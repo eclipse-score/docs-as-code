@@ -11,7 +11,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 # yaml-language-server: $schema=./metamodel-schema.json
-
 needs_types_base_options:
   optional_options:
     source_code_link: "^https://github.com/eclipse-score/score/blob/.*$"
@@ -28,9 +27,7 @@ needs_types_base_options:
       - some
       - thing
       - absolutely
-
 needs_types:
-
   ##############################################################################
   # Process Metamodel
   ##############################################################################
@@ -43,7 +40,6 @@ needs_types:
       status: "^(valid)$"
     optional_links:
       links: "^.*$"
-
   std_wp:
     title: "Standard Work Product"
     prefix: "std_wp__"
@@ -76,7 +72,6 @@ needs_types:
     optional_links:
       complies: "^std_req__(iso26262|isosae21434|isopas8926|aspice_40)__.*$"
       satisfies: "^wf__.*$"
-
   gd_temp:
     title: "Process Template"
     prefix: "gd_temp__"
@@ -85,7 +80,6 @@ needs_types:
       status: "^(valid|draft)$"
     optional_links:
       complies: "std_req__(iso26262|isodae21434|isopas8926|aspice_40)__.*$"
-
   gd_chklst:
     title: "Process Checklist"
     prefix: "gd_chklst__"
@@ -94,7 +88,6 @@ needs_types:
       status: "^(valid|draft)$"
     optional_links:
       complies: "std_req__(iso26262|isodae21434|isopas8926|aspice_40)__.*$"
-
   gd_guidl:
     title: "Process Guideline"
     prefix: "gd_guidl__"
@@ -103,7 +96,6 @@ needs_types:
       status: "^(valid|draft)$"
     optional_links:
       complies: "std_req__(iso26262|isosae21434|isopas8926|aspice_40)__.*$"
-
   gd_method:
     title: "Process Method"
     prefix: "gd_meth__"
@@ -136,14 +128,12 @@ needs_types:
     mandatory_options:
       id: "^doc_concept__[0-9a-z_]*$"
       status: "^(valid|draft)$"
-
   doc_getstrt:
     title: "Getting Startet"
     prefix: "doc_getstrt__"
     mandatory_options:
       id: "^doc_getstrt__[0-9a-z_]*$"
       status: "^(valid|draft)$"
-
   ##############################################################################
   # S-CORE Metamodel
   ##############################################################################
@@ -158,9 +148,9 @@ needs_types:
       safety: "^(QM|ASIL_B|ASIL_D)$"
       realizes: "^wp__.+$"
   # The following 3 guidance requirements enforce the requirement structure and attributes:
-  # req-Id: gd_req__req__structure
-  # req-Id: gd_req__requirements_attr_description
-  # req-Id: gd_req__req__linkage
+  # re-qid: gd_req__req__structure
+  # re-qid: gd_req__requirements_attr_description
+  # re-qid: gd_req__req__linkage
   # Requirements
   stkh_req:
     title: "Stakeholder Requirement"
@@ -178,7 +168,6 @@ needs_types:
       reqcovered: "^(YES|NO)$"
       testcovered: "^(YES|NO)$"
       hash: "^.*$"
-
   feat_req:
     title: "Feature Requirement"
     prefix: "feat_req__"
@@ -190,7 +179,7 @@ needs_types:
       safety: "^(QM|ASIL_B|ASIL_D)$"
       status: "^(valid|invalid)$"
     mandatory_links:
-      # req-Id: gd_req__req__linkage_fulfill
+      # re-qid: gd_req__req__linkage_fulfill
       satisfies: "^stkh_req__.*$"
     optional_options:
       codelink: "^.*$"
@@ -198,7 +187,6 @@ needs_types:
       reqcovered: "^(YES|NO)$"
       testcovered: "^(YES|NO)$"
       hash: "^.*$"
-
   comp_req:
     title: "Component Requirement"
     prefix: "comp_req__"
@@ -216,7 +204,6 @@ needs_types:
       reqcovered: "^(YES|NO)$"
       testcovered: "^(YES|NO)$"
       hash: "^.*$"
-
   tool_req:
     title: "Tool Requirement"
     prefix: "tool_req__"
@@ -234,7 +221,6 @@ needs_types:
       reqcovered: "^(YES|NO)$"
       testcovered: "^(YES|NO)$"
       hash: "^.*$"
-
   aou_req:
     title: "Assumption of Use"
     prefix: "aou_req__"
@@ -266,7 +252,6 @@ needs_types:
     mandatory_links:
       fulfils: "^feat_req__.+$"
       includes: "^feat_arc_int(_op)*__.+$"
-
   feat_arc_dyn:
     title: "Feature Architecture Dynamic View"
     prefix: "feat_arc_dyn__"
@@ -279,7 +264,6 @@ needs_types:
       status: "^(valid|invalid)$"
     mandatory_links:
       fulfils: "^feat_req__.+$"
-
   feat_arc_int:
     title: "Feature Architecture Interfaces"
     prefix: "feat_arc_int__"
@@ -294,7 +278,6 @@ needs_types:
       fulfils: "^feat_req__.+$"
     optional_links:
       includes: "^feat_arc_int_op__.+$"
-
   feat_arc_int_op:
     title: "Feature Architecture Interface Operation"
     prefix: "feat_arc_int_op__"
@@ -307,7 +290,6 @@ needs_types:
       status: "^(valid|invalid)$"
     mandatory_links:
       included_by: "^feat_arc_int__.+$"
-
   mod_view_sta:
     title: "Module Architecture Static View"
     prefix: "mod_view_sta__"
@@ -317,7 +299,6 @@ needs_types:
       id: "^mod_view_sta__[0-9a-z_]+$"
     mandatory_links:
       includes: "^comp_arc_sta__.+$"
-
   mod_view_dyn:
     title: "Module Architecture Dynamic View"
     prefix: "mod_view_dyn__"
@@ -325,7 +306,6 @@ needs_types:
     style: "card"
     mandatory_options:
       id: "^mod_view_dyn__[0-9a-z_]+$"
-
   comp_arc_sta:
     title: "Component Architecture Static View"
     prefix: "comp_arc_sta__"
@@ -342,7 +322,6 @@ needs_types:
       implements: "^comp_arc_int(_op)*__.+$"
       includes: "^comp_arc_sta__.+$"
       uses: "^comp_arc_int(_op)*__.+$"
-
   comp_arc_dyn:
     title: "Component Architecture Dynamic View"
     prefix: "comp_arc_dyn__"
@@ -355,7 +334,6 @@ needs_types:
       status: "^(valid|invalid)$"
     mandatory_links:
       fulfils: "^comp_req__.+$"
-
   comp_arc_int:
     title: "Component Architecture Interfaces"
     prefix: "comp_arc_int__"
@@ -369,7 +347,6 @@ needs_types:
       language: "^(cpp|rust)$"
     mandatory_links:
       fulfils: "^comp_req__.+$"
-
   comp_arc_int_op:
     title: "Component Architecture Interface Operation"
     prefix: "comp_arc_int_op__"
@@ -383,7 +360,6 @@ needs_types:
     mandatory_links:
       implements: "^feat_arc_int_op__.+$"
       included_by: "^comp_arc_int__.+$"
-
   review_header:
     prefix: "review__header"
     title: "Review Header"
@@ -393,7 +369,6 @@ needs_types:
       approvers: "^.*$"
       hash: "^.*$"
       template: "^.*$"
-
   # Implementation
   dd_sta:
     title: "Static detailed design"
@@ -441,7 +416,6 @@ needs_types:
       security: "^(YES|NO)$"
       safety: "^(QM|ASIL_B|ASIL_D)$"
       status: "^(valid|invalid)$"
-
 # Extra link types, which shall be available and allow need types to be linked to each other.
 # We use a dedicated linked type for each type of a connection, for instance from
 # a specification to a requirement. This makes filtering and visualization of such connections
@@ -455,37 +429,29 @@ needs_extra_links:
   contains:
     incoming: "contained by"
     outgoing: "contains"
-
   has:
     incoming: "relates to"
     outgoing: "has"
-
   input:
     incoming: "is input to"
     outgoing: "needs input"
-
   output:
     incoming: "is output from"
     outgoing: "outputs"
-
   # Roles
   responsible:
     incoming: "is responsible for"
     outgoing: "responsible"
-
   approved_by:
     incoming: "approves"
     outgoing: "approved by"
-
   supported_by:
     incoming: "supports"
     outgoing: "supported by"
-
   # Workproduct
   complies:
     incoming: "complies to"
     outgoing: "complies"
-
   ##############################################################
   #  S-CORE Metamodel
   ##############################################################
@@ -493,24 +459,19 @@ needs_extra_links:
   satisfies:
     incoming: "satisfied by"
     outgoing: "satisfies"
-
   # Architecture
   fulfils:
     incoming: "fulfilled by"
     outgoing: "fulfils"
-
   implements:
     incoming: "implemented by"
     outgoing: "implements"
-
   uses:
     incoming: "used by"
     outgoing: "uses"
-
   includes:
     incoming: "included by"
     outgoing: "includes"
-
   included_by:
     incoming: "includes"
     outgoing: "included by"
@@ -530,10 +491,10 @@ needs_extra_links:
 #   - condition: defines the condition that should be checked
 #     - [and / or / xor / not]
 ##############################################################
-# req-Id: gd_req__req__linkage_architecture
-# req-Id: gd_req__req__linkage_safety
+# re-qid: gd_req__req__linkage_architecture
+# re-qid: gd_req__req__linkage_safety
 graph_checks:
-  # req-Id: gd_req__req__linkage_safety
+  # re-qid: gd_req__req__linkage_safety
   req_safety_linkage:
     needs:
       include: "comp_req, feat_req"
@@ -552,7 +513,7 @@ graph_checks:
       condition: "status == valid"
     check:
       satisfies: "status == valid"
-  # req-Id: gd_req__req__linkage_architecture
+  # re-qid: gd_req__req__linkage_architecture
   arch_safety_linkage:
     needs:
       include: "comp_req, feat_req"

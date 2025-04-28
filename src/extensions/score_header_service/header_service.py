@@ -32,7 +32,7 @@ from sphinx.util.docutils import SphinxDirective
 from sphinx_needs.data import SphinxNeedsData
 from sphinx_needs.services.base import BaseService
 
-# req-traceability: GD__automatic_document_header_generation
+# re-qtraceability: GD__automatic_document_header_generation
 APPROVER_TEAMS = ["automotive-score-committers"]
 
 

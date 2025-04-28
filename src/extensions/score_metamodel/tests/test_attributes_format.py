@@ -113,7 +113,7 @@ class TestId:
         check_id_length(app, need_1, logger)
         logger.assert_warning(
             f"exceeds the maximum allowed length of 45 characters "
-            f"(current length: {len(need_1["id"])}).",
+            f"(current length: {len(need_1['id'])}).",
             expect_location=False,
         )
 

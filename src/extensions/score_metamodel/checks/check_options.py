@@ -76,12 +76,12 @@ def validate_fields(
                 )
 
 
-# req-Id: gd_req__req__attr_type
-# req-Id: gd_req__requirements_attr_security
-# req-Id: gd_req__req__attr_safety
-# req-Id: gd_req__req__attr_status
-# req-Id: gd_req__req__attr_rationale
-# req-Id: gd_req__req__attr_mandatory
+# re-qid: gd_req__req__attr_type
+# re-qid: gd_req__requirements_attr_security
+# re-qid: gd_req__req__attr_safety
+# re-qid: gd_req__req__attr_status
+# re-qid: gd_req__req__attr_rationale
+# re-qid: gd_req__req__attr_mandatory
 @local_check
 def check_options(
     app: Sphinx,

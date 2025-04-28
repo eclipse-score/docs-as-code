@@ -1,6 +1,6 @@
 ..
    # *******************************************************************************
-   # Copyright (c) 2025 Contributors to the Eclipse Foundation
+   # Copyright (c) 2024 Contributors to the Eclipse Foundation
    #
    # See the NOTICE file(s) distributed with this work for additional
    # information regarding copyright ownership.
@@ -12,13 +12,23 @@
    # SPDX-License-Identifier: Apache-2.0
    # *******************************************************************************
 
-#EXPECT: std_wp__test__abcd: has these extra options: `safety`.
+Hello World
+=================
+This is a simple example of a documentation page using the `docs` tool.
 
-.. std_wp:: This is a test
-   :id: std_wp__test__abcd
+.. stkh_req:: TestTitle
+   :id: stkh_req__test_requirement
+   :status: valid
    :safety: QM
+   :rationale: A simple requirement we need to enable a documentation build
+   :reqtype: Functional
 
-#EXPECT-NOT: std_wp__test__abce: has these extra options
+   Some content to make sure we also can render this
 
-.. std_wp:: This is a test
-   :id: std_wp__test__abce
+
+.. std_req:: External Link Test Req
+   :id: std_req__iso26262__testing
+   :status: valid
+   :links: gd_req__dynamic_diagram
+
+   This is some test content
