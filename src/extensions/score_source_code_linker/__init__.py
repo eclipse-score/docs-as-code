@@ -16,7 +16,7 @@ from copy import deepcopy
 from pathlib import Path
 from pprint import pprint
 
-from score_source_code_linker.parse_source_files import GITHUB_BASE_URL
+from src.extensions.score_source_code_linker.parse_source_files import GITHUB_BASE_URL
 from sphinx.application import Sphinx
 from sphinx.environment import BuildEnvironment
 from sphinx_needs.data import SphinxNeedsData

@@ -15,74 +15,24 @@ load("@aspect_rules_py//py:defs.bzl", "py_binary", "py_library")
 load("@pip_process//:requirements.bzl", "all_requirements")
 load("@score_python_basics//:defs.bzl", "score_py_pytest", "score_virtualenv")
 
+# TODO: This probably can be deleted
 score_virtualenv(
     name = "process_venv",
     reqs = all_requirements,
     venv_name = ".venv_process",
 )
 
+# convenient target that gathers all targets
 py_library(
     name = "score_extensions",
-    srcs = glob(
-        ["**/*.py"],
-        exclude = ["**/tests/**/*"],
-    ),
-    data = glob([
-        "score_layout/assets/**",
-        "score_metamodel/*.yaml",  # Needed to remove 'resolving of symlink' in score_metamodel.__init__
-    ]),
-    imports = ["."],
     visibility = ["//visibility:public"],
     deps = [
+        "//src/extensions/score_draw_uml_funcs:score_draw_uml_funcs",
+        "//src/extensions/score_header_service:score_header_service",
+        "//src/extensions/score_layout:score_layout",
+        "//src/extensions/score_metamodel:score_metamodel",
+        "//src/extensions/score_source_code_linker:score_source_code_linker",
         "@rules_python//python/runfiles",
     ],
 )
 
-# Dedicated metamodel target only for pytest.
-# It's required to define the imports for bazel pytest, so that python/pytest can
-# import "from score_metamodel" without issues.
-py_library(
-    name = "score_metamodel",
-    srcs = glob(
-        ["score_metamodel/**/*.py"],
-        exclude = ["**/tests/**/*"],
-    ),
-    imports = ["extensions"],
-    visibility = ["//visibility:public"],
-)
-
-score_py_pytest(
-    name = "score_metamodel_test",
-    size = "small",
-    srcs = glob(["score_metamodel/tests/**/*.py"]),
-    visibility = ["//visibility:public"],
-    deps = [":score_metamodel"] + all_requirements,
-)
-
-# ───────────────────────── Source code linker ────────────────────────
-# For more information see documentation at score_source_code_linker/README.md
-py_library(
-    name = "score_source_code_linker",
-    srcs = glob(
-        ["score_source_code_linker/**/*.py"],
-        exclude = ["score_source_code_linker/tests/*.py"],
-    ),
-    imports = ["."],
-    visibility = ["//visibility:public"],
-)
-
-score_py_pytest(
-    name = "score_source_code_linker_test",
-    size = "small",
-    srcs = glob(["score_source_code_linker/tests/**/*.py"]),
-    deps = [
-        ":score_source_code_linker",
-    ] + all_requirements,
-)
-
-# Needed to make the file parser executeable and findable for the source_code_linker aspect
-py_binary(
-    name = "parsed_source_files_for_source_code_linker",
-    srcs = ["score_source_code_linker/parse_source_files.py"],
-    visibility = ["//visibility:public"],
-)

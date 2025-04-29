@@ -16,7 +16,7 @@ from pathlib import Path
 
 import pytest
 from pytest import TempPathFactory
-from score_source_code_linker.parse_source_files import (
+from src.extensions.score_source_code_linker.parse_source_files import (
     GITHUB_BASE_URL,
     extract_requirements,
     get_git_hash,

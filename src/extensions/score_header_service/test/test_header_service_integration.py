@@ -16,7 +16,7 @@ from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
-import score_header_service.header_service as hs
+import src.extensions.score_header_service.header_service as hs
 from pytest import TempPathFactory
 from sphinx.testing.util import SphinxTestApp
 
@@ -82,7 +82,7 @@ def basic_conf():
         return f"""
 extensions = [
     "sphinx_needs",
-    "score_header_service",
+    "src.extensions.score_header_service",
 ]
 needs_types = [
     dict(title = "Review Header", directive = "review_header", color="#BFD8D2", style="node",
@@ -158,8 +158,8 @@ def template_needs():
 """
 
 
-@patch("score_header_service.header_service.generate_hash")
-@patch("score_header_service.header_service._extract_github_data")
+@patch("src.extensions.score_header_service.header_service.generate_hash")
+@patch("src.extensions.score_header_service.header_service._extract_github_data")
 def test_header_service_integration_github_data(
     mock_extract_github_data: MagicMock,
     mock_generate_hash: MagicMock,
@@ -192,8 +192,8 @@ def test_header_service_integration_github_data(
         raise AssertionError(f"Build failed: {err}") from err
 
 
-@patch("score_header_service.header_service.generate_hash")
-@patch("score_header_service.header_service._extract_merge_commit_data")
+@patch("src.extensions.score_header_service.header_service.generate_hash")
+@patch("src.extensions.score_header_service.header_service._extract_merge_commit_data")
 def test_header_service_integration_commit_data(
     mock_extract_merge_commit_data: MagicMock,
     mock_generate_hash: MagicMock,

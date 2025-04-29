@@ -16,7 +16,7 @@ from pathlib import Path
 
 import pytest
 from pytest import TempPathFactory
-from score_source_code_linker.parse_source_files import GITHUB_BASE_URL
+from src.extensions.score_source_code_linker.parse_source_files import GITHUB_BASE_URL
 from sphinx.testing.util import SphinxTestApp
 from sphinx_needs.data import SphinxNeedsData
 
@@ -64,7 +64,7 @@ def basic_conf():
     return """
 extensions = [
     "sphinx_needs",
-    "score_source_code_linker",
+    "src.extensions.score_source_code_linker",
 ]
 needs_types = [
     dict(

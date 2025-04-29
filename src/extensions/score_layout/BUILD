@@ -10,18 +10,16 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-from sphinx.application import Sphinx
-from src.extensions.score_header_service.header_service import register
+load("@aspect_rules_py//py:defs.bzl", "py_library")
+load("@pip_process//:requirements.bzl", "all_requirements")
 
-
-def setup(app: Sphinx) -> dict[str, str | bool]:
-    """Register the header service with the Sphinx application.
-
-    :param app: The Sphinx application instance.
-    """
-    app.connect("env-before-read-docs", register)
-    return {
-        "version": "0.1",
-        "parallel_read_safe": True,
-        "parallel_write_safe": True,
-    }
+py_library(
+    name = "score_layout",
+    srcs = glob(
+        ["*.py"],
+    ),
+    imports = ["."],
+    visibility = ["//visibility:public"],
+    # TODO: Figure out if all requirements are needed or if we can break it down a bit
+    deps = all_requirements,
+)
