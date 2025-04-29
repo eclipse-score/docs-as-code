@@ -44,7 +44,7 @@ def return_html_theme_options(app: Sphinx) -> dict[str, object]:
 
 
 html_theme = "pydata_sphinx_theme"  # "alabaster"
-html_static_path = ["_tooling/assets", "_assets"]
+html_static_path = ["src/assets", "_assets"]
 html_css_files = [
     "css/score.css",
     "css/score_needs.css",

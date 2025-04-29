@@ -22,7 +22,7 @@ load("@score_dash_license_checker//:dash.bzl", "dash_license_checker")
 
 sphinx_requirements = all_requirements + [
     ":plantuml_for_python",
-    "//tooling/extensions:score_extensions",
+    "//src/extensions:score_extensions",
 ]
 
 sphinx_build_binary(

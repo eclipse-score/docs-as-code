@@ -17,7 +17,7 @@ copyright_checker(
     name = "copyright",
     srcs = [
         "process-docs",
-        "tooling",
+        "src",
         "//:BUILD",
         "//:MODULE.bazel",
     ],

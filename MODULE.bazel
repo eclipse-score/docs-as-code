@@ -50,7 +50,7 @@ pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
 pip.parse(
     hub_name = "pip_process",
     python_version = PYTHON_VERSION,
-    requirements_lock = "//tooling:requirements.txt",
+    requirements_lock = "//src:requirements.txt",
 )
 use_repo(pip, "pip_process")
 
@@ -92,4 +92,4 @@ bazel_dep(name = "score_python_basics", version = "0.3.0")
 bazel_dep(name = "score_cr_checker", version = "0.2.0", dev_dependency = True)
 
 # Grab dash
-bazel_dep(name = "score_dash_license_checker", version = "0.1.1", dev_dependency = True )
+bazel_dep(name = "score_dash_license_checker", version = "0.1.1", dev_dependency = True)

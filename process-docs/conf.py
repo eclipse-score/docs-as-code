@@ -72,6 +72,6 @@ needs_string_links = {
 }
 
 # TODO: Fixing this in all builds
-html_static_path = ["../tooling/assets"]
+html_static_path = ["../src/assets"]
 
 logger.debug("After loading S-CORE conf.py")

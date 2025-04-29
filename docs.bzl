@@ -42,11 +42,11 @@ load("@pip_process//:requirements.bzl", "all_requirements", "requirement")
 load("@rules_python//sphinxdocs:sphinx.bzl", "sphinx_build_binary", "sphinx_docs")
 load("@rules_python//sphinxdocs:sphinx_docs_library.bzl", "sphinx_docs_library")
 load("@score_python_basics//:defs.bzl", "score_virtualenv")
-load("//tooling/extensions:score_source_code_linker/collect_source_files.bzl", "parse_source_files_for_needs_links")
+load("//src/extensions:score_source_code_linker/collect_source_files.bzl", "parse_source_files_for_needs_links")
 
 sphinx_requirements = all_requirements + [
-    "//tooling:plantuml_for_python",
-    "//tooling/extensions:score_extensions",
+    "//src:plantuml_for_python",
+    "//src/extensions:score_extensions",
 ]
 
 def docs(source_files_to_scan_for_needs_links = None, source_dir = "docs", conf_dir = "docs", build_dir_for_incremental = "_build", docs_targets = []):
@@ -63,7 +63,8 @@ def docs(source_files_to_scan_for_needs_links = None, source_dir = "docs", conf_
         name = "score_source_code_parser",
         srcs_and_deps = source_files_to_scan_for_needs_links if source_files_to_scan_for_needs_links else [],
     )
-    # TODO: Explain what this does / how it works? 
+
+    # TODO: Explain what this does / how it works?
     for target in docs_targets:
         suffix = "_" + target["suffix"] if target["suffix"] else ""
         external_needs_deps = target.get("target", [])
@@ -107,7 +108,7 @@ def _incremental(incremental_name = "incremental", live_name = "live_preview", s
     dependencies = sphinx_requirements + extra_dependencies
     py_binary(
         name = incremental_name,
-        srcs = ["//tooling:incremental.py"],
+        srcs = ["//src:incremental.py"],
         deps = dependencies,
         data = [":score_source_code_parser"] + external_needs_deps,
         env = {
@@ -121,7 +122,7 @@ def _incremental(incremental_name = "incremental", live_name = "live_preview", s
 
     py_binary(
         name = live_name,
-        srcs = ["//tooling:incremental.py"],
+        srcs = ["//src:incremental.py"],
         deps = dependencies,
         data = external_needs_deps,
         env = {
@@ -154,7 +155,7 @@ def _docs(name = "docs", format = "html", external_needs_deps = list(), external
             "**/*.css",
             "**/*.puml",
             "**/*.need",
-            # Include the docs tooling itself
+            # Include the docs src itself
             # Note: we don't use py_library here to make it as close as possible to docs:incremental.
             "**/*.py",
             "**/*.yaml",
@@ -169,13 +170,13 @@ def _docs(name = "docs", format = "html", external_needs_deps = list(), external
         formats = [
             format,
         ],
-        sphinx = "//tooling:sphinx_build",
+        sphinx = "//src:sphinx_build",
         tags = [
             "manual",
         ],
         tools = [
             ":score_source_code_parser",
-            "//tooling:plantuml",
+            "//src:plantuml",
         ] + external_needs_deps,
         visibility = ["//visibility:public"],
     )

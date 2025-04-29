@@ -84,7 +84,7 @@ def add_source_link(app: Sphinx, env: BuildEnvironment) -> None:
     # LOGGER.info("DEBUG: ============= CONF DIR===========")
     # LOGGER.info(f"DEBUG: {Path(app.confdir).name}")
     # LOGGER.info("DEBUG: =============================")
-    if str(p5).endswith("tooling"):
+    if str(p5).endswith("src"):
         LOGGER.info("DEBUG: WE ARE IN THE IF")
         path = str(p5.parent / Path(app.confdir).name / "score_source_code_parser.json")
     else:

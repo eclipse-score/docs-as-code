@@ -13,7 +13,7 @@
 from pathlib import Path
 
 # TODO: why is there an __init__.py file in tooling?
-from tooling import find_runfiles
+from src import find_runfiles
 
 
 def get_runfiles_dir_impl(

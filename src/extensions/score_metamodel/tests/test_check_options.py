@@ -17,11 +17,11 @@ from unittest.mock import Mock
 import pytest
 from sphinx.application import Sphinx
 
-from docs._tooling.extensions.score_metamodel.checks.check_options import (
+from src.extensions.score_metamodel.checks.check_options import (
     check_extra_options,
     check_options,
 )
-from docs._tooling.extensions.score_metamodel.tests import fake_check_logger, need
+from src.extensions.score_metamodel.tests import fake_check_logger, need
 
 
 @pytest.mark.metadata(

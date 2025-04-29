@@ -12,7 +12,7 @@
 # *******************************************************************************
 
 load("@aspect_rules_py//py:defs.bzl", "py_library")
-load("//tooling:docs.bzl", "docs")
+load("//:docs.bzl", "docs")
 
 # Creates all documentation targets:
 # - `docs:incremental` for building docs incrementally at runtime
@@ -26,10 +26,10 @@ docs(
             "suffix": "",  # local without external needs
         },
 
-#           ╭───────────────────────────────────────╮
-#           │   This is commented out until local   │
-#           │   multi-repo testing is implemented   │
-#           ╰───────────────────────────────────────╯
+        #           ╭───────────────────────────────────────╮
+        #           │   This is commented out until local   │
+        #           │   multi-repo testing is implemented   │
+        #           ╰───────────────────────────────────────╯
 
         # {
         #     "suffix": "release",  # The version imported from MODULE.bazel
@@ -56,7 +56,7 @@ docs(
     source_dir = "process-docs",
     source_files_to_scan_for_needs_links = [
         # Note: you can add filegroups, globs, or entire targets here.
-        "//tooling/extensions:score_extensions",
+        "//src/extensions:score_extensions",
         ":score_extensions",
         ":score_source_code_linker",
     ],
@@ -65,9 +65,9 @@ docs(
 py_library(
     name = "score_source_code_linker",
     srcs = glob(
-        ["tooling/extensions/score_source_code_linker/**/*.py"],
-        exclude = ["tooling/extensions/score_source_code_linker/tests/*.py"],
+        ["src/extensions/score_source_code_linker/**/*.py"],
+        exclude = ["src/extensions/score_source_code_linker/tests/*.py"],
     ),
-    imports = ["tooling/extensions"],
+    imports = ["src/extensions"],
     visibility = ["//visibility:public"],
 )
