@@ -42,7 +42,7 @@ load("@pip_process//:requirements.bzl", "all_requirements", "requirement")
 load("@rules_python//sphinxdocs:sphinx.bzl", "sphinx_build_binary", "sphinx_docs")
 load("@rules_python//sphinxdocs:sphinx_docs_library.bzl", "sphinx_docs_library")
 load("@score_python_basics//:defs.bzl", "score_virtualenv")
-load("//src/extensions:score_source_code_linker/collect_source_files.bzl", "parse_source_files_for_needs_links")
+load("//src/extensions/score_source_code_linker:collect_source_files.bzl", "parse_source_files_for_needs_links")
 
 sphinx_requirements = all_requirements + [
     "//src:plantuml_for_python",
@@ -64,7 +64,8 @@ def docs(source_files_to_scan_for_needs_links = None, source_dir = "docs", conf_
         srcs_and_deps = source_files_to_scan_for_needs_links if source_files_to_scan_for_needs_links else [],
     )
 
-    # TODO: Explain what this does / how it works?
+    # We are iterating over all provided 'targets' in order to allow for automatic generation of them without
+    # needing to modify the underlying 'docs.bzl' file.
     for target in docs_targets:
         suffix = "_" + target["suffix"] if target["suffix"] else ""
         external_needs_deps = target.get("target", [])
@@ -143,8 +144,6 @@ def _ide_support():
 
 def _docs(name = "docs", format = "html", external_needs_deps = list(), external_needs_def = dict()):
     ext_needs_arg = "--define=external_needs_source=" + json.encode(external_needs_def)
-
-    #fail(ext_needs_arg)
     sphinx_docs(
         name = name,
         srcs = native.glob([
@@ -157,7 +156,6 @@ def _docs(name = "docs", format = "html", external_needs_deps = list(), external
             "**/*.need",
             # Include the docs src itself
             # Note: we don't use py_library here to make it as close as possible to docs:incremental.
-            "**/*.py",
             "**/*.yaml",
             "**/*.json",
             "**/*.csv",
