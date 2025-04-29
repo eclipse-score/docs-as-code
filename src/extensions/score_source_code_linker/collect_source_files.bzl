@@ -130,7 +130,7 @@ parse_source_files_for_needs_links = rule(
         ),
         "_source_files_parser": attr.label(
             # TODO: rename to source_files_parser in next PR
-            default = Label("//docs:parsed_source_files_for_source_code_linker"),
+            default = Label(":parsed_source_files_for_source_code_linker"),
             executable = True,
             cfg = "exec",
         ),
@@ -141,11 +141,3 @@ parse_source_files_for_needs_links = rule(
     ],
     doc = "Rule that collects and parses source files for linking documentation. (Internal)",
 )
-
-# -----------------------------------------------------------------------------
-# Backwards compatibility
-# -----------------------------------------------------------------------------
-# This should be removed once all references have been updated.
-def collect_source_files_for_score_source_code_linker(deps, name):
-    print("DEPRECATED: Use `parse_source_files_for_needs_links` instead.")
-    parse_source_files_for_needs_links(srcs_and_deps = deps, name = name)

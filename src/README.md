@@ -1,6 +1,6 @@
 # S-CORE Project Tooling Development Guide
 
-*This document is meant for *developers* of the `_tooling` of docs in the score repository.*
+*This document is meant for *developers* of doc-as-code.*
 It should be treated as a 'get-started' guide, giving you all needed information to get up and running.
 
 ## Quick Start
@@ -11,7 +11,7 @@ It should be treated as a 'get-started' guide, giving you all needed information
     1. Install Bazelisk (version manager for Bazel)
     2. Create the Python virtual environment:
    ```bash
-   bazel run //docs:ide_support
+   bazel run //process-docs:ide_support
    ```
     3. Select `.venv_docs/bin/python` as the python interpreter inside your IDE
     *Note: This virtual environment does **not** have pip, therefore `pip install` is not available.*
@@ -54,12 +54,12 @@ It should be treated as a 'get-started' guide, giving you all needed information
 
 
 
-## Tooling Directory Architecture
+## docs-as-code Directory Architecture
 
 ```
-docs/_tooling/
+process-docs/         # Local documentation to test functionality
+src/
 ├── assets/           # Documentation styling (CSS)
-├── conf_extras/      # Sphinx configuration extensions
 ├── decision_records/ # Architecture Decision Records (ADRs)
 ├── extensions/       # Custom Sphinx extensions
 │   └── score_metamodel/
@@ -79,7 +79,7 @@ Find everything related to testing and how to add your on test suite [here](/too
 2. Create a dedicated test directory
 3. Include an appropriate README in markdown
 
-> If you want to develop your own sphinx extension, check out the [extensions guide](/docs/_tooling/extensions/README.md)
+> If you want to develop your own sphinx extension, check out the [extensions guide](/src/extensions/README.md)
 
 ## Best Practices
 
@@ -113,6 +113,6 @@ Common issues and solutions:
    - Verify extension dependencies
 
 ## Additional Resources
-- [Sphinx extension guide](/docs/_tooling/extensions/README.md)
-- [S-CORE Metamodel Documentation](/docs/_tooling/extensions/score_metamodel/README.md)
+- [Sphinx extension guide](/src/extensions/README.md)
+- [S-CORE Metamodel Documentation](/src/extensions/score_metamodel/README.md)
 - [Pytest Integration Guide](/tools/testing/pytest/README.md)

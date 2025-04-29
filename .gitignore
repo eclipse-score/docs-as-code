@@ -1,0 +1,25 @@
+# Commonly used for local settings and secrets
+.env
+
+# Bazel
+bazel-*
+MODULE.bazel.lock
+user.bazelrc
+
+# Ruff
+.ruff_cache
+
+# docs:incremental and docs:ide_support build artifacts
+/_build*
+
+# Vale - editorial style guide
+.vale.ini
+styles/
+
+# direnv - folder-specific bash configuration
+.envrc
+
+# Python
+.venv
+__pycache__/
+/.coverage

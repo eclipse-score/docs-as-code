@@ -16,7 +16,7 @@ from unittest.mock import MagicMock
 import pytest
 from sphinx.util.logging import SphinxLoggerAdapter
 
-from docs._tooling.extensions.score_metamodel import CheckLogger, NeedsInfoType
+from src.extensions.score_metamodel import CheckLogger, NeedsInfoType
 
 
 def fake_check_logger():

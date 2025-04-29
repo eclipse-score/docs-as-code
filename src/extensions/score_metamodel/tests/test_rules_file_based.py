@@ -20,14 +20,14 @@ from pathlib import Path
 import pytest
 from sphinx.testing.util import SphinxTestApp
 
-from docs._tooling.extensions.score_metamodel import (
+from src.extensions.score_metamodel import (
     graph_check_function,
     local_check_function,
 )
 
 RST_DIR = Path(__file__).absolute().parent / "rst"
 DOCS_DIR = Path(__file__).absolute().parent.parent.parent.parent.parent
-TOOLING_DIR_NAME = "_tooling"
+TOOLING_DIR_NAME = "src"
 
 ### List of relative paths of all rst files in RST_DIR
 RST_FILES = [str(f.relative_to(RST_DIR)) for f in Path(RST_DIR).rglob("*.rst")]

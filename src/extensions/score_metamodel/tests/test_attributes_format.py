@@ -14,13 +14,13 @@ from unittest.mock import Mock
 
 from sphinx.application import Sphinx
 
-from docs._tooling.extensions.score_metamodel.checks.attributes_format import (
+from src.extensions.score_metamodel.checks.attributes_format import (
     check_description,
     check_id_format,
     check_id_length,
     check_title,
 )
-from docs._tooling.extensions.score_metamodel.tests import fake_check_logger, need
+from src.extensions.score_metamodel.tests import fake_check_logger, need
 
 
 class TestId:
@@ -113,7 +113,7 @@ class TestId:
         check_id_length(app, need_1, logger)
         logger.assert_warning(
             f"exceeds the maximum allowed length of 45 characters "
-            f"(current length: {len(need_1["id"])}).",
+            f"(current length: {len(need_1['id'])}).",
             expect_location=False,
         )
 

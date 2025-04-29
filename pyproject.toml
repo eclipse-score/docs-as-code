@@ -1,0 +1,7 @@
+# This file is at the root level, as it applies to all Python code,
+# not only to docs or to tools.
+[tool.pyright] 
+extends = "bazel-bin/process-docs/ide_support.runfiles/score_python_basics~/pyproject.toml"
+
+[tool.ruff]
+extend = "bazel-bin/process-docs/ide_support.runfiles/score_python_basics~/pyproject.toml"

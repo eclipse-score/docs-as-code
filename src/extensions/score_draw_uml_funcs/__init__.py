@@ -311,9 +311,11 @@ def add_logical_interfaces(
                 logical_iface = logical_iface_tmp[0]
                 proc_logical_interfaces[logical_iface] = iface
                 structure_text += gen_interface_element(logical_iface, all_needs, True)
-                linkage_text += f"{gen_link_text(all_needs[iface], '-u->',
-                                    all_needs[logical_iface],
-                                    'implements')}\n"
+                linkage_text += f"{
+                    gen_link_text(
+                        all_needs[iface], '-u->', all_needs[logical_iface], 'implements'
+                    )
+                }\n"
             else:
                 print(f"{iface}: Not connected to any virtual interface")
     return structure_text, linkage_text, proc_logical_interfaces
@@ -335,17 +337,17 @@ def add_used_interfaces(
                 retval = get_hierarchy_text(impl_comp_str[0], all_needs)
                 structure_text += retval[2] + retval[0] + retval[1] + retval[3]
                 structure_text += gen_interface_element(iface, all_needs, True)
-                linkage_text += f"{gen_link_text(impl_comp, '-u->',
-                                all_needs[iface],
-                                'implements')} \n"
+                linkage_text += f"{
+                    gen_link_text(impl_comp, '-u->', all_needs[iface], 'implements')
+                } \n"
             else:
                 print(f"{iface}: No implementing component defined")
                 structure_text += gen_interface_element(iface, all_needs, True)
 
         for comp in comps:
-            linkage_text += f"{gen_link_text(all_needs[comp],
-                                            '-d[#green]->',
-                                            all_needs[iface], 'uses')} \n"
+            linkage_text += f"{
+                gen_link_text(all_needs[comp], '-d[#green]->', all_needs[iface], 'uses')
+            } \n"
     return structure_text, linkage_text
 
 
@@ -397,8 +399,9 @@ class draw_full_feature:
                     if comps:
                         impl_comp[iface] = comps[0]
                 if im := impl_comp.get(iface):
-                    structure_text += f"{gen_struct_element('component',
-                                         all_needs[im])}\n"
+                    structure_text += (
+                        f"{gen_struct_element('component', all_needs[im])}\n"
+                    )
             else:
                 logger.info(f"Interface {iface} could not be found")
         return structure_text, impl_comp
@@ -413,13 +416,16 @@ class draw_full_feature:
         link_text = ""
         for iface in interfacelist:
             if imcomp := impl_comp.get(iface):
-                link_text += f"{gen_link_text({'id': 'Feature_User'}, '-d->',
-                                    all_needs[iface],
-                                    'use')} \n"
-                link_text += f"{gen_link_text(all_needs[imcomp],
-                                    '-u->',
-                                    all_needs[iface],
-                                    'implements')} \n"
+                link_text += f"{
+                    gen_link_text(
+                        {'id': 'Feature_User'}, '-d->', all_needs[iface], 'use'
+                    )
+                } \n"
+                link_text += f"{
+                    gen_link_text(
+                        all_needs[imcomp], '-u->', all_needs[iface], 'implements'
+                    )
+                } \n"
             else:
                 logger.info(f"{need}: Interface {iface} could not be found")
         return link_text

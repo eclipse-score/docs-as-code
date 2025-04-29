@@ -17,7 +17,7 @@ from sphinx_needs.data import NeedsInfoType
 from score_metamodel import CheckLogger, local_check
 
 
-# req-Id: gd_req__req__attr_uid
+# req-#id: gd_req__req__attr_uid
 @local_check
 def check_id_format(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
     """
@@ -64,7 +64,7 @@ def check_id_length(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
         log.warning_for_option(need, "id", msg)
 
 
-# req-Id: gd_req__requirements_attr_title
+# req-#id: gd_req__requirements_attr_title
 @local_check
 def check_title(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
     """
@@ -85,7 +85,7 @@ def check_title(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
                 break
 
 
-# req-Id: gd_req__req__attr_desc_weak
+# req-#id: gd_req__req__attr_desc_weak
 @local_check
 def check_description(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
     """

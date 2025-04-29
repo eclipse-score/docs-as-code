@@ -108,7 +108,7 @@ Tags are defined inside `parse_source_files.py`
 You can use them like this:
 
 ```python
-# req-traceability: <NEED ID YOU WANT TO LINK TO>
+# req-#traceability: <NEED ID YOU WANT TO LINK TO>
 def dummy_function():
     pass
 ```

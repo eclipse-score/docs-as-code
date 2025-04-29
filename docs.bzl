@@ -1,5 +1,5 @@
 # *******************************************************************************
-# Copyright (c) 2024 Contributors to the Eclipse Foundation
+# Copyright (c) 2025 Contributors to the Eclipse Foundation
 #
 # See the NOTICE file(s) distributed with this work for additional
 # information regarding copyright ownership.
@@ -37,22 +37,19 @@
 #
 # For user-facing documentation, refer to `/README.md`.
 
-load("@aspect_rules_py//py:defs.bzl", "py_binary", "py_library", "py_venv")
-load("@pip_sphinx//:requirements.bzl", "all_requirements", "requirement")
-load("@rules_java//java:defs.bzl", "java_binary")
-load("@rules_pkg//pkg:mappings.bzl", "pkg_files")
-load("@rules_pkg//pkg:tar.bzl", "pkg_tar")
-load("@rules_python//python:pip.bzl", "compile_pip_requirements")
+load("@aspect_rules_py//py:defs.bzl", "py_binary")
+load("@pip_process//:requirements.bzl", "all_requirements", "requirement")
 load("@rules_python//sphinxdocs:sphinx.bzl", "sphinx_build_binary", "sphinx_docs")
-load("//docs:_tooling/extensions/score_source_code_linker/collect_source_files.bzl", "parse_source_files_for_needs_links")
-load("//tools/testing/pytest:defs.bzl", "score_py_pytest")
+load("@rules_python//sphinxdocs:sphinx_docs_library.bzl", "sphinx_docs_library")
+load("@score_python_basics//:defs.bzl", "score_virtualenv")
+load("//src/extensions:score_source_code_linker/collect_source_files.bzl", "parse_source_files_for_needs_links")
 
 sphinx_requirements = all_requirements + [
-    "@rules_python//python/runfiles",
-    ":plantuml_for_python",
+    "//src:plantuml_for_python",
+    "//src/extensions:score_extensions",
 ]
 
-def docs(source_files_to_scan_for_needs_links = None, source_dir = "docs", conf_dir = "docs", build_dir_for_incremental = "_build"):
+def docs(source_files_to_scan_for_needs_links = None, source_dir = "docs", conf_dir = "docs", build_dir_for_incremental = "_build", docs_targets = []):
     """
     Creates all targets related to documentation.
     By using this function, you'll get any and all updates for documentation targets in one place.
@@ -61,30 +58,42 @@ def docs(source_files_to_scan_for_needs_links = None, source_dir = "docs", conf_
     """
 
     # Parse source files for needs links
+    # This needs to be created to generate a target, otherwise it won't execute as dependency for other macros
     parse_source_files_for_needs_links(
         name = "score_source_code_parser",
         srcs_and_deps = source_files_to_scan_for_needs_links if source_files_to_scan_for_needs_links else [],
     )
 
-    # Get the output of source_code_linker
-    # Does not work:
-    # rule_info = native.existing_rule(source_code_linker.name)
-    # source_code_links = rule_info[SourceCodeLinks].file.path
-    # Workaround:
-    source_code_links = "score_source_code_parser.json"
-
-    # Run-time build of documentation, incl. incremental build support and non-IDE live preview.
-    _incremental(":score_source_code_parser", source_code_links, source_dir = source_dir, conf_dir = conf_dir, build_dir = build_dir_for_incremental)
+    # TODO: Explain what this does / how it works?
+    for target in docs_targets:
+        suffix = "_" + target["suffix"] if target["suffix"] else ""
+        external_needs_deps = target.get("target", [])
+        external_needs_def = target.get("external_needs_info", [])
+        _incremental(
+            incremental_name = "incremental" + suffix,
+            live_name = "live_preview" + suffix,
+            conf_dir = conf_dir,
+            source_dir = source_dir,
+            build_dir = build_dir_for_incremental,
+            external_needs_deps = external_needs_deps,
+            external_needs_def = external_needs_def,
+        )
+        _docs(
+            name = "docs" + suffix,
+            format = "html",
+            external_needs_deps = external_needs_deps,
+            external_needs_def = external_needs_def,
+        )
 
     # Virtual python environment for working on the documentation (esbonio).
     # incl. python support when working on conf.py and sphinx extensions.
     # creates :ide_support target for virtualenv
     _ide_support()
 
-    # creates :docs target for build time documentation
-    _docs()
+    # creates 'needs.json' build target
+    _docs(name = "docs_needs", format = "needs")
 
-def _incremental(source_code_linker, source_code_links, source_dir = "docs", conf_dir = "docs", build_dir = "_build", extra_dependencies = list()):
+def _incremental(incremental_name = "incremental", live_name = "live_preview", source_dir = "docs", conf_dir = "docs", build_dir = "_build", extra_dependencies = list(), external_needs_deps = list(), external_needs_def = None):
     """
     A target for building docs incrementally at runtime, incl live preview.
     Args:
@@ -97,44 +106,47 @@ def _incremental(source_code_linker, source_code_links, source_dir = "docs", con
     """
 
     dependencies = sphinx_requirements + extra_dependencies
-
     py_binary(
-        name = "incremental",
-        srcs = ["//docs:_tooling/incremental.py"],
-        data = [source_code_linker, "//docs:docs_assets"],
+        name = incremental_name,
+        srcs = ["//src:incremental.py"],
         deps = dependencies,
+        data = [":score_source_code_parser"] + external_needs_deps,
         env = {
-            "SOURCE_CODE_LINKS": source_code_links,
             "SOURCE_DIRECTORY": source_dir,
             "CONF_DIRECTORY": conf_dir,
             "BUILD_DIRECTORY": build_dir,
+            "EXTERNAL_NEEDS_INFO": json.encode(external_needs_def),
             "ACTION": "incremental",
         },
     )
 
     py_binary(
-        name = "live_preview",
-        srcs = ["//docs:_tooling/incremental.py"],
-        data = ["//docs:docs_assets"],
+        name = live_name,
+        srcs = ["//src:incremental.py"],
         deps = dependencies,
+        data = external_needs_deps,
         env = {
             "SOURCE_DIRECTORY": source_dir,
             "CONF_DIRECTORY": conf_dir,
             "BUILD_DIRECTORY": build_dir,
+            "EXTERNAL_NEEDS_INFO": json.encode(external_needs_def),
             "ACTION": "live_preview",
         },
     )
 
 def _ide_support():
-    py_venv(
+    score_virtualenv(
         name = "ide_support",
         venv_name = ".venv_docs",
-        deps = sphinx_requirements,
+        reqs = sphinx_requirements,
     )
 
-def _docs():
+def _docs(name = "docs", format = "html", external_needs_deps = list(), external_needs_def = dict()):
+    ext_needs_arg = "--define=external_needs_source=" + json.encode(external_needs_def)
+
+    #fail(ext_needs_arg)
     sphinx_docs(
-        name = "docs",
+        name = name,
         srcs = native.glob([
             "**/*.png",
             "**/*.svg",
@@ -143,29 +155,28 @@ def _docs():
             "**/*.css",
             "**/*.puml",
             "**/*.need",
-            # Include the docs tooling itself
+            # Include the docs src itself
             # Note: we don't use py_library here to make it as close as possible to docs:incremental.
             "**/*.py",
             "**/*.yaml",
             "**/*.json",
             "**/*.csv",
-        ], exclude = ["**/tests/rst/**/*.rst"]),
+        ], exclude = ["**/tests/*"]),
         config = ":conf.py",
         extra_opts = [
             "-W",
             "--keep-going",
-            # This is 'overwriting' the configuration parameter inside sphinx. As we only get this information during runtime
-            "--define=source_code_linker_file=$(location :score_source_code_parser)",
-        ],
+        ] + [ext_needs_arg],
         formats = [
-            "html",
+            format,
         ],
-        sphinx = ":sphinx_build",
+        sphinx = "//src:sphinx_build",
         tags = [
             "manual",
         ],
         tools = [
             ":score_source_code_parser",
-            ":plantuml",
-        ],
+            "//src:plantuml",
+        ] + external_needs_deps,
+        visibility = ["//visibility:public"],
     )

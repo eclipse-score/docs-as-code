@@ -38,7 +38,9 @@ def sphinx_app_setup(
 
         (src_dir / "conf.py").write_text(conf_content)
         (src_dir / "index.rst").write_text(rst_content)
-        (src_dir / "requierments.txt").write_text(json.dumps(requierments_text))
+        (src_dir / "score_source_code_parser.json").write_text(
+            json.dumps(requierments_text)
+        )
 
         return SphinxTestApp(
             freshenv=True,
@@ -48,7 +50,9 @@ def sphinx_app_setup(
             buildername="html",
             warningiserror=True,
             confoverrides={
-                "source_code_linker_file": str(src_dir / "requierments.txt")
+                "score_source_code_linker_file_overwrite": str(
+                    src_dir / "score_source_code_parser.json"
+                )
             },
         )
 
