@@ -11,8 +11,9 @@
    #
    # SPDX-License-Identifier: Apache-2.0
    # *******************************************************************************
+#CHECK: check_description
 
-.. Test xy
+.. Description contains a weak word
 #EXPECT: stkh_req__test__abcd.content (This should really work): contains a weak word: `really`.
 
 .. stkh_req:: This is a test
@@ -20,9 +21,18 @@
 
    This should really work
 
-#EXPECT-NOT: stkh_req__test__abce.title (This should work): contains a weak word
+.. Description contains no weak word
+#EXPECT-NOT: contains a weak word
 
 .. stkh_req:: This is a test
    :id: stkh_req__test__abce
 
    This should work
+
+.. Description of requirement of type std_wp is not checked for weak words
+#EXPECT-NOT: contains a weak word
+
+.. std_wp:: This is a test
+   :id: stdwp__test__abce
+
+   This should really work

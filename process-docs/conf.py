@@ -18,19 +18,11 @@
 
 import logging
 
-# from tooling.docs_assets_lib import get_path as asset_path
-# from tooling.find_runfiles import get_runfiles_dir
-# from tooling.score_extensions.find_runfiles import get_runfiles_dir
-# import tooling.score_extensions
-
-# sys.path extension for local files is needed, because the conf.py file is not
-# executed, but imported by Sphinx
-# sys.path.insert(0, ".")
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = "SCORE Process"
+project = "docs-as-code"
 author = "Score"
 version = "0.1"
 
@@ -38,7 +30,7 @@ version = "0.1"
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 logger = logging.getLogger("process-docs")
-logger.warning("Loading S-CORE conf.py")
+logger.debug("Loading docs-as-code conf.py")
 
 extensions = [
     "sphinx_design",
@@ -50,7 +42,7 @@ extensions = [
     "score_source_code_linker",
     "score_layout",
 ]
-logger.warning("After loading extensions")
+logger.debug("After loading extensions")
 
 exclude_patterns = [
     # The following entries are not required when building the documentation
@@ -82,4 +74,4 @@ needs_string_links = {
 # TODO: Fixing this in all builds
 html_static_path = ["../tooling/assets"]
 
-logger.warning("After loading S-CORE conf.py")
+logger.debug("After loading S-CORE conf.py")

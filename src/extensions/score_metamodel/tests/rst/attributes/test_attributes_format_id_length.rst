@@ -11,13 +11,16 @@
    #
    # SPDX-License-Identifier: Apache-2.0
    # *******************************************************************************
+#CHECK: check_id_length
 
+.. Id contains too many characters
 #EXPECT: std_wp__testabcdefghijklmnopqrstuvwxyz123__abcd.id (std_wp__testabcdefghijklmnopqrstuvwxyz123__abcd): exceeds the maximum allowed length of 45 characters (current length: 47).
 
 .. std_wp:: This is a test
    :id: std_wp__testabcdefghijklmnopqrstuvwxyz123__abcd
 
-#EXPECT-NOT: std_wp__test__abce.id (std_wp__test__abce): exceeds the maximum allowed length of 45 characters
+.. Id has correct length
+#EXPECT-NOT: exceeds the maximum allowed length of 45 characters
 
 .. std_wp:: This is a test
    :id: std_wp__test__abce

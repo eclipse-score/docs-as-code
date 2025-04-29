@@ -11,14 +11,17 @@
    #
    # SPDX-License-Identifier: Apache-2.0
    # *******************************************************************************
+#CHECK: check_extra_options
 
+.. Invalid option: `safety` is not allowed
 #EXPECT: std_wp__test__abcd: has these extra options: `safety`.
 
 .. std_wp:: This is a test
    :id: std_wp__test__abcd
    :safety: QM
 
-#EXPECT-NOT: std_wp__test__abce: has these extra options
+.. No invalid extra options are present
+#EXPECT-NOT: has these extra options
 
 .. std_wp:: This is a test
    :id: std_wp__test__abce

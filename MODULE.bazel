@@ -12,8 +12,8 @@
 # *******************************************************************************
 
 module(
-    name = "process",
-    version = "0.0.1",
+    name = "docs-as-code",
+    version = "0.1.0",
     compatibility_level = 0,
 )
 
@@ -35,6 +35,7 @@ PYTHON_VERSION = "3.12"
 
 python = use_extension("@rules_python//python/extensions:python.bzl", "python")
 python.toolchain(
+    configure_coverage_tool = True,
     is_default = True,
     python_version = PYTHON_VERSION,
 )
@@ -88,12 +89,7 @@ http_file(
 bazel_dep(name = "score_python_basics", version = "0.3.0")
 
 # Checker rule for CopyRight checks/fixes
-bazel_dep(name = "score_cr_checker", version = "0.2.0")
+bazel_dep(name = "score_cr_checker", version = "0.2.0", dev_dependency = True)
 
 # Grab dash
-bazel_dep(name = "score_dash_license_checker", version = "0.1.1")
-bazel_dep(name = "score_platform", version = "0.1.0")
-local_path_override(
-    module_name = "score_platform",
-    path = "../score/",
-)
+bazel_dep(name = "score_dash_license_checker", version = "0.1.1", dev_dependency = True )

@@ -11,13 +11,22 @@
    #
    # SPDX-License-Identifier: Apache-2.0
    # *******************************************************************************
+#CHECK: check_title
 
+.. Title contains a stop word
 #EXPECT: feat_req__test__abcd.title (This must work): contains a stop word: `must`.
 
 .. feat_req:: This must work
    :id: feat_req__test__abcd
 
+.. Title contains no stop word
 #EXPECT-NOT: feat_req__test__abce.title (This is a test): contains a stop word
 
 .. feat_req:: This is a test
    :id: feat_req__test__abce
+
+.. Title of requirement of type std_wp is not checked for stop words
+#EXPECT-NOT: std_wp__test__abce.title (This must work): contains a stop word: `must`.
+
+.. std_wp:: This must work
+   :id: std_wp__test__abce

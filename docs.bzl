@@ -10,17 +10,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-# *******************************************************************************
-# Copyright (c) 2024 Contributors to the Eclipse Foundation
-# See the NOTICE file(s) distributed with this work for additional
-# information regarding copyright ownership.
-#
-# This program and the accompanying materials are made available under the
-# terms of the Apache License Version 2.0 which is available at
-# https://www.apache.org/licenses/LICENSE-2.0
-#
-# SPDX-License-Identifier: Apache-2.0
-# *******************************************************************************
 
 # Multiple approaches are available to build the same documentation output:
 #
@@ -74,7 +63,7 @@ def docs(source_files_to_scan_for_needs_links = None, source_dir = "docs", conf_
         name = "score_source_code_parser",
         srcs_and_deps = source_files_to_scan_for_needs_links if source_files_to_scan_for_needs_links else [],
     )
-
+    # TODO: Explain what this does / how it works? 
     for target in docs_targets:
         suffix = "_" + target["suffix"] if target["suffix"] else ""
         external_needs_deps = target.get("target", [])
@@ -177,7 +166,6 @@ def _docs(name = "docs", format = "html", external_needs_deps = list(), external
             "-W",
             "--keep-going",
         ] + [ext_needs_arg],
-        #deps = ["@score_platform//docs:rst_files",],
         formats = [
             format,
         ],

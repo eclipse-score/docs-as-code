@@ -11,14 +11,24 @@
    #
    # SPDX-License-Identifier: Apache-2.0
    # *******************************************************************************
+#CHECK: check_options
 
+.. Required option: `status` is missing
 #EXPECT: std_wp__test__abcd: is missing required option: `status`.
 
 .. std_wp:: This is a test
    :id: std_wp__test__abcd
 
-#EXPECT-NOT: std_wp__test__abce: is missing required option: `status`.
+.. All required options are present
+#EXPECT-NOT: is missing required option
 
 .. std_wp:: This is a test
    :id: std_wp__test__abce
    :status: active
+
+.. Satisfies link refers to wrong requirement type
+#EXPECT: feat_req__abce.satisfies (['std_wp__test__abce']): does not follow pattern `^stkh_req__.*$`.
+
+.. feat_req:: Child requirement
+   :id: feat_req__abce
+   :satisfies: std_wp__test__abce

@@ -26,9 +26,9 @@ This is a simple example of a documentation page using the `docs` tool.
    Some content to make sure we also can render this
 
 
-.. std_req:: External Link Test Req
-   :id: std_req__iso26262__testing
-   :status: valid
-   :links: gd_req__dynamic_diagram
-
-   This is some test content
+.. .. std_req:: External Link Test Req
+..    :id: std_req__iso26262__testing
+..    :status: valid
+..    :links: gd_req__dynamic_diagram
+..
+..    This is some test content

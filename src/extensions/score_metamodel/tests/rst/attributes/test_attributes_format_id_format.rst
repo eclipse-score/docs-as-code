@@ -11,23 +11,28 @@
    #
    # SPDX-License-Identifier: Apache-2.0
    # *******************************************************************************
+#CHECK: check_id_format
 
+.. Id does not consists of 3 parts
 #EXPECT: std_wp__test__test__abcd.id (std_wp__test__test__abcd): expected to consisting of this format: `<Req Type>__<Abbreviations>__<Architectural Element>`.
 
 .. std_wp:: This is a test
    :id: std_wp__test__test__abcd
 
-#EXPECT-NOT: std_wp__test__abce.id (std_wp__test__abce): expected to consisting of this format: `<Req Type>__<Abbreviations>__<Architectural Element>`.
+.. Id follows pattern
+#EXPECT-NOT: expected to consisting of this format: `<Req Type>__<Abbreviations>__<Architectural Element>`.
 
 .. std_wp:: This is a test
    :id: std_wp__test__abce
 
+.. Id starts with wp and number of parth is neither 2 nor 3
 #EXPECT: wp__test__test__abcd.id (wp__test__test__abcd): expected to consisting of one of these 2 formats:`<Req Type>__<Abbreviations>` or `<Req Type>__<Abbreviations>__<Architectural Element>`.
 
 .. std_wp:: This is a test
    :id: wp__test__test__abcd
 
-#EXPECT-NOT: wp__test__abce.id (wp__test__abce): expected to consisting of one of these 2 formats:`<Req Type>__<Abbreviations>` or `<Req Type>__<Abbreviations>__<Architectural Element>`.
+.. Id is valid, because it starts with wp and contains 3 parts
+#EXPECT-NOT: expected to consisting of one of these 2 formats:`<Req Type>__<Abbreviations>` or `<Req Type>__<Abbreviations>__<Architectural Element>`.
 
 .. std_wp:: This is a test
    :id: wp__test__abce

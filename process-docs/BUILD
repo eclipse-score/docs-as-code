@@ -25,27 +25,33 @@ docs(
         {
             "suffix": "",  # local without external needs
         },
-        {
-            "suffix": "release",  # The version imported from MODULE.bazel
-            "target": ["@score_platform//docs:docs"],
-            "external_needs_info": [
-                {
-                    "base_url": "https://eclipse-score.github.io/score/pr-980/",
-                    "json_path": "/score_platform~/docs/docs/_build/html/needs.json",
-                    "version": "0.1",
-                },
-            ],
-        },
-        {
-            "suffix": "latest",  # latest main branch documentation build
-            "external_needs_info": [
-                {
-                    "base_url": "https://eclipse-score.github.io/score/main/",
-                    "json_url": "https://maximiliansoerenpollak.github.io/score/needs.json",
-                    "version": "0.1",
-                },
-            ],
-        },
+
+#           ╭───────────────────────────────────────╮
+#           │   This is commented out until local   │
+#           │   multi-repo testing is implemented   │
+#           ╰───────────────────────────────────────╯
+
+        # {
+        #     "suffix": "release",  # The version imported from MODULE.bazel
+        #     "target": ["@score_platform//docs:docs"],
+        #     "external_needs_info": [
+        #         {
+        #             "base_url": "https://eclipse-score.github.io/score/pr-980/",
+        #             "json_path": "/score_platform~/docs/docs/_build/html/needs.json",
+        #             "version": "0.1",
+        #         },
+        #     ],
+        # },
+        # {
+        #     "suffix": "latest",  # latest main branch documentation build
+        #     "external_needs_info": [
+        #         {
+        #             "base_url": "https://eclipse-score.github.io/score/main/",
+        #             "json_url": "https://maximiliansoerenpollak.github.io/score/needs.json",
+        #             "version": "0.1",
+        #         },
+        #     ],
+        # },
     ],
     source_dir = "process-docs",
     source_files_to_scan_for_needs_links = [
@@ -64,5 +70,4 @@ py_library(
     ),
     imports = ["tooling/extensions"],
     visibility = ["//visibility:public"],
-    # visibility = ["//__pkg__:public"],
 )
