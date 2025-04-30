@@ -64,14 +64,6 @@ numfig = True
 # -- sphinx-needs configuration --------------------------------------------
 # Setting the needs layouts
 # TODO: Move this to source_code_linker
-needs_string_links = {
-    "source_code_linker": {
-        "regex": r"(?P<value>[^,]+)",
-        "link_url": "{{value}}",
-        "link_name": "Source Code Link",
-        "options": ["source_code_link"],
-    },
-}
 
 # TODO: Fixing this in all builds
 html_static_path = ["../src/assets"]
