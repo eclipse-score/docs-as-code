@@ -16,7 +16,7 @@ from copy import deepcopy
 from pathlib import Path
 from pprint import pprint
 
-from score_source_code_linker.parse_source_files import GITHUB_BASE_URL
+from src.extensions.score_source_code_linker.parse_source_files import GITHUB_BASE_URL
 from sphinx.application import Sphinx
 from sphinx.environment import BuildEnvironment
 from sphinx_needs.data import SphinxNeedsData
@@ -31,6 +31,16 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     app.add_config_value("disable_source_code_linker", False, rebuild="env")
     app.add_config_value("score_source_code_linker_file_overwrite", "", rebuild="env")
     # TODO: can we detect live_preview & esbonio here? Until then we have a flag:
+
+    # Define need_string_links here to not have it in conf.py
+    app.config.needs_string_links = {
+        "source_code_linker": {
+            "regex": r"(?P<value>[^,]+)",
+            "link_url": "{{value}}",
+            "link_name": "Source Code Link",
+            "options": ["source_code_link"],
+        },
+    }
     if app.config.disable_source_code_linker:
         LOGGER.info(
             "INFO: Disabled source code linker. Not loading extension.",

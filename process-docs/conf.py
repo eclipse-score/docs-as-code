@@ -32,6 +32,7 @@ version = "0.1"
 logger = logging.getLogger("process-docs")
 logger.debug("Loading docs-as-code conf.py")
 
+
 extensions = [
     "sphinx_design",
     "sphinx_needs",
@@ -42,6 +43,7 @@ extensions = [
     "score_source_code_linker",
     "score_layout",
 ]
+
 logger.debug("After loading extensions")
 
 exclude_patterns = [
@@ -57,19 +59,6 @@ templates_path = ["templates"]
 
 # Enable numref
 numfig = True
-
-
-# -- sphinx-needs configuration --------------------------------------------
-# Setting the needs layouts
-needs_global_options = {"collapse": True}
-needs_string_links = {
-    "source_code_linker": {
-        "regex": r"(?P<value>[^,]+)",
-        "link_url": "{{value}}",
-        "link_name": "Source Code Link",
-        "options": ["source_code_link"],
-    },
-}
 
 # TODO: Fixing this in all builds
 html_static_path = ["../src/assets"]

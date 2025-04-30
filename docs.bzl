@@ -42,11 +42,16 @@ load("@pip_process//:requirements.bzl", "all_requirements", "requirement")
 load("@rules_python//sphinxdocs:sphinx.bzl", "sphinx_build_binary", "sphinx_docs")
 load("@rules_python//sphinxdocs:sphinx_docs_library.bzl", "sphinx_docs_library")
 load("@score_python_basics//:defs.bzl", "score_virtualenv")
-load("//src/extensions:score_source_code_linker/collect_source_files.bzl", "parse_source_files_for_needs_links")
+load("//src/extensions/score_source_code_linker:collect_source_files.bzl", "parse_source_files_for_needs_links")
 
 sphinx_requirements = all_requirements + [
     "//src:plantuml_for_python",
-    "//src/extensions:score_extensions",
+    "//src/extensions:score_plantuml",
+    "//src/extensions/score_draw_uml_funcs:score_draw_uml_funcs",
+    "//src/extensions/score_header_service:score_header_service",
+    "//src/extensions/score_layout:score_layout",
+    "//src/extensions/score_metamodel:score_metamodel",
+    "//src/extensions/score_source_code_linker:score_source_code_linker",
 ]
 
 def docs(source_files_to_scan_for_needs_links = None, source_dir = "docs", conf_dir = "docs", build_dir_for_incremental = "_build", docs_targets = []):
@@ -56,6 +61,11 @@ def docs(source_files_to_scan_for_needs_links = None, source_dir = "docs", conf_
     Current restrictions:
     * only callable from 'docs/BUILD'
     """
+    sphinx_build_binary(
+        name = "sphinx_build",
+        visibility = ["//visibility:public"],
+        deps = sphinx_requirements,
+    )
 
     # Parse source files for needs links
     # This needs to be created to generate a target, otherwise it won't execute as dependency for other macros
@@ -64,7 +74,8 @@ def docs(source_files_to_scan_for_needs_links = None, source_dir = "docs", conf_
         srcs_and_deps = source_files_to_scan_for_needs_links if source_files_to_scan_for_needs_links else [],
     )
 
-    # TODO: Explain what this does / how it works?
+    # We are iterating over all provided 'targets' in order to allow for automatic generation of them without
+    # needing to modify the underlying 'docs.bzl' file.
     for target in docs_targets:
         suffix = "_" + target["suffix"] if target["suffix"] else ""
         external_needs_deps = target.get("target", [])
@@ -105,12 +116,12 @@ def _incremental(incremental_name = "incremental", live_name = "live_preview", s
         extra_dependencies: Additional dependencies besides the centrally maintained "sphinx_requirements".
     """
 
-    dependencies = sphinx_requirements + extra_dependencies
+    dependencies = sphinx_requirements + extra_dependencies + ["@rules_python//python/runfiles"]
     py_binary(
         name = incremental_name,
         srcs = ["//src:incremental.py"],
         deps = dependencies,
-        data = [":score_source_code_parser"] + external_needs_deps,
+        data = [":score_source_code_parser"] + dependencies,
         env = {
             "SOURCE_DIRECTORY": source_dir,
             "CONF_DIRECTORY": conf_dir,
@@ -144,7 +155,6 @@ def _ide_support():
 def _docs(name = "docs", format = "html", external_needs_deps = list(), external_needs_def = dict()):
     ext_needs_arg = "--define=external_needs_source=" + json.encode(external_needs_def)
 
-    #fail(ext_needs_arg)
     sphinx_docs(
         name = name,
         srcs = native.glob([
@@ -157,7 +167,6 @@ def _docs(name = "docs", format = "html", external_needs_deps = list(), external
             "**/*.need",
             # Include the docs src itself
             # Note: we don't use py_library here to make it as close as possible to docs:incremental.
-            "**/*.py",
             "**/*.yaml",
             "**/*.json",
             "**/*.csv",
@@ -170,7 +179,7 @@ def _docs(name = "docs", format = "html", external_needs_deps = list(), external
         formats = [
             format,
         ],
-        sphinx = "//src:sphinx_build",
+        sphinx = ":sphinx_build",
         tags = [
             "manual",
         ],

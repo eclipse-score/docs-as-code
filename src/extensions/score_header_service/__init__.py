@@ -11,7 +11,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 from sphinx.application import Sphinx
-from score_header_service.header_service import register
+from src.extensions.score_header_service.header_service import register
 
 
 def setup(app: Sphinx) -> dict[str, str | bool]:

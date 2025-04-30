@@ -3,5 +3,19 @@
 [tool.pyright] 
 extends = "bazel-bin/process-docs/ide_support.runfiles/score_python_basics~/pyproject.toml"
 
+exclude = [
+    "**/__pycache__",
+    "**/.*",
+    "**/bazel-*",
+    "venv/**",
+]
+
 [tool.ruff]
 extend = "bazel-bin/process-docs/ide_support.runfiles/score_python_basics~/pyproject.toml"
+
+extend-exclude = [
+    "**/__pycache__",
+    "/.*",
+    "bazel-*",
+    "venv/**",
+]

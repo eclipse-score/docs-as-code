@@ -20,24 +20,15 @@ load("@rules_python//python:pip.bzl", "compile_pip_requirements")
 load("@rules_python//sphinxdocs:sphinx.bzl", "sphinx_build_binary")
 load("@score_dash_license_checker//:dash.bzl", "dash_license_checker")
 
-sphinx_requirements = all_requirements + [
-    ":plantuml_for_python",
-    "//src/extensions:score_extensions",
-]
-
-sphinx_build_binary(
-    name = "sphinx_build",
-    visibility = ["//visibility:public"],
-    deps = sphinx_requirements,
-)
-
 # These are only exported because they're passed as files to the //docs.bzl
 # macros, and thus must be visible to other packages. They should only be
 # referenced by the //docs.bzl macros.
+
 exports_files(
     [
         "requirements.txt",
         "incremental.py",
+        "dummy.py",
     ],
     visibility = ["//visibility:public"],
 )
@@ -95,6 +86,19 @@ py_library(
     name = "plantuml_for_python",
     srcs = ["dummy.py"],
     data = [":plantuml"],
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "score_extension_files",
+    srcs = glob(
+        ["*/**"],
+        exclude = [
+            "**/test/**",
+            "**/tests/**",
+            "**/__pycache__/**",
+        ],
+    ),
     visibility = ["//visibility:public"],
 )
 

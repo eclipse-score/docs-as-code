@@ -1,5 +1,5 @@
 # *******************************************************************************
-# Copyright (c) 2024 Contributors to the Eclipse Foundation
+# Copyright (c) 2025 Contributors to the Eclipse Foundation
 #
 # See the NOTICE file(s) distributed with this work for additional
 # information regarding copyright ownership.
@@ -10,20 +10,16 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-
-load("@aspect_rules_py//py:defs.bzl", "py_binary", "py_library")
+load("@aspect_rules_py//py:defs.bzl", "py_library")
 load("@pip_process//:requirements.bzl", "all_requirements")
-load("@score_python_basics//:defs.bzl", "score_py_pytest", "score_virtualenv")
-
-# TODO: This probably can be deleted
-# score_virtualenv(
-#     name = "process_venv",
-#     reqs = all_requirements,
-#     venv_name = ".venv_process",
-# )
 
 py_library(
-    name = "score_plantuml",
-    srcs = ["score_plantuml.py"],
+    name = "score_layout",
+    srcs = glob(
+        ["*.py"],
+    ),
+    imports = ["."],
     visibility = ["//visibility:public"],
+    # TODO: Figure out if all requirements are needed or if we can break it down a bit
+    deps = all_requirements,
 )

@@ -25,49 +25,38 @@ docs(
         {
             "suffix": "",  # local without external needs
         },
-
-        #           ╭───────────────────────────────────────╮
-        #           │   This is commented out until local   │
-        #           │   multi-repo testing is implemented   │
-        #           ╰───────────────────────────────────────╯
-
-        # {
-        #     "suffix": "release",  # The version imported from MODULE.bazel
-        #     "target": ["@score_platform//docs:docs"],
-        #     "external_needs_info": [
-        #         {
-        #             "base_url": "https://eclipse-score.github.io/score/pr-980/",
-        #             "json_path": "/score_platform~/docs/docs/_build/html/needs.json",
-        #             "version": "0.1",
-        #         },
-        #     ],
-        # },
-        # {
-        #     "suffix": "latest",  # latest main branch documentation build
-        #     "external_needs_info": [
-        #         {
-        #             "base_url": "https://eclipse-score.github.io/score/main/",
-        #             "json_url": "https://maximiliansoerenpollak.github.io/score/needs.json",
-        #             "version": "0.1",
-        #         },
-        #     ],
-        # },
     ],
     source_dir = "process-docs",
     source_files_to_scan_for_needs_links = [
         # Note: you can add filegroups, globs, or entire targets here.
-        "//src/extensions:score_extensions",
-        ":score_extensions",
-        ":score_source_code_linker",
+        "//src:score_extension_files",
+        "//src:plantuml_for_python",
     ],
 )
 
-py_library(
-    name = "score_source_code_linker",
-    srcs = glob(
-        ["src/extensions/score_source_code_linker/**/*.py"],
-        exclude = ["src/extensions/score_source_code_linker/tests/*.py"],
-    ),
-    imports = ["src/extensions"],
-    visibility = ["//visibility:public"],
-)
+#           ╭───────────────────────────────────────╮
+#           │   This is commented out until local   │
+#           │   multi-repo testing is implemented   │
+#           ╰───────────────────────────────────────╯
+
+# {
+#     "suffix": "release",  # The version imported from MODULE.bazel
+#     "target": ["@score_platform//docs:docs"],
+#     "external_needs_info": [
+#         {
+#             "base_url": "https://eclipse-score.github.io/score/pr-980/",
+#             "json_path": "/score_platform~/docs/docs/_build/html/needs.json",
+#             "version": "0.1",
+#         },
+#     ],
+# },
+# {
+#     "suffix": "latest",  # latest main branch documentation build
+#     "external_needs_info": [
+#         {
+#             "base_url": "https://eclipse-score.github.io/score/main/",
+#             "json_url": "https://maximiliansoerenpollak.github.io/score/needs.json",
+#             "version": "0.1",
+#         },
+#     ],
+# },

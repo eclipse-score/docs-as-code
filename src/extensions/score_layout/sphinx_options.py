@@ -55,4 +55,4 @@ needs_layouts: dict[str, SingleLayout] = {
     },
 }
 
-needs_global_options = {"layout": "score"}
+needs_global_options = {"layout": {"default": "score"}}

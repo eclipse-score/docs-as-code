@@ -15,7 +15,7 @@ from collections.abc import Callable
 from unittest.mock import ANY, MagicMock, patch
 
 import pytest
-import score_header_service.header_service as hs
+import src.extensions.score_header_service.header_service as hs
 from sphinx.util.docutils import SphinxDirective
 
 
@@ -40,7 +40,8 @@ def test_register():
     mock_env.app = mock_service
     mock_data.env = mock_env
     with patch(
-        "score_header_service.header_service.SphinxNeedsData", return_value=mock_data
+        "src.extensions.score_header_service.header_service.SphinxNeedsData",
+        return_value=mock_data,
     ):
         hs.register(mock_app, mock_env, None)
         mock_service.register.assert_called_once_with("header-service", ANY)
@@ -52,8 +53,8 @@ def test_generate_hash(randint_mock: MagicMock):
     assert hs.generate_hash() == "73475cb4"
 
 
-@patch("score_header_service.header_service.generate_hash")
-@patch("score_header_service.header_service._extract_github_data")
+@patch("src.extensions.score_header_service.header_service.generate_hash")
+@patch("src.extensions.score_header_service.header_service._extract_github_data")
 @patch("sphinx.application.Sphinx")
 def test_request_from_directive_github_data(
     mock_app: MagicMock,
@@ -84,8 +85,8 @@ def test_request_from_directive_github_data(
     ]
 
 
-@patch("score_header_service.header_service.generate_hash")
-@patch("score_header_service.header_service._extract_merge_commit_data")
+@patch("src.extensions.score_header_service.header_service.generate_hash")
+@patch("src.extensions.score_header_service.header_service._extract_merge_commit_data")
 @patch("sphinx.application.Sphinx")
 def test_request_from_directive_commit_data(
     mock_app: MagicMock,
@@ -120,7 +121,9 @@ def test_request_from_directive_commit_data(
     mock_extract_merge_commit_data.assert_called_once_with("file1.rst")
 
 
-@patch("score_header_service.header_service.HeaderService.request_from_directive")
+@patch(
+    "src.extensions.score_header_service.header_service.HeaderService.request_from_directive"
+)
 @patch("sphinx.application.Sphinx")
 def test_debug(mock_app: MagicMock, mock_request_from_directive: MagicMock):
     debug_data = [{"key": "value"}]
@@ -130,7 +133,7 @@ def test_debug(mock_app: MagicMock, mock_request_from_directive: MagicMock):
     assert header_service.debug(mock_directive) == debug_data
 
 
-@patch("score_header_service.header_service.subprocess.run")
+@patch("src.extensions.score_header_service.header_service.subprocess.run")
 def test_extract_merge_commit_data(run_mock: MagicMock):
     lines = """abcdef
 John Doe
@@ -166,7 +169,7 @@ Reviewed: {reviewer3} ( {reviewer3@mail.com} ) on {2024-12-3}"""
     )
 
 
-@patch("score_header_service.header_service.subprocess.run")
+@patch("src.extensions.score_header_service.header_service.subprocess.run")
 def test_extract_merge_commit_data_error(run_mock: MagicMock):
     result_mock = MagicMock()
     result_mock.returncode = 1
@@ -180,15 +183,15 @@ def test_extract_merge_commit_data_error(run_mock: MagicMock):
     }
 
 
-@patch("score_header_service.header_service._extract_approvers")
-@patch("score_header_service.header_service._extract_reviewers")
-@patch("score_header_service.header_service._extract_team_info")
-@patch("score_header_service.header_service._extract_org")
-@patch("score_header_service.header_service._extract_repo")
-@patch("score_header_service.header_service._extract_pull_request")
-@patch("score_header_service.header_service._extract_github_token")
-@patch("score_header_service.header_service.Auth.Token")
-@patch("score_header_service.header_service.Github")
+@patch("src.extensions.score_header_service.header_service._extract_approvers")
+@patch("src.extensions.score_header_service.header_service._extract_reviewers")
+@patch("src.extensions.score_header_service.header_service._extract_team_info")
+@patch("src.extensions.score_header_service.header_service._extract_org")
+@patch("src.extensions.score_header_service.header_service._extract_repo")
+@patch("src.extensions.score_header_service.header_service._extract_pull_request")
+@patch("src.extensions.score_header_service.header_service._extract_github_token")
+@patch("src.extensions.score_header_service.header_service.Auth.Token")
+@patch("src.extensions.score_header_service.header_service.Github")
 def test_extract_github_data(
     mock_github: MagicMock,
     mock_auth_token: MagicMock,
@@ -229,7 +232,7 @@ def test_extract_github_data(
     }
 
 
-@patch("score_header_service.header_service.Auth.Token")
+@patch("src.extensions.score_header_service.header_service.Auth.Token")
 def test_extract_github_data_exception(mock_auth_token: MagicMock):
     mock_auth_token.side_effect = Exception("Error")
     assert hs._extract_github_data() == {  # type: ignore
@@ -283,7 +286,7 @@ def test_extract_team_info():
     }
 
 
-@patch("score_header_service.header_service._append_approver_teams")
+@patch("src.extensions.score_header_service.header_service._append_approver_teams")
 def test_extract_approvers(mock_append_approver_teams: MagicMock):
     mock_review1 = MagicMock()
     mock_review2 = MagicMock()
