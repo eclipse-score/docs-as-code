@@ -40,7 +40,8 @@ def test_register():
     mock_env.app = mock_service
     mock_data.env = mock_env
     with patch(
-        "src.extensions.score_header_service.header_service.SphinxNeedsData", return_value=mock_data
+        "src.extensions.score_header_service.header_service.SphinxNeedsData",
+        return_value=mock_data,
     ):
         hs.register(mock_app, mock_env, None)
         mock_service.register.assert_called_once_with("header-service", ANY)
@@ -120,7 +121,9 @@ def test_request_from_directive_commit_data(
     mock_extract_merge_commit_data.assert_called_once_with("file1.rst")
 
 
-@patch("src.extensions.score_header_service.header_service.HeaderService.request_from_directive")
+@patch(
+    "src.extensions.score_header_service.header_service.HeaderService.request_from_directive"
+)
 @patch("sphinx.application.Sphinx")
 def test_debug(mock_app: MagicMock, mock_request_from_directive: MagicMock):
     debug_data = [{"key": "value"}]

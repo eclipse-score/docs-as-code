@@ -54,8 +54,6 @@ sphinx_requirements = all_requirements + [
     "//src/extensions/score_source_code_linker:score_source_code_linker",
 ]
 
-
-
 def docs(source_files_to_scan_for_needs_links = None, source_dir = "docs", conf_dir = "docs", build_dir_for_incremental = "_build", docs_targets = []):
     """
     Creates all targets related to documentation.
@@ -155,7 +153,6 @@ def _ide_support():
     )
 
 def _docs(name = "docs", format = "html", external_needs_deps = list(), external_needs_def = dict()):
-
     ext_needs_arg = "--define=external_needs_source=" + json.encode(external_needs_def)
 
     sphinx_docs(

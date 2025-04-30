@@ -46,7 +46,7 @@ def transform_env_str_to_dict(external_needs_source: str) -> list[dict[str, str]
     Transforms the 'string' we get from 'docs.bzl' back into something we can parse easliy inside sphinx/python
     !! HACK: This truly isn't great !!
     """
-    transformed_dicts: list[dict[str,str]] = []
+    transformed_dicts: list[dict[str, str]] = []
     dict_list = [
         x.split(",")
         for x in external_needs_source.replace("]", "")
@@ -59,7 +59,7 @@ def transform_env_str_to_dict(external_needs_source: str) -> list[dict[str, str]
         single_dict = {key_value[0]: key_value[1] for key_value in kv_splits}
         if single_dict:
             transformed_dicts.append(single_dict)
-    return transformed_dicts 
+    return transformed_dicts
 
 
 if __name__ == "__main__":

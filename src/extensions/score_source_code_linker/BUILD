@@ -14,7 +14,6 @@ load("@aspect_rules_py//py:defs.bzl", "py_library")
 load("@pip_process//:requirements.bzl", "all_requirements")
 load("@score_python_basics//:defs.bzl", "score_py_pytest")
 
-
 #exports_files(["parse_source_files.py"])
 
 py_library(
@@ -35,7 +34,6 @@ score_py_pytest(
         ":score_source_code_linker",
     ] + all_requirements,
 )
-
 
 # Needed to make the file parser executeable and findable for the source_code_linker aspect
 py_binary(

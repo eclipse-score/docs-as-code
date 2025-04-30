@@ -20,13 +20,9 @@ load("@rules_python//python:pip.bzl", "compile_pip_requirements")
 load("@rules_python//sphinxdocs:sphinx.bzl", "sphinx_build_binary")
 load("@score_dash_license_checker//:dash.bzl", "dash_license_checker")
 
-
-
 # These are only exported because they're passed as files to the //docs.bzl
 # macros, and thus must be visible to other packages. They should only be
 # referenced by the //docs.bzl macros.
-
-
 
 exports_files(
     [
@@ -93,11 +89,16 @@ py_library(
     visibility = ["//visibility:public"],
 )
 
-
-
 filegroup(
-    name="score_extension_files",
-    srcs=glob(["*/**"], exclude = ["**/test/**", "**/tests/**", "**/__pycache__/**"]),
+    name = "score_extension_files",
+    srcs = glob(
+        ["*/**"],
+        exclude = [
+            "**/test/**",
+            "**/tests/**",
+            "**/__pycache__/**",
+        ],
+    ),
     visibility = ["//visibility:public"],
 )
 

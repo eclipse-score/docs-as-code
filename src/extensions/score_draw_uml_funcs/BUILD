@@ -13,14 +13,13 @@
 load("@aspect_rules_py//py:defs.bzl", "py_library")
 load("@pip_process//:requirements.bzl", "all_requirements")
 
-
 py_library(
     name = "score_draw_uml_funcs",
     srcs = glob(
         ["*.py"],
     ),
-    # TODO: Figure out if all requirements are needed or if we can break it down a bit
-    deps = all_requirements,
     imports = ["."],
     visibility = ["//visibility:public"],
+    # TODO: Figure out if all requirements are needed or if we can break it down a bit
+    deps = all_requirements,
 )
