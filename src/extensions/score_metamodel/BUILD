@@ -20,7 +20,7 @@ py_library(
         ["**/*.py"],
         exclude = ["**/tests/**"],
     ),
-    imports = ["."],
+    imports = [".."],
     data = glob(["*.yaml"]),  # Needed to remove 'resolving of symlink' in score_metamodel.__init__
     visibility = ["//visibility:public"],
     # TODO: Figure out if all requirements are needed or if we can break it down a bit

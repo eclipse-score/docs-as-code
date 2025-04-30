@@ -12,8 +12,12 @@
 # *******************************************************************************
 import importlib
 import pkgutil
+import json
+import os
+
 from collections.abc import Callable
 from pathlib import Path
+
 
 from ruamel.yaml import YAML
 from sphinx.application import Sphinx
@@ -257,7 +261,22 @@ def default_options() -> list[str]:
     ]
 
 
+def parse_external_needs_sources(app: Sphinx, config):
+    # HACK: mabye there is a nicer way for this
+    if app.config.external_needs_source != "[]":
+        x = None
+        x = json.loads(app.config.external_needs_source)
+        if r := os.getenv("RUNFILES_DIR"):
+            if x[0].get("json_path", None):
+                for a in x:
+                    # This is needed to allow for the needs.json to be found locally
+                    if "json_path" in a.keys():
+                        a["json_path"] = r + a["json_path"]
+        app.config.needs_external_needs = x
+
+
 def setup(app: Sphinx) -> dict[str, str | bool]:
+    app.add_config_value("external_needs_source", "", rebuild="env")
     app.config.needs_id_required = True
     app.config.needs_id_regex = "^[A-Za-z0-9_-]{6,}"
 
@@ -271,6 +290,7 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     app.config.graph_checks = metamodel["needs_graph_check"]
     app.config.stop_words = metamodel["stop_words"]
     app.config.weak_words = metamodel["weak_words"]
+    app.connect("config-inited", parse_external_needs_sources)
 
     discover_checks()
 

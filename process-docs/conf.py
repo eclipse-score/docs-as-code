@@ -32,6 +32,7 @@ version = "0.1"
 logger = logging.getLogger("process-docs")
 logger.debug("Loading docs-as-code conf.py")
 
+
 extensions = [
     "sphinx_design",
     "sphinx_needs",
@@ -42,6 +43,7 @@ extensions = [
     "score_source_code_linker",
     "score_layout",
 ]
+
 logger.debug("After loading extensions")
 
 exclude_patterns = [
@@ -61,7 +63,7 @@ numfig = True
 
 # -- sphinx-needs configuration --------------------------------------------
 # Setting the needs layouts
-needs_global_options = {"collapse": True}
+# TODO: Move this to source_code_linker
 needs_string_links = {
     "source_code_linker": {
         "regex": r"(?P<value>[^,]+)",

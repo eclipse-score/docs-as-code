@@ -64,7 +64,7 @@ def basic_conf():
     return """
 extensions = [
     "sphinx_needs",
-    "src.extensions.score_source_code_linker",
+    "score_source_code_linker",
 ]
 needs_types = [
     dict(

@@ -29,10 +29,11 @@ docs(
     source_dir = "process-docs",
     source_files_to_scan_for_needs_links = [
         # Note: you can add filegroups, globs, or entire targets here.
-        "//src/extensions:score_extensions",
+        "//src:score_extension_files",
         "//src:plantuml_for_python",
     ],
 )
+
 
 #           ╭───────────────────────────────────────╮
 #           │   This is commented out until local   │
