@@ -60,11 +60,6 @@ templates_path = ["templates"]
 # Enable numref
 numfig = True
 
-
-# -- sphinx-needs configuration --------------------------------------------
-# Setting the needs layouts
-# TODO: Move this to source_code_linker
-
 # TODO: Fixing this in all builds
 html_static_path = ["../src/assets"]
 
