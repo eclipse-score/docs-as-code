@@ -68,26 +68,6 @@ pkg_tar(
     srcs = [":html_files"],
 )
 
-java_binary(
-    name = "plantuml",
-    jvm_flags = ["-Djava.awt.headless=true"],
-    main_class = "net.sourceforge.plantuml.Run",
-    visibility = ["//visibility:public"],
-    runtime_deps = [
-        "@plantuml//jar",
-    ],
-)
-
-# This makes it possible for py_venv to depend on plantuml.
-# Note: py_venv can only depend on py_library.
-# TODO: This can be removed with the next
-# upgrade of `aspect_rules_py` since the py_venv rule now supports a data field
-py_library(
-    name = "plantuml_for_python",
-    srcs = ["dummy.py"],
-    data = [":plantuml"],
-    visibility = ["//visibility:public"],
-)
 
 filegroup(
     name = "score_extension_files",

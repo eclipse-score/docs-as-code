@@ -37,21 +37,24 @@
 #
 # For user-facing documentation, refer to `/README.md`.
 
-load("@aspect_rules_py//py:defs.bzl", "py_binary")
+load("@aspect_rules_py//py:defs.bzl", "py_binary", "py_library")
 load("@pip_process//:requirements.bzl", "all_requirements", "requirement")
 load("@rules_python//sphinxdocs:sphinx.bzl", "sphinx_build_binary", "sphinx_docs")
 load("@rules_python//sphinxdocs:sphinx_docs_library.bzl", "sphinx_docs_library")
 load("@score_python_basics//:defs.bzl", "score_virtualenv")
-load("//src/extensions/score_source_code_linker:collect_source_files.bzl", "parse_source_files_for_needs_links")
+load("@rules_java//java:java_binary.bzl", "java_binary")
+load("@docs-as-code//src/extensions/score_source_code_linker:collect_source_files.bzl", "parse_source_files_for_needs_links")
+
+
 
 sphinx_requirements = all_requirements + [
-    "//src:plantuml_for_python",
-    "//src/extensions:score_plantuml",
-    "//src/extensions/score_draw_uml_funcs:score_draw_uml_funcs",
-    "//src/extensions/score_header_service:score_header_service",
-    "//src/extensions/score_layout:score_layout",
-    "//src/extensions/score_metamodel:score_metamodel",
-    "//src/extensions/score_source_code_linker:score_source_code_linker",
+    ":plantuml_for_python",
+    "@docs-as-code//src/extensions:score_plantuml",
+    "@docs-as-code//src/extensions/score_draw_uml_funcs:score_draw_uml_funcs",
+    "@docs-as-code//src/extensions/score_header_service:score_header_service",
+    "@docs-as-code//src/extensions/score_layout:score_layout",
+    "@docs-as-code//src/extensions/score_metamodel:score_metamodel",
+    "@docs-as-code//src/extensions/score_source_code_linker:score_source_code_linker",
 ]
 
 def docs(source_files_to_scan_for_needs_links = None, source_dir = "docs", conf_dir = "docs", build_dir_for_incremental = "_build", docs_targets = []):
@@ -66,6 +69,29 @@ def docs(source_files_to_scan_for_needs_links = None, source_dir = "docs", conf_
         visibility = ["//visibility:public"],
         deps = sphinx_requirements,
     )
+
+    java_binary(
+        name = "plantuml",
+        jvm_flags = ["-Djava.awt.headless=true"],
+        main_class = "net.sourceforge.plantuml.Run",
+        visibility = ["//visibility:public"],
+        runtime_deps = [
+            "@plantuml//jar",
+        ],
+    )
+
+    # This makes it possible for py_venv to depend on plantuml.
+    # Note: py_venv can only depend on py_library.
+    # TODO: This can be removed with the next
+    # upgrade of `aspect_rules_py` since the py_venv rule now supports a data field
+    py_library(
+        name = "plantuml_for_python",
+        srcs = ["@docs-as-code//src:dummy.py"],
+        data = [":plantuml"],
+        visibility = ["//visibility:public"],
+    )
+
+
 
     # Parse source files for needs links
     # This needs to be created to generate a target, otherwise it won't execute as dependency for other macros
@@ -119,7 +145,7 @@ def _incremental(incremental_name = "incremental", live_name = "live_preview", s
     dependencies = sphinx_requirements + extra_dependencies + ["@rules_python//python/runfiles"]
     py_binary(
         name = incremental_name,
-        srcs = ["//src:incremental.py"],
+        srcs = ["@docs-as-code//src:incremental.py"],
         deps = dependencies,
         data = [":score_source_code_parser"] + dependencies,
         env = {
@@ -133,7 +159,7 @@ def _incremental(incremental_name = "incremental", live_name = "live_preview", s
 
     py_binary(
         name = live_name,
-        srcs = ["//src:incremental.py"],
+        srcs = ["@docs-as-code//src:incremental.py"],
         deps = dependencies,
         data = external_needs_deps,
         env = {
@@ -185,7 +211,7 @@ def _docs(name = "docs", format = "html", external_needs_deps = list(), external
         ],
         tools = [
             ":score_source_code_parser",
-            "//src:plantuml",
+            ":plantuml",
         ] + external_needs_deps,
         visibility = ["//visibility:public"],
     )
