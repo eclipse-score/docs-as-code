@@ -14,7 +14,8 @@ from typing import Any
 
 from sphinx.application import Sphinx
 
-from score_layout import html_options, sphinx_options
+import html_options
+import sphinx_options
 
 
 def setup(app: Sphinx) -> dict[str, str | bool]:
