@@ -84,7 +84,7 @@ filegroup(
 filegroup(
     name = "docs_assets",
     srcs = glob([
-        "assets/css/*.css",
+        "assets/**/*",
     ]),
     visibility = ["//visibility:public"],
 )
