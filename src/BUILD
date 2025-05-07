@@ -68,7 +68,6 @@ pkg_tar(
     srcs = [":html_files"],
 )
 
-
 filegroup(
     name = "score_extension_files",
     srcs = glob(
@@ -79,6 +78,14 @@ filegroup(
             "**/__pycache__/**",
         ],
     ),
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "docs_assets",
+    srcs = glob([
+        "assets/css/*.css",
+    ]),
     visibility = ["//visibility:public"],
 )
 

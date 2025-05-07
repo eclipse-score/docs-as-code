@@ -60,7 +60,5 @@ templates_path = ["templates"]
 # Enable numref
 numfig = True
 
-# TODO: Fixing this in all builds
-html_static_path = ["../src/assets"]
 
 logger.debug("After loading S-CORE conf.py")

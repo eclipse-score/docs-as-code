@@ -13,7 +13,8 @@
 from typing import Any
 
 from sphinx.application import Sphinx
-
+import os
+from pathlib import Path
 import html_options
 import sphinx_options
 
@@ -33,6 +34,19 @@ def update_config(app: Sphinx, _config: Any):
     app.config.html_theme = html_options.html_theme
     app.config.html_context = html_options.html_context
     app.config.html_theme_options = html_options.return_html_theme_options(app)
+
+    # Setting HTML static path
+    if r := os.getenv("RUNFILES_DIR"):
+        dirs = [
+            str(x)
+            for x in Path(r).iterdir()
+            if Path(x).is_dir() and str(x).endswith("docs-as-code~")
+        ]
+        if dirs:
+            p = str(r) + "/docs-as-code~/src/assets"
+        else:
+            p = str(r) + "/_main/src/assets"
+        app.config.html_static_path = app.config.html_static_path + [p]
 
     app.add_css_file("css/score.css", priority=500)
     app.add_css_file("css/score_needs.css", priority=500)

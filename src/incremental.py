@@ -13,16 +13,12 @@
 
 import argparse
 import logging
-import itertools
 import os
-import sys
 import json
-from pathlib import Path
 from typing import Any
 
 import debugpy
 
-from python.runfiles import Runfiles
 from sphinx.cmd.build import main as sphinx_main
 from sphinx_autobuild.__main__ import main as sphinx_autobuild_main
 

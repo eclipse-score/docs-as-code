@@ -10,23 +10,22 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
+load("@aspect_rules_py//py:defs.bzl", "py_library")
+load("@pip_process//:requirements.bzl", "all_requirements")
+load("@score_python_basics//:defs.bzl", "score_py_pytest")
 
-load("@score_cr_checker//:cr_checker.bzl", "copyright_checker")
-
-copyright_checker(
-    name = "copyright",
-    srcs = [
-        "process-docs",
-        "src",
-        "//:BUILD",
-        "//:MODULE.bazel",
-    ],
-    config = "@score_cr_checker//resources:config",
-    template = "@score_cr_checker//resources:templates",
+py_library(
+    name = "find_runfiles",
+    srcs = ["__init__.py"],
+    imports = ["."],
     visibility = ["//visibility:public"],
 )
 
-exports_files([
-    "MODULE.bazel",
-    "BUILD",
-])
+score_py_pytest(
+    name = "find_runfiles_test",
+    size = "small",
+    srcs = ["test_find_runfiles.py"],
+    deps = [
+        ":find_runfiles",
+    ] + all_requirements,
+)
