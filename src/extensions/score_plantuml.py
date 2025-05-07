@@ -65,7 +65,6 @@ def get_runfiles_dir() -> Path:
             f"Could not find runfiles_dir at {runfiles_dir}. "
             "Have a look at README.md for instructions on how to build docs."
         )
-
     return runfiles_dir
 
 

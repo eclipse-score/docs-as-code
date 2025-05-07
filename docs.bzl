@@ -56,20 +56,7 @@ sphinx_requirements = all_requirements + [
     "@docs-as-code//src/extensions/score_source_code_linker:score_source_code_linker",
 ]
 
-def docs(source_files_to_scan_for_needs_links = None, source_dir = "docs", conf_dir = "docs", build_dir_for_incremental = "_build", docs_targets = []):
-    """
-    Creates all targets related to documentation.
-    By using this function, you'll get any and all updates for documentation targets in one place.
-    Current restrictions:
-    * only callable from 'docs/BUILD'
-    """
-    sphinx_build_binary(
-        name = "sphinx_build",
-        visibility = ["//visibility:public"],
-        data = ["@docs-as-code//src:docs_assets"],
-        deps = sphinx_requirements,
-    )
-
+def plantuml_setup():
     java_binary(
         name = "plantuml",
         jvm_flags = ["-Djava.awt.headless=true"],
@@ -90,6 +77,29 @@ def docs(source_files_to_scan_for_needs_links = None, source_dir = "docs", conf_
         data = [":plantuml"],
         visibility = ["//visibility:public"],
     )
+
+def sphinx_setup():
+    """
+    Creates sphinx build binary target needed for documentation.
+    Only call this once from your WORKSPACE or a central BUILD file.
+    """
+    sphinx_build_binary(
+        name = "sphinx_build",
+        visibility = ["//visibility:public"],
+        data = ["@docs-as-code//src:docs_assets"],
+        deps = sphinx_requirements,
+    )
+
+def docs(source_files_to_scan_for_needs_links = None, source_dir = "docs", conf_dir = "docs", build_dir_for_incremental = "_build", docs_targets = [], setup_dependencies = False):
+    """
+    Creates all targets related to documentation.
+    By using this function, you'll get any and all updates for documentation targets in one place.
+    Current restrictions:
+    * only callable from 'docs/BUILD'
+    """
+    if setup_dependencies:
+        plantuml_setup()
+        sphinx_setup()
 
     # Parse source files for needs links
     # This needs to be created to generate a target, otherwise it won't execute as dependency for other macros
@@ -153,7 +163,6 @@ def _incremental(incremental_name = "incremental", live_name = "live_preview", s
             "CONF_DIRECTORY": conf_dir,
             "BUILD_DIRECTORY": build_dir,
             "EXTERNAL_NEEDS_INFO": json.encode(external_needs_def),
-            #        "HTML_STATIC": html_static_path,
             "ACTION": "incremental",
         },
     )
