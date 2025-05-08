@@ -22,7 +22,7 @@ import logging
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = "docs-as-code"
+project = "score_docs_as_code"
 author = "Score"
 version = "0.1"
 
@@ -30,7 +30,7 @@ version = "0.1"
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 logger = logging.getLogger("process-docs")
-logger.debug("Loading docs-as-code conf.py")
+logger.debug("Loading score_docs_as_code conf.py")
 
 
 extensions = [

@@ -71,14 +71,14 @@ def get_runfiles_dir() -> Path:
 
 def find_correct_path(runfiles: str) -> str:
     """
-    This ensures that the 'plantuml' binary path is found in local 'docs-as-code' and module use.
+    This ensures that the 'plantuml' binary path is found in local 'score_docs_as_code' and module use.
     """
-    dirs = [str(x) for x in Path(runfiles).glob("*docs-as-code~")]
+    dirs = [str(x) for x in Path(runfiles).glob("*score_docs_as_code~")]
     if dirs:
-        # Happens if 'docs-as-code' is used as Module
-        p = runfiles + "/docs-as-code~/src/plantuml"
+        # Happens if 'score_docs_as_code' is used as Module
+        p = runfiles + "/score_docs_as_code~/src/plantuml"
     else:
-        # Only happens in 'docs-as-code' repository
+        # Only happens in 'score_docs_as_code' repository
         p = runfiles + "/../plantuml"
     return p
 

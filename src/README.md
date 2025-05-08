@@ -54,7 +54,7 @@ It should be treated as a 'get-started' guide, giving you all needed information
 
 
 
-## docs-as-code Directory Architecture
+## score_docs_as_code Directory Architecture
 
 ```
 process-docs/         # Local documentation to test functionality

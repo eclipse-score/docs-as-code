@@ -49,8 +49,8 @@ java_binary(
 # upgrade of `aspect_rules_py` since the py_venv rule now supports a data field
 py_library(
     name = "plantuml_for_python",
-    srcs = ["@docs-as-code//src:dummy.py"],
-    data = ["@docs-as-code//src:plantuml"],
+    srcs = ["@score_docs_as_code//src:dummy.py"],
+    data = ["@score_docs_as_code//src:plantuml"],
     visibility = ["//visibility:public"],
 )
 
