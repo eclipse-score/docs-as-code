@@ -33,6 +33,27 @@ exports_files(
     visibility = ["//visibility:public"],
 )
 
+java_binary(
+    name = "plantuml",
+    jvm_flags = ["-Djava.awt.headless=true"],
+    main_class = "net.sourceforge.plantuml.Run",
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        "@plantuml//jar",
+    ],
+)
+
+# This makes it possible for py_venv to depend on plantuml.
+# Note: py_venv can only depend on py_library.
+# TODO: This can be removed with the next
+# upgrade of `aspect_rules_py` since the py_venv rule now supports a data field
+py_library(
+    name = "plantuml_for_python",
+    srcs = ["@docs-as-code//src:dummy.py"],
+    data = ["@docs-as-code//src:plantuml"],
+    visibility = ["//visibility:public"],
+)
+
 # In order to update the requirements, change the `requirements.txt` file and run:
 # `bazel run //docs:requirements`.
 # This will update the `requirements_lock.txt` file.
@@ -98,6 +119,16 @@ filegroup(
     srcs = [
         "requirements.txt",
     ],
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "test_rst_files",
+    srcs = glob([
+        "extensions/**/*.rst",
+        "extensions/**/*.py",
+        "conf.py",
+    ]),
     visibility = ["//visibility:public"],
 )
 

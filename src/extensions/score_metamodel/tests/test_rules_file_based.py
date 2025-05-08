@@ -30,6 +30,8 @@ DOCS_DIR = Path(__file__).absolute().parent.parent.parent.parent.parent
 TOOLING_DIR_NAME = "src"
 
 ### List of relative paths of all rst files in RST_DIR
+
+
 RST_FILES = [str(f.relative_to(RST_DIR)) for f in Path(RST_DIR).rglob("*.rst")]
 
 

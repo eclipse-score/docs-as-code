@@ -263,7 +263,7 @@ def default_options() -> list[str]:
 
 def parse_external_needs_sources(app: Sphinx, config):
     # HACK: mabye there is a nicer way for this
-    if app.config.external_needs_source != "[]":
+    if app.config.external_needs_source not in ["[]", ""]:
         x = None
         x = json.loads(app.config.external_needs_source)
         if r := os.getenv("RUNFILES_DIR"):

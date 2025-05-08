@@ -46,7 +46,7 @@ load("@rules_python//sphinxdocs:sphinx_docs_library.bzl", "sphinx_docs_library")
 load("@score_python_basics//:defs.bzl", "score_virtualenv")
 
 sphinx_requirements = all_requirements + [
-    ":plantuml_for_python",
+    "@docs-as-code//src:plantuml_for_python",
     "@docs-as-code//src/extensions:score_plantuml",
     "@docs-as-code//src/find_runfiles:find_runfiles",
     "@docs-as-code//src/extensions/score_draw_uml_funcs:score_draw_uml_funcs",
@@ -67,29 +67,8 @@ def docs(source_files_to_scan_for_needs_links = None, source_dir = "docs", conf_
     sphinx_build_binary(
         name = "sphinx_build",
         visibility = ["//visibility:public"],
-        data = ["@docs-as-code//src:docs_assets"],
+        data = ["@docs-as-code//src:docs_assets", "@docs-as-code//src:score_extension_files"],
         deps = sphinx_requirements,
-    )
-
-    java_binary(
-        name = "plantuml",
-        jvm_flags = ["-Djava.awt.headless=true"],
-        main_class = "net.sourceforge.plantuml.Run",
-        visibility = ["//visibility:public"],
-        runtime_deps = [
-            "@plantuml//jar",
-        ],
-    )
-
-    # This makes it possible for py_venv to depend on plantuml.
-    # Note: py_venv can only depend on py_library.
-    # TODO: This can be removed with the next
-    # upgrade of `aspect_rules_py` since the py_venv rule now supports a data field
-    py_library(
-        name = "plantuml_for_python",
-        srcs = ["@docs-as-code//src:dummy.py"],
-        data = [":plantuml"],
-        visibility = ["//visibility:public"],
     )
 
     # Parse source files for needs links
@@ -148,7 +127,7 @@ def _incremental(incremental_name = "incremental", live_name = "live_preview", s
         srcs = ["@docs-as-code//src:incremental.py"],
         deps = dependencies,
         # TODO: Figure out if we need all dependencies as data here or not.
-        data = [":score_source_code_parser", "@docs-as-code//src:docs_assets"] + dependencies,
+        data = [":score_source_code_parser", "@docs-as-code//src:plantuml", "@docs-as-code//src:docs_assets", "@docs-as-code//src:score_extension_files"] + dependencies,
         env = {
             "SOURCE_DIRECTORY": source_dir,
             "CONF_DIRECTORY": conf_dir,
@@ -212,7 +191,7 @@ def _docs(name = "docs", format = "html", external_needs_deps = list(), external
         ],
         tools = [
             ":score_source_code_parser",
-            ":plantuml",
+            "@docs-as-code//src:plantuml",
             "@docs-as-code//src:docs_assets",
         ] + external_needs_deps,
         visibility = ["//visibility:public"],

@@ -24,6 +24,7 @@ Sphinx configuration.
 In addition it sets common PlantUML options, like output to svg_obj.
 """
 
+from gettext import find
 import os
 import sys
 from pathlib import Path
@@ -68,8 +69,19 @@ def get_runfiles_dir() -> Path:
     return runfiles_dir
 
 
+def find_correct_path(runfiles: str) -> str:
+    dirs = [str(x) for x in Path(runfiles).glob("*docs-as-code~")]
+    if dirs:
+        # Happens if 'docs-as-code' is used as Module
+        p = runfiles + "/docs-as-code~/src/plantuml"
+    else:
+        # Only happens in 'docs-as-code' repository
+        p = runfiles + "/../plantuml"
+    return p
+
+
 def setup(app: Sphinx):
-    app.config.plantuml = str(get_runfiles_dir() / ".." / "plantuml")
+    app.config.plantuml = find_correct_path(str(get_runfiles_dir()))
     app.config.plantuml_output_format = "svg_obj"
     app.config.plantuml_syntax_error_image = True
     app.config.needs_build_needumls = "_plantuml_sources"
