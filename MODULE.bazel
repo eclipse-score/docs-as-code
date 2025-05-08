@@ -12,7 +12,7 @@
 # *******************************************************************************
 
 module(
-    name = "docs-as-code",
+    name = "score_docs_as_code",
     version = "0.1.0",
     compatibility_level = 0,
 )
