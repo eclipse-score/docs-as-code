@@ -39,12 +39,12 @@ def update_config(app: Sphinx, _config: Any):
     # For now this seems the only place this is used / needed.
     # In the future it might be a good idea to make this available in other places, maybe via the 'find_runfiles' lib
     if r := os.getenv("RUNFILES_DIR"):
-        dirs = [str(x) for x in Path(r).glob("*docs-as-code~")]
+        dirs = [str(x) for x in Path(r).glob("*score_docs_as_code~")]
         if dirs:
-            # Happens if 'docs-as-code' is used as Module
-            p = str(r) + "/docs-as-code~/src/assets"
+            # Happens if 'score_docs_as_code' is used as Module
+            p = str(r) + "/score_docs_as_code~/src/assets"
         else:
-            # Only happens in 'docs-as-code' repository
+            # Only happens in 'score_docs_as_code' repository
             p = str(r) + "/_main/src/assets"
         app.config.html_static_path = app.config.html_static_path + [p]
 

@@ -38,7 +38,7 @@
 # For user-facing documentation, refer to `/README.md`.
 
 load("@aspect_rules_py//py:defs.bzl", "py_binary", "py_library")
-load("@docs-as-code//src/extensions/score_source_code_linker:collect_source_files.bzl", "parse_source_files_for_needs_links")
+load("@score_docs_as_code//src/extensions/score_source_code_linker:collect_source_files.bzl", "parse_source_files_for_needs_links")
 load("@pip_process//:requirements.bzl", "all_requirements", "requirement")
 load("@rules_java//java:java_binary.bzl", "java_binary")
 load("@rules_python//sphinxdocs:sphinx.bzl", "sphinx_build_binary", "sphinx_docs")
@@ -46,14 +46,14 @@ load("@rules_python//sphinxdocs:sphinx_docs_library.bzl", "sphinx_docs_library")
 load("@score_python_basics//:defs.bzl", "score_virtualenv")
 
 sphinx_requirements = all_requirements + [
-    "@docs-as-code//src:plantuml_for_python",
-    "@docs-as-code//src/extensions:score_plantuml",
-    "@docs-as-code//src/find_runfiles:find_runfiles",
-    "@docs-as-code//src/extensions/score_draw_uml_funcs:score_draw_uml_funcs",
-    "@docs-as-code//src/extensions/score_header_service:score_header_service",
-    "@docs-as-code//src/extensions/score_layout:score_layout",
-    "@docs-as-code//src/extensions/score_metamodel:score_metamodel",
-    "@docs-as-code//src/extensions/score_source_code_linker:score_source_code_linker",
+    "@score_docs_as_code//src:plantuml_for_python",
+    "@score_docs_as_code//src/extensions:score_plantuml",
+    "@score_docs_as_code//src/find_runfiles:find_runfiles",
+    "@score_docs_as_code//src/extensions/score_draw_uml_funcs:score_draw_uml_funcs",
+    "@score_docs_as_code//src/extensions/score_header_service:score_header_service",
+    "@score_docs_as_code//src/extensions/score_layout:score_layout",
+    "@score_docs_as_code//src/extensions/score_metamodel:score_metamodel",
+    "@score_docs_as_code//src/extensions/score_source_code_linker:score_source_code_linker",
 ]
 
 def docs(source_files_to_scan_for_needs_links = None, source_dir = "docs", conf_dir = "docs", build_dir_for_incremental = "_build", docs_targets = []):
@@ -67,7 +67,7 @@ def docs(source_files_to_scan_for_needs_links = None, source_dir = "docs", conf_
     sphinx_build_binary(
         name = "sphinx_build",
         visibility = ["//visibility:public"],
-        data = ["@docs-as-code//src:docs_assets", "@docs-as-code//src:score_extension_files"],
+        data = ["@score_docs_as_code//src:docs_assets", "@score_docs_as_code//src:score_extension_files"],
         deps = sphinx_requirements,
     )
 
@@ -124,10 +124,10 @@ def _incremental(incremental_name = "incremental", live_name = "live_preview", s
 
     py_binary(
         name = incremental_name,
-        srcs = ["@docs-as-code//src:incremental.py"],
+        srcs = ["@score_docs_as_code//src:incremental.py"],
         deps = dependencies,
         # TODO: Figure out if we need all dependencies as data here or not.
-        data = [":score_source_code_parser", "@docs-as-code//src:plantuml", "@docs-as-code//src:docs_assets"] + dependencies,
+        data = [":score_source_code_parser", "@score_docs_as_code//src:plantuml", "@score_docs_as_code//src:docs_assets"] + dependencies,
         env = {
             "SOURCE_DIRECTORY": source_dir,
             "CONF_DIRECTORY": conf_dir,
@@ -139,9 +139,9 @@ def _incremental(incremental_name = "incremental", live_name = "live_preview", s
 
     py_binary(
         name = live_name,
-        srcs = ["@docs-as-code//src:incremental.py"],
+        srcs = ["@score_docs_as_code//src:incremental.py"],
         deps = dependencies,
-        data = ["@docs-as-code//src:plantuml", "@docs-as-code//src:docs_assets"] + dependencies,
+        data = ["@score_docs_as_code//src:plantuml", "@score_docs_as_code//src:docs_assets"] + dependencies,
         env = {
             "SOURCE_DIRECTORY": source_dir,
             "CONF_DIRECTORY": conf_dir,
@@ -191,8 +191,8 @@ def _docs(name = "docs", format = "html", external_needs_deps = list(), external
         ],
         tools = [
             ":score_source_code_parser",
-            "@docs-as-code//src:plantuml",
-            "@docs-as-code//src:docs_assets",
+            "@score_docs_as_code//src:plantuml",
+            "@score_docs_as_code//src:docs_assets",
         ] + external_needs_deps,
         visibility = ["//visibility:public"],
     )
