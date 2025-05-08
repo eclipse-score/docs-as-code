@@ -89,7 +89,7 @@ http_file(
 bazel_dep(name = "score_python_basics", version = "0.3.0")
 
 # Checker rule for CopyRight checks/fixes
-bazel_dep(name = "score_cr_checker", version = "0.2.0", dev_dependency = True)
+bazel_dep(name = "score_cr_checker", version = "0.2.2")
 
 # Grab dash
-bazel_dep(name = "score_dash_license_checker", version = "0.1.1", dev_dependency = True)
+bazel_dep(name = "score_dash_license_checker", version = "0.1.1")

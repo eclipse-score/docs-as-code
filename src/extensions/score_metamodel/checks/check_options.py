@@ -70,9 +70,16 @@ def validate_fields(
             values = [str(raw_value)]
 
         for value in values:
-            if not re.match(pattern, value):
+            try:
+                if not re.match(pattern, value):
+                    log.warning_for_option(
+                        need, field, f"does not follow pattern `{pattern}`."
+                    )
+            except TypeError:
                 log.warning_for_option(
-                    need, field, f"does not follow pattern `{pattern}`."
+                    need,
+                    field,
+                    f"pattern `{pattern}` is not a valid regex pattern.",
                 )
 
 
@@ -102,6 +109,7 @@ def check_options(
 
     if not need_options.get("mandatory_options", {}):
         log.warning_for_option(need, "type", "no type info defined for semantic check.")
+        return
 
     # Validate Options and Links
     checking_dict: CheckingDictType = {

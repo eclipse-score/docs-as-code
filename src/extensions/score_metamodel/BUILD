@@ -18,10 +18,11 @@ py_library(
     name = "score_metamodel",
     srcs = glob(
         ["**/*.py"],
-        exclude = ["**/tests/**"],
     ),
     data = glob(["*.yaml"]),  # Needed to remove 'resolving of symlink' in score_metamodel.__init__
-    imports = [".."],
+    imports = [
+        ".",
+    ],
     visibility = ["//visibility:public"],
     # TODO: Figure out if all requirements are needed or if we can break it down a bit
     deps = all_requirements,
@@ -30,7 +31,8 @@ py_library(
 score_py_pytest(
     name = "score_metamodel_tests",
     size = "small",
-    srcs = glob(["tests/**/*.py"]),
+    srcs = glob(["tests/*.py"]),
     # All requirements already in the library so no need to have it double
+    data = ["//src:test_rst_files"] + glob(["**/*.rst"]),
     deps = [":score_metamodel"],
 )

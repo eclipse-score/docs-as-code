@@ -31,7 +31,7 @@ def gen_format(need: dict[str, str]) -> str:
     if "comp_arc_sta" in need["type"] and need["safety"] == "ASIL_B":
         style = "<<asilb>>"
 
-    if "comp_arc_int" in need["type"]:
+    if "real_arc_int" in need["type"]:
         style = "<Rust>" if need["language"] == "rust" else "<C++>"
 
     return style
@@ -120,6 +120,20 @@ def get_need_link(need: dict[str, str]) -> str:
         return f"[[[{link}]]]"
 
     return f"[[{link}]]"
+
+
+def get_module(component: str, all_needs: dict[str, dict[str, str]]) -> str:
+    need = all_needs.get(component, {})
+
+    if need:
+        module = need.get("includes_back", "")
+
+        if module:
+            return module[0]
+    else:
+        logger.warning(f"{component}: not defined, misspelled?")
+
+    return ""
 
 
 def get_hierarchy_text(
@@ -272,12 +286,12 @@ def get_logical_interface_real(
     return logical_ifaces
 
 
-def get_impl_comp_from_real_iface(
+def get_impl_comp_from_logic_iface(
     real_iface: str, all_needs: dict[str, dict[str, str]]
 ) -> list[str]:
     """Get implementing component of the interface"""
-    value = all_needs[real_iface].get("implements_back", [])
-    implcomp = value if isinstance(value, list) else []
+    implcomp: list[str] = all_needs[real_iface].get("implements_back", [])
+
     if not implcomp:
         logger.info(
             f"{all_needs[real_iface]['id']}: Implementing Component not specified!"

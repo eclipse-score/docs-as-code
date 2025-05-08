@@ -17,11 +17,11 @@ from unittest.mock import Mock
 import pytest
 from sphinx.application import Sphinx
 
-from src.extensions.score_metamodel.checks.check_options import (
+from score_metamodel.checks.check_options import (
     check_extra_options,
     check_options,
 )
-from src.extensions.score_metamodel.tests import fake_check_logger, need
+from score_metamodel.tests import fake_check_logger, need
 
 
 @pytest.mark.metadata(
@@ -34,26 +34,14 @@ from src.extensions.score_metamodel.tests import fake_check_logger, need
     TestType="Requirements-based test",
     DerivationTechnique="Analysis of requirements",
 )
-class NeedTypeWithReqLink(TypedDict):
+class NeedTypeDict(TypedDict, total=False):
     directive: str
-    mandatory_options: dict[str, str]
-    req_link: list[tuple[str, str]]
-
-
-class NeedTypeWithOptLink(TypedDict):
-    directive: str
-    mandatory_options: dict[str, str]
-    opt_link: list[tuple[str, str]]
-
-
-class NeedTypeWithOptOpt(TypedDict, total=False):
-    directive: str
-    mandatory_options: dict[str, str]
-    opt_opt: dict[str, str]
+    mandatory_options: dict[str, str | int] | None
+    opt_opt: dict[str, str] | None
 
 
 class TestCheckOptions:
-    NEED_TYPE_INFO: list[NeedTypeWithOptOpt] = [
+    NEED_TYPE_INFO: list[NeedTypeDict] = [
         {
             "directive": "tool_req",
             "mandatory_options": {
@@ -62,7 +50,7 @@ class TestCheckOptions:
             },
         }
     ]
-    NEED_TYPE_INFO_WITH_OPT_OPT: list[NeedTypeWithOptOpt] = [
+    NEED_TYPE_INFO_WITH_OPT_OPT: list[NeedTypeDict] = [
         {
             "directive": "tool_req",
             "mandatory_options": {
@@ -75,78 +63,25 @@ class TestCheckOptions:
         }
     ]
 
-    NEED_TYPE_INFO_WITH_REQ_LINK: list[NeedTypeWithReqLink] = [
+    NEED_TYPE_INFO_WITHOUT_MANDATORY_OPTIONS: list[NeedTypeDict] = [
+        {
+            "directive": "workflow",
+            "mandatory_options": None,
+        },
+    ]
+
+    NEED_TYPE_INFO_WITH_INVALID_OPTION_TYPE: list[NeedTypeDict] = [
         {
             "directive": "workflow",
             "mandatory_options": {
-                "id": "wf__.*$",
-                "status": "^(valid|draft)$",
+                "id": "^wf_req__.*$",
+                "some_invalid_option": 42,
             },
-            "req_link": [
-                ("input", "^wp__.*$"),
-            ],
         }
     ]
-
-    NEED_TYPE_INFO_WITH_OPT_LINK: list[NeedTypeWithOptLink] = [
-        {
-            "directive": "workflow",
-            "mandatory_options": {
-                "id": "wf__.*$",
-                "status": "^(valid|draft)$",
-            },
-            "opt_link": [
-                ("supported_by", "^rl__.*$"),
-            ],
-        }
-    ]
-
-    def test_known_directive_with_mandatory_option_and_allowed_value(self):
-        # Given a need with a type that is listed in the required options
-        #  and mandatory options present
-        #  and with correct values
-        need_1 = need(
-            target_id="tool_req__001",
-            id="tool_req__001",
-            type="tool_req",
-            some_required_option="some_value__001",
-            docname=None,
-            lineno=None,
-        )
-
-        logger = fake_check_logger()
-        app = Mock(spec=Sphinx)
-        app.config = Mock()
-        app.config.needs_types = self.NEED_TYPE_INFO
-        # Expect that the checks pass
-        check_options(app, need_1, logger)
-        logger.assert_no_warnings()
-
-    def test_known_directive_with_optional_and_mandatory_option_and_allowed_value(self):
-        # Given a need with a type that is listed in the optional options
-        #  and optional options present
-        #  and with correct values
-        need_1 = need(
-            target_id="tool_req__001",
-            id="tool_req__001",
-            type="tool_req",
-            some_required_option="some_value__001",
-            some_optional_option="some_value__001",
-            docname=None,
-            lineno=None,
-        )
-
-        logger = fake_check_logger()
-        app = Mock(spec=Sphinx)
-        app.config = Mock()
-        app.config.needs_types = self.NEED_TYPE_INFO_WITH_OPT_OPT
-        # Expect that the checks pass
-        check_options(app, need_1, logger)
-
-        logger.assert_no_warnings()
 
     def test_unknown_directive(self):
-        # Given a need with a an unknown type it should raise an error
+        # Given a need with an unknown type, should raise an error
         need_1 = need(
             target_id="tool_req__001",
             id="tool_req__001",
@@ -167,14 +102,13 @@ class TestCheckOptions:
             expect_location=False,
         )
 
-    def test_unknown_option_present_in_req_opt(self):
-        # Given a need with an option that is not listed in the required options
+    def test_unknown_directive_extra_option(self):
+        # Given a need an unknown/undefined type, should raise an error
         need_1 = need(
             target_id="tool_req__001",
-            id="tool_req__0011",
-            type="tool_req",
+            type="unknown_type",
+            id="tool_req__001",
             some_required_option="some_value__001",
-            other_option="some_other_value",
             docname=None,
             lineno=None,
         )
@@ -186,7 +120,55 @@ class TestCheckOptions:
         # Expect that the checks pass
         check_extra_options(app, need_1, logger)
         logger.assert_warning(
-            "has these extra options: `other_option`.",
+            "no type info defined for semantic check.",
+            expect_location=False,
+        )
+
+    def test_missing_mandatory_options_info(self):
+        # Given any need of known type
+        # with missing mandatory options info
+        # it should raise an error
+        need_1 = need(
+            target_id="wf_req__001",
+            id="wf_req__001",
+            type="workflow",
+            some_required_option=None,
+            docname=None,
+            lineno=None,
+        )
+
+        logger = fake_check_logger()
+        app = Mock(spec=Sphinx)
+        app.config = Mock()
+        app.config.needs_types = self.NEED_TYPE_INFO_WITHOUT_MANDATORY_OPTIONS
+        # Expect that the checks pass
+        check_options(app, need_1, logger)
+        logger.assert_warning(
+            "no type info defined for semantic check.",
+            expect_location=False,
+        )
+
+    def test_invalid_option_type(self):
+        # Given any need of known type
+        # with missing mandatory options info
+        # it should raise an error
+        need_1 = need(
+            target_id="wf_req__001",
+            id="wf_req__001",
+            type="workflow",
+            some_invalid_option=42,
+            docname=None,
+            lineno=None,
+        )
+
+        logger = fake_check_logger()
+        app = Mock(spec=Sphinx)
+        app.config = Mock()
+        app.config.needs_types = self.NEED_TYPE_INFO_WITH_INVALID_OPTION_TYPE
+        # Expect that the checks pass
+        check_options(app, need_1, logger)
+        logger.assert_warning(
+            "pattern `42` is not a valid regex pattern.",
             expect_location=False,
         )
 
@@ -215,128 +197,3 @@ class TestCheckOptions:
             "has these extra options: `other_option`.",
             expect_location=False,
         )
-
-    def test_known_required_option_missing(self):
-        # Given a need without an option that is listed in the required options
-        need_1 = need(
-            target_id="tool_req__001",
-            id="tool_req__001",
-            type="tool_req",
-            docname=None,
-            lineno=None,
-        )
-
-        logger = fake_check_logger()
-        app = Mock(spec=Sphinx)
-        app.config = Mock()
-        app.config.needs_types = self.NEED_TYPE_INFO
-        # Expect that the checks fail and a warning is logged
-        check_options(app, need_1, logger)
-        logger.assert_warning(
-            "is missing required option: `some_required_option`.",
-            expect_location=False,
-        )
-
-    def test_value_violates_pattern_for_required_option(self):
-        # Given a need with an option that is listed in the required
-        # options but the value violates the pattern
-        need_1 = need(
-            target_id="tool_req__001",
-            id="tool_req__001",
-            type="tool_req",
-            some_required_option="some_value_001",
-            docname=None,
-            lineno=None,
-        )
-
-        logger = fake_check_logger()
-        app = Mock(spec=Sphinx)
-        app.config = Mock()
-        app.config.needs_types = self.NEED_TYPE_INFO
-        # Expect that the checks fail and a warning is logged
-        check_options(app, need_1, logger)
-        pattern = (
-            self.NEED_TYPE_INFO_WITH_OPT_OPT[0]
-            .get("mandatory_options", {})
-            .get("some_required_option")
-        )
-        logger.assert_warning(
-            f"does not follow pattern `{pattern}`.",
-            expect_location=False,
-        )
-
-    def test_value_violates_pattern_for_optional_option(self):
-        # Given a need with an option that is listed in the optional
-        # options but the value violates the pattern
-        need_1 = need(
-            target_id="tool_req__001",
-            id="tool_req__001",
-            type="tool_req",
-            some_required_option="some_value__001",
-            some_optional_option="some_value_001",
-            docname=None,
-            lineno=None,
-        )
-
-        logger = fake_check_logger()
-        app = Mock(spec=Sphinx)
-        app.config = Mock()
-        app.config.needs_types = self.NEED_TYPE_INFO_WITH_OPT_OPT
-        # Expect that the checks fail and a warning is logged
-        check_options(app, need_1, logger)
-        pattern = (
-            self.NEED_TYPE_INFO_WITH_OPT_OPT[0]
-            .get("opt_opt", {})
-            .get("some_optional_option")
-        )
-        logger.assert_warning(
-            f"does not follow pattern `{pattern}`.",
-            expect_location=False,
-        )
-
-    def test_known_required_link_missing(self):
-        # Given a need without an option that is listed in the required options
-        need_1 = need(
-            target_id="wf__p_confirm_rv",
-            id="wf__p_confirm_rv",
-            status="valid",
-            type="workflow",
-            docname=None,
-            lineno=None,
-        )
-
-        logger = fake_check_logger()
-        app = Mock(spec=Sphinx)
-        app.config = Mock()
-        app.config.needs_types = self.NEED_TYPE_INFO_WITH_REQ_LINK
-        # Expect that the checks fail and a warning is logged
-        check_options(app, need_1, logger)
-        logger.assert_warning(
-            "is missing required link: `input`.",
-            expect_location=False,
-        )
-
-    # TODO: Remove commented code when re
-
-    # def test_value_violates_pattern_for_optional_link(self):
-    #     # Given a need without an option that is listed in the required options
-    #     need_1 = need(
-    #         target_id="wf__p_confirm_rv",
-    #         id="wf__p_confirm_rv",
-    #         status="valid",
-    #         type="workflow",
-    #         supported_by="rl_process_community",
-    #         docname=None,
-    #         lineno=None,
-    #     )
-
-    #     logger = fake_check_logger()
-    #     app = Mock(spec=Sphinx)
-    #     app.config = Mock()
-    #     app.config.needs_types = self.NEED_TYPE_INFO
-    #     # Expect that the checks fail and a warning is logged
-    #     check_options(app, need_1, logger, self.NEED_TYPE_INFO_WITH_OPT_LINK)
-    #     logger.assert_warning(
-    #         "does not follow pattern",
-    #         expect_location=False,
-    #     )

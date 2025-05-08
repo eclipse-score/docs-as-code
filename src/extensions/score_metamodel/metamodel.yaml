@@ -158,9 +158,9 @@ needs_types:
       safety: "^(QM|ASIL_B|ASIL_D)$"
       realizes: "^wp__.+$"
   # The following 3 guidance requirements enforce the requirement structure and attributes:
-  # req-#Id: gd_req__req__structure
-  # req-#Id: gd_req__requirements_attr_description
-  # req-#Id: gd_req__req__linkage
+  # req-Id: gd_req__req__structure
+  # req-Id: gd_req__requirements_attr_description
+  # req-Id: gd_req__req__linkage
   # Requirements
   stkh_req:
     title: "Stakeholder Requirement"
@@ -190,7 +190,7 @@ needs_types:
       safety: "^(QM|ASIL_B|ASIL_D)$"
       status: "^(valid|invalid)$"
     mandatory_links:
-      # req-#id: gd_req__req__linkage_fulfill
+      # req-Id: gd_req__req__linkage_fulfill
       satisfies: "^stkh_req__.*$"
     optional_options:
       codelink: "^.*$"
@@ -264,8 +264,9 @@ needs_types:
       safety: "^(QM|ASIL_B|ASIL_D)$"
       status: "^(valid|invalid)$"
     mandatory_links:
+      includes: "^logic_arc_int(_op)*__.+$"
+    optional_links:
       fulfils: "^feat_req__.+$"
-      includes: "^feat_arc_int(_op)*__.+$"
 
   feat_arc_dyn:
     title: "Feature Architecture Dynamic View"
@@ -280,33 +281,32 @@ needs_types:
     mandatory_links:
       fulfils: "^feat_req__.+$"
 
-  feat_arc_int:
-    title: "Feature Architecture Interfaces"
-    prefix: "feat_arc_int__"
+  logic_arc_int:
+    title: "Logical Architecture Interfaces"
+    prefix: "logic_arc_int__"
     color: "#FEDCD2"
     style: "card"
     mandatory_options:
-      id: "^feat_arc_int__[0-9a-z_]+$"
+      id: "^logic_arc_int__[0-9a-z_]+$"
       security: "^(YES|NO)$"
       safety: "^(QM|ASIL_B|ASIL_D)$"
       status: "^(valid|invalid)$"
-    mandatory_links:
-      fulfils: "^feat_req__.+$"
     optional_links:
-      includes: "^feat_arc_int_op__.+$"
+      includes: "^logic_arc_int_op__.+$"
+      fulfils: "^comp_req__.+$"
 
-  feat_arc_int_op:
-    title: "Feature Architecture Interface Operation"
-    prefix: "feat_arc_int_op__"
+  logic_arc_int_op:
+    title: "Logical Architecture Interface Operation"
+    prefix: "logic_arc_int_op__"
     color: "#FEDCD2"
     style: "card"
     mandatory_options:
-      id: "^feat_arc_int_op__[0-9a-z_]+$"
+      id: "^logic_arc_int_op__[0-9a-z_]+$"
       security: "^(YES|NO)$"
       safety: "^(QM|ASIL_B|ASIL_D)$"
       status: "^(valid|invalid)$"
     mandatory_links:
-      included_by: "^feat_arc_int__.+$"
+      included_by: "^logic_arc_int__.+$"
 
   mod_view_sta:
     title: "Module Architecture Static View"
@@ -336,12 +336,11 @@ needs_types:
       security: "^(YES|NO)$"
       safety: "^(QM|ASIL_B|ASIL_D)$"
       status: "^(valid|invalid)$"
-    mandatory_links:
-      fulfils: "^comp_req__.+$"
     optional_links:
-      implements: "^comp_arc_int(_op)*__.+$"
+      implements: "^real_arc_int(_op)*__.+$"
       includes: "^comp_arc_sta__.+$"
-      uses: "^comp_arc_int(_op)*__.+$"
+      uses: "^real_arc_int(_op)*__.+$"
+      fulfils: "^comp_req__.+$"
 
   comp_arc_dyn:
     title: "Component Architecture Dynamic View"
@@ -353,36 +352,38 @@ needs_types:
       security: "^(YES|NO)$"
       safety: "^(QM|ASIL_B|ASIL_D)$"
       status: "^(valid|invalid)$"
-    mandatory_links:
+    optional_links:
       fulfils: "^comp_req__.+$"
 
-  comp_arc_int:
+  real_arc_int:
     title: "Component Architecture Interfaces"
-    prefix: "comp_arc_int__"
+    prefix: "real_arc_int__"
     color: "#FEDCD2"
     style: "card"
     mandatory_options:
-      id: "^comp_arc_int__[0-9a-z_]+$"
+      id: "^real_arc_int__[0-9a-z_]+$"
       security: "^(YES|NO)$"
       safety: "^(QM|ASIL_B|ASIL_D)$"
       status: "^(valid|invalid)$"
       language: "^(cpp|rust)$"
-    mandatory_links:
+    optional_links:
       fulfils: "^comp_req__.+$"
 
-  comp_arc_int_op:
+  real_arc_int_op:
     title: "Component Architecture Interface Operation"
-    prefix: "comp_arc_int_op__"
+    prefix: "real_arc_int_op__"
     color: "#FEDCD2"
     style: "card"
     mandatory_options:
-      id: "^comp_arc_int_op__[0-9a-z_]+$"
+      id: "^real_arc_int_op__[0-9a-z_]+$"
       security: "^(YES|NO)$"
       safety: "^(QM|ASIL_B|ASIL_D)$"
       status: "^(valid|invalid)$"
     mandatory_links:
-      implements: "^feat_arc_int_op__.+$"
-      included_by: "^comp_arc_int__.+$"
+      included_by: "^real_arc_int__.+$"
+    optional_links:
+      implements: "^logic_arc_int_op__.+$"
+
 
   review_header:
     prefix: "review__header"
@@ -530,10 +531,10 @@ needs_extra_links:
 #   - condition: defines the condition that should be checked
 #     - [and / or / xor / not]
 ##############################################################
-# req-#id: gd_req__req__linkage_architecture
-# req-#id: gd_req__req__linkage_safety
+# req-Id: gd_req__req__linkage_architecture
+# req-Id: gd_req__req__linkage_safety
 graph_checks:
-  # req-#id: gd_req__req__linkage_safety
+  # req-Id: gd_req__req__linkage_safety
   req_safety_linkage:
     needs:
       include: "comp_req, feat_req"
@@ -552,7 +553,7 @@ graph_checks:
       condition: "status == valid"
     check:
       satisfies: "status == valid"
-  # req-#id: gd_req__req__linkage_architecture
+  # req-Id: gd_req__req__linkage_architecture
   arch_safety_linkage:
     needs:
       include: "comp_req, feat_req"
