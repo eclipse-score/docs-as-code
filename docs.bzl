@@ -127,7 +127,7 @@ def _incremental(incremental_name = "incremental", live_name = "live_preview", s
         srcs = ["@docs-as-code//src:incremental.py"],
         deps = dependencies,
         # TODO: Figure out if we need all dependencies as data here or not.
-        data = [":score_source_code_parser", "@docs-as-code//src:plantuml", "@docs-as-code//src:docs_assets", "@docs-as-code//src:score_extension_files"] + dependencies,
+        data = [":score_source_code_parser", "@docs-as-code//src:plantuml", "@docs-as-code//src:docs_assets"] + dependencies,
         env = {
             "SOURCE_DIRECTORY": source_dir,
             "CONF_DIRECTORY": conf_dir,
@@ -141,7 +141,7 @@ def _incremental(incremental_name = "incremental", live_name = "live_preview", s
         name = live_name,
         srcs = ["@docs-as-code//src:incremental.py"],
         deps = dependencies,
-        data = external_needs_deps,
+        data = ["@docs-as-code//src:plantuml", "@docs-as-code//src:docs_assets"] + dependencies,
         env = {
             "SOURCE_DIRECTORY": source_dir,
             "CONF_DIRECTORY": conf_dir,

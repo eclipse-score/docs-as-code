@@ -25,5 +25,6 @@ load("@score_python_basics//:defs.bzl", "score_py_pytest", "score_virtualenv")
 py_library(
     name = "score_plantuml",
     srcs = ["@docs-as-code//src/extensions:score_plantuml.py"],
+    imports = ["."],
     visibility = ["//visibility:public"],
 )

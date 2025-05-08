@@ -122,6 +122,7 @@ filegroup(
     visibility = ["//visibility:public"],
 )
 
+# Needed for 'test_rules_file_based'
 filegroup(
     name = "test_rst_files",
     srcs = glob([
