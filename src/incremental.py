@@ -12,13 +12,11 @@
 # *******************************************************************************
 
 import argparse
+import json
 import logging
 import os
-import json
-from typing import Any
 
 import debugpy
-
 from sphinx.cmd.build import main as sphinx_main
 from sphinx_autobuild.__main__ import main as sphinx_autobuild_main
 
@@ -92,7 +90,8 @@ if __name__ == "__main__":
     action = get_env("ACTION")
     if action == "live_preview":
         sphinx_autobuild_main(
-            base_arguments + ["--define=disable_source_code_linker=True"]
+            # Note: bools need to be passed via '0' and '1' from the command line.
+            base_arguments + ["--define=disable_source_code_linker=1"]
         )
     else:
         sphinx_main(base_arguments)
