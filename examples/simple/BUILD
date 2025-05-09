@@ -21,13 +21,13 @@ load("//:docs.bzl", "docs")
 # - `docs:docs` for building documentation at build-time
 
 docs(
-    conf_dir = "process-docs",
+    conf_dir = "examples/simple",
     docs_targets = [
         {
             "suffix": "",  # local without external needs
         },
     ],
-    source_dir = "process-docs",
+    source_dir = "examples/simple",
     source_files_to_scan_for_needs_links = [
         # Note: you can add filegroups, globs, or entire targets here.
         "//src:score_extension_files",

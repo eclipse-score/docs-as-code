@@ -29,7 +29,7 @@ bazel_dep(name = "score_docs_as_code", version = "0.1.0")
 And make sure to also add the S-core bazel registry to your `.bazelrc` file
 
 ```starlark
-common --registry=https://raw.githubusercontent.com/eclipse-score/bazel_registry/main/  
+common --registry=https://raw.githubusercontent.com/eclipse-score/bazel_registry/main/
 common --registry=https://bcr.bazel.build
 ```
 
@@ -61,7 +61,7 @@ docs(
 #### 2. Adapt your conf.py if needed
 
 ```python
-# ... 
+# ...
 extensions = [
     "sphinx_design",
     "sphinx_needs",
@@ -76,7 +76,7 @@ extensions = [
 ```
 
 Make sure that your conf.py imports all of the extensions you want to enable.\
-For a full example look at [This repos conf.py](process-docs/conf.py)
+For a full example look at [a simple example](examples/simple)
 
 #### 3. Run a documentation build:
 

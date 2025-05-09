@@ -11,7 +11,7 @@ It should be treated as a 'get-started' guide, giving you all needed information
     1. Install Bazelisk (version manager for Bazel)
     2. Create the Python virtual environment:
    ```bash
-   bazel run //process-docs:ide_support
+   bazel run //your-docs-dir:ide_support
    ```
     3. Select `.venv_docs/bin/python` as the python interpreter inside your IDE
     *Note: This virtual environment does **not** have pip, therefore `pip install` is not available.*
@@ -57,7 +57,7 @@ It should be treated as a 'get-started' guide, giving you all needed information
 ## score_docs_as_code Directory Architecture
 
 ```
-process-docs/         # Local documentation to test functionality
+examples/             # Shows how to use doc-as-code tooling
 src/
 ├── assets/           # Documentation styling (CSS)
 ├── decision_records/ # Architecture Decision Records (ADRs)
