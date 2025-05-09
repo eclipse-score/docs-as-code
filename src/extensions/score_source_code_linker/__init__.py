@@ -11,16 +11,15 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 import json
-import os
 from copy import deepcopy
 from pathlib import Path
-from pprint import pprint
 
-from src.extensions.score_source_code_linker.parse_source_files import GITHUB_BASE_URL
 from sphinx.application import Sphinx
 from sphinx.environment import BuildEnvironment
 from sphinx_needs.data import SphinxNeedsData
 from sphinx_needs.logging import get_logger
+
+from src.extensions.score_source_code_linker.parse_source_files import GITHUB_BASE_URL
 
 LOGGER = get_logger(__name__)
 LOGGER.setLevel("DEBUG")
@@ -28,9 +27,11 @@ LOGGER.setLevel("DEBUG")
 
 def setup(app: Sphinx) -> dict[str, str | bool]:
     # Extension: score_source_code_linker
-    app.add_config_value("disable_source_code_linker", False, rebuild="env")
-    app.add_config_value("score_source_code_linker_file_overwrite", "", rebuild="env")
     # TODO: can we detect live_preview & esbonio here? Until then we have a flag:
+    app.add_config_value("disable_source_code_linker", False, rebuild="env", types=bool)
+    app.add_config_value(
+        "score_source_code_linker_file_overwrite", "", rebuild="env", types=str
+    )
 
     # Define need_string_links here to not have it in conf.py
     app.config.needs_string_links = {
@@ -73,40 +74,17 @@ def add_source_link(app: Sphinx, env: BuildEnvironment) -> None:
     Needs_Data = SphinxNeedsData(env)
     needs = Needs_Data.get_needs_mutable()
     needs_copy = deepcopy(needs)
-    # bazel-out/k8-fastbuild/bin/process-docs/incremental.runfiles/_main/process-docs/score_source_code_parser.json
-    # bazel-out/k8-fastbuild/bin/process-docs/incremental.runfiles/_main/tooling/extensions/score_source_code_linker/__init__.py
-    # bazel-out/k8-fastbuild/bin/process-docs/score_source_code_parser.json
-    # /home/vscode/.cache/bazel/_bazel_vscode/6084288f00f33db17acb4220ce8f1999/execroot/_main/bazel-out/k8-fastbuild/bin/process-docs/incremental.runfiles/score_source_code_parser.json
-    #
-
-    ## -> build:
-
-    # bazel-out/k8-opt-exec-ST-d57f47055a04/bin/tooling/sphinx_build.runfiles/_main/tooling/extensions/score_source_code_linker/__init__.py
-
-    # Tried with build
-    # bazel-out/k8-fastbuild/bin/process-docs/_docs/_sources/process-docs/score_source_code_parser.json
-
-    # SEARCHING:
-    # bazel-out/k8-opt-exec-ST-d57f47055a04/bin/process-docs/score_source_code_parser.json
     p5 = Path(__file__).parents[5]
 
-    # bazel-out/k8-opt-exec-ST-d57f47055a04/bin/tooling
-    # LOGGER.info("DEBUG: ============= CONF DIR===========")
-    # LOGGER.info(f"DEBUG: {Path(app.confdir).name}")
-    # LOGGER.info("DEBUG: =============================")
     if str(p5).endswith("src"):
         LOGGER.info("DEBUG: WE ARE IN THE IF")
         path = str(p5.parent / Path(app.confdir).name / "score_source_code_parser.json")
     else:
         LOGGER.info("DEBUG: WE ARE IN THE ELSE")
         path = str(p5 / "score_source_code_parser.json")
-    # LOGGER.info("DEBUG============= FILE PATH OF JSON (where we search)===========")
-    # LOGGER.info(f"DEBUG: {path}")
-    # LOGGER.info("DEBUG: =============================")
+
     if app.config.score_source_code_linker_file_overwrite:
         path = app.config.score_source_code_linker_file_overwrite
-    # json_paths = [str(Path(__file__).parent.parent.parent.parent.parent.parent/"score_source_code_parser.json")]
-    # json_paths = [app.config.source_code_linker_file]
 
     try:
         with open(path) as f:
