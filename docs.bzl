@@ -38,11 +38,11 @@
 # For user-facing documentation, refer to `/README.md`.
 
 load("@aspect_rules_py//py:defs.bzl", "py_binary", "py_library")
-load("@score_docs_as_code//src/extensions/score_source_code_linker:collect_source_files.bzl", "parse_source_files_for_needs_links")
 load("@pip_process//:requirements.bzl", "all_requirements", "requirement")
 load("@rules_java//java:java_binary.bzl", "java_binary")
 load("@rules_python//sphinxdocs:sphinx.bzl", "sphinx_build_binary", "sphinx_docs")
 load("@rules_python//sphinxdocs:sphinx_docs_library.bzl", "sphinx_docs_library")
+load("@score_docs_as_code//src/extensions/score_source_code_linker:collect_source_files.bzl", "parse_source_files_for_needs_links")
 load("@score_python_basics//:defs.bzl", "score_virtualenv")
 
 sphinx_requirements = all_requirements + [
@@ -158,7 +158,7 @@ def _ide_support():
         reqs = sphinx_requirements,
     )
 
-def _docs(name = "docs", format = "html", external_needs_deps = list(), external_needs_def = dict()):
+def _docs(name = "docs", format = "html", external_needs_deps = list(), external_needs_def = list()):
     ext_needs_arg = "--define=external_needs_source=" + json.encode(external_needs_def)
 
     sphinx_docs(
