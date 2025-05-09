@@ -32,9 +32,6 @@ from functools import cache
 from pathlib import Path
 from typing import Any
 
-from sphinx.application import Sphinx
-from sphinx_needs.logging import get_logger
-
 from score_draw_uml_funcs.helpers import (
     gen_header,
     gen_interface_element,
@@ -49,6 +46,8 @@ from score_draw_uml_funcs.helpers import (
     get_module,
     get_real_interface_logical,
 )
+from sphinx.application import Sphinx
+from sphinx_needs.logging import get_logger
 
 logger = get_logger(__file__)
 
@@ -378,6 +377,14 @@ class draw_full_feature:
 
                 if imcomp := impl_comp.get(iface, {}):
                     module = get_module(imcomp, all_needs)
+
+                    # FIXME: sometimes module is empty, then the following code fails
+                    if not module:
+                        logger.info(
+                            f"FIXME: {need['id']}: "
+                            f"Module for interface {iface} -> {imcomp} is empty."
+                        )
+                        continue
 
                     if module not in proc_modules:
                         tmp, link_text, proc_impl_interfaces, proc_used_interfaces = (
