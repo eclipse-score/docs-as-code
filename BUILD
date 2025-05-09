@@ -16,7 +16,7 @@ load("@score_cr_checker//:cr_checker.bzl", "copyright_checker")
 copyright_checker(
     name = "copyright",
     srcs = [
-        "process-docs",
+        "examples",
         "src",
         "//:BUILD",
         "//:MODULE.bazel",
