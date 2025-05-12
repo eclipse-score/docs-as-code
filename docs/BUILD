@@ -24,9 +24,6 @@ docs(
     conf_dir = "docs",
     docs_targets = [
         {
-            "suffix": "",  # local without external needs
-        },
-        {
             "suffix": "latest",  # latest main branch documentation build
             "external_needs_info": [
                 {
