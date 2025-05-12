@@ -77,7 +77,10 @@ def _run_checks(app: Sphinx, exception: Exception | None) -> None:
     if exception:
         return
 
-    needs_all_needs = SphinxNeedsData(app.env).get_needs_view()
+    # Filter out external needs, as checks are only intended to be run on internal needs.
+    needs_all_needs = (
+        SphinxNeedsData(app.env).get_needs_view().filter_is_external(False)
+    )
 
     logger.debug(f"Running checks for {len(needs_all_needs)} needs")
 
