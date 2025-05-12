@@ -30,7 +30,7 @@ score_virtualenv(
         "@score_docs_as_code//src/extensions/score_layout:score_layout",
         "@score_docs_as_code//src/extensions/score_metamodel:score_metamodel",
         "@score_docs_as_code//src/extensions/score_source_code_linker:score_source_code_linker",
-    ],
+    ] + all_requirements,
 )
 # These are only exported because they're passed as files to the //docs.bzl
 # macros, and thus must be visible to other packages. They should only be
