@@ -24,12 +24,6 @@ This is a simple example of a documentation page using the `docs` tool.
    :reqtype: Functional
 
    Some content to make sure we also can render this
+   This is a link to an external need inside the 'score' docuemntation
+   :need:`SCORE_gd_req__req__attr_safety`
 
-
-.. std_req:: External Link Test Req
-   :id: std_req__iso26262__testing
-   :status: valid
-   :safety: QM
-   :links: gd_req__req__attr_safety
-
-   This is some test content to show a link to the 'score' documentation

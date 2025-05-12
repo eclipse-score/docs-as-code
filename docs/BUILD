@@ -33,6 +33,7 @@ docs(
                     "base_url": "https://eclipse-score.github.io/score/main/",
                     "json_url": "https://eclipse-score.github.io/score/main/needs.json",
                     "version": "0.1",
+                    "id_prefix": "score_",
                 },
             ],
         },
