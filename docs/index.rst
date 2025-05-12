@@ -24,6 +24,6 @@ This is a simple example of a documentation page using the `docs` tool.
    :reqtype: Functional
 
    Some content to make sure we also can render this
-   This is a link to an external need inside the 'score' docuemntation
+   This is a link to an external need inside the 'score' documentation
    :need:`SCORE_gd_req__req__attr_safety`
 
