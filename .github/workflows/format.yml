@@ -27,4 +27,5 @@ jobs:
         uses: bazel-contrib/setup-bazel@0.9.1
       - name: Run formatting checks
         run: |
+          bazel run //src:ide_support
           bazel test //src:format.check
