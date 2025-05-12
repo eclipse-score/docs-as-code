@@ -290,6 +290,12 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     app.config.graph_checks = metamodel["needs_graph_check"]
     app.config.stop_words = metamodel["stop_words"]
     app.config.weak_words = metamodel["weak_words"]
+
+    # Ensure that 'needs.json' is always build.
+    app.config.needs_build_json = True
+    app.config.needs_reproducible_json = True
+    app.config.needs_json_remove_defaults = True
+
     app.connect("config-inited", parse_external_needs_sources)
 
     discover_checks()
