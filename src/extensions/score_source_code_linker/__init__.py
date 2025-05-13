@@ -59,9 +59,14 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     }
 
 
+
 def find_need(
     all_needs: NeedsMutable, id: str, prefixes: list[str]
 ) -> NeedsInfoType | None:
+    """
+    Checks all possible external 'prefixes' for an ID
+    So that the linker can add the link to the correct NeedsInfoType object.
+    """
     if id in all_needs:
         return all_needs[id]
 

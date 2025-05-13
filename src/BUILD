@@ -101,6 +101,8 @@ pkg_tar(
     srcs = [":html_files"],
 )
 
+# 'source_code_linker' needs all targets to be passed to it.
+# This is a convenient gathering of all the 'python internal modules' to avoid writing them individiually
 py_library(
     name = "docs_as_code_py_modules",
     srcs = [
