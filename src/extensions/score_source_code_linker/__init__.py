@@ -59,7 +59,6 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     }
 
 
-
 def find_need(
     all_needs: NeedsMutable, id: str, prefixes: list[str]
 ) -> NeedsInfoType | None:
