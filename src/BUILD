@@ -101,16 +101,35 @@ pkg_tar(
     srcs = [":html_files"],
 )
 
+# 'source_code_linker' needs all targets to be passed to it.
+# This is a convenient gathering of all the 'python internal modules' to avoid writing them individiually
+py_library(
+    name = "docs_as_code_py_modules",
+    srcs = [
+        "@score_docs_as_code//src:plantuml_for_python",
+        "@score_docs_as_code//src/extensions:score_plantuml",
+        "@score_docs_as_code//src/extensions/score_draw_uml_funcs",
+        "@score_docs_as_code//src/extensions/score_header_service",
+        "@score_docs_as_code//src/extensions/score_layout",
+        "@score_docs_as_code//src/extensions/score_metamodel",
+        "@score_docs_as_code//src/extensions/score_source_code_linker",
+        "@score_docs_as_code//src/find_runfiles",
+    ],
+    visibility = ["//visibility:public"],
+)
+
 filegroup(
     name = "score_extension_files",
     srcs = glob(
-        ["*/**"],
+        [
+            "**",
+        ],
         exclude = [
             "**/test/**",
             "**/tests/**",
             "**/__pycache__/**",
         ],
-    ),
+    ) + [":docs_as_code_py_modules"],
     visibility = ["//visibility:public"],
 )
 

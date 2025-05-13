@@ -16,7 +16,7 @@ from pathlib import Path
 
 from sphinx.application import Sphinx
 from sphinx.environment import BuildEnvironment
-from sphinx_needs.data import SphinxNeedsData
+from sphinx_needs.data import NeedsMutable, SphinxNeedsData, NeedsInfoType
 from sphinx_needs.logging import get_logger
 
 from src.extensions.score_source_code_linker.parse_source_files import GITHUB_BASE_URL
@@ -59,6 +59,25 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     }
 
 
+def find_need(
+    all_needs: NeedsMutable, id: str, prefixes: list[str]
+) -> NeedsInfoType | None:
+    """
+    Checks all possible external 'prefixes' for an ID
+    So that the linker can add the link to the correct NeedsInfoType object.
+    """
+    if id in all_needs:
+        return all_needs[id]
+
+    # Try all possible prefixes
+    for prefix in prefixes:
+        prefixed_id = f"{prefix}{id}"
+        if prefixed_id in all_needs:
+            return all_needs[prefixed_id]
+
+    return None
+
+
 # re-qid: gd_req__req__attr_impl
 def add_source_link(app: Sphinx, env: BuildEnvironment) -> None:
     """
@@ -77,28 +96,25 @@ def add_source_link(app: Sphinx, env: BuildEnvironment) -> None:
     p5 = Path(__file__).parents[5]
 
     if str(p5).endswith("src"):
-        LOGGER.info("DEBUG: WE ARE IN THE IF")
+        LOGGER.debug("DEBUG: WE ARE IN THE IF")
         path = str(p5.parent / Path(app.confdir).name / "score_source_code_parser.json")
     else:
-        LOGGER.info("DEBUG: WE ARE IN THE ELSE")
+        LOGGER.debug("DEBUG: WE ARE IN THE ELSE")
         path = str(p5 / "score_source_code_parser.json")
 
     if app.config.score_source_code_linker_file_overwrite:
         path = app.config.score_source_code_linker_file_overwrite
 
+    # For some reason the prefix 'sphinx_needs internally' is CAPSLOCKED.
+    # So we have to make sure we uppercase the prefixes
+    prefixes = [x["id_prefix"].upper() for x in app.config.needs_external_needs]
     try:
         with open(path) as f:
             gh_json = json.load(f)
         for id, link in gh_json.items():
             id = id.strip()
-            try:
-                # NOTE: Removing & adding the need is important to make sure
-                # the needs gets 're-evaluated'.
-                need = needs_copy[id]  # NeedsInfoType
-                Needs_Data.remove_need(need["id"])
-                need["source_code_link"] = ",".join(link)
-                Needs_Data.add_need(need)
-            except KeyError:
+            need = find_need(needs_copy, id, prefixes)
+            if need is None:
                 # NOTE: manipulating link to remove git-hash,
                 # making the output file location more readable
                 files = [x.replace(GITHUB_BASE_URL, "").split("/", 1)[-1] for x in link]
@@ -107,6 +123,13 @@ def add_source_link(app: Sphinx, env: BuildEnvironment) -> None:
                     + f"Found in file(s): {files}",
                     type="score_source_code_linker",
                 )
+                continue
+
+            # NOTE: Removing & adding the need is important to make sure
+            # the needs gets 're-evaluated'.
+            Needs_Data.remove_need(need["id"])
+            need["source_code_link"] = ",".join(link)
+            Needs_Data.add_need(need)
     except Exception as e:
         LOGGER.warning(
             f"An unexpected error occurred while adding source_code_links to needs."

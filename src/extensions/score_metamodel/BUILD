@@ -18,7 +18,7 @@ py_library(
     name = "score_metamodel",
     srcs = glob(
         ["**/*.py"],
-    ),
+    ) + ["metamodel.yaml"],
     data = glob(["*.yaml"]),  # Needed to remove 'resolving of symlink' in score_metamodel.__init__
     imports = [
         ".",

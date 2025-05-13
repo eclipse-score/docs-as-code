@@ -13,6 +13,8 @@
 
 load("@score_cr_checker//:cr_checker.bzl", "copyright_checker")
 
+package(default_visibility = ["//visibility:public"])
+
 copyright_checker(
     name = "copyright",
     srcs = [

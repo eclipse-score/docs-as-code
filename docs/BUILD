@@ -27,7 +27,7 @@ docs(
             "suffix": "latest",  # latest main branch documentation build
             "external_needs_info": [
                 {
-                    "base_url": "https://eclipse-score.github.io/score/main/",
+                    "base_url": "https://eclipse-score.github.io/score/main",
                     "json_url": "https://eclipse-score.github.io/score/main/needs.json",
                     "version": "0.1",
                     "id_prefix": "score_",
