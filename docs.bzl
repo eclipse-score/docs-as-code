@@ -176,6 +176,7 @@ def _docs(name = "docs", format = "html", external_needs_deps = list(), external
             "**/*.yaml",
             "**/*.json",
             "**/*.csv",
+            "**/*.inc",
         ], exclude = ["**/tests/*"]),
         config = ":conf.py",
         extra_opts = [
