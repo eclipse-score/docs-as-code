@@ -1,10 +1,10 @@
-# Bazel Sphinx Documentation Builder
+# Score-Docs-As-Code Module
 
-A Bazel module providing comprehensive tools and extensions for building Sphinx documentation within Bazel projects.
+A Bazel module providing tools and extensions to enable and simplify documentation building via Sphinx
 
 ## Overview
 
-This module allows you to easily integrate Sphinx documentation generation into your Bazel build system. It provides a collection of utilities, extensions, and themes specifically designed to enhance documentation capabilities while maintaining Bazel's reproducible build environment.
+This module allows you to easily integrate Sphinx documentation generation into your Bazel build system. It provides a collection of utilitie and extensions specifically designed to enhance documentation capabilities.
 
 ## Features
 
@@ -23,7 +23,7 @@ This module allows you to easily integrate Sphinx documentation generation into 
 Add the module to your `MODULE.bazel` file:
 
 ```starlark
-bazel_dep(name = "score_docs_as_code", version = "0.1.0")
+bazel_dep(name = "score_docs_as_code", version = "0.2.3")
 ```
 
 And make sure to also add the S-core bazel registry to your `.bazelrc` file
@@ -75,8 +75,8 @@ extensions = [
 # ...
 ```
 
-Make sure that your conf.py imports all of the extensions you want to enable.\
-For a full example look at [a simple example](examples/simple)
+Make sure that your conf.py imports all of the extensions you want to enable.
+
 
 #### 3. Run a documentation build:
 
@@ -90,7 +90,12 @@ bazel build //path/to/BUILD-file:docs_latest # documentation at 'bazel-bin/
 - `_build/` for incremental
 - `bazel-bin/bazel-bin/<BUILD FILE FOLDER NAME>/docs/_build/html`
 
-______________________________________________________________________
+<br>
+<br>
+
+> ### *For the full example as well as more complex ones, check out the [examples directory](examples/)*
+
+--- 
 
 ### Available Targets
 
@@ -123,17 +128,10 @@ The `docs()` macro accepts the following arguments:
 | `source_files_to_scan_for_needs_links` | List of targets,globs,filegroups that the 'source_code_linker' should parse | No | `[]` |
 | `visibility` | Bazel visibility | No | `None` |
 
-## Advanced Usage
-
-### Custom Configuration
-
-#### Docs-targets
-
-!! TODO !!
-This should be filled out after the local mutli-repo tests are integrated and we have examples of different configurations
+--- 
+---
 
 ## Available Extensions
-
 This module includes several custom Sphinx extensions to enhance your documentation:
 
 ### Score Layout Extension

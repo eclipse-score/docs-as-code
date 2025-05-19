@@ -66,13 +66,6 @@ def docs(source_files_to_scan_for_needs_links = None, source_dir = "docs", conf_
     * only callable from 'docs/BUILD'
     """
 
-    sphinx_build_binary(
-        name = "sphinx_build",
-        visibility = ["//visibility:public"],
-        data = ["@score_docs_as_code//src:docs_assets", "@score_docs_as_code//src:score_extension_files"],
-        deps = sphinx_requirements,
-    )
-
     # Parse source files for needs links
     # This needs to be created to generate a target, otherwise it won't execute as dependency for other macros
     parse_source_files_for_needs_links(
@@ -86,6 +79,13 @@ def docs(source_files_to_scan_for_needs_links = None, source_dir = "docs", conf_
         suffix = "_" + target["suffix"] if target["suffix"] else ""
         external_needs_deps = target.get("target", [])
         external_needs_def = target.get("external_needs_info", [])
+
+        sphinx_build_binary(
+            name = "sphinx_build" + suffix,
+            visibility = ["//visibility:public"],
+            data = ["@score_docs_as_code//src:docs_assets", "@score_docs_as_code//src:score_extension_files"] + external_needs_deps,
+            deps = sphinx_requirements,
+        )
         _incremental(
             incremental_name = "incremental" + suffix,
             live_name = "live_preview" + suffix,
@@ -97,6 +97,7 @@ def docs(source_files_to_scan_for_needs_links = None, source_dir = "docs", conf_
         )
         _docs(
             name = "docs" + suffix,
+            suffix = suffix,
             format = "html",
             external_needs_deps = external_needs_deps,
             external_needs_def = external_needs_def,
@@ -129,7 +130,7 @@ def _incremental(incremental_name = "incremental", live_name = "live_preview", s
         srcs = ["@score_docs_as_code//src:incremental.py"],
         deps = dependencies,
         # TODO: Figure out if we need all dependencies as data here or not.
-        data = [":score_source_code_parser", "@score_docs_as_code//src:plantuml", "@score_docs_as_code//src:docs_assets"] + dependencies,
+        data = [":score_source_code_parser", "@score_docs_as_code//src:plantuml", "@score_docs_as_code//src:docs_assets"] + dependencies + external_needs_deps,
         env = {
             "SOURCE_DIRECTORY": source_dir,
             "CONF_DIRECTORY": conf_dir,
@@ -143,7 +144,7 @@ def _incremental(incremental_name = "incremental", live_name = "live_preview", s
         name = live_name,
         srcs = ["@score_docs_as_code//src:incremental.py"],
         deps = dependencies,
-        data = ["@score_docs_as_code//src:plantuml", "@score_docs_as_code//src:docs_assets"] + dependencies,
+        data = ["@score_docs_as_code//src:plantuml", "@score_docs_as_code//src:docs_assets"] + dependencies + external_needs_deps,
         env = {
             "SOURCE_DIRECTORY": source_dir,
             "CONF_DIRECTORY": conf_dir,
@@ -160,7 +161,7 @@ def _ide_support():
         reqs = sphinx_requirements,
     )
 
-def _docs(name = "docs", format = "html", external_needs_deps = list(), external_needs_def = list()):
+def _docs(name = "docs", suffix = "", format = "html", external_needs_deps = list(), external_needs_def = list()):
     ext_needs_arg = "--define=external_needs_source=" + json.encode(external_needs_def)
 
     # Clean suffix used in all generated target names
@@ -191,7 +192,7 @@ def _docs(name = "docs", format = "html", external_needs_deps = list(), external
         formats = [
             format,
         ],
-        sphinx = ":sphinx_build",
+        sphinx = ":sphinx_build" + suffix,
         tags = [
             "manual",
         ],
