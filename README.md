@@ -102,7 +102,12 @@ Using the `docs` macro enables multiple targets which are now useable.
 | incremental | Builds documentation incrementally (faster) | `bazel run` |
 | live_preview | Creates a live_preview of the documentation viewable in a local server | `bazel run` |
 | ide_support | Creates virtual environment under '.venv_docs' | `bazel run` |
+| `html`             | Filegroup that exposes the generated HTML files                              | `bazel build //docs:html`         |
+| `html_files`       | Prepares a flattened version of the HTML output for packaging                | `bazel build //docs:html_files`   |
+| `github_pages`     | Creates a `.tar` archive from the HTML output (ready for deployment)         | `bazel build //docs:github_pages` |
 
+
+> For each entry in `docs_targets`, these targets are suffixed accordingly (e.g. `docs_api`, `html_api`, `github_pages_api`).
 ______________________________________________________________________
 
 ## Configuration Options
