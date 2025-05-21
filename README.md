@@ -81,8 +81,8 @@ For a full example look at [a simple example](examples/simple)
 #### 3. Run a documentation build:
 
 ```bash
-bazel run //path/to/BUILD-file:incremental # documentation at '_build/'
-bazel build //path/to/BUILD-file:docs # documentation at 'bazel-bin/
+bazel run //path/to/BUILD-file:incremental_latest # documentation at '_build/'
+bazel build //path/to/BUILD-file:docs_latest # documentation at 'bazel-bin/
 ```
 
 #### 4. Access your documentation at
