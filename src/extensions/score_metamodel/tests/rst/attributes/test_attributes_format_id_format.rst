@@ -14,16 +14,16 @@
 #CHECK: check_id_format
 
 .. Id does not consists of 3 parts
-#EXPECT: std_wp__test__test__abcd.id (std_wp__test__test__abcd): expected to consisting of this format: `<Req Type>__<Abbreviations>__<Architectural Element>`.
+#EXPECT: stk_req__test.id (stk_req__test): expected to consisting of this format: `<Req Type>__<Abbreviations>__<Architectural Element>`.
 
-.. std_wp:: This is a test
-   :id: std_wp__test__test__abcd
+.. stkh_req:: This is a test
+   :id: stk_req__test
 
 .. Id follows pattern
 #EXPECT-NOT: expected to consisting of this format: `<Req Type>__<Abbreviations>__<Architectural Element>`.
 
 .. std_wp:: This is a test
-   :id: std_wp__test__abce
+   :id: std_wp__test__test__abcd
 
 .. Id starts with wp and number of parth is neither 2 nor 3
 #EXPECT: wp__test__test__abcd.id (wp__test__test__abcd): expected to consisting of one of these 2 formats:`<Req Type>__<Abbreviations>` or `<Req Type>__<Abbreviations>__<Architectural Element>`.

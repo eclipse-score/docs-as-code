@@ -17,7 +17,7 @@ Hello World
 This is a simple example of a documentation page using the `docs` tool.
 
 .. stkh_req:: TestTitle
-   :id: stkh_req__test_requirement
+   :id: stkh_req__docs__test_requirement
    :status: valid
    :safety: QM
    :rationale: A simple requirement we need to enable a documentation build
