@@ -69,6 +69,7 @@ def check_id_format(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
             )
             log.warning_for_option(need, "id", msg)
 
+
 @local_check
 def check_id_length(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
     """
