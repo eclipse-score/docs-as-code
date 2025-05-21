@@ -28,10 +28,7 @@ docs(
         },
     ],
     source_dir = "examples/simple",
-    source_files_to_scan_for_needs_links = [
-        # Note: you can add filegroups, globs, or entire targets here.
-        "//src:score_extension_files",
-    ],
+    source_files_to_scan_for_needs_links = [],
 )
 
 #           ╭───────────────────────────────────────╮

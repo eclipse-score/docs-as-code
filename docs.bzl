@@ -40,6 +40,8 @@
 load("@aspect_rules_py//py:defs.bzl", "py_binary", "py_library")
 load("@pip_process//:requirements.bzl", "all_requirements", "requirement")
 load("@rules_java//java:java_binary.bzl", "java_binary")
+load("@rules_pkg//pkg:mappings.bzl", "pkg_files")
+load("@rules_pkg//pkg:tar.bzl", "pkg_tar")
 load("@rules_python//sphinxdocs:sphinx.bzl", "sphinx_build_binary", "sphinx_docs")
 load("@rules_python//sphinxdocs:sphinx_docs_library.bzl", "sphinx_docs_library")
 load("@score_docs_as_code//src/extensions/score_source_code_linker:collect_source_files.bzl", "parse_source_files_for_needs_links")
@@ -161,6 +163,9 @@ def _ide_support():
 def _docs(name = "docs", format = "html", external_needs_deps = list(), external_needs_def = list()):
     ext_needs_arg = "--define=external_needs_source=" + json.encode(external_needs_def)
 
+    # Clean suffix used in all generated target names
+    target_suffix = "" if name == "docs" else "_" + name[len("docs"):]
+
     sphinx_docs(
         name = name,
         srcs = native.glob([
@@ -196,4 +201,26 @@ def _docs(name = "docs", format = "html", external_needs_deps = list(), external
             "@score_docs_as_code//src:docs_assets",
         ] + external_needs_deps,
         visibility = ["//visibility:public"],
+    )
+
+    native.filegroup(
+        name = "assets" + target_suffix,
+        srcs = native.glob(["_assets/**"]),
+        visibility = ["//visibility:public"],
+    )
+
+    native.filegroup(
+        name = "html" + target_suffix,
+        srcs = [":" + name],
+        visibility = ["//visibility:public"],
+    )
+
+    pkg_files(
+        name = "html_files" + target_suffix,
+        srcs = [":html" + target_suffix],
+    )
+
+    pkg_tar(
+        name = "github_pages" + target_suffix,
+        srcs = [":html_files" + target_suffix],
     )

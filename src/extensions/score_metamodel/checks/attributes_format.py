@@ -25,12 +25,35 @@ def check_id_format(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
     the requirement id or not.
     ---
     """
+    # These folders are taken from 'https://github.com/eclipse-score/process_description/tree/main/process'
+    # This means, any needs within any of these folders (no matter where they are) will not be required to have 3 parts
+    process_folder_names = [
+        "general_concepts",
+        "introduction",
+        "process_areas",
+        "roles",
+        "standards",
+        "workflows",
+        "workproducts",
+        "process",
+    ]
     # Split the string by underscores
     parts = need["id"].split("__")
-
-    if need["id"].startswith(
-        ("gd_", "wf__", "wp__", "rl__", "stkh_req__", "tool_req__", "doc__")
-    ) or ("process/" in str(need.get("docname", ""))):
+    if need["type"] in [
+        "std_wp",
+        "document",  # This is used in 'platform_managment' in score.
+        "gd_guidl",
+        "workflow",
+        "gd_chklst",
+        "std_req",
+        "role",
+        "doc_concept",
+        "gd_temp",
+        "gd_method",
+        "gd_req",
+        "workproduct",
+        "doc_getstrt",
+    ] or any(prefix in str(need.get("docname", "")) for prefix in process_folder_names):
         if len(parts) != 2 and len(parts) != 3:
             msg = (
                 "expected to consisting of one of these 2 formats:"
