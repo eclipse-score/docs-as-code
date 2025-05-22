@@ -7,7 +7,7 @@ In a second step this intermediary file is parsed during sphinx build. If a requ
 ## Implementation Components
 
 ### Bazel Integration
-The extension uses two main components to integrate with bazel:
+The extension uses two main components to integrate with Bazel:
 
 1. `collect_source_files`
    - Processes all files from provided deps

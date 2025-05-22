@@ -25,5 +25,6 @@ This is a simple example of a documentation page using the `docs` tool.
 
    Some content to make sure we also can render this
    This is a link to an external need inside the 'score' documentation
-   :need:`SCORE_gd_req__req__attr_safety`
+   :need:`SCORE_stkh_req__overall_goals__reuse_of_app_soft`
+   Note how it starts with the defined prefix but in UPPERCASE. This comes from sphinx-needs, `see here <https://github.com/useblocks/sphinx-needs/blob/master/sphinx_needs/external_needs.py#L119>`_
 

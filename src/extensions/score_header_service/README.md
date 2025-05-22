@@ -23,12 +23,12 @@ GH_TOKEN: Github access token
 GITHUB_REF_NAME: Github reference name (<pull request no>/merge)
 GITHUB_REPOSITORY: Github repository <org>/<repo>
 
-## Excecution
+## Execution
 The document generation has to be executed as follows:
 
     GH_TOKEN=$GH_TOKEN bazel run //docs:incremental
 
-Sphinx cannot acess the environment variables when started via bazel build.
+Sphinx cannot access the environment variables when started via Bazel build.
 
 If extraction method **Merge commit info** is used the document generation can be executed as follows:
 
