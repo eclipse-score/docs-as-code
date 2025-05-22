@@ -120,7 +120,7 @@ In addition, you can provide anything else that you might need to test your spec
 
 For examples on how to use and implement the sphinx testing app, you can check out the [source code linker](docs/_tooling/score_source_code_linker/tests)
 
-Find everything related to testing within bazel and how to add your test suite to it, [see here](/tools/testing/pytest/README.md)
+Find everything related to testing within Bazel and how to add your test suite to it, [see here](/tools/testing/pytest/README.md)
 
 Also look at already built extensions inside S-CORE. They can be found in their respective folders:
 - [score_metamodel](/docs/_tooling/extensions/score_metamodel/README.md)

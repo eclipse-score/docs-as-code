@@ -13,7 +13,7 @@ These examples show how to use the 'docs' macro in order to build without outgoi
 In order to enable linking against an imported Modules needs make sure you have imported it into the MODULE.bazel via 
 `bazel_dep(...)`. 
 
-Then have a look how the BUILD file is setup, and mimik it with the changes needed for your specific case. 
+Then have a look how the BUILD file is setup, and mimic it with the changes needed for your specific case. 
 Underneath are some explanations regarding the different key-value pairs and their function.
 
 Here is a more general overview
@@ -39,7 +39,7 @@ docs(
         },
     ],
     source_files_to_scan_for_needs_links = [
-        # Note: you can add filegroups, globs, or entire targets here.
+        # Note: you can add file groups, globs, or entire targets here.
         "<your targets that the source code linker should scan>"
     ],
 )

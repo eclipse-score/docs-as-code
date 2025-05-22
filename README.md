@@ -4,7 +4,7 @@ A Bazel module providing tools and extensions to enable and simplify documentati
 
 ## Overview
 
-This module allows you to easily integrate Sphinx documentation generation into your Bazel build system. It provides a collection of utilitie and extensions specifically designed to enhance documentation capabilities.
+This module allows you to easily integrate Sphinx documentation generation into your Bazel build system. It provides a collection of utilities and extensions specifically designed to enhance documentation capabilities.
 
 ## Features
 
@@ -26,7 +26,7 @@ Add the module to your `MODULE.bazel` file:
 bazel_dep(name = "score_docs_as_code", version = "0.2.5")
 ```
 
-And make sure to also add the S-core bazel registry to your `.bazelrc` file
+And make sure to also add the S-core Bazel registry to your `.bazelrc` file
 
 ```starlark
 common --registry=https://raw.githubusercontent.com/eclipse-score/bazel_registry/main/
@@ -47,12 +47,12 @@ docs(
     source_dir = "<your sphinx source dir>",
     docs_targets = [
         {
-            # For more detailed explenation look at the 'docs_targets' section
+            # For more detailed explanation look at the 'docs_targets' section
             "suffix": "",  # This creates the normal 'incremental' and 'docs' target
         },
     ],
     source_files_to_scan_for_needs_links = [
-        # Note: you can add filegroups, globs, or entire targets here.
+        # Note: you can add file groups, globs, or entire targets here.
         "<your targets that the source code linker should scan>"
     ],
 )
@@ -146,7 +146,7 @@ Consistent header styling across documentation pages.
 
 ### Score Metamodel
 
-Validation and checking of documentation structure against a defined metamodel.
+Validation and checking of documentation structure against a defined Metamodel.
 [Learn more](src/extensions/score_metamodel/README.md)
 
 ### Score Source Code Linker

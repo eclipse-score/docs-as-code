@@ -1,6 +1,6 @@
 # score_metamodel
 
-This extension provides the metamodel and corresponding checks of the SCORE
+This extension provides the Metamodel and corresponding checks of the SCORE
 project as a Sphinx extension.
 
 See [../README](../README.md) for more information on why we use extensions.
@@ -49,7 +49,7 @@ There are multiple ways to solve this issue, for example via
 https://github.com/useblocks/sphinx-needs/pull/1248
 
 However we chose to implement a custom warning mechanism, as we needed a
-more elaborate solution for our use case anyway. Calling the checks ourselfes
+more elaborate solution for our use case anyway. Calling the checks ourselves
 seems to be the most flexible solution.
 
 Technically local checks will be called with a single need, while graph-based
