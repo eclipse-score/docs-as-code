@@ -17,7 +17,7 @@ Hello World
 This is a simple example of a documentation page using the `docs` tool.
 
 .. stkh_req:: TestTitle
-   :id: stkh_req__test_requirement
+   :id: stkh_req__docs__test_requirement
    :status: valid
    :safety: QM
    :rationale: A simple requirement we need to enable a documentation build
@@ -25,5 +25,5 @@ This is a simple example of a documentation page using the `docs` tool.
 
    Some content to make sure we also can render this
    This is a link to an external need inside the 'score' documentation
-   :need:`PROCESS_doc_getstrt__req__process`
+   :need:`SCORE_stkh_req__overall_goals__reuse_of_app_soft`
 

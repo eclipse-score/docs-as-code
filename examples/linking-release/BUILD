@@ -21,7 +21,7 @@ load("@aspect_rules_py//py:defs.bzl", "py_library")
 load("//:docs.bzl", "docs")
 
 docs(
-    conf_dir = "docs",
+    conf_dir = "examples/linking-release",
     docs_targets = [
         {
             "suffix": "release",  # The version imported from MODULE.bazel
@@ -36,7 +36,7 @@ docs(
             ],
         },
     ],
-    source_dir = "docs",
+    source_dir = "examples/linking-release",
     source_files_to_scan_for_needs_links = [
         # Note: you can add filegroups, globs, or entire targets here.
         "//src:score_extension_files",

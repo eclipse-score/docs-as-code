@@ -23,7 +23,7 @@ This module allows you to easily integrate Sphinx documentation generation into 
 Add the module to your `MODULE.bazel` file:
 
 ```starlark
-bazel_dep(name = "score_docs_as_code", version = "0.2.3")
+bazel_dep(name = "score_docs_as_code", version = "0.2.5")
 ```
 
 And make sure to also add the S-core bazel registry to your `.bazelrc` file
