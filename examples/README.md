@@ -33,7 +33,9 @@ docs(
                     "base_url": "<URL to the documentation>",
                     "json_path/url": "<place where the needs.json is located>", # local_path OR a URL
                     "version": "<version of the needs.json you want to use", # 0.1
-                    "id_prefix": "<prefix for external needs>", # this gets put as a prefix in caps before all external needs from the needs.json above
+                    #  This is an UPPERCASE PREFIX that gets put before all external needs from the needs.json above.
+                    #  This comes from sphinx-needs internally see here: https://github.com/useblocks/sphinx-needs/blob/master/sphinx_needs/external_needs.py#L119
+                    "id_prefix": "<prefix for external needs>", 
                 },
             ],
         },
