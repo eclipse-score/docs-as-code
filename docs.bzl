@@ -102,6 +102,13 @@ def docs(source_files_to_scan_for_needs_links = None, source_dir = "docs", conf_
             external_needs_deps = external_needs_deps,
             external_needs_def = external_needs_def,
         )
+        _docs(
+            name = "docs_needs" + suffix,
+            suffix = suffix,
+            format = "needs",
+            external_needs_deps = external_needs_deps,
+            external_needs_def = external_needs_def,
+        )
 
     # Virtual python environment for working on the documentation (esbonio).
     # incl. python support when working on conf.py and sphinx extensions.
@@ -109,7 +116,6 @@ def docs(source_files_to_scan_for_needs_links = None, source_dir = "docs", conf_
     _ide_support()
 
     # creates 'needs.json' build target
-    _docs(name = "docs_needs", format = "needs")
 
 def _incremental(incremental_name = "incremental", live_name = "live_preview", source_dir = "docs", conf_dir = "docs", build_dir = "_build", extra_dependencies = list(), external_needs_deps = list(), external_needs_def = None):
     """
