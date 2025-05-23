@@ -104,6 +104,7 @@ def _run_checks(app: Sphinx, exception: Exception | None) -> None:
 
     # Graph-Based checks: These warnings require a graph of all other needs to
     # be checked.
+
     needs = list(needs_all_needs.values())
     for check in [c for c in graph_checks if is_check_enabled(c)]:
         logger.debug(f"Running graph check {check} for all needs")

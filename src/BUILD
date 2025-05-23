@@ -122,7 +122,7 @@ filegroup(
     name = "score_extension_files",
     srcs = glob(
         [
-            "**",
+            "src/**",
         ],
         exclude = [
             "**/test/**",
