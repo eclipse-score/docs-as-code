@@ -29,7 +29,6 @@ docs(
                 {
                     "base_url": "https://eclipse-score.github.io/score/main",
                     "json_url": "https://eclipse-score.github.io/score/main/needs.json",
-                    "version": "0.1",
                     "id_prefix": "score_",
                 },
             ],
@@ -41,7 +40,6 @@ docs(
                 {
                     "base_url": "https://eclipse-score.github.io/score/main",
                     "json_path": "/score_platform~/docs/docs_needs/_build/needs/needs.json",
-                    "version": "0.1",
                     "id_prefix": "score_",
                 },
             ],
