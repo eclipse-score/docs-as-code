@@ -15,8 +15,8 @@ name: Run renovate
 
 on:
   schedule:
-    - cron: "0 19 * * *"  # Every day at 9:00 PM Europe time
-  workflow_dispatch: {}  # Allow manual runs too
+    - cron: "0 19 * * *" # Every day at 9:00 PM Europe time
+  workflow_dispatch: {} # Allow manual runs too
 
 jobs:
   renovate:
