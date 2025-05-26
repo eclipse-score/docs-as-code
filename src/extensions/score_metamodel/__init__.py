@@ -266,10 +266,12 @@ def default_options() -> list[str]:
 
 
 def parse_external_needs_sources(app: Sphinx, config):
-    # HACK: mabye there is a nicer way for this
+    # HACK: maybe there is a nicer way for this
     if app.config.external_needs_source not in ["[]", ""]:
         x = None
-        x = json.loads(app.config.external_needs_source)
+        # NOTE: Due to upgrades in modules, encoding changed. Need to clean string in order to read it right again.
+        clean_str = app.config.external_needs_source.replace('\\"', "")
+        x = json.loads(clean_str)
         if r := os.getenv("RUNFILES_DIR"):
             if x[0].get("json_path", None):
                 for a in x:
