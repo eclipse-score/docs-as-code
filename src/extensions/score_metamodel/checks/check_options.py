@@ -53,9 +53,7 @@ def validate_fields(
     :param field_type: A string indicating the field type ('option' or 'link').
     """
 
-    def remove_prefix(
-        values: list[str], prefixes: list[str]
-    ) -> list[str]:
+    def remove_prefix(values: list[str], prefixes: list[str]) -> list[str]:
         # Memory and allocation wise better to use a generator here.
         # Removes any prefix allowed by configuration, if prefix is there.
         return [word.removeprefix(p) for word in values for p in prefixes]
