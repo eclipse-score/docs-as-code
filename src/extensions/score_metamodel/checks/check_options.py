@@ -15,6 +15,7 @@ import re
 from sphinx.application import Sphinx
 from sphinx_needs.config import NeedType
 from sphinx_needs.data import NeedsInfoType
+from collections.abc import Generator
 
 from score_metamodel import (
     CheckLogger,
@@ -40,6 +41,7 @@ def validate_fields(
     fields: dict[str, str],
     required: bool,
     field_type: str,
+    allowed_prefixes: list[str],
 ):
     """
     Validates that fields (options or links) in a need match their expected patterns.
@@ -50,9 +52,18 @@ def validate_fields(
     :param required: Whether the fields are required (True) or optional (False).
     :param field_type: A string indicating the field type ('option' or 'link').
     """
-    for field, pattern in fields.items():
-        raw_value: str | list[str] | None = need.get(field, None)
 
+    def remove_prefix(values: list[str], prefixes: list[str]) -> Generator[str, None,None]:
+        # Memory and allocation wise better to use a generator here.
+        # Removes any prefix allowed by configuration, if prefix is there.
+        return (
+            next((text.removeprefix(p) for p in prefixes if text.startswith(p)), text) for text in values
+        )
+
+        
+    for field, pattern in fields.items():
+
+        raw_value: str | list[str] | None = need.get(field, None)
         if raw_value in [None, [], ""]:
             if required:
                 log.warning_for_need(
@@ -68,6 +79,10 @@ def validate_fields(
             values = raw_value
         else:
             values = [str(raw_value)]
+
+        # The filter ensures that the function is only called when needed.
+        if field_type == "link" and allowed_prefixes:
+            values = list(remove_prefix(values,allowed_prefixes))
 
         for value in values:
             try:
@@ -123,6 +138,9 @@ def check_options(
         ],
     }
 
+    # If undefined this is an empty list
+    allowed_prefixes = app.config.allowed_external_prefixes
+   
     for field_type, check_fields in checking_dict.items():
         for field_values, is_required in check_fields:
             validate_fields(
@@ -131,6 +149,7 @@ def check_options(
                 field_values,
                 required=is_required,
                 field_type=field_type,
+                allowed_prefixes=allowed_prefixes
             )
 
 

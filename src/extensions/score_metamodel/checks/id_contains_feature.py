@@ -37,8 +37,13 @@ def id_contains_feature(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
 
     # Get the part of the string after the first two underscores: the path
     feature = parts[1]
+   
+    dir_docname = os.path.dirname(str(need.get("docname", "")))
 
-    docname = os.path.dirname(str(need.get("docname", "")))
+    # If the 'rst' file is not in a directory, the above expression will be "". 
+    # Even if the need itself has a docname. That's why we have this logic here.
+    docname = dir_docname if dir_docname else need.get("docname", "")
+
     if feature not in docname:
         log.warning_for_option(
             need, "id", f"Feature '{feature}' not in path '{docname}'."
