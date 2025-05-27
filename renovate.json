@@ -1,15 +1,14 @@
 {
-    "extends": ["config:base"],
-    "enabledManagers": ["bazel"],
-    "regexManagers": [
-      {
-        "fileMatch": ["^MODULE\\.bazel$"],
-        "matchStrings": [
-          "bazel_dep\\(name\\s*=\\s*\"(?<depName>[^\"]+)\",\\s*version\\s*=\\s*\"(?<currentValue>[^\"]+)\""
-        ],
-        "datasourceTemplate": "github-releases",
-        "versioningTemplate": "semver",
-        "packageNameTemplate": "{{depName}}"
-      }
-    ]
-  }
+  "extends": ["config:base"],
+  "regexManagers": [
+    {
+      "fileMatch": ["^MODULE\\.bazel$"],
+      "matchStrings": [
+        "bazel_dep\\(name\\s*=\\s*\"(?<depName>[^\"]+)\",\\s*version\\s*=\\s*\"(?<currentValue>[^\"]+)\""
+      ],
+      "datasourceTemplate": "github-releases",
+      "versioningTemplate": "semver",
+      "packageNameTemplate": "{{depName}}"
+    }
+  ]
+}
