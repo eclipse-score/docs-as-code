@@ -42,6 +42,7 @@ def id_contains_feature(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
 
     # If the 'rst' file is not in a directory, the above expression will be "".
     # Even if the need itself has a docname. That's why we have this logic here.
+    # NOTE: This does not match the process requirements
     docname = dir_docname if dir_docname else need.get("docname", "")
 
     if feature not in docname:

@@ -55,13 +55,10 @@ def validate_fields(
 
     def remove_prefix(
         values: list[str], prefixes: list[str]
-    ) -> Generator[str, None, None]:
+    ) -> list[str]:
         # Memory and allocation wise better to use a generator here.
         # Removes any prefix allowed by configuration, if prefix is there.
-        return (
-            next((text.removeprefix(p) for p in prefixes if text.startswith(p)), text)
-            for text in values
-        )
+        return [word.removeprefix(p) for word in values for p in prefixes]
 
     for field, pattern in fields.items():
         raw_value: str | list[str] | None = need.get(field, None)
@@ -83,7 +80,7 @@ def validate_fields(
 
         # The filter ensures that the function is only called when needed.
         if field_type == "link" and allowed_prefixes:
-            values = list(remove_prefix(values, allowed_prefixes))
+            values = remove_prefix(values, allowed_prefixes)
 
         for value in values:
             try:
