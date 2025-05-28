@@ -66,10 +66,10 @@ Hello there
 
 .. toctree::
    :maxdepth: 1
-   :titlesonly:
+   :caption: Contents:
 
-   extension_guide
-   header_service
-   source_code_linker
-   rst_filebased_testing
-   metamodel
+   Metamodel <metamodel>
+   Filebased Testing <rst_filebased_testing>
+   Header Service <header_service>
+   Source Code Linker <source_code_linker>
+   Extension Guide <extension_guide>

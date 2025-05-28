@@ -39,6 +39,6 @@ Docs-as-Code
 
 .. toctree::
    :maxdepth: 1
-   :titlesonly:
+   :caption: Contents:
 
-   getting_started
+   Getting Started <getting_started>

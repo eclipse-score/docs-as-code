@@ -178,6 +178,7 @@ def _docs(name = "docs", suffix = "", format = "html", external_needs_deps = lis
         srcs = native.glob([
             "**/*.png",
             "**/*.svg",
+            "**/*.md",
             "**/*.rst",
             "**/*.html",
             "**/*.css",

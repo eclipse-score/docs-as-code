@@ -45,7 +45,7 @@ Welcome to the docs-as-code documentation, it is organized into several key sect
 .. dropdown:: Click to see details
 
     .. toctree::
-       :maxdepth: 1
+       :maxdepth: 2
        :titlesonly:
 
        example/index

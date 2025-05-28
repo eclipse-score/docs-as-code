@@ -95,7 +95,7 @@ bazel build //path/to/BUILD-file:docs_latest # documentation at 'bazel-bin/
 <br>
 <br>
 
-> ### *For the full example as well as more complex ones, check out the [example](../example/index.rst)*
+> ### *For the full example as well as more complex ones, check out the {doc}`example <../example/index>`
 
 --- 
 
@@ -144,17 +144,17 @@ Custom layout options for Sphinx HTML output are defined in `score_layout`
 ### Score Header Service
 
 Consistent header styling across documentation pages.
-[Learn more](extensions/header_service.md)
+{doc}`Learn more <extensions/header_service>`
 
 ### Score Metamodel
 
 Validation and checking of documentation structure against a defined Metamodel.
-[Learn more](extensions/metamodel.md)
+{doc}`Learn more <extensions/metamodel>`
 
 ### Score Source Code Linker
 
 Links between requirements documentation and source code implementations.
-[Learn more](extensions/source_code_linker.md)
+{doc}`Learn more <extensions/source_code_linker.md>
 
 ### Score PlantUML
 
