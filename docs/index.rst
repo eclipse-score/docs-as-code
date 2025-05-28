@@ -16,27 +16,40 @@ Project Documentation
 
 Welcome to the docs-as-code documentation, it is organized into several key sections.
 
-Quick Overview
---------------
 
-**Example**
-   See the rendered version of the files inside 'examples/linking-both/'.
+.. grid:: 1 1 3 3
+   :class-container: score-grid
 
-**FAQ**
-   Find answers to frequently asked questions and common issues.
+   .. grid-item-card::
 
-**Docs-as-Code Documentation**
-   Learn how to use this module with how-to guides and tutorials.
-   
-   * **Extensions**: Detailed documentation of available extensions within the docs-as-code module.
+      **Example**
+      ^^^
+      See the rendered version of the files inside :ref:`example`.
 
 
+   .. grid-item-card::
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+      **FAQ**
+      ^^^
+      Find answers to frequently asked questions and common issues.
 
-   example/index
-   faq/index
-   docs-as-code/index
+   .. grid-item-card::
+
+      **Docs-as-Code Documentation**
+      ^^^
+      Learn how to use this module with how-to guides and tutorials.
+      :ref:`docs-as-code`   
+
+
+
+.. dropdown:: Click to see details
+
+    .. toctree::
+       :maxdepth: 1
+       :titlesonly:
+
+       example/index
+       faq/index
+       docs-as-code/index
+       docs-as-code/extensions/index
 

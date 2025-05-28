@@ -1,3 +1,4 @@
+(extension-guide)=
 # Guide to Creating a Sphinx Extension
 
 This document will help you with the most important building blocks and provide all information needed to start writing your own Sphinx extension in the S-CORE project.
@@ -118,13 +119,13 @@ To create a Sphinx testing app, you need the same components as a normal Sphinx 
 In addition, you can provide anything else that you might need to test your specific extension.
 
 
-For examples on how to use and implement the sphinx testing app, you can check out the [source code linker](docs/_tooling/score_source_code_linker/tests)
+For examples on how to use and implement the sphinx testing app, you can check out the [source code linker](https://github.com/eclipse-score/docs-as-code/tree/main/src/extensions/score_source_code_linker/)
 
-Find everything related to testing within Bazel and how to add your test suite to it, [see here](/tools/testing/pytest/README.md)
+Find everything related to testing within Bazel and how to add your test suite to it, [see here](https://github.com/eclipse-score/tooling/blob/main/python_basics/score_pytest/README.md)
 
 Also look at already built extensions inside S-CORE. They can be found in their respective folders:
-- [score_metamodel](/docs/_tooling/extensions/score_metamodel/README.md)
-- [score_draw_uml_funcs](/docs/_tooling/extensions/score_draw_uml_funcs/__init__.py)
+- [score_metamodel](https://github.com/eclipse-score/docs-as-code/tree/main/src/extensions/score_metamodel)
+- [score_draw_uml_funcs](https://github.com/eclipse-score/docs-as-code/tree/main/src/extensions/score_draw_uml_funcs)
 
 ## Further Resources
 

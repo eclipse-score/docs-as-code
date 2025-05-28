@@ -57,7 +57,6 @@ source_suffix = {
 
 templates_path = ["templates"]
 
-html_extra_path = ['../../src']
 
 # Enable numref
 numfig = True

@@ -11,15 +11,34 @@
     # SPDX-License-Identifier: Apache-2.0
     # *******************************************************************************
 
-Docs-as-Code Documentation
-==========================
+.. _docs-as-code:
 
-Here you will find "how-to's" for using and implementing docs-as-code. 
-Documentations of the different extensions build into 'docs-as-code' will also be linked here.
+
+============
+Docs-as-Code 
+============
+
+.. grid:: 1 1 2 2
+   :class-container: score-grid
+
+   .. grid-item-card::
+
+      Getting started with docs-as-code
+      ^^^
+      Start here to learn about general usage of the Docs-as-Code Module
+      :ref:`Get started <getting_started>`.
+
+   .. grid-item-card::
+
+      Information about Extensions  
+      ^^^
+      Head over to our extensions to learn about what we offer and how to configure,extend or integrate them.
+      :ref:`See our extensions here <extensions>`
+
 
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+   :maxdepth: 1
+   :titlesonly:
 
-   extensions/index
+   getting_started

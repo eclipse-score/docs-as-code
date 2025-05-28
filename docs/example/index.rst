@@ -12,8 +12,13 @@
    # SPDX-License-Identifier: Apache-2.0
    # *******************************************************************************
 
+.. _example:
+
+
+=======
 Example
 =======
+
 This is a simple example of a documentation page using the `docs` tool.
 
 .. stkh_req:: TestTitle

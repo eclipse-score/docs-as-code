@@ -45,7 +45,7 @@ docs(
             ],
         },
     ],
-    source_dir = ["docs", "src"],
+    source_dir = "docs",
     source_files_to_scan_for_needs_links = [
         "//src:score_extension_files",
     ],

@@ -18,5 +18,5 @@ FAQ
 In this document you will find answers to frequently asked questions regarding docs-as-code and it's usage.
 
 
-TODO: Everthing
----------------
+TODO: Everything
+----------------
