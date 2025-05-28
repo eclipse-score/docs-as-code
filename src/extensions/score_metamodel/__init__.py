@@ -279,10 +279,13 @@ def parse_external_needs_sources(app: Sphinx, config):
                     if "json_path" in a.keys():
                         a["json_path"] = r + a["json_path"]
         app.config.needs_external_needs = x
+        # Making the prefixes uppercase here to match sphinx_needs, as it does this internally too.
+        app.config.allowed_external_prefixes = [z["id_prefix"].upper() for z in x]
 
 
 def setup(app: Sphinx) -> dict[str, str | bool]:
     app.add_config_value("external_needs_source", "", rebuild="env")
+    app.add_config_value("allowed_external_prefixes", [], rebuild="env")
     app.config.needs_id_required = True
     app.config.needs_id_regex = "^[A-Za-z0-9_-]{6,}"
 
