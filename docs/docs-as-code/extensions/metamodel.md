@@ -1,9 +1,10 @@
+(metamodel)=
 # score_metamodel
 
 This extension provides the Metamodel and corresponding checks of the SCORE
 project as a Sphinx extension.
 
-See [../README](../README.md) for more information on why we use extensions.
+See [Getting started](../getting_started) for more information on why we use extensions.
 
 ## Naming
 

@@ -1,3 +1,4 @@
+(source-code-linker)=
 # Source Link Extension Details
 
 A Sphinx extension for source code traceability for requirements. This extension works with the Bazel system and Sphinx-needs to provide automatic source code traceability.

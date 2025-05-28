@@ -1,4 +1,6 @@
-# Score-Docs-As-Code Module
+(getting_started)=
+# Using Docs-As-Code
+
 
 A Bazel module providing tools and extensions to enable and simplify documentation building via Sphinx
 
@@ -23,7 +25,7 @@ This module allows you to easily integrate Sphinx documentation generation into 
 Add the module to your `MODULE.bazel` file:
 
 ```starlark
-bazel_dep(name = "score_docs_as_code", version = "0.2.5")
+bazel_dep(name = "score_docs_as_code", version = "0.2.7")
 ```
 
 And make sure to also add the S-core Bazel registry to your `.bazelrc` file
@@ -93,7 +95,7 @@ bazel build //path/to/BUILD-file:docs_latest # documentation at 'bazel-bin/
 <br>
 <br>
 
-> ### *For the full example as well as more complex ones, check out the [examples directory](examples/)*
+> ### *For the full example as well as more complex ones, check out the {doc}`example <../example/index>`
 
 --- 
 
@@ -129,37 +131,37 @@ The `docs()` macro accepts the following arguments:
 | `visibility` | Bazel visibility | No | `None` |
 
 --- 
----
+
 
 ## Available Extensions
 This module includes several custom Sphinx extensions to enhance your documentation:
 
 ### Score Layout Extension
 
-Custom layout options for Sphinx HTML output.
-[Learn more](src/extensions/score_layout/README.md)
+Custom layout options for Sphinx HTML output are defined in `score_layout`
+<README missing>
 
 ### Score Header Service
 
 Consistent header styling across documentation pages.
-[Learn more](src/extensions/score_header_service/README.md)
+{doc}`Learn more <extensions/header_service>`
 
 ### Score Metamodel
 
 Validation and checking of documentation structure against a defined Metamodel.
-[Learn more](src/extensions/score_metamodel/README.md)
+{doc}`Learn more <extensions/metamodel>`
 
 ### Score Source Code Linker
 
 Links between requirements documentation and source code implementations.
-[Learn more](src/extensions/score_source_code_linker/README.md)
+{doc}`Learn more <extensions/source_code_linker.md>
 
 ### Score PlantUML
 
 Integration with PlantUML for generating diagrams.
-[Learn more](src/extensions/README.md)
+<README missing>
 
 ### Score Draw UML Functions
 
 Helper functions for creating UML diagrams.
-[Learn more](src/extensions/score_draw_uml_funcs/README.md)
+<README missing>
