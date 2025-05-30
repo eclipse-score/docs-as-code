@@ -34,9 +34,9 @@ babel==2.17.0 \
     # via
     #   pydata-sphinx-theme
     #   sphinx
-basedpyright==1.29.1 \
-    --hash=sha256:06bbe6c3b50ab4af20f80e154049477a50d8b81d2522eadbc9f472f2f92cd44b \
-    --hash=sha256:b7eb65b9d4aaeeea29a349ac494252032a75a364942d0ac466d7f07ddeacc786
+basedpyright==1.29.2 \
+    --hash=sha256:12c49186003b9f69a028615da883ef97035ea2119a9e3f93a00091b3a27088a6 \
+    --hash=sha256:f389e2997de33d038c5065fd85bff351fbdc62fa6d6371c7b947fc3bce8d437d
     # via -r /home/maxi/.cache/bazel/_bazel_maxi/f48cff2378be6375aa481f2a5c918c10/external/score_python_basics~/requirements.txt
 beautifulsoup4==4.13.4 \
     --hash=sha256:9bbbb14bfde9d79f38b8cd5f8c7c85f4b8f2523190ebed90e950a8dea4cb1c4b \
@@ -657,16 +657,16 @@ myst-parser==4.0.1 \
     --hash=sha256:5cfea715e4f3574138aecbf7d54132296bfd72bb614d31168f48c477a830a7c4 \
     --hash=sha256:9134e88959ec3b5780aedf8a99680ea242869d012e8821db3126d427edc9c95d
     # via -r src/requirements.in
-nodejs-wheel-binaries==22.15.0 \
-    --hash=sha256:01a3fe4d60477f93bf21a44219db33548c75d7fed6dc6e6f4c05cf0adf015609 \
-    --hash=sha256:0ab0fbcda2ddc8aab7db1505d72cb958f99324b3834c4543541a305e02bfe860 \
-    --hash=sha256:2bde1d8e00cd955b9ce9ee9ac08309923e2778a790ee791b715e93e487e74bfd \
-    --hash=sha256:51deaf13ee474e39684ce8c066dfe86240edb94e7241950ca789befbbbcbd23d \
-    --hash=sha256:867121ccf99d10523f6878a26db86e162c4939690e24cfb5bea56d01ea696c93 \
-    --hash=sha256:a54bb3fee9170003fa8abc69572d819b2b1540344eff78505fcc2129a9175596 \
-    --hash=sha256:aa16366d48487fff89446fb237693e777aa2ecd987208db7d4e35acc40c3e1b1 \
-    --hash=sha256:acdd4ef73b6701aab9fbe02ac5e104f208a5e3c300402fa41ad7bc7f49499fbf \
-    --hash=sha256:ff81aa2a79db279c2266686ebcb829b6634d049a5a49fc7dc6921e4f18af9703
+nodejs-wheel-binaries==22.16.0 \
+    --hash=sha256:2728972d336d436d39ee45988978d8b5d963509e06f063e80fe41b203ee80b28 \
+    --hash=sha256:2fffb4bf1066fb5f660da20819d754f1b424bca1b234ba0f4fa901c52e3975fb \
+    --hash=sha256:447ad796850eb52ca20356ad39b2d296ed8fef3f214921f84a1ccdad49f2eba1 \
+    --hash=sha256:4ae3cf22138891cb44c3ee952862a257ce082b098b29024d7175684a9a77b0c0 \
+    --hash=sha256:71f2de4dc0b64ae43e146897ce811f80ac4f9acfbae6ccf814226282bf4ef174 \
+    --hash=sha256:7f526ca6a132b0caf633566a2a78c6985fe92857e7bfdb37380f76205a10b808 \
+    --hash=sha256:986b715a96ed703f8ce0c15712f76fc42895cf09067d72b6ef29e8b334eccf64 \
+    --hash=sha256:d695832f026df3a0cf9a089d222225939de9d1b67f8f0a353b79f015aabbe7e2 \
+    --hash=sha256:dbfccbcd558d2f142ccf66d8c3a098022bf4436db9525b5b8d32169ce185d99e
     # via
     #   -r /home/maxi/.cache/bazel/_bazel_maxi/f48cff2378be6375aa481f2a5c918c10/external/score_python_basics~/requirements.txt
     #   basedpyright
@@ -729,9 +729,9 @@ numpy==2.2.5 \
     # via
     #   contourpy
     #   matplotlib
-packaging==24.2 \
-    --hash=sha256:09abb1bccd265c01f4a3aa3f7a7db064b36514d2cba19a2f694fe6150451a759 \
-    --hash=sha256:c228a6dc5e932d346bc5739379109d49e8853dd8223571c7c5b55260edc0b97f
+packaging==25.0 \
+    --hash=sha256:29572ef2b1f17581046b3a2227d5c611fb25ec70ca1ba8554b24b0e69331a484 \
+    --hash=sha256:d443872c98d677bf60f6a1f2f8c1cb748e8fe762d2bf9d3148b5599295b0fc4f
     # via
     #   -r /home/maxi/.cache/bazel/_bazel_maxi/f48cff2378be6375aa481f2a5c918c10/external/score_python_basics~/requirements.txt
     #   matplotlib
@@ -824,9 +824,9 @@ platformdirs==4.3.7 \
     --hash=sha256:a03875334331946f13c549dbd8f4bac7a13a50a895a0eb1e8c6a8ace80d40a94 \
     --hash=sha256:eb437d586b6a0986388f0d6f74aa0cde27b48d0e3d66843640bfb6bdcdb6e351
     # via esbonio
-pluggy==1.5.0 \
-    --hash=sha256:2cffa88e94fdc978c4c574f15f9e59b7f4201d439195c3715ca9e2486f1d0cf1 \
-    --hash=sha256:44e1ad92c8ca002de6377e165f3e0f1be63266ab4d554740532335b9d75ea669
+pluggy==1.6.0 \
+    --hash=sha256:7dcc130b76258d33b90f61b658791dede3486c3e6bfb003ee5c9bfb396dd22f3 \
+    --hash=sha256:e920276dd6813095e9377c0bc5566d94c932c33b27a3e3945d8389c374dd4746
     # via
     #   -r /home/maxi/.cache/bazel/_bazel_maxi/f48cff2378be6375aa481f2a5c918c10/external/score_python_basics~/requirements.txt
     #   pytest
