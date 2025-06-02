@@ -255,6 +255,7 @@ needs_types:
       security: "^(YES|NO)$"
       safety: "^(QM|ASIL_B|ASIL_D)$"
       status: "^(valid|invalid)$"
+      implemented: "^(YES|PARTIAL|NO)$"
     mandatory_links:
       satisfies: "^.*_req__.*$"
     optional_options:

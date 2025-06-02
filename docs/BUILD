@@ -31,6 +31,11 @@ docs(
                     "json_url": "https://eclipse-score.github.io/score/main/needs.json",
                     "id_prefix": "score_",
                 },
+                {
+                    "base_url": "https://eclipse-score.github.io/process_description/main",
+                    "json_url": "https://eclipse-score.github.io/process_description/main/needs.json",
+                    "id_prefix": "process_",
+                },
             ],
         },
         {
