@@ -15,11 +15,19 @@
 
 
 ============
-Docs-as-Code 
+Docs-as-Code
 ============
 
-.. grid:: 1 1 2 2
+.. grid:: 1 1 3 3
    :class-container: score-grid
+
+   .. grid-item-card::
+
+      Features/Requirements
+      ^^^
+      Detailed list of docs-as-code capabilities.
+      :ref:`Features <features>`. :ref:`Requirements <requirements>`.
+
 
    .. grid-item-card::
 
@@ -30,7 +38,7 @@ Docs-as-Code
 
    .. grid-item-card::
 
-      Information about Extensions  
+      Information about Extensions
       ^^^
       Head over to our extensions to learn about what we offer and how to configure,extend or integrate them.
       :ref:`See our extensions here <extensions>`
@@ -40,5 +48,8 @@ Docs-as-Code
 .. toctree::
    :maxdepth: 1
    :caption: Contents:
+   :hidden:
 
    Getting Started <getting_started>
+   Features <features>
+   Requirements <requirements>

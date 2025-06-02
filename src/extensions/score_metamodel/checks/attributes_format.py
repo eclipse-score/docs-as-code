@@ -11,10 +11,9 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
+from score_metamodel import CheckLogger, local_check
 from sphinx.application import Sphinx
 from sphinx_needs.data import NeedsInfoType
-
-from score_metamodel import CheckLogger, local_check
 
 
 # req-#id: gd_req__req__attr_uid
@@ -46,6 +45,7 @@ def check_id_format(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
         "workflow",
         "gd_chklst",
         "std_req",
+        "tool_req",
         "role",
         "doc_concept",
         "gd_temp",

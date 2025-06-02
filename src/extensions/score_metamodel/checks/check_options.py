@@ -11,10 +11,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 import re
-
-from sphinx.application import Sphinx
-from sphinx_needs.config import NeedType
-from sphinx_needs.data import NeedsInfoType
 from collections.abc import Generator
 
 from score_metamodel import (
@@ -22,6 +18,9 @@ from score_metamodel import (
     default_options,
     local_check,
 )
+from sphinx.application import Sphinx
+from sphinx_needs.config import NeedType
+from sphinx_needs.data import NeedsInfoType
 
 FieldCheck = tuple[dict[str, str], bool]
 CheckingDictType = dict[str, list[FieldCheck]]
