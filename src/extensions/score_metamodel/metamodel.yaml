@@ -227,7 +227,7 @@ needs_types:
       safety: "^(QM|ASIL_B|ASIL_D)$"
       status: "^(valid|invalid)$"
     mandatory_links:
-      satisfies: "^stkh_req__.*$"
+      satisfies: "^.*_req__.*$"
     optional_options:
       codelink: "^.*$"
       testlink: "^.*$"
