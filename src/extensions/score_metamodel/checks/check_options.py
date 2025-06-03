@@ -53,10 +53,10 @@ def validate_fields(
     :param field_type: A string indicating the field type ('option' or 'link').
     """
 
-    def remove_prefix(values: list[str], prefixes: list[str]) -> list[str]:
+    def remove_prefix(word: str, prefixes: list[str]) -> str:
         # Memory and allocation wise better to use a generator here.
         # Removes any prefix allowed by configuration, if prefix is there.
-        return [word.removeprefix(p) for word in values for p in prefixes]
+        return [word.removeprefix(prefix) for prefix in prefixes][0]
 
     for field, pattern in fields.items():
         raw_value: str | list[str] | None = need.get(field, None)
@@ -77,10 +77,10 @@ def validate_fields(
             values = [str(raw_value)]
 
         # The filter ensures that the function is only called when needed.
-        if field_type == "link" and allowed_prefixes:
-            values = remove_prefix(values, allowed_prefixes)
 
         for value in values:
+            if field_type == "link" and allowed_prefixes:
+                value = remove_prefix(value, allowed_prefixes)
             try:
                 if not re.match(pattern, value):
                     log.warning_for_option(
