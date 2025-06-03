@@ -22,9 +22,9 @@ extensions = [
 ]
 
 needs_external_needs = [
-  {
-    'base_url': 'https://eclipse-score.github.io/process_description/main/',
-    'json_url':  'https://eclipse-score.github.io/process_description/main/needs.json',
-    'id_prefix': 'process_',
-  }
+    {
+        "base_url": "https://eclipse-score.github.io/process_description/main/",
+        "json_url": "https://eclipse-score.github.io/process_description/main/needs.json",
+        "id_prefix": "process_",
+    }
 ]
