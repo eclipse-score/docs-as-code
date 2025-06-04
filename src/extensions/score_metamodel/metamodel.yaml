@@ -18,12 +18,12 @@ needs_types_base_options:
   # Custom semantic validation rules
   prohibited_words:
     # reqId PROCESS_gd_req__requirements_attr_title
-    title[stkh_req, feat_req, comp_req]:
+    title:
       - shall
       - must
       - will
     # reqId PROCESS_gd_req__req__attr_desc_weak
-    content[stkh_req, feat_req, comp_req]:
+    content:
       - just
       - about
       - really
