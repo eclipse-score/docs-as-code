@@ -40,7 +40,10 @@ docs(
         },
         {
             "suffix": "release",  # The version imported from MODULE.bazel
-            "target": ["@score_platform//docs:docs_needs", "@score_process//process:docs_needs_latest"],
+            "target": [
+                "@score_platform//docs:docs_needs",
+                "@score_process//process:docs_needs_latest",
+            ],
             "external_needs_info": [
                 {
                     "base_url": "https://eclipse-score.github.io/score/main",
