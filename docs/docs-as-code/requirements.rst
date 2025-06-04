@@ -45,14 +45,16 @@ Details
    :satisfies: PROCESS_gd_req__req__attr_uid
 
    Need IDs must:
-   - Start with the need type (e.g. ``feature__``)
-   - Include the feature name (for feature requirements)
-   - Have additional text
+
+   * Start with the need type (e.g. ``feature__``)
+   * Include the feature name (for feature requirements)
+   * Have additional text
 
    This applies to needs of type:
-   - Stakeholder requirements
-   - Feature requirements
-   - Component requirements
+
+   * Stakeholder requirements
+   * Feature requirements
+   * Component requirements
 
 ----------------------
 🧾 Title Requirements
@@ -65,14 +67,15 @@ Details
 
 
    Titles must not contain the words:
-   - ``shall``
-   - ``must``
-   - ``will``
+   * ``shall``
+   * ``must``
+   * ``will``
 
    Applies to:
-   - stakeholder requirements
-   - feature requirements
-   - component requirements
+
+   * stakeholder requirements
+   * feature requirements
+   * component requirements
 
    .. warning::
       Process requirement forbids only ``shall``.
@@ -91,6 +94,7 @@ Details
    Each requirement must contain a non-empty description.
 
    Applies to:
+
    * Stakeholder requirement
    * Feature requirement
    * Component requirement
@@ -121,13 +125,15 @@ Details
    :satisfies: PROCESS_gd_req__req__attr_type
 
    The ``reqtype`` attribute must be one of:
-   - Functional
-   - Interface
-   - Process
-   - Legal
-   - Non-Functional
+
+   * Functional
+   * Interface
+   * Process
+   * Legal
+   * Non-Functional
 
    Applies to:
+
    * Stakeholder requirement
    * Feature requirement
    * Component requirement
@@ -146,16 +152,18 @@ Details
       PROCESS_gd_req__arch_attr_security,
 
    The ``security`` attribute must be one of:
-   - YES
-   - NO
+
+   * YES
+   * NO
 
    It is mandatory for:
-   - stakeholder requirements
-   - feature requirements
-   - component requirements
-   - assumption of use requirements
-   - process requirements
-   - Tool Verification Report
+
+   * stakeholder requirements
+   * feature requirements
+   * component requirements
+   * assumption of use requirements
+   * process requirements
+   * Tool Verification Report
 
    .. warning::
       the architecture requirement does not talk about architecture elements, but about requirements.
@@ -170,17 +178,19 @@ Details
    :satisfies: PROCESS_gd_req__req__attr_safety
 
    Needs of type:
-   - stakeholder requirements
-   - feature requirements
-   - component requirements
-   - assumption of use requirements
-   - process requirements
-   - Tool Verification Report
+
+   * stakeholder requirements
+   * feature requirements
+   * component requirements
+   * assumption of use requirements
+   * process requirements
+   * Tool Verification Report
 
    shall have a automotive safety integrity level (``safety``) identifier:
-   - QM
-   - ASIL_B
-   - ASIL_D
+
+   * QM
+   * ASIL_B
+   * ASIL_D
 
    .. warning::
       the architecture requirement does not talk about architecture elements, but about requirements.
@@ -197,16 +207,19 @@ Details
      PROCESS_gd_req__arch__attr_status,
 
    Needs of type:
-   - stakeholder requirements
-   - feature requirements
-   - component requirements
-   - assumption of use requirements
-   - process requirements
-   - Tool Verification Report
+
+   * stakeholder requirements
+   * feature requirements
+   * component requirements
+   * assumption of use requirements
+   * process requirements
+   * Tool Verification Report
 
    shall have an ``status`` attribute, which must be one of:
-   - valid
-   - invalid
+
+   * valid
+   * invalid
+
    .. warning::
       the architecture requirement does not talk about architecture elements, but about requirements.
 
@@ -216,23 +229,61 @@ Details
    :satisfies: PROCESS_gd_req__tool__attr_status
 
    The Tool Verification Report shall have an ``status`` attribute, which must be one of:
-      * draft
-      * evaluated
-      * qualified
-      * released
-      * rejected
+
+   * draft
+   * evaluated
+   * qualified
+   * released
+   * rejected
 
 -------------------------
-🔗 "requirement covered"
+"requirement covered"
 -------------------------
 
 .. tool_req:: Enables marking requirements as "covered"
-   :id: tool_req__linking
+   :id: tool_req__covered
    :implemented: PARTIAL
-   :satisfies: PROCESS_gd_req__req__linkage
+   :satisfies: PROCESS_gd_req__attr_req_cov
    :status: invalid
 
    To be clarified.
+
+
+.. tool_req:: Support requirements test coverage
+   :id: tool_req__req_test_cov
+   :implemented: NO
+   :satisfies: PROCESS_gd_req__req__attr_test_covered
+
+   | Requirements shall allow for an attribute that shows if the requirement is covered by linked test cases.
+   | Allowed values:
+
+   * Yes 
+   * No
+
+-------------------------
+🔗 "requirement linkage"
+-------------------------
+
+.. TODO: Check if this is actually enforced / implemented as described. 
+.. tool_req:: Enables linking from/to requirements
+   :id: tool_req__linkage
+   :implemented: YES
+   :satisfies: PROCESS_gd_req__req__linkage
+
+   The tool shall allow and check for linking of requirements to specific levels.
+   In the table underneath you can see which requirement type can link to which other one
+    
+   .. table:: 
+      :widths: auto
+
+      ========================  ===========================
+      Requirement Type          Allowed Link Target
+      ========================  ===========================
+      Stakeholder               Feature Requirements
+      Feature Requirements      Component Requirements
+      Workflows                 Process Requirements
+      ========================  ===========================
+
 
 ----------------
 📎 Code Linkage
@@ -245,6 +296,16 @@ Details
 
    Source code can link to requirements.
 
+
+.. tool_req:: Supports linking to test cases
+   :id: tool_req__test_case_linkage
+   :implemented: NO
+   :satisfies: PROCESS_gd_req__req__attr_testlink
+
+   Docs-as-code shall provide a way to automatically link test cases to requirements
+
+
+
 --------------------------
 🏗 Requirement Level Types
 --------------------------
@@ -255,11 +316,12 @@ Details
    :satisfies: PROCESS_gd_req__req__attr_uid
 
    The tool supports the following requirement levels:
-   - Stakeholder requirements
-   - Feature requirements
-   - Component requirements
-   - Assumption of use requirements
-   - Process requirements
+
+   * Stakeholder requirements
+   * Feature requirements
+   * Component requirements
+   * Assumption of use requirements
+   * Process requirements
 
 
 .. needextend:: c.this_doc() and type == 'tool_req'
