@@ -78,7 +78,8 @@ def validate_fields(
 
         # The filter ensures that the function is only called when needed.
         for value in values:
-            value = remove_prefix(value, allowed_prefixes)
+            if allowed_prefixes:
+                value = remove_prefix(value, allowed_prefixes)
             try:
                 if not re.match(pattern, value):
                     log.warning_for_option(
