@@ -40,7 +40,7 @@ Details
       receive unique prefixes for their IDs.
 
 .. tool_req:: Enforces need ID scheme
-   :id: tool_req__attr_id
+   :id: tool_req__attr_id_scheme
    :implemented: YES
    :satisfies: PROCESS_gd_req__req__attr_uid
 
@@ -79,9 +79,9 @@ Details
 
 
 
---------------------------
+---------------------------
 📝 Description Requirements
---------------------------
+---------------------------
 
 .. tool_req:: Enforces presence of description
    :id: tool_req__attr_description
@@ -101,9 +101,8 @@ Details
       All those "applies to" need to be matched exactly against available types,
       e.g. "process requirement" is quite vague.
 
-------------------------
 🧠 Rationale Requirements
-------------------------
+-------------------------
 
 .. tool_req:: Enforces rationale attribute
    :id: tool_req__attr_rationale
@@ -112,9 +111,9 @@ Details
 
    Each stakeholder requirement must contain a non-empty ``rationale`` attribute.
 
--------------------------
+--------------------------
 🏷️ Requirement Type Rules
--------------------------
+--------------------------
 
 .. tool_req:: Enforces requirement type classification
    :id: tool_req__attr_type
