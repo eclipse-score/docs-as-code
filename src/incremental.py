@@ -65,6 +65,15 @@ if __name__ == "__main__":
     parser.add_argument(
         "--debug", help="Enable Debugging via debugpy", action="store_true"
     )
+    # optional GitHub user forwarded from the Bazel CLI
+    parser.add_argument(
+        "--github_user",
+        help="GitHub username to embed in the Sphinx build",
+    )
+    parser.add_argument(
+        "--github_repo",
+        help="GitHub repository to embed in the Sphinx build",
+    )
     args = parser.parse_args()
     if args.debug:
         debugpy.listen(("0.0.0.0", args.debug_port))
@@ -87,6 +96,14 @@ if __name__ == "__main__":
         get_env("CONF_DIRECTORY"),
         f"--define=external_needs_source={json.dumps(transform_env_str_to_dict(get_env('EXTERNAL_NEEDS_INFO')))}",
     ]
+
+    # configure sphinx build with GitHub user and repo from CLI
+    if args.github_user and args.github_repo:
+        base_arguments.append(f"-A=github_user={args.github_user}")
+        base_arguments.append(f"-A=github_repo={args.github_repo}")
+        base_arguments.append(f"-A=github_version=main")
+        base_arguments.append(f"-A=doc_path=docs")
+
     action = get_env("ACTION")
     if action == "live_preview":
         sphinx_autobuild_main(

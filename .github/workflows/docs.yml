@@ -38,5 +38,5 @@ jobs:
       id-token: write
 
     with:
-      bazel-target: "//docs:github_pages__release"
+      bazel-target: "//docs:incremental_release -- --github_user=${{ github.repository_owner }} --github_repo=${{ github.event.repository.name }}"
       retention-days: 3

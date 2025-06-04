@@ -14,7 +14,7 @@ from sphinx.application import Sphinx
 
 
 def return_html_theme_options(app: Sphinx) -> dict[str, object]:
-    return {
+    theme_options = {
         "navbar_align": "content",
         "header_links_before_dropdown": 5,
         "icon_links": [
@@ -28,19 +28,32 @@ def return_html_theme_options(app: Sphinx) -> dict[str, object]:
         # https://pydata-sphinx-theme.readthedocs.io/en/stable/user_guide/source-buttons.html#add-an-edit-button
         "use_edit_page_button": True,
         "collapse_navigation": True,
-        # Enable version switcher
-        "switcher": {
-            "json_url": (
-                f"https://{html_context['github_user']}.github.io/"
-                f"{html_context['github_repo']}/versions.json"
-            ),  # URL to JSON file, hardcoded for now
-            "version_match": app.config.release,
-        },
-        "navbar_end": ["theme-switcher", "navbar-icon-links", "version-switcher"],
         "logo": {
             "text": "Eclipse S-CORE",
         },
     }
+
+    # Enable version switcher if github_user and github_repo are provided via CLI
+    if (
+        app.config.html_context.get("github_user") != "dummy"
+        and app.config.html_context.get("github_repo") != "dummy"
+    ):
+        theme_options["switcher"] = {
+            "json_url": (
+                f"https://{app.config.html_context['github_user']}.github.io/"
+                f"{app.config.html_context['github_repo']}/versions.json"
+            ),  # URL to JSON file, hardcoded for now
+            "version_match": app.config.release,
+        }
+        theme_options["navbar_end"] = [
+            "theme-switcher",
+            "navbar-icon-links",
+            "version-switcher",
+        ]
+    else:
+        theme_options["navbar_end"] = ["theme-switcher", "navbar-icon-links"]
+
+    return theme_options
 
 
 html_theme = "pydata_sphinx_theme"  # "alabaster"
@@ -54,10 +67,16 @@ html_css_files = [
 # html_logo = "_assets/S-CORE_Logo_white.svg"
 
 
-html_context = {
-    # "github_url": "https://github.com", # or your GitHub Enterprise site
-    "github_user": "eclipse-score",
-    "github_repo": "score",
-    "github_version": "main",
-    "doc_path": "docs",
-}
+def return_html_context(app: Sphinx) -> dict[str, str]:
+    if not hasattr(app.config, "html_context") or (
+        not app.config.html_context.get("github_user")
+        and not app.config.html_context.get("github_repo")
+    ):
+        return {
+            # still required for use_edit_page_button and other elements except version switcher
+            "github_user": "dummy",
+            "github_repo": "dummy",
+            "github_version": "main",
+            "doc_path": "docs",
+        }
+    return app.config.html_context
