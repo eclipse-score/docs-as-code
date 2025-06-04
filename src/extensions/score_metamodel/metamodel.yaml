@@ -34,6 +34,34 @@ needs_types:
   ##############################################################################
   # Process Metamodel
   ##############################################################################
+  # TSF
+  tsf:
+    title: "TSF"
+    prefix: "tsf__"
+    mandatory_options:
+      id: "^tsf__[0-9a-zA-Z_-]*$"
+      status: "^(draft|valid)$"
+    optional_links:
+      links: "^.*$"
+
+  tenet:
+    title: "Tenet"
+    prefix: "tenet__"
+    mandatory_options:
+      id: "^tenet__[0-9a-zA-Z_-]*$"
+      status: "^(draft|valid)$"
+    optional_links:
+      links: "^.*$"
+
+  assertion:
+    title: "Assertion"
+    prefix: "^assertion__"
+    mandatory_options:
+      id: "assertion__[0-9a-zA-Z_-]*$"
+      status: "^(draft|valid)$"
+    optional_links:
+      links: "^.*$"
+
   # Standards
   std_req:
     title: "Standard Requirement"
@@ -156,6 +184,7 @@ needs_types:
       status: "^(valid|draft|invalid)$"
     optional_options:
       safety: "^(QM|ASIL_B|ASIL_D)$"
+      security: "^(YES|NO)$"
       realizes: "^wp__.+$"
   # The following 3 guidance requirements enforce the requirement structure and attributes:
   # req-Id: gd_req__req__structure
