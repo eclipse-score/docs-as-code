@@ -105,6 +105,8 @@ Details
       All those "applies to" need to be matched exactly against available types,
       e.g. "process requirement" is quite vague.
 
+
+-------------------------
 🧠 Rationale Requirements
 -------------------------
 
