@@ -77,9 +77,8 @@ def validate_fields(
             values = [str(raw_value)]
 
         # The filter ensures that the function is only called when needed.
-
         for value in values:
-            if field_type == "link" and allowed_prefixes:
+            if allowed_prefixes:
                 value = remove_prefix(value, allowed_prefixes)
             try:
                 if not re.match(pattern, value):
