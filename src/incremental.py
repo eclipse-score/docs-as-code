@@ -35,27 +35,6 @@ def get_env(name: str) -> str:
     return val
 
 
-def transform_env_str_to_dict(external_needs_source: str) -> list[dict[str, str]]:
-    """
-    Transforms the 'string' we get from 'docs.bzl' back into something we can parse easliy inside sphinx/python
-    !! HACK: This truly isn't great !!
-    """
-    transformed_dicts: list[dict[str, str]] = []
-    dict_list = [
-        x.split(",")
-        for x in external_needs_source.replace("]", "")
-        .replace("[", "")
-        .replace("{", "")
-        .split("}")
-    ]
-    for inner_dict in dict_list:
-        kv_splits = [kv.split(":", 1) for kv in inner_dict if len(inner_dict) > 1]
-        single_dict = {key_value[0]: key_value[1] for key_value in kv_splits}
-        if single_dict:
-            transformed_dicts.append(single_dict)
-    return transformed_dicts
-
-
 if __name__ == "__main__":
     # Add debuging functionality
     parser = argparse.ArgumentParser()
@@ -94,7 +73,7 @@ if __name__ == "__main__":
         "auto",
         "--conf-dir",
         get_env("CONF_DIRECTORY"),
-        f"--define=external_needs_source={json.dumps(transform_env_str_to_dict(get_env('EXTERNAL_NEEDS_INFO')))}",
+        f"--define=external_needs_source={get_env('EXTERNAL_NEEDS_INFO')}",
     ]
 
     # configure sphinx build with GitHub user and repo from CLI
