@@ -22,14 +22,13 @@ from pathlib import Path
 from ruamel.yaml import YAML
 from sphinx.application import Sphinx
 from sphinx_needs import logging
-from sphinx_needs.data import NeedsInfoType, SphinxNeedsData
-
+from sphinx_needs.data import NeedsInfoType, SphinxNeedsData, NeedsView
 from .log import CheckLogger
 
 logger = logging.get_logger(__name__)
 
 local_check_function = Callable[[Sphinx, NeedsInfoType, CheckLogger], None]
-graph_check_function = Callable[[Sphinx, list[NeedsInfoType], CheckLogger], None]
+graph_check_function = Callable[[Sphinx, NeedsView, CheckLogger], None]
 
 local_checks: list[local_check_function] = []
 graph_checks: list[graph_check_function] = []
@@ -78,9 +77,7 @@ def _run_checks(app: Sphinx, exception: Exception | None) -> None:
         return
 
     # Filter out external needs, as checks are only intended to be run on internal needs.
-    needs_all_needs = (
-        SphinxNeedsData(app.env).get_needs_view().filter_is_external(False)
-    )
+    needs_all_needs = SphinxNeedsData(app.env).get_needs_view()
 
     logger.debug(f"Running checks for {len(needs_all_needs)} needs")
 
@@ -95,9 +92,12 @@ def _run_checks(app: Sphinx, exception: Exception | None) -> None:
 
     enabled_local_checks = [c for c in local_checks if is_check_enabled(c)]
 
+    needs_local_needs = (
+        SphinxNeedsData(app.env).get_needs_view().filter_is_external(False)
+    )
     # Need-Local checks: checks which can be checked file-local, without a
     # graph of other needs.
-    for need in needs_all_needs.values():
+    for need in needs_local_needs.values():
         for check in enabled_local_checks:
             logger.debug(f"Running local check {check} for need {need['id']}")
             check(app, need, log)
@@ -105,10 +105,9 @@ def _run_checks(app: Sphinx, exception: Exception | None) -> None:
     # Graph-Based checks: These warnings require a graph of all other needs to
     # be checked.
 
-    needs = list(needs_all_needs.values())
     for check in [c for c in graph_checks if is_check_enabled(c)]:
         logger.debug(f"Running graph check {check} for all needs")
-        check(app, needs, log)
+        check(app, needs_all_needs, log)
 
     if log.has_warnings:
         log.warning("Some needs have issues. See the log for more information.")

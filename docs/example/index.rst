@@ -30,7 +30,7 @@ This is a rendered example of the 'examples/linking-both' folder using the `docs
 
    Some content to make sure we also can render this
    This is a link to an external need inside the 'score' documentation.
-   :need:`SCORE_gd_req__req__attr_safety`
+   :need:`SCORE_feat_req__kvs__config_file`. 
    Note how it starts with the defined prefix but in UPPERCASE. This comes from sphinx-needs, `see here <https://github.com/useblocks/sphinx-needs/blob/master/sphinx_needs/external_needs.py#L119>`_
 
 

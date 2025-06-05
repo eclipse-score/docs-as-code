@@ -15,7 +15,7 @@ from collections.abc import Callable
 from typing import Any, Literal
 
 from sphinx.application import Sphinx
-from sphinx_needs.data import NeedsInfoType
+from sphinx_needs.data import NeedsInfoType, NeedsView
 
 from score_metamodel import (
     CheckLogger,
@@ -130,19 +130,20 @@ def get_need_selection(
 @graph_check
 def check_metamodel_graph(
     app: Sphinx,
-    all_needs: list[NeedsInfoType],
+    all_needs: NeedsView,
     log: CheckLogger,
 ):
     graph_checks_global = app.config.graph_checks
     # Convert list to dictionary for easy lookup
-    needs_dict = {need["id"]: need for need in all_needs}
+    needs_dict_all = {need["id"]: need for need in all_needs.values()}
+    needs_local = list(all_needs.filter_is_external(False).values())
 
     # Iterate over all graph checks
     for check in graph_checks_global.items():
         apply, eval = check[1].values()
 
         # Get all needs that match the selection criteria
-        selected_needs = get_need_selection(all_needs, apply, log)
+        selected_needs = get_need_selection(needs_local, apply, log)
 
         for need in selected_needs:
             for parent_relation in list(eval.keys()):
@@ -153,7 +154,7 @@ def check_metamodel_graph(
                 parent_ids = need[parent_relation]
 
                 for parent_id in parent_ids:
-                    parent_need = needs_dict.get(parent_id)
+                    parent_need = needs_dict_all.get(parent_id)
                     if parent_need is None:
                         msg = f"Parent need `{parent_id}` not found in needs_dict."
                         log.warning_for_need(need, msg)
