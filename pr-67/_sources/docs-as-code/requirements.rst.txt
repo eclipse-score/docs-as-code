@@ -21,6 +21,57 @@ Details
    feature description.
 
 ----------------------
+📛 Types
+----------------------
+
+.. tool_req:: Requirements Types
+   :id: tool_req__req_types
+   :implemented: YES
+   :satisfies: PROCESS_gd_req__req__structure
+   :parent_has_problem: NO
+   :parent_covered: YES
+
+   dosc-as-code shall support following requirement types:
+
+   * Stakeholder requirement (stkh_req)
+   * Feature requirement (feat_req)
+   * Component requirement (comp_req)
+   * Assumption of use requirement (aou_req)
+   * Process requirement (gd_req)
+   * Tool requirement (tool_req)
+
+.. tool_req:: Architecture Types
+   :id: tool_req__req_types
+   :implemented: YES
+   :parent_has_problem: YES
+   :parent_covered: NO
+   :valid: NO
+
+   docs-as-code shall support following architecture types:
+
+   * Feature Architecture Static View (feat_arch_static) - does this count as an architecture type, or is it a view?
+   * Feature Architecture Dynamic View (feat_arch_dyn) - the views below have view in their type name!!
+   * Logical Architecture Interfaces (logic_arc_int) - That's a single interface and not "interfaces"? Or is it a view?
+   * Logical Architecture Interface Operation (logic_arc_int_op)
+   * Module Architecture Static View (mod_view_static)
+   * Module Architecture Dynamic View (mod_view_dyn)
+   * Component Architecture Static View (comp_arc_sta)
+   * Component Architecture Dynamic View (comp_arc_dyn)
+   * Component Architecture Interfaces (comp_arc_int)
+   * Component Architecture Interface Operation (comp_arc_int_op)
+   * Real interface?? (see gd_req__arch__build_blocks_corr)
+   * Feature Architecture Interface?? (see gd_req__arch__traceability)
+
+.. tool_req:: Tool Verification Report
+   :id: tool_req__req_types_tool_verification
+   :implemented: NO
+   :satisfies: PROCESS_gd_req__tool__attr_uid
+
+   .. not sure about that satisfies link
+
+   docs-as-code shall support the Tool Verification Report (tool_verification_report).
+
+----------------------
 📛 ID Rules
 ----------------------
 
@@ -30,6 +81,10 @@ Details
    :satisfies:
       PROCESS_gd_req__req__attr_uid,
       PROCESS_gd_req__tool__attr_uid,
+   :parent_has_problem: NO
+   :parent_covered: YES
+
+   .. (gd_req__req__attr_uid only covered together with tool_req__attr_id_scheme)
 
    Need IDs must be globally unique.
 
@@ -43,6 +98,13 @@ Details
    :id: tool_req__attr_id_scheme
    :implemented: YES
    :satisfies: PROCESS_gd_req__req__attr_uid
+   :parent_has_problem: YES
+
+   .. problem: how can requirements have a component name?
+
+   :parent_covered: YES
+
+   .. (together with tool_req__attr_id)
 
    Need IDs must:
 
@@ -50,11 +112,7 @@ Details
    * Include the feature name (for feature requirements)
    * Have additional text
 
-   This applies to needs of type:
-
-   * Stakeholder requirements
-   * Feature requirements
-   * Component requirements
+   This applies to all :need:`tool_req__req_types`
 
 ----------------------
 🧾 Title Requirements
@@ -64,22 +122,17 @@ Details
    :id: tool_req__attr_title
    :implemented: PARTIAL
    :satisfies: PROCESS_gd_req__requirements_attr_title
+   :parent_has_problem: NO
+   :parent_covered: NO
 
+   .. "The title of the requirement shall provide a short summary of the description" is not toolable
 
    Titles must not contain the words:
    * ``shall``
    * ``must``
    * ``will``
 
-   Applies to:
-
-   * stakeholder requirements
-   * feature requirements
-   * component requirements
-
-   .. warning::
-      Process requirement forbids only ``shall``.
-
+   This applies to all :need:`tool_req__req_types`
 
 
 ---------------------------
@@ -93,17 +146,7 @@ Details
 
    Each requirement must contain a non-empty description.
 
-   Applies to:
-
-   * Stakeholder requirement
-   * Feature requirement
-   * Component requirement
-   * Assumption of use requirement
-   * Process requirement
-
-   .. warning::
-      All those "applies to" need to be matched exactly against available types,
-      e.g. "process requirement" is quite vague.
+   This applies to all :need:`tool_req__req_types`
 
 
 -------------------------
@@ -126,7 +169,8 @@ Details
    :implemented: YES
    :satisfies: PROCESS_gd_req__req__attr_type
 
-   The ``reqtype`` attribute must be one of:
+   docs-as-code shall enforce that each requirement has an ``reqtype`` attribute, which
+   must be one of:
 
    * Functional
    * Interface
@@ -134,13 +178,7 @@ Details
    * Legal
    * Non-Functional
 
-   Applies to:
-
-   * Stakeholder requirement
-   * Feature requirement
-   * Component requirement
-   * Assumption of use requirement
-   * Process requirement
+   This applies to all :need:`tool_req__req_types`
 
 ----------------------------
 🔐 Security Classification
@@ -158,17 +196,9 @@ Details
    * YES
    * NO
 
-   It is mandatory for:
-
-   * stakeholder requirements
-   * feature requirements
-   * component requirements
-   * assumption of use requirements
-   * process requirements
-   * Tool Verification Report
-
-   .. warning::
-      the architecture requirement does not talk about architecture elements, but about requirements.
+   This applies to:
+   * all :need:`tool_req__req_types` except process requirements.
+   * all architecture elements (TODO; see https://github.com/eclipse-score/process_description/issues/34)
 
 
 .. TODO: Double check if this truly isn't implements
@@ -176,11 +206,11 @@ Details
    :id: tool_req__arch_security_linkage
    :implemented: NO
    :satisfies: PROCESS_gd_req__arch__linkage_security_trace
-    
-   The tool shall enforce that requirements that are security relevant e.g. `security == YES` can only be 
+
+   The tool shall enforce that requirements that are security relevant e.g. `security == YES` can only be
    linked to other requirements that are also security relevant.
 
-   This shall be enforced for the following requirement types: 
+   This shall be enforced for the following requirement types:
 
    * Architecture
 
@@ -188,19 +218,28 @@ Details
 🛡️ Safety Classification
 ---------------------------
 
-.. tool_req:: Enforces safety classification
+.. tool_req:: Enforces safety classification (requirements, architecture)
    :id: tool_req__attr_safety
    :implemented: YES
-   :satisfies: PROCESS_gd_req__req__attr_safety
+   :satisfies:
+      PROCESS_gd_req__req__attr_safety,
 
-   Needs of type:
+   Needs of type :need:`tool_req__req_types` shall have a automotive safety integrity
+   level (``safety``) identifier:
 
    * stakeholder requirements
    * feature requirements
    * component requirements
    * assumption of use requirements
    * process requirements
-   * Tool Verification Report
+
+.. tool_req:: Enforces safety classification (tool verification report)
+   :id: tool_req__attr_safety
+   :implemented: YES
+   :satisfies:
+      PROCESS_gd_req__tool__attr_safety_affected,
+
+   Needs of type Tool Verification Report
 
    shall have a automotive safety integrity level (``safety``) identifier:
 
@@ -208,22 +247,18 @@ Details
    * ASIL_B
    * ASIL_D
 
-   .. warning::
-      the architecture requirement does not talk about architecture elements, but about requirements.
-
-
 
 
 ----------------------------
 📈 Status Classification
 ----------------------------
 
-.. tool_req:: Enforces status classification (1st part)
+.. tool_req:: Enforces status classification (requirements, architecture)
    :id: tool_req__attr_status
    :implemented: YES
    :satisfies:
      PROCESS_gd_req__req__attr_status,
-     PROCESS_gd_req__arch__attr_status
+     PROCESS_gd_req__arch__attr_status,
 
    Needs of type:
 
@@ -232,7 +267,6 @@ Details
    * component requirements
    * assumption of use requirements
    * process requirements
-   * Tool Verification Report
 
    shall have an ``status`` attribute, which must be one of:
 
@@ -242,10 +276,12 @@ Details
    .. warning::
       the architecture requirement does not talk about architecture elements, but about requirements.
 
-.. tool_req:: Enforces status classification (tool Verification Report)
+.. tool_req:: Enforces status classification (tool verification report)
    :id: tool_req__attr_status_tool_verification
    :implemented: YES
    :satisfies: PROCESS_gd_req__tool__attr_status
+   :parent_has_problem: NO
+   :parent_covered: YES
 
    The Tool Verification Report shall have an ``status`` attribute, which must be one of:
 
@@ -262,13 +298,38 @@ Document Headers
 
 .. TODO: Check if this is partially fulfilled by header service
 .. tool_req:: Document author is mandatory and autofilled
-   :id: tool_req__doc_author_auto_fill
+   :id: tool_req__doc_attr_author
    :implemented: PARTIAL
    :satisfies: PROCESS_gd_req__doc_author
 
    The tool shall ensure that a document header has an 'author' attribute.
-   It furthermore shall implement an automatic way to deter Minn the authors. 
+   It furthermore shall implement an automatic way to deter Minn the authors.
    Commiters with more than 50% of content addition, shall be considerd as author.
+
+.. TODO: Better title
+.. tool_req:: Document shall contain and the tool should fill approver attribute
+   :id: tool_req__doc_attr_approver
+   :implemented: PARTIAL
+   :satisfies: PROCESS_gd_req__doc_approver
+   :parent_covered: NO
+   :parent_has_problem: NO
+
+   The tool shall ensure that the document header contains the 'approver' attribute.
+   This attribute shall be filled automatically and shall be the *last CODEOWNER APPROVER*
+   of the file that contains the document.
+
+.. TODO: better title
+.. TODO: This might be fully implemented, have to check
+.. tool_req:: Document reviewer is mandatory and filled
+   :id: tool_req__doc_attr_reviewer
+   :implemented: PARTIAL
+   :satisfies: PROCESS_gd_req__doc_reviewer
+   :parent_covered: NO
+   :parent_has_problem: NO
+
+   The tool shall ensure that the document header contains the 'reviewer' attribute.
+   This attribute shall contain all reviewers that are not mentioned under the 'approver'
+   attribute.
 
 
 -------------------------
@@ -279,6 +340,9 @@ Document Headers
    :id: tool_req__covered
    :implemented: PARTIAL
    :satisfies: PROCESS_gd_req__attr_req_cov
+
+   .. link kaputt^^
+
    :status: invalid
 
    To be clarified.
@@ -292,14 +356,14 @@ Document Headers
    | Requirements shall allow for an attribute that shows if the requirement is covered by linked test cases.
    | Allowed values:
 
-   * Yes 
+   * Yes
    * No
 
 -------------------------
 🔗 "requirement linkage"
 -------------------------
 
-.. TODO: Check if this is actually enforced / implemented as described. 
+.. TODO: Check if this is actually enforced / implemented as described.
 .. tool_req:: Enables linking from/to requirements
    :id: tool_req__linkage
    :implemented: YES
@@ -307,8 +371,8 @@ Document Headers
 
    The tool shall allow and check for linking of requirements to specific levels.
    In the table underneath you can see which requirement type can link to which other one
-    
-   .. table:: 
+
+   .. table::
       :widths: auto
 
       ========================  ===========================
@@ -328,8 +392,8 @@ Document Headers
 
    The tool shall allow and check for linking of requirements to specific elements.
    In the table underneath you can see which requirement type can link to which other one
-    
-   .. table:: 
+
+   .. table::
       :widths: auto
 
 
@@ -351,9 +415,9 @@ Document Headers
    :satisfies: PROCESS_gd_req__arch__linkage_requirement
 
    The tool shall enforce that requirements who have an ASIL_* **have** to be linked
-   against another requirements that have ASIL_* safety. 
+   against another requirements that have ASIL_* safety.
 
-   This shall be enforced for the following requirement types: 
+   This shall be enforced for the following requirement types:
 
    * Architecture
 
@@ -361,13 +425,13 @@ Document Headers
 .. TODO: Check if this is implemented or not.
 .. tool_req:: Restrict links for safety requirements
    :id: tool_req__req_saftety_link_trace
-   :implemented: 
+   :implemented:
    :satisfies: PROCESS_gd_req__arch__linkage_safety_trace
 
-   The tool shall ensure that requirements with safety != QM can only 
+   The tool shall ensure that requirements with safety != QM can only
    be linked against safety elements.
 
-   This shall be enforced for the following requirement types: 
+   This shall be enforced for the following requirement types:
 
    * Architecture
 
@@ -378,24 +442,24 @@ Document Headers
 .. TODO: Check implementation status
 .. tool_req:: Ensure Architecture -> Requirements Link
    :id: tool_req__arch__attr_fulfils
-   :implemented: 
+   :implemented:
    :satisfies: PROCESS_gd_req__arch__attr_fulfils
 
-   The tool shall enforce that each architecture element is linked to a requirement via 
+   The tool shall enforce that each architecture element is linked to a requirement via
    the 'fulfils' attribute/option.
 
 
 
 .. tool_req:: Ensure Architecture fulfillment links
    :id: tool_req__arch__traceability
-   :implemented: 
+   :implemented:
    :satisfies: PROCESS_gd_req__arch__traceability
 
-   The tool shall enforce that requirements are fulfilled by the architecture at the correct level. 
-   This means: 
-   
-   * Feature requirements can only be fulfilled by: feat_arch_* 
-   * Component requirements can only be fulfilled by: comp_arch_* 
+   The tool shall enforce that requirements are fulfilled by the architecture at the correct level.
+   This means:
+
+   * Feature requirements can only be fulfilled by: feat_arch_*
+   * Component requirements can only be fulfilled by: comp_arch_*
 
 
 
@@ -403,12 +467,12 @@ Document Headers
 Release related things
 ------------------------
 
-.. tool_req:: Store releases 
+.. tool_req:: Store releases
    :id: tool_req__req_release_storage
    :implemented: NO
    :satisfies: PROCESS_gd_req__workproducts_storage
 
-   The tool shall allow for a permanently saved release of the documentation as text documents including OSS tooling 
+   The tool shall allow for a permanently saved release of the documentation as text documents including OSS tooling
 
 
 .. I'm unsure if we need to track his here, as this is 'done' by Github?
@@ -423,14 +487,14 @@ Release related things
 Tool Verification Report
 ------------------------
 
-.. This maybe also satisfies 
+.. This maybe also satisfies
 .. tool_req:: Ensure mandatory attributes in tool verficiation report
    :id: tool_req__tool_rep_check_attr_mandatory
    :implemented: NO
    :satisfies: PROCESS_gd_req__tool__check_mandatory
 
    The tool shall enforce mandatory attributes in a tool verification report.
-   The attributes are the following: 
+   The attributes are the following:
 
    * status
    * UID
@@ -439,10 +503,24 @@ Tool Verification Report
 
 
 ----------------------
-Requirement Versioning
+Diagramm Related
 ----------------------
 
-.. tool_req:: 
+.. TODO: CHeck if all of it is implemented
+.. tool_req:: Support Diagramm drawing of architecture
+   :id: tool_req__arch_diag_draw
+   :implemented: YES
+   :satisfies: PROCESS_doc_concept__arch__process, PROCESS_gd_req__arch__viewpoints
+   :parent_covered: NO
+
+   The tool shall enable the creation of a diagramm the following views:
+
+   * Feature View & Component View:
+      *  Static View
+      *  Dynamic View
+      *  Interface View
+   * SW Module View
+   * Platform View
 
 
 ----------------
