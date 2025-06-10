@@ -21,7 +21,7 @@ Details
    feature description.
 
 ----------------------
-📛 Types
+🏗 Types
 ----------------------
 
 .. tool_req:: Requirements Types
@@ -47,7 +47,7 @@ Details
    :parent_covered: NO
    :valid: NO
 
-   docs-as-code shall support following architecture types:
+   docs-as-code shall support following architecture types ??
 
    * Feature Architecture Static View (feat_arch_static) - does this count as an architecture type, or is it a view?
    * Feature Architecture Dynamic View (feat_arch_dyn) - the views below have view in their type name!!
@@ -61,15 +61,6 @@ Details
    * Component Architecture Interface Operation (comp_arc_int_op)
    * Real interface?? (see gd_req__arch__build_blocks_corr)
    * Feature Architecture Interface?? (see gd_req__arch__traceability)
-
-.. tool_req:: Tool Verification Report
-   :id: tool_req__req_types_tool_verification
-   :implemented: NO
-   :satisfies: PROCESS_gd_req__tool__attr_uid
-
-   .. not sure about that satisfies link
-
-   docs-as-code shall support the Tool Verification Report (tool_verification_report).
 
 ----------------------
 📛 ID Rules
@@ -224,24 +215,8 @@ Details
    :satisfies:
       PROCESS_gd_req__req__attr_safety,
 
-   Needs of type :need:`tool_req__req_types` shall have a automotive safety integrity
-   level (``safety``) identifier:
-
-   * stakeholder requirements
-   * feature requirements
-   * component requirements
-   * assumption of use requirements
-   * process requirements
-
-.. tool_req:: Enforces safety classification (tool verification report)
-   :id: tool_req__attr_safety
-   :implemented: YES
-   :satisfies:
-      PROCESS_gd_req__tool__attr_safety_affected,
-
-   Needs of type Tool Verification Report
-
-   shall have a automotive safety integrity level (``safety``) identifier:
+   docs-as-code shall ensure that every element of type :need:`tool_req__req_types` shall have a automotive safety integrity
+   level (``safety``) attribute, which must be one of:
 
    * QM
    * ASIL_B
@@ -275,21 +250,6 @@ Details
 
    .. warning::
       the architecture requirement does not talk about architecture elements, but about requirements.
-
-.. tool_req:: Enforces status classification (tool verification report)
-   :id: tool_req__attr_status_tool_verification
-   :implemented: YES
-   :satisfies: PROCESS_gd_req__tool__attr_status
-   :parent_has_problem: NO
-   :parent_covered: YES
-
-   The Tool Verification Report shall have an ``status`` attribute, which must be one of:
-
-   * draft
-   * evaluated
-   * qualified
-   * released
-   * rejected
 
 
 -------------------------
@@ -483,24 +443,6 @@ Release related things
 
    The tool shall allow for two versions to be compared with each other and visualize the differences between those versions.
 
-------------------------
-Tool Verification Report
-------------------------
-
-.. This maybe also satisfies
-.. tool_req:: Ensure mandatory attributes in tool verficiation report
-   :id: tool_req__tool_rep_check_attr_mandatory
-   :implemented: NO
-   :satisfies: PROCESS_gd_req__tool__check_mandatory
-
-   The tool shall enforce mandatory attributes in a tool verification report.
-   The attributes are the following:
-
-   * status
-   * UID
-   * safety affected
-   * security affected
-
 
 ----------------------
 Diagramm Related
@@ -543,35 +485,55 @@ Diagramm Related
    Docs-as-code shall provide a way to automatically link test cases to requirements
 
 
+------------------------------
+🏗 Tool Verification Reports
+------------------------------
 
+.. they are so different, that they need their own section
 
---------------------------
-🏗 Requirement Level Types
---------------------------
+.. tool_req:: Tool Verification Report
+   :id: tool_req__docs_tvr_uid
+   :implemented: NO
+   :satisfies: PROCESS_gd_req__tool__attr_uid
 
-.. tool_req:: Supports multiple requirement levels
-   :id: tool_req__requirement_levels
+   .. not sure about that satisfies link
+
+   docs-as-code shall support the Tool Verification Report (tool_verification_report).
+
+.. tool_req:: tool verification report: Enforce safety classification
+   :id: tool_req__docs_tvr_safety
    :implemented: YES
-   :satisfies: PROCESS_gd_req__req__attr_uid
+   :satisfies: PROCESS_gd_req__tool__attr_safety_affected
 
-   The tool supports the following requirement levels:
+   docs-as-code shall ensure that every Tool Verification Report has a ``safety_affected`` attribute, which must be one of:
 
-   * Stakeholder requirements
-   * Feature requirements
-   * Component requirements
-   * Assumption of use requirements
-   * Process requirements
+   * YES
+   * NO
 
+.. tool_req:: tool verification report: enforce security classification
+   :id: tool_req__docs_tvr_security
+   :implemented: YES
+   :satisfies: PROCESS_gd_req__tool__attr_security_affected
 
-.. needextend:: c.this_doc() and type == 'tool_req'
-   :safety: QM
-   :security: NO
-   :reqtype: Functional
+   docs-as-code shall ensure that every Tool Verification Report has a ``security_affected`` attribute, which must be one of:
 
+   * YES
+   * NO
 
-.. needextend:: c.this_doc() and type == 'tool_req' and not status
-   :status: valid
+.. tool_req:: tool verification report: enforce status classification (tool verification report)
+   :id: tool_req__docs_tvr_status
+   :implemented: YES
+   :satisfies: PROCESS_gd_req__tool__attr_status
+   :parent_has_problem: NO
+   :parent_covered: YES
 
+   docs-as-code shall ensure each Tool Verification Report has an ``status`` attribute, which must be one of:
+
+   * draft
+   * evaluated
+   * qualified
+   * released
+   * rejected
 
 --------------------------
 🏗 Metamodel
@@ -616,3 +578,14 @@ Diagramm Related
    The docs-as-code metamodel shall enforce process requirements.
 
    .. note:: once implemented, move the satisfies-links to tool_req__metamodel. This list contains not fully implemented or non understood requirements.
+
+
+
+.. needextend:: c.this_doc() and type == 'tool_req'
+   :safety: QM
+   :security: NO
+   :reqtype: Functional
+
+
+.. needextend:: c.this_doc() and type == 'tool_req' and not status
+   :status: valid
