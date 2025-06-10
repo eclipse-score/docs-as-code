@@ -170,6 +170,20 @@ Details
    .. warning::
       the architecture requirement does not talk about architecture elements, but about requirements.
 
+
+.. TODO: Double check if this truly isn't implements
+.. tool_req:: Restrict linakge of security architecture elements
+   :id: tool_req__arch_security_linkage
+   :implemented: NO
+   :satisfies: PROCESS_gd_req__arch__linkage_security_trace
+    
+   The tool shall enforce that requirements that are security relevant e.g. `security == YES` can only be 
+   linked to other requirements that are also security relevant.
+
+   This shall be enforced for the following requirement types: 
+
+   * Architecture
+
 ---------------------------
 🛡️ Safety Classification
 ---------------------------
@@ -197,6 +211,9 @@ Details
    .. warning::
       the architecture requirement does not talk about architecture elements, but about requirements.
 
+
+
+
 ----------------------------
 📈 Status Classification
 ----------------------------
@@ -206,7 +223,7 @@ Details
    :implemented: YES
    :satisfies:
      PROCESS_gd_req__req__attr_status,
-     PROCESS_gd_req__arch__attr_status,
+     PROCESS_gd_req__arch__attr_status
 
    Needs of type:
 
@@ -287,6 +304,113 @@ Details
       ========================  ===========================
 
 
+
+.. tool_req:: Checking architectual requirement linking
+   :id: tool_req__arch_linkage
+   :implemented: NO
+   :satisfies: PROCESS_gd_req__arch__linkage_requirement_type
+
+   The tool shall allow and check for linking of requirements to specific elements.
+   In the table underneath you can see which requirement type can link to which other one
+    
+   .. table:: 
+      :widths: auto
+
+
+      ====================================  ==========================================
+      Requirement Type                      Allowed Link Target
+      ====================================  ==========================================
+      Functional feature requirements       Static / dynamic feature architecture
+      Interface feature requirements        Interface feature architecture
+      Functional component requirements     Static / dynamic component architecture
+      Interface component requirements      Interface component architecture
+      ====================================  ==========================================
+
+
+
+.. I don't think this is enforced for JUST architecture, but for all.
+.. tool_req:: Mandate links for safety requirements
+   :id: tool_req__req_saftety_link
+   :implemented: PARTIAL
+   :satisfies: PROCESS_gd_req__arch__linkage_requirement
+
+   The tool shall enforce that requirements who have an ASIL_* **have** to be linked
+   against another requirements that have ASIL_* safety. 
+
+   This shall be enforced for the following requirement types: 
+
+   * Architecture
+
+
+.. TODO: Check if this is implemented or not.
+.. tool_req:: Restrict links for safety requirements
+   :id: tool_req__req_saftety_link_trace
+   :implemented: 
+   :satisfies: PROCESS_gd_req__arch__linkage_safety_trace
+
+   The tool shall ensure that requirements with safety != QM can only 
+   be linked against safety elements.
+
+   This shall be enforced for the following requirement types: 
+
+   * Architecture
+
+
+
+
+.. TODO: Check implementation status
+.. tool_req:: Ensure Architecture -> Requirements Link
+   :id: tool_req__arch__attr_fulfils
+   :implemented: 
+   :satisfies: PROCESS_gd_req__arch__attr_fulfils
+
+   The tool shall enforce that each architecture element is linked to a requirement via 
+   the 'fulfils' attribute/option.
+
+
+
+.. tool_req:: Ensure Architecture fulfillment links
+   :id: tool_req__arch__traceability
+   :implemented: 
+   :satisfies: PROCESS_gd_req__arch__traceability
+
+   The tool shall enforce that requirements are fulfilled by the architecture at the correct level. 
+   This means: 
+   
+   * Feature requirements can only be fulfilled by: feat_arch_* 
+   * Component requirements can only be fulfilled by: comp_arch_* 
+
+
+
+
+
+
+------------------------
+Tool Verification Report
+------------------------
+
+.. This maybe also satisfies 
+.. tool_req:: Ensure mandatory attributes in tool verficiation report
+   :id: tool_req__tool_rep_check_attr_mandatory
+   :implemented: NO
+   :satisfies: PROCESS_gd_req__tool__check_mandatory
+
+   The tool shall enforce mandatory attributes in a tool verification report.
+   The attributes are the following: 
+
+   * status
+   * UID
+   * safety affected
+   * security affected
+
+
+----------------------
+Requirement Versioning
+----------------------
+
+.. tool_req:: 
+
+
 ----------------
 📎 Code Linkage
 ----------------
@@ -305,6 +429,7 @@ Details
    :satisfies: PROCESS_gd_req__req__attr_testlink
 
    Docs-as-code shall provide a way to automatically link test cases to requirements
+
 
 
 
