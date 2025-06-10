@@ -358,6 +358,7 @@ Details
 
 
 
+
 .. TODO: Check implementation status
 .. tool_req:: Ensure Architecture -> Requirements Link
    :id: tool_req__arch__attr_fulfils
@@ -382,8 +383,25 @@ Details
 
 
 
+------------------------
+Release related things
+------------------------
+
+.. tool_req:: Store releases 
+   :id: tool_req__req_release_storage
+   :implemented: NO
+   :satisfies: PROCESS_gd_req__workproducts_storage
+
+   The tool shall allow for a permanently saved release of the documentation as text documents including OSS tooling 
 
 
+.. I'm unsure if we need to track his here, as this is 'done' by Github?
+.. tool_req:: Enable visulisation of differences between versions
+   :id: tool_req__vis_ver_diff
+   :implemented: YES
+   :satisfies: PROCESS_gd_req__baseline_diff
+
+   The tool shall allow for two versions to be compared with each other and visualize the differences between those versions.
 
 ------------------------
 Tool Verification Report
