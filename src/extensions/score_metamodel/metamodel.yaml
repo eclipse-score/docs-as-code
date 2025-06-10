@@ -266,6 +266,8 @@ needs_types:
       testcovered: ^(YES|NO)$
       hash: ^.*$
       implemented: ^(YES|PARTIAL|NO)$
+      parent_covered: ^(YES|NO)$
+      parent_has_problem: ^(YES|NO)$
 
   aou_req:
     title: Assumption of Use

@@ -9,7 +9,7 @@ Overview
 
 .. needtable::
    :filter: c.this_doc()
-   :columns: id;title;implemented
+   :columns: id;title;satisfies;implemented;
    :style: datatables
 
 Details
@@ -254,6 +254,22 @@ Details
    * qualified
    * released
    * rejected
+
+
+-------------------------
+Document Headers
+-------------------------
+
+.. TODO: Check if this is partially fulfilled by header service
+.. tool_req:: Document author is mandatory and autofilled
+   :id: tool_req__doc_author_auto_fill
+   :implemented: PARTIAL
+   :satisfies: PROCESS_gd_req__doc_author
+
+   The tool shall ensure that a document header has an 'author' attribute.
+   It furthermore shall implement an automatic way to deter Minn the authors. 
+   Commiters with more than 50% of content addition, shall be considerd as author.
+
 
 -------------------------
 "requirement covered"
