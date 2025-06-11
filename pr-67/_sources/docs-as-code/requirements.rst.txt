@@ -12,6 +12,14 @@ Overview
    :columns: id;title;satisfies;implemented;
    :style: datatables
 
+
+.. needpie:: Implemented Tool Requirements
+  :labels: Yes, Partial, No
+
+  implemented == 'YES'
+  implemented == 'PARTIAL'
+  implemented == 'NO'
+
 Details
 ----------------------
 
@@ -40,12 +48,14 @@ Details
    * Process requirement (gd_req)
    * Tool requirement (tool_req)
 
+
 .. tool_req:: Architecture Types
-   :id: tool_req__req_types
+   :id: tool_req__req_types_temp
+   :satisfies: PROCESS_gd_req__req__structure
    :implemented: YES
    :parent_has_problem: YES
    :parent_covered: NO
-   :valid: NO
+   :status: invalid
 
    docs-as-code shall support following architecture types ??
 
@@ -253,21 +263,24 @@ Details
 
 
 -------------------------
-Document Headers
+📄 Document Headers
 -------------------------
 
-.. TODO: Check if this is partially fulfilled by header service
 .. tool_req:: Document author is mandatory and autofilled
    :id: tool_req__doc_attr_author
    :implemented: PARTIAL
    :satisfies: PROCESS_gd_req__doc_author
+   :parent_covered: NO
+   :parent_has_problem: NO
 
    The tool shall ensure that a document header has an 'author' attribute.
    It furthermore shall implement an automatic way to deter Minn the authors.
    Commiters with more than 50% of content addition, shall be considerd as author.
 
-.. TODO: Better title
-.. tool_req:: Document shall contain and the tool should fill approver attribute
+   .. note::
+      Header service treats the 'author' is the person who makes the PR. Not someone who has at least 50% of the content added
+
+.. tool_req:: Document approver is mandatory and filled
    :id: tool_req__doc_attr_approver
    :implemented: PARTIAL
    :satisfies: PROCESS_gd_req__doc_approver
@@ -278,8 +291,8 @@ Document Headers
    This attribute shall be filled automatically and shall be the *last CODEOWNER APPROVER*
    of the file that contains the document.
 
-.. TODO: better title
-.. TODO: This might be fully implemented, have to check
+
+
 .. tool_req:: Document reviewer is mandatory and filled
    :id: tool_req__doc_attr_reviewer
    :implemented: PARTIAL
@@ -291,22 +304,24 @@ Document Headers
    This attribute shall contain all reviewers that are not mentioned under the 'approver'
    attribute.
 
+   .. note::
+      The header service grabs 'all' reviewers not just the last one. Therefore this is not 100% fulfilled as written.
 
 -------------------------
-"requirement covered"
+📌 "requirement covered"
 -------------------------
 
 .. tool_req:: Enables marking requirements as "covered"
    :id: tool_req__covered
-   :implemented: PARTIAL
-   :satisfies: PROCESS_gd_req__attr_req_cov
+   :implemented: NO
+   :satisfies: PROCESS_gd_req__req__attr_req_cov
+    
+   The tool shall check requirement parents hashes versus the ones referenced in the requirement it self.  
+   It then shall fill out the 'requirement covered' attribute accordingly. 
 
-   .. link kaputt^^
-
-   :status: invalid
-
-   To be clarified.
-
+   The hashes referenced in the requirement and the parents hashes are the same => 'covered'. 
+   Otherwise => 'not covered'
+    
 
 .. tool_req:: Support requirements test coverage
    :id: tool_req__req_test_cov
@@ -323,11 +338,12 @@ Document Headers
 🔗 "requirement linkage"
 -------------------------
 
-.. TODO: Check if this is actually enforced / implemented as described.
 .. tool_req:: Enables linking from/to requirements
    :id: tool_req__linkage
-   :implemented: YES
+   :implemented: PARTIAL
    :satisfies: PROCESS_gd_req__req__linkage
+   :parent_covered: NO
+   :parent_has_problem: NO
 
    The tool shall allow and check for linking of requirements to specific levels.
    In the table underneath you can see which requirement type can link to which other one
@@ -342,7 +358,9 @@ Document Headers
       Feature Requirements      Component Requirements
       Workflows                 Process Requirements
       ========================  ===========================
-
+   
+   .. note::
+      It seems that 'stakeholder' has no allowed link, targets. 
 
 
 .. tool_req:: Checking architectual requirement linking
@@ -382,11 +400,12 @@ Document Headers
    * Architecture
 
 
-.. TODO: Check if this is implemented or not.
 .. tool_req:: Restrict links for safety requirements
    :id: tool_req__req_saftety_link_trace
-   :implemented:
+   :implemented: PARTIAL
    :satisfies: PROCESS_gd_req__arch__linkage_safety_trace
+   :parent_covered: NO
+   :parent_has_problem: NO
 
    The tool shall ensure that requirements with safety != QM can only
    be linked against safety elements.
@@ -394,26 +413,34 @@ Document Headers
    This shall be enforced for the following requirement types:
 
    * Architecture
+   
+   .. note::
+      Currently only enforced for 'feat_req' and 'comp_req' not the other architecture needs.
 
 
 
 
 
-.. TODO: Check implementation status
 .. tool_req:: Ensure Architecture -> Requirements Link
-   :id: tool_req__arch__attr_fulfils
-   :implemented:
+   :id: tool_req__arch_attr_fulfils
+   :implemented: PARTIAL
    :satisfies: PROCESS_gd_req__arch__attr_fulfils
+   :parent_covered: NO
+   :parent_has_problem: NO
 
    The tool shall enforce that each architecture element is linked to a requirement via
    the 'fulfils' attribute/option.
 
-
+   .. note:: 
+      Requriements: feat_arc_sta, comp_arc_sta, comp_arc_dyn do not have it enforced. 
+      !TODO: Are these all 'architecture reqs'? Should we enforce this on all then?
 
 .. tool_req:: Ensure Architecture fulfillment links
-   :id: tool_req__arch__traceability
-   :implemented:
+   :id: tool_req__arch_traceability
+   :implemented: PARTIAL
    :satisfies: PROCESS_gd_req__arch__traceability
+   :parent_covered: NO
+   :parent_has_problem: NO
 
    The tool shall enforce that requirements are fulfilled by the architecture at the correct level.
    This means:
@@ -421,10 +448,15 @@ Document Headers
    * Feature requirements can only be fulfilled by: feat_arch_*
    * Component requirements can only be fulfilled by: comp_arch_*
 
+   .. note::
+      The link is implemented the other way. We only allow 'feat_arch' to fulfill a feat_req.
+      Feat_req's do not get checked what 'fullfilled_back' requirement types they are linked to.
+      !TODO: Check if this is alright!
+
 
 
 ------------------------
-Release related things
+🚀 Release related things
 ------------------------
 
 .. tool_req:: Store releases
@@ -445,15 +477,16 @@ Release related things
 
 
 ----------------------
-Diagramm Related
+📊 Diagramm Related
 ----------------------
 
-.. TODO: CHeck if all of it is implemented
+.. This seems covered so far, but there might be edgecases that I have not seen/realised that aren't.
 .. tool_req:: Support Diagramm drawing of architecture
    :id: tool_req__arch_diag_draw
    :implemented: YES
    :satisfies: PROCESS_doc_concept__arch__process, PROCESS_gd_req__arch__viewpoints
-   :parent_covered: NO
+   :parent_covered: YES
+   :parent_has_problem: NO
 
    The tool shall enable the creation of a diagramm the following views:
 
@@ -466,7 +499,7 @@ Diagramm Related
 
 
 ----------------
-📎 Code Linkage
+🧬 Code Linkage
 ----------------
 
 .. tool_req:: Supports linking to source code
@@ -513,7 +546,7 @@ Diagramm Related
 .. tool_req:: tool verification report: enforce security classification
    :id: tool_req__docs_tvr_security
    :implemented: YES
-   :satisfies: PROCESS_gd_req__tool__attr_security_affected
+   :satisfies: PROCESS_gd_req__tool_attr_security_affected
 
    docs-as-code shall ensure that every Tool Verification Report has a ``security_affected`` attribute, which must be one of:
 
