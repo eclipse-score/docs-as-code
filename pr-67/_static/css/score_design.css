@@ -5,6 +5,10 @@
     color: #FFFFFF;
 }
 
+.score-grid a:hover:visited {
+    color: #e0e0e0;
+}
+
 .score-grid .sd-card-header  {
     background-color: var(--pst-color-secondary) !important;
     color: var(--pst-color-text-muted);

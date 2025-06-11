@@ -455,9 +455,9 @@ Details
 
 
 
-------------------------
+-------------------------
 🚀 Release related things
-------------------------
+-------------------------
 
 .. tool_req:: Store releases
    :id: tool_req__req_release_storage
