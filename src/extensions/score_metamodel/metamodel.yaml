@@ -585,7 +585,7 @@ graph_checks:
       include: comp_req, feat_req
       condition: status == valid
     check:
-  # req- Id: gd_req__req__linkage_architecture
+      # req- Id: gd_req__req__linkage_architecture
       satisfies: status == valid
   arch_safety_linkage:
     needs:
