@@ -130,13 +130,12 @@ The following types of requirements, documents, workflows, architecture elements
   :parent_has_problem: NO
   :parent_covered: YES: together with tool_req__docs_attr_id_scheme
 
-  Docs-As-Code shall ensure that Need IDs are globally unique.
+  Docs-as-Code shall enforce that all Need IDs are globally unique across all included
+  documentation instances.
 
   .. note::
-     Implementation note (in some sort of DR in the future??).
-     IDs are unique within one docs-instance, this is guaranteed by sphinx-needs.
-     Several docs-instances are always independent. When they are linked, they always
-     receive unique prefixes for their IDs.
+     Within each docs-instance (as managed by sphinx-needs), IDs are guaranteed to be unique.
+     When linking across instances, unique prefixes are automatically applied to maintain global uniqueness.
 
 .. tool_req:: Enforces need ID scheme
   :id: tool_req__docs_attr_id_scheme
@@ -145,15 +144,15 @@ The following types of requirements, documents, workflows, architecture elements
   :parent_has_problem: YES: Parents are not aligned
   :parent_covered: YES: together with tool_req__docs_attr_id
 
-  Docs-As-Code shall ensure that Need IDs adhere to the following:
+  Docs-as-Code shall enforce that Need IDs follow the following naming scheme:
 
-  * Start with the need type (e.g. ``feature__``)
-  * Include the feature name (for feature requirements)
-     * Requirement Attribute UID: some part of the feature tree / component acronym
-     * Architecture Attribute UID: last part of the feature tree
-  * Have additional text
+  * A prefix indicating the need type (e.g. `feature__`)
+  * A middle part indicating the hierarchical structure of the need:
+     * For requirements: a portion of the feature tree or a component acronym
+     * For architecture elements: the final part of the feature tree
+  * Additional descriptive text to ensure human readability
 
-  This applies to all :need:`tool_req__docs_req_types`
+  This scheme applies to all requirement types defined in :need:`tool_req__docs_req_types`.
 
 ----------------------
 🧾 Title Requirements
@@ -166,13 +165,13 @@ The following types of requirements, documents, workflows, architecture elements
   :parent_has_problem: NO
   :parent_covered: NO: Can not ensure summary
 
-  Docs-As-Code shall ensure that requirement titles must not contain the words:
+  Docs-as-Code shall enforce that requirement titles do not contain the following words:
 
   * shall
   * must
   * will
 
-  This applies to all :need:`tool_req__docs_req_types`
+  This rule applies to all requirement types defined in :need:`tool_req__docs_req_types`.
 
 ---------------------------
 📝 Description Requirements
@@ -183,9 +182,9 @@ The following types of requirements, documents, workflows, architecture elements
   :implemented: NO
   :parent_covered: NO: Can not cover 'ISO/IEC/IEEE/29148'
 
-  Each requirement must contain a description (content).
+  Docs-as-Code shall enforce that each requirement contains a description (content).
 
-  This applies to all :need:`tool_req__docs_req_types`
+  This rule applies to all requirement types defined in :need:`tool_req__docs_req_types`.
 
 -------------------------
 🧠 Rationale Requirements
@@ -197,7 +196,7 @@ The following types of requirements, documents, workflows, architecture elements
   :parent_covered: NO: Can not ensure correct reasoning
   :satisfies: PROCESS_gd_req__req__attr_rationale
 
-  Each stakeholder requirement must contain a non-empty ``rationale`` attribute.
+  Docs-as-Code shall enforce that each stakeholder requirement contains a ``rationale`` attribute.
 
 --------------------------
 🏷️ Requirement Type Rules
@@ -209,8 +208,8 @@ The following types of requirements, documents, workflows, architecture elements
   :parent_has_problem: YES: tool_req shall not have 'reqtype' as discussed
   :satisfies: PROCESS_gd_req__req__attr_type
 
-  Docs-As-Code shall enforce that each requirement has an ``reqtype`` attribute, which
-  must be one of:
+  Docs-as-Code shall enforce that each requirement has a ``reqtype`` attribute with one
+  of the following values:
 
   * Functional
   * Interface
@@ -218,7 +217,7 @@ The following types of requirements, documents, workflows, architecture elements
   * Legal
   * Non-Functional
 
-  This applies to all :need:`tool_req__docs_req_types`
+  This rule applies to all requirement types defined in :need:`tool_req__docs_req_types`.
 
 ----------------------------
 🔐 Security Classification
@@ -232,14 +231,14 @@ The following types of requirements, documents, workflows, architecture elements
      PROCESS_gd_req__arch_attr_security,
   :parent_has_problem: YES: Architecture talks about requirements. Parents not aligned.
 
-  The ``security`` attribute must be one of:
+  Docs-as-Code shall enforce that the ``security`` attribute has one of the following values:
 
   * YES
   * NO
 
-  This applies to:
+  This rule applies to:
 
-  * all :need:`tool_req__docs_req_types` except process requirements.
+  * all requirement types defined in :need:`tool_req__docs_req_types`, except process requirements.
   * all architecture elements (TODO; see https://github.com/eclipse-score/process_description/issues/34)
 
 .. tool_req:: Restrict linakge of security architecture elements
@@ -248,12 +247,8 @@ The following types of requirements, documents, workflows, architecture elements
   :parent_covered: YES
   :satisfies: PROCESS_gd_req__arch__linkage_security_trace
 
-  Docs-As-Code shall enforce that needs that are security relevant meaning ``security == YES`` can only be
-  linked to other needs that are also security relevant.
-
-  This shall be enforced when:
-
-  * both linked needs are architecture elements (TODO; see https://github.com/eclipse-score/process_description/issues/34)
+  Docs-as-Code shall enforce that architecture elements with ``security == YES`` are
+  only linked to other architecture elements with ``security == YES``.
 
 ---------------------------
 🛡️ Safety Classification
@@ -268,8 +263,9 @@ The following types of requirements, documents, workflows, architecture elements
      PROCESS_gd_req__req__attr_safety,
      PROCESS_gd_req__arch__attr_safety
 
-  Docs-As-Code shall ensure that every need of type :need:`tool_req__docs_req_types` (except Process Requirements) shall have a automotive safety integrity
-  level (``safety``) attribute, which must be one of:
+  Docs-as-Code shall enforce that every requirement of type
+  :need:`tool_req__docs_req_types` (except process requirements) and all architecture
+  elements have a ``safety`` attribute with one of the following values:
 
   * QM
   * ASIL_B
@@ -288,8 +284,9 @@ The following types of requirements, documents, workflows, architecture elements
     PROCESS_gd_req__req__attr_status,
     PROCESS_gd_req__arch__attr_status,
 
-  Docs-As-Code shall ensure that every need of type :need:`tool_req__docs_req_types` has a ``status`` attribute,
-  which must be one of:
+  Docs-as-Code shall enforce that every requirement of type
+  :need:`tool_req__docs_req_types` and all architecture elements have a ``status``
+  attribute with one of the following values:
 
   * valid
   * invalid
@@ -302,17 +299,18 @@ The following types of requirements, documents, workflows, architecture elements
 .. tool_req:: Mandatory Document attributes
   :id: tool_req__docs_doc_attr
   :implemented: NO
-  :satisfies: PROCESS_gd_req__doc_author, PROCESS_gd_req__doc_approver, PROCESS_gd_req__doc_reviewer
+  :satisfies:
+   PROCESS_gd_req__doc_author,
+   PROCESS_gd_req__doc_approver,
+   PROCESS_gd_req__doc_reviewer,
   :parent_covered: NO
   :parent_has_problem: YES: Which need type to use for this?
 
-  Docs-As-Code shall enforce that a 'document' need has the following attributes:
+  Docs-as-Code shall enforce that each document model element has the following attributes:
 
   * author
   * approver
   * reviewer
-
-.. NOTE: Header_service trigger/working execution is disabled
 .. tool_req:: Document author is autofilled
   :id: tool_req__docs_doc_autofill_author
   :implemented: NO
@@ -320,8 +318,11 @@ The following types of requirements, documents, workflows, architecture elements
   :parent_covered: YES: Together with tool_req__docs_doc_attr
   :parent_has_problem: YES: Unclear how the contribution % is counted and how to accumulate %. Committer is a reserved role.
 
-  Docs-As-Code shall implement an automatic way to determin the authors.
-  Authors with more than 50% of content addition, shall be considerd as author.
+  Docs-as-Code shall provide an automatic mechanism to determine document authors.
+
+  Contributors responsible for more than 50% of the content shall be considered the
+  document author. Contributors are accumulated over all commits to the file containing
+  the document.
 
 .. tool_req:: Document approver is autofilled
   :id: tool_req__docs_doc_attr_approver
@@ -330,9 +331,11 @@ The following types of requirements, documents, workflows, architecture elements
   :parent_covered: YES: Together with tool_req__docs_doc_attr
   :parent_has_problem: YES: CODEOWNER is Github specific.
 
-  Docs-As-Code shall implement an automatic way to determin the appropriate approver.
-  This attribute shall be the *last CODEOWNER APPROVER* of the file that contains the document.
-  The last PR touching the relevant file is the basis for this.
+  Docs-as-Code shall provide an automatic mechanism to determine the document approver.
+
+  The approver shall be the last approver listed in *CODEOWNERS* of the file containing
+  the document. The determination is based on the last pull request (PR) that modified
+  the relevant file.
 
 .. tool_req:: Document reviewer is autofilled
   :id: tool_req__docs_doc_attr_reviewer
@@ -341,9 +344,11 @@ The following types of requirements, documents, workflows, architecture elements
   :parent_covered: YES: Together with tool_req__docs_doc_attr
   :parent_has_problem: NO
 
-  Docs-As-Code shall implement an automatic way to determin the appropriate reviewers.
-  This attribute shall contain all reviewers that are not mentioned under the 'approver' attribute.
-  The last PR touching the relevant file is the basis for this.
+  Docs-as-Code shall provide an automatic mechanism to determine the document reviewers.
+
+  The ``reviewer`` attribute shall include all reviewers who are not listed as
+  approvers. The determination is based on the last pull request (PR) that modified the
+  relevant file.
 
 -------------------------
 📌 Requirement Covered
@@ -355,14 +360,18 @@ The following types of requirements, documents, workflows, architecture elements
   :satisfies: PROCESS_gd_req__req__attr_req_cov
   :parent_has_problem: YES: Not understandable what is required.
 
+  .. warning::
+     This requirement is not yet specified. The corresponding parent requirement is
+     unclear and must be clarified before a precise tool requirement can be defined.
+
 .. tool_req:: Support requirements test coverage
   :id: tool_req__docs_req_test_cov
   :implemented: PARTIAL
   :parent_covered: YES
   :satisfies: PROCESS_gd_req__req__attr_test_covered
 
-  Docs-As-Code shall allow for every need of type :need:`tool_req__docs_req_types` to have a ``testcovered`` attribute,
-  which must be one of:
+  Docs-As-Code shall allow for every need of type :need:`tool_req__docs_req_types` to
+  have a ``testcovered`` attribute, which must be one of:
 
   * Yes
   * No
@@ -378,44 +387,49 @@ The following types of requirements, documents, workflows, architecture elements
   :parent_covered: YES
   :parent_has_problem: YES: Mandatory for all needs? Especially some tool_reqs do not have a process requirement.
 
-  Docs-As-Code shall allow and check for linking of need to specific levels. This is done via the ``satisfies`` attribute.
-  In the table underneath you can see which need type can link to which other one
+  Docs-as-Code shall enforce that linking between model elements via the ``satisfies``
+  attribute follows defined rules.
+
+  Allowed source and target combinations are defined in the following table:
 
   .. table::
      :widths: auto
 
      ========================  ===========================
-     Requirement Type          Allowed Link Target
+     Requirement Type           Allowed Link Target
      ========================  ===========================
-     Feature Requirements      Stakeholder
-     Component Requirements    Feature Requirements
-     Process Requirements      Workflows
-     Tooling Requirements      Process Requirements
+     Feature Requirements       Stakeholder Requirements
+     Component Requirements     Feature Requirements
+     Process Requirements       Workflows
+     Tooling Requirements       Process Requirements
      ========================  ===========================
 
 .. tool_req:: Mandatory Architecture Attribute: fulfils
   :id: tool_req__docs_arch_attr_fulfils
   :implemented: YES
-  :satisfies: PROCESS_gd_req__arch__linkage_requirement_type, PROCESS_gd_req__arch__attr_fulfils, PROCESS_gd_req__arch__traceability
+  :satisfies:
+   PROCESS_gd_req__arch__linkage_requirement_type,
+   PROCESS_gd_req__arch__attr_fulfils,
+   PROCESS_gd_req__arch__traceability,
   :parent_covered: YES
   :parent_has_problem: YES: Attribute is not mentioned. Link direction not clear. Fig. 22 does not contain 'fulfils'
 
-  Docs-As-Code shall enforce and check for linking of need to specific levels. This is done via the ``fulfils`` attribute.
-  In the table underneath you can see which need type can link to which other one
+  Docs-as-Code shall enforce that linking via the ``fulfils`` attribute follows defined rules.
+
+  Allowed source and target combinations are defined in the following table:
 
   .. table::
      :widths: auto
 
      ====================================  ==========================================
-     Requirement Type                      Allowed Link Target
+     Requirement Type                       Allowed Link Target
      ====================================  ==========================================
-     Functional feature requirements       Static / dynamic feature architecture
-     Interface feature requirements        Interface feature architecture
-     Functional component requirements     Static / dynamic component architecture
-     Interface component requirements      Interface component architecture
+     Functional feature requirements        Static / dynamic feature architecture
+     Interface feature requirements         Interface feature architecture
+     Functional component requirements      Static / dynamic component architecture
+     Interface component requirements       Interface component architecture
      ====================================  ==========================================
 
-.. I don't think this is enforced for JUST architecture, but for all.
 .. tool_req:: Mandate links for safety requirements
   :id: tool_req__docs_req_saftety_link
   :implemented: PARTIAL
@@ -423,8 +437,10 @@ The following types of requirements, documents, workflows, architecture elements
   :parent_covered: YES
   :parent_has_problem: NO
 
-  Docs-As-Code shall enforce that architecture needs of type :need:`tool_req__docs_arch_types` that are safety relevant meaning ``safety != QM`` shall be
-  linked to needs of type :need:`tool_req__docs_req_types` that are also safety relevant.
+  Docs-as-Code shall enforce that architecture model elements of type
+  :need:`tool_req__docs_arch_types` with ``safety != QM`` are linked to requirements of
+  type :need:`tool_req__docs_req_types` that are also safety relevant (``safety !=
+  QM``).
 
 .. tool_req:: Restrict links for safety requirements
   :id: tool_req__docs_req_saftety_link_trace
@@ -433,14 +449,14 @@ The following types of requirements, documents, workflows, architecture elements
   :parent_covered: NO
   :parent_has_problem: NO
 
-  Docs-As-Code shall enforce that architecture needs of type :need:`tool_req__docs_arch_types` that are safety relevant meaning ``safety != QM`` can only be
-  linked to architecture needs of type :need:`tool_req__docs_arch_types` if they are also safety relevant.
+  Docs-as-Code shall enforce that architecture model elements of type
+  :need:`tool_req__docs_arch_types` with ``safety != QM`` can only be linked to other
+  architecture model elements with ``safety != QM``.
 
 ----------------------
 📊 Diagramm Related
 ----------------------
 
-.. This seems covered so far, but there might be edgecases that I have not seen/realised that aren't.
 .. tool_req:: Support Diagramm drawing of architecture
   :id: tool_req__docs_arch_diag_draw
   :implemented: YES
@@ -448,13 +464,13 @@ The following types of requirements, documents, workflows, architecture elements
   :parent_covered: YES
   :parent_has_problem: NO
 
-  Docs-As-Code shall enable the rendering of diagramms for the following views:
+  Docs-as-Code shall enable the rendering of diagrams for the following architecture views:
 
   * Feature View & Component View:
-     *  Static View
-     *  Dynamic View
-     *  Interface View
-  * SW Module View
+     * Static View
+     * Dynamic View
+     * Interface View
+  * Software Module View
   * Platform View
 
 ----------------
@@ -467,17 +483,21 @@ The following types of requirements, documents, workflows, architecture elements
   :parent_covered: YES
   :satisfies: PROCESS_gd_req__req__attr_impl
 
-  Docs-As-Code shall allow for Source code to link requirements.
-  A backlink pointing to the code in Github shall be generate in the output as an attribute of said requirement.
+  Docs-as-Code shall allow source code to link to requirements.
+
+  A backlink to the corresponding source code location in GitHub shall be generated in
+  the output as an attribute of the linked requirement.
 
 .. tool_req:: Supports linking to test cases
   :id: tool_req__docs_test_case_linkage
   :implemented: NO
-  :parent_has_problem: YES: Test vs Testcase unclear.
+  :parent_has_problem: YES: Test vs Testcase unclear. Direction unclear. Goal unclear.
   :satisfies: PROCESS_gd_req__req__attr_testlink
 
-  Docs-as-code shall allow for a testlink attribute in needs of type :need:`tool_req__docs_req_types`
-  It shall be possible to link testcases to needs via this attribute.
+  Docs-as-Code shall allow requirements of type :need:`tool_req__docs_req_types` to
+  include a ``testlink`` attribute.
+
+  This attribute shall support linking test cases to requirements.
 
 ------------------------------
 🏗 Tool Verification Reports
@@ -491,7 +511,8 @@ The following types of requirements, documents, workflows, architecture elements
   :parent_covered: NO
   :satisfies: PROCESS_gd_req__tool__attr_uid
 
-  Docs-As-Code shall support the Tool Verification Report (tool_verification_report).
+  Docs-as-Code shall support the definition and management of Tool Verification Reports
+  (``tool_verification_report``).
 
 .. tool_req:: tool verification report: Enforce safety classification
   :id: tool_req__docs_tvr_safety
@@ -500,7 +521,8 @@ The following types of requirements, documents, workflows, architecture elements
   :parent_covered: YES
   :satisfies: PROCESS_gd_req__tool__attr_safety_affected
 
-  Docs-As-Code shall ensure that every Tool Verification Report has a ``safety_affected`` attribute, which must be one of:
+  Docs-as-Code shall enforce that every Tool Verification Report includes a
+  ``safety_affected`` attribute with one of the following values:
 
   * YES
   * NO
@@ -512,7 +534,8 @@ The following types of requirements, documents, workflows, architecture elements
   :parent_has_problem: YES: Safety affected vs Safety relevance
   :satisfies: PROCESS_gd_req__tool_attr_security_affected
 
-  Docs-As-Code shall ensure that every Tool Verification Report has a ``security_affected`` attribute, which must be one of:
+  Docs-as-Code shall enforce that every Tool Verification Report includes a
+  ``security_affected`` attribute with one of the following values:
 
   * YES
   * NO
@@ -524,7 +547,8 @@ The following types of requirements, documents, workflows, architecture elements
   :parent_has_problem: NO
   :parent_covered: YES
 
-  Docs-As-Code shall ensure each Tool Verification Report has a ``status`` attribute, which must be one of:
+  Docs-as-Code shall enforce that every Tool Verification Report includes a ``status``
+  attribute with one of the following values:
 
   * draft
   * evaluated
