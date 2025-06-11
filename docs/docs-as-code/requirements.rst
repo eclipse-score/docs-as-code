@@ -72,6 +72,9 @@ Details
    * Real interface?? (see gd_req__arch__build_blocks_corr)
    * Feature Architecture Interface?? (see gd_req__arch__traceability)
 
+   .. warning::
+      This is a temporary requirement, used to gain some oversight.
+
 ----------------------
 📛 ID Rules
 ----------------------
