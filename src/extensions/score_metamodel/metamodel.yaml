@@ -253,21 +253,21 @@ needs_types:
     prefix: tool_req__
     mandatory_options:
       id: ^tool_req__[0-9a-z_]*$
-      reqtype: ^(Functional|Interface|Process|Legal|Non-Functional)$
       security: ^(YES|NO)$
       safety: ^(QM|ASIL_B|ASIL_D)$
       status: ^(valid|invalid)$
-    mandatory_links:
+    optional_links:
       satisfies: ^.*$
     optional_options:
+      reqtype: ^(Functional|Interface|Process|Legal|Non-Functional)$
       codelink: ^.*$
       testlink: ^.*$
       reqcovered: ^(YES|NO)$
       testcovered: ^(YES|NO)$
       hash: ^.*$
       implemented: ^(YES|PARTIAL|NO)$
-      parent_covered: ^(YES|NO)$
-      parent_has_problem: ^(YES|NO)$
+      parent_covered: ^.*$
+      parent_has_problem: ^.*$
 
   aou_req:
     title: Assumption of Use
