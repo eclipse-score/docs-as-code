@@ -62,7 +62,7 @@
     <script src="../_static/sphinx-needs/libs/html/datatables.min.js?v=8a4aee21"></script>
     <script src="../_static/sphinx-needs/libs/html/datatables_loader.js?v=a2cae175"></script>
     <script src="../_static/sphinx-needs/libs/html/sphinx_needs_collapse.js?v=dca66431"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'docs-as-code/requirements';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'product/requirements';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://eclipse-score.github.io/docs-as-code/versions.json';
@@ -73,7 +73,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Extensions" href="extensions/index.html" />
-    <link rel="prev" title="📘 S-CORE Docs-as-Code – Features" href="features.html" />
+    <link rel="prev" title="📘 S-CORE Docs-as-Code – Capabilities" href="capabilities.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.1" />
@@ -153,15 +153,15 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../example/index.html">
-    Example
+  <a class="nav-link nav-internal" href="../how-to-integrate/index.html">
+    How to Integrate
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../faq/index.html">
-    FAQ
+  <a class="nav-link nav-internal" href="../how-to-use/index.html">
+    How To Use
   </a>
 </li>
 
@@ -169,13 +169,6 @@
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="index.html">
     Docs-as-Code
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="extensions/index.html">
-    Extensions
   </a>
 </li>
 
@@ -289,15 +282,15 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../example/index.html">
-    Example
+  <a class="nav-link nav-internal" href="../how-to-integrate/index.html">
+    How to Integrate
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../faq/index.html">
-    FAQ
+  <a class="nav-link nav-internal" href="../how-to-use/index.html">
+    How To Use
   </a>
 </li>
 
@@ -305,13 +298,6 @@
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="index.html">
     Docs-as-Code
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="extensions/index.html">
-    Extensions
   </a>
 </li>
 
@@ -380,9 +366,9 @@
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="features.html">Features</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="capabilities.html">📘 S-CORE Docs-as-Code – Capabilities</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Requirements (Process Compliance)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extensions/index.html">Extensions</a></li>
 </ul>
 </div>
 </nav></div>
@@ -445,155 +431,12 @@
                   
   <section id="requirements-process-compliance">
 <span id="requirements"></span><h1>Requirements (Process Compliance)<a class="headerlink" href="#requirements-process-compliance" title="Link to this heading">#</a></h1>
-<section id="overview">
-<h2>📈 Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
+<section id="status">
+<h2>📈 Status<a class="headerlink" href="#status" title="Link to this heading">#</a></h2>
 <p>This section provides an overview of current process requirements and their implementation status.</p>
-<div class="pst-scrollable-table-container"><span id="needtable-docs-as-code/requirements-0"></span><table class="NEEDS_DATATABLES table" id="needtable-docs-as-code/requirements-0-table_node">
-<colgroup>
-<col style="width: 20.0%" />
-<col style="width: 60.0%" />
-<col style="width: 20.0%" />
-</colgroup>
-<thead>
-<tr class="row-odd"><th class="head"><p>ID</p></th>
-<th class="head"><p>Title</p></th>
-<th class="head"><p>Implemented</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="#tool_req__docs_arch_attr_fulfils">tool_req__docs_arch_attr_fulfils</a></p></td>
-<td class="needs_title"><p>Mandatory Architecture Attribute: fulfils</p></td>
-<td class="needs_implemented"><p>YES</p></td>
-</tr>
-<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="#tool_req__docs_arch_diag_draw">tool_req__docs_arch_diag_draw</a></p></td>
-<td class="needs_title"><p>Support Diagram drawing of architecture</p></td>
-<td class="needs_implemented"><p>YES</p></td>
-</tr>
-<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="#tool_req__docs_arch_security_linkage">tool_req__docs_arch_security_linkage</a></p></td>
-<td class="needs_title"><p>Restrict linakge of security architecture elements</p></td>
-<td class="needs_implemented"><p>NO</p></td>
-</tr>
-<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="#tool_req__docs_arch_types">tool_req__docs_arch_types</a></p></td>
-<td class="needs_title"><p>Types</p></td>
-<td class="needs_implemented"><p>YES</p></td>
-</tr>
-<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="#tool_req__docs_attr_description">tool_req__docs_attr_description</a></p></td>
-<td class="needs_title"><p>Enforces presence of description</p></td>
-<td class="needs_implemented"><p>NO</p></td>
-</tr>
-<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="#tool_req__docs_attr_id">tool_req__docs_attr_id</a></p></td>
-<td class="needs_title"><p>Enforces need ID uniqueness</p></td>
-<td class="needs_implemented"><p>YES</p></td>
-</tr>
-<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="#tool_req__docs_attr_id_scheme">tool_req__docs_attr_id_scheme</a></p></td>
-<td class="needs_title"><p>Enforces need ID scheme</p></td>
-<td class="needs_implemented"><p>YES</p></td>
-</tr>
-<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="#tool_req__docs_attr_impl">tool_req__docs_attr_impl</a></p></td>
-<td class="needs_title"><p>Supports linking to source code</p></td>
-<td class="needs_implemented"><p>PARTIAL</p></td>
-</tr>
-<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="#tool_req__docs_attr_rationale">tool_req__docs_attr_rationale</a></p></td>
-<td class="needs_title"><p>Enforces rationale attribute</p></td>
-<td class="needs_implemented"><p>YES</p></td>
-</tr>
-<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="#tool_req__docs_attr_safety">tool_req__docs_attr_safety</a></p></td>
-<td class="needs_title"><p>Enforces safety classification (requirements, architecture)</p></td>
-<td class="needs_implemented"><p>YES</p></td>
-</tr>
-<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="#tool_req__docs_attr_security">tool_req__docs_attr_security</a></p></td>
-<td class="needs_title"><p>Enforces security classification</p></td>
-<td class="needs_implemented"><p>YES</p></td>
-</tr>
-<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="#tool_req__docs_attr_status">tool_req__docs_attr_status</a></p></td>
-<td class="needs_title"><p>Enforces status classification (requirements, architecture)</p></td>
-<td class="needs_implemented"><p>YES</p></td>
-</tr>
-<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="#tool_req__docs_attr_title">tool_req__docs_attr_title</a></p></td>
-<td class="needs_title"><p>Enforces title wording rules</p></td>
-<td class="needs_implemented"><p>YES</p></td>
-</tr>
-<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="#tool_req__docs_attr_type">tool_req__docs_attr_type</a></p></td>
-<td class="needs_title"><p>Enforces requirement type classification</p></td>
-<td class="needs_implemented"><p>YES</p></td>
-</tr>
-<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="#tool_req__docs_covered">tool_req__docs_covered</a></p></td>
-<td class="needs_title"><p>Enables marking requirements as &quot;covered&quot;</p></td>
-<td class="needs_implemented"><p>NO</p></td>
-</tr>
-<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="#tool_req__docs_doc_attr">tool_req__docs_doc_attr</a></p></td>
-<td class="needs_title"><p>Mandatory Document attributes</p></td>
-<td class="needs_implemented"><p>NO</p></td>
-</tr>
-<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="#tool_req__docs_doc_attr_approver">tool_req__docs_doc_attr_approver</a></p></td>
-<td class="needs_title"><p>Document approver is autofilled</p></td>
-<td class="needs_implemented"><p>NO</p></td>
-</tr>
-<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="#tool_req__docs_doc_attr_reviewer">tool_req__docs_doc_attr_reviewer</a></p></td>
-<td class="needs_title"><p>Document reviewer is autofilled</p></td>
-<td class="needs_implemented"><p>NO</p></td>
-</tr>
-<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="#tool_req__docs_doc_autofill_author">tool_req__docs_doc_autofill_author</a></p></td>
-<td class="needs_title"><p>Document author is autofilled</p></td>
-<td class="needs_implemented"><p>NO</p></td>
-</tr>
-<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="#tool_req__docs_doc_types">tool_req__docs_doc_types</a></p></td>
-<td class="needs_title"><p>Document Types</p></td>
-<td class="needs_implemented"><p>YES</p></td>
-</tr>
-<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="#tool_req__docs_req_saftety_link">tool_req__docs_req_saftety_link</a></p></td>
-<td class="needs_title"><p>Mandate links for safety requirements</p></td>
-<td class="needs_implemented"><p>PARTIAL</p></td>
-</tr>
-<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="#tool_req__docs_req_saftety_link_trace">tool_req__docs_req_saftety_link_trace</a></p></td>
-<td class="needs_title"><p>Restrict links for safety requirements</p></td>
-<td class="needs_implemented"><p>PARTIAL</p></td>
-</tr>
-<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="#tool_req__docs_req_test_cov">tool_req__docs_req_test_cov</a></p></td>
-<td class="needs_title"><p>Support requirements test coverage</p></td>
-<td class="needs_implemented"><p>PARTIAL</p></td>
-</tr>
-<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="#tool_req__docs_req_types">tool_req__docs_req_types</a></p></td>
-<td class="needs_title"><p>Requirements Types</p></td>
-<td class="needs_implemented"><p>YES</p></td>
-</tr>
-<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="#tool_req__docs_satisfies">tool_req__docs_satisfies</a></p></td>
-<td class="needs_title"><p>Enables needs linking via satisfies attribute</p></td>
-<td class="needs_implemented"><p>PARTIAL</p></td>
-</tr>
-<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="#tool_req__docs_std_req_types">tool_req__docs_std_req_types</a></p></td>
-<td class="needs_title"><p>Standard Requirement Types</p></td>
-<td class="needs_implemented"><p>YES</p></td>
-</tr>
-<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="#tool_req__docs_test_case_linkage">tool_req__docs_test_case_linkage</a></p></td>
-<td class="needs_title"><p>Supports linking to test cases</p></td>
-<td class="needs_implemented"><p>NO</p></td>
-</tr>
-<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="#tool_req__docs_tvr_safety">tool_req__docs_tvr_safety</a></p></td>
-<td class="needs_title"><p>tool verification report: Enforce safety classification</p></td>
-<td class="needs_implemented"><p>NO</p></td>
-</tr>
-<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="#tool_req__docs_tvr_security">tool_req__docs_tvr_security</a></p></td>
-<td class="needs_title"><p>tool verification report: enforce security classification</p></td>
-<td class="needs_implemented"><p>NO</p></td>
-</tr>
-<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="#tool_req__docs_tvr_status">tool_req__docs_tvr_status</a></p></td>
-<td class="needs_title"><p>tool verification report: enforce status classification (tool verification report)</p></td>
-<td class="needs_implemented"><p>NO</p></td>
-</tr>
-<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="#tool_req__docs_tvr_uid">tool_req__docs_tvr_uid</a></p></td>
-<td class="needs_title"><p>Tool Verification Report</p></td>
-<td class="needs_implemented"><p>NO</p></td>
-</tr>
-<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="#tool_req__docs_wf_types">tool_req__docs_wf_types</a></p></td>
-<td class="needs_title"><p>Workflow Types</p></td>
-<td class="needs_implemented"><p>YES</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<img alt="../_images/need_pie_d1b8b.svg" id="needpie-docs-as-code/requirements-0" src="../_images/need_pie_d1b8b.svg" />
-<img alt="../_images/need_pie_19487.svg" id="needpie-docs-as-code/requirements-1" src="../_images/need_pie_19487.svg" />
+<img alt="Status v2" id="needbar-product/requirements-0" src="../_images/need_bar_9bc5e.svg" />
+<img alt="../_images/need_pie_7e2f4.svg" id="needpie-product/requirements-0" src="../_images/need_pie_7e2f4.svg" />
+<img alt="../_images/need_pie_ac951.svg" id="needpie-product/requirements-1" src="../_images/need_pie_ac951.svg" />
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>To stay consistent with sphinx-needs (the tool behind docs-as-code), we’ll use <cite>need</cite>
@@ -605,7 +448,7 @@ feature description.</p>
 <h2>🗂️ Common Attributes<a class="headerlink" href="#common-attributes" title="Link to this heading">#</a></h2>
 <section id="id">
 <h3>🔢 ID<a class="headerlink" href="#id" title="Link to this heading">#</a></h3>
-<div class="need_container docutils container" id="SNCB-e4372a93">
+<div class="need_container docutils container" id="SNCB-7e9a9aeb">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_req table" id="tool_req__docs_attr_id">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -625,6 +468,7 @@ feature description.</p>
 </tr>
 <tr class="meta row-even"><td class="meta" colspan="3"><div class="needs_meta_left line-block">
 <div class="line"><span><span><div class="line"><span class="needs_status"><span class="needs_label">status: </span><span class="needs_data">valid</span></span></div>
+<div class="line"><span class="needs_tags"><span class="needs_label">tags: </span><span class="needs_data_container"><span class="needs_data">Common Attributes</span></span></span></div>
 <div class="line"><span class="needs_implemented"><span class="needs_label">implemented: </span><span class="needs_data">YES</span></span></div>
 <div class="line"><span class="needs_parent_covered"><span class="needs_label">parent_covered: </span><span class="needs_data">YES: together with tool_req__docs_attr_id_scheme</span></span></div>
 <div class="line"><span class="needs_parent_has_problem"><span class="needs_label">parent_has_problem: </span><span class="needs_data">NO</span></span></div>
@@ -660,7 +504,7 @@ When linking across instances, unique prefixes are automatically applied to main
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-132b821e">
+<div class="need_container docutils container" id="SNCB-d5842b1e">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_req table" id="tool_req__docs_attr_id_scheme">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -680,6 +524,7 @@ When linking across instances, unique prefixes are automatically applied to main
 </tr>
 <tr class="meta row-even"><td class="meta" colspan="3"><div class="needs_meta_left line-block">
 <div class="line"><span><span><div class="line"><span class="needs_status"><span class="needs_label">status: </span><span class="needs_data">invalid</span></span></div>
+<div class="line"><span class="needs_tags"><span class="needs_label">tags: </span><span class="needs_data_container"><span class="needs_data">Common Attributes</span></span></span></div>
 <div class="line"><span class="needs_implemented"><span class="needs_label">implemented: </span><span class="needs_data">YES</span></span></div>
 <div class="line"><span class="needs_parent_covered"><span class="needs_label">parent_covered: </span><span class="needs_data">YES: together with tool_req__docs_attr_id</span></span></div>
 <div class="line"><span class="needs_parent_has_problem"><span class="needs_label">parent_has_problem: </span><span class="needs_data">YES: Parents are not aligned</span></span></div>
@@ -725,7 +570,7 @@ When linking across instances, unique prefixes are automatically applied to main
 </section>
 <section id="title">
 <h3>🏷️ Title<a class="headerlink" href="#title" title="Link to this heading">#</a></h3>
-<div class="need_container docutils container" id="SNCB-34518058">
+<div class="need_container docutils container" id="SNCB-cff7c1ab">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_req table" id="tool_req__docs_attr_title">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -745,12 +590,13 @@ When linking across instances, unique prefixes are automatically applied to main
 </tr>
 <tr class="meta row-even"><td class="meta" colspan="3"><div class="needs_meta_left line-block">
 <div class="line"><span><span><div class="line"><span class="needs_status"><span class="needs_label">status: </span><span class="needs_data">valid</span></span></div>
+<div class="line"><span class="needs_tags"><span class="needs_label">tags: </span><span class="needs_data_container"><span class="needs_data">Common Attributes</span></span></span></div>
 <div class="line"><span class="needs_implemented"><span class="needs_label">implemented: </span><span class="needs_data">YES</span></span></div>
 <div class="line"><span class="needs_parent_covered"><span class="needs_label">parent_covered: </span><span class="needs_data">NO: Can not ensure summary</span></span></div>
 <div class="line"><span class="needs_parent_has_problem"><span class="needs_label">parent_has_problem: </span><span class="needs_data">NO</span></span></div>
 <div class="line"><span class="needs_safety"><span class="needs_label">safety: </span><span class="needs_data">ASIL_B</span></span></div>
 <div class="line"><span class="needs_security"><span class="needs_label">security: </span><span class="needs_data">NO</span></span></div>
-<div class="line"><span class="needs_source_code_link"><span class="needs_label">source_code_link: </span><span class="needs_data"><a class="reference external" href="https://github.com/eclipse-score/score/blob/451f338b8dadaca8741b96003cee81ed0830cc59/src/extensions/score_metamodel/metamodel.yaml#L20">Source Code Link</a><em>; </em></span></span></div>
+<div class="line"><span class="needs_source_code_link"><span class="needs_label">source_code_link: </span><span class="needs_data"><a class="reference external" href="https://github.com/eclipse-score/score/blob/5ecbf4f0233b2ef3b4f3e1abb47dc56c663a2e65/src/extensions/score_metamodel/metamodel.yaml#L20">Source Code Link</a><em>; </em></span></span></div>
 </span></span></div>
 <div class="line"><span><div class="line">satisfies: <span class="satisfies"><span><a class="external_link reference external" href="https://eclipse-score.github.io/process_description/main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__requirements_attr_title">PROCESS_gd_req__requirements_attr_title</a></span></span></div>
 </span></div>
@@ -784,7 +630,7 @@ When linking across instances, unique prefixes are automatically applied to main
 </section>
 <section id="description">
 <h3>📝 Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h3>
-<div class="need_container docutils container" id="SNCB-c53c658a">
+<div class="need_container docutils container" id="SNCB-6911ef11">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_req table" id="tool_req__docs_attr_description">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -804,11 +650,12 @@ When linking across instances, unique prefixes are automatically applied to main
 </tr>
 <tr class="meta row-even"><td class="meta" colspan="3"><div class="needs_meta_left line-block">
 <div class="line"><span><span><div class="line"><span class="needs_status"><span class="needs_label">status: </span><span class="needs_data">valid</span></span></div>
+<div class="line"><span class="needs_tags"><span class="needs_label">tags: </span><span class="needs_data_container"><span class="needs_data">Common Attributes</span></span></span></div>
 <div class="line"><span class="needs_implemented"><span class="needs_label">implemented: </span><span class="needs_data">NO</span></span></div>
 <div class="line"><span class="needs_parent_covered"><span class="needs_label">parent_covered: </span><span class="needs_data">NO: Can not cover 'ISO/IEC/IEEE/29148'</span></span></div>
 <div class="line"><span class="needs_safety"><span class="needs_label">safety: </span><span class="needs_data">ASIL_B</span></span></div>
 <div class="line"><span class="needs_security"><span class="needs_label">security: </span><span class="needs_data">NO</span></span></div>
-<div class="line"><span class="needs_source_code_link"><span class="needs_label">source_code_link: </span><span class="needs_data"><a class="reference external" href="https://github.com/eclipse-score/score/blob/451f338b8dadaca8741b96003cee81ed0830cc59/src/extensions/score_metamodel/metamodel.yaml#L25">Source Code Link</a><em>; </em></span></span></div>
+<div class="line"><span class="needs_source_code_link"><span class="needs_label">source_code_link: </span><span class="needs_data"><a class="reference external" href="https://github.com/eclipse-score/score/blob/5ecbf4f0233b2ef3b4f3e1abb47dc56c663a2e65/src/extensions/score_metamodel/metamodel.yaml#L25">Source Code Link</a><em>; </em></span></span></div>
 </span></span></div>
 <div class="line"><span></span></div>
 </div>
@@ -836,11 +683,11 @@ When linking across instances, unique prefixes are automatically applied to main
 </section>
 <section id="security-classification">
 <h3>🔒 Security Classification<a class="headerlink" href="#security-classification" title="Link to this heading">#</a></h3>
-<div class="need_container docutils container" id="SNCB-c9d358d9">
+<div class="need_container docutils container" id="SNCB-0a23836b">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_req table" id="tool_req__docs_attr_security">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
-<div class="line"><span><span class="needs_title"><span class="needs_data">Enforces security classification</span></span></span></div>
+<div class="line"><span><span class="needs_title"><span class="needs_data">Security: enforce classification</span></span></span></div>
 </div>
 </td>
 <td class="head_center" colspan="2"><div class="needs_head line-block">
@@ -856,6 +703,7 @@ When linking across instances, unique prefixes are automatically applied to main
 </tr>
 <tr class="meta row-even"><td class="meta" colspan="3"><div class="needs_meta_left line-block">
 <div class="line"><span><span><div class="line"><span class="needs_status"><span class="needs_label">status: </span><span class="needs_data">invalid</span></span></div>
+<div class="line"><span class="needs_tags"><span class="needs_label">tags: </span><span class="needs_data_container"><span class="needs_data">Common Attributes</span></span></span></div>
 <div class="line"><span class="needs_implemented"><span class="needs_label">implemented: </span><span class="needs_data">YES</span></span></div>
 <div class="line"><span class="needs_parent_has_problem"><span class="needs_label">parent_has_problem: </span><span class="needs_data">YES: Architecture talks about requirements. Parents not aligned.</span></span></div>
 <div class="line"><span class="needs_safety"><span class="needs_label">safety: </span><span class="needs_data">ASIL_B</span></span></div>
@@ -893,11 +741,11 @@ When linking across instances, unique prefixes are automatically applied to main
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-633e6392">
+<div class="need_container docutils container" id="SNCB-8bfb464a">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_req table" id="tool_req__docs_arch_security_linkage">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
-<div class="line"><span><span class="needs_title"><span class="needs_data">Restrict linakge of security architecture elements</span></span></span></div>
+<div class="line"><span><span class="needs_title"><span class="needs_data">Security: Restrict linkage</span></span></span></div>
 </div>
 </td>
 <td class="head_center" colspan="2"><div class="needs_head line-block">
@@ -913,6 +761,7 @@ When linking across instances, unique prefixes are automatically applied to main
 </tr>
 <tr class="meta row-even"><td class="meta" colspan="3"><div class="needs_meta_left line-block">
 <div class="line"><span><span><div class="line"><span class="needs_status"><span class="needs_label">status: </span><span class="needs_data">valid</span></span></div>
+<div class="line"><span class="needs_tags"><span class="needs_label">tags: </span><span class="needs_data_container"><span class="needs_data">Common Attributesocs_arch_security_linkage</span></span></span></div>
 <div class="line"><span class="needs_implemented"><span class="needs_label">implemented: </span><span class="needs_data">NO</span></span></div>
 <div class="line"><span class="needs_parent_covered"><span class="needs_label">parent_covered: </span><span class="needs_data">YES</span></span></div>
 <div class="line"><span class="needs_safety"><span class="needs_label">safety: </span><span class="needs_data">ASIL_B</span></span></div>
@@ -944,11 +793,11 @@ only linked to other architecture elements with <code class="docutils literal no
 </section>
 <section id="safety-classification">
 <h3>🛡️ Safety Classification<a class="headerlink" href="#safety-classification" title="Link to this heading">#</a></h3>
-<div class="need_container docutils container" id="SNCB-60019f46">
+<div class="need_container docutils container" id="SNCB-117438fa">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_req table" id="tool_req__docs_attr_safety">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
-<div class="line"><span><span class="needs_title"><span class="needs_data">Enforces safety classification (requirements, architecture)</span></span></span></div>
+<div class="line"><span><span class="needs_title"><span class="needs_data">Safety: enforce classification</span></span></span></div>
 </div>
 </td>
 <td class="head_center" colspan="2"><div class="needs_head line-block">
@@ -964,6 +813,7 @@ only linked to other architecture elements with <code class="docutils literal no
 </tr>
 <tr class="meta row-even"><td class="meta" colspan="3"><div class="needs_meta_left line-block">
 <div class="line"><span><span><div class="line"><span class="needs_status"><span class="needs_label">status: </span><span class="needs_data">invalid</span></span></div>
+<div class="line"><span class="needs_tags"><span class="needs_label">tags: </span><span class="needs_data_container"><span class="needs_data">Common Attributes</span></span></span></div>
 <div class="line"><span class="needs_implemented"><span class="needs_label">implemented: </span><span class="needs_data">YES</span></span></div>
 <div class="line"><span class="needs_parent_covered"><span class="needs_label">parent_covered: </span><span class="needs_data">YES</span></span></div>
 <div class="line"><span class="needs_parent_has_problem"><span class="needs_label">parent_has_problem: </span><span class="needs_data">YES: Architecture talks about requirements. Parents not aligned</span></span></div>
@@ -1001,13 +851,13 @@ elements have a <code class="docutils literal notranslate"><span class="pre">saf
 </div>
 </div>
 </section>
-<section id="status">
-<h3>🚦 Status<a class="headerlink" href="#status" title="Link to this heading">#</a></h3>
-<div class="need_container docutils container" id="SNCB-7657d73a">
+<section id="id1">
+<h3>🚦 Status<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<div class="need_container docutils container" id="SNCB-198a9637">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_req table" id="tool_req__docs_attr_status">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
-<div class="line"><span><span class="needs_title"><span class="needs_data">Enforces status classification (requirements, architecture)</span></span></span></div>
+<div class="line"><span><span class="needs_title"><span class="needs_data">Status: enforce attribute</span></span></span></div>
 </div>
 </td>
 <td class="head_center" colspan="2"><div class="needs_head line-block">
@@ -1023,12 +873,13 @@ elements have a <code class="docutils literal notranslate"><span class="pre">saf
 </tr>
 <tr class="meta row-even"><td class="meta" colspan="3"><div class="needs_meta_left line-block">
 <div class="line"><span><span><div class="line"><span class="needs_status"><span class="needs_label">status: </span><span class="needs_data">invalid</span></span></div>
+<div class="line"><span class="needs_tags"><span class="needs_label">tags: </span><span class="needs_data_container"><span class="needs_data">Common Attributescs_attr_status</span></span></span></div>
 <div class="line"><span class="needs_implemented"><span class="needs_label">implemented: </span><span class="needs_data">YES</span></span></div>
 <div class="line"><span class="needs_parent_covered"><span class="needs_label">parent_covered: </span><span class="needs_data">YES</span></span></div>
 <div class="line"><span class="needs_parent_has_problem"><span class="needs_label">parent_has_problem: </span><span class="needs_data">YES: Architecture talks about requirements, currently we have valid|draft</span></span></div>
 <div class="line"><span class="needs_safety"><span class="needs_label">safety: </span><span class="needs_data">ASIL_B</span></span></div>
 <div class="line"><span class="needs_security"><span class="needs_label">security: </span><span class="needs_data">NO</span></span></div>
-<div class="line"><span class="needs_source_code_link"><span class="needs_label">source_code_link: </span><span class="needs_data"><a class="reference external" href="https://github.com/eclipse-score/score/blob/451f338b8dadaca8741b96003cee81ed0830cc59/src/extensions/score_metamodel/metamodel.yaml#L108">Source Code Link</a><em>; </em></span></span></div>
+<div class="line"><span class="needs_source_code_link"><span class="needs_label">source_code_link: </span><span class="needs_data"><a class="reference external" href="https://github.com/eclipse-score/score/blob/5ecbf4f0233b2ef3b4f3e1abb47dc56c663a2e65/src/extensions/score_metamodel/metamodel.yaml#L108">Source Code Link</a><em>; </em></span></span></div>
 </span></span></div>
 <div class="line"><span><div class="line">satisfies: <span class="satisfies"><span><a class="external_link reference external" href="https://eclipse-score.github.io/process_description/main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req__attr_status">PROCESS_gd_req__req__attr_status</a>, <a class="external_link reference external" href="https://eclipse-score.github.io/process_description/main/process_areas/architecture_design/guidance/architecture_process_reqs.html#gd_req__arch__attr_status">PROCESS_gd_req__arch__attr_status</a></span></span></div>
 </span></div>
@@ -1063,56 +914,7 @@ attribute with one of the following values:</p>
 </section>
 <section id="documents">
 <h2>📚 Documents<a class="headerlink" href="#documents" title="Link to this heading">#</a></h2>
-<div class="need_container docutils container" id="SNCB-6bfc17d0">
-<div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_req table" id="tool_req__docs_doc_types">
-<tbody>
-<tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
-<div class="line"><span><span class="needs_title"><span class="needs_data">Document Types</span></span></span></div>
-</div>
-</td>
-<td class="head_center" colspan="2"><div class="needs_head line-block">
-<div class="line"><span><span class="needs_status"><span class="needs_label">status: </span><span class="needs_data">valid</span></span></span></div>
-<div class="line"><span><span class="needs_security"><span class="needs_label">security: </span><span class="needs_data">NO</span></span></span></div>
-<div class="line"><span><span class="needs_safety"><span class="needs_label">safety: </span><span class="needs_data">ASIL_B</span></span></span></div>
-</div>
-</td>
-<td class="head_right" colspan="2"><div class="needs_head_right line-block">
-<div class="line"><span><span class="needs needs_collapse" id="target__show__meta"><span class="needs collapsed"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-down-circle"><circle cx="12" cy="12" r="10"></circle><polyline points="8 12 12 16 16 12"></polyline><line x1="12" y1="8" x2="12" y2="16"></line></svg></span><span class="needs visible collapse_is_hidden"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right-circle"><circle cx="12" cy="12" r="10"></circle><polyline points="12 16 16 12 12 8"></polyline><line x1="8" y1="12" x2="16" y2="12"></line></svg></span></span></span></div>
-</div>
-</td>
-</tr>
-<tr class="meta row-even"><td class="meta" colspan="3"><div class="needs_meta_left line-block">
-<div class="line"><span><span><div class="line"><span class="needs_status"><span class="needs_label">status: </span><span class="needs_data">valid</span></span></div>
-<div class="line"><span class="needs_implemented"><span class="needs_label">implemented: </span><span class="needs_data">YES</span></span></div>
-<div class="line"><span class="needs_safety"><span class="needs_label">safety: </span><span class="needs_data">ASIL_B</span></span></div>
-<div class="line"><span class="needs_security"><span class="needs_label">security: </span><span class="needs_data">NO</span></span></div>
-</span></span></div>
-<div class="line"><span></span></div>
-</div>
-</td>
-<td class="meta" colspan="3"></td>
-</tr>
-<tr class="content row-odd"><td class="content" colspan="6"><p>Docs-as-Code shall support the following document types:</p>
-<ul class="simple">
-<li><p>Generic Document (document)</p></li>
-</ul>
-</td>
-</tr>
-<tr class="footer row-even"><td class="footer_left" colspan="2"><div class="needs_footer_left line-block">
-<div class="line"><span><span class="needs-id"><a class="reference internal" href="#tool_req__docs_doc_types" title="tool_req__docs_doc_types">tool_req__docs_doc_types</a></span></span></div>
-</div>
-</td>
-<td class="footer" colspan="2"><div class="needs_footer line-block">
-<div class="line"><span><span class="needs_type_name"><span class="needs_data">Tool Requirement</span></span></span></div>
-</div>
-</td>
-<td class="footer_right" colspan="2"></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="need_container docutils container" id="SNCB-8c0eea42">
+<div class="need_container docutils container" id="SNCB-5ec9021a">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_req table" id="tool_req__docs_doc_attr">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -1132,6 +934,7 @@ attribute with one of the following values:</p>
 </tr>
 <tr class="meta row-even"><td class="meta" colspan="3"><div class="needs_meta_left line-block">
 <div class="line"><span><span><div class="line"><span class="needs_status"><span class="needs_label">status: </span><span class="needs_data">invalid</span></span></div>
+<div class="line"><span class="needs_tags"><span class="needs_label">tags: </span><span class="needs_data_container"><span class="needs_data">Documents</span></span></span></div>
 <div class="line"><span class="needs_implemented"><span class="needs_label">implemented: </span><span class="needs_data">NO</span></span></div>
 <div class="line"><span class="needs_parent_covered"><span class="needs_label">parent_covered: </span><span class="needs_data">NO</span></span></div>
 <div class="line"><span class="needs_parent_has_problem"><span class="needs_label">parent_has_problem: </span><span class="needs_data">YES: Which need type to use for this?</span></span></div>
@@ -1166,7 +969,7 @@ attribute with one of the following values:</p>
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-81134ded">
+<div class="need_container docutils container" id="SNCB-8f3fc394">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_req table" id="tool_req__docs_doc_autofill_author">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -1186,6 +989,7 @@ attribute with one of the following values:</p>
 </tr>
 <tr class="meta row-even"><td class="meta" colspan="3"><div class="needs_meta_left line-block">
 <div class="line"><span><span><div class="line"><span class="needs_status"><span class="needs_label">status: </span><span class="needs_data">invalid</span></span></div>
+<div class="line"><span class="needs_tags"><span class="needs_label">tags: </span><span class="needs_data_container"><span class="needs_data">Documents</span></span></span></div>
 <div class="line"><span class="needs_implemented"><span class="needs_label">implemented: </span><span class="needs_data">NO</span></span></div>
 <div class="line"><span class="needs_parent_covered"><span class="needs_label">parent_covered: </span><span class="needs_data">YES: Together with tool_req__docs_doc_attr</span></span></div>
 <div class="line"><span class="needs_parent_has_problem"><span class="needs_label">parent_has_problem: </span><span class="needs_data">YES: Unclear how the contribution % is counted and how to accumulate %. Committer is a reserved role.</span></span></div>
@@ -1218,7 +1022,7 @@ the document.</p>
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-b6025d8e">
+<div class="need_container docutils container" id="SNCB-4a953d92">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_req table" id="tool_req__docs_doc_attr_approver">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -1238,6 +1042,7 @@ the document.</p>
 </tr>
 <tr class="meta row-even"><td class="meta" colspan="3"><div class="needs_meta_left line-block">
 <div class="line"><span><span><div class="line"><span class="needs_status"><span class="needs_label">status: </span><span class="needs_data">invalid</span></span></div>
+<div class="line"><span class="needs_tags"><span class="needs_label">tags: </span><span class="needs_data_container"><span class="needs_data">Documents</span></span></span></div>
 <div class="line"><span class="needs_implemented"><span class="needs_label">implemented: </span><span class="needs_data">NO</span></span></div>
 <div class="line"><span class="needs_parent_covered"><span class="needs_label">parent_covered: </span><span class="needs_data">YES: Together with tool_req__docs_doc_attr</span></span></div>
 <div class="line"><span class="needs_parent_has_problem"><span class="needs_label">parent_has_problem: </span><span class="needs_data">YES: CODEOWNER is Github specific.</span></span></div>
@@ -1270,7 +1075,7 @@ the relevant file.</p>
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-c1b4a716">
+<div class="need_container docutils container" id="SNCB-de352de6">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_req table" id="tool_req__docs_doc_attr_reviewer">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -1290,6 +1095,7 @@ the relevant file.</p>
 </tr>
 <tr class="meta row-even"><td class="meta" colspan="3"><div class="needs_meta_left line-block">
 <div class="line"><span><span><div class="line"><span class="needs_status"><span class="needs_label">status: </span><span class="needs_data">valid</span></span></div>
+<div class="line"><span class="needs_tags"><span class="needs_label">tags: </span><span class="needs_data_container"><span class="needs_data">Documents</span></span></span></div>
 <div class="line"><span class="needs_implemented"><span class="needs_label">implemented: </span><span class="needs_data">NO</span></span></div>
 <div class="line"><span class="needs_parent_covered"><span class="needs_label">parent_covered: </span><span class="needs_data">YES: Together with tool_req__docs_doc_attr</span></span></div>
 <div class="line"><span class="needs_parent_has_problem"><span class="needs_label">parent_has_problem: </span><span class="needs_data">NO</span></span></div>
@@ -1323,11 +1129,11 @@ relevant file.</p>
 </div>
 </div>
 </section>
-<section id="id1">
-<h2>📋 Requirements<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<section id="id2">
+<h2>📋 Requirements<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
 <section id="requirement-types">
 <h3>🔢 Requirement Types<a class="headerlink" href="#requirement-types" title="Link to this heading">#</a></h3>
-<div class="need_container docutils container" id="SNCB-85e71f7c">
+<div class="need_container docutils container" id="SNCB-3527e502">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_req table" id="tool_req__docs_req_types">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -1347,12 +1153,13 @@ relevant file.</p>
 </tr>
 <tr class="meta row-even"><td class="meta" colspan="3"><div class="needs_meta_left line-block">
 <div class="line"><span><span><div class="line"><span class="needs_status"><span class="needs_label">status: </span><span class="needs_data">invalid</span></span></div>
+<div class="line"><span class="needs_tags"><span class="needs_label">tags: </span><span class="needs_data_container"><span class="needs_data">Requirements</span></span></span></div>
 <div class="line"><span class="needs_implemented"><span class="needs_label">implemented: </span><span class="needs_data">YES</span></span></div>
 <div class="line"><span class="needs_parent_covered"><span class="needs_label">parent_covered: </span><span class="needs_data">YES: Together with tool_req__docs_linkage</span></span></div>
 <div class="line"><span class="needs_parent_has_problem"><span class="needs_label">parent_has_problem: </span><span class="needs_data">YES: std_req not mentioned</span></span></div>
 <div class="line"><span class="needs_safety"><span class="needs_label">safety: </span><span class="needs_data">ASIL_B</span></span></div>
 <div class="line"><span class="needs_security"><span class="needs_label">security: </span><span class="needs_data">NO</span></span></div>
-<div class="line"><span class="needs_source_code_link"><span class="needs_label">source_code_link: </span><span class="needs_data"><a class="reference external" href="https://github.com/eclipse-score/score/blob/451f338b8dadaca8741b96003cee81ed0830cc59/src/extensions/score_metamodel/metamodel.yaml#L196">Source Code Link</a><em>; </em><a class="reference external" href="https://github.com/eclipse-score/score/blob/451f338b8dadaca8741b96003cee81ed0830cc59/src/extensions/score_metamodel/metamodel.yaml#L217">Source Code Link</a><em>; </em><a class="reference external" href="https://github.com/eclipse-score/score/blob/451f338b8dadaca8741b96003cee81ed0830cc59/src/extensions/score_metamodel/metamodel.yaml#L241">Source Code Link</a><em>; </em><a class="reference external" href="https://github.com/eclipse-score/score/blob/451f338b8dadaca8741b96003cee81ed0830cc59/src/extensions/score_metamodel/metamodel.yaml#L264">Source Code Link</a><em>; </em><a class="reference external" href="https://github.com/eclipse-score/score/blob/451f338b8dadaca8741b96003cee81ed0830cc59/src/extensions/score_metamodel/metamodel.yaml#L290">Source Code Link</a><em>; </em></span></span></div>
+<div class="line"><span class="needs_source_code_link"><span class="needs_label">source_code_link: </span><span class="needs_data"><a class="reference external" href="https://github.com/eclipse-score/score/blob/5ecbf4f0233b2ef3b4f3e1abb47dc56c663a2e65/src/extensions/score_metamodel/metamodel.yaml#L196">Source Code Link</a><em>; </em><a class="reference external" href="https://github.com/eclipse-score/score/blob/5ecbf4f0233b2ef3b4f3e1abb47dc56c663a2e65/src/extensions/score_metamodel/metamodel.yaml#L217">Source Code Link</a><em>; </em><a class="reference external" href="https://github.com/eclipse-score/score/blob/5ecbf4f0233b2ef3b4f3e1abb47dc56c663a2e65/src/extensions/score_metamodel/metamodel.yaml#L241">Source Code Link</a><em>; </em><a class="reference external" href="https://github.com/eclipse-score/score/blob/5ecbf4f0233b2ef3b4f3e1abb47dc56c663a2e65/src/extensions/score_metamodel/metamodel.yaml#L264">Source Code Link</a><em>; </em><a class="reference external" href="https://github.com/eclipse-score/score/blob/5ecbf4f0233b2ef3b4f3e1abb47dc56c663a2e65/src/extensions/score_metamodel/metamodel.yaml#L291">Source Code Link</a><em>; </em></span></span></div>
 </span></span></div>
 <div class="line"><span><div class="line">satisfies: <span class="satisfies"><span><a class="external_link reference external" href="https://eclipse-score.github.io/process_description/main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req__structure">PROCESS_gd_req__req__structure</a></span></span></div>
 </span></div>
@@ -1388,8 +1195,8 @@ relevant file.</p>
 </section>
 <section id="attributes">
 <h3>🏷️ Attributes<a class="headerlink" href="#attributes" title="Link to this heading">#</a></h3>
-<div class="need_container docutils container" id="SNCB-c3aa7b9a">
-<div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_req table" id="tool_req__docs_attr_rationale">
+<div class="need_container docutils container" id="SNCB-a090709b">
+<div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_req table" id="tool_req__docs_req_attr_rationale">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
 <div class="line"><span><span class="needs_title"><span class="needs_data">Enforces rationale attribute</span></span></span></div>
@@ -1408,6 +1215,7 @@ relevant file.</p>
 </tr>
 <tr class="meta row-even"><td class="meta" colspan="3"><div class="needs_meta_left line-block">
 <div class="line"><span><span><div class="line"><span class="needs_status"><span class="needs_label">status: </span><span class="needs_data">valid</span></span></div>
+<div class="line"><span class="needs_tags"><span class="needs_label">tags: </span><span class="needs_data_container"><span class="needs_data">Requirements</span></span></span></div>
 <div class="line"><span class="needs_implemented"><span class="needs_label">implemented: </span><span class="needs_data">YES</span></span></div>
 <div class="line"><span class="needs_parent_covered"><span class="needs_label">parent_covered: </span><span class="needs_data">NO: Can not ensure correct reasoning</span></span></div>
 <div class="line"><span class="needs_safety"><span class="needs_label">safety: </span><span class="needs_data">ASIL_B</span></span></div>
@@ -1422,7 +1230,7 @@ relevant file.</p>
 <tr class="content row-odd"><td class="content" colspan="6"><p>Docs-as-Code shall enforce that each stakeholder requirement contains a <code class="docutils literal notranslate"><span class="pre">rationale</span></code> attribute.</p></td>
 </tr>
 <tr class="footer row-even"><td class="footer_left" colspan="2"><div class="needs_footer_left line-block">
-<div class="line"><span><span class="needs-id"><a class="reference internal" href="#tool_req__docs_attr_rationale" title="tool_req__docs_attr_rationale">tool_req__docs_attr_rationale</a></span></span></div>
+<div class="line"><span><span class="needs-id"><a class="reference internal" href="#tool_req__docs_req_attr_rationale" title="tool_req__docs_req_attr_rationale">tool_req__docs_req_attr_rationale</a></span></span></div>
 </div>
 </td>
 <td class="footer" colspan="2"><div class="needs_footer line-block">
@@ -1435,8 +1243,8 @@ relevant file.</p>
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-d532ee75">
-<div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_req table" id="tool_req__docs_attr_type">
+<div class="need_container docutils container" id="SNCB-9281b30b">
+<div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_req table" id="tool_req__docs_req_attr_type">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
 <div class="line"><span><span class="needs_title"><span class="needs_data">Enforces requirement type classification</span></span></span></div>
@@ -1455,11 +1263,11 @@ relevant file.</p>
 </tr>
 <tr class="meta row-even"><td class="meta" colspan="3"><div class="needs_meta_left line-block">
 <div class="line"><span><span><div class="line"><span class="needs_status"><span class="needs_label">status: </span><span class="needs_data">invalid</span></span></div>
+<div class="line"><span class="needs_tags"><span class="needs_label">tags: </span><span class="needs_data_container"><span class="needs_data">Requirements</span></span></span></div>
 <div class="line"><span class="needs_implemented"><span class="needs_label">implemented: </span><span class="needs_data">YES</span></span></div>
 <div class="line"><span class="needs_parent_has_problem"><span class="needs_label">parent_has_problem: </span><span class="needs_data">YES: tool_req shall not have 'reqtype' as discussed</span></span></div>
 <div class="line"><span class="needs_safety"><span class="needs_label">safety: </span><span class="needs_data">ASIL_B</span></span></div>
 <div class="line"><span class="needs_security"><span class="needs_label">security: </span><span class="needs_data">NO</span></span></div>
-<div class="line"><span class="needs_source_code_link"><span class="needs_label">source_code_link: </span><span class="needs_data"><a class="reference external" href="https://github.com/eclipse-score/score/blob/451f338b8dadaca8741b96003cee81ed0830cc59/src/extensions/score_metamodel/metamodel.yaml#L202">Source Code Link</a><em>; </em><a class="reference external" href="https://github.com/eclipse-score/score/blob/451f338b8dadaca8741b96003cee81ed0830cc59/src/extensions/score_metamodel/metamodel.yaml#L224">Source Code Link</a><em>; </em><a class="reference external" href="https://github.com/eclipse-score/score/blob/451f338b8dadaca8741b96003cee81ed0830cc59/src/extensions/score_metamodel/metamodel.yaml#L247">Source Code Link</a><em>; </em><a class="reference external" href="https://github.com/eclipse-score/score/blob/451f338b8dadaca8741b96003cee81ed0830cc59/src/extensions/score_metamodel/metamodel.yaml#L277">Source Code Link</a><em>; </em><a class="reference external" href="https://github.com/eclipse-score/score/blob/451f338b8dadaca8741b96003cee81ed0830cc59/src/extensions/score_metamodel/metamodel.yaml#L296">Source Code Link</a><em>; </em></span></span></div>
 </span></span></div>
 <div class="line"><span><div class="line">satisfies: <span class="satisfies"><span><a class="external_link reference external" href="https://eclipse-score.github.io/process_description/main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req__attr_type">PROCESS_gd_req__req__attr_type</a></span></span></div>
 </span></div>
@@ -1480,7 +1288,7 @@ of the following values:</p>
 </td>
 </tr>
 <tr class="footer row-even"><td class="footer_left" colspan="2"><div class="needs_footer_left line-block">
-<div class="line"><span><span class="needs-id"><a class="reference internal" href="#tool_req__docs_attr_type" title="tool_req__docs_attr_type">tool_req__docs_attr_type</a></span></span></div>
+<div class="line"><span><span class="needs-id"><a class="reference internal" href="#tool_req__docs_req_attr_type" title="tool_req__docs_req_attr_type">tool_req__docs_req_attr_type</a></span></span></div>
 </div>
 </td>
 <td class="footer" colspan="2"><div class="needs_footer line-block">
@@ -1493,8 +1301,8 @@ of the following values:</p>
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-5368b96a">
-<div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_req table" id="tool_req__docs_covered">
+<div class="need_container docutils container" id="SNCB-475202ef">
+<div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_req table" id="tool_req__docs_attr_test_cov">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
 <div class="line"><span><span class="needs_title"><span class="needs_data">Enables marking requirements as &quot;covered&quot;</span></span></span></div>
@@ -1513,11 +1321,11 @@ of the following values:</p>
 </tr>
 <tr class="meta row-even"><td class="meta" colspan="3"><div class="needs_meta_left line-block">
 <div class="line"><span><span><div class="line"><span class="needs_status"><span class="needs_label">status: </span><span class="needs_data">invalid</span></span></div>
+<div class="line"><span class="needs_tags"><span class="needs_label">tags: </span><span class="needs_data_container"><span class="needs_data">Requirements</span></span></span></div>
 <div class="line"><span class="needs_implemented"><span class="needs_label">implemented: </span><span class="needs_data">NO</span></span></div>
 <div class="line"><span class="needs_parent_has_problem"><span class="needs_label">parent_has_problem: </span><span class="needs_data">YES: Not understandable what is required.</span></span></div>
 <div class="line"><span class="needs_safety"><span class="needs_label">safety: </span><span class="needs_data">ASIL_B</span></span></div>
 <div class="line"><span class="needs_security"><span class="needs_label">security: </span><span class="needs_data">NO</span></span></div>
-<div class="line"><span class="needs_source_code_link"><span class="needs_label">source_code_link: </span><span class="needs_data"><a class="reference external" href="https://github.com/eclipse-score/score/blob/451f338b8dadaca8741b96003cee81ed0830cc59/src/extensions/score_metamodel/metamodel.yaml#L211">Source Code Link</a><em>; </em><a class="reference external" href="https://github.com/eclipse-score/score/blob/451f338b8dadaca8741b96003cee81ed0830cc59/src/extensions/score_metamodel/metamodel.yaml#L235">Source Code Link</a><em>; </em><a class="reference external" href="https://github.com/eclipse-score/score/blob/451f338b8dadaca8741b96003cee81ed0830cc59/src/extensions/score_metamodel/metamodel.yaml#L258">Source Code Link</a><em>; </em><a class="reference external" href="https://github.com/eclipse-score/score/blob/451f338b8dadaca8741b96003cee81ed0830cc59/src/extensions/score_metamodel/metamodel.yaml#L281">Source Code Link</a><em>; </em><a class="reference external" href="https://github.com/eclipse-score/score/blob/451f338b8dadaca8741b96003cee81ed0830cc59/src/extensions/score_metamodel/metamodel.yaml#L304">Source Code Link</a><em>; </em></span></span></div>
 </span></span></div>
 <div class="line"><span><div class="line">satisfies: <span class="satisfies"><span><a class="external_link reference external" href="https://eclipse-score.github.io/process_description/main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req__attr_req_cov">PROCESS_gd_req__req__attr_req_cov</a></span></span></div>
 </span></div>
@@ -1533,7 +1341,7 @@ unclear and must be clarified before a precise tool requirement can be defined.<
 </td>
 </tr>
 <tr class="footer row-even"><td class="footer_left" colspan="2"><div class="needs_footer_left line-block">
-<div class="line"><span><span class="needs-id"><a class="reference internal" href="#tool_req__docs_covered" title="tool_req__docs_covered">tool_req__docs_covered</a></span></span></div>
+<div class="line"><span><span class="needs-id"><a class="reference internal" href="#tool_req__docs_attr_test_cov" title="tool_req__docs_attr_test_cov">tool_req__docs_attr_test_cov</a></span></span></div>
 </div>
 </td>
 <td class="footer" colspan="2"><div class="needs_footer line-block">
@@ -1546,8 +1354,8 @@ unclear and must be clarified before a precise tool requirement can be defined.<
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-cb222910">
-<div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_req table" id="tool_req__docs_req_test_cov">
+<div class="need_container docutils container" id="SNCB-3703ac09">
+<div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_req table" id="tool_req__docs_test_cov">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
 <div class="line"><span><span class="needs_title"><span class="needs_data">Support requirements test coverage</span></span></span></div>
@@ -1566,11 +1374,11 @@ unclear and must be clarified before a precise tool requirement can be defined.<
 </tr>
 <tr class="meta row-even"><td class="meta" colspan="3"><div class="needs_meta_left line-block">
 <div class="line"><span><span><div class="line"><span class="needs_status"><span class="needs_label">status: </span><span class="needs_data">valid</span></span></div>
+<div class="line"><span class="needs_tags"><span class="needs_label">tags: </span><span class="needs_data_container"><span class="needs_data">Requirements</span></span></span></div>
 <div class="line"><span class="needs_implemented"><span class="needs_label">implemented: </span><span class="needs_data">PARTIAL</span></span></div>
 <div class="line"><span class="needs_parent_covered"><span class="needs_label">parent_covered: </span><span class="needs_data">YES</span></span></div>
 <div class="line"><span class="needs_safety"><span class="needs_label">safety: </span><span class="needs_data">ASIL_B</span></span></div>
 <div class="line"><span class="needs_security"><span class="needs_label">security: </span><span class="needs_data">NO</span></span></div>
-<div class="line"><span class="needs_source_code_link"><span class="needs_label">source_code_link: </span><span class="needs_data"><a class="reference external" href="https://github.com/eclipse-score/score/blob/451f338b8dadaca8741b96003cee81ed0830cc59/src/extensions/score_metamodel/metamodel.yaml#L213">Source Code Link</a><em>; </em><a class="reference external" href="https://github.com/eclipse-score/score/blob/451f338b8dadaca8741b96003cee81ed0830cc59/src/extensions/score_metamodel/metamodel.yaml#L237">Source Code Link</a><em>; </em><a class="reference external" href="https://github.com/eclipse-score/score/blob/451f338b8dadaca8741b96003cee81ed0830cc59/src/extensions/score_metamodel/metamodel.yaml#L260">Source Code Link</a><em>; </em><a class="reference external" href="https://github.com/eclipse-score/score/blob/451f338b8dadaca8741b96003cee81ed0830cc59/src/extensions/score_metamodel/metamodel.yaml#L283">Source Code Link</a><em>; </em><a class="reference external" href="https://github.com/eclipse-score/score/blob/451f338b8dadaca8741b96003cee81ed0830cc59/src/extensions/score_metamodel/metamodel.yaml#L306">Source Code Link</a><em>; </em></span></span></div>
 </span></span></div>
 <div class="line"><span><div class="line">satisfies: <span class="satisfies"><span><a class="external_link reference external" href="https://eclipse-score.github.io/process_description/main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req__attr_test_covered">PROCESS_gd_req__req__attr_test_covered</a></span></span></div>
 </span></div>
@@ -1587,7 +1395,7 @@ have a <code class="docutils literal notranslate"><span class="pre">testcovered<
 </td>
 </tr>
 <tr class="footer row-even"><td class="footer_left" colspan="2"><div class="needs_footer_left line-block">
-<div class="line"><span><span class="needs-id"><a class="reference internal" href="#tool_req__docs_req_test_cov" title="tool_req__docs_req_test_cov">tool_req__docs_req_test_cov</a></span></span></div>
+<div class="line"><span><span class="needs-id"><a class="reference internal" href="#tool_req__docs_test_cov" title="tool_req__docs_test_cov">tool_req__docs_test_cov</a></span></span></div>
 </div>
 </td>
 <td class="footer" colspan="2"><div class="needs_footer line-block">
@@ -1603,8 +1411,8 @@ have a <code class="docutils literal notranslate"><span class="pre">testcovered<
 </section>
 <section id="links">
 <h3>🔗 Links<a class="headerlink" href="#links" title="Link to this heading">#</a></h3>
-<div class="need_container docutils container" id="SNCB-2008e2c5">
-<div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_req table" id="tool_req__docs_satisfies">
+<div class="need_container docutils container" id="SNCB-794975d1">
+<div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_req table" id="tool_req__docs_req_linkage">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
 <div class="line"><span><span class="needs_title"><span class="needs_data">Enables needs linking via satisfies attribute</span></span></span></div>
@@ -1623,12 +1431,12 @@ have a <code class="docutils literal notranslate"><span class="pre">testcovered<
 </tr>
 <tr class="meta row-even"><td class="meta" colspan="3"><div class="needs_meta_left line-block">
 <div class="line"><span><span><div class="line"><span class="needs_status"><span class="needs_label">status: </span><span class="needs_data">invalid</span></span></div>
+<div class="line"><span class="needs_tags"><span class="needs_label">tags: </span><span class="needs_data_container"><span class="needs_data">Requirements</span></span></span></div>
 <div class="line"><span class="needs_implemented"><span class="needs_label">implemented: </span><span class="needs_data">PARTIAL</span></span></div>
 <div class="line"><span class="needs_parent_covered"><span class="needs_label">parent_covered: </span><span class="needs_data">YES</span></span></div>
 <div class="line"><span class="needs_parent_has_problem"><span class="needs_label">parent_has_problem: </span><span class="needs_data">YES: Mandatory for all needs? Especially some tool_reqs do not have a process requirement.</span></span></div>
 <div class="line"><span class="needs_safety"><span class="needs_label">safety: </span><span class="needs_data">ASIL_B</span></span></div>
 <div class="line"><span class="needs_security"><span class="needs_label">security: </span><span class="needs_data">NO</span></span></div>
-<div class="line"><span class="needs_source_code_link"><span class="needs_label">source_code_link: </span><span class="needs_data"><a class="reference external" href="https://github.com/eclipse-score/score/blob/451f338b8dadaca8741b96003cee81ed0830cc59/src/extensions/score_metamodel/metamodel.yaml#L112">Source Code Link</a><em>; </em><a class="reference external" href="https://github.com/eclipse-score/score/blob/451f338b8dadaca8741b96003cee81ed0830cc59/src/extensions/score_metamodel/metamodel.yaml#L230">Source Code Link</a><em>; </em><a class="reference external" href="https://github.com/eclipse-score/score/blob/451f338b8dadaca8741b96003cee81ed0830cc59/src/extensions/score_metamodel/metamodel.yaml#L253">Source Code Link</a><em>; </em><a class="reference external" href="https://github.com/eclipse-score/score/blob/451f338b8dadaca8741b96003cee81ed0830cc59/src/extensions/score_metamodel/metamodel.yaml#L274">Source Code Link</a><em>; </em></span></span></div>
 </span></span></div>
 <div class="line"><span><div class="line">satisfies: <span class="satisfies"><span><a class="external_link reference external" href="https://eclipse-score.github.io/process_description/main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req__linkage">PROCESS_gd_req__req__linkage</a></span></span></div>
 </span></div>
@@ -1664,7 +1472,7 @@ attribute follows defined rules.</p>
 </td>
 </tr>
 <tr class="footer row-even"><td class="footer_left" colspan="2"><div class="needs_footer_left line-block">
-<div class="line"><span><span class="needs-id"><a class="reference internal" href="#tool_req__docs_satisfies" title="tool_req__docs_satisfies">tool_req__docs_satisfies</a></span></span></div>
+<div class="line"><span><span class="needs-id"><a class="reference internal" href="#tool_req__docs_req_linkage" title="tool_req__docs_req_linkage">tool_req__docs_req_linkage</a></span></span></div>
 </div>
 </td>
 <td class="footer" colspan="2"><div class="needs_footer line-block">
@@ -1683,79 +1491,10 @@ attribute follows defined rules.</p>
 <h2>🏛️ Architecture<a class="headerlink" href="#architecture" title="Link to this heading">#</a></h2>
 <section id="architecture-types">
 <h3>🔢 Architecture Types<a class="headerlink" href="#architecture-types" title="Link to this heading">#</a></h3>
-<div class="need_container docutils container" id="SNCB-1d41a619">
-<div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_req table" id="tool_req__docs_arch_types">
-<tbody>
-<tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
-<div class="line"><span><span class="needs_title"><span class="needs_data">Types</span></span></span></div>
-</div>
-</td>
-<td class="head_center" colspan="2"><div class="needs_head line-block">
-<div class="line"><span><span class="needs_status"><span class="needs_label">status: </span><span class="needs_data">invalid</span></span></span></div>
-<div class="line"><span><span class="needs_security"><span class="needs_label">security: </span><span class="needs_data">NO</span></span></span></div>
-<div class="line"><span><span class="needs_safety"><span class="needs_label">safety: </span><span class="needs_data">ASIL_B</span></span></span></div>
-</div>
-</td>
-<td class="head_right" colspan="2"><div class="needs_head_right line-block">
-<div class="line"><span><span class="needs needs_collapse" id="target__show__meta"><span class="needs collapsed"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-down-circle"><circle cx="12" cy="12" r="10"></circle><polyline points="8 12 12 16 16 12"></polyline><line x1="12" y1="8" x2="12" y2="16"></line></svg></span><span class="needs visible collapse_is_hidden"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right-circle"><circle cx="12" cy="12" r="10"></circle><polyline points="12 16 16 12 12 8"></polyline><line x1="8" y1="12" x2="16" y2="12"></line></svg></span></span></span></div>
-</div>
-</td>
-</tr>
-<tr class="meta row-even"><td class="meta" colspan="3"><div class="needs_meta_left line-block">
-<div class="line"><span><span><div class="line"><span class="needs_status"><span class="needs_label">status: </span><span class="needs_data">invalid</span></span></div>
-<div class="line"><span class="needs_implemented"><span class="needs_label">implemented: </span><span class="needs_data">YES</span></span></div>
-<div class="line"><span class="needs_parent_covered"><span class="needs_label">parent_covered: </span><span class="needs_data">NO</span></span></div>
-<div class="line"><span class="needs_parent_has_problem"><span class="needs_label">parent_has_problem: </span><span class="needs_data">YES: Referenced in https://github.com/eclipse-score/process_description/issues/34</span></span></div>
-<div class="line"><span class="needs_safety"><span class="needs_label">safety: </span><span class="needs_data">ASIL_B</span></span></div>
-<div class="line"><span class="needs_security"><span class="needs_label">security: </span><span class="needs_data">NO</span></span></div>
-</span></span></div>
-<div class="line"><span><div class="line">satisfies: <span class="satisfies"><span><a class="external_link reference external" href="https://eclipse-score.github.io/process_description/main/process_areas/architecture_design/guidance/architecture_process_reqs.html#gd_req__arch__hierarchical_structure">PROCESS_gd_req__arch__hierarchical_structure</a>, <a class="external_link reference external" href="https://eclipse-score.github.io/process_description/main/process_areas/architecture_design/guidance/architecture_process_reqs.html#gd_req__arch__viewpoints">PROCESS_gd_req__arch__viewpoints</a>, <a class="external_link reference external" href="https://eclipse-score.github.io/process_description/main/process_areas/architecture_design/guidance/architecture_process_reqs.html#gd_req__arch__build_blocks">PROCESS_gd_req__arch__build_blocks</a>, <a class="external_link reference external" href="https://eclipse-score.github.io/process_description/main/process_areas/architecture_design/guidance/architecture_process_reqs.html#gd_req__arch__build_blocks_corr">PROCESS_gd_req__arch__build_blocks_corr</a></span></span></div>
-</span></div>
-</div>
-</td>
-<td class="meta" colspan="3"></td>
-</tr>
-<tr class="content row-odd"><td class="content" colspan="6"><div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p><strong>OPEN ISSUE</strong> → Architecture types are not yet understood
-See: <a class="github reference external" href="https://github.com/eclipse-score/process_description/issues/34">eclipse-score/process_description#34</a></p>
-<p>The list below is tentative at best.</p>
-</div>
-<p>Docs-as-Code shall support the following architecture types:</p>
-<ul class="simple">
-<li><p>Feature Architecture Static View (feat_arch_static) - does this count as an architecture type, or is it a view?</p></li>
-<li><p>Feature Architecture Dynamic View (feat_arch_dyn) - the views below have view in their type name!!</p></li>
-<li><p>Logical Architecture Interfaces (logic_arc_int) - That’s a single interface and not “interfaces”? Or is it a view?</p></li>
-<li><p>Logical Architecture Interface Operation (logic_arc_int_op)</p></li>
-<li><p>Module Architecture Static View (mod_view_static)</p></li>
-<li><p>Module Architecture Dynamic View (mod_view_dyn)</p></li>
-<li><p>Component Architecture Static View (comp_arc_sta)</p></li>
-<li><p>Component Architecture Dynamic View (comp_arc_dyn)</p></li>
-<li><p>Component Architecture Interfaces (comp_arc_int)</p></li>
-<li><p>Component Architecture Interface Operation (comp_arc_int_op)</p></li>
-<li><p>Real interface?? (see gd_req__arch__build_blocks_corr)</p></li>
-<li><p>Feature Architecture Interface?? (see gd_req__arch__traceability)</p></li>
-</ul>
-</td>
-</tr>
-<tr class="footer row-even"><td class="footer_left" colspan="2"><div class="needs_footer_left line-block">
-<div class="line"><span><span class="needs-id"><a class="reference internal" href="#tool_req__docs_arch_types" title="tool_req__docs_arch_types">tool_req__docs_arch_types</a></span></span></div>
-</div>
-</td>
-<td class="footer" colspan="2"><div class="needs_footer line-block">
-<div class="line"><span><span class="needs_type_name"><span class="needs_data">Tool Requirement</span></span></span></div>
-</div>
-</td>
-<td class="footer_right" colspan="2"></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
 </section>
 <section id="linkage">
 <h3>🔗 Linkage<a class="headerlink" href="#linkage" title="Link to this heading">#</a></h3>
-<div class="need_container docutils container" id="SNCB-40946a28">
+<div class="need_container docutils container" id="SNCB-f43af1f2">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_req table" id="tool_req__docs_arch_attr_fulfils">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -1775,6 +1514,7 @@ See: <a class="github reference external" href="https://github.com/eclipse-score
 </tr>
 <tr class="meta row-even"><td class="meta" colspan="3"><div class="needs_meta_left line-block">
 <div class="line"><span><span><div class="line"><span class="needs_status"><span class="needs_label">status: </span><span class="needs_data">invalid</span></span></div>
+<div class="line"><span class="needs_tags"><span class="needs_label">tags: </span><span class="needs_data_container"><span class="needs_data">Architecture</span></span></span></div>
 <div class="line"><span class="needs_implemented"><span class="needs_label">implemented: </span><span class="needs_data">YES</span></span></div>
 <div class="line"><span class="needs_parent_covered"><span class="needs_label">parent_covered: </span><span class="needs_data">YES</span></span></div>
 <div class="line"><span class="needs_parent_has_problem"><span class="needs_label">parent_has_problem: </span><span class="needs_data">YES: Attribute is not mentioned. Link direction not clear. Fig. 22 does not contain 'fulfils'</span></span></div>
@@ -1827,11 +1567,11 @@ See: <a class="github reference external" href="https://github.com/eclipse-score
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-c706bfe9">
+<div class="need_container docutils container" id="SNCB-b3bbde18">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_req table" id="tool_req__docs_req_saftety_link">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
-<div class="line"><span><span class="needs_title"><span class="needs_data">Mandate links for safety requirements</span></span></span></div>
+<div class="line"><span><span class="needs_title"><span class="needs_data">Mandate links for safety</span></span></span></div>
 </div>
 </td>
 <td class="head_center" colspan="2"><div class="needs_head line-block">
@@ -1847,6 +1587,7 @@ See: <a class="github reference external" href="https://github.com/eclipse-score
 </tr>
 <tr class="meta row-even"><td class="meta" colspan="3"><div class="needs_meta_left line-block">
 <div class="line"><span><span><div class="line"><span class="needs_status"><span class="needs_label">status: </span><span class="needs_data">valid</span></span></div>
+<div class="line"><span class="needs_tags"><span class="needs_label">tags: </span><span class="needs_data_container"><span class="needs_data">Architecture</span></span></span></div>
 <div class="line"><span class="needs_implemented"><span class="needs_label">implemented: </span><span class="needs_data">PARTIAL</span></span></div>
 <div class="line"><span class="needs_parent_covered"><span class="needs_label">parent_covered: </span><span class="needs_data">YES</span></span></div>
 <div class="line"><span class="needs_parent_has_problem"><span class="needs_label">parent_has_problem: </span><span class="needs_data">NO</span></span></div>
@@ -1860,7 +1601,7 @@ See: <a class="github reference external" href="https://github.com/eclipse-score
 <td class="meta" colspan="3"></td>
 </tr>
 <tr class="content row-odd"><td class="content" colspan="6"><p>Docs-as-Code shall enforce that architecture model elements of type
-<a class="reference internal" href="#tool_req__docs_arch_types" title="tool_req__docs_arch_types"><em class="xref need">Types (tool_req__docs_arch_types)</em></a> with <code class="docutils literal notranslate"><span class="pre">safety</span> <span class="pre">!=</span> <span class="pre">QM</span></code> are linked to requirements of
+<a class="reference internal" href="#Unknown need" title="tool_req__docs_arch_types?"><em class="xref need">tool_req__docs_arch_types</em></a> with <code class="docutils literal notranslate"><span class="pre">safety</span> <span class="pre">!=</span> <span class="pre">QM</span></code> are linked to requirements of
 type <a class="reference internal" href="#tool_req__docs_req_types" title="tool_req__docs_req_types"><em class="xref need">Requirements Types (tool_req__docs_req_types)</em></a> that are also safety relevant (<code class="docutils literal notranslate"><span class="pre">safety</span> <span class="pre">!=</span>
 <span class="pre">QM</span></code>).</p></td>
 </tr>
@@ -1878,8 +1619,8 @@ type <a class="reference internal" href="#tool_req__docs_req_types" title="tool_
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-209e48be">
-<div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_req table" id="tool_req__docs_req_saftety_link_trace">
+<div class="need_container docutils container" id="SNCB-32c11e60">
+<div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_req table" id="tool_req__docs_req_safety_link_trace">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
 <div class="line"><span><span class="needs_title"><span class="needs_data">Restrict links for safety requirements</span></span></span></div>
@@ -1898,6 +1639,7 @@ type <a class="reference internal" href="#tool_req__docs_req_types" title="tool_
 </tr>
 <tr class="meta row-even"><td class="meta" colspan="3"><div class="needs_meta_left line-block">
 <div class="line"><span><span><div class="line"><span class="needs_status"><span class="needs_label">status: </span><span class="needs_data">valid</span></span></div>
+<div class="line"><span class="needs_tags"><span class="needs_label">tags: </span><span class="needs_data_container"><span class="needs_data">Architecture</span></span></span></div>
 <div class="line"><span class="needs_implemented"><span class="needs_label">implemented: </span><span class="needs_data">PARTIAL</span></span></div>
 <div class="line"><span class="needs_parent_covered"><span class="needs_label">parent_covered: </span><span class="needs_data">NO</span></span></div>
 <div class="line"><span class="needs_parent_has_problem"><span class="needs_label">parent_has_problem: </span><span class="needs_data">NO</span></span></div>
@@ -1911,11 +1653,11 @@ type <a class="reference internal" href="#tool_req__docs_req_types" title="tool_
 <td class="meta" colspan="3"></td>
 </tr>
 <tr class="content row-odd"><td class="content" colspan="6"><p>Docs-as-Code shall enforce that architecture model elements of type
-<a class="reference internal" href="#tool_req__docs_arch_types" title="tool_req__docs_arch_types"><em class="xref need">Types (tool_req__docs_arch_types)</em></a> with <code class="docutils literal notranslate"><span class="pre">safety</span> <span class="pre">!=</span> <span class="pre">QM</span></code> can only be linked to other
+<a class="reference internal" href="#Unknown need" title="tool_req__docs_arch_types?"><em class="xref need">tool_req__docs_arch_types</em></a> with <code class="docutils literal notranslate"><span class="pre">safety</span> <span class="pre">!=</span> <span class="pre">QM</span></code> can only be linked to other
 architecture model elements with <code class="docutils literal notranslate"><span class="pre">safety</span> <span class="pre">!=</span> <span class="pre">QM</span></code>.</p></td>
 </tr>
 <tr class="footer row-even"><td class="footer_left" colspan="2"><div class="needs_footer_left line-block">
-<div class="line"><span><span class="needs-id"><a class="reference internal" href="#tool_req__docs_req_saftety_link_trace" title="tool_req__docs_req_saftety_link_trace">tool_req__docs_req_saftety_link_trace</a></span></span></div>
+<div class="line"><span><span class="needs-id"><a class="reference internal" href="#tool_req__docs_req_safety_link_trace" title="tool_req__docs_req_safety_link_trace">tool_req__docs_req_safety_link_trace</a></span></span></div>
 </div>
 </td>
 <td class="footer" colspan="2"><div class="needs_footer line-block">
@@ -1931,7 +1673,7 @@ architecture model elements with <code class="docutils literal notranslate"><spa
 </section>
 <section id="diagram-related">
 <h3>🖼️ Diagram Related<a class="headerlink" href="#diagram-related" title="Link to this heading">#</a></h3>
-<div class="need_container docutils container" id="SNCB-dd03084c">
+<div class="need_container docutils container" id="SNCB-9e1f6fe5">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_req table" id="tool_req__docs_arch_diag_draw">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -1951,6 +1693,7 @@ architecture model elements with <code class="docutils literal notranslate"><spa
 </tr>
 <tr class="meta row-even"><td class="meta" colspan="3"><div class="needs_meta_left line-block">
 <div class="line"><span><span><div class="line"><span class="needs_status"><span class="needs_label">status: </span><span class="needs_data">valid</span></span></div>
+<div class="line"><span class="needs_tags"><span class="needs_label">tags: </span><span class="needs_data_container"><span class="needs_data">Architecture</span></span></span></div>
 <div class="line"><span class="needs_implemented"><span class="needs_label">implemented: </span><span class="needs_data">YES</span></span></div>
 <div class="line"><span class="needs_parent_covered"><span class="needs_label">parent_covered: </span><span class="needs_data">YES</span></span></div>
 <div class="line"><span class="needs_parent_has_problem"><span class="needs_label">parent_has_problem: </span><span class="needs_data">NO</span></span></div>
@@ -1999,7 +1742,7 @@ architecture model elements with <code class="docutils literal notranslate"><spa
 <h2>💻 Detailed Design &amp; Code<a class="headerlink" href="#detailed-design-code" title="Link to this heading">#</a></h2>
 <section id="code-linkage">
 <h3>🔗 Code Linkage<a class="headerlink" href="#code-linkage" title="Link to this heading">#</a></h3>
-<div class="need_container docutils container" id="SNCB-10e3e778">
+<div class="need_container docutils container" id="SNCB-7e9fe59b">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_req table" id="tool_req__docs_attr_impl">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -2019,6 +1762,7 @@ architecture model elements with <code class="docutils literal notranslate"><spa
 </tr>
 <tr class="meta row-even"><td class="meta" colspan="3"><div class="needs_meta_left line-block">
 <div class="line"><span><span><div class="line"><span class="needs_status"><span class="needs_label">status: </span><span class="needs_data">valid</span></span></div>
+<div class="line"><span class="needs_tags"><span class="needs_label">tags: </span><span class="needs_data_container"><span class="needs_data">Detailed Design &amp; Code</span></span></span></div>
 <div class="line"><span class="needs_implemented"><span class="needs_label">implemented: </span><span class="needs_data">PARTIAL</span></span></div>
 <div class="line"><span class="needs_parent_covered"><span class="needs_label">parent_covered: </span><span class="needs_data">YES</span></span></div>
 <div class="line"><span class="needs_safety"><span class="needs_label">safety: </span><span class="needs_data">ASIL_B</span></span></div>
@@ -2049,7 +1793,7 @@ the output as an attribute of the linked requirement.</p>
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-983e7d7d">
+<div class="need_container docutils container" id="SNCB-3bfdec14">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_req table" id="tool_req__docs_test_case_linkage">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -2069,6 +1813,7 @@ the output as an attribute of the linked requirement.</p>
 </tr>
 <tr class="meta row-even"><td class="meta" colspan="3"><div class="needs_meta_left line-block">
 <div class="line"><span><span><div class="line"><span class="needs_status"><span class="needs_label">status: </span><span class="needs_data">invalid</span></span></div>
+<div class="line"><span class="needs_tags"><span class="needs_label">tags: </span><span class="needs_data_container"><span class="needs_data">Detailed Design &amp; Code</span></span></span></div>
 <div class="line"><span class="needs_implemented"><span class="needs_label">implemented: </span><span class="needs_data">NO</span></span></div>
 <div class="line"><span class="needs_parent_has_problem"><span class="needs_label">parent_has_problem: </span><span class="needs_data">YES: Test vs Testcase unclear. Direction unclear. Goal unclear.</span></span></div>
 <div class="line"><span class="needs_safety"><span class="needs_label">safety: </span><span class="needs_data">ASIL_B</span></span></div>
@@ -2103,7 +1848,7 @@ include a <code class="docutils literal notranslate"><span class="pre">testlink<
 </section>
 <section id="tool-verification-reports">
 <h2>🧪 Tool Verification Reports<a class="headerlink" href="#tool-verification-reports" title="Link to this heading">#</a></h2>
-<div class="need_container docutils container" id="SNCB-c35b9008">
+<div class="need_container docutils container" id="SNCB-a4dd750f">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_req table" id="tool_req__docs_tvr_uid">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -2123,6 +1868,7 @@ include a <code class="docutils literal notranslate"><span class="pre">testlink<
 </tr>
 <tr class="meta row-even"><td class="meta" colspan="3"><div class="needs_meta_left line-block">
 <div class="line"><span><span><div class="line"><span class="needs_status"><span class="needs_label">status: </span><span class="needs_data">valid</span></span></div>
+<div class="line"><span class="needs_tags"><span class="needs_label">tags: </span><span class="needs_data_container"><span class="needs_data">Detailed Design &amp; Code</span></span></span></div>
 <div class="line"><span class="needs_implemented"><span class="needs_label">implemented: </span><span class="needs_data">NO</span></span></div>
 <div class="line"><span class="needs_parent_covered"><span class="needs_label">parent_covered: </span><span class="needs_data">NO</span></span></div>
 <div class="line"><span class="needs_safety"><span class="needs_label">safety: </span><span class="needs_data">ASIL_B</span></span></div>
@@ -2151,7 +1897,7 @@ include a <code class="docutils literal notranslate"><span class="pre">testlink<
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-4450a428">
+<div class="need_container docutils container" id="SNCB-28b5172d">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_req table" id="tool_req__docs_tvr_safety">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -2171,6 +1917,7 @@ include a <code class="docutils literal notranslate"><span class="pre">testlink<
 </tr>
 <tr class="meta row-even"><td class="meta" colspan="3"><div class="needs_meta_left line-block">
 <div class="line"><span><span><div class="line"><span class="needs_status"><span class="needs_label">status: </span><span class="needs_data">invalid</span></span></div>
+<div class="line"><span class="needs_tags"><span class="needs_label">tags: </span><span class="needs_data_container"><span class="needs_data">Detailed Design &amp; Code</span></span></span></div>
 <div class="line"><span class="needs_implemented"><span class="needs_label">implemented: </span><span class="needs_data">NO</span></span></div>
 <div class="line"><span class="needs_parent_covered"><span class="needs_label">parent_covered: </span><span class="needs_data">YES</span></span></div>
 <div class="line"><span class="needs_parent_has_problem"><span class="needs_label">parent_has_problem: </span><span class="needs_data">YES: Safety affected vs Safety relevance</span></span></div>
@@ -2205,7 +1952,7 @@ include a <code class="docutils literal notranslate"><span class="pre">testlink<
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-33c3c4c1">
+<div class="need_container docutils container" id="SNCB-b1e558c6">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_req table" id="tool_req__docs_tvr_security">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -2225,6 +1972,7 @@ include a <code class="docutils literal notranslate"><span class="pre">testlink<
 </tr>
 <tr class="meta row-even"><td class="meta" colspan="3"><div class="needs_meta_left line-block">
 <div class="line"><span><span><div class="line"><span class="needs_status"><span class="needs_label">status: </span><span class="needs_data">invalid</span></span></div>
+<div class="line"><span class="needs_tags"><span class="needs_label">tags: </span><span class="needs_data_container"><span class="needs_data">Detailed Design &amp; Code</span></span></span></div>
 <div class="line"><span class="needs_implemented"><span class="needs_label">implemented: </span><span class="needs_data">NO</span></span></div>
 <div class="line"><span class="needs_parent_covered"><span class="needs_label">parent_covered: </span><span class="needs_data">YES</span></span></div>
 <div class="line"><span class="needs_parent_has_problem"><span class="needs_label">parent_has_problem: </span><span class="needs_data">YES: Safety affected vs Safety relevance</span></span></div>
@@ -2259,7 +2007,7 @@ include a <code class="docutils literal notranslate"><span class="pre">testlink<
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-11b276c4">
+<div class="need_container docutils container" id="SNCB-aca7b99d">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_req table" id="tool_req__docs_tvr_status">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -2279,6 +2027,7 @@ include a <code class="docutils literal notranslate"><span class="pre">testlink<
 </tr>
 <tr class="meta row-even"><td class="meta" colspan="3"><div class="needs_meta_left line-block">
 <div class="line"><span><span><div class="line"><span class="needs_status"><span class="needs_label">status: </span><span class="needs_data">valid</span></span></div>
+<div class="line"><span class="needs_tags"><span class="needs_label">tags: </span><span class="needs_data_container"><span class="needs_data">Detailed Design &amp; Code</span></span></span></div>
 <div class="line"><span class="needs_implemented"><span class="needs_label">implemented: </span><span class="needs_data">NO</span></span></div>
 <div class="line"><span class="needs_parent_covered"><span class="needs_label">parent_covered: </span><span class="needs_data">YES</span></span></div>
 <div class="line"><span class="needs_parent_has_problem"><span class="needs_label">parent_has_problem: </span><span class="needs_data">NO</span></span></div>
@@ -2319,7 +2068,7 @@ attribute with one of the following values:</p>
 </section>
 <section id="process-other">
 <h2>⚙️ Process / Other<a class="headerlink" href="#process-other" title="Link to this heading">#</a></h2>
-<div class="need_container docutils container" id="SNCB-0e54de8e">
+<div class="need_container docutils container" id="SNCB-bdbd5686">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_req table" id="tool_req__docs_wf_types">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -2339,10 +2088,11 @@ attribute with one of the following values:</p>
 </tr>
 <tr class="meta row-even"><td class="meta" colspan="3"><div class="needs_meta_left line-block">
 <div class="line"><span><span><div class="line"><span class="needs_status"><span class="needs_label">status: </span><span class="needs_data">valid</span></span></div>
+<div class="line"><span class="needs_tags"><span class="needs_label">tags: </span><span class="needs_data_container"><span class="needs_data">Process / Other</span></span></span></div>
 <div class="line"><span class="needs_implemented"><span class="needs_label">implemented: </span><span class="needs_data">YES</span></span></div>
 <div class="line"><span class="needs_safety"><span class="needs_label">safety: </span><span class="needs_data">ASIL_B</span></span></div>
 <div class="line"><span class="needs_security"><span class="needs_label">security: </span><span class="needs_data">NO</span></span></div>
-<div class="line"><span class="needs_source_code_link"><span class="needs_label">source_code_link: </span><span class="needs_data"><a class="reference external" href="https://github.com/eclipse-score/score/blob/451f338b8dadaca8741b96003cee81ed0830cc59/src/extensions/score_metamodel/metamodel.yaml#L85">Source Code Link</a><em>; </em></span></span></div>
+<div class="line"><span class="needs_source_code_link"><span class="needs_label">source_code_link: </span><span class="needs_data"><a class="reference external" href="https://github.com/eclipse-score/score/blob/5ecbf4f0233b2ef3b4f3e1abb47dc56c663a2e65/src/extensions/score_metamodel/metamodel.yaml#L85">Source Code Link</a><em>; </em></span></span></div>
 </span></span></div>
 <div class="line"><span></span></div>
 </div>
@@ -2369,7 +2119,7 @@ attribute with one of the following values:</p>
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-c70c7046">
+<div class="need_container docutils container" id="SNCB-b3ca4fe9">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_req table" id="tool_req__docs_std_req_types">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -2389,11 +2139,12 @@ attribute with one of the following values:</p>
 </tr>
 <tr class="meta row-even"><td class="meta" colspan="3"><div class="needs_meta_left line-block">
 <div class="line"><span><span><div class="line"><span class="needs_status"><span class="needs_label">status: </span><span class="needs_data">invalid</span></span></div>
+<div class="line"><span class="needs_tags"><span class="needs_label">tags: </span><span class="needs_data_container"><span class="needs_data">Process / Other</span></span></span></div>
 <div class="line"><span class="needs_implemented"><span class="needs_label">implemented: </span><span class="needs_data">YES</span></span></div>
 <div class="line"><span class="needs_parent_has_problem"><span class="needs_label">parent_has_problem: </span><span class="needs_data">YES: Requirement not found</span></span></div>
 <div class="line"><span class="needs_safety"><span class="needs_label">safety: </span><span class="needs_data">ASIL_B</span></span></div>
 <div class="line"><span class="needs_security"><span class="needs_label">security: </span><span class="needs_data">NO</span></span></div>
-<div class="line"><span class="needs_source_code_link"><span class="needs_label">source_code_link: </span><span class="needs_data"><a class="reference external" href="https://github.com/eclipse-score/score/blob/451f338b8dadaca8741b96003cee81ed0830cc59/src/extensions/score_metamodel/metamodel.yaml#L67">Source Code Link</a><em>; </em></span></span></div>
+<div class="line"><span class="needs_source_code_link"><span class="needs_label">source_code_link: </span><span class="needs_data"><a class="reference external" href="https://github.com/eclipse-score/score/blob/5ecbf4f0233b2ef3b4f3e1abb47dc56c663a2e65/src/extensions/score_metamodel/metamodel.yaml#L67">Source Code Link</a><em>; </em></span></span></div>
 </span></span></div>
 <div class="line"><span></span></div>
 </div>
@@ -2442,12 +2193,12 @@ requirements.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="features.html"
+       href="capabilities.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">📘 S-CORE Docs-as-Code – Features</p>
+        <p class="prev-next-title">📘 S-CORE Docs-as-Code – Capabilities</p>
       </div>
     </a>
     <a class="right-next"
@@ -2478,18 +2229,18 @@ requirements.</p>
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">📈 Overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#status">📈 Status</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#common-attributes">🗂️ Common Attributes</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id">🔢 ID</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#title">🏷️ Title</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#description">📝 Description</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#security-classification">🔒 Security Classification</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#safety-classification">🛡️ Safety Classification</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#status">🚦 Status</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">🚦 Status</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#documents">📚 Documents</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">📋 Requirements</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">📋 Requirements</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#requirement-types">🔢 Requirement Types</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#attributes">🏷️ Attributes</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#links">🔗 Links</a></li>
@@ -2515,7 +2266,7 @@ requirements.</p>
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/eclipse-score/docs-as-code/edit/main/docs/docs-as-code/requirements.rst">
+    <a href="https://github.com/eclipse-score/docs-as-code/edit/main/docs/product/requirements.rst">
       <i class="fa-solid fa-pencil"></i>
       
       
@@ -2531,7 +2282,7 @@ requirements.</p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/docs-as-code/requirements.rst.txt"
+      <li><a href="../_sources/product/requirements.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div></div>

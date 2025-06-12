@@ -11,7 +11,7 @@
     # SPDX-License-Identifier: Apache-2.0
     # *******************************************************************************
 
-.. _docs-as-code:
+.. _product:
 
 
 ============
@@ -23,18 +23,17 @@ Docs-as-Code
 
    .. grid-item-card::
 
-      Features/Requirements
+      Features
       ^^^
-      Detailed list of docs-as-code capabilities.
-      :ref:`Features <features>`. :ref:`Requirements <requirements>`.
+      High level view of docs-as-code :ref:`capabilities <capabilities>`.
 
 
    .. grid-item-card::
 
-      Getting started with docs-as-code
+      Requirements
       ^^^
-      Start here to learn about general usage of the Docs-as-Code Module
-      :ref:`Get started <getting_started>`.
+      Detailed list of docs-as-code tool :ref:`requirements`.
+
 
    .. grid-item-card::
 
@@ -50,6 +49,6 @@ Docs-as-Code
    :caption: Contents:
    :hidden:
 
-   Getting Started <getting_started>
-   Features <features>
-   Requirements <requirements>
+   capabilities
+   requirements
+   extensions/index

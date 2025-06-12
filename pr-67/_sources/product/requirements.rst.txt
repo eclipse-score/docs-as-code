@@ -4,15 +4,26 @@
 Requirements (Process Compliance)
 =================================
 
-📈 Overview
-############
+📈 Status
+##########
 
 This section provides an overview of current process requirements and their implementation status.
 
-.. needtable::
-  :filter: c.this_doc()
-  :columns: id;title;implemented
-  :style: datatables
+.. needbar:: Status v2
+  :stacked:
+  :show_sum:
+  :xlabels: FROM_DATA
+  :ylabels: FROM_DATA
+  :colors: green,orange,red
+
+                      , Common Attributes
+  implemented         , 'tool_req__docs' in id and implemented == "YES"       and "Common Attributes" in tags
+  partially           , 'tool_req__docs' in id and implemented == "PARTIALLY" and "Common Attributes" in tags
+  not implemented     , 'tool_req__docs' in id and implemented == "NO"        and "Common Attributes" in tags
+
+.. comment
+                   , implemented                                    , partially                                          , not implemented
+  Common Attributes, 'tool_req__docs' in id and implemented == "YES" and "Common Attributes" in tags, 'tool_req__docs' in id and implemented == "PARTIAL" and "Common Attributes" in tags, 'tool_req__docs' in id and implemented == "NO" and "Common Attributes" in tags
 
 .. needpie:: Docs-As-Code Requirements Status
   :labels: Implemented, Partial, Not Implemented
@@ -45,6 +56,7 @@ This section provides an overview of current process requirements and their impl
 .. tool_req:: Enforces need ID uniqueness
   :id: tool_req__docs_attr_id
   :implemented: YES
+  :tags: Common Attributes
   :satisfies:
      PROCESS_gd_req__req__attr_uid,
      PROCESS_gd_req__tool__attr_uid,
@@ -62,6 +74,7 @@ This section provides an overview of current process requirements and their impl
 .. tool_req:: Enforces need ID scheme
   :id: tool_req__docs_attr_id_scheme
   :implemented: YES
+  :tags: Common Attributes
   :satisfies: PROCESS_gd_req__req__attr_uid, PROCESS_gd_req__arch__attribute_uid
   :parent_has_problem: YES: Parents are not aligned
   :parent_covered: YES: together with tool_req__docs_attr_id
@@ -86,6 +99,7 @@ This section provides an overview of current process requirements and their impl
 .. tool_req:: Enforces title wording rules
   :id: tool_req__docs_attr_title
   :implemented: YES
+  :tags: Common Attributes
   :satisfies: PROCESS_gd_req__requirements_attr_title
   :parent_has_problem: NO
   :parent_covered: NO: Can not ensure summary
@@ -108,8 +122,9 @@ This section provides an overview of current process requirements and their impl
 
 .. tool_req:: Enforces presence of description
   :id: tool_req__docs_attr_description
-  :implemented: NO
+  :tags: Common Attributes
   :parent_covered: NO: Can not cover 'ISO/IEC/IEEE/29148'
+  :implemented: NO
 
   .. TODO: drop constraint to requriements
 
@@ -121,9 +136,10 @@ This section provides an overview of current process requirements and their impl
 🔒 Security Classification
 ----------------------------
 
-.. tool_req:: Enforces security classification
+.. tool_req:: Security: enforce classification
   :id: tool_req__docs_attr_security
   :implemented: YES
+  :tags: Common Attributes
   :satisfies:
      PROCESS_gd_req__requirements_attr_security,
      PROCESS_gd_req__arch_attr_security,
@@ -139,8 +155,9 @@ This section provides an overview of current process requirements and their impl
   * all requirement types defined in :need:`tool_req__docs_req_types`, except process requirements.
   * all architecture elements (TODO; see https://github.com/eclipse-score/process_description/issues/34)
 
-.. tool_req:: Restrict linakge of security architecture elements
+.. tool_req:: Security: Restrict linkage
   :id: tool_req__docs_arch_security_linkage
+  :tags: Common Attributesocs_arch_security_linkage
   :implemented: NO
   :parent_covered: YES
   :satisfies: PROCESS_gd_req__arch__linkage_security_trace
@@ -152,8 +169,9 @@ This section provides an overview of current process requirements and their impl
 🛡️ Safety Classification
 ---------------------------
 
-.. tool_req:: Enforces safety classification (requirements, architecture)
+.. tool_req:: Safety: enforce classification
   :id: tool_req__docs_attr_safety
+  :tags: Common Attributes
   :implemented: YES
   :parent_covered: YES
   :parent_has_problem: YES: Architecture talks about requirements. Parents not aligned
@@ -173,8 +191,9 @@ This section provides an overview of current process requirements and their impl
 🚦 Status
 ----------
 
-.. tool_req:: Enforces status classification (requirements, architecture)
+.. tool_req:: Status: enforce attribute
   :id: tool_req__docs_attr_status
+  :tags: Common Attributescs_attr_status
   :implemented: YES
   :parent_has_problem: YES: Architecture talks about requirements, currently we have valid|draft
   :parent_covered: YES
@@ -193,7 +212,9 @@ This section provides an overview of current process requirements and their impl
 #############
 
 .. tool_req:: Document Types
+
   :id: tool_req__docs_doc_types
+  :tags: Documents
   :implemented: YES
 
   Docs-as-Code shall support the following document types:
@@ -204,6 +225,7 @@ This section provides an overview of current process requirements and their impl
 .. NOTE: Header_service trigger/working execution is disabled
 .. tool_req:: Mandatory Document attributes
   :id: tool_req__docs_doc_attr
+  :tags: Documents
   :implemented: NO
   :satisfies:
    PROCESS_gd_req__doc_author,
@@ -221,6 +243,7 @@ This section provides an overview of current process requirements and their impl
 
 .. tool_req:: Document author is autofilled
   :id: tool_req__docs_doc_autofill_author
+  :tags: Documents
   :implemented: NO
   :satisfies: PROCESS_gd_req__doc_author
   :parent_covered: YES: Together with tool_req__docs_doc_attr
@@ -235,6 +258,7 @@ This section provides an overview of current process requirements and their impl
 
 .. tool_req:: Document approver is autofilled
   :id: tool_req__docs_doc_attr_approver
+  :tags: Documents
   :implemented: NO
   :satisfies: PROCESS_gd_req__doc_approver
   :parent_covered: YES: Together with tool_req__docs_doc_attr
@@ -249,6 +273,7 @@ This section provides an overview of current process requirements and their impl
 
 .. tool_req:: Document reviewer is autofilled
   :id: tool_req__docs_doc_attr_reviewer
+  :tags: Documents
   :implemented: NO
   :satisfies: PROCESS_gd_req__doc_reviewer
   :parent_covered: YES: Together with tool_req__docs_doc_attr
@@ -270,6 +295,7 @@ This section provides an overview of current process requirements and their impl
 
 .. tool_req:: Requirements Types
   :id: tool_req__docs_req_types
+  :tags: Requirements
   :implemented: YES
   :satisfies: PROCESS_gd_req__req__structure
   :parent_has_problem: YES: std_req not mentioned
@@ -289,7 +315,8 @@ This section provides an overview of current process requirements and their impl
 -------------------------
 
 .. tool_req:: Enforces rationale attribute
-  :id: tool_req__docs_attr_rationale
+  :id: tool_req__docs_req_attr_rationale
+  :tags: Requirements
   :implemented: YES
   :parent_covered: NO: Can not ensure correct reasoning
   :satisfies: PROCESS_gd_req__req__attr_rationale
@@ -297,7 +324,8 @@ This section provides an overview of current process requirements and their impl
   Docs-as-Code shall enforce that each stakeholder requirement contains a ``rationale`` attribute.
 
 .. tool_req:: Enforces requirement type classification
-  :id: tool_req__docs_attr_type
+  :id: tool_req__docs_req_attr_type
+  :tags: Requirements
   :implemented: YES
   :parent_has_problem: YES: tool_req shall not have 'reqtype' as discussed
   :satisfies: PROCESS_gd_req__req__attr_type
@@ -314,7 +342,8 @@ This section provides an overview of current process requirements and their impl
   This rule applies to all requirement types defined in :need:`tool_req__docs_req_types`.
 
 .. tool_req:: Enables marking requirements as "covered"
-  :id: tool_req__docs_covered
+  :id: tool_req__docs_attr_test_cov
+  :tags: Requirements
   :implemented: NO
   :satisfies: PROCESS_gd_req__req__attr_req_cov
   :parent_has_problem: YES: Not understandable what is required.
@@ -324,7 +353,8 @@ This section provides an overview of current process requirements and their impl
      unclear and must be clarified before a precise tool requirement can be defined.
 
 .. tool_req:: Support requirements test coverage
-  :id: tool_req__docs_req_test_cov
+  :id: tool_req__docs_test_cov
+  :tags: Requirements
   :implemented: PARTIAL
   :parent_covered: YES
   :satisfies: PROCESS_gd_req__req__attr_test_covered
@@ -340,7 +370,8 @@ This section provides an overview of current process requirements and their impl
 -------------------------
 
 .. tool_req:: Enables needs linking via satisfies attribute
-  :id: tool_req__docs_satisfies
+  :id: tool_req__docs_req_linkage
+  :tags: Requirements
   :implemented: PARTIAL
   :satisfies: PROCESS_gd_req__req__linkage
   :parent_covered: YES
@@ -371,7 +402,9 @@ This section provides an overview of current process requirements and their impl
 ----------------------
 
 .. tool_req:: Types
+
   :id: tool_req__docs_arch_types
+  :tags: Architecture
   :satisfies:
      PROCESS_gd_req__arch__hierarchical_structure,
      PROCESS_gd_req__arch__viewpoints,
@@ -410,6 +443,7 @@ This section provides an overview of current process requirements and their impl
 
 .. tool_req:: Mandatory Architecture Attribute: fulfils
   :id: tool_req__docs_arch_attr_fulfils
+  :tags: Architecture
   :implemented: YES
   :satisfies:
    PROCESS_gd_req__arch__linkage_requirement_type,
@@ -434,8 +468,9 @@ This section provides an overview of current process requirements and their impl
      Interface component requirements       Interface component architecture
      ====================================  ==========================================
 
-.. tool_req:: Mandate links for safety requirements
+.. tool_req:: Mandate links for safety
   :id: tool_req__docs_req_saftety_link
+  :tags: Architecture
   :implemented: PARTIAL
   :satisfies: PROCESS_gd_req__arch__linkage_requirement
   :parent_covered: YES
@@ -447,7 +482,8 @@ This section provides an overview of current process requirements and their impl
   QM``).
 
 .. tool_req:: Restrict links for safety requirements
-  :id: tool_req__docs_req_saftety_link_trace
+  :id: tool_req__docs_req_safety_link_trace
+  :tags: Architecture
   :implemented: PARTIAL
   :satisfies: PROCESS_gd_req__arch__linkage_safety_trace
   :parent_covered: NO
@@ -463,6 +499,7 @@ This section provides an overview of current process requirements and their impl
 
 .. tool_req:: Support Diagram drawing of architecture
   :id: tool_req__docs_arch_diag_draw
+  :tags: Architecture
   :implemented: YES
   :satisfies: PROCESS_doc_concept__arch__process, PROCESS_gd_req__arch__viewpoints
   :parent_covered: YES
@@ -485,6 +522,7 @@ This section provides an overview of current process requirements and their impl
 ----------------
 
 .. tool_req:: Supports linking to source code
+  :tags: Detailed Design & Code
   :id: tool_req__docs_attr_impl
   :implemented: PARTIAL
   :parent_covered: YES
@@ -497,6 +535,7 @@ This section provides an overview of current process requirements and their impl
 
 .. tool_req:: Supports linking to test cases
   :id: tool_req__docs_test_case_linkage
+  :tags: Detailed Design & Code
   :implemented: NO
   :parent_has_problem: YES: Test vs Testcase unclear. Direction unclear. Goal unclear.
   :satisfies: PROCESS_gd_req__req__attr_testlink
@@ -513,6 +552,7 @@ This section provides an overview of current process requirements and their impl
 
 .. tool_req:: Tool Verification Report
   :id: tool_req__docs_tvr_uid
+  :tags: Detailed Design & Code
   :implemented: NO
   :parent_covered: NO
   :satisfies: PROCESS_gd_req__tool__attr_uid
@@ -522,6 +562,7 @@ This section provides an overview of current process requirements and their impl
 
 .. tool_req:: tool verification report: Enforce safety classification
   :id: tool_req__docs_tvr_safety
+  :tags: Detailed Design & Code
   :implemented: NO
   :parent_has_problem: YES: Safety affected vs Safety relevance
   :parent_covered: YES
@@ -535,6 +576,7 @@ This section provides an overview of current process requirements and their impl
 
 .. tool_req:: tool verification report: enforce security classification
   :id: tool_req__docs_tvr_security
+  :tags: Detailed Design & Code
   :implemented: NO
   :parent_covered: YES
   :parent_has_problem: YES: Safety affected vs Safety relevance
@@ -548,6 +590,7 @@ This section provides an overview of current process requirements and their impl
 
 .. tool_req:: tool verification report: enforce status classification (tool verification report)
   :id: tool_req__docs_tvr_status
+  :tags: Detailed Design & Code
   :implemented: NO
   :satisfies: PROCESS_gd_req__tool__attr_status
   :parent_has_problem: NO
@@ -567,6 +610,7 @@ This section provides an overview of current process requirements and their impl
 
 .. tool_req:: Workflow Types
   :id: tool_req__docs_wf_types
+  :tags: Process / Other
   :implemented: YES
 
   Docs-as-Code shall support the following workflow types:
@@ -575,6 +619,7 @@ This section provides an overview of current process requirements and their impl
 
 .. tool_req:: Standard Requirement Types
   :id: tool_req__docs_std_req_types
+  :tags: Process / Other
   :implemented: YES
   :parent_has_problem: YES: Requirement not found
 
