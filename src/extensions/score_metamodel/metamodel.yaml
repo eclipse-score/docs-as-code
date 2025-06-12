@@ -277,6 +277,7 @@ needs_types:
       # req-Id: tool_req__docs_attr_type
       reqtype: ^(Functional|Interface|Process|Legal|Non-Functional)$
       codelink: ^.*$
+      tags: ^.*$
       testlink: ^.*$
       # req-Id: tool_req__docs_covered
       reqcovered: ^(YES|NO)$

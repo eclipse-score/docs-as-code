@@ -1,9 +1,8 @@
-(features)=
-# 📘 S-CORE Docs-as-Code – Features
+(capabilities)=
 
-Note: this is the normal "features" ;-)
+# 📘 S-CORE Docs-as-Code – Capabilities
 
-This document outlines the key features of the S-CORE docs-as-code tooling.
+This document outlines the key capabilities of the S-CORE docs-as-code tooling.
 Core capabilities of [Sphinx](https://www.sphinx-doc.org/) and [sphinx-needs](https://sphinx-needs.readthedocs.io/) are assumed and extended with S-CORE-specific conventions and infrastructure.
 
 ### Input Format
@@ -68,54 +67,3 @@ Core capabilities of [Sphinx](https://www.sphinx-doc.org/) and [sphinx-needs](ht
 
 - ✅ Automatically validates changes to the S-CORE Bazel registry
 - ✅ IDE support for editing Bazel `BUILD` and `.bzl` files (via LSP, plugins)
-
-
-## 🚀 CI/CD Integration
-
-- builds are cached and re-used where possible
-
-## 🪪 Copyright Checker
-
-- Ensures all S-CORE repositories use whitelisted 3rd party dependencies
-  - ✅ Python dependencies
-  - ✅ Rust dependencies
-
-## 📜 License Compliance
-
-- ✅ All used 3rd-party dependencies must be from a whitelisted set
-- License checks:
-  - ✅ Python
-  - ✅ Rust
-  - Bazel
-  - C++
-
-
-
-## 🧹 Linting
-
-- reStructuredText
-- Markdown
-- Python
-- Bazel
-- Rust
-- C++
-- GitHub Actions workflows
-
-## 🧱 Formatting
-
-- reStructuredText
-- Markdown
-- ✅ Python
-- ✅ Bazel
-- Rust
-- C++
-- GitHub Actions workflows
-
-## Project Helper (to be named)
-
-- Provide estimated work per month, by summing up the issues per month multiplied by their size
-- Exports all issues of a project to a CSV file
-
-## Repository Overview
-
-- ✅ Provide an overview of all S-CORE repositories, including their status (https://github.com/eclipse-score).
