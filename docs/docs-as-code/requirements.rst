@@ -4,8 +4,8 @@
 Requirements (Process Compliance)
 =================================
 
-Overview
---------
+📈 Overview
+############
 
 This section provides an overview of current process requirements and their implementation status.
 
@@ -35,89 +35,11 @@ This section provides an overview of current process requirements and their impl
   for any kind of model element like a requirement, an architecture element or a
   feature description.
 
-----------------------
-🏗 Model Types
-----------------------
-
-The following types of requirements, documents, workflows, architecture elements etc are supported.
-
-.. tool_req:: Requirements Types
-  :id: tool_req__docs_req_types
-  :implemented: YES
-  :satisfies: PROCESS_gd_req__req__structure
-  :parent_has_problem: YES: std_req not mentioned
-  :parent_covered: YES: Together with tool_req__docs_linkage
-
-  Docs-as-Code shall support the following requirement types:
-
-  * Stakeholder requirement (stkh_req)
-  * Feature requirement (feat_req)
-  * Component requirement (comp_req)
-  * Assumption of use requirement (aou_req)
-  * Process requirement (gd_req)
-  * Tool requirement (tool_req)
-
-.. tool_req:: Document Types
-  :id: tool_req__docs_doc_types
-  :implemented: YES
-
-  Docs-as-Code shall support the following document types:
-
-  * Generic Document (document)
-
-.. tool_req:: Workflow Types
-  :id: tool_req__docs_wf_types
-  :implemented: YES
-
-  Docs-as-Code shall support the following workflow types:
-
-  * Workflow (wf)
-
-.. tool_req:: Standard Requirement Types
-  :id: tool_req__docs_std_req_types
-  :implemented: YES
-  :parent_has_problem: YES: Requirement not found
-
-  Docs-as-Code shall support the following requirement types:
-
-  * Standard requirement (std_req)
-
-.. tool_req:: Architecture Types
-  :id: tool_req__docs_arch_types
-  :satisfies:
-     PROCESS_gd_req__arch__hierarchical_structure,
-     PROCESS_gd_req__arch__viewpoints,
-     PROCESS_gd_req__arch__build_blocks,
-     PROCESS_gd_req__arch__build_blocks_corr
-  :implemented: YES
-  :parent_has_problem: YES: Referenced in https://github.com/eclipse-score/process_description/issues/34
-  :parent_covered: NO
-  :status: invalid
-
-.. warning::
-   **OPEN ISSUE** → Architecture types are not yet understood
-   See: https://github.com/eclipse-score/process_description/issues/34
-
-   The list below is tentative at best.
-
-  Docs-as-Code shall support the following architecture types:
-
-  * Feature Architecture Static View (feat_arch_static) - does this count as an architecture type, or is it a view?
-  * Feature Architecture Dynamic View (feat_arch_dyn) - the views below have view in their type name!!
-  * Logical Architecture Interfaces (logic_arc_int) - That's a single interface and not "interfaces"? Or is it a view?
-  * Logical Architecture Interface Operation (logic_arc_int_op)
-  * Module Architecture Static View (mod_view_static)
-  * Module Architecture Dynamic View (mod_view_dyn)
-  * Component Architecture Static View (comp_arc_sta)
-  * Component Architecture Dynamic View (comp_arc_dyn)
-  * Component Architecture Interfaces (comp_arc_int)
-  * Component Architecture Interface Operation (comp_arc_int_op)
-  * Real interface?? (see gd_req__arch__build_blocks_corr)
-  * Feature Architecture Interface?? (see gd_req__arch__traceability)
-
+🗂️ Common Attributes
+#####################
 
 ----------------------
-📛 ID Rules
+🔢 ID
 ----------------------
 
 .. tool_req:: Enforces need ID uniqueness
@@ -146,6 +68,9 @@ The following types of requirements, documents, workflows, architecture elements
 
   Docs-as-Code shall enforce that Need IDs follow the following naming scheme:
 
+  .. TODO: is it "indicating" or "perfect match"?
+     e.g. workflow -> wf would be ok for "indicating", but not for "perfect match"
+
   * A prefix indicating the need type (e.g. `feature__`)
   * A middle part indicating the hierarchical structure of the need:
      * For requirements: a portion of the feature tree or a component acronym
@@ -155,7 +80,7 @@ The following types of requirements, documents, workflows, architecture elements
   This scheme applies to all requirement types defined in :need:`tool_req__docs_req_types`.
 
 ----------------------
-🧾 Title Requirements
+🏷️ Title
 ----------------------
 
 .. tool_req:: Enforces title wording rules
@@ -165,16 +90,20 @@ The following types of requirements, documents, workflows, architecture elements
   :parent_has_problem: NO
   :parent_covered: NO: Can not ensure summary
 
+  .. TODO: drop "requirement" from the next line:
+
   Docs-as-Code shall enforce that requirement titles do not contain the following words:
 
   * shall
   * must
   * will
 
+  .. TODO: drop the next line:
+
   This rule applies to all requirement types defined in :need:`tool_req__docs_req_types`.
 
 ---------------------------
-📝 Description Requirements
+📝 Description
 ---------------------------
 
 .. tool_req:: Enforces presence of description
@@ -182,45 +111,14 @@ The following types of requirements, documents, workflows, architecture elements
   :implemented: NO
   :parent_covered: NO: Can not cover 'ISO/IEC/IEEE/29148'
 
+  .. TODO: drop constraint to requriements
+
   Docs-as-Code shall enforce that each requirement contains a description (content).
 
   This rule applies to all requirement types defined in :need:`tool_req__docs_req_types`.
 
--------------------------
-🧠 Rationale Requirements
--------------------------
-
-.. tool_req:: Enforces rationale attribute
-  :id: tool_req__docs_attr_rationale
-  :implemented: YES
-  :parent_covered: NO: Can not ensure correct reasoning
-  :satisfies: PROCESS_gd_req__req__attr_rationale
-
-  Docs-as-Code shall enforce that each stakeholder requirement contains a ``rationale`` attribute.
-
---------------------------
-🏷️ Requirement Type Rules
---------------------------
-
-.. tool_req:: Enforces requirement type classification
-  :id: tool_req__docs_attr_type
-  :implemented: YES
-  :parent_has_problem: YES: tool_req shall not have 'reqtype' as discussed
-  :satisfies: PROCESS_gd_req__req__attr_type
-
-  Docs-as-Code shall enforce that each requirement has a ``reqtype`` attribute with one
-  of the following values:
-
-  * Functional
-  * Interface
-  * Process
-  * Legal
-  * Non-Functional
-
-  This rule applies to all requirement types defined in :need:`tool_req__docs_req_types`.
-
 ----------------------------
-🔐 Security Classification
+🔒 Security Classification
 ----------------------------
 
 .. tool_req:: Enforces security classification
@@ -271,14 +169,14 @@ The following types of requirements, documents, workflows, architecture elements
   * ASIL_B
   * ASIL_D
 
-----------------------------
-📈 Status Classification
-----------------------------
+----------
+🚦 Status
+----------
 
 .. tool_req:: Enforces status classification (requirements, architecture)
   :id: tool_req__docs_attr_status
   :implemented: YES
-  :parent_has_problem: YES: Architecture talks about requirements
+  :parent_has_problem: YES: Architecture talks about requirements, currently we have valid|draft
   :parent_covered: YES
   :satisfies:
     PROCESS_gd_req__req__attr_status,
@@ -291,9 +189,17 @@ The following types of requirements, documents, workflows, architecture elements
   * valid
   * invalid
 
--------------------------
-📄 Document Headers
--------------------------
+📚 Documents
+#############
+
+.. tool_req:: Document Types
+  :id: tool_req__docs_doc_types
+  :implemented: YES
+
+  Docs-as-Code shall support the following document types:
+
+  * Generic Document (document)
+
 
 .. NOTE: Header_service trigger/working execution is disabled
 .. tool_req:: Mandatory Document attributes
@@ -311,6 +217,8 @@ The following types of requirements, documents, workflows, architecture elements
   * author
   * approver
   * reviewer
+
+
 .. tool_req:: Document author is autofilled
   :id: tool_req__docs_doc_autofill_author
   :implemented: NO
@@ -323,6 +231,7 @@ The following types of requirements, documents, workflows, architecture elements
   Contributors responsible for more than 50% of the content shall be considered the
   document author. Contributors are accumulated over all commits to the file containing
   the document.
+
 
 .. tool_req:: Document approver is autofilled
   :id: tool_req__docs_doc_attr_approver
@@ -337,6 +246,7 @@ The following types of requirements, documents, workflows, architecture elements
   the document. The determination is based on the last pull request (PR) that modified
   the relevant file.
 
+
 .. tool_req:: Document reviewer is autofilled
   :id: tool_req__docs_doc_attr_reviewer
   :implemented: NO
@@ -350,9 +260,58 @@ The following types of requirements, documents, workflows, architecture elements
   approvers. The determination is based on the last pull request (PR) that modified the
   relevant file.
 
+
+📋 Requirements
+################
+
 -------------------------
-📌 Requirement Covered
+🔢 Requirement Types
 -------------------------
+
+.. tool_req:: Requirements Types
+  :id: tool_req__docs_req_types
+  :implemented: YES
+  :satisfies: PROCESS_gd_req__req__structure
+  :parent_has_problem: YES: std_req not mentioned
+  :parent_covered: YES: Together with tool_req__docs_linkage
+
+  Docs-as-Code shall support the following requirement types:
+
+  * Stakeholder requirement (stkh_req)
+  * Feature requirement (feat_req)
+  * Component requirement (comp_req)
+  * Assumption of use requirement (aou_req)
+  * Process requirement (gd_req)
+  * Tool requirement (tool_req)
+
+-------------------------
+🏷️ Attributes
+-------------------------
+
+.. tool_req:: Enforces rationale attribute
+  :id: tool_req__docs_attr_rationale
+  :implemented: YES
+  :parent_covered: NO: Can not ensure correct reasoning
+  :satisfies: PROCESS_gd_req__req__attr_rationale
+
+  Docs-as-Code shall enforce that each stakeholder requirement contains a ``rationale`` attribute.
+
+.. tool_req:: Enforces requirement type classification
+  :id: tool_req__docs_attr_type
+  :implemented: YES
+  :parent_has_problem: YES: tool_req shall not have 'reqtype' as discussed
+  :satisfies: PROCESS_gd_req__req__attr_type
+
+  Docs-as-Code shall enforce that each requirement has a ``reqtype`` attribute with one
+  of the following values:
+
+  * Functional
+  * Interface
+  * Process
+  * Legal
+  * Non-Functional
+
+  This rule applies to all requirement types defined in :need:`tool_req__docs_req_types`.
 
 .. tool_req:: Enables marking requirements as "covered"
   :id: tool_req__docs_covered
@@ -377,7 +336,7 @@ The following types of requirements, documents, workflows, architecture elements
   * No
 
 -------------------------
-🔗 Requirement Linkage
+🔗 Links
 -------------------------
 
 .. tool_req:: Enables needs linking via satisfies attribute
@@ -403,6 +362,51 @@ The following types of requirements, documents, workflows, architecture elements
      Process Requirements       Workflows
      Tooling Requirements       Process Requirements
      ========================  ===========================
+
+🏛️ Architecture
+################
+
+----------------------
+🔢 Architecture Types
+----------------------
+
+.. tool_req:: Types
+  :id: tool_req__docs_arch_types
+  :satisfies:
+     PROCESS_gd_req__arch__hierarchical_structure,
+     PROCESS_gd_req__arch__viewpoints,
+     PROCESS_gd_req__arch__build_blocks,
+     PROCESS_gd_req__arch__build_blocks_corr
+  :implemented: YES
+  :parent_has_problem: YES: Referenced in https://github.com/eclipse-score/process_description/issues/34
+  :parent_covered: NO
+  :status: invalid
+
+  .. warning::
+    **OPEN ISSUE** → Architecture types are not yet understood
+    See: https://github.com/eclipse-score/process_description/issues/34
+
+    The list below is tentative at best.
+
+  Docs-as-Code shall support the following architecture types:
+
+  * Feature Architecture Static View (feat_arch_static) - does this count as an architecture type, or is it a view?
+  * Feature Architecture Dynamic View (feat_arch_dyn) - the views below have view in their type name!!
+  * Logical Architecture Interfaces (logic_arc_int) - That's a single interface and not "interfaces"? Or is it a view?
+  * Logical Architecture Interface Operation (logic_arc_int_op)
+  * Module Architecture Static View (mod_view_static)
+  * Module Architecture Dynamic View (mod_view_dyn)
+  * Component Architecture Static View (comp_arc_sta)
+  * Component Architecture Dynamic View (comp_arc_dyn)
+  * Component Architecture Interfaces (comp_arc_int)
+  * Component Architecture Interface Operation (comp_arc_int_op)
+  * Real interface?? (see gd_req__arch__build_blocks_corr)
+  * Feature Architecture Interface?? (see gd_req__arch__traceability)
+
+
+------------------------
+🔗 Linkage
+------------------------
 
 .. tool_req:: Mandatory Architecture Attribute: fulfils
   :id: tool_req__docs_arch_attr_fulfils
@@ -454,10 +458,10 @@ The following types of requirements, documents, workflows, architecture elements
   architecture model elements with ``safety != QM``.
 
 ----------------------
-📊 Diagramm Related
+🖼️ Diagram Related
 ----------------------
 
-.. tool_req:: Support Diagramm drawing of architecture
+.. tool_req:: Support Diagram drawing of architecture
   :id: tool_req__docs_arch_diag_draw
   :implemented: YES
   :satisfies: PROCESS_doc_concept__arch__process, PROCESS_gd_req__arch__viewpoints
@@ -473,8 +477,11 @@ The following types of requirements, documents, workflows, architecture elements
   * Software Module View
   * Platform View
 
+💻 Detailed Design & Code
+##########################
+
 ----------------
-🧬 Code Linkage
+🔗 Code Linkage
 ----------------
 
 .. tool_req:: Supports linking to source code
@@ -499,9 +506,8 @@ The following types of requirements, documents, workflows, architecture elements
 
   This attribute shall support linking test cases to requirements.
 
-------------------------------
-🏗 Tool Verification Reports
-------------------------------
+🧪 Tool Verification Reports
+############################
 
 .. they are so different, that they need their own section
 
@@ -555,6 +561,39 @@ The following types of requirements, documents, workflows, architecture elements
   * qualified
   * released
   * rejected
+
+⚙️ Process / Other
+###################
+
+.. tool_req:: Workflow Types
+  :id: tool_req__docs_wf_types
+  :implemented: YES
+
+  Docs-as-Code shall support the following workflow types:
+
+  * Workflow (wf)
+
+.. tool_req:: Standard Requirement Types
+  :id: tool_req__docs_std_req_types
+  :implemented: YES
+  :parent_has_problem: YES: Requirement not found
+
+  Docs-as-Code shall support the following requirement types:
+
+  * Standard requirement (std_req)
+
+
+🛡️ Safety Analysis
+###################
+
+.. note::
+  Safety analysis is not yet defined yet. This is just a placeholder for future
+  requirements.
+
+
+..
+.. ------------------------------------------------------------------------
+..
 
 .. needextend:: c.this_doc() and type == 'tool_req'
   :safety: ASIL_B
