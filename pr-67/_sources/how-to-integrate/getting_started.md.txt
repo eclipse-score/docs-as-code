@@ -95,9 +95,9 @@ bazel build //path/to/BUILD-file:docs_latest # documentation at 'bazel-bin/
 <br>
 <br>
 
-> ### *For the full example as well as more complex ones, check out the {doc}`example <../example/index>`
+> ### *For the full example as well as more complex ones, check out the {doc}`example <example/index>`
 
---- 
+---
 
 ### Available Targets
 
@@ -129,39 +129,3 @@ The `docs()` macro accepts the following arguments:
 | `docs_targets` | List of dictionaries which allows multi-repo setup | Yes | - |
 | `source_files_to_scan_for_needs_links` | List of targets,globs,filegroups that the 'source_code_linker' should parse | No | `[]` |
 | `visibility` | Bazel visibility | No | `None` |
-
---- 
-
-
-## Available Extensions
-This module includes several custom Sphinx extensions to enhance your documentation:
-
-### Score Layout Extension
-
-Custom layout options for Sphinx HTML output are defined in `score_layout`
-<README missing>
-
-### Score Header Service
-
-Consistent header styling across documentation pages.
-{doc}`Learn more <extensions/header_service>`
-
-### Score Metamodel
-
-Validation and checking of documentation structure against a defined Metamodel.
-{doc}`Learn more <extensions/metamodel>`
-
-### Score Source Code Linker
-
-Links between requirements documentation and source code implementations.
-{doc}`Learn more <extensions/source_code_linker.md>
-
-### Score PlantUML
-
-Integration with PlantUML for generating diagrams.
-<README missing>
-
-### Score Draw UML Functions
-
-Helper functions for creating UML diagrams.
-<README missing>
