@@ -17,12 +17,12 @@ needs_types_base_options:
     source_code_link: ^https://github.com/eclipse-score/score/blob/.*$
   # Custom semantic validation rules
   prohibited_words:
-    # reqId PROCESS_gd_req__requirements_attr_title
+    # req-Id: tool_req__docs_attr_title
     title:
       - shall
       - must
       - will
-    # reqId PROCESS_gd_req__req__attr_desc_weak
+    # req-Id: tool_req__docs_attr_description
     content:
       - just
       - about
@@ -64,6 +64,7 @@ needs_types:
       links: "^.*$"
 
   # Standards
+  # req-Id: tool_req__docs_std_req_types
   std_req:
     title: Standard Requirement
     prefix: std_req__
@@ -79,7 +80,9 @@ needs_types:
     mandatory_options:
       id: std_wp__(iso26262|isosae21434|isopas8926|aspice_40)__[0-9a-z_]*$
       status: ^(valid)$
+
   # Workflow
+  # req-Id: tool_req__docs_wf_types
   workflow:
     title: Workflow
     prefix: wf__
@@ -95,15 +98,18 @@ needs_types:
       supported_by: ^rl__.*$
       contains: ^gd_(req|temp|chklst|guidl|meth)__.*$
       has: ^doc_(getstrt|concept)__.*$
+
   # Guidances
   gd_req:
     title: Process Requirements
     prefix: gd_req__
     mandatory_options:
       id: ^gd_req__[0-9a-z_]*$
+      # req-Id: tool_req__docs_attr_status
       status: ^(valid|draft)$
     optional_links:
       complies: ^std_req__(iso26262|isosae21434|isopas8926|aspice_40)__.*$
+      # req-Id: tool_req__docs_satisfies
       satisfies: ^wf__.*$
 
   gd_temp:
@@ -150,6 +156,7 @@ needs_types:
       status: ^(valid|draft)$
     optional_links:
       complies: std_(wp__iso26262|wp__isosae21434|wp__isopas8926|iic_aspice_40)__.*$
+
   # Role
   role:
     title: Role
@@ -158,6 +165,7 @@ needs_types:
       id: ^rl__[0-9a-z_]*$
     optional_links:
       contains: ^rl__.*$
+
   # Documents
   doc_concept:
     title: Concept Definition
@@ -173,10 +181,6 @@ needs_types:
       id: ^doc_getstrt__[0-9a-z_]*$
       status: ^(valid|draft)$
 
-  ##############################################################################
-  # S-CORE Metamodel
-  ##############################################################################
-  # General
   document:
     title: Generic Document
     prefix: doc__
@@ -187,17 +191,15 @@ needs_types:
       safety: "^(QM|ASIL_B|ASIL_D)$"
       security: "^(YES|NO)$"
       realizes: "^wp__.+$"
-  # The following 3 guidance requirements enforce the requirement structure and attributes:
-  # req- Id: gd_req__req__structure
-  # req- Id: gd_req__requirements_attr_description
-  # req- Id: gd_req__req__linkage
+
   # Requirements
+  # req-Id: tool_req__docs_req_types
   stkh_req:
-    # @satisfies(PROCESS_gd_req__req__structure)
     title: Stakeholder Requirement
     prefix: stkh_req__
     mandatory_options:
       id: ^stkh_req__[0-9a-z_]*$
+      # req-Id: tool_req__docs_attr_type
       reqtype: ^(Functional|Interface|Process|Legal|Non-Functional)$
       safety: ^(QM|ASIL_B|ASIL_D)$
       status: ^(valid|invalid)$
@@ -206,48 +208,60 @@ needs_types:
       security: ^(YES|NO)$
       codelink: ^.*$
       testlink: ^.*$
+      # req-Id: tool_req__docs_covered
       reqcovered: ^(YES|NO)$
+      # req-Id: tool_req__docs_req_test_cov
       testcovered: ^(YES|NO)$
       hash: ^.*$
 
+  # req-Id: tool_req__docs_req_types
   feat_req:
     title: Feature Requirement
     prefix: feat_req__
     style: node
     mandatory_options:
       id: ^feat_req__[0-9a-z_]*$
+      # req-Id: tool_req__docs_attr_type
       reqtype: ^(Functional|Interface|Process|Legal|Non-Functional)$
       security: ^(YES|NO)$
       safety: ^(QM|ASIL_B|ASIL_D)$
       status: ^(valid|invalid)$
     mandatory_links:
-      # req- Id: gd_req__req__linkage_fulfill
+      # req-Id: tool_req__docs_satisfies
       satisfies: ^stkh_req__.*$
     optional_options:
       codelink: ^.*$
       testlink: ^.*$
+      # req-Id: tool_req__docs_covered
       reqcovered: ^(YES|NO)$
+      # req-Id: tool_req__docs_req_test_cov
       testcovered: ^(YES|NO)$
       hash: ^.*$
 
+  # req-Id: tool_req__docs_req_types
   comp_req:
     title: Component Requirement
     prefix: comp_req__
     mandatory_options:
       id: ^comp_req__[0-9a-z_]*$
+      # req-Id: tool_req__docs_attr_type
       reqtype: ^(Functional|Interface|Process|Legal|Non-Functional)$
       security: ^(YES|NO)$
       safety: ^(QM|ASIL_B|ASIL_D)$
       status: ^(valid|invalid)$
     mandatory_links:
+      # req-Id: tool_req__docs_satisfies
       satisfies: ^feat_req__.*$
     optional_options:
       codelink: ^.*$
       testlink: ^.*$
+      # req-Id: tool_req__docs_covered
       reqcovered: ^(YES|NO)$
+      # req-Id: tool_req__docs_req_test_cov
       testcovered: ^(YES|NO)$
       hash: ^.*$
 
+  # req-Id: tool_req__docs_req_types
   tool_req:
     title: Tool Requirement
     prefix: tool_req__
@@ -257,23 +271,29 @@ needs_types:
       safety: ^(QM|ASIL_B|ASIL_D)$
       status: ^(valid|invalid)$
     optional_links:
+      # req-Id: tool_req__docs_satisfies
       satisfies: ^.*$
     optional_options:
+      # req-Id: tool_req__docs_attr_type
       reqtype: ^(Functional|Interface|Process|Legal|Non-Functional)$
       codelink: ^.*$
       testlink: ^.*$
+      # req-Id: tool_req__docs_covered
       reqcovered: ^(YES|NO)$
+      # req-Id: tool_req__docs_req_test_cov
       testcovered: ^(YES|NO)$
       hash: ^.*$
       implemented: ^(YES|PARTIAL|NO)$
       parent_covered: ^.*$
       parent_has_problem: ^.*$
 
+  # req-Id: tool_req__docs_req_types
   aou_req:
     title: Assumption of Use
     prefix: aou_req__
     mandatory_options:
       id: ^aou_req__[0-9a-z_]*$
+      # req-Id: tool_req__docs_attr_type
       reqtype: ^(Functional|Interface|Process|Legal|Non-Functional)$
       security: ^(YES|NO)$
       safety: ^(QM|ASIL_B|ASIL_D)$
@@ -281,11 +301,15 @@ needs_types:
     optional_options:
       codelink: ^.*$
       testlink: ^.*$
+      # req-Id: tool_req__docs_covered
       reqcovered: ^(YES|NO)$
+      # req-Id: tool_req__docs_req_test_cov
       testcovered: ^(YES|NO)$
       hash: ^.*$
     optional_links:
       mitigates: ^.*$
+
+
   # Architecture
   feat_arc_sta:
     title: Feature Architecture Static View
