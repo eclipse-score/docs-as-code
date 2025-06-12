@@ -5,11 +5,11 @@
 This document outlines the key capabilities of the S-CORE docs-as-code tooling.
 Core capabilities of [Sphinx](https://www.sphinx-doc.org/) and [sphinx-needs](https://sphinx-needs.readthedocs.io/) are assumed and extended with S-CORE-specific conventions and infrastructure.
 
-### Input Format
+## Input Format
 
 - Supports both reStructuredText (reST) and Markdown (CommonMark/GFM)
 
-### Build
+## Build
 
 - Ensures deterministic output: identical input produces identical output
 - ✅ Uses version-controlled configuration to ensure reproducibility
@@ -17,7 +17,7 @@ Core capabilities of [Sphinx](https://www.sphinx-doc.org/) and [sphinx-needs](ht
 - ✅ Supports incremental builds to provide fast feedback during authoring
 - ✅ Seamless integration with the Bazel build system
 
-### Configuration
+## Configuration
 
 - ✅ Uses a single, shared, version-controlled configuration file
 - ✅ Allows repository-specific overrides when needed
@@ -26,7 +26,7 @@ Core capabilities of [Sphinx](https://www.sphinx-doc.org/) and [sphinx-needs](ht
 
 
 
-### Cross-Repository Linking
+## Cross-Repository Linking
 
 - ✅ Supports unidirectional links to:
   - Versioned documentation (for tagged releases)
@@ -35,13 +35,13 @@ Core capabilities of [Sphinx](https://www.sphinx-doc.org/) and [sphinx-needs](ht
 - Allows bidirectional links for integration-focused documentation
 - In addition to high level versioning of repositories, supports verifying suspect links on a requirement level
 
-### Previews & Feedback
+## Previews & Feedback
 
 - ✅ Automatically generates documentation previews for pull requests
 - Previews are available within minutes of each push
 - ✅ Preview output matches final published artifacts (identical rendering)
 
-### IDE & Developer Experience
+## IDE & Developer Experience
 
 - ✅ Live preview functionality for documentation authors
 - ✅ Integrated linting for:
@@ -52,12 +52,12 @@ Core capabilities of [Sphinx](https://www.sphinx-doc.org/) and [sphinx-needs](ht
   - Cross-repository links
   - Sphinx directives and roles (planned)
 
-### Architecture Visualization
+## Architecture Visualization
 
 - ✅ Generates architecture diagrams from structured models
 - Integrates diagram tools such as PlantUML and Mermaid
 
-### Code Integration
+## Code Integration
 
 - ✅ Enables traceability between documentation and source code by linking from implementation to requirements
 
