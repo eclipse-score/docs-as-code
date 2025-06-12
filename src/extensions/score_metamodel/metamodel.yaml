@@ -14,15 +14,15 @@
 
 needs_types_base_options:
   optional_options:
-    source_code_link: ^https://github.com/eclipse-score/score/blob/.*$
+    source_code_link: ^https://github.com/eclipse-score/.*$
   # Custom semantic validation rules
   prohibited_words:
-    # req-Id: tool_req__docs_attr_title
+    # req-Id: tool_req__docs_common_attr_title
     title:
       - shall
       - must
       - will
-    # req-Id: tool_req__docs_attr_description
+    # req-Id: tool_req__docs_common_attr_description
     content:
       - just
       - about
@@ -64,7 +64,7 @@ needs_types:
       links: "^.*$"
 
   # Standards
-  # req-Id: tool_req__docs_std_req_types
+  # req-Id: tool_req__docs_stdreq_types
   std_req:
     title: Standard Requirement
     prefix: std_req__
@@ -105,11 +105,11 @@ needs_types:
     prefix: gd_req__
     mandatory_options:
       id: ^gd_req__[0-9a-z_]*$
-      # req-Id: tool_req__docs_attr_status
+      # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|draft)$
     optional_links:
       complies: ^std_req__(iso26262|isosae21434|isopas8926|aspice_40)__.*$
-      # req-Id: tool_req__docs_satisfies
+      # req-Id: tool_req__docs_req_link_satisfies_allowed
       satisfies: ^wf__.*$
 
   gd_temp:
@@ -199,7 +199,7 @@ needs_types:
     prefix: stkh_req__
     mandatory_options:
       id: ^stkh_req__[0-9a-z_]*$
-      # req-Id: tool_req__docs_attr_type
+      # req-Id: tool_req__docs_req_attr_reqtype
       reqtype: ^(Functional|Interface|Process|Legal|Non-Functional)$
       safety: ^(QM|ASIL_B|ASIL_D)$
       status: ^(valid|invalid)$
@@ -209,9 +209,9 @@ needs_types:
       security: ^(YES|NO)$
       codelink: ^.*$
       testlink: ^.*$
-      # req-Id: tool_req__docs_covered
+      # req-Id: tool_req__docs_req_attr_reqcov
       reqcovered: ^(YES|NO)$
-      # req-Id: tool_req__docs_req_test_cov
+      # req-Id: tool_req__docs_req_attr_testcov
       testcovered: ^(YES|NO)$
       hash: ^.*$
 
@@ -222,20 +222,20 @@ needs_types:
     style: node
     mandatory_options:
       id: ^feat_req__[0-9a-z_]*$
-      # req-Id: tool_req__docs_attr_type
+      # req-Id: tool_req__docs_req_attr_reqtype
       reqtype: ^(Functional|Interface|Process|Legal|Non-Functional)$
       security: ^(YES|NO)$
       safety: ^(QM|ASIL_B|ASIL_D)$
       status: ^(valid|invalid)$
     mandatory_links:
-      # req-Id: tool_req__docs_satisfies
+      # req-Id: tool_req__docs_req_link_satisfies_allowed
       satisfies: ^stkh_req__.*$
     optional_options:
       codelink: ^.*$
       testlink: ^.*$
-      # req-Id: tool_req__docs_covered
+      # req-Id: tool_req__docs_req_attr_reqcov
       reqcovered: ^(YES|NO)$
-      # req-Id: tool_req__docs_req_test_cov
+      # req-Id: tool_req__docs_req_attr_testcov
       testcovered: ^(YES|NO)$
       hash: ^.*$
 
@@ -245,20 +245,20 @@ needs_types:
     prefix: comp_req__
     mandatory_options:
       id: ^comp_req__[0-9a-z_]*$
-      # req-Id: tool_req__docs_attr_type
+      # req-Id: tool_req__docs_req_attr_reqtype
       reqtype: ^(Functional|Interface|Process|Legal|Non-Functional)$
       security: ^(YES|NO)$
       safety: ^(QM|ASIL_B|ASIL_D)$
       status: ^(valid|invalid)$
     mandatory_links:
-      # req-Id: tool_req__docs_satisfies
+      # req-Id: tool_req__docs_req_link_satisfies_allowed
       satisfies: ^feat_req__.*$
     optional_options:
       codelink: ^.*$
       testlink: ^.*$
-      # req-Id: tool_req__docs_covered
+      # req-Id: tool_req__docs_req_attr_reqcov
       reqcovered: ^(YES|NO)$
-      # req-Id: tool_req__docs_req_test_cov
+      # req-Id: tool_req__docs_req_attr_testcov
       testcovered: ^(YES|NO)$
       hash: ^.*$
 
@@ -272,17 +272,17 @@ needs_types:
       safety: ^(QM|ASIL_B|ASIL_D)$
       status: ^(valid|invalid)$
     optional_links:
-      # req-Id: tool_req__docs_satisfies
+      # req-Id: tool_req__docs_req_link_satisfies_allowed
       satisfies: ^.*$
     optional_options:
-      # req-Id: tool_req__docs_attr_type
+      # req-Id: tool_req__docs_req_attr_reqtype
       reqtype: ^(Functional|Interface|Process|Legal|Non-Functional)$
       codelink: ^.*$
       tags: ^.*$
       testlink: ^.*$
-      # req-Id: tool_req__docs_covered
+      # req-Id: tool_req__docs_req_attr_reqcov
       reqcovered: ^(YES|NO)$
-      # req-Id: tool_req__docs_req_test_cov
+      # req-Id: tool_req__docs_req_attr_testcov
       testcovered: ^(YES|NO)$
       hash: ^.*$
       implemented: ^(YES|PARTIAL|NO)$
@@ -295,7 +295,7 @@ needs_types:
     prefix: aou_req__
     mandatory_options:
       id: ^aou_req__[0-9a-z_]*$
-      # req-Id: tool_req__docs_attr_type
+      # req-Id: tool_req__docs_req_attr_reqtype
       reqtype: ^(Functional|Interface|Process|Legal|Non-Functional)$
       security: ^(YES|NO)$
       safety: ^(QM|ASIL_B|ASIL_D)$
@@ -303,9 +303,9 @@ needs_types:
     optional_options:
       codelink: ^.*$
       testlink: ^.*$
-      # req-Id: tool_req__docs_covered
+      # req-Id: tool_req__docs_req_attr_reqcov
       reqcovered: ^(YES|NO)$
-      # req-Id: tool_req__docs_req_test_cov
+      # req-Id: tool_req__docs_req_attr_testcov
       testcovered: ^(YES|NO)$
       hash: ^.*$
     optional_links:
@@ -470,6 +470,7 @@ needs_types:
       satisfies: ^comp_arc_sta__.*$
     optional_links:
       includes: ^sw_unit__.*$
+
   dd_dyn:
     title: Dynamic detailed design
     prefix: dd_dyn__
@@ -483,6 +484,7 @@ needs_types:
     mandatory_links:
       implements: ^comp_req__.*$
       satisfies: ^comp_arc_sta__.*$
+
   sw_unit:
     title: Software unit
     prefix: sw_unit__

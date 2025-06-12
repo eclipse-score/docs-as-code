@@ -7,7 +7,7 @@ Requirements (Process Compliance)
 📈 Status
 ##########
 
-This section provides an overview of current process requirements and their implementation status.
+This section provides an overview of current process requirements and their clarification & implementation status.
 
 .. needbar:: Docs-As-Code Requirements Status
   :stacked:
