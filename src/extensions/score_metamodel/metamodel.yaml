@@ -203,6 +203,7 @@ needs_types:
       reqtype: ^(Functional|Interface|Process|Legal|Non-Functional)$
       safety: ^(QM|ASIL_B|ASIL_D)$
       status: ^(valid|invalid)$
+      # req-Id: tool_req__docs_req_attr_rationale
       rationale: ^.+$
     optional_options:
       security: ^(YES|NO)$
