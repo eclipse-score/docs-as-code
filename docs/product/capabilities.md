@@ -7,7 +7,7 @@ Core capabilities of [Sphinx](https://www.sphinx-doc.org/) and [sphinx-needs](ht
 
 ## Input Format
 
-- Supports both reStructuredText (reST) and Markdown (CommonMark/GFM)
+- Supports both reStructuredText (rst) and Markdown (CommonMark/GFM)
 
 ## Build
 
