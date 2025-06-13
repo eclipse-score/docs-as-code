@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>File based rule checks &#8212; Score Docs-as-Code  documentation</title>
+    <title>Automatic Header Generation Service &#8212; Score Docs-as-Code  documentation</title>
   
   
   
@@ -38,11 +38,11 @@
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-data-viewer/jsonview.bundle.css?v=f6ef2277" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/libs/html/datatables.min.css?v=4b4fd840" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_toggle.css?v=5c6620df" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_style.css?v=92936fa5" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_core.css?v=f5b60a78" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_links.css?v=2150a916" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/needstable.css?v=5e1b6797" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_toggle.css?v=5c6620df" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_links.css?v=2150a916" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_core.css?v=f5b60a78" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_style.css?v=92936fa5" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/modern.css?v=803738c0" />
   
   <!-- So that users can add custom icons -->
@@ -62,7 +62,7 @@
     <script src="../../_static/sphinx-needs/libs/html/datatables.min.js?v=8a4aee21"></script>
     <script src="../../_static/sphinx-needs/libs/html/datatables_loader.js?v=a2cae175"></script>
     <script src="../../_static/sphinx-needs/libs/html/sphinx_needs_collapse.js?v=dca66431"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'docs-as-code/extensions/rst_filebased_testing';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'product/extensions/header_service';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://eclipse-score.github.io/docs-as-code/versions.json';
@@ -72,8 +72,8 @@
         </script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Automatic Header Generation Service" href="header_service.html" />
-    <link rel="prev" title="score_metamodel" href="metamodel.html" />
+    <link rel="next" title="Source Link Extension Details" href="source_code_linker.html" />
+    <link rel="prev" title="File based rule checks" href="rst_filebased_testing.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.1" />
@@ -153,29 +153,22 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../example/index.html">
-    Example
+  <a class="nav-link nav-internal" href="../../how-to-integrate/index.html">
+    How to Integrate
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../faq/index.html">
-    FAQ
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../index.html">
-    Docs-as-Code
+  <a class="nav-link nav-internal" href="../../how-to-use/index.html">
+    How To Use
   </a>
 </li>
 
 
 <li class="nav-item current active">
-  <a class="nav-link nav-internal" href="index.html">
-    Extensions
+  <a class="nav-link nav-internal" href="../index.html">
+    Docs-as-Code
   </a>
 </li>
 
@@ -289,29 +282,22 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../example/index.html">
-    Example
+  <a class="nav-link nav-internal" href="../../how-to-integrate/index.html">
+    How to Integrate
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../faq/index.html">
-    FAQ
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../index.html">
-    Docs-as-Code
+  <a class="nav-link nav-internal" href="../../how-to-use/index.html">
+    How To Use
   </a>
 </li>
 
 
 <li class="nav-item current active">
-  <a class="nav-link nav-internal" href="index.html">
-    Extensions
+  <a class="nav-link nav-internal" href="../index.html">
+    Docs-as-Code
   </a>
 </li>
 
@@ -380,11 +366,16 @@
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="metamodel.html">Metamodel</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Filebased Testing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="header_service.html">Header Service</a></li>
-<li class="toctree-l1"><a class="reference internal" href="source_code_linker.html">Source Code Linker</a></li>
-<li class="toctree-l1"><a class="reference internal" href="extension_guide.html">Extension Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../capabilities.html">📘 S-CORE Docs-as-Code – Capabilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../requirements.html">Requirements (Process Compliance)</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Extensions</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="metamodel.html">Metamodel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rst_filebased_testing.html">Filebased Testing</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Header Service</a></li>
+<li class="toctree-l2"><a class="reference internal" href="source_code_linker.html">Source Code Linker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extension_guide.html">Extension Guide</a></li>
+</ul>
+</details></li>
 </ul>
 </div>
 </nav></div>
@@ -426,9 +417,12 @@
       </a>
     </li>
     
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Docs-as-Code</a></li>
+    
+    
     <li class="breadcrumb-item"><a href="index.html" class="nav-link">Extensions</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">File based rule checks</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Automatic Header Generation Service</span></li>
   </ul>
 </nav>
 </div>
@@ -445,55 +439,90 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="file-based-rule-checks">
-<span id="file-based-testing"></span><h1>File based rule checks<a class="headerlink" href="#file-based-rule-checks" title="Link to this heading">#</a></h1>
-<section id="test-function">
-<h2>Test Function<a class="headerlink" href="#test-function" title="Link to this heading">#</a></h2>
-<p>The functionality of the Sphinx build rules can be verified with test rst files.</p>
-<p>The function <em>test_check_rules</em> in <em>test_rules_file_based.py</em> is executed for
-each rst file in the directory <em>rst</em>.
-It creates a SphinxTestApp and a document source folder with an index.rst file
-that contains a toctree with the given rst file.</p>
-<p>It uses the SphinxTestApp to build the documentation and checks for the
-<strong>expected/not expected</strong> warnings.</p>
+  <section id="automatic-header-generation-service">
+<span id="header-service"></span><h1>Automatic Header Generation Service<a class="headerlink" href="#automatic-header-generation-service" title="Link to this heading">#</a></h1>
+<section id="purpose">
+<h2>Purpose<a class="headerlink" href="#purpose" title="Link to this heading">#</a></h2>
+<p>The service <em>header-service</em> generates a table with review and approver informations.
+It uses the template <em>header.need</em> to generate this table.</p>
 </section>
-<section id="create-a-test-rst-file">
-<h2>Create a test rst file<a class="headerlink" href="#create-a-test-rst-file" title="Link to this heading">#</a></h2>
-<p>To add a new test case create a new rst file in the rst directory.
-The test files can also be organized in a subfolder structure below directory rst.
-The test files are expected to contain the following format:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>#CHECK: &lt;check functions&gt;
-
-#EXPECT: &lt;warning message&gt;
-#EXPECT-NOT: &lt;warning message&gt;
-
-&lt;need information&gt;
+<section id="extraction-methods">
+<h2>Extraction Methods<a class="headerlink" href="#extraction-methods" title="Link to this heading">#</a></h2>
+<p>This modules can use two different methods to extract the needed information.</p>
+<ul class="simple">
+<li><p>GitHub data</p></li>
+<li><p>Merge commit log</p></li>
+</ul>
+<p>The used method can be configured as a configuration parameter in <em>conf.py</em>.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>header_service_use_github_data = True
 </pre></div>
 </div>
-<p><strong>&lt;check functions&gt;</strong><br>
-Check functions (comma separated) to be used for the Sphinx build. Following
-warnings will only be generated by these check functions.
-Only one CHECK statement per file. Usually at the very top.
-If CHECK is not provided, all checks are enabled.</p>
-<p><strong>&lt;warning message&gt;</strong><br>
-Message text which is expected/not expected during the
-Sphinx build to be shown.
-This message is checked for the Sphinx-Needs directive
-specified after the EXPECT/EXPECT-NOT statement.</p>
-<p><strong>&lt;need information&gt;</strong><br>
-One or more Sphinx-Needs directives needed for the
-Sphinx document build</p>
-<p><strong>Example:</strong></p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>#CHECK: check_options
-#EXPECT: std_wp__test__abcd: is missing required option: `status`.
-
-.. std_wp:: Test requirement
-    :id: std_wp__test__abcd
+<p>GitHub data is used if parameter is not set.</p>
+</section>
+<section id="environment-variables">
+<h2>Environment variables<a class="headerlink" href="#environment-variables" title="Link to this heading">#</a></h2>
+<p>This module uses the following environment variables if the extraction method <strong>Github data</strong> is configured:</p>
+<p>GH_TOKEN: Github access token
+GITHUB_REF_NAME: Github reference name (<pull request no>/merge)
+GITHUB_REPOSITORY: Github repository <org>/<repo></p>
+</section>
+<section id="execution">
+<h2>Execution<a class="headerlink" href="#execution" title="Link to this heading">#</a></h2>
+<p>The document generation has to be executed as follows:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>GH_TOKEN=$GH_TOKEN bazel run //docs:incremental
 </pre></div>
 </div>
-<p>This example verifies that the warning message
-<em>std_wp__test__abcd: is missing required option: `status`</em>
-is shown during the Sphinx build. Only the <em>check_options</em> check is enabled.</p>
+<p>Sphinx cannot access the environment variables when started via Bazel build.</p>
+<p>If extraction method <strong>Merge commit info</strong> is used the document generation can be executed as follows:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>bazel run //docs:incremental
+</pre></div>
+</div>
+</section>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">#</a></h2>
+<p>Add the descriptor <em>header_service</em> to a RST file to fill out review and approver informations.</p>
+<p>.. needservice:: header-service</p>
+<p>This generates the following Table:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Document Identification</p></th>
+<th class="head"><p></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Document Type</p></td>
+<td><p>Checklist</p></td>
+</tr>
+<tr class="row-odd"><td><p>Document ID</p></td>
+<td><p>DPX-CONTR-REVIEW-CHECKLIST</p></td>
+</tr>
+<tr class="row-even"><td><p>Project Name</p></td>
+<td><p>dependix</p></td>
+</tr>
+<tr class="row-odd"><td><p>ASIL</p></td>
+<td><p>B</p></td>
+</tr>
+<tr class="row-even"><td><p>Security Classification</p></td>
+<td><p>CONFIDENTIAL</p></td>
+</tr>
+<tr class="row-odd"><td><p>Author</p></td>
+<td><p>[Author of the PR]</p></td>
+</tr>
+<tr class="row-even"><td><p>Reviewer</p></td>
+<td><p>[List of PR reviewers]</p></td>
+</tr>
+<tr class="row-odd"><td><p>Approver</p></td>
+<td><p>[List of PR approvers]</p></td>
+</tr>
+<tr class="row-even"><td><p>Version</p></td>
+<td><p>[Merge commit hash of the PR]</p></td>
+</tr>
+<tr class="row-odd"><td><p>Status</p></td>
+<td><p>RELEASED</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 </section>
 </section>
 
@@ -508,20 +537,20 @@ is shown during the Sphinx build. Only the <em>check_options</em> check is enabl
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="metamodel.html"
+       href="rst_filebased_testing.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">score_metamodel</p>
+        <p class="prev-next-title">File based rule checks</p>
       </div>
     </a>
     <a class="right-next"
-       href="header_service.html"
+       href="source_code_linker.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Automatic Header Generation Service</p>
+        <p class="prev-next-title">Source Link Extension Details</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -544,8 +573,11 @@ is shown during the Sphinx build. Only the <em>check_options</em> check is enabl
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#test-function">Test Function</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#create-a-test-rst-file">Create a test rst file</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#purpose">Purpose</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extraction-methods">Extraction Methods</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#environment-variables">Environment variables</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#execution">Execution</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#usage">Usage</a></li>
 </ul>
   </nav></div>
 
@@ -553,7 +585,7 @@ is shown during the Sphinx build. Only the <em>check_options</em> check is enabl
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/eclipse-score/docs-as-code/edit/main/docs/docs-as-code/extensions/rst_filebased_testing.md">
+    <a href="https://github.com/eclipse-score/docs-as-code/edit/main/docs/product/extensions/header_service.md">
       <i class="fa-solid fa-pencil"></i>
       
       
@@ -569,7 +601,7 @@ is shown during the Sphinx build. Only the <em>check_options</em> check is enabl
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../../_sources/docs-as-code/extensions/rst_filebased_testing.md.txt"
+      <li><a href="../../_sources/product/extensions/header_service.md.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div></div>

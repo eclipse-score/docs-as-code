@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Guide to Creating a Sphinx Extension &#8212; Score Docs-as-Code  documentation</title>
+    <title>score_metamodel &#8212; Score Docs-as-Code  documentation</title>
   
   
   
@@ -38,11 +38,11 @@
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-data-viewer/jsonview.bundle.css?v=f6ef2277" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/libs/html/datatables.min.css?v=4b4fd840" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_toggle.css?v=5c6620df" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_style.css?v=92936fa5" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_core.css?v=f5b60a78" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_links.css?v=2150a916" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/needstable.css?v=5e1b6797" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_toggle.css?v=5c6620df" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_links.css?v=2150a916" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_core.css?v=f5b60a78" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_style.css?v=92936fa5" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/modern.css?v=803738c0" />
   
   <!-- So that users can add custom icons -->
@@ -62,7 +62,7 @@
     <script src="../../_static/sphinx-needs/libs/html/datatables.min.js?v=8a4aee21"></script>
     <script src="../../_static/sphinx-needs/libs/html/datatables_loader.js?v=a2cae175"></script>
     <script src="../../_static/sphinx-needs/libs/html/sphinx_needs_collapse.js?v=dca66431"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'docs-as-code/extensions/extension_guide';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'product/extensions/metamodel';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://eclipse-score.github.io/docs-as-code/versions.json';
@@ -72,7 +72,8 @@
         </script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="prev" title="Source Link Extension Details" href="source_code_linker.html" />
+    <link rel="next" title="File based rule checks" href="rst_filebased_testing.html" />
+    <link rel="prev" title="Extensions" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.1" />
@@ -152,29 +153,22 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../example/index.html">
-    Example
+  <a class="nav-link nav-internal" href="../../how-to-integrate/index.html">
+    How to Integrate
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../faq/index.html">
-    FAQ
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../index.html">
-    Docs-as-Code
+  <a class="nav-link nav-internal" href="../../how-to-use/index.html">
+    How To Use
   </a>
 </li>
 
 
 <li class="nav-item current active">
-  <a class="nav-link nav-internal" href="index.html">
-    Extensions
+  <a class="nav-link nav-internal" href="../index.html">
+    Docs-as-Code
   </a>
 </li>
 
@@ -288,29 +282,22 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../example/index.html">
-    Example
+  <a class="nav-link nav-internal" href="../../how-to-integrate/index.html">
+    How to Integrate
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../faq/index.html">
-    FAQ
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../index.html">
-    Docs-as-Code
+  <a class="nav-link nav-internal" href="../../how-to-use/index.html">
+    How To Use
   </a>
 </li>
 
 
 <li class="nav-item current active">
-  <a class="nav-link nav-internal" href="index.html">
-    Extensions
+  <a class="nav-link nav-internal" href="../index.html">
+    Docs-as-Code
   </a>
 </li>
 
@@ -379,11 +366,16 @@
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="metamodel.html">Metamodel</a></li>
-<li class="toctree-l1"><a class="reference internal" href="rst_filebased_testing.html">Filebased Testing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="header_service.html">Header Service</a></li>
-<li class="toctree-l1"><a class="reference internal" href="source_code_linker.html">Source Code Linker</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Extension Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../capabilities.html">📘 S-CORE Docs-as-Code – Capabilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../requirements.html">Requirements (Process Compliance)</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Extensions</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Metamodel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rst_filebased_testing.html">Filebased Testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="header_service.html">Header Service</a></li>
+<li class="toctree-l2"><a class="reference internal" href="source_code_linker.html">Source Code Linker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extension_guide.html">Extension Guide</a></li>
+</ul>
+</details></li>
 </ul>
 </div>
 </nav></div>
@@ -425,9 +417,12 @@
       </a>
     </li>
     
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Docs-as-Code</a></li>
+    
+    
     <li class="breadcrumb-item"><a href="index.html" class="nav-link">Extensions</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Guide to Creating a Sphinx Extension</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">score_metamodel</span></li>
   </ul>
 </nav>
 </div>
@@ -444,137 +439,55 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="guide-to-creating-a-sphinx-extension">
-<span id="extension-guide"></span><h1>Guide to Creating a Sphinx Extension<a class="headerlink" href="#guide-to-creating-a-sphinx-extension" title="Link to this heading">#</a></h1>
-<p>This document will help you with the most important building blocks and provide all information needed to start writing your own Sphinx extension in the S-CORE project.
-<strong>It is intended for developers, it will not show how to use extensions.</strong></p>
-<section id="getting-started">
-<h2>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading">#</a></h2>
-<ol class="arabic simple">
-<li><p>Create a new folder in <code class="docutils literal notranslate"><span class="pre">docs/_tooling/extensions</span></code> called <code class="docutils literal notranslate"><span class="pre">score_&lt;name</span> <span class="pre">of</span> <span class="pre">your</span> <span class="pre">extension&gt;</span></code></p></li>
-<li><p>Copy the template inside the <code class="docutils literal notranslate"><span class="pre">__init__.py</span></code></p></li>
-<li><p>Adapt to your needs</p></li>
-</ol>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sphinx.application</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sphinx</span>
-
-<span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="n">app</span><span class="p">:</span> <span class="n">Sphinx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-    <span class="c1"># attach to events, add config parameters, call functions etc.</span>
-    <span class="o">...</span>
-    <span class="k">return</span> <span class="p">{</span>
-        <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;0.1&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;parallel_read_safe&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># or False</span>
-        <span class="s2">&quot;parallel_write_safe&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># or False</span>
-    <span class="p">}</span>
-</pre></div>
-</div>
-<p>The <code class="docutils literal notranslate"><span class="pre">setup</span></code> function is vital as this is the one that Sphinx will call when loading your extension.
-From here you can attach to different events emitted by Sphinx or sphinx-needs, emit events yourself,
-or implement the logic needed for your extension to work.</p>
-</section>
-<section id="attaching-to-an-event">
-<h2>Attaching to an Event<a class="headerlink" href="#attaching-to-an-event" title="Link to this heading">#</a></h2>
-<p>Your extension might want to attach certain functions to events that Sphinx emits. This can be done like so:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="n">app</span><span class="p">:</span> <span class="n">Sphinx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-    <span class="n">app</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;&lt;event&gt;&quot;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">function_to_execute</span><span class="o">&gt;</span><span class="p">)</span>
-    <span class="o">...</span>
-</pre></div>
-</div>
-<p>It’s important to ensure that the function you are attaching to the event accepts the correct number of arguments in the right order.
-Depending on the event you attach to, some information might not be available, or might be locked.
-Some events also expect a return value.</p>
-<p>For more information, please see the related documentation:</p>
+  <section id="score-metamodel">
+<span id="metamodel"></span><h1>score_metamodel<a class="headerlink" href="#score-metamodel" title="Link to this heading">#</a></h1>
+<p>This extension provides the Metamodel and corresponding checks of the SCORE
+project as a Sphinx extension.</p>
+<section id="naming">
+<h2>Naming<a class="headerlink" href="#naming" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><a class="reference external" href="https://www.sphinx-doc.org/en/master/extdev/appapi.html#sphinx.application.Sphinx.connect">Attaching function signature</a></p></li>
-<li><p><a class="reference external" href="https://www.sphinx-doc.org/en/master/extdev/event_callbacks.html#core-events-overview">Build API events</a></p></li>
-<li><p><a class="reference external" href="https://github.com/useblocks/sphinx-needs/blob/master/docs/contributing.rst#structure-of-the-extensions-logic">sphinx-needs events</a></p></li>
+<li><p>check: A check is a function that checks compliance to a specific rule.
+(Note: sphinx-needs calls this a ‘warning’)</p></li>
+<li><p>Need-Local checks: checks which can be checked file-local, without a graph of
+other needs.</p></li>
+<li><p>Graph-Based checks: These warnings require a graph of all other needs to be
+checked.</p></li>
 </ul>
 </section>
-<section id="adding-a-new-configuration-value">
-<h2>Adding a New Configuration Value<a class="headerlink" href="#adding-a-new-configuration-value" title="Link to this heading">#</a></h2>
-<p>Adding new configuration values can be useful. This can be achieved with:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="n">app</span><span class="p">:</span> <span class="n">Sphinx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-    <span class="n">app</span><span class="o">.</span><span class="n">add_config_value</span><span class="p">(</span><span class="s2">&quot;&lt;config-name&gt;&quot;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">default</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">rebuild</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">types</span><span class="o">&gt;</span><span class="p">)</span>
-    <span class="o">...</span>
-</pre></div>
-</div>
-<p>Each configuration value has an associated ‘rebuild’ value that determines what needs to be rebuilt if this value is changed.
-It must be one of these values:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">'env'</span></code>: if a change in the setting only takes effect when a document is parsed - this means that the whole environment must be rebuilt.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">'html'</span></code>: if a change in the setting needs a full rebuild of HTML documents.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">''</span></code>: if a change in the setting will not need any special rebuild.</p></li>
-</ul>
-<p>More information is available in the <a class="reference external" href="https://www.sphinx-doc.org/en/master/extdev/appapi.html#sphinx.application.Sphinx.add_config_value">documentation here</a>.</p>
+<section id="creating-new-checks">
+<h2>Creating new checks<a class="headerlink" href="#creating-new-checks" title="Link to this heading">#</a></h2>
+<p>In order to create a new check, you need to create a file in the <code class="docutils literal notranslate"><span class="pre">checks</span></code>
+directory. It will be picked up automatically.
+Then you need to write a local or graph based check function.
+You need to use &#64;local_check or &#64;graph_check decorators to mark your function
+accordingly.
+Have a look at a simple example like <code class="docutils literal notranslate"><span class="pre">id_contains_feature</span></code>.</p>
 </section>
-<section id="adding-your-extension-to-sphinx">
-<h2>Adding Your Extension to Sphinx<a class="headerlink" href="#adding-your-extension-to-sphinx" title="Link to this heading">#</a></h2>
-<p>Adding your extension to Sphinx is straightforward. Since all Python files are already ‘discovered’, you just need to add the extension inside <code class="docutils literal notranslate"><span class="pre">conf.py</span></code> to the extensions list:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># conf.py</span>
-<span class="n">extensions</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="c1">#...</span>
-        <span class="s2">&quot;score_&lt;name of your extension&gt;&quot;</span><span class="p">,</span>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">#</a></h2>
+<p>Add score_metamodel to your extensions in <code class="docutils literal notranslate"><span class="pre">conf.py</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">extensions</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="o">...</span>
+    <span class="s1">&#39;score_metamodel&#39;</span><span class="p">,</span>
+    <span class="o">...</span>
 <span class="p">]</span>
 </pre></div>
 </div>
-<blockquote>
-<div><p><strong>Important:</strong> There cannot be any BUILD file inside the entire ‘extensions’ folder, as that would break the Python imports.</p>
-</div></blockquote>
+<p>Make sure score_metamodel is installed in your environment or added to your
+sys.path.</p>
 </section>
-<section id="testing">
-<h2>Testing<a class="headerlink" href="#testing" title="Link to this heading">#</a></h2>
-<p>As we want to ensure code quality, testing is an integral part of the development process.
-We perform testing with unit tests as well as integration tests that validate the full extension.</p>
-<blockquote>
-<div><p>Tests should cover both the happy path and edge cases.</p>
-</div></blockquote>
-<section id="where-to-place-your-test-code">
-<h3>Where to Place Your Test Code<a class="headerlink" href="#where-to-place-your-test-code" title="Link to this heading">#</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>_tooling/
-├──<span class="w"> </span>extensions/
-│<span class="w">   </span>├──<span class="w"> </span>README.md
-│<span class="w">   </span>├──<span class="w"> </span>score_draw_uml_funcs/
-│<span class="w">   </span>├──<span class="w"> </span>YOUR_EXTENSION/
-│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>__init__.py<span class="w">  </span><span class="c1"># your python code (setup needs to be in here)</span>
-│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>xyz.py<span class="w">       </span><span class="c1"># your python code (if you need/want to split it across different files)</span>
-│<span class="w">   </span>│<span class="w">   </span>└──<span class="w"> </span>tests/
-│<span class="w">   </span>│<span class="w">       </span>├──<span class="w"> </span>test_xyz.py<span class="w">             </span><span class="c1"># unit tests</span>
-│<span class="w">   </span>│<span class="w">       </span>└──<span class="w"> </span>test_YOUR_EXTENSION.py<span class="w">  </span><span class="c1"># integration tests</span>
-├──<span class="w"> </span>score_metamodel/
-├──<span class="w"> </span>score_plantuml.py
-</pre></div>
-</div>
-</section>
-<section id="integration-tests">
-<h3>Integration Tests<a class="headerlink" href="#integration-tests" title="Link to this heading">#</a></h3>
-<p>To enable integration tests, we make use of the Sphinx test app fixture provided in pytest by Sphinx itself.</p>
-<section id="what-do-you-need">
-<h4>What Do You Need?<a class="headerlink" href="#what-do-you-need" title="Link to this heading">#</a></h4>
-<p>To create a Sphinx testing app, you need the same components as a normal Sphinx app:</p>
-<ul class="simple">
-<li><p>RST file to build</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">conf.py</span></code> file</p></li>
-<li><p>Source, conf, and build directories
-In addition, you can provide anything else that you might need to test your specific extension.</p></li>
-</ul>
-<p>For examples on how to use and implement the sphinx testing app, you can check out the <a class="reference external" href="https://github.com/eclipse-score/docs-as-code/tree/main/src/extensions/score_source_code_linker/">source code linker</a></p>
-<p>Find everything related to testing within Bazel and how to add your test suite to it, <a class="reference external" href="https://github.com/eclipse-score/tooling/blob/main/python_basics/score_pytest/README.md">see here</a></p>
-<p>Also look at already built extensions inside S-CORE. They can be found in their respective folders:</p>
-<ul class="simple">
-<li><p><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/tree/main/src/extensions/score_metamodel">score_metamodel</a></p></li>
-<li><p><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/tree/main/src/extensions/score_draw_uml_funcs">score_draw_uml_funcs</a></p></li>
-</ul>
-</section>
-</section>
-</section>
-<section id="further-resources">
-<h2>Further Resources<a class="headerlink" href="#further-resources" title="Link to this heading">#</a></h2>
-<ul class="simple">
-<li><p><a class="reference external" href="https://www.sphinx-doc.org/en">Sphinx Documentation</a></p></li>
-<li><p><a class="reference external" href="https://www.sphinx-doc.org/en/master/extdev/testing.html#module-sphinx.testing">Sphinx Testing Fixture</a></p></li>
-<li><p><a class="reference external" href="https://sphinx-needs.readthedocs.io/en/latest/">Sphinx Needs Documentation</a></p></li>
-<li><p><a class="reference external" href="https://www.sphinx-doc.org/en/master/development/tutorials/index.html">Sphinx Tutorials</a></p></li>
-<li><p><a class="reference external" href="https://docs.pytest.org/en/stable/">Pytest Documentation</a></p></li>
-</ul>
+<section id="decision-record-split-of-need-local-and-graph-based-checks">
+<h2>Decision Record: split of need-local and graph-based checks<a class="headerlink" href="#decision-record-split-of-need-local-and-graph-based-checks" title="Link to this heading">#</a></h2>
+<p>While sphinx-needs’ own check/warning mechanism is very powerful, it only works
+for need-local checks. This means, that it is not possible to warn about
+graph-based issues like wrong links etc.</p>
+<p>There are multiple ways to solve this issue, for example via
+https://github.com/useblocks/sphinx-needs/pull/1248</p>
+<p>However we chose to implement a custom warning mechanism, as we needed a
+more elaborate solution for our use case anyway. Calling the checks ourselves
+seems to be the most flexible solution.</p>
+<p>Technically local checks will be called with a single need, while graph-based
+checks will be called with all needs.</p>
 </section>
 </section>
 
@@ -589,13 +502,22 @@ In addition, you can provide anything else that you might need to test your spec
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="source_code_linker.html"
+       href="index.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Source Link Extension Details</p>
+        <p class="prev-next-title">Extensions</p>
       </div>
+    </a>
+    <a class="right-next"
+       href="rst_filebased_testing.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">File based rule checks</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
     </a>
 </div>
                 </footer>
@@ -616,19 +538,10 @@ In addition, you can provide anything else that you might need to test your spec
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#getting-started">Getting Started</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#attaching-to-an-event">Attaching to an Event</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-a-new-configuration-value">Adding a New Configuration Value</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-your-extension-to-sphinx">Adding Your Extension to Sphinx</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#testing">Testing</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#where-to-place-your-test-code">Where to Place Your Test Code</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#integration-tests">Integration Tests</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#what-do-you-need">What Do You Need?</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#further-resources">Further Resources</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#naming">Naming</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-new-checks">Creating new checks</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#usage">Usage</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#decision-record-split-of-need-local-and-graph-based-checks">Decision Record: split of need-local and graph-based checks</a></li>
 </ul>
   </nav></div>
 
@@ -636,7 +549,7 @@ In addition, you can provide anything else that you might need to test your spec
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/eclipse-score/docs-as-code/edit/main/docs/docs-as-code/extensions/extension_guide.md">
+    <a href="https://github.com/eclipse-score/docs-as-code/edit/main/docs/product/extensions/metamodel.md">
       <i class="fa-solid fa-pencil"></i>
       
       
@@ -652,7 +565,7 @@ In addition, you can provide anything else that you might need to test your spec
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../../_sources/docs-as-code/extensions/extension_guide.md.txt"
+      <li><a href="../../_sources/product/extensions/metamodel.md.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div></div>
