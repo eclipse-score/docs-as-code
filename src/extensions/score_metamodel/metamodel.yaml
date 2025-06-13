@@ -14,7 +14,7 @@
 
 needs_types_base_options:
   optional_options:
-    source_code_link: ^https://github.com/eclipse-score/.*$
+    source_code_link: ^https://github.com/.*
   # Custom semantic validation rules
   prohibited_words:
     # req-Id: tool_req__docs_common_attr_title

@@ -16,9 +16,16 @@ from pathlib import Path
 
 import pytest
 from pytest import TempPathFactory
-from src.extensions.score_source_code_linker.parse_source_files import GITHUB_BASE_URL
+from src.extensions.score_source_code_linker.parse_source_files import (
+    get_github_base_url,
+)
 from sphinx.testing.util import SphinxTestApp
 from sphinx_needs.data import SphinxNeedsData
+
+
+def construct_gh_url() -> str:
+    gh = get_github_base_url()
+    return f"{gh}/blob/"
 
 
 @pytest.fixture(scope="session")
@@ -105,22 +112,24 @@ TESTING SOURCE LINK
 
 @pytest.fixture(scope="session")
 def example_source_link_text_all_ok():
+    github_base_url = construct_gh_url()
     return {
         "TREQ_ID_1": [
-            f"{GITHUB_BASE_URL}aacce4887ceea1f884135242a8c182db1447050/tools/sources/implementation1.py#L2",
-            f"{GITHUB_BASE_URL}/tools/sources/implementation_2_new_file.py#L20",
+            f"{github_base_url}aacce4887ceea1f884135242a8c182db1447050/tools/sources/implementation1.py#L2",
+            f"{github_base_url}/tools/sources/implementation_2_new_file.py#L20",
         ],
         "TREQ_ID_2": [
-            f"{GITHUB_BASE_URL}f53f50a0ab1186329292e6b28b8e6c93b37ea41/tools/sources/implementation1.py#L18"
+            f"{github_base_url}f53f50a0ab1186329292e6b28b8e6c93b37ea41/tools/sources/implementation1.py#L18"
         ],
     }
 
 
 @pytest.fixture(scope="session")
 def example_source_link_text_non_existent():
+    github_base_url = construct_gh_url()
     return {
         "TREQ_ID_200": [
-            f"{GITHUB_BASE_URL}f53f50a0ab1186329292e6b28b8e6c93b37ea41/tools/sources/bad_implementation.py#L17"
+            f"{github_base_url}f53f50a0ab1186329292e6b28b8e6c93b37ea41/tools/sources/bad_implementation.py#L17"
         ],
     }
 
@@ -132,6 +141,7 @@ def test_source_link_integration_ok(
     example_source_link_text_all_ok: dict[str, list[str]],
     sphinx_base_dir: Path,
 ):
+    github_url = construct_gh_url()
     app = sphinx_app_setup(basic_conf, basic_needs, example_source_link_text_all_ok)
     try:
         app.build()

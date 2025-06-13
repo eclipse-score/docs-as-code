@@ -19,7 +19,9 @@ from sphinx.environment import BuildEnvironment
 from sphinx_needs.data import NeedsMutable, SphinxNeedsData, NeedsInfoType
 from sphinx_needs.logging import get_logger
 
-from src.extensions.score_source_code_linker.parse_source_files import GITHUB_BASE_URL
+from src.extensions.score_source_code_linker.parse_source_files import (
+    get_github_base_url,
+)
 
 LOGGER = get_logger(__name__)
 LOGGER.setLevel("DEBUG")
@@ -108,6 +110,7 @@ def add_source_link(app: Sphinx, env: BuildEnvironment) -> None:
     # For some reason the prefix 'sphinx_needs internally' is CAPSLOCKED.
     # So we have to make sure we uppercase the prefixes
     prefixes = [x["id_prefix"].upper() for x in app.config.needs_external_needs]
+    github_base_url = get_github_base_url() + "/blob/"
     try:
         with open(path) as f:
             gh_json = json.load(f)
@@ -117,7 +120,7 @@ def add_source_link(app: Sphinx, env: BuildEnvironment) -> None:
             if need is None:
                 # NOTE: manipulating link to remove git-hash,
                 # making the output file location more readable
-                files = [x.replace(GITHUB_BASE_URL, "").split("/", 1)[-1] for x in link]
+                files = [x.replace(github_base_url, "").split("/", 1)[-1] for x in link]
                 LOGGER.warning(
                     f"Could not find {id} in the needs id's. "
                     + f"Found in file(s): {files}",
