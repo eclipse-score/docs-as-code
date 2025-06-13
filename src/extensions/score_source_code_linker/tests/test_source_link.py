@@ -16,7 +16,7 @@ from pathlib import Path
 
 import pytest
 from pytest import TempPathFactory
-from src.extensions.score_source_code_linker.parse_source_files import GITHUB_BASE_URL
+from src.extensions.score_source_code_linker.parse_source_files import github_base_url
 from sphinx.testing.util import SphinxTestApp
 from sphinx_needs.data import SphinxNeedsData
 
@@ -107,11 +107,11 @@ TESTING SOURCE LINK
 def example_source_link_text_all_ok():
     return {
         "TREQ_ID_1": [
-            f"{GITHUB_BASE_URL}aacce4887ceea1f884135242a8c182db1447050/tools/sources/implementation1.py#L2",
-            f"{GITHUB_BASE_URL}/tools/sources/implementation_2_new_file.py#L20",
+            f"{github_base_url}aacce4887ceea1f884135242a8c182db1447050/tools/sources/implementation1.py#L2",
+            f"{github_base_url}/tools/sources/implementation_2_new_file.py#L20",
         ],
         "TREQ_ID_2": [
-            f"{GITHUB_BASE_URL}f53f50a0ab1186329292e6b28b8e6c93b37ea41/tools/sources/implementation1.py#L18"
+            f"{github_base_url}f53f50a0ab1186329292e6b28b8e6c93b37ea41/tools/sources/implementation1.py#L18"
         ],
     }
 
@@ -120,7 +120,7 @@ def example_source_link_text_all_ok():
 def example_source_link_text_non_existent():
     return {
         "TREQ_ID_200": [
-            f"{GITHUB_BASE_URL}f53f50a0ab1186329292e6b28b8e6c93b37ea41/tools/sources/bad_implementation.py#L17"
+            f"{github_base_url}f53f50a0ab1186329292e6b28b8e6c93b37ea41/tools/sources/bad_implementation.py#L17"
         ],
     }
 

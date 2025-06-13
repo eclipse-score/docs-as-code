@@ -17,6 +17,7 @@ import logging
 import os
 import subprocess
 
+
 # Importing from collections.abc as typing.Callable is deprecated since Python 3.9
 from collections.abc import Callable
 from pathlib import Path
@@ -28,7 +29,48 @@ TAGS = [
     "# req-Id:",
 ]
 
-GITHUB_BASE_URL = "https://github.com/eclipse-score/score/blob/"
+github_base_url = ""
+
+
+def get_github_repo_info() -> str:
+    process = subprocess.run(["git", "remote", "-v"], capture_output=True, text=True)
+    repo = ""
+    for line in process.stdout.split("\n"):
+        if "origin" in line and "(fetch)" in line:
+            url = line.split()[1]  # Get the URL part
+
+            # Handle SSH format (git@github.com:user/repo.git)
+            if url.startswith("git@"):
+                path = url.split(":")[1]  # Get part after ':'
+            # Handle HTTPS format (https://github.com/user/repo.git)
+            else:
+                path = "/".join(url.split("/")[3:])  # Get part after github.com/
+
+            # Split into user and repo
+            parts = path.replace(".git", "").split("/")
+            if len(parts) >= 2:
+                repo = parts[0] + "/" + parts[1]  # user, repo
+            break
+    assert repo != "", (
+        "Repository is empty. Make sure you have 'origin' set. Check this via 'git remote -v'"
+    )
+    return repo
+
+
+def find_git_root():
+    """
+    This is copied from 'find_runfiles' as the import does not work for some reason.
+    This should be fixed.
+    """
+    git_root = Path(__file__).resolve()
+    while not (git_root / ".git").exists():
+        git_root = git_root.parent
+        if git_root == Path("/"):
+            sys.exit(
+                "Could not find git root. Please run this script from the "
+                "root of the repository."
+            )
+    return git_root
 
 
 def get_git_hash(file_path: str) -> str:
@@ -110,7 +152,7 @@ def extract_requirements(
                 check_tag = cleaned_line.split(":")[1].strip()
                 if check_tag:
                     req_id = cleaned_line.split(":")[-1].strip()
-                    link = f"{GITHUB_BASE_URL}{hash}/{source_file}#L{line_number}"
+                    link = f"{github_base_url}{hash}/{source_file}#L{line_number}"
                     requirement_mapping[req_id].append(link)
     return requirement_mapping
 
@@ -123,6 +165,14 @@ if __name__ == "__main__":
     args, _ = parser.parse_known_args()
 
     logger.info(f"Parsing source files: {args.inputs}")
+
+    # Finding the GH URL
+    curr_dir = os.getcwd()
+    git_root = find_git_root()
+    os.chdir(git_root)
+    repo = get_github_repo_info()
+    github_base_url = f"https://github.com/{repo}/blob/"
+    os.chdir(curr_dir)
 
     requirement_mappings: dict[str, list[str]] = collections.defaultdict(list)
     for input in args.inputs:

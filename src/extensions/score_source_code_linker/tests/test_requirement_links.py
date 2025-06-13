@@ -17,7 +17,7 @@ from pathlib import Path
 import pytest
 from pytest import TempPathFactory
 from src.extensions.score_source_code_linker.parse_source_files import (
-    GITHUB_BASE_URL,
+    github_base_url,
     extract_requirements,
     get_git_hash,
 )
@@ -80,10 +80,10 @@ def test_extract_requirements(create_tmp_files: Path):
     )
     expected_dict1: dict[str, list[str]] = defaultdict(list)
     expected_dict1["TEST_REQ__LINKED_ID"].append(
-        f"{GITHUB_BASE_URL}no-hash/{root_dir}/testfile.txt#L7"
+        f"{github_base_url}no-hash/{root_dir}/testfile.txt#L7"
     )
     expected_dict1["TEST_REQ__LINKED_TRACE"].append(
-        f"{GITHUB_BASE_URL}no-hash/{root_dir}/testfile.txt#L11"
+        f"{github_base_url}no-hash/{root_dir}/testfile.txt#L11"
     )
 
     # Assumed random hash here to test if passed correctly
@@ -93,7 +93,7 @@ def test_extract_requirements(create_tmp_files: Path):
     )
     expected_dict2: dict[str, list[str]] = defaultdict(list)
     expected_dict2["TEST_REQ__LINKED_DIFFERENT_FILE"].append(
-        f"{GITHUB_BASE_URL}aacce4887ceea1f884135242a8c182db1447050/{root_dir}/testfile2.txt#L3"
+        f"{github_base_url}aacce4887ceea1f884135242a8c182db1447050/{root_dir}/testfile2.txt#L3"
     )
 
     results_dict3 = extract_requirements(str(root_dir / "testfile3.txt"))
@@ -106,7 +106,7 @@ def test_extract_requirements(create_tmp_files: Path):
     )
     expected_dict4: dict[str, list[str]] = defaultdict(list)
     expected_dict4["TEST_REQ__LINKED_DIFFERENT_FILE"].append(
-        f"{GITHUB_BASE_URL}/{root_dir}/testfile2.txt#L3"
+        f"{github_base_url}/{root_dir}/testfile2.txt#L3"
     )
 
     assert results_dict1 == expected_dict1
