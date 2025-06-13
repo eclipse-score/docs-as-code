@@ -11,26 +11,33 @@
     # SPDX-License-Identifier: Apache-2.0
     # *******************************************************************************
 
-.. _docs-as-code:
+.. _product:
 
 
 ============
-Docs-as-Code 
+Docs-as-Code
 ============
 
-.. grid:: 1 1 2 2
+.. grid:: 1 1 3 3
    :class-container: score-grid
 
    .. grid-item-card::
 
-      Getting started with docs-as-code
+      Features
       ^^^
-      Start here to learn about general usage of the Docs-as-Code Module
-      :ref:`Get started <getting_started>`.
+      High level view of docs-as-code :ref:`capabilities <capabilities>`.
+
 
    .. grid-item-card::
 
-      Information about Extensions  
+      Requirements
+      ^^^
+      Detailed list of docs-as-code tool :ref:`requirements`.
+
+
+   .. grid-item-card::
+
+      Information about Extensions
       ^^^
       Head over to our extensions to learn about what we offer and how to configure,extend or integrate them.
       :ref:`See our extensions here <extensions>`
@@ -40,5 +47,8 @@ Docs-as-Code
 .. toctree::
    :maxdepth: 1
    :caption: Contents:
+   :hidden:
 
-   Getting Started <getting_started>
+   capabilities
+   requirements
+   extensions/index

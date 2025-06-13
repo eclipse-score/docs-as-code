@@ -96,3 +96,4 @@ bazel_dep(name = "score_platform", version = "0.1.1")
 
 # Grab dash
 bazel_dep(name = "score_dash_license_checker", version = "0.1.1")
+bazel_dep(name = "score_process", version = "0.2.0")

@@ -32,5 +32,11 @@
   "python.testing.unittestEnabled": false,
   "python.testing.pytestEnabled": true,
   "bazel.lsp.command": "bazel",
-  "bazel.lsp.args": ["run", "//:starpls_server"]
+  "bazel.lsp.args": [
+    "run",
+    "//:starpls_server"
+  ],
+
+  // Disable internal type checking, since we use basedpyright
+  "python.analysis.typeCheckingMode": "off"
 }

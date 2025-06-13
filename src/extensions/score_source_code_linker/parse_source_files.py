@@ -13,12 +13,15 @@
 import argparse
 import collections
 import json
+import logging
 import os
 import subprocess
 
 # Importing from collections.abc as typing.Callable is deprecated since Python 3.9
 from collections.abc import Callable
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 TAGS = [
     "# req-traceability:",
@@ -118,6 +121,9 @@ if __name__ == "__main__":
     parser.add_argument("inputs", nargs="*")
 
     args, _ = parser.parse_known_args()
+
+    logger.info(f"Parsing source files: {args.inputs}")
+
     requirement_mappings: dict[str, list[str]] = collections.defaultdict(list)
     for input in args.inputs:
         with open(input) as f:

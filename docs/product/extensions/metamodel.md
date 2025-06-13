@@ -4,8 +4,6 @@
 This extension provides the Metamodel and corresponding checks of the SCORE
 project as a Sphinx extension.
 
-See [Getting started](../getting_started) for more information on why we use extensions.
-
 ## Naming
 
 * check: A check is a function that checks compliance to a specific rule.

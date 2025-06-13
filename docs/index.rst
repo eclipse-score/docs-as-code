@@ -22,34 +22,30 @@ Welcome to the docs-as-code documentation, it is organized into several key sect
 
    .. grid-item-card::
 
-      **Example**
+      **How to Integrate**
       ^^^
-      See the rendered version of the files inside :ref:`example`.
+      Learn how to integrate this docs-as-code tooling into your S-CORE repository.
 
 
    .. grid-item-card::
 
-      **FAQ**
+      How to Use
       ^^^
-      Find answers to frequently asked questions and common issues.
+      Learn how to write documentation using the docs-as-code approach in S-CORE.
 
    .. grid-item-card::
 
-      **Docs-as-Code Documentation**
+      :ref:`Product documentation <product>`
       ^^^
-      Learn how to use this module with how-to guides and tutorials.
-      :ref:`docs-as-code`   
+      Find the product documentation for docs-as-code, including tool requirements and architecture.
 
+.. dropdown:: Sitemap
 
+   .. toctree::
+      :maxdepth: 5
+      :includehidden:
+      :titlesonly:
 
-.. dropdown:: Click to see details
-
-    .. toctree::
-       :maxdepth: 2
-       :titlesonly:
-
-       example/index
-       faq/index
-       docs-as-code/index
-       docs-as-code/extensions/index
-
+      how-to-integrate/index
+      how-to-use/index
+      product/index
