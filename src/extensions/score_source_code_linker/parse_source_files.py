@@ -15,6 +15,7 @@ import collections
 import json
 import logging
 import os
+import sys
 import subprocess
 
 
@@ -29,30 +30,45 @@ TAGS = [
     "# req-Id:",
 ]
 
-github_base_url = ""
+
+def get_github_base_url() -> str:
+    git_root = find_git_root()
+    repo = get_github_repo_info(git_root)
+    return f"https://github.com/{repo}"
 
 
-def get_github_repo_info() -> str:
-    process = subprocess.run(["git", "remote", "-v"], capture_output=True, text=True)
+def parse_git_output(str_line: str) -> str:
+    if len(str_line.split()) < 2:
+        logger.warning(
+            f"Got wrong input line from 'get_github_repo_info'. Input: {str_line}. Expected example: 'origin git@github.com:user/repo.git'"
+        )
+        return ""
+    url = str_line.split()[1]  # Get the URL part
+    # Handle SSH format (git@github.com:user/repo.git)
+    if url.startswith("git@"):
+        path = url.split(":")[1]
+    else:
+        path = "/".join(url.split("/")[3:])  # Get part after github.com/
+    return path.replace(".git", "")
+
+
+def get_github_repo_info(git_root_cwd: Path) -> str:
+    process = subprocess.run(
+        ["git", "remote", "-v"], capture_output=True, text=True, cwd=git_root_cwd
+    )
     repo = ""
     for line in process.stdout.split("\n"):
         if "origin" in line and "(fetch)" in line:
-            url = line.split()[1]  # Get the URL part
-
-            # Handle SSH format (git@github.com:user/repo.git)
-            if url.startswith("git@"):
-                path = url.split(":")[1]  # Get part after ':'
-            # Handle HTTPS format (https://github.com/user/repo.git)
-            else:
-                path = "/".join(url.split("/")[3:])  # Get part after github.com/
-
-            # Split into user and repo
-            parts = path.replace(".git", "").split("/")
-            if len(parts) >= 2:
-                repo = parts[0] + "/" + parts[1]  # user, repo
+            repo = parse_git_output(line)
             break
+    else:
+        # If we do not find 'origin' we just take the first line
+        logger.info(
+            "Did not find origin remote name. Will now take first result from: 'git remote -v'"
+        )
+        repo = parse_git_output(process.stdout.split("\n")[0])
     assert repo != "", (
-        "Repository is empty. Make sure you have 'origin' set. Check this via 'git remote -v'"
+        "Remote repository is not defined. Make sure you have a remote set. Check this via 'git remote -v'"
     )
     return repo
 
@@ -90,7 +106,7 @@ def get_git_hash(file_path: str) -> str:
     try:
         abs_path = Path(file_path).resolve()
         if not os.path.isfile(abs_path):
-            print(f"File not found: {abs_path}", flush=True)
+            logger.warning(f"File not found: {abs_path}")
             return "file_not_found"
         result = subprocess.run(
             ["git", "log", "-n", "1", "--pretty=format:%H", "--", abs_path],
@@ -103,12 +119,13 @@ def get_git_hash(file_path: str) -> str:
         assert all(c in "0123456789abcdef" for c in decoded_result)
         return decoded_result
     except Exception as e:
-        print(f"Unexpected error: {abs_path}: {e}", flush=True)
+        logger.warning(f"Unexpected error: {abs_path}: {e}")
         return "error"
 
 
 def extract_requirements(
     source_file: str,
+    github_base_url: str,
     git_hash_func: Callable[[str], str] | None = get_git_hash,
 ) -> dict[str, list[str]]:
     """
@@ -152,7 +169,7 @@ def extract_requirements(
                 check_tag = cleaned_line.split(":")[1].strip()
                 if check_tag:
                     req_id = cleaned_line.split(":")[-1].strip()
-                    link = f"{github_base_url}{hash}/{source_file}#L{line_number}"
+                    link = f"{github_base_url}/blob/{hash}/{source_file}#L{line_number}"
                     requirement_mapping[req_id].append(link)
     return requirement_mapping
 
@@ -167,18 +184,12 @@ if __name__ == "__main__":
     logger.info(f"Parsing source files: {args.inputs}")
 
     # Finding the GH URL
-    curr_dir = os.getcwd()
-    git_root = find_git_root()
-    os.chdir(git_root)
-    repo = get_github_repo_info()
-    github_base_url = f"https://github.com/{repo}/blob/"
-    os.chdir(curr_dir)
-
+    gh_base_url = get_github_base_url()
     requirement_mappings: dict[str, list[str]] = collections.defaultdict(list)
     for input in args.inputs:
         with open(input) as f:
             for source_file in f:
-                rm = extract_requirements(source_file.strip())
+                rm = extract_requirements(source_file.strip(), gh_base_url)
                 for k, v in rm.items():
                     requirement_mappings[k].extend(v)
     with open(args.output, "w") as f:
