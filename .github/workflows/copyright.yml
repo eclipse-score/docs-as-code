@@ -19,6 +19,7 @@ on:
     types: [checks_requested]
 jobs:
   copyright-check:
-    uses: eclipse-score/cicd-workflows/.github/workflows/copyright.yml@main
-    with:
-      bazel-target: "run //:copyright.check"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call Test-Action-1
+        uses: eclipse-score/cicd-workflows/.github/actions/test-action-1@dump
