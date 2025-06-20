@@ -10,7 +10,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-load("@aspect_rules_py//py:defs.bzl", "py_library")
+load("@aspect_rules_py//py:defs.bzl", "py_binary", "py_library")
 load("@pip_process//:requirements.bzl", "all_requirements")
 load("@score_python_basics//:defs.bzl", "score_py_pytest")
 
