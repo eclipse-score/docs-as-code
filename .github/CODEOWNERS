@@ -1,0 +1,9 @@
+# 👋 Code owners help maintain this repository and keep it aligned with our technical vision.
+# You're responsible for reviewing changes, ensuring quality, and guiding contributors.
+# You're also encouraged to help triage issues and keep discussions constructive and focused.
+# Ownership can be shared, delegated, or updated as the project evolves.
+
+# For more information about CODEOWNERS, see:
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+* @AlexanderLanin @MaximilianSoerenPollak @dcalavrezo-qorix
