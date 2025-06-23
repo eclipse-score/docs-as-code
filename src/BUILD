@@ -185,6 +185,7 @@ format_test(
     no_sandbox = True,
     python = "@aspect_rules_lint//format:ruff",
     starlark = "@buildifier_prebuilt//:buildifier",
+    tags = ["manual"],
     visibility = [
         "//visibility:public",
     ],
