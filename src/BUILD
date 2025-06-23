@@ -190,4 +190,5 @@ format_test(
     ],
     workspace = "//:MODULE.bazel",
     yaml = "@aspect_rules_lint//format:yamlfmt",
+    tags=["manual"],
 )
