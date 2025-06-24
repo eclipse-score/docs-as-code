@@ -23,6 +23,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4.2.2
+      - name: Cache Bazel
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/bazel
+          key: ${{ runner.os }}-format-${{ hashFiles('**/*.bazel', '**/BUILD') }}
       - name: Setup Bazel
         uses: bazel-contrib/setup-bazel@0.9.1
       - name: Run formatting checks
