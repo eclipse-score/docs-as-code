@@ -13,9 +13,6 @@
 
 name: Run Bazel Tests
 on:
-  push:
-    branches:
-      - "**"
   pull_request:
     types: [opened, reopened, synchronize]
 jobs:
