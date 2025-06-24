@@ -504,6 +504,63 @@ needs_types:
       safety: ^(QM|ASIL_B|ASIL_D)$
       status: ^(valid|invalid)$
 
+# Safety Analysis DFA
+feat_saf_dfa:
+    title: DFA
+    prefix: feat_saf_dfa__
+    mandatory_options:
+      verifies: ^feat_arc_sta__[0-9a-z_]*$
+      id: ^feat_saf_dfa__[0-9a-z_]*$
+      violation_id: ^.+$
+      violation_cause: ^(YES|NO)$
+      mitigation: ^.*$
+      mitigation_issue: ^.*$
+      sufficient: ^(yes|no)$
+      argument: ^.+$
+      status: ^(valid|invalid)$
+
+comp_saf_dfa:
+    title: DFA
+    prefix: comp_saf_dfa__
+    mandatory_options:
+      verifies: ^comp_arc_sta__[0-9a-z_]*$
+      id: ^comp_saf_dfa__[0-9a-z_]*$
+      violation_id: ^.+$
+      violation_cause: ^(YES|NO)$
+      mitigation: ^.*$
+      mitigation_issue: ^.*$
+      sufficient: ^(yes|no)$
+      argument: ^.+$
+      status: ^(valid|invalid)$
+
+# Safety Analysis FMEA
+feat_saf_fmea:
+  title: FMEA
+  prefix: feat_saf_fmea__
+  mandatory_options:
+    verifies: ^feat_arc_sta__[0-9a-z_]*$
+    id: ^feat_saf_dfa__[0-9a-z_]*$
+    failure_mode: ^.+$
+    failure_effect: ^(YES|NO)$
+    mitigation: ^.*$
+    mitigation_issue: ^.*$    sufficient: ^(yes|no)$
+    argument: ^.+$
+    status: ^(valid|invalid)$
+
+comp_saf_fmea:
+  title: FMEA
+  prefix: comp_saf_fmea__
+  mandatory_options:
+    verifies: ^comp_arc_sta__[0-9a-z_]*$
+    id: ^comp_saf_dfa__[0-9a-z_]*$
+    failure_mode: ^.+$
+    failure_effect: ^(YES|NO)$
+    mitigation: ^.*$
+    mitigation_issue: ^.*$
+    sufficient: ^(yes|no)$
+    argument: ^.+$
+    status: ^(valid|invalid)$
+
 # Extra link types, which shall be available and allow need types to be linked to each other.
 # We use a dedicated linked type for each type of a connection, for instance from
 # a specification to a requirement. This makes filtering and visualization of such connections
