@@ -20,7 +20,7 @@ This section provides an overview of current process requirements and their clar
   :xlabels_rotation: 45
   :horizontal:
 
-                   , implemented                                    , partially / not quite clear                                          , not implemented / not clear
+                   , implemented                                    , not clear                                          , not implemented
   Common, 'tool_req__docs' in id and implemented == "YES" and "Common Attributes" in tags, 'tool_req__docs' in id and implemented == "PARTIAL" and "Common Attributes" in tags, 'tool_req__docs' in id and implemented == "NO" and "Common Attributes" in tags
   Doc, 'tool_req__docs' in id and implemented == "YES" and "Documents" in tags, 'tool_req__docs' in id and implemented == "PARTIAL" and "Documents" in tags, 'tool_req__docs' in id and implemented == "NO" and "Documents" in tags
   Req, 'tool_req__docs' in id and implemented == "YES" and "Requirements" in tags, 'tool_req__docs' in id and implemented == "PARTIAL" and "Requirements" in tags, 'tool_req__docs' in id and implemented == "NO" and "Requirements" in tags
@@ -241,12 +241,11 @@ This section provides an overview of current process requirements and their clar
   :implemented: NO
   :satisfies: PROCESS_gd_req__doc_approver
   :parent_covered: YES: Together with tool_req__docs_doc_attr
-  :parent_has_problem: YES: CODEOWNER is Github specific.
+  :parent_has_problem: NO
 
   Docs-as-Code shall provide an automatic mechanism to determine the document approver.
 
-  The approver shall be the last approver listed in *CODEOWNERS* of the file containing
-  the document. The determination is based on the last pull request (PR) that modified
+  The approver shall be determined based on the last pull request (PR) that modified
   the relevant file.
 
 
@@ -349,10 +348,10 @@ This section provides an overview of current process requirements and their clar
 .. tool_req:: Enables needs linking via satisfies attribute
   :id: tool_req__docs_req_link_satisfies_allowed
   :tags: Requirements
-  :implemented: PARTIAL
+  :implemented: YES
   :satisfies: PROCESS_gd_req__req__linkage, PROCESS_gd_req__req__traceability
   :parent_covered: YES
-  :parent_has_problem: YES: Mandatory for all needs? Especially some tool_reqs do not have a process requirement.
+  :parent_has_problem: NO
 
   Docs-as-Code shall enforce that linking between model elements via the ``satisfies``
   attribute follows defined rules.
@@ -551,7 +550,7 @@ This section provides an overview of current process requirements and their clar
   :id: tool_req__docs_tvr_safety
   :tags: Tool Verification Reports
   :implemented: NO
-  :parent_has_problem: YES: Safety affected vs Safety relevance
+  :parent_has_problem: NO
   :parent_covered: YES
   :satisfies: PROCESS_gd_req__tool__attr_safety_affected
 
@@ -566,7 +565,7 @@ This section provides an overview of current process requirements and their clar
   :tags: Tool Verification Reports
   :implemented: NO
   :parent_covered: YES
-  :parent_has_problem: YES: Safety affected vs Safety relevance
+  :parent_has_problem: NO
   :satisfies: PROCESS_gd_req__tool_attr_security_affected
 
   Docs-as-Code shall enforce that every Tool Verification Report includes a
