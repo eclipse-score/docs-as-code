@@ -29,6 +29,15 @@ py_binary(
 )
 
 py_test(
+    name = "test_consumer_tester_unit",
+    srcs = ["test_consumer_tester_unit.py"],
+    deps = [":consumer_tester"],
+    # Regular unit tests that don't require network access
+    size = "small",
+    visibility = ["//visibility:public"],
+)
+
+py_test(
     name = "test_consumer_regression",
     srcs = ["test_consumer_regression.py"],
     deps = [":consumer_tester"],

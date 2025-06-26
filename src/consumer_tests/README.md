@@ -16,7 +16,10 @@ The consumer tests validate that changes to `score_docs_as_code` are compatible 
 ### Running Tests with Bazel
 
 ```bash
-# Run all consumer tests
+# Run unit tests (fast, no network required)
+bazel test //src/consumer_tests:test_consumer_tester_unit
+
+# Run all consumer tests (requires network access)
 bazel test //src/consumer_tests:test_consumer_regression
 
 # Run the consumer test script directly
@@ -29,6 +32,9 @@ CONSUMER_TEST_REPOS="platform,process_description" bazel test //src/consumer_tes
 ### Running Tests with Python
 
 ```bash
+# Run unit tests (fast, no network required)
+python -m pytest src/consumer_tests/test_consumer_tester_unit.py
+
 # Install dependencies and run with pytest
 python -m pytest src/consumer_tests/test_consumer_regression.py
 
@@ -188,7 +194,8 @@ When adding new consumers or modifying the test infrastructure:
 src/consumer_tests/
 ├── __init__.py                    # Package initialization
 ├── consumer_tester.py             # Main consumer testing logic
-├── test_consumer_regression.py    # Pytest wrapper and test cases
+├── test_consumer_regression.py    # Pytest wrapper and integration test cases
+├── test_consumer_tester_unit.py   # Unit tests for consumer tester functionality
 ├── BUILD                          # Bazel build configuration
 └── README.md                      # This documentation
 ```
@@ -198,4 +205,21 @@ The main classes:
 - `ConsumerConfig`: Configuration for a consumer repository
 - `TestResult`: Result of running a single command
 - `ConsumerTester`: Main test runner with context management
-- `TestConsumerRegression`: Pytest test class
+- `TestConsumerRegression`: Pytest test class for integration tests
+
+## Testing
+
+The consumer tests include both unit tests and integration tests:
+
+### Unit Tests (`test_consumer_tester_unit.py`)
+- Test basic functionality without network access
+- Validate configuration objects
+- Test MODULE.bazel override logic
+- Test report generation
+- Mock external dependencies
+
+### Integration Tests (`test_consumer_regression.py`)  
+- Test actual consumer repositories
+- Require network access to clone repositories
+- Test end-to-end functionality
+- Generate reports with real data

@@ -41,3 +41,15 @@ bazel run //src:format.fix
 bazel run //:copyright-check
 bazel run //:copyright.fix
 ```
+
+#### Run consumer regression tests
+
+```bash
+# Test that changes don't break downstream consumers
+bazel test //src/consumer_tests:test_consumer_regression
+
+# Run specific consumer tests only
+CONSUMER_TEST_REPOS="platform,process_description" bazel test //src/consumer_tests:test_consumer_regression
+```
+
+See [Consumer Tests Documentation](src/consumer_tests/README.md) for more details.
