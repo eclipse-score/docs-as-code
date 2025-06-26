@@ -26,6 +26,10 @@ def _setup_impl(module_ctx):
     Usage in downstream MODULE.bazel:
         use_extension("@score_docs_as_code//setup:setup.bzl", "setup")
         use_repo(setup, "score_python_basics")
+    
+    Note: This follows the standard Bazel module extension pattern. The
+    pattern suggested in the issue description with setup.setup_dependencies()
+    is not how Bazel module extensions work in practice.
     """
     # The extension implementation doesn't need to create or modify repositories.
     # It just needs to exist so that downstream consumers can use use_repo()
