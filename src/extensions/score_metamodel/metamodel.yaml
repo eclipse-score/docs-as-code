@@ -654,17 +654,50 @@ needs_extra_links:
 # req- Id: gd_req__req__linkage_safety
 graph_checks:
   # req- Id: gd_req__req__linkage_safety
-  req_safety_linkage:
+  #
+  # If need-req is `QM`, parent must be `QM`.
+  req_safety_linkage_qm:
     needs:
       include: comp_req, feat_req
       condition:
         and:
-          - safety != QM
+          - safety == QM
           - status == valid
     check:
       satisfies:
         and:
-          - safety != QM
+          - safety == QM
+          - status == valid
+  # req- Id: gd_req__req__linkage_safety
+  #
+  # If need-req is `ASIL_B`, parent can be `QM` or `ASIL_B`.
+  req_safety_linkage_asil_b:
+    needs:
+      include: comp_req, feat_req
+      condition:
+        and:
+          - safety == ASIL_B
+          - status == valid
+    check:
+      satisfies:
+        or:
+          - safety == QM
+          - safety == ASIL_B
+        and:
+          - status == valid
+  # req- Id: gd_req__req__linkage_safety
+  #
+  # If need-req is `ASIL_D`, parent can be anything.
+  req_safety_linkage_asil_d:
+    needs:
+      include: comp_req, feat_req
+      condition:
+        and:
+          - safety == ASIL_D
+          - status == valid
+    check:
+      satisfies:
+        and:
           - status == valid
   req_linkage:
     needs:
