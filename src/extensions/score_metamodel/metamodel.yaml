@@ -543,7 +543,8 @@ feat_saf_fmea:
     failure_mode: ^.+$
     failure_effect: ^(YES|NO)$
     mitigation: ^.*$
-    mitigation_issue: ^.*$    sufficient: ^(yes|no)$
+    mitigation_issue: ^.*$
+    sufficient: ^(yes|no)$
     argument: ^.+$
     status: ^(valid|invalid)$
 
