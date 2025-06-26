@@ -506,32 +506,32 @@ needs_types:
 
 # Safety Analysis DFA
 feat_saf_dfa:
-    title: DFA
-    prefix: feat_saf_dfa__
-    mandatory_options:
-      verifies: ^feat_arc_sta__[0-9a-z_]*$
-      id: ^feat_saf_dfa__[0-9a-z_]*$
-      violation_id: ^.+$
-      violation_cause: ^(YES|NO)$
-      mitigation: ^.*$
-      mitigation_issue: ^.*$
-      sufficient: ^(yes|no)$
-      argument: ^.+$
-      status: ^(valid|invalid)$
+  title: DFA
+  prefix: feat_saf_dfa__
+  mandatory_options:
+    verifies: ^feat_arc_sta__[0-9a-z_]*$
+    id: ^feat_saf_dfa__[0-9a-z_]*$
+    violation_id: ^.+$
+    violation_cause: ^(YES|NO)$
+    mitigation: ^.*$
+    mitigation_issue: ^.*$
+    sufficient: ^(yes|no)$
+    argument: ^.+$
+    status: ^(valid|invalid)$
 
 comp_saf_dfa:
-    title: DFA
-    prefix: comp_saf_dfa__
-    mandatory_options:
-      verifies: ^comp_arc_sta__[0-9a-z_]*$
-      id: ^comp_saf_dfa__[0-9a-z_]*$
-      violation_id: ^.+$
-      violation_cause: ^(YES|NO)$
-      mitigation: ^.*$
-      mitigation_issue: ^.*$
-      sufficient: ^(yes|no)$
-      argument: ^.+$
-      status: ^(valid|invalid)$
+  title: DFA
+  prefix: comp_saf_dfa__
+  mandatory_options:
+    verifies: ^comp_arc_sta__[0-9a-z_]*$
+    id: ^comp_saf_dfa__[0-9a-z_]*$
+    violation_id: ^.+$
+    violation_cause: ^(YES|NO)$
+    mitigation: ^.*$
+    mitigation_issue: ^.*$
+    sufficient: ^(yes|no)$
+    argument: ^.+$
+    status: ^(valid|invalid)$
 
 # Safety Analysis FMEA
 feat_saf_fmea:
