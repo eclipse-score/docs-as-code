@@ -25,27 +25,16 @@ docs(
     docs_targets = [
         {
             "suffix": "release",  # The version imported from MODULE.bazel
-            "target": ["@score_platform//docs:docs_needs"],
+            "target": ["@score_process//process:docs_needs_latest"],
             "external_needs_info": [
                 {
                     "base_url": "https://eclipse-score.github.io/score/main",
-                    "json_path": "/score_platform~/docs/docs_needs/_build/needs/needs.json",
-                    "version": "0.1",
-                    "id_prefix": "score_",
+                    "json_path": "/score_process~/process/docs_needs_latest/_build/needs/needs.json",
+                    "id_prefix": "process_",
                 },
             ],
         },
     ],
     source_dir = "examples/linking-release",
-    source_files_to_scan_for_needs_links = [
-        # Note: you can add filegroups, globs, or entire targets here.
-        "//src:score_extension_files",
-    ],
+    source_files_to_scan_for_needs_links = [],
 )
-
-#           ╭───────────────────────────────────────╮
-#           │   This is commented out until local   │
-#           │   multi-repo testing is implemented   │
-#           ╰───────────────────────────────────────╯
-
-# {

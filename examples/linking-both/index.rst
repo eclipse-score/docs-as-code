@@ -33,20 +33,20 @@ This is a simple example of a documentation page using the `docs` tool.
 
    Some content to make sure we also can render this
    This is a link to an external need inside the 'score' documentation.
-   :need:`SCORE_feat_req__kvs__config_file`
+   :need:`PROCESS_gd_req__req__attr_uid`
    Note how it starts with the defined prefix but in UPPERCASE. This comes from sphinx-needs, `see here <https://github.com/useblocks/sphinx-needs/blob/master/sphinx_needs/external_needs.py#L119>`_
 
 
 
-.. feat_req:: Some Title
-   :id: feat_req__index__some_title
+.. tool_req:: Some Title
+   :id: tool_req__index__some_title
    :reqtype: Process
    :security: YES
    :safety: ASIL_D
-   :satisfies: SCORE_stkh_req__overall_goals__reuse_of_app_soft
+   :satisfies: PROCESS_gd_req__req__attr_uid
    :status: invalid
    
    With this requirement we can check if the removal of the prefix is working correctly. 
-   It should remove id_prefix (SCORE _) as it's defined inside the BUILD file and remove it before it checks the leftover value
+   It should remove id_prefix (PROCESS _) as it's defined inside the BUILD file and remove it before it checks the leftover value
    against the allowed defined regex in the metamodel
 
