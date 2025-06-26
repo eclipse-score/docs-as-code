@@ -26,7 +26,7 @@
   "python.testing.pytestArgs": [
     ".",
     "--ignore-glob=bazel-*/*",
-    "--ignore-glob=.venv_docs/*",
+    "--ignore-glob=.venv*/*",
     "--ignore-glob=_build/*"
   ],
   "python.testing.unittestEnabled": false,
