@@ -27,16 +27,13 @@ docs(
             "suffix": "latest",  # latest main branch documentation build
             "external_needs_info": [
                 {
-                    "base_url": "https://eclipse-score.github.io/score/main",
-                    "json_url": "https://eclipse-score.github.io/score/main/needs.json",
-                    "version": "0.1",
-                    "id_prefix": "score_",
+                    "base_url": "https://eclipse-score.github.io/process_description/main/",
+                    "json_url": "https://eclipse-score.github.io/process_description/main/needs.json",
+                    "id_prefix": "process_",
                 },
             ],
         },
     ],
     source_dir = "examples/linking-latest",
-    source_files_to_scan_for_needs_links = [
-        "//src:score_extension_files",
-    ],
+    source_files_to_scan_for_needs_links = [],
 )
