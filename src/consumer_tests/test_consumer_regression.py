@@ -17,7 +17,26 @@ import tempfile
 from pathlib import Path
 from typing import List
 
-import pytest
+# Import pytest only if available (for bazel test runs)
+try:
+    import pytest
+    HAS_PYTEST = True
+except ImportError:
+    HAS_PYTEST = False
+    # Define dummy pytest decorators for when pytest is not available
+    class MockMark:
+        def parametrize(self, *args, **kwargs):
+            def decorator(func):
+                return func
+            return decorator
+    
+    class MockPytest:
+        fixture = staticmethod(lambda *args, **kwargs: lambda func: func)
+        skip = staticmethod(lambda msg: None)
+        fail = staticmethod(lambda msg: (_ for _ in ()).throw(AssertionError(msg)))
+        mark = MockMark()
+    
+    pytest = MockPytest()
 
 from .consumer_tester import ConsumerConfig, ConsumerTester
 
