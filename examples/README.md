@@ -8,6 +8,7 @@ These examples show how to use the 'docs' macro in order to build without outgoi
 | `simple` | Build documentation without links to another sphinx documentations | 
 | `linking-latest` | Build documentation with links to another documentation via URL |
 | `linking-release` | Build documentation with links to another documentation via MODULE import |
+| `test-extension` | Example showing how to use the setup extension for transitive dependencies |
 
 ---
 In order to enable linking against an imported Modules needs make sure you have imported it into the MODULE.bazel via 
@@ -59,6 +60,24 @@ docs(
 | `id_prefix` | prefix that all exeternal ID's from this needs.json will get. Will be in UPPERCASE | No | '' |
 
 The `external_needs_info` is based on external needs, which can be explored more in detail [here](https://sphinx-needs.readthedocs.io/en/latest/configuration.html#needs-external-needs)
+
+## Using the Setup Extension for Transitive Dependencies
+
+The `score_docs_as_code` module provides a setup extension that allows downstream consumers to access transitive dependencies without explicitly declaring them. This follows Bazel best practices for modular, reusable modules.
+
+In your downstream project's `MODULE.bazel`:
+
+```starlark
+module(name = "my_project", version = "1.0.0")
+
+bazel_dep(name = "score_docs_as_code", version = "0.4.0")
+
+# Use the setup extension to access transitive dependencies
+use_extension("@score_docs_as_code//setup:setup.bzl", "setup")
+use_repo(setup, "score_python_basics")
+```
+
+This makes `@score_python_basics` available in your BUILD files without needing to add `bazel_dep(name = "score_python_basics")` to your MODULE.bazel. You can then use utilities like `score_py_pytest` and `score_virtualenv` from the `score_python_basics` module.
 
 --- 
 

@@ -16,11 +16,20 @@
 def _setup_impl(module_ctx):
     """Module extension implementation that exposes transitive dependencies.
     
-    This allows downstream modules to access transitive dependencies like
-    score_python_basics without explicitly declaring them in their MODULE.bazel.
+    This extension allows downstream modules to access transitive dependencies
+    like score_python_basics without explicitly declaring them in their MODULE.bazel.
+    
+    The key insight is that this module already depends on score_python_basics,
+    so the dependency is available transitively. This extension just provides
+    a way for downstream consumers to access it via use_repo().
+    
+    Usage in downstream MODULE.bazel:
+        use_extension("@score_docs_as_code//setup:setup.bzl", "setup")
+        use_repo(setup, "score_python_basics")
     """
-    # This extension simply needs to exist to allow downstream modules to use use_repo()
-    # to access the transitive dependencies that this module already provides
+    # The extension implementation doesn't need to create or modify repositories.
+    # It just needs to exist so that downstream consumers can use use_repo()
+    # to access the transitive dependencies that this module provides.
     pass
 
 # Define the module extension named "setup"
