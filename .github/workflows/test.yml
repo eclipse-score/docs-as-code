@@ -30,7 +30,7 @@ jobs:
           key: ${{ runner.os }}-test-${{ hashFiles('**/*.bazel', '**/BUILD', '**/*.bzl', 'src/requirements.txt', 'src/**/*.py') }}
 
       - name: Setup Bazel with cache
-        uses: bazel-contrib/setup-bazel@v0.14.0
+        uses: bazel-contrib/setup-bazel@0.15.0
         with:
           disk-cache: true
           repository-cache: true
