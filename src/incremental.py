@@ -55,6 +55,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--port",
+        type=int,
         help="Port to use for the live_preview ACTION. Default is 8000. "
         "Use 0 for auto detection of a free port.",
         default=8000,
