@@ -38,7 +38,7 @@ docs(
             "target": ["@score_process//process:docs_needs_latest"],
             "external_needs_info": [
                 {
-                    "base_url": "https://eclipse-score.github.io/score/main",
+                    "base_url": "https://eclipse-score.github.io/process_description/main",
                     "json_path": "/score_process~/process/docs_needs_latest/_build/needs/needs.json",
                     "id_prefix": "process_",
                 },
