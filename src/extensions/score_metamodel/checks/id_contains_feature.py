@@ -37,6 +37,7 @@ def id_contains_feature(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
 
     # Get the part of the string after the first two underscores: the path
     feature = parts[1]
+    featureparts = feature.split("_")
 
     dir_docname = os.path.dirname(str(need.get("docname", "")))
 
@@ -45,7 +46,12 @@ def id_contains_feature(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
     # NOTE: This does not match the process requirements
     docname = dir_docname if dir_docname else need.get("docname", "")
 
-    if feature not in docname:
+    found = False
+    for featurepart in featureparts:
+        if featurepart in docname:
+            found = True
+
+    if not found:
         log.warning_for_option(
             need, "id", f"Feature '{feature}' not in path '{docname}'."
         )
