@@ -57,7 +57,8 @@ This section provides an overview of current process requirements and their clar
   :satisfies:
      PROCESS_gd_req__req__attr_uid,
      PROCESS_gd_req__tool__attr_uid,
-     PROCESS_gd_req__arch__attribute_uid
+     PROCESS_gd_req__arch__attribute_uid,
+     PROCESS_gd_req__saf__attr_uid
   :parent_covered: YES: together with tool_req__docs_attr_id_scheme
 
   Docs-as-Code shall enforce that all Need IDs are globally unique across all included
@@ -91,11 +92,13 @@ This section provides an overview of current process requirements and their clar
   :id: tool_req__docs_common_attr_title
   :implemented: PARTIAL
   :tags: Common Attributes
-  :satisfies: PROCESS_gd_req__requirements_attr_title
+  :satisfies:
+    PROCESS_gd_req__requirements_attr_title,
+    PROCESS_gd_req__saf_attr_title,
   :parent_covered: NO: Can not ensure summary
 
 
-  Docs-as-Code shall enforce that Need titles do not contain the following words:
+  Docs-as-Code shall enforce that Needs have titles and titles do not contain the following words:
 
   * shall
   * must
@@ -173,6 +176,7 @@ This section provides an overview of current process requirements and their clar
   :satisfies:
     PROCESS_gd_req__req__attr_status,
     PROCESS_gd_req__arch__attr_status,
+    PROCESS_gd_req__saf__attr_status,
 
   Docs-as-Code shall enforce that the ``status`` attribute has one of the following values:
 
@@ -183,6 +187,7 @@ This section provides an overview of current process requirements and their clar
 
   * all requirement types defined in :need:`tool_req__docs_req_types`, except process requirements.
   * all architecture elements defined in :need:`tool_req__docs_arch_types`.
+  * all safety analysis elements defined in :need:`tool_req__docs_saf_types`.
 
 📚 Documents
 #############
@@ -259,6 +264,17 @@ This section provides an overview of current process requirements and their clar
 
   The reviewer shall be the approvers NOT listed in *CODEOWNERS* of the last pull
   request of the file containing the document.
+
+
+-------
+Mapping
+-------
+
+.. needtable::
+   :style: table
+   :types: gd_req
+   :columns: id;satisfies_back as "tool_req"
+   :filter: "PROCESS_gd_req__doc" in id
 
 
 📋 Requirements
@@ -612,13 +628,208 @@ This section provides an overview of current process requirements and their clar
   * Standard requirement (std_req)
 
 
-🛡️ Safety Analysis
-###################
+🛡️ Safety Analysis (DFA + FMEA)
+###############################
 
-.. note::
-  Safety analysis is not yet defined yet. This is just a placeholder for future
-  requirements.
+.. tool_req:: Safety Analysis Need Types
+  :id: tool_req__docs_saf_types
+  :implemented: NO
+  :tags: Safety Analysis
+  :satisfies:
+    PROCESS_gd_req__saf__structure,
+    PROCESS_gd_req__saf__attr_uid,
+  :parent_covered: YES
 
+   Docs-As-Code shall enable the following need types:
+
+  * Feature FMEA (Failure Modes and Effect Analysis) -> feat_saf_fmea
+  * Component FMEA (Failure Modes and Effect Analysis) -> comp_saf_fmea
+  * Feature DFA (Dependend Failure Analysis) -> feat_saf_dfa
+  * Component DFA (Dependent Failure Analysis) -> comp_saf_dfa
+
+
+
+.. tool_req:: Safety Analysis Mandatory Attributes
+  :id: tool_req__docs_saf_mandatory_attrs
+  :implemented: NO
+  :tags: Safety Analysis
+  :satisfies: PROCESS_gd_req__saf__attr_mandatory
+  :parent_covered: YES
+
+  Docs-As-Code shall ensure that needs of type :need:`tool_req__docs_saf_types`
+  have a failure_mode attribute.
+
+  * verifies: <Feature architecture>
+  * failure_mode: <ID from fault model Fault Models (gd_guidl__fault_models)>
+  * failure_effect: “description of failure effect of the failure initiator on the element”
+  * mitigation: < NONE|ID from Feature Requirement>
+  * mitigation_issue: <ID from Issue Tracker| None if no issue needed>
+  * sufficient: <yes|no>
+  * argument: <text to argument why mitigation is sufficient>
+
+.. tool_req:: Safety Analysis Mitigation Attribute
+  :id: tool_req__docs_saf_attrs_mitigation
+  :implemented: NO
+  :tags: Safety Analysis
+  :satisfies:
+    PROCESS_gd_req__saf_attr_mitigation,
+    PROCESS_gd_req__saf__attr_requirements,
+    PROCESS_gd_req__saf__attr_requirements_check,
+  :parent_covered: YES
+
+  Docs-As-Code shall enforce that needs of type :need:`tool_req__docs_saf_types`
+  have a mitigation attribute, which can be one of the following:
+
+  * None
+  * Requirement ID
+
+
+.. tool_req:: Safety Analysis Mitigation Issue Attribute
+  :id: tool_req__docs_saf_attrs_mitigation_issue
+  :implemented: NO
+  :tags: Safety Analysis
+  :satisfies: PROCESS_gd_req__saf_attr_mitigation_issue
+  :parent_covered: YES
+
+  Docs-As-Code shall enforce that needs of type :need:`tool_req__docs_saf_types`
+  have a mitigation attribute, which can be one of the following:
+
+  * None
+  * Link to GitHub issue?!
+
+
+.. tool_req:: Safety Analysis Sufficient Attribute
+  :id: tool_req__docs_saf_attrs_sufficient
+  :implemented: NO
+  :tags: Safety Analysis
+  :satisfies: PROCESS_gd_req__saf__attr_sufficient
+  :parent_covered: YES
+
+  Docs-As-Code shall enforce that needs of type :need:`tool_req__docs_saf_types`
+  have a sufficient attribute, which can have one of the following values:
+
+  * yes
+  * no
+
+
+
+.. tool_req:: Safety Analysis Mandatory Content
+   :id: tool_req__docs_saf_attrs_conent
+   :implemented: NO
+   :tags: Safety Analysis
+   :satisfies: PROCESS_gd_req__saf__attr_argument
+   :parent_covered: YES
+
+   Docs-As-Code shall enforce that needs of type :need:`tool_req__docs_saf_types` have a non empty content.
+
+
+
+.. tool_req:: Safety Analysis Linkage Verifies
+  :id: tool_req__docs_saf_attrs_verifies
+  :implemented: NO
+  :tags: Safety Analysis
+  :satisfies: PROCESS_gd_req__saf__linkage_check, PROCESS_gd_req__saf__linkage
+  :parent_covered: YES
+
+  Docs-As-Code shall enforce that needs of type :need:`tool_req__docs_saf_types` have a
+  link `verifies` that links to at least one dynamic diagram according to the table.
+
+  | Source | Target |
+  | -- | -- |
+  | --  * Feat | feat_arch_dyn |
+  | --  * Comp | comp_arch_dyn |
+
+
+
+  * Feature FMEA (Failure Modes and Effect Analysis) -> feat_saf_fmea
+  * Component FMEA (Failure Modes and Effect Analysis) -> comp_saf_fmea
+  * Feature DFA (Dependend Failure Analysis) -> feat_saf_dfa
+  * Component DFA (Dependent Failure Analysis) -> comp_saf_dfa
+
+  * Feature Architecture Dynamic View (feat_arch_dyn)
+  * Component Architecture Dynamic View (comp_arc_dyn)
+
+
+.. tool_req:: Enforces need ID scheme in safety analysis
+   :id: tool_req__docs_safety_ana_attr_id_scheme
+   :implemented: NO
+   :tags: Safety Analysis
+   :satisfies: PROCESS_gd_req__saf__attr_uid
+   :parent_covered: YES: together with tool_req__docs_common_attr_id
+   :parent_has_problem: YES: Unclear what keywords are
+
+   Docs-as-Code shall enforce that Need IDs of type safety analysis follow the following naming scheme:
+
+   * Indicate the type of safety analysis
+   * Have a keyword describing the level of analysis
+   * Have a keyword describing the content of analysis
+
+
+.. tool_req:: DFA -> violation_id
+   :id: tool_req__docs_saf_attr_dfa_violation_id
+   :implemented: NO
+   :tags: Safety Analysis
+   :satisfies: PROCESS_gd_req__saf__attr_vid
+   :parent_covered: NO
+
+   Docs-As-Code shall enforce that needs of type DFA (see
+   :need:`tool_req__docs_saf_types`) have a `violation_id` attribute.
+
+   Allowed values are listed as ID in tables at :need:`PROCESS_gd_guidl__dfa_failure_initiators`.
+
+.. tool_req:: DFA -> violation_cause
+   :id: tool_req__docs_saf_attr_dfa_violation_cause
+   :implemented: NO
+   :tags: Safety Analysis
+   :satisfies: PROCESS_gd_req__saf__attr_vcause
+   :parent_covered: NO
+
+   Docs-As-Code shall enforce that needs of type DFA (see
+   :need:`tool_req__docs_saf_types`) have a `violation_cause` attribute (free text).
+
+
+.. tool_req:: FMEA -> Failure Mode
+   :id: tool_req__docs_saf_attr_fmea_failure_mode
+   :implemented: NO
+   :tags: Safety Analysis
+   :satisfies: PROCESS_gd_req__saf__attr_fmode
+   :parent_covered: NO
+
+   Docs-As-Code shall enforce that needs of type FMEA (see
+   :need:`tool_req__docs_saf_types`) have a `failure_mode` attribute.
+
+   Allowed values are listed as ID in tables at :need:`PROCESS_gd_guidl__fault_models`.
+
+.. tool_req:: FMEA -> Failure Effect
+   :id: tool_req__docs_saf_attr_fmea_failure_effect
+   :implemented: NO
+   :tags: Safety Analysis
+   :satisfies: PROCESS_gd_req__saf__attr_veffect
+   :parent_covered: NO
+
+   Docs-As-Code shall enforce that needs of type FMEA (see
+   :need:`tool_req__docs_saf_types`) have a `failure_effect` attribute (free text).
+
+-------
+Mapping
+-------
+
+.. needtable::
+   :style: table
+   :types: gd_req
+   :columns: id;satisfies_back as "tool_req"
+   :filter: "PROCESS_gd_req__saf" in id
+
+
+🗺️ Full Mapping
+################
+
+Process to tools:
+
+.. needtable::
+   :style: table
+   :types: gd_req
+   :columns: id;satisfies_back as "tool_req"
 
 ..
 .. ------------------------------------------------------------------------
