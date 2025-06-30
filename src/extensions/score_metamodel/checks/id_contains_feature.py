@@ -46,10 +46,7 @@ def id_contains_feature(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
     # NOTE: This does not match the process requirements
     docname = dir_docname if dir_docname else need.get("docname", "")
 
-    found = False
-    for featurepart in featureparts:
-        if featurepart in docname:
-            found = True
+found = any(featurepart.lower() in docname.lower() for featurepart in featureparts)
 
     if not found:
         log.warning_for_option(
