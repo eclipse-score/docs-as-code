@@ -505,7 +505,7 @@ needs_types:
       status: ^(valid|invalid)$
 
 # Safety Analysis DFA
-feat_saf_dfa:
+feat_plat_saf_dfa:
   title: DFA
   prefix: feat_plat_saf_dfa__
   mandatory_options:
