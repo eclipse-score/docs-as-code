@@ -53,6 +53,14 @@ if __name__ == "__main__":
         "--github_repo",
         help="GitHub repository to embed in the Sphinx build",
     )
+    parser.add_argument(
+        "--port",
+        type=int,
+        help="Port to use for the live_preview ACTION. Default is 8000. "
+        "Use 0 for auto detection of a free port.",
+        default=8000,
+    )
+
     args = parser.parse_args()
     if args.debug:
         debugpy.listen(("0.0.0.0", args.debug_port))
@@ -87,7 +95,11 @@ if __name__ == "__main__":
     if action == "live_preview":
         sphinx_autobuild_main(
             # Note: bools need to be passed via '0' and '1' from the command line.
-            base_arguments + ["--define=disable_source_code_linker=1"]
+            base_arguments
+            + [
+                "--define=disable_source_code_linker=1",
+                f"--port={args.port}",
+            ]
         )
     else:
         sphinx_main(base_arguments)

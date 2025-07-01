@@ -27,11 +27,6 @@ docs(
             "suffix": "latest",  # latest main branch documentation build
             "external_needs_info": [
                 {
-                    "base_url": "https://eclipse-score.github.io/score/main",
-                    "json_url": "https://eclipse-score.github.io/score/main/needs.json",
-                    "id_prefix": "score_",
-                },
-                {
                     "base_url": "https://eclipse-score.github.io/process_description/main",
                     "json_url": "https://eclipse-score.github.io/process_description/main/needs.json",
                     "id_prefix": "process_",
@@ -41,15 +36,9 @@ docs(
         {
             "suffix": "release",  # The version imported from MODULE.bazel
             "target": [
-                "@score_platform//docs:docs_needs",
                 "@score_process//process:docs_needs_latest",
             ],
             "external_needs_info": [
-                {
-                    "base_url": "https://eclipse-score.github.io/score/main",
-                    "json_path": "/score_platform~/docs/docs_needs/_build/needs/needs.json",
-                    "id_prefix": "score_",
-                },
                 {
                     "base_url": "https://eclipse-score.github.io/process_description/main",
                     "json_path": "/score_process~/process/docs_needs_latest/_build/needs/needs.json",
