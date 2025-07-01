@@ -56,7 +56,8 @@ def register(app: Sphinx, env: BuildEnvironment, _: str | None) -> None:
     :param env: The Sphinx build environment.
     :param _: Additional argument not used.
     """
-    app.add_config_value("header_service_use_github_data", True, "env")
+    if not hasattr(app.config, "header_service_use_github_data"):
+        app.add_config_value("header_service_use_github_data", True, "env")
     data = SphinxNeedsData(env)
     services = data.get_or_create_services()
     services.register("header-service", HeaderService)
