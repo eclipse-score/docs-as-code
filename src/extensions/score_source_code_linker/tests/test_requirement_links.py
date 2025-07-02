@@ -10,21 +10,24 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
+import logging
 from collections import defaultdict
 from collections.abc import Callable
 from gettext import find
 from pathlib import Path
 
 import pytest
-import logging
 from pytest import TempPathFactory
-from src.extensions.score_source_code_linker.parse_source_files import (
-    get_github_base_url,
-    find_git_root,
-    get_github_repo_info,
+
+from src.extensions.score_source_code_linker.parse_source_files_OLD import (
     extract_requirements,
+    find_git_root,
     get_git_hash,
+    get_github_base_url,
+    get_github_repo_info,
     parse_git_output,
+)
+from src.extensions.score_source_code_linker.parse_source_files_OLD import (
     logger as scl_logger,
 )
 

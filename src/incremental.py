@@ -20,12 +20,6 @@ import debugpy
 from sphinx.cmd.build import main as sphinx_main
 from sphinx_autobuild.__main__ import main as sphinx_autobuild_main
 
-# Note: this works fine from bazel incremental, but it's not in venv
-# from score_source_code_linker.generate_source_code_links_json import ...
-from src.extensions.score_source_code_linker.generate_source_code_links_json import (
-    generate_source_code_links_json,
-)
-
 logger = logging.getLogger(__name__)
 
 def get_env(name: str) -> str:
@@ -71,8 +65,6 @@ if __name__ == "__main__":
     if workspace:
         os.chdir(workspace)
 
-    generate_source_code_links_json(Path(get_env("BUILD_DIRECTORY")))
-
     base_arguments = [
         get_env("SOURCE_DIRECTORY"),
         get_env("BUILD_DIRECTORY"),
@@ -95,11 +87,13 @@ if __name__ == "__main__":
 
     action = get_env("ACTION")
     if action == "live_preview":
+        build_dir = Path(get_env("BUILD_DIRECTORY"))
+        (build_dir / "score_source_code_linker_cache.json").unlink(missing_ok=True)
         sphinx_autobuild_main(
-            # Note: bools need to be passed via '0' and '1' from the command line.
             base_arguments
             + [
-                "--define=disable_source_code_linker=1",
+                # Note: bools need to be passed via '0' and '1' from the command line.
+                "--define=skip_rescanning_via_source_code_linker=1",
                 f"--port={args.port}",
             ]
         )

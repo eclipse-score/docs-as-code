@@ -16,7 +16,6 @@ load("@score_python_basics//:defs.bzl", "score_py_pytest")
 
 #exports_files(["parse_source_files.py"])
 
-# Sphinx extension & Preprocessing parser - all in one.
 py_library(
     name = "score_source_code_linker",
     srcs = glob(

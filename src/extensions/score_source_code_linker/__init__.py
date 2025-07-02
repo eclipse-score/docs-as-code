@@ -17,13 +17,22 @@ source code links from a JSON file and add them to the needs.
 
 import json
 from copy import deepcopy
+from dataclasses import dataclass
 from pathlib import Path
+from typing import cast
 
 from sphinx.application import Sphinx
 from sphinx.environment import BuildEnvironment
 from sphinx_needs.data import NeedsInfoType, NeedsMutable, SphinxNeedsData
 from sphinx_needs.logging import get_logger
 
+from src.extensions.score_source_code_linker.generate_source_code_links_json import (
+    generate_source_code_links_json,
+)
+from src.extensions.score_source_code_linker.needlinks import (
+    NeedLink,
+    load_source_code_links_json,
+)
 from src.extensions.score_source_code_linker.parse_source_files_OLD import (
     get_github_base_url,
 )
@@ -32,7 +41,24 @@ LOGGER = get_logger(__name__)
 LOGGER.setLevel("DEBUG")
 
 
-def setup(app: Sphinx) -> dict[str, str | bool]:
+def get_cache_filename(build_dir: Path) -> Path:
+    """
+    Returns the path to the cache file for the source code linker.
+    This is used to store the generated source code links.
+    """
+    return build_dir / "score_source_code_linker_cache.json"
+
+
+def setup_once(app: Sphinx):
+    # Extension: score_source_code_linker
+    app.add_config_value(
+        "skip_rescanning_via_source_code_linker",
+        False,
+        rebuild="env",
+        types=bool,
+        description="Skip rescanning source code files via the source code linker.",
+    )
+
     # Define need_string_links here to not have it in conf.py
     app.config.needs_string_links = {
         "source_code_linker": {
@@ -43,7 +69,30 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
         },
     }
 
-    app.connect("env-updated", add_source_link)
+    # TODO: correct config value?
+    build_dir = Path(app.outdir)
+    assert build_dir
+
+    if (
+        not get_cache_filename(build_dir).exists()
+        or not app.config.skip_rescanning_via_source_code_linker
+    ):
+        LOGGER.debug(
+            "INFO: Generating source code links JSON file.",
+            type="score_source_code_linker",
+        )
+
+        generate_source_code_links_json(get_cache_filename(build_dir))
+
+    app.connect("env-updated", inject_links_into_needs)
+
+
+def setup(app: Sphinx) -> dict[str, str | bool]:
+    # Esbonio will execute setup() on every iteration.
+    # setup_once will only be called once.
+    if "skip_rescanning_via_source_code_linker" not in app.config:
+        setup_once(app)
+
     return {
         "version": "0.1",
         "parallel_read_safe": True,
@@ -71,7 +120,7 @@ def find_need(
 
 
 # re-qid: gd_req__req__attr_impl
-def add_source_link(app: Sphinx, env: BuildEnvironment) -> None:
+def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
     """
     'Main' function that facilitates the running of all other functions
     in correct order.
@@ -85,47 +134,32 @@ def add_source_link(app: Sphinx, env: BuildEnvironment) -> None:
     Needs_Data = SphinxNeedsData(env)
     needs = Needs_Data.get_needs_mutable()
     needs_copy = deepcopy(needs)
-    p5 = Path(__file__).parents[5]
 
-    if str(p5).endswith("src"):
-        LOGGER.debug("DEBUG: WE ARE IN THE IF")
-        path = str(p5.parent / Path(app.confdir).name / "score_source_code_parser.json")
-    else:
-        LOGGER.debug("DEBUG: WE ARE IN THE ELSE")
-        path = str(p5 / "score_source_code_parser.json")
+    source_code_links = load_source_code_links_json(
+        get_cache_filename(app.outdir)
+    )
 
     # For some reason the prefix 'sphinx_needs internally' is CAPSLOCKED.
     # So we have to make sure we uppercase the prefixes
     prefixes = [x["id_prefix"].upper() for x in app.config.needs_external_needs]
     github_base_url = get_github_base_url() + "/blob/"
-    try:
-        with open(path) as f:
-            gh_json = json.load(f)
-        for id, link in gh_json.items():
-            id = id.strip()
-            need = find_need(needs_copy, id, prefixes)
-            if need is None:
-                # NOTE: manipulating link to remove git-hash,
-                # making the output file location more readable
-                files = [x.replace(github_base_url, "").split("/", 1)[-1] for x in link]
-                LOGGER.warning(
-                    f"Could not find {id} in the needs id's. "
-                    + f"Found in file(s): {files}",
-                    type="score_source_code_linker",
-                )
-                continue
+    for needlink in source_code_links:
+        need = find_need(needs_copy, needlink.need, prefixes)
+        if need is None:
+            # TODO: print github annotations as in https://github.com/eclipse-score/bazel_registry/blob/7423b9996a45dd0a9ec868e06a970330ee71cf4f/tools/verify_semver_compatibility_level.py#L126-L129
+            LOGGER.warning(
+                f"{needlink.file}:{needlink.line}: Could not find {needlink.need}",
+                type="score_source_code_linker",
+            )
+        else:
+            if "source_code_link" not in need:
+                need["source_code_link"] = []  # type: ignore
+            cast(dict[str, list[str]], need)["source_code_link"].append(
+                # TODO: fix github link
+                f"{github_base_url}{needlink.file}/{needlink.line}"
+            )
 
             # NOTE: Removing & adding the need is important to make sure
             # the needs gets 're-evaluated'.
             Needs_Data.remove_need(need["id"])
-            need["source_code_link"] = ",".join(link)
             Needs_Data.add_need(need)
-    except Exception as e:
-        LOGGER.warning(
-            f"An unexpected error occurred while adding source_code_links to needs."
-            + f"Error: {e}",
-            type="score_source_code_linker",
-        )
-        LOGGER.warning(
-            f"Reading file: {path} right now", type="score_source_code_linker"
-        )
