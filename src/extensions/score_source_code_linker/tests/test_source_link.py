@@ -29,6 +29,7 @@ from src.extensions.score_source_code_linker.needlinks import (
 from src.extensions.score_source_code_linker.generate_source_code_links_json import (
     find_ws_root
 )
+import os
 
 
 def construct_gh_url() -> str:
@@ -38,7 +39,9 @@ def construct_gh_url() -> str:
 
 @pytest.fixture(scope="session")
 def sphinx_base_dir(tmp_path_factory: TempPathFactory) -> Path:
-    return tmp_path_factory.mktemp("sphinx")
+    path = tmp_path_factory.mktemp("sphinx")
+    os.environ["SPHINX_TEST_DIR"] = str(path)
+    return path
 
 
 @pytest.fixture(scope="session")

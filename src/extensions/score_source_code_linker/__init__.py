@@ -16,6 +16,7 @@ source code links from a JSON file and add them to the needs.
 """
 
 import subprocess
+import os
 from collections import defaultdict
 from copy import deepcopy
 from pathlib import Path
@@ -56,6 +57,8 @@ def setup_once(app: Sphinx):
     # Run only for local files!
     # ws_root is not set when running on external repositories (dependencies).
     ws_root = find_ws_root()
+    running_test = os.environ.get("PYTEST_CURRENT_TEST",None)
+    print(f"OS PYTEST: {os.environ["SPHINX_TEST_DIR"]}")
     if not ws_root:
         return
 
