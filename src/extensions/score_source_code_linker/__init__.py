@@ -15,9 +15,8 @@
 source code links from a JSON file and add them to the needs.
 """
 
-import json
+from collections import defaultdict
 from copy import deepcopy
-from dataclasses import dataclass
 from pathlib import Path
 from typing import cast
 
@@ -27,6 +26,8 @@ from sphinx_needs.data import NeedsInfoType, NeedsMutable, SphinxNeedsData
 from sphinx_needs.logging import get_logger
 
 from src.extensions.score_source_code_linker.generate_source_code_links_json import (
+    find_git_root,
+    find_ws_root,
     generate_source_code_links_json,
 )
 from src.extensions.score_source_code_linker.needlinks import (
@@ -50,6 +51,15 @@ def get_cache_filename(build_dir: Path) -> Path:
 
 
 def setup_once(app: Sphinx):
+    print(f"DEBUG: Workspace root is {find_ws_root()}")
+    print(f"DEBUG: Current working directory is {Path('.')} = {Path('.').resolve()}")
+    print(f"DEBUG: Git root is {find_git_root()}")
+
+    # Run only for local files!
+    # ws_root is not set when running on external repositories (dependencies).
+    if not find_ws_root():
+        return
+
     # Extension: score_source_code_linker
     app.add_config_value(
         "skip_rescanning_via_source_code_linker",
@@ -62,19 +72,17 @@ def setup_once(app: Sphinx):
     # Define need_string_links here to not have it in conf.py
     app.config.needs_string_links = {
         "source_code_linker": {
-            "regex": r"(?P<value>[^,]+)",
-            "link_url": "{{value}}",
-            "link_name": "Source Code Link",
+            "regex": r"(?P<url>.+)<>(?P<name>.+)",
+            "link_url": "{{url}}",
+            "link_name": "{{name}}",
             "options": ["source_code_link"],
         },
     }
 
-    # TODO: correct config value?
-    build_dir = Path(app.outdir)
-    assert build_dir
+    cache_json = get_cache_filename(Path(app.outdir))
 
     if (
-        not get_cache_filename(build_dir).exists()
+        not cache_json.exists()
         or not app.config.skip_rescanning_via_source_code_linker
     ):
         LOGGER.debug(
@@ -82,7 +90,7 @@ def setup_once(app: Sphinx):
             type="score_source_code_linker",
         )
 
-        generate_source_code_links_json(get_cache_filename(build_dir))
+        generate_source_code_links_json(find_ws_root(), cache_json)
 
     app.connect("env-updated", inject_links_into_needs)
 
@@ -133,11 +141,16 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
 
     Needs_Data = SphinxNeedsData(env)
     needs = Needs_Data.get_needs_mutable()
-    needs_copy = deepcopy(needs)
+    needs_copy = deepcopy(needs) # TODO: why do we create a copy?
 
     source_code_links = load_source_code_links_json(
         get_cache_filename(app.outdir)
     )
+
+    # group source_code_links by need
+    source_code_links_by_need: dict[str, list[NeedLink]] = defaultdict(list)
+    for needlink in source_code_links:
+        source_code_links_by_need[needlink.need].append(needlink)
 
     # For some reason the prefix 'sphinx_needs internally' is CAPSLOCKED.
     # So we have to make sure we uppercase the prefixes

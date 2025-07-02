@@ -62,19 +62,23 @@ if __name__ == "__main__":
         debugpy.wait_for_client()
 
     workspace = os.getenv("BUILD_WORKSPACE_DIRECTORY")
+    # if workspace:
+    #     os.chdir(workspace)
     if workspace:
-        os.chdir(workspace)
+        workspace += "/"
+    else:
+        workspace = ""
 
     base_arguments = [
-        get_env("SOURCE_DIRECTORY"),
-        get_env("BUILD_DIRECTORY"),
+        workspace + get_env("SOURCE_DIRECTORY"),
+        workspace + get_env("BUILD_DIRECTORY"),
         "-W",  # treat warning as errors
         "--keep-going",  # do not abort after one error
         "-T",  # show details in case of errors in extensions
         "--jobs",
         "auto",
         "--conf-dir",
-        get_env("CONF_DIRECTORY"),
+        workspace + get_env("CONF_DIRECTORY"),
         f"--define=external_needs_source={get_env('EXTERNAL_NEEDS_INFO')}",
     ]
 

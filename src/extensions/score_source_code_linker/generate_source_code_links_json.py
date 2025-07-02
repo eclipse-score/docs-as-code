@@ -17,10 +17,10 @@ for the needs. It's split this way, so that the live_preview action does not nee
 parse everything on every run.
 """
 
-import json
 import os
 import sys
 from pathlib import Path
+from pprint import pprint
 
 from src.extensions.score_source_code_linker.needlinks import (
     NeedLink,
@@ -28,23 +28,18 @@ from src.extensions.score_source_code_linker.needlinks import (
 )
 
 
-def find_ws_root() -> Path:
+def find_ws_root() -> Path | None:
     """Find the current MODULE.bazel file"""
-    bwd = Path(os.environ["BUILD_WORKSPACE_DIRECTORY"])
-    assert bwd.exists(), f"BUILD_WORKSPACE_DIRECTORY {bwd} does not exist"
-    assert bwd.is_dir(), f"BUILD_WORKSPACE_DIRECTORY {bwd} is not a directory"
-    return bwd
+    ws_dir = os.environ.get("BUILD_WORKSPACE_DIRECTORY", None)
+    return Path(ws_dir) if ws_dir else None
 
 
-def find_git_root() -> Path:
+def find_git_root():
     git_root = Path(__file__).resolve()
     while not (git_root / ".git").exists():
         git_root = git_root.parent
         if git_root == Path("/"):
-            sys.exit(
-                "Could not find git root. Please run this script from the "
-                "root of the repository."
-            )
+            return None
     return git_root
 
 
@@ -54,53 +49,68 @@ TAGS = [
 ]
 
 
-def _should_skip_file(file_path: Path) -> bool:
-    """Check if a file should be skipped during scanning."""
-    # TODO: consider using .gitignore
-    return (
-        file_path.is_dir()
-        or file_path.name.startswith((".", "_"))
-        or file_path.suffix in [".pyc", ".so", ".exe", ".bin"]
-    )
 
-
-def _extract_requirements_from_line(line: str, tag: str) -> list[str]:
+def _extract_references_from_line(line: str):
     """Extract requirement IDs from a line containing a tag."""
-    tag_index = line.find(tag)
-    if tag_index == -1:
-        return []
 
-    after_tag = line[tag_index + len(tag) :].strip()
-    # Split by comma or space to get multiple requirements
-    return [req.strip() for req in after_tag.replace(",", " ").split() if req.strip()]
+    for tag in TAGS:
+        tag_index = line.find(tag)
+        if tag_index >= 0:
+            line_after_tag = line[tag_index + len(tag) :].strip()
+            # Split by comma or space to get multiple requirements
+            for req in line_after_tag.replace(",", " ").split():
+                yield tag, req.strip()
 
 
-def _extract_requirements_from_file(git_root: Path, file_path: Path) -> list[NeedLink]:
+
+def _extract_references_from_file(root: Path, file_path: Path) -> list[NeedLink]:
     """Scan a single file for template strings and return findings."""
+    assert root.is_absolute(), "Root path must be absolute"
+    assert not file_path.is_absolute(), "File path must be relative to the root"
+    assert file_path.is_relative_to(root), "File path must be relative to the root"
+
     findings: list[NeedLink] = []
 
     try:
-        with open(file_path, encoding="utf-8", errors="ignore") as f:
+        with open(root / file_path, encoding="utf-8", errors="ignore") as f:
             for line_num, line in enumerate(f, 1):
-                for tag in TAGS:
-                    if tag in line:
-                        requirements = _extract_requirements_from_line(line, tag)
-                        for req in requirements:
-                            findings.append(
-                                NeedLink(
-                                    file=file_path.relative_to(git_root),
-                                    line=line_num,
-                                    tag=tag,
-                                    need=req,
-                                    full_line=line.strip(),
-                                )
-                            )
+                for tag, req in _extract_references_from_line(line):
+                    findings.append(
+                        NeedLink(
+                            file=file_path,
+                            line=line_num,
+                            tag=tag,
+                            need=req,
+                            full_line=line.strip(),
+                        )
+                    )
     except (UnicodeDecodeError, PermissionError, OSError):
         # Skip files that can't be read as text
         pass
 
     return findings
 
+def iterate_files_recursively(search_path: Path):
+    def _should_skip_file(file_path: Path) -> bool:
+        """Check if a file should be skipped during scanning."""
+        # TODO: consider using .gitignore
+        return (
+            file_path.is_dir()
+            or file_path.name.startswith((".", "_"))
+            or file_path.suffix in [".pyc", ".so", ".exe", ".bin"]
+        )
+
+    for root, dirs, files in os.walk(search_path):
+        root_path = Path(root)
+
+        # Skip directories that start with '.' or '_' by modifying dirs in-place
+        # This prevents os.walk from descending into these directories
+        dirs[:] = [d for d in dirs if not d.startswith((".", "_", "bazel-"))]
+
+        for file in files:
+            f = root_path / file
+            if not _should_skip_file(f):
+                yield f
 
 def find_all_need_references(search_path: Path) -> list[NeedLink]:
     """
@@ -117,21 +127,9 @@ def find_all_need_references(search_path: Path) -> list[NeedLink]:
     all_need_references: list[NeedLink] = []
 
     # Use os.walk to have better control over directory traversal
-    for root, dirs, files in os.walk(search_path):
-        root_path = Path(root)
-
-        # Skip directories that start with '.' or '_' by modifying dirs in-place
-        # This prevents os.walk from descending into these directories
-        dirs[:] = [d for d in dirs if not d.startswith((".", "_", "bazel-"))]
-
-        for file in files:
-            file_path = root_path / file
-
-            if _should_skip_file(file_path):
-                continue
-
-            findings = _extract_requirements_from_file(search_path, file_path)
-            all_need_references.extend(findings)
+    for file in iterate_files_recursively(search_path):
+        references = _extract_references_from_file(search_path, file)
+        all_need_references.extend(references)
 
     elapsed_time = os.times().elapsed - start_time
     print(
@@ -142,11 +140,31 @@ def find_all_need_references(search_path: Path) -> list[NeedLink]:
     return all_need_references
 
 
-def generate_source_code_links_json(file: Path):
+def generate_source_code_links_json(search_path: Path, file: Path):
     """
     Generate a JSON file with all source code links for the needs.
     This is used to link the needs to the source code in the documentation.
     """
-    needlinks = find_all_need_references(Path("."))
-
+    needlinks = find_all_need_references(search_path)
     store_source_code_links_json(file, needlinks)
+
+
+# incremental_latest:
+# DEBUG: Workspace root is /home/lla2hi/score/docs-as-code
+# DEBUG: Current working directory is /home/lla2hi/.cache/bazel/_bazel_lla2hi/e35bb7c4cc72b99eb76653ab839f4f8e/execroot/_main/bazel-out/k8-fastbuild/bin/docs/incremental_latest.runfiles/_main
+# DEBUG: Git root is /home/lla2hi/score/docs-as-code
+
+# incremental_release: (-> bazel build sandbox of process repository)
+# DEBUG: Workspace root is None
+# DEBUG: Current working directory is /home/lla2hi/.cache/bazel/_bazel_lla2hi/e35bb7c4cc72b99eb76653ab839f4f8e/sandbox/linux-sandbox/25/execroot/_main (-> process repo!!)
+#    rst files are in .../bazel-out/k8-fastbuild/bin/external/score_process~/process/_docs_needs_latest/score_process~/*
+# DEBUG: Git root is /home/lla2hi/score/docs-as-code
+
+# docs_latest:
+# DEBUG: Workspace root is None
+# DEBUG: Current working directory is /home/lla2hi/.cache/bazel/_bazel_lla2hi/e35bb7c4cc72b99eb76653ab839f4f8e/sandbox/linux-sandbox/26/execroot/_main
+# DEBUG: Git root is /home/lla2hi/score/docs-as-code
+
+# TODO docu:
+# docs:docs has no source code links
+# external repositories have no source code links (to their code)

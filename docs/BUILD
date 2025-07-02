@@ -36,12 +36,12 @@ docs(
         {
             "suffix": "release",  # The version imported from MODULE.bazel
             "target": [
-                "@score_process//process:docs_needs_latest",
+                "@score_process//process:incremental_latest",
             ],
             "external_needs_info": [
                 {
                     "base_url": "https://eclipse-score.github.io/process_description/main",
-                    "json_path": "/score_process~/process/docs_needs_latest/_build/needs/needs.json",
+                    "json_path": "/score_process~/process/incremental_latest/_build/needs/needs.json",
                     "id_prefix": "process_",
                 },
             ],
