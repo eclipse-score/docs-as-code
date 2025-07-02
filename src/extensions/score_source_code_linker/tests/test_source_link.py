@@ -21,6 +21,13 @@ from sphinx_needs.data import SphinxNeedsData
 
 from src.extensions.score_source_code_linker import (
     get_github_base_url,
+    get_github_link
+)
+from src.extensions.score_source_code_linker.needlinks import ( 
+    NeedLink
+)
+from src.extensions.score_source_code_linker.generate_source_code_links_json import (
+    find_ws_root
 )
 
 
@@ -37,18 +44,15 @@ def sphinx_base_dir(tmp_path_factory: TempPathFactory) -> Path:
 @pytest.fixture(scope="session")
 def sphinx_app_setup(
     sphinx_base_dir: Path,
-) -> Callable[[str, str, dict[str, list[str]]], SphinxTestApp]:
+) -> Callable[[str, str], SphinxTestApp]:
     def _create_app(
-        conf_content: str, rst_content: str, requierments_text: dict[str, list[str]]
+        conf_content: str, rst_content: str,
     ):
         src_dir = sphinx_base_dir / "src"
         src_dir.mkdir(exist_ok=True)
 
         (src_dir / "conf.py").write_text(conf_content)
         (src_dir / "index.rst").write_text(rst_content)
-        (src_dir / "score_source_code_parser.json").write_text(
-            json.dumps(requierments_text)
-        )
 
         return SphinxTestApp(
             freshenv=True,
@@ -57,11 +61,6 @@ def sphinx_app_setup(
             outdir=sphinx_base_dir / "out",
             buildername="html",
             warningiserror=True,
-            confoverrides={
-                "score_source_code_linker_file_overwrite": str(
-                    src_dir / "score_source_code_parser.json"
-                )
-            },
         )
 
     return _create_app
@@ -102,18 +101,32 @@ TESTING SOURCE LINK
    :status: open
 """
 
-
 @pytest.fixture(scope="session")
 def example_source_link_text_all_ok():
-    github_base_url = construct_gh_url()
     return {
         "TREQ_ID_1": [
-            f"{github_base_url}aacce4887ceea1f884135242a8c182db1447050/tools/sources/implementation1.py#L2",
-            f"{github_base_url}/tools/sources/implementation_2_new_file.py#L20",
-        ],
+            NeedLink(
+                file= Path("/tools/sources/implementation1.py#L2"),
+                line= 1,
+                tag= "#"+ " req-Id:",
+                need= "TREQ_ID_1",
+            full_line=""
+            ),
+            NeedLink(
+            file=Path("/tools/sources/implementation_2_new_file.py"),
+            line= 20,
+            tag= "#"+ " req-Id:",
+            need= "TREQ_ID_1",
+            full_line=""
+        )],
         "TREQ_ID_2": [
-            f"{github_base_url}f53f50a0ab1186329292e6b28b8e6c93b37ea41/tools/sources/implementation1.py#L18"
-        ],
+        NeedLink(
+            file= Path(f"tools/sources/implementation1.py#L18"),
+            need= "TREQ_ID_2",
+            tag= "#"+ " req-Id:",
+            line= 18,
+            full_line=""
+            )]
     }
 
 
@@ -127,50 +140,52 @@ def example_source_link_text_non_existent():
     }
 
 
+def make_source_link(ws_root: Path, needlinks): 
+    return ", ".join(
+                f"{get_github_link(ws_root, n)}<>{n.file}:{n.line}" for n in needlinks
+            )
+
 def test_source_link_integration_ok(
-    sphinx_app_setup: Callable[[str, str, dict[str, list[str]]], SphinxTestApp],
+    sphinx_app_setup: Callable[[str, str], SphinxTestApp],
     basic_conf: str,
     basic_needs: str,
     example_source_link_text_all_ok: dict[str, list[str]],
     sphinx_base_dir: Path,
 ):
-    github_url = construct_gh_url()
-    app = sphinx_app_setup(basic_conf, basic_needs, example_source_link_text_all_ok)
+    app = sphinx_app_setup(basic_conf, basic_needs)
     try:
         app.build()
+        ws_root = find_ws_root()
+        if ws_root is None:
+            ws_root = Path(".")
         Needs_Data = SphinxNeedsData(app.env)
         needs_data = {x["id"]: x for x in Needs_Data.get_needs_view().values()}
         assert "TREQ_ID_1" in needs_data
         assert "TREQ_ID_2" in needs_data
+        expected_link1 = make_source_link(ws_root, example_source_link_text_all_ok["TREQ_ID_1"])
+        expected_link2 = make_source_link(ws_root, example_source_link_text_all_ok["TREQ_ID_2"])
+        print(expected_link1)
+        print(expected_link2)
         # extra_options are only available at runtime
-        assert (
-            ",".join(example_source_link_text_all_ok["TREQ_ID_1"])
-            == needs_data["TREQ_ID_1"]["source_code_link"]  # type: ignore
-        )
-        assert (
-            ",".join(example_source_link_text_all_ok["TREQ_ID_2"])
-            == needs_data["TREQ_ID_2"]["source_code_link"]  # type: ignore
-        )
+        assert expected_link2 == needs_data["TREQ_ID_2"]["source_code_link"]  # type: ignore)
+        assert expected_link1 == needs_data["TREQ_ID_1"]["source_code_link"]  # type: ignore)
     finally:
         app.cleanup()
 
 
 def test_source_link_integration_non_existent_id(
-    sphinx_app_setup: Callable[[str, str, dict[str, list[str]]], SphinxTestApp],
+    sphinx_app_setup: Callable[[str, str], SphinxTestApp],
     basic_conf: str,
     basic_needs: str,
     example_source_link_text_non_existent: dict[str, list[str]],
     sphinx_base_dir: Path,
 ):
-    app = sphinx_app_setup(
-        basic_conf, basic_needs, example_source_link_text_non_existent
-    )
+    app = sphinx_app_setup( basic_conf, basic_needs)
     try:
         app.build()
         warnings = app.warning.getvalue()
         assert (
-            "WARNING: Could not find TREQ_ID_200 in the needs id's. Found in "
-            "file(s): ['tools/sources/bad_implementation.py#L17']" in warnings
+            "tools/sources/bad_implementation.py:17: Could not find {TREQ_ID_200} in documentation" in warnings
         )
     finally:
         app.cleanup()
