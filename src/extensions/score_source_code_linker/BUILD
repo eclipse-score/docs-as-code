@@ -16,6 +16,7 @@ load("@score_python_basics//:defs.bzl", "score_py_pytest")
 
 #exports_files(["parse_source_files.py"])
 
+# Sphinx extension & Preprocessing parser - all in one.
 py_library(
     name = "score_source_code_linker",
     srcs = glob(
@@ -33,12 +34,4 @@ score_py_pytest(
     deps = [
         ":score_source_code_linker",
     ] + all_requirements,
-)
-
-# Needed to make the file parser executeable and findable for the source_code_linker aspect
-py_binary(
-    name = "parsed_source_files_for_source_code_linker",
-    srcs = ["parse_source_files.py"],
-    main = "parse_source_files.py",
-    visibility = ["//visibility:public"],
 )

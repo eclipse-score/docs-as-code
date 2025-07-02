@@ -12,142 +12,21 @@
 # *******************************************************************************
 
 import argparse
-import json
 import logging
 import os
-import sys
-from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Any
 
 import debugpy
 from sphinx.cmd.build import main as sphinx_main
 from sphinx_autobuild.__main__ import main as sphinx_autobuild_main
 
+# Note: this works fine from bazel incremental, but it's not in venv
+# from score_source_code_linker.generate_source_code_links_json import ...
+from src.extensions.score_source_code_linker.generate_source_code_links_json import (
+    generate_source_code_links_json,
+)
+
 logger = logging.getLogger(__name__)
-
-logger.debug("DEBUG: CWD: ", os.getcwd())
-logger.debug("DEBUG: SOURCE_DIRECTORY: ", os.getenv("SOURCE_DIRECTORY"))
-logger.debug("DEBUG: RUNFILES_DIR: ", os.getenv("RUNFILES_DIR"))
-
-def find_ws_root() -> Path:
-    """Find the current MODULE.bazel file"""
-    bwd = Path(os.environ["BUILD_WORKSPACE_DIRECTORY"])
-    assert bwd.exists(), f"BUILD_WORKSPACE_DIRECTORY {bwd} does not exist"
-    assert bwd.is_dir(), f"BUILD_WORKSPACE_DIRECTORY {bwd} is not a directory"
-    return bwd
-
-def find_git_root() -> Path:
-    git_root = Path(__file__).resolve()
-    while not (git_root / ".git").exists():
-        git_root = git_root.parent
-        if git_root == Path("/"):
-            sys.exit(
-                "Could not find git root. Please run this script from the "
-                "root of the repository."
-            )
-    return git_root
-
-TAGS = [
-    "# req-traceability:",
-    "# req-Id:",
-]
-
-
-@dataclass
-class NeedLink:
-    """Represents a single template string finding in a file."""
-    file: Path
-    line_number: int
-    tag: str
-    requirements: list[str]
-    full_line: str
-
-def _should_skip_file(file_path: Path) -> bool:
-    """Check if a file should be skipped during scanning."""
-    # TODO: consider using .gitignore
-    return (file_path.is_dir() or
-            file_path.name.startswith(('.', '_')) or
-            file_path.suffix in ['.pyc', '.so', '.exe', '.bin'])
-
-
-def _extract_requirements_from_line(line: str, tag: str) -> list[str]:
-    """Extract requirement IDs from a line containing a tag."""
-    tag_index = line.find(tag)
-    if tag_index == -1:
-        return []
-
-    after_tag = line[tag_index + len(tag):].strip()
-    # Split by comma or space to get multiple requirements
-    return [
-        req.strip()
-        for req in after_tag.replace(',', ' ').split()
-        if req.strip()
-    ]
-
-
-def _extract_requirements_from_file(git_root: Path, file_path: Path) -> list[NeedLink]:
-    """Scan a single file for template strings and return findings."""
-    findings: list[NeedLink] = []
-
-    try:
-        with open(file_path, encoding='utf-8', errors='ignore') as f:
-            for line_num, line in enumerate(f, 1):
-                for tag in TAGS:
-                    if tag in line:
-                        requirements = _extract_requirements_from_line(line, tag)
-                        findings.append(NeedLink(
-                            file=file_path.relative_to(git_root),
-                            line_number=line_num,
-                            tag=tag,
-                            requirements=requirements,
-                            full_line=line.strip()
-                        ))
-    except (UnicodeDecodeError, PermissionError, OSError):
-        # Skip files that can't be read as text
-        pass
-
-    return findings
-
-
-def find_all_need_references(search_path: Path) -> list[NeedLink]:
-    """
-    Find all need references in all files in git root.
-    Search for any appearance of TAGS and collect line numbers and referenced
-    requirements.
-
-    Returns:
-        list[FileFindings]: List of FileFindings objects containing all findings
-                           for each file that contains template strings.
-    """
-    start_time = os.times().elapsed
-
-    all_need_references: list[NeedLink] = []
-
-    # Use os.walk to have better control over directory traversal
-    for root, dirs, files in os.walk(search_path):
-        root_path = Path(root)
-
-        # Skip directories that start with '.' or '_' by modifying dirs in-place
-        # This prevents os.walk from descending into these directories
-        dirs[:] = [d for d in dirs if not d.startswith(('.', '_', 'bazel-'))]
-
-        for file in files:
-            file_path = root_path / file
-
-            if _should_skip_file(file_path):
-                continue
-
-            findings = _extract_requirements_from_file(search_path, file_path)
-            all_need_references.extend(findings)
-
-    elapsed_time = os.times().elapsed - start_time
-    print(f"DEBUG: Found {len(all_need_references)} need references in {elapsed_time:.2f} seconds")
-
-    return all_need_references
-
-
-
 
 def get_env(name: str) -> str:
     val = os.environ.get(name, None)
@@ -192,23 +71,7 @@ if __name__ == "__main__":
     if workspace:
         os.chdir(workspace)
 
-    need_references = find_all_need_references(Path("."))
-    build_dir = Path(get_env("BUILD_DIRECTORY"))
-
-    # Convert NeedLink objects to dictionaries using asdict
-    need_references_dict = [asdict(ref) for ref in need_references]
-
-    # Convert Path objects to strings for JSON serialization
-    for ref_dict in need_references_dict:
-        ref_dict["file"] = str(ref_dict["file"])
-
-    with open(build_dir / "NEED_REFERENCES_FILE.json", "w") as f:
-        json.dump(
-            need_references_dict,
-            f,
-            indent=2,
-            ensure_ascii=False,
-        )
+    generate_source_code_links_json(Path(get_env("BUILD_DIRECTORY")))
 
     base_arguments = [
         get_env("SOURCE_DIRECTORY"),

@@ -10,16 +10,21 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
+
+"""In this file the actual sphinx extension is defined. It will read pre-generated
+source code links from a JSON file and add them to the needs.
+"""
+
 import json
 from copy import deepcopy
 from pathlib import Path
 
 from sphinx.application import Sphinx
 from sphinx.environment import BuildEnvironment
-from sphinx_needs.data import NeedsMutable, SphinxNeedsData, NeedsInfoType
+from sphinx_needs.data import NeedsInfoType, NeedsMutable, SphinxNeedsData
 from sphinx_needs.logging import get_logger
 
-from src.extensions.score_source_code_linker.parse_source_files import (
+from src.extensions.score_source_code_linker.parse_source_files_OLD import (
     get_github_base_url,
 )
 
@@ -28,13 +33,6 @@ LOGGER.setLevel("DEBUG")
 
 
 def setup(app: Sphinx) -> dict[str, str | bool]:
-    # Extension: score_source_code_linker
-    # TODO: can we detect live_preview & esbonio here? Until then we have a flag:
-    app.add_config_value("disable_source_code_linker", False, rebuild="env", types=bool)
-    app.add_config_value(
-        "score_source_code_linker_file_overwrite", "", rebuild="env", types=str
-    )
-
     # Define need_string_links here to not have it in conf.py
     app.config.needs_string_links = {
         "source_code_linker": {
@@ -44,16 +42,8 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
             "options": ["source_code_link"],
         },
     }
-    if app.config.disable_source_code_linker:
-        LOGGER.info(
-            "INFO: Disabled source code linker. Not loading extension.",
-            type="score_source_code_linker",
-        )
-    else:
-        LOGGER.debug(
-            "INFO: Loading source code linker...", type="score_source_code_linker"
-        )
-        app.connect("env-updated", add_source_link)
+
+    app.connect("env-updated", add_source_link)
     return {
         "version": "0.1",
         "parallel_read_safe": True,
@@ -103,9 +93,6 @@ def add_source_link(app: Sphinx, env: BuildEnvironment) -> None:
     else:
         LOGGER.debug("DEBUG: WE ARE IN THE ELSE")
         path = str(p5 / "score_source_code_parser.json")
-
-    if app.config.score_source_code_linker_file_overwrite:
-        path = app.config.score_source_code_linker_file_overwrite
 
     # For some reason the prefix 'sphinx_needs internally' is CAPSLOCKED.
     # So we have to make sure we uppercase the prefixes
