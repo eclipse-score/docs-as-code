@@ -15,6 +15,7 @@
 source code links from a JSON file and add them to the needs.
 """
 
+import subprocess
 from collections import defaultdict
 from copy import deepcopy
 from pathlib import Path
@@ -33,9 +34,6 @@ from src.extensions.score_source_code_linker.generate_source_code_links_json imp
 from src.extensions.score_source_code_linker.needlinks import (
     NeedLink,
     load_source_code_links_json,
-)
-from src.extensions.score_source_code_linker.parse_source_files_OLD import (
-    get_github_base_url,
 )
 
 LOGGER = get_logger(__name__)
@@ -57,8 +55,12 @@ def setup_once(app: Sphinx):
 
     # Run only for local files!
     # ws_root is not set when running on external repositories (dependencies).
-    if not find_ws_root():
+    ws_root = find_ws_root()
+    if not ws_root:
         return
+
+    # When BUILD_WORKSPACE_DIRECTORY is set, we are inside a git repository.
+    assert find_git_root()
 
     # Extension: score_source_code_linker
     app.add_config_value(
@@ -81,16 +83,13 @@ def setup_once(app: Sphinx):
 
     cache_json = get_cache_filename(Path(app.outdir))
 
-    if (
-        not cache_json.exists()
-        or not app.config.skip_rescanning_via_source_code_linker
-    ):
+    if not cache_json.exists() or not app.config.skip_rescanning_via_source_code_linker:
         LOGGER.debug(
             "INFO: Generating source code links JSON file.",
             type="score_source_code_linker",
         )
 
-        generate_source_code_links_json(find_ws_root(), cache_json)
+        generate_source_code_links_json(ws_root, cache_json)
 
     app.connect("env-updated", inject_links_into_needs)
 
@@ -127,6 +126,83 @@ def find_need(
     return None
 
 
+def group_by_need(source_code_links: list[NeedLink]) -> dict[str, list[NeedLink]]:
+    """
+    Groups the given need links by their need ID.
+    """
+    source_code_links_by_need: dict[str, list[NeedLink]] = defaultdict(list)
+    for needlink in source_code_links:
+        source_code_links_by_need[needlink.need].append(needlink)
+    return source_code_links_by_need
+
+
+
+def get_github_base_url() -> str:
+    git_root = find_git_root()
+    repo = get_github_repo_info(git_root)
+    return f"https://github.com/{repo}"
+
+
+def parse_git_output(str_line: str) -> str:
+    if len(str_line.split()) < 2:
+        LOGGER.warning(
+            f"Got wrong input line from 'get_github_repo_info'. Input: {str_line}. Expected example: 'origin git@github.com:user/repo.git'"
+        )
+        return ""
+    url = str_line.split()[1]  # Get the URL part
+    # Handle SSH format (git@github.com:user/repo.git)
+    if url.startswith("git@"):
+        path = url.split(":")[1]
+    else:
+        path = "/".join(url.split("/")[3:])  # Get part after github.com/
+    return path.replace(".git", "")
+
+
+def get_github_repo_info(git_root_cwd: Path) -> str:
+    process = subprocess.run(
+        ["git", "remote", "-v"], capture_output=True, text=True, cwd=git_root_cwd
+    )
+    repo = ""
+    for line in process.stdout.split("\n"):
+        if "origin" in line and "(fetch)" in line:
+            repo = parse_git_output(line)
+            break
+    else:
+        # If we do not find 'origin' we just take the first line
+        LOGGER.info(
+            "Did not find origin remote name. Will now take first result from: 'git remote -v'"
+        )
+        repo = parse_git_output(process.stdout.split("\n")[0])
+    assert repo != "", (
+        "Remote repository is not defined. Make sure you have a remote set. Check this via 'git remote -v'"
+    )
+    return repo
+
+
+def get_github_link(ws_root: Path, n: NeedLink):
+    hash = get_current_git_hash(ws_root)
+
+    github_base_url = get_github_base_url() + "/blob/"
+    return f"{github_base_url}/{hash}/{n.file}#L{n.line}"
+
+
+def get_current_git_hash(ws_root: Path) -> str:
+    try:
+        result = subprocess.run(
+            ["git", "log", "-n", "1", "--pretty=format:%H"],
+            cwd=ws_root,
+            capture_output=True,
+        )
+        decoded_result = result.stdout.strip().decode()
+
+        # sanity check
+        assert all(c in "0123456789abcdef" for c in decoded_result)
+        return decoded_result
+    except Exception as e:
+        LOGGER.warning(f"Unexpected error: {ws_root}", exc_info=e)
+        raise
+
+
 # re-qid: gd_req__req__attr_impl
 def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
     """
@@ -138,41 +214,56 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
         env: Buildenvironment, this is filled automatically
         app: Sphinx app application, this is filled automatically
     """
+    print("inject_links_into_needs!!!!")
+
+    ws_root = find_ws_root()
+    assert ws_root
 
     Needs_Data = SphinxNeedsData(env)
     needs = Needs_Data.get_needs_mutable()
-    needs_copy = deepcopy(needs) # TODO: why do we create a copy?
+    needs_copy = deepcopy(
+        needs
+    )  # TODO: why do we create a copy? Can we also needs_copy = needs[:]? copy(needs)?
 
-    source_code_links = load_source_code_links_json(
-        get_cache_filename(app.outdir)
-    )
+    for id, need in needs.items():
+        if need["source_code_link"]:
+            print(f"?? Need {need['id']} already has source_code_link: {need['source_code_link']}")
+
+    source_code_links = load_source_code_links_json(get_cache_filename(app.outdir))
 
     # group source_code_links by need
-    source_code_links_by_need: dict[str, list[NeedLink]] = defaultdict(list)
-    for needlink in source_code_links:
-        source_code_links_by_need[needlink.need].append(needlink)
+    # groupby requires the input to be sorted by the key
+
+    source_code_links_by_need = group_by_need(source_code_links)
 
     # For some reason the prefix 'sphinx_needs internally' is CAPSLOCKED.
     # So we have to make sure we uppercase the prefixes
     prefixes = [x["id_prefix"].upper() for x in app.config.needs_external_needs]
-    github_base_url = get_github_base_url() + "/blob/"
-    for needlink in source_code_links:
-        need = find_need(needs_copy, needlink.need, prefixes)
+    for need_id, needlinks in source_code_links_by_need.items():
+        need = find_need(needs_copy, need_id, prefixes)
         if need is None:
             # TODO: print github annotations as in https://github.com/eclipse-score/bazel_registry/blob/7423b9996a45dd0a9ec868e06a970330ee71cf4f/tools/verify_semver_compatibility_level.py#L126-L129
-            LOGGER.warning(
-                f"{needlink.file}:{needlink.line}: Could not find {needlink.need}",
-                type="score_source_code_linker",
-            )
+            for n in needlinks:
+                LOGGER.warning(
+                    f"{n.file}:{n.line}: Could not find {need_id} in documentation",
+                    type="score_source_code_linker",
+                )
         else:
-            if "source_code_link" not in need:
-                need["source_code_link"] = []  # type: ignore
-            cast(dict[str, list[str]], need)["source_code_link"].append(
-                # TODO: fix github link
-                f"{github_base_url}{needlink.file}/{needlink.line}"
+            need_as_dict = cast(dict[str, object], need)
+
+            print(f"** Setting source_code_link for need {need['id']}")
+            print(f"Postprocessed: {Needs_Data.needs_is_post_processed}")
+
+            need_as_dict["source_code_link"] = ", ".join(
+                f"{get_github_link(ws_root, n)}<>{n.file}:{n.line}" for n in needlinks
             )
 
             # NOTE: Removing & adding the need is important to make sure
             # the needs gets 're-evaluated'.
             Needs_Data.remove_need(need["id"])
             Needs_Data.add_need(need)
+
+    # source_code_link of affected needs was overwritten. Make sure it's empty in all others!
+    for need in needs.values():
+        if need["id"] not in source_code_links_by_need:
+            need["source_code_link"] = ""

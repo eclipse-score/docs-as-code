@@ -49,7 +49,6 @@ TAGS = [
 ]
 
 
-
 def _extract_references_from_line(line: str):
     """Extract requirement IDs from a line containing a tag."""
 
@@ -62,12 +61,14 @@ def _extract_references_from_line(line: str):
                 yield tag, req.strip()
 
 
-
 def _extract_references_from_file(root: Path, file_path: Path) -> list[NeedLink]:
     """Scan a single file for template strings and return findings."""
     assert root.is_absolute(), "Root path must be absolute"
     assert not file_path.is_absolute(), "File path must be relative to the root"
-    assert file_path.is_relative_to(root), "File path must be relative to the root"
+    # assert file_path.is_relative_to(root), f"File path ({file_path}) must be relative to the root ({root})"
+    assert (root / file_path).exists(), (
+        f"File {file_path} does not exist in root {root}."
+    )
 
     findings: list[NeedLink] = []
 
@@ -90,6 +91,7 @@ def _extract_references_from_file(root: Path, file_path: Path) -> list[NeedLink]
 
     return findings
 
+
 def iterate_files_recursively(search_path: Path):
     def _should_skip_file(file_path: Path) -> bool:
         """Check if a file should be skipped during scanning."""
@@ -110,7 +112,8 @@ def iterate_files_recursively(search_path: Path):
         for file in files:
             f = root_path / file
             if not _should_skip_file(f):
-                yield f
+                yield f.relative_to(search_path)
+
 
 def find_all_need_references(search_path: Path) -> list[NeedLink]:
     """

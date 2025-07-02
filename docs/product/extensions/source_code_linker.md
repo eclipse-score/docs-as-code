@@ -16,7 +16,7 @@ The extension uses two main components to integrate with Bazel:
    - Handles dependency tracking for incremental builds
 
 2. `parse_source_files.py`
-   - Scans input files for template tags (e.g., `# req-traceability:`)
+   - Scans input files for template tags (e.g., "#<!-- comment prevents parsing this occurance --> req-traceability:")
    - Retrieves git information (hash, file location)
    - Generates mapping file with requirement IDs and links
 
@@ -37,7 +37,7 @@ The extension uses two main components to integrate with Bazel:
        - Gets current git hash for each file
        - Constructs GitHub URLs with format:
          `{base_url}/{repo}/blob/{hash}/{file}#L{line_nr}`
-        **Note:** The base_url is defined in `parse_source_files.py`. Currently set to: `https://github.com/eclipse-score/score/blob/`  
+        **Note:** The base_url is defined in `parse_source_files.py`. Currently set to: `https://github.com/eclipse-score/score/blob/`
 
 Produces JSON mapping file:
 ```json
@@ -86,7 +86,7 @@ The extension hooks into Sphinx's build process. It attaches to the `env-updated
 
 ### Adding Places to Search
 
-You can easily add files to be searched by adding targets / files to the deps inside the 
+You can easily add files to be searched by adding targets / files to the deps inside the
 `collect_source_files_for_score_source_code_linker` in `docs/BUILD`.
 See here:
 
@@ -126,7 +126,7 @@ WARNING: Could not find TREQ_ID_200 in the needs id's. Found in file(s):['_tooli
 
 ### Quickly Finding Source Links
 
-The easiest and quickest way to find source_code_link options is to just search for the option `source_code_link`. It should give you all rst files 
+The easiest and quickest way to find source_code_link options is to just search for the option `source_code_link`. It should give you all rst files
 where the option is not empty.
 
 ### Executing Tests

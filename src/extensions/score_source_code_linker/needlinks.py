@@ -36,6 +36,8 @@ def needlink_decoder(d: dict[str, Any]) -> NeedLink | dict[str, Any]:
         return d
 
 def store_source_code_links_json(file: Path, needlist: list[NeedLink]):
+    # After `rm -rf _build` or on clean builds the directory does not exist, so we need to create it
+    file.parent.mkdir(exist_ok=True)
     with open(file, "w") as f:
         json.dump(
             needlist,

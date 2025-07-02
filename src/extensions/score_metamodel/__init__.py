@@ -11,18 +11,17 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 import importlib
-import pkgutil
 import json
 import os
-
+import pkgutil
 from collections.abc import Callable
 from pathlib import Path
-
 
 from ruamel.yaml import YAML
 from sphinx.application import Sphinx
 from sphinx_needs import logging
-from sphinx_needs.data import NeedsInfoType, SphinxNeedsData, NeedsView
+from sphinx_needs.data import NeedsInfoType, NeedsView, SphinxNeedsData
+
 from .log import CheckLogger
 
 logger = logging.get_logger(__name__)
@@ -81,7 +80,9 @@ def _run_checks(app: Sphinx, exception: Exception | None) -> None:
 
     logger.debug(f"Running checks for {len(needs_all_needs)} needs")
 
-    prefix = str(Path(app.srcdir).relative_to(Path.cwd()))
+    ws_root = os.environ.get("BUILD_WORKSPACE_DIRECTORY", None)
+    cwd_or_ws_root = Path(ws_root) if ws_root else Path.cwd()
+    prefix = str(Path(app.srcdir).relative_to(cwd_or_ws_root))
 
     log = CheckLogger(logger, prefix)
 
