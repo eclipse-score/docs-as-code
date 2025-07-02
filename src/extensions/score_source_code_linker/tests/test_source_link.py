@@ -19,7 +19,7 @@ from pytest import TempPathFactory
 from sphinx.testing.util import SphinxTestApp
 from sphinx_needs.data import SphinxNeedsData
 
-from src.extensions.score_source_code_linker.parse_source_files_OLD import (
+from src.extensions.score_source_code_linker import (
     get_github_base_url,
 )
 
@@ -84,14 +84,6 @@ needs_types = [
     ),
 ]
 needs_extra_options = ["source_code_link"]
-needs_string_links = {
-    "source_code_linker": {
-        "regex": r"(?P<value>[^,]+)",
-        "link_url": "{{value}}",
-        "link_name": "Source Code Link",
-        "options": ["source_code_link"],
-    },
-}
 """
 
 
