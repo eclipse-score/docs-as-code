@@ -38,5 +38,13 @@
   ],
 
   // Disable internal type checking, since we use basedpyright
-  "python.analysis.typeCheckingMode": "off"
+  "python.analysis.typeCheckingMode": "off",
+  "cSpell.words": [
+    "ASIL",
+    "FMEA",
+    "isopas",
+    "isosae",
+    "stkh",
+    "workproduct"
+  ]
 }
