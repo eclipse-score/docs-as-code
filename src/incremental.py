@@ -62,6 +62,7 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
+    print("ARGS:", args)
     if args.debug:
         debugpy.listen(("0.0.0.0", args.debug_port))
         logger.info("Waiting for client to connect on port: " + str(args.debug_port))

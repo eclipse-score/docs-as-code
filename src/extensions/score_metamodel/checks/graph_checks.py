@@ -12,6 +12,7 @@
 # *******************************************************************************
 import operator
 from collections.abc import Callable
+from pprint import pprint
 from typing import Any, Literal
 
 from sphinx.application import Sphinx
@@ -40,6 +41,11 @@ def eval_need_check(need: NeedsInfoType, check: str, log: CheckLogger) -> bool:
     }
 
     parts = check.split(" ")
+
+    print("===NEED====")
+    pprint(need)
+    print("CHECK")
+    print(check)
 
     if len(parts) != 3:
         raise ValueError(f"Invalid check defined: {check}")
@@ -79,9 +85,17 @@ def eval_need_condition(
 
     cond: str = list(condition.keys())[0]
     vals: list[Any] = list(condition.values())[0]
+    # print("=== CONDITIONS")
+    # print(cond)
+    # print("=== VALUES")
+    # print(vals)
+    # print('=================')
 
     if cond in ["and", "or", "xor", "not"]:
         for i in range(len(vals) - 1):
+            print('======= CONDITIONS')
+            print(oper[cond], vals[i])
+            print('=================')
             return oper[cond](
                 eval_need_condition(need, vals[i], log),
                 eval_need_condition(need, vals[i + 1], log),
@@ -140,6 +154,9 @@ def check_metamodel_graph(
 
     # Iterate over all graph checks
     for check in graph_checks_global.items():
+        print("==========")
+        print(check)
+        print("==========")
         apply, eval = check[1].values()
 
         # Get all needs that match the selection criteria
@@ -151,8 +168,10 @@ def check_metamodel_graph(
                     msg = f"Attribute not defined: {parent_relation}"
                     log.warning_for_need(need, msg)
                     continue
-                parent_ids = need[parent_relation]
-
+                parent_ids = need[parent_relation]        
+                print("====P IDS===")
+                print(parent_ids)
+                print("==========")
                 for parent_id in parent_ids:
                     parent_need = needs_dict_all.get(parent_id)
                     if parent_need is None:
