@@ -38,7 +38,7 @@ def id_contains_feature(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
 
     # Get the part of the string after the first two underscores: the path
     feature = parts[1]
-    featureparts = re.split(r"_-", feature)
+    featureparts = re.split(r"[_-]", feature)
 
     dir_docname = os.path.dirname(str(need.get("docname", "")))
 
@@ -56,7 +56,7 @@ def id_contains_feature(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
 
     # allow abbreviation of the feature
     initials = "".join(
-        featurepart[0].lower() for featurepart in featureparts if len(featureparts > 1)
+        featurepart[0].lower() for featurepart in featureparts if len(featureparts) > 1
     )
     foundinitials = initials in docname.lower()
 
