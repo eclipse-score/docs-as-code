@@ -117,12 +117,138 @@
    :satisfies: feat_req__parent0__abcd
 
 
+.. Mitigation of Safety Analysis (FMEA and DFA) shall be checked. Mitigation shall have the same or higher safety level than the analysed item.
+.. Negative Test: Linked to a mitigation that is lower than the safety level of the analysed item.
+#EXPECT: feat_saf_dfa__child__10: parent need `feat_req__parent__QM` does not fulfill condition `safety != QM`.
 
+.. feat_saf_dfa:: Child requirement 10
+   :id: feat_saf_dfa__child__10
+   :safety: ASIL_B
+   :status: valid
+   :mitigates: feat_req__parent__QM
 
-.. .. Parent requirement does not exist
-.. .. #EXPECT: feat_saf_dfa__child__10: Parent need `feat_req__parent__QM` does not fulfill the condition `safety != QM`.
+.. Positive Test: Linked to a mitigation that is equal to the safety level of the analysed item.
+#EXPECT-NOT: feat_saf_dfa__child__11: parent need `feat_req__parent__ASIL_B` does not fulfill condition `safety != QM`.
 
-.. .. feat_req:: Child requirement 10
-.. ..    :id: feat_saf_dfa__child__10
-.. ..    :safety: ASIL_B
-.. ..    :mitigates: feat_req__parent__QM
+.. feat_saf_dfa:: Child requirement 11
+   :id: feat_saf_dfa__child__11
+   :safety: ASIL_B
+   :status: valid
+   :mitigates: feat_req__parent__ASIL_B
+
+.. Positive Test: Linked to a mitigation that is higher to the safety level of the analysed item.
+#EXPECT-NOT: feat_saf_dfa__child__12: parent need `feat_req__parent__ASIL_D` does not fulfill condition `safety != QM`.
+
+.. feat_saf_dfa:: Child requirement 12
+   :id: feat_saf_dfa__child__12
+   :safety: ASIL_B
+   :status: valid
+   :mitigates: feat_req__parent__ASIL_D
+
+.. Negative Test: Linked to a mitigation that is lower than the safety level of the analysed item.
+#EXPECT: comp_saf_dfa__child__13: parent need `feat_req__parent__QM` does not fulfill condition `safety != QM`.
+
+.. comp_saf_dfa:: Child requirement 13
+   :id: comp_saf_dfa__child__13
+   :safety: ASIL_B
+   :status: valid
+   :mitigates: feat_req__parent__QM
+
+.. Positive Test: Linked to a mitigation that is equal to the safety level of the analysed item.
+#EXPECT-NOT: comp_saf_dfa__child__14: parent need `feat_req__parent__ASIL_B` does not fulfill condition `safety != QM`.
+
+.. comp_saf_dfa:: Child requirement 14
+   :id: comp_saf_dfa__child__14
+   :safety: ASIL_B
+   :status: valid
+   :mitigates: feat_req__parent__ASIL_B
+
+.. Positive Test: Linked to a mitigation that is higher to the safety level of the analysed item.
+#EXPECT-NOT: comp_saf_dfa__child__15: parent need `feat_req__parent__ASIL_D` does not fulfill condition `safety != QM`.
+
+.. comp_saf_dfa:: Child requirement 15
+   :id: comp_saf_dfa__child__15
+   :safety: ASIL_B
+   :status: valid
+   :mitigates: feat_req__parent__ASIL_D
+
+.. Negative Test: Linked to a mitigation that is lower than the safety level of the analysed item.
+#EXPECT: feat_plat_saf_dfa__child__16: parent need `feat_req__parent__QM` does not fulfill condition `safety != QM`.
+
+.. feat_plat_saf_dfa:: Child requirement 16
+   :id: feat_plat_saf_dfa__child__16
+   :safety: ASIL_B
+   :status: valid
+   :mitigates: feat_req__parent__QM
+
+.. Positive Test: Linked to a mitigation that is equal to the safety level of the analysed item.
+#EXPECT-NOT: feat_plat_saf_dfa__child__17: parent need `feat_req__parent__ASIL_B` does not fulfill condition `safety != QM`.
+
+.. feat_plat_saf_dfa:: Child requirement 17
+   :id: feat_plat_saf_dfa__child__17
+   :safety: ASIL_B
+   :status: valid
+   :mitigates: feat_req__parent__ASIL_B
+
+.. Positive Test: Linked to a mitigation that is higher to the safety level of the analysed item.
+#EXPECT-NOT: feat_plat_saf_dfa__child__18: parent need `feat_req__parent__ASIL_D` does not fulfill condition `safety != QM`.
+
+.. feat_plat_saf_dfa:: Child requirement 18
+   :id: feat_plat_saf_dfa__child__15
+   :safety: ASIL_B
+   :status: valid
+   :mitigates: feat_req__parent__ASIL_D
+
+.. Negative Test: Linked to a mitigation that is lower than the safety level of the analysed item.
+#EXPECT: feat_saf_fmea__child__19: parent need `feat_req__parent__QM` does not fulfill condition `safety != QM`.
+
+.. feat_saf_fmea:: Child requirement 19
+   :id: feat_saf_fmea__child__19
+   :safety: ASIL_B
+   :status: valid
+   :mitigates: feat_req__parent__QM
+
+.. Positive Test: Linked to a mitigation that is equal to the safety level of the analysed item.
+#EXPECT-NOT: feat_saf_fmea__child__20: parent need `feat_req__parent__ASIL_B` does not fulfill condition `safety != QM`.
+
+.. feat_saf_fmea:: Child requirement 20
+   :id: feat_saf_fmea__child__20
+   :safety: ASIL_B
+   :status: valid
+   :mitigates: feat_req__parent__ASIL_B
+
+.. Positive Test: Linked to a mitigation that is higher to the safety level of the analysed item.
+#EXPECT-NOT: feat_saf_fmea__child__21: parent need `feat_req__parent__ASIL_D` does not fulfill condition `safety != QM`.
+
+.. feat_saf_fmea:: Child requirement 21
+   :id: feat_saf_fmea__child__21
+   :safety: ASIL_B
+   :status: valid
+   :mitigates: feat_req__parent__ASIL_D
+
+.. Negative Test: Linked to a mitigation that is lower than the safety level of the analysed item.
+#EXPECT: comp_saf_fmea__child__22: parent need `feat_req__parent__QM` does not fulfill condition `safety != QM`.
+
+.. comp_saf_fmea:: Child requirement 22
+   :id: comp_saf_fmea__child__22
+   :safety: ASIL_B
+   :status: valid
+   :mitigates: feat_req__parent__QM
+
+.. Positive Test: Linked to a mitigation that is equal to the safety level of the analysed item.
+#EXPECT-NOT: comp_saf_fmea__child__23: parent need `feat_req__parent__ASIL_B` does not fulfill condition `safety != QM`.
+
+.. comp_saf_fmea:: Child requirement 23
+   :id: comp_saf_fmea__child__23
+   :safety: ASIL_B
+   :status: valid
+   :mitigates: feat_req__parent__ASIL_B
+
+.. Positive Test: Linked to a mitigation that is higher to the safety level of the analysed item.
+#EXPECT-NOT: comp_saf_fmea__child__24: parent need `feat_req__parent__ASIL_D` does not fulfill condition `safety != QM`.
+
+.. comp_saf_fmea:: Child requirement 24
+   :id: comp_saf_fmea__child__24
+   :safety: ASIL_B
+   :status: valid
+   :mitigates: feat_req__parent__ASIL_D

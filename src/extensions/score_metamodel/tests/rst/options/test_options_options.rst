@@ -67,3 +67,95 @@
 
 .. stkh_req:: Parent requirement
    :id: stkh_req__abcd
+
+
+.. Test if the `sufficient` option for Safety Analysis (FMEA and DFA) follows the pattern `^(yes|no)$`
+#EXPECT: feat_saf_fmea__test__bad_1.sufficient (QM): does not follow pattern `^(yes|no)$`.
+
+.. feat_saf_fmea:: This is a test
+   :id: feat_saf_fmea__test__bad_1
+   :sufficient: QM
+
+#EXPECT-NOT: feat_saf_fmea__test__good_2.sufficient (yes): does not follow pattern `^(yes|no)$`.
+
+.. feat_saf_fmea:: This is a test
+   :id: feat_saf_fmea__test__2
+   :sufficient: yes
+
+#EXPECT-NOT: feat_saf_fmea__test__good_3.sufficient (no): does not follow pattern `^(yes|no)$`.
+
+.. feat_saf_fmea:: This is a test
+   :id: feat_saf_fmea__test__3
+   :sufficient: no
+
+#EXPECT: comp_saf_fmea__test__bad_4.sufficient (QM): does not follow pattern `^(yes|no)$`.
+
+.. comp_saf_fmea:: This is a test
+   :id: comp_saf_fmea__test__bad_4
+   :sufficient: QM
+
+#EXPECT-NOT: comp_saf_fmea__test__good_5.sufficient (yes): does not follow pattern `^(yes|no)$`.
+
+.. comp_saf_fmea:: This is a test
+   :id: comp_saf_fmea__test__5
+   :sufficient: yes
+
+#EXPECT-NOT: comp_saf_fmea__test__good_6.sufficient (no): does not follow pattern `^(yes|no)$`.
+
+.. comp_saf_fmea:: This is a test
+   :id: comp_saf_fmea__test__6
+   :sufficient: no
+
+#EXPECT: feat_plat_saf_dfa__test__bad_7.sufficient (QM): does not follow pattern `^(yes|no)$`.
+
+.. feat_plat_saf_dfa:: This is a test
+   :id: feat_plat_saf_dfa__test__bad_7
+   :sufficient: QM
+
+#EXPECT-NOT: feat_plat_saf_dfa__test__good_8.sufficient (yes): does not follow pattern `^(yes|no)$`.
+
+.. feat_plat_saf_dfa:: This is a test
+   :id: feat_plat_saf_dfa__test__8
+   :sufficient: yes
+
+#EXPECT-NOT: feat_plat_saf_dfa__test__good_9.sufficient (no): does not follow pattern `^(yes|no)$`.
+
+.. feat_plat_saf_dfa:: This is a test
+   :id: feat_plat_saf_dfa__test__9
+   :sufficient: no
+
+#EXPECT: feat_saf_dfa__test__bad_10.sufficient (QM): does not follow pattern `^(yes|no)$`.
+
+.. feat_saf_dfa:: This is a test
+   :id: feat_saf_dfa__test__bad_10
+   :sufficient: QM
+
+#EXPECT-NOT: feat_saf_dfa__test__good_11.sufficient (yes): does not follow pattern `^(yes|no)$`.
+
+.. feat_saf_dfa:: This is a test
+   :id: feat_saf_dfa__test__11
+   :sufficient: yes
+
+#EXPECT-NOT: feat_saf_dfa__test__good_12.sufficient (no): does not follow pattern `^(yes|no)$`.
+
+.. feat_saf_dfa:: This is a test
+   :id: feat_saf_dfa__test__12
+   :sufficient: no
+
+#EXPECT: comp_saf_dfa__test__bad_13.sufficient (QM): does not follow pattern `^(yes|no)$`.
+
+.. comp_saf_dfa:: This is a test
+   :id: comp_saf_dfa__test__bad_13
+   :sufficient: QM
+
+#EXPECT-NOT: comp_saf_dfa__test__good_14.sufficient (yes): does not follow pattern `^(yes|no)$`.
+
+.. comp_saf_dfa:: This is a test
+   :id: comp_saf_dfa__test__14
+   :sufficient: yes
+
+#EXPECT-NOT: comp_saf_dfa__test__good_15.sufficient (no): does not follow pattern `^(yes|no)$`.
+
+.. comp_saf_dfa:: This is a test
+   :id: comp_saf_dfa__test__15
+   :sufficient: no
