@@ -17,6 +17,7 @@ source code links from a JSON file and add them to the needs.
 
 import subprocess
 import os
+from pprint import pprint
 from collections import defaultdict
 from copy import deepcopy
 from pathlib import Path
@@ -57,8 +58,6 @@ def setup_once(app: Sphinx):
     # Run only for local files!
     # ws_root is not set when running on external repositories (dependencies).
     ws_root = find_ws_root()
-    running_test = os.environ.get("PYTEST_CURRENT_TEST",None)
-    print(f"OS PYTEST: {os.environ["SPHINX_TEST_DIR"]}")
     if not ws_root:
         return
 
@@ -253,9 +252,6 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
                 )
         else:
             need_as_dict = cast(dict[str, object], need)
-
-            print(f"** Setting source_code_link for need {need['id']}")
-            print(f"Postprocessed: {Needs_Data.needs_is_post_processed}")
 
             need_as_dict["source_code_link"] = ", ".join(
                 f"{get_github_link(ws_root, n)}<>{n.file}:{n.line}" for n in needlinks

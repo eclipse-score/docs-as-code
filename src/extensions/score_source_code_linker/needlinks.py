@@ -3,8 +3,7 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
 
-
-@dataclass
+@dataclass(frozen=True)
 class NeedLink:
     """Represents a single template string finding in a file."""
 
@@ -14,10 +13,20 @@ class NeedLink:
     need: str
     full_line: str
 
+# Ensuring our found json does not get parsed in future iterations
+def encode_comment(s: str) -> str:
+    return s.replace(" ","-----", 1)
+
+def decode_comment(s: str) -> str:
+    return s.replace("-----"," ", 1)
+
 class NeedLinkEncoder(json.JSONEncoder):
     def default(self, o: object):
         if isinstance(o, NeedLink):
-            return asdict(o)
+            d = asdict(o)
+            d["tag"] = encode_comment(d.get("tag", ""))
+            d["full_line"] = encode_comment(d.get("full_line", ""))
+            return d
         if isinstance(o, Path):
             return str(o)
         return super().default(o)
@@ -27,9 +36,9 @@ def needlink_decoder(d: dict[str, Any]) -> NeedLink | dict[str, Any]:
         return NeedLink(
             file=Path(d["file"]),
             line=d["line"],
-            tag=d["tag"],
+            tag=decode_comment(d["tag"]),
             need=d["need"],
-            full_line=d["full_line"],
+            full_line=decode_comment(d["full_line"]),
         )
     else:
         # It's something else, pass it on to other decoders

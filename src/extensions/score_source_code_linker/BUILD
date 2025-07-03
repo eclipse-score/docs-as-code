@@ -29,8 +29,9 @@ py_library(
 score_py_pytest(
     name = "score_source_code_linker_test",
     size = "small",
-    srcs = ["tests/test_source_link.py"],
-    args = ["-s"],
+    srcs = glob(["tests/*.py"]),
+    data = glob(["**/*.json"]),
+    args = ["-s", "-vv"],
     deps = [
         ":score_source_code_linker",
     ] + all_requirements,
