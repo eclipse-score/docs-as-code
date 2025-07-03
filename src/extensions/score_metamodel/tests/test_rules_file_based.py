@@ -185,7 +185,7 @@ def test_rst_files(
 
     # Collect the warnings
     warnings = app.warning.getvalue().splitlines()
-    #print(f"Warnings: {warnings}")
+    # print(f"Warnings: {warnings}")
 
     # Check if the expected warnings are present
     for warning_info in rst_data.warning_infos:

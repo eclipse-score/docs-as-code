@@ -647,8 +647,8 @@ needs_extra_links:
     outgoing: included by
 
   mitigates:
-   incoming: mitigates by
-   outgoing: mitigated
+    incoming: mitigates by
+    outgoing: mitigated
 ##############################################################
 # Graph Checks
 # The graph checks focus on the relation of the needs and their attributes.

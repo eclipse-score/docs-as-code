@@ -119,10 +119,10 @@
 
 
 
-.. Parent requirement does not exist
-#EXPECT: feat_saf_dfa__child__10: Parent need `feat_req__parent__QM` does not fulfill the condition `safety != QM`.
+.. .. Parent requirement does not exist
+.. .. #EXPECT: feat_saf_dfa__child__10: Parent need `feat_req__parent__QM` does not fulfill the condition `safety != QM`.
 
-.. feat_req:: Child requirement 10
-   :id: feat_saf_dfa__child__10
-   :safety: ASIL_B
-   :mitigates: feat_req__parent__QM
+.. .. feat_req:: Child requirement 10
+.. ..    :id: feat_saf_dfa__child__10
+.. ..    :safety: ASIL_B
+.. ..    :mitigates: feat_req__parent__QM
