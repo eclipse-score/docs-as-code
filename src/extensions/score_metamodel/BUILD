@@ -35,6 +35,6 @@ score_py_pytest(
     # All requirements already in the library so no need to have it double
     data = ["//src:test_rst_files"] + glob(
         ["tests/**/*.rst"],
-    ),
+    ),args = ["-s", "-vv"],
     deps = [":score_metamodel"],
 )

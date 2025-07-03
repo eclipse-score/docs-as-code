@@ -666,23 +666,18 @@ needs_extra_links:
 ##############################################################
 # req- Id: gd_req__req__linkage_architecture
 # req- Id: gd_req__req__linkage_safety
-req_safety_linkage_qm:
+  # If need-req is `QM`, parent must be `QM`.
+  req_safety_linkage_qm:
     needs:
       include: comp_req, feat_req
       condition:
-        and:
-          - safety == QM
+         and:
+            - safety == QM
     check:
       satisfies:
-        and:
-          - safety == QM
-    check:
-      satisfies:
-        and:
-          - safety == QM
-  # req- Id: gd_req__req__linkage_safety
-  #
-  # If need-req is `ASIL_B`, parent can be `QM` or `ASIL_B`. So it's possible to overfulfill a QM parent requirement with ASIL_B.
+          and:
+            - safety == QM
+  # If need-req is `ASIL_B`, parent must be `QM` or `ASIL_B`.
   req_safety_linkage_asil_b:
     needs:
       include: comp_req, feat_req
@@ -691,17 +686,25 @@ req_safety_linkage_qm:
           - safety == ASIL_B
     check:
       satisfies:
-        or:
-          - safety == QM
-          - safety == ASIL_B
+        not:
+          - safety == ASIL_D
+  # If need-req is `ASIL_D`, parent can `QM`, `ASIL_B` or `ASIL_D`.
+  # req_safety_linkage_asil_d:
+  #   needs:
+  #     include: comp_req, feat_req
+  #     condition:
+  #       and:
+  #         - safety == " "
+  #   check:
+  #     satisfies:
+  #       and:
+  #         - safety == ASIL_D
 
-
-
-# saf - ID gd_req__saf_linkage_safety
-# It shall be checked that Safety Analysis (DFA and FMEA) can only be linked via mitigate against
-#  - <Feature | Component | AoU> Requirements with the same ASIL or
-#  - <Feature | Component | AoU> Requirements with a higher ASIL
-# as the corresponding ASIL of the Feature or Component that is analyzed.
+  # saf - ID gd_req__saf_linkage_safety
+  # It shall be checked that Safety Analysis (DFA and FMEA) can only be linked via mitigate against
+  #  - <Feature | Component | AoU> Requirements with the same ASIL or
+  #  - <Feature | Component | AoU> Requirements with a higher ASIL
+  # as the corresponding ASIL of the Feature or Component that is analyzed.
   saf_linkage_safety:
     needs:
       include: feat_saf_fmea, comp_saf_fmea, feat_plat_saf_dfa, feat_saf_dfa, comp_saf_dfa, aou_req

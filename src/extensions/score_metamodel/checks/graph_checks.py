@@ -137,13 +137,14 @@ def check_metamodel_graph(
     # Convert list to dictionary for easy lookup
     needs_dict_all = {need["id"]: need for need in all_needs.values()}
     needs_local = list(all_needs.filter_is_external(False).values())
-
+    print("graph_checks_global:", graph_checks_global)
     # Iterate over all graph checks
     for check in graph_checks_global.items():
         apply, eval = check[1].values()
-
+        print(f"Applying check: {check[0]} with apply: {apply} and eval: {eval}")
         # Get all needs that match the selection criteria
         selected_needs = get_need_selection(needs_local, apply, log)
+        print(f"Selected needs: {selected_needs}")
 
         for need in selected_needs:
             for parent_relation in list(eval.keys()):
