@@ -14,92 +14,115 @@
 
 #CHECK: check_metamodel_graph
 
-.. feat_req:: Parent requirement
-   :id: feat_req__parent__abcd
+
+.. Checks if the child requirement has the at least the same safety level as the parent requirement. It's allowed to "overfill" the safety level of the parent.
+.. ASIL decomposition is not foreseen in S-CORE. Therefore it's not allowed to have a child requirement with a lower safety level than the parent requirement as
+.. it is possible in an decomposition case.
+.. feat_req:: Parent requirement QM
+   :id: feat_req__parent__QM
    :safety: QM
    :status: valid
 
-.. Parent requirement has the correct safety level
-#EXPECT-NOT: feat_req__child__abce: parent need `feat_req__parent__abcd` does not fulfill condition `{'and': ['safety == QM']}`.
-
-.. feat_req:: Child requirement
-   :id: feat_req__child__abce
-   :safety: QM
-   :satisfies: feat_req__parent__abcd
-   :status: valid
-
-.. feat_req:: Parent requirement2
-   :id: feat_req__parent__abcd2
-   :safety: QM
-   :status: valid
-
-.. Parent requirement has the correct safety level
-#EXPECT-NOT: feat_req__child__abce2: parent need `feat_req__parent__abcd2` does not fulfill condition `{'and': ['safety == QM']}`.
-
-.. feat_req:: Child requirement2
-   :id: feat_req__child__abce2
-   :safety: ASIL_B
-   :satisfies: feat_req__parent__abcd2
-   :status: valid
-
-.. feat_req:: Parent requirement3
-   :id: feat_req__parent3__abcd
+.. feat_req:: Parent requirement ASIL_B
+   :id: feat_req__parent__ASIL_B
    :safety: ASIL_B
    :status: valid
 
-.. Graph check without combined condition (no and or or)
-#EXPECT: feat_req__child__abce3: parent need `feat_req__parent3__abcd` does not fulfill condition `safety == QM`.
+.. feat_req:: Parent requirement ASIL_D
+   :id: feat_req__parent__ASIL_D
+   :safety: ASIL_D
+   :status: valid
 
-.. comp_req:: Child requirement3
-   :id: feat_req__child__abce3
+.. Positive Test: Child requirement QM. Parent requirement has the correct related safety level. Parent requirement is `QM`.
+#EXPECT-NOT: feat_req__child__1: parent need `feat_req__parent__QM` does not fulfill condition `safety == QM`.
+
+.. feat_req:: Child requirement 1
+   :id: feat_req__child__1
    :safety: QM
-   :satisfies: feat_req__parent3__abcd
+   :satisfies: feat_req__parent__QM
+   :status: valid
+
+.. Positive Test: Child requirement ASIL B. Parent requirement has the correct related safety level. Parent requirement is `QM`.
+#EXPECT-NOT: feat_req__child__2: parent need `feat_req__parent__ASIL_B` does not fulfill condition `safety == QM`.
+
+.. feat_req:: Child requirement 2
+   :id: feat_req__child__2
+   :safety: ASIL_B
+   :satisfies: feat_req__parent__ASIL_B
+   :status: valid
+
+.. Positive Test: Child requirement ASIL D. Parent requirement has the correct related safety level. Parent requirement is `QM`.
+#EXPECT-NOT: feat_req__child__3: parent need `feat_req__parent__ASIL_D` does not fulfill condition `safety == QM`.
+
+.. feat_req:: Child requirement 3
+   :id: feat_req__child__3
+   :safety: ASIL_D
+   :satisfies: feat_req__parent__ASIL_D
+   :status: valid
+
+.. Negative Test: Child requirement QM. Parent requirement is `ASIL_B`. Child cant fulfill the safety level of the parent.
+#EXPECT: feat_req__child__4: parent need `feat_req__parent__ASIL_B` does not fulfill condition `safety == QM`.
+
+.. comp_req:: Child requirement 4
+   :id: feat_req__child__4
+   :safety: QM
+   :satisfies: feat_req__parent__ASIL_B
+   :status: valid
+
+.. Negative Test: Child requirement QM. Parent requirement is `ASIL_D`. Child cant fulfill the safety level of the parent.
+#EXPECT: feat_req__child__5: parent need `feat_req__parent__ASIL_D` does not fulfill condition `safety == QM`.
+
+.. comp_req:: Child requirement 5
+   :id: feat_req__child__5
+   :safety: QM
+   :satisfies: feat_req__parent__ASIL_D
+   :status: valid
+
+.. Positive Test: Child requirement ASIL_B. Parent requirement has the correct related safety level. Parent requirement is `QM`.
+#EXPECT-NOT: feat_req__child__6: parent need `feat_req__parent__QM` does not fulfill condition `safety != ASIL_D`.
+
+.. feat_req:: Child requirement 6
+   :id: feat_req__child__6
+   :safety: ASIL_B
+   :satisfies: feat_req__parent__QM
+   :status: valid
+
+.. Positive Test: Child requirement ASIL_B. Parent requirement has the correct related safety level. Parent requirement is `ASIL_B`.
+#EXPECT-NOT: feat_req__child__7: parent need `feat_req__parent__ASIL_B` does not fulfill condition `safety != ASIL_D`.
+
+.. feat_req:: Child requirement 7
+   :id: feat_req__child__7
+   :safety: ASIL_B
+   :satisfies: feat_req__parent__ASIL_B
+   :status: valid
+
+.. Negative Test: Child requirement ASIL_B. Parent requirement is `ASIL_D`. Child cant fulfill the safety level of the parent.
+#EXPECT: feat_req__child__8: parent need `feat_req__parent__ASIL_D` does not fulfill condition `safety != ASIL_D`.
+
+.. comp_req:: Child requirement 8
+   :id: feat_req__child__8
+   :safety: ASIL_B
+   :satisfies: feat_req__parent__ASIL_D
    :status: valid
 
 
 
+.. Parent requirement does not exist
+#EXPECT: feat_req__child__9: Parent need `feat_req__parent0__abcd` not found in needs_dict.
+
+.. feat_req:: Child requirement 9
+   :id: feat_req__child__9
+   :safety: ASIL_B
+   :status: valid
+   :satisfies: feat_req__parent0__abcd
 
 
 
 
+.. Parent requirement does not exist
+#EXPECT: feat_saf_dfa__child__10: Parent need `feat_req__parent__QM` does not fulfill the condition `safety != QM`.
 
-
-
-
-
-
-
-
-
-.. .. feat_req:: Parent requirement 2
-..    :id: feat_req__parent2__abcd
-..    :safety: QM
-
-.. .. Parent requirement has the correct safety level
-.. #EXPECT-NOT: feat_req__child2__abce: parent need `feat_req__parent2__abcd` does not fulfill condition
-
-.. .. feat_req:: Child requirement 2
-..    :id: feat_req__child2__abce
-..    :safety: QM
-..    :satisfies: feat_req__parent2__abcd
-
-.. .. Parent requirement does not exist
-.. #EXPECT: feat_req__child3__abce: Parent need `feat_req__parent0__abcd` not found in needs_dict.
-
-.. .. feat_req:: Child requirement 3
-..    :id: feat_req__child3__abce
-..    :safety: ASIL_B
-..    :status: valid
-..    :satisfies: feat_req__parent0__abcd
-
-.. .. feat_req:: Parent requirement 3
-..    :id: feat_req__parent3__abcd
-..    :status: invalid
-
-.. .. Graph check without combined condition (no and or or)
-.. #EXPECT: comp_req__parent4__abcd: parent need `feat_req__parent3__abcd` does not fulfill condition `status == valid`.
-
-.. .. comp_req:: Child requirement 4
-..    :id: comp_req__parent4__abcd
-..    :status: valid
-..    :satisfies: feat_req__parent3__abcd
+.. feat_req:: Child requirement 10
+   :id: feat_saf_dfa__child__10
+   :safety: ASIL_B
+   :mitigates: feat_req__parent__QM

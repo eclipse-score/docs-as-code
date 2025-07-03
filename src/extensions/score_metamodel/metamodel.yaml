@@ -513,7 +513,7 @@ feat_plat_saf_dfa:
     id: ^gd_guidl__dfa_failure_initiators__[0-9a-z_]*$
     violation_id: ^.*$
     violation_cause: ^.*$
-    mitigation: ^(feat_req__[0-9a-z_]*|aou_req_[0-9a-z]*|)$
+    mitigates: ^(feat_req__[0-9a-z_]*|aou_req_[0-9a-z]*|)$
     mitigation_issue: ^https://github.com/.*$
     sufficient: ^(yes|no)$
     status: ^(valid|invalid)$
@@ -523,23 +523,24 @@ feat_saf_dfa:
   prefix: feat_saf_dfa__
   mandatory_options:
     verifies: ^feat_arc_sta__[0-9a-z_]*$
-    id: ^feat_saf_dfa__[0-9a-z_]*$
+    id: ^gd_guidl__dfa_failure_initiators__[0-9a-z_]*$
     violation_id: ^.*$
     violation_cause: ^.*$
-    mitigation: ^(feat_req__[0-9a-z_]*|aou_req_[0-9a-z]*|)$
     mitigation_issue: ^https://github.com/.*$
     sufficient: ^(yes|no)$
     status: ^(valid|invalid)$
+    mandatory_links:
+      mitigates: ^feat_req__.*$
 
 comp_saf_dfa:
   title: DFA
   prefix: comp_saf_dfa__
   mandatory_options:
     verifies: ^comp_arc_sta__[0-9a-z_]*$
-    id: ^comp_saf_dfa__[0-9a-z_]*$
+    id: ^gd_guidl__dfa_failure_initiators__[0-9a-z_]*$
     violation_id: ^.*$
     violation_cause: ^.*$
-    mitigation: ^(feat_req__[0-9a-z_]*|aou_req_[0-9a-z]*|)$
+    mitigates: ^(feat_req__[0-9a-z_]*|aou_req_[0-9a-z]*|)$
     mitigation_issue: ^https://github.com/.*$
     sufficient: ^(yes|no)$
     status: ^(valid|invalid)$
@@ -550,10 +551,10 @@ feat_saf_fmea:
   prefix: feat_saf_fmea__
   mandatory_options:
     verifies: ^feat_arc_dyn__[0-9a-z_]*$
-    id: ^feat_saf_dfa__[0-9a-z_]*$
+    id: ^gd_guidl__fault_models__[0-9a-z_]*$
     violation_id: ^.*$
     violation_cause: ^.*$
-    mitigation: ^(feat_req__[0-9a-z_]*|aou_req_[0-9a-z]*|)$
+    mitigates: ^(feat_req__[0-9a-z_]*|aou_req_[0-9a-z]*|)$
     mitigation_issue: ^https://github.com/.*$
     sufficient: ^(yes|no)$
     status: ^(valid|invalid)$
@@ -563,10 +564,10 @@ comp_saf_fmea:
   prefix: comp_saf_fmea__
   mandatory_options:
     verifies: ^comp_arc_dyn__[0-9a-z_]*$
-    id: ^comp_saf_dfa__[0-9a-z_]*$
+    id: ^gd_guidl__fault_models__[0-9a-z_]*$
     violation_id: ^.*$
     violation_cause: ^.*$
-    mitigation: ^(comp_req__[0-9a-z_]*|aou_req_[0-9a-z]*|)$
+    mitigates: ^(comp_req__[0-9a-z_]*|aou_req_[0-9a-z]*|)$
     mitigation_issue: ^https://github.com/.*$
     sufficient: ^(yes|no)$
     argument: ^.+$
@@ -646,8 +647,8 @@ needs_extra_links:
     outgoing: included by
 
   mitigates:
-   incoming: mitigates
-   outgoing: mitigated by
+   incoming: mitigates by
+   outgoing: mitigated
 ##############################################################
 # Graph Checks
 # The graph checks focus on the relation of the needs and their attributes.
@@ -666,40 +667,25 @@ needs_extra_links:
 ##############################################################
 # req- Id: gd_req__req__linkage_architecture
 # req- Id: gd_req__req__linkage_safety
-  # If need-req is `QM`, parent must be `QM`.
+
+# Checks if the child requirement has the at least the same safety level as the parent requirement. It's allowed to "overfill" the safety level of the parent.
+# ASIL decomposition is not foreseen in S-CORE. Therefore it's not allowed to have a child requirement with a lower safety level than the parent requirement as
+# it is possible in an decomposition case.
+# If need-req is `QM`, parent must be `QM`.
+graph_checks:
   req_safety_linkage_qm:
     needs:
       include: comp_req, feat_req
-      condition:
-         and:
-            - safety == QM
+      condition: safety == QM
     check:
-      satisfies:
-          and:
-            - safety == QM
+      satisfies: safety == QM
   # If need-req is `ASIL_B`, parent must be `QM` or `ASIL_B`.
   req_safety_linkage_asil_b:
     needs:
       include: comp_req, feat_req
-      condition:
-        and:
-          - safety == ASIL_B
+      condition: safety == ASIL_B
     check:
-      satisfies:
-        not:
-          - safety == ASIL_D
-  # If need-req is `ASIL_D`, parent can `QM`, `ASIL_B` or `ASIL_D`.
-  # req_safety_linkage_asil_d:
-  #   needs:
-  #     include: comp_req, feat_req
-  #     condition:
-  #       and:
-  #         - safety == " "
-  #   check:
-  #     satisfies:
-  #       and:
-  #         - safety == ASIL_D
-
+      satisfies: safety != ASIL_D
   # saf - ID gd_req__saf_linkage_safety
   # It shall be checked that Safety Analysis (DFA and FMEA) can only be linked via mitigate against
   #  - <Feature | Component | AoU> Requirements with the same ASIL or
@@ -708,11 +694,6 @@ needs_extra_links:
   saf_linkage_safety:
     needs:
       include: feat_saf_fmea, comp_saf_fmea, feat_plat_saf_dfa, feat_saf_dfa, comp_saf_dfa, aou_req
-      condition:
-        and:
-          - safety == ASIL_B
+      condition: safety == ASIL_B
     check:
-      mitigates:
-        or:
-          - safety == ASIL_B
-          - safety == ASIL_D
+      mitigates: safety == QM
