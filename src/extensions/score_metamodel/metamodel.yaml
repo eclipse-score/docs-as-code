@@ -504,7 +504,7 @@ needs_types:
       safety: ^(QM|ASIL_B|ASIL_D)$
       status: ^(valid|invalid)$
 
-# Safety Analysis DFA
+  # Safety Analysis DFA
   feat_plat_saf_dfa:
     title: DFA
     prefix: feat_plat_saf_dfa__
