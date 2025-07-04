@@ -11,6 +11,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 import os
+import re
 
 from sphinx.application import Sphinx
 from sphinx_needs.data import NeedsInfoType
@@ -37,6 +38,7 @@ def id_contains_feature(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
 
     # Get the part of the string after the first two underscores: the path
     feature = parts[1]
+    featureparts = re.split(r"[_-]", feature)
 
     dir_docname = os.path.dirname(str(need.get("docname", "")))
 
@@ -45,7 +47,22 @@ def id_contains_feature(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
     # NOTE: This does not match the process requirements
     docname = dir_docname if dir_docname else need.get("docname", "")
 
-    if feature not in docname:
+    # allow if any feature part is contained in UID
+    foundfeatpart = any(
+        featurepart.lower() in docname.lower()
+        for featurepart in featureparts
+        if featureparts
+    )
+
+    # allow abbreviation of the feature
+    initials = "".join(
+        featurepart[0].lower() for featurepart in featureparts if len(featureparts) > 1
+    )
+    foundinitials = initials in docname.lower()
+
+    if not (foundfeatpart or foundinitials):
         log.warning_for_option(
-            need, "id", f"Feature '{feature}' not in path '{docname}'."
+            need,
+            "id",
+            f"Featurepart '{featureparts}' not in path '{docname}' or abbreviation not ok, expected: '{initials}'.",
         )
