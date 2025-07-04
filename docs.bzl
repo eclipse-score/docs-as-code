@@ -58,7 +58,7 @@ sphinx_requirements = all_requirements + [
     "@score_docs_as_code//src/extensions/score_source_code_linker:score_source_code_linker",
 ]
 
-def docs(source_files_to_scan_for_needs_links = None, source_dir = "docs", conf_dir = "docs", build_dir_for_incremental = "_build", docs_targets = []):
+def docs(source_files_to_scan_for_needs_links = None, source_dir = "docs", conf_dir = "docs", build_dir_for_incremental = "_build", docs_targets = [], deps = []):
     """
     Creates all targets related to documentation.
     By using this function, you'll get any and all updates for documentation targets in one place.
@@ -84,7 +84,7 @@ def docs(source_files_to_scan_for_needs_links = None, source_dir = "docs", conf_
             name = "sphinx_build" + suffix,
             visibility = ["//visibility:public"],
             data = ["@score_docs_as_code//src:docs_assets", "@score_docs_as_code//src:score_extension_files"] + external_needs_deps,
-            deps = sphinx_requirements,
+            deps = sphinx_requirements + deps,
         )
         _incremental(
             incremental_name = "incremental" + suffix,
@@ -94,6 +94,7 @@ def docs(source_files_to_scan_for_needs_links = None, source_dir = "docs", conf_
             build_dir = build_dir_for_incremental,
             external_needs_deps = external_needs_deps,
             external_needs_def = external_needs_def,
+            extra_dependencies = deps,
         )
         _docs(
             name = "docs" + suffix,
@@ -113,7 +114,7 @@ def docs(source_files_to_scan_for_needs_links = None, source_dir = "docs", conf_
     # Virtual python environment for working on the documentation (esbonio).
     # incl. python support when working on conf.py and sphinx extensions.
     # creates :ide_support target for virtualenv
-    _ide_support()
+    _ide_support(deps)
 
     # creates 'needs.json' build target
 
@@ -160,11 +161,11 @@ def _incremental(incremental_name = "incremental", live_name = "live_preview", s
         },
     )
 
-def _ide_support():
+def _ide_support(extra_dependencies):
     score_virtualenv(
         name = "ide_support",
         venv_name = ".venv_docs",
-        reqs = sphinx_requirements,
+        reqs = sphinx_requirements + extra_dependencies,
     )
 
 def _docs(name = "docs", suffix = "", format = "html", external_needs_deps = list(), external_needs_def = list()):
