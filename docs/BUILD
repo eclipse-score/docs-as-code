@@ -48,4 +48,7 @@ docs(
         },
     ],
     source_dir = "docs",
+    source_files_to_scan_for_needs_links = [
+        "//src:docs_as_code_py_modules",
+    ],
 )
