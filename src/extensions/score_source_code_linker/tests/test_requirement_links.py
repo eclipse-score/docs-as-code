@@ -27,6 +27,18 @@ from src.extensions.score_source_code_linker.needlinks import (
     load_source_code_links_json,
 )
 
+"""
+#          ────────────────ATTENTION───────────────
+
+#          ╭──────────────────────────────────────╮
+#          │                !!!!!                 │
+#          │      BOILERPLATE TEST MADE VIA       │
+#          │   GENERATION. NOT YET FULLY LOOKED   │
+#          │               THROUGH                │
+#          │                 !!!!                 │
+#          ╰──────────────────────────────────────╯
+
+"""
 
 @pytest.fixture
 def temp_dir():
