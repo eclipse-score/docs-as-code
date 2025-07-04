@@ -34,7 +34,7 @@ def find_ws_root() -> Path | None:
     return Path(ws_dir) if ws_dir else None
 
 
-def find_git_root():
+def find_git_root(file:str=__file__):
     git_root = Path(__file__).resolve()
     while not (git_root / ".git").exists():
         git_root = git_root.parent

@@ -29,10 +29,14 @@ py_library(
 score_py_pytest(
     name = "score_source_code_linker_test",
     size = "small",
-    srcs = glob(["tests/*.py"]),
+    srcs = glob(["tests/*.py"], exclude = ["test/*OLD.py"]),
+    args = [
+        "-s",
+        "-vv",
+    ],
     data = glob(["**/*.json"]),
-    args = ["-s", "-vv"],
     deps = [
         ":score_source_code_linker",
+        "@score_docs_as_code//src/extensions/score_metamodel",
     ] + all_requirements,
 )

@@ -25,6 +25,7 @@ from sphinx_needs.data import NeedsInfoType
 FieldCheck = tuple[dict[str, str], bool]
 CheckingDictType = dict[str, list[FieldCheck]]
 
+
 def get_need_type(needs_types: list[NeedType], directive: str):
     for need_type in needs_types:
         assert isinstance(need_type, dict), need_type

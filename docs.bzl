@@ -65,7 +65,6 @@ def docs(source_files_to_scan_for_needs_links = None, source_dir = "docs", conf_
     * only callable from 'docs/BUILD'
     """
 
-
     # We are iterating over all provided 'targets' in order to allow for automatic generation of them without
     # needing to modify the underlying 'docs.bzl' file.
     for target in docs_targets:

@@ -79,7 +79,7 @@ def create_demo_files(sphinx_base_dir, git_repo_setup):
     (docs_dir / "index.rst").write_text(basic_needs())
     (docs_dir / "conf.py").write_text(basic_conf())
     curr_dir = Path(__file__).parent
-    shutil.copyfile(curr_dir/"scl_golden_file.json",repo_path/".golden_file.json")
+    shutil.copyfile(curr_dir / "scl_golden_file.json", repo_path / ".golden_file.json")
     # with open("scl_golden_file.json", "w") as gf:
     #     print(gf.readlines())
     #     gold_file = json.load(gf)
@@ -139,7 +139,7 @@ def construct_gh_url() -> str:
 
 
 @pytest.fixture(scope="session")
-def sphinx_app_setup(sphinx_base_dir, create_demo_files)-> Callable[[], SphinxTestApp]:
+def sphinx_app_setup(sphinx_base_dir, create_demo_files) -> Callable[[], SphinxTestApp]:
     def _create_app(sphinx_base_dir):
         base_dir = sphinx_base_dir
         return SphinxTestApp(
@@ -243,15 +243,21 @@ def make_source_link(ws_root: Path, needlinks):
         f"{get_github_link(ws_root, n)}<>{n.file}:{n.line}" for n in needlinks
     )
 
-def compare_json_files(file1: Path, golden_file:Path):
+
+def compare_json_files(file1: Path, golden_file: Path):
     with open(file1, "r") as f1:
         json1 = json.load(f1, object_hook=needlink_decoder)
     with open(golden_file, "r") as f2:
         json2 = json.load(f2, object_hook=needlink_decoder)
-    assert len(json1) == len(json2), f"{file1}'s lenth are not the same as in the golden file lenght. Len of{file1}: {len(json1)}. Len of Golden File: {len(json2)}"
+    assert len(json1) == len(json2), (
+        f"{file1}'s lenth are not the same as in the golden file lenght. Len of{file1}: {len(json1)}. Len of Golden File: {len(json2)}"
+    )
     c1 = Counter(n for n in json1)
     c2 = Counter(n for n in json2)
-    assert c1 == c2, f"Testfile does not have same needs as golden file. Testfile: {c1}\nGoldenFile: {c2}"
+    assert c1 == c2, (
+        f"Testfile does not have same needs as golden file. Testfile: {c1}\nGoldenFile: {c2}"
+    )
+
 
 def test_source_link_integration_ok(
     sphinx_app_setup: Callable[[str], SphinxTestApp],
@@ -268,13 +274,18 @@ def test_source_link_integration_ok(
             pytest.fail(f"WS_root is none. WS_root: {ws_root}")
         Needs_Data = SphinxNeedsData(app.env)
         needs_data = {x["id"]: x for x in Needs_Data.get_needs_view().values()}
-        compare_json_files(app.outdir/"score_source_code_linker_cache.json", sphinx_base_dir/".golden_file.json")
+        compare_json_files(
+            app.outdir / "score_source_code_linker_cache.json",
+            sphinx_base_dir / ".golden_file.json",
+        )
         # Testing TREQ_ID_1  & TREQ_ID_2
-        for i in range(1,3):
+        for i in range(1, 3):
             assert f"TREQ_ID_{i}" in needs_data
             need_as_dict = cast(dict[str, object], needs_data[f"TREQ_ID_{i}"])
-            expected_link = make_source_link( ws_root, example_source_link_text_all_ok[f"TREQ_ID_{i}"])
-        # extra_options are only available at runtime
+            expected_link = make_source_link(
+                ws_root, example_source_link_text_all_ok[f"TREQ_ID_{i}"]
+            )
+            # extra_options are only available at runtime
             assert expected_link == need_as_dict["source_code_link"]  # type: ignore)
     finally:
         app.cleanup()
@@ -283,7 +294,7 @@ def test_source_link_integration_ok(
 def test_source_link_integration_non_existent_id(
     sphinx_app_setup: Callable[[str], SphinxTestApp],
     example_source_link_text_non_existent: dict[str, list[str]],
-    sphinx_base_dir
+    sphinx_base_dir,
 ):
     app = sphinx_app_setup(sphinx_base_dir)
     try:

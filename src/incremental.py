@@ -22,12 +22,14 @@ from sphinx_autobuild.__main__ import main as sphinx_autobuild_main
 
 logger = logging.getLogger(__name__)
 
+
 def get_env(name: str) -> str:
     val = os.environ.get(name, None)
     logger.debug(f"DEBUG: Env: {name} = {val}")
     if val is None:
         raise ValueError(f"Environment variable {name} is not set")
     return val
+
 
 if __name__ == "__main__":
     # Add debuging functionality
@@ -92,7 +94,9 @@ if __name__ == "__main__":
     action = get_env("ACTION")
     if action == "live_preview":
         build_dir = Path(get_env("BUILD_DIRECTORY"))
-        (workspace / build_dir / "score_source_code_linker_cache.json").unlink(missing_ok=False)
+        (workspace / build_dir / "score_source_code_linker_cache.json").unlink(
+            missing_ok=False
+        )
         sphinx_autobuild_main(
             base_arguments
             + [

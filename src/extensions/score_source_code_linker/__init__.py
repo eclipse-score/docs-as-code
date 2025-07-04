@@ -138,9 +138,11 @@ def group_by_need(source_code_links: list[NeedLink]) -> dict[str, list[NeedLink]
     return source_code_links_by_need
 
 
-
-def get_github_base_url() -> str:
-    git_root = find_git_root()
+def get_github_base_url(file_path:str=__file__) -> str:
+    if file_path:
+        git_root = find_git_root(file_path)
+    else:
+        git_root = find_git_root()
     repo = get_github_repo_info(git_root)
     return f"https://github.com/{repo}"
 
@@ -181,10 +183,9 @@ def get_github_repo_info(git_root_cwd: Path) -> str:
     return repo
 
 
-def get_github_link(ws_root: Path, n: NeedLink):
+def get_github_link(ws_root: Path, n: NeedLink, file_path:str):
     hash = get_current_git_hash(ws_root)
-
-    github_base_url = get_github_base_url() + "/blob/"
+    github_base_url = get_github_base_url(file_path) + "/blob/" 
     return f"{github_base_url}/{hash}/{n.file}#L{n.line}"
 
 
@@ -194,10 +195,13 @@ def get_current_git_hash(ws_root: Path) -> str:
             ["git", "log", "-n", "1", "--pretty=format:%H"],
             cwd=ws_root,
             capture_output=True,
+            check=True,
         )
         decoded_result = result.stdout.strip().decode()
 
         # sanity check
+        print("===== DECODED RESULT====")
+        print(decoded_result, ws_root)
         assert all(c in "0123456789abcdef" for c in decoded_result)
         return decoded_result
     except Exception as e:
@@ -229,7 +233,9 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
 
     for id, need in needs.items():
         if need["source_code_link"]:
-            print(f"?? Need {need['id']} already has source_code_link: {need['source_code_link']}")
+            print(
+                f"?? Need {need['id']} already has source_code_link: {need['source_code_link']}"
+            )
 
     source_code_links = load_source_code_links_json(get_cache_filename(app.outdir))
 
