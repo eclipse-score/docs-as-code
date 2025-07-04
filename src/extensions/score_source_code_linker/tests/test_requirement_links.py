@@ -393,7 +393,7 @@ def test_get_github_link_with_real_repo(git_repo):
         full_line="# req-Id: REQ_001",
     )
 
-    result = get_github_link(git_repo, needlink,git_repo)
+    result = get_github_link(git_repo, needlink)
 
     # Should contain the base URL, hash, file path, and line number
     assert "https://github.com/test-user/test-repo/blob/" in result
@@ -558,9 +558,12 @@ def another_function():
     assert len(grouped["TREQ_ID_2"]) == 1
 
     # Test GitHub link generation
+
+    os.chdir(Path(git_repo).absolute())
     for needlink in loaded_links:
-        github_link = get_github_link(git_repo, needlink, git_repo)
-        assert "https://github.com/eclipse-/blob/" in github_link
+
+        github_link = get_github_link(git_repo, needlink)
+        assert "https://github.com/test-repo/blob/" in github_link
         assert f"src/{needlink.file.name}#L{needlink.line}" in github_link
 
 
@@ -591,7 +594,8 @@ def test_multiple_commits_hash_consistency(git_repo):
         full_line="# req-Id: TEST_001",
     )
 
-    github_link = get_github_link(git_repo, needlink,file_path=git_repo)
+    os.chdir(Path(git_repo).absolute())
+    github_link = get_github_link(git_repo, needlink)
     assert new_hash in github_link
 
 
@@ -608,11 +612,10 @@ def test_git_operations_with_no_commits(temp_dir):
     )
     subprocess.run(["git", "config", "user.name", "Test User"], cwd=git_dir, check=True)
 
+    os.chdir(Path(git_dir).absolute())
     # Should raise an exception when trying to get hash
     with pytest.raises(Exception):
         a = get_current_git_hash(git_dir)
-        print("========AAAAA=====")
-        print(a)
 
 
 def test_git_repo_with_no_remotes(temp_dir):
@@ -632,6 +635,7 @@ def test_git_repo_with_no_remotes(temp_dir):
     test_file.write_text("# Test file\nprint('hello')\n")
     subprocess.run(["git", "add", "."], cwd=git_dir, check=True)
     subprocess.run(["git", "commit", "-m", "Initial commit"], cwd=git_dir, check=True)
+    os.chdir(git_dir)
 
     # Should raise an exception when trying to get repo info
     with pytest.raises(AssertionError):

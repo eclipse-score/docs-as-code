@@ -138,11 +138,8 @@ def group_by_need(source_code_links: list[NeedLink]) -> dict[str, list[NeedLink]
     return source_code_links_by_need
 
 
-def get_github_base_url(file_path:str=__file__) -> str:
-    if file_path:
-        git_root = find_git_root(file_path)
-    else:
-        git_root = find_git_root()
+def get_github_base_url() -> str:
+    git_root = find_git_root()
     repo = get_github_repo_info(git_root)
     return f"https://github.com/{repo}"
 
@@ -183,9 +180,9 @@ def get_github_repo_info(git_root_cwd: Path) -> str:
     return repo
 
 
-def get_github_link(ws_root: Path, n: NeedLink, file_path:str):
+def get_github_link(ws_root: Path, n: NeedLink):
     hash = get_current_git_hash(ws_root)
-    github_base_url = get_github_base_url(file_path) + "/blob/" 
+    github_base_url = get_github_base_url() + "/blob/" 
     return f"{github_base_url}/{hash}/{n.file}#L{n.line}"
 
 
