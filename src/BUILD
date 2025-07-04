@@ -119,21 +119,6 @@ py_library(
 )
 
 filegroup(
-    name = "score_extension_files",
-    srcs = glob(
-        [
-            "src/**",
-        ],
-        exclude = [
-            "**/test/**",
-            "**/tests/**",
-            "**/__pycache__/**",
-        ],
-    ) + [":docs_as_code_py_modules"],
-    visibility = ["//visibility:public"],
-)
-
-filegroup(
     name = "docs_assets",
     srcs = glob([
         "assets/**/*",
@@ -150,17 +135,6 @@ filegroup(
     srcs = [
         "requirements.txt",
     ],
-    visibility = ["//visibility:public"],
-)
-
-# Needed for 'test_rules_file_based'
-filegroup(
-    name = "test_rst_files",
-    srcs = glob([
-        "extensions/**/*.rst",
-        "extensions/**/*.py",
-        "conf.py",
-    ]),
     visibility = ["//visibility:public"],
 )
 
