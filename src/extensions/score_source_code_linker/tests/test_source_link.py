@@ -11,16 +11,124 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 import json
+from collections import Counter
 from collections.abc import Callable
 from pathlib import Path
 
 import pytest
+import os
+import subprocess
+import shutil
+
+from typing import cast
 from pytest import TempPathFactory
-from src.extensions.score_source_code_linker.parse_source_files import (
-    get_github_base_url,
-)
 from sphinx.testing.util import SphinxTestApp
 from sphinx_needs.data import SphinxNeedsData
+
+from test_requirement_links import needlink_test_decoder
+from src.extensions.score_source_code_linker import get_github_base_url, get_github_link
+from src.extensions.score_source_code_linker.needlinks import NeedLink
+from src.extensions.score_source_code_linker.generate_source_code_links_json import (
+    find_ws_root,
+)
+
+
+@pytest.fixture()
+def sphinx_base_dir(tmp_path_factory: TempPathFactory) -> Path:
+    repo_path = tmp_path_factory.mktemp("test_git_repo")
+    return repo_path
+
+
+@pytest.fixture()
+def git_repo_setup(sphinx_base_dir) -> Path:
+    """Creating git repo, to make testing possible"""
+
+    repo_path = sphinx_base_dir
+    subprocess.run(["git", "init"], cwd=repo_path, check=True)
+    subprocess.run(
+        ["git", "config", "user.name", "Test User"], cwd=repo_path, check=True
+    )
+    subprocess.run(
+        ["git", "config", "user.email", "test@example.com"], cwd=repo_path, check=True
+    )
+
+    subprocess.run(
+        ["git", "remote", "add", "origin", "https://github.com/testorg/testrepo.git"],
+        cwd=repo_path,
+        check=True,
+    )
+    os.environ["BUILD_WORKSPACE_DIRECTORY"] = str(repo_path)
+    return repo_path
+
+
+@pytest.fixture()
+def create_demo_files(sphinx_base_dir, git_repo_setup):
+    repo_path = sphinx_base_dir
+
+    # Create some source files with requirement IDs
+    source_dir = repo_path / "src"
+    source_dir.mkdir()
+
+    # Create source files that contain requirement references
+    (source_dir / "implementation1.py").write_text(make_source_1())
+
+    (source_dir / "implementation2.py").write_text(make_source_2())
+    (source_dir / "bad_implementation.py").write_text(make_bad_source())
+    # Create a docs directory for Sphinx
+    docs_dir = repo_path / "docs"
+    docs_dir.mkdir()
+    (docs_dir / "index.rst").write_text(basic_needs())
+    (docs_dir / "conf.py").write_text(basic_conf())
+    curr_dir = Path(__file__).absolute().parent
+    # print("CURR_dir", curr_dir)
+    shutil.copyfile(curr_dir / "scl_golden_file.json", repo_path / ".golden_file.json")
+
+    # Add files to git and commit
+    subprocess.run(["git", "add", "."], cwd=repo_path, check=True)
+    subprocess.run(
+        ["git", "commit", "-m", "Initial commit with test files"],
+        cwd=repo_path,
+        check=True,
+    )
+
+    # Cleanup
+    # Don't know if we need this?
+    # os.environ.pop("BUILD_WORKSPACE_DIRECTORY", None)
+
+
+def make_source_1():
+    return """
+# This is a test implementation file
+# req-Id: TREQ_ID_1
+def some_function():
+    pass
+
+# Some other code here
+# More code...
+# req-Id: TREQ_ID_2
+def another_function():
+    pass
+"""
+
+
+def make_source_2():
+    return """
+# Another implementation file
+# req-Id: TREQ_ID_1
+class SomeClass:
+    def method(self):
+        pass
+
+"""
+
+
+def make_bad_source():
+    return """
+# req-Id: TREQ_ID_200
+def This_Should_Error(self):
+    pass
+
+"""
 
 
 def construct_gh_url() -> str:
@@ -28,45 +136,46 @@ def construct_gh_url() -> str:
     return f"{gh}/blob/"
 
 
-@pytest.fixture(scope="session")
-def sphinx_base_dir(tmp_path_factory: TempPathFactory) -> Path:
-    return tmp_path_factory.mktemp("sphinx")
-
-
-@pytest.fixture(scope="session")
+@pytest.fixture()
 def sphinx_app_setup(
-    sphinx_base_dir: Path,
-) -> Callable[[str, str, dict[str, list[str]]], SphinxTestApp]:
-    def _create_app(
-        conf_content: str, rst_content: str, requierments_text: dict[str, list[str]]
-    ):
-        src_dir = sphinx_base_dir / "src"
-        src_dir.mkdir(exist_ok=True)
+    sphinx_base_dir, create_demo_files, git_repo_setup
+) -> Callable[[], SphinxTestApp]:
+    def _create_app():
+        base_dir = sphinx_base_dir
+        docs_dir = base_dir / "docs"
 
-        (src_dir / "conf.py").write_text(conf_content)
-        (src_dir / "index.rst").write_text(rst_content)
-        (src_dir / "score_source_code_parser.json").write_text(
-            json.dumps(requierments_text)
-        )
+        # CRITICAL: Change to a directory that exists and is accessible
+        # This fixes the "no such file or directory" error in Bazel
+        original_cwd = None
+        try:
+            original_cwd = os.getcwd()
+        except FileNotFoundError:
+            # Current working directory doesn't exist, which is the problem
+            pass
 
-        return SphinxTestApp(
-            freshenv=True,
-            srcdir=Path(src_dir),
-            confdir=Path(src_dir),
-            outdir=sphinx_base_dir / "out",
-            buildername="html",
-            warningiserror=True,
-            confoverrides={
-                "score_source_code_linker_file_overwrite": str(
-                    src_dir / "score_source_code_parser.json"
-                )
-            },
-        )
+        # Change to the base_dir before creating SphinxTestApp
+        os.chdir(base_dir)
+        try:
+            return SphinxTestApp(
+                freshenv=True,
+                srcdir=docs_dir,
+                confdir=docs_dir,
+                outdir=sphinx_base_dir / "out",
+                buildername="html",
+                warningiserror=True,
+            )
+        finally:
+            # Try to restore original directory, but don't fail if it doesn't exist
+            if original_cwd is not None:
+                try:
+                    os.chdir(original_cwd)
+                except (FileNotFoundError, OSError):
+                    # Original directory might not exist anymore in Bazel sandbox
+                    pass
 
     return _create_app
 
 
-@pytest.fixture(scope="session")
 def basic_conf():
     return """
 extensions = [
@@ -83,18 +192,9 @@ needs_types = [
     ),
 ]
 needs_extra_options = ["source_code_link"]
-needs_string_links = {
-    "source_code_linker": {
-        "regex": r"(?P<value>[^,]+)",
-        "link_url": "{{value}}",
-        "link_name": "Source Code Link",
-        "options": ["source_code_link"],
-    },
-}
 """
 
 
-@pytest.fixture(scope="session")
 def basic_needs():
     return """
 TESTING SOURCE LINK
@@ -110,74 +210,125 @@ TESTING SOURCE LINK
 """
 
 
-@pytest.fixture(scope="session")
-def example_source_link_text_all_ok():
-    github_base_url = construct_gh_url()
+@pytest.fixture()
+def example_source_link_text_all_ok(sphinx_base_dir):
+    repo_path = sphinx_base_dir
     return {
         "TREQ_ID_1": [
-            f"{github_base_url}aacce4887ceea1f884135242a8c182db1447050/tools/sources/implementation1.py#L2",
-            f"{github_base_url}/tools/sources/implementation_2_new_file.py#L20",
+            NeedLink(
+                file=Path("src/implementation1.py"),
+                line=3,
+                tag="#" + " req-Id:",
+                need="TREQ_ID_1",
+                full_line="#" + " req-Id: TREQ_ID_1",
+            ),
+            NeedLink(
+                file=Path("src/implementation2.py"),
+                line=3,
+                tag="#" + " req-Id:",
+                need="TREQ_ID_1",
+                full_line="#" + " req-Id: TREQ_ID_1",
+            ),
         ],
         "TREQ_ID_2": [
-            f"{github_base_url}f53f50a0ab1186329292e6b28b8e6c93b37ea41/tools/sources/implementation1.py#L18"
+            NeedLink(
+                file=Path("src/implementation1.py"),
+                line=9,
+                tag="#" + " req-Id:",
+                need="TREQ_ID_2",
+                full_line="#" + " req-Id: TREQ_ID_2",
+            )
         ],
     }
 
 
-@pytest.fixture(scope="session")
-def example_source_link_text_non_existent():
-    github_base_url = construct_gh_url()
-    return {
-        "TREQ_ID_200": [
-            f"{github_base_url}f53f50a0ab1186329292e6b28b8e6c93b37ea41/tools/sources/bad_implementation.py#L17"
-        ],
-    }
+@pytest.fixture()
+def example_source_link_text_non_existent(sphinx_base_dir):
+    repo_path = sphinx_base_dir
+    return [
+        {
+            "TREQ_ID_200": [
+                NeedLink(
+                    file=Path(f"src/bad_implementation.py"),
+                    line=2,
+                    tag="#" + " req-Id:",
+                    need="TREQ_ID_200",
+                    full_line="#" + " req-Id: TREQ_ID_200",
+                )
+            ]
+        }
+    ]
+
+
+def make_source_link(ws_root: Path, needlinks):
+    return ", ".join(
+        f"{get_github_link(ws_root, n)}<>{n.file}:{n.line}" for n in needlinks
+    )
+
+
+def compare_json_files(file1: Path, golden_file: Path):
+    with open(file1, "r") as f1:
+        json1 = json.load(f1, object_hook=needlink_test_decoder)
+    with open(golden_file, "r") as f2:
+        json2 = json.load(f2, object_hook=needlink_test_decoder)
+    assert len(json1) == len(json2), (
+        f"{file1}'s lenth are not the same as in the golden file lenght. Len of{file1}: {len(json1)}. Len of Golden File: {len(json2)}"
+    )
+    c1 = Counter(n for n in json1)
+    c2 = Counter(n for n in json2)
+    assert c1 == c2, (
+        f"Testfile does not have same needs as golden file. Testfile: {c1}\nGoldenFile: {c2}"
+    )
 
 
 def test_source_link_integration_ok(
-    sphinx_app_setup: Callable[[str, str, dict[str, list[str]]], SphinxTestApp],
-    basic_conf: str,
-    basic_needs: str,
+    sphinx_app_setup: Callable[[], SphinxTestApp],
     example_source_link_text_all_ok: dict[str, list[str]],
-    sphinx_base_dir: Path,
+    sphinx_base_dir,
+    git_repo_setup,
+    create_demo_files,
 ):
-    github_url = construct_gh_url()
-    app = sphinx_app_setup(basic_conf, basic_needs, example_source_link_text_all_ok)
+    app = sphinx_app_setup()
     try:
+        os.environ["BUILD_WORKSPACE_DIRECTORY"] = str(sphinx_base_dir)
         app.build()
+        ws_root = find_ws_root()
+        if ws_root is None:
+            # This should never happen
+            pytest.fail(f"WS_root is none. WS_root: {ws_root}")
         Needs_Data = SphinxNeedsData(app.env)
         needs_data = {x["id"]: x for x in Needs_Data.get_needs_view().values()}
-        assert "TREQ_ID_1" in needs_data
-        assert "TREQ_ID_2" in needs_data
-        # extra_options are only available at runtime
-        assert (
-            ",".join(example_source_link_text_all_ok["TREQ_ID_1"])
-            == needs_data["TREQ_ID_1"]["source_code_link"]  # type: ignore
+        compare_json_files(
+            app.outdir / "score_source_code_linker_cache.json",
+            sphinx_base_dir / ".golden_file.json",
         )
-        assert (
-            ",".join(example_source_link_text_all_ok["TREQ_ID_2"])
-            == needs_data["TREQ_ID_2"]["source_code_link"]  # type: ignore
-        )
+        # Testing TREQ_ID_1  & TREQ_ID_2
+        for i in range(1, 3):
+            assert f"TREQ_ID_{i}" in needs_data
+            need_as_dict = cast(dict[str, object], needs_data[f"TREQ_ID_{i}"])
+            expected_link = make_source_link(
+                ws_root, example_source_link_text_all_ok[f"TREQ_ID_{i}"]
+            )
+            # extra_options are only available at runtime
+            assert expected_link == need_as_dict["source_code_link"]  # type: ignore)
     finally:
         app.cleanup()
 
 
 def test_source_link_integration_non_existent_id(
-    sphinx_app_setup: Callable[[str, str, dict[str, list[str]]], SphinxTestApp],
-    basic_conf: str,
-    basic_needs: str,
+    sphinx_app_setup: Callable[[], SphinxTestApp],
     example_source_link_text_non_existent: dict[str, list[str]],
-    sphinx_base_dir: Path,
+    sphinx_base_dir,
+    git_repo_setup,
+    create_demo_files,
 ):
-    app = sphinx_app_setup(
-        basic_conf, basic_needs, example_source_link_text_non_existent
-    )
+    app = sphinx_app_setup()
     try:
         app.build()
         warnings = app.warning.getvalue()
         assert (
-            "WARNING: Could not find TREQ_ID_200 in the needs id's. Found in "
-            "file(s): ['tools/sources/bad_implementation.py#L17']" in warnings
+            "src/bad_implementation.py:2: Could not find TREQ_ID_200 in documentation"
+            in warnings
         )
     finally:
         app.cleanup()

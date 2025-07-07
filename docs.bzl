@@ -44,7 +44,6 @@ load("@rules_pkg//pkg:mappings.bzl", "pkg_files")
 load("@rules_pkg//pkg:tar.bzl", "pkg_tar")
 load("@rules_python//sphinxdocs:sphinx.bzl", "sphinx_build_binary", "sphinx_docs")
 load("@rules_python//sphinxdocs:sphinx_docs_library.bzl", "sphinx_docs_library")
-load("@score_docs_as_code//src/extensions/score_source_code_linker:collect_source_files.bzl", "parse_source_files_for_needs_links")
 load("@score_python_basics//:defs.bzl", "score_virtualenv")
 
 sphinx_requirements = all_requirements + [
@@ -65,13 +64,6 @@ def docs(source_files_to_scan_for_needs_links = None, source_dir = "docs", conf_
     Current restrictions:
     * only callable from 'docs/BUILD'
     """
-
-    # Parse source files for needs links
-    # This needs to be created to generate a target, otherwise it won't execute as dependency for other macros
-    parse_source_files_for_needs_links(
-        name = "score_source_code_parser",
-        srcs_and_deps = source_files_to_scan_for_needs_links if source_files_to_scan_for_needs_links else [],
-    )
 
     # We are iterating over all provided 'targets' in order to allow for automatic generation of them without
     # needing to modify the underlying 'docs.bzl' file.
@@ -137,7 +129,7 @@ def _incremental(incremental_name = "incremental", live_name = "live_preview", s
         srcs = ["@score_docs_as_code//src:incremental.py"],
         deps = dependencies,
         # TODO: Figure out if we need all dependencies as data here or not.
-        data = [":score_source_code_parser", "@score_docs_as_code//src:plantuml", "@score_docs_as_code//src:docs_assets"] + dependencies + external_needs_deps,
+        data = ["@score_docs_as_code//src:plantuml", "@score_docs_as_code//src:docs_assets"] + dependencies + external_needs_deps,
         env = {
             "SOURCE_DIRECTORY": source_dir,
             "CONF_DIRECTORY": conf_dir,
@@ -205,7 +197,6 @@ def _docs(name = "docs", suffix = "", format = "html", external_needs_deps = lis
             "manual",
         ],
         tools = [
-            ":score_source_code_parser",
             "@score_docs_as_code//src:plantuml",
             "@score_docs_as_code//src:docs_assets",
         ] + external_needs_deps,
