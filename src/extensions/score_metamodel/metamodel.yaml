@@ -515,10 +515,10 @@ needs_types:
       sufficient: ^(yes|no)$
       status: ^(valid|invalid)$
     mandatory_links:
-        mitigates: ^(feat_req__.*|aou_req__.*)$
-        verifies: ^feat_arc_dyn__[0-9a-z_]*$
+      mitigates: ^(feat_req__.*|aou_req__.*)$
+      verifies: ^feat_arc_dyn__[0-9a-z_]*$
     optional_links:
-        mitigation_issue: ^https://github.com/.*$
+      mitigation_issue: ^https://github.com/.*$
 
   feat_saf_dfa:
     title: DFA
@@ -530,10 +530,10 @@ needs_types:
       sufficient: ^(yes|no)$
       status: ^(valid|invalid)$
     mandatory_links:
-        mitigates: ^(feat_req__.*|aou_req__.*)$
-        verifies: ^feat_arc_dyn__[0-9a-z_]*$
+      mitigates: ^(feat_req__.*|aou_req__.*)$
+      verifies: ^feat_arc_dyn__[0-9a-z_]*$
     optional_links:
-        mitigation_issue: ^https://github.com/.*$
+      mitigation_issue: ^https://github.com/.*$
 
   comp_saf_dfa:
     title: DFA
@@ -545,10 +545,10 @@ needs_types:
       sufficient: ^(yes|no)$
       status: ^(valid|invalid)$
     mandatory_links:
-        mitigates: ^(comp_req__.*|aou_req__.*)$
-        verifies: ^comp_arc_dyn__[0-9a-z_]*$
+      mitigates: ^(comp_req__.*|aou_req__.*)$
+      verifies: ^comp_arc_dyn__[0-9a-z_]*$
     optional_links:
-        mitigation_issue: ^https://github.com/.*$
+      mitigation_issue: ^https://github.com/.*$
 
   # # Safety Analysis FMEA
   feat_saf_fmea:
@@ -561,10 +561,10 @@ needs_types:
       sufficient: ^(yes|no)$
       status: ^(valid|invalid)$
     mandatory_links:
-        mitigates: ^(feat_req__.*|aou_req__.*)$
-        verifies: ^feat_arc_dyn__[0-9a-z_]*$
+      mitigates: ^(feat_req__.*|aou_req__.*)$
+      verifies: ^feat_arc_dyn__[0-9a-z_]*$
     optional_links:
-        mitigation_issue: ^https://github.com/.*$
+      mitigation_issue: ^https://github.com/.*$
 
   comp_saf_fmea:
     title: FMEA
@@ -576,10 +576,10 @@ needs_types:
       sufficient: ^(yes|no)$
       status: ^(valid|invalid)$
     mandatory_links:
-        mitigates: ^(comp_req__.*|aou_req__.*)$
-        verifies: ^comp_arc_dyn__[0-9a-z_]*$
+      mitigates: ^(comp_req__.*|aou_req__.*)$
+      verifies: ^comp_arc_dyn__[0-9a-z_]*$
     optional_links:
-        mitigation_issue: ^https://github.com/.*$
+      mitigation_issue: ^https://github.com/.*$
 
 # Extra link types, which shall be available and allow need types to be linked to each other.
 # We use a dedicated linked type for each type of a connection, for instance from
