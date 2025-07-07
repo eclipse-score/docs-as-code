@@ -33,6 +33,7 @@
    :safety: ASIL_D
    :status: valid
 
+
 .. Positive Test: Child requirement QM. Parent requirement has the correct related safety level. Parent requirement is `QM`.
 #EXPECT-NOT: feat_req__child__1: parent need `feat_req__parent__QM` does not fulfill condition `safety == QM`.
 

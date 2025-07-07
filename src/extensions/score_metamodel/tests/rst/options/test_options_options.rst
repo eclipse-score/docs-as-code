@@ -68,6 +68,25 @@
 .. stkh_req:: Parent requirement
    :id: stkh_req__abcd
 
+.. List of elements which an attribute safety. Preparation of a test that actually could be need to ensure that ASIL_D is not used.
+.. doc__
+.. stkh_req__
+.. feat_req__
+.. comp_req__
+.. tool_req__
+.. aou_req__
+.. feat_arc_sta__
+.. feat_arc_dyn__
+.. logic_arc_int__
+.. logic_arc_int_op__
+.. comp_arc_sta__
+.. comp_arc_dyn__
+.. real_arc_int__
+.. real_arc_int_op__
+.. dd_sta__
+.. dd_dyn__
+.. sw_unit__
+
 
 .. Test if the `sufficient` option for Safety Analysis (FMEA and DFA) follows the pattern `^(yes|no)$`
 #EXPECT: feat_saf_fmea__test__bad_1.sufficient (QM): does not follow pattern `^(yes|no)$`.
@@ -159,3 +178,36 @@
 .. comp_saf_dfa:: This is a test
    :id: comp_saf_dfa__test__15
    :sufficient: no
+
+.. Test that the `sufficient` option is case sensitive and does not accept values other than `yes` or `no`
+#EXPECT: feat_saf_fmea__test__bad_16.sufficient (yEs): does not follow pattern `^(yes|no)$`.
+
+.. feat_saf_fmea:: This is a test
+   :id: feat_saf_fmea__test__bad_16
+   :sufficient: yEs
+
+
+
+.. comp_req:: Child requirement ASIL_B
+   :id: comp_req__child__ASIL_B
+   :safety: ASIL_B
+   :status: valid
+
+
+.. Negative Test: Linked to a non-allowed requirement type.
+#EXPECT: feat_saf_fmea__child__25.mitigates (['comp_req__child__ASIL_B']): does not follow pattern `^(feat_req__.*|aou_req__.*)$`.
+
+.. feat_saf_fmea:: Child requirement 25
+   :id: feat_saf_fmea__child__25
+   :safety: ASIL_B
+   :status: valid
+   :mitigates: comp_req__child__ASIL_B
+
+.. Negative Test: Linked to a non-allowed requirement type.
+#EXPECT: feat_saf_fmea__child__26.verifies (['comp_req__child__ASIL_B']): does not follow pattern `^feat_arc_dyn__[0-9a-z_]*$`.
+
+.. feat_saf_fmea:: Child requirement 26
+   :id: feat_saf_fmea__child__26
+   :safety: ASIL_B
+   :status: valid
+   :verifies: comp_req__child__ASIL_B
