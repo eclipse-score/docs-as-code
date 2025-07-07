@@ -1,0 +1,527 @@
+[
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 20,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_common_attr_title",
+    "full_line": "# req-Id: tool_req__docs_common_attr_title"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 25,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_common_attr_description",
+    "full_line": "# req-Id: tool_req__docs_common_attr_description"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 67,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_stdreq_types",
+    "full_line": "# req-Id: tool_req__docs_stdreq_types"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 85,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_wf_types",
+    "full_line": "# req-Id: tool_req__docs_wf_types"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 108,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_common_attr_status",
+    "full_line": "# req-Id: tool_req__docs_common_attr_status"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 112,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_req_link_satisfies_allowed",
+    "full_line": "# req-Id: tool_req__docs_req_link_satisfies_allowed"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 196,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_req_types",
+    "full_line": "# req-Id: tool_req__docs_req_types"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 202,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_req_attr_reqtype",
+    "full_line": "# req-Id: tool_req__docs_req_attr_reqtype"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 206,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_req_attr_rationale",
+    "full_line": "# req-Id: tool_req__docs_req_attr_rationale"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 212,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_req_attr_reqcov",
+    "full_line": "# req-Id: tool_req__docs_req_attr_reqcov"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 214,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_req_attr_testcov",
+    "full_line": "# req-Id: tool_req__docs_req_attr_testcov"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 218,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_req_types",
+    "full_line": "# req-Id: tool_req__docs_req_types"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 225,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_req_attr_reqtype",
+    "full_line": "# req-Id: tool_req__docs_req_attr_reqtype"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 231,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_req_link_satisfies_allowed",
+    "full_line": "# req-Id: tool_req__docs_req_link_satisfies_allowed"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 236,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_req_attr_reqcov",
+    "full_line": "# req-Id: tool_req__docs_req_attr_reqcov"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 238,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_req_attr_testcov",
+    "full_line": "# req-Id: tool_req__docs_req_attr_testcov"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 242,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_req_types",
+    "full_line": "# req-Id: tool_req__docs_req_types"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 248,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_req_attr_reqtype",
+    "full_line": "# req-Id: tool_req__docs_req_attr_reqtype"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 254,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_req_link_satisfies_allowed",
+    "full_line": "# req-Id: tool_req__docs_req_link_satisfies_allowed"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 259,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_req_attr_reqcov",
+    "full_line": "# req-Id: tool_req__docs_req_attr_reqcov"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 261,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_req_attr_testcov",
+    "full_line": "# req-Id: tool_req__docs_req_attr_testcov"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 265,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_req_types",
+    "full_line": "# req-Id: tool_req__docs_req_types"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 275,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_req_link_satisfies_allowed",
+    "full_line": "# req-Id: tool_req__docs_req_link_satisfies_allowed"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 278,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_req_attr_reqtype",
+    "full_line": "# req-Id: tool_req__docs_req_attr_reqtype"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 283,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_req_attr_reqcov",
+    "full_line": "# req-Id: tool_req__docs_req_attr_reqcov"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 285,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_req_attr_testcov",
+    "full_line": "# req-Id: tool_req__docs_req_attr_testcov"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 292,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_req_types",
+    "full_line": "# req-Id: tool_req__docs_req_types"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 298,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_req_attr_reqtype",
+    "full_line": "# req-Id: tool_req__docs_req_attr_reqtype"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 306,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_req_attr_reqcov",
+    "full_line": "# req-Id: tool_req__docs_req_attr_reqcov"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 308,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_req_attr_testcov",
+    "full_line": "# req-Id: tool_req__docs_req_attr_testcov"
+  },
+  {
+    "file": "src/extensions/score_source_code_linker/tests/test_source_link.py",
+    "line": 102,
+    "tag": "# req-Id:",
+    "need": "TREQ_ID_1",
+    "full_line": "# req-Id: TREQ_ID_1"
+  },
+  {
+    "file": "src/extensions/score_source_code_linker/tests/test_source_link.py",
+    "line": 108,
+    "tag": "# req-Id:",
+    "need": "TREQ_ID_2",
+    "full_line": "# req-Id: TREQ_ID_2"
+  },
+  {
+    "file": "src/extensions/score_source_code_linker/tests/test_source_link.py",
+    "line": 117,
+    "tag": "# req-Id:",
+    "need": "TREQ_ID_1",
+    "full_line": "# req-Id: TREQ_ID_1"
+  },
+  {
+    "file": "src/extensions/score_source_code_linker/tests/test_source_link.py",
+    "line": 127,
+    "tag": "# req-Id:",
+    "need": "TREQ_ID_200",
+    "full_line": "# req-Id: TREQ_ID_200"
+  },
+  {
+    "file": "src/extensions/score_source_code_linker/tests/test_requirement_links.py",
+    "line": 204,
+    "tag": "# req-Id:",
+    "need": "\"",
+    "full_line": "tag=\"# req-Id:\","
+  },
+  {
+    "file": "src/extensions/score_source_code_linker/tests/test_requirement_links.py",
+    "line": 206,
+    "tag": "# req-Id:",
+    "need": "TREQ_ID_1\"",
+    "full_line": "full_line=\"# req-Id: TREQ_ID_1\","
+  },
+  {
+    "file": "src/extensions/score_source_code_linker/tests/test_requirement_links.py",
+    "line": 211,
+    "tag": "# req-Id:",
+    "need": "\"",
+    "full_line": "tag=\"# req-Id:\","
+  },
+  {
+    "file": "src/extensions/score_source_code_linker/tests/test_requirement_links.py",
+    "line": 213,
+    "tag": "# req-Id:",
+    "need": "TREQ_ID_1\"",
+    "full_line": "full_line=\"# req-Id: TREQ_ID_1\","
+  },
+  {
+    "file": "src/extensions/score_source_code_linker/tests/test_requirement_links.py",
+    "line": 218,
+    "tag": "# req-Id:",
+    "need": "\"",
+    "full_line": "tag=\"# req-Id:\","
+  },
+  {
+    "file": "src/extensions/score_source_code_linker/tests/test_requirement_links.py",
+    "line": 220,
+    "tag": "# req-Id:",
+    "need": "TREQ_ID_2\"",
+    "full_line": "full_line=\"# req-Id: TREQ_ID_2\","
+  },
+  {
+    "file": "src/extensions/score_source_code_linker/tests/test_requirement_links.py",
+    "line": 225,
+    "tag": "# req-Id:",
+    "need": "\"",
+    "full_line": "tag=\"# req-Id:\","
+  },
+  {
+    "file": "src/extensions/score_source_code_linker/tests/test_requirement_links.py",
+    "line": 227,
+    "tag": "# req-Id:",
+    "need": "TREQ_ID_200\"",
+    "full_line": "full_line=\"# req-Id: TREQ_ID_200\","
+  },
+  {
+    "file": "src/extensions/score_source_code_linker/tests/test_requirement_links.py",
+    "line": 455,
+    "tag": "# req-Id:",
+    "need": "\"",
+    "full_line": "tag=\"# req-Id:\","
+  },
+  {
+    "file": "src/extensions/score_source_code_linker/tests/test_requirement_links.py",
+    "line": 457,
+    "tag": "# req-Id:",
+    "need": "REQ_001\"",
+    "full_line": "full_line=\"# req-Id: REQ_001\","
+  },
+  {
+    "file": "src/extensions/score_source_code_linker/tests/test_requirement_links.py",
+    "line": 505,
+    "tag": "# req-Id:",
+    "need": "\"",
+    "full_line": "tag=\"# req-Id:\","
+  },
+  {
+    "file": "src/extensions/score_source_code_linker/tests/test_requirement_links.py",
+    "line": 507,
+    "tag": "# req-Id:",
+    "need": "TEST_001\"",
+    "full_line": "full_line=\"# req-Id: TEST_001\","
+  },
+  {
+    "file": "src/extensions/score_source_code_linker/tests/test_requirement_links.py",
+    "line": 517,
+    "tag": "# req-Id:",
+    "need": "\"",
+    "full_line": "assert \"# req-Id:\" in raw_content  # Should be encoded"
+  },
+  {
+    "file": "src/extensions/score_source_code_linker/tests/test_requirement_links.py",
+    "line": 517,
+    "tag": "# req-Id:",
+    "need": "in",
+    "full_line": "assert \"# req-Id:\" in raw_content  # Should be encoded"
+  },
+  {
+    "file": "src/extensions/score_source_code_linker/tests/test_requirement_links.py",
+    "line": 517,
+    "tag": "# req-Id:",
+    "need": "raw_content",
+    "full_line": "assert \"# req-Id:\" in raw_content  # Should be encoded"
+  },
+  {
+    "file": "src/extensions/score_source_code_linker/tests/test_requirement_links.py",
+    "line": 517,
+    "tag": "# req-Id:",
+    "need": "#",
+    "full_line": "assert \"# req-Id:\" in raw_content  # Should be encoded"
+  },
+  {
+    "file": "src/extensions/score_source_code_linker/tests/test_requirement_links.py",
+    "line": 517,
+    "tag": "# req-Id:",
+    "need": "Should",
+    "full_line": "assert \"# req-Id:\" in raw_content  # Should be encoded"
+  },
+  {
+    "file": "src/extensions/score_source_code_linker/tests/test_requirement_links.py",
+    "line": 517,
+    "tag": "# req-Id:",
+    "need": "be",
+    "full_line": "assert \"# req-Id:\" in raw_content  # Should be encoded"
+  },
+  {
+    "file": "src/extensions/score_source_code_linker/tests/test_requirement_links.py",
+    "line": 517,
+    "tag": "# req-Id:",
+    "need": "encoded",
+    "full_line": "assert \"# req-Id:\" in raw_content  # Should be encoded"
+  },
+  {
+    "file": "src/extensions/score_source_code_linker/tests/test_requirement_links.py",
+    "line": 523,
+    "tag": "# req-Id:",
+    "need": "\"",
+    "full_line": "assert loaded_links[0].tag == \"# req-Id:\"  # Should be decoded back"
+  },
+  {
+    "file": "src/extensions/score_source_code_linker/tests/test_requirement_links.py",
+    "line": 523,
+    "tag": "# req-Id:",
+    "need": "#",
+    "full_line": "assert loaded_links[0].tag == \"# req-Id:\"  # Should be decoded back"
+  },
+  {
+    "file": "src/extensions/score_source_code_linker/tests/test_requirement_links.py",
+    "line": 523,
+    "tag": "# req-Id:",
+    "need": "Should",
+    "full_line": "assert loaded_links[0].tag == \"# req-Id:\"  # Should be decoded back"
+  },
+  {
+    "file": "src/extensions/score_source_code_linker/tests/test_requirement_links.py",
+    "line": 523,
+    "tag": "# req-Id:",
+    "need": "be",
+    "full_line": "assert loaded_links[0].tag == \"# req-Id:\"  # Should be decoded back"
+  },
+  {
+    "file": "src/extensions/score_source_code_linker/tests/test_requirement_links.py",
+    "line": 523,
+    "tag": "# req-Id:",
+    "need": "decoded",
+    "full_line": "assert loaded_links[0].tag == \"# req-Id:\"  # Should be decoded back"
+  },
+  {
+    "file": "src/extensions/score_source_code_linker/tests/test_requirement_links.py",
+    "line": 523,
+    "tag": "# req-Id:",
+    "need": "back",
+    "full_line": "assert loaded_links[0].tag == \"# req-Id:\"  # Should be decoded back"
+  },
+  {
+    "file": "src/extensions/score_source_code_linker/tests/test_requirement_links.py",
+    "line": 524,
+    "tag": "# req-Id:",
+    "need": "TEST_001\"",
+    "full_line": "assert loaded_links[0].full_line == \"# req-Id: TEST_001\""
+  },
+  {
+    "file": "src/extensions/score_source_code_linker/tests/test_requirement_links.py",
+    "line": 564,
+    "tag": "# req-Id:",
+    "need": "TREQ_ID_1",
+    "full_line": "# req-Id: TREQ_ID_1"
+  },
+  {
+    "file": "src/extensions/score_source_code_linker/tests/test_requirement_links.py",
+    "line": 569,
+    "tag": "# req-Id:",
+    "need": "TREQ_ID_2",
+    "full_line": "# req-Id: TREQ_ID_2"
+  },
+  {
+    "file": "src/extensions/score_source_code_linker/tests/test_requirement_links.py",
+    "line": 576,
+    "tag": "# req-Id:",
+    "need": "TREQ_ID_1",
+    "full_line": "# req-Id: TREQ_ID_1"
+  },
+  {
+    "file": "src/extensions/score_source_code_linker/tests/test_requirement_links.py",
+    "line": 592,
+    "tag": "# req-Id:",
+    "need": "\"",
+    "full_line": "tag=\"# req-Id:\","
+  },
+  {
+    "file": "src/extensions/score_source_code_linker/tests/test_requirement_links.py",
+    "line": 594,
+    "tag": "# req-Id:",
+    "need": "TREQ_ID_1\"",
+    "full_line": "full_line=\"# req-Id: TREQ_ID_1\","
+  },
+  {
+    "file": "src/extensions/score_source_code_linker/tests/test_requirement_links.py",
+    "line": 599,
+    "tag": "# req-Id:",
+    "need": "\"",
+    "full_line": "tag=\"# req-Id:\","
+  },
+  {
+    "file": "src/extensions/score_source_code_linker/tests/test_requirement_links.py",
+    "line": 601,
+    "tag": "# req-Id:",
+    "need": "TREQ_ID_2\"",
+    "full_line": "full_line=\"# req-Id: TREQ_ID_2\","
+  },
+  {
+    "file": "src/extensions/score_source_code_linker/tests/test_requirement_links.py",
+    "line": 606,
+    "tag": "# req-Id:",
+    "need": "\"",
+    "full_line": "tag=\"# req-Id:\","
+  },
+  {
+    "file": "src/extensions/score_source_code_linker/tests/test_requirement_links.py",
+    "line": 608,
+    "tag": "# req-Id:",
+    "need": "TREQ_ID_1\"",
+    "full_line": "full_line=\"# req-Id: TREQ_ID_1\","
+  },
+  {
+    "file": "src/extensions/score_source_code_linker/tests/test_requirement_links.py",
+    "line": 655,
+    "tag": "# req-Id:",
+    "need": "\"",
+    "full_line": "tag=\"# req-Id:\","
+  },
+  {
+    "file": "src/extensions/score_source_code_linker/tests/test_requirement_links.py",
+    "line": 657,
+    "tag": "# req-Id:",
+    "need": "TEST_001\"",
+    "full_line": "full_line=\"# req-Id: TEST_001\","
+  },
+  {
+    "file": "docs/product/extensions/source_code_linker.md",
+    "line": 48,
+    "tag": "# req-Id:",
+    "need": "\"",
+    "full_line": "\"tag\":\"# req-Id:\","
+  },
+  {
+    "file": "docs/product/extensions/source_code_linker.md",
+    "line": 50,
+    "tag": "# req-Id:",
+    "need": "TREQ_ID_1\"",
+    "full_line": "\"full_line\": \"# req-Id: TREQ_ID_1\""
+  },
+  {
+    "file": "docs/product/extensions/source_code_linker.md",
+    "line": 55,
+    "tag": "# req-Id:",
+    "need": "\"",
+    "full_line": "\"tag\":\"# req-Id:\","
+  },
+  {
+    "file": "docs/product/extensions/source_code_linker.md",
+    "line": 57,
+    "tag": "# req-Id:",
+    "need": "TREQ_ID_1\"",
+    "full_line": "\"full_line\": \"# req-Id: TREQ_ID_1\""
+  }
+]
