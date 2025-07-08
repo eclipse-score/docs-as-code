@@ -40,10 +40,15 @@ def find_git_root(start_path: str | Path = "") -> Path | None:
         start_path = __file__
 
     git_root = Path(start_path).resolve()
+    esbonio_search = False
     while not (git_root / ".git").exists():
         git_root = git_root.parent
         if git_root == Path("/"):
-            return None
+            # fallback to cwd when building with python -m sphinx docs _build -T
+            if esbonio_search:
+                return None
+            git_root = Path.cwd().resolve()
+            esbonio_search = True
     return git_root
 
 
