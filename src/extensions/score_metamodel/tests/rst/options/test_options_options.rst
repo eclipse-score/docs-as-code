@@ -22,7 +22,7 @@
 
 
 .. All required options are present
-#EXPECT-NOT: is missing required option
+#EXPECT-NOT: std_wp__test__abcd: is missing required option
 
 .. std_wp:: This is a test
    :id: std_wp__test__abce
