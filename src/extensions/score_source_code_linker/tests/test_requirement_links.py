@@ -201,30 +201,30 @@ def sample_needlinks():
         NeedLink(
             file=Path("src/implementation1.py"),
             line=3,
-            tag="# req-Id:",
+            tag="#" + " req-Id:",
             need="TREQ_ID_1",
-            full_line="# req-Id: TREQ_ID_1",
+            full_line="#" + " req-Id: TREQ_ID_1",
         ),
         NeedLink(
             file=Path("src/implementation2.py"),
             line=3,
-            tag="# req-Id:",
+            tag="#" + " req-Id:",
             need="TREQ_ID_1",
-            full_line="# req-Id: TREQ_ID_1",
+            full_line="#" + " req-Id: TREQ_ID_1",
         ),
         NeedLink(
             file=Path("src/implementation1.py"),
             line=9,
-            tag="# req-Id:",
+            tag="#" + " req-Id:",
             need="TREQ_ID_2",
-            full_line="# req-Id: TREQ_ID_2",
+            full_line="#" + " req-Id: TREQ_ID_2",
         ),
         NeedLink(
             file=Path("src/bad_implementation.py"),
             line=2,
-            tag="# req-Id:",
+            tag="#" + " req-Id:",
             need="TREQ_ID_200",
-            full_line="# req-Id: TREQ_ID_200",
+            full_line="#" + " req-Id: TREQ_ID_200",
         ),
     ]
 
@@ -452,9 +452,9 @@ def test_get_github_link_with_real_repo(git_repo):
     needlink = NeedLink(
         file=Path("src/test.py"),
         line=42,
-        tag="# req-Id:",
+        tag="#" + " req-Id:",
         need="REQ_001",
-        full_line="# req-Id: REQ_001",
+        full_line="#" + " req-Id: REQ_001",
     )
 
     result = get_github_link(git_repo, needlink)
@@ -502,9 +502,9 @@ def test_cache_file_with_encoded_comments(temp_dir):
         NeedLink(
             file=Path("src/test.py"),
             line=1,
-            tag="# req-Id:",
+            tag="#" + " req-Id:",
             need="TEST_001",
-            full_line="# req-Id: TEST_001",
+            full_line="#" + " req-Id: TEST_001",
         )
     ]
 
@@ -514,14 +514,14 @@ def test_cache_file_with_encoded_comments(temp_dir):
     # Check the raw JSON to verify encoding
     with open(cache_file, "r") as f:
         raw_content = f.read()
-        assert "# req-Id:" in raw_content  # Should be encoded
+        assert "#" + " req-Id:" in raw_content  # Should be encoded
         assert "#-----req-Id:" not in raw_content  # Original should not be present
 
     # Load and verify decoding
     loaded_links = load_source_code_links_json(cache_file)
     assert len(loaded_links) == 1
-    assert loaded_links[0].tag == "# req-Id:"  # Should be decoded back
-    assert loaded_links[0].full_line == "# req-Id: TEST_001"
+    assert loaded_links[0].tag == "#" + " req-Id:"  # Should be decoded back
+    assert loaded_links[0].full_line == "#" + " req-Id: TEST_001"
 
 
 # Integration tests
@@ -559,24 +559,31 @@ def test_end_to_end_with_real_files(temp_dir, git_repo):
     src_dir = git_repo / "src"
     src_dir.mkdir()
 
-    (src_dir / "implementation1.py").write_text("""
+    (src_dir / "implementation1.py").write_text(
+        """
 # Some implementation
-# req-Id: TREQ_ID_1
+#"""
+        + """ req-Id: TREQ_ID_1
 def function1():
     pass
 
 # Another function
-# req-Id: TREQ_ID_2
+#"""
+        + """ req-Id: TREQ_ID_2
 def function2():
     pass
-""")
+"""
+    )
 
-    (src_dir / "implementation2.py").write_text("""
+    (src_dir / "implementation2.py").write_text(
+        """
 # Another implementation
-# req-Id: TREQ_ID_1
+#"""
+        + """ req-Id: TREQ_ID_1
 def another_function():
     pass
-""")
+"""
+    )
 
     # Commit the changes
     subprocess.run(["git", "add", "."], cwd=git_repo, check=True)
@@ -589,23 +596,23 @@ def another_function():
         NeedLink(
             file=Path("src/implementation1.py"),
             line=3,
-            tag="# req-Id:",
+            tag="#" + " req-Id:",
             need="TREQ_ID_1",
-            full_line="# req-Id: TREQ_ID_1",
+            full_line="#" + " req-Id: TREQ_ID_1",
         ),
         NeedLink(
             file=Path("src/implementation1.py"),
             line=8,
-            tag="# req-Id:",
+            tag="#" + " req-Id:",
             need="TREQ_ID_2",
-            full_line="# req-Id: TREQ_ID_2",
+            full_line="#" + " req-Id: TREQ_ID_2",
         ),
         NeedLink(
             file=Path("src/implementation2.py"),
             line=3,
-            tag="# req-Id:",
+            tag="#" + " req-Id:",
             need="TREQ_ID_1",
-            full_line="# req-Id: TREQ_ID_1",
+            full_line="#" + " req-Id: TREQ_ID_1",
         ),
     ]
 
@@ -652,9 +659,9 @@ def test_multiple_commits_hash_consistency(git_repo):
     needlink = NeedLink(
         file=Path("new_file.py"),
         line=1,
-        tag="# req-Id:",
+        tag="#" + " req-Id:",
         need="TEST_001",
-        full_line="# req-Id: TEST_001",
+        full_line="#" + " req-Id: TREQ_ID_1",
     )
 
     os.chdir(Path(git_repo).absolute())
