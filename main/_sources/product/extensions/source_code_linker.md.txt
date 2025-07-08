@@ -40,21 +40,22 @@ The extension uses two main components to integrate with Bazel:
         **Note:** The base_url is defined in `parse_source_files.py`. Currently set to: `https://github.com/eclipse-score/score/blob/`
 
 Produces JSON mapping file:
-```json
+The strings are split here to not enable tracking by the source code linker.
+```python
 [
     {
         "file": "src/implementation1.py",
         "line": 3,
-        "tag":"# req-Id:",
+        "tag":"#" + " req-Id:",
         "need": "TREQ_ID_1",
-        "full_line": "# req-Id: TREQ_ID_1"
+        "full_line": "#"+" req-Id: TREQ_ID_1"
     },
     {
         "file": "src/implementation2.py", 
         "line": 3,
-        "tag":"# req-Id:",
+        "tag":"#" + " req-Id:",
         "need": "TREQ_ID_1",
-        "full_line": "# req-Id: TREQ_ID_1"
+        "full_line": "#"+" req-Id: TREQ_ID_1"
     },
 ]
 ```

@@ -495,22 +495,23 @@ In a second step this intermediary file is parsed during sphinx build. If a requ
 </ul>
 </li>
 </ol>
-<p>Produces JSON mapping file:</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;file&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;src/implementation1.py&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;line&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;tag&quot;</span><span class="p">:</span><span class="s2">&quot;# req-Id:&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;need&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;TREQ_ID_1&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;full_line&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;# req-Id: TREQ_ID_1&quot;</span>
-<span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;file&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;src/implementation2.py&quot;</span><span class="p">,</span><span class="w"> </span>
-<span class="w">        </span><span class="nt">&quot;line&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;tag&quot;</span><span class="p">:</span><span class="s2">&quot;# req-Id:&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;need&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;TREQ_ID_1&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;full_line&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;# req-Id: TREQ_ID_1&quot;</span>
-<span class="w">    </span><span class="p">},</span>
+<p>Produces JSON mapping file:
+The strings are split here to not enable tracking by the source code linker.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;file&quot;</span><span class="p">:</span> <span class="s2">&quot;src/implementation1.py&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;line&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="s2">&quot;tag&quot;</span><span class="p">:</span><span class="s2">&quot;#&quot;</span> <span class="o">+</span> <span class="s2">&quot; req-Id:&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;need&quot;</span><span class="p">:</span> <span class="s2">&quot;TREQ_ID_1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;full_line&quot;</span><span class="p">:</span> <span class="s2">&quot;#&quot;</span><span class="o">+</span><span class="s2">&quot; req-Id: TREQ_ID_1&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;file&quot;</span><span class="p">:</span> <span class="s2">&quot;src/implementation2.py&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot;line&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="s2">&quot;tag&quot;</span><span class="p">:</span><span class="s2">&quot;#&quot;</span> <span class="o">+</span> <span class="s2">&quot; req-Id:&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;need&quot;</span><span class="p">:</span> <span class="s2">&quot;TREQ_ID_1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;full_line&quot;</span><span class="p">:</span> <span class="s2">&quot;#&quot;</span><span class="o">+</span><span class="s2">&quot; req-Id: TREQ_ID_1&quot;</span>
+    <span class="p">},</span>
 <span class="p">]</span>
 </pre></div>
 </div>
