@@ -30,8 +30,7 @@ score_py_pytest(
     name = "score_source_code_linker_test",
     size = "small",
     srcs = glob([
-        "tests/**/*.py",
-        "test/**/*.json",
+        "tests/*.py",
     ]),
     args = [
         "-s",
