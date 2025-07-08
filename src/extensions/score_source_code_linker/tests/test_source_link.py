@@ -99,13 +99,13 @@ def create_demo_files(sphinx_base_dir, git_repo_setup):
 def make_source_1():
     return """
 # This is a test implementation file
-# req-Id: TREQ_ID_1
+#""" + """ req-Id: TREQ_ID_1
 def some_function():
     pass
 
 # Some other code here
 # More code...
-# req-Id: TREQ_ID_2
+#""" """ req-Id: TREQ_ID_2
 def another_function():
     pass
 """
@@ -114,7 +114,7 @@ def another_function():
 def make_source_2():
     return """
 # Another implementation file
-# req-Id: TREQ_ID_1
+#"""+ """ req-Id: TREQ_ID_1
 class SomeClass:
     def method(self):
         pass
@@ -124,7 +124,7 @@ class SomeClass:
 
 def make_bad_source():
     return """
-# req-Id: TREQ_ID_200
+#""" + """ req-Id: TREQ_ID_200
 def This_Should_Error(self):
     pass
 
