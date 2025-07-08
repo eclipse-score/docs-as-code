@@ -13,11 +13,13 @@
    # *******************************************************************************
 #CHECK: check_options
 
+
 .. Required option: `status` is missing
 #EXPECT: std_wp__test__abcd: is missing required option: `status`.
 
 .. std_wp:: This is a test
    :id: std_wp__test__abcd
+
 
 .. All required options are present
 #EXPECT-NOT: is missing required option
@@ -25,6 +27,7 @@
 .. std_wp:: This is a test
    :id: std_wp__test__abce
    :status: active
+
 
 .. Required link `satisfies` refers to wrong requirement type
 #EXPECT: feat_req__abce.satisfies (['std_wp__test__abce']): does not follow pattern `^stkh_req__.*$`.
@@ -58,6 +61,7 @@
    .. feat_req:: Child requirement
       :id: feat_req__abcf
 
+
 .. All required links are present
 #EXPECT-NOT: feat_req__abcg: is missing required link
 
@@ -67,25 +71,6 @@
 
 .. stkh_req:: Parent requirement
    :id: stkh_req__abcd
-
-.. List of elements which an attribute safety. Preparation of a test that actually could be need to ensure that ASIL_D is not used.
-.. doc__
-.. stkh_req__
-.. feat_req__
-.. comp_req__
-.. tool_req__
-.. aou_req__
-.. feat_arc_sta__
-.. feat_arc_dyn__
-.. logic_arc_int__
-.. logic_arc_int_op__
-.. comp_arc_sta__
-.. comp_arc_dyn__
-.. real_arc_int__
-.. real_arc_int_op__
-.. dd_sta__
-.. dd_dyn__
-.. sw_unit__
 
 
 .. Test if the `sufficient` option for Safety Analysis (FMEA and DFA) follows the pattern `^(yes|no)$`
@@ -179,6 +164,7 @@
    :id: comp_saf_dfa__test__15
    :sufficient: no
 
+
 .. Test that the `sufficient` option is case sensitive and does not accept values other than `yes` or `no`
 #EXPECT: feat_saf_fmea__test__bad_16.sufficient (yEs): does not follow pattern `^(yes|no)$`.
 
@@ -203,6 +189,7 @@
    :status: valid
    :mitigates: comp_req__child__ASIL_B
 
+
 .. Negative Test: Linked to a non-allowed requirement type.
 #EXPECT: feat_saf_fmea__child__26.verifies (['comp_req__child__ASIL_B']): does not follow pattern `^feat_arc_dyn__[0-9a-z_]*$`.
 
@@ -211,3 +198,362 @@
    :safety: ASIL_B
    :status: valid
    :verifies: comp_req__child__ASIL_B
+
+
+.. Tests if the attribute `safety` follows the pattern `^(QM|ASIL_B)$`
+#EXPECT-NOT: doc__test_good_1.safety (QM): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. document:: This is a test document
+   :id: doc__test_good_1
+   :status: valid
+   :safety: QM
+
+#EXPECT-NOT: doc__test_good_2.safety (ASIL_B): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. document:: This is a test document
+   :id: doc__test_good_2
+   :status: valid
+   :safety: ASIL_B
+
+#EXPECT: doc__test_bad_1.safety (ASIL_D): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. document:: This is a test document
+   :id: doc__test_bad_1
+   :status: valid
+   :safety: ASIL_D
+
+#EXPECT-NOT: stkh_req__test_good_1.safety (QM): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. stkh_req:: This is a test
+   :id: stkh_req__test_good_1
+   :status: valid
+   :safety: QM
+
+#EXPECT-NOT: stkh_req__test_good_2.safety (ASIL_B): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. stkh_req:: This is a test
+   :id: stkh_req__test_good_2
+   :status: valid
+   :safety: ASIL_B
+
+#EXPECT: stkh_req__test_bad_1.safety (ASIL_D): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. stkh_req:: This is a test
+   :id: stkh_req__test_bad_1
+   :status: valid
+   :safety: ASIL_D
+
+#EXPECT-NOT: feat_req__test_good_1.safety (QM): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. feat_req:: This is a test
+   :id: feat_req__test_good_1
+   :status: valid
+   :safety: QM
+
+#EXPECT-NOT: feat_req__test_good_2.safety (ASIL_B): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. feat_req:: This is a test
+   :id: feat_req__test_good_2
+   :status: valid
+   :safety: ASIL_B
+
+#EXPECT: feat_req__test_bad_1.safety (ASIL_D): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. feat_req:: This is a test
+   :id: feat_req__test_bad_1
+   :status: valid
+   :safety: ASIL_D
+
+#EXPECT-NOT: comp_req__test_good_1.safety (QM): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. comp_req:: This is a test
+   :id: comp_req__test_good_1
+   :status: valid
+   :safety: QM
+
+#EXPECT-NOT: comp_req__test_good_2.safety (ASIL_B): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. comp_req:: This is a test
+   :id: comp_req__test_good_2
+   :status: valid
+   :safety: ASIL_B
+
+#EXPECT: comp_req__test_bad_1.safety (ASIL_D): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. comp_req:: This is a test
+   :id: comp_req__test_bad_1
+   :status: valid
+   :safety: ASIL_D
+
+#EXPECT-NOT: tool_req__test_good_1.safety (QM): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. tool_req:: This is a test
+   :id: tool_req__test_good_1
+   :status: valid
+   :safety: QM
+
+#EXPECT-NOT: tool_req__test_good_2.safety (ASIL_B): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. tool_req:: This is a test
+   :id: tool_req__test_good_2
+   :status: valid
+   :safety: ASIL_B
+
+#EXPECT: tool_req__test_bad_1.safety (ASIL_D): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. tool_req:: This is a test
+   :id: tool_req__test_bad_1
+   :status: valid
+   :safety: ASIL_D
+
+#EXPECT-NOT: aou_req__test_good_1.safety (QM): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. aou_req:: This is a test
+   :id: aou_req__test_good_1
+   :status: valid
+   :safety: QM
+
+#EXPECT-NOT: aou_req__test_good_2.safety (ASIL_B): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. aou_req:: This is a test
+   :id: aou_req__test_good_2
+   :status: valid
+   :safety: ASIL_B
+
+#EXPECT: aou_req__test_bad_1.safety (ASIL_D): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. aou_req:: This is a test
+   :id: aou_req__test_bad_1
+   :status: valid
+   :safety: ASIL_D
+
+#EXPECT-NOT: feat_arc_sta__test_good_1.safety (QM): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. feat_arc_sta:: This is a test
+   :id: feat_arc_sta__test_good_1
+   :status: valid
+   :safety: QM
+
+#EXPECT-NOT: feat_arc_sta__test_good_2.safety (ASIL_B): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. feat_arc_sta:: This is a test
+   :id: feat_arc_sta__test_good_2
+   :status: valid
+   :safety: ASIL_B
+
+#EXPECT: feat_arc_sta__test_bad_1.safety (ASIL_D): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. feat_arc_sta:: This is a test
+   :id: feat_arc_sta__test_bad_1
+   :status: valid
+   :safety: ASIL_D
+
+#EXPECT-NOT: feat_arc_dyn__test_good_1.safety (QM): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. feat_arc_dyn:: This is a test
+   :id: feat_arc_dyn__test_good_1
+   :status: valid
+   :safety: QM
+
+#EXPECT-NOT: feat_arc_dyn__test_good_2.safety (ASIL_B): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. feat_arc_dyn:: This is a test
+   :id: feat_arc_dyn__test_good_2
+   :status: valid
+   :safety: ASIL_B
+
+#EXPECT: feat_arc_dyn__test_bad_1.safety (ASIL_D): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. feat_arc_dyn:: This is a test
+   :id: feat_arc_dyn__test_bad_1
+   :status: valid
+   :safety: ASIL_D
+
+#EXPECT-NOT: logic_arc_int__test_good_1.safety (QM): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. logic_arc_int:: This is a test
+   :id: logic_arc_int__test_good_1
+   :status: valid
+   :safety: QM
+
+#EXPECT-NOT: logic_arc_int__test_good_2.safety (ASIL_B): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. logic_arc_int:: This is a test
+   :id: logic_arc_int__test_good_2
+   :status: valid
+   :safety: ASIL_B
+
+#EXPECT: logic_arc_int__test_bad_1.safety (ASIL_D): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. logic_arc_int:: This is a test
+   :id: logic_arc_int__test_bad_1
+   :status: valid
+   :safety: ASIL_D
+
+#EXPECT-NOT: logic_arc_int_op__test_good_1.safety (QM): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. logic_arc_int_op:: This is a test
+   :id: logic_arc_int_op__test_good_1
+   :status: valid
+   :safety: QM
+
+#EXPECT-NOT: logic_arc_int_op__test_good_2.safety (ASIL_B): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. logic_arc_int_op:: This is a test
+   :id: logic_arc_int_op__test_good_2
+   :status: valid
+   :safety: ASIL_B
+
+#EXPECT: logic_arc_int_op__test_bad_1.safety (ASIL_D): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. logic_arc_int_op:: This is a test
+   :id: logic_arc_int_op__test_bad_1
+   :status: valid
+   :safety: ASIL_D
+
+#EXPECT-NOT: comp_arc_sta__test_good_1.safety (QM): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. comp_arc_sta:: This is a test
+   :id: comp_arc_sta__test_good_1
+   :status: valid
+   :safety: QM
+
+#EXPECT-NOT: comp_arc_sta__test_good_2.safety (ASIL_B): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. comp_arc_sta:: This is a test
+   :id: comp_arc_sta__test_good_2
+   :status: valid
+   :safety: ASIL_B
+
+#EXPECT: comp_arc_sta__test_bad_1.safety (ASIL_D): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. comp_arc_sta:: This is a test
+   :id: comp_arc_sta__test_bad_1
+   :status: valid
+   :safety: ASIL_D
+
+#EXPECT-NOT: comp_arc_dyn__test_good_1.safety (QM): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. comp_arc_dyn:: This is a test
+   :id: comp_arc_dyn__test_good_1
+   :status: valid
+   :safety: QM
+
+#EXPECT-NOT: comp_arc_dyn__test_good_2.safety (ASIL_B): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. comp_arc_dyn:: This is a test
+   :id: comp_arc_dyn__test_good_2
+   :status: valid
+   :safety: ASIL_B
+
+#EXPECT: comp_arc_dyn__test_bad_1.safety (ASIL_D): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. comp_arc_dyn:: This is a test
+   :id: comp_arc_dyn__test_bad_1
+   :status: valid
+   :safety: ASIL_D
+
+#EXPECT-NOT: real_arc_int__test_good_1.safety (QM): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. real_arc_int:: This is a test
+   :id: real_arc_int__test_good_1
+   :status: valid
+   :safety: QM
+
+#EXPECT-NOT: real_arc_int__test_good_2.safety (ASIL_B): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. real_arc_int:: This is a test
+   :id: real_arc_int__test_good_2
+   :status: valid
+   :safety: ASIL_B
+
+#EXPECT: real_arc_int__test_bad_1.safety (ASIL_D): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. real_arc_int:: This is a test
+   :id: real_arc_int__test_bad_1
+   :status: valid
+   :safety: ASIL_D
+
+#EXPECT-NOT: real_arc_int_op__test_good_1.safety (QM): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. real_arc_int_op:: This is a test
+   :id: real_arc_int_op__test_good_1
+   :status: valid
+   :safety: QM
+
+#EXPECT-NOT: real_arc_int_op__test_good_2.safety (ASIL_B): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. real_arc_int_op:: This is a test
+   :id: real_arc_int_op__test_good_2
+   :status: valid
+   :safety: ASIL_B
+
+#EXPECT: real_arc_int_op__test_bad_1.safety (ASIL_D): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. real_arc_int_op:: This is a test
+   :id: real_arc_int_op__test_bad_1
+   :status: valid
+   :safety: ASIL_D
+
+#EXPECT-NOT: dd_sta__test_good_1.safety (QM): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. dd_sta:: This is a test
+   :id: dd_sta__test_good_1
+   :status: valid
+   :safety: QM
+
+#EXPECT-NOT: dd_sta__test_good_2.safety (ASIL_B): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. dd_sta:: This is a test
+   :id: dd_sta__test_good_2
+   :status: valid
+   :safety: ASIL_B
+
+#EXPECT: dd_sta__test_bad_1.safety (ASIL_D): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. dd_sta:: This is a test
+   :id: dd_sta__test_bad_1
+   :status: valid
+   :safety: ASIL_D
+
+#EXPECT-NOT: dd_dyn__test_good_1.safety (QM): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. dd_dyn:: This is a test
+   :id: dd_dyn__test_good_1
+   :status: valid
+   :safety: QM
+
+#EXPECT-NOT: dd_dyn__test_good_2.safety (ASIL_B): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. dd_dyn:: This is a test
+   :id: dd_dyn__test_good_2
+   :status: valid
+   :safety: ASIL_B
+
+#EXPECT: dd_dyn__test_bad_1.safety (ASIL_D): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. dd_dyn:: This is a test
+   :id: dd_dyn__test_bad_1
+   :status: valid
+   :safety: ASIL_D
+
+#EXPECT-NOT: sw_unit__test_good_1.safety (QM): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. sw_unit:: This is a test
+   :id: sw_unit__test_good_1
+   :status: valid
+   :safety: QM
+
+#EXPECT-NOT: sw_unit__test_good_2.safety (ASIL_B): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. sw_unit:: This is a test
+   :id: sw_unit__test_good_2
+   :status: valid
+   :safety: ASIL_B
+
+#EXPECT: sw_unit__test_bad_1.safety (ASIL_D): does not follow pattern `^(QM|ASIL_B)$`.
+
+.. sw_unit:: This is a test
+   :id: sw_unit__test_bad_1
+   :status: valid
+   :safety: ASIL_D

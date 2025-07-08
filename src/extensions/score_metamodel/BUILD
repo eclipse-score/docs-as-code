@@ -32,10 +32,6 @@ score_py_pytest(
     name = "score_metamodel_tests",
     size = "small",
     srcs = glob(["tests/*.py"]),
-    args = [
-        "-s",
-        "-vv",
-    ],
     # All requirements already in the library so no need to have it double
     data = ["//src:test_rst_files"] + glob(
         ["tests/**/*.rst"],
