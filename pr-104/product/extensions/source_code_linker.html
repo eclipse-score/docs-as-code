@@ -459,7 +459,7 @@ In a second step this intermediary file is parsed during sphinx build. If a requ
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">parse_source_files.py</span></code></p>
 <ul class="simple">
-<li><p>Scans input files for template tags (e.g., <code class="docutils literal notranslate"><span class="pre">#</span> <span class="pre">req-traceability:</span></code>)</p></li>
+<li><p>Scans input files for template tags (e.g., “#<!-- comment prevents parsing this occurance --> req-traceability:”)</p></li>
 <li><p>Retrieves git information (hash, file location)</p></li>
 <li><p>Generates mapping file with requirement IDs and links</p></li>
 </ul>
@@ -495,13 +495,24 @@ In a second step this intermediary file is parsed during sphinx build. If a requ
 </ul>
 </li>
 </ol>
-<p>Produces JSON mapping file:</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;REQ_ID&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">        </span><span class="s2">&quot;github_link1&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="s2">&quot;github_link2&quot;</span><span class="w">  </span><span class="c1">// If multiple code-links exist</span>
-<span class="w">    </span><span class="p">]</span>
-<span class="p">}</span>
+<p>Produces JSON mapping file:
+The strings are split here to not enable tracking by the source code linker.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;file&quot;</span><span class="p">:</span> <span class="s2">&quot;src/implementation1.py&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;line&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="s2">&quot;tag&quot;</span><span class="p">:</span><span class="s2">&quot;#&quot;</span> <span class="o">+</span> <span class="s2">&quot; req-Id:&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;need&quot;</span><span class="p">:</span> <span class="s2">&quot;TREQ_ID_1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;full_line&quot;</span><span class="p">:</span> <span class="s2">&quot;#&quot;</span><span class="o">+</span><span class="s2">&quot; req-Id: TREQ_ID_1&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;file&quot;</span><span class="p">:</span> <span class="s2">&quot;src/implementation2.py&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot;line&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="s2">&quot;tag&quot;</span><span class="p">:</span><span class="s2">&quot;#&quot;</span> <span class="o">+</span> <span class="s2">&quot; req-Id:&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;need&quot;</span><span class="p">:</span> <span class="s2">&quot;TREQ_ID_1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;full_line&quot;</span><span class="p">:</span> <span class="s2">&quot;#&quot;</span><span class="o">+</span><span class="s2">&quot; req-Id: TREQ_ID_1&quot;</span>
+    <span class="p">},</span>
+<span class="p">]</span>
 </pre></div>
 </div>
 <br>
