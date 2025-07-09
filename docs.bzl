@@ -44,7 +44,6 @@ load("@rules_pkg//pkg:mappings.bzl", "pkg_files")
 load("@rules_pkg//pkg:tar.bzl", "pkg_tar")
 load("@rules_python//sphinxdocs:sphinx.bzl", "sphinx_build_binary", "sphinx_docs")
 load("@rules_python//sphinxdocs:sphinx_docs_library.bzl", "sphinx_docs_library")
-load("@score_docs_as_code//src/extensions/score_source_code_linker:collect_source_files.bzl", "parse_source_files_for_needs_links")
 load("@score_python_basics//:defs.bzl", "score_virtualenv")
 
 sphinx_requirements = all_requirements + [
@@ -58,20 +57,13 @@ sphinx_requirements = all_requirements + [
     "@score_docs_as_code//src/extensions/score_source_code_linker:score_source_code_linker",
 ]
 
-def docs(source_files_to_scan_for_needs_links = None, source_dir = "docs", conf_dir = "docs", build_dir_for_incremental = "_build", docs_targets = []):
+def docs(source_files_to_scan_for_needs_links = None, source_dir = "docs", conf_dir = "docs", build_dir_for_incremental = "_build", docs_targets = [], deps = []):
     """
     Creates all targets related to documentation.
     By using this function, you'll get any and all updates for documentation targets in one place.
     Current restrictions:
     * only callable from 'docs/BUILD'
     """
-
-    # Parse source files for needs links
-    # This needs to be created to generate a target, otherwise it won't execute as dependency for other macros
-    parse_source_files_for_needs_links(
-        name = "score_source_code_parser",
-        srcs_and_deps = source_files_to_scan_for_needs_links if source_files_to_scan_for_needs_links else [],
-    )
 
     # We are iterating over all provided 'targets' in order to allow for automatic generation of them without
     # needing to modify the underlying 'docs.bzl' file.
@@ -83,8 +75,8 @@ def docs(source_files_to_scan_for_needs_links = None, source_dir = "docs", conf_
         sphinx_build_binary(
             name = "sphinx_build" + suffix,
             visibility = ["//visibility:public"],
-            data = ["@score_docs_as_code//src:docs_assets", "@score_docs_as_code//src:score_extension_files"] + external_needs_deps,
-            deps = sphinx_requirements,
+            data = ["@score_docs_as_code//src:docs_assets", "@score_docs_as_code//src:docs_as_code_py_modules"] + external_needs_deps,
+            deps = sphinx_requirements + deps,
         )
         _incremental(
             incremental_name = "incremental" + suffix,
@@ -94,6 +86,7 @@ def docs(source_files_to_scan_for_needs_links = None, source_dir = "docs", conf_
             build_dir = build_dir_for_incremental,
             external_needs_deps = external_needs_deps,
             external_needs_def = external_needs_def,
+            extra_dependencies = deps,
         )
         _docs(
             name = "docs" + suffix,
@@ -113,7 +106,7 @@ def docs(source_files_to_scan_for_needs_links = None, source_dir = "docs", conf_
     # Virtual python environment for working on the documentation (esbonio).
     # incl. python support when working on conf.py and sphinx extensions.
     # creates :ide_support target for virtualenv
-    _ide_support()
+    _ide_support(deps)
 
     # creates 'needs.json' build target
 
@@ -136,7 +129,7 @@ def _incremental(incremental_name = "incremental", live_name = "live_preview", s
         srcs = ["@score_docs_as_code//src:incremental.py"],
         deps = dependencies,
         # TODO: Figure out if we need all dependencies as data here or not.
-        data = [":score_source_code_parser", "@score_docs_as_code//src:plantuml", "@score_docs_as_code//src:docs_assets"] + dependencies + external_needs_deps,
+        data = ["@score_docs_as_code//src:plantuml", "@score_docs_as_code//src:docs_assets"] + dependencies + external_needs_deps,
         env = {
             "SOURCE_DIRECTORY": source_dir,
             "CONF_DIRECTORY": conf_dir,
@@ -160,11 +153,11 @@ def _incremental(incremental_name = "incremental", live_name = "live_preview", s
         },
     )
 
-def _ide_support():
+def _ide_support(extra_dependencies):
     score_virtualenv(
         name = "ide_support",
         venv_name = ".venv_docs",
-        reqs = sphinx_requirements,
+        reqs = sphinx_requirements + extra_dependencies,
     )
 
 def _docs(name = "docs", suffix = "", format = "html", external_needs_deps = list(), external_needs_def = list()):
@@ -190,7 +183,7 @@ def _docs(name = "docs", suffix = "", format = "html", external_needs_deps = lis
             "**/*.json",
             "**/*.csv",
             "**/*.inc",
-        ], exclude = ["**/tests/*"]),
+        ], exclude = ["**/tests/*"], allow_empty = True),
         config = ":conf.py",
         extra_opts = [
             "-W",
@@ -204,7 +197,6 @@ def _docs(name = "docs", suffix = "", format = "html", external_needs_deps = lis
             "manual",
         ],
         tools = [
-            ":score_source_code_parser",
             "@score_docs_as_code//src:plantuml",
             "@score_docs_as_code//src:docs_assets",
         ] + external_needs_deps,
@@ -213,7 +205,7 @@ def _docs(name = "docs", suffix = "", format = "html", external_needs_deps = lis
 
     native.filegroup(
         name = "assets" + target_suffix,
-        srcs = native.glob(["_assets/**"]),
+        srcs = native.glob(["_assets/**"], allow_empty = True),
         visibility = ["//visibility:public"],
     )
 

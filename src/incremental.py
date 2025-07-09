@@ -12,19 +12,15 @@
 # *******************************************************************************
 
 import argparse
-import json
 import logging
 import os
+from pathlib import Path
 
 import debugpy
 from sphinx.cmd.build import main as sphinx_main
 from sphinx_autobuild.__main__ import main as sphinx_autobuild_main
 
 logger = logging.getLogger(__name__)
-
-logger.debug("DEBUG: CWD: ", os.getcwd())
-logger.debug("DEBUG: SOURCE_DIRECTORY: ", os.getenv("SOURCE_DIRECTORY"))
-logger.debug("DEBUG: RUNFILES_DIR: ", os.getenv("RUNFILES_DIR"))
 
 
 def get_env(name: str) -> str:
@@ -68,19 +64,23 @@ if __name__ == "__main__":
         debugpy.wait_for_client()
 
     workspace = os.getenv("BUILD_WORKSPACE_DIRECTORY")
+    # if workspace:
+    #     os.chdir(workspace)
     if workspace:
-        os.chdir(workspace)
+        workspace += "/"
+    else:
+        workspace = ""
 
     base_arguments = [
-        get_env("SOURCE_DIRECTORY"),
-        get_env("BUILD_DIRECTORY"),
+        workspace + get_env("SOURCE_DIRECTORY"),
+        workspace + get_env("BUILD_DIRECTORY"),
         "-W",  # treat warning as errors
         "--keep-going",  # do not abort after one error
         "-T",  # show details in case of errors in extensions
         "--jobs",
         "auto",
         "--conf-dir",
-        get_env("CONF_DIRECTORY"),
+        workspace + get_env("CONF_DIRECTORY"),
         f"--define=external_needs_source={get_env('EXTERNAL_NEEDS_INFO')}",
     ]
 
@@ -88,16 +88,20 @@ if __name__ == "__main__":
     if args.github_user and args.github_repo:
         base_arguments.append(f"-A=github_user={args.github_user}")
         base_arguments.append(f"-A=github_repo={args.github_repo}")
-        base_arguments.append(f"-A=github_version=main")
-        base_arguments.append(f"-A=doc_path=docs")
+        base_arguments.append("-A=github_version=main")
+        base_arguments.append("-A=doc_path=docs")
 
     action = get_env("ACTION")
     if action == "live_preview":
+        build_dir = Path(get_env("BUILD_DIRECTORY"))
+        (workspace / build_dir / "score_source_code_linker_cache.json").unlink(
+            missing_ok=False
+        )
         sphinx_autobuild_main(
-            # Note: bools need to be passed via '0' and '1' from the command line.
             base_arguments
             + [
-                "--define=disable_source_code_linker=1",
+                # Note: bools need to be passed via '0' and '1' from the command line.
+                "--define=skip_rescanning_via_source_code_linker=1",
                 f"--port={args.port}",
             ]
         )
