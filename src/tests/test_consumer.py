@@ -8,9 +8,6 @@ import os
 import re
 from pytest import TempPathFactory
 from typing import Optional
-from src.extensions.score_source_code_linker.parse_source_files import (
-    get_github_base_url,
-)
 from sphinx.testing.util import SphinxTestApp
 from sphinx_needs.data import SphinxNeedsData
 from dataclasses import dataclass
@@ -20,7 +17,7 @@ class ConsumerRepo():
     name: str
     git_url: str
     commands: list[str] 
-    test_commands: Optional[list[str]]
+    test_commands: list[str]
     LocalOverrideResult: bool
     GitOverrideResult: bool
 
@@ -43,11 +40,24 @@ REPOS_TO_TEST: list[ConsumerRepo] = [
                 "bazel run //docs:ide_support",
                 "bazel build //docs:docs_release",
                 "bazel build //docs:docs_latest",
-                "bazel build //docs:docs_release", 
             ],
             LocalOverrideResult=False,
             GitOverrideResult=False,
             test_commands= []
+    ),
+    ConsumerRepo(
+            name="module_template",
+            git_url= "git@github.com:eclipse-score/score.git",
+            commands=[
+                "bazel run //docs:ide_support",
+                "bazel run //docs:incremental",
+                "bazel build //docs:docs",
+            ],
+            LocalOverrideResult=False,
+            GitOverrideResult=False,
+            test_commands= [
+            "bazel test //test/...",
+        ]
     )
 ]
 
@@ -129,11 +139,15 @@ def test_and_clone_repos(sphinx_base_dir):
             f.write(module_local_override)
         # TEST all commands
         for cmd in repo.commands:
-            print("TESTING WITH LOCAL OVERRIDE")
+            print("BUILDING WITH LOCAL OVERRIDE")
             out = subprocess.run(cmd.split(), capture_output=True, check=True, text=True)
             #print(out)
             #assert out.returncode == 0
             assert "Build completed successfully" in str(out.stderr) 
+        for test_cmd in repo.test_commands:
+            print("TESTING WITH LOCAL OVERRIDE")
+            out = subprocess.run(test_cmd.split(), capture_output=True, check=True, text=True)
+            assert out.check_returncode()
         with open("MODULE.bazel", "w") as f:
             f.write(module_git_override)
         for cmd in repo.commands:
