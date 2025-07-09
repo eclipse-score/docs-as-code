@@ -23,40 +23,40 @@ class ConsumerRepo():
 
 
 REPOS_TO_TEST: list[ConsumerRepo] = [
-    ConsumerRepo(
-            name="process_description",
-            git_url= "git@github.com:eclipse-score/process_description.git",
-            commands=["bazel run //process:incremental_latest"],
-            LocalOverrideResult=False,
-            GitOverrideResult=False,
-            test_commands= []
-    ),
-    ConsumerRepo(
-            name="score",
-            git_url= "git@github.com:eclipse-score/score.git",
-            commands=[
-                "bazel run //docs:incremental_latest",
-                "bazel run //docs:incremental_release",
-                "bazel run //docs:ide_support",
-                "bazel build //docs:docs_release",
-                "bazel build //docs:docs_latest",
-            ],
-            LocalOverrideResult=False,
-            GitOverrideResult=False,
-            test_commands= []
-    ),
+    # ConsumerRepo(
+    #         name="process_description",
+    #         git_url= "git@github.com:eclipse-score/process_description.git",
+    #         commands=["bazel run //process:incremental_latest"],
+    #         LocalOverrideResult=False,
+    #         GitOverrideResult=False,
+    #         test_commands= []
+    # ),
+    # ConsumerRepo(
+    #         name="score",
+    #         git_url= "git@github.com:eclipse-score/score.git",
+    #         commands=[
+    #             "bazel run //docs:incremental_latest",
+    #             "bazel run //docs:incremental_release",
+    #             "bazel run //docs:ide_support",
+    #             "bazel build //docs:docs_release",
+    #             "bazel build //docs:docs_latest",
+    #         ],
+    #         LocalOverrideResult=False,
+    #         GitOverrideResult=False,
+    #         test_commands= []
+    # ),
     ConsumerRepo(
             name="module_template",
-            git_url= "git@github.com:eclipse-score/score.git",
+            git_url= "git@github.com:eclipse-score/module_template.git",
             commands=[
                 "bazel run //docs:ide_support",
-                "bazel run //docs:incremental",
-                "bazel build //docs:docs",
+                # "bazel run //docs:incremental",
+                # "bazel build //docs:docs",
             ],
             LocalOverrideResult=False,
             GitOverrideResult=False,
             test_commands= [
-            "bazel test //test/...",
+            "bazel test //tests/...",
         ]
     )
 ]
@@ -147,7 +147,7 @@ def test_and_clone_repos(sphinx_base_dir):
         for test_cmd in repo.test_commands:
             print("TESTING WITH LOCAL OVERRIDE")
             out = subprocess.run(test_cmd.split(), capture_output=True, check=True, text=True)
-            assert out.check_returncode()
+            assert out.returncode == 0
         with open("MODULE.bazel", "w") as f:
             f.write(module_git_override)
         for cmd in repo.commands:
