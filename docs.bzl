@@ -75,7 +75,7 @@ def docs(source_files_to_scan_for_needs_links = None, source_dir = "docs", conf_
         sphinx_build_binary(
             name = "sphinx_build" + suffix,
             visibility = ["//visibility:public"],
-            data = ["@score_docs_as_code//src:docs_assets", "@score_docs_as_code//src:score_extension_files"] + external_needs_deps,
+            data = ["@score_docs_as_code//src:docs_assets", "@score_docs_as_code//src:docs_as_code_py_modules"] + external_needs_deps,
             deps = sphinx_requirements + deps,
         )
         _incremental(
@@ -183,7 +183,7 @@ def _docs(name = "docs", suffix = "", format = "html", external_needs_deps = lis
             "**/*.json",
             "**/*.csv",
             "**/*.inc",
-        ], exclude = ["**/tests/*"]),
+        ], exclude = ["**/tests/*"], allow_empty = True),
         config = ":conf.py",
         extra_opts = [
             "-W",
@@ -205,7 +205,7 @@ def _docs(name = "docs", suffix = "", format = "html", external_needs_deps = lis
 
     native.filegroup(
         name = "assets" + target_suffix,
-        srcs = native.glob(["_assets/**"]),
+        srcs = native.glob(["_assets/**"], allow_empty = True),
         visibility = ["//visibility:public"],
     )
 
