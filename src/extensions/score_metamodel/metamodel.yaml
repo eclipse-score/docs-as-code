@@ -188,7 +188,7 @@ needs_types:
       id: ^doc__[0-9a-z_]*$
       status: ^(valid|draft|invalid)$
     optional_options:
-      safety: "^(QM|ASIL_B|ASIL_D)$"
+      safety: "^(QM|ASIL_B)$"
       security: "^(YES|NO)$"
       realizes: "^wp__.+$"
 
@@ -201,7 +201,7 @@ needs_types:
       id: ^stkh_req__[0-9a-z_]*$
       # req-Id: tool_req__docs_req_attr_reqtype
       reqtype: ^(Functional|Interface|Process|Legal|Non-Functional)$
-      safety: ^(QM|ASIL_B|ASIL_D)$
+      safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
       # req-Id: tool_req__docs_req_attr_rationale
       rationale: ^.+$
@@ -225,7 +225,7 @@ needs_types:
       # req-Id: tool_req__docs_req_attr_reqtype
       reqtype: ^(Functional|Interface|Process|Legal|Non-Functional)$
       security: ^(YES|NO)$
-      safety: ^(QM|ASIL_B|ASIL_D)$
+      safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
     mandatory_links:
       # req-Id: tool_req__docs_req_link_satisfies_allowed
@@ -248,7 +248,7 @@ needs_types:
       # req-Id: tool_req__docs_req_attr_reqtype
       reqtype: ^(Functional|Interface|Process|Legal|Non-Functional)$
       security: ^(YES|NO)$
-      safety: ^(QM|ASIL_B|ASIL_D)$
+      safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
     mandatory_links:
       # req-Id: tool_req__docs_req_link_satisfies_allowed
@@ -269,7 +269,7 @@ needs_types:
     mandatory_options:
       id: ^tool_req__[0-9a-z_]*$
       security: ^(YES|NO)$
-      safety: ^(QM|ASIL_B|ASIL_D)$
+      safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
     optional_links:
       # req-Id: tool_req__docs_req_link_satisfies_allowed
@@ -298,7 +298,7 @@ needs_types:
       # req-Id: tool_req__docs_req_attr_reqtype
       reqtype: ^(Functional|Interface|Process|Legal|Non-Functional)$
       security: ^(YES|NO)$
-      safety: ^(QM|ASIL_B|ASIL_D)$
+      safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
     optional_options:
       codelink: ^.*$
@@ -321,7 +321,7 @@ needs_types:
     mandatory_options:
       id: ^feat_arc_sta__[0-9a-z_]+$
       security: ^(YES|NO)$
-      safety: ^(QM|ASIL_B|ASIL_D)$
+      safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
     mandatory_links:
       includes: ^logic_arc_int(_op)*__.+$
@@ -336,7 +336,7 @@ needs_types:
     mandatory_options:
       id: ^feat_arc_dyn__[0-9a-z_]+$
       security: ^(YES|NO)$
-      safety: ^(QM|ASIL_B|ASIL_D)$
+      safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
     mandatory_links:
       fulfils: ^feat_req__.+$
@@ -349,7 +349,7 @@ needs_types:
     mandatory_options:
       id: ^logic_arc_int__[0-9a-z_]+$
       security: ^(YES|NO)$
-      safety: ^(QM|ASIL_B|ASIL_D)$
+      safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
     optional_links:
       includes: ^logic_arc_int_op__.+$
@@ -363,7 +363,7 @@ needs_types:
     mandatory_options:
       id: ^logic_arc_int_op__[0-9a-z_]+$
       security: ^(YES|NO)$
-      safety: ^(QM|ASIL_B|ASIL_D)$
+      safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
     mandatory_links:
       included_by: ^logic_arc_int__.+$
@@ -394,7 +394,7 @@ needs_types:
     mandatory_options:
       id: ^comp_arc_sta__[0-9a-z_]+$
       security: ^(YES|NO)$
-      safety: ^(QM|ASIL_B|ASIL_D)$
+      safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
     optional_links:
       implements: ^real_arc_int(_op)*__.+$
@@ -410,7 +410,7 @@ needs_types:
     mandatory_options:
       id: ^comp_arc_dyn__[0-9a-z_]+$
       security: ^(YES|NO)$
-      safety: ^(QM|ASIL_B|ASIL_D)$
+      safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
     optional_links:
       fulfils: ^comp_req__.+$
@@ -423,7 +423,7 @@ needs_types:
     mandatory_options:
       id: ^real_arc_int__[0-9a-z_]+$
       security: ^(YES|NO)$
-      safety: ^(QM|ASIL_B|ASIL_D)$
+      safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
       language: ^(cpp|rust)$
     optional_links:
@@ -437,7 +437,7 @@ needs_types:
     mandatory_options:
       id: ^real_arc_int_op__[0-9a-z_]+$
       security: ^(YES|NO)$
-      safety: ^(QM|ASIL_B|ASIL_D)$
+      safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
     mandatory_links:
       included_by: ^real_arc_int__.+$
@@ -463,7 +463,7 @@ needs_types:
     mandatory_options:
       id: ^dd_sta__[0-9a-z_]*$
       security: ^(YES|NO)$
-      safety: ^(QM|ASIL_B|ASIL_D)$
+      safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
     mandatory_links:
       implements: ^comp_req__.*$
@@ -479,7 +479,7 @@ needs_types:
     mandatory_options:
       id: ^dd_dyn__[0-9a-z_]*$
       security: ^(YES|NO)$
-      safety: ^(QM|ASIL_B|ASIL_D)$
+      safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
     mandatory_links:
       implements: ^comp_req__.*$
@@ -491,7 +491,7 @@ needs_types:
     mandatory_options:
       id: ^sw_unit__[0-9a-z_]*$
       security: ^(YES|NO)$
-      safety: ^(QM|ASIL_B|ASIL_D)$
+      safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
   sw_unit_int:
     title: Software unit interfaces
@@ -501,8 +501,85 @@ needs_types:
     mandatory_options:
       id: ^sw_unit_int__[0-9a-z_]*$
       security: ^(YES|NO)$
-      safety: ^(QM|ASIL_B|ASIL_D)$
+      safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
+
+  # Safety Analysis DFA
+  feat_plat_saf_dfa:
+    title: DFA
+    prefix: feat_plat_saf_dfa__
+    mandatory_options:
+      id: ^feat_plat_saf_dfa__[0-9a-z_]+$
+      violation_id: ^.*$
+      violation_cause: ^.*$
+      sufficient: ^(yes|no)$
+      status: ^(valid|invalid)$
+    mandatory_links:
+      mitigates: ^(feat_req__.*|aou_req__.*)$
+      verifies: ^feat_arc_dyn__[0-9a-z_]*$
+    optional_links:
+      mitigation_issue: ^https://github.com/.*$
+
+  feat_saf_dfa:
+    title: DFA
+    prefix: feat_saf_dfa__
+    mandatory_options:
+      id: ^feat_saf_dfa__[0-9a-z_]+$
+      violation_id: ^.*$
+      violation_cause: ^.*$
+      sufficient: ^(yes|no)$
+      status: ^(valid|invalid)$
+    mandatory_links:
+      mitigates: ^(feat_req__.*|aou_req__.*)$
+      verifies: ^feat_arc_dyn__[0-9a-z_]*$
+    optional_links:
+      mitigation_issue: ^https://github.com/.*$
+
+  comp_saf_dfa:
+    title: DFA
+    prefix: comp_saf_dfa__
+    mandatory_options:
+      id: ^comp_saf_dfa__[0-9a-z_]+$
+      violation_id: ^.*$
+      violation_cause: ^.*$
+      sufficient: ^(yes|no)$
+      status: ^(valid|invalid)$
+    mandatory_links:
+      mitigates: ^(comp_req__.*|aou_req__.*)$
+      verifies: ^comp_arc_dyn__[0-9a-z_]*$
+    optional_links:
+      mitigation_issue: ^https://github.com/.*$
+
+  # # Safety Analysis FMEA
+  feat_saf_fmea:
+    title: FMEA
+    prefix: feat_saf_fmea__
+    mandatory_options:
+      id: ^feat_saf_fmea__[0-9a-z_]+$
+      violation_id: ^.*$
+      violation_cause: ^.*$
+      sufficient: ^(yes|no)$
+      status: ^(valid|invalid)$
+    mandatory_links:
+      mitigates: ^(feat_req__.*|aou_req__.*)$
+      verifies: ^feat_arc_dyn__[0-9a-z_]*$
+    optional_links:
+      mitigation_issue: ^https://github.com/.*$
+
+  comp_saf_fmea:
+    title: FMEA
+    prefix: comp_saf_fmea__
+    mandatory_options:
+      id: ^comp_saf_fmea__[0-9a-z_]+$
+      violation_id: ^.*$
+      violation_cause: ^.*$
+      sufficient: ^(yes|no)$
+      status: ^(valid|invalid)$
+    mandatory_links:
+      mitigates: ^(comp_req__.*|aou_req__.*)$
+      verifies: ^comp_arc_dyn__[0-9a-z_]*$
+    optional_links:
+      mitigation_issue: ^https://github.com/.*$
 
 # Extra link types, which shall be available and allow need types to be linked to each other.
 # We use a dedicated linked type for each type of a connection, for instance from
@@ -576,6 +653,14 @@ needs_extra_links:
   included_by:
     incoming: includes
     outgoing: included by
+
+  mitigates:
+    incoming: mitigated by
+    outgoing: mitigates
+
+  verifies:
+    incoming: verified by
+    outgoing: verifies
 ##############################################################
 # Graph Checks
 # The graph checks focus on the relation of the needs and their attributes.
@@ -594,36 +679,33 @@ needs_extra_links:
 ##############################################################
 # req- Id: gd_req__req__linkage_architecture
 # req- Id: gd_req__req__linkage_safety
+
+# Checks if the child requirement has the at least the same safety level as the parent requirement. It's allowed to "overfill" the safety level of the parent.
+# ASIL decomposition is not foreseen in S-CORE. Therefore it's not allowed to have a child requirement with a lower safety level than the parent requirement as
+# it is possible in an decomposition case.
+# If need-req is `QM`, parent must be `QM`.
 graph_checks:
-  # req- Id: gd_req__req__linkage_safety
-  req_safety_linkage:
+  req_safety_linkage_qm:
     needs:
       include: comp_req, feat_req
-      condition:
-        and:
-          - safety != QM
-          - status == valid
+      condition: safety == QM
     check:
-      satisfies:
-        and:
-          - safety != QM
-          - status == valid
-  req_linkage:
+      satisfies: safety == QM
+  # If need-req is `ASIL_B`, parent must be `QM` or `ASIL_B`.
+  req_safety_linkage_asil_b:
     needs:
       include: comp_req, feat_req
-      condition: status == valid
+      condition: safety == ASIL_B
     check:
-      # req- Id: gd_req__req__linkage_architecture
-      satisfies: status == valid
-  arch_safety_linkage:
+      satisfies: safety != ASIL_D
+  # saf - ID gd_req__saf_linkage_safety
+  # It shall be checked that Safety Analysis (DFA and FMEA) can only be linked via mitigate against
+  #  - <Feature | Component | AoU> Requirements with the same ASIL or
+  #  - <Feature | Component | AoU> Requirements with a higher ASIL
+  # as the corresponding ASIL of the Feature or Component that is analyzed.
+  saf_linkage_safety:
     needs:
-      include: comp_req, feat_req
-      condition:
-        and:
-          - safety != QM
-          - status == valid
+      include: feat_saf_fmea, comp_saf_fmea, feat_plat_saf_dfa, feat_saf_dfa, comp_saf_dfa
+      condition: safety == ASIL_B
     check:
-      fulfils:
-        and:
-          - safety != QM
-          - status == valid
+      mitigates: safety != QM
