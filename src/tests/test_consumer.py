@@ -15,6 +15,7 @@ from sphinx.testing.util import SphinxTestApp
 from sphinx_needs.data import SphinxNeedsData
 from dataclasses import dataclass, field
 
+from src.extensions.score_source_code_linker.generate_source_code_links_json import find_git_root
 # Do not need the sphinx logger => Normal python logger instead.
 LOGGER = logging.getLogger(__name__)
 
@@ -161,7 +162,7 @@ def replace_bazel_dep_with_local_override(module_content):
     """ """
 
     # Pattern to match the bazel_dep line
-    pattern = rf'bazel_dep\(name = "score_docs_as_code", version = "0.4.2"\)'
+    pattern = rf'bazel_dep\(name = "score_docs_as_code", version = "[^"]+"\)'
 
     # Replacement with local_path_override
     replacement = f"""bazel_dep(name = "score_docs_as_code", version = "0.4.2")
@@ -181,7 +182,7 @@ def replace_bazel_dep_with_git_override(module_content, git_hash):
     import re
 
     # Pattern to match the bazel_dep line
-    pattern = rf'bazel_dep\(name = "score_docs_as_code", version = "0.4.2"\)'
+    pattern = rf'bazel_dep\(name = "score_docs_as_code", version = "[^"]+"\)'
 
     # Replacement with local_path_override
     replacement = f'''bazel_dep(name = "score_docs_as_code", version = "0.4.2")
@@ -198,14 +199,21 @@ git_override(
 
 
 def parse_bazel_output(BR: BuildResult) -> BuildResult:
-    print(f"STDOUT: {BR.stdout}")
+    # print(f"STDOUT: {BR.stdout}")
+    # print("=========================")
+    # print("=========================")https://github.com/MaximilianSoerenPollak/docs-as-code/
+    # print("=========================")
+    # print(f"stderr: {BR.stderr}")
     print("=========================")
     print("=========================")
     print("=========================")
-    print(f"stderr: {BR.stderr}")
-    print("=========================")
-    print("=========================")
-    print("=========================")
+    err_lines = BR.stderr.splitlines()
+    warnings = [x for x in err_lines if "WARNING: " in x]
+    #d = {"score_metamodel": [warnings....], "score_source_code_linker": [warnings..],}
+    for warning in warnings:
+        if warning.endswith("]"):
+            warning.split()[-1].replace("[", "").replace("]","") # = score_metamode
+    print(warnings)
     return BR
 
 
@@ -214,6 +222,9 @@ def test_and_clone_repos(sphinx_base_dir):
     # This might not be the best idea
     os.chdir(sphinx_base_dir)
     curr_path = Path(__file__).parent
+    git_root = find_git_root(curr_path)
+    docs_as_code_dest = sphinx_base_dir / "docs_as_code"
+    docs_as_code_dest.symlink_to(git_root)
     current_hash = get_current_git_commit(curr_path)
     remote_main_commit = get_remote_main_commit(curr_path)
     metamodel_changed = check_for_metamodel_change(curr_path, remote_main_commit)
@@ -232,18 +243,21 @@ def test_and_clone_repos(sphinx_base_dir):
             f.write(module_local_override)
         # TEST all commands
         for cmd in repo.commands:
-            print("BUILDING WITH LOCAL OVERRIDE")
             out = subprocess.run(
-                cmd.split(), capture_output=True, check=True, text=True
+               cmd.split(), capture_output=True, check=True, text=True
             )
+            out_both = str(out.stdout) + "\n\n" + str(out.stderr)
+
             BR = BuildResult(
-                returncode=out.returncode, stdout=out.stdout, stderr=out.stderr
+                returncode=out.returncode, stdout=str(out.stdout), stderr=str(out.stderr)
             )
             parse_bazel_output(BR)
 
             # print(out)
             # assert out.returncode == 0
-            assert "Build completed successfully" in str(out.stderr)
+            #assert "Build completed successfully" in str(out.stderr)
+            #assert "feat_req__feo__activity_shutdown: parent need `stkh_req__app_architectures__support_data` does not fulfill condition `safety == QM`. [score_metamodel]" in str(out_both)
+            assert False
         for test_cmd in repo.test_commands:
             print("TESTING WITH LOCAL OVERRIDE")
             out = subprocess.run(
@@ -259,6 +273,10 @@ def test_and_clone_repos(sphinx_base_dir):
             )
             # print(out)
             # assert out.returncode == 0
+            # BR = BuildResult(
+            #     returncode=out.returncode, stdout=str(out.stdout), stderr=str(out.stderr)
+            # )
+            # parse_bazel_output(BR)
             assert "Build completed successfully" in str(out.stderr)
         os.chdir(Path.cwd().parent)
         # Now need to adapt the MODULE.bazel file.
