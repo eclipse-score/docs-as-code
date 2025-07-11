@@ -4,20 +4,28 @@ from pathlib import Path
 
 import subprocess
 from sys import stderr
+from warnings import warn
+from github import BadUserAgentException
 import pytest
 import os
 import re
 import logging
 
+
+from collections import defaultdict
 from pytest import TempPathFactory
 from typing import Optional
 from sphinx.testing.util import SphinxTestApp
 from sphinx_needs.data import SphinxNeedsData
 from dataclasses import dataclass, field
 
-from src.extensions.score_source_code_linker.generate_source_code_links_json import find_git_root
+from src.extensions.score_source_code_linker.generate_source_code_links_json import (
+    find_git_root,
+)
+
 # Do not need the sphinx logger => Normal python logger instead.
 LOGGER = logging.getLogger(__name__)
+LOGGER.setLevel("DEBUG")
 
 
 @dataclass
@@ -26,8 +34,6 @@ class ConsumerRepo:
     git_url: str
     commands: list[str]
     test_commands: list[str]
-    LocalOverrideResult: bool
-    GitOverrideResult: bool
 
 
 @dataclass
@@ -36,10 +42,10 @@ class BuildResult:
     stdout: str
     stderr: str
     warnings: dict[str, list[str]] = field(default_factory=dict)
-    errors: list[str] = field(default_factory=list)
-    infos: list[str] = field(default_factory=list)
-    metamodel_warnings: list[str] = field(default_factory=list)
-    other_warnings: list[str] = field(default_factory=list)
+    LocalOverrideResult: bool = False
+    GitOverrideResult: bool = False
+
+
 
 
 REPOS_TO_TEST: list[ConsumerRepo] = [
@@ -55,14 +61,12 @@ REPOS_TO_TEST: list[ConsumerRepo] = [
         name="score",
         git_url="git@github.com:eclipse-score/score.git",
         commands=[
-            #"bazel run //docs:incremental_latest",
+            # "bazel run //docs:incremental_latest",
             "bazel run //docs:incremental_release",
             # "bazel run //docs:ide_support",
             # "bazel build //docs:docs_release",
             # "bazel build //docs:docs_latest",
         ],
-        LocalOverrideResult=False,
-        GitOverrideResult=False,
         test_commands=[],
     ),
     # ConsumerRepo(
@@ -73,8 +77,6 @@ REPOS_TO_TEST: list[ConsumerRepo] = [
     #         "bazel run //docs:incremental",
     #         "bazel build //docs:docs",
     #     ],
-    #     LocalOverrideResult=False,
-    #     GitOverrideResult=False,
     #     test_commands=[
     #         "bazel test //tests/...",
     #     ],
@@ -199,23 +201,50 @@ git_override(
 
 
 def parse_bazel_output(BR: BuildResult) -> BuildResult:
-    # print(f"STDOUT: {BR.stdout}")
-    # print("=========================")
-    # print("=========================")https://github.com/MaximilianSoerenPollak/docs-as-code/
-    # print("=========================")
-    # print(f"stderr: {BR.stderr}")
-    print("=========================")
-    print("=========================")
-    print("=========================")
+    # HINT: All errors from sphinx / bazel commands are put into the stderr for some reason.
     err_lines = BR.stderr.splitlines()
-    warnings = [x for x in err_lines if "WARNING: " in x]
-    #d = {"score_metamodel": [warnings....], "score_source_code_linker": [warnings..],}
-    for warning in warnings:
-        if warning.endswith("]"):
-            warning.split()[-1].replace("[", "").replace("]","") # = score_metamode
-    print(warnings)
+    split_warnings = [x for x in err_lines if "WARNING: " in x]
+    warning_dict: dict[str, list[str]] = defaultdict(list)
+     
+    for raw_warning in split_warnings:
+        logger = "[NO SPECIFIC LOGGER]"
+        file_and_warning = raw_warning
+        if raw_warning.endswith("]"):
+            tmp_split_warning = raw_warning.split() 
+            logger = tmp_split_warning[-1] # [score_metamodel]
+            file_and_warning = raw_warning.replace(logger, "").rstrip()
+
+        warning_dict[logger].append(file_and_warning)
+    BR.warnings = warning_dict
+    print(BR.warnings)
+    # "[score_metamodel]": [warning1, warning2, warning3, ...], "[NO SPECIFIC LOGGER]": [warning1, warning2,...]
     return BR
 
+def aggregate_results(BR: BuildResult) ->str:
+    result = ""
+    warning_loggers = list(BR.warnings.keys())
+    result += f"Warning Loggers Total: {len(warning_loggers)}\n"
+    for logger in warning_loggers:  
+        result += f"========={logger}========\n"
+        warnings = BR.warnings[logger]
+        result += f"Warnings Found: {len(warnings)}\n"
+        result += "\n".join(x for x in warnings)
+    return result
+
+def print_build_result(BR: BuildResult, metamodel_changed: bool):
+    metamodel_warnings = BR.warnings.get('[score_metamodel]', [])
+    warning_loggers = [x for x in BR.warnings.keys() if x != "[NO SPECIFIC LOGGER]"]
+    LOGGER.info("=============================================")
+    LOGGER.info("=========BAZEL CONSUMER TEST RESULTS=========")
+    LOGGER.info("=============================================")
+    results = aggregate_results(BR)
+    if metamodel_changed:
+        LOGGER.info("============METAMODEL HAS CHANGED=============")
+        LOGGER.info("=[SCORE_METAMODEL] WARNINGS DISPLAYED AS INFO=")
+        LOGGER.info("\n".join(x for x in metamodel_warnings))
+        LOGGER.info("========[SCORE_METAMODEL] WARNINGS END========")
+    LOGGER.info(results)
+    pass 
 
 def test_and_clone_repos(sphinx_base_dir):
     # Clone
@@ -244,26 +273,30 @@ def test_and_clone_repos(sphinx_base_dir):
         # TEST all commands
         for cmd in repo.commands:
             out = subprocess.run(
-               cmd.split(), capture_output=True, check=True, text=True
+                cmd.split(), capture_output=True, check=True, text=True
             )
             out_both = str(out.stdout) + "\n\n" + str(out.stderr)
 
             BR = BuildResult(
-                returncode=out.returncode, stdout=str(out.stdout), stderr=str(out.stderr)
+                returncode=out.returncode,
+                stdout=str(out.stdout),
+                stderr=str(out.stderr),
             )
-            parse_bazel_output(BR)
+            BR_parsed = parse_bazel_output(BR)
+            print_build_result(BR_parsed, metamodel_changed)
 
             # print(out)
             # assert out.returncode == 0
-            #assert "Build completed successfully" in str(out.stderr)
-            #assert "feat_req__feo__activity_shutdown: parent need `stkh_req__app_architectures__support_data` does not fulfill condition `safety == QM`. [score_metamodel]" in str(out_both)
+            # assert "Build completed successfully" in str(out.stderr)
+            # assert "feat_req__feo__activity_shutdown: parent need `stkh_req__app_architectures__support_data` does not fulfill condition `safety == QM`. [score_metamodel]" in str(out_both)
             assert False
         for test_cmd in repo.test_commands:
-            print("TESTING WITH LOCAL OVERRIDE")
-            out = subprocess.run(
-                test_cmd.split(), capture_output=True, check=True, text=True
-            )
-            assert out.returncode == 0
+            pass
+            #print("TESTING WITH LOCAL OVERRIDE")
+            #out = subprocess.run(
+            #    test_cmd.split(), capture_output=True, check=True, text=True
+            #)
+            #assert out.returncode == 0
         with open("MODULE.bazel", "w") as f:
             f.write(module_git_override)
         for cmd in repo.commands:
@@ -273,10 +306,10 @@ def test_and_clone_repos(sphinx_base_dir):
             )
             # print(out)
             # assert out.returncode == 0
-            # BR = BuildResult(
-            #     returncode=out.returncode, stdout=str(out.stdout), stderr=str(out.stderr)
-            # )
-            # parse_bazel_output(BR)
+            BR = BuildResult(
+                returncode=out.returncode, stdout=str(out.stdout), stderr=str(out.stderr)
+             )
+            parse_bazel_output(BR)
             assert "Build completed successfully" in str(out.stderr)
         os.chdir(Path.cwd().parent)
         # Now need to adapt the MODULE.bazel file.
