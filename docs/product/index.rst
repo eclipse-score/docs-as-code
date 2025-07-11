@@ -42,6 +42,11 @@ Docs-as-Code
       Head over to our extensions to learn about what we offer and how to configure,extend or integrate them.
       :ref:`See our extensions here <extensions>`
 
+   .. grid-item-card::
+
+      Process requirements overview
+      ^^^
+      See the :ref:`process_overview` table for a process requirements overview.
 
 
 .. toctree::
@@ -52,3 +57,4 @@ Docs-as-Code
    capabilities
    requirements
    extensions/index
+   process_overview
