@@ -5,7 +5,7 @@ from pathlib import Path
 import subprocess
 from sys import stderr
 from warnings import warn
-from github import BadUserAgentException
+from rich import print
 import pytest
 import os
 import re
@@ -21,10 +21,16 @@ from dataclasses import dataclass, field
 
 from src.extensions.score_source_code_linker.generate_source_code_links_json import (
     find_git_root,
+    find_ws_root
 )
-
+len_max = 80
 # Do not need the sphinx logger => Normal python logger instead.
+# logging.basicConfig(
+#     level="NOTSET", format=FORMAT, datefmt="[%X]", handlers=[RichHandler(markup=True, console=console)]
+# )
+
 LOGGER = logging.getLogger(__name__)
+#LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel("DEBUG")
 
 
@@ -225,18 +231,35 @@ def aggregate_results(BR: BuildResult) ->str:
     warning_loggers = list(BR.warnings.keys())
     result += f"Warning Loggers Total: {len(warning_loggers)}\n"
     for logger in warning_loggers:  
-        result += f"========={logger}========\n"
+        len_left_logger = len_max - len(logger) 
+        result+= f"[cornflower_blue]{'='*int(len_left_logger/2)}{logger}{'='*int(len_left_logger/2)}[/cornflower_blue]\n"
         warnings = BR.warnings[logger]
-        result += f"Warnings Found: {len(warnings)}\n"
-        result += "\n".join(x for x in warnings)
+        len_left_warnings = len_max - len(f"Warnings Found: {len(warnings)}\n")
+        result+= f"[red3]{'='*int(len_left_warnings/2)}{f"Warnings Found: {len(warnings)}"}{'='*int(len_left_warnings/2)}[/red3]\n"
+        result += "\n".join(f"[red3]{x}[/red3]" for x in warnings)
+    print(result)
+    result = ""
     return result
+
+def print_running_cmd(repo: str, cmd: str, local_or_git: str):
+    len_left_cmd = len_max - len(cmd)
+    len_left_repo = len_max - len(repo)
+    len_left_local = len_max - len(local_or_git)
+    print(f"[cyan]{'='*len_max}[/cyan]")
+    print(f"[cornflower_blue]{'='*int(len_left_repo/2)}{repo}{'='*int(len_left_repo/2)}[/cornflower_blue]")
+    print(f"[cornflower_blue]{'='*int(len_left_local/2)}{local_or_git}{'='*int(len_left_local/2)}[/cornflower_blue]")
+    print(f"[cornflower_blue]{'='*int(len_left_cmd/2)}{cmd}{'='*int(len_left_cmd/2)}[/cornflower_blue]")
+    print(f"[cyan]{'='*len_max}[/cyan]")
+
+
 
 def print_build_result(BR: BuildResult, metamodel_changed: bool):
     metamodel_warnings = BR.warnings.get('[score_metamodel]', [])
     warning_loggers = [x for x in BR.warnings.keys() if x != "[NO SPECIFIC LOGGER]"]
-    LOGGER.info("=============================================")
-    LOGGER.info("=========BAZEL CONSUMER TEST RESULTS=========")
-    LOGGER.info("=============================================")
+    len_left_test_result = len_max - len("TEST RESULTS")
+    print(f"[navy_blue]{'='*len_max}[/navy_blue]")
+    print(f"[blue]{'='*int(len_left_test_result/2)}TEST RESULTS{'='*int(len_left_test_result/2)}[/blue]")
+    print(f"[navy_blue]{'='*len_max}[/navy_blue]")
     results = aggregate_results(BR)
     if metamodel_changed:
         LOGGER.info("============METAMODEL HAS CHANGED=============")
@@ -251,6 +274,7 @@ def test_and_clone_repos(sphinx_base_dir):
     # This might not be the best idea
     os.chdir(sphinx_base_dir)
     curr_path = Path(__file__).parent
+    #print(f"==== WS ROOT: ", curr_path)
     git_root = find_git_root(curr_path)
     docs_as_code_dest = sphinx_base_dir / "docs_as_code"
     docs_as_code_dest.symlink_to(git_root)
@@ -273,9 +297,12 @@ def test_and_clone_repos(sphinx_base_dir):
         # TEST all commands
         for cmd in repo.commands:
             out = subprocess.run(
-                cmd.split(), capture_output=True, check=True, text=True
+                cmd.split(), capture_output=True,  text=True
             )
             out_both = str(out.stdout) + "\n\n" + str(out.stderr)
+            print("======================================================")
+            print(out_both)
+            print_running_cmd(repo.name, cmd, "LOCAL OVERRIDE")
 
             BR = BuildResult(
                 returncode=out.returncode,
