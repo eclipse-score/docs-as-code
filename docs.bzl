@@ -124,6 +124,20 @@ def _incremental(incremental_name = "incremental", live_name = "live_preview", s
 
     dependencies = sphinx_requirements + extra_dependencies + ["@rules_python//python/runfiles"]
 
+    # Create description tags for the incremental targets.
+    incremental_tag = "cli_help=Build documentation incrementally:\nbazel run //docs:" + incremental_name
+    if incremental_name == "incremental_latest":
+        incremental_tag = (
+            "cli_help=Build documentation incrementally (use current main branch of imported docs repositories " + \
+            "(e.g. process_description)):\n" + \
+            "bazel run //docs:incremental_latest"
+        )
+    elif incremental_name == "incremental_release":
+        incremental_tag = (
+            "cli_help=Build documentation incrementally (use release version imported in MODULE.bazel):\n" + \
+            "bazel run //docs:incremental_release"
+        )
+
     py_binary(
         name = incremental_name,
         srcs = ["@score_docs_as_code//src:incremental.py"],
@@ -137,6 +151,7 @@ def _incremental(incremental_name = "incremental", live_name = "live_preview", s
             "EXTERNAL_NEEDS_INFO": json.encode(external_needs_def),
             "ACTION": "incremental",
         },
+        tags = [incremental_tag],
     )
 
     py_binary(
@@ -158,6 +173,10 @@ def _ide_support(extra_dependencies):
         name = "ide_support",
         venv_name = ".venv_docs",
         reqs = sphinx_requirements + extra_dependencies,
+        tags = [
+            "cli_help=Create virtual environment for documentation:\n" + \
+            "bazel run //docs:ide_support"
+        ],
     )
 
 def _docs(name = "docs", suffix = "", format = "html", external_needs_deps = list(), external_needs_def = list()):
