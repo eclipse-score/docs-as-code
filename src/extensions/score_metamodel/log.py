@@ -63,7 +63,7 @@ class CheckLogger:
         if is_info:
             msg += (
                 "\nPlease fix this warning related to the new check "
-                "before the release of the next version of Score."
+                "before the release of the next version of Docs-As-Code."
             )
             self.info(msg, location)
         else:
