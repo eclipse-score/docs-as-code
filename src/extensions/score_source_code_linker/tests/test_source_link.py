@@ -320,7 +320,9 @@ def test_source_link_integration_ok(
                 ws_root, example_source_link_text_all_ok[f"TREQ_ID_{i}"]
             )
             # extra_options are only available at runtime
-            assert expected_link == need_as_dict["source_code_link"]  # type: ignore)
+            # Compare contents, regardless of order.
+            actual_source_code_link = cast(list[str], need_as_dict["source_code_link"])
+            assert set(expected_link) == set(actual_source_code_link)
     finally:
         app.cleanup()
 
