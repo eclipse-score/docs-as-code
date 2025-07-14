@@ -514,11 +514,14 @@ needs_types:
       violation_cause: ^.*$
       sufficient: ^(yes|no)$
       status: ^(valid|invalid)$
+    optional_options:
+      sufficient: ^(yes|no)$
     mandatory_links:
       mitigates: ^(feat_req__.*|aou_req__.*)$
-      verifies: ^feat_arc_dyn__[0-9a-z_]*$
+      verifies: ^feat_arc_sta__[0-9a-z_]*$
     optional_links:
       mitigation_issue: ^https://github.com/.*$
+
 
   feat_saf_dfa:
     title: DFA
@@ -531,7 +534,7 @@ needs_types:
       status: ^(valid|invalid)$
     mandatory_links:
       mitigates: ^(feat_req__.*|aou_req__.*)$
-      verifies: ^feat_arc_dyn__[0-9a-z_]*$
+      verifies: ^feat_arc_sta__[0-9a-z_]*$
     optional_links:
       mitigation_issue: ^https://github.com/.*$
 
@@ -546,7 +549,7 @@ needs_types:
       status: ^(valid|invalid)$
     mandatory_links:
       mitigates: ^(comp_req__.*|aou_req__.*)$
-      verifies: ^comp_arc_dyn__[0-9a-z_]*$
+      verifies: ^comp_arc_sta__[0-9a-z_]*$
     optional_links:
       mitigation_issue: ^https://github.com/.*$
 
