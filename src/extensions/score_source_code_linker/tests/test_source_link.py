@@ -321,7 +321,7 @@ def test_source_link_integration_ok(
             )
             # extra_options are only available at runtime
             # Compare contents, regardless of order.
-            actual_source_code_link = cast(list[str], need_as_dict["source_code_link"]) 
+            actual_source_code_link = cast(list[str], need_as_dict["source_code_link"])
             assert set(expected_link) == set(actual_source_code_link)
     finally:
         app.cleanup()
