@@ -1,3 +1,15 @@
+# *******************************************************************************
+# Copyright (c) 2025 Contributors to the Eclipse Foundation
+#
+# See the NOTICE file(s) distributed with this work for additional
+# information regarding copyright ownership.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Apache License Version 2.0 which is available at
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# SPDX-License-Identifier: Apache-2.0
+# *******************************************************************************
 import subprocess
 import pytest
 import os
@@ -347,7 +359,6 @@ def print_final_result(
         print("==== STDOUT ====:\n\n", BR.stdout)
         print("==== STDERR ====:\n\n", BR.stderr)
 
-
     is_success, reason = analyze_build_success(BR, metamodel_changed)
 
     status = "OK PASSED" if is_success else "XX FAILED"
@@ -389,14 +400,14 @@ def print_result_table(results: list[Result]):
 # Updated version of your test loop
 def test_and_clone_repos_updated(sphinx_base_dir, pytestconfig):
     # Setting up the Test Environment
-    
+
     # This might be hacky, but currently the best way I could solve the issue of going to the right place.
     os.chdir(sphinx_base_dir)
     curr_path = Path(__file__).parent
     # Finding git_root is needed to enable local overrides.
     git_root = find_git_root(curr_path)
 
-    # I think we need git_root, otherwise the rest makes not much sense. 
+    # I think we need git_root, otherwise the rest makes not much sense.
     if git_root is None:
         assert False, "Git root was none"
 
@@ -404,7 +415,7 @@ def test_and_clone_repos_updated(sphinx_base_dir, pytestconfig):
     gh_url = get_github_base_url(git_root)
     current_hash = get_current_git_commit(curr_path)
 
-    # Symlink local docs-as-code => sphinx tmp 
+    # Symlink local docs-as-code => sphinx tmp
     docs_as_code_dest = sphinx_base_dir / "docs_as_code"
     docs_as_code_dest.symlink_to(git_root)
 
@@ -549,7 +560,7 @@ def test_and_clone_repos_updated(sphinx_base_dir, pytestconfig):
 
             if not is_success:
                 overall_success = False
-        
+
         # NOTE: We have to change directories back to the parent, otherwise the cloning & override will not be correct
         os.chdir(Path.cwd().parent)
 
