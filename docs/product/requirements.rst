@@ -91,7 +91,7 @@ This section provides an overview of current process requirements and their clar
   :id: tool_req__docs_common_attr_title
   :implemented: PARTIAL
   :tags: Common Attributes
-  :satisfies: PROCESS_gd_req__requirements_attr_title
+  :satisfies: PROCESS_gd_req__req__attr_title
   :parent_covered: NO: Can not ensure summary
 
 
@@ -123,8 +123,8 @@ This section provides an overview of current process requirements and their clar
   :implemented: PARTIAL
   :tags: Common Attributes
   :satisfies:
-     PROCESS_gd_req__requirements_attr_security,
-     PROCESS_gd_req__arch_attr_security,
+     PROCESS_gd_req__req__attr_security,
+     PROCESS_gd_req__arch__attr_security,
 
   Docs-as-Code shall enforce that the ``security`` attribute has one of the following values:
 
@@ -342,6 +342,25 @@ This section provides an overview of current process requirements and their clar
      This requirement is not yet specified. The corresponding parent requirement is
      unclear and must be clarified before a precise tool requirement can be defined.
 
+
+.. tool_req:: Support Weak Word Content Checking
+   :id: tool_req__docs_req_weak_content
+   :tags: Requirements
+   :implemented: 
+   :parent_covered: YES
+   :satisfies: PROCESS_gd_req__req__attr_desc_weak
+   :status: valid
+
+   Docs-as-Code shall enforce that no weak words (defined in the metamodel) are used in the content/description for 
+   the following need types: 
+   
+   * Stakeholder Requirements
+   * Feature Requirements
+   * Component Requirements
+   * Tool Requirements
+
+
+
 -------------------------
 🔗 Links
 -------------------------
@@ -400,6 +419,27 @@ This section provides an overview of current process requirements and their clar
   * Component Architecture Interface = Real Interface (comp_arc_int)
   * Component Architecture Interface Operation = Real Interface Operation (comp_arc_int_op)
 
+--------------------------
+Architecture Attributes
+--------------------------
+
+.. tool_req:: Architecture Mandatory Attributes
+   :id: tool_req__docs_arch_attr_mandatory
+   :tags: Architecture
+   :satisfies: PROCESS_gd_req__arch__attr_mandatory
+   :implemented: Partial
+   :parent_covered: YES
+   :parent_has_problem: YES: Metamodel & Process aren't the same. Some definitions are not consistent in Process
+
+   Docs-as-Code shall enforce that the following attributes are present in any needs of type :need:`tool_req__docs_arch_types`
+
+   * Fulfils
+   * Safety
+   * Security
+   * Status
+   * UID
+
+   
 
 .. tool_req::Module Views
   :id: tool_req__docs_module_views
