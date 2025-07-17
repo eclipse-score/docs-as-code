@@ -694,6 +694,7 @@ graph_checks:
       condition: safety == QM
     check:
       satisfies: safety == QM
+    explanation: An ASIL requirement must link at least one parent/upstream ASIL requirement for correct decomposition. Please ensure the parent’s safety level is QM and its status is valid.
   # If need-req is `ASIL_B`, parent must be `QM` or `ASIL_B`.
   req_safety_linkage_asil_b:
     needs:
@@ -701,6 +702,7 @@ graph_checks:
       condition: safety == ASIL_B
     check:
       satisfies: safety != ASIL_D
+    explanation: An ASIL requirement must link at least one parent/upstream ASIL requirement for correct decomposition. Please ensure the parent’s safety level is not ASIL_D and its status is valid.
   # saf - ID gd_req__saf_linkage_safety
   # It shall be checked that Safety Analysis (DFA and FMEA) can only be linked via mitigate against
   #  - <Feature | Component | AoU> Requirements with the same ASIL or
@@ -712,3 +714,4 @@ graph_checks:
       condition: safety == ASIL_B
     check:
       mitigates: safety != QM
+    explanation: An ASIL requirement must link at least one parent/upstream ASIL requirement for correct decomposition. Please ensure the parent’s safety level is not QM and its status is valid.
