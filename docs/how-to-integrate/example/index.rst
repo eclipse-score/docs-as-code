@@ -39,7 +39,7 @@ This is a rendered example of the 'examples/linking-both' folder using the `docs
    :id: tool_req__example__some_title
    :reqtype: Process
    :security: YES
-   :safety: ASIL_D
+   :safety: ASIL_B
    :satisfies: PROCESS_gd_req__req__attr_uid
    :status: invalid
 

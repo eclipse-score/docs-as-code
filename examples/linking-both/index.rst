@@ -42,7 +42,7 @@ This is a simple example of a documentation page using the `docs` tool.
    :id: tool_req__index__some_title
    :reqtype: Process
    :security: YES
-   :safety: ASIL_D
+   :safety: ASIL_B
    :satisfies: PROCESS_gd_req__req__attr_uid
    :status: invalid
    
