@@ -166,7 +166,7 @@ needs_types:
     optional_links:
       contains: ^rl__.*$
 
-  # Documents
+  # Documents, process_description only
   doc_concept:
     title: Concept Definition
     prefix: doc_concept__
@@ -181,6 +181,7 @@ needs_types:
       id: ^doc_getstrt__[0-9a-z_]*$
       status: ^(valid|draft)$
 
+  # Documents, score, and other modules only
   document:
     title: Generic Document
     prefix: doc__
@@ -190,6 +191,20 @@ needs_types:
     optional_options:
       safety: "^(QM|ASIL_B)$"
       security: "^(YES|NO)$"
+    optional_links:
+      realizes: "^wp__.+$"
+
+  doc_tool:
+    title: Tool Verification Report
+    prefix: doc_tool__
+    mandatory_options:
+      id: ^doc_tool__[0-9a-z_]*$
+      status: ^(draft|evaluated|qualified|released|rejected)$
+      version: ^.*$
+      safety_affected: "^(YES|NO)$"
+      security_affected: "^(YES|NO)$"
+      tcl: "^(LOW|HIGH)$"
+    optional_links:
       realizes: "^wp__.+$"
 
   # Requirements
@@ -627,6 +642,11 @@ needs_extra_links:
   complies:
     incoming: complies to
     outgoing: complies
+
+  # document, doc_tool
+  realizes:
+    incoming: realized by
+    outgoing: realizes
 
   ##############################################################
   #  S-CORE Metamodel

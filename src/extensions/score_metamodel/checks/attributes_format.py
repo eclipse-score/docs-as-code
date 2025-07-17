@@ -41,6 +41,7 @@ def check_id_format(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
     if need["type"] in [
         "std_wp",
         "document",  # This is used in 'platform_managment' in score.
+        "doc_tool",
         "gd_guidl",
         "workflow",
         "gd_chklst",
