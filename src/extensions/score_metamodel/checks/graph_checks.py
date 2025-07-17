@@ -66,6 +66,7 @@ def eval_need_condition(
        Recursively call the eval_need_function for each check and combine the
        results with the binary operation which was specified in the yaml file.
     """
+
     oper: dict[str, Any] = {
         "and": operator.and_,
         "or": operator.or_,
@@ -157,8 +158,6 @@ def check_metamodel_graph(
                     continue
 
                 parent_ids = need[parent_relation]
-                if not isinstance(parent_ids, list):
-                    parent_ids = [parent_ids]
 
                 for parent_id in parent_ids:
                     parent_need = needs_dict_all.get(parent_id)
