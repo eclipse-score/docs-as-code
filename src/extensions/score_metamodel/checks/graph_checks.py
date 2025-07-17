@@ -14,13 +14,12 @@ import operator
 from collections.abc import Callable
 from typing import Any, Literal
 
-from sphinx.application import Sphinx
-from sphinx_needs.data import NeedsInfoType, NeedsView
-
 from score_metamodel import (
     CheckLogger,
     graph_check,
 )
+from sphinx.application import Sphinx
+from sphinx_needs.data import NeedsInfoType, NeedsView
 
 
 def eval_need_check(need: NeedsInfoType, check: str, log: CheckLogger) -> bool:
@@ -137,19 +136,26 @@ def check_metamodel_graph(
     # Convert list to dictionary for easy lookup
     needs_dict_all = {need["id"]: need for need in all_needs.values()}
     needs_local = list(all_needs.filter_is_external(False).values())
+
     # Iterate over all graph checks
-    for check in graph_checks_global.items():
-        apply, eval = check[1].values()
-        # Get all needs that match the selection criteria
+    for check_name, check_config in graph_checks_global.items():
+        apply = check_config.get("needs")
+        eval = check_config.get("check")
+        explanation = check_config.get("explanation", "")
+
+        # Get all needs matching the selection criteria
         selected_needs = get_need_selection(needs_local, apply, log)
 
         for need in selected_needs:
             for parent_relation in list(eval.keys()):
                 if parent_relation not in need:
-                    msg = f"Attribute not defined: {parent_relation}"
+                    msg = f"Attribute not defined: `{parent_relation}` in need `{need['id']}`."
                     log.warning_for_need(need, msg)
                     continue
+
                 parent_ids = need[parent_relation]
+                if not isinstance(parent_ids, list):
+                    parent_ids = [parent_ids]
 
                 for parent_id in parent_ids:
                     parent_need = needs_dict_all.get(parent_id)
@@ -160,7 +166,9 @@ def check_metamodel_graph(
 
                     if not eval_need_condition(parent_need, eval[parent_relation], log):
                         msg = (
-                            f"parent need `{parent_id}` does not fulfill "
-                            f"condition `{eval[parent_relation]}`."
+                            f"Parent need `{parent_id}` does not fulfill "
+                            f"condition `{eval[parent_relation]}` for `{need['id']}`."
                         )
+                        if explanation:
+                            msg += f" Explanation: {explanation}"
                         log.warning_for_need(need, msg)
