@@ -55,10 +55,17 @@ def eval_need_check(need: NeedsInfoType, check: str, log: CheckLogger) -> bool:
     return oper[parts[1]](need[parts[0]], parts[2])
 
 
-
 def eval_need_condition(
     need: NeedsInfoType, condition: str | dict[str, list[Any]], log: CheckLogger
 ) -> bool:
+    """Evaluate a condition on a need:
+    1. Check if the condition is only a simple check (e.g. "status == valid")
+       If so call the check function.
+    2. If the condition is a combination of multiple checks
+       (e.g. "and: [check1, check2]")
+       Recursively call the eval_need_function for each check and combine the
+       results with the binary operation which was specified in the yaml file.
+    """
     oper: dict[str, Any] = {
         "and": operator.and_,
         "or": operator.or_,
@@ -78,8 +85,10 @@ def eval_need_condition(
         return oper["not"](eval_need_condition(need, vals[0], log))
 
     if cond in ["and", "or", "xor"]:
-        return reduce(lambda a, b: oper[cond](a, b),
-                      (eval_need_condition(need, val, log) for val in vals))
+        return reduce(
+            lambda a, b: oper[cond](a, b),
+            (eval_need_condition(need, val, log) for val in vals),
+        )
     raise ValueError(f"Unsupported condition operator: {cond}")
 
 
@@ -134,8 +143,9 @@ def check_metamodel_graph(
         apply = check_config.get("needs")
         eval = check_config.get("check")
         explanation = check_config.get("explanation", "")
-        assert explanation != "", f"Explanation for graph check {check_name} is missing. Explanations are mandatory for graph checks."
-
+        assert explanation != "", (
+            f"Explanation for graph check {check_name} is missing. Explanations are mandatory for graph checks."
+        )
         # Get all needs matching the selection criteria
         selected_needs = get_need_selection(needs_local, apply, log)
 
