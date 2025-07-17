@@ -50,14 +50,16 @@
    :status: valid
 
 
+
 .. Negative Test: Child requirement QM. Parent requirement is `ASIL_B`. Child cant fulfill the safety level of the parent.
-#EXPECT: feat_req__child__3: Parent need `feat_req__parent__ASIL_B` does not fulfill condition `safety == QM` for `feat_req__child__3`. Explanation: An ASIL requirement must link at least one parent/upstream ASIL requirement for correct decomposition. Please ensure the parent’s safety level is QM and its status is valid.
+#EXPECT: feat_req__child__3: Parent need `feat_req__parent__ASIL_B` does not fulfill condition `safety == QM`. Explanation: An ASIL requirement must link at least one parent/upstream ASIL requirement for correct decomposition. Please ensure the parent’s safety level is QM and its status is valid.
 
 .. comp_req:: Child requirement 3
    :id: feat_req__child__3
    :safety: QM
    :satisfies: feat_req__parent__ASIL_B
    :status: valid
+
 
 
 .. Parent requirement does not exist
@@ -73,7 +75,7 @@
 
 .. Mitigation of Safety Analysis (FMEA and DFA) shall be checked. Mitigation shall have the same or higher safety level than the analysed item.
 .. Negative Test: Linked to a mitigation that is lower than the safety level of the analysed item.
-#EXPECT: feat_saf_dfa__child__5: Parent need `feat_req__parent__QM` does not fulfill condition `safety != QM` for `feat_saf_dfa__child__5`. Explanation: An ASIL requirement must link at least one parent/upstream ASIL requirement for correct decomposition. Please ensure the parent’s safety level is not QM and its status is valid.
+#EXPECT: feat_saf_dfa__child__5: Parent need `feat_req__parent__QM` does not fulfill condition `safety != QM`. Explanation: An ASIL_B safety requirement must link to a ASIL_B requirement. Please ensure that the linked requirements safety level is not QM and it's status is valid.
 
 .. feat_saf_dfa:: Child requirement 5
    :id: feat_saf_dfa__child__5
@@ -92,8 +94,9 @@
    :mitigated_by: feat_req__parent__ASIL_B
 
 
+
 .. Negative Test: Linked to a mitigation that is lower than the safety level of the analysed item.
-#EXPECT: comp_saf_dfa__child__7: Parent need `feat_req__parent__QM` does not fulfill condition `safety != QM` for `comp_saf_dfa__child__7`. Explanation: An ASIL requirement must link at least one parent/upstream ASIL requirement for correct decomposition. Please ensure the parent’s safety level is not QM and its status is valid.
+#EXPECT: comp_saf_dfa__child__7: Parent need `feat_req__parent__QM` does not fulfill condition `safety != QM`. Explanation: An ASIL_B safety requirement must link to a ASIL_B requirement. Please ensure that the linked requirements safety level is not QM and it's status is valid.
 
 .. comp_saf_dfa:: Child requirement 7
    :id: comp_saf_dfa__child__7
@@ -114,7 +117,7 @@
 
 
 .. Negative Test: Linked to a mitigation that is lower than the safety level of the analysed item.
-#EXPECT:  Parent need `feat_req__parent__QM` does not fulfill condition `safety != QM` for `feat_saf_dfa__child__9`. Explanation: An ASIL requirement must link at least one parent/upstream ASIL requirement for correct decomposition. Please ensure the parent’s safety level is not QM and its status is valid.
+#EXPECT: feat_saf_dfa__child__9: Parent need `feat_req__parent__QM` does not fulfill condition `safety != QM`. Explanation: An ASIL_B safety requirement must link to a ASIL_B requirement. Please ensure that the linked requirements safety level is not QM and it's status is valid.
 
 .. feat_saf_dfa:: Child requirement 9
    :id: feat_saf_dfa__child__9
@@ -133,8 +136,9 @@
    :mitigated_by: feat_req__parent__ASIL_B
 
 
+
 .. Negative Test: Linked to a mitigation that is lower than the safety level of the analysed item.
-#EXPECT: Parent need `feat_req__parent__QM` does not fulfill condition `safety != QM` for `feat_saf_fmea__child__11`. Explanation: An ASIL requirement must link at least one parent/upstream ASIL requirement for correct decomposition. Please ensure the parent’s safety level is not QM and its status is valid.
+#EXPECT: feat_saf_fmea__child__11: Parent need `feat_req__parent__QM` does not fulfill condition `safety != QM`. Explanation: An ASIL_B safety requirement must link to a ASIL_B requirement. Please ensure that the linked requirements safety level is not QM and it's status is valid.
 
 .. feat_saf_fmea:: Child requirement 11
    :id: feat_saf_fmea__child__11
@@ -165,7 +169,7 @@
 
 
 .. Negative Test: Linked to a mitigation that is lower than the safety level of the analysed item.
-#EXPECT: Parent need `feat_req__parent__QM` does not fulfill condition `safety != QM` for `comp_saf_fmea__child__14`. Explanation: An ASIL requirement must link at least one parent/upstream ASIL requirement for correct decomposition. Please ensure the parent’s safety level is not QM and its status is valid.
+#EXPECT: comp_saf_fmea__child__14: Parent need `feat_req__parent__QM` does not fulfill condition `safety != QM`. Explanation: An ASIL_B safety requirement must link to a ASIL_B requirement. Please ensure that the linked requirements safety level is not QM and it's status is valid.
 
 .. comp_saf_fmea:: Child requirement 14
    :id: comp_saf_fmea__child__14
