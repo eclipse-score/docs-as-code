@@ -6,6 +6,22 @@ Docs-as-code tooling for Eclipse S-CORE
 
 The S-CORE docs Sphinx configuration and build code.
 
+## Usage
+
+### Using the module in your Bazel project
+
+To use `score_docs_as_code` in your Bazel project, add the following to your `MODULE.bazel`:
+
+```starlark
+bazel_dep(name = "score_docs_as_code", version = "...")
+
+# Use the setup extension to access transitive dependencies
+use_extension("@score_docs_as_code//setup:setup.bzl", "setup")
+use_repo(setup, "score_python_basics")
+```
+
+This pattern allows you to use the `docs()` macro and other utilities without manually declaring all transitive dependencies like `score_python_basics` in your own `MODULE.bazel`.
+
 ## Building documentation
 
 #### Run a documentation build:
