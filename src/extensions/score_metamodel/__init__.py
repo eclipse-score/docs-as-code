@@ -150,8 +150,8 @@ def load_metamodel_data():
     weak_words_list = global_base_options.get("prohibited_words", {}).get("content", [])
 
     # Get the list of all requirements
-    all_requirements_types = data.get("all_requirements_types:", {})
-
+    all_requirements_types = data.get("all_requirements_types", {})
+    print(all_requirements_types)
     # Default options by sphinx, sphinx-needs or anything else we need to account for
     default_options_list = default_options()
 

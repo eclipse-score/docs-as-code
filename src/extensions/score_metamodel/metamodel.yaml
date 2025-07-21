@@ -30,6 +30,7 @@ needs_types_base_options:
       - some
       - thing
       - absolutely
+
 all_requirements_types:
   - stkh_req
   - feat_req
