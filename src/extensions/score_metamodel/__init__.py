@@ -145,10 +145,12 @@ def load_metamodel_data():
     global_base_options = data.get("needs_types_base_options", {})
     global_base_options_optional_opts = global_base_options.get("optional_options", {})
 
-    # Get the list of stop-words and weak-words
     # Get the stop_words and weak_words as separate lists
     stop_words_list = global_base_options.get("prohibited_words", {}).get("title", [])
     weak_words_list = global_base_options.get("prohibited_words", {}).get("content", [])
+
+    # Get the list of all requirements
+    all_requirements_types = data.get("all_requirements_types:", {})
 
     # Default options by sphinx, sphinx-needs or anything else we need to account for
     default_options_list = default_options()
@@ -217,6 +219,7 @@ def load_metamodel_data():
         "needs_extra_links": needs_extra_links_list,
         "needs_extra_options": needs_extra_options,
         "needs_graph_check": graph_check_dict,
+        "all_requirements_types": all_requirements_types,
     }
 
 
@@ -299,7 +302,7 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     app.config.graph_checks = metamodel["needs_graph_check"]
     app.config.stop_words = metamodel["stop_words"]
     app.config.weak_words = metamodel["weak_words"]
-
+    app.config.all_requirements_types = metamodel["all_requirements_types"]
     # Ensure that 'needs.json' is always build.
     app.config.needs_build_json = True
     app.config.needs_reproducible_json = True

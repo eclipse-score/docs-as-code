@@ -96,7 +96,8 @@ def check_title(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
     This helps enforce clear and concise naming conventions.
     """
     stop_words = app.config.stop_words
-    if need["type"] in ["stkh_req", "feat_req", "comp_req"]:
+    all_requirements_types = app.config.all_requirements_types
+    if need["type"] in all_requirements_types:
         for word in stop_words:
             if word in need["title"]:
                 msg = (

@@ -30,6 +30,24 @@ needs_types_base_options:
       - some
       - thing
       - absolutely
+all_requirements_types:
+  - stkh_req
+  - feat_req
+  - comp_req
+  - stkh_req
+  - feat_req
+  - comp_req
+  - aou_req
+  - gd_req
+  - tool_req
+  - feat_arch_static
+  - feat_arch_dyn
+  - logic_arc_int
+  - logic_arc_int_op
+  - comp_arc_sta
+  - comp_arc_dyn
+  - comp_arc_int
+  - comp_arc_int_op
 
 needs_types:
   ##############################################################################
