@@ -34,9 +34,6 @@ all_requirements_types:
   - stkh_req
   - feat_req
   - comp_req
-  - stkh_req
-  - feat_req
-  - comp_req
   - aou_req
   - gd_req
   - tool_req
