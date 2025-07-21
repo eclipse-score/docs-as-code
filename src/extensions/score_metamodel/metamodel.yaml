@@ -734,4 +734,4 @@ graph_checks:
       condition: safety == ASIL_B
     check:
       mitigates: safety != QM
-    explanation: An ASIL_B safety requirement must link to a ASIL_B or ASIL_D requirement. Please ensure that the linked requirements safety level is not QM and it's status is valid.
+    explanation: An ASIL_B safety requirement must link to a ASIL_B requirement. Please ensure that the linked requirements safety level is not QM and it's status is valid.
