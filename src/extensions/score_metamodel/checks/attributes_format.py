@@ -16,12 +16,13 @@ from sphinx.application import Sphinx
 from sphinx_needs.data import NeedsInfoType
 
 
-def get_need_type(needs_types: list[str], directive: str)-> str:
+def get_need_type(needs_types: list[str], directive: str) -> str:
     for need_type in needs_types:
         assert isinstance(need_type, dict), need_type
         if need_type["directive"] == directive:
             return need_type
     raise ValueError(f"Need type {directive} not found in needs_types")
+
 
 # req-#id: gd_req__req__attr_uid
 @local_check
@@ -105,7 +106,10 @@ def check_title(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
     stop_words = app.config.stop_words
     need_options = get_need_type(app.config.needs_types, need["type"])
 
-    if any(tag in need_options.get("tags", []) for tag in ["architecture_element", "requirement"]):
+    if any(
+        tag in need_options.get("tags", [])
+        for tag in ["architecture_element", "requirement"]
+    ):
         for word in stop_words:
             if word in need["title"]:
                 msg = (
