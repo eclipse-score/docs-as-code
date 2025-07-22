@@ -473,32 +473,39 @@
    :safety: ASIL_B
 
 
-..
-   Ensuring that empty content is detected correctly
-#EXPECT: stkh_req__test_no_content: Need has no content. Content is mandatory for needs of type stkh_req
 
-.. stkh_req:: This is a test
-   :id: stkh_req__test_no_content
-   :status: valid
-   :safety: QM
-
+.. 
+   # The check is still marked as new_check, so there are not warnings currently.
+   # The checks will be enabled again once the check is active as a true warning check.
 
 ..
-   Ensuring that non empty content is detected correctly
-#EXPECT-NOT: stkh_req__test_content: Need has no content. Content is mandatory for needs of type stkh_req
-
-.. stkh_req:: This is a test
-   :id: stkh_req__test_content
-   :status: valid
-   :safety: QM
-
-   Some content, to not trigger the warning
-
 
 ..
-   This should not trigger, as 'std_wp' is not checked for content
-#EXPECT-NOT: std_wp__test_content : Need has no content. Content is mandatory for needs of type stkh_req
-
-.. std_wp:: This is a test
-   :id: std_wp__test_content
+..    Ensuring that empty content is detected correctly
+.. #EXPECT: stkh_req__test_no_content: Need has no content. Content is mandatory for needs of type stkh_req
+..
+.. .. stkh_req:: This is a test
+..    :id: stkh_req__test_no_content
+..    :status: valid
+..    :safety: QM
+..
+..
+.. ..
+..    Ensuring that non empty content is detected correctly
+.. #EXPECT-NOT: stkh_req__test_content: Need has no content. Content is mandatory for needs of type stkh_req
+..
+.. .. stkh_req:: This is a test
+..    :id: stkh_req__test_content
+..    :status: valid
+..    :safety: QM
+..
+..    Some content, to not trigger the warning
+..
+..
+.. ..
+..    This should not trigger, as 'std_wp' is not checked for content
+.. #EXPECT-NOT: std_wp__test_content : Need has no content. Content is mandatory for needs of type stkh_req
+..
+.. .. std_wp:: This is a test
+..    :id: std_wp__test_content
 
