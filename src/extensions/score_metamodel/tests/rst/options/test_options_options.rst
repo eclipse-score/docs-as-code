@@ -492,7 +492,7 @@
    :status: valid
    :safety: QM
 
-   Some content, to not trigger the test
+   Some content, to not trigger the warning
 
 
 ..
@@ -502,4 +502,3 @@
 .. std_wp:: This is a test
    :id: std_wp__test_content
 
-   Some content, to not trigger the test
