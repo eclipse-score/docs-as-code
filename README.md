@@ -6,6 +6,10 @@ Docs-as-code tooling for Eclipse S-CORE
 
 The S-CORE docs Sphinx configuration and build code.
 
+> [!NOTE]
+> This repository offers a [DevContainer](https://containers.dev/).
+> For setting this up read [eclipse-score/devcontainer/README.md#inside-the-container](https://github.com/eclipse-score/devcontainer/blob/main/README.md#inside-the-container).
+
 ## Building documentation
 
 #### Run a documentation build:
