@@ -14,14 +14,14 @@ import json
 import os
 import subprocess
 import tempfile
-from pathlib import Path
-from sphinx_needs.data import NeedsMutable
-from src.extensions.score_metamodel.tests import need as test_need
 from dataclasses import asdict
+from pathlib import Path
 from typing import Any
 
-
 import pytest
+from sphinx_needs.data import NeedsMutable
+
+from src.extensions.score_metamodel.tests import need as create_need
 
 # Import the module under test
 # Note: You'll need to adjust these imports based on your actual module structure
@@ -37,8 +37,8 @@ from src.extensions.score_source_code_linker import (
 )
 from src.extensions.score_source_code_linker.needlinks import (
     NeedLink,
-    store_source_code_links_json,
     load_source_code_links_json,
+    store_source_code_links_json,
 )
 
 """
@@ -270,7 +270,7 @@ def test_get_cache_filename():
 
 def make_needs(needs_dict):
     return NeedsMutable(
-        {need_id: test_need(**params) for need_id, params in needs_dict.items()}
+        {need_id: create_need(**params) for need_id, params in needs_dict.items()}
     )
 
 
