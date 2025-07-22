@@ -215,12 +215,6 @@
    :status: valid
    :safety: ASIL_B
 
-.. #EXPECT: doc__test_bad_1.safety (ASIL_D): does not follow pattern `^(QM|ASIL_B)$`.
-
-.. .. document:: This is a test document
-..    :id: doc__test_bad_1
-..    :status: valid
-..    :safety: ASIL_D
 
 #EXPECT-NOT: stkh_req__test_good_1.safety (QM): does not follow pattern `^(QM|ASIL_B)$`.
 
@@ -236,12 +230,6 @@
    :status: valid
    :safety: ASIL_B
 
-.. #EXPECT: stkh_req__test_bad_1.safety (ASIL_D): does not follow pattern `^(QM|ASIL_B)$`.
-
-.. .. stkh_req:: This is a test
-..    :id: stkh_req__test_bad_1
-..    :status: valid
-..    :safety: ASIL_D
 
 #EXPECT-NOT: feat_req__test_good_1.safety (QM): does not follow pattern `^(QM|ASIL_B)$`.
 
@@ -257,12 +245,6 @@
    :status: valid
    :safety: ASIL_B
 
-.. #EXPECT: feat_req__test_bad_1.safety (ASIL_D): does not follow pattern `^(QM|ASIL_B)$`.
-
-.. .. feat_req:: This is a test
-..    :id: feat_req__test_bad_1
-..    :status: valid
-..    :safety: ASIL_D
 
 #EXPECT-NOT: comp_req__test_good_1.safety (QM): does not follow pattern `^(QM|ASIL_B)$`.
 
@@ -278,12 +260,6 @@
    :status: valid
    :safety: ASIL_B
 
-.. #EXPECT: comp_req__test_bad_1.safety (ASIL_D): does not follow pattern `^(QM|ASIL_B)$`.
-
-.. .. comp_req:: This is a test
-..    :id: comp_req__test_bad_1
-..    :status: valid
-..    :safety: ASIL_D
 
 #EXPECT-NOT: tool_req__test_good_1.safety (QM): does not follow pattern `^(QM|ASIL_B)$`.
 
@@ -299,12 +275,6 @@
    :status: valid
    :safety: ASIL_B
 
-.. #EXPECT: tool_req__test_bad_1.safety (ASIL_D): does not follow pattern `^(QM|ASIL_B)$`.
-
-.. .. tool_req:: This is a test
-..    :id: tool_req__test_bad_1
-..    :status: valid
-..    :safety: ASIL_D
 
 #EXPECT-NOT: aou_req__test_good_1.safety (QM): does not follow pattern `^(QM|ASIL_B)$`.
 
@@ -320,12 +290,6 @@
    :status: valid
    :safety: ASIL_B
 
-.. #EXPECT: aou_req__test_bad_1.safety (ASIL_D): does not follow pattern `^(QM|ASIL_B)$`.
-
-.. .. aou_req:: This is a test
-..    :id: aou_req__test_bad_1
-..    :status: valid
-..    :safety: ASIL_D
 
 #EXPECT-NOT: feat_arc_sta__test_good_1.safety (QM): does not follow pattern `^(QM|ASIL_B)$`.
 
@@ -341,12 +305,6 @@
    :status: valid
    :safety: ASIL_B
 
-.. #EXPECT: feat_arc_sta__test_bad_1.safety (ASIL_D): does not follow pattern `^(QM|ASIL_B)$`.
-
-.. .. feat_arc_sta:: This is a test
-..    :id: feat_arc_sta__test_bad_1
-..    :status: valid
-..    :safety: ASIL_D
 
 #EXPECT-NOT: feat_arc_dyn__test_good_1.safety (QM): does not follow pattern `^(QM|ASIL_B)$`.
 
@@ -362,12 +320,6 @@
    :status: valid
    :safety: ASIL_B
 
-.. #EXPECT: feat_arc_dyn__test_bad_1.safety (ASIL_D): does not follow pattern `^(QM|ASIL_B)$`.
-
-.. .. feat_arc_dyn:: This is a test
-..    :id: feat_arc_dyn__test_bad_1
-..    :status: valid
-..    :safety: ASIL_D
 
 #EXPECT-NOT: logic_arc_int__test_good_1.safety (QM): does not follow pattern `^(QM|ASIL_B)$`.
 
@@ -383,12 +335,6 @@
    :status: valid
    :safety: ASIL_B
 
-.. #EXPECT: logic_arc_int__test_bad_1.safety (ASIL_D): does not follow pattern `^(QM|ASIL_B)$`.
-
-.. .. logic_arc_int:: This is a test
-..    :id: logic_arc_int__test_bad_1
-..    :status: valid
-..    :safety: ASIL_D
 
 #EXPECT-NOT: logic_arc_int_op__test_good_1.safety (QM): does not follow pattern `^(QM|ASIL_B)$`.
 
@@ -404,12 +350,6 @@
    :status: valid
    :safety: ASIL_B
 
-.. #EXPECT: logic_arc_int_op__test_bad_1.safety (ASIL_D): does not follow pattern `^(QM|ASIL_B)$`.
-
-.. .. logic_arc_int_op:: This is a test
-..    :id: logic_arc_int_op__test_bad_1
-..    :status: valid
-..    :safety: ASIL_D
 
 #EXPECT-NOT: comp_arc_sta__test_good_1.safety (QM): does not follow pattern `^(QM|ASIL_B)$`.
 
@@ -425,12 +365,6 @@
    :status: valid
    :safety: ASIL_B
 
-.. #EXPECT: comp_arc_sta__test_bad_1.safety (ASIL_D): does not follow pattern `^(QM|ASIL_B)$`.
-
-.. .. comp_arc_sta:: This is a test
-..    :id: comp_arc_sta__test_bad_1
-..    :status: valid
-..    :safety: ASIL_D
 
 #EXPECT-NOT: comp_arc_dyn__test_good_1.safety (QM): does not follow pattern `^(QM|ASIL_B)$`.
 
@@ -446,12 +380,6 @@
    :status: valid
    :safety: ASIL_B
 
-.. #EXPECT: comp_arc_dyn__test_bad_1.safety (ASIL_D): does not follow pattern `^(QM|ASIL_B)$`.
-
-.. .. comp_arc_dyn:: This is a test
-..    :id: comp_arc_dyn__test_bad_1
-..    :status: valid
-..    :safety: ASIL_D
 
 #EXPECT-NOT: real_arc_int__test_good_1.safety (QM): does not follow pattern `^(QM|ASIL_B)$`.
 
@@ -467,12 +395,6 @@
    :status: valid
    :safety: ASIL_B
 
-.. #EXPECT: real_arc_int__test_bad_1.safety (ASIL_D): does not follow pattern `^(QM|ASIL_B)$`.
-
-.. .. real_arc_int:: This is a test
-..    :id: real_arc_int__test_bad_1
-..    :status: valid
-..    :safety: ASIL_D
 
 #EXPECT-NOT: real_arc_int_op__test_good_1.safety (QM): does not follow pattern `^(QM|ASIL_B)$`.
 
@@ -488,12 +410,6 @@
    :status: valid
    :safety: ASIL_B
 
-.. #EXPECT: real_arc_int_op__test_bad_1.safety (ASIL_D): does not follow pattern `^(QM|ASIL_B)$`.
-
-.. .. real_arc_int_op:: This is a test
-..    :id: real_arc_int_op__test_bad_1
-..    :status: valid
-..    :safety: ASIL_D
 
 #EXPECT-NOT: dd_sta__test_good_1.safety (QM): does not follow pattern `^(QM|ASIL_B)$`.
 
@@ -509,12 +425,6 @@
    :status: valid
    :safety: ASIL_B
 
-.. #EXPECT: dd_sta__test_bad_1.safety (ASIL_D): does not follow pattern `^(QM|ASIL_B)$`.
-
-.. .. dd_sta:: This is a test
-..    :id: dd_sta__test_bad_1
-..    :status: valid
-..    :safety: ASIL_D
 
 #EXPECT-NOT: dd_dyn__test_good_1.safety (QM): does not follow pattern `^(QM|ASIL_B)$`.
 
@@ -530,12 +440,6 @@
    :status: valid
    :safety: ASIL_B
 
-.. #EXPECT: dd_dyn__test_bad_1.safety (ASIL_D): does not follow pattern `^(QM|ASIL_B)$`.
-
-.. .. dd_dyn:: This is a test
-..    :id: dd_dyn__test_bad_1
-..    :status: valid
-..    :safety: ASIL_D
 
 #EXPECT-NOT: sw_unit__test_good_1.safety (QM): does not follow pattern `^(QM|ASIL_B)$`.
 
@@ -551,9 +455,3 @@
    :status: valid
    :safety: ASIL_B
 
-.. #EXPECT: sw_unit__test_bad_1.safety (ASIL_D): does not follow pattern `^(QM|ASIL_B)$`.
-
-.. .. sw_unit:: This is a test
-..    :id: sw_unit__test_bad_1
-..    :status: valid
-..    :safety: ASIL_D
