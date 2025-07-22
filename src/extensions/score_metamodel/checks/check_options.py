@@ -107,7 +107,7 @@ def check_content(
         # HINT: Seems that falsey evaluation of content fails without bool conversion.
         if not bool(need["content"]):
             msg = f"Need has no content. Content is mandatory for needs of type {need['type']}"
-            log.warning_for_need(need, msg)
+            log.warning_for_need(need, msg, new_check=True)
 
 
 # req-#id: gd_req__req__attr_type

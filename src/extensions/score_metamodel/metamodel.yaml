@@ -73,8 +73,6 @@ needs_types:
       status: ^(valid)$
     optional_links:
       links: ^.*$
-    tags:
-      - requirement
 
   std_wp:
     title: Standard Work Product
