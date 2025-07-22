@@ -16,8 +16,6 @@ source code links from a JSON file and add them to the needs.
 """
 
 import subprocess
-import os
-from pprint import pprint
 from collections import defaultdict
 from copy import deepcopy
 from pathlib import Path
@@ -41,7 +39,8 @@ from src.extensions.score_source_code_linker.needlinks import (
 )
 
 LOGGER = get_logger(__name__)
-LOGGER.setLevel("DEBUG")
+# Outcomment this to enable more verbose logging
+# LOGGER.setLevel("DEBUG")
 
 
 def get_cache_filename(build_dir: Path) -> Path:
@@ -56,9 +55,11 @@ def setup_once(app: Sphinx, config: Config):
     # might be the only way to solve this?
     if "skip_rescanning_via_source_code_linker" in app.config:
         return
-    print(f"DEBUG: Workspace root is {find_ws_root()}")
-    print(f"DEBUG: Current working directory is {Path('.')} = {Path('.').resolve()}")
-    print(f"DEBUG: Git root is {find_git_root()}")
+    LOGGER.debug(f"DEBUG: Workspace root is {find_ws_root()}")
+    LOGGER.debug(
+        f"DEBUG: Current working directory is {Path('.')} = {Path('.').resolve()}"
+    )
+    LOGGER.debug(f"DEBUG: Git root is {find_git_root()}")
 
     # Run only for local files!
     # ws_root is not set when running on external repositories (dependencies).
@@ -235,7 +236,6 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
         env: Buildenvironment, this is filled automatically
         app: Sphinx app application, this is filled automatically
     """
-    print("inject_links_into_needs!!!!")
 
     ws_root = find_ws_root()
     assert ws_root
@@ -247,9 +247,9 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
     )  # TODO: why do we create a copy? Can we also needs_copy = needs[:]? copy(needs)?
 
     for id, need in needs.items():
-        if need["source_code_link"]:
-            print(
-                f"?? Need {need['id']} already has source_code_link: {need['source_code_link']}"
+        if need.get("source_code_link"):
+            LOGGER.debug(
+                f"?? Need {need['id']} already has source_code_link: {need.get('source_code_link')}"
             )
 
     source_code_links = load_source_code_links_json(get_cache_filename(app.outdir))

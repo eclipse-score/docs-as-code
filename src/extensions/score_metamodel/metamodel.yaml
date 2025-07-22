@@ -720,7 +720,10 @@ graph_checks:
       include: comp_req, feat_req
       condition: safety == ASIL_B
     check:
-      satisfies: safety != ASIL_D
+      satisfies:
+        or:
+          - safety == ASIL_B
+          - safety == QM
   # saf - ID gd_req__saf_linkage_safety
   # It shall be checked that Safety Analysis (DFA and FMEA) can only be linked via mitigate against
   #  - <Feature | Component | AoU> Requirements with the same ASIL or
