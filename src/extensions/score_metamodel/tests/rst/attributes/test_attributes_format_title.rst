@@ -25,6 +25,18 @@
 .. feat_req:: This is a test
    :id: feat_req__test__abce
 
+.. Title of an architecture element contains a stop word
+#EXPECT: logic_arc_int__test__abcd.title (This must work): contains a stop word: `must`.
+
+.. logic_arc_int:: This must work
+   :id: logic_arc_int__test__abcd
+
+.. Title of an architecture element contains no stop word
+#EXPECT-NOT: logic_arc_int__test__abce.title (This is a test): contains a stop word
+
+.. logic_arc_int:: This is a test
+   :id: logic_arc_int__test__abce
+
 .. Title of requirement of type std_wp is not checked for stop words
 #EXPECT-NOT: std_wp__test__abce.title (This must work): contains a stop word: `must`.
 

@@ -16,6 +16,14 @@ from sphinx.application import Sphinx
 from sphinx_needs.data import NeedsInfoType
 
 
+def get_need_type(needs_types: list[str], directive: str) -> str:
+    for need_type in needs_types:
+        assert isinstance(need_type, dict), need_type
+        if need_type["directive"] == directive:
+            return need_type
+    raise ValueError(f"Need type {directive} not found in needs_types")
+
+
 # req-#id: gd_req__req__attr_uid
 @local_check
 def check_id_format(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
@@ -96,7 +104,12 @@ def check_title(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
     This helps enforce clear and concise naming conventions.
     """
     stop_words = app.config.stop_words
-    if need["type"] in ["stkh_req", "feat_req", "comp_req"]:
+    need_options = get_need_type(app.config.needs_types, need["type"])
+
+    if any(
+        tag in need_options.get("tags", [])
+        for tag in ["architecture_element", "requirement"]
+    ):
         for word in stop_words:
             if word in need["title"]:
                 msg = (
