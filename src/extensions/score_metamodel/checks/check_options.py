@@ -103,7 +103,7 @@ def check_content(
 ):
     need_options = get_need_type(app.config.needs_types, need["type"])
     # ONLY requirements are needed to be checked here
-    if "requirement" in need_options.get("tags",[]):
+    if "requirement" in need_options.get("tags", []):
         # HINT: Seems that falsey evaluation of content fails without bool conversion.
         if not bool(need["content"]):
             msg = f"Need has no content. Content is mandatory for needs of type {need['type']}"
