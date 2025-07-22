@@ -467,6 +467,8 @@ needs_types:
       language: ^(cpp|rust)$
     optional_links:
       fulfils: ^comp_req__.+$
+    tags:
+      - architecture_element
 
   real_arc_int_op:
     title: Component Architecture Interface Operation
@@ -482,6 +484,8 @@ needs_types:
       included_by: ^real_arc_int__.+$
     optional_links:
       implements: ^logic_arc_int_op__.+$
+    tags:
+      - architecture_element
 
   review_header:
     prefix: review__header

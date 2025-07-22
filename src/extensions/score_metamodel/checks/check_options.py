@@ -12,6 +12,8 @@
 # *******************************************************************************
 import re
 from collections.abc import Generator
+from typing import cast
+from pprint import pprint
 
 from score_metamodel import (
     CheckLogger,
@@ -26,7 +28,7 @@ FieldCheck = tuple[dict[str, str], bool]
 CheckingDictType = dict[str, list[FieldCheck]]
 
 
-def get_need_type(needs_types: list[NeedType], directive: str):
+def get_need_type(needs_types: list[NeedType], directive: str)-> NeedType:
     for need_type in needs_types:
         assert isinstance(need_type, dict), need_type
         if need_type["directive"] == directive:
@@ -91,6 +93,22 @@ def validate_fields(
                     f"pattern `{pattern}` is not a valid regex pattern.",
                 )
 
+
+# req-Id: tool_req__docs_common_attr_description
+@local_check
+def check_content(
+    app: Sphinx,
+    need: NeedsInfoType,
+    log: CheckLogger,
+):
+
+    need_options = get_need_type(app.config.needs_types, need["type"])
+    # ONLY requirements are needed to be checked here
+    if "requirement" in need_options.get("tags",[]):
+        # HINT: Seems that falsey evaluation of content fails without bool conversion.
+        if not bool(need["content"]):
+            msg = f"Need has no content. Content is mandatory for needs of type {need['type']}"
+            log.warning_for_need(need, msg)
 
 # req-#id: gd_req__req__attr_type
 # req-#id: gd_req__requirements_attr_security
