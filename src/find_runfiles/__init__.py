@@ -16,7 +16,7 @@ import sys
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+# logger.setLevel(logging.DEBUG)
 
 
 def _log_debug(message: str):
