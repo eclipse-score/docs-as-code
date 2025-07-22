@@ -28,7 +28,7 @@ FieldCheck = tuple[dict[str, str], bool]
 CheckingDictType = dict[str, list[FieldCheck]]
 
 
-def get_need_type(needs_types: list[NeedType], directive: str)-> NeedType:
+def get_need_type(needs_types: list[NeedType], directive: str) -> NeedType:
     for need_type in needs_types:
         assert isinstance(need_type, dict), need_type
         if need_type["directive"] == directive:
@@ -101,7 +101,6 @@ def check_content(
     need: NeedsInfoType,
     log: CheckLogger,
 ):
-
     need_options = get_need_type(app.config.needs_types, need["type"])
     # ONLY requirements are needed to be checked here
     if "requirement" in need_options.get("tags",[]):
@@ -109,6 +108,7 @@ def check_content(
         if not bool(need["content"]):
             msg = f"Need has no content. Content is mandatory for needs of type {need['type']}"
             log.warning_for_need(need, msg)
+
 
 # req-#id: gd_req__req__attr_type
 # req-#id: gd_req__requirements_attr_security
