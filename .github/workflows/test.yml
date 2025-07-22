@@ -21,13 +21,14 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4.2.2
+
       - name: Cache Bazel and pip
         uses: actions/cache@v4
         with:
           path: |
             ~/.cache/bazel
             ~/.cache/pip
-          key: ${{ runner.os }}-test-${{ hashFiles('**/*.bazel', '**/BUILD', '**/*.bzl', 'src/requirements.txt', 'src/**/*.py') }}
+          key: v2 # Not really needed, as bazel will sort out whatever it needs
 
       - name: Setup Bazel with cache
         uses: bazel-contrib/setup-bazel@0.15.0
@@ -35,7 +36,8 @@ jobs:
           disk-cache: true
           repository-cache: true
           bazelisk-cache: true
+
       - name: Run test targets
         run: |
           bazel run //src:ide_support
-          bazel test //src/...
+          ./run_all_tests.sh
