@@ -28,4 +28,9 @@ score_py_pytest(
     deps = [
         ":find_runfiles",
     ] + all_requirements,
+
+    # TODO: move into score_py_pytest. This should be the default.
+    args = [
+        "--junitxml=$$XML_OUTPUT_FILE",
+    ],
 )

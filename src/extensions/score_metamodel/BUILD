@@ -37,4 +37,9 @@ score_py_pytest(
         ["tests/**/*.rst"],
     ),
     deps = [":score_metamodel"],
+
+    # TODO: move into score_py_pytest. This should be the default.
+    args = [
+        "--junitxml=$$XML_OUTPUT_FILE",
+    ],
 )

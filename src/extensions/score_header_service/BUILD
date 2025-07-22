@@ -32,4 +32,9 @@ score_py_pytest(
     srcs = glob(["test/**/*.py"]),
     # All requirements already in the library so no need to have it double
     deps = [":score_header_service"],
+
+    # TODO: move into score_py_pytest. This should be the default.
+    args = [
+        "--junitxml=$$XML_OUTPUT_FILE",
+    ],
 )
