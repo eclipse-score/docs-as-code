@@ -82,9 +82,7 @@ def validate_fields(
             try:
                 if not re.match(pattern, value):
                     log.warning_for_option(
-                        need,
-                        field,
-                        f"does not follow pattern `{pattern}`."
+                        need, field, f"does not follow pattern `{pattern}`."
                     )
             except TypeError:
                 log.warning_for_option(

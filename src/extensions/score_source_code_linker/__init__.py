@@ -56,7 +56,9 @@ def setup_once(app: Sphinx, config: Config):
     if "skip_rescanning_via_source_code_linker" in app.config:
         return
     LOGGER.debug(f"DEBUG: Workspace root is {find_ws_root()}")
-    LOGGER.debug(f"DEBUG: Current working directory is {Path('.')} = {Path('.').resolve()}")
+    LOGGER.debug(
+        f"DEBUG: Current working directory is {Path('.')} = {Path('.').resolve()}"
+    )
     LOGGER.debug(f"DEBUG: Git root is {find_git_root()}")
 
     # Run only for local files!

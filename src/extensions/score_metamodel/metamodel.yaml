@@ -720,7 +720,7 @@ graph_checks:
       include: comp_req, feat_req
       condition: safety == ASIL_B
     check:
-      satisfies: 
+      satisfies:
         or:
           - safety == ASIL_B
           - safety == QM
