@@ -35,6 +35,9 @@ score_py_pytest(
     args = [
         "-s",
         "-vv",
+
+        # TODO: move into score_py_pytest. This should be the default.
+        "--junitxml=$$XML_OUTPUT_FILE",
     ],
     data = glob(["**/*.json"]),
     imports = ["."],
