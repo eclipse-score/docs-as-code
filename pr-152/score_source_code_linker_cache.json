@@ -211,7 +211,7 @@
   },
   {
     "file": "src/extensions/score_metamodel/checks/check_options.py",
-    "line": 97,
+    "line": 94,
     "tag": "# req-Id:",
     "need": "tool_req__docs_common_attr_description",
     "full_line": "# req-Id: tool_req__docs_common_attr_description"
