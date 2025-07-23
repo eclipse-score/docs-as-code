@@ -79,7 +79,7 @@ This section provides an overview of current process requirements and their clar
   * A prefix indicating the need type (e.g. `feature__`)
   * A middle part matching the hierarchical structure of the need:
      * For requirements: a portion of the feature tree or a component acronym
-     * For architecture elements: the structural element (e.g. some part of the feature tree, component acronym)
+     * For architecture elements: the structural element (e.g. specific part of the feature tree, component acronym)
   * Additional descriptive text to ensure human readability
 
 
