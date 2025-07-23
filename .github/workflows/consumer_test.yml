@@ -1,0 +1,28 @@
+# *******************************************************************************
+# Copyright (c) 2025 Contributors to the Eclipse Foundation
+#
+# See the NOTICE file(s) distributed with this work for additional
+# information regarding copyright ownership.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Apache License Version 2.0 which is available at
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# SPDX-License-Identifier: Apache-2.0
+# *******************************************************************************
+
+name: Run Consumer Tests on Comment
+on: issue_comment
+
+jobs:
+  consumer_test:
+    if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, '/consumer-test') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.2.2
+
+      - name: Run consumer tests
+        run: |
+          bazel run //src:ide_support
+          .venv/bin/python -m pytest -s -v src/tests/
