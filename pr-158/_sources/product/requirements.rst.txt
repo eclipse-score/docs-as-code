@@ -112,7 +112,14 @@ This section provides an overview of current process requirements and their clar
   :parent_covered: NO: Can not cover 'ISO/IEC/IEEE/29148'
   :implemented: NO
 
-  Docs-as-Code shall enforce that each Need contains a description (content).
+  Docs-as-Code shall enforce that each Need contains a description (content) and no weak word like the following list is in that description:
+
+  * just
+  * about
+  * really
+  * some
+  * thing
+  * absolutely
 
 ----------------------------
 🔒 Security Classification
