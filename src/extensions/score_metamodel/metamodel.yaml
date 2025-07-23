@@ -75,7 +75,6 @@ needs_types:
       links: ^.*$
     tags:
       - requirement
-
   std_wp:
     title: Standard Work Product
     prefix: std_wp__
@@ -235,7 +234,7 @@ needs_types:
       hash: ^.*$
     tags:
       - requirement
-
+      - requirement_excl_process
   # req-Id: tool_req__docs_req_types
   feat_req:
     title: Feature Requirement
@@ -261,6 +260,7 @@ needs_types:
       hash: ^.*$
     tags:
       - requirement
+      - requirement_excl_process
 
   # req-Id: tool_req__docs_req_types
   comp_req:
@@ -286,6 +286,7 @@ needs_types:
       hash: ^.*$
     tags:
       - requirement
+      - requirement_excl_process
 
   # req-Id: tool_req__docs_req_types
   tool_req:
@@ -315,6 +316,7 @@ needs_types:
       parent_has_problem: ^.*$
     tags:
       - requirement
+      - requirement_excl_process
 
   # req-Id: tool_req__docs_req_types
   aou_req:
