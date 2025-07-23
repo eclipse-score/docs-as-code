@@ -1,0 +1,39 @@
+# *******************************************************************************
+# Copyright (c) 2025 Contributors to the Eclipse Foundation
+#
+# See the NOTICE file(s) distributed with this work for additional
+# information regarding copyright ownership.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Apache License Version 2.0 which is available at
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# SPDX-License-Identifier: Apache-2.0
+# *******************************************************************************
+
+name: Run Consumer Tests
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+jobs:
+  code:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Approving Workflow
+      - uses: pavlospt/manual-approval@v2
+        with:
+          secret: ${{ github.TOKEN }}
+          approvers: MaximilianSoerenPollak, AlexanderLanin, dcalavrezo-qorix
+          minimum-approvals: 1
+          issue-title: "Consumer Tests for Docs-As-Code."
+          issue-body: "Please approve or deny the running of the consumer tests."
+          exclude-workflow-initiator-as-approver: false
+          additional-approved-words: ''
+          additional-denied-words: ''
+      - name: Checkout repository
+        uses: actions/checkout@v4.2.2
+
+      - name: Run consumer tests
+        run: |
+          bazel run //src:ide_support
+          .venv/bin/python -m pytest -s -v src/tests/
