@@ -145,7 +145,6 @@ def load_metamodel_data():
     global_base_options = data.get("needs_types_base_options", {})
     global_base_options_optional_opts = global_base_options.get("optional_options", {})
 
-    # Get the list of stop-words and weak-words
     # Get the stop_words and weak_words as separate lists
     stop_words_list = global_base_options.get("prohibited_words", {}).get("title", [])
     weak_words_list = global_base_options.get("prohibited_words", {}).get("content", [])
@@ -173,6 +172,8 @@ def load_metamodel_data():
         # Store mandatory_options and optional_options directly as a dict
         mandatory_options = directive_data.get("mandatory_options", {})
         one_type["mandatory_options"] = mandatory_options
+        tags = directive_data.get("tags", [])
+        one_type["tags"] = tags
 
         optional_options = directive_data.get("optional_options", {})
         optional_options.update(global_base_options_optional_opts)
@@ -299,7 +300,6 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     app.config.graph_checks = metamodel["needs_graph_check"]
     app.config.stop_words = metamodel["stop_words"]
     app.config.weak_words = metamodel["weak_words"]
-
     # Ensure that 'needs.json' is always build.
     app.config.needs_build_json = True
     app.config.needs_reproducible_json = True

@@ -73,6 +73,8 @@ needs_types:
       status: ^(valid)$
     optional_links:
       links: ^.*$
+    tags:
+      - requirement
 
   std_wp:
     title: Standard Work Product
@@ -111,6 +113,8 @@ needs_types:
       complies: ^std_req__(iso26262|isosae21434|isopas8926|aspice_40)__.*$
       # req-Id: tool_req__docs_req_link_satisfies_allowed
       satisfies: ^wf__.*$
+    tags:
+      - requirement
 
   gd_temp:
     title: Process Template
@@ -229,6 +233,8 @@ needs_types:
       # req-Id: tool_req__docs_req_attr_testcov
       testcovered: ^(YES|NO)$
       hash: ^.*$
+    tags:
+      - requirement
 
   # req-Id: tool_req__docs_req_types
   feat_req:
@@ -253,6 +259,8 @@ needs_types:
       # req-Id: tool_req__docs_req_attr_testcov
       testcovered: ^(YES|NO)$
       hash: ^.*$
+    tags:
+      - requirement
 
   # req-Id: tool_req__docs_req_types
   comp_req:
@@ -276,6 +284,8 @@ needs_types:
       # req-Id: tool_req__docs_req_attr_testcov
       testcovered: ^(YES|NO)$
       hash: ^.*$
+    tags:
+      - requirement
 
   # req-Id: tool_req__docs_req_types
   tool_req:
@@ -303,6 +313,8 @@ needs_types:
       implemented: ^(YES|PARTIAL|NO)$
       parent_covered: ^.*$
       parent_has_problem: ^.*$
+    tags:
+      - requirement
 
   # req-Id: tool_req__docs_req_types
   aou_req:
@@ -325,6 +337,8 @@ needs_types:
       hash: ^.*$
     optional_links:
       mitigates: ^.*$
+    tags:
+      - requirement
 
 
   # Architecture
@@ -342,6 +356,8 @@ needs_types:
       includes: ^logic_arc_int(_op)*__.+$
     optional_links:
       fulfils: ^feat_req__.+$
+    tags:
+      - architecture_element
 
   feat_arc_dyn:
     title: Feature Architecture Dynamic View
@@ -369,6 +385,8 @@ needs_types:
     optional_links:
       includes: ^logic_arc_int_op__.+$
       fulfils: ^comp_req__.+$
+    tags:
+      - architecture_element
 
   logic_arc_int_op:
     title: Logical Architecture Interface Operation
@@ -382,6 +400,8 @@ needs_types:
       status: ^(valid|invalid)$
     mandatory_links:
       included_by: ^logic_arc_int__.+$
+    tags:
+      - architecture_element
 
   mod_view_sta:
     title: Module Architecture Static View
@@ -416,6 +436,8 @@ needs_types:
       includes: ^comp_arc_sta__.+$
       uses: ^real_arc_int(_op)*__.+$
       fulfils: ^comp_req__.+$
+    tags:
+      - architecture_element
 
   comp_arc_dyn:
     title: Component Architecture Dynamic View
@@ -429,6 +451,8 @@ needs_types:
       status: ^(valid|invalid)$
     optional_links:
       fulfils: ^comp_req__.+$
+    tags:
+      - architecture_element
 
   real_arc_int:
     title: Component Architecture Interfaces
