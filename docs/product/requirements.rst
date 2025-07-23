@@ -110,7 +110,7 @@ This section provides an overview of current process requirements and their clar
   :id: tool_req__docs_common_attr_description
   :tags: Common Attributes
   :parent_covered: NO: Can not cover 'ISO/IEC/IEEE/29148'
-  :implemented: NO
+  :implemented: YES
 
   Docs-as-Code shall enforce that each Need contains a description (content) and no weak word like the following list is in that description:
 
