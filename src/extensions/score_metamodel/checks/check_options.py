@@ -11,9 +11,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 import re
-from collections.abc import Generator
-from typing import cast
-from pprint import pprint
 
 from score_metamodel import (
     CheckLogger,
