@@ -279,9 +279,7 @@ def analyze_build_success(BR: BuildOutput) -> tuple[bool, str]:
     return True, "Build successful - no critical warnings"
 
 
-def print_final_result(
-    BR: BuildOutput, repo_name: str, cmd: str, pytestconfig
-):
+def print_final_result(BR: BuildOutput, repo_name: str, cmd: str, pytestconfig):
     """
     Print your existing detailed output plus a clear success/failure summary
     """
@@ -332,8 +330,9 @@ def print_result_table(results: list[Result]):
     print(table)
 
 
-def run_cmd(cmd: str, results:list[Result], repo_name:str, local_or_git:str, pytestconfig)->tuple[list[Result], bool]:
-
+def run_cmd(
+    cmd: str, results: list[Result], repo_name: str, local_or_git: str, pytestconfig
+) -> tuple[list[Result], bool]:
     out = subprocess.run(cmd.split(), capture_output=True, text=True)
 
     BR = BuildOutput(
@@ -343,9 +342,7 @@ def run_cmd(cmd: str, results:list[Result], repo_name:str, local_or_git:str, pyt
     )
     BR_parsed = parse_bazel_output(BR)
 
-    is_success, reason = print_final_result(
-        BR_parsed, repo_name, cmd, pytestconfig
-    )
+    is_success, reason = print_final_result(BR_parsed, repo_name, cmd, pytestconfig)
 
     results.append(
         Result(
@@ -363,24 +360,24 @@ def run_cmd(cmd: str, results:list[Result], repo_name:str, local_or_git:str, pyt
 def run_test_commands():
     pass
 
+
 def setup_test_environment(sphinx_base_dir):
     """Set up the test environment and return necessary paths and metadata."""
     os.chdir(sphinx_base_dir)
     curr_path = Path(__file__).parent
     git_root = find_git_root(curr_path)
-    
+
     if git_root is None:
         assert False, "Git root was none"
-    
+
     # Get GitHub URL and current hash for git override
     gh_url = get_github_base_url(git_root)
     current_hash = get_current_git_commit(curr_path)
-    
+
     # Create symlink for local docs-as-code
     docs_as_code_dest = sphinx_base_dir / "docs_as_code"
     docs_as_code_dest.symlink_to(git_root)
-    
-    
+
     return curr_path, git_root, gh_url, current_hash
 
 
@@ -389,19 +386,18 @@ def prepare_repo_overrides(repo_name, git_url, current_hash, gh_url):
     # Clone the repository
     subprocess.run(["git", "clone", git_url], check=True, capture_output=True)
     os.chdir(repo_name)
-    
+
     # Read original MODULE.bazel
     with open("MODULE.bazel", "r") as f:
         module_orig = f.read()
-    
+
     # Prepare override versions
     module_local_override = replace_bazel_dep_with_local_override(module_orig)
     module_git_override = replace_bazel_dep_with_git_override(
         module_orig, current_hash, gh_url
     )
-    
-    return module_local_override, module_git_override
 
+    return module_local_override, module_git_override
 
 
 # Updated version of your test loop
@@ -409,7 +405,7 @@ def test_and_clone_repos_updated(sphinx_base_dir, pytestconfig):
     # Setting up the Test Environment
 
     # This might be hacky, but currently the best way I could solve the issue of going to the right place.
-    curr_path, git_root, gh_url, current_hash =  setup_test_environment(sphinx_base_dir)    
+    curr_path, git_root, gh_url, current_hash = setup_test_environment(sphinx_base_dir)
 
     overall_success = True
 
@@ -420,8 +416,10 @@ def test_and_clone_repos_updated(sphinx_base_dir, pytestconfig):
         #          ╭──────────────────────────────────────╮
         #          │ Preparing the Repository for testing │
         #          ╰──────────────────────────────────────╯
-        module_local_override, module_git_override = prepare_repo_overrides(repo.name, repo.git_url,current_hash, gh_url )
-        overrides = {"local":module_local_override, "git":module_git_override}
+        module_local_override, module_git_override = prepare_repo_overrides(
+            repo.name, repo.git_url, current_hash, gh_url
+        )
+        overrides = {"local": module_local_override, "git": module_git_override}
         for type, override_content in overrides.items():
             with open("MODULE.bazel", "w") as f:
                 f.write(override_content)
@@ -433,7 +431,9 @@ def test_and_clone_repos_updated(sphinx_base_dir, pytestconfig):
             for cmd in repo.commands:
                 print_running_cmd(repo.name, cmd, f"{type.upper()} OVERRIDE")
                 # Running through all 'cmds' specified with the local override
-                gotten_results, is_success = run_cmd(cmd, results, repo.name, type, pytestconfig) 
+                gotten_results, is_success = run_cmd(
+                    cmd, results, repo.name, type, pytestconfig
+                )
                 results = gotten_results
                 if not is_success:
                     overall_success = False
@@ -445,7 +445,9 @@ def test_and_clone_repos_updated(sphinx_base_dir, pytestconfig):
                 # Running through all 'test cmds' specified with the local override
                 print_running_cmd(repo.name, test_cmd, "LOCAL OVERRIDE")
 
-                gotten_results, is_success = run_cmd(test_cmd, results, repo.name, "local", pytestconfig) 
+                gotten_results, is_success = run_cmd(
+                    test_cmd, results, repo.name, "local", pytestconfig
+                )
                 results = gotten_results
 
                 if not is_success:
