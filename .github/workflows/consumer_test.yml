@@ -22,7 +22,36 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4.2.2
 
-      - name: Run consumer tests
+
+      - name: Run Consumer tests
+        id: consumer_tests
         run: |
           bazel run //src:ide_support
           .venv/bin/python -m pytest -s -v src/tests/
+
+      - name: Report Consumer Tests Check
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const outcome = core.getInput('consumer_test_result');
+            const conclusion = outcome === 'success' ? 'success' :
+                               outcome === 'skipped' ? 'neutral' : 'failure';
+
+            await github.rest.checks.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              name: "Consumer Tests",
+              head_sha: context.sha,
+              status: "completed",
+              conclusion: conclusion,
+              output: {
+                title: "Consumer Tests Result",
+                summary: `The Consumer Tests step concluded with: ${conclusion}`
+              }
+            });
+          consumer_test_result: ${{ steps.consumer_tests.outcome }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+

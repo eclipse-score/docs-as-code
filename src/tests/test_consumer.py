@@ -78,13 +78,13 @@ class Result:
 REPOS_TO_TEST: list[ConsumerRepo] = [
     ConsumerRepo(
         name="process_description",
-        git_url="git@github.com:eclipse-score/process_description.git",
+        git_url="https://github.com/eclipse-score/process_description.git",
         commands=["bazel run //process:incremental_latest"],
         test_commands=[],
     ),
     ConsumerRepo(
         name="score",
-        git_url="git@github.com:eclipse-score/score.git",
+        git_url="https://github.com/eclipse-score/score.git",
         commands=[
             "bazel run //docs:incremental_latest",
             "bazel run //docs:ide_support",
@@ -96,7 +96,7 @@ REPOS_TO_TEST: list[ConsumerRepo] = [
     ),
     ConsumerRepo(
         name="module_template",
-        git_url="git@github.com:eclipse-score/module_template.git",
+        git_url="https://github.com/eclipse-score/module_template.git",
         commands=[
             "bazel run //docs:ide_support",
             "bazel run //docs:incremental",
