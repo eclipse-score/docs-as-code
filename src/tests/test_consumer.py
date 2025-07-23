@@ -128,63 +128,6 @@ def get_current_git_commit(curr_path: Path):
     return result.stdout.strip()
 
 
-def get_remote_main_commit(curr_path: Path) -> str:
-    """
-    Get the commit hash of the remote main branch, to find possible metamodel changes
-    """
-    _ = subprocess.run(
-        ["git", "fetch", "origin", "main"],
-        capture_output=True,
-        text=True,
-        check=True,
-        cwd=curr_path,
-    )
-
-    result = subprocess.run(
-        ["git", "rev-parse", "origin/main"],
-        capture_output=True,
-        text=True,
-        check=True,
-        cwd=curr_path,
-    )
-    LOGGER.debug(f"Grabbed remote origin/main with commit: {result.stdout.strip()}")
-    return result.stdout.strip()
-
-
-def check_for_metamodel_change(curr_path: Path, remote_base_commit: str):
-    """
-    Check if there are any changes in the metamodel.yaml file.
-    """
-    try:
-        # Get list of changed files
-        result = subprocess.run(
-            ["git", "diff", "--name-only", remote_base_commit, "HEAD"],
-            capture_output=True,
-            text=True,
-            check=True,
-            cwd=curr_path,
-        )
-
-        changed_files = result.stdout.strip().split("\n")
-
-        # Check if any changed files are in metamodel paths
-        for file_path in changed_files:
-            if "metamodel.yaml" in file_path:
-                LOGGER.debug(
-                    "Metamodel.yaml has changed. Ignoring 'score_metamodel' errors."
-                )
-                return True
-
-        LOGGER.debug("Metamodel.yaml has NOT changed. Parsing all errors")
-        return False
-
-    except Exception as e:
-        # Wondering if this is a good idea.
-        # Or better to fail here?
-        LOGGER.debug(f"Failed git diff. Error: {e}")
-        return False
-
-
 def replace_bazel_dep_with_local_override(module_content: str) -> str:
     """ """
 
@@ -192,7 +135,7 @@ def replace_bazel_dep_with_local_override(module_content: str) -> str:
     pattern = rf'bazel_dep\(name = "score_docs_as_code", version = "[^"]+"\)'
 
     # Replacement with local_path_override
-    replacement = f"""bazel_dep(name = "score_docs_as_code", version = "0.4.2")
+    replacement = f"""bazel_dep(name = "score_docs_as_code", version = "0.0.0")
 local_path_override(
     module_name = "score_docs_as_code",
     path = "../docs_as_code"
@@ -208,7 +151,7 @@ def replace_bazel_dep_with_git_override(
 ) -> str:
     pattern = rf'bazel_dep\(name = "score_docs_as_code", version = "[^"]+"\)'
 
-    replacement = f'''bazel_dep(name = "score_docs_as_code", version = "0.4.2")
+    replacement = f'''bazel_dep(name = "score_docs_as_code", version = "0.0.0")
 git_override(
     module_name = "score_docs_as_code",
     remote = "{gh_url}",
@@ -221,7 +164,6 @@ git_override(
 
 
 def parse_bazel_output(BR: BuildOutput) -> BuildOutput:
-    # HINT: All errors from sphinx / bazel commands are put into the stderr for some reason.
     err_lines = BR.stderr.splitlines()
     split_warnings = [x for x in err_lines if "WARNING: " in x]
     warning_dict: dict[str, list[str]] = defaultdict(list)
@@ -239,7 +181,7 @@ def parse_bazel_output(BR: BuildOutput) -> BuildOutput:
     return BR
 
 
-def print_overview_logs(BR: BuildOutput, metamodel_changed: bool):
+def print_overview_logs(BR: BuildOutput):
     warning_loggers = list(BR.warnings.keys())
     len_left_test_result = len_max - len("TEST RESULTS")
     print(
@@ -262,9 +204,6 @@ def print_overview_logs(BR: BuildOutput, metamodel_changed: bool):
             continue
         color = "orange1" if logger == "[NO SPECIFIC LOGGER]" else "red"
         warning_logger_msg = f"{logger} has {len(BR.warnings[logger])} warnings"
-        if metamodel_changed and logger == "[SCORE_METAMODEL]":
-            warning_logger_msg += "|| IGNORED DUE TO METAMODEL CHANGE"
-            color = "orange1"
         len_left_logger = len_max - len(warning_logger_msg)
         print(
             f"[{color}]{'=' * int(len_left_logger / 2)}{warning_logger_msg}{'=' * int(len_left_logger / 2)}[/{color}]"
@@ -309,7 +248,7 @@ def print_running_cmd(repo: str, cmd: str, local_or_git: str):
     print(f"[cyan]{'=' * len_max}[/cyan]")
 
 
-def analyze_build_success(BR: BuildOutput, metamodel_changed: bool) -> tuple[bool, str]:
+def analyze_build_success(BR: BuildOutput) -> tuple[bool, str]:
     """
     Analyze if the build should be considered successful based on your rules.
 
@@ -330,10 +269,6 @@ def analyze_build_success(BR: BuildOutput, metamodel_changed: bool) -> tuple[boo
         if logger == "[NO SPECIFIC LOGGER]":
             # Always ignore these
             continue
-        elif logger == "[SCORE_METAMODEL]":
-            # Only ignore if metamodel changed
-            if not metamodel_changed:
-                critical_warnings.extend(warnings)
         else:
             # Any other logger is critical/not ignored
             critical_warnings.extend(warnings)
@@ -345,12 +280,12 @@ def analyze_build_success(BR: BuildOutput, metamodel_changed: bool) -> tuple[boo
 
 
 def print_final_result(
-    BR: BuildOutput, metamodel_changed: bool, repo_name: str, cmd: str, pytestconfig
+    BR: BuildOutput, repo_name: str, cmd: str, pytestconfig
 ):
     """
     Print your existing detailed output plus a clear success/failure summary
     """
-    print_overview_logs(BR, metamodel_changed)
+    print_overview_logs(BR)
     if pytestconfig.get_verbosity() >= 1:
         # Verbosity Level 1 (-v)
         verbose_printout(BR)
@@ -359,7 +294,7 @@ def print_final_result(
         print("==== STDOUT ====:\n\n", BR.stdout)
         print("==== STDERR ====:\n\n", BR.stderr)
 
-    is_success, reason = analyze_build_success(BR, metamodel_changed)
+    is_success, reason = analyze_build_success(BR)
 
     status = "OK PASSED" if is_success else "XX FAILED"
     color = "green" if is_success else "red"
@@ -397,31 +332,84 @@ def print_result_table(results: list[Result]):
     print(table)
 
 
+def run_cmd(cmd: str, results:list[Result], repo_name:str, local_or_git:str, pytestconfig)->tuple[list[Result], bool]:
+
+    out = subprocess.run(cmd.split(), capture_output=True, text=True)
+
+    BR = BuildOutput(
+        returncode=out.returncode,
+        stdout=str(out.stdout),
+        stderr=str(out.stderr),
+    )
+    BR_parsed = parse_bazel_output(BR)
+
+    is_success, reason = print_final_result(
+        BR_parsed, repo_name, cmd, pytestconfig
+    )
+
+    results.append(
+        Result(
+            repo=repo_name,
+            cmd=cmd,
+            local_or_git=local_or_git,
+            passed=is_success,
+            reason=reason,
+        )
+    )
+
+    return results, is_success
+
+
+def run_test_commands():
+    pass
+
+def setup_test_environment(sphinx_base_dir):
+    """Set up the test environment and return necessary paths and metadata."""
+    os.chdir(sphinx_base_dir)
+    curr_path = Path(__file__).parent
+    git_root = find_git_root(curr_path)
+    
+    if git_root is None:
+        assert False, "Git root was none"
+    
+    # Get GitHub URL and current hash for git override
+    gh_url = get_github_base_url(git_root)
+    current_hash = get_current_git_commit(curr_path)
+    
+    # Create symlink for local docs-as-code
+    docs_as_code_dest = sphinx_base_dir / "docs_as_code"
+    docs_as_code_dest.symlink_to(git_root)
+    
+    
+    return curr_path, git_root, gh_url, current_hash
+
+
+def prepare_repo_overrides(repo_name, git_url, current_hash, gh_url):
+    """Clone repo and prepare both local and git overrides."""
+    # Clone the repository
+    subprocess.run(["git", "clone", git_url], check=True, capture_output=True)
+    os.chdir(repo_name)
+    
+    # Read original MODULE.bazel
+    with open("MODULE.bazel", "r") as f:
+        module_orig = f.read()
+    
+    # Prepare override versions
+    module_local_override = replace_bazel_dep_with_local_override(module_orig)
+    module_git_override = replace_bazel_dep_with_git_override(
+        module_orig, current_hash, gh_url
+    )
+    
+    return module_local_override, module_git_override
+
+
+
 # Updated version of your test loop
 def test_and_clone_repos_updated(sphinx_base_dir, pytestconfig):
     # Setting up the Test Environment
 
     # This might be hacky, but currently the best way I could solve the issue of going to the right place.
-    os.chdir(sphinx_base_dir)
-    curr_path = Path(__file__).parent
-    # Finding git_root is needed to enable local overrides.
-    git_root = find_git_root(curr_path)
-
-    # I think we need git_root, otherwise the rest makes not much sense.
-    if git_root is None:
-        assert False, "Git root was none"
-
-    # Getting GH_URL & current hash to enable git override
-    gh_url = get_github_base_url(git_root)
-    current_hash = get_current_git_commit(curr_path)
-
-    # Symlink local docs-as-code => sphinx tmp
-    docs_as_code_dest = sphinx_base_dir / "docs_as_code"
-    docs_as_code_dest.symlink_to(git_root)
-
-    # Calculating / Checking if the metamodel.yaml has changed, to determin if [score_metamodel] errors should be disablede
-    remote_main_commit = get_remote_main_commit(curr_path)
-    metamodel_changed = check_for_metamodel_change(curr_path, remote_main_commit)
+    curr_path, git_root, gh_url, current_hash =  setup_test_environment(sphinx_base_dir)    
 
     overall_success = True
 
@@ -429,137 +417,39 @@ def test_and_clone_repos_updated(sphinx_base_dir, pytestconfig):
     results: list[Result] = []
 
     for repo in REPOS_TO_TEST:
-        # Cloning the repo to the temporary directories
-        subprocess.run(["git", "clone", repo.git_url], check=True, capture_output=True)
-        os.chdir(repo.name)
-        # Reading the original MODULE.bazel to enable manipulation later
-        with open("MODULE.bazel", "r") as f:
-            module_orig = f.read()
-        # Preparing local & git overrides for later use
-        module_local_override = replace_bazel_dep_with_local_override(module_orig)
-        module_git_override = replace_bazel_dep_with_git_override(
-            module_orig, current_hash, gh_url
-        )
-        with open("MODULE.bazel", "w") as f:
-            f.write(module_local_override)
-        for cmd in repo.commands:
-            # Running through all 'cmds' specified with the local override
-            print_running_cmd(repo.name, cmd, "LOCAL OVERRIDE")
+        #          ╭──────────────────────────────────────╮
+        #          │ Preparing the Repository for testing │
+        #          ╰──────────────────────────────────────╯
+        module_local_override, module_git_override = prepare_repo_overrides(repo.name, repo.git_url,current_hash, gh_url )
+        overrides = {"local":module_local_override, "git":module_git_override}
+        for type, override_content in overrides.items():
+            with open("MODULE.bazel", "w") as f:
+                f.write(override_content)
 
-            out = subprocess.run(cmd.split(), capture_output=True, text=True)
+            #          ╭──────────────────────────────────────╮
+            #          │  Running the different build & run   │
+            #          │               commands               │
+            #          ╰──────────────────────────────────────╯
+            for cmd in repo.commands:
+                print_running_cmd(repo.name, cmd, f"{type.upper()} OVERRIDE")
+                # Running through all 'cmds' specified with the local override
+                gotten_results, is_success = run_cmd(cmd, results, repo.name, type, pytestconfig) 
+                results = gotten_results
+                if not is_success:
+                    overall_success = False
 
-            BR = BuildOutput(
-                returncode=out.returncode,
-                stdout=str(out.stdout),
-                stderr=str(out.stderr),
-            )
-            BR_parsed = parse_bazel_output(BR)
+            #          ╭──────────────────────────────────────╮
+            #          │ Running the different test commands  │
+            #          ╰──────────────────────────────────────╯
+            for test_cmd in repo.test_commands:
+                # Running through all 'test cmds' specified with the local override
+                print_running_cmd(repo.name, test_cmd, "LOCAL OVERRIDE")
 
-            is_success, reason = print_final_result(
-                BR_parsed, metamodel_changed, repo.name, cmd, pytestconfig
-            )
+                gotten_results, is_success = run_cmd(test_cmd, results, repo.name, "local", pytestconfig) 
+                results = gotten_results
 
-            results.append(
-                Result(
-                    repo=repo.name,
-                    cmd=cmd,
-                    local_or_git="local",
-                    passed=is_success,
-                    reason=reason,
-                )
-            )
-
-            if not is_success:
-                overall_success = False
-
-        for test_cmd in repo.test_commands:
-            # Running through all 'test cmds' specified with the local override
-            print_running_cmd(repo.name, test_cmd, "LOCAL OVERRIDE")
-            out = subprocess.run(test_cmd.split(), capture_output=True, text=True)
-
-            BR = BuildOutput(
-                returncode=out.returncode,
-                stdout=str(out.stdout),
-                stderr=str(out.stderr),
-            )
-            BR_parsed = parse_bazel_output(BR)
-
-            is_success, reason = print_final_result(
-                BR_parsed, metamodel_changed, repo.name, test_cmd, pytestconfig
-            )
-
-            results.append(
-                Result(
-                    repo=repo.name,
-                    cmd=test_cmd,
-                    local_or_git="local",
-                    passed=is_success,
-                    reason=reason,
-                )
-            )
-
-            if not is_success:
-                overall_success = False
-
-        with open("MODULE.bazel", "w") as f:
-            f.write(module_git_override)
-        for cmd in repo.commands:
-            # Running through all 'cmds' specified with the git override
-            print_running_cmd(repo.name, cmd, "GIT OVERRIDE")
-
-            out = subprocess.run(cmd.split(), capture_output=True, text=True)
-
-            BR = BuildOutput(
-                returncode=out.returncode,
-                stdout=str(out.stdout),
-                stderr=str(out.stderr),
-            )
-            BR_parsed = parse_bazel_output(BR)
-
-            is_success, reason = print_final_result(
-                BR_parsed, metamodel_changed, repo.name, cmd, pytestconfig
-            )
-
-            results.append(
-                Result(
-                    repo=repo.name,
-                    cmd=cmd,
-                    local_or_git="git",
-                    passed=is_success,
-                    reason=reason,
-                )
-            )
-
-            if not is_success:
-                overall_success = False
-
-        for test_cmd in repo.test_commands:
-            # Running through all 'test cmds' specified with the git override
-            print_running_cmd(repo.name, test_cmd, "GIT OVERRIDE")
-            out = subprocess.run(test_cmd.split(), capture_output=True, text=True)
-
-            BR = BuildOutput(
-                returncode=out.returncode,
-                stdout=str(out.stdout),
-                stderr=str(out.stderr),
-            )
-            BR_parsed = parse_bazel_output(BR)
-
-            is_success, reason = print_final_result(
-                BR_parsed, metamodel_changed, repo.name, test_cmd, pytestconfig
-            )
-            results.append(
-                Result(
-                    repo=repo.name,
-                    cmd=test_cmd,
-                    local_or_git="git",
-                    passed=is_success,
-                    reason=reason,
-                )
-            )
-
-            if not is_success:
-                overall_success = False
+                if not is_success:
+                    overall_success = False
 
         # NOTE: We have to change directories back to the parent, otherwise the cloning & override will not be correct
         os.chdir(Path.cwd().parent)
