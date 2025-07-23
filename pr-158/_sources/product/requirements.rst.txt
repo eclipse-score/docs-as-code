@@ -119,6 +119,7 @@ This section provides an overview of current process requirements and their clar
   :id: tool_req__docs_common_attr_description_wording
   :tags: Common Attributes
   :implemented: YES
+  :satisfies: PROCESS_gd_req__req__attr_desc_weak
 
   Docs-as-Code shall enforce that Need description do not contain the following words:
 
