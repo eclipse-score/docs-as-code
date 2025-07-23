@@ -37,7 +37,7 @@ jobs:
             const outcome = core.getInput('consumer_test_result');
             const conclusion = outcome === 'success' ? 'success' :
                                outcome === 'skipped' ? 'neutral' : 'failure';
- 
+
             await github.rest.checks.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -54,4 +54,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
- 
+
