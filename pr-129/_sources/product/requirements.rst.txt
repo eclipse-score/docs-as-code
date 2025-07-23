@@ -91,7 +91,7 @@ This section provides an overview of current process requirements and their clar
   :id: tool_req__docs_common_attr_title
   :implemented: PARTIAL
   :tags: Common Attributes
-  :satisfies: PROCESS_gd_req__requirements_attr_title
+  :satisfies: PROCESS_gd_req__req__attr_title
   :parent_covered: NO: Can not ensure summary
 
 
@@ -123,8 +123,8 @@ This section provides an overview of current process requirements and their clar
   :implemented: PARTIAL
   :tags: Common Attributes
   :satisfies:
-     PROCESS_gd_req__requirements_attr_security,
-     PROCESS_gd_req__arch_attr_security,
+     PROCESS_gd_req__req__attr_security,
+     PROCESS_gd_req__arch__attr_security,
 
   Docs-as-Code shall enforce that the ``security`` attribute has one of the following values:
 
@@ -154,7 +154,7 @@ This section provides an overview of current process requirements and their clar
 
   * QM
   * ASIL_B
-  * ASIL_D
+
 
   This rule applies to:
 
@@ -204,9 +204,9 @@ This section provides an overview of current process requirements and their clar
   :tags: Documents
   :implemented: NO
   :satisfies:
-   PROCESS_gd_req__doc_author,
-   PROCESS_gd_req__doc_approver,
-   PROCESS_gd_req__doc_reviewer,
+   PROCESS_gd_req__doc__author,
+   PROCESS_gd_req__doc__approver,
+   PROCESS_gd_req__doc__reviewer,
   :parent_covered: NO
 
   Docs-as-Code shall enforce that each :need:`tool_req__docs_doc_types` has the
@@ -221,7 +221,7 @@ This section provides an overview of current process requirements and their clar
   :id: tool_req__docs_doc_attr_author_autofill
   :tags: Documents
   :implemented: NO
-  :satisfies: PROCESS_gd_req__doc_author
+  :satisfies: PROCESS_gd_req__doc__author
   :parent_covered: YES: Together with tool_req__docs_doc_attr
   :status: invalid
 
@@ -239,7 +239,7 @@ This section provides an overview of current process requirements and their clar
   :id: tool_req__docs_doc_attr_approver_autofill
   :tags: Documents
   :implemented: NO
-  :satisfies: PROCESS_gd_req__doc_approver
+  :satisfies: PROCESS_gd_req__doc__approver
   :parent_covered: YES: Together with tool_req__docs_doc_attr
 
   Docs-as-Code shall provide an automatic mechanism to determine the document approver.
@@ -252,7 +252,7 @@ This section provides an overview of current process requirements and their clar
   :id: tool_req__docs_doc_attr_reviewer_autofill
   :tags: Documents
   :implemented: NO
-  :satisfies: PROCESS_gd_req__doc_reviewer
+  :satisfies: PROCESS_gd_req__doc__reviewer
   :parent_covered: YES: Together with tool_req__docs_doc_attr
 
   Docs-as-Code shall provide an automatic mechanism to determine the document reviewers.
@@ -566,13 +566,14 @@ This section provides an overview of current process requirements and their clar
   :tags: Tool Verification Reports
   :implemented: NO
   :parent_covered: YES
-  :satisfies: PROCESS_gd_req__tool_attr_security_affected
+  :satisfies: PROCESS_gd_req__tool__attr_security_affected
 
   Docs-as-Code shall enforce that every Tool Verification Report includes a
   ``security_affected`` attribute with one of the following values:
 
   * YES
   * NO
+
 
 .. tool_req:: Enforce status classification
   :id: tool_req__docs_tvr_status
