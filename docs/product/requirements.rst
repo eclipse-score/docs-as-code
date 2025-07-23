@@ -120,7 +120,7 @@ This section provides an overview of current process requirements and their clar
   :tags: Common Attributes
   :implemented: YES
   :satisfies: PROCESS_gd_req__req__attr_desc_weak
-
+  :parent_covered: YES
   Docs-as-Code shall enforce that Need description do not contain the following words:
 
   * just
