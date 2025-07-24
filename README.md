@@ -1,4 +1,3 @@
-test
 # docs-as-code
 
 Docs-as-code tooling for Eclipse S-CORE

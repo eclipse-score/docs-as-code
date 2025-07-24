@@ -40,7 +40,7 @@ jobs:
       - name: Checkout PR
         uses: actions/checkout@v4.2.2
         with:
-          ref: ${{ steps.pr_details.outputs.head_ref }}
+          ref: refs/pull/${{ github.event.issue.number }}/head
 
       - name: Set Consumer Tests Status - Pending
         uses: actions/github-script@v7
@@ -75,10 +75,8 @@ jobs:
           script: |
             const outcome = '${{ steps.consumer_tests.outcome }}';
             const state = outcome === 'success' ? 'success' : 'failure';
-
             console.log(`Test outcome: ${outcome}, state: ${state}`);
             console.log(`Head SHA: ${{ steps.pr_details.outputs.head_sha }}`);
-
             await github.rest.repos.createCommitStatus({
               owner: context.repo.owner,
               repo: context.repo.repo,
