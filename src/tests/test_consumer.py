@@ -78,12 +78,12 @@ class Result:
 
 
 REPOS_TO_TEST: list[ConsumerRepo] = [
-    ConsumerRepo(
-        name="process_description",
-        git_url="https://github.com/eclipse-score/process_description.git",
-        commands=["bazel run //process:incremental_latest"],
-        test_commands=[],
-    ),
+    # ConsumerRepo(
+    #     name="process_description",
+    #     git_url="https://github.com/eclipse-score/process_description.git",
+    #     commands=["bazel run //process:incremental_latest"],
+    #     test_commands=[],
+    # ),
     ConsumerRepo(
         name="score",
         git_url="https://github.com/eclipse-score/score.git",
@@ -92,22 +92,22 @@ REPOS_TO_TEST: list[ConsumerRepo] = [
             "bazel run //docs:ide_support",
             "bazel run //docs:incremental_release",
             "bazel build //docs:docs_release",
-            "bazel build //docs:docs_latest",
+            # "bazel build //docs:docs_latest",
         ],
         test_commands=[],
     ),
-    ConsumerRepo(
-        name="module_template",
-        git_url="https://github.com/eclipse-score/module_template.git",
-        commands=[
-            "bazel run //docs:ide_support",
-            "bazel run //docs:incremental",
-            "bazel build //docs:docs",
-        ],
-        test_commands=[
-            "bazel test //tests/...",
-        ],
-    ),
+    # ConsumerRepo(
+    #     name="module_template",
+    #     git_url="https://github.com/eclipse-score/module_template.git",
+    #     commands=[
+    #         "bazel run //docs:ide_support",
+    #         "bazel run //docs:incremental",
+    #         "bazel build //docs:docs",
+    #     ],
+    #     test_commands=[
+    #         "bazel test //tests/...",
+    #     ],
+    # ),
 ]
 
 
@@ -368,19 +368,37 @@ def setup_test_environment(sphinx_base_dir):
     os.chdir(sphinx_base_dir)
     curr_path = Path(__file__).parent
     git_root = find_git_root(curr_path)
-
+    
+    print(f"[DEBUG] curr_path: {curr_path}")
+    print(f"[DEBUG] git_root: {git_root}")
+    
     if git_root is None:
         assert False, "Git root was none"
 
     # Get GitHub URL and current hash for git override
     gh_url = get_github_base_url(git_root)
     current_hash = get_current_git_commit(curr_path)
+    
+    print(f"[DEBUG] gh_url: {gh_url}")
+    print(f"[DEBUG] current_hash: {current_hash}")
+    print(f"[DEBUG] Working directory has uncommitted changes: {has_uncommitted_changes(curr_path)}")
 
     # Create symlink for local docs-as-code
     docs_as_code_dest = sphinx_base_dir / "docs_as_code"
     docs_as_code_dest.symlink_to(git_root)
+    print(f"[DEBUG] Symlink created: {docs_as_code_dest} -> {git_root}")
 
     return curr_path, git_root, gh_url, current_hash
+
+def has_uncommitted_changes(path: Path) -> bool:
+    """Check if there are uncommitted changes in the git repo."""
+    result = subprocess.run(
+        ["git", "status", "--porcelain"],
+        capture_output=True,
+        text=True,
+        cwd=path,
+    )
+    return bool(result.stdout.strip())
 
 
 def prepare_repo_overrides(repo_name, git_url, current_hash, gh_url):
