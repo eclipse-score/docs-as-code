@@ -89,17 +89,14 @@ This section provides an overview of current process requirements and their clar
 
 .. tool_req:: Enforces title wording rules
   :id: tool_req__docs_common_attr_title
-  :implemented: YES
+  :implemented: YES 
   :tags: Common Attributes
   :satisfies: PROCESS_gd_req__req__attr_title
   :parent_covered: NO: Can not ensure summary
 
 
-  Docs-as-Code shall enforce that Need titles do not contain the following words:
-
-  * shall
-  * must
-  * will
+  Docs-as-Code shall enforce that needs of type :need:`tool_req__docs_req_types` do not have prohibited words
+  which can be found in the metamodel.
 
 
 ---------------------------
@@ -114,6 +111,17 @@ This section provides an overview of current process requirements and their clar
   :satisfies: PROCESS_gd_req__req__attr_description
 
   Docs-as-Code shall enforce that each need of type :need:`tool_req__docs_req_types` has a description (content)
+
+
+.. tool_req:: Enforces description wording rules
+  :id: tool_req__docs_common_attr_desc_wording
+  :tags: Common Attributes
+  :implemented: YES
+  :satisfies: PROCESS_gd_req__req__attr_desc_weak
+  :parent_covered: YES
+
+
+  Docs-as-Code shall enforce that Need description do not contain the weak words that are defined in the metamodel
 
 ----------------------------
 🔒 Security Classification
