@@ -89,7 +89,7 @@ This section provides an overview of current process requirements and their clar
 
 .. tool_req:: Enforces title wording rules
   :id: tool_req__docs_common_attr_title
-  :implemented: PARTIAL
+  :implemented: YES
   :tags: Common Attributes
   :satisfies: PROCESS_gd_req__req__attr_title
   :parent_covered: NO: Can not ensure summary
@@ -121,7 +121,7 @@ This section provides an overview of current process requirements and their clar
 
 .. tool_req:: Security: enforce classification
   :id: tool_req__docs_common_attr_security
-  :implemented: PARTIAL
+  :implemented: YES
   :tags: Common Attributes
   :satisfies:
      PROCESS_gd_req__req__attr_security,
@@ -301,7 +301,7 @@ This section provides an overview of current process requirements and their clar
 .. tool_req:: Enforces requirement type classification
   :id: tool_req__docs_req_attr_reqtype
   :tags: Requirements
-  :implemented: PARTIAL
+  :implemented: YES
   :satisfies: PROCESS_gd_req__req__attr_type
 
   Docs-as-Code shall enforce that each need of type :need:`tool_req__docs_req_types`
@@ -353,6 +353,7 @@ This section provides an overview of current process requirements and their clar
   :implemented: PARTIAL
   :satisfies: PROCESS_gd_req__req__linkage, PROCESS_gd_req__req__traceability
   :parent_covered: YES
+  :status: invalid
 
   Docs-as-Code shall enforce that linking between model elements via the ``satisfies``
   attribute follows defined rules. Having at least one link is mandatory.
@@ -371,6 +372,10 @@ This section provides an overview of current process requirements and their clar
      Tooling Requirements             Process Requirements
      ================================ ===========================
 
+  .. note::
+      Some tool requirements do not have a matching process requirement (gap).
+      And sometimes we need to link to documents and not requirements?!
+
 🏛️ Architecture
 ################
 
@@ -386,20 +391,20 @@ This section provides an overview of current process requirements and their clar
      PROCESS_gd_req__arch__viewpoints,
      PROCESS_gd_req__arch__build_blocks,
      PROCESS_gd_req__arch__build_blocks_corr
-  :implemented: PARTIAL
+  :implemented: YES
   :parent_covered: NO
   :status: invalid
 
   Docs-as-Code shall support the following architecture types:
 
-  * Feature (Architecture Element) = Feature Architecture Static View (feat_arch_static)
-  * Feature Architecture Dynamic View (feat_arch_dyn)
+  * Feature (Architecture Element) = Feature Architecture Static View (feat_arc_sta)
+  * Feature Architecture Dynamic View (feat_arc_dyn)
   * Feature: Logical Architecture Interface (incl Logical Interface View) (logic_arc_int)
   * Feature: Logical Architecture Interface Operation (logic_arc_int_op)
   * Component Architecture Static View (comp_arc_sta)
   * Component Architecture Dynamic View (comp_arc_dyn)
-  * Component Architecture Interface = Real Interface (comp_arc_int)
-  * Component Architecture Interface Operation = Real Interface Operation (comp_arc_int_op)
+  * Component Architecture Interface = Real Interface (real_arc_int)
+  * Component Architecture Interface Operation = Real Interface Operation (real_arc_int_op)
 
 
 .. tool_req::Module Views
@@ -416,7 +421,7 @@ This section provides an overview of current process requirements and their clar
 
   Docs-as-Code shall support the following module view-types:
 
-  * Module = Module Architecture Static View = Top Level SW component container (mod_view_static)
+  * Module = Module Architecture Static View = Top Level SW component container (mod_view_sta)
   * Module Architecture Dynamic View = Top Level SW component container (mod_view_dyn)
 
 
@@ -433,6 +438,7 @@ This section provides an overview of current process requirements and their clar
    PROCESS_gd_req__arch__attr_fulfils,
    PROCESS_gd_req__arch__traceability,
   :parent_covered: YES
+  :status: invalid
 
   Docs-as-Code shall enforce that linking via the ``fulfils`` attribute follows defined rules.
 
@@ -514,7 +520,7 @@ This section provides an overview of current process requirements and their clar
 .. tool_req:: Supports linking to source code
   :tags: Detailed Design & Code
   :id: tool_req__docs_dd_link_source_code_link
-  :implemented: PARTIAL
+  :implemented: YES
   :parent_covered: YES
   :satisfies: PROCESS_gd_req__req__attr_impl
 
@@ -526,7 +532,7 @@ This section provides an overview of current process requirements and their clar
 .. tool_req:: Supports linking to test cases
   :id: tool_req__docs_dd_link_testcase
   :tags: Detailed Design & Code
-  :implemented: NO
+  :implemented: PARTIAL
   :satisfies: PROCESS_gd_req__req__attr_testlink
 
   Docs-as-Code shall allow requirements of type :need:`tool_req__docs_req_types` to
@@ -540,21 +546,21 @@ This section provides an overview of current process requirements and their clar
 .. they are so different, that they need their own section
 
 .. tool_req:: Tool Verification Report
-  :id: tool_req__docs_tvr_uid
+  :id: tool_req__docs_tvr
   :tags: Tool Verification Reports
-  :implemented: NO
+  :implemented: YES
   :parent_covered: NO
   :satisfies: PROCESS_gd_req__tool__attr_uid
 
   Docs-as-Code shall support the definition and management of Tool Verification Reports
-  (``tool_verification_report``).
+  (``doc_tool``).
 
 .. tool_req:: Enforce safety classification
   :id: tool_req__docs_tvr_safety
   :tags: Tool Verification Reports
-  :implemented: NO
+  :implemented: YES
   :parent_covered: YES
-  :satisfies: PROCESS_gd_req__tool__attr_safety_affected
+  :satisfies: PROCESS_gd_req__tool__attr_safety_affected, PROCESS_gd_req__tool__check_mandatory
 
   Docs-as-Code shall enforce that every Tool Verification Report includes a
   ``safety_affected`` attribute with one of the following values:
@@ -565,9 +571,9 @@ This section provides an overview of current process requirements and their clar
 .. tool_req:: Enforce security classification
   :id: tool_req__docs_tvr_security
   :tags: Tool Verification Reports
-  :implemented: NO
+  :implemented: YES
   :parent_covered: YES
-  :satisfies: PROCESS_gd_req__tool__attr_security_affected
+  :satisfies: PROCESS_gd_req__tool__attr_security_affected, PROCESS_gd_req__tool__check_mandatory
 
   Docs-as-Code shall enforce that every Tool Verification Report includes a
   ``security_affected`` attribute with one of the following values:
@@ -579,8 +585,8 @@ This section provides an overview of current process requirements and their clar
 .. tool_req:: Enforce status classification
   :id: tool_req__docs_tvr_status
   :tags: Tool Verification Reports
-  :implemented: NO
-  :satisfies: PROCESS_gd_req__tool__attr_status
+  :implemented: YES
+  :satisfies: PROCESS_gd_req__tool__attr_status, PROCESS_gd_req__tool__check_mandatory
   :parent_covered: YES
 
   Docs-as-Code shall enforce that every Tool Verification Report includes a ``status``
