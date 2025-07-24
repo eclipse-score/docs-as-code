@@ -356,7 +356,6 @@ needs_types:
       security: ^(YES|NO)$
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
-      content: ^[\s\S]+$
     mandatory_links:
       includes: ^logic_arc_int(_op)*__.+$
     optional_links:
@@ -376,6 +375,8 @@ needs_types:
       status: ^(valid|invalid)$
     mandatory_links:
       fulfils: ^feat_req__.+$
+    tags:
+      - architecture_element
 
   logic_arc_int:
     title: Logical Architecture Interfaces
@@ -387,7 +388,6 @@ needs_types:
       security: ^(YES|NO)$
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
-      content: ^[\s\S]+$
     optional_links:
       includes: ^logic_arc_int_op__.+$
       fulfils: ^comp_req__.+$
@@ -404,7 +404,6 @@ needs_types:
       security: ^(YES|NO)$
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
-      content: ^[\s\S]+$
     mandatory_links:
       included_by: ^logic_arc_int__.+$
     tags:
@@ -438,7 +437,6 @@ needs_types:
       security: ^(YES|NO)$
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
-      content: ^[\s\S]+$
     optional_links:
       implements: ^real_arc_int(_op)*__.+$
       includes: ^comp_arc_sta__.+$
@@ -457,7 +455,6 @@ needs_types:
       security: ^(YES|NO)$
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
-      content: ^[\s\S]+$
     optional_links:
       fulfils: ^comp_req__.+$
     tags:
@@ -474,7 +471,6 @@ needs_types:
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
       language: ^(cpp|rust)$
-      content: ^[\s\S]+$
     optional_links:
       fulfils: ^comp_req__.+$
     tags:
@@ -490,7 +486,6 @@ needs_types:
       security: ^(YES|NO)$
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
-      content: ^[\s\S]+$
     mandatory_links:
       included_by: ^real_arc_int__.+$
     optional_links:
