@@ -20,6 +20,6 @@ styles/
 .envrc
 
 # Python
-.venv
+.venv_docs
 __pycache__/
 /.coverage

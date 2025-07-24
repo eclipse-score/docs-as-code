@@ -15,13 +15,6 @@ load("@aspect_rules_py//py:defs.bzl", "py_binary", "py_library")
 load("@pip_process//:requirements.bzl", "all_requirements")
 load("@score_python_basics//:defs.bzl", "score_py_pytest", "score_virtualenv")
 
-# TODO: This probably can be deleted
-# score_virtualenv(
-#     name = "process_venv",
-#     reqs = all_requirements,
-#     venv_name = ".venv_process",
-# )
-
 py_library(
     name = "score_plantuml",
     srcs = ["@score_docs_as_code//src/extensions:score_plantuml.py"],

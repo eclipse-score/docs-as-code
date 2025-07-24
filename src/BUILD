@@ -20,18 +20,6 @@ load("@rules_python//sphinxdocs:sphinx.bzl", "sphinx_build_binary")
 load("@score_dash_license_checker//:dash.bzl", "dash_license_checker")
 load("@score_python_basics//:defs.bzl", "score_virtualenv")
 
-score_virtualenv(
-    reqs = [
-        "@score_docs_as_code//src:plantuml_for_python",
-        "@score_docs_as_code//src/extensions:score_plantuml",
-        "@score_docs_as_code//src/find_runfiles:find_runfiles",
-        "@score_docs_as_code//src/extensions/score_draw_uml_funcs:score_draw_uml_funcs",
-        "@score_docs_as_code//src/extensions/score_header_service:score_header_service",
-        "@score_docs_as_code//src/extensions/score_layout:score_layout",
-        "@score_docs_as_code//src/extensions/score_metamodel:score_metamodel",
-        "@score_docs_as_code//src/extensions/score_source_code_linker:score_source_code_linker",
-    ] + all_requirements,
-)
 # These are only exported because they're passed as files to the //docs.bzl
 # macros, and thus must be visible to other packages. They should only be
 # referenced by the //docs.bzl macros.
