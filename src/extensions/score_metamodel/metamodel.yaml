@@ -22,7 +22,7 @@ needs_types_base_options:
       - shall
       - must
       - will
-    # req-Id: tool_req__docs_common_attr_description
+    # req-Id: tool_req__docs_common_attr_desc_wording
     content:
       - just
       - about

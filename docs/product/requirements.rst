@@ -116,19 +116,14 @@ This section provides an overview of current process requirements and their clar
 
 
 .. tool_req:: Enforces description wording rules
-  :id: tool_req__docs_common_attr_description_wording
+  :id: tool_req__docs_common_attr_desc_wording
   :tags: Common Attributes
   :implemented: YES
   :satisfies: PROCESS_gd_req__req__attr_desc_weak
   :parent_covered: YES
-  Docs-as-Code shall enforce that Need description do not contain the following words:
 
-  * just
-  * about
-  * really
-  * some
-  * thing
-  * absolutely
+
+  Docs-as-Code shall enforce that Need description do not contain the weak words that are defined in the metamodel
 
 
 ----------------------------
