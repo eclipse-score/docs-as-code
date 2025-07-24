@@ -164,6 +164,11 @@ git_override(
 
     return modified_content
 
+def strip_ansi_codes(text: str) -> str:
+    """Remove ANSI escape sequences from text"""
+    ansi_escape = re.compile(r'\x1b\[[0-9;]*m')
+    return ansi_escape.sub('', text)
+
 
 def parse_bazel_output(BR: BuildOutput) -> BuildOutput:
     err_lines = BR.stderr.splitlines()
@@ -176,13 +181,17 @@ def parse_bazel_output(BR: BuildOutput) -> BuildOutput:
             print(f"[DEBUG] Warning {i}: {repr(warning)}")
 
     for raw_warning in split_warnings:
+        # In the CLI we seem to have some ansi codes in the warnings. Need to strip those
+        clean_warning = strip_ansi_codes(raw_warning).strip()
+        
         logger = "[NO SPECIFIC LOGGER]"
-        file_and_warning = raw_warning
-        # If this is the case we have a specific logger => therefore parsing it
-        if raw_warning.endswith("]"):
-            tmp_split_warning = raw_warning.split()
-            logger = tmp_split_warning[-1].upper()  # [score_metamodel]
-            file_and_warning = raw_warning.replace(logger, "").rstrip()
+        file_and_warning = clean_warning
+        
+        if clean_warning.endswith("]"):
+            tmp_split_warning = clean_warning.split()
+            logger = tmp_split_warning[-1].upper()
+            file_and_warning = clean_warning.replace(logger, "").rstrip()
+        
         warning_dict[logger].append(file_and_warning)
     BR.warnings = warning_dict
     return BR
