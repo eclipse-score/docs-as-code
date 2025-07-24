@@ -473,12 +473,6 @@
 
 
 
-.. 
-   # The check is still marked as new_check, so there are not warnings currently.
-   # The checks will be enabled again once the check is active as a true warning check.
-
-..
-
 ..
    Ensuring that empty content is detected correctly
 #EXPECT: stkh_req__test_no_content: is missing required option: `content`
