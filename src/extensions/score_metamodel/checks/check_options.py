@@ -11,7 +11,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 import re
-from collections.abc import Generator
 
 from score_metamodel import (
     CheckLogger,
@@ -26,7 +25,7 @@ FieldCheck = tuple[dict[str, str], bool]
 CheckingDictType = dict[str, list[FieldCheck]]
 
 
-def get_need_type(needs_types: list[NeedType], directive: str):
+def get_need_type(needs_types: list[NeedType], directive: str) -> NeedType:
     for need_type in needs_types:
         assert isinstance(need_type, dict), need_type
         if need_type["directive"] == directive:
