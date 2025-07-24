@@ -44,8 +44,11 @@ class ScoreNeedType(NeedType):
 @dataclass
 class ProhibitedWordCheck:
     name: str
-    option_check: dict[str, list[str]]  = field(default_factory=dict) # { Option: [Forbidden words]}
-    types: list[str]  = field(default_factory=list)
+    option_check: dict[str, list[str]] = field(
+        default_factory=dict
+    )  # { Option: [Forbidden words]}
+    types: list[str] = field(default_factory=list)
+
 
 def parse_checks_filter(filter: str) -> list[str]:
     """
@@ -138,8 +141,8 @@ def convert_checks_to_dataclass(checks_dict) -> list[ProhibitedWordCheck]:
     prohibited_words_checks = [
         ProhibitedWordCheck(
             name=check_name,
-            option_check={k: v for k, v in check_config.items() if k != 'types'},
-            types=check_config.get('types', [])
+            option_check={k: v for k, v in check_config.items() if k != "types"},
+            types=check_config.get("types", []),
         )
         for check_name, check_config in checks_dict.items()
     ]
@@ -173,9 +176,9 @@ def load_metamodel_data():
 
     # Get the stop_words and weak_words as separate lists
     proh_checks_dict = data.get("prohibited_words_checks", {})
-    prohibited_words_checks= convert_checks_to_dataclass(proh_checks_dict)
-    
-    #prohibited_words_checks= [ProhibitedWordCheck(**check) for check in pro_checks.values()]
+    prohibited_words_checks = convert_checks_to_dataclass(proh_checks_dict)
+
+    # prohibited_words_checks= [ProhibitedWordCheck(**check) for check in pro_checks.values()]
 
     # stop_words_list = global_base_options.get("prohibited_words", {}).get("title", [])
     # weak_words_list = global_base_options.get("prohibited_words", {}).get("content", [])
@@ -244,7 +247,7 @@ def load_metamodel_data():
 
     return {
         "prohibited_words_checks": prohibited_words_checks,
-        #"weak_words": weak_words_list,
+        # "weak_words": weak_words_list,
         "needs_types": needs_types_list,
         "needs_extra_links": needs_extra_links_list,
         "needs_extra_options": needs_extra_options,
@@ -331,8 +334,8 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     app.config.graph_checks = metamodel["needs_graph_check"]
     app.config.prohibited_words_checks = metamodel["prohibited_words_checks"]
 
-    #app.config.stop_words = metamodel["stop_words"]
-    #app.config.weak_words = metamodel["weak_words"]
+    # app.config.stop_words = metamodel["stop_words"]
+    # app.config.weak_words = metamodel["weak_words"]
     # Ensure that 'needs.json' is always build.
     app.config.needs_build_json = True
     app.config.needs_reproducible_json = True

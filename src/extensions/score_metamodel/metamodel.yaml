@@ -15,17 +15,17 @@
 needs_types_base_options:
   optional_options:
     source_code_link: ^https://github.com/.*
-  # Custom semantic validation rules
+    # Custom semantic validation rules
 
 # Prohibited Word Option Checks
 # Follow this schema to write new checks 
 # check_name:
-    # types[optional]:
-    #   - List of tag types ('tags' option)
-    #   - ...
-    # option_to_check:
-    #   - List of words that are forbidden for this option
-    #   - ...
+# types[optional]:
+#   - List of tag types ('tags' option)
+#   - ...
+# option_to_check:
+#   - List of words that are forbidden for this option
+#   - ...
 #
 prohibited_words_checks:
   # req-Id: tool_req__docs_common_attr_title
@@ -36,7 +36,7 @@ prohibited_words_checks:
       - will
   # req-Id: tool_req__docs_common_attr_description
   content_check:
-    types: 
+    types:
       - requirement_excl_process
     content:
       - just

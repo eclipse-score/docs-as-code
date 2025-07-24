@@ -96,8 +96,9 @@ def check_id_length(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
         log.warning_for_option(need, "id", msg)
 
 
-
-def _check_options_for_prohibited_words(prohibited_word_checks: ProhibitedWordCheck, need: NeedsInfoType, log: CheckLogger):
+def _check_options_for_prohibited_words(
+    prohibited_word_checks: ProhibitedWordCheck, need: NeedsInfoType, log: CheckLogger
+):
     options: list[str] = [
         x for x in prohibited_word_checks.option_check.keys() if x != "types"
     ]
@@ -114,8 +115,10 @@ def _check_options_for_prohibited_words(prohibited_word_checks: ProhibitedWordCh
 @local_check
 def check_for_prohibited_words(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
     need_options = get_need_type(app.config.needs_types, need["type"])
-    prohibited_word_checks: list[ProhibitedWordCheck] = app.config.prohibited_words_checks
-    for check in prohibited_word_checks: 
+    prohibited_word_checks: list[ProhibitedWordCheck] = (
+        app.config.prohibited_words_checks
+    )
+    for check in prohibited_word_checks:
         # Check if there are any type restrictions for this check
         types_to_check = check.types
         if types_to_check:
@@ -123,5 +126,3 @@ def check_for_prohibited_words(app: Sphinx, need: NeedsInfoType, log: CheckLogge
                 _check_options_for_prohibited_words(check, need, log)
         else:
             _check_options_for_prohibited_words(check, need, log)
-
-
