@@ -50,10 +50,8 @@ len_max = 80
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel("DEBUG")
 
-console = Console(
-    force_terminal=True if os.getenv('CI') else None,
-    width=120
-)
+console = Console(force_terminal=True if os.getenv("CI") else None, width=120)
+
 
 @dataclass
 class ConsumerRepo:

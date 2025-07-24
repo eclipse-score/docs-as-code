@@ -75,7 +75,7 @@ jobs:
           script: |
             const outcome = '${{ steps.consumer_tests.outcome }}';
             const state = outcome === 'success' ? 'success' : 'failure';
-            
+
             console.log(`Test outcome: ${outcome}, state: ${state}`);
             console.log(`Head SHA: ${{ steps.pr_details.outputs.head_sha }}`);
 
