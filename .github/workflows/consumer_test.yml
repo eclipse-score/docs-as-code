@@ -14,6 +14,11 @@
 name: Run Consumer Tests on Comment
 on: issue_comment
 
+permissions:
+  checks: write
+  contents: read
+  pull-requests: read
+
 jobs:
   consumer_test:
     if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, '/consumer-test') }}
