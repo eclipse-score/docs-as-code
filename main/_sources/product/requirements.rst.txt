@@ -110,9 +110,10 @@ This section provides an overview of current process requirements and their clar
   :id: tool_req__docs_common_attr_description
   :tags: Common Attributes
   :parent_covered: NO: Can not cover 'ISO/IEC/IEEE/29148'
-  :implemented: NO
+  :implemented: YES
+  :satisfies: PROCESS_gd_req__req__attr_description
 
-  Docs-as-Code shall enforce that each Need contains a description (content).
+  Docs-as-Code shall enforce that each need of type :need:`tool_req__docs_req_types` has a description (content)
 
 ----------------------------
 🔒 Security Classification
