@@ -464,7 +464,6 @@
    :safety: QM
 
 
-
 #EXPECT-NOT: sw_unit__test_good_2.safety (ASIL_B): does not follow pattern `^(QM|ASIL_B)$`.
 
 .. sw_unit:: This is a test
@@ -481,31 +480,31 @@
 ..
 
 ..
-..    Ensuring that empty content is detected correctly
-.. #EXPECT: stkh_req__test_no_content: Need has no content. Content is mandatory for needs of type stkh_req
+   Ensuring that empty content is detected correctly
+#EXPECT: stkh_req__test_no_content: is missing required option: `content`
+
+.. stkh_req:: This is a test
+   :id: stkh_req__test_no_content
+   :status: valid
+   :safety: QM
+
+
 ..
-.. .. stkh_req:: This is a test
-..    :id: stkh_req__test_no_content
-..    :status: valid
-..    :safety: QM
+   Ensuring that non empty content is detected correctly
+#EXPECT-NOT: stkh_req__test_content: is missing required option: `content`
+
+.. stkh_req:: This is a test
+   :id: stkh_req__test_content
+   :status: valid
+   :safety: QM
+
+   Some content, to not trigger the warning
+
+
 ..
-..
-.. ..
-..    Ensuring that non empty content is detected correctly
-.. #EXPECT-NOT: stkh_req__test_content: Need has no content. Content is mandatory for needs of type stkh_req
-..
-.. .. stkh_req:: This is a test
-..    :id: stkh_req__test_content
-..    :status: valid
-..    :safety: QM
-..
-..    Some content, to not trigger the warning
-..
-..
-.. ..
-..    This should not trigger, as 'std_wp' is not checked for content
-.. #EXPECT-NOT: std_wp__test_content : Need has no content. Content is mandatory for needs of type stkh_req
-..
-.. .. std_wp:: This is a test
-..    :id: std_wp__test_content
+   This should not trigger, as 'std_wp' is not checked for content
+#EXPECT-NOT: std_wp__test_content: is missing required option: `content`
+
+.. std_wp:: This is a test
+   :id: std_wp__test_content
 

@@ -91,22 +91,6 @@ def validate_fields(
                 )
 
 
-# req-Id: tool_req__docs_common_attr_description
-@local_check
-def check_content(
-    app: Sphinx,
-    need: NeedsInfoType,
-    log: CheckLogger,
-):
-    need_options = get_need_type(app.config.needs_types, need["type"])
-    # ONLY requirements are needed to be checked here
-    if "requirement" in need_options.get("tags", []):
-        # HINT: Seems that falsey evaluation of content fails without bool conversion.
-        if not bool(need["content"]):
-            msg = f"Need has no content. Content is mandatory for needs of type {need['type']}"
-            log.warning_for_need(need, msg, new_check=True)
-
-
 # req-#id: gd_req__req__attr_type
 # req-#id: gd_req__requirements_attr_security
 # req-#id: gd_req__req__attr_safety

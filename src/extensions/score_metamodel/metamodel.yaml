@@ -107,6 +107,7 @@ needs_types:
       id: ^gd_req__[0-9a-z_]*$
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|draft)$
+      content: ^.*$
     optional_links:
       complies: ^std_req__(iso26262|isosae21434|isopas8926|aspice_40)__.*$
       # req-Id: tool_req__docs_req_link_satisfies_allowed
@@ -220,6 +221,7 @@ needs_types:
       reqtype: ^(Functional|Interface|Process|Legal|Non-Functional)$
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
+      content: ^.*$
       # req-Id: tool_req__docs_req_attr_rationale
       rationale: ^.+$
     optional_options:
@@ -246,6 +248,7 @@ needs_types:
       security: ^(YES|NO)$
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
+      content: ^.*$
     mandatory_links:
       # req-Id: tool_req__docs_req_link_satisfies_allowed
       satisfies: ^stkh_req__.*$
@@ -271,6 +274,7 @@ needs_types:
       security: ^(YES|NO)$
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
+      content: ^.*$
     mandatory_links:
       # req-Id: tool_req__docs_req_link_satisfies_allowed
       satisfies: ^feat_req__.*$
@@ -294,6 +298,7 @@ needs_types:
       security: ^(YES|NO)$
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
+      content: ^.*$
     optional_links:
       # req-Id: tool_req__docs_req_link_satisfies_allowed
       satisfies: ^.*$
@@ -325,6 +330,7 @@ needs_types:
       security: ^(YES|NO)$
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
+      content: ^.*$
     optional_options:
       codelink: ^.*$
       testlink: ^.*$
@@ -350,6 +356,7 @@ needs_types:
       security: ^(YES|NO)$
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
+      content: ^.*$
     mandatory_links:
       includes: ^logic_arc_int(_op)*__.+$
     optional_links:
@@ -380,6 +387,7 @@ needs_types:
       security: ^(YES|NO)$
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
+      content: ^.*$
     optional_links:
       includes: ^logic_arc_int_op__.+$
       fulfils: ^comp_req__.+$
@@ -396,6 +404,7 @@ needs_types:
       security: ^(YES|NO)$
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
+      content: ^.*$
     mandatory_links:
       included_by: ^logic_arc_int__.+$
     tags:
@@ -429,6 +438,7 @@ needs_types:
       security: ^(YES|NO)$
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
+      content: ^.*$
     optional_links:
       implements: ^real_arc_int(_op)*__.+$
       includes: ^comp_arc_sta__.+$
@@ -447,6 +457,7 @@ needs_types:
       security: ^(YES|NO)$
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
+      content: ^.*$
     optional_links:
       fulfils: ^comp_req__.+$
     tags:
@@ -463,6 +474,7 @@ needs_types:
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
       language: ^(cpp|rust)$
+      content: ^.*$
     optional_links:
       fulfils: ^comp_req__.+$
     tags:
@@ -478,6 +490,7 @@ needs_types:
       security: ^(YES|NO)$
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
+      content: ^.*$
     mandatory_links:
       included_by: ^real_arc_int__.+$
     optional_links:
