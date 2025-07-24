@@ -10,8 +10,8 @@
     "file": "src/extensions/score_metamodel/metamodel.yaml",
     "line": 25,
     "tag": "# req-Id:",
-    "need": "tool_req__docs_common_attr_description",
-    "full_line": "# req-Id: tool_req__docs_common_attr_description"
+    "need": "tool_req__docs_common_attr_desc_wording",
+    "full_line": "# req-Id: tool_req__docs_common_attr_desc_wording"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
