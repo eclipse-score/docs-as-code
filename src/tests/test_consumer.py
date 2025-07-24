@@ -10,37 +10,36 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-import subprocess
-import pytest
+import logging
 import os
 import re
-import logging
-
-
-from pathlib import Path
-from rich import print
-from rich.table import Table
-from rich.console import Console
+import subprocess
 from collections import defaultdict
-from pytest import TempPathFactory
 from dataclasses import dataclass, field
+from pathlib import Path
 
+import pytest
+from pytest import TempPathFactory
+from rich import print
+from rich.console import Console
+from rich.table import Table
+
+from src.extensions.score_source_code_linker import get_github_base_url
 from src.extensions.score_source_code_linker.generate_source_code_links_json import (
     find_git_root,
 )
-from src.extensions.score_source_code_linker import get_github_base_url
 
 """
-This script's main usecase is to test consumers of Docs-As-Code with the new changes made in PR's. 
+This script's main usecase is to test consumers of Docs-As-Code with the new changes made in PR's.
 This enables us to find new issues and problems we introduce with changes that we otherwise would only know much later.
 There are several things to note.
 
 - The `print` function has been overwritten by the 'rich' package to allow for richer text output.
 - The script itself takes quiet a bit of time, roughly 5+ min for a full run.
-- If you need more output, enable it via `-v` or `-vv`  
+- If you need more output, enable it via `-v` or `-vv`
 - Start the script via the following command:
-    - bazel run //src:ide_support
-    - .venv/bin/python -m pytest -s src/tests   (If you need more verbosity add `-v` or `-vv`)
+    - bazel run //docs:ide_support
+    - .venv_docs/bin/python -m pytest -s src/tests   (If you need more verbosity add `-v` or `-vv`)
 """
 
 # Max width of the printout

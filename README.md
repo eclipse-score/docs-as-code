@@ -26,11 +26,11 @@ bazel run //docs:incremental_latest
 
 #### Getting IDE support
 
-Create the virtual environment via `bazel run //src:ide_support`.\
+Create the virtual environment via `bazel run //docs:ide_support`.\
 If your IDE does not automatically ask you to activate the newly created environment you can activate it.
 
-- In VSCode via `ctrl+p` => `Select Python Interpreter` then select `.venv/bin/python`
-- In the terminal via `source .venv/bin/activate`
+- In VSCode via `ctrl+p` => `Select Python Interpreter` then select `.venv_docs/bin/python`
+- In the terminal via `source .venv_docs/bin/activate`
 
 #### Format your documentation with:
 

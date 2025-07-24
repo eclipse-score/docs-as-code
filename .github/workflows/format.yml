@@ -37,5 +37,5 @@ jobs:
           bazelisk-cache: true
       - name: Run formatting checks
         run: |
-          bazel run //src:ide_support
+          bazel run //docs:ide_support
           bazel test //src:format.check

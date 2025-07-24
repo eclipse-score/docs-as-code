@@ -61,8 +61,8 @@ jobs:
       - name: Run Consumer tests
         id: consumer_tests
         run: |
-          bazel run //src:ide_support
-          .venv/bin/python -m pytest -s -v src/tests/
+          bazel run //docs:ide_support
+          .venv_docs/bin/python -m pytest -s -v src/tests/
         env:
           FORCE_COLOR: "1"
           TERM: xterm-256color
