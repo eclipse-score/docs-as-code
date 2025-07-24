@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>FAQ &#8212; Score Docs-as-Code  documentation</title>
+    <title>docs-as-code FAQ &#8212; Score Docs-as-Code  documentation</title>
   
   
   
@@ -365,7 +365,7 @@
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">FAQ</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">docs-as-code FAQ</a></li>
 </ul>
 </div>
 </nav></div>
@@ -409,7 +409,7 @@
     
     <li class="breadcrumb-item"><a href="index.html" class="nav-link">How To Use</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">FAQ</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">docs-as-code FAQ</span></li>
   </ul>
 </nav>
 </div>
@@ -426,11 +426,102 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="faq">
-<h1>FAQ<a class="headerlink" href="#faq" title="Link to this heading">#</a></h1>
-<p>In this document you will find answers to frequently asked questions regarding docs-as-code and it’s usage.</p>
-<section id="todo-everything">
-<h2>TODO: Everything<a class="headerlink" href="#todo-everything" title="Link to this heading">#</a></h2>
+  <!-- **************************************************************************
+Copyright (c) 2025 Contributors to the Eclipse Foundation
+
+See the NOTICE file(s) distributed with this work for additional
+information regarding copyright ownership.
+
+This program and the accompanying materials are made available under the
+terms of the Apache License Version 2.0 which is available at
+https://www.apache.org/licenses/LICENSE-2.0
+
+SPDX-License-Identifier: Apache-2.0
+*************************************************************************** -->
+<section id="docs-as-code-faq">
+<h1>docs-as-code FAQ<a class="headerlink" href="#docs-as-code-faq" title="Link to this heading">#</a></h1>
+<p><em>docs-as-code is the S-CORE tool for building documentation, defining requirements and
+verifying compliance.</em></p>
+<p>In this document you will find answers to frequently asked questions regarding
+docs-as-code and its usage.</p>
+<section id="why-is-docs-as-code-so-slow">
+<h2>Why is docs-as-code so slow?<a class="headerlink" href="#why-is-docs-as-code-so-slow" title="Link to this heading">#</a></h2>
+<p>If you are experiencing slow performance, you might be using the deprecated <code class="docutils literal notranslate"><span class="pre">docs:docs</span></code>
+target. Please try one of the following solutions:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">//docs:incremental</span></code> (typically takes 5-15 seconds per iteration and
+provides metamodel warnings on the command line)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">//docs:live_preview</span></code> (runs continuously in the background and provides
+metamodel warnings on the command line)</p></li>
+</ul>
+<p>Note: In some repositories, you may need to append <code class="docutils literal notranslate"><span class="pre">_release</span></code> to the target name, e.g.,
+<code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">//docs:incremental_release</span></code>.</p>
+</section>
+<section id="ide-support-auto-completion-metamodel-checks-preview-lsp-capabilities">
+<h2>IDE support (auto completion, metamodel checks, preview, LSP capabilities)<a class="headerlink" href="#ide-support-auto-completion-metamodel-checks-preview-lsp-capabilities" title="Link to this heading">#</a></h2>
+<p>Currently, IDE support for docs-as-code is limited. Improving this is on our roadmap,
+but not a primary focus at the moment. <strong>Which might be a major oversight on our side.</strong></p>
+<p>In the meantime, we recommend using the live preview feature: <code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">//docs:live_preview</span></code>. This provides immediate metamodel feedback (although only on the
+console) and IDE-agnostic preview capabilities.</p>
+<section id="esbonio">
+<h3>Esbonio<a class="headerlink" href="#esbonio" title="Link to this heading">#</a></h3>
+<p>Known issues:</p>
+<ul class="simple">
+<li><p>Dependencies are not available. We’ll address this by dropping support for “latest”
+targets and pinning all dependencies to specific versions via Bazel.</p></li>
+<li><p>Python is required at startup, which is a problem for any Python-based LSP. We are
+working to improve this by providing a devcontainer with Python preinstalled.
+Additionally, we have submitted a feature request for Esbonio to handle Python
+installation.</p></li>
+</ul>
+</section>
+<section id="ubc">
+<h3>uBc<a class="headerlink" href="#ubc" title="Link to this heading">#</a></h3>
+<p>Currently, uBc is not aware of our metamodel. As a result, checks and auto-completion
+features are not available.</p>
+<p>We plan to explore improvements in this area in the future together with useblocks.</p>
+</section>
+</section>
+<section id="do-we-need-to-write-custom-python-code-for-every-metamodel-check">
+<h2>Do we need to write custom Python code for every Metamodel check?<a class="headerlink" href="#do-we-need-to-write-custom-python-code-for-every-metamodel-check" title="Link to this heading">#</a></h2>
+<p>With our current approach, allowed attributes and links for Needs are defined within the
+<code class="docutils literal notranslate"><span class="pre">metamodel.yml</span></code> file. If the check can be fully described there (e.g., process
+requirements are only allowed to link to stakeholder requirements), no custom code is
+needed. It is also not necessary to write individual tests for every single check
+performed by the metamodel.</p>
+<p>Only a few very specific checks require custom Python code beyond the generic metamodel
+capabilities. These are cases that cannot be addressed by generic metamodel approaches
+in any tool. For example: “the middle part of certain IDs must match the directory name
+of the file.”</p>
+</section>
+<section id="how-can-i-be-sure-that-the-metamodel-does-what-i-want-it-to-do">
+<h2>How can I be sure that the Metamodel does what I want it to do?<a class="headerlink" href="#how-can-i-be-sure-that-the-metamodel-does-what-i-want-it-to-do" title="Link to this heading">#</a></h2>
+<p>We use <em>examples</em> written in reStructuredText (rst) to verify that the metamodel has
+been configured as intended.</p>
+<p>Metamodel checks are verified through standard testing practices, like any other code.
+The examples mentioned above are helpful, but they are only examples. They are not
+mandatory for verification of the metamodel checks.</p>
+</section>
+<section id="sphinx-and-safety">
+<h2>Sphinx and safety<a class="headerlink" href="#sphinx-and-safety" title="Link to this heading">#</a></h2>
+<p>It is important to distinguish between metamodel checks and HTML rendering.</p>
+<p>Metamodel checks can be verified / qualified without Sphinx.</p>
+<p>If the renderer is safety-relevant, then qualification of Sphinx (and Sphinx Needs) is
+required. This is currently under evaluation by the process team (&#64;aschemmel-tech).</p>
+</section>
+<section id="what-about-versioning-of-requirements">
+<h2>What about versioning of requirements?<a class="headerlink" href="#what-about-versioning-of-requirements" title="Link to this heading">#</a></h2>
+<p>We are currently discussing possible implementations to enable linking to specific
+versions of requirements (e.g. <code class="docutils literal notranslate"><span class="pre">implements:</span> <span class="pre">req-5&#64;v3.0.0</span></code>).</p>
+</section>
+<section id="sphinx-traceability">
+<h2>Sphinx traceability<a class="headerlink" href="#sphinx-traceability" title="Link to this heading">#</a></h2>
+<p>It is possible to link requirements from other requirements, from source code, or from
+tests (tests within the next days).</p>
+<section id="what-about-bazel-targets">
+<h3>What about bazel targets?<a class="headerlink" href="#what-about-bazel-targets" title="Link to this heading">#</a></h3>
+<p>Bazel targets are not involved in traceability (currently not required by process).</p>
+</section>
 </section>
 </section>
 
@@ -481,7 +572,20 @@
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#todo-everything">TODO: Everything</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-is-docs-as-code-so-slow">Why is docs-as-code so slow?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ide-support-auto-completion-metamodel-checks-preview-lsp-capabilities">IDE support (auto completion, metamodel checks, preview, LSP capabilities)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#esbonio">Esbonio</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ubc">uBc</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#do-we-need-to-write-custom-python-code-for-every-metamodel-check">Do we need to write custom Python code for every Metamodel check?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-can-i-be-sure-that-the-metamodel-does-what-i-want-it-to-do">How can I be sure that the Metamodel does what I want it to do?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sphinx-and-safety">Sphinx and safety</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-about-versioning-of-requirements">What about versioning of requirements?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sphinx-traceability">Sphinx traceability</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-about-bazel-targets">What about bazel targets?</a></li>
+</ul>
+</li>
 </ul>
   </nav></div>
 
@@ -489,7 +593,7 @@
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/eclipse-score/docs-as-code/edit/main/docs/how-to-use/faq.rst">
+    <a href="https://github.com/eclipse-score/docs-as-code/edit/main/docs/how-to-use/faq.md">
       <i class="fa-solid fa-pencil"></i>
       
       
@@ -505,7 +609,7 @@
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/how-to-use/faq.rst.txt"
+      <li><a href="../_sources/how-to-use/faq.md.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div></div>
