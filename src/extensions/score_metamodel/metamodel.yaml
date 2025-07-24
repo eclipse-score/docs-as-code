@@ -109,9 +109,10 @@ needs_types:
       status: ^(valid|draft)$
       content: ^[\s\S]+$
     optional_links:
-      complies: ^std_req__(iso26262|isosae21434|isopas8926|aspice_40)__.*$
       # req-Id: tool_req__docs_req_link_satisfies_allowed
+      # TODO: fix once process_description is fixed
       satisfies: ^wf__.*$
+      complies: ^std_req__(iso26262|isosae21434|isopas8926|aspice_40)__.*$
     tags:
       - requirement
 
@@ -194,17 +195,24 @@ needs_types:
     optional_options:
       safety: "^(QM|ASIL_B)$"
       security: "^(YES|NO)$"
+      author: ^.*$
+      approver: ^.*$
+      reviewer: ^.*$
     optional_links:
       realizes: "^wp__.+$"
 
+  # req-Id: tool_req__docs_tvr
   doc_tool:
     title: Tool Verification Report
     prefix: doc_tool__
     mandatory_options:
       id: ^doc_tool__[0-9a-z_]*$
+      # req-Id: tool_req__docs_tvr_status
       status: ^(draft|evaluated|qualified|released|rejected)$
       version: ^.*$
+      # req-Id: tool_req__docs_tvr_safety
       safety_affected: "^(YES|NO)$"
+      # req-Id: tool_req__docs_tvr_security
       security_affected: "^(YES|NO)$"
       tcl: "^(LOW|HIGH)$"
     optional_links:
@@ -219,13 +227,17 @@ needs_types:
       id: ^stkh_req__[0-9a-z_]*$
       # req-Id: tool_req__docs_req_attr_reqtype
       reqtype: ^(Functional|Interface|Process|Legal|Non-Functional)$
+      # req-Id: tool_req__docs_common_attr_safety
       safety: ^(QM|ASIL_B)$
+      # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
-      # WARNING: THis will be activated again with new process release (1.1.0) 
+      # WARNING: THis will be activated again with new process release (1.1.0)
       # content: ^[\s\S]+$
       # req-Id: tool_req__docs_req_attr_rationale
       rationale: ^.+$
     optional_options:
+      # req-Id: tool_req__docs_common_attr_security
+      # TODO: move to mandatory once https://github.com/eclipse-score/process_description/pull/133 is merged
       security: ^(YES|NO)$
       codelink: ^.*$
       testlink: ^.*$
@@ -246,8 +258,11 @@ needs_types:
       id: ^feat_req__[0-9a-z_]*$
       # req-Id: tool_req__docs_req_attr_reqtype
       reqtype: ^(Functional|Interface|Process|Legal|Non-Functional)$
+      # req-Id: tool_req__docs_common_attr_security
       security: ^(YES|NO)$
+      # req-Id: tool_req__docs_common_attr_safety
       safety: ^(QM|ASIL_B)$
+      # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
       content: ^[\s\S]+$
     mandatory_links:
@@ -272,8 +287,11 @@ needs_types:
       id: ^comp_req__[0-9a-z_]*$
       # req-Id: tool_req__docs_req_attr_reqtype
       reqtype: ^(Functional|Interface|Process|Legal|Non-Functional)$
+      # req-Id: tool_req__docs_common_attr_security
       security: ^(YES|NO)$
+      # req-Id: tool_req__docs_common_attr_safety
       safety: ^(QM|ASIL_B)$
+      # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
       content: ^[\s\S]+$
     mandatory_links:
@@ -296,16 +314,18 @@ needs_types:
     prefix: tool_req__
     mandatory_options:
       id: ^tool_req__[0-9a-z_]*$
+      # req-Id: tool_req__docs_common_attr_security
       security: ^(YES|NO)$
+      # req-Id: tool_req__docs_common_attr_safety
       safety: ^(QM|ASIL_B)$
+      # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
       content: ^[\s\S]+$
     optional_links:
       # req-Id: tool_req__docs_req_link_satisfies_allowed
-      satisfies: ^.*$
+      # TODO: make it mandatory
+      satisfies: ^gd_req__.*$
     optional_options:
-      # req-Id: tool_req__docs_req_attr_reqtype
-      reqtype: ^(Functional|Interface|Process|Legal|Non-Functional)$
       codelink: ^.*$
       tags: ^.*$
       testlink: ^.*$
@@ -328,8 +348,11 @@ needs_types:
       id: ^aou_req__[0-9a-z_]*$
       # req-Id: tool_req__docs_req_attr_reqtype
       reqtype: ^(Functional|Interface|Process|Legal|Non-Functional)$
+      # req-Id: tool_req__docs_common_attr_security
       security: ^(YES|NO)$
+      # req-Id: tool_req__docs_common_attr_safety
       safety: ^(QM|ASIL_B)$
+      # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
       content: ^[\s\S]+$
     optional_options:
@@ -354,8 +377,11 @@ needs_types:
     style: card
     mandatory_options:
       id: ^feat_arc_sta__[0-9a-z_]+$
+      # req-Id: tool_req__docs_common_attr_security
       security: ^(YES|NO)$
+      # req-Id: tool_req__docs_common_attr_safety
       safety: ^(QM|ASIL_B)$
+      # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
     mandatory_links:
       includes: ^logic_arc_int(_op)*__.+$
@@ -371,8 +397,11 @@ needs_types:
     style: card
     mandatory_options:
       id: ^feat_arc_dyn__[0-9a-z_]+$
+      # req-Id: tool_req__docs_common_attr_security
       security: ^(YES|NO)$
+      # req-Id: tool_req__docs_common_attr_safety
       safety: ^(QM|ASIL_B)$
+      # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
     mandatory_links:
       fulfils: ^feat_req__.+$
@@ -386,8 +415,11 @@ needs_types:
     style: card
     mandatory_options:
       id: ^logic_arc_int__[0-9a-z_]+$
+      # req-Id: tool_req__docs_common_attr_security
       security: ^(YES|NO)$
+      # req-Id: tool_req__docs_common_attr_safety
       safety: ^(QM|ASIL_B)$
+      # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
     optional_links:
       includes: ^logic_arc_int_op__.+$
@@ -402,8 +434,11 @@ needs_types:
     style: card
     mandatory_options:
       id: ^logic_arc_int_op__[0-9a-z_]+$
+      # req-Id: tool_req__docs_common_attr_security
       security: ^(YES|NO)$
+      # req-Id: tool_req__docs_common_attr_safety
       safety: ^(QM|ASIL_B)$
+      # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
     mandatory_links:
       included_by: ^logic_arc_int__.+$
@@ -435,8 +470,11 @@ needs_types:
     style: card
     mandatory_options:
       id: ^comp_arc_sta__[0-9a-z_]+$
+      # req-Id: tool_req__docs_common_attr_security
       security: ^(YES|NO)$
+      # req-Id: tool_req__docs_common_attr_safety
       safety: ^(QM|ASIL_B)$
+      # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
     optional_links:
       implements: ^real_arc_int(_op)*__.+$
@@ -453,8 +491,11 @@ needs_types:
     style: card
     mandatory_options:
       id: ^comp_arc_dyn__[0-9a-z_]+$
+      # req-Id: tool_req__docs_common_attr_security
       security: ^(YES|NO)$
+      # req-Id: tool_req__docs_common_attr_safety
       safety: ^(QM|ASIL_B)$
+      # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
     optional_links:
       fulfils: ^comp_req__.+$
@@ -468,8 +509,11 @@ needs_types:
     style: card
     mandatory_options:
       id: ^real_arc_int__[0-9a-z_]+$
+      # req-Id: tool_req__docs_common_attr_security
       security: ^(YES|NO)$
+      # req-Id: tool_req__docs_common_attr_safety
       safety: ^(QM|ASIL_B)$
+      # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
       language: ^(cpp|rust)$
     optional_links:
@@ -484,8 +528,11 @@ needs_types:
     style: card
     mandatory_options:
       id: ^real_arc_int_op__[0-9a-z_]+$
+      # req-Id: tool_req__docs_common_attr_security
       security: ^(YES|NO)$
+      # req-Id: tool_req__docs_common_attr_safety
       safety: ^(QM|ASIL_B)$
+      # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
     mandatory_links:
       included_by: ^real_arc_int__.+$

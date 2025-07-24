@@ -25,6 +25,7 @@ This is a rendered example of the 'examples/linking-both' folder using the `docs
    :id: stkh_req__index__test_requirement
    :status: valid
    :safety: QM
+   :security: YES
    :rationale: A simple requirement we need to enable a documentation build
    :reqtype: Functional
 
@@ -37,7 +38,6 @@ This is a rendered example of the 'examples/linking-both' folder using the `docs
 
 .. tool_req:: Some Title
    :id: tool_req__example__some_title
-   :reqtype: Process
    :security: YES
    :safety: ASIL_B
    :satisfies: PROCESS_gd_req__req__attr_uid
