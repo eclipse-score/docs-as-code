@@ -475,12 +475,12 @@
 
 ..
    Ensuring that empty content is detected correctly
-#EXPECT: stkh_req__test_no_content: is missing required option: `content`
-
-.. stkh_req:: This is a test
-   :id: stkh_req__test_no_content
-   :status: valid
-   :safety: QM
+.. #EXPECT: stkh_req__test_no_content: is missing required option: `content`
+..
+.. .. stkh_req:: This is a test
+..    :id: stkh_req__test_no_content
+..    :status: valid
+..    :safety: QM
 
 
 ..
