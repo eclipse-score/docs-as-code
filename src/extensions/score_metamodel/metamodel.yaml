@@ -235,9 +235,10 @@ needs_types:
       # content: ^[\s\S]+$
       # req-Id: tool_req__docs_req_attr_rationale
       rationale: ^.+$
-      # req-Id: tool_req__docs_common_attr_security
-      security: ^(YES|NO)$
     optional_options:
+      # req-Id: tool_req__docs_common_attr_security
+      # TODO: move to mandatory once https://github.com/eclipse-score/process_description/pull/133 is merged
+      security: ^(YES|NO)$
       codelink: ^.*$
       testlink: ^.*$
       # req-Id: tool_req__docs_req_attr_reqcov
