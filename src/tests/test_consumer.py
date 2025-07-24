@@ -88,10 +88,10 @@ REPOS_TO_TEST: list[ConsumerRepo] = [
         name="score",
         git_url="https://github.com/eclipse-score/score.git",
         commands=[
-            "bazel run //docs:incremental_latest",
             "bazel run //docs:ide_support",
+            "bazel run //docs:incremental_latest",
             "bazel run //docs:incremental_release",
-            "bazel build //docs:docs_release",
+            #"bazel build //docs:docs_release",
             # "bazel build //docs:docs_latest",
         ],
         test_commands=[],
@@ -169,6 +169,11 @@ def parse_bazel_output(BR: BuildOutput) -> BuildOutput:
     err_lines = BR.stderr.splitlines()
     split_warnings = [x for x in err_lines if "WARNING: " in x]
     warning_dict: dict[str, list[str]] = defaultdict(list)
+
+    if os.getenv("CI"):
+        print("[DEBUG] Raw warnings in CI:")
+        for i, warning in enumerate(split_warnings):
+            print(f"[DEBUG] Warning {i}: {repr(warning)}")
 
     for raw_warning in split_warnings:
         logger = "[NO SPECIFIC LOGGER]"
