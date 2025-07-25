@@ -49,9 +49,6 @@ CACHE_DIR = Path.home() / ".cache" / "docs_as_code_consumer_tests"
 
 console = Console(force_terminal=True if os.getenv("CI") else None, width=80)
 
-LOGGER = logging.getLogger(__name__)
-LOGGER.setLevel("DEBUG")
-
 
 @dataclass
 class ConsumerRepo:
@@ -115,17 +112,17 @@ REPOS_TO_TEST: list[ConsumerRepo] = [
 @pytest.fixture(scope="session")
 def sphinx_base_dir(tmp_path_factory: TempPathFactory, pytestconfig) -> Path:
     """Create base directory for testing - either temporary or persistent cache"""
-    keep_temp = pytestconfig.getoption("--keep-temp")
+    disable_cache = pytestconfig.getoption("--disable-cache")
 
-    if keep_temp:
+    if disable_cache:
         # Use persistent cache directory for local development
-        CACHE_DIR.mkdir(parents=True, exist_ok=True)
-        print(f"[green]Using persistent cache directory: {CACHE_DIR}[/green]")
-        return CACHE_DIR
-    else:
         temp_dir = tmp_path_factory.mktemp("testing_dir")
         print(f"[blue]Using temporary directory: {temp_dir}[/blue]")
         return temp_dir
+    else:
+        CACHE_DIR.mkdir(parents=True, exist_ok=True)
+        print(f"[green]Using persistent cache directory: {CACHE_DIR}[/green]")
+        return CACHE_DIR
 
 
 def get_current_git_commit(curr_path: Path):
@@ -462,14 +459,17 @@ def run_test_commands():
     pass
 
 
-def setup_test_environment(sphinx_base_dir):
+def setup_test_environment(sphinx_base_dir, pytestconfig):
     """Set up the test environment and return necessary paths and metadata."""
     os.chdir(sphinx_base_dir)
     curr_path = Path(__file__).parent
     git_root = find_git_root(curr_path)
 
-    print(f"[DEBUG] curr_path: {curr_path}")
-    print(f"[DEBUG] git_root: {git_root}")
+    verbosity = pytestconfig.get_verbosity()
+
+    if verbosity >= 2:
+        print(f"[DEBUG] curr_path: {curr_path}")
+        print(f"[DEBUG] git_root: {git_root}")
 
     if git_root is None:
         assert False, "Git root was none"
@@ -478,11 +478,12 @@ def setup_test_environment(sphinx_base_dir):
     gh_url = get_github_base_url(git_root)
     current_hash = get_current_git_commit(curr_path)
 
-    print(f"[DEBUG] gh_url: {gh_url}")
-    print(f"[DEBUG] current_hash: {current_hash}")
-    print(
-        f"[DEBUG] Working directory has uncommitted changes: {has_uncommitted_changes(curr_path)}"
-    )
+    if verbosity >= 2:
+        print(f"[DEBUG] gh_url: {gh_url}")
+        print(f"[DEBUG] current_hash: {current_hash}")
+        print(
+            f"[DEBUG] Working directory has uncommitted changes: {has_uncommitted_changes(curr_path)}"
+        )
 
     # Create symlink for local docs-as-code
     docs_as_code_dest = sphinx_base_dir / "docs_as_code"
@@ -490,15 +491,19 @@ def setup_test_environment(sphinx_base_dir):
         # Remove existing symlink/directory to recreate it
         if docs_as_code_dest.is_symlink():
             docs_as_code_dest.unlink()
-            print(f"[DEBUG] Removed existing symlink: {docs_as_code_dest}")
+            if verbosity >= 2:
+                print(f"[DEBUG] Removed existing symlink: {docs_as_code_dest}")
         elif docs_as_code_dest.is_dir():
             import shutil
 
             shutil.rmtree(docs_as_code_dest)
-            print(f"[DEBUG] Removed existing directory: {docs_as_code_dest}")
+            if verbosity >= 2:
+                print(f"[DEBUG] Removed existing directory: {docs_as_code_dest}")
 
     docs_as_code_dest.symlink_to(git_root)
-    print(f"[DEBUG] Symlink created: {docs_as_code_dest} -> {git_root}")
+
+    if verbosity >= 2:
+        print(f"[DEBUG] Symlink created: {docs_as_code_dest} -> {git_root}")
 
     return gh_url, current_hash
 
@@ -514,11 +519,11 @@ def has_uncommitted_changes(path: Path) -> bool:
     return bool(result.stdout.strip())
 
 
-def prepare_repo_overrides(repo_name, git_url, current_hash, gh_url, use_cache=False):
+def prepare_repo_overrides(repo_name, git_url, current_hash, gh_url, use_cache=True):
     """Clone repo and prepare both local and git overrides."""
     repo_path = Path(repo_name)
 
-    if use_cache and repo_path.exists():
+    if not use_cache and repo_path.exists():
         print(f"[green]Using cached repository: {repo_name}[/green]")
         # Update the existing repo
         os.chdir(repo_name)
@@ -551,8 +556,8 @@ def prepare_repo_overrides(repo_name, git_url, current_hash, gh_url, use_cache=F
 # Updated version of your test loop
 def test_and_clone_repos_updated(sphinx_base_dir, pytestconfig):
     # Get command line options from pytest config
-    repo_tests = pytestconfig.getoption("--repo-tests")
-    keep_temp = pytestconfig.getoption("--keep-temp")
+    repo_tests = pytestconfig.getoption("--repo")
+    disable_cache = pytestconfig.getoption("--disable-cache")
 
     repos_to_test = filter_repos(repo_tests)
 
@@ -565,7 +570,7 @@ def test_and_clone_repos_updated(sphinx_base_dir, pytestconfig):
         f"[green]Testing {len(repos_to_test)} repositories: {[r.name for r in repos_to_test]}[/green]"
     )
     # This might be hacky, but currently the best way I could solve the issue of going to the right place.
-    gh_url, current_hash = setup_test_environment(sphinx_base_dir)
+    gh_url, current_hash = setup_test_environment(sphinx_base_dir, pytestconfig)
 
     overall_success = True
 
@@ -577,7 +582,7 @@ def test_and_clone_repos_updated(sphinx_base_dir, pytestconfig):
         #          │ Preparing the Repository for testing │
         #          └─────────────────────────────────────────┘
         module_local_override, module_git_override = prepare_repo_overrides(
-            repo.name, repo.git_url, current_hash, gh_url, use_cache=keep_temp
+            repo.name, repo.git_url, current_hash, gh_url, use_cache=disable_cache
         )
         overrides = {"local": module_local_override, "git": module_git_override}
         for type, override_content in overrides.items():
