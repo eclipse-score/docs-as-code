@@ -21,13 +21,13 @@ bazel run //docs:ide_support
 .venv_docs/bin/python -m pytest -s -v src/tests 
 
 # Run specific repositories only
-.venv_docs/bin/python -m pytest -s src/tests --repo-tests=score
+.venv_docs/bin/python -m pytest -s src/tests --repo=score
 
-# Use persistent cache for faster subsequent runs
-.venv_docs/bin/python -m pytest -s src/tests --keep-temp
+# Disable the persistent cache
+.venv_docs/bin/python -m pytest -s src/tests --disable-cache
 
-# Or combine both option
-.venv_docs/bin/python -m pytest -s src/tests --keep-temp --repo-tests=score
+# Or combine both options
+.venv_docs/bin/python -m pytest -s src/tests --disable-cache --repo=score
 ```
 
 ## Verbosity Levels
@@ -41,29 +41,31 @@ The test suite supports different levels of output detail:
 
 ## Command Line Options
 
-### `--keep-temp`
-Enables persistent caching for faster development cycles.
+### `--disable-cache`
+Disabled persistent caching for clean testing cycle.
 
-**What it does:**
+**What the test normaly do:**
 - Uses `~/.cache/docs_as_code_consumer_tests` instead of temporary directories
 - Reuses cloned repositories between runs (with git updates)
 - Significantly speeds up subsequent test runs
 
-**When to use:** During development when running tests multiple times.
+**This option disables the above mentioned behaviour and clones the repositories fresh**
 
-### `--repo-tests`
+**When to use:** During development when you need to ensure testing is done on a fresh env.
+
+### `--repo`
 Filters which repositories to test.
 
 **Usage:**
 ```bash
 # Test only the 'score' repository
-.venv_docs/bin/python -m pytest -s src/tests --repo-tests=score
+.venv_docs/bin/python -m pytest -s src/tests --repo=score
 
 # Test multiple repositories
-.venv_docs/bin/python -m pytest -s src/tests --repo-tests=score,module_template
+.venv_docs/bin/python -m pytest -s src/tests --repo=score,module_template
 
 # Invalid repo names fall back to testing all repositories
-.venv_docs/bin/python -m pytest -s src/tests --repo-tests=nonexistent
+.venv_docs/bin/python -m pytest -s src/tests --repo=nonexistent
 ```
 
 **Available repositories:** Check `REPOS_TO_TEST` in the test file for current list.
@@ -90,13 +92,13 @@ For each repository, the test:
 bazel run //docs:ide_support
 
 # First run - clones everything fresh
-.venv_docs/bin/python -m pytest -s src/tests --keep-temp --repo-tests=score -v
+.venv_docs/bin/python -m pytest -s -v src/tests --repo=score 
 
 # Make changes to docs-as-code...
 
 # Subsequent runs - much faster due to caching
-.venv_docs/bin/python -m pytest -s src/tests --keep-temp --repo-tests=score -v
+.venv_docs/bin/python -m pytest -s -v src/tests --repo=score 
 
-# Final validation - test all repos
-.venv_docs/bin/python -m pytest -s src/tests --keep-temp -v
+# Final validation - test all repos without cache
+.venv_docs/bin/python -m pytest -s -v src/tests --disable-cache 
 ```
