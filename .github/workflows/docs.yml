@@ -14,10 +14,7 @@
 name: Documentation
 
 permissions:
-  contents: write
-  pages: write
-  pull-requests: write
-  id-token: write
+  contents: read
 
 on:
   pull_request_target:
@@ -38,5 +35,5 @@ jobs:
       id-token: write
 
     with:
-      bazel-target: "//docs:incremental_release -- --github_user=${{ github.repository_owner }} --github_repo=${{ github.event.repository.name }}"
+      bazel-target: "//:docs"
       retention-days: 3

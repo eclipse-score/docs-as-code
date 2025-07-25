@@ -38,7 +38,7 @@ There are several things to note.
 - The script itself takes quiet a bit of time, roughly 5+ min for a full run.
 - If you need more output, enable it via `-v` or `-vv`
 - Start the script via the following command:
-    - bazel run //docs:ide_support
+    - bazel run //:ide_support
     - .venv_docs/bin/python -m pytest -s src/tests   (If you need more verbosity add `-v` or `-vv`)
 """
 
@@ -88,11 +88,11 @@ REPOS_TO_TEST: list[ConsumerRepo] = [
         name="score",
         git_url="https://github.com/eclipse-score/score.git",
         commands=[
-            "bazel run //docs:incremental_latest",
-            "bazel run //docs:ide_support",
-            "bazel run //docs:incremental_release",
-            "bazel build //docs:docs_release",
-            "bazel build //docs:docs_latest",
+            "bazel run //:docs_latest",
+            "bazel run //:ide_support",
+            "bazel run //:docs_release",
+            "bazel build //:docs_release",
+            "bazel build //:docs_latest",
         ],
         test_commands=[],
     ),
@@ -100,9 +100,9 @@ REPOS_TO_TEST: list[ConsumerRepo] = [
         name="module_template",
         git_url="https://github.com/eclipse-score/module_template.git",
         commands=[
-            "bazel run //docs:ide_support",
-            "bazel run //docs:incremental",
-            "bazel build //docs:docs",
+            "bazel run //:ide_support",
+            "bazel run //:docs",
+            "bazel build //:docs",
         ],
         test_commands=[
             "bazel test //tests/...",

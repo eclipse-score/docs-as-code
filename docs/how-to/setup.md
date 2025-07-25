@@ -46,7 +46,7 @@ load("@score_docs_as_code//docs.bzl", "docs")
 docs(
     source_dir = "<your sphinx source dir>",
     deps = [
-        "//path/to/your/dependency",
+        "@other_repo:needs_json",  # Optional, if you have dependencies
     ],
 )
 ```

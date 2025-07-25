@@ -73,7 +73,7 @@ if __name__ == "__main__":
 
     base_arguments = [
         workspace + get_env("SOURCE_DIRECTORY"),
-        workspace + get_env("BUILD_DIRECTORY"),
+        workspace + "_build",
         "-W",  # treat warning as errors
         "--keep-going",  # do not abort after one error
         "-T",  # show details in case of errors in extensions
@@ -93,8 +93,7 @@ if __name__ == "__main__":
 
     action = get_env("ACTION")
     if action == "live_preview":
-        build_dir = Path(get_env("BUILD_DIRECTORY"))
-        (workspace / build_dir / "score_source_code_linker_cache.json").unlink(
+        Path(workspace + "/_build/score_source_code_linker_cache.json").unlink(
             missing_ok=False
         )
         sphinx_autobuild_main(

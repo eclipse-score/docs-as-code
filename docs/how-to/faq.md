@@ -25,13 +25,13 @@ docs-as-code and its usage.
 
 If you are experiencing slow performance, you might be using the deprecated `docs:docs`
 target. Please try one of the following solutions:
-  - `bazel run //docs:incremental` (typically takes 5-15 seconds per iteration and
+  - `bazel run //:docs` (typically takes 5-15 seconds per iteration and
     provides metamodel warnings on the command line)
   - `bazel run //docs:live_preview` (runs continuously in the background and provides
     metamodel warnings on the command line)
 
 Note: In some repositories, you may need to append `_release` to the target name, e.g.,
-`bazel run //docs:incremental_release`.
+`bazel run //:docs_release`.
 
 
 

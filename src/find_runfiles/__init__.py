@@ -60,7 +60,7 @@ def get_runfiles_dir_impl(
     if env_runfiles:
         # Runfiles are only available when running in Bazel.
         # bazel build and bazel run are both supported.
-        # i.e. `bazel build //docs:docs` and `bazel run //docs:incremental`.
+        # i.e. `bazel build //:docs` and `bazel run //:docs`.
         _log_debug("Using env[runfiles] to find the runfiles...")
 
         if env_runfiles.is_absolute():
