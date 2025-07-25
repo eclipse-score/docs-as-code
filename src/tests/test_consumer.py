@@ -44,10 +44,10 @@ There are several things to note.
 """
 
 # Max width of the printout
-len_max = 120
+len_max = 80
 CACHE_DIR = Path.home() / ".cache" / "docs_as_code_consumer_tests"
 
-console = Console(force_terminal=True if os.getenv("CI") else None, width=120)
+console = Console(force_terminal=True if os.getenv("CI") else None, width=80)
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel("DEBUG")
