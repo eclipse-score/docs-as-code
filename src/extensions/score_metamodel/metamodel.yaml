@@ -73,8 +73,6 @@ needs_types:
       status: ^(valid)$
     optional_links:
       links: ^.*$
-    tags:
-      - requirement
 
   std_wp:
     title: Standard Work Product
@@ -109,6 +107,7 @@ needs_types:
       id: ^gd_req__[0-9a-z_]*$
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|draft)$
+      content: ^[\s\S]+$
     optional_links:
       complies: ^std_req__(iso26262|isosae21434|isopas8926|aspice_40)__.*$
       # req-Id: tool_req__docs_req_link_satisfies_allowed
@@ -222,6 +221,8 @@ needs_types:
       reqtype: ^(Functional|Interface|Process|Legal|Non-Functional)$
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
+      # WARNING: THis will be activated again with new process release (1.1.0) 
+      # content: ^[\s\S]+$
       # req-Id: tool_req__docs_req_attr_rationale
       rationale: ^.+$
     optional_options:
@@ -248,6 +249,7 @@ needs_types:
       security: ^(YES|NO)$
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
+      content: ^[\s\S]+$
     mandatory_links:
       # req-Id: tool_req__docs_req_link_satisfies_allowed
       satisfies: ^stkh_req__.*$
@@ -273,6 +275,7 @@ needs_types:
       security: ^(YES|NO)$
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
+      content: ^[\s\S]+$
     mandatory_links:
       # req-Id: tool_req__docs_req_link_satisfies_allowed
       satisfies: ^feat_req__.*$
@@ -296,6 +299,7 @@ needs_types:
       security: ^(YES|NO)$
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
+      content: ^[\s\S]+$
     optional_links:
       # req-Id: tool_req__docs_req_link_satisfies_allowed
       satisfies: ^.*$
@@ -327,6 +331,7 @@ needs_types:
       security: ^(YES|NO)$
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
+      content: ^[\s\S]+$
     optional_options:
       codelink: ^.*$
       testlink: ^.*$
@@ -371,6 +376,8 @@ needs_types:
       status: ^(valid|invalid)$
     mandatory_links:
       fulfils: ^feat_req__.+$
+    tags:
+      - architecture_element
 
   logic_arc_int:
     title: Logical Architecture Interfaces
@@ -467,6 +474,8 @@ needs_types:
       language: ^(cpp|rust)$
     optional_links:
       fulfils: ^comp_req__.+$
+    tags:
+      - architecture_element
 
   real_arc_int_op:
     title: Component Architecture Interface Operation
@@ -482,6 +491,8 @@ needs_types:
       included_by: ^real_arc_int__.+$
     optional_links:
       implements: ^logic_arc_int_op__.+$
+    tags:
+      - architecture_element
 
   review_header:
     prefix: review__header

@@ -175,7 +175,6 @@ def test_rst_files(
             "Unable to extract test data from the rst file: "
             f"{rst_file}. Please check the file for the correct format."
         )
-    # print(f"RST Data: {rst_data}")
     app: SphinxTestApp = sphinx_app_setup(RST_DIR / rst_file)
     os.chdir(app.srcdir)  # Change working directory to the source directory
 
@@ -185,7 +184,7 @@ def test_rst_files(
 
     # Collect the warnings
     warnings = app.warning.getvalue().splitlines()
-    print(f"Warnings: {warnings}")
+    # print(f"Warnings: {warnings}")
 
     # Check if the expected warnings are present
     for warning_info in rst_data.warning_infos:

@@ -1,0 +1,90 @@
+# *******************************************************************************
+# Copyright (c) 2025 Contributors to the Eclipse Foundation
+#
+# See the NOTICE file(s) distributed with this work for additional
+# information regarding copyright ownership.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Apache License Version 2.0 which is available at
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# SPDX-License-Identifier: Apache-2.0
+# *******************************************************************************
+
+name: Run Consumer Tests on Comment
+on: issue_comment
+
+permissions:
+  statuses: write
+  contents: read
+  pull-requests: read
+
+jobs:
+  consumer_test:
+    if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, '/consumer-test') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get PR details
+        id: pr_details
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number
+            });
+            core.setOutput('head_sha', pr.head.sha);
+            core.setOutput('head_ref', pr.head.ref);
+
+      - name: Checkout PR
+        uses: actions/checkout@v4.2.2
+        with:
+          ref: refs/pull/${{ github.event.issue.number }}/head
+
+      - name: Set Consumer Tests Status - Pending
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: '${{ steps.pr_details.outputs.head_sha }}',
+              state: 'pending',
+              context: 'Consumer Tests (Manual)',
+              description: 'Running consumer tests (manually triggered by @${{ github.event.comment.user.login }})',
+              target_url: `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${{ github.run_id }}`
+            });
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run Consumer tests
+        id: consumer_tests
+        run: |
+          bazel run //src:ide_support
+          .venv/bin/python -m pytest -s -v src/tests/
+        env:
+          FORCE_COLOR: "1"
+          TERM: xterm-256color
+          PYTHONUNBUFFERED: "1"
+
+      - name: Report Consumer Tests Status
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const outcome = '${{ steps.consumer_tests.outcome }}';
+            const state = outcome === 'success' ? 'success' : 'failure';
+            console.log(`Test outcome: ${outcome}, state: ${state}`);
+            console.log(`Head SHA: ${{ steps.pr_details.outputs.head_sha }}`);
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: '${{ steps.pr_details.outputs.head_sha }}',
+              state: state,
+              context: 'Consumer Tests (Manual)',
+              description: `Consumer tests ${outcome} (manually triggered by @${{ github.event.comment.user.login }})`,
+              target_url: `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${{ github.run_id }}`
+            });
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
