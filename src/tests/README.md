@@ -3,6 +3,11 @@
 This test validates that changes to the docs-as-code system don't break downstream consumers. 
 It tests both local changes and git-based overrides against real consumer repositories.
 
+## Use in CI
+
+If you want to start the consumer tests on a PR inside `docs-as-code`, then all you have to do is comment 
+`/consumer-test` on the PR and this should trigger them.
+
 ## Quick Start
 
 ```bash
