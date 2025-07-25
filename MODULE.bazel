@@ -98,3 +98,8 @@ bazel_dep(name = "score_cr_checker", version = "0.3.1")
 # Grab dash
 bazel_dep(name = "score_dash_license_checker", version = "0.1.1")
 bazel_dep(name = "score_process", version = "1.0.4")
+git_override(
+    module_name="score_process",
+    remote = "https://github.com/MaximilianSoerenPollak/process_description",
+    commit = "6c2c2707c4b9bdeb608dd499a727c57e1f9a503d"
+)

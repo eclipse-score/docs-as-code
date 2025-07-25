@@ -79,8 +79,8 @@ if __name__ == "__main__":
         "-T",  # show details in case of errors in extensions
         "--jobs",
         "auto",
-        "--conf-dir",
-        workspace + get_env("CONF_DIRECTORY"),
+        # "--conf-dir",
+        # workspace + get_env("CONF_DIRECTORY"),
         f"--define=external_needs_source={get_env('DATA')}",
     ]
 

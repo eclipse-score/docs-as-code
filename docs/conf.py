@@ -21,6 +21,8 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = "Score Docs-as-Code"
+project_url = "https://eclipse-score.github.io/docs-as-code/main/"
+project_prefix = "DOCS_"
 author = "S-CORE"
 version = "0.1"
 
@@ -62,3 +64,4 @@ templates_path = ["templates"]
 
 # Enable numref
 numfig = True
+needs_builder_filter = ""

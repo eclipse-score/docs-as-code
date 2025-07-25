@@ -80,7 +80,7 @@ def docs(source_dir = "docs", data = None, deps = None):
         deps = deps,
         env = {
             "SOURCE_DIRECTORY": source_dir,
-            "DATA": json.encode(data),
+            "DATA": str(data),
             "ACTION": "incremental",
         },
     )
@@ -109,16 +109,30 @@ def docs(source_dir = "docs", data = None, deps = None):
     sphinx_docs(
         name = "needs_json",
         srcs = native.glob([
+            "**/*.png",
+            "**/*.svg",
             "**/*.md",
             "**/*.rst",
-        ], exclude = ["**/tests/*"], allow_empty = False),
+            "**/*.html",
+            "**/*.css",
+            "**/*.puml",
+            "**/*.need",
+            # Include the docs src itself
+            # Note: we don't use py_library here to make it as close as possible to docs:incremental.
+            "**/*.yaml",
+            "**/*.json",
+            "**/*.csv",
+            "**/*.inc",
+        ], exclude = ["**/tests/*"], allow_empty = True),
         config = ":" + source_dir + "/conf.py",
         extra_opts = [
             "-W",
+            "-b",
+            "needs",
             "--keep-going",
-            "--define=external_needs_source=" + json.encode(data),
+            "--define=external_needs_source=" + str(data),
         ],
-        formats = ["json"],
+        formats = ["needs"],
         sphinx = ":sphinx_build",
         tools = data,
     )

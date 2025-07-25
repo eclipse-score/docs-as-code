@@ -23,6 +23,7 @@ from sphinx.application import Sphinx
 from sphinx_needs import logging
 from sphinx_needs.data import NeedsInfoType, NeedsView, SphinxNeedsData
 
+from .external_needs import connect_external_needs
 from .log import CheckLogger
 
 logger = logging.get_logger(__name__)

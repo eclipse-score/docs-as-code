@@ -40,6 +40,6 @@ exports_files([
 docs(
     source_dir = "docs",
     data = [
-        # "@score_process//:needs_json"
+        "@score_process//:needs_json"
     ],
 )
