@@ -131,11 +131,10 @@ def check_description(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
     ---
     """
     weak_words = app.config.weak_words
-    if need["type"] in [
-        "stkh_req",
-        "feat_req",
-        "comp_req",
-    ] and need.get("content", None):
+    need_options = get_need_type(app.config.needs_types, need["type"])
+
+    tags = need_options.get("tags", [])
+    if "requirement_excl_process" in tags and need.get("content", None):
         for word in weak_words:
             if word in need["content"]:
                 msg = f"contains a weak word: `{word}`. Please revise the description."

@@ -79,7 +79,7 @@ This section provides an overview of current process requirements and their clar
   * A prefix indicating the need type (e.g. `feature__`)
   * A middle part matching the hierarchical structure of the need:
      * For requirements: a portion of the feature tree or a component acronym
-     * For architecture elements: the structural element (e.g. some part of the feature tree, component acronym)
+     * For architecture elements: the structural element (e.g. specific part of the feature tree, component acronym)
   * Additional descriptive text to ensure human readability
 
 
@@ -114,6 +114,18 @@ This section provides an overview of current process requirements and their clar
   :satisfies: PROCESS_gd_req__req__attr_description
 
   Docs-as-Code shall enforce that each need of type :need:`tool_req__docs_req_types` has a description (content)
+
+
+.. tool_req:: Enforces description wording rules
+  :id: tool_req__docs_common_attr_desc_wording
+  :tags: Common Attributes
+  :implemented: YES
+  :satisfies: PROCESS_gd_req__req__attr_desc_weak
+  :parent_covered: YES
+
+
+  Docs-as-Code shall enforce that Need description do not contain the weak words that are defined in the metamodel
+
 
 ----------------------------
 🔒 Security Classification
