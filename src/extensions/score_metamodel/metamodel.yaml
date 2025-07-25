@@ -15,14 +15,29 @@
 needs_types_base_options:
   optional_options:
     source_code_link: ^https://github.com/.*
-  # Custom semantic validation rules
-  prohibited_words:
-    # req-Id: tool_req__docs_common_attr_title
+    # Custom semantic validation rules
+
+# Prohibited Word Option Checks
+# Follow this schema to write new checks 
+# check_name:
+# types[optional]:
+#   - List of tag types ('tags' option)
+#   - ...
+# option_to_check:
+#   - List of words that are forbidden for this option
+#   - ...
+#
+prohibited_words_checks:
+  # req-Id: tool_req__docs_common_attr_title
+  title_check:
     title:
       - shall
       - must
       - will
-    # req-Id: tool_req__docs_common_attr_description
+  # req-Id: tool_req__docs_common_attr_description
+  content_check:
+    types:
+      - requirement_excl_process
     content:
       - just
       - about
@@ -248,6 +263,7 @@ needs_types:
       hash: ^.*$
     tags:
       - requirement
+      - requirement_excl_process
 
   # req-Id: tool_req__docs_req_types
   feat_req:
@@ -278,6 +294,7 @@ needs_types:
       hash: ^.*$
     tags:
       - requirement
+      - requirement_excl_process
 
   # req-Id: tool_req__docs_req_types
   comp_req:
@@ -307,6 +324,7 @@ needs_types:
       hash: ^.*$
     tags:
       - requirement
+      - requirement_excl_process
 
   # req-Id: tool_req__docs_req_types
   tool_req:
@@ -339,6 +357,7 @@ needs_types:
       parent_has_problem: ^.*$
     tags:
       - requirement
+      - requirement_excl_process
 
   # req-Id: tool_req__docs_req_types
   aou_req:
@@ -367,6 +386,7 @@ needs_types:
       mitigates: ^.*$
     tags:
       - requirement
+      - requirement_excl_process
 
 
   # Architecture

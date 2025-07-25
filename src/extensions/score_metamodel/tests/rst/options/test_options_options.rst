@@ -11,7 +11,7 @@
    #
    # SPDX-License-Identifier: Apache-2.0
    # *******************************************************************************
-#CHECK: check_options, check_content
+#CHECK: check_options
 
 
 ..

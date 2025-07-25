@@ -11,12 +11,12 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-from score_metamodel import CheckLogger, local_check
+from score_metamodel import CheckLogger, local_check, ScoreNeedType, ProhibitedWordCheck
 from sphinx.application import Sphinx
 from sphinx_needs.data import NeedsInfoType
 
 
-def get_need_type(needs_types: list[str], directive: str) -> str:
+def get_need_type(needs_types: list[ScoreNeedType], directive: str) -> ScoreNeedType:
     for need_type in needs_types:
         assert isinstance(need_type, dict), need_type
         if need_type["directive"] == directive:
@@ -96,48 +96,33 @@ def check_id_length(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
         log.warning_for_option(need, "id", msg)
 
 
-# req-#id: gd_req__requirements_attr_title
-@local_check
-def check_title(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
-    """
-    Ensures that the requirement Title does not contain stop words.
-    This helps enforce clear and concise naming conventions.
-    """
-    stop_words = app.config.stop_words
-    need_options = get_need_type(app.config.needs_types, need["type"])
-
-    if any(
-        tag in need_options.get("tags", [])
-        for tag in ["architecture_element", "requirement"]
-    ):
-        for word in stop_words:
-            if word in need["title"]:
-                msg = (
-                    f"contains a stop word: `{word}`. "
-                    "The title is meant to provide a short summary, "
-                    "not to repeat the requirement statement. "
-                    "Please revise the title for clarity and brevity."
-                )
-                log.warning_for_option(need, "title", msg)
-                break
+def _check_options_for_prohibited_words(
+    prohibited_word_checks: ProhibitedWordCheck, need: NeedsInfoType, log: CheckLogger
+):
+    options: list[str] = [
+        x for x in prohibited_word_checks.option_check.keys() if x != "types"
+    ]
+    for option in options:
+        forbidden_words = prohibited_word_checks.option_check[option]
+        for word in need[option].split():
+            if word in forbidden_words:
+                msg = f"contains a weak word: `{word}` in option: `{option}`. Please revise the wording."
+                log.warning_for_need(need, msg)
 
 
 # req-#id: gd_req__req__attr_desc_weak
+# # req-#id: gd_req__requirements_attr_title
 @local_check
-def check_description(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
-    """
-    Ensures that the requirement Description does not contain weak words.
-    This helps enforce strong, clear, and unambiguous requirement phrasing
-    ---
-    """
-    weak_words = app.config.weak_words
-    if need["type"] in [
-        "stkh_req",
-        "feat_req",
-        "comp_req",
-    ] and need.get("content", None):
-        for word in weak_words:
-            if word in need["content"]:
-                msg = f"contains a weak word: `{word}`. Please revise the description."
-                log.warning_for_option(need, "content", msg)
-                break
+def check_for_prohibited_words(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
+    need_options = get_need_type(app.config.needs_types, need["type"])
+    prohibited_word_checks: list[ProhibitedWordCheck] = (
+        app.config.prohibited_words_checks
+    )
+    for check in prohibited_word_checks:
+        # Check if there are any type restrictions for this check
+        types_to_check = check.types
+        if types_to_check:
+            if any(tag in need_options.get("tags", []) for tag in types_to_check):
+                _check_options_for_prohibited_words(check, need, log)
+        else:
+            _check_options_for_prohibited_words(check, need, log)

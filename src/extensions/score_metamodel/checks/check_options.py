@@ -16,16 +16,16 @@ from score_metamodel import (
     CheckLogger,
     default_options,
     local_check,
+    ScoreNeedType,
 )
 from sphinx.application import Sphinx
-from sphinx_needs.config import NeedType
 from sphinx_needs.data import NeedsInfoType
 
 FieldCheck = tuple[dict[str, str], bool]
 CheckingDictType = dict[str, list[FieldCheck]]
 
 
-def get_need_type(needs_types: list[NeedType], directive: str) -> NeedType:
+def get_need_type(needs_types: list[ScoreNeedType], directive: str) -> ScoreNeedType:
     for need_type in needs_types:
         assert isinstance(need_type, dict), need_type
         if need_type["directive"] == directive:
