@@ -108,9 +108,12 @@ py_library(
 
 filegroup(
     name = "docs_assets",
-    srcs = glob([
-        "assets/**/*",
-    ]),
+    srcs = glob(
+        [
+            "assets/**/*",
+        ],
+        allow_empty = True,
+    ),
     visibility = ["//visibility:public"],
 )
 
