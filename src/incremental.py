@@ -81,7 +81,7 @@ if __name__ == "__main__":
         "auto",
         "--conf-dir",
         workspace + get_env("CONF_DIRECTORY"),
-        f"--define=external_needs_source={get_env('EXTERNAL_NEEDS_INFO')}",
+        f"--define=external_needs_source={get_env('DATA')}",
     ]
 
     # configure sphinx build with GitHub user and repo from CLI

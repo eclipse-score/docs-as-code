@@ -15,6 +15,7 @@ import json
 import os
 import pkgutil
 from collections.abc import Callable
+from dataclasses import dataclass
 from pathlib import Path
 
 from ruamel.yaml import YAML
@@ -265,25 +266,6 @@ def default_options() -> list[str]:
         "arch",
     ]
 
-
-def parse_external_needs_sources(app: Sphinx, config):
-    # HACK: maybe there is a nicer way for this
-    if app.config.external_needs_source not in ["[]", ""]:
-        x = None
-        # NOTE: Due to upgrades in modules, encoding changed. Need to clean string in order to read it right again.
-        clean_str = app.config.external_needs_source.replace('\\"', "")
-        x = json.loads(clean_str)
-        if r := os.getenv("RUNFILES_DIR"):
-            if x[0].get("json_path", None):
-                for a in x:
-                    # This is needed to allow for the needs.json to be found locally
-                    if "json_path" in a.keys():
-                        a["json_path"] = r + a["json_path"]
-        app.config.needs_external_needs = x
-        # Making the prefixes uppercase here to match sphinx_needs, as it does this internally too.
-        app.config.allowed_external_prefixes = [z["id_prefix"].upper() for z in x]
-
-
 def setup(app: Sphinx) -> dict[str, str | bool]:
     app.add_config_value("external_needs_source", "", rebuild="env")
     app.add_config_value("allowed_external_prefixes", [], rebuild="env")
@@ -305,7 +287,7 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     app.config.needs_reproducible_json = True
     app.config.needs_json_remove_defaults = True
 
-    app.connect("config-inited", parse_external_needs_sources)
+    _ = app.connect("config-inited", connect_external_needs)
 
     discover_checks()
 
@@ -318,7 +300,7 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
         ),
     )
 
-    app.connect("build-finished", _run_checks)
+    _ = app.connect("build-finished", _run_checks)
 
     return {
         "version": "0.1",

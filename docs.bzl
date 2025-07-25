@@ -80,7 +80,7 @@ def docs(source_dir = "docs", data = None, deps = None):
         deps = deps,
         env = {
             "SOURCE_DIRECTORY": source_dir,
-            "DATA_DEPS": json.encode(data),
+            "DATA": json.encode(data),
             "ACTION": "incremental",
         },
     )
@@ -93,7 +93,7 @@ def docs(source_dir = "docs", data = None, deps = None):
         deps = deps,
         env = {
             "SOURCE_DIRECTORY": source_dir,
-            "DATA_DEPS": json.encode(data),
+            "DATA": json.encode(data),
             "ACTION": "live_preview",
         },
     )
@@ -112,11 +112,11 @@ def docs(source_dir = "docs", data = None, deps = None):
             "**/*.md",
             "**/*.rst",
         ], exclude = ["**/tests/*"], allow_empty = False),
-        config = ":conf.py",
+        config = ":" + source_dir + "/conf.py",
         extra_opts = [
             "-W",
             "--keep-going",
-            "--define=DATA_DEPS=" + json.encode(data),
+            "--define=external_needs_source=" + json.encode(data),
         ],
         formats = ["json"],
         sphinx = ":sphinx_build",
