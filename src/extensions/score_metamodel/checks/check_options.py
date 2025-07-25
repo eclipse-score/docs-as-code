@@ -127,7 +127,7 @@ def check_options(
         ],
         "link": [
             (dict(need_options.get("req_link", [])), True),
-            #    (dict(need_options.get("opt_link", [])), False),
+            (dict(need_options.get("opt_link", [])), False),
         ],
     }
 

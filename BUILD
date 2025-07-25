@@ -12,6 +12,8 @@
 # *******************************************************************************
 
 load("@score_cr_checker//:cr_checker.bzl", "copyright_checker")
+load("//:docs.bzl", "docs")
+
 
 package(default_visibility = ["//visibility:public"])
 
@@ -32,3 +34,12 @@ exports_files([
     "MODULE.bazel",
     "BUILD",
 ])
+
+
+
+docs(
+    source_dir = "docs",
+    data = [
+        # "@score_process//:needs_json"
+    ],
+)

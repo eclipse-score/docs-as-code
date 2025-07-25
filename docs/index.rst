@@ -17,21 +17,15 @@ Project Documentation
 Welcome to the docs-as-code documentation, it is organized into several key sections.
 
 
-.. grid:: 1 1 3 3
+.. grid:: 1 1 2 2
    :class-container: score-grid
 
    .. grid-item-card::
 
-      **How to Integrate**
+      :ref:`How To's <how-to>`
       ^^^
-      Learn how to integrate this docs-as-code tooling into your S-CORE repository.
+      Learn how to integrate and use docs-as-code tooling.
 
-
-   .. grid-item-card::
-
-      How to Use
-      ^^^
-      Learn how to write documentation using the docs-as-code approach in S-CORE.
 
    .. grid-item-card::
 
@@ -46,6 +40,5 @@ Welcome to the docs-as-code documentation, it is organized into several key sect
       :includehidden:
       :titlesonly:
 
-      how-to-integrate/index
-      how-to-use/index
+      how-to/index
       product/index
