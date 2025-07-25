@@ -13,6 +13,7 @@
 import logging
 import os
 import re
+import argparse
 import subprocess
 from collections import defaultdict
 from dataclasses import dataclass, field
@@ -43,13 +44,13 @@ There are several things to note.
 """
 
 # Max width of the printout
-len_max = 80
+len_max = 120
+CACHE_DIR = Path.home() / ".cache" / "docs_as_code_consumer_tests"
 
+console = Console(force_terminal=True if os.getenv("CI") else None, width=120)
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel("DEBUG")
-
-console = Console(force_terminal=True if os.getenv("CI") else None, width=120)
 
 
 @dataclass
@@ -78,12 +79,12 @@ class Result:
 
 
 REPOS_TO_TEST: list[ConsumerRepo] = [
-    # ConsumerRepo(
-    #     name="process_description",
-    #     git_url="https://github.com/eclipse-score/process_description.git",
-    #     commands=["bazel run //process:incremental_latest"],
-    #     test_commands=[],
-    # ),
+    ConsumerRepo(
+        name="process_description",
+        git_url="https://github.com/eclipse-score/process_description.git",
+        commands=["bazel run //process:incremental_latest"],
+        test_commands=[],
+    ),
     ConsumerRepo(
         name="score",
         git_url="https://github.com/eclipse-score/score.git",
@@ -91,29 +92,40 @@ REPOS_TO_TEST: list[ConsumerRepo] = [
             "bazel run //docs:ide_support",
             "bazel run //docs:incremental_latest",
             "bazel run //docs:incremental_release",
-            #"bazel build //docs:docs_release",
-            # "bazel build //docs:docs_latest",
+            "bazel build //docs:docs_release",
+            "bazel build //docs:docs_latest",
         ],
         test_commands=[],
     ),
-    # ConsumerRepo(
-    #     name="module_template",
-    #     git_url="https://github.com/eclipse-score/module_template.git",
-    #     commands=[
-    #         "bazel run //docs:ide_support",
-    #         "bazel run //docs:incremental",
-    #         "bazel build //docs:docs",
-    #     ],
-    #     test_commands=[
-    #         "bazel test //tests/...",
-    #     ],
-    # ),
+    ConsumerRepo(
+        name="module_template",
+        git_url="https://github.com/eclipse-score/module_template.git",
+        commands=[
+            "bazel run //docs:ide_support",
+            "bazel run //docs:incremental",
+            "bazel build //docs:docs",
+        ],
+        test_commands=[
+            "bazel test //tests/...",
+        ],
+    ),
 ]
 
 
 @pytest.fixture(scope="session")
-def sphinx_base_dir(tmp_path_factory: TempPathFactory) -> Path:
-    return tmp_path_factory.mktemp("testing_dir")
+def sphinx_base_dir(tmp_path_factory: TempPathFactory, pytestconfig) -> Path:
+    """Create base directory for testing - either temporary or persistent cache"""
+    keep_temp = pytestconfig.getoption("--keep-temp")
+
+    if keep_temp:
+        # Use persistent cache directory for local development
+        CACHE_DIR.mkdir(parents=True, exist_ok=True)
+        print(f"[green]Using persistent cache directory: {CACHE_DIR}[/green]")
+        return CACHE_DIR
+    else:
+        temp_dir = tmp_path_factory.mktemp("testing_dir")
+        print(f"[blue]Using temporary directory: {temp_dir}[/blue]")
+        return temp_dir
 
 
 def get_current_git_commit(curr_path: Path):
@@ -128,6 +140,36 @@ def get_current_git_commit(curr_path: Path):
         cwd=curr_path,
     )
     return result.stdout.strip()
+
+
+def filter_repos(repo_filter: str | None) -> list[ConsumerRepo]:
+    """Filter repositories based on command line argument"""
+    if not repo_filter:
+        return REPOS_TO_TEST
+
+    requested_repos = [name.strip() for name in repo_filter.split(",")]
+    filtered_repos = []
+
+    for repo in REPOS_TO_TEST:
+        if repo.name in requested_repos:
+            filtered_repos.append(repo)
+            requested_repos.remove(repo.name)
+
+    # Warn about any repos that weren't found
+    if requested_repos:
+        available_names = [repo.name for repo in REPOS_TO_TEST]
+        print(f"[yellow]Warning: Unknown repositories: {requested_repos}[/yellow]")
+        print(f"[yellow]Available repositories: {available_names}[/yellow]")
+
+    # If no valid repos were found but filter was provided, return all repos
+    # This prevents accidentally running zero tests due to typos
+    if not filtered_repos and repo_filter:
+        print(
+            f"[red]No valid repositories found in filter, running all repositories instead[/red]"
+        )
+        return REPOS_TO_TEST
+
+    return filtered_repos
 
 
 def replace_bazel_dep_with_local_override(module_content: str) -> str:
@@ -164,34 +206,36 @@ git_override(
 
     return modified_content
 
+
 def strip_ansi_codes(text: str) -> str:
     """Remove ANSI escape sequences from text"""
-    ansi_escape = re.compile(r'\x1b\[[0-9;]*m')
-    return ansi_escape.sub('', text)
+    ansi_escape = re.compile(r"\x1b\[[0-9;]*m")
+    return ansi_escape.sub("", text)
 
 
-def parse_bazel_output(BR: BuildOutput) -> BuildOutput:
+def parse_bazel_output(BR: BuildOutput, pytestconfig) -> BuildOutput:
     err_lines = BR.stderr.splitlines()
     split_warnings = [x for x in err_lines if "WARNING: " in x]
     warning_dict: dict[str, list[str]] = defaultdict(list)
 
-    if os.getenv("CI"):
-        print("[DEBUG] Raw warnings in CI:")
-        for i, warning in enumerate(split_warnings):
-            print(f"[DEBUG] Warning {i}: {repr(warning)}")
+    if pytestconfig.get_verbosity() >= 2:
+        if os.getenv("CI"):
+            print("[DEBUG] Raw warnings in CI:")
+            for i, warning in enumerate(split_warnings):
+                print(f"[DEBUG] Warning {i}: {repr(warning)}")
 
     for raw_warning in split_warnings:
         # In the CLI we seem to have some ansi codes in the warnings. Need to strip those
         clean_warning = strip_ansi_codes(raw_warning).strip()
-        
+
         logger = "[NO SPECIFIC LOGGER]"
         file_and_warning = clean_warning
-        
+
         if clean_warning.endswith("]"):
             tmp_split_warning = clean_warning.split()
             logger = tmp_split_warning[-1].upper()
             file_and_warning = clean_warning.replace(logger, "").rstrip()
-        
+
         warning_dict[logger].append(file_and_warning)
     BR.warnings = warning_dict
     return BR
@@ -270,7 +314,6 @@ def analyze_build_success(BR: BuildOutput) -> tuple[bool, str]:
 
     Rules:
     - '[NO SPECIFIC LOGGER]' warnings are always ignored
-    - '[SCORE_METAMODEL]' warnings are ignored only if metamodel_changed is True
     """
 
     # Unsure if this is good, as sometimes the returncode is 1 but it should still go through?
@@ -346,19 +389,61 @@ def print_result_table(results: list[Result]):
     print(table)
 
 
+def stream_subprocess_output(cmd: str, repo_name: str):
+    """Stream subprocess output in real-time for maximum verbosity"""
+    print(f"[green]Streaming output for: {cmd}[/green]")
+
+    process = subprocess.Popen(
+        cmd.split(),
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,  # Merge stderr into stdout
+        universal_newlines=True,
+        bufsize=1,
+    )
+
+    # Stream output line by line
+    output_lines = []
+    for line in iter(process.stdout.readline, ""):
+        if line:
+            print(line.rstrip())  # Print immediately
+            output_lines.append(line)
+
+    process.stdout.close()
+    return_code = process.wait()
+
+    return BuildOutput(
+        returncode=return_code,
+        stdout="".join(output_lines),
+        stderr="",  # All merged into stdout
+    )
+
+
 def run_cmd(
     cmd: str, results: list[Result], repo_name: str, local_or_git: str, pytestconfig
 ) -> tuple[list[Result], bool]:
-    out = subprocess.run(cmd.split(), capture_output=True, text=True)
+    verbosity = pytestconfig.get_verbosity()
 
-    BR = BuildOutput(
-        returncode=out.returncode,
-        stdout=str(out.stdout),
-        stderr=str(out.stderr),
-    )
-    BR_parsed = parse_bazel_output(BR)
+    if verbosity >= 3:
+        # Level 3 (-vvv): Stream output in real-time
+        BR = stream_subprocess_output(cmd, repo_name)
+    else:
+        # Level 0-2: Capture output and parse later
+        out = subprocess.run(cmd.split(), capture_output=True, text=True)
+        BR = BuildOutput(
+            returncode=out.returncode,
+            stdout=str(out.stdout),
+            stderr=str(out.stderr),
+        )
 
-    is_success, reason = print_final_result(BR_parsed, repo_name, cmd, pytestconfig)
+    # Parse warnings (only needed for non-streaming mode)
+    if verbosity < 3:
+        BR = parse_bazel_output(BR, pytestconfig)
+    else:
+        # For streaming mode, we can't parse warnings from stderr easily
+        # since everything was merged to stdout and already printed
+        BR.warnings = {}
+
+    is_success, reason = print_final_result(BR, repo_name, cmd, pytestconfig)
 
     results.append(
         Result(
@@ -382,27 +467,41 @@ def setup_test_environment(sphinx_base_dir):
     os.chdir(sphinx_base_dir)
     curr_path = Path(__file__).parent
     git_root = find_git_root(curr_path)
-    
+
     print(f"[DEBUG] curr_path: {curr_path}")
     print(f"[DEBUG] git_root: {git_root}")
-    
+
     if git_root is None:
         assert False, "Git root was none"
 
     # Get GitHub URL and current hash for git override
     gh_url = get_github_base_url(git_root)
     current_hash = get_current_git_commit(curr_path)
-    
+
     print(f"[DEBUG] gh_url: {gh_url}")
     print(f"[DEBUG] current_hash: {current_hash}")
-    print(f"[DEBUG] Working directory has uncommitted changes: {has_uncommitted_changes(curr_path)}")
+    print(
+        f"[DEBUG] Working directory has uncommitted changes: {has_uncommitted_changes(curr_path)}"
+    )
 
     # Create symlink for local docs-as-code
     docs_as_code_dest = sphinx_base_dir / "docs_as_code"
+    if docs_as_code_dest.exists() or docs_as_code_dest.is_symlink():
+        # Remove existing symlink/directory to recreate it
+        if docs_as_code_dest.is_symlink():
+            docs_as_code_dest.unlink()
+            print(f"[DEBUG] Removed existing symlink: {docs_as_code_dest}")
+        elif docs_as_code_dest.is_dir():
+            import shutil
+
+            shutil.rmtree(docs_as_code_dest)
+            print(f"[DEBUG] Removed existing directory: {docs_as_code_dest}")
+
     docs_as_code_dest.symlink_to(git_root)
     print(f"[DEBUG] Symlink created: {docs_as_code_dest} -> {git_root}")
 
-    return curr_path, git_root, gh_url, current_hash
+    return gh_url, current_hash
+
 
 def has_uncommitted_changes(path: Path) -> bool:
     """Check if there are uncommitted changes in the git repo."""
@@ -415,11 +514,26 @@ def has_uncommitted_changes(path: Path) -> bool:
     return bool(result.stdout.strip())
 
 
-def prepare_repo_overrides(repo_name, git_url, current_hash, gh_url):
+def prepare_repo_overrides(repo_name, git_url, current_hash, gh_url, use_cache=False):
     """Clone repo and prepare both local and git overrides."""
-    # Clone the repository
-    subprocess.run(["git", "clone", git_url], check=True, capture_output=True)
-    os.chdir(repo_name)
+    repo_path = Path(repo_name)
+
+    if use_cache and repo_path.exists():
+        print(f"[green]Using cached repository: {repo_name}[/green]")
+        # Update the existing repo
+        os.chdir(repo_name)
+        subprocess.run(["git", "fetch", "origin"], check=True, capture_output=True)
+        subprocess.run(
+            ["git", "reset", "--hard", "origin/main"], check=True, capture_output=True
+        )
+    else:
+        # Clone the repository fresh
+        if repo_path.exists():
+            import shutil
+
+            shutil.rmtree(repo_path)
+        subprocess.run(["git", "clone", git_url], check=True, capture_output=True)
+        os.chdir(repo_name)
 
     # Read original MODULE.bazel
     with open("MODULE.bazel", "r") as f:
@@ -436,32 +550,44 @@ def prepare_repo_overrides(repo_name, git_url, current_hash, gh_url):
 
 # Updated version of your test loop
 def test_and_clone_repos_updated(sphinx_base_dir, pytestconfig):
-    # Setting up the Test Environment
+    # Get command line options from pytest config
+    repo_tests = pytestconfig.getoption("--repo-tests")
+    keep_temp = pytestconfig.getoption("--keep-temp")
 
+    repos_to_test = filter_repos(repo_tests)
+
+    # Exit early if we don't find repos to test.
+    if not repos_to_test:
+        print("[red]No repositories to test after filtering![/red]")
+        return
+
+    print(
+        f"[green]Testing {len(repos_to_test)} repositories: {[r.name for r in repos_to_test]}[/green]"
+    )
     # This might be hacky, but currently the best way I could solve the issue of going to the right place.
-    curr_path, git_root, gh_url, current_hash = setup_test_environment(sphinx_base_dir)
+    gh_url, current_hash = setup_test_environment(sphinx_base_dir)
 
     overall_success = True
 
     # We capture the results for each command run.
     results: list[Result] = []
 
-    for repo in REPOS_TO_TEST:
-        #          ╭──────────────────────────────────────╮
+    for repo in repos_to_test:
+        #          ┌─────────────────────────────────────────┐
         #          │ Preparing the Repository for testing │
-        #          ╰──────────────────────────────────────╯
+        #          └─────────────────────────────────────────┘
         module_local_override, module_git_override = prepare_repo_overrides(
-            repo.name, repo.git_url, current_hash, gh_url
+            repo.name, repo.git_url, current_hash, gh_url, use_cache=keep_temp
         )
         overrides = {"local": module_local_override, "git": module_git_override}
         for type, override_content in overrides.items():
             with open("MODULE.bazel", "w") as f:
                 f.write(override_content)
 
-            #          ╭──────────────────────────────────────╮
+            #          ┌─────────────────────────────────────────┐
             #          │  Running the different build & run   │
             #          │               commands               │
-            #          ╰──────────────────────────────────────╯
+            #          └─────────────────────────────────────────┘
             for cmd in repo.commands:
                 print_running_cmd(repo.name, cmd, f"{type.upper()} OVERRIDE")
                 # Running through all 'cmds' specified with the local override
@@ -472,9 +598,9 @@ def test_and_clone_repos_updated(sphinx_base_dir, pytestconfig):
                 if not is_success:
                     overall_success = False
 
-            #          ╭──────────────────────────────────────╮
+            #          ┌─────────────────────────────────────────┐
             #          │ Running the different test commands  │
-            #          ╰──────────────────────────────────────╯
+            #          └─────────────────────────────────────────┘
             for test_cmd in repo.test_commands:
                 # Running through all 'test cmds' specified with the local override
                 print_running_cmd(repo.name, test_cmd, "LOCAL OVERRIDE")
