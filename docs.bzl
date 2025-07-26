@@ -98,13 +98,6 @@ def docs(source_dir = "docs", data = None, deps = None):
         },
     )
 
-    score_virtualenv(
-        name = "ide_support",
-        tags = ["cli_help=Create virtual environment for documentation support [run]"],
-        venv_name = ".venv_docs",
-        reqs = deps,
-    )
-
     # creates 'needs.json' build target
     sphinx_docs(
         name = "needs_json",

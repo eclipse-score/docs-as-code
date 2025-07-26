@@ -6,7 +6,6 @@
 | --------------------------- | ---------------------------------------------------------------------- |
 | `bazel run //:docs`         | Builds documentation                                                   |
 | `bazel run //:live_preview` | Creates a live_preview of the documentation viewable in a local server |
-| `bazel run //:ide_support`  | Creates virtual environment under '.venv_docs'                         |
 
 ### Internal targets (do not use directly)
 

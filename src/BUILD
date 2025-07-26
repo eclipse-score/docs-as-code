@@ -154,3 +154,21 @@ format_test(
     workspace = "//:MODULE.bazel",
     yaml = "@aspect_rules_lint//format:yamlfmt",
 )
+
+
+score_virtualenv(
+    name = "ide_support",
+    tags = ["cli_help=Create virtual environment for docs-as-code development [run]"],
+    # venv_name = ".venv",
+    reqs = all_requirements + [
+        # TODO: remove all of these?
+        "@score_docs_as_code//src:plantuml_for_python",
+        "@score_docs_as_code//src/extensions:score_plantuml",
+        "@score_docs_as_code//src/find_runfiles:find_runfiles",
+        "@score_docs_as_code//src/extensions/score_draw_uml_funcs:score_draw_uml_funcs",
+        "@score_docs_as_code//src/extensions/score_header_service:score_header_service",
+        "@score_docs_as_code//src/extensions/score_layout:score_layout",
+        "@score_docs_as_code//src/extensions/score_metamodel:score_metamodel",
+        "@score_docs_as_code//src/extensions/score_source_code_linker:score_source_code_linker",
+    ],
+)
