@@ -621,7 +621,7 @@ needs_types:
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
 
-  # Safety Analysis DFA(Dependent Failure Analysis)
+  # DFA (Dependent Failure Analysis)
   feat_plat_saf_dfa:
     title: Feature Dependent Failure Analysis
     prefix: feat_plat_saf_dfa__
@@ -630,36 +630,50 @@ needs_types:
       failure_id: ^.*$
       failure_effect: ^.*$
       sufficient: ^(yes|no)$
-      safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
       content: ^[\s\S]+$
     mandatory_links:
-      violates: ^feat_arc_sta__[0-9a-z_]+$
+      violates: ^feat_arc_dyn__[0-9a-z_]+$
     optional_options:
       mitigation_issue: ^https://github.com/.*$
     optional_links:
       mitigated_by: ^(feat_req__.*|aou_req__.*)$
 
-
-  comp_plat_saf_dfa:
-    title: Component Dependent Failure Analysis
-    prefix: comp_plat_saf_dfa__
+  feat_saf_dfa:
+    title: Feature Dependent Failure Analysis
+    prefix: feat_saf_dfa__
     mandatory_options:
-      id: ^comp_plat_saf_dfa__[0-9a-z_]+$
+      id: ^feat_saf_dfa__[0-9a-z_]+$
       failure_id: ^.*$
       failure_effect: ^.*$
       sufficient: ^(yes|no)$
-      safety: ^(QM|ASIL_B)$
+      status: ^(valid|invalid)$
+      content: ^[\s\S]+$
+    mandatory_links:
+      violates: ^feat_arc_dyn__[0-9a-z_]+$
+    optional_options:
+      mitigation_issue: ^https://github.com/.*$
+    optional_links:
+      mitigated_by: ^(feat_req__.*|aou_req__.*)$
+
+  comp_saf_dfa:
+    title: Component Dependent Failure Analysis
+    prefix: comp_saf_dfa__
+    mandatory_options:
+      id: ^comp_saf_dfa__[0-9a-z_]+$
+      failure_id: ^.*$
+      failure_effect: ^.*$
+      sufficient: ^(yes|no)$
       status: ^(valid|invalid)$
       content: ^[\s\S]+$
     optional_options:
       mitigation_issue: ^https://github.com/.*$
     mandatory_links:
-      violates: ^comp_arc_sta__[0-9a-z_]+$
+      violates: ^comp_arc_dyn__[0-9a-z_]+$
     optional_links:
       mitigated_by: ^(comp_req__.*|aou_req__.*)$
 
-  # Safety Analysis FMEA(Failure Mode and Effects Analysis)
+  # FMEA (Failure Mode and Effects Analysis)
   feat_saf_fmea:
     title: Feature Failure Mode and Effects Analysis
     prefix: feat_saf_fmea__
@@ -668,13 +682,12 @@ needs_types:
       fault_id: ^.*$
       failure_effect: ^.*$
       sufficient: ^(yes|no)$
-      safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
       content: ^[\s\S]+$
     optional_options:
       mitigation_issue: ^https://github.com/.*$
     mandatory_links:
-      violates: ^feat_arc_sta__[0-9a-z_]+$
+      violates: ^feat_arc_dyn__[0-9a-z_]+$
     optional_links:
       mitigated_by: ^(feat_req__.*|aou_req__.*)$
 
@@ -687,12 +700,11 @@ needs_types:
       failure_effect: ^.*$
       sufficient: ^(yes|no)$
       status: ^(valid|invalid)$
-      safety: ^(QM|ASIL_B)$
       content: ^[\s\S]+$
     optional_options:
       mitigation_issue: ^https://github.com/.*$
     mandatory_links:
-      violates: ^comp_arc_sta__[0-9a-z_]+$
+      violates: ^comp_arc_dyn__[0-9a-z_]+$
     optional_links:
       mitigated_by: ^(comp_req__.*|aou_req__.*)$
 
@@ -828,7 +840,7 @@ graph_checks:
   # as the corresponding ASIL of the Feature or Component that is analyzed.
   saf_linkage_safety:
     needs:
-      include: feat_saf_fmea, comp_saf_fmea, feat_plat_saf_dfa, comp_plat_saf_dfa
+      include: feat_saf_fmea, comp_saf_fmea, feat_plat_saf_dfa, feat_saf_dfa, comp_saf_dfa
       condition: safety == ASIL_B
     check:
       mitigated_by: safety != QM
