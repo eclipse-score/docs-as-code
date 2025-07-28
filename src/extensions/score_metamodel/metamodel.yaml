@@ -633,7 +633,7 @@ needs_types:
       status: ^(valid|invalid)$
       content: ^[\s\S]+$
     mandatory_links:
-      violates: ^feat_arc_dyn__[0-9a-z_]+$
+      violates: ^feat_arc_sta__[0-9a-z_]+$
     optional_options:
       mitigation_issue: ^https://github.com/.*$
     optional_links:
@@ -650,7 +650,7 @@ needs_types:
       status: ^(valid|invalid)$
       content: ^[\s\S]+$
     mandatory_links:
-      violates: ^feat_arc_dyn__[0-9a-z_]+$
+      violates: ^feat_arc_sta__[0-9a-z_]+$
     optional_options:
       mitigation_issue: ^https://github.com/.*$
     optional_links:
@@ -669,7 +669,7 @@ needs_types:
     optional_options:
       mitigation_issue: ^https://github.com/.*$
     mandatory_links:
-      violates: ^comp_arc_dyn__[0-9a-z_]+$
+      violates: ^comp_arc_sta__[0-9a-z_]+$
     optional_links:
       mitigated_by: ^(comp_req__.*|aou_req__.*)$
 
