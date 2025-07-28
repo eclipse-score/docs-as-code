@@ -621,84 +621,81 @@ needs_types:
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
 
-  # Safety Analysis DFA
+  # Safety Analysis DFA(Dependent Failure Analysis)
   feat_plat_saf_dfa:
-    title: DFA
+    title: Feature Dependent Failure Analysis
     prefix: feat_plat_saf_dfa__
     mandatory_options:
       id: ^feat_plat_saf_dfa__[0-9a-z_]+$
-      violation_id: ^.*$
-      violation_cause: ^.*$
+      failure_id: ^.*$
+      failure_effect: ^.*$
       sufficient: ^(yes|no)$
       status: ^(valid|invalid)$
+      content: ^[\s\S]+$
     optional_options:
       sufficient: ^(yes|no)$
     mandatory_links:
-      mitigates: ^(feat_req__.*|aou_req__.*)$
-      verifies: ^feat_arc_sta__[0-9a-z_]*$
+      violates: ^feat_arc_sta__[0-9a-z_]+$
     optional_links:
+      mitigated_by: ^(feat_req__.*|aou_req__.*)$
       mitigation_issue: ^https://github.com/.*$
 
-
-  feat_saf_dfa:
-    title: DFA
-    prefix: feat_saf_dfa__
-    mandatory_options:
-      id: ^feat_saf_dfa__[0-9a-z_]+$
-      violation_id: ^.*$
-      violation_cause: ^.*$
-      sufficient: ^(yes|no)$
-      status: ^(valid|invalid)$
-    mandatory_links:
-      mitigates: ^(feat_req__.*|aou_req__.*)$
-      verifies: ^feat_arc_sta__[0-9a-z_]*$
-    optional_links:
-      mitigation_issue: ^https://github.com/.*$
 
   comp_saf_dfa:
-    title: DFA
-    prefix: comp_saf_dfa__
+    title: Component Dependent Failure Analysis
+    prefix: comp_plat_saf_dfa__
     mandatory_options:
-      id: ^comp_saf_dfa__[0-9a-z_]+$
-      violation_id: ^.*$
-      violation_cause: ^.*$
+      id: ^comp_plat_saf_dfa__[0-9a-z_]+$
+      failure_id: ^.*$
+      failure_effect: ^.*$
       sufficient: ^(yes|no)$
       status: ^(valid|invalid)$
+      content: ^[\s\S]+$
+    optional_options:
+      sufficient: ^(yes|no)$
     mandatory_links:
-      mitigates: ^(comp_req__.*|aou_req__.*)$
-      verifies: ^comp_arc_sta__[0-9a-z_]*$
+      violates: ^comp_arc_sta__[0-9a-z_]+$
     optional_links:
+      mitigated_by: ^(comp_req__.*|aou_req__.*)$
       mitigation_issue: ^https://github.com/.*$
 
-  # # Safety Analysis FMEA
-  feat_saf_fmea:
-    title: FMEA
-    prefix: feat_saf_fmea__
+
+  # Safety Analysis FMEA(Failure Mode and Effects Analysis)
+  feat_plat_saf_fmea:
+    title: Feature Failure Mode and Effects Analysis
+    prefix: feat_plat_saf_fmea__
     mandatory_options:
-      id: ^feat_saf_fmea__[0-9a-z_]+$
-      violation_id: ^.*$
-      violation_cause: ^.*$
+      id: ^feat_plat_saf_fmea__[0-9a-z_]+$
+      fault_id: ^.*$
+      failure_effect: ^.*$
       sufficient: ^(yes|no)$
       status: ^(valid|invalid)$
+      content: ^[\s\S]+$
+    optional_options:
+      sufficient: ^(yes|no)$
     mandatory_links:
-      mitigates: ^(feat_req__.*|aou_req__.*)$
-      verifies: ^feat_arc_dyn__[0-9a-z_]*$
+      violates: ^feat_arc_sta__[0-9a-z_]+$
     optional_links:
+      mitigated_by: ^(feat_req__.*|aou_req__.*)$
       mitigation_issue: ^https://github.com/.*$
 
-  comp_saf_fmea:
-    title: FMEA
-    prefix: comp_saf_fmea__
+
+  comp_plat_saf_fmea:
+    title: Component Failure Mode and Effects Analysis
+    prefix: comp_plat_saf_fmea__
     mandatory_options:
-      id: ^comp_saf_fmea__[0-9a-z_]+$
-      violation_id: ^.*$
-      violation_cause: ^.*$
+      id: ^comp_plat_saf_fmea__[0-9a-z_]+$
+      fault_id: ^.*$
+      failure_effect: ^.*$
       sufficient: ^(yes|no)$
       status: ^(valid|invalid)$
+      content: ^[\s\S]+$
+    optional_options:
+      sufficient: ^(yes|no)$
     mandatory_links:
-      mitigates: ^(comp_req__.*|aou_req__.*)$
-      verifies: ^comp_arc_dyn__[0-9a-z_]*$
+      violates: ^comp_arc_sta__[0-9a-z_]+$
     optional_links:
+      mitigated_by: ^(comp_req__.*|aou_req__.*)$
       mitigation_issue: ^https://github.com/.*$
 
 # Extra link types, which shall be available and allow need types to be linked to each other.
@@ -779,8 +776,8 @@ needs_extra_links:
     incoming: includes
     outgoing: included by
 
-  mitigates:
-    incoming: mitigated by
+  mitigated_by:
+    incoming: mitigated_by
     outgoing: mitigates
 
   verifies:

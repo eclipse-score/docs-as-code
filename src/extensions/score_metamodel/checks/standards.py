@@ -54,6 +54,9 @@ def get_workproducts(needs: list[NeedsInfoType]) -> dict[str, NeedsInfoType]:
     return {need["id"]: need for need in needs if need.get("type") == "workproduct"}
 
 
+def get_needs_by_tags(needs: list[NeedsInfoType], tag: str) -> dict[str, NeedsInfoType]:
+    return {need["id"]: need for need in needs if tag in need["tags"]}
+
 def get_compliance_req_needs(needs: list[NeedsInfoType]) -> set[str]:
     """
     Return a set of all compliance_req values from the Sphinx app's needs,
@@ -205,6 +208,31 @@ def my_pie_linked_standard_requirements(
         else:
             cnt_not_connected += 1
 
+    results.append(cnt_connected)
+    results.append(cnt_not_connected)
+
+def my_pie_linked_standard_requirements_by_tag(
+    needs: list[NeedsInfoType], results: list[int], **kwargs: str | int | float
+) -> None:
+    """
+    Function to render the chart of check for standard requirements linked
+    to at least an item via compliance-gd.
+
+    Passed arguments can be accessed via kwargs['arg<position>']
+    See: https://sphinx-needs.readthedocs.io/en/latest/filter.html#arguments
+    """
+    cnt_connected = 0
+    cnt_not_connected = 0
+
+    tag = str(kwargs["arg1"])
+    
+    all_tagged_needs = get_needs_by_tags(needs, tag)
+    compliance_req_needs = get_compliance_req_needs(needs)
+    for need in all_tagged_needs.values():
+        if need["id"] in compliance_req_needs:
+            cnt_connected += 1
+        else:
+            cnt_not_connected += 1
     results.append(cnt_connected)
     results.append(cnt_not_connected)
 
