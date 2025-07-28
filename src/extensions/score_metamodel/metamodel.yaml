@@ -832,4 +832,4 @@ graph_checks:
       condition: safety == ASIL_B
     check:
       mitigated_by: safety != QM
-      
+
