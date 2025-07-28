@@ -630,15 +630,15 @@ needs_types:
       failure_id: ^.*$
       failure_effect: ^.*$
       sufficient: ^(yes|no)$
+      safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
       content: ^[\s\S]+$
-    optional_options:
-      sufficient: ^(yes|no)$
     mandatory_links:
       violates: ^feat_arc_sta__[0-9a-z_]+$
+    optional_options:
+      mitigation_issue: ^https://github.com/.*$
     optional_links:
       mitigated_by: ^(feat_req__.*|aou_req__.*)$
-      mitigation_issue: ^https://github.com/.*$
 
 
   comp_saf_dfa:
@@ -649,15 +649,15 @@ needs_types:
       failure_id: ^.*$
       failure_effect: ^.*$
       sufficient: ^(yes|no)$
+      safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
       content: ^[\s\S]+$
     optional_options:
-      sufficient: ^(yes|no)$
+      mitigation_issue: ^https://github.com/.*$
     mandatory_links:
       violates: ^comp_arc_sta__[0-9a-z_]+$
     optional_links:
       mitigated_by: ^(comp_req__.*|aou_req__.*)$
-      mitigation_issue: ^https://github.com/.*$
 
 
   # Safety Analysis FMEA(Failure Mode and Effects Analysis)
@@ -669,15 +669,15 @@ needs_types:
       fault_id: ^.*$
       failure_effect: ^.*$
       sufficient: ^(yes|no)$
+      safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
       content: ^[\s\S]+$
     optional_options:
-      sufficient: ^(yes|no)$
+      mitigation_issue: ^https://github.com/.*$
     mandatory_links:
       violates: ^feat_arc_sta__[0-9a-z_]+$
     optional_links:
       mitigated_by: ^(feat_req__.*|aou_req__.*)$
-      mitigation_issue: ^https://github.com/.*$
 
 
   comp_plat_saf_fmea:
@@ -689,14 +689,14 @@ needs_types:
       failure_effect: ^.*$
       sufficient: ^(yes|no)$
       status: ^(valid|invalid)$
+      safety: ^(QM|ASIL_B)$
       content: ^[\s\S]+$
     optional_options:
-      sufficient: ^(yes|no)$
+      mitigation_issue: ^https://github.com/.*$
     mandatory_links:
       violates: ^comp_arc_sta__[0-9a-z_]+$
     optional_links:
       mitigated_by: ^(comp_req__.*|aou_req__.*)$
-      mitigation_issue: ^https://github.com/.*$
 
 # Extra link types, which shall be available and allow need types to be linked to each other.
 # We use a dedicated linked type for each type of a connection, for instance from
