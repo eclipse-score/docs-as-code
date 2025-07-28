@@ -117,45 +117,45 @@
    :sufficient: no
 
 
-#EXPECT: feat_saf_dfa__test__bad_10.sufficient (QM): does not follow pattern `^(yes|no)$`.
+#EXPECT: feat_plat_saf_dfa__test__bad_10.sufficient (QM): does not follow pattern `^(yes|no)$`.
 
-.. feat_saf_dfa:: This is a test
-   :id: feat_saf_dfa__test__bad_10
+.. feat_plat_saf_dfa:: This is a test
+   :id: feat_plat_saf_dfa__test__bad_10
    :sufficient: QM
 
 
-#EXPECT-NOT: feat_saf_dfa__test__good_11.sufficient (yes): does not follow pattern `^(yes|no)$`.
+#EXPECT-NOT: feat_plat_saf_dfa__test__good_11.sufficient (yes): does not follow pattern `^(yes|no)$`.
 
-.. feat_saf_dfa:: This is a test
-   :id: feat_saf_dfa__test__11
+.. feat_plat_saf_dfa:: This is a test
+   :id: feat_plat_saf_dfa__test__11
    :sufficient: yes
 
 
-#EXPECT-NOT: feat_saf_dfa__test__good_12.sufficient (no): does not follow pattern `^(yes|no)$`.
+#EXPECT-NOT: feat_plat_saf_dfa__test__good_12.sufficient (no): does not follow pattern `^(yes|no)$`.
 
-.. feat_saf_dfa:: This is a test
-   :id: feat_saf_dfa__test__12
+.. feat_plat_saf_dfa:: This is a test
+   :id: feat_plat_saf_dfa__test__12
    :sufficient: no
 
 
-#EXPECT: comp_saf_dfa__test__bad_13.sufficient (QM): does not follow pattern `^(yes|no)$`.
+#EXPECT: comp_plat_saf_dfa__test__bad_13.sufficient (QM): does not follow pattern `^(yes|no)$`.
 
-.. comp_saf_dfa:: This is a test
-   :id: comp_saf_dfa__test__bad_13
+.. comp_plat_saf_dfa:: This is a test
+   :id: comp_plat_saf_dfa__test__bad_13
    :sufficient: QM
 
 
-#EXPECT-NOT: comp_saf_dfa__test__good_14.sufficient (yes): does not follow pattern `^(yes|no)$`.
+#EXPECT-NOT: comp_plat_saf_dfa__test__good_14.sufficient (yes): does not follow pattern `^(yes|no)$`.
 
-.. comp_saf_dfa:: This is a test
-   :id: comp_saf_dfa__test__14
+.. comp_plat_saf_dfa:: This is a test
+   :id: comp_plat_saf_dfa__test__14
    :sufficient: yes
 
 
-#EXPECT-NOT: comp_saf_dfa__test__good_15.sufficient (no): does not follow pattern `^(yes|no)$`.
+#EXPECT-NOT: comp_plat_saf_dfa__test__good_15.sufficient (no): does not follow pattern `^(yes|no)$`.
 
-.. comp_saf_dfa:: This is a test
-   :id: comp_saf_dfa__test__15
+.. comp_plat_saf_dfa:: This is a test
+   :id: comp_plat_saf_dfa__test__15
    :sufficient: no
 
 
@@ -176,25 +176,28 @@
 
 
 
+.. 
+   This Test can not be tested at the moment without enabeling that optional checks are also linked.
+   TODO: Re-enable this check
 .. Negative Test: Linked to a non-allowed requirement type.
-#EXPECT: feat_saf_fmea__child__25.mitigates (['comp_req__child__ASIL_B']): does not follow pattern `^(feat_req__.*|aou_req__.*)$`.
-
-.. feat_saf_fmea:: Child requirement 25
-   :id: feat_saf_fmea__child__25
-   :safety: ASIL_B
-   :status: valid
-   :mitigates: comp_req__child__ASIL_B
+.. #EXPECT: feat_saf_fmea__child__25.mitigated_by (['comp_req__child__ASIL_B']): does not follow pattern `^(feat_req__.*|aou_req__.*)$`.
+..
+.. .. feat_saf_fmea:: Child requirement 25
+..    :id: feat_saf_fmea__child__25
+..    :safety: ASIL_B
+..    :status: valid
+..    :mitigated_by: comp_req__child__ASIL_B
 
 
 
 .. Negative Test: Linked to a non-allowed requirement type.
-#EXPECT: feat_saf_fmea__child__26.verifies (['comp_req__child__ASIL_B']): does not follow pattern `^feat_arc_dyn__[0-9a-z_]*$`.
+#EXPECT: feat_saf_fmea__child__26.violates (['comp_req__child__ASIL_B']): does not follow pattern `^feat_arc_sta__[0-9a-z_]+$`.
 
 .. feat_saf_fmea:: Child requirement 26
    :id: feat_saf_fmea__child__26
    :safety: ASIL_B
    :status: valid
-   :verifies: comp_req__child__ASIL_B
+   :violates: comp_req__child__ASIL_B
 
 
 

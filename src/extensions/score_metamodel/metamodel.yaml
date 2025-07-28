@@ -641,7 +641,7 @@ needs_types:
       mitigated_by: ^(feat_req__.*|aou_req__.*)$
 
 
-  comp_saf_dfa:
+  comp_plat_saf_dfa:
     title: Component Dependent Failure Analysis
     prefix: comp_plat_saf_dfa__
     mandatory_options:
@@ -659,13 +659,12 @@ needs_types:
     optional_links:
       mitigated_by: ^(comp_req__.*|aou_req__.*)$
 
-
   # Safety Analysis FMEA(Failure Mode and Effects Analysis)
-  feat_plat_saf_fmea:
+  feat_saf_fmea:
     title: Feature Failure Mode and Effects Analysis
-    prefix: feat_plat_saf_fmea__
+    prefix: feat_saf_fmea__
     mandatory_options:
-      id: ^feat_plat_saf_fmea__[0-9a-z_]+$
+      id: ^feat_saf_fmea__[0-9a-z_]+$
       fault_id: ^.*$
       failure_effect: ^.*$
       sufficient: ^(yes|no)$
@@ -679,12 +678,11 @@ needs_types:
     optional_links:
       mitigated_by: ^(feat_req__.*|aou_req__.*)$
 
-
-  comp_plat_saf_fmea:
+  comp_saf_fmea:
     title: Component Failure Mode and Effects Analysis
-    prefix: comp_plat_saf_fmea__
+    prefix: comp_saf_fmea__
     mandatory_options:
-      id: ^comp_plat_saf_fmea__[0-9a-z_]+$
+      id: ^comp_saf_fmea__[0-9a-z_]+$
       fault_id: ^.*$
       failure_effect: ^.*$
       sufficient: ^(yes|no)$
@@ -777,12 +775,12 @@ needs_extra_links:
     outgoing: included by
 
   mitigated_by:
-    incoming: mitigated_by
-    outgoing: mitigates
+    incoming: mititages
+    outgoing: mitigated_by
 
-  verifies:
-    incoming: verified by
-    outgoing: verifies
+  violates:
+    incoming: violated_by
+    outgoing: violates
 ##############################################################
 # Graph Checks
 # The graph checks focus on the relation of the needs and their attributes.
@@ -830,7 +828,8 @@ graph_checks:
   # as the corresponding ASIL of the Feature or Component that is analyzed.
   saf_linkage_safety:
     needs:
-      include: feat_saf_fmea, comp_saf_fmea, feat_plat_saf_dfa, feat_saf_dfa, comp_saf_dfa
+      include: feat_saf_fmea, comp_saf_fmea, feat_plat_saf_dfa, comp_plat_saf_dfa
       condition: safety == ASIL_B
     check:
-      mitigates: safety != QM
+      mitigated_by: safety != QM
+      
