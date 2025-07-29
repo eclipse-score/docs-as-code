@@ -11,6 +11,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
+load("@score_cli_helper//:cli_helper.bzl", "cli_helper")
 load("@score_cr_checker//:cr_checker.bzl", "copyright_checker")
 
 package(default_visibility = ["//visibility:public"])
@@ -31,3 +32,8 @@ exports_files([
     "MODULE.bazel",
     "BUILD",
 ])
+
+cli_helper(
+    name = "cli-help",
+    visibility = ["//visibility:public"],
+)
