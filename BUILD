@@ -14,7 +14,6 @@
 load("@score_cr_checker//:cr_checker.bzl", "copyright_checker")
 load("//:docs.bzl", "docs")
 
-
 package(default_visibility = ["//visibility:public"])
 
 copyright_checker(
@@ -29,10 +28,9 @@ copyright_checker(
     visibility = ["//visibility:public"],
 )
 
-
 docs(
-    source_dir = "docs",
     data = [
-        "@score_process//:needs_json"
+        "@score_process//:needs_json",
     ],
+    source_dir = "docs",
 )

@@ -71,7 +71,6 @@ compile_pip_requirements(
     ],
 )
 
-
 filegroup(
     name = "docs_assets",
     srcs = glob(

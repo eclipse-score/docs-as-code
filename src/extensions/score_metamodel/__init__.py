@@ -299,6 +299,7 @@ def default_options() -> list[str]:
         "arch",
     ]
 
+
 def setup(app: Sphinx) -> dict[str, str | bool]:
     app.add_config_value("external_needs_source", "", rebuild="env")
     app.add_config_value("allowed_external_prefixes", [], rebuild="env")
