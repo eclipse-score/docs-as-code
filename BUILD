@@ -18,7 +18,6 @@ package(default_visibility = ["//visibility:public"])
 copyright_checker(
     name = "copyright",
     srcs = [
-        "examples",
         "src",
         "//:BUILD",
         "//:MODULE.bazel",
