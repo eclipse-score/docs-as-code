@@ -190,7 +190,15 @@ def test_rst_files(
     for warning_info in rst_data.warning_infos:
         for w in warning_info.expected:
             if not warning_matches(rst_data, warning_info, w, warnings):
-                raise AssertionError(f"Expected warning: '{w}' not found")
+                raise AssertionError(
+                    f"\nExpected warning: '{w}' not found.\n"
+                    f"Actual warnings:\n" +
+                    "\n".join(warnings)
+                )
         for w in warning_info.not_expected:
             if warning_matches(rst_data, warning_info, w, warnings):
-                raise AssertionError(f"Unexpected warning: '{w}' found")
+                raise AssertionError(
+                    f"\nUnexpected warning: '{w}' found.\n"
+                    f"Actual warnings:\n" +
+                    "\n".join(warnings)
+                )

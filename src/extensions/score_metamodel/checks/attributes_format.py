@@ -24,61 +24,6 @@ def get_need_type(needs_types: list[ScoreNeedType], directive: str) -> ScoreNeed
     raise ValueError(f"Need type {directive} not found in needs_types")
 
 
-# req-#id: gd_req__req__attr_uid
-@local_check
-def check_id_format(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
-    """
-    Checking if the title, directory and feature are included in
-    the requirement id or not.
-    ---
-    """
-    # These folders are taken from 'https://github.com/eclipse-score/process_description/tree/main/process'
-    # This means, any needs within any of these folders (no matter where they are) will not be required to have 3 parts
-    process_folder_names = [
-        "general_concepts",
-        "introduction",
-        "process_areas",
-        "roles",
-        "standards",
-        "workflows",
-        "workproducts",
-        "process",
-    ]
-    # Split the string by underscores
-    parts = need["id"].split("__")
-    if need["type"] in [
-        "std_wp",
-        "document",  # This is used in 'platform_managment' in score.
-        "doc_tool",
-        "gd_guidl",
-        "workflow",
-        "gd_chklst",
-        "std_req",
-        "tool_req",
-        "role",
-        "doc_concept",
-        "gd_temp",
-        "gd_method",
-        "gd_req",
-        "workproduct",
-        "doc_getstrt",
-    ] or any(prefix in str(need.get("docname", "")) for prefix in process_folder_names):
-        if len(parts) != 2 and len(parts) != 3:
-            msg = (
-                "expected to consisting of one of these 2 formats:"
-                "`<Req Type>__<Abbreviations>` or "
-                "`<Req Type>__<Abbreviations>__<Architectural Element>`."
-            )
-            log.warning_for_option(need, "id", msg)
-    else:
-        if len(parts) != 3:
-            msg = (
-                "expected to consisting of this format: "
-                "`<Req Type>__<Abbreviations>__<Architectural Element>`."
-            )
-            log.warning_for_option(need, "id", msg)
-
-
 @local_check
 def check_id_length(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
     """

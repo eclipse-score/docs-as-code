@@ -18,7 +18,7 @@ needs_types_base_options:
     # Custom semantic validation rules
 
 # Prohibited Word Option Checks
-# Follow this schema to write new checks 
+# Follow this schema to write new checks
 # check_name:
 # types[optional]:
 #   - List of tag types ('tags' option)
@@ -47,6 +47,7 @@ prohibited_words_checks:
       - absolutely
 
 needs_types:
+  # req-#id: gd_req__req__attr_uid
   ##############################################################################
   # Process Metamodel
   ##############################################################################
@@ -55,7 +56,7 @@ needs_types:
     title: "TSF"
     prefix: "tsf__"
     mandatory_options:
-      id: "^tsf__[0-9a-zA-Z_-]*$"
+      id: "^tsf__[0-9a-z]+(?:_[0-9a-z]+)*__[0-9a-z]+(?:_[0-9a-z]+)*$"
       status: "^(draft|valid)$"
     optional_links:
       links: "^.*$"
@@ -64,7 +65,7 @@ needs_types:
     title: "Tenet"
     prefix: "tenet__"
     mandatory_options:
-      id: "^tenet__[0-9a-zA-Z_-]*$"
+      id: "^tenet__[0-9a-z]+(?:_[0-9a-z]+)*__[0-9a-z]+(?:_[0-9a-z]+)*$"
       status: "^(draft|valid)$"
     optional_links:
       links: "^.*$"
@@ -73,7 +74,7 @@ needs_types:
     title: "Assertion"
     prefix: "^assertion__"
     mandatory_options:
-      id: "assertion__[0-9a-zA-Z_-]*$"
+      id: "assertion__[0-9a-z]+(?:_[0-9a-z]+)*__[0-9a-z]+(?:_[0-9a-z]+)*$"
       status: "^(draft|valid)$"
     optional_links:
       links: "^.*$"
@@ -102,7 +103,7 @@ needs_types:
     title: Workflow
     prefix: wf__
     mandatory_options:
-      id: ^wf__[0-9a-z_]*$
+      id: ^wf__[0-9a-z]+(?:_[0-9a-z]+)*$
       status: ^(valid|draft)$
     mandatory_links:
       input: ^wp__.*$
@@ -119,7 +120,7 @@ needs_types:
     title: Process Requirements
     prefix: gd_req__
     mandatory_options:
-      id: ^gd_req__[0-9a-z_]*$
+      id: ^gd_req__[0-9a-z]+(?:_[0-9a-z]+)*$
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|draft)$
       content: ^[\s\S]+$
@@ -135,7 +136,7 @@ needs_types:
     title: Process Template
     prefix: gd_temp__
     mandatory_options:
-      id: ^gd_temp__[0-9a-z_]*$
+      id: ^gd_temp__[0-9a-z]+(?:_[0-9a-z]+)*$
       status: ^(valid|draft)$
     optional_links:
       complies: std_req__(iso26262|isodae21434|isopas8926|aspice_40)__.*$
@@ -144,7 +145,7 @@ needs_types:
     title: Process Checklist
     prefix: gd_chklst__
     mandatory_options:
-      id: ^gd_chklst__[0-9a-z_]*$
+      id: ^gd_chklst__[0-9a-z]+(?:_[0-9a-z]+)*$
       status: ^(valid|draft)$
     optional_links:
       complies: std_req__(iso26262|isodae21434|isopas8926|aspice_40)__.*$
@@ -153,7 +154,7 @@ needs_types:
     title: Process Guideline
     prefix: gd_guidl__
     mandatory_options:
-      id: ^gd_guidl__[0-9a-z_]*$
+      id: ^gd_guidl__[0-9a-z]+(?:_[0-9a-z]+)*$
       status: ^(valid|draft)$
     optional_links:
       complies: std_req__(iso26262|isosae21434|isopas8926|aspice_40)__.*$
@@ -162,7 +163,7 @@ needs_types:
     title: Process Method
     prefix: gd_meth__
     mandatory_options:
-      id: ^gd_meth__[0-9a-z_]*$
+      id: ^gd_meth__[0-9a-z]+(?:_[0-9a-z]+)*$
       status: ^(valid|draft)$
     optional_links:
       complies: std_req__(iso26262|isosae21434|isopas8926|aspice_40)__.*$
@@ -171,7 +172,7 @@ needs_types:
     title: Workproduct
     prefix: wp__
     mandatory_options:
-      id: ^wp__[0-9a-z_]*$
+      id: ^wp__[0-9a-z]+(?:_[0-9a-z]+)*$
       status: ^(valid|draft)$
     optional_links:
       complies: std_(wp__iso26262|wp__isosae21434|wp__isopas8926|iic_aspice_40)__.*$
@@ -181,7 +182,7 @@ needs_types:
     title: Role
     prefix: rl__
     mandatory_options:
-      id: ^rl__[0-9a-z_]*$
+      id: ^rl__[0-9a-z]+(?:_[0-9a-z]+)*$
     optional_links:
       contains: ^rl__.*$
 
@@ -190,14 +191,14 @@ needs_types:
     title: Concept Definition
     prefix: doc_concept__
     mandatory_options:
-      id: ^doc_concept__[0-9a-z_]*$
+      id: ^doc_concept__[0-9a-z]+(?:_[0-9a-z]+)*$
       status: ^(valid|draft)$
 
   doc_getstrt:
     title: Getting Startet
     prefix: doc_getstrt__
     mandatory_options:
-      id: ^doc_getstrt__[0-9a-z_]*$
+      id: ^doc_getstrt__[0-9a-z]+(?:_[0-9a-z]+)*$
       status: ^(valid|draft)$
 
   # Documents, score, and other modules only
@@ -205,7 +206,7 @@ needs_types:
     title: Generic Document
     prefix: doc__
     mandatory_options:
-      id: ^doc__[0-9a-z_]*$
+      id: ^doc__[0-9a-z]+(?:_[0-9a-z]+)*$
       status: ^(valid|draft|invalid)$
     optional_options:
       safety: "^(QM|ASIL_B)$"
@@ -221,7 +222,7 @@ needs_types:
     title: Tool Verification Report
     prefix: doc_tool__
     mandatory_options:
-      id: ^doc_tool__[0-9a-z_]*$
+      id: ^doc_tool__[0-9a-z]+(?:_[0-9a-z]+)*$
       # req-Id: tool_req__docs_tvr_status
       status: ^(draft|evaluated|qualified|released|rejected)$
       version: ^.*$
@@ -271,7 +272,7 @@ needs_types:
     prefix: feat_req__
     style: node
     mandatory_options:
-      id: ^feat_req__[0-9a-z_]*$
+      id: ^feat_req__[0-9a-z]+(?:_[0-9a-z]+)*__[0-9a-z]+(?:_[0-9a-z]+)*$
       # req-Id: tool_req__docs_req_attr_reqtype
       reqtype: ^(Functional|Interface|Process|Legal|Non-Functional)$
       # req-Id: tool_req__docs_common_attr_security
@@ -301,7 +302,7 @@ needs_types:
     title: Component Requirement
     prefix: comp_req__
     mandatory_options:
-      id: ^comp_req__[0-9a-z_]*$
+      id: ^comp_req__[0-9a-z]+(?:_[0-9a-z]+)*__[0-9a-z]+(?:_[0-9a-z]+)*$
       # req-Id: tool_req__docs_req_attr_reqtype
       reqtype: ^(Functional|Interface|Process|Legal|Non-Functional)$
       # req-Id: tool_req__docs_common_attr_security
@@ -331,7 +332,7 @@ needs_types:
     title: Tool Requirement
     prefix: tool_req__
     mandatory_options:
-      id: ^tool_req__[0-9a-z_]*$
+      id: ^tool_req__[0-9a-z]+(?:_[0-9a-z]+)*$
       # req-Id: tool_req__docs_common_attr_security
       security: ^(YES|NO)$
       # req-Id: tool_req__docs_common_attr_safety
@@ -364,7 +365,7 @@ needs_types:
     title: Assumption of Use
     prefix: aou_req__
     mandatory_options:
-      id: ^aou_req__[0-9a-z_]*$
+      id: ^aou_req__[0-9a-z]+(?:_[0-9a-z]+)*__[0-9a-z]+(?:_[0-9a-z]+)*$
       # req-Id: tool_req__docs_req_attr_reqtype
       reqtype: ^(Functional|Interface|Process|Legal|Non-Functional)$
       # req-Id: tool_req__docs_common_attr_security
@@ -396,7 +397,7 @@ needs_types:
     color: #FEDCD2
     style: card
     mandatory_options:
-      id: ^feat_arc_sta__[0-9a-z_]+$
+      id: ^feat_arc_sta__[0-9a-z]+(?:_[0-9a-z]+)*$
       # req-Id: tool_req__docs_common_attr_security
       security: ^(YES|NO)$
       # req-Id: tool_req__docs_common_attr_safety
@@ -416,7 +417,7 @@ needs_types:
     color: #FEDCD2
     style: card
     mandatory_options:
-      id: ^feat_arc_dyn__[0-9a-z_]+$
+      id: ^feat_arc_dyn__[0-9a-z]+(?:_[0-9a-z]+)*$
       # req-Id: tool_req__docs_common_attr_security
       security: ^(YES|NO)$
       # req-Id: tool_req__docs_common_attr_safety
@@ -434,7 +435,7 @@ needs_types:
     color: #FEDCD2
     style: card
     mandatory_options:
-      id: ^logic_arc_int__[0-9a-z_]+$
+      id: ^logic_arc_int__[0-9a-z]+(?:_[0-9a-z]+)*$
       # req-Id: tool_req__docs_common_attr_security
       security: ^(YES|NO)$
       # req-Id: tool_req__docs_common_attr_safety
@@ -453,7 +454,7 @@ needs_types:
     color: #FEDCD2
     style: card
     mandatory_options:
-      id: ^logic_arc_int_op__[0-9a-z_]+$
+      id: ^logic_arc_int_op__[0-9a-z]+(?:_[0-9a-z]+)*$
       # req-Id: tool_req__docs_common_attr_security
       security: ^(YES|NO)$
       # req-Id: tool_req__docs_common_attr_safety
@@ -471,7 +472,7 @@ needs_types:
     color: #FEDCD2
     style: card
     mandatory_options:
-      id: ^mod_view_sta__[0-9a-z_]+$
+      id: ^mod_view_sta__[0-9a-z]+(?:_[0-9a-z]+)*$
     mandatory_links:
       includes: ^comp_arc_sta__.+$
 
@@ -481,7 +482,7 @@ needs_types:
     color: #FEDCD2
     style: card
     mandatory_options:
-      id: ^mod_view_dyn__[0-9a-z_]+$
+      id: ^mod_view_dyn__[0-9a-z]+(?:_[0-9a-z]+)*$
 
   comp_arc_sta:
     title: Component Architecture Static View
@@ -489,7 +490,7 @@ needs_types:
     color: #FEDCD2
     style: card
     mandatory_options:
-      id: ^comp_arc_sta__[0-9a-z_]+$
+      id: ^comp_arc_sta__[0-9a-z]+(?:_[0-9a-z]+)*$
       # req-Id: tool_req__docs_common_attr_security
       security: ^(YES|NO)$
       # req-Id: tool_req__docs_common_attr_safety
@@ -510,7 +511,7 @@ needs_types:
     color: #FEDCD2
     style: card
     mandatory_options:
-      id: ^comp_arc_dyn__[0-9a-z_]+$
+      id: ^comp_arc_dyn__[0-9a-z]+(?:_[0-9a-z]+)*$
       # req-Id: tool_req__docs_common_attr_security
       security: ^(YES|NO)$
       # req-Id: tool_req__docs_common_attr_safety
@@ -528,7 +529,7 @@ needs_types:
     color: #FEDCD2
     style: card
     mandatory_options:
-      id: ^real_arc_int__[0-9a-z_]+$
+      id: ^real_arc_int__[0-9a-z]+(?:_[0-9a-z]+)*$
       # req-Id: tool_req__docs_common_attr_security
       security: ^(YES|NO)$
       # req-Id: tool_req__docs_common_attr_safety
@@ -547,7 +548,7 @@ needs_types:
     color: #FEDCD2
     style: card
     mandatory_options:
-      id: ^real_arc_int_op__[0-9a-z_]+$
+      id: ^real_arc_int_op__[0-9a-z]+(?:_[0-9a-z]+)*$
       # req-Id: tool_req__docs_common_attr_security
       security: ^(YES|NO)$
       # req-Id: tool_req__docs_common_attr_safety
@@ -578,7 +579,7 @@ needs_types:
     color: #FEDCD2
     style: card
     mandatory_options:
-      id: ^dd_sta__[0-9a-z_]*$
+      id: ^dd_sta__[0-9a-z]+(?:_[0-9a-z]+)*__[0-9a-z]+(?:_[0-9a-z]+)*$
       security: ^(YES|NO)$
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
@@ -594,7 +595,7 @@ needs_types:
     color: #FEDCD2
     style: card
     mandatory_options:
-      id: ^dd_dyn__[0-9a-z_]*$
+      id: ^dd_dyn__[0-9a-z]+(?:_[0-9a-z]+)*__[0-9a-z]+(?:_[0-9a-z]+)*$
       security: ^(YES|NO)$
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
@@ -606,7 +607,7 @@ needs_types:
     title: Software unit
     prefix: sw_unit__
     mandatory_options:
-      id: ^sw_unit__[0-9a-z_]*$
+      id: ^sw_unit__[0-9a-z]+(?:_[0-9a-z]+)*__[0-9a-z]+(?:_[0-9a-z]+)*$
       security: ^(YES|NO)$
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
@@ -616,7 +617,7 @@ needs_types:
     color: #FEDCD2
     style: card
     mandatory_options:
-      id: ^sw_unit_int__[0-9a-z_]*$
+      id: ^sw_unit_int__[0-9a-z]+(?:_[0-9a-z]+)*__[0-9a-z]+(?:_[0-9a-z]+)*$
       security: ^(YES|NO)$
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
@@ -626,7 +627,7 @@ needs_types:
     title: DFA
     prefix: feat_plat_saf_dfa__
     mandatory_options:
-      id: ^feat_plat_saf_dfa__[0-9a-z_]+$
+      id: ^feat_plat_saf_dfa__[0-9a-z]+(?:_[0-9a-z]+)*$
       violation_id: ^.*$
       violation_cause: ^.*$
       sufficient: ^(yes|no)$
@@ -644,7 +645,7 @@ needs_types:
     title: DFA
     prefix: feat_saf_dfa__
     mandatory_options:
-      id: ^feat_saf_dfa__[0-9a-z_]+$
+      id: ^feat_saf_dfa__[0-9a-z]+(?:_[0-9a-z]+)*$
       violation_id: ^.*$
       violation_cause: ^.*$
       sufficient: ^(yes|no)$
@@ -659,7 +660,7 @@ needs_types:
     title: DFA
     prefix: comp_saf_dfa__
     mandatory_options:
-      id: ^comp_saf_dfa__[0-9a-z_]+$
+      id: ^comp_saf_dfa__[0-9a-z]+(?:_[0-9a-z]+)*$
       violation_id: ^.*$
       violation_cause: ^.*$
       sufficient: ^(yes|no)$
@@ -675,7 +676,7 @@ needs_types:
     title: FMEA
     prefix: feat_saf_fmea__
     mandatory_options:
-      id: ^feat_saf_fmea__[0-9a-z_]+$
+      id: ^feat_saf_fmea__[0-9a-z]+(?:_[0-9a-z]+)*$
       violation_id: ^.*$
       violation_cause: ^.*$
       sufficient: ^(yes|no)$
@@ -690,7 +691,7 @@ needs_types:
     title: FMEA
     prefix: comp_saf_fmea__
     mandatory_options:
-      id: ^comp_saf_fmea__[0-9a-z_]+$
+      id: ^comp_saf_fmea__[0-9a-z]+(?:_[0-9a-z]+)*$
       violation_id: ^.*$
       violation_cause: ^.*$
       sufficient: ^(yes|no)$
