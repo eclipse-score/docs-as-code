@@ -68,7 +68,7 @@
     "esbonio.sphinx.buildCommand": [
         "docs",
         "_build",
-        "-T", // show details in case of errors in extensions
+        "-T", // show more details in case of errors
         "--jobs",
         "auto",
         "--conf-dir",

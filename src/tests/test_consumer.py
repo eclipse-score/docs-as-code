@@ -10,10 +10,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-import logging
 import os
 import re
-import argparse
 import subprocess
 from collections import defaultdict
 from dataclasses import dataclass, field
@@ -39,11 +37,12 @@ There are several things to note.
 - The script itself takes quiet a bit of time, roughly 5+ min for a full run.
 - If you need more output, enable it via `-v` or `-vv`
 - Start the script via the following command:
-    - bazel run //docs:ide_support
+    - bazel run //:ide_support
     - .venv_docs/bin/python -m pytest -s src/tests   (If you need more verbosity add `-v` or `-vv`)
 """
 
 # Max width of the printout
+# Trial and error has shown that 80 the best value is for GH CI output
 len_max = 80
 CACHE_DIR = Path.home() / ".cache" / "docs_as_code_consumer_tests"
 
@@ -79,18 +78,16 @@ REPOS_TO_TEST: list[ConsumerRepo] = [
     ConsumerRepo(
         name="process_description",
         git_url="https://github.com/eclipse-score/process_description.git",
-        commands=["bazel run //process:incremental_latest"],
+        commands=["bazel run //:docs"],
         test_commands=[],
     ),
     ConsumerRepo(
         name="score",
         git_url="https://github.com/eclipse-score/score.git",
         commands=[
-            "bazel run //docs:ide_support",
-            "bazel run //docs:incremental_latest",
-            "bazel run //docs:incremental_release",
-            "bazel build //docs:docs_release",
-            "bazel build //docs:docs_latest",
+            "bazel run //:ide_support",
+            "bazel run //:docs",
+            "bazel build //:needs_json",
         ],
         test_commands=[],
     ),
@@ -98,9 +95,9 @@ REPOS_TO_TEST: list[ConsumerRepo] = [
         name="module_template",
         git_url="https://github.com/eclipse-score/module_template.git",
         commands=[
-            "bazel run //docs:ide_support",
-            "bazel run //docs:incremental",
-            "bazel build //docs:docs",
+            "bazel run //:ide_support",
+            "bazel run //:docs",
+            "bazel build //:needs_json",
         ],
         test_commands=[
             "bazel test //tests/...",

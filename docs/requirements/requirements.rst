@@ -117,7 +117,6 @@ This section provides an overview of current process requirements and their clar
   :id: tool_req__docs_common_attr_desc_wording
   :tags: Common Attributes
   :implemented: YES
-  :satisfies: PROCESS_gd_req__req__attr_desc_weak
   :parent_covered: YES
 
 
