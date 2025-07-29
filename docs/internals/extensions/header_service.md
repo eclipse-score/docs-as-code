@@ -27,13 +27,13 @@ GITHUB_REPOSITORY: Github repository <org>/<repo>
 ## Execution
 The document generation has to be executed as follows:
 
-    GH_TOKEN=$GH_TOKEN bazel run //docs:incremental
+    GH_TOKEN=$GH_TOKEN bazel run //:docs
 
 Sphinx cannot access the environment variables when started via Bazel build.
 
 If extraction method **Merge commit info** is used the document generation can be executed as follows:
 
-    bazel run //docs:incremental
+    bazel run //:docs
 
 
 ## Usage

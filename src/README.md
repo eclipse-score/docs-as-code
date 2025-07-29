@@ -57,15 +57,14 @@ It should be treated as a 'get-started' guide, giving you all needed information
 ## score_docs_as_code Directory Architecture
 
 ```
-examples/             # Shows how to use doc-as-code tooling
 src/
 ├── assets/           # Documentation styling (CSS)
 ├── decision_records/ # Architecture Decision Records (ADRs)
 ├── extensions/       # Custom Sphinx extensions
 │   └── score_metamodel/
-│       ├── checks/  # Sphinx-needs validation
-│       └── tests/   # Extension test suite
-└── templates/        # Documentation templates
+│       ├── checks/   # Sphinx-needs validation
+│       └── tests/    # Extension test suite
+└── templates/        # HTML templates
 ```
 
 

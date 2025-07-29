@@ -1,7 +1,7 @@
-.. _requirements:
+.. _tool_requirements:
 
 =================================
-Requirements (Process Compliance)
+Tool Requirements
 =================================
 
 📈 Status
@@ -79,7 +79,7 @@ This section provides an overview of current process requirements and their clar
   * A prefix indicating the need type (e.g. `feature__`)
   * A middle part matching the hierarchical structure of the need:
      * For requirements: a portion of the feature tree or a component acronym
-     * For architecture elements: the structural element (e.g. some part of the feature tree, component acronym)
+     * For architecture elements: the structural element (e.g. a part of the feature tree, component acronym)
   * Additional descriptive text to ensure human readability
 
 
@@ -89,7 +89,7 @@ This section provides an overview of current process requirements and their clar
 
 .. tool_req:: Enforces title wording rules
   :id: tool_req__docs_common_attr_title
-  :implemented: YES 
+  :implemented: YES
   :tags: Common Attributes
   :satisfies: PROCESS_gd_req__req__attr_title
   :parent_covered: NO: Can not ensure summary

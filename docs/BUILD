@@ -24,16 +24,6 @@ docs(
     conf_dir = "docs",
     docs_targets = [
         {
-            "suffix": "latest",  # latest main branch documentation build
-            "external_needs_info": [
-                {
-                    "base_url": "https://eclipse-score.github.io/process_description/main",
-                    "json_url": "https://eclipse-score.github.io/process_description/main/needs.json",
-                    "id_prefix": "process_",
-                },
-            ],
-        },
-        {
             "suffix": "release",  # The version imported from MODULE.bazel
             "target": [
                 "@score_process//process:docs_needs_latest",

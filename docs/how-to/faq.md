@@ -11,7 +11,7 @@ https://www.apache.org/licenses/LICENSE-2.0
 SPDX-License-Identifier: Apache-2.0
 *************************************************************************** -->
 
-# docs-as-code FAQ
+# FAQ
 
 *docs-as-code is the S-CORE tool for building documentation, defining requirements and
 verifying compliance.*
@@ -22,38 +22,28 @@ docs-as-code and its usage.
 
 ## Why is docs-as-code so slow?
 
-
-If you are experiencing slow performance, you might be using the deprecated `docs:docs`
-target. Please try one of the following solutions:
-  - `bazel run //docs:incremental` (typically takes 5-15 seconds per iteration and
-    provides metamodel warnings on the command line)
-  - `bazel run //docs:live_preview` (runs continuously in the background and provides
-    metamodel warnings on the command line)
-
-Note: In some repositories, you may need to append `_release` to the target name, e.g.,
-`bazel run //docs:incremental_release`.
-
-
+The performance of docs-as-code has significantly improved in version 1.0.0 and later.
 
 ## IDE support (auto completion, metamodel checks, preview, LSP capabilities)
 
-Currently, IDE support for docs-as-code is limited. Improving this is on our roadmap,
-but not a primary focus at the moment. **Which might be a major oversight on our side.**
+Since 1.0.0 IDE support works via esbonio. You'll need to install the esbonio extension
+for your IDE (e.g., VSCode, PyCharm, etc.). Your repository must also be configured for
+esbonio (settings.json).
 
-In the meantime, we recommend using the live preview feature: `bazel run
-//docs:live_preview`. This provides immediate metamodel feedback (although only on the
-console) and IDE-agnostic preview capabilities.
+If this does not work, please use the live preview feature: `bazel run //:live_preview`.
+This provides immediate metamodel feedback (although only on the console) and
+IDE-agnostic preview capabilities.
 
 
 ### Esbonio
 
 Known issues:
-* Dependencies are not available. We'll address this by dropping support for "latest"
-  targets and pinning all dependencies to specific versions via Bazel.
 * Python is required at startup, which is a problem for any Python-based LSP. We are
   working to improve this by providing a devcontainer with Python preinstalled.
   Additionally, we have submitted a feature request for Esbonio to handle Python
   installation.
+
+  For now please run `bazel run //:ide_support` and restart VS Code.
 
 
 ### uBc
