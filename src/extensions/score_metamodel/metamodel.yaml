@@ -382,8 +382,6 @@ needs_types:
       # req-Id: tool_req__docs_req_attr_testcov
       testcovered: ^(YES|NO)$
       hash: ^.*$
-    optional_links:
-      mitigates: ^.*$
     tags:
       - requirement
       - requirement_excl_process
@@ -789,10 +787,6 @@ needs_extra_links:
   mitigated_by:
     incoming: mititages
     outgoing: mitigated_by
-
-  mitigates:
-    incoming: mititaged_by
-    outgoing: mitigates
 
   violates:
     incoming: violated_by
