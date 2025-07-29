@@ -209,6 +209,54 @@ def my_pie_linked_standard_requirements(
     results.append(cnt_not_connected)
 
 
+def my_pie_linked_standard_requirements_by_tag(
+    needs: list[NeedsInfoType], results: list[int], **kwargs: str | int | float
+) -> None:
+    """
+    Filter function used for 'needpie' directives.
+    `Needs` and `results` are automatically passed in by sphinx-needs.
+    The tag is put into `kwargs`.
+
+    Only one(1) tag is allowed to be passed into this function
+
+    Example usage:
+    .. needpie:: Linked Requirements ASPICE 4.0 MAN.5
+       :labels: Linked, Not Linked
+       :legend:
+       :colors: LightSeaGreen, lightgray
+       :filter-func: score_metamodel.checks.standards.my_pie_linked_standard_requirements_by_tag(aspice40_man5)
+
+    The call:
+    =>  score_metamodel.checks.standards.my_pie_linked_standard_requirements_by_tag(aspice40_man5)
+    would then pass 'aspice40_man5' as the arg1 and you have access to it then that way.
+
+    NOTE:: There can not be any `.`(dots) in the tag passed into this function
+
+
+    Return:
+        The direct return of this function is None. Sphinx-needs will get the mutated `results`
+        list, and use this to display/generate the piechart.
+
+    """
+    count_linked = 0
+    count_non_linked = 0
+
+    tag = str(kwargs["arg1"])
+    assert len(kwargs) == 1, (
+        "Can only provide one tag to `my_pie_linked_standard_requirements_by_tag`"
+    )
+
+    compliance_req_needs = get_compliance_req_needs(needs)
+    for need in needs:
+        if tag in need["tags"]:
+            if need["id"] in compliance_req_needs:
+                count_linked += 1
+            else:
+                count_non_linked += 1
+    results.append(count_linked)
+    results.append(count_non_linked)
+
+
 def my_pie_linked_standard_workproducts(
     needs: list[NeedsInfoType], results: list[int], **kwargs: str | int | float
 ) -> None:
