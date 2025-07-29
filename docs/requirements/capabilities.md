@@ -1,6 +1,6 @@
 (capabilities)=
 
-# 📘 S-CORE Docs-as-Code – Capabilities
+# Capabilities - A High Level Overview
 
 This document outlines the key capabilities of the S-CORE docs-as-code tooling.
 Core capabilities of [Sphinx](https://www.sphinx-doc.org/) and [sphinx-needs](https://sphinx-needs.readthedocs.io/) are assumed and extended with S-CORE-specific conventions and infrastructure.

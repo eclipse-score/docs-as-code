@@ -15,9 +15,8 @@ import json
 import os
 import pkgutil
 from collections.abc import Callable
-from pathlib import Path
 from dataclasses import dataclass, field
-from typing import cast
+from pathlib import Path
 
 from ruamel.yaml import YAML
 from sphinx.application import Sphinx
@@ -341,7 +340,7 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     app.config.needs_reproducible_json = True
     app.config.needs_json_remove_defaults = True
 
-    app.connect("config-inited", parse_external_needs_sources)
+    _ = app.connect("config-inited", parse_external_needs_sources)
 
     discover_checks()
 
@@ -354,7 +353,7 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
         ),
     )
 
-    app.connect("build-finished", _run_checks)
+    _ = app.connect("build-finished", _run_checks)
 
     return {
         "version": "0.1",

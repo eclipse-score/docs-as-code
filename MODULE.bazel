@@ -88,7 +88,7 @@ http_file(
 )
 
 # Provides, pytest & venv
-bazel_dep(name = "score_python_basics", version = "0.3.3")
+bazel_dep(name = "score_python_basics", version = "0.3.4")
 
 # Checker rule for CopyRight checks/fixes
 bazel_dep(name = "score_cr_checker", version = "0.3.1")

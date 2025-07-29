@@ -14,6 +14,7 @@
 import argparse
 import logging
 import os
+import sys
 from pathlib import Path
 
 import debugpy
@@ -106,4 +107,4 @@ if __name__ == "__main__":
             ]
         )
     else:
-        sphinx_main(base_arguments)
+        sys.exit(sphinx_main(base_arguments))

@@ -176,7 +176,3 @@ def generate_source_code_links_json(search_path: Path, file: Path):
 # DEBUG: Workspace root is None
 # DEBUG: Current working directory is /home/lla2hi/.cache/bazel/_bazel_lla2hi/e35bb7c4cc72b99eb76653ab839f4f8e/sandbox/linux-sandbox/26/execroot/_main
 # DEBUG: Git root is /home/lla2hi/score/docs-as-code
-
-# TODO docu:
-# docs:docs has no source code links
-# external repositories have no source code links (to their code)
