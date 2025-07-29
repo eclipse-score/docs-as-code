@@ -14,7 +14,7 @@
 # from unittest.mock import Mock
 
 # from sphinx.application import Sphinx
-
+import pytest
 from src.extensions.score_metamodel.checks import standards
 from src.extensions.score_metamodel.tests import need  # ,fake_check_logger
 
@@ -872,3 +872,82 @@ class TestStandards:
 
         assert need_1 in result.values()
         assert need_2 not in result.values()
+
+    def test_positive_case_mixed_linked_and_unlinked(self):
+        """Test case where some needs with the tag are linked and some are not."""
+        # Setup mock needs data
+        needs = [
+            {
+                "id": "std_req__aspice40_MAN-5_REQ_001",
+                "tags": ["aspice40_man5", "other_tag"],
+                "type": "gd_requirement",
+            },
+            {
+                "id": "std_req__aspice40_MAN-5_REQ_002",
+                "tags": ["aspice40_man5"],
+                "type": "std_req",
+            },
+            {
+                "id": "std_req__REQ_003_test",
+                "tags": ["different_tag"],
+                "type": "std_req",
+            },
+            {
+                "id": "stkh_req__aspice40_MAN-5_REQ_004",
+                "tags": ["aspice40_man5"],
+                "type": "stkh_req",
+            },
+            {
+                "id": "COMP_001",
+                "tags": [],
+                "type": "gd_req",
+                "complies": [
+                    "std_req__aspice40_MAN-5_REQ_002",
+                    "std_req__aspice40_MAN-5_REQ_001",
+                ],
+            },
+        ]
+
+        results = []
+        standards.my_pie_linked_standard_requirements_by_tag(
+            needs, results, arg1="aspice40_man5"
+        )
+
+        # Should find 3 needs with tag aspice40_man5
+        # REQ_001 and REQ_002 are linked (in compliance), REQ_004 is not linked
+        assert results == [2, 1]  # [count_linked, count_non_linked]
+
+    def test_negative_case_no_needs_with_tag(self):
+        """Test case where no needs have the specified tag."""
+        needs = [
+            {"id": "REQ_001", "tags": ["other_tag"], "type": "gd_requirement"},
+            {"id": "REQ_002", "tags": ["different_tag"], "type": "gd_process"},
+            {
+                "id": "COMP_001",
+                "tags": [],
+                "type": "gd_compliance",
+                "complies": ["REQ_001"],
+            },
+        ]
+
+        results = []
+        standards.my_pie_linked_standard_requirements_by_tag(
+            needs, results, arg1="nonexistent_tag"
+        )
+
+        # No needs found with the tag
+        assert results == [0, 0]  # [count_linked, count_non_linked]
+
+    def test_assert_multiple_kwargs(self):
+        """Test case that triggers the assertion error for multiple kwargs."""
+        needs = [{"id": "REQ_001", "tags": ["test_tag"], "type": "gd_requirement"}]
+
+        results = []
+        # Test if our assert works
+        with pytest.raises(
+            AssertionError,
+            match="Can only provide one tag to `my_pie_linked_standard_requirements_by_tag`",
+        ):
+            standards.my_pie_linked_standard_requirements_by_tag(
+                needs, results, arg1="test_tag", arg2="test_test_tag"
+            )
