@@ -621,85 +621,92 @@ needs_types:
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
 
-  # Safety Analysis DFA
+  # DFA (Dependent Failure Analysis)
   feat_plat_saf_dfa:
-    title: DFA
+    title: Feature Dependent Failure Analysis
     prefix: feat_plat_saf_dfa__
     mandatory_options:
       id: ^feat_plat_saf_dfa__[0-9a-z_]+$
-      violation_id: ^.*$
-      violation_cause: ^.*$
+      failure_id: ^.*$
+      failure_effect: ^.*$
       sufficient: ^(yes|no)$
       status: ^(valid|invalid)$
-    optional_options:
-      sufficient: ^(yes|no)$
+      content: ^[\s\S]+$
     mandatory_links:
-      mitigates: ^(feat_req__.*|aou_req__.*)$
-      verifies: ^feat_arc_sta__[0-9a-z_]*$
-    optional_links:
+      violates: ^feat_arc_sta__[0-9a-z_]+$
+    optional_options:
       mitigation_issue: ^https://github.com/.*$
-
+    optional_links:
+      mitigated_by: ^(feat_req__.*|aou_req__.*)$
 
   feat_saf_dfa:
-    title: DFA
+    title: Feature Dependent Failure Analysis
     prefix: feat_saf_dfa__
     mandatory_options:
       id: ^feat_saf_dfa__[0-9a-z_]+$
-      violation_id: ^.*$
-      violation_cause: ^.*$
+      failure_id: ^.*$
+      failure_effect: ^.*$
       sufficient: ^(yes|no)$
       status: ^(valid|invalid)$
+      content: ^[\s\S]+$
     mandatory_links:
-      mitigates: ^(feat_req__.*|aou_req__.*)$
-      verifies: ^feat_arc_sta__[0-9a-z_]*$
-    optional_links:
+      violates: ^feat_arc_sta__[0-9a-z_]+$
+    optional_options:
       mitigation_issue: ^https://github.com/.*$
+    optional_links:
+      mitigated_by: ^(feat_req__.*|aou_req__.*)$
 
   comp_saf_dfa:
-    title: DFA
+    title: Component Dependent Failure Analysis
     prefix: comp_saf_dfa__
     mandatory_options:
       id: ^comp_saf_dfa__[0-9a-z_]+$
-      violation_id: ^.*$
-      violation_cause: ^.*$
+      failure_id: ^.*$
+      failure_effect: ^.*$
       sufficient: ^(yes|no)$
       status: ^(valid|invalid)$
-    mandatory_links:
-      mitigates: ^(comp_req__.*|aou_req__.*)$
-      verifies: ^comp_arc_sta__[0-9a-z_]*$
-    optional_links:
+      content: ^[\s\S]+$
+    optional_options:
       mitigation_issue: ^https://github.com/.*$
+    mandatory_links:
+      violates: ^comp_arc_sta__[0-9a-z_]+$
+    optional_links:
+      mitigated_by: ^(comp_req__.*|aou_req__.*)$
 
-  # # Safety Analysis FMEA
+  # FMEA (Failure Mode and Effects Analysis)
   feat_saf_fmea:
-    title: FMEA
+    title: Feature Failure Mode and Effects Analysis
     prefix: feat_saf_fmea__
     mandatory_options:
       id: ^feat_saf_fmea__[0-9a-z_]+$
-      violation_id: ^.*$
-      violation_cause: ^.*$
+      fault_id: ^.*$
+      failure_effect: ^.*$
       sufficient: ^(yes|no)$
       status: ^(valid|invalid)$
-    mandatory_links:
-      mitigates: ^(feat_req__.*|aou_req__.*)$
-      verifies: ^feat_arc_dyn__[0-9a-z_]*$
-    optional_links:
+      content: ^[\s\S]+$
+    optional_options:
       mitigation_issue: ^https://github.com/.*$
+    mandatory_links:
+      violates: ^feat_arc_dyn__[0-9a-z_]+$
+    optional_links:
+      mitigated_by: ^(feat_req__.*|aou_req__.*)$
 
   comp_saf_fmea:
-    title: FMEA
+    title: Component Failure Mode and Effects Analysis
     prefix: comp_saf_fmea__
     mandatory_options:
       id: ^comp_saf_fmea__[0-9a-z_]+$
-      violation_id: ^.*$
-      violation_cause: ^.*$
+      fault_id: ^.*$
+      failure_effect: ^.*$
       sufficient: ^(yes|no)$
       status: ^(valid|invalid)$
-    mandatory_links:
-      mitigates: ^(comp_req__.*|aou_req__.*)$
-      verifies: ^comp_arc_dyn__[0-9a-z_]*$
-    optional_links:
+      content: ^[\s\S]+$
+    optional_options:
       mitigation_issue: ^https://github.com/.*$
+    mandatory_links:
+      violates: ^comp_arc_dyn__[0-9a-z_]+$
+    optional_links:
+      mitigated_by: ^(comp_req__.*|aou_req__.*)$
 
 # Extra link types, which shall be available and allow need types to be linked to each other.
 # We use a dedicated linked type for each type of a connection, for instance from
@@ -779,13 +786,13 @@ needs_extra_links:
     incoming: includes
     outgoing: included by
 
-  mitigates:
-    incoming: mitigated by
-    outgoing: mitigates
+  mitigated_by:
+    incoming: mititages
+    outgoing: mitigated_by
 
-  verifies:
-    incoming: verified by
-    outgoing: verifies
+  violates:
+    incoming: violated_by
+    outgoing: violates
 ##############################################################
 # Graph Checks
 # The graph checks focus on the relation of the needs and their attributes.
@@ -836,4 +843,5 @@ graph_checks:
       include: feat_saf_fmea, comp_saf_fmea, feat_plat_saf_dfa, feat_saf_dfa, comp_saf_dfa
       condition: safety == ASIL_B
     check:
-      mitigates: safety != QM
+      mitigated_by: safety != QM
+
