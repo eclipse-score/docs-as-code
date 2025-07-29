@@ -790,6 +790,10 @@ needs_extra_links:
     incoming: mititages
     outgoing: mitigated_by
 
+  mitigates:
+    incoming: mititaged_by
+    outgoing: mitigates
+
   violates:
     incoming: violated_by
     outgoing: violates
