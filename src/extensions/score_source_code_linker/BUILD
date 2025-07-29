@@ -35,12 +35,12 @@ score_py_pytest(
     ]),
     args = [
         "-s",
-        "-vv",
+#        "-vv",
     ],
     data = glob(["**/*.json"]),
     imports = ["."],
     deps = [
         ":score_source_code_linker",
         "@score_docs_as_code//src/extensions/score_metamodel",
-    ] + all_requirements,
+    ],
 )

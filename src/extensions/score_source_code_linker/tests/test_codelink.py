@@ -263,7 +263,7 @@ def test_get_cache_filename():
     """Test cache filename generation."""
     build_dir = Path("/tmp/build")
     expected = build_dir / "score_source_code_linker_cache.json"
-    result = get_cache_filename(build_dir)
+    result = get_cache_filename(build_dir, "score_source_code_linker_cache.json")
     assert result == expected
 
 
@@ -332,22 +332,26 @@ def test_find_need_not_found():
 def test_group_by_need(sample_needlinks):
     """Test grouping source code links by need ID."""
     result = group_by_need(sample_needlinks)
-
-    assert len(result) == 3
-    assert len(result["TREQ_ID_1"]) == 2
-    assert len(result["TREQ_ID_2"]) == 1
-    assert len(result["TREQ_ID_200"]) == 1
-
+    
     # Check that the grouping is correct
-    assert result["TREQ_ID_1"][0].file == Path("src/implementation1.py")
-    assert result["TREQ_ID_1"][1].file == Path("src/implementation2.py")
-    assert result["TREQ_ID_2"][0].file == Path("src/implementation1.py")
-    assert result["TREQ_ID_2"][0].line == 9
+    assert len(result) == 3
+    for found_link in result:
+        if found_link.need == "TREQ_ID_1":
+            assert len(found_link.links.CodeLinks) == 2
+            assert found_link.links.CodeLinks[0].file == Path("src/implementation1.py")
+            assert found_link.links.CodeLinks[1].file == Path("src/implementation2.py")
+        elif found_link.need == "TREQ_ID_2":
+            assert len(found_link.links.CodeLinks) == 1
+            assert found_link.links.CodeLinks[0].file == Path("src/implementation1.py")
+            assert found_link.links.CodeLinks[0].line == 9
+        elif found_link.need == "TREQ_ID_200":
+            assert len(found_link.links.CodeLinks) == 1
+
 
 
 def test_group_by_need_empty_list():
     """Test grouping empty list of needlinks."""
-    result = group_by_need([])
+    result = group_by_need([], [])
     assert len(result) == 0
 
 
@@ -519,17 +523,17 @@ def test_group_by_need_and_find_need_integration(sample_needlinks):
     )
 
     # Test finding needs for each group
-    for need_id in grouped:
-        found_need = find_need(all_needs, need_id, ["PREFIX_"])
-        if need_id in ["TREQ_ID_1", "TREQ_ID_2"]:
+    for found_link in grouped:
+        found_need = find_need(all_needs, found_link.need, ["PREFIX_"])
+        if found_link.need in ["TREQ_ID_1", "TREQ_ID_2"]:
             assert found_need is not None
-            assert found_need["id"] == need_id
-        elif need_id == "TREQ_ID_200":
+            assert found_need["id"] == found_link.need
+        elif found_link.need == "TREQ_ID_200":
             assert found_need is not None
             assert found_need["id"] == "PREFIX_TREQ_ID_200"
 
 
-def test_end_to_end_with_real_files(temp_dir, git_repo):
+def test_source_linker_end_to_end_with_real_files(temp_dir, git_repo):
     """Test end-to-end workflow with real files and git repo."""
     # Create source files with requirement IDs
     src_dir = git_repo / "src"
@@ -602,8 +606,13 @@ def another_function():
 
     # Test grouping
     grouped = group_by_need(loaded_links)
-    assert len(grouped["TREQ_ID_1"]) == 2
-    assert len(grouped["TREQ_ID_2"]) == 1
+    for found_links in grouped:
+        if found_links.need == "TREQ_ID_1":
+            assert len(found_links.links.CodeLinks) == 2
+            assert len(found_links.links.TestLinks) == 0
+        if found_links.need == "TREQ_ID_2":
+            assert len(found_links.links.CodeLinks) == 1
+            assert len(found_links.links.TestLinks) == 0
 
     # Test GitHub link generation
     # Have to change directories in order to ensure that we get the right/any .git file
