@@ -26,7 +26,7 @@ Repository = [process description](https://github.com/eclipse-score/process_desc
 
 ---
 
-## Benchmark 1: `bazel run //process:incremental_latest`
+## Benchmark 1: `bazel run //:docs`
 
 | Scenario         | Run 1         | Run 2         | Run 3         | Average   |
 |------------------|---------------|---------------|---------------|-----------|
@@ -37,7 +37,7 @@ Repository = [process description](https://github.com/eclipse-score/process_desc
 
 ---
 
-## Benchmark 2: `bazel build //process:docs_needs_latest`
+## Benchmark 2: `bazel build //:needs_json`
 
 | Scenario         | Run 1         | Run 2         | Run 3         | Average   |
 |------------------|---------------|---------------|---------------|-----------|
@@ -48,7 +48,7 @@ Repository = [process description](https://github.com/eclipse-score/process_desc
 
 ---
 
-## Benchmark 3: `bazel run //process:live_preview_latest`
+## Benchmark 3: `bazel run //:live_preview`
 
 | Scenario         | Run 1         | Run 2         | Run 3         | Average   |
 |------------------|---------------|---------------|---------------|-----------|
