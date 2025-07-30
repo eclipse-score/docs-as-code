@@ -40,7 +40,7 @@ from src.extensions.score_source_code_linker.needlinks import (
 
 LOGGER = get_logger(__name__)
 # Outcomment this to enable more verbose logging
-# LOGGER.setLevel("DEBUG")
+LOGGER.setLevel("DEBUG")
 
 
 def get_cache_filename(build_dir: Path) -> Path:
