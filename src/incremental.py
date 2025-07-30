@@ -91,7 +91,7 @@ if __name__ == "__main__":
     action = get_env("ACTION")
     if action == "live_preview":
         Path(workspace + "/_build/score_source_code_linker_cache.json").unlink(
-            missing_ok=False
+            missing_ok=True
         )
         sphinx_autobuild_main(
             base_arguments
