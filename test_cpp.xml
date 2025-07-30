@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites disabled="1" errors="0" failures="1" name="AllTests" tests="37" time="40.346" timestamp="2025-07-29T08:20:10.537">
+  <testsuite disabled="0" errors="0" failures="0" name="NonBlockingSenderFixture" skipped="0" tests="8" time="40.27" timestamp="2025-07-29T08:20:10.537">
+    <testcase classname="NonBlockingSenderFixture" file="score/mw/com/message_passing/non_blocking_sender_test.cpp" line="122" name="Creation" result="completed" status="run" time="0." timestamp="2025-07-29T08:20:10.537"></testcase>
+    <testcase classname="NonBlockingSenderFixture" file="score/mw/com/message_passing/non_blocking_sender_test.cpp" line="128" name="CreationDeath" result="completed" status="run" time="40.268" timestamp="2025-07-29T08:20:10.537"></testcase>
+    <testcase classname="NonBlockingSenderFixture" file="score/mw/com/message_passing/non_blocking_sender_test.cpp" line="134" name="NonBlockingGuarantee" result="completed" status="run" time="0." timestamp="2025-07-29T08:20:50.806"></testcase>
+    <testcase classname="NonBlockingSenderFixture" file="score/mw/com/message_passing/non_blocking_sender_test.cpp" line="217" name="SendShortMessage_NonEmptyQueue" result="completed" status="run" time="0." timestamp="2025-07-29T08:20:50.806"></testcase>
+    <testcase classname="NonBlockingSenderFixture" file="score/mw/com/message_passing/non_blocking_sender_test.cpp" line="245" name="SendMediumMessage_NonEmptyQueue" result="completed" status="run" time="0." timestamp="2025-07-29T08:20:50.806"></testcase>
+    <testcase classname="NonBlockingSenderFixture" file="score/mw/com/message_passing/non_blocking_sender_test.cpp" line="273" name="SendShortMessage_FullQueue" result="completed" status="run" time="0." timestamp="2025-07-29T08:20:50.807"></testcase>
+    <testcase classname="NonBlockingSenderFixture" file="score/mw/com/message_passing/non_blocking_sender_test.cpp" line="310" name="SendShortMessage_MultipleFromQueue" result="completed" status="run" time="0." timestamp="2025-07-29T08:20:50.807"></testcase>
+    <testcase classname="NonBlockingSenderFixture" file="score/mw/com/message_passing/non_blocking_sender_test.cpp" line="344" name="SendShortMessage_EnqueueTwice" result="completed" status="run" time="0." timestamp="2025-07-29T08:20:50.807"></testcase>
+  </testsuite>
+  <testsuite disabled="1" errors="0" failures="1" name="ReceiverFixture" skipped="1" tests="9" time="0.008" timestamp="2025-07-29T08:20:50.807">
+    <testcase classname="ReceiverFixture" file="score/mw/com/message_passing/receiver_test.cpp" line="75" name="CanRegisterACallback" result="completed" status="run" time="0." timestamp="2025-07-29T08:20:50.807">
+      <failure message="score/mw/com/message_passing/receiver_test.cpp:79
+Failed
+This is a test for a failure
+" type=""><![CDATA[score/mw/com/message_passing/receiver_test.cpp:79
+Failed
+This is a test for a failure
+]]></failure>
+    </testcase>
+    <testcase classname="ReceiverFixture" file="score/mw/com/message_passing/receiver_test.cpp" line="85" name="CanOpenUnderlyingChannel" result="skipped" status="run" time="0." timestamp="2025-07-29T08:20:50.808">
+      <skipped message="score/mw/com/message_passing/receiver_test.cpp:87
+Skipping this test as a test for skipped attr
+"><![CDATA[score/mw/com/message_passing/receiver_test.cpp:87
+Skipping this test as a test for skipped attr
+]]></skipped>
+    </testcase>
+    <testcase classname="ReceiverFixture" file="score/mw/com/message_passing/receiver_test.cpp" line="102" name="DISABLED_TriggerStopToken" result="suppressed" status="notrun" time="0." timestamp="1970-01-01T00:00:00.000"></testcase>
+    <testcase classname="ReceiverFixture" file="score/mw/com/message_passing/receiver_test.cpp" line="120" name="CanNotOpenUnderlyingChannel" result="completed" status="run" time="0." timestamp="2025-07-29T08:20:50.808"></testcase>
+    <testcase classname="ReceiverFixture" file="score/mw/com/message_passing/receiver_test.cpp" line="133" name="DestructReceiverWhileListeningWillStop" result="completed" status="run" time="0." timestamp="2025-07-29T08:20:50.808"></testcase>
+    <testcase classname="ReceiverFixture" file="score/mw/com/message_passing/receiver_test.cpp" line="148" name="CorrectCallbackIsInvokedForProperMessage" result="completed" status="run" time="0.002" timestamp="2025-07-29T08:20:50.808"></testcase>
+    <testcase classname="ReceiverFixture" file="score/mw/com/message_passing/receiver_test.cpp" line="237" name="CorrectCallbackIsInvokedForProperMessageWithoutDelay" result="completed" status="run" time="0." timestamp="2025-07-29T08:20:50.811"></testcase>
+    <testcase classname="ReceiverFixture" file="score/mw/com/message_passing/receiver_test.cpp" line="327" name="ReceiveMessageWhileNoCallbackIsRegistered" result="completed" status="run" time="0.002" timestamp="2025-07-29T08:20:50.811"></testcase>
+    <testcase classname="ReceiverFixture" file="score/mw/com/message_passing/receiver_test.cpp" line="392" name="ReceivedErrorFromChannelTraits" result="completed" status="run" time="0.001" timestamp="2025-07-29T08:20:50.814"></testcase>
+  </testsuite>
+  <testsuite disabled="0" errors="0" failures="0" name="SenderFactoryFixture" skipped="0" tests="1" time="0." timestamp="2025-07-29T08:20:50.815">
+    <testcase classname="SenderFactoryFixture" file="score/mw/com/message_passing/sender_factory_test.cpp" line="44" name="CheckSenderMock" result="completed" status="run" time="0." timestamp="2025-07-29T08:20:50.815"></testcase>
+  </testsuite>
+  <testsuite disabled="0" errors="0" failures="0" name="SenderFixture" skipped="0" tests="11" time="0.066" timestamp="2025-07-29T08:20:50.816">
+    <testcase classname="SenderFixture" file="score/mw/com/message_passing/sender_test.cpp" line="133" name="WillCreateUnitIfMessageChannelIsFound" result="completed" status="run" time="0." timestamp="2025-07-29T08:20:50.816"></testcase>
+    <testcase classname="SenderFixture" file="score/mw/com/message_passing/sender_test.cpp" line="145" name="WillWaitUntilChannelIsFound" result="completed" status="run" time="0.015" timestamp="2025-07-29T08:20:50.816"></testcase>
+    <testcase classname="SenderFixture" file="score/mw/com/message_passing/sender_test.cpp" line="185" name="WillAbortWaitWhenStopRequested" result="completed" status="run" time="0." timestamp="2025-07-29T08:20:50.831"></testcase>
+    <testcase classname="SenderFixture" file="score/mw/com/message_passing/sender_test.cpp" line="211" name="NothingSendIfNoChannelOpend" result="completed" status="run" time="0." timestamp="2025-07-29T08:20:50.831"></testcase>
+    <testcase classname="SenderFixture" file="score/mw/com/message_passing/sender_test.cpp" line="225" name="HasNonBlockingGuarantee" result="completed" status="run" time="0." timestamp="2025-07-29T08:20:50.831"></testcase>
+    <testcase classname="SenderFixture" file="score/mw/com/message_passing/sender_test.cpp" line="238" name="SendMessageOnFirstTry" result="completed" status="run" time="0." timestamp="2025-07-29T08:20:50.831"></testcase>
+    <testcase classname="SenderFixture" file="score/mw/com/message_passing/sender_test.cpp" line="255" name="SendMediumMessageOnFirstTry" result="completed" status="run" time="0." timestamp="2025-07-29T08:20:50.831"></testcase>
+    <testcase classname="SenderFixture" file="score/mw/com/message_passing/sender_test.cpp" line="272" name="RetryToSendMessage" result="completed" status="run" time="0." timestamp="2025-07-29T08:20:50.831"></testcase>
+    <testcase classname="SenderFixture" file="score/mw/com/message_passing/sender_test.cpp" line="303" name="StopRetryAfter5Times" result="completed" status="run" time="0." timestamp="2025-07-29T08:20:50.832"></testcase>
+    <testcase classname="SenderFixture" file="score/mw/com/message_passing/sender_test.cpp" line="329" name="StopAfterStopRequest" result="completed" status="run" time="0." timestamp="2025-07-29T08:20:50.832"></testcase>
+    <testcase classname="SenderFixture" file="score/mw/com/message_passing/sender_test.cpp" line="360" name="SenderShouldRetrySendingWithDelay" result="completed" status="run" time="0.05" timestamp="2025-07-29T08:20:50.832"></testcase>
+  </testsuite>
+  <testsuite disabled="0" errors="0" failures="0" name="Serializer" skipped="0" tests="4" time="0." timestamp="2025-07-29T08:20:50.883">
+    <testcase classname="Serializer" file="score/mw/com/message_passing/serializer_test.cpp" line="24" name="CanSerializeShortMessageToRawMessage" result="completed" status="run" time="0." timestamp="2025-07-29T08:20:50.883"></testcase>
+    <testcase classname="Serializer" file="score/mw/com/message_passing/serializer_test.cpp" line="48" name="CanSerializeMediumMessageToRawMessage" result="completed" status="run" time="0." timestamp="2025-07-29T08:20:50.883"></testcase>
+    <testcase classname="Serializer" file="score/mw/com/message_passing/serializer_test.cpp" line="77" name="CanDeserializeSerializedShortMessage" result="completed" status="run" time="0." timestamp="2025-07-29T08:20:50.883"></testcase>
+    <testcase classname="Serializer" file="score/mw/com/message_passing/serializer_test.cpp" line="95" name="CanDeserializeSerializedMediumMessage" result="completed" status="run" time="0." timestamp="2025-07-29T08:20:50.883"></testcase>
+  </testsuite>
+  <testsuite disabled="0" errors="0" failures="0" name="SendMessage_EmptyQueue/NonBlockingSenderParameterized" skipped="0" tests="4" time="0." timestamp="2025-07-29T08:20:50.883">
+    <testcase classname="SendMessage_EmptyQueue/NonBlockingSenderParameterized" file="score/mw/com/message_passing/non_blocking_sender_test.cpp" line="146" name="SendMessage_EmptyQueue/0" result="completed" status="run" time="0." timestamp="2025-07-29T08:20:50.883" value_param="(4-byte object &lt;01-00 00-00>, 4-byte object &lt;00-00 00-00>, 4-byte object &lt;00-00 00-00>)"></testcase>
+    <testcase classname="SendMessage_EmptyQueue/NonBlockingSenderParameterized" file="score/mw/com/message_passing/non_blocking_sender_test.cpp" line="146" name="SendMessage_EmptyQueue/1" result="completed" status="run" time="0." timestamp="2025-07-29T08:20:50.883" value_param="(4-byte object &lt;01-00 00-00>, 4-byte object &lt;01-00 00-00>, 4-byte object &lt;00-00 00-00>)"></testcase>
+    <testcase classname="SendMessage_EmptyQueue/NonBlockingSenderParameterized" file="score/mw/com/message_passing/non_blocking_sender_test.cpp" line="146" name="SendMessage_EmptyQueue/2" result="completed" status="run" time="0." timestamp="2025-07-29T08:20:50.883" value_param="(4-byte object &lt;00-00 00-00>, 4-byte object &lt;00-00 00-00>, 4-byte object &lt;00-00 00-00>)"></testcase>
+    <testcase classname="SendMessage_EmptyQueue/NonBlockingSenderParameterized" file="score/mw/com/message_passing/non_blocking_sender_test.cpp" line="146" name="SendMessage_EmptyQueue/3" result="completed" status="run" time="0." timestamp="2025-07-29T08:20:50.883" value_param="(4-byte object &lt;01-00 00-00>, 4-byte object &lt;00-00 00-00>, 4-byte object &lt;01-00 00-00>)"></testcase>
+  </testsuite>
+</testsuites>

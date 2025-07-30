@@ -36,5 +36,8 @@ score_py_pytest(
     data = glob(
         ["tests/**/*.rst"],
     ),
+    args = [
+        "--junitxml=$$XML_OUTPUT_FILE",
+    ],
     deps = [":score_metamodel"],
 )

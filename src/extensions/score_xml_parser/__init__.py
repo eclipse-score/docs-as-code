@@ -123,6 +123,7 @@ def generate_test_needs():
     assert ws_root
     bazel_testlogs = ws_root / "bazel-testlogs"
     # Check if it exists, create if not
+    # Should be possible to build docs without
     assert bazel_testlogs.exists(), "Please run `bazel tests`"
     xml_file_paths = find_xml_files(bazel_testlogs)
     for file in xml_file_paths:

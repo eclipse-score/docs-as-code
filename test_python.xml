@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites>
+  <testsuite errors="0" failures="1" hostname="L-DEE-CPPGGY3" name="pytest" skipped="1" tests="22" time="11.251" timestamp="2025-07-29T09:51:13.114123+00:00">
+    <testcase classname=".TestCheckOptions" name="test_unknown_directive" time="0.002"></testcase>
+    <testcase classname=".TestCheckOptions" name="test_unknown_directive_extra_option" time="0.001"></testcase>
+    <testcase classname=".TestCheckOptions" name="test_missing_mandatory_options_info" time="0.000">
+      <skipped message="Test skipped to test how it looks" type="pytest.skip">/home/maxi/.cache/bazel/_bazel_maxi/f48cff2378be6375aa481f2a5c918c10/sandbox/linux-sandbox/50/execroot/_main/bazel-out/k8-fastbuild/bin/src/extensions/score_metamodel/score_metamodel_tests.runfiles/_main/src/extensions/score_metamodel/tests/test_check_options.py:126: Test skipped to test how it looks</skipped>
+    </testcase>
+    <testcase classname=".TestCheckOptions" name="test_invalid_option_type" time="0.000">
+      <failure message="AssertionError: This is a test
+assert False">self = &lt;score_metamodel.tests.test_check_options.TestCheckOptions object at 0x792c675a8230> def test_invalid_option_type(self): > assert False, "This is a test" E AssertionError: This is a test E assert False src/extensions/score_metamodel/tests/test_check_options.py:153: AssertionError</failure>
+    </testcase>
+    <testcase classname=".TestCheckOptions" name="test_unknown_option_present_in_neither_req_opt_neither_opt_opt" time="0.001"></testcase>
+    <testcase classname="" name="test_rst_files[options/test_options_extra_option.rst]" time="2.290"></testcase>
+    <testcase classname="" name="test_rst_files[options/test_options_options.rst]" time="1.351"></testcase>
+    <testcase classname="" name="test_rst_files[id_contains_feature/test_id_contains_feature.rst]" time="1.152"></testcase>
+    <testcase classname="" name="test_rst_files[attributes/test_attributes_external_prefix.rst]" time="1.175"></testcase>
+    <testcase classname="" name="test_rst_files[attributes/test_prohibited_words.rst]" time="1.189"></testcase>
+    <testcase classname="" name="test_rst_files[attributes/test_attributes_format_id_format.rst]" time="1.088"></testcase>
+    <testcase classname="" name="test_rst_files[attributes/test_attributes_format_id_length.rst]" time="0.988"></testcase>
+    <testcase classname="" name="test_rst_files[graph/test_metamodel_graph.rst]" time="1.159"></testcase>
+    <testcase classname=".TestStandards" name="test_my_pie_linked_standard_requirements" time="0.000"></testcase>
+    <testcase classname=".TestStandards" name="test_my_pie_linked_standard_workproducts" time="0.000"></testcase>
+    <testcase classname=".TestStandards" name="test_my_pie_workproducts_contained_in_exactly_one_workflow" time="0.000"></testcase>
+    <testcase classname=".TestStandards" name="test_get_standards_needs" time="0.000"></testcase>
+    <testcase classname=".TestStandards" name="test_get_standards_workproducts" time="0.000"></testcase>
+    <testcase classname=".TestStandards" name="test_get_compliance_req_needs" time="0.000"></testcase>
+    <testcase classname=".TestStandards" name="test_get_compliance_wp_needs" time="0.000"></testcase>
+    <testcase classname=".TestStandards" name="test_get_workflows" time="0.000"></testcase>
+    <testcase classname=".TestStandards" name="test_get_workproducts" time="0.000"></testcase>
+  </testsuite>
+</testsuites>

@@ -123,7 +123,7 @@ class TestCheckOptions:
             "no type info defined for semantic check.",
             expect_location=False,
         )
-
+    @pytest.mark.skip(reason="Test skipped to test how it looks")
     def test_missing_mandatory_options_info(self):
         # Given any need of known type
         # with missing mandatory options info
@@ -150,6 +150,7 @@ class TestCheckOptions:
         )
 
     def test_invalid_option_type(self):
+        assert False, "This is a test"
         # Given any need of known type
         # with missing mandatory options info
         # it should raise an error

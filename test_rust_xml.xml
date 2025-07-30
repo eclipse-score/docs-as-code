@@ -1,0 +1,311 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites>
+  <testsuite id="0" name="cargo test #0" package="testsuite/cargo test #0" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2025-07-24T10:40:32.008650562Z" time="0" />
+  <testsuite id="1" name="cargo test #1" package="testsuite/cargo test #1" tests="7" errors="0" failures="0" hostname="localhost" timestamp="2025-07-24T10:40:32.008650562Z" time="0.011920128">
+    <testcase name="cit_persistency_reset_single_default_value" time="0" line="412" file="src/rust/rust_kvs/tests/cit_default_values.rs">
+      <skipped />
+      <properties>
+        <property name="PartiallyVerifies" value="[feat_req__persistency__default_values, feat_req__persistency__default_value_get, feat_req__persistency__default_value_file]" />
+        <property name="FullyVerifies" value="[]" />
+        <property name="Description" value="Test Description" />
+        <property name="TestType" value="requirements-based" />
+        <property name="DerivationTechnique" value="requirements-based" />
+      </properties>
+    </testcase>
+    <testcase name="cit_persistency_default_values" time="0.001929733" classname="" line="34" file="src/rust/rust_kvs/tests/cit_default_values.rs">
+      <properties>
+        <property name="PartiallyVerifies" value="[feat_req__persistency__default_values, feat_req__persistency__default_value_get, feat_req__persistency__default_value_file]" />
+        <property name="FullyVerifies" value="[]" />
+        <property name="Description" value="Test Description" />
+        <property name="TestType" value="requirements-based" />
+        <property name="DerivationTechnique" value="requirements-based" />
+      </properties>
+    </testcase>
+    <testcase name="cit_persistency_reset_all_default_values" time="0.001915638" classname="" line="335" file="src/rust/rust_kvs/tests/cit_default_values.rs">
+      <properties>
+        <property name="PartiallyVerifies" value="[feat_req__persistency__default_values, feat_req__persistency__default_value_get, feat_req__persistency__default_value_file]" />
+        <property name="FullyVerifies" value="[]" />
+        <property name="Description" value="Test Description" />
+        <property name="TestType" value="requirements-based" />
+        <property name="DerivationTechnique" value="requirements-based" />
+      </properties>
+    </testcase>
+    <testcase name="cit_persistency_defaults_enabled_values_removal" time="0.001985983" classname="" line="194" file="src/rust/rust_kvs/tests/cit_default_values.rs">
+      <properties>
+        <property name="PartiallyVerifies" value="[feat_req__persistency__default_values, feat_req__persistency__default_value_get, feat_req__persistency__default_value_file]" />
+        <property name="FullyVerifies" value="[]" />
+        <property name="Description" value="Test Description" />
+        <property name="TestType" value="requirements-based" />
+        <property name="DerivationTechnique" value="requirements-based" />
+      </properties>
+    </testcase>
+    <testcase name="cit_persistency_invalid_default_values" time="0.002008559" classname="" line="302" file="src/rust/rust_kvs/tests/cit_default_values.rs">
+      <properties>
+        <property name="PartiallyVerifies" value="[feat_req__persistency__default_values, feat_req__persistency__default_value_get, feat_req__persistency__default_value_file]" />
+        <property name="FullyVerifies" value="[]" />
+        <property name="Description" value="Test Description" />
+        <property name="TestType" value="requirements-based" />
+        <property name="DerivationTechnique" value="requirements-based" />
+      </properties>
+    </testcase>
+    <testcase name="cit_persistency_defaults_disabled_values_removal" time="0.001947006" classname="" line="258" file="src/rust/rust_kvs/tests/cit_default_values.rs">
+      <properties>
+        <property name="PartiallyVerifies" value="[feat_req__persistency__default_values, feat_req__persistency__default_value_get, feat_req__persistency__default_value_file]" />
+        <property name="FullyVerifies" value="[]" />
+        <property name="Description" value="Test Description" />
+        <property name="TestType" value="requirements-based" />
+        <property name="DerivationTechnique" value="requirements-based" />
+      </properties>
+    </testcase>
+    <testcase name="cit_persistency_default_values_optional" time="0.002133209" classname="" line="144" file="src/rust/rust_kvs/tests/cit_default_values.rs">
+      <properties>
+        <property name="PartiallyVerifies" value="[feat_req__persistency__default_values, feat_req__persistency__default_value_get, feat_req__persistency__default_value_file]" />
+        <property name="FullyVerifies" value="[]" />
+        <property name="Description" value="Test Description" />
+        <property name="TestType" value="requirements-based" />
+        <property name="DerivationTechnique" value="requirements-based" />
+      </properties>
+    </testcase>
+  </testsuite>
+  <testsuite id="2" name="cargo test #2" package="testsuite/cargo test #2" tests="3" errors="0" failures="0" hostname="localhost" timestamp="2025-07-24T10:40:32.008650562Z" time="0.001147914">
+    <testcase name="cit_persistency_multiple_instances_same_id_interfere" time="0" line="160" file="src/rust/rust_kvs/tests/cit_multiple_kvs.rs">
+      <skipped />
+      <properties>
+        <property name="PartiallyVerifies" value="[feat_req__persistency__multiple_kvs, feat_req__persistency__intra_process_comm]" />
+        <property name="FullyVerifies" value="[]" />
+        <property name="Description" value="Test Description" />
+        <property name="TestType" value="requirements-based" />
+        <property name="DerivationTechnique" value="requirements-based" />
+      </properties>
+    </testcase>
+    <testcase name="cit_persistency_multiple_instances" time="0.000580229" classname="" line="12" file="src/rust/rust_kvs/tests/cit_multiple_kvs.rs">
+      <properties>
+        <property name="PartiallyVerifies" value="[feat_req__persistency__multiple_kvs, feat_req__persistency__intra_process_comm]" />
+        <property name="FullyVerifies" value="[]" />
+        <property name="Description" value="Test Description" />
+        <property name="TestType" value="requirements-based" />
+        <property name="DerivationTechnique" value="requirements-based" />
+      </properties>
+    </testcase>
+    <testcase name="cit_persistency_multiple_instances_same_id_common_value" time="0.000567685" classname="" line="92" file="src/rust/rust_kvs/tests/cit_multiple_kvs.rs">
+      <properties>
+        <property name="PartiallyVerifies" value="[feat_req__persistency__multiple_kvs, feat_req__persistency__intra_process_comm]" />
+        <property name="FullyVerifies" value="[]" />
+        <property name="Description" value="Test Description" />
+        <property name="TestType" value="requirements-based" />
+        <property name="DerivationTechnique" value="requirements-based" />
+      </properties>
+    </testcase>
+  </testsuite>
+  <testsuite id="3" name="cargo test #3" package="testsuite/cargo test #3" tests="4" errors="0" failures="1" hostname="localhost" timestamp="2025-07-24T10:40:32.008650562Z" time="0.003837716">
+    <testcase name="cit_persistency_flush_on_exit_disabled_drop_data" time="0.000857123" classname="" line="82" file="src/rust/rust_kvs/tests/cit_persistency.rs">
+      <properties>
+        <property name="PartiallyVerifies" value="[feat_req__persistency__persistency, feat_req__persistency__persist_data]" />
+        <property name="FullyVerifies" value="[]" />
+        <property name="Description" value="Test Description" />
+        <property name="TestType" value="requirements-based" />
+        <property name="DerivationTechnique" value="requirements-based" />
+      </properties>
+    </testcase>
+    <testcase name="cit_failure" time="0.000954743" classname="" line="214" file="src/rust/rust_kvs/tests/cit_persistency.rs">
+      <failure type="cargo test" message="failed ::cit_failure">
+thread 'cit_failure' panicked at src/rust/rust_kvs/tests/cit_persistency.rs:201:5:
+This test is expected to fail.
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+</failure>
+      <properties>
+        <property name="PartiallyVerifies" value="[feat_req__persistency__persistency, feat_req__persistency__persist_data]" />
+        <property name="FullyVerifies" value="[]" />
+        <property name="Description" value="Test Description" />
+        <property name="TestType" value="requirements-based" />
+        <property name="DerivationTechnique" value="requirements-based" />
+      </properties>
+    </testcase>
+    <testcase name="cit_persistency_flush_on_exit_enabled" time="0.000895216" classname="" line="17" file="src/rust/rust_kvs/tests/cit_persistency.rs">
+      <properties>
+        <property name="PartiallyVerifies" value="[feat_req__persistency__persistency, feat_req__persistency__persist_data]" />
+        <property name="FullyVerifies" value="[]" />
+        <property name="Description" value="Test Description" />
+        <property name="TestType" value="requirements-based" />
+        <property name="DerivationTechnique" value="requirements-based" />
+      </properties>
+    </testcase>
+    <testcase name="cit_persistency_flush_on_exit_disabled_manual_flush" time="0.001130634" classname="" line="145" file="src/rust/rust_kvs/tests/cit_persistency.rs">
+      <properties>
+        <property name="PartiallyVerifies" value="[feat_req__persistency__persistency, feat_req__persistency__persist_data]" />
+        <property name="FullyVerifies" value="[]" />
+        <property name="Description" value="Test Description" />
+        <property name="TestType" value="requirements-based" />
+        <property name="DerivationTechnique" value="requirements-based" />
+      </properties>
+    </testcase>
+  </testsuite>
+  <testsuite id="4" name="cargo test #4" package="testsuite/cargo test #4" tests="10" errors="0" failures="0" hostname="localhost" timestamp="2025-07-24T10:40:32.008650562Z" time="0.01198704">
+    <testcase name="cit_snapshots_snapshot_max_count" time="0.000000764" classname="" line="108" file="src/rust/rust_kvs/tests/cit_snapshots.rs">
+      <properties>
+        <property name="PartiallyVerifies" value="[feat_req__persistency__snapshots]" />
+        <property name="FullyVerifies" value="[]" />
+        <property name="Description" value="Test Description" />
+        <property name="TestType" value="requirements-based" />
+        <property name="DerivationTechnique" value="inspection" />
+      </properties>
+    </testcase>
+    <testcase name="cit_snapshots_get_hash_filename_existing_snapshot" time="0.001390841" classname="" line="237" file="src/rust/rust_kvs/tests/cit_snapshots.rs">
+      <properties>
+        <property name="PartiallyVerifies" value="[feat_req__persistency__snapshots]" />
+        <property name="FullyVerifies" value="[]" />
+        <property name="Description" value="Test Description" />
+        <property name="TestType" value="requirements-based" />
+        <property name="DerivationTechnique" value="interface-test" />
+      </properties>
+    </testcase>
+    <testcase name="cit_snapshots_get_kvs_filename_nonexisting_snapshot" time="0.001414119" classname="" line="214" file="src/rust/rust_kvs/tests/cit_snapshots.rs">
+      <properties>
+        <property name="PartiallyVerifies" value="[feat_req__persistency__snapshots]" />
+        <property name="FullyVerifies" value="[]" />
+        <property name="Description" value="Test Description" />
+        <property name="TestType" value="requirements-based" />
+        <property name="DerivationTechnique" value="fault-injection" />
+      </properties>
+    </testcase>
+    <testcase name="cit_snapshots_get_hash_filename_nonexisting_snapshot" time="0.001511902" classname="" line="265" file="src/rust/rust_kvs/tests/cit_snapshots.rs">
+      <properties>
+        <property name="PartiallyVerifies" value="[feat_req__persistency__snapshots]" />
+        <property name="FullyVerifies" value="[]" />
+        <property name="Description" value="Test Description" />
+        <property name="TestType" value="requirements-based" />
+        <property name="DerivationTechnique" value="fault-injection" />
+      </properties>
+    </testcase>
+    <testcase name="cit_snapshots_get_kvs_filename_existing_snapshot" time="0.00175126" classname="" line="186" file="src/rust/rust_kvs/tests/cit_snapshots.rs">
+      <properties>
+        <property name="PartiallyVerifies" value="[feat_req__persistency__snapshots]" />
+        <property name="FullyVerifies" value="[]" />
+        <property name="Description" value="Test Description" />
+        <property name="TestType" value="requirements-based" />
+        <property name="DerivationTechnique" value="interface-test" />
+      </properties>
+    </testcase>
+    <testcase name="cit_snapshots_snapshot_count_first_flush" time="0.000332006" classname="" line="37" file="src/rust/rust_kvs/tests/cit_snapshots.rs">
+      <properties>
+        <property name="PartiallyVerifies" value="[feat_req__persistency__snapshots]" />
+        <property name="FullyVerifies" value="[]" />
+        <property name="Description" value="Test Description" />
+        <property name="TestType" value="requirements-based" />
+        <property name="DerivationTechnique" value="requirements-based" />
+      </properties>
+    </testcase>
+    <testcase name="cit_snapshots_snapshot_restore_nonexisting_snapshot" time="0.00141825" classname="" line="164" file="src/rust/rust_kvs/tests/cit_snapshots.rs">
+      <properties>
+        <property name="PartiallyVerifies" value="[feat_req__persistency__snapshots]" />
+        <property name="FullyVerifies" value="[]" />
+        <property name="Description" value="Test Description" />
+        <property name="TestType" value="requirements-based" />
+        <property name="DerivationTechnique" value="fault-injection" />
+      </properties>
+    </testcase>
+    <testcase name="cit_snapshots_snapshot_restore_previous_snapshot" time="0.001241205" classname="" line="120" file="src/rust/rust_kvs/tests/cit_snapshots.rs">
+      <properties>
+        <property name="PartiallyVerifies" value="[feat_req__persistency__snapshots]" />
+        <property name="FullyVerifies" value="[]" />
+        <property name="Description" value="Test Description" />
+        <property name="TestType" value="requirements-based" />
+        <property name="DerivationTechnique" value="control-flow-analysis" />
+      </properties>
+    </testcase>
+    <testcase name="cit_snapshots_snapshot_restore_current_snapshot" time="0.00070015" classname="" line="142" file="src/rust/rust_kvs/tests/cit_snapshots.rs">
+      <properties>
+        <property name="PartiallyVerifies" value="[feat_req__persistency__snapshots]" />
+        <property name="FullyVerifies" value="[]" />
+        <property name="Description" value="Test Description" />
+        <property name="TestType" value="requirements-based" />
+        <property name="DerivationTechnique" value="fault-injection" />
+      </properties>
+    </testcase>
+    <testcase name="cit_snapshots_snapshot_count_full" time="0.002226543" classname="" line="67" file="src/rust/rust_kvs/tests/cit_snapshots.rs">
+      <properties>
+        <property name="PartiallyVerifies" value="[feat_req__persistency__snapshots]" />
+        <property name="FullyVerifies" value="[]" />
+        <property name="Description" value="Test Description" />
+        <property name="TestType" value="requirements-based" />
+        <property name="DerivationTechnique" value="requirements-based" />
+      </properties>
+    </testcase>
+  </testsuite>
+  <testsuite id="5" name="cargo test #5" package="testsuite/cargo test #5" tests="7" errors="0" failures="0" hostname="localhost" timestamp="2025-07-24T10:40:32.008650562Z" time="0.004748555">
+    <testcase name="cit_supported_datatypes_null" time="0.000546811" classname="" line="94" file="src/rust/rust_kvs/tests/cit_supported_datatypes.rs">
+      <properties>
+        <property name="PartiallyVerifies" value="[feat_req__persistency__support_datatype_keys, feat_req__persistency__support_datatype_value]" />
+        <property name="FullyVerifies" value="[]" />
+        <property name="Description" value="Test Description" />
+        <property name="TestType" value="requirements-based" />
+        <property name="DerivationTechnique" value="requirements-based" />
+      </properties>
+    </testcase>
+    <testcase name="cit_supported_datatypes_object" time="0.000506202" classname="" line="127" file="src/rust/rust_kvs/tests/cit_supported_datatypes.rs">
+      <properties>
+        <property name="PartiallyVerifies" value="[feat_req__persistency__support_datatype_keys, feat_req__persistency__support_datatype_value]" />
+        <property name="FullyVerifies" value="[]" />
+        <property name="Description" value="Test Description" />
+        <property name="TestType" value="requirements-based" />
+        <property name="DerivationTechnique" value="requirements-based" />
+      </properties>
+    </testcase>
+    <testcase name="cit_supported_datatypes_boolean" time="0.00082609" classname="" line="72" file="src/rust/rust_kvs/tests/cit_supported_datatypes.rs">
+      <properties>
+        <property name="PartiallyVerifies" value="[feat_req__persistency__support_datatype_keys, feat_req__persistency__support_datatype_value]" />
+        <property name="FullyVerifies" value="[]" />
+        <property name="Description" value="Test Description" />
+        <property name="TestType" value="requirements-based" />
+        <property name="DerivationTechnique" value="requirements-based" />
+      </properties>
+    </testcase>
+    <testcase name="cit_supported_datatypes_number" time="0.000686361" classname="" line="58" file="src/rust/rust_kvs/tests/cit_supported_datatypes.rs">
+      <properties>
+        <property name="PartiallyVerifies" value="[feat_req__persistency__support_datatype_keys, feat_req__persistency__support_datatype_value]" />
+        <property name="FullyVerifies" value="[]" />
+        <property name="Description" value="Test Description" />
+        <property name="TestType" value="requirements-based" />
+        <property name="DerivationTechnique" value="requirements-based" />
+      </properties>
+    </testcase>
+    <testcase name="cit_supported_datatypes_keys" time="0.000855066" classname="" line="16" file="src/rust/rust_kvs/tests/cit_supported_datatypes.rs">
+      <properties>
+        <property name="PartiallyVerifies" value="[feat_req__persistency__support_datatype_keys, feat_req__persistency__support_datatype_value]" />
+        <property name="FullyVerifies" value="[]" />
+        <property name="Description" value="Test Description" />
+        <property name="TestType" value="requirements-based" />
+        <property name="DerivationTechnique" value="interface-test" />
+      </properties>
+    </testcase>
+    <testcase name="cit_supported_datatypes_array" time="0.000914703" classname="" line="105" file="src/rust/rust_kvs/tests/cit_supported_datatypes.rs">
+      <properties>
+        <property name="PartiallyVerifies" value="[feat_req__persistency__support_datatype_keys, feat_req__persistency__support_datatype_value]" />
+        <property name="FullyVerifies" value="[]" />
+        <property name="Description" value="Test Description" />
+        <property name="TestType" value="requirements-based" />
+        <property name="DerivationTechnique" value="requirements-based" />
+      </properties>
+    </testcase>
+    <testcase name="cit_supported_datatypes_string" time="0.000413322" classname="" line="83" file="src/rust/rust_kvs/tests/cit_supported_datatypes.rs">
+      <properties>
+        <property name="PartiallyVerifies" value="[feat_req__persistency__support_datatype_keys, feat_req__persistency__support_datatype_value]" />
+        <property name="FullyVerifies" value="[]" />
+        <property name="Description" value="Test Description" />
+        <property name="TestType" value="requirements-based" />
+        <property name="DerivationTechnique" value="requirements-based" />
+      </properties>
+    </testcase>
+  </testsuite>
+  <testsuite id="6" name="cargo test #6" package="testsuite/cargo test #6" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2025-07-24T10:40:32.008650562Z" time="0" />
+  <testsuite id="7" name="cargo test #7" package="testsuite/cargo test #7" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2025-07-24T10:40:32.008650562Z" time="0" />
+  <testsuite id="8" name="cargo test #8" package="testsuite/cargo test #8" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2025-07-24T10:40:32.008650562Z" time="0" />
+  <testsuite id="9" name="cargo test #9" package="testsuite/cargo test #9" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2025-07-24T10:40:32.008650562Z" time="0" />
+  <testsuite id="10" name="cargo test #10" package="testsuite/cargo test #10" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2025-07-24T10:40:32.008650562Z" time="0" />
+  <testsuite id="11" name="cargo test #11" package="testsuite/cargo test #11" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2025-07-24T10:40:32.008650562Z" time="0" />
+  <testsuite id="12" name="cargo test #12" package="testsuite/cargo test #12" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2025-07-24T10:40:32.008650562Z" time="0" />
+  <testsuite id="13" name="cargo test #13" package="testsuite/cargo test #13" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2025-07-24T10:40:32.008650562Z" time="0" />
+  <testsuite id="14" name="cargo test #14" package="testsuite/cargo test #14" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2025-07-24T10:40:32.008650562Z" time="0" />
+  <testsuite id="15" name="cargo test #15" package="testsuite/cargo test #15" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2025-07-24T10:40:32.008650562Z" time="0" />
+  <testsuite id="16" name="cargo test #16" package="testsuite/cargo test #16" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2025-07-24T10:40:32.008650562Z" time="0" />
+</testsuites>
