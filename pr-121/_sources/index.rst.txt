@@ -11,7 +11,7 @@
     # SPDX-License-Identifier: Apache-2.0
     # *******************************************************************************
 
-Project Documentation
+Docs-As-Code
 =====================
 
 Welcome to the docs-as-code documentation, it is organized into several key sections.
@@ -22,22 +22,22 @@ Welcome to the docs-as-code documentation, it is organized into several key sect
 
    .. grid-item-card::
 
-      **How to Integrate**
+      :ref:`How to <how-to>`
       ^^^
-      Learn how to integrate this docs-as-code tooling into your S-CORE repository.
+      Learn how to integrate and use docs-as-code.
 
 
    .. grid-item-card::
 
-      How to Use
+      :ref:`Internals <internals>`
       ^^^
-      Learn how to write documentation using the docs-as-code approach in S-CORE.
+      How does docs-as-code work? This section provides an overview of the architecture and design decisions behind the tooling.
 
    .. grid-item-card::
 
-      :ref:`Product documentation <product>`
+      :ref:`Requirements <requirements>`
       ^^^
-      Find the product documentation for docs-as-code, including tool requirements and architecture.
+      The official tool requirements for docs-as-code.
 
 .. dropdown:: Sitemap
 
@@ -46,6 +46,6 @@ Welcome to the docs-as-code documentation, it is organized into several key sect
       :includehidden:
       :titlesonly:
 
-      how-to-integrate/index
-      how-to-use/index
-      product/index
+      how-to/index
+      internals/index
+      requirements/index
