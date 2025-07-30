@@ -105,6 +105,8 @@ def extend_needs_json_exporter(config: Config, params: list[str]) -> None:
     """
 
     for p in params:
+        # Note: we are currently addinig these values to config after config-inited.
+        # This is wrong. But good enough.
         config.add(p, default="", rebuild="env", types=(), description="")
 
         if not getattr(config, p):

@@ -22,8 +22,8 @@ from pathlib import Path
 from typing import cast
 
 from sphinx.application import Sphinx
-from sphinx.environment import BuildEnvironment
 from sphinx.config import Config
+from sphinx.environment import BuildEnvironment
 from sphinx_needs.data import NeedsInfoType, NeedsMutable, SphinxNeedsData
 from sphinx_needs.logging import get_logger
 
@@ -33,9 +33,9 @@ from src.extensions.score_source_code_linker.generate_source_code_links_json imp
     generate_source_code_links_json,
 )
 from src.extensions.score_source_code_linker.needlinks import (
+    DefaultNeedLink,
     NeedLink,
     load_source_code_links_json,
-    DefaultNeedLink,
 )
 
 LOGGER = get_logger(__name__)
@@ -105,7 +105,7 @@ def setup_once(app: Sphinx, config: Config):
 def setup(app: Sphinx) -> dict[str, str | bool]:
     # Esbonio will execute setup() on every iteration.
     # setup_once will only be called once.
-    app.connect("config-inited", setup_once)
+    setup_once(app, app.config)
 
     return {
         "version": "0.1",
