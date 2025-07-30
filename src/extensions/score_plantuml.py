@@ -24,7 +24,6 @@ Sphinx configuration.
 In addition it sets common PlantUML options, like output to svg_obj.
 """
 
-from gettext import find
 import os
 import sys
 from pathlib import Path
@@ -39,14 +38,14 @@ def get_runfiles_dir() -> Path:
     if r := os.getenv("RUNFILES_DIR"):
         # Runfiles are only available when running in Bazel.
         # bazel build and bazel run are both supported.
-        # i.e. `bazel build //docs:docs` and `bazel run //docs:incremental`.
+        # i.e. `bazel build //:docs` and `bazel run //:docs`.
         logger.debug("Using runfiles to determine plantuml path.")
 
         runfiles_dir = Path(r)
 
     else:
         # The only way to land here is when running from within the virtual
-        # environment created by the `docs:ide_support` rule in the BUILD file.
+        # environment created by the `:ide_support` rule in the BUILD file.
         # i.e. esbonio or manual sphinx-build execution within the virtual
         # environment.
         # We'll still use the plantuml binary from the bazel build.
@@ -59,7 +58,7 @@ def get_runfiles_dir() -> Path:
             if git_root == Path("/"):
                 sys.exit("Could not find git root.")
 
-        runfiles_dir = git_root / "bazel-bin" / "docs" / "ide_support.runfiles"
+        runfiles_dir = git_root / "bazel-bin" / "ide_support.runfiles"
 
     if not runfiles_dir.exists():
         sys.exit(
@@ -73,10 +72,10 @@ def find_correct_path(runfiles: str) -> str:
     """
     This ensures that the 'plantuml' binary path is found in local 'score_docs_as_code' and module use.
     """
-    dirs = [str(x) for x in Path(runfiles).glob("*score_docs_as_code~")]
+    dirs = [str(x) for x in Path(runfiles).glob("*score_docs_as_code+")]
     if dirs:
         # Happens if 'score_docs_as_code' is used as Module
-        p = runfiles + "/score_docs_as_code~/src/plantuml"
+        p = runfiles + "/score_docs_as_code+/src/plantuml"
     else:
         # Only happens in 'score_docs_as_code' repository
         p = runfiles + "/../plantuml"

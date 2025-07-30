@@ -1,24 +1,24 @@
 # Docs-As-Code Consumer Tests
 
-This test validates that changes to the docs-as-code system don't break downstream consumers. 
+This test validates that changes to the docs-as-code system don't break downstream consumers.
 It tests both local changes and git-based overrides against real consumer repositories.
 
 ## Use in CI
 
-If you want to start the consumer tests on a PR inside `docs-as-code`, then all you have to do is comment 
+If you want to start the consumer tests on a PR inside `docs-as-code`, then all you have to do is comment
 `/consumer-test` on the PR and this should trigger them.
 
 ## Quick Start
 
 ```bash
 # Create the virtual environment
-bazel run //docs:ide_support
+bazel run //:ide_support
 
 # Run with std. configuration
 .venv_docs/bin/python -m pytest -s src/tests
 
 # Run with more verbose output (up to -vvv)
-.venv_docs/bin/python -m pytest -s -v src/tests 
+.venv_docs/bin/python -m pytest -s -v src/tests
 
 # Run specific repositories only
 .venv_docs/bin/python -m pytest -s src/tests --repo=score
@@ -89,16 +89,16 @@ For each repository, the test:
 
 ```bash
 # Create the virtual environment
-bazel run //docs:ide_support
+bazel run //:ide_support
 
 # First run - clones everything fresh
-.venv_docs/bin/python -m pytest -s -v src/tests --repo=score 
+.venv_docs/bin/python -m pytest -s -v src/tests --repo=score
 
 # Make changes to docs-as-code...
 
 # Subsequent runs - much faster due to caching
-.venv_docs/bin/python -m pytest -s -v src/tests --repo=score 
+.venv_docs/bin/python -m pytest -s -v src/tests --repo=score
 
 # Final validation - test all repos without cache
-.venv_docs/bin/python -m pytest -s -v src/tests --disable-cache 
+.venv_docs/bin/python -m pytest -s -v src/tests --disable-cache
 ```

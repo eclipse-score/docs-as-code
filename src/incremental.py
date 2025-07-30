@@ -33,8 +33,8 @@ def get_env(name: str) -> str:
 
 
 if __name__ == "__main__":
-    # Add debuging functionality
     parser = argparse.ArgumentParser()
+    # Add debuging functionality
     parser.add_argument(
         "-dp", "--debug_port", help="port to listen to debugging client", default=5678
     )
@@ -65,8 +65,6 @@ if __name__ == "__main__":
         debugpy.wait_for_client()
 
     workspace = os.getenv("BUILD_WORKSPACE_DIRECTORY")
-    # if workspace:
-    #     os.chdir(workspace)
     if workspace:
         workspace += "/"
     else:
@@ -74,15 +72,13 @@ if __name__ == "__main__":
 
     base_arguments = [
         workspace + get_env("SOURCE_DIRECTORY"),
-        workspace + get_env("BUILD_DIRECTORY"),
+        workspace + "_build",
         "-W",  # treat warning as errors
         "--keep-going",  # do not abort after one error
         "-T",  # show details in case of errors in extensions
         "--jobs",
         "auto",
-        "--conf-dir",
-        workspace + get_env("CONF_DIRECTORY"),
-        f"--define=external_needs_source={get_env('EXTERNAL_NEEDS_INFO')}",
+        f"--define=external_needs_source={get_env('DATA')}",
     ]
 
     # configure sphinx build with GitHub user and repo from CLI
@@ -94,9 +90,8 @@ if __name__ == "__main__":
 
     action = get_env("ACTION")
     if action == "live_preview":
-        build_dir = Path(get_env("BUILD_DIRECTORY"))
-        (workspace / build_dir / "score_source_code_linker_cache.json").unlink(
-            missing_ok=False
+        Path(workspace + "/_build/score_source_code_linker_cache.json").unlink(
+            missing_ok=True
         )
         sphinx_autobuild_main(
             base_arguments

@@ -10,13 +10,13 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-from typing import Any
-
-from sphinx.application import Sphinx
 import os
 from pathlib import Path
+from typing import Any
+
 import html_options
 import sphinx_options
+from sphinx.application import Sphinx
 
 
 def setup(app: Sphinx) -> dict[str, str | bool]:
@@ -39,10 +39,10 @@ def update_config(app: Sphinx, _config: Any):
     # For now this seems the only place this is used / needed.
     # In the future it might be a good idea to make this available in other places, maybe via the 'find_runfiles' lib
     if r := os.getenv("RUNFILES_DIR"):
-        dirs = [str(x) for x in Path(r).glob("*score_docs_as_code~")]
+        dirs = [str(x) for x in Path(r).glob("*score_docs_as_code+")]
         if dirs:
             # Happens if 'score_docs_as_code' is used as Module
-            p = str(r) + "/score_docs_as_code~/src/assets"
+            p = str(r) + "/score_docs_as_code+/src/assets"
         else:
             # Only happens in 'score_docs_as_code' repository
             p = str(r) + "/_main/src/assets"

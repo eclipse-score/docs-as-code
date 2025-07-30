@@ -1,21 +1,21 @@
 # This file is at the root level, as it applies to all Python code,
 # not only to docs or to tools.
 [tool.pyright]
-extends = "bazel-bin/docs/ide_support.runfiles/score_python_basics+/pyproject.toml"
+extends = "bazel-bin/ide_support.runfiles/score_python_basics+/pyproject.toml"
 
 exclude = [
     "**/__pycache__",
     "**/.*",
     "**/bazel-*",
-    "venv/**",
+    ".venv*/**",
 ]
 
 [tool.ruff]
-extend = "bazel-bin/docs/ide_support.runfiles/score_python_basics+/pyproject.toml"
+extend = "bazel-bin/ide_support.runfiles/score_python_basics+/pyproject.toml"
 
 extend-exclude = [
     "**/__pycache__",
     "/.*",
     "bazel-*",
-    "venv/**",
+    ".venv*/**",
 ]

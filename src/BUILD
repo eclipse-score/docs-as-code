@@ -55,10 +55,10 @@ py_library(
 )
 
 # In order to update the requirements, change the `requirements.txt` file and run:
-# `bazel run //docs:requirements`.
+# `bazel run //src:requirements`.
 # This will update the `requirements_lock.txt` file.
 # To upgrade all dependencies to their latest versions, run:
-# `bazel run //docs:requirements -- --upgrade`.
+# `bazel run //src:requirements -- --upgrade`.
 compile_pip_requirements(
     name = "requirements",
     srcs = [
@@ -69,41 +69,6 @@ compile_pip_requirements(
     tags = [
         "manual",
     ],
-)
-
-filegroup(
-    name = "html",
-    srcs = [":docs"],
-    output_group = "html",
-)
-
-pkg_files(
-    name = "html_files",
-    srcs = [":html"],
-    strip_prefix = "html",
-    #renames={"html": ""},
-)
-
-pkg_tar(
-    name = "github-pages",
-    srcs = [":html_files"],
-)
-
-# 'source_code_linker' needs all targets to be passed to it.
-# This is a convenient gathering of all the 'python internal modules' to avoid writing them individiually
-py_library(
-    name = "docs_as_code_py_modules",
-    srcs = [
-        "@score_docs_as_code//src:plantuml_for_python",
-        "@score_docs_as_code//src/extensions:score_plantuml",
-        "@score_docs_as_code//src/extensions/score_draw_uml_funcs",
-        "@score_docs_as_code//src/extensions/score_header_service",
-        "@score_docs_as_code//src/extensions/score_layout",
-        "@score_docs_as_code//src/extensions/score_metamodel",
-        "@score_docs_as_code//src/extensions/score_source_code_linker",
-        "@score_docs_as_code//src/find_runfiles",
-    ],
-    visibility = ["//visibility:public"],
 )
 
 filegroup(
