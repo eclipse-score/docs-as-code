@@ -71,13 +71,13 @@ def setup_once(app: Sphinx, config: Config):
     assert find_git_root(ws_root)
 
     # Extension: score_source_code_linker
-    app.add_config_value(
-        "skip_rescanning_via_source_code_linker",
-        False,
-        rebuild="env",
-        types=bool,
-        description="Skip rescanning source code files via the source code linker.",
-    )
+    # app.add_config_value(
+    #     "skip_rescanning_via_source_code_linker",
+    #     False,
+    #     rebuild="env",
+    #     types=bool,
+    #     description="Skip rescanning source code files via the source code linker.",
+    # )
 
     # Define need_string_links here to not have it in conf.py
     app.config.needs_string_links = {
@@ -105,6 +105,14 @@ def setup_once(app: Sphinx, config: Config):
 def setup(app: Sphinx) -> dict[str, str | bool]:
     # Esbonio will execute setup() on every iteration.
     # setup_once will only be called once.
+    if not "skip_rescanning_via_source_code_linker" in app.config:
+        app.add_config_value(
+            "skip_rescanning_via_source_code_linker",
+            False,
+            rebuild="env",
+            types=bool,
+            description="Skip rescanning source code files via the source code linker.",
+        )
     app.connect("config-inited", setup_once)
 
     return {
