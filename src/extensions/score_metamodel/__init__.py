@@ -170,7 +170,6 @@ def load_metamodel_data():
     types_dict = data.get("needs_types", {})
     links_dict = data.get("needs_extra_links", {})
     graph_check_dict = data.get("graph_checks", {})
-
     global_base_options = data.get("needs_types_base_options", {})
     global_base_options_optional_opts = global_base_options.get("optional_options", {})
 

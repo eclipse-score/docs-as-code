@@ -18,7 +18,7 @@ needs_types_base_options:
     # Custom semantic validation rules
 
 # Prohibited Word Option Checks
-# Follow this schema to write new checks 
+# Follow this schema to write new checks
 # check_name:
 # types[optional]:
 #   - List of tag types ('tags' option)
@@ -821,6 +821,7 @@ graph_checks:
       condition: safety == QM
     check:
       satisfies: safety == QM
+    explanation: An ASIL requirement must link at least one parent/upstream ASIL requirement for correct decomposition. Please ensure the parent’s safety level is QM and its status is valid.
   # If need-req is `ASIL_B`, parent must be `QM` or `ASIL_B`.
   req_safety_linkage_asil_b:
     needs:
@@ -831,6 +832,7 @@ graph_checks:
         or:
           - safety == ASIL_B
           - safety == QM
+    explanation: An ASIL requirement must link at least one parent/upstream ASIL requirement for correct decomposition. Please ensure the parent’s safety level is ASIL_B or QM and its status is valid.
   # saf - ID gd_req__saf_linkage_safety
   # It shall be checked that Safety Analysis (DFA and FMEA) can only be linked via mitigate against
   #  - <Feature | Component | AoU> Requirements with the same ASIL or
@@ -842,4 +844,4 @@ graph_checks:
       condition: safety == ASIL_B
     check:
       mitigated_by: safety != QM
-
+    explanation: An ASIL_B safety requirement must link to a ASIL_B requirement. Please ensure that the linked requirements safety level is not QM and it's status is valid.
