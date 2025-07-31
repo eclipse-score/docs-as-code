@@ -1,102 +1,141 @@
 import os
-
+import html
+import xml.etree.ElementTree as ET
+from xml.etree.ElementTree import Element
 from pathlib import Path
-from collections import defaultdict
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, Any
+
+from sphinx.application import Sphinx
 
 from src.extensions.score_source_code_linker.generate_source_code_links_json import (
     find_git_root,
-    find_ws_root
+    find_ws_root,
 )
 
-from junitparser import JUnitXml
-from junitparser 
-from sphinx.application import Sphinx
-
+# We will have everythin as string here as that mirrors the xml file
 @dataclass
-class TestCaseNeed():
+class TestCaseNeed:
     id: str
-    filepath: str
-    result: str
-    partially_verifies: Optional[list[str]]
-    fully_verifies: Optional[list[str]]
-    test_type: str
-    derivation_technique: str
+    file: str
+    lineNr: str
+    result: dict[
+        str, str
+    ]  # passed, "" | falied, "failure text" | skippep, "skipped explanation" | disabled, ""
+    TestType: str
+    DerivationTechnique: str
+    # Either or HAVE to be filled.
+    PartiallyVerifies: Optional[list[str]] = None
+    FullyVerifies: Optional[list[str]] = None
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]):
+        return cls(**data)
+
+    @classmethod
+    def clean_text(cls, text: str):
+        decoded = html.unescape(text)
+        return str(decoded.replace("\n", " ")).strip()
+
+    def __post_init__(self):
+        # Self assertion to double check some mandatory options
+
+        # It's mandatory that the test either partially or fully verifies a requirement
+        if self.PartiallyVerifies is None and self.FullyVerifies is None:
+            raise ValueError(
+                f"TestCase: {self.id} Error. Either 'PartiallyVerifies' or 'FullyVerifies' must be provided."
+            )
+        # Skipped tests should always have a reason associated with them
+        # if "skipped" in self.result.keys() and not list(self.result.values())[0]:
+        #     raise ValueError(
+        #         f"TestCase: {self.id} Error. Test was skipped without provided reason, reason is mandatory for skipped tests."
+        #     )
+        # Disabled tests are exempt from needing a description, as this is not possible
+
+        # Cleaning Text
+        # Do not know if this is alright, or horrific -_-
+        if not list(self.result.values())[0]:
+            key = list(self.result.keys())[0]
+            self.result[key] = self.clean_text(list(self.result.values())[0])
 
 
 
+def parse_testcase_result(testcase: ET.Element) -> dict[str, str]:
+    skipped = testcase.find("skipped")
+    failed = testcase.find("failure")
+    status = testcase.get("status")
+    # NOTE: Special CPP case of 'disabled'
+    if status is not None and status == "notrun":
+        return {"disabled": ""}
+    if skipped is None and failed is None:
+        return {"passed": ""}
+    elif failed is not None:
+        return {"failed": failed.get("message", "")}
+    elif skipped is not None:
+        return {"skipped": skipped.get("message", "")}
+    else:
+        # This shouldn't happen
+        raise ValueError(
+            f"Testcase: {testcase.get('name')}. Did not find 'failed', 'skipped' or 'passed' in test"
+        )
 
 
-def parse_file(file: Path) -> list[TestCaseNeed]:
-    """
-    Parsing the test.xml file into a dictionary.
-    Infos extracted are:
 
-    Verifies: str # Comma seperated
-    Filename: str # Pure filename
-    Filepath: str
-    Metadata: dict[str,str] # All other properties defined in the test besides `verifies`
-
-    input:
-    ======
-        file (str): Filepath to the test.xml that should be parsed
-
-    Example:
-
-    input:
-    ======
-        file: "testfiles/tools_sphinx_extensions_test_requirements_checks_test_checks_test.xml"
-
-    Properties of the file look like this:
-    <properties>
-        <property name="Verifies"
-            value="TOOL_REQ__toolchain_sphinx_needs_build__requirement_linkage_status_check" />
-        <property name="Description"
-            value="It should check the traceability like linkage of attributes." />
-        <property name="ASIL" value="ASIL_D" />
-        <property name="Priority" value="1" />
-        <property name="TestType" value="Requirements-based test" />
-        <property name="DerivationTechnique" value="Analysis of requirements" />
-    </properties>
-
-    output dict[str, str]:
-    =======
-    {
-        "verifies": TOOL_REQ__toolchain_sphinx_needs_build__requirement_linkage_status_check,
-        "Priority": 1,
-        "TestType": Requirements-based test,
-        "DerivationTechnique": Analysis of requirements,
-        "filename": tools_sphinx_extensions_test_requirements_checks_test_checks_test
-        "filepath": testfiles/tools_sphinx_extensions_test_requirements_checks_test_checks_test.xml
-    }
-    """
-    info_dict:dict[str, str] = dict()
-    xml = JUnitXml.fromfile(file)
-    for suite in xml: 
-        for case in suite:
-            case
-            for prop in case.properties():
-                info_dict[prop.name] = prop.value
-        info_dict["filename"] = str(file).split("/")[-1].removesuffix(".xml")
-        info_dict["filepath"] = str(file)
-        return info_dict
+def parse_properties(case_properties: dict[str, Any], properties: Element):
+    for prop in properties:
+        prop_name = prop.get("name", "")
+        prop_value = prop.get("value", "")
+        # We ignore the Description of the test
+        if prop_name == "Description":
+            continue
+        if prop_value.startswith("["):
+            list_prop_value: list[str] = [
+                x.strip()
+                for x in prop_value.replace("[", "").replace("]", "").split(",")
+                if x
+            ]
+            case_properties[prop_name] = list_prop_value
+            continue
+        case_properties[prop_name] = prop_value
+    return case_properties
 
 
-def find_xml_files(dir: Path) -> list[Path]:
-    """
-    Recoursively goes through all directories inside `bazel-testlogs` and finds
-    any of the files that is named `test.xml`.
-    It then returns the Paths to the files a list
+def read_file(file: Path):
+    test_case_needs: list[TestCaseNeed] = []
+    tree = ET.parse(file)
+    root = tree.getroot()
+    for testsuite in root.findall("testsuite"):
+        for testcase in testsuite.findall("testcase"):
+            case_properties = {}
+            testname = testcase.get("name")
+            test_file = testcase.get("file")
+            lineNr = testcase.get("line")
+            # Assert worldview that mandatory things are actually there
+            assert testname is not None, (
+                f"Testcase: {testcase} does not have a 'name' attribute. This is mandatory"
+            )
+            assert test_file is not None, (
+                f"Testcase: {testname} does not have a 'file' attribute. This is mandatory"
+            )
+            assert lineNr is not None, (
+                f"Testcase: {testname} located in {test_file} does not have a 'lineNr' attribute. This is mandator"
+            )
+            case_properties["id"] = testname
+            case_properties["file"] = testname
+            case_properties["lineNr"] = lineNr
+            case_properties["result"] = parse_testcase_result(testcase)
 
-    input:
-    ======
-        dir (str): Path to 'bazel-testlogs' directory
+            properties_element = testcase.find("properties")
+            # HINT: This list is hard coded here, might not be ideal to have that in the long run.
+            assert properties_element is not None, (
+                f"Testcase: {testname} located in {test_file}:{lineNr}, does not have any properties. Properties 'TestType', 'DerivationTechnique' and either 'PartiallyVerifies' or 'FullyVerifies' are mandatory."
+            )
+            case_properties = parse_properties(case_properties, properties_element)
+            test_case_needs.append(TestCaseNeed.from_dict(case_properties))
+    return test_case_needs
 
-    output:
-    ======
-        list: [Path("bazel-testlogs/tools/sphinx_extensions/test/requirements/checks/test_checks/test.xml"), ...]
-    """
+
+def find_xml_files(dir: Path):
     test_file_name = "test.xml"
 
     xml_paths: list[Path] = []
@@ -117,6 +156,7 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
         "parallel_write_safe": True,
     }
 
+
 def generate_test_needs():
     git_root =find_git_root(__file__)
     ws_root = find_ws_root()
@@ -126,8 +166,10 @@ def generate_test_needs():
     # Should be possible to build docs without
     assert bazel_testlogs.exists(), "Please run `bazel tests`"
     xml_file_paths = find_xml_files(bazel_testlogs)
-    for file in xml_file_paths:
-        parse_file(file)
+    for f in xml_file_paths:
+        b = read_file(f)
+        for c in b:
+            print(c)
 
 
 
