@@ -32,51 +32,20 @@ def check_id_format(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
     the requirement id or not.
     ---
     """
-    # These folders are taken from 'https://github.com/eclipse-score/process_description/tree/main/process'
-    # This means, any needs within any of these folders (no matter where they are) will not be required to have 3 parts
-    process_folder_names = [
-        "general_concepts",
-        "introduction",
-        "process_areas",
-        "roles",
-        "standards",
-        "workflows",
-        "workproducts",
-        "process",
-    ]
-    # Split the string by underscores
-    parts = need["id"].split("__")
-    if need["type"] in [
-        "std_wp",
-        "document",  # This is used in 'platform_managment' in score.
-        "doc_tool",
-        "gd_guidl",
-        "workflow",
-        "gd_chklst",
-        "std_req",
-        "tool_req",
-        "role",
-        "doc_concept",
-        "gd_temp",
-        "gd_method",
-        "gd_req",
-        "workproduct",
-        "doc_getstrt",
-    ] or any(prefix in str(need.get("docname", "")) for prefix in process_folder_names):
-        if len(parts) != 2 and len(parts) != 3:
+    need_options = get_need_type(app.config.needs_types, need["type"])
+    expected_parts = need_options.get("parts", 3)
+    id_parts = need["id"].split("__")
+    id_parts_len = len(id_parts)
+
+    if id_parts_len != expected_parts:
+        if expected_parts == 2:
+            msg = "expected to consist of this format: `<Req Type>__<Abbreviations>`."
+        else:
             msg = (
-                "expected to consisting of one of these 2 formats:"
-                "`<Req Type>__<Abbreviations>` or "
-                "`<Req Type>__<Abbreviations>__<Architectural Element>`."
+                "expected to consist of this format: "
+                "`<Req Type>__<Abbreviations>__<Architectural Element>`."+ str(expected_parts)+str(id_parts_len)
             )
-            log.warning_for_option(need, "id", msg)
-    else:
-        if len(parts) != 3:
-            msg = (
-                "expected to consisting of this format: "
-                "`<Req Type>__<Abbreviations>__<Architectural Element>`."
-            )
-            log.warning_for_option(need, "id", msg)
+        log.warning_for_option(need, "id", msg)
 
 
 @local_check
