@@ -39,6 +39,7 @@ graph_checks: list[graph_check_function] = []
 @dataclass
 class ScoreNeedType(NeedType):
     tags: list[str]
+    parts: int
 
 
 @dataclass
@@ -207,6 +208,8 @@ def load_metamodel_data():
         one_type["mandatory_options"] = mandatory_options
         tags = directive_data.get("tags", [])
         one_type["tags"] = tags
+        parts = directive_data.get("parts", 3)
+        one_type["parts"] = parts
 
         optional_options = directive_data.get("optional_options", {})
         optional_options.update(global_base_options_optional_opts)
@@ -296,6 +299,7 @@ def default_options() -> list[str]:
         "has_forbidden_dead_links",
         "tags",
         "arch",
+        "parts",
     ]
 
 
