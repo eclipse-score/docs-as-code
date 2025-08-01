@@ -40,7 +40,7 @@ def check_id_format(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
     if id_parts_len != expected_parts:
         msg = ""
         if expected_parts == 2:
-            msg = "expected to consist of this format: `<Req Type>__<Abbreviations>`. Only one '__' id allowed in this need's id."
+            msg = "expected to consist of this format: `<Req Type>__<Abbreviations>`. Only one '__' is allowed in this need's id."
         elif expected_parts == 3:
             msg = (
                 "expected to consist of this format: "
