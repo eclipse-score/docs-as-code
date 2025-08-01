@@ -59,6 +59,7 @@ needs_types:
       status: "^(draft|valid)$"
     optional_links:
       links: "^.*$"
+    parts: 3
 
   tenet:
     title: "Tenet"
@@ -68,6 +69,7 @@ needs_types:
       status: "^(draft|valid)$"
     optional_links:
       links: "^.*$"
+    parts: 3
 
   assertion:
     title: "Assertion"
@@ -77,6 +79,7 @@ needs_types:
       status: "^(draft|valid)$"
     optional_links:
       links: "^.*$"
+    parts: 3
 
   # Standards
   # req-Id: tool_req__docs_stdreq_types
@@ -88,6 +91,7 @@ needs_types:
       status: ^(valid)$
     optional_links:
       links: ^.*$
+    parts: 3
 
   std_wp:
     title: Standard Work Product
@@ -95,6 +99,7 @@ needs_types:
     mandatory_options:
       id: std_wp__(iso26262|isosae21434|isopas8926|aspice_40)__[0-9a-z_]*$
       status: ^(valid)$
+    parts: 3
 
   # Workflow
   # req-Id: tool_req__docs_wf_types
@@ -113,6 +118,7 @@ needs_types:
       supported_by: ^rl__.*$
       contains: ^gd_(req|temp|chklst|guidl|meth)__.*$
       has: ^doc_(getstrt|concept)__.*$
+    parts: 2
 
   # Guidances
   gd_req:
@@ -130,6 +136,7 @@ needs_types:
       complies: ^std_req__(iso26262|isosae21434|isopas8926|aspice_40)__.*$
     tags:
       - requirement
+    parts: 2
 
   gd_temp:
     title: Process Template
@@ -139,6 +146,7 @@ needs_types:
       status: ^(valid|draft)$
     optional_links:
       complies: std_req__(iso26262|isodae21434|isopas8926|aspice_40)__.*$
+    parts: 2
 
   gd_chklst:
     title: Process Checklist
@@ -148,6 +156,7 @@ needs_types:
       status: ^(valid|draft)$
     optional_links:
       complies: std_req__(iso26262|isodae21434|isopas8926|aspice_40)__.*$
+    parts: 2
 
   gd_guidl:
     title: Process Guideline
@@ -157,6 +166,7 @@ needs_types:
       status: ^(valid|draft)$
     optional_links:
       complies: std_req__(iso26262|isosae21434|isopas8926|aspice_40)__.*$
+    parts: 2
 
   gd_method:
     title: Process Method
@@ -166,6 +176,8 @@ needs_types:
       status: ^(valid|draft)$
     optional_links:
       complies: std_req__(iso26262|isosae21434|isopas8926|aspice_40)__.*$
+    parts: 2
+
   # S-CORE Workproduct
   workproduct:
     title: Workproduct
@@ -175,6 +187,7 @@ needs_types:
       status: ^(valid|draft)$
     optional_links:
       complies: std_(wp__iso26262|wp__isosae21434|wp__isopas8926|iic_aspice_40)__.*$
+    parts: 2
 
   # Role
   role:
@@ -184,6 +197,7 @@ needs_types:
       id: ^rl__[0-9a-z_]*$
     optional_links:
       contains: ^rl__.*$
+    parts: 2
 
   # Documents, process_description only
   doc_concept:
@@ -192,6 +206,7 @@ needs_types:
     mandatory_options:
       id: ^doc_concept__[0-9a-z_]*$
       status: ^(valid|draft)$
+    parts: 2
 
   doc_getstrt:
     title: Getting Startet
@@ -199,6 +214,7 @@ needs_types:
     mandatory_options:
       id: ^doc_getstrt__[0-9a-z_]*$
       status: ^(valid|draft)$
+    parts: 2
 
   # Documents, score, and other modules only
   document:
@@ -215,6 +231,7 @@ needs_types:
       reviewer: ^.*$
     optional_links:
       realizes: "^wp__.+$"
+    parts: 2
 
   # req-Id: tool_req__docs_tvr
   doc_tool:
@@ -232,6 +249,7 @@ needs_types:
       tcl: "^(LOW|HIGH)$"
     optional_links:
       realizes: "^wp__.+$"
+    parts: 2
 
   # Requirements
   # req-Id: tool_req__docs_req_types
@@ -264,6 +282,7 @@ needs_types:
     tags:
       - requirement
       - requirement_excl_process
+    parts: 3
 
   # req-Id: tool_req__docs_req_types
   feat_req:
@@ -295,6 +314,7 @@ needs_types:
     tags:
       - requirement
       - requirement_excl_process
+    parts: 3
 
   # req-Id: tool_req__docs_req_types
   comp_req:
@@ -325,6 +345,7 @@ needs_types:
     tags:
       - requirement
       - requirement_excl_process
+    parts: 3
 
   # req-Id: tool_req__docs_req_types
   tool_req:
@@ -358,6 +379,7 @@ needs_types:
     tags:
       - requirement
       - requirement_excl_process
+    parts: 2
 
   # req-Id: tool_req__docs_req_types
   aou_req:
@@ -385,7 +407,7 @@ needs_types:
     tags:
       - requirement
       - requirement_excl_process
-
+    parts: 3
 
   # Architecture
   feat_arc_sta:
@@ -407,6 +429,7 @@ needs_types:
       fulfils: ^feat_req__.+$
     tags:
       - architecture_element
+    parts: 3
 
   feat_arc_dyn:
     title: Feature Architecture Dynamic View
@@ -425,6 +448,7 @@ needs_types:
       fulfils: ^feat_req__.+$
     tags:
       - architecture_element
+    parts: 3
 
   logic_arc_int:
     title: Logical Architecture Interfaces
@@ -444,6 +468,7 @@ needs_types:
       fulfils: ^comp_req__.+$
     tags:
       - architecture_element
+    parts: 3
 
   logic_arc_int_op:
     title: Logical Architecture Interface Operation
@@ -462,6 +487,7 @@ needs_types:
       included_by: ^logic_arc_int__.+$
     tags:
       - architecture_element
+    parts: 3
 
   mod_view_sta:
     title: Module Architecture Static View
@@ -472,6 +498,7 @@ needs_types:
       id: ^mod_view_sta__[0-9a-z_]+$
     mandatory_links:
       includes: ^comp_arc_sta__.+$
+    parts: 3
 
   mod_view_dyn:
     title: Module Architecture Dynamic View
@@ -480,6 +507,7 @@ needs_types:
     style: card
     mandatory_options:
       id: ^mod_view_dyn__[0-9a-z_]+$
+    parts: 3
 
   comp_arc_sta:
     title: Component Architecture Static View
@@ -501,6 +529,7 @@ needs_types:
       fulfils: ^comp_req__.+$
     tags:
       - architecture_element
+    parts: 3
 
   comp_arc_dyn:
     title: Component Architecture Dynamic View
@@ -519,6 +548,7 @@ needs_types:
       fulfils: ^comp_req__.+$
     tags:
       - architecture_element
+    parts: 3
 
   real_arc_int:
     title: Component Architecture Interfaces
@@ -538,6 +568,7 @@ needs_types:
       fulfils: ^comp_req__.+$
     tags:
       - architecture_element
+    parts: 3
 
   real_arc_int_op:
     title: Component Architecture Interface Operation
@@ -558,6 +589,7 @@ needs_types:
       implements: ^logic_arc_int_op__.+$
     tags:
       - architecture_element
+    parts: 3
 
   review_header:
     prefix: review__header
@@ -568,6 +600,7 @@ needs_types:
       approvers: ^.*$
       hash: ^.*$
       template: ^.*$
+    parts: 3
 
   # Implementation
   dd_sta:
@@ -585,6 +618,7 @@ needs_types:
       satisfies: ^comp_arc_sta__.*$
     optional_links:
       includes: ^sw_unit__.*$
+    parts: 3
 
   dd_dyn:
     title: Dynamic detailed design
@@ -599,6 +633,7 @@ needs_types:
     mandatory_links:
       implements: ^comp_req__.*$
       satisfies: ^comp_arc_sta__.*$
+    parts: 3
 
   sw_unit:
     title: Software unit
@@ -608,6 +643,8 @@ needs_types:
       security: ^(YES|NO)$
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
+    parts: 3
+
   sw_unit_int:
     title: Software unit interfaces
     prefix: sw_unit_int__
@@ -618,6 +655,7 @@ needs_types:
       security: ^(YES|NO)$
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
+    parts: 3
 
   # DFA (Dependent Failure Analysis)
   plat_saf_dfa:
@@ -636,6 +674,7 @@ needs_types:
       mitigation_issue: ^https://github.com/.*$
     optional_links:
       mitigated_by: ^(feat_req__.*|aou_req__.*)$
+    parts: 3
 
   feat_saf_dfa:
     title: Feature Dependent Failure Analysis
@@ -653,6 +692,7 @@ needs_types:
       mitigation_issue: ^https://github.com/.*$
     optional_links:
       mitigated_by: ^(feat_req__.*|aou_req__.*)$
+    parts: 3
 
   comp_saf_dfa:
     title: Component Dependent Failure Analysis
@@ -670,6 +710,7 @@ needs_types:
       violates: ^comp_arc_sta__[0-9a-z_]+$
     optional_links:
       mitigated_by: ^(comp_req__.*|aou_req__.*)$
+    parts: 3
 
   # FMEA (Failure Mode and Effects Analysis)
   feat_saf_fmea:
@@ -688,6 +729,7 @@ needs_types:
       violates: ^feat_arc_dyn__[0-9a-z_]+$
     optional_links:
       mitigated_by: ^(feat_req__.*|aou_req__.*)$
+    parts: 3
 
   comp_saf_fmea:
     title: Component Failure Mode and Effects Analysis
@@ -705,6 +747,7 @@ needs_types:
       violates: ^comp_arc_dyn__[0-9a-z_]+$
     optional_links:
       mitigated_by: ^(comp_req__.*|aou_req__.*)$
+    parts: 3
 
 # Extra link types, which shall be available and allow need types to be linked to each other.
 # We use a dedicated linked type for each type of a connection, for instance from
