@@ -75,6 +75,11 @@ def eval_need_condition(
     }
 
     if not isinstance(condition, dict):
+        if not isinstance(condition, str):
+            raise ValueError(
+                f"Invalid condition type: condition ({type(condition)}),"
+                + " expected str or dict."
+            )
         return eval_need_check(need, condition, log)
 
     cond: str = list(condition.keys())[0]
