@@ -50,6 +50,19 @@ needs_types:
   ##############################################################################
   # Process Metamodel
   ##############################################################################
+  # Architectural Decision Record (ADR)
+  adr:
+    title: "ADR"
+    prefix: "adr__"
+    mandatory_options:
+      id: "^adr__[0-9]{3}$"
+      status: "^(proposed|accepted|deprecated|rejected|superseded)$"
+      context: "^.*$"
+      decision: "^.*$"
+      consequences: "^.*$"
+    optional_links:
+      links: "^.*$"
+
   # TSF
   tsf:
     title: "TSF"
