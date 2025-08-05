@@ -59,7 +59,7 @@ This section provides an overview of current process requirements and their clar
      PROCESS_gd_req__tool__attr_uid,
      PROCESS_gd_req__arch__attribute_uid,
      PROCESS_gd_req__saf_attr_uid,
-  :parent_covered: NO: cannot check non-existent "doc__naming_conventions" in PROCESS_gd_req__req__attr_uid
+  :parent_covered: NO
 
   Docs-as-Code shall enforce that all Need IDs are globally unique across all included
   documentation instances.
@@ -222,9 +222,8 @@ Versioning
    :id: tool_req__docs_common_attr_version
    :tags: Common Attributes
    :implemented: NO
-   :parent_covered: NO: concept in discussion
+   :parent_covered: NO: to be checked after demo
    :satisfies: PROCESS_gd_req__req__attr_version
-   :status: invalid
 
    Docs-As-Code shall enable and enforce a versioning attribute for all needs.
 
@@ -528,10 +527,6 @@ Architecture Attributes
    PROCESS_gd_req__arch__traceability,
    PROCESS_gd_req__req__linkage_fulfill
   :parent_covered: YES
-  :status: invalid
-
-  .. note::
-     TODO: link targets not clear
 
   Docs-as-Code shall enforce that linking via the ``fulfils`` attribute follows defined rules.
 
@@ -551,10 +546,8 @@ Architecture Attributes
      real_arc_int                          comp_req
      ====================================  ==========================================
 
-  .. TODO: make the table readable and check against parent
 
-
-.. tool_req:: Ensure safety architecture elements fulfill safety requirements
+.. tool_req:: Ensure safety architecture elements link a safety requirement
   :id: tool_req__docs_arch_link_safety_to_req
   :tags: Architecture
   :implemented: PARTIAL
@@ -562,8 +555,20 @@ Architecture Attributes
   :parent_covered: YES
 
   Docs-as-Code shall enforce that architecture elements of type
-  :need:`tool_req__docs_arch_types` are linked to requirements of
-  type :need:`tool_req__docs_req_types` with the exact same ``safety`` value.
+  :need:`tool_req__docs_arch_types` with ``safety != QM`` are linked to at least one
+  requirements of type :need:`tool_req__docs_req_types` with the exact same ``safety``
+  value.
+
+.. tool_req:: Ensure qm architecture elements do not fulfill safety requirements
+  :id: tool_req__docs_arch_link_qm_to_safety_req
+  :tags: Architecture
+  :implemented: PARTIAL
+  :satisfies: PROCESS_gd_req__arch__linkage_requirement
+  :parent_covered: YES
+
+  Docs-as-Code shall enforce that architecture elements of type
+  :need:`tool_req__docs_arch_types` with ``safety == QM`` are not linked to requirements
+  of type :need:`tool_req__docs_req_types` with ``safety != QM``.
 
 
 .. tool_req:: Restrict links for safety requirements
@@ -650,8 +655,7 @@ Architecture Attributes
    e.g. PROCESS_gd_req__req__linkage_architecture
 
 
-.. Unsure if this is 'detailed design'
-.. tool_req:: Enable Creation of Dependcy Graphs
+.. tool_req:: Enable Creation of Dependency Graphs
    :id: tool_req__docs__dd_dependency_graph
    :tags: Detailed Design & Code
    :implemented: NO
@@ -659,13 +663,13 @@ Architecture Attributes
    :satisfies: PROCESS_gd_req__impl__dependency_analysis
    :status: invalid
 
-   .. note:: we do not have "components". What shall we do with this requirement?
+   Docs-As-Code shall support generation and rendering of dependency graphs for
+   components. It shall show all dependencies of a component incl transitive
+   dependencies.
 
-   Docs-As-Code shall provide a way to create dependency graphs for components. It shall show the whole dependencies, from the libraries
-   used, to the leaves of the dependency tree.
-
-   .. warning::
-      Unclear what output format to use, and if it needs to be rendered in documentation, or just is extra asset.
+   .. note::
+      Components are defined in `comp_arc_sta`.
+      A component is also a bazel target. We can use bazel dependency graphs.
 
 
 Testing
@@ -704,7 +708,7 @@ Testing
 
    Docs-as-Code shall ensure that each test case has a non empty description.
 
-   .. note:: last we scope the description was optional.
+   .. note:: this will probably be implemented outside of docs-as-code.
 
 .. tool_req:: Extract Metadata from Tests
    :id: tool_req__docs_test_metadata_link_levels
