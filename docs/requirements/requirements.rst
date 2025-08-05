@@ -826,8 +826,9 @@ Testing
     PROCESS_gd_req__saf_attr_requirements_check,
   :parent_covered: YES
 
-  Docs-As-Code shall enforce valid needs of type :need:`tool_req__docs_saf_types` to
-  have at least one `mitigated_by` link to a requirement on the corresponding level.
+  Docs-As-Code shall enforce valid needs (`status` == `valid`) of type
+  :need:`tool_req__docs_saf_types` to have at least one `mitigated_by` link to a
+  requirement on the corresponding level.
 
 
 .. tool_req:: Safety Analysis Mitigation Issue Attribute
