@@ -899,23 +899,14 @@ graph_checks:
       satisfies: safety == QM
     explanation: QM requirements cannot satisfy ASIL requirements.
 
-
-  # req-Id: tool_req__docs_arch_link_safety_to_req
-  tool_req__docs_arch_link_safety_to_req_1:
+  # req-Id: tool_req__docs_arch_link_qm_to_safety_req
+  tool_req__docs_arch_link_qm_to_safety_req:
     needs:
       include: feat_arc_sta, logic_arc_int, logic_arc_int_op, comp_arc_sta, real_arc_int, real_arc_int_op
       condition: safety == QM
     check:
-      fulfils: safety == QM
-    explanation: An QM architecture element cannot implement ASIL requirements.
-
-  tool_req__docs_arch_link_safety_to_req_2:
-    needs:
-      include: feat_arc_sta, logic_arc_int, logic_arc_int_op, comp_arc_sta, real_arc_int, real_arc_int_op
-      condition: safety != QM
-    check:
       fulfils: safety != QM
-    explanation: An ASIL architecture element cannot implement QM requirements.
+    explanation: An QM architecture element cannot implement ASIL requirements.
 
   # req-Id: tool_req__docs_req_arch_link_safety_to_arch
   tool_req__docs_req_arch_link_safety_to_arch:
