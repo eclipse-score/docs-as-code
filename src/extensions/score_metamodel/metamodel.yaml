@@ -686,7 +686,7 @@ needs_types:
       # req-Id: tool_req__docs_saf_attrs_sufficient
       sufficient: ^(yes|no)$
       status: ^(valid|invalid)$
-      # req-Id: tool_req__docs_saf_attrs_conent
+      # req-Id: tool_req__docs_saf_attrs_content
       content: ^[\s\S]+$
     mandatory_links:
       # req-Id: tool_req__docs_saf_attrs_violates
@@ -714,7 +714,7 @@ needs_types:
       # req-Id: tool_req__docs_saf_attrs_sufficient
       sufficient: ^(yes|no)$
       status: ^(valid|invalid)$
-      # req-Id: tool_req__docs_saf_attrs_conent
+      # req-Id: tool_req__docs_saf_attrs_content
       content: ^[\s\S]+$
     optional_options:
       # req-Id: tool_req__docs_saf_attrs_mitigation_issue
@@ -743,7 +743,7 @@ needs_types:
       # req-Id: tool_req__docs_saf_attrs_sufficient
       sufficient: ^(yes|no)$
       status: ^(valid|invalid)$
-      # req-Id: tool_req__docs_saf_attrs_conent
+      # req-Id: tool_req__docs_saf_attrs_content
       content: ^[\s\S]+$
     optional_options:
       # req-Id: tool_req__docs_saf_attrs_mitigation_issue
@@ -771,7 +771,7 @@ needs_types:
       # req-Id: tool_req__docs_saf_attrs_sufficient
       sufficient: ^(yes|no)$
       status: ^(valid|invalid)$
-      # req-Id: tool_req__docs_saf_attrs_conent
+      # req-Id: tool_req__docs_saf_attrs_content
       content: ^[\s\S]+$
     optional_options:
       # req-Id: tool_req__docs_saf_attrs_mitigation_issue
