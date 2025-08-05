@@ -145,6 +145,18 @@ def extract_test_data(rst_file: Path) -> RstData | None:
         return rst_data
 
 
+def filter_warnings_by_position(
+    rst_data: RstData,
+    warning_info: WarningInfo,
+    warnings: list[str],
+) -> list[str]:
+    return [
+        warning
+        for warning in warnings
+        if (f"{rst_data.filename}:{str(warning_info.lineno)}" in warning)
+    ]
+
+
 def warning_matches(
     rst_data: RstData,
     warning_info: WarningInfo,
@@ -153,11 +165,8 @@ def warning_matches(
 ) -> bool:
     ### Checks if any element of the warning list is includes the given warning info.
     # It returns True if found otherwise False.
-    for warning in warnings:
-        if (
-            f"{rst_data.filename}:{str(warning_info.lineno)}" in warning
-            and expected_message in warning
-        ):
+    for warning in filter_warnings_by_position(rst_data, warning_info, warnings):
+        if expected_message in warning:
             return True
     return False
 
@@ -190,7 +199,10 @@ def test_rst_files(
     for warning_info in rst_data.warning_infos:
         for w in warning_info.expected:
             if not warning_matches(rst_data, warning_info, w, warnings):
-                raise AssertionError(f"Expected warning: '{w}' not found")
+                actual = filter_warnings_by_position(rst_data, warning_info, warnings)
+                raise AssertionError(
+                    f"Expected warning: '{w}' not found. Received: {actual}"
+                )
         for w in warning_info.not_expected:
             if warning_matches(rst_data, warning_info, w, warnings):
                 raise AssertionError(f"Unexpected warning: '{w}' found")
