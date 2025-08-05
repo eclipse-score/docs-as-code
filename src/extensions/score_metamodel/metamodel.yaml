@@ -893,7 +893,7 @@ graph_checks:
   # req-Id: tool_req__docs_common_attr_safety_link_check
   tool_req__docs_common_attr_safety_link_check:
     needs:
-      include: stkh_req, feat_reg, comp_req, aou_req, gd_req, tool_req
+      include: stkh_req, feat_req, comp_req, aou_req, gd_req, tool_req
       condition: safety == QM
     check:
       satisfies: safety == QM
