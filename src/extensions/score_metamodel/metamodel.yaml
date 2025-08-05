@@ -14,8 +14,8 @@
 
 needs_types_base_options:
   optional_options:
+    # req-Id: tool_req__docs_dd_link_source_code_link
     source_code_link: ^https://github.com/.*
-    # Custom semantic validation rules
 
 # Prohibited Word Option Checks
 # Follow this schema to write new checks
@@ -34,7 +34,7 @@ prohibited_words_checks:
       - shall
       - must
       - will
-  # req-Id: tool_req__docs_common_attr_description
+  # req-Id: tool_req__docs_common_attr_desc_wording
   content_check:
     types:
       - requirement_excl_process
@@ -78,7 +78,7 @@ needs_types:
     optional_links:
       links: "^.*$"
 
-  # Standards
+  # Standard Requirement and Work Product
   # req-Id: tool_req__docs_stdreq_types
   std_req:
     title: Standard Requirement
@@ -114,7 +114,7 @@ needs_types:
       contains: ^gd_(req|temp|chklst|guidl|meth)__.*$
       has: ^doc_(getstrt|concept)__.*$
 
-  # Guidances
+  # req-Id: tool_req__docs_req_types
   gd_req:
     title: Process Requirements
     prefix: gd_req__
@@ -200,7 +200,7 @@ needs_types:
       id: ^doc_getstrt__[0-9a-z_]*$
       status: ^(valid|draft)$
 
-  # Documents, score, and other modules only
+  # req-Id: tool_req__docs_doc_types
   document:
     title: Generic Document
     prefix: doc__
@@ -210,13 +210,14 @@ needs_types:
     optional_options:
       safety: "^(QM|ASIL_B)$"
       security: "^(YES|NO)$"
+      # req-Id: tool_req__docs_doc_attr
       author: ^.*$
       approver: ^.*$
       reviewer: ^.*$
     optional_links:
       realizes: "^wp__.+$"
 
-  # req-Id: tool_req__docs_tvr
+  # req-Id: tool_req__docs_doc_types
   doc_tool:
     title: Tool Verification Report
     prefix: doc_tool__
@@ -230,6 +231,11 @@ needs_types:
       # req-Id: tool_req__docs_tvr_security
       security_affected: "^(YES|NO)$"
       tcl: "^(LOW|HIGH)$"
+    optional_options:
+      # req-Id: tool_req__docs_doc_attr
+      author: ^.*$
+      approver: ^.*$
+      reviewer: ^.*$
     optional_links:
       realizes: "^wp__.+$"
 
@@ -241,7 +247,7 @@ needs_types:
     mandatory_options:
       id: ^stkh_req__[0-9a-z_]*$
       # req-Id: tool_req__docs_req_attr_reqtype
-      reqtype: ^(Functional|Interface|Process|Legal|Non-Functional)$
+      reqtype: ^(Functional|Interface|Process|Non-Functional)$
       # req-Id: tool_req__docs_common_attr_safety
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
@@ -250,10 +256,9 @@ needs_types:
       # content: ^[\s\S]+$
       # req-Id: tool_req__docs_req_attr_rationale
       rationale: ^.+$
-    optional_options:
       # req-Id: tool_req__docs_common_attr_security
-      # TODO: move to mandatory once https://github.com/eclipse-score/process_description/pull/133 is merged
       security: ^(YES|NO)$
+    optional_options:
       codelink: ^.*$
       testlink: ^.*$
       # req-Id: tool_req__docs_req_attr_reqcov
@@ -273,7 +278,7 @@ needs_types:
     mandatory_options:
       id: ^feat_req__[0-9a-z_]*$
       # req-Id: tool_req__docs_req_attr_reqtype
-      reqtype: ^(Functional|Interface|Process|Legal|Non-Functional)$
+      reqtype: ^(Functional|Interface|Process|Non-Functional)$
       # req-Id: tool_req__docs_common_attr_security
       security: ^(YES|NO)$
       # req-Id: tool_req__docs_common_attr_safety
@@ -303,7 +308,7 @@ needs_types:
     mandatory_options:
       id: ^comp_req__[0-9a-z_]*$
       # req-Id: tool_req__docs_req_attr_reqtype
-      reqtype: ^(Functional|Interface|Process|Legal|Non-Functional)$
+      reqtype: ^(Functional|Interface|Process|Non-Functional)$
       # req-Id: tool_req__docs_common_attr_security
       security: ^(YES|NO)$
       # req-Id: tool_req__docs_common_attr_safety
@@ -361,12 +366,12 @@ needs_types:
 
   # req-Id: tool_req__docs_req_types
   aou_req:
-    title: Assumption of Use
+    title: Assumption of Use Requirement
     prefix: aou_req__
     mandatory_options:
       id: ^aou_req__[0-9a-z_]*$
       # req-Id: tool_req__docs_req_attr_reqtype
-      reqtype: ^(Functional|Interface|Process|Legal|Non-Functional)$
+      reqtype: ^(Functional|Interface|Process|Non-Functional)$
       # req-Id: tool_req__docs_common_attr_security
       security: ^(YES|NO)$
       # req-Id: tool_req__docs_common_attr_safety
@@ -386,10 +391,13 @@ needs_types:
       - requirement
       - requirement_excl_process
 
+  # - Architecture -
 
-  # Architecture
+  # Architecture Element & View
+  # req-Id: tool_req__docs_arch_types
+  # req-Id: tool_req__docs_arch_views
   feat_arc_sta:
-    title: Feature Architecture Static View
+    title: Feature & Feature Package Diagram
     prefix: feat_arc_sta__
     color: #FEDCD2
     style: card
@@ -407,9 +415,12 @@ needs_types:
       fulfils: ^feat_req__.+$
     tags:
       - architecture_element
+      - architecture_view
 
+  # Architecture View
+  # req-Id: tool_req__docs_arch_views
   feat_arc_dyn:
-    title: Feature Architecture Dynamic View
+    title: Feature Sequence Diagram
     prefix: feat_arc_dyn__
     color: #FEDCD2
     style: card
@@ -424,10 +435,13 @@ needs_types:
     mandatory_links:
       fulfils: ^feat_req__.+$
     tags:
-      - architecture_element
+      - architecture_view
 
+  # Architecture Element & View
+  # req-Id: tool_req__docs_arch_types
+  # req-Id: tool_req__docs_arch_views
   logic_arc_int:
-    title: Logical Architecture Interfaces
+    title: Logical Interface & Feature Interface View
     prefix: logic_arc_int__
     color: #FEDCD2
     style: card
@@ -444,9 +458,12 @@ needs_types:
       fulfils: ^comp_req__.+$
     tags:
       - architecture_element
+      - architecture_view
 
+  # Architecture Element
+  # req-Id: tool_req__docs_arch_types
   logic_arc_int_op:
-    title: Logical Architecture Interface Operation
+    title: Logical Interface Operation
     prefix: logic_arc_int_op__
     color: #FEDCD2
     style: card
@@ -463,6 +480,8 @@ needs_types:
     tags:
       - architecture_element
 
+  # Architecture View
+  # req-Id: tool_req__docs_arch_views
   mod_view_sta:
     title: Module Architecture Static View
     prefix: mod_view_sta__
@@ -472,7 +491,10 @@ needs_types:
       id: ^mod_view_sta__[0-9a-z_]+$
     mandatory_links:
       includes: ^comp_arc_sta__.+$
+    tags:
+      - architecture_view
 
+  # No process requirement
   mod_view_dyn:
     title: Module Architecture Dynamic View
     prefix: mod_view_dyn__
@@ -481,8 +503,11 @@ needs_types:
     mandatory_options:
       id: ^mod_view_dyn__[0-9a-z_]+$
 
+  # Architecture Element & View
+  # req-Id: tool_req__docs_arch_types
+  # req-Id: tool_req__docs_arch_views
   comp_arc_sta:
-    title: Component Architecture Static View
+    title: Component & Component Package Diagram
     prefix: comp_arc_sta__
     color: #FEDCD2
     style: card
@@ -501,9 +526,12 @@ needs_types:
       fulfils: ^comp_req__.+$
     tags:
       - architecture_element
+      - architecture_view
 
+  # Architecture View
+  # req-Id: tool_req__docs_arch_views
   comp_arc_dyn:
-    title: Component Architecture Dynamic View
+    title: Component Sequence Diagram
     prefix: comp_arc_dyn__
     color: #FEDCD2
     style: card
@@ -518,10 +546,13 @@ needs_types:
     optional_links:
       fulfils: ^comp_req__.+$
     tags:
-      - architecture_element
+      - architecture_view
 
+  # Architecture Element & View
+  # req-Id: tool_req__docs_arch_types
+  # req-Id: tool_req__docs_arch_views
   real_arc_int:
-    title: Component Architecture Interfaces
+    title: Interface & Component Interface
     prefix: real_arc_int__
     color: #FEDCD2
     style: card
@@ -538,9 +569,12 @@ needs_types:
       fulfils: ^comp_req__.+$
     tags:
       - architecture_element
+      - architecture_view
 
+  # Architecture Element
+  # req-Id: tool_req__docs_arch_types
   real_arc_int_op:
-    title: Component Architecture Interface Operation
+    title: Interface Operation
     prefix: real_arc_int_op__
     color: #FEDCD2
     style: card
@@ -558,6 +592,8 @@ needs_types:
       implements: ^logic_arc_int_op__.+$
     tags:
       - architecture_element
+
+  # - architecture end -
 
   review_header:
     prefix: review__header
@@ -620,6 +656,7 @@ needs_types:
       status: ^(valid|invalid)$
 
   # DFA (Dependent Failure Analysis)
+  # No requirement!!
   plat_saf_dfa:
     title: Feature Dependent Failure Analysis
     prefix: plat_saf_dfa__
@@ -637,74 +674,116 @@ needs_types:
     optional_links:
       mitigated_by: ^(feat_req__.*|aou_req__.*)$
 
+  # req-Id: tool_req__docs_saf_types
   feat_saf_dfa:
-    title: Feature Dependent Failure Analysis
+    title: Feature DFA (Dependent Failure Analysis)
     prefix: feat_saf_dfa__
     mandatory_options:
       id: ^feat_saf_dfa__[0-9a-z_]+$
+      # req-Id: tool_req__docs_saf_attr_dfa_failure_id
       failure_id: ^.*$
       failure_effect: ^.*$
+      # req-Id: tool_req__docs_saf_attrs_sufficient
       sufficient: ^(yes|no)$
       status: ^(valid|invalid)$
+      # req-Id: tool_req__docs_saf_attrs_content
       content: ^[\s\S]+$
     mandatory_links:
+      # req-Id: tool_req__docs_saf_attrs_violates
       violates: ^feat_arc_sta__[0-9a-z_]+$
     optional_options:
+      # req-Id: tool_req__docs_saf_attrs_mitigation_issue
       mitigation_issue: ^https://github.com/.*$
     optional_links:
+      # req-Id: tool_req__docs_saf_attrs_mitigated_by
+      # (only mandatory once valid status == valid)
       mitigated_by: ^(feat_req__.*|aou_req__.*)$
+    tags:
+      - dependent_failure_analysis
+      - safety_analysis
 
+  # req-Id: tool_req__docs_saf_types
   comp_saf_dfa:
-    title: Component Dependent Failure Analysis
+    title: Component DFA (Dependent Failure Analysis)
     prefix: comp_saf_dfa__
     mandatory_options:
       id: ^comp_saf_dfa__[0-9a-z_]+$
+      # req-Id: tool_req__docs_saf_attr_dfa_failure_id
       failure_id: ^.*$
       failure_effect: ^.*$
+      # req-Id: tool_req__docs_saf_attrs_sufficient
       sufficient: ^(yes|no)$
       status: ^(valid|invalid)$
+      # req-Id: tool_req__docs_saf_attrs_content
       content: ^[\s\S]+$
     optional_options:
+      # req-Id: tool_req__docs_saf_attrs_mitigation_issue
       mitigation_issue: ^https://github.com/.*$
     mandatory_links:
+      # req-Id: tool_req__docs_saf_attrs_violates
       violates: ^comp_arc_sta__[0-9a-z_]+$
     optional_links:
+      # req-Id: tool_req__docs_saf_attrs_mitigated_by
+      # (only mandatory once valid status == valid)
       mitigated_by: ^(comp_req__.*|aou_req__.*)$
+    tags:
+      - dependent_failure_analysis
+      - safety_analysis
 
   # FMEA (Failure Mode and Effects Analysis)
+  # req-Id: tool_req__docs_saf_types
   feat_saf_fmea:
-    title: Feature Failure Mode and Effects Analysis
+    title: Feature FMEA (Failure Mode and Effects Analysis)
     prefix: feat_saf_fmea__
     mandatory_options:
       id: ^feat_saf_fmea__[0-9a-z_]+$
+      # req-Id: tool_req__docs_saf_attr_fmea_fault_id
       fault_id: ^.*$
       failure_effect: ^.*$
+      # req-Id: tool_req__docs_saf_attrs_sufficient
       sufficient: ^(yes|no)$
       status: ^(valid|invalid)$
+      # req-Id: tool_req__docs_saf_attrs_content
       content: ^[\s\S]+$
     optional_options:
+      # req-Id: tool_req__docs_saf_attrs_mitigation_issue
       mitigation_issue: ^https://github.com/.*$
     mandatory_links:
+      # req-Id: tool_req__docs_saf_attrs_violates
       violates: ^feat_arc_dyn__[0-9a-z_]+$
     optional_links:
+      # req-Id: tool_req__docs_saf_attrs_mitigated_by
+      # (only mandatory once valid status == valid)
       mitigated_by: ^(feat_req__.*|aou_req__.*)$
+    tags:
+      - failure_mode_effects_analysis
+      - safety_analysis
 
+  # req-Id: tool_req__docs_saf_types
   comp_saf_fmea:
-    title: Component Failure Mode and Effects Analysis
+    title: Component FMEA (Failure Mode and Effects Analysis)
     prefix: comp_saf_fmea__
     mandatory_options:
       id: ^comp_saf_fmea__[0-9a-z_]+$
+      # req-Id: tool_req__docs_saf_attr_fmea_fault_id
       fault_id: ^.*$
       failure_effect: ^.*$
+      # req-Id: tool_req__docs_saf_attrs_sufficient
       sufficient: ^(yes|no)$
       status: ^(valid|invalid)$
+      # req-Id: tool_req__docs_saf_attrs_content
       content: ^[\s\S]+$
     optional_options:
+      # req-Id: tool_req__docs_saf_attrs_mitigation_issue
       mitigation_issue: ^https://github.com/.*$
     mandatory_links:
+      # req-Id: tool_req__docs_saf_attrs_violates
       violates: ^comp_arc_dyn__[0-9a-z_]+$
     optional_links:
       mitigated_by: ^(comp_req__.*|aou_req__.*)$
+    tags:
+      - failure_mode_effects_analysis
+      - safety_analysis
 
 # Extra link types, which shall be available and allow need types to be linked to each other.
 # We use a dedicated linked type for each type of a connection, for instance from
@@ -810,29 +889,48 @@ needs_extra_links:
 # req- Id: gd_req__req__linkage_architecture
 # req- Id: gd_req__req__linkage_safety
 
-# Checks if the child requirement has the at least the same safety level as the parent requirement. It's allowed to "overfill" the safety level of the parent.
-# ASIL decomposition is not foreseen in S-CORE. Therefore it's not allowed to have a child requirement with a lower safety level than the parent requirement as
-# it is possible in an decomposition case.
-# If need-req is `QM`, parent must be `QM`.
 graph_checks:
-  req_safety_linkage_qm:
+  # req-Id: tool_req__docs_common_attr_safety_link_check
+  tool_req__docs_common_attr_safety_link_check:
     needs:
-      include: comp_req, feat_req
+      include: stkh_req, feat_req, comp_req, aou_req, gd_req, tool_req
       condition: safety == QM
     check:
       satisfies: safety == QM
-    explanation: An ASIL requirement must link at least one parent/upstream ASIL requirement for correct decomposition. Please ensure the parent’s safety level is QM and its status is valid.
-  # If need-req is `ASIL_B`, parent must be `QM` or `ASIL_B`.
-  req_safety_linkage_asil_b:
+    explanation: QM requirements cannot satisfy ASIL requirements.
+
+  # req-Id: tool_req__docs_arch_link_qm_to_safety_req
+  tool_req__docs_arch_link_qm_to_safety_req:
     needs:
-      include: comp_req, feat_req
-      condition: safety == ASIL_B
+      include: feat_arc_sta, logic_arc_int, logic_arc_int_op, comp_arc_sta, real_arc_int, real_arc_int_op
+      condition: safety == QM
     check:
-      satisfies:
-        or:
-          - safety == ASIL_B
-          - safety == QM
-    explanation: An ASIL requirement must link at least one parent/upstream ASIL requirement for correct decomposition. Please ensure the parent’s safety level is ASIL_B or QM and its status is valid.
+      fulfils: safety != QM
+    explanation: An QM architecture element cannot implement ASIL requirements.
+
+  # req-Id: tool_req__docs_req_arch_link_safety_to_arch
+  tool_req__docs_req_arch_link_safety_to_arch:
+    needs:
+      include: feat_arc_sta, logic_arc_int, logic_arc_int_op, comp_arc_sta, real_arc_int, real_arc_int_op
+      condition:
+        and:
+          - safety != QM
+          - status == valid
+    check:
+      implements: # TODO: which attribute???
+        and:
+          - safety != QM
+          - status == valid
+    explanation: An safety architecture element can only link other safety architecture elements.
+
+  tool_req__docs_arch_link_security:
+    needs:
+      include: feat_arc_sta, logic_arc_int, logic_arc_int_op, comp_arc_sta, real_arc_int, real_arc_int_op
+      condition: security == YES
+    check:
+      implements: security == YES # Which attribute???
+    explanation: An security architecture element can only link other security architecture elements.
+
   # saf - ID gd_req__saf_linkage_safety
   # It shall be checked that Safety Analysis (DFA and FMEA) can only be linked via mitigate against
   #  - <Feature | Component | AoU> Requirements with the same ASIL or
