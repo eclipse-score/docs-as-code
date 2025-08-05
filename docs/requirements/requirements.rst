@@ -883,7 +883,7 @@ Testing
   :parent_covered: YES
 
   Docs-As-Code shall enforce that needs of type :need:`tool_req__docs_saf_types` have a
-  `violates` links to at least one dynamic diagram according to the table.
+  `violates` links to at least one dynamic / static diagram according to the table.
 
   | Source | Target |
   | -- | -- |
