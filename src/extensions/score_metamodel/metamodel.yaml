@@ -593,7 +593,7 @@ needs_types:
     tags:
       - architecture_element
 
-# - architecture end -
+  # - architecture end -
 
   review_header:
     prefix: review__header
@@ -914,13 +914,13 @@ graph_checks:
       include: feat_arc_sta, logic_arc_int, logic_arc_int_op, comp_arc_sta, real_arc_int, real_arc_int_op
       condition:
         and:
-        - safety != QM
-        - status == valid
+          - safety != QM
+          - status == valid
     check:
       implements: # TODO: which attribute???
         and:
-        - safety != QM
-        - status == valid
+          - safety != QM
+          - status == valid
     explanation: An safety architecture element can only link other safety architecture elements.
 
   tool_req__docs_arch_link_security:
