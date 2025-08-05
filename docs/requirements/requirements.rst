@@ -130,8 +130,12 @@ This section provides an overview of current process requirements and their clar
     PROCESS_gd_req__req__desc_weak,
   :parent_covered: YES
 
-  Docs-as-Code shall enforce that need descriptions do not contain the following weak words:
+  Docs-as-Code shall enforce that requirement descriptions do not contain the following weak words:
   just, about, really, some, thing, absol-utely
+
+  This rule applies to:
+
+  * all requirement types defined in :need:`tool_req__docs_req_types`, except process requirements.
 
   .. note::
     Artificial "-" added to avoid triggering violation of this requirment in this document.

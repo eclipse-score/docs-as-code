@@ -37,7 +37,7 @@ prohibited_words_checks:
   # req-Id: tool_req__docs_common_attr_desc_wording
   content_check:
     types:
-      - requirement
+      - requirement_excl_process
     content:
       - just
       - about
