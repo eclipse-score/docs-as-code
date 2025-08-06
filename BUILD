@@ -12,6 +12,7 @@
 # *******************************************************************************
 
 load("@score_cr_checker//:cr_checker.bzl", "copyright_checker")
+load("@aspect_rules_py//py:defs.bzl", "py_library")
 load("//:docs.bzl", "docs")
 
 package(default_visibility = ["//visibility:public"])
@@ -33,4 +34,11 @@ docs(
         "@score_process//:needs_json",
     ],
     source_dir = "docs",
+)
+
+py_library(
+    name="pytest_prop_plugin",
+    srcs=["pytest_testcase_properties.py"],
+    #imports = ["."],
+    visibility = ["//visibility:public"],
 )

@@ -25,7 +25,7 @@ py_library(
     ],
     visibility = ["//visibility:public"],
     # TODO: Figure out if all requirements are needed or if we can break it down a bit
-    deps = all_requirements,
+    deps = all_requirements 
 )
 
 score_py_pytest(
@@ -39,5 +39,6 @@ score_py_pytest(
     args = [
         "--junitxml=$$XML_OUTPUT_FILE",
     ],
-    deps = [":score_metamodel"],
+    #plugins=["@score_docs_as_code//:pytest_prop_plugin"],
+    deps = [":score_metamodel"] #"@score_docs_as_code//src/extensions/score_xml_parser:score_xml_parser"]
 )

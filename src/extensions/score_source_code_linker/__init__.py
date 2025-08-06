@@ -16,6 +16,7 @@ source code links from a JSON file and add them to the needs.
 """
 
 import subprocess
+import json
 from collections import defaultdict
 from copy import deepcopy
 from pathlib import Path
@@ -37,18 +38,28 @@ from src.extensions.score_source_code_linker.needlinks import (
     NeedLink,
     load_source_code_links_json,
 )
+from src.extensions.score_source_code_linker.xml_parser import (
+    generate_test_needs,
+    run_xml_parser
+)
+
+from src.extensions.score_source_code_linker.testlink import (
+    TestLink, 
+    TestLinkJSONDecoder,
+    load_test_xml_parsed_json
+)
 
 LOGGER = get_logger(__name__)
 # Outcomment this to enable more verbose logging
 # LOGGER.setLevel("DEBUG")
 
 
-def get_cache_filename(build_dir: Path) -> Path:
+def get_cache_filename(build_dir: Path, filename: str) -> Path:
     """
     Returns the path to the cache file for the source code linker.
     This is used to store the generated source code links.
     """
-    return build_dir / "score_source_code_linker_cache.json"
+    return build_dir / filename
 
 
 def setup_once(app: Sphinx, config: Config):
@@ -71,6 +82,10 @@ def setup_once(app: Sphinx, config: Config):
     assert find_git_root(ws_root)
 
     # Extension: score_source_code_linker
+#          ╭──────────────────────────────────────╮
+#          │          SOURCE CODE LINKER          │
+#          ╰──────────────────────────────────────╯
+
     app.add_config_value(
         "skip_rescanning_via_source_code_linker",
         False,
@@ -80,24 +95,46 @@ def setup_once(app: Sphinx, config: Config):
     )
 
     # Define need_string_links here to not have it in conf.py
+    # source_code_link and testlinks have the same schema
     app.config.needs_string_links = {
         "source_code_linker": {
             "regex": r"(?P<url>.+)<>(?P<name>.+)",
             "link_url": "{{url}}",
             "link_name": "{{name}}",
-            "options": ["source_code_link"],
+            "options": ["source_code_link", "testlink"],
         },
     }
 
-    cache_json = get_cache_filename(Path(app.outdir))
+    scl_cache_json = get_cache_filename(Path(app.outdir), "score_source_code_linker_cache.json")
 
-    if not cache_json.exists() or not app.config.skip_rescanning_via_source_code_linker:
+    if not scl_cache_json.exists() or not app.config.skip_rescanning_via_source_code_linker:
         LOGGER.debug(
             "INFO: Generating source code links JSON file.",
             type="score_source_code_linker",
         )
 
-        generate_source_code_links_json(ws_root, cache_json)
+        generate_source_code_links_json(ws_root, scl_cache_json)
+
+#          ╭──────────────────────────────────────╮
+#          │              TEST LINKER             │
+#          ╰──────────────────────────────────────╯
+
+    tl_cache_json = get_cache_filename(Path(app.outdir), "score_xml_parser_cache.json")
+    if not tl_cache_json.exists() or not app.config.skip_rescanning_via_source_code_linker:
+        LOGGER.debug(
+            "INFO: Generating score_xml_parser JSON file.",
+            type="score_source_code_linker",
+        )
+        # sanity check if extension is enabled
+        bazel_testlogs = ws_root / "bazel-testlogs"
+        if not bazel_testlogs.exists():
+            LOGGER.info(f"{'='*80}",type="score_source_code_linker")
+            LOGGER.info(f"{'='*32}SCORE XML PARSER{'='*32}",type="score_source_code_linker")
+            LOGGER.info("'bazel-testlogs' was not found. If test data should be parsed, please run tests before building the documentation",type="score_source_code_linker")
+            LOGGER.info(f"{'='*80}",type="score_source_code_linker")
+            return
+        # TODO: Figure out if this is okay, since this has to run first?
+        app.connect("env-updated",run_xml_parser)
 
     app.connect("env-updated", inject_links_into_needs)
 
@@ -133,14 +170,33 @@ def find_need(
     return None
 
 
-def group_by_need(source_code_links: list[NeedLink]) -> dict[str, list[NeedLink]]:
+def group_by_need(
+    source_code_links: list[NeedLink], test_case_links: list[TestLink] = []
+) -> dict[str, dict[str, list[NeedLink | TestLink]]]:
     """
-    Groups the given need links by their need ID.
+    Groups the given need links and test case links by their need ID.
+    Returns a nested dictionary structure with 'CodeLink' and 'TestLink' categories.
+    Example output: 
+
+        <need>: {
+            "CodeLinks": 
+                [{..}, ...],
+            "TestLinks":    
+                [{..}, ...],
     """
-    source_code_links_by_need: dict[str, list[NeedLink]] = defaultdict(list)
+    grouped_by_need: dict[str, dict[str, list[NeedLink | TestLink]]] = defaultdict(
+        lambda: {"CodeLink": [], "TestLink": []}
+    )
+
+    # Group source code links
     for needlink in source_code_links:
-        source_code_links_by_need[needlink.need].append(needlink)
-    return source_code_links_by_need
+        grouped_by_need[needlink.need]["CodeLink"].append(needlink)
+
+    # Group test case links
+    for testlink in test_case_links:
+        grouped_by_need[testlink.need]["TestLink"].append(testlink)
+
+    return dict(grouped_by_need)
 
 
 def parse_git_output(str_line: str) -> str:
@@ -198,14 +254,14 @@ def get_github_base_url(git_root: Path = Path()) -> str:
 
 
 def get_github_link(
-    git_root: Path = Path(), needlink: NeedLink = DefaultNeedLink()
+    git_root: Path = Path(), link: NeedLink|TestLink = DefaultNeedLink()
 ) -> str:
     passed_git_root = get_git_root(git_root)
     base_url = get_github_base_url(
         passed_git_root
     )  # Pass git_root to avoid double lookup
     current_hash = get_current_git_hash(passed_git_root)
-    return f"{base_url}/blob/{current_hash}/{needlink.file}#L{needlink.line}"
+    return f"{base_url}/blob/{current_hash}/{link.file}#L{link.line}"
 
 
 def get_current_git_hash(ws_root: Path) -> str:
@@ -246,36 +302,50 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
         needs
     )  # TODO: why do we create a copy? Can we also needs_copy = needs[:]? copy(needs)?
 
-    for id, need in needs.items():
-        if need.get("source_code_link"):
-            LOGGER.debug(
-                f"?? Need {need['id']} already has source_code_link: {need.get('source_code_link')}"
-            )
+    # Enable for DEBUGGING
+    # for id, need in needs.items():
+    #     if need.get("source_code_link"):
+    #         LOGGER.debug(
+    #             f"?? Need {need['id']} already has source_code_link: {need.get('source_code_link')}"
+    #         )
 
-    source_code_links = load_source_code_links_json(get_cache_filename(app.outdir))
+    source_code_links = load_source_code_links_json(get_cache_filename(Path(app.outdir), "score_source_code_linker_cache.json"))
+    test_code_links = load_test_xml_parsed_json(get_cache_filename(Path(app.outdir), "score_xml_parser_cache.json"))
 
     # group source_code_links by need
     # groupby requires the input to be sorted by the key
 
-    source_code_links_by_need = group_by_need(source_code_links)
+    source_code_links_by_need = group_by_need(source_code_links, test_code_links)
+    # TODO: Enable DEBUG saving of 'grouped needs json' !!!
 
     # For some reason the prefix 'sphinx_needs internally' is CAPSLOCKED.
     # So we have to make sure we uppercase the prefixes
     prefixes = [x["id_prefix"].upper() for x in app.config.needs_external_needs]
     for need_id, needlinks in source_code_links_by_need.items():
+        #LOGGER.warning(f"NEEDLINKS: {needlinks}")
         need = find_need(needs_copy, need_id, prefixes)
+        # LOGGER.warning(f"NEEDLINKS: {needlinks}")
         if need is None:
             # TODO: print github annotations as in https://github.com/eclipse-score/bazel_registry/blob/7423b9996a45dd0a9ec868e06a970330ee71cf4f/tools/verify_semver_compatibility_level.py#L126-L129
-            for n in needlinks:
-                LOGGER.warning(
-                    f"{n.file}:{n.line}: Could not find {need_id} in documentation",
-                    type="score_source_code_linker",
-                )
+            pass
+            # for n in needlinks:
+            #     LOGGER.warning(
+            #         f"{n.file}:{n.line}: Could not find {need_id} in documentation",
+            #         type="score_source_code_linker",
+            #     )
         else:
+            # for code_link in needlinks["CodeLink"]:
+            # LOGGER.warning(f"CODELINKS: {needlinks['CodeLink']}")
             need_as_dict = cast(dict[str, object], need)
 
             need_as_dict["source_code_link"] = ", ".join(
-                f"{get_github_link(ws_root, n)}<>{n.file}:{n.line}" for n in needlinks
+                f"{get_github_link(ws_root, n)}<>{n.file}:{n.line}"
+                for n in needlinks["CodeLink"]
+            )
+            LOGGER.warning(f"ADDED TESTLINK TO NEED: {need['id']}")
+            need_as_dict["testlink"] = ", ".join(
+                f"{get_github_link(ws_root, n)}<>{n.file}:{n.line}"
+                for n in needlinks["TestLink"]
             )
 
             # NOTE: Removing & adding the need is important to make sure
@@ -287,3 +357,4 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
     for need in needs.values():
         if need["id"] not in source_code_links_by_need:
             need["source_code_link"] = ""
+            need["testlink"] = ""

@@ -41,5 +41,9 @@ score_py_pytest(
     deps = [
         ":score_source_code_linker",
         "@score_docs_as_code//src/extensions/score_metamodel",
-    ] + all_requirements,
+        #"@score_docs_as_code//src/extensions/score_xml_parser",
+        #"@score_python_basics//score_pytest:attribute_plugin"
+        #"@score_python_basics//score_pytest:attribute_plugin",
+    ],
+    #plugins=["attribute_plugin"]
 )

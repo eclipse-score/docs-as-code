@@ -20,6 +20,7 @@ from src.extensions.score_metamodel.tests import need as test_need
 from dataclasses import asdict
 from typing import Any
 
+from attribute_plugin import add_test_properties
 
 import pytest
 
@@ -264,7 +265,7 @@ def test_get_cache_filename():
     """Test cache filename generation."""
     build_dir = Path("/tmp/build")
     expected = build_dir / "score_source_code_linker_cache.json"
-    result = get_cache_filename(build_dir)
+    result = get_cache_filename(build_dir, "score_source_code_linker_cache.json")
     assert result == expected
 
 
@@ -274,6 +275,13 @@ def make_needs(needs_dict):
     )
 
 
+@add_test_properties(
+    partially_verifies=[
+        "tool_req__docs_dd_link_testcase",
+    ],
+    test_type="resource-usage",
+    derivation_technique="explorative-testing"
+)
 def test_find_need_direct_match():
     """Test finding a need with direct ID match."""
     all_needs = make_needs(
@@ -348,7 +356,7 @@ def test_group_by_need(sample_needlinks):
 
 def test_group_by_need_empty_list():
     """Test grouping empty list of needlinks."""
-    result = group_by_need([])
+    result = group_by_need([], [])
     assert len(result) == 0
 
 
