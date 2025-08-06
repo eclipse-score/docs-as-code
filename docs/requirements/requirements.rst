@@ -57,8 +57,9 @@ This section provides an overview of current process requirements and their clar
   :satisfies:
      PROCESS_gd_req__req__attr_uid,
      PROCESS_gd_req__tool__attr_uid,
-     PROCESS_gd_req__arch__attribute_uid
-  :parent_covered: YES: together with tool_req__docs_attr_id_scheme
+     PROCESS_gd_req__arch__attribute_uid,
+     PROCESS_gd_req__saf_attr_uid,
+  :parent_covered: NO
 
   Docs-as-Code shall enforce that all Need IDs are globally unique across all included
   documentation instances.
@@ -71,8 +72,11 @@ This section provides an overview of current process requirements and their clar
   :id: tool_req__docs_common_attr_id_scheme
   :implemented: PARTIAL
   :tags: Common Attributes
-  :satisfies: PROCESS_gd_req__req__attr_uid, PROCESS_gd_req__arch__attribute_uid
-  :parent_covered: YES: together with tool_req__docs_attr_id
+  :satisfies:
+    PROCESS_gd_req__req__attr_uid,
+    PROCESS_gd_req__arch__attribute_uid,
+    PROCESS_gd_req__saf_attr_uid,
+  :parent_covered: NO: cannot check non-existent "doc__naming_conventions" in PROCESS_gd_req__req__attr_uid
 
   Docs-as-Code shall enforce that Need IDs follow the following naming scheme:
 
@@ -80,6 +84,7 @@ This section provides an overview of current process requirements and their clar
   * A middle part matching the hierarchical structure of the need:
      * For requirements: a portion of the feature tree or a component acronym
      * For architecture elements: the structural element (e.g. a part of the feature tree, component acronym)
+     * For safety analysis (FMEA, DFA): name of analyzed structural element (e.g. Persistency, FEO, etc.)
   * Additional descriptive text to ensure human readability
 
 
@@ -91,12 +96,16 @@ This section provides an overview of current process requirements and their clar
   :id: tool_req__docs_common_attr_title
   :implemented: YES
   :tags: Common Attributes
-  :satisfies: PROCESS_gd_req__req__attr_title
+  :satisfies:
+    PROCESS_gd_req__req__attr_title,
+    PROCESS_gd_req__saf__attr_title,
   :parent_covered: NO: Can not ensure summary
 
+  Docs-as-Code shall enforce that all needs have titles and titles do not contain the following words:
 
-  Docs-as-Code shall enforce that needs of type :need:`tool_req__docs_req_types` do not have prohibited words
-  which can be found in the metamodel.
+  * shall
+  * must
+  * will
 
 
 ---------------------------
@@ -117,10 +126,19 @@ This section provides an overview of current process requirements and their clar
   :id: tool_req__docs_common_attr_desc_wording
   :tags: Common Attributes
   :implemented: YES
+  :satisfies:
+    PROCESS_gd_req__req__desc_weak,
   :parent_covered: YES
 
+  Docs-as-Code shall enforce that requirement descriptions do not contain the following weak words:
+  just, about, really, some, thing, absol-utely
 
-  Docs-as-Code shall enforce that Need description do not contain the weak words that are defined in the metamodel
+  This rule applies to:
+
+  * all requirement types defined in :need:`tool_req__docs_req_types`, except process requirements.
+
+  .. note::
+    Artificial "-" added to avoid triggering violation of this requirment in this document.
 
 ----------------------------
 🔒 Security Classification
@@ -141,8 +159,10 @@ This section provides an overview of current process requirements and their clar
 
   This rule applies to:
 
-  * all requirement types defined in :need:`tool_req__docs_req_types`, except process requirements.
+  * all requirement types defined in :need:`tool_req__docs_req_types`, except process and tool requirements.
   * all architecture elements defined in :need:`tool_req__docs_arch_types`.
+
+
 
 
 ---------------------------
@@ -166,8 +186,10 @@ This section provides an overview of current process requirements and their clar
 
   This rule applies to:
 
-  * all requirement types defined in :need:`tool_req__docs_req_types`, except process requirements.
+  * all requirement types defined in :need:`tool_req__docs_req_types`, except process and tool requirements.
   * all architecture elements defined in :need:`tool_req__docs_arch_types`.
+
+
 
 ----------
 🚦 Status
@@ -177,10 +199,11 @@ This section provides an overview of current process requirements and their clar
   :id: tool_req__docs_common_attr_status
   :tags: Common Attributes
   :implemented: YES
-  :parent_covered: YES
+  :parent_covered: NO: gd_req__saf_attr_status has additional constraints
   :satisfies:
     PROCESS_gd_req__req__attr_status,
     PROCESS_gd_req__arch__attr_status,
+    PROCESS_gd_req__saf_attr_status,
 
   Docs-as-Code shall enforce that the ``status`` attribute has one of the following values:
 
@@ -189,8 +212,43 @@ This section provides an overview of current process requirements and their clar
 
   This rule applies to:
 
-  * all requirement types defined in :need:`tool_req__docs_req_types`, except process requirements.
+  * all requirement types defined in :need:`tool_req__docs_req_types`, except process and tool requirements.
   * all architecture elements defined in :need:`tool_req__docs_arch_types`.
+  * all safety analysis elements defined in :need:`tool_req__docs_saf_types`.
+
+
+
+----------
+Versioning
+----------
+
+.. tool_req:: Versioning: enforce attribute
+   :id: tool_req__docs_common_attr_version
+   :tags: Common Attributes
+   :implemented: NO
+   :parent_covered: NO: to be checked after demo
+   :satisfies: PROCESS_gd_req__req__attr_version
+
+   Docs-As-Code shall enable and enforce a versioning attribute for all needs.
+
+   .. note::
+     Exact nature to be decided, it could e.g. be a number, a string, a semantic version, a date or a hash.
+
+
+
+.. tool_req:: Suspicious: Enforce attribute
+   :id: tool_req__docs_common_attr_suspicious
+   :tags: Common Attributes
+   :implemented: NO
+   :parent_covered: NO: parent talks about setting covered to false, but we want to issue a build error.
+   :satisfies: PROCESS_gd_req__req__suspicious
+   :status: invalid
+
+   Docs-as-Code shall check if linked parent needs have different versions, compared to
+   the version the need was originally linked to.
+
+
+
 
 📚 Documents
 #############
@@ -199,12 +257,13 @@ This section provides an overview of current process requirements and their clar
   :id: tool_req__docs_doc_types
   :tags: Documents
   :implemented: YES
-
-  .. :satisfies: PROCESS_gd_req__doc_types (next process release)
+  :parent_covered: YES
+  :satisfies: PROCESS_gd_req__doc__types
 
   Docs-as-Code shall support the following document types:
 
   * Generic Document (document)
+  * Tool Verification Report (doc_tool)
 
 
 .. tool_req:: Mandatory Document attributes
@@ -215,7 +274,8 @@ This section provides an overview of current process requirements and their clar
    PROCESS_gd_req__doc__author,
    PROCESS_gd_req__doc__approver,
    PROCESS_gd_req__doc__reviewer,
-  :parent_covered: NO
+  :parent_covered: NO, process requirement has changed and we do not understand the new wording.
+  :status: invalid
 
   Docs-as-Code shall enforce that each :need:`tool_req__docs_doc_types` has the
   following attributes:
@@ -230,7 +290,7 @@ This section provides an overview of current process requirements and their clar
   :tags: Documents
   :implemented: NO
   :satisfies: PROCESS_gd_req__doc__author
-  :parent_covered: YES: Together with tool_req__docs_doc_attr
+  :parent_covered: NO, process requirement has changed and we do not understand the new wording.
   :status: invalid
 
   Docs-as-Code shall provide an automatic mechanism to determine document authors.
@@ -248,7 +308,8 @@ This section provides an overview of current process requirements and their clar
   :tags: Documents
   :implemented: NO
   :satisfies: PROCESS_gd_req__doc__approver
-  :parent_covered: YES: Together with tool_req__docs_doc_attr
+  :parent_covered: NO, process requirement has changed and we do not understand the new wording.
+  :status: invalid
 
   Docs-as-Code shall provide an automatic mechanism to determine the document approver.
 
@@ -261,12 +322,24 @@ This section provides an overview of current process requirements and their clar
   :tags: Documents
   :implemented: NO
   :satisfies: PROCESS_gd_req__doc__reviewer
-  :parent_covered: YES: Together with tool_req__docs_doc_attr
+  :parent_covered: NO, process requirement has changed and we do not understand the new wording.
+  :status: invalid
 
   Docs-as-Code shall provide an automatic mechanism to determine the document reviewers.
 
   The reviewer shall be the approvers NOT listed in *CODEOWNERS* of the last pull
   request of the file containing the document.
+
+
+-------
+Mapping
+-------
+
+.. needtable::
+   :style: table
+   :types: gd_req
+   :columns: id;satisfies_back as "tool_req"
+   :filter: "PROCESS_gd_req__doc" in id
 
 
 📋 Requirements
@@ -303,7 +376,7 @@ This section provides an overview of current process requirements and their clar
   :parent_covered: NO: Can not ensure correct reasoning
   :satisfies: PROCESS_gd_req__req__attr_rationale
 
-  Docs-as-Code shall enforce that each stakeholder requirement contains a ``rationale`` attribute.
+  Docs-as-Code shall enforce that each stakeholder requirement (stkh_req) contains a ``rationale`` attribute.
 
 .. tool_req:: Enforces requirement type classification
   :id: tool_req__docs_req_attr_reqtype
@@ -318,19 +391,22 @@ This section provides an overview of current process requirements and their clar
   * Functional
   * Interface
   * Process
-  * Legal
   * Non-Functional
 
 .. tool_req:: Enables marking requirements as "covered"
   :id: tool_req__docs_req_attr_reqcov
   :tags: Requirements
-  :implemented: NO
+  :implemented: PARTIAL
   :satisfies: PROCESS_gd_req__req__attr_req_cov
-  :status: invalid
 
-  .. warning::
-     This requirement is not yet specified. The corresponding parent requirement is
-     unclear and must be clarified before a precise tool requirement can be defined.
+  Docs as code shall shall enable marking requirements as covered by their linked children.
+
+  Attribute ``reqcov`` must be one of the following values:
+      * Yes
+      * No
+
+  .. note::
+     No concept yet, as parents are generally not aware of their children.
 
 .. tool_req:: Support requirements test coverage
   :id: tool_req__docs_req_attr_testcov
@@ -346,9 +422,9 @@ This section provides an overview of current process requirements and their clar
   * Yes
   * No
 
-  .. warning::
-     This requirement is not yet specified. The corresponding parent requirement is
-     unclear and must be clarified before a precise tool requirement can be defined.
+  .. note::
+     No concept yet
+
 
 -------------------------
 🔗 Links
@@ -380,8 +456,16 @@ This section provides an overview of current process requirements and their clar
      ================================ ===========================
 
   .. note::
-      Some tool requirements do not have a matching process requirement (gap).
-      And sometimes we need to link to documents and not requirements?!
+      Some tool requirements do not have a matching process requirement.
+
+.. tool_req:: Safety: enforce safe linking
+   :id: tool_req__docs_common_attr_safety_link_check
+   :tags: Common Attributes
+   :implemented: YES
+   :parent_covered: YES
+   :satisfies: PROCESS_gd_req__req__linkage_safety
+
+   QM requirements (safety == QM) shall not be linked to safety requirements (safety != QM) via the ``satisfies`` attribute.
 
 🏛️ Architecture
 ################
@@ -395,41 +479,42 @@ This section provides an overview of current process requirements and their clar
   :tags: Architecture
   :satisfies:
      PROCESS_gd_req__arch__hierarchical_structure,
-     PROCESS_gd_req__arch__viewpoints,
      PROCESS_gd_req__arch__build_blocks,
-     PROCESS_gd_req__arch__build_blocks_corr
   :implemented: YES
   :parent_covered: NO
   :status: invalid
 
-  Docs-as-Code shall support the following architecture types:
+  Docs-as-Code shall support the following architecture element types:
 
-  * Feature (Architecture Element) = Feature Architecture Static View (feat_arc_sta)
-  * Feature Architecture Dynamic View (feat_arc_dyn)
-  * Feature: Logical Architecture Interface (incl Logical Interface View) (logic_arc_int)
-  * Feature: Logical Architecture Interface Operation (logic_arc_int_op)
-  * Component Architecture Static View (comp_arc_sta)
-  * Component Architecture Dynamic View (comp_arc_dyn)
-  * Component Architecture Interface = Real Interface (real_arc_int)
-  * Component Architecture Interface Operation = Real Interface Operation (real_arc_int_op)
+  * Feature (feat_arc_sta)
+  * Logical Interface (logic_arc_int)
+  * Logical Interface Operation (logic_arc_int_op)
+  * Component (comp_arc_sta)
+  * Interface (real_arc_int)
+  * Interface Operation (real_arc_int_op)
 
+--------------------------
+Architecture Attributes
+--------------------------
 
-.. tool_req::Module Views
-  :id: tool_req__docs_module_views
-  :tags: Architecture
-  :satisfies:
-     PROCESS_gd_req__arch__hierarchical_structure,
-     PROCESS_gd_req__arch__viewpoints,
-     PROCESS_gd_req__arch__build_blocks,
-     PROCESS_gd_req__arch__build_blocks_corr
-  :implemented: PARTIAL
-  :parent_covered: NO
-  :status: invalid
+.. tool_req:: Architecture Mandatory Attributes
+   :id: tool_req__docs_arch_attr_mandatory
+   :tags: Architecture
+   :satisfies:
+      PROCESS_gd_req__arch__attr_mandatory,
+      PROCESS_gd_req__arch__attr_fulfils,
+   :implemented: PARTIAL
+   :parent_covered: YES
+   :parent_has_problem: YES: Metamodel & Process aren't the same. Some definitions are not consistent in Process
 
-  Docs-as-Code shall support the following module view-types:
+   Docs-as-Code shall enforce that the following attributes are present in all needs of type :need:`tool_req__docs_arch_types`
 
-  * Module = Module Architecture Static View = Top Level SW component container (mod_view_sta)
-  * Module Architecture Dynamic View = Top Level SW component container (mod_view_dyn)
+   * Fulfils
+   * Safety
+   * Security
+   * Status
+   * UID
+
 
 
 ------------------------
@@ -444,8 +529,8 @@ This section provides an overview of current process requirements and their clar
    PROCESS_gd_req__arch__linkage_requirement_type,
    PROCESS_gd_req__arch__attr_fulfils,
    PROCESS_gd_req__arch__traceability,
+   PROCESS_gd_req__req__linkage_fulfill
   :parent_covered: YES
-  :status: invalid
 
   Docs-as-Code shall enforce that linking via the ``fulfils`` attribute follows defined rules.
 
@@ -455,36 +540,52 @@ This section provides an overview of current process requirements and their clar
      :widths: auto
 
      ====================================  ==========================================
-     Requirement Type                       Allowed Link Target
+     Link Source                           Allowed Link Target
      ====================================  ==========================================
-     Functional feature requirements        Static / dynamic feature architecture
-     Interface feature requirements         Interface feature architecture
-     Functional component requirements      Static / dynamic component architecture
-     Interface component requirements       Interface component architecture
+     feat_arc_sta                          feat_req
+     feat_arc_dyn                          feat_req
+     logic_arc_int                         comp_req
+     comp_arc_sta                          comp_req
+     comp_arc_dyn                          comp_req
+     real_arc_int                          comp_req
      ====================================  ==========================================
 
-.. tool_req:: Mandate links for safety
+
+.. tool_req:: Ensure safety architecture elements link a safety requirement
   :id: tool_req__docs_arch_link_safety_to_req
   :tags: Architecture
   :implemented: PARTIAL
   :satisfies: PROCESS_gd_req__arch__linkage_requirement
   :parent_covered: YES
 
-  Docs-as-Code shall enforce that architecture model elements of type
-  :need:`tool_req__docs_arch_types` with ``safety != QM`` are linked to requirements of
-  type :need:`tool_req__docs_req_types` that are also safety relevant (``safety !=
-  QM``).
+  Docs-as-Code shall enforce that architecture elements of type
+  :need:`tool_req__docs_arch_types` with ``safety != QM`` are linked to at least one
+  requirements of type :need:`tool_req__docs_req_types` with the exact same ``safety``
+  value.
+
+.. tool_req:: Ensure qm architecture elements do not fulfill safety requirements
+  :id: tool_req__docs_arch_link_qm_to_safety_req
+  :tags: Architecture
+  :implemented: PARTIAL
+  :satisfies: PROCESS_gd_req__arch__linkage_requirement
+  :parent_covered: YES
+
+  Docs-as-Code shall enforce that architecture elements of type
+  :need:`tool_req__docs_arch_types` with ``safety == QM`` are not linked to requirements
+  of type :need:`tool_req__docs_req_types` with ``safety != QM``.
+
 
 .. tool_req:: Restrict links for safety requirements
   :id: tool_req__docs_req_arch_link_safety_to_arch
   :tags: Architecture
   :implemented: PARTIAL
-  :satisfies: PROCESS_gd_req__arch__linkage_safety_trace
+  :satisfies:
+    PROCESS_gd_req__arch__linkage_safety_trace,
+    PROCESS_gd_req__req__linkage_safety,
   :parent_covered: NO
 
-  Docs-as-Code shall enforce that architecture model elements of type
-  :need:`tool_req__docs_arch_types` with ``safety != QM`` can only be linked to other
-  architecture model elements with ``safety != QM``.
+  Docs-as-Code shall enforce that valid safety architectural elements (Safety != QM) can
+  only be linked against valid safety architectural elements.
 
 .. tool_req:: Security: Restrict linkage
   :id: tool_req__docs_arch_link_security
@@ -493,29 +594,34 @@ This section provides an overview of current process requirements and their clar
   :parent_covered: YES
   :satisfies: PROCESS_gd_req__arch__linkage_security_trace
 
-  Docs-as-Code shall enforce that architecture elements with ``security == YES`` are
-  only linked to other architecture elements with ``security == YES``.
+  Docs-as-Code shall enforce that security relevant :need:`tool_req__docs_arch_types` (Security ==
+  YES) can only be linked against security relevant :need:`tool_req__docs_arch_types`.
 
 ----------------------
 🖼️ Diagram Related
 ----------------------
 
 .. tool_req:: Support Diagram drawing of architecture
-  :id: tool_req__docs_arch_diag_draw
+  :id: tool_req__docs_arch_views
   :tags: Architecture
   :implemented: YES
-  :satisfies: PROCESS_doc_concept__arch__process, PROCESS_gd_req__arch__viewpoints
+  :satisfies:
+    PROCESS_gd_req__arch__viewpoints,
   :parent_covered: YES
 
   Docs-as-Code shall enable the rendering of diagrams for the following architecture views:
 
-  * Feature View & Component View:
-     * Static View
-     * Dynamic View
-     * Interface View
-  * Software Module View
-  * Platform View
+  * Feature Package Diagram (feat_arc_sta)
+  * Feature Sequence Diagram (feat_arc_dyn)
+  * Feature Interface View (logic_arc_int)
+  * Component Package Diagram (comp_arc_sta)
+  * Component Sequence Diagram (comp_arc_dyn)
+  * Component Interface (real_arc_int)
+  * Module View (mod_view_sta)
 
+  .. note::
+    feat_arc_sta, comp_arc_sta, logic_arc_int, real_arc_int are architecture elements
+    AND architecture views.
 
 💻 Detailed Design & Code
 ##########################
@@ -528,18 +634,57 @@ This section provides an overview of current process requirements and their clar
   :tags: Detailed Design & Code
   :id: tool_req__docs_dd_link_source_code_link
   :implemented: YES
-  :parent_covered: YES
-  :satisfies: PROCESS_gd_req__req__attr_impl
+  :parent_covered: NO: we only enable linking, we do not link
+  :satisfies:
+    PROCESS_gd_req__req__attr_impl,
+    PROCESS_gd_req__impl__design_code_link,
 
-  Docs-as-Code shall allow source code to link to requirements.
+  Docs-as-Code shall allow source code to link to needs.
 
-  A backlink to the corresponding source code location in GitHub shall be generated in
-  the output as an attribute of the linked requirement.
+  A link to the corresponding source code location in GitHub shall be generated in the
+  generated documentation within the linked requirement.
+
+
+
+.. tool_req:: Feature Flags
+   :id: tool_req__docs_dd_feature_flag
+   :tags: Detailed Design & Code
+   :implemented: NO
+   :parent_covered: YES
+   :satisfies: PROCESS_gd_req__req__linkage_architecture_switch
+
+   Docs-as-Code shall allow for a to-be-defined list of checks to be non-fatal for non
+   release builds. These are typically better suited for metrics than for checks.
+
+   e.g. PROCESS_gd_req__req__linkage_architecture
+
+
+.. tool_req:: Enable Creation of Dependency Graphs
+   :id: tool_req__docs__dd_dependency_graph
+   :tags: Detailed Design & Code
+   :implemented: NO
+   :parent_covered: YES
+   :satisfies: PROCESS_gd_req__impl__dependency_analysis
+   :status: invalid
+
+   Docs-As-Code shall support generation and rendering of dependency graphs for
+   components. It shall show all dependencies of a component incl transitive
+   dependencies.
+
+   .. note::
+      Components are defined in `comp_arc_sta`.
+      A component is also a bazel target. We can use bazel dependency graphs.
+
+
+Testing
+#######
+
 
 .. tool_req:: Supports linking to test cases
-  :id: tool_req__docs_dd_link_testcase
-  :tags: Detailed Design & Code
+  :id: tool_req__docs_test_link_testcase
+  :tags: Testing
   :implemented: PARTIAL
+  :parent_covered: YES
   :satisfies: PROCESS_gd_req__req__attr_testlink
 
   Docs-as-Code shall allow requirements of type :need:`tool_req__docs_req_types` to
@@ -547,20 +692,47 @@ This section provides an overview of current process requirements and their clar
 
   This attribute shall support linking test cases to requirements.
 
+
+.. tool_req:: Extract Metadata from Tests
+   :id: tool_req__docs_test_metadata_mandatory_1
+   :tags: Testing
+   :implemented: NO
+   :parent_covered: NO
+   :satisfies: PROCESS_gd_req__verification__checks
+
+   Docs-as-Code shall ensure that each test case has TestType and DerivationTechnique set.
+
+.. tool_req:: Extract Metadata from Tests
+   :id: tool_req__docs_test_metadata_mandatory_2
+   :tags: Testing
+   :implemented: NO
+   :parent_covered: NO
+   :satisfies: PROCESS_gd_req__verification__checks
+   :status: invalid
+
+   Docs-as-Code shall ensure that each test case has a non empty description.
+
+   .. note:: this will probably be implemented outside of docs-as-code.
+
+.. tool_req:: Extract Metadata from Tests
+   :id: tool_req__docs_test_metadata_link_levels
+   :tags: Testing
+   :implemented: NO
+   :parent_covered: NO
+   :satisfies: PROCESS_gd_req__verification__checks
+   :status: invalid
+
+   Docs-as-Code shall ensure that test cases link to requirements on the correct level:
+
+    - If Partially/FullyVerifies are set in Feature Integration Test these shall link to Feature Requirements
+    - If Partially/FullyVerifies are set in Component Integration Test these shall link to Component Requirements
+    - If Partially/FullyVerifies are set in Unit Test these shall link to Component Requirements
+
+
 🧪 Tool Verification Reports
 ############################
 
 .. they are so different, that they need their own section
-
-.. tool_req:: Tool Verification Report
-  :id: tool_req__docs_tvr
-  :tags: Tool Verification Reports
-  :implemented: YES
-  :parent_covered: NO
-  :satisfies: PROCESS_gd_req__tool__attr_uid
-
-  Docs-as-Code shall support the definition and management of Tool Verification Reports
-  (``doc_tool``).
 
 .. tool_req:: Enforce safety classification
   :id: tool_req__docs_tvr_safety
@@ -569,7 +741,7 @@ This section provides an overview of current process requirements and their clar
   :parent_covered: YES
   :satisfies: PROCESS_gd_req__tool__attr_safety_affected, PROCESS_gd_req__tool__check_mandatory
 
-  Docs-as-Code shall enforce that every Tool Verification Report includes a
+  Docs-as-Code shall enforce that every Tool Verification Report (`doc_tool`) includes a
   ``safety_affected`` attribute with one of the following values:
 
   * YES
@@ -582,8 +754,8 @@ This section provides an overview of current process requirements and their clar
   :parent_covered: YES
   :satisfies: PROCESS_gd_req__tool__attr_security_affected, PROCESS_gd_req__tool__check_mandatory
 
-  Docs-as-Code shall enforce that every Tool Verification Report includes a
-  ``security_affected`` attribute with one of the following values:
+  Docs-as-Code shall enforce that every Tool Verification Report (`doc_tool`) includes a
+  `security_affected` attribute with one of the following values:
 
   * YES
   * NO
@@ -596,8 +768,8 @@ This section provides an overview of current process requirements and their clar
   :satisfies: PROCESS_gd_req__tool__attr_status, PROCESS_gd_req__tool__check_mandatory
   :parent_covered: YES
 
-  Docs-as-Code shall enforce that every Tool Verification Report includes a ``status``
-  attribute with one of the following values:
+  Docs-as-Code shall enforce that every Tool Verification Report (`doc_tool`) includes a
+  `status` attribute with one of the following values:
 
   * draft
   * evaluated
@@ -627,12 +799,175 @@ This section provides an overview of current process requirements and their clar
   * Standard requirement (std_req)
 
 
-🛡️ Safety Analysis
-###################
+🛡️ Safety Analysis (DFA + FMEA)
+###############################
 
-.. note::
-  Safety analysis is not yet defined yet. This is just a placeholder for future
-  requirements.
+
+.. tool_req:: Safety Analysis Need Types
+  :id: tool_req__docs_saf_types
+  :implemented: NO
+  :tags: Safety Analysis
+  :satisfies:
+    PROCESS_gd_req__saf_structure,
+    PROCESS_gd_req__saf_attr_uid,
+  :parent_covered: YES
+
+   Docs-As-Code shall support the following need types:
+
+  * Feature FMEA (Failure Modes and Effect Analysis) -> feat_saf_fmea
+  * Component FMEA (Failure Modes and Effect Analysis) -> comp_saf_fmea
+  * Feature DFA (Dependend Failure Analysis) -> feat_saf_dfa
+  * Component DFA (Dependent Failure Analysis) -> comp_saf_dfa
+
+
+.. tool_req:: Safety Analysis Mitigation Attribute
+  :id: tool_req__docs_saf_attrs_mitigated_by
+  :implemented: NO
+  :tags: Safety Analysis
+  :satisfies:
+    PROCESS_gd_req__saf__attr_mitigated_by,
+    PROCESS_gd_req__saf_attr_requirements,
+    PROCESS_gd_req__saf_attr_requirements_check,
+  :parent_covered: YES
+
+  Docs-As-Code shall enforce valid needs (`status` == `valid`) of type
+  :need:`tool_req__docs_saf_types` to have at least one `mitigated_by` link to a
+  requirement on the corresponding level.
+
+
+.. tool_req:: Safety Analysis Mitigation Issue Attribute
+  :id: tool_req__docs_saf_attrs_mitigation_issue
+  :implemented: NO
+  :tags: Safety Analysis
+  :satisfies: PROCESS_gd_req__saf__attr_mitigation_issue
+  :parent_covered: NO
+
+  Docs-As-Code shall allow needs of type :need:`tool_req__docs_saf_types` to have a
+  `mitigation_issue` attribute which links to a GitHub issue.
+
+
+.. tool_req:: Safety Analysis Sufficient Attribute
+  :id: tool_req__docs_saf_attrs_sufficient
+  :implemented: NO
+  :tags: Safety Analysis
+  :satisfies: PROCESS_gd_req__saf_attr_sufficient
+  :parent_covered: YES
+
+  Docs-As-Code shall enforce needs of type :need:`tool_req__docs_saf_types` to
+  have a `sufficient` attribute , which can have one of the following values:
+
+  * yes
+  * no
+
+.. tool_req:: Safety Analysis Sufficient Check
+  :id: tool_req__docs_saf_attrs_sufficient_check
+  :implemented: NO
+  :tags: Safety Analysis
+  :satisfies: PROCESS_gd_req__saf_attr_sufficient
+  :parent_covered: YES
+
+  Docs-As-Code shall ensure needs of type :need:`tool_req__docs_saf_types` with
+  `sufficient` == `yes` have a `mitigated_by` entry.
+
+
+.. tool_req:: Safety Analysis Mandatory Content
+   :id: tool_req__docs_saf_attrs_content
+   :implemented: NO
+   :tags: Safety Analysis
+   :satisfies: PROCESS_gd_req__saf_argument
+   :parent_covered: NO
+
+   Docs-As-Code shall enforce needs of type :need:`tool_req__docs_saf_types` to have a
+   non empty content.
+
+
+
+.. tool_req:: Safety Analysis Linkage Violates
+  :id: tool_req__docs_saf_attrs_violates
+  :implemented: NO
+  :tags: Safety Analysis
+  :satisfies:
+    PROCESS_gd_req__saf_linkage_check,
+    PROCESS_gd_req__saf_linkage,
+  :parent_covered: YES
+
+  Docs-As-Code shall enforce that needs of type :need:`tool_req__docs_saf_types` have a
+  `violates` links to at least one dynamic / static diagram according to the table.
+
+  | Source | Target |
+  | -- | -- |
+  | feat_saf_dfa | feat_arc_sta |
+  | comp_saf_dfa | comp_arc_sta |
+  | feat_saf_fmea | feat_arc_dyn |
+  | comp_saf_fmea | comp_arc_dyn |
+
+
+
+.. tool_req:: FMEA: fault id attribute
+   :id: tool_req__docs_saf_attr_fmea_fault_id
+   :implemented: NO
+   :tags: Safety Analysis
+   :satisfies: PROCESS_gd_req__saf_attr_fault_id
+   :parent_covered: NO
+
+   Docs-As-Code shall enforce that needs of type DFA (see
+   :need:`tool_req__docs_saf_types`) have a `fault_id` attribute.
+
+   Allowed values are listed as ID in tables at :need:`PROCESS_gd_guidl__dfa_failure_initiators`.
+
+
+.. tool_req:: DFA: failure id attribute
+   :id: tool_req__docs_saf_attr_dfa_failure_id
+   :implemented: NO
+   :tags: Safety Analysis
+   :satisfies: PROCESS_gd_req__saf_attr_failure_id
+   :parent_covered: NO
+
+   Docs-As-Code shall enforce that needs of type DFA (see
+   :need:`tool_req__docs_saf_types`) have a `fault_id` attribute.
+
+   Allowed values are listed as ID in tables at :need:`PROCESS_gd_guidl__dfa_failure_initiators`.
+
+
+.. tool_req:: Failure Effect
+   :id: tool_req__docs_saf_attr_fmea_failure_effect
+   :implemented: NO
+   :tags: Safety Analysis
+   :satisfies: PROCESS_gd_req__saf_attr_feffect
+   :parent_covered: NO
+   :status: invalid
+
+   Docs-As-Code shall enforce that every Safety Analysis has a short description of the failure effect (e.g. failure lead to an unintended actuation of the analysed element)
+
+-------
+Mapping
+-------
+
+.. needtable::
+   :style: table
+   :types: gd_req
+   :columns: id;satisfies_back as "tool_req"
+   :filter: "PROCESS_gd_req__saf" in id
+
+
+🗺️ Full Mapping
+################
+
+Process to tools:
+
+.. needtable::
+   :style: table
+   :types: gd_req
+   :columns: id;satisfies_back as "tool_req"
+
+Overview of Tool to Process Requirements
+########################################
+
+.. needtable::
+   :types: tool_req
+   :filter: any(s.startswith("PROCESS_gd_req") for s in satisfies)
+   :columns: satisfies as "Process Requirement" ;id as "Tool Requirement";implemented;source_code_link
+   :style: table
 
 
 ..

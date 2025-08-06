@@ -20,6 +20,7 @@ from score_metamodel import (
     graph_check,
 )
 from sphinx.application import Sphinx
+from sphinx_needs.config import NeedType
 from sphinx_needs.data import NeedsInfoType, NeedsView
 
 
@@ -75,6 +76,11 @@ def eval_need_condition(
     }
 
     if not isinstance(condition, dict):
+        if not isinstance(condition, str):
+            raise ValueError(
+                f"Invalid condition type: condition ({type(condition)}),"
+                + " expected str or dict."
+            )
         return eval_need_check(need, condition, log)
 
     cond: str = list(condition.keys())[0]
@@ -93,8 +99,11 @@ def eval_need_condition(
     raise ValueError(f"Unsupported condition operator: {cond}")
 
 
-def get_need_selection(
-    needs: list[NeedsInfoType], selection: dict[str, str], log: CheckLogger
+def filter_needs_by_criteria(
+    needs_types: list[NeedType],
+    needs: list[NeedsInfoType],
+    needs_selection_criteria: dict[str, str],
+    log: CheckLogger,
 ) -> list[NeedsInfoType]:
     """Create a list of needs that match the selection criteria.:
     - If it is an include selection add the include to the pattern
@@ -102,19 +111,23 @@ def get_need_selection(
     """
 
     selected_needs: list[NeedsInfoType] = []
-    pattern = []
-    need_pattern: str = list(selection.keys())[0]
+    pattern: list[str] = []
+    need_pattern: str = list(needs_selection_criteria.keys())[0]
     # Verify Inputs
     if need_pattern in ["include", "exclude"]:
-        for pat in list(selection.values())[0].split(","):
+        for pat in list(needs_selection_criteria.values())[0].split(","):
             pattern.append(pat.lstrip())
     else:
-        raise ValueError(f"Invalid need selection: {selection}")
+        raise ValueError(f"Invalid need selection: {needs_selection_criteria}")
 
-    if "condition" in selection:
-        condition = selection["condition"]
+    if "condition" in needs_selection_criteria:
+        condition = needs_selection_criteria["condition"]
     else:
-        raise ValueError(f"Invalid selection: {selection}")
+        raise ValueError(f"Invalid selection: {needs_selection_criteria}")
+
+    for pat in pattern:
+        if not any(need_type["directive"] == pat for need_type in needs_types):
+            log.warning(f"Unknown need type `{pat}` in graph check.")
 
     for need in needs:
         if need_pattern == "include":
@@ -141,23 +154,25 @@ def check_metamodel_graph(
 
     # Iterate over all graph checks
     for check_name, check_config in graph_checks_global.items():
-        apply = check_config.get("needs")
-        eval = check_config.get("check")
+        needs_selection_criteria: dict[str, str] = check_config.get("needs")
+        check_to_perform: dict[str, str | dict] = check_config.get("check")
         explanation = check_config.get("explanation", "")
         assert explanation != "", (
             f"Explanation for graph check {check_name} is missing. Explanations are mandatory for graph checks."
         )
         # Get all needs matching the selection criteria
-        selected_needs = get_need_selection(needs_local, apply, log)
+        selected_needs = filter_needs_by_criteria(
+            app.config.needs_types, needs_local, needs_selection_criteria, log
+        )
 
         for need in selected_needs:
-            for parent_relation in list(eval.keys()):
+            for parent_relation in list(check_to_perform.keys()):
                 if parent_relation not in need:
                     msg = f"Attribute not defined: `{parent_relation}` in need `{need['id']}`."
                     log.warning_for_need(need, msg)
                     continue
 
-                parent_ids = need[parent_relation]
+                parent_ids: list[str] = need[parent_relation]
 
                 for parent_id in parent_ids:
                     parent_need = needs_dict_all.get(parent_id)
@@ -166,10 +181,12 @@ def check_metamodel_graph(
                         log.warning_for_need(need, msg)
                         continue
 
-                    if not eval_need_condition(parent_need, eval[parent_relation], log):
+                    if not eval_need_condition(
+                        parent_need, check_to_perform[parent_relation], log
+                    ):
                         msg = (
                             f"Parent need `{parent_id}` does not fulfill "
-                            f"condition `{eval[parent_relation]}`."
+                            f"condition `{check_to_perform[parent_relation]}`."
                             f" Explanation: {explanation}"
                         )
                         log.warning_for_need(need, msg)

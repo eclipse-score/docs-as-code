@@ -52,10 +52,10 @@
 
 
 .. Negative Test: Child requirement QM. Parent requirement is `ASIL_B`. Child cant fulfill the safety level of the parent.
-#EXPECT: feat_req__child__3: Parent need `feat_req__parent__ASIL_B` does not fulfill condition `safety == QM`. Explanation: An ASIL requirement must link at least one parent/upstream ASIL requirement for correct decomposition. Please ensure the parent’s safety level is QM and its status is valid.
+#EXPECT: QM requirements cannot satisfy ASIL requirements.
 
 .. comp_req:: Child requirement 3
-   :id: feat_req__child__3
+   :id: feat_req__qm_child_with_asil_parent
    :safety: QM
    :satisfies: feat_req__parent__ASIL_B
    :status: valid
@@ -63,10 +63,10 @@
 
 
 .. Parent requirement does not exist
-#EXPECT: feat_req__child__4: Parent need `feat_req__parent0__abcd` not found in needs_dict.
+#EXPECT: unknown outgoing link
 
 .. feat_req:: Child requirement 4
-   :id: feat_req__child__4
+   :id: feat_req__linking_to_unknown_parent
    :safety: ASIL_B
    :status: valid
    :satisfies: feat_req__parent0__abcd
