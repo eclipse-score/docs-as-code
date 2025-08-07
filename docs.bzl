@@ -139,4 +139,5 @@ def docs(source_dir = "docs", data = [], deps = []):
         formats = ["needs"],
         sphinx = ":sphinx_build",
         tools = data,
+        visibility = ["//visibility:public"],
     )
