@@ -785,6 +785,21 @@ needs_types:
       - failure_mode_effects_analysis
       - safety_analysis
 
+  testcase:
+    title: Virtual Testcase Needs parsed from test.xml files
+    prefix: testcase__
+    mandatory_options:
+      id: ^testcase__
+    optional_options:
+      file: ^.*$
+      lineNr: ^.*$
+      test_type: ^.*$
+      derivation_technique: ^.*$
+      result: ^.*$
+      result_text: ^.*$
+      fully_verifies: ^.*$
+      partially_verifies: ^.*$   
+
 # Extra link types, which shall be available and allow need types to be linked to each other.
 # We use a dedicated linked type for each type of a connection, for instance from
 # a specification to a requirement. This makes filtering and visualization of such connections

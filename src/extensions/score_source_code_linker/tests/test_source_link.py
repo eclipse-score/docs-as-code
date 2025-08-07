@@ -32,6 +32,8 @@ from src.extensions.score_source_code_linker.generate_source_code_links_json imp
     find_ws_root,
 )
 
+from score_pytest.attribute_plugin import add_test_properties
+
 
 @pytest.fixture()
 def sphinx_base_dir(tmp_path_factory: TempPathFactory) -> Path:
@@ -277,6 +279,7 @@ def make_source_link(ws_root: Path, needlinks):
 
 
 def compare_json_files(file1: Path, golden_file: Path):
+    """Golden File tests with a known good file and the one created"""
     with open(file1, "r") as f1:
         json1 = json.load(f1, object_hook=needlink_test_decoder)
     with open(golden_file, "r") as f2:
@@ -290,7 +293,14 @@ def compare_json_files(file1: Path, golden_file: Path):
         f"Testfile does not have same needs as golden file. Testfile: {c1}\nGoldenFile: {c2}"
     )
 
-
+@add_test_properties(
+    partially_verifies=[
+        "tool_req__docs_dd_link_testcase",
+        "tool_req__docs_tvr_safety",
+    ],
+    test_type="interface-test",
+    derivation_technique="design-analysis"
+e
 def test_source_link_integration_ok(
     sphinx_app_setup: Callable[[], SphinxTestApp],
     example_source_link_text_all_ok: dict[str, list[str]],
@@ -298,8 +308,10 @@ def test_source_link_integration_ok(
     git_repo_setup,
     create_demo_files,
 ):
+    """ This is a test description """
     app = sphinx_app_setup()
     try:
+        #assert False, "test issue"
         os.environ["BUILD_WORKSPACE_DIRECTORY"] = str(sphinx_base_dir)
         app.build()
         ws_root = find_ws_root()
@@ -321,12 +333,25 @@ def test_source_link_integration_ok(
             )
             # extra_options are only available at runtime
             # Compare contents, regardless of order.
+            print(f"NEED AS DICT: {need_as_dict}")
+            print(f"EXPECTED LINK: {expected_link}")
             actual_source_code_link = cast(list[str], need_as_dict["source_code_link"])
+            print(f"ACTUALL LINK: {actual_source_code_link}")
             assert set(expected_link) == set(actual_source_code_link)
     finally:
         app.cleanup()
 
 
+@add_test_properties(
+    fully_verifies=[
+        "tool_req__docs_arch_link_security",
+        "tool_req__docs_req_arch_link_safety_to_arch",
+        "tool_req__docs_arch_link_safety_to_req",
+        "tool_req__docs_tvr"
+    ],
+    test_type="requirements-based",
+    derivation_technique="equivalence-classes"
+)
 def test_source_link_integration_non_existent_id(
     sphinx_app_setup: Callable[[], SphinxTestApp],
     example_source_link_text_non_existent: dict[str, list[str]],
@@ -334,6 +359,7 @@ def test_source_link_integration_non_existent_id(
     git_repo_setup,
     create_demo_files,
 ):
+    """Asserting warning if need not found"""
     app = sphinx_app_setup()
     try:
         app.build()

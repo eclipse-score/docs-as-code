@@ -55,6 +55,7 @@ def docs(source_dir = "docs", data = [], deps = []):
     data = data + ["@score_docs_as_code//src:docs_assets"]
 
     deps = deps + all_requirements + [
+        "@score_python_basics//score_pytest:attribute_plugin",
         "@score_docs_as_code//src:plantuml_for_python",
         "@score_docs_as_code//src/extensions:score_plantuml",
         "@score_docs_as_code//src/find_runfiles:find_runfiles",
