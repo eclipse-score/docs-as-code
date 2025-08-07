@@ -64,4 +64,6 @@ templates_path = ["templates"]
 
 # Enable numref
 numfig = True
-# needs_builder_filter = ""
+
+# Include all external needs into needs.json
+needs_builder_filter = ""
