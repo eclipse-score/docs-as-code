@@ -11,7 +11,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-from score_metamodel import CheckLogger, local_check, ScoreNeedType, ProhibitedWordCheck
+from score_metamodel import CheckLogger, ProhibitedWordCheck, ScoreNeedType, local_check
 from sphinx.application import Sphinx
 from sphinx_needs.data import NeedsInfoType
 
@@ -56,14 +56,21 @@ def check_id_length(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
     While the recommended limit is 30 characters, this check enforces a strict maximum
     of 45 characters.
     If the ID exceeds 45 characters, a warning is logged specifying the actual length.
+    Any examples that are required to have 3 parts (2x'__') have an exception, and get 16 extra characters
+    to compensate for the lenght of `example_feature` that would be replaced by actually feature names.
     ---
     """
-    if len(need["id"]) > 45:
+    max_lenght = 45
+    parts = need["id"].split("__")
+    if parts[1] == "example_feature":
+        max_lenght += 15 # '_example_feature_'
+    if len(need["id"]) > max_lenght:
         msg = (
             f"exceeds the maximum allowed length of 45 characters "
             f"(current length: {len(need['id'])})."
         )
         log.warning_for_option(need, "id", msg)
+
 
 
 def _check_options_for_prohibited_words(
