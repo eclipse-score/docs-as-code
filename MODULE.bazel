@@ -13,7 +13,7 @@
 
 module(
     name = "score_docs_as_code",
-    version = "1.0.2-CW1",
+    version = "1.0.2",
     compatibility_level = 1,
 )
 
@@ -95,4 +95,4 @@ bazel_dep(name = "score_cr_checker", version = "0.3.1")
 bazel_dep(name = "score_dash_license_checker", version = "0.1.1")
 
 # docs dependency
-bazel_dep(name = "score_process", version = "1.1.0")
+bazel_dep(name = "score_process", version = "1.1.1-Beta")
