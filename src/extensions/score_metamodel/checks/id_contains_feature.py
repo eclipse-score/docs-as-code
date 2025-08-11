@@ -38,6 +38,8 @@ def id_contains_feature(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
 
     # Get the part of the string after the first two underscores: the path
     feature = parts[1]
+    if feature == "example_feature":
+        return
     featureparts = re.split(r"[_-]", feature)
 
     dir_docname = os.path.dirname(str(need.get("docname", "")))

@@ -56,14 +56,14 @@ def check_id_length(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
     While the recommended limit is 30 characters, this check enforces a strict maximum
     of 45 characters.
     If the ID exceeds 45 characters, a warning is logged specifying the actual length.
-    Any examples that are required to have 3 parts (2x'__') have an exception, and get 16 extra characters
-    to compensate for the lenght of `example_feature` that would be replaced by actually feature names.
+    Any examples that are required to have 3 parts (2x'__') have an exception, and get 17 extra characters
+    to compensate for the lenght of `_example_feature_` that would be replaced by actually feature names.
     ---
     """
     max_lenght = 45
     parts = need["id"].split("__")
     if parts[1] == "example_feature":
-        return
+        max_lenght += 17 # _example_feature_
     if len(need["id"]) > max_lenght:
         msg = (
             f"exceeds the maximum allowed length of 45 characters "
