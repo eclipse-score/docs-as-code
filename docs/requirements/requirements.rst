@@ -532,6 +532,9 @@ Architecture Attributes
    PROCESS_gd_req__req__linkage_fulfill
   :parent_covered: YES
 
+  .. note::
+     TODO: link targets not clear
+
   Docs-as-Code shall enforce that linking via the ``fulfils`` attribute follows defined rules.
 
   Allowed source and target combinations are defined in the following table:
@@ -980,3 +983,16 @@ Overview of Tool to Process Requirements
 
 .. needextend:: c.this_doc() and type == 'tool_req' and not status
   :status: valid
+
+.. tool_req:: Metamodel
+  :id: tool_req__docs_metamodel
+  :tags: metamodel
+  :implemented: YES
+
+  Docs-as-Code shall provide a metamodel for definining config in a  `metamodel.yaml` in the source code repository.
+
+  .. note:: "satisfied by" is something like "used by" or "required by".
+
+.. needextend:: "metamodel.yaml" in source_code_link
+  :+satisfies: tool_req__docs_metamodel
+  :+tags: config
