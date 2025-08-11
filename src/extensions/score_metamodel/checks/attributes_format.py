@@ -11,7 +11,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-from score_metamodel import CheckLogger, local_check, ScoreNeedType, ProhibitedWordCheck
+from score_metamodel import CheckLogger, ProhibitedWordCheck, ScoreNeedType, local_check
 from sphinx.application import Sphinx
 from sphinx_needs.data import NeedsInfoType
 
@@ -24,7 +24,7 @@ def get_need_type(needs_types: list[ScoreNeedType], directive: str) -> ScoreNeed
     raise ValueError(f"Need type {directive} not found in needs_types")
 
 
-# req-#id: gd_req__req__attr_uid
+# req-#id: gd_req__req_attr_uid
 @local_check
 def check_id_format(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
     """
@@ -32,51 +32,21 @@ def check_id_format(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
     the requirement id or not.
     ---
     """
-    # These folders are taken from 'https://github.com/eclipse-score/process_description/tree/main/process'
-    # This means, any needs within any of these folders (no matter where they are) will not be required to have 3 parts
-    process_folder_names = [
-        "general_concepts",
-        "introduction",
-        "process_areas",
-        "roles",
-        "standards",
-        "workflows",
-        "workproducts",
-        "process",
-    ]
-    # Split the string by underscores
-    parts = need["id"].split("__")
-    if need["type"] in [
-        "std_wp",
-        "document",  # This is used in 'platform_managment' in score.
-        "doc_tool",
-        "gd_guidl",
-        "workflow",
-        "gd_chklst",
-        "std_req",
-        "tool_req",
-        "role",
-        "doc_concept",
-        "gd_temp",
-        "gd_method",
-        "gd_req",
-        "workproduct",
-        "doc_getstrt",
-    ] or any(prefix in str(need.get("docname", "")) for prefix in process_folder_names):
-        if len(parts) != 2 and len(parts) != 3:
+    need_options = get_need_type(app.config.needs_types, need["type"])
+    expected_parts = need_options.get("parts", 3)
+    id_parts = need["id"].split("__")
+    id_parts_len = len(id_parts)
+
+    if id_parts_len != expected_parts:
+        msg = ""
+        if expected_parts == 2:
+            msg = "expected to consist of this format: `<Req Type>__<Abbreviations>`. Only one '__' is allowed in this need's id."
+        elif expected_parts == 3:
             msg = (
-                "expected to consisting of one of these 2 formats:"
-                "`<Req Type>__<Abbreviations>` or "
-                "`<Req Type>__<Abbreviations>__<Architectural Element>`."
+                "expected to consist of this format: "
+                "`<Req Type>__<Abbreviations>__<Architectural Element>`. Only two '__' are allowed in this need's id."
             )
-            log.warning_for_option(need, "id", msg)
-    else:
-        if len(parts) != 3:
-            msg = (
-                "expected to consisting of this format: "
-                "`<Req Type>__<Abbreviations>__<Architectural Element>`."
-            )
-            log.warning_for_option(need, "id", msg)
+        log.warning_for_option(need, "id", msg)
 
 
 @local_check
@@ -86,12 +56,18 @@ def check_id_length(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
     While the recommended limit is 30 characters, this check enforces a strict maximum
     of 45 characters.
     If the ID exceeds 45 characters, a warning is logged specifying the actual length.
+    Any examples that are required to have 3 parts (2x'__') have an exception, and get 17 extra characters
+    to compensate for the lenght of `_example_feature_` that would be replaced by actually feature names.
     ---
     """
-    if len(need["id"]) > 45:
+    max_lenght = 45
+    parts = need["id"].split("__")
+    if parts[1] == "example_feature":
+        max_lenght += 17  # _example_feature_
+    if len(need["id"]) > max_lenght:
         msg = (
             f"exceeds the maximum allowed length of 45 characters "
-            f"(current length: {len(need['id'])})."
+            f"(current length: {len(need['id']) if 'example_feature' not in need['id'] else len(need['id']) - 17})."
         )
         log.warning_for_option(need, "id", msg)
 
@@ -110,7 +86,7 @@ def _check_options_for_prohibited_words(
                 log.warning_for_need(need, msg)
 
 
-# req-#id: gd_req__req__attr_desc_weak
+# req-#id: gd_req__req_attr_desc_weak
 # # req-#id: gd_req__requirements_attr_title
 @local_check
 def check_for_prohibited_words(app: Sphinx, need: NeedsInfoType, log: CheckLogger):

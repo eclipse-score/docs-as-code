@@ -225,7 +225,7 @@ def get_current_git_hash(ws_root: Path) -> str:
         raise
 
 
-# re-qid: gd_req__req__attr_impl
+# re-qid: gd_req__req_attr_impl
 def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
     """
     'Main' function that facilitates the running of all other functions
