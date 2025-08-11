@@ -24,7 +24,7 @@ def get_need_type(needs_types: list[ScoreNeedType], directive: str) -> ScoreNeed
     raise ValueError(f"Need type {directive} not found in needs_types")
 
 
-# req-#id: gd_req__req__attr_uid
+# req-#id: gd_req__req_attr_uid
 @local_check
 def check_id_format(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
     """
@@ -87,7 +87,7 @@ def _check_options_for_prohibited_words(
                 log.warning_for_need(need, msg)
 
 
-# req-#id: gd_req__req__attr_desc_weak
+# req-#id: gd_req__req_attr_desc_weak
 # # req-#id: gd_req__requirements_attr_title
 @local_check
 def check_for_prohibited_words(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
