@@ -22,819 +22,819 @@
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 82,
+    "line": 85,
     "tag": "# req-Id:",
     "need": "tool_req__docs_stdreq_types",
     "full_line": "# req-Id: tool_req__docs_stdreq_types"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 100,
+    "line": 105,
     "tag": "# req-Id:",
     "need": "tool_req__docs_wf_types",
     "full_line": "# req-Id: tool_req__docs_wf_types"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 117,
+    "line": 123,
     "tag": "# req-Id:",
     "need": "tool_req__docs_req_types",
     "full_line": "# req-Id: tool_req__docs_req_types"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 123,
+    "line": 129,
     "tag": "# req-Id:",
     "need": "tool_req__docs_common_attr_status",
     "full_line": "# req-Id: tool_req__docs_common_attr_status"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 127,
+    "line": 133,
     "tag": "# req-Id:",
     "need": "tool_req__docs_req_link_satisfies_allowed",
     "full_line": "# req-Id: tool_req__docs_req_link_satisfies_allowed"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 203,
+    "line": 219,
     "tag": "# req-Id:",
     "need": "tool_req__docs_doc_types",
     "full_line": "# req-Id: tool_req__docs_doc_types"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 213,
+    "line": 229,
     "tag": "# req-Id:",
     "need": "tool_req__docs_doc_attr",
     "full_line": "# req-Id: tool_req__docs_doc_attr"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 220,
+    "line": 237,
     "tag": "# req-Id:",
     "need": "tool_req__docs_doc_types",
     "full_line": "# req-Id: tool_req__docs_doc_types"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 226,
+    "line": 243,
     "tag": "# req-Id:",
     "need": "tool_req__docs_tvr_status",
     "full_line": "# req-Id: tool_req__docs_tvr_status"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 229,
+    "line": 246,
     "tag": "# req-Id:",
     "need": "tool_req__docs_tvr_safety",
     "full_line": "# req-Id: tool_req__docs_tvr_safety"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 231,
+    "line": 248,
     "tag": "# req-Id:",
     "need": "tool_req__docs_tvr_security",
     "full_line": "# req-Id: tool_req__docs_tvr_security"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 235,
+    "line": 252,
     "tag": "# req-Id:",
     "need": "tool_req__docs_doc_attr",
     "full_line": "# req-Id: tool_req__docs_doc_attr"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 243,
+    "line": 261,
     "tag": "# req-Id:",
     "need": "tool_req__docs_req_types",
     "full_line": "# req-Id: tool_req__docs_req_types"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 249,
+    "line": 267,
     "tag": "# req-Id:",
     "need": "tool_req__docs_req_attr_reqtype",
     "full_line": "# req-Id: tool_req__docs_req_attr_reqtype"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 251,
+    "line": 269,
     "tag": "# req-Id:",
     "need": "tool_req__docs_common_attr_safety",
     "full_line": "# req-Id: tool_req__docs_common_attr_safety"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 253,
+    "line": 271,
     "tag": "# req-Id:",
     "need": "tool_req__docs_common_attr_status",
     "full_line": "# req-Id: tool_req__docs_common_attr_status"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 257,
+    "line": 275,
     "tag": "# req-Id:",
     "need": "tool_req__docs_req_attr_rationale",
     "full_line": "# req-Id: tool_req__docs_req_attr_rationale"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 259,
+    "line": 277,
     "tag": "# req-Id:",
     "need": "tool_req__docs_common_attr_security",
     "full_line": "# req-Id: tool_req__docs_common_attr_security"
-  },
-  {
-    "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 264,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_req_attr_reqcov",
-    "full_line": "# req-Id: tool_req__docs_req_attr_reqcov"
-  },
-  {
-    "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 266,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_req_attr_testcov",
-    "full_line": "# req-Id: tool_req__docs_req_attr_testcov"
-  },
-  {
-    "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 273,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_req_types",
-    "full_line": "# req-Id: tool_req__docs_req_types"
-  },
-  {
-    "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 280,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_req_attr_reqtype",
-    "full_line": "# req-Id: tool_req__docs_req_attr_reqtype"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
     "line": 282,
     "tag": "# req-Id:",
-    "need": "tool_req__docs_common_attr_security",
-    "full_line": "# req-Id: tool_req__docs_common_attr_security"
+    "need": "tool_req__docs_req_attr_reqcov",
+    "full_line": "# req-Id: tool_req__docs_req_attr_reqcov"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
     "line": 284,
     "tag": "# req-Id:",
-    "need": "tool_req__docs_common_attr_safety",
-    "full_line": "# req-Id: tool_req__docs_common_attr_safety"
-  },
-  {
-    "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 286,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_common_attr_status",
-    "full_line": "# req-Id: tool_req__docs_common_attr_status"
-  },
-  {
-    "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 290,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_req_link_satisfies_allowed",
-    "full_line": "# req-Id: tool_req__docs_req_link_satisfies_allowed"
-  },
-  {
-    "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 295,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_req_attr_reqcov",
-    "full_line": "# req-Id: tool_req__docs_req_attr_reqcov"
-  },
-  {
-    "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 297,
-    "tag": "# req-Id:",
     "need": "tool_req__docs_req_attr_testcov",
     "full_line": "# req-Id: tool_req__docs_req_attr_testcov"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 304,
+    "line": 292,
     "tag": "# req-Id:",
     "need": "tool_req__docs_req_types",
     "full_line": "# req-Id: tool_req__docs_req_types"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 310,
+    "line": 299,
     "tag": "# req-Id:",
     "need": "tool_req__docs_req_attr_reqtype",
     "full_line": "# req-Id: tool_req__docs_req_attr_reqtype"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 312,
+    "line": 301,
     "tag": "# req-Id:",
     "need": "tool_req__docs_common_attr_security",
     "full_line": "# req-Id: tool_req__docs_common_attr_security"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 303,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_common_attr_safety",
+    "full_line": "# req-Id: tool_req__docs_common_attr_safety"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 305,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_common_attr_status",
+    "full_line": "# req-Id: tool_req__docs_common_attr_status"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 309,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_req_link_satisfies_allowed",
+    "full_line": "# req-Id: tool_req__docs_req_link_satisfies_allowed"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
     "line": 314,
     "tag": "# req-Id:",
-    "need": "tool_req__docs_common_attr_safety",
-    "full_line": "# req-Id: tool_req__docs_common_attr_safety"
+    "need": "tool_req__docs_req_attr_reqcov",
+    "full_line": "# req-Id: tool_req__docs_req_attr_reqcov"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
     "line": 316,
     "tag": "# req-Id:",
-    "need": "tool_req__docs_common_attr_status",
-    "full_line": "# req-Id: tool_req__docs_common_attr_status"
-  },
-  {
-    "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 320,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_req_link_satisfies_allowed",
-    "full_line": "# req-Id: tool_req__docs_req_link_satisfies_allowed"
-  },
-  {
-    "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 325,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_req_attr_reqcov",
-    "full_line": "# req-Id: tool_req__docs_req_attr_reqcov"
-  },
-  {
-    "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 327,
-    "tag": "# req-Id:",
     "need": "tool_req__docs_req_attr_testcov",
     "full_line": "# req-Id: tool_req__docs_req_attr_testcov"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 334,
+    "line": 324,
     "tag": "# req-Id:",
     "need": "tool_req__docs_req_types",
     "full_line": "# req-Id: tool_req__docs_req_types"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 340,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_common_attr_security",
-    "full_line": "# req-Id: tool_req__docs_common_attr_security"
-  },
-  {
-    "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 342,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_common_attr_safety",
-    "full_line": "# req-Id: tool_req__docs_common_attr_safety"
-  },
-  {
-    "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 344,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_common_attr_status",
-    "full_line": "# req-Id: tool_req__docs_common_attr_status"
-  },
-  {
-    "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 348,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_req_link_satisfies_allowed",
-    "full_line": "# req-Id: tool_req__docs_req_link_satisfies_allowed"
-  },
-  {
-    "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 355,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_req_attr_reqcov",
-    "full_line": "# req-Id: tool_req__docs_req_attr_reqcov"
-  },
-  {
-    "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 357,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_req_attr_testcov",
-    "full_line": "# req-Id: tool_req__docs_req_attr_testcov"
-  },
-  {
-    "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 367,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_req_types",
-    "full_line": "# req-Id: tool_req__docs_req_types"
-  },
-  {
-    "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 373,
+    "line": 330,
     "tag": "# req-Id:",
     "need": "tool_req__docs_req_attr_reqtype",
     "full_line": "# req-Id: tool_req__docs_req_attr_reqtype"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 375,
+    "line": 332,
     "tag": "# req-Id:",
     "need": "tool_req__docs_common_attr_security",
     "full_line": "# req-Id: tool_req__docs_common_attr_security"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 377,
+    "line": 334,
     "tag": "# req-Id:",
     "need": "tool_req__docs_common_attr_safety",
     "full_line": "# req-Id: tool_req__docs_common_attr_safety"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 379,
+    "line": 336,
     "tag": "# req-Id:",
     "need": "tool_req__docs_common_attr_status",
     "full_line": "# req-Id: tool_req__docs_common_attr_status"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 385,
+    "line": 340,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_req_link_satisfies_allowed",
+    "full_line": "# req-Id: tool_req__docs_req_link_satisfies_allowed"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 345,
     "tag": "# req-Id:",
     "need": "tool_req__docs_req_attr_reqcov",
     "full_line": "# req-Id: tool_req__docs_req_attr_reqcov"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 387,
+    "line": 347,
     "tag": "# req-Id:",
     "need": "tool_req__docs_req_attr_testcov",
     "full_line": "# req-Id: tool_req__docs_req_attr_testcov"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 355,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_req_types",
+    "full_line": "# req-Id: tool_req__docs_req_types"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 361,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_common_attr_security",
+    "full_line": "# req-Id: tool_req__docs_common_attr_security"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 363,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_common_attr_safety",
+    "full_line": "# req-Id: tool_req__docs_common_attr_safety"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 365,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_common_attr_status",
+    "full_line": "# req-Id: tool_req__docs_common_attr_status"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 369,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_req_link_satisfies_allowed",
+    "full_line": "# req-Id: tool_req__docs_req_link_satisfies_allowed"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 376,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_req_attr_reqcov",
+    "full_line": "# req-Id: tool_req__docs_req_attr_reqcov"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 378,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_req_attr_testcov",
+    "full_line": "# req-Id: tool_req__docs_req_attr_testcov"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 389,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_req_types",
+    "full_line": "# req-Id: tool_req__docs_req_types"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 395,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_req_attr_reqtype",
+    "full_line": "# req-Id: tool_req__docs_req_attr_reqtype"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
     "line": 397,
     "tag": "# req-Id:",
-    "need": "tool_req__docs_arch_types",
-    "full_line": "# req-Id: tool_req__docs_arch_types"
-  },
-  {
-    "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 398,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_arch_views",
-    "full_line": "# req-Id: tool_req__docs_arch_views"
-  },
-  {
-    "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 406,
-    "tag": "# req-Id:",
     "need": "tool_req__docs_common_attr_security",
     "full_line": "# req-Id: tool_req__docs_common_attr_security"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 408,
+    "line": 399,
     "tag": "# req-Id:",
     "need": "tool_req__docs_common_attr_safety",
     "full_line": "# req-Id: tool_req__docs_common_attr_safety"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 410,
+    "line": 401,
     "tag": "# req-Id:",
     "need": "tool_req__docs_common_attr_status",
     "full_line": "# req-Id: tool_req__docs_common_attr_status"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 421,
+    "line": 407,
     "tag": "# req-Id:",
-    "need": "tool_req__docs_arch_views",
-    "full_line": "# req-Id: tool_req__docs_arch_views"
+    "need": "tool_req__docs_req_attr_reqcov",
+    "full_line": "# req-Id: tool_req__docs_req_attr_reqcov"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 429,
+    "line": 409,
     "tag": "# req-Id:",
-    "need": "tool_req__docs_common_attr_security",
-    "full_line": "# req-Id: tool_req__docs_common_attr_security"
+    "need": "tool_req__docs_req_attr_testcov",
+    "full_line": "# req-Id: tool_req__docs_req_attr_testcov"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 431,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_common_attr_safety",
-    "full_line": "# req-Id: tool_req__docs_common_attr_safety"
-  },
-  {
-    "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 433,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_common_attr_status",
-    "full_line": "# req-Id: tool_req__docs_common_attr_status"
-  },
-  {
-    "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 441,
+    "line": 419,
     "tag": "# req-Id:",
     "need": "tool_req__docs_arch_types",
     "full_line": "# req-Id: tool_req__docs_arch_types"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 442,
+    "line": 420,
     "tag": "# req-Id:",
     "need": "tool_req__docs_arch_views",
     "full_line": "# req-Id: tool_req__docs_arch_views"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 450,
+    "line": 428,
     "tag": "# req-Id:",
     "need": "tool_req__docs_common_attr_security",
     "full_line": "# req-Id: tool_req__docs_common_attr_security"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 430,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_common_attr_safety",
+    "full_line": "# req-Id: tool_req__docs_common_attr_safety"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 432,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_common_attr_status",
+    "full_line": "# req-Id: tool_req__docs_common_attr_status"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 444,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_arch_views",
+    "full_line": "# req-Id: tool_req__docs_arch_views"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
     "line": 452,
     "tag": "# req-Id:",
-    "need": "tool_req__docs_common_attr_safety",
-    "full_line": "# req-Id: tool_req__docs_common_attr_safety"
+    "need": "tool_req__docs_common_attr_security",
+    "full_line": "# req-Id: tool_req__docs_common_attr_security"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
     "line": 454,
     "tag": "# req-Id:",
+    "need": "tool_req__docs_common_attr_safety",
+    "full_line": "# req-Id: tool_req__docs_common_attr_safety"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 456,
+    "tag": "# req-Id:",
     "need": "tool_req__docs_common_attr_status",
     "full_line": "# req-Id: tool_req__docs_common_attr_status"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 464,
+    "line": 466,
     "tag": "# req-Id:",
     "need": "tool_req__docs_arch_types",
     "full_line": "# req-Id: tool_req__docs_arch_types"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 472,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_common_attr_security",
-    "full_line": "# req-Id: tool_req__docs_common_attr_security"
-  },
-  {
-    "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 474,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_common_attr_safety",
-    "full_line": "# req-Id: tool_req__docs_common_attr_safety"
-  },
-  {
-    "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 476,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_common_attr_status",
-    "full_line": "# req-Id: tool_req__docs_common_attr_status"
-  },
-  {
-    "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 484,
+    "line": 467,
     "tag": "# req-Id:",
     "need": "tool_req__docs_arch_views",
     "full_line": "# req-Id: tool_req__docs_arch_views"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 507,
+    "line": 475,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_common_attr_security",
+    "full_line": "# req-Id: tool_req__docs_common_attr_security"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 477,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_common_attr_safety",
+    "full_line": "# req-Id: tool_req__docs_common_attr_safety"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 479,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_common_attr_status",
+    "full_line": "# req-Id: tool_req__docs_common_attr_status"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 490,
     "tag": "# req-Id:",
     "need": "tool_req__docs_arch_types",
     "full_line": "# req-Id: tool_req__docs_arch_types"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 508,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_arch_views",
-    "full_line": "# req-Id: tool_req__docs_arch_views"
-  },
-  {
-    "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 516,
+    "line": 498,
     "tag": "# req-Id:",
     "need": "tool_req__docs_common_attr_security",
     "full_line": "# req-Id: tool_req__docs_common_attr_security"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 518,
+    "line": 500,
     "tag": "# req-Id:",
     "need": "tool_req__docs_common_attr_safety",
     "full_line": "# req-Id: tool_req__docs_common_attr_safety"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 520,
+    "line": 502,
     "tag": "# req-Id:",
     "need": "tool_req__docs_common_attr_status",
     "full_line": "# req-Id: tool_req__docs_common_attr_status"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 532,
+    "line": 511,
     "tag": "# req-Id:",
     "need": "tool_req__docs_arch_views",
     "full_line": "# req-Id: tool_req__docs_arch_views"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 540,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_common_attr_security",
-    "full_line": "# req-Id: tool_req__docs_common_attr_security"
-  },
-  {
-    "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 542,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_common_attr_safety",
-    "full_line": "# req-Id: tool_req__docs_common_attr_safety"
-  },
-  {
-    "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 544,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_common_attr_status",
-    "full_line": "# req-Id: tool_req__docs_common_attr_status"
-  },
-  {
-    "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 552,
+    "line": 536,
     "tag": "# req-Id:",
     "need": "tool_req__docs_arch_types",
     "full_line": "# req-Id: tool_req__docs_arch_types"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 553,
+    "line": 537,
     "tag": "# req-Id:",
     "need": "tool_req__docs_arch_views",
     "full_line": "# req-Id: tool_req__docs_arch_views"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 561,
+    "line": 545,
     "tag": "# req-Id:",
     "need": "tool_req__docs_common_attr_security",
     "full_line": "# req-Id: tool_req__docs_common_attr_security"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 563,
+    "line": 547,
     "tag": "# req-Id:",
     "need": "tool_req__docs_common_attr_safety",
     "full_line": "# req-Id: tool_req__docs_common_attr_safety"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 565,
+    "line": 549,
     "tag": "# req-Id:",
     "need": "tool_req__docs_common_attr_status",
     "full_line": "# req-Id: tool_req__docs_common_attr_status"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 575,
+    "line": 562,
     "tag": "# req-Id:",
-    "need": "tool_req__docs_arch_types",
-    "full_line": "# req-Id: tool_req__docs_arch_types"
+    "need": "tool_req__docs_arch_views",
+    "full_line": "# req-Id: tool_req__docs_arch_views"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 583,
+    "line": 570,
     "tag": "# req-Id:",
     "need": "tool_req__docs_common_attr_security",
     "full_line": "# req-Id: tool_req__docs_common_attr_security"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 572,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_common_attr_safety",
+    "full_line": "# req-Id: tool_req__docs_common_attr_safety"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 574,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_common_attr_status",
+    "full_line": "# req-Id: tool_req__docs_common_attr_status"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 584,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_arch_types",
+    "full_line": "# req-Id: tool_req__docs_arch_types"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
     "line": 585,
     "tag": "# req-Id:",
+    "need": "tool_req__docs_arch_views",
+    "full_line": "# req-Id: tool_req__docs_arch_views"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 593,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_common_attr_security",
+    "full_line": "# req-Id: tool_req__docs_common_attr_security"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 595,
+    "tag": "# req-Id:",
     "need": "tool_req__docs_common_attr_safety",
     "full_line": "# req-Id: tool_req__docs_common_attr_safety"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 587,
+    "line": 597,
     "tag": "# req-Id:",
     "need": "tool_req__docs_common_attr_status",
     "full_line": "# req-Id: tool_req__docs_common_attr_status"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 677,
+    "line": 608,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_arch_types",
+    "full_line": "# req-Id: tool_req__docs_arch_types"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 616,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_common_attr_security",
+    "full_line": "# req-Id: tool_req__docs_common_attr_security"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 618,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_common_attr_safety",
+    "full_line": "# req-Id: tool_req__docs_common_attr_safety"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 620,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_common_attr_status",
+    "full_line": "# req-Id: tool_req__docs_common_attr_status"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 718,
     "tag": "# req-Id:",
     "need": "tool_req__docs_saf_types",
     "full_line": "# req-Id: tool_req__docs_saf_types"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 683,
+    "line": 724,
     "tag": "# req-Id:",
     "need": "tool_req__docs_saf_attr_dfa_failure_id",
     "full_line": "# req-Id: tool_req__docs_saf_attr_dfa_failure_id"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 686,
+    "line": 727,
     "tag": "# req-Id:",
     "need": "tool_req__docs_saf_attrs_sufficient",
     "full_line": "# req-Id: tool_req__docs_saf_attrs_sufficient"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 689,
+    "line": 730,
     "tag": "# req-Id:",
     "need": "tool_req__docs_saf_attrs_content",
     "full_line": "# req-Id: tool_req__docs_saf_attrs_content"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 692,
+    "line": 733,
     "tag": "# req-Id:",
     "need": "tool_req__docs_saf_attrs_violates",
     "full_line": "# req-Id: tool_req__docs_saf_attrs_violates"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 695,
+    "line": 736,
     "tag": "# req-Id:",
     "need": "tool_req__docs_saf_attrs_mitigation_issue",
     "full_line": "# req-Id: tool_req__docs_saf_attrs_mitigation_issue"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 698,
+    "line": 739,
     "tag": "# req-Id:",
     "need": "tool_req__docs_saf_attrs_mitigated_by",
     "full_line": "# req-Id: tool_req__docs_saf_attrs_mitigated_by"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 705,
+    "line": 747,
     "tag": "# req-Id:",
     "need": "tool_req__docs_saf_types",
     "full_line": "# req-Id: tool_req__docs_saf_types"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 711,
+    "line": 753,
     "tag": "# req-Id:",
     "need": "tool_req__docs_saf_attr_dfa_failure_id",
     "full_line": "# req-Id: tool_req__docs_saf_attr_dfa_failure_id"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 714,
+    "line": 756,
     "tag": "# req-Id:",
     "need": "tool_req__docs_saf_attrs_sufficient",
     "full_line": "# req-Id: tool_req__docs_saf_attrs_sufficient"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 717,
+    "line": 759,
     "tag": "# req-Id:",
     "need": "tool_req__docs_saf_attrs_content",
     "full_line": "# req-Id: tool_req__docs_saf_attrs_content"
-  },
-  {
-    "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 720,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_saf_attrs_mitigation_issue",
-    "full_line": "# req-Id: tool_req__docs_saf_attrs_mitigation_issue"
-  },
-  {
-    "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 723,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_saf_attrs_violates",
-    "full_line": "# req-Id: tool_req__docs_saf_attrs_violates"
-  },
-  {
-    "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 726,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_saf_attrs_mitigated_by",
-    "full_line": "# req-Id: tool_req__docs_saf_attrs_mitigated_by"
-  },
-  {
-    "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 734,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_saf_types",
-    "full_line": "# req-Id: tool_req__docs_saf_types"
-  },
-  {
-    "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 740,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_saf_attr_fmea_fault_id",
-    "full_line": "# req-Id: tool_req__docs_saf_attr_fmea_fault_id"
-  },
-  {
-    "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 743,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_saf_attrs_sufficient",
-    "full_line": "# req-Id: tool_req__docs_saf_attrs_sufficient"
-  },
-  {
-    "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 746,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_saf_attrs_content",
-    "full_line": "# req-Id: tool_req__docs_saf_attrs_content"
-  },
-  {
-    "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 749,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_saf_attrs_mitigation_issue",
-    "full_line": "# req-Id: tool_req__docs_saf_attrs_mitigation_issue"
-  },
-  {
-    "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 752,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_saf_attrs_violates",
-    "full_line": "# req-Id: tool_req__docs_saf_attrs_violates"
-  },
-  {
-    "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 755,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_saf_attrs_mitigated_by",
-    "full_line": "# req-Id: tool_req__docs_saf_attrs_mitigated_by"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
     "line": 762,
     "tag": "# req-Id:",
-    "need": "tool_req__docs_saf_types",
-    "full_line": "# req-Id: tool_req__docs_saf_types"
-  },
-  {
-    "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 768,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_saf_attr_fmea_fault_id",
-    "full_line": "# req-Id: tool_req__docs_saf_attr_fmea_fault_id"
-  },
-  {
-    "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 771,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_saf_attrs_sufficient",
-    "full_line": "# req-Id: tool_req__docs_saf_attrs_sufficient"
-  },
-  {
-    "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 774,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_saf_attrs_content",
-    "full_line": "# req-Id: tool_req__docs_saf_attrs_content"
-  },
-  {
-    "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 777,
-    "tag": "# req-Id:",
     "need": "tool_req__docs_saf_attrs_mitigation_issue",
     "full_line": "# req-Id: tool_req__docs_saf_attrs_mitigation_issue"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 780,
+    "line": 765,
     "tag": "# req-Id:",
     "need": "tool_req__docs_saf_attrs_violates",
     "full_line": "# req-Id: tool_req__docs_saf_attrs_violates"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 893,
+    "line": 768,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_saf_attrs_mitigated_by",
+    "full_line": "# req-Id: tool_req__docs_saf_attrs_mitigated_by"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 777,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_saf_types",
+    "full_line": "# req-Id: tool_req__docs_saf_types"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 783,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_saf_attr_fmea_fault_id",
+    "full_line": "# req-Id: tool_req__docs_saf_attr_fmea_fault_id"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 786,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_saf_attrs_sufficient",
+    "full_line": "# req-Id: tool_req__docs_saf_attrs_sufficient"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 789,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_saf_attrs_content",
+    "full_line": "# req-Id: tool_req__docs_saf_attrs_content"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 792,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_saf_attrs_mitigation_issue",
+    "full_line": "# req-Id: tool_req__docs_saf_attrs_mitigation_issue"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 795,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_saf_attrs_violates",
+    "full_line": "# req-Id: tool_req__docs_saf_attrs_violates"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 798,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_saf_attrs_mitigated_by",
+    "full_line": "# req-Id: tool_req__docs_saf_attrs_mitigated_by"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 806,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_saf_types",
+    "full_line": "# req-Id: tool_req__docs_saf_types"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 812,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_saf_attr_fmea_fault_id",
+    "full_line": "# req-Id: tool_req__docs_saf_attr_fmea_fault_id"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 815,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_saf_attrs_sufficient",
+    "full_line": "# req-Id: tool_req__docs_saf_attrs_sufficient"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 818,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_saf_attrs_content",
+    "full_line": "# req-Id: tool_req__docs_saf_attrs_content"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 821,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_saf_attrs_mitigation_issue",
+    "full_line": "# req-Id: tool_req__docs_saf_attrs_mitigation_issue"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 824,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_saf_attrs_violates",
+    "full_line": "# req-Id: tool_req__docs_saf_attrs_violates"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 938,
     "tag": "# req-Id:",
     "need": "tool_req__docs_common_attr_safety_link_check",
     "full_line": "# req-Id: tool_req__docs_common_attr_safety_link_check"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 902,
+    "line": 947,
     "tag": "# req-Id:",
     "need": "tool_req__docs_arch_link_qm_to_safety_req",
     "full_line": "# req-Id: tool_req__docs_arch_link_qm_to_safety_req"
   },
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
-    "line": 911,
+    "line": 956,
     "tag": "# req-Id:",
     "need": "tool_req__docs_req_arch_link_safety_to_arch",
     "full_line": "# req-Id: tool_req__docs_req_arch_link_safety_to_arch"
