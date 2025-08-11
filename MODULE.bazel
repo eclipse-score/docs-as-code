@@ -98,6 +98,6 @@ bazel_dep(name = "score_dash_license_checker", version = "0.1.1")
 bazel_dep(name = "score_process", version = "1.1.0")
 git_override(
     module_name = "score_process",
-    remote="https://github.com/eclipse-score/process_description",
-    commit="4404b128578f92d4d88d94c3047d4ad7f62435cd"
+    commit = "4404b128578f92d4d88d94c3047d4ad7f62435cd",
+    remote = "https://github.com/eclipse-score/process_description",
 )
