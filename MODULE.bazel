@@ -96,3 +96,20 @@ bazel_dep(name = "score_dash_license_checker", version = "0.1.1")
 
 # docs dependency
 bazel_dep(name = "score_process", version = "1.1.1-Beta")
+
+# Add Linter
+bazel_dep(name = "rules_multitool", version = "1.2.0")
+bazel_dep(
+    name = "score_linter",
+    version = "0.1.0",
+)
+
+multitool_root = use_extension("@rules_multitool//multitool:extension.bzl", "multitool")
+use_repo(multitool_root, "actionlint_hub", "multitool", "ruff_hub", "shellcheck_hub", "yamlfmt_hub")
+
+register_toolchains(
+    "@ruff_hub//toolchains:all",
+    "@actionlint_hub//toolchains:all",
+    "@shellcheck_hub//toolchains:all",
+    "@yamlfmt_hub//toolchains:all",
+)
