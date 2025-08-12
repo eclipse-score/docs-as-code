@@ -105,8 +105,7 @@ bazel_dep(
 )
 
 multitool_root = use_extension("@rules_multitool//multitool:extension.bzl", "multitool")
-
-use_repo(multitool_root, "multitool", "actionlint_hub", "ruff_hub", "shellcheck_hub", "yamlfmt_hub")
+use_repo(multitool_root, "actionlint_hub", "multitool", "ruff_hub", "shellcheck_hub", "yamlfmt_hub")
 
 register_toolchains(
     "@ruff_hub//toolchains:all",
