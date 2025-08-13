@@ -1,6 +1,6 @@
 # Integration Testing in a Distributed Monolith
 
-*RFC – Working draft. High-level overview of how our projects typically integrate
+*RFC - Working draft. High-level overview of how our projects typically integrate
 (reflecting practices used in several codebases). Assumptions and trade-offs are noted;
 please flag gaps or disagreeable sections so we can iterate. Easiest way for feedback is
 face to face!*
@@ -42,13 +42,13 @@ multi-repository change is treated as a first-class case—we validate the set a
 rather than relying on merge ordering.
 
 Terminology (brief):
-* Component – repository that participates in the assembled product (e.g. service API
+* Component - repository that participates in the assembled product (e.g. service API
   repo, shared library).
-* Fast subset – curated integration tests finishing in single-digit minutes (protocol
+* Fast subset - curated integration tests finishing in single-digit minutes (protocol
   seams, migration boundaries, adapters).
-* Tuple – mapping of component names to commit SHAs for one integrated build (e.g. {
+* Tuple - mapping of component names to commit SHAs for one integrated build (e.g. {
   users: a1c3f9d, billing: 9e02b4c }).
-* Known good – tuple + metadata (timestamp, suite, manifest hash) stored for later
+* Known good - tuple + metadata (timestamp, suite, manifest hash) stored for later
   reproduction.
 
 History & context: classic continuous integration assumed a single codebase; splitting
