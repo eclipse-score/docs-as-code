@@ -2,7 +2,7 @@
 
 *RFC – Working draft. High-level overview of how our projects typically integrate (reflecting practices used in several codebases). Assumptions and trade-offs are noted; please flag gaps or over-complication so we can iterate. Easiest way for feedback is face to face!*
 
-Teams often split what is functionally a single system across many repositories. Each repository can show a green build while the assembled system is already broken. This article looks at how to bring system-level feedback earlier when you work that way.
+Teams often split what is functionally a single system across many repositories. Each repository can show a green build while the assembled system is already broken. This article looks at how to bring system-level feedback earlier when you work that way. This article does not argue for pull requests, trunk-based development, or continuous integration itself. Those are well covered elsewhere. It also does not look into any specific tools or implementations for achieving these practices - except for providing a GitHub based example.
 
 The context here assumes three things: you develop through pull requests with required checks; you have multiple interdependent repositories that ship together; and you either have or will create a central integration repository used only for orchestration. If any of those are absent you will need to establish them first; the rest of the discussion builds on them.
 
@@ -20,8 +20,6 @@ Fast subset – a curated group of integration tests chosen to finish in single-
 Tuple – the mapping of component names to their commit SHAs for one integrated build; e.g. { users: a1c3f9d, billing: 9e02b4c }.
 Known good – a tuple plus metadata (timestamp, suite, manifest hash) that passed a defined suite and is stored for later reproduction.
 
-## Out of Scope
-This piece does not argue for pull requests, trunk-based development, or continuous integration itself. Those are well covered elsewhere. It also does not look into any specific tools or implementations for achieving these practices.
 
 ## A Note on History
 Classic continuous integration advice assumed a single codebase. Splitting a cohesive system across repositories reintroduces many of the coordination issues CI was meant to remove. The approach here adapts familiar CI principles (frequent integration, fast feedback, reproducibility) to a multi-repository boundary.
