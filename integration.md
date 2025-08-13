@@ -56,7 +56,12 @@ Distributed monoliths look like microservices on paper—many repositories, many
 
 Standard PR pipelines validate the piece you touched but often miss the system you implicitly changed. When components are tested in isolation, the first realistic system behavior appears post-merge—after a change meets everyone else’s. That’s late and expensive feedback.
 
-Component-level testing typically doe not include contract testing, with the implicit assumption that downstream integration tests will catch any issues. This undermines the fast feedback loops essential for effective development. Moreover, standard Git-based workflows validate only the changed component in isolation, not the integrated system. Coordinating changes across repositories is non-trivial, and integration failures often surface post-merge, when remediation is more disruptive.
+Component-level testing typically does not include contract testing, with the implicit
+assumption that downstream integration tests will catch any issues. This undermines the
+fast feedback loops essential for effective development. Moreover, standard Git-based
+workflows validate only the changed component in isolation, not the integrated system.
+Coordinating changes across repositories is non-trivial, and integration failures often
+surface post-merge, when remediation is more disruptive.
 
 1. End-to-end tests are slow and costly. Provisioning a realistic environment, compiling a build matrix, or coordinating hardware-in-the-loop can push runtimes beyond what’s practical on every PR.
 2. Cross-repository changes are common. Interface tweaks, coordinated refactorings, or schema migrations need to move in lock-step—even though Git’s default workflows don’t know that.
@@ -148,26 +153,213 @@ Each component could adopt Semantic Versioning (SemVer) independently, allowing 
 
 ---
 
-## Realization in GitHub & Bazel (Planned)
-*With concrete examples in S-CORE*
+## Realization in GitHub (Planned)
+
+How to implement the above patterns on GitHub.
+(According to our current knowledge. We have not done so yet.)
+
+*Examples use Bazel (S-CORE), but the workflow patterns are tool-agnostic.*
+
+---
 
 ### Pre-Merge Testing (Pull Requests)
 
-#### When concrete consumers are known, the integration test can be performed manually.
-This mode is especially useful for tooling repositories.
+Two modes: (A) local consumer tests (provider-driven), (B) integration tests (integration-driven).
 
-A local workflow checks out known consumers and injects the local PR branch via bazels git_override function.
+#### A. Consumer Injection
+Use when a repo has a well-known set of representative consumers.
 
-*We currently do that within docs-as-code consumer-tests*.
+1. Clone the consumers repository.
+2. Replace the dependency to the current repository with a dependency to the PR version (*for bazel that's appending `git_override` to `MODULE.bazel`*).
+3. Run the relevant consumer target to verify this "small-scoped-integration".
 
-#### Otherwise call integration repository workflows via workflow dispatch.
 
-todo
+
+```
+git_override(
+    module_name = "module_under_test",
+    remote = "{gh_url}",
+    commit = "{git_pr_hash}"
+)
+```
+
+#### B. Automated integration workflow
+A pull_request in component repos triggers a `repository_dispatch` / `workflow_call` to the integration repo.
+
+High-level GitHub Actions outline (component repo side):
+```
+name: integration-pr
+on: [pull_request]
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch to integration repo
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.INTEGRATION_TRIGGER_TOKEN }}
+          repository: eclipse-score/reference_integration
+          event-type: pr-integration
+          client-payload: >-
+            {"repo":"${{ github.repository }}",
+             "pr": "${{ github.event.pull_request.number }}",
+             "sha":"${{ github.sha }}"}
+```
+
+Integration repo receiving workflow (simplified):
+```
+on:
+  repository_dispatch:
+    types: [pr-integration]
+jobs:
+  pr-fast-subset:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Parse payload
+        run: |
+          echo '${{ toJson(github.event.client_payload) }}' > payload.json
+      - name: Materialize composition
+        run: python scripts/gen_pr_manifest.py payload.json manifest.pr.yaml
+      - name: Fetch component under test
+        run: python scripts/fetch_component.py manifest.pr.yaml  # clones repo@PR SHA
+      - name: Render MODULE overrides
+        run: python scripts/render_overrides.py manifest.pr.yaml MODULE.override.bzl
+      - name: Bazel test (subset)
+        run: bazel test //integration/subset:pr_fast --override_module_files=MODULE.override.bzl
+      - name: Store manifest & results
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-subset-${{ github.run_id }}
+          path: |
+            manifest.pr.yaml
+            bazel-testlogs/**/test.log
+```
+
+Manifest (example) written by `gen_pr_manifest.py`:
+```
+pr: 482
+component_under_test:
+  name: docs-as-code
+  repo: eclipse-score/docs-as-code
+  sha: 6bc901f2
+others:
+  - name: component-a
+    repo: eclipse-score/component-a
+    ref: main
+  - name: component-b
+    repo: eclipse-score/component-b
+    ref: main
+subset: pr_fast
+timestamp: 2025-08-13T12:14:03Z
+```
+
+
+---
 
 ### Pre-Merge Testing of Cross-Repository Dependent Changes
 
-todo; With github labels?!
+Coordination mechanism: a changeset label (e.g. `changeset:feature-x`) applied to each involved PR.
+
+Automated discovery (label mode): integration workflow queries GitHub search API for open PRs with the same `changeset:<id>` label across allowed repositories, then builds a manifest analogous to the single-PR manifest but with multiple `overrides` entries.
+
+Declarative manifest example (`changesets/feature-x`):
+```
+components:
+  - name: users-service
+    repo: eclipse-score/users-service
+    branch: feature/new_email_index
+    pr: 16
+  - name: auth-service
+    repo: eclipse-score/auth-service
+    branch: feature/lenient-token-parser
+    pr: 150
+others:
+  - name: billing-service
+    repo: eclipse-score/billing-service
+    ref: last_stable
+subset: pr_fast
+changeset: feature-x
+```
+
+Workflow differences vs single PR:
+- Replace multiple dependencies
+- Post unified status back to each PR (via a bot comment or commit status) summarizing subset result and manifest hash.
+
+Status semantics: all involved PRs blocked until this coordinated subset passes.
+
+---
 
 ### Post-Merge Integration Validation
 
-tbd
+Trigger: push to `main` in any component repo OR scheduled (cron) in integration repo pulling latest heads. Two modes:
+1. Per-merge: repository_dispatch from component merge workflow
+2. Scheduled batch: hourly cron that refreshes each component repository SHA
+
+Workflow outline (full suite):
+```
+on:
+  schedule: [{cron: "15 * * * *"}]
+  repository_dispatch:
+    types: [component-merged]
+jobs:
+  full-suite:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate full manifest
+        run: python scripts/gen_full_manifest.py manifest.full.yaml
+      - name: Bazel test (full)
+        run: bazel test //integration/full:all --test_tag_filters=-flaky
+      - name: Persist known-good tuple (on success)
+        if: success()
+        run: python scripts/persist_tuple.py manifest.full.yaml known_good/index.json
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: full-${{ github.run_id }}
+          path: |
+            manifest.full.yaml
+            known_good/index.json
+            bazel-testlogs/**/test.log
+```
+
+Persistence strategies:
+- Commit updated `known_good/index.json` (requires a bot token) containing an array of tuples with timestamp + SHAs + manifest hash.
+- Or publish a release/tag referencing the manifest artifact (immutable evidence).
+
+Known-good record snippet:
+```
+[
+  {
+    "timestamp": "2025-08-13T12:55:10Z",
+    "tuple": {
+      "docs-as-code": "6bc901f2",
+      "component-a": "91c0d4e1",
+      "component-b": "a44f0cd9"
+    },
+    "manifest_sha256": "4c9b7f...",
+    "suite": "full",
+    "duration_s": 742
+  }
+]
+```
+
+On failure: attach failing manifest + summarized failing targets; optionally open (or update) a rolling issue keyed by manifest hash to avoid alert fatigue.
+
+---
+
+### Considerations
+
+- Use caching to keep PR subset times predictable (bazel, ccache, etc.)
+- Tag slow or flaky tests; exclude from `pr_fast`.
+- Keep the subset target as an explicit target group (e.g. `pr_fast` alias) rather than relying on pattern globs—makes curation auditable via review.
+
+---
+
+### Failure Triage Flow (Recommended)
+1. PR subset fails: developer inspects manifest + specific seam test log; reproduce locally with `reproduce.sh manifest.pr.yaml`.
+2. Coordinated set fails: manual investigation of all involved PRs and their logs.
+3. Post-merge fails: bisect between last known‑good and current HEAD across components and component SHAs (scripted: iterate manifest permutations if necessary) then open focused issue.
+
+---
