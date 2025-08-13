@@ -92,12 +92,6 @@ flowchart TB
     fullPass -->|Yes| knownGood
     fullPass -->|No| issue["Issue with manifest<br>(or a more clever automated bisect solution)"]:::red
   end
-
-  classDef event fill:#E3F2FD
-  classDef step fill:#FFFFFF
-  classDef decision fill:#FFF8E1
-  classDef artifact fill:#E8F5E9
-  classDef red fill:#FFEBEE
 ```
 *High-level flow of integration workflows. Known good store feeds manifest construction for single and coordinated paths; full test suite success updates the store.*
 
