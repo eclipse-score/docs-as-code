@@ -90,7 +90,7 @@ flowchart TB
     fullMan --> fullSuite[Run full integration test suite]:::step
     fullSuite --> fullPass{Full suite pass?}:::decision
     fullPass -->|Yes| knownGood
-    fullPass -->|No| issue["Issue with manifest<br>(or a more clever automated bisect solution)"]:::red
+    fullPass -->|No| issue["Create Issue<br>(or a more clever automated bisect solution)"]:::red
   end
 ```
 *High-level flow of integration workflows. Known good store feeds manifest construction for single and coordinated paths; full test suite success updates the store.*
