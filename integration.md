@@ -69,9 +69,9 @@ a manifest, runs an appropriate depth of tests, and may record the tuple if succ
 When a pull request opens or updates, its repository runs its normal fast tests. The
 integration repository is also triggered with the repository name, pull request number,
 and head SHA. It builds a manifest using that SHA for the changed component and the last
-known-good (or main) SHAs for others, then runs the curated fast subset. The result is
-reported back to the pull request. The manifest and logs are stored even when failing so
-a developer can reproduce locally.
+known-good SHAs for others, then runs the curated fast subset. The result is reported
+back to the pull request. The manifest and logs are stored even when failing so a
+developer can reproduce locally.
 
 The subset is explicit rather than dynamically inferred. Tests in it should fail quickly
 when contracts or shared schemas drift. If the list grows until it is slow it will
@@ -109,29 +109,31 @@ component_under_test:
 others:
   - name: component-a
     repo: eclipse-score/component-a
-    ref: main
+    ref: 34985hf8 # based on last known-good
   - name: component-b
     repo: eclipse-score/component-b
-    ref: main
+    ref: a4fd56re # based on last known-good
 subset: pr_fast
 timestamp: 2025-08-13T12:14:03Z
 ```
 
 Coordinated example:
 ```
-components:
+components_under_test:
   - name: users-service
     repo: eclipse-score/users-service
     branch: feature/new_email_index
+    ref: a57hrdfg
     pr: 16
   - name: auth-service
     repo: eclipse-score/auth-service
     branch: feature/lenient-token-parser
+    ref: q928d46b75
     pr: 150
 others:
   - name: billing-service
     repo: eclipse-score/billing-service
-    ref: last_stable
+    ref: a4fd56re # based on last known-good
 subset: pr_fast
 changeset: feature-x
 ```
@@ -171,14 +173,16 @@ jobs:
       - uses: actions/checkout@v4
       - name: Parse payload
         run: echo '${{ toJson(github.event.client_payload) }}' > payload.json
+
       - name: Materialize composition
-        run: python scripts/gen_pr_manifest.py payload.json manifest.pr.yaml
-      - name: Fetch component under test
-        run: python scripts/fetch_component.py manifest.pr.yaml
+        run: gen_pr_manifest.py last_known_good.yaml payload.json > manifest.pr.yaml
+
       - name: Render MODULE overrides
-        run: python scripts/render_overrides.py manifest.pr.yaml MODULE.override.bzl
+        run: render_overrides.py manifest.pr.yaml > MODULE.override.bzl
+
       - name: Bazel test (subset)
         run: bazel test //integration/subset:pr_fast --override_module_files=MODULE.override.bzl
+
       - name: Store manifest & results
         uses: actions/upload-artifact@v4
         with:
@@ -199,20 +203,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Generate full manifest
-        run: python scripts/gen_full_manifest.py manifest.full.yaml
+
+      - name: Generate new last_known_good.yaml
+        run: update_last_known_good.py last_known_good.yaml > last_known_good.yaml
+
       - name: Bazel test (full)
         run: bazel test //integration/full:all --test_tag_filters=-flaky
+
       - name: Persist known-good tuple (on success)
         if: success()
-        run: python scripts/persist_tuple.py manifest.full.yaml known_good/index.json
+        run: |
+          git add last_known_good.yaml
+          git commit -m "update known good"
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: full-${{ github.run_id }}
           path: |
-            manifest.full.yaml
-            known_good/index.json
             bazel-testlogs/**/test.log
 ```
 
