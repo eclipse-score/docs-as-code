@@ -11,23 +11,18 @@ An interface change (for example a renamed field in a shared schema) is updated 
 
 Running full end-to-end environments on every pull request is rarely affordable. Coordinated multi-repository changes are then handled informally through ad-hoc ordering: “merge yours after mine”. Late detection raises cost and makes regression origins harder to locate.
 
-## Core Ideas
-We model the integrated system as an explicit set of (component, commit) pairs captured in a manifest. We derive those manifests deterministically from events: a single pull request, a coordinated group of pull requests, or a post-merge refresh. We run a curated fast subset of integration tests for pre-merge feedback and a deeper suite after merge. When a suite passes we record the manifest (“known good”). Coordinated multi-repository changes are treated as a first-class case so they are validated as a unit rather than through merge ordering.
+## Core Concepts
+We model the integrated system as an explicit set of (component, commit) pairs captured in a manifest. Manifests are derived deterministically from events: a single pull request, a coordinated group of pull requests, or a post-merge refresh. A curated fast subset of integration tests provides pre-merge feedback; a deeper suite runs after merge. Passing suites produce a recorded manifest (“known good”). Coordinated multi-repository change is treated as a first-class case—we validate the set as a unit rather than relying on merge ordering.
 
-## Terminology
-Component – a repository that participates in the assembled product (for example a service API repo or a common library).
-Fast subset – a curated group of integration tests chosen to finish in single-digit minutes; for example tests that exercise protocol seams or migration boundaries.
-Tuple – the mapping of component names to their commit SHAs for one integrated build; e.g. { users: a1c3f9d, billing: 9e02b4c }.
-Known good – a tuple plus metadata (timestamp, suite, manifest hash) that passed a defined suite and is stored for later reproduction.
+Terminology (brief):
+* Component – repository that participates in the assembled product (e.g. service API repo, shared library).
+* Fast subset – curated integration tests finishing in single-digit minutes (protocol seams, migration boundaries, adapters).
+* Tuple – mapping of component names to commit SHAs for one integrated build (e.g. { users: a1c3f9d, billing: 9e02b4c }).
+* Known good – tuple + metadata (timestamp, suite, manifest hash) stored for later reproduction.
 
+History & context: classic continuous integration assumed a single codebase; splitting one system across repositories reintroduces coordination issues CI was intended to remove. This adapts familiar CI principles (frequent integration, fast feedback, reproducibility) to a multi-repository boundary. The central integration repository is a neutral place to define participating components, build manifests, hold integration-specific helpers (overrides, fixtures, seam tests), and persist known-good records. It should not contain business logic; keeping it lean reduces accidental coupling and simplifies review.
 
-## A Note on History
-Classic continuous integration advice assumed a single codebase. Splitting a cohesive system across repositories reintroduces many of the coordination issues CI was meant to remove. The approach here adapts familiar CI principles (frequent integration, fast feedback, reproducibility) to a multi-repository boundary.
-
-## Why Use a Central Integration Repository
-A central repository offers a neutral place to define which components participate, to build manifests from events, to hold integration‑specific helpers (overrides, fixtures, seam tests), and to persist records of successful tuples. It should not contain business code. Keeping it small keeps review focused and reduces accidental coupling.
-
-## Workflow Layers
+## Integration Workflows
 We use three recurring workflows: a single pull request, a coordinated subset when multiple pull requests must land together, and a post‑merge fuller suite. Each produces a manifest, runs an appropriate depth of tests, and may record the tuple if successful.
 
 ### Single Pull Request
@@ -83,7 +78,7 @@ changeset: feature-x
 
 Large configuration belongs elsewhere; manifests should stay readable and diffable.
 
-## GitHub Realisation
+## Example: GitHub Actions (Conceptual)
 *Conceptual outline; not yet implemented here.*
 
 Trigger from a component repository:
@@ -180,23 +175,18 @@ Known-good records are stored append-only.
 ```
 Persisting enables reproduction (attach manifest to a defect), audit (what exactly passed before a release), gating (choose any known-good tuple), and comparison (diff manifests to isolate drift) without relying on (rather fragile) links to unique runs in your CI system.
 
-## Curating the Fast Subset
-Tests in the subset need to fail quickly when public seams change. Keep the list explicit (an alias such as //integration/subset:pr_fast). Remove redundant tests and quarantine flaky ones; otherwise the feedback loop becomes noisy or slow. Review the subset periodically (for example monthly or after significant interface churn) to keep its signal-to-noise high.
+## Operating It
+**Curating the fast subset:** Tests should fail quickly when public seams change. Keep the list explicit (e.g. //integration/subset:pr_fast). Remove redundant tests and quarantine flaky ones; review periodically (monthly or after significant interface churn) to preserve signal.
 
-## Handling Failures
-For a failing pull request subset: inspect the manifest and failing log; reproduce locally with a script that consumes the manifest. For a failing coordinated set: treat all participating pull requests as a unit and address seam failures before merging any. For a failing post-merge full suite: bisect between the last known-good tuple and the current manifest (script permutations when more than one repository changed) to narrow the cause. Distinguish between a genuine regression and test fragility so you do not mask product issues by disabling tests.
+**Handling failures:** For a failing pull request subset: inspect manifest + log; reproduce locally with a script consuming the manifest. For a failing coordinated set: treat all related pull requests as atomic. For a failing post-merge full suite: bisect between the last known-good tuple and current manifest (script permutations if multiple repositories changed) to narrow cause. Distinguish real regressions from test fragility.
 
-## Trade-offs and Choices
-Using manifests and commit SHAs instead of assigning semantic versions to every commit keeps validation close to current heads without creating tag noise. A two-tier arrangement (subset and full) offers a clear mental model; more tiers can be added later if evidence supports them. A central orchestration repository centralises caching and secrets handling and keeps audit history straightforward.
+**Trade-offs and choices:** Manifests + SHAs avoid tag noise and keep validation close to heads. Two tiers (subset + full) offer a clear mental model; add more only with evidence. A central orchestration repository centralises caching, secrets, and audit history.
 
-## Practical Notes
-Cache builds to stabilise subset runtime. Hash manifests (e.g. SHA-256) to reference runs succinctly. Provide an endpoint or badge showing the most recent known-good tuple. Generate overrides rather than editing them manually. Optionally lint the subset target to ensure only approved directories are referenced.
+**Practical notes:** Cache builds to stabilise subset runtime. Hash manifests (e.g. SHA-256) for concise references. Expose an endpoint or badge showing the latest known good. Generate overrides; do not hand-edit ephemeral files. Optionally lint the subset target for allowed directories.
 
-## Avoiding Common Pitfalls
-Selecting tests dynamically from a diff often misses schema or contract drift. Editing integration configuration manually for individual pull requests produces runs that cannot be reproduced. Relying on merge order to coordinate a multi-repository change delays detection to the last merger.
+**Avoiding pitfalls:** Diff-based dynamic test selection often misses schema or contract drift. Ad-hoc manual edits to integration config reduce reproducibility. Merge ordering as coordination defers detection to the last merge.
 
-## Signs It Is Working
-An interface change that would break another repository fails in the subset run before merge. A coordinated schema change shows a unified status across all related pull requests. A regression introduced over several independent merges is detected by the full suite and localised quickly using stored manifests.
+**Signs it is working:** Interface breakage is caught pre-merge. Coordinated change sets show unified status. Multi-repository regressions are localised rapidly using stored manifests.
 
 ## Summary
 By expressing the integrated system as explicit manifests, curating a fast integration subset for pull requests, and running a deeper post-merge suite, you move discovery of cross-repository breakage earlier while keeping costs predictable. Each successful run leaves a reproducible record, making release selection and debugging straightforward. The approach lets a distributed codebase behave operationally like a single one.
