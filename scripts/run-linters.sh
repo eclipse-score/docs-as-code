@@ -19,7 +19,7 @@ echo "Running Ruff linter..."
 bazel run @score_linter//:ruff check
 
 echo "Running basedpyright..."
-.venv/bin/python3 -m basedpyright
+.venv_docs/bin/python3 -m basedpyright
 
 echo "Running Actionlint..."
 bazel run @score_linter//:actionlint
