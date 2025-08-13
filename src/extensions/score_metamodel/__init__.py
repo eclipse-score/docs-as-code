@@ -53,12 +53,24 @@ class ProhibitedWordCheck:
 
 def parse_checks_filter(filter: str) -> list[str]:
     """
-    Parse the checks filter string into a list of individual checks.
-    When empty, an empty list is returned = all checks are enabled.
+    Parses a comma-separated list of check names.
+    Returns all names after trimming spaces and ensures
+    each exists in local_checks or graph_checks.
     """
     if not filter:
         return []
-    return [check.strip() for check in filter.split(",")]
+    checks = [check.strip() for check in filter.split(",")]
+
+    # Validate all checks exist in either local_checks or graph_checks
+    all_check_names = {c.__name__ for c in local_checks} | {
+        c.__name__ for c in graph_checks
+    }
+    for check in checks:
+        assert check in all_check_names, (
+            f"Check: '{check}' is not one of the defined local or graph checks"
+        )
+
+    return checks
 
 
 def discover_checks():
