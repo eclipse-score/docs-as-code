@@ -2,17 +2,9 @@
 
 ## Introduction
 
-Maintaining rapid pull‑request feedback while protecting the integrity of a distributed, component‑based system is a persistent challenge. As changes flow into the main branch, the risk of integration failures grows—especially when components are developed in separate repositories but must behave as a single system in production.
+This article assumes you already: (1) develop via pull requests with required checks; (2) work across multiple interdependent repositories (a distributed monolith); and (3) have a central integration repository that orchestrates cross‑component builds and tests. We treat those as prerequisites—not topics to justify.
 
-This article explores a pragmatic approach to integration testing for systems characterized by:
-
-- Pull request–driven workflows
-- Interdependent components maintained in separate repositories (a so-called “distributed monolith”)
-- The need for end-to-end tests spanning multiple components
-- A focus on developer productivity without sacrificing integration confidence
-- This article does not require, but it does support operation in regulated domains such as automotive, industrial, or embedded systems
-
-The discussion centers on orchestrating integration tests across pull request pipelines, post-merge validations, and periodic full-system tests, with an emphasis on traceability, reproducibility, and sustained confidence.
+The focus is on tightening workflows: fast pre‑merge signals, coordinated multi‑repo change handling, and post‑merge validation that produces auditable, reproducible version tuples. We skip foundational explanations and concentrate on practice.
 
 ---
 
@@ -75,9 +67,7 @@ We need to bring system‑level validation forward without imposing heavy costs 
 
 ## Goals and Architectural Approach
 
-(That's somehow slightly redundant with the introduction?)
-
-To address these challenges, an effective integration workflow should:
+We focus on optimizing the existing setup. Effective integration workflows should:
 
 - Provide early, actionable feedback at the component level
 - Reliably and reproducibly test cross‑component integration
@@ -85,14 +75,14 @@ To address these challenges, an effective integration workflow should:
 - Scale with pull‑request–driven workflows
 - Maintain traceability and visibility into what was tested, when, and why
 
-A central integration repository serves as the orchestrator for system‑wide builds and tests. This repository:
+A central integration repository (assumed present) handles:
 
-- Defines the set of components to be integrated
-- Acts as the source of truth for integration test configurations
-- Triggers integration tests using explicit version combinations
-- Serves as a gatekeeper, allowing only validated component versions into production‑bound builds
+- Defining participating components
+- Holding integration test configuration
+- Triggering tests for explicit version combinations
+- Recording/approving validated sets for downstream use
 
-By decoupling application logic from test orchestration, this architecture enables:
+Benefits (realized when disciplined) include:
 
 - Separation of concerns: the integration repository contains no application code, focusing solely on orchestration
 - Efficient CI pipeline design: component pipelines are distinct from cross‑component integration pipelines, reducing redundant CI overhead
@@ -152,14 +142,6 @@ Integrating distributed, component‑based systems in a PR‑driven workflow dem
 
 ### SemVer per Component
 
-Each component could adopt Semantic Versioning (SemVer) independently, allowing for more granular control over versioning and dependencies. This approach would enable teams to release updates at their own pace while still providing a clear framework for compatibility.
-
-While this sounds great, it has repeatedly failed in practice due to the complexities of managing interdependencies and ensuring compatibility across components.
-
-TODO: more on why it failed. Need to interview people.
+Each component could adopt Semantic Versioning (SemVer) independently, allowing for more granular control over versioning and dependencies. However in the end we want to verify main branches, and not tagged commits. Tagging every commit with a version number would be a rather silly replacement of git hashes.
 
 ---
-
-## Implementation Details
-
-TODO
