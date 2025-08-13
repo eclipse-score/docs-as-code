@@ -931,8 +931,6 @@ needs_extra_links:
 #   - condition: defines the condition that should be checked
 #     - [and / or / xor / not]
 ##############################################################
-# req-Id: tool_req__docs_dd_feature_flag
-# req-Id: tool_req__docs_req_arch_link_safety_to_arch
 
 graph_checks:
   # req-Id: tool_req__docs_common_attr_safety_link_check
