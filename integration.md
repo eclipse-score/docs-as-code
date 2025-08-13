@@ -1,242 +1,50 @@
-# Integration Testing Workflows in Distributed Monoliths
+# Integration Testing in a Distributed Monolith
 
-## Introduction
+Teams often split what is functionally a single system across many repositories. Each repository can show a green build while the assembled system is already broken. This article looks at how to bring system-level feedback earlier when you work that way.
 
-This article assumes you already: (1) develop via pull requests with required checks; (2) work across multiple interdependent repositories (a distributed monolith); and (3) have a central integration repository that orchestrates cross-component builds and tests. We treat those as prerequisites—not topics to justify.
+The context here assumes three things: you develop through pull requests with required checks; you have multiple interdependent repositories that ship together; and you either have or will create a central integration repository used only for orchestration. If any of those are absent you will need to establish them first; the rest of the discussion builds on them.
 
-The focus is on tightening workflows: fast pre-merge signals, coordinated multi-repo change handling, and post-merge validation that produces auditable, reproducible version tuples. We skip foundational explanations and concentrate on practice.
+## Where Problems Usually Appear
+An interface change (for example a renamed field in a shared schema) is updated in two direct consumers. Their pull requests pass. Another consumer several repositories away still depends on the old interface and only fails once the whole set of changes reaches main and a later integration run executes. The defect was present early but only visible late. Investigation now needs cross-repo log hunting instead of a quick fix while the change was still in flight.
 
----
+Running full end-to-end environments on every pull request is rarely affordable. Coordinated multi-repository changes are then handled informally through ad-hoc ordering: “merge yours after mine”. Late detection raises cost and makes regression origins harder to locate.
 
-## Prerequisites
+## Core Ideas
+We model the integrated system as an explicit set of (component, commit) pairs captured in a manifest. We derive those manifests deterministically from events: a single pull request, a coordinated group of pull requests, or a post-merge refresh. We run a curated fast subset of integration tests for pre-merge feedback and a deeper suite after merge. When a suite passes we record the manifest (“known good”). Coordinated multi-repository changes are treated as a first-class case so they are validated as a unit rather than through merge ordering.
 
-This article assumes familiarity with modern software engineering practices, particularly:
+## Terminology
+Component – a repository that participates in the assembled product (for example a service API repo or a common library).
+Fast subset – a curated group of integration tests chosen to finish in single-digit minutes; for example tests that exercise protocol seams or migration boundaries.
+Tuple – the mapping of component names to their commit SHAs for one integrated build; e.g. { users: a1c3f9d, billing: 9e02b4c }.
+Known good – a tuple plus metadata (timestamp, suite, manifest hash) that passed a defined suite and is stored for later reproduction.
 
-- CI/CD principles
-- Git-based workflows (feature branches, pull requests, rebases, merges)
+## Out of Scope
+This piece does not argue for pull requests, trunk-based development, or continuous integration itself. Those are well covered elsewhere. It also does not look into any specific tools or implementations for achieving these practices.
 
-For foundational material, see:
+## A Note on History
+Classic continuous integration advice assumed a single codebase. Splitting a cohesive system across repositories reintroduces many of the coordination issues CI was meant to remove. The approach here adapts familiar CI principles (frequent integration, fast feedback, reproducibility) to a multi-repository boundary.
 
-- [Modern Software Engineering – David Farley](https://www.oreilly.com/library/view/modern-software-engineering/9780137314942/)
-- [Continuous Delivery – Jez Humble & David Farley](https://www.oreilly.com/library/view/continuous-delivery-reliable/9780321670250/)
-- [The DevOps Handbook – Gene Kim, Patrick Debois, John Willis, and Jez Humble](https://www.oreilly.com/library/view/the-devops-handbook/9781098182281/)
-- [Continuous Integration – Martin Fowler](https://martinfowler.com/articles/continuousIntegration.html)
-- [The Continuous Delivery YouTube Channel](https://www.youtube.com/c/ContinuousDelivery)
-- [Trunk-Based Development](https://trunkbaseddevelopment.com/)
-- [Applying Trunk-Based Development in Large Teams](https://www.linkedin.com/blog/engineering/optimization/continuous-integration)
-- [End-to-End Testing for Microservices – Bunnyshell](https://www.bunnyshell.com/blog/end-to-end-testing-for-microservices-a-2025-guide)
-- [Scaling Distributed CI/CD Pipelines – ResearchGate](https://www.researchgate.net/publication/390157984_Scaling_Distributed_CICD_Pipelines_for_High-Throughput_Engineering_Teams_Architecture_Optimization_and_Developer_Experience)
+## Why Use a Central Integration Repository
+A central repository offers a neutral place to define which components participate, to build manifests from events, to hold integration‑specific helpers (overrides, fixtures, seam tests), and to persist records of successful tuples. It should not contain business code. Keeping it small keeps review focused and reduces accidental coupling.
 
----
+## Workflow Layers
+We use three recurring workflows: a single pull request, a coordinated subset when multiple pull requests must land together, and a post‑merge fuller suite. Each produces a manifest, runs an appropriate depth of tests, and may record the tuple if successful.
 
-## Glossary
+### Single Pull Request
+When a pull request opens or updates, its repository runs its normal fast tests. The integration repository is also triggered with the repository name, pull request number, and head SHA. It builds a manifest using that SHA for the changed component and the last known-good (or main) SHAs for others, then runs the curated fast subset. The result is reported back to the pull request. The manifest and logs are stored even when failing so a developer can reproduce locally.
 
-- **Component**: A self-contained unit of code, typically a library or binary, that integrates with other components.
-- **Component Test**: Tests a single component in isolation.
-- **Integration Test**: Validates interactions between multiple components or subsystems.
-- **Fast Tests**: Tests designed to execute in under ten minutes, providing rapid feedback.
+The subset is explicit rather than dynamically inferred. Tests in it should fail quickly when contracts or shared schemas drift. If the list grows until it is slow it will either be disabled or ignored; regular curation keeps it useful.
 
----
+### Coordinated Multi-Repository Subset
+Some changes require multiple repositories to move together (for example a schema evolution, a cross-cutting refactor, a protocol tightening). We mark related pull requests using a stable mechanism such as a common label (e.g. changeset:feature-x). The integration workflow discovers all open pull requests sharing the label, builds a manifest from their head SHAs, and runs the same fast subset. A unified status is posted back to each pull request. None merge until the coordinated set is green. This removes informal merge ordering as a coordination mechanism.
 
-## Scope
+### Post-Merge Full Suite
+After merges we run a deeper suite. Some teams trigger on every push to main; others run on a schedule (for example hourly). Per-merge runs localise failures but cost more; batched runs save resources but expand the search space when problems appear (for example every two hours when resources are constrained). When the suite fails, retaining the manifest lets you bisect between the last known-good tuple and the current manifest (using a scripted search across the changed SHAs if multiple components advanced). On success we append a record for the tuple with a manifest hash and timing data.
 
-This article does not address:
+### Manifests
+Manifests are minimal documents describing the composition. They allow reconstruction of the integrated system later.
 
-- The rationale for pull-request–based workflows or distributed monoliths
-- Specific CI/CD tooling
-- Container orchestration or service mesh patterns
-- Regulatory frameworks or compliance processes
-- General testing theory
-
----
-
-## The Challenge of Integration
-
-Distributed monoliths look like microservices on paper—many repositories, many builds—but behave like a single system in practice. Components share APIs, schemas, and timing assumptions. They often ship together. A small change in one place can ripple across the rest.
-
-Standard PR pipelines validate the piece you touched but often miss the system you implicitly changed. When components are tested in isolation, the first realistic system behavior appears post-merge—after a change meets everyone else’s. That’s late and expensive feedback.
-
-Component-level testing typically does not include contract testing, with the implicit
-assumption that downstream integration tests will catch any issues. This undermines the
-fast feedback loops essential for effective development. Moreover, standard Git-based
-workflows validate only the changed component in isolation, not the integrated system.
-Coordinating changes across repositories is non-trivial, and integration failures often
-surface post-merge, when remediation is more disruptive.
-
-1. End-to-end tests are slow and costly. Provisioning a realistic environment, compiling a build matrix, or coordinating hardware-in-the-loop can push runtimes beyond what’s practical on every PR.
-2. Cross-repository changes are common. Interface tweaks, coordinated refactorings, or schema migrations need to move in lock-step—even though Git’s default workflows don’t know that.
-
-We need to bring system-level validation forward without imposing heavy costs on every PR, and to coordinate multi-repo changes as first-class citizens—within a PR-gated workflow.
-
----
-
-## Goals and Architectural Approach
-
-We focus on optimizing the existing setup. Effective integration workflows should:
-
-- Provide early, actionable feedback at the component level
-- Reliably and reproducibly test cross-component integration
-- Balance test cost with coverage depth
-- Scale with pull-request–driven workflows
-- Maintain traceability and visibility into what was tested, when, and why
-
-A central integration repository (assumed present) handles:
-
-- Defining participating components
-- Holding integration test configuration
-- Triggering tests for explicit version combinations
-- Recording/approving validated sets for downstream use
-
-Benefits (realized when disciplined) include:
-
-- Separation of concerns: the integration repository contains no application code, focusing solely on orchestration
-- Efficient CI pipeline design: component pipelines are distinct from cross-component integration pipelines, reducing redundant CI overhead
-- Consistent governance: updates must pass defined quality checks before acceptance, preserving system integrity without impeding local agility
-- Independent component repositories: each component evolves in its own repository, with isolated development and CI
-- Minimal overhead: component repositories remain lightweight, free from unnecessary shared tooling
-- Improved troubleshooting: failures can be isolated to individual components or integration logic, expediting root cause analysis
-
----
-
-## Integration Workflows
-
-### Pre-Merge Testing (Pull Requests)
-
-When a PR is opened or updated in a component repository, two parallel workflows are triggered:
-
-- Fast, component-specific tests (unit and component-level integration) run in the component’s CI pipeline.
-- A system-level integration workflow in the integration repository validates compatibility with the rest of the system, typically running a fast subset of the integration test suite.
-
-The integration repository fetches the PR branch from the component under test and combines it with the latest main branches (or last known-good versions) of other components to form a synthetic system configuration. This configuration is then built and tested. The workflow may run in parallel with component CI (favoring rapid feedback) or sequentially (minimizing CI load), depending on project constraints.
-
----
-
-### Pre-Merge Testing of Cross-Repository Dependent Changes
-
-When changes in one component necessitate coordinated updates in others, the integration repository enables testing these combinations together. Related PRs across repositories are grouped, and the integration repository constructs a configuration using the relevant branches. Run the same fast subset as for single-PR validation and report a unified status back to each PR.
-
-Two conventions help:
-
-- Group related PRs via metadata (titles, labels, or an explicit manifest) so the integration repo can discover them
-- Resolve branch selection deterministically (e.g., PR branch overrides main for listed components; others stick to last known-good)
-
-This turns ad-hoc coordination into a normal operation. It reduces the risk that “the last repo to merge” breaks the system because you tested the change set as a unit before anything merges.
-
----
-
-### Post-Merge Integration Validation
-
-After a PR is merged, the integration repository runs a fuller integration suite using the updated state. Some teams run this on every main-branch commit; others batch changes and run on a timer. Whatever the cadence, the goal is to run a deeper suite than the pre-merge subset and to record the exact component versions that passed.
-
-Two common patterns:
-
-- Always-on verification: run after every merge. Failures are easy to attribute but costs are higher.
-- Scheduled verification: run on a timer. Costs are lower; root cause analysis is harder. Pair this with bisect automation to identify the offending change when failures occur.
-
-Successful post-merge tests confirm system stability, and the exact version tuple is recorded for future reference. This decouples verification from release, allowing components and the integrated system to be released independently as needed.
-
----
-
-### Conclusion
-
-Integrating distributed, component-based systems in a PR-driven workflow demands disciplined orchestration. Keep most checks close to the code. Use a central integration repository to assemble realistic compositions, run a fast subset pre-merge, and verify deeply post-merge. Record exactly what passed. Treat coordinated changes as first-class. Over time, you’ll get what you need: quick PR feedback and confidence that the system still works when parts move.
-
-Releases can happen independently of integration, on any verified commit on the main branch.
-
----
-
-## Considered Alternatives
-
-### SemVer per Component
-
-Each component could adopt Semantic Versioning (SemVer) independently, allowing for more granular control over versioning and dependencies. However in the end we want to verify main branches, and not tagged commits. Tagging every commit with a version number would be a rather silly replacement of git hashes.
-
----
-
-## Realization in GitHub (Planned)
-
-How to implement the above patterns on GitHub.
-(According to our current knowledge. We have not done so yet.)
-
-*Examples use Bazel (S-CORE), but the workflow patterns are tool-agnostic.*
-
----
-
-### Pre-Merge Testing (Pull Requests)
-
-Two modes: (A) local consumer tests (provider-driven), (B) integration tests (integration-driven).
-
-#### A. Consumer Injection
-Use when a repo has a well-known set of representative consumers.
-
-1. Clone the consumers repository.
-2. Replace the dependency to the current repository with a dependency to the PR version (*for bazel that's appending `git_override` to `MODULE.bazel`*).
-3. Run the relevant consumer target to verify this "small-scoped-integration".
-
-
-
-```
-git_override(
-    module_name = "module_under_test",
-    remote = "{gh_url}",
-    commit = "{git_pr_hash}"
-)
-```
-
-#### B. Automated integration workflow
-A pull_request in component repos triggers a `repository_dispatch` / `workflow_call` to the integration repo.
-
-High-level GitHub Actions outline (component repo side):
-```
-name: integration-pr
-on: [pull_request]
-jobs:
-  dispatch:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Dispatch to integration repo
-        uses: peter-evans/repository-dispatch@v3
-        with:
-          token: ${{ secrets.INTEGRATION_TRIGGER_TOKEN }}
-          repository: eclipse-score/reference_integration
-          event-type: pr-integration
-          client-payload: >-
-            {"repo":"${{ github.repository }}",
-             "pr": "${{ github.event.pull_request.number }}",
-             "sha":"${{ github.sha }}"}
-```
-
-Integration repo receiving workflow (simplified):
-```
-on:
-  repository_dispatch:
-    types: [pr-integration]
-jobs:
-  pr-fast-subset:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Parse payload
-        run: |
-          echo '${{ toJson(github.event.client_payload) }}' > payload.json
-      - name: Materialize composition
-        run: python scripts/gen_pr_manifest.py payload.json manifest.pr.yaml
-      - name: Fetch component under test
-        run: python scripts/fetch_component.py manifest.pr.yaml  # clones repo@PR SHA
-      - name: Render MODULE overrides
-        run: python scripts/render_overrides.py manifest.pr.yaml MODULE.override.bzl
-      - name: Bazel test (subset)
-        run: bazel test //integration/subset:pr_fast --override_module_files=MODULE.override.bzl
-      - name: Store manifest & results
-        uses: actions/upload-artifact@v4
-        with:
-          name: pr-subset-${{ github.run_id }}
-          path: |
-            manifest.pr.yaml
-            bazel-testlogs/**/test.log
-```
-
-Manifest (example) written by `gen_pr_manifest.py`:
+Single pull request example:
 ```
 pr: 482
 component_under_test:
@@ -254,16 +62,7 @@ subset: pr_fast
 timestamp: 2025-08-13T12:14:03Z
 ```
 
-
----
-
-### Pre-Merge Testing of Cross-Repository Dependent Changes
-
-Coordination mechanism: a changeset label (e.g. `changeset:feature-x`) applied to each involved PR.
-
-Automated discovery (label mode): integration workflow queries GitHub search API for open PRs with the same `changeset:<id>` label across allowed repositories, then builds a manifest analogous to the single-PR manifest but with multiple `overrides` entries.
-
-Declarative manifest example (`changesets/feature-x`):
+Coordinated example:
 ```
 components:
   - name: users-service
@@ -282,21 +81,59 @@ subset: pr_fast
 changeset: feature-x
 ```
 
-Workflow differences vs single PR:
-- Replace multiple dependencies
-- Post unified status back to each PR (via a bot comment or commit status) summarizing subset result and manifest hash.
+Large configuration belongs elsewhere; manifests should stay readable and diffable.
 
-Status semantics: all involved PRs blocked until this coordinated subset passes.
+## GitHub Realisation
+*Conceptual outline; not yet implemented here.*
 
----
+Trigger from a component repository:
+```
+name: integration-pr
+on: [pull_request]
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch to integration repo
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.INTEGRATION_TRIGGER_TOKEN }}
+          repository: eclipse-score/reference_integration
+          event-type: pr-integration
+          client-payload: >-
+            {"repo":"${{ github.repository }}","pr":"${{ github.event.pull_request.number }}","sha":"${{ github.sha }}"}
+```
 
-### Post-Merge Integration Validation
+Integration repository receiver (subset):
+```
+on:
+  repository_dispatch:
+    types: [pr-integration]
+jobs:
+  pr-fast-subset:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Parse payload
+        run: echo '${{ toJson(github.event.client_payload) }}' > payload.json
+      - name: Materialize composition
+        run: python scripts/gen_pr_manifest.py payload.json manifest.pr.yaml
+      - name: Fetch component under test
+        run: python scripts/fetch_component.py manifest.pr.yaml
+      - name: Render MODULE overrides
+        run: python scripts/render_overrides.py manifest.pr.yaml MODULE.override.bzl
+      - name: Bazel test (subset)
+        run: bazel test //integration/subset:pr_fast --override_module_files=MODULE.override.bzl
+      - name: Store manifest & results
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-subset-${{ github.run_id }}
+          path: |
+            manifest.pr.yaml
+            bazel-testlogs/**/test.log
+```
 
-Trigger: push to `main` in any component repo OR scheduled (cron) in integration repo pulling latest heads. Two modes:
-1. Per-merge: repository_dispatch from component merge workflow
-2. Scheduled batch: hourly cron that refreshes each component repository SHA
-
-Workflow outline (full suite):
+Post-merge full suite:
 ```
 on:
   schedule: [{cron: "15 * * * *"}]
@@ -324,11 +161,8 @@ jobs:
             bazel-testlogs/**/test.log
 ```
 
-Persistence strategies:
-- Commit updated `known_good/index.json` (requires a bot token) containing an array of tuples with timestamp + SHAs + manifest hash.
-- Or publish a release/tag referencing the manifest artifact (immutable evidence).
-
-Known-good record snippet:
+### Recording Known-Good Tuples
+Known-good records are stored append-only.
 ```
 [
   {
@@ -344,22 +178,27 @@ Known-good record snippet:
   }
 ]
 ```
+Persisting enables reproduction (attach manifest to a defect), audit (what exactly passed before a release), gating (choose any known-good tuple), and comparison (diff manifests to isolate drift) without relying on (rather fragile) links to unique runs in your CI system.
 
-On failure: attach failing manifest + summarized failing targets; optionally open (or update) a rolling issue keyed by manifest hash to avoid alert fatigue.
+## Curating the Fast Subset
+Tests in the subset need to fail quickly when public seams change. Keep the list explicit (an alias such as //integration/subset:pr_fast). Remove redundant tests and quarantine flaky ones; otherwise the feedback loop becomes noisy or slow. Review the subset periodically (for example monthly or after significant interface churn) to keep its signal-to-noise high.
 
----
+## Handling Failures
+For a failing pull request subset: inspect the manifest and failing log; reproduce locally with a script that consumes the manifest. For a failing coordinated set: treat all participating pull requests as a unit and address seam failures before merging any. For a failing post-merge full suite: bisect between the last known-good tuple and the current manifest (script permutations when more than one repository changed) to narrow the cause. Distinguish between a genuine regression and test fragility so you do not mask product issues by disabling tests.
 
-### Considerations
+## Trade-offs and Choices
+Using manifests and commit SHAs instead of assigning semantic versions to every commit keeps validation close to current heads without creating tag noise. A two-tier arrangement (subset and full) offers a clear mental model; more tiers can be added later if evidence supports them. A central orchestration repository centralises caching and secrets handling and keeps audit history straightforward.
 
-- Use caching to keep PR subset times predictable (bazel, ccache, etc.)
-- Tag slow or flaky tests; exclude from `pr_fast`.
-- Keep the subset target as an explicit target group (e.g. `pr_fast` alias) rather than relying on pattern globs—makes curation auditable via review.
+## Practical Notes
+Cache builds to stabilise subset runtime. Hash manifests (e.g. SHA-256) to reference runs succinctly. Provide an endpoint or badge showing the most recent known-good tuple. Generate overrides rather than editing them manually. Optionally lint the subset target to ensure only approved directories are referenced.
 
----
+## Avoiding Common Pitfalls
+Selecting tests dynamically from a diff often misses schema or contract drift. Editing integration configuration manually for individual pull requests produces runs that cannot be reproduced. Relying on merge order to coordinate a multi-repository change delays detection to the last merger.
 
-### Failure Triage Flow (Recommended)
-1. PR subset fails: developer inspects manifest + specific seam test log; reproduce locally with `reproduce.sh manifest.pr.yaml`.
-2. Coordinated set fails: manual investigation of all involved PRs and their logs.
-3. Post-merge fails: bisect between last known‑good and current HEAD across components and component SHAs (scripted: iterate manifest permutations if necessary) then open focused issue.
+## Signs It Is Working
+An interface change that would break another repository fails in the subset run before merge. A coordinated schema change shows a unified status across all related pull requests. A regression introduced over several independent merges is detected by the full suite and localised quickly using stored manifests.
 
----
+## Summary
+By expressing the integrated system as explicit manifests, curating a fast integration subset for pull requests, and running a deeper post-merge suite, you move discovery of cross-repository breakage earlier while keeping costs predictable. Each successful run leaves a reproducible record, making release selection and debugging straightforward. The approach lets a distributed codebase behave operationally like a single one.
+
+*Further reading:* Continuous Integration (Fowler), Continuous Delivery (Humble & Farley), trunk-based development resources.
