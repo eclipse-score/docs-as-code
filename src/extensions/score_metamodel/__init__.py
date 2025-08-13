@@ -53,12 +53,9 @@ class ProhibitedWordCheck:
 
 def parse_checks_filter(filter: str) -> list[str]:
     """
-    Parses the checks filter string into a list of individual check names.
-    - When empty, returns an empty list, meaning all available checks are enabled.
-    - Strips whitespace around each check name from the comma-separated list.
-    - Asserts that each provided check name exists in either the registered
-      `local_checks` or `graph_checks`. If a name is not found, the build will
-      fail immediately with an assertion error.
+    Parses a comma-separated list of check names.
+    Returns all names after trimming spaces and ensures
+    each exists in local_checks or graph_checks.
     """
     if not filter:
         return []
