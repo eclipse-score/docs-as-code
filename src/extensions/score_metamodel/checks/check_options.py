@@ -14,9 +14,9 @@ import re
 
 from score_metamodel import (
     CheckLogger,
+    ScoreNeedType,
     default_options,
     local_check,
-    ScoreNeedType,
 )
 from sphinx.application import Sphinx
 from sphinx_needs.data import NeedsInfoType
@@ -91,12 +91,12 @@ def validate_fields(
                 )
 
 
-# req-#id: gd_req__req_attr_type
-# req-#id: gd_req__requirements_attr_security
-# req-#id: gd_req__req_attr_safety
-# req-#id: gd_req__req_attr_status
-# req-#id: gd_req__req_attr_rationale
-# req-#id: gd_req__req_attr_mandatory
+# req-Id: gd_req__req_attr_type
+# req-Id: gd_req__requirements_attr_security
+# req-Id: gd_req__req_attr_safety
+# req-Id: gd_req__req_attr_status
+# req-Id: gd_req__req_attr_rationale
+# req-Id: gd_req__req_attr_mandatory
 @local_check
 def check_options(
     app: Sphinx,
