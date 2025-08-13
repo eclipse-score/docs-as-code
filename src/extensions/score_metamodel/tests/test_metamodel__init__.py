@@ -22,6 +22,7 @@ from src.extensions.score_metamodel.__init__ import (
 def dummy_local_check(app, need, log):
     pass
 
+
 def dummy_graph_check(app, needs_view, log):
     pass
 

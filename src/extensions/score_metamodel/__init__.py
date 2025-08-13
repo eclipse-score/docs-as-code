@@ -65,13 +65,16 @@ def parse_checks_filter(filter: str) -> list[str]:
     checks = [check.strip() for check in filter.split(",")]
 
     # Validate all checks exist in either local_checks or graph_checks
-    all_check_names = {c.__name__ for c in local_checks} | {c.__name__ for c in graph_checks}
+    all_check_names = {c.__name__ for c in local_checks} | {
+        c.__name__ for c in graph_checks
+    }
     for check in checks:
         assert check in all_check_names, (
             f"Check: '{check}' is not one of the defined local or graph checks"
         )
 
     return checks
+
 
 def discover_checks():
     """
