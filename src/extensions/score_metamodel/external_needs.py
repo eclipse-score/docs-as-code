@@ -52,7 +52,6 @@ def _parse_bazel_external_need(s: str) -> ExternalNeedsSource | None:
         return ExternalNeedsSource(
             bazel_module=repo, path_to_target=path_to_target, target=target
         )
-
     # Unknown data target. Probably not a needs.json file.
     return None
 

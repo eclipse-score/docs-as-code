@@ -24,9 +24,7 @@ from rich.console import Console
 from rich.table import Table
 
 from src.extensions.score_source_code_linker import get_github_base_url
-from src.extensions.score_source_code_linker.generate_source_code_links_json import (
-    find_git_root,
-)
+from src.helper_lib import find_git_root
 
 """
 This script's main usecase is to test consumers of Docs-As-Code with
@@ -120,10 +118,9 @@ def sphinx_base_dir(tmp_path_factory: TempPathFactory, pytestconfig) -> Path:
         temp_dir = tmp_path_factory.mktemp("testing_dir")
         print(f"[blue]Using temporary directory: {temp_dir}[/blue]")
         return temp_dir
-    else:
-        CACHE_DIR.mkdir(parents=True, exist_ok=True)
-        print(f"[green]Using persistent cache directory: {CACHE_DIR}[/green]")
-        return CACHE_DIR
+    CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    print(f"[green]Using persistent cache directory: {CACHE_DIR}[/green]")
+    return CACHE_DIR
 
 
 def get_current_git_commit(curr_path: Path):
@@ -175,7 +172,7 @@ def replace_bazel_dep_with_local_override(module_content: str) -> str:
     """ """
 
     # Pattern to match the bazel_dep line
-    pattern = rf'bazel_dep\(name = "score_docs_as_code", version = "[^"]+"\)'
+    pattern = r'bazel_dep\(name = "score_docs_as_code", version = "[^"]+"\)'
 
     # Replacement with local_path_override
     replacement = """bazel_dep(name = "score_docs_as_code", version = "0.0.0")
@@ -190,7 +187,7 @@ local_path_override(
 def replace_bazel_dep_with_git_override(
     module_content: str, git_hash: str, gh_url: str
 ) -> str:
-    pattern = rf'bazel_dep\(name = "score_docs_as_code", version = "[^"]+"\)'
+    pattern = r'bazel_dep\(name = "score_docs_as_code", version = "[^"]+"\)'
 
     replacement = f'''bazel_dep(name = "score_docs_as_code", version = "0.0.0")
 git_override(
@@ -343,9 +340,8 @@ def analyze_build_success(BR: BuildOutput) -> tuple[bool, str]:
         if logger == "[NO SPECIFIC LOGGER]":
             # Always ignore these
             continue
-        else:
-            # Any other logger is critical/not ignored
-            critical_warnings.extend(warnings)
+        # Any other logger is critical/not ignored
+        critical_warnings.extend(warnings)
 
     if critical_warnings:
         return False, f"Found {len(critical_warnings)} critical warnings"
@@ -483,7 +479,7 @@ def setup_test_environment(sphinx_base_dir, pytestconfig):
     """Set up the test environment and return necessary paths and metadata."""
     os.chdir(sphinx_base_dir)
     curr_path = Path(__file__).parent
-    git_root = find_git_root(curr_path)
+    git_root = find_git_root()
 
     verbosity = pytestconfig.get_verbosity()
 
@@ -495,7 +491,7 @@ def setup_test_environment(sphinx_base_dir, pytestconfig):
         assert False, "Git root was none"
 
     # Get GitHub URL and current hash for git override
-    gh_url = get_github_base_url(git_root)
+    gh_url = get_github_base_url()
     current_hash = get_current_git_commit(curr_path)
 
     if verbosity >= 2:
@@ -562,7 +558,7 @@ def prepare_repo_overrides(repo_name, git_url, current_hash, gh_url, use_cache=T
         os.chdir(repo_name)
 
     # Read original MODULE.bazel
-    with open("MODULE.bazel", "r") as f:
+    with open("MODULE.bazel") as f:
         module_orig = f.read()
 
     # Prepare override versions

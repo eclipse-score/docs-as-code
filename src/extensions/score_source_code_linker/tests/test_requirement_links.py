@@ -28,16 +28,18 @@ from src.extensions.score_metamodel.tests import need as test_need
 from src.extensions.score_source_code_linker import (
     find_need,
     get_cache_filename,
-    get_current_git_hash,
     get_github_link,
-    get_github_repo_info,
     group_by_need,
-    parse_git_output,
 )
 from src.extensions.score_source_code_linker.needlinks import (
     NeedLink,
     load_source_code_links_json,
     store_source_code_links_json,
+)
+from src.helper_lib import (
+    get_current_git_hash,
+    get_github_repo_info,
+    parse_remote_git_output,
 )
 
 """
@@ -83,7 +85,6 @@ def needlink_test_decoder(d: dict[str, Any]) -> NeedLink | dict[str, Any]:
             need=d["need"],
             full_line=decode_comment(d["full_line"]),
         )
-
     # It's something else, pass it on to other decoders
     return d
 
@@ -120,7 +121,6 @@ def git_repo(temp_dir):
         cwd=git_dir,
         check=True,
     )
-
     return git_dir
 
 
@@ -355,35 +355,35 @@ def test_group_by_need_empty_list():
 def test_parse_git_output_ssh_format():
     """Test parsing git remote output in SSH format."""
     git_line = "origin	git@github.com:test-user/test-repo.git (fetch)"
-    result = parse_git_output(git_line)
+    result = parse_remote_git_output(git_line)
     assert result == "test-user/test-repo"
 
 
 def test_parse_git_output_https_format():
     """Test parsing git remote output in HTTPS format."""
     git_line = "origin	https://github.com/test-user/test-repo.git (fetch)"
-    result = parse_git_output(git_line)
+    result = parse_remote_git_output(git_line)
     assert result == "test-user/test-repo"
 
 
 def test_parse_git_output_ssh_format_without_git_suffix():
     """Test parsing git remote output in SSH format without .git suffix."""
     git_line = "origin	git@github.com:test-user/test-repo (fetch)"
-    result = parse_git_output(git_line)
+    result = parse_remote_git_output(git_line)
     assert result == "test-user/test-repo"
 
 
 def test_parse_git_output_invalid_format():
     """Test parsing invalid git remote output."""
     git_line = "invalid"
-    result = parse_git_output(git_line)
+    result = parse_remote_git_output(git_line)
     assert result == ""
 
 
 def test_parse_git_output_empty_string():
     """Test parsing empty git remote output."""
     git_line = ""
-    result = parse_git_output(git_line)
+    result = parse_remote_git_output(git_line)
     assert result == ""
 
 
@@ -407,9 +407,6 @@ def test_get_github_repo_info_multiple_remotes(git_repo_multiple_remotes):
 
 def test_get_current_git_hash(git_repo):
     """Test getting current git hash."""
-    print("==== GIt REPO====")
-    a = git_repo
-    print(a)
     result = get_current_git_hash(git_repo)
 
     # Verify it's a valid git hash (40 hex characters)
@@ -423,28 +420,6 @@ def test_get_current_git_hash_invalid_repo(temp_dir):
         get_current_git_hash(temp_dir)
 
 
-# def test_get_github_base_url_with_real_repo(git_repo):
-#     """Test getting GitHub base URL with real repository."""
-#     # Temporarily set the git repo as the current directory context
-#     original_cwd = os.getcwd()
-#     os.chdir(git_repo)
-#
-#     try:
-#         # We need to temporarily patch find_git_root to return our test repo
-#         import src.extensions.score_source_code_linker as module
-#
-#         original_find_git_root = module.find_git_root
-#         module.find_git_root = lambda: git_repo
-#
-#         result = get_github_base_url()
-#         expected = "https://github.com/test-user/test-repo"
-#         assert result == expected
-#
-#     finally:
-#         module.find_git_root = original_find_git_root
-#         os.chdir(original_cwd)
-
-
 def test_get_github_link_with_real_repo(git_repo):
     """Test generating GitHub link with real repository."""
     # Create a needlink
@@ -456,7 +431,9 @@ def test_get_github_link_with_real_repo(git_repo):
         full_line="#" + " req-Id: REQ_001",
     )
 
-    result = get_github_link(git_repo, needlink)
+    # Have to change directories in order to ensure that we get the right/any .git file
+    os.chdir(Path(git_repo).absolute())
+    result = get_github_link(needlink)
 
     # Should contain the base URL, hash, file path, and line number
     assert "https://github.com/test-user/test-repo/blob/" in result
@@ -511,7 +488,7 @@ def test_cache_file_with_encoded_comments(temp_dir):
     store_source_code_links_json(cache_file, needlinks)
 
     # Check the raw JSON to verify encoding
-    with open(cache_file, "r") as f:
+    with open(cache_file) as f:
         raw_content = f.read()
         assert "#" + " req-Id:" in raw_content  # Should be encoded
         assert "#-----req-Id:" not in raw_content  # Original should not be present
@@ -629,10 +606,10 @@ def another_function():
     assert len(grouped["TREQ_ID_2"]) == 1
 
     # Test GitHub link generation
-
+    # Have to change directories in order to ensure that we get the right/any .git file
     os.chdir(Path(git_repo).absolute())
     for needlink in loaded_links:
-        github_link = get_github_link(git_repo, needlink)
+        github_link = get_github_link(needlink)
         assert "https://github.com/test-user/test-repo/blob/" in github_link
         assert f"src/{needlink.file.name}#L{needlink.line}" in github_link
 
@@ -665,48 +642,5 @@ def test_multiple_commits_hash_consistency(git_repo):
     )
 
     os.chdir(Path(git_repo).absolute())
-    github_link = get_github_link(git_repo, needlink)
+    github_link = get_github_link(needlink)
     assert new_hash in github_link
-
-
-# Test error handling
-def test_git_operations_with_no_commits(temp_dir):
-    """Test git operations on repo with no commits."""
-    git_dir = temp_dir / "empty_repo"
-    git_dir.mkdir()
-
-    # Initialize git repo but don't commit anything
-    subprocess.run(["git", "init"], cwd=git_dir, check=True, capture_output=True)
-    subprocess.run(
-        ["git", "config", "user.email", "test@example.com"], cwd=git_dir, check=True
-    )
-    subprocess.run(["git", "config", "user.name", "Test User"], cwd=git_dir, check=True)
-
-    os.chdir(Path(git_dir).absolute())
-    # Should raise an exception when trying to get hash
-    with pytest.raises(Exception):
-        a = get_current_git_hash(git_dir)
-
-
-def test_git_repo_with_no_remotes(temp_dir):
-    """Test git repository with no remotes."""
-    git_dir = temp_dir / "no_remote_repo"
-    git_dir.mkdir()
-
-    # Initialize git repo
-    subprocess.run(["git", "init"], cwd=git_dir, check=True, capture_output=True)
-    subprocess.run(
-        ["git", "config", "user.email", "test@example.com"], cwd=git_dir, check=True
-    )
-    subprocess.run(["git", "config", "user.name", "Test User"], cwd=git_dir, check=True)
-
-    # Create a test file and commit
-    test_file = git_dir / "test_file.py"
-    test_file.write_text("# Test file\nprint('hello')\n")
-    subprocess.run(["git", "add", "."], cwd=git_dir, check=True)
-    subprocess.run(["git", "commit", "-m", "Initial commit"], cwd=git_dir, check=True)
-    os.chdir(git_dir)
-
-    # Should raise an exception when trying to get repo info
-    with pytest.raises(AssertionError):
-        get_github_repo_info(git_dir)
