@@ -1,6 +1,6 @@
 # Integration Testing in a Distributed Monolith
 
-*RFC - Working draft. High-level overview of how our projects typically integrate
+*RFC – Working draft. High-level overview of how our projects typically integrate
 (reflecting practices used in several codebases). Assumptions and trade-offs are noted;
 please flag gaps or disagreeable sections so we can iterate. Easiest way for feedback is
 face to face!*
@@ -42,13 +42,13 @@ multi-repository change is treated as a first-class case—we validate the set a
 rather than relying on merge ordering.
 
 Terminology (brief):
-* Component - repository that participates in the assembled product (e.g. service API
+* Component – repository that participates in the assembled product (e.g. service API
   repo, shared library).
-* Fast subset - curated integration tests finishing in single-digit minutes (protocol
+* Fast subset – curated integration tests finishing in single-digit minutes (protocol
   seams, migration boundaries, adapters).
-* Tuple - mapping of component names to commit SHAs for one integrated build (e.g. {
+* Tuple – mapping of component names to commit SHAs for one integrated build (e.g. {
   users: a1c3f9d, billing: 9e02b4c }).
-* Known good - tuple + metadata (timestamp, suite, manifest hash) stored for later
+* Known good – tuple + metadata (timestamp, suite, manifest hash) stored for later
   reproduction.
 
 History & context: classic continuous integration assumed a single codebase; splitting
@@ -62,8 +62,48 @@ coupling and simplifies review.
 
 ## Integration Workflows
 We use three recurring workflows: a single pull request, a coordinated subset when
-multiple pull requests must land together, and a post‑merge fuller suite. Each produces
+multiple pull requests must land together, and a post-merge fuller suite. Each produces
 a manifest, runs an appropriate depth of tests, and may record the tuple if successful.
+
+### Visual Overview
+```mermaid
+flowchart TB
+  subgraph COMP[Component Repos]
+    pr[PR opened / updated<br/>&lt;event&gt;]:::event --> comp_ci[Component tests]:::step
+
+    trigger1[Merge to main<br/>&lt;event&gt;]:::event
+  end
+
+  subgraph INT[Integration Repo]
+    comp_ci --> |dispatch|detect_changeset[Detect multi repository PRs]:::step
+    knownGood[(Known good store)]:::artifact
+
+    %% PR
+    detect_changeset --> buildMan[Build PR/PRs manifest using PR/PRs SHA + known good others]:::step
+    knownGood --> buildMan
+    buildMan --> runSubset[Run fast subset of integration tests]:::step
+    runSubset --> prFeedback[Provide Feedback in PR / all PRs]:::step
+
+    %% Post-merge / scheduled full suite
+    trigger1 -->|dispatch| fullMan[Build full manifest from latest mains of all repos]:::step
+    trigger2[schedule<br/>&lt;event&gt;]:::event --> fullMan
+    fullMan --> fullSuite[Run full integration test suite]:::step
+    fullSuite --> fullPass{Full suite pass?}:::decision
+    fullPass -->|Yes| knownGood
+    fullPass -->|No| issue["Issue with manifest<br>(or a more clever automated bisect solution)"]:::status
+  end
+
+  classDef event fill:#E3F2FD,stroke:#1565C0,stroke-width:1px;
+  classDef step fill:#FFFFFF,stroke:#607D8B,stroke-width:1px;
+  classDef decision fill:#FFF8E1,stroke:#F9A825,stroke-width:1px;
+  classDef artifact fill:#E8F5E9,stroke:#2E7D32,stroke-width:1px;
+  classDef status fill:#FFEBEE,stroke:#C62828,stroke-width:1px;
+  classDef legend fill:#F5F5F5,stroke:#BDBDBD,stroke-dasharray: 3 3;
+
+  linkStyle default stroke:#888,stroke-width:1.2px;
+  class rec,knownGood artifact
+```
+*High-level flow of integration workflows. Known good store feeds manifest construction for single and coordinated paths; full test suite success updates the store.*
 
 ### Single Pull Request
 When a pull request opens or updates, its repository runs its normal fast tests. The
@@ -88,12 +128,12 @@ informal merge ordering as a coordination mechanism.
 
 ### Post-Merge Full Suite
 After merges we run a deeper suite. Some teams trigger on every push to main; others run
-on a schedule (for example hourly). Per-merge runs localise failures but cost more;
-batched runs save resources but expand the search space when problems appear (for
-example every two hours when resources are constrained). When the suite fails, retaining
-the manifest lets you bisect between the last known-good tuple and the current manifest
-(using a scripted search across the changed SHAs if multiple components advanced). On
-success we append a record for the tuple with a manifest hash and timing data.
+on a schedule (hourly seems to be a common practice). Per-merge runs localise failures
+but cost more; batched runs save resources but expand the search space when problems
+appear. When the suite fails, retaining the manifest lets you bisect between the last
+known-good tuple and the current manifest (using a scripted search across the changed
+SHAs if multiple components advanced). On success we append a record for the tuple with
+a manifest hash and timing data.
 
 ### Manifests
 Manifests are minimal documents describing the composition. They allow reconstruction of
