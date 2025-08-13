@@ -931,8 +931,6 @@ needs_extra_links:
 #   - condition: defines the condition that should be checked
 #     - [and / or / xor / not]
 ##############################################################
-# req- Id: gd_req__req_linkage_architecture
-# req- Id: gd_req__req_linkage_safety
 
 graph_checks:
   # req-Id: tool_req__docs_common_attr_safety_link_check
