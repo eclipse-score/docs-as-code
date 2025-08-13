@@ -90,18 +90,14 @@ flowchart TB
     fullMan --> fullSuite[Run full integration test suite]:::step
     fullSuite --> fullPass{Full suite pass?}:::decision
     fullPass -->|Yes| knownGood
-    fullPass -->|No| issue["Issue with manifest<br>(or a more clever automated bisect solution)"]:::status
+    fullPass -->|No| issue["Issue with manifest<br>(or a more clever automated bisect solution)"]:::red
   end
 
-  classDef event fill:#E3F2FD,stroke:#1565C0,stroke-width:1px;
-  classDef step fill:#FFFFFF,stroke:#607D8B,stroke-width:1px;
-  classDef decision fill:#FFF8E1,stroke:#F9A825,stroke-width:1px;
-  classDef artifact fill:#E8F5E9,stroke:#2E7D32,stroke-width:1px;
-  classDef status fill:#FFEBEE,stroke:#C62828,stroke-width:1px;
-  classDef legend fill:#F5F5F5,stroke:#BDBDBD,stroke-dasharray: 3 3;
-
-  linkStyle default stroke:#888,stroke-width:1.2px;
-  class rec,knownGood artifact
+  classDef event fill:#E3F2FD
+  classDef step fill:#FFFFFF
+  classDef decision fill:#FFF8E1
+  classDef artifact fill:#E8F5E9
+  classDef red fill:#FFEBEE
 ```
 *High-level flow of integration workflows. Known good store feeds manifest construction for single and coordinated paths; full test suite success updates the store.*
 
