@@ -1,6 +1,6 @@
 # Integration Testing in a Distributed Monolith
 
-*RFC – Working draft. High-level overview of how our projects typically integrate (reflecting practices used in several codebases). Assumptions and trade-offs are noted; please flag gaps or over-complication so we can iterate. Easiest way for feedback is face to face!*
+*RFC – Working draft. High-level overview of how our projects typically integrate (reflecting practices used in several codebases). Assumptions and trade-offs are noted; please flag gaps or disagreeable sections so we can iterate. Easiest way for feedback is face to face!*
 
 Teams often split what is functionally a single system across many repositories. Each repository can show a green build while the assembled system is already broken. This article looks at how to bring system-level feedback earlier when you work that way. This article does not argue for pull requests, trunk-based development, or continuous integration itself. Those are well covered elsewhere. It also does not look into any specific tools or implementations for achieving these practices - except for providing a GitHub based example.
 
