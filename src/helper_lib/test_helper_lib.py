@@ -17,7 +17,11 @@ from pathlib import Path
 
 import pytest
 
-from src.helper_lib import get_current_git_hash, get_github_repo_info
+from src.helper_lib import (
+    get_current_git_hash,
+    get_github_repo_info,
+    parse_remote_git_output,
+)
 
 
 @pytest.fixture
@@ -25,6 +29,103 @@ def temp_dir():
     """Create a temporary directory for tests."""
     with tempfile.TemporaryDirectory() as temp_dir:
         yield Path(temp_dir)
+
+
+@pytest.fixture
+def git_repo(temp_dir):
+    """Create a real git repository for testing."""
+    git_dir = temp_dir / "test_repo"
+    git_dir.mkdir()
+
+    # Initialize git repo
+    subprocess.run(["git", "init"], cwd=git_dir, check=True, capture_output=True)
+    subprocess.run(
+        ["git", "config", "user.email", "test@example.com"], cwd=git_dir, check=True
+    )
+    subprocess.run(["git", "config", "user.name", "Test User"], cwd=git_dir, check=True)
+
+    # Create a test file and commit
+    test_file = git_dir / "test_file.py"
+    test_file.write_text("# Test file\nprint('hello')\n")
+    subprocess.run(["git", "add", "."], cwd=git_dir, check=True)
+    subprocess.run(["git", "commit", "-m", "Initial commit"], cwd=git_dir, check=True)
+
+    # Add a remote
+    subprocess.run(
+        ["git", "remote", "add", "origin", "git@github.com:test-user/test-repo.git"],
+        cwd=git_dir,
+        check=True,
+    )
+    return git_dir
+
+
+@pytest.fixture
+def git_repo_multiple_remotes(temp_dir):
+    """Create a git repository with multiple remotes for testing."""
+    git_dir = temp_dir / "test_repo_multiple"
+    git_dir.mkdir()
+
+    # Initialize git repo
+    subprocess.run(["git", "init"], cwd=git_dir, check=True, capture_output=True)
+    subprocess.run(
+        ["git", "config", "user.email", "test@example.com"], cwd=git_dir, check=True
+    )
+    subprocess.run(["git", "config", "user.name", "Test User"], cwd=git_dir, check=True)
+
+    # Create a test file and commit
+    test_file = git_dir / "test_file.py"
+    test_file.write_text("# Test file\nprint('hello')\n")
+    subprocess.run(["git", "add", "."], cwd=git_dir, check=True)
+    subprocess.run(["git", "commit", "-m", "Initial commit"], cwd=git_dir, check=True)
+
+    # Add multiple remotes
+    subprocess.run(
+        ["git", "remote", "add", "upstream", "git@github.com:upstream/test-repo.git"],
+        cwd=git_dir,
+        check=True,
+    )
+    subprocess.run(
+        ["git", "remote", "add", "origin", "git@github.com:test-user/test-repo.git"],
+        cwd=git_dir,
+        check=True,
+    )
+
+    return git_dir
+
+
+@pytest.fixture
+def git_repo_with_https_remote(temp_dir):
+    """Create a git repository with HTTPS remote for testing."""
+    git_dir = temp_dir / "test_repo_https"
+    git_dir.mkdir()
+
+    # Initialize git repo
+    subprocess.run(["git", "init"], cwd=git_dir, check=True, capture_output=True)
+    subprocess.run(
+        ["git", "config", "user.email", "test@example.com"], cwd=git_dir, check=True
+    )
+    subprocess.run(["git", "config", "user.name", "Test User"], cwd=git_dir, check=True)
+
+    # Create a test file and commit
+    test_file = git_dir / "test_file.py"
+    test_file.write_text("# Test file\nprint('hello')\n")
+    subprocess.run(["git", "add", "."], cwd=git_dir, check=True)
+    subprocess.run(["git", "commit", "-m", "Initial commit"], cwd=git_dir, check=True)
+
+    # Add HTTPS remote
+    subprocess.run(
+        [
+            "git",
+            "remote",
+            "add",
+            "origin",
+            "https://github.com/test-user/test-repo.git",
+        ],
+        cwd=git_dir,
+        check=True,
+    )
+
+    return git_dir
 
 
 # Test error handling
@@ -68,3 +169,72 @@ def test_git_repo_with_no_remotes(temp_dir):
     # Should raise an exception when trying to get repo info
     with pytest.raises(AssertionError):
         get_github_repo_info(git_dir)
+
+
+# Test git-related functions
+def test_parse_git_output_ssh_format():
+    """Test parsing git remote output in SSH format."""
+    git_line = "origin	git@github.com:test-user/test-repo.git (fetch)"
+    result = parse_remote_git_output(git_line)
+    assert result == "test-user/test-repo"
+
+
+def test_parse_git_output_https_format():
+    """Test parsing git remote output in HTTPS format."""
+    git_line = "origin	https://github.com/test-user/test-repo.git (fetch)"
+    result = parse_remote_git_output(git_line)
+    assert result == "test-user/test-repo"
+
+
+def test_parse_git_output_ssh_format_without_git_suffix():
+    """Test parsing git remote output in SSH format without .git suffix."""
+    git_line = "origin	git@github.com:test-user/test-repo (fetch)"
+    result = parse_remote_git_output(git_line)
+    assert result == "test-user/test-repo"
+
+
+def test_parse_git_output_invalid_format():
+    """Test parsing invalid git remote output."""
+    git_line = "invalid"
+    result = parse_remote_git_output(git_line)
+    assert result == ""
+
+
+def test_parse_git_output_empty_string():
+    """Test parsing empty git remote output."""
+    git_line = ""
+    result = parse_remote_git_output(git_line)
+    assert result == ""
+
+
+def test_get_github_repo_info_ssh_remote(git_repo):
+    """Test getting GitHub repository information with SSH remote."""
+    result = get_github_repo_info(git_repo)
+    assert result == "test-user/test-repo"
+
+
+def test_get_github_repo_info_https_remote(git_repo_with_https_remote):
+    """Test getting GitHub repository information with HTTPS remote."""
+    result = get_github_repo_info(git_repo_with_https_remote)
+    assert result == "test-user/test-repo"
+
+
+def test_get_github_repo_info_multiple_remotes(git_repo_multiple_remotes):
+    """Test GitHub repo info retrieval with multiple remotes (origin preferred)."""
+    result = get_github_repo_info(git_repo_multiple_remotes)
+    assert result == "test-user/test-repo"
+
+
+def test_get_current_git_hash(git_repo):
+    """Test getting current git hash."""
+    result = get_current_git_hash(git_repo)
+
+    # Verify it's a valid git hash (40 hex characters)
+    assert len(result) == 40
+    assert all(c in "0123456789abcdef" for c in result)
+
+
+def test_get_current_git_hash_invalid_repo(temp_dir):
+    """Test getting git hash from invalid repository."""
+    with pytest.raises(Exception):
+        get_current_git_hash(temp_dir)
