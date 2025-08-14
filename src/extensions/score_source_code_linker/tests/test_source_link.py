@@ -267,9 +267,7 @@ def example_source_link_text_non_existent(sphinx_base_dir):
 
 
 def make_source_link(needlinks):
-    return ", ".join(
-        f"{get_github_link(n)}<>{n.file}:{n.line}" for n in needlinks
-    )
+    return ", ".join(f"{get_github_link(n)}<>{n.file}:{n.line}" for n in needlinks)
 
 
 def compare_json_files(file1: Path, golden_file: Path):

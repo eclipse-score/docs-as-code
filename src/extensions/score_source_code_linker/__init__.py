@@ -27,8 +27,6 @@ from sphinx_needs.data import NeedsInfoType, NeedsMutable, SphinxNeedsData
 from sphinx_needs.logging import get_logger
 
 from src.extensions.score_source_code_linker.generate_source_code_links_json import (
-    find_git_root,
-    find_ws_root,
     generate_source_code_links_json,
 )
 from src.extensions.score_source_code_linker.needlinks import (
@@ -37,6 +35,8 @@ from src.extensions.score_source_code_linker.needlinks import (
     load_source_code_links_json,
 )
 from src.helper_lib import (
+    find_git_root,
+    find_ws_root,
     get_current_git_hash,
     get_github_base_url,
 )
@@ -65,7 +65,7 @@ def setup_once(app: Sphinx, config: Config):
     LOGGER.debug(f"DEBUG: Git root is {find_git_root()}")
 
     # Run only for local files!
-    # ws_root is not set when running on any on bazel run command repositories (dependencies) 
+    # ws_root is not set when running on any on bazel run command repositories (dependencies)
     ws_root = find_ws_root()
     if not ws_root:
         return
@@ -146,13 +146,11 @@ def group_by_need(source_code_links: list[NeedLink]) -> dict[str, list[NeedLink]
     return source_code_links_by_need
 
 
-def get_github_link(
-    needlink: NeedLink = DefaultNeedLink()
-) -> str:
+def get_github_link(needlink: NeedLink = DefaultNeedLink()) -> str:
     passed_git_root = find_git_root()
     if passed_git_root is None:
         passed_git_root = Path()
-    base_url = get_github_base_url()  
+    base_url = get_github_base_url()
     current_hash = get_current_git_hash(passed_git_root)
     return f"{base_url}/blob/{current_hash}/{needlink.file}#L{needlink.line}"
 

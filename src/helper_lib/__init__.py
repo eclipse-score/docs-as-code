@@ -83,7 +83,7 @@ def get_github_repo_info(git_root_cwd: Path) -> str:
 
     Args:
         git_root_cwd: Path to directory containing .git folder
-    
+
     Returns:
         Repository in format 'user/repo' or 'org/repo'
     """
@@ -115,7 +115,7 @@ def get_github_base_url() -> str:
 
     Execution context behavior:
     - 'bazel run' => ✅ Correct GitHub URL
-    - 'bazel build' => ⚠️ Uses Path() fallback when git_root is None  
+    - 'bazel build' => ⚠️ Uses Path() fallback when git_root is None
     - 'direct sphinx' => ✅ Correct GitHub URL
 
     Returns:
@@ -139,7 +139,7 @@ def get_current_git_hash(git_root: Path) -> str:
 
     Args:
         git_root: Path to directory containing .git folder
-        
+
     Returns:
         Full commit hash (40 character hex string)
     """
