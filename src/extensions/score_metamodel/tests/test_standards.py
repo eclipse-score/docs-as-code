@@ -947,10 +947,8 @@ class TestStandards:
         # Test if our assert works
         with pytest.raises(
             AssertionError,
-            match=(
-                "Can only provide one tag to "
-                "`my_pie_linked_standard_requirements_by_tag`"
-            ),
+            match="Can only provide one tag to "
+            + "`my_pie_linked_standard_requirements_by_tag`",
         ):
             standards.my_pie_linked_standard_requirements_by_tag(
                 needs, results, arg1="test_tag", arg2="test_test_tag"
