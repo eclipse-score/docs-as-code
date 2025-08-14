@@ -416,7 +416,7 @@ def test_get_current_git_hash(git_repo):
 
 def test_get_current_git_hash_invalid_repo(temp_dir):
     """Test getting git hash from invalid repository."""
-    with pytest.raises(Exception):
+    with pytest.raises(subprocess.CalledProcessError):
         get_current_git_hash(temp_dir)
 
 
@@ -519,7 +519,7 @@ def test_group_by_need_and_find_need_integration(sample_needlinks):
     )
 
     # Test finding needs for each group
-    for need_id, links in grouped.items():
+    for need_id in grouped:
         found_need = find_need(all_needs, need_id, ["PREFIX_"])
         if need_id in ["TREQ_ID_1", "TREQ_ID_2"]:
             assert found_need is not None

@@ -10,6 +10,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
+import contextlib
 import json
 import os
 import shutil
@@ -150,14 +151,11 @@ def sphinx_app_setup(
         base_dir = sphinx_base_dir
         docs_dir = base_dir / "docs"
 
+        original_cwd = None
         # CRITICAL: Change to a directory that exists and is accessible
         # This fixes the "no such file or directory" error in Bazel
-        original_cwd = None
-        try:
+        with contextlib.suppress(FileNotFoundError):
             original_cwd = os.getcwd()
-        except FileNotFoundError:
-            # Current working directory doesn't exist, which is the problem
-            pass
 
         # Change to the base_dir before creating SphinxTestApp
         os.chdir(base_dir)
@@ -172,12 +170,10 @@ def sphinx_app_setup(
             )
         finally:
             # Try to restore original directory, but don't fail if it doesn't exist
-            if original_cwd is not None:
-                try:
-                    os.chdir(original_cwd)
-                except (FileNotFoundError, OSError):
+            if original_cwd is not None and "original_cwd" in locals():
                     # Original directory might not exist anymore in Bazel sandbox
-                    pass
+                    with contextlib.suppress(FileNotFoundError, OSError):
+                        os.chdir(original_cwd)
 
     return _create_app
 

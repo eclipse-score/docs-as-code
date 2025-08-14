@@ -118,6 +118,7 @@ def sphinx_base_dir(tmp_path_factory: TempPathFactory, pytestconfig) -> Path:
         temp_dir = tmp_path_factory.mktemp("testing_dir")
         print(f"[blue]Using temporary directory: {temp_dir}[/blue]")
         return temp_dir
+
     CACHE_DIR.mkdir(parents=True, exist_ok=True)
     print(f"[green]Using persistent cache directory: {CACHE_DIR}[/green]")
     return CACHE_DIR
@@ -210,11 +211,10 @@ def parse_bazel_output(BR: BuildOutput, pytestconfig) -> BuildOutput:
     split_warnings = [x for x in err_lines if "WARNING: " in x]
     warning_dict: dict[str, list[str]] = defaultdict(list)
 
-    if pytestconfig.get_verbosity() >= 2:
-        if os.getenv("CI"):
-            print("[DEBUG] Raw warnings in CI:")
-            for i, warning in enumerate(split_warnings):
-                print(f"[DEBUG] Warning {i}: {repr(warning)}")
+    if pytestconfig.get_verbosity() >= 2 and  os.getenv("CI"):
+        print("[DEBUG] Raw warnings in CI:")
+        for i, warning in enumerate(split_warnings):
+            print(f"[DEBUG] Warning {i}: {repr(warning)}")
 
     for raw_warning in split_warnings:
         # In the CLI we seem to have some ansi codes in the warnings.
@@ -489,6 +489,9 @@ def setup_test_environment(sphinx_base_dir, pytestconfig):
 
     if verbosity >= 2:
         print(f"[DEBUG] git_root: {git_root}")
+
+    if git_root is None:
+        raise ValueError("Git root was None")
 
     # Get GitHub URL and current hash for git override
 

@@ -149,7 +149,7 @@ def draw_comp_incl_impl_int(
                     all_needs[iface],
                     'implements',
                 )
-            } \n"
+                } \n"
             proc_impl_interfaces[iface] = need["id"]
 
     # Add all elements which are used by component to global list
@@ -312,7 +312,12 @@ def draw_module(
                     structure_text += gen_interface_element(iface, all_needs, True)
 
                 # Draw connection between implementing components and interface
-                linkage_text += f"{gen_link_text(impl_comp, '-u->', all_needs[iface], 'implements')} \n"
+                linkage_text += f"{gen_link_text(
+                                    impl_comp,
+                                    '-u->',
+                                    all_needs[iface],
+                                    'implements'
+                                )} \n"
 
             else:
                 # Add only interface if component not defined
@@ -322,7 +327,12 @@ def draw_module(
         # Interface can be used by multiple components
         for comp in comps:
             # Draw connection between used interfaces and components
-            linkage_text += f"{gen_link_text(all_needs[comp], '-d[#green]->', all_needs[iface], 'uses')} \n"
+            linkage_text += f"{gen_link_text(
+                                all_needs[comp],
+                                '-d[#green]->',
+                                all_needs[iface],
+                                'uses'
+                            )} \n"
 
     # Remove duplicate links
     linkage_text = "\n".join(set(linkage_text.split("\n"))) + "\n"
@@ -366,7 +376,7 @@ class draw_full_feature:
                 interfacelist.append(iface)
 
         for iface in interfacelist:
-            if iface_need := all_needs.get(iface):
+            if all_needs.get(iface):
                 if iface:
                     comps = get_impl_comp_from_logic_iface(iface, all_needs)
 

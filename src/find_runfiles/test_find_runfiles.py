@@ -39,7 +39,10 @@ def test_run_incremental():
             env_runfiles="/home/vscode/.cache/bazel/_bazel_vscode/6084288f00f33db17acb4220ce8f1999/execroot/_main/bazel-out/k8-fastbuild/bin/process-docs/incremental.runfiles",
             git_root="/workspaces/process",
         )
-        == "/workspaces/process/bazel-out/k8-fastbuild/bin/process-docs/incremental.runfiles"
+        == (
+            "/workspaces/process/bazel-out/k8-fastbuild/bin/process-docs/"
+            "incremental.runfiles"
+        )
     )
 
     # in conf.py:
@@ -50,7 +53,10 @@ def test_run_incremental():
             env_runfiles="/home/vscode/.cache/bazel/_bazel_vscode/6084288f00f33db17acb4220ce8f1999/execroot/_main/bazel-out/k8-fastbuild/bin/process-docs/incremental.runfiles",
             git_root="/workspaces/process",
         )
-        == "/workspaces/process/bazel-out/k8-fastbuild/bin/process-docs/incremental.runfiles"
+        == (
+            "/workspaces/process/bazel-out/k8-fastbuild/bin/process-docs/"
+            "incremental.runfiles"
+        )
     )
 
 
@@ -90,5 +96,8 @@ def test3():
             env_runfiles="/home/vscode/.cache/bazel/_bazel_vscode/6084288f00f33db17acb4220ce8f1999/execroot/_main/bazel-out/k8-fastbuild/bin/other-docs/incremental.runfiles",
             git_root="/workspaces/process",
         )
-        == "/workspaces/process/bazel-out/k8-fastbuild/bin/other-docs/incremental.runfiles"
+        == (
+            "/workspaces/process/bazel-out/k8-fastbuild/bin/other-docs/"
+            "incremental.runfiles"
+        )
     )
