@@ -274,8 +274,8 @@ def compare_json_files(file1: Path, golden_file: Path):
     with open(golden_file) as f2:
         json2 = json.load(f2, object_hook=needlink_test_decoder)
     assert len(json1) == len(json2), (
-        f"{file1}'s lenth are not the same as in the golden file lenght. "
-        f"Len of{file1}: {len(json1)}. Len of Golden File: {len(json2)}"
+        f"{file1}'s lenth is not the same as the golden file. "
+        + f"Len of{file1}: {len(json1)}. Len of Golden File: {len(json2)}"
     )
     c1 = Counter(n for n in json1)
     c2 = Counter(n for n in json2)
