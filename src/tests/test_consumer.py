@@ -29,16 +29,20 @@ from src.extensions.score_source_code_linker.generate_source_code_links_json imp
 )
 
 """
-This script's main usecase is to test consumers of Docs-As-Code with the new changes made in PR's.
-This enables us to find new issues and problems we introduce with changes that we otherwise would only know much later.
+This script's main usecase is to test consumers of Docs-As-Code with
+the new changes made in PR's.
+This enables us to find new issues and problems we introduce with changes
+that we otherwise would only know much later.
 There are several things to note.
 
-- The `print` function has been overwritten by the 'rich' package to allow for richer text output.
+- The `print` function has been overwritten by the 'rich' package to allow for richer
+text output.
 - The script itself takes quiet a bit of time, roughly 5+ min for a full run.
 - If you need more output, enable it via `-v` or `-vv`
 - Start the script via the following command:
     - bazel run //:ide_support
-    - .venv_docs/bin/python -m pytest -s src/tests   (If you need more verbosity add `-v` or `-vv`)
+    - .venv_docs/bin/python -m pytest -s src/tests
+    (If you need more verbosity add `-v` or `-vv`)
 """
 
 # Max width of the printout
@@ -159,7 +163,8 @@ def filter_repos(repo_filter: str | None) -> list[ConsumerRepo]:
     # This prevents accidentally running zero tests due to typos
     if not filtered_repos and repo_filter:
         print(
-            f"[red]No valid repositories found in filter, running all repositories instead[/red]"
+            "[red]No valid repositories found in filter, "
+            "running all repositories instead[/red]"
         )
         return REPOS_TO_TEST
 
@@ -173,15 +178,13 @@ def replace_bazel_dep_with_local_override(module_content: str) -> str:
     pattern = rf'bazel_dep\(name = "score_docs_as_code", version = "[^"]+"\)'
 
     # Replacement with local_path_override
-    replacement = f"""bazel_dep(name = "score_docs_as_code", version = "0.0.0")
+    replacement = """bazel_dep(name = "score_docs_as_code", version = "0.0.0")
 local_path_override(
     module_name = "score_docs_as_code",
     path = "../docs_as_code"
 )"""
 
-    modified_content = re.sub(pattern, replacement, module_content)
-
-    return modified_content
+    return re.sub(pattern, replacement, module_content)
 
 
 def replace_bazel_dep_with_git_override(
@@ -196,9 +199,7 @@ git_override(
     commit = "{git_hash}"
 )'''
 
-    modified_content = re.sub(pattern, replacement, module_content)
-
-    return modified_content
+    return re.sub(pattern, replacement, module_content)
 
 
 def strip_ansi_codes(text: str) -> str:
@@ -219,7 +220,8 @@ def parse_bazel_output(BR: BuildOutput, pytestconfig) -> BuildOutput:
                 print(f"[DEBUG] Warning {i}: {repr(warning)}")
 
     for raw_warning in split_warnings:
-        # In the CLI we seem to have some ansi codes in the warnings. Need to strip those
+        # In the CLI we seem to have some ansi codes in the warnings.
+        # Need to strip those
         clean_warning = strip_ansi_codes(raw_warning).strip()
 
         logger = "[NO SPECIFIC LOGGER]"
@@ -239,19 +241,25 @@ def print_overview_logs(BR: BuildOutput):
     warning_loggers = list(BR.warnings.keys())
     len_left_test_result = len_max - len("TEST RESULTS")
     print(
-        f"[blue]{'=' * int(len_left_test_result / 2)}TEST RESULTS{'=' * int(len_left_test_result / 2)}[/blue]"
+        f"[blue]{'=' * int(len_left_test_result / 2)}"
+        f"TEST RESULTS"
+        f"{'=' * int(len_left_test_result / 2)}[/blue]"
     )
     print(f"[navy_blue]{'=' * len_max}[/navy_blue]")
     warning_total_loggers_msg = f"Warning Loggers Total: {len(warning_loggers)}"
     len_left_loggers = len_max - len(warning_total_loggers_msg)
     print(
-        f"[blue]{'=' * int(len_left_loggers / 2)}{warning_total_loggers_msg}{'=' * int(len_left_loggers / 2)}[/blue]"
+        f"[blue]{'=' * int(len_left_loggers / 2)}"
+        f"{warning_total_loggers_msg}"
+        f"{'=' * int(len_left_loggers / 2)}[/blue]"
     )
     warning_loggers = list(BR.warnings.keys())
-    warning_total_msg = f"Logger Warnings Accumulated"
+    warning_total_msg = "Logger Warnings Accumulated"
     len_left_loggers_total = len_max - len(warning_total_msg)
     print(
-        f"[blue]{'=' * int(len_left_loggers_total / 2)}{warning_total_msg}{'=' * int(len_left_loggers_total / 2)}[/blue]"
+        f"[blue]{'=' * int(len_left_loggers_total / 2)}"
+        f"{warning_total_msg}"
+        f"{'=' * int(len_left_loggers_total / 2)}[/blue]"
     )
     for logger in warning_loggers:
         if len(BR.warnings[logger]) == 0:
@@ -260,7 +268,9 @@ def print_overview_logs(BR: BuildOutput):
         warning_logger_msg = f"{logger} has {len(BR.warnings[logger])} warnings"
         len_left_logger = len_max - len(warning_logger_msg)
         print(
-            f"[{color}]{'=' * int(len_left_logger / 2)}{warning_logger_msg}{'=' * int(len_left_logger / 2)}[/{color}]"
+            f"[{color}]{'=' * int(len_left_logger / 2)}"
+            f"{warning_logger_msg}"
+            f"{'=' * int(len_left_logger / 2)}[/{color}]"
         )
     print(f"[blue]{'=' * len_max}[/blue]")
 
@@ -271,7 +281,9 @@ def verbose_printout(BR: BuildOutput):
     for logger in warning_loggers:
         len_left_logger = len_max - len(logger)
         print(
-            f"[cornflower_blue]{'=' * int(len_left_logger / 2)}{logger}{'=' * int(len_left_logger / 2)}[/cornflower_blue]"
+            f"[cornflower_blue]{'=' * int(len_left_logger / 2)}"
+            f"{logger}"
+            f"{'=' * int(len_left_logger / 2)}[/cornflower_blue]"
         )
         warnings = BR.warnings[logger]
         len_left_warnings = len_max - len(f"Warnings Found: {len(warnings)}\n")
@@ -279,7 +291,9 @@ def verbose_printout(BR: BuildOutput):
         if logger == "[NO SPECIFIC LOGGER]":
             color = "orange1"
         print(
-            f"[{color}]{'=' * int(len_left_warnings / 2)}{f'Warnings Found: {len(warnings)}'}{'=' * int(len_left_warnings / 2)}[/{color}]"
+            f"[{color}]{'=' * int(len_left_warnings / 2)}"
+            f"{f'Warnings Found: {len(warnings)}'}"
+            f"{'=' * int(len_left_warnings / 2)}[/{color}]"
         )
         print("\n".join(f"[{color}]{x}[/{color}]" for x in warnings))
 
@@ -291,13 +305,19 @@ def print_running_cmd(repo: str, cmd: str, local_or_git: str):
     len_left_local = len_max - len(local_or_git)
     print(f"\n[cyan]{'=' * len_max}[/cyan]")
     print(
-        f"[cornflower_blue]{'=' * int(len_left_repo / 2)}{repo}{'=' * int(len_left_repo / 2)}[/cornflower_blue]"
+        f"[cornflower_blue]{'=' * int(len_left_repo / 2)}"
+        f"{repo}"
+        f"{'=' * int(len_left_repo / 2)}[/cornflower_blue]"
     )
     print(
-        f"[cornflower_blue]{'=' * int(len_left_local / 2)}{local_or_git}{'=' * int(len_left_local / 2)}[/cornflower_blue]"
+        f"[cornflower_blue]{'=' * int(len_left_local / 2)}"
+        f"{local_or_git}"
+        f"{'=' * int(len_left_local / 2)}[/cornflower_blue]"
     )
     print(
-        f"[cornflower_blue]{'=' * int(len_left_cmd / 2)}{cmd}{'=' * int(len_left_cmd / 2)}[/cornflower_blue]"
+        f"[cornflower_blue]{'=' * int(len_left_cmd / 2)}"
+        f"{cmd}"
+        f"{'=' * int(len_left_cmd / 2)}[/cornflower_blue]"
     )
     print(f"[cyan]{'=' * len_max}[/cyan]")
 
@@ -310,7 +330,8 @@ def analyze_build_success(BR: BuildOutput) -> tuple[bool, str]:
     - '[NO SPECIFIC LOGGER]' warnings are always ignored
     """
 
-    # Unsure if this is good, as sometimes the returncode is 1 but it should still go through?
+    # Unsure if this is good, as sometimes the returncode is 1
+    # but it should still go through?
     # Logging for feedback here
     if BR.returncode != 0:
         return False, f"Build failed with return code {BR.returncode}"
@@ -354,7 +375,9 @@ def print_final_result(BR: BuildOutput, repo_name: str, cmd: str, pytestconfig):
     result_msg = f"{repo_name} - {cmd}: {status}"
     len_left = len_max - len(result_msg)
     print(
-        f"[{color}]{'=' * int(len_left / 2)}{result_msg}{'=' * int(len_left / 2)}[/{color}]"
+        f"[{color}]{'=' * int(len_left / 2)}"
+        f"{result_msg}"
+        f"{'=' * int(len_left / 2)}[/{color}]"
     )
     print(f"[{color}]Reason: {reason}[/{color}]")
     print(f"[{color}]{'=' * len_max}[/{color}]")
@@ -479,7 +502,8 @@ def setup_test_environment(sphinx_base_dir, pytestconfig):
         print(f"[DEBUG] gh_url: {gh_url}")
         print(f"[DEBUG] current_hash: {current_hash}")
         print(
-            f"[DEBUG] Working directory has uncommitted changes: {has_uncommitted_changes(curr_path)}"
+            "[DEBUG] Working directory has uncommitted changes: "
+            f"{has_uncommitted_changes(curr_path)}"
         )
 
     # Create symlink for local docs-as-code
@@ -564,9 +588,11 @@ def test_and_clone_repos_updated(sphinx_base_dir, pytestconfig):
         return
 
     print(
-        f"[green]Testing {len(repos_to_test)} repositories: {[r.name for r in repos_to_test]}[/green]"
+        f"[green]Testing {len(repos_to_test)} repositories: "
+        f"{[r.name for r in repos_to_test]}[/green]"
     )
-    # This might be hacky, but currently the best way I could solve the issue of going to the right place.
+    # This might be hacky, but currently the best way I could solve the issue
+    #  of going to the right place.
     gh_url, current_hash = setup_test_environment(sphinx_base_dir, pytestconfig)
 
     overall_success = True
@@ -615,11 +641,13 @@ def test_and_clone_repos_updated(sphinx_base_dir, pytestconfig):
                 if not is_success:
                     overall_success = False
 
-        # NOTE: We have to change directories back to the parent, otherwise the cloning & override will not be correct
+        # NOTE: We have to change directories back to the parent
+        # otherwise the cloning & override will not be correct
         os.chdir(Path.cwd().parent)
 
     # Printing a 'overview' table as a result
     print_result_table(results)
     assert overall_success, (
-        "Consumer Tests failed, see table for which commands specifically. Enable verbosity for warning/error printouts"
+        "Consumer Tests failed, see table for which commands specifically. "
+        "Enable verbosity for warning/error printouts"
     )

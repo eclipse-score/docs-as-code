@@ -224,18 +224,18 @@ def my_pie_linked_standard_requirements_by_tag(
        :labels: Linked, Not Linked
        :legend:
        :colors: LightSeaGreen, lightgray
-       :filter-func: score_metamodel.checks.standards.my_pie_linked_standard_requirements_by_tag(aspice40_man5)
+       :filter-func: path.to.function(tag_name)
 
     The call:
-    =>  score_metamodel.checks.standards.my_pie_linked_standard_requirements_by_tag(aspice40_man5)
+    =>  path.to.function(tag_name)
     would then pass 'aspice40_man5' as the arg1 and you have access to it then that way.
 
     NOTE:: There can not be any `.`(dots) in the tag passed into this function
 
 
     Return:
-        The direct return of this function is None. Sphinx-needs will get the mutated `results`
-        list, and use this to display/generate the piechart.
+        The direct return of this function is None. Sphinx-needs will get
+        the mutated `results`list, and use this to display/generate the piechart.
 
     """
     count_linked = 0

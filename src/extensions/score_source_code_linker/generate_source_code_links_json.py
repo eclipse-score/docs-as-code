@@ -1,5 +1,5 @@
 # *******************************************************************************
-# Copyright (c) 2024 Contributors to the Eclipse Foundation
+# Copyright (c) 2025 Contributors to the Eclipse Foundation
 #
 # See the NOTICE file(s) distributed with this work for additional
 # information regarding copyright ownership.
@@ -18,9 +18,7 @@ parse everything on every run.
 """
 
 import os
-import sys
 from pathlib import Path
-from pprint import pprint
 
 from src.extensions.score_source_code_linker.needlinks import (
     NeedLink,
@@ -74,7 +72,9 @@ def _extract_references_from_file(root: Path, file_path: Path) -> list[NeedLink]
     """Scan a single file for template strings and return findings."""
     assert root.is_absolute(), "Root path must be absolute"
     assert not file_path.is_absolute(), "File path must be relative to the root"
-    # assert file_path.is_relative_to(root), f"File path ({file_path}) must be relative to the root ({root})"
+    # assert file_path.is_relative_to(root), (
+    #     f"File path ({file_path}) must be relative to the root ({root})"
+    # )
     assert (root / file_path).exists(), (
         f"File {file_path} does not exist in root {root}."
     )
@@ -159,20 +159,3 @@ def generate_source_code_links_json(search_path: Path, file: Path):
     """
     needlinks = find_all_need_references(search_path)
     store_source_code_links_json(file, needlinks)
-
-
-# incremental_latest:
-# DEBUG: Workspace root is /home/lla2hi/score/docs-as-code
-# DEBUG: Current working directory is /home/lla2hi/.cache/bazel/_bazel_lla2hi/e35bb7c4cc72b99eb76653ab839f4f8e/execroot/_main/bazel-out/k8-fastbuild/bin/docs/incremental_latest.runfiles/_main
-# DEBUG: Git root is /home/lla2hi/score/docs-as-code
-
-# incremental_release: (-> bazel build sandbox of process repository)
-# DEBUG: Workspace root is None
-# DEBUG: Current working directory is /home/lla2hi/.cache/bazel/_bazel_lla2hi/e35bb7c4cc72b99eb76653ab839f4f8e/sandbox/linux-sandbox/25/execroot/_main (-> process repo!!)
-#    rst files are in .../bazel-out/k8-fastbuild/bin/external/score_process~/process/_docs_needs_latest/score_process~/*
-# DEBUG: Git root is /home/lla2hi/score/docs-as-code
-
-# docs_latest:
-# DEBUG: Workspace root is None
-# DEBUG: Current working directory is /home/lla2hi/.cache/bazel/_bazel_lla2hi/e35bb7c4cc72b99eb76653ab839f4f8e/sandbox/linux-sandbox/26/execroot/_main
-# DEBUG: Git root is /home/lla2hi/score/docs-as-code

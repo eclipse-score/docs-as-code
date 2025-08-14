@@ -11,32 +11,30 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 import json
+import os
+import shutil
+import subprocess
 from collections import Counter
 from collections.abc import Callable
 from pathlib import Path
+from typing import cast
 
 import pytest
-import os
-import subprocess
-import shutil
-
-from typing import cast
 from pytest import TempPathFactory
 from sphinx.testing.util import SphinxTestApp
 from sphinx_needs.data import SphinxNeedsData
-
 from test_requirement_links import needlink_test_decoder
+
 from src.extensions.score_source_code_linker import get_github_base_url, get_github_link
-from src.extensions.score_source_code_linker.needlinks import NeedLink
 from src.extensions.score_source_code_linker.generate_source_code_links_json import (
     find_ws_root,
 )
+from src.extensions.score_source_code_linker.needlinks import NeedLink
 
 
 @pytest.fixture()
 def sphinx_base_dir(tmp_path_factory: TempPathFactory) -> Path:
-    repo_path = tmp_path_factory.mktemp("test_git_repo")
-    return repo_path
+    return tmp_path_factory.mktemp("test_git_repo")
 
 
 @pytest.fixture()
@@ -222,7 +220,6 @@ TESTING SOURCE LINK
 
 @pytest.fixture()
 def example_source_link_text_all_ok(sphinx_base_dir):
-    repo_path = sphinx_base_dir
     return {
         "TREQ_ID_1": [
             NeedLink(
@@ -254,7 +251,6 @@ def example_source_link_text_all_ok(sphinx_base_dir):
 
 @pytest.fixture()
 def example_source_link_text_non_existent(sphinx_base_dir):
-    repo_path = sphinx_base_dir
     return [
         {
             "TREQ_ID_200": [
@@ -282,12 +278,14 @@ def compare_json_files(file1: Path, golden_file: Path):
     with open(golden_file, "r") as f2:
         json2 = json.load(f2, object_hook=needlink_test_decoder)
     assert len(json1) == len(json2), (
-        f"{file1}'s lenth are not the same as in the golden file lenght. Len of{file1}: {len(json1)}. Len of Golden File: {len(json2)}"
+        f"{file1}'s lenth are not the same as in the golden file lenght. "
+        f"Len of{file1}: {len(json1)}. Len of Golden File: {len(json2)}"
     )
     c1 = Counter(n for n in json1)
     c2 = Counter(n for n in json2)
     assert c1 == c2, (
-        f"Testfile does not have same needs as golden file. Testfile: {c1}\nGoldenFile: {c2}"
+        "Testfile does not have same needs as golden file. "
+        f"Testfile: {c1}\nGoldenFile: {c2}"
     )
 
 

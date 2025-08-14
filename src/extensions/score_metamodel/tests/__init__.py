@@ -46,8 +46,8 @@ def fake_check_logger():
 
         def assert_warning(self, expected_substring: str, expect_location: bool = True):
             """
-            Assert that the logger warning was called exactly once with a message containing
-            a specific substring.
+            Assert that the logger warning was called exactly once with a message
+            containing a specific substring.
 
             This also verifies that the defaults from need() are used correctly.
             So you must use need() to create the need object that is passed
@@ -71,8 +71,8 @@ def fake_check_logger():
 
         def assert_info(self, expected_substring: str, expect_location: bool = True):
             """
-            Assert that the logger info was called exactly once with a message containing
-            a specific substring.
+            Assert that the logger info was called exactly once with a message
+            containing a specific substring.
 
             This also verifies that the defaults from need() are used correctly.
             So you must use need() to create the need object that is passed

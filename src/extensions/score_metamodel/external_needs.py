@@ -52,9 +52,9 @@ def _parse_bazel_external_need(s: str) -> ExternalNeedsSource | None:
         return ExternalNeedsSource(
             bazel_module=repo, path_to_target=path_to_target, target=target
         )
-    else:
-        # Unknown data target. Probably not a needs.json file.
-        return None
+
+    # Unknown data target. Probably not a needs.json file.
+    return None
 
 
 def parse_external_needs_sources_from_DATA(v: str) -> list[ExternalNeedsSource]:
@@ -148,7 +148,8 @@ def connect_external_needs(app: Sphinx, config: Config):
             fixed_json_file = Path(r) / json_file
         else:
             logger.debug(
-                "Running outside bazel. Determining git root for external needs JSON file."
+                "Running outside bazel. "
+                "Determining git root for external needs JSON file."
             )
             git_root = Path.cwd().resolve()
             while not (git_root / ".git").exists():
@@ -182,7 +183,8 @@ def connect_external_needs(app: Sphinx, config: Config):
                 "json_path": json_file,
             }
         )
-        # Making the prefixes uppercase here to match sphinx_needs, as it does this internally too.
+        # Making the prefixes uppercase here to match sphinx_needs,
+        # as it does this internally too.
         assert isinstance(app.config.allowed_external_prefixes, list)  # pyright: ignore[reportAny]
         app.config.allowed_external_prefixes.append(  # pyright: ignore[reportUnknownMemberType]
             needs_json_data["project_prefix"].upper()  # pyright: ignore[reportAny]

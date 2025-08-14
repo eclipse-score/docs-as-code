@@ -16,7 +16,6 @@ from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
-import src.extensions.score_header_service.header_service as hs
 from pytest import TempPathFactory
 from sphinx.testing.util import SphinxTestApp
 
@@ -85,8 +84,8 @@ extensions = [
     "src.extensions.score_header_service",
 ]
 needs_types = [
-    dict(title = "Review Header", directive = "review_header", color="#BFD8D2", style="node",
-        prefix = "review_header__"),
+    dict(title = "Review Header", directive = "review_header",
+      color="#BFD8D2", style="node", prefix = "review_header__"),
 ]
 needs_id_regex = ".*"
 needs_extra_options = [

@@ -13,13 +13,12 @@
 import os
 import re
 
-from sphinx.application import Sphinx
-from sphinx_needs.data import NeedsInfoType
-
 from score_metamodel import (
     CheckLogger,
     local_check,
 )
+from sphinx.application import Sphinx
+from sphinx_needs.data import NeedsInfoType
 
 
 @local_check
@@ -66,5 +65,8 @@ def id_contains_feature(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
         log.warning_for_option(
             need,
             "id",
-            f"Featurepart '{featureparts}' not in path '{docname}' or abbreviation not ok, expected: '{initials}'.",
+            (
+                f"Featurepart '{featureparts}' not in path '{docname}' "
+                f"or abbreviation not ok, expected: '{initials}'."
+            ),
         )

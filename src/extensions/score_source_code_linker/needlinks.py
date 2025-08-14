@@ -59,13 +59,13 @@ def needlink_decoder(d: dict[str, Any]) -> NeedLink | dict[str, Any]:
             need=d["need"],
             full_line=d["full_line"],
         )
-    else:
-        # It's something else, pass it on to other decoders
-        return d
+    # It's something else, pass it on to other decoders
+    return d
 
 
 def store_source_code_links_json(file: Path, needlist: list[NeedLink]):
-    # After `rm -rf _build` or on clean builds the directory does not exist, so we need to create it
+    # After `rm -rf _build` or on clean builds the directory does not exist,
+    # so we need to create it
     file.parent.mkdir(exist_ok=True)
     with open(file, "w") as f:
         json.dump(
