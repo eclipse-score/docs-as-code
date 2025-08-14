@@ -26,10 +26,8 @@ from sphinx_needs.data import SphinxNeedsData
 from test_requirement_links import needlink_test_decoder
 
 from src.extensions.score_source_code_linker import get_github_base_url, get_github_link
-from src.extensions.score_source_code_linker.generate_source_code_links_json import (
-    find_ws_root,
-)
 from src.extensions.score_source_code_linker.needlinks import NeedLink
+from src.helper_lib import find_ws_root
 
 
 @pytest.fixture()
