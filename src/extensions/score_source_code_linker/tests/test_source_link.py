@@ -171,9 +171,9 @@ def sphinx_app_setup(
         finally:
             # Try to restore original directory, but don't fail if it doesn't exist
             if original_cwd is not None and "original_cwd" in locals():
-                    # Original directory might not exist anymore in Bazel sandbox
-                    with contextlib.suppress(FileNotFoundError, OSError):
-                        os.chdir(original_cwd)
+                # Original directory might not exist anymore in Bazel sandbox
+                with contextlib.suppress(FileNotFoundError, OSError):
+                    os.chdir(original_cwd)
 
     return _create_app
 

@@ -211,7 +211,7 @@ def parse_bazel_output(BR: BuildOutput, pytestconfig) -> BuildOutput:
     split_warnings = [x for x in err_lines if "WARNING: " in x]
     warning_dict: dict[str, list[str]] = defaultdict(list)
 
-    if pytestconfig.get_verbosity() >= 2 and  os.getenv("CI"):
+    if pytestconfig.get_verbosity() >= 2 and os.getenv("CI"):
         print("[DEBUG] Raw warnings in CI:")
         for i, warning in enumerate(split_warnings):
             print(f"[DEBUG] Warning {i}: {repr(warning)}")

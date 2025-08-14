@@ -70,11 +70,11 @@ def check_id_length(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
     if parts[1] == "example_feature":
         max_lenght += 17  # _example_feature_
     if len(need["id"]) > max_lenght:
-        length =0
-        if 'example_feature' not in need['id'] :
-            length = len(need['id'])
+        length = 0
+        if "example_feature" not in need["id"]:
+            length = len(need["id"])
         else:
-            length = len(need['id']) - 17
+            length = len(need["id"]) - 17
         msg = (
             f"exceeds the maximum allowed length of 45 characters "
             "(current length: "
