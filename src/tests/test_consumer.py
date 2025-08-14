@@ -478,19 +478,17 @@ def run_test_commands():
 def setup_test_environment(sphinx_base_dir, pytestconfig):
     """Set up the test environment and return necessary paths and metadata."""
     git_root = find_git_root()
+    if git_root is None:
+        assert False, "Git root was none"
     gh_url = get_github_base_url()
     current_hash = get_current_git_commit(git_root)
+
     os.chdir(Path(sphinx_base_dir).absolute())
-    #curr_path = Path(__file__).parent
 
     verbosity = pytestconfig.get_verbosity()
 
     if verbosity >= 2:
-        #print(f"[DEBUG] curr_path: {curr_path}")
         print(f"[DEBUG] git_root: {git_root}")
-
-    if git_root is None:
-        assert False, "Git root was none"
 
     # Get GitHub URL and current hash for git override
 
