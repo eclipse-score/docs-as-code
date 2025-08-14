@@ -26,10 +26,8 @@ from sphinx_needs.data import SphinxNeedsData
 from test_requirement_links import needlink_test_decoder
 
 from src.extensions.score_source_code_linker import get_github_base_url, get_github_link
-from src.extensions.score_source_code_linker.generate_source_code_links_json import (
-    find_ws_root,
-)
 from src.extensions.score_source_code_linker.needlinks import NeedLink
+from src.helper_lib import find_ws_root
 
 
 @pytest.fixture()
@@ -255,7 +253,7 @@ def example_source_link_text_non_existent(sphinx_base_dir):
         {
             "TREQ_ID_200": [
                 NeedLink(
-                    file=Path(f"src/bad_implementation.py"),
+                    file=Path("src/bad_implementation.py"),
                     line=2,
                     tag="#" + " req-Id:",
                     need="TREQ_ID_200",
@@ -266,16 +264,14 @@ def example_source_link_text_non_existent(sphinx_base_dir):
     ]
 
 
-def make_source_link(ws_root: Path, needlinks):
-    return ", ".join(
-        f"{get_github_link(ws_root, n)}<>{n.file}:{n.line}" for n in needlinks
-    )
+def make_source_link(needlinks):
+    return ", ".join(f"{get_github_link(n)}<>{n.file}:{n.line}" for n in needlinks)
 
 
 def compare_json_files(file1: Path, golden_file: Path):
-    with open(file1, "r") as f1:
+    with open(file1) as f1:
         json1 = json.load(f1, object_hook=needlink_test_decoder)
-    with open(golden_file, "r") as f2:
+    with open(golden_file) as f2:
         json2 = json.load(f2, object_hook=needlink_test_decoder)
     assert len(json1) == len(json2), (
         f"{file1}'s lenth are not the same as in the golden file lenght. "
@@ -315,7 +311,7 @@ def test_source_link_integration_ok(
             assert f"TREQ_ID_{i}" in needs_data
             need_as_dict = cast(dict[str, object], needs_data[f"TREQ_ID_{i}"])
             expected_link = make_source_link(
-                ws_root, example_source_link_text_all_ok[f"TREQ_ID_{i}"]
+                example_source_link_text_all_ok[f"TREQ_ID_{i}"]
             )
             # extra_options are only available at runtime
             # Compare contents, regardless of order.

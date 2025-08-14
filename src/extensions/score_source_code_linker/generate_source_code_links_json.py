@@ -25,31 +25,6 @@ from src.extensions.score_source_code_linker.needlinks import (
     store_source_code_links_json,
 )
 
-
-def find_ws_root() -> Path | None:
-    """Find the current MODULE.bazel file"""
-    ws_dir = os.environ.get("BUILD_WORKSPACE_DIRECTORY", None)
-    return Path(ws_dir) if ws_dir else None
-
-
-def find_git_root(start_path: str | Path = "") -> Path | None:
-    """Find the git root directory starting from the given path or __file__."""
-    if start_path == "":
-        start_path = __file__
-
-    git_root = Path(start_path).resolve()
-    esbonio_search = False
-    while not (git_root / ".git").exists():
-        git_root = git_root.parent
-        if git_root == Path("/"):
-            # fallback to cwd when building with python -m sphinx docs _build -T
-            if esbonio_search:
-                return None
-            git_root = Path.cwd().resolve()
-            esbonio_search = True
-    return git_root
-
-
 TAGS = [
     "# " + "req-traceability:",
     "# " + "req-Id:",
