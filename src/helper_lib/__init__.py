@@ -122,7 +122,6 @@ def get_github_base_url() -> str:
         GitHub URL in format 'https://github.com/user/repo'
     """
     passed_git_root = find_git_root()
-    print("THIS IS PASSED GIT ROOT IN GH BASE URL", passed_git_root)
     if passed_git_root is None:
         passed_git_root = Path()
     repo_info = get_github_repo_info(passed_git_root)
