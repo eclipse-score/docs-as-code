@@ -890,14 +890,14 @@
   },
   {
     "file": "src/extensions/score_metamodel/checks/attributes_format.py",
-    "line": 89,
+    "line": 98,
     "tag": "# req-Id:",
     "need": "tool_req__docs_common_attr_desc_wording",
     "full_line": "# req-Id: tool_req__docs_common_attr_desc_wording"
   },
   {
     "file": "src/extensions/score_metamodel/checks/attributes_format.py",
-    "line": 90,
+    "line": 99,
     "tag": "# req-Id:",
     "need": "tool_req__docs_common_attr_title",
     "full_line": "# req-Id: tool_req__docs_common_attr_title"
