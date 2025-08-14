@@ -70,7 +70,8 @@ def get_runfiles_dir() -> Path:
 
 def find_correct_path(runfiles: str) -> str:
     """
-    This ensures that the 'plantuml' binary path is found in local 'score_docs_as_code' and module use.
+    This ensures that the 'plantuml' binary path is found in local 'score_docs_as_code'
+    and module use.
     """
     dirs = [str(x) for x in Path(runfiles).glob("*score_docs_as_code+")]
     if dirs:

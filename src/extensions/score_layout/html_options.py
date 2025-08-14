@@ -73,7 +73,8 @@ def return_html_context(app: Sphinx) -> dict[str, str]:
         and not app.config.html_context.get("github_repo")
     ):
         return {
-            # still required for use_edit_page_button and other elements except version switcher
+            # still required for use_edit_page_button and other elements
+            # except version switcher
             "github_user": "dummy",
             "github_repo": "dummy",
             "github_version": "main",

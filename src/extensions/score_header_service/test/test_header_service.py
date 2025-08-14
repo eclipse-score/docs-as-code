@@ -15,8 +15,9 @@ from collections.abc import Callable
 from unittest.mock import ANY, MagicMock, patch
 
 import pytest
-import src.extensions.score_header_service.header_service as hs
 from sphinx.util.docutils import SphinxDirective
+
+import src.extensions.score_header_service.header_service as hs
 
 
 @pytest.fixture(scope="session", autouse=True)

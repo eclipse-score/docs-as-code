@@ -105,7 +105,8 @@ def _run_checks(app: Sphinx, exception: Exception | None) -> None:
     if exception:
         return
 
-    # Filter out external needs, as checks are only intended to be run on internal needs.
+    # Filter out external needs, as checks are only intended to be run
+    # on internal needs.
     needs_all_needs = SphinxNeedsData(app.env).get_needs_view()
 
     logger.debug(f"Running checks for {len(needs_all_needs)} needs")
@@ -145,13 +146,14 @@ def _run_checks(app: Sphinx, exception: Exception | None) -> None:
 
     if log.has_infos:
         log.info(
-            "Some needs have issues related to the new checks. See the log for more information."
+            "Some needs have issues related to the new checks. "
+            "See the log for more information."
         )
         # TODO: exit code
 
 
 def convert_checks_to_dataclass(checks_dict) -> list[ProhibitedWordCheck]:
-    prohibited_words_checks = [
+    return [
         ProhibitedWordCheck(
             name=check_name,
             option_check={k: v for k, v in check_config.items() if k != "types"},
@@ -159,7 +161,6 @@ def convert_checks_to_dataclass(checks_dict) -> list[ProhibitedWordCheck]:
         )
         for check_name, check_config in checks_dict.items()
     ]
-    return prohibited_words_checks
 
 
 def load_metamodel_data():
@@ -189,11 +190,6 @@ def load_metamodel_data():
     # Get the stop_words and weak_words as separate lists
     proh_checks_dict = data.get("prohibited_words_checks", {})
     prohibited_words_checks = convert_checks_to_dataclass(proh_checks_dict)
-
-    # prohibited_words_checks= [ProhibitedWordCheck(**check) for check in pro_checks.values()]
-
-    # stop_words_list = global_base_options.get("prohibited_words", {}).get("title", [])
-    # weak_words_list = global_base_options.get("prohibited_words", {}).get("content", [])
 
     # Default options by sphinx, sphinx-needs or anything else we need to account for
     default_options_list = default_options()

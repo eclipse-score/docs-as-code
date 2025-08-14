@@ -40,11 +40,15 @@ def check_id_format(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
     if id_parts_len != expected_parts:
         msg = ""
         if expected_parts == 2:
-            msg = "expected to consist of this format: `<Req Type>__<Abbreviations>`. Only one '__' is allowed in this need's id."
+            msg = (
+                "expected to consist of this format: `<Req Type>__<Abbreviations>`. "
+                "Only one '__' is allowed in this need's id."
+            )
         elif expected_parts == 3:
             msg = (
                 "expected to consist of this format: "
-                "`<Req Type>__<Abbreviations>__<Architectural Element>`. Only two '__' are allowed in this need's id."
+                "`<Req Type>__<Abbreviations>__<Architectural Element>`. "
+                "Only two '__' are allowed in this need's id."
             )
         log.warning_for_option(need, "id", msg)
 
@@ -56,8 +60,9 @@ def check_id_length(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
     While the recommended limit is 30 characters, this check enforces a strict maximum
     of 45 characters.
     If the ID exceeds 45 characters, a warning is logged specifying the actual length.
-    Any examples that are required to have 3 parts (2x'__') have an exception, and get 17 extra characters
-    to compensate for the lenght of `_example_feature_` that would be replaced by actually feature names.
+    Any examples that are required to have 3 parts (2x'__') have an exception,
+    and get 17 extra characters to compensate for the lenght of `_example_feature_`
+    that would be replaced by actually feature names.
     ---
     """
     max_lenght = 45
@@ -67,7 +72,8 @@ def check_id_length(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
     if len(need["id"]) > max_lenght:
         msg = (
             f"exceeds the maximum allowed length of 45 characters "
-            f"(current length: {len(need['id']) if 'example_feature' not in need['id'] else len(need['id']) - 17})."
+            "(current length: "
+            f"{len(need['id']) if 'example_feature' not in need['id'] else len(need['id']) - 17})."
         )
         log.warning_for_option(need, "id", msg)
 
@@ -82,7 +88,10 @@ def _check_options_for_prohibited_words(
         forbidden_words = prohibited_word_checks.option_check[option]
         for word in need[option].split():
             if word in forbidden_words:
-                msg = f"contains a weak word: `{word}` in option: `{option}`. Please revise the wording."
+                msg = (
+                    f"contains a weak word: `{word}` in option: `{option}`. "
+                    "Please revise the wording."
+                )
                 log.warning_for_need(need, msg)
 
 

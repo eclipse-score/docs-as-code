@@ -42,9 +42,7 @@ from score_draw_uml_funcs.helpers import (
     get_impl_comp_from_logic_iface,
     get_interface_from_component,
     get_interface_from_int,
-    get_logical_interface_real,
     get_module,
-    get_real_interface_logical,
 )
 from sphinx.application import Sphinx
 from sphinx_needs.logging import get_logger
@@ -97,10 +95,10 @@ def draw_comp_incl_impl_int(
 
     :param dict[str,str] need: Component which should be drawn
     :param dict all_needs: Dictionary containing all needs
-    :param dict[str,dict] proc_impl_interfaces: Dictionary containing all implemented interfaces
-    which were already processed during this cycle
-    :param dict[str,dict] proc_used_interfaces: Dictionary containing all used interfaces
-    which were already processed during this cycle
+    :param dict[str,dict] proc_impl_interfaces: Dictionary containing
+    all implemented interfaces which were already processed during this cycle
+    :param dict[str,dict] proc_used_interfaces: Dictionary containing
+    all used interfaces which were already processed during this cycle
     """
     # Draw outer component
     structure_text = f"{gen_struct_element('component', need)}  {{\n"

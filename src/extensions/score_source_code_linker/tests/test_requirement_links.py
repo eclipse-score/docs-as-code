@@ -14,14 +14,14 @@ import json
 import os
 import subprocess
 import tempfile
-from pathlib import Path
-from sphinx_needs.data import NeedsMutable
-from src.extensions.score_metamodel.tests import need as test_need
 from dataclasses import asdict
+from pathlib import Path
 from typing import Any
 
-
 import pytest
+from sphinx_needs.data import NeedsMutable
+
+from src.extensions.score_metamodel.tests import need as test_need
 
 # Import the module under test
 # Note: You'll need to adjust these imports based on your actual module structure
@@ -29,7 +29,6 @@ from src.extensions.score_source_code_linker import (
     find_need,
     get_cache_filename,
     get_current_git_hash,
-    get_github_base_url,
     get_github_link,
     get_github_repo_info,
     group_by_need,
@@ -37,8 +36,8 @@ from src.extensions.score_source_code_linker import (
 )
 from src.extensions.score_source_code_linker.needlinks import (
     NeedLink,
-    store_source_code_links_json,
     load_source_code_links_json,
+    store_source_code_links_json,
 )
 
 """
@@ -84,9 +83,9 @@ def needlink_test_decoder(d: dict[str, Any]) -> NeedLink | dict[str, Any]:
             need=d["need"],
             full_line=decode_comment(d["full_line"]),
         )
-    else:
-        # It's something else, pass it on to other decoders
-        return d
+
+    # It's something else, pass it on to other decoders
+    return d
 
 
 @pytest.fixture
@@ -401,7 +400,7 @@ def test_get_github_repo_info_https_remote(git_repo_with_https_remote):
 
 
 def test_get_github_repo_info_multiple_remotes(git_repo_multiple_remotes):
-    """Test getting GitHub repository information with multiple remotes (should prefer origin)."""
+    """Test GitHub repo info retrieval with multiple remotes (origin preferred)."""
     result = get_github_repo_info(git_repo_multiple_remotes)
     assert result == "test-user/test-repo"
 
@@ -591,7 +590,8 @@ def another_function():
         ["git", "commit", "-m", "Add implementation files"], cwd=git_repo, check=True
     )
 
-    # Create needlinks manually (simulating what generate_source_code_links_json would do)
+    # Create needlinks manually
+    # (simulating what generate_source_code_links_json would do)
     needlinks = [
         NeedLink(
             file=Path("src/implementation1.py"),

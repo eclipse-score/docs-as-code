@@ -11,6 +11,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 from sphinx.application import Sphinx
+
 from src.extensions.score_header_service.header_service import register
 
 

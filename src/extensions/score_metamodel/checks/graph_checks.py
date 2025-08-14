@@ -158,7 +158,8 @@ def check_metamodel_graph(
         check_to_perform: dict[str, str | dict] = check_config.get("check")
         explanation = check_config.get("explanation", "")
         assert explanation != "", (
-            f"Explanation for graph check {check_name} is missing. Explanations are mandatory for graph checks."
+            f"Explanation for graph check {check_name} is missing. "
+            "Explanations are mandatory for graph checks."
         )
         # Get all needs matching the selection criteria
         selected_needs = filter_needs_by_criteria(
@@ -168,7 +169,10 @@ def check_metamodel_graph(
         for need in selected_needs:
             for parent_relation in list(check_to_perform.keys()):
                 if parent_relation not in need:
-                    msg = f"Attribute not defined: `{parent_relation}` in need `{need['id']}`."
+                    msg = (
+                        f"Attribute not defined: `{parent_relation}` "
+                        f"in need `{need['id']}`."
+                    )
                     log.warning_for_need(need, msg)
                     continue
 

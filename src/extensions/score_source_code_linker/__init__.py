@@ -146,7 +146,9 @@ def group_by_need(source_code_links: list[NeedLink]) -> dict[str, list[NeedLink]
 def parse_git_output(str_line: str) -> str:
     if len(str_line.split()) < 2:
         LOGGER.warning(
-            f"Got wrong input line from 'get_github_repo_info'. Input: {str_line}. Expected example: 'origin git@github.com:user/repo.git'"
+            "Got wrong input line from 'get_github_repo_info'. "
+            f"Input: {str_line}."
+            "Expected example: 'origin git@github.com:user/repo.git'"
         )
         return ""
     url = str_line.split()[1]  # Get the URL part
@@ -170,11 +172,13 @@ def get_github_repo_info(git_root_cwd: Path) -> str:
     else:
         # If we do not find 'origin' we just take the first line
         LOGGER.info(
-            "Did not find origin remote name. Will now take first result from: 'git remote -v'"
+            "Did not find origin remote name. "
+            "Will now take first result from: 'git remote -v'"
         )
         repo = parse_git_output(process.stdout.split("\n")[0])
     assert repo != "", (
-        "Remote repository is not defined. Make sure you have a remote set. Check this via 'git remote -v'"
+        "Remote repository is not defined. Make sure you have a remote set. "
+        "Check this via 'git remote -v'"
     )
     return repo
 
@@ -246,10 +250,11 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
         needs
     )  # TODO: why do we create a copy? Can we also needs_copy = needs[:]? copy(needs)?
 
-    for id, need in needs.items():
+    for _, need in needs.items():
         if need.get("source_code_link"):
             LOGGER.debug(
-                f"?? Need {need['id']} already has source_code_link: {need.get('source_code_link')}"
+                f"?? Need {need['id']} already has source_code_link: "
+                f"{need.get('source_code_link')}"
             )
 
     source_code_links = load_source_code_links_json(get_cache_filename(app.outdir))
@@ -283,7 +288,8 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
             Needs_Data.remove_need(need["id"])
             Needs_Data.add_need(need)
 
-    # source_code_link of affected needs was overwritten. Make sure it's empty in all others!
+    # source_code_link of affected needs was overwritten.
+    # Make sure it's empty in all others!
     for need in needs.values():
         if need["id"] not in source_code_links_by_need:
             need["source_code_link"] = ""

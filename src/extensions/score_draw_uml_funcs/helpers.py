@@ -269,7 +269,8 @@ def get_logical_interface_real(
         logical_ifop_need = all_needs.get(logical_ifop[0])
         if not logical_ifop_need:
             logger.info(
-                f"{real_ifop}: Logical Interface Operation Need not defined, probably misspelled!"
+                f"{real_ifop}: Logical Interface Operation Need not defined, "
+                "probably misspelled!"
             )
             continue
 

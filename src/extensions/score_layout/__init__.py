@@ -37,7 +37,8 @@ def update_config(app: Sphinx, _config: Any):
 
     # Setting HTML static path
     # For now this seems the only place this is used / needed.
-    # In the future it might be a good idea to make this available in other places, maybe via the 'find_runfiles' lib
+    # In the future it might be a good idea to make this available in other places,
+    # maybe via the 'find_runfiles' lib
     if r := os.getenv("RUNFILES_DIR"):
         dirs = [str(x) for x in Path(r).glob("*score_docs_as_code+")]
         if dirs:
