@@ -39,7 +39,6 @@ from src.helper_lib import (
     find_git_root,
     find_ws_root,
     get_current_git_hash,
-    get_github_base_url,
 )
 
 LOGGER = get_logger(__name__)
@@ -197,6 +196,12 @@ def get_git_root(git_root: Path = Path()) -> Path:
     else:
         passed_git_root = git_root
     return passed_git_root
+
+
+def get_github_base_url(git_root: Path = Path()) -> str:
+    passed_git_root = get_git_root(git_root)
+    repo_info = get_github_repo_info(passed_git_root)
+    return f"https://github.com/{repo_info}"
 
 
 def get_github_link(
