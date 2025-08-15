@@ -11,6 +11,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 import re
+from os import error
 
 from score_metamodel import (
     CheckLogger,
@@ -41,7 +42,7 @@ def _normalize_values(raw_value: str | list[str] | None) -> list[str]:
         return [raw_value]
     if isinstance(raw_value, list) and all(isinstance(v, str) for v in raw_value):
         return raw_value
-    raise ValueError("unexpected types")
+    raise ValueError
 
 
 def _validate_value_pattern(
@@ -88,9 +89,13 @@ def validate_fields(
                     need, f"is missing required {field_type}: `{field}`."
                 )
             continue  # Skip empty optional fields
-
-        values = _normalize_values(raw_value)
-
+        try:
+            values = _normalize_values(raw_value)
+        except ValueError as err:
+            raise ValueError(
+                f"An Attribute inside need {need['id']} is "
+                "not of type str. Only Strings are allowed"
+            ) from err
         # The filter ensures that the function is only called when needed.
         for value in values:
             if allowed_prefixes:

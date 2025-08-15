@@ -156,7 +156,7 @@ class TestCheckOptions:
             target_id="wf_req__001",
             id="wf_req__001",
             type="workflow",
-            some_invalid_option=42,
+            some_invalid_option="42",
             docname=None,
             lineno=None,
         )

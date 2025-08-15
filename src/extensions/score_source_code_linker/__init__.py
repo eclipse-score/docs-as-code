@@ -15,7 +15,6 @@
 source code links from a JSON file and add them to the needs.
 """
 
-import subprocess
 from collections import defaultdict
 from copy import deepcopy
 from pathlib import Path
@@ -39,6 +38,7 @@ from src.helper_lib import (
     find_git_root,
     find_ws_root,
     get_current_git_hash,
+    get_github_base_url,
 )
 
 LOGGER = get_logger(__name__)
@@ -156,63 +156,6 @@ def get_github_link(needlink: NeedLink | None = None) -> str:
     base_url = get_github_base_url()
     current_hash = get_current_git_hash(passed_git_root)
     return f"{base_url}/blob/{current_hash}/{needlink.file}#L{needlink.line}"
-
-
-def parse_git_output(str_line: str) -> str:
-    if len(str_line.split()) < 2:
-        LOGGER.warning(
-            "Got wrong input line from 'get_github_repo_info'. "
-            f"Input: {str_line}."
-            "Expected example: 'origin git@github.com:user/repo.git'"
-        )
-        return ""
-    url = str_line.split()[1]  # Get the URL part
-    # Handle SSH format (git@github.com:user/repo.git)
-    path = (
-        url.split(":")[1] if url.startswith("git@") else "/".join(url.split("/")[3:])
-    )  # Get part after github.com/
-    return path.replace(".git", "")
-
-
-def get_github_repo_info(git_root_cwd: Path) -> str:
-    process = subprocess.run(
-        ["git", "remote", "-v"], capture_output=True, text=True, cwd=git_root_cwd
-    )
-    repo = ""
-    for line in process.stdout.split("\n"):
-        if "origin" in line and "(fetch)" in line:
-            repo = parse_git_output(line)
-            break
-    else:
-        # If we do not find 'origin' we just take the first line
-        LOGGER.info(
-            "Did not find origin remote name. "
-            "Will now take first result from: 'git remote -v'"
-        )
-        repo = parse_git_output(process.stdout.split("\n")[0])
-    assert repo != "", (
-        "Remote repository is not defined. Make sure you have a remote set. "
-        "Check this via 'git remote -v'"
-    )
-    return repo
-
-
-def get_git_root(git_root: Path = Path()) -> Path:
-    # This is kinda ugly, doing this to reduce type errors.
-    # There might be a nicer way to do this
-    if git_root == Path():
-        passed_git_root = find_git_root()
-        if passed_git_root is None:
-            return Path()
-    else:
-        passed_git_root = git_root
-    return passed_git_root
-
-
-def get_github_base_url(git_root: Path = Path()) -> str:
-    passed_git_root = get_git_root(git_root)
-    repo_info = get_github_repo_info(passed_git_root)
-    return f"https://github.com/{repo_info}"
 
 
 # req-Id: tool_req__docs_dd_link_source_code_link
