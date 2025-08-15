@@ -30,7 +30,7 @@ from sphinx_needs.api import add_external_need
 
 from src.extensions.score_source_code_linker.testlink import (
     DataOfTestCase,
-    store_test_case_need_json,
+    store_data_of_test_case_json,
     store_test_xml_parsed_json,
 )
 from src.helper_lib import find_ws_root, get_github_link
@@ -169,7 +169,7 @@ def run_xml_parser(app: Sphinx, env: BuildEnvironment):
     xml_file_paths = find_xml_files(bazel_testlogs)
     test_case_needs = build_test_needs_from_files(app, env, xml_file_paths)
     # Saving the test case needs for cache
-    store_test_case_need_json(
+    store_data_of_test_case_json(
         app.outdir / "score_testcaseneeds_cache.json", test_case_needs
     )
     output = list(

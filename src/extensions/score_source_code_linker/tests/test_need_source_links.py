@@ -26,7 +26,7 @@ from src.extensions.score_source_code_linker.need_source_links import (
     store_source_code_links_combined_json,
 )
 from src.extensions.score_source_code_linker.needlinks import NeedLink
-from src.extensions.score_source_code_linker.testlink import TestLink
+from src.extensions.score_source_code_linker.testlink import DataForTestLink
 from src.extensions.score_source_code_linker.tests.test_codelink import (
     NeedLinkTestEncoder,
     needlink_test_decoder,
@@ -44,7 +44,7 @@ def SourceCodeLinks_TEST_JSON_Decoder(
                 CodeLinks=[
                     needlink_test_decoder(cl) for cl in links.get("CodeLinks", [])
                 ],
-                TestLinks=[TestLink(**tl) for tl in links.get("TestLinks", [])],
+                TestLinks=[DataForTestLink(**tl) for tl in links.get("TestLinks", [])],
             ),
         )
     return d
@@ -79,8 +79,8 @@ def sample_needlink() -> NeedLink:
 
 
 @pytest.fixture
-def sample_testlink() -> TestLink:
-    return TestLink(
+def sample_testlink() -> DataForTestLink:
+    return DataForTestLink(
         name="test_example",
         file=Path("tests/test_example.py"),
         need="REQ_001",

@@ -32,7 +32,7 @@ LOGGER = logging.get_logger(__name__)
 
 
 @dataclass(frozen=True)
-class TestLink:
+class DataForTestLink:
     name: str
     file: Path
     line: int
@@ -42,16 +42,16 @@ class TestLink:
     result_text: str = ""
 
 
-class TestLink_JSON_Encoder(json.JSONEncoder):
+class DataForTestLink_JSON_Encoder(json.JSONEncoder):
     def default(self, o: object):
-        if isinstance(o, TestLink):
+        if isinstance(o, DataForTestLink):
             return asdict(o)
         if isinstance(o, Path):
             return str(o)
         return super().default(o)
 
 
-def TestLink_JSON_Decoder(d: dict[str, Any]) -> TestLink | dict[str, Any]:
+def DataForTestLink_JSON_Decoder(d: dict[str, Any]) -> DataForTestLink | dict[str, Any]:
     if {
         "name",
         "file",
@@ -61,7 +61,7 @@ def TestLink_JSON_Decoder(d: dict[str, Any]) -> TestLink | dict[str, Any]:
         "result",
         "result_text",
     } <= d.keys():
-        return TestLink(
+        return DataForTestLink(
             name=d["name"],
             file=Path(d["file"]),
             line=d["line"],
@@ -124,7 +124,7 @@ class DataOfTestCase:
         #         f"TestCase: {self.id} Error. Test was skipped without provided reason, reason is mandatory for skipped tests."
         #     )
 
-    def get_test_links(self) -> list[TestLink]:
+    def get_test_links(self) -> list[DataForTestLink]:
         """Convert TestCaseNeed to list of TestLink objects."""
 
         def parse_attributes(self, verify_field: str | None, verify_type: str):
@@ -138,7 +138,7 @@ class DataOfTestCase:
             )
 
             for need in verify_field.split(","):
-                yield TestLink(
+                yield DataForTestLink(
                     name=self.name,
                     file=Path(self.file),
                     line=int(self.line),
@@ -156,14 +156,14 @@ class DataOfTestCase:
         )
 
 
-class TestCaseNeed_JSON_Encoder(json.JSONEncoder):
+class DataOfTestCase_JSON_Encoder(json.JSONEncoder):
     def default(self, o: object):
         if isinstance(o, DataOfTestCase):
             return asdict(o)
         return super().default(o)
 
 
-def TestCaseNeed_JSON_Decoder(d: dict[str, Any]) -> DataOfTestCase | dict[str, Any]:
+def DataOfTestCase_JSON_Decoder(d: dict[str, Any]) -> DataOfTestCase | dict[str, Any]:
     if {
         "name",
         "file",
@@ -190,7 +190,7 @@ def TestCaseNeed_JSON_Decoder(d: dict[str, Any]) -> DataOfTestCase | dict[str, A
     return d
 
 
-def store_test_xml_parsed_json(file: Path, testlist: list[TestLink]):
+def store_test_xml_parsed_json(file: Path, testlist: list[DataForTestLink]):
     """
     TestCases that are 'skipped' do not have properties, therefore they will NOT be saved/transformed
     to TestLinks.
@@ -201,43 +201,43 @@ def store_test_xml_parsed_json(file: Path, testlist: list[TestLink]):
         json.dump(
             testlist,
             f,
-            cls=TestLink_JSON_Encoder,
+            cls=DataForTestLink_JSON_Encoder,
             indent=2,
             ensure_ascii=False,
         )
 
 
-def load_test_xml_parsed_json(file: Path) -> list[TestLink]:
-    links: list[TestLink] = json.loads(
+def load_test_xml_parsed_json(file: Path) -> list[DataForTestLink]:
+    links: list[DataForTestLink] = json.loads(
         file.read_text(encoding="utf-8"),
-        object_hook=TestLink_JSON_Decoder,
+        object_hook=DataForTestLink_JSON_Decoder,
     )
     assert isinstance(links, list), (
         "The source xml parser links should be a list of TestLink objects."
     )
-    assert all(isinstance(link, TestLink) for link in links), (
+    assert all(isinstance(link, DataForTestLink) for link in links), (
         "All items in source_xml_parser should be TestLink objects."
     )
     return links
 
 
-def store_test_case_need_json(file: Path, testneeds: list[DataOfTestCase]):
+def store_data_of_test_case_json(file: Path, testneeds: list[DataOfTestCase]):
     # After `rm -rf _build` or on clean builds the directory does not exist, so we need to create it
     file.parent.mkdir(exist_ok=True)
     with open(file, "w") as f:
         json.dump(
             testneeds,
             f,
-            cls=TestCaseNeed_JSON_Encoder,
+            cls=DataOfTestCase_JSON_Encoder,
             indent=2,
             ensure_ascii=False,
         )
 
 
-def load_test_case_need_json(file: Path) -> list[DataOfTestCase]:
+def load_data_of_test_case_json(file: Path) -> list[DataOfTestCase]:
     links: list[DataOfTestCase] = json.loads(
         file.read_text(encoding="utf-8"),
-        object_hook=TestCaseNeed_JSON_Decoder,
+        object_hook=DataOfTestCase_JSON_Decoder,
     )
     assert isinstance(links, list), (
         "The test_case_need json should be a list of TestCaseNeed objects."

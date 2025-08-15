@@ -26,8 +26,8 @@ from sphinx_needs.data import SphinxNeedsData
 
 from src.extensions.score_source_code_linker.needlinks import NeedLink
 from src.extensions.score_source_code_linker.testlink import (
-    TestLink,
-    TestLink_JSON_Decoder,
+    DataForTestLink,
+    DataForTestLink_JSON_Decoder,
 )
 from src.extensions.score_source_code_linker.tests.test_codelink import (
     needlink_test_decoder,
@@ -339,7 +339,7 @@ def example_test_link_text_all_ok(sphinx_base_dir):
     repo_path = sphinx_base_dir
     return {
         "TREQ_ID_1": [
-            TestLink(
+            DataForTestLink(
                 name="test_system_startup_time",
                 file=Path("src/tests/testfile_2.py"),
                 need="TREQ_ID_1",
@@ -350,7 +350,7 @@ def example_test_link_text_all_ok(sphinx_base_dir):
             ),
         ],
         "TREQ_ID_2": [
-            TestLink(
+            DataForTestLink(
                 name="test_api_response_format",
                 file=Path("src/testfile_1.py"),
                 need="TREQ_ID_2",
@@ -359,7 +359,7 @@ def example_test_link_text_all_ok(sphinx_base_dir):
                 result="passed",
                 result_text="",
             ),
-            TestLink(
+            DataForTestLink(
                 name="test_error_handling",
                 file=Path("src/tests/testfile_2.py"),
                 need="TREQ_ID_2",
@@ -370,7 +370,7 @@ def example_test_link_text_all_ok(sphinx_base_dir):
             ),
         ],
         "TREQ_ID_3": [
-            TestLink(
+            DataForTestLink(
                 name="test_api_response_format",
                 file=Path("src/testfile_1.py"),
                 need="TREQ_ID_3",
@@ -379,7 +379,7 @@ def example_test_link_text_all_ok(sphinx_base_dir):
                 result="passed",
                 result_text="",
             ),
-            TestLink(
+            DataForTestLink(
                 name="test_error_handling",
                 file=Path("src/test/testfile_2.py"),
                 need="TREQ_ID_3",
@@ -491,7 +491,7 @@ def test_source_link_integration_ok(
         compare_json_files(
             app.outdir / "score_xml_parser_cache.json",
             sphinx_base_dir / ".expected_testlink.json",
-            TestLink_JSON_Decoder,
+            DataForTestLink_JSON_Decoder,
         )
         compare_grouped_json_files(
             app.outdir / "score_scl_grouped_cache.json",

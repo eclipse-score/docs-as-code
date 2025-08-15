@@ -15,16 +15,16 @@ from pathlib import Path
 
 from src.extensions.score_source_code_linker.testlink import (
     DataOfTestCase,
-    TestLink,
-    TestLink_JSON_Decoder,
-    TestLink_JSON_Encoder,
+    DataForTestLink,
+    DataForTestLink_JSON_Decoder,
+    DataForTestLink_JSON_Encoder,
     load_test_xml_parsed_json,
     store_test_xml_parsed_json,
 )
 
 
 def test_testlink_serialization_roundtrip():
-    link = TestLink(
+    link = DataForTestLink(
         name="my_test",
         file=Path("some/file.py"),
         line=123,
@@ -33,22 +33,22 @@ def test_testlink_serialization_roundtrip():
         result="passed",
         result_text="All good",
     )
-    dumped = json.dumps(link, cls=TestLink_JSON_Encoder)
-    loaded = json.loads(dumped, object_hook=TestLink_JSON_Decoder)
+    dumped = json.dumps(link, cls=DataForTestLink_JSON_Encoder)
+    loaded = json.loads(dumped, object_hook=DataForTestLink_JSON_Decoder)
 
-    assert isinstance(loaded, TestLink)
+    assert isinstance(loaded, DataForTestLink)
     assert loaded == link
 
 
 def test_testlink_encoder_handles_path():
     data = {"file": Path("some/thing.py")}
-    encoded = json.dumps(data, cls=TestLink_JSON_Encoder)
+    encoded = json.dumps(data, cls=DataForTestLink_JSON_Encoder)
     assert '"file": "some/thing.py"' in encoded
 
 
 def test_decoder_ignores_irrelevant_dicts():
     input_data = {"foo": "bar"}
-    result = TestLink_JSON_Decoder(input_data)
+    result = DataForTestLink_JSON_Decoder(input_data)
     assert result == input_data
 
 
@@ -88,7 +88,7 @@ def test_store_and_load_testlinks_roundtrip(tmp_path):
     file = tmp_path / "testlinks.json"
 
     links = [
-        TestLink(
+        DataForTestLink(
             name="L1",
             file=Path("abc.py"),
             line=1,
@@ -97,7 +97,7 @@ def test_store_and_load_testlinks_roundtrip(tmp_path):
             result="passed",
             result_text="Looks good",
         ),
-        TestLink(
+        DataForTestLink(
             name="L2",
             file=Path("def.py"),
             line=2,
@@ -115,4 +115,4 @@ def test_store_and_load_testlinks_roundtrip(tmp_path):
 
     assert reloaded == links
     for link in reloaded:
-        assert isinstance(link, TestLink)
+        assert isinstance(link, DataForTestLink)

@@ -40,8 +40,8 @@ from src.extensions.score_source_code_linker.needlinks import (
     load_source_code_links_json,
 )
 from src.extensions.score_source_code_linker.testlink import (
-    TestLink,
-    load_test_case_need_json,
+    DataForTestLink,
+    load_data_of_test_case_json,
     load_test_xml_parsed_json,
 )
 from src.extensions.score_source_code_linker.xml_parser import (
@@ -66,7 +66,7 @@ LOGGER.setLevel("DEBUG")
 
 
 def group_by_need(
-    source_code_links: list[NeedLink], test_case_links: list[TestLink] | None = None
+    source_code_links: list[NeedLink], test_case_links: list[DataForTestLink] | None = None
 ) -> list[SourceCodeLinks]:
     """
     Groups the given need links and test case links by their need ID.
@@ -222,7 +222,7 @@ def setup_test_code_linker(app: Sphinx, env: BuildEnvironment):
         f"TestCaseNeed Cache file does not exist.Checked Path: {tcn_cache}"
     )
     # TODO: Make this more efficent, idk how though.
-    test_case_needs = load_test_case_need_json(tcn_cache)
+    test_case_needs = load_data_of_test_case_json(tcn_cache)
     for tcn in test_case_needs:
         construct_and_add_need(app, tcn)
 

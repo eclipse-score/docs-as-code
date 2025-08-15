@@ -25,14 +25,14 @@ from src.extensions.score_source_code_linker.needlinks import (
     NeedLink,
 )
 from src.extensions.score_source_code_linker.testlink import (
-    TestLink,
+    DataForTestLink,
 )
 
 
 @dataclass
 class NeedSourceLinks:
     CodeLinks: list[NeedLink] = field(default_factory=list)
-    TestLinks: list[TestLink] = field(default_factory=list)
+    TestLinks: list[DataForTestLink] = field(default_factory=list)
 
 SourceCodeLinks  = dict[str, NeedSourceLinks]
 
@@ -56,7 +56,7 @@ class SourceCodeLinks_JSON_Encoder(json.JSONEncoder):
     def default(self, o: object):
         if isinstance(o, (SourceCodeLinks, NeedSourceLinks)):
             return asdict(o)
-        if isinstance(o, (NeedLink, TestLink)):
+        if isinstance(o, (NeedLink, DataForTestLink)):
             return asdict(o)
         if isinstance(o, Path):
             return str(o)
@@ -70,7 +70,7 @@ def SourceCodeLinks_JSON_Decoder(d: dict[str, Any]) -> SourceCodeLinks | dict[st
             need=d["need"],
             links=NeedSourceLinks(
                 CodeLinks=[NeedLink(**cl) for cl in links.get("CodeLinks", [])],
-                TestLinks=[TestLink(**tl) for tl in links.get("TestLinks", [])],
+                TestLinks=[DataForTestLink(**tl) for tl in links.get("TestLinks", [])],
             ),
         )
     return d
