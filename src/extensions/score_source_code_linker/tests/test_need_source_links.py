@@ -1,7 +1,6 @@
 import json
-import tempfile
-from pathlib import Path
 from dataclasses import asdict
+from pathlib import Path
 from typing import Any
 
 import pytest
@@ -9,19 +8,17 @@ import pytest
 from src.extensions.score_source_code_linker.need_source_links import (
     NeedSourceLinks,
     SourceCodeLinks,
-    SourceCodeLinks_JSON_Encoder,
     SourceCodeLinks_JSON_Decoder,
-    store_source_code_links_combined_json,
+    SourceCodeLinks_JSON_Encoder,
     load_source_code_links_combined_json,
+    store_source_code_links_combined_json,
 )
-
-
+from src.extensions.score_source_code_linker.needlinks import NeedLink
+from src.extensions.score_source_code_linker.testlink import TestLink
 from src.extensions.score_source_code_linker.tests.test_codelink import (
     NeedLinkTestEncoder,
     needlink_test_decoder,
 )
-from src.extensions.score_source_code_linker.needlinks import NeedLink
-from src.extensions.score_source_code_linker.testlink import TestLink
 
 
 def SourceCodeLinks_TEST_JSON_Decoder(

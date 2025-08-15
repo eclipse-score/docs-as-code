@@ -17,12 +17,12 @@ Once we enable those we will need to change the tests
 """
 
 import xml.etree.ElementTree as ET
-import pytest
 from pathlib import Path
 from typing import Any
 
-import src.extensions.score_source_code_linker.xml_parser as xml_parser
+import pytest
 
+import src.extensions.score_source_code_linker.xml_parser as xml_parser
 from src.extensions.score_source_code_linker.testlink import TestCaseNeed
 
 

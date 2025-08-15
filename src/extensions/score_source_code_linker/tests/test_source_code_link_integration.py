@@ -11,32 +11,31 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 import json
+import os
+import shutil
+import subprocess
 from collections import Counter
 from collections.abc import Callable
 from pathlib import Path
+from typing import cast
 
 import pytest
-import os
-import subprocess
-import shutil
-
-from typing import cast
 from pytest import TempPathFactory
 from sphinx.testing.util import SphinxTestApp
 from sphinx_needs.data import SphinxNeedsData
 
-from src.extensions.score_source_code_linker.tests.test_codelink import (
-    needlink_test_decoder,
-)
 from src.extensions.score_source_code_linker.needlinks import NeedLink
 from src.extensions.score_source_code_linker.testlink import (
     TestLink,
     TestLink_JSON_Decoder,
 )
+from src.extensions.score_source_code_linker.tests.test_codelink import (
+    needlink_test_decoder,
+)
 from src.extensions.score_source_code_linker.tests.test_need_source_links import (
     SourceCodeLinks_TEST_JSON_Decoder,
 )
-from src.helper_lib import find_ws_root, get_github_link, get_github_base_url
+from src.helper_lib import find_ws_root, get_github_base_url, get_github_link
 
 
 @pytest.fixture()
@@ -400,7 +399,7 @@ def example_source_link_text_non_existent(sphinx_base_dir):
         {
             "TREQ_ID_200": [
                 NeedLink(
-                    file=Path(f"src/bad_implementation.py"),
+                    file=Path("src/bad_implementation.py"),
                     line=2,
                     tag="#" + " req-Id:",
                     need="TREQ_ID_200",
@@ -421,9 +420,9 @@ def make_test_link(testlinks):
 
 def compare_json_files(file1: Path, golden_file: Path, object_hook):
     """Golden File tests with a known good file and the one created"""
-    with open(file1, "r") as f1:
+    with open(file1) as f1:
         json1 = json.load(f1, object_hook=object_hook)
-    with open(golden_file, "r") as f2:
+    with open(golden_file) as f2:
         json2 = json.load(f2, object_hook=object_hook)
     assert len(json1) == len(json2), (
         f"{file1}'s lenth are not the same as in the golden file lenght. Len of{file1}: {len(json1)}. Len of Golden File: {len(json2)}"
@@ -437,9 +436,9 @@ def compare_json_files(file1: Path, golden_file: Path, object_hook):
 
 def compare_grouped_json_files(file1: Path, golden_file: Path):
     """Golden File tests with a known good file and the one created"""
-    with open(file1, "r") as f1:
+    with open(file1) as f1:
         json1 = json.load(f1, object_hook=SourceCodeLinks_TEST_JSON_Decoder)
-    with open(golden_file, "r") as f2:
+    with open(golden_file) as f2:
         json2 = json.load(f2, object_hook=SourceCodeLinks_TEST_JSON_Decoder)
     assert len(json1) == len(json2), (
         f"{file1}'s lenth are not the same as in the golden file lenght. Len of{file1}: {len(json1)}. Len of Golden File: {len(json2)}"

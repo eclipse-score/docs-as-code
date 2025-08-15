@@ -19,15 +19,14 @@ TestLink => The datatype that is ultimately saved inside of the JSON
 """
 
 import html
-import re
 import json
-
+import re
+from dataclasses import asdict, dataclass
 from itertools import chain
-from sphinx_needs import logging
-from typing import Any
-from dataclasses import dataclass, asdict
 from pathlib import Path
+from typing import Any
 
+from sphinx_needs import logging
 
 LOGGER = logging.get_logger(__name__)
 
@@ -71,9 +70,8 @@ def TestLink_JSON_Decoder(d: dict[str, Any]) -> TestLink | dict[str, Any]:
             result=d["result"],
             result_text=d["result_text"],
         )
-    else:
-        # It's something else, pass it on to other decoders
-        return d
+    # It's something else, pass it on to other decoders
+    return d
 
 
 # We will have everythin as string here as that mirrors the xml file

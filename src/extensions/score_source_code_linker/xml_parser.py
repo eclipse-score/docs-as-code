@@ -15,27 +15,25 @@ This file deals with finding and parsing of test.xml files that get created duri
 It also generates external needs out of the parsed testcases to enable linking to requirements &gathering statistics
 """
 
-import os
 import contextlib
-import xml.etree.ElementTree as ET
 import itertools
-
-from xml.etree.ElementTree import Element
+import os
+import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import Any
+from xml.etree.ElementTree import Element
 
 from sphinx.application import Sphinx
 from sphinx.environment import BuildEnvironment
 from sphinx_needs import logging
 from sphinx_needs.api import add_external_need
 
-from src.helper_lib import find_ws_root
 from src.extensions.score_source_code_linker.testlink import (
     TestCaseNeed,
     store_test_case_need_json,
     store_test_xml_parsed_json,
 )
-from src.helper_lib import get_github_link
+from src.helper_lib import find_ws_root, get_github_link
 
 logger = logging.get_logger(__name__)
 logger.setLevel("DEBUG")
@@ -50,15 +48,14 @@ def parse_testcase_result(testcase: ET.Element) -> tuple[str, str]:
         return "disabled", ""
     if skipped is None and failed is None:
         return "passed", ""
-    elif failed is not None:
+    if failed is not None:
         return "failed", failed.get("message", "")
-    elif skipped is not None:
+    if skipped is not None:
         return "skipped", skipped.get("message", "")
-    else:
-        # TODO: Delete this, this is unreachable?
-        raise ValueError(
-            f"Testcase: {testcase.get('name')}. Did not find 'failed', 'skipped' or 'passed' in test"
-        )
+    # TODO: Delete this, this is unreachable?
+    raise ValueError(
+        f"Testcase: {testcase.get('name')}. Did not find 'failed', 'skipped' or 'passed' in test"
+    )
 
 
 def parse_properties(case_properties: dict[str, Any], properties: Element):
@@ -197,8 +194,8 @@ def build_test_needs_from_files(
     return tcns
 
 
-import hashlib
 import base64
+import hashlib
 
 
 def short_hash(input_str: str, length: int = 5) -> str:

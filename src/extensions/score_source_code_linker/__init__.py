@@ -26,18 +26,27 @@ from sphinx.environment import BuildEnvironment
 from sphinx_needs.data import NeedsInfoType, NeedsMutable, SphinxNeedsData
 from sphinx_needs.logging import get_logger
 
-
 from src.extensions.score_source_code_linker.generate_source_code_links_json import (
     generate_source_code_links_json,
 )
 from src.extensions.score_source_code_linker.need_source_links import (
-    SourceCodeLinks,
     NeedSourceLinks,
+    SourceCodeLinks,
+    load_source_code_links_combined_json,
+    store_source_code_links_combined_json,
 )
-
 from src.extensions.score_source_code_linker.needlinks import (
     NeedLink,
     load_source_code_links_json,
+)
+from src.extensions.score_source_code_linker.testlink import (
+    TestLink,
+    load_test_case_need_json,
+    load_test_xml_parsed_json,
+)
+from src.extensions.score_source_code_linker.xml_parser import (
+    construct_and_add_need,
+    run_xml_parser,
 )
 from src.helper_lib import (
     find_git_root,
@@ -45,28 +54,9 @@ from src.helper_lib import (
     get_github_link,
 )
 
-from src.extensions.score_source_code_linker.xml_parser import (
-    construct_and_add_need,
-    run_xml_parser,
-)
-
-from src.extensions.score_source_code_linker.testlink import (
-    TestLink,
-    load_test_xml_parsed_json,
-    load_test_case_need_json,
-)
-
-from src.extensions.score_source_code_linker.need_source_links import (
-    SourceCodeLinks,
-    store_source_code_links_combined_json,
-    load_source_code_links_combined_json,
-)
-
 LOGGER = get_logger(__name__)
 # Uncomment this to enable more verbose logging
 LOGGER.setLevel("DEBUG")
-
-
 
 
 # re-qid: gd_req__req_attr_impl

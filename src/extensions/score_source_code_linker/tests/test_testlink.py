@@ -1,12 +1,13 @@
 import json
 from pathlib import Path
+
 from src.extensions.score_source_code_linker.testlink import (
-    TestLink,
-    TestLink_JSON_Encoder,
-    TestLink_JSON_Decoder,
     TestCaseNeed,
-    store_test_xml_parsed_json,
+    TestLink,
+    TestLink_JSON_Decoder,
+    TestLink_JSON_Encoder,
     load_test_xml_parsed_json,
+    store_test_xml_parsed_json,
 )
 
 

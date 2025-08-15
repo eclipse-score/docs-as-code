@@ -19,7 +19,7 @@ py_library(
     srcs = ["__init__.py"],
     imports = ["."],
     visibility = ["//visibility:public"],
-    deps = ["@score_docs_as_code//src/extensions/score_source_code_linker:source_code_linker_helpers"]
+    deps = ["@score_docs_as_code//src/extensions/score_source_code_linker:source_code_linker_helpers"],
 )
 
 score_py_pytest(

@@ -17,16 +17,15 @@ It also defines a decoder and encoder for SourceCodeLinks to enable JSON read/wr
 """
 
 import json
-from dataclasses import dataclass, asdict, field
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
 
-from src.extensions.score_source_code_linker.testlink import (
-    TestLink,
-)
-
 from src.extensions.score_source_code_linker.needlinks import (
     NeedLink,
+)
+from src.extensions.score_source_code_linker.testlink import (
+    TestLink,
 )
 
 

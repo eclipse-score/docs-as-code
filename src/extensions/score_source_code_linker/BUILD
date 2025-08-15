@@ -27,13 +27,13 @@ py_library(
     deps = ["@score_docs_as_code//src/helper_lib"],
 )
 
-py_library( 
+py_library(
     name = "source_code_linker_helpers",
     srcs = [
-        "testlink.py",
         "needlinks.py",
-        "xml_parser.py"
-    ],           
+        "testlink.py",
+        "xml_parser.py",
+    ],
     imports = ["."],
     visibility = ["//visibility:public"],
 )
