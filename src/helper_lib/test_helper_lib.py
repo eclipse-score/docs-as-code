@@ -42,7 +42,7 @@ def test_git_operations_with_no_commits(temp_dir):
 
     os.chdir(Path(git_dir).absolute())
     # Should raise an exception when trying to get hash
-    with pytest.raises(Exception):
+    with pytest.raises(subprocess.CalledProcessError):
         get_current_git_hash(git_dir)
 
 

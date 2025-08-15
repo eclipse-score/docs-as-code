@@ -479,49 +479,43 @@ def setup_test_environment(sphinx_base_dir, pytestconfig):
     """Set up the test environment and return necessary paths and metadata."""
     git_root = find_git_root()
     if git_root is None:
-        assert False, "Git root was none"
+        raise RuntimeError("Git root was not found")
+
     gh_url = get_github_base_url()
     current_hash = get_current_git_commit(git_root)
 
     os.chdir(Path(sphinx_base_dir).absolute())
-
     verbosity = pytestconfig.get_verbosity()
 
-    if verbosity >= 2:
-        print(f"[DEBUG] git_root: {git_root}")
+    def debug_print(message):
+        if verbosity >= 2:
+            print(f"[DEBUG] {message}")
 
-    if git_root is None:
-        raise ValueError("Git root was None")
+    debug_print(f"git_root: {git_root}")
 
     # Get GitHub URL and current hash for git override
+    debug_print(f"gh_url: {gh_url}")
+    debug_print(f"current_hash: {current_hash}")
+    debug_print(
+        "Working directory has uncommitted changes: "
+        f"{has_uncommitted_changes(git_root)}"
+    )
 
-    if verbosity >= 2:
-        print(f"[DEBUG] gh_url: {gh_url}")
-        print(f"[DEBUG] current_hash: {current_hash}")
-        print(
-            "[DEBUG] Working directory has uncommitted changes: "
-            f"{has_uncommitted_changes(git_root)}"
-        )
+    def recreate_symlink(dest, target):
+        # Create symlink for local docs-as-code
+        if dest.exists() or dest.is_symlink():
+            # Remove existing symlink/directory to recreate it
+            if dest.is_symlink():
+                dest.unlink()
+                debug_print(f"Removed existing symlink: {dest}")
+            elif dest.is_dir():
+                import shutil
+                shutil.rmtree(dest)
+                debug_print(f"Removed existing directory: {dest}")
+        dest.symlink_to(target)
+        debug_print(f"Symlink created: {dest} -> {target}")
 
-    # Create symlink for local docs-as-code
-    docs_as_code_dest = sphinx_base_dir / "docs_as_code"
-    if docs_as_code_dest.exists() or docs_as_code_dest.is_symlink():
-        # Remove existing symlink/directory to recreate it
-        if docs_as_code_dest.is_symlink():
-            docs_as_code_dest.unlink()
-            if verbosity >= 2:
-                print(f"[DEBUG] Removed existing symlink: {docs_as_code_dest}")
-        elif docs_as_code_dest.is_dir():
-            import shutil
-
-            shutil.rmtree(docs_as_code_dest)
-            if verbosity >= 2:
-                print(f"[DEBUG] Removed existing directory: {docs_as_code_dest}")
-
-    docs_as_code_dest.symlink_to(git_root)
-
-    if verbosity >= 2:
-        print(f"[DEBUG] Symlink created: {docs_as_code_dest} -> {git_root}")
+    recreate_symlink(sphinx_base_dir / "docs_as_code", git_root)
 
     return gh_url, current_hash
 

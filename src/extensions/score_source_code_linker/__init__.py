@@ -66,7 +66,8 @@ def setup_once(app: Sphinx, config: Config):
     LOGGER.debug(f"DEBUG: Git root is {find_git_root()}")
 
     # Run only for local files!
-    # ws_root is not set when running on any on bazel run command repositories (dependencies)
+    # ws_root is not set when running on any on bazel run
+    # command repositories (dependencies)
     ws_root = find_ws_root()
     if not ws_root:
         return
@@ -196,12 +197,6 @@ def get_git_root(git_root: Path = Path()) -> Path:
     else:
         passed_git_root = git_root
     return passed_git_root
-
-
-def get_github_base_url(git_root: Path = Path()) -> str:
-    passed_git_root = get_git_root(git_root)
-    repo_info = get_github_repo_info(passed_git_root)
-    return f"https://github.com/{repo_info}"
 
 
 def get_github_link(
