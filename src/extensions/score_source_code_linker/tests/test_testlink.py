@@ -28,9 +28,7 @@ def test_testlink_serialization_roundtrip():
 
 
 def test_testlink_encoder_handles_path():
-    data = {
-        "file": Path("some/thing.py")
-    }
+    data = {"file": Path("some/thing.py")}
     encoded = json.dumps(data, cls=TestLink_JSON_Encoder)
     assert '"file": "some/thing.py"' in encoded
 
@@ -51,13 +49,13 @@ def test_testcaseneed_to_dict_multiple_links():
     case = TestCaseNeed(
         name="TC_01",
         file="src/test.py",
-        lineNr="10",
+        line="10",
         result="failed",
         TestType="unit",
         DerivationTechnique="manual",
         result_text="Something went wrong",
         PartiallyVerifies="REQ-1, REQ-2",
-        FullyVerifies="REQ-3"
+        FullyVerifies="REQ-3",
     )
 
     links = case.to_dict()
@@ -84,7 +82,7 @@ def test_store_and_load_testlinks_roundtrip(tmp_path):
             need="REQ_A",
             verify_type="partially",
             result="passed",
-            result_text="Looks good"
+            result_text="Looks good",
         ),
         TestLink(
             name="L2",
@@ -93,8 +91,8 @@ def test_store_and_load_testlinks_roundtrip(tmp_path):
             need="REQ_B",
             verify_type="fully",
             result="failed",
-            result_text="Needs work"
-        )
+            result_text="Needs work",
+        ),
     ]
 
     store_test_xml_parsed_json(file, links)

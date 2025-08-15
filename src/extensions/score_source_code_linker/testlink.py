@@ -81,7 +81,7 @@ def TestLink_JSON_Decoder(d: dict[str, Any]) -> TestLink | dict[str, Any]:
 class TestCaseNeed:
     name: str
     file: str
-    lineNr: str
+    line: str
     result: str  # passed | falied | skipped | disabled
     TestType: str
     DerivationTechnique: str
@@ -137,7 +137,7 @@ class TestCaseNeed:
                 yield TestLink(
                     name=self.name,
                     file=Path(self.file),
-                    line=int(self.lineNr),
+                    line=int(self.line),
                     need=need.strip(),
                     verify_type=verify_type,
                     result=self.result,
@@ -163,7 +163,7 @@ def TestCaseNeed_JSON_Decoder(d: dict[str, Any]) -> TestCaseNeed | dict[str, Any
     if {
         "name",
         "file",
-        "lineNr",
+        "line",
         "result",
         "TestType",
         "DerivationTechnique",
@@ -174,7 +174,7 @@ def TestCaseNeed_JSON_Decoder(d: dict[str, Any]) -> TestCaseNeed | dict[str, Any
         return TestCaseNeed(
             name=d["name"],
             file=d["file"],
-            lineNr=d["lineNr"],
+            line=d["line"],
             result=d["result"],
             TestType=d["TestType"],
             DerivationTechnique=d["DerivationTechnique"],
@@ -232,7 +232,7 @@ def load_test_case_need_json(file: Path) -> list[TestCaseNeed]:
         object_hook=TestCaseNeed_JSON_Decoder,
     )
     assert isinstance(links, list), (
-        "The source xml parser links should be a list of TestCaseNeed objects."
+        "The test_case_need json should be a list of TestCaseNeed objects."
     )
     assert all(isinstance(link, TestCaseNeed) for link in links), (
         "All items in source_xml_parser should be TestCaseNeed objects."

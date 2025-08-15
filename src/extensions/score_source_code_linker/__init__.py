@@ -36,15 +36,13 @@ from src.extensions.score_source_code_linker.need_source_links import (
 )
 
 from src.extensions.score_source_code_linker.needlinks import (
-    DefaultNeedLink,
     NeedLink,
     load_source_code_links_json,
 )
 from src.helper_lib import (
     find_git_root,
     find_ws_root,
-    get_current_git_hash,
-    get_github_base_url,
+    get_github_link,
 )
 
 from src.extensions.score_source_code_linker.xml_parser import (
@@ -69,15 +67,6 @@ LOGGER = get_logger(__name__)
 LOGGER.setLevel("DEBUG")
 
 
-def get_github_link(link: NeedLink | TestLink| None = None) -> str:
-    if link is None:
-        link = DefaultNeedLink()
-    passed_git_root = find_git_root()
-    if passed_git_root is None:
-        passed_git_root = Path()
-    base_url = get_github_base_url()
-    current_hash = get_current_git_hash(passed_git_root)
-    return f"{base_url}/blob/{current_hash}/{link.file}#L{link.line}"
 
 
 # re-qid: gd_req__req_attr_impl
@@ -388,8 +377,7 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
             for n in source_code_links.links.CodeLinks
         )
         need_as_dict["testlink"] = ", ".join(
-            f"{get_github_link(n)}<>{n.name}"
-            for n in source_code_links.links.TestLinks
+            f"{get_github_link(n)}<>{n.name}" for n in source_code_links.links.TestLinks
         )
 
         # NOTE: Removing & adding the need is important to make sure

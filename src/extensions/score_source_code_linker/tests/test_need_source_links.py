@@ -16,23 +16,30 @@ from src.extensions.score_source_code_linker.need_source_links import (
 )
 
 
-from src.extensions.score_source_code_linker.tests.test_codelink import NeedLinkTestEncoder, needlink_test_decoder
+from src.extensions.score_source_code_linker.tests.test_codelink import (
+    NeedLinkTestEncoder,
+    needlink_test_decoder,
+)
 from src.extensions.score_source_code_linker.needlinks import NeedLink
 from src.extensions.score_source_code_linker.testlink import TestLink
 
 
-
-def SourceCodeLinks_TEST_JSON_Decoder(d: dict[str, Any]) -> SourceCodeLinks | dict[str, Any]:
+def SourceCodeLinks_TEST_JSON_Decoder(
+    d: dict[str, Any],
+) -> SourceCodeLinks | dict[str, Any]:
     if "need" in d and "links" in d:
         links = d["links"]
         return SourceCodeLinks(
             need=d["need"],
             links=NeedSourceLinks(
-                CodeLinks=[needlink_test_decoder(cl) for cl in links.get("CodeLinks", [])],
+                CodeLinks=[
+                    needlink_test_decoder(cl) for cl in links.get("CodeLinks", [])
+                ],
                 TestLinks=[TestLink(**tl) for tl in links.get("TestLinks", [])],
             ),
         )
     return d
+
 
 class SourceCodeLinks_TEST_JSON_Encoder(json.JSONEncoder):
     def default(self, o: object):
@@ -49,6 +56,7 @@ class SourceCodeLinks_TEST_JSON_Encoder(json.JSONEncoder):
         if isinstance(o, Path):
             return str(o)
         return super().default(o)
+
 
 @pytest.fixture
 def sample_needlink() -> NeedLink:

@@ -28,7 +28,6 @@ from src.extensions.score_metamodel.tests import need as test_need
 from src.extensions.score_source_code_linker import (
     find_need,
     get_cache_filename,
-    get_github_link,
     group_by_need,
 )
 from src.extensions.score_source_code_linker.needlinks import (
@@ -40,6 +39,7 @@ from src.helper_lib import (
     get_current_git_hash,
     get_github_repo_info,
     parse_remote_git_output,
+    get_github_link,
 )
 
 """
@@ -332,7 +332,7 @@ def test_find_need_not_found():
 def test_group_by_need(sample_needlinks):
     """Test grouping source code links by need ID."""
     result = group_by_need(sample_needlinks)
-    
+
     # Check that the grouping is correct
     assert len(result) == 3
     for found_link in result:
@@ -346,7 +346,6 @@ def test_group_by_need(sample_needlinks):
             assert found_link.links.CodeLinks[0].line == 9
         elif found_link.need == "TREQ_ID_200":
             assert len(found_link.links.CodeLinks) == 1
-
 
 
 def test_group_by_need_empty_list():

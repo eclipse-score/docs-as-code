@@ -25,13 +25,18 @@ from pytest import TempPathFactory
 from sphinx.testing.util import SphinxTestApp
 from sphinx_needs.data import SphinxNeedsData
 
-from src.extensions.score_source_code_linker.tests.test_codelink import needlink_test_decoder
-from src.extensions.score_source_code_linker import get_github_base_url, get_github_link
+from src.extensions.score_source_code_linker.tests.test_codelink import (
+    needlink_test_decoder,
+)
 from src.extensions.score_source_code_linker.needlinks import NeedLink
-from src.extensions.score_source_code_linker.testlink import TestLink, TestLink_JSON_Decoder
-from src.extensions.score_source_code_linker.tests.test_need_source_links import SourceCodeLinks_TEST_JSON_Decoder
-from src.helper_lib import find_ws_root
-
+from src.extensions.score_source_code_linker.testlink import (
+    TestLink,
+    TestLink_JSON_Decoder,
+)
+from src.extensions.score_source_code_linker.tests.test_need_source_links import (
+    SourceCodeLinks_TEST_JSON_Decoder,
+)
+from src.helper_lib import find_ws_root, get_github_link, get_github_base_url
 
 
 @pytest.fixture()
@@ -82,7 +87,7 @@ def create_demo_files(sphinx_base_dir, git_repo_setup):
     (docs_dir / "conf.py").write_text(basic_conf())
 
     # Create test.xml files
-    bazel_testdir1 = repo_path / "bazel-testlogs" 
+    bazel_testdir1 = repo_path / "bazel-testlogs"
     bazel_testdir1.mkdir()
     bazel_testdir2 = bazel_testdir1 / "src"
     bazel_testdir2.mkdir()
@@ -94,9 +99,15 @@ def create_demo_files(sphinx_base_dir, git_repo_setup):
 
     curr_dir = Path(__file__).absolute().parent
     # print("CURR_dir", curr_dir)
-    shutil.copyfile(curr_dir / "codelink_golden_file.json", repo_path / ".codelink_golden_file.json")
-    shutil.copyfile(curr_dir / "testlink_golden_file.json", repo_path / ".testlink_golden_file.json")
-    shutil.copyfile(curr_dir / "grouped_golden_file.json", repo_path / ".grouped_golden_file.json")
+    shutil.copyfile(
+        curr_dir / "codelink_golden_file.json", repo_path / ".codelink_golden_file.json"
+    )
+    shutil.copyfile(
+        curr_dir / "testlink_golden_file.json", repo_path / ".testlink_golden_file.json"
+    )
+    shutil.copyfile(
+        curr_dir / "grouped_golden_file.json", repo_path / ".grouped_golden_file.json"
+    )
 
     # Add files to git and commit
     subprocess.run(["git", "add", "."], cwd=repo_path, check=True)
@@ -126,7 +137,9 @@ def some_function():
         """ req-Id: TREQ_ID_2
 def another_function():
     pass
-""")
+"""
+    )
+
 
 def make_codelink_source_2():
     return (
@@ -321,6 +334,7 @@ def example_source_link_text_all_ok(sphinx_base_dir):
         ],
     }
 
+
 @pytest.fixture()
 def example_test_link_text_all_ok(sphinx_base_dir):
     repo_path = sphinx_base_dir
@@ -354,8 +368,7 @@ def example_test_link_text_all_ok(sphinx_base_dir):
                 verify_type="partially",
                 result="passed",
                 result_text="",
-            )
-
+            ),
         ],
         "TREQ_ID_3": [
             TestLink(
@@ -376,8 +389,9 @@ def example_test_link_text_all_ok(sphinx_base_dir):
                 result="passed",
                 result_text="",
             ),
-        ]
+        ],
     }
+
 
 @pytest.fixture()
 def example_source_link_text_non_existent(sphinx_base_dir):
@@ -398,14 +412,12 @@ def example_source_link_text_non_existent(sphinx_base_dir):
 
 
 def make_source_link(needlinks):
-    return ", ".join(
-        f"{get_github_link(n)}<>{n.file}:{n.line}" for n in needlinks
-    )
+    return ", ".join(f"{get_github_link(n)}<>{n.file}:{n.line}" for n in needlinks)
+
 
 def make_test_link(testlinks):
-    return ", ".join(
-        f"{get_github_link(n)}<>{n.name}" for n in testlinks
-    )
+    return ", ".join(f"{get_github_link(n)}<>{n.name}" for n in testlinks)
+
 
 def compare_json_files(file1: Path, golden_file: Path, object_hook):
     """Golden File tests with a known good file and the one created"""
@@ -453,8 +465,6 @@ def compare_grouped_json_files(file1: Path, golden_file: Path):
                 break
 
 
-
-
 def test_source_link_integration_ok(
     sphinx_app_setup: Callable[[], SphinxTestApp],
     example_source_link_text_all_ok: dict[str, list[str]],
@@ -477,12 +487,12 @@ def test_source_link_integration_ok(
         compare_json_files(
             app.outdir / "score_source_code_linker_cache.json",
             sphinx_base_dir / ".codelink_golden_file.json",
-            needlink_test_decoder
+            needlink_test_decoder,
         )
         compare_json_files(
             app.outdir / "score_xml_parser_cache.json",
             sphinx_base_dir / ".testlink_golden_file.json",
-            TestLink_JSON_Decoder
+            TestLink_JSON_Decoder,
         )
         compare_grouped_json_files(
             app.outdir / "score_scl_grouped_cache.json",
@@ -502,7 +512,9 @@ def test_source_link_integration_ok(
                     example_source_link_text_all_ok[f"TREQ_ID_{i}"]
                 )
                 print(f"EXPECTED LINK CODE: {expected_code_link}")
-                actual_source_code_link = cast(list[str], need_as_dict["source_code_link"])
+                actual_source_code_link = cast(
+                    list[str], need_as_dict["source_code_link"]
+                )
                 print(f"ACTUALL CODE LINK: {actual_source_code_link}")
                 assert set(expected_code_link) == set(actual_source_code_link)
             expected_test_link = make_test_link(

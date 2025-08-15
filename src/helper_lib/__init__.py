@@ -16,6 +16,8 @@ import subprocess
 from pathlib import Path
 
 from sphinx_needs.logging import get_logger
+from src.extensions.score_source_code_linker.needlinks import NeedLink, DefaultNeedLink
+from src.extensions.score_source_code_linker.testlink import TestLink, TestCaseNeed
 
 LOGGER = get_logger(__name__)
 
@@ -156,3 +158,15 @@ def get_current_git_hash(git_root: Path) -> str:
     except Exception as e:
         LOGGER.warning(f"Unexpected error: {git_root}", exc_info=e)
         raise
+
+
+
+def get_github_link(link: NeedLink | TestLink | TestCaseNeed |  None = None) -> str:
+    if link is None:
+        link = DefaultNeedLink()
+    passed_git_root = find_git_root()
+    if passed_git_root is None:
+        passed_git_root = Path()
+    base_url = get_github_base_url()
+    current_hash = get_current_git_hash(passed_git_root)
+    return f"{base_url}/blob/{current_hash}/{link.file}#L{link.line}"

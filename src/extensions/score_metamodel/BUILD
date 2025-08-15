@@ -36,5 +36,5 @@ score_py_pytest(
     data = glob(
         ["tests/**/*.rst"],
     ),
-    deps = [":score_metamodel"] 
+    deps = [":score_metamodel"],
 )

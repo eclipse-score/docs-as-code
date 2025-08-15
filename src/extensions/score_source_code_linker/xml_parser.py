@@ -16,6 +16,7 @@ It also generates external needs out of the parsed testcases to enable linking t
 """
 
 import os
+import contextlib
 import xml.etree.ElementTree as ET
 import itertools
 
@@ -34,6 +35,7 @@ from src.extensions.score_source_code_linker.testlink import (
     store_test_case_need_json,
     store_test_xml_parsed_json,
 )
+from src.helper_lib import get_github_link
 
 logger = logging.get_logger(__name__)
 logger.setLevel("DEBUG")
@@ -93,7 +95,7 @@ def read_test_xml_file(file: Path) -> tuple[list[TestCaseNeed], list[str]]:
                 f"Testcase: {testcase} does not have a 'name' attribute. This is mandatory. This should not happen, something is wrong."
             )
             test_file = testcase.get("file")
-            lineNr = testcase.get("line")
+            line = testcase.get("line")
 
             #          ╭──────────────────────────────────────╮
             #          │   Assert worldview that mandatory    │
@@ -109,7 +111,7 @@ def read_test_xml_file(file: Path) -> tuple[list[TestCaseNeed], list[str]]:
             # )
             case_properties["name"] = testname
             case_properties["file"] = test_file
-            case_properties["lineNr"] = lineNr
+            case_properties["line"] = line
             case_properties["result"], case_properties["result_text"] = (
                 parse_testcase_result(testcase)
             )
@@ -161,7 +163,9 @@ def run_xml_parser(app: Sphinx, env: BuildEnvironment):
     xml_file_paths = find_xml_files(bazel_testlogs)
     test_case_needs = build_test_needs_from_files(app, env, xml_file_paths)
     # Saving the test case needs for cache
-    store_test_case_need_json(app.outdir / "score_testcaseneeds_cache.json", test_case_needs)
+    store_test_case_need_json(
+        app.outdir / "score_testcaseneeds_cache.json", test_case_needs
+    )
     output = list(
         itertools.chain.from_iterable(tcn.to_dict() for tcn in test_case_needs)
     )
@@ -210,7 +214,7 @@ def short_hash(input_str: str, length: int = 5) -> str:
 
 def construct_and_add_need(app: Sphinx, tn: TestCaseNeed):
     # IDK if this is ideal or not
-    try:
+    with contextlib.suppress(BaseException):
         _ = add_external_need(
             app=app,
             need_type="testcase",
@@ -218,8 +222,7 @@ def construct_and_add_need(app: Sphinx, tn: TestCaseNeed):
             tags="TEST",
             id=f"testcase__{short_hash(tn.file + tn.name).upper()}",
             name=tn.name,
-            external_url=f"https://github.com/MaximilianSoerenPollak/docs-as-code/blob/MSP_add_xml_test_parsing/{tn.file}#L{tn.lineNr}",
-            # Unsure if I should make them as links here already. As the backlinks are shot.
+            external_url=get_github_link(tn),
             fully_verifies=tn.FullyVerifies if tn.FullyVerifies is not None else "",
             partially_verifies=tn.PartiallyVerifies
             if tn.PartiallyVerifies is not None
@@ -227,11 +230,7 @@ def construct_and_add_need(app: Sphinx, tn: TestCaseNeed):
             test_type=tn.TestType,
             derivation_technique=tn.DerivationTechnique,
             file=tn.file,
-            lineNr=tn.lineNr,
+            line=tn.line,
             result=tn.result,  # We just want the 'failed' or whatever
             result_text=tn.result_text if tn.result_text else "",
         )
-    except:
-        pass
-
-

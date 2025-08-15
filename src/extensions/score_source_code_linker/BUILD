@@ -27,6 +27,17 @@ py_library(
     deps = ["@score_docs_as_code//src/helper_lib"],
 )
 
+py_library( 
+    name = "source_code_linker_helpers",
+    srcs = [
+        "testlink.py",
+        "needlinks.py",
+        "xml_parser.py"
+    ],           
+    imports = ["."],
+    visibility = ["//visibility:public"],
+)
+
 score_py_pytest(
     name = "score_source_code_linker_test",
     size = "small",
@@ -35,7 +46,7 @@ score_py_pytest(
     ]),
     args = [
         "-s",
-#        "-vv",
+        #        "-vv",
     ],
     data = glob(["**/*.json"]),
     imports = ["."],

@@ -16,6 +16,7 @@ from pathlib import Path
 from typing import Any
 
 
+
 @dataclass(frozen=True)
 class NeedLink:
     """Represents a single template string finding in a file."""

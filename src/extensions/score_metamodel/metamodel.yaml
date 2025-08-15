@@ -839,7 +839,7 @@ needs_types:
     optional_options:
       name: ^.*$
       file: ^.*$
-      lineNr: ^.*$
+      line: ^.*$
       test_type: ^.*$
       derivation_technique: ^.*$
       result: ^.*$

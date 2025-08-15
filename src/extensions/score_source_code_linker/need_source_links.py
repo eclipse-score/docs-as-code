@@ -44,11 +44,11 @@ class SourceCodeLinks:
     # Example:
     #
     # need: <str>
-    # links: 
+    # links:
     #   {
-    #   "CodeLinks: 
-    #       [{needlink},{needlink}...], 
-    #   "TestLinks": 
+    #   "CodeLinks:
+    #       [{needlink},{needlink}...],
+    #   "TestLinks":
     #       [{testlink},{testlink},...]
 
 
