@@ -35,11 +35,13 @@ def get_need_type(needs_types: list[ScoreNeedType], directive: str) -> ScoreNeed
 
 def _normalize_values(raw_value: str | list[str] | None) -> list[str]:
     """Normalize a raw value into a list of strings."""
+    if raw_value is None:
+        return []
     if isinstance(raw_value, str):
         return [raw_value]
     if isinstance(raw_value, list) and all(isinstance(v, str) for v in raw_value):
         return raw_value
-    return [str(raw_value)]
+    raise ValueError("unexpected types")
 
 
 def _validate_value_pattern(
