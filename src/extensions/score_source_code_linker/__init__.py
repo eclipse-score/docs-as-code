@@ -297,6 +297,7 @@ def find_need(
     for prefix in prefixes:
         prefixed_id = f"{prefix}{id}"
         if prefixed_id in all_needs:
+            LOGGER.warning("linking to external needs is not supported!")
             return all_needs[prefixed_id]
 
     return None
@@ -323,15 +324,15 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
     )  # TODO: why do we create a copy? Can we also needs_copy = needs[:]? copy(needs)?
 
     # Enabled automatically for DEBUGGING
-    if LOGGER.getEffectiveLevel() == 10:
+    if LOGGER.getEffectiveLevel() >= 10:
         for id, need in needs.items():
             if need.get("source_code_link"):
                 LOGGER.debug(
-                    f"?? Need {need['id']} already has source_code_link: {need.get('source_code_link')}"
+                    f"?? Need {id} already has source_code_link: {need.get('source_code_link')}"
                 )
             if need.get("testlink"):
                 LOGGER.debug(
-                    f"?? Need {need['id']} already has testlink: {need.get('testlink')}"
+                    f"?? Need {id} already has testlink: {need.get('testlink')}"
                 )
 
     source_code_links_by_need = load_source_code_links_combined_json(

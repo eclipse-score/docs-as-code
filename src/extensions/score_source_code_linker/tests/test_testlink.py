@@ -14,7 +14,7 @@ import json
 from pathlib import Path
 
 from src.extensions.score_source_code_linker.testlink import (
-    TestCaseNeed,
+    DataOfTestCase,
     TestLink,
     TestLink_JSON_Decoder,
     TestLink_JSON_Encoder,
@@ -54,12 +54,12 @@ def test_decoder_ignores_irrelevant_dicts():
 
 def test_clean_text_removes_ansi_and_html_unescapes():
     raw = "\x1b[31m&lt;b&gt;Warning&lt;/b&gt;\x1b[0m\nExtra line"
-    cleaned = TestCaseNeed.clean_text(raw)
+    cleaned = DataOfTestCase.clean_text(raw)
     assert cleaned == "<b>Warning</b> Extra line"
 
 
 def test_testcaseneed_to_dict_multiple_links():
-    case = TestCaseNeed(
+    case = DataOfTestCase(
         name="TC_01",
         file="src/test.py",
         line="10",
@@ -71,7 +71,7 @@ def test_testcaseneed_to_dict_multiple_links():
         FullyVerifies="REQ-3",
     )
 
-    links = case.to_dict()
+    links = case.get_test_links()
 
     assert len(links) == 3
     need_ids = [link.need for link in links]

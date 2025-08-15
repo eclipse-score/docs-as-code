@@ -29,7 +29,7 @@ from sphinx_needs import logging
 from sphinx_needs.api import add_external_need
 
 from src.extensions.score_source_code_linker.testlink import (
-    TestCaseNeed,
+    DataOfTestCase,
     store_test_case_need_json,
     store_test_xml_parsed_json,
 )
@@ -40,6 +40,15 @@ logger.setLevel("DEBUG")
 
 
 def parse_testcase_result(testcase: ET.Element) -> tuple[str, str]:
+    """
+    Returns 'result' and 'result_text' found in the 'message'
+    attribute of the result.
+    Example: 
+        => <skipped message="Test skip message"></skipped>
+
+        Returns:
+            ("skipped", "Test skip message")
+    """
     skipped = testcase.find("skipped")
     failed = testcase.find("failure")
     status = testcase.get("status")
@@ -52,7 +61,7 @@ def parse_testcase_result(testcase: ET.Element) -> tuple[str, str]:
         return "failed", failed.get("message", "")
     if skipped is not None:
         return "skipped", skipped.get("message", "")
-    # TODO: Delete this, this is unreachable?
+    # TODO: Test all possible permuations of this to find if this is unreachable
     raise ValueError(
         f"Testcase: {testcase.get('name')}. Did not find 'failed', 'skipped' or 'passed' in test"
     )
@@ -70,7 +79,7 @@ def parse_properties(case_properties: dict[str, Any], properties: Element):
     return case_properties
 
 
-def read_test_xml_file(file: Path) -> tuple[list[TestCaseNeed], list[str]]:
+def read_test_xml_file(file: Path) -> tuple[list[DataOfTestCase], list[str]]:
     """
     Reading & parsing the test.xml files into TestCaseNeeds
 
@@ -79,7 +88,7 @@ def read_test_xml_file(file: Path) -> tuple[list[TestCaseNeed], list[str]]:
             - list[TestCaseNeed]
             - list[str] => Testcase Names that did not have the required properties.
     """
-    test_case_needs: list[TestCaseNeed] = []
+    test_case_needs: list[DataOfTestCase] = []
     non_prop_tests: list[str] = []
     tree = ET.parse(file)
     root = tree.getroot()
@@ -127,7 +136,7 @@ def read_test_xml_file(file: Path) -> tuple[list[TestCaseNeed], list[str]]:
             # )
 
             case_properties = parse_properties(case_properties, properties_element)
-            test_case_needs.append(TestCaseNeed.from_dict(case_properties))
+            test_case_needs.append(DataOfTestCase.from_dict(case_properties))
     return test_case_needs, non_prop_tests
 
 
@@ -164,7 +173,7 @@ def run_xml_parser(app: Sphinx, env: BuildEnvironment):
         app.outdir / "score_testcaseneeds_cache.json", test_case_needs
     )
     output = list(
-        itertools.chain.from_iterable(tcn.to_dict() for tcn in test_case_needs)
+        itertools.chain.from_iterable(tcn.get_test_links() for tcn in test_case_needs)
     )
     # This is not ideal, due to duplication, but I can't think of a better solution right now
     store_test_xml_parsed_json(app.outdir / "score_xml_parser_cache.json", output)
@@ -172,14 +181,14 @@ def run_xml_parser(app: Sphinx, env: BuildEnvironment):
 
 def build_test_needs_from_files(
     app: Sphinx, env: BuildEnvironment, xml_paths: list[Path]
-) -> list[TestCaseNeed]:
+) -> list[DataOfTestCase]:
     """
     Reading in all test.xml files, and building 'testcase' external need objects out of them.
 
     Returns:
         - list[TestCaseNeed]
     """
-    tcns: list[TestCaseNeed] = []
+    tcns: list[DataOfTestCase] = []
     for f in xml_paths:
         b, z = read_test_xml_file(f)
         for non_prop_test in z:
@@ -209,7 +218,7 @@ def short_hash(input_str: str, length: int = 5) -> str:
     return letters_only[:length].lower()
 
 
-def construct_and_add_need(app: Sphinx, tn: TestCaseNeed):
+def construct_and_add_need(app: Sphinx, tn: DataOfTestCase):
     # IDK if this is ideal or not
     with contextlib.suppress(BaseException):
         _ = add_external_need(

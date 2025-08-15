@@ -23,7 +23,7 @@ from typing import Any
 import pytest
 
 import src.extensions.score_source_code_linker.xml_parser as xml_parser
-from src.extensions.score_source_code_linker.testlink import TestCaseNeed
+from src.extensions.score_source_code_linker.testlink import DataOfTestCase
 
 
 # Unsure if I should make these last a session or not
@@ -129,7 +129,7 @@ def test_read_test_xml_file(tmp_xml_dirs):
     needs1, no_props1 = xml_parser.read_test_xml_file(dir1 / "test.xml")
     assert isinstance(needs1, list) and len(needs1) == 1
     tcneed = needs1[0]
-    assert isinstance(tcneed, TestCaseNeed)
+    assert isinstance(tcneed, DataOfTestCase)
     assert tcneed.result == "failed"
     assert no_props1 == []
 

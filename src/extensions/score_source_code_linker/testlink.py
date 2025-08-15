@@ -74,13 +74,14 @@ def TestLink_JSON_Decoder(d: dict[str, Any]) -> TestLink | dict[str, Any]:
     return d
 
 
-# We will have everythin as string here as that mirrors the xml file
+# We will have everything as string here as that mirrors the xml file
 @dataclass
-class TestCaseNeed:
+class DataOfTestCase:
     name: str
     file: str
     line: str
     result: str  # passed | falied | skipped | disabled
+    # Intentionally not snakecase to make dict parsing simple
     TestType: str
     DerivationTechnique: str
     result_text: str = ""  # Can be None on anything but failed
@@ -95,8 +96,13 @@ class TestCaseNeed:
     @classmethod
     def clean_text(cls, text: str):
         # This might not be the right thing in all circumstances
+
+        # Designed to find ansi terminal codes (formatting&color) and santize the text 
+        # '\x1b[0m' => '' # Reset formatting code
+        # '\x1b[31m' => '' # Red text 
         ansi_regex = re.compile(r"\x1b\[[0-9;]*m")
         ansi_clean = ansi_regex.sub("", text)
+        # Will turn HTML things back into 'symbols'. E.g. '&lt;' => '<'
         decoded = html.unescape(ansi_clean)
         return str(decoded.replace("\n", " ")).strip()
 
@@ -118,10 +124,10 @@ class TestCaseNeed:
         #         f"TestCase: {self.id} Error. Test was skipped without provided reason, reason is mandatory for skipped tests."
         #     )
 
-    def to_dict(self) -> list[TestLink]:
+    def get_test_links(self) -> list[TestLink]:
         """Convert TestCaseNeed to list of TestLink objects."""
 
-        def process_verification(self, verify_field: str | None, verify_type: str):
+        def parse_attributes(self, verify_field: str | None, verify_type: str):
             """Process a verification field and yield TestLink objects."""
             if not verify_field:
                 return
@@ -144,20 +150,20 @@ class TestCaseNeed:
 
         return list(
             chain(
-                process_verification(self, self.PartiallyVerifies, "partially"),
-                process_verification(self, self.FullyVerifies, "fully"),
+                parse_attributes(self, self.PartiallyVerifies, "partially"),
+                parse_attributes(self, self.FullyVerifies, "fully"),
             )
         )
 
 
 class TestCaseNeed_JSON_Encoder(json.JSONEncoder):
     def default(self, o: object):
-        if isinstance(o, TestCaseNeed):
+        if isinstance(o, DataOfTestCase):
             return asdict(o)
         return super().default(o)
 
 
-def TestCaseNeed_JSON_Decoder(d: dict[str, Any]) -> TestCaseNeed | dict[str, Any]:
+def TestCaseNeed_JSON_Decoder(d: dict[str, Any]) -> DataOfTestCase | dict[str, Any]:
     if {
         "name",
         "file",
@@ -169,7 +175,7 @@ def TestCaseNeed_JSON_Decoder(d: dict[str, Any]) -> TestCaseNeed | dict[str, Any
         "PartiallyVerifies",
         "FullyVerifies",
     } <= d.keys():
-        return TestCaseNeed(
+        return DataOfTestCase(
             name=d["name"],
             file=d["file"],
             line=d["line"],
@@ -185,6 +191,10 @@ def TestCaseNeed_JSON_Decoder(d: dict[str, Any]) -> TestCaseNeed | dict[str, Any
 
 
 def store_test_xml_parsed_json(file: Path, testlist: list[TestLink]):
+    """
+    TestCases that are 'skipped' do not have properties, therefore they will NOT be saved/transformed
+    to TestLinks.
+    """
     # After `rm -rf _build` or on clean builds the directory does not exist, so we need to create it
     file.parent.mkdir(exist_ok=True)
     with open(file, "w") as f:
@@ -211,7 +221,7 @@ def load_test_xml_parsed_json(file: Path) -> list[TestLink]:
     return links
 
 
-def store_test_case_need_json(file: Path, testneeds: list[TestCaseNeed]):
+def store_test_case_need_json(file: Path, testneeds: list[DataOfTestCase]):
     # After `rm -rf _build` or on clean builds the directory does not exist, so we need to create it
     file.parent.mkdir(exist_ok=True)
     with open(file, "w") as f:
@@ -224,15 +234,15 @@ def store_test_case_need_json(file: Path, testneeds: list[TestCaseNeed]):
         )
 
 
-def load_test_case_need_json(file: Path) -> list[TestCaseNeed]:
-    links: list[TestCaseNeed] = json.loads(
+def load_test_case_need_json(file: Path) -> list[DataOfTestCase]:
+    links: list[DataOfTestCase] = json.loads(
         file.read_text(encoding="utf-8"),
         object_hook=TestCaseNeed_JSON_Decoder,
     )
     assert isinstance(links, list), (
         "The test_case_need json should be a list of TestCaseNeed objects."
     )
-    assert all(isinstance(link, TestCaseNeed) for link in links), (
+    assert all(isinstance(link, DataOfTestCase) for link in links), (
         "All items in source_xml_parser should be TestCaseNeed objects."
     )
     return links

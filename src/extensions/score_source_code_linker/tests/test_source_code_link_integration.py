@@ -99,13 +99,13 @@ def create_demo_files(sphinx_base_dir, git_repo_setup):
     curr_dir = Path(__file__).absolute().parent
     # print("CURR_dir", curr_dir)
     shutil.copyfile(
-        curr_dir / "codelink_golden_file.json", repo_path / ".codelink_golden_file.json"
+        curr_dir / "expected_codelink.json", repo_path / ".expected_codelink.json"
     )
     shutil.copyfile(
-        curr_dir / "testlink_golden_file.json", repo_path / ".testlink_golden_file.json"
+        curr_dir / "expected_testlink.json", repo_path / ".expected_testlink.json"
     )
     shutil.copyfile(
-        curr_dir / "grouped_golden_file.json", repo_path / ".grouped_golden_file.json"
+        curr_dir / "expected_grouped.json", repo_path / ".expected_grouped.json"
     )
 
     # Add files to git and commit
@@ -418,11 +418,11 @@ def make_test_link(testlinks):
     return ", ".join(f"{get_github_link(n)}<>{n.name}" for n in testlinks)
 
 
-def compare_json_files(file1: Path, golden_file: Path, object_hook):
+def compare_json_files(file1: Path, expected_file: Path, object_hook):
     """Golden File tests with a known good file and the one created"""
     with open(file1) as f1:
         json1 = json.load(f1, object_hook=object_hook)
-    with open(golden_file) as f2:
+    with open(expected_file) as f2:
         json2 = json.load(f2, object_hook=object_hook)
     assert len(json1) == len(json2), (
         f"{file1}'s lenth are not the same as in the golden file lenght. Len of{file1}: {len(json1)}. Len of Golden File: {len(json2)}"
@@ -485,17 +485,17 @@ def test_source_link_integration_ok(
         needs_data = {x["id"]: x for x in Needs_Data.get_needs_view().values()}
         compare_json_files(
             app.outdir / "score_source_code_linker_cache.json",
-            sphinx_base_dir / ".codelink_golden_file.json",
+            sphinx_base_dir / ".expected_codelink.json",
             needlink_test_decoder,
         )
         compare_json_files(
             app.outdir / "score_xml_parser_cache.json",
-            sphinx_base_dir / ".testlink_golden_file.json",
+            sphinx_base_dir / ".expected_testlink.json",
             TestLink_JSON_Decoder,
         )
         compare_grouped_json_files(
             app.outdir / "score_scl_grouped_cache.json",
-            sphinx_base_dir / ".grouped_golden_file.json",
+            sphinx_base_dir / ".expected_grouped.json",
         )
         # Testing TREQ_ID_1, TREQ_ID_2, TREQ_ID_3
 
