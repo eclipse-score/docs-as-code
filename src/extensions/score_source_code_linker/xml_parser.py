@@ -28,10 +28,7 @@ from sphinx.environment import BuildEnvironment
 from sphinx_needs import logging
 from sphinx_needs.api import add_external_need
 
-
-from src.extensions.score_source_code_linker.generate_source_code_links_json import (
-    find_ws_root,
-)
+from src.helper_lib import find_ws_root
 from src.extensions.score_source_code_linker.testlink import (
     TestCaseNeed,
     store_test_case_need_json,

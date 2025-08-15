@@ -25,14 +25,12 @@ from pytest import TempPathFactory
 from sphinx.testing.util import SphinxTestApp
 from sphinx_needs.data import SphinxNeedsData
 
-from test_codelink import needlink_test_decoder
+from src.extensions.score_source_code_linker.tests.test_codelink import needlink_test_decoder
 from src.extensions.score_source_code_linker import get_github_base_url, get_github_link
 from src.extensions.score_source_code_linker.needlinks import NeedLink
 from src.extensions.score_source_code_linker.testlink import TestLink, TestLink_JSON_Decoder
 from src.extensions.score_source_code_linker.tests.test_need_source_links import SourceCodeLinks_TEST_JSON_Decoder
-from src.extensions.score_source_code_linker.generate_source_code_links_json import (
-    find_ws_root,
-)
+from src.helper_lib import find_ws_root
 
 
 
@@ -399,14 +397,14 @@ def example_source_link_text_non_existent(sphinx_base_dir):
     ]
 
 
-def make_source_link(ws_root: Path, needlinks):
+def make_source_link(needlinks):
     return ", ".join(
-        f"{get_github_link(ws_root, n)}<>{n.file}:{n.line}" for n in needlinks
+        f"{get_github_link(n)}<>{n.file}:{n.line}" for n in needlinks
     )
 
-def make_test_link(ws_root: Path, testlinks):
+def make_test_link(testlinks):
     return ", ".join(
-        f"{get_github_link(ws_root, n)}<>{n.name}" for n in testlinks
+        f"{get_github_link(n)}<>{n.name}" for n in testlinks
     )
 
 def compare_json_files(file1: Path, golden_file: Path, object_hook):
@@ -501,14 +499,14 @@ def test_source_link_integration_ok(
             if i != 3:
                 # Excluding 3 as this is a keyerror here
                 expected_code_link = make_source_link(
-                    ws_root, example_source_link_text_all_ok[f"TREQ_ID_{i}"]
+                    example_source_link_text_all_ok[f"TREQ_ID_{i}"]
                 )
                 print(f"EXPECTED LINK CODE: {expected_code_link}")
                 actual_source_code_link = cast(list[str], need_as_dict["source_code_link"])
                 print(f"ACTUALL CODE LINK: {actual_source_code_link}")
                 assert set(expected_code_link) == set(actual_source_code_link)
             expected_test_link = make_test_link(
-                ws_root, example_test_link_text_all_ok[f"TREQ_ID_{i}"]
+                example_test_link_text_all_ok[f"TREQ_ID_{i}"]
             )
             # Compare contents, regardless of order.
             print(f"NEED AS DICT: {need_as_dict}")
