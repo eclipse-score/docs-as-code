@@ -271,7 +271,7 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
             need_as_dict = cast(dict[str, object], need)
 
             need_as_dict["source_code_link"] = ", ".join(
-                f"{get_github_link(n)}<>{n.file}:{n.line}" for n in needlinks
+                f"{get_github_link(None, n)}<>{n.file}:{n.line}" for n in needlinks
             )
 
             # NOTE: Removing & adding the need is important to make sure
