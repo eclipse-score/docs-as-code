@@ -147,6 +147,17 @@ def group_by_need(source_code_links: list[NeedLink]) -> dict[str, list[NeedLink]
     return source_code_links_by_need
 
 
+def get_github_link(needlink: NeedLink | None = None) -> str:
+    if needlink is None:
+        needlink = DefaultNeedLink()
+    passed_git_root = find_git_root()
+    if passed_git_root is None:
+        passed_git_root = Path()
+    base_url = get_github_base_url()
+    current_hash = get_current_git_hash(passed_git_root)
+    return f"{base_url}/blob/{current_hash}/{needlink.file}#L{needlink.line}"
+
+
 def parse_git_output(str_line: str) -> str:
     if len(str_line.split()) < 2:
         LOGGER.warning(
@@ -204,22 +215,6 @@ def get_github_base_url(git_root: Path = Path()) -> str:
     return f"https://github.com/{repo_info}"
 
 
-def get_github_link(
-    git_root: Path | None = None, needlink: NeedLink | None = None
-) -> str:
-    if git_root is None:
-        git_root = Path()
-    if needlink is None:
-        needlink = DefaultNeedLink()
-
-    passed_git_root = get_git_root(git_root)
-    base_url = get_github_base_url(
-        passed_git_root
-    )  # Pass git_root to avoid double lookup
-    current_hash = get_current_git_hash(passed_git_root)
-    return f"{base_url}/blob/{current_hash}/{needlink.file}#L{needlink.line}"
-
-
 # req-Id: tool_req__docs_dd_link_source_code_link
 def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
     """
@@ -271,7 +266,7 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
             need_as_dict = cast(dict[str, object], need)
 
             need_as_dict["source_code_link"] = ", ".join(
-                f"{get_github_link(None, n)}<>{n.file}:{n.line}" for n in needlinks
+                f"{get_github_link(n)}<>{n.file}:{n.line}" for n in needlinks
             )
 
             # NOTE: Removing & adding the need is important to make sure
