@@ -841,42 +841,42 @@
   },
   {
     "file": "src/extensions/score_metamodel/checks/check_options.py",
-    "line": 94,
+    "line": 106,
     "tag": "# req-Id:",
     "need": "tool_req__docs_req_attr_reqtype",
     "full_line": "# req-Id: tool_req__docs_req_attr_reqtype"
   },
   {
     "file": "src/extensions/score_metamodel/checks/check_options.py",
-    "line": 95,
+    "line": 107,
     "tag": "# req-Id:",
     "need": "tool_req__docs_common_attr_security",
     "full_line": "# req-Id: tool_req__docs_common_attr_security"
   },
   {
     "file": "src/extensions/score_metamodel/checks/check_options.py",
-    "line": 96,
+    "line": 108,
     "tag": "# req-Id:",
     "need": "tool_req__docs_common_attr_safety",
     "full_line": "# req-Id: tool_req__docs_common_attr_safety"
   },
   {
     "file": "src/extensions/score_metamodel/checks/check_options.py",
-    "line": 97,
+    "line": 109,
     "tag": "# req-Id:",
     "need": "tool_req__docs_common_attr_status",
     "full_line": "# req-Id: tool_req__docs_common_attr_status"
   },
   {
     "file": "src/extensions/score_metamodel/checks/check_options.py",
-    "line": 98,
+    "line": 110,
     "tag": "# req-Id:",
     "need": "tool_req__docs_req_attr_rationale",
     "full_line": "# req-Id: tool_req__docs_req_attr_rationale"
   },
   {
     "file": "src/extensions/score_metamodel/checks/check_options.py",
-    "line": 99,
+    "line": 111,
     "tag": "# req-Id:",
     "need": "tool_req__docs_arch_attr_mandatory",
     "full_line": "# req-Id: tool_req__docs_arch_attr_mandatory"
@@ -890,14 +890,14 @@
   },
   {
     "file": "src/extensions/score_metamodel/checks/attributes_format.py",
-    "line": 98,
+    "line": 103,
     "tag": "# req-Id:",
     "need": "tool_req__docs_common_attr_desc_wording",
     "full_line": "# req-Id: tool_req__docs_common_attr_desc_wording"
   },
   {
     "file": "src/extensions/score_metamodel/checks/attributes_format.py",
-    "line": 99,
+    "line": 104,
     "tag": "# req-Id:",
     "need": "tool_req__docs_common_attr_title",
     "full_line": "# req-Id: tool_req__docs_common_attr_title"
