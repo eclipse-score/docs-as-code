@@ -32,25 +32,25 @@ def get_runfiles_dir_impl(
 def test_run_incremental():
     """bazel run //process-docs:incremental"""
     # in incremental.py:
-    assert (
-        get_runfiles_dir_impl(
-            cwd="/home/vscode/.cache/bazel/_bazel_vscode/6084288f00f33db17acb4220ce8f1999/execroot/_main/bazel-out/k8-fastbuild/bin/process-docs/incremental.runfiles/_main",
-            conf_dir="process-docs",
-            env_runfiles="/home/vscode/.cache/bazel/_bazel_vscode/6084288f00f33db17acb4220ce8f1999/execroot/_main/bazel-out/k8-fastbuild/bin/process-docs/incremental.runfiles",
-            git_root="/workspaces/process",
-        )
-        == "/workspaces/process/bazel-out/k8-fastbuild/bin/process-docs/incremental.runfiles"
+    assert get_runfiles_dir_impl(
+        cwd="/home/vscode/.cache/bazel/_bazel_vscode/6084288f00f33db17acb4220ce8f1999/execroot/_main/bazel-out/k8-fastbuild/bin/process-docs/incremental.runfiles/_main",
+        conf_dir="process-docs",
+        env_runfiles="/home/vscode/.cache/bazel/_bazel_vscode/6084288f00f33db17acb4220ce8f1999/execroot/_main/bazel-out/k8-fastbuild/bin/process-docs/incremental.runfiles",
+        git_root="/workspaces/process",
+    ) == (
+        "/workspaces/process/bazel-out/k8-fastbuild/bin/process-docs/"
+        "incremental.runfiles"
     )
 
     # in conf.py:
-    assert (
-        get_runfiles_dir_impl(
-            cwd="/workspaces/process/process-docs",
-            conf_dir="process-docs",
-            env_runfiles="/home/vscode/.cache/bazel/_bazel_vscode/6084288f00f33db17acb4220ce8f1999/execroot/_main/bazel-out/k8-fastbuild/bin/process-docs/incremental.runfiles",
-            git_root="/workspaces/process",
-        )
-        == "/workspaces/process/bazel-out/k8-fastbuild/bin/process-docs/incremental.runfiles"
+    assert get_runfiles_dir_impl(
+        cwd="/workspaces/process/process-docs",
+        conf_dir="process-docs",
+        env_runfiles="/home/vscode/.cache/bazel/_bazel_vscode/6084288f00f33db17acb4220ce8f1999/execroot/_main/bazel-out/k8-fastbuild/bin/process-docs/incremental.runfiles",
+        git_root="/workspaces/process",
+    ) == (
+        "/workspaces/process/bazel-out/k8-fastbuild/bin/process-docs/"
+        "incremental.runfiles"
     )
 
 
@@ -83,12 +83,11 @@ def test_esbonio_old():
 def test3():
     # docs named differently, just to make sure nothing is hardcoded
     # bazel run //other-docs:incremental
-    assert (
-        get_runfiles_dir_impl(
-            cwd="/workspaces/process/other-docs",
-            conf_dir="other-docs",
-            env_runfiles="/home/vscode/.cache/bazel/_bazel_vscode/6084288f00f33db17acb4220ce8f1999/execroot/_main/bazel-out/k8-fastbuild/bin/other-docs/incremental.runfiles",
-            git_root="/workspaces/process",
-        )
-        == "/workspaces/process/bazel-out/k8-fastbuild/bin/other-docs/incremental.runfiles"
+    assert get_runfiles_dir_impl(
+        cwd="/workspaces/process/other-docs",
+        conf_dir="other-docs",
+        env_runfiles="/home/vscode/.cache/bazel/_bazel_vscode/6084288f00f33db17acb4220ce8f1999/execroot/_main/bazel-out/k8-fastbuild/bin/other-docs/incremental.runfiles",
+        git_root="/workspaces/process",
+    ) == (
+        "/workspaces/process/bazel-out/k8-fastbuild/bin/other-docs/incremental.runfiles"
     )

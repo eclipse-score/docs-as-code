@@ -83,6 +83,36 @@ def scripts_directory_hash():
 #       ╰──────────────────────────────────────────────────────────────────────────────╯
 
 
+def _process_interfaces(
+    iface_list: list[str],
+    relation: str,
+    need: dict[str, str],
+    all_needs: dict[str, dict[str, str]],
+    proc_dict: dict[str, str] | dict[str, list[str]],
+    linkage_text: str,
+) -> str:
+    """Helper to process either implemented or used interfaces."""
+    for iface in iface_list:
+        # check for misspelled interface
+        if not all_needs.get(iface, []):
+            logger.info(f"{need}: {relation} {iface} could not be found")
+            continue
+
+        if relation == "implements":
+            if not proc_dict.get(iface, []):
+                linkage_text += (
+                    f"{gen_link_text(need, '-u->', all_needs[iface], 'implements')} \n"
+                )
+                proc_dict[iface] = need["id"]
+        else:  # "uses"
+            if not proc_dict.get(iface, []):
+                proc_dict[iface] = [need["id"]]
+            else:
+                proc_dict[iface].append(need["id"])
+
+    return linkage_text
+
+
 def draw_comp_incl_impl_int(
     need: dict[str, str],
     all_needs: dict[str, dict[str, str]],
@@ -133,36 +163,25 @@ def draw_comp_incl_impl_int(
     local_impl_interfaces = get_interface_from_component(need, "implements", all_needs)
     local_used_interfaces = get_interface_from_component(need, "uses", all_needs)
 
-    # Add all interfaces which are implemented by component to global list
-    # and provide implementation
-    for iface in local_impl_interfaces:
-        # check for misspelled implements
-        if not all_needs.get(iface, []):
-            logger.info(f"{need}: implements {iface} could not be found")
-            continue
+    # Process implemented interfaces
+    linkage_text = _process_interfaces(
+        local_impl_interfaces,
+        "implements",
+        need,
+        all_needs,
+        proc_impl_interfaces,
+        linkage_text,
+    )
 
-        if not proc_impl_interfaces.get(iface, []):
-            linkage_text += f"{
-                gen_link_text(
-                    need,
-                    '-u->',
-                    all_needs[iface],
-                    'implements',
-                )
-            } \n"
-            proc_impl_interfaces[iface] = need["id"]
-
-    # Add all elements which are used by component to global list
-    for iface in local_used_interfaces:
-        # check for misspelled used
-        if not all_needs.get(iface, []):
-            logger.info(f"{need}: uses {iface} could not be found")
-            continue
-
-        if not proc_used_interfaces.get(iface, []):
-            proc_used_interfaces[iface] = [need["id"]]
-        else:
-            proc_used_interfaces[iface].append(need["id"])
+    # Process used interfaces
+    linkage_text = _process_interfaces(
+        local_used_interfaces,
+        "uses",
+        need,
+        all_needs,
+        proc_used_interfaces,
+        linkage_text,
+    )
 
     return structure_text, linkage_text, proc_impl_interfaces, proc_used_interfaces
 
@@ -189,6 +208,68 @@ def draw_impl_interface(
     )
 
     return local_impl_interfaces
+
+
+def _process_impl_interfaces(
+    need: dict[str, str],
+    all_needs: dict[str, dict[str, str]],
+    proc_impl_interfaces: dict[str, str],
+    structure_text: str,
+) -> str:
+    """Handle implemented interfaces outside the boxes."""
+    local_impl_interfaces = draw_impl_interface(need, all_needs, set())
+    # Add all interfaces which are implemented by component to global list
+    # and provide implementation
+    for iface in local_impl_interfaces:
+        # check for misspelled implements
+        if not all_needs.get(iface, []):
+            logger.info(f"{need}: implements {iface} could not be found")
+            continue
+        if not proc_impl_interfaces.get(iface, []):
+            structure_text += gen_interface_element(iface, all_needs, True)
+    return structure_text
+
+
+def _process_used_interfaces(
+    need: dict[str, str],
+    all_needs: dict[str, dict[str, str]],
+    proc_impl_interfaces: dict[str, str],
+    proc_used_interfaces: dict[str, list[str]],
+    local_impl_interfaces: list[str],
+    structure_text: str,
+    linkage_text: str,
+) -> tuple[str, str]:
+    """Handle all interfaces which are used by component."""
+    for iface, comps in proc_used_interfaces.items():
+        if iface not in proc_impl_interfaces:
+            # Add implementing components and modules
+            impl_comp_str = get_impl_comp_from_logic_iface(iface, all_needs)
+            impl_comp = all_needs.get(impl_comp_str[0], {}) if impl_comp_str else ""
+
+            if impl_comp:
+                retval = get_hierarchy_text(impl_comp_str[0], all_needs)
+                structure_text += retval[2]  # module open
+                structure_text += retval[0]  # rest open
+                structure_text += retval[1]  # rest close
+                structure_text += retval[3]  # module close
+                if iface not in local_impl_interfaces:
+                    structure_text += gen_interface_element(iface, all_needs, True)
+                # Draw connection between implementing components and interface
+                linkage_text += f"{
+                    gen_link_text(impl_comp, '-u->', all_needs[iface], 'implements')
+                } \n"
+            else:
+                # Add only interface if component not defined
+                print(f"{iface}: No implementing component defined")
+                structure_text += gen_interface_element(iface, all_needs, True)
+
+        # Interface can be used by multiple components
+        for comp in comps:
+            linkage_text += f"{
+                gen_link_text(all_needs[comp], '-d[#green]->', all_needs[iface], 'uses')
+            } \n"
+
+    return structure_text, linkage_text
 
 
 def draw_module(
@@ -254,17 +335,9 @@ def draw_module(
 
     # Draw all implemented interfaces outside the boxes
     local_impl_interfaces = draw_impl_interface(need, all_needs, set())
-
-    # Add all interfaces which are implemented by component to global list
-    # and provide implementation
-    for iface in local_impl_interfaces:
-        # check for misspelled implements
-        if not all_needs.get(iface, []):
-            logger.info(f"{need}: implements {iface} could not be found")
-            continue
-
-        if not proc_impl_interfaces.get(iface, []):
-            structure_text += gen_interface_element(iface, all_needs, True)
+    structure_text = _process_impl_interfaces(
+        need, all_needs, proc_impl_interfaces, structure_text
+    )
 
     # Draw outer module
     structure_text += f"{gen_struct_element('package', need)}  {{\n"
@@ -272,21 +345,17 @@ def draw_module(
     # Draw inner components recursively
     for need_inc in need.get("includes", []):
         curr_need = all_needs.get(need_inc, {})
-
         # check for misspelled include
         if not curr_need:
             logger.info(f"{need}: include with id {need_inc} could not be found")
             continue
-
         if curr_need["type"] not in ["comp_arc_sta", "mod_view_sta"]:
             continue
-
         sub_structure, sub_linkage, proc_impl_interfaces, proc_used_interfaces = (
             draw_comp_incl_impl_int(
                 curr_need, all_needs, proc_impl_interfaces, proc_used_interfaces
             )
         )
-
         structure_text += sub_structure
         linkage_text += sub_linkage
 
@@ -294,35 +363,15 @@ def draw_module(
     structure_text += f"}} /' {need['title']} '/ \n\n"
 
     # Add all interfaces which are used by component
-    for iface, comps in proc_used_interfaces.items():
-        if iface not in proc_impl_interfaces:
-            # Add implementing components and modules
-            impl_comp_str = get_impl_comp_from_logic_iface(iface, all_needs)
-
-            impl_comp = all_needs.get(impl_comp_str[0], {}) if impl_comp_str else ""
-
-            if impl_comp:
-                retval = get_hierarchy_text(impl_comp_str[0], all_needs)
-                structure_text += retval[2]  # module open
-                structure_text += retval[0]  # rest open
-
-                structure_text += retval[1]  # rest close
-                structure_text += retval[3]  # module close
-                if iface not in local_impl_interfaces:
-                    structure_text += gen_interface_element(iface, all_needs, True)
-
-                # Draw connection between implementing components and interface
-                linkage_text += f"{gen_link_text(impl_comp, '-u->', all_needs[iface], 'implements')} \n"
-
-            else:
-                # Add only interface if component not defined
-                print(f"{iface}: No implementing component defined")
-                structure_text += gen_interface_element(iface, all_needs, True)
-
-        # Interface can be used by multiple components
-        for comp in comps:
-            # Draw connection between used interfaces and components
-            linkage_text += f"{gen_link_text(all_needs[comp], '-d[#green]->', all_needs[iface], 'uses')} \n"
+    structure_text, linkage_text = _process_used_interfaces(
+        need,
+        all_needs,
+        proc_impl_interfaces,
+        proc_used_interfaces,
+        local_impl_interfaces,
+        structure_text,
+        linkage_text,
+    )
 
     # Remove duplicate links
     linkage_text = "\n".join(set(linkage_text.split("\n"))) + "\n"
@@ -338,6 +387,98 @@ def draw_module(
 class draw_full_feature:
     def __repr__(self):
         return "draw_full_feature" + " in " + scripts_directory_hash()
+
+    def _collect_interfaces_and_modules(
+        self,
+        need: dict[str, str],
+        all_needs: dict[str, dict[str, str]],
+        interfacelist: list[str],
+        impl_comp: dict[str, str],
+        proc_modules: list[str],
+        proc_impl_interfaces: dict[str, str],
+        proc_used_interfaces: dict[str, list[str]],
+        structure_text: str,
+        link_text: str,
+    ) -> tuple[
+        str, str, dict[str, str], dict[str, list[str]], dict[str, str], list[str]
+    ]:
+        """Process interfaces and load modules for implementation."""
+        for iface in interfacelist:
+            if all_needs.get(iface):
+                if iface:
+                    comps = get_impl_comp_from_logic_iface(iface, all_needs)
+                    if comps:
+                        impl_comp[iface] = comps[0]
+
+                if imcomp := impl_comp.get(iface, {}):
+                    module = get_module(imcomp, all_needs)
+                    # FIXME: sometimes module is empty, then the following code fails
+                    if not module:
+                        logger.info(
+                            f"FIXME: {need['id']}: "
+                            f"Module for interface {iface} -> {imcomp} is empty."
+                        )
+                        continue
+
+                    if module not in proc_modules:
+                        tmp, link_text, proc_impl_interfaces, proc_used_interfaces = (
+                            draw_module(
+                                all_needs[module],
+                                all_needs,
+                                proc_impl_interfaces,
+                                proc_used_interfaces,
+                            )
+                        )
+                        structure_text += tmp
+                        proc_modules.append(module)
+            else:
+                logger.info(f"{need}: Interface {iface} could not be found")
+                continue
+        return (
+            structure_text,
+            link_text,
+            proc_impl_interfaces,
+            proc_used_interfaces,
+            impl_comp,
+            proc_modules,
+        )
+
+    def _build_links(
+        self,
+        need: dict[str, str],
+        all_needs: dict[str, dict[str, str]],
+        interfacelist: list[str],
+        impl_comp: dict[str, str],
+        link_text: str,
+    ) -> str:
+        """Add actor-interface and interface-component relations."""
+        for iface in interfacelist:
+            if imcomp := impl_comp.get(iface):
+                # Add relation between Actor and Interfaces
+                link_text += f"{
+                    gen_link_text(
+                        {'id': 'Feature_User'}, '-d->', all_needs[iface], 'use'
+                    )
+                } \n"
+
+                # Add relation between interface and component
+                if imcomp := impl_comp.get(iface):
+                    link_text += f"{
+                        gen_link_text(
+                            all_needs[imcomp],
+                            '-u->',
+                            all_needs[iface],
+                            'implements',
+                        )
+                    } \n"
+                else:
+                    logger.info(
+                        f"Interface {iface} is not implemented by any component"
+                    )
+            else:
+                logger.info(f"{need}: Interface {iface} could not be found")
+                continue
+        return link_text
 
     def __call__(
         self, need: dict[str, str], all_needs: dict[str, dict[str, str]]
@@ -365,70 +506,33 @@ class draw_full_feature:
             if iface not in interfacelist:
                 interfacelist.append(iface)
 
-        for iface in interfacelist:
-            if iface_need := all_needs.get(iface):
-                if iface:
-                    comps = get_impl_comp_from_logic_iface(iface, all_needs)
-
-                    if comps:
-                        impl_comp[iface] = comps[0]
-
-                if imcomp := impl_comp.get(iface, {}):
-                    module = get_module(imcomp, all_needs)
-
-                    # FIXME: sometimes module is empty, then the following code fails
-                    if not module:
-                        logger.info(
-                            f"FIXME: {need['id']}: "
-                            f"Module for interface {iface} -> {imcomp} is empty."
-                        )
-                        continue
-
-                    if module not in proc_modules:
-                        tmp, link_text, proc_impl_interfaces, proc_used_interfaces = (
-                            draw_module(
-                                all_needs[module],
-                                all_needs,
-                                proc_impl_interfaces,
-                                proc_used_interfaces,
-                            )
-                        )
-                        structure_text += tmp
-                        proc_modules.append(module)
-
-            else:
-                logger.info(f"{need}: Interface {iface} could not be found")
-                continue
+        # Process interfaces and collect required modules
+        (
+            structure_text,
+            link_text,
+            proc_impl_interfaces,
+            proc_used_interfaces,
+            impl_comp,
+            proc_modules,
+        ) = self._collect_interfaces_and_modules(
+            need,
+            all_needs,
+            interfacelist,
+            impl_comp,
+            proc_modules,
+            proc_impl_interfaces,
+            proc_used_interfaces,
+            structure_text,
+            link_text,
+        )
 
         # Close Package
         # structure_text += f"}} /' {need['title']}  '/ \n\n"
 
-        for iface in interfacelist:
-            if imcomp := impl_comp.get(iface):
-                # Add relation between Actor and Interfaces
-                link_text += f"{
-                    gen_link_text(
-                        {'id': 'Feature_User'}, '-d->', all_needs[iface], 'use'
-                    )
-                } \n"
-
-                # Add relation between interface and component
-                if imcomp := impl_comp.get(iface):
-                    link_text += f"{
-                        gen_link_text(
-                            all_needs[imcomp],
-                            '-u->',
-                            all_needs[iface],
-                            'implements',
-                        )
-                    } \n"
-                else:
-                    logger.info(
-                        f"Interface {iface} is not implemented by any component"
-                    )
-            else:
-                logger.info(f"{need}: Interface {iface} could not be found")
-                continue
+        # Build all links between actor, interfaces, and components
+        link_text = self._build_links(
+            need, all_needs, interfacelist, impl_comp, link_text
+        )
 
         # Remove duplicate links
         link_text = "\n".join(set(link_text.split("\n"))) + "\n"

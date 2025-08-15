@@ -70,10 +70,15 @@ def check_id_length(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
     if parts[1] == "example_feature":
         max_lenght += 17  # _example_feature_
     if len(need["id"]) > max_lenght:
+        length = 0
+        if "example_feature" not in need["id"]:
+            length = len(need["id"])
+        else:
+            length = len(need["id"]) - 17
         msg = (
             f"exceeds the maximum allowed length of 45 characters "
             "(current length: "
-            f"{len(need['id']) if 'example_feature' not in need['id'] else len(need['id']) - 17})."
+            f"{length})."
         )
         log.warning_for_option(need, "id", msg)
 
@@ -82,7 +87,7 @@ def _check_options_for_prohibited_words(
     prohibited_word_checks: ProhibitedWordCheck, need: NeedsInfoType, log: CheckLogger
 ):
     options: list[str] = [
-        x for x in prohibited_word_checks.option_check.keys() if x != "types"
+        x for x in prohibited_word_checks.option_check if x != "types"
     ]
     for option in options:
         forbidden_words = prohibited_word_checks.option_check[option]

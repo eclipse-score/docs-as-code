@@ -11,7 +11,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 import importlib
-import json
 import os
 import pkgutil
 from collections.abc import Callable
@@ -23,13 +22,6 @@ from sphinx.application import Sphinx
 from sphinx_needs import logging
 from sphinx_needs.config import NeedType
 from sphinx_needs.data import NeedsInfoType, NeedsView, SphinxNeedsData
-
-from src.helper_lib import (
-    find_git_root,
-    find_ws_root,
-    get_current_git_hash,
-    get_github_repo_info,
-)
 
 from .external_needs import connect_external_needs
 from .log import CheckLogger

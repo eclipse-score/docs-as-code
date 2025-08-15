@@ -11,6 +11,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 import re
+from os import error
 
 from score_metamodel import (
     CheckLogger,
@@ -31,6 +32,30 @@ def get_need_type(needs_types: list[ScoreNeedType], directive: str) -> ScoreNeed
         if need_type["directive"] == directive:
             return need_type
     raise ValueError(f"Need type {directive} not found in needs_types")
+
+
+def _normalize_values(raw_value: str | list[str] | None) -> list[str]:
+    """Normalize a raw value into a list of strings."""
+    if raw_value is None:
+        return []
+    if isinstance(raw_value, str):
+        return [raw_value]
+    if isinstance(raw_value, list) and all(isinstance(v, str) for v in raw_value):
+        return raw_value
+    raise ValueError
+
+
+def _validate_value_pattern(
+    value: str, pattern: str, need: NeedsInfoType, field: str, log: CheckLogger
+) -> None:
+    """Check if a value matches the given pattern, log warnings if not."""
+    try:
+        if not re.match(pattern, value):
+            log.warning_for_option(need, field, f"does not follow pattern `{pattern}`.")
+    except TypeError:
+        log.warning_for_option(
+            need, field, f"pattern `{pattern}` is not a valid regex pattern."
+        )
 
 
 def validate_fields(
@@ -64,31 +89,18 @@ def validate_fields(
                     need, f"is missing required {field_type}: `{field}`."
                 )
             continue  # Skip empty optional fields
-
-        values: list[str]
-
-        if isinstance(raw_value, str):
-            values = [raw_value]
-        elif isinstance(raw_value, list) and all(isinstance(v, str) for v in raw_value):
-            values = raw_value
-        else:
-            values = [str(raw_value)]
-
+        try:
+            values = _normalize_values(raw_value)
+        except ValueError as err:
+            raise ValueError(
+                f"An Attribute inside need {need['id']} is "
+                "not of type str. Only Strings are allowed"
+            ) from err
         # The filter ensures that the function is only called when needed.
         for value in values:
             if allowed_prefixes:
                 value = remove_prefix(value, allowed_prefixes)
-            try:
-                if not re.match(pattern, value):
-                    log.warning_for_option(
-                        need, field, f"does not follow pattern `{pattern}`."
-                    )
-            except TypeError:
-                log.warning_for_option(
-                    need,
-                    field,
-                    f"pattern `{pattern}` is not a valid regex pattern.",
-                )
+            _validate_value_pattern(value, pattern, need, field, log)
 
 
 # req-Id: tool_req__docs_req_attr_reqtype
