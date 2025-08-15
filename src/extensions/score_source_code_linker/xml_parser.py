@@ -217,7 +217,7 @@ def construct_and_add_need(app: Sphinx, tn: TestCaseNeed):
             need_type="testcase",
             title=tn.name,
             tags="TEST",
-            id=f"testcase__{short_hash(tn.file + tn.name).upper()}",
+            id=f"testcase__{tn.name}_{short_hash(tn.file + tn.name).upper()}",
             name=tn.name,
             external_url=get_github_link(tn),
             fully_verifies=tn.FullyVerifies if tn.FullyVerifies is not None else "",
