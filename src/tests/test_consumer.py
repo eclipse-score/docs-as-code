@@ -510,6 +510,7 @@ def setup_test_environment(sphinx_base_dir, pytestconfig):
                 debug_print(f"Removed existing symlink: {dest}")
             elif dest.is_dir():
                 import shutil
+
                 shutil.rmtree(dest)
                 debug_print(f"Removed existing directory: {dest}")
         dest.symlink_to(target)
