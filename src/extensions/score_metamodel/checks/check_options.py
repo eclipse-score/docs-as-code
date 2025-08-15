@@ -11,7 +11,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 import re
-from os import error
 
 from score_metamodel import (
     CheckLogger,

@@ -1,4 +1,4 @@
-# *******************************************************************************
+#*******************************************************************************
 # Copyright (c) 2025 Contributors to the Eclipse Foundation
 #
 # See the NOTICE file(s) distributed with this work for additional
@@ -27,6 +27,17 @@ py_library(
     deps = ["@score_docs_as_code//src/helper_lib"],
 )
 
+py_library(
+    name = "source_code_linker_helpers",
+    srcs = [
+        "needlinks.py",
+        "testlink.py",
+        "xml_parser.py",
+    ],
+    imports = ["."],
+    visibility = ["//visibility:public"],
+)
+
 score_py_pytest(
     name = "score_source_code_linker_test",
     size = "small",
@@ -35,12 +46,12 @@ score_py_pytest(
     ]),
     args = [
         "-s",
-        "-vv",
+        #        "-vv",
     ],
     data = glob(["**/*.json"]),
     imports = ["."],
     deps = [
         ":score_source_code_linker",
         "@score_docs_as_code//src/extensions/score_metamodel",
-    ] + all_requirements,
+    ],
 )
