@@ -11,6 +11,8 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
+import string
+
 from score_metamodel import CheckLogger, ProhibitedWordCheck, ScoreNeedType, local_check
 from sphinx.application import Sphinx
 from sphinx_needs.data import NeedsInfoType
@@ -91,8 +93,9 @@ def _check_options_for_prohibited_words(
     ]
     for option in options:
         forbidden_words = prohibited_word_checks.option_check[option]
-        for word in forbidden_words:
-            if word in need[option]:
+        for word in need[option].split():
+            normalized = word.strip(string.punctuation).lower()
+            if normalized in forbidden_words:
                 msg = (
                     f"contains a weak word: `{word}` in option: `{option}`. "
                     "Please revise the wording."
