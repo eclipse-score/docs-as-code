@@ -75,7 +75,7 @@ def parse_remote_git_output(str_line: str) -> str:
 
 def get_github_repo_info(git_root_cwd: Path) -> str:
     """
-    Extract GitHub repository info from git remotes.
+    Query git for the github remote repository (based on heuristic).
 
     Execution context behavior:
     - Works consistently across all contexts when given valid git directory
@@ -154,5 +154,8 @@ def get_current_git_hash(git_root: Path) -> str:
         assert all(c in "0123456789abcdef" for c in decoded_result)
         return decoded_result
     except Exception as e:
-        LOGGER.warning(f"Unexpected error: {git_root}", exc_info=e)
+        LOGGER.warning(
+            f"Unexpected error while trying to get git_hash. Exceuted in: {git_root}",
+            exc_info=e,
+        )
         raise
