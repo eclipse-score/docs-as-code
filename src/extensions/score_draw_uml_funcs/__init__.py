@@ -47,6 +47,15 @@ from score_draw_uml_funcs.helpers import (
 from sphinx.application import Sphinx
 from sphinx_needs.logging import get_logger
 
+CollectResult = tuple[
+    str,  # structure_text
+    str,  # link_text
+    dict[str, str],  # proc_impl_interfaces
+    dict[str, list[str]],  # proc_used_interfaces
+    dict[str, str],  # impl_comp
+    list[str],  # proc_modules
+]
+
 logger = get_logger(__file__)
 
 
@@ -399,9 +408,7 @@ class draw_full_feature:
         proc_used_interfaces: dict[str, list[str]],
         structure_text: str,
         link_text: str,
-    ) -> tuple[
-        str, str, dict[str, str], dict[str, list[str]], dict[str, str], list[str]
-    ]:
+    ) -> CollectResult:
         """Process interfaces and load modules for implementation."""
         for iface in interfacelist:
             if all_needs.get(iface):

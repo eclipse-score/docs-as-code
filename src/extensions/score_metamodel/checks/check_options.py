@@ -88,6 +88,8 @@ def validate_fields(
                     need, f"is missing required {field_type}: `{field}`."
                 )
             continue  # Skip empty optional fields
+        # Try except used to add more context to Error without passing variables
+        # just for that to function
         try:
             values = _normalize_values(raw_value)
         except ValueError as err:

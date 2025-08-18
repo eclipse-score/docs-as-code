@@ -477,8 +477,8 @@ def run_test_commands():
 def setup_test_environment(sphinx_base_dir, pytestconfig):
     """Set up the test environment and return necessary paths and metadata."""
     git_root = find_git_root()
-    if git_root is None:
-        raise RuntimeError("Git root was not found")
+
+    assert git_root is None, "Git root was not found"
 
     gh_url = get_github_base_url()
     current_hash = get_current_git_commit(git_root)
