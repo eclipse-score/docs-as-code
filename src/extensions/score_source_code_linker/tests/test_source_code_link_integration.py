@@ -443,48 +443,30 @@ def compare_grouped_json_files(file1: Path, golden_file: Path):
     with open(golden_file) as f2:
         json2 = json.load(f2, object_hook=SourceCodeLinks_TEST_JSON_Decoder)
 
-    # Basic checks first
     assert len(json1) == len(json2), (
-        f"Files have different lengths. {file1}: {len(json1)}, {golden_file}: {len(json2)}"
+        f"Input & Expected have different Lenghts. Input: {file1}: {len(json1)}, Expected: {golden_file}: {len(json2)}"
     )
 
-    # Check that both files have the same needs
-    needs1 = Counter(item.need for item in json1)
-    needs2 = Counter(item.need for item in json2)
-    assert needs1 == needs2, (
-        f"Files have different needs. {file1}: {needs1}, {golden_file}: {needs2}"
-    )
+    json1_sorted = sorted(json1, key=lambda x: x.need)
+    json2_sorted = sorted(json2, key=lambda x: x.need)
 
-    dict1 = {item.need: item for item in json1}
-    dict2 = {item.need: item for item in json2}
-
-    # Compare each need
-    for need in dict1:
-        item1 = dict1[need]
-        item2 = dict2[need]
-
-        assert len(item1.links.CodeLinks) == len(item2.links.CodeLinks), (
-            f"Different CodeLinks count for {need}. "
-            f"{file1}: {len(item1.links.CodeLinks)}, {golden_file}: {len(item2.links.CodeLinks)}"
+    for item1, item2 in zip(json1_sorted, json2_sorted):
+        assert item1.need == item2.need, (
+            f"Needs don't match: {item1.need} vs {item2.need}"
         )
 
-        assert len(item1.links.TestLinks) == len(item2.links.TestLinks), (
-            f"Different TestLinks count for {need}. "
-            f"{file1}: {len(item1.links.TestLinks)}, {golden_file}: {len(item2.links.TestLinks)}"
-        )
-
-        # Sorting this to make sure we don't compare order, but compare content
+        # Need to sort it to make sure we compare content not order
         codelinks1_sorted = sorted(item1.links.CodeLinks)
         codelinks2_sorted = sorted(item2.links.CodeLinks)
         assert codelinks1_sorted == codelinks2_sorted, (
-            f"CodeLinks don't match for {need}. "
+            f"CodeLinks don't match for {item1.need}. "
             f"{file1}: {item1.links.CodeLinks}, {golden_file}: {item2.links.CodeLinks}"
         )
 
         testlinks1_sorted = sorted(item1.links.TestLinks)
         testlinks2_sorted = sorted(item2.links.TestLinks)
         assert testlinks1_sorted == testlinks2_sorted, (
-            f"TestLinks don't match for {need}. "
+            f"TestLinks don't match for {item1.need}. "
             f"{file1}: {item1.links.TestLinks}, {golden_file}: {item2.links.TestLinks}"
         )
 
