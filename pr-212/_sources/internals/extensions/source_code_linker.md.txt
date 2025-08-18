@@ -5,6 +5,9 @@ A Sphinx extension for source code traceability for requirements. This extension
 In a first step it parses the source code for requirement tags. All discovered tags including their file and line numbers are written in an intermediary file before the sphinx build.
 In a second step this intermediary file is parsed during sphinx build. If a requirement Id is found in the intermediary file a link to the source is added.
 
+** Please note that the 'test parsing & linking' has been added to the source-code-linker. **
+* The documentation for this part will follow soon * 
+
 ## Implementation Components
 
 ### Bazel Integration
