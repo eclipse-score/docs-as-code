@@ -15,6 +15,7 @@ from src.extensions.score_source_code_linker.testlink import (
     DataForTestLink,
 )
 
+
 def get_github_link(
     link: NeedLink | DataForTestLink | DataOfTestCase | None = None,
 ) -> str:

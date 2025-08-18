@@ -157,5 +157,3 @@ def get_current_git_hash(git_root: Path) -> str:
     except Exception as e:
         LOGGER.warning(f"Unexpected error: {git_root}", exc_info=e)
         raise
-
-
