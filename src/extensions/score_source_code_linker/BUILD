@@ -58,7 +58,7 @@ score_py_pytest(
     ]),
     args = [
         "-s",
-        #        "-vv",
+        "-vv",
     ],
     data = glob(["**/*.json"]),
     imports = ["."],
