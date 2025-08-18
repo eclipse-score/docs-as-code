@@ -442,46 +442,50 @@ def compare_grouped_json_files(file1: Path, golden_file: Path):
         json1 = json.load(f1, object_hook=SourceCodeLinks_TEST_JSON_Decoder)
     with open(golden_file) as f2:
         json2 = json.load(f2, object_hook=SourceCodeLinks_TEST_JSON_Decoder)
-    
-    # Check that both files have the same number of entries
+
+    # Basic checks first
     assert len(json1) == len(json2), (
-        f"{file1}'s length is not the same as the golden file length. "
-        f"Len of {file1}: {len(json1)}. Len of Golden File: {len(json2)}"
+        f"Files have different lengths. {file1}: {len(json1)}, {golden_file}: {len(json2)}"
     )
-    
-    # Check that both files have the same needs (counts should match)
-    c1 = Counter(n.need for n in json1)
-    c2 = Counter(n.need for n in json2)
-    assert c1 == c2, (
-        f"Testfile does not have same needs as golden file. "
-        f"Testfile: {c1}\nGoldenFile: {c2}"
+
+    # Check that both files have the same needs
+    needs1 = Counter(item.need for item in json1)
+    needs2 = Counter(item.need for item in json2)
+    assert needs1 == needs2, (
+        f"Files have different needs. {file1}: {needs1}, {golden_file}: {needs2}"
     )
-    
-    # Convert lists to dictionaries keyed by 'need' for easier comparison
+
     dict1 = {item.need: item for item in json1}
     dict2 = {item.need: item for item in json2}
-    
-    # Compare each need's content
-    for need in dict1.keys():
+
+    # Compare each need
+    for need in dict1:
         item1 = dict1[need]
-        item2 = dict2[need]  # We know this exists due to Counter check above
-        
-        # Compare CodeLinks length
+        item2 = dict2[need]
+
         assert len(item1.links.CodeLinks) == len(item2.links.CodeLinks), (
-            f"Testfile does not have same number of CodeLinks in need {need} as golden file. "
-            f"Testfile: {len(item1.links.CodeLinks)}, GoldenFile: {len(item2.links.CodeLinks)}"
+            f"Different CodeLinks count for {need}. "
+            f"{file1}: {len(item1.links.CodeLinks)}, {golden_file}: {len(item2.links.CodeLinks)}"
         )
-        
-        # Compare TestLinks length
+
         assert len(item1.links.TestLinks) == len(item2.links.TestLinks), (
-            f"Testfile does not have same number of TestLinks in need {need} as golden file. "
-            f"Testfile: {len(item1.links.TestLinks)}, GoldenFile: {len(item2.links.TestLinks)}"
+            f"Different TestLinks count for {need}. "
+            f"{file1}: {len(item1.links.TestLinks)}, {golden_file}: {len(item2.links.TestLinks)}"
         )
-        
-        # Compare the actual links content (order-independent)
-        assert item1.links == item2.links, (
-            f"Testfile Links were not the same as Golden file in need {need}. "
-            f"Testfile: {item1.links}\nGoldenFile: {item2.links}"
+
+        # Sorting this to make sure we don't compare order, but compare content
+        codelinks1_sorted = sorted(item1.links.CodeLinks)
+        codelinks2_sorted = sorted(item2.links.CodeLinks)
+        assert codelinks1_sorted == codelinks2_sorted, (
+            f"CodeLinks don't match for {need}. "
+            f"{file1}: {item1.links.CodeLinks}, {golden_file}: {item2.links.CodeLinks}"
+        )
+
+        testlinks1_sorted = sorted(item1.links.TestLinks)
+        testlinks2_sorted = sorted(item2.links.TestLinks)
+        assert testlinks1_sorted == testlinks2_sorted, (
+            f"TestLinks don't match for {need}. "
+            f"{file1}: {item1.links.TestLinks}, {golden_file}: {item2.links.TestLinks}"
         )
 
 

@@ -31,7 +31,7 @@ from sphinx_needs import logging
 LOGGER = logging.get_logger(__name__)
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, order=True)
 class DataForTestLink:
     name: str
     file: Path
