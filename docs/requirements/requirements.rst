@@ -132,7 +132,7 @@ This section provides an overview of current process requirements and their clar
   :parent_covered: YES
 
   Docs-as-Code shall enforce that requirement descriptions do not contain the following weak words:
-  just, about, really, some, thing, absol-utely
+  just, about, really, some, thing, absolutely
 
   This rule applies to:
 

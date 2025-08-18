@@ -91,8 +91,8 @@ def _check_options_for_prohibited_words(
     ]
     for option in options:
         forbidden_words = prohibited_word_checks.option_check[option]
-        for word in need[option].split():
-            if word in forbidden_words:
+        for word in forbidden_words:
+            if word in need[option]:
                 msg = (
                     f"contains a weak word: `{word}` in option: `{option}`. "
                     "Please revise the wording."

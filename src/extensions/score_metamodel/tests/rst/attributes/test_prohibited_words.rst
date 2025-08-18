@@ -30,7 +30,7 @@
 
 
 
-.. Title of an architecture element contains a stop word 
+.. Title of an architecture element contains a stop word
 #EXPECT: stkh_req__test_title_bad: contains a weak word: `must` in option: `title`. Please revise the wording.
 
 .. stkh_req:: This must work
@@ -40,7 +40,7 @@
 
 #EXPECT-NOT: stkh_req__test_title_good: contains a weak word: `must` in option: `title`. Please revise the wording.
 
-.. stkh_req:: This is a teset 
+.. stkh_req:: This is a teset
    :id: stkh_req__test_title_good
 
 
@@ -73,3 +73,24 @@
    :id: feat_arc_sta_desc_good
 
    This should really work
+
+
+#EXPECT: contains a weak word:
+
+.. tool_req:: Enforces description wording rules
+  :id: tool_req__docs_common_attr_desc_wording
+  :tags: Common Attributes
+  :implemented: YES
+  :satisfies:
+    PROCESS_gd_req__req_desc_weak,
+  :parent_covered: YES
+
+  Docs-as-Code shall enforce that requirement descriptions do not contain the following weak words:
+  just, about, really, some, thing, absolut-ely
+
+  This rule applies to:
+
+  * all requirement types defined in :need:`tool_req__docs_req_types`, except process requirements.
+
+  .. note::
+    Artificial "-" added to avoid triggering violation of this requirment in this document.
