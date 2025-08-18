@@ -18,7 +18,10 @@ from pathlib import Path
 from sphinx_needs.logging import get_logger
 
 from src.extensions.score_source_code_linker.needlinks import DefaultNeedLink, NeedLink
-from src.extensions.score_source_code_linker.testlink import DataOfTestCase, DataForTestLink
+from src.extensions.score_source_code_linker.testlink import (
+    DataOfTestCase,
+    DataForTestLink,
+)
 
 LOGGER = get_logger(__name__)
 
@@ -161,7 +164,9 @@ def get_current_git_hash(git_root: Path) -> str:
         raise
 
 
-def get_github_link(link: NeedLink | DataForTestLink | DataOfTestCase | None = None) -> str:
+def get_github_link(
+    link: NeedLink | DataForTestLink | DataOfTestCase | None = None,
+) -> str:
     if link is None:
         link = DefaultNeedLink()
     passed_git_root = find_git_root()

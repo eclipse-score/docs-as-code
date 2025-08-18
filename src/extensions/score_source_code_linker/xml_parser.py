@@ -43,7 +43,7 @@ def parse_testcase_result(testcase: ET.Element) -> tuple[str, str]:
     """
     Returns 'result' and 'result_text' found in the 'message'
     attribute of the result.
-    Example: 
+    Example:
         => <skipped message="Test skip message"></skipped>
 
         Returns:

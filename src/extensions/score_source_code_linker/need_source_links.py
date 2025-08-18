@@ -34,7 +34,9 @@ class NeedSourceLinks:
     CodeLinks: list[NeedLink] = field(default_factory=list)
     TestLinks: list[DataForTestLink] = field(default_factory=list)
 
-SourceCodeLinks  = dict[str, NeedSourceLinks]
+
+SourceCodeLinks = dict[str, NeedSourceLinks]
+
 
 @dataclass
 class SourceCodeLinks:

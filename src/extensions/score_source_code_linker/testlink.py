@@ -97,9 +97,9 @@ class DataOfTestCase:
     def clean_text(cls, text: str):
         # This might not be the right thing in all circumstances
 
-        # Designed to find ansi terminal codes (formatting&color) and santize the text 
+        # Designed to find ansi terminal codes (formatting&color) and santize the text
         # '\x1b[0m' => '' # Reset formatting code
-        # '\x1b[31m' => '' # Red text 
+        # '\x1b[31m' => '' # Red text
         ansi_regex = re.compile(r"\x1b\[[0-9;]*m")
         ansi_clean = ansi_regex.sub("", text)
         # Will turn HTML things back into 'symbols'. E.g. '&lt;' => '<'

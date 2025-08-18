@@ -66,7 +66,8 @@ LOGGER.setLevel("DEBUG")
 
 
 def group_by_need(
-    source_code_links: list[NeedLink], test_case_links: list[DataForTestLink] | None = None
+    source_code_links: list[NeedLink],
+    test_case_links: list[DataForTestLink] | None = None,
 ) -> list[SourceCodeLinks]:
     """
     Groups the given need links and test case links by their need ID.
