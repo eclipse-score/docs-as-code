@@ -144,6 +144,8 @@ def make_codelink_source_2():
     return (
         """
 # Another implementation file
+# Though we should make sure this 
+# is at a different line than the other ID
 #"""
         + """ req-Id: TREQ_ID_1
 class SomeClass:
