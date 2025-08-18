@@ -16,6 +16,8 @@ needs_types_base_options:
   optional_options:
     # req-Id: tool_req__docs_dd_link_source_code_link
     source_code_link: ^https://github.com/.*
+    testlink: ^https://github.com/.*
+    # Custom semantic validation rules
 
 # Prohibited Word Option Checks
 # Follow this schema to write new checks
@@ -372,7 +374,6 @@ needs_types:
     optional_options:
       codelink: ^.*$
       tags: ^.*$
-      testlink: ^.*$
       # req-Id: tool_req__docs_req_attr_reqcov
       reqcovered: ^(YES|NO)$
       # req-Id: tool_req__docs_req_attr_testcov
@@ -830,6 +831,23 @@ needs_types:
       - safety_analysis
     parts: 3
 
+  testcase:
+    title: Testcase Needs parsed from test.xml files
+    prefix: testcase__
+    mandatory_options:
+      id: ^testcase__
+    optional_options:
+      name: ^.*$
+      file: ^.*$
+      line: ^.*$
+      test_type: ^.*$
+      derivation_technique: ^.*$
+      result: ^.*$
+      result_text: ^.*$
+    optional_links:
+      fully_verifies: ^.*$
+      partially_verifies: ^.*$
+
 # Extra link types, which shall be available and allow need types to be linked to each other.
 # We use a dedicated linked type for each type of a connection, for instance from
 # a specification to a requirement. This makes filtering and visualization of such connections
@@ -915,6 +933,14 @@ needs_extra_links:
   violates:
     incoming: violated_by
     outgoing: violates
+
+  fully_verifies:
+    incoming: fully_verified_by
+    outgoing: fully_verifies
+
+  partially_verifies:
+    incoming: partially_verified_by
+    outgoing: partially_verifies
 ##############################################################
 # Graph Checks
 # The graph checks focus on the relation of the needs and their attributes.

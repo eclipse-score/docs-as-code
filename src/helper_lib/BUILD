@@ -16,9 +16,13 @@ load("@score_python_basics//:defs.bzl", "score_py_pytest")
 
 py_library(
     name = "helper_lib",
-    srcs = ["__init__.py"],
+    srcs = [
+        "__init__.py",
+        "additional_functions.py",
+    ],
     imports = ["."],
     visibility = ["//visibility:public"],
+    deps = ["@score_docs_as_code//src/extensions/score_source_code_linker:source_code_linker_helpers"],
 )
 
 score_py_pytest(

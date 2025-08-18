@@ -11,7 +11,8 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-"""In this file the actual sphinx extension is defined. It will read pre-generated
+"""
+In this file the actual sphinx extension is defined. It will read pre-generated
 source code links from a JSON file and add them to the needs.
 """
 
@@ -21,7 +22,6 @@ from pathlib import Path
 from typing import cast
 
 from sphinx.application import Sphinx
-from sphinx.config import Config
 from sphinx.environment import BuildEnvironment
 from sphinx_needs.data import NeedsInfoType, NeedsMutable, SphinxNeedsData
 from sphinx_needs.logging import get_logger
@@ -29,32 +29,226 @@ from sphinx_needs.logging import get_logger
 from src.extensions.score_source_code_linker.generate_source_code_links_json import (
     generate_source_code_links_json,
 )
+from src.extensions.score_source_code_linker.need_source_links import (
+    NeedSourceLinks,
+    SourceCodeLinks,
+    load_source_code_links_combined_json,
+    store_source_code_links_combined_json,
+)
 from src.extensions.score_source_code_linker.needlinks import (
-    DefaultNeedLink,
     NeedLink,
     load_source_code_links_json,
+)
+from src.extensions.score_source_code_linker.testlink import (
+    DataForTestLink,
+    load_data_of_test_case_json,
+    load_test_xml_parsed_json,
+)
+from src.extensions.score_source_code_linker.xml_parser import (
+    construct_and_add_need,
+    run_xml_parser,
 )
 from src.helper_lib import (
     find_git_root,
     find_ws_root,
-    get_current_git_hash,
-    get_github_base_url,
 )
+from src.helper_lib.additional_functions import get_github_link
 
 LOGGER = get_logger(__name__)
-# Outcomment this to enable more verbose logging
+# Uncomment this to enable more verbose logging
 # LOGGER.setLevel("DEBUG")
 
 
-def get_cache_filename(build_dir: Path) -> Path:
+# re-qid: gd_req__req_attr_impl
+#          ╭──────────────────────────────────────╮
+#          │       JSON FILE RELATED FUNCS        │
+#          ╰──────────────────────────────────────╯
+
+
+def group_by_need(
+    source_code_links: list[NeedLink],
+    test_case_links: list[DataForTestLink] | None = None,
+) -> list[SourceCodeLinks]:
+    """
+    Groups the given need links and test case links by their need ID.
+    Returns a nested dictionary structure with 'CodeLink' and 'TestLink' categories.
+    Example output:
+
+
+      {
+        "need": "<need_id>",
+        "links": {
+          "CodeLinks": [NeedLink, NeedLink, ...],
+          "TestLinks": [testlink, testlink, ...]
+        }
+      }
+    """
+    # TODO: I wonder if there is a more efficent way to do this
+    grouped_by_need: dict[str, NeedSourceLinks] = defaultdict(
+        lambda: NeedSourceLinks(TestLinks=[], CodeLinks=[])
+    )
+
+    # Group source code links
+    for needlink in source_code_links:
+        grouped_by_need[needlink.need].CodeLinks.append(needlink)
+
+    # Group test case links
+    if test_case_links is not None:
+        for testlink in test_case_links:
+            grouped_by_need[testlink.need].TestLinks.append(testlink)
+
+    # Build final list of SourceCodeLinks
+    result: list[SourceCodeLinks] = [
+        SourceCodeLinks(
+            need=need,
+            links=NeedSourceLinks(
+                CodeLinks=need_links.CodeLinks,
+                TestLinks=need_links.TestLinks,
+            ),
+        )
+        for need, need_links in grouped_by_need.items()
+    ]
+
+    return result
+
+
+def get_cache_filename(build_dir: Path, filename: str) -> Path:
     """
     Returns the path to the cache file for the source code linker.
     This is used to store the generated source code links.
     """
-    return build_dir / "score_source_code_linker_cache.json"
+    return build_dir / filename
 
 
-def setup_once(app: Sphinx, config: Config):
+def build_and_save_combined_file(outdir: Path):
+    """
+    Reads the saved partial caches of codelink & testlink
+    Builds the combined JSON cache & saves it
+    """
+    source_code_links = load_source_code_links_json(
+        get_cache_filename(outdir, "score_source_code_linker_cache.json")
+    )
+    test_code_links = load_test_xml_parsed_json(
+        get_cache_filename(outdir, "score_xml_parser_cache.json")
+    )
+
+    store_source_code_links_combined_json(
+        outdir / "score_scl_grouped_cache.json",
+        group_by_need(source_code_links, test_code_links),
+    )
+
+
+#          ╭──────────────────────────────────────╮
+#          │         ONE TIME SETUP FUNCS         │
+#          ╰──────────────────────────────────────╯
+
+
+def setup_source_code_linker(app: Sphinx, ws_root: Path):
+    """
+    Setting up source_code_linker with all needed options.
+    Allows us to only have this run once during live_preview & esbonio
+    """
+    app.add_config_value(
+        "skip_rescanning_via_source_code_linker",
+        False,
+        rebuild="env",
+        types=bool,
+        description="Skip rescanning source code files via the source code linker.",
+    )
+
+    # Define need_string_links here to not have it in conf.py
+    # source_code_link and testlinks have the same schema
+    app.config.needs_string_links = {
+        "source_code_linker": {
+            "regex": r"(?P<url>.+)<>(?P<name>.+)",
+            "link_url": "{{url}}",
+            "link_name": "{{name}}",
+            "options": ["source_code_link", "testlink"],
+        },
+    }
+
+    scl_cache_json = get_cache_filename(
+        app.outdir, "score_source_code_linker_cache.json"
+    )
+
+    if (
+        not scl_cache_json.exists()
+        or not app.config.skip_rescanning_via_source_code_linker
+    ):
+        LOGGER.debug(
+            "INFO: Generating source code links JSON file.",
+            type="score_source_code_linker",
+        )
+
+        generate_source_code_links_json(ws_root, scl_cache_json)
+
+
+def register_test_code_linker(app: Sphinx):
+    # Connects function to sphinx to ensure correct execution order
+    # priority is set to make sure it is called in the right order.
+    # Before the combining action
+    app.connect("env-updated", setup_test_code_linker, priority=505)
+
+
+def setup_test_code_linker(app: Sphinx, env: BuildEnvironment):
+    tl_cache_json = get_cache_filename(app.outdir, "score_xml_parser_cache.json")
+    if (
+        not tl_cache_json.exists()
+        or not app.config.skip_rescanning_via_source_code_linker
+    ):
+        ws_root = find_ws_root()
+        if not ws_root:
+            return
+        LOGGER.debug(
+            "INFO: Generating score_xml_parser JSON file.",
+            type="score_source_code_linker",
+        )
+        # sanity check if extension is enabled
+        bazel_testlogs = ws_root / "bazel-testlogs"
+        if not bazel_testlogs.exists():
+            LOGGER.info(f"{'=' * 80}", type="score_source_code_linker")
+            LOGGER.info(
+                f"{'=' * 32}SCORE XML PARSER{'=' * 32}", type="score_source_code_linker"
+            )
+            LOGGER.info(
+                "'bazel-testlogs' was not found. If test data should be parsed,"
+                + "please run tests before building the documentation",
+                type="score_source_code_linker",
+            )
+            LOGGER.info(f"{'=' * 80}", type="score_source_code_linker")
+            return
+
+        run_xml_parser(app, env)
+        return
+    tcn_cache = get_cache_filename(app.outdir, "score_testcaseneeds_cache.json")
+    assert tcn_cache.exists(), (
+        f"TestCaseNeed Cache file does not exist.Checked Path: {tcn_cache}"
+    )
+    # TODO: Make this more efficent, idk how though.
+    test_case_needs = load_data_of_test_case_json(tcn_cache)
+    for tcn in test_case_needs:
+        construct_and_add_need(app, tcn)
+
+
+def register_combined_linker(app: Sphinx):
+    # Registering the combined linker to Sphinx
+    # priority is set to make sure it is called in the right order.
+    # Needs to be called after xml parsing & codelink
+    app.connect("env-updated", setup_combined_linker, priority=507)
+
+
+def setup_combined_linker(app: Sphinx, _: BuildEnvironment):
+    grouped_cache = get_cache_filename(app.outdir, "score_scl_grouped_cache.json")
+    gruped_cache_exists = grouped_cache.exists()
+    if not gruped_cache_exists or not app.config.skip_rescanning_via_source_code_linker:
+        LOGGER.debug(
+            "Did not find combined json 'score_scl_grouped_cache.json' in _build."
+            "Generating new one"
+        )
+        build_and_save_combined_file(app.outdir)
+
+
+def setup_once(app: Sphinx):
     # might be the only way to solve this?
     if "skip_rescanning_via_source_code_linker" in app.config:
         return
@@ -65,8 +259,7 @@ def setup_once(app: Sphinx, config: Config):
     LOGGER.debug(f"DEBUG: Git root is {find_git_root()}")
 
     # Run only for local files!
-    # ws_root is not set when running on any on bazel run
-    # command repositories (dependencies)
+    # ws_root is not set when running on external repositories (dependencies).
     ws_root = find_ws_root()
     if not ws_root:
         return
@@ -74,42 +267,19 @@ def setup_once(app: Sphinx, config: Config):
     # When BUILD_WORKSPACE_DIRECTORY is set, we are inside a git repository.
     assert find_git_root()
 
-    # Extension: score_source_code_linker
-    app.add_config_value(
-        "skip_rescanning_via_source_code_linker",
-        False,
-        rebuild="env",
-        types=bool,
-        description="Skip rescanning source code files via the source code linker.",
-    )
+    # Register & Run (if needed) parsing & saving of JSON caches
+    setup_source_code_linker(app, ws_root)
+    register_test_code_linker(app)
+    register_combined_linker(app)
 
-    # Define need_string_links here to not have it in conf.py
-    app.config.needs_string_links = {
-        "source_code_linker": {
-            "regex": r"(?P<url>.+)<>(?P<name>.+)",
-            "link_url": "{{url}}",
-            "link_name": "{{name}}",
-            "options": ["source_code_link"],
-        },
-    }
-
-    cache_json = get_cache_filename(Path(app.outdir))
-
-    if not cache_json.exists() or not app.config.skip_rescanning_via_source_code_linker:
-        LOGGER.debug(
-            "INFO: Generating source code links JSON file.",
-            type="score_source_code_linker",
-        )
-
-        generate_source_code_links_json(ws_root, cache_json)
-
-    app.connect("env-updated", inject_links_into_needs)
+    # Priorty=510 to ensure it's called after the test code linker & combined connection
+    app.connect("env-updated", inject_links_into_needs, priority=510)
 
 
 def setup(app: Sphinx) -> dict[str, str | bool]:
     # Esbonio will execute setup() on every iteration.
     # setup_once will only be called once.
-    setup_once(app, app.config)
+    setup_once(app)
 
     return {
         "version": "0.1",
@@ -132,33 +302,13 @@ def find_need(
     for prefix in prefixes:
         prefixed_id = f"{prefix}{id}"
         if prefixed_id in all_needs:
+            LOGGER.warning("linking to external needs is not supported!")
             return all_needs[prefixed_id]
 
     return None
 
 
-def group_by_need(source_code_links: list[NeedLink]) -> dict[str, list[NeedLink]]:
-    """
-    Groups the given need links by their need ID.
-    """
-    source_code_links_by_need: dict[str, list[NeedLink]] = defaultdict(list)
-    for needlink in source_code_links:
-        source_code_links_by_need[needlink.need].append(needlink)
-    return source_code_links_by_need
-
-
-def get_github_link(needlink: NeedLink | None = None) -> str:
-    if needlink is None:
-        needlink = DefaultNeedLink()
-    passed_git_root = find_git_root()
-    if passed_git_root is None:
-        passed_git_root = Path()
-    base_url = get_github_base_url()
-    current_hash = get_current_git_hash(passed_git_root)
-    return f"{base_url}/blob/{current_hash}/{needlink.file}#L{needlink.line}"
-
-
-# req-Id: tool_req__docs_dd_link_source_code_link
+# re-qid: gd_req__req__attr_impl
 def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
     """
     'Main' function that facilitates the running of all other functions
@@ -169,7 +319,6 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
         env: Buildenvironment, this is filled automatically
         app: Sphinx app application, this is filled automatically
     """
-
     ws_root = find_ws_root()
     assert ws_root
 
@@ -179,46 +328,65 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
         needs
     )  # TODO: why do we create a copy? Can we also needs_copy = needs[:]? copy(needs)?
 
-    for _, need in needs.items():
-        if need.get("source_code_link"):
-            LOGGER.debug(
-                f"?? Need {need['id']} already has source_code_link: "
-                f"{need.get('source_code_link')}"
-            )
+    # Enabled automatically for DEBUGGING
+    if LOGGER.getEffectiveLevel() >= 10:
+        for id, need in needs.items():
+            if need.get("source_code_link"):
+                LOGGER.debug(
+                    f"?? Need {id} already has source_code_link: {need.get('source_code_link')}"
+                )
+            if need.get("testlink"):
+                LOGGER.debug(
+                    f"?? Need {id} already has testlink: {need.get('testlink')}"
+                )
 
-    source_code_links = load_source_code_links_json(get_cache_filename(app.outdir))
-
-    # group source_code_links by need
-    # groupby requires the input to be sorted by the key
-
-    source_code_links_by_need = group_by_need(source_code_links)
+    source_code_links_by_need = load_source_code_links_combined_json(
+        get_cache_filename(app.outdir, "score_scl_grouped_cache.json")
+    )
 
     # For some reason the prefix 'sphinx_needs internally' is CAPSLOCKED.
     # So we have to make sure we uppercase the prefixes
     prefixes = [x["id_prefix"].upper() for x in app.config.needs_external_needs]
-    for need_id, needlinks in source_code_links_by_need.items():
-        need = find_need(needs_copy, need_id, prefixes)
+    for source_code_links in source_code_links_by_need:
+        need = find_need(needs_copy, source_code_links.need, prefixes)
         if need is None:
             # TODO: print github annotations as in https://github.com/eclipse-score/bazel_registry/blob/7423b9996a45dd0a9ec868e06a970330ee71cf4f/tools/verify_semver_compatibility_level.py#L126-L129
-            for n in needlinks:
+            for n in source_code_links.links.CodeLinks:
                 LOGGER.warning(
-                    f"{n.file}:{n.line}: Could not find {need_id} in documentation",
+                    f"{n.file}:{n.line}: Could not find {source_code_links.need} in documentation [CODE LINK]",
                     type="score_source_code_linker",
                 )
-        else:
-            need_as_dict = cast(dict[str, object], need)
+            for n in source_code_links.links.TestLinks:
+                LOGGER.warning(
+                    f"{n.file}:{n.line}: Could not find {source_code_links.need} in documentation [TEST LINK]",
+                    type="score_source_code_linker",
+                )
+            continue
 
-            need_as_dict["source_code_link"] = ", ".join(
-                f"{get_github_link(n)}<>{n.file}:{n.line}" for n in needlinks
-            )
+        need_as_dict = cast(dict[str, object], need)
 
-            # NOTE: Removing & adding the need is important to make sure
-            # the needs gets 're-evaluated'.
-            Needs_Data.remove_need(need["id"])
-            Needs_Data.add_need(need)
+        need_as_dict["source_code_link"] = ", ".join(
+            f"{get_github_link(n)}<>{n.file}:{n.line}"
+            for n in source_code_links.links.CodeLinks
+        )
+        need_as_dict["testlink"] = ", ".join(
+            f"{get_github_link(n)}<>{n.name}" for n in source_code_links.links.TestLinks
+        )
 
-    # source_code_link of affected needs was overwritten.
-    # Make sure it's empty in all others!
-    for need in needs.values():
-        if need["id"] not in source_code_links_by_need:
-            need["source_code_link"] = ""
+        # NOTE: Removing & adding the need is important to make sure
+        # the needs gets 're-evaluated'.
+        Needs_Data.remove_need(need["id"])
+        Needs_Data.add_need(need)
+
+
+#          ╭──────────────────────────────────────╮
+#          │ WARNING: This somehow screws up the  │
+#          │       integration test? What??       │
+#          │        Commented out for now         │
+#          ╰──────────────────────────────────────╯
+
+# source_code_link of affected needs was overwritten. Make sure it's empty in all others!
+# for need in needs.values():
+#     if need["id"] not in source_code_links_by_need:
+#         need["source_code_link"] = ""  # type: ignore
+#         need["testlink"] = ""  # type: ignore
