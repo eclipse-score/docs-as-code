@@ -51,8 +51,8 @@ from src.extensions.score_source_code_linker.xml_parser import (
 from src.helper_lib import (
     find_git_root,
     find_ws_root,
-    get_github_link,
 )
+from src.helper_lib.additional_functions import get_github_link
 
 LOGGER = get_logger(__name__)
 # Uncomment this to enable more verbose logging

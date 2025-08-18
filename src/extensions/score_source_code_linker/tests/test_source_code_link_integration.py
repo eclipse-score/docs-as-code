@@ -35,7 +35,8 @@ from src.extensions.score_source_code_linker.tests.test_codelink import (
 from src.extensions.score_source_code_linker.tests.test_need_source_links import (
     SourceCodeLinks_TEST_JSON_Decoder,
 )
-from src.helper_lib import find_ws_root, get_github_base_url, get_github_link
+from src.helper_lib import find_ws_root, get_github_base_url
+from src.helper_lib.additional_functions import get_github_link
 
 
 @pytest.fixture()

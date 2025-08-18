@@ -37,10 +37,10 @@ from src.extensions.score_source_code_linker.needlinks import (
 )
 from src.helper_lib import (
     get_current_git_hash,
-    get_github_link,
     get_github_repo_info,
     parse_remote_git_output,
 )
+from src.helper_lib.additional_functions import get_github_link
 
 """
 #          ────────────────ATTENTION───────────────

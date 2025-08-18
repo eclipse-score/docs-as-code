@@ -23,8 +23,7 @@ from rich import print
 from rich.console import Console
 from rich.table import Table
 
-from src.extensions.score_source_code_linker import get_github_base_url
-from src.helper_lib import find_git_root
+from src.helper_lib import find_git_root, get_github_base_url
 
 """
 This script's main usecase is to test consumers of Docs-As-Code with
