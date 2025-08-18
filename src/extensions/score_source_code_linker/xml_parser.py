@@ -16,6 +16,8 @@ It also generates external needs out of the parsed testcases to enable linking t
 """
 
 import contextlib
+import base64
+import hashlib
 import itertools
 import os
 import xml.etree.ElementTree as ET
@@ -202,10 +204,6 @@ def build_test_needs_from_files(
         for c in b:
             construct_and_add_need(app, c)
     return tcns
-
-
-import base64
-import hashlib
 
 
 def short_hash(input_str: str, length: int = 5) -> str:

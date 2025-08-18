@@ -123,7 +123,6 @@ class TestCheckOptions:
             expect_location=False,
         )
 
-    @pytest.mark.skip(reason="Test skipped to test how it looks")
     def test_missing_mandatory_options_info(self):
         # Given any need of known type
         # with missing mandatory options info

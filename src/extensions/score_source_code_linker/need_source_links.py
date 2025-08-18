@@ -35,9 +35,6 @@ class NeedSourceLinks:
     TestLinks: list[DataForTestLink] = field(default_factory=list)
 
 
-SourceCodeLinks = dict[str, NeedSourceLinks]
-
-
 @dataclass
 class SourceCodeLinks:
     # TODO: Find a good key name for this

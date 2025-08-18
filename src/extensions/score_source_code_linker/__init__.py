@@ -56,7 +56,7 @@ from src.helper_lib.additional_functions import get_github_link
 
 LOGGER = get_logger(__name__)
 # Uncomment this to enable more verbose logging
-LOGGER.setLevel("DEBUG")
+# LOGGER.setLevel("DEBUG")
 
 
 # re-qid: gd_req__req_attr_impl
@@ -185,6 +185,8 @@ def setup_source_code_linker(app: Sphinx, ws_root: Path):
 
 def register_test_code_linker(app: Sphinx):
     # Connects function to sphinx to ensure correct execution order
+    # priority is set to make sure it is called in the right order.
+    # Before the combining action
     app.connect("env-updated", setup_test_code_linker, priority=505)
 
 
@@ -230,6 +232,8 @@ def setup_test_code_linker(app: Sphinx, env: BuildEnvironment):
 
 def register_combined_linker(app: Sphinx):
     # Registering the combined linker to Sphinx
+    # priority is set to make sure it is called in the right order.
+    # Needs to be called after xml parsing & codelink
     app.connect("env-updated", setup_combined_linker, priority=507)
 
 
@@ -361,9 +365,6 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
 
         need_as_dict = cast(dict[str, object], need)
 
-        # LOGGER.warning(
-        #     f"Putting links into need: {need['id']}. SCL: {source_code_links.links.CodeLinks}\nTESTLINKS: {source_code_links.links.TestLinks}"
-        # )
         need_as_dict["source_code_link"] = ", ".join(
             f"{get_github_link(n)}<>{n.file}:{n.line}"
             for n in source_code_links.links.CodeLinks

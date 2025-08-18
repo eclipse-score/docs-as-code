@@ -117,10 +117,6 @@ def create_demo_files(sphinx_base_dir, git_repo_setup):
         check=True,
     )
 
-    # Cleanup
-    # Don't know if we need this?
-    # os.environ.pop("BUILD_WORKSPACE_DIRECTORY", None)
-
 
 def make_codelink_source_1():
     return (
