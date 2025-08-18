@@ -34,7 +34,6 @@ from src.extensions.score_source_code_linker.testlink import (
     store_test_xml_parsed_json,
 )
 from src.helper_lib import find_ws_root
-
 from src.helper_lib.additional_functions import get_github_link
 
 logger = logging.get_logger(__name__)

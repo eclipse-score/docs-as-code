@@ -14,10 +14,10 @@ import json
 from pathlib import Path
 
 from src.extensions.score_source_code_linker.testlink import (
-    DataOfTestCase,
     DataForTestLink,
     DataForTestLink_JSON_Decoder,
     DataForTestLink_JSON_Encoder,
+    DataOfTestCase,
     load_test_xml_parsed_json,
     store_test_xml_parsed_json,
 )

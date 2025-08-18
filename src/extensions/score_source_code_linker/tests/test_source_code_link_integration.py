@@ -451,7 +451,7 @@ def compare_grouped_json_files(file1: Path, golden_file: Path):
     json1_sorted = sorted(json1, key=lambda x: x.need)
     json2_sorted = sorted(json2, key=lambda x: x.need)
 
-    for item1, item2 in zip(json1_sorted, json2_sorted):
+    for item1, item2 in zip(json1_sorted, json2_sorted, strict=False):
         assert item1.need == item2.need, (
             f"Needs don't match: {item1.need} vs {item2.need}"
         )

@@ -17,7 +17,6 @@ from pathlib import Path
 
 from sphinx_needs.logging import get_logger
 
-
 LOGGER = get_logger(__name__)
 
 

@@ -11,20 +11,17 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 from pathlib import Path
-from src.helper_lib import (
-    find_ws_root,
-    find_git_root,
-    get_github_base_url,
-    get_current_git_hash,
-    parse_remote_git_output,
-    get_github_repo_info,
-)
 
 # Import types that depend on score_source_code_linker
 from src.extensions.score_source_code_linker.needlinks import DefaultNeedLink, NeedLink
 from src.extensions.score_source_code_linker.testlink import (
-    DataOfTestCase,
     DataForTestLink,
+    DataOfTestCase,
+)
+from src.helper_lib import (
+    find_git_root,
+    get_current_git_hash,
+    get_github_base_url,
 )
 
 
