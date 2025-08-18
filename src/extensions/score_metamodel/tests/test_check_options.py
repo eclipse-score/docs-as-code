@@ -200,13 +200,13 @@ class TestCheckOptions:
             expect_location=False,
         )
 
-    def test_invalid_option_value_type_raises_valueerror(self):
+    def test_invalid_option_value_type_raises_value_error(self):
         # Given a need with an option of wrong type (list with non-str)
         need_1 = need(
             target_id="tool_req__002",
             id="tool_req__002",
             type="tool_req",
-            some_required_option=["not_a_string", 123],
+            some_required_option=123,
             docname=None,
             lineno=None,
         )

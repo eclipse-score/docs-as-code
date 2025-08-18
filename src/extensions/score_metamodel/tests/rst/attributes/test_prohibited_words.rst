@@ -40,7 +40,7 @@
 
 #EXPECT-NOT: stkh_req__test_title_good: contains a weak word: `must` in option: `title`. Please revise the wording.
 
-.. stkh_req:: This is a teset
+.. stkh_req:: This is a test
    :id: stkh_req__test_title_good
 
 
@@ -75,7 +75,7 @@
    This should really work
 
 
-#EXPECT: contains a weak word:
+#EXPECT: tool_req__docs_common_attr_desc_wording: contains a weak word: `just` in option: `content`. Please revise the wording.
 
 .. tool_req:: Enforces description wording rules
   :id: tool_req__docs_common_attr_desc_wording
@@ -91,6 +91,3 @@
   This rule applies to:
 
   * all requirement types defined in :need:`tool_req__docs_req_types`, except process requirements.
-
-  .. note::
-    Artificial "-" added to avoid triggering violation of this requirment in this document.

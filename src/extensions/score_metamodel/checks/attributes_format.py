@@ -95,7 +95,7 @@ def _check_options_for_prohibited_words(
             normalized = word.strip(string.punctuation).lower()
             if normalized in forbidden_words:
                 msg = (
-                    f"contains a weak word: `{word}` in option: `{option}`. "
+                    f"contains a weak word: `{normalized}` in option: `{option}`. "
                     "Please revise the wording."
                 )
                 log.warning_for_need(need, msg)
