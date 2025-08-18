@@ -132,7 +132,7 @@ This section provides an overview of current process requirements and their clar
   :parent_covered: YES
 
   Docs-as-Code shall enforce that requirement descriptions do not contain the following weak words:
-  just, about, really, some, thing, absol-utely
+  ju-st, ab-out, rea-lly, so-me, th-ing, absol-utely
 
   This rule applies to:
 
@@ -457,7 +457,7 @@ Mapping
      ================================ ===========================
 
   .. note::
-      Some tool requirements do not have a matching process requirement.
+      Certain tool requirements do not have a matching process requirement.
 
 .. tool_req:: Safety: enforce safe linking
    :id: tool_req__docs_common_attr_safety_link_check
