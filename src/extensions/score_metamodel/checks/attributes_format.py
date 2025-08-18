@@ -11,6 +11,8 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
+import string
+
 from score_metamodel import CheckLogger, ProhibitedWordCheck, ScoreNeedType, local_check
 from sphinx.application import Sphinx
 from sphinx_needs.data import NeedsInfoType
@@ -70,11 +72,9 @@ def check_id_length(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
     if parts[1] == "example_feature":
         max_lenght += 17  # _example_feature_
     if len(need["id"]) > max_lenght:
-        length = 0
-        if "example_feature" not in need["id"]:
-            length = len(need["id"])
-        else:
-            length = len(need["id"]) - 17
+        length = len(need["id"])
+        if "example_feature" in need["id"]:
+            length -= 17
         msg = (
             f"exceeds the maximum allowed length of 45 characters "
             "(current length: "
@@ -92,9 +92,10 @@ def _check_options_for_prohibited_words(
     for option in options:
         forbidden_words = prohibited_word_checks.option_check[option]
         for word in need[option].split():
-            if word in forbidden_words:
+            normalized = word.strip(string.punctuation).lower()
+            if normalized in forbidden_words:
                 msg = (
-                    f"contains a weak word: `{word}` in option: `{option}`. "
+                    f"contains a weak word: `{normalized}` in option: `{option}`. "
                     "Please revise the wording."
                 )
                 log.warning_for_need(need, msg)
