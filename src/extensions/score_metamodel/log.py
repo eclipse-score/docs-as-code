@@ -11,14 +11,14 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 import os
-from typing import Any, Optional, Union
+from typing import Any
 
 from docutils.nodes import Node
 from sphinx_needs import logging
 from sphinx_needs.data import NeedsInfoType
 from sphinx_needs.logging import SphinxLoggerAdapter
 
-Location = Union[str, tuple[Optional[str], Optional[int]], Node, None]
+Location = str | tuple[str | None, int | None] | Node | None
 NewCheck = tuple[str, Location]
 logger = logging.get_logger(__name__)
 
@@ -65,7 +65,7 @@ class CheckLogger:
     def _log_message(
         self,
         msg: str,
-        location: None | str | tuple[str | None, int | None] | Node = None,
+        location: Location,
         is_new_check: bool = False,
     ):
         if is_new_check:
@@ -78,14 +78,14 @@ class CheckLogger:
     def info(
         self,
         msg: str,
-        location: None | str | tuple[str | None, int | None] | Node = None,
+        location: Location,
     ):
         self._log.info(msg, type="score_metamodel", location=location)
 
     def warning(
         self,
         msg: str,
-        location: None | str | tuple[str | None, int | None] | Node = None,
+        location: Location,
     ):
         self._log.warning(msg, type="score_metamodel", location=location)
 
@@ -98,9 +98,9 @@ class CheckLogger:
         return self._info_count > 0
 
     def flush_new_checks(self):
-        """Log all new-check messages together once."""
+        """Log all new-check messages together at once."""
 
-        def make_header_line(text: str, width: int = 120) -> str:
+        def make_header_line(text: str, width: int = 80) -> str:
             """Center a header inside '=' padding so line length stays fixed."""
             text = f" {text} "
             return text.center(width, "=")
@@ -109,7 +109,7 @@ class CheckLogger:
             return
 
         info_header = make_header_line("[INFO MESSAGE]")
-        separator = "=" * 120
+        separator = "=" * 80
         warning_header = make_header_line(
             f"[New Checks] has {len(self._new_checks)} warnings"
         )
