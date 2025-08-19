@@ -11,11 +11,16 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 import os
-from typing import Any
+from typing import Any, Optional, Union
 
 from docutils.nodes import Node
+from sphinx_needs import logging
 from sphinx_needs.data import NeedsInfoType
 from sphinx_needs.logging import SphinxLoggerAdapter
+
+Location = Union[str, tuple[Optional[str], Optional[int]], Node, None]
+NewCheck = tuple[str, Location]
+logger = logging.get_logger(__name__)
 
 
 class CheckLogger:
@@ -24,6 +29,7 @@ class CheckLogger:
         self._info_count = 0
         self._warning_count = 0
         self._prefix = prefix
+        self._new_checks: list[NewCheck] = []
 
     @staticmethod
     def _location(need: NeedsInfoType, prefix: str):
@@ -43,43 +49,31 @@ class CheckLogger:
         return None
 
     def warning_for_option(
-        self, need: NeedsInfoType, option: str, msg: str, new_check: bool = False
+        self, need: NeedsInfoType, option: str, msg: str, is_new_check: bool = False
     ):
         full_msg = f"{need['id']}.{option} ({need.get(option, None)}): {msg}"
         location = CheckLogger._location(need, self._prefix)
-        self._log_message(full_msg, location, new_check)
+        self._log_message(full_msg, location, is_new_check)
 
-    def warning_for_need(self, need: NeedsInfoType, msg: str, new_check: bool = False):
+    def warning_for_need(
+        self, need: NeedsInfoType, msg: str, is_new_check: bool = False
+    ):
         full_msg = f"{need['id']}: {msg}"
         location = CheckLogger._location(need, self._prefix)
-        self._log_message(full_msg, location, new_check)
+        self._log_message(full_msg, location, is_new_check)
 
     def _log_message(
         self,
         msg: str,
         location: None | str | tuple[str | None, int | None] | Node = None,
-        is_info: bool = False,
+        is_new_check: bool = False,
     ):
-        def make_header_line(text: str, width: int = 120) -> str:
-            """Center a header inside '=' padding so line length stays fixed."""
-            text = f" {text} "
-            return text.center(width, "=")
-
-        if is_info:
-            info_header = make_header_line("[INFO MESSAGE]")
-            warning_header = make_header_line("[New Check Warning]")
-
-            msg = (
-                f"\n\n{info_header}\n\n"
-                f"{'=' * len(info_header)}\n\n"
-                f"{warning_header}\n\n"
-                f"{msg}\n"
-                "Please fix this warning related to the new check "
-                "before the release of the next version of Docs-As-Code.\n"
-            )
-            self.info(msg, location)
+        if is_new_check:
+            self._new_checks.append((msg, location))
+            self._info_count += 1
         else:
             self.warning(msg, location)
+            self._warning_count += 1
 
     def info(
         self,
@@ -87,7 +81,6 @@ class CheckLogger:
         location: None | str | tuple[str | None, int | None] | Node = None,
     ):
         self._log.info(msg, type="score_metamodel", location=location)
-        self._info_count += 1
 
     def warning(
         self,
@@ -95,7 +88,6 @@ class CheckLogger:
         location: None | str | tuple[str | None, int | None] | Node = None,
     ):
         self._log.warning(msg, type="score_metamodel", location=location)
-        self._warning_count += 1
 
     @property
     def has_warnings(self):
@@ -104,3 +96,27 @@ class CheckLogger:
     @property
     def has_infos(self):
         return self._info_count > 0
+
+    def flush_new_checks(self):
+        """Log all new-check messages together once."""
+
+        def make_header_line(text: str, width: int = 120) -> str:
+            """Center a header inside '=' padding so line length stays fixed."""
+            text = f" {text} "
+            return text.center(width, "=")
+
+        if not self._new_checks:
+            return
+
+        info_header = make_header_line("[INFO MESSAGE]")
+        separator = "=" * 120
+        warning_header = make_header_line(
+            f"[New Checks] has {len(self._new_checks)} warnings"
+        )
+
+        logger.info(info_header)
+        logger.info(separator)
+        logger.info(warning_header)
+
+        for msg, location in self._new_checks:
+            self.info(msg, location)
