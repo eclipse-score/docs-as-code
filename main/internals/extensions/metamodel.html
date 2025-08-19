@@ -439,31 +439,45 @@
                   
   <section id="score-metamodel">
 <span id="metamodel"></span><h1>score_metamodel<a class="headerlink" href="#score-metamodel" title="Link to this heading">#</a></h1>
-<p>This extension provides the Metamodel and corresponding checks of the SCORE
-project as a Sphinx extension.</p>
-<section id="naming">
-<h2>Naming<a class="headerlink" href="#naming" title="Link to this heading">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">score_metamodel</span></code> extension is a core extension/component of the Docs-As-Code.
+It provides metamodel definitions, validation checks, and project layout management for Sphinx documentation.</p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
+<p>This extension serves multiple critical functions:</p>
 <ul class="simple">
-<li><p>check: A check is a function that checks compliance to a specific rule.
-(Note: sphinx-needs calls this a ‘warning’)</p></li>
-<li><p>Need-Local checks: checks which can be checked file-local, without a graph of
-other needs.</p></li>
-<li><p>Graph-Based checks: These warnings require a graph of all other needs to be
-checked.</p></li>
+<li><p><strong>Metamodel Definition</strong>: Houses the project’s metamodel schema and configuration</p></li>
+<li><p><strong>Validation System</strong>: Implements comprehensive checks to ensure documentation compliance</p></li>
+<li><p><strong>External Needs Management</strong>: Imports external needs from dependencies</p></li>
+<li><p><strong>Project Layout</strong>: Manages the rendering, look and feel of documentation</p></li>
+<li><p><strong>Integration Testing</strong>: Provides RST-based tests to validate metamodel behavior</p></li>
 </ul>
 </section>
-<section id="creating-new-checks">
-<h2>Creating new checks<a class="headerlink" href="#creating-new-checks" title="Link to this heading">#</a></h2>
-<p>In order to create a new check, you need to create a file in the <code class="docutils literal notranslate"><span class="pre">checks</span></code>
-directory. It will be picked up automatically.
-Then you need to write a local or graph based check function.
-You need to use &#64;local_check or &#64;graph_check decorators to mark your function
-accordingly.
-Have a look at a simple example like <code class="docutils literal notranslate"><span class="pre">id_contains_feature</span></code>.</p>
+<section id="core-components">
+<h2>Core Components<a class="headerlink" href="#core-components" title="Link to this heading">#</a></h2>
+<section id="metamodel-definition">
+<h3>Metamodel Definition<a class="headerlink" href="#metamodel-definition" title="Link to this heading">#</a></h3>
+<p>The extension contains:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">metamodel.yaml</span></code>: The main metamodel definition</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">metamodel-schema.json</span></code>: JSON schema for validation</p></li>
+<li><p>Setting configuration parameters based on input that get passed on to sphinx-needs</p></li>
+</ul>
 </section>
-<section id="usage">
-<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">#</a></h2>
-<p>Add score_metamodel to your extensions in <code class="docutils literal notranslate"><span class="pre">conf.py</span></code>:</p>
+<section id="validation-system">
+<h3>Validation System<a class="headerlink" href="#validation-system" title="Link to this heading">#</a></h3>
+<p>The extension implements a multi-tier checking system:</p>
+<p><strong>Local Checks</strong>: Validate individual needs using only their own data</p>
+<ul class="simple">
+<li><p>Run faster as they don’t require the full needs graph</p></li>
+<li><p>Examples: ID format validation, prohibited words, attribute formatting</p></li>
+</ul>
+<p><strong>Graph-Based Checks</strong>: Validate needs in the context of their relationships</p>
+<ul class="simple">
+<li><p>Require access to the complete needs graph</p></li>
+<li><p>Examples: Link validation, dependency checking, cross-reference verification</p></li>
+</ul>
+<p>This extension comes with Docs-As-Code.
+Add <code class="docutils literal notranslate"><span class="pre">score_metamodel</span></code> to your extensions in <code class="docutils literal notranslate"><span class="pre">conf.py</span></code>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">extensions</span> <span class="o">=</span> <span class="p">[</span>
     <span class="o">...</span>
     <span class="s1">&#39;score_metamodel&#39;</span><span class="p">,</span>
@@ -471,21 +485,193 @@ Have a look at a simple example like <code class="docutils literal notranslate">
 <span class="p">]</span>
 </pre></div>
 </div>
-<p>Make sure score_metamodel is installed in your environment or added to your
-sys.path.</p>
 </section>
-<section id="decision-record-split-of-need-local-and-graph-based-checks">
-<h2>Decision Record: split of need-local and graph-based checks<a class="headerlink" href="#decision-record-split-of-need-local-and-graph-based-checks" title="Link to this heading">#</a></h2>
-<p>While sphinx-needs’ own check/warning mechanism is very powerful, it only works
-for need-local checks. This means, that it is not possible to warn about
-graph-based issues like wrong links etc.</p>
-<p>There are multiple ways to solve this issue, for example via
-https://github.com/useblocks/sphinx-needs/pull/1248</p>
-<p>However we chose to implement a custom warning mechanism, as we needed a
-more elaborate solution for our use case anyway. Calling the checks ourselves
-seems to be the most flexible solution.</p>
-<p>Technically local checks will be called with a single need, while graph-based
-checks will be called with all needs.</p>
+</section>
+<section id="creating-new-validation-checks">
+<h2>Creating New Validation Checks<a class="headerlink" href="#creating-new-validation-checks" title="Link to this heading">#</a></h2>
+<p>The extension automatically discovers checks from the <code class="docutils literal notranslate"><span class="pre">checks/</span></code> directory and the metamodel.yaml config. There are several types of checks you can implement:</p>
+<section id="need-local-checks-configuration-based">
+<h3>1. Need-Local Checks (Configuration-Based)<a class="headerlink" href="#need-local-checks-configuration-based" title="Link to this heading">#</a></h3>
+<p>These checks validate individual needs using regex patterns. They’re defined in <code class="docutils literal notranslate"><span class="pre">metamodel.yaml</span></code> and are the easiest to create.</p>
+<p>All definitions are parsed as regex and evaluated as such, keep that in mind.
+They can be found inside the metamodel.yml and are how we define needs. See an example here:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">needs_types</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">gd_req</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Process Requirements</span>
+<span class="w">    </span><span class="nt">prefix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gd_req__</span>
+<span class="w">    </span><span class="c1"># All options&amp;links defined below are checked if they follow the defined regex in the need itself</span>
+<span class="w">    </span><span class="nt">mandatory_options</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^gd_req__[0-9a-z_]*$</span>
+<span class="w">      </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^(valid|draft)$</span>
+<span class="w">      </span><span class="nt">content</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^[\s\S]+$</span><span class="w"> </span><span class="c1"># multiline non empty matching</span>
+<span class="w">    </span><span class="nt">optional_links</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">satisfies</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^wf__.*$</span>
+<span class="w">      </span><span class="nt">complies</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^std_req__(iso26262|isosae21434|isopas8926|aspice_40)__.*$</span><span class="w"> </span><span class="c1">#can only be one of these</span>
+<span class="w">    </span><span class="nt">tags</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">requirement</span><span class="w"> </span><span class="c1"># grouping of similar needs together in order to make some other checks easier to write</span>
+<span class="w">    </span><span class="nt">parts</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span><span class="w"> </span><span class="c1"># has to have exactly one `__` inside the ID</span>
+</pre></div>
+</div>
+</section>
+<section id="generic-graph-checks-configuration-based">
+<h3>2. Generic Graph Checks (Configuration-Based)<a class="headerlink" href="#generic-graph-checks-configuration-based" title="Link to this heading">#</a></h3>
+<p>Generic graph checks are defined in the metamodel.yaml under <code class="docutils literal notranslate"><span class="pre">graph_checks</span></code>.
+These checks all follow the same structure:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;name of the check&gt;</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">needs</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">include</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;need1&gt;, &lt;need2&gt;</span><span class="w"> </span><span class="c1">#list of your needs </span>
+<span class="w">    </span><span class="nt">condition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;your condition(s) that need to be fulfilled&gt;</span>
+<span class="w">  </span><span class="nt">check</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">&lt;link attribute to check&gt;</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;condition to be checked in each need inside the link attribute&gt;</span>
+<span class="w">  </span><span class="nt">explanation</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;A short sentence that explains what is required to be adhered to. This will be</span><span class="w"> </span>
+<span class="w">              </span><span class="l l-Scalar l-Scalar-Plain">&lt; part of the error message if the check fails&gt;</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p><em>Note:</em> You can also use multiple conditions or negate conditions in either the needs or check part.</p>
+</div></blockquote>
+<p>A complete example might look like so:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">graph_checks</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">tool_req__docs_req_arch_link_safety_to_arch</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">needs</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">include</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">feat_arc_sta, logic_arc_int, logic_arc_int_op, comp_arc_sta, real_arc_int, real_arc_int_op</span>
+<span class="w">      </span><span class="nt">condition</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">and</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">safety != QM</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">status == valid</span>
+<span class="w">    </span><span class="nt">check</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">implements</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">and</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">safety != QM</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">status == valid</span>
+<span class="w">    </span><span class="nt">explanation</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">An safety architecture element can only link other safety architecture elements.</span>
+</pre></div>
+</div>
+<p>What does this check do?
+This check will go through each of the needs mentioned in ‘include’ that match the condition, and then for every single one of them check the needs that are linked inside the ‘implements’ attribute. Go inside those needs and check if they also fulfill the condition described.
+If one of them does not fulfill the condition the check fails and will let you know with a warning that it did so.</p>
+</section>
+<section id="prohibited-word-checks-configuration-based">
+<h3>3. Prohibited Word Checks (Configuration-Based)<a class="headerlink" href="#prohibited-word-checks-configuration-based" title="Link to this heading">#</a></h3>
+<p>For preventing specific words for specific needs in certain attributes.
+This is also defined in metamodel and follows the following schema:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">prohibited_words_checks</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">&lt;check name&gt;</span><span class="p">:</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">types[OPTIONAL]</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="c1"># If you skip this, all needs will be checked.</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt; you can specify here that only needs with this tag will get checked for this check&gt;</span>
+<span class="w">    </span><span class="nt">&lt;attribute to check&gt;</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt; word to forbid &gt;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt; word to forbid &gt;</span>
+</pre></div>
+</div>
+<p>An example might look like this:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">prohibited_words_checks</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">content_check</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">types</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">requirement_excl_process</span>
+<span class="w">    </span><span class="nt">content</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">just</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">about</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">really</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">some</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">thing</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absolutely</span>
+</pre></div>
+</div>
+<p>For all needs that have the <code class="docutils literal notranslate"><span class="pre">tag</span></code> ‘requirement_excl_process’ <strong>inside the metamodel.yaml</strong> this check will now verify that the <code class="docutils literal notranslate"><span class="pre">content</span></code> or the <code class="docutils literal notranslate"><span class="pre">description</span></code> does not contain any of the mentioned words in the list.</p>
+</section>
+<section id="custom-local-checks-python-code">
+<h3>4. Custom Local Checks (Python Code)<a class="headerlink" href="#custom-local-checks-python-code" title="Link to this heading">#</a></h3>
+<p>If you need something that the generic local or graph checks can not fulfill, then you can also add a custom check.
+Ensure this check is inside a python file that is placed in the <code class="docutils literal notranslate"><span class="pre">check</span></code> folder in this extension.
+Do not forget to add the applicable decorator to the function.</p>
+<p>This means all validations can be done with only the information in this need itself, and you do not need access to any of the linked needs or other needs inside the documentation.</p>
+<p>Your function will receive the Sphinx <code class="docutils literal notranslate"><span class="pre">app</span></code>, the current <code class="docutils literal notranslate"><span class="pre">need</span></code> to check and a <code class="docutils literal notranslate"><span class="pre">log</span></code> to log messages.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">score_metamodel.checks</span><span class="w"> </span><span class="kn">import</span> <span class="n">local_check</span>
+
+<span class="nd">@local_check</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">my_local_check</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">need</span><span class="p">,</span> <span class="n">log</span><span class="p">):</span>
+    <span class="c1"># Validate individual need properties</span>
+    <span class="c1"># Example: If option_a == &#39;2&#39; then option_b is required to be not empty</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>Check existing files in the <code class="docutils literal notranslate"><span class="pre">checks/</span></code> folder for real examples.</p>
+</div></blockquote>
+</section>
+<section id="custom-graph-checks-python-code">
+<h3>5. Custom Graph Checks (Python Code)<a class="headerlink" href="#custom-graph-checks-python-code" title="Link to this heading">#</a></h3>
+<p>These checks need to access linked needs in order to fully verify the specified behavior.
+The signature is similar to that of local_check, but instead of one need you will get <code class="docutils literal notranslate"><span class="pre">all_needs</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">score_metamodel.checks</span><span class="w"> </span><span class="kn">import</span> <span class="n">graph_check</span>
+
+<span class="nd">@graph_check</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">my_custom_graph_check</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">all_needs</span><span class="p">,</span> <span class="n">log</span><span class="p">):</span>
+    <span class="c1"># Complex validation with full graph access</span>
+    <span class="c1"># Example: if option_a == &#39;2&#39; then each linked requirement needs to also have option_a == &#39;2&#39;</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>Check existing files in the <code class="docutils literal notranslate"><span class="pre">checks/</span></code> folder for real examples.</p>
+</div></blockquote>
+</section>
+</section>
+<section id="file-structure-reference">
+<h2>File Structure Reference<a class="headerlink" href="#file-structure-reference" title="Link to this heading">#</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>score_metamodel/
+├── BUILD
+├── __init__.py
+├── checks
+│   ├── __init__.py
+│   ├── attributes_format.py
+│   ├── check_options.py
+│   ├── graph_checks.py
+│   ├── id_contains_feature.py
+│   └── standards.py
+├── external_needs.py
+├── log.py
+├── metamodel-schema.json
+├── metamodel.yaml
+└── tests
+    ├── __init__.py
+    ├── rst
+    │   ├── attributes
+    │   │   └── ... 
+    │   ├── conf.py
+    │   ├── graph
+    │   │   └── test_metamodel_graph.rst
+    │   ├── id_contains_feature
+    │   │   └── test_id_contains_feature.rst
+    │   └── options
+    │       └── test_options_options.rst
+    └── ...
+</pre></div>
+</div>
+</section>
+<section id="testing-your-changes">
+<h2>Testing Your Changes<a class="headerlink" href="#testing-your-changes" title="Link to this heading">#</a></h2>
+<p>The extension is setup for comprehensive testing:</p>
+<p>To add tests for new checks:</p>
+<ul class="simple">
+<li><p><strong>Unit Tests</strong>: Test individual additions, if they are not covered by the present unit-tests</p></li>
+<li><p><strong>Integration Tests</strong>: Add RST-based tests in <code class="docutils literal notranslate"><span class="pre">tests/rst/</span></code> that validate the metamodel in realistic scenarios. Make sure to have at least one good and one bad case.</p></li>
+</ul>
+<ol class="arabic simple">
+<li><p>Add unit tests in the appropriate <code class="docutils literal notranslate"><span class="pre">test_*.py</span></code> file</p></li>
+<li><p>Create RST integration tests in <code class="docutils literal notranslate"><span class="pre">tests/rst/</span></code> to verify behavior in Sphinx. Ensure thematically it’s in the right folder</p></li>
+</ol>
+</section>
+<section id="architecture-decision-local-vs-graph-based-checks">
+<h2>Architecture Decision: Local vs Graph-Based Checks<a class="headerlink" href="#architecture-decision-local-vs-graph-based-checks" title="Link to this heading">#</a></h2>
+<p>While sphinx-needs provides a powerful warning mechanism, it’s limited to need-local checks. This extension implements a custom multi-tier system because:</p>
+<ul class="simple">
+<li><p><strong>Performance</strong>: Local checks run faster and can provide immediate feedback</p></li>
+<li><p><strong>Flexibility</strong>: Graph-based checks enable complex relationship validation</p></li>
+<li><p><strong>Control</strong>: Custom implementation allows for more elaborate validation logic</p></li>
+<li><p><strong>Future-proofing</strong>: Provides foundation for advanced validation features</p></li>
+</ul>
 </section>
 </section>
 
@@ -536,10 +722,23 @@ checks will be called with all needs.</p>
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#naming">Naming</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-new-checks">Creating new checks</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#usage">Usage</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#decision-record-split-of-need-local-and-graph-based-checks">Decision Record: split of need-local and graph-based checks</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#core-components">Core Components</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#metamodel-definition">Metamodel Definition</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#validation-system">Validation System</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-new-validation-checks">Creating New Validation Checks</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#need-local-checks-configuration-based">1. Need-Local Checks (Configuration-Based)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#generic-graph-checks-configuration-based">2. Generic Graph Checks (Configuration-Based)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#prohibited-word-checks-configuration-based">3. Prohibited Word Checks (Configuration-Based)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-local-checks-python-code">4. Custom Local Checks (Python Code)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-graph-checks-python-code">5. Custom Graph Checks (Python Code)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#file-structure-reference">File Structure Reference</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#testing-your-changes">Testing Your Changes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#architecture-decision-local-vs-graph-based-checks">Architecture Decision: Local vs Graph-Based Checks</a></li>
 </ul>
   </nav></div>
 
