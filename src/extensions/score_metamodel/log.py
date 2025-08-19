@@ -60,10 +60,22 @@ class CheckLogger:
         location: None | str | tuple[str | None, int | None] | Node = None,
         is_info: bool = False,
     ):
+        def make_header_line(text: str, width: int = 120) -> str:
+            """Center a header inside '=' padding so line length stays fixed."""
+            text = f" {text} "
+            return text.center(width, "=")
+
         if is_info:
-            msg += (
-                "\nPlease fix this warning related to the new check "
-                "before the release of the next version of Docs-As-Code."
+            info_header = make_header_line("[INFO MESSAGE]")
+            warning_header = make_header_line("[New Check Warning]")
+
+            msg = (
+                f"\n\n{info_header}\n\n"
+                f"{'=' * len(info_header)}\n\n"
+                f"{warning_header}\n\n"
+                f"{msg}\n"
+                "Please fix this warning related to the new check "
+                "before the release of the next version of Docs-As-Code.\n"
             )
             self.info(msg, location)
         else:
