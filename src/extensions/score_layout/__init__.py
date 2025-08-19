@@ -48,6 +48,9 @@ def update_config(app: Sphinx, _config: Any):
             # Only happens in 'score_docs_as_code' repository
             p = str(r) + "/_main/src/assets"
         app.config.html_static_path = app.config.html_static_path + [p]
+        app.config.needs_flow_configs = {
+            "score_config": f"!include {p}/puml-theme-score.puml"
+        }
 
     app.add_css_file("css/score.css", priority=500)
     app.add_css_file("css/score_needs.css", priority=500)
