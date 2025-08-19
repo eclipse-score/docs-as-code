@@ -86,6 +86,19 @@ def docs(source_dir = "docs", data = [], deps = []):
     )
 
     py_binary(
+        name = "docs_check",
+        tags = ["cli_help=Verify documentation [run]"],
+        srcs = ["@score_docs_as_code//src:incremental.py"],
+        data = data,
+        deps = deps,
+        env = {
+            "SOURCE_DIRECTORY": source_dir,
+            "DATA": str(data),
+            "ACTION": "check",
+        },
+    )
+
+    py_binary(
         name = "live_preview",
         tags = ["cli_help=Live preview documentation in the browser [run]"],
         srcs = ["@score_docs_as_code//src:incremental.py"],
