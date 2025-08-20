@@ -337,11 +337,6 @@ def test_cache_file_operations(temp_dir, sample_needlinks):
     assert loaded_links[3].line == 2
 
 
-@add_test_properties(
-    partially_verifies=["tool_req__docs_common_attr_title", "tool_req__docs_common_attr_description"],
-    test_type="interface-test",
-    derivation_technique="boundary-values"
-)
 def test_cache_file_with_encoded_comments(temp_dir):
     """Test that cache file properly handles encoded comments."""
     # Create needlinks with spaces in tags and full_line
@@ -400,6 +395,11 @@ def test_group_by_need_and_find_need_integration(sample_needlinks):
             assert found_need["id"] == "PREFIX_TREQ_ID_200"
 
 
+@add_test_properties(
+    partially_verifies=["tool_req__docs_dd_link_source_code_link"],
+    test_type="interface-test",
+    derivation_technique="design-analysis"
+)
 def test_source_linker_end_to_end_with_real_files(temp_dir, git_repo):
     """Test end-to-end workflow with real files and git repo."""
     # Create source files with requirement IDs
