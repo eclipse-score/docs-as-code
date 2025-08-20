@@ -260,7 +260,7 @@ flowchart TD
     N2 --> Z
 
     %% Final step
-    Z --> FINAL[<b>Add testlinks to needs</b>]
+    Z --> FINAL[<b>Add links to needs</b>]
 
     %% Legend
     subgraph Legend["Legend"]
