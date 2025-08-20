@@ -1,0 +1,103 @@
+# *******************************************************************************
+# Copyright (c) 2025 Contributors to the Eclipse Foundation
+#
+# See the NOTICE file(s) distributed with this work for additional
+# information regarding copyright ownership.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Apache License Version 2.0 which is available at
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# SPDX-License-Identifier: Apache-2.0
+# *******************************************************************************
+
+name: Measure Docs Performance
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 4 * * *" # daily at 04:00 UTC
+
+jobs:
+
+  docs:
+    runs-on: ${{ vars.REPO_RUNNER_LABELS && fromJSON(vars.REPO_RUNNER_LABELS) || 'ubuntu-latest' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        cache: [false, true]
+        warmup: [false, true]
+        # only run commands for the moment
+        command: [docs, docs_check]
+    name: "${{ matrix.command }} (Cache: ${{ matrix.cache }}, Warmup: ${{ matrix.warmup }})"
+
+    steps:
+      - uses: actions/checkout@v4.2.2
+
+      - name: "Setup Caching: Sphinx"
+        if: ${{ matrix.cache }}
+        uses: actions/cache@v4
+        with:
+          path: ./_build
+          # For clean incremental builds, the cache can only be reused as long as the tool is identical
+          key: sphinx-${{ hashFiles('src/**/*.py') }}
+
+      - name: "Setup Caching: Bazel"
+        if: ${{ matrix.cache }}
+        uses: bazel-contrib/setup-bazel@0.14.0
+        with:
+          # Fetch bazelisk from cache
+          bazelisk-cache: true
+
+          # Normal bazel caching
+          disk-cache: true
+
+          # Cache all those http downloads etc
+          repository-cache: true
+
+          # Cache external dependencies
+          external-cache: true
+
+      - name: "Debug: Bazel repo cache"
+        if: ${{ matrix.cache }}
+        run: |
+          bazel info repository_cache
+          du -sh "$(bazel info repository_cache)" || true
+          ls -1 "$(bazel info repository_cache)" | wc -l || true
+
+      - name: Install Graphviz
+        uses: eclipse-score/apt-install@main
+        with:
+          packages: graphviz
+          # TODO: fix install from cache, see https://github.com/awalsh128/cache-apt-pkgs-action#caveats
+          cache: false
+
+      - name: Bazel Warmup
+        if: ${{ matrix.warmup }}
+        # This step installs python etc.
+        # It should be much much faster, or ideally even a no-op if we could use the host python
+        run: |
+          bazel build --nobuild //:${{ matrix.command }} --profile=$perf_json --record_full_profiler_data # --noslim_profile
+        env:
+          perf_json: perf_warmup_${{ matrix.command }}_cache-${{ matrix.cache }}_warmup-${{ matrix.warmup }}.json
+
+      - id: docs
+        name: Build documentation (timed)
+        run: |
+          start=$(date +%s)
+          bazel run //:${{ matrix.command }} --profile=$perf_json --record_full_profiler_data # --noslim_profile
+          end=$(date +%s)
+          echo "duration_seconds=$((end-start))" >> "$GITHUB_OUTPUT"
+        env:
+          perf_json: perf_docs_${{ matrix.command }}_cache-${{ matrix.cache }}_warmup-${{ matrix.warmup }}.json
+
+      - name: Archive performance profile files
+        uses: actions/upload-artifact@v4
+        with:
+          # TODO: unique name from matrix
+          name: performance_profiles_${{ matrix.command }}_cache-${{ matrix.cache }}_warmup-${{ matrix.warmup }}
+          path: perf_*.json
+
+      - name: Publish Summary
+        run: |
+          echo "### Docs build time: ${{ steps.docs.outputs.duration_seconds }} s" >> "$GITHUB_STEP_SUMMARY"
