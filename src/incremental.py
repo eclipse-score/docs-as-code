@@ -15,6 +15,7 @@ import argparse
 import logging
 import os
 import sys
+import time
 from pathlib import Path
 
 import debugpy
@@ -102,4 +103,24 @@ if __name__ == "__main__":
             ]
         )
     else:
-        sys.exit(sphinx_main(base_arguments))
+        if action == "incremental":
+            builder = "html"
+        elif action == "check":
+            builder = "needs"
+        else:
+            raise ValueError(f"Unknown action: {action}")
+
+        base_arguments.extend(
+            [
+                "-b",
+                builder,
+            ]
+        )
+
+        start_time = time.perf_counter()
+        exit_code = sphinx_main(base_arguments)
+        end_time = time.perf_counter()
+        duration = end_time - start_time
+        print(f"docs ({action}) finished in {duration:.1f} seconds")
+
+        sys.exit(exit_code)
