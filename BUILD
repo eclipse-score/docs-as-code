@@ -11,7 +11,8 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-load("@score_cr_checker//:cr_checker.bzl", "copyright_checker")
+load("@score_tooling//:defs.bzl", "copyright_checker")
+load("@aspect_rules_py//py:defs.bzl", "py_library")
 load("//:docs.bzl", "docs")
 
 package(default_visibility = ["//visibility:public"])

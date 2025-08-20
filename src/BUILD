@@ -18,7 +18,7 @@ load("@rules_pkg//pkg:tar.bzl", "pkg_tar")
 load("@rules_python//python:pip.bzl", "compile_pip_requirements")
 load("@rules_python//sphinxdocs:sphinx.bzl", "sphinx_build_binary")
 load("@score_dash_license_checker//:dash.bzl", "dash_license_checker")
-load("@score_python_basics//:defs.bzl", "score_virtualenv")
+load("@score_tooling//:defs.bzl", "score_virtualenv")
 
 # These are only exported because they're passed as files to the //docs.bzl
 # macros, and thus must be visible to other packages. They should only be

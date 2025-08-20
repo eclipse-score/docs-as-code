@@ -22,6 +22,7 @@ import pytest
 from sphinx_needs.data import NeedsMutable
 
 from src.extensions.score_metamodel.tests import need as test_need
+from attribute_plugin import add_test_properties
 
 # Import the module under test
 # Note: You'll need to adjust these imports based on your actual module structure
@@ -336,6 +337,11 @@ def test_cache_file_operations(temp_dir, sample_needlinks):
     assert loaded_links[3].line == 2
 
 
+@add_test_properties(
+    partially_verifies=["tool_req__docs_common_attr_title", "tool_req__docs_common_attr_description"],
+    test_type="interface-test",
+    derivation_technique="boundary-values"
+)
 def test_cache_file_with_encoded_comments(temp_dir):
     """Test that cache file properly handles encoded comments."""
     # Create needlinks with spaces in tags and full_line
