@@ -220,3 +220,85 @@ To see working examples for CodeLinks & TestLinks, take a look at the Docs-As-Co
 [Example CodeLink](https://eclipse-score.github.io/docs-as-code/main/requirements/requirements.html#tool_req__docs_common_attr_status)
 
 [Example TestLink](https://eclipse-score.github.io/docs-as-code/main/requirements/requirements.html#tool_req__docs_dd_link_source_code_link)
+
+## Flow-Overview
+```{mermaid}
+flowchart TD
+    %% Entry Point
+    A[source_code_linker] --> B{Check for Grouped JSON Cache}
+
+    %% If cache exists
+    B -->|Yes| C[Load Grouped JSON Cache]
+    %% Cache does not exist
+    B --> N9[NO]
+
+    %% --- NeedLink Path ---
+    N9 --> D1[needslink.py<br><b>NeedLink</b>]
+    D1 --> E1{Check for CodeLink JSON Cache}
+
+    E1 -->|Yes| F1[Load CodeLink JSON Cache]
+    F1 --> Z[Grouped JSON Cache]
+
+    E1 -->|No| G1[Parse all files in repository]
+    G1 --> H1[Build & Save<br>CodeLink JSON Cache]
+    H1 --> Z
+
+    %% --- TestLink Path ---
+    N9 --> D2[testlink.py<br><b>DFTL</b>]
+    D2 --> E2{Check for DFTL Cache}
+
+    E2 -->|Yes| F2[Load DFTL JSON Cache]
+    F2 --> J2[Load DOTC JSON Cache]
+    J2 --> K2[Add as External Needs to project]
+
+    E2 -->|No| G2[Parse test.xml Files]
+    G2 --> H2[Convert Each TestCase<br>to DOTC Format]
+    H2 --> I2[Build & Save<br>DOTC JSON Cache]
+    H2 --> K2
+
+    H2 --> M2[Convert to<br>DFTL]
+    M2 --> N2[Build & Save<br>DFTL JSON Cache]
+
+
+    %% Final step
+    N2 --> Z[Build & Save<br><b>Grouped JSON Cache</b>]
+    Z --> FINAL[<b>Add testlinks to requirements</b>]
+
+    %% Legend
+    subgraph Legend[" "]
+        direction TB
+        L1[NeedLink Operations]
+        L2[TestLink Operations]
+        L4[DTFL = DataForTestLink]
+        L3[TestCaseNeed Operations]
+        L5[DOTC = DataOfTestCase]
+        L1 ~~~ L2
+        L2 ~~~ L4
+        L4 ~~~ L3
+        L3 ~~~ L5
+    end
+
+    %% Styling
+    classDef needlink fill:#dbeafe,stroke:#2563eb,stroke-width:2px,color:#1e40af
+    classDef testlink fill:#e0e7ff,stroke:#7c3aed,stroke-width:2px,color:#5b21b6
+    classDef dotc fill:#fef3c7,stroke:#d97706,stroke-width:2px,color:#92400e
+
+    class D1,E1,F1,G1,H1 needlink
+    class D2,E2,F2,G2,M2,N2 testlink
+    class J2,H2,I2,K2 dotc
+    
+    %% Apply legend styling
+    class L1 needlink
+    class L2,L4 testlink
+    class L3,L5 dotc
+
+
+    %% Styling
+    classDef needlink fill:#dbeafe,stroke:#2563eb,stroke-width:2px,color:#1e40af
+    classDef testlink fill:#e0e7ff,stroke:#7c3aed,stroke-width:2px,color:#5b21b6
+    classDef dotcn fill:#fef3c7,stroke:#d97706,stroke-width:2px,color:#92400e
+
+    class D1,E1,F1,G1,H1 needlink
+    class D2,E2,F2,G2,M2,N2 testlink
+    class J2,H2,I2,K2 dotcn
+```
