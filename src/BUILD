@@ -63,7 +63,7 @@ compile_pip_requirements(
     name = "requirements",
     srcs = [
         "requirements.in",
-        "@score_python_basics//:requirements.txt",
+        "@score_tooling//python_basics:requirements.txt",
     ],
     requirements_txt = "requirements.txt",
     tags = [

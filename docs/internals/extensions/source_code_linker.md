@@ -228,77 +228,71 @@ flowchart TD
     A[source_code_linker] --> B{Check for Grouped JSON Cache}
 
     %% If cache exists
-    B -->|Yes| C[Load Grouped JSON Cache]
-    %% Cache does not exist
-    B --> N9[NO]
+    B --> |✅| C[Load Grouped JSON Cache]
+    B --> |🔴| N9[Proceed Without Cache]
 
     %% --- NeedLink Path ---
-    N9 --> D1[needslink.py<br><b>NeedLink</b>]
+    N9 --> D1[needslink.py<br/><b>NeedLink</b>]
     D1 --> E1{Check for CodeLink JSON Cache}
 
-    E1 -->|Yes| F1[Load CodeLink JSON Cache]
+    E1 --> |✅| F1[Load CodeLink JSON Cache]
     F1 --> Z[Grouped JSON Cache]
 
-    E1 -->|No| G1[Parse all files in repository]
-    G1 --> H1[Build & Save<br>CodeLink JSON Cache]
+    E1 --> |🔴| G1[Parse all files in repository]
+    G1 --> H1[Build & Save<br/>CodeLink JSON Cache]
     H1 --> Z
 
     %% --- TestLink Path ---
-    N9 --> D2[testlink.py<br><b>DFTL</b>]
-    D2 --> E2{Check for DFTL Cache}
+    N9 --> D2[testlink.py<br/><b>DFTL</b>]
+    D2 --> E2{Check for DFTL JSON Cache}
 
-    E2 -->|Yes| F2[Load DFTL JSON Cache]
+    E2 --> |✅| F2[Load DFTL JSON Cache]
     F2 --> J2[Load DOTC JSON Cache]
-    J2 --> K2[Add as External Needs to project]
+    J2 --> K2[Add as External Needs]
 
-    E2 -->|No| G2[Parse test.xml Files]
-    G2 --> H2[Convert Each TestCase<br>to DOTC Format]
-    H2 --> I2[Build & Save<br>DOTC JSON Cache]
-    H2 --> K2
+    E2 --> |🔴| G2[Parse test.xml Files]
+    G2 --> H2[Convert TestCases<br/>to DOTC]
+    H2 --> I2[Build & Save<br/>DOTC JSON Cache]
+    I2 --> K2
 
-    H2 --> M2[Convert to<br>DFTL]
-    M2 --> N2[Build & Save<br>DFTL JSON Cache]
-
+    H2 --> M2[Convert to DFTL]
+    M2 --> N2[Build & Save<br/>DFTL JSON Cache]
+    N2 --> Z
 
     %% Final step
-    N2 --> Z[Build & Save<br><b>Grouped JSON Cache</b>]
     Z --> FINAL[<b>Add testlinks to requirements</b>]
 
     %% Legend
-    subgraph Legend[" "]
+    subgraph Legend["Legend"]
         direction TB
         L1[NeedLink Operations]
         L2[TestLink Operations]
         L4[DTFL = DataForTestLink]
         L3[TestCaseNeed Operations]
         L5[DOTC = DataOfTestCase]
-        L1 ~~~ L2
-        L2 ~~~ L4
-        L4 ~~~ L3
+        L1 ~~~ L2 
+        L2 ~~~ L4 
+        L4 ~~~ L3 
         L3 ~~~ L5
     end
 
-    %% Styling
-    classDef needlink fill:#dbeafe,stroke:#2563eb,stroke-width:2px,color:#1e40af
-    classDef testlink fill:#e0e7ff,stroke:#7c3aed,stroke-width:2px,color:#5b21b6
-    classDef dotc fill:#fef3c7,stroke:#d97706,stroke-width:2px,color:#92400e
+    %% Node Styling
+    classDef needlink fill:#3b82f6,color:#ffffff,stroke:#1d4ed8,stroke-width:2px
+    classDef testlink fill:#8b5cf6,color:#ffffff,stroke:#6d28d9,stroke-width:2px
+    classDef dotc fill:#f59e0b,color:#ffffff,stroke:#b45309,stroke-width:2px
+    classDef grouped fill:#10b981,color:#ffffff,stroke:#047857,stroke-width:2px
+    classDef final fill:#f43f5e,color:#ffffff,stroke:#be123c,stroke-width:2px
 
+    %% Class assignments
     class D1,E1,F1,G1,H1 needlink
     class D2,E2,F2,G2,M2,N2 testlink
     class J2,H2,I2,K2 dotc
-    
-    %% Apply legend styling
+    class Z grouped
+    class FINAL final
     class L1 needlink
     class L2,L4 testlink
     class L3,L5 dotc
 
-
-    %% Styling
-    classDef needlink fill:#dbeafe,stroke:#2563eb,stroke-width:2px,color:#1e40af
-    classDef testlink fill:#e0e7ff,stroke:#7c3aed,stroke-width:2px,color:#5b21b6
-    classDef dotcn fill:#fef3c7,stroke:#d97706,stroke-width:2px,color:#92400e
-
-    class D1,E1,F1,G1,H1 needlink
-    class D2,E2,F2,G2,M2,N2 testlink
-    class J2,H2,I2,K2 dotcn
+    %% Edge/Arrow Styling
+    linkStyle default stroke:#22d3ee,stroke-width:2px,color:#22d3ee
 ```
