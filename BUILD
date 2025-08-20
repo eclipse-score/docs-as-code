@@ -24,8 +24,8 @@ copyright_checker(
         "//:BUILD",
         "//:MODULE.bazel",
     ],
-    config = "@score_tooling//score_cr_checker/resources:config",
-    template = "@score_tooling//score_cr_checker/resources:templates",
+    config = "@score_tooling//cr_checker/resources:config",
+    template = "@score_tooling//cr_checker/resources:templates",
     visibility = ["//visibility:public"],
 )
 

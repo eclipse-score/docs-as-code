@@ -398,7 +398,7 @@ def test_group_by_need_and_find_need_integration(sample_needlinks):
 @add_test_properties(
     partially_verifies=["tool_req__docs_dd_link_source_code_link"],
     test_type="interface-test",
-    derivation_technique="design-analysis"
+    derivation_technique="design-analysis",
 )
 def test_source_linker_end_to_end_with_real_files(temp_dir, git_repo):
     """Test end-to-end workflow with real files and git repo."""
