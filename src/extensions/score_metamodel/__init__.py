@@ -141,12 +141,14 @@ def _run_checks(app: Sphinx, exception: Exception | None) -> None:
         check(app, needs_all_needs, log)
 
     if log.has_warnings:
-        log.warning("Some needs have issues. See the log for more information.")
+        logger.warning("Some needs have issues. See the log for more information.")
 
     if log.has_infos:
-        log.info(
-            "Some needs have issues related to the new checks. "
-            "See the log for more information."
+        log.flush_new_checks()
+        logger.info(
+            "\n\nThese next warnings are displayed as info statements for now. "
+            "They will become real warnings in the future. "
+            "Please fix them as soon as possible.\n"
         )
         # TODO: exit code
 
