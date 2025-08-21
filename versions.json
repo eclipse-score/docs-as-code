@@ -50,5 +50,9 @@
   {
     "version": "pr-223",
     "url": "https://eclipse-score.github.io/docs-as-code/pr-223/"
+  },
+  {
+    "version": "pr-224",
+    "url": "https://eclipse-score.github.io/docs-as-code/pr-224/"
   }
 ]
