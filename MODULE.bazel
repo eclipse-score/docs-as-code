@@ -104,7 +104,7 @@ bazel_dep(name = "rules_multitool", version = "1.9.0")
 bazel_dep(name = "score_tooling", version = "0.0.0")
 git_override(
     module_name = "score_tooling",
-    commit = "0fc82801df8356571582527e907662e4875fef36",
+    commit = "07bb8bce1dc5ed806b934bbb7bb49f6b796e0387",
     remote = "https://github.com/eclipse-score/tooling",
 )
 
