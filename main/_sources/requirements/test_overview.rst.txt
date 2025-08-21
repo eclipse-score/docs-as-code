@@ -1,6 +1,6 @@
 .. _testing_stats:
 
-TESTING STATISTICS
+Testing Statistics
 ==================
 
 
