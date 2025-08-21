@@ -23,16 +23,6 @@ from score_metamodel.tests import fake_check_logger, need
 from sphinx.application import Sphinx
 
 
-@pytest.mark.metadata(
-    Verifies=["tool_req__toolchain_sphinx_needs_build__options"],
-    Description=(
-        "It should check if directives have required options and required values."
-    ),
-    ASIL="ASIL_B",
-    Priority="1",
-    TestType="Requirements-based test",
-    DerivationTechnique="Analysis of requirements",
-)
 class NeedTypeDict(TypedDict, total=False):
     directive: str
     mandatory_options: dict[str, str | int] | None

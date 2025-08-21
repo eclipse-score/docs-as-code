@@ -16,6 +16,9 @@ Both datatypes are used in the 'grouped cache' JSON that contains 'CodeLinks' an
 It also defines a decoder and encoder for SourceCodeLinks to enable JSON read/write
 """
 
+# req-Id: tool_req__docs_test_link_testcase
+# This whole file along with '__init__', 'xml_parser' and 'testlink' are implementing the above need.
+
 import json
 from dataclasses import asdict, dataclass, field
 from pathlib import Path

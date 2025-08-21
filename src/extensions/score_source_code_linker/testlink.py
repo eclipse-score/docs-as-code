@@ -18,6 +18,9 @@ TestCaseNeed => The datatype that testcases from the test.xml get parsed into
 TestLink => The datatype that is ultimately saved inside of the JSON
 """
 
+# req-Id: tool_req__docs_test_link_testcase
+# This whole file along with '__init__', 'xml_parser' and 'need_source_link' are implementing the above need.
+
 import html
 import json
 import re
