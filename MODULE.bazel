@@ -88,20 +88,24 @@ http_file(
 )
 
 # Provides, pytest & venv
-bazel_dep(name = "score_python_basics", version = "0.3.4")
+# bazel_dep(name = "score_python_basics", version = "0.3.4")
+# local_path_override(
+#     module_name = "score_python_basics",
+#     path="../tooling"
+# )
 
 # Checker rule for CopyRight checks/fixes
-bazel_dep(name = "score_cr_checker", version = "0.3.1")
-bazel_dep(name = "score_dash_license_checker", version = "0.1.1")
 
 # docs dependency
 bazel_dep(name = "score_process", version = "1.1.1-Beta")
 
 # Add Linter
 bazel_dep(name = "rules_multitool", version = "1.2.0")
-bazel_dep(
-    name = "score_linter",
-    version = "0.1.0",
+bazel_dep(name = "score_tooling", version = "0.0.0")
+git_override(
+    module_name = "score_tooling",
+    commit = "0fc82801df8356571582527e907662e4875fef36",
+    remote = "https://github.com/eclipse-score/tooling",
 )
 
 multitool_root = use_extension("@rules_multitool//multitool:extension.bzl", "multitool")

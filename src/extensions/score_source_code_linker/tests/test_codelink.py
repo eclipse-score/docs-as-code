@@ -22,6 +22,7 @@ import pytest
 from sphinx_needs.data import NeedsMutable
 
 from src.extensions.score_metamodel.tests import need as test_need
+from attribute_plugin import add_test_properties
 
 # Import the module under test
 # Note: You'll need to adjust these imports based on your actual module structure
@@ -394,6 +395,11 @@ def test_group_by_need_and_find_need_integration(sample_needlinks):
             assert found_need["id"] == "PREFIX_TREQ_ID_200"
 
 
+@add_test_properties(
+    partially_verifies=["tool_req__docs_dd_link_source_code_link"],
+    test_type="interface-test",
+    derivation_technique="design-analysis",
+)
 def test_source_linker_end_to_end_with_real_files(temp_dir, git_repo):
     """Test end-to-end workflow with real files and git repo."""
     # Create source files with requirement IDs

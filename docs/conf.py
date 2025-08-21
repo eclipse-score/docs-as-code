@@ -39,6 +39,7 @@ extensions = [
     "score_metamodel",
     "score_draw_uml_funcs",
     "score_layout",
+    "sphinxcontrib.mermaid",
 ]
 
 myst_enable_extensions = ["colon_fence"]

@@ -11,7 +11,8 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-load("@score_cr_checker//:cr_checker.bzl", "copyright_checker")
+load("@aspect_rules_py//py:defs.bzl", "py_library")
+load("@score_tooling//:defs.bzl", "copyright_checker")
 load("//:docs.bzl", "docs")
 
 package(default_visibility = ["//visibility:public"])
@@ -23,8 +24,8 @@ copyright_checker(
         "//:BUILD",
         "//:MODULE.bazel",
     ],
-    config = "@score_cr_checker//resources:config",
-    template = "@score_cr_checker//resources:templates",
+    config = "@score_tooling//cr_checker/resources:config",
+    template = "@score_tooling//cr_checker/resources:templates",
     visibility = ["//visibility:public"],
 )
 

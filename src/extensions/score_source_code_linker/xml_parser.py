@@ -194,12 +194,10 @@ def build_test_needs_from_files(
     tcns: list[DataOfTestCase] = []
     for f in xml_paths:
         b, z = read_test_xml_file(f)
-        for non_prop_test in z:
-            # We probably do not want to do this as a warning yet
-            logger.info(
-                f"Test: {non_prop_test} has no properties. Could not create need"
-            )
-        # Now we build the needs from it
+        non_prop_tests = ", ".join(n for n in z)
+        if non_prop_tests:
+            logger.info("The following tests do not have properties.")
+            logger.info(non_prop_tests + "\n")
         tcns.extend(b)
         for c in b:
             construct_and_add_need(app, c)
