@@ -7,19 +7,18 @@ Testing Statistics
 .. needtable:: SUCCESSFUL TESTS
    :filter: result == "passed"
    :tags: TEST
-   :columns: name as "testcase";result;fully_verifies;partially_verifies;test_type;derivation_technique; id as "source_link"
-
+   :columns: name as "testcase";result;fully_verifies;partially_verifies;test_type;derivation_technique;id as "link"
 
 .. needtable:: FAILED TESTS
    :filter: result == "failed"
    :tags: TEST
-   :columns: name as "testcase";result;fully_verifies;partially_verifies;test_type;derivation_technique; id as "source_link"
+   :columns: name as "testcase";result;fully_verifies;partially_verifies;test_type;derivation_technique;id as "link"
 
 
 .. needtable:: SKIPPED/DISABLED TESTS
    :filter: result != "failed" and result != "passed"
    :tags: TEST
-   :columns: name as "testcase";result;fully_verifies;partially_verifies;test_type;derivation_technique; id as "source_link"
+   :columns: name as "testcase";result;fully_verifies;partially_verifies;test_type;derivation_technique;id as "link"
 
 
 .. needpie:: Implemented Requirements That Have A Linked Test
