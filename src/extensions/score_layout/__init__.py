@@ -36,18 +36,17 @@ def update_config(app: Sphinx, _config: Any):
     app.config.html_theme_options = html_options.return_html_theme_options(app)
 
     # Setting HTML static path
-    # For now this seems the only place this is used / needed.
-    # In the future it might be a good idea to make this available in other places,
-    # maybe via the 'find_runfiles' lib
     if r := os.getenv("RUNFILES_DIR"):
-        dirs = [str(x) for x in Path(r).glob("*score_docs_as_code+")]
-        if dirs:
-            # Happens if 'score_docs_as_code' is used as Module
-            p = str(r) + "/score_docs_as_code+/src/assets"
+        if (Path(r) / "score_docs_as_code+").exists():
+            # Docs-as-code used as a module with bazel 8
+            module = "score_docs_as_code+"
+        elif (Path(r) / "score_docs_as_code~").exists():
+            # Docs-as-code used as a module with bazel 7
+            module = "score_docs_as_code~"
         else:
-            # Only happens in 'score_docs_as_code' repository
-            p = str(r) + "/_main/src/assets"
-        app.config.html_static_path = app.config.html_static_path + [p]
+            # Docs-as-code is the current module
+            module = "_main"
+        app.config.html_static_path.append(str(Path(r) / module / "src/assets"))
 
     app.add_css_file("css/score.css", priority=500)
     app.add_css_file("css/score_needs.css", priority=500)
