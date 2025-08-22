@@ -320,6 +320,7 @@ def test_group_by_need_empty_list():
     result = group_by_need([], [])
     assert len(result) == 0
 
+
 @add_test_properties(
     partially_verifies=["tool_req__docs_dd_link_source_code_link"],
     test_type="requirements-based",
@@ -416,6 +417,7 @@ def test_cache_file_with_encoded_comments(temp_dir):
 
 
 # Integration tests
+
 
 @add_test_properties(
     partially_verifies=["tool_req__docs_dd_link_source_code_link"],
@@ -543,6 +545,7 @@ def another_function():
         github_link = get_github_link(needlink)
         assert "https://github.com/test-user/test-repo/blob/" in github_link
         assert f"src/{needlink.file.name}#L{needlink.line}" in github_link
+
 
 @add_test_properties(
     partially_verifies=["tool_req__docs_dd_link_source_code_link"],

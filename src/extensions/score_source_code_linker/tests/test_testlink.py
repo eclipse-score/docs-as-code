@@ -23,6 +23,7 @@ from src.extensions.score_source_code_linker.testlink import (
 )
 from attribute_plugin import add_test_properties
 
+
 @add_test_properties(
     partially_verifies=["tool_req__docs_test_link_testcase"],
     test_type="requirements-based",
@@ -62,6 +63,7 @@ def test_decoder_ignores_irrelevant_dicts():
     input_data = {"foo": "bar"}
     result = DataForTestLink_JSON_Decoder(input_data)
     assert result == input_data
+
 
 @add_test_properties(
     partially_verifies=["tool_req__docs_test_link_testcase"],

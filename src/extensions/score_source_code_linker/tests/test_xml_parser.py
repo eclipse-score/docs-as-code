@@ -27,6 +27,7 @@ from src.extensions.score_source_code_linker.testlink import DataOfTestCase
 
 from attribute_plugin import add_test_properties
 
+
 # Unsure if I should make these last a session or not
 @pytest.fixture
 def tmp_xml_dirs(tmp_path):
