@@ -7,19 +7,19 @@ Testing Statistics
 .. needtable:: SUCCESSFUL TEST
    :filter: result == "passed"
    :tags: TEST
-   :columns: external_url as "source_link"; name as "testcase";result;fully_verifies;partially_verifies;test_type;derivation_technique
+   :columns: name as "testcase";result;fully_verifies;partially_verifies;test_type;derivation_technique;id as "link"
 
 
 .. needtable:: FAILED TEST
    :filter: result == "failed"
    :tags: TEST
-   :columns: external_url as "source_link"; name as "testcase";result;fully_verifies;partially_verifies;test_type;derivation_technique
+   :columns: name as "testcase";result;fully_verifies;partially_verifies;test_type;derivation_technique;id as "link"
 
 
 .. needtable:: OTHER TEST
    :filter: result != "failed" and result != "passed"
    :tags: TEST
-   :columns: external_url as "source_link"; name as "testcase";result;fully_verifies;partially_verifies;test_type;derivation_technique
+   :columns: name as "testcase";result;fully_verifies;partially_verifies;test_type;derivation_technique;id as "link"
 
 
 .. needpie:: Test Results
