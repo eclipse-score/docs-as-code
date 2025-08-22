@@ -21,23 +21,27 @@ logger = logging.getLogger(__name__)
 
 def _log_debug(message: str):
     # TODO: why does logger not print anything?
-    logger.debug(message)
-    print(message)
+    if logger.hasHandlers():
+        logger.debug(message)
+    else:
+        print(message)
 
 
-def find_git_root():
+def find_git_root() -> Path:
     # TODO: is __file__ ever resolved into the bazel cache directories?
     # Then this function will not work!
-    # TODO: use os.getenv("BUILD_WORKSPACE_DIRECTORY")?
-    git_root = Path(__file__).resolve()
-    while not (git_root / ".git").exists():
-        git_root = git_root.parent
-        if git_root == Path("/"):
-            sys.exit(
-                "Could not find git root. Please run this script from the "
-                "root of the repository."
-            )
-    return git_root
+    workspace = os.getenv("BUILD_WORKSPACE_DIRECTORY")
+    if workspace:
+        return Path(workspace)
+
+    for parent in Path(__file__).resolve().parents:
+        if (parent / ".git").exists():
+            return parent
+
+    sys.exit(
+        "Could not find git root. "
+        "Please run this script from the root of the repository."
+    )
 
 
 def get_runfiles_dir_impl(
@@ -49,31 +53,26 @@ def get_runfiles_dir_impl(
     """Functional (and therefore testable) logic to determine the runfiles directory."""
 
     _log_debug(
-        "get_runfiles_dir_impl(\n"
-        f"  {cwd=},\n"
-        f"  {conf_dir=},\n"
-        f"  {env_runfiles=},\n"
-        f"  {git_root=}\n"
-        ")"
+        f"get_runfiles_dir_impl(\n  cwd={cwd},\n  conf_dir={conf_dir},\n"
+        f"  env_runfiles={env_runfiles},\n  git_root={git_root}\n)"
     )
 
     if env_runfiles:
         # Runfiles are only available when running in Bazel.
-        # bazel build and bazel run are both supported.
+        # Both `bazel build` and `bazel run` are supported.
         # i.e. `bazel build //:docs` and `bazel run //:docs`.
-        _log_debug("Using env[runfiles] to find the runfiles...")
+        _log_debug("Using env[RUNFILES_DIR] to find the runfiles...")
 
-        if env_runfiles.is_absolute():
-            # In case of `bazel run` it will point to the global cache directory, which
-            # has a new hash every time. And it's not pretty.
-            # However `bazel-out` is a symlink to that same cache directory!
-            parts = str(env_runfiles).split("/bazel-out/")
-            if len(parts) != 2:
-                # This will intentionally also fail if "bazel-out" appears multiple
-                # times in the path. Will be fixed on demand only.
+        if env_runfiles.is_absolute() and "bazel-out" in env_runfiles.parts:
+            # In case of `bazel run` it will point to the global cache directory,
+            # which has a new hash every time. And it's not pretty.
+            # However, `bazel-out` is a symlink to that same cache directory!
+            try:
+                idx = env_runfiles.parts.index("bazel-out")
+                runfiles_dir = git_root.joinpath(*env_runfiles.parts[idx:])
+                _log_debug(f"Made runfiles dir pretty: {runfiles_dir}")
+            except ValueError:
                 sys.exit("Could not find bazel-out in runfiles path.")
-            runfiles_dir = git_root / Path("bazel-out") / parts[1]
-            _log_debug(f"Made runfiles dir pretty: {runfiles_dir}")
         else:
             runfiles_dir = git_root / env_runfiles
 
@@ -84,12 +83,8 @@ def get_runfiles_dir_impl(
         # environment.
         _log_debug("Running outside bazel.")
 
-        print(f"{git_root=}")
-
         # TODO: "process-docs" is in SOURCE_DIR!!
-        runfiles_dir = (
-            Path(git_root) / "bazel-bin" / "process-docs" / "ide_support.runfiles"
-        )
+        runfiles_dir = git_root / "bazel-bin" / "process-docs" / "ide_support.runfiles"
 
     return runfiles_dir
 
