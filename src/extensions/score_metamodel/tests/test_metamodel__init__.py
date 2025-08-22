@@ -20,6 +20,7 @@ from src.extensions.score_metamodel.__init__ import (
 
 from attribute_plugin import add_test_properties
 
+
 def dummy_local_check(app, need, log):
     pass
 
@@ -46,6 +47,7 @@ def test_returns_empty_list_when_filter_is_empty():
     """Return an empty list if no filter string is provided."""
     assert parse_checks_filter("") == []
 
+
 @add_test_properties(
     partially_verifies=["tool_req__docs_metamodel"],
     test_type="requirements-based",
@@ -66,6 +68,7 @@ def test_strips_whitespace():
     """Remove surrounding spaces from each check name."""
     result = parse_checks_filter(" dummy_local_check , dummy_graph_check ")
     assert result == ["dummy_local_check", "dummy_graph_check"]
+
 
 @add_test_properties(
     partially_verifies=["tool_req__docs_metamodel"],

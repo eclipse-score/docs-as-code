@@ -77,7 +77,7 @@ class TestCheckOptions:
         derivation_technique="requirements-analysis",
     )
     def test_unknown_directive(self):
-        # Given a need with an unknown type, should raise an error
+        """Given a need with an unknown type, should raise an error"""
         need_1 = need(
             target_id="tool_req__001",
             id="tool_req__001",
@@ -97,7 +97,6 @@ class TestCheckOptions:
             "no type info defined for semantic check.",
             expect_location=False,
         )
-    
 
     @add_test_properties(
         partially_verifies=["tool_req__docs_metamodel"],
@@ -105,7 +104,7 @@ class TestCheckOptions:
         derivation_technique="requirements-analysis",
     )
     def test_unknown_directive_extra_option(self):
-        # Given a need an unknown/undefined type, should raise an error
+        """Given a need an unknown/undefined type, should raise an error"""
         need_1 = need(
             target_id="tool_req__001",
             type="unknown_type",
@@ -132,9 +131,10 @@ class TestCheckOptions:
         derivation_technique="requirements-analysis",
     )
     def test_missing_mandatory_options_info(self):
-        # Given any need of known type
-        # with missing mandatory options info
-        # it should raise an error
+        """
+        Given any need of known type with missing mandatory options info
+        it should raise an error
+        """
         need_1 = need(
             target_id="wf_req__001",
             id="wf_req__001",
@@ -162,9 +162,10 @@ class TestCheckOptions:
         derivation_technique="requirements-analysis",
     )
     def test_invalid_option_type(self):
-        # Given any need of known type
-        # with missing mandatory options info
-        # it should raise an error
+        """
+        Given any need of known type with missing mandatory options info
+        it should raise an error
+        """
         need_1 = need(
             target_id="wf_req__001",
             id="wf_req__001",
@@ -192,8 +193,10 @@ class TestCheckOptions:
         derivation_technique="requirements-analysis",
     )
     def test_unknown_option_present_in_neither_req_opt_neither_opt_opt(self):
-        # Given a need with an option that is not listed
-        # in the required and optional options
+        """
+        Given a need with an option that is not listed
+        in the required and optional options
+        """
         need_1 = need(
             target_id="tool_req__001",
             id="tool_req__0011",
@@ -224,7 +227,7 @@ class TestCheckOptions:
         derivation_technique="requirements-analysis",
     )
     def test_invalid_option_value_type_raises_value_error(self):
-        # Given a need with an option of wrong type (list with non-str)
+        """Given a need with an option of wrong type (list with non-str)"""
         need_1 = need(
             target_id="tool_req__002",
             id="tool_req__002",

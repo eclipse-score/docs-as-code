@@ -22,8 +22,8 @@ Testing Statistics
 
 
 .. needpie:: Requirements That Have A Linked Test
-   :labels: requirement not implemeted; not tested, tested
-   :colors: red, green
+   :labels: requirement not implemeted, not tested, tested
+   :colors: red,yellow, green
    :legend:
 
    type == 'tool_req' and implemented == 'NO'
