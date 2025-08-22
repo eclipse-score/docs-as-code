@@ -90,7 +90,7 @@ PR --> parallel
 parallel --> DC & T1
 
 PM --> T2
-T2 -- <br> --> HB2
+T2 --> HB2
 HB2 --> W
 
 PR@{ shape: event}
