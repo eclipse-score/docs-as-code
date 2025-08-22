@@ -1,0 +1,44 @@
+needs_types_base_options:
+  optional_options:
+    global_opt: "global_value"
+
+prohibited_words_checks:
+  title_check:
+    title:
+      - stop_word1
+  content_check:
+    types:
+      - req_type
+    content:
+      - weak_word1
+
+needs_types:
+  type1:
+    title: "Type 1"
+    prefix: "T1"
+    color: "blue"
+    style: "bold"
+    mandatory_options:
+      opt1: "value1"
+    optional_options:
+      opt2: "value2"
+      opt3: "value3"
+    mandatory_links:
+      link1: "value1"
+    optional_links:
+      link2: "value2"
+    tags:
+      - req_type
+
+needs_extra_links:
+  link_option1:
+    incoming: "incoming1"
+    outgoing: "outgoing1"
+
+graph_checks:
+  needs_graph_check:
+    needs:
+      include: type1
+      condition: opt1 == test
+    check:
+      link1: opt1 == test

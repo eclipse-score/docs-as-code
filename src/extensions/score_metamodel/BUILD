@@ -34,7 +34,10 @@ score_py_pytest(
     srcs = glob(["tests/*.py"]),
     # All requirements already in the library so no need to have it double
     data = glob(
-        ["tests/**/*.rst"],
+        [
+            "tests/**/*.rst",
+            "tests/**/*.yaml",
+        ],
     ),
     deps = [":score_metamodel"],
 )
