@@ -4,22 +4,31 @@ Testing Statistics
 ==================
 
 
-.. needtable:: SUCCESSFUL TEST
+.. needtable:: SUCCESSFUL TESTS
    :filter: result == "passed"
    :tags: TEST
    :columns: name as "testcase";result;fully_verifies;partially_verifies;test_type;derivation_technique;id as "link"
 
-
-.. needtable:: FAILED TEST
+.. needtable:: FAILED TESTS
    :filter: result == "failed"
    :tags: TEST
    :columns: name as "testcase";result;fully_verifies;partially_verifies;test_type;derivation_technique;id as "link"
 
 
-.. needtable:: OTHER TEST
+.. needtable:: SKIPPED/DISABLED TESTS
    :filter: result != "failed" and result != "passed"
    :tags: TEST
    :columns: name as "testcase";result;fully_verifies;partially_verifies;test_type;derivation_technique;id as "link"
+
+
+.. needpie:: Requirements That Have A Linked Test
+   :labels: requirement not implemeted, not tested, tested
+   :colors: red,yellow, green
+   :legend:
+
+   type == 'tool_req' and implemented == 'NO'
+   type == 'tool_req' and testlink == '' and (implemented == 'YES' or implemented == 'PARTIAL')
+   type == 'tool_req' and testlink != '' and (implemented == 'YES' or implemented == 'PARTIAL')
 
 
 .. needpie:: Test Results
