@@ -22,6 +22,8 @@ from score_metamodel.checks.check_options import (
 from score_metamodel.tests import fake_check_logger, need
 from sphinx.application import Sphinx
 
+from attribute_plugin import add_test_properties
+
 
 class NeedTypeDict(TypedDict, total=False):
     directive: str
@@ -69,6 +71,11 @@ class TestCheckOptions:
         }
     ]
 
+    @add_test_properties(
+        partially_verifies=["tool_req__docs_metamodel"],
+        test_type="requirements-based",
+        derivation_technique="requirements-analysis",
+    )
     def test_unknown_directive(self):
         # Given a need with an unknown type, should raise an error
         need_1 = need(
@@ -90,7 +97,13 @@ class TestCheckOptions:
             "no type info defined for semantic check.",
             expect_location=False,
         )
+    
 
+    @add_test_properties(
+        partially_verifies=["tool_req__docs_metamodel"],
+        test_type="requirements-based",
+        derivation_technique="requirements-analysis",
+    )
     def test_unknown_directive_extra_option(self):
         # Given a need an unknown/undefined type, should raise an error
         need_1 = need(
@@ -113,6 +126,11 @@ class TestCheckOptions:
             expect_location=False,
         )
 
+    @add_test_properties(
+        partially_verifies=["tool_req__docs_metamodel"],
+        test_type="requirements-based",
+        derivation_technique="requirements-analysis",
+    )
     def test_missing_mandatory_options_info(self):
         # Given any need of known type
         # with missing mandatory options info
@@ -138,6 +156,11 @@ class TestCheckOptions:
             expect_location=False,
         )
 
+    @add_test_properties(
+        partially_verifies=["tool_req__docs_metamodel"],
+        test_type="requirements-based",
+        derivation_technique="requirements-analysis",
+    )
     def test_invalid_option_type(self):
         # Given any need of known type
         # with missing mandatory options info
@@ -163,6 +186,11 @@ class TestCheckOptions:
             expect_location=False,
         )
 
+    @add_test_properties(
+        partially_verifies=["tool_req__docs_metamodel"],
+        test_type="requirements-based",
+        derivation_technique="requirements-analysis",
+    )
     def test_unknown_option_present_in_neither_req_opt_neither_opt_opt(self):
         # Given a need with an option that is not listed
         # in the required and optional options
@@ -190,6 +218,11 @@ class TestCheckOptions:
             expect_location=False,
         )
 
+    @add_test_properties(
+        partially_verifies=["tool_req__docs_metamodel"],
+        test_type="requirements-based",
+        derivation_technique="requirements-analysis",
+    )
     def test_invalid_option_value_type_raises_value_error(self):
         # Given a need with an option of wrong type (list with non-str)
         need_1 = need(

@@ -16,7 +16,6 @@ It also generates external needs out of the parsed testcases to enable linking t
 """
 
 # req-Id: tool_req__docs_test_link_testcase
-# This whole file along with '__init__', 'need_source_links' and 'testlink' are implementing the above need.
 
 import contextlib
 import base64

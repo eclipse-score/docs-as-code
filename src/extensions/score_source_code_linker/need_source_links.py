@@ -17,7 +17,7 @@ It also defines a decoder and encoder for SourceCodeLinks to enable JSON read/wr
 """
 
 # req-Id: tool_req__docs_test_link_testcase
-# This whole file along with '__init__', 'xml_parser' and 'testlink' are implementing the above need.
+# req-Id: tool_req__docs_dd_link_source_code_link
 
 import json
 from dataclasses import asdict, dataclass, field

@@ -17,7 +17,8 @@ source code links from a JSON file and add them to the needs.
 """
 
 # req-Id: tool_req__docs_test_link_testcase
-# This whole file along with 'xml_parser', 'need_source_links' and 'testlink' are implementing the above need.
+# req-Id: tool_req__docs_dd_link_source_code_link
+# This whole directory implements the above mentioned tool requirements
 
 from collections import defaultdict
 from copy import deepcopy
