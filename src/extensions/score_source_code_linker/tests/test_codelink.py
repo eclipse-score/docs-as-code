@@ -191,6 +191,11 @@ def sample_needs():
 
 
 # Test utility functions
+@add_test_properties(
+    partially_verifies=["tool_req__docs_dd_link_source_code_link"],
+    test_type="requirements-based",
+    derivation_technique="requirements-analysis",
+)
 def test_get_cache_filename():
     """Test cache filename generation."""
     build_dir = Path("/tmp/build")
@@ -205,6 +210,11 @@ def make_needs(needs_dict):
     )
 
 
+@add_test_properties(
+    partially_verifies=["tool_req__docs_dd_link_source_code_link"],
+    test_type="requirements-based",
+    derivation_technique="requirements-analysis",
+)
 def test_find_need_direct_match():
     """Test finding a need with direct ID match."""
     all_needs = make_needs(
@@ -218,6 +228,11 @@ def test_find_need_direct_match():
     assert result["id"] == "REQ_001"
 
 
+@add_test_properties(
+    partially_verifies=["tool_req__docs_dd_link_source_code_link"],
+    test_type="requirements-based",
+    derivation_technique="requirements-analysis",
+)
 def test_find_need_with_prefix():
     """Test finding a need with prefix matching."""
 
@@ -232,6 +247,11 @@ def test_find_need_with_prefix():
     assert result["id"] == "PREFIX_REQ_001"
 
 
+@add_test_properties(
+    partially_verifies=["tool_req__docs_dd_link_source_code_link"],
+    test_type="requirements-based",
+    derivation_technique="requirements-analysis",
+)
 def test_find_need_multiple_prefixes():
     """Test finding a need with multiple prefixes."""
     all_needs = make_needs(
@@ -249,6 +269,11 @@ def test_find_need_multiple_prefixes():
     assert result["id"] == "SECOND_REQ_001"
 
 
+@add_test_properties(
+    partially_verifies=["tool_req__docs_dd_link_source_code_link"],
+    test_type="requirements-based",
+    derivation_technique="requirements-analysis",
+)
 def test_find_need_not_found():
     """Test finding a need that doesn't exist."""
     all_needs = make_needs(
@@ -261,6 +286,11 @@ def test_find_need_not_found():
     assert result is None
 
 
+@add_test_properties(
+    partially_verifies=["tool_req__docs_dd_link_source_code_link"],
+    test_type="requirements-based",
+    derivation_technique="requirements-analysis",
+)
 def test_group_by_need(sample_needlinks):
     """Test grouping source code links by need ID."""
     result = group_by_need(sample_needlinks)
@@ -280,12 +310,22 @@ def test_group_by_need(sample_needlinks):
             assert len(found_link.links.CodeLinks) == 1
 
 
+@add_test_properties(
+    partially_verifies=["tool_req__docs_dd_link_source_code_link"],
+    test_type="requirements-based",
+    derivation_technique="requirements-analysis",
+)
 def test_group_by_need_empty_list():
     """Test grouping empty list of needlinks."""
     result = group_by_need([], [])
     assert len(result) == 0
 
 
+@add_test_properties(
+    partially_verifies=["tool_req__docs_dd_link_source_code_link"],
+    test_type="requirements-based",
+    derivation_technique="requirements-analysis",
+)
 def test_get_github_link_with_real_repo(git_repo):
     """Test generating GitHub link with real repository."""
     # Create a needlink
@@ -313,6 +353,11 @@ def test_get_github_link_with_real_repo(git_repo):
 
 
 # Test cache file operations
+@add_test_properties(
+    partially_verifies=["tool_req__docs_dd_link_source_code_link"],
+    test_type="requirements-based",
+    derivation_technique="requirements-analysis",
+)
 def test_cache_file_operations(temp_dir, sample_needlinks):
     """Test storing and loading cache files."""
     cache_file = temp_dir / "test_cache.json"
@@ -337,6 +382,11 @@ def test_cache_file_operations(temp_dir, sample_needlinks):
     assert loaded_links[3].line == 2
 
 
+@add_test_properties(
+    partially_verifies=["tool_req__docs_dd_link_source_code_link"],
+    test_type="requirements-based",
+    derivation_technique="requirements-analysis",
+)
 def test_cache_file_with_encoded_comments(temp_dir):
     """Test that cache file properly handles encoded comments."""
     # Create needlinks with spaces in tags and full_line
@@ -367,6 +417,13 @@ def test_cache_file_with_encoded_comments(temp_dir):
 
 
 # Integration tests
+
+
+@add_test_properties(
+    partially_verifies=["tool_req__docs_dd_link_source_code_link"],
+    test_type="requirements-based",
+    derivation_technique="requirements-analysis",
+)
 def test_group_by_need_and_find_need_integration(sample_needlinks):
     """Test grouping links and finding needs together."""
     # Group the test links
@@ -397,8 +454,8 @@ def test_group_by_need_and_find_need_integration(sample_needlinks):
 
 @add_test_properties(
     partially_verifies=["tool_req__docs_dd_link_source_code_link"],
-    test_type="interface-test",
-    derivation_technique="design-analysis",
+    test_type="requirements-based",
+    derivation_technique="requirements-analysis",
 )
 def test_source_linker_end_to_end_with_real_files(temp_dir, git_repo):
     """Test end-to-end workflow with real files and git repo."""
@@ -490,6 +547,11 @@ def another_function():
         assert f"src/{needlink.file.name}#L{needlink.line}" in github_link
 
 
+@add_test_properties(
+    partially_verifies=["tool_req__docs_dd_link_source_code_link"],
+    test_type="requirements-based",
+    derivation_technique="requirements-analysis",
+)
 def test_multiple_commits_hash_consistency(git_repo):
     """Test that git hash remains consistent and links update properly."""
     # Get initial hash

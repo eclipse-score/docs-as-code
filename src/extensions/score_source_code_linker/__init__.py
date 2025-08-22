@@ -16,6 +16,10 @@ In this file the actual sphinx extension is defined. It will read pre-generated
 source code links from a JSON file and add them to the needs.
 """
 
+# req-Id: tool_req__docs_test_link_testcase
+# req-Id: tool_req__docs_dd_link_source_code_link
+# This whole directory implements the above mentioned tool requirements
+
 from collections import defaultdict
 from copy import deepcopy
 from pathlib import Path
