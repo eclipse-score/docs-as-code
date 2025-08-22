@@ -8,3 +8,4 @@ Internals
 
    extensions/index
    benchmark_results
+   decisions_and_concepts/index
