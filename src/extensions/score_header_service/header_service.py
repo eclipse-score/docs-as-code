@@ -89,7 +89,7 @@ class HeaderService(BaseService):
         :param config: The configuration dictionary.
         :param kwargs: Additional keyword arguments.
         """
-        super(BaseService, self).__init__()
+        super().__init__()
 
     def request_from_directive(
         self, directive: SphinxDirective
