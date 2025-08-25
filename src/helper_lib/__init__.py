@@ -61,16 +61,23 @@ def parse_remote_git_output(str_line: str) -> str:
         Input:  'origin git@github.com:MaximilianSoerenPollak/docs-as-code.git'
         Output: 'MaximilianSoerenPollak/docs-as-code'
     """
-    if len(str_line.split()) < 2:
+    parts = str_line.split(maxsplit=2)  # split into up to three parts [remote, url, ...]
+    if len(parts) < 2:
         LOGGER.warning(
             f"Got wrong input line from 'get_github_repo_info'. Input: {str_line}. "
             + "Expected example: 'origin git@github.com:user/repo.git'"
         )
         return ""
-    url = str_line.split()[1]  # Get the URL part
-    # Handle SSH format (git@github.com:user/repo.git)      Get part after github.com/
-    path = url.split(":")[1] if url.startswith("git@") else "/".join(url.split("/")[3:])
-    return path.replace(".git", "")
+
+    url = parts[1]  # Get the URL part
+
+    # Handle SSH vs HTTPS formats directly
+    if url.startswith("git@"):
+        path = url.split(":", 1)[-1]
+    else:
+        path = "/".join(url.split("/")[3:])
+
+    return path.removesuffix(".git")
 
 
 def get_github_repo_info(git_root_cwd: Path) -> str:
@@ -146,16 +153,22 @@ def get_current_git_hash(git_root: Path) -> str:
         result = subprocess.run(
             ["git", "log", "-n", "1", "--pretty=format:%H"],
             cwd=git_root,
+            text=True,  # ✅ decode automatically
             capture_output=True,
             check=True,
         )
-        decoded_result = result.stdout.strip().decode()
+        decoded_result = result.stdout.strip()
 
-        assert all(c in "0123456789abcdef" for c in decoded_result)
+        if len(decoded_result) != 40:
+            raise ValueError(f"Unexpected git hash length: {decoded_result}")
+
+        if not all(c in "0123456789abcdef" for c in decoded_result):
+            raise ValueError(f"Invalid characters in git hash: {decoded_result}")
+
         return decoded_result
     except Exception as e:
         LOGGER.warning(
-            f"Unexpected error while trying to get git_hash. Exceuted in: {git_root}",
+            f"Unexpected error while trying to get git_hash. Executed in: {git_root}",
             exc_info=e,
         )
         raise
