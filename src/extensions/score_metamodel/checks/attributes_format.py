@@ -67,11 +67,11 @@ def check_id_length(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
     that would be replaced by actually feature names.
     ---
     """
-    max_lenght = 45
+    max_length = 45
     parts = need["id"].split("__")
     if parts[1] == "example_feature":
-        max_lenght += 17  # _example_feature_
-    if len(need["id"]) > max_lenght:
+        max_length += 17  # _example_feature_
+    if len(need["id"]) > max_length:
         length = len(need["id"])
         if "example_feature" in need["id"]:
             length -= 17

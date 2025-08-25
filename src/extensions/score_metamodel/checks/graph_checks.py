@@ -79,7 +79,7 @@ def eval_need_condition(
         if not isinstance(condition, str):
             raise ValueError(
                 f"Invalid condition type: condition ({type(condition)}),"
-                + " expected str or dict."
+                " expected str or dict."
             )
         return eval_need_check(need, condition, log)
 
