@@ -47,6 +47,9 @@ def update_config(app: Sphinx, _config: Any):
             # Docs-as-code is the current module
             module = "_main"
         app.config.html_static_path.append(str(Path(r) / module / "src/assets"))
+        app.config.needs_flow_configs = {
+            "score_config": f"!include {Path(r) / module / 'src/assets/puml-theme-score.puml'}"
+        }
 
     app.add_css_file("css/score.css", priority=500)
     app.add_css_file("css/score_needs.css", priority=500)
