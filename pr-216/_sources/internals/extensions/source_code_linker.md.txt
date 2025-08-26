@@ -1,187 +1,300 @@
 (source-code-linker)=
-# Source Link Extension Details
+# Score Source Code Linker
 
-A Sphinx extension for source code traceability for requirements. This extension works with the Bazel system and Sphinx-needs to provide automatic source code traceability.
-In a first step it parses the source code for requirement tags. All discovered tags including their file and line numbers are written in an intermediary file before the sphinx build.
-In a second step this intermediary file is parsed during sphinx build. If a requirement Id is found in the intermediary file a link to the source is added.
-
-** Please note that the 'test parsing & linking' has been added to the source-code-linker. **
-* The documentation for this part will follow soon * 
-
-## Implementation Components
-
-### Bazel Integration
-The extension uses two main components to integrate with Bazel:
-
-1. `collect_source_files`
-   - Processes all files from provided deps
-   - Passes files as `--input` arguments to `parse_source_files.py`
-   - Handles dependency tracking for incremental builds
-
-2. `parse_source_files.py`
-   - Scans input files for template tags (e.g., "#<!-- comment prevents parsing this occurance --> req-traceability:")
-   - Retrieves git information (hash, file location)
-   - Generates mapping file with requirement IDs and links
-
-### Link Generation Process
-
-1. File Discovery:
-   - Takes deps from Bazel rule
-   - Filters for relevant file types
-   - Creates file list for processing
-
-<br>
-
-2. Tag Processing:
-   - Scans files for template strings
-   - Extracts requirement IDs
-   - Maps IDs to file locations
-   - *Git Integration*:
-       - Gets current git hash for each file
-       - Constructs GitHub URLs with format:
-         `{base_url}/{repo}/blob/{hash}/{file}#L{line_nr}`
-        **Note:** The base_url is defined in `parse_source_files.py`. Currently set to: `https://github.com/eclipse-score/score/blob/`
-
-Produces JSON mapping file:
-The strings are split here to not enable tracking by the source code linker.
-```python
-[
-    {
-        "file": "src/implementation1.py",
-        "line": 3,
-        "tag":"#" + " req-Id:",
-        "need": "TREQ_ID_1",
-        "full_line": "#"+" req-Id: TREQ_ID_1"
-    },
-    {
-        "file": "src/implementation2.py", 
-        "line": 3,
-        "tag":"#" + " req-Id:",
-        "need": "TREQ_ID_1",
-        "full_line": "#"+" req-Id: TREQ_ID_1"
-    },
-]
-```
-
-<br>
-
-3. Sphinx extension & Sphinx-needs:
-    - Parses JSON file
-    - Adds 'url-string' to needs
-    - Converts 'url-string' to clickable link
-
-<hr>
-
-> An overview of the data flow inside the extension and it's parts
-
-![Data flow inside extension](data_flow.png)
+A Sphinx extension for enabling **source code and test traceability** for requirements.  
+This extension integrates with **Bazel** and **sphinx-needs** to automatically generate traceability links between implementation, tests, and documentation.
 
 ---
 
+## Overview
 
-### Sphinx Integration
-The extension hooks into Sphinx's build process. It attaches to the `env-updated` event.
+The extension is split into two main components:
 
-1. Configuration Phase:
-   - Registers as Sphinx extension
-   - Reads mapping file
-   - Sets up sphinx-needs integration
+- **CodeLink** – Parses source files for template strings and links them to needs.
+- **TestLink** – Parses test.xml outputs inside `bazel-testlogs` to link test cases to requirements.
 
-2. Build Phase:
-   - Processes each need
-   - Adds source_code_link option to matching needs
-   - Handles needs_string_links conversion
+Each component stores intermediate data in JSON caches under `_build/` to optimize performance and speed up incremental builds.
 
-3. Error Handling:
-   - Validates requirement IDs
-   - Provides descriptive warnings for missing IDs
+---
 
-## Usage Guide
+## How It Works
 
-### Adding Places to Search
+### ✅ CodeLink: Source Code Integration
 
-You can easily add files to be searched by adding targets / files to the deps inside the
-`collect_source_files_for_score_source_code_linker` in `docs/BUILD`.
-See here:
-
-```starlark
-collect_source_files_for_score_source_code_linker(
-    name = "collected_files_for_score_source_code_linker",
-    deps = [
-        ":score_metamodel",
-        ":score_source_code_linker",
-        # Add targets to be parsed here
-    ],
-)
-```
-
-### Adding Tags to Source Files
-
-In order for a source_code_link to be generated there needs to be a **tag** inside the parsed file.
-Tags are defined inside `parse_source_files.py`
-
-You can use them like this:
+CodeLink scans repository files (excluding `_`, `.`, and binary formats) for requirement tags such as:
 
 ```python
-# req-#traceability: <NEED ID YOU WANT TO LINK TO>
-def dummy_function():
-    pass
+# Choose one or the other, both mentioned here to avoid detection
+# req-Id/req-traceability: <NEED_ID>
 ```
 
-This will then add a link to this source file to the need you specified.
+These tags are extracted and matched to Sphinx needs via the `source_code_link` attribute. If a need ID does not exist, a build warning will be raised.
 
-**Warning:** If the need-id you specified in the tag, does **not** exist in the needs, the extension will give an error message.
-Therefore stopping the sphinx-build.
-The error message looks similar to this:
+#### Data Flow
+
+1. **File Scanning** (`generate_source_code_links_json.py`)
+   - Filters out files starting with `_`, `.`, or ending in `.pyc`, `.so`, `.exe`, `.bin`.
+   - Searches for template tags: `#<!-- comment prevents parsing this occurance --> req-Id:` and `#<!-- comment prevents parsing this occurance --> req-traceability:`.
+   - Extracts:
+     - File path
+     - Line number
+     - Tag and full line
+     - Associated need ID
+   - Saves data as JSON via `needlinks.py`.
+
+2. **Link Creation**
+   - Git info (file hash) is used to build a GitHub URL to the line in the source file.
+   - Links are injected into needs via the `source_code_link` attribute during the Sphinx build process.
+
+#### Example JSON Cache (CodeLinks)
 
 ```
-WARNING: Could not find TREQ_ID_200 in the needs id's. Found in file(s):['_tooling/score_metamodel/bad_implementation.py']
+[
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 17,
+    "tag": "#--req-Id:", # added `--` to avoid detection
+    "need": "tool_req__docs_dd_link_source_code_link",
+    "full_line": "#--req-Id: tool_req__docs_dd_link_source_code_link" # added `--` to avoid detection
+  }
+]
 ```
 
-### Quickly Finding Source Links
+---
 
-The easiest and quickest way to find source_code_link options is to just search for the option `source_code_link`. It should give you all rst files
-where the option is not empty.
+### ✅ TestLink: Test Result Integration
 
-### Executing Tests
+TestLink scans test result XMLs from Bazel and converts each test case with metadata into Sphinx external needs, allowing links from tests to requirements.
+This depends on the `attribute_plugin` in our tooling repository, find it [here](https://github.com/eclipse-score/tooling/tree/main/python_basics/score_pytest)
+#### Test Tagging Options
 
-If you want to specifically execute the test suite for the extension please use the following command:
+```python
+# Import the decorator
+from attribute_plugin import add_test_properties
+
+# Add the decorator to your test
+@add_test_properties(
+    partially_verifies=["tool_req__docs_common_attr_title", "tool_req__docs_common_attr_description"],
+    test_type="interface-test",
+    derivation_technique="boundary-values"
+)
+def test_feature():
+    """
+    Mandatory docstring that contains a description of the test
+    """
+    ...
+
+```
+> Note: If you use the decorator, it will check that you have specified a docstring inside the function.
+
+#### Data Flow
+
+1. **XML Parsing** (`xml_parser.py`)
+   - Scans `bazel-testlogs/` for `test.xml` files.
+   - Parses test cases and extracts:
+     - Name
+     - File path
+     - Line
+     - Result (e.g. passed, failed, skipped)
+     - Result text (if failed/skipped will check if message was attached to it)
+     - Verifications (`PartiallyVerifies`, `FullyVerifies`)
+
+   - Cases without metadata are logged out as info (not errors).
+   - Test cases with metadata are converted into:
+     - `DataFromTestCase` (used for external needs)
+     - `DataForTestLink` (used for linking tests to requirements)
+
+2. **Need Linking**
+   - Generates external Sphinx needs from `DataFromTestCase`.
+   - Creates `testlink` attributes on linked requirements.
+   - Warns on missing need IDs.
+
+#### Example JSON Cache (DataFromTestCase)
+The DataFromTestCase depicts the information gathered about one testcase.
+```json
+[
+  {
+    "name": "test_cache_file_with_encoded_comments",
+    "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
+    "line": "340",
+    "result": "passed",
+    "TestType": "interface-test",
+    "DerivationTechnique": "boundary-values",
+    "result_text": "",
+    "PartiallyVerifies": "tool_req__docs_common_attr_title, tool_req__docs_common_attr_description",
+    "FullyVerifies": null
+  }
+]
+```
+
+---
+
+## 🔗 Combined Links
+
+During the Sphinx build process, both CodeLink and TestLink data are combined and applied to needs.
+
+This is handled in `__init__.py` using the `NeedSourceLinks` and `SourceCodeLinks` dataclasses from `need_source_links.py`.
+
+### Combined JSON Example
+
+```
+[
+  {
+    "need": "tool_req__docs_common_attr_title",
+    "links": {
+      "CodeLinks": [
+        {
+          "file": "src/extensions/score_metamodel/metamodel.yaml",
+          "line": 33,
+          "tag": "#--req-Id:",# added `--` to avoid detection
+          "need": "tool_req__docs_common_attr_title",
+          "full_line": "#--req-Id: tool_req__docs_common_attr_title" # added `--` to avoid detection
+        }
+      ],
+      "TestLinks": [
+        {
+          "name": "test_cache_file_with_encoded_comments",
+          "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
+          "line": 340,
+          "need": "tool_req__docs_common_attr_title",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": ""
+        }
+      ]
+    }
+  }
+]
+```
+
+
+---
+
+## ⚠️ Known Limitations
+
+### CodeLink
+
+- ❌ Not compatible with **Esbonio/Live_preview**
+- 🔗 GitHub links may 404 if the commit isn’t pushed
+- 🧪 Tags must match exactly (e.g. #<!-- comment prevents parsing this occurance --> req-Id)
+- 👀 `source_code_link` isn’t visible until the full Sphinx build is completed
+
+### TestLink
+
+- ❌ Not compatible with **Esbonio/Live_preview**
+- 🔗 GitHub links may 404 if the commit isn’t pushed
+- 🧪 XML structure must be followed exactly (e.g. `properties & attributes`)
+- 🗂 Relies on test to be executed first
+
+
+
+---
+
+## 🏗️ Internal Module Overview
+
+```
+score_source_code_linker/
+├── __init__.py                   # Main Sphinx extension; combines CodeLinks + TestLinks
+├── generate_source_code_links_json.py  # Parses source files for tags
+├── need_source_links.py         # Data model for combined links
+├── needlinks.py                 # CodeLink dataclass & JSON encoder/decoder
+├── testlink.py                  # DataForTestLink definition & logic
+├── xml_parser.py                # Parses XML files into test case data
+├── tests/                       # Testsuite, containing unit & integration tests
+│   └── ...
+```
+
+---
+## Clearing Cache Manually
+
+To clear the build cache, run:
+
 ```bash
-bazel test //docs:score_source_code_link_tests
+rm -rf _build/
 ```
 
-The test suite should also run if you run all tests via `bazel test //...`
+## Examples:
+To see working examples for CodeLinks & TestLinks, take a look at the Docs-As-Code documentation.
 
-## Known Limitations
+[Example CodeLink](https://eclipse-score.github.io/docs-as-code/main/requirements/requirements.html#tool_req__docs_common_attr_id_scheme)
+[Example CodeLink](https://eclipse-score.github.io/docs-as-code/main/requirements/requirements.html#tool_req__docs_common_attr_status)
 
-1. Esbonio Compatibility:
-   - Does not work with Language Server
-   - Skipped for performance reasons in instant feedback mode
+[Example TestLink](https://eclipse-score.github.io/docs-as-code/main/requirements/requirements.html#tool_req__docs_dd_link_source_code_link)
 
-2. Local Development:
-   - Links to unpushed commits return 404
-   - Links still generated but non-functional until push
+## Flow-Overview
+```{mermaid}
+flowchart TD
+    %% Entry Point
+    A[source_code_linker] --> B{Check for Grouped JSON Cache}
 
-3. Build Process:
-   - source_code_link not visible in raw RST
-   - Requires full build cycle for link generation
-   - Dependent on GitHub repository structure
+    %% If cache exists
+    B --> |✅| C[Load Grouped JSON Cache]
+    B --> |🔴| N9[Proceed Without Cache]
 
-## Internal Architecture
+    %% --- NeedLink Path ---
+    N9 --> D1[needslink.py<br/><b>NeedLink</b>]
+    D1 --> E1{Check for CodeLink JSON Cache}
 
+    E1 --> |✅| F1[Load CodeLink JSON Cache]
+    F1 --> Z[Grouped JSON Cache]
 
-1. `collect_source_files`:
-   - Dependency management
-   - File filtering
-   - Build rule definition
+    E1 --> |🔴| G1[Parse all files in repository]
+    G1 --> H1[Build & Save<br/>CodeLink JSON Cache]
+    H1 --> Z
 
-2. `parse_source_files.py`:
-   - File parsing
-   - Git integration
-   - Link generation
+    %% --- TestLink Path ---
+    N9 --> D2[testlink.py<br/><b>DFTL</b>]
+    D2 --> E2{Check for DFTL JSON Cache}
 
-3. `source_link` extension:
-   - Sphinx integration
-   - Need modification
+    E2 --> |✅| F2[Load DFTL JSON Cache]
+    F2 --> J2[Load DOTC JSON Cache]
+    J2 --> K2[Add as External Needs]
 
-Tests are inside the `source_link/tests`
+    E2 --> |🔴| G2[Parse test.xml Files]
+    G2 --> H2[Convert TestCases<br/>to DOTC]
+    H2 --> I2[Build & Save<br/>DOTC JSON Cache]
+    I2 --> K2
+
+    H2 --> M2[Convert to DFTL]
+    M2 --> N2[Build & Save<br/>DFTL JSON Cache]
+    N2 --> Z
+
+    %% Final step
+    Z --> FINAL[<b>Add links to needs</b>]
+
+    %% Legend
+    subgraph Legend["Legend"]
+        direction TB
+        L1[NeedLink Operations]
+        L2[TestLink Operations]
+        L4[DTFL = DataForTestLink]
+        L3[TestCaseNeed Operations]
+        L5[DOTC = DataOfTestCase]
+        L1 ~~~ L2 
+        L2 ~~~ L4 
+        L4 ~~~ L3 
+        L3 ~~~ L5
+    end
+
+    %% Node Styling
+    classDef needlink fill:#3b82f6,color:#ffffff,stroke:#1d4ed8,stroke-width:2px
+    classDef testlink fill:#8b5cf6,color:#ffffff,stroke:#6d28d9,stroke-width:2px
+    classDef dotc fill:#f59e0b,color:#ffffff,stroke:#b45309,stroke-width:2px
+    classDef grouped fill:#10b981,color:#ffffff,stroke:#047857,stroke-width:2px
+    classDef final fill:#f43f5e,color:#ffffff,stroke:#be123c,stroke-width:2px
+
+    %% Class assignments
+    class D1,E1,F1,G1,H1 needlink
+    class D2,E2,F2,G2,M2,N2 testlink
+    class J2,H2,I2,K2 dotc
+    class Z grouped
+    class FINAL final
+    class L1 needlink
+    class L2,L4 testlink
+    class L3,L5 dotc
+
+    %% Edge/Arrow Styling
+    linkStyle default stroke:#22d3ee,stroke-width:2px,color:#22d3ee
+    %% Ensure links in the Legend do not show up
+    linkStyle 23,24,25,26 opacity:0
+```
