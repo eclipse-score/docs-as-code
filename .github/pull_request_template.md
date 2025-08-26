@@ -2,11 +2,18 @@
 Thank you for your contribution!
 Please fill out this template to help us review your PR effectively.
 -->
+# Pull Request Template – docs-as-code
 
 ## 📌 Description
 - What does this PR change?
 - Why is it needed?
 - Which task it's related to?
+
+## Impact Analysis
+<!-- REQUIRED: Analyze and explain the impact of this change -->
+- Impact on Tool Requirements: <!-- Yes/No + details -->
+- Impact on Design Decisions: <!-- Yes/No + details -->
+- Impact on Qualification: <!-- Yes/No + details -->
 
 ## ✅ Checklist
 Before requesting a review, please confirm that you have:
@@ -16,9 +23,6 @@ Before requesting a review, please confirm that you have:
 - [ ] Verified that existing tests pass locally
 - [ ] Followed project coding standards and guidelines
 
-## 🧪 Testing
-- How did you test your changes?
-- Any special test setup required?
 
 ## 📖 Documentation
 - Does this PR update docs?
