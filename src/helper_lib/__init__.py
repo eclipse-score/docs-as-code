@@ -61,7 +61,9 @@ def parse_remote_git_output(str_line: str) -> str:
         Input:  'origin git@github.com:MaximilianSoerenPollak/docs-as-code.git'
         Output: 'MaximilianSoerenPollak/docs-as-code'
     """
-    parts = str_line.split(maxsplit=2)  # split into up to three parts [remote, url, ...]
+    parts = str_line.split(
+        maxsplit=2
+    )  # split into up to three parts [remote, url, ...]
     if len(parts) < 2:
         LOGGER.warning(
             f"Got wrong input line from 'get_github_repo_info'. Input: {str_line}. "
