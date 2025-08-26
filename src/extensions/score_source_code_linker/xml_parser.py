@@ -15,8 +15,10 @@ This file deals with finding and parsing of test.xml files that get created duri
 It also generates external needs out of the parsed testcases to enable linking to requirements &gathering statistics
 """
 
-import contextlib
+# req-Id: tool_req__docs_test_link_testcase
+
 import base64
+import contextlib
 import hashlib
 import itertools
 import os
@@ -194,12 +196,9 @@ def build_test_needs_from_files(
     tcns: list[DataOfTestCase] = []
     for f in xml_paths:
         b, z = read_test_xml_file(f)
-        for non_prop_test in z:
-            # We probably do not want to do this as a warning yet
-            logger.info(
-                f"Test: {non_prop_test} has no properties. Could not create need"
-            )
-        # Now we build the needs from it
+        non_prop_tests = ", ".join(n for n in z)
+        if non_prop_tests:
+            logger.info(f"Tests missing properties: {non_prop_tests}")
         tcns.extend(b)
         for c in b:
             construct_and_add_need(app, c)

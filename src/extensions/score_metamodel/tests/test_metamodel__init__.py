@@ -18,6 +18,8 @@ from src.extensions.score_metamodel.__init__ import (
     parse_checks_filter,
 )
 
+from attribute_plugin import add_test_properties
+
 
 def dummy_local_check(app, need, log):
     pass
@@ -36,23 +38,43 @@ def setup_checks():
     graph_checks.append(dummy_graph_check)
 
 
+@add_test_properties(
+    partially_verifies=["tool_req__docs_metamodel"],
+    test_type="requirements-based",
+    derivation_technique="requirements-analysis",
+)
 def test_returns_empty_list_when_filter_is_empty():
     """Return an empty list if no filter string is provided."""
     assert parse_checks_filter("") == []
 
 
+@add_test_properties(
+    partially_verifies=["tool_req__docs_metamodel"],
+    test_type="requirements-based",
+    derivation_technique="requirements-analysis",
+)
 def test_returns_valid_checks():
     """Return the provided valid check names."""
     result = parse_checks_filter("dummy_local_check,dummy_graph_check")
     assert result == ["dummy_local_check", "dummy_graph_check"]
 
 
+@add_test_properties(
+    partially_verifies=["tool_req__docs_metamodel"],
+    test_type="requirements-based",
+    derivation_technique="requirements-analysis",
+)
 def test_strips_whitespace():
     """Remove surrounding spaces from each check name."""
     result = parse_checks_filter(" dummy_local_check , dummy_graph_check ")
     assert result == ["dummy_local_check", "dummy_graph_check"]
 
 
+@add_test_properties(
+    partially_verifies=["tool_req__docs_metamodel"],
+    test_type="requirements-based",
+    derivation_technique="requirements-analysis",
+)
 def test_raises_assertion_for_invalid_check():
     """Raise AssertionError if a check name is unknown."""
     with pytest.raises(AssertionError) as exc_info:

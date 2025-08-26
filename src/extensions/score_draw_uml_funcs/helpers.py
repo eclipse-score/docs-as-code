@@ -236,16 +236,18 @@ def get_real_interface_logical(
             logger.info(f"{logical_op}: not implemented by any logical operation")
             continue
 
-        real_ifops.extend(real_ifop) if real_ifop not in real_ifops else None
+        if real_ifop[0] not in real_ifops:
+            real_ifops.extend(real_ifop)
 
-        # Per definition a operation can only be included by one interface
+        # Per definition an operation can only be included by one interface
         real_iface = all_needs[real_ifop[0]].get("included_by")
 
         if not real_iface:
             logger.info(f"{real_ifop[0]}: not included in any interface")
             continue
 
-        real_ifaces.extend(real_iface) if real_iface not in real_ifaces else None
+        if real_iface[0] not in real_ifaces:
+            real_ifaces.extend(real_iface)
 
     return real_ifaces
 

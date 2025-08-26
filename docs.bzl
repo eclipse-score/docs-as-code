@@ -44,7 +44,7 @@ load("@rules_pkg//pkg:mappings.bzl", "pkg_files")
 load("@rules_pkg//pkg:tar.bzl", "pkg_tar")
 load("@rules_python//sphinxdocs:sphinx.bzl", "sphinx_build_binary", "sphinx_docs")
 load("@rules_python//sphinxdocs:sphinx_docs_library.bzl", "sphinx_docs_library")
-load("@score_python_basics//:defs.bzl", "score_virtualenv")
+load("@score_tooling//:defs.bzl", "score_virtualenv")
 
 def docs(source_dir = "docs", data = [], deps = []):
     """
@@ -63,6 +63,8 @@ def docs(source_dir = "docs", data = [], deps = []):
         "@score_docs_as_code//src/extensions/score_layout:score_layout",
         "@score_docs_as_code//src/extensions/score_metamodel:score_metamodel",
         "@score_docs_as_code//src/extensions/score_source_code_linker:score_source_code_linker",
+        # NOTE: Do not comment this in, can only be enabled once tooling is released & process upgraded
+        #"@score_tooling//python_basics/score_pytest:attribute_plugin"
     ]
 
     sphinx_build_binary(
@@ -82,6 +84,19 @@ def docs(source_dir = "docs", data = [], deps = []):
             "SOURCE_DIRECTORY": source_dir,
             "DATA": str(data),
             "ACTION": "incremental",
+        },
+    )
+
+    py_binary(
+        name = "docs_check",
+        tags = ["cli_help=Verify documentation [run]"],
+        srcs = ["@score_docs_as_code//src:incremental.py"],
+        data = data,
+        deps = deps,
+        env = {
+            "SOURCE_DIRECTORY": source_dir,
+            "DATA": str(data),
+            "ACTION": "check",
         },
     )
 

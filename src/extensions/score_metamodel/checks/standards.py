@@ -312,9 +312,9 @@ def my_pie_workproducts_contained_in_exactly_one_workflow(
             if output in workproduct_analysis:
                 workproduct_analysis[output]["count"] += 1
 
-    nb_wp_connected_to_one_workflow = nb_wp_connected_to_more_than_one_workflow = (
-        not_connected_wp
-    ) = 0
+    not_connected_wp = 0
+    nb_wp_connected_to_one_workflow = 0
+    nb_wp_connected_to_more_than_one_workflow = 0
 
     for analysis in workproduct_analysis.values():
         count = analysis["count"]

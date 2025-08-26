@@ -21,9 +21,16 @@ from src.extensions.score_source_code_linker.testlink import (
     load_test_xml_parsed_json,
     store_test_xml_parsed_json,
 )
+from attribute_plugin import add_test_properties
 
 
+@add_test_properties(
+    partially_verifies=["tool_req__docs_test_link_testcase"],
+    test_type="requirements-based",
+    derivation_technique="requirements-analysis",
+)
 def test_testlink_serialization_roundtrip():
+    """Ensure that Encode/Decode is reversible"""
     link = DataForTestLink(
         name="my_test",
         file=Path("some/file.py"),
@@ -46,19 +53,42 @@ def test_testlink_encoder_handles_path():
     assert '"file": "some/thing.py"' in encoded
 
 
+@add_test_properties(
+    partially_verifies=["tool_req__docs_test_link_testcase"],
+    test_type="requirements-based",
+    derivation_technique="requirements-analysis",
+)
 def test_decoder_ignores_irrelevant_dicts():
+    """Ensure Decoder ignores data it doesn't understand"""
     input_data = {"foo": "bar"}
     result = DataForTestLink_JSON_Decoder(input_data)
     assert result == input_data
 
 
+@add_test_properties(
+    partially_verifies=["tool_req__docs_test_link_testcase"],
+    test_type="requirements-based",
+    derivation_technique="requirements-analysis",
+)
 def test_clean_text_removes_ansi_and_html_unescapes():
+    """
+    Test if text clean works as intended.
+    It should remove ANSI color & text styles, as well as convert HTML things back to Chars
+    """
     raw = "\x1b[31m&lt;b&gt;Warning&lt;/b&gt;\x1b[0m\nExtra line"
     cleaned = DataOfTestCase.clean_text(raw)
     assert cleaned == "<b>Warning</b> Extra line"
 
 
+@add_test_properties(
+    partially_verifies=["tool_req__docs_test_link_testcase"],
+    test_type="requirements-based",
+    derivation_technique="requirements-analysis",
+)
 def test_testcaseneed_to_dict_multiple_links():
+    """
+    Ensure that a DataOfTestCase can transform itself into a list of DataForTestLink.
+    """
     case = DataOfTestCase(
         name="TC_01",
         file="src/test.py",
@@ -84,7 +114,13 @@ def test_testcaseneed_to_dict_multiple_links():
         assert link.result == "failed"
 
 
+@add_test_properties(
+    partially_verifies=["tool_req__docs_test_link_testcase"],
+    test_type="requirements-based",
+    derivation_technique="requirements-analysis",
+)
 def test_store_and_load_testlinks_roundtrip(tmp_path):
+    """Ensure that Encode/Decode is reversible"""
     file = tmp_path / "testlinks.json"
 
     links = [

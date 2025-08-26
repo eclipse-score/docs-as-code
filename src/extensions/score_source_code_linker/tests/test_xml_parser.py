@@ -25,6 +25,8 @@ import pytest
 import src.extensions.score_source_code_linker.xml_parser as xml_parser
 from src.extensions.score_source_code_linker.testlink import DataOfTestCase
 
+from attribute_plugin import add_test_properties
+
 
 # Unsure if I should make these last a session or not
 @pytest.fixture
@@ -90,14 +92,26 @@ def tmp_xml_dirs(tmp_path):
     return root, dir1, dir2
 
 
+@add_test_properties(
+    partially_verifies=["tool_req__docs_test_link_testcase"],
+    test_type="requirements-based",
+    derivation_technique="requirements-analysis",
+)
 def test_find_xml_files(tmp_xml_dirs):
+    """Ensure xml files are found as expected"""
     root, dir1, dir2 = tmp_xml_dirs
     found = xml_parser.find_xml_files(root)
     expected = {dir1 / "test.xml", dir2 / "test.xml"}
     assert set(found) == expected
 
 
+@add_test_properties(
+    partially_verifies=["tool_req__docs_test_link_testcase"],
+    test_type="requirements-based",
+    derivation_technique="requirements-analysis",
+)
 def test_parse_testcase_result():
+    """Ensure Testcase results are parsed as intended"""
     tc = ET.Element("testcase", {"name": "a"})
     assert xml_parser.parse_testcase_result(tc) == ("passed", "")
 
@@ -113,7 +127,13 @@ def test_parse_testcase_result():
     assert xml_parser.parse_testcase_result(tc4) == ("skipped", "skp")
 
 
+@add_test_properties(
+    partially_verifies=["tool_req__docs_test_link_testcase"],
+    test_type="requirements-based",
+    derivation_technique="requirements-analysis",
+)
 def test_parse_properties():
+    """Ensure properties of testcases are parsed as intended"""
     cp: dict[str, Any] = {}
     props_el = ET.Element("properties")
     ET.SubElement(props_el, "property", {"name": "A", "value": "1"})
@@ -123,8 +143,14 @@ def test_parse_properties():
     assert "Description" not in res
 
 
+@add_test_properties(
+    partially_verifies=["tool_req__docs_test_link_testcase"],
+    test_type="requirements-based",
+    derivation_technique="requirements-analysis",
+)
 def test_read_test_xml_file(tmp_xml_dirs):
-    root, dir1, dir2 = tmp_xml_dirs
+    """Ensure a whole pre-defined xml file is parsed correctly"""
+    _, dir1, dir2 = tmp_xml_dirs
 
     needs1, no_props1 = xml_parser.read_test_xml_file(dir1 / "test.xml")
     assert isinstance(needs1, list) and len(needs1) == 1
@@ -138,7 +164,13 @@ def test_read_test_xml_file(tmp_xml_dirs):
     assert no_props2 == ["tc_no_props"]
 
 
+@add_test_properties(
+    partially_verifies=["tool_req__docs_test_link_testcase"],
+    test_type="requirements-based",
+    derivation_technique="requirements-analysis",
+)
 def test_short_hash_consistency_and_format():
+    """Ensure shorthash has the intended format"""
     h1 = xml_parser.short_hash("foo")
     h2 = xml_parser.short_hash("foo")
     assert h1 == h2
