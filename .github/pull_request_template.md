@@ -11,9 +11,9 @@ Please fill out this template to help us review your PR effectively.
 
 ## Impact Analysis
 <!-- REQUIRED: Analyze and explain the impact of this change -->
-- Impact on Tool Requirements: <!-- Yes/No + details -->
-- Impact on Design Decisions: <!-- Yes/No + details -->
-- Impact on Qualification: <!-- Yes/No + details -->
+- [ ] This change does not violate any tool requirements and is covered by existing tool requirements
+- [ ] This change does not violate any design decisions
+- [ ] Otherwise I have created a ticket for new tool qualification
 
 ## ✅ Checklist
 Before requesting a review, please confirm that you have:
