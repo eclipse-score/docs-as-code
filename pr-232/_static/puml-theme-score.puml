@@ -1,17 +1,26 @@
-'' The referenced original work is published under MIT license
-'' MIT license: https://github.com/bschwarz/puml-themes/blob/master/LICENSE
+'' ******************************************************************************
+'' Copyright (c) 2025 Contributors to the Eclipse Foundation
 ''
-'' SPDX-License-Identifier: MIT
+'' See the NOTICE file(s) distributed with this work for additional
+'' information regarding copyright ownership.
 ''
-'' 'score' theme is based on materia theme
-'' Author: Andreas Kaluza
-'' Copyright (c) 2025 by Andreas Kaluza
+'' This program and the accompanying materials are made available under the
+'' terms of the Apache License Version 2.0 which is available at
+'' https://www.apache.org/licenses/LICENSE-2.0
 ''
-'' materia theme based off of the bootstrap theme of the same name
-'' https://bootswatch.com/materia/
+'' SPDX-License-Identifier: Apache-2.0 AND MIT
 ''
-'' Author: Brett Schwarz
-'' Copyright (c) 2019 by Brett Schwarz
+'' Portions of this file are derived from the "materia" PlantUML theme,
+'' originally published under the MIT License:
+''   Copyright (c) 2019 Brett Schwarz
+''   https://github.com/bschwarz/puml-themes
+''
+'' The materia theme itself is based on the "Bootstrap Materia" theme,
+'' also published under the MIT License:
+''   https://bootswatch.com/materia/
+''
+'' Full text of the MIT license is available in LICENSES/MIT.txt
+'' ******************************************************************************
 
 
 !$THEME = "score"
