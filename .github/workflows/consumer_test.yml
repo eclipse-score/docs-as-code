@@ -18,15 +18,11 @@ on:
   merge_group:
     types: [checks_requested]
 
-  # TEMP! REMOVE!
-  push:
-    branches:
-      - '**'
-
 jobs:
   consumer_test:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         consumer: ["process_description", "score", "module_template"]
 
@@ -40,7 +36,7 @@ jobs:
 
       - name: Run Consumer tests
         run: |
-          .venv_docs/bin/python -m pytest -s -v src/tests/ --repo={$CONSUMER}
+          .venv_docs/bin/python -m pytest -s -v src/tests/ --repo=$CONSUMER
 
         env:
           FORCE_COLOR: "1"
