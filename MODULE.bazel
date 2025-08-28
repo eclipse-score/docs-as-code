@@ -57,7 +57,7 @@ pip.parse(
 use_repo(pip, "pip_process")
 
 # Additional Python rules provided by aspect, e.g. an improved version of
-bazel_dep(name = "aspect_rules_py", version = "1.6.3")
+bazel_dep(name = "aspect_rules_py", version = "1.4.0")
 bazel_dep(name = "buildifier_prebuilt", version = "8.2.0.2")
 
 ###############################################################################
