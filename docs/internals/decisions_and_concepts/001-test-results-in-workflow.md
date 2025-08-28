@@ -4,6 +4,14 @@ status: "Draft"
 owner: Infrastructure Community
 ---
 
+:::{dec_rec} Decision Record 001: Test results in Docs-As-Code Workflows
+:id: dec_rec__docs_as_code__001_test_results_in_docs_as_code_workflows
+:status: accepted
+:context: see below...
+:decision: see below...
+:consequences: implementation effort
+:::
+
 # Decision Record 001: Test results in Docs-As-Code Workflows
 
 ## Goals
