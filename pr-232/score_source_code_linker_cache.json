@@ -840,6 +840,27 @@
     "full_line": "# req-Id: tool_req__docs_req_arch_link_safety_to_arch"
   },
   {
+    "file": "src/extensions/score_metamodel/checks/attributes_format.py",
+    "line": 29,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_common_attr_id_scheme",
+    "full_line": "# req-Id: tool_req__docs_common_attr_id_scheme"
+  },
+  {
+    "file": "src/extensions/score_metamodel/checks/attributes_format.py",
+    "line": 104,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_common_attr_desc_wording",
+    "full_line": "# req-Id: tool_req__docs_common_attr_desc_wording"
+  },
+  {
+    "file": "src/extensions/score_metamodel/checks/attributes_format.py",
+    "line": 105,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_common_attr_title",
+    "full_line": "# req-Id: tool_req__docs_common_attr_title"
+  },
+  {
     "file": "src/extensions/score_metamodel/checks/check_options.py",
     "line": 107,
     "tag": "# req-Id:",
@@ -882,41 +903,6 @@
     "full_line": "# req-Id: tool_req__docs_arch_attr_mandatory"
   },
   {
-    "file": "src/extensions/score_metamodel/checks/attributes_format.py",
-    "line": 29,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_common_attr_id_scheme",
-    "full_line": "# req-Id: tool_req__docs_common_attr_id_scheme"
-  },
-  {
-    "file": "src/extensions/score_metamodel/checks/attributes_format.py",
-    "line": 104,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_common_attr_desc_wording",
-    "full_line": "# req-Id: tool_req__docs_common_attr_desc_wording"
-  },
-  {
-    "file": "src/extensions/score_metamodel/checks/attributes_format.py",
-    "line": 105,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_common_attr_title",
-    "full_line": "# req-Id: tool_req__docs_common_attr_title"
-  },
-  {
-    "file": "src/extensions/score_source_code_linker/needlinks.py",
-    "line": 13,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_dd_link_source_code_link",
-    "full_line": "# req-Id: tool_req__docs_dd_link_source_code_link"
-  },
-  {
-    "file": "src/extensions/score_source_code_linker/xml_parser.py",
-    "line": 18,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_test_link_testcase",
-    "full_line": "# req-Id: tool_req__docs_test_link_testcase"
-  },
-  {
     "file": "src/extensions/score_source_code_linker/testlink.py",
     "line": 21,
     "tag": "# req-Id:",
@@ -936,5 +922,19 @@
     "tag": "# req-Id:",
     "need": "tool_req__docs_dd_link_source_code_link",
     "full_line": "# req-Id: tool_req__docs_dd_link_source_code_link"
+  },
+  {
+    "file": "src/extensions/score_source_code_linker/needlinks.py",
+    "line": 13,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_dd_link_source_code_link",
+    "full_line": "# req-Id: tool_req__docs_dd_link_source_code_link"
+  },
+  {
+    "file": "src/extensions/score_source_code_linker/xml_parser.py",
+    "line": 18,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_test_link_testcase",
+    "full_line": "# req-Id: tool_req__docs_test_link_testcase"
   }
 ]
