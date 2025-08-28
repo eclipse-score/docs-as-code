@@ -61,6 +61,7 @@ jobs:
       - name: Run Consumer tests
         id: consumer_tests
         run: |
+          rm -rf .venv_docs
           bazel run //:ide_support
           .venv_docs/bin/python -m pytest -s -v src/tests/
         env:
