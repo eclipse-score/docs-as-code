@@ -98,11 +98,12 @@ http_file(
 
 # docs dependency
 bazel_dep(name = "score_process", version = "1.1.1")
-# PR version which has aspect_rules_py 1.6 dependency removed
+
+# latest main as of 2025-08-28
 git_override(
     module_name = "score_process",
+    commit = "62a7bf3670cb2a8d9d7751dc3917a296ecb2e4a3",
     remote = "https://github.com/eclipse-score/process_description.git",
-    commit = "33428068c6acb547902e3fcce03ec199dea38b6c"
 )
 
 # Add Linter

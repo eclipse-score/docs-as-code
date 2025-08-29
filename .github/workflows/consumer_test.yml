@@ -11,7 +11,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-name: Run Consumer Tests on Comment
+name: Consumer Tests
 on:
   pull_request:
     types: [opened, reopened, synchronize]
@@ -19,7 +19,7 @@ on:
     types: [checks_requested]
 
 jobs:
-  consumer_test:
+  test:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
