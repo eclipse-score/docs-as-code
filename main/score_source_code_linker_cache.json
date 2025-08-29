@@ -932,7 +932,7 @@
   },
   {
     "file": "src/extensions/score_source_code_linker/xml_parser.py",
-    "line": 18,
+    "line": 19,
     "tag": "# req-Id:",
     "need": "tool_req__docs_test_link_testcase",
     "full_line": "# req-Id: tool_req__docs_test_link_testcase"
