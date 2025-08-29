@@ -32,11 +32,11 @@ jobs:
 
       - name: Prepare Python
         run: |
-          bazel run //:ide_support
+          pip install pytest
 
       - name: Run Consumer tests
         run: |
-          .venv_docs/bin/python -m pytest -s -v src/tests/ --repo=$CONSUMER
+          pytest -s -v src/tests/ --repo=$CONSUMER
 
         env:
           FORCE_COLOR: "1"
