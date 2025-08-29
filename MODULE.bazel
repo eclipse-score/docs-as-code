@@ -57,7 +57,7 @@ pip.parse(
 use_repo(pip, "pip_process")
 
 # Additional Python rules provided by aspect, e.g. an improved version of
-bazel_dep(name = "aspect_rules_py", version = "1.6.3")
+bazel_dep(name = "aspect_rules_py", version = "1.4.0")
 bazel_dep(name = "buildifier_prebuilt", version = "8.2.0.2")
 
 ###############################################################################
@@ -101,7 +101,7 @@ bazel_dep(name = "score_process", version = "1.1.1")
 
 # Add Linter
 bazel_dep(name = "rules_multitool", version = "1.9.0")
-bazel_dep(name = "score_tooling", version = "1.0.0")
+bazel_dep(name = "score_tooling", version = "1.0.2")
 
 multitool_root = use_extension("@rules_multitool//multitool:extension.bzl", "multitool")
 use_repo(multitool_root, "actionlint_hub", "multitool", "ruff_hub", "shellcheck_hub", "yamlfmt_hub")
