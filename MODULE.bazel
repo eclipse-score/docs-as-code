@@ -99,13 +99,6 @@ http_file(
 # docs dependency
 bazel_dep(name = "score_process", version = "1.1.1")
 
-# latest main as of 2025-08-28
-git_override(
-    module_name = "score_process",
-    commit = "62a7bf3670cb2a8d9d7751dc3917a296ecb2e4a3",
-    remote = "https://github.com/eclipse-score/process_description.git",
-)
-
 # Add Linter
 bazel_dep(name = "rules_multitool", version = "1.9.0")
 bazel_dep(name = "score_tooling", version = "1.0.2")
