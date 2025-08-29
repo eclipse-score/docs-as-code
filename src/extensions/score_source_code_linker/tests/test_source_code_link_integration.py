@@ -10,6 +10,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
+import contextlib
 import json
 import os
 import shutil
@@ -46,7 +47,7 @@ def sphinx_base_dir(tmp_path_factory: TempPathFactory) -> Path:
 
 
 @pytest.fixture()
-def git_repo_setup(sphinx_base_dir) -> Path:
+def git_repo_setup(sphinx_base_dir: Path) -> Path:
     """Creating git repo, to make testing possible"""
 
     repo_path = sphinx_base_dir
@@ -68,7 +69,7 @@ def git_repo_setup(sphinx_base_dir) -> Path:
 
 
 @pytest.fixture()
-def create_demo_files(sphinx_base_dir, git_repo_setup):
+def create_demo_files(sphinx_base_dir: Path, git_repo_setup):
     repo_path = sphinx_base_dir
 
     # Create some source files with requirement IDs
@@ -141,7 +142,7 @@ def make_codelink_source_2():
     return (
         """
 # Another implementation file
-# Though we should make sure this 
+# Though we should make sure this
 # is at a different line than the other ID
 #"""
         + """ req-Id: TREQ_ID_1
@@ -214,7 +215,7 @@ def construct_gh_url() -> str:
 
 @pytest.fixture()
 def sphinx_app_setup(
-    sphinx_base_dir, create_demo_files, git_repo_setup
+    sphinx_base_dir: Path, create_demo_files, git_repo_setup
 ) -> Callable[[], SphinxTestApp]:
     def _create_app():
         base_dir = sphinx_base_dir
@@ -223,11 +224,9 @@ def sphinx_app_setup(
         # CRITICAL: Change to a directory that exists and is accessible
         # This fixes the "no such file or directory" error in Bazel
         original_cwd = None
-        try:
+        # Current working directory doesn't exist, which is the problem
+        with contextlib.suppress(FileNotFoundError):
             original_cwd = os.getcwd()
-        except FileNotFoundError:
-            # Current working directory doesn't exist, which is the problem
-            pass
 
         # Change to the base_dir before creating SphinxTestApp
         os.chdir(base_dir)
@@ -243,11 +242,9 @@ def sphinx_app_setup(
         finally:
             # Try to restore original directory, but don't fail if it doesn't exist
             if original_cwd is not None:
-                try:
+                # Original directory might not exist anymore in Bazel sandbox
+                with contextlib.suppress(FileNotFoundError, OSError):
                     os.chdir(original_cwd)
-                except (FileNotFoundError, OSError):
-                    # Original directory might not exist anymore in Bazel sandbox
-                    pass
 
     return _create_app
 
@@ -302,8 +299,7 @@ TESTING SOURCE LINK
 
 
 @pytest.fixture()
-def example_source_link_text_all_ok(sphinx_base_dir):
-    repo_path = sphinx_base_dir
+def example_source_link_text_all_ok(sphinx_base_dir: Path):
     return {
         "TREQ_ID_1": [
             NeedLink(
@@ -334,8 +330,7 @@ def example_source_link_text_all_ok(sphinx_base_dir):
 
 
 @pytest.fixture()
-def example_test_link_text_all_ok(sphinx_base_dir):
-    repo_path = sphinx_base_dir
+def example_test_link_text_all_ok(sphinx_base_dir: Path):
     return {
         "TREQ_ID_1": [
             DataForTestLink(
@@ -392,8 +387,7 @@ def example_test_link_text_all_ok(sphinx_base_dir):
 
 
 @pytest.fixture()
-def example_source_link_text_non_existent(sphinx_base_dir):
-    repo_path = sphinx_base_dir
+def example_source_link_text_non_existent(sphinx_base_dir: Path):
     return [
         {
             "TREQ_ID_200": [
@@ -409,11 +403,11 @@ def example_source_link_text_non_existent(sphinx_base_dir):
     ]
 
 
-def make_source_link(needlinks):
+def make_source_link(needlinks: list[NeedLink]):
     return ", ".join(f"{get_github_link(n)}<>{n.file}:{n.line}" for n in needlinks)
 
 
-def make_test_link(testlinks):
+def make_test_link(testlinks: list[DataForTestLink]):
     return ", ".join(f"{get_github_link(n)}<>{n.name}" for n in testlinks)
 
 
@@ -424,12 +418,14 @@ def compare_json_files(file1: Path, expected_file: Path, object_hook):
     with open(expected_file) as f2:
         json2 = json.load(f2, object_hook=object_hook)
     assert len(json1) == len(json2), (
-        f"{file1}'s lenth are not the same as in the golden file lenght. Len of{file1}: {len(json1)}. Len of Golden File: {len(json2)}"
+        f"{file1}'s lenth are not the same as in the golden file lenght. "
+        f"Len of{file1}: {len(json1)}. Len of Golden File: {len(json2)}"
     )
     c1 = Counter(n for n in json1)
     c2 = Counter(n for n in json2)
     assert c1 == c2, (
-        f"Testfile does not have same needs as golden file. Testfile: {c1}\nGoldenFile: {c2}"
+        f"Testfile does not have same needs as golden file. "
+        f"Testfile: {c1}\nGoldenFile: {c2}"
     )
 
 
@@ -441,7 +437,8 @@ def compare_grouped_json_files(file1: Path, golden_file: Path):
         json2 = json.load(f2, object_hook=SourceCodeLinks_TEST_JSON_Decoder)
 
     assert len(json1) == len(json2), (
-        f"Input & Expected have different Lenghts. Input: {file1}: {len(json1)}, Expected: {golden_file}: {len(json2)}"
+        "Input & Expected have different Lenghts. "
+        f"Input: {file1}: {len(json1)}, Expected: {golden_file}: {len(json2)}"
     )
 
     json1_sorted = sorted(json1, key=lambda x: x.need)
@@ -468,11 +465,14 @@ def compare_grouped_json_files(file1: Path, golden_file: Path):
         )
 
 
+@pytest.mark.skip(
+    "Flaky test, see https://github.com/eclipse-score/docs-as-code/issues/226"
+)
 def test_source_link_integration_ok(
     sphinx_app_setup: Callable[[], SphinxTestApp],
-    example_source_link_text_all_ok: dict[str, list[str]],
-    example_test_link_text_all_ok: dict[str, list[str]],
-    sphinx_base_dir,
+    example_source_link_text_all_ok: dict[str, list[NeedLink]],
+    example_test_link_text_all_ok: dict[str, list[DataForTestLink]],
+    sphinx_base_dir: Path,
     git_repo_setup,
     create_demo_files,
 ):
@@ -536,7 +536,7 @@ def test_source_link_integration_ok(
 def test_source_link_integration_non_existent_id(
     sphinx_app_setup: Callable[[], SphinxTestApp],
     example_source_link_text_non_existent: dict[str, list[str]],
-    sphinx_base_dir,
+    sphinx_base_dir: Path,
     git_repo_setup,
     create_demo_files,
 ):

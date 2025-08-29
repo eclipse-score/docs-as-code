@@ -11,9 +11,9 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 """
-This file defines NeedSourceLinks as well as SourceCodeLinks.
-Both datatypes are used in the 'grouped cache' JSON that contains 'CodeLinks' and 'TestLinks'
-It also defines a decoder and encoder for SourceCodeLinks to enable JSON read/write
+This file defines NeedSourceLinks as well as SourceCodeLinks. Both datatypes are used in
+the 'grouped cache' JSON that contains 'CodeLinks' and 'TestLinks' It also defines a
+decoder and encoder for SourceCodeLinks to enable JSON read/write
 """
 
 # req-Id: tool_req__docs_test_link_testcase
@@ -56,9 +56,9 @@ class SourceCodeLinks:
 
 class SourceCodeLinks_JSON_Encoder(json.JSONEncoder):
     def default(self, o: object):
-        if isinstance(o, (SourceCodeLinks, NeedSourceLinks)):
+        if isinstance(o, SourceCodeLinks | NeedSourceLinks):
             return asdict(o)
-        if isinstance(o, (NeedLink, DataForTestLink)):
+        if isinstance(o, NeedLink | DataForTestLink):
             return asdict(o)
         if isinstance(o, Path):
             return str(o)
@@ -81,7 +81,8 @@ def SourceCodeLinks_JSON_Decoder(d: dict[str, Any]) -> SourceCodeLinks | dict[st
 def store_source_code_links_combined_json(
     file: Path, source_code_links: list[SourceCodeLinks]
 ):
-    # After `rm -rf _build` or on clean builds the directory does not exist, so we need to create it
+    # After `rm -rf _build` or on clean builds the directory does not exist, so we need
+    # to create it
     file.parent.mkdir(exist_ok=True)
     with open(file, "w") as f:
         json.dump(
@@ -99,9 +100,11 @@ def load_source_code_links_combined_json(file: Path) -> list[SourceCodeLinks]:
         object_hook=SourceCodeLinks_JSON_Decoder,
     )
     assert isinstance(links, list), (
-        "The combined source code linker links should be a list of SourceCodeLinks objects."
+        "The combined source code linker links should be "
+        "a list of SourceCodeLinks objects."
     )
     assert all(isinstance(link, SourceCodeLinks) for link in links), (
-        "All items in combined_source_code_linker_cache should be SourceCodeLinks objects."
+        "All items in combined_source_code_linker_cache should be "
+        "SourceCodeLinks objects."
     )
     return links

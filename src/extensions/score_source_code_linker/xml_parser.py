@@ -11,8 +11,9 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 """
-This file deals with finding and parsing of test.xml files that get created during `bazel test`.
-It also generates external needs out of the parsed testcases to enable linking to requirements &gathering statistics
+This file deals with finding and parsing of test.xml files that get created during
+`bazel test`. It also generates external needs out of the parsed testcases to enable
+linking to requirements &gathering statistics
 """
 
 # req-Id: tool_req__docs_test_link_testcase
@@ -68,7 +69,8 @@ def parse_testcase_result(testcase: ET.Element) -> tuple[str, str]:
         return "skipped", skipped.get("message", "")
     # TODO: Test all possible permuations of this to find if this is unreachable
     raise ValueError(
-        f"Testcase: {testcase.get('name')}. Did not find 'failed', 'skipped' or 'passed' in test"
+        f"Testcase: {testcase.get('name')}. "
+        "Did not find 'failed', 'skipped' or 'passed' in test"
     )
 
 
@@ -77,7 +79,8 @@ def parse_properties(case_properties: dict[str, Any], properties: Element):
         prop_name = prop.get("name", "")
         prop_value = prop.get("value", "")
         # We ignore the Description of the test as a 'property'.
-        # Every language just needs to ensure each test does have a description. No matter where this resides.
+        # Every language just needs to ensure each test does have a description.
+        # No matter where this resides.
         if prop_name == "Description":
             continue
         case_properties[prop_name] = prop_value
@@ -103,7 +106,8 @@ def read_test_xml_file(file: Path) -> tuple[list[DataOfTestCase], list[str]]:
             case_properties = {}
             testname = testcase.get("name")
             assert testname is not None, (
-                f"Testcase: {testcase} does not have a 'name' attribute. This is mandatory. This should not happen, something is wrong."
+                f"Testcase: {testcase} does not have a 'name' attribute. "
+                "This is mandatory. This should not happen, something is wrong."
             )
             test_file = testcase.get("file")
             line = testcase.get("line")
@@ -128,7 +132,8 @@ def read_test_xml_file(file: Path) -> tuple[list[DataOfTestCase], list[str]]:
             )
 
             properties_element = testcase.find("properties")
-            # HINT: This list is hard coded here, might not be ideal to have that in the long run.
+            # HINT: This list is hard coded here, might not be ideal to have that in the
+            # long run.
             if properties_element is None:
                 non_prop_tests.append(testname)
                 continue
@@ -180,7 +185,8 @@ def run_xml_parser(app: Sphinx, env: BuildEnvironment):
     output = list(
         itertools.chain.from_iterable(tcn.get_test_links() for tcn in test_case_needs)
     )
-    # This is not ideal, due to duplication, but I can't think of a better solution right now
+    # This is not ideal, due to duplication, but I can't think of a better solution
+    # right now
     store_test_xml_parsed_json(app.outdir / "score_xml_parser_cache.json", output)
 
 
@@ -188,7 +194,8 @@ def build_test_needs_from_files(
     app: Sphinx, env: BuildEnvironment, xml_paths: list[Path]
 ) -> list[DataOfTestCase]:
     """
-    Reading in all test.xml files, and building 'testcase' external need objects out of them.
+    Reading in all test.xml files, and building 'testcase' external need objects out of
+    them.
 
     Returns:
         - list[TestCaseNeed]
