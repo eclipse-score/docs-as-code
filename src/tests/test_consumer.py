@@ -79,7 +79,12 @@ REPOS_TO_TEST: list[ConsumerRepo] = [
     ConsumerRepo(
         name="process_description",
         git_url="https://github.com/eclipse-score/process_description.git",
-        commands=["bazel run //:docs"],
+        commands=[
+            "bazel run //:ide_support",
+            "bazel run //:docs_check",
+            "bazel run //:docs",
+            "bazel build //:needs_json",
+        ],
         test_commands=[],
     ),
     ConsumerRepo(
@@ -87,6 +92,7 @@ REPOS_TO_TEST: list[ConsumerRepo] = [
         git_url="https://github.com/eclipse-score/score.git",
         commands=[
             "bazel run //:ide_support",
+            "bazel run //:docs_check",
             "bazel run //:docs",
             "bazel build //:needs_json",
         ],
@@ -97,6 +103,7 @@ REPOS_TO_TEST: list[ConsumerRepo] = [
         git_url="https://github.com/eclipse-score/module_template.git",
         commands=[
             "bazel run //:ide_support",
+            "bazel run //:docs_check",
             "bazel run //:docs",
             "bazel build //:needs_json",
         ],
