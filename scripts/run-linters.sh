@@ -16,21 +16,21 @@ set -euo pipefail
 bazel run //:ide_support
 
 echo "Running Ruff linter..."
-bazel run @score_linter//:ruff check
+bazel run @score_tooling//tools:ruff check
 
 echo "Running basedpyright..."
 .venv_docs/bin/python3 -m basedpyright
 
 echo "Running Actionlint..."
-bazel run @score_linter//:actionlint
+bazel run @score_tooling//tools:actionlint
 
 echo "Running Shellcheck..."
 find . \
   -type d \( -name .git -o -name .venv -o -name bazel-out -o -name node_modules \) -prune -false \
   -o -type f -exec grep -Il '^#!.*sh' {} \; | \
-xargs bazel run @score_linter//:shellcheck --
+xargs bazel run @score_tooling//tools:shellcheck --
 
 echo "Running Yamlfmt..."
-bazel run @score_linter//:yamlfmt -- $(find . \
+bazel run @score_tooling//tools:yamlfmt -- $(find . \
   -type d \( -name .git -o -name .venv -o -name bazel-out -o -name node_modules \) -prune -false \
   -o -type f \( -name "*.yaml" -o -name "*.yml" \) | tr '\n' '\0' | xargs -0)
