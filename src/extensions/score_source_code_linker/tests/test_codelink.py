@@ -19,10 +19,10 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+from attribute_plugin import add_test_properties
 from sphinx_needs.data import NeedsMutable
 
 from src.extensions.score_metamodel.tests import need as test_need
-from attribute_plugin import add_test_properties
 
 # Import the module under test
 # Note: You'll need to adjust these imports based on your actual module structure
@@ -38,8 +38,6 @@ from src.extensions.score_source_code_linker.needlinks import (
 )
 from src.helper_lib import (
     get_current_git_hash,
-    get_github_repo_info,
-    parse_remote_git_output,
 )
 from src.helper_lib.additional_functions import get_github_link
 

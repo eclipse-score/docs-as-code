@@ -11,14 +11,13 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 import pytest
+from attribute_plugin import add_test_properties
 
 from src.extensions.score_metamodel.__init__ import (
     graph_checks,
     local_checks,
     parse_checks_filter,
 )
-
-from attribute_plugin import add_test_properties
 
 
 def dummy_local_check(app, need, log):

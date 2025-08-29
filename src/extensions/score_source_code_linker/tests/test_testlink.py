@@ -13,6 +13,8 @@
 import json
 from pathlib import Path
 
+from attribute_plugin import add_test_properties
+
 from src.extensions.score_source_code_linker.testlink import (
     DataForTestLink,
     DataForTestLink_JSON_Decoder,
@@ -21,7 +23,6 @@ from src.extensions.score_source_code_linker.testlink import (
     load_test_xml_parsed_json,
     store_test_xml_parsed_json,
 )
-from attribute_plugin import add_test_properties
 
 
 @add_test_properties(
@@ -72,8 +73,8 @@ def test_decoder_ignores_irrelevant_dicts():
 )
 def test_clean_text_removes_ansi_and_html_unescapes():
     """
-    Test if text clean works as intended.
-    It should remove ANSI color & text styles, as well as convert HTML things back to Chars
+    Test if text clean works as intended. It should remove ANSI color & text styles, as
+    well as convert HTML things back to Chars
     """
     raw = "\x1b[31m&lt;b&gt;Warning&lt;/b&gt;\x1b[0m\nExtra line"
     cleaned = DataOfTestCase.clean_text(raw)
@@ -119,7 +120,7 @@ def test_testcaseneed_to_dict_multiple_links():
     test_type="requirements-based",
     derivation_technique="requirements-analysis",
 )
-def test_store_and_load_testlinks_roundtrip(tmp_path):
+def test_store_and_load_testlinks_roundtrip(tmp_path: Path):
     """Ensure that Encode/Decode is reversible"""
     file = tmp_path / "testlinks.json"
 

@@ -21,16 +21,15 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+from attribute_plugin import add_test_properties
 
 import src.extensions.score_source_code_linker.xml_parser as xml_parser
 from src.extensions.score_source_code_linker.testlink import DataOfTestCase
 
-from attribute_plugin import add_test_properties
-
 
 # Unsure if I should make these last a session or not
 @pytest.fixture
-def tmp_xml_dirs(tmp_path):
+def tmp_xml_dirs(tmp_path: Path):
     root = tmp_path / "bazel-testlogs"
     dir1 = root / "with_props"
     dir2 = root / "no_props"
@@ -48,7 +47,7 @@ def tmp_xml_dirs(tmp_path):
     def make_tc(
         name: str,
         result: str = "",
-        props: dict[str, str] = dict(),
+        props: dict[str, str] | None = None,
         file: str = "",
         line: int = 0,
     ):
@@ -84,8 +83,8 @@ def tmp_xml_dirs(tmp_path):
     write(dir1 / "test.xml", [tc1])
 
     # File without properties
-    # HINT: Once the assertions in xml_parser are back and active, this should allow us to catch that the tests
-    #       Need to be changed too.
+    # HINT: Once the assertions in xml_parser are back and active, this should allow us
+    #       to catch that the tests Need to be changed too.
     tc2 = make_tc("tc_no_props", file="path2", line=20)
     write(dir2 / "test.xml", [tc2])
 

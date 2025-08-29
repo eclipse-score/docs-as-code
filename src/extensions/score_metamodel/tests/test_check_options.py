@@ -15,14 +15,13 @@ from typing import TypedDict
 from unittest.mock import Mock
 
 import pytest
+from attribute_plugin import add_test_properties
 from score_metamodel.checks.check_options import (
     check_extra_options,
     check_options,
 )
 from score_metamodel.tests import fake_check_logger, need
 from sphinx.application import Sphinx
-
-from attribute_plugin import add_test_properties
 
 
 class NeedTypeDict(TypedDict, total=False):

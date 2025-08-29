@@ -194,10 +194,11 @@ def DataOfTestCase_JSON_Decoder(d: dict[str, Any]) -> DataOfTestCase | dict[str,
 
 def store_test_xml_parsed_json(file: Path, testlist: list[DataForTestLink]):
     """
-    TestCases that are 'skipped' do not have properties, therefore they will NOT be saved/transformed
-    to TestLinks.
+    TestCases that are 'skipped' do not have properties, therefore they will NOT be
+    saved/transformed to TestLinks.
     """
-    # After `rm -rf _build` or on clean builds the directory does not exist, so we need to create it
+    # After `rm -rf _build` or on clean builds the directory does not exist, so we need
+    # to create it
     file.parent.mkdir(exist_ok=True)
     with open(file, "w") as f:
         json.dump(
@@ -224,7 +225,8 @@ def load_test_xml_parsed_json(file: Path) -> list[DataForTestLink]:
 
 
 def store_data_of_test_case_json(file: Path, testneeds: list[DataOfTestCase]):
-    # After `rm -rf _build` or on clean builds the directory does not exist, so we need to create it
+    # After `rm -rf _build` or on clean builds the directory does not exist, so we need
+    # to create it
     file.parent.mkdir(exist_ok=True)
     with open(file, "w") as f:
         json.dump(

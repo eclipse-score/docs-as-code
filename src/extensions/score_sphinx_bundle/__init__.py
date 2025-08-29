@@ -10,9 +10,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-from typing import Any
-
-
 from sphinx.application import Sphinx
 
 # Note: order matters!
@@ -43,10 +40,10 @@ def setup(app: Sphinx) -> dict[str, object]:
     app.config.myst_enable_extensions = ["colon_fence"]
 
     app.config.exclude_patterns = [
-        # The following entries are not required when building the documentation via 'bazel
-        # build //:docs', as that command runs in a sandboxed environment. However, when
-        # building the documentation via 'bazel run //:docs' or esbonio, these
-        # entries are required to prevent the build from failing.
+        # The following entries are not required when building the documentation via
+        # 'bazel build //:docs', as that command runs in a sandboxed environment.
+        # However, when building the documentation via 'bazel run //:docs' or esbonio,
+        # these entries are required to prevent the build from failing.
         "bazel-*",
         ".venv*",
     ]
