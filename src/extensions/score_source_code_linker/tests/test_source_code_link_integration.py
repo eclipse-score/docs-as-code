@@ -465,7 +465,9 @@ def compare_grouped_json_files(file1: Path, golden_file: Path):
         )
 
 
-@pytest.mark.skip("Flaky test, see https://github.com/eclipse-score/docs-as-code/issues/226")
+@pytest.mark.skip(
+    "Flaky test, see https://github.com/eclipse-score/docs-as-code/issues/226"
+)
 def test_source_link_integration_ok(
     sphinx_app_setup: Callable[[], SphinxTestApp],
     example_source_link_text_all_ok: dict[str, list[NeedLink]],
