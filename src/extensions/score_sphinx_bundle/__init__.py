@@ -18,9 +18,7 @@ from sphinx.application import Sphinx
 score_extensions = [
     "sphinxcontrib.plantuml",
     "score_plantuml",
-
     "sphinx_needs",
-
     "score_metamodel",
     "sphinx_design",
     "myst_parser",
