@@ -14,14 +14,14 @@ from sphinx.application import Sphinx
 
 # Note: order matters!
 # Extensions are loaded in this order.
-# (Although not sure what has to be loaded first)
+# e.g. plantuml MUST be loaded before sphinx-needs
 score_extensions = [
-    "score_metamodel",
-    "sphinx_design",
-    "sphinx_needs",
-    "myst_parser",
     "sphinxcontrib.plantuml",
     "score_plantuml",
+    "sphinx_needs",
+    "score_metamodel",
+    "sphinx_design",
+    "myst_parser",
     "score_source_code_linker",
     "score_draw_uml_funcs",
     "score_layout",
