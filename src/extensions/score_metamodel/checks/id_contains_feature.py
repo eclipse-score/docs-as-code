@@ -35,6 +35,10 @@ def id_contains_feature(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
         # No warning needed here, as this is already checked in the metamodel.
         return
 
+    if parts[0] == "dec_rec":
+        # Decision records are intentionally not located within their components
+        return
+
     # Get the part of the string after the first two underscores: the path
     feature = parts[1]
     if feature == "example_feature":
