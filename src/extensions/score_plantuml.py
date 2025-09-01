@@ -68,23 +68,26 @@ def get_runfiles_dir() -> Path:
     return runfiles_dir
 
 
-def find_correct_path(runfiles: str) -> str:
+def find_correct_path(runfiles: Path) -> Path:
     """
     This ensures that the 'plantuml' binary path is found in local 'score_docs_as_code'
     and module use.
     """
-    dirs = [str(x) for x in Path(runfiles).glob("*score_docs_as_code+")]
-    if dirs:
-        # Happens if 'score_docs_as_code' is used as Module
-        p = runfiles + "/score_docs_as_code+/src/plantuml"
+    if (Path(runfiles) / "score_docs_as_code+").exists():
+        # Docs-as-code used as a module with bazel 8
+        module = "score_docs_as_code+"
+    elif (Path(runfiles) / "score_docs_as_code~").exists():
+        # Docs-as-code used as a module with bazel 7
+        module = "score_docs_as_code~"
     else:
-        # Only happens in 'score_docs_as_code' repository
-        p = runfiles + "/../plantuml"
-    return p
+        # Docs-as-code is the current module
+        module = "_main"
+
+    return runfiles / module / "src" / "plantuml"
 
 
 def setup(app: Sphinx):
-    app.config.plantuml = find_correct_path(str(get_runfiles_dir()))
+    app.config.plantuml = str(find_correct_path(get_runfiles_dir()))
     app.config.plantuml_output_format = "svg_obj"
     app.config.plantuml_syntax_error_image = True
     app.config.needs_build_needumls = "_plantuml_sources"
