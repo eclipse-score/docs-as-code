@@ -42,8 +42,7 @@ from src.helper_lib.additional_functions import get_github_link
 
 @pytest.fixture()
 def sphinx_base_dir(tmp_path_factory: TempPathFactory) -> Path:
-    repo_path = tmp_path_factory.mktemp("test_git_repo")
-    return repo_path
+    return tmp_path_factory.mktemp("test_git_repo")
 
 
 @pytest.fixture()
@@ -190,6 +189,8 @@ def make_test_xml_1():
 
 
 def make_test_xml_2():
+    # ruff: This is a long xml string, so ignore the line length check for the block
+    # flake8: noqa: E501 (start)
     return """
 <testsuites>
   <testsuite name="TestRequirementsCoverage" tests="2" failures="0" errors="0" time="0.234" timestamp="2025-08-12T10:31:00">
@@ -206,6 +207,7 @@ def make_test_xml_2():
   </testsuite>
 </testsuites>
 """
+# flake8: noqa: E501 (end)
 
 
 def construct_gh_url() -> str:

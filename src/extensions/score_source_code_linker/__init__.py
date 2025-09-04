@@ -337,7 +337,8 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
         for id, need in needs.items():
             if need.get("source_code_link"):
                 LOGGER.debug(
-                    f"?? Need {id} already has source_code_link: {need.get('source_code_link')}"
+                    f"?? Need {id} already has source_code_link: "
+                    f"{need.get('source_code_link')}"
                 )
             if need.get("testlink"):
                 LOGGER.debug(
@@ -391,7 +392,8 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
 #          │        Commented out for now         │
 #          ╰──────────────────────────────────────╯
 
-# source_code_link of affected needs was overwritten. Make sure it's empty in all others!
+# source_code_link of affected needs was overwritten.
+# Make sure it's empty in all others!
 # for need in needs.values():
 #     if need["id"] not in source_code_links_by_need:
 #         need["source_code_link"] = ""  # type: ignore

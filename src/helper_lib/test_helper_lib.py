@@ -236,5 +236,5 @@ def test_get_current_git_hash(git_repo):
 
 def test_get_current_git_hash_invalid_repo(temp_dir):
     """Test getting git hash from invalid repository."""
-    with pytest.raises(Exception):
+    with pytest.raises(subprocess.CalledProcessError):
         get_current_git_hash(temp_dir)
