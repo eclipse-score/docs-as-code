@@ -52,14 +52,14 @@ def id_contains_feature(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
     foundfeatpart = any(
         featurepart.lower() in docname.lower()
         for featurepart in featureparts
-        if featureparts
+        if featureparts and featurepart and docname
     )
 
     # allow abbreviation of the feature
     initials = (
         "".join(fp[0].lower() for fp in featureparts) if len(featureparts) > 1 else ""
     )
-    foundinitials = bool(initials) and initials in docname.lower()
+    foundinitials = bool(initials) and docname and initials in docname.lower()
 
     if not (foundfeatpart or foundinitials):
         log.warning_for_option(

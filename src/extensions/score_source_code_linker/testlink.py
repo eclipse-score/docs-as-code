@@ -131,7 +131,7 @@ class DataOfTestCase:
     def get_test_links(self) -> list[DataForTestLink]:
         """Convert TestCaseNeed to list of TestLink objects."""
 
-        def parse_attributes(self, verify_field: str | None, verify_type: str):
+        def parse_attributes(verify_field: str | None, verify_type: str):
             """Process a verification field and yield TestLink objects."""
             if not verify_field:
                 return
@@ -154,8 +154,8 @@ class DataOfTestCase:
 
         return list(
             chain(
-                parse_attributes(self, self.PartiallyVerifies, "partially"),
-                parse_attributes(self, self.FullyVerifies, "fully"),
+                parse_attributes(self.PartiallyVerifies, "partially"),
+                parse_attributes(self.FullyVerifies, "fully"),
             )
         )
 

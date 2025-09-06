@@ -11,17 +11,18 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-from typing import TypedDict
+from typing import TypedDict, cast
 from unittest.mock import Mock
 
 import pytest
-from attribute_plugin import add_test_properties
+from attribute_plugin import add_test_properties  # type: ignore[import-untyped]
+from score_metamodel import CheckLogger
 from score_metamodel.checks.check_options import (
     check_extra_options,
     check_options,
 )
 from score_metamodel.tests import fake_check_logger, need
-from sphinx.application import Sphinx
+from sphinx.application import Sphinx  # type: ignore[import-untyped]
 
 
 class NeedTypeDict(TypedDict, total=False):
@@ -91,7 +92,7 @@ class TestCheckOptions:
         app.config = Mock()
         app.config.needs_types = self.NEED_TYPE_INFO
         # Expect that the checks pass
-        check_options(app, need_1, logger)
+        check_options(app, need_1, cast(CheckLogger, logger))
         logger.assert_warning(
             "no type info defined for semantic check.",
             expect_location=False,
@@ -118,7 +119,7 @@ class TestCheckOptions:
         app.config = Mock()
         app.config.needs_types = self.NEED_TYPE_INFO
         # Expect that the checks pass
-        check_extra_options(app, need_1, logger)
+        check_extra_options(app, need_1, cast(CheckLogger, logger))
         logger.assert_warning(
             "no type info defined for semantic check.",
             expect_location=False,
@@ -149,7 +150,7 @@ class TestCheckOptions:
         app.config.needs_types = self.NEED_TYPE_INFO_WITHOUT_MANDATORY_OPTIONS
         app.config.allowed_external_prefixes = []
         # Expect that the checks pass
-        check_options(app, need_1, logger)
+        check_options(app, need_1, cast(CheckLogger, logger))
         logger.assert_warning(
             "no type info defined for semantic check.",
             expect_location=False,
@@ -180,7 +181,7 @@ class TestCheckOptions:
         app.config.needs_types = self.NEED_TYPE_INFO_WITH_INVALID_OPTION_TYPE
         app.config.allowed_external_prefixes = []
         # Expect that the checks pass
-        check_options(app, need_1, logger)
+        check_options(app, need_1, cast(CheckLogger, logger))
         logger.assert_warning(
             "pattern `42` is not a valid regex pattern.",
             expect_location=False,
@@ -213,7 +214,7 @@ class TestCheckOptions:
         app.config.needs_types = self.NEED_TYPE_INFO_WITH_OPT_OPT
         app.config.allowed_external_prefixes = []
         # Expect that the checks pass
-        check_extra_options(app, need_1, logger)
+        check_extra_options(app, need_1, cast(CheckLogger, logger))
 
         logger.assert_warning(
             "has these extra options: `other_option`.",
@@ -242,5 +243,5 @@ class TestCheckOptions:
         app.config.needs_types = self.NEED_TYPE_INFO
         app.config.allowed_external_prefixes = []
 
-        with pytest.raises(ValueError, match="Only Strings are allowed"):
-            check_options(app, need_1, logger)
+        with pytest.raises(ValueError, match="Only Strings are allowed"):  # type: ignore[attr-defined]
+            check_options(app, need_1, cast(CheckLogger, logger))

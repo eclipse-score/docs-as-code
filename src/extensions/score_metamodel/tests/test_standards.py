@@ -878,35 +878,35 @@ class TestStandards:
         """Test case where some needs with the tag are linked and some are not."""
         # Setup mock needs data
         needs = [
-            {
-                "id": "std_req__aspice40_MAN-5_REQ_001",
-                "tags": ["aspice40_man5", "other_tag"],
-                "type": "gd_requirement",
-            },
-            {
-                "id": "std_req__aspice40_MAN-5_REQ_002",
-                "tags": ["aspice40_man5"],
-                "type": "std_req",
-            },
-            {
-                "id": "std_req__REQ_003_test",
-                "tags": ["different_tag"],
-                "type": "std_req",
-            },
-            {
-                "id": "stkh_req__aspice40_MAN-5_REQ_004",
-                "tags": ["aspice40_man5"],
-                "type": "stkh_req",
-            },
-            {
-                "id": "COMP_001",
-                "tags": [],
-                "type": "gd_req",
-                "complies": [
+            need(
+                id="std_req__aspice40_MAN-5_REQ_001",
+                tags=["aspice40_man5", "other_tag"],
+                type="gd_requirement",
+            ),
+            need(
+                id="std_req__aspice40_MAN-5_REQ_002",
+                tags=["aspice40_man5"],
+                type="std_req",
+            ),
+            need(
+                id="std_req__REQ_003_test",
+                tags=["different_tag"],
+                type="std_req",
+            ),
+            need(
+                id="stkh_req__aspice40_MAN-5_REQ_004",
+                tags=["aspice40_man5"],
+                type="stkh_req",
+            ),
+            need(
+                id="COMP_001",
+                tags=[],
+                type="gd_req",
+                complies=[
                     "std_req__aspice40_MAN-5_REQ_002",
                     "std_req__aspice40_MAN-5_REQ_001",
                 ],
-            },
+            ),
         ]
 
         results = []
@@ -921,14 +921,14 @@ class TestStandards:
     def test_negative_case_no_needs_with_tag(self):
         """Test case where no needs have the specified tag."""
         needs = [
-            {"id": "REQ_001", "tags": ["other_tag"], "type": "gd_requirement"},
-            {"id": "REQ_002", "tags": ["different_tag"], "type": "gd_process"},
-            {
-                "id": "COMP_001",
-                "tags": [],
-                "type": "gd_compliance",
-                "complies": ["REQ_001"],
-            },
+            need(id="REQ_001", tags=["other_tag"], type="gd_requirement"),
+            need(id="REQ_002", tags=["different_tag"], type="gd_process"),
+            need(
+                id="COMP_001",
+                tags=[],
+                type="gd_compliance",
+                complies=["REQ_001"],
+            ),
         ]
 
         results = []
@@ -941,11 +941,11 @@ class TestStandards:
 
     def test_assert_multiple_kwargs(self):
         """Test case that triggers the assertion error for multiple kwargs."""
-        needs = [{"id": "REQ_001", "tags": ["test_tag"], "type": "gd_requirement"}]
+        needs = [need(id="REQ_001", tags=["test_tag"], type="gd_requirement")]
 
         results = []
         # Test if our assert works
-        with pytest.raises(
+        with pytest.raises(  # type: ignore[attr-defined]
             AssertionError,
             match="Can only provide one tag to "
             + "`my_pie_linked_standard_requirements_by_tag`",

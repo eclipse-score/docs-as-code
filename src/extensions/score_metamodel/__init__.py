@@ -16,6 +16,7 @@ import pkgutil
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any, cast
 
 from ruamel.yaml import YAML
 from sphinx.application import Sphinx
@@ -153,7 +154,9 @@ def _run_checks(app: Sphinx, exception: Exception | None) -> None:
         # TODO: exit code
 
 
-def convert_checks_to_dataclass(checks_dict) -> list[ProhibitedWordCheck]:
+def convert_checks_to_dataclass(
+    checks_dict: dict[str, dict[str, Any]],
+) -> list[ProhibitedWordCheck]:
     return [
         ProhibitedWordCheck(
             name=check_name,
@@ -164,7 +167,7 @@ def convert_checks_to_dataclass(checks_dict) -> list[ProhibitedWordCheck]:
     ]
 
 
-def load_metamodel_data():
+def load_metamodel_data() -> dict[str, Any]:
     """
     Load and process metamodel.yaml.
 
@@ -178,18 +181,22 @@ def load_metamodel_data():
 
     yaml = YAML()
     with open(yaml_path, encoding="utf-8") as f:
-        data = yaml.load(f)
+        data = cast(dict[str, Any], yaml.load(f))
 
     # Access the custom validation block
 
-    types_dict = data.get("needs_types", {})
-    links_dict = data.get("needs_extra_links", {})
-    graph_check_dict = data.get("graph_checks", {})
-    global_base_options = data.get("needs_types_base_options", {})
-    global_base_options_optional_opts = global_base_options.get("optional_options", {})
+    types_dict = cast(dict[str, Any], data.get("needs_types", {}))
+    links_dict = cast(dict[str, Any], data.get("needs_extra_links", {}))
+    graph_check_dict = cast(dict[str, Any], data.get("graph_checks", {}))
+    global_base_options = cast(dict[str, Any], data.get("needs_types_base_options", {}))
+    global_base_options_optional_opts = cast(
+        dict[str, Any], global_base_options.get("optional_options", {})
+    )
 
     # Get the stop_words and weak_words as separate lists
-    proh_checks_dict = data.get("prohibited_words_checks", {})
+    proh_checks_dict = cast(
+        dict[str, dict[str, Any]], data.get("prohibited_words_checks", {})
+    )
     prohibited_words_checks = convert_checks_to_dataclass(proh_checks_dict)
 
     # Default options by sphinx, sphinx-needs or anything else we need to account for
@@ -198,10 +205,12 @@ def load_metamodel_data():
     # Convert "types" from {directive_name: {...}, ...} to a list of dicts
     needs_types_list = []
 
-    all_options = set()
+    all_options: set[str] = set()
     for directive_name, directive_data in types_dict.items():
+        directive_name = cast(str, directive_name)
+        directive_data = cast(dict[str, Any], directive_data)
         # Build up a single "needs_types" item
-        one_type = {
+        one_type: dict[str, Any] = {
             "directive": directive_name,
             "title": directive_data.get("title", ""),
             "prefix": directive_data.get("prefix", ""),
@@ -213,14 +222,18 @@ def load_metamodel_data():
             one_type["style"] = directive_data["style"]
 
         # Store mandatory_options and optional_options directly as a dict
-        mandatory_options = directive_data.get("mandatory_options", {})
+        mandatory_options = cast(
+            dict[str, Any], directive_data.get("mandatory_options", {})
+        )
         one_type["mandatory_options"] = mandatory_options
-        tags = directive_data.get("tags", [])
+        tags = cast(list[str], directive_data.get("tags", []))
         one_type["tags"] = tags
-        parts = directive_data.get("parts", 3)
+        parts = cast(int, directive_data.get("parts", 3))
         one_type["parts"] = parts
 
-        optional_options = directive_data.get("optional_options", {})
+        optional_options = cast(
+            dict[str, Any], directive_data.get("optional_options", {})
+        )
         optional_options.update(global_base_options_optional_opts)
         one_type["opt_opt"] = optional_options
 
@@ -228,20 +241,28 @@ def load_metamodel_data():
         all_options.update(list(optional_options.keys()))
 
         # mandatory_links => "req_link"
-        mand_links_yaml = directive_data.get("mandatory_links", {})
+        mand_links_yaml = cast(
+            dict[str, Any], directive_data.get("mandatory_links", {})
+        )
         if mand_links_yaml:
-            one_type["req_link"] = [(k, v) for k, v in mand_links_yaml.items()]
+            one_type["req_link"] = [
+                (cast(str, k), cast(Any, v)) for k, v in mand_links_yaml.items()
+            ]
 
         # optional_links => "opt_link"
-        opt_links_yaml = directive_data.get("optional_links", {})
+        opt_links_yaml = cast(dict[str, Any], directive_data.get("optional_links", {}))
         if opt_links_yaml:
-            one_type["opt_link"] = [(k, v) for k, v in opt_links_yaml.items()]
+            one_type["opt_link"] = [
+                (cast(str, k), cast(Any, v)) for k, v in opt_links_yaml.items()
+            ]
 
         needs_types_list.append(one_type)
 
     # Convert "links" dict -> list of {"option", "incoming", "outgoing"}
-    needs_extra_links_list = []
+    needs_extra_links_list: list[dict[str, str]] = []
     for link_option, link_data in links_dict.items():
+        link_option = cast(str, link_option)
+        link_data = cast(dict[str, Any], link_data)
         needs_extra_links_list.append(
             {
                 "option": link_option,
@@ -254,7 +275,7 @@ def load_metamodel_data():
     # As otherwise sphinx errors, due to an option being registered twice.
     # They are still inside the extra options we extract to enable
     # constraint checking via regex
-    needs_extra_options = sorted(all_options - set(default_options_list))
+    needs_extra_options: list[str] = sorted(all_options - set(default_options_list))
 
     return {
         "prohibited_words_checks": prohibited_words_checks,
