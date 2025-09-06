@@ -14,9 +14,10 @@ import json
 import os
 import subprocess
 import tempfile
+from collections.abc import Generator
 from dataclasses import asdict
 from pathlib import Path
-from typing import Any, Generator
+from typing import Any
 
 import pytest
 from attribute_plugin import add_test_properties  # type: ignore[import-untyped]

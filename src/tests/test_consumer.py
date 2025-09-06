@@ -16,11 +16,11 @@ import subprocess
 from collections import defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import cast
 
 import pytest
-from pytest import TempPathFactory
 from _pytest.config import Config
-from typing import cast
+from pytest import TempPathFactory
 from rich import print
 from rich.console import Console
 from rich.table import Table

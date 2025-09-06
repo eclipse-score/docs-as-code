@@ -36,7 +36,7 @@ jobs:
 
       - name: Run Consumer tests
         run: |
-          .venv_docs/bin/python -m pytest -s -v src/tests/ --repo=$CONSUMER
+          .venv_docs/bin/python -m pytest -s -v src/tests/ --repo="$CONSUMER"
 
         env:
           FORCE_COLOR: "1"
