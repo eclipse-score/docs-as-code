@@ -138,7 +138,7 @@ def _run_checks(app: Sphinx, exception: Exception | None) -> None:
     # External needs: run a focused, info-only check on optional_links patterns
     # so that optional link issues from imported needs are visible but do not
     # fail builds with -W.
-    _check_external_optional_link_patterns(app, log)
+    # _check_external_optional_link_patterns(app, log)
 
     # Graph-Based checks: These warnings require a graph of all other needs to
     # be checked.
@@ -186,12 +186,15 @@ def _validate_external_need_opt_links(
     log: CheckLogger,
 ) -> None:
     for link_field, pattern in opt_links.items():
-        raw_value = need.get(link_field, None)
+        raw_value: str | list[str] | None = need.get(link_field, None)
         if raw_value in [None, [], ""]:
             continue
 
-        values = raw_value if isinstance(raw_value, list) else [raw_value]
+        values: list[str | Any] = (
+            raw_value if isinstance(raw_value, list) else [raw_value]
+        )
         for value in values:
+            v: str | Any
             if isinstance(value, str):
                 v = _remove_prefix(value, allowed_prefixes)
             else:

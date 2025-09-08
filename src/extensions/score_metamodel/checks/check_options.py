@@ -70,7 +70,6 @@ def _validate_value_pattern(
             need,
             field,
             f"pattern `{pattern}` is not a valid regex pattern.",
-            is_new_check=as_info,
         )
 
 
