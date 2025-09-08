@@ -119,10 +119,12 @@ def read_test_xml_file(file: Path) -> tuple[list[DataOfTestCase], list[str]]:
             #          ╰──────────────────────────────────────╯
 
             # assert test_file is not None, (
-            #     f"Testcase: {testname} does not have a 'file' attribute. This is mandatory"
+            #     f"Testcase: {testname} does not have a 'file' attribute. "
+            #     "This is mandatory"
             # )
             # assert lineNr is not None, (
-            #     f"Testcase: {testname} located in {test_file} does not have a 'lineNr' attribute. This is mandator"
+            #     f"Testcase: {testname} located in {test_file} does not have a "
+            #     "'lineNr' attribute. This is mandatory"
             # )
             case_properties["name"] = testname
             case_properties["file"] = test_file
@@ -142,7 +144,9 @@ def read_test_xml_file(file: Path) -> tuple[list[DataOfTestCase], list[str]]:
             # ║ Disabled Temporarily                 ║
             # ╙                                      ╜
             # assert properties_element is not None, (
-            #     f"Testcase: {testname} located in {test_file}:{lineNr}, does not have any properties. Properties 'TestType', 'DerivationTechnique' and either 'PartiallyVerifies' or 'FullyVerifies' are mandatory."
+            #     f"Testcase: {testname} located in {test_file}:{lineNr}, does not "
+            #     "have any properties. Properties 'TestType', 'DerivationTechnique' "
+            #     "and either 'PartiallyVerifies' or 'FullyVerifies' are mandatory."
             # )
 
             case_properties = parse_properties(case_properties, properties_element)

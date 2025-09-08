@@ -293,7 +293,10 @@ def get_impl_comp_from_logic_iface(
     real_iface: str, all_needs: dict[str, dict[str, str]]
 ) -> list[str]:
     """Get implementing component of the interface"""
-    implcomp: list[str] = all_needs[real_iface].get("implements_back", [])
+    implements_back = all_needs[real_iface].get("implements_back", [])
+    implcomp: list[str] = (
+        [implements_back] if isinstance(implements_back, str) else implements_back
+    )
 
     if not implcomp:
         logger.info(

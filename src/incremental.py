@@ -20,7 +20,9 @@ from pathlib import Path
 
 import debugpy
 from sphinx.cmd.build import main as sphinx_main
-from sphinx_autobuild.__main__ import main as sphinx_autobuild_main
+from sphinx_autobuild.__main__ import (
+    main as sphinx_autobuild_main,  # type: ignore[reportUnknownVariableType] # sphinx_autobuild doesn't provide complete type annotations
+)
 
 logger = logging.getLogger(__name__)
 

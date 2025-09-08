@@ -16,8 +16,10 @@ import subprocess
 from collections import defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import cast
 
 import pytest
+from _pytest.config import Config
 from pytest import TempPathFactory
 from rich import print
 from rich.console import Console
@@ -115,9 +117,9 @@ REPOS_TO_TEST: list[ConsumerRepo] = [
 
 
 @pytest.fixture(scope="session")
-def sphinx_base_dir(tmp_path_factory: TempPathFactory, pytestconfig) -> Path:
+def sphinx_base_dir(tmp_path_factory: TempPathFactory, pytestconfig: Config) -> Path:
     """Create base directory for testing - either temporary or persistent cache"""
-    disable_cache = pytestconfig.getoption("--disable-cache")
+    disable_cache: bool = bool(pytestconfig.getoption("--disable-cache"))
 
     if disable_cache:
         # Use persistent cache directory for local development
@@ -150,7 +152,7 @@ def filter_repos(repo_filter: str | None) -> list[ConsumerRepo]:
         return REPOS_TO_TEST
 
     requested_repos = [name.strip() for name in repo_filter.split(",")]
-    filtered_repos = []
+    filtered_repos: list[ConsumerRepo] = []
 
     for repo in REPOS_TO_TEST:
         if repo.name in requested_repos:
@@ -212,7 +214,7 @@ def strip_ansi_codes(text: str) -> str:
     return ansi_escape.sub("", text)
 
 
-def parse_bazel_output(BR: BuildOutput, pytestconfig) -> BuildOutput:
+def parse_bazel_output(BR: BuildOutput, pytestconfig: Config) -> BuildOutput:
     err_lines = BR.stderr.splitlines()
     split_warnings = [x for x in err_lines if "WARNING: " in x]
     warning_dict: dict[str, list[str]] = defaultdict(list)
@@ -355,7 +357,7 @@ def analyze_build_success(BR: BuildOutput) -> tuple[bool, str]:
     return True, "Build successful - no critical warnings"
 
 
-def print_final_result(BR: BuildOutput, repo_name: str, cmd: str, pytestconfig):
+def print_final_result(BR: BuildOutput, repo_name: str, cmd: str, pytestconfig: Config):
     """
     Print your existing detailed output plus a clear success/failure summary
     """
@@ -422,12 +424,13 @@ def stream_subprocess_output(cmd: str, repo_name: str):
 
     # Stream output line by line
     output_lines = []
-    for line in iter(process.stdout.readline, ""):
-        if line:
-            print(line.rstrip())  # Print immediately
-            output_lines.append(line)
+    if process.stdout is not None:
+        for line in iter(process.stdout.readline, ""):
+            if line:
+                print(line.rstrip())  # Print immediately
+                output_lines.append(line)
 
-    process.stdout.close()
+        process.stdout.close()
     return_code = process.wait()
 
     return BuildOutput(
@@ -438,9 +441,13 @@ def stream_subprocess_output(cmd: str, repo_name: str):
 
 
 def run_cmd(
-    cmd: str, results: list[Result], repo_name: str, local_or_git: str, pytestconfig
+    cmd: str,
+    results: list[Result],
+    repo_name: str,
+    local_or_git: str,
+    pytestconfig: Config,
 ) -> tuple[list[Result], bool]:
-    verbosity = pytestconfig.get_verbosity()
+    verbosity: int = pytestconfig.get_verbosity()
 
     if verbosity >= 3:
         # Level 3 (-vvv): Stream output in real-time
@@ -481,7 +488,7 @@ def run_test_commands():
     pass
 
 
-def setup_test_environment(sphinx_base_dir, pytestconfig):
+def setup_test_environment(sphinx_base_dir: Path, pytestconfig: Config):
     """Set up the test environment and return necessary paths and metadata."""
     git_root = find_git_root()
 
@@ -491,9 +498,9 @@ def setup_test_environment(sphinx_base_dir, pytestconfig):
     current_hash = get_current_git_commit(git_root)
 
     os.chdir(Path(sphinx_base_dir).absolute())
-    verbosity = pytestconfig.get_verbosity()
+    verbosity: int = pytestconfig.get_verbosity()
 
-    def debug_print(message):
+    def debug_print(message: str):
         if verbosity >= 2:
             print(f"[DEBUG] {message}")
 
@@ -507,7 +514,7 @@ def setup_test_environment(sphinx_base_dir, pytestconfig):
         f"{has_uncommitted_changes(git_root)}"
     )
 
-    def recreate_symlink(dest, target):
+    def recreate_symlink(dest: Path, target: Path):
         # Create symlink for local docs-as-code
         if dest.exists() or dest.is_symlink():
             # Remove existing symlink/directory to recreate it
@@ -538,7 +545,9 @@ def has_uncommitted_changes(path: Path) -> bool:
     return bool(result.stdout.strip())
 
 
-def prepare_repo_overrides(repo_name, git_url, current_hash, gh_url, use_cache=True):
+def prepare_repo_overrides(
+    repo_name: str, git_url: str, current_hash: str, gh_url: str, use_cache: bool = True
+):
     """Clone repo and prepare both local and git overrides."""
     repo_path = Path(repo_name)
 
@@ -573,10 +582,10 @@ def prepare_repo_overrides(repo_name, git_url, current_hash, gh_url, use_cache=T
 
 
 # Updated version of your test loop
-def test_and_clone_repos_updated(sphinx_base_dir, pytestconfig):
+def test_and_clone_repos_updated(sphinx_base_dir: Path, pytestconfig: Config):
     # Get command line options from pytest config
-    repo_tests = pytestconfig.getoption("--repo")
-    disable_cache = pytestconfig.getoption("--disable-cache")
+    repo_tests: str | None = cast(str | None, pytestconfig.getoption("--repo"))
+    disable_cache: bool = bool(pytestconfig.getoption("--disable-cache"))
 
     repos_to_test = filter_repos(repo_tests)
 

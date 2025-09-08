@@ -39,8 +39,10 @@ needs_layouts: dict[str, SingleLayout] = {
                 "initial=False)>>",
             ],
             "meta_left": [
-                '<<meta_all(no_links=True, exclude=["layout","style", "fully_verified_by", "status", "security", "safety"])>>',
-                '<<meta_links_all(exclude=["fully_verified_by", "fully_verifies_back", "partially_verified_by", "partially_verifies_back"])>>',
+                '<<meta_all(no_links=True, exclude=["layout","style", '
+                '"fully_verified_by", "status", "security", "safety"])>>',
+                '<<meta_links_all(exclude=["fully_verified_by", "fully_verifies_back", '
+                '"partially_verified_by", "partially_verifies_back"])>>',
             ],
             "meta_right": [],
             "footer_left": ["<<meta_id()>>"],

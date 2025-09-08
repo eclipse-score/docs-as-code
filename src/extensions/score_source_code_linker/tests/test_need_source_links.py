@@ -42,7 +42,9 @@ def SourceCodeLinks_TEST_JSON_Decoder(
             need=d["need"],
             links=NeedSourceLinks(
                 CodeLinks=[
-                    needlink_test_decoder(cl) for cl in links.get("CodeLinks", [])
+                    link
+                    for cl in links.get("CodeLinks", [])
+                    if isinstance(link := needlink_test_decoder(cl), NeedLink)
                 ],
                 TestLinks=[DataForTestLink(**tl) for tl in links.get("TestLinks", [])],
             ),
@@ -51,7 +53,7 @@ def SourceCodeLinks_TEST_JSON_Decoder(
 
 
 class SourceCodeLinks_TEST_JSON_Encoder(json.JSONEncoder):
-    def default(self, o: object):
+    def default(self, o: object) -> Any:
         if isinstance(o, SourceCodeLinks):
             return {
                 "need": o.need,
@@ -92,20 +94,22 @@ def sample_testlink() -> DataForTestLink:
 
 
 @pytest.fixture
-def sample_source_code_links(sample_needlink, sample_testlink) -> SourceCodeLinks:
+def sample_source_code_links(
+    sample_needlink: NeedLink, sample_testlink: DataForTestLink
+) -> SourceCodeLinks:
     return SourceCodeLinks(
         need="REQ_001",
         links=NeedSourceLinks(CodeLinks=[sample_needlink], TestLinks=[sample_testlink]),
     )
 
 
-def test_encoder_outputs_serializable_dict(sample_source_code_links):
+def test_encoder_outputs_serializable_dict(sample_source_code_links: SourceCodeLinks):
     encoded = json.dumps(sample_source_code_links, cls=SourceCodeLinks_JSON_Encoder)
     assert isinstance(encoded, str)
     assert "REQ_001" in encoded
 
 
-def test_decoder_reconstructs_object(sample_source_code_links):
+def test_decoder_reconstructs_object(sample_source_code_links: SourceCodeLinks):
     encoded = json.dumps(sample_source_code_links, cls=SourceCodeLinks_JSON_Encoder)
     decoded = json.loads(encoded, object_hook=SourceCodeLinks_JSON_Decoder)
     assert isinstance(decoded, SourceCodeLinks)
@@ -114,7 +118,7 @@ def test_decoder_reconstructs_object(sample_source_code_links):
     assert decoded.links.CodeLinks[0].need == "REQ_001"
 
 
-def test_store_and_load_json(tmp_path: Path, sample_source_code_links):
+def test_store_and_load_json(tmp_path: Path, sample_source_code_links: SourceCodeLinks):
     test_file = tmp_path / "combined_links.json"
     store_source_code_links_combined_json(test_file, [sample_source_code_links])
     assert test_file.exists()

@@ -10,7 +10,10 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-def pytest_addoption(parser):
+import pytest
+
+
+def pytest_addoption(parser: pytest.Parser):
     """Add custom command line options to pytest"""
     parser.addoption(
         "--repo",

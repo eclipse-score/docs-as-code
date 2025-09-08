@@ -18,7 +18,7 @@ import subprocess
 from collections import Counter
 from collections.abc import Callable
 from pathlib import Path
-from typing import cast
+from typing import Any, cast
 
 import pytest
 from pytest import TempPathFactory
@@ -42,8 +42,7 @@ from src.helper_lib.additional_functions import get_github_link
 
 @pytest.fixture()
 def sphinx_base_dir(tmp_path_factory: TempPathFactory) -> Path:
-    repo_path = tmp_path_factory.mktemp("test_git_repo")
-    return repo_path
+    return tmp_path_factory.mktemp("test_git_repo")
 
 
 @pytest.fixture()
@@ -69,7 +68,7 @@ def git_repo_setup(sphinx_base_dir: Path) -> Path:
 
 
 @pytest.fixture()
-def create_demo_files(sphinx_base_dir: Path, git_repo_setup):
+def create_demo_files(sphinx_base_dir: Path, git_repo_setup: Path):
     repo_path = sphinx_base_dir
 
     # Create some source files with requirement IDs
@@ -190,6 +189,8 @@ def make_test_xml_1():
 
 
 def make_test_xml_2():
+    # ruff: This is a long xml string, so ignore the line length check for the block
+    # flake8: noqa: E501 (start)
     return """
 <testsuites>
   <testsuite name="TestRequirementsCoverage" tests="2" failures="0" errors="0" time="0.234" timestamp="2025-08-12T10:31:00">
@@ -208,6 +209,9 @@ def make_test_xml_2():
 """
 
 
+# flake8: noqa: E501 (end)
+
+
 def construct_gh_url() -> str:
     gh = get_github_base_url()
     return f"{gh}/blob/"
@@ -215,7 +219,7 @@ def construct_gh_url() -> str:
 
 @pytest.fixture()
 def sphinx_app_setup(
-    sphinx_base_dir: Path, create_demo_files, git_repo_setup
+    sphinx_base_dir: Path, create_demo_files: None, git_repo_setup: Path
 ) -> Callable[[], SphinxTestApp]:
     def _create_app():
         base_dir = sphinx_base_dir
@@ -411,7 +415,9 @@ def make_test_link(testlinks: list[DataForTestLink]):
     return ", ".join(f"{get_github_link(n)}<>{n.name}" for n in testlinks)
 
 
-def compare_json_files(file1: Path, expected_file: Path, object_hook):
+def compare_json_files(
+    file1: Path, expected_file: Path, object_hook: Callable[[dict[str, Any]], Any]
+):
     """Golden File tests with a known good file and the one created"""
     with open(file1) as f1:
         json1 = json.load(f1, object_hook=object_hook)
@@ -473,8 +479,8 @@ def test_source_link_integration_ok(
     example_source_link_text_all_ok: dict[str, list[NeedLink]],
     example_test_link_text_all_ok: dict[str, list[DataForTestLink]],
     sphinx_base_dir: Path,
-    git_repo_setup,
-    create_demo_files,
+    git_repo_setup: Path,
+    create_demo_files: None,
 ):
     """This is a test description"""
     app = sphinx_app_setup()
@@ -537,8 +543,8 @@ def test_source_link_integration_non_existent_id(
     sphinx_app_setup: Callable[[], SphinxTestApp],
     example_source_link_text_non_existent: dict[str, list[str]],
     sphinx_base_dir: Path,
-    git_repo_setup,
-    create_demo_files,
+    git_repo_setup: Path,
+    create_demo_files: None,
 ):
     """Asserting warning if need not found"""
     app = sphinx_app_setup()

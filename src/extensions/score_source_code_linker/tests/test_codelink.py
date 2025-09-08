@@ -14,12 +14,13 @@ import json
 import os
 import subprocess
 import tempfile
+from collections.abc import Generator
 from dataclasses import asdict
 from pathlib import Path
 from typing import Any
 
 import pytest
-from attribute_plugin import add_test_properties
+from attribute_plugin import add_test_properties  # type: ignore[import-untyped]
 from sphinx_needs.data import NeedsMutable
 
 from src.extensions.score_metamodel.tests import need as test_need
@@ -89,16 +90,16 @@ def needlink_test_decoder(d: dict[str, Any]) -> NeedLink | dict[str, Any]:
 
 
 @pytest.fixture
-def temp_dir():
+def temp_dir() -> Generator[Path, None, None]:
     """Create a temporary directory for tests."""
     with tempfile.TemporaryDirectory() as temp_dir:
         yield Path(temp_dir)
 
 
 @pytest.fixture
-def git_repo(temp_dir):
+def git_repo(temp_dir: Path) -> Path:
     """Create a real git repository for testing."""
-    git_dir = temp_dir / "test_repo"
+    git_dir: Path = temp_dir / "test_repo"
     git_dir.mkdir()
 
     # Initialize git repo
@@ -109,7 +110,7 @@ def git_repo(temp_dir):
     subprocess.run(["git", "config", "user.name", "Test User"], cwd=git_dir, check=True)
 
     # Create a test file and commit
-    test_file = git_dir / "test_file.py"
+    test_file: Path = git_dir / "test_file.py"
     test_file.write_text("# Test file\nprint('hello')\n")
     subprocess.run(["git", "add", "."], cwd=git_dir, check=True)
     subprocess.run(["git", "commit", "-m", "Initial commit"], cwd=git_dir, check=True)
@@ -124,7 +125,7 @@ def git_repo(temp_dir):
 
 
 @pytest.fixture
-def sample_needlinks():
+def sample_needlinks() -> list[NeedLink]:
     """Create sample NeedLink objects for testing."""
     return [
         NeedLink(
@@ -159,15 +160,15 @@ def sample_needlinks():
 
 
 @pytest.fixture
-def cache_file_with_links(temp_dir, sample_needlinks):
+def cache_file_with_links(temp_dir: Path, sample_needlinks: list[NeedLink]) -> Path:
     """Create a cache file with sample needlinks."""
-    cache_file = temp_dir / "cache.json"
+    cache_file: Path = temp_dir / "cache.json"
     store_source_code_links_json(cache_file, sample_needlinks)
     return cache_file
 
 
 @pytest.fixture
-def sample_needs():
+def sample_needs() -> dict[str, dict[str, str]]:
     """Create sample needs data for testing."""
     return {
         "TREQ_ID_1": {
@@ -202,7 +203,7 @@ def test_get_cache_filename():
     assert result == expected
 
 
-def make_needs(needs_dict):
+def make_needs(needs_dict: dict[str, dict[str, Any]]) -> NeedsMutable:
     return NeedsMutable(
         {need_id: test_need(**params) for need_id, params in needs_dict.items()}
     )
@@ -289,7 +290,7 @@ def test_find_need_not_found():
     test_type="requirements-based",
     derivation_technique="requirements-analysis",
 )
-def test_group_by_need(sample_needlinks):
+def test_group_by_need(sample_needlinks: list[NeedLink]) -> None:
     """Test grouping source code links by need ID."""
     result = group_by_need(sample_needlinks)
 
@@ -324,7 +325,7 @@ def test_group_by_need_empty_list():
     test_type="requirements-based",
     derivation_technique="requirements-analysis",
 )
-def test_get_github_link_with_real_repo(git_repo):
+def test_get_github_link_with_real_repo(git_repo: Path) -> None:
     """Test generating GitHub link with real repository."""
     # Create a needlink
     needlink = NeedLink(
@@ -356,9 +357,11 @@ def test_get_github_link_with_real_repo(git_repo):
     test_type="requirements-based",
     derivation_technique="requirements-analysis",
 )
-def test_cache_file_operations(temp_dir, sample_needlinks):
+def test_cache_file_operations(
+    temp_dir: Path, sample_needlinks: list[NeedLink]
+) -> None:
     """Test storing and loading cache files."""
-    cache_file = temp_dir / "test_cache.json"
+    cache_file: Path = temp_dir / "test_cache.json"
 
     # Store links
     store_source_code_links_json(cache_file, sample_needlinks)
@@ -385,7 +388,7 @@ def test_cache_file_operations(temp_dir, sample_needlinks):
     test_type="requirements-based",
     derivation_technique="requirements-analysis",
 )
-def test_cache_file_with_encoded_comments(temp_dir):
+def test_cache_file_with_encoded_comments(temp_dir: Path) -> None:
     """Test that cache file properly handles encoded comments."""
     # Create needlinks with spaces in tags and full_line
     needlinks = [
@@ -398,7 +401,7 @@ def test_cache_file_with_encoded_comments(temp_dir):
         )
     ]
 
-    cache_file = temp_dir / "encoded_cache.json"
+    cache_file: Path = temp_dir / "encoded_cache.json"
     store_source_code_links_json(cache_file, needlinks)
 
     # Check the raw JSON to verify encoding
@@ -422,7 +425,9 @@ def test_cache_file_with_encoded_comments(temp_dir):
     test_type="requirements-based",
     derivation_technique="requirements-analysis",
 )
-def test_group_by_need_and_find_need_integration(sample_needlinks):
+def test_group_by_need_and_find_need_integration(
+    sample_needlinks: list[NeedLink],
+) -> None:
     """Test grouping links and finding needs together."""
     # Group the test links
     grouped = group_by_need(sample_needlinks)
@@ -455,10 +460,12 @@ def test_group_by_need_and_find_need_integration(sample_needlinks):
     test_type="requirements-based",
     derivation_technique="requirements-analysis",
 )
-def test_source_linker_end_to_end_with_real_files(temp_dir, git_repo):
+def test_source_linker_end_to_end_with_real_files(
+    temp_dir: Path, git_repo: Path
+) -> None:
     """Test end-to-end workflow with real files and git repo."""
     # Create source files with requirement IDs
-    src_dir = git_repo / "src"
+    src_dir: Path = git_repo / "src"
     src_dir.mkdir()
 
     (src_dir / "implementation1.py").write_text(
@@ -520,7 +527,7 @@ def another_function():
     ]
 
     # Test cache operations
-    cache_file = temp_dir / "cache.json"
+    cache_file: Path = temp_dir / "cache.json"
     store_source_code_links_json(cache_file, needlinks)
     loaded_links = load_source_code_links_json(cache_file)
 
@@ -550,13 +557,13 @@ def another_function():
     test_type="requirements-based",
     derivation_technique="requirements-analysis",
 )
-def test_multiple_commits_hash_consistency(git_repo):
+def test_multiple_commits_hash_consistency(git_repo: Path) -> None:
     """Test that git hash remains consistent and links update properly."""
     # Get initial hash
     initial_hash = get_current_git_hash(git_repo)
 
     # Create and commit a new file
-    new_file = git_repo / "new_file.py"
+    new_file: Path = git_repo / "new_file.py"
     new_file.write_text("# New file\nprint('new')")
     subprocess.run(["git", "add", "."], cwd=git_repo, check=True)
     subprocess.run(["git", "commit", "-m", "Add new file"], cwd=git_repo, check=True)

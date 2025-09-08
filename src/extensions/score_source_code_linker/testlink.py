@@ -118,18 +118,20 @@ class DataOfTestCase:
         # It's mandatory that the test either partially or fully verifies a requirement
         # if self.PartiallyVerifies is None and self.FullyVerifies is None:
         #     raise ValueError(
-        #         f"TestCase: {self.id} Error. Either 'PartiallyVerifies' or 'FullyVerifies' must be provided."
+        #         f"TestCase: {self.id} Error. Either 'PartiallyVerifies' or "
+        #         "'FullyVerifies' must be provided."
         #     )
         # Skipped tests should always have a reason associated with them
         # if "skipped" in self.result.keys() and not list(self.result.values())[0]:
         #     raise ValueError(
-        #         f"TestCase: {self.id} Error. Test was skipped without provided reason, reason is mandatory for skipped tests."
+        #         f"TestCase: {self.id} Error. Test was skipped without provided "
+        #         "reason, reason is mandatory for skipped tests."
         #     )
 
     def get_test_links(self) -> list[DataForTestLink]:
         """Convert TestCaseNeed to list of TestLink objects."""
 
-        def parse_attributes(self, verify_field: str | None, verify_type: str):
+        def parse_attributes(verify_field: str | None, verify_type: str):
             """Process a verification field and yield TestLink objects."""
             if not verify_field:
                 return
@@ -152,8 +154,8 @@ class DataOfTestCase:
 
         return list(
             chain(
-                parse_attributes(self, self.PartiallyVerifies, "partially"),
-                parse_attributes(self, self.FullyVerifies, "fully"),
+                parse_attributes(self.PartiallyVerifies, "partially"),
+                parse_attributes(self.FullyVerifies, "fully"),
             )
         )
 
