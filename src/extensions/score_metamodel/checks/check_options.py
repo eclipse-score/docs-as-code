@@ -45,15 +45,31 @@ def _normalize_values(raw_value: str | list[str] | None) -> list[str]:
 
 
 def _validate_value_pattern(
-    value: str, pattern: str, need: NeedsInfoType, field: str, log: CheckLogger
+    value: str,
+    pattern: str,
+    need: NeedsInfoType,
+    field: str,
+    log: CheckLogger,
+    as_info: bool = False,
 ) -> None:
-    """Check if a value matches the given pattern, log warnings if not."""
+    """Check if a value matches the given pattern and log the result.
+
+    If ``as_info`` is True, mismatches are reported as info (non-failing)
+    messages, otherwise as warnings.
+    """
     try:
         if not re.match(pattern, value):
-            log.warning_for_option(need, field, f"does not follow pattern `{pattern}`.")
+            log.warning_for_option(
+                need,
+                field,
+                f"does not follow pattern `{pattern}`.",
+                is_new_check=as_info,
+            )
     except TypeError:
         log.warning_for_option(
-            need, field, f"pattern `{pattern}` is not a valid regex pattern."
+            need,
+            field,
+            f"pattern `{pattern}` is not a valid regex pattern.",
         )
 
 
@@ -80,6 +96,8 @@ def validate_fields(
         # Removes any prefix allowed by configuration, if prefix is there.
         return [word.removeprefix(prefix) for prefix in prefixes][0]
 
+    optional_link_as_info = (not required) and (field_type == "link")
+
     for field, pattern in fields.items():
         raw_value: str | list[str] | None = need.get(field, None)
         if raw_value in [None, [], ""]:
@@ -101,7 +119,9 @@ def validate_fields(
         for value in values:
             if allowed_prefixes:
                 value = remove_prefix(value, allowed_prefixes)
-            _validate_value_pattern(value, pattern, need, field, log)
+            _validate_value_pattern(
+                value, pattern, need, field, log, as_info=optional_link_as_info
+            )
 
 
 # req-Id: tool_req__docs_req_attr_reqtype
@@ -140,7 +160,7 @@ def check_options(
         ],
         "link": [
             (dict(need_options.get("req_link", [])), True),
-            #    (dict(need_options.get("opt_link", [])), False),
+            (dict(need_options.get("opt_link", [])), False),
         ],
     }
 

@@ -13,6 +13,7 @@
 import importlib
 import os
 import pkgutil
+import re
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -134,6 +135,11 @@ def _run_checks(app: Sphinx, exception: Exception | None) -> None:
             logger.debug(f"Running local check {check} for need {need['id']}")
             check(app, need, log)
 
+    # External needs: run a focused, info-only check on optional_links patterns
+    # so that optional link issues from imported needs are visible but do not
+    # fail builds with -W.
+    # _check_external_optional_link_patterns(app, log)
+
     # Graph-Based checks: These warnings require a graph of all other needs to
     # be checked.
 
@@ -152,6 +158,85 @@ def _run_checks(app: Sphinx, exception: Exception | None) -> None:
             "Please fix them as soon as possible.\n"
         )
         # TODO: exit code
+
+
+def _remove_prefix(word: str, prefixes: list[str]) -> str:
+    for prefix in prefixes or []:
+        if isinstance(word, str) and word.startswith(prefix):
+            return word.removeprefix(prefix)
+    return word
+
+
+def _get_need_type_for_need(app: Sphinx, need: NeedsInfoType):
+    need_type = None
+    for nt in app.config.needs_types:
+        try:
+            if nt["directive"] == need["type"]:
+                need_type = nt
+                break
+        except Exception:
+            continue
+    return need_type
+
+
+def _validate_external_need_opt_links(
+    need: NeedsInfoType,
+    opt_links: dict[str, str],
+    allowed_prefixes: list[str],
+    log: CheckLogger,
+) -> None:
+    for link_field, pattern in opt_links.items():
+        raw_value: str | list[str] | None = need.get(link_field, None)
+        if raw_value in [None, [], ""]:
+            continue
+
+        values: list[str | Any] = (
+            raw_value if isinstance(raw_value, list) else [raw_value]
+        )
+        for value in values:
+            v: str | Any
+            if isinstance(value, str):
+                v = _remove_prefix(value, allowed_prefixes)
+            else:
+                v = value
+
+            try:
+                if not isinstance(v, str) or not re.match(pattern, v):
+                    log.warning_for_option(
+                        need,
+                        link_field,
+                        f"does not follow pattern `{pattern}`.",
+                        is_new_check=True,
+                    )
+            except TypeError:
+                log.warning_for_option(
+                    need,
+                    link_field,
+                    f"pattern `{pattern}` is not a valid regex pattern.",
+                    is_new_check=True,
+                )
+
+
+def _check_external_optional_link_patterns(app: Sphinx, log: CheckLogger) -> None:
+    """Validate optional link patterns on external needs and log as info-only.
+
+    Mirrors the original inline logic from ``_run_checks`` without changing behavior.
+    """
+    needs_external_needs = (
+        SphinxNeedsData(app.env).get_needs_view().filter_is_external(True)
+    )
+
+    for need in needs_external_needs.values():
+        need_type = _get_need_type_for_need(app, need)
+        if not need_type:
+            continue
+
+        opt_links = dict(need_type.get("opt_link", []))
+        if not opt_links:
+            continue
+
+        allowed_prefixes = app.config.allowed_external_prefixes
+        _validate_external_need_opt_links(need, opt_links, allowed_prefixes, log)
 
 
 def convert_checks_to_dataclass(
