@@ -32,9 +32,9 @@ def temp_dir():
 
 
 @pytest.fixture
-def git_repo(temp_dir):
+def git_repo(temp_dir: Path) -> Path:
     """Create a real git repository for testing."""
-    git_dir = temp_dir / "test_repo"
+    git_dir: Path = temp_dir / "test_repo"
     git_dir.mkdir()
 
     # Initialize git repo
@@ -45,7 +45,7 @@ def git_repo(temp_dir):
     subprocess.run(["git", "config", "user.name", "Test User"], cwd=git_dir, check=True)
 
     # Create a test file and commit
-    test_file = git_dir / "test_file.py"
+    test_file: Path = git_dir / "test_file.py"
     test_file.write_text("# Test file\nprint('hello')\n")
     subprocess.run(["git", "add", "."], cwd=git_dir, check=True)
     subprocess.run(["git", "commit", "-m", "Initial commit"], cwd=git_dir, check=True)
@@ -60,9 +60,9 @@ def git_repo(temp_dir):
 
 
 @pytest.fixture
-def git_repo_multiple_remotes(temp_dir):
+def git_repo_multiple_remotes(temp_dir: Path) -> Path:
     """Create a git repository with multiple remotes for testing."""
-    git_dir = temp_dir / "test_repo_multiple"
+    git_dir: Path = temp_dir / "test_repo_multiple"
     git_dir.mkdir()
 
     # Initialize git repo
@@ -73,7 +73,7 @@ def git_repo_multiple_remotes(temp_dir):
     subprocess.run(["git", "config", "user.name", "Test User"], cwd=git_dir, check=True)
 
     # Create a test file and commit
-    test_file = git_dir / "test_file.py"
+    test_file: Path = git_dir / "test_file.py"
     test_file.write_text("# Test file\nprint('hello')\n")
     subprocess.run(["git", "add", "."], cwd=git_dir, check=True)
     subprocess.run(["git", "commit", "-m", "Initial commit"], cwd=git_dir, check=True)
@@ -94,9 +94,9 @@ def git_repo_multiple_remotes(temp_dir):
 
 
 @pytest.fixture
-def git_repo_with_https_remote(temp_dir):
+def git_repo_with_https_remote(temp_dir: Path) -> Path:
     """Create a git repository with HTTPS remote for testing."""
-    git_dir = temp_dir / "test_repo_https"
+    git_dir: Path = temp_dir / "test_repo_https"
     git_dir.mkdir()
 
     # Initialize git repo
@@ -107,7 +107,7 @@ def git_repo_with_https_remote(temp_dir):
     subprocess.run(["git", "config", "user.name", "Test User"], cwd=git_dir, check=True)
 
     # Create a test file and commit
-    test_file = git_dir / "test_file.py"
+    test_file: Path = git_dir / "test_file.py"
     test_file.write_text("# Test file\nprint('hello')\n")
     subprocess.run(["git", "add", "."], cwd=git_dir, check=True)
     subprocess.run(["git", "commit", "-m", "Initial commit"], cwd=git_dir, check=True)
@@ -129,9 +129,9 @@ def git_repo_with_https_remote(temp_dir):
 
 
 # Test error handling
-def test_git_operations_with_no_commits(temp_dir):
+def test_git_operations_with_no_commits(temp_dir: Path):
     """Test git operations on repo with no commits."""
-    git_dir = temp_dir / "empty_repo"
+    git_dir: Path = temp_dir / "empty_repo"
     git_dir.mkdir()
 
     # Initialize git repo but don't commit anything
@@ -147,9 +147,9 @@ def test_git_operations_with_no_commits(temp_dir):
         get_current_git_hash(git_dir)
 
 
-def test_git_repo_with_no_remotes(temp_dir):
+def test_git_repo_with_no_remotes(temp_dir: Path):
     """Test git repository with no remotes."""
-    git_dir = temp_dir / "no_remote_repo"
+    git_dir: Path = temp_dir / "no_remote_repo"
     git_dir.mkdir()
 
     # Initialize git repo
@@ -160,7 +160,7 @@ def test_git_repo_with_no_remotes(temp_dir):
     subprocess.run(["git", "config", "user.name", "Test User"], cwd=git_dir, check=True)
 
     # Create a test file and commit
-    test_file = git_dir / "test_file.py"
+    test_file: Path = git_dir / "test_file.py"
     test_file.write_text("# Test file\nprint('hello')\n")
     subprocess.run(["git", "add", "."], cwd=git_dir, check=True)
     subprocess.run(["git", "commit", "-m", "Initial commit"], cwd=git_dir, check=True)
@@ -207,25 +207,25 @@ def test_parse_git_output_empty_string():
     assert result == ""
 
 
-def test_get_github_repo_info_ssh_remote(git_repo):
+def test_get_github_repo_info_ssh_remote(git_repo: Path):
     """Test getting GitHub repository information with SSH remote."""
     result = get_github_repo_info(git_repo)
     assert result == "test-user/test-repo"
 
 
-def test_get_github_repo_info_https_remote(git_repo_with_https_remote):
+def test_get_github_repo_info_https_remote(git_repo_with_https_remote: Path):
     """Test getting GitHub repository information with HTTPS remote."""
     result = get_github_repo_info(git_repo_with_https_remote)
     assert result == "test-user/test-repo"
 
 
-def test_get_github_repo_info_multiple_remotes(git_repo_multiple_remotes):
+def test_get_github_repo_info_multiple_remotes(git_repo_multiple_remotes: Path):
     """Test GitHub repo info retrieval with multiple remotes (origin preferred)."""
     result = get_github_repo_info(git_repo_multiple_remotes)
     assert result == "test-user/test-repo"
 
 
-def test_get_current_git_hash(git_repo):
+def test_get_current_git_hash(git_repo: Path):
     """Test getting current git hash."""
     result = get_current_git_hash(git_repo)
 
@@ -234,7 +234,7 @@ def test_get_current_git_hash(git_repo):
     assert all(c in "0123456789abcdef" for c in result)
 
 
-def test_get_current_git_hash_invalid_repo(temp_dir):
+def test_get_current_git_hash_invalid_repo(temp_dir: Path):
     """Test getting git hash from invalid repository."""
-    with pytest.raises(Exception):
+    with pytest.raises(subprocess.CalledProcessError):
         get_current_git_hash(temp_dir)

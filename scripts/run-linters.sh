@@ -16,21 +16,26 @@ set -euo pipefail
 bazel run //:ide_support
 
 echo "Running Ruff linter..."
-bazel run @score_linter//:ruff check
+bazel run @score_tooling//tools:ruff check
 
 echo "Running basedpyright..."
 .venv_docs/bin/python3 -m basedpyright
 
 echo "Running Actionlint..."
-bazel run @score_linter//:actionlint
+bazel run @score_tooling//tools:actionlint
 
 echo "Running Shellcheck..."
+# SC2038: find/xargs pattern works fine here despite non-alphanumeric filename warning
+#         The recommended -print0 | xargs -0 solution causes:
+#         "openBinaryFile: does not exist" with bazel run
+# shellcheck disable=SC2038
 find . \
   -type d \( -name .git -o -name .venv -o -name bazel-out -o -name node_modules \) -prune -false \
   -o -type f -exec grep -Il '^#!.*sh' {} \; | \
-xargs bazel run @score_linter//:shellcheck --
+# SC1128: Shebang after copyright header is intentional
+xargs bazel run @score_tooling//tools:shellcheck -- --exclude=SC1128
 
 echo "Running Yamlfmt..."
-bazel run @score_linter//:yamlfmt -- $(find . \
+bazel run @score_tooling//tools:yamlfmt -- "$(find . \
   -type d \( -name .git -o -name .venv -o -name bazel-out -o -name node_modules \) -prune -false \
-  -o -type f \( -name "*.yaml" -o -name "*.yml" \) | tr '\n' '\0' | xargs -0)
+  -o -type f \( -name "*.yaml" -o -name "*.yml" \) | tr '\n' '\0' | xargs -0)"

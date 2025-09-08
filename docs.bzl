@@ -56,15 +56,7 @@ def docs(source_dir = "docs", data = [], deps = []):
 
     deps = deps + all_requirements + [
         "@score_docs_as_code//src:plantuml_for_python",
-        "@score_docs_as_code//src/extensions:score_plantuml",
-        "@score_docs_as_code//src/find_runfiles:find_runfiles",
-        "@score_docs_as_code//src/extensions/score_draw_uml_funcs:score_draw_uml_funcs",
-        "@score_docs_as_code//src/extensions/score_header_service:score_header_service",
-        "@score_docs_as_code//src/extensions/score_layout:score_layout",
-        "@score_docs_as_code//src/extensions/score_metamodel:score_metamodel",
-        "@score_docs_as_code//src/extensions/score_source_code_linker:score_source_code_linker",
-        # NOTE: Do not comment this in, can only be enabled once tooling is released & process upgraded
-        #"@score_tooling//python_basics/score_pytest:attribute_plugin"
+        "@score_docs_as_code//src/extensions/score_sphinx_bundle:score_sphinx_bundle",
     ]
 
     sphinx_build_binary(

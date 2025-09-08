@@ -11,21 +11,23 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 import pytest
+from attribute_plugin import add_test_properties  # type: ignore[import-untyped]
+from sphinx.application import Sphinx
+from sphinx_needs.data import NeedsInfoType, NeedsView
 
+from src.extensions.score_metamodel import CheckLogger
 from src.extensions.score_metamodel.__init__ import (
     graph_checks,
     local_checks,
     parse_checks_filter,
 )
 
-from attribute_plugin import add_test_properties
 
-
-def dummy_local_check(app, need, log):
+def dummy_local_check(app: Sphinx, need: NeedsInfoType, log: CheckLogger) -> None:
     pass
 
 
-def dummy_graph_check(app, needs_view, log):
+def dummy_graph_check(app: Sphinx, needs_view: NeedsView, log: CheckLogger) -> None:
     pass
 
 

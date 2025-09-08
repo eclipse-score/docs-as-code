@@ -10,11 +10,13 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
+from typing import Any
+
 from sphinx.application import Sphinx
 
 
-def return_html_theme_options(app: Sphinx) -> dict[str, object]:
-    theme_options = {
+def return_html_theme_options(app: Sphinx) -> dict[str, Any]:
+    theme_options: dict[str, Any] = {
         "navbar_align": "content",
         "header_links_before_dropdown": 5,
         "icon_links": [

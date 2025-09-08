@@ -30,7 +30,7 @@ import time
 from collections.abc import Callable
 from functools import cache
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from score_draw_uml_funcs.helpers import (
     gen_header,
@@ -101,6 +101,7 @@ def _process_interfaces(
     linkage_text: str,
 ) -> str:
     """Helper to process either implemented or used interfaces."""
+
     for iface in iface_list:
         # check for misspelled interface
         if not all_needs.get(iface, []):
@@ -108,16 +109,18 @@ def _process_interfaces(
             continue
 
         if relation == "implements":
-            if not proc_dict.get(iface, []):
+            proc_impl_dict = cast(dict[str, str], proc_dict)
+            if not proc_impl_dict.get(iface, []):
                 linkage_text += (
                     f"{gen_link_text(need, '-u->', all_needs[iface], 'implements')} \n"
                 )
-                proc_dict[iface] = need["id"]
+                proc_impl_dict[iface] = need["id"]
         else:  # "uses"
-            if not proc_dict.get(iface, []):
-                proc_dict[iface] = [need["id"]]
+            proc_used_dict = cast(dict[str, list[str]], proc_dict)
+            if not proc_used_dict.get(iface, []):
+                proc_used_dict[iface] = [need["id"]]
             else:
-                proc_dict[iface].append(need["id"])
+                proc_used_dict[iface].append(need["id"])
 
     return linkage_text
 
@@ -377,7 +380,7 @@ def draw_module(
         all_needs,
         proc_impl_interfaces,
         proc_used_interfaces,
-        local_impl_interfaces,
+        list(local_impl_interfaces),
         structure_text,
         linkage_text,
     )
@@ -417,7 +420,7 @@ class draw_full_feature:
                     if comps:
                         impl_comp[iface] = comps[0]
 
-                if imcomp := impl_comp.get(iface, {}):
+                if imcomp := impl_comp.get(iface):
                     module = get_module(imcomp, all_needs)
                     # FIXME: sometimes module is empty, then the following code fails
                     if not module:

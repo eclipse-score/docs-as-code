@@ -22,18 +22,19 @@ from typing import Any
 
 import pytest
 
+# This depends on the `attribute_plugin` in our tooling repository
+from attribute_plugin import add_test_properties  # type: ignore[import-untyped]
+
 import src.extensions.score_source_code_linker.xml_parser as xml_parser
 from src.extensions.score_source_code_linker.testlink import DataOfTestCase
-
-from attribute_plugin import add_test_properties
 
 
 # Unsure if I should make these last a session or not
 @pytest.fixture
-def tmp_xml_dirs(tmp_path):
-    root = tmp_path / "bazel-testlogs"
-    dir1 = root / "with_props"
-    dir2 = root / "no_props"
+def tmp_xml_dirs(tmp_path: Path) -> tuple[Path, Path, Path]:
+    root: Path = tmp_path / "bazel-testlogs"
+    dir1: Path = root / "with_props"
+    dir2: Path = root / "no_props"
     dir1.mkdir(parents=True)
     dir2.mkdir(parents=True)
 
@@ -48,7 +49,7 @@ def tmp_xml_dirs(tmp_path):
     def make_tc(
         name: str,
         result: str = "",
-        props: dict[str, str] = dict(),
+        props: dict[str, str] | None = None,
         file: str = "",
         line: int = 0,
     ):
@@ -84,8 +85,8 @@ def tmp_xml_dirs(tmp_path):
     write(dir1 / "test.xml", [tc1])
 
     # File without properties
-    # HINT: Once the assertions in xml_parser are back and active, this should allow us to catch that the tests
-    #       Need to be changed too.
+    # HINT: Once the assertions in xml_parser are back and active, this should allow us
+    #       to catch that the tests Need to be changed too.
     tc2 = make_tc("tc_no_props", file="path2", line=20)
     write(dir2 / "test.xml", [tc2])
 
@@ -97,11 +98,14 @@ def tmp_xml_dirs(tmp_path):
     test_type="requirements-based",
     derivation_technique="requirements-analysis",
 )
-def test_find_xml_files(tmp_xml_dirs):
+def test_find_xml_files(tmp_xml_dirs: tuple[Path, Path, Path]):
     """Ensure xml files are found as expected"""
+    root: Path
+    dir1: Path
+    dir2: Path
     root, dir1, dir2 = tmp_xml_dirs
     found = xml_parser.find_xml_files(root)
-    expected = {dir1 / "test.xml", dir2 / "test.xml"}
+    expected: set[Path] = {dir1 / "test.xml", dir2 / "test.xml"}
     assert set(found) == expected
 
 
@@ -148,8 +152,11 @@ def test_parse_properties():
     test_type="requirements-based",
     derivation_technique="requirements-analysis",
 )
-def test_read_test_xml_file(tmp_xml_dirs):
+def test_read_test_xml_file(tmp_xml_dirs: tuple[Path, Path, Path]):
     """Ensure a whole pre-defined xml file is parsed correctly"""
+    _: Path
+    dir1: Path
+    dir2: Path
     _, dir1, dir2 = tmp_xml_dirs
 
     needs1, no_props1 = xml_parser.read_test_xml_file(dir1 / "test.xml")

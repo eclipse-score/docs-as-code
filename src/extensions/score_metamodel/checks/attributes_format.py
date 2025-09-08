@@ -12,6 +12,7 @@
 # *******************************************************************************
 
 import string
+from typing import cast
 
 from score_metamodel import CheckLogger, ProhibitedWordCheck, ScoreNeedType, local_check
 from sphinx.application import Sphinx
@@ -91,7 +92,11 @@ def _check_options_for_prohibited_words(
     ]
     for option in options:
         forbidden_words = prohibited_word_checks.option_check[option]
-        for word in need[option].split():
+        option_value = need.get(option)
+        if not isinstance(option_value, str):
+            continue
+        option_text = cast(str, option_value)
+        for word in option_text.split():
             normalized = word.strip(string.punctuation).lower()
             if normalized in forbidden_words:
                 msg = (

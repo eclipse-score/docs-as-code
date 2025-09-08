@@ -10,6 +10,9 @@ exclude = [
     ".venv*/**",
 ]
 
+venvPath = "."
+venv = ".venv_docs"
+
 [tool.ruff]
 extend = "bazel-bin/ide_support.runfiles/score_tooling+/python_basics/pyproject.toml"
 

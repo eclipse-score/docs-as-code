@@ -13,7 +13,7 @@
 import operator
 from collections.abc import Callable
 from functools import reduce
-from typing import Any
+from typing import Any, cast
 
 from score_metamodel import (
     CheckLogger,
@@ -127,7 +127,7 @@ def filter_needs_by_criteria(
 
     for pat in pattern:
         if not any(need_type["directive"] == pat for need_type in needs_types):
-            log.warning(f"Unknown need type `{pat}` in graph check.")
+            log.warning(f"Unknown need type `{pat}` in graph check.", location="")
 
     for need in needs:
         if need_pattern == "include":
@@ -155,7 +155,7 @@ def check_metamodel_graph(
     # Iterate over all graph checks
     for check_name, check_config in graph_checks_global.items():
         needs_selection_criteria: dict[str, str] = check_config.get("needs")
-        check_to_perform: dict[str, str | dict] = check_config.get("check")
+        check_to_perform: dict[str, str | dict[str, Any]] = check_config.get("check")
         explanation = check_config.get("explanation", "")
         assert explanation != "", (
             f"Explanation for graph check {check_name} is missing. "
@@ -176,9 +176,12 @@ def check_metamodel_graph(
                     log.warning_for_need(need, msg)
                     continue
 
-                parent_ids: list[str] = need[parent_relation]
+                parent_ids = cast(list[str] | Any, need[parent_relation])
+                if not isinstance(parent_ids, list):
+                    continue
 
-                for parent_id in parent_ids:
+                parent_ids_list = cast(list[str], parent_ids)
+                for parent_id in parent_ids_list:
                     parent_need = needs_dict_all.get(parent_id)
                     if parent_need is None:
                         msg = f"Parent need `{parent_id}` not found in needs_dict."
