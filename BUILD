@@ -13,6 +13,7 @@
 
 load("@aspect_rules_py//py:defs.bzl", "py_library")
 load("@score_tooling//:defs.bzl", "copyright_checker")
+load("@score_tooling//:defs.bzl", "cli_helper")
 load("//:docs.bzl", "docs")
 
 package(default_visibility = ["//visibility:public"])
@@ -34,4 +35,9 @@ docs(
         "@score_process//:needs_json",
     ],
     source_dir = "docs",
+)
+
+cli_helper(
+    name = "cli-help",
+    visibility = ["//visibility:public"],
 )
