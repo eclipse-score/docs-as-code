@@ -41,7 +41,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/checks/attributes_format.py",
-          "line": 105,
+          "line": 110,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_title",
           "full_line": "# req-Id: tool_req__docs_common_attr_title"
@@ -63,7 +63,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/checks/attributes_format.py",
-          "line": 104,
+          "line": 109,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_desc_wording",
           "full_line": "# req-Id: tool_req__docs_common_attr_desc_wording"
@@ -1164,7 +1164,7 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/checks/attributes_format.py",
-          "line": 29,
+          "line": 30,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_id_scheme",
           "full_line": "# req-Id: tool_req__docs_common_attr_id_scheme"
