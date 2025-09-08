@@ -848,6 +848,7 @@ needs_types:
       fully_verifies: ^.*$
       partially_verifies: ^.*$
 
+  # https://eclipse-score.github.io/process_description/main/permalink.html?id=gd_temp__change_decision_record
   dec_rec:
     title: Decision Record
     prefix: dec_rec__

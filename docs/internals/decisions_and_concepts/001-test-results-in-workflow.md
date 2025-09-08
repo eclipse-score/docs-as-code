@@ -1,14 +1,8 @@
----
-id: Docs-As-Code-DR-001
-status: "Draft"
-owner: Infrastructure Community
----
-
 :::{dec_rec} Decision Record 001: Test results in Docs-As-Code Workflows
-:id: dec_rec__docs_as_code__001_results_in_wfs
+:id: dec_rec__dac__001_test_results_in_workflows
 :status: accepted
-:context: see below...
-:decision: see below...
+:context: Need to embed test results into docs, but tests are slow.
+:decision: Run quick docs checks and tests in parallel, then full docs generation sequentially.
 :consequences: implementation effort
 :::
 
