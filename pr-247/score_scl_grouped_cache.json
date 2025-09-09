@@ -1119,7 +1119,7 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 962,
+          "line": 976,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_safety_link_check",
           "full_line": "# req-Id: tool_req__docs_common_attr_safety_link_check"
@@ -1134,7 +1134,7 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 971,
+          "line": 985,
           "tag": "# req-Id:",
           "need": "tool_req__docs_arch_link_qm_to_safety_req",
           "full_line": "# req-Id: tool_req__docs_arch_link_qm_to_safety_req"
@@ -1149,7 +1149,7 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 980,
+          "line": 994,
           "tag": "# req-Id:",
           "need": "tool_req__docs_req_arch_link_safety_to_arch",
           "full_line": "# req-Id: tool_req__docs_req_arch_link_safety_to_arch"
