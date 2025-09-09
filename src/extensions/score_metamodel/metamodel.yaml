@@ -848,6 +848,20 @@ needs_types:
       fully_verifies: ^.*$
       partially_verifies: ^.*$
 
+  # https://eclipse-score.github.io/process_description/main/permalink.html?id=gd_temp__change_decision_record
+  dec_rec:
+    title: Decision Record
+    prefix: dec_rec__
+    mandatory_options:
+      id: ^dec_rec__.*__.*$
+      status: ^(proposed|accepted|deprecated|rejected|superseded)$
+      context: ^.*$
+      decision: ^.*$
+    optional_options:
+      consequences: ^.*$
+    optional_links:
+      affects: ^.*$
+
 # Extra link types, which shall be available and allow need types to be linked to each other.
 # We use a dedicated linked type for each type of a connection, for instance from
 # a specification to a requirement. This makes filtering and visualization of such connections
