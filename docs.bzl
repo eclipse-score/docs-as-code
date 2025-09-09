@@ -55,6 +55,9 @@ def docs(source_dir = "docs", data = [], deps = []):
     data = data + ["@score_docs_as_code//src:docs_assets"]
     call_path = native.package_name()
 
+    if call_path != "":
+        fail("docs() must be called from the root package. Current package: " + call_path)
+
     deps = deps + all_requirements + [
         "@score_docs_as_code//src:plantuml_for_python",
         "@score_docs_as_code//src/extensions/score_sphinx_bundle:score_sphinx_bundle",
@@ -69,7 +72,7 @@ def docs(source_dir = "docs", data = [], deps = []):
 
     py_binary(
         name = "docs",
-        tags = ["cli_help=Build documentation:\nbazel run //" + call_path + ":docs"],
+        tags = ["cli_help=Build documentation:\nbazel run //:docs"],
         srcs = ["@score_docs_as_code//src:incremental.py"],
         data = data,
         deps = deps,
@@ -82,7 +85,7 @@ def docs(source_dir = "docs", data = [], deps = []):
 
     py_binary(
         name = "docs_check",
-        tags = ["cli_help=Verify documentation:\nbazel run //" + call_path + ":docs_check"],
+        tags = ["cli_help=Verify documentation:\nbazel run //:docs_check"],
         srcs = ["@score_docs_as_code//src:incremental.py"],
         data = data,
         deps = deps,
@@ -95,7 +98,7 @@ def docs(source_dir = "docs", data = [], deps = []):
 
     py_binary(
         name = "live_preview",
-        tags = ["cli_help=Live preview documentation in the browser:\nbazel run //" + call_path + ":live_preview"],
+        tags = ["cli_help=Live preview documentation in the browser:\nbazel run //:live_preview"],
         srcs = ["@score_docs_as_code//src:incremental.py"],
         data = data,
         deps = deps,
@@ -108,7 +111,7 @@ def docs(source_dir = "docs", data = [], deps = []):
 
     score_virtualenv(
         name = "ide_support",
-        tags = ["cli_help=Create virtual environment (.venv_docs) for documentation support:\nbazel run //" + call_path + ":ide_support"],
+        tags = ["cli_help=Create virtual environment (.venv_docs) for documentation support:\nbazel run //:ide_support"],
         venv_name = ".venv_docs",
         reqs = deps,
         # Add dependencies to ide_support, so esbonio has access to them.

@@ -12,8 +12,7 @@
 # *******************************************************************************
 
 load("@aspect_rules_py//py:defs.bzl", "py_library")
-load("@score_tooling//:defs.bzl", "copyright_checker")
-load("@score_tooling//:defs.bzl", "cli_helper")
+load("@score_tooling//:defs.bzl", "cli_helper", "copyright_checker")
 load("//:docs.bzl", "docs")
 
 package(default_visibility = ["//visibility:public"])
