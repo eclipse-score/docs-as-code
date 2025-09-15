@@ -12,7 +12,7 @@
 # *******************************************************************************
 """Functionality related to reading in the SCORE metamodel.yaml"""
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, cast
 
