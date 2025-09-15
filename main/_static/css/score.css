@@ -12,9 +12,14 @@ html {
 
     The base color is TEAL */
 
-/* TODO: Does not work as intended */
-.version-switcher__container[data-theme="light"] {
-    background-color: #a382c5;
+/* Version Switcher Button */
+button.btn.version-switcher__button {
+    color: #FFF;
+}
+
+/* Version Switcher Menu */
+.version-switcher__menu a.list-group-item {
+    color: #FFF;
 }
 
 html[data-theme="light"] {
