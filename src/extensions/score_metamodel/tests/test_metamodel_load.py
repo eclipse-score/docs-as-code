@@ -33,49 +33,46 @@ def test_load_metamodel_data():
         result = load_metamodel_data()
 
     # Assertions
-    assert "needs_types" in result
-    assert len(result["needs_types"]) == 1
-    assert result["needs_types"][0]["directive"] == "type1"
-    assert result["needs_types"][0]["title"] == "Type 1"
-    assert result["needs_types"][0]["prefix"] == "T1"
-    assert result["needs_types"][0]["color"] == "blue"
-    assert result["needs_types"][0]["style"] == "bold"
-    assert result["needs_types"][0]["mandatory_options"] == {"opt1": "value1"}
-    assert result["needs_types"][0]["opt_opt"] == {
+    assert len(result.needs_types) == 1
+    assert result.needs_types[0]["directive"] == "type1"
+    assert result.needs_types[0]["title"] == "Type 1"
+    assert result.needs_types[0]["prefix"] == "T1"
+    assert result.needs_types[0]["color"] == "blue"
+    assert result.needs_types[0]["style"] == "bold"
+    assert result.needs_types[0]["mandatory_options"] == {"opt1": "value1"}
+    assert result.needs_types[0]["opt_opt"] == {
         "opt2": "value2",
         "opt3": "value3",
         "global_opt": "global_value",
     }
-    assert result["needs_types"][0]["req_link"] == [("link1", "value1")]
-    assert result["needs_types"][0]["opt_link"] == [("link2", "value2")]
+    assert result.needs_types[0]["req_link"] == [("link1", "value1")]
+    assert result.needs_types[0]["opt_link"] == [("link2", "value2")]
 
-    assert "needs_extra_links" in result
-    assert len(result["needs_extra_links"]) == 1
-    assert result["needs_extra_links"][0] == {
+    assert len(result.needs_extra_links) == 1
+    assert result.needs_extra_links[0] == {
         "option": "link_option1",
         "incoming": "incoming1",
         "outgoing": "outgoing1",
     }
 
-    assert "needs_extra_options" in result
-    assert result["needs_extra_options"] == ["global_opt", "opt1", "opt2", "opt3"]
+    assert result.needs_extra_options == ["global_opt", "opt1", "opt2", "opt3"]
 
-    assert "prohibited_words_checks" in result
-    assert result["prohibited_words_checks"][0] == ProhibitedWordCheck(
+    assert result.prohibited_words_checks[0] == ProhibitedWordCheck(
         name="title_check", option_check={"title": ["stop_word1"]}
     )
 
-    assert result["prohibited_words_checks"][1] == ProhibitedWordCheck(
+    assert result.prohibited_words_checks[1] == ProhibitedWordCheck(
         name="content_check",
         option_check={"content": ["weak_word1"]},
         types=["req_type"],
     )
 
-    assert "needs_graph_check" in result
-    assert result["needs_graph_check"]["needs_graph_check"]["needs"] == {
+    defined_graph_check = result.needs_graph_check["needs_graph_check"]
+    assert isinstance(defined_graph_check, dict)
+    assert defined_graph_check["needs"] == {
         "include": "type1",
         "condition": "opt1 == test",
     }
-    assert result["needs_graph_check"]["needs_graph_check"]["check"] == {
+    assert defined_graph_check["check"] == {
         "link1": "opt1 == test",
     }
