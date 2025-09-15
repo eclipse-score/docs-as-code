@@ -13,16 +13,18 @@ html {
     The base color is TEAL */
 
 /* Version Switcher Button */
-button.btn.version-switcher__button[data-theme="light"] {
-    color: #FFF;
+button.btn.version-switcher__button {
+    color: var(--score-version-selector-color);
 }
 
 /* Version Switcher Menu */
-.version-switcher__menu a.list-group-item[data-theme="light"] {
-    color: #FFF;
+.version-switcher__menu a.list-group-item {
+    color: var(--score-version-selector-color);
 }
 
 html[data-theme="light"] {
+    --score-version-selector-color: #FFF;
+
     /* Search Box background color. */
     --bs-btn-hover-bg: #a382c5;
     /* Menu svg items */
@@ -43,6 +45,8 @@ html[data-theme="light"] {
 }
 
 html[data-theme="dark"] {
+    --score-version-selector-color: #2D1942;
+
     /* Link color */
     --pst-color-primary: #FFFFFF;
     /* Link color on hover */
