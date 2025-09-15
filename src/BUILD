@@ -70,17 +70,6 @@ compile_pip_requirements(
     ],
 )
 
-filegroup(
-    name = "docs_assets",
-    srcs = glob(
-        [
-            "assets/**/*",
-        ],
-        allow_empty = True,
-    ),
-    visibility = ["//visibility:public"],
-)
-
 # Running this executes the `collect_source_files.bzl` aspect.
 # Collects all source files from specified targets in 'deps', and makes them available for parsing for the source_code_linker
 
