@@ -20,6 +20,7 @@ from sphinx.application import Sphinx
 
 logger = logging.getLogger(__name__)
 
+
 def setup(app: Sphinx) -> dict[str, str | bool]:
     logger.debug("score_layout setup called")
 
