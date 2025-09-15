@@ -23,6 +23,7 @@ from src.extensions.score_metamodel.metamodel_types import ProhibitedWordCheck
 
 logger = logging.get_logger(__name__)
 
+
 @dataclass
 class MetaModelData:
     needs_types: list[dict[str, object]]
@@ -90,15 +91,10 @@ def default_options() -> list[str]:
         "parts",
     ]
 
+
 def load_metamodel_data() -> MetaModelData:
     """
-    Load and process metamodel.yaml.
-
-    Returns:
-        dict: A dictionary with keys:
-            - 'needs_types': A list of processed need types.
-            - 'needs_extra_links': A list of extra link definitions.
-            - 'needs_extra_options': A sorted list of all option keys.
+    Load metamodel.yaml and prepare data fields as needed for sphinx-needs.
     """
     yaml_path = Path(__file__).resolve().parent / "metamodel.yaml"
 

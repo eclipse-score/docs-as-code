@@ -24,6 +24,7 @@ class ProhibitedWordCheck:
     )  # { Option: [Forbidden words]}
     types: list[str] = field(default_factory=list)
 
+
 class ScoreNeedType(NeedType):
     tags: list[str]
     parts: int
