@@ -12,7 +12,7 @@ html {
 
     The base color is TEAL */
 
-version-switcher__container[data-theme="light"] {
+.version-switcher__container[data-theme="light"] {
     background-color: #a382c5;
 }
 
