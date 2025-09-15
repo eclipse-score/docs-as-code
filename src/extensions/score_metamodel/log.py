@@ -90,12 +90,12 @@ class CheckLogger:
         self._log.warning(msg, type="score_metamodel", location=location)
 
     @property
-    def has_warnings(self):
-        return self._warning_count > 0
+    def warnings(self):
+        return self._warning_count
 
     @property
-    def has_infos(self):
-        return self._info_count > 0
+    def infos(self):
+        return self._info_count
 
     def flush_new_checks(self):
         """Log all new-check messages together at once."""
@@ -108,14 +108,11 @@ class CheckLogger:
         if not self._new_checks:
             return
 
-        info_header = make_header_line("[INFO MESSAGE]")
-        separator = "=" * 80
         warning_header = make_header_line(
-            f"[New Checks] has {len(self._new_checks)} warnings"
+            f"{len(self._new_checks)} non-fatal warnings "
+            "(will become fatal in the future)"
         )
 
-        logger.info(info_header)
-        logger.info(separator)
         logger.info(warning_header)
 
         for msg, location in self._new_checks:

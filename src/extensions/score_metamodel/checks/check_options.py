@@ -21,9 +21,6 @@ from score_metamodel import (
 from sphinx.application import Sphinx
 from sphinx_needs.data import NeedsInfoType
 
-FieldCheck = tuple[dict[str, str], bool]
-CheckingDictType = dict[str, list[FieldCheck]]
-
 
 def get_need_type(needs_types: list[ScoreNeedType], directive: str) -> ScoreNeedType:
     for need_type in needs_types:
@@ -142,41 +139,28 @@ def check_options(
     """
     production_needs_types = app.config.needs_types
 
-    try:
-        need_options = get_need_type(production_needs_types, need["type"])
-    except ValueError:
-        log.warning_for_option(need, "type", "no type info defined for semantic check.")
-        return
-
-    if not need_options.get("mandatory_options", {}):
-        log.warning_for_option(need, "type", "no type info defined for semantic check.")
-        return
-
-    # Validate Options and Links
-    checking_dict: CheckingDictType = {
-        "option": [
-            (need_options.get("mandatory_options", {}), True),
-            (need_options.get("opt_opt", {}), False),
-        ],
-        "link": [
-            (dict(need_options.get("req_link", [])), True),
-            (dict(need_options.get("opt_link", [])), False),
-        ],
-    }
+    need_options = get_need_type(production_needs_types, need["type"])
 
     # If undefined this is an empty list
     allowed_prefixes = app.config.allowed_external_prefixes
 
-    for field_type, check_fields in checking_dict.items():
-        for field_values, is_required in check_fields:
-            validate_fields(
-                need,
-                log,
-                field_values,
-                required=is_required,
-                field_type=field_type,
-                allowed_prefixes=allowed_prefixes,
-            )
+    # Validate Options and Links
+    field_validations = [
+        ("option", need_options["mandatory_options"], True),
+        ("option", need_options["optional_options"], False),
+        ("link", need_options["mandatory_links"], True),
+        ("link", need_options["optional_links"], False),
+    ]
+
+    for field_type, field_values, is_required in field_validations:
+        validate_fields(
+            need,
+            log,
+            field_values,
+            required=is_required,
+            field_type=field_type,
+            allowed_prefixes=allowed_prefixes,
+        )
 
 
 @local_check
@@ -193,25 +177,18 @@ def check_extra_options(
 
     production_needs_types = app.config.needs_types
     default_options_list = default_options()
-    try:
-        need_options = get_need_type(production_needs_types, need["type"])
-    except ValueError:
-        msg = "no type info defined for semantic check."
-        log.warning_for_option(need, "type", msg)
-        return
+    need_options = get_need_type(production_needs_types, need["type"])
 
-    required_options: dict[str, str] = need_options.get("mandatory_options", {})
-    optional_options: dict[str, str] = need_options.get("opt_opt", {})
-    required_links: list[str] = [x[0] for x in need_options.get("req_link", ())]
-    optional_links: list[str] = [x[0] for x in need_options.get("opt_link", ())]
+    # list() creates a copy to avoid modifying the original
+    allowed_options = list(default_options_list)
 
-    allowed_options = (
-        list(required_options.keys())
-        + list(optional_options.keys())
-        + required_links
-        + optional_links
-        + default_options_list
-    )
+    for o in (
+        "mandatory_options",
+        "optional_options",
+        "mandatory_links",
+        "optional_links",
+    ):
+        allowed_options.extend(need_options[o].keys())
 
     extra_options = [
         option

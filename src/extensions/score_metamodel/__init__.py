@@ -143,17 +143,18 @@ def _run_checks(app: Sphinx, exception: Exception | None) -> None:
         logger.debug(f"Running graph check {check} for all needs")
         check(app, needs_all_needs, log)
 
-    if log.has_warnings:
-        logger.warning("Some needs have issues. See the log for more information.")
+    if log.warnings:
+        logger.warning(
+            f"{log.warnings} needs have issues. See the log for more information."
+        )
 
-    if log.has_infos:
+    if log.infos:
         log.flush_new_checks()
         logger.info(
-            "\n\nThese next warnings are displayed as info statements for now. "
-            "They will become real warnings in the future. "
+            f"\nThe {log.infos} warnings above are non fatal for now. "
+            "They will become fatal in the future. "
             "Please fix them as soon as possible.\n"
         )
-        # TODO: exit code
 
 
 def _remove_prefix(word: str, prefixes: list[str]) -> str:
@@ -163,16 +164,11 @@ def _remove_prefix(word: str, prefixes: list[str]) -> str:
     return word
 
 
-def _get_need_type_for_need(app: Sphinx, need: NeedsInfoType):
-    need_type = None
+def _get_need_type_for_need(app: Sphinx, need: NeedsInfoType) -> ScoreNeedType:
     for nt in app.config.needs_types:
-        try:
-            if nt["directive"] == need["type"]:
-                need_type = nt
-                break
-        except Exception:
-            continue
-    return need_type
+        if nt["directive"] == need["type"]:
+            return nt
+    raise ValueError(f"Need type {need['type']} not found in needs_types")
 
 
 def _validate_external_need_opt_links(
@@ -224,15 +220,10 @@ def _check_external_optional_link_patterns(app: Sphinx, log: CheckLogger) -> Non
 
     for need in needs_external_needs.values():
         need_type = _get_need_type_for_need(app, need)
-        if not need_type:
-            continue
 
-        opt_links = dict(need_type.get("opt_link", []))
-        if not opt_links:
-            continue
-
-        allowed_prefixes = app.config.allowed_external_prefixes
-        _validate_external_need_opt_links(need, opt_links, allowed_prefixes, log)
+        if opt_links := need_type["optional_links"]:
+            allowed_prefixes = app.config.allowed_external_prefixes
+            _validate_external_need_opt_links(need, opt_links, allowed_prefixes, log)
 
 
 def setup(app: Sphinx) -> dict[str, str | bool]:
