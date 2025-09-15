@@ -52,7 +52,6 @@ def docs(source_dir = "docs", data = [], deps = []):
     By using this function, you'll get any and all updates for documentation targets in one place.
     """
 
-    data = data + ["@score_docs_as_code//src:docs_assets"]
     call_path = native.package_name()
 
     if call_path != "":

@@ -10,7 +10,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-import os
+import logging
 from pathlib import Path
 from typing import Any
 
@@ -18,8 +18,12 @@ import html_options
 import sphinx_options
 from sphinx.application import Sphinx
 
+logger = logging.getLogger(__name__)
+
 
 def setup(app: Sphinx) -> dict[str, str | bool]:
+    logger.debug("score_layout setup called")
+
     app.connect("config-inited", update_config)
     return {
         "version": "0.1",
@@ -29,27 +33,23 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
 
 
 def update_config(app: Sphinx, _config: Any):
+    logger.debug("score_layout update_config called")
+
     app.config.needs_layouts = sphinx_options.needs_layouts
     app.config.needs_global_options = sphinx_options.needs_global_options
     app.config.html_theme = html_options.html_theme
     app.config.html_context = html_options.return_html_context(app)
     app.config.html_theme_options = html_options.return_html_theme_options(app)
 
-    # Setting HTML static path
-    if r := os.getenv("RUNFILES_DIR"):
-        if (Path(r) / "score_docs_as_code+").exists():
-            # Docs-as-code used as a module with bazel 8
-            module = "score_docs_as_code+"
-        elif (Path(r) / "score_docs_as_code~").exists():
-            # Docs-as-code used as a module with bazel 7
-            module = "score_docs_as_code~"
-        else:
-            # Docs-as-code is the current module
-            module = "_main"
-        app.config.html_static_path.append(str(Path(r) / module / "src/assets"))
+    logger.debug(f"score_layout __file__: {__file__}")
 
-        puml = Path(r) / module / "src/assets/puml-theme-score.puml"
-        app.config.needs_flow_configs = {"score_config": f"!include {puml}"}
+    score_layout_path = Path(__file__).parent.resolve()
+    logger.debug(f"score_layout_path: {score_layout_path}")
+
+    app.config.html_static_path.append(str(score_layout_path / "assets"))
+
+    puml = score_layout_path / "assets" / "puml-theme-score.puml"
+    app.config.needs_flow_configs = {"score_config": f"!include {puml}"}
 
     app.add_css_file("css/score.css", priority=500)
     app.add_css_file("css/score_needs.css", priority=500)

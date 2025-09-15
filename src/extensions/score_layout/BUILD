@@ -11,15 +11,20 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 load("@aspect_rules_py//py:defs.bzl", "py_library")
-load("@pip_process//:requirements.bzl", "all_requirements")
+load("@pip_process//:requirements.bzl", "requirement")
 
 py_library(
     name = "score_layout",
-    srcs = glob(
-        ["*.py"],
-    ),
+    srcs = glob([
+        "*.py",
+        # Adding assets as src instead of data ensures they are included in the
+        # library as they would normally be, and we do not need to go through bazel's
+        # RUNFILES_DIR mechanism to access them. This makes the code much simpler.
+        # And it makes the library far easier extractable from bazel into a normal
+        # python package if we ever want to do that.
+        "assets/**",
+    ]),
     imports = ["."],
     visibility = ["//visibility:public"],
-    # TODO: Figure out if all requirements are needed or if we can break it down a bit
-    deps = all_requirements,
+    deps = [requirement("sphinx")],
 )
