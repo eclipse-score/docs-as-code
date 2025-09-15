@@ -12,11 +12,13 @@ html {
 
     The base color is TEAL */
 
+version-switcher__container[data-theme="light"] {
+    background-color: #a382c5;
+}
+
 html[data-theme="light"] {
     /* Search Box background color. */
     --bs-btn-hover-bg: #a382c5;
-    /* Version selector */
-    --pst-color-on-background: #a382c5;
     /* Menu svg items */
     --pst-color-muted: #FFF;
     /* Text color within cards (same background as page header) */
