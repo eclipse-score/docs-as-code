@@ -56,30 +56,30 @@ needs_types:
   ##############################################################################
   # TSF
   tsf:
-    title: "TSF"
+    title: TSF
     mandatory_options:
-      id: "^tsf__[0-9a-zA-Z_-]*$"
-      status: "^(draft|valid)$"
+      id: ^tsf__[0-9a-zA-Z_-]*$
+      status: ^(draft|valid)$
     optional_links:
-      links: "^.*$"
+      links: ^.*$
     parts: 3
 
   tenet:
-    title: "Tenet"
+    title: Tenet
     mandatory_options:
-      id: "^tenet__[0-9a-zA-Z_-]*$"
-      status: "^(draft|valid)$"
+      id: ^tenet__[0-9a-zA-Z_-]*$
+      status: ^(draft|valid)$
     optional_links:
       links: "^.*$"
     parts: 3
 
   assertion:
-    title: "Assertion"
+    title: Assertion
     mandatory_options:
-      id: "assertion__[0-9a-zA-Z_-]*$"
-      status: "^(draft|valid)$"
+      id: ^assertion__[0-9a-zA-Z_-]*$
+      status: ^(draft|valid)$
     optional_links:
-      links: "^.*$"
+      links: ^.*$
     parts: 3
 
   # Standard Requirement and Work Product
@@ -87,7 +87,7 @@ needs_types:
   std_req:
     title: Standard Requirement
     mandatory_options:
-      id: std_req__(iso26262|isosae21434|isopas8926|aspice_40)__[0-9a-zA-Z_-]*$
+      id: ^std_req__(iso26262|isosae21434|isopas8926|aspice_40)__[0-9a-zA-Z_-]*$
       status: ^(valid)$
     optional_links:
       links: ^.*$
@@ -96,7 +96,7 @@ needs_types:
   std_wp:
     title: Standard Work Product
     mandatory_options:
-      id: std_wp__(iso26262|isosae21434|isopas8926|aspice_40)__[0-9a-z_]*$
+      id: ^std_wp__(iso26262|isosae21434|isopas8926|aspice_40)__[0-9a-z_]*$
       status: ^(valid)$
     parts: 3
 
