@@ -60,10 +60,6 @@ def _validate_value_pattern(
         ) from e
 
 
-def get_id_pattern(t: ScoreNeedType) -> str:
-    return t["mandatory_options"]["id"]
-
-
 def validate_fields(
     need: NeedsInfoType,
     log: CheckLogger,
