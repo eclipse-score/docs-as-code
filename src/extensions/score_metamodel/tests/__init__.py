@@ -31,14 +31,14 @@ def fake_check_logger():
             super().__init__(self._mock_logger, app_path)
 
         def assert_no_warnings(self):
-            if self.has_warnings:
+            if self.warnings:
                 warnings = "\n".join(
                     f"* {call}" for call in self._mock_logger.warning.call_args_list
                 )
                 pytest.fail(f"Expected no warnings, but got:\n{warnings}")
 
         def assert_no_infos(self):
-            if self.has_infos:
+            if self.infos:
                 infos = "\n".join(
                     f"* {call}" for call in self._mock_logger.info.call_args_list
                 )

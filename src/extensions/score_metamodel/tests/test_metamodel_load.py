@@ -37,16 +37,16 @@ def test_load_metamodel_data():
     assert result.needs_types[0]["directive"] == "type1"
     assert result.needs_types[0]["title"] == "Type 1"
     assert result.needs_types[0]["prefix"] == "T1"
-    assert result.needs_types[0]["color"] == "blue"
-    assert result.needs_types[0]["style"] == "bold"
+    assert result.needs_types[0].get("color") == "blue"
+    assert result.needs_types[0].get("style") == "bold"
     assert result.needs_types[0]["mandatory_options"] == {"opt1": "value1"}
-    assert result.needs_types[0]["opt_opt"] == {
+    assert result.needs_types[0]["optional_options"] == {
         "opt2": "value2",
         "opt3": "value3",
         "global_opt": "global_value",
     }
-    assert result.needs_types[0]["req_link"] == [("link1", "value1")]
-    assert result.needs_types[0]["opt_link"] == [("link2", "value2")]
+    assert result.needs_types[0]["mandatory_links"] == {"link1": "value1"}
+    assert result.needs_types[0]["optional_links"] == {"link2": "value2"}
 
     assert len(result.needs_extra_links) == 1
     assert result.needs_extra_links[0] == {

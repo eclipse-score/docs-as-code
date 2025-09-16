@@ -19,14 +19,17 @@ from typing import Any, cast
 from ruamel.yaml import YAML
 from sphinx_needs import logging
 
-from src.extensions.score_metamodel.metamodel_types import ProhibitedWordCheck
+from src.extensions.score_metamodel.metamodel_types import (
+    ProhibitedWordCheck,
+    ScoreNeedType,
+)
 
 logger = logging.get_logger(__name__)
 
 
 @dataclass
 class MetaModelData:
-    needs_types: list[dict[str, object]]
+    needs_types: list[ScoreNeedType]
     needs_extra_links: list[dict[str, str]]
     needs_extra_options: list[str]
     prohibited_words_checks: list[ProhibitedWordCheck]
@@ -102,11 +105,7 @@ def load_metamodel_data() -> MetaModelData:
     with open(yaml_path, encoding="utf-8") as f:
         data = cast(dict[str, Any], yaml.load(f))
 
-    # Access the custom validation block
-
-    types_dict = cast(dict[str, Any], data.get("needs_types", {}))
-    links_dict = cast(dict[str, Any], data.get("needs_extra_links", {}))
-    graph_check_dict = cast(dict[str, Any], data.get("graph_checks", {}))
+    # Some options are globally enabled for all types
     global_base_options = cast(dict[str, Any], data.get("needs_types_base_options", {}))
     global_base_options_optional_opts = cast(
         dict[str, Any], global_base_options.get("optional_options", {})
@@ -125,14 +124,23 @@ def load_metamodel_data() -> MetaModelData:
     needs_types_list = []
 
     all_options: set[str] = set()
+    types_dict = cast(dict[str, Any], data.get("needs_types", {}))
     for directive_name, directive_data in types_dict.items():
-        directive_name = cast(str, directive_name)
-        directive_data = cast(dict[str, Any], directive_data)
+        assert isinstance(directive_name, str)
+        assert isinstance(directive_data, dict)
+
         # Build up a single "needs_types" item
-        one_type: dict[str, Any] = {
+        one_type: ScoreNeedType = {
             "directive": directive_name,
-            "title": directive_data.get("title", ""),
-            "prefix": directive_data.get("prefix", ""),
+            "title": directive_data["title"],
+            "prefix": directive_data["prefix"],
+            "tags": directive_data.get("tags", []),
+            "parts": directive_data.get("parts", 3),
+            "mandatory_options": directive_data.get("mandatory_options", {}),
+            "optional_options": directive_data.get("optional_options", {})
+            | global_base_options_optional_opts,
+            "mandatory_links": directive_data.get("mandatory_links", {}),
+            "optional_links": directive_data.get("optional_links", {}),
         }
 
         if "color" in directive_data:
@@ -140,45 +148,14 @@ def load_metamodel_data() -> MetaModelData:
         if "style" in directive_data:
             one_type["style"] = directive_data["style"]
 
-        # Store mandatory_options and optional_options directly as a dict
-        mandatory_options = cast(
-            dict[str, Any], directive_data.get("mandatory_options", {})
-        )
-        one_type["mandatory_options"] = mandatory_options
-        tags = cast(list[str], directive_data.get("tags", []))
-        one_type["tags"] = tags
-        parts = cast(int, directive_data.get("parts", 3))
-        one_type["parts"] = parts
-
-        optional_options = cast(
-            dict[str, Any], directive_data.get("optional_options", {})
-        )
-        optional_options.update(global_base_options_optional_opts)
-        one_type["opt_opt"] = optional_options
-
-        all_options.update(list(mandatory_options.keys()))
-        all_options.update(list(optional_options.keys()))
-
-        # mandatory_links => "req_link"
-        mand_links_yaml = cast(
-            dict[str, Any], directive_data.get("mandatory_links", {})
-        )
-        if mand_links_yaml:
-            one_type["req_link"] = [
-                (cast(str, k), cast(Any, v)) for k, v in mand_links_yaml.items()
-            ]
-
-        # optional_links => "opt_link"
-        opt_links_yaml = cast(dict[str, Any], directive_data.get("optional_links", {}))
-        if opt_links_yaml:
-            one_type["opt_link"] = [
-                (cast(str, k), cast(Any, v)) for k, v in opt_links_yaml.items()
-            ]
-
         needs_types_list.append(one_type)
+
+        all_options.update(set(one_type["mandatory_options"].keys()))
+        all_options.update(set(one_type["optional_options"].keys()))
 
     # Convert "links" dict -> list of {"option", "incoming", "outgoing"}
     needs_extra_links_list: list[dict[str, str]] = []
+    links_dict = cast(dict[str, Any], data.get("needs_extra_links", {}))
     for link_option, link_data in links_dict.items():
         link_option = cast(str, link_option)
         link_data = cast(dict[str, Any], link_data)
@@ -195,6 +172,8 @@ def load_metamodel_data() -> MetaModelData:
     # They are still inside the extra options we extract to enable
     # constraint checking via regex
     needs_extra_options: list[str] = sorted(all_options - set(default_options_list))
+
+    graph_check_dict = cast(dict[str, Any], data.get("graph_checks", {}))
 
     return MetaModelData(
         needs_types=needs_types_list,
