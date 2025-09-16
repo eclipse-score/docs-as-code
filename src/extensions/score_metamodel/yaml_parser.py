@@ -133,7 +133,7 @@ def load_metamodel_data() -> MetaModelData:
         one_type: ScoreNeedType = {
             "directive": directive_name,
             "title": directive_data["title"],
-            "prefix": directive_data["prefix"],
+            "prefix": directive_data.get("prefix", f"{directive_name}__"),
             "tags": directive_data.get("tags", []),
             "parts": directive_data.get("parts", 3),
             "mandatory_options": directive_data.get("mandatory_options", {}),
@@ -142,6 +142,11 @@ def load_metamodel_data() -> MetaModelData:
             "mandatory_links": directive_data.get("mandatory_links", {}),
             "optional_links": directive_data.get("optional_links", {}),
         }
+
+        # Ensure ID regex is set
+        if "id" not in one_type["mandatory_options"]:
+            prefix = one_type["prefix"]
+            one_type["mandatory_options"]["id"] = f"^{prefix}[0-9a-z_]+$"
 
         if "color" in directive_data:
             one_type["color"] = directive_data["color"]
