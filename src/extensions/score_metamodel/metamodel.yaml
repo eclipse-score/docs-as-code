@@ -49,47 +49,45 @@ prohibited_words_checks:
       - absolutely
 
 needs_types:
+  # See metamodel.md for how to define a new need type
+
   ##############################################################################
   # Process Metamodel
   ##############################################################################
   # TSF
   tsf:
-    title: "TSF"
-    prefix: "tsf__"
+    title: TSF
     mandatory_options:
-      id: "^tsf__[0-9a-zA-Z_-]*$"
-      status: "^(draft|valid)$"
+      id: ^tsf__[0-9a-zA-Z_-]*$
+      status: ^(draft|valid)$
     optional_links:
-      links: "^.*$"
+      links: ^.*$
     parts: 3
 
   tenet:
-    title: "Tenet"
-    prefix: "tenet__"
+    title: Tenet
     mandatory_options:
-      id: "^tenet__[0-9a-zA-Z_-]*$"
-      status: "^(draft|valid)$"
+      id: ^tenet__[0-9a-zA-Z_-]*$
+      status: ^(draft|valid)$
     optional_links:
       links: "^.*$"
     parts: 3
 
   assertion:
-    title: "Assertion"
-    prefix: "^assertion__"
+    title: Assertion
     mandatory_options:
-      id: "assertion__[0-9a-zA-Z_-]*$"
-      status: "^(draft|valid)$"
+      id: ^assertion__[0-9a-zA-Z_-]*$
+      status: ^(draft|valid)$
     optional_links:
-      links: "^.*$"
+      links: ^.*$
     parts: 3
 
   # Standard Requirement and Work Product
   # req-Id: tool_req__docs_stdreq_types
   std_req:
     title: Standard Requirement
-    prefix: std_req__
     mandatory_options:
-      id: std_req__(iso26262|isosae21434|isopas8926|aspice_40)__[0-9a-zA-Z_-]*$
+      id: ^std_req__(iso26262|isosae21434|isopas8926|aspice_40)__[0-9a-zA-Z_-]*$
       status: ^(valid)$
     optional_links:
       links: ^.*$
@@ -97,9 +95,8 @@ needs_types:
 
   std_wp:
     title: Standard Work Product
-    prefix: std_wp__
     mandatory_options:
-      id: std_wp__(iso26262|isosae21434|isopas8926|aspice_40)__[0-9a-z_]*$
+      id: ^std_wp__(iso26262|isosae21434|isopas8926|aspice_40)__[0-9a-z_]*$
       status: ^(valid)$
     parts: 3
 
@@ -109,7 +106,6 @@ needs_types:
     title: Workflow
     prefix: wf__
     mandatory_options:
-      id: ^wf__[0-9a-z_]*$
       status: ^(valid|draft)$
     mandatory_links:
       input: ^wp__.*$
@@ -125,9 +121,7 @@ needs_types:
   # req-Id: tool_req__docs_req_types
   gd_req:
     title: Process Requirements
-    prefix: gd_req__
     mandatory_options:
-      id: ^gd_req__[0-9a-z_]*$
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|draft)$
       content: ^[\s\S]+$
@@ -142,9 +136,7 @@ needs_types:
 
   gd_temp:
     title: Process Template
-    prefix: gd_temp__
     mandatory_options:
-      id: ^gd_temp__[0-9a-z_]*$
       status: ^(valid|draft)$
     optional_links:
       complies: std_req__(iso26262|isodae21434|isopas8926|aspice_40)__.*$
@@ -152,32 +144,27 @@ needs_types:
 
   gd_chklst:
     title: Process Checklist
-    prefix: gd_chklst__
     mandatory_options:
-      id: ^gd_chklst__[0-9a-z_]*$
       status: ^(valid|draft)$
     optional_links:
-      complies: std_req__(iso26262|isodae21434|isopas8926|aspice_40)__.*$
+      complies: ^std_req__(iso26262|isodae21434|isopas8926|aspice_40)__.*$
     parts: 2
 
   gd_guidl:
     title: Process Guideline
-    prefix: gd_guidl__
     mandatory_options:
-      id: ^gd_guidl__[0-9a-z_]*$
       status: ^(valid|draft)$
     optional_links:
-      complies: std_req__(iso26262|isosae21434|isopas8926|aspice_40)__.*$
+      complies: ^std_req__(iso26262|isosae21434|isopas8926|aspice_40)__.*$
     parts: 2
 
   gd_method:
     title: Process Method
     prefix: gd_meth__
     mandatory_options:
-      id: ^gd_meth__[0-9a-z_]*$
       status: ^(valid|draft)$
     optional_links:
-      complies: std_req__(iso26262|isosae21434|isopas8926|aspice_40)__.*$
+      complies: ^std_req__(iso26262|isosae21434|isopas8926|aspice_40)__.*$
     parts: 2
 
   # S-CORE Workproduct
@@ -185,18 +172,15 @@ needs_types:
     title: Workproduct
     prefix: wp__
     mandatory_options:
-      id: ^wp__[0-9a-z_]*$
       status: ^(valid|draft)$
     optional_links:
-      complies: std_(wp__iso26262|wp__isosae21434|wp__isopas8926|iic_aspice_40)__.*$
+      complies: ^std_(wp__iso26262|wp__isosae21434|wp__isopas8926|iic_aspice_40)__.*$
     parts: 2
 
   # Role
   role:
     title: Role
     prefix: rl__
-    mandatory_options:
-      id: ^rl__[0-9a-z_]*$
     optional_links:
       contains: ^rl__.*$
     parts: 2
@@ -204,17 +188,13 @@ needs_types:
   # Documents, process_description only
   doc_concept:
     title: Concept Definition
-    prefix: doc_concept__
     mandatory_options:
-      id: ^doc_concept__[0-9a-z_]*$
       status: ^(valid|draft)$
     parts: 2
 
   doc_getstrt:
-    title: Getting Startet
-    prefix: doc_getstrt__
+    title: Getting Started
     mandatory_options:
-      id: ^doc_getstrt__[0-9a-z_]*$
       status: ^(valid|draft)$
     parts: 2
 
@@ -223,7 +203,6 @@ needs_types:
     title: Generic Document
     prefix: doc__
     mandatory_options:
-      id: ^doc__[0-9a-z_]*$
       status: ^(valid|draft|invalid)$
     optional_options:
       safety: "^(QM|ASIL_B)$"
@@ -239,9 +218,7 @@ needs_types:
   # req-Id: tool_req__docs_doc_types
   doc_tool:
     title: Tool Verification Report
-    prefix: doc_tool__
     mandatory_options:
-      id: ^doc_tool__[0-9a-z_]*$
       # req-Id: tool_req__docs_tvr_status
       status: ^(draft|evaluated|qualified|released|rejected)$
       version: ^.*$
@@ -263,9 +240,7 @@ needs_types:
   # req-Id: tool_req__docs_req_types
   stkh_req:
     title: Stakeholder Requirement
-    prefix: stkh_req__
     mandatory_options:
-      id: ^stkh_req__[0-9a-z_]*$
       # req-Id: tool_req__docs_req_attr_reqtype
       reqtype: ^(Functional|Interface|Process|Non-Functional)$
       # req-Id: tool_req__docs_common_attr_safety
@@ -294,10 +269,8 @@ needs_types:
   # req-Id: tool_req__docs_req_types
   feat_req:
     title: Feature Requirement
-    prefix: feat_req__
     style: node
     mandatory_options:
-      id: ^feat_req__[0-9a-z_]*$
       # req-Id: tool_req__docs_req_attr_reqtype
       reqtype: ^(Functional|Interface|Process|Non-Functional)$
       # req-Id: tool_req__docs_common_attr_security
@@ -326,9 +299,7 @@ needs_types:
   # req-Id: tool_req__docs_req_types
   comp_req:
     title: Component Requirement
-    prefix: comp_req__
     mandatory_options:
-      id: ^comp_req__[0-9a-z_]*$
       # req-Id: tool_req__docs_req_attr_reqtype
       reqtype: ^(Functional|Interface|Process|Non-Functional)$
       # req-Id: tool_req__docs_common_attr_security
@@ -357,9 +328,7 @@ needs_types:
   # req-Id: tool_req__docs_req_types
   tool_req:
     title: Tool Requirement
-    prefix: tool_req__
     mandatory_options:
-      id: ^tool_req__[0-9a-z_]*$
       # req-Id: tool_req__docs_common_attr_security
       security: ^(YES|NO)$
       # req-Id: tool_req__docs_common_attr_safety
@@ -390,9 +359,7 @@ needs_types:
   # req-Id: tool_req__docs_req_types
   aou_req:
     title: Assumption of Use Requirement
-    prefix: aou_req__
     mandatory_options:
-      id: ^aou_req__[0-9a-z_]*$
       # req-Id: tool_req__docs_req_attr_reqtype
       reqtype: ^(Functional|Interface|Process|Non-Functional)$
       # req-Id: tool_req__docs_common_attr_security
@@ -421,11 +388,9 @@ needs_types:
   # req-Id: tool_req__docs_arch_views
   feat_arc_sta:
     title: Feature & Feature Package Diagram
-    prefix: feat_arc_sta__
     color: #FEDCD2
     style: card
     mandatory_options:
-      id: ^feat_arc_sta__[0-9a-z_]+$
       # req-Id: tool_req__docs_common_attr_security
       security: ^(YES|NO)$
       # req-Id: tool_req__docs_common_attr_safety
@@ -445,11 +410,9 @@ needs_types:
   # req-Id: tool_req__docs_arch_views
   feat_arc_dyn:
     title: Feature Sequence Diagram
-    prefix: feat_arc_dyn__
     color: #FEDCD2
     style: card
     mandatory_options:
-      id: ^feat_arc_dyn__[0-9a-z_]+$
       # req-Id: tool_req__docs_common_attr_security
       security: ^(YES|NO)$
       # req-Id: tool_req__docs_common_attr_safety
@@ -468,11 +431,9 @@ needs_types:
   # req-Id: tool_req__docs_arch_views
   logic_arc_int:
     title: Logical Interface & Feature Interface View
-    prefix: logic_arc_int__
     color: #FEDCD2
     style: card
     mandatory_options:
-      id: ^logic_arc_int__[0-9a-z_]+$
       # req-Id: tool_req__docs_common_attr_security
       security: ^(YES|NO)$
       # req-Id: tool_req__docs_common_attr_safety
@@ -491,11 +452,9 @@ needs_types:
   # req-Id: tool_req__docs_arch_types
   logic_arc_int_op:
     title: Logical Interface Operation
-    prefix: logic_arc_int_op__
     color: #FEDCD2
     style: card
     mandatory_options:
-      id: ^logic_arc_int_op__[0-9a-z_]+$
       # req-Id: tool_req__docs_common_attr_security
       security: ^(YES|NO)$
       # req-Id: tool_req__docs_common_attr_safety
@@ -512,11 +471,8 @@ needs_types:
   # req-Id: tool_req__docs_arch_views
   mod_view_sta:
     title: Module Architecture Static View
-    prefix: mod_view_sta__
     color: #FEDCD2
     style: card
-    mandatory_options:
-      id: ^mod_view_sta__[0-9a-z_]+$
     mandatory_links:
       includes: ^comp_arc_sta__.+$
     tags:
@@ -526,11 +482,8 @@ needs_types:
   # No process requirement
   mod_view_dyn:
     title: Module Architecture Dynamic View
-    prefix: mod_view_dyn__
     color: #FEDCD2
     style: card
-    mandatory_options:
-      id: ^mod_view_dyn__[0-9a-z_]+$
     parts: 3
 
   # Architecture Element & View
@@ -538,11 +491,9 @@ needs_types:
   # req-Id: tool_req__docs_arch_views
   comp_arc_sta:
     title: Component & Component Package Diagram
-    prefix: comp_arc_sta__
     color: #FEDCD2
     style: card
     mandatory_options:
-      id: ^comp_arc_sta__[0-9a-z_]+$
       # req-Id: tool_req__docs_common_attr_security
       security: ^(YES|NO)$
       # req-Id: tool_req__docs_common_attr_safety
@@ -563,11 +514,9 @@ needs_types:
   # req-Id: tool_req__docs_arch_views
   comp_arc_dyn:
     title: Component Sequence Diagram
-    prefix: comp_arc_dyn__
     color: #FEDCD2
     style: card
     mandatory_options:
-      id: ^comp_arc_dyn__[0-9a-z_]+$
       # req-Id: tool_req__docs_common_attr_security
       security: ^(YES|NO)$
       # req-Id: tool_req__docs_common_attr_safety
@@ -586,11 +535,9 @@ needs_types:
   # req-Id: tool_req__docs_arch_views
   real_arc_int:
     title: Interface & Component Interface
-    prefix: real_arc_int__
     color: #FEDCD2
     style: card
     mandatory_options:
-      id: ^real_arc_int__[0-9a-z_]+$
       # req-Id: tool_req__docs_common_attr_security
       security: ^(YES|NO)$
       # req-Id: tool_req__docs_common_attr_safety
@@ -609,11 +556,9 @@ needs_types:
   # req-Id: tool_req__docs_arch_types
   real_arc_int_op:
     title: Interface Operation
-    prefix: real_arc_int_op__
     color: #FEDCD2
     style: card
     mandatory_options:
-      id: ^real_arc_int_op__[0-9a-z_]+$
       # req-Id: tool_req__docs_common_attr_security
       security: ^(YES|NO)$
       # req-Id: tool_req__docs_common_attr_safety
@@ -631,10 +576,8 @@ needs_types:
   # - architecture end -
 
   review_header:
-    prefix: review__header
     title: Review Header
     mandatory_options:
-      id: ^review__header__[0-9a-z_]*$
       reviewers: ^.*$
       approvers: ^.*$
       hash: ^.*$
@@ -644,11 +587,9 @@ needs_types:
   # Implementation
   dd_sta:
     title: Static detailed design
-    prefix: dd_sta__
     color: #FEDCD2
     style: card
     mandatory_options:
-      id: ^dd_sta__[0-9a-z_]*$
       security: ^(YES|NO)$
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
@@ -661,11 +602,9 @@ needs_types:
 
   dd_dyn:
     title: Dynamic detailed design
-    prefix: dd_dyn__
     color: #FEDCD2
     style: card
     mandatory_options:
-      id: ^dd_dyn__[0-9a-z_]*$
       security: ^(YES|NO)$
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
@@ -676,9 +615,7 @@ needs_types:
 
   sw_unit:
     title: Software unit
-    prefix: sw_unit__
     mandatory_options:
-      id: ^sw_unit__[0-9a-z_]*$
       security: ^(YES|NO)$
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
@@ -686,11 +623,9 @@ needs_types:
 
   sw_unit_int:
     title: Software unit interfaces
-    prefix: sw_unit_int__
     color: #FEDCD2
     style: card
     mandatory_options:
-      id: ^sw_unit_int__[0-9a-z_]*$
       security: ^(YES|NO)$
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
@@ -700,9 +635,7 @@ needs_types:
   # No requirement!!
   plat_saf_dfa:
     title: Feature Dependent Failure Analysis
-    prefix: plat_saf_dfa__
     mandatory_options:
-      id: ^plat_saf_dfa__[0-9a-z_]+$
       failure_id: ^.*$
       failure_effect: ^.*$
       sufficient: ^(yes|no)$
@@ -719,9 +652,7 @@ needs_types:
   # req-Id: tool_req__docs_saf_types
   feat_saf_dfa:
     title: Feature DFA (Dependent Failure Analysis)
-    prefix: feat_saf_dfa__
     mandatory_options:
-      id: ^feat_saf_dfa__[0-9a-z_]+$
       # req-Id: tool_req__docs_saf_attr_dfa_failure_id
       failure_id: ^.*$
       failure_effect: ^.*$
@@ -748,9 +679,7 @@ needs_types:
   # req-Id: tool_req__docs_saf_types
   comp_saf_dfa:
     title: Component DFA (Dependent Failure Analysis)
-    prefix: comp_saf_dfa__
     mandatory_options:
-      id: ^comp_saf_dfa__[0-9a-z_]+$
       # req-Id: tool_req__docs_saf_attr_dfa_failure_id
       failure_id: ^.*$
       failure_effect: ^.*$
@@ -778,9 +707,7 @@ needs_types:
   # req-Id: tool_req__docs_saf_types
   feat_saf_fmea:
     title: Feature FMEA (Failure Mode and Effects Analysis)
-    prefix: feat_saf_fmea__
     mandatory_options:
-      id: ^feat_saf_fmea__[0-9a-z_]+$
       # req-Id: tool_req__docs_saf_attr_fmea_fault_id
       fault_id: ^.*$
       failure_effect: ^.*$
@@ -807,9 +734,7 @@ needs_types:
   # req-Id: tool_req__docs_saf_types
   comp_saf_fmea:
     title: Component FMEA (Failure Mode and Effects Analysis)
-    prefix: comp_saf_fmea__
     mandatory_options:
-      id: ^comp_saf_fmea__[0-9a-z_]+$
       # req-Id: tool_req__docs_saf_attr_fmea_fault_id
       fault_id: ^.*$
       failure_effect: ^.*$
@@ -833,9 +758,6 @@ needs_types:
 
   testcase:
     title: Testcase Needs parsed from test.xml files
-    prefix: testcase__
-    mandatory_options:
-      id: ^testcase__
     optional_options:
       name: ^.*$
       file: ^.*$
@@ -851,9 +773,7 @@ needs_types:
   # https://eclipse-score.github.io/process_description/main/permalink.html?id=gd_temp__change_decision_record
   dec_rec:
     title: Decision Record
-    prefix: dec_rec__
     mandatory_options:
-      id: ^dec_rec__.*__.*$
       status: ^(proposed|accepted|deprecated|rejected|superseded)$
       context: ^.*$
       decision: ^.*$

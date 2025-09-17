@@ -39,7 +39,11 @@ def test_load_metamodel_data():
     assert result.needs_types[0]["prefix"] == "T1"
     assert result.needs_types[0].get("color") == "blue"
     assert result.needs_types[0].get("style") == "bold"
-    assert result.needs_types[0]["mandatory_options"] == {"opt1": "value1"}
+    assert result.needs_types[0]["mandatory_options"] == {
+        # default id pattern: prefix + digits, lowercase letters and underscores
+        "id": "^T1[0-9a-z_]+$",
+        "opt1": "value1",
+    }
     assert result.needs_types[0]["optional_options"] == {
         "opt2": "value2",
         "opt3": "value3",

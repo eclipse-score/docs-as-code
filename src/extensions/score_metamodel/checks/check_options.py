@@ -46,28 +46,18 @@ def _validate_value_pattern(
     pattern: str,
     need: NeedsInfoType,
     field: str,
-    log: CheckLogger,
-    as_info: bool = False,
-) -> None:
+):
     """Check if a value matches the given pattern and log the result.
 
-    If ``as_info`` is True, mismatches are reported as info (non-failing)
-    messages, otherwise as warnings.
+    Returns true if the value matches the pattern, False otherwise.
     """
     try:
-        if not re.match(pattern, value):
-            log.warning_for_option(
-                need,
-                field,
-                f"does not follow pattern `{pattern}`.",
-                is_new_check=as_info,
-            )
-    except TypeError:
-        log.warning_for_option(
-            need,
-            field,
-            f"pattern `{pattern}` is not a valid regex pattern.",
-        )
+        return re.match(pattern, value) is not None
+    except TypeError as e:
+        raise TypeError(
+            f"Error in metamodel.yaml at {need['type']}->{field}: "
+            f"pattern `{pattern}` is not a valid regex pattern."
+        ) from e
 
 
 def validate_fields(
@@ -102,23 +92,21 @@ def validate_fields(
                 log.warning_for_need(
                     need, f"is missing required {field_type}: `{field}`."
                 )
-            continue  # Skip empty optional fields
-        # Try except used to add more context to Error without passing variables
-        # just for that to function
-        try:
-            values = _normalize_values(raw_value)
-        except ValueError as err:
-            raise ValueError(
-                f"An Attribute inside need {need['id']} is "
-                "not of type str. Only Strings are allowed"
-            ) from err
-        # The filter ensures that the function is only called when needed.
+            continue  # Nothing to validate if not present
+
+        values = _normalize_values(raw_value)
+
         for value in values:
             if allowed_prefixes:
                 value = remove_prefix(value, allowed_prefixes)
-            _validate_value_pattern(
-                value, pattern, need, field, log, as_info=optional_link_as_info
-            )
+            if not _validate_value_pattern(value, pattern, need, field):
+                msg = f"does not follow pattern `{pattern}`."
+                log.warning_for_option(
+                    need,
+                    field,
+                    msg,
+                    is_new_check=optional_link_as_info,
+                )
 
 
 # req-Id: tool_req__docs_req_attr_reqtype
@@ -137,19 +125,17 @@ def check_options(
     Checks that required and optional options and links are present
     and follow their defined patterns.
     """
-    production_needs_types = app.config.needs_types
-
-    need_options = get_need_type(production_needs_types, need["type"])
+    need_type = get_need_type(app.config.needs_types, need["type"])
 
     # If undefined this is an empty list
     allowed_prefixes = app.config.allowed_external_prefixes
 
     # Validate Options and Links
     field_validations = [
-        ("option", need_options["mandatory_options"], True),
-        ("option", need_options["optional_options"], False),
-        ("link", need_options["mandatory_links"], True),
-        ("link", need_options["optional_links"], False),
+        ("option", need_type["mandatory_options"], True),
+        ("option", need_type["optional_options"], False),
+        ("link", need_type["mandatory_links"], True),
+        ("link", need_type["optional_links"], False),
     ]
 
     for field_type, field_values, is_required in field_validations:
