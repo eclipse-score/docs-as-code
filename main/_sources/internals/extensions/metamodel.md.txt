@@ -1,7 +1,7 @@
 (metamodel)=
 # score_metamodel
 
-The `score_metamodel` extension is a core extension/component of the Docs-As-Code. 
+The `score_metamodel` extension is a core extension/component of the Docs-As-Code.
 It provides metamodel definitions, validation checks, and project layout management for Sphinx documentation.
 
 ## Overview
@@ -33,7 +33,7 @@ The extension implements a multi-tier checking system:
 - Require access to the complete needs graph
 - Examples: Link validation, dependency checking, cross-reference verification
 
-This extension comes with Docs-As-Code. 
+This extension comes with Docs-As-Code.
 Add `score_metamodel` to your extensions in `conf.py`:
 
 ```python
@@ -43,6 +43,23 @@ extensions = [
     ...
 ]
 ```
+
+## need types
+
+Each type of needs is defined in the `needs_types` section of the `metamodel.yaml` file. Each need type has attributes, links, tags, and other properties that define its structure and behavior within the documentation system.
+
+Each need type is introduced via `<type-name>:` followed by its properties indented under it.
+
+Properties:
+- **title**: The title of the need type.
+- **prefix**: A unique prefix used to identify the need type. Default is the type name followed by `__`.
+- **mandatory_options**: A list of mandatory options that must be provided for the need type.
+  `id` is worth mentioning as it is automatically included and must be unique. Default is the prefix followed by `[a-z0-9_]`.
+- **optional_options**: A list of optional options that can be provided for the need type.
+- **mandatory_links**: A list of mandatory links to other need types that must be included.
+- **optional_links**: A list of optional links to other need types that can be included.
+- **tags**: A list of tags associated with the need type.
+- **parts**: The number of parts (separated by `__`) within the need ID.
 
 ## Creating New Validation Checks
 
@@ -73,23 +90,23 @@ needs_types:
 ```
 
 ### 2. Generic Graph Checks (Configuration-Based)
-Generic graph checks are defined in the metamodel.yaml under `graph_checks`. 
+Generic graph checks are defined in the metamodel.yaml under `graph_checks`.
 These checks all follow the same structure:
 
 ```yaml
 <name of the check>:
   needs:
-    include: <need1>, <need2> #list of your needs 
+    include: <need1>, <need2> #list of your needs
     condition: <your condition(s) that need to be fulfilled>
   check:
     <link attribute to check>: <condition to be checked in each need inside the link attribute>
-  explanation: <A short sentence that explains what is required to be adhered to. This will be 
+  explanation: <A short sentence that explains what is required to be adhered to. This will be
               < part of the error message if the check fails>
 ```
 
 > *Note:* You can also use multiple conditions or negate conditions in either the needs or check part.
 
-A complete example might look like so: 
+A complete example might look like so:
 
 ```yaml
 graph_checks:
@@ -101,14 +118,14 @@ graph_checks:
           - safety != QM
           - status == valid
     check:
-      implements: 
+      implements:
         and:
           - safety != QM
           - status == valid
     explanation: An safety architecture element can only link other safety architecture elements.
 ```
 
-What does this check do? 
+What does this check do?
 This check will go through each of the needs mentioned in 'include' that match the condition, and then for every single one of them check the needs that are linked inside the 'implements' attribute. Go inside those needs and check if they also fulfill the condition described.
 If one of them does not fulfill the condition the check fails and will let you know with a warning that it did so.
 
@@ -126,7 +143,7 @@ prohibited_words_checks:
         - < word to forbid >
 ```
 
-An example might look like this: 
+An example might look like this:
 ```yaml
 prohibited_words_checks:
   content_check:
@@ -201,7 +218,7 @@ score_metamodel/
     ├── __init__.py
     ├── rst
     │   ├── attributes
-    │   │   └── ... 
+    │   │   └── ...
     │   ├── conf.py
     │   ├── graph
     │   │   └── test_metamodel_graph.rst

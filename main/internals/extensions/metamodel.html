@@ -488,6 +488,23 @@ Add <code class="docutils literal notranslate"><span class="pre">score_metamodel
 </div>
 </section>
 </section>
+<section id="need-types">
+<h2>need types<a class="headerlink" href="#need-types" title="Link to this heading">#</a></h2>
+<p>Each type of needs is defined in the <code class="docutils literal notranslate"><span class="pre">needs_types</span></code> section of the <code class="docutils literal notranslate"><span class="pre">metamodel.yaml</span></code> file. Each need type has attributes, links, tags, and other properties that define its structure and behavior within the documentation system.</p>
+<p>Each need type is introduced via <code class="docutils literal notranslate"><span class="pre">&lt;type-name&gt;:</span></code> followed by its properties indented under it.</p>
+<p>Properties:</p>
+<ul class="simple">
+<li><p><strong>title</strong>: The title of the need type.</p></li>
+<li><p><strong>prefix</strong>: A unique prefix used to identify the need type. Default is the type name followed by <code class="docutils literal notranslate"><span class="pre">__</span></code>.</p></li>
+<li><p><strong>mandatory_options</strong>: A list of mandatory options that must be provided for the need type.
+<code class="docutils literal notranslate"><span class="pre">id</span></code> is worth mentioning as it is automatically included and must be unique. Default is the prefix followed by <code class="docutils literal notranslate"><span class="pre">[a-z0-9_]</span></code>.</p></li>
+<li><p><strong>optional_options</strong>: A list of optional options that can be provided for the need type.</p></li>
+<li><p><strong>mandatory_links</strong>: A list of mandatory links to other need types that must be included.</p></li>
+<li><p><strong>optional_links</strong>: A list of optional links to other need types that can be included.</p></li>
+<li><p><strong>tags</strong>: A list of tags associated with the need type.</p></li>
+<li><p><strong>parts</strong>: The number of parts (separated by <code class="docutils literal notranslate"><span class="pre">__</span></code>) within the need ID.</p></li>
+</ul>
+</section>
 <section id="creating-new-validation-checks">
 <h2>Creating New Validation Checks<a class="headerlink" href="#creating-new-validation-checks" title="Link to this heading">#</a></h2>
 <p>The extension automatically discovers checks from the <code class="docutils literal notranslate"><span class="pre">checks/</span></code> directory and the metamodel.yaml config. There are several types of checks you can implement:</p>
@@ -520,11 +537,11 @@ They can be found inside the metamodel.yml and are how we define needs. See an e
 These checks all follow the same structure:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;name of the check&gt;</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">needs</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">include</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;need1&gt;, &lt;need2&gt;</span><span class="w"> </span><span class="c1">#list of your needs </span>
+<span class="w">    </span><span class="nt">include</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;need1&gt;, &lt;need2&gt;</span><span class="w"> </span><span class="c1">#list of your needs</span>
 <span class="w">    </span><span class="nt">condition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;your condition(s) that need to be fulfilled&gt;</span>
 <span class="w">  </span><span class="nt">check</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">&lt;link attribute to check&gt;</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;condition to be checked in each need inside the link attribute&gt;</span>
-<span class="w">  </span><span class="nt">explanation</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;A short sentence that explains what is required to be adhered to. This will be</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">explanation</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;A short sentence that explains what is required to be adhered to. This will be</span>
 <span class="w">              </span><span class="l l-Scalar l-Scalar-Plain">&lt; part of the error message if the check fails&gt;</span>
 </pre></div>
 </div>
@@ -541,7 +558,7 @@ These checks all follow the same structure:</p>
 <span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">safety != QM</span>
 <span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">status == valid</span>
 <span class="w">    </span><span class="nt">check</span><span class="p">:</span>
-<span class="w">      </span><span class="nt">implements</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">implements</span><span class="p">:</span>
 <span class="w">        </span><span class="nt">and</span><span class="p">:</span>
 <span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">safety != QM</span>
 <span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">status == valid</span>
@@ -639,7 +656,7 @@ The signature is similar to that of local_check, but instead of one need you wil
     ├── __init__.py
     ├── rst
     │   ├── attributes
-    │   │   └── ... 
+    │   │   └── ...
     │   ├── conf.py
     │   ├── graph
     │   │   └── test_metamodel_graph.rst
@@ -729,6 +746,7 @@ The signature is similar to that of local_check, but instead of one need you wil
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#validation-system">Validation System</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#need-types">need types</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-new-validation-checks">Creating New Validation Checks</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#need-local-checks-configuration-based">1. Need-Local Checks (Configuration-Based)</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#generic-graph-checks-configuration-based">2. Generic Graph Checks (Configuration-Based)</a></li>
