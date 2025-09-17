@@ -108,8 +108,8 @@ needs_types:
     mandatory_options:
       status: ^(valid|draft)$
     mandatory_links:
-      input: ^wp__.*$
-      output: ^wp__.*$
+      input: workproduct
+      output: workproduct
       approved_by: ^rl__.*$
       responsible: ^rl__.*$
     optional_links:
@@ -139,7 +139,7 @@ needs_types:
     mandatory_options:
       status: ^(valid|draft)$
     optional_links:
-      complies: std_req__(iso26262|isodae21434|isopas8926|aspice_40)__.*$
+      complies: ^std_req__(iso26262|isodae21434|isopas8926|aspice_40)__.*$
     parts: 2
 
   gd_chklst:
@@ -339,7 +339,7 @@ needs_types:
     optional_links:
       # req-Id: tool_req__docs_req_link_satisfies_allowed
       # TODO: make it mandatory
-      satisfies: ^gd_req__.*$
+      satisfies: gd_req
     optional_options:
       codelink: ^.*$
       tags: ^.*$

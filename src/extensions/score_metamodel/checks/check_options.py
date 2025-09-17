@@ -63,7 +63,7 @@ def _validate_value_pattern(
 def validate_fields(
     need: NeedsInfoType,
     log: CheckLogger,
-    fields: dict[str, str],
+    fields: dict[str, list[ScoreNeedType] | str] | dict[str, str],
     required: bool,
     field_type: str,
     allowed_prefixes: list[str],
@@ -96,11 +96,31 @@ def validate_fields(
 
         values = _normalize_values(raw_value)
 
+        # Links can be configured to reference other need types instead of regex.
+        # However, in order to not "load" the other need, we'll check the regex as
+        # it does encode the need type (at least in S-CORE metamodel).
+        # Therefore this can remain a @local_check!
+        # TypedDicts cannot be used with isinstance, so check for dict and required keys
+        if isinstance(pattern, list):
+            assert field_type == "link"  # sanity check
+            allowed_directives: list[ScoreNeedType] | None = pattern  # pyright: ignore[reportUnknownVariableType]
+            pattern = (
+                "("
+                + "|".join(d["mandatory_options"]["id"] for d in allowed_directives)
+                + ")"
+            )
+        else:
+            allowed_directives = None
+
+        # regex based validation
         for value in values:
             if allowed_prefixes:
                 value = remove_prefix(value, allowed_prefixes)
             if not _validate_value_pattern(value, pattern, need, field):
-                msg = f"does not follow pattern `{pattern}`."
+                if allowed_directives:
+                    msg = f"must reference {', '.join(f'{d["title"]} ({d["directive"]})' for d in allowed_directives)}."
+                else:
+                    msg = f"does not follow pattern `{pattern}`."
                 log.warning_for_option(
                     need,
                     field,
@@ -131,7 +151,9 @@ def check_options(
     allowed_prefixes = app.config.allowed_external_prefixes
 
     # Validate Options and Links
-    field_validations = [
+    field_validations: list[
+        tuple[str, dict[str, str | list[ScoreNeedType]] | dict[str, str], bool]
+    ] = [
         ("option", need_type["mandatory_options"], True),
         ("option", need_type["optional_options"], False),
         ("link", need_type["mandatory_links"], True),

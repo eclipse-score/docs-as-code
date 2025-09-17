@@ -121,7 +121,7 @@ def load_metamodel_data() -> MetaModelData:
     default_options_list = default_options()
 
     # Convert "types" from {directive_name: {...}, ...} to a list of dicts
-    needs_types_list = []
+    needs_types: dict[str, ScoreNeedType] = {}
 
     all_options: set[str] = set()
     types_dict = cast(dict[str, Any], data.get("needs_types", {}))
@@ -153,10 +153,30 @@ def load_metamodel_data() -> MetaModelData:
         if "style" in directive_data:
             one_type["style"] = directive_data["style"]
 
-        needs_types_list.append(one_type)
+        needs_types[directive_name] = one_type
 
         all_options.update(set(one_type["mandatory_options"].keys()))
         all_options.update(set(one_type["optional_options"].keys()))
+
+    # post process links to distinguish between regex and references to other needs
+    for need_type in needs_types.values():
+        for link_dict in (need_type["mandatory_links"], need_type["optional_links"]):
+            for link_name, link_value in link_dict.items():
+                assert isinstance(link_value, str)  # so far all of them are strings
+
+                if not link_value.startswith("^"):
+                    link_values = [v.strip() for v in link_value.split(",")]
+                    linkable_types = []
+                    for v in link_values:
+                        target_need_type = needs_types.get(v)
+                        if target_need_type is None:
+                            logger.error(
+                                f"In metamodel.yaml: {need_type['directive']}, "
+                                f"link '{link_name}' references unknown type '{v}'."
+                            )
+                        else:
+                            linkable_types.append(target_need_type)
+                    link_dict[link_name] = linkable_types
 
     # Convert "links" dict -> list of {"option", "incoming", "outgoing"}
     needs_extra_links_list: list[dict[str, str]] = []
@@ -181,7 +201,7 @@ def load_metamodel_data() -> MetaModelData:
     graph_check_dict = cast(dict[str, Any], data.get("graph_checks", {}))
 
     return MetaModelData(
-        needs_types=needs_types_list,
+        needs_types=list(needs_types.values()),
         needs_extra_links=needs_extra_links_list,
         needs_extra_options=needs_extra_options,
         prohibited_words_checks=prohibited_words_checks,
