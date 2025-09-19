@@ -184,11 +184,10 @@ def check_extra_options(
     """
 
     production_needs_types = app.config.needs_types
-    default_options_list = default_options()
     need_options = get_need_type(production_needs_types, need["type"])
 
-    # list() creates a copy to avoid modifying the original
-    allowed_options = list(default_options_list)
+    # set() creates a copy to avoid modifying the original
+    allowed_options = set(default_options())
 
     for o in (
         "mandatory_options",
@@ -196,7 +195,7 @@ def check_extra_options(
         "mandatory_links",
         "optional_links",
     ):
-        allowed_options.extend(need_options[o].keys())
+        allowed_options.update(need_options[o].keys())
 
     extra_options = [
         option
