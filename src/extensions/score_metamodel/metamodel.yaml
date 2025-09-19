@@ -139,7 +139,7 @@ needs_types:
     mandatory_options:
       status: ^(valid|draft)$
     optional_links:
-      complies: std_req__(iso26262|isodae21434|isopas8926|aspice_40)__.*$
+      complies: ^std_req__(iso26262|isodae21434|isopas8926|aspice_40)__.*$
     parts: 2
 
   gd_chklst:
