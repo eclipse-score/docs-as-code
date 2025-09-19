@@ -63,7 +63,7 @@ def _validate_value_pattern(
 def validate_fields(
     need: NeedsInfoType,
     log: CheckLogger,
-    fields: dict[str, list[ScoreNeedType] | str] | dict[str, str],
+    fields: dict[str, str] | dict[str, list["ScoreNeedType"]],
     required: bool,
     field_type: str,
     allowed_prefixes: list[str],
@@ -85,7 +85,7 @@ def validate_fields(
 
     optional_link_as_info = (not required) and (field_type == "link")
 
-    for field, pattern in fields.items():
+    for field, allowed_value in fields.items():
         raw_value: str | list[str] | None = need.get(field, None)
         if raw_value in [None, [], ""]:
             if required:
@@ -101,10 +101,11 @@ def validate_fields(
         # it does encode the need type (at least in S-CORE metamodel).
         # Therefore this can remain a @local_check!
         # TypedDicts cannot be used with isinstance, so check for dict and required keys
-        if isinstance(pattern, list):
+        if isinstance(allowed_value, list):
             assert field_type == "link"  # sanity check
-            allowed_directives: list[ScoreNeedType] | None = pattern  # pyright: ignore[reportUnknownVariableType]
-            pattern = (
+            # patterns holds a list of allowed need types
+            allowed_directives = allowed_value
+            allowed_value = (
                 "("
                 + "|".join(d["mandatory_options"]["id"] for d in allowed_directives)
                 + ")"
@@ -116,11 +117,11 @@ def validate_fields(
         for value in values:
             if allowed_prefixes:
                 value = remove_prefix(value, allowed_prefixes)
-            if not _validate_value_pattern(value, pattern, need, field):
+            if not _validate_value_pattern(value, allowed_value, need, field):
                 if allowed_directives:
                     msg = f"must reference {', '.join(f'{d["title"]} ({d["directive"]})' for d in allowed_directives)}."
                 else:
-                    msg = f"does not follow pattern `{pattern}`."
+                    msg = f"does not follow pattern `{allowed_value}`."
                 log.warning_for_option(
                     need,
                     field,
@@ -152,7 +153,7 @@ def check_options(
 
     # Validate Options and Links
     field_validations: list[
-        tuple[str, dict[str, str | list[ScoreNeedType]] | dict[str, str], bool]
+        tuple[str, dict[str, str] | dict[str, list["ScoreNeedType"]], bool]
     ] = [
         ("option", need_type["mandatory_options"], True),
         ("option", need_type["optional_options"], False),

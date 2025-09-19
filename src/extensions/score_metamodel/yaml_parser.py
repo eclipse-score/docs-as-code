@@ -165,7 +165,7 @@ def _postprocess_links(needs_types_dict: dict[str, ScoreNeedType]):
                 assert isinstance(link_value, str)  # so far all of them are strings
 
                 if not link_value.startswith("^"):
-                    link_dict[link_name] = _resolve_linkable_types(
+                    link_dict[link_name] = _resolve_linkable_types(  # pyright: ignore[reportArgumentType]
                         link_name, link_value, need_type, needs_types_dict
                     )
 

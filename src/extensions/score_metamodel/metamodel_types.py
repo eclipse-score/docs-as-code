@@ -32,5 +32,5 @@ class ScoreNeedType(NeedType):
     optional_options: dict[str, str]
 
     # Holds either a regex (str) or a list of other need types (list of ScoreNeedType)
-    mandatory_links: dict[str, str | list["ScoreNeedType"]]
-    optional_links: dict[str, str | list["ScoreNeedType"]]
+    mandatory_links: dict[str, str] | dict[str, list["ScoreNeedType"]]
+    optional_links: dict[str, str] | dict[str, list["ScoreNeedType"]]
