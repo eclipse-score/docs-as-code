@@ -128,13 +128,32 @@ def _build_need_type(
     return t
 
 
+def _resolve_linkable_types(
+    link_name: str,
+    link_value: str,
+    current_need_type: ScoreNeedType,
+    needs_types_dict: dict[str, ScoreNeedType],
+) -> list[ScoreNeedType]:
+    link_values = [v.strip() for v in link_value.split(",")]
+    linkable_types: list[ScoreNeedType] = []
+    for v in link_values:
+        target_need_type = needs_types_dict.get(v)
+        if target_need_type is None:
+            logger.error(
+                f"In metamodel.yaml: {current_need_type['directive']}, "
+                f"link '{link_name}' references unknown type '{v}'."
+            )
+        else:
+            linkable_types.append(target_need_type)
+    return linkable_types
+
+
 def _postprocess_links(needs_types_dict: dict[str, ScoreNeedType]):
     """Convert link option strings into lists of target need types.
 
     If a link value starts with '^' it is treated as a regex and left
     unchanged. Otherwise it is a comma-separated list of type names which
-    are resolved to the corresponding need type dicts. Unknown types are
-    logged as errors.
+    are resolved to the corresponding ScoreNeedTypes.
     """
     for need_type in needs_types_dict.values():
         link_dicts = (
@@ -142,22 +161,13 @@ def _postprocess_links(needs_types_dict: dict[str, ScoreNeedType]):
             need_type["optional_links"],
         )
         for link_dict in link_dicts:
-            for link_name, link_value in list(link_dict.items()):
+            for link_name, link_value in link_dict.items():
                 assert isinstance(link_value, str)  # so far all of them are strings
 
                 if not link_value.startswith("^"):
-                    link_values = [v.strip() for v in link_value.split(",")]
-                    linkable_types: list[ScoreNeedType] = []
-                    for v in link_values:
-                        target_need_type = needs_types_dict.get(v)
-                        if target_need_type is None:
-                            logger.error(
-                                f"In metamodel.yaml: {need_type['directive']}, "
-                                f"link '{link_name}' references unknown type '{v}'."
-                            )
-                        else:
-                            linkable_types.append(target_need_type)
-                    link_dict[link_name] = linkable_types
+                    link_dict[link_name] = _resolve_linkable_types(
+                        link_name, link_value, need_type, needs_types_dict
+                    )
 
 
 def _parse_needs_types(
