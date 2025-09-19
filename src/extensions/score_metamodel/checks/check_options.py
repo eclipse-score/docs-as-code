@@ -63,7 +63,7 @@ def _validate_value_pattern(
 def validate_fields(
     need: NeedsInfoType,
     log: CheckLogger,
-    fields: dict[str, str],
+    fields: dict[str, str] | dict[str, list["ScoreNeedType"]],
     required: bool,
     field_type: str,
     allowed_prefixes: list[str],
@@ -85,7 +85,7 @@ def validate_fields(
 
     optional_link_as_info = (not required) and (field_type == "link")
 
-    for field, pattern in fields.items():
+    for field, allowed_value in fields.items():
         raw_value: str | list[str] | None = need.get(field, None)
         if raw_value in [None, [], ""]:
             if required:
@@ -96,11 +96,32 @@ def validate_fields(
 
         values = _normalize_values(raw_value)
 
+        # Links can be configured to reference other need types instead of regex.
+        # However, in order to not "load" the other need, we'll check the regex as
+        # it does encode the need type (at least in S-CORE metamodel).
+        # Therefore this can remain a @local_check!
+        # TypedDicts cannot be used with isinstance, so check for dict and required keys
+        if isinstance(allowed_value, list):
+            assert field_type == "link"  # sanity check
+            # patterns holds a list of allowed need types
+            allowed_directives = allowed_value
+            allowed_value = (
+                "("
+                + "|".join(d["mandatory_options"]["id"] for d in allowed_directives)
+                + ")"
+            )
+        else:
+            allowed_directives = None
+
+        # regex based validation
         for value in values:
             if allowed_prefixes:
                 value = remove_prefix(value, allowed_prefixes)
-            if not _validate_value_pattern(value, pattern, need, field):
-                msg = f"does not follow pattern `{pattern}`."
+            if not _validate_value_pattern(value, allowed_value, need, field):
+                if allowed_directives:
+                    msg = f"must reference {', '.join(f'{d["title"]} ({d["directive"]})' for d in allowed_directives)}."
+                else:
+                    msg = f"does not follow pattern `{allowed_value}`."
                 log.warning_for_option(
                     need,
                     field,
@@ -131,7 +152,9 @@ def check_options(
     allowed_prefixes = app.config.allowed_external_prefixes
 
     # Validate Options and Links
-    field_validations = [
+    field_validations: list[
+        tuple[str, dict[str, str] | dict[str, list["ScoreNeedType"]], bool]
+    ] = [
         ("option", need_type["mandatory_options"], True),
         ("option", need_type["optional_options"], False),
         ("link", need_type["mandatory_links"], True),
@@ -162,11 +185,10 @@ def check_extra_options(
     """
 
     production_needs_types = app.config.needs_types
-    default_options_list = default_options()
     need_options = get_need_type(production_needs_types, need["type"])
 
-    # list() creates a copy to avoid modifying the original
-    allowed_options = list(default_options_list)
+    # set() creates a copy to avoid modifying the original
+    allowed_options = set(default_options())
 
     for o in (
         "mandatory_options",
@@ -174,7 +196,7 @@ def check_extra_options(
         "mandatory_links",
         "optional_links",
     ):
-        allowed_options.extend(need_options[o].keys())
+        allowed_options.update(need_options[o].keys())
 
     extra_options = [
         option
