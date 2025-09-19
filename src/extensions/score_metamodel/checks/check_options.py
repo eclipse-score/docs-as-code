@@ -85,7 +85,7 @@ def validate_fields(
 
     optional_link_as_info = (not required) and (field_type == "link")
 
-    for field, pattern in fields.items():
+    for field, allowed_value in fields.items():
         raw_value: str | list[str] | None = need.get(field, None)
         if raw_value in [None, [], ""]:
             if required:
@@ -96,11 +96,12 @@ def validate_fields(
 
         values = _normalize_values(raw_value)
 
+        # regex based validation
         for value in values:
             if allowed_prefixes:
                 value = remove_prefix(value, allowed_prefixes)
-            if not _validate_value_pattern(value, pattern, need, field):
-                msg = f"does not follow pattern `{pattern}`."
+            if not _validate_value_pattern(value, allowed_value, need, field):
+                msg = f"does not follow pattern `{allowed_value}`."
                 log.warning_for_option(
                     need,
                     field,
@@ -162,11 +163,10 @@ def check_extra_options(
     """
 
     production_needs_types = app.config.needs_types
-    default_options_list = default_options()
     need_options = get_need_type(production_needs_types, need["type"])
 
-    # list() creates a copy to avoid modifying the original
-    allowed_options = list(default_options_list)
+    # set() creates a copy to avoid modifying the original
+    allowed_options = set(default_options())
 
     for o in (
         "mandatory_options",
@@ -174,7 +174,7 @@ def check_extra_options(
         "mandatory_links",
         "optional_links",
     ):
-        allowed_options.extend(need_options[o].keys())
+        allowed_options.update(need_options[o].keys())
 
     extra_options = [
         option
