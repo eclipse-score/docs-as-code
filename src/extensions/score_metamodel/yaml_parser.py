@@ -36,7 +36,7 @@ class MetaModelData:
     needs_graph_check: dict[str, object]
 
 
-def convert_checks_to_dataclass(
+def _parse_prohibited_words(
     checks_dict: dict[str, dict[str, Any]],
 ) -> list[ProhibitedWordCheck]:
     return [
@@ -49,12 +49,12 @@ def convert_checks_to_dataclass(
     ]
 
 
-def default_options() -> list[str]:
+def default_options():
     """
     Helper function to get a list of all default options defined by
     sphinx, sphinx-needs etc.
     """
-    return [
+    return {
         "target_id",
         "id",
         "status",
@@ -92,7 +92,93 @@ def default_options() -> list[str]:
         "tags",
         "arch",
         "parts",
+    }
+
+
+def _parse_need_type(
+    directive_name: str,
+    yaml_data: dict[str, Any],
+    global_base_opts: dict[str, Any],
+):
+    """Build a single ScoreNeedType dict from the metamodel entry, incl defaults."""
+    t: ScoreNeedType = {
+        "directive": directive_name,
+        "title": yaml_data["title"],
+        "prefix": yaml_data.get("prefix", f"{directive_name}__"),
+        "tags": yaml_data.get("tags", []),
+        "parts": yaml_data.get("parts", 3),
+        "mandatory_options": yaml_data.get("mandatory_options", {}),
+        "optional_options": yaml_data.get("optional_options", {}) | global_base_opts,
+        "mandatory_links": yaml_data.get("mandatory_links", {}),
+        "optional_links": yaml_data.get("optional_links", {}),
+    }
+
+    # Ensure ID regex is set
+    if "id" not in t["mandatory_options"]:
+        prefix = t["prefix"]
+        t["mandatory_options"]["id"] = f"^{prefix}[0-9a-z_]+$"
+
+    if "color" in yaml_data:
+        t["color"] = yaml_data["color"]
+    if "style" in yaml_data:
+        t["style"] = yaml_data["style"]
+
+    return t
+
+
+def _parse_needs_types(
+    types_dict: dict[str, Any],
+    global_base_options_optional_opts: dict[str, Any],
+) -> dict[str, ScoreNeedType]:
+    """Parse the 'needs_types' section of the metamodel.yaml."""
+
+    needs_types: dict[str, ScoreNeedType] = {}
+    for directive_name, directive_data in types_dict.items():
+        assert isinstance(directive_name, str)
+        assert isinstance(directive_data, dict)
+
+        needs_types[directive_name] = _parse_need_type(
+            directive_name, directive_data, global_base_options_optional_opts
+        )
+
+    return needs_types
+
+
+def _parse_links(
+    links_dict: dict[str, Any],
+) -> list[dict[str, str]]:
+    """
+    Generate 'needs_extra_links' for sphinx-needs.
+
+    It has a slightly different structure than in our metamodel.yaml.
+    """
+    return [
+        {
+            "option": k,
+            "incoming": v["incoming"],
+            "outgoing": v["outgoing"],
+        }
+        for k, v in links_dict.items()
     ]
+
+
+def _collect_all_options(needs_types: dict[str, ScoreNeedType]) -> set[str]:
+    all_options: set[str] = set()
+    for t in needs_types.values():
+        all_options.update(set(t["mandatory_options"].keys()))
+        all_options.update(set(t["optional_options"].keys()))
+    return all_options
+
+
+def _collect_all_custom_options(
+    needs_types: dict[str, ScoreNeedType],
+):
+    """Generate 'needs_extra_options' for sphinx-needs."""
+
+    defaults = default_options()
+    all_options = _collect_all_options(needs_types)
+
+    return sorted(all_options - defaults)
 
 
 def load_metamodel_data() -> MetaModelData:
@@ -101,89 +187,29 @@ def load_metamodel_data() -> MetaModelData:
     """
     yaml_path = Path(__file__).resolve().parent / "metamodel.yaml"
 
-    yaml = YAML()
     with open(yaml_path, encoding="utf-8") as f:
-        data = cast(dict[str, Any], yaml.load(f))
+        data = cast(dict[str, Any], YAML().load(f))
 
     # Some options are globally enabled for all types
-    global_base_options = cast(dict[str, Any], data.get("needs_types_base_options", {}))
-    global_base_options_optional_opts = cast(
-        dict[str, Any], global_base_options.get("optional_options", {})
+    global_base_options_optional_opts = data.get("needs_types_base_options", {}).get(
+        "optional_options", {}
     )
 
     # Get the stop_words and weak_words as separate lists
-    proh_checks_dict = cast(
-        dict[str, dict[str, Any]], data.get("prohibited_words_checks", {})
+    prohibited_words_checks = _parse_prohibited_words(
+        data.get("prohibited_words_checks", {})
     )
-    prohibited_words_checks = convert_checks_to_dataclass(proh_checks_dict)
-
-    # Default options by sphinx, sphinx-needs or anything else we need to account for
-    default_options_list = default_options()
 
     # Convert "types" from {directive_name: {...}, ...} to a list of dicts
-    needs_types_list = []
 
-    all_options: set[str] = set()
-    types_dict = cast(dict[str, Any], data.get("needs_types", {}))
-    for directive_name, directive_data in types_dict.items():
-        assert isinstance(directive_name, str)
-        assert isinstance(directive_data, dict)
-
-        # Build up a single "needs_types" item
-        one_type: ScoreNeedType = {
-            "directive": directive_name,
-            "title": directive_data["title"],
-            "prefix": directive_data.get("prefix", f"{directive_name}__"),
-            "tags": directive_data.get("tags", []),
-            "parts": directive_data.get("parts", 3),
-            "mandatory_options": directive_data.get("mandatory_options", {}),
-            "optional_options": directive_data.get("optional_options", {})
-            | global_base_options_optional_opts,
-            "mandatory_links": directive_data.get("mandatory_links", {}),
-            "optional_links": directive_data.get("optional_links", {}),
-        }
-
-        # Ensure ID regex is set
-        if "id" not in one_type["mandatory_options"]:
-            prefix = one_type["prefix"]
-            one_type["mandatory_options"]["id"] = f"^{prefix}[0-9a-z_]+$"
-
-        if "color" in directive_data:
-            one_type["color"] = directive_data["color"]
-        if "style" in directive_data:
-            one_type["style"] = directive_data["style"]
-
-        needs_types_list.append(one_type)
-
-        all_options.update(set(one_type["mandatory_options"].keys()))
-        all_options.update(set(one_type["optional_options"].keys()))
-
-    # Convert "links" dict -> list of {"option", "incoming", "outgoing"}
-    needs_extra_links_list: list[dict[str, str]] = []
-    links_dict = cast(dict[str, Any], data.get("needs_extra_links", {}))
-    for link_option, link_data in links_dict.items():
-        link_option = cast(str, link_option)
-        link_data = cast(dict[str, Any], link_data)
-        needs_extra_links_list.append(
-            {
-                "option": link_option,
-                "incoming": link_data.get("incoming", ""),
-                "outgoing": link_data.get("outgoing", ""),
-            }
-        )
-
-    # We have to remove all 'default options' from the extra options.
-    # As otherwise sphinx errors, due to an option being registered twice.
-    # They are still inside the extra options we extract to enable
-    # constraint checking via regex
-    needs_extra_options: list[str] = sorted(all_options - set(default_options_list))
-
-    graph_check_dict = cast(dict[str, Any], data.get("graph_checks", {}))
+    needs_types = _parse_needs_types(
+        data.get("needs_types", {}), global_base_options_optional_opts
+    )
 
     return MetaModelData(
-        needs_types=needs_types_list,
-        needs_extra_links=needs_extra_links_list,
-        needs_extra_options=needs_extra_options,
+        needs_types=list(needs_types.values()),
+        needs_extra_links=_parse_links(data.get("needs_extra_links", {})),
+        needs_extra_options=_collect_all_custom_options(needs_types),
         prohibited_words_checks=prohibited_words_checks,
-        needs_graph_check=graph_check_dict,
+        needs_graph_check=data.get("graph_checks", {}),
     )

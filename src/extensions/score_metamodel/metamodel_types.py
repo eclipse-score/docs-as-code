@@ -28,7 +28,10 @@ class ProhibitedWordCheck:
 class ScoreNeedType(NeedType):
     tags: list[str]
     parts: int
+
     mandatory_options: dict[str, str]
     optional_options: dict[str, str]
+
+    # Holds a regex (str)
     mandatory_links: dict[str, str]
     optional_links: dict[str, str]
