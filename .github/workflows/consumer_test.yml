@@ -13,10 +13,7 @@
 
 name: Consumer Tests
 on:
-  pull_request:
-    types: [opened, reopened, synchronize]
-  merge_group:
-    types: [checks_requested]
+  workflow_call:
 
 jobs:
   test:
@@ -34,12 +31,46 @@ jobs:
         run: |
           bazel run //:ide_support
 
+      - name: Prepare report directory
+        run: |
+          mkdir -p reports
+
       - name: Run Consumer tests
         run: |
-          .venv_docs/bin/python -m pytest -s -v src/tests/ --repo="$CONSUMER"
+          .venv_docs/bin/python -m pytest -s -v src/tests/ --repo="$CONSUMER" --junitxml="reports/${{ matrix.consumer }}.xml" | tee "reports/${{ matrix.consumer }}.log"
 
         env:
           FORCE_COLOR: "1"
           TERM: xterm-256color
           PYTHONUNBUFFERED: "1"
           CONSUMER: ${{ matrix.consumer }}
+
+      - name: Upload consumer test report
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: tests-${{ matrix.consumer }}
+          path: reports/
+
+  summarize:
+    needs: test
+    runs-on: ubuntu-latest
+    if: ${{ always() }}
+    steps:
+      - name: Prepare consumer report directory
+        run: |
+          mkdir -p tests-report
+
+      - name: Download individual consumer reports
+        uses: actions/download-artifact@v4
+        with:
+          pattern: tests-*
+          path: tests-report
+          merge-multiple: true
+
+      - name: Upload bundled consumer report
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: tests-report
+          path: tests-report
