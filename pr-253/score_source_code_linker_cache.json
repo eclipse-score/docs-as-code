@@ -903,8 +903,22 @@
     "full_line": "# req-Id: tool_req__docs_arch_attr_mandatory"
   },
   {
+    "file": "src/extensions/score_source_code_linker/needlinks.py",
+    "line": 13,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_dd_link_source_code_link",
+    "full_line": "# req-Id: tool_req__docs_dd_link_source_code_link"
+  },
+  {
     "file": "src/extensions/score_source_code_linker/testlink.py",
     "line": 21,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_test_link_testcase",
+    "full_line": "# req-Id: tool_req__docs_test_link_testcase"
+  },
+  {
+    "file": "src/extensions/score_source_code_linker/xml_parser.py",
+    "line": 19,
     "tag": "# req-Id:",
     "need": "tool_req__docs_test_link_testcase",
     "full_line": "# req-Id: tool_req__docs_test_link_testcase"
@@ -922,19 +936,5 @@
     "tag": "# req-Id:",
     "need": "tool_req__docs_dd_link_source_code_link",
     "full_line": "# req-Id: tool_req__docs_dd_link_source_code_link"
-  },
-  {
-    "file": "src/extensions/score_source_code_linker/needlinks.py",
-    "line": 13,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_dd_link_source_code_link",
-    "full_line": "# req-Id: tool_req__docs_dd_link_source_code_link"
-  },
-  {
-    "file": "src/extensions/score_source_code_linker/xml_parser.py",
-    "line": 19,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_test_link_testcase",
-    "full_line": "# req-Id: tool_req__docs_test_link_testcase"
   }
 ]
