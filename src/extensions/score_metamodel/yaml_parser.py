@@ -144,9 +144,7 @@ def _parse_needs_types(
     return needs_types
 
 
-def _parse_links(
-    links_dict: dict[str, Any],
-) -> list[dict[str, str]]:
+def _parse_links(links_dict: dict[str, dict[str, str]]) -> list[dict[str, str]]:
     """
     Generate 'needs_extra_links' for sphinx-needs.
 

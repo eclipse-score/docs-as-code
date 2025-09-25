@@ -13,10 +13,8 @@
 import importlib
 import os
 import pkgutil
-import re
 from collections.abc import Callable
 from pathlib import Path
-from typing import Any
 
 from sphinx.application import Sphinx
 from sphinx_needs import logging
@@ -102,6 +100,13 @@ def _run_checks(app: Sphinx, exception: Exception | None) -> None:
     if exception:
         return
 
+    # First of all postprocess the need links to convert
+    # type names into actual need types.
+    # This must be done before any checks are run.
+    # And it must be done after config was hashed, otherwise
+    # the config hash would include recusive linking between types.
+    postprocess_need_links(app.config.needs_types)
+
     # Filter out external needs, as checks are only intended to be run
     # on internal needs.
     needs_all_needs = SphinxNeedsData(app.env).get_needs_view()
@@ -171,59 +176,53 @@ def _get_need_type_for_need(app: Sphinx, need: NeedsInfoType) -> ScoreNeedType:
     raise ValueError(f"Need type {need['type']} not found in needs_types")
 
 
-def _validate_external_need_opt_links(
-    need: NeedsInfoType,
-    opt_links: dict[str, str],
-    allowed_prefixes: list[str],
-    log: CheckLogger,
-) -> None:
-    for link_field, pattern in opt_links.items():
-        raw_value: str | list[str] | None = need.get(link_field, None)
-        if raw_value in [None, [], ""]:
+def _resolve_linkable_types(
+    link_name: str,
+    link_value: str,
+    current_need_type: ScoreNeedType,
+    needs_types: list[ScoreNeedType],
+) -> list[ScoreNeedType]:
+    needs_types_dict = {nt["directive"]: nt for nt in needs_types}
+    link_values = [v.strip() for v in link_value.split(",")]
+    linkable_types: list[ScoreNeedType] = []
+    for v in link_values:
+        target_need_type = needs_types_dict.get(v)
+        if target_need_type is None:
+            logger.error(
+                f"In metamodel.yaml: {current_need_type['directive']}, "
+                f"link '{link_name}' references unknown type '{v}'."
+            )
+        else:
+            linkable_types.append(target_need_type)
+    return linkable_types
+
+
+def postprocess_need_links(needs_types_list: list[ScoreNeedType]):
+    """Convert link option strings into lists of target need types.
+
+    If a link value starts with '^' it is treated as a regex and left
+    unchanged. Otherwise it is a comma-separated list of type names which
+    are resolved to the corresponding ScoreNeedTypes.
+    """
+    for need_type in needs_types_list:
+        try:
+            link_dicts = (
+                need_type["mandatory_links"],
+                need_type["optional_links"],
+            )
+        except KeyError:
+            # TODO: remove the Sphinx-Needs defaults from our metamodel
+            # Example: {'directive': 'issue', 'title': 'Issue', 'prefix': 'IS_'}
             continue
 
-        values: list[str | Any] = (
-            raw_value if isinstance(raw_value, list) else [raw_value]
-        )
-        for value in values:
-            v: str | Any
-            if isinstance(value, str):
-                v = _remove_prefix(value, allowed_prefixes)
-            else:
-                v = value
+        for link_dict in link_dicts:
+            for link_name, link_value in link_dict.items():
+                assert isinstance(link_value, str)  # so far all of them are strings
 
-            try:
-                if not isinstance(v, str) or not re.match(pattern, v):
-                    log.warning_for_option(
-                        need,
-                        link_field,
-                        f"does not follow pattern `{pattern}`.",
-                        is_new_check=True,
+                if not link_value.startswith("^"):
+                    link_dict[link_name] = _resolve_linkable_types(  # pyright: ignore[reportArgumentType]
+                        link_name, link_value, need_type, needs_types_list
                     )
-            except TypeError:
-                log.warning_for_option(
-                    need,
-                    link_field,
-                    f"pattern `{pattern}` is not a valid regex pattern.",
-                    is_new_check=True,
-                )
-
-
-def _check_external_optional_link_patterns(app: Sphinx, log: CheckLogger) -> None:
-    """Validate optional link patterns on external needs and log as info-only.
-
-    Mirrors the original inline logic from ``_run_checks`` without changing behavior.
-    """
-    needs_external_needs = (
-        SphinxNeedsData(app.env).get_needs_view().filter_is_external(True)
-    )
-
-    for need in needs_external_needs.values():
-        need_type = _get_need_type_for_need(app, need)
-
-        if opt_links := need_type["optional_links"]:
-            allowed_prefixes = app.config.allowed_external_prefixes
-            _validate_external_need_opt_links(need, opt_links, allowed_prefixes, log)
 
 
 def setup(app: Sphinx) -> dict[str, str | bool]:
