@@ -862,49 +862,63 @@
   },
   {
     "file": "src/extensions/score_metamodel/checks/check_options.py",
-    "line": 113,
+    "line": 170,
     "tag": "# req-Id:",
     "need": "tool_req__docs_req_attr_reqtype",
     "full_line": "# req-Id: tool_req__docs_req_attr_reqtype"
   },
   {
     "file": "src/extensions/score_metamodel/checks/check_options.py",
-    "line": 114,
+    "line": 171,
     "tag": "# req-Id:",
     "need": "tool_req__docs_common_attr_security",
     "full_line": "# req-Id: tool_req__docs_common_attr_security"
   },
   {
     "file": "src/extensions/score_metamodel/checks/check_options.py",
-    "line": 115,
+    "line": 172,
     "tag": "# req-Id:",
     "need": "tool_req__docs_common_attr_safety",
     "full_line": "# req-Id: tool_req__docs_common_attr_safety"
   },
   {
     "file": "src/extensions/score_metamodel/checks/check_options.py",
-    "line": 116,
+    "line": 173,
     "tag": "# req-Id:",
     "need": "tool_req__docs_common_attr_status",
     "full_line": "# req-Id: tool_req__docs_common_attr_status"
   },
   {
     "file": "src/extensions/score_metamodel/checks/check_options.py",
-    "line": 117,
+    "line": 174,
     "tag": "# req-Id:",
     "need": "tool_req__docs_req_attr_rationale",
     "full_line": "# req-Id: tool_req__docs_req_attr_rationale"
   },
   {
     "file": "src/extensions/score_metamodel/checks/check_options.py",
-    "line": 118,
+    "line": 175,
     "tag": "# req-Id:",
     "need": "tool_req__docs_arch_attr_mandatory",
     "full_line": "# req-Id: tool_req__docs_arch_attr_mandatory"
   },
   {
+    "file": "src/extensions/score_source_code_linker/needlinks.py",
+    "line": 13,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_dd_link_source_code_link",
+    "full_line": "# req-Id: tool_req__docs_dd_link_source_code_link"
+  },
+  {
     "file": "src/extensions/score_source_code_linker/testlink.py",
     "line": 21,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_test_link_testcase",
+    "full_line": "# req-Id: tool_req__docs_test_link_testcase"
+  },
+  {
+    "file": "src/extensions/score_source_code_linker/xml_parser.py",
+    "line": 19,
     "tag": "# req-Id:",
     "need": "tool_req__docs_test_link_testcase",
     "full_line": "# req-Id: tool_req__docs_test_link_testcase"
@@ -922,19 +936,5 @@
     "tag": "# req-Id:",
     "need": "tool_req__docs_dd_link_source_code_link",
     "full_line": "# req-Id: tool_req__docs_dd_link_source_code_link"
-  },
-  {
-    "file": "src/extensions/score_source_code_linker/needlinks.py",
-    "line": 13,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_dd_link_source_code_link",
-    "full_line": "# req-Id: tool_req__docs_dd_link_source_code_link"
-  },
-  {
-    "file": "src/extensions/score_source_code_linker/xml_parser.py",
-    "line": 19,
-    "tag": "# req-Id:",
-    "need": "tool_req__docs_test_link_testcase",
-    "full_line": "# req-Id: tool_req__docs_test_link_testcase"
   }
 ]
