@@ -11,6 +11,8 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
+from __future__ import annotations
+
 from dataclasses import dataclass, field
 
 from sphinx_needs.config import NeedType
@@ -32,6 +34,7 @@ class ScoreNeedType(NeedType):
     mandatory_options: dict[str, str]
     optional_options: dict[str, str]
 
-    # Holds a regex (str)
-    mandatory_links: dict[str, str]
-    optional_links: dict[str, str]
+    # Holds either regexes (str) or a list of other need types (list of ScoreNeedType).
+    # One or the other for simplicity, no mixing.
+    mandatory_links: dict[str, str] | dict[str, list[ScoreNeedType]]
+    optional_links: dict[str, str] | dict[str, list[ScoreNeedType]]

@@ -33,7 +33,7 @@
 
 
 .. Required link `satisfies` refers to wrong requirement type
-#EXPECT: feat_req__abce.satisfies (['std_wp__test__abce']): does not follow pattern `^stkh_req__.*$`.
+#EXPECT: feat_req__abce: references 'std_wp__test__abce' as 'satisfies', but it must reference Stakeholder Requirement (stkh_req).
 
 .. feat_req:: Child requirement
    :id: feat_req__abce
@@ -176,7 +176,7 @@
 
 
 
-.. 
+..
    This Test can not be tested at the moment without enabeling that optional checks are also linked.
    TODO: Re-enable this check
 .. Negative Test: Linked to a non-allowed requirement type.
@@ -191,7 +191,7 @@
 
 
 .. Negative Test: Linked to a non-allowed requirement type.
-#EXPECT: feat_saf_fmea__child__26.violates (['comp_req__child__ASIL_B']): does not follow pattern `^feat_arc_dyn__[0-9a-z_]+$`.
+#EXPECT: feat_saf_fmea__child__26: references 'comp_req__child__ASIL_B' as 'violates', but it must reference Feature Sequence Diagram (feat_arc_dyn).
 
 .. feat_saf_fmea:: Child requirement 26
    :id: feat_saf_fmea__child__26
@@ -504,4 +504,3 @@
 
 .. std_wp:: This is a test
    :id: std_wp__test_content
-

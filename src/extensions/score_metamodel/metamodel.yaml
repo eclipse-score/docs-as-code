@@ -108,12 +108,12 @@ needs_types:
     mandatory_options:
       status: ^(valid|draft)$
     mandatory_links:
-      input: ^wp__.*$
-      output: ^wp__.*$
-      approved_by: ^rl__.*$
-      responsible: ^rl__.*$
+      input: workproduct
+      output: workproduct
+      approved_by: role
+      responsible: role
     optional_links:
-      supported_by: ^rl__.*$
+      supported_by: role
       contains: ^gd_(req|temp|chklst|guidl|meth)__.*$
       has: ^doc_(getstrt|concept)__.*$
     parts: 2
@@ -128,7 +128,7 @@ needs_types:
     optional_links:
       # req-Id: tool_req__docs_req_link_satisfies_allowed
       # TODO: fix once process_description is fixed
-      satisfies: ^wf__.*$
+      satisfies: workflow
       complies: ^std_req__(iso26262|isosae21434|isopas8926|aspice_40)__.*$
     tags:
       - requirement
@@ -182,7 +182,7 @@ needs_types:
     title: Role
     prefix: rl__
     optional_links:
-      contains: ^rl__.*$
+      contains: role
     parts: 2
 
   # Documents, process_description only
@@ -212,7 +212,7 @@ needs_types:
       approver: ^.*$
       reviewer: ^.*$
     optional_links:
-      realizes: "^wp__.+$"
+      realizes: workproduct
     parts: 2
 
   # req-Id: tool_req__docs_doc_types
@@ -233,7 +233,7 @@ needs_types:
       approver: ^.*$
       reviewer: ^.*$
     optional_links:
-      realizes: "^wp__.+$"
+      realizes: workproduct
     parts: 2
 
   # Requirements
@@ -282,7 +282,7 @@ needs_types:
       content: ^[\s\S]+$
     mandatory_links:
       # req-Id: tool_req__docs_req_link_satisfies_allowed
-      satisfies: ^stkh_req__.*$
+      satisfies: stkh_req
     optional_options:
       codelink: ^.*$
       testlink: ^.*$
@@ -311,7 +311,7 @@ needs_types:
       content: ^[\s\S]+$
     mandatory_links:
       # req-Id: tool_req__docs_req_link_satisfies_allowed
-      satisfies: ^feat_req__.*$
+      satisfies: feat_req
     optional_options:
       codelink: ^.*$
       testlink: ^.*$
@@ -339,7 +339,7 @@ needs_types:
     optional_links:
       # req-Id: tool_req__docs_req_link_satisfies_allowed
       # TODO: make it mandatory
-      satisfies: ^gd_req__.*$
+      satisfies: gd_req
     optional_options:
       codelink: ^.*$
       tags: ^.*$
@@ -400,7 +400,7 @@ needs_types:
     mandatory_links:
       includes: ^logic_arc_int(_op)*__.+$
     optional_links:
-      fulfils: ^feat_req__.+$
+      fulfils: feat_req
     tags:
       - architecture_element
       - architecture_view
@@ -420,7 +420,7 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
     mandatory_links:
-      fulfils: ^feat_req__.+$
+      fulfils: feat_req
     tags:
       - architecture_view
       - architecture_element
@@ -441,8 +441,8 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
     optional_links:
-      includes: ^logic_arc_int_op__.+$
-      fulfils: ^comp_req__.+$
+      includes: logic_arc_int_op
+      fulfils: comp_req
     tags:
       - architecture_element
       - architecture_view
@@ -462,7 +462,7 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
     mandatory_links:
-      included_by: ^logic_arc_int__.+$
+      included_by: logic_arc_int
     tags:
       - architecture_element
     parts: 3
@@ -474,7 +474,7 @@ needs_types:
     color: #FEDCD2
     style: card
     mandatory_links:
-      includes: ^comp_arc_sta__.+$
+      includes: comp_arc_sta
     tags:
       - architecture_view
     parts: 3
@@ -501,10 +501,10 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
     optional_links:
-      implements: ^real_arc_int(_op)*__.+$
-      includes: ^comp_arc_sta__.+$
-      uses: ^real_arc_int(_op)*__.+$
-      fulfils: ^comp_req__.+$
+      implements: real_arc_int, real_arc_int_op
+      includes: comp_arc_sta
+      uses: real_arc_int, real_arc_int_op
+      fulfils: comp_req
     tags:
       - architecture_element
       - architecture_view
@@ -524,7 +524,7 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
     optional_links:
-      fulfils: ^comp_req__.+$
+      fulfils: comp_req
     tags:
       - architecture_view
       - architecture_element
@@ -546,7 +546,7 @@ needs_types:
       status: ^(valid|invalid)$
       language: ^(cpp|rust)$
     optional_links:
-      fulfils: ^comp_req__.+$
+      fulfils: comp_req
     tags:
       - architecture_element
       - architecture_view
@@ -566,9 +566,9 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
     mandatory_links:
-      included_by: ^real_arc_int__.+$
+      included_by: real_arc_int
     optional_links:
-      implements: ^logic_arc_int_op__.+$
+      implements: logic_arc_int_op
     tags:
       - architecture_element
     parts: 3
@@ -594,10 +594,10 @@ needs_types:
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
     mandatory_links:
-      implements: ^comp_req__.*$
-      satisfies: ^comp_arc_sta__.*$
+      implements: comp_req
+      satisfies: comp_arc_sta
     optional_links:
-      includes: ^sw_unit__.*$
+      includes: sw_unit
     parts: 3
 
   dd_dyn:
@@ -609,8 +609,8 @@ needs_types:
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
     mandatory_links:
-      implements: ^comp_req__.*$
-      satisfies: ^comp_arc_sta__.*$
+      implements: comp_req
+      satisfies: comp_arc_sta
     parts: 3
 
   sw_unit:
@@ -642,11 +642,11 @@ needs_types:
       status: ^(valid|invalid)$
       content: ^[\s\S]+$
     mandatory_links:
-      violates: ^feat_arc_sta__[0-9a-z_]+$
+      violates: feat_arc_sta
     optional_options:
       mitigation_issue: ^https://github.com/.*$
     optional_links:
-      mitigated_by: ^(feat_req__.*|aou_req__.*)$
+      mitigated_by: feat_req, aou_req
     parts: 3
 
   # req-Id: tool_req__docs_saf_types
@@ -663,14 +663,14 @@ needs_types:
       content: ^[\s\S]+$
     mandatory_links:
       # req-Id: tool_req__docs_saf_attrs_violates
-      violates: ^feat_arc_sta__[0-9a-z_]+$
+      violates: feat_arc_sta
     optional_options:
       # req-Id: tool_req__docs_saf_attrs_mitigation_issue
       mitigation_issue: ^https://github.com/.*$
     optional_links:
       # req-Id: tool_req__docs_saf_attrs_mitigated_by
       # (only mandatory once valid status == valid)
-      mitigated_by: ^(feat_req__.*|aou_req__.*)$
+      mitigated_by: feat_req, aou_req
     tags:
       - dependent_failure_analysis
       - safety_analysis
@@ -693,11 +693,11 @@ needs_types:
       mitigation_issue: ^https://github.com/.*$
     mandatory_links:
       # req-Id: tool_req__docs_saf_attrs_violates
-      violates: ^comp_arc_sta__[0-9a-z_]+$
+      violates: comp_arc_sta
     optional_links:
       # req-Id: tool_req__docs_saf_attrs_mitigated_by
       # (only mandatory once valid status == valid)
-      mitigated_by: ^(comp_req__.*|aou_req__.*)$
+      mitigated_by: comp_req, aou_req
     tags:
       - dependent_failure_analysis
       - safety_analysis
@@ -721,11 +721,11 @@ needs_types:
       mitigation_issue: ^https://github.com/.*$
     mandatory_links:
       # req-Id: tool_req__docs_saf_attrs_violates
-      violates: ^feat_arc_dyn__[0-9a-z_]+$
+      violates: feat_arc_dyn
     optional_links:
       # req-Id: tool_req__docs_saf_attrs_mitigated_by
       # (only mandatory once valid status == valid)
-      mitigated_by: ^(feat_req__.*|aou_req__.*)$
+      mitigated_by: feat_req, aou_req
     tags:
       - failure_mode_effects_analysis
       - safety_analysis
@@ -748,9 +748,9 @@ needs_types:
       mitigation_issue: ^https://github.com/.*$
     mandatory_links:
       # req-Id: tool_req__docs_saf_attrs_violates
-      violates: ^comp_arc_dyn__[0-9a-z_]+$
+      violates: comp_arc_dyn
     optional_links:
-      mitigated_by: ^(comp_req__.*|aou_req__.*)$
+      mitigated_by: comp_req, aou_req
     tags:
       - failure_mode_effects_analysis
       - safety_analysis
