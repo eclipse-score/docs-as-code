@@ -59,9 +59,11 @@ def fake_check_logger():
             args, kwargs = self._mock_logger.warning.call_args
             log_message = args[0]
 
-            assert expected_substring in log_message, f"Expected substring '{
-                expected_substring
-            }' not found in log message: '{log_message}'"
+            assert expected_substring in log_message, (
+                "Expected substring "
+                f"'{expected_substring}' "
+                f"not found in log message: '{log_message}'"
+            )
 
             # All our checks shall report themselves as score_metamodel checks
             assert kwargs["type"] == "score_metamodel"
@@ -84,9 +86,11 @@ def fake_check_logger():
             args, kwargs = self._mock_logger.info.call_args
             log_message = args[0]
 
-            assert expected_substring in log_message, f"Expected substring '{
-                expected_substring
-            }' not found in log message: '{log_message}'"
+            assert expected_substring in log_message, (
+                "Expected substring "
+                f"'{expected_substring}' "
+                f"not found in log message: '{log_message}'"
+            )
 
             # All our checks shall report themselves as score_metamodel checks
             assert kwargs["type"] == "score_metamodel"

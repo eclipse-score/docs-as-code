@@ -454,9 +454,8 @@ class TestStandards:
         assert results == [
             1,
             1,
-        ], f"For function my_pie_linked_standard_requirements expected [1, 1] but got {
-            results
-        }"
+        ], "For function my_pie_linked_standard_requirements expected [1, 1] but got "
+        f"{results}"
 
     def test_my_pie_linked_standard_workproducts(self):
         """
@@ -508,9 +507,8 @@ class TestStandards:
         assert results == [
             1,
             1,
-        ], f"For function my_pie_linked_standard_workproducts expected [1, 1] but got {
-            results
-        }"
+        ], "For function my_pie_linked_standard_workproducts expected [1, 1] but got "
+        f"{results}"
 
     def test_my_pie_workproducts_contained_in_exactly_one_workflow(self):
         """

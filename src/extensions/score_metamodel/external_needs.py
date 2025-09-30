@@ -76,17 +76,27 @@ def parse_external_needs_sources_from_bazel_query() -> list[ExternalNeedsSource]
     When running with Bazel, we pass the `external_needs_source` config value
     from the bazel config.
     """
+    try:
+        logger.debug(
+            "Detected execution without Bazel. Fetching external needs config..."
+        )
+        # Currently dependencies are stored in the top level BUILD file.
+        # We could parse it or query bazel.
+        # Parsing would be MUCH faster, but querying bazel would be more robust.
+        p = subprocess.run(
+            ["bazel", "query", "labels(data, //:docs)"],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+    except (subprocess.CalledProcessError, FileNotFoundError) as e:
+        logger.warning(
+            "Bazel query failed or Bazel not found. "
+            "Falling back to empty external needs. (%s)",
+            e,
+        )
+        return []
 
-    logger.debug("Detected execution without Bazel. Fetching external needs config...")
-    # Currently dependencies are stored in the top level BUILD file.
-    # We could parse it or query bazel.
-    # Parsing would be MUCH faster, but querying bazel would be more robust.
-    p = subprocess.run(
-        ["bazel", "query", "labels(data, //:docs)"],
-        check=True,
-        capture_output=True,
-        text=True,
-    )
     res = [
         res
         for line in p.stdout.splitlines()
