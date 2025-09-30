@@ -11,7 +11,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-project = "Score Docs-as-Code"
+project = "Theta Nil Docs-as-Code"
 project_url = "https://eclipse-score.github.io/docs-as-code/"
 project_prefix = "DOCS_"
 version = "0.1"
