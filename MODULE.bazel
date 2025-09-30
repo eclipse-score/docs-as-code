@@ -98,6 +98,11 @@ http_file(
 
 # docs dependency
 bazel_dep(name = "score_process", version = "1.1.1")
+git_override(
+    module_name = "score_process",
+    remote = "https://github.com/eclipse-score/process_description.git",
+    commit = "5c4c11df4af3d48592f15d26c70a11c82a38402b",  # trlc-2.0.2 release
+)
 
 # Add Linter
 bazel_dep(name = "rules_multitool", version = "1.9.0")
