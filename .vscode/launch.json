@@ -1,0 +1,105 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug Sphinx Live Server",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "sphinx_autobuild",
+            "args": [
+                "docs",
+                "docs/_build/html",
+                "--host",
+                "127.0.0.1",
+                "--port",
+                "8000",
+                "--delay",
+                "1",
+                "--ignore",
+                "*.pyc",
+                "--ignore",
+                "*~",
+                "--ignore",
+                ".DS_Store"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "python": "${workspaceFolder}/.venv_docs/bin/python",
+            "justMyCode": false,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            }
+        },
+        {
+            "name": "Debug Sphinx Build",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "sphinx.cmd.build",
+            "args": [
+                "-b",
+                "html",
+                "docs",
+                "docs/_build/html",
+                "-v"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "python": "${workspaceFolder}/.venv_docs/bin/python",
+            "justMyCode": false,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            }
+        },
+        {
+            "name": "Debug Django Development Server",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/django_app/manage.py",
+            "args": [
+                "runserver",
+                "0.0.0.0:8001"
+            ],
+            "django": true,
+            "cwd": "${workspaceFolder}/django_app",
+            "console": "integratedTerminal",
+            "python": "${workspaceFolder}/.venv_docs/bin/python",
+            "justMyCode": false,
+            "env": {
+                "DJANGO_SETTINGS_MODULE": "myproject.settings",
+                "PYTHONPATH": "${workspaceFolder}"
+            }
+        },
+        {
+            "name": "Debug FastAPI Development Server",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "uvicorn",
+            "args": [
+                "main:app",
+                "--host",
+                "0.0.0.0",
+                "--port",
+                "8002",
+                "--reload"
+            ],
+            "cwd": "${workspaceFolder}/fastapi_app",
+            "console": "integratedTerminal",
+            "python": "${workspaceFolder}/.venv_docs/bin/python",
+            "justMyCode": false,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            }
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Debug All Services",
+            "configurations": [
+                "Debug Sphinx Live Server",
+                "Debug Django Development Server",
+                "Debug FastAPI Development Server"
+            ],
+            "stopAll": true
+        }
+    ]
+}
