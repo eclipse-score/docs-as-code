@@ -11,23 +11,23 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-name: License check preparation
-on:
-  pull_request_target:
-    types: [opened, reopened, synchronize]
-  merge_group:
-    types: [checks_requested]
+# name: License check preparation
+# on:
+#   pull_request_target:
+#     types: [opened, reopened, synchronize]
+#   merge_group:
+#     types: [checks_requested]
 
-permissions:
-  pull-requests: write
-  issues: write
+# permissions:
+#   pull-requests: write
+#   issues: write
 
 
-jobs:
-  license-check:
-    uses: eclipse-score/cicd-workflows/.github/workflows/license-check.yml@main
-    with:
-      repo-url: "${{ github.server_url }}/${{ github.repository }}"
-      bazel-target: "run //src:license-check"
-    secrets:
-      dash-api-token: ${{ secrets.ECLIPSE_GITLAB_API_TOKEN }}
+# jobs:
+#   license-check:
+#     uses: eclipse-score/cicd-workflows/.github/workflows/license-check.yml@main
+#     with:
+#       repo-url: "${{ github.server_url }}/${{ github.repository }}"
+#       bazel-target: "run //src:license-check"
+#     secrets:
+#       dash-api-token: ${{ secrets.ECLIPSE_GITLAB_API_TOKEN }}

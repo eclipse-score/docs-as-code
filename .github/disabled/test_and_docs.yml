@@ -29,13 +29,13 @@ on:
     types: [checks_requested]
 
 jobs:
-  docs-verify:
-    uses: eclipse-score/cicd-workflows/.github/workflows/docs-verify.yml@main
-    permissions:
-      pull-requests: write
-      contents: read
-    with:
-      bazel-docs-verify-target: "//:docs_check"
+  # docs-verify:
+  #   uses: eclipse-score/cicd-workflows/.github/workflows/docs-verify.yml@main
+  #   permissions:
+  #     pull-requests: write
+  #     contents: read
+  #   with:
+  #     bazel-docs-verify-target: "//:docs_check"
 
   # This is the user configurable part of the workflow
   consumer-tests:

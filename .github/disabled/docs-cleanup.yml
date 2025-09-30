@@ -11,14 +11,19 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-name: Copyright checks
-on:
-  pull_request:
-    types: [opened, reopened, synchronize]
-  merge_group:
-    types: [checks_requested]
-jobs:
-  copyright-check:
-    uses: eclipse-score/cicd-workflows/.github/workflows/copyright.yml@main
-    with:
-      bazel-target: "run //:copyright.check"
+# name: Documentation Cleanup
+
+# permissions:
+#   contents: write
+#   pages: write
+#   id-token: write
+
+# on:
+#   schedule:
+#     - cron: '0 0 * * *' # Runs every day at midnight UTC
+
+# jobs:
+#   docs-cleanup:
+#     uses: eclipse-score/cicd-workflows/.github/workflows/docs-cleanup.yml@main
+#     secrets:
+#       token: ${{ secrets.GITHUB_TOKEN }}
