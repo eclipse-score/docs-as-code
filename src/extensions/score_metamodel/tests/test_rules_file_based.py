@@ -162,13 +162,13 @@ def warning_matches(
     warning_info: WarningInfo,
     expected_message: str,
     warnings: list[str],
-) -> bool:
+) -> str | None:
     ### Checks if any element of the warning list is includes the given warning info.
-    # It returns True if found otherwise False.
+    # It returns the matched warning or None if no match is found.
     for warning in filter_warnings_by_position(rst_data, warning_info, warnings):
         if expected_message in warning:
-            return True
-    return False
+            return warning
+    return None
 
 
 @pytest.mark.parametrize("rst_file", RST_FILES)
@@ -193,16 +193,24 @@ def test_rst_files(
 
     # Collect the warnings
     warnings = app.warning.getvalue().splitlines()
-    # print(f"Warnings: {warnings}")
 
     # Check if the expected warnings are present
     for warning_info in rst_data.warning_infos:
         for w in warning_info.expected:
             if not warning_matches(rst_data, warning_info, w, warnings):
                 actual = filter_warnings_by_position(rst_data, warning_info, warnings)
-                raise AssertionError(
-                    f"Expected warning: '{w}' not found. Received: {actual}"
-                )
+                loc = f"{rst_data.filename}:{warning_info.lineno}"
+                msg = f"{loc} Expected warning not found:\n"
+                msg += f"  Expected: '{w}'\n"
+                msg += "  Actual:\n"
+                for a in actual:
+                    msg += f"    - {a}\n"
+                pytest.fail(msg, pytrace=False)
+
         for w in warning_info.not_expected:
-            if warning_matches(rst_data, warning_info, w, warnings):
-                raise AssertionError(f"Unexpected warning: '{w}' found")
+            if unexpected := warning_matches(rst_data, warning_info, w, warnings):
+                loc = f"{rst_data.filename}:{warning_info.lineno}"
+                msg = f"{loc} Unexpected warning found:\n"
+                msg += f"  Not Expected: '{w}'\n"
+                msg += f"  Actual: '{unexpected}'\n"
+                pytest.fail(msg, pytrace=False)
