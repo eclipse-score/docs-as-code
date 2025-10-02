@@ -26,8 +26,10 @@ class ProhibitedWordCheck:
     )  # { Option: [Forbidden words]}
     types: list[str] = field(default_factory=list)
 
+
 # links to either regexes (str) or a other need types (list of ScoreNeedType).
 AllowedLinksType = dict[str, list["str | ScoreNeedType"]]
+
 
 class ScoreNeedType(NeedType):
     tags: list[str]
