@@ -115,15 +115,12 @@ def validate_links(
             if mandatory and not values:
                 log.warning_for_need(need, f"is missing required link: `{attribute}`.")
 
-            allowed_regex = ""
-            for v in allowed_values:
-                if allowed_regex:
-                    allowed_regex += "|"
-
-                if isinstance(v, str):
-                    allowed_regex += v
-                else:
-                    allowed_regex += v["mandatory_options"]["id"]
+            allowed_regex = "|".join(
+                [
+                    v if isinstance(v, str) else v["mandatory_options"]["id"]
+                    for v in allowed_values
+                ]
+            )
 
             # regex based validation
             for value in values:
