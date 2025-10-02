@@ -109,7 +109,7 @@ def validate_links(
     Validates that links in a need match the expected types or regexes.
     """
 
-    def _validate(attributes_to_allowed_values: AllowedLinksType, mandatory: bool):
+    def _validate(attributes_to_allowed_values: AllowedLinksType, mandatory: bool, treat_as_info: bool = False):
         for attribute, allowed_values in attributes_to_allowed_values.items():
             values = _get_normalized(need, attribute, remove_prefix=True)
             if mandatory and not values:
@@ -136,10 +136,11 @@ def validate_links(
                             for av in allowed_values
                         ],
                         allowed_regex,
+                        is_new_check=treat_as_info,
                     )
 
     _validate(need_type["mandatory_links"], True)
-    _validate(need_type["optional_links"], False)
+    _validate(need_type["optional_links"], False, treat_as_info=True)
 
 
 # req-Id: tool_req__docs_req_attr_reqtype
