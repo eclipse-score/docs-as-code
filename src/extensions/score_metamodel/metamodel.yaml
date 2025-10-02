@@ -129,7 +129,7 @@ needs_types:
       # req-Id: tool_req__docs_req_link_satisfies_allowed
       # TODO: fix once process_description is fixed
       satisfies: workflow
-      complies: ^std_req__(iso26262|isosae21434|isopas8926|aspice_40)__.*$
+      complies: std_req
     tags:
       - requirement
     parts: 2
@@ -139,7 +139,7 @@ needs_types:
     mandatory_options:
       status: ^(valid|draft)$
     optional_links:
-      complies: ^std_req__(iso26262|isodae21434|isopas8926|aspice_40)__.*$
+      complies: std_req
     parts: 2
 
   gd_chklst:
@@ -147,7 +147,7 @@ needs_types:
     mandatory_options:
       status: ^(valid|draft)$
     optional_links:
-      complies: ^std_req__(iso26262|isodae21434|isopas8926|aspice_40)__.*$
+      complies: std_req
     parts: 2
 
   gd_guidl:
@@ -155,7 +155,7 @@ needs_types:
     mandatory_options:
       status: ^(valid|draft)$
     optional_links:
-      complies: ^std_req__(iso26262|isosae21434|isopas8926|aspice_40)__.*$
+      complies: std_req
     parts: 2
 
   gd_method:
@@ -164,7 +164,7 @@ needs_types:
     mandatory_options:
       status: ^(valid|draft)$
     optional_links:
-      complies: ^std_req__(iso26262|isosae21434|isopas8926|aspice_40)__.*$
+      complies: std_req
     parts: 2
 
   # S-CORE Workproduct
@@ -174,7 +174,7 @@ needs_types:
     mandatory_options:
       status: ^(valid|draft)$
     optional_links:
-      complies: ^std_(wp__iso26262|wp__isosae21434|wp__isopas8926|iic_aspice_40)__.*$
+      complies: std_wp, ^std_req__aspice_40__iic.*$
     parts: 2
 
   # Role
