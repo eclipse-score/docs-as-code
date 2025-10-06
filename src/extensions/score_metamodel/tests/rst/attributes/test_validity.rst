@@ -11,10 +11,10 @@
    #
    # SPDX-License-Identifier: Apache-2.0
    # *******************************************************************************
-#CHECK: check_validity_attributes
+#CHECK: check_validity_consistency
 
 
-#EXPECT: feat_req__random_id1 has inconsistent validity
+#EXPECT: feat_req__random_id1: inconsistent validity: valid_from (v1.0) >= valid_until (v0.5).
 
 .. feat_req:: from after until
    :id: feat_req__random_id1
@@ -22,9 +22,17 @@
    :valid_until: v0.5
 
 
-#EXPECT-NOT: feat_req__random_id2 has inconsistent validity
+#EXPECT-NOT: feat_req__random_id2: inconsistent validity: valid_from (v0.5) >= valid_until (v1.0).
 
 .. feat_req:: until after from
    :id: feat_req__random_id2
    :valid_from: v0.5
    :valid_until: v1.0
+
+
+#EXPECT: stkh_req__random_id1: inconsistent validity: valid_from (v1.0.1) >= valid_until (v0.5).
+
+.. stkh_req:: from after until for stakeholder requirement
+   :id: stkh_req__random_id1
+   :valid_from: v1.0.1
+   :valid_until: v0.5

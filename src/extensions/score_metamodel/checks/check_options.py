@@ -243,7 +243,7 @@ def check_validity_consistency(
     valid_until_version = parse_milestone(valid_until)
     if valid_from_version >= valid_until_version:
         msg = (
-            "has inconsistent validity:"
+            "inconsistent validity: "
             f"valid_from ({valid_from}) >= valid_until ({valid_until})."
         )
         log.warning_for_need(need, msg)
