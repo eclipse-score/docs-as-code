@@ -487,9 +487,7 @@ def test_source_link_integration_ok(
         os.environ["BUILD_WORKSPACE_DIRECTORY"] = str(sphinx_base_dir)
         app.build()
         ws_root = find_ws_root()
-        if ws_root is None:
-            # This should never happen
-            pytest.fail(f"WS_root is none. WS_root: {ws_root}")
+        assert ws_root is not None
         Needs_Data = SphinxNeedsData(app.env)
         needs_data = {x["id"]: x for x in Needs_Data.get_needs_view().values()}
         compare_json_files(
@@ -506,33 +504,24 @@ def test_source_link_integration_ok(
             app.outdir / "score_scl_grouped_cache.json",
             sphinx_base_dir / ".expected_grouped.json",
         )
-        # Testing TREQ_ID_1, TREQ_ID_2, TREQ_ID_3
 
         # TODO: Is this actually a good test, or just a weird mock?
-        for i in range(1, 4):
+        for i in (1, 2, 3):
             treq_id = f"TREQ_ID_{i}"
-            print(f"TESTING NEED: {treq_id}")
-            # extra_options are only available at runtime
             assert treq_id in needs_data
-            need_as_dict = cast(dict[str, object], needs_data[treq_id])
+            treq_info = needs_data[treq_id]
+            print("Needs Data for", treq_id, ":", treq_info)
 
             # verify codelinks
             expected_code_link = make_source_link(
                 example_source_link_text_all_ok[treq_id]
             )
-            print(f"EXPECTED CODE LINK: {expected_code_link}")
-            actual_source_code_link = cast(
-                list[str], need_as_dict["source_code_link"]
-            )
-            print(f"ACTUAL CODE LINK:   {actual_source_code_link}")
+            actual_source_code_link = treq_info["source_code_link"]
             assert expected_code_link == actual_source_code_link, treq_id
 
             # verify testlinks
             expected_test_link = make_test_link(example_test_link_text_all_ok[treq_id])
-            print(f"NEED AS DICT: {need_as_dict}")
-            print(f"EXPECTED TEST LINK: {expected_test_link}")
-            actual_test_code_link = need_as_dict["testlink"]
-            print(f"ACTUAL TEST LINK:   {actual_test_code_link}")
+            actual_test_code_link = treq_info["testlink"]
             assert expected_test_link == actual_test_code_link, treq_id
     finally:
         app.cleanup()
