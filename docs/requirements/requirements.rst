@@ -447,14 +447,14 @@ Mapping
   .. table::
      :widths: auto
 
-     ================================ ===========================
+     ================================ ===================================================
      Source Type                      Allowed Link Target
-     ================================ ===========================
+     ================================ ===================================================
      Feature Requirements             Stakeholder Requirements
      Component Requirements           Feature Requirements
      Process Requirements             Workflows
-     Tooling Requirements             Process Requirements
-     ================================ ===========================
+     Tooling Requirements             Process Requirements, Stakeholder Requirements
+     ================================ ===================================================
 
   .. note::
       Certain tool requirements do not have a matching process requirement.
