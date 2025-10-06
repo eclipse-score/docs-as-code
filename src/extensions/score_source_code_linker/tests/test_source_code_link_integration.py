@@ -515,12 +515,14 @@ def test_source_link_integration_ok(
             expected_code_link = make_source_link(
                 example_source_link_text_all_ok[treq_id]
             )
-            actual_source_code_link = treq_info["source_code_link"]
+            actual_source_code_link = treq_info.get(
+                "source_code_link", "no source link"
+            )
             assert expected_code_link == actual_source_code_link, treq_id
 
             # verify testlinks
             expected_test_link = make_test_link(example_test_link_text_all_ok[treq_id])
-            actual_test_code_link = treq_info["testlink"]
+            actual_test_code_link = treq_info.get("testlink", "no test link")
             assert expected_test_link == actual_test_code_link, treq_id
     finally:
         app.cleanup()
