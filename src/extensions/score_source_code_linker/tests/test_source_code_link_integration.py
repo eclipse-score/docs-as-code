@@ -18,7 +18,7 @@ import subprocess
 from collections import Counter
 from collections.abc import Callable
 from pathlib import Path
-from typing import Any, cast
+from typing import Any
 
 import pytest
 from pytest import TempPathFactory
@@ -470,7 +470,6 @@ def compare_grouped_json_files(file1: Path, golden_file: Path):
             f"TestLinks don't match for {item1.need}. "
             f"{file1}: {item1.links.TestLinks}, {golden_file}: {item2.links.TestLinks}"
         )
-
 
 
 def test_source_link_integration_ok(
