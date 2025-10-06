@@ -307,14 +307,14 @@ def example_source_link_text_all_ok(sphinx_base_dir: Path):
     return {
         "TREQ_ID_1": [
             NeedLink(
-                file=Path("src/implementation1.py"),
-                line=3,
+                file=Path("src/implementation2.py"),
+                line=5,
                 tag="#" + " req-Id:",
                 need="TREQ_ID_1",
                 full_line="#" + " req-Id: TREQ_ID_1",
             ),
             NeedLink(
-                file=Path("src/implementation2.py"),
+                file=Path("src/implementation1.py"),
                 line=3,
                 tag="#" + " req-Id:",
                 need="TREQ_ID_1",
@@ -330,6 +330,7 @@ def example_source_link_text_all_ok(sphinx_base_dir: Path):
                 full_line="#" + " req-Id: TREQ_ID_2",
             )
         ],
+        "TREQ_ID_3": [],
     }
 
 
@@ -359,9 +360,9 @@ def example_test_link_text_all_ok(sphinx_base_dir: Path):
             ),
             DataForTestLink(
                 name="test_error_handling",
-                file=Path("src/tests/testfile_2.py"),
+                file=Path("src/testfile_1.py"),
                 need="TREQ_ID_2",
-                line=33,
+                line=38,
                 verify_type="partially",
                 result="passed",
                 result_text="",
@@ -379,7 +380,7 @@ def example_test_link_text_all_ok(sphinx_base_dir: Path):
             ),
             DataForTestLink(
                 name="test_error_handling",
-                file=Path("src/test/testfile_2.py"),
+                file=Path("src/testfile_1.py"),
                 need="TREQ_ID_3",
                 line=38,
                 verify_type="partially",
@@ -471,9 +472,7 @@ def compare_grouped_json_files(file1: Path, golden_file: Path):
         )
 
 
-@pytest.mark.skip(
-    "Flaky test, see https://github.com/eclipse-score/docs-as-code/issues/226"
-)
+
 def test_source_link_integration_ok(
     sphinx_app_setup: Callable[[], SphinxTestApp],
     example_source_link_text_all_ok: dict[str, list[NeedLink]],
@@ -511,30 +510,30 @@ def test_source_link_integration_ok(
 
         # TODO: Is this actually a good test, or just a weird mock?
         for i in range(1, 4):
+            treq_id = f"TREQ_ID_{i}"
+            print(f"TESTING NEED: {treq_id}")
             # extra_options are only available at runtime
-            assert f"TREQ_ID_{i}" in needs_data
-            need_as_dict = cast(dict[str, object], needs_data[f"TREQ_ID_{i}"])
-            # TODO: This probably isn't great. Should make this better.
-            if i != 3:
-                # Excluding 3 as this is a keyerror here
-                expected_code_link = make_source_link(
-                    example_source_link_text_all_ok[f"TREQ_ID_{i}"]
-                )
-                print(f"EXPECTED LINK CODE: {expected_code_link}")
-                actual_source_code_link = cast(
-                    list[str], need_as_dict["source_code_link"]
-                )
-                print(f"ACTUALL CODE LINK: {actual_source_code_link}")
-                assert set(expected_code_link) == set(actual_source_code_link)
-            expected_test_link = make_test_link(
-                example_test_link_text_all_ok[f"TREQ_ID_{i}"]
+            assert treq_id in needs_data
+            need_as_dict = cast(dict[str, object], needs_data[treq_id])
+
+            # verify codelinks
+            expected_code_link = make_source_link(
+                example_source_link_text_all_ok[treq_id]
             )
-            # Compare contents, regardless of order.
+            print(f"EXPECTED CODE LINK: {expected_code_link}")
+            actual_source_code_link = cast(
+                list[str], need_as_dict["source_code_link"]
+            )
+            print(f"ACTUAL CODE LINK:   {actual_source_code_link}")
+            assert expected_code_link == actual_source_code_link, treq_id
+
+            # verify testlinks
+            expected_test_link = make_test_link(example_test_link_text_all_ok[treq_id])
             print(f"NEED AS DICT: {need_as_dict}")
-            print(f"EXPECTED LINK TEST: {expected_test_link}")
-            actual_test_code_link = cast(list[str], need_as_dict["testlink"])
-            print(f"ACTUALL TEST LINK: {actual_test_code_link}")
-            assert set(expected_test_link) == set(actual_test_code_link)
+            print(f"EXPECTED TEST LINK: {expected_test_link}")
+            actual_test_code_link = need_as_dict["testlink"]
+            print(f"ACTUAL TEST LINK:   {actual_test_code_link}")
+            assert expected_test_link == actual_test_code_link, treq_id
     finally:
         app.cleanup()
 
