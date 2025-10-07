@@ -478,14 +478,14 @@ One or more Sphinx-Needs directives needed for the
 Sphinx document build</p>
 <p><strong>Example:</strong></p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>#CHECK: check_options
-#EXPECT: std_wp__test__abcd: is missing required option: `status`.
+#EXPECT: std_wp__test__abcd: is missing required attribute: `status`.
 
 .. std_wp:: Test requirement
     :id: std_wp__test__abcd
 </pre></div>
 </div>
 <p>This example verifies that the warning message
-<em>std_wp__test__abcd: is missing required option: `status`</em>
+<em>std_wp__test__abcd: is missing required attribute: `status`</em>
 is shown during the Sphinx build. Only the <em>check_options</em> check is enabled.</p>
 </section>
 </section>
