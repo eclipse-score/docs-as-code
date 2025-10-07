@@ -18,7 +18,7 @@ import subprocess
 from collections import Counter
 from collections.abc import Callable
 from pathlib import Path
-from typing import Any, cast
+from typing import Any
 
 import pytest
 from pytest import TempPathFactory
@@ -307,14 +307,14 @@ def example_source_link_text_all_ok(sphinx_base_dir: Path):
     return {
         "TREQ_ID_1": [
             NeedLink(
-                file=Path("src/implementation1.py"),
-                line=3,
+                file=Path("src/implementation2.py"),
+                line=5,
                 tag="#" + " req-Id:",
                 need="TREQ_ID_1",
                 full_line="#" + " req-Id: TREQ_ID_1",
             ),
             NeedLink(
-                file=Path("src/implementation2.py"),
+                file=Path("src/implementation1.py"),
                 line=3,
                 tag="#" + " req-Id:",
                 need="TREQ_ID_1",
@@ -330,6 +330,7 @@ def example_source_link_text_all_ok(sphinx_base_dir: Path):
                 full_line="#" + " req-Id: TREQ_ID_2",
             )
         ],
+        "TREQ_ID_3": [],
     }
 
 
@@ -359,9 +360,9 @@ def example_test_link_text_all_ok(sphinx_base_dir: Path):
             ),
             DataForTestLink(
                 name="test_error_handling",
-                file=Path("src/tests/testfile_2.py"),
+                file=Path("src/testfile_1.py"),
                 need="TREQ_ID_2",
-                line=33,
+                line=38,
                 verify_type="partially",
                 result="passed",
                 result_text="",
@@ -379,7 +380,7 @@ def example_test_link_text_all_ok(sphinx_base_dir: Path):
             ),
             DataForTestLink(
                 name="test_error_handling",
-                file=Path("src/test/testfile_2.py"),
+                file=Path("src/testfile_1.py"),
                 need="TREQ_ID_3",
                 line=38,
                 verify_type="partially",
@@ -471,9 +472,6 @@ def compare_grouped_json_files(file1: Path, golden_file: Path):
         )
 
 
-@pytest.mark.skip(
-    "Flaky test, see https://github.com/eclipse-score/docs-as-code/issues/226"
-)
 def test_source_link_integration_ok(
     sphinx_app_setup: Callable[[], SphinxTestApp],
     example_source_link_text_all_ok: dict[str, list[NeedLink]],
@@ -488,9 +486,7 @@ def test_source_link_integration_ok(
         os.environ["BUILD_WORKSPACE_DIRECTORY"] = str(sphinx_base_dir)
         app.build()
         ws_root = find_ws_root()
-        if ws_root is None:
-            # This should never happen
-            pytest.fail(f"WS_root is none. WS_root: {ws_root}")
+        assert ws_root is not None
         Needs_Data = SphinxNeedsData(app.env)
         needs_data = {x["id"]: x for x in Needs_Data.get_needs_view().values()}
         compare_json_files(
@@ -507,34 +503,27 @@ def test_source_link_integration_ok(
             app.outdir / "score_scl_grouped_cache.json",
             sphinx_base_dir / ".expected_grouped.json",
         )
-        # Testing TREQ_ID_1, TREQ_ID_2, TREQ_ID_3
 
         # TODO: Is this actually a good test, or just a weird mock?
-        for i in range(1, 4):
-            # extra_options are only available at runtime
-            assert f"TREQ_ID_{i}" in needs_data
-            need_as_dict = cast(dict[str, object], needs_data[f"TREQ_ID_{i}"])
-            # TODO: This probably isn't great. Should make this better.
-            if i != 3:
-                # Excluding 3 as this is a keyerror here
-                expected_code_link = make_source_link(
-                    example_source_link_text_all_ok[f"TREQ_ID_{i}"]
-                )
-                print(f"EXPECTED LINK CODE: {expected_code_link}")
-                actual_source_code_link = cast(
-                    list[str], need_as_dict["source_code_link"]
-                )
-                print(f"ACTUALL CODE LINK: {actual_source_code_link}")
-                assert set(expected_code_link) == set(actual_source_code_link)
-            expected_test_link = make_test_link(
-                example_test_link_text_all_ok[f"TREQ_ID_{i}"]
+        for i in (1, 2, 3):
+            treq_id = f"TREQ_ID_{i}"
+            assert treq_id in needs_data
+            treq_info = needs_data[treq_id]
+            print("Needs Data for", treq_id, ":", treq_info)
+
+            # verify codelinks
+            expected_code_link = make_source_link(
+                example_source_link_text_all_ok[treq_id]
             )
-            # Compare contents, regardless of order.
-            print(f"NEED AS DICT: {need_as_dict}")
-            print(f"EXPECTED LINK TEST: {expected_test_link}")
-            actual_test_code_link = cast(list[str], need_as_dict["testlink"])
-            print(f"ACTUALL TEST LINK: {actual_test_code_link}")
-            assert set(expected_test_link) == set(actual_test_code_link)
+            actual_source_code_link = treq_info.get(
+                "source_code_link", "no source link"
+            )
+            assert expected_code_link == actual_source_code_link, treq_id
+
+            # verify testlinks
+            expected_test_link = make_test_link(example_test_link_text_all_ok[treq_id])
+            actual_test_code_link = treq_info.get("testlink", "no test link")
+            assert expected_test_link == actual_test_code_link, treq_id
     finally:
         app.cleanup()
 
