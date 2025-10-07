@@ -339,7 +339,7 @@ needs_types:
     optional_links:
       # req-Id: tool_req__docs_req_link_satisfies_allowed
       # TODO: make it mandatory
-      satisfies: gd_req
+      satisfies: gd_req, stkh_req
     optional_options:
       codelink: ^.*$
       tags: ^.*$

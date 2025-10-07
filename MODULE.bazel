@@ -97,7 +97,7 @@ http_file(
 # Checker rule for CopyRight checks/fixes
 
 # docs dependency
-bazel_dep(name = "score_process", version = "1.1.1")
+bazel_dep(name = "score_process", version = "1.2.0")
 
 # Add Linter
 bazel_dep(name = "rules_multitool", version = "1.9.0")
