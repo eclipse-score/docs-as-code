@@ -16,7 +16,7 @@
 
 ..
    Required option: `status` is missing
-#EXPECT: std_wp__test__abcd: is missing required option: `status`.
+#EXPECT: std_wp__test__abcd: is missing required attribute: `status`.
 
 .. std_wp:: This is a test
    :id: std_wp__test__abcd
@@ -24,7 +24,7 @@
 
 
 .. All required options are present
-#EXPECT-NOT: std_wp__test__abcd: is missing required option
+#EXPECT-NOT: std_wp__test__abcd: is missing required attribute
 
 .. std_wp:: This is a test
    :id: std_wp__test__abce
@@ -478,7 +478,7 @@
 
 ..
    Ensuring that empty content is detected correctly
-.. #EXPECT: stkh_req__test_no_content: is missing required option: `content`
+.. #EXPECT: stkh_req__test_no_content: is missing required attribute: `content`
 ..
 .. .. stkh_req:: This is a test
 ..    :id: stkh_req__test_no_content
@@ -488,7 +488,7 @@
 
 ..
    Ensuring that non empty content is detected correctly
-#EXPECT-NOT: stkh_req__test_content: is missing required option: `content`
+#EXPECT-NOT: stkh_req__test_content: is missing required attribute: `content`
 
 .. stkh_req:: This is a test
    :id: stkh_req__test_content
@@ -500,7 +500,7 @@
 
 ..
    This should not trigger, as 'std_wp' is not checked for content
-#EXPECT-NOT: std_wp__test_content: is missing required option: `content`
+#EXPECT-NOT: std_wp__test_content: is missing required attribute: `content`
 
 .. std_wp:: This is a test
    :id: std_wp__test_content

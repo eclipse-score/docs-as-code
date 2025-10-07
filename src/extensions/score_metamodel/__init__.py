@@ -181,19 +181,22 @@ def _resolve_linkable_types(
     link_value: str,
     current_need_type: ScoreNeedType,
     needs_types: list[ScoreNeedType],
-) -> list[ScoreNeedType]:
+) -> list[ScoreNeedType | str]:
     needs_types_dict = {nt["directive"]: nt for nt in needs_types}
     link_values = [v.strip() for v in link_value.split(",")]
-    linkable_types: list[ScoreNeedType] = []
+    linkable_types: list[ScoreNeedType | str] = []
     for v in link_values:
-        target_need_type = needs_types_dict.get(v)
-        if target_need_type is None:
-            logger.error(
-                f"In metamodel.yaml: {current_need_type['directive']}, "
-                f"link '{link_name}' references unknown type '{v}'."
-            )
+        if v.startswith("^"):
+            linkable_types.append(v)  # keep regex as-is
         else:
-            linkable_types.append(target_need_type)
+            target_need_type = needs_types_dict.get(v)
+            if target_need_type is None:
+                logger.error(
+                    f"In metamodel.yaml: {current_need_type['directive']}, "
+                    f"link '{link_name}' references unknown type '{v}'."
+                )
+            else:
+                linkable_types.append(target_need_type)
     return linkable_types
 
 
@@ -219,10 +222,9 @@ def postprocess_need_links(needs_types_list: list[ScoreNeedType]):
             for link_name, link_value in link_dict.items():
                 assert isinstance(link_value, str)  # so far all of them are strings
 
-                if not link_value.startswith("^"):
-                    link_dict[link_name] = _resolve_linkable_types(  # pyright: ignore[reportArgumentType]
-                        link_name, link_value, need_type, needs_types_list
-                    )
+                link_dict[link_name] = _resolve_linkable_types(  # pyright: ignore[reportArgumentType]
+                    link_name, link_value, need_type, needs_types_list
+                )
 
 
 def setup(app: Sphinx) -> dict[str, str | bool]:
