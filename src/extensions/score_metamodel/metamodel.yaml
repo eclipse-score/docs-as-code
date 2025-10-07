@@ -399,7 +399,6 @@ needs_types:
       status: ^(valid|invalid)$
     mandatory_links:
       includes: ^logic_arc_int(_op)*__.+$
-    optional_links:
       fulfils: feat_req
     tags:
       - architecture_element
@@ -442,7 +441,7 @@ needs_types:
       status: ^(valid|invalid)$
     optional_links:
       includes: logic_arc_int_op
-      fulfils: comp_req
+      fulfils: feat_req
     tags:
       - architecture_element
       - architecture_view
@@ -501,10 +500,10 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
     optional_links:
-      implements: real_arc_int, real_arc_int_op
-      includes: comp_arc_sta
-      uses: real_arc_int, real_arc_int_op
       fulfils: comp_req
+      implements: logic_arc_int, real_arc_int_op
+      includes: comp_arc_sta
+      uses: logic_arc_int, real_arc_int_op
     tags:
       - architecture_element
       - architecture_view

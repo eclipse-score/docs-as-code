@@ -545,7 +545,7 @@ Architecture Attributes
      ====================================  ==========================================
      feat_arc_sta                          feat_req
      feat_arc_dyn                          feat_req
-     logic_arc_int                         comp_req
+     logic_arc_int                         feat_req
      comp_arc_sta                          comp_req
      comp_arc_dyn                          comp_req
      real_arc_int                          comp_req
