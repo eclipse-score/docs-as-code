@@ -499,9 +499,8 @@ needs_types:
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
-    mandatory_links:
-      fulfils: comp_req
     optional_links:
+      fulfils: comp_req
       implements: logic_arc_int, real_arc_int_op
       includes: comp_arc_sta
       uses: logic_arc_int, real_arc_int_op
