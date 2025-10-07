@@ -862,42 +862,42 @@
   },
   {
     "file": "src/extensions/score_metamodel/checks/check_options.py",
-    "line": 170,
+    "line": 150,
     "tag": "# req-Id:",
     "need": "tool_req__docs_req_attr_reqtype",
     "full_line": "# req-Id: tool_req__docs_req_attr_reqtype"
   },
   {
     "file": "src/extensions/score_metamodel/checks/check_options.py",
-    "line": 171,
+    "line": 151,
     "tag": "# req-Id:",
     "need": "tool_req__docs_common_attr_security",
     "full_line": "# req-Id: tool_req__docs_common_attr_security"
   },
   {
     "file": "src/extensions/score_metamodel/checks/check_options.py",
-    "line": 172,
+    "line": 152,
     "tag": "# req-Id:",
     "need": "tool_req__docs_common_attr_safety",
     "full_line": "# req-Id: tool_req__docs_common_attr_safety"
   },
   {
     "file": "src/extensions/score_metamodel/checks/check_options.py",
-    "line": 173,
+    "line": 153,
     "tag": "# req-Id:",
     "need": "tool_req__docs_common_attr_status",
     "full_line": "# req-Id: tool_req__docs_common_attr_status"
   },
   {
     "file": "src/extensions/score_metamodel/checks/check_options.py",
-    "line": 174,
+    "line": 154,
     "tag": "# req-Id:",
     "need": "tool_req__docs_req_attr_rationale",
     "full_line": "# req-Id: tool_req__docs_req_attr_rationale"
   },
   {
     "file": "src/extensions/score_metamodel/checks/check_options.py",
-    "line": 175,
+    "line": 155,
     "tag": "# req-Id:",
     "need": "tool_req__docs_arch_attr_mandatory",
     "full_line": "# req-Id: tool_req__docs_arch_attr_mandatory"
