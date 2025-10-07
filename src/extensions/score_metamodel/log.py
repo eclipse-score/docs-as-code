@@ -55,6 +55,26 @@ class CheckLogger:
         location = CheckLogger._location(need, self._prefix)
         self._log_message(full_msg, location, is_new_check)
 
+    def warning_for_link(
+        self,
+        need: NeedsInfoType,
+        option: str,
+        problematic_value: str,
+        allowed_values: list[str],
+        allowed_regex: str,
+        is_new_check: bool = False,
+    ):
+        msg = (
+            f"references '{problematic_value}' as '{option}', "
+            f"but it must reference {' or '.join(allowed_values)}."
+        )
+        # Sometimes printing this helps, but most often it just clutters the log.
+        # Not sure yet.
+        # if allowed_regex:
+        #     msg += f" (allowed pattern: `{allowed_regex}`)"
+
+        self.warning_for_need(need, msg, is_new_check=is_new_check)
+
     def warning_for_need(
         self, need: NeedsInfoType, msg: str, is_new_check: bool = False
     ):
