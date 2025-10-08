@@ -207,3 +207,43 @@ def check_extra_options(
         extra_options_str = ", ".join(f"`{option}`" for option in extra_options)
         msg = f"has these extra options: {extra_options_str}."
         log.warning_for_need(need, msg)
+
+
+def parse_milestone(value: str) -> tuple[int, int, int]:
+    """Parse a string like 'v0.5' or 'v1.0.0'. No suffixes."""
+    match = re.match(r"v(\d+)(\.(\d+))?(\.(\d+))?$", value)
+    if not match:
+        raise ValueError(f"Invalid milestone format: {value}")
+    major = int(match.group(1))
+    minor = int(match.group(3) or 0)
+    patch = int(match.group(5) or 0)
+    return (major, minor, patch)
+
+
+# req-Id: tool_req__docs_req_attr_validity_consistency
+@local_check
+def check_validity_consistency(
+    app: Sphinx,
+    need: NeedsInfoType,
+    log: CheckLogger,
+):
+    """
+    Check if the attributes valid_from < valid_until.
+    """
+    if need["type"] not in ("stkh_req", "feat_req"):
+        return
+
+    valid_from = need.get("valid_from", None)
+    valid_until = need.get("valid_until", None)
+
+    if not valid_from or not valid_until:
+        return
+
+    valid_from_version = parse_milestone(valid_from)
+    valid_until_version = parse_milestone(valid_until)
+    if valid_from_version >= valid_until_version:
+        msg = (
+            "inconsistent validity: "
+            f"valid_from ({valid_from}) >= valid_until ({valid_until})."
+        )
+        log.warning_for_need(need, msg)

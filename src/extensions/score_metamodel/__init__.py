@@ -62,7 +62,8 @@ def parse_checks_filter(filter: str) -> list[str]:
     }
     for check in checks:
         assert check in all_check_names, (
-            f"Check: '{check}' is not one of the defined local or graph checks"
+            f"Check: '{check}' is not one of the defined local or graph checks: "
+            + ", ".join(all_check_names)
         )
 
     return checks

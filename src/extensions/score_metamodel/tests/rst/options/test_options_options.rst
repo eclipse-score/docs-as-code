@@ -504,3 +504,17 @@
 
 .. std_wp:: This is a test
    :id: std_wp__test_content
+
+
+#EXPECT: feat_req__random_id3.valid_from (2035-03): does not follow pattern
+
+.. feat_req:: milestone must be a version
+   :id: feat_req__random_id3
+   :valid_from: 2035-03
+
+
+#EXPECT: feat_req__random_id4.valid_until (2035-03): does not follow pattern
+
+.. feat_req:: milestone must be a version
+   :id: feat_req__random_id4
+   :valid_until: 2035-03
