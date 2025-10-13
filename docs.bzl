@@ -39,8 +39,7 @@
 
 load("@aspect_rules_py//py:defs.bzl", "py_binary", "py_library")
 load("@pip_process//:requirements.bzl", "all_requirements", "requirement")
-load("@rules_java//java:java_binary.bzl", "java_binary")
-load("@rules_pkg//pkg:mappings.bzl", "pkg_files")
+load("@rules_pkg//pkg:mappings.bzl", "pkg_files", "strip_prefix")
 load("@rules_pkg//pkg:tar.bzl", "pkg_tar")
 load("@rules_python//sphinxdocs:sphinx.bzl", "sphinx_build_binary", "sphinx_docs")
 load("@rules_python//sphinxdocs:sphinx_docs_library.bzl", "sphinx_docs_library")
@@ -67,6 +66,27 @@ def docs(source_dir = "docs", data = [], deps = []):
         visibility = ["//visibility:private"],
         data = data,
         deps = deps,
+    )
+
+    pkg_files(
+        name = "docs_sources",
+        srcs = native.glob([
+            source_dir + "/**/*.png",
+            source_dir + "/**/*.svg",
+            source_dir + "/**/*.md",
+            source_dir + "/**/*.rst",
+            source_dir + "/**/*.html",
+            source_dir + "/**/*.css",
+            source_dir + "/**/*.puml",
+            source_dir + "/**/*.need",
+            source_dir + "/**/*.yaml",
+            source_dir + "/**/*.json",
+            source_dir + "/**/*.csv",
+            source_dir + "/**/*.inc",
+            "more_docs/**/*.rst",
+        ], allow_empty = True),
+        strip_prefix = strip_prefix.from_pkg(),  # avoid flattening of folders
+        visibility = ["//visibility:public"],
     )
 
     py_binary(
@@ -117,26 +137,9 @@ def docs(source_dir = "docs", data = [], deps = []):
         data = data,
     )
 
-    # creates 'needs.json' build target
     sphinx_docs(
         name = "needs_json",
-        srcs = native.glob([
-            # TODO: we do not need images etc to generate the json file.
-            "**/*.png",
-            "**/*.svg",
-            "**/*.md",
-            "**/*.rst",
-            "**/*.html",
-            "**/*.css",
-            "**/*.puml",
-            "**/*.need",
-            # Include the docs src itself
-            # Note: we don't use py_library here to make it as close as possible to docs:incremental.
-            "**/*.yaml",
-            "**/*.json",
-            "**/*.csv",
-            "**/*.inc",
-        ], exclude = ["**/tests/*"], allow_empty = True),
+        srcs = [":docs_sources"],
         config = ":" + source_dir + "/conf.py",
         extra_opts = [
             "-W",
