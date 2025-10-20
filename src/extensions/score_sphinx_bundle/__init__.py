@@ -10,6 +10,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
+import logging
 from sphinx.application import Sphinx
 
 # Note: order matters!
@@ -28,8 +29,22 @@ score_extensions = [
     "sphinxcontrib.mermaid",
 ]
 
+logger = logging.getLogger(__name__)
+
 
 def setup(app: Sphinx) -> dict[str, object]:
+
+    # Tag-recognition
+    if app.tags.has("source"):
+        logger.info("<< score_sphinx_bundle: 'source' tag dected - enabling source generation")
+        app.config.html_copy_source = True
+        app.config.html_show_sourcelink = True
+    else:
+        if "score_sphinx_bundle.source_code_linker" in app.config.extensions:
+            app.config.extensions.remove("score_sphinx_bundle.source_code_linker")
+        app.config.html_copy_source = False
+        app.config.html_show_sourcelink = False
+
     # Global settings
     # Note: the "sub-extensions" also set their own config values
 
