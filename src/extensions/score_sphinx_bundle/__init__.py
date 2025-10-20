@@ -36,7 +36,7 @@ def setup(app: Sphinx) -> dict[str, object]:
 
     # Tag-recognition
     if app.tags.has("source"):
-        logger.info("<< score_sphinx_bundle: 'source' tag dected - enabling source generation")
+        logger.info("<< score_sphinx_bundle: 'source' tag detected - enabling source generation")
         app.config.html_copy_source = True
         app.config.html_show_sourcelink = True
     else:
