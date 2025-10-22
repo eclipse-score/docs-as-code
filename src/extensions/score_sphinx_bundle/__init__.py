@@ -34,9 +34,10 @@ logger = logging.getLogger(__name__)
 
 def setup(app: Sphinx) -> dict[str, object]:
 
-    # Tag-recognition
-    if app.tags.has("source"):
-        logger.info("<< score_sphinx_bundle: 'source' tag detected - enabling source generation")
+    # recognition of configuration value
+    app.add_config_value("enable_source_generation", False, "html")
+    if app.config.enable_source_generation:
+        logger.info("<< score_sphinx_bundle: source generation activated")
         app.config.html_copy_source = True
         app.config.html_show_sourcelink = True
     else:
