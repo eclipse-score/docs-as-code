@@ -80,6 +80,23 @@ Find everything related to testing and how to add your on test suite [here](/too
 
 > If you want to develop your own sphinx extension, check out the [extensions guide](/src/extensions/README.md)
 
+## Updating dependencies
+
+The file [requirements.in](./requirements.in) is a [PIP requirements file](https://pip.pypa.io/en/stable/reference/requirements-file-format/) that describe first level dependencies.
+
+The file [requirements.txt](./requirements.txt) is a [pip-compile lock file](https://pip-tools.readthedocs.io/en/latest/cli/pip-compile/) that holds
+the pinned dependency tree calculated from [requirements.in](./requirements.in).
+
+To update dependencies (e.g. after adding a dependency), run:
+```
+bazel run //src:requirements.update
+```
+
+To update the full dependency tree, run
+```
+bazel run //src:requirements.update -- --upgrade
+```
+
 ## Best Practices
 
 1. **Documentation**

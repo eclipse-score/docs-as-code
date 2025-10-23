@@ -53,11 +53,11 @@ py_library(
     visibility = ["//visibility:public"],
 )
 
-# In order to update the requirements, change the `requirements.txt` file and run:
-# `bazel run //src:requirements`.
-# This will update the `requirements_lock.txt` file.
+# In order to update the requirements, change the `requirements.in` file and run:
+# `bazel run //src:requirements.update`.
+# This will update the `requirements.txt` file.
 # To upgrade all dependencies to their latest versions, run:
-# `bazel run //src:requirements -- --upgrade`.
+# `bazel run //src:requirements.update -- --upgrade`.
 compile_pip_requirements(
     name = "requirements",
     srcs = [
