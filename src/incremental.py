@@ -60,6 +60,12 @@ if __name__ == "__main__":
         "Use 0 for auto detection of a free port.",
         default=8000,
     )
+    parser.add_argument(
+        '--sphinx_args',
+        nargs=argparse.REMAINDER,
+        default=[],
+        help='Extra arguments to pass to sphinx-build'
+    )
 
     args = parser.parse_args()
     if args.debug:
@@ -90,6 +96,8 @@ if __name__ == "__main__":
         base_arguments.append(f"-A=github_repo={args.github_repo}")
         base_arguments.append("-A=github_version=main")
         base_arguments.append("-A=doc_path=docs")
+
+    base_arguments += args.sphinx_args
 
     action = get_env("ACTION")
     if action == "live_preview":
