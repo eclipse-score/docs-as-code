@@ -22,3 +22,7 @@ esbonio<1
 # Although not required in all targets, we want pytest within ide_support to run tests from the IDE.
 debugpy
 rich
+
+# write out dynamically assembled Sphinx-Needs configuration in TOML format
+needs-config-writer==0.2.1
+
