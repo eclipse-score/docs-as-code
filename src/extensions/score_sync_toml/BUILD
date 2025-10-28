@@ -15,8 +15,14 @@ load("@pip_process//:requirements.bzl", "requirement")
 
 py_library(
     name = "score_sync_toml",
-    srcs = ["__init__.py", "shared.toml"],
+    srcs = [
+        "__init__.py",
+        "shared.toml",
+    ],
     imports = ["."],
     visibility = ["//visibility:public"],
-    deps = [requirement("sphinx"), requirement("needs-config-writer")],
+    deps = [
+        requirement("sphinx"),
+        requirement("needs-config-writer"),
+    ],
 )
