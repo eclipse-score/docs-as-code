@@ -10,8 +10,9 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-from sphinx.application import Sphinx
 from pathlib import Path
+
+from sphinx.application import Sphinx
 
 
 def setup(app: Sphinx) -> dict[str, str | bool]:
@@ -22,13 +23,13 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     """Write to the confdir directory."""
 
     app.config.needscfg_overwrite = True
-    """Any changes to the shared/local configuration shall update the generated config file."""
+    """Any changes to the shared/local configuration updates the generated config."""
 
     app.config.needscfg_write_all = True
     """Write full config, so the final configuration is visible in one file."""
 
     app.config.needscfg_warn_on_diff = True
-    """Be sure to update this - running Sphinx with -W will fail the CI, that's wanted."""
+    """Running Sphinx with -W will fail the CI for uncommitted TOML changes."""
 
     app.config.needscfg_merge_toml_files = [
         str(Path(__file__).parent / "shared.toml"),
