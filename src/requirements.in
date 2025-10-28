@@ -24,5 +24,4 @@ debugpy
 rich
 
 # write out dynamically assembled Sphinx-Needs configuration in TOML format
-needs-config-writer==0.2.1
-
+needs-config-writer @ git+https://github.com/useblocks/needs-config-writer@444525a5965f25b364a5896a907ddf1f338f7b94
