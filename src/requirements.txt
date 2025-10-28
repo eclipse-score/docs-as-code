@@ -706,9 +706,8 @@ myst-parser==4.0.1 \
     --hash=sha256:5cfea715e4f3574138aecbf7d54132296bfd72bb614d31168f48c477a830a7c4 \
     --hash=sha256:9134e88959ec3b5780aedf8a99680ea242869d012e8821db3126d427edc9c95d
     # via -r src/requirements.in
-needs-config-writer @ git+https://github.com/useblocks/needs-config-writer@444525a5965f25b364a5896a907ddf1f338f7b94 \
-    --hash=sha256:86c1211eec825acf986e49b8f35584744073c84d5ed1c2190f3740830a2ff190 \
-    --hash=sha256:a57f9d77efb6d482a9092f36990601b781e44c4d0de639aafc652696335fb009
+needs-config-writer @ https://github.com/useblocks/needs-config-writer/archive/444525a5965f25b364a5896a907ddf1f338f7b94.zip \
+    --hash=sha256:f114d2352d20f71e253af32962d1c3d351773a32b9075c93214622af94c9747d
     # via -r src/requirements.in
 nodejs-wheel-binaries==22.16.0 \
     --hash=sha256:2728972d336d436d39ee45988978d8b5d963509e06f063e80fe41b203ee80b28 \

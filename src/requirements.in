@@ -24,4 +24,5 @@ debugpy
 rich
 
 # write out dynamically assembled Sphinx-Needs configuration in TOML format
-needs-config-writer @ git+https://github.com/useblocks/needs-config-writer@444525a5965f25b364a5896a907ddf1f338f7b94
+# using archive URL instead of git reference for Bazel compatibility
+needs-config-writer @ https://github.com/useblocks/needs-config-writer/archive/444525a5965f25b364a5896a907ddf1f338f7b94.zip
