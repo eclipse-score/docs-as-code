@@ -1,10 +1,11 @@
---extra-index-url https://pypi.org/simple/
-
 Sphinx
 
 # At least 4.2.0, as it fixes a bug in combination with esbonio live preview:
 # https://github.com/useblocks/sphinx-needs/issues/1350
 sphinx-needs>=4.2.0
+
+# "sphinx-collections" pypi release is ancient
+sphinxcontrib-collections @ git+https://github.com/etas-contrib/sphinx-collections.git@b71893242d26a0407de6d3345b2e05a3137a36d4
 
 sphinxcontrib-plantuml
 pydata-sphinx-theme
