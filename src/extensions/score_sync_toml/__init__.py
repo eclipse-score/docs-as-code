@@ -28,12 +28,16 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     app.config.needscfg_write_all = True
     """Write full config, so the final configuration is visible in one file."""
 
+    app.config.needscfg_exclude_defaults = True
+    """Exclude default values from the generated configuration."""
+
     app.config.needscfg_warn_on_diff = True
     """Running Sphinx with -W will fail the CI for uncommitted TOML changes."""
 
     app.config.needscfg_merge_toml_files = [
         str(Path(__file__).parent / "shared.toml"),
     ]
+    """Merge the static TOML file into the generated configuration."""
 
     app.config.suppress_warnings += [
         "needs_config_writer.unsupported_type",
