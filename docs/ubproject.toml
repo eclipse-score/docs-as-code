@@ -3,20 +3,8 @@
 # Do not manually modify it - changes will be overwritten.
 
 [needs]
-allow_unsafe_filters = false
 build_json = true
-build_json_per_id = false
-build_json_per_id_path = "needs_id"
 build_needumls = "_plantuml_sources"
-builder_filter = "is_external==False"
-completion_option = "completion"
-constraints_failed_color = ""
-css = "modern.css"
-debug_filters = false
-debug_measurement = false
-default_layout = "clean"
-diagram_template = "\n{%- if is_need -%}\n<size:12>{{type_name}}</size>\\n**{{title|wordwrap(15, wrapstring='**\\\\n**')}}**\\n<size:10>{{id}}</size>\n{%- else -%}\n<size:12>{{type_name}} (part)</size>\\n**{{content|wordwrap(15, wrapstring='**\\\\n**')}}**\\n<size:10>{{id_parent}}.**{{id}}**</size>\n{%- endif -%}\n"
-duration_option = "duration"
 extra_options = [
     "approver",
     "approvers",
@@ -59,63 +47,10 @@ extra_options = [
     "valid_until",
     "version",
 ]
-flow_engine = "plantuml"
-flow_link_types = [
-    "links",
-]
-flow_show_links = false
-functions = []
-id_from_title = false
-id_length = 5
 id_regex = "^[A-Za-z0-9_-]{6,}"
 id_required = true
-include_needs = true
-json_exclude_fields = [
-    "collapse",
-    "hide",
-    "id_complete",
-    "id_parent",
-    "lineno_content",
-    "type_color",
-    "type_prefix",
-    "type_style",
-]
 json_remove_defaults = true
-max_title_length = -1
-needextend_strict = false
-part_prefix = "→ "
-permalink_data = "needs.json"
-permalink_file = "permalink.html"
-report_dead_links = true
-report_template = ""
 reproducible_json = true
-role_need_max_title_length = 30
-role_need_template = "{title} ({id})"
-service_all_data = false
-show_link_id = true
-show_link_title = false
-show_link_type = false
-statuses = []
-table_classes = []
-table_columns = "ID;TITLE;STATUS;TYPE;OUTGOING;TAGS"
-table_style = "DATATABLES"
-tags = []
-template_folder = "needs_templates/"
-title_from_content = false
-title_optional = false
-variant_options = []
-warnings_always_warn = false
-
-[needs.constraint_failed_options]
-
-[needs.constraints]
-
-[needs.extensions]
-
-[[needs.external_needs]]
-base_url = "https://eclipse-score.github.io/process_description//main"
-id_prefix = "PROCESS_"
-json_path = "/home/marco/.cache/bazel/_bazel_marco/3778152fef70679df5b348f45ca27594/execroot/_main/bazel-out/k8-fastbuild/bin/docs.runfiles/score_process+/needs_json/_build/needs/needs.json"
 
 [[needs.extra_links]]
 incoming = "approves"
@@ -226,8 +161,6 @@ incoming = "violated_by"
 option = "violates"
 outgoing = "violates"
 
-[needs.filter_data]
-
 [needs.flow_configs]
 score_config = "!include /home/marco/.cache/bazel/_bazel_marco/3778152fef70679df5b348f45ca27594/execroot/_main/bazel-out/k8-fastbuild/bin/docs.runfiles/_main/src/extensions/score_layout/assets/puml-theme-score.puml"
 
@@ -249,12 +182,48 @@ rankdir = "TB"
 [needs.graphviz_styles.transparent.graph]
 bgcolor = "transparent"
 
-[needs.import_keys]
-
 [needs.layouts.focus]
 grid = "content"
 
 [needs.layouts.focus.layout]
+
+[needs.layouts.github]
+grid = "complex"
+
+[needs.layouts.github.layout]
+footer = [
+    "service:  <<meta(\"service\")>>",
+]
+footer_left = [
+    "layout: <<meta(\"layout\")>>",
+]
+footer_right = [
+    "style: <<meta(\"style\")>>",
+]
+head = [
+    "**<<meta(\"title\")>>** (<<link(\"url\", text=\"url\", is_dynamic=True)>>)",
+]
+head_left = [
+    "<<meta_id()>>",
+    "<<collapse_button(\"meta,footer\", collapsed=\"icon:arrow-down-circle\", visible=\"icon:arrow-right-circle\", initial=True)>>",
+]
+head_right = [
+    "<<image(\"field:avatar\", width=\"40px\", align=\"middle\")>>",
+    "<<meta(\"user\")>>",
+]
+meta_left = [
+    "<<meta(\"user\", prefix=\"user: \")>>",
+    "<<meta(\"created_at\", prefix=\"created_at: \")>>",
+    "<<meta(\"updated_at\", prefix=\"updated_at: \")>>",
+    "<<meta(\"closed_at\", prefix=\"closed_at: \")>>",
+    "<<meta(\"service\", prefix=\"service: \")>>",
+    "<<link(\"url\", text=\"Link\", prefix=\"url: \", is_dynamic=True)>>",
+]
+meta_right = [
+    "<<meta(\"type_name\", prefix=\"type: \")>>",
+    "<<meta_all(no_links=True, exclude=[\"layout\",\"style\",\"user\",\"created_at\",\"updated_at\",\"closed_at\",\"service\",\"url\",\"avatar\", \"type\",\"query\",\"specific\",\"max_amount\",\"max_content_lines\",\"id_prefix\"])>>",
+    "<<meta_links_all()>>",
+]
 
 [needs.layouts.score]
 grid = "complex"
@@ -285,8 +254,6 @@ meta_left = [
 meta_right = []
 
 [needs.render_context]
-
-[needs.services]
 
 [needs.string_links.source_code_linker]
 link_name = "{{name}}"
@@ -346,6 +313,13 @@ reqcovered = "^(YES|NO)$"
 source_code_link = "^https://github.com/.*"
 testcovered = "^(YES|NO)$"
 testlink = "^https://github.com/.*"
+
+[[needs.types]]
+color = "#888888"
+directive = "commit"
+prefix = "C_"
+style = "card"
+title = "Commit"
 
 [[needs.types]]
 directive = "comp_arc_sta"
@@ -826,6 +800,13 @@ source_code_link = "^https://github.com/.*"
 testlink = "^https://github.com/.*"
 
 [[needs.types]]
+color = "#cccccc"
+directive = "issue"
+prefix = "IS_"
+style = "card"
+title = "Issue"
+
+[[needs.types]]
 directive = "logic_arc_int"
 parts = 3
 prefix = "logic_arc_int__"
@@ -1021,6 +1002,13 @@ complies = "std_req"
 [needs.types.optional_options]
 source_code_link = "^https://github.com/.*"
 testlink = "^https://github.com/.*"
+
+[[needs.types]]
+color = "#aaaaaa"
+directive = "pr"
+prefix = "PR_"
+style = "card"
+title = "PullRequest"
 
 [[needs.types]]
 directive = "review_header"
@@ -1375,10 +1363,6 @@ complies = "std_wp, ^std_req__aspice_40__iic.*$"
 [needs.types.optional_options]
 source_code_link = "^https://github.com/.*"
 testlink = "^https://github.com/.*"
-
-[needs.variants]
-
-[needs.warnings]
 
 [parse.extend_directives.grid]
 argument = true
