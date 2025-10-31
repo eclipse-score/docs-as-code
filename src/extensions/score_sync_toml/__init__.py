@@ -61,7 +61,7 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
 
     app.config.suppress_warnings += [
         "needs_config_writer.unsupported_type",
-        "ubproject.path_conversion",
+        "needs_config_writer.path_conversion",
     ]
     # TODO remove the suppress_warnings once fixed
 
