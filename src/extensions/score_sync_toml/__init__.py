@@ -55,7 +55,7 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
         {
             "field": "needs_flow_configs.score_config",
             "prefix": "!include ",
-        }
+        },
     ]
     """Relative paths to confdir for Bazel provided absolute paths."""
 
