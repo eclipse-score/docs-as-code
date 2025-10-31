@@ -184,6 +184,9 @@ def connect_external_needs(app: Sphinx, config: Config):
             continue
 
         assert isinstance(app.config.needs_external_needs, list)  # pyright: ignore[reportUnknownMemberType]
+        # this sets the default value - required for the needs-config-writer
+        # setting 'needscfg_exclude_defaults = True' to see the diff
+        app.config.needs_external_needs = []
         app.config.needs_external_needs.append(  # pyright: ignore[reportUnknownMemberType]
             {
                 "id_prefix": needs_json_data["project_prefix"],

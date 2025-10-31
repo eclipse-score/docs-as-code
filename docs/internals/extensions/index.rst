@@ -21,7 +21,7 @@ Extensions
 Hello there
 
 
-.. grid:: 1 1 3 3 
+.. grid:: 1 1 3 3
    :class-container: score-grid
 
    .. grid-item-card::
@@ -52,15 +52,24 @@ Hello there
       RST Filebased testing
       ^^^
       A new testing approach that we have integrated. It makes it easy to ensure that the metamodel and it's checks
-      work as intended. Create new checks simply by writing RST files. 
+      work as intended. Create new checks simply by writing RST files.
       Head over to :ref:`File Based Testing <file-based-testing>` to learn more.
 
    .. grid-item-card::
 
       Extension Guide
       ^^^
-      Want to learn how to write your own sphinx extension, or see how others have done it? 
+      Want to learn how to write your own sphinx extension, or see how others have done it?
       Head over to :ref:`Building an Extension<extension-guide>` to dive in.
+
+   .. grid-item-card::
+
+      Sync TOML
+      ^^^
+      Learn about the :ref:`config sync <toml_sync>` extension that generates the
+      ``ubproject.toml`` file needed by the
+      `ubCode <https://ubcode.useblocks.com>`__ VS Code extension.
+      Getting IDE support for Sphinx-Needs in a Bazel context made easy.
 
 
 
@@ -73,3 +82,4 @@ Hello there
    Header Service <header_service>
    Source Code Linker <source_code_linker>
    Extension Guide <extension_guide>
+   Sync TOML <sync_toml>

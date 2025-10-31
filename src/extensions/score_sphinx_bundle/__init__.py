@@ -26,6 +26,8 @@ score_extensions = [
     "score_draw_uml_funcs",
     "score_layout",
     "sphinxcontrib.mermaid",
+    "needs_config_writer",
+    "score_sync_toml",
 ]
 
 

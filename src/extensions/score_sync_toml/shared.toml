@@ -1,0 +1,20 @@
+[parse.extend_directives.grid]
+argument = true
+options = true
+content = true
+parse_content = true
+content_required = true
+
+[parse.extend_directives.grid-item-card]
+argument = false
+options = true
+content = true
+parse_content = true
+content_required = true
+
+[parse.extend_directives.uml]
+argument = true
+options = true
+content = true
+parse_content = false
+content_required = false
