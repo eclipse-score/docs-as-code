@@ -52,6 +52,11 @@ id_required = true
 json_remove_defaults = true
 reproducible_json = true
 
+[[needs.external_needs]]
+base_url = "https://eclipse-score.github.io/process_description//main"
+id_prefix = "PROCESS_"
+json_path = "/home/marco/.cache/bazel/_bazel_marco/3778152fef70679df5b348f45ca27594/execroot/_main/bazel-out/k8-fastbuild/bin/docs.runfiles/score_process+/needs_json/_build/needs/needs.json"
+
 [[needs.extra_links]]
 incoming = "approves"
 option = "approved_by"
