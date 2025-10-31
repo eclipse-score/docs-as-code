@@ -27,4 +27,4 @@ rich
 # using archive URL instead of git reference for Bazel compatibility
 # needs-config-writer == 0.2.3
 # use this for a specific commit
-needs-config-writer @ https://github.com/useblocks/needs-config-writer/archive/8bf600a.zip
+needs-config-writer @ https://github.com/useblocks/needs-config-writer/archive/032a5f8.zip
