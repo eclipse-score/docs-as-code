@@ -161,9 +161,6 @@ incoming = "violated_by"
 option = "violates"
 outgoing = "violates"
 
-[needs.flow_configs]
-score_config = "!include /home/marco/.cache/bazel/_bazel_marco/3778152fef70679df5b348f45ca27594/execroot/_main/bazel-out/k8-fastbuild/bin/docs.runfiles/_main/src/extensions/score_layout/assets/puml-theme-score.puml"
-
 [needs.global_options.layout]
 default = "score"
 
