@@ -25,6 +25,6 @@ rich
 
 # write out dynamically assembled Sphinx-Needs configuration in TOML format
 # using archive URL instead of git reference for Bazel compatibility
-needs-config-writer == 0.2.3
+# needs-config-writer == 0.2.3
 # use this for a specific commit
-# needs-config-writer ==  @ https://github.com/useblocks/needs-config-writer/archive/e81fc77.zip
+needs-config-writer @ https://github.com/useblocks/needs-config-writer/archive/8bf600a.zip
