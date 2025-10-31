@@ -50,6 +50,11 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     ]
     """Merge the static TOML file into the generated configuration."""
 
+    app.config.needscfg_relativize_paths = [
+        "needs_external_needs[*].json_path",
+    ]
+    """Relativize paths for external needs to the confdir."""
+
     app.config.suppress_warnings += [
         "needs_config_writer.unsupported_type",
         "ubproject.path_conversion",
