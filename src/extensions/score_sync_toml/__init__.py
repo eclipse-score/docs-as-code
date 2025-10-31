@@ -16,8 +16,11 @@ from sphinx.application import Sphinx
 
 
 def setup(app: Sphinx) -> dict[str, str | bool]:
-    # Global settings
-    # Note: the "sub-extensions" also set their own config values
+    """
+    Extension to configure needs-config-writer for syncing needs configuration to TOML.
+
+    See https://needs-config-writer.useblocks.com
+    """
 
     app.config.needscfg_outpath = "ubproject.toml"
     """Write to the confdir directory."""
