@@ -31,6 +31,14 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     app.config.needscfg_exclude_defaults = True
     """Exclude default values from the generated configuration."""
 
+    app.config.needscfg_exclude_vars = [
+        "needs_from_toml",
+        "needs_from_toml_table",
+        "needs_schema_definitions_from_json",
+        "needs_flow_configs",
+    ]
+    """Exclude defaults plus flow_configs which has absolute paths."""
+
     app.config.needscfg_warn_on_diff = True
     """Running Sphinx with -W will fail the CI for uncommitted TOML changes."""
 
