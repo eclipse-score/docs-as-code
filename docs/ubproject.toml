@@ -166,6 +166,9 @@ incoming = "violated_by"
 option = "violates"
 outgoing = "violates"
 
+[needs.flow_configs]
+score_config = "!include ../src/extensions/score_layout/assets/puml-theme-score.puml"
+
 [needs.global_options.layout]
 default = "score"
 
