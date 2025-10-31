@@ -34,6 +34,12 @@ If this does not work, please use the live preview feature: `bazel run //:live_p
 This provides immediate metamodel feedback (although only on the console) and
 IDE-agnostic preview capabilities.
 
+Another option is to use the [ubCode](https://ubcode.useblocks.com) extension for
+VS Code. It provides lightning-fast linting, formatting, previewing, navigation and
+analytical features for large Sphinx and Sphinx-Needs projects.
+The `ubproject.toml` configuration file gets generated automatically when a Sphinx
+build is running once. The file can safely be committed to the repository to enable
+IDE support without requiring a Sphinx build first.
 
 ### Esbonio
 
@@ -46,13 +52,13 @@ Known issues:
   For now please run `bazel run //:ide_support` and restart VS Code.
 
 
-### uBc
+### ubc
 
-Currently, uBc is not aware of our metamodel. As a result, checks and auto-completion
+Currently, ubc is not aware of our metamodel. As a result, checks and auto-completion
 features are not available.
 
 We plan to explore improvements in this area in the future together with useblocks.
-
+These features are on the immediate roadmap.
 
 
 ## Do we need to write custom Python code for every Metamodel check?
