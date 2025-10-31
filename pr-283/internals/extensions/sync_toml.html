@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Decision Record 001: Test results in Docs-As-Code Workflows &#8212; Score Docs-as-Code  documentation</title>
+    <title>ubproject.toml sync &#8212; Score Docs-as-Code  documentation</title>
   
   
   
@@ -62,15 +62,7 @@
     <script src="../../_static/sphinx-needs/libs/html/datatables.min.js?v=8a4aee21"></script>
     <script src="../../_static/sphinx-needs/libs/html/datatables_loader.js?v=a2cae175"></script>
     <script src="../../_static/sphinx-needs/libs/html/sphinx_needs_collapse.js?v=dca66431"></script>
-    <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.6.0/dist/mermaid.esm.min.mjs"></script>
-    <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs"></script>
-    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.6.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
-    <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
-    <script type="module">
-import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.6.0/dist/mermaid.esm.min.mjs";
-window.addEventListener("load", () => mermaid.run());
-</script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'internals/decisions_and_concepts/001-test-results-in-workflow';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'internals/extensions/sync_toml';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://eclipse-score.github.io/docs-as-code/versions.json';
@@ -80,8 +72,8 @@ window.addEventListener("load", () => mermaid.run());
         </script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Requirements" href="../../requirements/index.html" />
-    <link rel="prev" title="Decisions And Concepts" href="index.html" />
+    <link rel="next" title="Bazel Mini Benchmark Results" href="../benchmark_results.html" />
+    <link rel="prev" title="Guide to Creating a Sphinx Extension" href="extension_guide.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.1" />
@@ -373,12 +365,17 @@ window.addEventListener("load", () => mermaid.run());
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../extensions/index.html">Extensions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../benchmark_results.html">Bazel Mini Benchmark Results</a></li>
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Decisions And Concepts</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">Decision Record 001: Test results in Docs-As-Code Workflows</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Extensions</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="metamodel.html">Metamodel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rst_filebased_testing.html">Filebased Testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="header_service.html">Header Service</a></li>
+<li class="toctree-l2"><a class="reference internal" href="source_code_linker.html">Source Code Linker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extension_guide.html">Extension Guide</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Sync TOML</a></li>
 </ul>
 </details></li>
+<li class="toctree-l1"><a class="reference internal" href="../benchmark_results.html">Bazel Mini Benchmark Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../decisions_and_concepts/index.html">Decisions And Concepts</a></li>
 </ul>
 </div>
 </nav></div>
@@ -423,9 +420,9 @@ window.addEventListener("load", () => mermaid.run());
     <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Internals</a></li>
     
     
-    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Decisions And Concepts</a></li>
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Extensions</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Decision Record 001: Test results in Docs-As-Code Workflows</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ubproject.toml sync</span></li>
   </ul>
 </nav>
 </div>
@@ -442,160 +439,36 @@ window.addEventListener("load", () => mermaid.run());
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <div class="need_container docutils container" id="SNCB-0fe0ba4f">
-<div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_dec_rec table" id="dec_rec__dac__001_test_results_in_workflows">
-<tbody>
-<tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
-<div class="line"><span><span class="needs_title"><span class="needs_data">Decision Record 001: Test results in Docs-As-Code Workflows</span></span></span></div>
-</div>
-</td>
-<td class="head_center" colspan="2"><div class="needs_head line-block">
-<div class="line"><span><span class="needs_status"><span class="needs_label">status: </span><span class="needs_data">accepted</span></span></span></div>
-<div class="line"><span></span></div>
-<div class="line"><span></span></div>
-</div>
-</td>
-<td class="head_right" colspan="2"><div class="needs_head_right line-block">
-<div class="line"><span><span class="needs needs_collapse" id="target__show__meta"><span class="needs collapsed"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-down-circle"><circle cx="12" cy="12" r="10"></circle><polyline points="8 12 12 16 16 12"></polyline><line x1="12" y1="8" x2="12" y2="16"></line></svg></span><span class="needs visible collapse_is_hidden"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right-circle"><circle cx="12" cy="12" r="10"></circle><polyline points="12 16 16 12 12 8"></polyline><line x1="8" y1="12" x2="16" y2="12"></line></svg></span></span></span></div>
-</div>
-</td>
-</tr>
-<tr class="meta row-even"><td class="meta" colspan="3"><div class="needs_meta_left line-block">
-<div class="line"><span><span><div class="line"><span class="needs_consequences"><span class="needs_label">consequences: </span><span class="needs_data">implementation effort</span></span></div>
-<div class="line"><span class="needs_context"><span class="needs_label">context: </span><span class="needs_data">Need to embed test results into docs, but tests are slow.</span></span></div>
-<div class="line"><span class="needs_decision"><span class="needs_label">decision: </span><span class="needs_data">Run quick docs checks and tests in parallel, then full docs generation sequentially.</span></span></div>
-</span></span></div>
-<div class="line"><span></span></div>
-</div>
-</td>
-<td class="meta" colspan="3"></td>
-</tr>
-<tr class="content row-odd"><td class="content" colspan="6"></td>
-</tr>
-<tr class="footer row-even"><td class="footer_left" colspan="2"><div class="needs_footer_left line-block">
-<div class="line"><span><span class="needs-id"><a class="reference internal" href="#dec_rec__dac__001_test_results_in_workflows" title="dec_rec__dac__001_test_results_in_workflows">dec_rec__dac__001_test_results_in_workflows</a></span></span></div>
-</div>
-</td>
-<td class="footer" colspan="2"><div class="needs_footer line-block">
-<div class="line"><span><span class="needs_type_name"><span class="needs_data">Decision Record</span></span></span></div>
-</div>
-</td>
-<td class="footer_right" colspan="2"></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<section id="decision-record-001-test-results-in-docs-as-code-workflows">
-<h1>Decision Record 001: Test results in Docs-As-Code Workflows<a class="headerlink" href="#decision-record-001-test-results-in-docs-as-code-workflows" title="Link to this heading">#</a></h1>
-<section id="goals">
-<h2>Goals<a class="headerlink" href="#goals" title="Link to this heading">#</a></h2>
-<ul class="simple">
-<li><p>PR</p>
-<ul>
-<li><p>Early detection of issues</p></li>
-<li><p>Generate website-preview</p></li>
-</ul>
-</li>
-<li><p>Post-Merge</p>
-<ul>
-<li><p>Generate website</p></li>
-</ul>
-</li>
-</ul>
-</section>
-<section id="problem-statement">
-<h2>Problem Statement<a class="headerlink" href="#problem-statement" title="Link to this heading">#</a></h2>
-<p>Some parts of generating docs are rather slow:</p>
-<ol class="arabic simple">
-<li><p>Embedding test results, implies that we need test results</p></li>
-<li><p>Generating HTML output, especially generating diagrams (PlantUML)</p></li>
-</ol>
-<p>Note: the used tools are irrelevant for the problem statement.</p>
-</section>
-<section id="current-situation">
-<h2>Current Situation<a class="headerlink" href="#current-situation" title="Link to this heading">#</a></h2>
-<pre  class="mermaid">
-        flowchart TD
- subgraph subGraph0[&quot;Pre-Merge Workflow&quot;]
-        parallel[&quot;parallel&quot;]
-        PR[&quot;Pull Request&lt;br&gt;&quot;]
-        DOCS1[&quot;HTML Build&lt;br&gt;&amp;lt;slow&amp;gt;&quot;]
-        TESTS[&quot;tests&lt;br&gt;&amp;lt;slow&amp;gt;&quot;]
-        WP1[&quot;Website Preview&quot;]
-        TF2[&quot;PR Feedback&quot;]
-  end
- subgraph subGraph1[&quot;Post-Merge Workflow&quot;]
-        DOCS2[&quot;HTML Build&lt;br&gt;&amp;lt;slow&amp;gt;&quot;]
-        PM[&quot;Post-Merge&lt;br&gt;&quot;]
-        W[&quot;Website&quot;]
-  end
-    PR --&gt; parallel
-    parallel --&gt; DOCS1 &amp; TESTS
-    DOCS1 --&gt; WP1
-    TESTS --&gt; TF2
-    PM --&gt; DOCS2
-    DOCS2 --&gt; W
-
-    parallel&#64;{ shape: fork}
-    PR&#64;{ shape: event}
-    DOCS1&#64;{ shape: lean-l}
-    TESTS&#64;{ shape: out-in}
-    WP1&#64;{ shape: stored-data}
-    TF2&#64;{ shape: stored-data}
-    DOCS2&#64;{ shape: lean-l}
-    PM&#64;{ shape: event}
-    W&#64;{ shape: stored-data}
-    </pre></section>
-<section id="solution">
-<h2>Solution<a class="headerlink" href="#solution" title="Link to this heading">#</a></h2>
-<p>A combination of test and docs workflows:</p>
-<pre  class="mermaid">
-        flowchart TD
- subgraph subGraph0[&quot;Pre-Merge Workflow&quot;]
-        DC[&quot;Docs Verification&lt;br&gt;&amp;lt;fast&amp;gt;&quot;]
-        DCF[&quot;PR Feedback&quot;]
-        PR[&quot;Pull Request&quot;]
-        T1[&quot;tests&lt;br&gt;&amp;lt;slow&amp;gt;&quot;]
-        TF[&quot;PR Feedback&quot;]
-        HB1[&quot;HTML Build&lt;br&gt;&amp;lt;slow&amp;gt;&quot;]
-        WP[&quot;Website Preview&quot;]
-        parallel[&quot;parallel&quot;]
-  end
- subgraph subGraph1[&quot;Post-Merge Workflow&quot;]
-        T2[&quot;tests&quot;]
-        PM[&quot;Post-Merge&quot;]
-        HB2[&quot;HTML Build&quot;]
-        W[&quot;Website&quot;]
-  end
-
-DC --&gt; DCF
-DC -- cache --&gt; HB1
-T1 -- results --&gt; HB1
-T1 --&gt; TF
-HB1 --&gt; WP
-PR --&gt; parallel
-parallel --&gt; DC &amp; T1
-
-PM --&gt; T2
-T2 --&gt; HB2
-HB2 --&gt; W
-
-PR&#64;{ shape: event}
-
-DC&#64;{ shape: out-in}
-T1&#64;{ shape: out-in}
-HB1&#64;{ shape: out-in}
-parallel&#64;{ shape: fork}
-TF&#64;{ shape: stored-data}
-WP&#64;{ shape: stored-data}
-DCF&#64;{ shape: stored-data}
-
-PM&#64;{ shape: event}
-W&#64;{ shape: stored-data}
-T2&#64;{ shape: out-in}
-HB2&#64;{ shape: out-in}
-    </pre></section>
+  <section id="ubproject-toml-sync">
+<span id="toml-sync"></span><h1>ubproject.toml sync<a class="headerlink" href="#ubproject-toml-sync" title="Link to this heading">#</a></h1>
+<p>The extension <code class="docutils literal notranslate"><span class="pre">score_sync_toml</span></code> provides configuration for the newly developed
+Sphinx extension <a class="reference external" href="https://needs-config-writer.useblocks.com/">needs-config-writer</a>.</p>
+<p>The extension allows to write a declarative configuration file <code class="docutils literal notranslate"><span class="pre">ubproject.toml</span></code>
+that is required by the <a class="reference external" href="https://ubcode.useblocks.com">ubCode VS Code extension</a>
+and its companion CLI app <a class="reference external" href="https://ubcode.useblocks.com/ubc/introduction.html">ubc</a>
+to get hold of the Sphinx-Needs configuration.</p>
+<p>The solution outlined here can serve as a template for how to build IDE extensions
+in a Bazel environment. IDE extensions need to know the configuration and file sets
+that are part of the project. This information is hidden in the build system, so a call
+is needed to extract this information and make it available to the IDE extension.</p>
+<p>The basic idea is to stay with the programmed configuration system for Sphinx and
+Sphinx-Needs as it exists in S-CORE, but use it to generate the <code class="docutils literal notranslate"><span class="pre">ubproject.toml</span></code> file.
+The <code class="docutils literal notranslate"><span class="pre">ubproject.toml</span></code> file is generated into the directory holding the <code class="docutils literal notranslate"><span class="pre">conf.py</span></code> file
+(called <code class="docutils literal notranslate"><span class="pre">confdir</span></code> in Sphinx) and should be checked into the version control system
+alongside <code class="docutils literal notranslate"><span class="pre">conf.py</span></code>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">ubproject.toml</span></code> file is generated on each Sphinx build, so any changes to the
+Sphinx-Needs configuration are automatically reflected in the generated file.
+If changes are detected, a warning is emitted during the Sphinx build to remind the user
+to commit the updated <code class="docutils literal notranslate"><span class="pre">ubproject.toml</span></code> file. Changes may occur because docs-as-code
+updated a configuration or a new Sphinx-Needs version added configuration.</p>
+<p>Committing the generated <code class="docutils literal notranslate"><span class="pre">ubproject.toml</span></code> file allows the IDE extension to work
+without requiring any Sphinx build to be performed first. For a fully complete network
+of need items, required external or imported <code class="docutils literal notranslate"><span class="pre">needs.json</span></code> files must first be
+generated by Bazel.</p>
+<p>The command line tool <code class="docutils literal notranslate"><span class="pre">ubc</span></code> uses the same configuration as <code class="docutils literal notranslate"><span class="pre">ubCode</span></code> and can be
+used to lint and format all RST files in any of the S-CORE documentations.
+<code class="docutils literal notranslate"><span class="pre">ubc</span></code> also has features for exporting traceability data to specific file formats or
+performing diff and impact analysis.</p>
 </section>
 
 
@@ -609,20 +482,20 @@ HB2&#64;{ shape: out-in}
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="index.html"
+       href="extension_guide.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Decisions And Concepts</p>
+        <p class="prev-next-title">Guide to Creating a Sphinx Extension</p>
       </div>
     </a>
     <a class="right-next"
-       href="../../requirements/index.html"
+       href="../benchmark_results.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Requirements</p>
+        <p class="prev-next-title">Bazel Mini Benchmark Results</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -638,25 +511,10 @@ HB2&#64;{ shape: out-in}
 
 
   <div class="sidebar-secondary-item">
-<div
-    id="pst-page-navigation-heading-2"
-    class="page-toc tocsection onthispage">
-    <i class="fa-solid fa-list"></i> On this page
-  </div>
-  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#goals">Goals</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-statement">Problem Statement</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#current-situation">Current Situation</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#solution">Solution</a></li>
-</ul>
-  </nav></div>
-
-  <div class="sidebar-secondary-item">
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/eclipse-score/docs-as-code/edit/main/docs/internals/decisions_and_concepts/001-test-results-in-workflow.md">
+    <a href="https://github.com/eclipse-score/docs-as-code/edit/main/docs/internals/extensions/sync_toml.rst">
       <i class="fa-solid fa-pencil"></i>
       
       
@@ -672,7 +530,7 @@ HB2&#64;{ shape: out-in}
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../../_sources/internals/decisions_and_concepts/001-test-results-in-workflow.md.txt"
+      <li><a href="../../_sources/internals/extensions/sync_toml.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div></div>
