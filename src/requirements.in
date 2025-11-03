@@ -1,5 +1,3 @@
---extra-index-url https://pypi.org/simple/
-
 Sphinx
 
 # At least 4.2.0, as it fixes a bug in combination with esbonio live preview:
