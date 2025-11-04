@@ -28,11 +28,11 @@
     "url": "https://eclipse-score.github.io/docs-as-code/pr-286/"
   },
   {
-    "version": "pr-90",
-    "url": "https://eclipse-score.github.io/docs-as-code/pr-90/"
-  },
-  {
     "version": "pr-290",
     "url": "https://eclipse-score.github.io/docs-as-code/pr-290/"
+  },
+  {
+    "version": "pr-90",
+    "url": "https://eclipse-score.github.io/docs-as-code/pr-90/"
   }
 ]
