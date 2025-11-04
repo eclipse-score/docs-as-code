@@ -4,7 +4,7 @@
 | ---------------------------------------------- | ------------------------------------------------------------------------------------------------- |
 | `bazel run //:docs`                            | Builds documentation                                                                              |
 | `bazel run //:docs_check`                      | Verifies documentation correctness                                                                |
-| `bazel run //:docs_combo_experimental`         | Builds documentation                                                                              |
+| `bazel run //:docs_combo_experimental`         | Builds combined documentation with all external dependencies included                             |
 | `bazel run //:live_preview`                    | Creates a live_preview of the documentation viewable in a local server                            |
 | `bazel run //:live_preview_combo_experimental` | Creates a live_preview of the full documentation with all dependencies viewable in a local server |
 | `bazel run //:ide_support`                     | Sets up a Python venv for esbonio (Remember to restart VS Code!)                                  |
