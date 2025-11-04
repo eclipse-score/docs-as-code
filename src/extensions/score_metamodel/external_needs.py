@@ -137,64 +137,73 @@ def extend_needs_json_exporter(config: Config, params: list[str]) -> None:
     NeedsList._finalise = temp  # pyright: ignore[reportPrivateUsage]
 
 
-def connect_external_needs(app: Sphinx, config: Config):
-    extend_needs_json_exporter(config, ["project_url", "project_prefix"])
-
-    bazel = app.config.external_needs_source or os.getenv("RUNFILES_DIR")
+def get_external_needs_source(external_needs_source: str) -> list[ExternalNeedsSource]:
+    bazel = external_needs_source or os.getenv("RUNFILES_DIR")
 
     if bazel:
-        external_needs = parse_external_needs_sources_from_DATA(
-            app.config.external_needs_source
-        )  # pyright: ignore[reportAny]
+        external_needs = parse_external_needs_sources_from_DATA(external_needs_source)
     else:
         external_needs = parse_external_needs_sources_from_bazel_query()  # pyright: ignore[reportAny]
 
+    return external_needs
+
+
+def add_external_needs_json(e: ExternalNeedsSource, config: Config):
+    json_file = f"{e.bazel_module}+/{e.target}/_build/needs/needs.json"
+    if r := os.getenv("RUNFILES_DIR"):
+        logger.debug("Using runfiles to determine external needs JSON file.")
+        fixed_json_file = Path(r) / json_file
+    else:
+        logger.debug(
+            "Running outside bazel. "
+            + "Determining git root for external needs JSON file."
+        )
+        git_root = Path.cwd().resolve()
+        while not (git_root / ".git").exists():
+            git_root = git_root.parent
+            if git_root == Path("/"):
+                sys.exit("Could not find git root.")
+        logger.debug(f"Git root found: {git_root}")
+        fixed_json_file = git_root / "bazel-bin" / "ide_support.runfiles" / json_file
+
+    logger.debug(f"Fixed JSON file path: {json_file} -> {fixed_json_file}")
+    json_file = fixed_json_file
+
+    try:
+        needs_json_data = json.loads(Path(json_file).read_text(encoding="utf-8"))  # pyright: ignore[reportAny]
+    except FileNotFoundError:
+        logger.error(
+            f"Could not find external needs JSON file at {json_file}. "
+            + "Something went terribly wrong. "
+            + "Try running `bazel clean --async && rm -rf _build`."
+        )
+        # Attempt to continue, exit code will be non-zero after a logged error anyway.
+        return
+
+    assert isinstance(config.needs_external_needs, list)  # pyright: ignore[reportUnknownMemberType]
+    config.needs_external_needs.append(  # pyright: ignore[reportUnknownMemberType]
+        {
+            "id_prefix": needs_json_data["project_prefix"],
+            "base_url": needs_json_data["project_url"]
+            + "/main",  # for now always "main"
+            "json_path": json_file,
+        }
+    )
+    # Making the prefixes uppercase here to match sphinx_needs,
+    # as it does this internally too.
+    assert isinstance(config.allowed_external_prefixes, list)  # pyright: ignore[reportAny]
+    config.allowed_external_prefixes.append(  # pyright: ignore[reportUnknownMemberType]
+        needs_json_data["project_prefix"].upper()  # pyright: ignore[reportAny]
+    )
+
+
+def connect_external_needs(app: Sphinx, config: Config):
+    extend_needs_json_exporter(config, ["project_url", "project_prefix"])
+
+    external_needs = get_external_needs_source(app.config.external_needs_source)
+
     for e in external_needs:
         assert not e.path_to_target  # path_to_target is always empty
-        json_file = f"{e.bazel_module}+/{e.target}/_build/needs/needs.json"
-        if r := os.getenv("RUNFILES_DIR"):
-            logger.debug("Using runfiles to determine external needs JSON file.")
-            fixed_json_file = Path(r) / json_file
-        else:
-            logger.debug(
-                "Running outside bazel. "
-                "Determining git root for external needs JSON file."
-            )
-            git_root = Path.cwd().resolve()
-            while not (git_root / ".git").exists():
-                git_root = git_root.parent
-                if git_root == Path("/"):
-                    sys.exit("Could not find git root.")
-            logger.debug(f"Git root found: {git_root}")
-            fixed_json_file = (
-                git_root / "bazel-bin" / "ide_support.runfiles" / json_file
-            )
+        assert e.target == "needs_json"
 
-        logger.debug(f"Fixed JSON file path: {json_file} -> {fixed_json_file}")
-        json_file = fixed_json_file
-
-        try:
-            needs_json_data = json.loads(Path(json_file).read_text(encoding="utf-8"))  # pyright: ignore[reportAny]
-        except FileNotFoundError:
-            logger.error(
-                f"Could not find external needs JSON file at {json_file}. "
-                + "Something went terribly wrong. "
-                + "Try running `bazel clean --async && rm -rf _build`."
-            )
-            continue
-
-        assert isinstance(app.config.needs_external_needs, list)  # pyright: ignore[reportUnknownMemberType]
-        app.config.needs_external_needs.append(  # pyright: ignore[reportUnknownMemberType]
-            {
-                "id_prefix": needs_json_data["project_prefix"],
-                "base_url": needs_json_data["project_url"]
-                + "/main",  # for now always "main"
-                "json_path": json_file,
-            }
-        )
-        # Making the prefixes uppercase here to match sphinx_needs,
-        # as it does this internally too.
-        assert isinstance(app.config.allowed_external_prefixes, list)  # pyright: ignore[reportAny]
-        app.config.allowed_external_prefixes.append(  # pyright: ignore[reportUnknownMemberType]
-            needs_json_data["project_prefix"].upper()  # pyright: ignore[reportAny]
-        )
+        add_external_needs_json(e, app.config)
