@@ -214,8 +214,7 @@ def add_external_docs_sources(e: ExternalNeedsSource, config: Config):
         "target": e.bazel_module,
     }
 
-    print(f"Added external docs source: {docs_source_path} -> {e.bazel_module}")
-    logger.warning(
+    logger.info(
         f"Added external docs source: {docs_source_path} -> {e.bazel_module}"
     )
 
