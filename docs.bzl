@@ -51,7 +51,7 @@ def _rewrite_needs_json_to_docs_sources(labels):
     for x in labels:
         s = str(x)
         if s.endswith("//:needs_json"):
-            out.append(s[:-len("needs_json")] + "docs_sources")
+            out.append(s.replace("//:needs_json", "//:docs_sources"))
         else:
             out.append(s)
     return out
