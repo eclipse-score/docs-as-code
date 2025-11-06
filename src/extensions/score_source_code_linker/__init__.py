@@ -351,7 +351,8 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
 
     # For some reason the prefix 'sphinx_needs internally' is CAPSLOCKED.
     # So we have to make sure we uppercase the prefixes
-    prefixes = [x["id_prefix"].upper() for x in app.config.needs_external_needs]
+    # Only include prefixes if they are defined (for mega-builds, id_prefix is optional)
+    prefixes = [x["id_prefix"].upper() for x in app.config.needs_external_needs if "id_prefix" in x]
     for source_code_links in source_code_links_by_need:
         need = find_need(needs_copy, source_code_links.need, prefixes)
         if need is None:
