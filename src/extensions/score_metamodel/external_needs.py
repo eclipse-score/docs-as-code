@@ -214,9 +214,7 @@ def add_external_docs_sources(e: ExternalNeedsSource, config: Config):
         "target": e.bazel_module,
     }
 
-    logger.info(
-        f"Added external docs source: {docs_source_path} -> {e.bazel_module}"
-    )
+    logger.info(f"Added external docs source: {docs_source_path} -> {e.bazel_module}")
 
 
 def connect_external_needs(app: Sphinx, config: Config):
