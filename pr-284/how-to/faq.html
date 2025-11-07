@@ -458,6 +458,12 @@ esbonio (settings.json).</p>
 <p>If this does not work, please use the live preview feature: <code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">//:live_preview</span></code>.
 This provides immediate metamodel feedback (although only on the console) and
 IDE-agnostic preview capabilities.</p>
+<p>Another option is to use the <a class="reference external" href="https://ubcode.useblocks.com">ubCode</a> extension for
+VS Code. It provides lightning-fast linting, formatting, previewing, navigation and
+analytical features for large Sphinx and Sphinx-Needs projects.
+The <code class="docutils literal notranslate"><span class="pre">ubproject.toml</span></code> configuration file gets generated automatically when a Sphinx
+build is running once. The file can safely be committed to the repository to enable
+IDE support without requiring a Sphinx build first.</p>
 <section id="esbonio">
 <h3>Esbonio<a class="headerlink" href="#esbonio" title="Link to this heading">#</a></h3>
 <p>Known issues:</p>
@@ -471,10 +477,11 @@ installation.</p>
 </ul>
 </section>
 <section id="ubc">
-<h3>uBc<a class="headerlink" href="#ubc" title="Link to this heading">#</a></h3>
-<p>Currently, uBc is not aware of our metamodel. As a result, checks and auto-completion
+<h3>ubc<a class="headerlink" href="#ubc" title="Link to this heading">#</a></h3>
+<p>Currently, ubc is not aware of our metamodel. As a result, checks and auto-completion
 features are not available.</p>
-<p>We plan to explore improvements in this area in the future together with useblocks.</p>
+<p>We plan to explore improvements in this area in the future together with useblocks.
+These features are on the immediate roadmap.</p>
 </section>
 </section>
 <section id="do-we-need-to-write-custom-python-code-for-every-metamodel-check">
@@ -570,7 +577,7 @@ tests (tests within the next days).</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-is-docs-as-code-so-slow">Why is docs-as-code so slow?</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ide-support-auto-completion-metamodel-checks-preview-lsp-capabilities">IDE support (auto completion, metamodel checks, preview, LSP capabilities)</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#esbonio">Esbonio</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ubc">uBc</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ubc">ubc</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#do-we-need-to-write-custom-python-code-for-every-metamodel-check">Do we need to write custom Python code for every Metamodel check?</a></li>
