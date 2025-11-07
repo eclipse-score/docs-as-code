@@ -4,6 +4,9 @@ Sphinx
 # https://github.com/useblocks/sphinx-needs/issues/1350
 sphinx-needs>=4.2.0
 
+# Due to needed bugfix in 0.3.1
+sphinx-collections>=0.3.1
+
 sphinxcontrib-plantuml
 pydata-sphinx-theme
 sphinx-design

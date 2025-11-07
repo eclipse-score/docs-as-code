@@ -230,7 +230,6 @@ def postprocess_need_links(needs_types_list: list[ScoreNeedType]):
 
 def setup(app: Sphinx) -> dict[str, str | bool]:
     app.add_config_value("external_needs_source", "", rebuild="env")
-    app.add_config_value("allowed_external_prefixes", [], rebuild="env")
     app.config.needs_id_required = True
     app.config.needs_id_regex = "^[A-Za-z0-9_-]{6,}"
 
@@ -251,7 +250,10 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     app.config.needs_reproducible_json = True
     app.config.needs_json_remove_defaults = True
 
-    _ = app.connect("config-inited", connect_external_needs)
+    # sphinx-collections runs on default prio 500.
+    # We need to populate the sphinx-collections config before that happens.
+    # --> 499
+    _ = app.connect("config-inited", connect_external_needs, priority=499)
 
     discover_checks()
 

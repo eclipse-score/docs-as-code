@@ -13,7 +13,6 @@
 
 project = "Score Docs-as-Code"
 project_url = "https://eclipse-score.github.io/docs-as-code/"
-project_prefix = "DOCS_"
 version = "0.1"
 
 extensions = [

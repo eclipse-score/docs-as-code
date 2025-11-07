@@ -292,24 +292,11 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     }
 
 
-def find_need(
-    all_needs: NeedsMutable, id: str, prefixes: list[str]
-) -> NeedsInfoType | None:
+def find_need(all_needs: NeedsMutable, id: str) -> NeedsInfoType | None:
     """
-    Checks all possible external 'prefixes' for an ID
-    So that the linker can add the link to the correct NeedsInfoType object.
+    Finds a need by ID in the needs collection.
     """
-    if id in all_needs:
-        return all_needs[id]
-
-    # Try all possible prefixes
-    for prefix in prefixes:
-        prefixed_id = f"{prefix}{id}"
-        if prefixed_id in all_needs:
-            LOGGER.warning("linking to external needs is not supported!")
-            return all_needs[prefixed_id]
-
-    return None
+    return all_needs.get(id)
 
 
 # re-qid: gd_req__req__attr_impl
@@ -349,11 +336,8 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
         get_cache_filename(app.outdir, "score_scl_grouped_cache.json")
     )
 
-    # For some reason the prefix 'sphinx_needs internally' is CAPSLOCKED.
-    # So we have to make sure we uppercase the prefixes
-    prefixes = [x["id_prefix"].upper() for x in app.config.needs_external_needs]
     for source_code_links in source_code_links_by_need:
-        need = find_need(needs_copy, source_code_links.need, prefixes)
+        need = find_need(needs_copy, source_code_links.need)
         if need is None:
             # TODO: print github annotations as in https://github.com/eclipse-score/bazel_registry/blob/7423b9996a45dd0a9ec868e06a970330ee71cf4f/tools/verify_semver_compatibility_level.py#L126-L129
             for n in source_code_links.links.CodeLinks:
