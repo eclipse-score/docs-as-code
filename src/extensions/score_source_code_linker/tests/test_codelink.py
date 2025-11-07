@@ -222,50 +222,9 @@ def test_find_need_direct_match():
             "REQ_002": {"id": "REQ_002", "title": "Another requirement"},
         }
     )
-    result = find_need(all_needs, "REQ_001", [])
+    result = find_need(all_needs, "REQ_001")
     assert result is not None
     assert result["id"] == "REQ_001"
-
-
-@add_test_properties(
-    partially_verifies=["tool_req__docs_dd_link_source_code_link"],
-    test_type="requirements-based",
-    derivation_technique="requirements-analysis",
-)
-def test_find_need_with_prefix():
-    """Test finding a need with prefix matching."""
-
-    all_needs = make_needs(
-        {
-            "PREFIX_REQ_001": {"id": "PREFIX_REQ_001", "title": "Prefixed requirement"},
-            "REQ_002": {"id": "REQ_002", "title": "Another requirement"},
-        }
-    )
-    result = find_need(all_needs, "REQ_001", ["PREFIX_"])
-    assert result is not None
-    assert result["id"] == "PREFIX_REQ_001"
-
-
-@add_test_properties(
-    partially_verifies=["tool_req__docs_dd_link_source_code_link"],
-    test_type="requirements-based",
-    derivation_technique="requirements-analysis",
-)
-def test_find_need_multiple_prefixes():
-    """Test finding a need with multiple prefixes."""
-    all_needs = make_needs(
-        {
-            "SECOND_REQ_001": {
-                "id": "SECOND_REQ_001",
-                "title": "Second prefixed requirement",
-            },
-            "REQ_002": {"id": "REQ_002", "title": "Another requirement"},
-        }
-    )
-
-    result = find_need(all_needs, "REQ_001", ["FIRST_", "SECOND_"])
-    assert result is not None
-    assert result["id"] == "SECOND_REQ_001"
 
 
 @add_test_properties(
@@ -281,7 +240,7 @@ def test_find_need_not_found():
         }
     )
 
-    result = find_need(all_needs, "REQ_999", ["PREFIX_"])
+    result = find_need(all_needs, "REQ_999")
     assert result is None
 
 
@@ -437,22 +396,15 @@ def test_group_by_need_and_find_need_integration(
         {
             "TREQ_ID_1": {"id": "TREQ_ID_1", "title": "Test requirement 1"},
             "TREQ_ID_2": {"id": "TREQ_ID_2", "title": "Test requirement 2"},
-            "PREFIX_TREQ_ID_200": {
-                "id": "PREFIX_TREQ_ID_200",
-                "title": "Prefixed requirement",
-            },
         }
     )
 
     # Test finding needs for each group
     for found_link in grouped:
-        found_need = find_need(all_needs, found_link.need, ["PREFIX_"])
+        found_need = find_need(all_needs, found_link.need)
         if found_link.need in ["TREQ_ID_1", "TREQ_ID_2"]:
             assert found_need is not None
             assert found_need["id"] == found_link.need
-        elif found_link.need == "TREQ_ID_200":
-            assert found_need is not None
-            assert found_need["id"] == "PREFIX_TREQ_ID_200"
 
 
 @add_test_properties(

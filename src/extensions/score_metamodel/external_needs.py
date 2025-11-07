@@ -191,7 +191,7 @@ def add_external_needs_json(e: ExternalNeedsSource, config: Config):
 
 
 def connect_external_needs(app: Sphinx, config: Config):
-    extend_needs_json_exporter(config, ["project_url", "project_prefix"])
+    extend_needs_json_exporter(config, ["project_url"])
 
     external_needs = get_external_needs_source(app.config.external_needs_source)
 
