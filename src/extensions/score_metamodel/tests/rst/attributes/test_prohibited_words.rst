@@ -82,7 +82,7 @@
   :tags: Common Attributes
   :implemented: YES
   :satisfies:
-    PROCESS_gd_req__req_desc_weak,
+    gd_req__req_desc_weak,
   :parent_covered: YES
 
   Docs-as-Code shall enforce that requirement descriptions do not contain the following weak words:

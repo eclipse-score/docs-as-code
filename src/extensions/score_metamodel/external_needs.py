@@ -183,22 +183,15 @@ def add_external_needs_json(e: ExternalNeedsSource, config: Config):
     assert isinstance(config.needs_external_needs, list)  # pyright: ignore[reportUnknownMemberType]
     config.needs_external_needs.append(  # pyright: ignore[reportUnknownMemberType]
         {
-            "id_prefix": needs_json_data["project_prefix"],
             "base_url": needs_json_data["project_url"]
             + "/main",  # for now always "main"
             "json_path": json_file,
         }
     )
-    # Making the prefixes uppercase here to match sphinx_needs,
-    # as it does this internally too.
-    assert isinstance(config.allowed_external_prefixes, list)  # pyright: ignore[reportAny]
-    config.allowed_external_prefixes.append(  # pyright: ignore[reportUnknownMemberType]
-        needs_json_data["project_prefix"].upper()  # pyright: ignore[reportAny]
-    )
 
 
 def connect_external_needs(app: Sphinx, config: Config):
-    extend_needs_json_exporter(config, ["project_url", "project_prefix"])
+    extend_needs_json_exporter(config, ["project_url"])
 
     external_needs = get_external_needs_source(app.config.external_needs_source)
 

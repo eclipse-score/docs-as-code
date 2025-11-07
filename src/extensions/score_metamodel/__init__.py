@@ -230,7 +230,6 @@ def postprocess_need_links(needs_types_list: list[ScoreNeedType]):
 
 def setup(app: Sphinx) -> dict[str, str | bool]:
     app.add_config_value("external_needs_source", "", rebuild="env")
-    app.add_config_value("allowed_external_prefixes", [], rebuild="env")
     app.config.needs_id_required = True
     app.config.needs_id_regex = "^[A-Za-z0-9_-]{6,}"
 
