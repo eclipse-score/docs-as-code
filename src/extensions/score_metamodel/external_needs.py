@@ -48,7 +48,7 @@ def _parse_bazel_external_need(s: str) -> ExternalNeedsSource | None:
     repo, path_to_target = repo_and_path.split("//", 1)
     repo = repo.lstrip("@")
 
-    if path_to_target == "" and target == "needs_json":
+    if path_to_target == "" and target in ("needs_json", "docs_sources"):
         return ExternalNeedsSource(
             bazel_module=repo, path_to_target=path_to_target, target=target
         )
@@ -190,6 +190,26 @@ def add_external_needs_json(e: ExternalNeedsSource, config: Config):
     )
 
 
+def add_external_docs_sources(e: ExternalNeedsSource, config: Config):
+    # Note that bazel does NOT write the files under e.target!
+    # {e.bazel_module}+ matches the original git layout!
+    if r := os.getenv("RUNFILES_DIR"):
+        docs_source_path = Path(r) / f"{e.bazel_module}+"
+    else:
+        logger.error("Combo builds are currently only supported with Bazel.")
+        return
+
+    if "collections" not in config:
+        config.collections = {}
+    config.collections[e.bazel_module] = {
+        "driver": "symlink",
+        "source": str(docs_source_path),
+        "target": e.bazel_module,
+    }
+
+    logger.info(f"Added external docs source: {docs_source_path} -> {e.bazel_module}")
+
+
 def connect_external_needs(app: Sphinx, config: Config):
     extend_needs_json_exporter(config, ["project_url"])
 
@@ -197,6 +217,12 @@ def connect_external_needs(app: Sphinx, config: Config):
 
     for e in external_needs:
         assert not e.path_to_target  # path_to_target is always empty
-        assert e.target == "needs_json"
 
-        add_external_needs_json(e, app.config)
+        if e.target == "needs_json":
+            add_external_needs_json(e, app.config)
+        elif e.target == "docs_sources":
+            add_external_docs_sources(e, app.config)
+        else:
+            raise ValueError(
+                f"Internal Error. Unknown external needs target: {e.target}"
+            )

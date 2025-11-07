@@ -25,6 +25,7 @@ score_extensions = [
     "score_source_code_linker",
     "score_draw_uml_funcs",
     "score_layout",
+    "sphinx_collections",
     "sphinxcontrib.mermaid",
 ]
 

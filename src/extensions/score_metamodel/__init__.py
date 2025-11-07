@@ -250,7 +250,10 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     app.config.needs_reproducible_json = True
     app.config.needs_json_remove_defaults = True
 
-    _ = app.connect("config-inited", connect_external_needs)
+    # sphinx-collections runs on default prio 500.
+    # We need to populate the sphinx-collections config before that happens.
+    # --> 499
+    _ = app.connect("config-inited", connect_external_needs, priority=499)
 
     discover_checks()
 

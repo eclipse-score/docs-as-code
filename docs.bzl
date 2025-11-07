@@ -45,6 +45,17 @@ load("@rules_python//sphinxdocs:sphinx.bzl", "sphinx_build_binary", "sphinx_docs
 load("@rules_python//sphinxdocs:sphinx_docs_library.bzl", "sphinx_docs_library")
 load("@score_tooling//:defs.bzl", "score_virtualenv")
 
+def _rewrite_needs_json_to_docs_sources(labels):
+    """Replace '@repo//:needs_json' -> '@repo//:docs_sources' for every item."""
+    out = []
+    for x in labels:
+        s = str(x)
+        if s.endswith("//:needs_json"):
+            out.append(s.replace("//:needs_json", "//:docs_sources"))
+        else:
+            out.append(s)
+    return out
+
 def docs(source_dir = "docs", data = [], deps = []):
     """
     Creates all targets related to documentation.
@@ -89,6 +100,8 @@ def docs(source_dir = "docs", data = [], deps = []):
         visibility = ["//visibility:public"],
     )
 
+    data_with_docs_sources = _rewrite_needs_json_to_docs_sources(data)
+
     py_binary(
         name = "docs",
         tags = ["cli_help=Build documentation:\nbazel run //:docs"],
@@ -98,6 +111,19 @@ def docs(source_dir = "docs", data = [], deps = []):
         env = {
             "SOURCE_DIRECTORY": source_dir,
             "DATA": str(data),
+            "ACTION": "incremental",
+        },
+    )
+
+    py_binary(
+        name = "docs_combo",
+        tags = ["cli_help=Build full documentation with all dependencies:\nbazel run //:docs_combo_experimental"],
+        srcs = ["@score_docs_as_code//src:incremental.py"],
+        data = data_with_docs_sources,
+        deps = deps,
+        env = {
+            "SOURCE_DIRECTORY": source_dir,
+            "DATA": str(data_with_docs_sources),
             "ACTION": "incremental",
         },
     )
@@ -124,6 +150,19 @@ def docs(source_dir = "docs", data = [], deps = []):
         env = {
             "SOURCE_DIRECTORY": source_dir,
             "DATA": str(data),
+            "ACTION": "live_preview",
+        },
+    )
+
+    py_binary(
+        name = "live_preview_combo_experimental",
+        tags = ["cli_help=Live preview full documentation with all dependencies in the browser:\nbazel run //:live_preview_combo_experimental"],
+        srcs = ["@score_docs_as_code//src:incremental.py"],
+        data = data_with_docs_sources,
+        deps = deps,
+        env = {
+            "SOURCE_DIRECTORY": source_dir,
+            "DATA": str(data_with_docs_sources),
             "ACTION": "live_preview",
         },
     )
