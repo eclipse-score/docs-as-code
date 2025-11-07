@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Extensions &#8212; Score Docs-as-Code  documentation</title>
+    <title>ubproject.toml sync &#8212; Score Docs-as-Code  documentation</title>
   
   
   
@@ -62,7 +62,7 @@
     <script src="../../_static/sphinx-needs/libs/html/datatables.min.js?v=8a4aee21"></script>
     <script src="../../_static/sphinx-needs/libs/html/datatables_loader.js?v=a2cae175"></script>
     <script src="../../_static/sphinx-needs/libs/html/sphinx_needs_collapse.js?v=dca66431"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'internals/extensions/index';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'internals/extensions/sync_toml';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://eclipse-score.github.io/docs-as-code/versions.json';
@@ -72,8 +72,8 @@
         </script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="score_metamodel" href="metamodel.html" />
-    <link rel="prev" title="Internals" href="../index.html" />
+    <link rel="next" title="Bazel Mini Benchmark Results" href="../benchmark_results.html" />
+    <link rel="prev" title="Guide to Creating a Sphinx Extension" href="extension_guide.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.1" />
@@ -365,13 +365,13 @@
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">Extensions</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Extensions</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="metamodel.html">Metamodel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="rst_filebased_testing.html">Filebased Testing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="header_service.html">Header Service</a></li>
 <li class="toctree-l2"><a class="reference internal" href="source_code_linker.html">Source Code Linker</a></li>
 <li class="toctree-l2"><a class="reference internal" href="extension_guide.html">Extension Guide</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sync_toml.html">Sync TOML</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Sync TOML</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1"><a class="reference internal" href="../benchmark_results.html">Bazel Mini Benchmark Results</a></li>
@@ -419,7 +419,10 @@
     
     <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Internals</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Extensions</span></li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Extensions</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ubproject.toml sync</span></li>
   </ul>
 </nav>
 </div>
@@ -436,95 +439,36 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="extensions">
-<span id="id1"></span><h1>Extensions<a class="headerlink" href="#extensions" title="Link to this heading">#</a></h1>
-<p>Hello there</p>
-<div class="sd-container-fluid sd-sphinx-override sd-mb-4 score-grid docutils">
-<div class="sd-row sd-row-cols-1 sd-row-cols-xs-1 sd-row-cols-sm-1 sd-row-cols-md-3 sd-row-cols-lg-3 docutils">
-<div class="sd-col sd-d-flex-row docutils">
-<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm docutils">
-<div class="sd-card-header docutils">
-<p class="sd-card-text">Metamodel</p>
-</div>
-<div class="sd-card-body docutils">
-<p class="sd-card-text">Learn more about our Metamodel extension and what this extension takes care of.
-<a class="reference internal" href="metamodel.html#metamodel"><span class="std std-ref">Metamodel Extension</span></a>.</p>
-</div>
-</div>
-</div>
-<div class="sd-col sd-d-flex-row docutils">
-<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm docutils">
-<div class="sd-card-header docutils">
-<p class="sd-card-text">Header Service</p>
-</div>
-<div class="sd-card-body docutils">
-<p class="sd-card-text">Learn about the Header Service extension, and how you can configure it.
-It creates RST Tables and automatically fills our information needed.
-<a class="reference internal" href="header_service.html#header-service"><span class="std std-ref">Header Service Extension</span></a></p>
-</div>
-</div>
-</div>
-<div class="sd-col sd-d-flex-row docutils">
-<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm docutils">
-<div class="sd-card-header docutils">
-<p class="sd-card-text">Source Code Linker</p>
-</div>
-<div class="sd-card-body docutils">
-<p class="sd-card-text">Learn about the Source Code Linker extension, and how you can configure it.
-It enables the possibility to link source code to requirements.
-<a class="reference internal" href="source_code_linker.html#source-code-linker"><span class="std std-ref">Source Code Linker Extension</span></a></p>
-</div>
-</div>
-</div>
-<div class="sd-col sd-d-flex-row docutils">
-<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm docutils">
-<div class="sd-card-header docutils">
-<p class="sd-card-text">RST Filebased testing</p>
-</div>
-<div class="sd-card-body docutils">
-<p class="sd-card-text">A new testing approach that we have integrated. It makes it easy to ensure that the metamodel and it’s checks
-work as intended. Create new checks simply by writing RST files.
-Head over to <a class="reference internal" href="rst_filebased_testing.html#file-based-testing"><span class="std std-ref">File Based Testing</span></a> to learn more.</p>
-</div>
-</div>
-</div>
-<div class="sd-col sd-d-flex-row docutils">
-<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm docutils">
-<div class="sd-card-header docutils">
-<p class="sd-card-text">Extension Guide</p>
-</div>
-<div class="sd-card-body docutils">
-<p class="sd-card-text">Want to learn how to write your own sphinx extension, or see how others have done it?
-Head over to <a class="reference internal" href="extension_guide.html#extension-guide"><span class="std std-ref">Building an Extension</span></a> to dive in.</p>
-</div>
-</div>
-</div>
-<div class="sd-col sd-d-flex-row docutils">
-<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm docutils">
-<div class="sd-card-header docutils">
-<p class="sd-card-text">Sync TOML</p>
-</div>
-<div class="sd-card-body docutils">
-<p class="sd-card-text">Learn about the <a class="reference internal" href="sync_toml.html#toml-sync"><span class="std std-ref">config sync</span></a> extension that generates the
-<code class="docutils literal notranslate"><span class="pre">ubproject.toml</span></code> file needed by the
-<a class="reference external" href="https://ubcode.useblocks.com">ubCode</a> VS Code extension.
-Getting IDE support for Sphinx-Needs in a Bazel context made easy.</p>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="toctree-wrapper compound">
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="metamodel.html">Metamodel</a></li>
-<li class="toctree-l1"><a class="reference internal" href="rst_filebased_testing.html">Filebased Testing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="header_service.html">Header Service</a></li>
-<li class="toctree-l1"><a class="reference internal" href="source_code_linker.html">Source Code Linker</a></li>
-<li class="toctree-l1"><a class="reference internal" href="extension_guide.html">Extension Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sync_toml.html">Sync TOML</a></li>
-</ul>
-</div>
+  <section id="ubproject-toml-sync">
+<span id="toml-sync"></span><h1>ubproject.toml sync<a class="headerlink" href="#ubproject-toml-sync" title="Link to this heading">#</a></h1>
+<p>The extension <code class="docutils literal notranslate"><span class="pre">score_sync_toml</span></code> provides configuration for the newly developed
+Sphinx extension <a class="reference external" href="https://needs-config-writer.useblocks.com/">needs-config-writer</a>.</p>
+<p>The extension allows to write a declarative configuration file <code class="docutils literal notranslate"><span class="pre">ubproject.toml</span></code>
+that is required by the <a class="reference external" href="https://ubcode.useblocks.com">ubCode VS Code extension</a>
+and its companion CLI app <a class="reference external" href="https://ubcode.useblocks.com/ubc/introduction.html">ubc</a>
+to get hold of the Sphinx-Needs configuration.</p>
+<p>The solution outlined here can serve as a template for how to build IDE extensions
+in a Bazel environment. IDE extensions need to know the configuration and file sets
+that are part of the project. This information is hidden in the build system, so a call
+is needed to extract this information and make it available to the IDE extension.</p>
+<p>The basic idea is to stay with the programmed configuration system for Sphinx and
+Sphinx-Needs as it exists in S-CORE, but use it to generate the <code class="docutils literal notranslate"><span class="pre">ubproject.toml</span></code> file.
+The <code class="docutils literal notranslate"><span class="pre">ubproject.toml</span></code> file is generated into the directory holding the <code class="docutils literal notranslate"><span class="pre">conf.py</span></code> file
+(called <code class="docutils literal notranslate"><span class="pre">confdir</span></code> in Sphinx) and should be checked into the version control system
+alongside <code class="docutils literal notranslate"><span class="pre">conf.py</span></code>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">ubproject.toml</span></code> file is generated on each Sphinx build, so any changes to the
+Sphinx-Needs configuration are automatically reflected in the generated file.
+If changes are detected, a warning is emitted during the Sphinx build to remind the user
+to commit the updated <code class="docutils literal notranslate"><span class="pre">ubproject.toml</span></code> file. Changes may occur because docs-as-code
+updated a configuration or a new Sphinx-Needs version added configuration.</p>
+<p>Committing the generated <code class="docutils literal notranslate"><span class="pre">ubproject.toml</span></code> file allows the IDE extension to work
+without requiring any Sphinx build to be performed first. For a fully complete network
+of need items, required external or imported <code class="docutils literal notranslate"><span class="pre">needs.json</span></code> files must first be
+generated by Bazel.</p>
+<p>The command line tool <code class="docutils literal notranslate"><span class="pre">ubc</span></code> uses the same configuration as <code class="docutils literal notranslate"><span class="pre">ubCode</span></code> and can be
+used to lint and format all RST files in any of the S-CORE documentations.
+<code class="docutils literal notranslate"><span class="pre">ubc</span></code> also has features for exporting traceability data to specific file formats or
+performing diff and impact analysis.</p>
 </section>
 
 
@@ -538,20 +482,20 @@ Getting IDE support for Sphinx-Needs in a Bazel context made easy.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../index.html"
+       href="extension_guide.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Internals</p>
+        <p class="prev-next-title">Guide to Creating a Sphinx Extension</p>
       </div>
     </a>
     <a class="right-next"
-       href="metamodel.html"
+       href="../benchmark_results.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">score_metamodel</p>
+        <p class="prev-next-title">Bazel Mini Benchmark Results</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -570,7 +514,7 @@ Getting IDE support for Sphinx-Needs in a Bazel context made easy.</p>
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/eclipse-score/docs-as-code/edit/main/docs/internals/extensions/index.rst">
+    <a href="https://github.com/eclipse-score/docs-as-code/edit/main/docs/internals/extensions/sync_toml.rst">
       <i class="fa-solid fa-pencil"></i>
       
       
@@ -586,7 +530,7 @@ Getting IDE support for Sphinx-Needs in a Bazel context made easy.</p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../../_sources/internals/extensions/index.rst.txt"
+      <li><a href="../../_sources/internals/extensions/sync_toml.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div></div>
