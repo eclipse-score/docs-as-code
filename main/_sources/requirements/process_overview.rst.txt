@@ -18,7 +18,7 @@ The following table lists tool requirements from our process which are not satis
 
    results = []
    for need in needs.filter_types(["gd_req"]):
-       if not need["id"].startswith("PROCESS_gd_req__tool_"):
+       if not need["id"].startswith("gd_req__tool_"):
           continue
        if len(need["satisfies_back"]) >= 1:
           continue
