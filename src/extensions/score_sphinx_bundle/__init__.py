@@ -27,6 +27,8 @@ score_extensions = [
     "score_layout",
     "sphinx_collections",
     "sphinxcontrib.mermaid",
+    "needs_config_writer",
+    "score_sync_toml",
 ]
 
 
