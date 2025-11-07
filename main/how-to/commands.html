@@ -430,7 +430,6 @@
                   
   <section id="commands">
 <h1>Commands<a class="headerlink" href="#commands" title="Link to this heading">#</a></h1>
-<p>⚠️ Only valid for docs-as-code v1.x.x.</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Target</p></th>
@@ -441,10 +440,19 @@
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">//:docs</span></code></p></td>
 <td><p>Builds documentation</p></td>
 </tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">//:docs_check</span></code></p></td>
+<td><p>Verifies documentation correctness</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">//:docs_combo_experimental</span></code></p></td>
+<td><p>Builds combined documentation with all external dependencies included</p></td>
+</tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">//:live_preview</span></code></p></td>
 <td><p>Creates a live_preview of the documentation viewable in a local server</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">//:ide_support</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">//:live_preview_combo_experimental</span></code></p></td>
+<td><p>Creates a live_preview of the full documentation with all dependencies viewable in a local server</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">//:ide_support</span></code></p></td>
 <td><p>Sets up a Python venv for esbonio (Remember to restart VS Code!)</p></td>
 </tr>
 </tbody>
@@ -461,6 +469,9 @@
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">build</span> <span class="pre">//:needs_json</span></code></p></td>
 <td><p>Creates a ‘needs.json’ file</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">build</span> <span class="pre">//:docs_sources</span></code></p></td>
+<td><p>Provides all the documentation source files</p></td>
 </tr>
 </tbody>
 </table>
