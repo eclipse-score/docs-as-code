@@ -69,7 +69,7 @@ def setup(app: Sphinx) -> dict[str, object]:
 
     return {
         "version": "0.1",
-        "env_version": 200,  # 2.0.0
+        "env_version": 200,  # 2.0.0 - keep this in sync with the score_docs_as_code version in MODULE.bazel
         "parallel_read_safe": True,
         "parallel_write_safe": True,
     }
