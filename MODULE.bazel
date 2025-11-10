@@ -13,8 +13,8 @@
 
 module(
     name = "score_docs_as_code",
-    version = "1.5.0",
-    compatibility_level = 1,
+    version = "2.0.0",
+    compatibility_level = 2,
 )
 
 ###############################################################################

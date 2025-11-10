@@ -116,7 +116,7 @@ def docs(source_dir = "docs", data = [], deps = []):
     )
 
     py_binary(
-        name = "docs_combo",
+        name = "docs_combo_experimental",
         tags = ["cli_help=Build full documentation with all dependencies:\nbazel run //:docs_combo_experimental"],
         srcs = ["@score_docs_as_code//src:incremental.py"],
         data = data_with_docs_sources,
