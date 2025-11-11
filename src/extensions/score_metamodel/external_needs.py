@@ -179,9 +179,6 @@ def add_external_needs_json(e: ExternalNeedsSource, config: Config):
         )
         # Attempt to continue, exit code will be non-zero after a logged error anyway.
         return
-    # this sets the default value - required for the needs-config-writer
-    # setting 'needscfg_exclude_defaults = True' to see the diff
-    config.needs_external_needs = []
     assert isinstance(config.needs_external_needs, list)  # pyright: ignore[reportUnknownMemberType]
     config.needs_external_needs.append(  # pyright: ignore[reportUnknownMemberType]
         {
@@ -216,6 +213,10 @@ def connect_external_needs(app: Sphinx, config: Config):
     extend_needs_json_exporter(config, ["project_url"])
 
     external_needs = get_external_needs_source(app.config.external_needs_source)
+
+    # this sets the default value - required for the needs-config-writer
+    # setting 'needscfg_exclude_defaults = True' to see the diff
+    config.needs_external_needs = []
 
     for e in external_needs:
         assert not e.path_to_target  # path_to_target is always empty
