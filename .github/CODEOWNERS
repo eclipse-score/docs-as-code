@@ -6,4 +6,5 @@
 # For more information about CODEOWNERS, see:
 # https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
 
-* @AlexanderLanin @MaximilianSoerenPollak @dcalavrezo-qorix
+# https://github.com/orgs/eclipse-score/teams/infrastructure-maintainers
+* @AlexanderLanin @MaximilianSoerenPollak @dcalavrezo-qorix @nradakovic
