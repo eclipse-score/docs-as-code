@@ -29,9 +29,16 @@ It provides documentation, requirements, and traceability.
 
    .. grid-item-card::
 
-      :ref:`Internals <internals>`
+      :ref:`Reference <reference>`
       ^^^
-      How does docs-as-code work? This section provides an overview of the architecture and design decisions behind the tooling.
+      API and usage reference.
+
+
+   .. grid-item-card::
+
+      :ref:`Concepts <concepts>`
+      ^^^
+      Key concepts, models and explanatory material to understand the system.
 
 
 .. if-collection:: score_process
