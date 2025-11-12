@@ -13,7 +13,7 @@
 
 module(
     name = "score_docs_as_code",
-    version = "2.0.1",
+    version = "2.0.2",
     compatibility_level = 2,
 )
 
@@ -97,7 +97,9 @@ http_file(
 # Checker rule for CopyRight checks/fixes
 
 # docs dependency
-bazel_dep(name = "score_process", version = "1.2.0")
+# Note: requirements were last aligned with 1.2.0,
+# the switch to 1.3.1 is purely to drop the dependency on docs-as-code 1.x.
+bazel_dep(name = "score_process", version = "1.3.1")
 
 # Add Linter
 bazel_dep(name = "rules_multitool", version = "1.9.0")
