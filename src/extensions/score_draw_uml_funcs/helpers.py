@@ -98,9 +98,7 @@ def gen_header() -> str:
 
 def gen_sytle_header() -> str:
     """Create PlantUML Header for Style definition"""
-    return (
-        """<style>\n.asilb {\nLineColor blue\nLineThickness 2.0\n}\n</style>""" + "\n"
-    )
+    return """<style>\n.asilb {\nLineColor red\nLineThickness 2.0\n}\n</style>""" + "\n"
 
 
 ########################################################################
