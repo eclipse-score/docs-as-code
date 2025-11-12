@@ -1,7 +1,6 @@
-(getting_started)=
+(setup)=
 # Setup
 
-⚠️ Only valid for docs-as-code v1.x.x.
 
 ## Overview
 

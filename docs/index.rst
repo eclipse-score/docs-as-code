@@ -12,10 +12,10 @@
     # *******************************************************************************
 
 Docs-As-Code
-=====================
+============
 
-Welcome to the docs-as-code documentation, it is organized into several key sections.
-
+This is the tool / toolchain for documentation in the S-CORE ecosystem.
+It provides documentation, requirements, and traceability.
 
 .. grid:: 1 1 3 3
    :class-container: score-grid
@@ -32,12 +32,6 @@ Welcome to the docs-as-code documentation, it is organized into several key sect
       :ref:`Internals <internals>`
       ^^^
       How does docs-as-code work? This section provides an overview of the architecture and design decisions behind the tooling.
-
-   .. grid-item-card::
-
-      :ref:`Requirements <requirements>`
-      ^^^
-      The official tool requirements for docs-as-code.
 
 
 .. if-collection:: score_process
@@ -59,6 +53,7 @@ Welcome to the docs-as-code documentation, it is organized into several key sect
       :titlesonly:
 
       how-to/index
+      reference/index
       internals/index
       requirements/index
 

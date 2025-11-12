@@ -6,6 +6,6 @@ How To
 .. toctree::
    :maxdepth: 1
 
-   faq
-   commands
+   get_started
    setup
+   faq
