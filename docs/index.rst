@@ -54,8 +54,8 @@ It provides documentation, requirements, and traceability.
 
       how-to/index
       reference/index
+      concepts/index
       internals/index
-      requirements/index
 
    docs-as-code is based on score_process:
 

@@ -8,4 +8,6 @@ How To
 
    get_started
    setup
+   write_docs
    faq
+   other_modules
