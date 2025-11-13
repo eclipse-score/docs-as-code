@@ -33,17 +33,10 @@ logger = logging.getLogger(__name__)
 
 
 def setup(app: Sphinx) -> dict[str, object]:
-    # recognition of configuration value
-    app.add_config_value("enable_source_generation", False, "html")
-    if app.config.enable_source_generation:
-        logger.info("<< score_sphinx_bundle: source generation activated")
-        app.config.html_copy_source = True
-        app.config.html_show_sourcelink = True
-    else:
-        if "score_sphinx_bundle.source_code_linker" in app.config.extensions:
-            app.config.extensions.remove("score_sphinx_bundle.source_code_linker")
-        app.config.html_copy_source = False
-        app.config.html_show_sourcelink = False
+    if "score_sphinx_bundle.source_code_linker" in app.config.extensions:
+        app.config.extensions.remove("score_sphinx_bundle.source_code_linker")
+    app.config.html_copy_source = False
+    app.config.html_show_sourcelink = False
 
     # Global settings
     # Note: the "sub-extensions" also set their own config values
