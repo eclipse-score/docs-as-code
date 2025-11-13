@@ -481,7 +481,7 @@ Add the external module’s <code class="docutils literal notranslate"><span cla
 </section>
 <section id="reference-needs-across-modules">
 <h3>3) Reference needs across modules<a class="headerlink" href="#reference-needs-across-modules" title="Link to this heading">#</a></h3>
-<p>Once the other module’s inventories are available at build time, you can reference its needs IDs in the usual Sphinx-Needs way.
+<p>Once the other module’s are defined as dependencies as explained above, you can reference their needs IDs in the usual Sphinx-Needs way.
 The important part is that the inventory name that Sphinx-Needs looks up matches the module that produced the needs entries.</p>
 <p>Example in reStructuredText:</p>
 <div class="highlight-rst notranslate"><div class="highlight"><pre><span></span>See the requirement <span class="na">:need:</span><span class="nv">`gd_req__req_traceability`</span>, for example.
