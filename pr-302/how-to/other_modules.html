@@ -467,17 +467,19 @@ There are multiple ways to do this depending on how you manage third-party/local
 <section id="extend-your-docs-rule-so-sphinx-picks-up-the-other-module-s-inventory">
 <h3>2) Extend your <cite>docs</cite> rule so Sphinx picks up the other module’s inventory<a class="headerlink" href="#extend-your-docs-rule-so-sphinx-picks-up-the-other-module-s-inventory" title="Link to this heading">#</a></h3>
 <p>The documentation build in this project is exposed via a Bazel macro/rule that accepts a <cite>data</cite> parameter.
-Add the external module’s <code class="docutils literal notranslate"><span class="pre">:needs_json</span></code> target to that list.</p>
+Add the external module’s <code class="docutils literal notranslate"><span class="pre">:needs_json</span></code> target to that list
+to have their needs elements available for cross-referencing.</p>
 <p>Example <cite>BUILD</cite> snippet (consumer module):</p>
-<div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span>     <span class="n">load</span><span class="p">(</span><span class="s2">&quot;@rules_docs//:docs.bzl&quot;</span><span class="p">,</span> <span class="s2">&quot;docs&quot;</span><span class="p">)</span>
-     <span class="n">docs</span><span class="p">(</span>
+<div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;@rules_docs//:docs.bzl&quot;</span><span class="p">,</span> <span class="s2">&quot;docs&quot;</span><span class="p">)</span>
+<span class="n">docs</span><span class="p">(</span>
   <span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
-      <span class="s2">&quot;@score_process//:needs_json&quot;</span><span class="p">,</span>
+     <span class="s2">&quot;@score_process//:needs_json&quot;</span><span class="p">,</span>
   <span class="p">],</span>
-<span class="n">source_dir</span> <span class="o">=</span> <span class="s2">&quot;docs&quot;</span><span class="p">,</span>
+  <span class="n">source_dir</span> <span class="o">=</span> <span class="s2">&quot;docs&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
+<p>More details in <a class="reference internal" href="../concepts/bidirectional_traceability.html#bidirectional-traceability"><span class="std std-ref">Bi-directional Traceability</span></a>.</p>
 </section>
 <section id="reference-needs-across-modules">
 <h3>3) Reference needs across modules<a class="headerlink" href="#reference-needs-across-modules" title="Link to this heading">#</a></h3>
