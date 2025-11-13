@@ -44,7 +44,7 @@ Example `BUILD` snippet (consumer module):
 3) Reference needs across modules
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Once the other module's inventories are available at build time, you can reference its needs IDs in the usual Sphinx-Needs way.
+Once the other module's are defined as dependencies as explained above, you can reference their needs IDs in the usual Sphinx-Needs way.
 The important part is that the inventory name that Sphinx-Needs looks up matches the module that produced the needs entries.
 
 Example in reStructuredText:
