@@ -10,7 +10,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-import logging
 from sphinx.application import Sphinx
 
 # Note: order matters!
@@ -28,8 +27,6 @@ score_extensions = [
     "score_layout",
     "sphinxcontrib.mermaid",
 ]
-
-logger = logging.getLogger(__name__)
 
 
 def setup(app: Sphinx) -> dict[str, object]:
