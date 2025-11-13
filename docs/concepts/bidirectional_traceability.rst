@@ -33,7 +33,7 @@ For individual modules this means the build is relatively fast and this can be d
 The tradeoff is that the target of the hyperlink is unaware.
 That other module's need elements will not have backlinks.
 At least not immediately.
-In a later build they may update to referencers.
+In a later revision they can update their dependency on the first module and then the references are updated in their documentation.
 
 Build with copies
 ~~~~~~~~~~~~~~~~~

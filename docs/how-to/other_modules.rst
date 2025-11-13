@@ -27,19 +27,22 @@ A minimal example (add or extend the existing `bazel_deps` stanza):
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The documentation build in this project is exposed via a Bazel macro/rule that accepts a `data` parameter.
-Add the external module's ``:needs_json`` target to that list.
+Add the external module's ``:needs_json`` target to that list
+to have their needs elements available for cross-referencing.
 
 Example `BUILD` snippet (consumer module):
 
 .. code-block:: starlark
 
-	 load("@rules_docs//:docs.bzl", "docs")
-	 docs(
+    load("@rules_docs//:docs.bzl", "docs")
+    docs(
       data = [
-          "@score_process//:needs_json",
+         "@score_process//:needs_json",
       ],
-    source_dir = "docs",
+      source_dir = "docs",
     )
+
+More details in :ref:`bidirectional_traceability`.
 
 3) Reference needs across modules
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
