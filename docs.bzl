@@ -176,20 +176,23 @@ def docs(source_dir = "docs", data = [], deps = []):
         data = data,
     )
 
-    sphinx_docs(
-        name = "needs_json",
-        srcs = [":docs_sources"],
-        config = ":" + source_dir + "/conf.py",
-        extra_opts = [
-            "-W",
-            "--keep-going",
-            "-T",  # show more details in case of errors
-            "--jobs",
-            "auto",
-            "--define=external_needs_source=" + str(data),
-        ],
-        formats = ["needs"],
-        sphinx = ":sphinx_build",
-        tools = data,
-        visibility = ["//visibility:public"],
-    )
+    # Create sphinx_docs targets for different output formats
+    formats = {"needs_json": "needs", "html": "html"}
+    for target_name, format_type in formats.items():
+        sphinx_docs(
+            name = target_name,
+            srcs = [":docs_sources"],
+            config = ":" + source_dir + "/conf.py",
+            extra_opts = [
+                "-W",
+                "--keep-going",
+                "-T",  # show more details in case of errors
+                "--jobs",
+                "auto",
+                "--define=external_needs_source=" + str(data),
+            ],
+            formats = [format_type],
+            sphinx = ":sphinx_build",
+            tools = data,
+            visibility = ["//visibility:public"],
+        )
