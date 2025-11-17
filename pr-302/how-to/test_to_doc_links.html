@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Getting started &#8212; Score Docs-as-Code  documentation</title>
+    <title>Reference Docs in Tests &#8212; Score Docs-as-Code  documentation</title>
   
   
   
@@ -62,7 +62,7 @@
     <script src="../_static/sphinx-needs/libs/html/datatables.min.js?v=8a4aee21"></script>
     <script src="../_static/sphinx-needs/libs/html/datatables_loader.js?v=a2cae175"></script>
     <script src="../_static/sphinx-needs/libs/html/sphinx_needs_collapse.js?v=dca66431"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'how-to/get_started';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'how-to/test_to_doc_links';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://eclipse-score.github.io/docs-as-code/versions.json';
@@ -72,8 +72,8 @@
         </script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Setup" href="setup.html" />
-    <link rel="prev" title="How To" href="index.html" />
+    <link rel="next" title="Reference" href="../reference/index.html" />
+    <link rel="prev" title="Reference Docs in Source Code" href="source_to_doc_links.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.1" />
@@ -379,13 +379,13 @@
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="get_started.html">Getting started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="setup.html">Setup</a></li>
 <li class="toctree-l1"><a class="reference internal" href="write_docs.html">Write Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
 <li class="toctree-l1"><a class="reference internal" href="other_modules.html">Reference Other Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="source_to_doc_links.html">Reference Docs in Source Code</a></li>
-<li class="toctree-l1"><a class="reference internal" href="test_to_doc_links.html">Reference Docs in Tests</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Reference Docs in Tests</a></li>
 </ul>
 </div>
 </nav></div>
@@ -429,7 +429,7 @@
     
     <li class="breadcrumb-item"><a href="index.html" class="nav-link">How To</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Getting started</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Reference Docs in Tests</span></li>
   </ul>
 </nav>
 </div>
@@ -446,14 +446,36 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="getting-started">
-<h1>Getting started<a class="headerlink" href="#getting-started" title="Link to this heading">#</a></h1>
-<p>In an existing S-CORE repository, you can build the documentation using Bazel:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bazel<span class="w"> </span>run<span class="w"> </span>//:docs
+  <section id="reference-docs-in-tests">
+<h1>Reference Docs in Tests<a class="headerlink" href="#reference-docs-in-tests" title="Link to this heading">#</a></h1>
+<p>In tests, you want to reference requirements (needs).
+The docs-as-code tool will create backlinks in the documentation.</p>
+<p>Docs-as-code parses <cite>test.xml</cite> files produced by Bazel under <cite>bazel-testlogs/</cite>.
+To attach metadata to tests use the project tooling decorator (provided by the
+attribute plugin). Example usage:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">attribute_plugin</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_test_properties</span>
+
+<span class="nd">@add_test_properties</span><span class="p">(</span>
+                <span class="n">partially_verifies</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;tool_req__docs_common_attr_title&quot;</span><span class="p">,</span> <span class="s2">&quot;tool_req__docs_common_attr_description&quot;</span><span class="p">],</span>
+                <span class="n">test_type</span><span class="o">=</span><span class="s2">&quot;interface-test&quot;</span><span class="p">,</span>
+                <span class="n">derivation_technique</span><span class="o">=</span><span class="s2">&quot;boundary-values&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_feature</span><span class="p">():</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;Short description of what the test does.&quot;&quot;&quot;</span>
+                <span class="o">...</span>
 </pre></div>
 </div>
-<p>Open the generated site at <code class="docutils literal notranslate"><span class="pre">_build/index.html</span></code> in your browser.</p>
-<p>In a new S-CORE repository, see <a class="reference internal" href="setup.html#setup"><span class="std std-ref">Setup</span></a>.</p>
+<p>TestLink will extract test name, file, line, result and verification lists
+(<cite>PartiallyVerifies</cite>, <cite>FullyVerifies</cite>) and create external needs from tests
+and <cite>testlink</cite> attributes on requirements that reference the test.</p>
+<section id="limitations">
+<h2>Limitations<a class="headerlink" href="#limitations" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Not compatible with Esbonio/Live_preview.</p></li>
+<li><p>Tags and XML must match the expected format exactly for parsing to work.</p></li>
+<li><p>Tests must be executed by Bazel first so <cite>test.xml</cite> files exist.</p></li>
+</ul>
+</section>
 </section>
 
 
@@ -467,20 +489,20 @@
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="index.html"
+       href="source_to_doc_links.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">How To</p>
+        <p class="prev-next-title">Reference Docs in Source Code</p>
       </div>
     </a>
     <a class="right-next"
-       href="setup.html"
+       href="../reference/index.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Setup</p>
+        <p class="prev-next-title">Reference</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -496,10 +518,22 @@
 
 
   <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#limitations">Limitations</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/eclipse-score/docs-as-code/edit/main/docs/how-to/get_started.rst">
+    <a href="https://github.com/eclipse-score/docs-as-code/edit/main/docs/how-to/test_to_doc_links.rst">
       <i class="fa-solid fa-pencil"></i>
       
       
@@ -515,7 +549,7 @@
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/how-to/get_started.rst.txt"
+      <li><a href="../_sources/how-to/test_to_doc_links.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div></div>
