@@ -29,13 +29,18 @@ logger = logging.getLogger(__name__)
 
 def get_env(name: str) -> str:
     val = os.environ.get(name, None)
-    logger.debug(f"DEBUG: Env: {name} = {val}")
+    logger.debug(f"Env: {name} = {val}")
     if val is None:
         raise ValueError(f"Environment variable {name} is not set")
     return val
 
 
 if __name__ == "__main__":
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format="%(asctime)s %(name)s %(levelname)s %(message)s",
+        datefmt="%H:%M:%S",
+    )
     parser = argparse.ArgumentParser()
     # Add debuging functionality
     parser.add_argument(

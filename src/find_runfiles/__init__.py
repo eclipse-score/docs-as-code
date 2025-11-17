@@ -16,15 +16,10 @@ import sys
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
-# logger.setLevel(logging.DEBUG)
 
 
 def _log_debug(message: str):
-    # TODO: why does logger not print anything?
-    if logger.hasHandlers():
-        logger.debug(message)
-    else:
-        print(message)
+    logger.debug(message)
 
 
 def find_git_root() -> Path:
@@ -98,6 +93,7 @@ def get_runfiles_dir() -> Path:
     assert conf_dir
 
     env_runfiles = os.getenv("RUNFILES_DIR")
+    logger.debug(f"env RUNFILES_DIR = {env_runfiles}")
 
     runfiles = Path(
         get_runfiles_dir_impl(
