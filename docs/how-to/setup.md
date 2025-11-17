@@ -1,7 +1,6 @@
-(getting_started)=
+(setup)=
 # Setup
 
-⚠️ Only valid for docs-as-code v1.x.x.
 
 ## Overview
 
@@ -19,7 +18,7 @@ designed to enhance documentation capabilities in S-CORE.
 
 ## Installation
 
-### 1. /MODULE.bazel file
+### 1. MODULE.bazel file
 
 Add the module to your `MODULE.bazel` file:
 
@@ -34,9 +33,20 @@ common --registry=https://raw.githubusercontent.com/eclipse-score/bazel_registry
 common --registry=https://bcr.bazel.build
 ```
 
-______________________________________________________________________
+### 2. .bazelrc file
 
-### 2. /BUILD file
+Since we use `PlantUML <https://www.plantuml.com>`_ for diagrams, we need some Java.
+If there is no Java on your system, Bazel can download a remote JDK for you
+but that requires some configuration in your `.bazelrc` file:
+
+```
+build --java_language_version=17
+build --java_runtime_version=remotejdk_17
+build --tool_java_language_version=17
+build --tool_java_runtime_version=remotejdk_17
+```
+
+### 3. BUILD file
 
 
 ```starlark
@@ -61,18 +71,18 @@ The `docs()` macro accepts the following arguments:
 | `data` | List of `needs_json` targets that should be included in the documentation| No |
 
 
-### 3. Copy conf.py
+### 4. Copy conf.py
 
 Copy the `conf.py` file from the `docs-as-code` module to your `source_dir`.
 
 
-#### 4. Run a documentation build:
+#### 5. Run a documentation build:
 
 
 ```bash
 bazel run //:docs
 ```
 
-#### 5. Access your documentation at
+#### 6. Access your documentation at
 
 `/_build/index.html`

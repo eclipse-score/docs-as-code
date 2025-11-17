@@ -80,11 +80,13 @@ def iterate_files_recursively(search_path: Path):
     def _should_skip_file(file_path: Path) -> bool:
         """Check if a file should be skipped during scanning."""
         # TODO: consider using .gitignore
-        return (
-            file_path.is_dir()
-            or file_path.name.startswith((".", "_"))
-            or file_path.suffix in [".pyc", ".so", ".exe", ".bin"]
-        )
+        if file_path.is_dir():
+            return True
+        if file_path.suffix in [".pyc", ".so", ".exe", ".bin"]:
+            return True  # skip binaries
+        if file_path.suffix in [".rst", ".md"]:
+            return True  # skip documentation
+        return file_path.name.startswith((".", "_"))
 
     for root, dirs, files in os.walk(search_path):
         root_path = Path(root)
