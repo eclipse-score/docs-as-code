@@ -35,7 +35,7 @@ common --registry=https://bcr.bazel.build
 
 ### 2. .bazelrc file
 
-Since we use `PlantUML <https://ww.plantuml.com>`_ for diagrams, we need some Java.
+Since we use `PlantUML <https://www.plantuml.com>`_ for diagrams, we need some Java.
 If there is no Java on your system, Bazel can download a remote JDK for you
 but that requires some configuration in your `.bazelrc` file:
 
