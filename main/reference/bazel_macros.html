@@ -2,13 +2,13 @@
 <!DOCTYPE html>
 
 
-<html lang="en" data-content_root="../../" >
+<html lang="en" data-content_root="../" >
 
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Automatic Header Generation Service &#8212; Score Docs-as-Code  documentation</title>
+    <title>Bazel macro: docs &#8212; Score Docs-as-Code  documentation</title>
   
   
   
@@ -27,42 +27,42 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
-    <link rel="stylesheet" type="text/css" href="../../_static/css/score.css?v=6e51530f" />
-    <link rel="stylesheet" type="text/css" href="../../_static/css/score_needs.css?v=e97392eb" />
-    <link rel="stylesheet" type="text/css" href="../../_static/css/score_design.css?v=d9fd870c" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-data-viewer/jsonview.bundle.css?v=f6ef2277" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/libs/html/datatables.min.css?v=4b4fd840" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_toggle.css?v=5c6620df" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/needstable.css?v=5e1b6797" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_core.css?v=f5b60a78" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_links.css?v=2150a916" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_style.css?v=92936fa5" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/modern.css?v=803738c0" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/score.css?v=6e51530f" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/score_needs.css?v=e97392eb" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/score_design.css?v=d9fd870c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-data-viewer/jsonview.bundle.css?v=f6ef2277" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/libs/html/datatables.min.css?v=4b4fd840" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_toggle.css?v=5c6620df" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/needstable.css?v=5e1b6797" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_core.css?v=f5b60a78" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_links.css?v=2150a916" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_style.css?v=92936fa5" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/modern.css?v=803738c0" />
   
   <!-- So that users can add custom icons -->
-  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/jquery.js?v=5d32c60e"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
-    <script src="../../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
-    <script src="../../_static/sphinx-data-viewer/jsonview.bundle.js?v=18cd53c5"></script>
-    <script src="../../_static/sphinx-data-viewer/jsonview_loader.js?v=f7ff7e7d"></script>
-    <script src="../../_static/sphinx-needs/libs/html/datatables.min.js?v=8a4aee21"></script>
-    <script src="../../_static/sphinx-needs/libs/html/datatables_loader.js?v=a2cae175"></script>
-    <script src="../../_static/sphinx-needs/libs/html/sphinx_needs_collapse.js?v=dca66431"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'internals/extensions/header_service';</script>
+    <script src="../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script src="../_static/sphinx-data-viewer/jsonview.bundle.js?v=18cd53c5"></script>
+    <script src="../_static/sphinx-data-viewer/jsonview_loader.js?v=f7ff7e7d"></script>
+    <script src="../_static/sphinx-needs/libs/html/datatables.min.js?v=8a4aee21"></script>
+    <script src="../_static/sphinx-needs/libs/html/datatables_loader.js?v=a2cae175"></script>
+    <script src="../_static/sphinx-needs/libs/html/sphinx_needs_collapse.js?v=dca66431"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/bazel_macros';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://eclipse-score.github.io/docs-as-code/versions.json';
@@ -70,10 +70,10 @@
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             false;
         </script>
-    <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Score Source Code Linker" href="source_code_linker.html" />
-    <link rel="prev" title="File based rule checks" href="rst_filebased_testing.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Concepts" href="../concepts/index.html" />
+    <link rel="prev" title="Commands" href="commands.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.1" />
@@ -95,7 +95,7 @@
   <dialog id="pst-search-dialog">
     
 <form class="bd-search d-flex align-items-center"
-      action="../../search.html"
+      action="../search.html"
       method="get">
   <i class="fa-solid fa-magnifying-glass"></i>
   <input type="search"
@@ -131,7 +131,7 @@
     
   
 
-<a class="navbar-brand logo" href="../../index.html">
+<a class="navbar-brand logo" href="../index.html">
   
   
   
@@ -153,28 +153,28 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../how-to/index.html">
+  <a class="nav-link nav-internal" href="../how-to/index.html">
     How To
   </a>
 </li>
 
 
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../reference/index.html">
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
     Reference
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../concepts/index.html">
+  <a class="nav-link nav-internal" href="../concepts/index.html">
     Concepts
   </a>
 </li>
 
 
-<li class="nav-item current active">
-  <a class="nav-link nav-internal" href="../index.html">
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../internals/index.html">
     Internals
   </a>
 </li>
@@ -289,28 +289,28 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../how-to/index.html">
+  <a class="nav-link nav-internal" href="../how-to/index.html">
     How To
   </a>
 </li>
 
 
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../reference/index.html">
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
     Reference
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../concepts/index.html">
+  <a class="nav-link nav-internal" href="../concepts/index.html">
     Concepts
   </a>
 </li>
 
 
-<li class="nav-item current active">
-  <a class="nav-link nav-internal" href="../index.html">
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../internals/index.html">
     Internals
   </a>
 </li>
@@ -379,18 +379,8 @@
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Extensions</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="metamodel.html">Metamodel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="rst_filebased_testing.html">Filebased Testing</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">Header Service</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source_code_linker.html">Source Code Linker</a></li>
-<li class="toctree-l2"><a class="reference internal" href="extension_guide.html">Extension Guide</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sync_toml.html">Sync TOML</a></li>
-</ul>
-</details></li>
-<li class="toctree-l1"><a class="reference internal" href="../benchmark_results.html">Bazel Mini Benchmark Results</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../decisions/index.html">Decisions And Concepts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../requirements/index.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="commands.html">Commands</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Bazel macro: <code class="docutils literal notranslate"><span class="pre">docs</span></code></a></li>
 </ul>
 </div>
 </nav></div>
@@ -427,17 +417,14 @@
   <ul class="bd-breadcrumbs">
     
     <li class="breadcrumb-item breadcrumb-home">
-      <a href="../../index.html" class="nav-link" aria-label="Home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
         <i class="fa-solid fa-home"></i>
       </a>
     </li>
     
-    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Internals</a></li>
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Reference</a></li>
     
-    
-    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Extensions</a></li>
-    
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Automatic Header Generation Service</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Bazel macro: <code class="docutils literal notranslate"><span class="pre">docs</span></code></span></li>
   </ul>
 </nav>
 </div>
@@ -454,90 +441,53 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="automatic-header-generation-service">
-<span id="header-service"></span><h1>Automatic Header Generation Service<a class="headerlink" href="#automatic-header-generation-service" title="Link to this heading">#</a></h1>
-<section id="purpose">
-<h2>Purpose<a class="headerlink" href="#purpose" title="Link to this heading">#</a></h2>
-<p>The service <em>header-service</em> generates a table with review and approver informations.
-It uses the template <em>header.need</em> to generate this table.</p>
-</section>
-<section id="extraction-methods">
-<h2>Extraction Methods<a class="headerlink" href="#extraction-methods" title="Link to this heading">#</a></h2>
-<p>This modules can use two different methods to extract the needed information.</p>
+  <section id="bazel-macro-docs">
+<span id="bazel-macros"></span><h1>Bazel macro: <code class="docutils literal notranslate"><span class="pre">docs</span></code><a class="headerlink" href="#bazel-macro-docs" title="Link to this heading">#</a></h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">docs</span></code> macro defined in <code class="docutils literal notranslate"><span class="pre">docs.bzl</span></code> is a convenience wrapper
+that creates a small set of Bazel targets
+to build, verify and preview the project’s Sphinx documentation,
+and to create a Python virtual environment for IDE support (Esbonio).</p>
+<p>See <a class="reference internal" href="commands.html"><span class="doc">commands</span></a> for the targets/commands it creates.</p>
+<p>The macro must be called from the repository root package.</p>
+<section id="minimal-example-root-build">
+<h2>Minimal example (root <code class="docutils literal notranslate"><span class="pre">BUILD</span></code>)<a class="headerlink" href="#minimal-example-root-build" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;//:docs.bzl&quot;</span><span class="p">,</span> <span class="s2">&quot;docs&quot;</span><span class="p">)</span>
+
+<span class="n">docs</span><span class="p">(</span>
+    <span class="n">source_dir</span> <span class="o">=</span> <span class="s2">&quot;docs&quot;</span><span class="p">,</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="c1"># labels to any extra tools or data you want included</span>
+        <span class="c1"># e.g. &quot;//:needs_json&quot; or other tool targets</span>
+    <span class="p">],</span>
+    <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="c1"># additional bazel labels providing Python deps or other runfiles</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+</pre></div>
+</div>
 <ul class="simple">
-<li><p>GitHub data</p></li>
-<li><p>Merge commit log</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">source_dir</span></code> (string, default: <code class="docutils literal notranslate"><span class="pre">&quot;docs&quot;</span></code>)
+Path (relative to repository root) to your Sphinx source directory. This is the folder
+that contains your <code class="docutils literal notranslate"><span class="pre">conf.py</span></code> and the top-level ReST/markdown sources.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">data</span></code> (list of bazel labels)
+Extra runfiles / data targets that should be made available to the documentation targets.
+Typical entries are targets that generate or provide external data used by the docs, for
+example a <code class="docutils literal notranslate"><span class="pre">:needs_json</span></code> producer. The items in <code class="docutils literal notranslate"><span class="pre">data</span></code> are added to the py_binaries and
+to the Sphinx tooling so they are available at build time.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">deps</span></code> (list of bazel labels)
+Additional Bazel dependencies to add to the Python binaries and the virtual environment
+target. Use this to add project-specific Python packages or extension libraries the docs
+build requires.</p></li>
 </ul>
-<p>The used method can be configured as a configuration parameter in <em>conf.py</em>.</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>header_service_use_github_data = True
-</pre></div>
-</div>
-<p>GitHub data is used if parameter is not set.</p>
 </section>
-<section id="environment-variables">
-<h2>Environment variables<a class="headerlink" href="#environment-variables" title="Link to this heading">#</a></h2>
-<p>This module uses the following environment variables if the extraction method <strong>Github data</strong> is configured:</p>
-<p>GH_TOKEN: Github access token
-GITHUB_REF_NAME: Github reference name (<pull request no>/merge)
-GITHUB_REPOSITORY: Github repository <org>/<repo></p>
-</section>
-<section id="execution">
-<h2>Execution<a class="headerlink" href="#execution" title="Link to this heading">#</a></h2>
-<p>The document generation has to be executed as follows:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>GH_TOKEN=$GH_TOKEN bazel run //:docs
-</pre></div>
-</div>
-<p>Sphinx cannot access the environment variables when started via Bazel build.</p>
-<p>If extraction method <strong>Merge commit info</strong> is used the document generation can be executed as follows:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>bazel run //:docs
-</pre></div>
-</div>
-</section>
-<section id="usage">
-<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">#</a></h2>
-<p>Add the descriptor <em>header_service</em> to a RST file to fill out review and approver informations.</p>
-<p>.. needservice:: header-service</p>
-<p>This generates the following Table:</p>
-<div class="pst-scrollable-table-container"><table class="table">
-<thead>
-<tr class="row-odd"><th class="head"><p>Document Identification</p></th>
-<th class="head"><p></p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>Document Type</p></td>
-<td><p>Checklist</p></td>
-</tr>
-<tr class="row-odd"><td><p>Document ID</p></td>
-<td><p>DPX-CONTR-REVIEW-CHECKLIST</p></td>
-</tr>
-<tr class="row-even"><td><p>Project Name</p></td>
-<td><p>dependix</p></td>
-</tr>
-<tr class="row-odd"><td><p>ASIL</p></td>
-<td><p>B</p></td>
-</tr>
-<tr class="row-even"><td><p>Security Classification</p></td>
-<td><p>CONFIDENTIAL</p></td>
-</tr>
-<tr class="row-odd"><td><p>Author</p></td>
-<td><p>[Author of the PR]</p></td>
-</tr>
-<tr class="row-even"><td><p>Reviewer</p></td>
-<td><p>[List of PR reviewers]</p></td>
-</tr>
-<tr class="row-odd"><td><p>Approver</p></td>
-<td><p>[List of PR approvers]</p></td>
-</tr>
-<tr class="row-even"><td><p>Version</p></td>
-<td><p>[Merge commit hash of the PR]</p></td>
-</tr>
-<tr class="row-odd"><td><p>Status</p></td>
-<td><p>RELEASED</p></td>
-</tr>
-</tbody>
-</table>
-</div>
+<section id="edge-cases">
+<h2>Edge cases<a class="headerlink" href="#edge-cases" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>If your Sphinx <code class="docutils literal notranslate"><span class="pre">conf.py</span></code> expects files generated by other Bazel targets, make sure those
+targets are included in the <code class="docutils literal notranslate"><span class="pre">data</span></code> list so they are available to the build driver.</p></li>
+<li><p>The experimental “combo” targets rewrite some <code class="docutils literal notranslate"><span class="pre">data</span></code> labels for combined builds; those
+are intended for advanced use and are optional for normal doc workflows.</p></li>
+</ul>
 </section>
 </section>
 
@@ -552,20 +502,20 @@ GITHUB_REPOSITORY: Github repository <org>/<repo></p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="rst_filebased_testing.html"
+       href="commands.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">File based rule checks</p>
+        <p class="prev-next-title">Commands</p>
       </div>
     </a>
     <a class="right-next"
-       href="source_code_linker.html"
+       href="../concepts/index.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Score Source Code Linker</p>
+        <p class="prev-next-title">Concepts</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -588,11 +538,8 @@ GITHUB_REPOSITORY: Github repository <org>/<repo></p>
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#purpose">Purpose</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extraction-methods">Extraction Methods</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#environment-variables">Environment variables</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#execution">Execution</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#usage">Usage</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#minimal-example-root-build">Minimal example (root <code class="docutils literal notranslate"><span class="pre">BUILD</span></code>)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#edge-cases">Edge cases</a></li>
 </ul>
   </nav></div>
 
@@ -600,7 +547,7 @@ GITHUB_REPOSITORY: Github repository <org>/<repo></p>
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/eclipse-score/docs-as-code/edit/main/docs/internals/extensions/header_service.md">
+    <a href="https://github.com/eclipse-score/docs-as-code/edit/main/docs/reference/bazel_macros.rst">
       <i class="fa-solid fa-pencil"></i>
       
       
@@ -616,7 +563,7 @@ GITHUB_REPOSITORY: Github repository <org>/<repo></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../../_sources/internals/extensions/header_service.md.txt"
+      <li><a href="../_sources/reference/bazel_macros.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div></div>
@@ -634,8 +581,8 @@ GITHUB_REPOSITORY: Github repository <org>/<repo></p>
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">

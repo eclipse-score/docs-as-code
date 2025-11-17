@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Commands &#8212; Score Docs-as-Code  documentation</title>
+    <title>Reference Other Modules &#8212; Score Docs-as-Code  documentation</title>
   
   
   
@@ -62,7 +62,7 @@
     <script src="../_static/sphinx-needs/libs/html/datatables.min.js?v=8a4aee21"></script>
     <script src="../_static/sphinx-needs/libs/html/datatables_loader.js?v=a2cae175"></script>
     <script src="../_static/sphinx-needs/libs/html/sphinx_needs_collapse.js?v=dca66431"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'how-to/commands';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'how-to/other_modules';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://eclipse-score.github.io/docs-as-code/versions.json';
@@ -72,7 +72,7 @@
         </script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Setup" href="setup.html" />
+    <link rel="next" title="Reference Docs in Source Code" href="source_to_doc_links.html" />
     <link rel="prev" title="FAQ" href="faq.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -160,15 +160,22 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../internals/index.html">
-    Internals
+  <a class="nav-link nav-internal" href="../reference/index.html">
+    Reference
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../requirements/index.html">
-    Requirements
+  <a class="nav-link nav-internal" href="../concepts/index.html">
+    Concepts
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../internals/index.html">
+    Internals
   </a>
 </li>
 
@@ -289,15 +296,22 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../internals/index.html">
-    Internals
+  <a class="nav-link nav-internal" href="../reference/index.html">
+    Reference
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../requirements/index.html">
-    Requirements
+  <a class="nav-link nav-internal" href="../concepts/index.html">
+    Concepts
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../internals/index.html">
+    Internals
   </a>
 </li>
 
@@ -365,9 +379,13 @@
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="get_started.html">Getting started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="setup.html">Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="write_docs.html">Write Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Reference Other Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="source_to_doc_links.html">Reference Docs in Source Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="test_to_doc_links.html">Reference Docs in Tests</a></li>
 </ul>
 </div>
 </nav></div>
@@ -411,7 +429,7 @@
     
     <li class="breadcrumb-item"><a href="index.html" class="nav-link">How To</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Commands</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Reference Other Modules</span></li>
   </ul>
 </nav>
 </div>
@@ -428,54 +446,58 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="commands">
-<h1>Commands<a class="headerlink" href="#commands" title="Link to this heading">#</a></h1>
-<div class="pst-scrollable-table-container"><table class="table">
-<thead>
-<tr class="row-odd"><th class="head"><p>Target</p></th>
-<th class="head"><p>What it does</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">//:docs</span></code></p></td>
-<td><p>Builds documentation</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">//:docs_check</span></code></p></td>
-<td><p>Verifies documentation correctness</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">//:docs_combo_experimental</span></code></p></td>
-<td><p>Builds combined documentation with all external dependencies included</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">//:live_preview</span></code></p></td>
-<td><p>Creates a live_preview of the documentation viewable in a local server</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">//:live_preview_combo_experimental</span></code></p></td>
-<td><p>Creates a live_preview of the full documentation with all dependencies viewable in a local server</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">//:ide_support</span></code></p></td>
-<td><p>Sets up a Python venv for esbonio (Remember to restart VS Code!)</p></td>
-</tr>
-</tbody>
-</table>
+  <section id="reference-other-modules">
+<h1>Reference Other Modules<a class="headerlink" href="#reference-other-modules" title="Link to this heading">#</a></h1>
+<p>This document explains how to enable cross-module (bi-directional) linking between documentation modules with Sphinx-Needs in this project.
+In short:</p>
+<ol class="arabic simple">
+<li><p>Make the other module available to Bazel via the <cite>MODULE</cite> (aka <cite>MODULE.bazel</cite>) file.</p></li>
+<li><p>Add the external module’s documentation targets to your <cite>docs(data=[…])</cite> target so Sphinx can see the other module’s built inventory.</p></li>
+<li><p>Reference remote needs using the normal Sphinx-Needs referencing syntax.</p></li>
+</ol>
+<section id="details-and-example">
+<h2>Details and Example<a class="headerlink" href="#details-and-example" title="Link to this heading">#</a></h2>
+<section id="include-the-other-module-in-module-bazel">
+<h3>1) Include the other module in <cite>MODULE.bazel</cite><a class="headerlink" href="#include-the-other-module-in-module-bazel" title="Link to this heading">#</a></h3>
+<p>The consumer module must declare the other modules as dependencies in the <cite>MODULE.bazel</cite> file so Bazel can fetch them.
+There are multiple ways to do this depending on how you manage third-party/local modules (git, local overrides, etc.).</p>
+<p>A minimal example (add or extend the existing <cite>bazel_deps</cite> stanza):</p>
+<div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="n">bazel_dep</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;score_process&quot;</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;1.3.0&quot;</span><span class="p">)</span>
+</pre></div>
 </div>
-<section id="internal-targets-do-not-use-directly">
-<h2>Internal targets (do not use directly)<a class="headerlink" href="#internal-targets-do-not-use-directly" title="Link to this heading">#</a></h2>
-<div class="pst-scrollable-table-container"><table class="table">
-<thead>
-<tr class="row-odd"><th class="head"><p>Target</p></th>
-<th class="head"><p>What it does</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">build</span> <span class="pre">//:needs_json</span></code></p></td>
-<td><p>Creates a ‘needs.json’ file</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">build</span> <span class="pre">//:docs_sources</span></code></p></td>
-<td><p>Provides all the documentation source files</p></td>
-</tr>
-</tbody>
-</table>
+</section>
+<section id="extend-your-docs-rule-so-sphinx-picks-up-the-other-module-s-inventory">
+<h3>2) Extend your <cite>docs</cite> rule so Sphinx picks up the other module’s inventory<a class="headerlink" href="#extend-your-docs-rule-so-sphinx-picks-up-the-other-module-s-inventory" title="Link to this heading">#</a></h3>
+<p>The documentation build in this project is exposed via a Bazel macro/rule that accepts a <cite>data</cite> parameter.
+Add the external module’s <code class="docutils literal notranslate"><span class="pre">:needs_json</span></code> target to that list
+to have their needs elements available for cross-referencing.</p>
+<p>Example <cite>BUILD</cite> snippet (consumer module):</p>
+<div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;@rules_docs//:docs.bzl&quot;</span><span class="p">,</span> <span class="s2">&quot;docs&quot;</span><span class="p">)</span>
+<span class="n">docs</span><span class="p">(</span>
+  <span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
+     <span class="s2">&quot;@score_process//:needs_json&quot;</span><span class="p">,</span>
+  <span class="p">],</span>
+  <span class="n">source_dir</span> <span class="o">=</span> <span class="s2">&quot;docs&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
 </div>
+<p>More details in <a class="reference internal" href="../concepts/bidirectional_traceability.html#bidirectional-traceability"><span class="std std-ref">Bi-directional Traceability</span></a>.</p>
+</section>
+<section id="reference-needs-across-modules">
+<h3>3) Reference needs across modules<a class="headerlink" href="#reference-needs-across-modules" title="Link to this heading">#</a></h3>
+<p>Once the other module’s are defined as dependencies as explained above, you can reference their needs IDs in the usual Sphinx-Needs way.
+The important part is that the inventory name that Sphinx-Needs looks up matches the module that produced the needs entries.</p>
+<p>Example in reStructuredText:</p>
+<div class="highlight-rst notranslate"><div class="highlight"><pre><span></span>See the requirement <span class="na">:need:</span><span class="nv">`gd_req__req_traceability`</span>, for example.
+</pre></div>
+</div>
+<p>Which results in:</p>
+<blockquote>
+<div><p>See the requirement <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_traceability">gd_req__req_traceability</a>, for example.</p>
+</div></blockquote>
+<p>See the <a class="reference external" href="https://sphinx-needs.readthedocs.io/en/latest/">Sphinx-Needs documentation</a>
+for more details on cross-referencing needs.</p>
+</section>
 </section>
 </section>
 
@@ -499,11 +521,11 @@
       </div>
     </a>
     <a class="right-next"
-       href="setup.html"
+       href="source_to_doc_links.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Setup</p>
+        <p class="prev-next-title">Reference Docs in Source Code</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -526,7 +548,12 @@
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#internal-targets-do-not-use-directly">Internal targets (do not use directly)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#details-and-example">Details and Example</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#include-the-other-module-in-module-bazel">1) Include the other module in <cite>MODULE.bazel</cite></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#extend-your-docs-rule-so-sphinx-picks-up-the-other-module-s-inventory">2) Extend your <cite>docs</cite> rule so Sphinx picks up the other module’s inventory</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reference-needs-across-modules">3) Reference needs across modules</a></li>
+</ul>
+</li>
 </ul>
   </nav></div>
 
@@ -534,7 +561,7 @@
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/eclipse-score/docs-as-code/edit/main/docs/how-to/commands.md">
+    <a href="https://github.com/eclipse-score/docs-as-code/edit/main/docs/how-to/other_modules.rst">
       <i class="fa-solid fa-pencil"></i>
       
       
@@ -550,7 +577,7 @@
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/how-to/commands.md.txt"
+      <li><a href="../_sources/how-to/other_modules.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div></div>

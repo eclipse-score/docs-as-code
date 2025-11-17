@@ -72,8 +72,8 @@
         </script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Internals" href="../internals/index.html" />
-    <link rel="prev" title="Commands" href="commands.html" />
+    <link rel="next" title="Write Documentation" href="write_docs.html" />
+    <link rel="prev" title="Getting started" href="get_started.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.1" />
@@ -160,15 +160,22 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../internals/index.html">
-    Internals
+  <a class="nav-link nav-internal" href="../reference/index.html">
+    Reference
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../requirements/index.html">
-    Requirements
+  <a class="nav-link nav-internal" href="../concepts/index.html">
+    Concepts
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../internals/index.html">
+    Internals
   </a>
 </li>
 
@@ -289,15 +296,22 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../internals/index.html">
-    Internals
+  <a class="nav-link nav-internal" href="../reference/index.html">
+    Reference
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../requirements/index.html">
-    Requirements
+  <a class="nav-link nav-internal" href="../concepts/index.html">
+    Concepts
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../internals/index.html">
+    Internals
   </a>
 </li>
 
@@ -365,9 +379,13 @@
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
-<li class="toctree-l1"><a class="reference internal" href="commands.html">Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="get_started.html">Getting started</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="write_docs.html">Write Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="other_modules.html">Reference Other Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="source_to_doc_links.html">Reference Docs in Source Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="test_to_doc_links.html">Reference Docs in Tests</a></li>
 </ul>
 </div>
 </nav></div>
@@ -429,8 +447,7 @@
                 <article class="bd-article">
                   
   <section id="setup">
-<span id="getting-started"></span><h1>Setup<a class="headerlink" href="#setup" title="Link to this heading">#</a></h1>
-<p>⚠️ Only valid for docs-as-code v1.x.x.</p>
+<span id="id1"></span><h1>Setup<a class="headerlink" href="#setup" title="Link to this heading">#</a></h1>
 <section id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
 <p>docs-as-code allows you to easily integrate Sphinx documentation generation into your
@@ -450,7 +467,7 @@ designed to enhance documentation capabilities in S-CORE.</p>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h2>
 <section id="module-bazel-file">
-<h3>1. /MODULE.bazel file<a class="headerlink" href="#module-bazel-file" title="Link to this heading">#</a></h3>
+<h3>1. MODULE.bazel file<a class="headerlink" href="#module-bazel-file" title="Link to this heading">#</a></h3>
 <p>Add the module to your <code class="docutils literal notranslate"><span class="pre">MODULE.bazel</span></code> file:</p>
 <div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="n">bazel_dep</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;score_docs_as_code&quot;</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;0.2.7&quot;</span><span class="p">)</span>
 </pre></div>
@@ -461,9 +478,20 @@ designed to enhance documentation capabilities in S-CORE.</p>
 </pre></div>
 </div>
 </section>
-<hr class="docutils" />
+<section id="bazelrc-file">
+<h3>2. .bazelrc file<a class="headerlink" href="#bazelrc-file" title="Link to this heading">#</a></h3>
+<p>Since we use <code class="docutils literal notranslate"><span class="pre">PlantUML</span> <span class="pre">&lt;https://www.plantuml.com&gt;</span></code>_ for diagrams, we need some Java.
+If there is no Java on your system, Bazel can download a remote JDK for you
+but that requires some configuration in your <code class="docutils literal notranslate"><span class="pre">.bazelrc</span></code> file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">build</span> <span class="o">--</span><span class="n">java_language_version</span><span class="o">=</span><span class="mi">17</span>
+<span class="n">build</span> <span class="o">--</span><span class="n">java_runtime_version</span><span class="o">=</span><span class="n">remotejdk_17</span>
+<span class="n">build</span> <span class="o">--</span><span class="n">tool_java_language_version</span><span class="o">=</span><span class="mi">17</span>
+<span class="n">build</span> <span class="o">--</span><span class="n">tool_java_runtime_version</span><span class="o">=</span><span class="n">remotejdk_17</span>
+</pre></div>
+</div>
+</section>
 <section id="build-file">
-<h3>2. /BUILD file<a class="headerlink" href="#build-file" title="Link to this heading">#</a></h3>
+<h3>3. BUILD file<a class="headerlink" href="#build-file" title="Link to this heading">#</a></h3>
 <div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;@score_docs_as_code//docs.bzl&quot;</span><span class="p">,</span> <span class="s2">&quot;docs&quot;</span><span class="p">)</span>
 
 <span class="n">docs</span><span class="p">(</span>
@@ -499,16 +527,16 @@ designed to enhance documentation capabilities in S-CORE.</p>
 </section>
 </section>
 <section id="copy-conf-py">
-<h3>3. Copy conf.py<a class="headerlink" href="#copy-conf-py" title="Link to this heading">#</a></h3>
+<h3>4. Copy conf.py<a class="headerlink" href="#copy-conf-py" title="Link to this heading">#</a></h3>
 <p>Copy the <code class="docutils literal notranslate"><span class="pre">conf.py</span></code> file from the <code class="docutils literal notranslate"><span class="pre">docs-as-code</span></code> module to your <code class="docutils literal notranslate"><span class="pre">source_dir</span></code>.</p>
 <section id="run-a-documentation-build">
-<h4>4. Run a documentation build:<a class="headerlink" href="#run-a-documentation-build" title="Link to this heading">#</a></h4>
+<h4>5. Run a documentation build:<a class="headerlink" href="#run-a-documentation-build" title="Link to this heading">#</a></h4>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bazel<span class="w"> </span>run<span class="w"> </span>//:docs
 </pre></div>
 </div>
 </section>
 <section id="access-your-documentation-at">
-<h4>5. Access your documentation at<a class="headerlink" href="#access-your-documentation-at" title="Link to this heading">#</a></h4>
+<h4>6. Access your documentation at<a class="headerlink" href="#access-your-documentation-at" title="Link to this heading">#</a></h4>
 <p><code class="docutils literal notranslate"><span class="pre">/_build/index.html</span></code></p>
 </section>
 </section>
@@ -526,20 +554,20 @@ designed to enhance documentation capabilities in S-CORE.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="commands.html"
+       href="get_started.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Commands</p>
+        <p class="prev-next-title">Getting started</p>
       </div>
     </a>
     <a class="right-next"
-       href="../internals/index.html"
+       href="write_docs.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Internals</p>
+        <p class="prev-next-title">Write Documentation</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -565,14 +593,15 @@ designed to enhance documentation capabilities in S-CORE.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#features">Features</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#module-bazel-file">1. /MODULE.bazel file</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#build-file">2. /BUILD file</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#module-bazel-file">1. MODULE.bazel file</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bazelrc-file">2. .bazelrc file</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#build-file">3. BUILD file</a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#configuration-options">Configuration Options</a></li>
 </ul>
 </li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#copy-conf-py">3. Copy conf.py</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#run-a-documentation-build">4. Run a documentation build:</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#access-your-documentation-at">5. Access your documentation at</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#copy-conf-py">4. Copy conf.py</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#run-a-documentation-build">5. Run a documentation build:</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#access-your-documentation-at">6. Access your documentation at</a></li>
 </ul>
 </li>
 </ul>

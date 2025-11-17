@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Testing Statistics &#8212; Score Docs-as-Code  documentation</title>
+    <title>Write Documentation &#8212; Score Docs-as-Code  documentation</title>
   
   
   
@@ -62,7 +62,7 @@
     <script src="../_static/sphinx-needs/libs/html/datatables.min.js?v=8a4aee21"></script>
     <script src="../_static/sphinx-needs/libs/html/datatables_loader.js?v=a2cae175"></script>
     <script src="../_static/sphinx-needs/libs/html/sphinx_needs_collapse.js?v=dca66431"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'requirements/test_overview';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'how-to/write_docs';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://eclipse-score.github.io/docs-as-code/versions.json';
@@ -72,7 +72,8 @@
         </script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="Tool Requirements" href="requirements.html" />
+    <link rel="next" title="FAQ" href="faq.html" />
+    <link rel="prev" title="Setup" href="setup.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.1" />
@@ -151,9 +152,23 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../how-to/index.html">
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
     How To
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../reference/index.html">
+    Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/index.html">
+    Concepts
   </a>
 </li>
 
@@ -161,13 +176,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../internals/index.html">
     Internals
-  </a>
-</li>
-
-
-<li class="nav-item current active">
-  <a class="nav-link nav-internal" href="index.html">
-    Requirements
   </a>
 </li>
 
@@ -280,9 +288,23 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../how-to/index.html">
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
     How To
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../reference/index.html">
+    Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/index.html">
+    Concepts
   </a>
 </li>
 
@@ -290,13 +312,6 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../internals/index.html">
     Internals
-  </a>
-</li>
-
-
-<li class="nav-item current active">
-  <a class="nav-link nav-internal" href="index.html">
-    Requirements
   </a>
 </li>
 
@@ -364,10 +379,13 @@
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="capabilities.html">Capabilities - A High Level Overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="process_overview.html">Process Requirements Overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="requirements.html">Tool Requirements</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Testing Statistics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="get_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="setup.html">Setup</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Write Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="other_modules.html">Reference Other Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="source_to_doc_links.html">Reference Docs in Source Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="test_to_doc_links.html">Reference Docs in Tests</a></li>
 </ul>
 </div>
 </nav></div>
@@ -409,9 +427,9 @@
       </a>
     </li>
     
-    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Requirements</a></li>
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">How To</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Testing Statistics</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Write Documentation</span></li>
   </ul>
 </nav>
 </div>
@@ -428,15 +446,14 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="testing-statistics">
-<span id="testing-stats"></span><h1>Testing Statistics<a class="headerlink" href="#testing-statistics" title="Link to this heading">#</a></h1>
-<p class="needs_filter_warning" id="needtable-requirements/test_overview-0">No needs passed the filters</p>
-<p class="needs_filter_warning" id="needtable-requirements/test_overview-1">No needs passed the filters</p>
-<p class="needs_filter_warning" id="needtable-requirements/test_overview-2">No needs passed the filters</p>
-<img alt="../_images/need_pie_d0418.svg" id="needpie-requirements/test_overview-0" src="../_images/need_pie_d0418.svg" />
-<p class="needs_filter_warning" id="needpie-requirements/test_overview-1">No needs passed the filters</p>
-<p class="needs_filter_warning" id="needpie-requirements/test_overview-2">No needs passed the filters</p>
-<p class="needs_filter_warning" id="needpie-requirements/test_overview-3">No needs passed the filters</p>
+  <section id="write-documentation">
+<h1>Write Documentation<a class="headerlink" href="#write-documentation" title="Link to this heading">#</a></h1>
+<p><a class="reference external" href="https://www.sphinx-doc.org/en/master/">Sphinx</a>:
+the documentation generator we use.</p>
+<p><a class="reference external" href="https://docutils.sourceforge.io/rst.html">reStructuredText (reST)</a>:
+the plain-text markup language used for most source files in this project.</p>
+<p><a class="reference external" href="https://sphinx-needs.readthedocs.io/en/latest/">Sphinx-Needs</a>:
+a Sphinx extension that models requirements, tests, tasks and other “needs” inside the docs.</p>
 </section>
 
 
@@ -450,13 +467,22 @@
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="requirements.html"
+       href="setup.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Tool Requirements</p>
+        <p class="prev-next-title">Setup</p>
       </div>
+    </a>
+    <a class="right-next"
+       href="faq.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">FAQ</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
     </a>
 </div>
                 </footer>
@@ -473,7 +499,7 @@
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/eclipse-score/docs-as-code/edit/main/docs/requirements/test_overview.rst">
+    <a href="https://github.com/eclipse-score/docs-as-code/edit/main/docs/how-to/write_docs.rst">
       <i class="fa-solid fa-pencil"></i>
       
       
@@ -489,7 +515,7 @@
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/requirements/test_overview.rst.txt"
+      <li><a href="../_sources/how-to/write_docs.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div></div>
