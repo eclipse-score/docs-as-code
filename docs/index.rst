@@ -41,17 +41,6 @@ It provides documentation, requirements, and traceability.
       Key concepts, models and explanatory material to understand the system.
 
 
-.. if-collection:: score_process
-
-   .. grid:: 1 1 3 3
-      :class-container: score-grid
-
-      .. grid-item-card::
-
-         :ref:`score_process <_collections/score_process/process/index>`
-         ^^^
-         Documentation for the score_process that docs-as-code is based on, including backlinks to docs-as-code.
-
 .. dropdown:: Sitemap
 
    .. toctree::
@@ -63,14 +52,3 @@ It provides documentation, requirements, and traceability.
       reference/index
       concepts/index
       internals/index
-
-   docs-as-code is based on score_process:
-
-   .. if-collection:: score_process
-
-      .. toctree::
-         :maxdepth: 5
-         :includehidden:
-         :titlesonly:
-
-         _collections/score_process/process/index
