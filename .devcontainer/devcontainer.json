@@ -1,6 +1,5 @@
 {
     "name": "eclipse-s-core",
     "image": "ghcr.io/eclipse-score/devcontainer:1.0.0",
-    "initializeCommand": "mkdir -p ${localEnv:HOME}/.cache/bazel",
     "updateContentCommand": "bazel run //:ide_support"
 }
