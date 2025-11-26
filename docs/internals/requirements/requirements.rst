@@ -269,7 +269,7 @@ Versioning
 .. tool_req:: Mandatory attributes of Generic Documents
   :id: tool_req__docs_doc_generic_mandatory
   :tags: Documents
-  :implemented: YES
+  :implemented: PARTIAL
   :satisfies: gd_req__doc_attributes_manual
   :parent_covered: YES
 
@@ -280,6 +280,9 @@ Versioning
   * security
   * safety
   * realizes
+
+  .. note::
+    'security' is currently optional, because score_process 1.3.1 would fail to build otherwise.
 
 .. tool_req:: Mandatory Document attributes
   :id: tool_req__docs_doc_attr

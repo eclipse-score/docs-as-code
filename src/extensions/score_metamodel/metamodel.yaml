@@ -206,12 +206,13 @@ needs_types:
     mandatory_options:
       status: ^(valid|draft|invalid)$
       safety: "^(QM|ASIL_B)$"
-      security: "^(YES|NO)$"
     optional_options:
       # req-Id: tool_req__docs_doc_attr
       author: ^.*$
       approver: ^.*$
       reviewer: ^.*$
+      # TODO Make 'security' mandatory once score_process>=1.3.2 is released.
+      security: "^(YES|NO)$"
     # req-Id: tool_req__docs_doc_generic_mandatory
     mandatory_links:
       realizes: workproduct
