@@ -719,7 +719,6 @@ Architecture Attributes
    :implemented: NO
    :parent_covered: YES
    :satisfies: gd_req__impl_dependency_analysis
-   :status: invalid
 
    Docs-As-Code shall support generation and rendering of dependency graphs for
    components. It shall show all dependencies of a component incl transitive
@@ -728,6 +727,25 @@ Architecture Attributes
    .. note::
       Components are defined in `comp_arc_sta`.
       A component is also a bazel target. We can use bazel dependency graphs.
+
+
+.. tool_req:: Static Diagram for Unit Interactions
+   :id: tool_req__docs_dd_sta
+   :tags: Detailed Design & Code
+   :implemented: YES
+   :parent_covered: YES
+   :satisfies: gd_req__impl_static_diagram
+
+   Provide needs type ``dd_sta`` for static diagrams showing unit interactions as UML.
+
+.. tool_req:: Dynamic Diagram for Unit Interactions
+   :id: tool_req__docs_dd_dyn
+   :tags: Detailed Design & Code
+   :implemented: YES
+   :parent_covered: YES
+   :satisfies: gd_req__impl_dynamic_diagram
+
+   Provide needs type ``dd_dyn`` for dynamic diagrams showing unit interactions as UML.
 
 
 Testing
