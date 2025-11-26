@@ -26,5 +26,9 @@
   {
     "version": "pr-308",
     "url": "https://eclipse-score.github.io/docs-as-code/pr-308/"
+  },
+  {
+    "version": "pr-309",
+    "url": "https://eclipse-score.github.io/docs-as-code/pr-309/"
   }
 ]
