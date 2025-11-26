@@ -265,17 +265,19 @@ Versioning
 
   * Generic Document (document)
   * Tool Verification Report (doc_tool)
+  * Change Request is also a generic document
 
 .. tool_req:: Mandatory attributes of Generic Documents
   :id: tool_req__docs_doc_generic_mandatory
   :tags: Documents
   :implemented: PARTIAL
-  :satisfies: gd_req__doc_attributes_manual
+  :satisfies:
+   gd_req__doc_attributes_manual,
+   gd_req__change_attr_impact_safety
   :parent_covered: YES
 
   Docs-as-Code shall enforce that each Generic Document ``doc__*`` has the following attributes:
 
-  * id (implicitly enforced by sphinx-needs)
   * status
   * security
   * safety
@@ -292,12 +294,16 @@ Versioning
    gd_req__doc_author,
    gd_req__doc_approver,
    gd_req__doc_reviewer,
+   gd_req__change_attr_impact_description,
+   gd_req__change_attr_title,
   :parent_covered: NO, process requirement has changed and we do not understand the new wording.
   :status: invalid
 
   Docs-as-Code shall enforce that each :need:`tool_req__docs_doc_types` has the
   following attributes:
 
+  * title (implicitly enforced by sphinx-needs)
+  * description (implicitly enforced by sphinx-needs)
   * author
   * approver
   * reviewer

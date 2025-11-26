@@ -19,11 +19,6 @@ i.e. covered by tool requirements.
 
    results = []
    ignored_ids = [
-      # Change Requests are generic documents
-      "gd_req__change_attr_impact_description",
-      "gd_req__change_attr_impact_safety",
-      "gd_req__change_attr_title",
-      "gd_req__change_attr_types",
       # Problem Reports are Github issues not docs-as-code
       "gd_req__problem_attr_anaylsis_results",
       "gd_req__problem_attr_classification",
