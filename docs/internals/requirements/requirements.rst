@@ -879,6 +879,7 @@ Testing
   :id: tool_req__docs_wf_types
   :tags: Process / Other
   :implemented: YES
+  :satisfies: gd_req__process_management_build_blocks_attr, gd_req__process_management_build_blocks_link
 
   Docs-as-Code shall support the following workflow types:
 
