@@ -202,16 +202,18 @@ needs_types:
   document:
     title: Generic Document
     prefix: doc__
+    # req-Id: tool_req__docs_doc_generic_mandatory
     mandatory_options:
       status: ^(valid|draft|invalid)$
-    optional_options:
       safety: "^(QM|ASIL_B)$"
       security: "^(YES|NO)$"
+    optional_options:
       # req-Id: tool_req__docs_doc_attr
       author: ^.*$
       approver: ^.*$
       reviewer: ^.*$
-    optional_links:
+    # req-Id: tool_req__docs_doc_generic_mandatory
+    mandatory_links:
       realizes: workproduct
     parts: 2
 

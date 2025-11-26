@@ -266,6 +266,20 @@ Versioning
   * Generic Document (document)
   * Tool Verification Report (doc_tool)
 
+.. tool_req:: Mandatory attributes of Generic Documents
+  :id: tool_req__docs_doc_generic_mandatory
+  :tags: Documents
+  :implemented: YES
+  :satisfies: gd_req__doc_attributes_manual
+  :parent_covered: YES
+
+  Docs-as-Code shall enforce that each Generic Document ``doc__*`` has the following attributes:
+
+  * id (implicitly enforced by sphinx-needs)
+  * status
+  * security
+  * safety
+  * realizes
 
 .. tool_req:: Mandatory Document attributes
   :id: tool_req__docs_doc_attr
