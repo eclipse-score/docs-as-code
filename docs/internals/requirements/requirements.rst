@@ -77,6 +77,7 @@ This section provides an overview of current process requirements and their clar
     gd_req__req_attr_uid,
     gd_req__arch_attribute_uid,
     gd_req__saf_attr_uid,
+    gd_req__req_check_mandatory,
   :parent_covered: NO: cannot check non-existent "doc__naming_conventions" in gd_req__req_attr_uid
 
   Docs-as-Code shall enforce that Need IDs follow the following naming scheme:
@@ -118,7 +119,7 @@ This section provides an overview of current process requirements and their clar
   :tags: Common Attributes
   :parent_covered: NO: Can not cover 'ISO/IEC/IEEE/29148'
   :implemented: YES
-  :satisfies: gd_req__req_attr_description
+  :satisfies: gd_req__req_attr_description, gd_req__req_check_mandatory
 
   Docs-as-Code shall enforce that each need of type :need:`tool_req__docs_req_types` has a description (content)
 
@@ -152,6 +153,7 @@ This section provides an overview of current process requirements and their clar
   :satisfies:
      gd_req__req_attr_security,
      gd_req__arch_attr_security,
+     gd_req__req_check_mandatory,
 
   Docs-as-Code shall enforce that the ``security`` attribute has one of the following values:
 
@@ -176,6 +178,7 @@ This section provides an overview of current process requirements and their clar
   :implemented: YES
   :parent_covered: YES
   :satisfies:
+     gd_req__req_check_mandatory,
      gd_req__req_attr_safety,
      gd_req__arch_attr_safety
 
@@ -205,6 +208,7 @@ This section provides an overview of current process requirements and their clar
     gd_req__req_attr_status,
     gd_req__arch_attr_status,
     gd_req__saf_attr_status,
+    gd_req__req_check_mandatory,
 
   Docs-as-Code shall enforce that the ``status`` attribute has one of the following values:
 
@@ -398,7 +402,7 @@ Mapping
   :tags: Requirements
   :implemented: YES
   :parent_covered: NO: Can not ensure correct reasoning
-  :satisfies: gd_req__req_attr_rationale
+  :satisfies: gd_req__req_attr_rationale, gd_req__req_check_mandatory
 
   Docs-as-Code shall enforce that each stakeholder requirement (stkh_req) contains a ``rationale`` attribute.
 
