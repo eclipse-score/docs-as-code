@@ -221,11 +221,13 @@ needs_types:
     mandatory_options:
       # req-Id: tool_req__docs_tvr_status
       status: ^(draft|evaluated|qualified|released|rejected)$
+      # req-Id: tool_req__docs_tvr_version
       version: ^.*$
       # req-Id: tool_req__docs_tvr_safety
       safety_affected: "^(YES|NO)$"
       # req-Id: tool_req__docs_tvr_security
       security_affected: "^(YES|NO)$"
+      # req-Id: tool_req__docs_tvr_confidence_level
       tcl: "^(LOW|HIGH)$"
     optional_options:
       # req-Id: tool_req__docs_doc_attr
