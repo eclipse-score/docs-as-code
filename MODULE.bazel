@@ -13,7 +13,7 @@
 
 module(
     name = "score_docs_as_code",
-    version = "2.0.2",
+    version = "2.0.3",
     compatibility_level = 2,
 )
 
