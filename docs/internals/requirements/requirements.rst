@@ -298,7 +298,6 @@ Versioning
    gd_req__doc_author,
    gd_req__doc_approver,
    gd_req__doc_reviewer,
-   gd_req__change_attr_impact_description,
    gd_req__change_attr_title,
   :parent_covered: NO, process requirement has changed and we do not understand the new wording.
   :status: invalid

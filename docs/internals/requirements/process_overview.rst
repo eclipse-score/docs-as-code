@@ -19,6 +19,8 @@ i.e. covered by tool requirements.
 
    results = []
    ignored_ids = [
+      # Impact Analysis is free form text, thus not in scope of docs-as-code
+      "gd_req__change_attr_impact_description",
       # Problem Reports are Github issues not docs-as-code
       "gd_req__problem_attr_anaylsis_results",
       "gd_req__problem_attr_classification",
