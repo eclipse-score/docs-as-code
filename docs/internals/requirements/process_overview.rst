@@ -18,8 +18,30 @@ i.e. covered by tool requirements.
    :style: table
 
    results = []
+   ignored_ids = [
+      # Impact Analysis is free form text, thus not in scope of docs-as-code
+      "gd_req__change_attr_impact_description",
+      # Problem Reports are Github issues not docs-as-code
+      "gd_req__problem_attr_anaylsis_results",
+      "gd_req__problem_attr_classification",
+      "gd_req__problem_attr_impact_description",
+      "gd_req__problem_attr_milestone",
+      "gd_req__problem_attr_safety_affected",
+      "gd_req__problem_attr_security_affected",
+      "gd_req__problem_attr_stakeholder",
+      "gd_req__problem_attr_status",
+      "gd_req__problem_attr_title",
+      "gd_req__problem_check_closing",
+      # Requirements for test frameworks are not in scope of docs-as-code
+      "gd_req__verification_link_tests",
+      "gd_req__verification_link_tests_cpp",
+      "gd_req__verification_link_tests_python",
+      "gd_req__verification_link_tests_rust",
+   ]
    prio = "prio_1"
    for need in needs.filter_types(["gd_req"]):
+       if need["id"] in ignored_ids:
+          continue
        if not any(prio in tag for tag in need["tags"]):
           continue
        if len(need["satisfies_back"]) >= 1:
