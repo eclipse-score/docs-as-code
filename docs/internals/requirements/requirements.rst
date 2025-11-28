@@ -938,7 +938,7 @@ Testing
 
 .. tool_req:: Safety Analysis Mitigation Issue Attribute
   :id: tool_req__docs_saf_attrs_mitigation_issue
-  :implemented: NO
+  :implemented: YES
   :tags: Safety Analysis
   :satisfies: gd_req__saf_attr_mitigation_issue
   :parent_covered: NO
@@ -949,7 +949,7 @@ Testing
 
 .. tool_req:: Safety Analysis Sufficient Attribute
   :id: tool_req__docs_saf_attrs_sufficient
-  :implemented: NO
+  :implemented: YES
   :tags: Safety Analysis
   :satisfies: gd_req__saf_attr_sufficient
   :parent_covered: YES
