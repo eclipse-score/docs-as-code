@@ -937,6 +937,7 @@ graph_checks:
           - status == valid
     explanation: An safety architecture element can only link other safety architecture elements.
 
+  # req-Id: tool_req__docs_arch_link_security
   tool_req__docs_arch_link_security:
     needs:
       include: feat_arc_sta, logic_arc_int, logic_arc_int_op, comp_arc_sta, real_arc_int, real_arc_int_op

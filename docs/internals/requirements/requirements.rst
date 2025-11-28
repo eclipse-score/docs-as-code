@@ -639,7 +639,7 @@ Architecture Attributes
 .. tool_req:: Security: Restrict linkage
   :id: tool_req__docs_arch_link_security
   :tags: Architecture
-  :implemented: NO
+  :implemented: YES
   :parent_covered: YES
   :satisfies: gd_req__arch_linkage_security_trace
 
