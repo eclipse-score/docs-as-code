@@ -4,6 +4,9 @@
 Process Requirements Overview
 ===============================
 
+This page shall provide an overview
+how well this tool implements process requirements.
+
 Unsatisfied Process Requirements
 ################################
 
@@ -82,11 +85,3 @@ does not mean it is implemented.
       if need["implemented"] == "YES":
          continue
       results.append(need)
-
-All our Tool Requirements
-#########################
-
-.. needtable::
-   :types: tool_req
-   :columns: satisfies as "Process Requirement" ;id as "Tool Requirement";implemented;source_code_link
-   :style: table
