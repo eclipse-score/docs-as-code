@@ -303,7 +303,6 @@ Versioning
   following attributes:
 
   * title (implicitly enforced by sphinx-needs)
-  * description (implicitly enforced by sphinx-needs)
   * author
   * approver
   * reviewer
@@ -707,22 +706,6 @@ Architecture Attributes
    release builds. These are typically better suited for metrics than for checks.
 
    e.g. gd_req__req_linkage_architecture
-
-
-.. tool_req:: Enable Creation of Dependency Graphs
-   :id: tool_req__docs_dd_dependency_graph
-   :tags: Detailed Design & Code
-   :implemented: NO
-   :parent_covered: YES
-   :satisfies: gd_req__impl_dependency_analysis
-
-   Docs-As-Code shall support generation and rendering of dependency graphs for
-   components. It shall show all dependencies of a component incl transitive
-   dependencies.
-
-   .. note::
-      Components are defined in `comp_arc_sta`.
-      A component is also a bazel target. We can use bazel dependency graphs.
 
 
 .. tool_req:: Static Diagram for Unit Interactions
