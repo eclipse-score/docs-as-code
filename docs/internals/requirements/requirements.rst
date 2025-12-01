@@ -287,9 +287,6 @@ Versioning
   * safety
   * realizes
 
-  .. note::
-    'security' is currently optional, because score_process 1.3.1 would fail to build otherwise.
-
 .. tool_req:: Mandatory Document attributes
   :id: tool_req__docs_doc_attr
   :tags: Documents
