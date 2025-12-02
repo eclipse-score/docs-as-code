@@ -469,7 +469,7 @@ designed to enhance documentation capabilities in S-CORE.</p>
 <section id="module-bazel-file">
 <h3>1. MODULE.bazel file<a class="headerlink" href="#module-bazel-file" title="Link to this heading">#</a></h3>
 <p>Add the module to your <code class="docutils literal notranslate"><span class="pre">MODULE.bazel</span></code> file:</p>
-<div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="n">bazel_dep</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;score_docs_as_code&quot;</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;0.2.7&quot;</span><span class="p">)</span>
+<div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="n">bazel_dep</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;score_docs_as_code&quot;</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;2.0.3&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>And make sure to also add the S-core Bazel registry to your <code class="docutils literal notranslate"><span class="pre">.bazelrc</span></code> file</p>
@@ -492,7 +492,7 @@ but that requires some configuration in your <code class="docutils literal notra
 </section>
 <section id="build-file">
 <h3>3. BUILD file<a class="headerlink" href="#build-file" title="Link to this heading">#</a></h3>
-<div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;@score_docs_as_code//docs.bzl&quot;</span><span class="p">,</span> <span class="s2">&quot;docs&quot;</span><span class="p">)</span>
+<div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;@score_docs_as_code//:docs.bzl&quot;</span><span class="p">,</span> <span class="s2">&quot;docs&quot;</span><span class="p">)</span>
 
 <span class="n">docs</span><span class="p">(</span>
     <span class="n">source_dir</span> <span class="o">=</span> <span class="s2">&quot;&lt;your sphinx source dir&gt;&quot;</span><span class="p">,</span>
