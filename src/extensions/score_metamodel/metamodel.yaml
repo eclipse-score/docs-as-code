@@ -937,6 +937,7 @@ graph_checks:
           - status == valid
     explanation: An safety architecture element can only link other safety architecture elements.
 
+  # req-Id: tool_req__docs_arch_link_security
   tool_req__docs_arch_link_security:
     needs:
       include: feat_arc_sta, logic_arc_int, logic_arc_int_op, comp_arc_sta, real_arc_int, real_arc_int_op
@@ -950,6 +951,7 @@ graph_checks:
   #  - <Feature | Component | AoU> Requirements with the same ASIL or
   #  - <Feature | Component | AoU> Requirements with a higher ASIL
   # as the corresponding ASIL of the Feature or Component that is analyzed.
+  # req-Id: tool_req__docs_saf_attrs_mitigated_by
   saf_linkage_safety:
     needs:
       include: feat_saf_fmea, comp_saf_fmea, plat_saf_dfa, feat_saf_dfa, comp_saf_dfa
