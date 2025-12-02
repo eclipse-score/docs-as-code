@@ -111,7 +111,10 @@ def get_alias(need: dict[str, str]) -> str:
 
 def get_need_link(need: dict[str, str]) -> str:
     """Generate the link to the need element from the PlantUML Diagram"""
-    link = ".." + "/" + need["docname"] + ".html#" + need["id_parent"]
+    if need["is_external"]:
+        link = need["external_url"]
+    else:
+        link = f"../{need['docname']}.html#{need['id_parent']}"
 
     # Reminder: Link is displayed via triple braces inside a interface
     if "int_op" in need["type"]:

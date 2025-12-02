@@ -23,7 +23,7 @@ designed to enhance documentation capabilities in S-CORE.
 Add the module to your `MODULE.bazel` file:
 
 ```starlark
-bazel_dep(name = "score_docs_as_code", version = "0.2.7")
+bazel_dep(name = "score_docs_as_code", version = "2.0.3")
 ```
 
 And make sure to also add the S-core Bazel registry to your `.bazelrc` file
@@ -50,7 +50,7 @@ build --tool_java_runtime_version=remotejdk_17
 
 
 ```starlark
-load("@score_docs_as_code//docs.bzl", "docs")
+load("@score_docs_as_code//:docs.bzl", "docs")
 
 docs(
     source_dir = "<your sphinx source dir>",
