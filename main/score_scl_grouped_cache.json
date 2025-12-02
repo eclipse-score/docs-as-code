@@ -1190,6 +1190,13 @@
           "tag": "# req-Id:",
           "need": "tool_req__docs_saf_attrs_mitigated_by",
           "full_line": "# req-Id: tool_req__docs_saf_attrs_mitigated_by"
+        },
+        {
+          "file": "src/extensions/score_metamodel/metamodel.yaml",
+          "line": 954,
+          "tag": "# req-Id:",
+          "need": "tool_req__docs_saf_attrs_mitigated_by",
+          "full_line": "# req-Id: tool_req__docs_saf_attrs_mitigated_by"
         }
       ],
       "TestLinks": []
@@ -1257,6 +1264,21 @@
           "tag": "# req-Id:",
           "need": "tool_req__docs_req_arch_link_safety_to_arch",
           "full_line": "# req-Id: tool_req__docs_req_arch_link_safety_to_arch"
+        }
+      ],
+      "TestLinks": []
+    }
+  },
+  {
+    "need": "tool_req__docs_arch_link_security",
+    "links": {
+      "CodeLinks": [
+        {
+          "file": "src/extensions/score_metamodel/metamodel.yaml",
+          "line": 940,
+          "tag": "# req-Id:",
+          "need": "tool_req__docs_arch_link_security",
+          "full_line": "# req-Id: tool_req__docs_arch_link_security"
         }
       ],
       "TestLinks": []

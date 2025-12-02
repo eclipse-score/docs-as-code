@@ -896,6 +896,20 @@
     "full_line": "# req-Id: tool_req__docs_req_arch_link_safety_to_arch"
   },
   {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 940,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_arch_link_security",
+    "full_line": "# req-Id: tool_req__docs_arch_link_security"
+  },
+  {
+    "file": "src/extensions/score_metamodel/metamodel.yaml",
+    "line": 954,
+    "tag": "# req-Id:",
+    "need": "tool_req__docs_saf_attrs_mitigated_by",
+    "full_line": "# req-Id: tool_req__docs_saf_attrs_mitigated_by"
+  },
+  {
     "file": "src/extensions/score_metamodel/checks/attributes_format.py",
     "line": 30,
     "tag": "# req-Id:",
