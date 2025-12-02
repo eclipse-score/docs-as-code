@@ -77,6 +77,7 @@ This section provides an overview of current process requirements and their clar
     gd_req__req_attr_uid,
     gd_req__arch_attribute_uid,
     gd_req__saf_attr_uid,
+    gd_req__req_check_mandatory,
   :parent_covered: NO: cannot check non-existent "doc__naming_conventions" in gd_req__req_attr_uid
 
   Docs-as-Code shall enforce that Need IDs follow the following naming scheme:
@@ -118,7 +119,7 @@ This section provides an overview of current process requirements and their clar
   :tags: Common Attributes
   :parent_covered: NO: Can not cover 'ISO/IEC/IEEE/29148'
   :implemented: YES
-  :satisfies: gd_req__req_attr_description
+  :satisfies: gd_req__req_attr_description, gd_req__req_check_mandatory
 
   Docs-as-Code shall enforce that each need of type :need:`tool_req__docs_req_types` has a description (content)
 
@@ -152,6 +153,7 @@ This section provides an overview of current process requirements and their clar
   :satisfies:
      gd_req__req_attr_security,
      gd_req__arch_attr_security,
+     gd_req__req_check_mandatory,
 
   Docs-as-Code shall enforce that the ``security`` attribute has one of the following values:
 
@@ -176,6 +178,7 @@ This section provides an overview of current process requirements and their clar
   :implemented: YES
   :parent_covered: YES
   :satisfies:
+     gd_req__req_check_mandatory,
      gd_req__req_attr_safety,
      gd_req__arch_attr_safety
 
@@ -205,6 +208,7 @@ This section provides an overview of current process requirements and their clar
     gd_req__req_attr_status,
     gd_req__arch_attr_status,
     gd_req__saf_attr_status,
+    gd_req__req_check_mandatory,
 
   Docs-as-Code shall enforce that the ``status`` attribute has one of the following values:
 
@@ -265,7 +269,23 @@ Versioning
 
   * Generic Document (document)
   * Tool Verification Report (doc_tool)
+  * Change Request is also a generic document
 
+.. tool_req:: Mandatory attributes of Generic Documents
+  :id: tool_req__docs_doc_generic_mandatory
+  :tags: Documents
+  :implemented: PARTIAL
+  :satisfies:
+   gd_req__doc_attributes_manual,
+   gd_req__change_attr_impact_safety
+  :parent_covered: YES
+
+  Docs-as-Code shall enforce that each Generic Document ``doc__*`` has the following attributes:
+
+  * status
+  * security
+  * safety
+  * realizes
 
 .. tool_req:: Mandatory Document attributes
   :id: tool_req__docs_doc_attr
@@ -275,12 +295,14 @@ Versioning
    gd_req__doc_author,
    gd_req__doc_approver,
    gd_req__doc_reviewer,
+   gd_req__change_attr_title,
   :parent_covered: NO, process requirement has changed and we do not understand the new wording.
   :status: invalid
 
   Docs-as-Code shall enforce that each :need:`tool_req__docs_doc_types` has the
   following attributes:
 
+  * title (implicitly enforced by sphinx-needs)
   * author
   * approver
   * reviewer
@@ -375,7 +397,7 @@ Mapping
   :tags: Requirements
   :implemented: YES
   :parent_covered: NO: Can not ensure correct reasoning
-  :satisfies: gd_req__req_attr_rationale
+  :satisfies: gd_req__req_attr_rationale, gd_req__req_check_mandatory
 
   Docs-as-Code shall enforce that each stakeholder requirement (stkh_req) contains a ``rationale`` attribute.
 
@@ -686,21 +708,23 @@ Architecture Attributes
    e.g. gd_req__req_linkage_architecture
 
 
-.. tool_req:: Enable Creation of Dependency Graphs
-   :id: tool_req__docs_dd_dependency_graph
+.. tool_req:: Static Diagram for Unit Interactions
+   :id: tool_req__docs_dd_sta
    :tags: Detailed Design & Code
-   :implemented: NO
+   :implemented: YES
    :parent_covered: YES
-   :satisfies: gd_req__impl_dependency_analysis
-   :status: invalid
+   :satisfies: gd_req__impl_static_diagram
 
-   Docs-As-Code shall support generation and rendering of dependency graphs for
-   components. It shall show all dependencies of a component incl transitive
-   dependencies.
+   Provide needs type ``dd_sta`` for static diagrams showing unit interactions as UML.
 
-   .. note::
-      Components are defined in `comp_arc_sta`.
-      A component is also a bazel target. We can use bazel dependency graphs.
+.. tool_req:: Dynamic Diagram for Unit Interactions
+   :id: tool_req__docs_dd_dyn
+   :tags: Detailed Design & Code
+   :implemented: YES
+   :parent_covered: YES
+   :satisfies: gd_req__impl_dynamic_diagram
+
+   Provide needs type ``dd_dyn`` for dynamic diagrams showing unit interactions as UML.
 
 
 Testing
@@ -804,6 +828,29 @@ Testing
   * released
   * rejected
 
+.. tool_req:: Enforce version attribute
+  :id: tool_req__docs_tvr_version
+  :tags: Tool Verification Reports
+  :implemented: YES
+  :satisfies: gd_req__tool_attr_version
+  :parent_covered: YES
+
+  Docs-as-Code shall enforce that every Tool Verification Report (`doc_tool`) includes a
+  `version` attribute.
+
+.. tool_req:: Enforce confidence level classification
+  :id: tool_req__docs_tvr_confidence_level
+  :tags: Tool Verification Reports
+  :implemented: YES
+  :satisfies: gd_req__tool_attr_tcl
+  :parent_covered: YES
+
+  Docs-as-Code shall enforce that every Tool Verification Report (`doc_tool`) includes a
+  `tcl` attribute with one of the following values:
+
+  * LOW
+  * HIGH
+
 ⚙️ Process / Other
 ###################
 
@@ -811,6 +858,7 @@ Testing
   :id: tool_req__docs_wf_types
   :tags: Process / Other
   :implemented: YES
+  :satisfies: gd_req__process_management_build_blocks_attr, gd_req__process_management_build_blocks_link
 
   Docs-as-Code shall support the following workflow types:
 

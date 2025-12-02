@@ -202,16 +202,18 @@ needs_types:
   document:
     title: Generic Document
     prefix: doc__
+    # req-Id: tool_req__docs_doc_generic_mandatory
     mandatory_options:
       status: ^(valid|draft|invalid)$
-    optional_options:
       safety: "^(QM|ASIL_B)$"
       security: "^(YES|NO)$"
+    optional_options:
       # req-Id: tool_req__docs_doc_attr
       author: ^.*$
       approver: ^.*$
       reviewer: ^.*$
-    optional_links:
+    # req-Id: tool_req__docs_doc_generic_mandatory
+    mandatory_links:
       realizes: workproduct
     parts: 2
 
@@ -221,11 +223,13 @@ needs_types:
     mandatory_options:
       # req-Id: tool_req__docs_tvr_status
       status: ^(draft|evaluated|qualified|released|rejected)$
+      # req-Id: tool_req__docs_tvr_version
       version: ^.*$
       # req-Id: tool_req__docs_tvr_safety
       safety_affected: "^(YES|NO)$"
       # req-Id: tool_req__docs_tvr_security
       security_affected: "^(YES|NO)$"
+      # req-Id: tool_req__docs_tvr_confidence_level
       tcl: "^(LOW|HIGH)$"
     optional_options:
       # req-Id: tool_req__docs_doc_attr
@@ -590,6 +594,7 @@ needs_types:
     parts: 3
 
   # Implementation
+  # req-Id: tool_req__docs_dd_sta
   dd_sta:
     title: Static detailed design
     color: #FEDCD2
@@ -605,6 +610,7 @@ needs_types:
       includes: sw_unit
     parts: 3
 
+  # req-Id: tool_req__docs_dd_dyn
   dd_dyn:
     title: Dynamic detailed design
     color: #FEDCD2
