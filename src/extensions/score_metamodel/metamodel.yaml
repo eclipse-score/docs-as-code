@@ -565,6 +565,7 @@ needs_types:
     optional_links:
       implements: logic_arc_int, real_arc_int_op
       uses: logic_arc_int, real_arc_int_op
+      consists_of: comp, sw_unit
     tags:
       - architecture_element
     parts: 2
@@ -927,6 +928,10 @@ needs_extra_links:
     outgoing: satisfies
 
   # Architecture
+  consists_of:
+    incoming: forms part of
+    outgoing: consists of
+
   fulfils:
     incoming: fulfilled by
     outgoing: fulfils
