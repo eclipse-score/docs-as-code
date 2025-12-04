@@ -393,6 +393,31 @@ needs_types:
     parts: 3
 
   # - Architecture -
+
+  # Architecture Element
+  # No process requirement - For evaluation:
+  # https://github.com/orgs/eclipse-score/discussions/407#discussioncomment-15125454
+  feat:
+    title: Feature
+    color: #FEDCD2
+    style: card
+    mandatory_options:
+      # req-Id: tool_req__docs_common_attr_security
+      security: ^(YES|NO)$
+      # req-Id: tool_req__docs_common_attr_safety
+      safety: ^(QM|ASIL_B)$
+      # req-Id: tool_req__docs_common_attr_status
+      status: ^(valid|invalid)$
+    mandatory_links:
+      has: feat_req
+      includes: feat_arc_sta, feat_arc_dyn
+    optional_links:
+      consists_of: comp
+    tags:
+      - architecture_element
+      - architecture_view
+    parts: 2
+
   # Architecture Element & View
   # req-Id: tool_req__docs_arch_types
   # req-Id: tool_req__docs_arch_views
@@ -476,6 +501,26 @@ needs_types:
       - architecture_element
     parts: 3
 
+  # Architecture Element
+  # No process requirement - For evaluation:
+  # https://github.com/orgs/eclipse-score/discussions/407#discussioncomment-15125454
+  mod:
+    title: Module
+    color: #FEDCD2
+    style: card
+    optinal_options:
+      # req-Id: tool_req__docs_common_attr_security
+      security: ^(YES|NO)$
+      # req-Id: tool_req__docs_common_attr_safety
+      safety: ^(QM|ASIL_B)$
+      # req-Id: tool_req__docs_common_attr_status
+      status: ^(valid|invalid)$
+    mandatory_links:
+      includes: comp_arc_sta, mod_view_dyn
+    tags:
+      - architecture_view
+    parts:
+
   # Architecture View
   # req-Id: tool_req__docs_arch_views
   mod_view_sta:
@@ -488,6 +533,7 @@ needs_types:
       - architecture_view
     parts: 3
 
+  # Architecture View
   # No process requirement
   mod_view_dyn:
     title: Module Architecture Dynamic View
@@ -495,11 +541,33 @@ needs_types:
     style: card
     parts: 3
 
-  # Architecture Element & View
+  # Architecture Element
   # req-Id: tool_req__docs_arch_types
+  comp:
+    title: Component
+    color: #FEDCD2
+    style: card
+    mandatory_options:
+      # req-Id: tool_req__docs_common_attr_security
+      security: ^(YES|NO)$
+      # req-Id: tool_req__docs_common_attr_safety
+      safety: ^(QM|ASIL_B)$
+      # req-Id: tool_req__docs_common_attr_status
+      status: ^(valid|invalid)$
+    optional_links:
+      has: comp_req
+      implements: logic_arc_int, real_arc_int_op
+      includes: comp_arc_sta, comp_arc_dyn, dd_sta, dd_dyn
+      uses: logic_arc_int, real_arc_int_op
+    tags:
+      - architecture_element
+      - architecture_view
+    parts: 2
+
+  # Architecture View
   # req-Id: tool_req__docs_arch_views
   comp_arc_sta:
-    title: Component & Component Package Diagram
+    title: Component Package Diagram
     color: #FEDCD2
     style: card
     mandatory_options:
