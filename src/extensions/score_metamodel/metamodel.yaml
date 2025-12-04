@@ -301,6 +301,7 @@ needs_types:
       # req-Id: tool_req__docs_req_attr_validity_correctness
       valid_from: ^v(0|[1-9]\d*)\.(0|[1-9]\d*)(\.(0|[1-9]\d*))?$
       valid_until: ^v(0|[1-9]\d*)\.(0|[1-9]\d*)(\.(0|[1-9]\d*))?$
+    optional_links:
       belongs_to: feat # for evaluation
     tags:
       - requirement
@@ -436,8 +437,7 @@ needs_types:
       includes: ^logic_arc_int(_op)*__.+$
       fulfils: feat_req
     optional_links:
-      # for evaluation
-      belongs_to: feat
+      belongs_to: feat # for evaluation
     tags:
       - architecture_element
       - architecture_view
@@ -459,8 +459,7 @@ needs_types:
     mandatory_links:
       fulfils: feat_req
     optional_links:
-      # for evaluation
-      belongs_to: feat
+      belongs_to: feat # for evaluation
     tags:
       - architecture_view
       - architecture_element
