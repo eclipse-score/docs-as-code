@@ -301,6 +301,8 @@ needs_types:
       # req-Id: tool_req__docs_req_attr_validity_correctness
       valid_from: ^v(0|[1-9]\d*)\.(0|[1-9]\d*)(\.(0|[1-9]\d*))?$
       valid_until: ^v(0|[1-9]\d*)\.(0|[1-9]\d*)(\.(0|[1-9]\d*))?$
+    optional_links:
+      belongs_to: feat # for evaluation
     tags:
       - requirement
       - requirement_excl_process
@@ -330,6 +332,8 @@ needs_types:
       # req-Id: tool_req__docs_req_attr_testcov
       testcovered: ^(YES|NO)$
       hash: ^.*$
+    optional_links:
+      belongs_to: comp # TODO: make it mandatory
     tags:
       - requirement
       - requirement_excl_process
@@ -393,6 +397,28 @@ needs_types:
     parts: 3
 
   # - Architecture -
+
+  # Architecture Element
+  # No process requirement - For evaluation:
+  # https://github.com/orgs/eclipse-score/discussions/407#discussioncomment-15125454
+  feat:
+    title: Feature
+    color: #FEDCD2
+    style: card
+    mandatory_options:
+      # req-Id: tool_req__docs_common_attr_security
+      security: ^(YES|NO)$
+      # req-Id: tool_req__docs_common_attr_safety
+      safety: ^(QM|ASIL_B)$
+      # req-Id: tool_req__docs_common_attr_status
+      status: ^(valid|invalid)$
+    mandatory_links:
+      includes: ^logic_arc_int(_op)*__.+$
+      consists_of: comp
+    tags:
+      - architecture_element
+    parts: 2
+
   # Architecture Element & View
   # req-Id: tool_req__docs_arch_types
   # req-Id: tool_req__docs_arch_views
@@ -410,6 +436,8 @@ needs_types:
     mandatory_links:
       includes: ^logic_arc_int(_op)*__.+$
       fulfils: feat_req
+    optional_links:
+      belongs_to: feat # for evaluation
     tags:
       - architecture_element
       - architecture_view
@@ -430,6 +458,8 @@ needs_types:
       status: ^(valid|invalid)$
     mandatory_links:
       fulfils: feat_req
+    optional_links:
+      belongs_to: feat # for evaluation
     tags:
       - architecture_view
       - architecture_element
@@ -476,6 +506,26 @@ needs_types:
       - architecture_element
     parts: 3
 
+  # Architecture Element
+  # No process requirement - For evaluation:
+  # https://github.com/orgs/eclipse-score/discussions/407#discussioncomment-15125454
+  mod:
+    title: Module
+    color: #FEDCD2
+    style: card
+    optional_options:
+      # req-Id: tool_req__docs_common_attr_security
+      security: ^(YES|NO)$
+      # req-Id: tool_req__docs_common_attr_safety
+      safety: ^(QM|ASIL_B)$
+      # req-Id: tool_req__docs_common_attr_status
+      status: ^(valid|invalid)$
+    optional_links:
+      includes: comp
+    tags:
+      - architecture_element
+    parts: 2
+
   # Architecture View
   # req-Id: tool_req__docs_arch_views
   mod_view_sta:
@@ -484,22 +534,46 @@ needs_types:
     style: card
     mandatory_links:
       includes: comp_arc_sta
+    optional_links:
+      belongs_to: mod # for evaluation
     tags:
       - architecture_view
     parts: 3
 
+  # Architecture View
   # No process requirement
   mod_view_dyn:
     title: Module Architecture Dynamic View
     color: #FEDCD2
     style: card
     parts: 3
+    optional_links:
+      belongs_to: mod # for evaluation
 
-  # Architecture Element & View
-  # req-Id: tool_req__docs_arch_types
+  # Architecture Element
+  comp:
+    title: Component
+    color: #FEDCD2
+    style: card
+    mandatory_options:
+      # req-Id: tool_req__docs_common_attr_security
+      security: ^(YES|NO)$
+      # req-Id: tool_req__docs_common_attr_safety
+      safety: ^(QM|ASIL_B)$
+      # req-Id: tool_req__docs_common_attr_status
+      status: ^(valid|invalid)$
+    optional_links:
+      implements: logic_arc_int, real_arc_int_op
+      uses: logic_arc_int, real_arc_int_op
+      consists_of: comp, sw_unit
+    tags:
+      - architecture_element
+    parts: 2
+
+  # Architecture View
   # req-Id: tool_req__docs_arch_views
   comp_arc_sta:
-    title: Component & Component Package Diagram
+    title: Component Package Diagram
     color: #FEDCD2
     style: card
     mandatory_options:
@@ -514,8 +588,8 @@ needs_types:
       implements: logic_arc_int, real_arc_int_op
       includes: comp_arc_sta
       uses: logic_arc_int, real_arc_int_op
+      belongs_to: comp # TODO: make it mandatory
     tags:
-      - architecture_element
       - architecture_view
     parts: 3
 
@@ -534,9 +608,9 @@ needs_types:
       status: ^(valid|invalid)$
     optional_links:
       fulfils: comp_req
+      belongs_to: comp # TODO: make it mandatory
     tags:
       - architecture_view
-      - architecture_element
     parts: 3
 
   # Architecture Element & View
@@ -607,6 +681,7 @@ needs_types:
       implements: comp_req
       satisfies: comp_arc_sta
     optional_links:
+      belongs_to: comp # TODO: make it mandatory
       includes: sw_unit
     parts: 3
 
@@ -622,6 +697,8 @@ needs_types:
     mandatory_links:
       implements: comp_req
       satisfies: comp_arc_sta
+    optional_links:
+      belongs_to: comp # TODO: make it mandatory
     parts: 3
 
   sw_unit:
@@ -851,6 +928,14 @@ needs_extra_links:
     outgoing: satisfies
 
   # Architecture
+  consists_of:
+    incoming: forms part of
+    outgoing: consists of
+
+  belongs_to:
+    incoming: has
+    outgoing: belongs to
+
   fulfils:
     incoming: fulfilled by
     outgoing: fulfils
