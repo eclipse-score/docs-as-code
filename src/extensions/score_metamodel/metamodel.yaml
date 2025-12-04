@@ -700,7 +700,6 @@ needs_types:
       belongs_to: comp # TODO: make it mandatory
     parts: 3
 
-  # sw-unit (id, titel...)
   sw_unit:
     title: Software unit
     mandatory_options:
