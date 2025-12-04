@@ -513,7 +513,7 @@ needs_types:
     title: Module
     color: #FEDCD2
     style: card
-    optinal_options:
+    optional_options:
       # req-Id: tool_req__docs_common_attr_security
       security: ^(YES|NO)$
       # req-Id: tool_req__docs_common_attr_safety
@@ -931,6 +931,10 @@ needs_extra_links:
   consists_of:
     incoming: forms part of
     outgoing: consists of
+
+  belongs_to:
+    incoming: has
+    outgoing: belongs to
 
   fulfils:
     incoming: fulfilled by
