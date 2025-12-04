@@ -521,8 +521,7 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
     optional_links:
-      includes: comp, mod_view_sta, mod_view_dyn
-      # Probably: requires: mod
+      includes: comp
     tags:
       - architecture_element
     parts: 2
@@ -535,6 +534,8 @@ needs_types:
     style: card
     mandatory_links:
       includes: comp_arc_sta
+    optional_links:
+      belongs_to: mod # for evaluation
     tags:
       - architecture_view
     parts: 3
@@ -546,6 +547,8 @@ needs_types:
     color: #FEDCD2
     style: card
     parts: 3
+    optional_links:
+      belongs_to: mod # for evaluation
 
   # Architecture Element
   comp:
@@ -697,6 +700,7 @@ needs_types:
       belongs_to: comp # TODO: make it mandatory
     parts: 3
 
+  # sw-unit (id, titel...)
   sw_unit:
     title: Software unit
     mandatory_options:
