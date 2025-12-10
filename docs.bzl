@@ -79,7 +79,7 @@ def docs(source_dir = "docs", data = [], deps = []):
         deps = deps,
     )
 
-    pkg_files(
+    sphinx_docs_library(
         name = "docs_sources",
         srcs = native.glob([
             source_dir + "/**/*.png",
@@ -97,6 +97,7 @@ def docs(source_dir = "docs", data = [], deps = []):
             "more_docs/**/*.rst",
         ], allow_empty = True),
         strip_prefix = strip_prefix.from_pkg(),  # avoid flattening of folders
+        prefix = "docs/modules/x/",
         visibility = ["//visibility:public"],
     )
 
@@ -178,7 +179,7 @@ def docs(source_dir = "docs", data = [], deps = []):
 
     sphinx_docs(
         name = "needs_json",
-        srcs = [":docs_sources"],
+        srcs = [],  # empty as we pull in all docs via deps
         config = ":" + source_dir + "/conf.py",
         extra_opts = [
             "-W",
@@ -191,5 +192,6 @@ def docs(source_dir = "docs", data = [], deps = []):
         formats = ["needs"],
         sphinx = ":sphinx_build",
         tools = data,
+        deps = [":docs_sources"],
         visibility = ["//visibility:public"],
     )
