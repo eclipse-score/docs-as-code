@@ -33,6 +33,9 @@ score_extensions = [
 
 
 def setup(app: Sphinx) -> dict[str, object]:
+    app.config.html_copy_source = False
+    app.config.html_show_sourcelink = False
+
     # Global settings
     # Note: the "sub-extensions" also set their own config values
 
