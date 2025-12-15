@@ -419,7 +419,7 @@ needs_types:
       - architecture_element
     parts: 2
 
-  # Architecture Element & View
+  # Architecture View
   # req-Id: tool_req__docs_arch_types
   # req-Id: tool_req__docs_arch_views
   feat_arc_sta:
@@ -532,10 +532,9 @@ needs_types:
     title: Module Architecture Static View
     color: #FEDCD2
     style: card
-    mandatory_links:
-      includes: comp_arc_sta
     optional_links:
       belongs_to: mod # for evaluation
+      includes: comp, comp_arc_sta
     tags:
       - architecture_view
     parts: 3

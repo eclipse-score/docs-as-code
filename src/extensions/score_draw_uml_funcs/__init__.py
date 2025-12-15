@@ -156,7 +156,7 @@ def draw_comp_incl_impl_int(
                 logger.info(f"{need}: include {need_inc} could not be found")
                 continue
 
-            if curr_need["type"] != "comp_arc_sta":
+            if curr_need["type"] != "comp":
                 continue
 
             sub_structure, sub_linkage, proc_impl_interfaces, proc_used_interfaces = (

@@ -66,7 +66,7 @@
 
 
 
-.. Description of requirement of type feat_arc_sta is not checked for weak words
+.. Description of architecture view of type feat_arc_sta is not checked for weak words
 #EXPECT-NOT: feat_arc_sta_desc_good: contains a weak word: `really` in option: `content`. Please revise the wording.
 
 .. feat_arc_sta:: This is a test
