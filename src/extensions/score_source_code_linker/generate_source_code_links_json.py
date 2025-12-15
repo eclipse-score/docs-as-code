@@ -28,6 +28,7 @@ from src.extensions.score_source_code_linker.needlinks import (
 TAGS = [
     "# " + "req-traceability:",
     "# " + "req-Id:",
+    "# " + "need-Id:", # to link from source code to architecture element
 ]
 
 
