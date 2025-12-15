@@ -565,7 +565,7 @@ needs_types:
     optional_links:
       implements: logic_arc_int, real_arc_int_op
       uses: logic_arc_int, real_arc_int_op
-      consists_of: comp, sw_unit
+      consists_of: comp
     tags:
       - architecture_element
     parts: 2
@@ -707,6 +707,8 @@ needs_types:
       security: ^(YES|NO)$
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
+    optional_links:
+      belongs_to: comp # TODO: make it mandatory
     parts: 3
 
   sw_unit_int:
@@ -717,6 +719,8 @@ needs_types:
       security: ^(YES|NO)$
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
+    optional_links:
+      belongs_to: comp # TODO: make it mandatory
     parts: 3
 
   # DFA (Dependent Failure Analysis)
