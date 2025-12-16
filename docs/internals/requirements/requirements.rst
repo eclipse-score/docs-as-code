@@ -670,7 +670,9 @@ Architecture Attributes
   * Module View (mod_view_sta)
 
   .. note::
-    feat_arc_sta, comp_arc_sta, logic_arc_int, real_arc_int are architecture views.
+    feat_arc_sta, comp_arc_sta, logic_arc_int, real_arc_int are architecture views,
+    but are still defined as architectural elements, what means have the properties of
+    architectural elements.
 
 💻 Detailed Design & Code
 ##########################
