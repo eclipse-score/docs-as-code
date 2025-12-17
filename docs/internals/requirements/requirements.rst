@@ -672,7 +672,7 @@ Architecture Attributes
 
   .. note::
     feat_arc_sta, comp_arc_sta, logic_arc_int, real_arc_int are architecture views,
-    but are still defined as architectural elements, what means have the properties of
+    but are still defined as architectural elements, which means they have the properties of
     architectural elements.
 
 💻 Detailed Design & Code
