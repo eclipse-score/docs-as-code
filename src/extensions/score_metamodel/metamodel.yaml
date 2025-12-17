@@ -419,7 +419,7 @@ needs_types:
       - architecture_element
     parts: 2
 
-  # Architecture View (but owns by requirement properties of architectural elements)
+  # Architecture View (but owns the requirement properties of architectural elements)
   # req-Id: tool_req__docs_arch_types
   # req-Id: tool_req__docs_arch_views
   feat_arc_sta:
