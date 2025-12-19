@@ -534,7 +534,7 @@ needs_types:
     style: card
     optional_links:
       belongs_to: mod # for evaluation
-      includes: comp, comp_arc_sta
+      includes: comp, comp_arc_sta # deprecated
     tags:
       - architecture_view
     parts: 3
@@ -585,7 +585,7 @@ needs_types:
     optional_links:
       fulfils: comp_req
       implements: logic_arc_int, real_arc_int_op
-      includes: comp_arc_sta
+      includes: comp_arc_sta, comp
       uses: logic_arc_int, real_arc_int_op
       belongs_to: comp # TODO: make it mandatory
     tags:
