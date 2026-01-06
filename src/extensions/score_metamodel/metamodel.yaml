@@ -419,7 +419,7 @@ needs_types:
       - architecture_element
     parts: 2
 
-  # Architecture Element & View
+  # Architecture View (but owns the requirement properties of architectural elements)
   # req-Id: tool_req__docs_arch_types
   # req-Id: tool_req__docs_arch_views
   feat_arc_sta:
@@ -443,7 +443,7 @@ needs_types:
       - architecture_view
     parts: 3
 
-  # Architecture View
+  # Architecture View (but owns the requirement properties of architectural elements)
   # req-Id: tool_req__docs_arch_views
   feat_arc_dyn:
     title: Feature Sequence Diagram
@@ -532,10 +532,9 @@ needs_types:
     title: Module Architecture Static View
     color: #FEDCD2
     style: card
-    mandatory_links:
-      includes: comp_arc_sta
     optional_links:
       belongs_to: mod # for evaluation
+      includes: comp, comp_arc_sta # deprecated
     tags:
       - architecture_view
     parts: 3
@@ -570,7 +569,7 @@ needs_types:
       - architecture_element
     parts: 2
 
-  # Architecture View
+  # Architecture View (but owns requirement properties of architectural elements)
   # req-Id: tool_req__docs_arch_views
   comp_arc_sta:
     title: Component Package Diagram
@@ -586,14 +585,14 @@ needs_types:
     optional_links:
       fulfils: comp_req
       implements: logic_arc_int, real_arc_int_op
-      includes: comp_arc_sta
+      includes: comp_arc_sta, comp
       uses: logic_arc_int, real_arc_int_op
       belongs_to: comp # TODO: make it mandatory
     tags:
       - architecture_view
     parts: 3
 
-  # Architecture View
+  # Architecture View (but owns requirement properties of architectural elements)
   # req-Id: tool_req__docs_arch_views
   comp_arc_dyn:
     title: Component Sequence Diagram
