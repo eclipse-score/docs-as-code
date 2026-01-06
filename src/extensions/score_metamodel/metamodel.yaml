@@ -564,7 +564,7 @@ needs_types:
     optional_links:
       implements: logic_arc_int, real_arc_int_op
       uses: logic_arc_int, real_arc_int_op
-      consists_of: comp, sw_unit
+      consists_of: comp
     tags:
       - architecture_element
     parts: 2
@@ -681,7 +681,7 @@ needs_types:
       satisfies: comp_arc_sta
     optional_links:
       belongs_to: comp # TODO: make it mandatory
-      includes: sw_unit
+      includes: sw_unit, sw_unit_int
     parts: 3
 
   # req-Id: tool_req__docs_dd_dyn
@@ -698,6 +698,7 @@ needs_types:
       satisfies: comp_arc_sta
     optional_links:
       belongs_to: comp # TODO: make it mandatory
+      includes: sw_unit, sw_unit_int
     parts: 3
 
   sw_unit:
@@ -706,16 +707,21 @@ needs_types:
       security: ^(YES|NO)$
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
+    optional_links:
+      belongs_to: comp # TODO: make it mandatory
     parts: 3
 
   sw_unit_int:
-    title: Software unit interfaces
+    title: Software unit interface
     color: #FEDCD2
     style: card
     mandatory_options:
       security: ^(YES|NO)$
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
+    optional_links:
+      belongs_to: comp # TODO: make it mandatory
+      implements: real_arc_int, real_arc_int_op
     parts: 3
 
   # DFA (Dependent Failure Analysis)
