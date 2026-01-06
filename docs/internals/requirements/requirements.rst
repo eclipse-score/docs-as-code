@@ -535,10 +535,12 @@ Mapping
 
   Docs-as-Code shall support the following architecture element types:
 
-  * Feature (feat_arc_sta)
+  * Feature Static View (feat_arc_sta)
+  * Feature (feat)
   * Logical Interface (logic_arc_int)
   * Logical Interface Operation (logic_arc_int_op)
-  * Component (comp_arc_sta)
+  * Component Static View (comp_arc_sta)
+  * Component (comp)
   * Interface (real_arc_int)
   * Interface Operation (real_arc_int_op)
 
@@ -669,8 +671,9 @@ Architecture Attributes
   * Module View (mod_view_sta)
 
   .. note::
-    feat_arc_sta, comp_arc_sta, logic_arc_int, real_arc_int are architecture elements
-    AND architecture views.
+    feat_arc_sta, comp_arc_sta, logic_arc_int, real_arc_int are architecture views,
+    but are still defined as architectural elements, which means they have the properties of
+    architectural elements.
 
 💻 Detailed Design & Code
 ##########################
