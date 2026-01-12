@@ -43,13 +43,13 @@ jobs:
     # Waits for consumer-tests but run only when docs verification succeeded
     needs: [docs-verify]
     if: ${{ always() && needs.docs-verify.result == 'success' }}
-    uses: maximiliansoerenpollak/cicd-workflows/.github/workflows/docs.yml@main
+    uses: maximiliansoerenpollak/cicd-workflows/.github/workflows/docs_with_test.yml@main
     permissions:
       contents: write
       pages: write
       pull-requests: write
       id-token: write
     with:
-      pre-build-command: "bazel run //:ide_support && bazel test //src/..."
+      bazel-test-target: "//src/..."
       bazel-target: "//:docs -- --github_user=${{ github.repository_owner }} --github_repo=${{ github.event.repository.name }}"
       retention-days: 3
