@@ -50,6 +50,7 @@ jobs:
       pull-requests: write
       id-token: write
     with:
+      bazel-venv-target: "//:ide_support"
       bazel-test-target: "//src/..."
       bazel-target: "//:docs -- --github_user=${{ github.repository_owner }} --github_repo=${{ github.event.repository.name }}"
       retention-days: 3
