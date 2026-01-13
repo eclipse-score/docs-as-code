@@ -11,10 +11,11 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
+# Versioning is handled by GitHub Releases.
+# Here we always keep "0.0.0" to indicate that.
 module(
     name = "score_docs_as_code",
-    version = "2.3.0",
-    compatibility_level = 2,
+    version = "0.0.0",
 )
 
 ###############################################################################
