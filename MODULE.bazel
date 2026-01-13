@@ -12,7 +12,11 @@
 # *******************************************************************************
 
 # Versioning is handled by GitHub Releases.
-module(name = "score_docs_as_code", version = "0.0.0")
+# Here we always keep "0.0.0" to indicate that.
+module(
+    name = "score_docs_as_code",
+    version = "0.0.0",
+)
 
 ###############################################################################
 #
