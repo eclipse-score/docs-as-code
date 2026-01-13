@@ -161,7 +161,7 @@ def find_xml_files(dir: Path) -> list[Path]:
     Returns:
         - list[Path] => Paths to all found 'test.xml' files.
     """
-
+    # Note: This maybe in the future should also be able to be customized
     test_file_name = "test.xml"
 
     xml_paths: list[Path] = []
@@ -179,8 +179,16 @@ def run_xml_parser(app: Sphinx, env: BuildEnvironment):
     """
     ws_root = find_ws_root()
     assert ws_root is not None
-    bazel_testlogs = ws_root / "bazel-testlogs"
-    xml_file_paths = find_xml_files(bazel_testlogs)
+    # We also have to allow for 'tests-report' to be viable path
+    if os.path.isdir(ws_root/"tests-report"):
+        testlogs_dir =  ws_root / "tests-report" 
+    elif os.path.isdir(ws_root/"bazel-testlogs"):
+        testlogs_dir = ws_root / "bazel-testlogs"
+    else:
+        # TODO: Figure out if this brings issues with it.
+        logger.info("could not find tests-report or bazel-testlogs to parse testcases")
+        return 
+    xml_file_paths = find_xml_files(testlogs_dir)
     test_case_needs = build_test_needs_from_files(app, env, xml_file_paths)
     # Saving the test case needs for cache
     store_data_of_test_case_json(

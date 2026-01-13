@@ -40,3 +40,25 @@ jobs:
         run: |
           bazel run //:ide_support
           bazel test //src/...
+
+      - name: Prepare bundled consumer report
+        if: always()
+        run: |
+          # 1. Create the target directory
+          mkdir -p tests-report
+          
+          # 2. Sync the testlogs to our artifact folder
+          # We use -L to follow the symlink and --include filters 
+          # to only grab the actual results (XMLs and Logs)
+          rsync -amL --include='*/' --include='test.xml' --include='test.log' --exclude='*' bazel-testlogs/ tests-report/
+          
+          # 3. Optional: If your tool prefers the folder name to match the Consumer Tests
+          # you can rename specific subfolders here, but rsync preserves the package paths.
+
+      - name: Upload bundled consumer report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tests-report
+          path: tests-report
+

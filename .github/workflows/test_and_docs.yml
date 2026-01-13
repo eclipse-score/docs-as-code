@@ -38,19 +38,21 @@ jobs:
       bazel-docs-verify-target: "//:docs_check"
 
   # This is the user configurable part of the workflow
+  unit-tests:
+    uses: ./.github/workflows/test.yml
+    secrets: inherit
 
   docs-build:
     # Waits for consumer-tests but run only when docs verification succeeded
-    needs: [docs-verify]
+    needs: [docs-verify, unit-tests]
     if: ${{ always() && needs.docs-verify.result == 'success' }}
-    uses: maximiliansoerenpollak/cicd-workflows/.github/workflows/docs_with_test.yml@main
+    uses: eclipse-score/cicd-workflows/.github/workflows/docs.yml@main
     permissions:
       contents: write
       pages: write
       pull-requests: write
       id-token: write
     with:
-      bazel-venv-target: "//:ide_support"
-      bazel-test-target: "//src/..."
       bazel-target: "//:docs -- --github_user=${{ github.repository_owner }} --github_repo=${{ github.event.repository.name }}"
       retention-days: 3
+      tests-report-artifact: tests-report
