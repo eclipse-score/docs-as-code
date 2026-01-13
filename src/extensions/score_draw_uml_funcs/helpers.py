@@ -28,7 +28,7 @@ def gen_format(need: dict[str, str]) -> str:
 
     style = ""
 
-    if "comp_arc_sta" in need["type"] and need["safety"] == "ASIL_B":
+    if "comp" in need["type"] and need["safety"] == "ASIL_B":
         style = "<<asilb>>"
 
     if "real_arc_int" in need["type"]:

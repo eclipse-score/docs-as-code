@@ -361,7 +361,7 @@ def draw_module(
         if not curr_need:
             logger.info(f"{need}: include with id {need_inc} could not be found")
             continue
-        if curr_need["type"] not in ["comp_arc_sta", "mod_view_sta"]:
+        if curr_need["type"] not in ["comp", "mod"]:
             continue
         sub_structure, sub_linkage, proc_impl_interfaces, proc_used_interfaces = (
             draw_comp_incl_impl_int(
