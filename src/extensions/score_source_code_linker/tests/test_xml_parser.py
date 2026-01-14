@@ -17,6 +17,7 @@ Once we enable those we will need to change the tests
 """
 
 import xml.etree.ElementTree as ET
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
@@ -30,67 +31,73 @@ from src.extensions.score_source_code_linker.testlink import DataOfTestCase
 
 
 # Unsure if I should make these last a session or not
+def _write_test_xml(
+    path: Path,
+    name: str,
+    result: str = "",
+    props: dict[str, str] | None = None,
+    file: str = "",
+    line: int = 0,
+):
+    """Helper to create the XML structure for a test case."""
+    ts = ET.Element("testsuites")
+    suite = ET.SubElement(ts, "testsuite")
+
+    # Create testcase with attributes
+    tc_attrs = {"name": name}
+    if file:
+        tc_attrs["file"] = file
+    if line:
+        tc_attrs["line"] = str(line)
+    tc = ET.SubElement(suite, "testcase", tc_attrs)
+
+    # Add failure/skipped status
+    if result == "failed":
+        ET.SubElement(tc, "failure", {"message": "failmsg"})
+    elif result == "skipped":
+        ET.SubElement(tc, "skipped", {"message": "skipmsg"})
+
+    # Add properties if provided
+    if props:
+        props_el = ET.SubElement(tc, "properties")
+        for k, v in props.items():
+            ET.SubElement(props_el, "property", {"name": k, "value": v})
+
+    # Save to file
+    ET.ElementTree(ts).write(path, encoding="utf-8", xml_declaration=True)
+
+
 @pytest.fixture
-def tmp_xml_dirs(tmp_path: Path) -> tuple[Path, Path, Path]:
-    root: Path = tmp_path / "bazel-testlogs"
-    dir1: Path = root / "with_props"
-    dir2: Path = root / "no_props"
-    dir1.mkdir(parents=True)
-    dir2.mkdir(parents=True)
+def tmp_xml_dirs(tmp_path: Path) -> Callable[..., tuple[Path, Path, Path]]:
+    def _tmp_xml_dirs(test_folder: str = "bazel-testlogs") -> tuple[Path, Path, Path]:
+        root = tmp_path / test_folder
+        dir1, dir2 = root / "with_props", root / "no_props"
 
-    def write(file_path: Path, testcases: list[ET.Element]):
-        ts = ET.Element("testsuites")
-        suite = ET.SubElement(ts, "testsuite")
-        for tc in testcases:
-            suite.append(tc)
-        tree = ET.ElementTree(ts)
-        tree.write(file_path, encoding="utf-8", xml_declaration=True)
+        for d in (dir1, dir2):
+            d.mkdir(parents=True, exist_ok=True)
 
-    def make_tc(
-        name: str,
-        result: str = "",
-        props: dict[str, str] | None = None,
-        file: str = "",
-        line: int = 0,
-    ):
-        tc = ET.Element("testcase", {"name": name})
-        if file:
-            tc.set("file", file)
-        if line:
-            tc.set("line", str(line))
-        if result == "failed":
-            ET.SubElement(tc, "failure", {"message": "failmsg"})
-        elif result == "skipped":
-            ET.SubElement(tc, "skipped", {"message": "skipmsg"})
-        if props:
-            props_el = ET.SubElement(tc, "properties")
-            for k, v in props.items():
-                ET.SubElement(props_el, "property", {"name": k, "value": v})
-        return tc
+        # File with properties
+        _write_test_xml(
+            dir1 / "test.xml",
+            name="tc_with_props",
+            result="failed",
+            file="path1",
+            line=10,
+            props={
+                "PartiallyVerifies": "REQ1",
+                "FullyVerifies": "",
+                "TestType": "type",
+                "DerivationTechnique": "tech",
+                "Description": "desc",
+            },
+        )
 
-    # File with properties
-    tc1 = make_tc(
-        "tc_with_props",
-        result="failed",
-        props={
-            "PartiallyVerifies": "REQ1",
-            "FullyVerifies": "",
-            "TestType": "type",
-            "DerivationTechnique": "tech",
-            "Description": "desc",
-        },
-        file="path1",
-        line=10,
-    )
-    write(dir1 / "test.xml", [tc1])
+        # File without properties
+        _write_test_xml(dir2 / "test.xml", name="tc_no_props", file="path2", line=20)
 
-    # File without properties
-    # HINT: Once the assertions in xml_parser are back and active, this should allow us
-    #       to catch that the tests Need to be changed too.
-    tc2 = make_tc("tc_no_props", file="path2", line=20)
-    write(dir2 / "test.xml", [tc2])
+        return root, dir1, dir2
 
-    return root, dir1, dir2
+    return _tmp_xml_dirs
 
 
 @add_test_properties(
@@ -98,15 +105,60 @@ def tmp_xml_dirs(tmp_path: Path) -> tuple[Path, Path, Path]:
     test_type="requirements-based",
     derivation_technique="requirements-analysis",
 )
-def test_find_xml_files(tmp_xml_dirs: tuple[Path, Path, Path]):
-    """Ensure xml files are found as expected"""
+def test_find_xml_files(tmp_xml_dirs: Callable[..., tuple[Path, Path, Path]]):
+    """Ensure xml files are found as expected if bazel-testlogs is used"""
     root: Path
     dir1: Path
     dir2: Path
-    root, dir1, dir2 = tmp_xml_dirs
+    root, dir1, dir2 = tmp_xml_dirs()
     found = xml_parser.find_xml_files(root)
     expected: set[Path] = {dir1 / "test.xml", dir2 / "test.xml"}
     assert set(found) == expected
+
+
+def test_find_xml_folder(tmp_xml_dirs: Callable[..., tuple[Path, Path, Path]]):
+    """Ensure xml files are found as expected if bazel-testlogs is used"""
+    root: Path
+    root, _, _ = tmp_xml_dirs()
+    found = xml_parser.find_test_folder(base_path=root.parent)
+    assert found is not None
+    assert found == root
+
+
+def test_find_xml_folder_test_reports(
+    tmp_xml_dirs: Callable[..., tuple[Path, Path, Path]],
+):
+    # root is the 'tests-report' folder inside tmp_path
+    root, _, _ = tmp_xml_dirs(test_folder="tests-report")
+    # We pass the PARENT of 'tests-report' as the workspace root
+    found = xml_parser.find_test_folder(base_path=root.parent)
+    assert found is not None
+    assert found == root
+
+
+def test_find_xml_files_test_reports(
+    tmp_xml_dirs: Callable[..., tuple[Path, Path, Path]],
+):
+    """Ensure xml files are found as expected if tests-report is used"""
+    root: Path
+    dir1: Path
+    dir2: Path
+    root, dir1, dir2 = tmp_xml_dirs(test_folder="tests-report")
+    found = xml_parser.find_xml_files(dir=root)
+    assert found is not None
+    expected: set[Path] = {root / dir1 / "test.xml", root / dir2 / "test.xml"}
+    assert set(found) == expected
+
+
+def test_early_return(tmp_path: Path):
+    """
+    Ensure that if tests-report & bazel-testlogs is not found,
+    we return None for early return inside extension
+    """
+    # Move the test execution context to a 100% empty folder
+
+    found = xml_parser.find_test_folder(tmp_path)
+    assert found is None
 
 
 @add_test_properties(
@@ -152,12 +204,12 @@ def test_parse_properties():
     test_type="requirements-based",
     derivation_technique="requirements-analysis",
 )
-def test_read_test_xml_file(tmp_xml_dirs: tuple[Path, Path, Path]):
+def test_read_test_xml_file(tmp_xml_dirs: Callable[..., tuple[Path, Path, Path]]):
     """Ensure a whole pre-defined xml file is parsed correctly"""
     _: Path
     dir1: Path
     dir2: Path
-    _, dir1, dir2 = tmp_xml_dirs
+    _, dir1, dir2 = tmp_xml_dirs()
 
     needs1, no_props1 = xml_parser.read_test_xml_file(dir1 / "test.xml")
     assert isinstance(needs1, list) and len(needs1) == 1

@@ -15,6 +15,7 @@ name: Run Bazel Tests
 on:
   pull_request:
     types: [opened, reopened, synchronize]
+  workflow_call:
 jobs:
   code:
     runs-on: ubuntu-latest
@@ -39,3 +40,19 @@ jobs:
         run: |
           bazel run //:ide_support
           bazel test //src/...
+
+      - name: Prepare bundled consumer report
+        if: always()
+        # Creating tests-report directory
+        # Follow Symlinks via '-L' to copy correctly
+        # Copy everything inside the 'test-reports' folder
+        run: |
+          mkdir -p tests-report
+          rsync -amL --include='*/' --include='test.xml' --include='test.log' --exclude='*' bazel-testlogs/ tests-report/
+
+      - name: Upload bundled consumer report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tests-report
+          path: tests-report

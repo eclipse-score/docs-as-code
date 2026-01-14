@@ -38,13 +38,13 @@ jobs:
       bazel-docs-verify-target: "//:docs_check"
 
   # This is the user configurable part of the workflow
-  consumer-tests:
-    uses: ./.github/workflows/consumer_test.yml
+  unit-tests:
+    uses: ./.github/workflows/test.yml
     secrets: inherit
 
   docs-build:
     # Waits for consumer-tests but run only when docs verification succeeded
-    needs: [docs-verify, consumer-tests]
+    needs: [docs-verify, unit-tests]
     if: ${{ always() && needs.docs-verify.result == 'success' }}
     uses: eclipse-score/cicd-workflows/.github/workflows/docs.yml@main
     permissions:
