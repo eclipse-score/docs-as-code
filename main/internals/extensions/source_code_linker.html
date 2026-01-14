@@ -888,7 +888,7 @@ This extension integrates with <strong>Bazel</strong> and <strong>sphinx-needs</
 <hr class="docutils" />
 <section id="testlink-test-result-integration">
 <h3>✅ TestLink: Test Result Integration<a class="headerlink" href="#testlink-test-result-integration" title="Link to this heading">#</a></h3>
-<p>TestLink scans test result XMLs from Bazel and converts each test case with metadata into Sphinx external needs, allowing links from tests to requirements.
+<p>TestLink scans test result XMLs from Bazel (bazel-testlogs) or in the folder ‘tests-report’ and converts each test case with metadata into Sphinx external needs, allowing links from tests to requirements.
 This depends on the <code class="docutils literal notranslate"><span class="pre">attribute_plugin</span></code> in our tooling repository, find it <a class="reference external" href="https://github.com/eclipse-score/tooling/tree/main/python_basics/score_pytest">here</a></p>
 <section id="test-tagging-options">
 <h4>Test Tagging Options<a class="headerlink" href="#test-tagging-options" title="Link to this heading">#</a></h4>
