@@ -11,7 +11,8 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-name: PR Entry Point
+# Note: "PR" is what will appear on the website as the workflow name, so keep it short.
+name: PR
 
 on:
   # Run on Pull Requests
@@ -31,8 +32,9 @@ permissions:
   contents: read
 
 jobs:
-  # This job runs the S-Core PR checks workflow
-  PR-Checks:
+  # This job runs the S-Core PR checks workflow.
+  # Note: "Common" is what will appear on the website as the job name.
+  Common:
     # Intentionally using latest greatest version of the workflow.
     # This allows centralized updates to the S-Core PR checks logic,
     # without needing to update each repository individually.
