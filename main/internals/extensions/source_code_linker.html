@@ -921,7 +921,7 @@ This depends on the <code class="docutils literal notranslate"><span class="pre"
 <li><p>Scans <code class="docutils literal notranslate"><span class="pre">bazel-testlogs/</span></code> for <code class="docutils literal notranslate"><span class="pre">test.xml</span></code> files.</p></li>
 <li><p>Parses test cases and extracts:</p>
 <ul>
-<li><p>Name</p></li>
+<li><p>Name &amp; Classname</p></li>
 <li><p>File path</p></li>
 <li><p>Line</p></li>
 <li><p>Result (e.g. passed, failed, skipped)</p></li>
@@ -938,6 +938,11 @@ This depends on the <code class="docutils literal notranslate"><span class="pre"
 </li>
 </ul>
 </li>
+</ol>
+<blockquote>
+<div><p>If there is a Classname then it gets combined with the function name for the displayed link as follows: <code class="docutils literal notranslate"><span class="pre">Classname__Functionname</span></code></p>
+</div></blockquote>
+<ol class="arabic simple" start="2">
 <li><p><strong>Need Linking</strong></p>
 <ul class="simple">
 <li><p>Generates external Sphinx needs from <code class="docutils literal notranslate"><span class="pre">DataFromTestCase</span></code>.</p></li>

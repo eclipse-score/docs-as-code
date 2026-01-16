@@ -1,6 +1,6 @@
 [
   {
-    "name": "test_unknown_directive",
+    "name": "TestCheckOptions__test_unknown_directive",
     "file": "src/extensions/score_metamodel/tests/test_check_options.py",
     "line": "65",
     "result": "passed",
@@ -11,7 +11,7 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_unknown_option_present_in_neither_req_opt_neither_opt_opt",
+    "name": "TestCheckOptions__test_unknown_option_present_in_neither_req_opt_neither_opt_opt",
     "file": "src/extensions/score_metamodel/tests/test_check_options.py",
     "line": "89",
     "result": "passed",
