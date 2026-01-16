@@ -21,7 +21,7 @@
             ],
       "TestLinks": [
   {
-    "name": "test_system_startup_time",
+    "name": "TestRequirementsCoverage__test_system_startup_time",
     "file": "src/tests/testfile_2.py",
     "line": 25,
     "need": "TREQ_ID_1",

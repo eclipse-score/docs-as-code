@@ -92,7 +92,7 @@ def test_feature():
 1. **XML Parsing** (`xml_parser.py`)
    - Scans `bazel-testlogs/` for `test.xml` files.
    - Parses test cases and extracts:
-     - Name
+     - Name & Classname
      - File path
      - Line
      - Result (e.g. passed, failed, skipped)
@@ -103,6 +103,8 @@ def test_feature():
    - Test cases with metadata are converted into:
      - `DataFromTestCase` (used for external needs)
      - `DataForTestLink` (used for linking tests to requirements)
+
+> If there is a Classname then it gets combined with the function name for the displayed link as follows: `Classname__Functionname`
 
 2. **Need Linking**
    - Generates external Sphinx needs from `DataFromTestCase`.
