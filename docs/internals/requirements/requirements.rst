@@ -693,7 +693,7 @@ Architecture Attributes
   Docs-as-Code shall allow source code to link to requirement needs.
 
   A link to the corresponding source code location in GitHub shall be generated in the
-  generated documentation within the linked requirement.
+  generated documentation within the linked sphinx-needs requirement.
 
 
 
