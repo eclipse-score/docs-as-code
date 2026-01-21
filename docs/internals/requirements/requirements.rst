@@ -689,9 +689,8 @@ Architecture Attributes
   :parent_covered: NO: we only enable linking, we do not link
   :satisfies:
     gd_req__req_attr_impl,
-    gd_req__impl_design_code_link,
 
-  Docs-as-Code shall allow source code to link to needs.
+  Docs-as-Code shall allow source code to link to requirement sphinx-needs objects.
 
   A link to the corresponding source code location in GitHub shall be generated in the
   generated documentation within the linked requirement.
@@ -720,14 +719,14 @@ Architecture Attributes
 
    Provide needs type ``dd_sta`` for static diagrams showing unit interactions as UML.
 
-.. tool_req:: Dynamic Diagram for Unit Interactions
-   :id: tool_req__docs_dd_dyn
-   :tags: Detailed Design & Code
-   :implemented: YES
-   :parent_covered: YES
-   :satisfies: gd_req__impl_dynamic_diagram
+.. .. tool_req:: Dynamic Diagram for Unit Interactions
+..    :id: tool_req__docs_dd_dyn
+..    :tags: Detailed Design & Code
+..    :implemented: YES
+..    :parent_covered: YES
+..    :satisfies: gd_req__impl_dynamic_diagram
 
-   Provide needs type ``dd_dyn`` for dynamic diagrams showing unit interactions as UML.
+..    Provide needs type ``dd_dyn`` for dynamic diagrams showing unit interactions as UML.
 
 
 Testing

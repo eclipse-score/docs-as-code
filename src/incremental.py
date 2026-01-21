@@ -89,7 +89,7 @@ if __name__ == "__main__":
         base_arguments.append(f"-A=github_user={args.github_user}")
         base_arguments.append(f"-A=github_repo={args.github_repo}")
         base_arguments.append("-A=github_version=main")
-        base_arguments.append(f"-A=doc_path='{get_env('SOURCE_DIRECTORY')}'")
+        base_arguments.append(f"-A=doc_path={get_env('SOURCE_DIRECTORY')}")
 
     action = get_env("ACTION")
     if action == "live_preview":

@@ -684,7 +684,6 @@ needs_types:
       includes: sw_unit, sw_unit_int
     parts: 3
 
-  # req-Id: tool_req__docs_dd_dyn
   dd_dyn:
     title: Dynamic detailed design
     color: #FEDCD2
