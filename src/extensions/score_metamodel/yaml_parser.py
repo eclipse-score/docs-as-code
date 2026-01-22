@@ -92,6 +92,9 @@ def default_options():
         "tags",
         "arch",
         "parts",
+        # Introduced with sphinx-needs 6.3.0
+        "is_import",
+        "constraints",
     }
 
 
