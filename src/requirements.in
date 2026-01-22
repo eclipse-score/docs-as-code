@@ -1,4 +1,4 @@
-Sphinx
+Sphinx>=8.2.3,<9
 
 # At least 4.2.0, as it fixes a bug in combination with esbonio live preview:
 # https://github.com/useblocks/sphinx-needs/issues/1350
