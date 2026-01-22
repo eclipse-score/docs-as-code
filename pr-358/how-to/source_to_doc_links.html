@@ -449,14 +449,59 @@
   <section id="reference-docs-in-source-code">
 <h1>Reference Docs in Source Code<a class="headerlink" href="#reference-docs-in-source-code" title="Link to this heading">#</a></h1>
 <p>In your C++/Rust/Python source code, you want to reference requirements (needs).
-The docs-as-code tool will create backlinks in the documentation.</p>
+The docs-as-code tool will create backlinks in the documentation in two steps:</p>
+<ol class="arabic simple">
+<li><p>You add a special comment in your source code that references the need ID.</p></li>
+<li><p>Scan for those comments and provide needs links to your documentation.</p></li>
+</ol>
+<p>For an example result, look at the attribute <code class="docutils literal notranslate"><span class="pre">source_code_link</span></code>
+of <a class="reference internal" href="../internals/requirements/requirements.html#tool_req__docs_common_attr_title" title="tool_req__docs_common_attr_title"><em class="xref need">Enforces title wording rules (tool_req__docs_common_attr_title)</em></a>.</p>
+<section id="comments-in-source-code">
+<h2>Comments in Source Code<a class="headerlink" href="#comments-in-source-code" title="Link to this heading">#</a></h2>
 <p>Use a comment and start with <code class="docutils literal notranslate"><span class="pre">req-Id:</span></code> or <code class="docutils literal notranslate"><span class="pre">req-traceability:</span></code> followed by the need ID.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># req-Id: TOOL_REQ__EXAMPLE_ID</span>
 <span class="c1"># req-traceability: TOOL_REQ__EXAMPLE_ID</span>
 </pre></div>
 </div>
-<p>For an example, look at the attribute <code class="docutils literal notranslate"><span class="pre">source_code_link</span></code>
-of <a class="reference internal" href="../internals/requirements/requirements.html#tool_req__docs_common_attr_title" title="tool_req__docs_common_attr_title"><em class="xref need">Enforces title wording rules (tool_req__docs_common_attr_title)</em></a>.</p>
+<p>For other languages (C++, Rust, etc.), use the appropriate comment syntax.</p>
+</section>
+<section id="scanning-source-code-for-links">
+<h2>Scanning Source Code for Links<a class="headerlink" href="#scanning-source-code-for-links" title="Link to this heading">#</a></h2>
+<p>In you <code class="docutils literal notranslate"><span class="pre">BUILD</span></code> files, you specify which source files to scan
+with <code class="docutils literal notranslate"><span class="pre">filegroup</span></code> or <code class="docutils literal notranslate"><span class="pre">glob</span></code> or whatever Bazel mechanism you prefer.
+Then, you use the <code class="docutils literal notranslate"><span class="pre">sourcelinks_json</span></code> rule to scan those files.
+Finally, pass the scan results to the <code class="docutils literal notranslate"><span class="pre">docs</span></code> rule as <code class="docutils literal notranslate"><span class="pre">sourcelinks</span></code> attribute.</p>
+<div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="hll"><span class="linenos"> 1</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;//:docs.bzl&quot;</span><span class="p">,</span> <span class="s2">&quot;docs&quot;</span><span class="p">,</span> <span class="s2">&quot;sourcelinks_json&quot;</span><span class="p">)</span>
+</span><span class="linenos"> 2</span>
+<span class="linenos"> 3</span><span class="n">filegroup</span><span class="p">(</span>
+<span class="linenos"> 4</span>   <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;some_sources&quot;</span><span class="p">,</span>
+<span class="linenos"> 5</span>   <span class="n">srcs</span> <span class="o">=</span> <span class="p">[</span>
+<span class="linenos"> 6</span>       <span class="s2">&quot;foo.py&quot;</span><span class="p">,</span>
+<span class="linenos"> 7</span>       <span class="s2">&quot;bar.cpp&quot;</span><span class="p">,</span>
+<span class="linenos"> 8</span>       <span class="s2">&quot;data.yaml&quot;</span><span class="p">,</span>
+<span class="linenos"> 9</span>   <span class="p">]</span> <span class="o">+</span> <span class="n">glob</span><span class="p">([</span><span class="s2">&quot;subdir/**/.py&quot;</span><span class="p">]),</span>
+<span class="linenos">10</span><span class="p">)</span>
+<span class="linenos">11</span>
+<span class="hll"><span class="linenos">12</span><span class="n">sourcelinks_json</span><span class="p">(</span>
+</span><span class="linenos">13</span>   <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;my_source_links&quot;</span><span class="p">,</span>
+<span class="linenos">14</span>   <span class="n">srcs</span> <span class="o">=</span> <span class="p">[</span>
+<span class="linenos">15</span>      <span class="s2">&quot;:some_sources&quot;</span><span class="p">,</span>
+<span class="linenos">16</span>      <span class="s2">&quot;//src:all_sources&quot;</span><span class="p">,</span>
+<span class="linenos">17</span>      <span class="c1"># whatever</span>
+<span class="linenos">18</span>   <span class="p">],</span>
+<span class="linenos">19</span><span class="p">)</span>
+<span class="linenos">20</span>
+<span class="linenos">21</span><span class="n">docs</span><span class="p">(</span>
+<span class="linenos">22</span>   <span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
+<span class="linenos">23</span>          <span class="s2">&quot;@score_process//:needs_json&quot;</span><span class="p">,</span>
+<span class="linenos">24</span>      <span class="p">],</span>
+<span class="linenos">25</span>      <span class="n">source_dir</span> <span class="o">=</span> <span class="s2">&quot;docs&quot;</span><span class="p">,</span>
+<span class="hll"><span class="linenos">26</span>      <span class="n">sourcelinks</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;:my_source_links&quot;</span><span class="p">],</span>
+</span><span class="linenos">27</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Since the source links are Bazel targets, you can easily reference other modules as well.</p>
+</section>
 </section>
 
 
@@ -497,6 +542,19 @@ of <a class="reference internal" href="../internals/requirements/requirements.ht
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comments-in-source-code">Comments in Source Code</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scanning-source-code-for-links">Scanning Source Code for Links</a></li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
 
