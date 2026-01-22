@@ -562,6 +562,7 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
     optional_links:
+      fulfils: comp_req
       implements: logic_arc_int, real_arc_int_op
       uses: logic_arc_int, real_arc_int_op
       consists_of: comp
