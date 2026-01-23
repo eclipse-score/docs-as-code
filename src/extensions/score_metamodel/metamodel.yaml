@@ -585,7 +585,7 @@ needs_types:
     optional_links:
       fulfils: comp_req
       implements: logic_arc_int, real_arc_int_op # deprecated, views does not implement anything. Now moved to comp
-      includes: comp
+      includes: comp # deprecated
       uses: logic_arc_int, real_arc_int_op
       belongs_to: comp # TODO: make it mandatory
     tags:
