@@ -39,10 +39,13 @@ jobs:
         run: |
           mkdir -p reports
 
+      # The pipefail ensures that non 0 exit codes inside the pytest execution get carried into the pipe 
+      # & make the tests red in the end. Without this we only would check the exit code of the 'tee' command.
       - name: Run Consumer tests
-        run: |
-          .venv_docs/bin/python -m pytest -s -v src/tests/ --repo="$CONSUMER" --junitxml="reports/${{ matrix.consumer }}.xml" | tee "reports/${{ matrix.consumer }}.log"
 
+        run: |
+          set -o pipefail
+          .venv_docs/bin/python -m pytest -s -v src/tests/ --repo="$CONSUMER" --junitxml="reports/${{ matrix.consumer }}.xml" | tee "reports/${{ matrix.consumer }}.log"
         env:
           FORCE_COLOR: "1"
           TERM: xterm-256color
