@@ -112,13 +112,7 @@ def need(**kwargs: Any) -> NeedItem:
 
     # Extract links (any list field that's not a core field)
     link_keys = {
-        "complies",
         "links",
-        "parent_needs",
-        "input",
-        "output",
-        "contains",
-        "satisfies",
     }
     links = {k: kwargs.pop(k, []) for k in list(link_keys) if k in kwargs}
 
@@ -153,6 +147,9 @@ def need(**kwargs: Any) -> NeedItem:
         "docname",
         "lineno",
         "lineno_content",
+        "external_url",
+        "is_import",
+        "is_external",
         "doctype",
         "content",
         "pre_content",
