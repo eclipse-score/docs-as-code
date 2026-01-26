@@ -303,7 +303,7 @@ TESTING SOURCE LINK
 
 
 @pytest.fixture()
-def example_source_link_text_all_ok(sphinx_base_dir: Path):
+def example_source_link_text_all_ok(sphinx_base_dir: Path) -> dict[str, list[NeedLink]]:
     return {
         "TREQ_ID_1": [
             NeedLink(
@@ -518,10 +518,10 @@ def test_source_link_integration_ok(
             actual_source_code_link = treq_info.get(
                 "source_code_link", "no source link"
             )
-            expected_links = (
+            expected_links: set[str] = (
                 set(expected_code_link.split(", ")) if expected_code_link else set()
             )
-            actual_links = (
+            actual_links: set[str] = (
                 set(actual_source_code_link.split(", "))
                 if actual_source_code_link
                 else set()

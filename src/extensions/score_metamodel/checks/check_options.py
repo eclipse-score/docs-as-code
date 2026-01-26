@@ -41,9 +41,10 @@ def _get_normalized(need: NeedItem, key: str, remove_prefix: bool = False) -> li
             return [_remove_namespace_prefix_(raw_value)]
         return [raw_value]
     if isinstance(raw_value, list) and all(isinstance(v, str) for v in raw_value):
+        str_list: list[str] = raw_value
         if remove_prefix:
-            return [_remove_namespace_prefix_(v) for v in raw_value]
-        return raw_value
+            return [_remove_namespace_prefix_(v) for v in str_list]
+        return str_list
     raise ValueError
 
 
