@@ -14,8 +14,8 @@
 name: Consumer Tests
 on:
   workflow_call:
-  pull_request_target:
-    types: [opened, reopened, synchronize] # Allows forks to trigger the docs build
+  pull_request:
+    types: [opened, reopened, synchronize]
   merge_group:
     types: [checks_requested]
 
