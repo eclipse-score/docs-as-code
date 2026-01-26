@@ -12,15 +12,15 @@
 # *******************************************************************************
 from typing import Any, cast
 from unittest.mock import MagicMock
+
 import pytest
 from sphinx.util.logging import SphinxLoggerAdapter
-
+from sphinx_needs.data import NeedsInfoType
 from sphinx_needs.need_item import (
     NeedItem,
-    NeedsContent,
     NeedItemSourceUnknown,
+    NeedsContent,
 )
-from sphinx_needs.data import NeedsInfoType
 
 from src.extensions.score_metamodel import CheckLogger
 

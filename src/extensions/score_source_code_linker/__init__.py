@@ -28,8 +28,8 @@ from typing import cast
 from sphinx.application import Sphinx
 from sphinx.environment import BuildEnvironment
 from sphinx_needs.data import NeedsMutable, SphinxNeedsData
-from sphinx_needs.need_item import NeedItem
 from sphinx_needs.logging import get_logger
+from sphinx_needs.need_item import NeedItem
 
 from src.extensions.score_source_code_linker.generate_source_code_links_json import (
     generate_source_code_links_json,
