@@ -148,7 +148,7 @@ def draw_comp_incl_impl_int(
 
     # Draw inner (sub)components recursively if requested
     if white_box_view:
-        for need_inc in need.get("includes", []):
+        for need_inc in need.get("consists_of", []):
             curr_need = all_needs.get(need_inc, {})
 
             # check for misspelled include
