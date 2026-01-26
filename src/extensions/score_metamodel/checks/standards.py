@@ -12,7 +12,7 @@
 # *******************************************************************************
 # from sphinx.application import Sphinx
 
-from sphinx_needs.data import NeedsInfoType
+from sphinx_needs.need_item import NeedItem
 
 # from score_metamodel import (
 #    CheckLogger,
@@ -20,7 +20,7 @@ from sphinx_needs.data import NeedsInfoType
 # )
 
 
-def get_standards_needs(needs: list[NeedsInfoType]) -> dict[str, NeedsInfoType]:
+def get_standards_needs(needs: list[NeedItem]) -> dict[str, NeedItem]:
     """
     Return a dictionary of all standard requirements from the Sphinx app's needs.
     """
@@ -29,8 +29,8 @@ def get_standards_needs(needs: list[NeedsInfoType]) -> dict[str, NeedsInfoType]:
 
 
 def get_standards_workproducts(
-    needs: list[NeedsInfoType],
-) -> dict[str, NeedsInfoType]:
+    needs: list[NeedItem],
+) -> dict[str, NeedItem]:
     """
     Return a dictionary of standard workproducts from the Sphinx app's needs.
     """
@@ -38,7 +38,7 @@ def get_standards_workproducts(
     return {need["id"]: need for need in needs if need["type"] == "std_wp"}
 
 
-def get_workflows(needs: list[NeedsInfoType]) -> dict[str, NeedsInfoType]:
+def get_workflows(needs: list[NeedItem]) -> dict[str, NeedItem]:
     """
     Return a dictionary of all workflows from the Sphinx app's needs.
     """
@@ -46,7 +46,7 @@ def get_workflows(needs: list[NeedsInfoType]) -> dict[str, NeedsInfoType]:
     return {need["id"]: need for need in needs if need.get("type") == "workflow"}
 
 
-def get_workproducts(needs: list[NeedsInfoType]) -> dict[str, NeedsInfoType]:
+def get_workproducts(needs: list[NeedItem]) -> dict[str, NeedItem]:
     """
     Return a dictionary of all workproducts from the Sphinx app's needs.
     """
@@ -54,7 +54,7 @@ def get_workproducts(needs: list[NeedsInfoType]) -> dict[str, NeedsInfoType]:
     return {need["id"]: need for need in needs if need.get("type") == "workproduct"}
 
 
-def get_compliance_req_needs(needs: list[NeedsInfoType]) -> set[str]:
+def get_compliance_req_needs(needs: list[NeedItem]) -> set[str]:
     """
     Return a set of all compliance_req values from the Sphinx app's needs,
     but only if the need type is one of the specified process-related types.
@@ -68,7 +68,7 @@ def get_compliance_req_needs(needs: list[NeedsInfoType]) -> set[str]:
     }
 
 
-def get_compliance_wp_needs(needs: list[NeedsInfoType]) -> set[str]:
+def get_compliance_wp_needs(needs: list[NeedItem]) -> set[str]:
     """
     Return a set of all compliance_wp values from the Sphinx app's needs,
     but only if the need type is "workproduct".
@@ -177,7 +177,7 @@ def get_compliance_wp_needs(needs: list[NeedsInfoType]) -> set[str]:
 
 
 def my_pie_linked_standard_requirements(
-    needs: list[NeedsInfoType], results: list[int], **kwargs: str | int | float
+    needs: list[NeedItem], results: list[int], **kwargs: str | int | float
 ) -> None:
     """
     Function to render the chart of check for standard requirements linked
@@ -210,7 +210,7 @@ def my_pie_linked_standard_requirements(
 
 
 def my_pie_linked_standard_requirements_by_tag(
-    needs: list[NeedsInfoType], results: list[int], **kwargs: str | int | float
+    needs: list[NeedItem], results: list[int], **kwargs: str | int | float
 ) -> None:
     """
     Filter function used for 'needpie' directives.
@@ -258,7 +258,7 @@ def my_pie_linked_standard_requirements_by_tag(
 
 
 def my_pie_linked_standard_workproducts(
-    needs: list[NeedsInfoType], results: list[int], **kwargs: str | int | float
+    needs: list[NeedItem], results: list[int], **kwargs: str | int | float
 ) -> None:
     """
     Function to render the chart of check for standar workproducts linked
@@ -292,7 +292,7 @@ def my_pie_linked_standard_workproducts(
 
 
 def my_pie_workproducts_contained_in_exactly_one_workflow(
-    needs: list[NeedsInfoType], results: list[int], **kwargs: str | int | float
+    needs: list[NeedItem], results: list[int], **kwargs: str | int | float
 ) -> None:
     """
     Function to render the chart of check for workproducts that are contained

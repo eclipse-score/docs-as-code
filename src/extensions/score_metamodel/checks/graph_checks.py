@@ -21,10 +21,11 @@ from score_metamodel import (
 )
 from sphinx.application import Sphinx
 from sphinx_needs.config import NeedType
-from sphinx_needs.data import NeedsInfoType, NeedsView
+from sphinx_needs.data import NeedsView
+from sphinx_needs.need_item import NeedItem
 
 
-def eval_need_check(need: NeedsInfoType, check: str, log: CheckLogger) -> bool:
+def eval_need_check(need: NeedItem, check: str, log: CheckLogger) -> bool:
     """
     Perform a single check on a need:
     1. Split the check into its parts
@@ -57,7 +58,7 @@ def eval_need_check(need: NeedsInfoType, check: str, log: CheckLogger) -> bool:
 
 
 def eval_need_condition(
-    need: NeedsInfoType, condition: str | dict[str, list[Any]], log: CheckLogger
+    need: NeedItem, condition: str | dict[str, list[Any]], log: CheckLogger
 ) -> bool:
     """Evaluate a condition on a need:
     1. Check if the condition is only a simple check (e.g. "status == valid")
@@ -101,16 +102,16 @@ def eval_need_condition(
 
 def filter_needs_by_criteria(
     needs_types: list[NeedType],
-    needs: list[NeedsInfoType],
+    needs: list[NeedItem],
     needs_selection_criteria: dict[str, str],
     log: CheckLogger,
-) -> list[NeedsInfoType]:
+) -> list[NeedItem]:
     """Create a list of needs that match the selection criteria.:
     - If it is an include selection add the include to the pattern
     - If it is an exclude selection add a "^" to the pattern
     """
 
-    selected_needs: list[NeedsInfoType] = []
+    selected_needs: list[NeedItem] = []
     pattern: list[str] = []
     need_pattern: str = list(needs_selection_criteria.keys())[0]
     # Verify Inputs
