@@ -21,7 +21,6 @@ jobs:
       # Run your Python script to parse the linkcheck log and generate issue body
       - name: Parse broken links and generate issue body
         run: |
-          pip install --user dataclasses  # only for older Python, likely not needed 3.7+
           python3 scripts/link_parser.py linkcheck_output.txt
 
       # Check if issue_body.md exists and is not empty
@@ -29,9 +28,9 @@ jobs:
         id: detect
         run: |
           if [ -s issue_body.md ]; then
-            echo "issue_needed=true" >> $GITHUB_OUTPUT
+            echo "issue_needed=true" >> "$GITHUB_OUTPUT"
           else
-            echo "issue_needed=false" >> $GITHUB_OUTPUT
+            echo "issue_needed=false" >> "$GITHUB_OUTPUT"
           fi
 
       # Upload issue body artifact if present

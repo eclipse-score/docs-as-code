@@ -14,6 +14,7 @@ class BrokenLink:
     status: str
     reasoning: str
 
+
 def parse_broken_links(log: str) -> list[BrokenLink]:
     broken_links: list[BrokenLink] = []
     lines = log.strip().split("\n")
