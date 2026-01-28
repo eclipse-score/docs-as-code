@@ -100,7 +100,7 @@ def docs(source_dir = "docs", data = [], deps = []):
         visibility = ["//visibility:public"],
     )
 
-    data_with_docs_sources = _rewrite_needs_json_to_docs_sources(data)
+    data_with_docs_sources = _rewrite_needs_json_to_docs_sources(data) + ["@rules_python//python/runfiles"]
 
     py_binary(
         name = "docs",

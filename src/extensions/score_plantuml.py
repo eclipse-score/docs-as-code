@@ -24,75 +24,59 @@ Sphinx configuration.
 In addition it sets common PlantUML options, like output to svg_obj.
 """
 
-import os
 import sys
-from pathlib import Path
-
+import os
 from sphinx.application import Sphinx
 from sphinx.util import logging
 
+try:
+    from bazel_runfiles import runfiles
+except ImportError:
+    try:
+        from . import runfiles as runfiles
+    except ImportError:
+        import runfiles as runfiles
+    except Exception as e:
+        print("Could not import bazel_runfiles module.", file=sys.stderr)
+        raise e
+except Exception as e:
+    print("Could not import bazel_runfiles module.", file=sys.stderr)
+    raise e
+
 logger = logging.getLogger(__name__)
 
+# YOUR MODULE NAME (adjust as needed if it changes in bzlmod)
+MODULE_NAME_CANDIDATES = [
+    "score_docs_as_code+",
+    "score_docs_as_code~",
+    "_main",
+]
 
-def get_runfiles_dir() -> Path:
-    if r := os.getenv("RUNFILES_DIR"):
-        # Runfiles are only available when running in Bazel.
-        # bazel build and bazel run are both supported.
-        # i.e. `bazel build //:docs` and `bazel run //:docs`.
-        logger.debug("Using runfiles to determine plantuml path.")
+PLANTUML_REL_PATH = "src/plantuml"  # Or whatever your actual structure is
 
-        runfiles_dir = Path(r)
-
-    else:
-        # The only way to land here is when running from within the virtual
-        # environment created by the `:ide_support` rule in the BUILD file.
-        # i.e. esbonio or manual sphinx-build execution within the virtual
-        # environment.
-        # We'll still use the plantuml binary from the bazel build.
-        # But we need to find it first.
-        logger.debug("Running outside bazel.")
-
-        git_root = Path.cwd().resolve()
-        while not (git_root / ".git").exists():
-            git_root = git_root.parent
-            if git_root == Path("/"):
-                sys.exit("Could not find git root.")
-
-        runfiles_dir = git_root / "bazel-bin" / "ide_support.runfiles"
-
-    if not runfiles_dir.exists():
-        sys.exit(
-            f"Could not find runfiles_dir at {runfiles_dir}. "
-            "Have a look at README.md for instructions on how to build docs."
-        )
-    return runfiles_dir
-
-
-def find_correct_path(runfiles: Path) -> Path:
-    """
-    This ensures that the 'plantuml' binary path is found in local 'score_docs_as_code'
-    and module use.
-    """
-    if (Path(runfiles) / "score_docs_as_code+").exists():
-        # Docs-as-code used as a module with bazel 8
-        module = "score_docs_as_code+"
-    elif (Path(runfiles) / "score_docs_as_code~").exists():
-        # Docs-as-code used as a module with bazel 7
-        module = "score_docs_as_code~"
-    else:
-        # Docs-as-code is the current module
-        module = "_main"
-
-    return runfiles / module / "src" / "plantuml"
-
+def _find_plantuml_path():
+    r = runfiles.Create()
+    # Try all possible module prefixes
+    for module_prefix in MODULE_NAME_CANDIDATES:
+        key = f"{module_prefix}/{PLANTUML_REL_PATH}"
+        candidate = r.Rlocation(key)
+        if candidate and os.path.exists(candidate):
+            logger.debug(f"Found PlantUML at: {candidate}")
+            return candidate
+    msg = (
+        f"Could not find PlantUML binary in runfiles. "
+        f"Tried keys: {[f'{m}/{PLANTUML_REL_PATH}' for m in MODULE_NAME_CANDIDATES]}. "
+        "Have a look at README.md for instructions on how to build docs."
+    )
+    logger.error(msg)
+    raise FileNotFoundError(msg)
 
 def setup(app: Sphinx):
-    app.config.plantuml = str(find_correct_path(get_runfiles_dir()))
+    plantuml_bin = _find_plantuml_path()
+    app.config.plantuml = plantuml_bin
     app.config.plantuml_output_format = "svg_obj"
     app.config.plantuml_syntax_error_image = True
     app.config.needs_build_needumls = "_plantuml_sources"
 
-    logger.debug(f"PlantUML binary found at {app.config.plantuml}")
-
-    # The extension is not even active at runtime.
+    logger.info(f"PlantUML binary found at {app.config.plantuml}")
     return {"parallel_read_safe": True, "parallel_write_safe": True}
