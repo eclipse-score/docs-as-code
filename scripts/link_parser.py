@@ -31,6 +31,7 @@ EXAMPLE LOG INPUT:
 """
 import argparse
 import sys
+import re
 from dataclasses import dataclass
 
 PARSING_STATUSES = ["broken"]
@@ -100,13 +101,19 @@ Thank you!
 """
     return issue_body
 
+def strip_ansi_codes(text: str) -> str:
+    """Remove ANSI escape sequences from text"""
+    ansi_escape = re.compile(r"\x1b\[[0-9;]*m")
+    return ansi_escape.sub("", text)
+
 
 if __name__ == "__main__":
     argparse = argparse.ArgumentParser(description="Parse broken links from Sphinx log and generate issue body.")
     argparse.add_argument("logfile", type=str, help="Path to the Sphinx log file.")
     args = argparse.parse_args()
     with open(args.logfile, "r") as f:
-        log_content = f.read()
+        log_content_raw = f.read()
+    log_content = strip_ansi_codes(log_content_raw)
     broken_links = parse_broken_links(log_content)
     if not broken_links:
         # Nothing broken found, can exit early
