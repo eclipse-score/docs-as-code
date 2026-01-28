@@ -109,6 +109,8 @@ if __name__ == "__main__":
             builder = "html"
         elif action == "check":
             builder = "needs"
+        elif action == "linkcheck":
+            builder = "linkcheck"
         else:
             raise ValueError(f"Unknown action: {action}")
 
