@@ -16,7 +16,7 @@ jobs:
       - name: Run LinkChecker
         run: |
           bazel run //:link_check > linkcheck_output.txt
-          # or: sphinx-build ... 2>&1 | tee linkcheck_output.txt
+        continue-on-error: true
 
       # Run your Python script to parse the linkcheck log and generate issue body
       - name: Parse broken links and generate issue body
