@@ -8,10 +8,6 @@
     "url": "https://eclipse-score.github.io/docs-as-code/pr-318/"
   },
   {
-    "version": "pr-330",
-    "url": "https://eclipse-score.github.io/docs-as-code/pr-330/"
-  },
-  {
     "version": "pr-332",
     "url": "https://eclipse-score.github.io/docs-as-code/pr-332/"
   },
@@ -50,9 +46,5 @@
   {
     "version": "pr-367",
     "url": "https://eclipse-score.github.io/docs-as-code/pr-367/"
-  },
-  {
-    "version": "pr-370",
-    "url": "https://eclipse-score.github.io/docs-as-code/pr-370/"
   }
 ]
