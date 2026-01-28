@@ -29,12 +29,14 @@ EXAMPLE LOG INPUT:
 (internals/extensions/extension_guide: line   46) ok        https://www.sphinx-doc.org/en/master/extdev/event_callbacks.html#core-events-overview
 (internals/extensions/extension_guide: line   45) ok        https://www.sphinx-doc.org/en/master/extdev/appapi.html#sphinx.application.Sphinx.connect
 """
+
 import argparse
 import sys
 import re
 from dataclasses import dataclass
 
 PARSING_STATUSES = ["broken"]
+
 
 @dataclass
 class BrokenLink:
@@ -43,6 +45,7 @@ class BrokenLink:
     url: str
     status: str
     reasoning: str
+
 
 # Make me a function that parses the above string and returns a list with all links that are broken or don't work and where they are in the documentation.
 # The string above is just an example. The actuall string will need to parse std out from a sphinx execution, or read a txt file that contains this format.
@@ -56,12 +59,12 @@ def parse_broken_links(log: str) -> list[BrokenLink]:
             continue
 
         location_part = parts[0].replace("(", "").strip()
-        location= location_part.split(":")[0].strip()
+        location = location_part.split(":")[0].strip()
         line_nr = location_part.split("line")[-1].strip()
         status_and_url_part = parts[1]
 
         if not any(status in status_and_url_part for status in PARSING_STATUSES):
-            continue 
+            continue
         status_and_url = status_and_url_part.split(" - ")
         # status = list(filter(None,status_and_url.split(' ')))
         if len(status_and_url) < 2:
@@ -69,17 +72,20 @@ def parse_broken_links(log: str) -> list[BrokenLink]:
         status, url = status_and_url[0].strip().split()
         reasoning = status_and_url[1].strip()
 
-        broken_links.append(BrokenLink(
-            location=location,
-            line_nr=line_nr,
-            url=url,
-            status=status,
-            reasoning=reasoning
-        ))
+        broken_links.append(
+            BrokenLink(
+                location=location,
+                line_nr=line_nr,
+                url=url,
+                status=status,
+                reasoning=reasoning,
+            )
+        )
 
     return broken_links
 
-# make me a function that takes the dictionary of parse_broken_links and puts them into a nice markdown table. 
+
+# make me a function that takes the dictionary of parse_broken_links and puts them into a nice markdown table.
 def generate_markdown_table(broken_links: list[BrokenLink]) -> str:
     table = "| Location | Line Number | URL | Status | Reasoning |\n"
     table += "|----------|-------------|-----|--------|-----------|\n"
@@ -101,6 +107,7 @@ Thank you!
 """
     return issue_body
 
+
 def strip_ansi_codes(text: str) -> str:
     """Remove ANSI escape sequences from text"""
     ansi_escape = re.compile(r"\x1b\[[0-9;]*m")
@@ -108,7 +115,9 @@ def strip_ansi_codes(text: str) -> str:
 
 
 if __name__ == "__main__":
-    argparse = argparse.ArgumentParser(description="Parse broken links from Sphinx log and generate issue body.")
+    argparse = argparse.ArgumentParser(
+        description="Parse broken links from Sphinx log and generate issue body."
+    )
     argparse.add_argument("logfile", type=str, help="Path to the Sphinx log file.")
     args = argparse.parse_args()
     with open(args.logfile, "r") as f:
@@ -122,6 +131,3 @@ if __name__ == "__main__":
     if broken_links:
         with open("issue_body.md", "w") as out:
             out.write(issue_body)
-
-
-
