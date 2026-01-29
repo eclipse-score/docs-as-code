@@ -30,42 +30,43 @@ from pathlib import Path
 
 from sphinx.application import Sphinx
 from sphinx.util import logging
+from src.find_runfiles import get_runfiles_dir
 
 logger = logging.getLogger(__name__)
 
 
-def get_runfiles_dir() -> Path:
-    if r := os.getenv("RUNFILES_DIR"):
-        # Runfiles are only available when running in Bazel.
-        # bazel build and bazel run are both supported.
-        # i.e. `bazel build //:docs` and `bazel run //:docs`.
-        logger.debug("Using runfiles to determine plantuml path.")
-
-        runfiles_dir = Path(r)
-
-    else:
-        # The only way to land here is when running from within the virtual
-        # environment created by the `:ide_support` rule in the BUILD file.
-        # i.e. esbonio or manual sphinx-build execution within the virtual
-        # environment.
-        # We'll still use the plantuml binary from the bazel build.
-        # But we need to find it first.
-        logger.debug("Running outside bazel.")
-
-        git_root = Path.cwd().resolve()
-        while not (git_root / ".git").exists():
-            git_root = git_root.parent
-            if git_root == Path("/"):
-                sys.exit("Could not find git root.")
-
-        runfiles_dir = git_root / "bazel-bin" / "ide_support.runfiles"
-
-    if not runfiles_dir.exists():
-        sys.exit(
-            f"Could not find runfiles_dir at {runfiles_dir}. "
-            "Have a look at README.md for instructions on how to build docs."
-        )
-    return runfiles_dir
+# def get_runfiles_dir() -> Path:
+#     if r := os.getenv("RUNFILES_DIR"):
+#         # Runfiles are only available when running in Bazel.
+#         # bazel build and bazel run are both supported.
+#         # i.e. `bazel build //:docs` and `bazel run //:docs`.
+#         logger.debug("Using runfiles to determine plantuml path.")
+#
+#         runfiles_dir = Path(r)
+#
+#     else:
+#         # The only way to land here is when running from within the virtual
+#         # environment created by the `:ide_support` rule in the BUILD file.
+#         # i.e. esbonio or manual sphinx-build execution within the virtual
+#         # environment.
+#         # We'll still use the plantuml binary from the bazel build.
+#         # But we need to find it first.
+#         logger.debug("Running outside bazel.")
+#
+#         git_root = Path.cwd().resolve()
+#         while not (git_root / ".git").exists():
+#             git_root = git_root.parent
+#             if git_root == Path("/"):
+#                 sys.exit("Could not find git root.")
+#
+#         runfiles_dir = git_root / "bazel-bin" / "ide_support.runfiles"
+#
+#     if not runfiles_dir.exists():
+#         sys.exit(
+#             f"Could not find runfiles_dir at {runfiles_dir}. "
+#             "Have a look at README.md for instructions on how to build docs."
+#         )
+#     return runfiles_dir
 
 
 def find_correct_path(runfiles: Path) -> Path:
