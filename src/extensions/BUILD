@@ -18,6 +18,7 @@ load("@score_tooling//:defs.bzl", "score_py_pytest", "score_virtualenv")
 py_library(
     name = "score_plantuml",
     srcs = ["@score_docs_as_code//src/extensions:score_plantuml.py"],
+    deps = ["@score_docs_as_code//src/find_runfiles"],
     imports = ["."],
     visibility = ["//visibility:public"],
 )

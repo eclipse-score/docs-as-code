@@ -49,6 +49,7 @@ java_binary(
 py_library(
     name = "plantuml_for_python",
     srcs = ["@score_docs_as_code//src:dummy.py"],
+    #deps = ["@score_docs_as_code//src/find_runfiles"],
     data = ["@score_docs_as_code//src:plantuml"],
     visibility = ["//visibility:public"],
 )

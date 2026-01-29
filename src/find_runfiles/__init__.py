@@ -44,74 +44,73 @@ def find_git_root() -> Path:
     )
 
 
-def get_runfiles_dir_impl(
-    cwd: Path,
-    conf_dir: Path,
-    env_runfiles: Path | None,
-    git_root: Path,
-) -> Path:
-    """Functional (and therefore testable) logic to determine the runfiles directory."""
-
-    _log_debug(
-        f"get_runfiles_dir_impl(\n  cwd={cwd},\n  conf_dir={conf_dir},\n"
-        f"  env_runfiles={env_runfiles},\n  git_root={git_root}\n)"
-    )
-
-    if env_runfiles:
+def get_runfiles_dir() -> Path:
+    """Runfiles directory relative to conf.py"""
+    if r := os.getenv("RUNFILES_DIR"):
         # Runfiles are only available when running in Bazel.
-        # Both `bazel build` and `bazel run` are supported.
+        # bazel build and bazel run are both supported.
         # i.e. `bazel build //:docs` and `bazel run //:docs`.
-        _log_debug("Using env[RUNFILES_DIR] to find the runfiles...")
+        logger.debug("Using runfiles to determine plantuml path.")
 
-        if env_runfiles.is_absolute() and "bazel-out" in env_runfiles.parts:
-            # In case of `bazel run` it will point to the global cache directory,
-            # which has a new hash every time. And it's not pretty.
-            # However, `bazel-out` is a symlink to that same cache directory!
-            try:
-                idx = env_runfiles.parts.index("bazel-out")
-                runfiles_dir = git_root.joinpath(*env_runfiles.parts[idx:])
-                _log_debug(f"Made runfiles dir pretty: {runfiles_dir}")
-            except ValueError:
-                sys.exit("Could not find bazel-out in runfiles path.")
-        else:
-            runfiles_dir = git_root / env_runfiles
+        runfiles_dir = Path(r)
 
     else:
         # The only way to land here is when running from within the virtual
-        # environment created by the `:ide_support` rule.
+        # environment created by the `:ide_support` rule in the BUILD file.
         # i.e. esbonio or manual sphinx-build execution within the virtual
         # environment.
-        _log_debug("Running outside bazel.")
+        # We'll still use the plantuml binary from the bazel build.
+        # But we need to find it first.
+        logger.debug("Running outside bazel.")
 
-        # TODO: "process-docs" is in SOURCE_DIR!!
-        runfiles_dir = git_root / "bazel-bin" / "process-docs" / "ide_support.runfiles"
+        git_root = Path.cwd().resolve()
+        while not (git_root / ".git").exists():
+            git_root = git_root.parent
+            if git_root == Path("/"):
+                sys.exit("Could not find git root.")
 
+        runfiles_dir = git_root / "bazel-bin" / "ide_support.runfiles"
+
+    if not runfiles_dir.exists():
+        sys.exit(
+            f"Could not find runfiles_dir at {runfiles_dir}. "
+            "Have a look at README.md for instructions on how to build docs."
+        )
     return runfiles_dir
 
 
-def get_runfiles_dir() -> Path:
-    """Runfiles directory relative to conf.py"""
-
-    # FIXME CONF_DIRECTORY is our invention. When running from esbonio, this is not
-    # set. It seems to provide app.confdir instead...
-    conf_dir = os.getenv("CONF_DIRECTORY")
-    assert conf_dir
-
-    env_runfiles = os.getenv("RUNFILES_DIR")
-
-    runfiles = Path(
-        get_runfiles_dir_impl(
-            cwd=Path(os.getcwd()),
-            conf_dir=Path(conf_dir),
-            env_runfiles=Path(env_runfiles) if env_runfiles else None,
-            git_root=find_git_root(),
-        )
-    )
-
-    if not runfiles.exists():
-        sys.exit(
-            f"Could not find runfiles at {runfiles}. Have a look at "
-            "README.md for instructions on how to build docs."
-        )
-
-    return runfiles
+    # _log_debug(
+    #     f"get_runfiles_dir_impl(\n  cwd={cwd},\n "
+    #     f"  env_runfiles={env_runfiles},\n  git_root={git_root}\n)"
+    # )
+    #
+    # if env_runfiles:
+    #     # Runfiles are only available when running in Bazel.
+    #     # Both `bazel build` and `bazel run` are supported.
+    #     # i.e. `bazel build //:docs` and `bazel run //:docs`.
+    #     _log_debug("Using env[RUNFILES_DIR] to find the runfiles...")
+    #
+    #     if env_runfiles.is_absolute() and "bazel-out" in env_runfiles.parts:
+    #         # In case of `bazel run` it will point to the global cache directory,
+    #         # which has a new hash every time. And it's not pretty.
+    #         # However, `bazel-out` is a symlink to that same cache directory!
+    #         try:
+    #             idx = env_runfiles.parts.index("bazel-out")
+    #             runfiles_dir = git_root.joinpath(*env_runfiles.parts[idx:])
+    #             _log_debug(f"Made runfiles dir pretty: {runfiles_dir}")
+    #         except ValueError:
+    #             sys.exit("Could not find bazel-out in runfiles path.")
+    #     else:
+    #         runfiles_dir = git_root / env_runfiles
+    #
+    # else:
+    #     # The only way to land here is when running from within the virtual
+    #     # environment created by the `:ide_support` rule.
+    #     # i.e. esbonio or manual sphinx-build execution within the virtual
+    #     # environment.
+    #     _log_debug("Running outside bazel.")
+    #
+    #     # TODO: "process-docs" is in SOURCE_DIR!!
+    #     runfiles_dir = git_root / "bazel-bin" / "process-docs" / "ide_support.runfiles"
+    #
+    # return runfiles_dir
