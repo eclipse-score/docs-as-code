@@ -469,38 +469,25 @@ of <a class="reference internal" href="../internals/requirements/requirements.ht
 <h2>Scanning Source Code for Links<a class="headerlink" href="#scanning-source-code-for-links" title="Link to this heading">#</a></h2>
 <p>In you <code class="docutils literal notranslate"><span class="pre">BUILD</span></code> files, you specify which source files to scan
 with <code class="docutils literal notranslate"><span class="pre">filegroup</span></code> or <code class="docutils literal notranslate"><span class="pre">glob</span></code> or whatever Bazel mechanism you prefer.
-Then, you use the <code class="docutils literal notranslate"><span class="pre">sourcelinks_json</span></code> rule to scan those files.
-Finally, pass the scan results to the <code class="docutils literal notranslate"><span class="pre">docs</span></code> rule as <code class="docutils literal notranslate"><span class="pre">sourcelinks</span></code> attribute.</p>
-<div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="hll"><span class="linenos"> 1</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;//:docs.bzl&quot;</span><span class="p">,</span> <span class="s2">&quot;docs&quot;</span><span class="p">,</span> <span class="s2">&quot;sourcelinks_json&quot;</span><span class="p">)</span>
-</span><span class="linenos"> 2</span>
-<span class="linenos"> 3</span><span class="n">filegroup</span><span class="p">(</span>
-<span class="linenos"> 4</span>   <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;some_sources&quot;</span><span class="p">,</span>
-<span class="linenos"> 5</span>   <span class="n">srcs</span> <span class="o">=</span> <span class="p">[</span>
-<span class="linenos"> 6</span>       <span class="s2">&quot;foo.py&quot;</span><span class="p">,</span>
-<span class="linenos"> 7</span>       <span class="s2">&quot;bar.cpp&quot;</span><span class="p">,</span>
-<span class="linenos"> 8</span>       <span class="s2">&quot;data.yaml&quot;</span><span class="p">,</span>
-<span class="linenos"> 9</span>   <span class="p">]</span> <span class="o">+</span> <span class="n">glob</span><span class="p">([</span><span class="s2">&quot;subdir/**/.py&quot;</span><span class="p">]),</span>
-<span class="linenos">10</span><span class="p">)</span>
-<span class="linenos">11</span>
-<span class="hll"><span class="linenos">12</span><span class="n">sourcelinks_json</span><span class="p">(</span>
-</span><span class="linenos">13</span>   <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;my_source_links&quot;</span><span class="p">,</span>
-<span class="linenos">14</span>   <span class="n">srcs</span> <span class="o">=</span> <span class="p">[</span>
-<span class="linenos">15</span>      <span class="s2">&quot;:some_sources&quot;</span><span class="p">,</span>
-<span class="linenos">16</span>      <span class="s2">&quot;//src:all_sources&quot;</span><span class="p">,</span>
-<span class="linenos">17</span>      <span class="c1"># whatever</span>
-<span class="linenos">18</span>   <span class="p">],</span>
-<span class="linenos">19</span><span class="p">)</span>
-<span class="linenos">20</span>
-<span class="linenos">21</span><span class="n">docs</span><span class="p">(</span>
-<span class="linenos">22</span>   <span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
-<span class="linenos">23</span>          <span class="s2">&quot;@score_process//:needs_json&quot;</span><span class="p">,</span>
-<span class="linenos">24</span>      <span class="p">],</span>
-<span class="linenos">25</span>      <span class="n">source_dir</span> <span class="o">=</span> <span class="s2">&quot;docs&quot;</span><span class="p">,</span>
-<span class="hll"><span class="linenos">26</span>      <span class="n">sourcelinks</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;:my_source_links&quot;</span><span class="p">],</span>
-</span><span class="linenos">27</span><span class="p">)</span>
+Finally, pass the scan results to the <code class="docutils literal notranslate"><span class="pre">docs</span></code> rule as <code class="docutils literal notranslate"><span class="pre">scan_code</span></code> attribute.</p>
+<div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="n">filegroup</span><span class="p">(</span>
+<span class="linenos"> 2</span>   <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;some_sources&quot;</span><span class="p">,</span>
+<span class="linenos"> 3</span>   <span class="n">srcs</span> <span class="o">=</span> <span class="p">[</span>
+<span class="linenos"> 4</span>       <span class="s2">&quot;foo.py&quot;</span><span class="p">,</span>
+<span class="linenos"> 5</span>       <span class="s2">&quot;bar.cpp&quot;</span><span class="p">,</span>
+<span class="linenos"> 6</span>       <span class="s2">&quot;data.yaml&quot;</span><span class="p">,</span>
+<span class="linenos"> 7</span>   <span class="p">]</span> <span class="o">+</span> <span class="n">glob</span><span class="p">([</span><span class="s2">&quot;subdir/**/.py&quot;</span><span class="p">]),</span>
+<span class="linenos"> 8</span><span class="p">)</span>
+<span class="linenos"> 9</span>
+<span class="linenos">10</span><span class="n">docs</span><span class="p">(</span>
+<span class="linenos">11</span>   <span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
+<span class="linenos">12</span>          <span class="s2">&quot;@score_process//:needs_json&quot;</span><span class="p">,</span>
+<span class="linenos">13</span>      <span class="p">],</span>
+<span class="linenos">14</span>      <span class="n">source_dir</span> <span class="o">=</span> <span class="s2">&quot;docs&quot;</span><span class="p">,</span>
+<span class="hll"><span class="linenos">15</span>      <span class="n">scan_code</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;:some_sources&quot;</span><span class="p">],</span>
+</span><span class="linenos">16</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Since the source links are Bazel targets, you can easily reference other modules as well.</p>
 </section>
 </section>
 
