@@ -15,8 +15,8 @@ from typing import Any
 
 from docutils.nodes import Node
 from sphinx_needs import logging
-from sphinx_needs.data import NeedsInfoType
 from sphinx_needs.logging import SphinxLoggerAdapter
+from sphinx_needs.need_item import NeedItem
 
 Location = str | tuple[str | None, int | None] | Node | None
 NewCheck = tuple[str, Location]
@@ -32,7 +32,7 @@ class CheckLogger:
         self._new_checks: list[NewCheck] = []
 
     @staticmethod
-    def _location(need: NeedsInfoType, prefix: str):
+    def _location(need: NeedItem, prefix: str):
         def get(key: str) -> Any:
             return need.get(key, None)
 
@@ -49,7 +49,7 @@ class CheckLogger:
         return None
 
     def warning_for_option(
-        self, need: NeedsInfoType, option: str, msg: str, is_new_check: bool = False
+        self, need: NeedItem, option: str, msg: str, is_new_check: bool = False
     ):
         full_msg = f"{need['id']}.{option} ({need.get(option, None)}): {msg}"
         location = CheckLogger._location(need, self._prefix)
@@ -57,7 +57,7 @@ class CheckLogger:
 
     def warning_for_link(
         self,
-        need: NeedsInfoType,
+        need: NeedItem,
         option: str,
         problematic_value: str,
         allowed_values: list[str],
@@ -75,9 +75,7 @@ class CheckLogger:
 
         self.warning_for_need(need, msg, is_new_check=is_new_check)
 
-    def warning_for_need(
-        self, need: NeedsInfoType, msg: str, is_new_check: bool = False
-    ):
+    def warning_for_need(self, need: NeedItem, msg: str, is_new_check: bool = False):
         full_msg = f"{need['id']}: {msg}"
         location = CheckLogger._location(need, self._prefix)
         self._log_message(full_msg, location, is_new_check)

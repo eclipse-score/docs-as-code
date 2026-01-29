@@ -11,6 +11,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 import re
+from typing import cast
 
 from score_metamodel import (
     CheckLogger,
@@ -20,7 +21,7 @@ from score_metamodel import (
 )
 from score_metamodel.metamodel_types import AllowedLinksType
 from sphinx.application import Sphinx
-from sphinx_needs.data import NeedsInfoType
+from sphinx_needs.need_item import NeedItem
 
 
 def get_need_type(needs_types: list[ScoreNeedType], directive: str) -> ScoreNeedType:
@@ -31,9 +32,7 @@ def get_need_type(needs_types: list[ScoreNeedType], directive: str) -> ScoreNeed
     raise ValueError(f"Need type {directive} not found in needs_types")
 
 
-def _get_normalized(
-    need: NeedsInfoType, key: str, remove_prefix: bool = False
-) -> list[str]:
+def _get_normalized(need: NeedItem, key: str, remove_prefix: bool = False) -> list[str]:
     """Normalize a raw value into a list of strings."""
     raw_value = need.get(key, None)
     if not raw_value:
@@ -42,17 +41,23 @@ def _get_normalized(
         if remove_prefix:
             return [_remove_namespace_prefix_(raw_value)]
         return [raw_value]
-    if isinstance(raw_value, list) and all(isinstance(v, str) for v in raw_value):
+    if isinstance(raw_value, list):
+        # Verify all elements are strings
+        raw_list = cast(list[object], raw_value)
+        for item in raw_list:
+            if not isinstance(item, str):
+                raise ValueError
+        str_list = cast(list[str], raw_value)
         if remove_prefix:
-            return [_remove_namespace_prefix_(v) for v in raw_value]
-        return raw_value
+            return [_remove_namespace_prefix_(v) for v in str_list]
+        return str_list
     raise ValueError
 
 
 def _validate_value_pattern(
     value: str,
     pattern: str,
-    need: NeedsInfoType,
+    need: NeedItem,
     field: str,
 ):
     """Check if a value matches the given pattern and log the result.
@@ -76,7 +81,7 @@ def _remove_namespace_prefix_(word: str) -> str:
 def validate_options(
     log: CheckLogger,
     need_type: ScoreNeedType,
-    need: NeedsInfoType,
+    need: NeedItem,
 ):
     """
     Validates that options in a need match their expected patterns.
@@ -103,7 +108,7 @@ def validate_options(
 def validate_links(
     log: CheckLogger,
     need_type: ScoreNeedType,
-    need: NeedsInfoType,
+    need: NeedItem,
 ):
     """
     Validates that links in a need match the expected types or regexes.
@@ -156,7 +161,7 @@ def validate_links(
 @local_check
 def check_options(
     app: Sphinx,
-    need: NeedsInfoType,
+    need: NeedItem,
     log: CheckLogger,
 ):
     """
@@ -172,7 +177,7 @@ def check_options(
 @local_check
 def check_extra_options(
     app: Sphinx,
-    need: NeedsInfoType,
+    need: NeedItem,
     log: CheckLogger,
 ):
     """
@@ -224,7 +229,7 @@ def parse_milestone(value: str) -> tuple[int, int, int]:
 @local_check
 def check_validity_consistency(
     app: Sphinx,
-    need: NeedsInfoType,
+    need: NeedItem,
     log: CheckLogger,
 ):
     """

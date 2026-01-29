@@ -16,7 +16,7 @@ from typing import cast
 
 from score_metamodel import CheckLogger, ProhibitedWordCheck, ScoreNeedType, local_check
 from sphinx.application import Sphinx
-from sphinx_needs.data import NeedsInfoType
+from sphinx_needs.need_item import NeedItem
 
 
 def get_need_type(needs_types: list[ScoreNeedType], directive: str) -> ScoreNeedType:
@@ -29,7 +29,7 @@ def get_need_type(needs_types: list[ScoreNeedType], directive: str) -> ScoreNeed
 
 # req-Id: tool_req__docs_common_attr_id_scheme
 @local_check
-def check_id_format(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
+def check_id_format(app: Sphinx, need: NeedItem, log: CheckLogger):
     """
     Checking if the title, directory and feature are included in
     the requirement id or not.
@@ -57,7 +57,7 @@ def check_id_format(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
 
 
 @local_check
-def check_id_length(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
+def check_id_length(app: Sphinx, need: NeedItem, log: CheckLogger):
     """
     Validates that the requirement ID does not exceed the hard limit of 45 characters.
     While the recommended limit is 30 characters, this check enforces a strict maximum
@@ -85,7 +85,7 @@ def check_id_length(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
 
 
 def _check_options_for_prohibited_words(
-    prohibited_word_checks: ProhibitedWordCheck, need: NeedsInfoType, log: CheckLogger
+    prohibited_word_checks: ProhibitedWordCheck, need: NeedItem, log: CheckLogger
 ):
     options: list[str] = [
         x for x in prohibited_word_checks.option_check if x != "types"
@@ -109,7 +109,7 @@ def _check_options_for_prohibited_words(
 # req-Id: tool_req__docs_common_attr_desc_wording
 # req-Id: tool_req__docs_common_attr_title
 @local_check
-def check_for_prohibited_words(app: Sphinx, need: NeedsInfoType, log: CheckLogger):
+def check_for_prohibited_words(app: Sphinx, need: NeedItem, log: CheckLogger):
     need_options = get_need_type(app.config.needs_types, need["type"])
     prohibited_word_checks: list[ProhibitedWordCheck] = (
         app.config.prohibited_words_checks

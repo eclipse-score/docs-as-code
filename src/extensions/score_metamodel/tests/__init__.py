@@ -10,13 +10,19 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-from typing import Any
+from typing import Any, cast
 from unittest.mock import MagicMock
 
 import pytest
 from sphinx.util.logging import SphinxLoggerAdapter
+from sphinx_needs.data import NeedsInfoType
+from sphinx_needs.need_item import (
+    NeedItem,
+    NeedItemSourceUnknown,
+    NeedsContent,
+)
 
-from src.extensions.score_metamodel import CheckLogger, NeedsInfoType
+from src.extensions.score_metamodel import CheckLogger
 
 
 def fake_check_logger():
@@ -101,12 +107,81 @@ def fake_check_logger():
     return FakeCheckLogger()
 
 
-def need(**kwargs: Any) -> NeedsInfoType:
-    """Convinience function to create a NeedsInfoType object with some defaults."""
+def need(**kwargs: Any) -> NeedItem:
+    """Convenience function to create a NeedItem object with some defaults."""
 
+    # Extract links (any list field that's not a core field)
+    link_keys = {
+        "links",
+    }
+    links = {k: kwargs.pop(k, []) for k in list(link_keys) if k in kwargs}
+
+    # Set defaults for core fields
     kwargs.setdefault("id", "test_need")
-    kwargs.setdefault("docname", "docname")
-    kwargs.setdefault("doctype", "rst")
-    kwargs.setdefault("lineno", "42")
+    kwargs.setdefault("type", "requirement")
+    kwargs.setdefault("title", "")
+    kwargs.setdefault("status", None)
+    kwargs.setdefault("tags", [])
+    kwargs.setdefault("collapse", False)
+    kwargs.setdefault("hide", False)
+    kwargs.setdefault("layout", None)
+    kwargs.setdefault("style", None)
+    kwargs.setdefault("external_css", "")
+    kwargs.setdefault("type_name", "")
+    kwargs.setdefault("type_prefix", "")
+    kwargs.setdefault("type_color", "")
+    kwargs.setdefault("type_style", "")
+    kwargs.setdefault("constraints", [])
+    kwargs.setdefault("arch", {})
+    kwargs.setdefault("sections", ())
+    kwargs.setdefault("signature", None)
+    kwargs.setdefault("has_dead_links", False)
+    kwargs.setdefault("has_forbidden_dead_links", False)
 
-    return NeedsInfoType(**kwargs)
+    # Build core dict (only NeedsInfoType fields)
+    core_keys = set(NeedsInfoType.__annotations__.keys())
+    core = cast(NeedsInfoType, {k: kwargs[k] for k in core_keys})
+
+    # Source/content keys to exclude from extras
+    source_content_keys = {
+        "docname",
+        "lineno",
+        "lineno_content",
+        "external_url",
+        "is_import",
+        "is_external",
+        "doctype",
+        "content",
+        "pre_content",
+        "post_content",
+    }
+
+    # Extract extras (any remaining kwargs not in core or source/content)
+    extras = {
+        k: v
+        for k, v in kwargs.items()
+        if k not in core_keys and k not in source_content_keys
+    }
+
+    # Create source
+    source = NeedItemSourceUnknown(
+        docname=kwargs.get("docname", "docname"),
+        lineno=kwargs.get("lineno", 42),
+        lineno_content=kwargs.get("lineno_content"),
+    )
+
+    # Create content
+    content = NeedsContent(
+        doctype=kwargs.get("doctype", ".rst"),
+        content=kwargs.get("content", ""),
+        pre_content=kwargs.get("pre_content"),
+        post_content=kwargs.get("post_content"),
+    )
+
+    return NeedItem(
+        source=source,
+        content=content,
+        core=core,
+        extras=extras,
+        links=links,
+    )
