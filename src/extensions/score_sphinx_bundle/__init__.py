@@ -16,6 +16,10 @@ from sphinx.application import Sphinx
 # Extensions are loaded in this order.
 # e.g. plantuml MUST be loaded before sphinx-needs
 score_extensions = [
+    # needs_config_writer must be loaded before score_metamodel
+    # due to conflict in priorities.
+    "needs_config_writer",
+    "score_sync_toml",
     "sphinxcontrib.plantuml",
     "score_plantuml",
     "sphinx_needs",
@@ -27,8 +31,6 @@ score_extensions = [
     "score_layout",
     "sphinx_collections",
     "sphinxcontrib.mermaid",
-    "needs_config_writer",
-    "score_sync_toml",
 ]
 
 
