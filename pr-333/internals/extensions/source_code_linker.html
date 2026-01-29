@@ -888,7 +888,7 @@ This extension integrates with <strong>Bazel</strong> and <strong>sphinx-needs</
 <hr class="docutils" />
 <section id="testlink-test-result-integration">
 <h3>✅ TestLink: Test Result Integration<a class="headerlink" href="#testlink-test-result-integration" title="Link to this heading">#</a></h3>
-<p>TestLink scans test result XMLs from Bazel and converts each test case with metadata into Sphinx external needs, allowing links from tests to requirements.
+<p>TestLink scans test result XMLs from Bazel (bazel-testlogs) or in the folder ‘tests-report’ and converts each test case with metadata into Sphinx external needs, allowing links from tests to requirements.
 This depends on the <code class="docutils literal notranslate"><span class="pre">attribute_plugin</span></code> in our tooling repository, find it <a class="reference external" href="https://github.com/eclipse-score/tooling/tree/main/python_basics/score_pytest">here</a></p>
 <section id="test-tagging-options">
 <h4>Test Tagging Options<a class="headerlink" href="#test-tagging-options" title="Link to this heading">#</a></h4>
@@ -921,7 +921,7 @@ This depends on the <code class="docutils literal notranslate"><span class="pre"
 <li><p>Scans <code class="docutils literal notranslate"><span class="pre">bazel-testlogs/</span></code> for <code class="docutils literal notranslate"><span class="pre">test.xml</span></code> files.</p></li>
 <li><p>Parses test cases and extracts:</p>
 <ul>
-<li><p>Name</p></li>
+<li><p>Name &amp; Classname</p></li>
 <li><p>File path</p></li>
 <li><p>Line</p></li>
 <li><p>Result (e.g. passed, failed, skipped)</p></li>
@@ -938,6 +938,11 @@ This depends on the <code class="docutils literal notranslate"><span class="pre"
 </li>
 </ul>
 </li>
+</ol>
+<blockquote>
+<div><p>If there is a Classname then it gets combined with the function name for the displayed link as follows: <code class="docutils literal notranslate"><span class="pre">Classname__Functionname</span></code></p>
+</div></blockquote>
+<ol class="arabic simple" start="2">
 <li><p><strong>Need Linking</strong></p>
 <ul class="simple">
 <li><p>Generates external Sphinx needs from <code class="docutils literal notranslate"><span class="pre">DataFromTestCase</span></code>.</p></li>
@@ -1220,7 +1225,7 @@ This depends on the <code class="docutils literal notranslate"><span class="pre"
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/eclipse-score/docs-as-code/edit/main/'docs'/internals/extensions/source_code_linker.md">
+    <a href="https://github.com/eclipse-score/docs-as-code/edit/main/docs/internals/extensions/source_code_linker.md">
       <i class="fa-solid fa-pencil"></i>
       
       
