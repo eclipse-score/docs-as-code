@@ -78,7 +78,6 @@ def get_runfiles_dir() -> Path:
         )
     return runfiles_dir
 
-
     # _log_debug(
     #     f"get_runfiles_dir_impl(\n  cwd={cwd},\n "
     #     f"  env_runfiles={env_runfiles},\n  git_root={git_root}\n)"
