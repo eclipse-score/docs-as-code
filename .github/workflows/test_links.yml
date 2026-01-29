@@ -1,0 +1,66 @@
+name: Link Check and Automated Issue
+
+on:
+  workflow_dispatch:
+
+jobs:
+  check-links:
+    runs-on: ubuntu-latest
+    outputs:
+      should_create_issue: ${{ steps.detect.outputs.issue_needed }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.2.2
+
+      # Run your link checker and generate log
+      - name: Run LinkChecker
+        run: |
+          bazel run //:link_check > linkcheck_output.txt
+        continue-on-error: true
+
+      # Run your Python script to parse the linkcheck log and generate issue body
+      - name: Parse broken links and generate issue body
+        run: |
+          python3 scripts/link_parser.py linkcheck_output.txt
+
+      # Check if issue_body.md exists and is not empty
+      - name: Check for issues to report
+        id: detect
+        run: |
+          if [ -s issue_body.md ]; then
+            echo "issue_needed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "issue_needed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Upload issue body artifact if present
+      - name: Upload issue body
+        if: steps.detect.outputs.issue_needed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: issue-body
+          path: issue_body.md
+
+  create-issue:
+    needs: check-links
+    if: needs.check-links.outputs.should_create_issue == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download issue body artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: issue-body
+
+      - name: Create GitHub issue from findings
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const body = fs.readFileSync('issue_body.md', 'utf-8');
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: "Automated Issue: Broken Documentation Links",
+              body,
+            });
