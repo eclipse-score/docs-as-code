@@ -14,12 +14,15 @@ load("@aspect_rules_py//py:defs.bzl", "py_library")
 load("@pip_process//:requirements.bzl", "all_requirements")
 load("@score_tooling//:defs.bzl", "score_py_pytest")
 
+filegroup(
+    name = "all_sources",
+    srcs = glob(["*.py"]),
+    visibility = ["//visibility:public"],
+)
+
 py_library(
     name = "helper_lib",
-    srcs = [
-        "__init__.py",
-        "additional_functions.py",
-    ],
+    srcs = [":all_sources"],
     imports = ["."],
     visibility = ["//visibility:public"],
     deps = ["@score_docs_as_code//src/extensions/score_source_code_linker:source_code_linker_helpers"],

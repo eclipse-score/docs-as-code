@@ -56,11 +56,39 @@ def _rewrite_needs_json_to_docs_sources(labels):
             out.append(s)
     return out
 
-def docs(source_dir = "docs", data = [], deps = []):
+def _merge_sourcelinks(name, sourcelinks):
+    """Merge multiple sourcelinks JSON files into a single file.
+
+    Args:
+        name: Name for the merged sourcelinks target
+        sourcelinks: List of sourcelinks JSON file targets
     """
-    Creates all targets related to documentation.
+
+    native.genrule(
+        name = name,
+        srcs = sourcelinks,
+        outs = [name + ".json"],
+        cmd = """
+        $(location @score_docs_as_code//scripts_bazel:merge_sourcelinks) \
+            --output $@ \
+            $(SRCS)
+        """,
+        tools = ["@score_docs_as_code//scripts_bazel:merge_sourcelinks"],
+    )
+
+def docs(source_dir = "docs", data = [], deps = [], sourcelinks = []):
+    """Creates all targets related to documentation.
+
     By using this function, you'll get any and all updates for documentation targets in one place.
+
+    Args:
+      source_dir: The source directory containing documentation files. Defaults to "docs".
+      data: Additional data files to include in the documentation build.
+      deps: Additional dependencies for the documentation build.
+      sourcelinks: Source code links configuration for traceability.
     """
+
+    _merge_sourcelinks(name = "merged_sourcelinks", sourcelinks = sourcelinks)
 
     call_path = native.package_name()
 
@@ -106,12 +134,13 @@ def docs(source_dir = "docs", data = [], deps = []):
         name = "docs",
         tags = ["cli_help=Build documentation:\nbazel run //:docs"],
         srcs = ["@score_docs_as_code//src:incremental.py"],
-        data = data,
+        data = data + [":merged_sourcelinks"],
         deps = deps,
         env = {
             "SOURCE_DIRECTORY": source_dir,
             "DATA": str(data),
             "ACTION": "incremental",
+            "SCORE_SOURCELINKS": "$(location :merged_sourcelinks)",
         },
     )
 
@@ -119,12 +148,13 @@ def docs(source_dir = "docs", data = [], deps = []):
         name = "docs_combo_experimental",
         tags = ["cli_help=Build full documentation with all dependencies:\nbazel run //:docs_combo_experimental"],
         srcs = ["@score_docs_as_code//src:incremental.py"],
-        data = data_with_docs_sources,
+        data = data_with_docs_sources + [":merged_sourcelinks"],
         deps = deps,
         env = {
             "SOURCE_DIRECTORY": source_dir,
             "DATA": str(data_with_docs_sources),
             "ACTION": "incremental",
+            "SCORE_SOURCELINKS": "$(location :merged_sourcelinks)",
         },
     )
 
@@ -132,12 +162,13 @@ def docs(source_dir = "docs", data = [], deps = []):
         name = "docs_check",
         tags = ["cli_help=Verify documentation:\nbazel run //:docs_check"],
         srcs = ["@score_docs_as_code//src:incremental.py"],
-        data = data,
+        data = data + [":merged_sourcelinks"],
         deps = deps,
         env = {
             "SOURCE_DIRECTORY": source_dir,
             "DATA": str(data),
             "ACTION": "check",
+            "SCORE_SOURCELINKS": "$(location :merged_sourcelinks)",
         },
     )
 
@@ -145,12 +176,13 @@ def docs(source_dir = "docs", data = [], deps = []):
         name = "live_preview",
         tags = ["cli_help=Live preview documentation in the browser:\nbazel run //:live_preview"],
         srcs = ["@score_docs_as_code//src:incremental.py"],
-        data = data,
+        data = data + [":merged_sourcelinks"],
         deps = deps,
         env = {
             "SOURCE_DIRECTORY": source_dir,
             "DATA": str(data),
             "ACTION": "live_preview",
+            "SCORE_SOURCELINKS": "$(location :merged_sourcelinks)",
         },
     )
 
@@ -158,12 +190,13 @@ def docs(source_dir = "docs", data = [], deps = []):
         name = "live_preview_combo_experimental",
         tags = ["cli_help=Live preview full documentation with all dependencies in the browser:\nbazel run //:live_preview_combo_experimental"],
         srcs = ["@score_docs_as_code//src:incremental.py"],
-        data = data_with_docs_sources,
+        data = data_with_docs_sources + [":merged_sourcelinks"],
         deps = deps,
         env = {
             "SOURCE_DIRECTORY": source_dir,
             "DATA": str(data_with_docs_sources),
             "ACTION": "live_preview",
+            "SCORE_SOURCELINKS": "$(location :merged_sourcelinks)",
         },
     )
 
@@ -192,4 +225,30 @@ def docs(source_dir = "docs", data = [], deps = []):
         sphinx = ":sphinx_build",
         tools = data,
         visibility = ["//visibility:public"],
+    )
+
+def sourcelinks_json(name, srcs, visibility = None):
+    """
+    Creates a target that generates a JSON file with source code links.
+
+    See https://eclipse-score.github.io/docs-as-code/main/how-to/source_to_doc_links.html
+
+    Args:
+        name: Name of the target
+        srcs: Source files to scan for traceability tags
+        visibility: Visibility of the target
+    """
+    output_file = name + ".json"
+
+    native.genrule(
+        name = name,
+        srcs = srcs,
+        outs = [output_file],
+        cmd = """
+        $(location @score_docs_as_code//scripts_bazel:generate_sourcelinks) \
+            --output $@ \
+            $(SRCS)
+        """,
+        tools = ["@score_docs_as_code//scripts_bazel:generate_sourcelinks"],
+        visibility = visibility,
     )

@@ -1,5 +1,5 @@
 # *******************************************************************************
-# Copyright (c) 2025 Contributors to the Eclipse Foundation
+# Copyright (c) 2026 Contributors to the Eclipse Foundation
 #
 # See the NOTICE file(s) distributed with this work for additional
 # information regarding copyright ownership.
@@ -10,28 +10,29 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-load("@aspect_rules_py//py:defs.bzl", "py_library")
+
+load("@aspect_rules_py//py:defs.bzl", "py_binary")
 load("@pip_process//:requirements.bzl", "all_requirements")
-load("@score_tooling//:defs.bzl", "score_py_pytest")
 
 filegroup(
-    name = "all_sources",
-    srcs = glob(["*.py"]),
+    name = "sources",
+    srcs = glob(["**/*.py"]),
     visibility = ["//visibility:public"],
 )
 
-py_library(
-    name = "find_runfiles",
-    srcs = [":all_sources"],
-    imports = ["."],
+py_binary(
+    name = "generate_sourcelinks",
+    srcs = ["generate_sourcelinks_cli.py"],
+    main = "generate_sourcelinks_cli.py",
     visibility = ["//visibility:public"],
-)
-
-score_py_pytest(
-    name = "find_runfiles_test",
-    size = "small",
-    srcs = ["test_find_runfiles.py"],
     deps = [
-        ":find_runfiles",
+        "//src/extensions/score_source_code_linker",
     ] + all_requirements,
+)
+
+py_binary(
+    name = "merge_sourcelinks",
+    srcs = ["merge_sourcelinks.py"],
+    main = "merge_sourcelinks.py",
+    visibility = ["//visibility:public"],
 )

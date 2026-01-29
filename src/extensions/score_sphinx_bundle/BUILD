@@ -13,9 +13,15 @@
 load("@aspect_rules_py//py:defs.bzl", "py_library")
 load("@pip_process//:requirements.bzl", "all_requirements")
 
+filegroup(
+    name = "all_sources",
+    srcs = ["__init__.py"],
+    visibility = ["//visibility:public"],
+)
+
 py_library(
     name = "score_sphinx_bundle",
-    srcs = ["__init__.py"],
+    srcs = [":all_sources"],
     visibility = ["//visibility:public"],
     deps = all_requirements + [
         "@score_docs_as_code//src/extensions:score_plantuml",

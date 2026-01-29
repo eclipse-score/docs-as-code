@@ -10,16 +10,20 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
+
 load("@aspect_rules_py//py:defs.bzl", "py_library")
 load("@pip_process//:requirements.bzl", "all_requirements")
 load("@score_tooling//:defs.bzl", "score_py_pytest")
 
+filegroup(
+    name = "all_sources",
+    srcs = glob(["*.py"]),
+    visibility = ["//visibility:public"],
+)
+
 py_library(
     name = "score_header_service",
-    srcs = glob(
-        ["*.py"],
-        exclude = ["test/**"],
-    ),
+    srcs = [":all_sources"],
     imports = ["."],
     visibility = ["//visibility:public"],
     # TODO: Figure out if all requirements are needed or if we can break it down a bit

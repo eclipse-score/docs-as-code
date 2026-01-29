@@ -21,9 +21,7 @@ from typing import Any
 
 import pytest
 from attribute_plugin import add_test_properties  # type: ignore[import-untyped]
-from sphinx_needs.data import NeedsMutable
-
-from src.extensions.score_metamodel.tests import need as test_need
+from sphinx_needs.data import NeedsInfoType, NeedsMutable
 
 # Import the module under test
 # Note: You'll need to adjust these imports based on your actual module structure
@@ -54,6 +52,17 @@ from src.helper_lib.additional_functions import get_github_link
 #          ╰──────────────────────────────────────╯
 
 """
+
+
+def test_need(**kwargs: Any) -> NeedsInfoType:
+    """Convinience function to create a NeedsInfoType object with some defaults."""
+
+    kwargs.setdefault("id", "test_need")
+    kwargs.setdefault("docname", "docname")
+    kwargs.setdefault("doctype", "rst")
+    kwargs.setdefault("lineno", "42")
+
+    return NeedsInfoType(**kwargs)
 
 
 def encode_comment(s: str) -> str:

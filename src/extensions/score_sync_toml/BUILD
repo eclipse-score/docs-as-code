@@ -10,15 +10,22 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
+
 load("@aspect_rules_py//py:defs.bzl", "py_library")
 load("@pip_process//:requirements.bzl", "requirement")
 
+filegroup(
+    name = "all_sources",
+    srcs = glob([
+        "*.py",
+        "*.toml",
+    ]),
+    visibility = ["//visibility:public"],
+)
+
 py_library(
     name = "score_sync_toml",
-    srcs = [
-        "__init__.py",
-        "shared.toml",
-    ],
+    srcs = [":all_sources"],
     imports = ["."],
     visibility = ["//visibility:public"],
     deps = [
