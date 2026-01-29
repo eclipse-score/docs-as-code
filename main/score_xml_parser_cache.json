@@ -20,7 +20,7 @@
   {
     "name": "test_returns_empty_list_when_filter_is_empty",
     "file": "src/extensions/score_metamodel/tests/test_metamodel__init__.py",
-    "line": 43,
+    "line": 45,
     "need": "tool_req__docs_metamodel",
     "verify_type": "partially",
     "result": "passed",
@@ -29,7 +29,7 @@
   {
     "name": "test_returns_valid_checks",
     "file": "src/extensions/score_metamodel/tests/test_metamodel__init__.py",
-    "line": 53,
+    "line": 55,
     "need": "tool_req__docs_metamodel",
     "verify_type": "partially",
     "result": "passed",
@@ -38,7 +38,7 @@
   {
     "name": "test_strips_whitespace",
     "file": "src/extensions/score_metamodel/tests/test_metamodel__init__.py",
-    "line": 64,
+    "line": 66,
     "need": "tool_req__docs_metamodel",
     "verify_type": "partially",
     "result": "passed",
@@ -47,7 +47,7 @@
   {
     "name": "test_raises_assertion_for_invalid_check",
     "file": "src/extensions/score_metamodel/tests/test_metamodel__init__.py",
-    "line": 75,
+    "line": 77,
     "need": "tool_req__docs_metamodel",
     "verify_type": "partially",
     "result": "passed",

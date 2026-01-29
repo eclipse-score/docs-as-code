@@ -377,7 +377,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/checks/check_options.py",
-          "line": 153,
+          "line": 158,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_status",
           "full_line": "# req-Id: tool_req__docs_common_attr_status"
@@ -597,7 +597,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/checks/check_options.py",
-          "line": 150,
+          "line": 155,
           "tag": "# req-Id:",
           "need": "tool_req__docs_req_attr_reqtype",
           "full_line": "# req-Id: tool_req__docs_req_attr_reqtype"
@@ -724,7 +724,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/checks/check_options.py",
-          "line": 152,
+          "line": 157,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_safety",
           "full_line": "# req-Id: tool_req__docs_common_attr_safety"
@@ -746,7 +746,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/checks/check_options.py",
-          "line": 154,
+          "line": 159,
           "tag": "# req-Id:",
           "need": "tool_req__docs_req_attr_rationale",
           "full_line": "# req-Id: tool_req__docs_req_attr_rationale"
@@ -873,7 +873,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/checks/check_options.py",
-          "line": 151,
+          "line": 156,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_security",
           "full_line": "# req-Id: tool_req__docs_common_attr_security"
@@ -1446,7 +1446,7 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/checks/check_options.py",
-          "line": 155,
+          "line": 160,
           "tag": "# req-Id:",
           "need": "tool_req__docs_arch_attr_mandatory",
           "full_line": "# req-Id: tool_req__docs_arch_attr_mandatory"
@@ -1461,7 +1461,7 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/checks/check_options.py",
-          "line": 223,
+          "line": 228,
           "tag": "# req-Id:",
           "need": "tool_req__docs_req_attr_validity_consistency",
           "full_line": "# req-Id: tool_req__docs_req_attr_validity_consistency"
@@ -1616,7 +1616,7 @@
         {
           "name": "test_returns_empty_list_when_filter_is_empty",
           "file": "src/extensions/score_metamodel/tests/test_metamodel__init__.py",
-          "line": 43,
+          "line": 45,
           "need": "tool_req__docs_metamodel",
           "verify_type": "partially",
           "result": "passed",
@@ -1625,7 +1625,7 @@
         {
           "name": "test_returns_valid_checks",
           "file": "src/extensions/score_metamodel/tests/test_metamodel__init__.py",
-          "line": 53,
+          "line": 55,
           "need": "tool_req__docs_metamodel",
           "verify_type": "partially",
           "result": "passed",
@@ -1634,7 +1634,7 @@
         {
           "name": "test_strips_whitespace",
           "file": "src/extensions/score_metamodel/tests/test_metamodel__init__.py",
-          "line": 64,
+          "line": 66,
           "need": "tool_req__docs_metamodel",
           "verify_type": "partially",
           "result": "passed",
@@ -1643,7 +1643,7 @@
         {
           "name": "test_raises_assertion_for_invalid_check",
           "file": "src/extensions/score_metamodel/tests/test_metamodel__init__.py",
-          "line": 75,
+          "line": 77,
           "need": "tool_req__docs_metamodel",
           "verify_type": "partially",
           "result": "passed",
