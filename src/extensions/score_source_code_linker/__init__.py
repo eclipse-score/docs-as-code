@@ -20,6 +20,7 @@ source code links from a JSON file and add them to the needs.
 # req-Id: tool_req__docs_dd_link_source_code_link
 # This whole directory implements the above mentioned tool requirements
 
+import os
 from collections import defaultdict
 from copy import deepcopy
 from pathlib import Path
@@ -130,9 +131,18 @@ def build_and_save_combined_file(outdir: Path):
     Reads the saved partial caches of codelink & testlink
     Builds the combined JSON cache & saves it
     """
-    source_code_links = load_source_code_links_json(
-        get_cache_filename(outdir, "score_source_code_linker_cache.json")
-    )
+    source_code_links_json = os.environ.get("SCORE_SOURCELINKS")
+    if not source_code_links_json:
+        # Fallback to the obsolete way of doing source code links,
+        # just in case someone is not using the docs(sourcelinks=...) attribute.
+        # TODO: Remove this once backwards compatibility is not needed anymore.
+        source_code_links_json = get_cache_filename(
+            outdir, "score_source_code_linker_cache.json"
+        )
+    else:
+        source_code_links_json = Path(source_code_links_json)
+
+    source_code_links = load_source_code_links_json(source_code_links_json)
     test_code_links = load_test_xml_parsed_json(
         get_cache_filename(outdir, "score_xml_parser_cache.json")
     )
@@ -172,6 +182,12 @@ def setup_source_code_linker(app: Sphinx, ws_root: Path):
         },
     }
 
+    score_sourcelinks_json = os.environ.get("SCORE_SOURCELINKS")
+    if score_sourcelinks_json:
+        # No need to generate the JSON file if this env var is set
+        # because it points to an existing file with the needed data.
+        return
+
     scl_cache_json = get_cache_filename(
         app.outdir, "score_source_code_linker_cache.json"
     )
@@ -196,6 +212,7 @@ def register_test_code_linker(app: Sphinx):
 
 
 def setup_test_code_linker(app: Sphinx, env: BuildEnvironment):
+    # TODO instead of implementing our own caching here, we should rely on Bazel
     tl_cache_json = get_cache_filename(app.outdir, "score_xml_parser_cache.json")
     if (
         not tl_cache_json.exists()
@@ -245,6 +262,7 @@ def register_combined_linker(app: Sphinx):
 def setup_combined_linker(app: Sphinx, _: BuildEnvironment):
     grouped_cache = get_cache_filename(app.outdir, "score_scl_grouped_cache.json")
     gruped_cache_exists = grouped_cache.exists()
+    # TODO this cache should be done via Bazel
     if not gruped_cache_exists or not app.config.skip_rescanning_via_source_code_linker:
         LOGGER.debug(
             "Did not find combined json 'score_scl_grouped_cache.json' in _build."

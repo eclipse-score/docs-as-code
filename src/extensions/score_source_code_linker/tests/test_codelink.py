@@ -21,9 +21,12 @@ from typing import Any
 
 import pytest
 from attribute_plugin import add_test_properties  # type: ignore[import-untyped]
-from sphinx_needs.data import NeedsMutable
-
-from src.extensions.score_metamodel.tests import need as test_need
+from sphinx_needs.data import NeedsInfoType, NeedsMutable
+from sphinx_needs.need_item import (
+    NeedItem,
+    NeedItemSourceUnknown,
+    NeedsContent,
+)
 
 # Import the module under test
 # Note: You'll need to adjust these imports based on your actual module structure
@@ -54,6 +57,53 @@ from src.helper_lib.additional_functions import get_github_link
 #          ╰──────────────────────────────────────╯
 
 """
+
+
+def test_need(**kwargs: Any) -> NeedItem:
+    """Convenience function to create a NeedItem object with some defaults."""
+
+    kwargs.setdefault("id", "test_need")
+    kwargs.setdefault("type", "requirement")
+    kwargs.setdefault("title", "")
+    kwargs.setdefault("status", None)
+    kwargs.setdefault("tags", [])
+    kwargs.setdefault("collapse", False)
+    kwargs.setdefault("hide", False)
+    kwargs.setdefault("layout", None)
+    kwargs.setdefault("style", None)
+    kwargs.setdefault("external_css", "")
+    kwargs.setdefault("type_name", "")
+    kwargs.setdefault("type_prefix", "")
+    kwargs.setdefault("type_color", "")
+    kwargs.setdefault("type_style", "")
+    kwargs.setdefault("constraints", [])
+    kwargs.setdefault("arch", {})
+    kwargs.setdefault("sections", ())
+    kwargs.setdefault("signature", None)
+    kwargs.setdefault("has_dead_links", False)
+    kwargs.setdefault("has_forbidden_dead_links", False)
+
+    # Create source
+    source = NeedItemSourceUnknown(
+        docname=kwargs.get("docname", "docname"),
+        lineno=kwargs.get("lineno", 42),
+        lineno_content=kwargs.get("lineno_content"),
+    )
+
+    # Create content
+    content = NeedsContent(
+        doctype=kwargs.get("doctype", ".rst"),
+        content=kwargs.get("content", ""),
+        pre_content=kwargs.get("pre_content"),
+        post_content=kwargs.get("post_content"),
+    )
+    return NeedItem(
+        source=source,
+        content=content,
+        core=NeedsInfoType(**kwargs),
+        extras={},
+        links={},
+    )
 
 
 def encode_comment(s: str) -> str:

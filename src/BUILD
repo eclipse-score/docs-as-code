@@ -10,14 +10,11 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
+
 load("@aspect_rules_lint//format:defs.bzl", "format_multirun", "format_test")
-load("@aspect_rules_py//py:defs.bzl", "py_binary", "py_library")
-load("@pip_process//:requirements.bzl", "all_requirements", "requirement")
-load("@rules_pkg//pkg:mappings.bzl", "pkg_files")
-load("@rules_pkg//pkg:tar.bzl", "pkg_tar")
+load("@aspect_rules_py//py:defs.bzl", "py_library")
 load("@rules_python//python:pip.bzl", "compile_pip_requirements")
-load("@rules_python//sphinxdocs:sphinx.bzl", "sphinx_build_binary")
-load("@score_tooling//:defs.bzl", "dash_license_checker", "score_virtualenv")
+load("@score_tooling//:defs.bzl", "dash_license_checker")
 
 # These are only exported because they're passed as files to the //docs.bzl
 # macros, and thus must be visible to other packages. They should only be
@@ -28,6 +25,25 @@ exports_files(
         "requirements.txt",
         "incremental.py",
         "dummy.py",
+        "generate_sourcelinks_cli.py",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "all_sources",
+    srcs = glob(
+        ["*.py"],
+    ) + [
+        "//src/extensions/score_draw_uml_funcs:all_sources",
+        "//src/extensions/score_header_service:all_sources",
+        "//src/extensions/score_layout:all_sources",
+        "//src/extensions/score_metamodel:all_sources",
+        "//src/extensions/score_source_code_linker:all_sources",
+        "//src/extensions/score_sphinx_bundle:all_sources",
+        "//src/extensions/score_sync_toml:all_sources",
+        "//src/find_runfiles:all_sources",
+        "//src/helper_lib:all_sources",
     ],
     visibility = ["//visibility:public"],
 )

@@ -11,7 +11,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-load("@aspect_rules_py//py:defs.bzl", "py_library")
 load("@score_tooling//:defs.bzl", "cli_helper", "copyright_checker")
 load("//:docs.bzl", "docs")
 
@@ -32,6 +31,10 @@ copyright_checker(
 docs(
     data = [
         "@score_process//:needs_json",
+    ],
+    scan_code = [
+        "//scripts_bazel:sources",
+        "//src:all_sources",
     ],
     source_dir = "docs",
 )

@@ -13,6 +13,7 @@
 # req-Id: tool_req__docs_dd_link_source_code_link
 
 import json
+import os
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
@@ -80,6 +81,12 @@ def store_source_code_links_json(file: Path, needlist: list[NeedLink]):
 
 
 def load_source_code_links_json(file: Path) -> list[NeedLink]:
+    if not file.is_absolute():
+        # use env variable set by Bazel
+        ws_root = os.environ.get("BUILD_WORKSPACE_DIRECTORY")
+        if ws_root:
+            file = Path(ws_root) / file
+
     links: list[NeedLink] = json.loads(
         file.read_text(encoding="utf-8"),
         object_hook=needlink_decoder,
