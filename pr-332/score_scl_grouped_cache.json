@@ -25,7 +25,107 @@
           "full_line": "# req-Id: tool_req__docs_dd_link_source_code_link"
         }
       ],
-      "TestLinks": []
+      "TestLinks": [
+        {
+          "name": "test_get_cache_filename",
+          "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
+          "line": 193,
+          "need": "tool_req__docs_dd_link_source_code_link",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": ""
+        },
+        {
+          "name": "test_find_need_direct_match",
+          "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
+          "line": 212,
+          "need": "tool_req__docs_dd_link_source_code_link",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": ""
+        },
+        {
+          "name": "test_find_need_not_found",
+          "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
+          "line": 230,
+          "need": "tool_req__docs_dd_link_source_code_link",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": ""
+        },
+        {
+          "name": "test_group_by_need",
+          "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
+          "line": 247,
+          "need": "tool_req__docs_dd_link_source_code_link",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": ""
+        },
+        {
+          "name": "test_group_by_need_empty_list",
+          "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
+          "line": 271,
+          "need": "tool_req__docs_dd_link_source_code_link",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": ""
+        },
+        {
+          "name": "test_get_github_link_with_real_repo",
+          "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
+          "line": 282,
+          "need": "tool_req__docs_dd_link_source_code_link",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": ""
+        },
+        {
+          "name": "test_cache_file_operations",
+          "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
+          "line": 314,
+          "need": "tool_req__docs_dd_link_source_code_link",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": ""
+        },
+        {
+          "name": "test_cache_file_with_encoded_comments",
+          "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
+          "line": 345,
+          "need": "tool_req__docs_dd_link_source_code_link",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": ""
+        },
+        {
+          "name": "test_group_by_need_and_find_need_integration",
+          "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
+          "line": 382,
+          "need": "tool_req__docs_dd_link_source_code_link",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": ""
+        },
+        {
+          "name": "test_source_linker_end_to_end_with_real_files",
+          "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
+          "line": 410,
+          "need": "tool_req__docs_dd_link_source_code_link",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": ""
+        },
+        {
+          "name": "test_multiple_commits_hash_consistency",
+          "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
+          "line": 507,
+          "need": "tool_req__docs_dd_link_source_code_link",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": ""
+        }
+      ]
     }
   },
   {
@@ -277,7 +377,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/checks/check_options.py",
-          "line": 153,
+          "line": 158,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_status",
           "full_line": "# req-Id: tool_req__docs_common_attr_status"
@@ -497,7 +597,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/checks/check_options.py",
-          "line": 150,
+          "line": 155,
           "tag": "# req-Id:",
           "need": "tool_req__docs_req_attr_reqtype",
           "full_line": "# req-Id: tool_req__docs_req_attr_reqtype"
@@ -624,7 +724,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/checks/check_options.py",
-          "line": 152,
+          "line": 157,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_safety",
           "full_line": "# req-Id: tool_req__docs_common_attr_safety"
@@ -646,7 +746,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/checks/check_options.py",
-          "line": 154,
+          "line": 159,
           "tag": "# req-Id:",
           "need": "tool_req__docs_req_attr_rationale",
           "full_line": "# req-Id: tool_req__docs_req_attr_rationale"
@@ -773,7 +873,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/checks/check_options.py",
-          "line": 151,
+          "line": 156,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_security",
           "full_line": "# req-Id: tool_req__docs_common_attr_security"
@@ -1006,48 +1106,33 @@
     }
   },
   {
-    "need": "tool_req__docs_dd_dyn",
-    "links": {
-      "CodeLinks": [
-        {
-          "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 687,
-          "tag": "# req-Id:",
-          "need": "tool_req__docs_dd_dyn",
-          "full_line": "# req-Id: tool_req__docs_dd_dyn"
-        }
-      ],
-      "TestLinks": []
-    }
-  },
-  {
     "need": "tool_req__docs_saf_types",
     "links": {
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 745,
+          "line": 744,
           "tag": "# req-Id:",
           "need": "tool_req__docs_saf_types",
           "full_line": "# req-Id: tool_req__docs_saf_types"
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 772,
+          "line": 771,
           "tag": "# req-Id:",
           "need": "tool_req__docs_saf_types",
           "full_line": "# req-Id: tool_req__docs_saf_types"
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 800,
+          "line": 799,
           "tag": "# req-Id:",
           "need": "tool_req__docs_saf_types",
           "full_line": "# req-Id: tool_req__docs_saf_types"
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 827,
+          "line": 826,
           "tag": "# req-Id:",
           "need": "tool_req__docs_saf_types",
           "full_line": "# req-Id: tool_req__docs_saf_types"
@@ -1062,14 +1147,14 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 749,
+          "line": 748,
           "tag": "# req-Id:",
           "need": "tool_req__docs_saf_attr_dfa_failure_id",
           "full_line": "# req-Id: tool_req__docs_saf_attr_dfa_failure_id"
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 776,
+          "line": 775,
           "tag": "# req-Id:",
           "need": "tool_req__docs_saf_attr_dfa_failure_id",
           "full_line": "# req-Id: tool_req__docs_saf_attr_dfa_failure_id"
@@ -1084,28 +1169,28 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 752,
+          "line": 751,
           "tag": "# req-Id:",
           "need": "tool_req__docs_saf_attrs_sufficient",
           "full_line": "# req-Id: tool_req__docs_saf_attrs_sufficient"
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 779,
+          "line": 778,
           "tag": "# req-Id:",
           "need": "tool_req__docs_saf_attrs_sufficient",
           "full_line": "# req-Id: tool_req__docs_saf_attrs_sufficient"
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 807,
+          "line": 806,
           "tag": "# req-Id:",
           "need": "tool_req__docs_saf_attrs_sufficient",
           "full_line": "# req-Id: tool_req__docs_saf_attrs_sufficient"
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 834,
+          "line": 833,
           "tag": "# req-Id:",
           "need": "tool_req__docs_saf_attrs_sufficient",
           "full_line": "# req-Id: tool_req__docs_saf_attrs_sufficient"
@@ -1120,28 +1205,28 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 755,
+          "line": 754,
           "tag": "# req-Id:",
           "need": "tool_req__docs_saf_attrs_content",
           "full_line": "# req-Id: tool_req__docs_saf_attrs_content"
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 782,
+          "line": 781,
           "tag": "# req-Id:",
           "need": "tool_req__docs_saf_attrs_content",
           "full_line": "# req-Id: tool_req__docs_saf_attrs_content"
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 810,
+          "line": 809,
           "tag": "# req-Id:",
           "need": "tool_req__docs_saf_attrs_content",
           "full_line": "# req-Id: tool_req__docs_saf_attrs_content"
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 837,
+          "line": 836,
           "tag": "# req-Id:",
           "need": "tool_req__docs_saf_attrs_content",
           "full_line": "# req-Id: tool_req__docs_saf_attrs_content"
@@ -1156,28 +1241,28 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 758,
+          "line": 757,
           "tag": "# req-Id:",
           "need": "tool_req__docs_saf_attrs_violates",
           "full_line": "# req-Id: tool_req__docs_saf_attrs_violates"
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 788,
+          "line": 787,
           "tag": "# req-Id:",
           "need": "tool_req__docs_saf_attrs_violates",
           "full_line": "# req-Id: tool_req__docs_saf_attrs_violates"
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 816,
+          "line": 815,
           "tag": "# req-Id:",
           "need": "tool_req__docs_saf_attrs_violates",
           "full_line": "# req-Id: tool_req__docs_saf_attrs_violates"
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 843,
+          "line": 842,
           "tag": "# req-Id:",
           "need": "tool_req__docs_saf_attrs_violates",
           "full_line": "# req-Id: tool_req__docs_saf_attrs_violates"
@@ -1192,28 +1277,28 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 761,
+          "line": 760,
           "tag": "# req-Id:",
           "need": "tool_req__docs_saf_attrs_mitigation_issue",
           "full_line": "# req-Id: tool_req__docs_saf_attrs_mitigation_issue"
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 785,
+          "line": 784,
           "tag": "# req-Id:",
           "need": "tool_req__docs_saf_attrs_mitigation_issue",
           "full_line": "# req-Id: tool_req__docs_saf_attrs_mitigation_issue"
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 813,
+          "line": 812,
           "tag": "# req-Id:",
           "need": "tool_req__docs_saf_attrs_mitigation_issue",
           "full_line": "# req-Id: tool_req__docs_saf_attrs_mitigation_issue"
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 840,
+          "line": 839,
           "tag": "# req-Id:",
           "need": "tool_req__docs_saf_attrs_mitigation_issue",
           "full_line": "# req-Id: tool_req__docs_saf_attrs_mitigation_issue"
@@ -1228,28 +1313,28 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 764,
+          "line": 763,
           "tag": "# req-Id:",
           "need": "tool_req__docs_saf_attrs_mitigated_by",
           "full_line": "# req-Id: tool_req__docs_saf_attrs_mitigated_by"
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 791,
+          "line": 790,
           "tag": "# req-Id:",
           "need": "tool_req__docs_saf_attrs_mitigated_by",
           "full_line": "# req-Id: tool_req__docs_saf_attrs_mitigated_by"
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 819,
+          "line": 818,
           "tag": "# req-Id:",
           "need": "tool_req__docs_saf_attrs_mitigated_by",
           "full_line": "# req-Id: tool_req__docs_saf_attrs_mitigated_by"
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 1044,
+          "line": 1043,
           "tag": "# req-Id:",
           "need": "tool_req__docs_saf_attrs_mitigated_by",
           "full_line": "# req-Id: tool_req__docs_saf_attrs_mitigated_by"
@@ -1264,14 +1349,14 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 804,
+          "line": 803,
           "tag": "# req-Id:",
           "need": "tool_req__docs_saf_attr_fmea_fault_id",
           "full_line": "# req-Id: tool_req__docs_saf_attr_fmea_fault_id"
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 831,
+          "line": 830,
           "tag": "# req-Id:",
           "need": "tool_req__docs_saf_attr_fmea_fault_id",
           "full_line": "# req-Id: tool_req__docs_saf_attr_fmea_fault_id"
@@ -1286,7 +1371,7 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 997,
+          "line": 996,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_safety_link_check",
           "full_line": "# req-Id: tool_req__docs_common_attr_safety_link_check"
@@ -1301,7 +1386,7 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 1006,
+          "line": 1005,
           "tag": "# req-Id:",
           "need": "tool_req__docs_arch_link_qm_to_safety_req",
           "full_line": "# req-Id: tool_req__docs_arch_link_qm_to_safety_req"
@@ -1316,7 +1401,7 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 1015,
+          "line": 1014,
           "tag": "# req-Id:",
           "need": "tool_req__docs_req_arch_link_safety_to_arch",
           "full_line": "# req-Id: tool_req__docs_req_arch_link_safety_to_arch"
@@ -1331,7 +1416,7 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 1030,
+          "line": 1029,
           "tag": "# req-Id:",
           "need": "tool_req__docs_arch_link_security",
           "full_line": "# req-Id: tool_req__docs_arch_link_security"
@@ -1361,7 +1446,7 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/checks/check_options.py",
-          "line": 155,
+          "line": 160,
           "tag": "# req-Id:",
           "need": "tool_req__docs_arch_attr_mandatory",
           "full_line": "# req-Id: tool_req__docs_arch_attr_mandatory"
@@ -1376,7 +1461,7 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/checks/check_options.py",
-          "line": 223,
+          "line": 228,
           "tag": "# req-Id:",
           "need": "tool_req__docs_req_attr_validity_consistency",
           "full_line": "# req-Id: tool_req__docs_req_attr_validity_consistency"
@@ -1411,7 +1496,160 @@
           "full_line": "# req-Id: tool_req__docs_test_link_testcase"
         }
       ],
-      "TestLinks": []
+      "TestLinks": [
+        {
+          "name": "test_testlink_serialization_roundtrip",
+          "file": "src/extensions/score_source_code_linker/tests/test_testlink.py",
+          "line": 29,
+          "need": "tool_req__docs_test_link_testcase",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": ""
+        },
+        {
+          "name": "test_decoder_ignores_irrelevant_dicts",
+          "file": "src/extensions/score_source_code_linker/tests/test_testlink.py",
+          "line": 58,
+          "need": "tool_req__docs_test_link_testcase",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": ""
+        },
+        {
+          "name": "test_clean_text_removes_ansi_and_html_unescapes",
+          "file": "src/extensions/score_source_code_linker/tests/test_testlink.py",
+          "line": 70,
+          "need": "tool_req__docs_test_link_testcase",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": ""
+        },
+        {
+          "name": "test_testcaseneed_to_dict_multiple_links",
+          "file": "src/extensions/score_source_code_linker/tests/test_testlink.py",
+          "line": 85,
+          "need": "tool_req__docs_test_link_testcase",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": ""
+        },
+        {
+          "name": "test_store_and_load_testlinks_roundtrip",
+          "file": "src/extensions/score_source_code_linker/tests/test_testlink.py",
+          "line": 119,
+          "need": "tool_req__docs_test_link_testcase",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": ""
+        },
+        {
+          "name": "test_find_xml_files",
+          "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
+          "line": 103,
+          "need": "tool_req__docs_test_link_testcase",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": ""
+        },
+        {
+          "name": "test_parse_testcase_result",
+          "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
+          "line": 164,
+          "need": "tool_req__docs_test_link_testcase",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": ""
+        },
+        {
+          "name": "test_parse_properties",
+          "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
+          "line": 186,
+          "need": "tool_req__docs_test_link_testcase",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": ""
+        },
+        {
+          "name": "test_read_test_xml_file",
+          "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
+          "line": 202,
+          "need": "tool_req__docs_test_link_testcase",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": ""
+        },
+        {
+          "name": "test_short_hash_consistency_and_format",
+          "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
+          "line": 226,
+          "need": "tool_req__docs_test_link_testcase",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": ""
+        }
+      ]
+    }
+  },
+  {
+    "need": "tool_req__docs_metamodel",
+    "links": {
+      "CodeLinks": [],
+      "TestLinks": [
+        {
+          "name": "TestCheckOptions__test_unknown_directive",
+          "file": "src/extensions/score_metamodel/tests/test_check_options.py",
+          "line": 65,
+          "need": "tool_req__docs_metamodel",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": ""
+        },
+        {
+          "name": "TestCheckOptions__test_unknown_option_present_in_neither_req_opt_neither_opt_opt",
+          "file": "src/extensions/score_metamodel/tests/test_check_options.py",
+          "line": 89,
+          "need": "tool_req__docs_metamodel",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": ""
+        },
+        {
+          "name": "test_returns_empty_list_when_filter_is_empty",
+          "file": "src/extensions/score_metamodel/tests/test_metamodel__init__.py",
+          "line": 45,
+          "need": "tool_req__docs_metamodel",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": ""
+        },
+        {
+          "name": "test_returns_valid_checks",
+          "file": "src/extensions/score_metamodel/tests/test_metamodel__init__.py",
+          "line": 55,
+          "need": "tool_req__docs_metamodel",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": ""
+        },
+        {
+          "name": "test_strips_whitespace",
+          "file": "src/extensions/score_metamodel/tests/test_metamodel__init__.py",
+          "line": 66,
+          "need": "tool_req__docs_metamodel",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": ""
+        },
+        {
+          "name": "test_raises_assertion_for_invalid_check",
+          "file": "src/extensions/score_metamodel/tests/test_metamodel__init__.py",
+          "line": 77,
+          "need": "tool_req__docs_metamodel",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": ""
+        }
+      ]
     }
   }
 ]
