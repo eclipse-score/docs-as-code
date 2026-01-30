@@ -20,4 +20,8 @@ py_library(
     srcs = ["@score_docs_as_code//src/extensions:score_plantuml.py"],
     imports = ["."],
     visibility = ["//visibility:public"],
+    deps = [
+        "@rules_python//python/runfiles",
+        "@score_docs_as_code//src:plantuml_for_python",
+    ],
 )

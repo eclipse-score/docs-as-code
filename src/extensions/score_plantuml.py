@@ -24,10 +24,10 @@ Sphinx configuration.
 In addition it sets common PlantUML options, like output to svg_obj.
 """
 
-import os
 import sys
 from pathlib import Path
 
+from python.runfiles import Runfiles
 from sphinx.application import Sphinx
 from sphinx.util import logging
 
@@ -35,13 +35,13 @@ logger = logging.getLogger(__name__)
 
 
 def get_runfiles_dir() -> Path:
-    if r := os.getenv("RUNFILES_DIR"):
+    if (r := Runfiles.Create()) and (rd := r.EnvVars().get("RUNFILES_DIR")):
         # Runfiles are only available when running in Bazel.
         # bazel build and bazel run are both supported.
         # i.e. `bazel build //:docs` and `bazel run //:docs`.
         logger.debug("Using runfiles to determine plantuml path.")
 
-        runfiles_dir = Path(r)
+        runfiles_dir = Path(rd)
 
     else:
         # The only way to land here is when running from within the virtual
