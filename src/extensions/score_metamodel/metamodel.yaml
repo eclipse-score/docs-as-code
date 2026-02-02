@@ -435,9 +435,9 @@ needs_types:
       status: ^(valid|invalid)$
     mandatory_links:
       includes: ^logic_arc_int(_op)*__.+$
-      fulfils: feat_req
+      fulfils: feat_req # TODO: make it mandatory
     optional_links:
-      belongs_to: feat # for evaluation
+      belongs_to: feat # make it mandatory for evaluation
     tags:
       - architecture_element
       - architecture_view
@@ -457,9 +457,9 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
     mandatory_links:
-      fulfils: feat_req
+      fulfils: feat_req # TODO: make it mandatory
     optional_links:
-      belongs_to: feat # for evaluation
+      belongs_to: feat # make in mandatory for evaluation
     tags:
       - architecture_view
       - architecture_element
@@ -481,7 +481,7 @@ needs_types:
       status: ^(valid|invalid)$
     optional_links:
       includes: logic_arc_int_op
-      fulfils: feat_req
+      fulfils: feat_req # TODO: make it mandatory
     tags:
       - architecture_element
       - architecture_view
@@ -583,7 +583,7 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
     optional_links:
-      fulfils: comp_req
+      fulfils: comp_req # TODO: make it mandatory
       implements: logic_arc_int, real_arc_int_op # deprecated, views does not implement anything. Now moved to comp
       includes: comp # deprecated
       uses: logic_arc_int, real_arc_int_op
@@ -606,7 +606,7 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
     optional_links:
-      fulfils: comp_req
+      fulfils: comp_req # TODO: make it mandatory
       belongs_to: comp # TODO: make it mandatory
     tags:
       - architecture_view
@@ -726,7 +726,7 @@ needs_types:
   # DFA (Dependent Failure Analysis)
   # No requirement!!
   plat_saf_dfa:
-    title: Feature Dependent Failure Analysis
+    title: Platform Dependent Failure Analysis
     mandatory_options:
       failure_id: ^.*$
       failure_effect: ^.*$
@@ -738,7 +738,7 @@ needs_types:
     optional_options:
       mitigation_issue: ^https://github.com/.*$
     optional_links:
-      mitigated_by: feat_req, aou_req
+      mitigated_by: stkh_req, aou_req
     parts: 3
 
   # req-Id: tool_req__docs_saf_types
