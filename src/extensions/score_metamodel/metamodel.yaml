@@ -437,7 +437,7 @@ needs_types:
       includes: ^logic_arc_int(_op)*__.+$
       fulfils: feat_req
     optional_links:
-      belongs_to: feat # for evaluation
+      belongs_to: feat # make it mandatory for evaluation
     tags:
       - architecture_element
       - architecture_view
@@ -459,7 +459,7 @@ needs_types:
     mandatory_links:
       fulfils: feat_req
     optional_links:
-      belongs_to: feat # for evaluation
+      belongs_to: feat # make in mandatory for evaluation
     tags:
       - architecture_view
       - architecture_element
@@ -738,7 +738,7 @@ needs_types:
     optional_options:
       mitigation_issue: ^https://github.com/.*$
     optional_links:
-      mitigated_by: feat_req, aou_req
+      mitigated_by: stkh_req, aou_req
     parts: 3
 
   # req-Id: tool_req__docs_saf_types
