@@ -189,6 +189,28 @@ def filter_repos(repo_filter: str | None) -> list[ConsumerRepo]:
     return filtered_repos
 
 
+def comment_out_git_override(module_content: str) -> str:
+    """
+    Comment out existing git_override blocks for score_docs_as_code if found
+    """
+
+    pattern = (
+        r"^(git_override\s*\(\s*"
+        r"[^)]*?module_name\s*=\s*['\"]score_docs_as_code['\"]"
+        r"[^)]*\)\s*)"
+    )
+
+    def comment_out_block(match: re.Match[str]) -> str:
+        # Comment out each line of the found block
+        return "\n".join("# " + line for line in match.group(0).splitlines())
+
+    # First, comment out old override(s)
+    out = re.sub(
+        pattern, comment_out_block, module_content, flags=re.MULTILINE | re.DOTALL
+    )
+    return out.strip()
+
+
 def replace_bazel_dep_with_local_override(module_content: str) -> str:
     """ """
 
@@ -498,10 +520,6 @@ def run_cmd(
     return results, is_success
 
 
-def run_test_commands():
-    pass
-
-
 def setup_test_environment(sphinx_base_dir: Path, pytestconfig: Config):
     """Set up the test environment and return necessary paths and metadata."""
     git_root = find_git_root()
@@ -587,9 +605,10 @@ def prepare_repo_overrides(
         module_orig = f.read()
 
     # Prepare override versions
-    module_local_override = replace_bazel_dep_with_local_override(module_orig)
+    module_orig_clean = comment_out_git_override(module_orig)
+    module_local_override = replace_bazel_dep_with_local_override(module_orig_clean)
     module_git_override = replace_bazel_dep_with_git_override(
-        module_orig, current_hash, gh_url
+        module_orig_clean, current_hash, gh_url
     )
 
     return module_local_override, module_git_override
