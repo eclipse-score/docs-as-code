@@ -324,6 +324,7 @@ needs_types:
     mandatory_links:
       # req-Id: tool_req__docs_req_link_satisfies_allowed
       satisfies: feat_req
+      belongs_to: comp
     optional_options:
       codelink: ^.*$
       testlink: ^.*$
@@ -332,8 +333,6 @@ needs_types:
       # req-Id: tool_req__docs_req_attr_testcov
       testcovered: ^(YES|NO)$
       hash: ^.*$
-    optional_links:
-      belongs_to: comp # TODO: make it mandatory
     tags:
       - requirement
       - requirement_excl_process
@@ -435,8 +434,7 @@ needs_types:
       status: ^(valid|invalid)$
     mandatory_links:
       includes: ^logic_arc_int(_op)*__.+$
-      fulfils: feat_req # TODO: make it mandatory
-    optional_links:
+      fulfils: feat_req
       belongs_to: feat # make it mandatory for evaluation
     tags:
       - architecture_element
@@ -457,9 +455,8 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
     mandatory_links:
-      fulfils: feat_req # TODO: make it mandatory
-    optional_links:
-      belongs_to: feat # make in mandatory for evaluation
+      fulfils: feat_req
+      belongs_to: feat
     tags:
       - architecture_view
       - architecture_element
@@ -481,7 +478,7 @@ needs_types:
       status: ^(valid|invalid)$
     optional_links:
       includes: logic_arc_int_op
-      fulfils: feat_req # TODO: make it mandatory
+      fulfils: feat_req
     tags:
       - architecture_element
       - architecture_view
@@ -582,12 +579,11 @@ needs_types:
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
+    mandatory_links:
+      belongs_to: comp
+      fulfils: comp_req
     optional_links:
-      fulfils: comp_req # TODO: make it mandatory
-      implements: logic_arc_int, real_arc_int_op # deprecated, views does not implement anything. Now moved to comp
-      includes: comp # deprecated
       uses: logic_arc_int, real_arc_int_op
-      belongs_to: comp # TODO: make it mandatory
     tags:
       - architecture_view
     parts: 3
@@ -605,9 +601,9 @@ needs_types:
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
-    optional_links:
-      fulfils: comp_req # TODO: make it mandatory
-      belongs_to: comp # TODO: make it mandatory
+    mandatory_links:
+      belongs_to: comp
+      fulfils: comp_req
     tags:
       - architecture_view
     parts: 3
