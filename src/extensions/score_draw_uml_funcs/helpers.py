@@ -166,7 +166,7 @@ def get_hierarchy_text(
     close_mod_text = ""
     parent_need = {}
 
-    if "mod_" not in need["type"]:
+    if "mod" not in need["type"]:
         parent_need_str = need.get("includes_back", [])
 
         if parent_need_str:
