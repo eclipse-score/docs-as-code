@@ -30,10 +30,6 @@ babel==2.17.0 \
     # via
     #   pydata-sphinx-theme
     #   sphinx
-basedpyright==1.35.0 \
-    --hash=sha256:2a7e0bd476623d48499e2b18ff6ed19dc28c51909cf9e1152ad355b5809049ad \
-    --hash=sha256:4f4f84023df5a0cd4ee154916ba698596682ac98bacfa22c941ed6aaf07bba4e
-    # via -r /external/score_tooling+/python_basics/requirements.txt
 beautifulsoup4==4.14.2 \
     --hash=sha256:2a98ab9f944a11acee9cc848508ec28d9228abfd522ef0fad6a02a72e0ded69e \
     --hash=sha256:5ef6fa3a8cbece8488d66985560f97ed091e22bbc4e9c2338508a9d5de6d4515
@@ -424,7 +420,7 @@ debugpy==1.8.17 \
     --hash=sha256:f14467edef672195c6f6b8e27ce5005313cb5d03c9239059bc7182b60c176e2d \
     --hash=sha256:f2ac8055a0c4a09b30b931100996ba49ef334c6947e7ae365cdd870416d7513e \
     --hash=sha256:fd723b47a8c08892b1a16b2c6239a8b96637c62a59b94bb5dab4bac592a58a8e
-    # via -r src/requirements.in
+    # via -r requirements.in
 docutils==0.21.2 \
     --hash=sha256:3a6b18732edf182daa3cd12775bbb338cf5691468f91eeeb109deff6ebfa986f \
     --hash=sha256:dafca5b9e384f0e419294eb4d2ff9fa826435bf15f15b7bd45723e8ad76811b2
@@ -435,7 +431,7 @@ docutils==0.21.2 \
 esbonio==0.16.5 \
     --hash=sha256:04ba926e3603f7b1fde1abc690b47afd60749b64b1029b6bce8e1de0bb284921 \
     --hash=sha256:acab2e16c6cf8f7232fb04e0d48514ce50566516b1f6fcf669ccf2f247e8b10f
-    # via -r src/requirements.in
+    # via -r requirements.in
 fonttools==4.60.1 \
     --hash=sha256:022beaea4b73a70295b688f817ddc24ed3e3418b5036ffcd5658141184ef0d0c \
     --hash=sha256:026290e4ec76583881763fac284aca67365e0be9f13a7fb137257096114cb3bc \
@@ -518,12 +514,6 @@ imagesize==1.4.1 \
     --hash=sha256:0d8d18d08f840c19d0ee7ca1fd82490fdc3729b7ac93f49870406ddde8ef8d8b \
     --hash=sha256:69150444affb9cb0d5cc5a92b3676f0b2fb7cd9ae39e947a5e11a36b4497cd4a
     # via sphinx
-iniconfig==2.3.0 \
-    --hash=sha256:c76315c77db068650d49c5b56314774a7804df16fee4402c1f19d6d15d8c4730 \
-    --hash=sha256:f631c04d2c48c52b84d0d0549c99ff3859c98df65b3101406327ecc7d53fbf12
-    # via
-    #   -r /external/score_tooling+/python_basics/requirements.txt
-    #   pytest
 jinja2==3.1.6 \
     --hash=sha256:0137fb05990d35f1275a587e9aee6d56da821fc83491a0fb838183be43f66d6d \
     --hash=sha256:85ece4451f492d0c13c5dd7c13a64681a86afae63a5f347908daf103ce6d2f67
@@ -818,24 +808,11 @@ mdurl==0.1.2 \
 myst-parser==4.0.1 \
     --hash=sha256:5cfea715e4f3574138aecbf7d54132296bfd72bb614d31168f48c477a830a7c4 \
     --hash=sha256:9134e88959ec3b5780aedf8a99680ea242869d012e8821db3126d427edc9c95d
-    # via -r src/requirements.in
+    # via -r requirements.in
 needs-config-writer==0.2.4 \
     --hash=sha256:0f0702574081bb8ed7d896aadfb73c0e48af099dc0d4227cc2bac957ed8ea4f6 \
     --hash=sha256:7c89375848c822e891b3cca48783f3cc3f7cbd3c02cba19418de146ca077f212
-    # via -r src/requirements.in
-nodejs-wheel-binaries==24.11.1 \
-    --hash=sha256:0e14874c3579def458245cdbc3239e37610702b0aa0975c1dc55e2cb80e42102 \
-    --hash=sha256:10197b1c9c04d79403501766f76508b0dac101ab34371ef8a46fcf51773497d0 \
-    --hash=sha256:376b9ea1c4bc1207878975dfeb604f7aa5668c260c6154dcd2af9d42f7734116 \
-    --hash=sha256:413dfffeadfb91edb4d8256545dea797c237bba9b3faefea973cde92d96bb922 \
-    --hash=sha256:5ef598101b0fb1c2bf643abb76dfbf6f76f1686198ed17ae46009049ee83c546 \
-    --hash=sha256:78bc5bb889313b565df8969bb7423849a9c7fc218bf735ff0ce176b56b3e96f0 \
-    --hash=sha256:c2741525c9874b69b3e5a6d6c9179a6fe484ea0c3d5e7b7c01121c8e5d78b7e2 \
-    --hash=sha256:c79a7e43869ccecab1cae8183778249cceb14ca2de67b5650b223385682c6239 \
-    --hash=sha256:cde41d5e4705266688a8d8071debf4f8a6fcea264c61292782672ee75a6905f9
-    # via
-    #   -r /external/score_tooling+/python_basics/requirements.txt
-    #   basedpyright
+    # via -r requirements.in
 numpy==2.3.5 \
     --hash=sha256:00dc4e846108a382c5869e77c6ed514394bdeb3403461d25a829711041217d5b \
     --hash=sha256:0472f11f6ec23a74a906a00b48a4dcf3849209696dff7c189714511268d103ae \
@@ -918,9 +895,7 @@ packaging==25.0 \
     --hash=sha256:29572ef2b1f17581046b3a2227d5c611fb25ec70ca1ba8554b24b0e69331a484 \
     --hash=sha256:d443872c98d677bf60f6a1f2f8c1cb748e8fe762d2bf9d3148b5599295b0fc4f
     # via
-    #   -r /external/score_tooling+/python_basics/requirements.txt
     #   matplotlib
-    #   pytest
     #   sphinx
     #   sphinx-collections
 pillow==12.0.0 \
@@ -1020,12 +995,6 @@ platformdirs==4.5.0 \
     --hash=sha256:70ddccdd7c99fc5942e9fc25636a8b34d04c24b335100223152c2803e4063312 \
     --hash=sha256:e578a81bb873cbb89a41fcc904c7ef523cc18284b7e3b3ccf06aca1403b7ebd3
     # via esbonio
-pluggy==1.6.0 \
-    --hash=sha256:7dcc130b76258d33b90f61b658791dede3486c3e6bfb003ee5c9bfb396dd22f3 \
-    --hash=sha256:e920276dd6813095e9377c0bc5566d94c932c33b27a3e3945d8389c374dd4746
-    # via
-    #   -r /external/score_tooling+/python_basics/requirements.txt
-    #   pytest
 pycparser==2.23 \
     --hash=sha256:78816d4f24add8f10a06d6f05b4d424ad9e96cfebf68a4ddc99c65c0720d00c2 \
     --hash=sha256:e5c6e8d3fbad53479cab09ac03729e0a9faf2bee3db8208a550daf5af81a5934
@@ -1033,11 +1002,11 @@ pycparser==2.23 \
 pydata-sphinx-theme==0.16.1 \
     --hash=sha256:225331e8ac4b32682c18fcac5a57a6f717c4e632cea5dd0e247b55155faeccde \
     --hash=sha256:a08b7f0b7f70387219dc659bff0893a7554d5eb39b59d3b8ef37b8401b7642d7
-    # via -r src/requirements.in
+    # via -r requirements.in
 pygithub==2.8.1 \
     --hash=sha256:23a0a5bca93baef082e03411bf0ce27204c32be8bfa7abc92fe4a3e132936df0 \
     --hash=sha256:341b7c78521cb07324ff670afd1baa2bf5c286f8d9fd302c1798ba594a5400c9
-    # via -r src/requirements.in
+    # via -r requirements.in
 pygls==1.3.1 \
     --hash=sha256:140edceefa0da0e9b3c533547c892a42a7d2fd9217ae848c330c53d266a55018 \
     --hash=sha256:6e00f11efc56321bdeb6eac04f6d86131f654c7d49124344a9ebb968da3dd91e
@@ -1046,10 +1015,8 @@ pygments==2.19.2 \
     --hash=sha256:636cb2477cec7f8952536970bc533bc43743542f70392ae026374600add5b887 \
     --hash=sha256:86540386c03d588bb81d44bc3928634ff26449851e99741617ecb9037ee5ec0b
     # via
-    #   -r /external/score_tooling+/python_basics/requirements.txt
     #   accessible-pygments
     #   pydata-sphinx-theme
-    #   pytest
     #   rich
     #   sphinx
 pyjwt[crypto]==2.10.1 \
@@ -1093,10 +1060,6 @@ pyspellchecker==0.8.3 \
     --hash=sha256:cb06eeafe124837f321e0d02f8e21deab713e966e28e0360319a28a089c43978 \
     --hash=sha256:e993076e98b0da5a99b7cc31085c3022c77a9dc37c5e95f5cf6304b5dbb8b9d2
     # via esbonio
-pytest==9.0.1 \
-    --hash=sha256:3e9c069ea73583e255c3b21cf46b8d3c56f6e3a1a8f6da94ccb0fcf57b9d73c8 \
-    --hash=sha256:67be0030d194df2dfa7b556f2e56fb3c3315bd5c8822c6951162b92b32ce7dad
-    # via -r /external/score_tooling+/python_basics/requirements.txt
 python-dateutil==2.9.0.post0 \
     --hash=sha256:37dd54208da7e1cd875388217d5e00ebd4179249f90fb72437e91a35459a0ad3 \
     --hash=sha256:a8b2bc7bffae282281c8140a97d3aa9c14da0b136dfe83f850eea9a5f7470427
@@ -1193,7 +1156,7 @@ requests-file==2.1.0 \
 rich==14.2.0 \
     --hash=sha256:73ff50c7c0c1c77c8243079283f4edb376f0f6442433aecb8ce7e6d0b92d1fe4 \
     --hash=sha256:76bc51fe2e57d2b1be1f96c524b890b816e334ab4c1e45888799bfaab0021edd
-    # via -r src/requirements.in
+    # via -r requirements.in
 roman-numerals-py==3.1.0 \
     --hash=sha256:9da2ad2fb670bcf24e81070ceb3be72f6c11c440d73bd579fbeca1e9f330954c \
     --hash=sha256:be4bf804f083a4ce001b5eb7e3c0862479d10f94c936f6c4e5f250aa5ff5bd2d
@@ -1201,7 +1164,7 @@ roman-numerals-py==3.1.0 \
 ruamel-yaml==0.18.16 \
     --hash=sha256:048f26d64245bae57a4f9ef6feb5b552a386830ef7a826f235ffb804c59efbba \
     --hash=sha256:a6e587512f3c998b2225d68aa1f35111c29fad14aed561a26e73fab729ec5e5a
-    # via -r src/requirements.in
+    # via -r requirements.in
 ruamel-yaml-clib==0.2.15 \
     --hash=sha256:014181cdec565c8745b7cbc4de3bf2cc8ced05183d986e6d1200168e5bb59490 \
     --hash=sha256:04d21dc9c57d9608225da28285900762befbb0165ae48482c15d8d4989d4af14 \
@@ -1289,7 +1252,7 @@ sphinx==8.2.3 \
     --hash=sha256:398ad29dee7f63a75888314e9424d40f52ce5a6a87ae88e7071e80af296ec348 \
     --hash=sha256:4405915165f13521d875a8c29c8970800a0141c14cc5416a38feca4ea5d9b9c3
     # via
-    #   -r src/requirements.in
+    #   -r requirements.in
     #   esbonio
     #   myst-parser
     #   needs-config-writer
@@ -1305,11 +1268,11 @@ sphinx==8.2.3 \
 sphinx-autobuild==2025.8.25 \
     --hash=sha256:9cf5aab32853c8c31af572e4fecdc09c997e2b8be5a07daf2a389e270e85b213 \
     --hash=sha256:b750ac7d5a18603e4665294323fd20f6dcc0a984117026d1986704fa68f0379a
-    # via -r src/requirements.in
+    # via -r requirements.in
 sphinx-collections==0.3.1 \
     --hash=sha256:4dda762479d2ad2163ccb074b15f36f72810d9cd08be4daa69854a6e34c99f92 \
     --hash=sha256:fb93b979cc9275bd2ad980a71fd57be5521c0f879f90f8189917a8f7ca0436ab
-    # via -r src/requirements.in
+    # via -r requirements.in
 sphinx-data-viewer==0.1.5 \
     --hash=sha256:a7d5e58613562bb745380bfe61ca8b69997998167fd6fa9aea55606c9a4b17e4 \
     --hash=sha256:b74b1d304c505c464d07c7b225ed0d84ea02dcc88bc1c49cdad7c2275fbbdad4
@@ -1317,12 +1280,12 @@ sphinx-data-viewer==0.1.5 \
 sphinx-design==0.6.1 \
     --hash=sha256:b11f37db1a802a183d61b159d9a202314d4d2fe29c163437001324fe2f19549c \
     --hash=sha256:b44eea3719386d04d765c1a8257caca2b3e6f8421d7b3a5e742c0fd45f84e632
-    # via -r src/requirements.in
+    # via -r requirements.in
 sphinx-needs[plotting]==6.3.0 \
     --hash=sha256:761901765844c69f6181580065b099b31016895a86962a25e7860a9f5bea54a2 \
     --hash=sha256:a8a1cccc1525b94551e7a2f9525bf36eaae88654abceb5047b5470d57472b346
     # via
-    #   -r src/requirements.in
+    #   -r requirements.in
     #   needs-config-writer
 sphinxcontrib-applehelp==2.0.0 \
     --hash=sha256:2f29ef331735ce958efa4734873f084941970894c6090408b079c61b2e1c06d1 \
@@ -1347,10 +1310,10 @@ sphinxcontrib-jsmath==1.0.1 \
 sphinxcontrib-mermaid==1.2.3 \
     --hash=sha256:358699d0ec924ef679b41873d9edd97d0773446daf9760c75e18dc0adfd91371 \
     --hash=sha256:5be782b27026bef97bfb15ccb2f7868b674a1afc0982b54cb149702cfc25aa02
-    # via -r src/requirements.in
+    # via -r requirements.in
 sphinxcontrib-plantuml==0.31 \
     --hash=sha256:fd74752f8ea070e641c3f8a402fccfa1d4a4056e0967b56033d2a76282d9f956
-    # via -r src/requirements.in
+    # via -r requirements.in
 sphinxcontrib-qthelp==2.0.0 \
     --hash=sha256:4fe7d0ac8fc171045be623aba3e2a8f613f8682731f9153bb2e40ece16b9bbab \
     --hash=sha256:b18a828cdba941ccd6ee8445dbe72ffa3ef8cbe7505d8cd1fa0d42d3f2d5f3eb
@@ -1422,9 +1385,9 @@ typing-extensions==4.15.0 \
     #   pygithub
     #   sphinx-needs
     #   starlette
-urllib3==2.5.0 \
-    --hash=sha256:3fc47733c7e419d4bc3f6b3dc2b4f890bb743906a30d56ba4a5bfa4bbff92760 \
-    --hash=sha256:e6b01673c0fa6a13e374b50871808eb3bf7046c4b125b216f6bf1cc604cff0dc
+urllib3==2.6.3 \
+    --hash=sha256:1b62b6884944a57dbe321509ab94fd4d3b307075e0c2eae991ac71ee15ad38ed \
+    --hash=sha256:bf272323e553dfb2e87d9bfd225ca7b0f467b919d7bbd355436d3fd37cb0acd4
     # via
     #   pygithub
     #   requests
