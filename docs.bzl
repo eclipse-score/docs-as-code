@@ -174,6 +174,19 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = []):
     )
 
     py_binary(
+        name = "docs_link_check",
+        tags = ["cli_help=Verify Links inside Documentation:\nbazel run //:link_check\n (Note: this could take a long time)"],
+        srcs = ["@score_docs_as_code//src:incremental.py"],
+        data = data,
+        deps = deps,
+        env = {
+            "SOURCE_DIRECTORY": source_dir,
+            "DATA": str(data),
+            "ACTION": "linkcheck",
+        },
+    )
+
+    py_binary(
         name = "docs_check",
         tags = ["cli_help=Verify documentation:\nbazel run //:docs_check"],
         srcs = ["@score_docs_as_code//src:incremental.py"],
