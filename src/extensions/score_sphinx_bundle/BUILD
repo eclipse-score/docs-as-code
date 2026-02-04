@@ -31,7 +31,6 @@ py_library(
         "@score_docs_as_code//src/extensions/score_metamodel",
         "@score_docs_as_code//src/extensions/score_source_code_linker",
         "@score_docs_as_code//src/extensions/score_sync_toml",
-        "@score_docs_as_code//src/find_runfiles",
         "@score_docs_as_code//src/helper_lib",
     ],
 )

@@ -30,7 +30,7 @@ bazel_dep(name = "rules_pkg", version = "1.1.0")
 # Python version
 #
 ###############################################################################
-bazel_dep(name = "rules_python", version = "1.4.1")
+bazel_dep(name = "rules_python", version = "1.8.3")
 
 PYTHON_VERSION = "3.12"
 
@@ -109,7 +109,7 @@ git_override(
 
 # Add Linter
 bazel_dep(name = "rules_multitool", version = "1.9.0")
-bazel_dep(name = "score_tooling", version = "1.0.5")
+bazel_dep(name = "score_tooling", version = "1.1.0")
 
 multitool_root = use_extension("@rules_multitool//multitool:extension.bzl", "multitool")
 use_repo(multitool_root, "actionlint_hub", "multitool", "ruff_hub", "shellcheck_hub", "yamlfmt_hub")

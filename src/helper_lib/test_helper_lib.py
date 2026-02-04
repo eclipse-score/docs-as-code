@@ -20,6 +20,7 @@ import pytest
 from src.helper_lib import (
     get_current_git_hash,
     get_github_repo_info,
+    get_runfiles_dir,
     parse_remote_git_output,
 )
 
@@ -238,3 +239,56 @@ def test_get_current_git_hash_invalid_repo(temp_dir: Path):
     """Test getting git hash from invalid repository."""
     with pytest.raises(subprocess.CalledProcessError):
         get_current_git_hash(temp_dir)
+
+
+def test_runfiles_dir_found(temp_dir: Path):
+    """Test Runfiles dir found when provided and it's actually there"""
+    runfiles_dir = temp_dir / "runfiles_here"
+    runfiles_dir.mkdir(parents=True)
+    os.environ["RUNFILES_DIR"] = str(runfiles_dir)
+    os.chdir(runfiles_dir)
+    result = get_runfiles_dir()
+    assert Path(result) == runfiles_dir
+    os.environ.pop("RUNFILES_DIR", None)
+
+
+def test_runfiles_dir_missing_triggers_exit(temp_dir: Path):
+    """Testing if the runfiles exit via sys.exit if runfiles are set but don't exist"""
+    runfiles_dir = temp_dir / "does_not_exist"
+    os.environ["RUNFILES_DIR"] = str(runfiles_dir)
+    with pytest.raises(SystemExit) as e:
+        get_runfiles_dir()
+    assert "Could not find runfiles_dir" in str(e.value)
+    os.environ.pop("RUNFILES_DIR", None)
+
+
+def test_git_root_search_success(git_repo: Path, monkeypatch: pytest.MonkeyPatch):
+    """Testing if Git Root can be found successfully with unset RUNFILES"""
+    docs_dir = git_repo / "docs"
+    runfiles_dir = git_repo / "bazel-bin" / "ide_support.runfiles"
+    docs_dir.mkdir()
+    runfiles_dir.mkdir(parents=True)
+    os.environ.pop("RUNFILES_DIR", None)
+
+    # Have to monkeypatch in order to allow us to test
+    # the 'else' path inside 'get_runfiles_dir'
+    monkeypatch.setattr(Path, "cwd", lambda: docs_dir)
+    result = get_runfiles_dir()
+    assert Path(result) == runfiles_dir
+    os.environ.pop("RUNFILES_DIR", None)
+
+
+def test_git_root_search_not_found(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    """
+    Test fallback when no .git is found (should sys.exit).
+    """
+    nowhere = tmp_path / "nowhere"
+    nowhere.mkdir(parents=True)
+    os.environ.pop("RUNFILES_DIR", None)
+    # Have to monkeypatch in order to allow us to
+    # test the 'else' path inside 'get_runfiles_dir'
+    monkeypatch.setattr(Path, "cwd", lambda: nowhere)
+    with pytest.raises(SystemExit) as excinfo:
+        get_runfiles_dir()
+    assert "Could not find git root" in str(excinfo.value)
+    os.environ.pop("RUNFILES_DIR", None)

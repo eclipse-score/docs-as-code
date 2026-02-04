@@ -13,8 +13,10 @@
 
 import os
 import subprocess
+import sys
 from pathlib import Path
 
+from python.runfiles import Runfiles
 from sphinx_needs.logging import get_logger
 
 LOGGER = get_logger(__name__)
@@ -174,3 +176,33 @@ def get_current_git_hash(git_root: Path) -> str:
             exc_info=e,
         )
         raise
+
+
+def get_runfiles_dir() -> Path:
+    """
+    Find the Bazel runfiles directory using bazel_runfiles convention,
+    fallback to RUNFILES_DIR or relative traversal if needed.
+    """
+    if (r := Runfiles.Create()) and (rd := r.EnvVars().get("RUNFILES_DIR")):
+        runfiles_dir = Path(rd)
+    else:
+        # The only way to land here is when running from within the virtual
+        # environment created by the `:ide_support` rule in the BUILD file.
+        # i.e. esbonio or manual sphinx-build execution within the virtual
+        # environment.
+        # We'll still use the plantuml binary from the bazel build.
+        # But we need to find it first.
+        LOGGER.debug("Running outside bazel.")
+
+        git_root = find_git_root()
+        if git_root is None:
+            sys.exit("Could not find git root.")
+
+        runfiles_dir = git_root / "bazel-bin" / "ide_support.runfiles"
+
+    if not runfiles_dir.exists():
+        sys.exit(
+            f"Could not find runfiles_dir at {runfiles_dir}. "
+            "Have a look at README.md for instructions on how to build docs."
+        )
+    return runfiles_dir

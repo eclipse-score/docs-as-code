@@ -12,9 +12,7 @@
 # *******************************************************************************
 
 import json
-import os
 import subprocess
-import sys
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -22,6 +20,8 @@ from sphinx.application import Sphinx
 from sphinx.config import Config
 from sphinx.util import logging
 from sphinx_needs.needsfile import NeedsList
+
+from src.helper_lib import get_runfiles_dir
 
 logger = logging.getLogger(__name__)
 
@@ -61,6 +61,7 @@ def parse_external_needs_sources_from_DATA(v: str) -> list[ExternalNeedsSource]:
         return []
 
     logger.debug(f"Parsing external needs sources: {v}")
+
     data = json.loads(v)
 
     res = [res for el in data if (res := _parse_bazel_external_need(el))]
@@ -138,37 +139,21 @@ def extend_needs_json_exporter(config: Config, params: list[str]) -> None:
 
 
 def get_external_needs_source(external_needs_source: str) -> list[ExternalNeedsSource]:
-    bazel = external_needs_source or os.getenv("RUNFILES_DIR")
-
-    if bazel:
+    if external_needs_source:
+        # Path taken for all invocations via `bazel`
         external_needs = parse_external_needs_sources_from_DATA(external_needs_source)
     else:
+        # This is the path taken for anything that doesn't
+        # run via `bazel`  e.g. esbonio or other direct executions
         external_needs = parse_external_needs_sources_from_bazel_query()  # pyright: ignore[reportAny]
-
     return external_needs
 
 
 def add_external_needs_json(e: ExternalNeedsSource, config: Config):
-    json_file = f"{e.bazel_module}+/{e.target}/_build/needs/needs.json"
-    if r := os.getenv("RUNFILES_DIR"):
-        logger.debug("Using runfiles to determine external needs JSON file.")
-        fixed_json_file = Path(r) / json_file
-    else:
-        logger.debug(
-            "Running outside bazel. "
-            + "Determining git root for external needs JSON file."
-        )
-        git_root = Path.cwd().resolve()
-        while not (git_root / ".git").exists():
-            git_root = git_root.parent
-            if git_root == Path("/"):
-                sys.exit("Could not find git root.")
-        logger.debug(f"Git root found: {git_root}")
-        fixed_json_file = git_root / "bazel-bin" / "ide_support.runfiles" / json_file
-
-    logger.debug(f"Fixed JSON file path: {json_file} -> {fixed_json_file}")
-    json_file = fixed_json_file
-
+    json_file_raw = f"{e.bazel_module}+/{e.target}/_build/needs/needs.json"
+    r = get_runfiles_dir()
+    json_file = r / json_file_raw
+    logger.debug(f"External needs.json: {json_file}")
     try:
         needs_json_data = json.loads(Path(json_file).read_text(encoding="utf-8"))  # pyright: ignore[reportAny]
     except FileNotFoundError:
@@ -192,11 +177,11 @@ def add_external_needs_json(e: ExternalNeedsSource, config: Config):
 def add_external_docs_sources(e: ExternalNeedsSource, config: Config):
     # Note that bazel does NOT write the files under e.target!
     # {e.bazel_module}+ matches the original git layout!
-    if r := os.getenv("RUNFILES_DIR"):
-        docs_source_path = Path(r) / f"{e.bazel_module}+"
-    else:
+    r = get_runfiles_dir()
+    if "ide_support.runfiles" in str(r):
         logger.error("Combo builds are currently only supported with Bazel.")
         return
+    docs_source_path = Path(r) / f"{e.bazel_module}+"
 
     if "collections" not in config:
         config.collections = {}
