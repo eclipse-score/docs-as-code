@@ -13,7 +13,9 @@
 
 name: License check preparation
 on:
-  pull_request_target:
+  # TEMP: run from PR, instead of from pull_request_target.
+  # No access to secrets this way!
+  pull_request:
     types: [opened, reopened, synchronize]
   merge_group:
     types: [checks_requested]
@@ -25,9 +27,16 @@ permissions:
 
 jobs:
   license-check:
-    uses: eclipse-score/cicd-workflows/.github/workflows/license-check.yml@main
-    with:
-      repo-url: "${{ github.server_url }}/${{ github.repository }}"
-      bazel-target: "run //src:license-check"
-    secrets:
-      dash-api-token: ${{ secrets.ECLIPSE_GITLAB_API_TOKEN }}
+    name: Self Scan (from Action)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Run dash-license-scan from experimental @dev branch
+      - uses: eclipse-score/dash-license-scan@dev
+        with:
+          token: ${{ secrets.ECLIPSE_GITLAB_API_TOKEN }}
+          eclipse_project: ${{ vars.ECLIPSE_PROJECT }}
+          lockfiles: src/requirements.txt
+          trigger_review: false
+          comply_with: ASF EF
