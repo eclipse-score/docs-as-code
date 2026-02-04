@@ -174,7 +174,7 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = []):
     )
 
     py_binary(
-        name = "link_check",
+        name = "docs_link_check",
         tags = ["cli_help=Verify Links inside Documentation:\nbazel run //:link_check\n (Note: this could take a long time)"],
         srcs = ["@score_docs_as_code//src:incremental.py"],
         data = data,

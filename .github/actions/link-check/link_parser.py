@@ -61,11 +61,18 @@ def generate_markdown_table(broken_links: list[BrokenLink]) -> str:
 def generate_issue_body(broken_links: list[BrokenLink]) -> str:
     markdown_table = generate_markdown_table(broken_links)
     return f"""
-# Broken Links Report. Last updated: {datetime.now().isoformat()}
+# Broken Links Report. 
+**Last updated: {datetime.now().strftime('%d-%m-%Y %H:%M')}**
+
 The following broken links were detected in the documentation:
 {markdown_table}
 Please investigate and fix these issues to ensure all links are functional.
 Thank you!
+
+--- 
+This issue will be auto updated regularly if link issues are found.
+You may close it if you wish, though a new one will be created if link issues are still present. 
+
 """
 
 
