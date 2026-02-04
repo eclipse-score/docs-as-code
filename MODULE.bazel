@@ -110,6 +110,11 @@ git_override(
 # Add Linter
 bazel_dep(name = "rules_multitool", version = "1.9.0")
 bazel_dep(name = "score_tooling", version = "1.1.0")
+git_override(
+    module_name = "score_tooling",
+    commit = "43cddac03ea0db64111b55832b7c1af5370c2710",
+    remote = "https://github.com/eclipse-score/tooling.git",
+)
 
 multitool_root = use_extension("@rules_multitool//multitool:extension.bzl", "multitool")
 use_repo(multitool_root, "actionlint_hub", "multitool", "ruff_hub", "shellcheck_hub", "yamlfmt_hub")
