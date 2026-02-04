@@ -25,7 +25,7 @@ For other languages (C++, Rust, etc.), use the appropriate comment syntax.
 Scanning Source Code for Links
 ------------------------------
 
-In you ``BUILD`` files, you specify which source files to scan
+In your ``BUILD`` files, you specify which source files to scan
 with ``filegroup`` or ``glob`` or whatever Bazel mechanism you prefer.
 Finally, pass the scan results to the ``docs`` rule as ``scan_code`` attribute.
 
