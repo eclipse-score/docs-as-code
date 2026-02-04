@@ -1,0 +1,13 @@
+name: Link Check
+
+on:
+  workflow_dispatch:
+
+jobs:
+  link-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run link check action
+        uses: ./.github/actions/link-check
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
