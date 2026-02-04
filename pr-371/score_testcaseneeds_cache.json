@@ -24,7 +24,7 @@
   {
     "name": "test_returns_empty_list_when_filter_is_empty",
     "file": "src/extensions/score_metamodel/tests/test_metamodel__init__.py",
-    "line": "43",
+    "line": "45",
     "result": "passed",
     "TestType": "requirements-based",
     "DerivationTechnique": "requirements-analysis",
@@ -35,7 +35,7 @@
   {
     "name": "test_returns_valid_checks",
     "file": "src/extensions/score_metamodel/tests/test_metamodel__init__.py",
-    "line": "53",
+    "line": "55",
     "result": "passed",
     "TestType": "requirements-based",
     "DerivationTechnique": "requirements-analysis",
@@ -46,7 +46,7 @@
   {
     "name": "test_strips_whitespace",
     "file": "src/extensions/score_metamodel/tests/test_metamodel__init__.py",
-    "line": "64",
+    "line": "66",
     "result": "passed",
     "TestType": "requirements-based",
     "DerivationTechnique": "requirements-analysis",
@@ -57,7 +57,7 @@
   {
     "name": "test_raises_assertion_for_invalid_check",
     "file": "src/extensions/score_metamodel/tests/test_metamodel__init__.py",
-    "line": "75",
+    "line": "77",
     "result": "passed",
     "TestType": "requirements-based",
     "DerivationTechnique": "requirements-analysis",
@@ -68,7 +68,7 @@
   {
     "name": "test_get_cache_filename",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "193",
+    "line": "243",
     "result": "passed",
     "TestType": "requirements-based",
     "DerivationTechnique": "requirements-analysis",
@@ -79,7 +79,7 @@
   {
     "name": "test_find_need_direct_match",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "212",
+    "line": "262",
     "result": "passed",
     "TestType": "requirements-based",
     "DerivationTechnique": "requirements-analysis",
@@ -90,7 +90,7 @@
   {
     "name": "test_find_need_not_found",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "230",
+    "line": "280",
     "result": "passed",
     "TestType": "requirements-based",
     "DerivationTechnique": "requirements-analysis",
@@ -101,7 +101,7 @@
   {
     "name": "test_group_by_need",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "247",
+    "line": "297",
     "result": "passed",
     "TestType": "requirements-based",
     "DerivationTechnique": "requirements-analysis",
@@ -112,7 +112,7 @@
   {
     "name": "test_group_by_need_empty_list",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "271",
+    "line": "321",
     "result": "passed",
     "TestType": "requirements-based",
     "DerivationTechnique": "requirements-analysis",
@@ -123,7 +123,7 @@
   {
     "name": "test_get_github_link_with_real_repo",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "282",
+    "line": "332",
     "result": "passed",
     "TestType": "requirements-based",
     "DerivationTechnique": "requirements-analysis",
@@ -134,7 +134,7 @@
   {
     "name": "test_cache_file_operations",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "314",
+    "line": "364",
     "result": "passed",
     "TestType": "requirements-based",
     "DerivationTechnique": "requirements-analysis",
@@ -145,7 +145,7 @@
   {
     "name": "test_cache_file_with_encoded_comments",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "345",
+    "line": "395",
     "result": "passed",
     "TestType": "requirements-based",
     "DerivationTechnique": "requirements-analysis",
@@ -156,7 +156,7 @@
   {
     "name": "test_group_by_need_and_find_need_integration",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "382",
+    "line": "432",
     "result": "passed",
     "TestType": "requirements-based",
     "DerivationTechnique": "requirements-analysis",
@@ -167,7 +167,7 @@
   {
     "name": "test_source_linker_end_to_end_with_real_files",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "410",
+    "line": "460",
     "result": "passed",
     "TestType": "requirements-based",
     "DerivationTechnique": "requirements-analysis",
@@ -178,7 +178,7 @@
   {
     "name": "test_multiple_commits_hash_consistency",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "507",
+    "line": "557",
     "result": "passed",
     "TestType": "requirements-based",
     "DerivationTechnique": "requirements-analysis",

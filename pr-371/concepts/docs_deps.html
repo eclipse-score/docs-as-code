@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Reference Docs in Source Code &#8212; Score Docs-as-Code  documentation</title>
+    <title>Docs Dependencies &#8212; Score Docs-as-Code  documentation</title>
   
   
   
@@ -62,7 +62,7 @@
     <script src="../_static/sphinx-needs/libs/html/datatables.min.js?v=8a4aee21"></script>
     <script src="../_static/sphinx-needs/libs/html/datatables_loader.js?v=a2cae175"></script>
     <script src="../_static/sphinx-needs/libs/html/sphinx_needs_collapse.js?v=dca66431"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'how-to/source_to_doc_links';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'concepts/docs_deps';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://eclipse-score.github.io/docs-as-code/versions.json';
@@ -72,8 +72,8 @@
         </script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Reference Docs in Tests" href="test_to_doc_links.html" />
-    <link rel="prev" title="Reference Other Modules" href="other_modules.html" />
+    <link rel="next" title="Internals" href="../internals/index.html" />
+    <link rel="prev" title="Bi-directional Traceability" href="bidirectional_traceability.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.1" />
@@ -152,8 +152,8 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
-<li class="nav-item current active">
-  <a class="nav-link nav-internal" href="index.html">
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../how-to/index.html">
     How To
   </a>
 </li>
@@ -166,8 +166,8 @@
 </li>
 
 
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../concepts/index.html">
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
     Concepts
   </a>
 </li>
@@ -288,8 +288,8 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
-<li class="nav-item current active">
-  <a class="nav-link nav-internal" href="index.html">
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../how-to/index.html">
     How To
   </a>
 </li>
@@ -302,8 +302,8 @@
 </li>
 
 
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../concepts/index.html">
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
     Concepts
   </a>
 </li>
@@ -379,13 +379,8 @@
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="get_started.html">Getting started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="setup.html">Setup</a></li>
-<li class="toctree-l1"><a class="reference internal" href="write_docs.html">Write Documentation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
-<li class="toctree-l1"><a class="reference internal" href="other_modules.html">Reference Other Modules</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Reference Docs in Source Code</a></li>
-<li class="toctree-l1"><a class="reference internal" href="test_to_doc_links.html">Reference Docs in Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bidirectional_traceability.html">Bi-directional Traceability</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Docs Dependencies</a></li>
 </ul>
 </div>
 </nav></div>
@@ -427,9 +422,9 @@
       </a>
     </li>
     
-    <li class="breadcrumb-item"><a href="index.html" class="nav-link">How To</a></li>
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Concepts</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Reference Docs in Source Code</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Docs Dependencies</span></li>
   </ul>
 </nav>
 </div>
@@ -446,49 +441,25 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="reference-docs-in-source-code">
-<h1>Reference Docs in Source Code<a class="headerlink" href="#reference-docs-in-source-code" title="Link to this heading">#</a></h1>
-<p>In your C++/Rust/Python source code, you want to reference requirements (needs).
-The docs-as-code tool will create backlinks in the documentation in two steps:</p>
+  <section id="docs-dependencies">
+<span id="id1"></span><h1>Docs Dependencies<a class="headerlink" href="#docs-dependencies" title="Link to this heading">#</a></h1>
+<p>When running <code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">:docs</span></code>, the documentation build system orchestrates multiple interconnected dependencies to produce HTML documentation.</p>
 <ol class="arabic simple">
-<li><p>You add a special comment in your source code that references the need ID.</p></li>
-<li><p>Scan for those comments and provide needs links to your documentation.</p></li>
+<li><p>Gather inputs (Bazel may do this parallelized):</p>
+<ul class="simple">
+<li><p>Extract source code links from files via <code class="docutils literal notranslate"><span class="pre">sourcelinks_json</span></code> rule.</p>
+<ul>
+<li><p>Optionally, merge source links using the <code class="docutils literal notranslate"><span class="pre">merge_sourcelinks</span></code> rule.</p></li>
+</ul>
+</li>
+<li><p>Needs (requirements) are gathered from various <code class="docutils literal notranslate"><span class="pre">needs_json</span></code> targets specified in the <code class="docutils literal notranslate"><span class="pre">data</span></code> attribute.</p></li>
+</ul>
+</li>
+<li><p>Documentation sources are read from the specified source directory (default: <code class="docutils literal notranslate"><span class="pre">docs/</span></code>).
+Sphinx processes the documentation sources along with the merged data to generate the final HTML output.</p></li>
 </ol>
-<p>For an example result, look at the attribute <code class="docutils literal notranslate"><span class="pre">source_code_link</span></code>
-of <a class="reference internal" href="../internals/requirements/requirements.html#tool_req__docs_common_attr_title" title="tool_req__docs_common_attr_title"><em class="xref need">Enforces title wording rules (tool_req__docs_common_attr_title)</em></a>.</p>
-<section id="comments-in-source-code">
-<h2>Comments in Source Code<a class="headerlink" href="#comments-in-source-code" title="Link to this heading">#</a></h2>
-<p>Use a comment and start with <code class="docutils literal notranslate"><span class="pre">req-Id:</span></code> or <code class="docutils literal notranslate"><span class="pre">req-traceability:</span></code> followed by the need ID.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># req-Id: TOOL_REQ__EXAMPLE_ID</span>
-<span class="c1"># req-traceability: TOOL_REQ__EXAMPLE_ID</span>
-</pre></div>
-</div>
-<p>For other languages (C++, Rust, etc.), use the appropriate comment syntax.</p>
-</section>
-<section id="scanning-source-code-for-links">
-<h2>Scanning Source Code for Links<a class="headerlink" href="#scanning-source-code-for-links" title="Link to this heading">#</a></h2>
-<p>In your <code class="docutils literal notranslate"><span class="pre">BUILD</span></code> files, you specify which source files to scan
-with <code class="docutils literal notranslate"><span class="pre">filegroup</span></code> or <code class="docutils literal notranslate"><span class="pre">glob</span></code> or whatever Bazel mechanism you prefer.
-Finally, pass the scan results to the <code class="docutils literal notranslate"><span class="pre">docs</span></code> rule as <code class="docutils literal notranslate"><span class="pre">scan_code</span></code> attribute.</p>
-<div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="n">filegroup</span><span class="p">(</span>
-<span class="linenos"> 2</span>   <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;some_sources&quot;</span><span class="p">,</span>
-<span class="linenos"> 3</span>   <span class="n">srcs</span> <span class="o">=</span> <span class="p">[</span>
-<span class="linenos"> 4</span>       <span class="s2">&quot;foo.py&quot;</span><span class="p">,</span>
-<span class="linenos"> 5</span>       <span class="s2">&quot;bar.cpp&quot;</span><span class="p">,</span>
-<span class="linenos"> 6</span>       <span class="s2">&quot;data.yaml&quot;</span><span class="p">,</span>
-<span class="linenos"> 7</span>   <span class="p">]</span> <span class="o">+</span> <span class="n">glob</span><span class="p">([</span><span class="s2">&quot;subdir/**/.py&quot;</span><span class="p">]),</span>
-<span class="linenos"> 8</span><span class="p">)</span>
-<span class="linenos"> 9</span>
-<span class="linenos">10</span><span class="n">docs</span><span class="p">(</span>
-<span class="linenos">11</span>   <span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
-<span class="linenos">12</span>          <span class="s2">&quot;@score_process//:needs_json&quot;</span><span class="p">,</span>
-<span class="linenos">13</span>      <span class="p">],</span>
-<span class="linenos">14</span>      <span class="n">source_dir</span> <span class="o">=</span> <span class="s2">&quot;docs&quot;</span><span class="p">,</span>
-<span class="hll"><span class="linenos">15</span>      <span class="n">scan_code</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;:some_sources&quot;</span><span class="p">],</span>
-</span><span class="linenos">16</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
+<p class="plantuml">
+<object data="../_images/plantuml-8b47d7b4fe6a0983f5cc335eab3018914fbc0064.svg" type="image/svg+xml" style="width:825px;height:266px;background:#FFFFFF;"></object></p>
 </section>
 
 
@@ -502,20 +473,20 @@ Finally, pass the scan results to the <code class="docutils literal notranslate"
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="other_modules.html"
+       href="bidirectional_traceability.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Reference Other Modules</p>
+        <p class="prev-next-title">Bi-directional Traceability</p>
       </div>
     </a>
     <a class="right-next"
-       href="test_to_doc_links.html"
+       href="../internals/index.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Reference Docs in Tests</p>
+        <p class="prev-next-title">Internals</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -531,23 +502,10 @@ Finally, pass the scan results to the <code class="docutils literal notranslate"
 
 
   <div class="sidebar-secondary-item">
-<div
-    id="pst-page-navigation-heading-2"
-    class="page-toc tocsection onthispage">
-    <i class="fa-solid fa-list"></i> On this page
-  </div>
-  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comments-in-source-code">Comments in Source Code</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scanning-source-code-for-links">Scanning Source Code for Links</a></li>
-</ul>
-  </nav></div>
-
-  <div class="sidebar-secondary-item">
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/eclipse-score/docs-as-code/edit/main/docs/how-to/source_to_doc_links.rst">
+    <a href="https://github.com/eclipse-score/docs-as-code/edit/main/docs/concepts/docs_deps.rst">
       <i class="fa-solid fa-pencil"></i>
       
       
