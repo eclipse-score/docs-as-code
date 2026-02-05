@@ -303,5 +303,5 @@ def _sourcelinks_json(name, srcs):
             $(SRCS)
         """,
         tools = ["@score_docs_as_code//scripts_bazel:generate_sourcelinks"],
-        # Allows any score repo to be used as dependency for score modules.
+        # Allows any score repo to be used as a dependency for sphinx modules
     )
