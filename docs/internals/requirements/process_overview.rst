@@ -76,7 +76,7 @@ does not mean it is implemented.
 
 .. needtable::
    :types: gd_req
-   :columns: id as "Process Requirement";implemented;satisfies
+   :columns: id as "Tool Requirement";implemented;satisfies
    :colwidths: 1;1;2
    :style: table
 
