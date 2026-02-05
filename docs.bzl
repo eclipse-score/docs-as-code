@@ -46,6 +46,7 @@ load("@pip_process//:requirements.bzl", "all_requirements")
 load("@rules_pkg//pkg:mappings.bzl", "pkg_files", "strip_prefix")
 load("@rules_python//sphinxdocs:sphinx.bzl", "sphinx_build_binary", "sphinx_docs")
 load("@score_tooling//:defs.bzl", "score_virtualenv")
+load("@score_tooling//bazel/rules/rules_score:rules_score.bzl", "sphinx_module")
 
 def _rewrite_needs_json_to_docs_sources(labels):
     """Replace '@repo//:needs_json' -> '@repo//:docs_sources' for every item."""
@@ -106,6 +107,7 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = []):
     if call_path != "":
         fail("docs() must be called from the root package. Current package: " + call_path)
 
+    module_deps = deps
     deps = deps + all_requirements + [
         "@score_docs_as_code//src:plantuml_for_python",
         "@score_docs_as_code//src/extensions/score_sphinx_bundle:score_sphinx_bundle",
@@ -252,6 +254,30 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = []):
         formats = ["needs"],
         sphinx = ":sphinx_build",
         tools = data,
+        visibility = ["//visibility:public"],
+    )
+
+    sphinx_module(
+        name = native.module_name() + "_module",
+        srcs = native.glob([
+            source_dir + "/**/*.rst",
+            source_dir + "/**/*.png",
+            source_dir + "/**/*.svg",
+            source_dir + "/**/*.md",
+            source_dir + "/**/*.html",
+            source_dir + "/**/*.css",
+            source_dir + "/**/*.puml",
+            source_dir + "/**/*.need",
+            source_dir + "/**/*.yaml",
+            source_dir + "/**/*.json",
+            source_dir + "/**/*.csv",
+            source_dir + "/**/*.inc",
+            "more_docs/**/*.rst",
+        ], allow_empty = True),
+        # config = ":" + source_dir + "/conf.py",
+        index = source_dir + "/index.rst",
+        sphinx = "@score_tooling//bazel/rules/rules_score:score_build",
+        deps = module_deps,
         visibility = ["//visibility:public"],
     )
 
