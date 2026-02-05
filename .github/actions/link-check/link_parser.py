@@ -69,6 +69,8 @@ The following broken links were detected in the documentation:
 Please investigate and fix these issues to ensure all links are functional.
 Thank you!
 
+> To test locally if all link issues are resolved use `bazel run //:docs_link_check`
+
 --- 
 This issue will be auto updated regularly if link issues are found.
 You may close it if you wish, though a new one will be created if link issues are still present. 
