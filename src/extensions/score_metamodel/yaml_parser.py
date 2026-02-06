@@ -119,7 +119,7 @@ def _parse_need_type(
     # Ensure ID regex is set
     if "id" not in t["mandatory_options"]:
         prefix = t["prefix"]
-        t["mandatory_options"]["id"] = f"^{prefix}[0-9a-z_]+$"
+        t["mandatory_options"]["id"] = f"^{prefix}[0-9a-zA-Z_]+$"
 
     if "color" in yaml_data:
         t["color"] = yaml_data["color"]
