@@ -1077,19 +1077,6 @@ Overview of Tool to Process Requirements
 .. ------------------------------------------------------------------------
 ..
 
-Grouped Requirements
-####################
-
-.. tool_req:: Metamodel
-  :id: tool_req__docs_metamodel
-  :tags: metamodel
-  :implemented: YES
-
-  Docs-as-Code shall provide a metamodel for definining config in a  `metamodel.yaml` in the source code repository.
-
-  .. note:: "satisfied by" is something like "used by" or "required by".
-
-
 .. needextend:: c.this_doc() and type == 'tool_req'
   :safety: ASIL_B
   :security: NO
@@ -1098,5 +1085,4 @@ Grouped Requirements
   :status: valid
 
 .. needextend:: "metamodel.yaml" in source_code_link
-  :+satisfies: tool_req__docs_metamodel
   :+tags: config
