@@ -385,7 +385,8 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
         if source_code_links.links.TestLinks:
             modified_need = True
             need_as_dict["testlink"] = ", ".join(
-                f"{get_github_link(n)}<>{n.name}" for n in source_code_links.links.TestLinks
+                f"{get_github_link(n)}<>{n.name}"
+                for n in source_code_links.links.TestLinks
             )
 
         if modified_need:

@@ -273,12 +273,7 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     # Generate schemas.json from the metamodel and register it with sphinx-needs.
     # This enables sphinx-needs 6 schema validation: required fields, regex
     # patterns on option values, and (eventually) link target type checks.
-
-    print("Trying to generate schemas from metamodel.yaml and register them with Sphinx-Needs.")
-
     write_sn_schemas(app, metamodel)
-
-    print("Successfully generated schemas from metamodel.yaml and registered them with Sphinx-Needs.")
 
     # sphinx-collections runs on default prio 500.
     # We need to populate the sphinx-collections config before that happens.
