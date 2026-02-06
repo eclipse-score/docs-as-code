@@ -10,9 +10,12 @@ how well this tool implements process requirements.
 Unsatisfied Process Requirements
 ################################
 
-The following table lists tool requirements from our process
+The following table lists process requirements from our process
 which are not (yet) satisfied,
 i.e. covered by tool requirements.
+
+Unsatisfied – Priority 1
+------------------------
 
 .. needtable::
    :types: gd_req
@@ -50,6 +53,9 @@ i.e. covered by tool requirements.
        if len(need["satisfies_back"]) >= 1:
           continue
        results.append(need)
+
+Unsatisfied – Priority 2
+------------------------
 
 .. needtable::
    :types: gd_req
