@@ -1097,6 +1097,6 @@ Grouped Requirements
 .. needextend:: c.this_doc() and type == 'tool_req' and not status
   :status: valid
 
-.. needextend:: "metamodel.yaml" in source_code_link
+.. needextend:: source_code_link is not None and "metamodel.yaml" in source_code_link
   :+satisfies: tool_req__docs_metamodel
   :+tags: config

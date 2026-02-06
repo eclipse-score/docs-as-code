@@ -124,7 +124,7 @@ needs_types:
     mandatory_options:
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|draft)$
-      content: ^[\s\S]+$
+      content: ^(.|[\n\r])+$
     optional_links:
       # req-Id: tool_req__docs_req_link_satisfies_allowed
       # TODO: fix once process_description is fixed
@@ -252,7 +252,7 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
       # WARNING: THis will be activated again with new process release (1.1.0)
-      # content: ^[\s\S]+$
+      # content: ^(.|[\n\r])+$
       # req-Id: tool_req__docs_req_attr_rationale
       rationale: ^.+$
       # req-Id: tool_req__docs_common_attr_security
@@ -266,8 +266,8 @@ needs_types:
       testcovered: ^(YES|NO)$
       hash: ^.*$
       # req-Id: tool_req__docs_req_attr_validity_correctness
-      valid_from: ^v(0|[1-9]\d*)\.(0|[1-9]\d*)(\.(0|[1-9]\d*))?$
-      valid_until: ^v(0|[1-9]\d*)\.(0|[1-9]\d*)(\.(0|[1-9]\d*))?$
+      valid_from: ^v(0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)(\.(0|[1-9][0-9]*))?$
+      valid_until: ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(\.(0|[1-9][0-9]*))?$
     tags:
       - requirement
       - requirement_excl_process
@@ -286,7 +286,7 @@ needs_types:
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
-      content: ^[\s\S]+$
+      content: ^(.|[\n\r])+$
     mandatory_links:
       # req-Id: tool_req__docs_req_link_satisfies_allowed
       satisfies: stkh_req
@@ -299,8 +299,8 @@ needs_types:
       testcovered: ^(YES|NO)$
       hash: ^.*$
       # req-Id: tool_req__docs_req_attr_validity_correctness
-      valid_from: ^v(0|[1-9]\d*)\.(0|[1-9]\d*)(\.(0|[1-9]\d*))?$
-      valid_until: ^v(0|[1-9]\d*)\.(0|[1-9]\d*)(\.(0|[1-9]\d*))?$
+      valid_from: ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(\.(0|[1-9][0-9]*))?$
+      valid_until: ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(\.(0|[1-9][0-9]*))?$
     optional_links:
       belongs_to: feat # for evaluation
     tags:
@@ -320,7 +320,7 @@ needs_types:
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
-      content: ^[\s\S]+$
+      content: ^(.|[\n\r])+$
     mandatory_links:
       # req-Id: tool_req__docs_req_link_satisfies_allowed
       satisfies: feat_req
@@ -348,7 +348,7 @@ needs_types:
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
-      content: ^[\s\S]+$
+      content: ^(.|[\n\r])+$
     optional_links:
       # req-Id: tool_req__docs_req_link_satisfies_allowed
       # TODO: make it mandatory
@@ -381,7 +381,7 @@ needs_types:
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
-      content: ^[\s\S]+$
+      content: ^(.|[\n\r])+$
     optional_options:
       codelink: ^.*$
       testlink: ^.*$
@@ -728,7 +728,7 @@ needs_types:
       failure_effect: ^.*$
       sufficient: ^(yes|no)$
       status: ^(valid|invalid)$
-      content: ^[\s\S]+$
+      content: ^(.|[\n\r])+$
     mandatory_links:
       violates: feat_arc_sta
     optional_options:
@@ -748,7 +748,7 @@ needs_types:
       sufficient: ^(yes|no)$
       status: ^(valid|invalid)$
       # req-Id: tool_req__docs_saf_attrs_content
-      content: ^[\s\S]+$
+      content: ^(.|[\n\r])+$
     mandatory_links:
       # req-Id: tool_req__docs_saf_attrs_violates
       violates: feat_arc_sta
@@ -775,7 +775,7 @@ needs_types:
       sufficient: ^(yes|no)$
       status: ^(valid|invalid)$
       # req-Id: tool_req__docs_saf_attrs_content
-      content: ^[\s\S]+$
+      content: ^(.|[\n\r])+$
     optional_options:
       # req-Id: tool_req__docs_saf_attrs_mitigation_issue
       mitigation_issue: ^https://github.com/.*$
@@ -803,7 +803,7 @@ needs_types:
       sufficient: ^(yes|no)$
       status: ^(valid|invalid)$
       # req-Id: tool_req__docs_saf_attrs_content
-      content: ^[\s\S]+$
+      content: ^(.|[\n\r])+$
     optional_options:
       # req-Id: tool_req__docs_saf_attrs_mitigation_issue
       mitigation_issue: ^https://github.com/.*$
@@ -830,7 +830,7 @@ needs_types:
       sufficient: ^(yes|no)$
       status: ^(valid|invalid)$
       # req-Id: tool_req__docs_saf_attrs_content
-      content: ^[\s\S]+$
+      content: ^(.|[\n\r])+$
     optional_options:
       # req-Id: tool_req__docs_saf_attrs_mitigation_issue
       mitigation_issue: ^https://github.com/.*$
@@ -971,6 +971,12 @@ needs_extra_links:
   partially_verifies:
     incoming: partially_verified_by
     outgoing: partially_verifies
+
+  # Decision Records
+  affects:
+    incoming: affected by
+    outgoing: affects
+
 ##############################################################
 # Graph Checks
 # The graph checks focus on the relation of the needs and their attributes.

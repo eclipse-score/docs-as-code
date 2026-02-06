@@ -375,18 +375,24 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
 
         need_as_dict = cast(dict[str, object], need)
 
-        need_as_dict["source_code_link"] = ", ".join(
-            f"{get_github_link(n)}<>{n.file}:{n.line}"
-            for n in source_code_links.links.CodeLinks
-        )
-        need_as_dict["testlink"] = ", ".join(
-            f"{get_github_link(n)}<>{n.name}" for n in source_code_links.links.TestLinks
-        )
+        modified_need = False
+        if source_code_links.links.CodeLinks:
+            modified_need = True
+            need_as_dict["source_code_link"] = ", ".join(
+                f"{get_github_link(n)}<>{n.file}:{n.line}"
+                for n in source_code_links.links.CodeLinks
+            )
+        if source_code_links.links.TestLinks:
+            modified_need = True
+            need_as_dict["testlink"] = ", ".join(
+                f"{get_github_link(n)}<>{n.name}" for n in source_code_links.links.TestLinks
+            )
 
-        # NOTE: Removing & adding the need is important to make sure
-        # the needs gets 're-evaluated'.
-        Needs_Data.remove_need(need["id"])
-        Needs_Data.add_need(need)
+        if modified_need:
+            # NOTE: Removing & adding the need is important to make sure
+            # the needs gets 're-evaluated'.
+            Needs_Data.remove_need(need["id"])
+            Needs_Data.add_need(need)
 
 
 #          ╭──────────────────────────────────────╮
