@@ -59,6 +59,12 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     ]
     # TODO remove the suppress_warnings once fixed
 
+    app.config.needscfg_exclude_vars = [
+        "needs_from_toml",
+        "needs_from_toml_table",
+        # "needs_schema_definitions_from_json",
+    ]
+
     return {
         "version": "0.1",
         "parallel_read_safe": True,
