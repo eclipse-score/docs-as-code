@@ -102,13 +102,13 @@ class TestClassifyLinks:
         links = {"satisfies": "comp"}
         regexes, targets = _classify_links(links, "my_type", mandatory=False)
         assert regexes == {}
-        assert targets == {"satisfies": "comp"}
+        assert targets == {"satisfies": ["comp"]}
 
     def test_comma_separated_mixed_values(self) -> None:
         links = {"related": "^arc_.+$, comp"}
         regexes, targets = _classify_links(links, "my_type", mandatory=True)
         assert regexes == {"related": "^arc_.+$"}
-        assert targets == {"related": "comp"}
+        assert targets == {"related": ["comp"]}
 
     def test_empty_links(self) -> None:
         regexes, targets = _classify_links({}, "my_type", mandatory=True)
@@ -122,7 +122,7 @@ class TestClassifyLinks:
         }
         regexes, targets = _classify_links(links, "my_type", mandatory=False)
         assert regexes == {"parent": "^parent__.+$"}
-        assert targets == {"satisfies": "req"}
+        assert targets == {"satisfies": ["req"]}
 
     def test_multiple_regex_for_same_field_logs_error(self) -> None:
         links = {"field": "^regex1$, ^regex2$"}
@@ -132,12 +132,11 @@ class TestClassifyLinks:
             # Last regex overwrites previous ones
             assert regexes == {"field": "^regex2$"}
 
-    def test_multiple_plain_targets_last_wins(self) -> None:
+    def test_multiple_plain_targets_all_kept(self) -> None:
         links = {"field": "comp, sw_unit"}
         regexes, targets = _classify_links(links, "my_type", mandatory=True)
         assert regexes == {}
-        # Last target overwrites
-        assert targets == {"field": "sw_unit"}
+        assert targets == {"field": ["comp", "sw_unit"]}
 
 
 # =============================================================================
@@ -205,6 +204,12 @@ class TestBuildLocalValidator:
         result = _build_local_validator(mandatory, {}, {}, {})
         assert result["properties"]["tags"]["type"] == "array"
         assert "items" in result["properties"]["tags"]
+
+    def test_mandatory_link_targets_required_with_min_items(self) -> None:
+        mandatory_link_targets = {"satisfies": ["comp", "sw_unit"]}
+        result = _build_local_validator({}, {}, {}, {}, mandatory_link_targets)
+        assert "satisfies" in result["required"]
+        assert result["properties"]["satisfies"] == {"type": "array", "minItems": 1}
 
 
 # =============================================================================
@@ -287,8 +292,9 @@ class TestBuildNeedTypeSchema:
         schema = _build_need_type_schema(need_type)
         assert schema is not None
         local = schema["validate"]["local"]
-        # Plain targets don't produce local validation entries
-        assert "satisfies" not in local["properties"]
+        # Mandatory plain-target links get minItems: 1 in local validator
+        assert "satisfies" in local["required"]
+        assert local["properties"]["satisfies"] == {"type": "array", "minItems": 1}
 
     def test_optional_links_with_regex(self) -> None:
         need_type = _make_need_type(
@@ -397,3 +403,99 @@ class TestWriteSnSchemas:
         assert len(data["schemas"]) == 2
         ids = {s["id"] for s in data["schemas"]}
         assert ids == {"need-type-req", "need-type-spec"}
+
+
+# =============================================================================
+# Tests for validate.network schema generation
+# =============================================================================
+
+
+class TestNetworkValidation:
+    def test_single_mandatory_target_type(self) -> None:
+        need_type = _make_need_type(
+            mandatory_links={"satisfies": "comp"},
+        )
+        schema = _build_need_type_schema(need_type)
+        assert schema is not None
+        network = schema["validate"].get("network")
+        assert network is not None
+        assert "satisfies" in network
+        entry = network["satisfies"]
+        assert entry["type"] == "array"
+        assert entry["items"]["local"]["properties"]["type"]["const"] == "comp"
+        assert entry["items"]["local"]["required"] == ["type"]
+        # minItems is in local validator, not network
+        assert "minItems" not in entry
+
+    def test_optional_target_types_excluded_from_network(self) -> None:
+        """Optional links are not validated via network schema.
+
+        The Python validate_links() treats optional link type violations as
+        informational (treat_as_info=True).  Since schemas use a single severity
+        per need type, including optional links would escalate info-level issues
+        to errors.
+        """
+        need_type = _make_need_type(
+            optional_links={"implements": "logic_arc_int, real_arc_int_op"},
+        )
+        schema = _build_need_type_schema(need_type)
+        assert schema is not None
+        assert "network" not in schema["validate"]
+
+    def test_mandatory_and_optional_combined(self) -> None:
+        """Only mandatory links appear in network; optional links are excluded."""
+        need_type = _make_need_type(
+            mandatory_links={"satisfies": "comp"},
+            optional_links={"implements": "logic_arc_int, real_arc_int_op"},
+        )
+        schema = _build_need_type_schema(need_type)
+        assert schema is not None
+        network = schema["validate"].get("network")
+        assert network is not None
+        # Only mandatory links in network
+        assert set(network.keys()) == {"satisfies"}
+        assert network["satisfies"]["items"]["local"]["properties"]["type"]["const"] == "comp"
+
+    def test_mandatory_plain_target_gets_local_min_items(self) -> None:
+        need_type = _make_need_type(
+            mandatory_links={"satisfies": "comp"},
+        )
+        schema = _build_need_type_schema(need_type)
+        assert schema is not None
+        local = schema["validate"]["local"]
+        assert "satisfies" in local["required"]
+        assert local["properties"]["satisfies"] == {"type": "array", "minItems": 1}
+
+    def test_optional_plain_target_no_local_min_items(self) -> None:
+        need_type = _make_need_type(
+            optional_links={"implements": "logic_arc_int"},
+        )
+        schema = _build_need_type_schema(need_type)
+        assert schema is not None
+        local = schema["validate"]["local"]
+        assert "implements" not in local.get("required", [])
+
+    def test_no_network_when_only_regex_links(self) -> None:
+        need_type = _make_need_type(
+            mandatory_links={"includes": "^logic_arc_int__.+$"},
+        )
+        schema = _build_need_type_schema(need_type)
+        assert schema is not None
+        assert "network" not in schema["validate"]
+
+    def test_mixed_regex_and_plain_skips_network(self) -> None:
+        """When a field mixes regex and plain targets, no network entry is generated.
+
+        The items schema would require ALL linked needs to match the plain type,
+        but some legitimately match the regex instead.  Validated by Python checks.
+        """
+        need_type = _make_need_type(
+            optional_links={"complies": "std_wp, ^std_req__aspice_40__iic.*$"},
+        )
+        schema = _build_need_type_schema(need_type)
+        assert schema is not None
+        # Regex part goes to local validator
+        local = schema["validate"]["local"]
+        assert local["properties"]["complies"] == {"type": "array"}
+        # No network entry for mixed fields
+        assert "network" not in schema["validate"]

@@ -19,7 +19,7 @@ the S-CORE metamodel rules (required fields, regex patterns, link constraints).
 Schema structure per need type (sphinx-needs schema format):
   - ``select``  : matches needs by their ``type`` field
   - ``validate.local``   : validates the need's own properties (patterns, required)
-  - ``validate.network`` : validates properties of linked needs (NOT YET ACTIVE)
+  - ``validate.network`` : validates properties of linked needs
 """
 
 import json
@@ -77,7 +77,7 @@ def write_sn_schemas(app: Sphinx, metamodel: MetaModelData) -> None:
 
 def _classify_links(
     links: dict[str, Any], type_name: str, mandatory: bool
-) -> tuple[dict[str, str], dict[str, str]]:
+) -> tuple[dict[str, str], dict[str, list[str]]]:
     """Classify link values into regex patterns vs. target type names.
 
     In the metamodel YAML, a link value can be either:
@@ -89,10 +89,11 @@ def _classify_links(
 
     Returns:
         A tuple of (regexes, targets) dicts, keyed by field name.
+        ``targets`` maps each field to a list of all allowed type names.
     """
     label = "mandatory" if mandatory else "optional"
     regexes: dict[str, str] = {}
-    targets: dict[str, str] = {}
+    targets: dict[str, list[str]] = {}
 
     for field, value in links.items():
         link_values = [v.strip() for v in value.split(",")]
@@ -106,7 +107,9 @@ def _classify_links(
                     )
                 regexes[field] = link_value
             else:
-                targets[field] = link_value
+                if field not in targets:
+                    targets[field] = []
+                targets[field].append(link_value)
 
     return regexes, targets
 
@@ -116,6 +119,7 @@ def _build_local_validator(
     optional_fields: dict[str, str],
     mandatory_links_regexes: dict[str, str],
     optional_links_regexes: dict[str, str],
+    mandatory_links_targets: dict[str, list[str]] | None = None,
 ) -> dict[str, Any]:
     """Build the local validator dict for a need type's schema.
 
@@ -146,6 +150,15 @@ def _build_local_validator(
         properties[field] = {"type": "array", "minItems": 1}
         required.append(field)
 
+    # Mandatory links (plain target types): must have at least one entry.
+    # The type of the linked need is checked via validate.network, but the
+    # list length constraint belongs in the local validator.
+    # Skip fields already handled by mandatory_links_regexes (mixed regex + plain).
+    for field in mandatory_links_targets or {}:
+        if field not in properties:
+            properties[field] = {"type": "array", "minItems": 1}
+            required.append(field)
+
     # Optional links (regex): allowed but not required
     # TODO: regex pattern matching on link IDs is not yet enabled
     for field in optional_links_regexes:
@@ -167,7 +180,7 @@ def _build_need_type_schema(need_type: ScoreNeedType) -> dict[str, Any] | None:
     The returned dict has the sphinx-needs schema structure:
       - ``select``: matches needs by their ``type`` field
       - ``validate.local``: validates the need's own properties
-      - ``validate.network``: validates linked needs' types (NOT YET ACTIVE)
+      - ``validate.network``: validates linked needs' types
     """
     mandatory_fields = need_type.get("mandatory_options", {})
     optional_fields = need_type.get("optional_options", {})
@@ -182,12 +195,49 @@ def _build_need_type_schema(need_type: ScoreNeedType) -> dict[str, Any] | None:
 
     # Classify link values as regex patterns vs. target type names.
     # Note: links are still plain strings at this point (before postprocess_need_links).
-    mandatory_links_regexes, _ = _classify_links(
+    mandatory_links_regexes, mandatory_links_targets = _classify_links(
         mandatory_links, type_name, mandatory=True
     )
-    optional_links_regexes, _ = _classify_links(
+    optional_links_regexes, optional_links_targets = _classify_links(
         optional_links, type_name, mandatory=False
     )
+
+    # Build validate.network for link fields with plain type targets.
+    # The network schema uses sphinx-needs' ValidateSchemaType format:
+    # each entry's ``items.local`` is a JSON Schema applied to each linked need.
+    network: dict[str, Any] = {}
+
+    def add_network_entry(field: str, target_types: list[str]) -> None:
+        type_constraint: dict[str, Any] = (
+            {"enum": target_types}
+            if len(target_types) > 1
+            else {"const": target_types[0]}
+        )
+        network[field] = {
+            "type": "array",
+            "items": {
+                "local": {
+                    "properties": {"type": type_constraint},
+                    "required": ["type"],
+                }
+            },
+        }
+
+    # Only add network entries for *mandatory* links with exclusively plain
+    # type targets.  Two categories are intentionally excluded:
+    #
+    # 1. Mixed regex+plain fields (e.g. "complies: std_wp, ^std_req__aspice_40__iic.*$"):
+    #    The items schema would incorrectly require ALL linked needs to match
+    #    the plain type, while some legitimately match the regex instead.
+    #
+    # 2. Optional links: The Python validate_links() in check_options.py treats
+    #    optional link type violations as informational (treat_as_info=True),
+    #    but schemas use a single severity ("violation") per need type.
+    #    Including optional links would escalate info-level issues to errors.
+    #    Optional link types are validated by the Python check instead.
+    for field, target_types in mandatory_links_targets.items():
+        if field not in mandatory_links_regexes:
+            add_network_entry(field, target_types)
 
     type_schema: dict[str, Any] = {
         "id": f"need-type-{type_name}",
@@ -204,13 +254,12 @@ def _build_need_type_schema(need_type: ScoreNeedType) -> dict[str, Any] | None:
                 optional_fields,
                 mandatory_links_regexes,
                 optional_links_regexes,
+                mandatory_links_targets,
             ),
         },
     }
-
-    # TODO: network validation is not yet enabled.
-    # When enabled, it would use the target type names (second return value
-    # of _classify_links) to check that linked needs have the expected type.
+    if network:
+        type_schema["validate"]["network"] = network
 
     return type_schema
 

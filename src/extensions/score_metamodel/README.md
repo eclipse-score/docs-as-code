@@ -39,15 +39,29 @@ Each need type can specify:
 
 ## Validation layers
 
-### Schema validation (sphinx-needs 6)
+### Schema validation (sphinx-needs >6)
 
 `sn_schemas.py` translates the metamodel into a `schemas.json` file that
 sphinx-needs evaluates at parse time. Each schema entry has:
 
 - **`select`** -- matches needs by their `type` field.
 - **`validate.local`** -- JSON Schema checking the need's own properties
-  (required fields, regex patterns, mandatory links with `minItems: 1`).
-- **`validate.network`** -- (not yet active) would validate linked needs' types.
+  (required fields, regex patterns on option values, mandatory links with
+  `minItems: 1`). Regex patterns on **link IDs** (e.g. checking that
+  `includes` entries match `^logic_arc_int(_op)*__.+$`) are not yet
+  validated here; the schema only enforces that at least one link exists.
+  ID-pattern checking is still done by the Python `validate_links()` in
+  `check_options.py`.
+- **`validate.network`** -- validates that linked needs have the expected
+  `type` (e.g. `satisfies` targets must be `stkh_req`). Uses the
+  sphinx-needs `items.local` format so each linked need is checked
+  individually. Only **mandatory** links are checked here; optional link
+  type violations are left to the Python `validate_links()` check, which
+  treats them as informational (`treat_as_info=True`) rather than errors.
+  Fields that mix regex and plain targets (e.g.
+  `complies: std_wp, ^std_req__aspice_40__iic.*$`) are also excluded
+  because the `items` schema would incorrectly require all linked needs
+  to match the plain type.
 
 ### Post-build Python checks
 

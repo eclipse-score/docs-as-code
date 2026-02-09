@@ -68,8 +68,6 @@ Validation helpers:
     ``validate.local``.
 
 Limitations:
-    - Network validation (checking linked needs' types) is not yet active
-      in ``sn_schemas.py`` and therefore not tested here.
     - Graph checks (safety level decomposition, prohibited words) remain in
       Python code and are outside the scope of schema-based validation.
     - The ``content`` field is excluded via ``IGNORE_FIELDS`` because it is
@@ -288,6 +286,7 @@ class TestFeatReqSchema:
             "security": "YES",
             "safety": "QM",
             "status": "valid",
+            "satisfies": ["stkh_req__some_need"],
         }
 
     def test_valid_need_passes(
@@ -415,6 +414,7 @@ class TestFeatSchema:
             "safety": "QM",
             "status": "valid",
             "includes": ["logic_arc_int__something"],
+            "consists_of": ["comp__some_component"],
         }
 
     def test_valid_need_passes(
@@ -435,3 +435,101 @@ class TestFeatSchema:
         need = self._make_valid()
         need["includes"] = []  # minItems: 1 violated
         assert_schema_invalid(need, schemas_by_type["feat"])
+
+
+# =============================================================================
+# Network validation: plain type targets produce validate.network entries
+# =============================================================================
+
+
+class TestNetworkValidation:
+    """Verify validate.network schemas for types with plain-target links."""
+
+    def test_mandatory_link_has_network_entry(
+        self, schemas_by_type: dict[str, dict[str, Any]]
+    ) -> None:
+        """feat_req: satisfies -> stkh_req produces a network entry."""
+        schema = schemas_by_type["feat_req"]
+        network = schema["validate"].get("network")
+        assert network is not None
+        assert "satisfies" in network
+        entry = network["satisfies"]
+        assert entry["type"] == "array"
+        assert entry["items"]["local"]["properties"]["type"]["const"] == "stkh_req"
+        assert entry["items"]["local"]["required"] == ["type"]
+
+    def test_mandatory_link_has_local_min_items(
+        self, schemas_by_type: dict[str, dict[str, Any]]
+    ) -> None:
+        """feat_req: mandatory satisfies link gets minItems: 1 in local validator."""
+        schema = schemas_by_type["feat_req"]
+        local = schema["validate"]["local"]
+        assert "satisfies" in local["required"]
+        assert local["properties"]["satisfies"] == {"type": "array", "minItems": 1}
+
+    def test_optional_link_excluded_from_network(
+        self, schemas_by_type: dict[str, dict[str, Any]]
+    ) -> None:
+        """tool_req: satisfies is optional, so no network entry is generated.
+
+        Optional link type violations are treated as informational by the Python
+        validate_links() check (treat_as_info=True).  Since schemas use a single
+        severity per need type, optional links are excluded from network to avoid
+        escalating info-level issues to errors.
+        """
+        schema = schemas_by_type["tool_req"]
+        network = schema["validate"].get("network", {})
+        assert "satisfies" not in network
+
+    def test_network_validates_linked_need_type(
+        self, schemas_by_type: dict[str, dict[str, Any]]
+    ) -> None:
+        """The local schema inside items validates a linked need's type field."""
+        schema = schemas_by_type["feat_req"]
+        network = schema["validate"]["network"]
+        local_schema = network["satisfies"]["items"]["local"]
+        validator = jsonschema_rs.Draft7Validator(local_schema)
+        # Valid linked need
+        assert validator.is_valid({"type": "stkh_req"})
+        # Invalid linked need type
+        assert not validator.is_valid({"type": "comp_req"})
+
+    def test_all_mandatory_plain_links_have_local_and_network(
+        self,
+        schemas_by_type: dict[str, dict[str, Any]],
+        need_types_by_directive: dict[str, ScoreNeedType],
+    ) -> None:
+        """Structural sweep: every mandatory plain-target link has both entries.
+
+        Fields that mix regex and plain targets are excluded from network
+        validation (the items schema would incorrectly require ALL linked
+        needs to match the plain type).
+        """
+        for type_name, schema in schemas_by_type.items():
+            need_type = need_types_by_directive[type_name]
+            local = schema["validate"]["local"]
+            network = schema["validate"].get("network", {})
+            for link_field, link_value in need_type.get("mandatory_links", {}).items():
+                assert isinstance(link_value, str)  # before postprocess_need_links
+                values = [v.strip() for v in link_value.split(",")]
+                plain_targets = [v for v in values if not v.startswith("^")]
+                has_regex = any(v.startswith("^") for v in values)
+                if not plain_targets:
+                    continue
+                # Must have local minItems: 1
+                assert link_field in local["required"], (
+                    f"{type_name}.{link_field}: missing from local required"
+                )
+                assert local["properties"][link_field] == {
+                    "type": "array",
+                    "minItems": 1,
+                }, f"{type_name}.{link_field}: wrong local properties"
+                # Network type constraint only for non-mixed fields
+                if has_regex:
+                    assert link_field not in network, (
+                        f"{type_name}.{link_field}: mixed field should NOT be in network"
+                    )
+                else:
+                    assert link_field in network, (
+                        f"{type_name}.{link_field}: missing from network"
+                    )
