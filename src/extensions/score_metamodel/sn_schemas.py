@@ -10,7 +10,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-"""Transforms the YAML metamodel into sphinx-needs JSON schema definitions.
+"""Transforms the YAML metamodel into sphinx-needs >6 JSON schema definitions.
 
 Reads need types from the parsed metamodel (MetaModelData) and generates a
 ``schemas.json`` file that sphinx-needs uses to validate each need against
