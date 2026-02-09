@@ -76,7 +76,7 @@ Limitations:
       not yet available in ubCode; this exclusion is explicitly tested.
 """
 
-from typing import Any, cast
+from typing import Any
 
 import jsonschema_rs
 import pytest
@@ -90,7 +90,6 @@ from src.extensions.score_metamodel.yaml_parser import (
     MetaModelData,
     load_metamodel_data,
 )
-
 
 # =============================================================================
 # Fixtures

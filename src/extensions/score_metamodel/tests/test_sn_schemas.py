@@ -16,8 +16,6 @@ from pathlib import Path
 from typing import Any, cast
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 from src.extensions.score_metamodel.metamodel_types import ScoreNeedType
 from src.extensions.score_metamodel.sn_schemas import (
     IGNORE_FIELDS,
@@ -30,7 +28,6 @@ from src.extensions.score_metamodel.sn_schemas import (
     get_pattern_schema,
     write_sn_schemas,
 )
-
 
 # =============================================================================
 # Tests for get_pattern_schema
