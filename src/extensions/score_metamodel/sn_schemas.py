@@ -198,7 +198,7 @@ def _build_need_type_schema(need_type: ScoreNeedType) -> dict[str, Any] | None:
     mandatory_links_regexes, mandatory_links_targets = _classify_links(
         mandatory_links, type_name, mandatory=True
     )
-    optional_links_regexes, optional_links_targets = _classify_links(
+    optional_links_regexes, _ = _classify_links(
         optional_links, type_name, mandatory=False
     )
 

@@ -454,7 +454,10 @@ class TestNetworkValidation:
         assert network is not None
         # Only mandatory links in network
         assert set(network.keys()) == {"satisfies"}
-        assert network["satisfies"]["items"]["local"]["properties"]["type"]["const"] == "comp"
+        assert (
+            network["satisfies"]["items"]["local"]["properties"]["type"]["const"]
+            == "comp"
+        )
 
     def test_mandatory_plain_target_gets_local_min_items(self) -> None:
         need_type = _make_need_type(
