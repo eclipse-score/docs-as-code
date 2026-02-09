@@ -15,6 +15,7 @@ import os
 import pkgutil
 from collections.abc import Callable
 from pathlib import Path
+from typing import Any
 
 from sphinx.application import Sphinx
 from sphinx_needs import logging
@@ -243,12 +244,12 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     # Options WITHOUT a schema are registered but not validated.
     # non_schema_options = {"source_code_link", "testlink", "codelink"}
     non_schema_options = {}  # currently empty → all options get schema validation
-    extra_options_schema = [
+    extra_options_schema: list[dict[str, Any]] = [
         {"name": opt, "schema": {"type": "string"}}
         for opt in metamodel.needs_extra_options
         if opt not in non_schema_options
     ]
-    extra_options_wo_schema = [
+    extra_options_wo_schema: list[dict[str, Any]] = [
         {"name": opt}
         for opt in metamodel.needs_extra_options
         if opt in non_schema_options

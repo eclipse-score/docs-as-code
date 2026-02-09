@@ -124,7 +124,7 @@ needs_types:
     mandatory_options:
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|draft)$
-      content: ^(.|[\n\r])+$
+      content: ^[\s\S]+$
     optional_links:
       # req-Id: tool_req__docs_req_link_satisfies_allowed
       # TODO: fix once process_description is fixed
@@ -252,7 +252,7 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
       # WARNING: THis will be activated again with new process release (1.1.0)
-      # content: ^(.|[\n\r])+$
+      # content: ^[\s\S]+$
       # req-Id: tool_req__docs_req_attr_rationale
       rationale: ^.+$
       # req-Id: tool_req__docs_common_attr_security
@@ -286,7 +286,7 @@ needs_types:
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
-      content: ^(.|[\n\r])+$
+      content: ^[\s\S]+$
     mandatory_links:
       # req-Id: tool_req__docs_req_link_satisfies_allowed
       satisfies: stkh_req
@@ -320,7 +320,7 @@ needs_types:
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
-      content: ^(.|[\n\r])+$
+      content: ^[\s\S]+$
     mandatory_links:
       # req-Id: tool_req__docs_req_link_satisfies_allowed
       satisfies: feat_req
@@ -348,7 +348,7 @@ needs_types:
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
-      content: ^(.|[\n\r])+$
+      content: ^[\s\S]+$
     optional_links:
       # req-Id: tool_req__docs_req_link_satisfies_allowed
       # TODO: make it mandatory
@@ -381,7 +381,7 @@ needs_types:
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
-      content: ^(.|[\n\r])+$
+      content: ^[\s\S]+$
     optional_options:
       codelink: ^.*$
       testlink: ^.*$
@@ -728,7 +728,7 @@ needs_types:
       failure_effect: ^.*$
       sufficient: ^(yes|no)$
       status: ^(valid|invalid)$
-      content: ^(.|[\n\r])+$
+      content: ^[\s\S]+$
     mandatory_links:
       violates: feat_arc_sta
     optional_options:
@@ -748,7 +748,7 @@ needs_types:
       sufficient: ^(yes|no)$
       status: ^(valid|invalid)$
       # req-Id: tool_req__docs_saf_attrs_content
-      content: ^(.|[\n\r])+$
+      content: ^[\s\S]+$
     mandatory_links:
       # req-Id: tool_req__docs_saf_attrs_violates
       violates: feat_arc_sta
@@ -775,7 +775,7 @@ needs_types:
       sufficient: ^(yes|no)$
       status: ^(valid|invalid)$
       # req-Id: tool_req__docs_saf_attrs_content
-      content: ^(.|[\n\r])+$
+      content: ^[\s\S]+$
     optional_options:
       # req-Id: tool_req__docs_saf_attrs_mitigation_issue
       mitigation_issue: ^https://github.com/.*$
@@ -803,7 +803,7 @@ needs_types:
       sufficient: ^(yes|no)$
       status: ^(valid|invalid)$
       # req-Id: tool_req__docs_saf_attrs_content
-      content: ^(.|[\n\r])+$
+      content: ^[\s\S]+$
     optional_options:
       # req-Id: tool_req__docs_saf_attrs_mitigation_issue
       mitigation_issue: ^https://github.com/.*$
@@ -830,7 +830,7 @@ needs_types:
       sufficient: ^(yes|no)$
       status: ^(valid|invalid)$
       # req-Id: tool_req__docs_saf_attrs_content
-      content: ^(.|[\n\r])+$
+      content: ^[\s\S]+$
     optional_options:
       # req-Id: tool_req__docs_saf_attrs_mitigation_issue
       mitigation_issue: ^https://github.com/.*$
