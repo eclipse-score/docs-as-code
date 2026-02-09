@@ -527,7 +527,8 @@ class TestNetworkValidation:
                 # Network type constraint only for non-mixed fields
                 if has_regex:
                     assert link_field not in network, (
-                        f"{type_name}.{link_field}: mixed field should NOT be in network"
+                        f"{type_name}.{link_field}: mixed field should NOT be in "
+                        "network"
                     )
                 else:
                     assert link_field in network, (

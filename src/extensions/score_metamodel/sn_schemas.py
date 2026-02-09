@@ -226,7 +226,8 @@ def _build_need_type_schema(need_type: ScoreNeedType) -> dict[str, Any] | None:
     # Only add network entries for *mandatory* links with exclusively plain
     # type targets.  Two categories are intentionally excluded:
     #
-    # 1. Mixed regex+plain fields (e.g. "complies: std_wp, ^std_req__aspice_40__iic.*$"):
+    # 1. Mixed regex+plain fields (e.g.
+    #    "complies: std_wp, ^std_req__aspice_40__iic.*$"):
     #    The items schema would incorrectly require ALL linked needs to match
     #    the plain type, while some legitimately match the regex instead.
     #
