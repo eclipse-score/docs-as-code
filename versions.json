@@ -32,11 +32,11 @@
     "url": "https://eclipse-score.github.io/docs-as-code/pr-394/"
   },
   {
-    "version": "v3.0.0",
-    "url": "https://eclipse-score.github.io/docs-as-code/v3.0.0/"
-  },
-  {
     "version": "pr-395",
     "url": "https://eclipse-score.github.io/docs-as-code/pr-395/"
+  },
+  {
+    "version": "v3.0.0",
+    "url": "https://eclipse-score.github.io/docs-as-code/v3.0.0/"
   }
 ]
