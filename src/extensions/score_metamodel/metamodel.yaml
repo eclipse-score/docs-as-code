@@ -266,8 +266,8 @@ needs_types:
       testcovered: ^(YES|NO)$
       hash: ^.*$
       # req-Id: tool_req__docs_req_attr_validity_correctness
-      valid_from: ^v(0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)(\.(0|[1-9][0-9]*))?$
-      valid_until: ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(\.(0|[1-9][0-9]*))?$
+      valid_from: ^v(0|[1-9]\d*)\.(0|[1-9]\d*)(\.(0|[1-9]\d*))?$
+      valid_until: ^v(0|[1-9]\d*)\.(0|[1-9]\d*)(\.(0|[1-9]\d*))?$
     tags:
       - requirement
       - requirement_excl_process
@@ -299,8 +299,8 @@ needs_types:
       testcovered: ^(YES|NO)$
       hash: ^.*$
       # req-Id: tool_req__docs_req_attr_validity_correctness
-      valid_from: ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(\.(0|[1-9][0-9]*))?$
-      valid_until: ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(\.(0|[1-9][0-9]*))?$
+      valid_from: ^v(0|[1-9]\d*)\.(0|[1-9]\d*)(\.(0|[1-9]\d*))?$
+      valid_until: ^v(0|[1-9]\d*)\.(0|[1-9]\d*)(\.(0|[1-9]\d*))?$
     optional_links:
       belongs_to: feat # for evaluation
     tags:
