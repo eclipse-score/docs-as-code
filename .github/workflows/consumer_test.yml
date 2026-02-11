@@ -44,8 +44,19 @@ jobs:
       - name: Run Consumer tests
 
         run: |
-          set -o pipefail
-          .venv_docs/bin/python -m pytest -s -vv src/tests/ --repo="$CONSUMER" --junitxml="reports/${{ matrix.consumer }}.xml" | tee "reports/${{ matrix.consumer }}.log"
+          set -euxo pipefail
+          # Start watchdog: after 10 minutes, ask Python to dump thread stacks.
+          (
+            sleep 400
+            echo "Watchdog: dumping stacks (SIGUSR1)"
+            pkill -USR1 -f ".venv_docs/bin/python -X faulthandler -m pytest" || true
+          ) &
+
+          .venv_docs/bin/python -X faulthandler -m pytest -s -vv src/tests/ \
+          --repo="$CONSUMER" \
+          --junitxml="reports/${{ matrix.consumer }}.xml" \
+          | tee "reports/${{ matrix.consumer }}.log"
+
         env:
           FORCE_COLOR: "1"
           TERM: xterm-256color
