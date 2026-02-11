@@ -30,7 +30,7 @@ It should be treated as a 'get-started' guide, giving you all needed information
   - Python
   - Git
   - **VSCode** (Optional)
-    - Several integrations and guides are development primarily with VS Code in mind.
+    - Several integrations and guides are developed primarily with VS Code in mind.
 
 
 
@@ -68,9 +68,9 @@ src/
 ```
 
 
-Find all important bazel commands in the [project README](/README.md)
+Find all important Bazel commands in the [project README](/README.md)
 
-Find everything related to testing and how to add your on test suite [here](/tools/testing/pytest/README.md)
+Find everything related to testing and how to add your own test suite [here](/src/tests/README.md)
 
 ## Developing new tools
 
@@ -78,7 +78,7 @@ Find everything related to testing and how to add your on test suite [here](/too
 2. Create a dedicated test directory
 3. Include an appropriate README in markdown
 
-> If you want to develop your own sphinx extension, check out the [extensions guide](/src/extensions/README.md)
+> If you want to develop your own Sphinx extension, check out the [extensions guide](/src/extensions/README.md)
 
 ## Updating dependencies
 
