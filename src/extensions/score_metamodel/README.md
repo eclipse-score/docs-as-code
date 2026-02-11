@@ -12,7 +12,10 @@ those rules.
    `workflow`, etc.) including their fields, links, and extra options.
 2. **Generates `schemas.json`** from the metamodel so that sphinx-needs 6 can
    validate needs at parse time (required fields, regex patterns, link
-   constraints).
+   constraints). Because ubCode (the VS Code extension for sphinx-needs)
+   evaluates these schemas during editing, **metamodel violations are shown
+   as diagnostics directly in the IDE** -- catching errors early with
+   lightweight, fast rendering, without needing a full Sphinx build.
 3. **Runs post-build checks** that go beyond what JSON Schema can express
    (graph traversals, prohibited words, ID format rules).
 
@@ -63,7 +66,7 @@ sphinx-needs evaluates at parse time. Each schema entry has:
   because the `items` schema would incorrectly require all linked needs
   to match the plain type.
 
-### Post-build Python checks
+### Post-build S-Core metamodel checks
 
 Checks in `checks/` run after the Sphinx build and cover rules that
 JSON Schema cannot express:
