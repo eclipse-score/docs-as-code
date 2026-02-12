@@ -46,5 +46,9 @@
   {
     "version": "v3.0.0",
     "url": "https://eclipse-score.github.io/docs-as-code/v3.0.0/"
+  },
+  {
+    "version": "pr-399",
+    "url": "https://eclipse-score.github.io/docs-as-code/pr-399/"
   }
 ]
