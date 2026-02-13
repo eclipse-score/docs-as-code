@@ -45,6 +45,16 @@ class TestGetPatternSchema:
         assert result["type"] == "string"
         assert result["pattern"] == pattern
 
+    def test_optional_allows_empty_string(self) -> None:
+        result = get_pattern_schema("^https://github.com/.*$", is_optional=True)
+        assert result == {"type": "string", "pattern": "^$|^https://github.com/.*$"}
+
+    def test_mandatory_does_not_allow_empty_string(self) -> None:
+        result = get_pattern_schema("^[A-Z]+$", is_optional=False)
+        assert result == {"type": "string", "pattern": "^[A-Z]+$"}
+        # Should not have alternation with empty string
+        assert "^$|" not in result.get("pattern", "")
+
 
 # =============================================================================
 # Tests for get_array_pattern_schema
@@ -63,6 +73,11 @@ class TestGetArrayPatternSchema:
         pattern = "^[a-z]+$"
         result = get_array_pattern_schema(pattern)
         assert result["items"] == get_pattern_schema(pattern)
+
+    def test_optional_array_allows_empty_string_items(self) -> None:
+        result = get_array_pattern_schema("^tag_.*$", is_optional=True)
+        assert result["type"] == "array"
+        assert result["items"] == {"type": "string", "pattern": "^$|^tag_.*$"}
 
 
 # =============================================================================
@@ -84,6 +99,16 @@ class TestGetFieldPatternSchema:
     def test_unknown_field_returns_string_schema(self) -> None:
         result = get_field_pattern_schema("some_custom_field", "^.*$")
         assert result["type"] == "string"
+
+    def test_optional_scalar_field_allows_empty_string(self) -> None:
+        result = get_field_pattern_schema("mitigation_issue", "^https://github.com/.*$", is_optional=True)
+        assert result == {"type": "string", "pattern": "^$|^https://github.com/.*$"}
+
+    def test_mandatory_scalar_field_does_not_allow_empty_string(self) -> None:
+        result = get_field_pattern_schema("status", "^(valid|invalid)$", is_optional=False)
+        assert result == {"type": "string", "pattern": "^(valid|invalid)$"}
+        # Should not have alternation with empty string
+        assert "^$|" not in result.get("pattern", "")
 
 
 # =============================================================================
@@ -157,6 +182,8 @@ class TestBuildLocalValidator:
         result = _build_local_validator({}, optional, {}, {})
         assert "comment" not in result["required"]
         assert "comment" in result["properties"]
+        # Optional fields should allow empty strings via pattern alternation
+        assert result["properties"]["comment"] == {"type": "string", "pattern": "^$|^.*$"}
 
     def test_ignored_fields_excluded(self) -> None:
         mandatory = {field: "^.*$" for field in IGNORE_FIELDS}

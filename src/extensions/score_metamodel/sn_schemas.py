@@ -136,13 +136,14 @@ def _build_local_validator(
         if field in IGNORE_FIELDS:
             continue
         required.append(field)
-        properties[field] = get_field_pattern_schema(field, pattern)
+        properties[field] = get_field_pattern_schema(field, pattern, is_optional=False)
 
     # Optional fields: if present, must match the regex pattern
+    # Allow empty strings to align with Python checker behavior
     for field, pattern in optional_fields.items():
         if field in IGNORE_FIELDS:
             continue
-        properties[field] = get_field_pattern_schema(field, pattern)
+        properties[field] = get_field_pattern_schema(field, pattern, is_optional=True)
 
     # Mandatory links (regex): must have at least one entry
     # TODO: regex pattern matching on link IDs is not yet enabled
@@ -265,28 +266,47 @@ def _build_need_type_schema(need_type: ScoreNeedType) -> dict[str, Any] | None:
     return type_schema
 
 
-def get_field_pattern_schema(field: str, pattern: str) -> dict[str, Any]:
+def get_field_pattern_schema(field: str, pattern: str, is_optional: bool = False) -> dict[str, Any]:
     """Return the appropriate JSON schema for a field's regex pattern.
 
     Array-valued fields (like ``tags``) get an array-of-strings schema;
     scalar fields get a plain string schema.
+
+    For optional fields, the schema allows empty strings to align with the
+    Python metamodel checker's behavior (which treats empty strings as absent).
     """
     if field in SN_ARRAY_FIELDS:
-        return get_array_pattern_schema(pattern)
-    return get_pattern_schema(pattern)
+        return get_array_pattern_schema(pattern, is_optional=is_optional)
+    return get_pattern_schema(pattern, is_optional=is_optional)
 
 
-def get_pattern_schema(pattern: str) -> dict[str, str]:
-    """Return a JSON schema that validates a string against a regex pattern."""
+def get_pattern_schema(pattern: str, is_optional: bool = False) -> dict[str, Any]:
+    """Return a JSON schema that validates a string against a regex pattern.
+
+    For optional fields, allows either an empty string OR a string matching
+    the pattern, matching the Python checker's behavior where empty strings
+    are treated as "absent" and not validated.
+    """
+    if is_optional:
+        # Allow empty strings for optional fields (Python checker treats "" as absent)
+        # Use regex alternation to match either empty string or the original pattern
+        return {
+            "type": "string",
+            "pattern": f"^$|{pattern}",
+        }
     return {
         "type": "string",
         "pattern": pattern,
     }
 
 
-def get_array_pattern_schema(pattern: str) -> dict[str, Any]:
-    """Return a JSON schema that validates an array where each item matches a regex."""
+def get_array_pattern_schema(pattern: str, is_optional: bool = False) -> dict[str, Any]:
+    """Return a JSON schema that validates an array where each item matches a regex.
+
+    For optional fields, allows empty strings in the array to align with the
+    Python checker's behavior.
+    """
     return {
         "type": "array",
-        "items": get_pattern_schema(pattern),
+        "items": get_pattern_schema(pattern, is_optional=is_optional),
     }
