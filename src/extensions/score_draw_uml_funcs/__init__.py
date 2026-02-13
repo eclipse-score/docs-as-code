@@ -60,7 +60,11 @@ logger = get_logger(__file__)
 
 
 def setup(app: Sphinx) -> dict[str, object]:
-    app.config.needs_render_context = draw_uml_function_context
+    # Extend the needs_render_context with our drawing functions
+    app.config.needs_render_context = (
+        app.config.needs_render_context or {}
+    ) | draw_uml_function_context
+
     return {
         "version": "0.1",
         "parallel_read_safe": True,

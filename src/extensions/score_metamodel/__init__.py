@@ -17,10 +17,12 @@ from collections.abc import Callable
 from pathlib import Path
 
 from sphinx.application import Sphinx
+from sphinx.environment import BuildEnvironment
 from sphinx_needs import logging
 from sphinx_needs.data import NeedsView, SphinxNeedsData
 from sphinx_needs.need_item import NeedItem
 
+from src.extensions.score_metamodel.draw_metamodel import DrawMetamodel
 from src.extensions.score_metamodel.external_needs import connect_external_needs
 from src.extensions.score_metamodel.log import CheckLogger
 
@@ -101,13 +103,6 @@ def _run_checks(app: Sphinx, exception: Exception | None) -> None:
     # Do not run checks if an exception occurred during build
     if exception:
         return
-
-    # First of all postprocess the need links to convert
-    # type names into actual need types.
-    # This must be done before any checks are run.
-    # And it must be done after config was hashed, otherwise
-    # the config hash would include recusive linking between types.
-    postprocess_need_links(app.config.needs_types)
 
     # Filter out external needs, as checks are only intended to be run
     # on internal needs.
@@ -202,13 +197,17 @@ def _resolve_linkable_types(
     return linkable_types
 
 
-def postprocess_need_links(needs_types_list: list[ScoreNeedType]):
+def postprocess_need_links(
+    app: Sphinx, _env: BuildEnvironment, _docnames: list[str]
+) -> None:
     """Convert link option strings into lists of target need types.
 
     If a link value starts with '^' it is treated as a regex and left
     unchanged. Otherwise it is a comma-separated list of type names which
     are resolved to the corresponding ScoreNeedTypes.
     """
+    needs_types_list: list[ScoreNeedType] = app.config.needs_types
+
     for need_type in needs_types_list:
         try:
             link_dicts = (
@@ -251,10 +250,24 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     app.config.needs_reproducible_json = True
     app.config.needs_json_remove_defaults = True
 
+    # Extend the needs_render_context with our drawing functions
+    app.config.needs_render_context = (app.config.needs_render_context or {}) | {
+        "draw_metamodel": DrawMetamodel(app.config),
+    }
+
     # sphinx-collections runs on default prio 500.
     # We need to populate the sphinx-collections config before that happens.
     # --> 499
     _ = app.connect("config-inited", connect_external_needs, priority=499)
+
+    # Postprocess the need links to convert type names into actual need types.
+    # This must be done before any checks are run.
+    # And it must be done after config was hashed, otherwise
+    # the config hash would include recusive linking between types.
+    # Note that needs_config_writer also runs at 999. Our postprocessing must happen
+    # after needs_config_writer has done its job (for now).
+    # So needs_config_writer must be included before score_metamodel in extensions list.
+    _ = app.connect("env-before-read-docs", postprocess_need_links, priority=999)
 
     discover_checks()
 
