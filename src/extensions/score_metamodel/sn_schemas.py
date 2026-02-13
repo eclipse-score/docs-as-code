@@ -266,7 +266,9 @@ def _build_need_type_schema(need_type: ScoreNeedType) -> dict[str, Any] | None:
     return type_schema
 
 
-def get_field_pattern_schema(field: str, pattern: str, is_optional: bool = False) -> dict[str, Any]:
+def get_field_pattern_schema(
+    field: str, pattern: str, is_optional: bool = False
+) -> dict[str, Any]:
     """Return the appropriate JSON schema for a field's regex pattern.
 
     Array-valued fields (like ``tags``) get an array-of-strings schema;

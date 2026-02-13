@@ -101,11 +101,15 @@ class TestGetFieldPatternSchema:
         assert result["type"] == "string"
 
     def test_optional_scalar_field_allows_empty_string(self) -> None:
-        result = get_field_pattern_schema("mitigation_issue", "^https://github.com/.*$", is_optional=True)
+        result = get_field_pattern_schema(
+            "mitigation_issue", "^https://github.com/.*$", is_optional=True
+        )
         assert result == {"type": "string", "pattern": "^$|^https://github.com/.*$"}
 
     def test_mandatory_scalar_field_does_not_allow_empty_string(self) -> None:
-        result = get_field_pattern_schema("status", "^(valid|invalid)$", is_optional=False)
+        result = get_field_pattern_schema(
+            "status", "^(valid|invalid)$", is_optional=False
+        )
         assert result == {"type": "string", "pattern": "^(valid|invalid)$"}
         # Should not have alternation with empty string
         assert "^$|" not in result.get("pattern", "")
@@ -183,7 +187,10 @@ class TestBuildLocalValidator:
         assert "comment" not in result["required"]
         assert "comment" in result["properties"]
         # Optional fields should allow empty strings via pattern alternation
-        assert result["properties"]["comment"] == {"type": "string", "pattern": "^$|^.*$"}
+        assert result["properties"]["comment"] == {
+            "type": "string",
+            "pattern": "^$|^.*$",
+        }
 
     def test_ignored_fields_excluded(self) -> None:
         mandatory = {field: "^.*$" for field in IGNORE_FIELDS}
