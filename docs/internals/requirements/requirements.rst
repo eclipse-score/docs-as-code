@@ -997,12 +997,18 @@ Testing
   Docs-As-Code shall enforce that needs of type :need:`tool_req__docs_saf_types` have a
   `violates` links to at least one dynamic / static diagram according to the table.
 
-  | Source | Target |
-  | -- | -- |
-  | feat_saf_dfa | feat_arc_sta |
-  | comp_saf_dfa | comp_arc_sta |
-  | feat_saf_fmea | feat_arc_dyn |
-  | comp_saf_fmea | comp_arc_dyn |
+  
+  .. table::
+     :widths: auto
+   
+     =============  ===================
+     Link Source    Allowed Link Target 
+     =============  ===================
+     feat_saf_dfa   feat_arc_sta 
+     comp_saf_dfa   comp_arc_sta 
+     feat_saf_fmea  feat_arc_dyn 
+     comp_saf_fmea  comp_arc_dyn
+     =============  ===================
 
 
 
