@@ -101,8 +101,8 @@ class DataOfTestCase:
             TestType=data["TestType"],
             DerivationTechnique=data["DerivationTechnique"],
             result_text=data["result_text"],
-            PartiallyVerifies=data.get("PartiallyVerifies", None),
-            FullyVerifies=data.get("FullyVerifies", None),
+            PartiallyVerifies=data.get("PartiallyVerifies"),
+            FullyVerifies=data.get("FullyVerifies"),
         )
 
     @classmethod
