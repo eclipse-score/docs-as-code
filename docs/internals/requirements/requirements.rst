@@ -354,9 +354,9 @@ Versioning
   request of the file containing the document.
 
 
--------
-Mapping
--------
+--------
+ Mapping
+--------
 
 .. needtable::
    :style: table
@@ -1048,9 +1048,9 @@ Testing
 
    Docs-As-Code shall enforce that every Safety Analysis has a short description of the failure effect (e.g. failure lead to an unintended actuation of the analysed element)
 
--------
-Mapping
--------
+----------------------------------------------------------------
+Safety Analysis (DFA + FMEA) Process to Tool Requirement Mapping
+----------------------------------------------------------------
 
 .. needtable::
    :style: table
