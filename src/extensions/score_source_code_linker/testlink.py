@@ -93,7 +93,17 @@ class DataOfTestCase:
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]):  # type-ignore
-        return cls(**data)  # type-ignore
+        return cls(
+            name=data["name"],
+            file=data["file"],
+            line=data["line"],
+            result=data["result"],
+            TestType=data["TestType"],
+            DerivationTechnique=data["DerivationTechnique"],
+            result_text=data["result_text"],
+            PartiallyVerifies=data.get("PartiallyVerifies"),
+            FullyVerifies=data.get("FullyVerifies"),
+        )
 
     @classmethod
     def clean_text(cls, text: str):
