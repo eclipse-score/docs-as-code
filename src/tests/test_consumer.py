@@ -14,6 +14,8 @@ import os
 import re
 import shutil
 import subprocess
+import hashlib
+import shlex
 from collections import defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -133,15 +135,38 @@ def sphinx_base_dir(tmp_path_factory: TempPathFactory, pytestconfig: Config) -> 
     return CACHE_DIR
 
 
+def safe_slug(s: str, max_len: int = 60) -> str:
+    s = re.sub(r"[^a-zA-Z0-9._-]+", "_", s.strip())
+    return s[:max_len].strip("_") or "cmd"
+
+def output_base_for(sphinx_base_dir: Path, repo_name: str, override_type: str, cmd: str) -> Path:
+    # Keep bases under the session dir/cache so they can be reused if you want.
+    # Hash ensures uniqueness even if cmd is long.
+    #sphinx_base = sphinx_base_dir
+    h = hashlib.sha256(cmd.encode("utf-8")).hexdigest()[:12]
+    slug = safe_slug(cmd)
+    return (Path(sphinx_base_dir) / ".bazel_output_bases" / repo_name / override_type / f"{slug}_{h}").absolute()
+
+def add_output_base(cmd: str, output_base: Path) -> list[str]:
+    # Use shlex for safety (cmd.split() breaks quoted args)
+    argv = shlex.split(cmd)
+    if not argv:
+        return argv
+    # Insert right after "bazel"
+    if argv[0] == "bazel":
+        argv.insert(1, f"--output_base={str(output_base)}")
+    return argv
+
+
 def cleanup():
     """
     Cleanup before tests are run
     """
     for p in Path(".").glob("*/ubproject.toml"):
         p.unlink()
-    shutil.rmtree("_build", ignore_errors=True)
-    cmd = "bazel clean --async"
-    subprocess.run(cmd.split(), text=True)
+    # shutil.rmtree("_build", ignore_errors=True)
+    # cmd = "bazel clean --async"
+    #subprocess.run(cmd.split(), text=True)
 
 
 def get_current_git_commit(curr_path: Path):
@@ -480,8 +505,12 @@ def run_cmd(
     repo_name: str,
     local_or_git: str,
     pytestconfig: Config,
+    sphinx_base_dir: Path
 ) -> tuple[list[Result], bool]:
     verbosity: int = pytestconfig.get_verbosity()
+
+    ob = output_base_for(sphinx_base_dir, repo_name, local_or_git, cmd)
+    ob.mkdir(parents=True, exist_ok=True)
 
     cleanup()
 
@@ -650,6 +679,7 @@ def test_and_clone_repos_updated(sphinx_base_dir: Path, pytestconfig: Config):
         )
         overrides = {"local": module_local_override, "git": module_git_override}
         for type, override_content in overrides.items():
+            print(override_content)
             with open("MODULE.bazel", "w") as f:
                 f.write(override_content)
 
@@ -661,7 +691,7 @@ def test_and_clone_repos_updated(sphinx_base_dir: Path, pytestconfig: Config):
                 print_running_cmd(repo.name, cmd, f"{type.upper()} OVERRIDE")
                 # Running through all 'cmds' specified with the local override
                 gotten_results, is_success = run_cmd(
-                    cmd, results, repo.name, type, pytestconfig
+                    cmd, results, repo.name, type, pytestconfig, sphinx_base_dir
                 )
                 results = gotten_results
                 if not is_success:
@@ -675,7 +705,7 @@ def test_and_clone_repos_updated(sphinx_base_dir: Path, pytestconfig: Config):
                 print_running_cmd(repo.name, test_cmd, "LOCAL OVERRIDE")
 
                 gotten_results, is_success = run_cmd(
-                    test_cmd, results, repo.name, "local", pytestconfig
+                    test_cmd, results, repo.name, "local", pytestconfig, sphinx_base_dir
                 )
                 results = gotten_results
 
