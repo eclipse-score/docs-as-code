@@ -43,7 +43,6 @@ Easy streamlined way for S-CORE docs-as-code.
 
 load("@aspect_rules_py//py:defs.bzl", "py_binary")
 load("@pip_process//:requirements.bzl", "all_requirements")
-load("@rules_pkg//pkg:mappings.bzl", "pkg_files", "strip_prefix")
 load("@rules_python//sphinxdocs:sphinx.bzl", "sphinx_build_binary", "sphinx_docs")
 load("@score_tooling//:defs.bzl", "score_virtualenv")
 load("@score_tooling//bazel/rules/rules_score:rules_score.bzl", "sphinx_module")
@@ -120,7 +119,7 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = []):
         deps = deps,
     )
 
-    pkg_files(
+    native.filegroup(
         name = "docs_sources",
         srcs = native.glob([
             source_dir + "/**/*.png",
@@ -137,7 +136,7 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = []):
             source_dir + "/**/*.inc",
             "more_docs/**/*.rst",
         ], allow_empty = True),
-        strip_prefix = strip_prefix.from_pkg(),  # avoid flattening of folders
+        #strip_prefix = strip_prefix.from_pkg(),  # avoid flattening of folders
         visibility = ["//visibility:public"],
     )
 
