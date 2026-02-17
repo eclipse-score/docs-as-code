@@ -258,21 +258,7 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = []):
 
     sphinx_module(
         name = native.module_name() + "_module",
-        srcs = native.glob([
-            source_dir + "/**/*.rst",
-            source_dir + "/**/*.png",
-            source_dir + "/**/*.svg",
-            source_dir + "/**/*.md",
-            source_dir + "/**/*.html",
-            source_dir + "/**/*.css",
-            source_dir + "/**/*.puml",
-            source_dir + "/**/*.need",
-            source_dir + "/**/*.yaml",
-            source_dir + "/**/*.json",
-            source_dir + "/**/*.csv",
-            source_dir + "/**/*.inc",
-            "more_docs/**/*.rst",
-        ], allow_empty = True),
+        srcs = [":docs_sources"],
         # config = ":" + source_dir + "/conf.py",
         index = source_dir + "/index.rst",
         sphinx = "@score_tooling//bazel/rules/rules_score:score_build",
