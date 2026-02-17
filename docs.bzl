@@ -42,7 +42,7 @@ Easy streamlined way for S-CORE docs-as-code.
 # For user-facing documentation, refer to `/README.md`.
 
 load("@aspect_rules_py//py:defs.bzl", "py_binary")
-load("@pip_process//:requirements.bzl", "all_requirements")
+load("@docs_as_code_hub_env//:requirements.bzl", "all_requirements")
 load("@rules_python//sphinxdocs:sphinx.bzl", "sphinx_build_binary", "sphinx_docs")
 load("@score_tooling//:defs.bzl", "score_virtualenv")
 load("@score_tooling//bazel/rules/rules_score:rules_score.bzl", "sphinx_module")

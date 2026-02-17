@@ -12,7 +12,7 @@
 # *******************************************************************************
 
 load("@aspect_rules_py//py:defs.bzl", "py_binary")
-load("@pip_process//:requirements.bzl", "all_requirements")
+load("@docs_as_code_hub_env//:requirements.bzl", "all_requirements")
 
 filegroup(
     name = "sources",
