@@ -136,7 +136,6 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = []):
             source_dir + "/**/*.inc",
             "more_docs/**/*.rst",
         ], allow_empty = True),
-        #strip_prefix = strip_prefix.from_pkg(),  # avoid flattening of folders
         visibility = ["//visibility:public"],
     )
 
