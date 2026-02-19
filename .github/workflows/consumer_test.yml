@@ -41,15 +41,44 @@ jobs:
 
       # The pipefail ensures that non 0 exit codes inside the pytest execution get carried into the pipe 
       # & make the tests red in the end. Without this we only would check the exit code of the 'tee' command.
-      - name: Run Consumer tests
-
+      - name: Run Consumer tests (timeout added)
+        shell: bash
         run: |
-          set -o pipefail
-          .venv_docs/bin/python -m pytest -s -vv src/tests/ --repo="$CONSUMER" --junitxml="reports/${{ matrix.consumer }}.xml" | tee "reports/${{ matrix.consumer }}.log"
+          set -euxo pipefail
+          # Kill the whole pytest pipeline if it runs longer than 25 minutes
+          timeout --signal=SIGTERM 25m bash -lc '
+            set -o pipefail
+            .venv_docs/bin/python -m pytest -s -vv src/tests/ \
+              --repo="$CONSUMER" \
+              --junitxml="reports/${{ matrix.consumer }}.xml" \
+              | tee "reports/${{ matrix.consumer }}.log"
+          '
         env:
           FORCE_COLOR: "1"
           TERM: xterm-256color
           PYTHONUNBUFFERED: "1"
+          CONSUMER: ${{ matrix.consumer }}
+      - name: Debug Bazel server log (consumer repo)
+        if: always()
+        shell: bash
+        run: |
+          set -euxo pipefail
+          BASE="$HOME/.cache/docs_as_code_consumer_tests"
+          REPO_DIR="${BASE}/${CONSUMER}"
+          echo "CONSUMER=$CONSUMER"
+          echo "REPO_DIR=$REPO_DIR"
+          ls -la "$BASE" || true
+          ls -la "$REPO_DIR" || true
+          if [ -d "$REPO_DIR" ]; then
+            cd "$REPO_DIR"
+            bazel info output_base || true
+            bazel info server_log || true
+            SERVER_LOG="$(bazel info server_log 2>/dev/null || true)"
+            if [ -n "$SERVER_LOG" ] && [ -f "$SERVER_LOG" ]; then
+              tail -n 300 "$SERVER_LOG" || true
+            fi
+          fi
+        env:
           CONSUMER: ${{ matrix.consumer }}
       - name: Replay consumer test logs
         if: always()
