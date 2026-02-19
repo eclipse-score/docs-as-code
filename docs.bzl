@@ -42,8 +42,7 @@ Easy streamlined way for S-CORE docs-as-code.
 # For user-facing documentation, refer to `/README.md`.
 
 load("@aspect_rules_py//py:defs.bzl", "py_binary")
-load("@pip_process//:requirements.bzl", "all_requirements")
-load("@rules_pkg//pkg:mappings.bzl", "pkg_files", "strip_prefix")
+load("@docs_as_code_hub_env//:requirements.bzl", "all_requirements")
 load("@rules_python//sphinxdocs:sphinx.bzl", "sphinx_build_binary", "sphinx_docs")
 load("@score_tooling//:defs.bzl", "score_virtualenv")
 load("@score_tooling//bazel/rules/rules_score:rules_score.bzl", "sphinx_module")
@@ -120,7 +119,7 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = []):
         deps = deps,
     )
 
-    pkg_files(
+    native.filegroup(
         name = "docs_sources",
         srcs = native.glob([
             source_dir + "/**/*.png",
@@ -137,7 +136,6 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = []):
             source_dir + "/**/*.inc",
             "more_docs/**/*.rst",
         ], allow_empty = True),
-        strip_prefix = strip_prefix.from_pkg(),  # avoid flattening of folders
         visibility = ["//visibility:public"],
     )
 
@@ -259,21 +257,7 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = []):
 
     sphinx_module(
         name = native.module_name() + "_module",
-        srcs = native.glob([
-            source_dir + "/**/*.rst",
-            source_dir + "/**/*.png",
-            source_dir + "/**/*.svg",
-            source_dir + "/**/*.md",
-            source_dir + "/**/*.html",
-            source_dir + "/**/*.css",
-            source_dir + "/**/*.puml",
-            source_dir + "/**/*.need",
-            source_dir + "/**/*.yaml",
-            source_dir + "/**/*.json",
-            source_dir + "/**/*.csv",
-            source_dir + "/**/*.inc",
-            "more_docs/**/*.rst",
-        ], allow_empty = True),
+        srcs = [":docs_sources"],
         # config = ":" + source_dir + "/conf.py",
         index = source_dir + "/index.rst",
         sphinx = "@score_tooling//bazel/rules/rules_score:score_build",
