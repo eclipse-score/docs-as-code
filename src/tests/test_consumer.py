@@ -83,10 +83,10 @@ REPOS_TO_TEST: list[ConsumerRepo] = [
         name="process_description",
         git_url="https://github.com/eclipse-score/process_description.git",
         commands=[
-            "bazel --max_idle_secs=5 run //:ide_support",
-            "bazel --max_idle_secs=5 run //:docs_check",
-            "bazel --max_idle_secs=5 run //:docs",
-            "bazel --max_idle_secs=5 build //:needs_json",
+            "bazel --noblock_for_lock --max_idle_secs=5 run //:ide_support",
+            "bazel --noblock_for_lock --max_idle_secs=5 run //:docs_check",
+            "bazel --noblock_for_lock --max_idle_secs=5 run //:docs",
+            "bazel --noblock_for_lock --max_idle_secs=5 build //:needs_json",
         ],
         test_commands=[],
     ),
@@ -94,10 +94,10 @@ REPOS_TO_TEST: list[ConsumerRepo] = [
         name="score",
         git_url="https://github.com/eclipse-score/score.git",
         commands=[
-            "bazel --max_idle_secs=5 run //:ide_support",
-            "bazel --max_idle_secs=5 run //:docs_check",
-            "bazel --max_idle_secs=5 run //:docs",
-            "bazel --max_idle_secs=5 build //:needs_json",
+            "bazel --noblock_for_lock --max_idle_secs=5 run //:ide_support",
+            "bazel --noblock_for_lock --max_idle_secs=5 run //:docs_check",
+            "bazel --noblock_for_lock --max_idle_secs=5 run //:docs",
+            "bazel --noblock_for_lock --max_idle_secs=5 build //:needs_json",
         ],
         test_commands=[],
     ),
@@ -105,13 +105,13 @@ REPOS_TO_TEST: list[ConsumerRepo] = [
         name="module_template",
         git_url="https://github.com/eclipse-score/module_template.git",
         commands=[
-            "bazel --max_idle_secs=5 run //:ide_support",
-            "bazel --max_idle_secs=5 run //:docs_check",
-            "bazel --max_idle_secs=5 run //:docs",
-            "bazel --max_idle_secs=5 build //:needs_json",
+            "bazel --noblock_for_lock --max_idle_secs=5 run //:ide_support",
+            "bazel --noblock_for_lock --max_idle_secs=5 run //:docs_check",
+            "bazel --noblock_for_lock --max_idle_secs=5 run //:docs",
+            "bazel --noblock_for_lock --max_idle_secs=5 build //:needs_json",
         ],
         test_commands=[
-            "bazel test //tests/...",
+            "bazel --noblock_for_lock --max_idle_secs=5 test //tests/...",
         ],
     ),
 ]
@@ -140,8 +140,8 @@ def cleanup():
     for p in Path(".").glob("*/ubproject.toml"):
         p.unlink()
     shutil.rmtree("_build", ignore_errors=True)
-    #cmd = "bazel clean --async"
-    cmd = "bazel shutdown"
+    cmd = "bazel clean --async"
+    #cmd = "bazel shutdown"
     subprocess.run(cmd.split(), text=True)
 
 
