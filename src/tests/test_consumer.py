@@ -140,7 +140,8 @@ def cleanup():
     for p in Path(".").glob("*/ubproject.toml"):
         p.unlink()
     shutil.rmtree("_build", ignore_errors=True)
-    cmd = "bazel clean --async"
+    #cmd = "bazel clean --async"
+    cmd = "bazel shutdown"
     subprocess.run(cmd.split(), text=True)
 
 
