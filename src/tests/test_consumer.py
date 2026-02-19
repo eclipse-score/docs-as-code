@@ -13,6 +13,8 @@
 import os
 import re
 import shutil
+import hashlib
+import shlex
 import subprocess
 from collections import defaultdict
 from dataclasses import dataclass, field
@@ -133,6 +135,39 @@ def sphinx_base_dir(tmp_path_factory: TempPathFactory, pytestconfig: Config) -> 
     return CACHE_DIR
 
 
+def safe_slug(s: str, max_len: int = 60) -> str:
+    s = re.sub(r"[^a-zA-Z0-9._-]+", "_", s.strip())
+    return s[:max_len].strip("_") or "cmd"
+
+
+def output_base_for(
+    sphinx_base_dir: Path, repo_name: str, override_type: str, cmd: str
+) -> Path:
+    # Keep bases under the session dir/cache so they can be reused if you want.
+    # Hash ensures uniqueness even if cmd is long.
+    # sphinx_base = sphinx_base_dir
+    h = hashlib.sha256(cmd.encode("utf-8")).hexdigest()[:12]
+    slug = safe_slug(cmd)
+    return (
+        Path(sphinx_base_dir)
+        / ".bazel_output_bases"
+        / repo_name
+        / override_type
+        / f"{slug}_{h}"
+    ).absolute()
+
+
+def add_output_base(cmd: str, output_base: Path) -> str:
+    # Use shlex for safety (cmd.split() breaks quoted args)
+    argv = shlex.split(cmd)
+    if not argv:
+        return " ".join(argv)
+    # Insert right after "bazel"
+    if argv[0] == "bazel":
+        argv.insert(1, f"--output_base={str(output_base)}")
+    return " ".join(argv)
+
+
 def cleanup():
     """
     Cleanup before tests are run
@@ -141,7 +176,7 @@ def cleanup():
         p.unlink()
     shutil.rmtree("_build", ignore_errors=True)
     cmd = "bazel clean --async"
-    #cmd = "bazel shutdown"
+    # cmd = "bazel shutdown"
     subprocess.run(cmd.split(), text=True)
 
 
@@ -481,17 +516,22 @@ def run_cmd(
     repo_name: str,
     local_or_git: str,
     pytestconfig: Config,
+    sphinx_base_dir: Path,
 ) -> tuple[list[Result], bool]:
     verbosity: int = pytestconfig.get_verbosity()
+
+    ob = output_base_for(sphinx_base_dir, repo_name, local_or_git, cmd)
+    ob.mkdir(parents=True, exist_ok=True)
+    new_cmd = add_output_base(cmd, ob)
 
     cleanup()
 
     if verbosity >= 3:
         # Level 3 (-vvv): Stream output in real-time
-        BR = stream_subprocess_output(cmd, repo_name)
+        BR = stream_subprocess_output(new_cmd, repo_name)
     else:
         # Level 0-2: Capture output and parse later
-        out = subprocess.run(cmd.split(), capture_output=True, text=True)
+        out = subprocess.run(new_cmd.split(), capture_output=True, text=True)
         BR = BuildOutput(
             returncode=out.returncode,
             stdout=str(out.stdout),
@@ -506,7 +546,7 @@ def run_cmd(
         # since everything was merged to stdout and already printed
         BR.warnings = {}
 
-    is_success, reason = print_final_result(BR, repo_name, cmd, pytestconfig)
+    is_success, reason = print_final_result(BR, repo_name, new_cmd, pytestconfig)
 
     results.append(
         Result(
@@ -662,7 +702,7 @@ def test_and_clone_repos_updated(sphinx_base_dir: Path, pytestconfig: Config):
                 print_running_cmd(repo.name, cmd, f"{type.upper()} OVERRIDE")
                 # Running through all 'cmds' specified with the local override
                 gotten_results, is_success = run_cmd(
-                    cmd, results, repo.name, type, pytestconfig
+                    cmd, results, repo.name, type, pytestconfig, sphinx_base_dir
                 )
                 results = gotten_results
                 if not is_success:
@@ -676,7 +716,7 @@ def test_and_clone_repos_updated(sphinx_base_dir: Path, pytestconfig: Config):
                 print_running_cmd(repo.name, test_cmd, "LOCAL OVERRIDE")
 
                 gotten_results, is_success = run_cmd(
-                    test_cmd, results, repo.name, "local", pytestconfig
+                    test_cmd, results, repo.name, "local", pytestconfig, sphinx_base_dir
                 )
                 results = gotten_results
 
