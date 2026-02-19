@@ -51,6 +51,10 @@ jobs:
           TERM: xterm-256color
           PYTHONUNBUFFERED: "1"
           CONSUMER: ${{ matrix.consumer }}
+      - name: Replay consumer test logs
+        if: always()
+        run: .venv_docs/bin/python scripts/replay_consumer_test_logs.py consumer_tests.txt
+
 
       - name: Upload consumer test report
         if: ${{ always() }}

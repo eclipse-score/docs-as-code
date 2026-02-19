@@ -12,10 +12,16 @@
 # *******************************************************************************
 import os
 import re
+import builtins
 import shutil
 import subprocess
 import hashlib
 import shlex
+import logging
+import time
+import threading
+import contextlib
+import datetime
 from collections import defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -24,6 +30,7 @@ from typing import cast
 import pytest
 from _pytest.config import Config
 from pytest import TempPathFactory
+
 from rich import print
 from rich.console import Console
 from rich.table import Table
@@ -49,10 +56,46 @@ text output.
 
 # Max width of the printout
 # Trial and error has shown that 80 the best value is for GH CI output
+# logger = logging.getLogger(__name__)
 len_max = 80
 CACHE_DIR = Path.home() / ".cache" / "docs_as_code_consumer_tests"
 
-console = Console(force_terminal=True if os.getenv("CI") else None, width=80)
+log_path = Path.cwd() / "consumer_tests.txt"
+log_path.parent.mkdir(parents=True, exist_ok=True)
+_log_file = open(log_path, "w", encoding="utf-8")
+console = Console(file=_log_file, width=80, no_color=False, force_terminal=True)
+
+
+@pytest.fixture(scope="session", autouse=True)
+def _close_log_file_at_end():
+    yield
+    _log_file.close()
+
+
+def rprint(*args, **kwargs):
+    console.print(*args, **kwargs)
+    with contextlib.suppress(Exception):
+        _log_file.flush()
+
+
+_heartbeat_status = "phase=initialized"
+_STOP = False
+start_time = datetime.datetime.now()
+
+def heartbeat_loop():
+    global _heartbeat_status, _STOP, start_time
+    # This prints the current command & repo being run
+    while not _STOP:
+        time.sleep(15)
+        builtins.print(f"Time since start of test: {datetime.datetime.now() - start_time}")
+        builtins.print(f"[heartbeat] {_heartbeat_status}", flush=True)
+
+def start_heartbeat():
+    global _heartbeat_status
+    t = threading.Thread(target=heartbeat_loop, daemon=True)
+    t.start()
+    _heartbeat_status = "phase=heartbeat started"
+    return t
 
 
 @dataclass
@@ -127,11 +170,11 @@ def sphinx_base_dir(tmp_path_factory: TempPathFactory, pytestconfig: Config) -> 
     if disable_cache:
         # Use persistent cache directory for local development
         temp_dir = tmp_path_factory.mktemp("testing_dir")
-        print(f"[blue]Using temporary directory: {temp_dir}[/blue]")
+        rprint(f"[blue]Using temporary directory: {temp_dir}[/blue]")
         return temp_dir
 
     CACHE_DIR.mkdir(parents=True, exist_ok=True)
-    print(f"[green]Using persistent cache directory: {CACHE_DIR}[/green]")
+    rprint(f"[green]Using persistent cache directory: {CACHE_DIR}[/green]")
     return CACHE_DIR
 
 
@@ -139,13 +182,23 @@ def safe_slug(s: str, max_len: int = 60) -> str:
     s = re.sub(r"[^a-zA-Z0-9._-]+", "_", s.strip())
     return s[:max_len].strip("_") or "cmd"
 
-def output_base_for(sphinx_base_dir: Path, repo_name: str, override_type: str, cmd: str) -> Path:
+
+def output_base_for(
+    sphinx_base_dir: Path, repo_name: str, override_type: str, cmd: str
+) -> Path:
     # Keep bases under the session dir/cache so they can be reused if you want.
     # Hash ensures uniqueness even if cmd is long.
-    #sphinx_base = sphinx_base_dir
+    # sphinx_base = sphinx_base_dir
     h = hashlib.sha256(cmd.encode("utf-8")).hexdigest()[:12]
     slug = safe_slug(cmd)
-    return (Path(sphinx_base_dir) / ".bazel_output_bases" / repo_name / override_type / f"{slug}_{h}").absolute()
+    return (
+        Path(sphinx_base_dir)
+        / ".bazel_output_bases"
+        / repo_name
+        / override_type
+        / f"{slug}_{h}"
+    ).absolute()
+
 
 def add_output_base(cmd: str, output_base: Path) -> list[str]:
     # Use shlex for safety (cmd.split() breaks quoted args)
@@ -166,7 +219,7 @@ def cleanup():
         p.unlink()
     # shutil.rmtree("_build", ignore_errors=True)
     # cmd = "bazel clean --async"
-    #subprocess.run(cmd.split(), text=True)
+    # subprocess.run(cmd.split(), text=True)
 
 
 def get_current_git_commit(curr_path: Path):
@@ -199,13 +252,13 @@ def filter_repos(repo_filter: str | None) -> list[ConsumerRepo]:
     # Warn about any repos that weren't found
     if requested_repos:
         available_names = [repo.name for repo in REPOS_TO_TEST]
-        print(f"[yellow]Warning: Unknown repositories: {requested_repos}[/yellow]")
-        print(f"[yellow]Available repositories: {available_names}[/yellow]")
+        rprint(f"[yellow]Warning: Unknown repositories: {requested_repos}[/yellow]")
+        rprint(f"[yellow]Available repositories: {available_names}[/yellow]")
 
     # If no valid repos were found but filter was provided, return all repos
     # This prevents accidentally running zero tests due to typos
     if not filtered_repos and repo_filter:
-        print(
+        rprint(
             "[red]No valid repositories found in filter, "
             "running all repositories instead[/red]"
         )
@@ -279,9 +332,9 @@ def parse_bazel_output(BR: BuildOutput, pytestconfig: Config) -> BuildOutput:
     warning_dict: dict[str, list[str]] = defaultdict(list)
 
     if pytestconfig.get_verbosity() >= 2 and os.getenv("CI"):
-        print("[DEBUG] Raw warnings in CI:")
+        rprint("[DEBUG] Raw warnings in CI:")
         for i, warning in enumerate(split_warnings):
-            print(f"[DEBUG] Warning {i}: {repr(warning)}")
+            rprint(f"[DEBUG] Warning {i}: {repr(warning)}")
 
     for raw_warning in split_warnings:
         # In the CLI we seem to have some ansi codes in the warnings.
@@ -304,15 +357,15 @@ def parse_bazel_output(BR: BuildOutput, pytestconfig: Config) -> BuildOutput:
 def print_overview_logs(BR: BuildOutput):
     warning_loggers = list(BR.warnings.keys())
     len_left_test_result = len_max - len("TEST RESULTS")
-    print(
+    rprint(
         f"[blue]{'=' * int(len_left_test_result / 2)}"
         f"TEST RESULTS"
         f"{'=' * int(len_left_test_result / 2)}[/blue]"
     )
-    print(f"[navy_blue]{'=' * len_max}[/navy_blue]")
+    rprint(f"[navy_blue]{'=' * len_max}[/navy_blue]")
     warning_total_loggers_msg = f"Warning Loggers Total: {len(warning_loggers)}"
     len_left_loggers = len_max - len(warning_total_loggers_msg)
-    print(
+    rprint(
         f"[blue]{'=' * int(len_left_loggers / 2)}"
         f"{warning_total_loggers_msg}"
         f"{'=' * int(len_left_loggers / 2)}[/blue]"
@@ -320,7 +373,7 @@ def print_overview_logs(BR: BuildOutput):
     warning_loggers = list(BR.warnings.keys())
     warning_total_msg = "Logger Warnings Accumulated"
     len_left_loggers_total = len_max - len(warning_total_msg)
-    print(
+    rprint(
         f"[blue]{'=' * int(len_left_loggers_total / 2)}"
         f"{warning_total_msg}"
         f"{'=' * int(len_left_loggers_total / 2)}[/blue]"
@@ -331,12 +384,12 @@ def print_overview_logs(BR: BuildOutput):
         color = "orange1" if logger == "[NO SPECIFIC LOGGER]" else "red"
         warning_logger_msg = f"{logger} has {len(BR.warnings[logger])} warnings"
         len_left_logger = len_max - len(warning_logger_msg)
-        print(
+        rprint(
             f"[{color}]{'=' * int(len_left_logger / 2)}"
             f"{warning_logger_msg}"
             f"{'=' * int(len_left_logger / 2)}[/{color}]"
         )
-    print(f"[blue]{'=' * len_max}[/blue]")
+    rprint(f"[blue]{'=' * len_max}[/blue]")
 
 
 def verbose_printout(BR: BuildOutput):
@@ -344,7 +397,7 @@ def verbose_printout(BR: BuildOutput):
     warning_loggers = list(BR.warnings.keys())
     for logger in warning_loggers:
         len_left_logger = len_max - len(logger)
-        print(
+        rprint(
             f"[cornflower_blue]{'=' * int(len_left_logger / 2)}"
             f"{logger}"
             f"{'=' * int(len_left_logger / 2)}[/cornflower_blue]"
@@ -354,12 +407,12 @@ def verbose_printout(BR: BuildOutput):
         color = "red"
         if logger == "[NO SPECIFIC LOGGER]":
             color = "orange1"
-        print(
+        rprint(
             f"[{color}]{'=' * int(len_left_warnings / 2)}"
             f"{f'Warnings Found: {len(warnings)}'}"
             f"{'=' * int(len_left_warnings / 2)}[/{color}]"
         )
-        print("\n".join(f"[{color}]{x}[/{color}]" for x in warnings))
+        rprint("\n".join(f"[{color}]{x}[/{color}]" for x in warnings))
 
 
 def print_running_cmd(repo: str, cmd: str, local_or_git: str):
@@ -367,23 +420,23 @@ def print_running_cmd(repo: str, cmd: str, local_or_git: str):
     len_left_cmd = len_max - len(cmd)
     len_left_repo = len_max - len(repo)
     len_left_local = len_max - len(local_or_git)
-    print(f"\n[cyan]{'=' * len_max}[/cyan]")
-    print(
+    rprint(f"\n[cyan]{'=' * len_max}[/cyan]")
+    rprint(
         f"[cornflower_blue]{'=' * int(len_left_repo / 2)}"
         f"{repo}"
         f"{'=' * int(len_left_repo / 2)}[/cornflower_blue]"
     )
-    print(
+    rprint(
         f"[cornflower_blue]{'=' * int(len_left_local / 2)}"
         f"{local_or_git}"
         f"{'=' * int(len_left_local / 2)}[/cornflower_blue]"
     )
-    print(
+    rprint(
         f"[cornflower_blue]{'=' * int(len_left_cmd / 2)}"
         f"{cmd}"
         f"{'=' * int(len_left_cmd / 2)}[/cornflower_blue]"
     )
-    print(f"[cyan]{'=' * len_max}[/cyan]")
+    rprint(f"[cyan]{'=' * len_max}[/cyan]")
 
 
 def analyze_build_success(BR: BuildOutput) -> tuple[bool, str]:
@@ -426,8 +479,8 @@ def print_final_result(BR: BuildOutput, repo_name: str, cmd: str, pytestconfig: 
         verbose_printout(BR)
     if pytestconfig.get_verbosity() >= 2:
         # Verbosity Level 2 (-vv)
-        print("==== STDOUT ====:\n\n", BR.stdout)
-        print("==== STDERR ====:\n\n", BR.stderr)
+        rprint("==== STDOUT ====:\n\n", BR.stdout)
+        rprint("==== STDERR ====:\n\n", BR.stderr)
 
     is_success, reason = analyze_build_success(BR)
 
@@ -437,13 +490,13 @@ def print_final_result(BR: BuildOutput, repo_name: str, cmd: str, pytestconfig: 
     # Printing a small 'report' for each cmd.
     result_msg = f"{repo_name} - {cmd}: {status}"
     len_left = len_max - len(result_msg)
-    print(
+    rprint(
         f"[{color}]{'=' * int(len_left / 2)}"
         f"{result_msg}"
         f"{'=' * int(len_left / 2)}[/{color}]"
     )
-    print(f"[{color}]Reason: {reason}[/{color}]")
-    print(f"[{color}]{'=' * len_max}[/{color}]")
+    rprint(f"[{color}]Reason: {reason}[/{color}]")
+    rprint(f"[{color}]{'=' * len_max}[/{color}]")
 
     return is_success, reason
 
@@ -466,12 +519,13 @@ def print_result_table(results: list[Result]):
             result.reason,
             style=style,
         )
+    rprint(table)
     print(table)
 
 
 def stream_subprocess_output(cmd: str, repo_name: str):
     """Stream subprocess output in real-time for maximum verbosity"""
-    print(f"[green]Streaming output for: {cmd}[/green]")
+    rprint(f"[green]Streaming output for: {cmd}[/green]")
 
     process = subprocess.Popen(
         cmd.split(),
@@ -486,7 +540,7 @@ def stream_subprocess_output(cmd: str, repo_name: str):
     if process.stdout is not None:
         for line in iter(process.stdout.readline, ""):
             if line:
-                print(line.rstrip())  # Print immediately
+                rprint(line.rstrip())  # Print immediately
                 output_lines.append(line)
 
         process.stdout.close()
@@ -505,7 +559,7 @@ def run_cmd(
     repo_name: str,
     local_or_git: str,
     pytestconfig: Config,
-    sphinx_base_dir: Path
+    sphinx_base_dir: Path,
 ) -> tuple[list[Result], bool]:
     verbosity: int = pytestconfig.get_verbosity()
 
@@ -514,6 +568,8 @@ def run_cmd(
 
     cleanup()
 
+    rprint("==============RUNNING SUBPROCESS FROM: ===============")
+    rprint(Path.cwd())
     if verbosity >= 3:
         # Level 3 (-vvv): Stream output in real-time
         BR = stream_subprocess_output(cmd, repo_name)
@@ -563,7 +619,7 @@ def setup_test_environment(sphinx_base_dir: Path, pytestconfig: Config):
 
     def debug_print(message: str):
         if verbosity >= 2:
-            print(f"[DEBUG] {message}")
+            rprint(f"[DEBUG] {message}")
 
     debug_print(f"git_root: {git_root}")
 
@@ -613,7 +669,7 @@ def prepare_repo_overrides(
     repo_path = Path(repo_name)
 
     if not use_cache and repo_path.exists():
-        print(f"[green]Using cached repository: {repo_name}[/green]")
+        rprint(f"[green]Using cached repository: {repo_name}[/green]")
         # Update the existing repo
         os.chdir(repo_name)
         subprocess.run(["git", "fetch", "origin"], check=True, capture_output=True)
@@ -645,6 +701,9 @@ def prepare_repo_overrides(
 
 # Updated version of your test loop
 def test_and_clone_repos_updated(sphinx_base_dir: Path, pytestconfig: Config):
+    global _heartbeat_status, _STOP
+    _STOP = False
+    t = start_heartbeat()
     # Get command line options from pytest config
 
     repo_tests: str | None = cast(str | None, pytestconfig.getoption("--repo"))
@@ -654,10 +713,10 @@ def test_and_clone_repos_updated(sphinx_base_dir: Path, pytestconfig: Config):
 
     # Exit early if we don't find repos to test.
     if not repos_to_test:
-        print("[red]No repositories to test after filtering![/red]")
+        rprint("[red]No repositories to test after filtering![/red]")
         return
 
-    print(
+    rprint(
         f"[green]Testing {len(repos_to_test)} repositories: "
         f"{[r.name for r in repos_to_test]}[/green]"
     )
@@ -670,55 +729,66 @@ def test_and_clone_repos_updated(sphinx_base_dir: Path, pytestconfig: Config):
     # We capture the results for each command run.
     results: list[Result] = []
 
-    for repo in repos_to_test:
-        #          ┌─────────────────────────────────────────┐
-        #          │ Preparing the Repository for testing │
-        #          └─────────────────────────────────────────┘
-        module_local_override, module_git_override = prepare_repo_overrides(
-            repo.name, repo.git_url, current_hash, gh_url, use_cache=disable_cache
-        )
-        overrides = {"local": module_local_override, "git": module_git_override}
-        for type, override_content in overrides.items():
-            print(override_content)
-            with open("MODULE.bazel", "w") as f:
-                f.write(override_content)
-
+    try:
+        for repo in repos_to_test:
             #          ┌─────────────────────────────────────────┐
-            #          │  Running the different build & run   │
-            #          │               commands               │
+            #          │ Preparing the Repository for testing │
             #          └─────────────────────────────────────────┘
-            for cmd in repo.commands:
-                print_running_cmd(repo.name, cmd, f"{type.upper()} OVERRIDE")
-                # Running through all 'cmds' specified with the local override
-                gotten_results, is_success = run_cmd(
-                    cmd, results, repo.name, type, pytestconfig, sphinx_base_dir
-                )
-                results = gotten_results
-                if not is_success:
-                    overall_success = False
+            module_local_override, module_git_override = prepare_repo_overrides(
+                repo.name, repo.git_url, current_hash, gh_url, use_cache=disable_cache
+            )
+            overrides = {"local": module_local_override, "git": module_git_override}
+            for type, override_content in overrides.items():
+                # rprint(override_content)
+                with open("MODULE.bazel", "w") as f:
+                    f.write(override_content)
 
-            #          ┌─────────────────────────────────────────┐
-            #          │ Running the different test commands  │
-            #          └─────────────────────────────────────────┘
-            for test_cmd in repo.test_commands:
-                # Running through all 'test cmds' specified with the local override
-                print_running_cmd(repo.name, test_cmd, "LOCAL OVERRIDE")
+                #          ┌─────────────────────────────────────────┐
+                #          │  Running the different build & run   │
+                #          │               commands               │
+                #          └─────────────────────────────────────────┘
+                for cmd in repo.commands:
+                    _heartbeat_status = (
+                        f"Currently testing repo: {repo.name} and running the command: {cmd}"
+                    )
+                    print_running_cmd(repo.name, cmd, f"{type.upper()} OVERRIDE")
+                    # Running through all 'cmds' specified with the local override
+                    gotten_results, is_success = run_cmd(
+                        cmd, results, repo.name, type, pytestconfig, sphinx_base_dir
+                    )
+                    results = gotten_results
+                    if not is_success:
+                        overall_success = False
 
-                gotten_results, is_success = run_cmd(
-                    test_cmd, results, repo.name, "local", pytestconfig, sphinx_base_dir
-                )
-                results = gotten_results
+                #          ┌─────────────────────────────────────────┐
+                #          │ Running the different test commands  │
+                #          └─────────────────────────────────────────┘
+                for test_cmd in repo.test_commands:
+                    _heartbeat_status = f"Currently testing repo: {repo.name} and running the command: {test_cmd}"
+                    # Running through all 'test cmds' specified with the local override
+                    print_running_cmd(repo.name, test_cmd, "LOCAL OVERRIDE")
 
-                if not is_success:
-                    overall_success = False
+                    gotten_results, is_success = run_cmd(
+                        test_cmd, results, repo.name, "local", pytestconfig, sphinx_base_dir
+                    )
+                    results = gotten_results
 
-        # NOTE: We have to change directories back to the parent
-        # otherwise the cloning & override will not be correct
-        os.chdir(Path.cwd().parent)
+                    if not is_success:
+                        overall_success = False
 
-    # Printing a 'overview' table as a result
-    print_result_table(results)
-    if not overall_success:
-        pytest.fail(
-            reason="Consumer Tests failed, see table for which commands specifically. "
-        )
+            # NOTE: We have to change directories back to the parent
+            # otherwise the cloning & override will not be correct
+            os.chdir(Path.cwd().parent)
+            rprint("==================CURRENT DIR===============")
+            rprint(Path.cwd())
+
+        # Printing a 'overview' table as a result
+        print_result_table(results)
+        if not overall_success:
+            pytest.fail(
+                reason="Consumer Tests failed, see table for which commands specifically. "
+            )
+    finally:
+        _STOP = True
+        t.join(timeout=1)
+
