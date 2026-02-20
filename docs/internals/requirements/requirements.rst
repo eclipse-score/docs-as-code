@@ -997,16 +997,16 @@ Testing
   Docs-As-Code shall enforce that needs of type :need:`tool_req__docs_saf_types` have a
   `violates` links to at least one dynamic / static diagram according to the table.
 
-  
+
   .. table::
      :widths: auto
-   
+
      =============  ===================
-     Link Source    Allowed Link Target 
+     Link Source    Allowed Link Target
      =============  ===================
-     feat_saf_dfa   feat_arc_sta 
-     comp_saf_dfa   comp_arc_sta 
-     feat_saf_fmea  feat_arc_dyn 
+     feat_saf_dfa   feat_arc_sta
+     comp_saf_dfa   comp_arc_sta
+     feat_saf_fmea  feat_arc_dyn
      comp_saf_fmea  comp_arc_dyn
      =============  ===================
 
@@ -1103,6 +1103,6 @@ Grouped Requirements
 .. needextend:: c.this_doc() and type == 'tool_req' and not status
   :status: valid
 
-.. needextend:: "metamodel.yaml" in source_code_link
+.. needextend:: source_code_link is not None and "metamodel.yaml" in source_code_link
   :+satisfies: tool_req__docs_metamodel
   :+tags: config

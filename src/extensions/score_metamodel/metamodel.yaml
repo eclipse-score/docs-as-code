@@ -971,6 +971,12 @@ needs_extra_links:
   partially_verifies:
     incoming: partially_verified_by
     outgoing: partially_verifies
+
+  # Decision Records
+  affects:
+    incoming: affected by
+    outgoing: affects
+
 ##############################################################
 # Graph Checks
 # The graph checks focus on the relation of the needs and their attributes.
