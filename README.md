@@ -18,6 +18,21 @@ If your IDE does not automatically ask you to activate the newly created environ
 - In VSCode via `ctrl+p` => `Select Python Interpreter` then select `.venv_docs/bin/python`
 - In the terminal via `. .venv_docs/bin/activate`
 
+
+### Enabeling pre-commit
+
+Pre-commit is supported inside docs-as-code to help with code quality and make developers workflow easier.
+
+Install the hook:
+```bash
+pre-commit install
+
+# Or install it to run on pre-push via:
+pre-commit install --hook-type pre-push
+```
+
+Execute the pre-commit manually via `pre-commit`
+
 ### Format your documentation with:
 
 ```bash
