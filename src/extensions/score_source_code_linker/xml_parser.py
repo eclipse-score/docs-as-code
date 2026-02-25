@@ -87,7 +87,7 @@ def parse_properties(case_properties: dict[str, Any], properties: Element):
     return case_properties
 
 
-def read_test_xml_file(file: Path) -> tuple[list[DataOfTestCase], list[str]]:
+def read_test_xml_file(file: Path) -> tuple[list[DataOfTestCase], list[str], list[str]]:
     """
     Reading & parsing the test.xml files into TestCaseNeeds
 
@@ -98,6 +98,7 @@ def read_test_xml_file(file: Path) -> tuple[list[DataOfTestCase], list[str]]:
     """
     test_case_needs: list[DataOfTestCase] = []
     non_prop_tests: list[str] = []
+    missing_prop_tests: list[str] = []
     tree = ET.parse(file)
     root = tree.getroot()
 
@@ -155,9 +156,17 @@ def read_test_xml_file(file: Path) -> tuple[list[DataOfTestCase], list[str]]:
             #     "and either 'PartiallyVerifies' or 'FullyVerifies' are mandatory."
             # )
 
+            # TODO: There is a better way here to check this i think.
+            # I think it should be possible to save the 'from_dict' operation
+            # If the is_valid method would return 'False' anyway.
+            # I just can't think of it right now, leaving this for future me
             case_properties = parse_properties(case_properties, properties_element)
-            test_case_needs.append(DataOfTestCase.from_dict(case_properties))
-    return test_case_needs, non_prop_tests
+            test_case = DataOfTestCase.from_dict(case_properties)
+            if not test_case.is_valid():
+                missing_prop_tests.append(testname)
+                continue
+            test_case_needs.append(test_case)
+    return test_case_needs, non_prop_tests, missing_prop_tests
 
 
 def find_xml_files(dir: Path) -> list[Path]:
@@ -213,7 +222,7 @@ def run_xml_parser(app: Sphinx, env: BuildEnvironment):
 
 
 def build_test_needs_from_files(
-    app: Sphinx, env: BuildEnvironment, xml_paths: list[Path]
+    app: Sphinx, enw_: BuildEnvironment, xml_paths: list[Path]
 ) -> list[DataOfTestCase]:
     """
     Reading in all test.xml files, and building 'testcase' external need objects out of
@@ -223,14 +232,15 @@ def build_test_needs_from_files(
         - list[TestCaseNeed]
     """
     tcns: list[DataOfTestCase] = []
-    for f in xml_paths:
-        b, z = read_test_xml_file(f)
-        non_prop_tests = ", ".join(n for n in z)
+    for file in xml_paths:
+        # Last value can be ignored. The 'is_valid' function already prints infos
+        test_cases, tests_missing_all_props,_ = read_test_xml_file(file)
+        non_prop_tests = ", ".join(n for n in tests_missing_all_props)
         if non_prop_tests:
-            logger.info(f"Tests missing properties: {non_prop_tests}")
-        tcns.extend(b)
-        for c in b:
-            construct_and_add_need(app, c)
+            logger.info(f"Tests missing all properties: {non_prop_tests}")
+        tcns.extend(test_cases)
+        for tc in test_cases:
+            construct_and_add_need(app, tc)
     return tcns
 
 
@@ -246,6 +256,12 @@ def short_hash(input_str: str, length: int = 5) -> str:
 
 
 def construct_and_add_need(app: Sphinx, tn: DataOfTestCase):
+    # Asserting worldview to a peace Language Server
+    # And ensure non crashing due to non string concatenation
+    # Everything but 'result_text',
+    # and either 'Fully' or 'PartiallyVerifies' should not be None here
+    assert tn.file is not None
+    assert tn.name is not None
     # IDK if this is ideal or not
     with contextlib.suppress(BaseException):
         _ = add_external_need(

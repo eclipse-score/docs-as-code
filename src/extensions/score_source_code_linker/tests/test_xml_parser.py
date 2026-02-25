@@ -68,12 +68,21 @@ def _write_test_xml(
 
 
 @pytest.fixture
-def tmp_xml_dirs(tmp_path: Path) -> Callable[..., tuple[Path, Path, Path]]:
-    def _tmp_xml_dirs(test_folder: str = "bazel-testlogs") -> tuple[Path, Path, Path]:
+def tmp_xml_dirs(
+    tmp_path: Path,
+) -> Callable[..., tuple[Path, Path, Path, Path, Path]]:
+    def _tmp_xml_dirs(
+        test_folder: str = "bazel-testlogs",
+    ) -> tuple[Path, Path, Path, Path, Path]:
         root = tmp_path / test_folder
-        dir1, dir2 = root / "with_props", root / "no_props"
+        dir1, dir2, dir3, dir4 = (
+            root / "with_props",
+            root / "no_props",
+            root / "with_extra_props",
+            root / "missing_props",
+        )
 
-        for d in (dir1, dir2):
+        for d in (dir1, dir2, dir3, dir4):
             d.mkdir(parents=True, exist_ok=True)
 
         # File with properties
@@ -95,7 +104,42 @@ def tmp_xml_dirs(tmp_path: Path) -> Callable[..., tuple[Path, Path, Path]]:
         # File without properties
         _write_test_xml(dir2 / "test.xml", name="tc_no_props", file="path2", line=20)
 
-        return root, dir1, dir2
+        # File with some properties that we don't care about
+        _write_test_xml(
+            dir3 / "test.xml",
+            name="tc_with_extra_props",
+            result="failed",
+            file="path1",
+            line=10,
+            props={
+                # Properties we do not parse should not throw an error
+                "PartiallyVerifies": "REQ1",
+                "FullyVerifies": "",
+                "TestType": "type",
+                "DerivationTechnique": "tech",
+                "Description": "desc",
+                "ASIL": "B",
+                "important": "yes",
+            },
+        )
+
+        # File with some properties missing
+        _write_test_xml(
+            dir4 / "test.xml",
+            name="tc_with_missing_props",
+            result="failed",
+            file="path1",
+            line=10,
+            props={
+                # derivation_technique and test_type are missing
+                # This should not make a 'valid' testlink
+                "PartiallyVerifies": "REQ1",
+                "FullyVerifies": "",
+                "Description": "desc",
+            },
+        )
+
+        return root, dir1, dir2, dir3, dir4
 
     return _tmp_xml_dirs
 
@@ -105,31 +149,40 @@ def tmp_xml_dirs(tmp_path: Path) -> Callable[..., tuple[Path, Path, Path]]:
     test_type="requirements-based",
     derivation_technique="requirements-analysis",
 )
-def test_find_xml_files(tmp_xml_dirs: Callable[..., tuple[Path, Path, Path]]):
+def test_find_xml_files(
+    tmp_xml_dirs: Callable[..., tuple[Path, Path, Path, Path, Path]],
+):
     """Ensure xml files are found as expected if bazel-testlogs is used"""
     root: Path
     dir1: Path
     dir2: Path
-    root, dir1, dir2 = tmp_xml_dirs()
+    root, dir1, dir2, dir3, dir4 = tmp_xml_dirs()
     found = xml_parser.find_xml_files(root)
-    expected: set[Path] = {dir1 / "test.xml", dir2 / "test.xml"}
+    expected: set[Path] = {
+        dir1 / "test.xml",
+        dir2 / "test.xml",
+        dir3 / "test.xml",
+        dir4 / "test.xml",
+    }
     assert set(found) == expected
 
 
-def test_find_xml_folder(tmp_xml_dirs: Callable[..., tuple[Path, Path, Path]]):
+def test_find_xml_folder(
+    tmp_xml_dirs: Callable[..., tuple[Path, Path, Path, Path, Path]],
+):
     """Ensure xml files are found as expected if bazel-testlogs is used"""
     root: Path
-    root, _, _ = tmp_xml_dirs()
+    root, _, _, _, _ = tmp_xml_dirs()
     found = xml_parser.find_test_folder(base_path=root.parent)
     assert found is not None
     assert found == root
 
 
 def test_find_xml_folder_test_reports(
-    tmp_xml_dirs: Callable[..., tuple[Path, Path, Path]],
+    tmp_xml_dirs: Callable[..., tuple[Path, Path, Path, Path, Path]],
 ):
     # root is the 'tests-report' folder inside tmp_path
-    root, _, _ = tmp_xml_dirs(test_folder="tests-report")
+    root, _, _, _, _ = tmp_xml_dirs(test_folder="tests-report")
     # We pass the PARENT of 'tests-report' as the workspace root
     found = xml_parser.find_test_folder(base_path=root.parent)
     assert found is not None
@@ -137,16 +190,21 @@ def test_find_xml_folder_test_reports(
 
 
 def test_find_xml_files_test_reports(
-    tmp_xml_dirs: Callable[..., tuple[Path, Path, Path]],
+    tmp_xml_dirs: Callable[..., tuple[Path, Path, Path, Path, Path]],
 ):
     """Ensure xml files are found as expected if tests-report is used"""
     root: Path
     dir1: Path
     dir2: Path
-    root, dir1, dir2 = tmp_xml_dirs(test_folder="tests-report")
+    root, dir1, dir2, dir3, dir4 = tmp_xml_dirs(test_folder="tests-report")
     found = xml_parser.find_xml_files(dir=root)
     assert found is not None
-    expected: set[Path] = {root / dir1 / "test.xml", root / dir2 / "test.xml"}
+    expected: set[Path] = {
+        root / dir1 / "test.xml",
+        root / dir2 / "test.xml",
+        root / dir3 / "test.xml",
+        root / dir4 / "test.xml",
+    }
     assert set(found) == expected
 
 
@@ -204,23 +262,42 @@ def test_parse_properties():
     test_type="requirements-based",
     derivation_technique="requirements-analysis",
 )
-def test_read_test_xml_file(tmp_xml_dirs: Callable[..., tuple[Path, Path, Path]]):
+def test_read_test_xml_file(
+    tmp_xml_dirs: Callable[..., tuple[Path, Path, Path, Path, Path]],
+):
     """Ensure a whole pre-defined xml file is parsed correctly"""
     _: Path
     dir1: Path
     dir2: Path
-    _, dir1, dir2 = tmp_xml_dirs()
-
-    needs1, no_props1 = xml_parser.read_test_xml_file(dir1 / "test.xml")
+    _, dir1, dir2, dir3, dir4 = tmp_xml_dirs()
+    needs1, no_props1, missing_props1 = xml_parser.read_test_xml_file(dir1 / "test.xml")
+    # Should parse the properties and create a 'valid' testlink
     assert isinstance(needs1, list) and len(needs1) == 1
     tcneed = needs1[0]
     assert isinstance(tcneed, DataOfTestCase)
     assert tcneed.result == "failed"
     assert no_props1 == []
+    assert missing_props1 == []
 
-    needs2, no_props2 = xml_parser.read_test_xml_file(dir2 / "test.xml")
+    # No properties at all => Should not be a 'valid' testlink
+    needs2, no_props2, missing_props2 = xml_parser.read_test_xml_file(dir2 / "test.xml")
     assert needs2 == []
     assert no_props2 == ["tc_no_props"]
+    assert missing_props2 == []
+
+    # Extra Properties => Should not cause an error
+    needs3, no_props3, missing_props3 = xml_parser.read_test_xml_file(dir3 / "test.xml")
+    assert isinstance(needs1, list) and len(needs1) == 1
+    tcneed3 = needs3[0]
+    assert isinstance(tcneed3, DataOfTestCase)
+    assert no_props3 == []
+    assert missing_props3 == []
+
+    # Missing some properties => Should not be a 'valid' testlink
+    needs4, no_props4, missing_props4 = xml_parser.read_test_xml_file(dir4 / "test.xml")
+    assert needs4 == []
+    assert no_props4 == []
+    assert missing_props4 == ["tc_with_missing_props"]
 
 
 @add_test_properties(
