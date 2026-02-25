@@ -33,16 +33,16 @@
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/score.css?v=6e51530f" />
-    <link rel="stylesheet" type="text/css" href="../../_static/css/score_needs.css?v=e97392eb" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/score_needs.css?v=1f5dae2a" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/score_design.css?v=d9fd870c" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-data-viewer/jsonview.bundle.css?v=f6ef2277" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/libs/html/datatables.min.css?v=4b4fd840" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_toggle.css?v=5c6620df" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/needstable.css?v=5e1b6797" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_core.css?v=f5b60a78" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_links.css?v=2150a916" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_style.css?v=92936fa5" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/needstable.css?v=5e1b6797" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_toggle.css?v=5c6620df" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_core.css?v=f5b60a78" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/modern.css?v=803738c0" />
   
   <!-- So that users can add custom icons -->
@@ -891,7 +891,7 @@ window.addEventListener("load", load);</script>
                   
   <section id="score-source-code-linker">
 <span id="source-code-linker"></span><h1>Score Source Code Linker<a class="headerlink" href="#score-source-code-linker" title="Link to this heading">#</a></h1>
-<p>A Sphinx extension for enabling <strong>source code and test traceability</strong> for requirements.<br />
+<p>A Sphinx extension for enabling <strong>source code and test traceability</strong> for requirements.
 This extension integrates with <strong>Bazel</strong> and <strong>sphinx-needs</strong> to automatically generate traceability links between implementation, tests, and documentation.</p>
 <hr class="docutils" />
 <section id="overview">
@@ -1183,9 +1183,9 @@ This depends on the <code class="docutils literal notranslate"><span class="pre"
         L4[DTFL = DataForTestLink]
         L3[TestCaseNeed Operations]
         L5[DOTC = DataOfTestCase]
-        L1 ~~~ L2 
-        L2 ~~~ L4 
-        L4 ~~~ L3 
+        L1 ~~~ L2
+        L2 ~~~ L4
+        L4 ~~~ L3
         L3 ~~~ L5
     end
 
