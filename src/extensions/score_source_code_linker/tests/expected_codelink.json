@@ -7,7 +7,7 @@
         "full_line": "#-----req-Id: TREQ_ID_1"
     },
     {
-        "file": "src/implementation2.py", 
+        "file": "src/implementation2.py",
         "line": 5,
         "tag":"#-----req-Id:",
         "need": "TREQ_ID_1",
@@ -17,7 +17,7 @@
         "file": "src/implementation1.py",
         "line": 9,
         "tag":"#-----req-Id:",
-        "need": "TREQ_ID_2", 
+        "need": "TREQ_ID_2",
         "full_line":"#-----req-Id: TREQ_ID_2"
     },
     {

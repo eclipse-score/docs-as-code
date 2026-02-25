@@ -30,4 +30,3 @@ rich
 needs-config-writer == 0.2.4
 # use this for a specific commit for fast development iterations
 # needs-config-writer @ https://github.com/useblocks/needs-config-writer/archive/032a5f8.zip
-
