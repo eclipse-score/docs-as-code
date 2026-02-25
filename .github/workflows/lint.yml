@@ -27,15 +27,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4.2.2
 
-      - name: Setup Bazel
-        uses: bazel-contrib/setup-bazel@0.15.0
+      - name: Build and run dev container task
+        uses: devcontainers/ci@v0.3
         with:
-          disk-cache: true
-          repository-cache: true
-          bazelisk-cache: true
-
-      - name: Install pre-commit
-        run: pip install pre-commit
-
-      - name: Run pre-commit checks
-        run: pre-commit run -a
+          cacheFrom: ghcr.io/eclipse-score/devcontainer
+          push: never
+          runCmd: ${PIPX_BIN_DIR}/pre-commit run -a

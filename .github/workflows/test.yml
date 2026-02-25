@@ -22,33 +22,17 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4.2.2
-      - name: Cache Bazel and pip
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cache/bazel
-            ~/.cache/pip
-          key: ${{ runner.os }}-test-${{ hashFiles('**/*.bazel', '**/BUILD', '**/*.bzl', 'src/requirements.txt', 'src/**/*.py') }}
 
-      - name: Setup Bazel with cache
-        uses: bazel-contrib/setup-bazel@0.15.0
+      - name: Build and run dev container task
+        uses: devcontainers/ci@v0.3
         with:
-          disk-cache: true
-          repository-cache: true
-          bazelisk-cache: true
-      - name: Run test targets
-        run: |
-          bazel run //:ide_support
-          bazel test //src/...
-
-      - name: Prepare bundled consumer report
-        if: always()
-        # Creating tests-report directory
-        # Follow Symlinks via '-L' to copy correctly
-        # Copy everything inside the 'test-reports' folder
-        run: |
-          mkdir -p tests-report
-          rsync -amL --include='*/' --include='test.xml' --include='test.log' --exclude='*' bazel-testlogs/ tests-report/
+          cacheFrom: ghcr.io/eclipse-score/devcontainer@v1.2.0
+          push: never
+          runCmd: |
+            bazel run //:ide_support
+            bazel test //src/...
+            mkdir -p tests-report
+            rsync -amL --include='*/' --include='test.xml' --include='test.log' --exclude='*' bazel-testlogs/ tests-report/
 
       - name: Upload bundled consumer report
         if: always()

@@ -18,8 +18,52 @@ repos:
   # use LOCAL hooks for python tooling so versions come from the virtualenv
   - repo: local
     hooks:
-      - id: Linter Scripts
-        name: Run linter script
-        entry: ./scripts/run-linters.sh
-        language: unsupported_script
+      - id: ruff
+        name: ruff
+        entry: ruff check --fix
+        language: system
+        types_or: [python, pyi]
+
+      - id: ruff-format
+        name: ruff format
+        entry: ruff format
+        language: system
+        types_or: [python, pyi]
+
+      # Can not get this to run ;/
+      - id: basedpyright
+        name: basedpyright
+        entry: basedpyright
+        language: system
+        types_or: [python, pyi]
         pass_filenames: false
+
+      - id: actionlint
+        name: actionlint (container)
+        entry: actionlint
+        language: system
+        files: ^\.github/workflows/.*\.ya?ml$
+
+      - id: yamlfmt
+        name: yamlfmt (container)
+        entry: yamlfmt
+        language: system
+        types: [yaml]
+
+      - id: shellcheck
+        name: shellcheck (container)
+        entry: shellcheck
+        language: system
+        types: [shell]
+
+      - id: buildifier fix
+        name: bazel linting fix (container)
+        entry: buildifier --lint=fix
+        language: system
+        files: '(^|/)(BUILD(\.bazel)?|MODULE\.bazel|.*\.bzl)$'
+
+      - id: buildifier format
+        name: bazel formatting (container)
+        entry: buildifier
+        language: system
+        files: '(^|/)(BUILD(\.bazel)?|MODULE\.bazel|.*\.bzl)$'
