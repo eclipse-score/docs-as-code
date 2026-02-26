@@ -38,8 +38,13 @@ def parse_filename(filename: str):
     /home/user/.cache/bazel/aksj37981712/external/score_docs_as_code+/src/tests/testfile.py
     => score_docs_as_code
     """
-    splitted_filename = filename.split("external",maxsplit= 1)
-    print(splitted_filename)
+    # We only want '/score_docs_as_code+/....'
+    raw_module_name = filename.split("external",maxsplit= 1)[-1]
+    # This should give us just 'score_docs_as_code'
+    print(raw_module_name)
+    a = raw_module_name.removeprefix("/")
+    b = a.split("/")[0]
+    print(b)
     #splitted_filename[-1].split()
 
 
