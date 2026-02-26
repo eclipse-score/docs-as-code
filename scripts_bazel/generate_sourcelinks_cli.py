@@ -28,6 +28,7 @@ from src.extensions.score_source_code_linker.generate_source_code_links_json imp
 from src.extensions.score_source_code_linker.needlinks import (
     store_source_code_links_json,
 )
+from src.helper_lib import find_git_root, find_ws_root
 
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
@@ -45,6 +46,10 @@ def parse_filename(filename: str):
     a = raw_module_name.removeprefix("/")
     b = a.split("/")[0]
     print(b)
+    ws_root = find_ws_root()
+    git_root = find_git_root()
+    print("WS: ", ws_root)
+    print("GIT: ", git_root)
     #splitted_filename[-1].split()
 
 
