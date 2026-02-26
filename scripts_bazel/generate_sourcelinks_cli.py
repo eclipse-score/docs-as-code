@@ -32,6 +32,17 @@ from src.extensions.score_source_code_linker.needlinks import (
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
 
+def parse_filename(filename: str):
+    """
+    Parse out the Module-Name from the filename gotten
+    /home/user/.cache/bazel/aksj37981712/external/score_docs_as_code+/src/tests/testfile.py
+    => score_docs_as_code
+    """
+    splitted_filename = filename.split("external",maxsplit= 1)
+    print(splitted_filename)
+    #splitted_filename[-1].split()
+
+
 
 def main():
     parser = argparse.ArgumentParser(
@@ -55,6 +66,7 @@ def main():
     all_need_references = []
     for file_path in args.files:
         abs_file_path = file_path.resolve()
+        parse_filename(str(abs_file_path))
         assert abs_file_path.exists(), abs_file_path
         references = _extract_references_from_file(
             abs_file_path.parent, Path(abs_file_path.name)
