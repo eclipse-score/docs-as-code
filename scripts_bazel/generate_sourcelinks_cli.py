@@ -40,15 +40,14 @@ def parse_filename(filename: str):
     => score_docs_as_code
     """
     # We only want '/score_docs_as_code+/....'
-    raw_module_name = filename.split("external",maxsplit= 1)[-1]
+    #raw_module_name = filename.split("external",maxsplit= 1)[-1]
     # This should give us just 'score_docs_as_code'
     # print(raw_module_name)
     # a = raw_module_name.removeprefix("/")
     # b = a.split("/")[0]
     # print(b)
-    runfiles = get_runfiles_dir()
-    print("Runfiles: ", runfiles)
     #splitted_filename[-1].split()
+    print(filename)
 
 
 
@@ -63,6 +62,12 @@ def main():
         help="Output JSON file path",
     )
     parser.add_argument(
+        "--known-good",
+        required=False,
+        type=Path,
+        help="Konw_good.json file",
+    )
+    parser.add_argument(
         "files",
         nargs="*",
         type=Path,
@@ -70,11 +75,15 @@ def main():
     )
 
     args = parser.parse_args()
+    if args.known_good is not None:
+        print("===========")
+        print(Path(args.known_good).resolve())
+        print("===========")
 
     all_need_references = []
     for file_path in args.files:
         abs_file_path = file_path.resolve()
-        parse_filename(str(abs_file_path))
+        parse_filename(args.known_good)
         assert abs_file_path.exists(), abs_file_path
         references = _extract_references_from_file(
             abs_file_path.parent, Path(abs_file_path.name)

@@ -89,6 +89,7 @@ def _merge_sourcelinks(name, sourcelinks):
         tools = ["@score_docs_as_code//scripts_bazel:merge_sourcelinks"],
     )
 
+<<<<<<< HEAD
 def _missing_requirements(deps):
     """Add Python hub dependencies if they are missing."""
     found = []
@@ -120,7 +121,7 @@ def _missing_requirements(deps):
         fail(msg)
     fail("This case should be unreachable?!")
 
-def docs(source_dir = "docs", data = [], deps = [], scan_code = []):
+def docs(known_good = None, source_dir = "docs", data = [], deps = [], scan_code = []):
     """Creates all targets related to documentation.
 
     By using this function, you'll get any and all updates for documentation targets in one place.
@@ -171,7 +172,7 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = []):
         visibility = ["//visibility:public"],
     )
 
-    _sourcelinks_json(name = "sourcelinks_json", srcs = scan_code)
+    _sourcelinks_json(name = "sourcelinks_json", srcs = scan_code, known_good = known_good)
 
     data_with_docs_sources = _rewrite_needs_json_to_docs_sources(data)
     additional_combo_sourcelinks = _rewrite_needs_json_to_sourcelinks(data)
@@ -297,7 +298,7 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = []):
         visibility = ["//visibility:public"],
     )
 
-def _sourcelinks_json(name, srcs):
+def _sourcelinks_json(name, srcs, known_good):
     """
     Creates a target that generates a JSON file with source code links.
 
@@ -308,16 +309,34 @@ def _sourcelinks_json(name, srcs):
         srcs: Source files to scan for traceability tags
     """
     output_file = name + ".json"
+    #print("KNOWN: GOOD")
+    # print(known_good)
+    # print("$(location %s)" % known_good)
+    # if not known_good:
+    #     known_good = ""
+
+
+    cmd = """
+        $(location @score_docs_as_code//scripts_bazel:generate_sourcelinks) \
+            --output $@ \
+            {known_good_arg} \
+            $(SRCS)
+    """
+
+    known_good_arg = ""
+    rule_srcs = srcs
+
+    if known_good:
+        rule_srcs = srcs + [known_good]
+        known_good_arg = "--known-good $(location %s)" % known_good
+    #print(known_good_arg)
+    #print(cmd.format(known_good_arg = known_good_arg))
 
     native.genrule(
         name = name,
-        srcs = srcs,
+        srcs = rule_srcs,
         outs = [output_file],
-        cmd = """
-        $(location @score_docs_as_code//scripts_bazel:generate_sourcelinks) \
-            --output $@ \
-            $(SRCS)
-        """,
+        cmd = cmd.format(known_good_arg = known_good_arg),
         tools = ["@score_docs_as_code//scripts_bazel:generate_sourcelinks"],
         visibility = ["//visibility:public"],
     )
