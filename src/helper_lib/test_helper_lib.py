@@ -18,11 +18,32 @@ from pathlib import Path
 import pytest
 
 from src.helper_lib import (
+    config_setdefault,
     get_current_git_hash,
     get_github_repo_info,
     get_runfiles_dir,
     parse_remote_git_output,
 )
+
+
+class _FakeConfig:
+    """Minimal stand-in for sphinx.config.Config sufficient to test config_setdefault."""
+
+    def __init__(self, raw: dict):
+        self._raw_config = raw
+
+
+def test_config_setdefault_sets_when_not_in_raw_config():
+    cfg = _FakeConfig(raw={})
+    config_setdefault(cfg, "html_copy_source", False)
+    assert cfg.html_copy_source is False
+
+
+def test_config_setdefault_does_not_overwrite_user_value():
+    cfg = _FakeConfig(raw={"html_copy_source": True})
+    cfg.html_copy_source = True
+    config_setdefault(cfg, "html_copy_source", False)
+    assert cfg.html_copy_source is True
 
 
 @pytest.fixture
