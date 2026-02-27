@@ -12,6 +12,8 @@
 # *******************************************************************************
 from sphinx.application import Sphinx
 
+from src.helper_lib import config_setdefault
+
 # Note: order matters!
 # Extensions are loaded in this order.
 # e.g. plantuml MUST be loaded before sphinx-needs
@@ -33,17 +35,14 @@ score_extensions = [
 
 
 def setup(app: Sphinx) -> dict[str, object]:
-    if "html_copy_source" not in app.config._raw_config:
-        app.config.html_copy_source = False
-    if "html_show_sourcelink" not in app.config._raw_config:
-        app.config.html_show_sourcelink = False
+    config_setdefault(app.config, "html_copy_source", False)
+    config_setdefault(app.config, "html_show_sourcelink", False)
 
     # Global settings
     # Note: the "sub-extensions" also set their own config values
 
     # Same as current VS Code extension
-    if "mermaid_version" not in app.config._raw_config:
-        app.config.mermaid_version = "11.6.0"
+    config_setdefault(app.config, "mermaid_version", "11.6.0")
 
     # The following entries are not required when building the documentation via
     # 'bazel build //:docs', as that command runs in a sandboxed environment.
@@ -58,8 +57,7 @@ def setup(app: Sphinx) -> dict[str, object]:
     if "templates" not in app.config.templates_path:
         app.config.templates_path += ["templates"]
 
-    if "numfig" not in app.config._raw_config:
-        app.config.numfig = True
+    config_setdefault(app.config, "numfig", True)
 
     if not app.config.author:
         app.config.author = "S-CORE"

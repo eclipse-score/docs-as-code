@@ -18,6 +18,8 @@ from pathlib import Path
 
 from sphinx.application import Sphinx
 from sphinx_needs import logging
+
+from src.helper_lib import config_setdefault
 from sphinx_needs.data import NeedsView, SphinxNeedsData
 from sphinx_needs.need_item import NeedItem
 
@@ -231,10 +233,8 @@ def postprocess_need_links(needs_types_list: list[ScoreNeedType]):
 
 def setup(app: Sphinx) -> dict[str, str | bool]:
     app.add_config_value("external_needs_source", "", rebuild="env")
-    if "needs_id_required" not in app.config._raw_config:
-        app.config.needs_id_required = True
-    if "needs_id_regex" not in app.config._raw_config:
-        app.config.needs_id_regex = "^[A-Za-z0-9_-]{6,}"
+    config_setdefault(app.config, "needs_id_required", True)
+    config_setdefault(app.config, "needs_id_regex", "^[A-Za-z0-9_-]{6,}")
 
     # load metamodel.yaml via ruamel.yaml
     metamodel = load_metamodel_data()
@@ -249,12 +249,9 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     # app.config.stop_words = metamodel["stop_words"]
     # app.config.weak_words = metamodel["weak_words"]
     # Ensure that 'needs.json' is always build.
-    if "needs_build_json" not in app.config._raw_config:
-        app.config.needs_build_json = True
-    if "needs_reproducible_json" not in app.config._raw_config:
-        app.config.needs_reproducible_json = True
-    if "needs_json_remove_defaults" not in app.config._raw_config:
-        app.config.needs_json_remove_defaults = True
+    config_setdefault(app.config, "needs_build_json", True)
+    config_setdefault(app.config, "needs_reproducible_json", True)
+    config_setdefault(app.config, "needs_json_remove_defaults", True)
 
     # sphinx-collections runs on default prio 500.
     # We need to populate the sphinx-collections config before that happens.

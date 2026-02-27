@@ -18,6 +18,8 @@ import html_options
 import sphinx_options
 from sphinx.application import Sphinx
 
+from src.helper_lib import config_setdefault
+
 logger = logging.getLogger(__name__)
 
 
@@ -41,8 +43,7 @@ def update_config(app: Sphinx, _config: Any):
         **sphinx_options.needs_global_options,
         **app.config.needs_global_options,
     }
-    if "html_theme" not in app.config._raw_config:
-        app.config.html_theme = html_options.html_theme
+    config_setdefault(app.config, "html_theme", html_options.html_theme)
     app.config.html_context = {**html_options.return_html_context(app), **app.config.html_context}
     app.config.html_theme_options = {
         **html_options.return_html_theme_options(app),

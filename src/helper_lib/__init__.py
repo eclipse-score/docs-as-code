@@ -15,11 +15,23 @@ import os
 import subprocess
 import sys
 from pathlib import Path
+from typing import Any
 
 from runfiles import Runfiles
+from sphinx.config import Config
 from sphinx_needs.logging import get_logger
 
 LOGGER = get_logger(__name__)
+
+
+def config_setdefault(config: Config, name: str, value: Any) -> None:
+    """Set a Sphinx config value only if the user hasn't explicitly set it in conf.py."""
+
+    # Sphinx has no public API for this check. We use ``_raw_config`` which is the
+    # de-facto standard across the ecosystem (Furo, RTD-theme, etc.). If Sphinx
+    # ever adds a public alternative, update this single function.
+    if name not in config._raw_config:
+        setattr(config, name, value)
 
 
 def find_ws_root() -> Path | None:

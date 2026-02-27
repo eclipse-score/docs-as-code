@@ -14,6 +14,8 @@ from pathlib import Path
 
 from sphinx.application import Sphinx
 
+from src.helper_lib import config_setdefault
+
 
 def setup(app: Sphinx) -> dict[str, str | bool]:
     """
@@ -22,26 +24,21 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     See https://needs-config-writer.useblocks.com
     """
 
-    if "needscfg_outpath" not in app.config._raw_config:
-        app.config.needscfg_outpath = "ubproject.toml"
+    config_setdefault(app.config, "needscfg_outpath", "ubproject.toml")
     """Write to the confdir directory."""
 
-    if "needscfg_overwrite" not in app.config._raw_config:
-        app.config.needscfg_overwrite = True
+    config_setdefault(app.config, "needscfg_overwrite", True)
     """Any changes to the shared/local configuration updates the generated config."""
 
-    if "needscfg_write_all" not in app.config._raw_config:
-        app.config.needscfg_write_all = True
+    config_setdefault(app.config, "needscfg_write_all", True)
     """Write full config, so the final configuration is visible in one file."""
 
-    if "needscfg_exclude_defaults" not in app.config._raw_config:
-        app.config.needscfg_exclude_defaults = True
+    config_setdefault(app.config, "needscfg_exclude_defaults", True)
     """Exclude default values from the generated configuration."""
 
     # This is disabled for right now as it causes a lot of issues
     # While we are not using the generated file anywhere
-    if "needscfg_warn_on_diff" not in app.config._raw_config:
-        app.config.needscfg_warn_on_diff = False
+    config_setdefault(app.config, "needscfg_warn_on_diff", False)
     """Running Sphinx with -W will fail the CI for uncommitted TOML changes."""
 
     app.config.needscfg_merge_toml_files = (
