@@ -468,11 +468,18 @@ attribute plugin). Example usage:</p>
 <p>TestLink will extract test name, file, line, result and verification lists
 (<cite>PartiallyVerifies</cite>, <cite>FullyVerifies</cite>) and create external needs from tests
 and <cite>testlink</cite> attributes on requirements that reference the test.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>It is possible to have ‘additional’ properties on tests. They will not show up in the
+TestLink but also won’t break the parsing process.</p>
+</div>
 <section id="limitations">
 <h2>Limitations<a class="headerlink" href="#limitations" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>Not compatible with Esbonio/Live_preview.</p></li>
-<li><p>Tags and XML must match the expected format exactly for parsing to work.</p></li>
+<li><p>To create a valid Testlink Tags and XML must match the expected format.</p></li>
+<li><p>Partial properties will lead to no Testlink creation.
+If you want a test to be linked, please ensure all requirement properties are provided.</p></li>
 <li><p>Tests must be executed by Bazel first so <cite>test.xml</cite> files exist.</p></li>
 </ul>
 </section>

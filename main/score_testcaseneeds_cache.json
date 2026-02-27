@@ -178,7 +178,7 @@
   {
     "name": "test_find_xml_files",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "103",
+    "line": "147",
     "result": "passed",
     "TestType": "requirements-based",
     "DerivationTechnique": "requirements-analysis",
@@ -189,7 +189,7 @@
   {
     "name": "test_parse_testcase_result",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "164",
+    "line": "222",
     "result": "passed",
     "TestType": "requirements-based",
     "DerivationTechnique": "requirements-analysis",
@@ -200,7 +200,7 @@
   {
     "name": "test_parse_properties",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "186",
+    "line": "244",
     "result": "passed",
     "TestType": "requirements-based",
     "DerivationTechnique": "requirements-analysis",
@@ -211,7 +211,7 @@
   {
     "name": "test_read_test_xml_file",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "202",
+    "line": "260",
     "result": "passed",
     "TestType": "requirements-based",
     "DerivationTechnique": "requirements-analysis",
@@ -222,7 +222,7 @@
   {
     "name": "test_short_hash_consistency_and_format",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "226",
+    "line": "303",
     "result": "passed",
     "TestType": "requirements-based",
     "DerivationTechnique": "requirements-analysis",
