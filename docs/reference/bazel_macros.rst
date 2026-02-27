@@ -42,8 +42,10 @@ Minimal example (root ``BUILD``)
 
 - ``deps`` (list of bazel labels)
   Additional Bazel dependencies to add to the Python binaries and the virtual environment
-  target. Use this to add project-specific Python packages or extension libraries the docs
-  build requires.
+  target. Use this to add project-specific Python modules.
+
+  If you don't provide the necessary Sphinx packages,
+  this function adds its own (but checks for conflicts).
 
 Edge cases
 ----------

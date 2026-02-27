@@ -15,3 +15,4 @@ Here you find practical guides on how to use docs-as-code.
    other_modules
    source_to_doc_links
    test_to_doc_links
+   add_extensions
