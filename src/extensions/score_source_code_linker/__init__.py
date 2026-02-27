@@ -173,14 +173,15 @@ def setup_source_code_linker(app: Sphinx, ws_root: Path):
 
     # Define need_string_links here to not have it in conf.py
     # source_code_link and testlinks have the same schema
-    app.config.needs_string_links = {
-        "source_code_linker": {
+    app.config.needs_string_links.setdefault(
+        "source_code_linker",
+        {
             "regex": r"(?P<url>.+)<>(?P<name>.+)",
             "link_url": "{{url}}",
             "link_name": "{{name}}",
             "options": ["source_code_link", "testlink"],
         },
-    }
+    )
 
     score_sourcelinks_json = os.environ.get("SCORE_SOURCELINKS")
     if score_sourcelinks_json:

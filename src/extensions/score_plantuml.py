@@ -53,10 +53,14 @@ def find_correct_path(runfiles: Path) -> Path:
 
 
 def setup(app: Sphinx):
-    app.config.plantuml = str(find_correct_path(get_runfiles_dir()))
-    app.config.plantuml_output_format = "svg_obj"
-    app.config.plantuml_syntax_error_image = True
-    app.config.needs_build_needumls = "_plantuml_sources"
+    if not app.config.plantuml:
+        app.config.plantuml = str(find_correct_path(get_runfiles_dir()))
+    if "plantuml_output_format" not in app.config._raw_config:
+        app.config.plantuml_output_format = "svg_obj"
+    if "plantuml_syntax_error_image" not in app.config._raw_config:
+        app.config.plantuml_syntax_error_image = True
+    if "needs_build_needumls" not in app.config._raw_config:
+        app.config.needs_build_needumls = "_plantuml_sources"
 
     logger.debug(f"PlantUML binary found at {app.config.plantuml}")
 

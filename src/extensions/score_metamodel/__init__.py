@@ -231,25 +231,30 @@ def postprocess_need_links(needs_types_list: list[ScoreNeedType]):
 
 def setup(app: Sphinx) -> dict[str, str | bool]:
     app.add_config_value("external_needs_source", "", rebuild="env")
-    app.config.needs_id_required = True
-    app.config.needs_id_regex = "^[A-Za-z0-9_-]{6,}"
+    if "needs_id_required" not in app.config._raw_config:
+        app.config.needs_id_required = True
+    if "needs_id_regex" not in app.config._raw_config:
+        app.config.needs_id_regex = "^[A-Za-z0-9_-]{6,}"
 
     # load metamodel.yaml via ruamel.yaml
     metamodel = load_metamodel_data()
 
-    # Assign everything to Sphinx config
-    app.config.needs_types = metamodel.needs_types
-    app.config.needs_extra_links = metamodel.needs_extra_links
-    app.config.needs_extra_options = metamodel.needs_extra_options
+    # Extend sphinx-needs config rather than overwriting
+    app.config.needs_types += metamodel.needs_types
+    app.config.needs_extra_links += metamodel.needs_extra_links
+    app.config.needs_extra_options += metamodel.needs_extra_options
     app.config.graph_checks = metamodel.needs_graph_check
     app.config.prohibited_words_checks = metamodel.prohibited_words_checks
 
     # app.config.stop_words = metamodel["stop_words"]
     # app.config.weak_words = metamodel["weak_words"]
     # Ensure that 'needs.json' is always build.
-    app.config.needs_build_json = True
-    app.config.needs_reproducible_json = True
-    app.config.needs_json_remove_defaults = True
+    if "needs_build_json" not in app.config._raw_config:
+        app.config.needs_build_json = True
+    if "needs_reproducible_json" not in app.config._raw_config:
+        app.config.needs_reproducible_json = True
+    if "needs_json_remove_defaults" not in app.config._raw_config:
+        app.config.needs_json_remove_defaults = True
 
     # sphinx-collections runs on default prio 500.
     # We need to populate the sphinx-collections config before that happens.

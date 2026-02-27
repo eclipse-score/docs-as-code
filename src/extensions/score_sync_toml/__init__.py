@@ -22,29 +22,36 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     See https://needs-config-writer.useblocks.com
     """
 
-    app.config.needscfg_outpath = "ubproject.toml"
+    if "needscfg_outpath" not in app.config._raw_config:
+        app.config.needscfg_outpath = "ubproject.toml"
     """Write to the confdir directory."""
 
-    app.config.needscfg_overwrite = True
+    if "needscfg_overwrite" not in app.config._raw_config:
+        app.config.needscfg_overwrite = True
     """Any changes to the shared/local configuration updates the generated config."""
 
-    app.config.needscfg_write_all = True
+    if "needscfg_write_all" not in app.config._raw_config:
+        app.config.needscfg_write_all = True
     """Write full config, so the final configuration is visible in one file."""
 
-    app.config.needscfg_exclude_defaults = True
+    if "needscfg_exclude_defaults" not in app.config._raw_config:
+        app.config.needscfg_exclude_defaults = True
     """Exclude default values from the generated configuration."""
 
     # This is disabled for right now as it causes a lot of issues
     # While we are not using the generated file anywhere
-    app.config.needscfg_warn_on_diff = False
+    if "needscfg_warn_on_diff" not in app.config._raw_config:
+        app.config.needscfg_warn_on_diff = False
     """Running Sphinx with -W will fail the CI for uncommitted TOML changes."""
 
-    app.config.needscfg_merge_toml_files = [
-        str(Path(__file__).parent / "shared.toml"),
-    ]
+    app.config.needscfg_merge_toml_files = (
+        app.config.needscfg_merge_toml_files or []
+    ) + [str(Path(__file__).parent / "shared.toml")]
     """Merge the static TOML file into the generated configuration."""
 
-    app.config.needscfg_relative_path_fields = [
+    app.config.needscfg_relative_path_fields = (
+        app.config.needscfg_relative_path_fields or []
+    ) + [
         "needs_external_needs[*].json_path",
         {
             "field": "needs_flow_configs.score_config",
