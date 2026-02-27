@@ -550,7 +550,7 @@ They can be found inside the metamodel.yml and are how we define needs. See an e
 <section id="generic-graph-checks-configuration-based">
 <h3>2. Generic Graph Checks (Configuration-Based)<a class="headerlink" href="#generic-graph-checks-configuration-based" title="Link to this heading">#</a></h3>
 <p>Generic graph checks are defined in the metamodel.yaml under <code class="docutils literal notranslate"><span class="pre">graph_checks</span></code>.
-These checks all follow the same structure:</p>
+These checks follow the same structure:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;name of the check&gt;</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">needs</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">include</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;need1&gt;, &lt;need2&gt;</span><span class="w"> </span><span class="c1">#list of your needs</span>
@@ -578,11 +578,11 @@ These checks all follow the same structure:</p>
 <span class="w">        </span><span class="nt">and</span><span class="p">:</span>
 <span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">safety != QM</span>
 <span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">status == valid</span>
-<span class="w">    </span><span class="nt">explanation</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">An safety architecture element can only link other safety architecture elements.</span>
+<span class="w">    </span><span class="nt">explanation</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">A safety architecture element can only link other safety architecture elements.</span>
 </pre></div>
 </div>
-<p>What does this check do?
-This check will go through each of the needs mentioned in ‘include’ that match the condition, and then for every single one of them check the needs that are linked inside the ‘implements’ attribute. Go inside those needs and check if they also fulfill the condition described.
+<p>Purpose of this check:
+This check will go through each of the needs mentioned in ‘include’ that match the condition, and then for every single one of them check the needs that are linked inside the ‘implements’ attribute. Check whether those needs also fulfill the condition.
 If one of them does not fulfill the condition the check fails and will let you know with a warning that it did so.</p>
 </section>
 <section id="prohibited-word-checks-configuration-based">
@@ -619,7 +619,7 @@ This is also defined in metamodel and follows the following schema:</p>
 <p>If you need something that the generic local or graph checks can not fulfill, then you can also add a custom check.
 Ensure this check is inside a python file that is placed in the <code class="docutils literal notranslate"><span class="pre">check</span></code> folder in this extension.
 Do not forget to add the applicable decorator to the function.</p>
-<p>This means all validations can be done with only the information in this need itself, and you do not need access to any of the linked needs or other needs inside the documentation.</p>
+<p>This means all validations can be done using only the information within the need itself, and you do not need access to any of the linked needs or other needs inside the documentation.</p>
 <p>Your function will receive the Sphinx <code class="docutils literal notranslate"><span class="pre">app</span></code>, the current <code class="docutils literal notranslate"><span class="pre">need</span></code> to check and a <code class="docutils literal notranslate"><span class="pre">log</span></code> to log messages.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">score_metamodel.checks</span><span class="w"> </span><span class="kn">import</span> <span class="n">local_check</span>
 
@@ -637,7 +637,7 @@ Do not forget to add the applicable decorator to the function.</p>
 <section id="custom-graph-checks-python-code">
 <h3>5. Custom Graph Checks (Python Code)<a class="headerlink" href="#custom-graph-checks-python-code" title="Link to this heading">#</a></h3>
 <p>These checks need to access linked needs in order to fully verify the specified behavior.
-The signature is similar to that of local_check, but instead of one need you will get <code class="docutils literal notranslate"><span class="pre">all_needs</span></code>.</p>
+The signature is similar to that of local_check, but instead of one need, you will get <code class="docutils literal notranslate"><span class="pre">all_needs</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">score_metamodel.checks</span><span class="w"> </span><span class="kn">import</span> <span class="n">graph_check</span>
 
 <span class="nd">@graph_check</span>
