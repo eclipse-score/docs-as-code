@@ -472,6 +472,27 @@ supply all necessary packages to <code class="docutils literal notranslate"><spa
 <p>The general documentation is <a class="reference external" href="https://rules-python.readthedocs.io/en/latest/toolchains.html">in the rules_python documentation</a>.</p>
 <p>You can also peek into <a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/main/MODULE.bazel">this docs-as-code repo’s MODULE.bazel file</a>
 how <code class="docutils literal notranslate"><span class="pre">docs_as_code_hub_env</span></code> is defined and use it as a template for <code class="docutils literal notranslate"><span class="pre">your_python_env</span></code>.</p>
+<p>Recommendation:
+Use <a class="reference external" href="https://rules-python.readthedocs.io/en/latest/api/rules_python/python/pip.html#compile_pip_requirements">compile_pip_requirements</a>
+because it is a solid practice anyways.
+Next, get <code class="docutils literal notranslate"><span class="pre">&#64;score_docs_as_code//src:requirements.in</span></code> as one of the inputs
+to ensure you have all the necessary dependencies for docs-as-code.</p>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-number">Listing 2 </span><span class="caption-text">Example BUILD file snippet</span><a class="headerlink" href="#id2" title="Link to this code">#</a></div>
+<div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span> <span class="n">load</span><span class="p">(</span><span class="s2">&quot;@rules_python//python:pip.bzl&quot;</span><span class="p">,</span> <span class="s2">&quot;compile_pip_requirements&quot;</span><span class="p">)</span>
+
+ <span class="n">compile_pip_requirements</span><span class="p">(</span>
+     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;requirements&quot;</span><span class="p">,</span>
+     <span class="n">srcs</span> <span class="o">=</span> <span class="p">[</span>
+         <span class="s2">&quot;@score_docs_as_code//src:requirements.in&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;requirements.in&quot;</span><span class="p">,</span>
+     <span class="p">],</span>
+     <span class="n">requirements_txt</span> <span class="o">=</span> <span class="s2">&quot;requirements_lock.txt&quot;</span><span class="p">,</span>
+     <span class="n">visibility</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;//visibility:public&quot;</span><span class="p">],</span>
+ <span class="p">)</span>
+</pre></div>
+</div>
+</div>
 </section>
 </section>
 
