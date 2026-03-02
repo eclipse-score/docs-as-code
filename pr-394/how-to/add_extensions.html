@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Internals &#8212; Score Docs-as-Code  documentation</title>
+    <title>Add Extensions &#8212; Score Docs-as-Code  documentation</title>
   
   
   
@@ -62,7 +62,7 @@
     <script src="../_static/sphinx-needs/libs/html/datatables.min.js?v=8a4aee21"></script>
     <script src="../_static/sphinx-needs/libs/html/datatables_loader.js?v=a2cae175"></script>
     <script src="../_static/sphinx-needs/libs/html/sphinx_needs_collapse.js?v=dca66431"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'internals/index';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'how-to/add_extensions';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://eclipse-score.github.io/docs-as-code/versions.json';
@@ -72,8 +72,8 @@
         </script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Extensions" href="extensions/index.html" />
-    <link rel="prev" title="Docs Dependencies" href="../concepts/docs_deps.html" />
+    <link rel="next" title="Reference" href="../reference/index.html" />
+    <link rel="prev" title="Reference Docs in Tests" href="test_to_doc_links.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.1" />
@@ -152,8 +152,8 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../how-to/index.html">
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
     How To
   </a>
 </li>
@@ -173,8 +173,8 @@
 </li>
 
 
-<li class="nav-item current active">
-  <a class="nav-link nav-internal" href="#">
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../internals/index.html">
     Internals
   </a>
 </li>
@@ -288,8 +288,8 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../how-to/index.html">
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
     How To
   </a>
 </li>
@@ -309,8 +309,8 @@
 </li>
 
 
-<li class="nav-item current active">
-  <a class="nav-link nav-internal" href="#">
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../internals/index.html">
     Internals
   </a>
 </li>
@@ -378,11 +378,15 @@
 <nav class="bd-docs-nav bd-links"
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
-  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="extensions/index.html">Extensions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="benchmark_results.html">Bazel Mini Benchmark Results</a></li>
-<li class="toctree-l1"><a class="reference internal" href="decisions/index.html">Decisions And Concepts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="requirements/index.html">Requirements</a></li>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="get_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="setup.html">Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="write_docs.html">Write Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="other_modules.html">Reference Other Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="source_to_doc_links.html">Reference Docs in Source Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="test_to_doc_links.html">Reference Docs in Tests</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Add Extensions</a></li>
 </ul>
 </div>
 </nav></div>
@@ -423,7 +427,10 @@
         <i class="fa-solid fa-home"></i>
       </a>
     </li>
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Internals</span></li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">How To</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Add Extensions</span></li>
   </ul>
 </nav>
 </div>
@@ -440,17 +447,53 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="internals">
-<span id="id1"></span><h1>Internals<a class="headerlink" href="#internals" title="Link to this heading">#</a></h1>
-<p>This section is not relevant for users of docs-as-code but for developers extending or maintaining it.</p>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="extensions/index.html">Extensions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="benchmark_results.html">Bazel Mini Benchmark Results</a></li>
-<li class="toctree-l1"><a class="reference internal" href="decisions/index.html">Decisions And Concepts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="requirements/index.html">Requirements</a></li>
-</ul>
+  <section id="add-extensions">
+<h1>Add Extensions<a class="headerlink" href="#add-extensions" title="Link to this heading">#</a></h1>
+<p>The docs-as-code module defines its own Python environment in <code class="docutils literal notranslate"><span class="pre">MODULE.bazel</span></code>
+and as a user you cannot extend that.
+If you want to add Sphinx extensions,
+you must duplicate the Python environment first.</p>
+<p>Once you have your own Python environment,
+supply all necessary packages to <code class="docutils literal notranslate"><span class="pre">docs</span></code> via the <code class="docutils literal notranslate"><span class="pre">deps</span></code> attribute.</p>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-number">Listing 1 </span><span class="caption-text">In your BUILD file</span><a class="headerlink" href="#id1" title="Link to this code">#</a></div>
+<div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span> <span class="n">load</span><span class="p">(</span><span class="s2">&quot;@your_python_env//:requirements.bzl&quot;</span><span class="p">,</span> <span class="s2">&quot;all_requirements&quot;</span><span class="p">)</span>
+
+ <span class="n">docs</span><span class="p">(</span>
+     <span class="c1"># ...other attributes...</span>
+     <span class="n">deps</span> <span class="o">=</span> <span class="n">all_requirements</span>
+ <span class="p">)</span>
+</pre></div>
 </div>
+</div>
+<p>Inside <code class="docutils literal notranslate"><span class="pre">docs()</span></code>, the docs-as-code module will check if you have supplied all necessary dependencies.</p>
+<section id="how-to-create-a-python-environment">
+<h2>How to Create a Python Environment?<a class="headerlink" href="#how-to-create-a-python-environment" title="Link to this heading">#</a></h2>
+<p>The general documentation is <a class="reference external" href="https://rules-python.readthedocs.io/en/latest/toolchains.html">in the rules_python documentation</a>.</p>
+<p>You can also peek into <a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/main/MODULE.bazel">this docs-as-code repo’s MODULE.bazel file</a>
+how <code class="docutils literal notranslate"><span class="pre">docs_as_code_hub_env</span></code> is defined and use it as a template for <code class="docutils literal notranslate"><span class="pre">your_python_env</span></code>.</p>
+<p>Recommendation:
+Use <a class="reference external" href="https://rules-python.readthedocs.io/en/latest/api/rules_python/python/pip.html#compile_pip_requirements">compile_pip_requirements</a>
+because it is a solid practice anyways.
+Next, get <code class="docutils literal notranslate"><span class="pre">&#64;score_docs_as_code//src:requirements.in</span></code> as one of the inputs
+to ensure you have all the necessary dependencies for docs-as-code.</p>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-number">Listing 2 </span><span class="caption-text">Example BUILD file snippet</span><a class="headerlink" href="#id2" title="Link to this code">#</a></div>
+<div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span> <span class="n">load</span><span class="p">(</span><span class="s2">&quot;@rules_python//python:pip.bzl&quot;</span><span class="p">,</span> <span class="s2">&quot;compile_pip_requirements&quot;</span><span class="p">)</span>
+
+ <span class="n">compile_pip_requirements</span><span class="p">(</span>
+     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;requirements&quot;</span><span class="p">,</span>
+     <span class="n">srcs</span> <span class="o">=</span> <span class="p">[</span>
+         <span class="s2">&quot;@score_docs_as_code//src:requirements.in&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;requirements.in&quot;</span><span class="p">,</span>
+     <span class="p">],</span>
+     <span class="n">requirements_txt</span> <span class="o">=</span> <span class="s2">&quot;requirements_lock.txt&quot;</span><span class="p">,</span>
+     <span class="n">visibility</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;//visibility:public&quot;</span><span class="p">],</span>
+ <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
 </section>
 
 
@@ -464,20 +507,20 @@
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../concepts/docs_deps.html"
+       href="test_to_doc_links.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Docs Dependencies</p>
+        <p class="prev-next-title">Reference Docs in Tests</p>
       </div>
     </a>
     <a class="right-next"
-       href="extensions/index.html"
+       href="../reference/index.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Extensions</p>
+        <p class="prev-next-title">Reference</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -493,10 +536,22 @@
 
 
   <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-create-a-python-environment">How to Create a Python Environment?</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/eclipse-score/docs-as-code/edit/main/docs/internals/index.rst">
+    <a href="https://github.com/eclipse-score/docs-as-code/edit/main/docs/how-to/add_extensions.rst">
       <i class="fa-solid fa-pencil"></i>
       
       
