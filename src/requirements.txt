@@ -34,6 +34,9 @@ basedpyright==1.35.0 \
     --hash=sha256:2a7e0bd476623d48499e2b18ff6ed19dc28c51909cf9e1152ad355b5809049ad \
     --hash=sha256:4f4f84023df5a0cd4ee154916ba698596682ac98bacfa22c941ed6aaf07bba4e
     # via -r /external/score_tooling+/python_basics/requirements.txt
+bazel-runfiles==1.8.5 \
+    --hash=sha256:7c34df05e0115e5559cbc3069b580ef66e330e7f5dde29dba50f312dfad346d9
+    # via -r src/requirements.in
 beautifulsoup4==4.14.3 \
     --hash=sha256:0918bfe44902e6ad8d57732ba310582e98da931428d231a5ecb9e7c703a735bb \
     --hash=sha256:6292b1c5186d356bba669ef9f7f051757099565ad9ada5dd630bd9de5fa7fb86

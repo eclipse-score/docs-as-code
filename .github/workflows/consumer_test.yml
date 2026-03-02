@@ -39,7 +39,7 @@ jobs:
         run: |
           mkdir -p reports
 
-      # The pipefail ensures that non 0 exit codes inside the pytest execution get carried into the pipe 
+      # The pipefail ensures that non 0 exit codes inside the pytest execution get carried into the pipe
       # & make the tests red in the end. Without this we only would check the exit code of the 'tee' command.
       - name: Run Consumer tests
 

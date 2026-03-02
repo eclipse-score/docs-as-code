@@ -89,6 +89,37 @@ def _merge_sourcelinks(name, sourcelinks):
         tools = ["@score_docs_as_code//scripts_bazel:merge_sourcelinks"],
     )
 
+def _missing_requirements(deps):
+    """Add Python hub dependencies if they are missing."""
+    found = []
+    missing = []
+    def _target_to_packagename(target):
+        return target.split("/")[-1].split(":")[0]
+    all_packages = [_target_to_packagename(pkg) for pkg in all_requirements]
+    def _find(pkg):
+        for dep in deps:
+            dep_pkg = _target_to_packagename(dep)
+            if dep_pkg == pkg:
+                return True
+        return False
+    for pkg in all_packages:
+        if _find(pkg):
+            found.append(pkg)
+        else:
+            missing.append(pkg)
+    if len(missing) == len(all_requirements):
+        #print("All docs-as-code dependencies are missing, adding all of them.")
+        return all_requirements
+    if len(missing) == 0:
+        #print("All docs-as-code dependencies are already included, no need to add any.")
+        return []
+    if len(found) > 0:
+        msg = "Some docs-as-code dependencies are in deps: " + ", ".join(found) + \
+              "\n   ... but others are missing: " + ", ".join(missing) + \
+              "\nInconsistent deps for docs(): either include all dependencies or none of them."
+        fail(msg)
+    fail("This case should be unreachable?!")
+
 def docs(source_dir = "docs", data = [], deps = [], scan_code = []):
     """Creates all targets related to documentation.
 
@@ -107,7 +138,8 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = []):
         fail("docs() must be called from the root package. Current package: " + call_path)
 
     module_deps = deps
-    deps = deps + all_requirements + [
+    deps = deps + _missing_requirements(deps)
+    deps = deps + [
         "@score_docs_as_code//src:plantuml_for_python",
         "@score_docs_as_code//src/extensions/score_sphinx_bundle:score_sphinx_bundle",
     ]

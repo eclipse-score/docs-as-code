@@ -1,0 +1,25 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-yaml
+      - id: check-toml
+      - id: check-json
+        exclude: ^\.vscode/ # those are actually jsonc files
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: mixed-line-ending
+      - id: detect-private-key
+      - id: check-added-large-files
+        args: ["--maxkb=150"]
+
+  # use LOCAL hooks for python tooling so versions come from the virtualenv
+  - repo: local
+    hooks:
+      - id: Linter Scripts
+        name: Run linter script
+        entry: ./scripts/run-linters.sh
+        language: unsupported_script
+        pass_filenames: false

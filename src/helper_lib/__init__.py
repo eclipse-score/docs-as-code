@@ -16,7 +16,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from python.runfiles import Runfiles
+from runfiles import Runfiles
 from sphinx_needs.logging import get_logger
 
 LOGGER = get_logger(__name__)

@@ -1,7 +1,7 @@
 (source-code-linker)=
 # Score Source Code Linker
 
-A Sphinx extension for enabling **source code and test traceability** for requirements.  
+A Sphinx extension for enabling **source code and test traceability** for requirements.
 This extension integrates with **Bazel** and **sphinx-needs** to automatically generate traceability links between implementation, tests, and documentation.
 
 ---
@@ -272,9 +272,9 @@ flowchart TD
         L4[DTFL = DataForTestLink]
         L3[TestCaseNeed Operations]
         L5[DOTC = DataOfTestCase]
-        L1 ~~~ L2 
-        L2 ~~~ L4 
-        L4 ~~~ L3 
+        L1 ~~~ L2
+        L2 ~~~ L4
+        L4 ~~~ L3
         L3 ~~~ L5
     end
 

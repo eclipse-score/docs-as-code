@@ -71,7 +71,7 @@ This section provides an overview of current process requirements and their clar
 
 .. tool_req:: Enforces need ID scheme
   :id: tool_req__docs_common_attr_id_scheme
-  :implemented: PARTIAL
+  :implemented: YES
   :tags: Common Attributes
   :satisfies:
     gd_req__req_attr_uid,
@@ -119,7 +119,7 @@ This section provides an overview of current process requirements and their clar
   :tags: Common Attributes
   :parent_covered: NO: Can not cover 'ISO/IEC/IEEE/29148'
   :implemented: YES
-  :satisfies: gd_req__req_attr_description, gd_req__req_check_mandatory
+  :satisfies: gd_req__req_attr_description, gd_req__req_check_mandatory,
 
   Docs-as-Code shall enforce that each need of type :need:`tool_req__docs_req_types` has a description (content)
 
@@ -554,7 +554,9 @@ Architecture Attributes
    :satisfies:
       gd_req__arch_attr_mandatory,
       gd_req__arch_attr_fulfils,
-   :implemented: PARTIAL
+      gd_req__arch_attr_mandatory,
+      gd_req__arch_attr_fulfils,
+   :implemented: YES
    :parent_covered: YES
    :parent_has_problem: YES: Metamodel & Process aren't the same. Some definitions are not consistent in Process
 
@@ -575,7 +577,7 @@ Architecture Attributes
 .. tool_req:: Mandatory Architecture Attribute: fulfils
   :id: tool_req__docs_arch_link_fulfils
   :tags: Architecture
-  :implemented: PARTIAL
+  :implemented: YES
   :satisfies:
    gd_req__arch_linkage_requirement_type,
    gd_req__arch_attr_fulfils,
@@ -605,7 +607,7 @@ Architecture Attributes
 .. tool_req:: Ensure safety architecture elements link a safety requirement
   :id: tool_req__docs_arch_link_safety_to_req
   :tags: Architecture
-  :implemented: PARTIAL
+  :implemented: YES
   :satisfies: gd_req__arch_linkage_requirement
   :parent_covered: YES
 
@@ -617,7 +619,7 @@ Architecture Attributes
 .. tool_req:: Ensure qm architecture elements do not fulfill safety requirements
   :id: tool_req__docs_arch_link_qm_to_safety_req
   :tags: Architecture
-  :implemented: PARTIAL
+  :implemented: YES
   :satisfies: gd_req__arch_linkage_requirement
   :parent_covered: YES
 
@@ -736,7 +738,7 @@ Testing
 .. tool_req:: Supports linking to test cases
   :id: tool_req__docs_test_link_testcase
   :tags: Testing
-  :implemented: PARTIAL
+  :implemented: YES
   :parent_covered: YES
   :satisfies: gd_req__req_attr_testlink
 
@@ -902,6 +904,7 @@ Testing
   :tags: Safety Analysis
   :satisfies:
     gd_req__saf_attr_mandatory,
+    gd_req__sec_attr_mandatory,
   :parent_covered: YES
 
   All safety analysis elements in :need:`tool_req__docs_saf_types`
@@ -926,6 +929,8 @@ Testing
     gd_req__saf_attr_requirements_check,
     gd_req__saf_attr_aou,
     gd_req__saf_linkage_safety,
+    gd_req__sec_attr_mitigated_by,
+    gd_req__sec_attr_requirements_check,
   :parent_covered: YES
 
   Docs-As-Code shall enforce valid needs (`status` == `valid`) of type
@@ -992,6 +997,7 @@ Testing
   :satisfies:
     gd_req__saf_linkage_check,
     gd_req__saf_linkage,
+    gd_req__sec_linkage_check,
   :parent_covered: YES
 
   Docs-As-Code shall enforce that needs of type :need:`tool_req__docs_saf_types` have a
