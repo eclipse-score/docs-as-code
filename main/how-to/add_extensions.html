@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Reference Docs in Tests &#8212; Score Docs-as-Code  documentation</title>
+    <title>Add Extensions &#8212; Score Docs-as-Code  documentation</title>
   
   
   
@@ -62,7 +62,7 @@
     <script src="../_static/sphinx-needs/libs/html/datatables.min.js?v=8a4aee21"></script>
     <script src="../_static/sphinx-needs/libs/html/datatables_loader.js?v=a2cae175"></script>
     <script src="../_static/sphinx-needs/libs/html/sphinx_needs_collapse.js?v=dca66431"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'how-to/test_to_doc_links';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'how-to/add_extensions';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://eclipse-score.github.io/docs-as-code/versions.json';
@@ -72,8 +72,8 @@
         </script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Add Extensions" href="add_extensions.html" />
-    <link rel="prev" title="Reference Docs in Source Code" href="source_to_doc_links.html" />
+    <link rel="next" title="Reference" href="../reference/index.html" />
+    <link rel="prev" title="Reference Docs in Tests" href="test_to_doc_links.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.1" />
@@ -385,8 +385,8 @@
 <li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
 <li class="toctree-l1"><a class="reference internal" href="other_modules.html">Reference Other Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="source_to_doc_links.html">Reference Docs in Source Code</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Reference Docs in Tests</a></li>
-<li class="toctree-l1"><a class="reference internal" href="add_extensions.html">Add Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="test_to_doc_links.html">Reference Docs in Tests</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Add Extensions</a></li>
 </ul>
 </div>
 </nav></div>
@@ -430,7 +430,7 @@
     
     <li class="breadcrumb-item"><a href="index.html" class="nav-link">How To</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Reference Docs in Tests</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Add Extensions</span></li>
   </ul>
 </nav>
 </div>
@@ -447,42 +447,52 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="reference-docs-in-tests">
-<h1>Reference Docs in Tests<a class="headerlink" href="#reference-docs-in-tests" title="Link to this heading">#</a></h1>
-<p>In tests, you want to reference requirements (needs).
-The docs-as-code tool will create backlinks in the documentation.</p>
-<p>Docs-as-code parses <cite>test.xml</cite> files produced by Bazel under <cite>bazel-testlogs/</cite>.
-To attach metadata to tests use the project tooling decorator (provided by the
-attribute plugin). Example usage:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">attribute_plugin</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_test_properties</span>
+  <section id="add-extensions">
+<h1>Add Extensions<a class="headerlink" href="#add-extensions" title="Link to this heading">#</a></h1>
+<p>The docs-as-code module defines its own Python environment in <code class="docutils literal notranslate"><span class="pre">MODULE.bazel</span></code>
+and as a user you cannot extend that.
+If you want to add Sphinx extensions,
+you must duplicate the Python environment first.</p>
+<p>Once you have your own Python environment,
+supply all necessary packages to <code class="docutils literal notranslate"><span class="pre">docs</span></code> via the <code class="docutils literal notranslate"><span class="pre">deps</span></code> attribute.</p>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-number">Listing 1 </span><span class="caption-text">In your BUILD file</span><a class="headerlink" href="#id1" title="Link to this code">#</a></div>
+<div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span> <span class="n">load</span><span class="p">(</span><span class="s2">&quot;@your_python_env//:requirements.bzl&quot;</span><span class="p">,</span> <span class="s2">&quot;all_requirements&quot;</span><span class="p">)</span>
 
-<span class="nd">@add_test_properties</span><span class="p">(</span>
-                <span class="n">partially_verifies</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;tool_req__docs_common_attr_title&quot;</span><span class="p">,</span> <span class="s2">&quot;tool_req__docs_common_attr_description&quot;</span><span class="p">],</span>
-                <span class="n">test_type</span><span class="o">=</span><span class="s2">&quot;interface-test&quot;</span><span class="p">,</span>
-                <span class="n">derivation_technique</span><span class="o">=</span><span class="s2">&quot;boundary-values&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">test_feature</span><span class="p">():</span>
-<span class="w">                </span><span class="sd">&quot;&quot;&quot;Short description of what the test does.&quot;&quot;&quot;</span>
-                <span class="o">...</span>
+ <span class="n">docs</span><span class="p">(</span>
+     <span class="c1"># ...other attributes...</span>
+     <span class="n">deps</span> <span class="o">=</span> <span class="n">all_requirements</span>
+ <span class="p">)</span>
 </pre></div>
 </div>
-<p>TestLink will extract test name, file, line, result and verification lists
-(<cite>PartiallyVerifies</cite>, <cite>FullyVerifies</cite>) and create external needs from tests
-and <cite>testlink</cite> attributes on requirements that reference the test.</p>
-<div class="admonition hint">
-<p class="admonition-title">Hint</p>
-<p>It is possible to have ‘additional’ properties on tests. They will not show up in the
-TestLink but also won’t break the parsing process.</p>
 </div>
-<section id="limitations">
-<h2>Limitations<a class="headerlink" href="#limitations" title="Link to this heading">#</a></h2>
-<ul class="simple">
-<li><p>Not compatible with Esbonio/Live_preview.</p></li>
-<li><p>To create a valid Testlink Tags and XML must match the expected format.</p></li>
-<li><p>Partial properties will lead to no Testlink creation.
-If you want a test to be linked, please ensure all requirement properties are provided.</p></li>
-<li><p>Tests must be executed by Bazel first so <cite>test.xml</cite> files exist.</p></li>
-</ul>
+<p>Inside <code class="docutils literal notranslate"><span class="pre">docs()</span></code>, the docs-as-code module will check if you have supplied all necessary dependencies.</p>
+<section id="how-to-create-a-python-environment">
+<h2>How to Create a Python Environment?<a class="headerlink" href="#how-to-create-a-python-environment" title="Link to this heading">#</a></h2>
+<p>The general documentation is <a class="reference external" href="https://rules-python.readthedocs.io/en/latest/toolchains.html">in the rules_python documentation</a>.</p>
+<p>You can also peek into <a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/main/MODULE.bazel">this docs-as-code repo’s MODULE.bazel file</a>
+how <code class="docutils literal notranslate"><span class="pre">docs_as_code_hub_env</span></code> is defined and use it as a template for <code class="docutils literal notranslate"><span class="pre">your_python_env</span></code>.</p>
+<p>Recommendation:
+Use <a class="reference external" href="https://rules-python.readthedocs.io/en/latest/api/rules_python/python/pip.html#compile_pip_requirements">compile_pip_requirements</a>
+because it is a solid practice anyways.
+Next, get <code class="docutils literal notranslate"><span class="pre">&#64;score_docs_as_code//src:requirements.in</span></code> as one of the inputs
+to ensure you have all the necessary dependencies for docs-as-code.</p>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-number">Listing 2 </span><span class="caption-text">Example BUILD file snippet</span><a class="headerlink" href="#id2" title="Link to this code">#</a></div>
+<div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span> <span class="n">load</span><span class="p">(</span><span class="s2">&quot;@rules_python//python:pip.bzl&quot;</span><span class="p">,</span> <span class="s2">&quot;compile_pip_requirements&quot;</span><span class="p">)</span>
+
+ <span class="n">compile_pip_requirements</span><span class="p">(</span>
+     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;requirements&quot;</span><span class="p">,</span>
+     <span class="n">srcs</span> <span class="o">=</span> <span class="p">[</span>
+         <span class="s2">&quot;@score_docs_as_code//src:requirements.in&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;requirements.in&quot;</span><span class="p">,</span>
+     <span class="p">],</span>
+     <span class="n">requirements_txt</span> <span class="o">=</span> <span class="s2">&quot;requirements_lock.txt&quot;</span><span class="p">,</span>
+     <span class="n">visibility</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;//visibility:public&quot;</span><span class="p">],</span>
+ <span class="p">)</span>
+</pre></div>
+</div>
+</div>
 </section>
 </section>
 
@@ -497,20 +507,20 @@ If you want a test to be linked, please ensure all requirement properties are pr
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="source_to_doc_links.html"
+       href="test_to_doc_links.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Reference Docs in Source Code</p>
+        <p class="prev-next-title">Reference Docs in Tests</p>
       </div>
     </a>
     <a class="right-next"
-       href="add_extensions.html"
+       href="../reference/index.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Add Extensions</p>
+        <p class="prev-next-title">Reference</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -533,7 +543,7 @@ If you want a test to be linked, please ensure all requirement properties are pr
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#limitations">Limitations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-create-a-python-environment">How to Create a Python Environment?</a></li>
 </ul>
   </nav></div>
 
@@ -541,7 +551,7 @@ If you want a test to be linked, please ensure all requirement properties are pr
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/eclipse-score/docs-as-code/edit/main/docs/how-to/test_to_doc_links.rst">
+    <a href="https://github.com/eclipse-score/docs-as-code/edit/main/docs/how-to/add_extensions.rst">
       <i class="fa-solid fa-pencil"></i>
       
       
