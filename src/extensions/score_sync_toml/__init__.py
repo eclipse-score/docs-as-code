@@ -41,20 +41,20 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     config_setdefault(app.config, "needscfg_warn_on_diff", False)
     """Running Sphinx with -W will fail the CI for uncommitted TOML changes."""
 
-    app.config.needscfg_merge_toml_files = (
-        app.config.needscfg_merge_toml_files or []
-    ) + [str(Path(__file__).parent / "shared.toml")]
+    app.config.needscfg_merge_toml_files.append(
+        str(Path(__file__).parent / "shared.toml")
+    )
     """Merge the static TOML file into the generated configuration."""
 
-    app.config.needscfg_relative_path_fields = (
-        app.config.needscfg_relative_path_fields or []
-    ) + [
-        "needs_external_needs[*].json_path",
-        {
-            "field": "needs_flow_configs.score_config",
-            "prefix": "!include ",
-        },
-    ]
+    app.config.needscfg_relative_path_fields.extend(
+        [
+            "needs_external_needs[*].json_path",
+            {
+                "field": "needs_flow_configs.score_config",
+                "prefix": "!include ",
+            },
+        ]
+    )
     """Relative paths to confdir for Bazel provided absolute paths."""
 
     app.config.suppress_warnings += [

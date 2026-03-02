@@ -58,17 +58,22 @@ def setup(app: Sphinx) -> dict[str, object]:
         app.config.templates_path += ["templates"]
 
     config_setdefault(app.config, "numfig", True)
-
-    if not app.config.author:
-        app.config.author = "S-CORE"
+    config_setdefault(app.config, "author", "S-CORE")
 
     # Load the actual extensions list
     for e in score_extensions:
         app.setup_extension(e)
 
     # enable "..."-syntax in markdown — must come after myst_parser is loaded above
-    if "colon_fence" not in app.config.myst_enable_extensions:
-        app.config.myst_enable_extensions |= {"colon_fence"}
+    if isinstance(app.config.myst_enable_extensions, list):
+        app.config.myst_enable_extensions.append("colon_fence")
+    elif isinstance(app.config.myst_enable_extensions, set):
+        app.config.myst_enable_extensions.add("colon_fence")
+    else:
+        print(
+            "Unexpected type for myst_enable_extensions: %s",
+            type(app.config.myst_enable_extensions),
+        )
 
     return {
         "version": "3.0.0",

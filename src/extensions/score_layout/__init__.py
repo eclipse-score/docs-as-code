@@ -38,15 +38,19 @@ def update_config(app: Sphinx, _config: Any):
     logger.debug("score_layout update_config called")
 
     # Merge: user's entries take precedence over our defaults
-    app.config.needs_layouts = {**sphinx_options.needs_layouts,
-                                **app.config.needs_layouts}
+    app.config.needs_layouts = {
+        **sphinx_options.needs_layouts,
+        **app.config.needs_layouts,
+    }
     app.config.needs_global_options = {
         **sphinx_options.needs_global_options,
         **app.config.needs_global_options,
     }
     config_setdefault(app.config, "html_theme", html_options.html_theme)
-    app.config.html_context = {**html_options.return_html_context(app),
-                               **app.config.html_context}
+    app.config.html_context = {
+        **html_options.return_html_context(app),
+        **app.config.html_context,
+    }
     app.config.html_theme_options = {
         **html_options.return_html_theme_options(app),
         **app.config.html_theme_options,
