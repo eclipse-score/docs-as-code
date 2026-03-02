@@ -24,6 +24,7 @@ load("@score_tooling//:defs.bzl", "dash_license_checker")
 exports_files(
     [
         "requirements.txt",
+        "requirements.in",
         "incremental.py",
         "dummy.py",
         "generate_sourcelinks_cli.py",
