@@ -18,8 +18,6 @@ from pathlib import Path
 
 from sphinx.application import Sphinx
 from sphinx_needs import logging
-
-from src.helper_lib import config_setdefault
 from sphinx_needs.data import NeedsView, SphinxNeedsData
 from sphinx_needs.need_item import NeedItem
 
@@ -39,6 +37,7 @@ from src.extensions.score_metamodel.yaml_parser import (
 from src.extensions.score_metamodel.yaml_parser import (
     load_metamodel_data as load_metamodel_data,
 )
+from src.helper_lib import config_setdefault
 
 logger = logging.get_logger(__name__)
 

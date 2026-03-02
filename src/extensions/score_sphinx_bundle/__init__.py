@@ -68,7 +68,7 @@ def setup(app: Sphinx) -> dict[str, object]:
 
     # enable "..."-syntax in markdown — must come after myst_parser is loaded above
     if "colon_fence" not in app.config.myst_enable_extensions:
-        app.config.myst_enable_extensions = set(app.config.myst_enable_extensions) | {"colon_fence"}
+        app.config.myst_enable_extensions |= {"colon_fence"}
 
     return {
         "version": "3.0.0",

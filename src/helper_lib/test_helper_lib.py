@@ -27,7 +27,7 @@ from src.helper_lib import (
 
 
 class _FakeConfig:
-    """Minimal stand-in for sphinx.config.Config sufficient to test config_setdefault."""
+    """Minimal stand-in for sphinx.config.Config."""
 
     def __init__(self, raw: dict):
         self._raw_config = raw
@@ -35,15 +35,15 @@ class _FakeConfig:
 
 def test_config_setdefault_sets_when_not_in_raw_config():
     cfg = _FakeConfig(raw={})
-    config_setdefault(cfg, "html_copy_source", False)
-    assert cfg.html_copy_source is False
+    config_setdefault(cfg, "html_copy_source", False)  # pyright: ignore [reportArgumentType]
+    assert cfg.html_copy_source is False  # pyright: ignore [reportAttributeAccessIssue]
 
 
 def test_config_setdefault_does_not_overwrite_user_value():
     cfg = _FakeConfig(raw={"html_copy_source": True})
-    cfg.html_copy_source = True
-    config_setdefault(cfg, "html_copy_source", False)
-    assert cfg.html_copy_source is True
+    cfg.html_copy_source = True  # pyright: ignore[reportAttributeAccessIssue]
+    config_setdefault(cfg, "html_copy_source", False)  # pyright: ignore [reportArgumentType]
+    assert cfg.html_copy_source is True  # pyright: ignore[reportAttributeAccessIssue]
 
 
 @pytest.fixture
