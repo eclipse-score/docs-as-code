@@ -18,3 +18,9 @@ options = true
 content = true
 parse_content = false
 content_required = false
+
+[needs]
+schema_definitions_from_json="schemas.json"
+
+[server]
+index_on_save = true
