@@ -58,7 +58,10 @@ from src.helper_lib import (
     find_git_root,
     find_ws_root,
 )
-from src.helper_lib.additional_functions import get_github_link
+from src.helper_lib.additional_functions import (
+    get_github_link,
+    get_module_has_from_known_good_json,
+)
 
 LOGGER = get_logger(__name__)
 # Uncomment this to enable more verbose logging
@@ -355,7 +358,10 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
     source_code_links_by_need = load_source_code_links_combined_json(
         get_cache_filename(app.outdir, "score_scl_grouped_cache.json")
     )
-
+    if known_good_path := os.getenv("KNOWN_GOOD"):
+        module_hash_mapping = get_module_has_from_known_good_json(Path(known_good_path))
+    else:
+        module_hash_mapping = None
     for source_code_links in source_code_links_by_need:
         need = find_need(needs_copy, source_code_links.need)
         if need is None:
@@ -377,11 +383,11 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
         need_as_dict = cast(dict[str, object], need)
 
         need_as_dict["source_code_link"] = ", ".join(
-            f"{get_github_link(n)}<>{n.file}:{n.line}"
+            f"{get_github_link(n, module_hash_mapping)}<>{n.file}:{n.line}"
             for n in source_code_links.links.CodeLinks
         )
         need_as_dict["testlink"] = ", ".join(
-            f"{get_github_link(n)}<>{n.name}" for n in source_code_links.links.TestLinks
+            f"{get_github_link(n, module_hash_mapping)}<>{n.name}" for n in source_code_links.links.TestLinks
         )
 
         # NOTE: Removing & adding the need is important to make sure

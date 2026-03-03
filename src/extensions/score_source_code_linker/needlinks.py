@@ -23,7 +23,9 @@ from typing import Any
 class NeedLink:
     """Represents a single template string finding in a file."""
 
-    file: Path
+    file: str
+    path: Path
+    module: str
     line: int
     tag: str
     need: str
@@ -36,7 +38,9 @@ def DefaultNeedLink() -> NeedLink:
     Like this better than adding defaults to the dataclass, as it is deliberate
     """
     return NeedLink(
-        file=Path("."),
+        file="",
+        path=Path("."),
+        module="",
         line=0,
         tag="",
         need="",
@@ -54,9 +58,19 @@ class NeedLinkEncoder(json.JSONEncoder):
 
 
 def needlink_decoder(d: dict[str, Any]) -> NeedLink | dict[str, Any]:
-    if {"file", "line", "tag", "need", "full_line"} <= d.keys():
+    if {
+        "file",
+        "path",
+        "module",
+        "line",
+        "tag",
+        "need",
+        "full_line",
+    } <= d.keys():
         return NeedLink(
-            file=Path(d["file"]),
+            file=d["file"],
+            path=Path(d["path"]),
+            module=d["module"],
             line=d["line"],
             tag=d["tag"],
             need=d["need"],

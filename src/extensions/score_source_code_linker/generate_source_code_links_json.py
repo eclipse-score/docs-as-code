@@ -43,34 +43,48 @@ def _extract_references_from_line(line: str):
                 yield tag, req.strip()
 
 
-def _extract_references_from_file(root: Path, file_path: Path) -> list[NeedLink]:
+def _extract_references_from_file(
+    prefix: Path,
+    file_name: str,
+    file_path: Path,
+    module_name: str
+) -> list[NeedLink]:
     """Scan a single file for template strings and return findings."""
-    assert root.is_absolute(), "Root path must be absolute"
+    # assert root.is_absolute(), f"Root path must be absolute. {root} is not"
     assert not file_path.is_absolute(), "File path must be relative to the root"
     # assert file_path.is_relative_to(root), (
     #     f"File path ({file_path}) must be relative to the root ({root})"
     # )
-    assert (root / file_path).exists(), (
-        f"File {file_path} does not exist in root {root}."
-    )
-
+    # assert (root / file_path).exists(), (
+    #     f"File {file_path} does not exist in root {root}."
+    # )
     findings: list[NeedLink] = []
-
+    if module_name: 
+        module_name_full = str(module_name) + "+"
+        complete_file = prefix / module_name_full / file_path / file_name
+    else:
+        complete_file = prefix / file_path / file_name
+    assert complete_file is not None
+    print('==============COMPLETE FILE =========')
+    print(complete_file)
     try:
-        with open(root / file_path, encoding="utf-8", errors="ignore") as f:
+        with open(complete_file, encoding="utf-8", errors="ignore") as f:
             for line_num, line in enumerate(f, 1):
                 for tag, req in _extract_references_from_line(line):
                     findings.append(
                         NeedLink(
-                            file=file_path,
+                            file=file_name,
+                            path=file_path,
+                            module=module_name if module_name is not None else "",
                             line=line_num,
                             tag=tag,
                             need=req,
                             full_line=line.strip(),
                         )
                     )
-    except (UnicodeDecodeError, PermissionError, OSError):
+    except (UnicodeDecodeError, PermissionError, OSError) as e:
         # Skip files that can't be read as text
+        print(f"SOME ERROR OCCURED: {e}")
         pass
 
     return findings

@@ -36,11 +36,13 @@ LOGGER = logging.get_logger(__name__)
 @dataclass(frozen=True, order=True)
 class DataForTestLink:
     name: str
-    file: Path
+    file: str
+    path: Path
     line: int
     need: str
     verify_type: str
     result: str
+    module: str = "" # Is "" when running for local tests
     result_text: str = ""
 
 
@@ -57,15 +59,19 @@ def DataForTestLink_JSON_Decoder(d: dict[str, Any]) -> DataForTestLink | dict[st
     if {
         "name",
         "file",
+        "path",
         "line",
         "need",
         "verify_type",
         "result",
+        "module",
         "result_text",
     } <= d.keys():
         return DataForTestLink(
             name=d["name"],
-            file=Path(d["file"]),
+            file=d["file"],
+            path=Path(d["path"]),
+            module=d["module"],
             line=d["line"],
             need=d["need"],
             verify_type=d["verify_type"],
@@ -81,6 +87,8 @@ def DataForTestLink_JSON_Decoder(d: dict[str, Any]) -> DataForTestLink | dict[st
 class DataOfTestCase:
     name: str | None = None
     file: str | None = None
+    path: Path | None = None
+    module: str | None = None # Is none when running for local tests
     line: str | None = None
     result: str | None = None  # passed | falied | skipped | disabled
     # Intentionally not snakecase to make dict parsing simple
@@ -96,6 +104,8 @@ class DataOfTestCase:
         return cls(
             name=data.get("name"),
             file=data.get("file"),
+            path=data.get("path"),
+            module=data.get("module"),
             line=data.get("line"),
             result=data.get("result"),
             TestType=data.get("TestType"),
@@ -198,6 +208,7 @@ class DataOfTestCase:
             assert self.name is not None
             assert self.file is not None
             assert self.line is not None
+            assert self.path is not None
             assert self.result is not None
             assert self.result_text is not None
             assert self.TestType is not None
@@ -206,7 +217,9 @@ class DataOfTestCase:
             for need in verify_field.split(","):
                 yield DataForTestLink(
                     name=self.name,  # type-ignore
-                    file=Path(self.file),  # type-ignore
+                    file=self.file,  # type-ignore
+                    path=Path(self.path),  # type-ignore
+                    module=self.module if self.module is not None else "",# type-ignore
                     line=int(self.line),  # type-ignore
                     need=need.strip(),
                     verify_type=verify_type,
@@ -234,6 +247,8 @@ def DataOfTestCase_JSON_Decoder(d: dict[str, Any]) -> DataOfTestCase | dict[str,
         "name",
         "file",
         "line",
+        "path",
+        "module",
         "result",
         "TestType",
         "DerivationTechnique",
@@ -244,6 +259,8 @@ def DataOfTestCase_JSON_Decoder(d: dict[str, Any]) -> DataOfTestCase | dict[str,
         return DataOfTestCase(
             name=d["name"],
             file=d["file"],
+            path=d["path"],
+            module=d["module"],
             line=d["line"],
             result=d["result"],
             TestType=d["TestType"],
