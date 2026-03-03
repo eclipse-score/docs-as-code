@@ -12,6 +12,7 @@
 # *******************************************************************************
 import os
 from collections.abc import Callable, Generator
+from contextlib import suppress
 from pathlib import Path
 
 import pytest
@@ -20,10 +21,8 @@ from sphinx.testing.util import SphinxTestApp
 
 def _make_app(srcdir: Path, outdir: Path) -> SphinxTestApp:
     original_cwd = None
-    try:
+    with suppress(FileNotFoundError):
         original_cwd = os.getcwd()
-    except FileNotFoundError:
-        pass
     os.chdir(srcdir)
     try:
         return SphinxTestApp(
@@ -35,10 +34,8 @@ def _make_app(srcdir: Path, outdir: Path) -> SphinxTestApp:
         )
     finally:
         if original_cwd is not None:
-            try:
+            with suppress(FileNotFoundError, OSError):
                 os.chdir(original_cwd)
-            except (FileNotFoundError, OSError):
-                pass
 
 
 @pytest.fixture
