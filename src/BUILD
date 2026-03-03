@@ -37,6 +37,7 @@ filegroup(
     srcs = glob(
         ["*.py"],
     ) + [
+        "//src/extensions/score_any_folder:all_sources",
         "//src/extensions/score_draw_uml_funcs:all_sources",
         "//src/extensions/score_header_service:all_sources",
         "//src/extensions/score_layout:all_sources",
