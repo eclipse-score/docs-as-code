@@ -18,3 +18,7 @@ version = "0.1"
 extensions = [
     "score_sphinx_bundle",
 ]
+
+score_any_folder_mapping = {
+    "../src/extensions/docs": "internals/extensions",
+}
