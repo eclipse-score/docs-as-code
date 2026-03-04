@@ -14,7 +14,6 @@ import json
 from pathlib import Path
 from typing import TypedDict
 
-
 # Import types that depend on score_source_code_linker
 from src.extensions.score_source_code_linker.needlinks import DefaultNeedLink, NeedLink
 from src.extensions.score_source_code_linker.testlink import (
@@ -39,14 +38,16 @@ def get_github_link(
 ) -> str:
     if link is None:
         link = DefaultNeedLink()
-    
+
     if known_json is not None and link.module is not None:
         # Using the parsed know_good json file as source of truth
-        # We also have to check for link.module being not none as for example 'ref-int' could have links. 
-        # And then we would not find them in the known_json and have to go the normal route
+        # We also have to check for link.module being
+        # not none as for example 'ref-int' could have links.
+        # And then we would not find them in the known_json
+        # and have to go the normal route
         module_info = known_json[link.module]
         current_hash = module_info["hash"]
-        base_url = module_info["repo"].removesuffix('.git')
+        base_url = module_info["repo"].removesuffix(".git")
     else:
         # Fall back to git discovery for local links
         passed_git_root = find_git_root()
@@ -54,10 +55,8 @@ def get_github_link(
             passed_git_root = Path()
         base_url = get_github_base_url()
         current_hash = get_current_git_hash(passed_git_root)
-    
+
     return f"{base_url}/blob/{current_hash}/{link.path}/{link.file}#L{link.line}"
-
-
 
 
 def get_module_has_from_known_good_json(known_good_path: Path) -> dict[str, ModuleInfo]:

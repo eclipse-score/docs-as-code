@@ -228,9 +228,9 @@ def parse_filename(filepath: Path, runfiles_dir: Path) -> tuple[Path, str, str, 
     """
 
     # COMBO BUILD
-    # If external is in the filepath that gets parsed => file is in an external module => combo build
+    # If external is in the filepath that gets parsed =>
+    # file is in an external module => combo build
     if "external" in str(filepath):
-        
         bazel_path = str(runfiles_dir.resolve()).split("/sandbox", maxsplit=1)
         prefix = Path(bazel_path[0]) / "external"
         filepath_split = str(filepath).removeprefix("external/").split("/", maxsplit=1)
@@ -240,7 +240,8 @@ def parse_filename(filepath: Path, runfiles_dir: Path) -> tuple[Path, str, str, 
         file_name = path_file_split[1]
     # LOCAL BUILD
     else:
-        # We have a non combo build and the file is local to this repo => can use the git root to find the root 
+        # We have a non combo build and the file is local to this repo
+        # => can use the git root to find the root
         prefix = find_git_root()
         module_name = ""
         path_file_split = str(filepath).rsplit("/", maxsplit=1)
@@ -250,7 +251,6 @@ def parse_filename(filepath: Path, runfiles_dir: Path) -> tuple[Path, str, str, 
     assert prefix is not None
     assert module_name is not None
     assert file_path is not None
-    assert file_name is not None 
+    assert file_name is not None
 
     return prefix, module_name, file_path, file_name
-

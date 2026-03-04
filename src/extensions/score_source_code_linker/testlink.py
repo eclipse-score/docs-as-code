@@ -42,7 +42,7 @@ class DataForTestLink:
     need: str
     verify_type: str
     result: str
-    module: str = "" # Is "" when running for local tests
+    module: str = ""  # Is "" when running for local tests
     result_text: str = ""
 
 
@@ -88,7 +88,7 @@ class DataOfTestCase:
     name: str | None = None
     file: str | None = None
     path: Path | None = None
-    module: str | None = None # Is none when running for local tests
+    module: str | None = None  # Is none when running for local tests
     line: str | None = None
     result: str | None = None  # passed | falied | skipped | disabled
     # Intentionally not snakecase to make dict parsing simple
@@ -175,8 +175,9 @@ class DataOfTestCase:
         ]
         for field in fields:
             if getattr(self, field) is None:
+                # Module can be None when we are in a local enviroment,
+                # not reference-integration.
                 if field == "module":
-                    # Module can be None when we are in a local enviroment, not re-integration.
                     continue
                 # This might be a warning in the future, but for now we want be lenient.
                 LOGGER.info(
@@ -222,7 +223,9 @@ class DataOfTestCase:
                     name=self.name,  # type-ignore
                     file=self.file,  # type-ignore
                     path=Path(self.path),  # type-ignore
-                    module=self.module if self.module is not None else "",# type-ignore
+                    module=self.module
+                    if self.module is not None
+                    else "",  # type-ignore
                     line=int(self.line),  # type-ignore
                     need=need.strip(),
                     verify_type=verify_type,

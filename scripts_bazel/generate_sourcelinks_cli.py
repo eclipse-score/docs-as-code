@@ -18,21 +18,18 @@ with all source code links for documentation needs.
 """
 
 import argparse
-import json
 import logging
-from pdb import run
 import sys
 from pathlib import Path
-import subprocess
-# from python.runfiles import Runfiles
 
+# from python.runfiles import Runfiles
 from src.extensions.score_source_code_linker.generate_source_code_links_json import (
     _extract_references_from_file,  # pyright: ignore[reportPrivateUsage] TODO: move it out of the extension and into this script
 )
 from src.extensions.score_source_code_linker.needlinks import (
     store_source_code_links_json,
 )
-from src.helper_lib import parse_filename, get_runfiles_dir
+from src.helper_lib import get_runfiles_dir, parse_filename
 
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
@@ -59,17 +56,8 @@ def main():
 
     all_need_references = []
 
-    # bazel_out_dir = subprocesrun(["bazel", "info", "output_base"], capture_output=True, check=True)
-    # print("==== bazel_out_dir ====")
-    # print(bazel_out_dir)
-
-    # This way makes it easier to read the logic
-    known_good_file_path = None
     all_files = args.files
 
-    # For ref-integration or any integration that explicitly inputs 'known_good' jsons.
-    # print("all_files: ", all_files)
-    # print(all_files
     runfiles_dir = get_runfiles_dir()
     for raw_file_path in all_files:
         assert raw_file_path.exists(), raw_file_path
@@ -83,10 +71,10 @@ def main():
             file_path=Path(file_path),
             module_name=module_name,
         )
-        print("==============")
-        # print(module_name, file_path, file_name)
-        print(references)
-        print("==============")
+        # print("==============")
+        # # print(module_name, file_path, file_name)
+        # print(references)
+        # print("==============")
         all_need_references.extend(references)
 
     store_source_code_links_json(args.output, all_need_references)

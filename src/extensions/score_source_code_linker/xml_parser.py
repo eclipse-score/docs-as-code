@@ -95,7 +95,7 @@ def read_test_xml_file(file: Path) -> tuple[list[DataOfTestCase], list[str], lis
         tuple consisting of:
             - list[TestCaseNeed]
             - list[str] => Testcase Names that did not have any properties at all.
-            - list[str] => Testcase Names that did not have all of the required properties.
+            - list[str] => Testcase Names that did not have all of the req. properties.
     """
     test_case_needs: list[DataOfTestCase] = []
     non_prop_tests: list[str] = []
@@ -118,11 +118,17 @@ def read_test_xml_file(file: Path) -> tuple[list[DataOfTestCase], list[str], lis
             else:
                 testname = testcasename
             test_file_complete = testcase.get("file", "")
-            test_path, test_file = test_file_complete.rsplit("/", maxsplit=1) if test_file_complete else [None,None]
+            test_path, test_file = (
+                test_file_complete.rsplit("/", maxsplit=1)
+                if test_file_complete
+                else [None, None]
+            )
             line = testcase.get("line")
             # Module can be None if we are not in a combo build
             if "external" in str(file):
-                test_module = str(file).split("external/")[-1].split("/")[0].removesuffix("+")
+                test_module = (
+                    str(file).split("external/")[-1].split("/")[0].removesuffix("+")
+                )
             else:
                 test_module = None
 
@@ -246,7 +252,7 @@ def build_test_needs_from_files(
     tcns: list[DataOfTestCase] = []
     for file in xml_paths:
         # Last value can be ignored. The 'is_valid' function already prints infos
-        test_cases, tests_missing_all_props,_ = read_test_xml_file(file)
+        test_cases, tests_missing_all_props, _ = read_test_xml_file(file)
         non_prop_tests = ", ".join(n for n in tests_missing_all_props)
         if non_prop_tests:
             logger.info(f"Tests missing all properties: {non_prop_tests}")

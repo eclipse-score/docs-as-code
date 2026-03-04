@@ -10,9 +10,10 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-import pytest
 import json
 from pathlib import Path
+
+import pytest
 
 # This depends on the `attribute_plugin` in our tooling repository
 from attribute_plugin import add_test_properties  # type: ignore[import-untyped]

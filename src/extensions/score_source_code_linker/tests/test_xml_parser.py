@@ -102,7 +102,9 @@ def tmp_xml_dirs(
         )
 
         # File without properties
-        _write_test_xml(dir2 / "test.xml", name="tc_no_props", file="src/path2", line=20)
+        _write_test_xml(
+            dir2 / "test.xml", name="tc_no_props", file="src/path2", line=20
+        )
 
         # File with some properties that we don't care about
         _write_test_xml(

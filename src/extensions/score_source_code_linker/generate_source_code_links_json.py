@@ -17,7 +17,6 @@ for the needs. It's split this way, so that the live_preview action does not nee
 parse everything on every run.
 """
 
-from multiprocessing import get_all_start_methods
 import os
 from pathlib import Path
 
@@ -46,10 +45,7 @@ def _extract_references_from_line(line: str):
 
 
 def _extract_references_from_file(
-    prefix: Path,
-    file_name: str,
-    file_path: Path,
-    module_name: str
+    prefix: Path, file_name: str, file_path: Path, module_name: str
 ) -> list[NeedLink]:
     """Scan a single file for template strings and return findings."""
     # assert root.is_absolute(), f"Root path must be absolute. {root} is not"
@@ -61,13 +57,13 @@ def _extract_references_from_file(
     #     f"File {file_path} does not exist in root {root}."
     # )
     findings: list[NeedLink] = []
-    if module_name: 
+    if module_name:
         module_name_full = str(module_name) + "+"
         complete_file = prefix / module_name_full / file_path / file_name
     else:
         complete_file = prefix / file_path / file_name
     assert complete_file is not None
-    print('==============COMPLETE FILE =========')
+    print("==============COMPLETE FILE =========")
     print(complete_file)
     try:
         with open(complete_file, encoding="utf-8", errors="ignore") as f:
@@ -135,7 +131,9 @@ def find_all_need_references(search_path: Path) -> list[NeedLink]:
     # Use os.walk to have better control over directory traversal
     for file in iterate_files_recursively(search_path):
         prefix, module_name, file_path, file_name = parse_filename(file, runfiles_dir)
-        references = _extract_references_from_file(prefix, file_name,Path(file_path),module_name)
+        references = _extract_references_from_file(
+            prefix, file_name, Path(file_path), module_name
+        )
         all_need_references.extend(references)
 
     elapsed_time = os.times().elapsed - start_time
