@@ -4,14 +4,18 @@
     "links": {
       "CodeLinks": [
     {
-        "file": "src/implementation1.py",
+        "file": "implementation1.py",
+        "path": "src",
+        "module": "",
         "line": 3,
         "tag":"#-----req-Id:",
         "need": "TREQ_ID_1",
         "full_line": "#-----req-Id: TREQ_ID_1"
     },
     {
-        "file": "src/implementation2.py",
+        "file": "implementation2.py",
+        "path": "src",
+        "module": "",
         "line": 5,
         "tag":"#-----req-Id:",
         "need": "TREQ_ID_1",
@@ -22,7 +26,9 @@
       "TestLinks": [
   {
     "name": "TestRequirementsCoverage__test_system_startup_time",
-    "file": "src/tests/testfile_2.py",
+    "file": "testfile_2.py", 
+    "path": "src/tests",
+    "module": "",
     "line": 25,
     "need": "TREQ_ID_1",
     "verify_type": "fully",
@@ -37,7 +43,9 @@
     "links": {
       "CodeLinks": [
     {
-        "file": "src/implementation1.py",
+        "file": "implementation1.py",
+        "path": "src",
+        "module": "",
         "line": 9,
         "tag":"#-----req-Id:",
         "need": "TREQ_ID_2",
@@ -48,7 +56,9 @@
 
   {
     "name": "test_api_response_format",
-    "file": "src/testfile_1.py",
+    "file": "testfile_1.py",
+    "path": "src",
+    "module": "",
     "line": 10,
     "need": "TREQ_ID_2",
     "verify_type": "partially",
@@ -57,7 +67,9 @@
   },
   {
     "name": "test_error_handling",
-    "file": "src/testfile_1.py",
+    "file": "testfile_1.py",
+    "path": "src",
+    "module": "",
     "line": 38,
     "need": "TREQ_ID_2",
     "verify_type": "partially",
@@ -75,7 +87,9 @@
       "TestLinks": [
   {
     "name": "test_api_response_format",
-    "file": "src/testfile_1.py",
+    "file": "testfile_1.py",
+    "path": "src",
+    "module": "",
     "line": 10,
     "need": "TREQ_ID_3",
     "verify_type": "partially",
@@ -84,7 +98,9 @@
   },
   {
     "name": "test_error_handling",
-    "file": "src/testfile_1.py",
+    "file": "testfile_1.py",
+    "path": "src",
+    "module": "",
     "line": 38,
     "need": "TREQ_ID_3",
     "verify_type": "partially",
@@ -99,7 +115,9 @@
     "links": {
       "CodeLinks": [
         {
-            "file": "src/bad_implementation.py",
+            "file": "bad_implementation.py",
+            "path": "src",
+            "module": "",
             "line":2,
             "tag":"#-----req-Id:",
             "need": "TREQ_ID_200",

@@ -17,6 +17,7 @@ for the needs. It's split this way, so that the live_preview action does not nee
 parse everything on every run.
 """
 
+from multiprocessing import get_all_start_methods
 import os
 from pathlib import Path
 
@@ -24,6 +25,7 @@ from src.extensions.score_source_code_linker.needlinks import (
     NeedLink,
     store_source_code_links_json,
 )
+from src.helper_lib import get_runfiles_dir, parse_filename
 
 TAGS = [
     "# " + "req-traceability:",
@@ -125,13 +127,15 @@ def find_all_need_references(search_path: Path) -> list[NeedLink]:
         list[FileFindings]: List of FileFindings objects containing all findings
                            for each file that contains template strings.
     """
+    runfiles_dir = get_runfiles_dir()
     start_time = os.times().elapsed
 
     all_need_references: list[NeedLink] = []
 
     # Use os.walk to have better control over directory traversal
     for file in iterate_files_recursively(search_path):
-        references = _extract_references_from_file(search_path, file)
+        prefix, module_name, file_path, file_name = parse_filename(file, runfiles_dir)
+        references = _extract_references_from_file(prefix, file_name,Path(file_path),module_name)
         all_need_references.extend(references)
 
     elapsed_time = os.times().elapsed - start_time

@@ -72,7 +72,9 @@ class SourceCodeLinks_TEST_JSON_Encoder(json.JSONEncoder):
 @pytest.fixture
 def sample_needlink() -> NeedLink:
     return NeedLink(
-        file=Path("src/example.py"),
+        file="example.py",
+        path=Path("src"),
+        module="",
         line=10,
         tag="# req:",
         need="REQ_001",
@@ -84,7 +86,9 @@ def sample_needlink() -> NeedLink:
 def sample_testlink() -> DataForTestLink:
     return DataForTestLink(
         name="test_example",
-        file=Path("tests/test_example.py"),
+        file="test_example.py",
+        path=Path("tests"),
+        module="",
         need="REQ_001",
         line=5,
         verify_type="partially",

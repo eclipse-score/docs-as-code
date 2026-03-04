@@ -1,27 +1,35 @@
 [
     {
-        "file": "src/implementation1.py",
+        "file": "implementation1.py",
+        "path": "src",
+        "module": "",
         "line": 3,
         "tag":"#-----req-Id:",
         "need": "TREQ_ID_1",
         "full_line": "#-----req-Id: TREQ_ID_1"
     },
     {
-        "file": "src/implementation2.py",
+        "file": "implementation2.py",
+        "path": "src",
+        "module": "",
         "line": 5,
         "tag":"#-----req-Id:",
         "need": "TREQ_ID_1",
         "full_line": "#-----req-Id: TREQ_ID_1"
     },
     {
-        "file": "src/implementation1.py",
+        "file": "implementation1.py",
+        "path": "src",
+        "module": "",
         "line": 9,
         "tag":"#-----req-Id:",
         "need": "TREQ_ID_2",
         "full_line":"#-----req-Id: TREQ_ID_2"
     },
     {
-        "file": "src/bad_implementation.py",
+        "file": "bad_implementation.py",
+        "path": "src",
+        "module": "",
         "line":2,
         "tag":"#-----req-Id:",
         "need": "TREQ_ID_200",

@@ -127,9 +127,11 @@ class NeedLinkTestEncoder(json.JSONEncoder):
 
 
 def needlink_test_decoder(d: dict[str, Any]) -> NeedLink | dict[str, Any]:
-    if {"file", "line", "tag", "need", "full_line"} <= d.keys():
+    if {"file", "path", "module", "line", "tag", "need", "full_line"} <= d.keys():
         return NeedLink(
-            file=Path(d["file"]),
+            file=d["file"],
+            path=Path(d["path"]),
+            module=d["module"],
             line=d["line"],
             tag=decode_comment(d["tag"]),
             need=d["need"],
@@ -179,28 +181,36 @@ def sample_needlinks() -> list[NeedLink]:
     """Create sample NeedLink objects for testing."""
     return [
         NeedLink(
-            file=Path("src/implementation1.py"),
+            file="implementation1.py",
+            path=Path("src"),
+            module="",
             line=3,
             tag="#" + " req-Id:",
             need="TREQ_ID_1",
             full_line="#" + " req-Id: TREQ_ID_1",
         ),
         NeedLink(
-            file=Path("src/implementation2.py"),
+            file="implementation2.py",
+            path=Path("src"),
+            module="",
             line=3,
             tag="#" + " req-Id:",
             need="TREQ_ID_1",
             full_line="#" + " req-Id: TREQ_ID_1",
         ),
         NeedLink(
-            file=Path("src/implementation1.py"),
+            file="implementation1.py",
+            path=Path("src"),
+            module="",
             line=9,
             tag="#" + " req-Id:",
             need="TREQ_ID_2",
             full_line="#" + " req-Id: TREQ_ID_2",
         ),
         NeedLink(
-            file=Path("src/bad_implementation.py"),
+            file="bad_implementation.py",
+            path=Path("src"),
+            module="",
             line=2,
             tag="#" + " req-Id:",
             need="TREQ_ID_200",
@@ -308,11 +318,15 @@ def test_group_by_need(sample_needlinks: list[NeedLink]) -> None:
     for found_link in result:
         if found_link.need == "TREQ_ID_1":
             assert len(found_link.links.CodeLinks) == 2
-            assert found_link.links.CodeLinks[0].file == Path("src/implementation1.py")
-            assert found_link.links.CodeLinks[1].file == Path("src/implementation2.py")
+            assert found_link.links.CodeLinks[0].file == "implementation1.py"
+            assert found_link.links.CodeLinks[0].path == Path("src")
+            assert found_link.links.CodeLinks[1].file == "implementation2.py"
+            assert found_link.links.CodeLinks[1].path == Path("src")
         elif found_link.need == "TREQ_ID_2":
             assert len(found_link.links.CodeLinks) == 1
-            assert found_link.links.CodeLinks[0].file == Path("src/implementation1.py")
+            assert found_link.links.CodeLinks[0].file == "implementation1.py"
+            assert found_link.links.CodeLinks[0].path == Path("src")
+
             assert found_link.links.CodeLinks[0].line == 9
         elif found_link.need == "TREQ_ID_200":
             assert len(found_link.links.CodeLinks) == 1
@@ -338,7 +352,9 @@ def test_get_github_link_with_real_repo(git_repo: Path) -> None:
     """Test generating GitHub link with real repository."""
     # Create a needlink
     needlink = NeedLink(
-        file=Path("src/test.py"),
+        file="test.py",
+        path=Path("src"),
+        module="",
         line=42,
         tag="#" + " req-Id:",
         need="REQ_001",
@@ -402,7 +418,9 @@ def test_cache_file_with_encoded_comments(temp_dir: Path) -> None:
     # Create needlinks with spaces in tags and full_line
     needlinks = [
         NeedLink(
-            file=Path("src/test.py"),
+            file="test.py",
+            path=Path("src"),
+            module="",
             line=1,
             tag="#" + " req-Id:",
             need="TEST_001",
@@ -506,21 +524,27 @@ def another_function():
     # (simulating what generate_source_code_links_json would do)
     needlinks = [
         NeedLink(
-            file=Path("src/implementation1.py"),
+            file="implementation1.py",
+            path=Path("src"),
+            module="",
             line=3,
             tag="#" + " req-Id:",
             need="TREQ_ID_1",
             full_line="#" + " req-Id: TREQ_ID_1",
         ),
         NeedLink(
-            file=Path("src/implementation1.py"),
+            file="implementation1.py",
+            path=Path("src"),
+            module="",
             line=8,
             tag="#" + " req-Id:",
             need="TREQ_ID_2",
             full_line="#" + " req-Id: TREQ_ID_2",
         ),
         NeedLink(
-            file=Path("src/implementation2.py"),
+            file="implementation2.py",
+            path=Path("src"),
+            module="",
             line=3,
             tag="#" + " req-Id:",
             need="TREQ_ID_1",
@@ -551,7 +575,7 @@ def another_function():
     for needlink in loaded_links:
         github_link = get_github_link(needlink)
         assert "https://github.com/test-user/test-repo/blob/" in github_link
-        assert f"src/{needlink.file.name}#L{needlink.line}" in github_link
+        assert f"{needlink.path}/{needlink.file}#L{needlink.line}" in github_link
 
 
 @add_test_properties(
@@ -579,7 +603,9 @@ def test_multiple_commits_hash_consistency(git_repo: Path) -> None:
 
     # Test that links use the current hash
     needlink = NeedLink(
-        file=Path("new_file.py"),
+        file="new_file.py",
+        path=Path("."),
+        module="",
         line=1,
         tag="#" + " req-Id:",
         need="TEST_001",

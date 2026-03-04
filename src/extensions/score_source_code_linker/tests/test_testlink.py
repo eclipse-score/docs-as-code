@@ -10,6 +10,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
+import pytest
 import json
 from pathlib import Path
 
@@ -31,17 +32,58 @@ from src.extensions.score_source_code_linker.testlink import (
     test_type="requirements-based",
     derivation_technique="requirements-analysis",
 )
-def test_testlink_serialization_roundtrip():
+def test_testlink_serialization_roundtrip_no_module():
     """Ensure that Encode/Decode is reversible"""
-    link = DataForTestLink(
+    link_no_module = DataForTestLink(
         name="my_test",
-        file=Path("some/file.py"),
+        file="file.py",
+        path=Path("some"),
         line=123,
         need="REQ_001",
         verify_type="fully",
         result="passed",
         result_text="All good",
     )
+    dumped = json.dumps(link_no_module, cls=DataForTestLink_JSON_Encoder)
+    loaded = json.loads(dumped, object_hook=DataForTestLink_JSON_Decoder)
+
+    assert isinstance(loaded, DataForTestLink)
+    assert loaded == link_no_module
+
+DataForTestLinks =[
+    DataForTestLink(
+        name="my_test",
+        file="file.py",
+        path=Path("some"),
+        line=123,
+        need="REQ_001",
+        verify_type="fully",
+        result="passed",
+        result_text="All good",
+    ),
+        DataForTestLink(
+        name="my_test",
+        file="file.py",
+        path=Path("some"),
+        module="some_module",
+        line=123,
+        need="REQ_001",
+        verify_type="fully",
+        result="passed",
+        result_text="All good",
+    )
+]
+
+
+
+@add_test_properties(
+    partially_verifies=["tool_req__docs_test_link_testcase"],
+    test_type="requirements-based",
+    derivation_technique="requirements-analysis",
+)
+@pytest.mark.parametrize("link", DataForTestLinks)
+def test_testlink_serialization_roundtrip_with_module(link):
+    """Ensure that Encode/Decode is reversible"""
     dumped = json.dumps(link, cls=DataForTestLink_JSON_Encoder)
     loaded = json.loads(dumped, object_hook=DataForTestLink_JSON_Decoder)
 
@@ -50,9 +92,10 @@ def test_testlink_serialization_roundtrip():
 
 
 def test_testlink_encoder_handles_path():
-    data = {"file": Path("some/thing.py")}
+    data = {"file": "thing.py","path": Path("some")}
     encoded = json.dumps(data, cls=DataForTestLink_JSON_Encoder)
-    assert '"file": "some/thing.py"' in encoded
+    assert '"file": "thing.py"' in encoded
+    assert '"path": "some"' in encoded
 
 
 @add_test_properties(
@@ -93,7 +136,8 @@ def test_testcaseneed_to_dict_multiple_links():
     """
     case = DataOfTestCase(
         name="TC_01",
-        file="src/test.py",
+        file="test.py",
+        path=Path("src"),
         line="10",
         result="failed",
         TestType="unit",
@@ -110,7 +154,8 @@ def test_testcaseneed_to_dict_multiple_links():
     assert set(need_ids) == {"REQ-1", "REQ-2", "REQ-3"}
 
     for link in links:
-        assert link.file == Path("src/test.py")
+        assert link.file == "test.py"
+        assert link.path == Path("src")
         assert link.line == 10
         assert link.name == "TC_01"
         assert link.result == "failed"
@@ -128,7 +173,8 @@ def test_store_and_load_testlinks_roundtrip(tmp_path: Path):
     links = [
         DataForTestLink(
             name="L1",
-            file=Path("abc.py"),
+            file="abc.py",
+            path=Path("src"),
             line=1,
             need="REQ_A",
             verify_type="partially",
@@ -137,7 +183,9 @@ def test_store_and_load_testlinks_roundtrip(tmp_path: Path):
         ),
         DataForTestLink(
             name="L2",
-            file=Path("def.py"),
+            file="def.py",
+            path=Path("src"),
+            module="some_module",
             line=2,
             need="REQ_B",
             verify_type="fully",

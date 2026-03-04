@@ -175,6 +175,9 @@ class DataOfTestCase:
         ]
         for field in fields:
             if getattr(self, field) is None:
+                if field == "module":
+                    # Module can be None when we are in a local enviroment, not re-integration.
+                    continue
                 # This might be a warning in the future, but for now we want be lenient.
                 LOGGER.info(
                     f"TestCase: {self.name} has a None value for the field: "

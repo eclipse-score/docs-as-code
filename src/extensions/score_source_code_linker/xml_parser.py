@@ -94,7 +94,8 @@ def read_test_xml_file(file: Path) -> tuple[list[DataOfTestCase], list[str], lis
     Returns:
         tuple consisting of:
             - list[TestCaseNeed]
-            - list[str] => Testcase Names that did not have the required properties.
+            - list[str] => Testcase Names that did not have any properties at all.
+            - list[str] => Testcase Names that did not have all of the required properties.
     """
     test_case_needs: list[DataOfTestCase] = []
     non_prop_tests: list[str] = []
@@ -116,8 +117,14 @@ def read_test_xml_file(file: Path) -> tuple[list[DataOfTestCase], list[str], lis
                 testname = "__".join([testcn, testcasename])
             else:
                 testname = testcasename
-            test_file = testcase.get("file")
+            test_file_complete = testcase.get("file", "")
+            test_path, test_file = test_file_complete.rsplit("/", maxsplit=1) if test_file_complete else [None,None]
             line = testcase.get("line")
+            # Module can be None if we are not in a combo build
+            if "external" in str(file):
+                test_module = str(file).split("external/")[-1].split("/")[0].removesuffix("+")
+            else:
+                test_module = None
 
             #          ╭──────────────────────────────────────╮
             #          │   Assert worldview that mandatory    │
@@ -134,6 +141,8 @@ def read_test_xml_file(file: Path) -> tuple[list[DataOfTestCase], list[str], lis
             #     "'lineNr' attribute. This is mandatory"
             # )
             case_properties["name"] = testname
+            case_properties["module"] = test_module
+            case_properties["path"] = test_path
             case_properties["file"] = test_file
             case_properties["line"] = line
             case_properties["result"], case_properties["result_text"] = (
@@ -180,7 +189,10 @@ def find_xml_files(dir: Path) -> list[Path]:
     test_file_name = "test.xml"
 
     xml_paths: list[Path] = []
-    for root, _, files in os.walk(dir):
+    for root, a, files in os.walk(dir):
+        print("This is root: ", root)
+        print("This is a: ", a)
+        print("This is files: ", files)
         if test_file_name in files:
             xml_paths.append(Path(os.path.join(root, test_file_name)))
     return xml_paths
@@ -262,6 +274,7 @@ def construct_and_add_need(app: Sphinx, tn: DataOfTestCase):
     # and either 'Fully' or 'PartiallyVerifies' should not be None here
     assert tn.file is not None
     assert tn.name is not None
+    assert tn.path is not None
     # IDK if this is ideal or not
     with contextlib.suppress(BaseException):
         _ = add_external_need(
@@ -278,7 +291,7 @@ def construct_and_add_need(app: Sphinx, tn: DataOfTestCase):
             else "",
             test_type=tn.TestType,
             derivation_technique=tn.DerivationTechnique,
-            file=tn.file,
+            file=tn.path / tn.file,
             line=tn.line,
             result=tn.result,  # We just want the 'failed' or whatever
             result_text=tn.result_text if tn.result_text else "",

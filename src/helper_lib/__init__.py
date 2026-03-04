@@ -218,3 +218,39 @@ def get_runfiles_dir() -> Path:
             "Have a look at README.md for instructions on how to build docs."
         )
     return runfiles_dir
+
+
+def parse_filename(filepath: Path, runfiles_dir: Path) -> tuple[Path, str, str, str]:
+    """
+    Parse out the Module-Name from the filename gotten
+    /home/user/.cache/bazel/aksj37981712/external/score_docs_as_code+/src/tests/testfile.py
+    => score_docs_as_code
+    """
+
+    # COMBO BUILD
+    # If external is in the filepath that gets parsed => file is in an external module => combo build
+    if "external" in str(filepath):
+        
+        bazel_path = str(runfiles_dir.resolve()).split("/sandbox", maxsplit=1)
+        prefix = Path(bazel_path[0]) / "external"
+        filepath_split = str(filepath).removeprefix("external/").split("/", maxsplit=1)
+        module_name = str(filepath_split[0].removesuffix("+"))
+        path_file_split = filepath_split[1].rsplit("/", maxsplit=1)
+        file_path = path_file_split[0]
+        file_name = path_file_split[1]
+    # LOCAL BUILD
+    else:
+        # We have a non combo build and the file is local to this repo => can use the git root to find the root 
+        prefix = find_git_root()
+        module_name = ""
+        path_file_split = str(filepath).rsplit("/", maxsplit=1)
+        file_path = path_file_split[0]
+        file_name = path_file_split[1]
+
+    assert prefix is not None
+    assert module_name is not None
+    assert file_path is not None
+    assert file_name is not None 
+
+    return prefix, module_name, file_path, file_name
+

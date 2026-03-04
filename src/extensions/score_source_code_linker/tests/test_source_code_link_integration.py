@@ -307,14 +307,18 @@ def example_source_link_text_all_ok(sphinx_base_dir: Path) -> dict[str, list[Nee
     return {
         "TREQ_ID_1": [
             NeedLink(
-                file=Path("src/implementation2.py"),
+                file="implementation2.py",
+                path=Path("src"),
+                module="",
                 line=5,
                 tag="#" + " req-Id:",
                 need="TREQ_ID_1",
                 full_line="#" + " req-Id: TREQ_ID_1",
             ),
             NeedLink(
-                file=Path("src/implementation1.py"),
+                file="implementation1.py",
+                path=Path("src"),
+                module="",
                 line=3,
                 tag="#" + " req-Id:",
                 need="TREQ_ID_1",
@@ -323,7 +327,9 @@ def example_source_link_text_all_ok(sphinx_base_dir: Path) -> dict[str, list[Nee
         ],
         "TREQ_ID_2": [
             NeedLink(
-                file=Path("src/implementation1.py"),
+                file="implementation1.py",
+                path=Path("src"),
+                module="",
                 line=9,
                 tag="#" + " req-Id:",
                 need="TREQ_ID_2",
@@ -340,7 +346,8 @@ def example_test_link_text_all_ok(sphinx_base_dir: Path):
         "TREQ_ID_1": [
             DataForTestLink(
                 name="TestRequirementsCoverage__test_system_startup_time",
-                file=Path("src/tests/testfile_2.py"),
+                file="testfile_2.py",
+                path=Path("src/tests"),
                 need="TREQ_ID_1",
                 line=25,
                 verify_type="fully",
@@ -351,7 +358,8 @@ def example_test_link_text_all_ok(sphinx_base_dir: Path):
         "TREQ_ID_2": [
             DataForTestLink(
                 name="test_api_response_format",
-                file=Path("src/testfile_1.py"),
+                file="testfile_1.py",
+                path=Path("src"),
                 need="TREQ_ID_2",
                 line=10,
                 verify_type="partially",
@@ -360,7 +368,8 @@ def example_test_link_text_all_ok(sphinx_base_dir: Path):
             ),
             DataForTestLink(
                 name="test_error_handling",
-                file=Path("src/testfile_1.py"),
+                file="testfile_1.py",
+                path=Path("src"),
                 need="TREQ_ID_2",
                 line=38,
                 verify_type="partially",
@@ -371,7 +380,8 @@ def example_test_link_text_all_ok(sphinx_base_dir: Path):
         "TREQ_ID_3": [
             DataForTestLink(
                 name="test_api_response_format",
-                file=Path("src/testfile_1.py"),
+                file="testfile_1.py",
+                path=Path("src"),
                 need="TREQ_ID_3",
                 line=10,
                 verify_type="partially",
@@ -380,7 +390,8 @@ def example_test_link_text_all_ok(sphinx_base_dir: Path):
             ),
             DataForTestLink(
                 name="test_error_handling",
-                file=Path("src/testfile_1.py"),
+                file="testfile_1.py",
+                path=Path("src"),
                 need="TREQ_ID_3",
                 line=38,
                 verify_type="partially",
@@ -397,7 +408,9 @@ def example_source_link_text_non_existent(sphinx_base_dir: Path):
         {
             "TREQ_ID_200": [
                 NeedLink(
-                    file=Path("src/bad_implementation.py"),
+                    file="bad_implementation.py",
+                    path=Path("src"),
+                    module="",
                     line=2,
                     tag="#" + " req-Id:",
                     need="TREQ_ID_200",
@@ -548,6 +561,8 @@ def test_source_link_integration_non_existent_id(
     try:
         app.build()
         warnings = app.warning.getvalue()
+        print("====================")
+        print("Warnings:\n", warnings)
         assert (
             "src/bad_implementation.py:2: Could not find TREQ_ID_200 in documentation"
             in warnings

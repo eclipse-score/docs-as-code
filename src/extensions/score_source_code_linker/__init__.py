@@ -367,14 +367,16 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
         if need is None:
             # TODO: print github annotations as in https://github.com/eclipse-score/bazel_registry/blob/7423b9996a45dd0a9ec868e06a970330ee71cf4f/tools/verify_semver_compatibility_level.py#L126-L129
             for n in source_code_links.links.CodeLinks:
+                full_file_path = f"{n.module}/{n.path}/{n.file}" if n.module else f"{n.path}/{n.file}"
                 LOGGER.warning(
-                    f"{n.file}:{n.line}: Could not find {source_code_links.need} "
+                    f"{full_file_path}:{n.line}: Could not find {source_code_links.need} "
                     "in documentation [CODE LINK]",
                     type="score_source_code_linker",
                 )
             for n in source_code_links.links.TestLinks:
+                full_file_path = f"{n.module}/{n.path}/{n.file}" if n.module else f"{n.path}/{n.file}"
                 LOGGER.warning(
-                    f"{n.file}:{n.line}: Could not find {source_code_links.need} "
+                    f"{full_file_path}:{n.line}: Could not find {source_code_links.need} "
                     "in documentation [TEST LINK]",
                     type="score_source_code_linker",
                 )

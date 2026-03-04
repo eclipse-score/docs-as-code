@@ -39,7 +39,7 @@ def DefaultNeedLink() -> NeedLink:
     """
     return NeedLink(
         file="",
-        path=Path("."),
+        path=Path(),
         module="",
         line=0,
         tag="",

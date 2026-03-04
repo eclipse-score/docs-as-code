@@ -90,7 +90,7 @@ def tmp_xml_dirs(
             dir1 / "test.xml",
             name="tc_with_props",
             result="failed",
-            file="path1",
+            file="src/path1",
             line=10,
             props={
                 "PartiallyVerifies": "REQ1",
@@ -102,14 +102,14 @@ def tmp_xml_dirs(
         )
 
         # File without properties
-        _write_test_xml(dir2 / "test.xml", name="tc_no_props", file="path2", line=20)
+        _write_test_xml(dir2 / "test.xml", name="tc_no_props", file="src/path2", line=20)
 
         # File with some properties that we don't care about
         _write_test_xml(
             dir3 / "test.xml",
             name="tc_with_extra_props",
             result="failed",
-            file="path1",
+            file="src/path1",
             line=10,
             props={
                 # Properties we do not parse should not throw an error
@@ -128,7 +128,7 @@ def tmp_xml_dirs(
             dir4 / "test.xml",
             name="tc_with_missing_props",
             result="failed",
-            file="path1",
+            file="src/path1",
             line=10,
             props={
                 # derivation_technique and test_type are missing
@@ -156,6 +156,8 @@ def test_find_xml_files(
     root: Path
     dir1: Path
     dir2: Path
+    dir3: Path
+    dir4: Path
     root, dir1, dir2, dir3, dir4 = tmp_xml_dirs()
     found = xml_parser.find_xml_files(root)
     expected: set[Path] = {
