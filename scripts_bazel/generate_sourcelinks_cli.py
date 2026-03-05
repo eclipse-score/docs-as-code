@@ -64,20 +64,12 @@ def main():
         prefix, module_name, file_path, file_name = parse_filename(
             raw_file_path, runfiles_dir
         )
-        # if not module_name:
-        #     # We can not extract anything as we can not read the file (we do not have the correct prefix for local execution here)
-        #     return 0
-        # ('external/score_docs_as_code+/src/extensions/score_sync_toml/shared.toml'
         references = _extract_references_from_file(
             prefix=prefix,
             file_name=file_name,
             file_path=Path(file_path),
             module_name=module_name,
         )
-        # print("==============")
-        # # print(module_name, file_path, file_name)
-        # print(references)
-        # print("==============")
         all_need_references.extend(references)
 
     store_source_code_links_json(args.output, all_need_references)

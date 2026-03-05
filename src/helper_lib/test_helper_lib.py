@@ -325,15 +325,26 @@ def test_git_root_search_not_found(tmp_path: Path, monkeypatch: pytest.MonkeyPat
 
 # COMBO BUILD TESTS (External Modules)
 
+
 def test_external_module_basic(tmp_path: Path) -> None:
     """Test parsing a file from an external module (combo build)."""
     # Simulate bazel cache structure
-    bazel_cache = tmp_path / ".cache" / "bazel" / "_bazel_user" / "58de169282104bb8c73a59023f615bcd"
-    sandbox_base = bazel_cache / "sandbox" / "linux-sandbox" / "42" / "execroot" / "_main"
+    bazel_cache = (
+        tmp_path
+        / ".cache"
+        / "bazel"
+        / "_bazel_user"
+        / "58de169282104bb8c73a59023f615bcd"
+    )
+    sandbox_base = (
+        bazel_cache / "sandbox" / "linux-sandbox" / "42" / "execroot" / "_main"
+    )
     external_dir = sandbox_base / "external"
     external_dir.mkdir(parents=True, exist_ok=True)
 
-    runfiles_dir = sandbox_base / "bazel-out" / "k8-fastbuild" / "bin" / "ide_support.runfiles"
+    runfiles_dir = (
+        sandbox_base / "bazel-out" / "k8-fastbuild" / "bin" / "ide_support.runfiles"
+    )
     runfiles_dir.mkdir(parents=True, exist_ok=True)
 
     filepath = Path("external/score_docs_as_code+/src/tests/testfile.py")
@@ -400,6 +411,7 @@ def test_external_module_special_chars(tmp_path: Path) -> None:
 
 # LOCAL BUILD TESTS (With Workspace)
 
+
 def test_local_with_workspace(tmp_path: Path, monkeypatch: MonkeyPatch) -> None:
     """Test parsing a local file when workspace root is available."""
     workspace = tmp_path / "my_project"
@@ -426,7 +438,9 @@ def test_local_with_workspace(tmp_path: Path, monkeypatch: MonkeyPatch) -> None:
     assert (prefix / ".git").exists()
 
 
-def test_local_root_file_with_workspace(tmp_path: Path, monkeypatch: MonkeyPatch) -> None:
+def test_local_root_file_with_workspace(
+    tmp_path: Path, monkeypatch: MonkeyPatch
+) -> None:
     """Test parsing a file at the repository root."""
     workspace = tmp_path / "repo"
     workspace.mkdir()
@@ -453,7 +467,10 @@ def test_local_root_file_with_workspace(tmp_path: Path, monkeypatch: MonkeyPatch
 
 # LOCAL BUILD TESTS (Without Workspace)
 
-def test_local_without_workspace_uses_execroot(tmp_path: Path, monkeypatch: MonkeyPatch) -> None:
+
+def test_local_without_workspace_uses_execroot(
+    tmp_path: Path, monkeypatch: MonkeyPatch
+) -> None:
     """Test parsing a local file when workspace root is None (uses execroot fallback).
 
     This simulates the actual behavior where:
@@ -463,12 +480,20 @@ def test_local_without_workspace_uses_execroot(tmp_path: Path, monkeypatch: Monk
     monkeypatch.delenv("BUILD_WORKSPACE_DIRECTORY", raising=False)
 
     # Simulate real bazel cache structure
-    bazel_cache = tmp_path / ".cache" / "bazel" / "_bazel_maximilianp" / "4ac366a7bf0ecac1b3be0bef35848a2a"
+    bazel_cache = (
+        tmp_path
+        / ".cache"
+        / "bazel"
+        / "_bazel_maximilianp"
+        / "4ac366a7bf0ecac1b3be0bef35848a2a"
+    )
     execroot = bazel_cache / "execroot" / "_main"
     execroot.mkdir(parents=True, exist_ok=True)
 
     # Runfiles dir is inside sandbox, but we're checking the execroot path
-    sandbox_base = bazel_cache / "sandbox" / "linux-sandbox" / "123" / "execroot" / "_main"
+    sandbox_base = (
+        bazel_cache / "sandbox" / "linux-sandbox" / "123" / "execroot" / "_main"
+    )
     runfiles_dir = sandbox_base / "bazel-out" / "k8-fastbuild" / "bin" / "test.runfiles"
     runfiles_dir.mkdir(parents=True, exist_ok=True)
 
@@ -485,7 +510,9 @@ def test_local_without_workspace_uses_execroot(tmp_path: Path, monkeypatch: Monk
     assert prefix == expected_prefix
 
 
-def test_local_root_file_without_workspace(tmp_path: Path, monkeypatch: MonkeyPatch) -> None:
+def test_local_root_file_without_workspace(
+    tmp_path: Path, monkeypatch: MonkeyPatch
+) -> None:
     """Test parsing a root file when workspace is None."""
     monkeypatch.delenv("BUILD_WORKSPACE_DIRECTORY", raising=False)
 
@@ -512,9 +539,16 @@ def test_local_root_file_without_workspace(tmp_path: Path, monkeypatch: MonkeyPa
 
 # EDGE CASES
 
+
 def test_path_reconstruction_external(tmp_path: Path) -> None:
     """Test that we can reconstruct paths from parsed components (external)."""
-    bazel_cache = tmp_path / ".cache" / "bazel" / "_bazel_user" / "58de169282104bb8c73a59023f615bcd"
+    bazel_cache = (
+        tmp_path
+        / ".cache"
+        / "bazel"
+        / "_bazel_user"
+        / "58de169282104bb8c73a59023f615bcd"
+    )
     sandbox_base = bazel_cache / "sandbox" / "execroot" / "_main"
     external_dir = sandbox_base / "external"
     external_dir.mkdir(parents=True, exist_ok=True)
@@ -533,7 +567,9 @@ def test_path_reconstruction_external(tmp_path: Path) -> None:
 
     # Verify we can construct the full path using prefix and module_name
     full_path = prefix / module_name / file_path / file_name
-    expected_full_path = bazel_cache / "external" / "awesome_module" / "src" / "tests" / "test_file.py"
+    expected_full_path = (
+        bazel_cache / "external" / "awesome_module" / "src" / "tests" / "test_file.py"
+    )
     assert full_path == expected_full_path
 
 
