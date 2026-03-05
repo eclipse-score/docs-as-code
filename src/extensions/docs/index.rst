@@ -74,7 +74,8 @@ Hello there
    .. grid-item-card::
 
       Any Folder
-      ^^^
+      ^^^^^^^^^^
+
       Learn about the :doc:`any_folder` extension that creates symlinks
       from arbitrary repository locations into the docs folder,
       allowing Sphinx to discover and build source files

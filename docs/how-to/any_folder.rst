@@ -1,5 +1,5 @@
 Use Any Folder for Documentation
-=============================================
+================================
 
 Generally, your documentation must be ``docs/``,
 but the RST files for a module may live closer to the code they describe,
