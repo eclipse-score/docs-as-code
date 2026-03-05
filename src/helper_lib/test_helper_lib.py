@@ -16,12 +16,14 @@ import tempfile
 from pathlib import Path
 
 import pytest
+from pytest import MonkeyPatch
 
 from src.helper_lib import (
     config_setdefault,
     get_current_git_hash,
     get_github_repo_info,
     get_runfiles_dir,
+    parse_filename,
     parse_remote_git_output,
 )
 
@@ -313,3 +315,249 @@ def test_git_root_search_not_found(tmp_path: Path, monkeypatch: pytest.MonkeyPat
         get_runfiles_dir()
     assert "Could not find git root" in str(excinfo.value)
     os.environ.pop("RUNFILES_DIR", None)
+
+
+#       ╭──────────────────────────────────────────────────────────────────────────────╮
+#       │    GENERATED TESTS. Manually reviewed though may need further tweaking to    │
+#       │                       catch more branches / edge cases                       │
+#       ╰──────────────────────────────────────────────────────────────────────────────╯
+
+
+# COMBO BUILD TESTS (External Modules)
+
+def test_external_module_basic(tmp_path: Path) -> None:
+    """Test parsing a file from an external module (combo build)."""
+    # Simulate bazel cache structure
+    bazel_cache = tmp_path / ".cache" / "bazel" / "_bazel_user" / "58de169282104bb8c73a59023f615bcd"
+    sandbox_base = bazel_cache / "sandbox" / "linux-sandbox" / "42" / "execroot" / "_main"
+    external_dir = sandbox_base / "external"
+    external_dir.mkdir(parents=True, exist_ok=True)
+
+    runfiles_dir = sandbox_base / "bazel-out" / "k8-fastbuild" / "bin" / "ide_support.runfiles"
+    runfiles_dir.mkdir(parents=True, exist_ok=True)
+
+    filepath = Path("external/score_docs_as_code+/src/tests/testfile.py")
+
+    prefix, module_name, file_path, file_name = parse_filename(filepath, runfiles_dir)
+
+    # Verify all components
+    assert module_name == "score_docs_as_code"
+    assert file_path == "src/tests"
+    assert file_name == "testfile.py"
+
+    # Verify prefix points to the bazel cache external directory (NOT sandbox/execroot)
+    # The function extracts the path up to but not including /sandbox
+    expected_prefix = bazel_cache / "external"
+    assert prefix == expected_prefix
+
+
+def test_external_module_root_file(tmp_path: Path) -> None:
+    """Test parsing a file at the root of an external module."""
+    bazel_cache = tmp_path / ".cache" / "bazel" / "_bazel_user" / "abc123"
+    sandbox_base = bazel_cache / "sandbox" / "linux" / "1" / "execroot" / "_main"
+    external_dir = sandbox_base / "external"
+    external_dir.mkdir(parents=True, exist_ok=True)
+
+    runfiles_dir = sandbox_base / "bazel-bin" / "test.runfiles"
+    runfiles_dir.mkdir(parents=True, exist_ok=True)
+
+    filepath = Path("external/some_lib+/BUILD.bazel")
+
+    prefix, module_name, file_path, file_name = parse_filename(filepath, runfiles_dir)
+
+    assert module_name == "some_lib"
+    assert file_path == ""
+    assert file_name == "BUILD.bazel"
+
+    # Verify prefix points to bazel cache external directory
+    expected_prefix = bazel_cache / "external"
+    assert prefix == expected_prefix
+
+
+def test_external_module_special_chars(tmp_path: Path) -> None:
+    """Test parsing module names with hyphens, underscores, and multiple plus signs."""
+    bazel_cache = tmp_path / ".cache" / "bazel" / "_bazel_test" / "hash123"
+    sandbox_base = bazel_cache / "sandbox" / "worker" / "99" / "execroot" / "_main"
+    external_dir = sandbox_base / "external"
+    external_dir.mkdir(parents=True, exist_ok=True)
+
+    runfiles_dir = sandbox_base / "bin" / "test.runfiles"
+    runfiles_dir.mkdir(parents=True, exist_ok=True)
+
+    filepath = Path("external/my-special_module+v2+/src/file.py")
+
+    prefix, module_name, file_path, file_name = parse_filename(filepath, runfiles_dir)
+
+    # removesuffix only removes the trailing '+'
+    assert module_name == "my-special_module+v2"
+    assert file_path == "src"
+    assert file_name == "file.py"
+
+    # Verify prefix
+    expected_prefix = bazel_cache / "external"
+    assert prefix == expected_prefix
+
+
+# LOCAL BUILD TESTS (With Workspace)
+
+def test_local_with_workspace(tmp_path: Path, monkeypatch: MonkeyPatch) -> None:
+    """Test parsing a local file when workspace root is available."""
+    workspace = tmp_path / "my_project"
+    workspace.mkdir()
+    git_dir = workspace / ".git"
+    git_dir.mkdir()
+
+    runfiles_dir = tmp_path / "bazel-bin" / "ide_support.runfiles"
+    runfiles_dir.mkdir(parents=True, exist_ok=True)
+
+    monkeypatch.setenv("BUILD_WORKSPACE_DIRECTORY", str(workspace))
+
+    filepath = Path("src/tests/test_example.py")
+
+    prefix, module_name, file_path, file_name = parse_filename(filepath, runfiles_dir)
+
+    assert module_name == ""
+    assert file_path == "src/tests"
+    assert file_name == "test_example.py"
+
+    # Verify prefix is the git root (workspace)
+    assert prefix == workspace
+    assert prefix.exists()
+    assert (prefix / ".git").exists()
+
+
+def test_local_root_file_with_workspace(tmp_path: Path, monkeypatch: MonkeyPatch) -> None:
+    """Test parsing a file at the repository root."""
+    workspace = tmp_path / "repo"
+    workspace.mkdir()
+    git_dir = workspace / ".git"
+    git_dir.mkdir()
+
+    runfiles_dir = tmp_path / "bazel-bin" / "build.runfiles"
+    runfiles_dir.mkdir(parents=True, exist_ok=True)
+
+    monkeypatch.setenv("BUILD_WORKSPACE_DIRECTORY", str(workspace))
+
+    filepath = Path("BUILD.bazel")
+
+    prefix, module_name, file_path, file_name = parse_filename(filepath, runfiles_dir)
+
+    assert module_name == ""
+    assert file_path == ""
+    assert file_name == "BUILD.bazel"
+
+    # Verify prefix is the workspace root
+    assert prefix == workspace
+    assert (prefix / ".git").exists()
+
+
+# LOCAL BUILD TESTS (Without Workspace)
+
+def test_local_without_workspace_uses_execroot(tmp_path: Path, monkeypatch: MonkeyPatch) -> None:
+    """Test parsing a local file when workspace root is None (uses execroot fallback).
+
+    This simulates the actual behavior where:
+    - BUILD_WORKSPACE_DIRECTORY is not set
+    - prefix = /home/user/.cache/bazel/_bazel_user/hash/execroot/_main
+    """
+    monkeypatch.delenv("BUILD_WORKSPACE_DIRECTORY", raising=False)
+
+    # Simulate real bazel cache structure
+    bazel_cache = tmp_path / ".cache" / "bazel" / "_bazel_maximilianp" / "4ac366a7bf0ecac1b3be0bef35848a2a"
+    execroot = bazel_cache / "execroot" / "_main"
+    execroot.mkdir(parents=True, exist_ok=True)
+
+    # Runfiles dir is inside sandbox, but we're checking the execroot path
+    sandbox_base = bazel_cache / "sandbox" / "linux-sandbox" / "123" / "execroot" / "_main"
+    runfiles_dir = sandbox_base / "bazel-out" / "k8-fastbuild" / "bin" / "test.runfiles"
+    runfiles_dir.mkdir(parents=True, exist_ok=True)
+
+    filepath = Path("src/helper_lib/test_helper_lib.py")
+
+    prefix, module_name, file_path, file_name = parse_filename(filepath, runfiles_dir)
+
+    assert module_name == ""
+    assert file_path == "src/helper_lib"
+    assert file_name == "test_helper_lib.py"
+
+    # Verify prefix points to execroot/_main (the path before /sandbox)
+    expected_prefix = bazel_cache / "execroot" / "_main"
+    assert prefix == expected_prefix
+
+
+def test_local_root_file_without_workspace(tmp_path: Path, monkeypatch: MonkeyPatch) -> None:
+    """Test parsing a root file when workspace is None."""
+    monkeypatch.delenv("BUILD_WORKSPACE_DIRECTORY", raising=False)
+
+    bazel_cache = tmp_path / ".cache" / "bazel" / "_bazel_test" / "xyz789"
+    execroot = bazel_cache / "execroot" / "_main"
+    execroot.mkdir(parents=True, exist_ok=True)
+
+    sandbox_base = bazel_cache / "sandbox" / "worker" / "42" / "execroot" / "_main"
+    runfiles_dir = sandbox_base / "bazel-bin" / "app.runfiles"
+    runfiles_dir.mkdir(parents=True, exist_ok=True)
+
+    filepath = Path("README.md")
+
+    prefix, module_name, file_path, file_name = parse_filename(filepath, runfiles_dir)
+
+    assert module_name == ""
+    assert file_path == ""
+    assert file_name == "README.md"
+
+    # Verify prefix is execroot/_main (before sandbox)
+    expected_prefix = bazel_cache / "execroot" / "_main"
+    assert prefix == expected_prefix
+
+
+# EDGE CASES
+
+def test_path_reconstruction_external(tmp_path: Path) -> None:
+    """Test that we can reconstruct paths from parsed components (external)."""
+    bazel_cache = tmp_path / ".cache" / "bazel" / "_bazel_user" / "58de169282104bb8c73a59023f615bcd"
+    sandbox_base = bazel_cache / "sandbox" / "execroot" / "_main"
+    external_dir = sandbox_base / "external"
+    external_dir.mkdir(parents=True, exist_ok=True)
+
+    runfiles_dir = sandbox_base / "bazel-bin" / "test.runfiles"
+    runfiles_dir.mkdir(parents=True, exist_ok=True)
+
+    original_path = "src/tests/test_file.py"
+    filepath = Path(f"external/awesome_module+/{original_path}")
+
+    prefix, module_name, file_path, file_name = parse_filename(filepath, runfiles_dir)
+
+    assert module_name == "awesome_module"
+    reconstructed = f"{file_path}/{file_name}" if file_path else file_name
+    assert reconstructed == original_path
+
+    # Verify we can construct the full path using prefix and module_name
+    full_path = prefix / module_name / file_path / file_name
+    expected_full_path = bazel_cache / "external" / "awesome_module" / "src" / "tests" / "test_file.py"
+    assert full_path == expected_full_path
+
+
+def test_path_reconstruction_local(tmp_path: Path, monkeypatch: MonkeyPatch) -> None:
+    """Test that we can reconstruct paths from parsed components (local)."""
+    workspace = tmp_path / "workspace"
+    workspace.mkdir()
+    git_dir = workspace / ".git"
+    git_dir.mkdir()
+
+    runfiles_dir = tmp_path / "bazel-bin" / "test.runfiles"
+    runfiles_dir.mkdir(parents=True, exist_ok=True)
+
+    monkeypatch.setenv("BUILD_WORKSPACE_DIRECTORY", str(workspace))
+
+    original_path = "src/core/utils/helper.py"
+    filepath = Path(original_path)
+
+    prefix, module_name, file_path, file_name = parse_filename(filepath, runfiles_dir)
+
+    reconstructed = f"{file_path}/{file_name}" if file_path else file_name
+    assert reconstructed == original_path
+    assert module_name == ""
+
+    # Verify we can construct the full path using prefix
+    full_path = prefix / file_path / file_name
+    assert full_path == workspace / "src" / "core" / "utils" / "helper.py"
