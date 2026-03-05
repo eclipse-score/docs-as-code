@@ -442,7 +442,7 @@
                 <article class="bd-article">
                   
   <section id="bazel-macro-docs">
-<span id="bazel-macros"></span><h1>Bazel macro: <code class="docutils literal notranslate"><span class="pre">docs</span></code><a class="headerlink" href="#bazel-macro-docs" title="Link to this heading">#</a></h1>
+<span id="docs-bazel-macros"></span><h1>Bazel macro: <code class="docutils literal notranslate"><span class="pre">docs</span></code><a class="headerlink" href="#bazel-macro-docs" title="Link to this heading">#</a></h1>
 <p>The <code class="docutils literal notranslate"><span class="pre">docs</span></code> macro defined in <code class="docutils literal notranslate"><span class="pre">docs.bzl</span></code> is a convenience wrapper
 that creates a small set of Bazel targets
 to build, verify and preview the project’s Sphinx documentation,
@@ -465,7 +465,7 @@ and to create a Python virtual environment for IDE support (Esbonio).</p>
 <span class="p">)</span>
 </pre></div>
 </div>
-<ul class="simple">
+<ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">source_dir</span></code> (string, default: <code class="docutils literal notranslate"><span class="pre">&quot;docs&quot;</span></code>)
 Path (relative to repository root) to your Sphinx source directory. This is the folder
 that contains your <code class="docutils literal notranslate"><span class="pre">conf.py</span></code> and the top-level ReST/markdown sources.</p></li>
@@ -476,8 +476,10 @@ example a <code class="docutils literal notranslate"><span class="pre">:needs_js
 to the Sphinx tooling so they are available at build time.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">deps</span></code> (list of bazel labels)
 Additional Bazel dependencies to add to the Python binaries and the virtual environment
-target. Use this to add project-specific Python packages or extension libraries the docs
-build requires.</p></li>
+target. Use this to add project-specific Python modules.</p>
+<p>If you don’t provide the necessary Sphinx packages,
+this function adds its own (but checks for conflicts).</p>
+</li>
 </ul>
 </section>
 <section id="edge-cases">
