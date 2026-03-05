@@ -463,6 +463,17 @@ while pulling in source files from anywhere else in the repository.</p>
 Sphinx then discovers and buildsthose files as if they were part of <code class="docutils literal notranslate"><span class="pre">docs/</span></code> from the start.</p>
 <p>The extension hooks into the <code class="docutils literal notranslate"><span class="pre">builder-inited</span></code> event,
 which fires before Sphinx reads any documents.</p>
+<section id="difference-to-sphinx-collections">
+<h2>Difference to Sphinx-Collections<a class="headerlink" href="#difference-to-sphinx-collections" title="Link to this heading">#</a></h2>
+<p>The extension <a class="reference external" href="https://sphinx-collections.readthedocs.io/">sphinx-collections</a>
+is very similar to this extension.
+We use it for including external modules
+as it allows conditional inclusion
+and we need to switch between “normal” and “combo” builds.</p>
+<p>The relevant difference is that this extension allows to include folders to anywhere
+and is not restricted to a <code class="docutils literal notranslate"><span class="pre">_collections/</span></code> folder.
+We consider this additional control over folder placement necessary.</p>
+</section>
 </section>
 
 
@@ -503,6 +514,18 @@ which fires before Sphinx reads any documents.</p>
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#difference-to-sphinx-collections">Difference to Sphinx-Collections</a></li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
 
