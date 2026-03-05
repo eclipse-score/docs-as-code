@@ -16,7 +16,7 @@ set -euo pipefail
 bazel run //:ide_support
 
 echo "Running Ruff linter..."
-bazel run @score_tooling//tools:ruff check -- --fix
+bazel run @score_tooling//tools:ruff check 
 
 echo "Running basedpyright..."
 .venv_docs/bin/python3 -m basedpyright
