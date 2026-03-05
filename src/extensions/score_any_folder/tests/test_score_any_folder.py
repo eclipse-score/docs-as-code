@@ -85,18 +85,17 @@ def test_symlink_exposes_files_at_target_path(
 def test_symlink_is_idempotent(
     make_sphinx_app: Callable, docs_dir: Path, tmp_path: Path
 ) -> None:
-    """A second build with the same mapping reuses the symlink without errors."""
+    """Build cleanup removes temporary links and a second build still succeeds."""
     src_docs = tmp_path / "external"
     src_docs.mkdir()
 
     make_sphinx_app({"../external": "notes"}).build()
     link = docs_dir / "notes"
-    assert link.is_symlink()
+    assert not link.exists()
 
     make_sphinx_app({"../external": "notes"}).build()
 
-    assert link.is_symlink()
-    assert link.resolve() == src_docs.resolve()
+    assert not link.exists()
 
 
 def test_stale_symlink_is_replaced(

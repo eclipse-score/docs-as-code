@@ -26,9 +26,12 @@ Each entry is a ``source: target`` pair where:
   (the directory containing ``conf.py``).
 * ``target`` – path of the symlink to create, relative to ``confdir``.
 
-The extension creates the symlinks on ``builder-inited``, before Sphinx
-starts reading any documents.  Existing correct symlinks are left in place
-(idempotent); a symlink pointing to the wrong target is replaced.  A
+The extension creates the symlinks on ``builder-inited``,
+before Sphinx starts reading any documents.
+Existing correct symlinks are left in place(idempotent);
+a symlink pointing to the wrong target is replaced.
+
+Symlinks created by this extension are removed again on ``build-finished``.
 Misconfigured pairs (absolute paths, non-symlink path at the target location)
 are logged as errors and skipped.
 """
@@ -43,6 +46,7 @@ logger = getLogger(__name__)
 def setup(app: Sphinx) -> dict[str, str | bool]:
     app.add_config_value("score_any_folder_mapping", default={}, rebuild="env")
     app.connect("builder-inited", _create_symlinks)
+    app.connect("build-finished", _cleanup_symlinks)
     return {
         "version": "0.1",
         "parallel_read_safe": True,
@@ -74,6 +78,8 @@ def _symlink_pairs(app: Sphinx) -> list[tuple[Path, Path]]:
 
 
 def _create_symlinks(app: Sphinx) -> None:
+    created_links: set[Path] = set()
+
     for source, link in _symlink_pairs(app):
         if link.is_symlink():
             if link.resolve() == source:
@@ -93,4 +99,18 @@ def _create_symlinks(app: Sphinx) -> None:
 
         link.parent.mkdir(parents=True, exist_ok=True)
         link.symlink_to(source)
+        created_links.add(link)
         logger.debug("score_any_folder: created symlink %s -> %s", link, source)
+
+    setattr(app, "_score_any_folder_created_links", created_links)
+
+
+def _cleanup_symlinks(app: Sphinx, exception: Exception | None) -> None:
+    del exception
+
+    created_links = getattr(app, "_score_any_folder_created_links", set())
+    for link in created_links:
+        if not link.is_symlink():
+            continue
+        link.unlink()
+        logger.debug("score_any_folder: removed temporary symlink %s", link)
