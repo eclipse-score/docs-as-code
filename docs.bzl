@@ -89,7 +89,6 @@ def _merge_sourcelinks(name, sourcelinks):
         tools = ["@score_docs_as_code//scripts_bazel:merge_sourcelinks"],
     )
 
-<<<<<<< HEAD
 def _missing_requirements(deps):
     """Add Python hub dependencies if they are missing."""
     found = []
