@@ -54,7 +54,7 @@ def make_sphinx_app(
 
     def _factory(mapping: dict[str, str]) -> SphinxTestApp:
         (docs_dir / "conf.py").write_text(
-            f'extensions = ["score_any_folder"]\n'
+            'extensions = ["score_any_folder"]\n'
             f"score_any_folder_mapping = {mapping!r}\n"
         )
         (docs_dir / "index.rst").write_text("Root\n====\n")
@@ -69,7 +69,9 @@ def make_sphinx_app(
 
 
 def test_symlink_exposes_files_at_target_path(
-    make_sphinx_app: Callable, docs_dir: Path, tmp_path: Path
+    make_sphinx_app: Callable[[dict[str, str]], SphinxTestApp],
+    docs_dir: Path,
+    tmp_path: Path,
 ) -> None:
     """Files in the source directory are readable via the symlinked target path."""
     src_docs = tmp_path / "src" / "module_docs"
@@ -83,7 +85,9 @@ def test_symlink_exposes_files_at_target_path(
 
 
 def test_symlink_is_idempotent(
-    make_sphinx_app: Callable, docs_dir: Path, tmp_path: Path
+    make_sphinx_app: Callable[[dict[str, str]], SphinxTestApp],
+    docs_dir: Path,
+    tmp_path: Path,
 ) -> None:
     """Build cleanup removes temporary links and a second build still succeeds."""
     src_docs = tmp_path / "external"
@@ -99,7 +103,9 @@ def test_symlink_is_idempotent(
 
 
 def test_stale_symlink_is_replaced(
-    make_sphinx_app: Callable, docs_dir: Path, tmp_path: Path
+    make_sphinx_app: Callable[[dict[str, str]], SphinxTestApp],
+    docs_dir: Path,
+    tmp_path: Path,
 ) -> None:
     """A symlink pointing to a stale target is replaced with the correct one."""
     correct_src = tmp_path / "correct"
@@ -114,21 +120,23 @@ def test_stale_symlink_is_replaced(
 
 
 def test_existing_non_symlink_logs_error_and_skips(
-    make_sphinx_app: Callable, docs_dir: Path, tmp_path: Path
+    make_sphinx_app: Callable[[dict[str, str]], SphinxTestApp],
+    docs_dir: Path,
+    tmp_path: Path,
 ) -> None:
     """A real directory at the target path is left untouched and an error is logged."""
     (tmp_path / "external").mkdir()
     real_dir = docs_dir / "module"
     real_dir.mkdir()
 
-    app = make_sphinx_app({"../external": "module"})
+    app: SphinxTestApp = make_sphinx_app({"../external": "module"})
 
     assert real_dir.is_dir() and not real_dir.is_symlink()
     assert "not a symlink" in app.warning.getvalue()
 
 
 def test_empty_mapping_is_a_no_op(
-    make_sphinx_app: Callable, docs_dir: Path
+    make_sphinx_app: Callable[[dict[str, str]], SphinxTestApp], docs_dir: Path
 ) -> None:
     """An empty mapping produces no symlinks and no errors."""
     make_sphinx_app({}).build()
@@ -137,7 +145,9 @@ def test_empty_mapping_is_a_no_op(
 
 
 def test_multiple_mappings(
-    make_sphinx_app: Callable, docs_dir: Path, tmp_path: Path
+    make_sphinx_app: Callable[[dict[str, str]], SphinxTestApp],
+    docs_dir: Path,
+    tmp_path: Path,
 ) -> None:
     """Multiple mapping entries each produce their own symlink."""
     for name in ("alpha", "beta"):
@@ -152,7 +162,9 @@ def test_multiple_mappings(
 
 
 def test_target_in_subfolder(
-    make_sphinx_app: Callable, docs_dir: Path, tmp_path: Path
+    make_sphinx_app: Callable[[dict[str, str]], SphinxTestApp],
+    docs_dir: Path,
+    tmp_path: Path,
 ) -> None:
     """A target path with intermediate directories creates the parent dirs."""
     src_docs = tmp_path / "external"

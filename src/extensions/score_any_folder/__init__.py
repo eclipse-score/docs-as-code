@@ -35,6 +35,7 @@ Symlinks created by this extension are removed again on ``build-finished``.
 Misconfigured pairs (absolute paths, non-symlink path at the target location)
 are logged as errors and skipped.
 """
+
 from pathlib import Path
 
 from sphinx.application import Sphinx
@@ -42,6 +43,7 @@ from sphinx.util.logging import getLogger
 
 logger = getLogger(__name__)
 
+_APP_ATTRIBUTE = "_score_any_folder_created_links"
 
 def setup(app: Sphinx) -> dict[str, str | bool]:
     app.add_config_value("score_any_folder_mapping", default={}, rebuild="env")
@@ -102,13 +104,13 @@ def _create_symlinks(app: Sphinx) -> None:
         created_links.add(link)
         logger.debug("score_any_folder: created symlink %s -> %s", link, source)
 
-    setattr(app, "_score_any_folder_created_links", created_links)
+    setattr(app, _APP_ATTRIBUTE, created_links)
 
 
 def _cleanup_symlinks(app: Sphinx, exception: Exception | None) -> None:
     del exception
 
-    created_links = getattr(app, "_score_any_folder_created_links", set())
+    created_links: set[Path] = getattr(app, _APP_ATTRIBUTE, set())
     for link in created_links:
         if not link.is_symlink():
             continue

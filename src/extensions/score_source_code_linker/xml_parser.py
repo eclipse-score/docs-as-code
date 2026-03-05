@@ -234,7 +234,7 @@ def build_test_needs_from_files(
     tcns: list[DataOfTestCase] = []
     for file in xml_paths:
         # Last value can be ignored. The 'is_valid' function already prints infos
-        test_cases, tests_missing_all_props,_ = read_test_xml_file(file)
+        test_cases, tests_missing_all_props, _ = read_test_xml_file(file)
         non_prop_tests = ", ".join(n for n in tests_missing_all_props)
         if non_prop_tests:
             logger.info(f"Tests missing all properties: {non_prop_tests}")
