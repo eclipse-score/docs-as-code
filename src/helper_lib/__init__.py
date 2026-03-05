@@ -44,7 +44,7 @@ def find_ws_root() -> Path | None:
     - 'direct sphinx' => ❌ None (no Bazel environment)
     """
     ws_dir = os.environ.get("BUILD_WORKSPACE_DIRECTORY", None)
-    #pprint(os.environ)
+    # pprint(os.environ)
     return Path(ws_dir) if ws_dir else None
 
 
@@ -231,39 +231,47 @@ def parse_filename(filepath: Path, runfiles_dir: Path) -> tuple[Path, str, str, 
     # COMBO BUILD
     # If external is in the filepath that gets parsed =>
     # file is in an external module => combo build
-    #print("THIs IS PASSEd FILEPATH: ", filepath)
+    # e.g. .../external/score_docs_as_code+/src/helper_lib/__init__.py
     if "external" in str(filepath):
         bazel_path = str(runfiles_dir.resolve()).split("/sandbox", maxsplit=1)
         prefix = Path(bazel_path[0]) / "external"
         filepath_split = str(filepath).removeprefix("external/").split("/", maxsplit=1)
         module_name = str(filepath_split[0].removesuffix("+"))
         path_file_split = filepath_split[1].rsplit("/", maxsplit=1)
-        file_path = path_file_split[0]
-        file_name = path_file_split[1]
-    # LOCAL BUILD
+        if "/" in str(filepath_split[1]):
+            path_file_split = filepath_split[1].rsplit("/", maxsplit=1)
+            file_path = path_file_split[0]
+            file_name = path_file_split[1]
+        else:
+            file_path = ""
+            file_name = str(filepath_split[1])
+    # LOCAL BUILD (external not in filepath)
+    # e.g. src/helper_lib/__init__.py
     else:
         # We have a non combo build and the file is local to this repo
         # => can use the git root to find the root
 
-        bazel_path = str(runfiles_dir.resolve()).split("/sandbox", maxsplit=1)
         ws_root = find_ws_root()
         if ws_root is None:
+            # Local running during `:sourcelinks_json` build
             bazel_path = str(runfiles_dir.resolve()).split("/sandbox", maxsplit=1)
-            prefix = Path(bazel_path[0]+"/execroot/_main")
+            prefix = Path(bazel_path[0] + "/execroot/_main")
         else:
+            # This happens in local running inside sphinx
             prefix = find_git_root()
         module_name = ""
-        path_file_split = str(filepath).rsplit("/", maxsplit=1)
-        file_path = path_file_split[0]
-        file_name = path_file_split[1]
+        if "/" in str(filepath):
+            path_file_split = str(filepath).rsplit("/", maxsplit=1)
+            file_path = path_file_split[0]
+            file_name = path_file_split[1]
+        else:
+            file_path = ""
+            file_name = str(filepath)
 
+    # Assert worldview
     assert prefix is not None
     assert module_name is not None
     assert file_path is not None
     assert file_name is not None
-    print("PREFIX: ",prefix)
-    print("MODULE_NAME: ", module_name)
-    print("FILE_PATH: ", file_path)
-    print("FILE_NAME: ", file_name)
 
     return prefix, module_name, file_path, file_name
