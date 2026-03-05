@@ -195,7 +195,7 @@ def find_xml_files(dir: Path) -> list[Path]:
     test_file_name = "test.xml"
 
     xml_paths: list[Path] = []
-    for root, a, files in os.walk(dir):
+    for root, _, files in os.walk(dir):
         if test_file_name in files:
             xml_paths.append(Path(os.path.join(root, test_file_name)))
     return xml_paths

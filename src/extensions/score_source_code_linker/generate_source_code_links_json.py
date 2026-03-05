@@ -20,14 +20,14 @@ parse everything on every run.
 import os
 from pathlib import Path
 
+from sphinx_needs.logging import get_logger
+
 from src.extensions.score_source_code_linker.needlinks import (
     NeedLink,
     store_source_code_links_json,
 )
-
 from src.helper_lib import get_runfiles_dir, parse_filename
 
-from sphinx_needs.logging import get_logger
 LOGGER = get_logger(__name__)
 
 TAGS = [
