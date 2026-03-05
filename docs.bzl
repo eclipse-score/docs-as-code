@@ -308,11 +308,9 @@ def _sourcelinks_json(name, srcs):
     cmd = """
         $(location @score_docs_as_code//scripts_bazel:generate_sourcelinks) \
             --output $@ \
-            {known_good_arg} \
             $(SRCS)
     """
 
-    known_good_arg = ""
     rule_srcs = srcs
 
     # if known_good:
@@ -325,7 +323,7 @@ def _sourcelinks_json(name, srcs):
         name = name,
         srcs = rule_srcs,
         outs = [output_file],
-        cmd = cmd.format(known_good_arg = known_good_arg),
+        cmd = cmd,
         tools = ["@score_docs_as_code//scripts_bazel:generate_sourcelinks"],
         visibility = ["//visibility:public"],
     )

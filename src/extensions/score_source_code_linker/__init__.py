@@ -374,7 +374,7 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
                 )
                 LOGGER.warning(
                     f"{full_file_path}:{n.line}: "
-                    f"Could not find {source_code_links.need}"
+                    f"Could not find {source_code_links.need} "
                     "in documentation [CODE LINK]",
                     type="score_source_code_linker",
                 )
@@ -385,7 +385,7 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
                     else f"{n.path}/{n.file}"
                 )
                 LOGGER.warning(
-                    f"{full_file_path}:{n.line}: "
+                    f"{full_file_path}:{n.line}: " 
                     f"Could not find {source_code_links.need} "
                     "in documentation [TEST LINK]",
                     type="score_source_code_linker",

@@ -49,7 +49,7 @@ def _extract_references_from_file(
 ) -> list[NeedLink]:
     """Scan a single file for template strings and return findings."""
     # assert root.is_absolute(), f"Root path must be absolute. {root} is not"
-    assert not file_path.is_absolute(), "File path must be relative to the root"
+    #assert not file_path.is_absolute(), "File path must be relative to the root"
     # assert file_path.is_relative_to(root), (
     #     f"File path ({file_path}) must be relative to the root ({root})"
     # )
@@ -57,6 +57,8 @@ def _extract_references_from_file(
     #     f"File {file_path} does not exist in root {root}."
     # )
     findings: list[NeedLink] = []
+    print('=================')
+    print("PREFIX: ", prefix)
     if module_name:
         module_name_full = str(module_name) + "+"
         complete_file = prefix / module_name_full / file_path / file_name
@@ -131,6 +133,10 @@ def find_all_need_references(search_path: Path) -> list[NeedLink]:
     # Use os.walk to have better control over directory traversal
     for file in iterate_files_recursively(search_path):
         prefix, module_name, file_path, file_name = parse_filename(file, runfiles_dir)
+        print("PREFIX: ", prefix)
+        print("MODULE NAME: ", module_name)
+        print("FILE PATH: ", file_path)
+        print("FILE NAME: ", file_name)
         references = _extract_references_from_file(
             prefix, file_name, Path(file_path), module_name
         )
