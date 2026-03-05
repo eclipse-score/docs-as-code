@@ -24,7 +24,11 @@ from src.extensions.score_source_code_linker.needlinks import (
     NeedLink,
     store_source_code_links_json,
 )
+
 from src.helper_lib import get_runfiles_dir, parse_filename
+
+from sphinx_needs.logging import get_logger
+LOGGER = get_logger(__name__)
 
 TAGS = [
     "# " + "req-traceability:",
@@ -57,16 +61,12 @@ def _extract_references_from_file(
     #     f"File {file_path} does not exist in root {root}."
     # )
     findings: list[NeedLink] = []
-    print('=================')
-    print("PREFIX: ", prefix)
     if module_name:
         module_name_full = str(module_name) + "+"
         complete_file = prefix / module_name_full / file_path / file_name
     else:
         complete_file = prefix / file_path / file_name
     assert complete_file is not None
-    print("==============COMPLETE FILE =========")
-    print(complete_file)
     try:
         with open(complete_file, encoding="utf-8", errors="ignore") as f:
             for line_num, line in enumerate(f, 1):
@@ -84,7 +84,7 @@ def _extract_references_from_file(
                     )
     except (UnicodeDecodeError, PermissionError, OSError) as e:
         # Skip files that can't be read as text
-        print(f"SOME ERROR OCCURED: {e}")
+        LOGGER.debug(f"Error reading file to parse for linked needs: \n{e}")
         pass
 
     return findings
@@ -133,18 +133,14 @@ def find_all_need_references(search_path: Path) -> list[NeedLink]:
     # Use os.walk to have better control over directory traversal
     for file in iterate_files_recursively(search_path):
         prefix, module_name, file_path, file_name = parse_filename(file, runfiles_dir)
-        print("PREFIX: ", prefix)
-        print("MODULE NAME: ", module_name)
-        print("FILE PATH: ", file_path)
-        print("FILE NAME: ", file_name)
         references = _extract_references_from_file(
             prefix, file_name, Path(file_path), module_name
         )
         all_need_references.extend(references)
 
     elapsed_time = os.times().elapsed - start_time
-    print(
-        f"DEBUG: Found {len(all_need_references)} need references "
+    LOGGER.debug(
+        f"Found {len(all_need_references)} need references "
         f"in {elapsed_time:.2f} seconds"
     )
 

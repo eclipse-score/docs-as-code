@@ -219,7 +219,7 @@ def docs(known_good = None, source_dir = "docs", data = [], deps = [], scan_code
         name = "docs_link_check",
         tags = ["cli_help=Verify Links inside Documentation:\nbazel run //:link_check\n (Note: this could take a long time)"],
         srcs = ["@score_docs_as_code//src:incremental.py"],
-        data = docs_data,
+        data = data,
         deps = deps,
         env = {
             "SOURCE_DIRECTORY": source_dir,
@@ -311,12 +311,6 @@ def _sourcelinks_json(name, srcs):
     """
 
     rule_srcs = srcs
-
-    # if known_good:
-    #     rule_srcs = srcs + [known_good]
-    #     known_good_arg = "--known-good $(location %s)" % known_good
-    #print(known_good_arg)
-    #print(cmd.format(known_good_arg = known_good_arg))
 
     native.genrule(
         name = name,

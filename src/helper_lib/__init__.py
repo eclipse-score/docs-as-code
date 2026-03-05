@@ -44,7 +44,6 @@ def find_ws_root() -> Path | None:
     - 'direct sphinx' => ❌ None (no Bazel environment)
     """
     ws_dir = os.environ.get("BUILD_WORKSPACE_DIRECTORY", None)
-    # pprint(os.environ)
     return Path(ws_dir) if ws_dir else None
 
 

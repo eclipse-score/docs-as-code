@@ -22,7 +22,6 @@ import logging
 import sys
 from pathlib import Path
 
-# from python.runfiles import Runfiles
 from src.extensions.score_source_code_linker.generate_source_code_links_json import (
     _extract_references_from_file,  # pyright: ignore[reportPrivateUsage] TODO: move it out of the extension and into this script
 )
