@@ -20,8 +20,8 @@ permissions:
   id-token: write
 
 on:
-  pull_request_target:
-    types: [opened, reopened, synchronize] # Allows forks to trigger the docs build
+  pull_request:
+    types: [opened, reopened, synchronize]
   push:
     branches:
       - main
@@ -44,17 +44,24 @@ jobs:
     uses: ./.github/workflows/test.yml
     secrets: inherit
 
-  docs-build:
-    # Waits for consumer-tests but run only when docs verification succeeded
-    needs: [docs-verify, unit-tests]
-    if: ${{ always() && needs.docs-verify.result == 'success' }}
-    uses: eclipse-score/cicd-workflows/.github/workflows/docs.yml@main
-    permissions:
-      contents: write
-      pages: write
-      pull-requests: write
-      id-token: write
+  # docs-build:
+  #   # Waits for consumer-tests but run only when docs verification succeeded
+  #   needs: [docs-verify, unit-tests]
+  #   if: ${{ always() && needs.docs-verify.result == 'success' }}
+  #   uses: eclipse-score/cicd-workflows/.github/workflows/docs.yml@main
+  #   permissions:
+  #     contents: write
+  #     pages: write
+  #     pull-requests: write
+  #     id-token: write
+  #   with:
+  #     bazel-target: "//:docs -- --github_user=${{ github.repository_owner }} --github_repo=${{ github.event.repository.name }}"
+  #     retention-days: 3
+  #     tests-report-artifact: tests-report
+  smoke:
+    #needs: [docs-build]
+    uses: eclipse-score/reference_integration/.github/workflows/reusable_smoke-test.yml@main
     with:
-      bazel-target: "//:docs -- --github_user=${{ github.repository_owner }} --github_repo=${{ github.event.repository.name }}"
-      retention-days: 3
-      tests-report-artifact: tests-report
+      repo_runner_labels: ubuntu-latest
+      module_name: score_docs_as_code
+      target_branch: main
