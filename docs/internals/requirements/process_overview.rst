@@ -39,6 +39,7 @@ Unsatisfied – Priority 1
       "gd_req__problem_attr_title",
       "gd_req__problem_check_closing",
       "gd_req__problem_check_mandatory",
+      "gd_req__impl_dependency_analysis",
       # Additional requirements that are Github issues not docs-as-code
       "gd_req__doc_author",
       "gd_req__doc_reviewer",
