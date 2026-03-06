@@ -1,24 +1,58 @@
 # This file is at the root level, as it applies to all Python code,
 # not only to docs or to tools.
 [tool.pyright]
-extends = "bazel-bin/ide_support.runfiles/score_tooling+/python_basics/pyproject.toml"
+typeCheckingMode = "standard"
+pythonVersion = "3.12" # Keep in sync with MODULE.bazel
+
+# Warn if function parameters lack type annotations
+reportMissingParameterType = "warning"
+
+# Warn if generic types (e.g. List) are missing type args
+reportMissingTypeArgument = "warning"
+
+# Warn when using members marked as private (e.g. _log)
+reportPrivateUsage = "warning"
+
+# Warn when variable type can't be inferred or is 'Any'
+reportUnknownVariableType = "warning"
+
+# Warn about declared but unused variables
+reportUnusedVariable = "warning"
 
 exclude = [
     "**/__pycache__",
     "**/.*",
     "**/bazel-*",
-    ".venv*/**",
 ]
 
 venvPath = "."
 venv = ".venv_docs"
 
 [tool.ruff]
-extend = "bazel-bin/ide_support.runfiles/score_tooling+/python_basics/pyproject.toml"
-
+#line-length=59
+target-version = "py312" # Keep in sync with MODULE.bazel
 extend-exclude = [
+    "__pycache__",
+    ".*",
+    "bazel-*",
     "**/__pycache__",
     "/.*",
-    "bazel-*",
     ".venv*/**",
+]
+
+# Selected rules for clean code, readability, and bug prevention
+lint.select = [
+    "E",    # pycodestyle (PEP8)
+    "F",    # pyflakes (undefined vars, unused imports)
+    "I",    # isort (import sorting)
+    "B",    # flake8-bugbear (likely bugs)
+    "C90",  # mccabe (complexity checks)
+    "UP",   # pyupgrade (modern Python 3.12+ features)
+    "SIM",  # flake8-simplify (simplifies code patterns)
+    "RET"   # flake8-return (consistent return statements)
+]
+
+lint.ignore = [
+    # Rules we want to ignore go in here.
+    # Always provide a comment explaining why.
 ]

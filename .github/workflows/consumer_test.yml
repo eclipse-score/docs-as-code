@@ -31,26 +31,29 @@ jobs:
       - name: Checkout PR
         uses: actions/checkout@v4.2.2
 
-      - name: Prepare Python
-        run: |
-          bazel run //:ide_support
 
-      - name: Prepare report directory
-        run: |
-          mkdir -p reports
+      - name: Build and run dev container task
+        uses: devcontainers/ci@v0.3
+        with:
+          cacheFrom: ghcr.io/eclipse-score/devcontainer@v1.2.0
+          push: never
+          # The pipefail ensures that non 0 exit codes inside the pytest execution get carried into the pipe
+          # & make the tests red in the end. Without this we only would check the exit code of the 'tee' command.
+          runCmd: |
+            set -euxo pipefail
+            uv venv && uv pip install -r src/requirements.txt
 
-      # The pipefail ensures that non 0 exit codes inside the pytest execution get carried into the pipe
-      # & make the tests red in the end. Without this we only would check the exit code of the 'tee' command.
-      - name: Run Consumer tests
+            mkdir -p reports
 
-        run: |
-          set -o pipefail
-          .venv_docs/bin/python -m pytest -s -v src/tests/ --repo="$CONSUMER" --junitxml="reports/${{ matrix.consumer }}.xml" | tee "reports/${{ matrix.consumer }}.log"
-        env:
-          FORCE_COLOR: "1"
-          TERM: xterm-256color
-          PYTHONUNBUFFERED: "1"
-          CONSUMER: ${{ matrix.consumer }}
+            export FORCE_COLOR="1"
+            export TERM="xterm-256color"
+            export PYTHONUNBUFFERED="1"
+            export CONSUMER="${{ matrix.consumer }}"
+            export PYTHONPATH=.
+            uv run pytest -s -v src/tests/ \
+              --repo="$CONSUMER" \
+              --junitxml="reports/${{ matrix.consumer }}.xml" \
+              | tee "reports/${{ matrix.consumer }}.log"
 
       - name: Upload consumer test report
         if: ${{ always() }}
