@@ -1,0 +1,45 @@
+# *******************************************************************************
+# Copyright (c) 2025 Contributors to the Eclipse Foundation
+#
+# See the NOTICE file(s) distributed with this work for additional
+# information regarding copyright ownership.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Apache License Version 2.0 which is available at
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# SPDX-License-Identifier: Apache-2.0
+# *******************************************************************************
+
+# Note: "PR" is what will appear on the website as the workflow name, so keep it short.
+name: PR
+
+on:
+  # Run on Pull Requests
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+  # Run once PR is accepted
+  # Hint: runs on a temp branch with PR and main branch pre-merged.
+  merge_group:
+    types: [checks_requested]
+
+  # Run on manual trigger (for testing/debugging)
+  workflow_dispatch:
+
+# Minimal permissions by default; individual jobs can elevate as needed.
+permissions:
+  contents: read
+
+jobs:
+  # This job runs the S-Core PR checks workflow.
+  # Note: "Common" is what will appear on the website as the job name.
+  Common:
+    # Intentionally using latest greatest version of the workflow.
+    # This allows centralized updates to the S-Core PR checks logic,
+    # without needing to update each repository individually.
+    uses: eclipse-score/cicd-workflows/.github/workflows/score-pr-checks.yml@main
+
+    # Allow automated creation of PR comments
+    permissions:
+      pull-requests: write
