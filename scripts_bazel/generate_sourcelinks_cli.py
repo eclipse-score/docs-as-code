@@ -56,9 +56,14 @@ def main():
     all_need_references = []
 
     all_files = args.files
-
     runfiles_dir = get_runfiles_dir()
     for raw_file_path in all_files:
+        print('=====================')
+        print(raw_file_path.parent)
+        print('=====================')
+        with open(raw_file_path.parent/raw_file_path.name, "r") as f:
+            f.readlines()
+        
         assert raw_file_path.exists(), raw_file_path
         prefix, module_name, file_path, file_name = parse_filename(
             raw_file_path, runfiles_dir
