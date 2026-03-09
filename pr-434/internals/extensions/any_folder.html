@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Automatic Header Generation Service &#8212; Score Docs-as-Code  documentation</title>
+    <title>Any Folder &#8212; Score Docs-as-Code  documentation</title>
   
   
   
@@ -62,7 +62,7 @@
     <script src="../../_static/sphinx-needs/libs/html/datatables.min.js?v=8a4aee21"></script>
     <script src="../../_static/sphinx-needs/libs/html/datatables_loader.js?v=a2cae175"></script>
     <script src="../../_static/sphinx-needs/libs/html/sphinx_needs_collapse.js?v=dca66431"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'internals/extensions/header_service';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'internals/extensions/any_folder';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://eclipse-score.github.io/docs-as-code/versions.json';
@@ -72,8 +72,8 @@
         </script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Score Source Code Linker" href="source_code_linker.html" />
-    <link rel="prev" title="File based rule checks" href="rst_filebased_testing.html" />
+    <link rel="next" title="Bazel Mini Benchmark Results" href="../benchmark_results.html" />
+    <link rel="prev" title="ubproject.toml sync" href="sync_toml.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.1" />
@@ -382,11 +382,11 @@
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Extensions</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="metamodel.html">Metamodel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="rst_filebased_testing.html">Filebased Testing</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">Header Service</a></li>
+<li class="toctree-l2"><a class="reference internal" href="header_service.html">Header Service</a></li>
 <li class="toctree-l2"><a class="reference internal" href="source_code_linker.html">Source Code Linker</a></li>
 <li class="toctree-l2"><a class="reference internal" href="extension_guide.html">Extension Guide</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sync_toml.html">Sync TOML</a></li>
-<li class="toctree-l2"><a class="reference internal" href="any_folder.html">Any Folder</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Any Folder</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1"><a class="reference internal" href="../benchmark_results.html">Bazel Mini Benchmark Results</a></li>
@@ -438,7 +438,7 @@
     
     <li class="breadcrumb-item"><a href="index.html" class="nav-link">Extensions</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Automatic Header Generation Service</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Any Folder</span></li>
   </ul>
 </nav>
 </div>
@@ -455,90 +455,24 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="automatic-header-generation-service">
-<span id="header-service"></span><h1>Automatic Header Generation Service<a class="headerlink" href="#automatic-header-generation-service" title="Link to this heading">#</a></h1>
-<section id="purpose">
-<h2>Purpose<a class="headerlink" href="#purpose" title="Link to this heading">#</a></h2>
-<p>The service <em>header-service</em> generates a table with review and approver informations.
-It uses the template <em>header.need</em> to generate this table.</p>
-</section>
-<section id="extraction-methods">
-<h2>Extraction Methods<a class="headerlink" href="#extraction-methods" title="Link to this heading">#</a></h2>
-<p>This modules can use two different methods to extract the needed information.</p>
-<ul class="simple">
-<li><p>GitHub data</p></li>
-<li><p>Merge commit log</p></li>
-</ul>
-<p>The used method can be configured as a configuration parameter in <em>conf.py</em>.</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>header_service_use_github_data = True
-</pre></div>
-</div>
-<p>GitHub data is used if parameter is not set.</p>
-</section>
-<section id="environment-variables">
-<h2>Environment variables<a class="headerlink" href="#environment-variables" title="Link to this heading">#</a></h2>
-<p>This module uses the following environment variables if the extraction method <strong>Github data</strong> is configured:</p>
-<p>GH_TOKEN: Github access token
-GITHUB_REF_NAME: Github reference name (<pull request no>/merge)
-GITHUB_REPOSITORY: Github repository <org>/<repo></p>
-</section>
-<section id="execution">
-<h2>Execution<a class="headerlink" href="#execution" title="Link to this heading">#</a></h2>
-<p>The document generation has to be executed as follows:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>GH_TOKEN=$GH_TOKEN bazel run //:docs
-</pre></div>
-</div>
-<p>Sphinx cannot access the environment variables when started via Bazel build.</p>
-<p>If extraction method <strong>Merge commit info</strong> is used the document generation can be executed as follows:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>bazel run //:docs
-</pre></div>
-</div>
-</section>
-<section id="usage">
-<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">#</a></h2>
-<p>Add the descriptor <em>header_service</em> to a RST file to fill out review and approver informations.</p>
-<p>.. needservice:: header-service</p>
-<p>This generates the following Table:</p>
-<div class="pst-scrollable-table-container"><table class="table">
-<thead>
-<tr class="row-odd"><th class="head"><p>Document Identification</p></th>
-<th class="head"><p></p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>Document Type</p></td>
-<td><p>Checklist</p></td>
-</tr>
-<tr class="row-odd"><td><p>Document ID</p></td>
-<td><p>DPX-CONTR-REVIEW-CHECKLIST</p></td>
-</tr>
-<tr class="row-even"><td><p>Project Name</p></td>
-<td><p>dependix</p></td>
-</tr>
-<tr class="row-odd"><td><p>ASIL</p></td>
-<td><p>B</p></td>
-</tr>
-<tr class="row-even"><td><p>Security Classification</p></td>
-<td><p>CONFIDENTIAL</p></td>
-</tr>
-<tr class="row-odd"><td><p>Author</p></td>
-<td><p>[Author of the PR]</p></td>
-</tr>
-<tr class="row-even"><td><p>Reviewer</p></td>
-<td><p>[List of PR reviewers]</p></td>
-</tr>
-<tr class="row-odd"><td><p>Approver</p></td>
-<td><p>[List of PR approvers]</p></td>
-</tr>
-<tr class="row-even"><td><p>Version</p></td>
-<td><p>[Merge commit hash of the PR]</p></td>
-</tr>
-<tr class="row-odd"><td><p>Status</p></td>
-<td><p>RELEASED</p></td>
-</tr>
-</tbody>
-</table>
-</div>
+  <section id="any-folder">
+<h1>Any Folder<a class="headerlink" href="#any-folder" title="Link to this heading">#</a></h1>
+<p>The extension <code class="docutils literal notranslate"><span class="pre">score_any_folder</span></code> allows documentation roots to stay in <code class="docutils literal notranslate"><span class="pre">docs/</span></code>
+while pulling in source files from anywhere else in the repository.</p>
+<p>It does this by creating symlinks inside the Sphinx source directory (<code class="docutils literal notranslate"><span class="pre">confdir</span></code>) that point to the configured external directories.
+Sphinx then discovers and buildsthose files as if they were part of <code class="docutils literal notranslate"><span class="pre">docs/</span></code> from the start.</p>
+<p>The extension hooks into the <code class="docutils literal notranslate"><span class="pre">builder-inited</span></code> event,
+which fires before Sphinx reads any documents.</p>
+<section id="difference-to-sphinx-collections">
+<h2>Difference to Sphinx-Collections<a class="headerlink" href="#difference-to-sphinx-collections" title="Link to this heading">#</a></h2>
+<p>The extension <a class="reference external" href="https://sphinx-collections.readthedocs.io/">sphinx-collections</a>
+is very similar to this extension.
+We use it for including external modules
+as it allows conditional inclusion
+and we need to switch between “normal” and “combo” builds.</p>
+<p>The relevant difference is that this extension allows to include folders to anywhere
+and is not restricted to a <code class="docutils literal notranslate"><span class="pre">_collections/</span></code> folder.
+We consider this additional control over folder placement necessary.</p>
 </section>
 </section>
 
@@ -553,20 +487,20 @@ GITHUB_REPOSITORY: Github repository <org>/<repo></p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="rst_filebased_testing.html"
+       href="sync_toml.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">File based rule checks</p>
+        <p class="prev-next-title">ubproject.toml sync</p>
       </div>
     </a>
     <a class="right-next"
-       href="source_code_linker.html"
+       href="../benchmark_results.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Score Source Code Linker</p>
+        <p class="prev-next-title">Bazel Mini Benchmark Results</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -589,11 +523,7 @@ GITHUB_REPOSITORY: Github repository <org>/<repo></p>
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#purpose">Purpose</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extraction-methods">Extraction Methods</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#environment-variables">Environment variables</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#execution">Execution</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#usage">Usage</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#difference-to-sphinx-collections">Difference to Sphinx-Collections</a></li>
 </ul>
   </nav></div>
 
@@ -601,7 +531,7 @@ GITHUB_REPOSITORY: Github repository <org>/<repo></p>
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/eclipse-score/docs-as-code/edit/main/docs/internals/extensions/header_service.md">
+    <a href="https://github.com/eclipse-score/docs-as-code/edit/main/docs/internals/extensions/any_folder.rst">
       <i class="fa-solid fa-pencil"></i>
       
       
