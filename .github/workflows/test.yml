@@ -38,8 +38,8 @@ jobs:
           bazelisk-cache: true
       - name: Run test targets
         run: |
-          bazel run //:ide_support
-          bazel test //src/...
+          bazel run --lockfile_mode=error //:ide_support
+          bazel test --lockfile_mode=error //src/...
 
       - name: Prepare bundled consumer report
         if: always()

@@ -3,7 +3,6 @@
 
 # Bazel
 bazel-*
-MODULE.bazel.lock
 user.bazelrc
 
 # Ruff

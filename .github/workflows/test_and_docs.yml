@@ -37,7 +37,7 @@ jobs:
       pull-requests: write
       contents: read
     with:
-      bazel-docs-verify-target: "//:docs_check"
+      bazel-docs-verify-target: "--lockfile_mode=error //:docs_check"
 
   # This is the user configurable part of the workflow
   unit-tests:
@@ -55,6 +55,6 @@ jobs:
       pull-requests: write
       id-token: write
     with:
-      bazel-target: "//:docs -- --github_user=${{ github.repository_owner }} --github_repo=${{ github.event.repository.name }}"
+      bazel-target: "--lockfile_mode=error //:docs -- --github_user=${{ github.repository_owner }} --github_repo=${{ github.event.repository.name }}"
       retention-days: 3
       tests-report-artifact: tests-report

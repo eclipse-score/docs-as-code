@@ -10,15 +10,19 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-
-name: Copyright checks
+name: Bzlmod Lockfile Check
+permissions:
+  contents: read
 on:
   pull_request:
     types: [opened, reopened, synchronize]
   merge_group:
     types: [checks_requested]
+  push:
+    branches:
+      - main
 jobs:
-  copyright-check:
-    uses: eclipse-score/cicd-workflows/.github/workflows/copyright.yml@main
+  bzlmod-lock:
+    uses: eclipse-score/cicd-workflows/.github/workflows/bzlmod-lock-check.yml@main
     with:
-      bazel-target: "run --lockfile_mode=error //:copyright.check"
+      working-directory: .

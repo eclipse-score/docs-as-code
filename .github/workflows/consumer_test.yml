@@ -33,7 +33,7 @@ jobs:
 
       - name: Prepare Python
         run: |
-          bazel run //:ide_support
+          bazel run --lockfile_mode=error //:ide_support
 
       - name: Prepare report directory
         run: |
