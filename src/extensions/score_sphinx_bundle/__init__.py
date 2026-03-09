@@ -31,6 +31,7 @@ score_extensions = [
     "sphinxcontrib.mermaid",
     "needs_config_writer",
     "score_sync_toml",
+    "score_any_folder",
 ]
 
 

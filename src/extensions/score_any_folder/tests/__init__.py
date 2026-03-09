@@ -1,5 +1,5 @@
 # *******************************************************************************
-# Copyright (c) 2025 Contributors to the Eclipse Foundation
+# Copyright (c) 2026 Contributors to the Eclipse Foundation
 #
 # See the NOTICE file(s) distributed with this work for additional
 # information regarding copyright ownership.
@@ -10,15 +10,3 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-
-project = "Score Docs-as-Code"
-project_url = "https://eclipse-score.github.io/docs-as-code/"
-version = "0.1"
-
-extensions = [
-    "score_sphinx_bundle",
-]
-
-score_any_folder_mapping = {
-    "../src/extensions/docs": "internals/extensions",
-}
