@@ -122,8 +122,6 @@ needs_types:
   gd_req:
     title: Process Requirements
     mandatory_options:
-      # req-Id: tool_req__docs_common_attr_status
-      status: ^(valid|draft)$
       content: ^[\s\S]+$
     optional_links:
       # req-Id: tool_req__docs_req_link_satisfies_allowed
@@ -342,12 +340,6 @@ needs_types:
   tool_req:
     title: Tool Requirement
     mandatory_options:
-      # req-Id: tool_req__docs_common_attr_security
-      security: ^(YES|NO)$
-      # req-Id: tool_req__docs_common_attr_safety
-      safety: ^(QM|ASIL_B)$
-      # req-Id: tool_req__docs_common_attr_status
-      status: ^(valid|invalid)$
       content: ^[\s\S]+$
     optional_links:
       # req-Id: tool_req__docs_req_link_satisfies_allowed
@@ -364,6 +356,8 @@ needs_types:
       implemented: ^(YES|PARTIAL|NO)$
       parent_covered: ^.*$
       parent_has_problem: ^.*$
+      security: ^(YES|NO)$
+      safety: ^(QM|ASIL_B)$
     tags:
       - requirement
       - requirement_excl_process
