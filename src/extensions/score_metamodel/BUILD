@@ -66,4 +66,5 @@ score_py_pytest(
         ],
     ) + ["tests/rst/conf.py"],
     deps = [":score_metamodel"],
+    pytest_config = "//:pyproject.toml",
 )

@@ -47,4 +47,5 @@ score_py_pytest(
     size = "small",
     srcs = glob(["tests/*.py"]),
     deps = [":score_any_folder"],
+    pytest_config = "//:pyproject.toml",
 )

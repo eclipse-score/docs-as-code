@@ -21,6 +21,7 @@ score_py_pytest(
         "//scripts_bazel:generate_sourcelinks",
         "//src/extensions/score_source_code_linker",
     ] + all_requirements,
+    pytest_config = "//:pyproject.toml",
 )
 
 score_py_pytest(
@@ -29,4 +30,5 @@ score_py_pytest(
     deps = [
         "//scripts_bazel:merge_sourcelinks",
     ] + all_requirements,
+    pytest_config = "//:pyproject.toml",
 )

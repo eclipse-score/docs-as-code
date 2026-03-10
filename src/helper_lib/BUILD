@@ -38,4 +38,5 @@ score_py_pytest(
     deps = [
         ":helper_lib",
     ] + all_requirements,
+    pytest_config = "//:pyproject.toml",
 )

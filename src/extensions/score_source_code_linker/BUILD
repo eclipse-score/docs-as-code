@@ -75,4 +75,5 @@ score_py_pytest(
         ":score_source_code_linker",
         "//src/extensions/score_metamodel",
     ],
+    pytest_config = "//:pyproject.toml",
 )
