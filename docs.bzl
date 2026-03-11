@@ -69,7 +69,7 @@ def _rewrite_needs_json_to_sourcelinks(labels):
             out.append(s)
     return out
 
-def _merge_sourcelinks(name, sourcelinks):
+def _merge_sourcelinks(name, sourcelinks, known_good = None):
     """Merge multiple sourcelinks JSON files into a single file.
 
     Args:
@@ -77,15 +77,22 @@ def _merge_sourcelinks(name, sourcelinks):
         sourcelinks: List of sourcelinks JSON file targets
     """
 
+    extra_srcs = []
+    known_good_arg = ""
+    if known_good != None:
+        extra_srcs = [known_good]
+        known_good_arg = "--known_good $(location %s)" % known_good
+
     native.genrule(
         name = name,
-        srcs = sourcelinks,
+        srcs = sourcelinks + extra_srcs,
         outs = [name + ".json"],
         cmd = """
         $(location @score_docs_as_code//scripts_bazel:merge_sourcelinks) \
             --output $@ \
+            {known_good_arg} \
             $(SRCS)
-        """,
+        """.format(known_good_arg = known_good_arg),
         tools = ["@score_docs_as_code//scripts_bazel:merge_sourcelinks"],
     )
 
@@ -120,7 +127,7 @@ def _missing_requirements(deps):
         fail(msg)
     fail("This case should be unreachable?!")
 
-def docs(source_dir = "docs", data = [], deps = [], scan_code = []):
+def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good = None):
     """Creates all targets related to documentation.
 
     By using this function, you'll get any and all updates for documentation targets in one place.
@@ -175,7 +182,7 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = []):
 
     data_with_docs_sources = _rewrite_needs_json_to_docs_sources(data)
     additional_combo_sourcelinks = _rewrite_needs_json_to_sourcelinks(data)
-    _merge_sourcelinks(name = "merged_sourcelinks", sourcelinks = [":sourcelinks_json"] + additional_combo_sourcelinks)
+    _merge_sourcelinks(name = "merged_sourcelinks", sourcelinks = [":sourcelinks_json"] + additional_combo_sourcelinks, known_good = known_good)
 
     py_binary(
         name = "docs",
