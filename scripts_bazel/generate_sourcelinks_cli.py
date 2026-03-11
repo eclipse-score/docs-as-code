@@ -26,24 +26,51 @@ from src.extensions.score_source_code_linker.generate_source_code_links_json imp
     _extract_references_from_file,  # pyright: ignore[reportPrivateUsage] TODO: move it out of the extension and into this script
 )
 from src.extensions.score_source_code_linker.needlinks import (
-    store_source_code_links_json,
+    store_source_code_links_with_metadata_json,
 )
+from src.extensions.score_source_code_linker.metadata import MetaData
 
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
+
+
+def parse_module_name_from_path(path: Path) -> str:
+    """
+    Parse out the Module-Name from the filename gotten
+    /home/user/.cache/bazel/aksj37981712/external/score_docs_as_code+/src/tests/testfile.py
+    => score_docs_as_code
+    """
+
+    # COMBO BUILD
+    # If external is in the filepath that gets parsed =>
+    # file is in an external module => combo build
+    # e.g. .../external/score_docs_as_code+/src/helper_lib/__init__.py
+
+    # PATH if we are in local repository
+    # PosixPath('src/helper_lib/test_helper_lib.py')
+    # Path if we are in combo build and externally
+    # PosixPath('external/score_docs_as_code+/src/helper_lib/test_helper_lib.py'
+    print("======== THIs IS PATH we PARSIGN FOr MODULE NAME")
+    print(path)
+    if str(path).startswith("external/"):
+        module_raw = str(path).removeprefix("external/")
+        filepath_split = str(module_raw).split("/", maxsplit=1)
+        module_name = str(filepath_split[0].removesuffix("+"))
+        return module_name
+    return "local_module"
 
 
 def main():
     parser = argparse.ArgumentParser(
         description="Generate source code links JSON from source files"
     )
-    parser.add_argument(
+    _ = parser.add_argument(
         "--output",
         required=True,
         type=Path,
         help="Output JSON file path",
     )
-    parser.add_argument(
+    _ = parser.add_argument(
         "files",
         nargs="*",
         type=Path,
@@ -53,15 +80,29 @@ def main():
     args = parser.parse_args()
 
     all_need_references = []
+    metadata: MetaData = {
+        "module_name": "",
+        "hash": "",
+        "url": "",
+    }
+    metadata_set = False
     for file_path in args.files:
+        if "known_good.json" not in str(file_path) and not metadata_set:
+            metadata["module_name"] = parse_module_name_from_path(file_path)
+            print("================")
+            print(metadata)
+            print("===============")
+            print("METADATA SET")
+            metadata_set = True
         abs_file_path = file_path.resolve()
         assert abs_file_path.exists(), abs_file_path
         references = _extract_references_from_file(
             abs_file_path.parent, Path(abs_file_path.name)
         )
         all_need_references.extend(references)
-
-    store_source_code_links_json(args.output, all_need_references)
+    store_source_code_links_with_metadata_json(
+        file=args.output, metadata=metadata, needlist=all_need_references
+    )
     logger.info(
         f"Found {len(all_need_references)} need references in {len(args.files)} files"
     )

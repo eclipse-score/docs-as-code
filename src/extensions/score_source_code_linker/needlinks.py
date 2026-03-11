@@ -16,10 +16,11 @@ import json
 import os
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, TypeGuard
+from src.extensions.score_source_code_linker.metadata import MetaData, is_metadata
 
 
-@dataclass(frozen=True, order=True)
+@dataclass(order=True)
 class NeedLink:
     """Represents a single template string finding in a file."""
 
@@ -28,6 +29,19 @@ class NeedLink:
     tag: str
     need: str
     full_line: str
+    module_name: str = ""
+    hash: str = ""
+    url: str = ""
+
+    def to_dict_full(self) -> dict[str, str | Path]:
+        return asdict(self)
+
+    def to_dict_without_metadata(self) -> dict[str, str | Path]:
+        d = asdict(self)
+        d.pop("module_name", None)
+        d.pop("hash", None)
+        d.pop("url", None)
+        return d
 
 
 def DefaultNeedLink() -> NeedLink:
@@ -41,6 +55,8 @@ def DefaultNeedLink() -> NeedLink:
         tag="",
         need="",
         full_line="",
+        # Module_name, hash, url are defaulted to ""
+        # therefore not needed to be listed
     )
 
 
@@ -61,26 +77,99 @@ def needlink_decoder(d: dict[str, Any]) -> NeedLink | dict[str, Any]:
             tag=d["tag"],
             need=d["need"],
             full_line=d["full_line"],
+            module_name=d.get("module_name", ""),
+            hash=d.get("hash", ""),
+            url=d.get("url", ""),
         )
     # It's something else, pass it on to other decoders
     return d
 
 
-def store_source_code_links_json(file: Path, needlist: list[NeedLink]):
-    # After `rm -rf _build` or on clean builds the directory does not exist,
-    # so we need to create it
+def store_source_code_links_with_metadata_json(
+    file: Path, metadata: MetaData, needlist: list[NeedLink]
+) -> None:
+    """
+    Writes a JSON array:
+      [ meta_dict, needlink1, needlink2, ... ]
+
+    meta_dict must include:
+      module_name, hash, url
+    """
+    payload: list[object] = [metadata, *needlist]
+
     file.parent.mkdir(exist_ok=True)
-    with open(file, "w") as f:
-        json.dump(
-            needlist,
-            f,
-            cls=NeedLinkEncoder,  # use your custom encoder
-            indent=2,
-            ensure_ascii=False,
+    with open(file, "w", encoding="utf-8") as f:
+        json.dump(payload, f, cls=NeedLinkEncoder, indent=2, ensure_ascii=False)
+
+
+def store_source_code_links_json(file: Path, needlist: list[NeedLink]) -> None:
+    """
+    Writes a JSON array:
+      [ meta_dict, needlink1, needlink2, ... ]
+
+    meta_dict must include:
+      module_name, hash, url
+    """
+
+    file.parent.mkdir(exist_ok=True)
+    with open(file, "w", encoding="utf-8") as f:
+        json.dump(needlist, f, cls=NeedLinkEncoder, indent=2, ensure_ascii=False)
+
+
+def _is_needlink_list(xs: list[object]) -> TypeGuard[list[NeedLink]]:
+    return all(isinstance(link, NeedLink) for link in xs)
+
+
+def load_source_code_links_with_metadata_json(file: Path) -> list[NeedLink]:
+    """
+    Expects the JSON array where first is a meta_dict:
+      [ meta_dict, needlink1, needlink2, ... ]
+    Returns:
+      [NeedLink, NeedLink, ...]
+
+    This normally should be the one called 'locally' => :docs target
+    """
+    if not file.is_absolute():
+        ws_root = os.environ.get("BUILD_WORKSPACE_DIRECTORY")
+        if ws_root:
+            file = Path(ws_root) / file
+
+    data: list[object] = json.loads(
+        file.read_text(encoding="utf-8"),
+        object_hook=needlink_decoder,
+    )
+    links: list[object] = []
+    if not is_metadata(data[0]):
+        raise TypeError(
+            "If you do not have a 'metadata' dict as the first one in the json "
+            "you might wanted to call the load without metadata named: "
+            "'load_source_code_links_json'"
         )
+    metadata: MetaData = data[0]
+    links = data[1:]
+    if not _is_needlink_list(links):
+        raise TypeError(
+            "In local build context all items after"
+            f"metadata must decode to NeedLink objects. File: {file}"
+        )
+    for d in links:
+        d.module_name = metadata["module_name"]
+        d.hash = metadata["hash"]
+        d.url = metadata["url"]
+    return links
 
 
 def load_source_code_links_json(file: Path) -> list[NeedLink]:
+    """
+    Expects the JSON array with needlinks
+    *that already have extra info in them* (module_name, hash, url):
+      [ needlink1, needlink2, ... ]
+    Returns:
+      [NeedLink, NeedLink, ...]
+
+    This normally should be the one called in combo builds
+    => :docs_combo_experimental target
+    """
     if not file.is_absolute():
         # use env variable set by Bazel
         ws_root = os.environ.get("BUILD_WORKSPACE_DIRECTORY")
@@ -98,3 +187,4 @@ def load_source_code_links_json(file: Path) -> list[NeedLink]:
         "All items in source_code_links should be NeedLink objects."
     )
     return links
+
