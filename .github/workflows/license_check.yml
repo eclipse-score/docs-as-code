@@ -25,7 +25,7 @@ permissions:
 
 jobs:
   license-check:
-    uses: eclipse-score/cicd-workflows/.github/workflows/license-check.yml@main
+    uses: eclipse-score/cicd-workflows/.github/workflows/license-check.yml@c1c90b1a82a1fab0fc202979dde6686b2162d5a8 # v0.0.0
     with:
       repo-url: "${{ github.server_url }}/${{ github.repository }}"
       bazel-target: "run --lockfile_mode=error //src:license-check"
