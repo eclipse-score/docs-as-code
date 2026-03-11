@@ -89,15 +89,18 @@ def main():
     for file_path in args.files:
         if "known_good.json" not in str(file_path) and not metadata_set:
             metadata["module_name"] = parse_module_name_from_path(file_path)
-            print("================")
-            print(metadata)
-            print("===============")
-            print("METADATA SET")
+            # print("================")
+            # print(metadata)
+            # print("===============")
+            # print("METADATA SET")
             metadata_set = True
         abs_file_path = file_path.resolve()
         assert abs_file_path.exists(), abs_file_path
+        # print("THIS Is ABS FILEPATH: ", file_path)
+        # print("THIS IS ABS FILEPATH NAME: ", abs_file_path.name)
+        # print("THIS Is ABS FILEPATH PARENT: ", abs_file_path.parent)
         references = _extract_references_from_file(
-            abs_file_path.parent, Path(abs_file_path.name)
+            abs_file_path.parent, Path(abs_file_path.name), file_path
         )
         all_need_references.extend(references)
     store_source_code_links_with_metadata_json(

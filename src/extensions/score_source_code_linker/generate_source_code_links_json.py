@@ -19,6 +19,8 @@ parse everything on every run.
 
 import os
 from pathlib import Path
+from sphinx_needs.logging import get_logger
+LOGGER = get_logger(__name__)
 
 from src.extensions.score_source_code_linker.needlinks import (
     NeedLink,
@@ -43,21 +45,21 @@ def _extract_references_from_line(line: str):
                 yield tag, req.strip()
 
 
-def _extract_references_from_file(root: Path, file_path: Path) -> list[NeedLink]:
+def _extract_references_from_file(root: Path, file_path_name: Path, file_path: Path) -> list[NeedLink]:
     """Scan a single file for template strings and return findings."""
     assert root.is_absolute(), "Root path must be absolute"
-    assert not file_path.is_absolute(), "File path must be relative to the root"
+    assert not file_path_name.is_absolute(), "File path must be relative to the root"
     # assert file_path.is_relative_to(root), (
     #     f"File path ({file_path}) must be relative to the root ({root})"
     # )
-    assert (root / file_path).exists(), (
-        f"File {file_path} does not exist in root {root}."
+    assert (root / file_path_name).exists(), (
+        f"File {file_path_name} does not exist in root {root}."
     )
 
     findings: list[NeedLink] = []
 
     try:
-        with open(root / file_path, encoding="utf-8", errors="ignore") as f:
+        with open(root / file_path_name, encoding="utf-8", errors="ignore") as f:
             for line_num, line in enumerate(f, 1):
                 for tag, req in _extract_references_from_line(line):
                     findings.append(
@@ -69,8 +71,9 @@ def _extract_references_from_file(root: Path, file_path: Path) -> list[NeedLink]
                             full_line=line.strip(),
                         )
                     )
-    except (UnicodeDecodeError, PermissionError, OSError):
+    except (UnicodeDecodeError, PermissionError, OSError) as e:
         # Skip files that can't be read as text
+        LOGGER.debug(f"Error reading file to parse for linked needs: \n{e}")
         pass
 
     return findings
@@ -121,8 +124,8 @@ def find_all_need_references(search_path: Path) -> list[NeedLink]:
         all_need_references.extend(references)
 
     elapsed_time = os.times().elapsed - start_time
-    print(
-        f"DEBUG: Found {len(all_need_references)} need references "
+    LOGGER.debug(
+        f"Found {len(all_need_references)} need references "
         f"in {elapsed_time:.2f} seconds"
     )
 
