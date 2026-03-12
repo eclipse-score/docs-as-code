@@ -124,7 +124,7 @@ def find_all_need_references(search_path: Path) -> list[NeedLink]:
 
     # Use os.walk to have better control over directory traversal
     for file in iterate_files_recursively(search_path):
-        references = _extract_references_from_file(search_path, file)
+        references = _extract_references_from_file(search_path,Path(file.name), file)
         all_need_references.extend(references)
 
     elapsed_time = os.times().elapsed - start_time
