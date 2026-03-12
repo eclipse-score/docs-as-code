@@ -192,8 +192,8 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = []):
     )
 
     py_binary(
-        name = "docs_combo_experimental",
-        tags = ["cli_help=Build full documentation with all dependencies:\nbazel run //:docs_combo_experimental"],
+        name = "docs_combo",
+        tags = ["cli_help=Build full documentation with all dependencies:\nbazel run //:docs_combo"],
         srcs = ["@score_docs_as_code//src:incremental.py"],
         data = data_with_docs_sources + [":merged_sourcelinks"],
         deps = deps,
@@ -203,6 +203,12 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = []):
             "ACTION": "incremental",
             "SCORE_SOURCELINKS": "$(location :merged_sourcelinks)",
         },
+    )
+
+    native.alias(
+        name = "docs_combo_experimental",
+        actual = ":docs_combo",
+        deprecation = "Target '//:docs_combo_experimental' is deprecated. Use '//:docs_combo' instead.",
     )
 
     py_binary(

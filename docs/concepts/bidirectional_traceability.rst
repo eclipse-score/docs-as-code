@@ -40,7 +40,7 @@ Build with copies
 
 .. code-block:: sh
 
-   bazel run //:docs_combo_experimental
+	bazel run //:docs_combo
 
 The documentation build does not depend on the needs.json but on whole documentation source code.
 
