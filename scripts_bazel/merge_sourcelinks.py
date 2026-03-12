@@ -53,16 +53,10 @@ if external => parse thing for module_name => look up known_good json for hash &
 def parse_info_from_known_good(
     known_good_json: Path, module_name: str
 ) -> tuple[str, str]:
-    print("===THIS IS MODULE NAME WE LOOK FOR===========")
-    print(module_name)
     with open(known_good_json) as f:
         kg_json = json.load(f)
     for category in kg_json["modules"].values():
-        print("===THIS IS CATEGORY=========")
-        print(category)
         if module_name in category:
-            print("===THIS IS MODULE NAME INSIDe CATEGORY===========")
-            print(module_name)
             m = category[module_name]
             return (m["hash"], m["repo"].removesuffix(".git"))
     raise KeyError(f"Module {module_name!r} not found in known_good_json.")
@@ -104,7 +98,7 @@ def main():
                 )
                 metadata["hash"] = hash
                 metadata["url"] = repo
-            # In the case that 'metadata[module_name]' is empty
+            # In the case that 'metadata[module_name]' is 'local_module' or empty (somehow)
             # hash & url are already existing and empty inside of 'metadata'
             # Therefore all 3 keys will be written to needlinks in each branch
             for d in data[1:]:
