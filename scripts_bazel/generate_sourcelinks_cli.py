@@ -26,8 +26,8 @@ from src.extensions.score_source_code_linker.generate_source_code_links_json imp
     _extract_references_from_file,  # pyright: ignore[reportPrivateUsage] TODO: move it out of the extension and into this script
 )
 from src.extensions.score_source_code_linker.needlinks import (
-    store_source_code_links_with_metadata_json,
     MetaData,
+    store_source_code_links_with_metadata_json,
 )
 
 logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -51,8 +51,7 @@ def parse_module_name_from_path(path: Path) -> str:
         # This allows for files / folders etc. to have `external` in their name too.
         module_raw = str(path).removeprefix("external/")
         filepath_split = str(module_raw).split("/", maxsplit=1)
-        module_name = str(filepath_split[0].removesuffix("+"))
-        return module_name
+        return str(filepath_split[0].removesuffix("+"))
     return "local_module"
 
 

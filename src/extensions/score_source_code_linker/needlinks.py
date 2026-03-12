@@ -16,7 +16,7 @@ import json
 import os
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Any, TypeGuard, TypedDict
+from typing import Any, TypedDict, TypeGuard
 
 
 class MetaData(TypedDict):

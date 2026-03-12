@@ -40,19 +40,15 @@ from src.extensions.score_source_code_linker.module_source_links import (
     store_module_source_links_json,
 )
 from src.extensions.score_source_code_linker.need_source_links import (
-    NeedSourceLinks,
-    SourceCodeLinks,
     group_by_need,
     load_source_code_links_combined_json,
     store_source_code_links_combined_json,
 )
 from src.extensions.score_source_code_linker.needlinks import (
-    NeedLink,
     load_source_code_links_json,
     load_source_code_links_with_metadata_json,
 )
 from src.extensions.score_source_code_linker.testlink import (
-    DataForTestLink,
     load_data_of_test_case_json,
     load_test_xml_parsed_json,
 )
@@ -228,7 +224,10 @@ def setup_combined_linker(app: Sphinx, _: BuildEnvironment):
     grouped_cache = get_cache_filename(app.outdir, "score_scl_grouped_cache.json")
     grouped_cache_exists = grouped_cache.exists()
     # TODO this cache should be done via Bazel
-    if not grouped_cache_exists or not app.config.skip_rescanning_via_source_code_linker:
+    if (
+        not grouped_cache_exists
+        or not app.config.skip_rescanning_via_source_code_linker
+    ):
         LOGGER.debug(
             "Did not find combined json 'score_scl_grouped_cache.json' in _build."
             "Generating new one"
@@ -351,9 +350,6 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
     scl_by_module = load_module_source_links_json(
         get_cache_filename(app.outdir, "score_module_grouped_scl_cache.json")
     )
-    # source_code_links_by_need = load_source_code_links_combined_json(
-    #     get_cache_filename(app.outdir, "score_scl_grouped_cache.json")
-    # )
     for module_grouped_needs in scl_by_module:
         for source_code_links in module_grouped_needs.needs:
             need = find_need(needs_copy, source_code_links.need)
