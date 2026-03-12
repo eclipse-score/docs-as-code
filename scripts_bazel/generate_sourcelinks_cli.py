@@ -44,15 +44,11 @@ def parse_module_name_from_path(path: Path) -> str:
     # COMBO BUILD
     # If external is in the filepath that gets parsed =>
     # file is in an external module => combo build
-    # e.g. .../external/score_docs_as_code+/src/helper_lib/__init__.py
+    # Example Path:
+    #   PosixPath('external/score_docs_as_code+/src/helper_lib/test_helper_lib.py'
 
-    # PATH if we are in local repository
-    # PosixPath('src/helper_lib/test_helper_lib.py')
-    # Path if we are in combo build and externally
-    # PosixPath('external/score_docs_as_code+/src/helper_lib/test_helper_lib.py'
-    print("======== THIs IS PATH we PARSIGN FOr MODULE NAME")
-    print(path)
     if str(path).startswith("external/"):
+        # This allows for files / folders etc. to have `external` in their name too.
         module_raw = str(path).removeprefix("external/")
         filepath_split = str(module_raw).split("/", maxsplit=1)
         module_name = str(filepath_split[0].removesuffix("+"))
@@ -89,16 +85,9 @@ def main():
     for file_path in args.files:
         if "known_good.json" not in str(file_path) and not metadata_set:
             metadata["module_name"] = parse_module_name_from_path(file_path)
-            # print("================")
-            # print(metadata)
-            # print("===============")
-            # print("METADATA SET")
             metadata_set = True
         abs_file_path = file_path.resolve()
         assert abs_file_path.exists(), abs_file_path
-        # print("THIS Is ABS FILEPATH: ", file_path)
-        # print("THIS IS ABS FILEPATH NAME: ", abs_file_path.name)
-        # print("THIS Is ABS FILEPATH PARENT: ", abs_file_path.parent)
         references = _extract_references_from_file(
             abs_file_path.parent, Path(abs_file_path.name), file_path
         )
