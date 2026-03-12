@@ -80,7 +80,7 @@ def main():
     )
     _ = parser.add_argument(
         "--known_good",
-        default=None,
+        required=True,
         help="Optional path to a 'known good' JSON file (provided by Bazel).",
     )
     _ = parser.add_argument(
