@@ -42,10 +42,10 @@ class NeedLink:
     hash: str = ""
     url: str = ""
 
-    def to_dict_full(self) -> dict[str, str | Path]:
+    def to_dict_full(self) -> dict[str, str | Path | int]:
         return asdict(self)
 
-    def to_dict_without_metadata(self) -> dict[str, str | Path]:
+    def to_dict_without_metadata(self) -> dict[str, str | Path | int]:
         d = asdict(self)
         d.pop("module_name", None)
         d.pop("hash", None)
@@ -114,10 +114,7 @@ def store_source_code_links_with_metadata_json(
 def store_source_code_links_json(file: Path, needlist: list[NeedLink]) -> None:
     """
     Writes a JSON array:
-      [ meta_dict, needlink1, needlink2, ... ]
-
-    meta_dict must include:
-      module_name, hash, url
+      [ needlink1, needlink2, ... ]
     """
 
     file.parent.mkdir(exist_ok=True)

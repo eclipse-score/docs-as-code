@@ -27,7 +27,7 @@ from src.extensions.score_source_code_linker.testlink import DataForTestLink
 
 
 @dataclass
-class moduleInfo:
+class ModuleInfo:
     name: str
     hash: str
     url: str
@@ -35,7 +35,7 @@ class moduleInfo:
 
 @dataclass
 class ModuleSourceLinks:
-    module: moduleInfo
+    module: ModuleInfo
     needs: list[SourceCodeLinks] = field(default_factory=list)
 
 
@@ -48,7 +48,7 @@ class ModuleSourceLinks_JSON_Encoder(json.JSONEncoder):
         if isinstance(o, NeedLink):
             return o.to_dict_without_metadata()
         if isinstance(
-            o, ModuleSourceLinks | SourceCodeLinks | DataForTestLink | NeedSourceLinks
+            o, (ModuleSourceLinks, SourceCodeLinks, DataForTestLink, NeedSourceLinks)
         ):
             return asdict(o)
         return super().default(o)
@@ -61,14 +61,14 @@ def ModuleSourceLinks_JSON_Decoder(
         module_name = d["module_name"]
         needs = d["needs"]
         return ModuleSourceLinks(
-            module=moduleInfo(
+            module=ModuleInfo(
                 name=module_name.get("module_name"),
                 hash=module_name.get("hash"),
                 url=module_name.get("url"),
             ),
             # We know this can only be list[SourceCodeLinks] and nothing else
             # Therefore => we ignore the type error here
-            needs=[SourceCodeLinks_JSON_Decoder(need) for need in needs] # type: ignore
+            needs=[SourceCodeLinks_JSON_Decoder(need) for need in needs],  # type: ignore
         )
     return d
 
@@ -117,7 +117,9 @@ def group_needs_by_module(links: list[SourceCodeLinks]) -> list[ModuleSourceLink
 
         if module_key not in module_groups:
             module_groups[module_key] = ModuleSourceLinks(
-                module=moduleInfo(name=module_key, hash=first_link.hash, url=first_link.url)
+                module=ModuleInfo(
+                    name=module_key, hash=first_link.hash, url=first_link.url
+                )
             )
 
         module_groups[module_key].needs.append(source_link)  # Much clearer!

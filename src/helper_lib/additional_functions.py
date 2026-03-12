@@ -12,7 +12,7 @@
 # *******************************************************************************
 from pathlib import Path
 
-from src.extensions.score_source_code_linker.module_source_links import moduleInfo
+from src.extensions.score_source_code_linker.module_source_links import ModuleInfo
 
 # Import types that depend on score_source_code_linker
 from src.extensions.score_source_code_linker.needlinks import DefaultNeedLink, NeedLink
@@ -28,7 +28,7 @@ from src.helper_lib import (
 
 
 def get_github_link(
-    metadata: moduleInfo,
+    metadata: ModuleInfo,
     link: NeedLink | DataForTestLink | DataOfTestCase | None = None,
 ) -> str:
     if link is None:
@@ -54,7 +54,7 @@ def get_github_link_from_git(
 
 
 def get_github_link_from_json(
-    metadata: moduleInfo,
+    metadata: ModuleInfo,
     link: NeedLink | DataForTestLink | DataOfTestCase | None = None,
 ):
     if link is None:
