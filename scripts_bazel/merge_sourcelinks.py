@@ -20,7 +20,6 @@ import json
 import logging
 import sys
 from pathlib import Path
-from typing import Any
 
 # from src.extensions.score_source_code_linker.need_source_links import (
 #     store_source_code_links_combined_json,
@@ -44,8 +43,8 @@ logger = logging.getLogger(__name__)
 
 
 """
-if bazel-out/k8-fastbuild/bin/external/ in file_path => module is external 
-otherwise it's local 
+if bazel-out/k8-fastbuild/bin/external/ in file_path => module is external
+otherwise it's local
 if local => module_name & hash == empty
 if external => parse thing for module_name => look up known_good json for hash & url
 """
@@ -56,7 +55,7 @@ def parse_info_from_known_good(
 ) -> tuple[str, str]:
     print("===THIS IS MODULE NAME WE LOOK FOR===========")
     print(module_name)
-    with open(known_good_json, "r") as f:
+    with open(known_good_json) as f:
         kg_json = json.load(f)
     for category in kg_json["modules"].values():
         print("===THIS IS CATEGORY=========")

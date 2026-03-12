@@ -19,7 +19,9 @@ parse everything on every run.
 
 import os
 from pathlib import Path
+
 from sphinx_needs.logging import get_logger
+
 LOGGER = get_logger(__name__)
 
 from src.extensions.score_source_code_linker.needlinks import (

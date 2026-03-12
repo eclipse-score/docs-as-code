@@ -34,20 +34,18 @@ from sphinx_needs.need_item import NeedItem
 from src.extensions.score_source_code_linker.generate_source_code_links_json import (
     generate_source_code_links_json,
 )
+from src.extensions.score_source_code_linker.module_source_links import (
+    group_needs_by_module,
+    load_module_source_links_json,
+    store_module_source_links_json,
+)
 from src.extensions.score_source_code_linker.need_source_links import (
     NeedSourceLinks,
     SourceCodeLinks,
+    group_by_need,
     load_source_code_links_combined_json,
     store_source_code_links_combined_json,
-    group_by_need,
 )
-
-from src.extensions.score_source_code_linker.module_source_links import (
-    group_needs_by_module,
-    store_module_source_links_json,
-    load_module_source_links_json,
-)
-
 from src.extensions.score_source_code_linker.needlinks import (
     NeedLink,
     load_source_code_links_json,
@@ -376,7 +374,7 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
                 continue
 
             need_as_dict = cast(dict[str, object], need)
-            metadata = module_grouped_needs.module_name
+            metadata = module_grouped_needs.module
             need_as_dict["source_code_link"] = ", ".join(
                 f"{get_github_link(metadata, n)}<>{n.file}:{n.line}"
                 for n in source_code_links.links.CodeLinks
