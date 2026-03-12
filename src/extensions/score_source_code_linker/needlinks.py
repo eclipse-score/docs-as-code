@@ -16,8 +16,17 @@ import json
 import os
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Any, TypeGuard
-from src.extensions.score_source_code_linker.metadata import MetaData, is_metadata
+from typing import Any, TypeGuard, TypedDict
+
+
+class MetaData(TypedDict):
+    module_name: str
+    hash: str
+    url: str
+
+def is_metadata(x: object) -> TypeGuard[MetaData]:
+    # Make this as strict/loose as you want; at minimum, it must be a dict.
+    return isinstance(x, dict) and {"module_name", "hash", "url"} <= x.keys()
 
 
 @dataclass(order=True)
@@ -187,4 +196,3 @@ def load_source_code_links_json(file: Path) -> list[NeedLink]:
         "All items in source_code_links should be NeedLink objects."
     )
     return links
-

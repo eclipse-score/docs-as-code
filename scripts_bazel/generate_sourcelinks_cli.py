@@ -27,8 +27,8 @@ from src.extensions.score_source_code_linker.generate_source_code_links_json imp
 )
 from src.extensions.score_source_code_linker.needlinks import (
     store_source_code_links_with_metadata_json,
+    MetaData,
 )
-from src.extensions.score_source_code_linker.metadata import MetaData
 
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
