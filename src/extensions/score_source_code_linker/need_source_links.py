@@ -20,8 +20,8 @@ decoder and encoder for SourceCodeLinks to enable JSON read/write
 # req-Id: tool_req__docs_dd_link_source_code_link
 
 import json
-from dataclasses import asdict, dataclass, field
 from collections import defaultdict
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
 

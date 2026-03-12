@@ -12,9 +12,10 @@
 # *******************************************************************************
 from pathlib import Path
 
+from src.extensions.score_source_code_linker.module_source_links import moduleInfo
+
 # Import types that depend on score_source_code_linker
 from src.extensions.score_source_code_linker.needlinks import DefaultNeedLink, NeedLink
-from src.extensions.score_source_code_linker.module_source_links import moduleInfo
 from src.extensions.score_source_code_linker.testlink import (
     DataForTestLink,
     DataOfTestCase,

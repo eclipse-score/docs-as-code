@@ -12,11 +12,10 @@
 # *******************************************************************************
 
 
-from dataclasses import dataclass, asdict, field
 import json
-from typing import Any
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
-
+from typing import Any
 
 from src.extensions.score_source_code_linker.need_source_links import (
     NeedSourceLinks,
@@ -36,7 +35,7 @@ class moduleInfo:
 
 @dataclass
 class ModuleSourceLinks:
-    module_name: moduleInfo
+    module: moduleInfo
     needs: list[SourceCodeLinks] = field(default_factory=list)
 
 
@@ -62,7 +61,7 @@ def ModuleSourceLinks_JSON_Decoder(
         module_name = d["module_name"]
         needs = d["needs"]
         return ModuleSourceLinks(
-            module_name=moduleInfo(
+            module=moduleInfo(
                 name=module_name.get("module_name"),
                 hash=module_name.get("hash"),
                 url=module_name.get("url"),
@@ -118,13 +117,13 @@ def group_needs_by_module(links: list[SourceCodeLinks]) -> list[ModuleSourceLink
 
         if module_key not in module_groups:
             module_groups[module_key] = ModuleSourceLinks(
-                module_name=moduleInfo(name=module_key, hash=first_link.hash, url=first_link.url)
+                module=moduleInfo(name=module_key, hash=first_link.hash, url=first_link.url)
             )
 
         module_groups[module_key].needs.append(source_link)  # Much clearer!
 
     return [
-        ModuleSourceLinks(module_name=group.module_name, needs=group.needs)
+        ModuleSourceLinks(module=group.module, needs=group.needs)
         for group in module_groups.values()
     ]
 
