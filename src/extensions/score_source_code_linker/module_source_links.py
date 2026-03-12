@@ -48,7 +48,7 @@ class ModuleSourceLinks_JSON_Encoder(json.JSONEncoder):
         if isinstance(o, NeedLink):
             return o.to_dict_without_metadata()
         if isinstance(
-            o, (ModuleSourceLinks, SourceCodeLinks, DataForTestLink, NeedSourceLinks)
+            o, ModuleSourceLinks | SourceCodeLinks | DataForTestLink | NeedSourceLinks
         ):
             return asdict(o)
         return super().default(o)

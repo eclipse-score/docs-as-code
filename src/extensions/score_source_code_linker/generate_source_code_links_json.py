@@ -22,12 +22,12 @@ from pathlib import Path
 
 from sphinx_needs.logging import get_logger
 
-LOGGER = get_logger(__name__)
-
 from src.extensions.score_source_code_linker.needlinks import (
     NeedLink,
     store_source_code_links_json,
 )
+
+LOGGER = get_logger(__name__)
 
 TAGS = [
     "# " + "req-traceability:",
@@ -47,7 +47,9 @@ def _extract_references_from_line(line: str):
                 yield tag, req.strip()
 
 
-def _extract_references_from_file(root: Path, file_path_name: Path, file_path: Path) -> list[NeedLink]:
+def _extract_references_from_file(
+    root: Path, file_path_name: Path, file_path: Path
+) -> list[NeedLink]:
     """Scan a single file for template strings and return findings."""
     assert root.is_absolute(), "Root path must be absolute"
     assert not file_path_name.is_absolute(), "File path must be relative to the root"

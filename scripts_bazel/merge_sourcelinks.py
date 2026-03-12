@@ -28,18 +28,6 @@ from pathlib import Path
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
 
-# [
-# PosixPath('bazel-out/k8-fastbuild/bin/sourcelinks_json.json'),
-# PosixPath('bazel-out/k8-fastbuild/bin/external/score_persistency+/sourcelinks_json.json'),
-# PosixPath('bazel-out/k8-fastbuild/bin/external/score_orchestrator+/sourcelinks_json.json'),
-# PosixPath('bazel-out/k8-fastbuild/bin/external/score_kyron+/sourcelinks_json.json'),
-# PosixPath('bazel-out/k8-fastbuild/bin/external/score_baselibs+/sourcelinks_json.json'),
-# PosixPath('bazel-out/k8-fastbuild/bin/external/score_baselibs_rust+/sourcelinks_json.json'),
-# PosixPath('bazel-out/k8-fastbuild/bin/external/score_logging+/sourcelinks_json.json'),
-# PosixPath('bazel-out/k8-fastbuild/bin/external/score_platform+/sourcelinks_json.json'),
-# PosixPath('bazel-out/k8-fastbuild/bin/external/score_process+/sourcelinks_json.json'),
-# PosixPath('bazel-out/k8-fastbuild/bin/external/score_docs_as_code+/sourcelinks_json.json')
-# ]
 
 
 """
@@ -98,7 +86,7 @@ def main():
                 )
                 metadata["hash"] = hash
                 metadata["url"] = repo
-            # In the case that 'metadata[module_name]' is 'local_module' or empty (somehow)
+            # In the case that 'metadata[module_name]' is 'local_module'
             # hash & url are already existing and empty inside of 'metadata'
             # Therefore all 3 keys will be written to needlinks in each branch
             for d in data[1:]:
