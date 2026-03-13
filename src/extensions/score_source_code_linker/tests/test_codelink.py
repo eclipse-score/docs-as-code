@@ -43,7 +43,7 @@ from src.extensions.score_source_code_linker.needlinks import (
 from src.helper_lib import (
     get_current_git_hash,
 )
-from src.helper_lib.additional_functions import get_github_link
+from src.extensions.score_source_code_linker.helpers import get_github_link
 
 """
 #          ────────────────ATTENTION───────────────

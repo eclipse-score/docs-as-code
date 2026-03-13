@@ -15,6 +15,7 @@
 import json
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
+from re import M
 from typing import Any
 
 from src.extensions.score_source_code_linker.need_source_links import (
@@ -43,13 +44,12 @@ class ModuleSourceLinks_JSON_Encoder(json.JSONEncoder):
     def default(self, o: object):
         if isinstance(o, Path):
             return str(o)
-        # We do not want to save the metadata inside the codelink
+        # We do not want to save the metadata inside the codelink or testlink
+        # As we save this already in a structure above it
         # (hash, module_name, url)
-        if isinstance(o, NeedLink):
+        if isinstance(o, NeedLink | DataForTestLink):
             return o.to_dict_without_metadata()
-        if isinstance(
-            o, ModuleSourceLinks | SourceCodeLinks | DataForTestLink | NeedSourceLinks
-        ):
+        if isinstance(o, ModuleSourceLinks | SourceCodeLinks | NeedSourceLinks):
             return asdict(o)
         return super().default(o)
 
@@ -57,14 +57,14 @@ class ModuleSourceLinks_JSON_Encoder(json.JSONEncoder):
 def ModuleSourceLinks_JSON_Decoder(
     d: dict[str, Any],
 ) -> ModuleSourceLinks | dict[str, Any]:
-    if "module_name" in d and "needs" in d:
-        module_name = d["module_name"]
+    if "module" in d and "needs" in d:
+        module = d["module"]
         needs = d["needs"]
         return ModuleSourceLinks(
             module=ModuleInfo(
-                name=module_name.get("module_name"),
-                hash=module_name.get("hash"),
-                url=module_name.get("url"),
+                name=module.get("module_name"),
+                hash=module.get("hash"),
+                url=module.get("url"),
             ),
             # We know this can only be list[SourceCodeLinks] and nothing else
             # Therefore => we ignore the type error here
@@ -95,12 +95,16 @@ def load_module_source_links_json(file: Path) -> list[ModuleSourceLinks]:
         object_hook=ModuleSourceLinks_JSON_Decoder,
     )
     assert isinstance(links, list), (
-        "The combined source code linker links should be "
-        "a list of SourceCodeLinks objects."
+        "The ModuleSourceLink json should be aa list of ModuleSourceLink objects."
     )
+    print("=====================")
+    print("=== TESTING LINKS IN ModuleSourceLink === ")
+    for link in links:
+        if not isinstance(link, ModuleSourceLinks):
+            print(f"Link not module_sourcelink: {link}")
+    print("=====================")
     assert all(isinstance(link, ModuleSourceLinks) for link in links), (
-        "All items in combined_source_code_linker_cache should be "
-        "SourceCodeLinks objects."
+        "All items in module source link cache should be ModuleSourceLink objects."
     )
     return links
 
@@ -109,10 +113,14 @@ def group_needs_by_module(links: list[SourceCodeLinks]) -> list[ModuleSourceLink
     module_groups: dict[str, ModuleSourceLinks] = {}
 
     for source_link in links:
-        if not source_link.links.CodeLinks:
+        # Check if we can take moduleInfo from code or testlinks
+        if source_link.links.CodeLinks:
+            first_link = source_link.links.CodeLinks[0]
+        elif source_link.links.TestLinks:
+            first_link = source_link.links.TestLinks[0]
+        else:
+            # This should not happen?
             continue
-
-        first_link = source_link.links.CodeLinks[0]
         module_key = first_link.module_name
 
         if module_key not in module_groups:

@@ -10,6 +10,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
+import json
 from pathlib import Path
 
 from src.extensions.score_source_code_linker.module_source_links import ModuleInfo
@@ -62,3 +63,38 @@ def get_github_link_from_json(
     base_url = metadata.url
     current_hash = metadata.hash
     return f"{base_url}/blob/{current_hash}/{link.file}#L{link.line}"
+
+
+def parse_module_name_from_path(path: Path) -> str:
+    """
+    Parse out the Module-Name from the filename gotten
+    /home/user/.cache/bazel/aksj37981712/external/score_docs_as_code+/src/tests/testfile.py
+    => score_docs_as_code
+    """
+
+    # COMBO BUILD
+    # If external is in the filepath that gets parsed =>
+    # file is in an external module => combo build
+    # Example Path:
+    #   PosixPath('external/score_docs_as_code+/src/helper_lib/test_helper_lib.py'
+
+    if str(path).startswith("external/"):
+        # This allows for files / folders etc. to have `external` in their name too.
+        module_raw = str(path).removeprefix("external/")
+        filepath_split = str(module_raw).split("/", maxsplit=1)
+        return str(filepath_split[0].removesuffix("+"))
+    # We return this when we are in a local build `//:docs` the rest of DaC knows
+    # What to do then if it encounters this module_name
+    return "local_module"
+
+
+def parse_info_from_known_good(
+    known_good_json: Path, module_name: str
+) -> tuple[str, str]:
+    with open(known_good_json) as f:
+        kg_json = json.load(f)
+    for category in kg_json["modules"].values():
+        if module_name in category:
+            m = category[module_name]
+            return (m["hash"], m["repo"].removesuffix(".git"))
+    raise KeyError(f"Module {module_name!r} not found in known_good_json.")
