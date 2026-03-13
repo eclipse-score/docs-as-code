@@ -33,16 +33,39 @@ from sphinx.environment import BuildEnvironment
 from sphinx_needs import logging
 from sphinx_needs.api import add_external_need
 
+from src.extensions.score_source_code_linker.needlinks import (
+    MetaData,
+)
+from src.extensions.score_source_code_linker.module_source_links import ModuleInfo
 from src.extensions.score_source_code_linker.testlink import (
     DataOfTestCase,
     store_data_of_test_case_json,
     store_test_xml_parsed_json,
 )
 from src.helper_lib import find_ws_root
-from src.helper_lib.additional_functions import get_github_link
+from src.extensions.score_source_code_linker.helpers import (
+    get_github_link,
+    parse_info_from_known_good,
+    parse_module_name_from_path,
+)
 
 logger = logging.get_logger(__name__)
 logger.setLevel("DEBUG")
+
+
+def get_metadata_from_test_path(filepath: Path) -> MetaData:
+    known_good_json = os.environ.get("KNOWN_GOOD_JSON")
+    module_name = parse_module_name_from_path(filepath)
+    md: MetaData = {
+        "module_name": module_name,
+        "hash": "",
+        "url": "",
+    }
+    if module_name != "local_module" and known_good_json:
+        md["hash"], md["url"] = parse_info_from_known_good(
+            Path(known_good_json), module_name
+        )
+    return md
 
 
 def parse_testcase_result(testcase: ET.Element) -> tuple[str, str]:
@@ -101,7 +124,7 @@ def read_test_xml_file(file: Path) -> tuple[list[DataOfTestCase], list[str], lis
     missing_prop_tests: list[str] = []
     tree = ET.parse(file)
     root = tree.getroot()
-
+    md = get_metadata_from_test_path(file)
     for testsuite in root.findall("testsuite"):
         for testcase in testsuite.findall("testcase"):
             case_properties = {}
@@ -161,6 +184,7 @@ def read_test_xml_file(file: Path) -> tuple[list[DataOfTestCase], list[str], lis
             # If the is_valid method would return 'False' anyway.
             # I just can't think of it right now, leaving this for future me
             case_properties = parse_properties(case_properties, properties_element)
+            case_properties.update(md)
             test_case = DataOfTestCase.from_dict(case_properties)
             if not test_case.is_valid():
                 missing_prop_tests.append(testname)
@@ -169,6 +193,7 @@ def read_test_xml_file(file: Path) -> tuple[list[DataOfTestCase], list[str], lis
     return test_case_needs, non_prop_tests, missing_prop_tests
 
 
+# /home/maximilianp/score_personal/reference_integration/bazel-testlogs/external/score_docs_as_code+/src/helper_lib/helper_lib_tests/test.xml
 def find_xml_files(dir: Path) -> list[Path]:
     """
     Recursively search all test.xml files inside 'bazel-testlogs'
@@ -183,18 +208,21 @@ def find_xml_files(dir: Path) -> list[Path]:
     for root, _, files in os.walk(dir):
         if test_file_name in files:
             xml_paths.append(Path(os.path.join(root, test_file_name)))
+    print("=========================================")
+    print(xml_paths[0])
+    print("=========================================")
     return xml_paths
 
 
-def find_test_folder(base_path: Path | None = None) -> Path | None:
+def find_test_folder(base_path: Path | None = None) -> tuple[Path | None, Path | None]:
     ws_root = base_path if base_path is not None else find_ws_root()
     assert ws_root is not None
     if os.path.isdir(ws_root / "tests-report"):
-        return ws_root / "tests-report"
+        return ws_root, ws_root / "tests-report"
     if os.path.isdir(ws_root / "bazel-testlogs"):
-        return ws_root / "bazel-testlogs"
+        return ws_root, ws_root / "bazel-testlogs"
     logger.info("could not find tests-report or bazel-testlogs to parse testcases")
-    return None
+    return ws_root, None
 
 
 def run_xml_parser(app: Sphinx, env: BuildEnvironment):
@@ -203,11 +231,19 @@ def run_xml_parser(app: Sphinx, env: BuildEnvironment):
     building testcase needs.
     It gets called from the source_code_linker __init__
     """
-    testlogs_dir = find_test_folder()
+    root_path, testlogs_dir = find_test_folder()
     # early return
     if testlogs_dir is None:
         return
     xml_file_paths = find_xml_files(testlogs_dir)
+    # scl_with_metadata = load_source_code_links_with_metadata_json(
+    #     app.outdir / "score_source_links_metadata.json"
+    # )[0]
+    # metadata: MetaData = {
+    #     "module_name": scl_with_metadata.module_name,
+    #     "hash": scl_with_metadata.hash,
+    #     "url": scl_with_metadata.url,
+    # }
     test_case_needs = build_test_needs_from_files(app, env, xml_file_paths)
     # Saving the test case needs for cache
     store_data_of_test_case_json(
@@ -262,6 +298,10 @@ def construct_and_add_need(app: Sphinx, tn: DataOfTestCase):
     # and either 'Fully' or 'PartiallyVerifies' should not be None here
     assert tn.file is not None
     assert tn.name is not None
+    assert tn.module_name is not None
+    assert tn.hash is not None
+    assert tn.url is not None
+    metadata = ModuleInfo(name=tn.module_name, hash=tn.hash, url=tn.url)
     # IDK if this is ideal or not
     with contextlib.suppress(BaseException):
         _ = add_external_need(
@@ -271,7 +311,7 @@ def construct_and_add_need(app: Sphinx, tn: DataOfTestCase):
             tags="TEST",
             id=f"testcase__{tn.name}_{short_hash(tn.file + tn.name).upper()}",
             name=tn.name,
-            external_url=get_github_link(tn),
+            external_url=get_github_link(metadata, tn),
             fully_verifies=tn.FullyVerifies if tn.FullyVerifies is not None else "",
             partially_verifies=tn.PartiallyVerifies
             if tn.PartiallyVerifies is not None

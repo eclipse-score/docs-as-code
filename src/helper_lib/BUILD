@@ -27,8 +27,7 @@ py_library(
     visibility = ["//visibility:public"],
     deps = [
         "@rules_python//python/runfiles",
-        "@score_docs_as_code//src/extensions/score_source_code_linker:source_code_linker_helpers",
-    ],
+    ] + all_requirements,
 )
 
 score_py_pytest(

@@ -21,9 +21,7 @@ import logging
 import sys
 from pathlib import Path
 
-# from src.extensions.score_source_code_linker.need_source_links import (
-#     store_source_code_links_combined_json,
-# )
+from src.extensions.score_source_code_linker.helpers import parse_info_from_known_good
 
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
@@ -38,17 +36,10 @@ if external => parse thing for module_name => look up known_good json for hash &
 """
 
 
-def parse_info_from_known_good(
-    known_good_json: Path, module_name: str
-) -> tuple[str, str]:
-    with open(known_good_json) as f:
-        kg_json = json.load(f)
-    for category in kg_json["modules"].values():
-        if module_name in category:
-            m = category[module_name]
-            return (m["hash"], m["repo"].removesuffix(".git"))
-    raise KeyError(f"Module {module_name!r} not found in known_good_json.")
 
+def add_needid_to_metaneed_mapping(mapping: dict[str, dict[str, str]], metadata: dict[str, str], needid: str):
+    mapping
+    pass
 
 def main():
     parser = argparse.ArgumentParser(
@@ -76,6 +67,7 @@ def main():
     all_files = [x for x in args.files if "known_good.json" not in str(x)]
 
     merged = []
+    needs_metadata_mapping = {}
     for json_file in all_files:
         with open(json_file) as f:
             data = json.load(f)
@@ -89,11 +81,11 @@ def main():
             # In the case that 'metadata[module_name]' is 'local_module'
             # hash & url are already existing and empty inside of 'metadata'
             # Therefore all 3 keys will be written to needlinks in each branch
+
             for d in data[1:]:
                 d.update(metadata)
             assert isinstance(data, list), repr(data)
-            merged.extend(data[1:])
-
+            merged.extend(data[1:]) 
     with open(args.output, "w") as f:
         json.dump(merged, f, indent=2, ensure_ascii=False)
 
