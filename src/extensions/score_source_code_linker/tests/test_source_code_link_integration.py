@@ -25,6 +25,7 @@ from pytest import TempPathFactory
 from sphinx.testing.util import SphinxTestApp
 from sphinx_needs.data import SphinxNeedsData
 
+from src.extensions.score_source_code_linker.helpers import get_github_link
 from src.extensions.score_source_code_linker.needlinks import NeedLink
 from src.extensions.score_source_code_linker.testlink import (
     DataForTestLink,
@@ -37,8 +38,6 @@ from src.extensions.score_source_code_linker.tests.test_need_source_links import
     SourceCodeLinks_TEST_JSON_Decoder,
 )
 from src.helper_lib import find_ws_root, get_github_base_url
-
-from src.extensions.score_source_code_linker.helpers import  get_github_link
 
 
 @pytest.fixture()

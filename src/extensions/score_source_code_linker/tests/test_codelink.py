@@ -35,6 +35,7 @@ from src.extensions.score_source_code_linker import (
     get_cache_filename,
     group_by_need,
 )
+from src.extensions.score_source_code_linker.helpers import get_github_link
 from src.extensions.score_source_code_linker.needlinks import (
     NeedLink,
     load_source_code_links_json,
@@ -43,7 +44,6 @@ from src.extensions.score_source_code_linker.needlinks import (
 from src.helper_lib import (
     get_current_git_hash,
 )
-from src.extensions.score_source_code_linker.helpers import get_github_link
 
 """
 #          ────────────────ATTENTION───────────────
