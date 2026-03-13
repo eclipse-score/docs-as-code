@@ -42,6 +42,19 @@ class DataForTestLink:
     verify_type: str
     result: str
     result_text: str = ""
+    module_name: str = ""
+    hash: str = ""
+    url: str = ""
+
+    def to_dict_full(self) -> dict[str, str | Path | int]:
+        return asdict(self)
+
+    def to_dict_without_metadata(self) -> dict[str, str | Path | int]:
+        d = asdict(self)
+        d.pop("module_name", None)
+        d.pop("hash", None)
+        d.pop("url", None)
+        return d
 
 
 class DataForTestLink_JSON_Encoder(json.JSONEncoder):
@@ -60,6 +73,9 @@ def DataForTestLink_JSON_Decoder(d: dict[str, Any]) -> DataForTestLink | dict[st
         "line",
         "need",
         "verify_type",
+        "module_name",
+        "hash",
+        "url",
         "result",
         "result_text",
     } <= d.keys():
@@ -68,6 +84,9 @@ def DataForTestLink_JSON_Decoder(d: dict[str, Any]) -> DataForTestLink | dict[st
             file=Path(d["file"]),
             line=d["line"],
             need=d["need"],
+            module_name=d.get("module_name", ""),
+            hash=d.get("hash", ""),
+            url=d.get("url", ""),
             verify_type=d["verify_type"],
             result=d["result"],
             result_text=d["result_text"],
@@ -83,6 +102,9 @@ class DataOfTestCase:
     file: str | None = None
     line: str | None = None
     result: str | None = None  # passed | falied | skipped | disabled
+    module_name: str | None = None
+    hash: str | None = None
+    url: str | None = None
     # Intentionally not snakecase to make dict parsing simple
     TestType: str | None = None
     DerivationTechnique: str | None = None
@@ -98,6 +120,9 @@ class DataOfTestCase:
             file=data.get("file"),
             line=data.get("line"),
             result=data.get("result"),
+            module_name=data.get("module_name"),
+            hash=data.get("hash"),
+            url=data.get("url"),
             TestType=data.get("TestType"),
             DerivationTechnique=data.get("DerivationTechnique"),
             result_text=data.get("result_text"),
@@ -158,6 +183,8 @@ class DataOfTestCase:
         #         and self.TestType is not None
         #         and self.DerivationTechnique is not None
         # ):
+        # Hash & URL are explictily allowed to be empty but not none.
+        # module_name has to be always filled or something went wrong
         fields = [
             x
             for x in self.__dataclass_fields__
@@ -199,6 +226,9 @@ class DataOfTestCase:
             assert self.file is not None
             assert self.line is not None
             assert self.result is not None
+            assert self.module_name is not None
+            assert self.hash is not None
+            assert self.url is not None
             assert self.result_text is not None
             assert self.TestType is not None
             assert self.DerivationTechnique is not None
@@ -212,6 +242,9 @@ class DataOfTestCase:
                     verify_type=verify_type,
                     result=self.result,
                     result_text=self.result_text,
+                    module_name=self.module_name,
+                    hash=self.hash,
+                    url=self.url,
                 )
 
         return list(

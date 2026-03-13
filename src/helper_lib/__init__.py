@@ -17,7 +17,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from runfiles import Runfiles
+from python.runfiles import Runfiles
 from sphinx.config import Config
 from sphinx_needs.logging import get_logger
 

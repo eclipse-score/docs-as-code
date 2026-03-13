@@ -33,6 +33,7 @@ py_binary(
 py_binary(
     name = "merge_sourcelinks",
     srcs = ["merge_sourcelinks.py"],
+    deps= [ "//src/extensions/score_source_code_linker"],
     main = "merge_sourcelinks.py",
     visibility = ["//visibility:public"],
 )

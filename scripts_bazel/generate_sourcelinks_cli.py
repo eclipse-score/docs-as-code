@@ -25,8 +25,10 @@ from pathlib import Path
 from src.extensions.score_source_code_linker.generate_source_code_links_json import (
     _extract_references_from_file,  # pyright: ignore[reportPrivateUsage] TODO: move it out of the extension and into this script
 )
+from src.extensions.score_source_code_linker.helpers import parse_module_name_from_path
 from src.extensions.score_source_code_linker.needlinks import (
-    store_source_code_links_json,
+    MetaData,
+    store_source_code_links_with_metadata_json,
 )
 
 logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -37,13 +39,13 @@ def main():
     parser = argparse.ArgumentParser(
         description="Generate source code links JSON from source files"
     )
-    parser.add_argument(
+    _ = parser.add_argument(
         "--output",
         required=True,
         type=Path,
         help="Output JSON file path",
     )
-    parser.add_argument(
+    _ = parser.add_argument(
         "files",
         nargs="*",
         type=Path,
@@ -53,15 +55,25 @@ def main():
     args = parser.parse_args()
 
     all_need_references = []
+    metadata: MetaData = {
+        "module_name": "",
+        "hash": "",
+        "url": "",
+    }
+    metadata_set = False
     for file_path in args.files:
+        if "known_good.json" not in str(file_path) and not metadata_set:
+            metadata["module_name"] = parse_module_name_from_path(file_path)
+            metadata_set = True
         abs_file_path = file_path.resolve()
         assert abs_file_path.exists(), abs_file_path
         references = _extract_references_from_file(
-            abs_file_path.parent, Path(abs_file_path.name)
+            abs_file_path.parent, Path(abs_file_path.name), file_path
         )
         all_need_references.extend(references)
-
-    store_source_code_links_json(args.output, all_need_references)
+    store_source_code_links_with_metadata_json(
+        file=args.output, metadata=metadata, needlist=all_need_references
+    )
     logger.info(
         f"Found {len(all_need_references)} need references in {len(args.files)} files"
     )

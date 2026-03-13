@@ -21,21 +21,42 @@ import logging
 import sys
 from pathlib import Path
 
+from src.extensions.score_source_code_linker.helpers import parse_info_from_known_good
+
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
 
+
+
+"""
+if bazel-out/k8-fastbuild/bin/external/ in file_path => module is external
+otherwise it's local
+if local => module_name & hash == empty
+if external => parse thing for module_name => look up known_good json for hash & url
+"""
+
+
+
+def add_needid_to_metaneed_mapping(mapping: dict[str, dict[str, str]], metadata: dict[str, str], needid: str):
+    mapping
+    pass
 
 def main():
     parser = argparse.ArgumentParser(
         description="Merge multiple sourcelinks JSON files into one"
     )
-    parser.add_argument(
+    _ = parser.add_argument(
         "--output",
         required=True,
         type=Path,
         help="Output merged JSON file path",
     )
-    parser.add_argument(
+    _ = parser.add_argument(
+        "--known_good",
+        required=True,
+        help="Optional path to a 'known good' JSON file (provided by Bazel).",
+    )
+    _ = parser.add_argument(
         "files",
         nargs="*",
         type=Path,
@@ -43,14 +64,28 @@ def main():
     )
 
     args = parser.parse_args()
+    all_files = [x for x in args.files if "known_good.json" not in str(x)]
 
     merged = []
-    for json_file in args.files:
+    needs_metadata_mapping = {}
+    for json_file in all_files:
         with open(json_file) as f:
             data = json.load(f)
-            assert isinstance(data, list), repr(data)
-            merged.extend(data)
+            metadata = data[0]
+            if metadata["module_name"] and metadata["module_name"] != "local_module":
+                hash, repo = parse_info_from_known_good(
+                    known_good_json=args.known_good, module_name=metadata["module_name"]
+                )
+                metadata["hash"] = hash
+                metadata["url"] = repo
+            # In the case that 'metadata[module_name]' is 'local_module'
+            # hash & url are already existing and empty inside of 'metadata'
+            # Therefore all 3 keys will be written to needlinks in each branch
 
+            for d in data[1:]:
+                d.update(metadata)
+            assert isinstance(data, list), repr(data)
+            merged.extend(data[1:])
     with open(args.output, "w") as f:
         json.dump(merged, f, indent=2, ensure_ascii=False)
 
