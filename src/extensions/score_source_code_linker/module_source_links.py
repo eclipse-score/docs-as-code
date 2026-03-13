@@ -15,7 +15,6 @@
 import json
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from re import M
 from typing import Any
 
 from src.extensions.score_source_code_linker.need_source_links import (

@@ -31,7 +31,6 @@ from src.extensions.score_source_code_linker.needlinks import (
     store_source_code_links_with_metadata_json,
 )
 
-
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
 

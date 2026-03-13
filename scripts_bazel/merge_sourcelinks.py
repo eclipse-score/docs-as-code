@@ -85,7 +85,7 @@ def main():
             for d in data[1:]:
                 d.update(metadata)
             assert isinstance(data, list), repr(data)
-            merged.extend(data[1:]) 
+            merged.extend(data[1:])
     with open(args.output, "w") as f:
         json.dump(merged, f, indent=2, ensure_ascii=False)
 

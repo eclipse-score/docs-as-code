@@ -30,7 +30,6 @@ from typing import Any
 
 from sphinx_needs import logging
 
-
 LOGGER = logging.get_logger(__name__)
 
 

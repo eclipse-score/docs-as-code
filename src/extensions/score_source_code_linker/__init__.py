@@ -34,6 +34,7 @@ from sphinx_needs.need_item import NeedItem
 from src.extensions.score_source_code_linker.generate_source_code_links_json import (
     generate_source_code_links_json,
 )
+from src.extensions.score_source_code_linker.helpers import get_github_link
 from src.extensions.score_source_code_linker.module_source_links import (
     group_needs_by_module,
     load_module_source_links_json,
@@ -60,7 +61,6 @@ from src.helper_lib import (
     find_git_root,
     find_ws_root,
 )
-from src.extensions.score_source_code_linker.helpers import get_github_link
 
 LOGGER = get_logger(__name__)
 # Uncomment this to enable more verbose logging
