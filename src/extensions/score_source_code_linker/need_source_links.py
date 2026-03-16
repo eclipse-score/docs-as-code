@@ -123,9 +123,6 @@ def group_by_need(
 
       {
         "need": "<need_id>",
-        "module_name": <module_name>,
-        "hash": <git hash>,
-        "url": <github base url>,
         "links": {
           "CodeLinks": [NeedLink, NeedLink, ...],
           "TestLinks": [testlink, testlink, ...]

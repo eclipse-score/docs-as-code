@@ -57,7 +57,7 @@ def get_github_link_from_git(
 def get_github_link_from_json(
     metadata: ModuleInfo,
     link: NeedLink | DataForTestLink | DataOfTestCase | None = None,
-):
+) -> str:
     if link is None:
         link = DefaultNeedLink()
     base_url = metadata.url
@@ -67,16 +67,17 @@ def get_github_link_from_json(
 
 def parse_module_name_from_path(path: Path) -> str:
     """
-    Parse out the Module-Name from the filename gotten
-    /home/user/.cache/bazel/aksj37981712/external/score_docs_as_code+/src/tests/testfile.py
-    => score_docs_as_code
+    Parse out the Module-Name from the filename:
+    Combo Example:
+        Path: external/score_docs_as_code+/src/helper_lib/test_helper_lib.py
+        => score_docs_as_code
+    Local:
+        Path: src/helper_lib/test_helper_lib.py
+        => local_module
+
     """
 
     # COMBO BUILD
-    # If external is in the filepath that gets parsed =>
-    # file is in an external module => combo build
-    # Example Path:
-    #   PosixPath('external/score_docs_as_code+/src/helper_lib/test_helper_lib.py'
 
     if str(path).startswith("external/"):
         # This allows for files / folders etc. to have `external` in their name too.
@@ -84,7 +85,6 @@ def parse_module_name_from_path(path: Path) -> str:
         filepath_split = str(module_raw).split("/", maxsplit=1)
         return str(filepath_split[0].removesuffix("+"))
     # We return this when we are in a local build `//:docs` the rest of DaC knows
-    # What to do then if it encounters this module_name
     return "local_module"
 
 

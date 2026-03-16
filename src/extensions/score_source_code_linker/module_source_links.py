@@ -78,7 +78,7 @@ def store_module_source_links_json(
     # After `rm -rf _build` or on clean builds the directory does not exist, so we need
     # to create it
     file.parent.mkdir(exist_ok=True)
-    with open(file, "w") as f:
+    with open(file, "w", encoding="utf-8") as f:
         json.dump(
             source_code_links,
             f,

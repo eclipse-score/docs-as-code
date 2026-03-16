@@ -34,6 +34,7 @@ if local => module_name & hash == empty
 if external => parse thing for module_name => look up known_good json for hash & url
 """
 
+
 def main():
     parser = argparse.ArgumentParser(
         description="Merge multiple sourcelinks JSON files into one"
@@ -63,7 +64,18 @@ def main():
     for json_file in all_files:
         with open(json_file) as f:
             data = json.load(f)
+            # If the file is empty e.g. '[]' there is nothing to parse, we continue
+            if not data:
+                continue
             metadata = data[0]
+            if not isinstance(metadata, dict) or "module_name" not in metadata:
+                logger.warning(
+                    f"Unexpected schema in sourcelinks file '{json_file}': "
+                    "expected first element to be a metadata dict "
+                    "with a 'module_name' key. "
+                )
+                # As we can't deal with bad JSON structure we just skip it
+                continue
             if metadata["module_name"] and metadata["module_name"] != "local_module":
                 hash, repo = parse_info_from_known_good(
                     known_good_json=args.known_good, module_name=metadata["module_name"]
