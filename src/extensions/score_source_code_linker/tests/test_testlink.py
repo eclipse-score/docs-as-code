@@ -1,5 +1,5 @@
 # *******************************************************************************
-# Copyright (c) 2025 Contributors to the Eclipse Foundation
+# Copyright (c) 2025-2026 Contributors to the Eclipse Foundation
 #
 # See the NOTICE file(s) distributed with this work for additional
 # information regarding copyright ownership.
@@ -41,6 +41,10 @@ def test_testlink_serialization_roundtrip():
         verify_type="fully",
         result="passed",
         result_text="All good",
+        # ADAPTED: Added new fields
+        module_name="test_module",
+        hash="abc12345",
+        url="https://github.com/org/repo",
     )
     dumped = json.dumps(link, cls=DataForTestLink_JSON_Encoder)
     loaded = json.loads(dumped, object_hook=DataForTestLink_JSON_Decoder)
@@ -101,6 +105,10 @@ def test_testcaseneed_to_dict_multiple_links():
         result_text="Something went wrong",
         PartiallyVerifies="REQ-1, REQ-2",
         FullyVerifies="REQ-3",
+        # ADAPTED: Added new fields which are now required for valid TestLinks
+        module_name="test_module",
+        hash="hash123",
+        url="http://github.com",
     )
 
     links = case.get_test_links()
@@ -114,6 +122,10 @@ def test_testcaseneed_to_dict_multiple_links():
         assert link.line == 10
         assert link.name == "TC_01"
         assert link.result == "failed"
+        # ADAPTED: Verify new fields are propagated
+        assert link.module_name == "test_module"
+        assert link.hash == "hash123"
+        assert link.url == "http://github.com"
 
 
 @add_test_properties(
@@ -134,6 +146,10 @@ def test_store_and_load_testlinks_roundtrip(tmp_path: Path):
             verify_type="partially",
             result="passed",
             result_text="Looks good",
+            # ADAPTED: Added new fields
+            module_name="mod1",
+            hash="h1",
+            url="u1",
         ),
         DataForTestLink(
             name="L2",
@@ -143,6 +159,10 @@ def test_store_and_load_testlinks_roundtrip(tmp_path: Path):
             verify_type="fully",
             result="failed",
             result_text="Needs work",
+            # ADAPTED: Added new fields
+            module_name="mod2",
+            hash="h2",
+            url="u2",
         ),
     ]
 

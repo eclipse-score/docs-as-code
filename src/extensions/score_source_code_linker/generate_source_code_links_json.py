@@ -57,6 +57,9 @@ def _extract_references_from_file(
         external/score_docs_as_code+/src/extensions/score_source_code_linker/testlink.py
     #FILE PATH NAME:  testlink.py
     """
+    print("ROOT: ", root)
+    print("FILE_PATH: ", file_path)
+    print("FILE_PATH_NAME: ", file_path_name)
     assert root.is_absolute(), "Root path must be absolute"
     assert not file_path_name.is_absolute(), "File path must be relative to the root"
     # assert file_path.is_relative_to(root), (
@@ -130,6 +133,9 @@ def find_all_need_references(search_path: Path) -> list[NeedLink]:
 
     # Use os.walk to have better control over directory traversal
     for file in iterate_files_recursively(search_path):
+        print("Search_path: ", search_path)
+        print("File.name: ", file.name)
+        print("File: ", file)
         references = _extract_references_from_file(search_path,Path(file.name), file)
         all_need_references.extend(references)
 

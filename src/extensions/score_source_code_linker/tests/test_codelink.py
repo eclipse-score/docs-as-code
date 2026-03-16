@@ -1,5 +1,5 @@
 # *******************************************************************************
-# Copyright (c) 2025 Contributors to the Eclipse Foundation
+# Copyright (c) 2025-2026 Contributors to the Eclipse Foundation
 #
 # See the NOTICE file(s) distributed with this work for additional
 # information regarding copyright ownership.
@@ -35,7 +35,6 @@ from src.extensions.score_source_code_linker import (
     get_cache_filename,
     group_by_need,
 )
-from src.extensions.score_source_code_linker.helpers import get_github_link
 from src.extensions.score_source_code_linker.needlinks import (
     NeedLink,
     load_source_code_links_json,
@@ -43,6 +42,10 @@ from src.extensions.score_source_code_linker.needlinks import (
 )
 from src.helper_lib import (
     get_current_git_hash,
+)
+# ADAPTED: Importing from the new generator location
+from src.extensions.score_source_code_linker.helpers import (
+    get_github_link_from_git,
 )
 
 """
@@ -127,6 +130,7 @@ class NeedLinkTestEncoder(json.JSONEncoder):
 
 
 def needlink_test_decoder(d: dict[str, Any]) -> NeedLink | dict[str, Any]:
+    # ADAPTED: Updated to include new optional fields (module_name, hash, url)
     if {"file", "line", "tag", "need", "full_line"} <= d.keys():
         return NeedLink(
             file=Path(d["file"]),
@@ -134,6 +138,9 @@ def needlink_test_decoder(d: dict[str, Any]) -> NeedLink | dict[str, Any]:
             tag=decode_comment(d["tag"]),
             need=d["need"],
             full_line=decode_comment(d["full_line"]),
+            module_name=d.get("module_name", ""),
+            hash=d.get("hash", ""),
+            url=d.get("url", ""),
         )
     # It's something else, pass it on to other decoders
     return d
@@ -347,7 +354,8 @@ def test_get_github_link_with_real_repo(git_repo: Path) -> None:
 
     # Have to change directories in order to ensure that we get the right/any .git file
     os.chdir(Path(git_repo).absolute())
-    result = get_github_link(needlink)
+    # ADAPTED: Using get_github_link_from_git for direct local repo testing
+    result = get_github_link_from_git(needlink)
 
     # Should contain the base URL, hash, file path, and line number
     assert "https://github.com/test-user/test-repo/blob/" in result
@@ -549,7 +557,8 @@ def another_function():
     # Have to change directories in order to ensure that we get the right/any .git file
     os.chdir(Path(git_repo).absolute())
     for needlink in loaded_links:
-        github_link = get_github_link(needlink)
+        # ADAPTED: Using get_github_link_from_git
+        github_link = get_github_link_from_git(needlink)
         assert "https://github.com/test-user/test-repo/blob/" in github_link
         assert f"src/{needlink.file.name}#L{needlink.line}" in github_link
 
@@ -587,5 +596,6 @@ def test_multiple_commits_hash_consistency(git_repo: Path) -> None:
     )
 
     os.chdir(Path(git_repo).absolute())
-    github_link = get_github_link(needlink)
+    # ADAPTED: Using get_github_link_from_git
+    github_link = get_github_link_from_git(needlink)
     assert new_hash in github_link

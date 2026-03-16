@@ -1,5 +1,5 @@
 # *******************************************************************************
-# Copyright (c) 2025 Contributors to the Eclipse Foundation
+# Copyright (c) 2025-2026 Contributors to the Eclipse Foundation
 #
 # See the NOTICE file(s) distributed with this work for additional
 # information regarding copyright ownership.
@@ -20,6 +20,7 @@ import xml.etree.ElementTree as ET
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any
+from unittest.mock import patch
 
 import pytest
 
@@ -262,10 +263,18 @@ def test_parse_properties():
     test_type="requirements-based",
     derivation_technique="requirements-analysis",
 )
+# ADAPTED: Added patching for metadata functions
+@patch("src.extensions.score_source_code_linker.xml_parser.parse_module_name_from_path")
 def test_read_test_xml_file(
+    mock_parse_module: Any,
     tmp_xml_dirs: Callable[..., tuple[Path, Path, Path, Path, Path]],
 ):
     """Ensure a whole pre-defined xml file is parsed correctly"""
+    # ADAPTED: Mock return value to ensure metadata is populated.
+    # 'local_module' triggers the path where hash/url are empty strings,
+    # which is valid but avoids the need to mock parse_info_from_known_good.
+    mock_parse_module.return_value = "local_module"
+
     _: Path
     dir1: Path
     dir2: Path
@@ -276,6 +285,11 @@ def test_read_test_xml_file(
     tcneed = needs1[0]
     assert isinstance(tcneed, DataOfTestCase)
     assert tcneed.result == "failed"
+    # ADAPTED: Verify metadata fields were populated
+    assert tcneed.module_name == "local_module"
+    assert tcneed.hash == ""
+    assert tcneed.url == ""
+
     assert no_props1 == []
     assert missing_props1 == []
 
@@ -287,7 +301,7 @@ def test_read_test_xml_file(
 
     # Extra Properties => Should not cause an error
     needs3, no_props3, missing_props3 = xml_parser.read_test_xml_file(dir3 / "test.xml")
-    assert isinstance(needs1, list) and len(needs1) == 1
+    assert isinstance(needs3, list) and len(needs3) == 1
     tcneed3 = needs3[0]
     assert isinstance(tcneed3, DataOfTestCase)
     assert no_props3 == []
