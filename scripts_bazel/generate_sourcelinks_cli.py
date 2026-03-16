@@ -35,6 +35,22 @@ logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
 
 
+def clean_external_prefix(path: Path) -> Path:
+    """
+    As it can be in combo builds that the path is:
+    `external/score_docs_as_code+/....` or similar
+    We have to remove this prefix from the file
+    before we pass it to the extract function. Otherwise we have
+    this prefix inside the `file` attribute leading to wrong links
+    """
+    if not str(path).startswith("external/"):
+        return path
+    # This allows for files / folders etc. to have `external` in their name too.
+    path_raw = str(path).removeprefix("external/")
+    filepath_split = str(path_raw).split("/", maxsplit=1)
+    return Path("".join(filepath_split[1:]))
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Generate source code links JSON from source files"
@@ -67,8 +83,9 @@ def main():
             metadata_set = True
         abs_file_path = file_path.resolve()
         assert abs_file_path.exists(), abs_file_path
+        clean_path = clean_external_prefix(file_path)
         references = _extract_references_from_file(
-            abs_file_path.parent, Path(abs_file_path.name), file_path
+            abs_file_path.parent, Path(abs_file_path.name), clean_path
         )
         all_need_references.extend(references)
     store_source_code_links_with_metadata_json(

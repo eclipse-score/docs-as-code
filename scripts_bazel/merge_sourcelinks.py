@@ -27,19 +27,12 @@ logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
 
 
-
 """
 if bazel-out/k8-fastbuild/bin/external/ in file_path => module is external
 otherwise it's local
 if local => module_name & hash == empty
 if external => parse thing for module_name => look up known_good json for hash & url
 """
-
-
-
-def add_needid_to_metaneed_mapping(mapping: dict[str, dict[str, str]], metadata: dict[str, str], needid: str):
-    mapping
-    pass
 
 def main():
     parser = argparse.ArgumentParser(
@@ -67,7 +60,6 @@ def main():
     all_files = [x for x in args.files if "known_good.json" not in str(x)]
 
     merged = []
-    needs_metadata_mapping = {}
     for json_file in all_files:
         with open(json_file) as f:
             data = json.load(f)

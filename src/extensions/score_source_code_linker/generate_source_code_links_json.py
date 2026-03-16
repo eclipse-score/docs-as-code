@@ -50,7 +50,13 @@ def _extract_references_from_line(line: str):
 def _extract_references_from_file(
     root: Path, file_path_name: Path, file_path: Path
 ) -> list[NeedLink]:
-    """Scan a single file for template strings and return findings."""
+    """Scan a single file for template strings and return findings.
+    Examples:
+    # ROOT: <local_root>/docs-as-code/src/extensions/score_source_code_linker
+    #FILE PATH:
+        external/score_docs_as_code+/src/extensions/score_source_code_linker/testlink.py
+    #FILE PATH NAME:  testlink.py
+    """
     assert root.is_absolute(), "Root path must be absolute"
     assert not file_path_name.is_absolute(), "File path must be relative to the root"
     # assert file_path.is_relative_to(root), (

@@ -54,6 +54,23 @@ logger.setLevel("DEBUG")
 
 
 def get_metadata_from_test_path(filepath: Path) -> MetaData:
+    """
+    Will parse out the metadata from the testpath.
+    If test is local then the metadata will be:
+
+        "module_name": "local_module",
+        "hash": "",
+        "url": "",
+
+    Else it will parse the module_name e.g. `score_docs_as_code`
+    match this in the known_good_json and grab the accompanying
+    hash, url as well and return metadata like so for example:
+
+          "module_name": "score_docs_as_code",
+          "hash": "c1207676afe6cafd25c35d420e73279a799515d8",
+          "url": "https://github.com/eclipse-score/docs-as-code"
+
+    """
     known_good_json = os.environ.get("KNOWN_GOOD_JSON")
     module_name = parse_module_name_from_path(filepath)
     md: MetaData = {
@@ -193,13 +210,17 @@ def read_test_xml_file(file: Path) -> tuple[list[DataOfTestCase], list[str], lis
     return test_case_needs, non_prop_tests, missing_prop_tests
 
 
-# /home/maximilianp/score_personal/reference_integration/bazel-testlogs/external/score_docs_as_code+/src/helper_lib/helper_lib_tests/test.xml
 def find_xml_files(dir: Path) -> list[Path]:
     """
     Recursively search all test.xml files inside 'bazel-testlogs'
 
     Returns:
         - list[Path] => Paths to all found 'test.xml' files.
+
+    Example combo TestPath for future reference:
+
+    '<local path to folder>/reference_integration/bazel-testlogs
+    /feature_integration_tests/test_cases/fit/test.xml'
     """
 
     test_file_name = "test.xml"
@@ -208,21 +229,19 @@ def find_xml_files(dir: Path) -> list[Path]:
     for root, _, files in os.walk(dir):
         if test_file_name in files:
             xml_paths.append(Path(os.path.join(root, test_file_name)))
-    print("=========================================")
-    print(xml_paths[0])
-    print("=========================================")
+
     return xml_paths
 
 
-def find_test_folder(base_path: Path | None = None) -> tuple[Path | None, Path | None]:
+def find_test_folder(base_path: Path | None = None) -> Path | None:
     ws_root = base_path if base_path is not None else find_ws_root()
     assert ws_root is not None
     if os.path.isdir(ws_root / "tests-report"):
-        return ws_root, ws_root / "tests-report"
+        return ws_root / "tests-report"
     if os.path.isdir(ws_root / "bazel-testlogs"):
-        return ws_root, ws_root / "bazel-testlogs"
+        return ws_root / "bazel-testlogs"
     logger.info("could not find tests-report or bazel-testlogs to parse testcases")
-    return ws_root, None
+    return None
 
 
 def run_xml_parser(app: Sphinx, env: BuildEnvironment):
@@ -231,19 +250,10 @@ def run_xml_parser(app: Sphinx, env: BuildEnvironment):
     building testcase needs.
     It gets called from the source_code_linker __init__
     """
-    root_path, testlogs_dir = find_test_folder()
-    # early return
+    testlogs_dir = find_test_folder()
     if testlogs_dir is None:
         return
     xml_file_paths = find_xml_files(testlogs_dir)
-    # scl_with_metadata = load_source_code_links_with_metadata_json(
-    #     app.outdir / "score_source_links_metadata.json"
-    # )[0]
-    # metadata: MetaData = {
-    #     "module_name": scl_with_metadata.module_name,
-    #     "hash": scl_with_metadata.hash,
-    #     "url": scl_with_metadata.url,
-    # }
     test_case_needs = build_test_needs_from_files(app, env, xml_file_paths)
     # Saving the test case needs for cache
     store_data_of_test_case_json(
@@ -301,6 +311,7 @@ def construct_and_add_need(app: Sphinx, tn: DataOfTestCase):
     assert tn.module_name is not None
     assert tn.hash is not None
     assert tn.url is not None
+    # Have to build metadata here for the gh link func
     metadata = ModuleInfo(name=tn.module_name, hash=tn.hash, url=tn.url)
     # IDK if this is ideal or not
     with contextlib.suppress(BaseException):
