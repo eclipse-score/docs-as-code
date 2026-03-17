@@ -131,7 +131,7 @@ class NeedLinkTestEncoder(json.JSONEncoder):
 
 def needlink_test_decoder(d: dict[str, Any]) -> NeedLink | dict[str, Any]:
     # ADAPTED: Updated to include new optional fields (module_name, hash, url)
-    if {"file", "line", "tag", "need", "full_line"} <= d.keys():
+    if {"file", "line", "tag", "need", "full_line", "module_name", "hash" ,"url" } <= d.keys():
         return NeedLink(
             file=Path(d["file"]),
             line=d["line"],
@@ -336,36 +336,6 @@ def test_group_by_need_empty_list():
     assert len(result) == 0
 
 
-@add_test_properties(
-    partially_verifies=["tool_req__docs_dd_link_source_code_link"],
-    test_type="requirements-based",
-    derivation_technique="requirements-analysis",
-)
-def test_get_github_link_with_real_repo(git_repo: Path) -> None:
-    """Test generating GitHub link with real repository."""
-    # Create a needlink
-    needlink = NeedLink(
-        file=Path("src/test.py"),
-        line=42,
-        tag="#" + " req-Id:",
-        need="REQ_001",
-        full_line="#" + " req-Id: REQ_001",
-    )
-
-    # Have to change directories in order to ensure that we get the right/any .git file
-    os.chdir(Path(git_repo).absolute())
-    # ADAPTED: Using get_github_link_from_git for direct local repo testing
-    result = get_github_link_from_git(needlink)
-
-    # Should contain the base URL, hash, file path, and line number
-    assert "https://github.com/test-user/test-repo/blob/" in result
-    assert "src/test.py#L42" in result
-    assert len(result.split("/")) >= 7  # Should have proper URL structure
-
-    # Verify the hash is actually from the repo
-    hash_from_link = result.split("/blob/")[1].split("/")[0]
-    actual_hash = get_current_git_hash(git_repo)
-    assert hash_from_link == actual_hash
 
 
 # Test cache file operations

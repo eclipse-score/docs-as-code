@@ -24,6 +24,7 @@ class MetaData(TypedDict):
     hash: str
     url: str
 
+
 def is_metadata(x: object) -> TypeGuard[MetaData]:
     # Make this as strict/loose as you want; at minimum, it must be a dict.
     return isinstance(x, dict) and {"module_name", "hash", "url"} <= x.keys()
@@ -38,13 +39,46 @@ class NeedLink:
     tag: str
     need: str
     full_line: str
-    module_name: str = ""
+    module_name: str = "local_module"
     hash: str = ""
     url: str = ""
 
+    # Adding hashing & equality as this is needed to make comparisions.
+    # Since the Dataclass is not 'frozen = true' it isn't automatically hashable
+    def __hash__(self):
+        return hash(
+            (
+                self.file,
+                self.line,
+                self.tag,
+                self.need,
+                self.full_line,
+                self.module_name,
+                self.hash,
+                self.url,
+            )
+        )
+
+    def __eq__(self, other):
+        if not isinstance(other, NeedLink):
+            return NotImplemented
+        return (
+            self.file == other.file
+            and self.line == other.line
+            and self.tag == other.tag
+            and self.need == other.need
+            and self.full_line == other.full_line
+            and self.module_name == other.module_name
+            and self.hash == other.hash
+            and self.url == other.url
+        )
+
+    # Normal 'dictionary conversion'. Converts all fields
     def to_dict_full(self) -> dict[str, str | Path | int]:
         return asdict(self)
 
+    # Drops MetaData fields for saving the Dataclass (saving space in json)
+    # The information is in the 'Module_Source_Link' in the end
     def to_dict_without_metadata(self) -> dict[str, str | Path | int]:
         d = asdict(self)
         d.pop("module_name", None)

@@ -33,7 +33,7 @@ from sphinx_needs import logging
 LOGGER = logging.get_logger(__name__)
 
 
-@dataclass(frozen=True, order=True)
+@dataclass(order=True)
 class DataForTestLink:
     name: str
     file: Path
@@ -42,13 +42,50 @@ class DataForTestLink:
     verify_type: str
     result: str
     result_text: str = ""
-    module_name: str = ""
+    module_name: str = "local_module"
     hash: str = ""
     url: str = ""
 
+    # Adding hashing & equality as this is needed to make comparisions.
+    # Since the Dataclass is not 'frozen = true' it isn't automatically hashable
+    def __hash__(self):
+        return hash(
+            (
+                self.name,
+                str(self.file),
+                self.line,
+                self.need,
+                self.verify_type,
+                self.result,
+                self.result_text,
+                self.module_name,
+                self.hash,
+                self.url,
+            )
+        )
+
+    def __eq__(self, other):
+        if not isinstance(other, DataForTestLink):
+            return NotImplemented
+        return (
+            self.name == other.name
+            and self.file == other.file
+            and self.line == other.line
+            and self.need == other.need
+            and self.verify_type == other.verify_type
+            and self.result == other.result
+            and self.result_text == other.result_text
+            and self.module_name == other.module_name
+            and self.hash == other.hash
+            and self.url == other.url
+        )
+
+    # Normal 'dictionary conversion'. Converts all fields
     def to_dict_full(self) -> dict[str, str | Path | int]:
         return asdict(self)
 
+    # Drops MetaData fields for saving the Dataclass (saving space in json)
+    # The information is in the 'Module_Source_Link' in the end
     def to_dict_without_metadata(self) -> dict[str, str | Path | int]:
         d = asdict(self)
         d.pop("module_name", None)

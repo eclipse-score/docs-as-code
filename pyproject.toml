@@ -67,4 +67,3 @@ filterwarnings = [
 pythonpath = [
     "src/extensions/",
 ]
-basetemp = "./debug_tmp"

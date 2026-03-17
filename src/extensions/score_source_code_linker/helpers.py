@@ -93,6 +93,18 @@ def parse_info_from_known_good(
 ) -> tuple[str, str]:
     with open(known_good_json) as f:
         kg_json = json.load(f)
+
+    #   ───────[ Assert our worldview that has to exist here ]─────
+    assert kg_json, (
+        f"Known good json at: {known_good_json} is empty. This is not allowed"
+    )
+    assert "modules" in kg_json, (
+        f"Known good json at: {known_good_json} is missing the 'modules' key"
+    )
+    assert kg_json["modules"], (
+        f"Known good json at: {known_good_json} has an empty 'modules' dictionary"
+    )
+
     for category in kg_json["modules"].values():
         if module_name in category:
             m = category[module_name]
