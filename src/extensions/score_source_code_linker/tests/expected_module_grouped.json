@@ -13,16 +13,16 @@
             {
               "file": "src/module_a_impl.py",
               "line": 3,
-              "tag": "# req-Id:",
+              "tag": "#-----req-Id:",
               "need": "MOD_REQ_1",
-              "full_line": "# req-Id: MOD_REQ_1"
+              "full_line": "#-----req-Id: MOD_REQ_1"
             },
             {
               "file": "src/module_b_impl.py",
               "line": 3,
-              "tag": "# req-Id:",
+              "tag": "#-----req-Id:",
               "need": "MOD_REQ_1",
-              "full_line": "# req-Id: MOD_REQ_1"
+              "full_line": "#-----req-Id: MOD_REQ_1"
             }
           ],
           "TestLinks": [
@@ -45,9 +45,9 @@
             {
               "file": "src/module_a_impl.py",
               "line": 7,
-              "tag": "# req-Id:",
+              "tag": "#-----req-Id:",
               "need": "MOD_REQ_2",
-              "full_line": "# req-Id: MOD_REQ_2"
+              "full_line": "#-----req-Id: MOD_REQ_2"
             }
           ],
           "TestLinks": []
@@ -60,9 +60,9 @@
             {
               "file": "src/module_b_impl.py",
               "line": 7,
-              "tag": "# req-Id:",
+              "tag": "#-----req-Id:",
               "need": "MOD_REQ_3",
-              "full_line": "# req-Id: MOD_REQ_3"
+              "full_line": "#-----req-Id: MOD_REQ_3"
             }
           ],
           "TestLinks": [

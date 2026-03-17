@@ -12,6 +12,8 @@
 # *******************************************************************************
 from pathlib import Path
 from typing import Any
+import json
+from dataclasses import asdict
 
 import pytest
 
@@ -19,7 +21,6 @@ from src.extensions.score_source_code_linker.module_source_links import (
     ModuleInfo,
     ModuleSourceLinks,
     ModuleSourceLinks_JSON_Decoder,
-    ModuleSourceLinks_JSON_Encoder,
     group_needs_by_module,
     load_module_source_links_json,
     store_module_source_links_json,
@@ -48,15 +49,107 @@ from src.extensions.score_source_code_linker.testlink import DataForTestLink
 #              ╰──────────────────────────────────────────────────────────╯
 
 
+def encode_comment(s: str) -> str:
+    return s.replace(" ", "-----", 1)
+
+
+def decode_comment(s: str) -> str:
+    return s.replace("-----", " ", 1)
+
+
+def SourceCodeLinks_TEST_JSON_Decoder(
+    d: dict[str, Any],
+) -> SourceCodeLinks | dict[str, Any]:
+    if "need" in d and "links" in d:
+        links = d["links"]
+
+        # Decode CodeLinks
+        code_links = []
+        for cl in links.get("CodeLinks", []):
+            # Decode the tag and full_line fields
+            if "tag" in cl:
+                cl["tag"] = decode_comment(cl["tag"])
+            if "full_line" in cl:
+                cl["full_line"] = decode_comment(cl["full_line"])
+            code_links.append(NeedLink(**cl))
+
+        # Decode TestLinks
+        return SourceCodeLinks(
+            need=d["need"],
+            links=NeedSourceLinks(
+                CodeLinks=code_links,
+                TestLinks=[DataForTestLink(**tl) for tl in links.get("TestLinks", [])],
+            ),
+        )
+    return d
+
+
+class ModuleSourceLinks_TEST_JSON_Encoder(json.JSONEncoder):
+    def default(self, o: object) -> str | dict[str, Any]:
+        if isinstance(o, Path):
+            return str(o)
+        # We do not want to save the metadata inside the codelink or testlink
+        # As we save this already in a structure above it
+        # (hash, module_name, url)
+        if isinstance(o, NeedLink | DataForTestLink):
+            d = o.to_dict_without_metadata()
+            tag = d.get("tag", "")
+            full_line = d.get("full_line", "")
+            assert isinstance(tag, str)
+            assert isinstance(full_line, str)
+            d["tag"] = encode_comment(tag)
+            d["full_line"] = encode_comment(full_line)
+            return d
+        # We need to split this up, otherwise the nested
+        # dictionaries won't get split up and we will not
+        # run into the 'to_dict_without_metadata' as
+        # everything will be converted to a normal dictionary
+        if isinstance(o, ModuleSourceLinks):
+            return {
+                "module": asdict(o.module),
+                "needs": o.needs,  # Let the encoder handle the list
+            }
+        if isinstance(o, SourceCodeLinks):
+            return {
+                "need": o.need,
+                "links": o.links,
+            }
+        if isinstance(o, NeedSourceLinks):
+            return {
+                "CodeLinks": o.CodeLinks,
+                "TestLinks": o.TestLinks,
+            }
+        return super().default(o)
+
+
+def ModuleSourceLinks_TEST_JSON_Decoder(
+    d: dict[str, Any],
+) -> ModuleSourceLinks | dict[str, Any]:
+    if "module" in d and "needs" in d:
+        module = d["module"]
+        needs = d["needs"]
+        return ModuleSourceLinks(
+            module=ModuleInfo(
+                name=module.get("name"),
+                hash=module.get("hash"),
+                url=module.get("url"),
+            ),
+            # We know this can only be list[SourceCodeLinks] and nothing else
+            # Therefore => we ignore the type error here
+            needs=[SourceCodeLinks_TEST_JSON_Decoder(need) for need in needs],  # type: ignore
+        )
+    return d
+
+
 def test_json_encoder_removes_metadata_from_needlink():
     """Happy path: NeedLink metadata fields are excluded from JSON output"""
-    encoder = ModuleSourceLinks_JSON_Encoder()
+    encoder = ModuleSourceLinks_TEST_JSON_Encoder()
     needlink = NeedLink(
         file=Path("src/test.py"),
         line=10,
-        tag="# req-Id:",
+        tag="#" + " req-Id:",
         need="REQ_1",
-        full_line="# req-Id: REQ_1",
+        full_line="#" + " req-Id: REQ_1",
         module_name="test_module",
         url="https://github.com/test/repo",
         hash="abc123",
@@ -73,7 +166,7 @@ def test_json_encoder_removes_metadata_from_needlink():
 
 def test_json_encoder_removes_metadata_from_testlink():
     """Happy path: DataForTestLink metadata fields are excluded from JSON output"""
-    encoder = ModuleSourceLinks_JSON_Encoder()
+    encoder = ModuleSourceLinks_TEST_JSON_Encoder()
     testlink = DataForTestLink(
         name="test_something",
         file=Path("src/test_file.py"),
@@ -88,7 +181,6 @@ def test_json_encoder_removes_metadata_from_testlink():
     )
     result = encoder.default(testlink)
 
-
     assert isinstance(result, dict)
     assert "module_name" not in result
     assert "url" not in result
@@ -99,7 +191,7 @@ def test_json_encoder_removes_metadata_from_testlink():
 
 def test_json_encoder_converts_path_to_string():
     """Happy path: Path objects are converted to strings"""
-    encoder = ModuleSourceLinks_JSON_Encoder()
+    encoder = ModuleSourceLinks_TEST_JSON_Encoder()
     result = encoder.default(Path("/test/path/file.py"))
     assert result == "/test/path/file.py"
     assert isinstance(result, str)
@@ -112,7 +204,7 @@ def test_json_encoder_converts_path_to_string():
 
 def test_json_decoder_reconstructs_module_source_links():
     """Happy path: Valid JSON dict is decoded into ModuleSourceLinks"""
-    json_data: dict[str,Any] = {
+    json_data: dict[str, Any] = {
         "module": {"name": "test_module", "hash": "hash1", "url": "url1"},
         "needs": [
             {
@@ -148,9 +240,9 @@ def test_store_and_load_roundtrip(tmp_path: Path):
     needlink = NeedLink(
         file=Path("src/test.py"),
         line=10,
-        tag="# req-Id:",
+        tag="#" + " req-Id:",
         need="REQ_1",
-        full_line="# req-Id: REQ_1",
+        full_line="#" + " req-Id: REQ_1",
         module_name="test_module",
         url="url1",
         hash="hash1",
@@ -219,9 +311,9 @@ def test_group_needs_single_module_with_codelinks():
     needlink1 = NeedLink(
         file=Path("src/file1.py"),
         line=10,
-        tag="# req-Id:",
+        tag="#" + " req-Id:",
         need="REQ_1",
-        full_line="# req-Id: REQ_1",
+        full_line="#" + " req-Id: REQ_1",
         module_name="shared_module",
         url="https://github.com/test/repo",
         hash="hash1",
@@ -229,9 +321,9 @@ def test_group_needs_single_module_with_codelinks():
     needlink2 = NeedLink(
         file=Path("src/file2.py"),
         line=20,
-        tag="# req-Id:",
+        tag="#" + " req-Id:",
         need="REQ_2",
-        full_line="# req-Id: REQ_2",
+        full_line="#" + " req-Id: REQ_2",
         module_name="shared_module",
         url="https://github.com/test/repo",
         hash="hash1",
@@ -259,9 +351,9 @@ def test_group_needs_multiple_modules():
     needlink_a = NeedLink(
         file=Path("src/a.py"),
         line=10,
-        tag="# req-Id:",
+        tag="#" + " req-Id:",
         need="REQ_1",
-        full_line="# req-Id: REQ_1",
+        full_line="#" + " req-Id: REQ_1",
         module_name="module_a",
         url="https://github.com/a/repo",
         hash="hash_a",
@@ -269,9 +361,9 @@ def test_group_needs_multiple_modules():
     needlink_b = NeedLink(
         file=Path("src/b.py"),
         line=20,
-        tag="# req-Id:",
+        tag="#" + " req-Id:",
         need="REQ_2",
-        full_line="# req-Id: REQ_2",
+        full_line="#" + " req-Id: REQ_2",
         module_name="module_b",
         url="https://github.com/b/repo",
         hash="hash_b",
@@ -409,9 +501,9 @@ def test_group_needs_skips_needs_without_links():
                 NeedLink(
                     file=Path("src/test.py"),
                     line=10,
-                    tag="# req-Id:",
+                    tag="#" + " req-Id:",
                     need="REQ_1",
-                    full_line="# req-Id: REQ_1",
+                    full_line="#" + " req-Id: REQ_1",
                     module_name="module_a",
                     url="url1",
                     hash="hash1",
@@ -429,7 +521,7 @@ def test_group_needs_skips_needs_without_links():
 
     assert len(result) == 1
     assert result[0].needs[0].need == "REQ_1"
-    assert result[0].needs[0].links.CodeLinks[0].full_line == "# req-Id: REQ_1"
+    assert result[0].needs[0].links.CodeLinks[0].full_line == "#" + " req-Id: REQ_1"
 
 
 def test_group_needs_mixed_codelinks_and_testlinks():
@@ -437,9 +529,9 @@ def test_group_needs_mixed_codelinks_and_testlinks():
     needlink = NeedLink(
         file=Path("src/impl.py"),
         line=5,
-        tag="# req-Id:",
+        tag="#" + " req-Id:",
         need="REQ_1",
-        full_line="# req-Id: REQ_1",
+        full_line="#" + " req-Id: REQ_1",
         module_name="module_a",
         url="https://github.com/test/repo",
         hash="hash1",

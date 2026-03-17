@@ -39,7 +39,7 @@ class ModuleSourceLinks:
     needs: list[SourceCodeLinks] = field(default_factory=list)
 
 
-class ModuleSourceLinks_JSON_Encoder(json.JSONEncoder):
+class ModuleSourceLinks_TEST_JSON_Encoder(json.JSONEncoder):
     def default(self, o: object) -> str | dict[str, Any]:
         if isinstance(o, Path):
             return str(o)
@@ -99,7 +99,7 @@ def store_module_source_links_json(
         json.dump(
             source_code_links,
             f,
-            cls=ModuleSourceLinks_JSON_Encoder,
+            cls=ModuleSourceLinks_TEST_JSON_Encoder,
             indent=2,
             ensure_ascii=False,
         )

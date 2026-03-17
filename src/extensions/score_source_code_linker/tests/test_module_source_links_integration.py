@@ -105,11 +105,11 @@ def create_demo_files(sphinx_base_dir: Path, git_repo_setup: Path):
 def make_module_a_source():
     return """
 # Module A implementation
-# req-Id: MOD_REQ_1
+# """+"""req-Id: MOD_REQ_1
 def module_a_function():
     pass
 
-# req-Id: MOD_REQ_2
+# """+"""req-Id: MOD_REQ_2
 class ModuleAClass:
     pass
 """
@@ -118,11 +118,11 @@ class ModuleAClass:
 def make_module_b_source():
     return """
 # Module B implementation
-# req-Id: MOD_REQ_1
+# """+"""req-Id: MOD_REQ_1
 def module_b_function():
     pass
 
-# req-Id: MOD_REQ_3
+# """+"""req-Id: MOD_REQ_3
 def another_module_b_function():
     pass
 """

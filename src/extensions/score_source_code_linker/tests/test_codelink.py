@@ -564,9 +564,9 @@ def test_needlink_to_dict_without_metadata():
     needlink = NeedLink(
         file=Path("src/test.py"),
         line=10,
-        tag="# req-Id:",
+        tag="#" + " req-Id:",
         need="REQ_1",
-        full_line="# req-Id: REQ_1",
+        full_line="#"+" req-Id: REQ_1",
         module_name="test_module",
         url="https://github.com/test/repo",
         hash="abc123",
@@ -585,9 +585,9 @@ def test_needlink_to_dict_full():
     needlink = NeedLink(
         file=Path("src/test.py"),
         line=10,
-        tag="# req-Id:",
+        tag="#" + " req-Id:",
         need="REQ_1",
-        full_line="# req-Id: REQ_1",
+        full_line="#" + " req-Id: REQ_1",
         module_name="test_module",
         url="https://github.com/test/repo",
         hash="abc123",
@@ -609,9 +609,9 @@ def test_needlink_encoder_includes_metadata():
     needlink = NeedLink(
         file=Path("src/test.py"),
         line=10,
-        tag="# req-Id:",
+        tag="#" + " req-Id:",
         need="REQ_1",
-        full_line="# req-Id: REQ_1",
+        full_line="#" + " req-Id: REQ_1",
         module_name="test_module",
         url="https://github.com/test/repo",
         hash="abc123",
@@ -634,9 +634,9 @@ def test_needlink_decoder_with_all_fields():
     json_data: dict[str, Any] = {
         "file": "src/test.py",
         "line": 10,
-        "tag": "# req-Id:",
+        "tag":"#" + " req-Id:",
         "need": "REQ_1",
-        "full_line": "# req-Id: REQ_1",
+        "full_line": "#" +" req-Id: REQ_1",
         "module_name": "test_module",
         "hash": "abc123",
         "url": "https://github.com/test/repo",
@@ -665,9 +665,9 @@ def test_store_and_load_source_code_links(tmp_path: Path):
         NeedLink(
             file=Path("src/impl.py"),
             line=42,
-            tag="# req-Id:",
+            tag="#" + " req-Id:",
             need="REQ_1",
-            full_line="# req-Id: REQ_1",
+            full_line="#" + " req-Id: REQ_1",
             module_name="mod",
             url="url",
             hash="hash",
@@ -715,9 +715,9 @@ def test_store_and_load_with_metadata(tmp_path: Path):
         NeedLink(
             file=Path("src/impl.py"),
             line=10,
-            tag="# req-Id:",
+            tag="#" + " req-Id:",
             need="REQ_1",
-            full_line="# req-Id: REQ_1",
+            full_line="#"+" req-Id: REQ_1",
             module_name="",  # Will be filled from metadata
             url="",
             hash="",
@@ -725,9 +725,9 @@ def test_store_and_load_with_metadata(tmp_path: Path):
         NeedLink(
             file=Path("src/impl2.py"),
             line=20,
-            tag="# req-Id:",
+            tag="#" + " req-Id:",
             need="REQ_2",
-            full_line="# req-Id: REQ_2",
+            full_line="#"+" req-Id: REQ_2",
             module_name="",
             url="",
             hash="",
@@ -753,9 +753,9 @@ def test_load_with_metadata_missing_metadata_dict(tmp_path: Path):
         NeedLink(
             file=Path("src/test.py"),
             line=1,
-            tag="# req-Id:",
+            tag="#" + " req-Id:",
             need="REQ_1",
-            full_line="# req-Id: REQ_1",
+            full_line="#" +" req-Id: REQ_1",
         )
     ]
 
@@ -795,9 +795,9 @@ def test_load_resolves_relative_path_with_env_var(
         NeedLink(
             file=Path("src/test.py"),
             line=1,
-            tag="# req-Id:",
+            tag="#"+" req-Id:",
             need="REQ_1",
-            full_line="# req-Id: REQ_1",
+            full_line="#"+" req-Id: REQ_1",
         )
     ]
 
@@ -829,9 +829,9 @@ def test_load_with_metadata_resolves_relative_path(
         NeedLink(
             file=Path("src/test.py"),
             line=1,
-            tag="# req-Id:",
+            tag="#"+"  req-Id:",
             need="REQ_1",
-            full_line="# req-Id: REQ_1",
+            full_line="#"+" req-Id: REQ_1",
         )
     ]
 
@@ -854,9 +854,9 @@ def test_roundtrip_standard_format(tmp_path: Path):
         NeedLink(
             file=Path("src/file1.py"),
             line=10,
-            tag="# req-Id:",
+            tag="#"+" req-Id:",
             need="REQ_A",
-            full_line="# req-Id: REQ_A",
+            full_line="#"+" req-Id: REQ_A",
             module_name="mod_a",
             url="url_a",
             hash="hash_a",
@@ -864,9 +864,9 @@ def test_roundtrip_standard_format(tmp_path: Path):
         NeedLink(
             file=Path("src/file2.py"),
             line=20,
-            tag="# req-Id:",
+            tag="#"+" req-Id:",
             need="REQ_B",
-            full_line="# req-Id: REQ_B",
+            full_line="#"+" req-Id: REQ_B",
             module_name="mod_b",
             url="url_b",
             hash="hash_b",
@@ -893,16 +893,16 @@ def test_roundtrip_metadata_format_applies_metadata(tmp_path: Path):
         NeedLink(
             file=Path("src/f1.py"),
             line=5,
-            tag="# req-Id:",
+            tag="#"+" req-Id:",
             need="R1",
-            full_line="# req-Id: R1",
+            full_line="#"+" req-Id: R1",
         ),
         NeedLink(
             file=Path("src/f2.py"),
             line=15,
-            tag="# req-Id:",
+            tag="#"+" req-Id:",
             need="R2",
-            full_line="# req-Id: R2",
+            full_line="#"+" req-Id: R2",
         ),
     ]
 
@@ -940,9 +940,9 @@ def test_json_format_with_metadata_has_separate_dict(tmp_path: Path):
     needlink = NeedLink(
         file=Path("src/test.py"),
         line=1,
-        tag="# req-Id:",
+        tag="#"+" req-Id:",
         need="REQ_1",
-        full_line="# req-Id: REQ_1",
+        full_line="#"+" req-Id: REQ_1",
     )
 
     test_file = tmp_path / "metadata_format.json"
@@ -967,9 +967,9 @@ def test_needlink_equality_same_values():
     link1 = NeedLink(
         file=Path("src/test.py"),
         line=10,
-        tag="# req-Id:",
+        tag="#"+" req-Id:",
         need="REQ_1",
-        full_line="# req-Id: REQ_1",
+        full_line="#"+" req-Id: REQ_1",
         module_name="mod",
         url="url",
         hash="hash",
@@ -977,9 +977,9 @@ def test_needlink_equality_same_values():
     link2 = NeedLink(
         file=Path("src/test.py"),
         line=10,
-        tag="# req-Id:",
+        tag="#"+" req-Id:",
         need="REQ_1",
-        full_line="# req-Id: REQ_1",
+        full_line="#"+" req-Id: REQ_1",
         module_name="mod",
         url="url",
         hash="hash",
@@ -994,16 +994,16 @@ def test_needlink_inequality_different_values():
     link1 = NeedLink(
         file=Path("src/test.py"),
         line=10,
-        tag="# req-Id:",
+        tag="#"+" req-Id:",
         need="REQ_1",
-        full_line="# req-Id: REQ_1",
+        full_line="#"+" req-Id: REQ_1",
     )
     link2 = NeedLink(
         file=Path("src/test.py"),
         line=20,  # Different line
-        tag="# req-Id:",
+        tag="#"+" req-Id:",
         need="REQ_1",
-        full_line="# req-Id: REQ_1",
+        full_line="#"+" req-Id: REQ_1",
     )
 
     assert link1 != link2
