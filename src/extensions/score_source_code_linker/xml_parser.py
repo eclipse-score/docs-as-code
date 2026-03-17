@@ -69,12 +69,12 @@ def clean_test_file_name(raw_filepath: Path) -> Path:
     """
     if "bazel-testlogs" in str(raw_filepath):
         return Path(str(raw_filepath).split("bazel-testlogs/")[-1])
-    elif "tests-report" in str(raw_filepath):
+    if "tests-report" in str(raw_filepath):
         return Path(str(raw_filepath).split("test-report/")[-1])
-    else:
-        raise ValueError(
-            f"Filepath does not have 'bazel-testlogs' nor 'test-report'. Filepath: {raw_filepath}"
-        )
+    raise ValueError(
+        "Filepath does not have 'bazel-testlogs' nor "
+        f"'test-report'. Filepath: {raw_filepath}"
+    )
 
 
 def get_metadata_from_test_path(raw_filepath: Path) -> MetaData:
@@ -101,15 +101,15 @@ def get_metadata_from_test_path(raw_filepath: Path) -> MetaData:
     src/extensions/score_any_folder/score_any_folder_tests/test.xml
 
     For local builds:
-    <root path>/bazel-testlogs/src/extensions/score_any_folder/score_any_folder_tests/test.xml
+    <root path>/bazel-testlogs/src/ext/score_.../score_any_folder_tests/test.xml
 
     Therefore will we 'clean' it before passing it to the parse_module func.
     Removing everything up to and including 'bazel-testlogs' or 'tests-report'
     """
-    #print("THIs IS FILEPATH IN GET MD FROm TestPATH: ", raw_filepath)
+    # print("THIs IS FILEPATH IN GET MD FROm TestPATH: ", raw_filepath)
     known_good_json = os.environ.get("KNOWN_GOOD_JSON")
     clean_filepath = clean_test_file_name(raw_filepath)
-    #print(f"This is the cleaned filepath: {clean_filepath}")
+    # print(f"This is the cleaned filepath: {clean_filepath}")
     module_name = parse_module_name_from_path(clean_filepath)
     md: MetaData = {
         "module_name": module_name,
