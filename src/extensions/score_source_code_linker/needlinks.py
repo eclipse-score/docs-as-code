@@ -59,7 +59,7 @@ class NeedLink:
             )
         )
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any):
         if not isinstance(other, NeedLink):
             return NotImplemented
         return (
@@ -140,7 +140,7 @@ def store_source_code_links_with_metadata_json(
     """
     payload: list[object] = [metadata, *needlist]
 
-    # After `rm -rf _build` or on clean builds the directory does not exist, 
+    # After `rm -rf _build` or on clean builds the directory does not exist,
     # so we need to create it. We create any folder that might be missing
     file.parent.mkdir(exist_ok=True,parents=True)
     with open(file, "w", encoding="utf-8") as f:
@@ -153,7 +153,7 @@ def store_source_code_links_json(file: Path, needlist: list[NeedLink]) -> None:
       [ needlink1, needlink2, ... ]
     """
 
-    # After `rm -rf _build` or on clean builds the directory does not exist, 
+    # After `rm -rf _build` or on clean builds the directory does not exist,
     # so we need to create it. We create any folder that might be missing
     file.parent.mkdir(exist_ok=True, parents=True)
     with open(file, "w", encoding="utf-8") as f:

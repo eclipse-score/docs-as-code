@@ -64,7 +64,7 @@ class DataForTestLink:
             )
         )
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any):
         if not isinstance(other, DataForTestLink):
             return NotImplemented
         return (

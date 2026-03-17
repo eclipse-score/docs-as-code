@@ -10,8 +10,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-import json
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -30,7 +30,6 @@ from src.extensions.score_source_code_linker.need_source_links import (
 )
 from src.extensions.score_source_code_linker.needlinks import NeedLink
 from src.extensions.score_source_code_linker.testlink import DataForTestLink
-
 
 """
                         ────────────────INFORMATION───────────────
@@ -64,6 +63,7 @@ def test_json_encoder_removes_metadata_from_needlink():
     )
     result = encoder.default(needlink)
 
+    assert isinstance(result, dict)
     assert "module_name" not in result
     assert "url" not in result
     assert "hash" not in result
@@ -88,6 +88,8 @@ def test_json_encoder_removes_metadata_from_testlink():
     )
     result = encoder.default(testlink)
 
+
+    assert isinstance(result, dict)
     assert "module_name" not in result
     assert "url" not in result
     assert "hash" not in result
@@ -110,7 +112,7 @@ def test_json_encoder_converts_path_to_string():
 
 def test_json_decoder_reconstructs_module_source_links():
     """Happy path: Valid JSON dict is decoded into ModuleSourceLinks"""
-    json_data = {
+    json_data: dict[str,Any] = {
         "module": {"name": "test_module", "hash": "hash1", "url": "url1"},
         "needs": [
             {

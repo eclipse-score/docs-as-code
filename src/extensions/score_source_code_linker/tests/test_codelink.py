@@ -17,7 +17,6 @@
 
 import json
 import os
-from pkgutil import ModuleInfo
 import subprocess
 import tempfile
 from collections.abc import Generator
@@ -29,8 +28,6 @@ import pytest
 
 # S-CORE plugin to allow for properties/attributes in xml
 # Enables Testlinking
-from attribute_plugin import add_test_properties  # type: ignore[import-untyped]
-
 from sphinx_needs.data import NeedsInfoType, NeedsMutable
 from sphinx_needs.need_item import (
     NeedItem,
@@ -43,11 +40,11 @@ from src.extensions.score_source_code_linker import (
     get_cache_filename,
     group_by_need,
 )
-
+from src.extensions.score_source_code_linker.helpers import (
+    get_github_link,
+)
 from src.extensions.score_source_code_linker.module_source_links import ModuleInfo
-
 from src.extensions.score_source_code_linker.needlinks import (
-    DefaultNeedLink,
     MetaData,
     NeedLink,
     NeedLinkEncoder,
@@ -60,11 +57,6 @@ from src.extensions.score_source_code_linker.needlinks import (
 )
 from src.helper_lib import (
     get_current_git_hash,
-)
-
-from src.extensions.score_source_code_linker.helpers import (
-    get_github_link_from_git,
-    get_github_link,
 )
 
 
@@ -626,6 +618,7 @@ def test_needlink_encoder_includes_metadata():
     )
     result = encoder.default(needlink)
 
+    assert isinstance(result, dict)
     assert result["module_name"] == "test_module"
     assert result["hash"] == "abc123"
     assert result["url"] == "https://github.com/test/repo"
@@ -638,7 +631,7 @@ def test_needlink_encoder_includes_metadata():
 
 def test_needlink_decoder_with_all_fields():
     """Decoder reconstructs NeedLink with all fields"""
-    json_data = {
+    json_data: dict[str, Any] = {
         "file": "src/test.py",
         "line": 10,
         "tag": "# req-Id:",
@@ -791,7 +784,9 @@ def test_load_with_metadata_invalid_items_after_metadata(tmp_path: Path):
 #            ────────────────[ File Path Resolution Tests ]────────────────
 
 
-def test_load_resolves_relative_path_with_env_var(tmp_path: Path, monkeypatch):
+def test_load_resolves_relative_path_with_env_var(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
     """Edge case: Relative path is resolved using BUILD_WORKSPACE_DIRECTORY"""
     workspace = tmp_path / "workspace"
     workspace.mkdir()
@@ -818,7 +813,9 @@ def test_load_resolves_relative_path_with_env_var(tmp_path: Path, monkeypatch):
     assert loaded[0].need == "REQ_1"
 
 
-def test_load_with_metadata_resolves_relative_path(tmp_path: Path, monkeypatch):
+def test_load_with_metadata_resolves_relative_path(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
     """Edge case: load_with_metadata resolves relative paths using env var"""
     workspace = tmp_path / "workspace"
     workspace.mkdir()

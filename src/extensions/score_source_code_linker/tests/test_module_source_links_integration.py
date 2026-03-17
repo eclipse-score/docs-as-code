@@ -27,8 +27,6 @@ from src.extensions.score_source_code_linker.module_source_links import (
     ModuleSourceLinks_JSON_Decoder,
     load_module_source_links_json,
 )
-from src.helper_lib import find_ws_root
-
 
 """
                         ────────────────INFORMATION───────────────
@@ -131,6 +129,7 @@ def another_module_b_function():
 
 
 def make_test_xml():
+    # ruff: noqa: E501 (start)
     return """
 <testsuites>
   <testsuite name="ModuleTests" tests="2" failures="0" errors="0" time="0.123">
@@ -151,6 +150,7 @@ def make_test_xml():
   </testsuite>
 </testsuites>
 """
+    # ruff: noqa: E501 (finish)
 
 
 def basic_conf():
@@ -330,7 +330,10 @@ def test_module_cache_json_format(
     git_repo_setup: Path,
     create_demo_files: None,
 ):
-    """Edge case: Module cache JSON has correct structure and excludes metadata from links"""
+    """
+    Module cache JSON has correct
+    structure and excludes metadata from links
+    """
     app = sphinx_app_setup()
     try:
         os.environ["BUILD_WORKSPACE_DIRECTORY"] = str(sphinx_base_dir)
@@ -356,18 +359,17 @@ def test_module_cache_json_format(
         # Check that needlinks don't have metadata
         if first_module["needs"]:
             first_need = first_module["needs"][0]
-            if "links" in first_need:
-                if first_need["links"].get("CodeLinks"):
-                    codelink = first_need["links"]["CodeLinks"][0]
-                    assert "module_name" not in codelink, (
-                        "CodeLinks should not contain module_name metadata"
-                    )
-                    assert "hash" not in codelink, (
-                        "CodeLinks should not contain hash metadata"
-                    )
-                    assert "url" not in codelink, (
-                        "CodeLinks should not contain url metadata"
-                    )
+            if "links" in first_need and first_need["links"].get("CodeLinks"):
+                codelink = first_need["links"]["CodeLinks"][0]
+                assert "module_name" not in codelink, (
+                    "CodeLinks should not contain module_name metadata"
+                )
+                assert "hash" not in codelink, (
+                    "CodeLinks should not contain hash metadata"
+                )
+                assert "url" not in codelink, (
+                    "CodeLinks should not contain url metadata"
+                )
 
     finally:
         app.cleanup()

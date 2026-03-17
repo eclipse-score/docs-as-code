@@ -40,7 +40,7 @@ class ModuleSourceLinks:
 
 
 class ModuleSourceLinks_JSON_Encoder(json.JSONEncoder):
-    def default(self, o: object):
+    def default(self, o: object) -> str | dict[str, Any]:
         if isinstance(o, Path):
             return str(o)
         # We do not want to save the metadata inside the codelink or testlink
@@ -48,9 +48,9 @@ class ModuleSourceLinks_JSON_Encoder(json.JSONEncoder):
         # (hash, module_name, url)
         if isinstance(o, NeedLink | DataForTestLink):
             return o.to_dict_without_metadata()
-        # We need to split this up, otherwise the nested 
-        # dictionaries won't get split up and we will not 
-        # run into the 'to_dict_without_metadata' as 
+        # We need to split this up, otherwise the nested
+        # dictionaries won't get split up and we will not
+        # run into the 'to_dict_without_metadata' as
         # everything will be converted to a normal dictionary
         if isinstance(o, ModuleSourceLinks):
             return {
@@ -92,7 +92,7 @@ def ModuleSourceLinks_JSON_Decoder(
 def store_module_source_links_json(
     file: Path, source_code_links: list[ModuleSourceLinks]
 ):
-    # After `rm -rf _build` or on clean builds the directory does not exist, 
+    # After `rm -rf _build` or on clean builds the directory does not exist,
     # so we need to create it. We create any folder that might be missing
     file.parent.mkdir(exist_ok=True, parents=True)
     with open(file, "w") as f:

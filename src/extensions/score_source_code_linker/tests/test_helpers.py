@@ -12,16 +12,12 @@
 # *******************************************************************************
 import json
 import os
-from pathlib import Path
+import subprocess
 import tempfile
 from collections.abc import Generator
+from pathlib import Path
 
 import pytest
-import subprocess
-
-from src.helper_lib import get_current_git_hash 
-from src.extensions.score_source_code_linker.module_source_links import ModuleInfo
-from src.extensions.score_source_code_linker.needlinks import DefaultNeedLink
 
 from src.extensions.score_source_code_linker.helpers import (
     get_github_link,
@@ -29,7 +25,9 @@ from src.extensions.score_source_code_linker.helpers import (
     parse_info_from_known_good,
     parse_module_name_from_path,
 )
-
+from src.extensions.score_source_code_linker.module_source_links import ModuleInfo
+from src.extensions.score_source_code_linker.needlinks import DefaultNeedLink
+from src.helper_lib import get_current_git_hash
 
 #              ╭──────────────────────────────────────────────────────────╮
 #              │          Tests for parse_module_name_from_path           │

@@ -17,6 +17,7 @@
 
 import json
 from pathlib import Path
+
 import pytest
 
 # This depends on the `attribute_plugin` in our tooling repository
@@ -27,12 +28,12 @@ from src.extensions.score_source_code_linker.testlink import (
     DataForTestLink_JSON_Decoder,
     DataForTestLink_JSON_Encoder,
     DataOfTestCase,
-    load_test_xml_parsed_json,
-    store_test_xml_parsed_json,
-    store_data_of_test_case_json,
-    load_data_of_test_case_json,
-    DataOfTestCase_JSON_Encoder,
     DataOfTestCase_JSON_Decoder,
+    DataOfTestCase_JSON_Encoder,
+    load_data_of_test_case_json,
+    load_test_xml_parsed_json,
+    store_data_of_test_case_json,
+    store_test_xml_parsed_json,
 )
 
 

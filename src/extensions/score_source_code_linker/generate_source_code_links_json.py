@@ -19,7 +19,6 @@ parse everything on every run.
 
 import os
 from pathlib import Path
-import subprocess
 
 from sphinx_needs.logging import get_logger
 
