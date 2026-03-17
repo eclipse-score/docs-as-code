@@ -53,7 +53,31 @@ logger = logging.get_logger(__name__)
 logger.setLevel("DEBUG")
 
 
-def get_metadata_from_test_path(filepath: Path) -> MetaData:
+def clean_test_file_name(raw_filepath: Path) -> Path:
+    """
+    incoming path:
+    `local`
+        <root>/docs-as-code/bazel-testlogs/src/extensions/score_any_folder/score_any_folder_tests/test.xml
+    `combo`
+        <root>/bazel-testlogs/external/score_docs_as_code+/src/extensions/score_any_folder/score_any_folder_tests/test.xml
+
+    outgoing path:
+    `local`
+        src/extensions/score_any_folder/score_any_folder_tests/test.xml
+    `combo`
+        external/score_docs_as_code+/src/extensions/score_any_folder/score_any_folder_tests/test.xml
+    """
+    if "bazel-testlogs" in str(raw_filepath):
+        return Path(str(raw_filepath).split("bazel-testlogs/")[-1])
+    elif "tests-report" in str(raw_filepath):
+        return Path(str(raw_filepath).split("test-report/")[-1])
+    else:
+        raise ValueError(
+            f"Filepath does not have 'bazel-testlogs' nor 'test-report'. Filepath: {raw_filepath}"
+        )
+
+
+def get_metadata_from_test_path(raw_filepath: Path) -> MetaData:
     """
     Will parse out the metadata from the testpath.
     If test is local then the metadata will be:
@@ -70,9 +94,23 @@ def get_metadata_from_test_path(filepath: Path) -> MetaData:
           "hash": "c1207676afe6cafd25c35d420e73279a799515d8",
           "url": "https://github.com/eclipse-score/docs-as-code"
 
+    The file name passed into here is:
+
+    For combo builds: something like:
+    <root path>/bazel-testlogs/external/score_docs_as_code+/
+    src/extensions/score_any_folder/score_any_folder_tests/test.xml
+
+    For local builds:
+    <root path>/bazel-testlogs/src/extensions/score_any_folder/score_any_folder_tests/test.xml
+
+    Therefore will we 'clean' it before passing it to the parse_module func.
+    Removing everything up to and including 'bazel-testlogs' or 'tests-report'
     """
+    #print("THIs IS FILEPATH IN GET MD FROm TestPATH: ", raw_filepath)
     known_good_json = os.environ.get("KNOWN_GOOD_JSON")
-    module_name = parse_module_name_from_path(filepath)
+    clean_filepath = clean_test_file_name(raw_filepath)
+    #print(f"This is the cleaned filepath: {clean_filepath}")
+    module_name = parse_module_name_from_path(clean_filepath)
     md: MetaData = {
         "module_name": module_name,
         "hash": "",
