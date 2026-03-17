@@ -82,9 +82,9 @@ def SourceCodeLinks_JSON_Decoder(d: dict[str, Any]) -> SourceCodeLinks | dict[st
 def store_source_code_links_combined_json(
     file: Path, source_code_links: list[SourceCodeLinks]
 ):
-    # After `rm -rf _build` or on clean builds the directory does not exist, so we need
-    # to create it
-    file.parent.mkdir(exist_ok=True)
+    # After `rm -rf _build` or on clean builds the directory does not exist, 
+    # so we need to create it. We create any folder that might be missing
+    file.parent.mkdir(exist_ok=True, parents=True)
     with open(file, "w") as f:
         json.dump(
             source_code_links,

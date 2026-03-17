@@ -48,8 +48,25 @@ class ModuleSourceLinks_JSON_Encoder(json.JSONEncoder):
         # (hash, module_name, url)
         if isinstance(o, NeedLink | DataForTestLink):
             return o.to_dict_without_metadata()
-        if isinstance(o, ModuleSourceLinks | SourceCodeLinks | NeedSourceLinks):
-            return asdict(o)
+        # We need to split this up, otherwise the nested 
+        # dictionaries won't get split up and we will not 
+        # run into the 'to_dict_without_metadata' as 
+        # everything will be converted to a normal dictionary
+        if isinstance(o, ModuleSourceLinks):
+            return {
+                "module": asdict(o.module),
+                "needs": o.needs,  # Let the encoder handle the list
+            }
+        if isinstance(o, SourceCodeLinks):
+            return {
+                "need": o.need,
+                "links": o.links,
+            }
+        if isinstance(o, NeedSourceLinks):
+            return {
+                "CodeLinks": o.CodeLinks,
+                "TestLinks": o.TestLinks,
+            }
         return super().default(o)
 
 
@@ -61,7 +78,7 @@ def ModuleSourceLinks_JSON_Decoder(
         needs = d["needs"]
         return ModuleSourceLinks(
             module=ModuleInfo(
-                name=module.get("module_name"),
+                name=module.get("name"),
                 hash=module.get("hash"),
                 url=module.get("url"),
             ),
@@ -75,10 +92,10 @@ def ModuleSourceLinks_JSON_Decoder(
 def store_module_source_links_json(
     file: Path, source_code_links: list[ModuleSourceLinks]
 ):
-    # After `rm -rf _build` or on clean builds the directory does not exist, so we need
-    # to create it
-    file.parent.mkdir(exist_ok=True)
-    with open(file, "w", encoding="utf-8") as f:
+    # After `rm -rf _build` or on clean builds the directory does not exist, 
+    # so we need to create it. We create any folder that might be missing
+    file.parent.mkdir(exist_ok=True, parents=True)
+    with open(file, "w") as f:
         json.dump(
             source_code_links,
             f,
@@ -94,14 +111,11 @@ def load_module_source_links_json(file: Path) -> list[ModuleSourceLinks]:
         object_hook=ModuleSourceLinks_JSON_Decoder,
     )
     assert isinstance(links, list), (
-        "The ModuleSourceLink json should be aa list of ModuleSourceLink objects."
+        "The ModuleSourceLink json should be a list of ModuleSourceLink objects."
     )
-    print("=====================")
-    print("=== TESTING LINKS IN ModuleSourceLink === ")
     for link in links:
         if not isinstance(link, ModuleSourceLinks):
             print(f"Link not module_sourcelink: {link}")
-    print("=====================")
     assert all(isinstance(link, ModuleSourceLinks) for link in links), (
         "All items in module source link cache should be ModuleSourceLink objects."
     )
@@ -129,7 +143,9 @@ def group_needs_by_module(links: list[SourceCodeLinks]) -> list[ModuleSourceLink
                 )
             )
 
-        module_groups[module_key].needs.append(source_link)  # Much clearer!
+        # TODO: Add an assert that checks if needs only are
+        # in a singular module (not allowed to be in multiple)
+        module_groups[module_key].needs.append(source_link)
 
     return [
         ModuleSourceLinks(module=group.module, needs=group.needs)

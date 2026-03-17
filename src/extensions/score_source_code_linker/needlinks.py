@@ -140,7 +140,9 @@ def store_source_code_links_with_metadata_json(
     """
     payload: list[object] = [metadata, *needlist]
 
-    file.parent.mkdir(exist_ok=True)
+    # After `rm -rf _build` or on clean builds the directory does not exist, 
+    # so we need to create it. We create any folder that might be missing
+    file.parent.mkdir(exist_ok=True,parents=True)
     with open(file, "w", encoding="utf-8") as f:
         json.dump(payload, f, cls=NeedLinkEncoder, indent=2, ensure_ascii=False)
 
@@ -151,7 +153,9 @@ def store_source_code_links_json(file: Path, needlist: list[NeedLink]) -> None:
       [ needlink1, needlink2, ... ]
     """
 
-    file.parent.mkdir(exist_ok=True)
+    # After `rm -rf _build` or on clean builds the directory does not exist, 
+    # so we need to create it. We create any folder that might be missing
+    file.parent.mkdir(exist_ok=True, parents=True)
     with open(file, "w", encoding="utf-8") as f:
         json.dump(needlist, f, cls=NeedLinkEncoder, indent=2, ensure_ascii=False)
 
