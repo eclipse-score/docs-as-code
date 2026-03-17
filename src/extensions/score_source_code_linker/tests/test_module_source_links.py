@@ -10,10 +10,10 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-from pathlib import Path
-from typing import Any
 import json
 from dataclasses import asdict
+from pathlib import Path
+from typing import Any
 
 import pytest
 
