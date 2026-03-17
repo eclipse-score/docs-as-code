@@ -113,9 +113,6 @@ def load_module_source_links_json(file: Path) -> list[ModuleSourceLinks]:
     assert isinstance(links, list), (
         "The ModuleSourceLink json should be a list of ModuleSourceLink objects."
     )
-    for link in links:
-        if not isinstance(link, ModuleSourceLinks):
-            print(f"Link not module_sourcelink: {link}")
     assert all(isinstance(link, ModuleSourceLinks) for link in links), (
         "All items in module source link cache should be ModuleSourceLink objects."
     )

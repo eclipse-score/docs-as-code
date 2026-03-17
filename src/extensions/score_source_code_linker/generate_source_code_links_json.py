@@ -58,11 +58,6 @@ def _extract_references_from_file(
         external/score_docs_as_code+/src/extensions/score_source_code_linker/testlink.py
     #FILE PATH NAME:  testlink.py
     """
-    print("ROOT: ", root)
-    print("FILE_PATH: ", file_path)
-    print("FILE_PATH_NAME: ", file_path_name)
-    output = subprocess.run(["ls", "-la", f"{root}"], capture_output=True)
-    print(output)
     assert root.is_absolute(), "Root path must be absolute"
     assert not file_path_name.is_absolute(), "File path must be relative to the root"
     # assert file_path.is_relative_to(root), (
