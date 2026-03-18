@@ -256,9 +256,12 @@ def setup_module_linker(app: Sphinx, _: BuildEnvironment):
     grouped_cache = get_cache_filename(
         app.outdir, "score_module_grouped_scl_cache.json"
     )
-    gruped_cache_exists = grouped_cache.exists()
+    grouped_cache_exists = grouped_cache.exists()
     # TODO this cache should be done via Bazel
-    if not gruped_cache_exists or not app.config.skip_rescanning_via_source_code_linker:
+    if (
+        not grouped_cache_exists
+        or not app.config.skip_rescanning_via_source_code_linker
+    ):
         LOGGER.debug(
             "Did not find combined json 'score_module_grouped_scl_cache.json' "
             "in _build. Generating new one"
@@ -291,7 +294,7 @@ def setup_once(app: Sphinx):
     register_combined_linker(app)
     register_module_linker(app)
 
-    # Priorty=515 to ensure it's called after the test code linker & combined connection
+    # Priority=515 to ensure it's called after the test linker & combined connection
     app.connect("env-updated", inject_links_into_needs, priority=525)
 
 
