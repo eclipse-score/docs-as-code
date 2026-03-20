@@ -1,7 +1,7 @@
 [
   {
-    "module": {
-      "name": "local_module",
+    "repo": {
+      "name": "local_repo",
       "hash": "",
       "url": ""
     },
