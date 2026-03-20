@@ -20,14 +20,19 @@ from typing import Any, TypedDict, TypeGuard
 
 
 class MetaData(TypedDict):
-    module_name: str
+    repo_name: str
     hash: str
     url: str
 
 
+def DefaultMetaData() -> MetaData:
+    md: MetaData = {"repo_name": "local_repo", "hash": "", "url": ""}
+    return md
+
+
 def is_metadata(x: object) -> TypeGuard[MetaData]:
     # Make this as strict/loose as you want; at minimum, it must be a dict.
-    return isinstance(x, dict) and {"module_name", "hash", "url"} <= x.keys()
+    return isinstance(x, dict) and {"repo_name", "hash", "url"} <= x.keys()
 
 
 @dataclass(order=True)
@@ -39,12 +44,13 @@ class NeedLink:
     tag: str
     need: str
     full_line: str
-    module_name: str = "local_module"
+    repo_name: str = "local_repo"
     hash: str = ""
     url: str = ""
 
     # Adding hashing & equality as this is needed to make comparisions.
     # Since the Dataclass is not 'frozen = true' it isn't automatically hashable
+    # This is used in tests
     def __hash__(self):
         return hash(
             (
@@ -53,7 +59,7 @@ class NeedLink:
                 self.tag,
                 self.need,
                 self.full_line,
-                self.module_name,
+                self.repo_name,
                 self.hash,
                 self.url,
             )
@@ -68,7 +74,7 @@ class NeedLink:
             and self.tag == other.tag
             and self.need == other.need
             and self.full_line == other.full_line
-            and self.module_name == other.module_name
+            and self.repo_name == other.repo_name
             and self.hash == other.hash
             and self.url == other.url
         )
@@ -78,10 +84,10 @@ class NeedLink:
         return asdict(self)
 
     # Drops MetaData fields for saving the Dataclass (saving space in json)
-    # The information is in the 'Module_Source_Link' in the end
+    # The information is in the 'Repo_Source_Link' in the end
     def to_dict_without_metadata(self) -> dict[str, str | Path | int]:
         d = asdict(self)
-        d.pop("module_name", None)
+        d.pop("repo_name", None)
         d.pop("hash", None)
         d.pop("url", None)
         return d
@@ -98,7 +104,7 @@ def DefaultNeedLink() -> NeedLink:
         tag="",
         need="",
         full_line="",
-        # Module_name, hash, url are defaulted to ""
+        # Repo_name, hash, url are defaulted to ""
         # therefore not needed to be listed
     )
 
@@ -120,7 +126,7 @@ def needlink_decoder(d: dict[str, Any]) -> NeedLink | dict[str, Any]:
             tag=d["tag"],
             need=d["need"],
             full_line=d["full_line"],
-            module_name=d.get("module_name", ""),
+            repo_name=d.get("repo_name", ""),
             hash=d.get("hash", ""),
             url=d.get("url", ""),
         )
@@ -136,13 +142,13 @@ def store_source_code_links_with_metadata_json(
       [ meta_dict, needlink1, needlink2, ... ]
 
     meta_dict must include:
-      module_name, hash, url
+      repo_name, hash, url
     """
     payload: list[object] = [metadata, *needlist]
 
     # After `rm -rf _build` or on clean builds the directory does not exist,
     # so we need to create it. We create any folder that might be missing
-    file.parent.mkdir(exist_ok=True,parents=True)
+    file.parent.mkdir(exist_ok=True, parents=True)
     with open(file, "w", encoding="utf-8") as f:
         json.dump(payload, f, cls=NeedLinkEncoder, indent=2, ensure_ascii=False)
 
@@ -197,7 +203,7 @@ def load_source_code_links_with_metadata_json(file: Path) -> list[NeedLink]:
             f"metadata must decode to NeedLink objects. File: {file}"
         )
     for d in links:
-        d.module_name = metadata["module_name"]
+        d.repo_name = metadata["repo_name"]
         d.hash = metadata["hash"]
         d.url = metadata["url"]
     return links
@@ -206,7 +212,7 @@ def load_source_code_links_with_metadata_json(file: Path) -> list[NeedLink]:
 def load_source_code_links_json(file: Path) -> list[NeedLink]:
     """
     Expects the JSON array with needlinks
-    *that already have extra info in them* (module_name, hash, url):
+    *that already have extra info in them* (repo_name, hash, url):
       [ needlink1, needlink2, ... ]
     Returns:
       [NeedLink, NeedLink, ...]

@@ -36,10 +36,11 @@ from sphinx_needs.api import add_external_need
 from src.extensions.score_source_code_linker.helpers import (
     get_github_link,
     parse_info_from_known_good,
-    parse_module_name_from_path,
+    parse_repo_name_from_path,
 )
-from src.extensions.score_source_code_linker.module_source_links import ModuleInfo
+from src.extensions.score_source_code_linker.repo_source_links import RepoInfo
 from src.extensions.score_source_code_linker.needlinks import (
+    DefaultMetaData,
     MetaData,
 )
 from src.extensions.score_source_code_linker.testlink import (
@@ -82,15 +83,15 @@ def get_metadata_from_test_path(raw_filepath: Path) -> MetaData:
     Will parse out the metadata from the testpath.
     If test is local then the metadata will be:
 
-        "module_name": "local_module",
+        "repo_name": "local_repo",
         "hash": "",
         "url": "",
 
-    Else it will parse the module_name e.g. `score_docs_as_code`
+    Else it will parse the repo_name e.g. `score_docs_as_code`
     match this in the known_good_json and grab the accompanying
     hash, url as well and return metadata like so for example:
 
-          "module_name": "score_docs_as_code",
+          "repo_name": "score_docs_as_code",
           "hash": "c1207676afe6cafd25c35d420e73279a799515d8",
           "url": "https://github.com/eclipse-score/docs-as-code"
 
@@ -110,15 +111,12 @@ def get_metadata_from_test_path(raw_filepath: Path) -> MetaData:
     known_good_json = os.environ.get("KNOWN_GOOD_JSON")
     clean_filepath = clean_test_file_name(raw_filepath)
     # print(f"This is the cleaned filepath: {clean_filepath}")
-    module_name = parse_module_name_from_path(clean_filepath)
-    md: MetaData = {
-        "module_name": module_name,
-        "hash": "",
-        "url": "",
-    }
-    if module_name != "local_module" and known_good_json:
+    repo_name = parse_repo_name_from_path(clean_filepath)
+    md = DefaultMetaData()
+    md["repo_name"] = repo_name
+    if repo_name != "local_repo" and known_good_json:
         md["hash"], md["url"] = parse_info_from_known_good(
-            Path(known_good_json), module_name
+            Path(known_good_json), repo_name
         )
     return md
 
@@ -346,11 +344,11 @@ def construct_and_add_need(app: Sphinx, tn: DataOfTestCase):
     # and either 'Fully' or 'PartiallyVerifies' should not be None here
     assert tn.file is not None
     assert tn.name is not None
-    assert tn.module_name is not None
+    assert tn.repo_name is not None
     assert tn.hash is not None
     assert tn.url is not None
     # Have to build metadata here for the gh link func
-    metadata = ModuleInfo(name=tn.module_name, hash=tn.hash, url=tn.url)
+    metadata = RepoInfo(name=tn.repo_name, hash=tn.hash, url=tn.url)
     # IDK if this is ideal or not
     with contextlib.suppress(BaseException):
         _ = add_external_need(

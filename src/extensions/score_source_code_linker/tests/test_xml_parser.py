@@ -269,7 +269,7 @@ def test_parse_properties():
     derivation_technique="requirements-analysis",
 )
 # ADAPTED: Added patching for metadata functions
-@patch("src.extensions.score_source_code_linker.xml_parser.parse_module_name_from_path")
+@patch("src.extensions.score_source_code_linker.xml_parser.parse_repo_name_from_path")
 def test_read_test_xml_file(
     mock_parse_module: Any,
     tmp_xml_dirs: Callable[..., tuple[Path, Path, Path, Path, Path]],
@@ -278,7 +278,7 @@ def test_read_test_xml_file(
     # ADAPTED: Mock return value to ensure metadata is populated.
     # 'local_module' triggers the path where hash/url are empty strings,
     # which is valid but avoids the need to mock parse_info_from_known_good.
-    mock_parse_module.return_value = "local_module"
+    mock_parse_module.return_value = "local_repo"
 
     _: Path
     dir1: Path
@@ -291,7 +291,7 @@ def test_read_test_xml_file(
     assert isinstance(tcneed, DataOfTestCase)
     assert tcneed.result == "failed"
     # ADAPTED: Verify metadata fields were populated
-    assert tcneed.module_name == "local_module"
+    assert tcneed.repo_name == "local_repo"
     assert tcneed.hash == ""
     assert tcneed.url == ""
 

@@ -23,6 +23,8 @@ from collections.abc import Generator
 from dataclasses import asdict
 from pathlib import Path
 from typing import Any
+from collections import Counter
+from collections.abc import Callable
 
 import pytest
 
@@ -43,7 +45,7 @@ from src.extensions.score_source_code_linker import (
 from src.extensions.score_source_code_linker.helpers import (
     get_github_link,
 )
-from src.extensions.score_source_code_linker.module_source_links import ModuleInfo
+from src.extensions.score_source_code_linker.repo_source_links import RepoInfo
 from src.extensions.score_source_code_linker.needlinks import (
     MetaData,
     NeedLink,
@@ -137,7 +139,7 @@ def needlink_test_decoder(d: dict[str, Any]) -> NeedLink | dict[str, Any]:
         "tag",
         "need",
         "full_line",
-        "module_name",
+        "repo_name",
         "hash",
         "url",
     } <= d.keys():
@@ -147,7 +149,7 @@ def needlink_test_decoder(d: dict[str, Any]) -> NeedLink | dict[str, Any]:
             tag=decode_comment(d["tag"]),
             need=d["need"],
             full_line=decode_comment(d["full_line"]),
-            module_name=d.get("module_name", ""),
+            repo_name=d.get("repo_name", ""),
             hash=d.get("hash", ""),
             url=d.get("url", ""),
         )
@@ -200,7 +202,7 @@ def sample_needlinks() -> list[NeedLink]:
             tag="#" + " req-Id:",
             need="TREQ_ID_1",
             full_line="#" + " req-Id: TREQ_ID_1",
-            module_name="local_module",
+            repo_name="local_repo",
             hash="",
             url="",
         ),
@@ -210,7 +212,7 @@ def sample_needlinks() -> list[NeedLink]:
             tag="#" + " req-Id:",
             need="TREQ_ID_1",
             full_line="#" + " req-Id: TREQ_ID_1",
-            module_name="local_module",
+            repo_name="local_repo",
             hash="",
             url="",
         ),
@@ -220,7 +222,7 @@ def sample_needlinks() -> list[NeedLink]:
             tag="#" + " req-Id:",
             need="TREQ_ID_2",
             full_line="#" + " req-Id: TREQ_ID_2",
-            module_name="local_module",
+            repo_name="local_repo",
             hash="",
             url="",
         ),
@@ -230,7 +232,7 @@ def sample_needlinks() -> list[NeedLink]:
             tag="#" + " req-Id:",
             need="TREQ_ID_200",
             full_line="#" + " req-Id: TREQ_ID_200",
-            module_name="local_module",
+            repo_name="local_repo",
             hash="",
             url="",
         ),
@@ -368,7 +370,7 @@ def test_cache_file_with_encoded_comments(temp_dir: Path) -> None:
             tag="#" + " req-Id:",
             need="TEST_001",
             full_line="#" + " req-Id: TEST_001",
-            module_name="local_module",
+            repo_name="local_repo",
             hash="",
             url="",
         )
@@ -462,7 +464,7 @@ def another_function():
             tag="#" + " req-Id:",
             need="TREQ_ID_1",
             full_line="#" + " req-Id: TREQ_ID_1",
-            module_name="local_module",
+            repo_name="local_repo",
             hash="",
             url="",
         ),
@@ -472,7 +474,7 @@ def another_function():
             tag="#" + " req-Id:",
             need="TREQ_ID_2",
             full_line="#" + " req-Id: TREQ_ID_2",
-            module_name="local_module",
+            repo_name="local_repo",
             hash="",
             url="",
         ),
@@ -482,7 +484,7 @@ def another_function():
             tag="#" + " req-Id:",
             need="TREQ_ID_1",
             full_line="#" + " req-Id: TREQ_ID_1",
-            module_name="local_module",
+            repo_name="local_repo",
             hash="",
             url="",
         ),
@@ -508,7 +510,7 @@ def another_function():
     # Test GitHub link generation
     # Have to change directories in order to ensure that we get the right/any .git file
     os.chdir(Path(git_repo).absolute())
-    metadata = ModuleInfo(name="local_module", hash="", url="")
+    metadata = RepoInfo(name="local_repo", hash="", url="")
     for needlink in loaded_links:
         github_link = get_github_link(metadata, needlink)
         assert "https://github.com/test-user/test-repo/blob/" in github_link
@@ -544,7 +546,7 @@ def test_multiple_commits_hash_consistency(git_repo: Path) -> None:
         full_line="#" + " req-Id: TREQ_ID_1",
     )
 
-    metadata = ModuleInfo(name="local_module", hash="", url="")
+    metadata = RepoInfo(name="local_repo", hash="", url="")
     os.chdir(Path(git_repo).absolute())
     github_link = get_github_link(metadata, needlink)
     assert new_hash in github_link
@@ -552,7 +554,7 @@ def test_multiple_commits_hash_consistency(git_repo: Path) -> None:
 
 def test_is_metadata_missing_keys():
     """Bad path: Dict missing required keys returns False"""
-    incomplete = {"module_name": "test", "hash": "abc"}
+    incomplete = {"repo_name": "test", "hash": "abc"}
     assert is_metadata(incomplete) is False
 
 
@@ -566,14 +568,14 @@ def test_needlink_to_dict_without_metadata():
         line=10,
         tag="#" + " req-Id:",
         need="REQ_1",
-        full_line="#"+" req-Id: REQ_1",
-        module_name="test_module",
+        full_line="#" + " req-Id: REQ_1",
+        repo_name="test_repo",
         url="https://github.com/test/repo",
         hash="abc123",
     )
     result = needlink.to_dict_without_metadata()
 
-    assert "module_name" not in result
+    assert "repo_name" not in result
     assert "hash" not in result
     assert "url" not in result
     assert result["need"] == "REQ_1"
@@ -588,13 +590,13 @@ def test_needlink_to_dict_full():
         tag="#" + " req-Id:",
         need="REQ_1",
         full_line="#" + " req-Id: REQ_1",
-        module_name="test_module",
+        repo_name="test_repo",
         url="https://github.com/test/repo",
         hash="abc123",
     )
     result = needlink.to_dict_full()
 
-    assert result["module_name"] == "test_module"
+    assert result["repo_name"] == "test_repo"
     assert result["hash"] == "abc123"
     assert result["url"] == "https://github.com/test/repo"
     assert result["need"] == "REQ_1"
@@ -612,14 +614,14 @@ def test_needlink_encoder_includes_metadata():
         tag="#" + " req-Id:",
         need="REQ_1",
         full_line="#" + " req-Id: REQ_1",
-        module_name="test_module",
+        repo_name="test_repo",
         url="https://github.com/test/repo",
         hash="abc123",
     )
     result = encoder.default(needlink)
 
     assert isinstance(result, dict)
-    assert result["module_name"] == "test_module"
+    assert result["repo_name"] == "test_repo"
     assert result["hash"] == "abc123"
     assert result["url"] == "https://github.com/test/repo"
 
@@ -634,10 +636,10 @@ def test_needlink_decoder_with_all_fields():
     json_data: dict[str, Any] = {
         "file": "src/test.py",
         "line": 10,
-        "tag":"#" + " req-Id:",
+        "tag": "#" + " req-Id:",
         "need": "REQ_1",
-        "full_line": "#" +" req-Id: REQ_1",
-        "module_name": "test_module",
+        "full_line": "#" + " req-Id: REQ_1",
+        "repo_name": "test_repo",
         "hash": "abc123",
         "url": "https://github.com/test/repo",
     }
@@ -646,7 +648,7 @@ def test_needlink_decoder_with_all_fields():
     assert isinstance(result, NeedLink)
     assert result.file == Path("src/test.py")
     assert result.line == 10
-    assert result.module_name == "test_module"
+    assert result.repo_name == "test_repo"
 
 
 def test_needlink_decoder_non_needlink_dict():
@@ -657,30 +659,6 @@ def test_needlink_decoder_non_needlink_dict():
 
 
 #            ───────────────[ Testing Encoding / Decoding ]─────────────
-
-
-def test_store_and_load_source_code_links(tmp_path: Path):
-    """Happy path: Store and load without metadata"""
-    needlinks = [
-        NeedLink(
-            file=Path("src/impl.py"),
-            line=42,
-            tag="#" + " req-Id:",
-            need="REQ_1",
-            full_line="#" + " req-Id: REQ_1",
-            module_name="mod",
-            url="url",
-            hash="hash",
-        )
-    ]
-
-    test_file = tmp_path / "standard.json"
-    store_source_code_links_json(test_file, needlinks)
-    loaded = load_source_code_links_json(test_file)
-
-    assert len(loaded) == 1
-    assert loaded[0].need == "REQ_1"
-    assert loaded[0].module_name == "mod"
 
 
 def test_load_validates_list_type(tmp_path: Path):
@@ -707,7 +685,7 @@ def test_load_validates_all_items_are_needlinks(tmp_path: Path):
 def test_store_and_load_with_metadata(tmp_path: Path):
     """Happy path: Store with metadata dict and load correctly"""
     metadata: MetaData = {
-        "module_name": "external_module",
+        "repo_name": "external_repo",
         "hash": "commit_xyz",
         "url": "https://github.com/external/repo",
     }
@@ -717,8 +695,8 @@ def test_store_and_load_with_metadata(tmp_path: Path):
             line=10,
             tag="#" + " req-Id:",
             need="REQ_1",
-            full_line="#"+" req-Id: REQ_1",
-            module_name="",  # Will be filled from metadata
+            full_line="#" + " req-Id: REQ_1",
+            repo_name="",  # Will be filled from metadata
             url="",
             hash="",
         ),
@@ -727,8 +705,8 @@ def test_store_and_load_with_metadata(tmp_path: Path):
             line=20,
             tag="#" + " req-Id:",
             need="REQ_2",
-            full_line="#"+" req-Id: REQ_2",
-            module_name="",
+            full_line="#" + " req-Id: REQ_2",
+            repo_name="",
             url="",
             hash="",
         ),
@@ -740,14 +718,17 @@ def test_store_and_load_with_metadata(tmp_path: Path):
 
     assert len(loaded) == 2
     # Verify metadata was applied to all links
-    assert loaded[0].module_name == "external_module"
-    assert loaded[0].hash == "commit_xyz"
-    assert loaded[0].url == "https://github.com/external/repo"
-    assert loaded[1].module_name == "external_module"
+    for nl in loaded:
+        assert nl.repo_name == "external_repo"
+        assert nl.url == "https://github.com/external/repo"
+        assert nl.hash == "commit_xyz"
 
 
 def test_load_with_metadata_missing_metadata_dict(tmp_path: Path):
-    """Bad path: Loading file without metadata dict raises TypeError"""
+    """
+    Test if loading file without metadata dict via
+    the scl_with_metadata loader raises TypeError
+    """
     # Store without metadata (just needlinks)
     needlinks = [
         NeedLink(
@@ -755,7 +736,7 @@ def test_load_with_metadata_missing_metadata_dict(tmp_path: Path):
             line=1,
             tag="#" + " req-Id:",
             need="REQ_1",
-            full_line="#" +" req-Id: REQ_1",
+            full_line="#" + " req-Id: REQ_1",
         )
     ]
 
@@ -768,12 +749,12 @@ def test_load_with_metadata_missing_metadata_dict(tmp_path: Path):
 
 
 def test_load_with_metadata_invalid_items_after_metadata(tmp_path: Path):
-    """Bad path: Items after metadata dict are not NeedLinks"""
+    """Test wrong JSON structure"""
     test_file = tmp_path / "bad_items.json"
     # Manually create invalid JSON
     _ = test_file.write_text(
         json.dumps(
-            [{"module_name": "mod", "hash": "h", "url": "u"}, {"invalid": "structure"}]
+            [{"repo_name": "mod", "hash": "h", "url": "u"}, {"invalid": "structure"}]
         )
     )
 
@@ -787,7 +768,7 @@ def test_load_with_metadata_invalid_items_after_metadata(tmp_path: Path):
 def test_load_resolves_relative_path_with_env_var(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ):
-    """Edge case: Relative path is resolved using BUILD_WORKSPACE_DIRECTORY"""
+    """Test if relative path is resolved using BUILD_WORKSPACE_DIRECTORY"""
     workspace = tmp_path / "workspace"
     workspace.mkdir()
 
@@ -795,9 +776,9 @@ def test_load_resolves_relative_path_with_env_var(
         NeedLink(
             file=Path("src/test.py"),
             line=1,
-            tag="#"+" req-Id:",
+            tag="#" + " req-Id:",
             need="REQ_1",
-            full_line="#"+" req-Id: REQ_1",
+            full_line="#" + " req-Id: REQ_1",
         )
     ]
 
@@ -821,7 +802,7 @@ def test_load_with_metadata_resolves_relative_path(
     workspace.mkdir()
 
     metadata: MetaData = {
-        "module_name": "mod",
+        "repo_name": "mod",
         "hash": "h",
         "url": "u",
     }
@@ -829,9 +810,9 @@ def test_load_with_metadata_resolves_relative_path(
         NeedLink(
             file=Path("src/test.py"),
             line=1,
-            tag="#"+"  req-Id:",
+            tag="#" + "  req-Id:",
             need="REQ_1",
-            full_line="#"+" req-Id: REQ_1",
+            full_line="#" + " req-Id: REQ_1",
         )
     ]
 
@@ -842,7 +823,7 @@ def test_load_with_metadata_resolves_relative_path(
     loaded = load_source_code_links_with_metadata_json(Path("metadata_cache.json"))
 
     assert len(loaded) == 1
-    assert loaded[0].module_name == "mod"
+    assert loaded[0].repo_name == "mod"
 
 
 #            ─────────────────────[ Roundtrip Tests ]───────────────────
@@ -854,20 +835,20 @@ def test_roundtrip_standard_format(tmp_path: Path):
         NeedLink(
             file=Path("src/file1.py"),
             line=10,
-            tag="#"+" req-Id:",
+            tag="#" + " req-Id:",
             need="REQ_A",
-            full_line="#"+" req-Id: REQ_A",
-            module_name="mod_a",
+            full_line="#" + " req-Id: REQ_A",
+            repo_name="mod_a",
             url="url_a",
             hash="hash_a",
         ),
         NeedLink(
             file=Path("src/file2.py"),
             line=20,
-            tag="#"+" req-Id:",
+            tag="#" + " req-Id:",
             need="REQ_B",
-            full_line="#"+" req-Id: REQ_B",
-            module_name="mod_b",
+            full_line="#" + " req-Id: REQ_B",
+            repo_name="mod_b",
             url="url_b",
             hash="hash_b",
         ),
@@ -878,14 +859,15 @@ def test_roundtrip_standard_format(tmp_path: Path):
     loaded = load_source_code_links_json(test_file)
 
     assert len(loaded) == 2
-    assert loaded[0].module_name == "mod_a"
-    assert loaded[1].module_name == "mod_b"
+    assert needlinks == loaded
+    assert loaded[0].repo_name == "mod_a"
+    assert loaded[1].repo_name == "mod_b"
 
 
 def test_roundtrip_metadata_format_applies_metadata(tmp_path: Path):
     """Happy path: Metadata format applies metadata to all links"""
     metadata: MetaData = {
-        "module_name": "shared_module",
+        "repo_name": "shared_repo",
         "hash": "shared_hash",
         "url": "https://github.com/shared/repo",
     }
@@ -893,16 +875,16 @@ def test_roundtrip_metadata_format_applies_metadata(tmp_path: Path):
         NeedLink(
             file=Path("src/f1.py"),
             line=5,
-            tag="#"+" req-Id:",
+            tag="#" + " req-Id:",
             need="R1",
-            full_line="#"+" req-Id: R1",
+            full_line="#" + " req-Id: R1",
         ),
         NeedLink(
             file=Path("src/f2.py"),
             line=15,
-            tag="#"+" req-Id:",
+            tag="#" + " req-Id:",
             need="R2",
-            full_line="#"+" req-Id: R2",
+            full_line="#" + " req-Id: R2",
         ),
     ]
 
@@ -913,7 +895,7 @@ def test_roundtrip_metadata_format_applies_metadata(tmp_path: Path):
     assert len(loaded) == 2
     # Both should have the same metadata applied
     for link in loaded:
-        assert link.module_name == "shared_module"
+        assert link.repo_name == "shared_repo"
         assert link.hash == "shared_hash"
         assert link.url == "https://github.com/shared/repo"
 
@@ -933,16 +915,16 @@ def test_roundtrip_empty_lists(tmp_path: Path):
 def test_json_format_with_metadata_has_separate_dict(tmp_path: Path):
     """Edge case: Verify metadata format has metadata as first element"""
     metadata: MetaData = {
-        "module_name": "test_mod",
+        "repo_name": "test_mod",
         "hash": "test_hash",
         "url": "test_url",
     }
     needlink = NeedLink(
         file=Path("src/test.py"),
         line=1,
-        tag="#"+" req-Id:",
+        tag="#" + " req-Id:",
         need="REQ_1",
-        full_line="#"+" req-Id: REQ_1",
+        full_line="#" + " req-Id: REQ_1",
     )
 
     test_file = tmp_path / "metadata_format.json"
@@ -954,7 +936,7 @@ def test_json_format_with_metadata_has_separate_dict(tmp_path: Path):
     assert isinstance(raw_json, list)
     assert len(raw_json) == 2  # metadata + 1 needlink
     # First element should be metadata dict
-    assert raw_json[0]["module_name"] == "test_mod"
+    assert raw_json[0]["repo_name"] == "test_mod"
     assert raw_json[0]["hash"] == "test_hash"
     assert raw_json[0]["url"] == "test_url"
 
@@ -967,20 +949,20 @@ def test_needlink_equality_same_values():
     link1 = NeedLink(
         file=Path("src/test.py"),
         line=10,
-        tag="#"+" req-Id:",
+        tag="#" + " req-Id:",
         need="REQ_1",
-        full_line="#"+" req-Id: REQ_1",
-        module_name="mod",
+        full_line="#" + " req-Id: REQ_1",
+        repo_name="mod",
         url="url",
         hash="hash",
     )
     link2 = NeedLink(
         file=Path("src/test.py"),
         line=10,
-        tag="#"+" req-Id:",
+        tag="#" + " req-Id:",
         need="REQ_1",
-        full_line="#"+" req-Id: REQ_1",
-        module_name="mod",
+        full_line="#" + " req-Id: REQ_1",
+        repo_name="mod",
         url="url",
         hash="hash",
     )
@@ -994,16 +976,16 @@ def test_needlink_inequality_different_values():
     link1 = NeedLink(
         file=Path("src/test.py"),
         line=10,
-        tag="#"+" req-Id:",
+        tag="#" + " req-Id:",
         need="REQ_1",
-        full_line="#"+" req-Id: REQ_1",
+        full_line="#" + " req-Id: REQ_1",
     )
     link2 = NeedLink(
         file=Path("src/test.py"),
         line=20,  # Different line
-        tag="#"+" req-Id:",
+        tag="#" + " req-Id:",
         need="REQ_1",
-        full_line="#"+" req-Id: REQ_1",
+        full_line="#" + " req-Id: REQ_1",
     )
 
     assert link1 != link2

@@ -7,7 +7,7 @@
     "verify_type": "partially",
     "result": "passed",
     "result_text": "",
-    "module_name": "local_module",
+    "repo_name": "local_repo",
     "hash": "",
     "url": ""
   },
@@ -19,7 +19,7 @@
     "verify_type": "partially",
     "result": "passed",
     "result_text": "",
-    "module_name": "local_module",
+    "repo_name": "local_repo",
     "hash": "",
     "url": ""
   },
@@ -31,7 +31,7 @@
     "verify_type": "partially",
     "result": "passed",
     "result_text": "",
-    "module_name": "local_module",
+    "repo_name": "local_repo",
     "hash": "",
     "url": ""
   },
@@ -43,7 +43,7 @@
     "verify_type": "partially",
     "result": "passed",
     "result_text": "",
-    "module_name": "local_module",
+    "repo_name": "local_repo",
     "hash": "",
     "url": ""
   },
@@ -55,7 +55,7 @@
     "verify_type": "fully",
     "result": "passed",
     "result_text": "",
-    "module_name": "local_module",
+    "repo_name": "local_repo",
     "hash": "",
     "url": ""
   }

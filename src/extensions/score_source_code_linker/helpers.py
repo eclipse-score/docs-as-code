@@ -13,7 +13,7 @@
 import json
 from pathlib import Path
 
-from src.extensions.score_source_code_linker.module_source_links import ModuleInfo
+from src.extensions.score_source_code_linker.repo_source_links import RepoInfo
 
 # Import types that depend on score_source_code_linker
 from src.extensions.score_source_code_linker.needlinks import DefaultNeedLink, NeedLink
@@ -29,7 +29,7 @@ from src.helper_lib import (
 
 
 def get_github_link(
-    metadata: ModuleInfo,
+    metadata: RepoInfo,
     link: NeedLink | DataForTestLink | DataOfTestCase | None = None,
 ) -> str:
     if link is None:
@@ -55,7 +55,7 @@ def get_github_link_from_git(
 
 
 def get_github_link_from_json(
-    metadata: ModuleInfo,
+    metadata: RepoInfo,
     link: NeedLink | DataForTestLink | DataOfTestCase | None = None,
 ) -> str:
     if link is None:
@@ -65,7 +65,7 @@ def get_github_link_from_json(
     return f"{base_url}/blob/{current_hash}/{link.file}#L{link.line}"
 
 
-def parse_module_name_from_path(path: Path) -> str:
+def parse_repo_name_from_path(path: Path) -> str:
     """
     Parse out the Module-Name from the filename:
     Combo Example:
@@ -73,7 +73,7 @@ def parse_module_name_from_path(path: Path) -> str:
         => score_docs_as_code
     Local:
         Path: src/helper_lib/test_helper_lib.py
-        => local_module
+        => local_repo
 
     """
 
@@ -85,11 +85,11 @@ def parse_module_name_from_path(path: Path) -> str:
         filepath_split = str(module_raw).split("/", maxsplit=1)
         return str(filepath_split[0].removesuffix("+"))
     # We return this when we are in a local build `//:docs` the rest of DaC knows
-    return "local_module"
+    return "local_repo"
 
 
 def parse_info_from_known_good(
-    known_good_json: Path, module_name: str
+    known_good_json: Path, repo_name: str
 ) -> tuple[str, str]:
     with open(known_good_json) as f:
         kg_json = json.load(f)
@@ -106,7 +106,7 @@ def parse_info_from_known_good(
     )
 
     for category in kg_json["modules"].values():
-        if module_name in category:
-            m = category[module_name]
+        if repo_name in category:
+            m = category[repo_name]
             return (m["hash"], m["repo"].removesuffix(".git"))
-    raise KeyError(f"Module {module_name!r} not found in known_good_json.")
+    raise KeyError(f"Module {repo_name} not found in known_good_json.")

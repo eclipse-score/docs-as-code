@@ -25,9 +25,9 @@ from pathlib import Path
 from src.extensions.score_source_code_linker.generate_source_code_links_json import (
     _extract_references_from_file,  # pyright: ignore[reportPrivateUsage] TODO: move it out of the extension and into this script
 )
-from src.extensions.score_source_code_linker.helpers import parse_module_name_from_path
+from src.extensions.score_source_code_linker.helpers import parse_repo_name_from_path
 from src.extensions.score_source_code_linker.needlinks import (
-    MetaData,
+    DefaultMetaData,
     store_source_code_links_with_metadata_json,
 )
 
@@ -71,15 +71,12 @@ def main():
     args = parser.parse_args()
 
     all_need_references = []
-    metadata: MetaData = {
-        "module_name": "",
-        "hash": "",
-        "url": "",
-    }
+
+    metadata = DefaultMetaData()
     metadata_set = False
     for file_path in args.files:
         if "known_good.json" not in str(file_path) and not metadata_set:
-            metadata["module_name"] = parse_module_name_from_path(file_path)
+            metadata["repo_name"] = parse_repo_name_from_path(file_path)
             metadata_set = True
         abs_file_path = file_path.resolve()
         assert abs_file_path.exists(), abs_file_path

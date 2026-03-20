@@ -53,7 +53,7 @@ def test_testlink_serialization_roundtrip():
         result="passed",
         result_text="All good",
         # ADAPTED: Added new fields
-        module_name="test_module",
+        repo_name="test_repo",
         hash="abc12345",
         url="https://github.com/org/repo",
     )
@@ -117,7 +117,7 @@ def test_testcaseneed_to_dict_multiple_links():
         PartiallyVerifies="REQ-1, REQ-2",
         FullyVerifies="REQ-3",
         # ADAPTED: Added new fields which are now required for valid TestLinks
-        module_name="test_module",
+        repo_name="test_repo",
         hash="hash123",
         url="http://github.com",
     )
@@ -134,7 +134,7 @@ def test_testcaseneed_to_dict_multiple_links():
         assert link.name == "TC_01"
         assert link.result == "failed"
         # ADAPTED: Verify new fields are propagated
-        assert link.module_name == "test_module"
+        assert link.repo_name == "test_repo"
         assert link.hash == "hash123"
         assert link.url == "http://github.com"
 
@@ -158,7 +158,7 @@ def test_store_and_load_testlinks_roundtrip(tmp_path: Path):
             result="passed",
             result_text="Looks good",
             # ADAPTED: Added new fields
-            module_name="mod1",
+            repo_name="mod1",
             hash="h1",
             url="u1",
         ),
@@ -171,7 +171,7 @@ def test_store_and_load_testlinks_roundtrip(tmp_path: Path):
             result="failed",
             result_text="Needs work",
             # ADAPTED: Added new fields
-            module_name="mod2",
+            repo_name="mod2",
             hash="h2",
             url="u2",
         ),
@@ -197,13 +197,13 @@ def test_datafortestlink_to_dict_full():
         verify_type="fully",
         result="passed",
         result_text="All good",
-        module_name="test_module",
+        repo_name="test_repo",
         hash="abc123",
         url="https://github.com/test/repo",
     )
     result = link.to_dict_full()
 
-    assert result["module_name"] == "test_module"
+    assert result["repo_name"] == "test_repo"
     assert result["hash"] == "abc123"
     assert result["url"] == "https://github.com/test/repo"
     assert result["name"] == "test_full"
@@ -239,7 +239,7 @@ def test_dataoftestcase_check_verifies_fields_missing_both():
         result_text="",
         PartiallyVerifies=None,
         FullyVerifies=None,
-        module_name="mod",
+        repo_name="mod",
         hash="h",
         url="u",
     )
@@ -258,7 +258,7 @@ def test_dataoftestcase_is_valid_fails_on_none_field():
         DerivationTechnique="manual",
         result_text="",
         PartiallyVerifies="REQ_1",
-        module_name="mod",
+        repo_name="mod",
         hash="h",
         url="u",
     )
@@ -294,7 +294,7 @@ def test_dataoftestcase_decoder_valid_dict():
         "result_text": "Good",
         "PartiallyVerifies": "REQ_1",
         "FullyVerifies": "REQ_2",
-        "module_name": "mod",
+        "repo_name": "mod",
         "hash": "h",
         "url": "u",
     }
@@ -325,7 +325,7 @@ def test_store_and_load_data_of_test_case_roundtrip(tmp_path: Path):
             result_text="OK",
             PartiallyVerifies="REQ_A",
             FullyVerifies=None,
-            module_name="mod_a",
+            repo_name="mod_a",
             hash="hash_a",
             url="url_a",
         ),
@@ -339,7 +339,7 @@ def test_store_and_load_data_of_test_case_roundtrip(tmp_path: Path):
             result_text="Failed",
             PartiallyVerifies=None,
             FullyVerifies="REQ_B",
-            module_name="mod_b",
+            repo_name="mod_b",
             hash="hash_b",
             url="url_b",
         ),

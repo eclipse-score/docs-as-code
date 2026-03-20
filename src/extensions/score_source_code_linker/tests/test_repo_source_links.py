@@ -17,13 +17,13 @@ from typing import Any
 
 import pytest
 
-from src.extensions.score_source_code_linker.module_source_links import (
-    ModuleInfo,
-    ModuleSourceLinks,
-    ModuleSourceLinks_JSON_Decoder,
-    group_needs_by_module,
-    load_module_source_links_json,
-    store_module_source_links_json,
+from src.extensions.score_source_code_linker.repo_source_links import (
+    RepoInfo,
+    RepoSourceLinks,
+    RepoSourceLinks_JSON_Decoder,
+    group_needs_by_repo,
+    load_repo_source_links_json,
+    store_repo_source_links_json,
 )
 from src.extensions.score_source_code_linker.need_source_links import (
     NeedSourceLinks,
@@ -84,13 +84,13 @@ def SourceCodeLinks_TEST_JSON_Decoder(
     return d
 
 
-class ModuleSourceLinks_TEST_JSON_Encoder(json.JSONEncoder):
+class repoSourceLinks_TEST_JSON_Encoder(json.JSONEncoder):
     def default(self, o: object) -> str | dict[str, Any]:
         if isinstance(o, Path):
             return str(o)
         # We do not want to save the metadata inside the codelink or testlink
         # As we save this already in a structure above it
-        # (hash, module_name, url)
+        # (hash, repo_name, url)
         if isinstance(o, NeedLink | DataForTestLink):
             d = o.to_dict_without_metadata()
             tag = d.get("tag", "")
@@ -104,9 +104,9 @@ class ModuleSourceLinks_TEST_JSON_Encoder(json.JSONEncoder):
         # dictionaries won't get split up and we will not
         # run into the 'to_dict_without_metadata' as
         # everything will be converted to a normal dictionary
-        if isinstance(o, ModuleSourceLinks):
+        if isinstance(o, RepoSourceLinks):
             return {
-                "module": asdict(o.module),
+                "repo": asdict(o.repo),
                 "needs": o.needs,  # Let the encoder handle the list
             }
         if isinstance(o, SourceCodeLinks):
@@ -122,17 +122,17 @@ class ModuleSourceLinks_TEST_JSON_Encoder(json.JSONEncoder):
         return super().default(o)
 
 
-def ModuleSourceLinks_TEST_JSON_Decoder(
+def repoSourceLinks_TEST_JSON_Decoder(
     d: dict[str, Any],
-) -> ModuleSourceLinks | dict[str, Any]:
-    if "module" in d and "needs" in d:
-        module = d["module"]
+) -> RepoSourceLinks | dict[str, Any]:
+    if "repo" in d and "needs" in d:
+        repo = d["repo"]
         needs = d["needs"]
-        return ModuleSourceLinks(
-            module=ModuleInfo(
-                name=module.get("name"),
-                hash=module.get("hash"),
-                url=module.get("url"),
+        return RepoSourceLinks(
+            repo=RepoInfo(
+                name=repo.get("name"),
+                hash=repo.get("hash"),
+                url=repo.get("url"),
             ),
             # We know this can only be list[SourceCodeLinks] and nothing else
             # Therefore => we ignore the type error here
@@ -143,21 +143,21 @@ def ModuleSourceLinks_TEST_JSON_Decoder(
 
 def test_json_encoder_removes_metadata_from_needlink():
     """Happy path: NeedLink metadata fields are excluded from JSON output"""
-    encoder = ModuleSourceLinks_TEST_JSON_Encoder()
+    encoder = repoSourceLinks_TEST_JSON_Encoder()
     needlink = NeedLink(
         file=Path("src/test.py"),
         line=10,
         tag="#" + " req-Id:",
         need="REQ_1",
         full_line="#" + " req-Id: REQ_1",
-        module_name="test_module",
+        repo_name="test_repo",
         url="https://github.com/test/repo",
         hash="abc123",
     )
     result = encoder.default(needlink)
 
     assert isinstance(result, dict)
-    assert "module_name" not in result
+    assert "repo_name" not in result
     assert "url" not in result
     assert "hash" not in result
     assert result["need"] == "REQ_1"
@@ -166,7 +166,7 @@ def test_json_encoder_removes_metadata_from_needlink():
 
 def test_json_encoder_removes_metadata_from_testlink():
     """Happy path: DataForTestLink metadata fields are excluded from JSON output"""
-    encoder = ModuleSourceLinks_TEST_JSON_Encoder()
+    encoder = repoSourceLinks_TEST_JSON_Encoder()
     testlink = DataForTestLink(
         name="test_something",
         file=Path("src/test_file.py"),
@@ -175,14 +175,14 @@ def test_json_encoder_removes_metadata_from_testlink():
         verify_type="fully",
         result="passed",
         result_text="",
-        module_name="test_module",
+        repo_name="test_repo",
         url="https://github.com/test/repo",
         hash="abc123",
     )
     result = encoder.default(testlink)
 
     assert isinstance(result, dict)
-    assert "module_name" not in result
+    assert "repo_name" not in result
     assert "url" not in result
     assert "hash" not in result
     assert result["name"] == "test_something"
@@ -191,7 +191,7 @@ def test_json_encoder_removes_metadata_from_testlink():
 
 def test_json_encoder_converts_path_to_string():
     """Happy path: Path objects are converted to strings"""
-    encoder = ModuleSourceLinks_TEST_JSON_Encoder()
+    encoder = repoSourceLinks_TEST_JSON_Encoder()
     result = encoder.default(Path("/test/path/file.py"))
     assert result == "/test/path/file.py"
     assert isinstance(result, str)
@@ -202,10 +202,10 @@ def test_json_encoder_converts_path_to_string():
 # ============================================================================
 
 
-def test_json_decoder_reconstructs_module_source_links():
-    """Happy path: Valid JSON dict is decoded into ModuleSourceLinks"""
+def test_json_decoder_reconstructs_repo_source_links():
+    """Happy path: Valid JSON dict is decoded into repoSourceLinks"""
     json_data: dict[str, Any] = {
-        "module": {"name": "test_module", "hash": "hash1", "url": "url1"},
+        "repo": {"name": "test_repo", "hash": "hash1", "url": "url1"},
         "needs": [
             {
                 "need": "REQ_1",
@@ -213,19 +213,19 @@ def test_json_decoder_reconstructs_module_source_links():
             }
         ],
     }
-    result = ModuleSourceLinks_JSON_Decoder(json_data)
+    result = RepoSourceLinks_JSON_Decoder(json_data)
 
-    assert isinstance(result, ModuleSourceLinks)
-    assert result.module.name == "test_module"
-    assert result.module.hash == "hash1"
-    assert result.module.url == "url1"
+    assert isinstance(result, RepoSourceLinks)
+    assert result.repo.name == "test_repo"
+    assert result.repo.hash == "hash1"
+    assert result.repo.url == "url1"
     assert len(result.needs) == 1
 
 
-def test_json_decoder_returns_unchanged_for_non_module_dict():
-    """Edge case: Non-ModuleSourceLinks dicts are returned unchanged"""
+def test_json_decoder_returns_unchanged_for_non_repo_dict():
+    """Edge case: Non-repoSourceLinks dicts are returned unchanged"""
     json_data = {"some": "data", "other": "values"}
-    result = ModuleSourceLinks_JSON_Decoder(json_data)
+    result = RepoSourceLinks_JSON_Decoder(json_data)
     assert result == json_data
 
 
@@ -236,14 +236,14 @@ def test_json_decoder_returns_unchanged_for_non_module_dict():
 
 def test_store_and_load_roundtrip(tmp_path: Path):
     """Happy path: Store and load preserves data correctly"""
-    module = ModuleInfo(name="test_module", hash="hash1", url="url1")
+    repo = RepoInfo(name="test_repo", hash="hash1", url="url1")
     needlink = NeedLink(
         file=Path("src/test.py"),
         line=10,
         tag="#" + " req-Id:",
         need="REQ_1",
         full_line="#" + " req-Id: REQ_1",
-        module_name="test_module",
+        repo_name="test_repo",
         url="url1",
         hash="hash1",
     )
@@ -251,24 +251,24 @@ def test_store_and_load_roundtrip(tmp_path: Path):
         need="REQ_1",
         links=NeedSourceLinks(CodeLinks=[needlink], TestLinks=[]),
     )
-    module_links = ModuleSourceLinks(module=module, needs=[scl])
+    repo_links = RepoSourceLinks(repo=repo, needs=[scl])
 
     test_file = tmp_path / "test.json"
-    store_module_source_links_json(test_file, [module_links])
-    loaded = load_module_source_links_json(test_file)
+    store_repo_source_links_json(test_file, [repo_links])
+    loaded = load_repo_source_links_json(test_file)
 
     assert len(loaded) == 1
-    assert loaded[0].module.name == "test_module"
+    assert loaded[0].repo.name == "test_repo"
     assert loaded[0].needs[0].need == "REQ_1"
 
 
 def test_store_creates_parent_directories(tmp_path: Path):
     """Edge case: Parent directories are created if they don't exist"""
     nested_path = tmp_path / "nested" / "deeply" / "test.json"
-    module = ModuleInfo(name="test", hash="h", url="u")
-    module_links = ModuleSourceLinks(module=module, needs=[])
+    repo = RepoInfo(name="test", hash="h", url="u")
+    repo_links = RepoSourceLinks(repo=repo, needs=[])
 
-    store_module_source_links_json(nested_path, [module_links])
+    store_repo_source_links_json(nested_path, [repo_links])
 
     assert nested_path.exists()
     assert nested_path.parent.exists()
@@ -277,19 +277,19 @@ def test_store_creates_parent_directories(tmp_path: Path):
 def test_load_empty_list(tmp_path: Path):
     """Edge case: Loading empty list returns empty list"""
     test_file = tmp_path / "empty.json"
-    store_module_source_links_json(test_file, [])
+    store_repo_source_links_json(test_file, [])
 
-    loaded = load_module_source_links_json(test_file)
+    loaded = load_repo_source_links_json(test_file)
     assert loaded == []
 
 
 def test_load_validates_is_list(tmp_path: Path):
     """Bad path: Loading non-list JSON fails validation"""
     test_file = tmp_path / "not_list.json"
-    test_file.write_text('{"module": {}, "needs": []}')
+    test_file.write_text('{"repo": {}, "needs": []}')
 
     with pytest.raises(AssertionError, match="should be a list"):
-        load_module_source_links_json(test_file)
+        load_repo_source_links_json(test_file)
 
 
 def test_load_validates_items_are_correct_type(tmp_path: Path):
@@ -297,24 +297,24 @@ def test_load_validates_items_are_correct_type(tmp_path: Path):
     test_file = tmp_path / "invalid_items.json"
     test_file.write_text('[{"invalid": "structure"}]')
 
-    with pytest.raises(AssertionError, match="should be ModuleSourceLink objects"):
-        load_module_source_links_json(test_file)
+    with pytest.raises(AssertionError, match="should be RepoSourceLink objects"):
+        load_repo_source_links_json(test_file)
 
 
 # ============================================================================
-# group_needs_by_module Tests
+# group_needs_by_repo Tests
 # ============================================================================
 
 
-def test_group_needs_single_module_with_codelinks():
-    """Happy path: Multiple needs from same module are grouped together"""
+def test_group_needs_single_repo_with_codelinks():
+    """Happy path: Multiple needs from same repo are grouped together"""
     needlink1 = NeedLink(
         file=Path("src/file1.py"),
         line=10,
         tag="#" + " req-Id:",
         need="REQ_1",
         full_line="#" + " req-Id: REQ_1",
-        module_name="shared_module",
+        repo_name="shared_repo",
         url="https://github.com/test/repo",
         hash="hash1",
     )
@@ -324,7 +324,7 @@ def test_group_needs_single_module_with_codelinks():
         tag="#" + " req-Id:",
         need="REQ_2",
         full_line="#" + " req-Id: REQ_2",
-        module_name="shared_module",
+        repo_name="shared_repo",
         url="https://github.com/test/repo",
         hash="hash1",
     )
@@ -336,25 +336,25 @@ def test_group_needs_single_module_with_codelinks():
         need="REQ_2", links=NeedSourceLinks(CodeLinks=[needlink2], TestLinks=[])
     )
 
-    result = group_needs_by_module([scl1, scl2])
+    result = group_needs_by_repo([scl1, scl2])
 
     assert len(result) == 1
-    assert result[0].module.name == "shared_module"
-    assert result[0].module.hash == "hash1"
+    assert result[0].repo.name == "shared_repo"
+    assert result[0].repo.hash == "hash1"
     assert len(result[0].needs) == 2
     assert len(result[0].needs[0].links.CodeLinks) == 1
     assert len(result[0].needs[1].links.CodeLinks) == 1
 
 
-def test_group_needs_multiple_modules():
-    """Happy path: Needs from different modules create separate groups"""
+def test_group_needs_multiple_repos():
+    """Happy path: Needs from different repos create separate groups"""
     needlink_a = NeedLink(
         file=Path("src/a.py"),
         line=10,
         tag="#" + " req-Id:",
         need="REQ_1",
         full_line="#" + " req-Id: REQ_1",
-        module_name="module_a",
+        repo_name="repo_a",
         url="https://github.com/a/repo",
         hash="hash_a",
     )
@@ -364,7 +364,7 @@ def test_group_needs_multiple_modules():
         tag="#" + " req-Id:",
         need="REQ_2",
         full_line="#" + " req-Id: REQ_2",
-        module_name="module_b",
+        repo_name="repo_b",
         url="https://github.com/b/repo",
         hash="hash_b",
     )
@@ -376,15 +376,15 @@ def test_group_needs_multiple_modules():
         need="REQ_2", links=NeedSourceLinks(CodeLinks=[needlink_b], TestLinks=[])
     )
 
-    result = group_needs_by_module([scl1, scl2])
+    result = group_needs_by_repo([scl1, scl2])
 
     assert len(result) == 2
-    assert result[0].module.name == "module_a"
-    assert result[0].module.hash == "hash_a"
-    assert result[0].module.url == "https://github.com/a/repo"
-    assert result[1].module.name == "module_b"
-    assert result[1].module.hash == "hash_b"
-    assert result[1].module.url == "https://github.com/b/repo"
+    assert result[0].repo.name == "repo_a"
+    assert result[0].repo.hash == "hash_a"
+    assert result[0].repo.url == "https://github.com/a/repo"
+    assert result[1].repo.name == "repo_b"
+    assert result[1].repo.hash == "hash_b"
+    assert result[1].repo.url == "https://github.com/b/repo"
 
 
 def test_group_needs_with_testlinks_only():
@@ -397,7 +397,7 @@ def test_group_needs_with_testlinks_only():
         verify_type="fully",
         result="passed",
         result_text="",
-        module_name="test_module",
+        repo_name="test_repo",
         url="https://github.com/test/repo",
         hash="hash1",
     )
@@ -409,7 +409,7 @@ def test_group_needs_with_testlinks_only():
         verify_type="partially",
         result="passed",
         result_text="",
-        module_name="test_module",
+        repo_name="test_repo",
         url="https://github.com/test/repo",
         hash="hash1",
     )
@@ -423,10 +423,10 @@ def test_group_needs_with_testlinks_only():
         links=NeedSourceLinks(CodeLinks=[], TestLinks=[testlink2]),
     )
 
-    result = group_needs_by_module([scl, scl2])
+    result = group_needs_by_repo([scl, scl2])
 
     assert len(result) == 1
-    assert result[0].module.name == "test_module"
+    assert result[0].repo.name == "test_repo"
     assert len(result[0].needs) == 2
     needs = [x.need for x in result[0].needs]
     assert "REQ_1" in needs
@@ -435,8 +435,8 @@ def test_group_needs_with_testlinks_only():
     assert len(result[0].needs[1].links.TestLinks) == 1
 
 
-def test_group_needs_with_testlinks_different_modules():
-    """Testing Testlinks grouping for different modules"""
+def test_group_needs_with_testlinks_different_repos():
+    """Testing Testlinks grouping for different repos"""
     testlink = DataForTestLink(
         name="test_feature",
         file=Path("tests/test.py"),
@@ -445,7 +445,7 @@ def test_group_needs_with_testlinks_different_modules():
         verify_type="fully",
         result="passed",
         result_text="",
-        module_name="module_a",
+        repo_name="repo_a",
         url="https://github.com/test_a/repo_a",
         hash="hash_a",
     )
@@ -457,7 +457,7 @@ def test_group_needs_with_testlinks_different_modules():
         verify_type="partially",
         result="passed",
         result_text="",
-        module_name="module_b",
+        repo_name="repo_b",
         url="https://github.com/test_b/repo_b",
         hash="hash_b",
     )
@@ -471,20 +471,20 @@ def test_group_needs_with_testlinks_different_modules():
         links=NeedSourceLinks(CodeLinks=[], TestLinks=[testlink2]),
     )
 
-    result = group_needs_by_module([scl, scl2])
+    result = group_needs_by_repo([scl, scl2])
 
     assert len(result) == 2
-    assert result[0].module.name == "module_a"
-    assert result[0].module.hash == "hash_a"
-    assert result[0].module.url == "https://github.com/test_a/repo_a"
-    assert result[1].module.name == "module_b"
-    assert result[1].module.hash == "hash_b"
-    assert result[1].module.url == "https://github.com/test_b/repo_b"
+    assert result[0].repo.name == "repo_a"
+    assert result[0].repo.hash == "hash_a"
+    assert result[0].repo.url == "https://github.com/test_a/repo_a"
+    assert result[1].repo.name == "repo_b"
+    assert result[1].repo.hash == "hash_b"
+    assert result[1].repo.url == "https://github.com/test_b/repo_b"
 
 
 def test_group_needs_empty_list():
     """Edge case: Empty list returns empty result"""
-    result = group_needs_by_module([])
+    result = group_needs_by_repo([])
     assert result == []
 
 
@@ -504,7 +504,7 @@ def test_group_needs_skips_needs_without_links():
                     tag="#" + " req-Id:",
                     need="REQ_1",
                     full_line="#" + " req-Id: REQ_1",
-                    module_name="module_a",
+                    repo_name="repo_a",
                     url="url1",
                     hash="hash1",
                 )
@@ -517,7 +517,7 @@ def test_group_needs_skips_needs_without_links():
         links=NeedSourceLinks(CodeLinks=[], TestLinks=[]),
     )
 
-    result = group_needs_by_module([scl_with_links, scl_without_links])
+    result = group_needs_by_repo([scl_with_links, scl_without_links])
 
     assert len(result) == 1
     assert result[0].needs[0].need == "REQ_1"
@@ -532,7 +532,7 @@ def test_group_needs_mixed_codelinks_and_testlinks():
         tag="#" + " req-Id:",
         need="REQ_1",
         full_line="#" + " req-Id: REQ_1",
-        module_name="module_a",
+        repo_name="repo_a",
         url="https://github.com/test/repo",
         hash="hash1",
     )
@@ -544,7 +544,7 @@ def test_group_needs_mixed_codelinks_and_testlinks():
         verify_type="fully",
         result="passed",
         result_text="",
-        module_name="module_a",
+        repo_name="repo_a",
         url="https://github.com/test/repo",
         hash="hash1",
     )
@@ -554,7 +554,7 @@ def test_group_needs_mixed_codelinks_and_testlinks():
         links=NeedSourceLinks(CodeLinks=[needlink], TestLinks=[testlink]),
     )
 
-    result = group_needs_by_module([scl])
+    result = group_needs_by_repo([scl])
 
     assert len(result) == 1
     assert len(result[0].needs[0].links.CodeLinks) == 1

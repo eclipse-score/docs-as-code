@@ -23,66 +23,66 @@ from src.extensions.score_source_code_linker.helpers import (
     get_github_link,
     get_github_link_from_json,
     parse_info_from_known_good,
-    parse_module_name_from_path,
+    parse_repo_name_from_path,
 )
-from src.extensions.score_source_code_linker.module_source_links import ModuleInfo
+from src.extensions.score_source_code_linker.repo_source_links import RepoInfo
 from src.extensions.score_source_code_linker.needlinks import DefaultNeedLink
 from src.helper_lib import get_current_git_hash
 
 #              ╭──────────────────────────────────────────────────────────╮
-#              │          Tests for parse_module_name_from_path           │
+#              │          Tests for parse_repo_name_from_path             │
 #              ╰──────────────────────────────────────────────────────────╯
 
 
-def test_parse_module_name_from_external_path():
-    """Test parsing module name from external/combo build path."""
+def test_parse_repo_name_from_external_path():
+    """Test parsing repo name from external/combo build path."""
     path = Path("external/score_docs_as_code+/src/helper_lib/test_helper_lib.py")
 
-    result = parse_module_name_from_path(path)
+    result = parse_repo_name_from_path(path)
 
     assert result == "score_docs_as_code"
 
 
-def test_parse_module_name_from_external_path_2():
+def test_parse_repo_name_from_external_path_2():
     """Test that an extra 'external' in the path does not change the output"""
     path = Path(
         "external/score_docs_as_code+/src/external/helper_lib/test_helper_lib.py"
     )
 
-    result = parse_module_name_from_path(path)
+    result = parse_repo_name_from_path(path)
 
     assert result == "score_docs_as_code"
 
 
-def test_parse_module_name_from_local_path():
-    """Test parsing module name from local build path."""
+def test_parse_repo_name_from_local_path():
+    """Test parsing repo name from local build path."""
     path = Path("src/helper_lib/test_helper_lib.py")
 
-    result = parse_module_name_from_path(path)
+    result = parse_repo_name_from_path(path)
 
-    assert result == "local_module"
+    assert result == "local_repo"
 
 
-def test_parse_module_name_from_empty_path():
-    """Test parsing module name from an empty path."""
+def test_parse_repo_name_from_empty_path():
+    """Test parsing repo name from an empty path."""
     path = Path("")
 
-    result = parse_module_name_from_path(path)
+    result = parse_repo_name_from_path(path)
 
-    assert result == "local_module"
+    assert result == "local_repo"
 
 
-def test_parse_module_name_without_plus_suffix():
+def test_parse_repo_name_without_plus_suffix():
     """
-    Test parsing external module without plus suffix.
+    Test parsing external repo without plus suffix.
     This should never happen (due to bazel adding the '+')
     But testing this edge case anyway
     """
-    path = Path("external/module_without_plus/file.py")
+    path = Path("external/repo_without_plus/file.py")
 
-    result = parse_module_name_from_path(path)
+    result = parse_repo_name_from_path(path)
 
-    assert result == "module_without_plus"
+    assert result == "repo_without_plus"
 
 
 #              ╭──────────────────────────────────────────────────────────╮
@@ -126,7 +126,7 @@ def known_good_json(tmp_path: Path):
 
 # Tests for parse_info_from_known_good
 def test_parse_info_from_known_good_happy_path(known_good_json: Path):
-    """Test parsing module info from valid known_good.json."""
+    """Test parsing repo info from valid known_good.json."""
     hash_result, repo_result = parse_info_from_known_good(
         known_good_json, "score_baselibs"
     )
@@ -136,7 +136,7 @@ def test_parse_info_from_known_good_happy_path(known_good_json: Path):
 
 
 def test_parse_info_from_known_good_different_category(known_good_json: Path):
-    """Test finding module in different category."""
+    """Test finding repo in different category."""
     hash_result, repo_result = parse_info_from_known_good(
         known_good_json, "score_docs_as_code"
     )
@@ -145,14 +145,14 @@ def test_parse_info_from_known_good_different_category(known_good_json: Path):
     assert repo_result == "https://github.com/eclipse-score/docs-as-code"
 
 
-def test_parse_info_from_known_good_module_not_found(known_good_json: Path):
-    """Test that KeyError is raised when module doesn't exist."""
-    with pytest.raises(KeyError, match="Module 'nonexistent' not found"):
+def test_parse_info_from_known_good_repo_not_found(known_good_json: Path):
+    """Test that KeyError is raised when repo doesn't exist."""
+    with pytest.raises(KeyError, match="Module nonexistent not found"):
         parse_info_from_known_good(known_good_json, "nonexistent")
 
 
 def test_parse_info_from_known_good_empty_json(tmp_path: Path):
-    """Test with empty JSON file."""
+    """Test that it errors when given an empty JSON file."""
     json_file = tmp_path / "example.json"
     _ = json_file.write_text("{}")
 
@@ -160,11 +160,11 @@ def test_parse_info_from_known_good_empty_json(tmp_path: Path):
         AssertionError,
         match=f"Known good json at: {json_file} is empty. This is not allowed",
     ):
-        parse_info_from_known_good(json_file, "any_module")
+        parse_info_from_known_good(json_file, "any_repo")
 
 
-def test_parse_info_from_known_good_no_module_in_json(tmp_path: Path):
-    """Test that assertion works when module not in top level keys"""
+def test_parse_info_from_known_good_no_repo_in_json(tmp_path: Path):
+    """Test that assertion works when repo not in top level keys"""
     json_file = tmp_path / "example.json"
     _ = json_file.write_text(
         '{"another_key": {"a": "b"}, "second_key": ["a" , "b", "c"]}'
@@ -174,11 +174,11 @@ def test_parse_info_from_known_good_no_module_in_json(tmp_path: Path):
         AssertionError,
         match=f"Known good json at: {json_file} is missing the 'modules' key",
     ):
-        parse_info_from_known_good(json_file, "any_module")
+        parse_info_from_known_good(json_file, "any_repo")
 
 
-def test_parse_info_from_known_good_empty_module_dict_in_json(tmp_path: Path):
-    """Test that assertion works if module dictionary is empty"""
+def test_parse_info_from_known_good_empty_repo_dict_in_json(tmp_path: Path):
+    """Test that assertion works if repo dictionary is empty"""
     json_file = tmp_path / "emample.json"
     _ = json_file.write_text('{"another_key": {"a": "b"}, "modules": {}}')
 
@@ -186,13 +186,16 @@ def test_parse_info_from_known_good_empty_module_dict_in_json(tmp_path: Path):
         AssertionError,
         match=f"Known good json at: {json_file} has an empty 'modules' dictionary",
     ):
-        parse_info_from_known_good(json_file, "any_module")
+        parse_info_from_known_good(json_file, "any_repo")
 
 
 # Tests for get_github_link_from_json
 def test_get_github_link_from_json_happy_path():
-    """Test generating GitHub link from metadata."""
-    metadata = ModuleInfo(
+    """
+    Test generating GitHub link with fully filled metadata
+    =>this happens in combo builds
+    """
+    metadata = RepoInfo(
         name="project_name",
         url="https://github.com/eclipse/project",
         hash="commit123abc",
@@ -212,7 +215,7 @@ def test_get_github_link_from_json_happy_path():
 
 def test_get_github_link_from_json_with_none_link():
     """Test that None link creates DefaultNeedLink."""
-    metadata = ModuleInfo(
+    metadata = RepoInfo(
         name="test_repo", url="https://github.com/test/repo", hash="def456"
     )
 
@@ -224,7 +227,7 @@ def test_get_github_link_from_json_with_none_link():
 
 def test_get_github_link_from_json_with_line_zero():
     """Test generating link with line number 0."""
-    metadata = ModuleInfo(
+    metadata = RepoInfo(
         name="test_repo", url="https://github.com/test/repo", hash="hash123"
     )
 
@@ -240,8 +243,8 @@ def test_get_github_link_from_json_with_line_zero():
 # Tests for get_github_link
 def test_get_github_link_with_hash():
     """Test get_github_link uses json method when hash is present."""
-    metadata = ModuleInfo(
-        name="some_module", url="https://github.com/org/repo", hash="commit_hash_123"
+    metadata = RepoInfo(
+        name="some_repo", url="https://github.com/org/repo", hash="commit_hash_123"
     )
 
     link = DefaultNeedLink()
@@ -254,11 +257,13 @@ def test_get_github_link_with_hash():
         result == "https://github.com/org/repo/blob/commit_hash_123/src/example.py#L42"
     )
 
+
 @pytest.fixture
 def temp_dir() -> Generator[Path, None, None]:
     """Create a temporary directory for tests."""
     with tempfile.TemporaryDirectory() as temp_dir:
         yield Path(temp_dir)
+
 
 @pytest.fixture
 def git_repo(temp_dir: Path) -> Path:
@@ -295,9 +300,9 @@ def git_repo(temp_dir: Path) -> Path:
 def test_get_github_link_with_real_repo(git_repo: Path) -> None:
     """
     Test generating GitHub link without url/hash.
-    This expects to be in a git module
+    This expects to be in a git repo
     """
-    metadata = ModuleInfo(name="some_module", url="", hash="")
+    metadata = RepoInfo(name="some_repo", url="", hash="")
 
     link = DefaultNeedLink()
     link.file = Path("src/example.py")
@@ -323,16 +328,16 @@ def test_complete_workflow(known_good_json: Path):
 
     # Parse path
     path = Path("external/score_docs_as_code+/src/helper_lib/test_helper_lib.py")
-    module_name = parse_module_name_from_path(path)
-    assert module_name == "score_docs_as_code"
+    repo_name = parse_repo_name_from_path(path)
+    assert repo_name == "score_docs_as_code"
 
     # Get metadata
-    hash_val, repo_url = parse_info_from_known_good(known_good_json, module_name)
+    hash_val, repo_url = parse_info_from_known_good(known_good_json, repo_name)
     assert hash_val == "c1207676afe6cafd25c35d420e73279a799515d8"
     assert repo_url == "https://github.com/eclipse-score/docs-as-code"
 
     # Generate link
-    metadata = ModuleInfo(name=module_name, url=repo_url, hash=hash_val)
+    metadata = RepoInfo(name=repo_name, url=repo_url, hash=hash_val)
     link = DefaultNeedLink()
     link.file = Path("src/helper_lib/test_helper_lib.py")
     link.line = 75

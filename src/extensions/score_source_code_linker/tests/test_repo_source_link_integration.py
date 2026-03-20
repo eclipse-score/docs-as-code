@@ -22,10 +22,10 @@ import pytest
 from pytest import TempPathFactory
 from sphinx.testing.util import SphinxTestApp
 
-from src.extensions.score_source_code_linker.module_source_links import (
-    ModuleInfo,
-    ModuleSourceLinks_JSON_Decoder,
-    load_module_source_links_json,
+from src.extensions.score_source_code_linker.repo_source_links import (
+    RepoInfo,
+    RepoSourceLinks_JSON_Decoder,
+    load_repo_source_links_json,
 )
 
 """
@@ -73,8 +73,8 @@ def create_demo_files(sphinx_base_dir: Path, git_repo_setup: Path):
     source_dir = repo_path / "src"
     source_dir.mkdir()
 
-    _ = (source_dir / "module_a_impl.py").write_text(make_module_a_source())
-    _ = (source_dir / "module_b_impl.py").write_text(make_module_b_source())
+    _ = (source_dir / "repo_a_impl.py").write_text(make_repo_a_source())
+    _ = (source_dir / "repo_b_impl.py").write_text(make_repo_b_source())
 
     # Create docs directory
     docs_dir = repo_path / "docs"
@@ -89,8 +89,8 @@ def create_demo_files(sphinx_base_dir: Path, git_repo_setup: Path):
 
     curr_dir = Path(__file__).absolute().parent
     _ = shutil.copyfile(
-        curr_dir / "expected_module_grouped.json",
-        repo_path / ".expected_module_grouped.json",
+        curr_dir / "expected_repo_grouped.json",
+        repo_path / ".expected_repo_grouped.json",
     )
 
     # Commit everything
@@ -102,45 +102,53 @@ def create_demo_files(sphinx_base_dir: Path, git_repo_setup: Path):
     )
 
 
-def make_module_a_source():
-    return """
-# Module A implementation
-# """+"""req-Id: MOD_REQ_1
-def module_a_function():
+def make_repo_a_source():
+    return (
+        """
+# Repo A implementation
+# """
+        + """req-Id: MOD_REQ_1
+def repo_a_function():
     pass
 
-# """+"""req-Id: MOD_REQ_2
-class ModuleAClass:
-    pass
-"""
-
-
-def make_module_b_source():
-    return """
-# Module B implementation
-# """+"""req-Id: MOD_REQ_1
-def module_b_function():
-    pass
-
-# """+"""req-Id: MOD_REQ_3
-def another_module_b_function():
+# """
+        + """req-Id: MOD_REQ_2
+class RepoAClass:
     pass
 """
+    )
+
+
+def make_repo_b_source():
+    return (
+        """
+# Repo B implementation
+# """
+        + """req-Id: MOD_REQ_1
+def repo_b_function():
+    pass
+
+# """
+        + """req-Id: MOD_REQ_3
+def another_repo_b_function():
+    pass
+"""
+    )
 
 
 def make_test_xml():
     # ruff: noqa: E501 (start)
     return """
 <testsuites>
-  <testsuite name="ModuleTests" tests="2" failures="0" errors="0" time="0.123">
-    <testcase name="test_module_a" classname="" file="src/test_module_a.py" line="10" time="0.056">
+  <testsuite name="RepoTests" tests="2" failures="0" errors="0" time="0.123">
+    <testcase name="test_repo_a" classname="" file="src/test_repo_a.py" line="10" time="0.056">
       <properties>
         <property name="FullyVerifies" value="MOD_REQ_1"/>
         <property name="TestType" value="unit-test"/>
         <property name="DerivationTechnique" value="requirements-analysis"/>
       </properties>
     </testcase>
-    <testcase name="test_module_b" classname="" file="src/test_module_b.py" line="20" time="0.067">
+    <testcase name="test_repo_b" classname="" file="src/test_repo_b.py" line="20" time="0.067">
       <properties>
         <property name="PartiallyVerifies" value="MOD_REQ_3"/>
         <property name="TestType" value="integration-test"/>
@@ -162,7 +170,7 @@ extensions = [
 needs_types = [
     dict(
         directive="mod_req",
-        title="Module Requirement",
+        title="Repo Requirement",
         prefix="MOD_REQ_",
         color="#BFD8D2",
         style="node",
@@ -187,15 +195,15 @@ def basic_needs():
 MODULE TESTING
 ==============
 
-.. mod_req:: Module Requirement 1
+.. mod_req:: Repo Requirement 1
    :id: MOD_REQ_1
    :status: valid
 
-.. mod_req:: Module Requirement 2
+.. mod_req:: Repo Requirement 2
    :id: MOD_REQ_2
    :status: open
 
-.. mod_req:: Module Requirement 3
+.. mod_req:: Repo Requirement 3
    :id: MOD_REQ_3
    :status: open
 """
@@ -231,89 +239,89 @@ def sphinx_app_setup(
     return _create_app
 
 
-def test_module_grouped_cache_generated(
+def test_repo_grouped_cache_generated(
     sphinx_app_setup: Callable[[], SphinxTestApp],
     sphinx_base_dir: Path,
     git_repo_setup: Path,
     create_demo_files: None,
 ):
-    """Happy path: Module grouped cache file is generated after Sphinx build"""
+    """Happy path: Repo grouped cache file is generated after Sphinx build"""
     app = sphinx_app_setup()
     try:
         os.environ["BUILD_WORKSPACE_DIRECTORY"] = str(sphinx_base_dir)
         app.build()
 
-        module_cache = app.outdir / "score_module_grouped_scl_cache.json"
-        assert module_cache.exists(), "Module grouped cache was not created"
+        repo_cache = app.outdir / "score_repo_grouped_scl_cache.json"
+        assert repo_cache.exists(), "Repo grouped cache was not created"
 
         # Load and verify structure
-        loaded = load_module_source_links_json(module_cache)
+        loaded = load_repo_source_links_json(repo_cache)
         assert isinstance(loaded, list)
-        assert len(loaded) > 0, "Module cache should contain at least one module"
+        assert len(loaded) > 0, "Repo cache should contain at least one repo"
 
-        # Verify each item is a ModuleSourceLinks
+        # Verify each item is a RepoSourceLinks
         for item in loaded:
-            assert hasattr(item, "module")
+            assert hasattr(item, "repo")
             assert hasattr(item, "needs")
-            assert isinstance(item.module, ModuleInfo)
+            assert isinstance(item.repo, RepoInfo)
 
     finally:
         app.cleanup()
 
 
-def test_module_grouping_preserves_metadata(
+def test_repo_grouping_preserves_metadata(
     sphinx_app_setup: Callable[[], SphinxTestApp],
     sphinx_base_dir: Path,
     git_repo_setup: Path,
     create_demo_files: None,
 ):
-    """Happy path: Module metadata (name, hash, url) is preserved in cache"""
+    """Happy path: Repo metadata (name, hash, url) is preserved in cache"""
     app = sphinx_app_setup()
     try:
         os.environ["BUILD_WORKSPACE_DIRECTORY"] = str(sphinx_base_dir)
         app.build()
 
-        module_cache = app.outdir / "score_module_grouped_scl_cache.json"
-        loaded = load_module_source_links_json(module_cache)
+        repo_cache = app.outdir / "score_repo_grouped_scl_cache.json"
+        loaded = load_repo_source_links_json(repo_cache)
 
         # Verify that each module has proper metadata
-        for module_links in loaded:
-            assert module_links.module.name is not None
-            assert isinstance(module_links.module.name, str)
+        for repo_links in loaded:
+            assert repo_links.repo.name is not None
+            assert isinstance(repo_links.repo.name, str)
             # Hash and URL might be empty strings for local module
-            assert module_links.module.hash is not None
-            assert module_links.module.url is not None
+            assert repo_links.repo.hash is not None
+            assert repo_links.repo.url is not None
 
     finally:
         app.cleanup()
 
 
-def test_module_grouping_multiple_needs_per_module(
+def test_repo_grouping_multiple_needs_per_repo(
     sphinx_app_setup: Callable[[], SphinxTestApp],
     sphinx_base_dir: Path,
     git_repo_setup: Path,
     create_demo_files: None,
 ):
-    """Happy path: Multiple needs from same module are grouped together"""
+    """Happy path: Multiple needs from same repo are grouped together"""
     app = sphinx_app_setup()
     try:
         os.environ["BUILD_WORKSPACE_DIRECTORY"] = str(sphinx_base_dir)
         app.build()
 
-        module_cache = app.outdir / "score_module_grouped_scl_cache.json"
-        loaded = load_module_source_links_json(module_cache)
+        repo_cache = app.outdir / "score_repo_grouped_scl_cache.json"
+        loaded = load_repo_source_links_json(repo_cache)
 
-        # Find the local_module (should have all 3 requirements)
-        local_module = None
+        # Find the local_repo (should have all 3 requirements)
+        local_repo = None
         for m in loaded:
-            if m.module.name == "local_module":
-                local_module = m
+            if m.repo.name == "local_repo":
+                local_repo = m
                 break
 
-        assert local_module is not None, "local_module not found in grouped cache"
+        assert local_repo is not None, "local_repo not found in grouped cache"
 
-        # All 3 MOD_REQ should be in this module
-        need_ids = {need.need for need in local_module.needs}
+        # All 3 MOD_REQ should be in this repo
+        need_ids = {need.need for need in local_repo.needs}
         assert (
             "MOD_REQ_1" in need_ids
             or "MOD_REQ_2" in need_ids
@@ -324,14 +332,14 @@ def test_module_grouping_multiple_needs_per_module(
         app.cleanup()
 
 
-def test_module_cache_json_format(
+def test_repo_cache_json_format(
     sphinx_app_setup: Callable[[], SphinxTestApp],
     sphinx_base_dir: Path,
     git_repo_setup: Path,
     create_demo_files: None,
 ):
     """
-    Module cache JSON has correct
+    Repo cache JSON has correct
     structure and excludes metadata from links
     """
     app = sphinx_app_setup()
@@ -339,30 +347,30 @@ def test_module_cache_json_format(
         os.environ["BUILD_WORKSPACE_DIRECTORY"] = str(sphinx_base_dir)
         app.build()
 
-        module_cache = app.outdir / "score_module_grouped_scl_cache.json"
+        repo_cache = app.outdir / "score_repo_grouped_scl_cache.json"
 
         # Load as raw JSON to check structure
-        with open(module_cache) as f:
+        with open(repo_cache) as f:
             raw_json = json.load(f)
 
         assert isinstance(raw_json, list)
         assert len(raw_json) > 0
 
-        # Check first module structure
-        first_module = raw_json[0]
-        assert "module" in first_module
-        assert "needs" in first_module
-        assert "name" in first_module["module"]
-        assert "hash" in first_module["module"]
-        assert "url" in first_module["module"]
+        # Check first repo structure
+        first_repo = raw_json[0]
+        assert "repo" in first_repo
+        assert "needs" in first_repo
+        assert "name" in first_repo["repo"]
+        assert "hash" in first_repo["repo"]
+        assert "url" in first_repo["repo"]
 
         # Check that needlinks don't have metadata
-        if first_module["needs"]:
-            first_need = first_module["needs"][0]
+        if first_repo["needs"]:
+            first_need = first_repo["needs"][0]
             if "links" in first_need and first_need["links"].get("CodeLinks"):
                 codelink = first_need["links"]["CodeLinks"][0]
-                assert "module_name" not in codelink, (
-                    "CodeLinks should not contain module_name metadata"
+                assert "repo_name" not in codelink, (
+                    "CodeLinks should not contain repo_name metadata"
                 )
                 assert "hash" not in codelink, (
                     "CodeLinks should not contain hash metadata"
@@ -375,33 +383,33 @@ def test_module_cache_json_format(
         app.cleanup()
 
 
-def test_module_cache_rebuilds_when_missing(
+def test_repo_cache_rebuilds_when_missing(
     sphinx_app_setup: Callable[[], SphinxTestApp],
     sphinx_base_dir: Path,
     git_repo_setup: Path,
     create_demo_files: None,
 ):
-    """Edge case: Module cache is regenerated if deleted"""
+    """Edge case: Repo cache is regenerated if deleted"""
     app = sphinx_app_setup()
     try:
         os.environ["BUILD_WORKSPACE_DIRECTORY"] = str(sphinx_base_dir)
         app.build()
 
-        module_cache = app.outdir / "score_module_grouped_scl_cache.json"
-        assert module_cache.exists()
+        repo_cache = app.outdir / "score_repo_grouped_scl_cache.json"
+        assert repo_cache.exists()
 
         # Delete the cache
-        module_cache.unlink()
-        assert not module_cache.exists()
+        repo_cache.unlink()
+        assert not repo_cache.exists()
 
         # Build again - should regenerate
         app2 = sphinx_app_setup()
         app2.build()
 
-        assert module_cache.exists(), "Cache should be regenerated on rebuild"
+        assert repo_cache.exists(), "Cache should be regenerated on rebuild"
 
         # Verify it's valid
-        loaded = load_module_source_links_json(module_cache)
+        loaded = load_repo_source_links_json(repo_cache)
         assert len(loaded) > 0
 
         app2.cleanup()
@@ -409,50 +417,50 @@ def test_module_cache_rebuilds_when_missing(
         app.cleanup()
 
 
-def test_module_grouping_with_golden_file(
+def test_repo_grouping_with_golden_file(
     sphinx_app_setup: Callable[[], SphinxTestApp],
     sphinx_base_dir: Path,
     git_repo_setup: Path,
     create_demo_files: None,
 ):
-    """Happy path: Generated module cache matches expected golden file"""
+    """Happy path: Generated repo cache matches expected golden file"""
     app = sphinx_app_setup()
     try:
         os.environ["BUILD_WORKSPACE_DIRECTORY"] = str(sphinx_base_dir)
         app.build()
 
-        module_cache = app.outdir / "score_module_grouped_scl_cache.json"
-        expected_file = sphinx_base_dir / ".expected_module_grouped.json"
+        repo_cache = app.outdir / "score_repo_grouped_scl_cache.json"
+        expected_file = sphinx_base_dir / ".expected_repo_grouped.json"
 
-        assert module_cache.exists()
+        assert repo_cache.exists()
         assert expected_file.exists(), "Golden file not found"
 
-        with open(module_cache) as f1:
-            actual = json.load(f1, object_hook=ModuleSourceLinks_JSON_Decoder)
+        with open(repo_cache) as f1:
+            actual = json.load(f1, object_hook=RepoSourceLinks_JSON_Decoder)
         with open(expected_file) as f2:
-            expected = json.load(f2, object_hook=ModuleSourceLinks_JSON_Decoder)
+            expected = json.load(f2, object_hook=RepoSourceLinks_JSON_Decoder)
 
         assert len(actual) == len(expected), (
-            f"Module count mismatch. Actual: {len(actual)}, Expected: {len(expected)}"
+            f"Repo count mismatch. Actual: {len(actual)}, Expected: {len(expected)}"
         )
 
-        # Compare module by module
-        actual_by_name = {m.module.name: m for m in actual}
-        expected_by_name = {m.module.name: m for m in expected}
+        # Compare repo by repo
+        actual_by_name = {m.repo.name: m for m in actual}
+        expected_by_name = {m.repo.name: m for m in expected}
 
         assert set(actual_by_name.keys()) == set(expected_by_name.keys()), (
-            f"Module names don't match. "
+            f"Repo names don't match. "
             f"Actual: {set(actual_by_name.keys())}, "
             f"Expected: {set(expected_by_name.keys())}"
         )
 
-        for module_name in actual_by_name:
-            actual_module = actual_by_name[module_name]
-            expected_module = expected_by_name[module_name]
+        for repo_name in actual_by_name:
+            actual_repo = actual_by_name[repo_name]
+            expected_repo = expected_by_name[repo_name]
 
-            assert actual_module.module.hash == expected_module.module.hash
-            assert actual_module.module.url == expected_module.module.url
-            assert len(actual_module.needs) == len(expected_module.needs)
+            assert actual_repo.repo.hash == expected_repo.repo.hash
+            assert actual_repo.repo.url == expected_repo.repo.url
+            assert len(actual_repo.needs) == len(expected_repo.needs)
 
     finally:
         app.cleanup()

@@ -26,7 +26,7 @@ from sphinx.testing.util import SphinxTestApp
 from sphinx_needs.data import SphinxNeedsData
 
 from src.extensions.score_source_code_linker.helpers import get_github_link
-from src.extensions.score_source_code_linker.module_source_links import ModuleInfo
+from src.extensions.score_source_code_linker.repo_source_links import RepoInfo
 from src.extensions.score_source_code_linker.needlinks import NeedLink
 from src.extensions.score_source_code_linker.testlink import (
     DataForTestLink,
@@ -313,7 +313,7 @@ def example_source_link_text_all_ok(sphinx_base_dir: Path) -> dict[str, list[Nee
                 tag="#" + " req-Id:",
                 need="TREQ_ID_1",
                 full_line="#" + " req-Id: TREQ_ID_1",
-                module_name="local_module",
+                repo_name="local_repo",
                 url="",
                 hash="",
             ),
@@ -323,7 +323,7 @@ def example_source_link_text_all_ok(sphinx_base_dir: Path) -> dict[str, list[Nee
                 tag="#" + " req-Id:",
                 need="TREQ_ID_1",
                 full_line="#" + " req-Id: TREQ_ID_1",
-                module_name="local_module",
+                repo_name="local_repo",
                 url="",
                 hash="",
             ),
@@ -335,7 +335,7 @@ def example_source_link_text_all_ok(sphinx_base_dir: Path) -> dict[str, list[Nee
                 tag="#" + " req-Id:",
                 need="TREQ_ID_2",
                 full_line="#" + " req-Id: TREQ_ID_2",
-                module_name="local_module",
+                repo_name="local_repo",
                 url="",
                 hash="",
             )
@@ -356,7 +356,7 @@ def example_test_link_text_all_ok(sphinx_base_dir: Path):
                 verify_type="fully",
                 result="passed",
                 result_text="",
-                module_name="local_module",
+                repo_name="local_repo",
                 url="",
                 hash="",
             ),
@@ -370,7 +370,7 @@ def example_test_link_text_all_ok(sphinx_base_dir: Path):
                 verify_type="partially",
                 result="passed",
                 result_text="",
-                module_name="local_module",
+                repo_name="local_repo",
                 url="",
                 hash="",
             ),
@@ -382,7 +382,7 @@ def example_test_link_text_all_ok(sphinx_base_dir: Path):
                 verify_type="partially",
                 result="passed",
                 result_text="",
-                module_name="local_module",
+                repo_name="local_repo",
                 url="",
                 hash="",
             ),
@@ -396,7 +396,7 @@ def example_test_link_text_all_ok(sphinx_base_dir: Path):
                 verify_type="partially",
                 result="passed",
                 result_text="",
-                module_name="local_module",
+                repo_name="local_repo",
                 url="",
                 hash="",
             ),
@@ -408,7 +408,7 @@ def example_test_link_text_all_ok(sphinx_base_dir: Path):
                 verify_type="partially",
                 result="passed",
                 result_text="",
-                module_name="local_module",
+                repo_name="local_repo",
                 url="",
                 hash="",
             ),
@@ -434,21 +434,23 @@ def example_source_link_text_non_existent(sphinx_base_dir: Path):
 
 
 def make_source_link(needlinks: list[NeedLink]):
-    metadata= ModuleInfo(
-                name="local_module",
-                url="",
-                hash="",
+    metadata = RepoInfo(
+        name="local_repo",
+        url="",
+        hash="",
     )
-    return ", ".join(f"{get_github_link(metadata,n)}<>{n.file}:{n.line}" for n in needlinks)
+    return ", ".join(
+        f"{get_github_link(metadata, n)}<>{n.file}:{n.line}" for n in needlinks
+    )
 
 
 def make_test_link(testlinks: list[DataForTestLink]):
-    metadata= ModuleInfo(
-                name="local_module",
-                url="",
-                hash="",
+    metadata = RepoInfo(
+        name="local_repo",
+        url="",
+        hash="",
     )
-    return ", ".join(f"{get_github_link(metadata,n)}<>{n.name}" for n in testlinks)
+    return ", ".join(f"{get_github_link(metadata, n)}<>{n.name}" for n in testlinks)
 
 
 def compare_json_files(

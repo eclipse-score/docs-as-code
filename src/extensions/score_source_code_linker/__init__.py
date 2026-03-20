@@ -35,10 +35,10 @@ from src.extensions.score_source_code_linker.generate_source_code_links_json imp
     generate_source_code_links_json,
 )
 from src.extensions.score_source_code_linker.helpers import get_github_link
-from src.extensions.score_source_code_linker.module_source_links import (
-    group_needs_by_module,
-    load_module_source_links_json,
-    store_module_source_links_json,
+from src.extensions.score_source_code_linker.repo_source_links import (
+    group_needs_by_repo,
+    load_repo_source_links_json,
+    store_repo_source_links_json,
 )
 from src.extensions.score_source_code_linker.need_source_links import (
     group_by_need,
@@ -235,26 +235,26 @@ def setup_combined_linker(app: Sphinx, _: BuildEnvironment):
         build_and_save_combined_file(app.outdir)
 
 
-def register_module_linker(app: Sphinx):
+def register_repo_linker(app: Sphinx):
     # Registering the combined linker to Sphinx
     # priority is set to make sure it is called in the right order.
     # Needs to be called after xml parsing & codelink
-    app.connect("env-updated", setup_module_linker, priority=520)
+    app.connect("env-updated", setup_repo_linker, priority=520)
 
 
-def build_and_save_module_scl_file(outdir: Path):
+def build_and_save_repo_scl_file(outdir: Path):
     scl_links = load_source_code_links_combined_json(
         get_cache_filename(outdir, "score_scl_grouped_cache.json")
     )
-    mcl_links = group_needs_by_module(scl_links)
-    store_module_source_links_json(
-        outdir / "score_module_grouped_scl_cache.json", mcl_links
+    mcl_links = group_needs_by_repo(scl_links)
+    store_repo_source_links_json(
+        outdir / "score_repo_grouped_scl_cache.json", mcl_links
     )
 
 
-def setup_module_linker(app: Sphinx, _: BuildEnvironment):
+def setup_repo_linker(app: Sphinx, _: BuildEnvironment):
     grouped_cache = get_cache_filename(
-        app.outdir, "score_module_grouped_scl_cache.json"
+        app.outdir, "score_repo_grouped_scl_cache.json"
     )
     grouped_cache_exists = grouped_cache.exists()
     # TODO this cache should be done via Bazel
@@ -266,7 +266,7 @@ def setup_module_linker(app: Sphinx, _: BuildEnvironment):
             "Did not find combined json 'score_module_grouped_scl_cache.json' "
             "in _build. Generating new one"
         )
-        build_and_save_module_scl_file(app.outdir)
+        build_and_save_repo_scl_file(app.outdir)
 
 
 def setup_once(app: Sphinx):
@@ -292,7 +292,7 @@ def setup_once(app: Sphinx):
     setup_source_code_linker(app, ws_root)
     register_test_code_linker(app)
     register_combined_linker(app)
-    register_module_linker(app)
+    register_repo_linker(app)
 
     # Priority=515 to ensure it's called after the test linker & combined connection
     app.connect("env-updated", inject_links_into_needs, priority=525)
@@ -350,8 +350,8 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
                     f"?? Need {id} already has testlink: {need.get('testlink')}"
                 )
 
-    scl_by_module = load_module_source_links_json(
-        get_cache_filename(app.outdir, "score_module_grouped_scl_cache.json")
+    scl_by_module = load_repo_source_links_json(
+        get_cache_filename(app.outdir, "score_repo_grouped_scl_cache.json")
     )
     for module_grouped_needs in scl_by_module:
         for source_code_links in module_grouped_needs.needs:
@@ -373,7 +373,7 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
                 continue
 
             need_as_dict = cast(dict[str, object], need)
-            metadata = module_grouped_needs.module
+            metadata = module_grouped_needs.repo
             need_as_dict["source_code_link"] = ", ".join(
                 f"{get_github_link(metadata, n)}<>{n.file}:{n.line}"
                 for n in source_code_links.links.CodeLinks

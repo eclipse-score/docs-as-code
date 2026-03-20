@@ -42,7 +42,7 @@ class DataForTestLink:
     verify_type: str
     result: str
     result_text: str = ""
-    module_name: str = "local_module"
+    repo_name: str = "local_repo"
     hash: str = ""
     url: str = ""
 
@@ -58,7 +58,7 @@ class DataForTestLink:
                 self.verify_type,
                 self.result,
                 self.result_text,
-                self.module_name,
+                self.repo_name,
                 self.hash,
                 self.url,
             )
@@ -75,7 +75,7 @@ class DataForTestLink:
             and self.verify_type == other.verify_type
             and self.result == other.result
             and self.result_text == other.result_text
-            and self.module_name == other.module_name
+            and self.repo_name == other.repo_name
             and self.hash == other.hash
             and self.url == other.url
         )
@@ -85,10 +85,10 @@ class DataForTestLink:
         return asdict(self)
 
     # Drops MetaData fields for saving the Dataclass (saving space in json)
-    # The information is in the 'Module_Source_Link' in the end
+    # The information is in the 'Repo_Source_Link' in the end
     def to_dict_without_metadata(self) -> dict[str, str | Path | int]:
         d = asdict(self)
-        d.pop("module_name", None)
+        d.pop("repo_name", None)
         d.pop("hash", None)
         d.pop("url", None)
         return d
@@ -110,7 +110,7 @@ def DataForTestLink_JSON_Decoder(d: dict[str, Any]) -> DataForTestLink | dict[st
         "line",
         "need",
         "verify_type",
-        "module_name",
+        "repo_name",
         "hash",
         "url",
         "result",
@@ -121,7 +121,7 @@ def DataForTestLink_JSON_Decoder(d: dict[str, Any]) -> DataForTestLink | dict[st
             file=Path(d["file"]),
             line=d["line"],
             need=d["need"],
-            module_name=d.get("module_name", ""),
+            repo_name=d.get("repo_name", ""),
             hash=d.get("hash", ""),
             url=d.get("url", ""),
             verify_type=d["verify_type"],
@@ -139,7 +139,7 @@ class DataOfTestCase:
     file: str | None = None
     line: str | None = None
     result: str | None = None  # passed | falied | skipped | disabled
-    module_name: str | None = None
+    repo_name: str | None = None
     hash: str | None = None
     url: str | None = None
     # Intentionally not snakecase to make dict parsing simple
@@ -157,7 +157,7 @@ class DataOfTestCase:
             file=data.get("file"),
             line=data.get("line"),
             result=data.get("result"),
-            module_name=data.get("module_name"),
+            repo_name=data.get("repo_name"),
             hash=data.get("hash"),
             url=data.get("url"),
             TestType=data.get("TestType"),
@@ -221,7 +221,7 @@ class DataOfTestCase:
         #         and self.DerivationTechnique is not None
         # ):
         # Hash & URL are explictily allowed to be empty but not none.
-        # module_name has to be always filled or something went wrong
+        # repo_name has to be always filled or something went wrong
         fields = [
             x
             for x in self.__dataclass_fields__
@@ -263,7 +263,7 @@ class DataOfTestCase:
             assert self.file is not None
             assert self.line is not None
             assert self.result is not None
-            assert self.module_name is not None
+            assert self.repo_name is not None
             assert self.hash is not None
             assert self.url is not None
             assert self.result_text is not None
@@ -279,7 +279,7 @@ class DataOfTestCase:
                     verify_type=verify_type,
                     result=self.result,
                     result_text=self.result_text,
-                    module_name=self.module_name,
+                    repo_name=self.repo_name,
                     hash=self.hash,
                     url=self.url,
                 )

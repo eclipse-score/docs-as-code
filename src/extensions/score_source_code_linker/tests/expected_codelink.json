@@ -5,7 +5,7 @@
         "tag":"#-----req-Id:",
         "need": "TREQ_ID_1",
         "full_line": "#-----req-Id: TREQ_ID_1",
-        "module_name": "local_module",
+        "repo_name": "local_repo",
         "hash": "",
         "url": ""
     },
@@ -15,7 +15,7 @@
         "tag":"#-----req-Id:",
         "need": "TREQ_ID_1",
         "full_line": "#-----req-Id: TREQ_ID_1",
-        "module_name": "local_module",
+        "repo_name": "local_repo",
         "hash": "",
         "url": ""
     },
@@ -25,7 +25,7 @@
         "tag":"#-----req-Id:",
         "need": "TREQ_ID_2",
         "full_line":"#-----req-Id: TREQ_ID_2",
-        "module_name": "local_module",
+        "repo_name": "local_repo",
         "hash": "",
         "url": ""
     },
@@ -35,7 +35,7 @@
         "tag":"#-----req-Id:",
         "need": "TREQ_ID_200",
         "full_line":"#-----req-Id: TREQ_ID_200",
-        "module_name": "local_module",
+        "repo_name": "local_repo",
         "hash": "",
         "url": ""
     }

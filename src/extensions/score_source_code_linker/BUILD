@@ -55,7 +55,7 @@ py_library(
         "testlink.py",
         "xml_parser.py",
         "helpers.py",
-        "module_source_links.py",
+        "repo_source_links.py",
     ],
     imports = ["."],
     visibility = ["//visibility:public"],

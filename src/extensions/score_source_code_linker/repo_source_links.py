@@ -27,19 +27,23 @@ from src.extensions.score_source_code_linker.testlink import DataForTestLink
 
 
 @dataclass
-class ModuleInfo:
+class RepoInfo:
     name: str
     hash: str
     url: str
 
 
+def DefaultRepoInfo() -> RepoInfo:
+    return RepoInfo(name="local_repo", hash="", url="")
+
+
 @dataclass
-class ModuleSourceLinks:
-    module: ModuleInfo
+class RepoSourceLinks:
+    repo: RepoInfo
     needs: list[SourceCodeLinks] = field(default_factory=list)
 
 
-class ModuleSourceLinks_TEST_JSON_Encoder(json.JSONEncoder):
+class RepoSourceLinks_TEST_JSON_Encoder(json.JSONEncoder):
     def default(self, o: object) -> str | dict[str, Any]:
         if isinstance(o, Path):
             return str(o)
@@ -52,9 +56,9 @@ class ModuleSourceLinks_TEST_JSON_Encoder(json.JSONEncoder):
         # dictionaries won't get split up and we will not
         # run into the 'to_dict_without_metadata' as
         # everything will be converted to a normal dictionary
-        if isinstance(o, ModuleSourceLinks):
+        if isinstance(o, RepoSourceLinks):
             return {
-                "module": asdict(o.module),
+                "repo": asdict(o.repo),
                 "needs": o.needs,  # Let the encoder handle the list
             }
         if isinstance(o, SourceCodeLinks):
@@ -70,17 +74,17 @@ class ModuleSourceLinks_TEST_JSON_Encoder(json.JSONEncoder):
         return super().default(o)
 
 
-def ModuleSourceLinks_JSON_Decoder(
+def RepoSourceLinks_JSON_Decoder(
     d: dict[str, Any],
-) -> ModuleSourceLinks | dict[str, Any]:
-    if "module" in d and "needs" in d:
-        module = d["module"]
+) -> RepoSourceLinks | dict[str, Any]:
+    if "repo" in d and "needs" in d:
+        repo = d["repo"]
         needs = d["needs"]
-        return ModuleSourceLinks(
-            module=ModuleInfo(
-                name=module.get("name"),
-                hash=module.get("hash"),
-                url=module.get("url"),
+        return RepoSourceLinks(
+            repo=RepoInfo(
+                name=repo.get("name"),
+                hash=repo.get("hash"),
+                url=repo.get("url"),
             ),
             # We know this can only be list[SourceCodeLinks] and nothing else
             # Therefore => we ignore the type error here
@@ -89,8 +93,8 @@ def ModuleSourceLinks_JSON_Decoder(
     return d
 
 
-def store_module_source_links_json(
-    file: Path, source_code_links: list[ModuleSourceLinks]
+def store_repo_source_links_json(
+    file: Path, source_code_links: list[RepoSourceLinks]
 ):
     # After `rm -rf _build` or on clean builds the directory does not exist,
     # so we need to create it. We create any folder that might be missing
@@ -99,31 +103,31 @@ def store_module_source_links_json(
         json.dump(
             source_code_links,
             f,
-            cls=ModuleSourceLinks_TEST_JSON_Encoder,
+            cls=RepoSourceLinks_TEST_JSON_Encoder,
             indent=2,
             ensure_ascii=False,
         )
 
 
-def load_module_source_links_json(file: Path) -> list[ModuleSourceLinks]:
-    links: list[ModuleSourceLinks] = json.loads(
+def load_repo_source_links_json(file: Path) -> list[RepoSourceLinks]:
+    links: list[RepoSourceLinks] = json.loads(
         file.read_text(encoding="utf-8"),
-        object_hook=ModuleSourceLinks_JSON_Decoder,
+        object_hook=RepoSourceLinks_JSON_Decoder,
     )
     assert isinstance(links, list), (
-        "The ModuleSourceLink json should be a list of ModuleSourceLink objects."
+        "The RepoSourceLink json should be a list of RepoSourceLink objects."
     )
-    assert all(isinstance(link, ModuleSourceLinks) for link in links), (
-        "All items in module source link cache should be ModuleSourceLink objects."
+    assert all(isinstance(link, RepoSourceLinks) for link in links), (
+        "All items in repo source link cache should be RepoSourceLink objects."
     )
     return links
 
 
-def group_needs_by_module(links: list[SourceCodeLinks]) -> list[ModuleSourceLinks]:
-    module_groups: dict[str, ModuleSourceLinks] = {}
+def group_needs_by_repo(links: list[SourceCodeLinks]) -> list[RepoSourceLinks]:
+    repo_groups: dict[str, RepoSourceLinks] = {}
 
     for source_link in links:
-        # Check if we can take moduleInfo from code or testlinks
+        # Check if we can take repoInfo from code or testlinks
         if source_link.links.CodeLinks:
             first_link = source_link.links.CodeLinks[0]
         elif source_link.links.TestLinks:
@@ -131,28 +135,22 @@ def group_needs_by_module(links: list[SourceCodeLinks]) -> list[ModuleSourceLink
         else:
             # This should not happen?
             continue
-        module_key = first_link.module_name
+        repo_key = first_link.repo_name
 
-        if module_key not in module_groups:
-            module_groups[module_key] = ModuleSourceLinks(
-                module=ModuleInfo(
-                    name=module_key, hash=first_link.hash, url=first_link.url
+        if repo_key not in repo_groups:
+            repo_groups[repo_key] = RepoSourceLinks(
+                repo=RepoInfo(
+                    name=repo_key, hash=first_link.hash, url=first_link.url
                 )
             )
 
         # TODO: Add an assert that checks if needs only are
-        # in a singular module (not allowed to be in multiple)
-        module_groups[module_key].needs.append(source_link)
+        # in a singular repo (not allowed to be in multiple)
+        repo_groups[repo_key].needs.append(source_link)
 
     return [
-        ModuleSourceLinks(module=group.module, needs=group.needs)
-        for group in module_groups.values()
+        RepoSourceLinks(repo=group.repo, needs=group.needs)
+        for group in repo_groups.values()
     ]
 
 
-# # Pouplate Metadata
-# # Since all metadata inside the Codelinks is the same
-# # we can just arbitrarily grab the first one
-# module_name=need_links.CodeLinks[0].module_name,
-# hash=need_links.CodeLinks[0].hash,
-# url=need_links.CodeLinks[0].url,
