@@ -25,8 +25,8 @@ from src.extensions.score_source_code_linker.helpers import (
     parse_info_from_known_good,
     parse_repo_name_from_path,
 )
-from src.extensions.score_source_code_linker.repo_source_links import RepoInfo
 from src.extensions.score_source_code_linker.needlinks import DefaultNeedLink
+from src.extensions.score_source_code_linker.repo_source_links import RepoInfo
 from src.helper_lib import get_current_git_hash
 
 #              ╭──────────────────────────────────────────────────────────╮

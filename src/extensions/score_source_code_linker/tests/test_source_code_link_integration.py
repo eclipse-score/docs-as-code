@@ -26,8 +26,8 @@ from sphinx.testing.util import SphinxTestApp
 from sphinx_needs.data import SphinxNeedsData
 
 from src.extensions.score_source_code_linker.helpers import get_github_link
-from src.extensions.score_source_code_linker.repo_source_links import RepoInfo
 from src.extensions.score_source_code_linker.needlinks import NeedLink
+from src.extensions.score_source_code_linker.repo_source_links import RepoInfo
 from src.extensions.score_source_code_linker.testlink import (
     DataForTestLink,
     DataForTestLink_JSON_Decoder,

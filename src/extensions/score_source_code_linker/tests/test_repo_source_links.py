@@ -17,6 +17,11 @@ from typing import Any
 
 import pytest
 
+from src.extensions.score_source_code_linker.need_source_links import (
+    NeedSourceLinks,
+    SourceCodeLinks,
+)
+from src.extensions.score_source_code_linker.needlinks import NeedLink
 from src.extensions.score_source_code_linker.repo_source_links import (
     RepoInfo,
     RepoSourceLinks,
@@ -25,11 +30,6 @@ from src.extensions.score_source_code_linker.repo_source_links import (
     load_repo_source_links_json,
     store_repo_source_links_json,
 )
-from src.extensions.score_source_code_linker.need_source_links import (
-    NeedSourceLinks,
-    SourceCodeLinks,
-)
-from src.extensions.score_source_code_linker.needlinks import NeedLink
 from src.extensions.score_source_code_linker.testlink import DataForTestLink
 
 """

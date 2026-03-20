@@ -35,11 +35,6 @@ from src.extensions.score_source_code_linker.generate_source_code_links_json imp
     generate_source_code_links_json,
 )
 from src.extensions.score_source_code_linker.helpers import get_github_link
-from src.extensions.score_source_code_linker.repo_source_links import (
-    group_needs_by_repo,
-    load_repo_source_links_json,
-    store_repo_source_links_json,
-)
 from src.extensions.score_source_code_linker.need_source_links import (
     group_by_need,
     load_source_code_links_combined_json,
@@ -48,6 +43,11 @@ from src.extensions.score_source_code_linker.need_source_links import (
 from src.extensions.score_source_code_linker.needlinks import (
     load_source_code_links_json,
     load_source_code_links_with_metadata_json,
+)
+from src.extensions.score_source_code_linker.repo_source_links import (
+    group_needs_by_repo,
+    load_repo_source_links_json,
+    store_repo_source_links_json,
 )
 from src.extensions.score_source_code_linker.testlink import (
     load_data_of_test_case_json,

@@ -23,8 +23,6 @@ from collections.abc import Generator
 from dataclasses import asdict
 from pathlib import Path
 from typing import Any
-from collections import Counter
-from collections.abc import Callable
 
 import pytest
 
@@ -45,7 +43,6 @@ from src.extensions.score_source_code_linker import (
 from src.extensions.score_source_code_linker.helpers import (
     get_github_link,
 )
-from src.extensions.score_source_code_linker.repo_source_links import RepoInfo
 from src.extensions.score_source_code_linker.needlinks import (
     MetaData,
     NeedLink,
@@ -57,6 +54,7 @@ from src.extensions.score_source_code_linker.needlinks import (
     store_source_code_links_json,
     store_source_code_links_with_metadata_json,
 )
+from src.extensions.score_source_code_linker.repo_source_links import RepoInfo
 from src.helper_lib import (
     get_current_git_hash,
 )

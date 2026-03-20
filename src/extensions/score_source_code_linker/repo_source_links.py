@@ -152,5 +152,3 @@ def group_needs_by_repo(links: list[SourceCodeLinks]) -> list[RepoSourceLinks]:
         RepoSourceLinks(repo=group.repo, needs=group.needs)
         for group in repo_groups.values()
     ]
-
-
