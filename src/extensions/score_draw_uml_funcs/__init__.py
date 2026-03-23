@@ -32,7 +32,7 @@ from functools import cache
 from pathlib import Path
 from typing import Any, cast
 
-from score_draw_uml_funcs.helpers import (
+from score_draw_uml_funcs.draw_helpers import (
     gen_header,
     gen_interface_element,
     gen_link_text,
