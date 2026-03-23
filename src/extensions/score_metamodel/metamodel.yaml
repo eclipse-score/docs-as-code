@@ -130,8 +130,8 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_description
       content: ^[\s\S]+$
     optional_links:
-      # req-Id: tool_req__docs_req_link_satisfies_allowed
-      # TODO: fix once process_description is fixed
+      # req-Id: tool_req__docs_req_link_derived_from_allowed
+      derived_from: workflow
       satisfies: workflow
       complies: std_req
     tags:
@@ -292,8 +292,11 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_description
       content: ^[\s\S]+$
     mandatory_links:
-      # req-Id: tool_req__docs_req_link_satisfies_allowed
+      # req-Id: tool_req__docs_req_link_derived_from_allowed
+      derived_from: stkh_req
+    optional_links:
       satisfies: stkh_req
+      belongs_to: feat # for evaluation
     optional_options:
       # req-Id: tool_req__docs_req_attr_reqcov
       reqcovered: ^(YES|NO)$
@@ -304,7 +307,6 @@ needs_types:
       valid_from: ^v(0|[1-9]\d*)\.(0|[1-9]\d*)(\.(0|[1-9]\d*))?$
       valid_until: ^v(0|[1-9]\d*)\.(0|[1-9]\d*)(\.(0|[1-9]\d*))?$
     optional_links:
-      belongs_to: feat # for evaluation
       # req-Id: tool_req__docs_req_link_covers_aou
       covers: aou_req
     tags:
@@ -327,9 +329,11 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_description
       content: ^[\s\S]+$
     mandatory_links:
-      # req-Id: tool_req__docs_req_link_satisfies_allowed
-      satisfies: feat_req
+      # req-Id: tool_req__docs_req_link_derived_from_allowed
+      derived_from: feat_req
       belongs_to: comp
+    optional_links:
+      satisfies: feat_req
     optional_options:
       # req-Id: tool_req__docs_req_attr_reqcov
       reqcovered: ^(YES|NO)$
@@ -351,8 +355,9 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_description
       content: ^[\s\S]+$
     optional_links:
-      # req-Id: tool_req__docs_req_link_satisfies_allowed
+      # req-Id: tool_req__docs_req_link_derived_from_allowed
       # TODO: make it mandatory
+      derived_from: gd_req, stkh_req
       satisfies: gd_req, stkh_req, feat_req, comp_req
     optional_options:
       tags: ^.*$
@@ -436,9 +441,10 @@ needs_types:
       status: ^(valid|invalid)$
     mandatory_links:
       includes: ^logic_arc_int(_op)*__.+$
-      # req-Id: tool_req__docs_arch_link_fulfils, tool_req__docs_arch_link_fulfils_aou
-      fulfils: feat_req, aou_req
+      satisfies: feat_req, aou_req
       belongs_to: feat # make it mandatory for evaluation
+    optional_links:
+      fulfils: feat_req
     tags:
       - architecture_element
       - architecture_view
@@ -458,8 +464,10 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
     mandatory_links:
-      fulfils: feat_req
+      satisfies: feat_req
       belongs_to: feat
+    optional_links:
+      fulfils: feat_req
     tags:
       - architecture_view
       - architecture_element
@@ -481,6 +489,7 @@ needs_types:
       status: ^(valid|invalid)$
     optional_links:
       includes: logic_arc_int_op
+      satisfies: feat_req
       fulfils: feat_req
     tags:
       - architecture_element
@@ -587,10 +596,10 @@ needs_types:
       status: ^(valid|invalid)$
     mandatory_links:
       belongs_to: comp
-      # req-Id: tool_req__docs_arch_link_fulfils, tool_req__docs_arch_link_fulfils_aou
-      fulfils: comp_req, aou_req
+      satisfies: comp_req, aou_req
     optional_links:
       uses: logic_arc_int, real_arc_int_op
+      fulfils: comp_req
     tags:
       - architecture_view
     parts: 3
@@ -610,6 +619,8 @@ needs_types:
       status: ^(valid|invalid)$
     mandatory_links:
       belongs_to: comp
+      satisfies: comp_req
+    optional_links:
       fulfils: comp_req
     tags:
       - architecture_view
@@ -631,6 +642,7 @@ needs_types:
       status: ^(valid|invalid)$
       language: ^(cpp|rust)$
     optional_links:
+      satisfies: comp_req
       fulfils: comp_req
     tags:
       - architecture_element
@@ -978,9 +990,9 @@ needs_extra_links:
   #  S-CORE Metamodel
   ##############################################################
   # Requirements
-  satisfies:
-    incoming: satisfied by
-    outgoing: satisfies
+  derived_from:
+    incoming: derives
+    outgoing: derived from
 
   # req-Id: tool_req__docs_req_link_covers_aou
   covers:
@@ -996,6 +1008,11 @@ needs_extra_links:
     incoming: has
     outgoing: belongs to
 
+  satisfies:
+    incoming: satisfied by
+    outgoing: satisfies
+
+  # kept for backward compatibility - old name for satisfies
   fulfils:
     incoming: fulfilled by
     outgoing: fulfils
@@ -1059,8 +1076,9 @@ graph_checks:
       include: stkh_req, feat_req, comp_req, aou_req, gd_req, tool_req
       condition: safety == QM
     check:
+      derived_from: safety == QM
       satisfies: safety == QM
-    explanation: QM requirements cannot satisfy ASIL requirements.
+    explanation: QM requirements cannot be derived from ASIL requirements.
 
   # req-Id: tool_req__docs_arch_link_qm_to_safety_req
   tool_req__docs_arch_link_qm_to_safety_req:
@@ -1068,6 +1086,7 @@ graph_checks:
       include: feat_arc_sta, logic_arc_int, logic_arc_int_op, comp_arc_sta, real_arc_int, real_arc_int_op
       condition: safety == QM
     check:
+      satisfies: safety != QM
       fulfils: safety != QM
     explanation: An QM architecture element cannot implement ASIL requirements.
 
