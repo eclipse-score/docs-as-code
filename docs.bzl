@@ -189,13 +189,11 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
     docs_env = {
         "SOURCE_DIRECTORY": source_dir,
         "DATA": str(data),
-        "ACTION": "incremental",
         "SCORE_SOURCELINKS": "$(location :sourcelinks_json)",
     }
     docs_sources_env = {
         "SOURCE_DIRECTORY": source_dir,
         "DATA": str(data_with_docs_sources),
-        "ACTION": "incremental",
         "SCORE_SOURCELINKS": "$(location :merged_sourcelinks)",
     }
     if known_good:
@@ -204,15 +202,18 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
         docs_data.append(known_good)
         combo_data.append(known_good)
 
+    docs_env["ACTION"] = "incremental"
+
     py_binary(
         name = "docs",
         tags = ["cli_help=Build documentation:\nbazel run //:docs"],
         srcs = ["@score_docs_as_code//src:incremental.py"],
         data = docs_data,
         deps = deps,
-        env = docs_env,
+        env = docs_env
     )
 
+    docs_sources_env["ACTION"] = "incremental"
     py_binary(
         name = "docs_combo",
         tags = ["cli_help=Build full documentation with all dependencies:\nbazel run //:docs_combo"],
@@ -228,6 +229,7 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
         deprecation = "Target '//:docs_combo_experimental' is deprecated. Use '//:docs_combo' instead.",
     )
 
+    docs_env["ACTION"] = "linkcheck"
     py_binary(
         name = "docs_link_check",
         tags = ["cli_help=Verify Links inside Documentation:\nbazel run //:link_check\n (Note: this could take a long time)"],
@@ -237,24 +239,27 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
         env = docs_env
     )
 
+    docs_env["ACTION"] = "check"
     py_binary(
         name = "docs_check",
         tags = ["cli_help=Verify documentation:\nbazel run //:docs_check"],
         srcs = ["@score_docs_as_code//src:incremental.py"],
         data = docs_data,
         deps = deps,
-        env = docs_env,
+        env = docs_env
     )
 
+    docs_env["ACTION"] = "live_preview"
     py_binary(
         name = "live_preview",
         tags = ["cli_help=Live preview documentation in the browser:\nbazel run //:live_preview"],
         srcs = ["@score_docs_as_code//src:incremental.py"],
         data = docs_data,
         deps = deps,
-        env = docs_env,
+        env = docs_env
     )
 
+    docs_sources_env["ACTION"] = "live_preview"
     py_binary(
         name = "live_preview_combo_experimental",
         tags = ["cli_help=Live preview full documentation with all dependencies in the browser:\nbazel run //:live_preview_combo_experimental"],
