@@ -69,7 +69,7 @@ Unsatisfied – Priority 1
           continue
        if not any(prio in tag for tag in need["tags"]):
           continue
-       if len(need["satisfies_back"]) >= 1:
+       if len(need["derived_from_back"]) >= 1:
           continue
        results.append(need)
 
@@ -87,7 +87,7 @@ Unsatisfied – Priority 2
    for need in needs.filter_types(["gd_req"]):
        if not any(prio in tag for tag in need["tags"]):
           continue
-       if len(need["satisfies_back"]) >= 1:
+       if len(need["derived_from_back"]) >= 1:
           continue
        results.append(need)
 
@@ -101,7 +101,7 @@ does not mean it is implemented.
 
 .. needtable::
    :types: gd_req
-   :columns: id as "Tool Requirement";implemented;satisfies
+   :columns: id as "Tool Requirement";implemented;derived_from
    :colwidths: 1;1;2
    :style: table
 

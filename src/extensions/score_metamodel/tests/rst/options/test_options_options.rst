@@ -46,7 +46,7 @@
 
 .. feat_req:: Child requirement
    :id: feat_req__abcg
-   :satisfies: stkh_req__abcd
+   :derived_from: stkh_req__abcd
 
 .. stkh_req:: Parent requirement
    :id: stkh_req__abcd
