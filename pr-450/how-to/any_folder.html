@@ -38,11 +38,11 @@
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-data-viewer/jsonview.bundle.css?v=f6ef2277" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/libs/html/datatables.min.css?v=4b4fd840" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_links.css?v=2150a916" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_style.css?v=92936fa5" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/needstable.css?v=5e1b6797" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_toggle.css?v=5c6620df" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_core.css?v=f5b60a78" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_links.css?v=2150a916" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/needstable.css?v=5e1b6797" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/modern.css?v=803738c0" />
   
   <!-- So that users can add custom icons -->
@@ -491,20 +491,6 @@ in your <code class="docutils literal notranslate"><span class="pre">docs()</spa
 <p>This is necessary for sandboxed builds.
 For example, when other modules use your documentation’s <code class="docutils literal notranslate"><span class="pre">needs.json</span></code> as a dependency.</p>
 </section>
-<section id="combo-builds">
-<h2>Combo builds<a class="headerlink" href="#combo-builds" title="Link to this heading">#</a></h2>
-<p>When a combo build aggregates multiple modules, only the main <code class="docutils literal notranslate"><span class="pre">conf.py</span></code> is
-processed by Sphinx.  External modules mounted via <code class="docutils literal notranslate"><span class="pre">sphinx_collections</span></code> have
-their own <code class="docutils literal notranslate"><span class="pre">score_any_folder_mapping</span></code> that would otherwise be ignored, leaving
-their externally-mapped files at the wrong paths.</p>
-<p>No extra configuration is required.  The extension automatically scans
-<code class="docutils literal notranslate"><span class="pre">confdir</span></code> subdirectories for <code class="docutils literal notranslate"><span class="pre">conf.py</span></code> files after the primary symlink pass
-and applies any <code class="docutils literal notranslate"><span class="pre">score_any_folder_mapping</span></code> it finds, with paths resolved
-relative to each module’s directory.  All secondary symlinks are cleaned up
-alongside the primary ones when the build finishes.</p>
-<p>The handler runs at event priority 600 (above the default 500) to ensure
-<code class="docutils literal notranslate"><span class="pre">sphinx_collections</span></code> has finished mounting modules before the scan begins.</p>
-</section>
 </section>
 
 
@@ -555,7 +541,6 @@ alongside the primary ones when the build finishes.</p>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bazel">Bazel</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#combo-builds">Combo builds</a></li>
 </ul>
   </nav></div>
 
