@@ -359,7 +359,7 @@ def test_clean_test_file_name_combo_path():
 def test_clean_test_file_name_tests_report_path():
     raw_path = Path("/some/path/tests-report/test-report/unit/test_module.xml")
     result = xml_parser.clean_test_file_name(raw_path)
-    assert result == Path("unit/test_module.xml")
+    assert result == Path("test-report/unit/test_module.xml")
 
 
 def test_clean_test_file_name_nested_bazel_testlogs():
@@ -371,7 +371,7 @@ def test_clean_test_file_name_nested_bazel_testlogs():
 def test_clean_test_file_name_invalid_path_raises_error():
     raw_path = Path("/invalid/path/without/markers/test.xml")
     with pytest.raises(
-        ValueError, match="Filepath does not have 'bazel-testlogs' nor 'test-report'"
+        ValueError, match="Filepath does not have 'bazel-testlogs' nor 'tests-report'"
     ):
         xml_parser.clean_test_file_name(raw_path)
 
@@ -379,6 +379,6 @@ def test_clean_test_file_name_invalid_path_raises_error():
 def test_clean_test_file_name_empty_path_raises_error():
     raw_path = Path("")
     with pytest.raises(
-        ValueError, match="Filepath does not have 'bazel-testlogs' nor 'test-report'"
+        ValueError, match="Filepath does not have 'bazel-testlogs' nor 'tests-report'"
     ):
         xml_parser.clean_test_file_name(raw_path)

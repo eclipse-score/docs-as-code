@@ -323,6 +323,7 @@ def test_get_github_link_with_real_repo(git_repo: Path) -> None:
     assert hash_from_link == actual_hash
 
 
+
 def test_complete_workflow(known_good_json: Path):
     """Test complete workflow from path to GitHub link."""
 

@@ -71,10 +71,10 @@ def clean_test_file_name(raw_filepath: Path) -> Path:
     if "bazel-testlogs" in str(raw_filepath):
         return Path(str(raw_filepath).split("bazel-testlogs/")[-1])
     if "tests-report" in str(raw_filepath):
-        return Path(str(raw_filepath).split("test-report/")[-1])
+        return Path(str(raw_filepath).split("tests-report/")[-1])
     raise ValueError(
         "Filepath does not have 'bazel-testlogs' nor "
-        f"'test-report'. Filepath: {raw_filepath}"
+        + f"'tests-report'. Filepath: {raw_filepath}"
     )
 
 

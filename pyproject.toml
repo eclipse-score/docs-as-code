@@ -23,7 +23,6 @@ extend-exclude = [
     ".venv*/**",
 ]
 [tool.pytest.ini_options]
-addopts = ["-v", "-s"]
 log_cli = true
 log_cli_level = "Debug"
 log_cli_format = "[%(asctime)s.%(msecs)03d] [%(levelname)-3s] [%(name)s] %(message)s"
