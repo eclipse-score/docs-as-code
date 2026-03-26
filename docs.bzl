@@ -294,6 +294,9 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
         sphinx = ":sphinx_build",
         tools = data,
         visibility = ["//visibility:public"],
+        # Persistent workers cause stale symlinks after dependency version
+        # changes, corrupting the Bazel cache.
+        allow_persistent_workers = False,
     )
 
     sphinx_module(
