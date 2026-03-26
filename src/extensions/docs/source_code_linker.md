@@ -26,6 +26,7 @@ This separation makes combo builds faster and more deterministic, because the ex
 
 The Bazel parts are responsible for producing the **intermediate caches** that the source_code_linker extension later will consumes.
 
+(step-1-per-repository-cache-generation)=
 #### Step 1: Per-repository cache generation
 
 All files provided via the `scan_code` attribute to the docs macro will be scanned for the requirement tags.
@@ -52,7 +53,7 @@ Example of requirement tags:
 
 ##### Example JSON cache (per repository)
 
-```json
+```{code-block} json
 [
   {
     "file": "src/extensions/score_metamodel/metamodel.yaml",
@@ -80,7 +81,7 @@ In a second Bazel step `scripts_bazel/merge_sourcelinks.py`, **all per-repo cach
 
 This step also fills in url & hash if there is a known_good_json provided (e.g. in a combo build)
 
-
+(repo-metadata-rules)=
 #### Repo metadata rules
 Here are some basic rules regarding the MetaData information
 
@@ -245,7 +246,7 @@ Instead of repeating `repo_name/hash/url` for every single link entry, the final
 - All links belonging to that repository are stored beneath it
 
 This somewhat looks like this:
-```json
+```{code-block} json
 [
   {
     "repo": {
@@ -266,11 +267,10 @@ This somewhat looks like this:
               "full_line": "# req-Id: tool_req__docs_common_attr_id_scheme"
             }
           ],
-          "TestLinks": ...
+          "TestLinks": []
         }
       },
     ],
-    { ... }
 ```
 Due to not saving the `repo_name, url and hash` in each link but grouping them we can eleminate a lot of unnecessary
 length to the JSON document here.
