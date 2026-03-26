@@ -301,6 +301,7 @@ def setup_once(app: Sphinx):
 def setup(app: Sphinx) -> dict[str, str | bool]:
     # Esbonio will execute setup() on every iteration.
     # setup_once will only be called once.
+    app.add_config_value("KNOWN_GOOD_JSON", default="",rebuild="env",types=str)
     setup_once(app)
 
     return {
