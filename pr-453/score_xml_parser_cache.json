@@ -6,7 +6,10 @@
     "need": "tool_req__docs_test_link_testcase",
     "verify_type": "partially",
     "result": "passed",
-    "result_text": ""
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
   },
   {
     "name": "test_testlink__test_decoder_ignores_irrelevant_dicts",
@@ -15,7 +18,10 @@
     "need": "tool_req__docs_test_link_testcase",
     "verify_type": "partially",
     "result": "passed",
-    "result_text": ""
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
   },
   {
     "name": "test_testlink__test_clean_text_removes_ansi_and_html_unescapes",
@@ -24,7 +30,10 @@
     "need": "tool_req__docs_test_link_testcase",
     "verify_type": "partially",
     "result": "passed",
-    "result_text": ""
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
   },
   {
     "name": "test_testlink__test_testcaseneed_to_dict_multiple_links",
@@ -33,7 +42,10 @@
     "need": "tool_req__docs_test_link_testcase",
     "verify_type": "partially",
     "result": "passed",
-    "result_text": ""
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
   },
   {
     "name": "test_testlink__test_store_and_load_testlinks_roundtrip",
@@ -42,7 +54,10 @@
     "need": "tool_req__docs_test_link_testcase",
     "verify_type": "partially",
     "result": "passed",
-    "result_text": ""
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
   },
   {
     "name": "test_xml_parser__test_find_xml_files",
@@ -51,7 +66,10 @@
     "need": "tool_req__docs_test_link_testcase",
     "verify_type": "partially",
     "result": "passed",
-    "result_text": ""
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
   },
   {
     "name": "test_xml_parser__test_parse_testcase_result",
@@ -60,7 +78,10 @@
     "need": "tool_req__docs_test_link_testcase",
     "verify_type": "partially",
     "result": "passed",
-    "result_text": ""
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
   },
   {
     "name": "test_xml_parser__test_parse_properties",
@@ -69,7 +90,10 @@
     "need": "tool_req__docs_test_link_testcase",
     "verify_type": "partially",
     "result": "passed",
-    "result_text": ""
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
   },
   {
     "name": "test_xml_parser__test_read_test_xml_file",
@@ -78,7 +102,10 @@
     "need": "tool_req__docs_test_link_testcase",
     "verify_type": "partially",
     "result": "passed",
-    "result_text": ""
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
   },
   {
     "name": "test_xml_parser__test_short_hash_consistency_and_format",
@@ -87,7 +114,10 @@
     "need": "tool_req__docs_test_link_testcase",
     "verify_type": "partially",
     "result": "passed",
-    "result_text": ""
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
   },
   {
     "name": "TestCheckOptions__test_unknown_directive",
@@ -96,7 +126,10 @@
     "need": "tool_req__docs_metamodel",
     "verify_type": "partially",
     "result": "passed",
-    "result_text": ""
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
   },
   {
     "name": "TestCheckOptions__test_unknown_option_present_in_neither_req_opt_neither_opt_opt",
@@ -105,7 +138,10 @@
     "need": "tool_req__docs_metamodel",
     "verify_type": "partially",
     "result": "passed",
-    "result_text": ""
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
   },
   {
     "name": "test_metamodel__init____test_returns_empty_list_when_filter_is_empty",
@@ -114,7 +150,10 @@
     "need": "tool_req__docs_metamodel",
     "verify_type": "partially",
     "result": "passed",
-    "result_text": ""
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
   },
   {
     "name": "test_metamodel__init____test_returns_valid_checks",
@@ -123,7 +162,10 @@
     "need": "tool_req__docs_metamodel",
     "verify_type": "partially",
     "result": "passed",
-    "result_text": ""
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
   },
   {
     "name": "test_metamodel__init____test_strips_whitespace",
@@ -132,7 +174,10 @@
     "need": "tool_req__docs_metamodel",
     "verify_type": "partially",
     "result": "passed",
-    "result_text": ""
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
   },
   {
     "name": "test_metamodel__init____test_raises_assertion_for_invalid_check",
@@ -141,6 +186,9 @@
     "need": "tool_req__docs_metamodel",
     "verify_type": "partially",
     "result": "passed",
-    "result_text": ""
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
   }
 ]
