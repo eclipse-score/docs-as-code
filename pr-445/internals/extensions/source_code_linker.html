@@ -38,11 +38,11 @@
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-data-viewer/jsonview.bundle.css?v=f6ef2277" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/libs/html/datatables.min.css?v=4b4fd840" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_links.css?v=2150a916" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_style.css?v=92936fa5" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/needstable.css?v=5e1b6797" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_toggle.css?v=5c6620df" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_core.css?v=f5b60a78" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_links.css?v=2150a916" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/needstable.css?v=5e1b6797" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/modern.css?v=803738c0" />
   
   <!-- So that users can add custom icons -->
@@ -62,441 +62,6 @@
     <script src="../../_static/sphinx-needs/libs/html/datatables.min.js?v=8a4aee21"></script>
     <script src="../../_static/sphinx-needs/libs/html/datatables_loader.js?v=a2cae175"></script>
     <script src="../../_static/sphinx-needs/libs/html/sphinx_needs_collapse.js?v=dca66431"></script>
-    <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
-    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.6.0/dist/mermaid.esm.min.mjs";
-
-
-
-
-
-const initStyles = () => {
-    const defaultStyle = document.createElement('style');
-    defaultStyle.textContent = `pre.mermaid {
-    /* Same as .mermaid-container > pre */
-    display: block;
-    width: 100%;
-}
-
-pre.mermaid > svg {
-    /* Same as .mermaid-container > pre > svg */
-    height: 500px;
-    width: 100%;
-    max-width: 100% !important;
-}`;
-    document.head.appendChild(defaultStyle);
-
-    const fullscreenStyle = document.createElement('style');
-    fullscreenStyle.textContent = `.mermaid-container {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-}
-
-.mermaid-container > pre {
-    display: block;
-    width: 100%;
-}
-
-.mermaid-container > pre > svg {
-    height: 500px;
-    width: 100%;
-    max-width: 100% !important;
-}
-
-.mermaid-fullscreen-btn {
-    width: 28px;
-    height: 28px;
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(0, 0, 0, 0.3);
-    border-radius: 4px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-    font-size: 14px;
-    line-height: 1;
-    padding: 0;
-    color: #333;
-}
-
-.mermaid-fullscreen-btn:hover {
-    opacity: 100% !important;
-    background: rgba(255, 255, 255, 1);
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
-    transform: scale(1.1);
-}
-
-.mermaid-fullscreen-btn.dark-theme {
-    background: rgba(50, 50, 50, 0.95);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    color: #e0e0e0;
-}
-
-.mermaid-fullscreen-btn.dark-theme:hover {
-    background: rgba(60, 60, 60, 1);
-    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2);
-}
-
-.mermaid-fullscreen-modal {
-    display: none;
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 95vw;
-    height: 100vh;
-    background: rgba(255, 255, 255, 0.98);
-    z-index: 9999;
-    padding: 20px;
-    overflow: auto;
-}
-
-.mermaid-fullscreen-modal.dark-theme {
-    background: rgba(0, 0, 0, 0.98);
-}
-
-.mermaid-fullscreen-modal.active {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.mermaid-container-fullscreen {
-    position: relative;
-    width: 95vw;
-    height: 90vh;
-    max-width: 95vw;
-    max-height: 90vh;
-    background: white;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-    overflow: auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.mermaid-container-fullscreen.dark-theme {
-    background: #1a1a1a;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
-}
-
-.mermaid-container-fullscreen pre.mermaid {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.mermaid-container-fullscreen .mermaid svg {
-    height: 100% !important;
-    width: 100% !important;
-    cursor: grab;
-}
-
-.mermaid-fullscreen-close {
-    position: fixed !important;
-    top: 20px !important;
-    right: 20px !important;
-    width: 40px;
-    height: 40px;
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    border-radius: 50%;
-    cursor: pointer;
-    z-index: 10000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    transition: all 0.2s;
-    font-size: 24px;
-    line-height: 1;
-    color: #333;
-}
-
-.mermaid-fullscreen-close:hover {
-    background: white;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
-    transform: scale(1.1);
-}
-
-.mermaid-fullscreen-close.dark-theme {
-    background: rgba(50, 50, 50, 0.95);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: #e0e0e0;
-}
-
-.mermaid-fullscreen-close.dark-theme:hover {
-    background: rgba(60, 60, 60, 1);
-    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);
-}
-
-.mermaid-fullscreen-modal .mermaid-fullscreen-btn {
-    display: none !important;
-}`;
-    document.head.appendChild(fullscreenStyle);
-}
-
-// Detect if page has dark background
-const isDarkTheme = () => {
-    // We use a set of heuristics:
-    // 1. Check for common dark mode classes or attributes
-    // 2. Check computed background color brightness
-    if (document.documentElement.classList.contains('dark') ||
-        document.documentElement.getAttribute('data-theme') === 'dark' ||
-        document.body.classList.contains('dark') ||
-        document.body.getAttribute('data-theme') === 'dark') {
-        // console.log("Dark theme detected via class/attribute");
-        return true;
-    }
-    if (document.documentElement.classList.contains('light') ||
-        document.documentElement.getAttribute('data-theme') === 'light' ||
-        document.body.classList.contains('light') ||
-        document.body.getAttribute('data-theme') === 'light') {
-        // console.log("Light theme detected via class/attribute");
-        return false;
-    }
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        // console.log("Dark theme detected via prefers-color-scheme");
-        return true;
-    }
-    const bgColor = window.getComputedStyle(document.body).backgroundColor;
-    const match = bgColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
-    if (match) {
-        const r = parseInt(match[1]);
-        const g = parseInt(match[2]);
-        const b = parseInt(match[3]);
-        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-        // console.log("Background color brightness:", brightness);
-        return brightness < 128;
-    }
-    // console.log("No dark or light theme detected, defaulting to light theme");
-    return false;
-};
-
-let darkTheme = isDarkTheme();
-let modal = null;
-let modalContent = null;
-let previousScrollOffset = [window.scrollX, window.scrollY];
-
-const runMermaid = async (rerun) => {
-    console.log("Running mermaid diagrams, rerun =", rerun);
-    // clear all existing mermaid charts
-    let all_mermaids = document.querySelectorAll(".mermaid");
-
-    if (rerun) {
-        all_mermaids.forEach((el) => {
-            if(!el.hasAttribute("data-original-code")) {
-                // store original code
-                // console.log(`Storing original code for first run: `, el.innerHTML);
-                el.setAttribute('data-original-code', el.innerHTML);
-            }
-            if(el.getAttribute("data-processed") === "true") {
-                // remove and restore original
-                el.removeAttribute("data-processed");
-                // console.log(`Restoring original code for re-run: `, el.getAttribute('data-original-code'));
-                el.innerHTML = el.getAttribute('data-original-code');
-            } else {
-                // store original code
-                // console.log(`Storing original code for re-run: `, el.innerHTML);
-                el.setAttribute('data-original-code', el.innerHTML);
-            }
-        });
-        await mermaid.run();
-    }
-
-    all_mermaids = document.querySelectorAll(".mermaid");
-    const mermaids_processed = document.querySelectorAll(".mermaid[data-processed='true']");
-
-    if ("False" === "True") {
-        const mermaids_to_add_zoom = -1 === -1 ? all_mermaids.length : -1;
-        if(mermaids_to_add_zoom > 0) {
-            var svgs = d3.selectAll("");
-            if(all_mermaids.length !== mermaids_processed.length) {
-                setTimeout(() => runMermaid(false), 200);
-                return;
-            } else if(svgs.size() !== mermaids_to_add_zoom) {
-                setTimeout(() => runMermaid(false), 200);
-                return;
-            } else {
-                svgs.each(function() {
-                    var svg = d3.select(this);
-                    svg.html("<g class='wrapper'>" + svg.html() + "</g>");
-                    var inner = svg.select("g");
-                    var zoom = d3.zoom().on("zoom", function(event) {
-                        inner.attr("transform", event.transform);
-                    });
-                    svg.call(zoom);
-                });
-            }
-        }
-    } else if(all_mermaids.length !== mermaids_processed.length) {
-        // Wait for mermaid to process all diagrams
-        setTimeout(() => runMermaid(false), 200);
-        return;
-    }
-
-    // Stop here if not adding fullscreen capability
-    if ("True" !== "True") return;
-
-    if (modal !== null ) {
-        // Destroy existing modal
-        modal.remove();
-        modal = null;
-        modalContent = null;
-    }
-
-    modal = document.createElement('div');
-    modal.className = 'mermaid-fullscreen-modal' + (darkTheme ? ' dark-theme' : '');
-    modal.setAttribute('role', 'dialog');
-    modal.setAttribute('aria-modal', 'true');
-    modal.setAttribute('aria-label', 'Fullscreen diagram viewer');
-    modal.innerHTML = `
-        <button class="mermaid-fullscreen-close${darkTheme ? ' dark-theme' : ''}" aria-label="Close fullscreen">✕</button>
-        <div class="mermaid-container-fullscreen${darkTheme ? ' dark-theme' : ''}"></div>
-    `;
-    document.body.appendChild(modal);
-
-    modalContent = modal.querySelector('.mermaid-container-fullscreen');
-    const closeBtn = modal.querySelector('.mermaid-fullscreen-close');
-
-    const closeModal = () => {
-        modal.classList.remove('active');
-        modalContent.innerHTML = '';
-        document.body.style.overflow = ''
-        window.scrollTo({left: previousScrollOffset[0], top: previousScrollOffset[1], behavior: 'instant'});
-    };
-
-    closeBtn.addEventListener('click', closeModal);
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) closeModal();
-    });
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && modal.classList.contains('active')) {
-            closeModal();
-        }
-    });
-
-    document.querySelectorAll('.mermaid').forEach((mermaidDiv) => {
-        if (mermaidDiv.parentNode.classList.contains('mermaid-container') ||
-            mermaidDiv.closest('.mermaid-fullscreen-modal')) {
-            // Already processed, adjust button class if needed
-            const existingBtn = mermaidDiv.parentNode.querySelector('.mermaid-fullscreen-btn');
-            if (existingBtn) {
-                existingBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
-            }
-            return;
-        }
-
-        const container = document.createElement('div');
-        container.className = 'mermaid-container';
-        mermaidDiv.parentNode.insertBefore(container, mermaidDiv);
-        container.appendChild(mermaidDiv);
-
-        const fullscreenBtn = document.createElement('button');
-        fullscreenBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
-        fullscreenBtn.setAttribute('aria-label', 'View diagram in fullscreen');
-        fullscreenBtn.textContent = '⛶';
-        fullscreenBtn.style.opacity = '50%';
-
-        // Calculate dynamic position based on diagram's margin and padding
-        const diagramStyle = window.getComputedStyle(mermaidDiv);
-        const marginTop = parseFloat(diagramStyle.marginTop) || 0;
-        const marginRight = parseFloat(diagramStyle.marginRight) || 0;
-        const paddingTop = parseFloat(diagramStyle.paddingTop) || 0;
-        const paddingRight = parseFloat(diagramStyle.paddingRight) || 0;
-        fullscreenBtn.style.top = `${marginTop + paddingTop + 4}px`;
-        fullscreenBtn.style.right = `${marginRight + paddingRight + 4}px`;
-
-        fullscreenBtn.addEventListener('click', () => {
-            previousScrollOffset = [window.scroll, window.scrollY];
-            const clone = mermaidDiv.cloneNode(true);
-            modalContent.innerHTML = '';
-            modalContent.appendChild(clone);
-
-            const svg = clone.querySelector('svg');
-            if (svg) {
-                svg.removeAttribute('width');
-                svg.removeAttribute('height');
-                svg.style.width = '100%';
-                svg.style.height = 'auto';
-                svg.style.maxWidth = '100%';
-                svg.style.sdisplay = 'block';
-
-                if ("False" === "True") {
-                    setTimeout(() => {
-                        const g = svg.querySelector('g');
-                        if (g) {
-                            var svgD3 = d3.select(svg);
-                            svgD3.html("<g class='wrapper'>" + svgD3.html() + "</g>");
-                            var inner = svgD3.select("g");
-                            var zoom = d3.zoom().on("zoom", function(event) {
-                                inner.attr("transform", event.transform);
-                            });
-                            svgD3.call(zoom);
-                        }
-                    }, 100);
-                }
-            }
-
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        });
-        container.appendChild(fullscreenBtn);
-    });
-};
-
-const load = async () => {
-    initStyles();
-
-    await runMermaid(true);
-
-    const reRunIfThemeChanges = async () => {
-        const newDarkTheme = isDarkTheme();
-        if (newDarkTheme !== darkTheme) {
-            darkTheme = newDarkTheme;
-            console.log("Theme change detected, re-running mermaid with", darkTheme ? "dark" : "default", "theme");
-            await mermaid.initialize(
-                {...JSON.parse(
-                    `{"startOnLoad": false}`
-                ),
-                ...{ darkMode: darkTheme, theme: darkTheme ? 'dark' : 'default' },
-                }
-            );
-            await runMermaid(true);
-        }
-    };
-
-    // Update theme classes when theme changes
-    const themeObserver = new MutationObserver(reRunIfThemeChanges);
-    themeObserver.observe(document.documentElement, {
-        attributes: true,
-        attributeFilter: ['class', 'style', 'data-theme']
-    });
-    themeObserver.observe(document.body, {
-        attributes: true,
-        attributeFilter: ['class', 'style', 'data-theme']
-    });
-};
-
-
-
-
-
-console.log("Initializing mermaid with", darkTheme ? "dark" : "default", "theme");
-mermaid.initialize(
-    {...JSON.parse(
-        `{"startOnLoad": false}`
-    ),
-    ...{ darkMode: darkTheme, theme: darkTheme ? 'dark' : 'default' },
-    }
-);
-
-window.addEventListener("load", load);</script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'internals/extensions/source_code_linker';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
@@ -897,70 +462,120 @@ This extension integrates with <strong>Bazel</strong> and <strong>sphinx-needs</
 <hr class="docutils" />
 <section id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
-<p>The extension is split into two main components:</p>
-<ul class="simple">
-<li><p><strong>CodeLink</strong> – Parses source files for template strings and links them to needs.</p></li>
-<li><p><strong>TestLink</strong> – Parses test.xml outputs inside <code class="docutils literal notranslate"><span class="pre">bazel-testlogs</span></code> to link test cases to requirements.</p></li>
-</ul>
-<p>Each component stores intermediate data in JSON caches under <code class="docutils literal notranslate"><span class="pre">_build/</span></code> to optimize performance and speed up incremental builds.</p>
+<p>The feature is split into <strong>two layers</strong>:</p>
+<ol class="arabic simple">
+<li><p><strong>Bazel pre-processing (before Sphinx runs)</strong>
+Generates and aggregates JSON caches containing the raw <code class="docutils literal notranslate"><span class="pre">source_code_link</span></code> findings (and, if available, repository metadata like <code class="docutils literal notranslate"><span class="pre">repo_name/hash/url</span></code>).</p></li>
+<li><p><strong>Sphinx extension (during the Sphinx build)</strong>
+Reads the aggregated JSON, validates and adapts it, and finally injects the links into Sphinx needs in the final layout (<strong>RepoSourceLink</strong>).</p></li>
+</ol>
+<p>This separation makes combo builds faster and more deterministic, because the expensive repository scanning/parsing happens <strong>outside</strong> the Sphinx process.</p>
 </section>
 <hr class="docutils" />
 <section id="how-it-works">
 <h2>How It Works<a class="headerlink" href="#how-it-works" title="Link to this heading">#</a></h2>
-<section id="codelink-source-code-integration">
-<h3>✅ CodeLink: Source Code Integration<a class="headerlink" href="#codelink-source-code-integration" title="Link to this heading">#</a></h3>
-<p>CodeLink scans repository files (excluding <code class="docutils literal notranslate"><span class="pre">_</span></code>, <code class="docutils literal notranslate"><span class="pre">.</span></code>, and binary formats) for requirement tags such as:</p>
+<section id="bazel-pre-processing-source-code-integration-codelinks">
+<h3>Bazel Pre-processing: Source Code Integration (CodeLinks)<a class="headerlink" href="#bazel-pre-processing-source-code-integration-codelinks" title="Link to this heading">#</a></h3>
+<p>The Bazel parts are responsible for producing the <strong>intermediate caches</strong> that the source_code_linker extension later will consumes.</p>
+<section id="step-1-per-repository-cache-generation">
+<span id="id1"></span><h4>Step 1: Per-repository cache generation<a class="headerlink" href="#step-1-per-repository-cache-generation" title="Link to this heading">#</a></h4>
+<p>All files provided via the <code class="docutils literal notranslate"><span class="pre">scan_code</span></code> attribute to the docs macro will be scanned for the requirement tags.
+A <em>per repository JSON cache</em> will be generated and saved.
+This script <code class="docutils literal notranslate"><span class="pre">scripts_bazel/generate_sourcelinks_cli.py</span></code> finds all codelinks per file, and gathers them into
+one JSON cache per repository.
+It also adds metadata to each needlink that is needed in further steps.</p>
+<p>Example of requirement tags:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Choose one or the other, both mentioned here to avoid detection</span>
 <span class="c1"># req-Id/req-traceability: &lt;NEED_ID&gt;</span>
 </pre></div>
 </div>
-<p>These tags are extracted and matched to Sphinx needs via the <code class="docutils literal notranslate"><span class="pre">source_code_link</span></code> attribute. If a need ID does not exist, a build warning will be raised.</p>
-<section id="data-flow">
-<h4>Data Flow<a class="headerlink" href="#data-flow" title="Link to this heading">#</a></h4>
-<ol class="arabic simple">
-<li><p><strong>File Scanning</strong> (<code class="docutils literal notranslate"><span class="pre">generate_source_code_links_json.py</span></code>)</p>
 <ul class="simple">
-<li><p>Filters out files starting with <code class="docutils literal notranslate"><span class="pre">_</span></code>, <code class="docutils literal notranslate"><span class="pre">.</span></code>, or ending in <code class="docutils literal notranslate"><span class="pre">.pyc</span></code>, <code class="docutils literal notranslate"><span class="pre">.so</span></code>, <code class="docutils literal notranslate"><span class="pre">.exe</span></code>, <code class="docutils literal notranslate"><span class="pre">.bin</span></code>.</p></li>
-<li><p>Searches for template tags: <code class="docutils literal notranslate"><span class="pre">#&lt;!--</span> <span class="pre">comment</span> <span class="pre">prevents</span> <span class="pre">parsing</span> <span class="pre">this</span> <span class="pre">occurance</span> <span class="pre">--&gt;</span> <span class="pre">req-Id:</span></code> and <code class="docutils literal notranslate"><span class="pre">#&lt;!--</span> <span class="pre">comment</span> <span class="pre">prevents</span> <span class="pre">parsing</span> <span class="pre">this</span> <span class="pre">occurance</span> <span class="pre">--&gt;</span> <span class="pre">req-traceability:</span></code>.</p></li>
-<li><p>Extracts:</p>
+<li><p>Extracts for each match:</p>
 <ul>
 <li><p>File path</p></li>
 <li><p>Line number</p></li>
-<li><p>Tag and full line</p></li>
+<li><p>Tag + full line</p></li>
 <li><p>Associated need ID</p></li>
+<li><p>Repository Metadata:</p>
+<ul>
+<li><p>repo_name (parsed from filepath) (local_repo if non combo build)</p></li>
+<li><p>hash (at this stage always blank)</p></li>
+<li><p>url (at this stage always blank)</p></li>
 </ul>
 </li>
-<li><p>Saves data as JSON via <code class="docutils literal notranslate"><span class="pre">needlinks.py</span></code>.</p></li>
 </ul>
 </li>
-<li><p><strong>Link Creation</strong></p>
-<ul class="simple">
-<li><p>Git info (file hash) is used to build a GitHub URL to the line in the source file.</p></li>
-<li><p>Links are injected into needs via the <code class="docutils literal notranslate"><span class="pre">source_code_link</span></code> attribute during the Sphinx build process.</p></li>
 </ul>
-</li>
-</ol>
-</section>
-<section id="example-json-cache-codelinks">
-<h4>Example JSON Cache (CodeLinks)<a class="headerlink" href="#example-json-cache-codelinks" title="Link to this heading">#</a></h4>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
-  <span class="p">{</span>
-    <span class="s2">&quot;file&quot;</span><span class="p">:</span> <span class="s2">&quot;src/extensions/score_metamodel/metamodel.yaml&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;line&quot;</span><span class="p">:</span> <span class="mi">17</span><span class="p">,</span>
-    <span class="s2">&quot;tag&quot;</span><span class="p">:</span> <span class="s2">&quot;#--req-Id:&quot;</span><span class="p">,</span> <span class="c1"># added `--` to avoid detection</span>
-    <span class="s2">&quot;need&quot;</span><span class="p">:</span> <span class="s2">&quot;tool_req__docs_dd_link_source_code_link&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;full_line&quot;</span><span class="p">:</span> <span class="s2">&quot;#--req-Id: tool_req__docs_dd_link_source_code_link&quot;</span> <span class="c1"># added `--` to avoid detection</span>
-  <span class="p">}</span>
+<section id="example-json-cache-per-repository">
+<h5>Example JSON cache (per repository)<a class="headerlink" href="#example-json-cache-per-repository" title="Link to this heading">#</a></h5>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;file&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;src/extensions/score_metamodel/metamodel.yaml&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;line&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">17</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;tag&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#--req-Id:&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;need&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;tool_req__docs_dd_link_source_code_link&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;full_line&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#--req-Id: tool_req__docs_dd_link_source_code_link&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;repo_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;local_repo&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;hash&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">  </span><span class="p">}</span>
 <span class="p">]</span>
 </pre></div>
 </div>
+<blockquote>
+<div><p>Note: <code class="docutils literal notranslate"><span class="pre">--</span></code> is shown in the examples to avoid accidental detection by the parser.</p>
+</div></blockquote>
 </section>
 </section>
 <hr class="docutils" />
-<section id="testlink-test-result-integration">
-<h3>✅ TestLink: Test Result Integration<a class="headerlink" href="#testlink-test-result-integration" title="Link to this heading">#</a></h3>
-<p>TestLink scans test result XMLs from Bazel (bazel-testlogs) or in the folder ‘tests-report’ and converts each test case with metadata into Sphinx external needs, allowing links from tests to requirements.
+<section id="step-2-cache-merge-step-multi-repo-aggregation">
+<h4>Step 2: Cache merge step (multi-repo aggregation)<a class="headerlink" href="#step-2-cache-merge-step-multi-repo-aggregation" title="Link to this heading">#</a></h4>
+<p>In a second Bazel step <code class="docutils literal notranslate"><span class="pre">scripts_bazel/merge_sourcelinks.py</span></code>, <strong>all per-repo caches</strong> are merged into a <strong>single combined JSON</strong>.</p>
+<ul class="simple">
+<li><p>Input: N JSON caches (one per repo)</p></li>
+<li><p>Output: 1 merged JSON containing all found source_code_links</p></li>
+</ul>
+<p>This step also fills in url &amp; hash if there is a known_good_json provided (e.g. in a combo build)</p>
+</section>
+<section id="repo-metadata-rules">
+<span id="id2"></span><h4>Repo metadata rules<a class="headerlink" href="#repo-metadata-rules" title="Link to this heading">#</a></h4>
+<p>Here are some basic rules regarding the MetaData information</p>
+<p>In a combo build, a known_good_json <strong>must</strong> be provided.
+If known_good_json is found then the hash &amp; url will be filled for each need by the script.</p>
+<p>Combo build:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">repo_name</span></code>: repository name (parsed from filepath in step 1)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hash</span></code>: revision/commit hash (as provided by the known_good_json)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">url</span></code>: repository remote URL (as provided by the known_good_json)</p></li>
+</ul>
+<p>Local build:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">repo_name</span></code>: ‘local_repo’</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hash</span></code>: will be empty at this point, and later filled via parsing the git commands</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">url</span></code>: will be empty at this point, and later filled via parsing the git commands</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="source-code-linker-extension">
+<h3>Source Code Linker Extension<a class="headerlink" href="#source-code-linker-extension" title="Link to this heading">#</a></h3>
+<p>1a. <strong>Reads the merged JSON</strong> produced by Bazel
+1b. <strong>Reads test.xml files and generates testlinks JSON</strong>
+2. <strong>Validates and adapts</strong> both JSON cache files
+3. <strong>Merges and converts</strong> them into the final structure: <strong>RepoSourceLink</strong></p>
+<section id="codelinks">
+<h4>Codelinks<a class="headerlink" href="#codelinks" title="Link to this heading">#</a></h4>
+<p>Since these are all found in <a class="reference internal" href="#step-1-per-repository-cache-generation">Bazel step 1</a> this essentially does not run
+anymore inside of the source_code_linker extension.</p>
+</section>
+<section id="testlinks">
+<h4>Testlinks<a class="headerlink" href="#testlinks" title="Link to this heading">#</a></h4>
+<p>TestLink scans test result XMLs from Bazel (bazel-testlogs) or from the folder ‘tests-report’ and converts each test case with metadata into Sphinx external needs, allowing links from tests to requirements.
 This depends on the <code class="docutils literal notranslate"><span class="pre">attribute_plugin</span></code> in our tooling repository, find it <a class="reference external" href="https://github.com/eclipse-score/tooling/tree/main/python_basics/score_pytest">here</a></p>
+<div class="attention docutils">
+<p>If TestLinks should be generated in a combo build please ensure that you have the known_good_json added to the docs macro.</p>
+</div>
+</section>
 <section id="test-tagging-options">
 <h4>Test Tagging Options<a class="headerlink" href="#test-tagging-options" title="Link to this heading">#</a></h4>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Import the decorator</span>
@@ -984,12 +599,12 @@ This depends on the <code class="docutils literal notranslate"><span class="pre"
 <div><p>Note: If you use the decorator, it will check that you have specified a docstring inside the function.</p>
 </div></blockquote>
 </section>
-<section id="id1">
-<h4>Data Flow<a class="headerlink" href="#id1" title="Link to this heading">#</a></h4>
+<section id="data-flow">
+<h4>Data Flow<a class="headerlink" href="#data-flow" title="Link to this heading">#</a></h4>
 <ol class="arabic simple">
 <li><p><strong>XML Parsing</strong> (<code class="docutils literal notranslate"><span class="pre">xml_parser.py</span></code>)</p>
 <ul class="simple">
-<li><p>Scans <code class="docutils literal notranslate"><span class="pre">bazel-testlogs/</span></code> for <code class="docutils literal notranslate"><span class="pre">test.xml</span></code> files.</p></li>
+<li><p>Scans <code class="docutils literal notranslate"><span class="pre">bazel-testlogs/</span></code> or <code class="docutils literal notranslate"><span class="pre">tests-report</span></code> for <code class="docutils literal notranslate"><span class="pre">test.xml</span></code> files.</p></li>
 <li><p>Parses test cases and extracts:</p>
 <ul>
 <li><p>Name &amp; Classname</p></li>
@@ -1000,6 +615,7 @@ This depends on the <code class="docutils literal notranslate"><span class="pre"
 <li><p>Verifications (<code class="docutils literal notranslate"><span class="pre">PartiallyVerifies</span></code>, <code class="docutils literal notranslate"><span class="pre">FullyVerifies</span></code>)</p></li>
 </ul>
 </li>
+<li><p>Also parses metadata according to the <a class="reference internal" href="#repo-metadata-rules">metadata rules</a></p></li>
 <li><p>Cases without metadata are logged out as info (not errors).</p></li>
 <li><p>Test cases with metadata are converted into:</p>
 <ul>
@@ -1037,18 +653,23 @@ This depends on the <code class="docutils literal notranslate"><span class="pre"
 <span class="w">    </span><span class="nt">&quot;result_text&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;PartiallyVerifies&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;tool_req__docs_common_attr_title, tool_req__docs_common_attr_description&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;FullyVerifies&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
+<span class="w">    </span><span class="nt">&quot;repo_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;local_module&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;hash&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="p">}</span>
 <span class="p">]</span>
 </pre></div>
 </div>
 </section>
 </section>
-</section>
 <hr class="docutils" />
-<section id="combined-links">
-<h2>🔗 Combined Links<a class="headerlink" href="#combined-links" title="Link to this heading">#</a></h2>
-<p>During the Sphinx build process, both CodeLink and TestLink data are combined and applied to needs.</p>
-<p>This is handled in <code class="docutils literal notranslate"><span class="pre">__init__.py</span></code> using the <code class="docutils literal notranslate"><span class="pre">NeedSourceLinks</span></code> and <code class="docutils literal notranslate"><span class="pre">SourceCodeLinks</span></code> dataclasses from <code class="docutils literal notranslate"><span class="pre">need_source_links.py</span></code>.</p>
+<section id="early-combined-links">
+<h3>Early-Combined Links<a class="headerlink" href="#early-combined-links" title="Link to this heading">#</a></h3>
+<p>During the Sphinx build process, both CodeLink and TestLink data are combined and grouped by needs.
+This will allow us to have an easier time building the final JSON which will eliminate the metadata from each link,
+and group all needs according to the appropriate repository.</p>
+<p>This all is handled in <code class="docutils literal notranslate"><span class="pre">need_source_links.py</span></code>.</p>
+</section>
 <section id="combined-json-example">
 <h3>Combined JSON Example<a class="headerlink" href="#combined-json-example" title="Link to this heading">#</a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
@@ -1061,7 +682,11 @@ This depends on the <code class="docutils literal notranslate"><span class="pre"
           <span class="s2">&quot;line&quot;</span><span class="p">:</span> <span class="mi">33</span><span class="p">,</span>
           <span class="s2">&quot;tag&quot;</span><span class="p">:</span> <span class="s2">&quot;#--req-Id:&quot;</span><span class="p">,</span><span class="c1"># added `--` to avoid detection</span>
           <span class="s2">&quot;need&quot;</span><span class="p">:</span> <span class="s2">&quot;tool_req__docs_common_attr_title&quot;</span><span class="p">,</span>
-          <span class="s2">&quot;full_line&quot;</span><span class="p">:</span> <span class="s2">&quot;#--req-Id: tool_req__docs_common_attr_title&quot;</span> <span class="c1"># added `--` to avoid detection</span>
+          <span class="s2">&quot;full_line&quot;</span><span class="p">:</span> <span class="s2">&quot;#--req-Id: tool_req__docs_common_attr_title&quot;</span><span class="p">,</span> <span class="c1"># added `--` to avoid detection</span>
+          <span class="s2">&quot;repo_name&quot;</span><span class="p">:</span> <span class="s2">&quot;local_module&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;hash&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+
         <span class="p">}</span>
       <span class="p">],</span>
       <span class="s2">&quot;TestLinks&quot;</span><span class="p">:</span> <span class="p">[</span>
@@ -1072,7 +697,10 @@ This depends on the <code class="docutils literal notranslate"><span class="pre"
           <span class="s2">&quot;need&quot;</span><span class="p">:</span> <span class="s2">&quot;tool_req__docs_common_attr_title&quot;</span><span class="p">,</span>
           <span class="s2">&quot;verify_type&quot;</span><span class="p">:</span> <span class="s2">&quot;partially&quot;</span><span class="p">,</span>
           <span class="s2">&quot;result&quot;</span><span class="p">:</span> <span class="s2">&quot;passed&quot;</span><span class="p">,</span>
-          <span class="s2">&quot;result_text&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span>
+          <span class="s2">&quot;result_text&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;repo_name&quot;</span><span class="p">:</span> <span class="s2">&quot;local_module&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;hash&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
         <span class="p">}</span>
       <span class="p">]</span>
     <span class="p">}</span>
@@ -1080,37 +708,122 @@ This depends on the <code class="docutils literal notranslate"><span class="pre"
 <span class="p">]</span>
 </pre></div>
 </div>
+<section id="final-layout-reposourcelink">
+<h4>Final layout: RepoSourceLink<a class="headerlink" href="#final-layout-reposourcelink" title="Link to this heading">#</a></h4>
+<p>Instead of repeating <code class="docutils literal notranslate"><span class="pre">repo_name/hash/url</span></code> for every single link entry, the final output groups links <strong>by repository</strong>:</p>
+<ul class="simple">
+<li><p>Repository metadata appears <strong>once per repository</strong></p></li>
+<li><p>All links belonging to that repository are stored beneath it</p></li>
+</ul>
+<p>This somewhat looks like this:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;repo&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;local_repo&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;hash&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;needs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;need&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;tool_req__docs_common_attr_id_scheme&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;links&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="nt">&quot;CodeLinks&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">              </span><span class="nt">&quot;file&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;src/extensions/score_metamodel/checks/attributes_format.py&quot;</span><span class="p">,</span>
+<span class="w">              </span><span class="nt">&quot;line&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">30</span><span class="p">,</span>
+<span class="w">              </span><span class="nt">&quot;tag&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;# req-Id:&quot;</span><span class="p">,</span>
+<span class="w">              </span><span class="nt">&quot;need&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;tool_req__docs_common_attr_id_scheme&quot;</span><span class="p">,</span>
+<span class="w">              </span><span class="nt">&quot;full_line&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;# req-Id: tool_req__docs_common_attr_id_scheme&quot;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">          </span><span class="p">],</span>
+<span class="w">          </span><span class="nt">&quot;TestLinks&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">    </span><span class="p">],</span>
+</pre></div>
+</div>
+<p>Due to not saving the <code class="docutils literal notranslate"><span class="pre">repo_name,</span> <span class="pre">url</span> <span class="pre">and</span> <span class="pre">hash</span></code> in each link but grouping them we can eleminate a lot of unnecessary
+length to the JSON document here.</p>
+<p>This is the structure the extension uses to attach links to needs (via the <code class="docutils literal notranslate"><span class="pre">source_code_link</span></code> attribute), while keeping the resulting data compact and normalized.</p>
+<div class="hint docutils">
+<p>Currently if the repo is the local one, SCL is still using the hash and url it gets from executing the git functions parsing.
+This is a known inefficiency and will be improved upon later</p>
+</div>
+</section>
 </section>
 </section>
 <hr class="docutils" />
-<section id="known-limitations">
-<h2>⚠️ Known Limitations<a class="headerlink" href="#known-limitations" title="Link to this heading">#</a></h2>
-<section id="codelink">
-<h3>CodeLink<a class="headerlink" href="#codelink" title="Link to this heading">#</a></h3>
+<section id="result-traceability-links-in-needs">
+<h2>Result: Traceability Links in Needs<a class="headerlink" href="#result-traceability-links-in-needs" title="Link to this heading">#</a></h2>
+<p>During the Sphinx build process, the extension applies the computed links to needs:</p>
 <ul class="simple">
-<li><p>❌ Not compatible with <strong>Esbonio/Live_preview</strong></p></li>
-<li><p>🔗 GitHub links may 404 if the commit isn’t pushed</p></li>
-<li><p>🧪 Tags must match exactly (e.g. #<!-- comment prevents parsing this occurance --> req-Id)</p></li>
-<li><p>👀 <code class="docutils literal notranslate"><span class="pre">source_code_link</span></code> isn’t visible until the full Sphinx build is completed</p></li>
+<li><p>Each need’s <code class="docutils literal notranslate"><span class="pre">source_code_link</span></code> and <code class="docutils literal notranslate"><span class="pre">testlink</span></code> attribute is filled from the (repo-grouped) RepoSourceLink data where applicable.</p></li>
+<li><p>If a referenced need ID does not exist, a build warning will be raised.</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="known-limitations">
+<h2>Known Limitations<a class="headerlink" href="#known-limitations" title="Link to this heading">#</a></h2>
+<section id="general">
+<h3>General<a class="headerlink" href="#general" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>In combo builds, known_good_json is required.</p></li>
+<li><p>inefficiencies in creating the links and saving the JSON caches</p></li>
+<li><p>Not compatible with <strong>Esbonio/Live_preview</strong></p></li>
+</ul>
+</section>
+<section id="id3">
+<h3>Codelinks<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>GitHub links may 404 if the commit isn’t pushed</p></li>
+<li><p>Tags must match exactly (e.g. #<!-- comment prevents parsing this occurance --> req-Id)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code> isn’t visible until the full Sphinx build is completed</p></li>
 </ul>
 </section>
 <section id="testlink">
 <h3>TestLink<a class="headerlink" href="#testlink" title="Link to this heading">#</a></h3>
 <ul class="simple">
-<li><p>❌ Not compatible with <strong>Esbonio/Live_preview</strong></p></li>
-<li><p>🔗 GitHub links may 404 if the commit isn’t pushed</p></li>
-<li><p>🧪 XML structure must be followed exactly (e.g. <code class="docutils literal notranslate"><span class="pre">properties</span> <span class="pre">&amp;</span> <span class="pre">attributes</span></code>)</p></li>
-<li><p>🗂 Relies on test to be executed first</p></li>
+<li><p>GitHub links may 404 if the commit isn’t pushed</p></li>
+<li><p>XML structure must be followed exactly (e.g. <code class="docutils literal notranslate"><span class="pre">properties</span> <span class="pre">&amp;</span> <span class="pre">attributes</span></code>)</p></li>
+<li><p>Relies on test to be executed first</p></li>
 </ul>
 </section>
 </section>
 <hr class="docutils" />
-<section id="internal-module-overview">
-<h2>🏗️ Internal Module Overview<a class="headerlink" href="#internal-module-overview" title="Link to this heading">#</a></h2>
+<section id="high-level-data-flow-summary">
+<h2>High-level Data Flow Summary<a class="headerlink" href="#high-level-data-flow-summary" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><strong>Bazel Script #1</strong>: scan + parse → write <strong>per-repo cache</strong> (includes repo metadata if known)</p></li>
+<li><p><strong>Bazel Script #2</strong>: merge caches → write <strong>single merged JSON</strong></p></li>
+<li><p><strong>Sphinx Extension</strong>: read merged JSON → adapt to <strong>RepoSourceLink</strong> → inject source_code_link and testlink into needs</p></li>
+</ol>
+</section>
+<hr class="docutils" />
+<section id="clearing-cache-manually">
+<h2>Clearing Cache Manually<a class="headerlink" href="#clearing-cache-manually" title="Link to this heading">#</a></h2>
+<p>To clear the build cache, run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>rm<span class="w"> </span>-rf<span class="w"> </span>_build/
+</pre></div>
+</div>
+</section>
+<section id="internal-overview">
+<h2>Internal  Overview<a class="headerlink" href="#internal-overview" title="Link to this heading">#</a></h2>
+<p>The bazel part:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>scripts_bazel/
+├── BUILD   # Declare libraries and filegroups needed for bazel
+├── generate_sourcelinks_cli.py # Bazel step 1 =&gt; Parses sourcefiles for tags
+├── merge_sourcelinks.py
+└── tests
+│   └── ...
+</pre></div>
+</div>
+<p>The Sphinx extension</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>score_source_code_linker/
 ├── __init__.py                   # Main Sphinx extension; combines CodeLinks + TestLinks
-├── generate_source_code_links_json.py  # Parses source files for tags
+├── generate_source_code_links_json.py  # Most functionality moved to &#39;scripts_bazel/generate_sourcelinks_cli&#39;
 ├── need_source_links.py         # Data model for combined links
+├── repo_source_links.py         # Data model for Repo combined links (Final output JSON)
+├── helpers.py                   # Misc. functions used throughout SCL
 ├── needlinks.py                 # CodeLink dataclass &amp; JSON encoder/decoder
 ├── testlink.py                  # DataForTestLink definition &amp; logic
 ├── xml_parser.py                # Parses XML files into test case data
@@ -1120,8 +833,8 @@ This depends on the <code class="docutils literal notranslate"><span class="pre"
 </div>
 </section>
 <hr class="docutils" />
-<section id="clearing-cache-manually">
-<h2>Clearing Cache Manually<a class="headerlink" href="#clearing-cache-manually" title="Link to this heading">#</a></h2>
+<section id="id4">
+<h2>Clearing Cache Manually<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
 <p>To clear the build cache, run:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>rm<span class="w"> </span>-rf<span class="w"> </span>_build/
 </pre></div>
@@ -1134,84 +847,6 @@ This depends on the <code class="docutils literal notranslate"><span class="pre"
 <a class="reference external" href="https://eclipse-score.github.io/docs-as-code/main/requirements/requirements.html#tool_req__docs_common_attr_status">Example CodeLink</a></p>
 <p><a class="reference external" href="https://eclipse-score.github.io/docs-as-code/main/requirements/requirements.html#tool_req__docs_dd_link_source_code_link">Example TestLink</a></p>
 </section>
-<section id="flow-overview">
-<h2>Flow-Overview<a class="headerlink" href="#flow-overview" title="Link to this heading">#</a></h2>
-<pre  class="mermaid">
-        flowchart TD
-    %% Entry Point
-    A[source_code_linker] --&gt; B{Check for Grouped JSON Cache}
-
-    %% If cache exists
-    B --&gt; |✅| C[Load Grouped JSON Cache]
-    B --&gt; |🔴| N9[Proceed Without Cache]
-
-    %% --- NeedLink Path ---
-    N9 --&gt; D1[needslink.py&lt;br/&gt;&lt;b&gt;NeedLink&lt;/b&gt;]
-    D1 --&gt; E1{Check for CodeLink JSON Cache}
-
-    E1 --&gt; |✅| F1[Load CodeLink JSON Cache]
-    F1 --&gt; Z[Grouped JSON Cache]
-
-    E1 --&gt; |🔴| G1[Parse all files in repository]
-    G1 --&gt; H1[Build &amp; Save&lt;br/&gt;CodeLink JSON Cache]
-    H1 --&gt; Z
-
-    %% --- TestLink Path ---
-    N9 --&gt; D2[testlink.py&lt;br/&gt;&lt;b&gt;DFTL&lt;/b&gt;]
-    D2 --&gt; E2{Check for DFTL JSON Cache}
-
-    E2 --&gt; |✅| F2[Load DFTL JSON Cache]
-    F2 --&gt; J2[Load DOTC JSON Cache]
-    J2 --&gt; K2[Add as External Needs]
-
-    E2 --&gt; |🔴| G2[Parse test.xml Files]
-    G2 --&gt; H2[Convert TestCases&lt;br/&gt;to DOTC]
-    H2 --&gt; I2[Build &amp; Save&lt;br/&gt;DOTC JSON Cache]
-    I2 --&gt; K2
-
-    H2 --&gt; M2[Convert to DFTL]
-    M2 --&gt; N2[Build &amp; Save&lt;br/&gt;DFTL JSON Cache]
-    N2 --&gt; Z
-
-    %% Final step
-    Z --&gt; FINAL[&lt;b&gt;Add links to needs&lt;/b&gt;]
-
-    %% Legend
-    subgraph Legend[&quot;Legend&quot;]
-        direction TB
-        L1[NeedLink Operations]
-        L2[TestLink Operations]
-        L4[DTFL = DataForTestLink]
-        L3[TestCaseNeed Operations]
-        L5[DOTC = DataOfTestCase]
-        L1 ~~~ L2
-        L2 ~~~ L4
-        L4 ~~~ L3
-        L3 ~~~ L5
-    end
-
-    %% Node Styling
-    classDef needlink fill:#3b82f6,color:#ffffff,stroke:#1d4ed8,stroke-width:2px
-    classDef testlink fill:#8b5cf6,color:#ffffff,stroke:#6d28d9,stroke-width:2px
-    classDef dotc fill:#f59e0b,color:#ffffff,stroke:#b45309,stroke-width:2px
-    classDef grouped fill:#10b981,color:#ffffff,stroke:#047857,stroke-width:2px
-    classDef final fill:#f43f5e,color:#ffffff,stroke:#be123c,stroke-width:2px
-
-    %% Class assignments
-    class D1,E1,F1,G1,H1 needlink
-    class D2,E2,F2,G2,M2,N2 testlink
-    class J2,H2,I2,K2 dotc
-    class Z grouped
-    class FINAL final
-    class L1 needlink
-    class L2,L4 testlink
-    class L3,L5 dotc
-
-    %% Edge/Arrow Styling
-    linkStyle default stroke:#22d3ee,stroke-width:2px,color:#22d3ee
-    %% Ensure links in the Legend do not show up
-    linkStyle 23,24,25,26 opacity:0
-    </pre></section>
 </section>
 
 
@@ -1263,32 +898,42 @@ This depends on the <code class="docutils literal notranslate"><span class="pre"
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-it-works">How It Works</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#codelink-source-code-integration">✅ CodeLink: Source Code Integration</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#data-flow">Data Flow</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#example-json-cache-codelinks">Example JSON Cache (CodeLinks)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bazel-pre-processing-source-code-integration-codelinks">Bazel Pre-processing: Source Code Integration (CodeLinks)</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-per-repository-cache-generation">Step 1: Per-repository cache generation</a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#example-json-cache-per-repository">Example JSON cache (per repository)</a></li>
 </ul>
 </li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#testlink-test-result-integration">✅ TestLink: Test Result Integration</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-cache-merge-step-multi-repo-aggregation">Step 2: Cache merge step (multi-repo aggregation)</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#repo-metadata-rules">Repo metadata rules</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#source-code-linker-extension">Source Code Linker Extension</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#codelinks">Codelinks</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#testlinks">Testlinks</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#test-tagging-options">Test Tagging Options</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Data Flow</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#data-flow">Data Flow</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#example-json-cache-datafromtestcase">Example JSON Cache (DataFromTestCase)</a></li>
 </ul>
 </li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#early-combined-links">Early-Combined Links</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#combined-json-example">Combined JSON Example</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#final-layout-reposourcelink">Final layout: RepoSourceLink</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#combined-links">🔗 Combined Links</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#combined-json-example">Combined JSON Example</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#known-limitations">⚠️ Known Limitations</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#codelink">CodeLink</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#result-traceability-links-in-needs">Result: Traceability Links in Needs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#known-limitations">Known Limitations</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#general">General</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Codelinks</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#testlink">TestLink</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#internal-module-overview">🏗️ Internal Module Overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#high-level-data-flow-summary">High-level Data Flow Summary</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#clearing-cache-manually">Clearing Cache Manually</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#internal-overview">Internal  Overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Clearing Cache Manually</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples:</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#flow-overview">Flow-Overview</a></li>
 </ul>
   </nav></div>
 
