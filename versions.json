@@ -62,5 +62,9 @@
   {
     "version": "v3.1.0",
     "url": "https://eclipse-score.github.io/docs-as-code/v3.1.0/"
+  },
+  {
+    "version": "pr-461",
+    "url": "https://eclipse-score.github.io/docs-as-code/pr-461/"
   }
 ]
