@@ -10,7 +10,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-name: On Pull Request
+name: PR
 
 on:
   pull_request:
@@ -23,6 +23,6 @@ permissions:
   id-token: write
 
 jobs:
-  on-pr:
+  common:
     # FIXME: change to @main once the workflow is merged into main
     uses: eclipse-score/cicd-workflows/.github/workflows/on-pr.yml@on-pr
