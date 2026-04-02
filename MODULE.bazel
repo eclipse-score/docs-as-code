@@ -18,6 +18,8 @@ module(
     version = "0.0.0",
 )
 
+bazel_dep(name = "platforms", version = "1.0.0")
+
 ###############################################################################
 #
 # Python version
