@@ -25,10 +25,10 @@ permissions:
 jobs:
   common:
     # TODO: pin version once stable release is available
-    uses: eclipse-score/cicd-workflows/.github/workflows/on-pr.yml@main
+    uses: eclipse-score/cicd-workflows/.github/workflows/on-pr.yml@829b3e11ccbf924a5782f7bfed647cb1619fdf78 # v0.0.1
 
   license-check:
-    uses: eclipse-score/cicd-workflows/.github/workflows/license-check.yml@c1c90b1a82a1fab0fc202979dde6686b2162d5a8 # v0.0.0
+    uses: eclipse-score/cicd-workflows/.github/workflows/license-check.yml@829b3e11ccbf924a5782f7bfed647cb1619fdf78 # v0.0.1
     with:
       repo-url: "${{ github.server_url }}/${{ github.repository }}"
       bazel-target: "run --lockfile_mode=error //src:license-check"
