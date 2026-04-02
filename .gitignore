@@ -23,3 +23,6 @@ styles/
 .venv*
 __pycache__/
 /.coverage
+
+# Codex marker
+/.codex
