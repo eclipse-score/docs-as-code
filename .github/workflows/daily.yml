@@ -37,6 +37,4 @@ on:
 
 jobs:
   maintenance:
-    # TODO: pin version once stable release is available
-    # FIXME: @daily will stop working once the branch is deleted, so at least we need to switch to @main before merging this!
-    uses: eclipse-score/cicd-workflows/.github/workflows/daily.yml@daily
+    uses: eclipse-score/cicd-workflows/.github/workflows/daily.yml@829b3e11ccbf924a5782f7bfed647cb1619fdf78 # v0.0.1
