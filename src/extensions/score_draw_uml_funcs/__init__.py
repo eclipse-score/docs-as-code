@@ -408,7 +408,7 @@ def _resolve_component_for_view(
             if len(component_ref) > 1:
                 logger.info(
                     f"{need}: component static view has multiple belongs_to targets, "
-                    f"using {component_id}"
+                    f"using only first component: {component_id}"
                 )
     else:
         component_id = component_ref
