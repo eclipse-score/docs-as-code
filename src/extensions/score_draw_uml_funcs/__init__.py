@@ -400,19 +400,16 @@ def _resolve_component_for_view(
         return need
 
     component_ref = need.get("belongs_to")
-    if isinstance(component_ref, list):
-        if not component_ref:
-            component_id = ""
-        else:
-            component_id = component_ref[0]
-            if len(component_ref) > 1:
-                logger.info(
-                    f"{need}: component static view has multiple belongs_to targets, "
-                    f"using only first component: {component_id}"
-                )
+    if isinstance(component_ref, list) and component_ref:
+        component_id = component_ref[0]
+        if len(component_ref) > 1:
+            logger.info(
+                f"{need}: component static view has multiple belongs_to targets, "
+                f"using only first component: {component_id}"
+            )
+
     else:
         component_id = component_ref
-
     if not component_id:
         logger.info(f"{need}: missing belongs_to for component static view")
         return need
