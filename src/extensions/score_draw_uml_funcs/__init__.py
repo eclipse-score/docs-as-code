@@ -392,6 +392,43 @@ def draw_module(
     return structure_text, linkage_text, proc_impl_interfaces, proc_used_interfaces
 
 
+def _resolve_component_for_view(
+    need: dict[str, str], all_needs: dict[str, dict[str, str]]
+) -> dict[str, str]:
+    """Resolve component architecture views to their owning component."""
+    if need.get("type") != "comp_arc_sta":
+        return need
+
+    component_ref = need.get("belongs_to")
+    if isinstance(component_ref, list):
+        if not component_ref:
+            component_id = ""
+        else:
+            component_id = component_ref[0]
+            if len(component_ref) > 1:
+                logger.info(
+                    f"{need}: component static view has multiple belongs_to targets, "
+                    f"using {component_id}"
+                )
+    else:
+        component_id = component_ref
+
+    if not component_id:
+        logger.info(f"{need}: missing belongs_to for component static view")
+        return need
+
+    component_need = all_needs.get(component_id, {})
+    if not component_need:
+        logger.info(f"{need}: belongs_to component {component_id} could not be found")
+        return need
+
+    if component_need.get("type") != "comp":
+        logger.info(f"{need}: belongs_to {component_id} is not a component")
+        return need
+
+    return component_need
+
+
 #       ╭──────────────────────────────────────────────────────────────────────────────╮
 #       │                    Classes with hashing to enable caching                    │
 #       ╰──────────────────────────────────────────────────────────────────────────────╯
@@ -575,16 +612,16 @@ class draw_full_component:
     def __call__(
         self, need: dict[str, str], all_needs: dict[str, dict[str, str]]
     ) -> str:
-        structure_text, linkage_text, _, _ = draw_comp_incl_impl_int(
-            need, all_needs, dict(), dict(), True
+        component_need = _resolve_component_for_view(need, all_needs)
+        structure_text, linkage_text, proc_impl_interfaces, _ = (
+            draw_comp_incl_impl_int(component_need, all_needs, dict(), dict(), True)
         )
 
-        # Draw all implemented interfaces outside the boxes
-        local_impl_interfaces = draw_impl_interface(need, all_needs, set())
-
         # Add all interfaces which are implemented by component to global list
-        # and provide implementation
-        for iface in local_impl_interfaces:
+        # and provide implementation. Use the interfaces collected during the
+        # recursive consists_of walk so component drawings also include
+        # interfaces implemented by nested subcomponents.
+        for iface in proc_impl_interfaces:
             # check for misspelled implements
             if not all_needs.get(iface, []):
                 logger.info(f"{need}: implements {iface} could not be found")
