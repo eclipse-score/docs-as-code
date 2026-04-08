@@ -225,7 +225,17 @@
               "full_line": "# req-Id: tool_req__docs_common_attr_security"
             }
           ],
-          "TestLinks": []
+          "TestLinks": [
+            {
+              "name": "TestCheckOptions__test_unknown_directive",
+              "file": "src/extensions/score_metamodel/tests/test_check_options.py",
+              "line": 65,
+              "need": "tool_req__docs_common_attr_security",
+              "verify_type": "partially",
+              "result": "passed",
+              "result_text": ""
+            }
+          ]
         }
       },
       {
@@ -1484,24 +1494,15 @@
         }
       },
       {
-        "need": "tool_req__docs_metamodel",
+        "need": "tool_req__docs_common_attr_description",
         "links": {
           "CodeLinks": [],
           "TestLinks": [
             {
-              "name": "TestCheckOptions__test_unknown_directive",
-              "file": "src/extensions/score_metamodel/tests/test_check_options.py",
-              "line": 65,
-              "need": "tool_req__docs_metamodel",
-              "verify_type": "partially",
-              "result": "passed",
-              "result_text": ""
-            },
-            {
               "name": "TestCheckOptions__test_unknown_option_present_in_neither_req_opt_neither_opt_opt",
               "file": "src/extensions/score_metamodel/tests/test_check_options.py",
               "line": 89,
-              "need": "tool_req__docs_metamodel",
+              "need": "tool_req__docs_common_attr_description",
               "verify_type": "partially",
               "result": "passed",
               "result_text": ""
@@ -1510,7 +1511,7 @@
               "name": "test_metamodel__init____test_returns_empty_list_when_filter_is_empty",
               "file": "src/extensions/score_metamodel/tests/test_metamodel__init__.py",
               "line": 45,
-              "need": "tool_req__docs_metamodel",
+              "need": "tool_req__docs_common_attr_description",
               "verify_type": "partially",
               "result": "passed",
               "result_text": ""
@@ -1519,7 +1520,7 @@
               "name": "test_metamodel__init____test_returns_valid_checks",
               "file": "src/extensions/score_metamodel/tests/test_metamodel__init__.py",
               "line": 55,
-              "need": "tool_req__docs_metamodel",
+              "need": "tool_req__docs_common_attr_description",
               "verify_type": "partially",
               "result": "passed",
               "result_text": ""
@@ -1528,7 +1529,7 @@
               "name": "test_metamodel__init____test_strips_whitespace",
               "file": "src/extensions/score_metamodel/tests/test_metamodel__init__.py",
               "line": 66,
-              "need": "tool_req__docs_metamodel",
+              "need": "tool_req__docs_common_attr_description",
               "verify_type": "partially",
               "result": "passed",
               "result_text": ""
@@ -1537,7 +1538,7 @@
               "name": "test_metamodel__init____test_raises_assertion_for_invalid_check",
               "file": "src/extensions/score_metamodel/tests/test_metamodel__init__.py",
               "line": 77,
-              "need": "tool_req__docs_metamodel",
+              "need": "tool_req__docs_common_attr_description",
               "verify_type": "partially",
               "result": "passed",
               "result_text": ""
