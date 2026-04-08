@@ -79,7 +79,7 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/checks/check_options.py",
-          "line": 186,
+          "line": 194,
           "tag": "# req-Id:",
           "need": "tool_req__docs_req_attr_reqtype",
           "full_line": "# req-Id: tool_req__docs_req_attr_reqtype",
@@ -137,7 +137,7 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/checks/check_options.py",
-          "line": 187,
+          "line": 195,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_security",
           "full_line": "# req-Id: tool_req__docs_common_attr_security",
@@ -305,7 +305,7 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/checks/check_options.py",
-          "line": 188,
+          "line": 196,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_safety",
           "full_line": "# req-Id: tool_req__docs_common_attr_safety",
@@ -473,7 +473,7 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/checks/check_options.py",
-          "line": 189,
+          "line": 197,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_status",
           "full_line": "# req-Id: tool_req__docs_common_attr_status",
@@ -641,7 +641,7 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/checks/check_options.py",
-          "line": 190,
+          "line": 198,
           "tag": "# req-Id:",
           "need": "tool_req__docs_req_attr_rationale",
           "full_line": "# req-Id: tool_req__docs_req_attr_rationale",
@@ -669,7 +669,7 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/checks/check_options.py",
-          "line": 191,
+          "line": 199,
           "tag": "# req-Id:",
           "need": "tool_req__docs_arch_attr_mandatory",
           "full_line": "# req-Id: tool_req__docs_arch_attr_mandatory",
@@ -687,7 +687,7 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/checks/check_options.py",
-          "line": 259,
+          "line": 267,
           "tag": "# req-Id:",
           "need": "tool_req__docs_req_attr_validity_consistency",
           "full_line": "# req-Id: tool_req__docs_req_attr_validity_consistency",
