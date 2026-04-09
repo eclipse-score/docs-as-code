@@ -32,3 +32,7 @@ needs-config-writer == 0.2.4
 
 # Need this to enable non bazel execution
 bazel-runfiles
+
+# Local development
+pytest
+basedpyright
