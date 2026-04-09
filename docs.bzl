@@ -156,6 +156,7 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
         visibility = ["//visibility:private"],
         data = data,
         deps = deps,
+        allow_persistent_workers = False,
     )
 
     native.filegroup(
