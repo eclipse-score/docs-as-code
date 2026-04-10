@@ -32,13 +32,6 @@ Hello there
       Learn more about our Metamodel extension and what this extension takes care of.
       :ref:`Metamodel Extension<metamodel>`.
 
-   .. grid-item-card::
-
-      Header Service
-      ^^^
-      Learn about the Header Service extension, and how you can configure it.
-      It creates RST Tables and automatically fills our information needed.
-      :ref:`Header Service Extension <header-service>`
 
    .. grid-item-card::
 
@@ -80,7 +73,6 @@ Hello there
 
    Metamodel <metamodel>
    Filebased Testing <rst_filebased_testing>
-   Header Service <header_service>
    Source Code Linker <source_code_linker>
    Extension Guide <extension_guide>
    Sync TOML <sync_toml>

@@ -26,7 +26,6 @@ py_library(
     deps = all_requirements + [
         "@score_docs_as_code//src/extensions:score_plantuml",
         "@score_docs_as_code//src/extensions/score_draw_uml_funcs",
-        "@score_docs_as_code//src/extensions/score_header_service",
         "@score_docs_as_code//src/extensions/score_layout",
         "@score_docs_as_code//src/extensions/score_metamodel",
         "@score_docs_as_code//src/extensions/score_source_code_linker",

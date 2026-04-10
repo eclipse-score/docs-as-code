@@ -411,7 +411,6 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
     optional_links:
-      consists_of: comp # preparation for linking change according to DR-005
       includes: ^logic_arc_int(_op)*__.+$
       uses: ^logic_arc_int(_op)*__.+$
       provides: ^logic_arc_int(_op)*__.+$ # preparation for linking change according to DR-005
@@ -559,11 +558,13 @@ needs_types:
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
+
+    mandatory_links:
+      belongs_to: feat # preparation for linking change according to DR-005
     optional_links:
       implements: logic_arc_int, real_arc_int_op
       uses: logic_arc_int, real_arc_int_op
       consists_of: comp
-      belongs_to: feat # preparation for linking change according to DR-005
     tags:
       - architecture_element
     parts: 2
