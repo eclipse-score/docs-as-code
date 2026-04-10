@@ -75,7 +75,7 @@ def add_test_properties(
         # Ensure a 'description' is there inside the Docstring
         if not func.__doc__ or not func.__doc__.strip():
             raise ValueError(
-                f"{func.__name__} does not have a description."
+                f"{func.__name__} does not have a description. "
                 + "Descriptions (in docstrings) are mandatory."
             )
         # NOTE: This might come back to bite us in some weird edgecase, though I have not thought of one so far
@@ -86,9 +86,14 @@ def add_test_properties(
     return decorator
 
 
-def pytest_runtest_makereport(item: pytest.Item, call: pytest.CallInfo[None]) -> None:
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(item: pytest.Item, call: pytest.CallInfo[None]):
     """Attach file and line info to the report for use in junitxml output."""
-    if call.when != "call":
+
+    outcome = yield
+    report = outcome.get_result()
+
+    if report.when != "call":
         return
     # Since our decorator 'add_test_properties' will create a 'test_properties' marker
     # This function then searches for the nearest dictionary attached to an item with
@@ -100,7 +105,16 @@ def pytest_runtest_makereport(item: pytest.Item, call: pytest.CallInfo[None]) ->
     # Note: This does NOT add 'line' and 'file' to the testcase.
 
     marker = item.get_closest_marker("test_properties")
-    if marker and isinstance(marker.args[0], dict):
+    if not marker:
+        return
+
+    if not marker.args:
+        raise ValueError(
+            f"Marker 'test_properties' on {item.name} does not have any arguments. "
+            + "Please ensure that the 'add_test_properties' decorator is used correctly."
+        )
+
+    if isinstance(marker.args[0], dict):
         for k, v in marker.args[0].items():
             item.user_properties.append((k, str(v)))
 
@@ -116,5 +130,5 @@ def add_file_and_line_attr(
     # turning `../../../_main/<file_path>` into => <filepath>
     clean_file_path = raw_file_path.split("_main/")[-1]
     record_xml_attribute("file", str(clean_file_path))
-    # Adding +1 to the line so we point to the decorator instead of above it
+    # Convert pytest's 0-based source line number to 1-based numbering for XML output.
     record_xml_attribute("line", str(line_number + 1))

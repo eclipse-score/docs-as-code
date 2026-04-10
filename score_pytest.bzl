@@ -12,20 +12,29 @@
 # *******************************************************************************
 """Bazel interface for running pytest"""
 
-load("@pip_tooling//:requirements.bzl", "all_requirements")
+load("@docs_as_code_hub_env//:requirements.bzl", "requirement")
 load("@rules_python//python:defs.bzl", "py_test")
 
-def score_py_pytest(name, srcs, args = [], data = [], deps = [], env = {}, plugins = [], pytest_config = None, **kwargs):
-    pytest_bootstrap = Label("@score_tooling//python_basics/score_pytest:main.py")
+def score_pytest(name, srcs, args = [], data = [], deps = [], env = {}, plugins = [], pytest_config = None, **kwargs):
+    pytest_bootstrap = Label("@score_docs_as_code//score_pytest:main.py")
 
     if not pytest_config:
-        pytest_config = Label("@score_tooling//python_basics/score_pytest:pytest.ini")
-        #fail("$(location %s)" % pytest_config)
+        pytest_config = Label("@score_docs_as_code//score_pytest:pytest.ini")
 
     if not srcs:
         fail("No source files provided for %s! (Is your glob empty?)" % name)
 
     plugins = ["-p attribute_plugin"] + ["-p %s" % plugin for plugin in plugins]
+
+    docs_pytest = requirement("pytest")
+    pytest_in_deps = False
+    for dep in deps:
+        if "//pytest:pkg" in str(dep):
+            if str(dep) != str(docs_pytest):
+                fail("Please do not provide your own pytest version. We want to use the same pytest version everywhere.")
+            pytest_in_deps = True
+    if not pytest_in_deps:
+        deps = deps + [docs_pytest]
 
     py_test(
         name = name,
@@ -46,7 +55,7 @@ def score_py_pytest(name, srcs, args = [], data = [], deps = [], env = {}, plugi
                args +
                plugins +
                ["$(location %s)" % x for x in srcs],
-        deps = ["@score_tooling//python_basics/score_pytest:attribute_plugin"] + all_requirements + deps,
+        deps = deps + ["@score_docs_as_code//score_pytest:attribute_plugin"],
         data = [
             pytest_config,
         ] + data,

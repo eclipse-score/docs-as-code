@@ -12,7 +12,7 @@
 # *******************************************************************************
 
 load("@aspect_rules_py//py:defs.bzl", "py_library")
-load("@score_tooling//:defs.bzl", "score_py_pytest")
+load("//:score_pytest.bzl", "score_pytest")
 
 filegroup(
     name = "sources",
@@ -61,7 +61,7 @@ py_library(
     visibility = ["//visibility:public"],
 )
 
-score_py_pytest(
+score_pytest(
     name = "score_source_code_linker_test",
     size = "small",
     srcs = glob([

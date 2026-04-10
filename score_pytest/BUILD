@@ -12,22 +12,16 @@
 # *******************************************************************************
 
 load("@aspect_rules_py//py:defs.bzl", "py_library")
-load("@score_tooling//python_basics/score_pytest:py_pytest.bzl", "score_py_pytest")
+load("//:score_pytest.bzl", "score_pytest")
 
 exports_files([
     "pytest.ini",
     "main.py",
-    "py_pytest.bzl",
 ])
 
-score_py_pytest(
+score_pytest(
     name = "test_rules_are_working_correctly",
-    srcs = glob(
-        [
-            "tests/*.py",
-        ],
-        allow_empty = True,
-    ),
+    srcs = glob(["tests/*.py"]),
 )
 
 py_library(

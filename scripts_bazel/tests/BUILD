@@ -12,9 +12,9 @@
 # *******************************************************************************
 
 load("@docs_as_code_hub_env//:requirements.bzl", "all_requirements")
-load("@score_tooling//:defs.bzl", "score_py_pytest")
+load("//:score_pytest.bzl", "score_pytest")
 
-score_py_pytest(
+score_pytest(
     name = "generate_sourcelinks_cli_test",
     srcs = ["generate_sourcelinks_cli_test.py"],
     deps = [
@@ -24,7 +24,7 @@ score_py_pytest(
     pytest_config = "//:pyproject.toml",
 )
 
-score_py_pytest(
+score_pytest(
     name = "merge_sourcelinks_test",
     srcs = ["merge_sourcelinks_test.py"],
     deps = [

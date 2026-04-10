@@ -16,7 +16,7 @@ This module provides support for running [pytest](https://docs.pytest.org/en/lat
 - **Requirements Traceability**: Link tests to requirement IDs
 - **Automatic File/Line Attribution**: Annotates tests with file path and line number
 - **JUnit XML Integration**: Exports metadata as `<properties>` in test reports
-- **Bazel Integration**: Run tests with `score_py_pytest` Bazel rule
+- **Bazel Integration**: Run tests with `score_pytest` Bazel rule
 
 ---
 
@@ -24,20 +24,29 @@ This module provides support for running [pytest](https://docs.pytest.org/en/lat
 
 ### In `MODULE.bazel`
 
-```starlark
-bazel_dep(name = "score_python_basics", version = "0.1.0")
-```
-
-> The `score_pytest` module will determine the appropriate `pytest` version. It is not possible to override this.
+Add a dependency to `score_docs_as_code` to use the `score_pytest` module.
+The module will determine the appropriate `pytest` version. It is not possible to override this.
 
 ---
 
 ### In `BUILD`
 
 ```starlark
-load("@score_python_basics//score_pytest:py_pytest.bzl", "score_py_pytest")
+load("@score_docs_as_code//:score_pytest.bzl", "score_pytest")
 
-score_py_pytest(
+# simple case:
+score_pytest(
+    name = "test_my_first_check",
+    srcs = ["test_my_first_check.py"],
+
+    # Optional custom pyproject.toml or pytest.ini
+    # Recommended if you have one.
+    # This will align CLI, IDE and bazel test behavior.
+    pytest_config = "//:pyproject.toml",
+)
+
+# all options:
+score_pytest(
     name = "test_my_first_check",
     srcs = ["test_my_first_check.py"],
     plugins = [
@@ -49,7 +58,7 @@ score_py_pytest(
     env = {
         "LD_LIBRARY_PATH": "/path/to/dynamic/lib",  # Optional environment
     },
-    pytest_ini = "//my_pytest:my_pytest_ini",  # Optional custom pytest.ini
+    pytest_config = "//:pytest_ini",  # Optional custom pytest.ini
     tags = ["integration"]  # Optional tags for test grouping
 )
 ```
@@ -80,8 +89,6 @@ def test_user_login():
 - `test_type`: Type of test being executed
 - `derivation_technique`: Method used to derive the test
 - **Either** `partially_verifies` or `fully_verifies`: List of requirement IDs
-
-> ?? All decorated tests **must include a docstring**.
 
 ---
 
@@ -162,27 +169,3 @@ When using `--junit-xml=report.xml`, the plugin augments each test case with:
   </testsuite>
 </testsuites>
 ```
-
----
-
-## Development of `score_pytest`
-
-### Updating `pytest` and dependencies
-
-Update the dependencies listed in `requirements.txt` and lock them with:
-
-```bash
-bazel run //:requirements.update -- --upgrade
-```
-
----
-
-### Running Tests
-
-To run the internal tests for this module:
-
-```bash
-bazel test //...
-```
-
----

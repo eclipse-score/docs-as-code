@@ -13,7 +13,7 @@
 
 load("@aspect_rules_py//py:defs.bzl", "py_library")
 load("@docs_as_code_hub_env//:requirements.bzl", "all_requirements")
-load("@score_tooling//:defs.bzl", "score_py_pytest")
+load("//:score_pytest.bzl", "score_pytest")
 
 filegroup(
     name = "all_sources",
@@ -30,7 +30,7 @@ py_library(
     deps = all_requirements,
 )
 
-score_py_pytest(
+score_pytest(
     name = "score_header_service_test",
     size = "small",
     srcs = glob(["test/**/*.py"]),
