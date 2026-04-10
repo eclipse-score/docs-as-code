@@ -610,8 +610,8 @@ class draw_full_component:
         self, need: dict[str, str], all_needs: dict[str, dict[str, str]]
     ) -> str:
         component_need = _resolve_component_for_view(need, all_needs)
-        structure_text, linkage_text, proc_impl_interfaces, _ = (
-            draw_comp_incl_impl_int(component_need, all_needs, dict(), dict(), True)
+        structure_text, linkage_text, proc_impl_interfaces, _ = draw_comp_incl_impl_int(
+            component_need, all_needs, dict(), dict(), True
         )
 
         # Add all interfaces which are implemented by component to global list
