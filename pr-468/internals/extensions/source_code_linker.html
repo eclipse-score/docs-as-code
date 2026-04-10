@@ -38,11 +38,11 @@
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-data-viewer/jsonview.bundle.css?v=f6ef2277" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/libs/html/datatables.min.css?v=4b4fd840" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_style.css?v=92936fa5" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_toggle.css?v=5c6620df" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_core.css?v=f5b60a78" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_links.css?v=2150a916" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_toggle.css?v=5c6620df" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/needstable.css?v=5e1b6797" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_links.css?v=2150a916" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_style.css?v=92936fa5" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/modern.css?v=803738c0" />
   
   <!-- So that users can add custom icons -->
@@ -464,7 +464,8 @@ This extension integrates with <strong>Bazel</strong> and <strong>sphinx-needs</
 <p>The feature is split into <strong>two layers</strong>:</p>
 <ol class="arabic simple">
 <li><p><strong>Bazel pre-processing (before Sphinx runs)</strong>
-Generates and aggregates JSON caches containing the raw <code class="docutils literal notranslate"><span class="pre">source_code_link</span></code> findings (and, if available, repository metadata like <code class="docutils literal notranslate"><span class="pre">repo_name/hash/url</span></code>).</p></li>
+Generates and aggregates JSON caches containing the raw <code class="docutils literal notranslate"><span class="pre">source_code_link</span></code> findings (and, if available, repository metadata like <code class="docutils literal notranslate"><span class="pre">repo_name/hash/url</span></code>).
+Note that “hash” might also be a “version” tag.</p></li>
 <li><p><strong>Sphinx extension (during the Sphinx build)</strong>
 Reads the aggregated JSON, validates and adapts it, and finally injects the links into Sphinx needs in the final layout (<strong>RepoSourceLink</strong>).</p></li>
 </ol>
@@ -612,9 +613,9 @@ This depends on the <code class="docutils literal notranslate"><span class="pre"
 <li><p>Result (e.g. passed, failed, skipped)</p></li>
 <li><p>Result text (if failed/skipped will check if message was attached to it)</p></li>
 <li><p>Verifications (<code class="docutils literal notranslate"><span class="pre">PartiallyVerifies</span></code>, <code class="docutils literal notranslate"><span class="pre">FullyVerifies</span></code>)</p></li>
+<li><p>Also parses metadata according to the <a class="reference internal" href="#repo-metadata-rules">metadata rules</a></p></li>
 </ul>
 </li>
-<li><p>Also parses metadata according to the <a class="reference internal" href="#repo-metadata-rules">metadata rules</a></p></li>
 <li><p>Cases without metadata are logged out as info (not errors).</p></li>
 <li><p>Test cases with metadata are converted into:</p>
 <ul>
@@ -808,7 +809,7 @@ This is a known inefficiency and will be improved upon later</p>
 <section id="internal-overview">
 <h2>Internal  Overview<a class="headerlink" href="#internal-overview" title="Link to this heading">#</a></h2>
 <p>The bazel part:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>scripts_bazel/
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>scripts_bazel/
 ├── BUILD   # Declare libraries and filegroups needed for bazel
 ├── generate_sourcelinks_cli.py # Bazel step 1 =&gt; Parses sourcefiles for tags
 ├── merge_sourcelinks.py
@@ -817,7 +818,7 @@ This is a known inefficiency and will be improved upon later</p>
 </pre></div>
 </div>
 <p>The Sphinx extension</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>score_source_code_linker/
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>score_source_code_linker/
 ├── __init__.py                   # Main Sphinx extension; combines CodeLinks + TestLinks
 ├── generate_source_code_links_json.py  # Most functionality moved to &#39;scripts_bazel/generate_sourcelinks_cli&#39;
 ├── need_source_links.py         # Data model for combined links
@@ -840,7 +841,7 @@ This is a known inefficiency and will be improved upon later</p>
 </div>
 </section>
 <section id="examples">
-<h2>Examples:<a class="headerlink" href="#examples" title="Link to this heading">#</a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h2>
 <p>To see working examples for CodeLinks &amp; TestLinks, take a look at the Docs-As-Code documentation.</p>
 <p><a class="reference external" href="https://eclipse-score.github.io/docs-as-code/main/requirements/requirements.html#tool_req__docs_common_attr_id_scheme">Example CodeLink</a>
 <a class="reference external" href="https://eclipse-score.github.io/docs-as-code/main/requirements/requirements.html#tool_req__docs_common_attr_status">Example CodeLink</a></p>
@@ -932,7 +933,7 @@ This is a known inefficiency and will be improved upon later</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#clearing-cache-manually">Clearing Cache Manually</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#internal-overview">Internal  Overview</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Clearing Cache Manually</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples:</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
 </ul>
   </nav></div>
 
