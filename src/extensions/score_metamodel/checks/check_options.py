@@ -105,6 +105,45 @@ def validate_options(
     _validate(need_type["optional_options"], False)
 
 
+#              ╭──────────────────────────────────────────────────────────╮
+#              │ Checks will be deactivated for now to give silent grace  │
+#              │                         period.                          │
+#              │    Afterwards they will be activated as 'non fatal'.     │
+#              │   Before getting enabled as 'mandatory' in the future    │
+#              │                 where this can be delted                 │
+#              ╰──────────────────────────────────────────────────────────╯
+
+
+# @local_check
+# def check_version_attr_present(
+#     _: Sphinx,
+#     need: NeedItem,
+#     log: CheckLogger,
+# ):
+#     """
+#     This is a temporary check to allow for non fatal warnings if a version attribute
+#     is missing in any need.
+#     In future releases the version will be mandatory and this check
+#     can be deleted as then it is covered by the normal validate_options function
+#     Checks if version attribute is present in the need. Will emit a non fatal warning
+#     """
+#     need_version = need.get("version")
+#     if not need_version:
+#         log.warning_for_need(
+#             need,
+#             msg="is missing attribute `version`. All needs "
+#             + "are required to have the version attribute in future releases. "
+#             + "It should be a whole number like: 'version: 1'.",
+#             is_new_check=True,
+#         )
+#     elif not need_version.isdigit():
+#         # As the version is already in the need here, this can be a 'error log'.
+#         log.warning_for_need(
+#             need,
+#             msg="Version is required to be a whole number e.g '1, 10, 12'",
+#         )
+
+
 def validate_links(
     log: CheckLogger,
     need_type: ScoreNeedType,

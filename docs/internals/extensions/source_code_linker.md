@@ -12,6 +12,7 @@ The feature is split into **two layers**:
 
 1. **Bazel pre-processing (before Sphinx runs)**
    Generates and aggregates JSON caches containing the raw `source_code_link` findings (and, if available, repository metadata like `repo_name/hash/url`).
+   Note that "hash" might also be a "version" tag.
 
 2. **Sphinx extension (during the Sphinx build)**
    Reads the aggregated JSON, validates and adapts it, and finally injects the links into Sphinx needs in the final layout (**RepoSourceLink**).
@@ -36,6 +37,7 @@ one JSON cache per repository.
 It also adds metadata to each needlink that is needed in further steps.
 
 Example of requirement tags:
+
 ```python
 # Choose one or the other, both mentioned here to avoid detection
 # req-Id/req-traceability: <NEED_ID>
@@ -83,20 +85,23 @@ This step also fills in url & hash if there is a known_good_json provided (e.g. 
 
 (repo-metadata-rules)=
 #### Repo metadata rules
+
 Here are some basic rules regarding the MetaData information
 
 In a combo build, a known_good_json **must** be provided.
 If known_good_json is found then the hash & url will be filled for each need by the script.
 
 Combo build:
-  - `repo_name`: repository name (parsed from filepath in step 1)
-  - `hash`: revision/commit hash (as provided by the known_good_json)
-  - `url`: repository remote URL (as provided by the known_good_json)
+
+- `repo_name`: repository name (parsed from filepath in step 1)
+- `hash`: revision/commit hash (as provided by the known_good_json)
+- `url`: repository remote URL (as provided by the known_good_json)
 
 Local build:
-  - `repo_name`: 'local_repo'
-  - `hash`: will be empty at this point, and later filled via parsing the git commands
-  - `url`: will be empty at this point, and later filled via parsing the git commands
+
+- `repo_name`: 'local_repo'
+- `hash`: will be empty at this point, and later filled via parsing the git commands
+- `url`: will be empty at this point, and later filled via parsing the git commands
 
 ---
 
@@ -140,6 +145,7 @@ def test_feature():
     ...
 
 ```
+
 > Note: If you use the decorator, it will check that you have specified a docstring inside the function.
 
 #### Data Flow
@@ -153,7 +159,7 @@ def test_feature():
      - Result (e.g. passed, failed, skipped)
      - Result text (if failed/skipped will check if message was attached to it)
      - Verifications (`PartiallyVerifies`, `FullyVerifies`)
-    - Also parses metadata according to the [metadata rules](#repo-metadata-rules)
+     - Also parses metadata according to the [metadata rules](#repo-metadata-rules)
 
    - Cases without metadata are logged out as info (not errors).
    - Test cases with metadata are converted into:
@@ -168,7 +174,9 @@ def test_feature():
    - Warns on missing need IDs.
 
 #### Example JSON Cache (DataFromTestCase)
+
 The DataFromTestCase depicts the information gathered about one testcase.
+
 ```json
 [
   {
@@ -246,6 +254,7 @@ Instead of repeating `repo_name/hash/url` for every single link entry, the final
 - All links belonging to that repository are stored beneath it
 
 This somewhat looks like this:
+
 ```{code-block} json
 [
   {
@@ -296,20 +305,22 @@ During the Sphinx build process, the extension applies the computed links to nee
 ## Known Limitations
 
 ### General
--  In combo builds, known_good_json is required.
--  inefficiencies in creating the links and saving the JSON caches
--  Not compatible with **Esbonio/Live_preview**
+
+- In combo builds, known_good_json is required.
+- inefficiencies in creating the links and saving the JSON caches
+- Not compatible with **Esbonio/Live_preview**
 
 ### Codelinks
--  GitHub links may 404 if the commit isn’t pushed
--  Tags must match exactly (e.g. #<!-- comment prevents parsing this occurance --> req-Id)
--  `source_code_link` isn’t visible until the full Sphinx build is completed
+
+- GitHub links may 404 if the commit isn’t pushed
+- Tags must match exactly (e.g. #<!-- comment prevents parsing this occurance --> req-Id)
+- `source_code_link` isn’t visible until the full Sphinx build is completed
 
 ### TestLink
 
--  GitHub links may 404 if the commit isn’t pushed
--  XML structure must be followed exactly (e.g. `properties & attributes`)
--  Relies on test to be executed first
+- GitHub links may 404 if the commit isn’t pushed
+- XML structure must be followed exactly (e.g. `properties & attributes`)
+- Relies on test to be executed first
 
 ---
 
@@ -332,7 +343,8 @@ rm -rf _build/
 ## Internal  Overview
 
 The bazel part:
-```
+
+```text
 scripts_bazel/
 ├── BUILD   # Declare libraries and filegroups needed for bazel
 ├── generate_sourcelinks_cli.py # Bazel step 1 => Parses sourcefiles for tags
@@ -340,8 +352,10 @@ scripts_bazel/
 └── tests
 │   └── ...
 ```
+
 The Sphinx extension
-```
+
+```text
 score_source_code_linker/
 ├── __init__.py                   # Main Sphinx extension; combines CodeLinks + TestLinks
 ├── generate_source_code_links_json.py  # Most functionality moved to 'scripts_bazel/generate_sourcelinks_cli'
@@ -356,6 +370,7 @@ score_source_code_linker/
 ```
 
 ---
+
 ## Clearing Cache Manually
 
 To clear the build cache, run:
@@ -364,7 +379,8 @@ To clear the build cache, run:
 rm -rf _build/
 ```
 
-## Examples:
+## Examples
+
 To see working examples for CodeLinks & TestLinks, take a look at the Docs-As-Code documentation.
 
 [Example CodeLink](https://eclipse-score.github.io/docs-as-code/main/requirements/requirements.html#tool_req__docs_common_attr_id_scheme)

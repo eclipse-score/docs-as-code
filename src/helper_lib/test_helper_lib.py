@@ -30,7 +30,7 @@ from src.helper_lib import (
 class _FakeConfig:
     """Minimal stand-in for sphinx.config.Config."""
 
-    def __init__(self, raw: dict[Any,Any]):
+    def __init__(self, raw: dict[Any, Any]):
         self._raw_config = raw
 
 

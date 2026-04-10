@@ -33,7 +33,7 @@ babel==2.18.0 \
 basedpyright==1.35.0 \
     --hash=sha256:2a7e0bd476623d48499e2b18ff6ed19dc28c51909cf9e1152ad355b5809049ad \
     --hash=sha256:4f4f84023df5a0cd4ee154916ba698596682ac98bacfa22c941ed6aaf07bba4e
-    # via -r /external/score_tooling+/python_basics/requirements.txt
+    # via -r src/requirements.in
 bazel-runfiles==1.8.5 \
     --hash=sha256:7c34df05e0115e5559cbc3069b580ef66e330e7f5dde29dba50f312dfad346d9
     # via -r src/requirements.in
@@ -511,9 +511,7 @@ imagesize==1.4.1 \
 iniconfig==2.3.0 \
     --hash=sha256:c76315c77db068650d49c5b56314774a7804df16fee4402c1f19d6d15d8c4730 \
     --hash=sha256:f631c04d2c48c52b84d0d0549c99ff3859c98df65b3101406327ecc7d53fbf12
-    # via
-    #   -r /external/score_tooling+/python_basics/requirements.txt
-    #   pytest
+    # via pytest
 jinja2==3.1.6 \
     --hash=sha256:0137fb05990d35f1275a587e9aee6d56da821fc83491a0fb838183be43f66d6d \
     --hash=sha256:85ece4451f492d0c13c5dd7c13a64681a86afae63a5f347908daf103ce6d2f67
@@ -838,9 +836,7 @@ nodejs-wheel-binaries==24.11.1 \
     --hash=sha256:c2741525c9874b69b3e5a6d6c9179a6fe484ea0c3d5e7b7c01121c8e5d78b7e2 \
     --hash=sha256:c79a7e43869ccecab1cae8183778249cceb14ca2de67b5650b223385682c6239 \
     --hash=sha256:cde41d5e4705266688a8d8071debf4f8a6fcea264c61292782672ee75a6905f9
-    # via
-    #   -r /external/score_tooling+/python_basics/requirements.txt
-    #   basedpyright
+    # via basedpyright
 numpy==2.4.2 \
     --hash=sha256:00ab83c56211a1d7c07c25e3217ea6695e50a3e2f255053686b081dc0b091a82 \
     --hash=sha256:068cdb2d0d644cdb45670810894f6a0600797a69c05f1ac478e8d31670b8ee75 \
@@ -921,7 +917,6 @@ packaging==25.0 \
     --hash=sha256:29572ef2b1f17581046b3a2227d5c611fb25ec70ca1ba8554b24b0e69331a484 \
     --hash=sha256:d443872c98d677bf60f6a1f2f8c1cb748e8fe762d2bf9d3148b5599295b0fc4f
     # via
-    #   -r /external/score_tooling+/python_basics/requirements.txt
     #   matplotlib
     #   pytest
     #   sphinx
@@ -1026,9 +1021,7 @@ platformdirs==4.5.1 \
 pluggy==1.6.0 \
     --hash=sha256:7dcc130b76258d33b90f61b658791dede3486c3e6bfb003ee5c9bfb396dd22f3 \
     --hash=sha256:e920276dd6813095e9377c0bc5566d94c932c33b27a3e3945d8389c374dd4746
-    # via
-    #   -r /external/score_tooling+/python_basics/requirements.txt
-    #   pytest
+    # via pytest
 pycparser==3.0 \
     --hash=sha256:600f49d217304a5902ac3c37e1281c9fe94e4d0489de643a9504c5cdfdfc6b29 \
     --hash=sha256:b727414169a36b7d524c1c3e31839a521725078d7b2ff038656844266160a992
@@ -1049,7 +1042,6 @@ pygments==2.20.0 \
     --hash=sha256:6757cd03768053ff99f3039c1a36d6c0aa0b263438fcab17520b30a303a82b5f \
     --hash=sha256:81a9e26dd42fd28a23a2d169d86d7ac03b46e2f8b59ed4698fb4785f946d0176
     # via
-    #   -r /external/score_tooling+/python_basics/requirements.txt
     #   accessible-pygments
     #   pydata-sphinx-theme
     #   pytest
@@ -1097,7 +1089,7 @@ pyspellchecker==0.8.4 \
 pytest==9.0.1 \
     --hash=sha256:3e9c069ea73583e255c3b21cf46b8d3c56f6e3a1a8f6da94ccb0fcf57b9d73c8 \
     --hash=sha256:67be0030d194df2dfa7b556f2e56fb3c3315bd5c8822c6951162b92b32ce7dad
-    # via -r /external/score_tooling+/python_basics/requirements.txt
+    # via -r src/requirements.in
 python-dateutil==2.9.0.post0 \
     --hash=sha256:37dd54208da7e1cd875388217d5e00ebd4179249f90fb72437e91a35459a0ad3 \
     --hash=sha256:a8b2bc7bffae282281c8140a97d3aa9c14da0b136dfe83f850eea9a5f7470427

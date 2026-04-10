@@ -358,7 +358,7 @@ def test_repo_cache_json_format(
         assert len(raw_json) > 0
 
         # Check first repo structure
-        first_repo = raw_json[0]
+        first_repo = raw_json[0]  # pyright: ignore[reportUnknownVariableType]
         assert "repo" in first_repo
         assert "needs" in first_repo
         assert "name" in first_repo["repo"]
@@ -367,9 +367,9 @@ def test_repo_cache_json_format(
 
         # Check that needlinks don't have metadata
         if first_repo["needs"]:
-            first_need = first_repo["needs"][0]
+            first_need = first_repo["needs"][0]  # pyright: ignore[reportUnknownVariableType]
             if "links" in first_need and first_need["links"].get("CodeLinks"):
-                codelink = first_need["links"]["CodeLinks"][0]
+                codelink = first_need["links"]["CodeLinks"][0]  # pyright: ignore[reportUnknownVariableType]
                 assert "repo_name" not in codelink, (
                     "CodeLinks should not contain repo_name metadata"
                 )

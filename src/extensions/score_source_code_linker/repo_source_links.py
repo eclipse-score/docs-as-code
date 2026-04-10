@@ -93,9 +93,7 @@ def RepoSourceLinks_JSON_Decoder(
     return d
 
 
-def store_repo_source_links_json(
-    file: Path, source_code_links: list[RepoSourceLinks]
-):
+def store_repo_source_links_json(file: Path, source_code_links: list[RepoSourceLinks]):
     # After `rm -rf _build` or on clean builds the directory does not exist,
     # so we need to create it. We create any folder that might be missing
     file.parent.mkdir(exist_ok=True, parents=True)
@@ -139,9 +137,7 @@ def group_needs_by_repo(links: list[SourceCodeLinks]) -> list[RepoSourceLinks]:
 
         if repo_key not in repo_groups:
             repo_groups[repo_key] = RepoSourceLinks(
-                repo=RepoInfo(
-                    name=repo_key, hash=first_link.hash, url=first_link.url
-                )
+                repo=RepoInfo(name=repo_key, hash=first_link.hash, url=first_link.url)
             )
 
         # TODO: Add an assert that checks if needs only are

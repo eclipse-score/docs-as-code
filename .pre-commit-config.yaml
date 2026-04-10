@@ -1,3 +1,15 @@
+# *******************************************************************************
+# Copyright (c) 2026 Contributors to the Eclipse Foundation
+#
+# See the NOTICE file(s) distributed with this work for additional
+# information regarding copyright ownership.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Apache License Version 2.0 which is available at
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# SPDX-License-Identifier: Apache-2.0
+# *******************************************************************************
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
@@ -15,11 +27,33 @@ repos:
       - id: check-added-large-files
         args: ["--maxkb=150"]
 
-  # use LOCAL hooks for python tooling so versions come from the virtualenv
+  - repo: https://github.com/rhysd/actionlint
+    rev: v1.7.11
+    hooks:
+      - id: actionlint
+        args:
+          # Disable shellcheck and pyflakes for now, to enforce consistent behavior.
+          - -shellcheck=
+          - -pyflakes=
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.9
+    hooks:
+      - id: ruff-check
+        args: [ --fix ]
+      - id: ruff-format
+
+  # Note: this is super slow, therefore it is last
   - repo: local
     hooks:
-      - id: Linter Scripts
-        name: Run linter script
-        entry: ./scripts/run-linters.sh
-        language: unsupported_script
+      - id: BasedPyright
+        name: BasedPyright
+        entry: bash -c 'bazel run //:ide_support && .venv_docs/bin/python3 -m basedpyright'
+        language: system
         pass_filenames: false
+
+  # Ensure every file has a copyright header as per the Eclipse Foundation's requirements
+  - repo: https://github.com/eclipse-score/tooling
+    rev: 31ff8eee214e4e97ef8f5cb46e443273515b63ec
+    hooks:
+      - id: copyright

@@ -27,14 +27,10 @@ from src.extensions.score_metamodel.log import CheckLogger
 # Import and re-export some types and functions for easier access
 from src.extensions.score_metamodel.metamodel_types import (
     ProhibitedWordCheck as ProhibitedWordCheck,
-)
-from src.extensions.score_metamodel.metamodel_types import (
     ScoreNeedType as ScoreNeedType,
 )
 from src.extensions.score_metamodel.yaml_parser import (
     default_options as default_options,
-)
-from src.extensions.score_metamodel.yaml_parser import (
     load_metamodel_data as load_metamodel_data,
 )
 from src.helper_lib import config_setdefault

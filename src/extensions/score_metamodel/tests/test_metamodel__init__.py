@@ -43,7 +43,7 @@ def setup_checks():
 
 
 @add_test_properties(
-    partially_verifies=["tool_req__docs_metamodel"],
+    partially_verifies=["tool_req__docs_common_attr_description"],
     test_type="requirements-based",
     derivation_technique="requirements-analysis",
 )
@@ -53,7 +53,7 @@ def test_returns_empty_list_when_filter_is_empty():
 
 
 @add_test_properties(
-    partially_verifies=["tool_req__docs_metamodel"],
+    partially_verifies=["tool_req__docs_common_attr_description"],
     test_type="requirements-based",
     derivation_technique="requirements-analysis",
 )
@@ -64,7 +64,7 @@ def test_returns_valid_checks():
 
 
 @add_test_properties(
-    partially_verifies=["tool_req__docs_metamodel"],
+    partially_verifies=["tool_req__docs_common_attr_description"],
     test_type="requirements-based",
     derivation_technique="requirements-analysis",
 )
@@ -75,7 +75,7 @@ def test_strips_whitespace():
 
 
 @add_test_properties(
-    partially_verifies=["tool_req__docs_metamodel"],
+    partially_verifies=["tool_req__docs_common_attr_description"],
     test_type="requirements-based",
     derivation_technique="requirements-analysis",
 )

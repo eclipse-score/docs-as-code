@@ -21,6 +21,8 @@ Keep in mind that this is with the 'assertions' inside xml_parser disabled so fa
 Once we enable those we will need to change the tests
 """
 
+import json
+import os
 import xml.etree.ElementTree as ET
 from collections.abc import Callable
 from pathlib import Path
@@ -382,3 +384,85 @@ def test_clean_test_file_name_empty_path_raises_error():
         ValueError, match="Filepath does not have 'bazel-testlogs' nor 'tests-report'"
     ):
         xml_parser.clean_test_file_name(raw_path)
+
+
+#              ╭──────────────────────────────────────────────────────────╮
+#              │           Tests for get_metadata_from_test_path          │
+#              ╰──────────────────────────────────────────────────────────╯
+
+_KNOWN_GOOD_WITH_HASH = {
+    "modules": {
+        "tooling": {
+            "score_docs_as_code": {
+                "repo": "https://github.com/eclipse-score/docs-as-code.git",
+                "hash": "abc123hashvalue",
+            }
+        }
+    }
+}
+
+_KNOWN_GOOD_WITH_VERSION = {
+    "modules": {
+        "tooling": {
+            "score_docs_as_code": {
+                "repo": "https://github.com/eclipse-score/docs-as-code.git",
+                "version": "v2.1.0",
+            }
+        }
+    }
+}
+
+_COMBO_TEST_PATH = Path(
+    "/root/bazel-testlogs/external/score_docs_as_code+/src/ext/score_foo/test.xml"
+)
+
+
+def test_get_metadata_from_test_path_local():
+    """Local builds produce empty hash/url without reading known_good.json."""
+    local_path = Path(
+        "/home/root/docs-as-code/bazel-testlogs/src/extensions/foo/test.xml"
+    )
+    md = xml_parser.get_metadata_from_test_path(local_path)
+    assert md["repo_name"] == "local_repo"
+    assert md["hash"] == ""
+    assert md["url"] == ""
+
+
+def test_get_metadata_from_test_path_combo_with_hash(tmp_path: Path):
+    """Combo builds with 'hash' in known_good.json populate metadata correctly."""
+    json_file = tmp_path / "known_good.json"
+    json_file.write_text(json.dumps(_KNOWN_GOOD_WITH_HASH))
+
+    old = os.environ.get("KNOWN_GOOD_JSON")
+    try:
+        os.environ["KNOWN_GOOD_JSON"] = str(json_file)
+        md = xml_parser.get_metadata_from_test_path(_COMBO_TEST_PATH)
+    finally:
+        if old is None:
+            os.environ.pop("KNOWN_GOOD_JSON", None)
+        else:
+            os.environ["KNOWN_GOOD_JSON"] = old
+
+    assert md["repo_name"] == "score_docs_as_code"
+    assert md["hash"] == "abc123hashvalue"
+    assert md["url"] == "https://github.com/eclipse-score/docs-as-code"
+
+
+def test_get_metadata_from_test_path_combo_with_version(tmp_path: Path):
+    """Combo builds with 'version' in known_good.json populate metadata correctly."""
+    json_file = tmp_path / "known_good.json"
+    json_file.write_text(json.dumps(_KNOWN_GOOD_WITH_VERSION))
+
+    old = os.environ.get("KNOWN_GOOD_JSON")
+    try:
+        os.environ["KNOWN_GOOD_JSON"] = str(json_file)
+        md = xml_parser.get_metadata_from_test_path(_COMBO_TEST_PATH)
+    finally:
+        if old is None:
+            os.environ.pop("KNOWN_GOOD_JSON", None)
+        else:
+            os.environ["KNOWN_GOOD_JSON"] = old
+
+    assert md["repo_name"] == "score_docs_as_code"
+    assert md["hash"] == "v2.1.0"
+    assert md["url"] == "https://github.com/eclipse-score/docs-as-code"

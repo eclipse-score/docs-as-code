@@ -1,27 +1,76 @@
 # This file is at the root level, as it applies to all Python code,
 # not only to docs or to tools.
 [tool.pyright]
-extends = "bazel-bin/ide_support.runfiles/score_tooling+/python_basics/pyproject.toml"
+# Standard mode + some additional warnings as defined below
+typeCheckingMode = "standard"
+
+# Warn if function parameters lack type annotations
+reportMissingParameterType = "warning"
+
+# Warn if generic types (e.g. List) are missing type args
+reportMissingTypeArgument = "warning"
+
+# Warn when using members marked as private (e.g. _log)
+reportPrivateUsage = "warning"
+
+# Warn when variable type can't be inferred or is 'Any'
+reportUnknownVariableType = "warning"
+
+# Warn about declared but unused variables
+reportUnusedVariable = "warning"
 
 exclude = [
-    "**/__pycache__",
-    "**/.*",
-    "**/bazel-*",
-    ".venv*/**",
+  "**/__pycache__",
+  "**/.*",
+  "**/bazel-*",
+  ".venv*/**",
 ]
 
 venvPath = "."
 venv = ".venv_docs"
 
 [tool.ruff]
-extend = "bazel-bin/ide_support.runfiles/score_tooling+/python_basics/pyproject.toml"
+target-version = "py312"
 
-extend-exclude = [
-    "**/__pycache__",
-    "/.*",
-    "bazel-*",
-    ".venv*/**",
+[tool.ruff.lint]
+select = [
+  "E",    # pycodestyle (PEP8)
+  "F",    # pyflakes (undefined vars, unused imports)
+  "I",    # isort (import sorting)
+  "B",    # flake8-bugbear (likely bugs)
+  "C90",  # mccabe (complexity checks)
+  "UP",   # pyupgrade (modern Python 3.12+ features)
+  "SIM",  # flake8-simplify (simplifies code patterns)
+  "RET"   # flake8-return (consistent return statements)
+
+  # FIXME:
+  # "W",    # pycodestyle warnings
+  # "N",    # pep8-naming
+  # "C4",   # flake8-comprehensions
+  # "TCH",  # flake8-type-checking
+  # "TID",  # flake8-tidy-imports
+  # "RUF",  # ruff-specific rules
+  # "PT",   # flake8-pytest-style
+  # "PIE",  # flake8-pie
+  # "T20",  # flake8-print
+  # "RSE",  # flake8-raise
 ]
+ignore = [
+  "E501",   # line too long (handled by formatter)
+  "T201",   # allow print() globally for CLI friendliness
+  "RET505", # opinionated decision: allow else after if-return for readability
+]
+
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = [
+  "S101",  # assert used
+]
+
+
 [tool.pytest.ini_options]
 log_cli = true
 log_cli_level = "Debug"

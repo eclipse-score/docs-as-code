@@ -1,3 +1,16 @@
+..
+   # *******************************************************************************
+   # Copyright (c) 2026 Contributors to the Eclipse Foundation
+   #
+   # See the NOTICE file(s) distributed with this work for additional
+   # information regarding copyright ownership.
+   #
+   # This program and the accompanying materials are made available under the
+   # terms of the Apache License Version 2.0 which is available at
+   # https://www.apache.org/licenses/LICENSE-2.0
+   #
+   # SPDX-License-Identifier: Apache-2.0
+   # *******************************************************************************
 .. _docs_tool_requirements:
 
 =================================
@@ -55,6 +68,7 @@ This section provides an overview of current process requirements and their clar
   :id: tool_req__docs_common_attr_id
   :implemented: YES
   :tags: Common Attributes
+  :version: 1
   :satisfies:
      gd_req__req_attr_uid,
      gd_req__tool_attr_uid,
@@ -73,6 +87,7 @@ This section provides an overview of current process requirements and their clar
   :id: tool_req__docs_common_attr_id_scheme
   :implemented: YES
   :tags: Common Attributes
+  :version: 1
   :satisfies:
     gd_req__req_attr_uid,
     gd_req__arch_attribute_uid,
@@ -98,6 +113,7 @@ This section provides an overview of current process requirements and their clar
   :id: tool_req__docs_common_attr_title
   :implemented: YES
   :tags: Common Attributes
+  :version: 1
   :satisfies:
     gd_req__req_attr_title,
     gd_req__saf_attr_title,
@@ -118,6 +134,7 @@ This section provides an overview of current process requirements and their clar
   :id: tool_req__docs_common_attr_description
   :tags: Common Attributes
   :parent_covered: NO: Can not cover 'ISO/IEC/IEEE/29148'
+  :version: 1
   :implemented: YES
   :satisfies: gd_req__req_attr_description, gd_req__req_check_mandatory,
 
@@ -128,6 +145,7 @@ This section provides an overview of current process requirements and their clar
   :id: tool_req__docs_common_attr_desc_wording
   :tags: Common Attributes
   :implemented: YES
+  :version: 1
   :satisfies:
     gd_req__req_desc_weak,
   :parent_covered: YES
@@ -150,6 +168,7 @@ This section provides an overview of current process requirements and their clar
   :id: tool_req__docs_common_attr_security
   :implemented: YES
   :tags: Common Attributes
+  :version: 1
   :satisfies:
      gd_req__req_attr_security,
      gd_req__arch_attr_security,
@@ -177,6 +196,7 @@ This section provides an overview of current process requirements and their clar
   :tags: Common Attributes
   :implemented: YES
   :parent_covered: YES
+  :version: 1
   :satisfies:
      gd_req__req_check_mandatory,
      gd_req__req_attr_safety,
@@ -204,6 +224,7 @@ This section provides an overview of current process requirements and their clar
   :tags: Common Attributes
   :implemented: YES
   :parent_covered: NO: gd_req__saf_attr_status has additional constraints
+  :version: 1
   :satisfies:
     gd_req__req_attr_status,
     gd_req__arch_attr_status,
@@ -231,6 +252,7 @@ Versioning
    :id: tool_req__docs_common_attr_version
    :tags: Common Attributes
    :implemented: PARTIAL
+   :version: 1
    :parent_covered: NO: to be checked after demo
    :satisfies: gd_req__req_attr_version
 
@@ -246,6 +268,7 @@ Versioning
    :id: tool_req__docs_common_attr_suspicious
    :tags: Common Attributes
    :implemented: NO
+   :version: 1
    :parent_covered: NO: parent talks about setting covered to false, but we want to issue a build error.
    :satisfies: gd_req__req_suspicious
    :status: invalid
@@ -263,6 +286,7 @@ Versioning
   :id: tool_req__docs_doc_types
   :tags: Documents
   :implemented: YES
+  :version: 1
   :parent_covered: YES
   :satisfies: gd_req__doc_types
 
@@ -276,6 +300,7 @@ Versioning
   :id: tool_req__docs_doc_generic_mandatory
   :tags: Documents
   :implemented: PARTIAL
+  :version: 1
   :satisfies:
    gd_req__doc_attributes_manual,
    gd_req__change_attr_impact_safety
@@ -292,6 +317,7 @@ Versioning
   :id: tool_req__docs_doc_attr
   :tags: Documents
   :implemented: NO
+  :version: 1
   :satisfies:
    gd_req__doc_author,
    gd_req__doc_approver,
@@ -313,6 +339,7 @@ Versioning
   :id: tool_req__docs_doc_attr_author_autofill
   :tags: Documents
   :implemented: NO
+  :version: 1
   :satisfies: gd_req__doc_author
   :parent_covered: NO, process requirement has changed and we do not understand the new wording.
   :status: invalid
@@ -331,6 +358,7 @@ Versioning
   :id: tool_req__docs_doc_attr_approver_autofill
   :tags: Documents
   :implemented: NO
+  :version: 1
   :satisfies: gd_req__doc_approver
   :parent_covered: NO, process requirement has changed and we do not understand the new wording.
   :status: invalid
@@ -345,6 +373,7 @@ Versioning
   :id: tool_req__docs_doc_attr_reviewer_autofill
   :tags: Documents
   :implemented: NO
+  :version: 1
   :satisfies: gd_req__doc_reviewer
   :parent_covered: NO, process requirement has changed and we do not understand the new wording.
   :status: invalid
@@ -377,6 +406,7 @@ Versioning
   :id: tool_req__docs_req_types
   :tags: Requirements
   :implemented: YES
+  :version: 1
   :satisfies: gd_req__req_structure
   :parent_covered: YES: Together with tool_req__docs_linkage
 
@@ -396,6 +426,7 @@ Versioning
 .. tool_req:: Enforces rationale attribute
   :id: tool_req__docs_req_attr_rationale
   :tags: Requirements
+  :version: 1
   :implemented: YES
   :parent_covered: NO: Can not ensure correct reasoning
   :satisfies: gd_req__req_attr_rationale, gd_req__req_check_mandatory
@@ -406,6 +437,7 @@ Versioning
   :id: tool_req__docs_req_attr_reqtype
   :tags: Requirements
   :implemented: YES
+  :version: 1
   :satisfies: gd_req__req_attr_type
 
   Docs-as-Code shall enforce that each need of type :need:`tool_req__docs_req_types`
@@ -421,6 +453,7 @@ Versioning
   :id: tool_req__docs_req_attr_reqcov
   :tags: Requirements
   :implemented: PARTIAL
+  :version: 1
   :satisfies: gd_req__req_attr_req_cov
 
   Docs as code shall shall enable marking requirements as covered by their linked children.
@@ -436,6 +469,7 @@ Versioning
   :id: tool_req__docs_req_attr_testcov
   :tags: Requirements
   :implemented: PARTIAL
+  :version: 1
   :parent_covered: YES
   :satisfies: gd_req__req_attr_test_covered
   :status: invalid
@@ -454,6 +488,7 @@ Versioning
   :id: tool_req__docs_req_attr_validity_correctness
   :tags: Requirements
   :implemented: PARTIAL
+  :version: 1
   :parent_covered: YES
   :satisfies: gd_req__req_validity
   :status: valid
@@ -467,6 +502,7 @@ Versioning
   :id: tool_req__docs_req_attr_validity_consistency
   :tags: Requirements
   :implemented: PARTIAL
+  :version: 1
   :parent_covered: YES
   :satisfies: gd_req__req_validity
   :status: valid
@@ -484,6 +520,7 @@ Versioning
   :id: tool_req__docs_req_link_satisfies_allowed
   :tags: Requirements
   :implemented: PARTIAL
+  :version: 1
   :satisfies: gd_req__req_linkage, gd_req__req_traceability
   :parent_covered: YES
   :status: invalid
@@ -511,6 +548,7 @@ Versioning
 .. tool_req:: Safety: enforce safe linking
    :id: tool_req__docs_common_attr_safety_link_check
    :tags: Common Attributes
+   :version: 1
    :implemented: YES
    :parent_covered: YES
    :satisfies: gd_req__req_linkage_safety
@@ -527,6 +565,7 @@ Versioning
 .. tool_req:: Architecture Types
   :id: tool_req__docs_arch_types
   :tags: Architecture
+  :version: 1
   :satisfies:
      gd_req__arch_hierarchical_structure,
      gd_req__arch_build_blocks,
@@ -552,6 +591,7 @@ Architecture Attributes
 .. tool_req:: Architecture Mandatory Attributes
    :id: tool_req__docs_arch_attr_mandatory
    :tags: Architecture
+   :version: 1
    :satisfies:
       gd_req__arch_attr_mandatory,
       gd_req__arch_attr_fulfils,
@@ -579,6 +619,7 @@ Architecture Attributes
   :id: tool_req__docs_arch_link_fulfils
   :tags: Architecture
   :implemented: YES
+  :version: 1
   :satisfies:
    gd_req__arch_linkage_requirement_type,
    gd_req__arch_attr_fulfils,
@@ -609,6 +650,7 @@ Architecture Attributes
   :id: tool_req__docs_arch_link_safety_to_req
   :tags: Architecture
   :implemented: YES
+  :version: 1
   :satisfies: gd_req__arch_linkage_requirement
   :parent_covered: YES
 
@@ -621,6 +663,7 @@ Architecture Attributes
   :id: tool_req__docs_arch_link_qm_to_safety_req
   :tags: Architecture
   :implemented: YES
+  :version: 1
   :satisfies: gd_req__arch_linkage_requirement
   :parent_covered: YES
 
@@ -633,6 +676,7 @@ Architecture Attributes
   :id: tool_req__docs_req_arch_link_safety_to_arch
   :tags: Architecture
   :implemented: PARTIAL
+  :version: 1
   :satisfies:
     gd_req__arch_linkage_safety_trace,
     gd_req__req_linkage_safety,
@@ -645,6 +689,7 @@ Architecture Attributes
   :id: tool_req__docs_arch_link_security
   :tags: Architecture
   :implemented: YES
+  :version: 1
   :parent_covered: YES
   :satisfies: gd_req__arch_linkage_security_trace
 
@@ -659,6 +704,7 @@ Architecture Attributes
   :id: tool_req__docs_arch_views
   :tags: Architecture
   :implemented: YES
+  :version: 1
   :satisfies:
     gd_req__arch_viewpoints,
   :parent_covered: YES
@@ -689,6 +735,7 @@ Architecture Attributes
   :tags: Detailed Design & Code
   :id: tool_req__docs_dd_link_source_code_link
   :implemented: YES
+  :version: 1
   :parent_covered: NO: we only enable linking, we do not link
   :satisfies:
     gd_req__req_attr_impl,
@@ -703,6 +750,7 @@ Architecture Attributes
 .. tool_req:: Feature Flags
    :id: tool_req__docs_dd_feature_flag
    :tags: Detailed Design & Code
+   :version: 1
    :implemented: NO
    :parent_covered: YES
    :satisfies: gd_req__req_linkage_architecture_switch
@@ -716,6 +764,7 @@ Architecture Attributes
 .. tool_req:: Static Diagram for Unit Interactions
    :id: tool_req__docs_dd_sta
    :tags: Detailed Design & Code
+   :version: 1
    :implemented: YES
    :parent_covered: YES
    :satisfies: gd_req__impl_static_diagram
@@ -739,6 +788,7 @@ Testing
 .. tool_req:: Supports linking to test cases
   :id: tool_req__docs_test_link_testcase
   :tags: Testing
+  :version: 1
   :implemented: YES
   :parent_covered: YES
   :satisfies: gd_req__req_attr_testlink
@@ -752,6 +802,7 @@ Testing
 .. tool_req:: Extract Metadata from Tests
    :id: tool_req__docs_test_metadata_mandatory_1
    :tags: Testing
+   :version: 1
    :implemented: NO
    :parent_covered: NO
    :satisfies: gd_req__verification_checks
@@ -761,6 +812,7 @@ Testing
 .. tool_req:: Extract Metadata from Tests
    :id: tool_req__docs_test_metadata_mandatory_2
    :tags: Testing
+   :version: 1
    :implemented: NO
    :parent_covered: NO
    :satisfies: gd_req__verification_checks
@@ -773,6 +825,7 @@ Testing
 .. tool_req:: Extract Metadata from Tests
    :id: tool_req__docs_test_metadata_link_levels
    :tags: Testing
+   :version: 1
    :implemented: NO
    :parent_covered: NO
    :satisfies: gd_req__verification_checks
@@ -793,6 +846,7 @@ Testing
 .. tool_req:: Enforce safety classification
   :id: tool_req__docs_tvr_safety
   :tags: Tool Verification Reports
+  :version: 1
   :implemented: YES
   :parent_covered: YES
   :satisfies: gd_req__tool_attr_safety_affected, gd_req__tool_check_mandatory
@@ -807,6 +861,7 @@ Testing
   :id: tool_req__docs_tvr_security
   :tags: Tool Verification Reports
   :implemented: YES
+  :version: 1
   :parent_covered: YES
   :satisfies: gd_req__tool_attr_security_affected, gd_req__tool_check_mandatory
 
@@ -821,6 +876,7 @@ Testing
   :id: tool_req__docs_tvr_status
   :tags: Tool Verification Reports
   :implemented: YES
+  :version: 1
   :satisfies: gd_req__tool_attr_status, gd_req__tool_check_mandatory
   :parent_covered: YES
 
@@ -837,6 +893,7 @@ Testing
   :id: tool_req__docs_tvr_version
   :tags: Tool Verification Reports
   :implemented: YES
+  :version: 1
   :satisfies: gd_req__tool_attr_version
   :parent_covered: YES
 
@@ -847,6 +904,7 @@ Testing
   :id: tool_req__docs_tvr_confidence_level
   :tags: Tool Verification Reports
   :implemented: YES
+  :version: 1
   :satisfies: gd_req__tool_attr_tcl
   :parent_covered: YES
 
@@ -863,6 +921,7 @@ Testing
   :id: tool_req__docs_wf_types
   :tags: Process / Other
   :implemented: YES
+  :version: 1
   :satisfies: gd_req__process_management_build_blocks_attr, gd_req__process_management_build_blocks_link
 
   Docs-as-Code shall support the following workflow types:
@@ -872,6 +931,7 @@ Testing
 .. tool_req:: Standard Requirement Types
   :id: tool_req__docs_stdreq_types
   :tags: Process / Other
+  :version: 1
   :implemented: YES
 
   Docs-as-Code shall support the following requirement types:
@@ -887,6 +947,7 @@ Testing
   :id: tool_req__docs_saf_types
   :implemented: YES
   :tags: Safety Analysis
+  :version: 1
   :satisfies:
     gd_req__saf_structure,
     gd_req__saf_attr_uid,
@@ -903,6 +964,7 @@ Testing
   :id: tool_req__docs_saf_attrs_mandatory
   :implemented: YES
   :tags: Safety Analysis
+  :version: 1
   :satisfies:
     gd_req__saf_attr_mandatory,
     gd_req__sec_attr_mandatory,
@@ -924,6 +986,7 @@ Testing
   :id: tool_req__docs_saf_attrs_mitigated_by
   :implemented: NO
   :tags: Safety Analysis
+  :version: 1
   :satisfies:
     gd_req__saf_attr_mitigated_by,
     gd_req__saf_attr_requirements,
@@ -948,6 +1011,7 @@ Testing
   :id: tool_req__docs_saf_attrs_mitigation_issue
   :implemented: YES
   :tags: Safety Analysis
+  :version: 1
   :satisfies: gd_req__saf_attr_mitigation_issue
   :parent_covered: NO
 
@@ -959,6 +1023,7 @@ Testing
   :id: tool_req__docs_saf_attrs_sufficient
   :implemented: YES
   :tags: Safety Analysis
+  :version: 1
   :satisfies: gd_req__saf_attr_sufficient
   :parent_covered: YES
 
@@ -971,6 +1036,7 @@ Testing
 .. tool_req:: Safety Analysis Sufficient Check
   :id: tool_req__docs_saf_attrs_sufficient_check
   :implemented: NO
+  :version: 1
   :tags: Safety Analysis
   :satisfies: gd_req__saf_attr_sufficient
   :parent_covered: YES
@@ -983,6 +1049,7 @@ Testing
    :id: tool_req__docs_saf_attrs_content
    :implemented: NO
    :tags: Safety Analysis
+   :version: 1
    :satisfies: gd_req__saf_argument
    :parent_covered: NO
 
@@ -995,6 +1062,7 @@ Testing
   :id: tool_req__docs_saf_attrs_violates
   :implemented: NO
   :tags: Safety Analysis
+  :version: 1
   :satisfies:
     gd_req__saf_linkage_check,
     gd_req__saf_linkage,
@@ -1023,6 +1091,7 @@ Testing
    :id: tool_req__docs_saf_attr_fmea_fault_id
    :implemented: NO
    :tags: Safety Analysis
+   :version: 1
    :satisfies: gd_req__saf_attr_fault_id
    :parent_covered: NO
 
@@ -1036,6 +1105,7 @@ Testing
    :id: tool_req__docs_saf_attr_dfa_failure_id
    :implemented: NO
    :tags: Safety Analysis
+   :version: 1
    :satisfies: gd_req__saf_attr_failure_id
    :parent_covered: NO
 
@@ -1049,6 +1119,7 @@ Testing
    :id: tool_req__docs_saf_attr_fmea_failure_effect
    :implemented: NO
    :tags: Safety Analysis
+   :version: 1
    :satisfies: gd_req__saf_attr_feffect
    :parent_covered: NO
    :status: invalid
@@ -1090,17 +1161,6 @@ Overview of Tool to Process Requirements
 .. ------------------------------------------------------------------------
 ..
 
-Grouped Requirements
-####################
-
-.. tool_req:: Metamodel
-  :id: tool_req__docs_metamodel
-  :tags: metamodel
-  :implemented: YES
-
-  Docs-as-Code shall provide a metamodel for definining config in a  `metamodel.yaml` in the source code repository.
-
-  .. note:: "satisfied by" is something like "used by" or "required by".
 
 
 .. needextend:: c.this_doc() and type == 'tool_req'
@@ -1109,7 +1169,3 @@ Grouped Requirements
 
 .. needextend:: c.this_doc() and type == 'tool_req' and not status
   :status: valid
-
-.. needextend:: "metamodel.yaml" in source_code_link
-  :+satisfies: tool_req__docs_metamodel
-  :+tags: config

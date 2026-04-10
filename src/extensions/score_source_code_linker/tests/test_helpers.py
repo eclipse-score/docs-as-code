@@ -189,6 +189,76 @@ def test_parse_info_from_known_good_empty_repo_dict_in_json(tmp_path: Path):
         parse_info_from_known_good(json_file, "any_repo")
 
 
+VALID_KNOWN_GOOD_WITH_VERSION = {
+    "modules": {
+        "target_sw": {
+            "score_baselibs": {
+                "repo": "https://github.com/eclipse-score/baselibs.git",
+                "version": "v1.2.3",
+            },
+        },
+        "tooling": {
+            "score_docs_as_code": {
+                "repo": "https://github.com/eclipse-score/docs-as-code.git",
+                "version": "4.3-alpha",
+            }
+        },
+    }
+}
+
+
+@pytest.fixture
+def known_good_json_with_version(tmp_path: Path):
+    """Providing a known_good.json file that uses 'version' instead of 'hash'."""
+    json_file = tmp_path / "known_good_version.json"
+    _ = json_file.write_text(json.dumps(VALID_KNOWN_GOOD_WITH_VERSION))
+    return json_file
+
+
+def test_parse_info_from_known_good_with_version(known_good_json_with_version: Path):
+    """Test that 'version' is accepted as a fallback when 'hash' is absent."""
+    hash_result, repo_result = parse_info_from_known_good(
+        known_good_json_with_version, "score_baselibs"
+    )
+
+    assert hash_result == "v1.2.3"
+    assert repo_result == "https://github.com/eclipse-score/baselibs"
+
+
+def test_parse_info_from_known_good_with_version_different_category(
+    known_good_json_with_version: Path,
+):
+    """Test that 'version' works for a module in a different category."""
+    hash_result, repo_result = parse_info_from_known_good(
+        known_good_json_with_version, "score_docs_as_code"
+    )
+
+    assert hash_result == "4.3-alpha"
+    assert repo_result == "https://github.com/eclipse-score/docs-as-code"
+
+
+def test_parse_info_from_known_good_neither_hash_nor_version(tmp_path: Path):
+    """Test that KeyError is raised when neither 'hash' nor 'version' is present."""
+    json_file = tmp_path / "broken.json"
+    _ = json_file.write_text(
+        json.dumps(
+            {
+                "modules": {
+                    "target_sw": {
+                        "score_baselibs": {
+                            "repo": "https://github.com/eclipse-score/baselibs.git",
+                        }
+                    }
+                }
+            }
+        )
+    )
+
+    msg = "score_baselibs has neither 'hash' nor 'version'"
+    with pytest.raises(KeyError, match=msg):
+        parse_info_from_known_good(json_file, "score_baselibs")
+
+
 # Tests for get_github_link_from_json
 def test_get_github_link_from_json_happy_path():
     """
@@ -321,7 +391,6 @@ def test_get_github_link_with_real_repo(git_repo: Path) -> None:
     hash_from_link = result.split("/blob/")[1].split("/")[0]
     actual_hash = get_current_git_hash(git_repo)
     assert hash_from_link == actual_hash
-
 
 
 def test_complete_workflow(known_good_json: Path):

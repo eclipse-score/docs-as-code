@@ -199,46 +199,61 @@ def filter_repos(repo_filter: str | None) -> list[ConsumerRepo]:
 
 def comment_out_git_override(module_content: str) -> str:
     """
-    Comment out existing git_override blocks for score_docs_as_code if found
+    Comment out existing git_override blocks for score_docs_as_code only.
     """
+    lines = module_content.splitlines()
+    result = []
+    i = 0
 
-    pattern = (
-        r"^(git_override\s*\(\s*"
-        r"[^)]*?module_name\s*=\s*['\"]score_docs_as_code['\"]"
-        r"[^)]*\)\s*)"
-    )
+    while i < len(lines):
+        line = lines[i]
 
-    def comment_out_block(match: re.Match[str]) -> str:
-        # Comment out each line of the found block
-        return "\n".join("# " + line for line in match.group(0).splitlines())
+        # Check if this line starts a git_override block
+        if re.match(r"^\s*git_override\s*\(", line):
+            # Collect the entire block
+            block_start = i
+            depth = line.count("(") - line.count(")")
+            i += 1
 
-    # First, comment out old override(s)
-    out = re.sub(
-        pattern, comment_out_block, module_content, flags=re.MULTILINE | re.DOTALL
-    )
-    return out.strip()
+            while i < len(lines) and depth > 0:
+                depth += lines[i].count("(") - lines[i].count(")")
+                i += 1
+
+            # Extract the block
+            block = lines[block_start:i]
+            block_text = "\n".join(block)
+
+            # Comment out if it's for score_docs_as_code
+            if (
+                'module_name = "score_docs_as_code"' in block_text
+                or "module_name = 'score_docs_as_code'" in block_text
+            ):
+                result.extend("# " + line if line.strip() else "#" for line in block)
+            else:
+                result.extend(block)
+        else:
+            result.append(line)
+            i += 1
+
+    return "\n".join(result) + ("\n" if module_content.endswith("\n") else "")
 
 
 def replace_bazel_dep_with_local_override(module_content: str) -> str:
-    """ """
+    # Match bazel_dep with required name and optional version
+    pattern = r'bazel_dep\(name = "score_docs_as_code"(?:, version = "[^"]+")?\)'
 
-    # Pattern to match the bazel_dep line
-    pattern = r'bazel_dep\(name = "score_docs_as_code", version = "[^"]+"\)'
-
-    # Replacement with local_path_override
     replacement = """bazel_dep(name = "score_docs_as_code", version = "0.0.0")
 local_path_override(
     module_name = "score_docs_as_code",
     path = "../docs_as_code"
 )"""
-
     return re.sub(pattern, replacement, module_content)
 
 
 def replace_bazel_dep_with_git_override(
     module_content: str, git_hash: str, gh_url: str
 ) -> str:
-    pattern = r'bazel_dep\(name = "score_docs_as_code", version = "[^"]+"\)'
+    pattern = r'bazel_dep\(name = "score_docs_as_code"(?:, version = "[^"]+")?\)'
 
     replacement = f'''bazel_dep(name = "score_docs_as_code", version = "0.0.0")
 git_override(

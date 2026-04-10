@@ -107,5 +107,10 @@ def parse_info_from_known_good(
     for category in kg_json["modules"].values():
         if repo_name in category:
             m = category[repo_name]
-            return (m["hash"], m["repo"].removesuffix(".git"))
+            hash_or_version = m.get("hash") or m.get("version")
+            if hash_or_version is None:
+                raise KeyError(
+                    f"Module {repo_name} has neither 'hash' nor 'version' key."
+                )
+            return (hash_or_version, m["repo"].removesuffix(".git"))
     raise KeyError(f"Module {repo_name} not found in known_good_json.")

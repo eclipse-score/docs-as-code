@@ -20,22 +20,19 @@ jobs:
   code:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout repository (Handle all events)
         uses: actions/checkout@v4.2.2
-      - name: Cache Bazel and pip
-        uses: actions/cache@v4
         with:
-          path: |
-            ~/.cache/bazel
-            ~/.cache/pip
-          key: ${{ runner.os }}-test-${{ hashFiles('**/*.bazel', '**/BUILD', '**/*.bzl', 'src/requirements.txt', 'src/**/*.py') }}
+          ref: ${{ github.head_ref || github.event.pull_request.head.ref || github.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
 
-      - name: Setup Bazel with cache
-        uses: bazel-contrib/setup-bazel@0.15.0
+      - name: Setup Bazel with shared caching
+        uses: bazel-contrib/setup-bazel@0.18.0
         with:
           disk-cache: true
           repository-cache: true
           bazelisk-cache: true
+          cache-save: ${{ github.event_name == 'push' }}
       - name: Run test targets
         run: |
           bazel run --lockfile_mode=error //:ide_support

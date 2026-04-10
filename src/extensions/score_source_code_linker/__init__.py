@@ -253,9 +253,7 @@ def build_and_save_repo_scl_file(outdir: Path):
 
 
 def setup_repo_linker(app: Sphinx, _: BuildEnvironment):
-    grouped_cache = get_cache_filename(
-        app.outdir, "score_repo_grouped_scl_cache.json"
-    )
+    grouped_cache = get_cache_filename(app.outdir, "score_repo_grouped_scl_cache.json")
     grouped_cache_exists = grouped_cache.exists()
     # TODO this cache should be done via Bazel
     if (
@@ -301,7 +299,7 @@ def setup_once(app: Sphinx):
 def setup(app: Sphinx) -> dict[str, str | bool]:
     # Esbonio will execute setup() on every iteration.
     # setup_once will only be called once.
-    app.add_config_value("KNOWN_GOOD_JSON", default="",rebuild="env",types=str)
+    app.add_config_value("KNOWN_GOOD_JSON", default="", rebuild="env", types=str)
     setup_once(app)
 
     return {
