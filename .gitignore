@@ -23,3 +23,6 @@ styles/
 .venv*
 __pycache__/
 /.coverage
+
+# bug: This file is created in repo root on test discovery.
+/consumer_test.log

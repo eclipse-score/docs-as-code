@@ -12,29 +12,21 @@
 # *******************************************************************************
 
 load("@aspect_rules_py//py:defs.bzl", "py_library")
-load("@docs_as_code_hub_env//:requirements.bzl", "all_requirements")
 load("//:score_pytest.bzl", "score_pytest")
 
-filegroup(
-    name = "all_sources",
-    srcs = glob(["*.py"]),
-    visibility = ["//visibility:public"],
+exports_files([
+    "pytest.ini",
+    "main.py",
+])
+
+score_pytest(
+    name = "test_rules_are_working_correctly",
+    srcs = glob(["tests/*.py"]),
 )
 
 py_library(
-    name = "score_header_service",
-    srcs = [":all_sources"],
+    name = "attribute_plugin",
+    srcs = ["attribute_plugin.py"],
     imports = ["."],
     visibility = ["//visibility:public"],
-    # TODO: Figure out if all requirements are needed or if we can break it down a bit
-    deps = all_requirements,
-)
-
-score_pytest(
-    name = "score_header_service_test",
-    size = "small",
-    srcs = glob(["test/**/*.py"]),
-    # All requirements already in the library so no need to have it double
-    deps = [":score_header_service"],
-    pytest_config = "//:pyproject.toml",
 )

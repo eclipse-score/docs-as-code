@@ -1,5 +1,5 @@
 # *******************************************************************************
-# Copyright (c) 2025 Contributors to the Eclipse Foundation
+# Copyright (c) 2026 Contributors to the Eclipse Foundation
 #
 # See the NOTICE file(s) distributed with this work for additional
 # information regarding copyright ownership.
@@ -11,19 +11,30 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-name: Documentation Cleanup
+name: Daily Maintenance
 
 permissions:
   contents: write
+  issues: write
+  pull-requests: write
   pages: write
   id-token: write
 
 on:
+  # Runs every day at midnight UTC
   schedule:
-    - cron: '0 0 * * *' # Runs every day at midnight UTC
+    - cron: '0 0 * * *'
+
+  # On changes to this workflow file
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/daily.yml'
+
+  # Manually trigger the workflow from the GitHub UI
+  workflow_dispatch: {}
 
 jobs:
-  docs-cleanup:
-    uses: eclipse-score/cicd-workflows/.github/workflows/docs-cleanup.yml@c1c90b1a82a1fab0fc202979dde6686b2162d5a8 # v0.0.0
-    secrets:
-      token: ${{ secrets.GITHUB_TOKEN }}
+  maintenance:
+    uses: eclipse-score/cicd-workflows/.github/workflows/daily.yml@829b3e11ccbf924a5782f7bfed647cb1619fdf78 # v0.0.1
