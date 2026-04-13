@@ -39,6 +39,18 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     app.config.needscfg_warn_on_diff = False
     """Running Sphinx with -W will fail the CI for uncommitted TOML changes."""
 
+    app.config.needscfg_exclude_vars = [
+        # Default exclusions from needs-config-writer
+        "needs_from_toml",
+        "needs_from_toml_table",
+        "needs_schema_definitions_from_json",
+        # Exclude the expanded schema definitions generated from metamodel.yaml.
+        # These are managed via schemas.json / score_metamodel and must not be
+        # duplicated in ubproject.toml (ubCode only needs schema_definitions_from_json).
+        "needs_schema_definitions",
+    ]
+    """Exclude resolved/generated config values that don't belong in ubproject.toml."""
+
     app.config.needscfg_merge_toml_files = [
         str(Path(__file__).parent / "shared.toml"),
     ]
