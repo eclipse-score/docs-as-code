@@ -731,6 +731,22 @@ Architecture Attributes
 🔗 Code Linkage
 ----------------
 
+**Codelink Coverage Status**
+
+.. needpie:: Tool Requirements with Source Code Links
+  :labels: with codelink, without codelink
+  :colors: green, red
+
+  type == 'tool_req' and source_code_link != ''
+  type == 'tool_req' and source_code_link == ''
+
+.. note::
+  This dashboard is complemented by an automated CI check using 
+  ``traceability_coverage``.
+  The checker enforces minimum coverage thresholds. See 
+  :doc:`/how-to/test_to_doc_links` for detailed information on combining
+  visual dashboards with CI/CD gates.
+
 .. tool_req:: Supports linking to source code
   :tags: Detailed Design & Code
   :id: tool_req__docs_dd_link_source_code_link

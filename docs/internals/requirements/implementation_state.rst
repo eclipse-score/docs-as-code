@@ -19,13 +19,23 @@ Implementation State Statistics
 Overview
 --------
 
+.. note::
+   **Implementation vs. Traceability:** A requirement can be "implemented" in code
+   without having documentation links. This dashboard shows implementation status.
+   
+   - **Not implemented**: ``implemented == 'NO'`` (actual TODO)
+   - **Implemented but incomplete docs**: ``implemented == 'YES|PARTIAL'`` and missing source_code_link OR missing testlink
+   - **Fully documented**: Both ``source_code_link`` and ``testlink`` present
+   
+   The CI/CD gate check enforces minimum coverage thresholds for source_code_link and testlink.
+
 .. needpie:: Requirements Status
-   :labels: not implemented, implemented but not tested, implemented and tested
+   :labels: not implemented, implemented (at least partial), fully documented
    :colors: red,yellow, green
 
    type == 'tool_req' and implemented == 'NO'
-   type == 'tool_req' and testlink == '' and (implemented == 'YES' or implemented == 'PARTIAL')
-   type == 'tool_req' and testlink != '' and (implemented == 'YES' or implemented == 'PARTIAL')
+   type == 'tool_req' and (implemented == 'YES' or implemented == 'PARTIAL') and (source_code_link == '' or testlink == '')
+   type == 'tool_req' and (implemented == 'YES' or implemented == 'PARTIAL') and source_code_link != '' and testlink != ''
 
 In Detail
 ---------
@@ -45,12 +55,32 @@ In Detail
 
    .. grid-item-card::
 
-      .. needpie:: Requirements with Codelinks
+      .. needpie:: Requirements with Source Code Links
          :labels: no codelink, with codelink
          :colors: red, green
 
          type == 'tool_req' and source_code_link == ''
          type == 'tool_req' and source_code_link != ''
+
+   .. grid-item-card::
+
+      .. needpie:: Requirements with Test Links
+         :labels: no testlink, with testlink
+         :colors: red, green
+
+         type == 'tool_req' and testlink == ''
+         type == 'tool_req' and testlink != ''
+
+   .. grid-item-card::
+
+      .. needpie:: Full Traceability (Code + Test Links)
+         :labels: fully linked, code only, test only, unlinked
+         :colors: green, orange, yellow, red
+
+         type == 'tool_req' and source_code_link != '' and testlink != ''
+         type == 'tool_req' and source_code_link != '' and testlink == ''
+         type == 'tool_req' and source_code_link == '' and testlink != ''
+         type == 'tool_req' and source_code_link == '' and testlink == ''
 
    .. grid-item-card::
 
