@@ -316,38 +316,6 @@ def find_need(all_needs: NeedsMutable, id: str) -> NeedItem | None:
     return all_needs.get(id)
 
 
-def _log_needs_with_existing_links(needs: NeedsMutable) -> None:
-    """Log needs that already have source_code_link or testlink set."""
-    if LOGGER.getEffectiveLevel() >= 10:
-        for id, need in needs.items():
-            if need.get("source_code_link"):
-                LOGGER.debug(
-                    f"?? Need {id} already has source_code_link: "
-                    f"{need.get('source_code_link')}"
-                )
-            if need.get("testlink"):
-                LOGGER.debug(
-                    f"?? Need {id} already has testlink: {need.get('testlink')}"
-                )
-
-
-def _warn_missing_need(source_code_links: SourceCodeLinks) -> None:
-    """Log warnings when a need referenced by source/test links is not found."""
-    # TODO: print github annotations as in https://github.com/eclipse-score/bazel_registry/blob/7423b9996a45dd0a9ec868e06a970330ee71cf4f/tools/verify_semver_compatibility_level.py#L126-L129
-    for n in source_code_links.links.CodeLinks:
-        LOGGER.warning(
-            f"{n.file}:{n.line}: Could not find {source_code_links.need} "
-            "in documentation [CODE LINK]",
-            type="score_source_code_linker",
-        )
-    for n in source_code_links.links.TestLinks:
-        LOGGER.warning(
-            f"{n.file}:{n.line}: Could not find {source_code_links.need} "
-            "in documentation [TEST LINK]",
-            type="score_source_code_linker",
-        )
-
-
 # re-qid: gd_req__req__attr_impl
 def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
     """
@@ -369,7 +337,17 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
     )  # TODO: why do we create a copy? Can we also needs_copy = needs[:]? copy(needs)?
 
     # Enabled automatically for DEBUGGING
-    _log_needs_with_existing_links(needs)
+    if LOGGER.getEffectiveLevel() >= 10:
+        for id, need in needs.items():
+            if need.get("source_code_link"):
+                LOGGER.debug(
+                    f"?? Need {id} already has source_code_link: "
+                    f"{need.get('source_code_link')}"
+                )
+            if need.get("testlink"):
+                LOGGER.debug(
+                    f"?? Need {id} already has testlink: {need.get('testlink')}"
+                )
 
     scl_by_module = load_repo_source_links_json(
         get_cache_filename(app.outdir, "score_repo_grouped_scl_cache.json")
