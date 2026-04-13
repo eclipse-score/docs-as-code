@@ -80,6 +80,3 @@ git_override(
     commit = "4c3a16f03c2834b25a10f39542cbe81a8dec4e8a",
     remote = "https://github.com/eclipse-score/process_description.git",
 )
-
-# Add Linter
-bazel_dep(name = "score_tooling", version = "1.2.0")

@@ -14,7 +14,6 @@
 load("@aspect_rules_py//py:defs.bzl", "py_library")
 load("@rules_java//java:java_binary.bzl", "java_binary")
 load("@rules_python//python:pip.bzl", "compile_pip_requirements")
-load("@score_tooling//:defs.bzl", "dash_license_checker")
 
 # These are only exported because they're passed as files to the //docs.bzl
 # macros, and thus must be visible to other packages. They should only be
@@ -93,11 +92,5 @@ filegroup(
     srcs = [
         "requirements.txt",
     ],
-    visibility = ["//visibility:public"],
-)
-
-dash_license_checker(
-    src = ":requirements_lock",
-    file_type = "requirements",
     visibility = ["//visibility:public"],
 )

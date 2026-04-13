@@ -11,7 +11,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-load("@score_tooling//:defs.bzl", "cli_helper")
 load("//:docs.bzl", "docs")
 
 package(default_visibility = ["//visibility:public"])
@@ -26,9 +25,4 @@ docs(
         "//src:all_sources",
     ],
     source_dir = "docs",
-)
-
-cli_helper(
-    name = "cli-help",
-    visibility = ["//visibility:public"],
 )

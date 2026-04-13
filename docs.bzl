@@ -44,7 +44,6 @@ Easy streamlined way for S-CORE docs-as-code.
 load("@aspect_rules_py//py:defs.bzl", "py_binary", "py_venv")
 load("@docs_as_code_hub_env//:requirements.bzl", "all_requirements")
 load("@rules_python//sphinxdocs:sphinx.bzl", "sphinx_build_binary", "sphinx_docs")
-load("@score_tooling//bazel/rules/rules_score:rules_score.bzl", "sphinx_module")
 
 def _rewrite_needs_json_to_docs_sources(labels):
     """Replace '@repo//:needs_json' -> '@repo//:docs_sources' for every item."""
@@ -303,7 +302,6 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
         # changes, corrupting the Bazel cache.
         allow_persistent_workers = False,
     )
-
 
 def _sourcelinks_json(name, srcs):
     """
