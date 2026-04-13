@@ -545,6 +545,39 @@ Versioning
   .. note::
       Certain tool requirements do not have a matching process requirement.
 
+.. tool_req:: Enables needs linking via covers attribute (Requirements to AoU)
+  :id: tool_req__docs_req_link_covers_aou
+  :tags: Requirements
+  :implemented: YES
+  :version: 1
+  :satisfies: gd_req__req_linkage_aou
+  :parent_covered: YES
+  :status: valid
+
+  Docs-as-Code shall support the ``covers`` link type to establish traceability between
+  requirements and their Assumptions of Use (AoU), per SCORE process specification.
+
+  **Purpose**: In SEooC (Safety Element Out of Context) development, AoU capture the
+  operational context and constraints that validate safety cases. Requirements "cover"
+  (are bound to) specific assumptions about their usage environment.
+
+  **Allowed connections**:
+
+  .. table::
+     :widths: auto
+
+     ================================ ========================================================
+     Source Type                      Link Type  Target Type
+     ================================ ========================================================
+     Feature Requirements             covers     Assumptions of Use (AoU)
+     Component Requirements           covers     Assumptions of Use (AoU)
+     ================================ ========================================================
+
+  **Traceability chain**: Stakeholder Req → Feature Req → (covers) → AoU → Component Req
+
+  **Process reference**: :need:`gd_req__req_linkage_aou` — Requirements SHALL be linked to AoU
+  via covers if they already cover these.
+
 .. tool_req:: Safety: enforce safe linking
    :id: tool_req__docs_common_attr_safety_link_check
    :tags: Common Attributes
