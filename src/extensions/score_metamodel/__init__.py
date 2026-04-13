@@ -15,6 +15,7 @@ import os
 import pkgutil
 from collections.abc import Callable
 from pathlib import Path
+
 from sphinx.application import Sphinx
 from sphinx_needs import logging
 from sphinx_needs.data import NeedsView, SphinxNeedsData
