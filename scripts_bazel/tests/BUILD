@@ -32,3 +32,12 @@ score_pytest(
     ] + all_requirements,
     pytest_config = "//:pyproject.toml",
 )
+
+score_pytest(
+    name = "traceability_coverage_test",
+    srcs = ["traceability_coverage_test.py"],
+    deps = [
+        "//scripts_bazel:traceability_coverage",
+    ] + all_requirements,
+    pytest_config = "//:pyproject.toml",
+)

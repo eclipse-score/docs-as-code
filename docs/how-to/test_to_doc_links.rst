@@ -53,3 +53,43 @@ Limitations
 - Partial properties will lead to no Testlink creation.
   If you want a test to be linked, please ensure all requirement properties are provided.
 - Tests must be executed by Bazel first so `test.xml` files exist.
+
+
+CI/CD Gate for Linkage Percentage
+---------------------------------
+
+To enforce traceability in CI:
+
+1. Run tests.
+2. Generate ``needs.json``.
+3. Execute the traceability checker.
+
+.. code-block:: bash
+
+    bazel test //...
+    bazel build //:needs_json
+    bazel run //scripts_bazel:traceability_coverage -- \
+       --needs-json bazel-bin/needs_json/_build/needs/needs.json \
+       --min-req-code 100 \
+       --min-req-test 100 \
+       --min-req-fully-linked 100 \
+       --min-tests-linked 100 \
+       --fail-on-broken-test-refs
+
+The checker reports:
+
+- Percentage of implemented requirements with ``source_code_link``
+- Percentage of implemented requirements with ``testlink``
+- Percentage of implemented requirements with both links (fully linked)
+- Percentage of test cases linked to at least one requirement
+- Broken testcase references to unknown requirement IDs
+
+To check only unit tests, filter testcase types:
+
+.. code-block:: bash
+
+    bazel run //scripts_bazel:traceability_coverage -- \
+  --needs-json bazel-bin/needs_json/_build/needs/needs.json \
+       --test-types unit-test
+
+Use lower thresholds during rollout and tighten towards 100% over time.

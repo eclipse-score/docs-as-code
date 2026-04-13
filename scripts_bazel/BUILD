@@ -37,3 +37,10 @@ py_binary(
     main = "merge_sourcelinks.py",
     visibility = ["//visibility:public"],
 )
+
+py_binary(
+    name = "traceability_coverage",
+    srcs = ["traceability_coverage.py"],
+    main = "traceability_coverage.py",
+    visibility = ["//visibility:public"],
+)
