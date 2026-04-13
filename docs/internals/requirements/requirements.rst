@@ -741,9 +741,9 @@ Architecture Attributes
   type == 'tool_req' and source_code_link == ''
 
 .. note::
-  This dashboard is complemented by an automated CI check using 
+  This dashboard is complemented by an automated CI check using
   ``traceability_coverage``.
-  The checker enforces minimum coverage thresholds. See 
+  The checker enforces minimum coverage thresholds. See
   :doc:`/how-to/test_to_doc_links` for detailed information on combining
   visual dashboards with CI/CD gates.
 

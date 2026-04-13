@@ -22,11 +22,11 @@ Overview
 .. note::
    **Implementation vs. Traceability:** A requirement can be "implemented" in code
    without having documentation links. This dashboard shows implementation status.
-   
+
    - **Not implemented**: ``implemented == 'NO'`` (actual TODO)
    - **Implemented but incomplete docs**: ``implemented == 'YES|PARTIAL'`` and missing source_code_link OR missing testlink
    - **Fully documented**: Both ``source_code_link`` and ``testlink`` present
-   
+
    The CI/CD gate check enforces minimum coverage thresholds for source_code_link and testlink.
 
 .. needpie:: Requirements Status
