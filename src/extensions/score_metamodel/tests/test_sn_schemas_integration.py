@@ -375,6 +375,8 @@ class TestCompSchema:
             "security": "YES",
             "safety": "QM",
             "status": "valid",
+            # belongs_to is a mandatory link for comp
+            "belongs_to": ["feat__some_feature"],
         }
 
     def test_valid_need_passes(
@@ -403,7 +405,13 @@ class TestCompSchema:
 
 
 class TestFeatSchema:
-    """Integration tests for feat — has a mandatory link with regex pattern."""
+    """Integration tests for feat — mandatory options, optional links only.
+
+    Note: ``feat.includes`` is an *optional* link (regex pattern), so
+    missing or empty ``includes`` does NOT fail local validation.  The
+    mandatory constraints for ``feat`` are the option fields
+    ``security``, ``safety``, and ``status``.
+    """
 
     @staticmethod
     def _make_valid() -> dict[str, Any]:
@@ -422,18 +430,20 @@ class TestFeatSchema:
     ) -> None:
         assert_schema_valid(self._make_valid(), schemas_by_type["feat"])
 
-    def test_missing_mandatory_link_fails(
+    def test_missing_mandatory_option_fails(
         self, schemas_by_type: dict[str, dict[str, Any]]
     ) -> None:
+        """Removing a mandatory option (security) must fail validation."""
         need = self._make_valid()
-        del need["includes"]
+        del need["security"]
         assert_schema_invalid(need, schemas_by_type["feat"])
 
-    def test_empty_mandatory_link_fails(
+    def test_invalid_mandatory_option_fails(
         self, schemas_by_type: dict[str, dict[str, Any]]
     ) -> None:
+        """An invalid value for a mandatory option must fail validation."""
         need = self._make_valid()
-        need["includes"] = []  # minItems: 1 violated
+        need["safety"] = "ASIL_D"  # not in ^(QM|ASIL_B)$
         assert_schema_invalid(need, schemas_by_type["feat"])
 
 
