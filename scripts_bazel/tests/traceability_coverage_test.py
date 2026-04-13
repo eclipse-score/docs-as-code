@@ -198,7 +198,9 @@ def test_traceability_coverage_prints_unlinked_requirements(tmp_path: Path) -> N
     assert "Not fully linked:         REQ_1, REQ_2" in result.stdout
 
 
-def test_traceability_coverage_accepts_workspace_relative_needs_json(tmp_path: Path) -> None:
+def test_traceability_coverage_accepts_workspace_relative_needs_json(
+    tmp_path: Path,
+) -> None:
     workspace = tmp_path / "workspace"
     workspace.mkdir()
     needs_json = _write_needs_json(workspace)
