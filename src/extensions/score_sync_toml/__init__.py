@@ -50,6 +50,44 @@ def _write_needs_fields_toml(app: Sphinx) -> Path:
     return output_path
 
 
+def _write_needs_links_toml(app: Sphinx) -> Path:
+    """Serialize ``app.config.needs_links`` as ``[needs.links.*]`` TOML entries.
+
+    ``needs_config_writer`` cannot serialize the ``needs_links`` dict of dicts
+    (containing ``incoming`` / ``outgoing`` labels), so custom link types like
+    ``satisfies``, ``fulfils``, ``belongs_to`` etc. are absent from
+    ``ubproject.toml``.  Without them, ubCode does not recognise those link
+    fields and may flag them as unknown.
+
+    Must be called *after* ``score_metamodel.setup()`` has run (i.e. after
+    ``app.config.needs_links`` has been updated with the metamodel links).
+    """
+    lines: list[str] = [
+        "# Auto-generated – do not edit manually.\n",
+        "# Contains [needs.links.*] entries derived from metamodel.yaml.\n",
+        "# Required for the ubCode language server to recognise custom link types.\n\n",
+    ]
+    for link_name, link_config in sorted(app.config.needs_links.items()):
+        incoming = (
+            str(link_config.get("incoming", ""))
+            .replace("\\", "\\\\")
+            .replace('"', '\\"')
+        )
+        outgoing = (
+            str(link_config.get("outgoing", ""))
+            .replace("\\", "\\\\")
+            .replace('"', '\\"')
+        )
+        lines.append(f"[needs.links.{link_name}]\n")
+        lines.append(f'incoming = "{incoming}"\n')
+        lines.append(f'outgoing = "{outgoing}"\n')
+        lines.append("\n")
+
+    output_path = Path(app.confdir) / "needs_links_generated.toml"
+    output_path.write_text("".join(lines), encoding="utf-8")
+    return output_path
+
+
 def _write_needs_types_toml(app: Sphinx) -> Path:
     """Serialize ``app.config.needs_types`` as ``[[needs.types]]`` TOML entries.
 
@@ -148,6 +186,14 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     needs_fields_toml = _write_needs_fields_toml(app)
     app.config.needscfg_merge_toml_files.append(str(needs_fields_toml))
     """Merge the generated [needs.fields.*] TOML into the final ubproject.toml."""
+
+    # Write [needs.links.*] from the metamodel into a separate TOML fragment and
+    # merge it.  needs_config_writer cannot serialise the nested link dicts, so
+    # custom link types like 'satisfies', 'fulfils', 'belongs_to' etc. would be
+    # absent from ubproject.toml and ubCode would not recognise them.
+    needs_links_toml = _write_needs_links_toml(app)
+    app.config.needscfg_merge_toml_files.append(str(needs_links_toml))
+    """Merge the generated [needs.links.*] TOML into the final ubproject.toml."""
 
     app.config.needscfg_relative_path_fields.extend(
         [
