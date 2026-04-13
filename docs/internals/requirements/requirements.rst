@@ -1171,5 +1171,4 @@ Overview of Tool to Process Requirements
   :status: valid
 
 .. needextend:: source_code_link is not None and "metamodel.yaml" in source_code_link
-  :+satisfies: tool_req__docs_metamodel
   :+tags: config
