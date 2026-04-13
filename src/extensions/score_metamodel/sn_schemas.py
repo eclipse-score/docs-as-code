@@ -140,8 +140,13 @@ def _build_local_validator(
 
     # Optional fields: if present, must match the regex pattern
     # Allow empty strings to align with Python checker behavior
+    # Skip fields already handled as mandatory to avoid pattern/required conflicts
+    # when a field appears in both mandatory_options and optional_options
+    # (e.g. global base options merged into every type's optional_options).
     for field, pattern in optional_fields.items():
         if field in IGNORE_FIELDS:
+            continue
+        if field in mandatory_fields:
             continue
         properties[field] = get_field_pattern_schema(field, pattern, is_optional=True)
 
