@@ -306,6 +306,8 @@ needs_types:
       valid_until: ^v(0|[1-9]\d*)\.(0|[1-9]\d*)(\.(0|[1-9]\d*))?$
     optional_links:
       belongs_to: feat # for evaluation
+      # req-Id: tool_req__docs_req_link_covers_aou
+      covers: aou_req
     tags:
       - requirement
       - requirement_excl_process
@@ -336,6 +338,9 @@ needs_types:
       # req-Id: tool_req__docs_req_attr_testcov
       testcovered: ^(YES|NO)$
       hash: ^.*$
+    optional_links:
+      # req-Id: tool_req__docs_req_link_covers_aou
+      covers: aou_req
     tags:
       - requirement
       - requirement_excl_process
