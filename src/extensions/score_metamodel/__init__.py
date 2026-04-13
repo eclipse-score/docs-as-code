@@ -15,8 +15,6 @@ import os
 import pkgutil
 from collections.abc import Callable
 from pathlib import Path
-from typing import Any
-
 from sphinx.application import Sphinx
 from sphinx_needs import logging
 from sphinx_needs.data import NeedsView, SphinxNeedsData
@@ -28,17 +26,14 @@ from src.extensions.score_metamodel.log import CheckLogger
 # Import and re-export some types and functions for easier access
 from src.extensions.score_metamodel.metamodel_types import (
     ProhibitedWordCheck as ProhibitedWordCheck,
-)
-from src.extensions.score_metamodel.metamodel_types import (
     ScoreNeedType as ScoreNeedType,
 )
 from src.extensions.score_metamodel.sn_schemas import write_sn_schemas
 from src.extensions.score_metamodel.yaml_parser import (
     default_options as default_options,
-)
-from src.extensions.score_metamodel.yaml_parser import (
     load_metamodel_data as load_metamodel_data,
 )
+from src.helper_lib import config_setdefault
 
 logger = logging.get_logger(__name__)
 
@@ -233,43 +228,25 @@ def postprocess_need_links(needs_types_list: list[ScoreNeedType]):
 
 def setup(app: Sphinx) -> dict[str, str | bool]:
     app.add_config_value("external_needs_source", "", rebuild="env")
-    app.config.needs_id_required = True
-    app.config.needs_id_regex = "^[A-Za-z0-9_-]{6,}"
+    config_setdefault(app.config, "needs_id_required", True)
+    config_setdefault(app.config, "needs_id_regex", "^[A-Za-z0-9_-]{6,}")
 
     # load metamodel.yaml via ruamel.yaml
     metamodel = load_metamodel_data()
 
-    # Sphinx-Needs 6 requires extra options as dicts: {"name": ..., "schema": ...}
-    # Options WITH a schema get JSON schema validation (value must be a string).
-    # Options WITHOUT a schema are registered but not validated.
-    # non_schema_options = {"source_code_link", "testlink", "codelink"}
-    non_schema_options = {}  # currently empty → all options get schema validation
-    extra_options_schema: list[dict[str, Any]] = [
-        {"name": opt, "schema": {"type": "string"}}
-        for opt in metamodel.needs_extra_options
-        if opt not in non_schema_options
-    ]
-    extra_options_wo_schema: list[dict[str, Any]] = [
-        {"name": opt}
-        for opt in metamodel.needs_extra_options
-        if opt in non_schema_options
-    ]
-    # extra_options = [{"name": opt} for opt in metamodel.needs_extra_options]
-    extra_options = extra_options_schema + extra_options_wo_schema
-
-    # Assign everything to Sphinx config
-    app.config.needs_types = metamodel.needs_types
-    app.config.needs_extra_links = metamodel.needs_extra_links
-    app.config.needs_extra_options = extra_options
+    # Extend sphinx-needs config rather than overwriting
+    app.config.needs_types += metamodel.needs_types
+    app.config.needs_links.update(metamodel.needs_links)
+    app.config.needs_fields.update(metamodel.needs_fields)
     app.config.graph_checks = metamodel.needs_graph_check
     app.config.prohibited_words_checks = metamodel.prohibited_words_checks
 
     # app.config.stop_words = metamodel["stop_words"]
     # app.config.weak_words = metamodel["weak_words"]
     # Ensure that 'needs.json' is always build.
-    app.config.needs_build_json = True
-    app.config.needs_reproducible_json = True
-    app.config.needs_json_remove_defaults = True
+    config_setdefault(app.config, "needs_build_json", True)
+    config_setdefault(app.config, "needs_reproducible_json", True)
+    config_setdefault(app.config, "needs_json_remove_defaults", True)
 
     # Generate schemas.json from the metamodel and register it with sphinx-needs.
     # This enables sphinx-needs 6 schema validation: required fields, regex

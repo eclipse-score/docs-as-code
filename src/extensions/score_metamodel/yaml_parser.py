@@ -30,8 +30,8 @@ logger = logging.get_logger(__name__)
 @dataclass
 class MetaModelData:
     needs_types: list[ScoreNeedType]
-    needs_extra_links: list[dict[str, str]]
-    needs_extra_options: list[str]
+    needs_links: dict[str, dict[str, str]]
+    needs_fields: dict[str, dict[str, Any]]
     prohibited_words_checks: list[ProhibitedWordCheck]
     needs_graph_check: dict[str, object]
 
@@ -147,20 +147,17 @@ def _parse_needs_types(
     return needs_types
 
 
-def _parse_links(links_dict: dict[str, dict[str, str]]) -> list[dict[str, str]]:
+def _parse_links(links_dict: dict[str, dict[str, str]]) -> dict[str, dict[str, str]]:
     """
-    Generate 'needs_extra_links' for sphinx-needs.
-
-    It has a slightly different structure than in our metamodel.yaml.
+    Generate 'needs_links' for sphinx-needs.
     """
-    return [
-        {
-            "option": k,
+    return {
+        k: {
             "incoming": v["incoming"],
             "outgoing": v["outgoing"],
         }
         for k, v in links_dict.items()
-    ]
+    }
 
 
 def _collect_all_options(needs_types: dict[str, ScoreNeedType]) -> set[str]:
@@ -173,13 +170,16 @@ def _collect_all_options(needs_types: dict[str, ScoreNeedType]) -> set[str]:
 
 def _collect_all_custom_options(
     needs_types: dict[str, ScoreNeedType],
-):
-    """Generate 'needs_extra_options' for sphinx-needs."""
+) -> dict[str, dict[str, Any]]:
+    """Generate 'needs_fields' entries for sphinx-needs."""
 
     defaults = default_options()
     all_options = _collect_all_options(needs_types)
 
-    return sorted(all_options - defaults)
+    return {
+        name: {"schema": {"type": "string"}, "default": ""}
+        for name in sorted(all_options - defaults)
+    }
 
 
 def load_metamodel_data() -> MetaModelData:
@@ -209,8 +209,8 @@ def load_metamodel_data() -> MetaModelData:
 
     return MetaModelData(
         needs_types=list(needs_types.values()),
-        needs_extra_links=_parse_links(data.get("needs_extra_links", {})),
-        needs_extra_options=_collect_all_custom_options(needs_types),
+        needs_links=_parse_links(data.get("needs_extra_links", {})),
+        needs_fields=_collect_all_custom_options(needs_types),
         prohibited_words_checks=prohibited_words_checks,
         needs_graph_check=data.get("graph_checks", {}),
     )

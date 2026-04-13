@@ -12,6 +12,8 @@
 # *******************************************************************************
 from sphinx.application import Sphinx
 
+from src.helper_lib import config_setdefault
+
 # Note: order matters!
 # Extensions are loaded in this order.
 # e.g. plantuml MUST be loaded before sphinx-needs
@@ -33,42 +35,45 @@ score_extensions = [
 
 
 def setup(app: Sphinx) -> dict[str, object]:
-    app.config.html_copy_source = False
-    app.config.html_show_sourcelink = False
+    config_setdefault(app.config, "html_copy_source", False)
+    config_setdefault(app.config, "html_show_sourcelink", False)
 
     # Global settings
     # Note: the "sub-extensions" also set their own config values
 
     # Same as current VS Code extension
-    app.config.mermaid_version = "11.6.0"
+    config_setdefault(app.config, "mermaid_version", "11.6.0")
 
-    # enable "..."-syntax in markdown
-    app.config.myst_enable_extensions = ["colon_fence"]
-
-    app.config.exclude_patterns = [
-        # The following entries are not required when building the documentation via
-        # 'bazel build //:docs', as that command runs in a sandboxed environment.
-        # However, when building the documentation via 'bazel run //:docs' or esbonio,
-        # these entries are required to prevent the build from failing.
-        "bazel-*",
-        ".venv*",
-    ]
+    # The following entries are not required when building the documentation via
+    # 'bazel build //:docs', as that command runs in a sandboxed environment.
+    # However, when building the documentation via 'bazel run //:docs' or esbonio,
+    # these entries are required to prevent the build from failing.
+    app.config.exclude_patterns += ["bazel-*", ".venv*"]
 
     # Enable markdown rendering
-    app.config.source_suffix = {
-        ".rst": "restructuredtext",
-        ".md": "markdown",
-    }
+    app.config.source_suffix.setdefault(".rst", "restructuredtext")
+    app.config.source_suffix.setdefault(".md", "markdown")
 
-    app.config.templates_path = ["templates"]
+    if "templates" not in app.config.templates_path:
+        app.config.templates_path += ["templates"]
 
-    app.config.numfig = True
-
-    app.config.author = "S-CORE"
+    config_setdefault(app.config, "numfig", True)
+    config_setdefault(app.config, "author", "S-CORE")
 
     # Load the actual extensions list
     for e in score_extensions:
         app.setup_extension(e)
+
+    # enable "..."-syntax in markdown — must come after myst_parser is loaded above
+    if isinstance(app.config.myst_enable_extensions, list):
+        app.config.myst_enable_extensions.append("colon_fence")
+    elif isinstance(app.config.myst_enable_extensions, set):
+        app.config.myst_enable_extensions.add("colon_fence")
+    else:
+        print(
+            "Unexpected type for myst_enable_extensions: %s",
+            type(app.config.myst_enable_extensions),
+        )
 
     return {
         "version": "3.0.0",

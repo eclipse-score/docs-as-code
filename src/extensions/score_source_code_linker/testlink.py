@@ -33,7 +33,7 @@ from sphinx_needs import logging
 LOGGER = logging.get_logger(__name__)
 
 
-@dataclass(frozen=True, order=True)
+@dataclass(order=True)
 class DataForTestLink:
     name: str
     file: Path
@@ -42,6 +42,56 @@ class DataForTestLink:
     verify_type: str
     result: str
     result_text: str = ""
+    repo_name: str = "local_repo"
+    hash: str = ""
+    url: str = ""
+
+    # Adding hashing & equality as this is needed to make comparisions.
+    # Since the Dataclass is not 'frozen = true' it isn't automatically hashable
+    def __hash__(self):
+        return hash(
+            (
+                self.name,
+                str(self.file),
+                self.line,
+                self.need,
+                self.verify_type,
+                self.result,
+                self.result_text,
+                self.repo_name,
+                self.hash,
+                self.url,
+            )
+        )
+
+    def __eq__(self, other: Any):
+        if not isinstance(other, DataForTestLink):
+            return NotImplemented
+        return (
+            self.name == other.name
+            and self.file == other.file
+            and self.line == other.line
+            and self.need == other.need
+            and self.verify_type == other.verify_type
+            and self.result == other.result
+            and self.result_text == other.result_text
+            and self.repo_name == other.repo_name
+            and self.hash == other.hash
+            and self.url == other.url
+        )
+
+    # Normal 'dictionary conversion'. Converts all fields
+    def to_dict_full(self) -> dict[str, str | Path | int]:
+        return asdict(self)
+
+    # Drops MetaData fields for saving the Dataclass (saving space in json)
+    # The information is in the 'Repo_Source_Link' in the end
+    def to_dict_without_metadata(self) -> dict[str, str | Path | int]:
+        d = asdict(self)
+        d.pop("repo_name", None)
+        d.pop("hash", None)
+        d.pop("url", None)
+        return d
 
 
 class DataForTestLink_JSON_Encoder(json.JSONEncoder):
@@ -60,6 +110,9 @@ def DataForTestLink_JSON_Decoder(d: dict[str, Any]) -> DataForTestLink | dict[st
         "line",
         "need",
         "verify_type",
+        "repo_name",
+        "hash",
+        "url",
         "result",
         "result_text",
     } <= d.keys():
@@ -68,6 +121,9 @@ def DataForTestLink_JSON_Decoder(d: dict[str, Any]) -> DataForTestLink | dict[st
             file=Path(d["file"]),
             line=d["line"],
             need=d["need"],
+            repo_name=d.get("repo_name", ""),
+            hash=d.get("hash", ""),
+            url=d.get("url", ""),
             verify_type=d["verify_type"],
             result=d["result"],
             result_text=d["result_text"],
@@ -79,14 +135,17 @@ def DataForTestLink_JSON_Decoder(d: dict[str, Any]) -> DataForTestLink | dict[st
 # We will have everything as string here as that mirrors the xml file
 @dataclass
 class DataOfTestCase:
-    name: str
-    file: str
-    line: str
-    result: str  # passed | falied | skipped | disabled
+    name: str | None = None
+    file: str | None = None
+    line: str | None = None
+    result: str | None = None  # passed | falied | skipped | disabled
+    repo_name: str | None = None
+    hash: str | None = None
+    url: str | None = None
     # Intentionally not snakecase to make dict parsing simple
-    TestType: str
-    DerivationTechnique: str
-    result_text: str = ""  # Can be None on anything but failed
+    TestType: str | None = None
+    DerivationTechnique: str | None = None
+    result_text: str | None = None  # Can be None on anything but failed
     # Either or HAVE to be filled.
     PartiallyVerifies: str | None = None
     FullyVerifies: str | None = None
@@ -94,13 +153,16 @@ class DataOfTestCase:
     @classmethod
     def from_dict(cls, data: dict[str, Any]):  # type-ignore
         return cls(
-            name=data["name"],
-            file=data["file"],
-            line=data["line"],
-            result=data["result"],
-            TestType=data["TestType"],
-            DerivationTechnique=data["DerivationTechnique"],
-            result_text=data["result_text"],
+            name=data.get("name"),
+            file=data.get("file"),
+            line=data.get("line"),
+            result=data.get("result"),
+            repo_name=data.get("repo_name"),
+            hash=data.get("hash"),
+            url=data.get("url"),
+            TestType=data.get("TestType"),
+            DerivationTechnique=data.get("DerivationTechnique"),
+            result_text=data.get("result_text"),
             PartiallyVerifies=data.get("PartiallyVerifies"),
             FullyVerifies=data.get("FullyVerifies"),
         )
@@ -122,15 +184,8 @@ class DataOfTestCase:
         # Cleaning text
         if self.result_text:
             self.result_text = self.clean_text(self.result_text)
-        # Self assertion to double check some mandatory options
         # For now this is disabled
 
-        # It's mandatory that the test either partially or fully verifies a requirement
-        # if self.PartiallyVerifies is None and self.FullyVerifies is None:
-        #     raise ValueError(
-        #         f"TestCase: {self.id} Error. Either 'PartiallyVerifies' or "
-        #         "'FullyVerifies' must be provided."
-        #     )
         # Skipped tests should always have a reason associated with them
         # if "skipped" in self.result.keys() and not list(self.result.values())[0]:
         #     raise ValueError(
@@ -138,8 +193,56 @@ class DataOfTestCase:
         #         "reason, reason is mandatory for skipped tests."
         #     )
 
+    # Self assertion to double check some mandatory options
+    def check_verifies_fields(self) -> bool:
+        if self.PartiallyVerifies is None and self.FullyVerifies is None:
+            # This might be a warning in the future, but for now we want be lenient.
+            LOGGER.info(
+                f"TestCase: {self.name} Error. Either 'PartiallyVerifies' or "
+                "'FullyVerifies' must be provided."
+                "This test case will be skipped and not linked.",
+                type="score_source_code_linker",
+            )
+            return False
+        # Either or is filled, this is fine
+        return True
+
+    def is_valid(self) -> bool:
+        if not self.check_verifies_fields():
+            return False
+
+        # if (
+        #     # Result Text can be None if result is not failed.
+        #         self.name is not None
+        #         and self.file is not None
+        #         and self.line is not None
+        #         and self.result is not None
+        #         and self.TestType is not None
+        #         and self.DerivationTechnique is not None
+        # ):
+        # Hash & URL are explictily allowed to be empty but not none.
+        # repo_name has to be always filled or something went wrong
+        fields = [
+            x
+            for x in self.__dataclass_fields__
+            if x not in ["PartiallyVerifies", "FullyVerifies"]
+        ]
+        for field in fields:
+            if getattr(self, field) is None:
+                # This might be a warning in the future, but for now we want be lenient.
+                LOGGER.info(
+                    f"TestCase: {self.name} has a None value for the field: "
+                    f"{field}. This test case will be skipped and not linked.",
+                    type="score_source_code_linker",
+                )
+                return False
+        # All properties are filled
+        return True
+
     def get_test_links(self) -> list[DataForTestLink]:
         """Convert TestCaseNeed to list of TestLink objects."""
+        if not self.is_valid():
+            return []
 
         def parse_attributes(verify_field: str | None, verify_type: str):
             """Process a verification field and yield TestLink objects."""
@@ -151,15 +254,34 @@ class DataOfTestCase:
                 type="score_source_code_linker",
             )
 
+            # LSP can not figure out that 'is_valid' up top
+            # already gurantees non-None values here
+            # So we assert our worldview here to ensure type safety.
+            # Any of these being none should NOT happen at this point
+
+            assert self.name is not None
+            assert self.file is not None
+            assert self.line is not None
+            assert self.result is not None
+            assert self.repo_name is not None
+            assert self.hash is not None
+            assert self.url is not None
+            assert self.result_text is not None
+            assert self.TestType is not None
+            assert self.DerivationTechnique is not None
+
             for need in verify_field.split(","):
                 yield DataForTestLink(
-                    name=self.name,
-                    file=Path(self.file),
-                    line=int(self.line),
+                    name=self.name,  # type-ignore
+                    file=Path(self.file),  # type-ignore
+                    line=int(self.line),  # type-ignore
                     need=need.strip(),
                     verify_type=verify_type,
                     result=self.result,
                     result_text=self.result_text,
+                    repo_name=self.repo_name,
+                    hash=self.hash,
+                    url=self.url,
                 )
 
         return list(

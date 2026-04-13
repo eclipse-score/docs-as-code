@@ -25,5 +25,3 @@
 
 .. std_wp:: This is a test
    :id: std_wp__test__abce
-
-

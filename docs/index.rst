@@ -1,15 +1,16 @@
-..  # *******************************************************************************
-    # Copyright (c) 2025 Contributors to the Eclipse Foundation
-    #
-    # See the NOTICE file(s) distributed with this work for additional
-    # information regarding copyright ownership.
-    #
-    # This program and the accompanying materials are made available under the
-    # terms of the Apache License Version 2.0 which is available at
-    # https://www.apache.org/licenses/LICENSE-2.0
-    #
-    # SPDX-License-Identifier: Apache-2.0
-    # *******************************************************************************
+..
+   # *******************************************************************************
+   # Copyright (c) 2025 Contributors to the Eclipse Foundation
+   #
+   # See the NOTICE file(s) distributed with this work for additional
+   # information regarding copyright ownership.
+   #
+   # This program and the accompanying materials are made available under the
+   # terms of the Apache License Version 2.0 which is available at
+   # https://www.apache.org/licenses/LICENSE-2.0
+   #
+   # SPDX-License-Identifier: Apache-2.0
+   # *******************************************************************************
 
 Docs-As-Code
 ============
@@ -22,21 +23,21 @@ It provides documentation, requirements, and traceability.
 
    .. grid-item-card::
 
-      :ref:`How to <how-to>`
+      :ref:`How to <docs_how-to>`
       ^^^
       Learn how to integrate and use docs-as-code.
 
 
    .. grid-item-card::
 
-      :ref:`Reference <reference>`
+      :ref:`Reference <docs_reference>`
       ^^^
       API and usage reference.
 
 
    .. grid-item-card::
 
-      :ref:`Concepts <concepts>`
+      :ref:`Concepts <docs_concepts>`
       ^^^
       Key concepts, models and explanatory material to understand the system.
 

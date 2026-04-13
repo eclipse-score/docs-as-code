@@ -14,6 +14,8 @@ from pathlib import Path
 
 from sphinx.application import Sphinx
 
+from src.helper_lib import config_setdefault
+
 
 def setup(app: Sphinx) -> dict[str, str | bool]:
     """
@@ -22,21 +24,21 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     See https://needs-config-writer.useblocks.com
     """
 
-    app.config.needscfg_outpath = "ubproject.toml"
+    config_setdefault(app.config, "needscfg_outpath", "ubproject.toml")
     """Write to the confdir directory."""
 
-    app.config.needscfg_overwrite = True
+    config_setdefault(app.config, "needscfg_overwrite", True)
     """Any changes to the shared/local configuration updates the generated config."""
 
-    app.config.needscfg_write_all = True
+    config_setdefault(app.config, "needscfg_write_all", True)
     """Write full config, so the final configuration is visible in one file."""
 
-    app.config.needscfg_exclude_defaults = True
+    config_setdefault(app.config, "needscfg_exclude_defaults", True)
     """Exclude default values from the generated configuration."""
 
     # This is disabled for right now as it causes a lot of issues
     # While we are not using the generated file anywhere
-    app.config.needscfg_warn_on_diff = False
+    config_setdefault(app.config, "needscfg_warn_on_diff", False)
     """Running Sphinx with -W will fail the CI for uncommitted TOML changes."""
 
     app.config.needscfg_exclude_vars = [
@@ -51,18 +53,20 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     ]
     """Exclude resolved/generated config values that don't belong in ubproject.toml."""
 
-    app.config.needscfg_merge_toml_files = [
-        str(Path(__file__).parent / "shared.toml"),
-    ]
+    app.config.needscfg_merge_toml_files.append(
+        str(Path(__file__).parent / "shared.toml")
+    )
     """Merge the static TOML file into the generated configuration."""
 
-    app.config.needscfg_relative_path_fields = [
-        "needs_external_needs[*].json_path",
-        {
-            "field": "needs_flow_configs.score_config",
-            "prefix": "!include ",
-        },
-    ]
+    app.config.needscfg_relative_path_fields.extend(
+        [
+            "needs_external_needs[*].json_path",
+            {
+                "field": "needs_flow_configs.score_config",
+                "prefix": "!include ",
+            },
+        ]
+    )
     """Relative paths to confdir for Bazel provided absolute paths."""
 
     app.config.suppress_warnings += [

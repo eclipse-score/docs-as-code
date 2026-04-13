@@ -34,5 +34,8 @@ jobs:
           repository-cache: true
           bazelisk-cache: true
 
-      - name: Run Linter Script
-        run: bash scripts/run-linters.sh
+      - name: Install pre-commit
+        run: pip install pre-commit
+
+      - name: Run pre-commit checks
+        run: pre-commit run -a

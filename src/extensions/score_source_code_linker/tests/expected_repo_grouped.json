@@ -1,0 +1,83 @@
+[
+  {
+    "repo": {
+      "name": "local_repo",
+      "hash": "",
+      "url": ""
+    },
+    "needs": [
+      {
+        "need": "MOD_REQ_1",
+        "links": {
+          "CodeLinks": [
+            {
+              "file": "src/repo_a_impl.py",
+              "line": 3,
+              "tag": "#-----req-Id:",
+              "need": "MOD_REQ_1",
+              "full_line": "#-----req-Id: MOD_REQ_1"
+            },
+            {
+              "file": "src/repo_b_impl.py",
+              "line": 3,
+              "tag": "#-----req-Id:",
+              "need": "MOD_REQ_1",
+              "full_line": "#-----req-Id: MOD_REQ_1"
+            }
+          ],
+          "TestLinks": [
+            {
+              "name": "test_repo_a",
+              "file": "src/test_repo_a.py",
+              "line": 10,
+              "need": "MOD_REQ_1",
+              "verify_type": "fully",
+              "result": "passed",
+              "result_text": ""
+            }
+          ]
+        }
+      },
+      {
+        "need": "MOD_REQ_2",
+        "links": {
+          "CodeLinks": [
+            {
+              "file": "src/repo_a_impl.py",
+              "line": 7,
+              "tag": "#-----req-Id:",
+              "need": "MOD_REQ_2",
+              "full_line": "#-----req-Id: MOD_REQ_2"
+            }
+          ],
+          "TestLinks": []
+        }
+      },
+      {
+        "need": "MOD_REQ_3",
+        "links": {
+          "CodeLinks": [
+            {
+              "file": "src/repo_b_impl.py",
+              "line": 7,
+              "tag": "#-----req-Id:",
+              "need": "MOD_REQ_3",
+              "full_line": "#-----req-Id: MOD_REQ_3"
+            }
+          ],
+          "TestLinks": [
+            {
+              "name": "test_repo_b",
+              "file": "src/test_repo_b.py",
+              "line": 20,
+              "need": "MOD_REQ_3",
+              "verify_type": "partially",
+              "result": "passed",
+              "result_text": ""
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

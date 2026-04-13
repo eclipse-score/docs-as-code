@@ -29,7 +29,7 @@ from pathlib import Path
 from sphinx.application import Sphinx
 from sphinx.util import logging
 
-from src.helper_lib import get_runfiles_dir
+from src.helper_lib import config_setdefault, get_runfiles_dir
 
 logger = logging.getLogger(__name__)
 
@@ -53,10 +53,11 @@ def find_correct_path(runfiles: Path) -> Path:
 
 
 def setup(app: Sphinx):
+    # we must overwrite the plantuml path due to Bazel
     app.config.plantuml = str(find_correct_path(get_runfiles_dir()))
-    app.config.plantuml_output_format = "svg_obj"
-    app.config.plantuml_syntax_error_image = True
-    app.config.needs_build_needumls = "_plantuml_sources"
+    config_setdefault(app.config, "plantuml_output_format", "svg_obj")
+    config_setdefault(app.config, "plantuml_syntax_error_image", True)
+    config_setdefault(app.config, "needs_build_needumls", "_plantuml_sources")
 
     logger.debug(f"PlantUML binary found at {app.config.plantuml}")
 

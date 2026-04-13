@@ -33,16 +33,92 @@ from sphinx.environment import BuildEnvironment
 from sphinx_needs import logging
 from sphinx_needs.api import add_external_need
 
+from src.extensions.score_source_code_linker.helpers import (
+    get_github_link,
+    parse_info_from_known_good,
+    parse_repo_name_from_path,
+)
+from src.extensions.score_source_code_linker.needlinks import (
+    DefaultMetaData,
+    MetaData,
+)
+from src.extensions.score_source_code_linker.repo_source_links import RepoInfo
 from src.extensions.score_source_code_linker.testlink import (
     DataOfTestCase,
     store_data_of_test_case_json,
     store_test_xml_parsed_json,
 )
 from src.helper_lib import find_ws_root
-from src.helper_lib.additional_functions import get_github_link
 
 logger = logging.get_logger(__name__)
 logger.setLevel("DEBUG")
+
+
+def clean_test_file_name(raw_filepath: Path) -> Path:
+    """
+    incoming path:
+    `local`
+        <root>/docs-as-code/bazel-testlogs/src/extensions/score_any_folder/score_any_folder_tests/test.xml
+    `combo`
+        <root>/bazel-testlogs/external/score_docs_as_code+/src/extensions/score_any_folder/score_any_folder_tests/test.xml
+
+    outgoing path:
+    `local`
+        src/extensions/score_any_folder/score_any_folder_tests/test.xml
+    `combo`
+        external/score_docs_as_code+/src/extensions/score_any_folder/score_any_folder_tests/test.xml
+    """
+    if "bazel-testlogs" in str(raw_filepath):
+        return Path(str(raw_filepath).split("bazel-testlogs/")[-1])
+    if "tests-report" in str(raw_filepath):
+        return Path(str(raw_filepath).split("tests-report/")[-1])
+    raise ValueError(
+        "Filepath does not have 'bazel-testlogs' nor "
+        + f"'tests-report'. Filepath: {raw_filepath}"
+    )
+
+
+def get_metadata_from_test_path(raw_filepath: Path) -> MetaData:
+    """
+    Will parse out the metadata from the testpath.
+    If test is local then the metadata will be:
+
+        "repo_name": "local_repo",
+        "hash": "",
+        "url": "",
+
+    Else it will parse the repo_name e.g. `score_docs_as_code`
+    match this in the known_good_json and grab the accompanying
+    hash, url as well and return metadata like so for example:
+
+          "repo_name": "score_docs_as_code",
+          "hash": "c1207676afe6cafd25c35d420e73279a799515d8",
+          "url": "https://github.com/eclipse-score/docs-as-code"
+
+    The file name passed into here is:
+
+    For combo builds: something like:
+    <root path>/bazel-testlogs/external/score_docs_as_code+/
+    src/extensions/score_any_folder/score_any_folder_tests/test.xml
+
+    For local builds:
+    <root path>/bazel-testlogs/src/ext/score_.../score_any_folder_tests/test.xml
+
+    Therefore will we 'clean' it before passing it to the parse_module func.
+    Removing everything up to and including 'bazel-testlogs' or 'tests-report'
+    """
+    # print("THIs IS FILEPATH IN GET MD FROm TestPATH: ", raw_filepath)
+    known_good_json = os.environ.get("KNOWN_GOOD_JSON")
+    clean_filepath = clean_test_file_name(raw_filepath)
+    # print(f"This is the cleaned filepath: {clean_filepath}")
+    repo_name = parse_repo_name_from_path(clean_filepath)
+    md = DefaultMetaData()
+    md["repo_name"] = repo_name
+    if repo_name != "local_repo" and known_good_json:
+        md["hash"], md["url"] = parse_info_from_known_good(
+            Path(known_good_json), repo_name
+        )
+    return md
 
 
 def parse_testcase_result(testcase: ET.Element) -> tuple[str, str]:
@@ -87,7 +163,7 @@ def parse_properties(case_properties: dict[str, Any], properties: Element):
     return case_properties
 
 
-def read_test_xml_file(file: Path) -> tuple[list[DataOfTestCase], list[str]]:
+def read_test_xml_file(file: Path) -> tuple[list[DataOfTestCase], list[str], list[str]]:
     """
     Reading & parsing the test.xml files into TestCaseNeeds
 
@@ -98,9 +174,10 @@ def read_test_xml_file(file: Path) -> tuple[list[DataOfTestCase], list[str]]:
     """
     test_case_needs: list[DataOfTestCase] = []
     non_prop_tests: list[str] = []
+    missing_prop_tests: list[str] = []
     tree = ET.parse(file)
     root = tree.getroot()
-
+    md = get_metadata_from_test_path(file)
     for testsuite in root.findall("testsuite"):
         for testcase in testsuite.findall("testcase"):
             case_properties = {}
@@ -155,26 +232,35 @@ def read_test_xml_file(file: Path) -> tuple[list[DataOfTestCase], list[str]]:
             #     "and either 'PartiallyVerifies' or 'FullyVerifies' are mandatory."
             # )
 
+            # TODO: There is a better way here to check this i think.
+            # I think it should be possible to save the 'from_dict' operation
+            # If the is_valid method would return 'False' anyway.
+            # I just can't think of it right now, leaving this for future me
             case_properties = parse_properties(case_properties, properties_element)
-            test_case_needs.append(DataOfTestCase.from_dict(case_properties))
-    return test_case_needs, non_prop_tests
+            case_properties.update(md)
+            test_case = DataOfTestCase.from_dict(case_properties)
+            if not test_case.is_valid():
+                missing_prop_tests.append(testname)
+                continue
+            test_case_needs.append(test_case)
+    return test_case_needs, non_prop_tests, missing_prop_tests
 
 
-def find_xml_files(dir: Path) -> list[Path]:
+def find_xml_files(search_path: Path) -> list[Path]:
     """
     Recursively search all test.xml files inside 'bazel-testlogs'
 
     Returns:
         - list[Path] => Paths to all found 'test.xml' files.
+
+    Example combo TestPath for future reference:
+
+    '<local path to folder>/reference_integration/bazel-testlogs
+    /feature_integration_tests/test_cases/fit/test.xml'
     """
 
     test_file_name = "test.xml"
-
-    xml_paths: list[Path] = []
-    for root, _, files in os.walk(dir):
-        if test_file_name in files:
-            xml_paths.append(Path(os.path.join(root, test_file_name)))
-    return xml_paths
+    return [x for x in search_path.rglob(test_file_name)]
 
 
 def find_test_folder(base_path: Path | None = None) -> Path | None:
@@ -195,7 +281,6 @@ def run_xml_parser(app: Sphinx, env: BuildEnvironment):
     It gets called from the source_code_linker __init__
     """
     testlogs_dir = find_test_folder()
-    # early return
     if testlogs_dir is None:
         return
     xml_file_paths = find_xml_files(testlogs_dir)
@@ -213,7 +298,7 @@ def run_xml_parser(app: Sphinx, env: BuildEnvironment):
 
 
 def build_test_needs_from_files(
-    app: Sphinx, env: BuildEnvironment, xml_paths: list[Path]
+    app: Sphinx, enw_: BuildEnvironment, xml_paths: list[Path]
 ) -> list[DataOfTestCase]:
     """
     Reading in all test.xml files, and building 'testcase' external need objects out of
@@ -223,14 +308,15 @@ def build_test_needs_from_files(
         - list[TestCaseNeed]
     """
     tcns: list[DataOfTestCase] = []
-    for f in xml_paths:
-        b, z = read_test_xml_file(f)
-        non_prop_tests = ", ".join(n for n in z)
+    for file in xml_paths:
+        # Last value can be ignored. The 'is_valid' function already prints infos
+        test_cases, tests_missing_all_props, _ = read_test_xml_file(file)
+        non_prop_tests = ", ".join(n for n in tests_missing_all_props)
         if non_prop_tests:
-            logger.info(f"Tests missing properties: {non_prop_tests}")
-        tcns.extend(b)
-        for c in b:
-            construct_and_add_need(app, c)
+            logger.info(f"Tests missing all properties: {non_prop_tests}")
+        tcns.extend(test_cases)
+        for tc in test_cases:
+            construct_and_add_need(app, tc)
     return tcns
 
 
@@ -246,6 +332,17 @@ def short_hash(input_str: str, length: int = 5) -> str:
 
 
 def construct_and_add_need(app: Sphinx, tn: DataOfTestCase):
+    # Asserting worldview to a peace Language Server
+    # And ensure non crashing due to non string concatenation
+    # Everything but 'result_text',
+    # and either 'Fully' or 'PartiallyVerifies' should not be None here
+    assert tn.file is not None
+    assert tn.name is not None
+    assert tn.repo_name is not None
+    assert tn.hash is not None
+    assert tn.url is not None
+    # Have to build metadata here for the gh link func
+    metadata = RepoInfo(name=tn.repo_name, hash=tn.hash, url=tn.url)
     # IDK if this is ideal or not
     with contextlib.suppress(BaseException):
         _ = add_external_need(
@@ -253,9 +350,9 @@ def construct_and_add_need(app: Sphinx, tn: DataOfTestCase):
             need_type="testcase",
             title=tn.name,
             tags="TEST",
-            id=f"testcase__{tn.name}_{short_hash(tn.file + tn.name).upper()}",
+            id=f"testcase__{tn.name}_{short_hash(tn.file + tn.name)}",
             name=tn.name,
-            external_url=get_github_link(tn),
+            external_url=get_github_link(metadata, tn),
             fully_verifies=tn.FullyVerifies if tn.FullyVerifies is not None else "",
             partially_verifies=tn.PartiallyVerifies
             if tn.PartiallyVerifies is not None

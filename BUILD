@@ -11,22 +11,10 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-load("@score_tooling//:defs.bzl", "cli_helper", "copyright_checker")
 load("//:docs.bzl", "docs")
 
 package(default_visibility = ["//visibility:public"])
-
-copyright_checker(
-    name = "copyright",
-    srcs = [
-        "src",
-        "//:BUILD",
-        "//:MODULE.bazel",
-    ],
-    config = "@score_tooling//cr_checker/resources:config",
-    template = "@score_tooling//cr_checker/resources:templates",
-    visibility = ["//visibility:public"],
-)
+exports_files(["pyproject.toml"])
 
 docs(
     data = [
@@ -37,9 +25,4 @@ docs(
         "//src:all_sources",
     ],
     source_dir = "docs",
-)
-
-cli_helper(
-    name = "cli-help",
-    visibility = ["//visibility:public"],
 )

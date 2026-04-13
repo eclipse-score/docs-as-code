@@ -1,4 +1,17 @@
-.. _process_overview:
+..
+   # *******************************************************************************
+   # Copyright (c) 2026 Contributors to the Eclipse Foundation
+   #
+   # See the NOTICE file(s) distributed with this work for additional
+   # information regarding copyright ownership.
+   #
+   # This program and the accompanying materials are made available under the
+   # terms of the Apache License Version 2.0 which is available at
+   # https://www.apache.org/licenses/LICENSE-2.0
+   #
+   # SPDX-License-Identifier: Apache-2.0
+   # *******************************************************************************
+.. _docs_process_overview:
 
 ===============================
 Process Requirements Overview
@@ -28,7 +41,7 @@ Unsatisfied – Priority 1
       # Impact Analysis is free form text, thus not in scope of docs-as-code
       "gd_req__change_attr_impact_description",
       # Problem Reports are Github issues not docs-as-code
-      "gd_req__problem_attr_anaylsis_results",
+      "gd_req__problem_attr_analysis_results",
       "gd_req__problem_attr_classification",
       "gd_req__problem_attr_impact_description",
       "gd_req__problem_attr_milestone",
@@ -38,6 +51,12 @@ Unsatisfied – Priority 1
       "gd_req__problem_attr_status",
       "gd_req__problem_attr_title",
       "gd_req__problem_check_closing",
+      "gd_req__problem_check_mandatory",
+      "gd_req__impl_dependency_analysis",
+      # Additional requirements that are Github issues not docs-as-code
+      "gd_req__doc_author",
+      "gd_req__doc_reviewer",
+      "gd_req__doc_approver",
       # Requirements for test frameworks are not in scope of docs-as-code
       "gd_req__verification_link_tests",
       "gd_req__verification_link_tests_cpp",

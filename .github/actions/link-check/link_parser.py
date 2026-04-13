@@ -1,3 +1,15 @@
+# *******************************************************************************
+# Copyright (c) 2026 Contributors to the Eclipse Foundation
+#
+# See the NOTICE file(s) distributed with this work for additional
+# information regarding copyright ownership.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Apache License Version 2.0 which is available at
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# SPDX-License-Identifier: Apache-2.0
+# *******************************************************************************
 import argparse
 import re
 import sys
@@ -51,9 +63,7 @@ def generate_markdown_table(broken_links: list[BrokenLink]) -> str:
     table += "|----------|-------------|-----------|\n"
 
     for link in broken_links:
-        table += (
-            f"| {link.location} | {link.line_nr} | {link.reasoning} |\n"
-        )
+        table += f"| {link.location} | {link.line_nr} | {link.reasoning} |\n"
 
     return table
 
@@ -61,8 +71,8 @@ def generate_markdown_table(broken_links: list[BrokenLink]) -> str:
 def generate_issue_body(broken_links: list[BrokenLink]) -> str:
     markdown_table = generate_markdown_table(broken_links)
     return f"""
-# Broken Links Report. 
-**Last updated: {datetime.now().strftime('%d-%m-%Y %H:%M')}**
+# Broken Links Report.
+**Last updated: {datetime.now().strftime("%d-%m-%Y %H:%M")}**
 
 The following broken links were detected in the documentation:
 {markdown_table}
@@ -71,9 +81,10 @@ Thank you!
 
 > To test locally if all link issues are resolved use `bazel run //:docs_link_check`
 
---- 
+---
 This issue will be auto updated regularly if link issues are found.
-You may close it if you wish, though a new one will be created if link issues are still present. 
+You may close it if you wish.
+Though a new one will be created if link issues are still present.
 
 """
 
@@ -85,11 +96,11 @@ def strip_ansi_codes(text: str) -> str:
 
 
 if __name__ == "__main__":
-    argparse = argparse.ArgumentParser(
+    arg = argparse.ArgumentParser(
         description="Parse broken links from Sphinx log and generate issue body."
     )
-    argparse.add_argument("logfile", type=str, help="Path to the Sphinx log file.")
-    args = argparse.parse_args()
+    arg.add_argument("logfile", type=str, help="Path to the Sphinx log file.")
+    args = arg.parse_args()
     with open(args.logfile) as f:
         log_content_raw = f.read()
     log_content = strip_ansi_codes(log_content_raw)

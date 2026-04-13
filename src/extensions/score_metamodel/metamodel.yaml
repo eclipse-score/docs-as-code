@@ -17,6 +17,11 @@ needs_types_base_options:
     # req-Id: tool_req__docs_dd_link_source_code_link
     source_code_link: ^https://github.com/.*
     testlink: ^https://github.com/.*
+    # Version will be mandatory global option in future releases
+    # For now giving grace periods to consumers
+    # req-Id: tool_req__docs_common_attr_version
+    version: ^.*$
+
     # Custom semantic validation rules
 
 # Prohibited Word Option Checks
@@ -122,8 +127,6 @@ needs_types:
   gd_req:
     title: Process Requirements
     mandatory_options:
-      # req-Id: tool_req__docs_common_attr_status
-      status: ^(valid|draft)$
       content: ^[\s\S]+$
     optional_links:
       # req-Id: tool_req__docs_req_link_satisfies_allowed
@@ -342,17 +345,11 @@ needs_types:
   tool_req:
     title: Tool Requirement
     mandatory_options:
-      # req-Id: tool_req__docs_common_attr_security
-      security: ^(YES|NO)$
-      # req-Id: tool_req__docs_common_attr_safety
-      safety: ^(QM|ASIL_B)$
-      # req-Id: tool_req__docs_common_attr_status
-      status: ^(valid|invalid)$
       content: ^[\s\S]+$
     optional_links:
       # req-Id: tool_req__docs_req_link_satisfies_allowed
       # TODO: make it mandatory
-      satisfies: gd_req, stkh_req
+      satisfies: gd_req, stkh_req, feat_req, comp_req
     optional_options:
       codelink: ^.*$
       tags: ^.*$
@@ -364,6 +361,8 @@ needs_types:
       implemented: ^(YES|PARTIAL|NO)$
       parent_covered: ^.*$
       parent_has_problem: ^.*$
+      security: ^(YES|NO)$
+      safety: ^(QM|ASIL_B)$
     tags:
       - requirement
       - requirement_excl_process
@@ -411,9 +410,10 @@ needs_types:
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
-    mandatory_links:
+    optional_links:
       includes: ^logic_arc_int(_op)*__.+$
-      consists_of: comp
+      uses: ^logic_arc_int(_op)*__.+$
+      provides: ^logic_arc_int(_op)*__.+$ # preparation for linking change according to DR-005
     tags:
       - architecture_element
     parts: 2
@@ -558,6 +558,9 @@ needs_types:
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
+
+    mandatory_links:
+      belongs_to: feat # preparation for linking change according to DR-005
     optional_links:
       implements: logic_arc_int, real_arc_int_op
       uses: logic_arc_int, real_arc_int_op
@@ -947,6 +950,10 @@ needs_extra_links:
   uses:
     incoming: used by
     outgoing: uses
+
+  provides:
+    incoming: provided by
+    outgoing: provides
 
   includes:
     incoming: included by

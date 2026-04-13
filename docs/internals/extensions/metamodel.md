@@ -91,7 +91,7 @@ needs_types:
 
 ### 2. Generic Graph Checks (Configuration-Based)
 Generic graph checks are defined in the metamodel.yaml under `graph_checks`.
-These checks all follow the same structure:
+These checks follow the same structure:
 
 ```yaml
 <name of the check>:
@@ -122,11 +122,11 @@ graph_checks:
         and:
           - safety != QM
           - status == valid
-    explanation: An safety architecture element can only link other safety architecture elements.
+    explanation: A safety architecture element can only link other safety architecture elements.
 ```
 
-What does this check do?
-This check will go through each of the needs mentioned in 'include' that match the condition, and then for every single one of them check the needs that are linked inside the 'implements' attribute. Go inside those needs and check if they also fulfill the condition described.
+Purpose of this check:
+This check will go through each of the needs mentioned in 'include' that match the condition, and then for every single one of them check the needs that are linked inside the 'implements' attribute. Check whether those needs also fulfill the condition.
 If one of them does not fulfill the condition the check fails and will let you know with a warning that it did so.
 
 ### 3. Prohibited Word Checks (Configuration-Based)
@@ -165,7 +165,7 @@ If you need something that the generic local or graph checks can not fulfill, th
 Ensure this check is inside a python file that is placed in the `check` folder in this extension.
 Do not forget to add the applicable decorator to the function.
 
-This means all validations can be done with only the information in this need itself, and you do not need access to any of the linked needs or other needs inside the documentation.
+This means all validations can be done using only the information within the need itself, and you do not need access to any of the linked needs or other needs inside the documentation.
 
 Your function will receive the Sphinx `app`, the current `need` to check and a `log` to log messages.
 
@@ -183,7 +183,7 @@ def my_local_check(app, need, log):
 
 ### 5. Custom Graph Checks (Python Code)
 These checks need to access linked needs in order to fully verify the specified behavior.
-The signature is similar to that of local_check, but instead of one need you will get `all_needs`.
+The signature is similar to that of local_check, but instead of one need, you will get `all_needs`.
 
 ```python
 from score_metamodel.checks import graph_check

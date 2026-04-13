@@ -25,7 +25,9 @@ from pytest import TempPathFactory
 from sphinx.testing.util import SphinxTestApp
 from sphinx_needs.data import SphinxNeedsData
 
+from src.extensions.score_source_code_linker.helpers import get_github_link
 from src.extensions.score_source_code_linker.needlinks import NeedLink
+from src.extensions.score_source_code_linker.repo_source_links import RepoInfo
 from src.extensions.score_source_code_linker.testlink import (
     DataForTestLink,
     DataForTestLink_JSON_Decoder,
@@ -37,15 +39,14 @@ from src.extensions.score_source_code_linker.tests.test_need_source_links import
     SourceCodeLinks_TEST_JSON_Decoder,
 )
 from src.helper_lib import find_ws_root, get_github_base_url
-from src.helper_lib.additional_functions import get_github_link
 
 
-@pytest.fixture()
+@pytest.fixture(scope="session")
 def sphinx_base_dir(tmp_path_factory: TempPathFactory) -> Path:
     return tmp_path_factory.mktemp("test_git_repo")
 
 
-@pytest.fixture()
+@pytest.fixture(scope="session")
 def git_repo_setup(sphinx_base_dir: Path) -> Path:
     """Creating git repo, to make testing possible"""
 
@@ -67,7 +68,7 @@ def git_repo_setup(sphinx_base_dir: Path) -> Path:
     return repo_path
 
 
-@pytest.fixture()
+@pytest.fixture(scope="session")
 def create_demo_files(sphinx_base_dir: Path, git_repo_setup: Path):
     repo_path = sphinx_base_dir
 
@@ -312,6 +313,9 @@ def example_source_link_text_all_ok(sphinx_base_dir: Path) -> dict[str, list[Nee
                 tag="#" + " req-Id:",
                 need="TREQ_ID_1",
                 full_line="#" + " req-Id: TREQ_ID_1",
+                repo_name="local_repo",
+                url="",
+                hash="",
             ),
             NeedLink(
                 file=Path("src/implementation1.py"),
@@ -319,6 +323,9 @@ def example_source_link_text_all_ok(sphinx_base_dir: Path) -> dict[str, list[Nee
                 tag="#" + " req-Id:",
                 need="TREQ_ID_1",
                 full_line="#" + " req-Id: TREQ_ID_1",
+                repo_name="local_repo",
+                url="",
+                hash="",
             ),
         ],
         "TREQ_ID_2": [
@@ -328,6 +335,9 @@ def example_source_link_text_all_ok(sphinx_base_dir: Path) -> dict[str, list[Nee
                 tag="#" + " req-Id:",
                 need="TREQ_ID_2",
                 full_line="#" + " req-Id: TREQ_ID_2",
+                repo_name="local_repo",
+                url="",
+                hash="",
             )
         ],
         "TREQ_ID_3": [],
@@ -346,6 +356,9 @@ def example_test_link_text_all_ok(sphinx_base_dir: Path):
                 verify_type="fully",
                 result="passed",
                 result_text="",
+                repo_name="local_repo",
+                url="",
+                hash="",
             ),
         ],
         "TREQ_ID_2": [
@@ -357,6 +370,9 @@ def example_test_link_text_all_ok(sphinx_base_dir: Path):
                 verify_type="partially",
                 result="passed",
                 result_text="",
+                repo_name="local_repo",
+                url="",
+                hash="",
             ),
             DataForTestLink(
                 name="test_error_handling",
@@ -366,6 +382,9 @@ def example_test_link_text_all_ok(sphinx_base_dir: Path):
                 verify_type="partially",
                 result="passed",
                 result_text="",
+                repo_name="local_repo",
+                url="",
+                hash="",
             ),
         ],
         "TREQ_ID_3": [
@@ -377,6 +396,9 @@ def example_test_link_text_all_ok(sphinx_base_dir: Path):
                 verify_type="partially",
                 result="passed",
                 result_text="",
+                repo_name="local_repo",
+                url="",
+                hash="",
             ),
             DataForTestLink(
                 name="test_error_handling",
@@ -386,6 +408,9 @@ def example_test_link_text_all_ok(sphinx_base_dir: Path):
                 verify_type="partially",
                 result="passed",
                 result_text="",
+                repo_name="local_repo",
+                url="",
+                hash="",
             ),
         ],
     }
@@ -409,11 +434,23 @@ def example_source_link_text_non_existent(sphinx_base_dir: Path):
 
 
 def make_source_link(needlinks: list[NeedLink]):
-    return ", ".join(f"{get_github_link(n)}<>{n.file}:{n.line}" for n in needlinks)
+    metadata = RepoInfo(
+        name="local_repo",
+        url="",
+        hash="",
+    )
+    return ", ".join(
+        f"{get_github_link(metadata, n)}<>{n.file}:{n.line}" for n in needlinks
+    )
 
 
 def make_test_link(testlinks: list[DataForTestLink]):
-    return ", ".join(f"{get_github_link(n)}<>{n.name}" for n in testlinks)
+    metadata = RepoInfo(
+        name="local_repo",
+        url="",
+        hash="",
+    )
+    return ", ".join(f"{get_github_link(metadata, n)}<>{n.name}" for n in testlinks)
 
 
 def compare_json_files(

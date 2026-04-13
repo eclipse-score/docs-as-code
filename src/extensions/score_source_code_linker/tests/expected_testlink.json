@@ -6,7 +6,10 @@
     "need": "TREQ_ID_2",
     "verify_type": "partially",
     "result": "passed",
-    "result_text": ""
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
   },
   {
     "name": "test_api_response_format",
@@ -15,7 +18,10 @@
     "need": "TREQ_ID_3",
     "verify_type": "partially",
     "result": "passed",
-    "result_text": ""
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
   },
   {
     "name": "test_error_handling",
@@ -24,7 +30,10 @@
     "need": "TREQ_ID_2",
     "verify_type": "partially",
     "result": "passed",
-    "result_text": ""
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
   },
   {
     "name": "test_error_handling",
@@ -33,7 +42,10 @@
     "need": "TREQ_ID_3",
     "verify_type": "partially",
     "result": "passed",
-    "result_text": ""
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
   },
   {
     "name": "TestRequirementsCoverage__test_system_startup_time",
@@ -42,6 +54,9 @@
     "need": "TREQ_ID_1",
     "verify_type": "fully",
     "result": "passed",
-    "result_text": ""
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
   }
 ]

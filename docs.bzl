@@ -41,11 +41,9 @@ Easy streamlined way for S-CORE docs-as-code.
 #
 # For user-facing documentation, refer to `/README.md`.
 
-load("@aspect_rules_py//py:defs.bzl", "py_binary")
+load("@aspect_rules_py//py:defs.bzl", "py_binary", "py_venv")
 load("@docs_as_code_hub_env//:requirements.bzl", "all_requirements")
 load("@rules_python//sphinxdocs:sphinx.bzl", "sphinx_build_binary", "sphinx_docs")
-load("@score_tooling//:defs.bzl", "score_virtualenv")
-load("@score_tooling//bazel/rules/rules_score:rules_score.bzl", "sphinx_module")
 
 def _rewrite_needs_json_to_docs_sources(labels):
     """Replace '@repo//:needs_json' -> '@repo//:docs_sources' for every item."""
@@ -69,7 +67,7 @@ def _rewrite_needs_json_to_sourcelinks(labels):
             out.append(s)
     return out
 
-def _merge_sourcelinks(name, sourcelinks):
+def _merge_sourcelinks(name, sourcelinks, known_good = None):
     """Merge multiple sourcelinks JSON files into a single file.
 
     Args:
@@ -77,19 +75,57 @@ def _merge_sourcelinks(name, sourcelinks):
         sourcelinks: List of sourcelinks JSON file targets
     """
 
+    extra_srcs = []
+    known_good_arg = ""
+    if known_good != None:
+        extra_srcs = [known_good]
+        known_good_arg = "--known_good $(location %s)" % known_good
+
     native.genrule(
         name = name,
-        srcs = sourcelinks,
+        srcs = sourcelinks + extra_srcs,
         outs = [name + ".json"],
         cmd = """
         $(location @score_docs_as_code//scripts_bazel:merge_sourcelinks) \
             --output $@ \
+            {known_good_arg} \
             $(SRCS)
-        """,
+        """.format(known_good_arg = known_good_arg),
         tools = ["@score_docs_as_code//scripts_bazel:merge_sourcelinks"],
     )
 
-def docs(source_dir = "docs", data = [], deps = [], scan_code = []):
+def _missing_requirements(deps):
+    """Add Python hub dependencies if they are missing."""
+    found = []
+    missing = []
+    def _target_to_packagename(target):
+        return target.split("/")[-1].split(":")[0]
+    all_packages = [_target_to_packagename(pkg) for pkg in all_requirements]
+    def _find(pkg):
+        for dep in deps:
+            dep_pkg = _target_to_packagename(dep)
+            if dep_pkg == pkg:
+                return True
+        return False
+    for pkg in all_packages:
+        if _find(pkg):
+            found.append(pkg)
+        else:
+            missing.append(pkg)
+    if len(missing) == len(all_requirements):
+        #print("All docs-as-code dependencies are missing, adding all of them.")
+        return all_requirements
+    if len(missing) == 0:
+        #print("All docs-as-code dependencies are already included, no need to add any.")
+        return []
+    if len(found) > 0:
+        msg = "Some docs-as-code dependencies are in deps: " + ", ".join(found) + \
+              "\n   ... but others are missing: " + ", ".join(missing) + \
+              "\nInconsistent deps for docs(): either include all dependencies or none of them."
+        fail(msg)
+    fail("This case should be unreachable?!")
+
+def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good = None):
     """Creates all targets related to documentation.
 
     By using this function, you'll get any and all updates for documentation targets in one place.
@@ -107,7 +143,8 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = []):
         fail("docs() must be called from the root package. Current package: " + call_path)
 
     module_deps = deps
-    deps = deps + all_requirements + [
+    deps = deps + _missing_requirements(deps)
+    deps = deps + [
         "@score_docs_as_code//src:plantuml_for_python",
         "@score_docs_as_code//src/extensions/score_sphinx_bundle:score_sphinx_bundle",
     ]
@@ -143,98 +180,100 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = []):
 
     data_with_docs_sources = _rewrite_needs_json_to_docs_sources(data)
     additional_combo_sourcelinks = _rewrite_needs_json_to_sourcelinks(data)
-    _merge_sourcelinks(name = "merged_sourcelinks", sourcelinks = [":sourcelinks_json"] + additional_combo_sourcelinks)
+    _merge_sourcelinks(name = "merged_sourcelinks", sourcelinks = [":sourcelinks_json"] + additional_combo_sourcelinks, known_good = known_good)
+    docs_data = data + [":sourcelinks_json"]
+    combo_data = data_with_docs_sources + [":merged_sourcelinks"]
+
+    docs_env = {
+        "SOURCE_DIRECTORY": source_dir,
+        "DATA": str(data),
+        "SCORE_SOURCELINKS": "$(location :sourcelinks_json)",
+    }
+    docs_sources_env = {
+        "SOURCE_DIRECTORY": source_dir,
+        "DATA": str(data_with_docs_sources),
+        "SCORE_SOURCELINKS": "$(location :merged_sourcelinks)",
+    }
+    if known_good:
+        docs_env["KNOWN_GOOD_JSON"] = "$(location "+ known_good + ")"
+        docs_sources_env["KNOWN_GOOD_JSON"] = "$(location "+ known_good + ")"
+        docs_data.append(known_good)
+        combo_data.append(known_good)
+
+    docs_env["ACTION"] = "incremental"
 
     py_binary(
         name = "docs",
         tags = ["cli_help=Build documentation:\nbazel run //:docs"],
         srcs = ["@score_docs_as_code//src:incremental.py"],
-        data = data + [":sourcelinks_json"],
+        data = docs_data,
         deps = deps,
-        env = {
-            "SOURCE_DIRECTORY": source_dir,
-            "DATA": str(data),
-            "ACTION": "incremental",
-            "SCORE_SOURCELINKS": "$(location :sourcelinks_json)",
-        },
+        env = docs_env
     )
 
+    docs_sources_env["ACTION"] = "incremental"
     py_binary(
-        name = "docs_combo_experimental",
-        tags = ["cli_help=Build full documentation with all dependencies:\nbazel run //:docs_combo_experimental"],
+        name = "docs_combo",
+        tags = ["cli_help=Build full documentation with all dependencies:\nbazel run //:docs_combo"],
         srcs = ["@score_docs_as_code//src:incremental.py"],
-        data = data_with_docs_sources + [":merged_sourcelinks"],
+        data = combo_data,
         deps = deps,
-        env = {
-            "SOURCE_DIRECTORY": source_dir,
-            "DATA": str(data_with_docs_sources),
-            "ACTION": "incremental",
-            "SCORE_SOURCELINKS": "$(location :merged_sourcelinks)",
-        },
+        env = docs_sources_env
     )
 
+    native.alias(
+        name = "docs_combo_experimental",
+        actual = ":docs_combo",
+        deprecation = "Target '//:docs_combo_experimental' is deprecated. Use '//:docs_combo' instead.",
+    )
+
+    docs_env["ACTION"] = "linkcheck"
     py_binary(
         name = "docs_link_check",
         tags = ["cli_help=Verify Links inside Documentation:\nbazel run //:link_check\n (Note: this could take a long time)"],
         srcs = ["@score_docs_as_code//src:incremental.py"],
-        data = data,
+        data = docs_data,
         deps = deps,
-        env = {
-            "SOURCE_DIRECTORY": source_dir,
-            "DATA": str(data),
-            "ACTION": "linkcheck",
-        },
+        env = docs_env
     )
 
+    docs_env["ACTION"] = "check"
     py_binary(
         name = "docs_check",
         tags = ["cli_help=Verify documentation:\nbazel run //:docs_check"],
         srcs = ["@score_docs_as_code//src:incremental.py"],
-        data = data + [":sourcelinks_json"],
+        data = docs_data,
         deps = deps,
-        env = {
-            "SOURCE_DIRECTORY": source_dir,
-            "DATA": str(data),
-            "ACTION": "check",
-            "SCORE_SOURCELINKS": "$(location :sourcelinks_json)",
-        },
+        env = docs_env
     )
 
+    docs_env["ACTION"] = "live_preview"
     py_binary(
         name = "live_preview",
         tags = ["cli_help=Live preview documentation in the browser:\nbazel run //:live_preview"],
         srcs = ["@score_docs_as_code//src:incremental.py"],
-        data = data + [":sourcelinks_json"],
+        data = docs_data,
         deps = deps,
-        env = {
-            "SOURCE_DIRECTORY": source_dir,
-            "DATA": str(data),
-            "ACTION": "live_preview",
-            "SCORE_SOURCELINKS": "$(location :sourcelinks_json)",
-        },
+        env = docs_env
     )
 
+    docs_sources_env["ACTION"] = "live_preview"
     py_binary(
         name = "live_preview_combo_experimental",
         tags = ["cli_help=Live preview full documentation with all dependencies in the browser:\nbazel run //:live_preview_combo_experimental"],
         srcs = ["@score_docs_as_code//src:incremental.py"],
-        data = data_with_docs_sources + [":merged_sourcelinks"],
+        data = combo_data,
         deps = deps,
-        env = {
-            "SOURCE_DIRECTORY": source_dir,
-            "DATA": str(data_with_docs_sources),
-            "ACTION": "live_preview",
-            "SCORE_SOURCELINKS": "$(location :merged_sourcelinks)",
-        },
+        env = docs_sources_env
     )
 
-    score_virtualenv(
+    py_venv(
         name = "ide_support",
         tags = ["cli_help=Create virtual environment (.venv_docs) for documentation support:\nbazel run //:ide_support"],
         venv_name = ".venv_docs",
-        reqs = deps,
-        # Add dependencies to ide_support, so esbonio has access to them.
+        deps = deps,
         data = data,
+        package_collisions = "warning",
     )
 
     sphinx_docs(
@@ -253,16 +292,9 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = []):
         sphinx = ":sphinx_build",
         tools = data,
         visibility = ["//visibility:public"],
-    )
-
-    sphinx_module(
-        name = native.module_name() + "_module",
-        srcs = [":docs_sources"],
-        # config = ":" + source_dir + "/conf.py",
-        index = source_dir + "/index.rst",
-        sphinx = "@score_tooling//bazel/rules/rules_score:score_build",
-        deps = module_deps,
-        visibility = ["//visibility:public"],
+        # Persistent workers cause stale symlinks after dependency version
+        # changes, corrupting the Bazel cache.
+        allow_persistent_workers = False,
     )
 
 def _sourcelinks_json(name, srcs):

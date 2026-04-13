@@ -12,21 +12,23 @@
 # *******************************************************************************
 
 load("@docs_as_code_hub_env//:requirements.bzl", "all_requirements")
-load("@score_tooling//:defs.bzl", "score_py_pytest")
+load("//:score_pytest.bzl", "score_pytest")
 
-score_py_pytest(
+score_pytest(
     name = "generate_sourcelinks_cli_test",
     srcs = ["generate_sourcelinks_cli_test.py"],
     deps = [
         "//scripts_bazel:generate_sourcelinks",
         "//src/extensions/score_source_code_linker",
     ] + all_requirements,
+    pytest_config = "//:pyproject.toml",
 )
 
-score_py_pytest(
+score_pytest(
     name = "merge_sourcelinks_test",
     srcs = ["merge_sourcelinks_test.py"],
     deps = [
         "//scripts_bazel:merge_sourcelinks",
     ] + all_requirements,
+    pytest_config = "//:pyproject.toml",
 )

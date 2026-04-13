@@ -10,15 +10,5 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-
-name: Copyright checks
-on:
-  pull_request:
-    types: [opened, reopened, synchronize]
-  merge_group:
-    types: [checks_requested]
-jobs:
-  copyright-check:
-    uses: eclipse-score/cicd-workflows/.github/workflows/copyright.yml@main
-    with:
-      bazel-target: "run //:copyright.check"
+def test_local_fixture_has_correct_value(fixture42):
+    assert fixture42 == 42

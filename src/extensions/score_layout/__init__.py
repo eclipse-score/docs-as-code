@@ -18,6 +18,8 @@ import html_options
 import sphinx_options
 from sphinx.application import Sphinx
 
+from src.helper_lib import config_setdefault
+
 logger = logging.getLogger(__name__)
 
 
@@ -35,11 +37,23 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
 def update_config(app: Sphinx, _config: Any):
     logger.debug("score_layout update_config called")
 
-    app.config.needs_layouts = sphinx_options.needs_layouts
-    app.config.needs_global_options = sphinx_options.needs_global_options
-    app.config.html_theme = html_options.html_theme
-    app.config.html_context = html_options.return_html_context(app)
-    app.config.html_theme_options = html_options.return_html_theme_options(app)
+    # Merge: user's entries take precedence over our defaults
+    app.config.needs_layouts = {
+        **sphinx_options.needs_layouts,
+        **app.config.needs_layouts,
+    }
+    config_setdefault(
+        app.config, "needs_default_layout", sphinx_options.needs_default_layout
+    )
+    config_setdefault(app.config, "html_theme", html_options.html_theme)
+    app.config.html_context = {
+        **html_options.return_html_context(app),
+        **app.config.html_context,
+    }
+    app.config.html_theme_options = {
+        **html_options.return_html_theme_options(app),
+        **app.config.html_theme_options,
+    }
 
     logger.debug(f"score_layout __file__: {__file__}")
 
@@ -49,7 +63,7 @@ def update_config(app: Sphinx, _config: Any):
     app.config.html_static_path.append(str(score_layout_path / "assets"))
 
     puml = score_layout_path / "assets" / "puml-theme-score.puml"
-    app.config.needs_flow_configs = {"score_config": f"!include {puml}"}
+    app.config.needs_flow_configs.setdefault("score_config", f"!include {puml}")
 
     app.add_css_file("css/score.css", priority=500)
     app.add_css_file("css/score_needs.css", priority=500)

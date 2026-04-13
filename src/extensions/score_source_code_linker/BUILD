@@ -12,7 +12,7 @@
 # *******************************************************************************
 
 load("@aspect_rules_py//py:defs.bzl", "py_library")
-load("@score_tooling//:defs.bzl", "score_py_pytest")
+load("//:score_pytest.bzl", "score_pytest")
 
 filegroup(
     name = "sources",
@@ -54,12 +54,14 @@ py_library(
         "needlinks.py",
         "testlink.py",
         "xml_parser.py",
+        "helpers.py",
+        "repo_source_links.py",
     ],
     imports = ["."],
     visibility = ["//visibility:public"],
 )
 
-score_py_pytest(
+score_pytest(
     name = "score_source_code_linker_test",
     size = "small",
     srcs = glob([
@@ -75,4 +77,5 @@ score_py_pytest(
         ":score_source_code_linker",
         "//src/extensions/score_metamodel",
     ],
+    pytest_config = "//:pyproject.toml",
 )

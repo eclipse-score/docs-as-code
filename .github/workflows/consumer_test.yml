@@ -33,19 +33,38 @@ jobs:
 
       - name: Prepare Python
         run: |
-          bazel run //:ide_support
+          bazel run --lockfile_mode=error //:ide_support
 
       - name: Prepare report directory
         run: |
           mkdir -p reports
 
-      # The pipefail ensures that non 0 exit codes inside the pytest execution get carried into the pipe 
+      # The pipefail ensures that non 0 exit codes inside the pytest execution get carried into the pipe
       # & make the tests red in the end. Without this we only would check the exit code of the 'tee' command.
       - name: Run Consumer tests
 
         run: |
-          set -o pipefail
-          .venv_docs/bin/python -m pytest -s -v src/tests/ --repo="$CONSUMER" --junitxml="reports/${{ matrix.consumer }}.xml" | tee "reports/${{ matrix.consumer }}.log"
+          pytest_rc=0
+          .venv_docs/bin/python -m pytest -vv src/tests/ \
+          --repo="$CONSUMER" \
+          --junitxml="reports/${{ matrix.consumer }}.xml" \
+          || pytest_rc=$?
+
+
+          if [ -f "consumer_test.log" ]; then
+            src_log="consumer_test.log"
+          else
+            echo "consumer_test.log not found; expected at ./consumer_test.log"
+          exit ${pytest_rc:-1}
+          fi
+
+          dest_log="reports/${{ matrix.consumer }}.log"
+          mv "$src_log" "$dest_log"
+
+          tail -n 15 "$dest_log" >> "$GITHUB_STEP_SUMMARY"
+
+          cat "$dest_log"
+          exit $pytest_rc
         env:
           FORCE_COLOR: "1"
           TERM: xterm-256color

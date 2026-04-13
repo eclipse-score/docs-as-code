@@ -1,15 +1,16 @@
-..  # *******************************************************************************
-    # Copyright (c) 2025 Contributors to the Eclipse Foundation
-    #
-    # See the NOTICE file(s) distributed with this work for additional
-    # information regarding copyright ownership.
-    #
-    # This program and the accompanying materials are made available under the
-    # terms of the Apache License Version 2.0 which is available at
-    # https://www.apache.org/licenses/LICENSE-2.0
-    #
-    # SPDX-License-Identifier: Apache-2.0
-    # *******************************************************************************
+..
+   # *******************************************************************************
+   # Copyright (c) 2025 Contributors to the Eclipse Foundation
+   #
+   # See the NOTICE file(s) distributed with this work for additional
+   # information regarding copyright ownership.
+   #
+   # This program and the accompanying materials are made available under the
+   # terms of the Apache License Version 2.0 which is available at
+   # https://www.apache.org/licenses/LICENSE-2.0
+   #
+   # SPDX-License-Identifier: Apache-2.0
+   # *******************************************************************************
 
 .. _extensions:
 
@@ -31,13 +32,6 @@ Hello there
       Learn more about our Metamodel extension and what this extension takes care of.
       :ref:`Metamodel Extension<metamodel>`.
 
-   .. grid-item-card::
-
-      Header Service
-      ^^^
-      Learn about the Header Service extension, and how you can configure it.
-      It creates RST Tables and automatically fills our information needed.
-      :ref:`Header Service Extension <header-service>`
 
    .. grid-item-card::
 
@@ -79,7 +73,6 @@ Hello there
 
    Metamodel <metamodel>
    Filebased Testing <rst_filebased_testing>
-   Header Service <header_service>
    Source Code Linker <source_code_linker>
    Extension Guide <extension_guide>
    Sync TOML <sync_toml>

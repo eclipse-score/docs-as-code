@@ -20,6 +20,7 @@ decoder and encoder for SourceCodeLinks to enable JSON read/write
 # req-Id: tool_req__docs_dd_link_source_code_link
 
 import json
+from collections import defaultdict
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
@@ -81,9 +82,9 @@ def SourceCodeLinks_JSON_Decoder(d: dict[str, Any]) -> SourceCodeLinks | dict[st
 def store_source_code_links_combined_json(
     file: Path, source_code_links: list[SourceCodeLinks]
 ):
-    # After `rm -rf _build` or on clean builds the directory does not exist, so we need
-    # to create it
-    file.parent.mkdir(exist_ok=True)
+    # After `rm -rf _build` or on clean builds the directory does not exist,
+    # so we need to create it. We create any folder that might be missing
+    file.parent.mkdir(exist_ok=True, parents=True)
     with open(file, "w") as f:
         json.dump(
             source_code_links,
@@ -108,3 +109,50 @@ def load_source_code_links_combined_json(file: Path) -> list[SourceCodeLinks]:
         "SourceCodeLinks objects."
     )
     return links
+
+
+def group_by_need(
+    source_code_links: list[NeedLink],
+    test_case_links: list[DataForTestLink] | None = None,
+) -> list[SourceCodeLinks]:
+    """
+    Groups the given need links and test case links by their need ID.
+    Returns a nested dictionary structure with 'CodeLink' and 'TestLink' categories.
+    Example output:
+
+
+      {
+        "need": "<need_id>",
+        "links": {
+          "CodeLinks": [NeedLink, NeedLink, ...],
+          "TestLinks": [testlink, testlink, ...]
+        }
+      }
+    """
+    # TODO: I wonder if there is a more efficent way to do this
+    grouped_by_need: dict[str, NeedSourceLinks] = defaultdict(
+        lambda: NeedSourceLinks(TestLinks=[], CodeLinks=[])
+    )
+
+    # Group source code links
+    for needlink in source_code_links:
+        grouped_by_need[needlink.need].CodeLinks.append(needlink)
+
+    # Group test case links
+    if test_case_links is not None:
+        for testlink in test_case_links:
+            grouped_by_need[testlink.need].TestLinks.append(testlink)
+
+    # Build final list of SourceCodeLinks
+    result: list[SourceCodeLinks] = [
+        SourceCodeLinks(
+            need=need,
+            links=NeedSourceLinks(
+                CodeLinks=need_links.CodeLinks,
+                TestLinks=need_links.TestLinks,
+            ),
+        )
+        for need, need_links in grouped_by_need.items()
+    ]
+
+    return result

@@ -11,9 +11,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-load("@aspect_rules_py//py:defs.bzl", "py_binary", "py_library")
-load("@docs_as_code_hub_env//:requirements.bzl", "all_requirements")
-load("@score_tooling//:defs.bzl", "score_py_pytest", "score_virtualenv")
+load("@aspect_rules_py//py:defs.bzl", "py_library")
 
 py_library(
     name = "score_plantuml",

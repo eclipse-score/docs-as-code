@@ -52,14 +52,17 @@ def test_load_metamodel_data():
     assert result.needs_types[0]["mandatory_links"] == {"link1": "value1"}
     assert result.needs_types[0]["optional_links"] == {"link2": "value2"}
 
-    assert len(result.needs_extra_links) == 1
-    assert result.needs_extra_links[0] == {
-        "option": "link_option1",
-        "incoming": "incoming1",
-        "outgoing": "outgoing1",
+    assert result.needs_links == {
+        "link_option1": {
+            "incoming": "incoming1",
+            "outgoing": "outgoing1",
+        }
     }
 
-    assert result.needs_extra_options == ["global_opt", "opt1", "opt2", "opt3"]
+    assert result.needs_fields == {
+        name: {"schema": {"type": "string"}, "default": ""}
+        for name in ["global_opt", "opt1", "opt2", "opt3"]
+    }
 
     assert result.prohibited_words_checks[0] == ProhibitedWordCheck(
         name="title_check", option_check={"title": ["stop_word1"]}

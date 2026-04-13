@@ -10,32 +10,19 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-
-name: Formatting checks
+name: Bzlmod Lockfile Check
+permissions:
+  contents: read
 on:
   pull_request:
     types: [opened, reopened, synchronize]
   merge_group:
     types: [checks_requested]
+  push:
+    branches:
+      - main
 jobs:
-  formatting-check:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4.2.2
-      - name: Cache Bazel
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/bazel
-          key: ${{ runner.os }}-format-${{ hashFiles('**/*.bazel', '**/BUILD', '**/*.bzl') }}
-
-      - name: Setup Bazel with cache
-        uses: bazel-contrib/setup-bazel@0.15.0
-        with:
-          disk-cache: true
-          repository-cache: true
-          bazelisk-cache: true
-      - name: Run formatting checks
-        run: |
-          bazel run //:ide_support
-          bazel test //src:format.check
+  bzlmod-lock:
+    uses: eclipse-score/cicd-workflows/.github/workflows/bzlmod-lock-check.yml@c1c90b1a82a1fab0fc202979dde6686b2162d5a8 # v0.0.0
+    with:
+      working-directory: .

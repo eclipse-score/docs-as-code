@@ -10,19 +10,10 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-from sphinx.application import Sphinx
+import sys
 
-from src.extensions.score_header_service.header_service import register
+import pytest
 
-
-def setup(app: Sphinx) -> dict[str, str | bool]:
-    """Register the header service with the Sphinx application.
-
-    :param app: The Sphinx application instance.
-    """
-    app.connect("env-before-read-docs", register)
-    return {
-        "version": "0.1",
-        "parallel_read_safe": True,
-        "parallel_write_safe": True,
-    }
+if __name__ == "__main__":
+    args = sys.argv[1:]
+    sys.exit(pytest.main(args))

@@ -90,6 +90,8 @@ if __name__ == "__main__":
         base_arguments.append(f"-A=github_repo={args.github_repo}")
         base_arguments.append("-A=github_version=main")
         base_arguments.append(f"-A=doc_path={get_env('SOURCE_DIRECTORY')}")
+    if os.getenv("KNOWN_GOOD_JSON"):
+        base_arguments.append(f"--define=KNOWN_GOOD_JSON={get_env('KNOWN_GOOD_JSON')}")
 
     action = get_env("ACTION")
     if action == "live_preview":

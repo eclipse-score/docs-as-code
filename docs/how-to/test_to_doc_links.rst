@@ -1,3 +1,17 @@
+..
+   # *******************************************************************************
+   # Copyright (c) 2026 Contributors to the Eclipse Foundation
+   #
+   # See the NOTICE file(s) distributed with this work for additional
+   # information regarding copyright ownership.
+   #
+   # This program and the accompanying materials are made available under the
+   # terms of the Apache License Version 2.0 which is available at
+   # https://www.apache.org/licenses/LICENSE-2.0
+   #
+   # SPDX-License-Identifier: Apache-2.0
+   # *******************************************************************************
+
 Reference Docs in Tests
 =======================
 
@@ -25,10 +39,17 @@ TestLink will extract test name, file, line, result and verification lists
 (`PartiallyVerifies`, `FullyVerifies`) and create external needs from tests
 and `testlink` attributes on requirements that reference the test.
 
+.. hint::
+   It is possible to have 'additional' properties on tests. They will not show up in the
+   TestLink but also won't break the parsing process.
+
+
 
 Limitations
 -----------
 
 - Not compatible with Esbonio/Live_preview.
-- Tags and XML must match the expected format exactly for parsing to work.
+- To create a valid Testlink Tags and XML must match the expected format.
+- Partial properties will lead to no Testlink creation.
+  If you want a test to be linked, please ensure all requirement properties are provided.
 - Tests must be executed by Bazel first so `test.xml` files exist.
