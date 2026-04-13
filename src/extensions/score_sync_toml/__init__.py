@@ -17,6 +17,39 @@ from sphinx.application import Sphinx
 from src.helper_lib import config_setdefault
 
 
+def _write_needs_fields_toml(app: Sphinx) -> Path:
+    """Serialize ``app.config.needs_fields`` as ``[needs.fields.*]`` TOML entries.
+
+    ``needs_config_writer`` cannot serialize the nested dicts that make up
+    ``needs_fields`` (e.g. ``{"schema": {"type": "string"}, "default": ""}``),
+    so custom fields like ``safety``, ``security``, and ``reqtype`` are missing
+    from ``ubproject.toml``.  Without them, ubCode does not know these are valid
+    options and will report them as unknown fields.
+
+    This function writes only the ``default`` value for each field, which is
+    sufficient for ubCode to recognise the field as valid.
+
+    Must be called *after* ``score_metamodel.setup()`` has run (i.e. after
+    ``app.config.needs_fields`` has been extended with the metamodel fields).
+    """
+    lines: list[str] = [
+        "# Auto-generated – do not edit manually.\n",
+        "# Contains [needs.fields.*] entries derived from metamodel.yaml.\n",
+        "# Required for the ubCode language server to recognise custom need fields.\n\n",
+    ]
+    for field_name, field_config in sorted(app.config.needs_fields.items()):
+        default = field_config.get("default", "")
+        # TOML-escape the default value (handle quotes)
+        escaped = str(default).replace("\\", "\\\\").replace('"', '\\"')
+        lines.append(f"[needs.fields.{field_name}]\n")
+        lines.append(f'default = "{escaped}"\n')
+        lines.append("\n")
+
+    output_path = Path(app.confdir) / "needs_fields_generated.toml"
+    output_path.write_text("".join(lines), encoding="utf-8")
+    return output_path
+
+
 def _write_needs_types_toml(app: Sphinx) -> Path:
     """Serialize ``app.config.needs_types`` as ``[[needs.types]]`` TOML entries.
 
@@ -107,6 +140,14 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     needs_types_toml = _write_needs_types_toml(app)
     app.config.needscfg_merge_toml_files.append(str(needs_types_toml))
     """Merge the generated [[needs.types]] TOML into the final ubproject.toml."""
+
+    # Write [needs.fields.*] from the metamodel into a separate TOML fragment and
+    # merge it.  needs_config_writer cannot serialise the nested field dicts, so
+    # custom fields like 'safety', 'security', 'reqtype' etc. would be absent from
+    # ubproject.toml and ubCode would flag them as unknown.
+    needs_fields_toml = _write_needs_fields_toml(app)
+    app.config.needscfg_merge_toml_files.append(str(needs_fields_toml))
+    """Merge the generated [needs.fields.*] TOML into the final ubproject.toml."""
 
     app.config.needscfg_relative_path_fields.extend(
         [
