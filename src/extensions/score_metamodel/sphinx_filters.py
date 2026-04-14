@@ -1,0 +1,188 @@
+# *******************************************************************************
+# Copyright (c) 2025 Contributors to the Eclipse Foundation
+#
+# See the NOTICE file(s) distributed with this work for additional
+# information regarding copyright ownership.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Apache License Version 2.0 which is available at
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# SPDX-License-Identifier: Apache-2.0
+# *******************************************************************************
+
+"""Generic sphinx-needs filter functions for ``needpie`` directives.
+
+These functions are fully parameterizable and designed to be called directly
+by consumers of docs-as-code (e.g. reference-integration repos) when they
+pull in the ``score_docs_as_code`` Bazel module.  All functions follow the
+sphinx-needs ``filter-func`` signature convention:
+
+.. code-block:: python
+
+    def func(needs: list[NeedItem], results: list[int], **kwargs) -> None: ...
+
+Arguments are injected from the ``:filter-func:`` call-site as positional
+``arg1``, ``arg2``, … keyword arguments.
+
+Example usage in RST::
+
+    .. needpie:: My Requirements Coverage
+       :labels: Linked, Not Linked
+       :filter-func: score_metamodel.sphinx_filters.generic_pie_linked_items(std_req__mystandard__, gd_)
+
+"""
+
+from __future__ import annotations
+
+from sphinx_needs.need_item import NeedItem
+
+
+def generic_pie_linked_items(
+    needs: list[NeedItem], results: list[int], **kwargs: str | int | float
+) -> None:
+    """Count items matching an ID prefix split by compliance linkage.
+
+    Finds all needs whose ``id`` starts with *arg1*, then checks whether
+    each one appears in the ``complies`` field of any need whose ``type``
+    starts with *arg2*.
+
+    :filter-func: arguments:
+
+        - ``arg1`` – ID prefix of the items to count
+          (e.g. ``std_req__iso26262__``)
+        - ``arg2`` – type prefix of the source needs whose ``complies``
+          lists are scanned (e.g. ``gd_``)
+
+    Appends to *results*: ``[linked_count, not_linked_count]``
+    """
+    id_prefix = str(kwargs.get("arg1", ""))
+    compliance_prefix = str(kwargs.get("arg2", ""))
+
+    target_ids = [
+        str(n.get("id", ""))
+        for n in needs
+        if str(n.get("id", "")).startswith(id_prefix)
+    ]
+
+    linked_ids: set[str] = {
+        ref
+        for n in needs
+        if str(n.get("type", "")).startswith(compliance_prefix)
+        for ref in n.get("complies", [])
+        if ref
+    }
+
+    connected = sum(1 for item_id in target_ids if item_id in linked_ids)
+    not_connected = len(target_ids) - connected
+
+    results.append(connected)
+    results.append(not_connected)
+
+
+def generic_pie_items_by_tag(
+    needs: list[NeedItem], results: list[int], **kwargs: str | int | float
+) -> None:
+    """Count items carrying a given tag split by compliance linkage.
+
+    Checks every need that has *arg1* in its ``tags`` field and splits them
+    by whether their id appears in the ``complies`` field of any need whose
+    ``type`` starts with *arg2*.
+
+    :filter-func: arguments:
+
+        - ``arg1`` – tag to filter by (e.g. ``aspice40_man5``).
+          Note: tag values must not contain dots.
+        - ``arg2`` – type prefix of the source needs whose ``complies``
+          lists are scanned (e.g. ``gd_``)
+
+    Appends to *results*: ``[linked_count, not_linked_count]``
+    """
+    tag = str(kwargs.get("arg1", ""))
+    compliance_prefix = str(kwargs.get("arg2", ""))
+
+    linked_ids: set[str] = {
+        ref
+        for n in needs
+        if str(n.get("type", "")).startswith(compliance_prefix)
+        for ref in n.get("complies", [])
+        if ref
+    }
+
+    linked = 0
+    not_linked = 0
+    for n in needs:
+        if tag in n.get("tags", []):
+            if str(n.get("id", "")) in linked_ids:
+                linked += 1
+            else:
+                not_linked += 1
+
+    results.append(linked)
+    results.append(not_linked)
+
+
+def generic_pie_workproducts_by_type(
+    needs: list[NeedItem], results: list[int], **kwargs: str | int | float
+) -> None:
+    """Count work-product items matching an ID prefix split by compliance linkage.
+
+    Semantically equivalent to :func:`generic_pie_linked_items` but scoped to
+    work-product traceability where the compliance source type is typically an
+    exact match (e.g. ``workproduct``) rather than a prefix.  Because
+    ``"workproduct".startswith("workproduct")`` is ``True``, both functions use
+    the same underlying logic.
+
+    :filter-func: arguments:
+
+        - ``arg1`` – ID prefix of the work-product items to count
+          (e.g. ``std_wp__iso26262__``)
+        - ``arg2`` – type (or type prefix) of source needs whose ``complies``
+          lists are scanned (e.g. ``workproduct``)
+
+    Appends to *results*: ``[linked_count, not_linked_count]``
+    """
+    generic_pie_linked_items(needs, results, **kwargs)
+
+
+def generic_pie_items_in_relationships(
+    needs: list[NeedItem], results: list[int], **kwargs: str | int | float
+) -> None:
+    """Count items of a given type by how many container items reference them.
+
+    For every need of type *arg3*, counts how many needs of type *arg1*
+    include its id in their *arg2* field.  Splits the result into three
+    buckets: not referenced, referenced exactly once, referenced more than
+    once.
+
+    :filter-func: arguments:
+
+        - ``arg1`` – type of the container needs (e.g. ``workflow``)
+        - ``arg2`` – field on the container that holds references
+          (e.g. ``output``)
+        - ``arg3`` – type of the items to count (e.g. ``workproduct``)
+
+    Appends to *results*:
+    ``[not_referenced_count, referenced_once_count, referenced_multiple_count]``
+    """
+    container_type = str(kwargs.get("arg1", ""))
+    field = str(kwargs.get("arg2", ""))
+    item_type = str(kwargs.get("arg3", ""))
+
+    containers = [n for n in needs if n.get("type") == container_type]
+    items = [n for n in needs if n.get("type") == item_type]
+
+    item_counts: dict[str, int] = {str(n.get("id", "")): 0 for n in items}
+
+    for container in containers:
+        for ref in container.get(field, []):
+            if ref in item_counts:
+                item_counts[ref] += 1
+
+    not_referenced = sum(1 for c in item_counts.values() if c == 0)
+    referenced_once = sum(1 for c in item_counts.values() if c == 1)
+    referenced_multiple = sum(1 for c in item_counts.values() if c > 1)
+
+    results.append(not_referenced)
+    results.append(referenced_once)
+    results.append(referenced_multiple)
