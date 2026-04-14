@@ -10,7 +10,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-import tempfile
 from pathlib import Path
 
 from sphinx.application import Sphinx
@@ -151,20 +150,17 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
 
     # Generate TOML fragments for types, fields, and links from the metamodel.
     # needs_config_writer cannot serialise these structures itself, so we combine
-    # them into a single temporary file and register it for merging.
-    # A NamedTemporaryFile with delete=False is used so the path remains valid
-    # when needs_config_writer reads it later during the write phase.
+    # them into a single file and register it for merging.
+    # Write to a deterministic path so it's always overwritten (no temp file leak).
     metamodel_toml = (
         _generate_needs_types_toml(app)
         + _generate_needs_fields_toml(app)
         + _generate_needs_links_toml(app)
     )
-    with tempfile.NamedTemporaryFile(
-        mode="w", suffix=".toml", delete=False, encoding="utf-8"
-    ) as tmp:
-        tmp.write(metamodel_toml)
-        # Merge the generated metamodel TOML (types, fields, links) into the final ubproject.toml.
-        app.config.needscfg_merge_toml_files.append(tmp.name)
+    metamodel_path = Path(app.confdir) / "needs_metamodel_generated.toml"
+    metamodel_path.write_text(metamodel_toml, encoding="utf-8")
+    # Merge the generated metamodel TOML (types, fields, links) into the final ubproject.toml.
+    app.config.needscfg_merge_toml_files.append(str(metamodel_path))
 
     # Relative paths to confdir for Bazel provided absolute paths.
     app.config.needscfg_relative_path_fields.extend(

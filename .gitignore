@@ -12,6 +12,7 @@ user.bazelrc
 /_build*
 docs/ubproject.toml
 docs/schemas.json
+docs/needs_metamodel_generated.toml
 
 # Vale - editorial style guide
 .vale.ini
