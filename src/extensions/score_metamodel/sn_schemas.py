@@ -1,5 +1,5 @@
 # *******************************************************************************
-# Copyright (c) 2026 Contributors to the Eclipse Foundation
+# Copyright (c) 2025 Contributors to the Eclipse Foundation
 #
 # See the NOTICE file(s) distributed with this work for additional
 # information regarding copyright ownership.
@@ -72,7 +72,6 @@ def write_sn_schemas(app: Sphinx, metamodel: MetaModelData) -> None:
 
     # Tell sphinx-needs to load the schema from the JSON file
     config.needs_schema_definitions_from_json = "schemas.json"
-    # config.needs_schema_definitions = schema_definitions
 
 
 def _classify_links(
@@ -173,7 +172,6 @@ def _build_local_validator(
     return {
         "properties": properties,
         "required": required,
-        # "unevaluatedProperties": False,
     }
 
 

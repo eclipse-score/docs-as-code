@@ -111,23 +111,24 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     See https://needs-config-writer.useblocks.com
     """
 
+    # Write to the confdir directory.
     config_setdefault(app.config, "needscfg_outpath", "ubproject.toml")
-    """Write to the confdir directory."""
 
+    # Any changes to the shared/local configuration updates the generated config.
     config_setdefault(app.config, "needscfg_overwrite", True)
-    """Any changes to the shared/local configuration updates the generated config."""
 
+    # Write full config, so the final configuration is visible in one file.
     config_setdefault(app.config, "needscfg_write_all", True)
-    """Write full config, so the final configuration is visible in one file."""
 
+    # Exclude default values from the generated configuration.
     config_setdefault(app.config, "needscfg_exclude_defaults", True)
-    """Exclude default values from the generated configuration."""
 
     # This is disabled for right now as it causes a lot of issues
     # While we are not using the generated file anywhere
+    # Running Sphinx with -W will fail the CI for uncommitted TOML changes.
     config_setdefault(app.config, "needscfg_warn_on_diff", False)
-    """Running Sphinx with -W will fail the CI for uncommitted TOML changes."""
 
+    # Exclude resolved/generated config values that don't belong in ubproject.toml.
     app.config.needscfg_exclude_vars = [
         # Default exclusions from needs-config-writer
         "needs_from_toml",
@@ -142,12 +143,11 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
         # needs_config_writer emits unsupported_type warnings for these and skips them.
         "needs_render_context",
     ]
-    """Exclude resolved/generated config values that don't belong in ubproject.toml."""
 
+    # Merge the static TOML file into the generated configuration.
     app.config.needscfg_merge_toml_files.append(
         str(Path(__file__).parent / "shared.toml")
     )
-    """Merge the static TOML file into the generated configuration."""
 
     # Generate TOML fragments for types, fields, and links from the metamodel.
     # needs_config_writer cannot serialise these structures itself, so we combine
@@ -163,9 +163,10 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
         mode="w", suffix=".toml", delete=False, encoding="utf-8"
     ) as tmp:
         tmp.write(metamodel_toml)
+        # Merge the generated metamodel TOML (types, fields, links) into the final ubproject.toml.
         app.config.needscfg_merge_toml_files.append(tmp.name)
-    """Merge the generated metamodel TOML (types, fields, links) into the final ubproject.toml."""
 
+    # Relative paths to confdir for Bazel provided absolute paths.
     app.config.needscfg_relative_path_fields.extend(
         [
             "needs_external_needs[*].json_path",
@@ -175,7 +176,6 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
             },
         ]
     )
-    """Relative paths to confdir for Bazel provided absolute paths."""
 
     app.config.suppress_warnings += [
         "needs_config_writer.path_conversion",
