@@ -12,7 +12,6 @@ user.bazelrc
 /_build*
 docs/ubproject.toml
 docs/schemas.json
-docs/*_generated.toml
 
 # Vale - editorial style guide
 .vale.ini
