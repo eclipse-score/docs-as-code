@@ -128,7 +128,10 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     config_setdefault(app.config, "needscfg_warn_on_diff", False)
 
     # Exclude resolved/generated config values that don't belong in ubproject.toml.
-    app.config.needscfg_exclude_vars = [
+    # Extend any existing exclusions rather than overwriting them.
+    app.config.needscfg_exclude_vars = list(
+        getattr(app.config, "needscfg_exclude_vars", None) or []
+    ) + [
         # Default exclusions from needs-config-writer
         "needs_from_toml",
         "needs_from_toml_table",

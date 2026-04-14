@@ -17,6 +17,7 @@ from collections.abc import Callable
 from pathlib import Path
 
 from sphinx.application import Sphinx
+from sphinx.config import Config
 from sphinx_needs import logging
 from sphinx_needs.data import NeedsView, SphinxNeedsData
 from sphinx_needs.need_item import NeedItem
@@ -252,7 +253,18 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     # Generate schemas.json from the metamodel and register it with sphinx-needs.
     # This enables sphinx-needs 6 schema validation: required fields, regex
     # patterns on option values, and (eventually) link target type checks.
-    write_sn_schemas(app, metamodel)
+    # Use config-inited event to defer file writing until config is ready,
+    # with error handling to prevent boot crashes on file write failures.
+    def _write_schemas_with_error_handling(app: Sphinx, config: Config) -> None:
+        try:
+            write_sn_schemas(app, metamodel)
+        except Exception as e:
+            logger.warning(
+                f"Failed to write schemas.json: {e}. "
+                "Schema validation will be unavailable."
+            )
+
+    _ = app.connect("config-inited", _write_schemas_with_error_handling, priority=499)
 
     # sphinx-collections runs on default prio 500.
     # We need to populate the sphinx-collections config before that happens.

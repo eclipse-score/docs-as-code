@@ -95,6 +95,17 @@ def _classify_links(
     targets: dict[str, list[str]] = {}
 
     for field, value in links.items():
+        # Guard: ensure value is a string (i.e., called before postprocess_need_links).
+        # postprocess_need_links mutates link values into lists of ScoreNeedType objects,
+        # which would break the string operations below.
+        if not isinstance(value, str):
+            raise TypeError(
+                f"_classify_links must be called before postprocess_need_links. "
+                f"Expected string for {label} link '{field}' in type '{type_name}', "
+                f"but got {type(value).__name__}. This indicates a Sphinx phase "
+                "ordering issue."
+            )
+
         link_values = [v.strip() for v in value.split(",")]
         for link_value in link_values:
             if link_value.startswith("^"):
