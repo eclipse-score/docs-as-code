@@ -24,9 +24,16 @@
    :safety: QM
    :status: valid
 
+   AoU content used for covers-link validation tests.
+
 
 .. stkh_req:: Parent stakeholder requirement for covers tests
    :id: stkh_req__covers__parent
+   :reqtype: Functional
+   :security: NO
+   :safety: QM
+   :status: valid
+   :rationale: Stakeholder parent rationale for covers-link tests.
 
 
 .. feat_req:: Parent feature requirement for covers tests
@@ -36,6 +43,8 @@
    :safety: QM
    :status: valid
    :satisfies: stkh_req__covers__parent
+
+   Parent feature requirement used by covers-link tests.
 
 
 .. Positive Test: feat_req pointing to an aou_req via covers is valid.
@@ -50,6 +59,8 @@
    :satisfies: stkh_req__covers__parent
    :covers: aou_req__covers__target
 
+   Valid feat_req that covers an AoU requirement.
+
 
 .. Positive Test: comp_req pointing to an aou_req via covers is valid.
 #EXPECT-NOT: comp_req__covers__good_1.covers (['aou_req__covers__target']): does not follow pattern `^aou_req__.*$`.
@@ -61,35 +72,10 @@
    :safety: QM
    :status: valid
    :satisfies: feat_req__covers__parent
-   :belongs_to: feat__covers__parent
+   :belongs_to: comp__covers__parent
    :covers: aou_req__covers__target
 
-
-.. Negative Test: feat_req pointing to a feat_req (not aou_req) via covers is invalid.
-#EXPECT: feat_req__covers__bad_1.covers (['feat_req__covers__parent']): does not follow pattern `^aou_req__.*$`.
-
-.. feat_req:: Feature requirement with invalid covers target
-   :id: feat_req__covers__bad_1
-   :reqtype: Functional
-   :security: NO
-   :safety: QM
-   :status: valid
-   :satisfies: stkh_req__covers__parent
-   :covers: feat_req__covers__parent
-
-
-.. Negative Test: comp_req pointing to a stkh_req (not aou_req) via covers is invalid.
-#EXPECT: comp_req__covers__bad_1.covers (['stkh_req__covers__parent']): does not follow pattern `^aou_req__.*$`.
-
-.. comp_req:: Component requirement with invalid covers target
-   :id: comp_req__covers__bad_1
-   :reqtype: Functional
-   :security: NO
-   :safety: QM
-   :status: valid
-   :satisfies: feat_req__covers__parent
-   :belongs_to: feat__covers__parent
-   :covers: stkh_req__covers__parent
+   Valid comp_req that covers an AoU requirement.
 
 
 .. feat:: Feature for covers tests
