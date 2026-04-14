@@ -43,4 +43,5 @@ py_binary(
     srcs = ["traceability_coverage.py"],
     main = "traceability_coverage.py",
     visibility = ["//visibility:public"],
+    deps = all_requirements + ["//src/extensions/score_metamodel:score_metamodel"],
 )

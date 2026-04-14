@@ -1,0 +1,199 @@
+# *******************************************************************************
+# Copyright (c) 2026 Contributors to the Eclipse Foundation
+#
+# See the NOTICE file(s) distributed with this work for additional
+# information regarding copyright ownership.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Apache License Version 2.0 which is available at
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# SPDX-License-Identifier: Apache-2.0
+# *******************************************************************************
+
+"""Shared traceability metric calculations for CI checks and dashboards."""
+
+from __future__ import annotations
+
+from collections.abc import Sequence
+from typing import Any
+
+
+def is_non_empty(value: Any) -> bool:
+    """Return True if value should be treated as present for traceability checks."""
+    if value is None:
+        return False
+    if isinstance(value, str):
+        return bool(value.strip())
+    if isinstance(value, (list, tuple, set, dict)):
+        return len(value) > 0
+    return True
+
+
+def parse_need_id_list(value: Any) -> list[str]:
+    """Normalize need-id lists encoded as CSV strings or string lists."""
+    if value is None:
+        return []
+    if isinstance(value, str):
+        return [item.strip() for item in value.split(",") if item.strip()]
+    if isinstance(value, list):
+        out: list[str] = []
+        for item in value:
+            if isinstance(item, str) and item.strip():
+                out.append(item.strip())
+        return out
+    return []
+
+
+def safe_percent(numerator: int, denominator: int) -> float:
+    """Return percentage in range [0, 100], treating empty denominator as 100%."""
+    if denominator == 0:
+        return 100.0
+    return (numerator / denominator) * 100.0
+
+
+def filter_requirements(
+    all_needs: Sequence[Any],
+    requirement_types: set[str],
+    include_not_implemented: bool,
+) -> list[Any]:
+    """Extract requirements by type and implementation state."""
+    requirements: list[dict[str, Any]] = []
+    for need in all_needs:
+        need_type = str(need.get("type", "")).strip()
+        if need_type not in requirement_types:
+            continue
+        if not include_not_implemented:
+            implemented = str(need.get("implemented", "")).upper().strip()
+            if implemented not in {"YES", "PARTIAL"}:
+                continue
+        requirements.append(need)
+    return requirements
+
+
+def calculate_requirement_metrics(
+    requirements: Sequence[Any],
+) -> dict[str, Any]:
+    """Calculate requirement traceability statistics for links and completeness."""
+    total = len(requirements)
+    with_code = sum(
+        1 for need in requirements if is_non_empty(need.get("source_code_link"))
+    )
+    with_test = sum(1 for need in requirements if is_non_empty(need.get("testlink")))
+    fully_linked = sum(
+        1
+        for need in requirements
+        if is_non_empty(need.get("source_code_link"))
+        and is_non_empty(need.get("testlink"))
+    )
+
+    missing_code_ids = [
+        str(need.get("id", ""))
+        for need in requirements
+        if not is_non_empty(need.get("source_code_link")) and need.get("id")
+    ]
+    missing_test_ids = [
+        str(need.get("id", ""))
+        for need in requirements
+        if not is_non_empty(need.get("testlink")) and need.get("id")
+    ]
+    not_fully_linked_ids = [
+        str(need.get("id", ""))
+        for need in requirements
+        if (
+            (
+                not is_non_empty(need.get("source_code_link"))
+                or not is_non_empty(need.get("testlink"))
+            )
+            and need.get("id")
+        )
+    ]
+
+    return {
+        "total": total,
+        "with_code_link": with_code,
+        "with_test_link": with_test,
+        "fully_linked": fully_linked,
+        "with_code_link_pct": safe_percent(with_code, total),
+        "with_test_link_pct": safe_percent(with_test, total),
+        "fully_linked_pct": safe_percent(fully_linked, total),
+        "missing_code_link_ids": sorted(missing_code_ids),
+        "missing_test_link_ids": sorted(missing_test_ids),
+        "not_fully_linked_ids": sorted(not_fully_linked_ids),
+    }
+
+
+def calculate_test_metrics(
+    all_needs: Sequence[Any],
+    requirement_ids: set[str],
+    filtered_test_types: set[str],
+) -> dict[str, Any]:
+    """Calculate testcase linkage and broken testcase-reference statistics."""
+    testcases = [
+        need for need in all_needs if str(need.get("type", "")).strip() == "testcase"
+    ]
+    if filtered_test_types:
+        testcases = [
+            need
+            for need in testcases
+            if str(need.get("test_type", need.get("TestType", ""))).strip()
+            in filtered_test_types
+        ]
+
+    tests_total = len(testcases)
+    tests_linked = 0
+    broken_references: list[dict[str, str]] = []
+
+    for test_need in testcases:
+        test_id = str(test_need.get("id", "<unknown_testcase>"))
+        partially = parse_need_id_list(
+            test_need.get("partially_verifies", test_need.get("PartiallyVerifies"))
+        )
+        fully = parse_need_id_list(
+            test_need.get("fully_verifies", test_need.get("FullyVerifies"))
+        )
+        refs = partially + fully
+        if refs:
+            tests_linked += 1
+        for ref in refs:
+            if ref not in requirement_ids:
+                broken_references.append({"testcase": test_id, "missing_need": ref})
+
+    return {
+        "total": tests_total,
+        "filtered_test_types": sorted(filtered_test_types),
+        "linked_to_requirements": tests_linked,
+        "linked_to_requirements_pct": safe_percent(tests_linked, tests_total),
+        "broken_references": broken_references,
+    }
+
+
+def compute_traceability_summary(
+    all_needs: Sequence[Any],
+    requirement_types: set[str],
+    include_not_implemented: bool,
+    filtered_test_types: set[str],
+) -> dict[str, Any]:
+    """Return full CI/dashboard summary using one shared metric implementation."""
+    requirements = filter_requirements(
+        all_needs,
+        requirement_types=requirement_types,
+        include_not_implemented=include_not_implemented,
+    )
+    requirement_ids = {
+        str(need.get("id", "")).strip() for need in requirements if need.get("id")
+    }
+
+    req_metrics = calculate_requirement_metrics(requirements)
+    test_metrics = calculate_test_metrics(
+        all_needs,
+        requirement_ids=requirement_ids,
+        filtered_test_types=filtered_test_types,
+    )
+
+    return {
+        "requirement_types": sorted(requirement_types),
+        "include_not_implemented": include_not_implemented,
+        "requirements": req_metrics,
+        "tests": test_metrics,
+    }

@@ -16,40 +16,27 @@
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import json
 import os
+import sys
 from pathlib import Path
 from typing import Any
 
+# Ensure shared metric code under src/ is importable when executed directly.
+_REPO_ROOT = Path(__file__).resolve().parent.parent
+if str(_REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_ROOT))
 
-def _is_non_empty(value: Any) -> bool:
-    if value is None:
-        return False
-    if isinstance(value, str):
-        return bool(value.strip())
-    if isinstance(value, (list, tuple, set, dict)):
-        return len(value) > 0
-    return True
+# Import only the metrics module, avoid heavy __init__.py
+_metrics_path = _REPO_ROOT / "src/extensions/score_metamodel/traceability_metrics.py"
+_spec = importlib.util.spec_from_file_location("traceability_metrics", _metrics_path)
+if _spec is None or _spec.loader is None:
+    raise ImportError(f"Failed to load metrics module from {_metrics_path}")
+traceability_metrics = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(traceability_metrics)
 
-
-def _parse_need_id_list(value: Any) -> list[str]:
-    if value is None:
-        return []
-    if isinstance(value, str):
-        return [item.strip() for item in value.split(",") if item.strip()]
-    if isinstance(value, list):
-        out: list[str] = []
-        for item in value:
-            if isinstance(item, str) and item.strip():
-                out.append(item.strip())
-        return out
-    return []
-
-
-def _safe_percent(numerator: int, denominator: int) -> float:
-    if denominator == 0:
-        return 100.0
-    return (numerator / denominator) * 100.0
+compute_traceability_summary = traceability_metrics.compute_traceability_summary
 
 
 def _load_needs(needs_json: Path) -> list[dict[str, Any]]:
@@ -119,113 +106,6 @@ def _apply_argument_shortcuts(args: argparse.Namespace) -> None:
         args.min_req_fully_linked = 100.0
         args.min_tests_linked = 100.0
         args.fail_on_broken_test_refs = True
-
-
-def _filter_requirements(
-    all_needs: list[dict[str, Any]],
-    requirement_types: set[str],
-    include_not_implemented: bool,
-) -> list[dict[str, Any]]:
-    """Extract and filter requirements from needs."""
-    requirements: list[dict[str, Any]] = []
-    for need in all_needs:
-        need_type = str(need.get("type", "")).strip()
-        if need_type not in requirement_types:
-            continue
-        if not include_not_implemented:
-            implemented = str(need.get("implemented", "")).upper().strip()
-            if implemented not in {"YES", "PARTIAL"}:
-                continue
-        requirements.append(need)
-    return requirements
-
-
-def _calculate_requirement_metrics(
-    requirements: list[dict[str, Any]],
-) -> tuple[int, int, int, int, list[str], list[str], list[str]]:
-    """Calculate traceability metrics for requirements."""
-    req_total = len(requirements)
-    req_with_code = sum(
-        1 for need in requirements if _is_non_empty(need.get("source_code_link"))
-    )
-    req_with_test = sum(
-        1 for need in requirements if _is_non_empty(need.get("testlink"))
-    )
-    req_fully_linked = sum(
-        1
-        for need in requirements
-        if _is_non_empty(need.get("source_code_link"))
-        and _is_non_empty(need.get("testlink"))
-    )
-    req_missing_code = [
-        str(need.get("id", ""))
-        for need in requirements
-        if not _is_non_empty(need.get("source_code_link")) and need.get("id")
-    ]
-    req_missing_test = [
-        str(need.get("id", ""))
-        for need in requirements
-        if not _is_non_empty(need.get("testlink")) and need.get("id")
-    ]
-    req_not_fully_linked = [
-        str(need.get("id", ""))
-        for need in requirements
-        if (
-            (
-                not _is_non_empty(need.get("source_code_link"))
-                or not _is_non_empty(need.get("testlink"))
-            )
-            and need.get("id")
-        )
-    ]
-    return (
-        req_total,
-        req_with_code,
-        req_with_test,
-        req_fully_linked,
-        req_missing_code,
-        req_missing_test,
-        req_not_fully_linked,
-    )
-
-
-def _calculate_test_metrics(
-    all_needs: list[dict[str, Any]],
-    requirement_ids: set[str],
-    filtered_test_types: set[str],
-) -> tuple[int, int, list[dict[str, str]]]:
-    """Calculate test linkage metrics and find broken references."""
-    testcases = [
-        need for need in all_needs if str(need.get("type", "")).strip() == "testcase"
-    ]
-    if filtered_test_types:
-        testcases = [
-            need
-            for need in testcases
-            if str(need.get("test_type", need.get("TestType", ""))).strip()
-            in filtered_test_types
-        ]
-    tests_total = len(testcases)
-
-    tests_linked = 0
-    broken_test_references: list[dict[str, str]] = []
-    for test_need in testcases:
-        test_id = str(test_need.get("id", "<unknown_testcase>"))
-        partially = _parse_need_id_list(
-            test_need.get("partially_verifies", test_need.get("PartiallyVerifies"))
-        )
-        fully = _parse_need_id_list(
-            test_need.get("fully_verifies", test_need.get("FullyVerifies"))
-        )
-        refs = partially + fully
-        if refs:
-            tests_linked += 1
-        for ref in refs:
-            if ref not in requirement_ids:
-                broken_test_references.append(
-                    {"testcase": test_id, "missing_need": ref}
-                )
-    return tests_total, tests_linked, broken_test_references
 
 
 def _print_summary(
@@ -432,56 +312,35 @@ def main() -> int:
     needs_json = _find_needs_json(args.needs_json)
     all_needs = _load_needs(needs_json)
 
-    requirements = _filter_requirements(
-        all_needs, requirement_types, args.include_not_implemented
+    summary = compute_traceability_summary(
+        all_needs=all_needs,
+        requirement_types=requirement_types,
+        include_not_implemented=args.include_not_implemented,
+        filtered_test_types=filtered_test_types,
     )
 
-    requirement_ids = {
-        str(need.get("id", "")).strip() for need in requirements if need.get("id")
-    }
+    req_total = int(summary["requirements"]["total"])
+    req_with_code = int(summary["requirements"]["with_code_link"])
+    req_with_test = int(summary["requirements"]["with_test_link"])
+    req_fully_linked = int(summary["requirements"]["fully_linked"])
+    req_code_pct = float(summary["requirements"]["with_code_link_pct"])
+    req_test_pct = float(summary["requirements"]["with_test_link_pct"])
+    req_fully_linked_pct = float(summary["requirements"]["fully_linked_pct"])
+    req_missing_code = list(summary["requirements"]["missing_code_link_ids"])
+    req_missing_test = list(summary["requirements"]["missing_test_link_ids"])
+    req_not_fully_linked = list(summary["requirements"]["not_fully_linked_ids"])
 
-    (
-        req_total,
-        req_with_code,
-        req_with_test,
-        req_fully_linked,
-        req_missing_code,
-        req_missing_test,
-        req_not_fully_linked,
-    ) = _calculate_requirement_metrics(requirements)
+    tests_total = int(summary["tests"]["total"])
+    tests_linked = int(summary["tests"]["linked_to_requirements"])
+    tests_linked_pct = float(summary["tests"]["linked_to_requirements_pct"])
+    broken_test_references = list(summary["tests"]["broken_references"])
 
-    tests_total, tests_linked, broken_test_references = _calculate_test_metrics(
-        all_needs, requirement_ids, filtered_test_types
-    )
-
-    req_code_pct = _safe_percent(req_with_code, req_total)
-    req_test_pct = _safe_percent(req_with_test, req_total)
-    req_fully_linked_pct = _safe_percent(req_fully_linked, req_total)
-    tests_linked_pct = _safe_percent(tests_linked, tests_total)
-
-    summary = {
+    summary_output = {
         "needs_json": str(needs_json),
-        "requirement_types": sorted(requirement_types),
-        "include_not_implemented": bool(args.include_not_implemented),
-        "requirements": {
-            "total": req_total,
-            "with_code_link": req_with_code,
-            "with_test_link": req_with_test,
-            "fully_linked": req_fully_linked,
-            "with_code_link_pct": req_code_pct,
-            "with_test_link_pct": req_test_pct,
-            "fully_linked_pct": req_fully_linked_pct,
-            "missing_code_link_ids": sorted(req_missing_code),
-            "missing_test_link_ids": sorted(req_missing_test),
-            "not_fully_linked_ids": sorted(req_not_fully_linked),
-        },
-        "tests": {
-            "total": tests_total,
-            "filtered_test_types": sorted(filtered_test_types),
-            "linked_to_requirements": tests_linked,
-            "linked_to_requirements_pct": tests_linked_pct,
-            "broken_references": broken_test_references,
-        },
+        "requirement_types": summary["requirement_types"],
+        "include_not_implemented": summary["include_not_implemented"],
+        "requirements": summary["requirements"],
+        "tests": summary["tests"],
         "thresholds": {
             "min_req_code": float(args.min_req_code),
             "min_req_test": float(args.min_req_test),
@@ -512,7 +371,7 @@ def main() -> int:
 
     if args.json_output:
         out_file = Path(args.json_output)
-        out_file.write_text(json.dumps(summary, indent=2), encoding="utf-8")
+        out_file.write_text(json.dumps(summary_output, indent=2), encoding="utf-8")
         print(f"JSON summary written to: {out_file}")
 
     failures = _check_thresholds(

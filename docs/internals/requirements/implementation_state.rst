@@ -20,12 +20,9 @@ Overview
 --------
 
 .. needpie:: Requirements Status
-   :labels: not implemented, implemented but not tested, implemented and tested
+   :labels: not implemented, implemented but incomplete docs, fully documented
    :colors: red,yellow, green
-
-   type == 'tool_req' and implemented == 'NO'
-   type == 'tool_req' and testlink == '' and (implemented == 'YES' or implemented == 'PARTIAL')
-   type == 'tool_req' and testlink != '' and (implemented == 'YES' or implemented == 'PARTIAL')
+   :filter-func: src.extensions.score_metamodel.checks.traceability_dashboard.pie_requirements_status(tool_req)
 
 In Detail
 ---------
@@ -48,9 +45,7 @@ In Detail
       .. needpie:: Requirements with Codelinks
          :labels: no codelink, with codelink
          :colors: red, green
-
-         type == 'tool_req' and source_code_link == ''
-         type == 'tool_req' and source_code_link != ''
+         :filter-func: src.extensions.score_metamodel.checks.traceability_dashboard.pie_requirements_with_code_links(tool_req)
 
    .. grid-item-card::
 
