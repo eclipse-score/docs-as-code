@@ -47,7 +47,7 @@ use_repo(pip, "docs_as_code_hub_env")
 
 # Additional Python rules provided by aspect, e.g. an improved version of
 bazel_dep(name = "aspect_rules_py", version = "1.4.0")
-bazel_dep(name = "buildifier_prebuilt", version = "8.2.0.2")
+bazel_dep(name = "buildifier_prebuilt", version = "8.5.1.2")
 
 # PlantUML for docs
 bazel_dep(name = "rules_java", version = "8.15.1")
