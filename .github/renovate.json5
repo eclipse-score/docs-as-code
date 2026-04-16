@@ -9,11 +9,37 @@
   // enabledManagers: ["bazel"],
 
   // Target following repositories
-  repositories: ["eclipse-score/docs-as-code"],
+  repositories: [
+    // general
+    "eclipse-score/score",
+
+    // infra -> general
+    "eclipse-score/module_template",
+
+    // infra -> integration
+    "eclipse-score/os_images",
+    "eclipse-score/reference_integration",
+    "eclipse-score/rules_imagefs",
+
+    // infra -> tools
+    "eclipse-score/devcontainer",
+    "eclipse-score/docs-as-code",
+  ],
 
   // For now, only update Bazel module dependencies
   enabledManagers: ["bazel-module"],
 
   // Allow bazel lockfile updates via `bazel mod deps --lockfile_mode=update`
   allowedUnsafeExecutions: ["bazelModDeps"],
+
+  // 🚨 Run experiment
+  prTitle: "EXPERIMENTAL DO NOT MERGE - {{depName}} update",
+  prBodyNotes: [
+    "🚨 **EXPERIMENTAL DO NOT MERGE** 🚨",
+    "This Renovate setup is currently under testing.  "
+    "Contact #infrastructure if you have any questions or feedback.",
+  ]
+
+  // Add labels to all PRs, so we can actually find them
+  labels: ["automation", "renovate", "experimental-do-not-merge"]
 }
