@@ -50,7 +50,7 @@ bazel_dep(name = "aspect_rules_py", version = "1.4.0")
 bazel_dep(name = "buildifier_prebuilt", version = "8.2.0.2")
 
 # PlantUML for docs
-bazel_dep(name = "rules_java", version = "8.15.1")
+bazel_dep(name = "rules_java", version = "8.16.1")
 
 http_jar = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_jar")
 
