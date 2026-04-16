@@ -35,4 +35,4 @@ jobs:
         uses: renovatebot/github-action@v46.1.9
         with:
           token: ${{ secrets.RENOVATE_TOKEN }}
-          configurationFile: renovate.json
+          configurationFile: .github/renovate.json5
