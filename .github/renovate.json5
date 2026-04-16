@@ -68,6 +68,6 @@
   onboarding: false,
   requireConfig: "ignored",
 
-  // 2 test PRs per repo should be enough to validate the setup, and we can always increase if needed
-  prConcurrentLimit: 2,
+  // some test PRs per repo should be enough to validate the setup, and we can always increase if needed
+  prConcurrentLimit: 4,
 }
