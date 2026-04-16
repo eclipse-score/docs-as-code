@@ -10,4 +10,10 @@
 
   // Target following repositories
   repositories: ["eclipse-score/docs-as-code"],
+
+  // For now, only update Bazel module dependencies
+  enabledManagers: ["bazel-module"],
+
+  // Allow bazel lockfile updates via `bazel mod deps --lockfile_mode=update`
+  allowedUnsafeExecutions: ["bazelModDeps"],
 }
