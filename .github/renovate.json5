@@ -18,7 +18,6 @@
 
     // infra -> integration
     "eclipse-score/os_images",
-    "eclipse-score/reference_integration",
     "eclipse-score/rules_imagefs",
 
     // infra -> tools
