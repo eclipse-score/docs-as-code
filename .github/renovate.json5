@@ -1,10 +1,13 @@
 {
-  // Use Renovate’s default sane baseline (PR limits, grouping, etc.)
-  extends: ["config:base"],
+  // Use Renovate’s recommended baseline (PR limits, grouping, etc.)
+  extends: ["config:recommended"],
 
-  // Ensure commits are attributed to your bot user
+  // Commit author
   gitAuthor: "eclipse-score-bot <eclipse-score-bot@users.noreply.github.com>",
 
   // Bazel manager is enabled by default, so no need to declare it
   // enabledManagers: ["bazel"],
+
+  // Target following repositories
+  repositories: ["eclipse-score/docs-as-code"],
 }
