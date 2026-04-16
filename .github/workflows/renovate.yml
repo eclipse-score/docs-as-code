@@ -30,3 +30,5 @@ jobs:
         with:
           token: ${{ secrets.SCORE_BOT_CLASSIC_PAT }}
           configurationFile: .github/renovate.json5
+        env:
+          LOG_LEVEL: debug
