@@ -46,4 +46,22 @@
     "renovate",
     "experimental-do-not-merge",
   ],
+
+  // Update score packages only
+  packageRules: [
+    {
+      // disable all bazel module updates by default
+      matchManagers: ["bazel-module"],
+      enabled: false
+    },
+    {
+      // re-enable only modules whose package name starts with "score"
+      matchManagers: ["bazel-module"],
+      matchPackageNames: ["/^score_.*/"],
+      enabled: true
+    }
+  ],
+
+  // Run on all repos, without requiring local renovate.json
+  onboarding: false,
 }
