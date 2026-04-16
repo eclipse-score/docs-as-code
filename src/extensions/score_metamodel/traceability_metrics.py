@@ -21,13 +21,9 @@ from typing import Any
 
 def is_non_empty(value: Any) -> bool:
     """Return True if value should be treated as present for traceability checks."""
-    if value is None:
-        return False
     if isinstance(value, str):
         return bool(value.strip())
-    if isinstance(value, (list, tuple, set, dict)):
-        return len(value) > 0
-    return True
+    return bool(value)
 
 
 def parse_need_id_list(value: Any) -> list[str]:
