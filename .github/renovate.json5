@@ -57,7 +57,10 @@
       // re-enable only modules whose package name starts with "score"
       matchManagers: ["bazel-module"],
       matchPackageNames: ["/^score_.*/"],
-      enabled: true
+      enabled: true,
+
+      // allow all update types (major, minor, patch) for these modules
+      matchUpdateTypes: ["major", "minor", "patch"],
     }
   ],
 
