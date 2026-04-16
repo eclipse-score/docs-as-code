@@ -18,6 +18,11 @@ on:
     - cron: "0 19 * * *" # Every day at 9:00 PM Europe time
   workflow_dispatch: {} # Allow manual runs too
 
+  # temp:
+  push:
+    branches:
+      - renofix
+
 jobs:
   renovate:
     runs-on: ubuntu-latest
