@@ -70,3 +70,7 @@ http_file(
 )
 
 bazel_dep(name = "score_process", version = "1.5.3")
+
+# Force downgrade to last working version.
+# Remove this once process #661 is merged (drop tooling)
+single_version_override(module_name = "score_tooling", version = "1.1.2")
