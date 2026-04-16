@@ -60,7 +60,8 @@
       enabled: true,
 
       // allow all update types (major, minor, patch) for these modules
-      matchUpdateTypes: ["major", "minor", "patch"],
+      // Does not work as intended, with this setting all PRs disappear:
+      // matchUpdateTypes: ["major", "minor", "patch"],
     }
   ],
 
