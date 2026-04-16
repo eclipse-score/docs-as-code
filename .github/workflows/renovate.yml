@@ -22,6 +22,12 @@ jobs:
   renovate:
     runs-on: ubuntu-latest
     steps:
+      - name: "🕵️‍♂️ Debug PAT: /user"
+        run: |
+          curl -s -H "Authorization: token $token" https://api.github.com/user
+        env:
+          token: ${{ secrets.RENOVATE_TOKEN }}
+
       - name: Checkout repository
         uses: actions/checkout@v6
 
