@@ -32,7 +32,7 @@
   allowedUnsafeExecutions: ["bazelModDeps"],
 
   // 🚨 Run experiment
-  prTitle: "EXPERIMENTAL DO NOT MERGE - {{depName}} update",
+  commitMessagePrefix: "EXPERIMENTAL DO NOT MERGE -",
   prBodyNotes: [
     "🚨 **EXPERIMENTAL DO NOT MERGE** 🚨",
     "This Renovate setup is currently under testing.  ",
@@ -63,6 +63,7 @@
 
   // Run on all repos, without requiring local renovate.json
   onboarding: false,
+  requireConfig: "ignored",
 
   // 2 test PRs per repo should be enough to validate the setup, and we can always increase if needed
   prConcurrentLimit: 2,
