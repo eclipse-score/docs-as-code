@@ -36,10 +36,14 @@
   prTitle: "EXPERIMENTAL DO NOT MERGE - {{depName}} update",
   prBodyNotes: [
     "🚨 **EXPERIMENTAL DO NOT MERGE** 🚨",
-    "This Renovate setup is currently under testing.  "
+    "This Renovate setup is currently under testing.  ",
     "Contact #infrastructure if you have any questions or feedback.",
   ]
 
   // Add labels to all PRs, so we can actually find them
-  labels: ["automation", "renovate", "experimental-do-not-merge"]
+  labels: [
+    "automation",
+    "renovate",
+    "experimental-do-not-merge",
+  ],
 }
