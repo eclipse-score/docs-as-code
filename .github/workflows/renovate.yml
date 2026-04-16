@@ -22,17 +22,11 @@ jobs:
   renovate:
     runs-on: ubuntu-latest
     steps:
-      - name: "🕵️‍♂️ Debug PAT: /user"
-        run: |
-          curl -s -H "Authorization: token $token" https://api.github.com/user
-        env:
-          token: ${{ secrets.RENOVATE_TOKEN }}
-
-      - name: Checkout repository
+      - name: Checkout repository (for config file)
         uses: actions/checkout@v6
 
       - name: Run renovate
         uses: renovatebot/github-action@v46.1.9
         with:
-          token: ${{ secrets.RENOVATE_TOKEN }}
+          token: ${{ secrets.SCORE_BOT_CLASSIC_PAT }}
           configurationFile: .github/renovate.json5
