@@ -39,7 +39,6 @@ def main():
     )
     _ = parser.add_argument(
         "--known_good",
-        required=True,
         help="Path to a required 'known good' JSON file (provided by Bazel).",
     )
     _ = parser.add_argument(
