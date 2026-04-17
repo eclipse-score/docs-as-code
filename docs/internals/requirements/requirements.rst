@@ -559,7 +559,7 @@ Versioning
 
   **Purpose**: In SEooC (Safety Element Out of Context) development, AoU capture the
   operational context and constraints that validate safety cases. Requirements "cover"
-  (are bound to) specific assumptions about their usage environment.
+  (are bound to) specific assumptions.
 
   **Allowed connections**:
 
