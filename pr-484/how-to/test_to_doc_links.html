@@ -498,16 +498,22 @@ If you want a test to be linked, please ensure all requirement properties are pr
 </section>
 <section id="ci-cd-gate-for-linkage-percentage">
 <h2>CI/CD Gate for Linkage Percentage<a class="headerlink" href="#ci-cd-gate-for-linkage-percentage" title="Link to this heading">#</a></h2>
-<p>To enforce traceability in CI:</p>
+<p>The traceability checker can be used as a low-level CI gate over exported
+<code class="docutils literal notranslate"><span class="pre">needs.json</span></code> data.</p>
+<p>Current workflow:</p>
 <ol class="arabic simple">
 <li><p>Run tests.</p></li>
 <li><p>Generate <code class="docutils literal notranslate"><span class="pre">needs.json</span></code>.</p></li>
 <li><p>Execute the traceability checker.</p></li>
 </ol>
+<p>In repository CI, the preferred setup is to wire the coverage check target
+to depend on the test-report and <code class="docutils literal notranslate"><span class="pre">//:needs_json</span></code> targets, so Bazel handles
+the build order automatically.</p>
+<p>You can run the checker as a standalone command, and you can also run it as
+part of documentation creation if your repository wiring does so.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bazel<span class="w"> </span><span class="nb">test</span><span class="w"> </span>//...
 bazel<span class="w"> </span>build<span class="w"> </span>//:needs_json
 bazel<span class="w"> </span>run<span class="w"> </span>//scripts_bazel:traceability_coverage<span class="w"> </span>--<span class="w"> </span><span class="se">\</span>
-<span class="w">   </span>--needs-json<span class="w"> </span>bazel-bin/needs_json/_build/needs/needs.json<span class="w"> </span><span class="se">\</span>
 <span class="w">   </span>--min-req-code<span class="w"> </span><span class="m">100</span><span class="w"> </span><span class="se">\</span>
 <span class="w">   </span>--min-req-test<span class="w"> </span><span class="m">100</span><span class="w"> </span><span class="se">\</span>
 <span class="w">   </span>--min-req-fully-linked<span class="w"> </span><span class="m">100</span><span class="w"> </span><span class="se">\</span>
@@ -515,18 +521,26 @@ bazel<span class="w"> </span>run<span class="w"> </span>//scripts_bazel:traceabi
 <span class="w">   </span>--fail-on-broken-test-refs
 </pre></div>
 </div>
+<p>If <code class="docutils literal notranslate"><span class="pre">//:needs_json</span></code> was built beforehand, the checker locates the default
+<code class="docutils literal notranslate"><span class="pre">needs.json</span></code> output automatically. Use <code class="docutils literal notranslate"><span class="pre">--needs-json</span></code> only when you want
+to point to a non-standard location.</p>
 <p>The checker reports:</p>
 <ul class="simple">
 <li><p>Percentage of implemented requirements with <code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></li>
 <li><p>Percentage of implemented requirements with <code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></li>
 <li><p>Percentage of implemented requirements with both links (fully linked)</p></li>
-<li><p>Percentage of test cases linked to at least one requirement</p></li>
-<li><p>Broken testcase references to unknown requirement IDs</p></li>
 </ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Testcase-based metrics depend on testcase needs being present in the
+exported <code class="docutils literal notranslate"><span class="pre">needs.json</span></code>. Testcases are currently generated as external
+needs, so values such as testcase linkage percentage or broken testcase
+references are only meaningful if those external testcase needs are also
+included in the exported dataset.</p>
+</div>
 <p>To check only unit tests, filter testcase types:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="w">  </span>bazel<span class="w"> </span>run<span class="w"> </span>//scripts_bazel:traceability_coverage<span class="w"> </span>--<span class="w"> </span><span class="se">\</span>
---needs-json<span class="w"> </span>bazel-bin/needs_json/_build/needs/needs.json<span class="w"> </span><span class="se">\</span>
-<span class="w">     </span>--test-types<span class="w"> </span>unit-test
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bazel<span class="w"> </span>run<span class="w"> </span>//scripts_bazel:traceability_coverage<span class="w"> </span>--<span class="w"> </span><span class="se">\</span>
+<span class="w">   </span>--test-types<span class="w"> </span>unit-test
 </pre></div>
 </div>
 <p>Use lower thresholds during rollout and tighten towards 100% over time.</p>
