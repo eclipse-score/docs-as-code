@@ -63,8 +63,8 @@ def _rewrite_needs_json_to_sourcelinks(labels):
         s = str(x)
         if s.endswith("//:needs_json"):
             out.append(s.replace("//:needs_json", "//:sourcelinks_json"))
-        else:
-            out.append(s)
+        #Items which do not end up with '//:needs_json' shall not be appended to 'out'.
+        #They are treated separately and are not related to source code linking.
     return out
 
 def _merge_sourcelinks(name, sourcelinks, known_good = None):
