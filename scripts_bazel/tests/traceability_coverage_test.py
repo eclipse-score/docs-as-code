@@ -110,13 +110,17 @@ def test_traceability_coverage_thresholds_pass(tmp_path: Path) -> None:
     assert output_json.exists()
 
     summary = json.loads(output_json.read_text(encoding="utf-8"))
-    assert summary["requirements"]["total"] == 2
-    assert summary["requirements"]["with_code_link"] == 1
-    assert summary["requirements"]["with_test_link"] == 1
-    assert summary["requirements"]["fully_linked"] == 0
-    assert summary["tests"]["total"] == 3
-    assert summary["tests"]["linked_to_requirements"] == 2
-    assert len(summary["tests"]["broken_references"]) == 1
+    assert summary["schema_version"] == "1"
+    assert summary["generated_by"] == "traceability_coverage"
+    assert "tool_req" in summary["metrics_by_type"]
+    type_metrics = summary["metrics_by_type"]["tool_req"]
+    assert type_metrics["requirements"]["total"] == 2
+    assert type_metrics["requirements"]["with_code_link"] == 1
+    assert type_metrics["requirements"]["with_test_link"] == 1
+    assert type_metrics["requirements"]["fully_linked"] == 0
+    assert type_metrics["tests"]["total"] == 3
+    assert type_metrics["tests"]["linked_to_requirements"] == 2
+    assert len(type_metrics["tests"]["broken_references"]) == 1
 
 
 def test_traceability_coverage_thresholds_fail(tmp_path: Path) -> None:

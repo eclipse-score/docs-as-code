@@ -339,19 +339,28 @@ def main() -> int:
     tests_linked_pct = float(summary["tests"]["linked_to_requirements_pct"])
     broken_test_references = list(summary["tests"]["broken_references"])
 
+    # Build per-type metrics for the JSON output (schema v1).
+    # Each requirement type is computed independently so downstream tools
+    # (e.g. traceability_gate) can apply per-type thresholds.
+    metrics_by_type: dict[str, Any] = {}
+    for req_type in sorted(requirement_types):
+        type_summary = compute_traceability_summary(
+            all_needs=all_needs,
+            requirement_types={req_type},
+            include_not_implemented=args.include_not_implemented,
+            filtered_test_types=filtered_test_types,
+        )
+        metrics_by_type[req_type] = {
+            "include_not_implemented": type_summary["include_not_implemented"],
+            "requirements": type_summary["requirements"],
+            "tests": type_summary["tests"],
+        }
+
     summary_output = {
+        "schema_version": "1",
+        "generated_by": "traceability_coverage",
         "needs_json": str(needs_json),
-        "requirement_types": summary["requirement_types"],
-        "include_not_implemented": summary["include_not_implemented"],
-        "requirements": summary["requirements"],
-        "tests": summary["tests"],
-        "thresholds": {
-            "min_req_code": float(args.min_req_code),
-            "min_req_test": float(args.min_req_test),
-            "min_req_fully_linked": float(args.min_req_fully_linked),
-            "min_tests_linked": float(args.min_tests_linked),
-            "fail_on_broken_test_refs": bool(args.fail_on_broken_test_refs),
-        },
+        "metrics_by_type": metrics_by_type,
     }
 
     _print_summary(

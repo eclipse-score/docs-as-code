@@ -45,3 +45,12 @@ score_pytest(
     ] + all_requirements,
     pytest_config = "//:pyproject.toml",
 )
+
+score_pytest(
+    name = "traceability_gate_test",
+    srcs = ["traceability_gate_test.py"],
+    deps = [
+        "//scripts_bazel:traceability_gate",
+    ] + all_requirements,
+    pytest_config = "//:pyproject.toml",
+)
