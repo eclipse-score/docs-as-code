@@ -35,7 +35,7 @@ A minimal example (add or extend the existing `bazel_deps` stanza):
 
 .. code-block:: starlark
 
-	 bazel_dep(name = "score_process", version = "1.3.0")
+	 bazel_dep(name = "score_process", version = "1.5.3")
 
 2) Extend your `docs` rule so Sphinx picks up the other module's inventory
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
