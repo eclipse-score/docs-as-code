@@ -70,5 +70,9 @@
   {
     "version": "v4.0.1",
     "url": "https://eclipse-score.github.io/docs-as-code/v4.0.1/"
+  },
+  {
+    "version": "v4.0.2",
+    "url": "https://eclipse-score.github.io/docs-as-code/v4.0.2/"
   }
 ]
