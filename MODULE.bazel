@@ -69,13 +69,4 @@ http_file(
     urls = ["https://github.com/withered-magic/starpls/releases/download/v0.1.21/starpls-linux-amd64"],
 )
 
-bazel_dep(name = "score_process", version = "1.5.3")
-
-# 1.5.3 + 3 commits, to drop the transitive score_tooling dependency
-# Note: this will only drop the local score_tooling dependency, as git_override will not
-#       be forwarded to downstream users.
-git_override(
-    module_name = "score_process",
-    commit = "42cfa87d5650fe4b70fcb8dce1cc0e24b658d687",
-    remote = "https://github.com/eclipse-score/process_description.git",
-)
+bazel_dep(name = "score_process", version = "1.5.4")
