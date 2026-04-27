@@ -27,6 +27,15 @@ repos:
       - id: check-added-large-files
         args: ["--maxkb=150"]
 
+  - repo: local
+    hooks:
+      - id: bazel-mod-tidy
+        name: format Bazel module files
+        entry: bazel mod tidy
+        language: system
+        pass_filenames: false
+        files: '(^|/)(MODULE\.bazel|.*\.bzl|BUILD(\.bazel)?)$'
+
   - repo: https://github.com/rhysd/actionlint
     rev: v1.7.11
     hooks:

@@ -63,8 +63,8 @@ def _rewrite_needs_json_to_sourcelinks(labels):
         s = str(x)
         if s.endswith("//:needs_json"):
             out.append(s.replace("//:needs_json", "//:sourcelinks_json"))
-        else:
-            out.append(s)
+        #Items which do not end up with '//:needs_json' shall not be appended to 'out'.
+        #They are treated separately and are not related to source code linking.
     return out
 
 def _merge_sourcelinks(name, sourcelinks, known_good = None):
@@ -156,22 +156,28 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
         deps = deps,
     )
 
+    # If the source directory is the root (".") we must omit it, otherwise:
+    # > invalid glob pattern './**/*.png': segment '.' not permitted
+    if source_dir == ".":
+        source_prefix = ""
+    else:
+        source_prefix = source_dir + "/"
+
     native.filegroup(
         name = "docs_sources",
         srcs = native.glob([
-            source_dir + "/**/*.png",
-            source_dir + "/**/*.svg",
-            source_dir + "/**/*.md",
-            source_dir + "/**/*.rst",
-            source_dir + "/**/*.html",
-            source_dir + "/**/*.css",
-            source_dir + "/**/*.puml",
-            source_dir + "/**/*.need",
-            source_dir + "/**/*.yaml",
-            source_dir + "/**/*.json",
-            source_dir + "/**/*.csv",
-            source_dir + "/**/*.inc",
-            "more_docs/**/*.rst",
+            source_prefix + "**/*.png",
+            source_prefix + "**/*.svg",
+            source_prefix + "**/*.md",
+            source_prefix + "**/*.rst",
+            source_prefix + "**/*.html",
+            source_prefix + "**/*.css",
+            source_prefix + "**/*.puml",
+            source_prefix + "**/*.need",
+            source_prefix + "**/*.yaml",
+            source_prefix + "**/*.json",
+            source_prefix + "**/*.csv",
+            source_prefix + "**/*.inc",
         ], allow_empty = True),
         visibility = ["//visibility:public"],
     )
@@ -279,7 +285,7 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
     sphinx_docs(
         name = "needs_json",
         srcs = [":docs_sources"],
-        config = ":" + source_dir + "/conf.py",
+        config = ":" + source_prefix + "conf.py",
         extra_opts = [
             "-W",
             "--keep-going",

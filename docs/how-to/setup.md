@@ -23,7 +23,7 @@ designed to enhance documentation capabilities in S-CORE.
 Add the module to your `MODULE.bazel` file:
 
 ```starlark
-bazel_dep(name = "score_docs_as_code", version = "2.0.3")
+bazel_dep(name = "score_docs_as_code", version = "4.0.1")
 ```
 
 And make sure to also add the S-core Bazel registry to your `.bazelrc` file
