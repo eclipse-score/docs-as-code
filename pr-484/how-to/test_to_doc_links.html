@@ -33,8 +33,8 @@
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/css/score.css?v=6e51530f" />
-    <link rel="stylesheet" type="text/css" href="../_static/css/score_needs.css?v=1f5dae2a" />
-    <link rel="stylesheet" type="text/css" href="../_static/css/score_design.css?v=d9fd870c" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/score_needs.css?v=82a1844f" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/score_design.css?v=8048e6ee" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-data-viewer/jsonview.bundle.css?v=f6ef2277" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/libs/html/datatables.min.css?v=4b4fd840" />
@@ -396,6 +396,7 @@
 <li class="toctree-l1"><a class="reference internal" href="write_docs.html">Write Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
 <li class="toctree-l1"><a class="reference internal" href="other_modules.html">Reference Other Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dashboards_and_quality_gates.html">Build Dashboards and Quality Gates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="source_to_doc_links.html">Reference Docs in Source Code</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Reference Docs in Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="add_extensions.html">Add Extensions</a></li>
@@ -507,23 +508,29 @@ coverage thresholds.</p></li>
 </ol>
 <p>Separating the two steps keeps the CI gate decoupled from the Sphinx/Bazel
 build: the gate never parses <code class="docutils literal notranslate"><span class="pre">needs.json</span></code> itself.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">metrics.json</span></code> is the <strong>single source of truth</strong> for traceability data.
+It is written by the Sphinx docs build (via the <code class="docutils literal notranslate"><span class="pre">score_metamodel</span></code> extension)
+to <code class="docutils literal notranslate"><span class="pre">_build/needs/metrics.json</span></code> alongside <code class="docutils literal notranslate"><span class="pre">needs.json</span></code>. The same
+<code class="docutils literal notranslate"><span class="pre">compute_traceability_summary</span></code> function that powers the dashboard pie charts
+produces this file, so the gate and the dashboard always show the same numbers.
+The <code class="docutils literal notranslate"><span class="pre">traceability_coverage</span></code> CLI is a standalone alternative for repos that
+run the coverage check outside of a full Sphinx build.</p>
+</div>
 <p class="plantuml">
 <object data="../_images/plantuml-f4c68f548532a386e520390b4567831a806df5a3.svg" type="image/svg+xml" style="width:241px;height:556px;background:#FFFFFF;"></object></p>
 <p>Current workflow:</p>
 <ol class="arabic simple">
 <li><p>Run tests.</p></li>
-<li><p>Generate <code class="docutils literal notranslate"><span class="pre">needs.json</span></code>.</p></li>
-<li><p>Compute metrics and export to <code class="docutils literal notranslate"><span class="pre">metrics.json</span></code>.</p></li>
+<li><p>Build docs (generates <code class="docutils literal notranslate"><span class="pre">needs.json</span></code> <strong>and</strong> <code class="docutils literal notranslate"><span class="pre">metrics.json</span></code>).</p></li>
 <li><p>Run the gate against the exported metrics.</p></li>
 </ol>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bazel<span class="w"> </span><span class="nb">test</span><span class="w"> </span>//...
 bazel<span class="w"> </span>build<span class="w"> </span>//:needs_json
-bazel<span class="w"> </span>run<span class="w"> </span>//scripts_bazel:traceability_coverage<span class="w"> </span>--<span class="w"> </span><span class="se">\</span>
-<span class="w">   </span>--needs-json<span class="w"> </span>bazel-bin/needs_json/needs.json<span class="w"> </span><span class="se">\</span>
-<span class="w">   </span>--json-output<span class="w"> </span>metrics.json
 
 bazel<span class="w"> </span>run<span class="w"> </span>//scripts_bazel:traceability_gate<span class="w"> </span>--<span class="w"> </span><span class="se">\</span>
-<span class="w">   </span>--metrics-json<span class="w"> </span>metrics.json<span class="w"> </span><span class="se">\</span>
+<span class="w">   </span>--metrics-json<span class="w"> </span>bazel-bin/needs_json/_build/needs/metrics.json<span class="w"> </span><span class="se">\</span>
 <span class="w">   </span>--min-req-code<span class="w"> </span><span class="m">100</span><span class="w"> </span><span class="se">\</span>
 <span class="w">   </span>--min-req-test<span class="w"> </span><span class="m">100</span><span class="w"> </span><span class="se">\</span>
 <span class="w">   </span>--min-req-fully-linked<span class="w"> </span><span class="m">100</span><span class="w"> </span><span class="se">\</span>
@@ -537,9 +544,9 @@ bazel<span class="w"> </span>run<span class="w"> </span>//scripts_bazel:traceabi
 flags to 100 and enabling <code class="docutils literal notranslate"><span class="pre">--fail-on-broken-test-refs</span></code>.</p>
 <p>The gate reports:</p>
 <ul class="simple">
-<li><p>Percentage of implemented requirements with <code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></li>
-<li><p>Percentage of implemented requirements with <code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></li>
-<li><p>Percentage of implemented requirements with both links (fully linked)</p></li>
+<li><p>Percentage of requirements with <code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></li>
+<li><p>Percentage of requirements with <code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></li>
+<li><p>Percentage of requirements with both links (fully linked)</p></li>
 <li><p>Percentage of testcases linked to at least one requirement</p></li>
 <li><p>Broken testcase references (testcases referencing an unknown requirement ID)</p></li>
 </ul>
@@ -551,11 +558,22 @@ needs, so values such as testcase linkage percentage or broken testcase
 references are only meaningful if those external testcase needs are also
 included in the exported dataset.</p>
 </div>
-<p>To check only unit tests, pass <code class="docutils literal notranslate"><span class="pre">--test-types</span></code> to the coverage step:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bazel<span class="w"> </span>run<span class="w"> </span>//scripts_bazel:traceability_coverage<span class="w"> </span>--<span class="w"> </span><span class="se">\</span>
-<span class="w">   </span>--needs-json<span class="w"> </span>bazel-bin/needs_json/needs.json<span class="w"> </span><span class="se">\</span>
-<span class="w">   </span>--test-types<span class="w"> </span>unit-test<span class="w"> </span><span class="se">\</span>
-<span class="w">   </span>--json-output<span class="w"> </span>metrics.json
+<p>To restrict which need types are treated as requirements when computing metrics,
+set <code class="docutils literal notranslate"><span class="pre">score_metamodel_requirement_types</span></code> in your Sphinx <code class="docutils literal notranslate"><span class="pre">conf.py</span></code>
+(default: <code class="docutils literal notranslate"><span class="pre">tool_req</span></code>):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">score_metamodel_requirement_types</span> <span class="o">=</span> <span class="s2">&quot;tool_req,comp_req&quot;</span>
+</pre></div>
+</div>
+<p>By default, dashboard and gate use only needs defined in the current repository
+(<code class="docutils literal notranslate"><span class="pre">is_external</span> <span class="pre">==</span> <span class="pre">False</span></code>). This supports per-repo CI gates.
+For integration repositories that intentionally aggregate across dependencies,
+you can include external needs in both dashboard and gate by setting:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">score_metamodel_include_external_needs</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+<p>You can also override dashboard behaviour per pie chart via filter args:</p>
+<div class="highlight-rst notranslate"><div class="highlight"><pre><span></span><span class="p">..</span> <span class="ow">needpie</span><span class="p">::</span> Requirements with Codelinks
+   <span class="nc">:filter-func:</span> src.extensions.score_metamodel.checks.traceability_dashboard.pie_requirements_with_code_links(tool_req,true)
 </pre></div>
 </div>
 <p>Use lower thresholds during rollout and tighten towards 100% over time.</p>
