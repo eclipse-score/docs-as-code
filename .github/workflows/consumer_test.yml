@@ -28,6 +28,12 @@ jobs:
         consumer: ["process_description", "score", "module_template"]
 
     steps:
+      - name: 🛡️ Harden Runner
+        if: github.repository_owner == 'eclipse-score'
+        uses: step-security/harden-runner@v2.18.0
+        with:
+          egress-policy: audit
+
       - name: Checkout PR
         uses: actions/checkout@v4.2.2
 
