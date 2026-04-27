@@ -36,7 +36,7 @@ jobs:
       - name: Run test targets
         run: |
           bazel run --lockfile_mode=error //:ide_support
-          bazel test --lockfile_mode=error //src/... //score_pytest/...
+          bazel test --lockfile_mode=error //...
 
       - name: Prepare bundled consumer report
         if: always()
