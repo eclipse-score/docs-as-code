@@ -82,16 +82,12 @@ In Detail
          type == 'tool_req' and implemented == 'PARTIAL'
          type == 'tool_req' and implemented == 'YES'
 
-         See table: :ref:`tooling_coverage_table_impl_links`
-
    .. grid-item-card::
 
       .. needpie:: Requirements with Codelinks
          :labels: no codelink, with codelink
          :colors: red, green
          :filter-func: src.extensions.score_metamodel.checks.traceability_dashboard.pie_requirements_with_code_links(tool_req)
-
-      See table: :ref:`tooling_coverage_table_impl_links`
 
    .. grid-item-card::
 
@@ -100,8 +96,6 @@ In Detail
          :colors: red, green
          :filter-func: src.extensions.score_metamodel.checks.traceability_dashboard.pie_requirements_with_test_links(tool_req)
 
-      See table: :ref:`tooling_coverage_table_impl_links`
-
    .. grid-item-card::
 
       .. needpie:: Requirements fully linked (code + tests)
@@ -109,16 +103,12 @@ In Detail
          :colors: orange, green
          :filter-func: src.extensions.score_metamodel.checks.traceability_dashboard.pie_requirements_fully_linked(tool_req)
 
-      See table: :ref:`tooling_coverage_table_impl_links`
-
    .. grid-item-card::
 
       .. needpie:: Process requirements linked by tool requirements
          :labels: not linked, linked
          :colors: red, green
          :filter-func: src.extensions.score_metamodel.checks.traceability_dashboard.pie_process_requirements_linked(tool_req,true)
-
-      See table: :ref:`tooling_coverage_table_process_mapping`
 
 
 Process-to-Tool Mapping
