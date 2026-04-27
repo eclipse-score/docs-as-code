@@ -99,13 +99,13 @@ Schema column: **yes** = implemented, **feasible** = could be added, **--** = no
 | Mandatory link ID regex | feasible | yes | Can add `items.pattern` in local; TODO in code |
 | Optional link target type | feasible | yes (info) | Split into separate schema with `severity: "info"` |
 | Optional link ID regex | feasible | yes (info) | Same split-severity approach |
-| Mixed regex+plain link type | -- | yes | `ValidateSchemaType` has no `anyOf`/`oneOf` |
+| Mixed regex+plain link type | to be analyzed | yes | `ValidateSchemaType` has no `anyOf`/`oneOf` |
 | ID structure (parts count) | feasible | yes | Per-type pattern from `parts` field; cannot check file-path part |
 | Prohibited words | feasible | yes | Negative lookahead regex on `title`; less precise than Python |
-| Graph constraints | -- | yes | Cross-need traversals beyond JSON Schema |
-| Undefined extra options | -- | yes | `unevaluatedProperties` would reject sphinx-needs internal fields |
+| Graph constraints | to be analyzed | yes | Cross-need traversals beyond JSON Schema |
+| Undefined extra options | to be analyzed | yes | `unevaluatedProperties` would reject sphinx-needs internal fields |
 | ID length limit (45 chars) | feasible | yes | Can add `maxLength` to per-type ID pattern in schema |
-| Validity period consistency (`valid_from` < `valid_until`) | -- | yes | Cross-field comparison beyond JSON Schema |
+| Validity period consistency (`valid_from` < `valid_until`) | to be analyzed | yes | Cross-field comparison beyond JSON Schema |
 
 #### Rule explanations
 
