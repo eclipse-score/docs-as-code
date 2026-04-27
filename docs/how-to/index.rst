@@ -27,6 +27,7 @@ Here you find practical guides on how to use docs-as-code.
    write_docs
    faq
    other_modules
+   dashboards_and_quality_gates
    source_to_doc_links
    test_to_doc_links
    add_extensions

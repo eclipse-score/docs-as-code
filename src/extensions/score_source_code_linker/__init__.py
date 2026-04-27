@@ -41,15 +41,18 @@ from src.extensions.score_source_code_linker.need_source_links import (
     store_source_code_links_combined_json,
 )
 from src.extensions.score_source_code_linker.needlinks import (
+    NeedLink,
     load_source_code_links_json,
     load_source_code_links_with_metadata_json,
 )
 from src.extensions.score_source_code_linker.repo_source_links import (
+    RepoInfo,
     group_needs_by_repo,
     load_repo_source_links_json,
     store_repo_source_links_json,
 )
 from src.extensions.score_source_code_linker.testlink import (
+    DataForTestLink,
     load_data_of_test_case_json,
     load_test_xml_parsed_json,
 )
@@ -104,9 +107,15 @@ def build_and_save_combined_file(outdir: Path):
         source_code_links = load_source_code_links_with_metadata_json(
             source_code_links_json
         )
-    test_code_links = load_test_xml_parsed_json(
-        get_cache_filename(outdir, "score_xml_parser_cache.json")
-    )
+    test_cache = get_cache_filename(outdir, "score_xml_parser_cache.json")
+    if test_cache.exists():
+        test_code_links = load_test_xml_parsed_json(test_cache)
+    else:
+        LOGGER.debug(
+            "No score_xml_parser_cache.json found. Continuing without test XML links.",
+            type="score_source_code_linker",
+        )
+        test_code_links = []
     scl_list = group_by_need(source_code_links, test_code_links)
     store_source_code_links_combined_json(
         outdir / "score_scl_grouped_cache.json", scl_list
@@ -118,7 +127,7 @@ def build_and_save_combined_file(outdir: Path):
 #          ╰──────────────────────────────────────╯
 
 
-def setup_source_code_linker(app: Sphinx, ws_root: Path):
+def setup_source_code_linker(app: Sphinx, ws_root: Path | None):
     """
     Setting up source_code_linker with all needed options.
     Allows us to only have this run once during live_preview & esbonio
@@ -144,9 +153,24 @@ def setup_source_code_linker(app: Sphinx, ws_root: Path):
     )
 
     score_sourcelinks_json = os.environ.get("SCORE_SOURCELINKS")
+    if not score_sourcelinks_json:
+        score_sourcelinks_json = str(
+            getattr(app.config, "score_sourcelinks_json", "")
+        ).strip()
+        if score_sourcelinks_json:
+            # Reuse existing code paths that expect this env var.
+            os.environ["SCORE_SOURCELINKS"] = score_sourcelinks_json
     if score_sourcelinks_json:
         # No need to generate the JSON file if this env var is set
         # because it points to an existing file with the needed data.
+        return
+
+    if ws_root is None:
+        LOGGER.info(
+            "No workspace root found and no SCORE_SOURCELINKS provided. "
+            "Skipping source-code-link scan.",
+            type="score_source_code_linker",
+        )
         return
 
     scl_cache_json = get_cache_filename(
@@ -277,14 +301,13 @@ def setup_once(app: Sphinx):
     )
     LOGGER.debug(f"DEBUG: Git root is {find_git_root()}")
 
-    # Run only for local files!
-    # ws_root is not set when running on external repositories (dependencies).
+    # Run for local files if possible. In Bazel sandbox builds, ws_root may be
+    # unavailable; in that case we can still operate when SCORE_SOURCELINKS
+    # (or score_sourcelinks_json config) is provided.
     ws_root = find_ws_root()
-    if not ws_root:
-        return
-
-    # When BUILD_WORKSPACE_DIRECTORY is set, we are inside a git repository.
-    assert find_git_root()
+    if ws_root:
+        # When BUILD_WORKSPACE_DIRECTORY is set, we are inside a git repository.
+        assert find_git_root()
 
     # Register & Run (if needed) parsing & saving of JSON caches
     setup_source_code_linker(app, ws_root)
@@ -300,6 +323,13 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     # Esbonio will execute setup() on every iteration.
     # setup_once will only be called once.
     app.add_config_value("KNOWN_GOOD_JSON", default="", rebuild="env", types=str)
+    app.add_config_value("score_sourcelinks_json", default="", rebuild="env", types=str)
+    app.add_config_value(
+        "score_source_code_linker_plain_links",
+        default=False,
+        rebuild="env",
+        types=bool,
+    )
     setup_once(app)
 
     return {
@@ -327,9 +357,6 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
         env: Buildenvironment, this is filled automatically
         app: Sphinx app application, this is filled automatically
     """
-    ws_root = find_ws_root()
-    assert ws_root
-
     Needs_Data = SphinxNeedsData(env)
     needs = Needs_Data.get_needs_mutable()
     needs_copy = deepcopy(
@@ -352,6 +379,41 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
     scl_by_module = load_repo_source_links_json(
         get_cache_filename(app.outdir, "score_repo_grouped_scl_cache.json")
     )
+    plain_links = bool(
+        getattr(app.config, "score_source_code_linker_plain_links", False)
+    )
+
+    def _render_code_link(metadata: RepoInfo, link: NeedLink) -> str:
+        if plain_links:
+            return (
+                "https://github.com/placeholder/placeholder/blob/unknown/"
+                f"{link.file}#L{link.line}<>{link.file}:{link.line}"
+            )
+        try:
+            base = get_github_link(metadata, link)
+        except AssertionError:
+            LOGGER.info(
+                "Falling back to local code-link format (no git remote available): "
+                f"{link.file}:{link.line}",
+                type="score_source_code_linker",
+            )
+            return f"{link.file}:{link.line}"
+        return f"{base}<>{link.file}:{link.line}"
+
+    def _render_test_link(metadata: RepoInfo, link: DataForTestLink) -> str:
+        if plain_links:
+            return str(link.name)
+        try:
+            base = get_github_link(metadata, link)
+        except AssertionError:
+            LOGGER.info(
+                "Falling back to local test-link format (no git remote available): "
+                f"{link.name}",
+                type="score_source_code_linker",
+            )
+            return str(link.name)
+        return f"{base}<>{link.name}"
+
     for module_grouped_needs in scl_by_module:
         for source_code_links in module_grouped_needs.needs:
             need = find_need(needs_copy, source_code_links.need)
@@ -374,11 +436,11 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
             need_as_dict = cast(dict[str, object], need)
             metadata = module_grouped_needs.repo
             need_as_dict["source_code_link"] = ", ".join(
-                f"{get_github_link(metadata, n)}<>{n.file}:{n.line}"
+                _render_code_link(metadata, n)
                 for n in source_code_links.links.CodeLinks
             )
             need_as_dict["testlink"] = ", ".join(
-                f"{get_github_link(metadata, n)}<>{n.name}"
+                _render_test_link(metadata, n)
                 for n in source_code_links.links.TestLinks
             )
 

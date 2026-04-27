@@ -23,6 +23,23 @@ from sphinx_needs.need_item import NeedItem
 
 from ..traceability_metrics import compute_traceability_summary, filter_requirements
 
+_DEFAULT_INCLUDE_EXTERNAL = False
+
+
+def set_default_include_external(include_external: bool) -> None:
+    """Configure default behaviour for including external requirements."""
+    global _DEFAULT_INCLUDE_EXTERNAL
+    _DEFAULT_INCLUDE_EXTERNAL = bool(include_external)
+
+
+def _include_external(kwargs: dict[str, str | int | float]) -> bool:
+    """Read include_external override from filter args, else use configured default."""
+    raw = kwargs.get("arg2")
+    if raw is None:
+        return _DEFAULT_INCLUDE_EXTERNAL
+    text = str(raw).strip().lower()
+    return text in {"1", "true", "yes", "on"}
+
 
 def _requirement_types(kwargs: dict[str, str | int | float]) -> set[str]:
     raw = str(kwargs.get("arg1", "tool_req")).strip()
@@ -35,22 +52,26 @@ def pie_requirements_status(
 ) -> None:
     """Dashboard status split: not implemented, implemented/incomplete, fully linked."""
     req_types = _requirement_types(kwargs)
+    include_external = _include_external(kwargs)
 
     all_requirements = filter_requirements(
         needs,
         requirement_types=req_types,
         include_not_implemented=True,
+        include_external=include_external,
     )
     implemented_requirements = filter_requirements(
         needs,
         requirement_types=req_types,
         include_not_implemented=False,
+        include_external=include_external,
     )
     summary = compute_traceability_summary(
         all_needs=needs,
         requirement_types=req_types,
         include_not_implemented=False,
         filtered_test_types=set(),
+        include_external=include_external,
     )
 
     not_implemented = len(all_requirements) - len(implemented_requirements)
@@ -67,11 +88,13 @@ def pie_requirements_with_code_links(
 ) -> None:
     """Dashboard split: requirements with and without source code links."""
     req_types = _requirement_types(kwargs)
+    include_external = _include_external(kwargs)
     summary = compute_traceability_summary(
         all_needs=needs,
         requirement_types=req_types,
         include_not_implemented=True,
         filtered_test_types=set(),
+        include_external=include_external,
     )
 
     total = int(summary["requirements"]["total"])
@@ -79,3 +102,67 @@ def pie_requirements_with_code_links(
 
     results.append(total - with_code)
     results.append(with_code)
+
+
+def pie_requirements_with_test_links(
+    needs: list[NeedItem], results: list[int], **kwargs: str | int | float
+) -> None:
+    """Dashboard split: requirements with and without testcase links."""
+    req_types = _requirement_types(kwargs)
+    include_external = _include_external(kwargs)
+    summary = compute_traceability_summary(
+        all_needs=needs,
+        requirement_types=req_types,
+        include_not_implemented=True,
+        filtered_test_types=set(),
+        include_external=include_external,
+    )
+
+    total = int(summary["requirements"]["total"])
+    with_test = int(summary["requirements"]["with_test_link"])
+
+    results.append(total - with_test)
+    results.append(with_test)
+
+
+def pie_requirements_fully_linked(
+    needs: list[NeedItem], results: list[int], **kwargs: str | int | float
+) -> None:
+    """Dashboard split: requirements fully linked vs incomplete."""
+    req_types = _requirement_types(kwargs)
+    include_external = _include_external(kwargs)
+    summary = compute_traceability_summary(
+        all_needs=needs,
+        requirement_types=req_types,
+        include_not_implemented=True,
+        filtered_test_types=set(),
+        include_external=include_external,
+    )
+
+    total = int(summary["requirements"]["total"])
+    fully_linked = int(summary["requirements"]["fully_linked"])
+
+    results.append(total - fully_linked)
+    results.append(fully_linked)
+
+
+def pie_process_requirements_linked(
+    needs: list[NeedItem], results: list[int], **kwargs: str | int | float
+) -> None:
+    """Dashboard split: process requirements linked vs not linked."""
+    req_types = _requirement_types(kwargs)
+    include_external = _include_external(kwargs)
+    summary = compute_traceability_summary(
+        all_needs=needs,
+        requirement_types=req_types,
+        include_not_implemented=True,
+        filtered_test_types=set(),
+        include_external=include_external,
+    )
+
+    process_requirements = summary["process_requirements"]
+    total = int(process_requirements["total"])
+    linked = int(process_requirements["linked"])
+
+    results.append(total - linked)
+    results.append(linked)

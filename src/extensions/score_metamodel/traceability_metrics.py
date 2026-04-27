@@ -56,12 +56,15 @@ def filter_requirements(
     all_needs: Sequence[Any],
     requirement_types: set[str],
     include_not_implemented: bool,
+    include_external: bool = False,
 ) -> list[Any]:
-    """Extract requirements by type and implementation state."""
+    """Extract requirements by type, implementation state, and origin."""
     requirements: list[dict[str, Any]] = []
     for need in all_needs:
         need_type = str(need.get("type", "")).strip()
         if need_type not in requirement_types:
+            continue
+        if not include_external and need.get("is_external", False):
             continue
         if not include_not_implemented:
             implemented = str(need.get("implemented", "")).upper().strip()
@@ -168,17 +171,66 @@ def calculate_test_metrics(
     }
 
 
+def calculate_process_requirement_metrics(
+    all_needs: Sequence[Any],
+    include_not_implemented: bool,
+    include_external: bool,
+) -> dict[str, Any]:
+    """Calculate process-requirement coverage via tool_req ``satisfies`` links."""
+    process_requirements = [
+        need
+        for need in all_needs
+        if str(need.get("type", "")).strip() in {"gd_req", "process_req"}
+        and (include_external or not need.get("is_external", False))
+    ]
+    process_requirement_ids = {
+        str(need.get("id", "")).strip()
+        for need in process_requirements
+        if need.get("id")
+    }
+
+    tool_requirements = filter_requirements(
+        all_needs,
+        requirement_types={"tool_req"},
+        include_not_implemented=include_not_implemented,
+        include_external=include_external,
+    )
+
+    linked_process_requirement_ids: set[str] = set()
+    for need in tool_requirements:
+        satisfies_ids = parse_need_id_list(need.get("satisfies", need.get("Satisfies")))
+        for ref_id in satisfies_ids:
+            if ref_id in process_requirement_ids:
+                linked_process_requirement_ids.add(ref_id)
+
+    total = len(process_requirement_ids)
+    linked_by_tool_requirements = len(linked_process_requirement_ids)
+    unlinked_ids = sorted(process_requirement_ids - linked_process_requirement_ids)
+
+    return {
+        "total": total,
+        "linked": linked_by_tool_requirements,
+        "linked_by_tool_requirements": linked_by_tool_requirements,
+        "linked_by_tool_requirements_pct": safe_percent(
+            linked_by_tool_requirements, total
+        ),
+        "unlinked_ids": unlinked_ids,
+    }
+
+
 def compute_traceability_summary(
     all_needs: Sequence[Any],
     requirement_types: set[str],
     include_not_implemented: bool,
     filtered_test_types: set[str],
+    include_external: bool = False,
 ) -> dict[str, Any]:
     """Return full CI/dashboard summary using one shared metric implementation."""
     requirements = filter_requirements(
         all_needs,
         requirement_types=requirement_types,
         include_not_implemented=include_not_implemented,
+        include_external=include_external,
     )
     requirement_ids = {
         str(need.get("id", "")).strip() for need in requirements if need.get("id")
@@ -190,10 +242,17 @@ def compute_traceability_summary(
         requirement_ids=requirement_ids,
         filtered_test_types=filtered_test_types,
     )
+    process_requirement_metrics = calculate_process_requirement_metrics(
+        all_needs,
+        include_not_implemented=include_not_implemented,
+        include_external=include_external,
+    )
 
     return {
         "requirement_types": sorted(requirement_types),
         "include_not_implemented": include_not_implemented,
+        "include_external": include_external,
         "requirements": req_metrics,
         "tests": test_metrics,
+        "process_requirements": process_requirement_metrics,
     }

@@ -72,7 +72,7 @@ def _load_needs(needs_json: Path) -> list[dict[str, Any]]:
 def _default_needs_json_candidates() -> list[Path]:
     return [
         Path("_build/needs/needs.json"),
-        Path("bazel-bin/needs_json/needs.json"),
+        Path("bazel-bin/needs_json/_build/needs/needs.json"),
     ]
 
 

@@ -86,3 +86,9 @@ bazel run //:docs
 #### 6. Access your documentation at
 
 `/_build/index.html`
+
+## Next Step
+
+After basic setup, see {doc}`dashboards_and_quality_gates` to configure
+traceability dashboards, export `metrics.json`, and enforce CI quality gates in
+consumer repositories.

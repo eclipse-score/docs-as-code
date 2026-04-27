@@ -293,10 +293,12 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
             "--jobs",
             "auto",
             "--define=external_needs_source=" + str(data),
+            "--define=score_sourcelinks_json=$(location :sourcelinks_json)",
+            "--define=score_source_code_linker_plain_links=1",
         ],
         formats = ["needs"],
         sphinx = ":sphinx_build",
-        tools = data,
+        tools = data + [":sourcelinks_json"],
         visibility = ["//visibility:public"],
         # Persistent workers cause stale symlinks after dependency version
         # changes, corrupting the Bazel cache.

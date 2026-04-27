@@ -17,8 +17,13 @@
    # ╙                                                          ╜
 .. _docs_statistics:
 
-Implementation State Statistics
-================================
+Tooling Coverage
+================
+
+This page shows how the docs-as-code tooling covers process and tool
+requirements. It focuses on tooling capabilities offered to downstream
+repositories rather than on product-specific traceability inside those
+repositories.
 
 Overview
 --------
@@ -53,72 +58,35 @@ In Detail
 
    .. grid-item-card::
 
-      .. needpie:: Test Results
-         :labels: passed, failed, skipped
-         :colors: green, red, orange
-
-         type == 'testcase' and result == 'passed'
-         type == 'testcase' and result == 'failed'
-         type == 'testcase' and result == 'skipped'
-
-.. grid:: 2
+      .. needpie:: Requirements with linked tests
+         :labels: no test link, with test link
+         :colors: red, green
+         :filter-func: src.extensions.score_metamodel.checks.traceability_dashboard.pie_requirements_with_test_links(tool_req)
 
    .. grid-item-card::
 
-      Failed Tests
-
-      *Hint: this table is empty by definition, as PRs with failing tests are not allowed to be merged in docs-as-code repo.*
-
-      .. needtable:: FAILED TESTS
-         :filter: result == "failed"
-         :tags: TEST
-         :columns: name as "testcase";result;fully_verifies;partially_verifies;test_type;derivation_technique;id as "link"
+      .. needpie:: Requirements fully linked (code + tests)
+         :labels: not fully linked, fully linked
+         :colors: orange, green
+         :filter-func: src.extensions.score_metamodel.checks.traceability_dashboard.pie_requirements_fully_linked(tool_req)
 
    .. grid-item-card::
 
-      Skipped / Disabled Tests
-
-      *Hint: this table is empty by definition, as we do not allow skipped or disabled tests in docs-as-code repo.*
-
-      .. needtable:: SKIPPED/DISABLED TESTS
-         :filter: result != "failed" and result != "passed"
-         :tags: TEST
-         :columns: name as "testcase";result;fully_verifies;partially_verifies;test_type;derivation_technique;id as "link"
+      .. needpie:: Process requirements linked by tool requirements
+         :labels: not linked, linked
+         :colors: red, green
+         :filter-func: src.extensions.score_metamodel.checks.traceability_dashboard.pie_process_requirements_linked(tool_req,true)
 
 
+Process-to-Tool Mapping
+-----------------------
 
+.. needtable:: Process requirement -> tool requirement mapping
+   :types: tool_req
+   :columns: satisfies as "Process Requirement";id as "Tool Requirement"
+   :style: table
 
-All passed Tests
------------------
-
-.. needtable:: SUCCESSFUL TESTS
-   :filter: result == "passed"
-   :tags: TEST
-   :columns: name as "testcase";result;fully_verifies;partially_verifies;test_type;derivation_technique;id as "link"
-
-
-Details About Testcases
-------------------------
-*Data is not filled out yet within the test cases.*
-
-.. needpie:: Test Types Used In Testcases
-   :labels: fault-injection, interface-test, requirements-based, resource-usage
-   :legend:
-
-   type == 'testcase' and test_type == 'fault-injection'
-   type == 'testcase' and test_type == 'interface-test'
-   type == 'testcase' and test_type == 'requirements-based'
-   type == 'testcase' and test_type == 'resource-usage'
-
-
-.. needpie:: Derivation Techniques Used In Testcases
-   :labels: requirements-analysis, design-analysis, boundary-values, equivalence-classes, fuzz-testing, error-guessing, explorative-testing
-   :legend:
-
-   type == 'testcase' and derivation_technique == 'requirements-analysis'
-   type == 'testcase' and derivation_technique == 'design-analysis'
-   type == 'testcase' and derivation_technique == 'boundary-values'
-   type == 'testcase' and derivation_technique == 'equivalence-classes'
-   type == 'testcase' and derivation_technique == 'fuzz-testing'
-   type == 'testcase' and derivation_technique == 'error-guessing'
-   type == 'testcase' and derivation_technique == 'explorative-testing'
+.. needtable:: Tool requirement implementation and links
+   :types: tool_req
+   :columns: id as "Tool Requirement";implemented;source_code_link;testlink
+   :style: table

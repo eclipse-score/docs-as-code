@@ -29,6 +29,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 from typing import Any
@@ -189,6 +190,9 @@ def main() -> int:
         args.fail_on_broken_test_refs = True
 
     metrics_path = Path(args.metrics_json)
+    workspace_dir = os.environ.get("BUILD_WORKSPACE_DIRECTORY", "").strip()
+    if not metrics_path.is_absolute() and workspace_dir:
+        metrics_path = Path(workspace_dir) / metrics_path
     if not metrics_path.exists():
         print(f"Error: metrics JSON not found: {metrics_path}", file=sys.stderr)
         return 1

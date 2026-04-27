@@ -72,6 +72,16 @@ The traceability tooling uses a **two-step architecture**:
 Separating the two steps keeps the CI gate decoupled from the Sphinx/Bazel
 build: the gate never parses ``needs.json`` itself.
 
+.. note::
+
+   ``metrics.json`` is the **single source of truth** for traceability data.
+   It is written by the Sphinx docs build (via the ``score_metamodel`` extension)
+   to ``_build/needs/metrics.json`` alongside ``needs.json``. The same
+   ``compute_traceability_summary`` function that powers the dashboard pie charts
+   produces this file, so the gate and the dashboard always show the same numbers.
+   The ``traceability_coverage`` CLI is a standalone alternative for repos that
+   run the coverage check outside of a full Sphinx build.
+
 .. plantuml::
 
    @startuml
@@ -98,20 +108,16 @@ build: the gate never parses ``needs.json`` itself.
 Current workflow:
 
 1. Run tests.
-2. Generate ``needs.json``.
-3. Compute metrics and export to ``metrics.json``.
-4. Run the gate against the exported metrics.
+2. Build docs (generates ``needs.json`` **and** ``metrics.json``).
+3. Run the gate against the exported metrics.
 
 .. code-block:: bash
 
     bazel test //...
     bazel build //:needs_json
-    bazel run //scripts_bazel:traceability_coverage -- \
-       --needs-json bazel-bin/needs_json/needs.json \
-       --json-output metrics.json
 
     bazel run //scripts_bazel:traceability_gate -- \
-       --metrics-json metrics.json \
+       --metrics-json bazel-bin/needs_json/_build/needs/metrics.json \
        --min-req-code 100 \
        --min-req-test 100 \
        --min-req-fully-linked 100 \
@@ -126,9 +132,9 @@ flags to 100 and enabling ``--fail-on-broken-test-refs``.
 
 The gate reports:
 
-- Percentage of implemented requirements with ``source_code_link``
-- Percentage of implemented requirements with ``testlink``
-- Percentage of implemented requirements with both links (fully linked)
+- Percentage of requirements with ``source_code_link``
+- Percentage of requirements with ``testlink``
+- Percentage of requirements with both links (fully linked)
 - Percentage of testcases linked to at least one requirement
 - Broken testcase references (testcases referencing an unknown requirement ID)
 
@@ -140,13 +146,28 @@ The gate reports:
    references are only meaningful if those external testcase needs are also
    included in the exported dataset.
 
-To check only unit tests, pass ``--test-types`` to the coverage step:
+To restrict which need types are treated as requirements when computing metrics,
+set ``score_metamodel_requirement_types`` in your Sphinx ``conf.py``
+(default: ``tool_req``):
 
-.. code-block:: bash
+.. code-block:: python
 
-    bazel run //scripts_bazel:traceability_coverage -- \
-       --needs-json bazel-bin/needs_json/needs.json \
-       --test-types unit-test \
-       --json-output metrics.json
+    score_metamodel_requirement_types = "tool_req,comp_req"
+
+By default, dashboard and gate use only needs defined in the current repository
+(``is_external == False``). This supports per-repo CI gates.
+For integration repositories that intentionally aggregate across dependencies,
+you can include external needs in both dashboard and gate by setting:
+
+.. code-block:: python
+
+   score_metamodel_include_external_needs = True
+
+You can also override dashboard behaviour per pie chart via filter args:
+
+.. code-block:: rst
+
+   .. needpie:: Requirements with Codelinks
+      :filter-func: src.extensions.score_metamodel.checks.traceability_dashboard.pie_requirements_with_code_links(tool_req,true)
 
 Use lower thresholds during rollout and tighten towards 100% over time.
