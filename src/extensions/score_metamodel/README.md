@@ -75,11 +75,12 @@ JSON Schema cannot express:
 |---|---|---|
 | `check_options` | `check_options.py` | Mandatory/optional field presence and patterns (legacy, overlaps with schema validation) |
 | `check_extra_options` | `check_options.py` | Warns about fields not defined in the metamodel |
+| `check_validity_consistency` | `check_options.py` | Validates that `valid_from` < `valid_until` for `stkh_req` and `feat_req` |
 | `check_id_format` | `attributes_format.py` | ID structure (`<type>__<abbrev>__<element>`, part count) |
-| `check_for_prohibited_words` | `attributes_format.py` | Forbidden words in titles |
+| `check_id_length` | `attributes_format.py` | ID must not exceed 45 characters (62 for IDs containing `example_feature`) |
+| `check_for_prohibited_words` | `attributes_format.py` | Forbidden words in titles and content |
 | `check_metamodel_graph` | `graph_checks.py` | Cross-need constraints (e.g. ASIL_B needs must link to non-QM requirements) |
-| `check_id_contains_feature` | `id_contains_feature.py` | Need IDs must contain the feature abbreviation from the file path |
-| `check_standards` | `standards.py` | Standard compliance link validation |
+| `id_contains_feature` | `id_contains_feature.py` | Need IDs must contain the feature abbreviation from the file path |
 
 ### Coverage comparison
 
@@ -103,6 +104,8 @@ Schema column: **yes** = implemented, **feasible** = could be added, **--** = no
 | Prohibited words | feasible | yes | Negative lookahead regex on `title`; less precise than Python |
 | Graph constraints | -- | yes | Cross-need traversals beyond JSON Schema |
 | Undefined extra options | -- | yes | `unevaluatedProperties` would reject sphinx-needs internal fields |
+| ID length limit (45 chars) | feasible | yes | Can add `maxLength` to per-type ID pattern in schema |
+| Validity period consistency (`valid_from` < `valid_until`) | -- | yes | Cross-field comparison beyond JSON Schema |
 
 #### Rule explanations
 
@@ -164,7 +167,7 @@ same need type with `severity: "info"` that only checks optional link targets.
 Same as above, but for regex-based link IDs on optional links (e.g.
 `optional_links: { links: ^.*$ }` on `tsf`). Same severity-split approach would work.
 
-**Mixed regex+plain link type** (not possible) --
+**Mixed regex+plain link type** (to be analyzed) --
 `workproduct` has `optional_links: { complies: std_wp, ^std_req__aspice_40__iic.*$ }`.
 A `complies` target is valid if it is either a need of type `std_wp` OR has an ID
 matching the regex. The `validate.network` `items` schema applies to ALL linked needs
@@ -178,8 +181,21 @@ These mixed fields are validated only by the Python check.
 `__` and counts parts. *Feasible*: generate a per-type regex like
 `^feat_req__[^_]+(__[^_]+){1}$` in the schema. However, the Python check also
 validates that the ID contains the feature abbreviation from the file path
-(`check_id_contains_feature`), which depends on runtime context and cannot be
+(`id_contains_feature`), which depends on runtime context and cannot be
 expressed in a schema.
+
+**ID length limit (45 chars)** (feasible) --
+The Python check (`check_id_length`) rejects IDs longer than 45 characters (IDs
+containing `example_feature` get an extra 17 characters to account for the
+placeholder being replaced by real feature names). *Feasible*: add `"maxLength": 45`
+to the per-type ID pattern in the schema.
+
+**Validity period consistency** (to be analyzed) --
+`stkh_req` and `feat_req` may carry `valid_from` and `valid_until` version fields.
+The Python check (`check_validity_consistency`) rejects needs where
+`valid_from >= valid_until`. This requires comparing two field values against each
+other, which JSON Schema cannot do (JSON Schema has no cross-field comparison
+operator). Only the Python check can enforce this rule.
 
 **Prohibited words** (feasible) --
 The metamodel forbids words like "shall", "must", "will" in need titles (for
@@ -188,13 +204,13 @@ requirement types). The Python check splits the title into words and checks each
 `^(?!.*\b(shall|must|will)\b).*$`. This is less precise than the Python check
 (which normalizes case, strips punctuation) but catches most violations.
 
-**Graph constraints** (not possible) --
+**Graph constraints** (to be analyzed) --
 `graph_checks` in the metamodel define rules like "an ASIL_B need must link to at
 least one non-QM requirement via `satisfies`". This requires traversing the need
 graph across multiple levels, which is fundamentally beyond what JSON Schema can
 express. Only the Python check (`check_metamodel_graph`) can do this.
 
-**Undefined extra options** (not possible) --
+**Undefined extra options** (to be analyzed) --
 The Python check (`check_extra_options`) warns when a need has fields not defined
 in the metamodel (e.g. a typo like `saftey` instead of `safety`). In theory,
 `unevaluatedProperties: false` could reject unknown fields. In practice, sphinx-needs
