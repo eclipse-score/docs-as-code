@@ -40,27 +40,39 @@ _SUPPORTED_SCHEMA_VERSION = "1"
 def _print_type_summary(need_type: str, metrics: dict[str, Any]) -> None:
     req = metrics["requirements"]
     tst = metrics["tests"]
+    req_total = req["total"]
+    req_with_code_link = req["with_code_link"]
+    req_with_code_link_pct = req["with_code_link_pct"]
+    req_with_test_link = req["with_test_link"]
+    req_with_test_link_pct = req["with_test_link_pct"]
+    req_fully_linked = req["fully_linked"]
+    req_fully_linked_pct = req["fully_linked_pct"]
+    tst_total = tst["total"]
+    tst_linked_to_requirements = tst["linked_to_requirements"]
+    tst_linked_to_requirements_pct = tst["linked_to_requirements_pct"]
+    tst_broken_references = tst["broken_references"]
+
     print(f"[{need_type}]")
     print(
         f"  Requirements with source links: "
-        f"{req['with_code_link']}/{req['total']} ({req['with_code_link_pct']:.2f}%)"
+        f"{req_with_code_link}/{req_total} ({req_with_code_link_pct:.2f}%)"
     )
     print(
         f"  Requirements with test links:   "
-        f"{req['with_test_link']}/{req['total']} ({req['with_test_link_pct']:.2f}%)"
+        f"{req_with_test_link}/{req_total} ({req_with_test_link_pct:.2f}%)"
     )
     print(
         f"  Requirements fully linked:      "
-        f"{req['fully_linked']}/{req['total']} ({req['fully_linked_pct']:.2f}%)"
+        f"{req_fully_linked}/{req_total} ({req_fully_linked_pct:.2f}%)"
     )
     print(
         f"  Tests linked to requirements:   "
-        f"{tst['linked_to_requirements']}/{tst['total']} "
-        f"({tst['linked_to_requirements_pct']:.2f}%)"
+        f"{tst_linked_to_requirements}/{tst_total} "
+        f"({tst_linked_to_requirements_pct:.2f}%)"
     )
-    print(f"  Broken test references:         {len(tst['broken_references'])}")
-    if tst["broken_references"]:
-        for item in tst["broken_references"]:
+    print(f"  Broken test references:         {len(tst_broken_references)}")
+    if tst_broken_references:
+        for item in tst_broken_references:
             print(f"    - {item['testcase']} -> {item['missing_need']}")
 
 
@@ -76,31 +88,36 @@ def _check_type_thresholds(
     failures: list[str] = []
     req = metrics["requirements"]
     tst = metrics["tests"]
+    req_with_code_link_pct = req["with_code_link_pct"]
+    req_with_test_link_pct = req["with_test_link_pct"]
+    req_fully_linked_pct = req["fully_linked_pct"]
+    tst_linked_to_requirements_pct = tst["linked_to_requirements_pct"]
+    tst_broken_references = tst["broken_references"]
     prefix = f"[{need_type}] "
 
-    if req["with_code_link_pct"] < min_req_code:
+    if req_with_code_link_pct < min_req_code:
         failures.append(
             f"{prefix}requirements with code links "
-            f"{req['with_code_link_pct']:.2f}% < {min_req_code:.2f}%"
+            f"{req_with_code_link_pct:.2f}% < {min_req_code:.2f}%"
         )
-    if req["with_test_link_pct"] < min_req_test:
+    if req_with_test_link_pct < min_req_test:
         failures.append(
             f"{prefix}requirements with test links "
-            f"{req['with_test_link_pct']:.2f}% < {min_req_test:.2f}%"
+            f"{req_with_test_link_pct:.2f}% < {min_req_test:.2f}%"
         )
-    if req["fully_linked_pct"] < min_req_fully_linked:
+    if req_fully_linked_pct < min_req_fully_linked:
         failures.append(
             f"{prefix}requirements fully linked "
-            f"{req['fully_linked_pct']:.2f}% < {min_req_fully_linked:.2f}%"
+            f"{req_fully_linked_pct:.2f}% < {min_req_fully_linked:.2f}%"
         )
-    if tst["linked_to_requirements_pct"] < min_tests_linked:
+    if tst_linked_to_requirements_pct < min_tests_linked:
         failures.append(
             f"{prefix}tests linked to requirements "
-            f"{tst['linked_to_requirements_pct']:.2f}% < {min_tests_linked:.2f}%"
+            f"{tst_linked_to_requirements_pct:.2f}% < {min_tests_linked:.2f}%"
         )
-    if fail_on_broken_test_refs and tst["broken_references"]:
+    if fail_on_broken_test_refs and tst_broken_references:
         failures.append(
-            f"{prefix}broken testcase references found: {len(tst['broken_references'])}"
+            f"{prefix}broken testcase references found: {len(tst_broken_references)}"
         )
     return failures
 
@@ -189,7 +206,9 @@ def main() -> int:
         return 1
 
     metrics_by_type: dict[str, Any] = data["metrics_by_type"]
-    types_to_check = [args.need_type] if args.need_type else list(metrics_by_type.keys())
+    types_to_check = (
+        [args.need_type] if args.need_type else list(metrics_by_type.keys())
+    )
 
     print(f"Traceability gate input: {metrics_path}")
     print("-" * 72)
