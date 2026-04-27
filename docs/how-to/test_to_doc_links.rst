@@ -62,42 +62,75 @@ Limitations
 CI/CD Gate for Linkage Percentage
 ---------------------------------
 
-The traceability checker can be used as a low-level CI gate over exported
-``needs.json`` data.
+The traceability tooling uses a **two-step architecture**:
+
+1. ``traceability_coverage`` reads ``needs.json``, computes metrics, and writes
+   a machine-readable ``metrics.json`` (schema v1).
+2. ``traceability_gate`` reads that ``metrics.json`` and enforces configurable
+   coverage thresholds.
+
+Separating the two steps keeps the CI gate decoupled from the Sphinx/Bazel
+build: the gate never parses ``needs.json`` itself.
+
+.. plantuml::
+
+   @startuml
+   skinparam componentStyle rectangle
+   skinparam defaultTextAlignment center
+
+   rectangle "docs build" {
+     component "calc metrics\n(traceability_coverage)" as coverage
+   }
+
+   usecase "test" as test
+   database "needs.json" as needsjson
+   database "metrics.json\n(v1: metrics per needs type,\ne.g. tool_req)" as metricsjson
+   component "gate\n(traceability_gate)" as gate
+
+   test --> coverage : xml
+   needsjson --> coverage
+   coverage --> metricsjson
+   metricsjson --> gate
+   gate --> (Pretty output)
+
+   @enduml
 
 Current workflow:
 
 1. Run tests.
 2. Generate ``needs.json``.
-3. Execute the traceability checker.
-
-In repository CI, the preferred setup is to wire the coverage check target
-to depend on the test-report and ``//:needs_json`` targets, so Bazel handles
-the build order automatically.
-
-You can run the checker as a standalone command, and you can also run it as
-part of documentation creation if your repository wiring does so.
+3. Compute metrics and export to ``metrics.json``.
+4. Run the gate against the exported metrics.
 
 .. code-block:: bash
 
     bazel test //...
     bazel build //:needs_json
     bazel run //scripts_bazel:traceability_coverage -- \
+       --needs-json bazel-bin/needs_json/needs.json \
+       --json-output metrics.json
+
+    bazel run //scripts_bazel:traceability_gate -- \
+       --metrics-json metrics.json \
        --min-req-code 100 \
        --min-req-test 100 \
        --min-req-fully-linked 100 \
        --min-tests-linked 100 \
        --fail-on-broken-test-refs
 
-If ``//:needs_json`` was built beforehand, the checker locates the default
-``needs.json`` output automatically. Use ``--needs-json`` only when you want
-to point to a non-standard location.
+In repository CI, wire the coverage target to depend on the test-report and
+``//:needs_json`` targets so Bazel handles the build order automatically.
 
-The checker reports:
+The ``--require-all-links`` shortcut is equivalent to setting all ``--min-*``
+flags to 100 and enabling ``--fail-on-broken-test-refs``.
+
+The gate reports:
 
 - Percentage of implemented requirements with ``source_code_link``
 - Percentage of implemented requirements with ``testlink``
 - Percentage of implemented requirements with both links (fully linked)
+- Percentage of testcases linked to at least one requirement
+- Broken testcase references (testcases referencing an unknown requirement ID)
 
 .. note::
 
@@ -107,11 +140,13 @@ The checker reports:
    references are only meaningful if those external testcase needs are also
    included in the exported dataset.
 
-To check only unit tests, filter testcase types:
+To check only unit tests, pass ``--test-types`` to the coverage step:
 
 .. code-block:: bash
 
     bazel run //scripts_bazel:traceability_coverage -- \
-       --test-types unit-test
+       --needs-json bazel-bin/needs_json/needs.json \
+       --test-types unit-test \
+       --json-output metrics.json
 
 Use lower thresholds during rollout and tighten towards 100% over time.

@@ -17,8 +17,7 @@
 
 """Traceability gate: read a metrics JSON and enforce coverage thresholds.
 
-This script is the "gate" step from the json-idea architecture:
-
+This script is the "gate" step based from a metrics.json approach. The typical workflow is:
     docs build  →  traceability_coverage --json-output metrics.json
     CI gate     →  traceability_gate --metrics-json metrics.json [--min-* ...]
 
