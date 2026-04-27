@@ -26,13 +26,14 @@ import os
 import xml.etree.ElementTree as ET
 from collections.abc import Callable
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 from unittest.mock import patch
 
 import pytest
 
 # This depends on the `attribute_plugin` in our tooling repository
 from attribute_plugin import add_test_properties  # type: ignore[import-untyped]
+from sphinx.application import Sphinx
 
 import src.extensions.score_source_code_linker.xml_parser as xml_parser
 from src.extensions.score_source_code_linker.testlink import DataOfTestCase
@@ -336,7 +337,7 @@ def test_short_hash_consistency_and_format():
 
 
 def test_construct_and_add_need_uses_fallback_url_for_missing_repo_metadata(
-    monkeypatch,
+    monkeypatch: pytest.MonkeyPatch,
 ):
     calls: list[dict[str, object]] = []
 
@@ -349,7 +350,7 @@ def test_construct_and_add_need_uses_fallback_url_for_missing_repo_metadata(
     testcase = DataOfTestCase(
         name="tc_missing_meta",
         file="tests/foo_test.py",
-        line=10,
+        line="10",
         result="passed",
         result_text="",
         FullyVerifies="REQ_1",
@@ -361,7 +362,10 @@ def test_construct_and_add_need_uses_fallback_url_for_missing_repo_metadata(
         url=None,
     )
 
-    xml_parser.construct_and_add_need(app=object(), tn=testcase)
+    xml_parser.construct_and_add_need(
+        app=cast(Sphinx, object()),
+        tn=testcase,
+    )
 
     # Must not crash and should create an external need using fallback metadata.
     assert len(calls) == 1

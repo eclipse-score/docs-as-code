@@ -16,6 +16,10 @@
 import json
 from pathlib import Path
 from types import SimpleNamespace
+from typing import cast
+
+import pytest
+from sphinx.application import Sphinx
 
 import src.extensions.score_metamodel.__init__ as metamodel_init
 
@@ -56,10 +60,15 @@ def _app(tmp_path: Path, include_external: bool) -> SimpleNamespace:
     )
 
 
-def test_write_metrics_json_defaults_to_local_only(monkeypatch, tmp_path: Path) -> None:
+def test_write_metrics_json_defaults_to_local_only(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
     monkeypatch.setattr(metamodel_init, "SphinxNeedsData", _FakeNeedsData)
 
-    metamodel_init._write_metrics_json(_app(tmp_path, include_external=False), None)
+    metamodel_init._write_metrics_json(
+        cast(Sphinx, _app(tmp_path, include_external=False)),
+        None,
+    )
 
     payload = json.loads((tmp_path / "metrics.json").read_text(encoding="utf-8"))
     metrics = payload["metrics_by_type"]["tool_req"]
@@ -70,10 +79,15 @@ def test_write_metrics_json_defaults_to_local_only(monkeypatch, tmp_path: Path) 
     assert metrics["requirements"]["total"] == 1
 
 
-def test_write_metrics_json_can_include_external(monkeypatch, tmp_path: Path) -> None:
+def test_write_metrics_json_can_include_external(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
     monkeypatch.setattr(metamodel_init, "SphinxNeedsData", _FakeNeedsData)
 
-    metamodel_init._write_metrics_json(_app(tmp_path, include_external=True), None)
+    metamodel_init._write_metrics_json(
+        cast(Sphinx, _app(tmp_path, include_external=True)),
+        None,
+    )
 
     payload = json.loads((tmp_path / "metrics.json").read_text(encoding="utf-8"))
     metrics = payload["metrics_by_type"]["tool_req"]

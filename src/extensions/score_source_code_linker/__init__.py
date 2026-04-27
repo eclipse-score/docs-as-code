@@ -23,7 +23,7 @@ source code links from a JSON file and add them to the needs.
 import os
 from copy import deepcopy
 from pathlib import Path
-from typing import cast
+from typing import Any, cast
 
 from sphinx.application import Sphinx
 from sphinx.environment import BuildEnvironment
@@ -346,6 +346,102 @@ def find_need(all_needs: NeedsMutable, id: str) -> NeedItem | None:
     return all_needs.get(id)
 
 
+def _log_existing_links(needs: NeedsMutable) -> None:
+    """Emit debug logs for needs that already contain source/test links."""
+    if LOGGER.getEffectiveLevel() < 10:
+        return
+
+    for need_id, need in needs.items():
+        if need.get("source_code_link"):
+            LOGGER.debug(
+                f"?? Need {need_id} already has source_code_link: "
+                f"{need.get('source_code_link')}"
+            )
+        if need.get("testlink"):
+            LOGGER.debug(
+                f"?? Need {need_id} already has testlink: {need.get('testlink')}"
+            )
+
+
+def _render_code_link(plain_links: bool, metadata: RepoInfo, link: NeedLink) -> str:
+    if plain_links:
+        return (
+            "https://github.com/placeholder/placeholder/blob/unknown/"
+            f"{link.file}#L{link.line}<>{link.file}:{link.line}"
+        )
+    try:
+        base = get_github_link(metadata, link)
+    except AssertionError:
+        LOGGER.info(
+            "Falling back to local code-link format (no git remote available): "
+            f"{link.file}:{link.line}",
+            type="score_source_code_linker",
+        )
+        return f"{link.file}:{link.line}"
+    return f"{base}<>{link.file}:{link.line}"
+
+
+def _render_test_link(
+    plain_links: bool,
+    metadata: RepoInfo,
+    link: DataForTestLink,
+) -> str:
+    if plain_links:
+        return str(link.name)
+    try:
+        base = get_github_link(metadata, link)
+    except AssertionError:
+        LOGGER.info(
+            "Falling back to local test-link format (no git remote available): "
+            f"{link.name}",
+            type="score_source_code_linker",
+        )
+        return str(link.name)
+    return f"{base}<>{link.name}"
+
+
+def _warn_missing_need(source_code_links: object) -> None:
+    links = cast(Any, source_code_links).links
+    need_id = cast(Any, source_code_links).need
+
+    for code_link in links.CodeLinks:
+        LOGGER.warning(
+            f"{code_link.file}:{code_link.line}: Could not find {need_id} "
+            "in documentation [CODE LINK]",
+            type="score_source_code_linker",
+        )
+    for test_link in links.TestLinks:
+        LOGGER.warning(
+            f"{test_link.file}:{test_link.line}: Could not find {need_id} "
+            "in documentation [TEST LINK]",
+            type="score_source_code_linker",
+        )
+
+
+def _apply_links_to_need(
+    needs_data: SphinxNeedsData,
+    need: NeedItem,
+    source_code_links: object,
+    metadata: RepoInfo,
+    plain_links: bool,
+) -> None:
+    links = cast(Any, source_code_links).links
+    need_as_dict = cast(dict[str, object], need)
+    need_as_dict["source_code_link"] = ", ".join(
+        _render_code_link(plain_links, metadata, code_link)
+        for code_link in links.CodeLinks
+    )
+    need_as_dict["testlink"] = ", ".join(
+        _render_test_link(plain_links, metadata, test_link)
+        for test_link in links.TestLinks
+    )
+
+    # NOTE: Removing & adding the need is important to make sure
+    # the needs gets 're-evaluated'.
+    needs_data.remove_need(need["id"])
+    needs_data.add_need(need)
+
+
 # re-qid: gd_req__req__attr_impl
 def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
     """
@@ -357,24 +453,13 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
         env: Buildenvironment, this is filled automatically
         app: Sphinx app application, this is filled automatically
     """
-    Needs_Data = SphinxNeedsData(env)
-    needs = Needs_Data.get_needs_mutable()
+    needs_data = SphinxNeedsData(env)
+    needs = needs_data.get_needs_mutable()
     needs_copy = deepcopy(
         needs
     )  # TODO: why do we create a copy? Can we also needs_copy = needs[:]? copy(needs)?
 
-    # Enabled automatically for DEBUGGING
-    if LOGGER.getEffectiveLevel() >= 10:
-        for id, need in needs.items():
-            if need.get("source_code_link"):
-                LOGGER.debug(
-                    f"?? Need {id} already has source_code_link: "
-                    f"{need.get('source_code_link')}"
-                )
-            if need.get("testlink"):
-                LOGGER.debug(
-                    f"?? Need {id} already has testlink: {need.get('testlink')}"
-                )
+    _log_existing_links(needs)
 
     scl_by_module = load_repo_source_links_json(
         get_cache_filename(app.outdir, "score_repo_grouped_scl_cache.json")
@@ -383,71 +468,21 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
         getattr(app.config, "score_source_code_linker_plain_links", False)
     )
 
-    def _render_code_link(metadata: RepoInfo, link: NeedLink) -> str:
-        if plain_links:
-            return (
-                "https://github.com/placeholder/placeholder/blob/unknown/"
-                f"{link.file}#L{link.line}<>{link.file}:{link.line}"
-            )
-        try:
-            base = get_github_link(metadata, link)
-        except AssertionError:
-            LOGGER.info(
-                "Falling back to local code-link format (no git remote available): "
-                f"{link.file}:{link.line}",
-                type="score_source_code_linker",
-            )
-            return f"{link.file}:{link.line}"
-        return f"{base}<>{link.file}:{link.line}"
-
-    def _render_test_link(metadata: RepoInfo, link: DataForTestLink) -> str:
-        if plain_links:
-            return str(link.name)
-        try:
-            base = get_github_link(metadata, link)
-        except AssertionError:
-            LOGGER.info(
-                "Falling back to local test-link format (no git remote available): "
-                f"{link.name}",
-                type="score_source_code_linker",
-            )
-            return str(link.name)
-        return f"{base}<>{link.name}"
-
     for module_grouped_needs in scl_by_module:
         for source_code_links in module_grouped_needs.needs:
             need = find_need(needs_copy, source_code_links.need)
             if need is None:
                 # TODO: print github annotations as in https://github.com/eclipse-score/bazel_registry/blob/7423b9996a45dd0a9ec868e06a970330ee71cf4f/tools/verify_semver_compatibility_level.py#L126-L129
-                for n in source_code_links.links.CodeLinks:
-                    LOGGER.warning(
-                        f"{n.file}:{n.line}: Could not find {source_code_links.need} "
-                        "in documentation [CODE LINK]",
-                        type="score_source_code_linker",
-                    )
-                for n in source_code_links.links.TestLinks:
-                    LOGGER.warning(
-                        f"{n.file}:{n.line}: Could not find {source_code_links.need} "
-                        "in documentation [TEST LINK]",
-                        type="score_source_code_linker",
-                    )
+                _warn_missing_need(source_code_links)
                 continue
 
-            need_as_dict = cast(dict[str, object], need)
-            metadata = module_grouped_needs.repo
-            need_as_dict["source_code_link"] = ", ".join(
-                _render_code_link(metadata, n)
-                for n in source_code_links.links.CodeLinks
+            _apply_links_to_need(
+                needs_data=needs_data,
+                need=need,
+                source_code_links=source_code_links,
+                metadata=module_grouped_needs.repo,
+                plain_links=plain_links,
             )
-            need_as_dict["testlink"] = ", ".join(
-                _render_test_link(metadata, n)
-                for n in source_code_links.links.TestLinks
-            )
-
-            # NOTE: Removing & adding the need is important to make sure
-            # the needs gets 're-evaluated'.
-            Needs_Data.remove_need(need["id"])
-            Needs_Data.add_need(need)
 
 
 #          ╭──────────────────────────────────────╮

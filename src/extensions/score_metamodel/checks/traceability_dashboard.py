@@ -19,6 +19,9 @@
 
 from __future__ import annotations
 
+from collections.abc import Sequence
+from typing import Any
+
 from sphinx_needs.need_item import NeedItem
 
 from ..traceability_metrics import compute_traceability_summary, filter_requirements
@@ -48,7 +51,9 @@ def _requirement_types(kwargs: dict[str, str | int | float]) -> set[str]:
 
 
 def pie_requirements_status(
-    needs: list[NeedItem], results: list[int], **kwargs: str | int | float
+    needs: Sequence[NeedItem | dict[str, Any]],
+    results: list[int],
+    **kwargs: str | int | float,
 ) -> None:
     """Dashboard status split: not implemented, implemented/incomplete, fully linked."""
     req_types = _requirement_types(kwargs)
@@ -84,7 +89,9 @@ def pie_requirements_status(
 
 
 def pie_requirements_with_code_links(
-    needs: list[NeedItem], results: list[int], **kwargs: str | int | float
+    needs: Sequence[NeedItem | dict[str, Any]],
+    results: list[int],
+    **kwargs: str | int | float,
 ) -> None:
     """Dashboard split: requirements with and without source code links."""
     req_types = _requirement_types(kwargs)
@@ -105,7 +112,9 @@ def pie_requirements_with_code_links(
 
 
 def pie_requirements_with_test_links(
-    needs: list[NeedItem], results: list[int], **kwargs: str | int | float
+    needs: Sequence[NeedItem | dict[str, Any]],
+    results: list[int],
+    **kwargs: str | int | float,
 ) -> None:
     """Dashboard split: requirements with and without testcase links."""
     req_types = _requirement_types(kwargs)
@@ -126,7 +135,9 @@ def pie_requirements_with_test_links(
 
 
 def pie_requirements_fully_linked(
-    needs: list[NeedItem], results: list[int], **kwargs: str | int | float
+    needs: Sequence[NeedItem | dict[str, Any]],
+    results: list[int],
+    **kwargs: str | int | float,
 ) -> None:
     """Dashboard split: requirements fully linked vs incomplete."""
     req_types = _requirement_types(kwargs)
@@ -147,7 +158,9 @@ def pie_requirements_fully_linked(
 
 
 def pie_process_requirements_linked(
-    needs: list[NeedItem], results: list[int], **kwargs: str | int | float
+    needs: Sequence[NeedItem | dict[str, Any]],
+    results: list[int],
+    **kwargs: str | int | float,
 ) -> None:
     """Dashboard split: process requirements linked vs not linked."""
     req_types = _requirement_types(kwargs)

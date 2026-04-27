@@ -141,7 +141,9 @@ def test_compute_traceability_summary_process_requirements_summary() -> None:
     assert process_requirements["unlinked_ids"] == ["PR_LOCAL_3"]
 
 
-def test_compute_traceability_summary_process_requirements_respects_include_external() -> None:
+def test_compute_traceability_summary_process_requirements_respects_include_external() -> (
+    None
+):
     all_needs = [
         {
             "id": "TOOL_REQ_LOCAL",

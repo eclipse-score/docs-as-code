@@ -13,12 +13,17 @@
 
 """Tests that dashboard filters follow local/external settings."""
 
+from collections.abc import Sequence
+from typing import Any
+
+import pytest
+
 from src.extensions.score_metamodel.checks import traceability_dashboard
 from src.extensions.score_metamodel.checks.traceability_dashboard import (
     pie_process_requirements_linked,
     pie_requirements_fully_linked,
-    pie_requirements_with_test_links,
     pie_requirements_with_code_links,
+    pie_requirements_with_test_links,
     set_default_include_external,
 )
 from src.extensions.score_metamodel.traceability_metrics import (
@@ -176,17 +181,17 @@ def test_requirements_fully_linked_can_include_external() -> None:
 
 
 def test_process_requirements_linked_uses_stream_a_process_requirement_totals(
-    monkeypatch,
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     captured: dict[str, object] = {}
 
     def _fake_summary(
-        all_needs,
-        requirement_types,
-        include_not_implemented,
-        filtered_test_types,
-        include_external,
-    ):
+        all_needs: Sequence[dict[str, Any]],
+        requirement_types: set[str],
+        include_not_implemented: bool,
+        filtered_test_types: set[str],
+        include_external: bool,
+    ) -> dict[str, dict[str, int]]:
         captured["all_needs"] = all_needs
         captured["requirement_types"] = requirement_types
         captured["include_not_implemented"] = include_not_implemented
@@ -197,10 +202,14 @@ def test_process_requirements_linked_uses_stream_a_process_requirement_totals(
             "process_requirements": {"total": 4, "linked": 3},
         }
 
-    monkeypatch.setattr(traceability_dashboard, "compute_traceability_summary", _fake_summary)
+    monkeypatch.setattr(
+        traceability_dashboard, "compute_traceability_summary", _fake_summary
+    )
 
     results: list[int] = []
-    pie_process_requirements_linked(_needs(), results, arg1="tool_req,sys_req", arg2="true")
+    pie_process_requirements_linked(
+        _needs(), results, arg1="tool_req,sys_req", arg2="true"
+    )
 
     assert results == [1, 3]
     assert captured["requirement_types"] == {"tool_req", "sys_req"}
