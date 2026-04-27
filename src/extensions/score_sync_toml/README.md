@@ -110,9 +110,9 @@ score_metamodel.setup()  ──► app.config.needs_types (Python objects)
                                          ▼
                      needs_metamodel_generated.toml ───────────┐
                                                                │
-shared.toml  ──────────────────────────────────────────────────┤  merge via
+shared.toml ───────────────────────────────────────────────────┤  merge via
                                                                │  needs_config_writer
-app.config (all other needs_* settings)  ──────────────────────┤
+app.config (all other needs_* settings) ───────────────────────┤
                                                                ▼
                                                      ubproject.toml
                                                           │
