@@ -33,7 +33,6 @@ import pytest
 
 # This depends on the `attribute_plugin` in our tooling repository
 from attribute_plugin import add_test_properties  # type: ignore[import-untyped]
-from sphinx.application import Sphinx
 
 import src.extensions.score_source_code_linker.xml_parser as xml_parser
 from src.extensions.score_source_code_linker.testlink import DataOfTestCase
@@ -362,8 +361,9 @@ def test_construct_and_add_need_uses_fallback_url_for_missing_repo_metadata(
         url=None,
     )
 
+    app_stub: Any = object()
     xml_parser.construct_and_add_need(
-        app=cast(Sphinx, object()),
+        app=app_stub,
         tn=testcase,
     )
 

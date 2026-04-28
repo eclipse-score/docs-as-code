@@ -11,6 +11,10 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
+from typing import cast
+
+from sphinx_needs.need_item import NeedItem
+
 from src.extensions.score_metamodel.sphinx_filters import (
     generic_pie_items_by_tag,
     generic_pie_linked_items,
@@ -18,15 +22,18 @@ from src.extensions.score_metamodel.sphinx_filters import (
 
 
 def test_generic_pie_linked_items_matches_source_by_id_prefix() -> None:
-    needs = [
-        {"id": "std_req__iso26262__001", "type": "std_req"},
-        # Type intentionally does not match selector prefix, id does.
-        {
-            "id": "gd_guidl__xyz",
-            "type": "guideline",
-            "complies": ["std_req__iso26262__001"],
-        },
-    ]
+    needs = cast(
+        list[NeedItem],
+        [
+            {"id": "std_req__iso26262__001", "type": "std_req"},
+            # Type intentionally does not match selector prefix, id does.
+            {
+                "id": "gd_guidl__xyz",
+                "type": "guideline",
+                "complies": ["std_req__iso26262__001"],
+            },
+        ],
+    )
 
     results: list[int] = []
     generic_pie_linked_items(
@@ -41,16 +48,19 @@ def test_generic_pie_linked_items_matches_source_by_id_prefix() -> None:
 
 
 def test_generic_pie_items_by_tag_matches_source_by_id_prefix() -> None:
-    needs = [
-        {"id": "REQ_A", "type": "tool_req", "tags": ["aspice40_man5"]},
-        {"id": "REQ_B", "type": "tool_req", "tags": ["aspice40_man5"]},
-        # Type intentionally does not match selector prefix, id does.
-        {
-            "id": "gd_req__abc",
-            "type": "process_requirement",
-            "complies": ["REQ_A"],
-        },
-    ]
+    needs = cast(
+        list[NeedItem],
+        [
+            {"id": "REQ_A", "type": "tool_req", "tags": ["aspice40_man5"]},
+            {"id": "REQ_B", "type": "tool_req", "tags": ["aspice40_man5"]},
+            # Type intentionally does not match selector prefix, id does.
+            {
+                "id": "gd_req__abc",
+                "type": "process_requirement",
+                "complies": ["REQ_A"],
+            },
+        ],
+    )
 
     results: list[int] = []
     generic_pie_items_by_tag(
