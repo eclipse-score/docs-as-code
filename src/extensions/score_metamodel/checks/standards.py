@@ -22,7 +22,6 @@ from ..sphinx_filters import (
     generic_pie_items_by_tag,
     generic_pie_items_in_relationships,
     generic_pie_linked_items,
-    generic_pie_workproducts_by_type,
 )
 
 # from score_metamodel import (
@@ -247,7 +246,7 @@ def my_pie_linked_standard_workproducts(
     See: https://sphinx-needs.readthedocs.io/en/latest/filter.html#arguments
     """
     standard = str(kwargs["arg1"])
-    generic_pie_workproducts_by_type(
+    generic_pie_linked_items(
         needs, results, arg1=f"std_wp__{standard}__", arg2="workproduct"
     )
 

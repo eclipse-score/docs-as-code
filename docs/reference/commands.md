@@ -8,10 +8,10 @@
 
 | Target                                         | What it does                                                                                      |
 | ---------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| `bazel run //:docs`                            | Builds documentation                                                                              |
+| `bazel run //:docs`                            | Builds documentation (also writes `metrics.json` via the score_metamodel extension)               |
 | `bazel run //:docs_check`                      | Verifies documentation correctness                                                                |
 | `bazel run //:docs_combo`                      | Builds combined documentation with all external dependencies included                             |
-| `bazel run @score_docs_as_code//scripts_bazel:traceability_coverage -- --needs-json bazel-bin/needs_json/needs.json --min-req-code 100 --min-req-test 100 --min-req-fully-linked 100 --min-tests-linked 100 --fail-on-broken-test-refs` | Calculates requirement/test traceability percentages and fails if thresholds are not met |
+| `bazel run @score_docs_as_code//scripts_bazel:traceability_gate -- --metrics-json bazel-bin/needs_json/_build/needs/metrics.json --min-req-code 100 --min-req-test 100 --min-req-fully-linked 100 --min-tests-linked 100 --fail-on-broken-test-refs` | Reads the pre-computed metrics.json from the docs build and fails if coverage thresholds are not met |
 | `bazel run //:live_preview`                    | Creates a live_preview of the documentation viewable in a local server                            |
 | `bazel run //:live_preview_combo_experimental` | Creates a live_preview of the full documentation with all dependencies viewable in a local server |
 | `bazel run //:ide_support`                     | Sets up a Python venv for esbonio (Remember to restart VS Code!)                                  |

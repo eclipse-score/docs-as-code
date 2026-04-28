@@ -43,14 +43,6 @@ py_binary(
 )
 
 py_binary(
-    name = "traceability_coverage",
-    srcs = ["traceability_coverage.py"],
-    main = "traceability_coverage.py",
-    visibility = ["//visibility:public"],
-    deps = all_requirements + ["//src/extensions/score_metamodel:score_metamodel"],
-)
-
-py_binary(
     name = "traceability_gate",
     srcs = ["traceability_gate.py"],
     main = "traceability_gate.py",

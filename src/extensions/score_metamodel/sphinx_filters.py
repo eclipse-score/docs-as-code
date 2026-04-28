@@ -45,23 +45,25 @@ from sphinx_needs.need_item import NeedItem
 def generic_pie_linked_items(
     needs: list[NeedItem], results: list[int], **kwargs: str | int | float
 ) -> None:
-    """Count items matching an ID prefix split by compliance linkage.
+    """Count items matching an ID prefix split by linkage via a named link field.
 
     Finds all needs whose ``id`` starts with *arg1*, then checks whether
-    each one appears in the ``complies`` field of any need whose ``type``
+    each one appears in the *arg3* field of any need whose ``type``
     starts with *arg2*.
 
     :filter-func: arguments:
 
         - ``arg1`` – ID prefix of the items to count
           (e.g. ``std_req__iso26262__``)
-        - ``arg2`` – type prefix of the source needs whose ``complies``
-          lists are scanned (e.g. ``gd_``)
+        - ``arg2`` – type prefix of the source needs to scan (e.g. ``gd_``)
+        - ``arg3`` – name of the link field to scan on source needs
+          (default: ``complies``)
 
     Appends to *results*: ``[linked_count, not_linked_count]``
     """
     id_prefix = str(kwargs.get("arg1", ""))
     compliance_prefix = str(kwargs.get("arg2", ""))
+    link_field = str(kwargs.get("arg3", "complies"))
 
     target_ids = [
         str(n.get("id", ""))
@@ -73,7 +75,7 @@ def generic_pie_linked_items(
         ref
         for n in needs
         if str(n.get("type", "")).startswith(compliance_prefix)
-        for ref in n.get("complies", [])
+        for ref in n.get(link_field, [])
         if ref
     }
 
@@ -87,29 +89,31 @@ def generic_pie_linked_items(
 def generic_pie_items_by_tag(
     needs: list[NeedItem], results: list[int], **kwargs: str | int | float
 ) -> None:
-    """Count items carrying a given tag split by compliance linkage.
+    """Count items carrying a given tag split by linkage via a named link field.
 
     Checks every need that has *arg1* in its ``tags`` field and splits them
-    by whether their id appears in the ``complies`` field of any need whose
+    by whether their id appears in the *arg3* field of any need whose
     ``type`` starts with *arg2*.
 
     :filter-func: arguments:
 
         - ``arg1`` – tag to filter by (e.g. ``aspice40_man5``).
           Note: tag values must not contain dots.
-        - ``arg2`` – type prefix of the source needs whose ``complies``
-          lists are scanned (e.g. ``gd_``)
+        - ``arg2`` – type prefix of the source needs to scan (e.g. ``gd_``)
+        - ``arg3`` – name of the link field to scan on source needs
+          (default: ``complies``)
 
     Appends to *results*: ``[linked_count, not_linked_count]``
     """
     tag = str(kwargs.get("arg1", ""))
     compliance_prefix = str(kwargs.get("arg2", ""))
+    link_field = str(kwargs.get("arg3", "complies"))
 
     linked_ids: set[str] = {
         ref
         for n in needs
         if str(n.get("type", "")).startswith(compliance_prefix)
-        for ref in n.get("complies", [])
+        for ref in n.get(link_field, [])
         if ref
     }
 
@@ -124,29 +128,6 @@ def generic_pie_items_by_tag(
 
     results.append(linked)
     results.append(not_linked)
-
-
-def generic_pie_workproducts_by_type(
-    needs: list[NeedItem], results: list[int], **kwargs: str | int | float
-) -> None:
-    """Count work-product items matching an ID prefix split by compliance linkage.
-
-    Semantically equivalent to :func:`generic_pie_linked_items` but scoped to
-    work-product traceability where the compliance source type is typically an
-    exact match (e.g. ``workproduct``) rather than a prefix.  Because
-    ``"workproduct".startswith("workproduct")`` is ``True``, both functions use
-    the same underlying logic.
-
-    :filter-func: arguments:
-
-        - ``arg1`` – ID prefix of the work-product items to count
-          (e.g. ``std_wp__iso26262__``)
-        - ``arg2`` – type (or type prefix) of source needs whose ``complies``
-          lists are scanned (e.g. ``workproduct``)
-
-    Appends to *results*: ``[linked_count, not_linked_count]``
-    """
-    generic_pie_linked_items(needs, results, **kwargs)
 
 
 def generic_pie_items_in_relationships(

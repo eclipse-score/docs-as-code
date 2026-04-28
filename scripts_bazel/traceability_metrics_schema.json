@@ -2,9 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://eclipse-score.github.io/docs-as-code/traceability-metrics-schema.json",
   "title": "Traceability Metrics",
-  "description": "Per-need-type traceability coverage metrics produced by the docs build (traceability_coverage --json-output). Consumed by traceability_gate to enforce coverage thresholds without re-parsing needs.json.",
+  "description": "Per-need-type traceability coverage metrics produced by the docs build (score_metamodel Sphinx extension). Consumed by traceability_gate to enforce coverage thresholds without re-parsing needs.json.",
   "type": "object",
-  "required": ["schema_version", "generated_by", "needs_json", "metrics_by_type"],
+  "required": ["schema_version", "generated_by", "metrics_by_type"],
   "additionalProperties": false,
   "properties": {
     "schema_version": {
@@ -14,11 +14,7 @@
     },
     "generated_by": {
       "type": "string",
-      "description": "Name of the tool that produced this file (e.g. 'traceability_coverage')."
-    },
-    "needs_json": {
-      "type": "string",
-      "description": "Path to the needs.json that was used as input."
+      "description": "Name of the producer that generated this file (e.g. 'sphinx_build')."
     },
     "metrics_by_type": {
       "type": "object",

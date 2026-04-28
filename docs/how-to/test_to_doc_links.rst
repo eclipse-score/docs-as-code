@@ -64,23 +64,23 @@ CI/CD Gate for Linkage Percentage
 
 The traceability tooling uses a **two-step architecture**:
 
-1. ``traceability_coverage`` reads ``needs.json``, computes metrics, and writes
-   a machine-readable ``metrics.json`` (schema v1).
+1. The **Sphinx build** computes metrics via the ``score_metamodel`` extension and
+   writes a machine-readable ``metrics.json`` (schema v1) to the build output
+   directory alongside ``needs.json``.
 2. ``traceability_gate`` reads that ``metrics.json`` and enforces configurable
    coverage thresholds.
 
-Separating the two steps keeps the CI gate decoupled from the Sphinx/Bazel
-build: the gate never parses ``needs.json`` itself.
+Separating computation (Sphinx extension, during docs build) from gating (thin
+CLI, in CI) keeps the gate decoupled from the Sphinx/Bazel build: it never
+parses ``needs.json`` itself and has direct access to all sphinx-needs data.
 
 .. note::
 
    ``metrics.json`` is the **single source of truth** for traceability data.
    It is written by the Sphinx docs build (via the ``score_metamodel`` extension)
-   to ``_build/needs/metrics.json`` alongside ``needs.json``. The same
-   ``compute_traceability_summary`` function that powers the dashboard pie charts
-   produces this file, so the gate and the dashboard always show the same numbers.
-   The ``traceability_coverage`` CLI is a standalone alternative for repos that
-   run the coverage check outside of a full Sphinx build.
+   to ``<outdir>/metrics.json``.  The same computation that powers the dashboard
+   pie charts produces this file, so the gate and the dashboard always show
+   the same numbers.
 
 .. plantuml::
 
@@ -88,17 +88,17 @@ build: the gate never parses ``needs.json`` itself.
    skinparam componentStyle rectangle
    skinparam defaultTextAlignment center
 
-   rectangle "docs build" {
-     component "calc metrics\n(traceability_coverage)" as coverage
+   rectangle "docs build (Sphinx + score_metamodel extension)" {
+     component "calc metrics\n(Sphinx extension\nbuild-finished hook)" as coverage
    }
 
    usecase "test" as test
-   database "needs.json" as needsjson
+   database "needs.json\n(sphinx-needs)" as needsjson
    database "metrics.json\n(v1: metrics per needs type,\ne.g. tool_req)" as metricsjson
    component "gate\n(traceability_gate)" as gate
 
    test --> coverage : xml
-   needsjson --> coverage
+   needsjson --> coverage : sphinx-needs data\n(already loaded)
    coverage --> metricsjson
    metricsjson --> gate
    gate --> (Pretty output)
@@ -108,7 +108,7 @@ build: the gate never parses ``needs.json`` itself.
 Current workflow:
 
 1. Run tests.
-2. Build docs (generates ``needs.json`` **and** ``metrics.json``).
+2. Build docs (``score_metamodel`` extension writes ``metrics.json`` automatically).
 3. Run the gate against the exported metrics.
 
 .. code-block:: bash
@@ -124,7 +124,7 @@ Current workflow:
        --min-tests-linked 100 \
        --fail-on-broken-test-refs
 
-In repository CI, wire the coverage target to depend on the test-report and
+In repository CI, wire the gate target to depend on the test-report and
 ``//:needs_json`` targets so Bazel handles the build order automatically.
 
 The ``--require-all-links`` shortcut is equivalent to setting all ``--min-*``

@@ -150,7 +150,7 @@ After building ``//:needs_json``, run the gate on the exported metrics:
 
 .. code-block:: bash
 
-   bazel run //scripts_bazel:traceability_gate -- \
+   bazel run @score_docs_as_code//scripts_bazel:traceability_gate -- \
       --metrics-json bazel-bin/needs_json/_build/needs/metrics.json \
       --min-req-code 70 \
       --min-req-test 70 \

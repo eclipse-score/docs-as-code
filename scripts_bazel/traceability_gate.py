@@ -17,8 +17,8 @@
 
 """Traceability gate: read a metrics JSON and enforce coverage thresholds.
 
-This script is the "gate" step based from a metrics.json approach. The typical workflow is:
-    docs build  →  traceability_coverage --json-output metrics.json
+This script is the CI gate for a metrics.json based workflow:
+    docs build  →  score_metamodel extension writes metrics.json
     CI gate     →  traceability_gate --metrics-json metrics.json [--min-* ...]
 
 The gate never parses needs.json itself; it only reads the pre-computed
@@ -132,10 +132,7 @@ def main() -> int:
     parser.add_argument(
         "--metrics-json",
         required=True,
-        help=(
-            "Path to the metrics JSON produced by "
-            "'traceability_coverage --json-output <file>'."
-        ),
+        help="Path to the metrics JSON produced by the docs build.",
     )
     parser.add_argument(
         "--need-type",

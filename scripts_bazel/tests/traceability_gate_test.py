@@ -56,8 +56,7 @@ def _write_metrics_json(tmp_path: Path, metrics_by_type: dict | None = None) -> 
         }
     payload = {
         "schema_version": "1",
-        "generated_by": "traceability_coverage",
-        "needs_json": "fake/needs.json",
+        "generated_by": "sphinx_build",
         "metrics_by_type": metrics_by_type,
     }
     out = tmp_path / "metrics.json"

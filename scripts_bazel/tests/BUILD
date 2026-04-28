@@ -38,15 +38,6 @@ score_pytest(
 )
 
 score_pytest(
-    name = "traceability_coverage_test",
-    srcs = ["traceability_coverage_test.py"],
-    deps = [
-        "//scripts_bazel:traceability_coverage",
-    ] + all_requirements,
-    pytest_config = "//:pyproject.toml",
-)
-
-score_pytest(
     name = "traceability_gate_test",
     srcs = ["traceability_gate_test.py"],
     deps = [
