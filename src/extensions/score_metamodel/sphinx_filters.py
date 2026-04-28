@@ -156,9 +156,10 @@ def generic_pie_items_in_relationships(
             if ref in item_counts:
                 item_counts[ref] += 1
 
-    not_referenced = sum(1 for c in item_counts.values() if c == 0)
-    referenced_once = sum(1 for c in item_counts.values() if c == 1)
-    referenced_multiple = sum(1 for c in item_counts.values() if c > 1)
+    item_count_values = list(item_counts.values())
+    not_referenced = item_count_values.count(0)
+    referenced_once = item_count_values.count(1)
+    referenced_multiple = len(item_count_values) - not_referenced - referenced_once
 
     results.append(not_referenced)
     results.append(referenced_once)
