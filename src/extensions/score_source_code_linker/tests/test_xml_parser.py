@@ -26,7 +26,7 @@ import os
 import xml.etree.ElementTree as ET
 from collections.abc import Callable
 from pathlib import Path
-from typing import Any, cast
+from typing import Any
 from unittest.mock import patch
 
 import pytest

@@ -42,27 +42,29 @@ from __future__ import annotations
 from sphinx_needs.need_item import NeedItem
 
 
+def _matches_source_selector(need: NeedItem, selector: str) -> bool:
+    """Return whether a need matches a source selector.
+
+    The selector is treated as a prefix and matched against both ``type`` and
+    ``id`` so filters remain robust when metamodels use explicit id prefixes
+    that are not coupled to directive names.
+    """
+    need_type = str(need.get("type", ""))
+    need_id = str(need.get("id", ""))
+    return need_type.startswith(selector) or need_id.startswith(selector)
+
+
 def generic_pie_linked_items(
     needs: list[NeedItem], results: list[int], **kwargs: str | int | float
 ) -> None:
-    """Count items matching an ID prefix split by linkage via a named link field.
+    """Count target IDs by whether they are linked by selected source needs.
 
-    Finds all needs whose ``id`` starts with *arg1*, then checks whether
-    each one appears in the *arg3* field of any need whose ``type``
-    starts with *arg2*.
-
-    :filter-func: arguments:
-
-        - ``arg1`` – ID prefix of the items to count
-          (e.g. ``std_req__iso26262__``)
-        - ``arg2`` – type prefix of the source needs to scan (e.g. ``gd_``)
-        - ``arg3`` – name of the link field to scan on source needs
-          (default: ``complies``)
-
-    Appends to *results*: ``[linked_count, not_linked_count]``
+    Arguments are passed via ``arg1`` (target ID prefix), ``arg2`` (source
+    selector prefix, matched against source ``type`` and ``id``), and ``arg3``
+    (link field name, default ``complies``).
     """
     id_prefix = str(kwargs.get("arg1", ""))
-    compliance_prefix = str(kwargs.get("arg2", ""))
+    source_selector = str(kwargs.get("arg2", ""))
     link_field = str(kwargs.get("arg3", "complies"))
 
     target_ids = [
@@ -74,7 +76,7 @@ def generic_pie_linked_items(
     linked_ids: set[str] = {
         ref
         for n in needs
-        if str(n.get("type", "")).startswith(compliance_prefix)
+        if _matches_source_selector(n, source_selector)
         for ref in n.get(link_field, [])
         if ref
     }
@@ -89,30 +91,20 @@ def generic_pie_linked_items(
 def generic_pie_items_by_tag(
     needs: list[NeedItem], results: list[int], **kwargs: str | int | float
 ) -> None:
-    """Count items carrying a given tag split by linkage via a named link field.
+    """Count tagged items split by whether selected source needs link them.
 
-    Checks every need that has *arg1* in its ``tags`` field and splits them
-    by whether their id appears in the *arg3* field of any need whose
-    ``type`` starts with *arg2*.
-
-    :filter-func: arguments:
-
-        - ``arg1`` – tag to filter by (e.g. ``aspice40_man5``).
-          Note: tag values must not contain dots.
-        - ``arg2`` – type prefix of the source needs to scan (e.g. ``gd_``)
-        - ``arg3`` – name of the link field to scan on source needs
-          (default: ``complies``)
-
-    Appends to *results*: ``[linked_count, not_linked_count]``
+    Arguments are passed via ``arg1`` (tag), ``arg2`` (source selector prefix,
+    matched against source ``type`` and ``id``), and ``arg3`` (link field
+    name, default ``complies``).
     """
     tag = str(kwargs.get("arg1", ""))
-    compliance_prefix = str(kwargs.get("arg2", ""))
+    source_selector = str(kwargs.get("arg2", ""))
     link_field = str(kwargs.get("arg3", "complies"))
 
     linked_ids: set[str] = {
         ref
         for n in needs
-        if str(n.get("type", "")).startswith(compliance_prefix)
+        if _matches_source_selector(n, source_selector)
         for ref in n.get(link_field, [])
         if ref
     }
