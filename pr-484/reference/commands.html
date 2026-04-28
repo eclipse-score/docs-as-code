@@ -468,7 +468,7 @@
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">//:docs</span></code></p></td>
-<td><p>Builds documentation</p></td>
+<td><p>Builds documentation (also writes <code class="docutils literal notranslate"><span class="pre">metrics.json</span></code> via the score_metamodel extension)</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">//:docs_check</span></code></p></td>
 <td><p>Verifies documentation correctness</p></td>
@@ -476,8 +476,8 @@
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">//:docs_combo</span></code></p></td>
 <td><p>Builds combined documentation with all external dependencies included</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">&#64;score_docs_as_code//scripts_bazel:traceability_coverage</span> <span class="pre">--</span> <span class="pre">--needs-json</span> <span class="pre">bazel-bin/needs_json/needs.json</span> <span class="pre">--min-req-code</span> <span class="pre">100</span> <span class="pre">--min-req-test</span> <span class="pre">100</span> <span class="pre">--min-req-fully-linked</span> <span class="pre">100</span> <span class="pre">--min-tests-linked</span> <span class="pre">100</span> <span class="pre">--fail-on-broken-test-refs</span></code></p></td>
-<td><p>Calculates requirement/test traceability percentages and fails if thresholds are not met</p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">&#64;score_docs_as_code//scripts_bazel:traceability_gate</span> <span class="pre">--</span> <span class="pre">--metrics-json</span> <span class="pre">bazel-bin/needs_json/_build/needs/metrics.json</span> <span class="pre">--min-req-code</span> <span class="pre">100</span> <span class="pre">--min-req-test</span> <span class="pre">100</span> <span class="pre">--min-req-fully-linked</span> <span class="pre">100</span> <span class="pre">--min-tests-linked</span> <span class="pre">100</span> <span class="pre">--fail-on-broken-test-refs</span></code></p></td>
+<td><p>Reads the pre-computed metrics.json from the docs build and fails if coverage thresholds are not met</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">//:live_preview</span></code></p></td>
 <td><p>Creates a live_preview of the documentation viewable in a local server</p></td>

@@ -501,29 +501,29 @@ If you want a test to be linked, please ensure all requirement properties are pr
 <h2>CI/CD Gate for Linkage Percentage<a class="headerlink" href="#ci-cd-gate-for-linkage-percentage" title="Link to this heading">#</a></h2>
 <p>The traceability tooling uses a <strong>two-step architecture</strong>:</p>
 <ol class="arabic simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">traceability_coverage</span></code> reads <code class="docutils literal notranslate"><span class="pre">needs.json</span></code>, computes metrics, and writes
-a machine-readable <code class="docutils literal notranslate"><span class="pre">metrics.json</span></code> (schema v1).</p></li>
+<li><p>The <strong>Sphinx build</strong> computes metrics via the <code class="docutils literal notranslate"><span class="pre">score_metamodel</span></code> extension and
+writes a machine-readable <code class="docutils literal notranslate"><span class="pre">metrics.json</span></code> (schema v1) to the build output
+directory alongside <code class="docutils literal notranslate"><span class="pre">needs.json</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">traceability_gate</span></code> reads that <code class="docutils literal notranslate"><span class="pre">metrics.json</span></code> and enforces configurable
 coverage thresholds.</p></li>
 </ol>
-<p>Separating the two steps keeps the CI gate decoupled from the Sphinx/Bazel
-build: the gate never parses <code class="docutils literal notranslate"><span class="pre">needs.json</span></code> itself.</p>
+<p>Separating computation (Sphinx extension, during docs build) from gating (thin
+CLI, in CI) keeps the gate decoupled from the Sphinx/Bazel build: it never
+parses <code class="docutils literal notranslate"><span class="pre">needs.json</span></code> itself and has direct access to all sphinx-needs data.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p><code class="docutils literal notranslate"><span class="pre">metrics.json</span></code> is the <strong>single source of truth</strong> for traceability data.
 It is written by the Sphinx docs build (via the <code class="docutils literal notranslate"><span class="pre">score_metamodel</span></code> extension)
-to <code class="docutils literal notranslate"><span class="pre">_build/needs/metrics.json</span></code> alongside <code class="docutils literal notranslate"><span class="pre">needs.json</span></code>. The same
-<code class="docutils literal notranslate"><span class="pre">compute_traceability_summary</span></code> function that powers the dashboard pie charts
-produces this file, so the gate and the dashboard always show the same numbers.
-The <code class="docutils literal notranslate"><span class="pre">traceability_coverage</span></code> CLI is a standalone alternative for repos that
-run the coverage check outside of a full Sphinx build.</p>
+to <code class="docutils literal notranslate"><span class="pre">&lt;outdir&gt;/metrics.json</span></code>.  The same computation that powers the dashboard
+pie charts produces this file, so the gate and the dashboard always show
+the same numbers.</p>
 </div>
 <p class="plantuml">
-<object data="../_images/plantuml-f4c68f548532a386e520390b4567831a806df5a3.svg" type="image/svg+xml" style="width:241px;height:556px;background:#FFFFFF;"></object></p>
+<object data="../_images/plantuml-9608a667c91b36ce92fa3fee075ac366634bae4d.svg" type="image/svg+xml" style="width:423px;height:604px;background:#FFFFFF;"></object></p>
 <p>Current workflow:</p>
 <ol class="arabic simple">
 <li><p>Run tests.</p></li>
-<li><p>Build docs (generates <code class="docutils literal notranslate"><span class="pre">needs.json</span></code> <strong>and</strong> <code class="docutils literal notranslate"><span class="pre">metrics.json</span></code>).</p></li>
+<li><p>Build docs (<code class="docutils literal notranslate"><span class="pre">score_metamodel</span></code> extension writes <code class="docutils literal notranslate"><span class="pre">metrics.json</span></code> automatically).</p></li>
 <li><p>Run the gate against the exported metrics.</p></li>
 </ol>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bazel<span class="w"> </span><span class="nb">test</span><span class="w"> </span>//...
@@ -538,7 +538,7 @@ bazel<span class="w"> </span>run<span class="w"> </span>//scripts_bazel:traceabi
 <span class="w">   </span>--fail-on-broken-test-refs
 </pre></div>
 </div>
-<p>In repository CI, wire the coverage target to depend on the test-report and
+<p>In repository CI, wire the gate target to depend on the test-report and
 <code class="docutils literal notranslate"><span class="pre">//:needs_json</span></code> targets so Bazel handles the build order automatically.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">--require-all-links</span></code> shortcut is equivalent to setting all <code class="docutils literal notranslate"><span class="pre">--min-*</span></code>
 flags to 100 and enabling <code class="docutils literal notranslate"><span class="pre">--fail-on-broken-test-refs</span></code>.</p>

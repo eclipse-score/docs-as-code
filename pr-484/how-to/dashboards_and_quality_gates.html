@@ -580,7 +580,7 @@ repository purpose.</p></li>
 <section id="ci-quality-gate">
 <h2>CI Quality Gate<a class="headerlink" href="#ci-quality-gate" title="Link to this heading">#</a></h2>
 <p>After building <code class="docutils literal notranslate"><span class="pre">//:needs_json</span></code>, run the gate on the exported metrics:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bazel<span class="w"> </span>run<span class="w"> </span>//scripts_bazel:traceability_gate<span class="w"> </span>--<span class="w"> </span><span class="se">\</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bazel<span class="w"> </span>run<span class="w"> </span>@score_docs_as_code//scripts_bazel:traceability_gate<span class="w"> </span>--<span class="w"> </span><span class="se">\</span>
 <span class="w">   </span>--metrics-json<span class="w"> </span>bazel-bin/needs_json/_build/needs/metrics.json<span class="w"> </span><span class="se">\</span>
 <span class="w">   </span>--min-req-code<span class="w"> </span><span class="m">70</span><span class="w"> </span><span class="se">\</span>
 <span class="w">   </span>--min-req-test<span class="w"> </span><span class="m">70</span><span class="w"> </span><span class="se">\</span>
