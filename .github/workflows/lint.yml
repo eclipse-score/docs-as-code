@@ -24,6 +24,12 @@ jobs:
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
+
+      - name: 🛡️ Harden Runner
+        if: github.repository_owner == 'eclipse-score'
+        uses: step-security/harden-runner@v2.18.0
+        with:
+          egress-policy: audit
       - name: Checkout repository
         uses: actions/checkout@v4.2.2
 

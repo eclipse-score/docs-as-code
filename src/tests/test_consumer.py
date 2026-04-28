@@ -199,7 +199,8 @@ def filter_repos(repo_filter: str | None) -> list[ConsumerRepo]:
 
 def comment_out_git_override(module_content: str) -> str:
     """
-    Comment out existing git_override blocks for score_docs_as_code only.
+    Comment out existing override blocks for score_docs_as_code only.
+    Handles git_override, single_version_override, local_path_override, archive_override, etc.
     """
     lines = module_content.splitlines()
     result = []
@@ -209,7 +210,7 @@ def comment_out_git_override(module_content: str) -> str:
         line = lines[i]
 
         # Check if this line starts a git_override block
-        if re.match(r"^\s*git_override\s*\(", line):
+        if re.match(r"^\s*\w+_override\s*\(", line):
             # Collect the entire block
             block_start = i
             depth = line.count("(") - line.count(")")
