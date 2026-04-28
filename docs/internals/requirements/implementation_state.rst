@@ -35,8 +35,8 @@ Overview
 
 Jump to evidence tables:
 
-- :ref:`tooling_coverage_table_impl_links`
-- :ref:`tooling_coverage_table_process_mapping`
+- :ref:`Tool Requirement Implementation and Links table <tooling_coverage_table_impl_links>`
+- :ref:`Process Requirement to Tool Requirement mapping table <tooling_coverage_table_process_mapping>`
 
 How To Read These Levels
 ------------------------
