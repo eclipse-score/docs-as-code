@@ -26,6 +26,11 @@ jobs:
   link-check:
     runs-on: ubuntu-latest
     steps:
+      - name: 🛡️ Harden Runner
+        if: github.repository_owner == 'eclipse-score'
+        uses: step-security/harden-runner@v2.18.0
+        with:
+          egress-policy: audit
       - name: Checkout repo
         uses: actions/checkout@v4
 
