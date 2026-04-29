@@ -190,15 +190,33 @@
 
 
 
+--- feat_saf_fmea violates begin ---
+
 .. Negative Test: Linked to a non-allowed requirement type.
-#EXPECT: feat_saf_fmea__child__26: references 'comp_req__child__ASIL_B' as 'violates', but it must reference Feature Sequence Diagram (feat_arc_dyn).
+#EXPECT: feat_saf_fmea__child__26: references 'comp_req__child__ASIL_B' as 'violates', but it must reference Feature Sequence Diagram (feat_arc_dyn) or Feature & Feature Package Diagram (feat_arc_sta).
 
 .. feat_saf_fmea:: Child requirement 26
    :id: feat_saf_fmea__child__26
-   :safety: ASIL_B
-   :status: valid
    :violates: comp_req__child__ASIL_B
 
+.. feat_saf_fmea can link either feat_arc_dyn or feat_arc_sta
+
+Expect no errors related to "violates" field. We need to be generic for expect-not verifications.
+#EXPECT-NOT: violates
+
+.. feat_saf_fmea:: This requirement links a feat_arc_dyn
+   :id: feat_saf_fmea__violate__dyn
+   :violates: feat_arc_dyn__test_good_1
+
+
+Expect no errors related to "violates" field. We need to be generic for expect-not verifications.
+#EXPECT-NOT: violates
+
+.. feat_saf_fmea:: This requirement links a feat_arc_sta
+   :id: feat_saf_fmea__violate__sta
+   :violates: feat_arc_sta__test_good_1
+
+--- feat_saf_fmea violates end ---
 
 
 .. Tests if the attribute `safety` follows the pattern `^(QM|ASIL_B)$`
