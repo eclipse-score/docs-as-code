@@ -1,0 +1,13 @@
+{
+  "id": "task_004_need_type_scope_pass",
+  "description": "Need-type scoping should pass when only fully-linked tool_req is checked and comp_req is ignored.",
+  "input_path": "score_harness/fixtures/metrics_tool_req_scope_pass.json",
+  "change_description": "Evaluate a metrics fixture where tool_req passes and comp_req fails, while gate is scoped to tool_req only.",
+  "expected_verdict": "pass",
+  "consistency_rules": ["CR-005"],
+  "metrics_json_path": "score_harness/fixtures/metrics_tool_req_scope_pass.json",
+  "gate_args": ["--need-type", "tool_req", "--require-all-links"],
+  "responsible_role": "pr_creator",
+  "escalation_role": "harness_maintainer",
+  "waiver_authority": "release_approver"
+}

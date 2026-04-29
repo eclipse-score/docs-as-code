@@ -1,0 +1,12 @@
+{
+  "_comment": "Example task spec. Copy and edit per change scenario. See README.md for field descriptions.",
+  "active": false,
+  "id": "task_001_complies_link_removed",
+  "description": "A guideline loses its complies link to a std_req. Gate should fail due to broken reference.",
+  "input_path": "docs/internals/requirements/requirements.rst",
+  "change_description": "Remove the complies link from gd_guidl__xyz to std_req__iso26262__001",
+  "expected_verdict": "fail",
+  "consistency_rules": ["CR-001"],
+  "needs_json_path": "",
+  "_note": "Set needs_json_path to the path of the needs.json produced after the agent applies the change."
+}

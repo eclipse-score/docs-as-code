@@ -30,3 +30,12 @@ __pycache__/
 # bug: This file is created in repo root on test discovery.
 /consumer_test.log
 .clwb
+
+# Harness execution history (local only)
+score_harness/runs/
+
+# Internal OEM documentation (confidential)
+docs/internals/requirements/oem_internal_workstreams.md
+
+# Temporary issue drafts (already created in GitHub)
+.tmp_issue_updates/

@@ -1,0 +1,72 @@
+# *******************************************************************************
+# Copyright (c) 2026 Contributors to the Eclipse Foundation
+#
+# See the NOTICE file(s) distributed with this work for additional
+# information regarding copyright ownership.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Apache License Version 2.0 which is available at
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# SPDX-License-Identifier: Apache-2.0
+# *******************************************************************************
+# Consistency Rule Catalog
+# Machine-readable rules linking argument elements to artifact types and change scenarios.
+# Format: YAML list. Each rule has an id, description, trigger, impacted_element_type,
+# impact_class, and action_required.
+
+rules:
+  - id: CR-001
+    description: >
+      If a complies link target is renamed or removed, all linking elements
+      are directly impacted and must be rechecked.
+    trigger:
+      artifact_type: requirement
+      change: link_target_removed_or_renamed
+    impacted_element_type: guideline
+    impact_class: direct_recheck
+    action_required: re-verify compliance claim
+
+  - id: CR-002
+    description: >
+      If a requirement type changes (e.g. tool_req to process_requirement),
+      all guidelines that comply with it are indirectly impacted.
+    trigger:
+      artifact_type: requirement
+      change: type_changed
+    impacted_element_type: guideline
+    impact_class: indirect_propagation
+    action_required: review compliance argument chain
+
+  - id: CR-003
+    description: >
+      If a test reference is broken (linked test ID does not exist in needs.json),
+      the linked requirement loses its test coverage evidence.
+    trigger:
+      artifact_type: test_link
+      change: reference_broken
+    impacted_element_type: requirement
+    impact_class: revision_required
+    action_required: restore or replace test reference before gate can pass
+
+  - id: CR-004
+    description: >
+      If a std_req changes content, all gd_guidl elements that comply with it
+      require re-review of the compliance argument.
+    trigger:
+      artifact_type: std_req
+      change: content_changed
+    impacted_element_type: gd_guidl
+    impact_class: indirect_propagation
+    action_required: re-review compliance argument
+
+  - id: CR-005
+    description: >
+      If coverage drops below the configured threshold for any requirement type,
+      the gate verdict changes from pass to fail.
+    trigger:
+      artifact_type: metrics
+      change: coverage_below_threshold
+    impacted_element_type: gate_verdict
+    impact_class: direct_recheck
+    action_required: restore coverage above threshold or request waiver

@@ -1,0 +1,13 @@
+{
+  "id": "task_005_build_output_pass",
+  "description": "Current docs build output should pass when no thresholds are enforced.",
+  "input_path": "../_build/needs.json",
+  "change_description": "Evaluate the current repo docs build output with default gate settings (no minimum thresholds).",
+  "expected_verdict": "pass",
+  "consistency_rules": ["CR-005"],
+  "needs_json_path": "../_build/needs.json",
+  "gate_args": [],
+  "responsible_role": "pr_creator",
+  "escalation_role": "harness_maintainer",
+  "waiver_authority": "release_approver"
+}

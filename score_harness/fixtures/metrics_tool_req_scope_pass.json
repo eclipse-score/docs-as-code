@@ -1,0 +1,50 @@
+{
+  "schema_version": "1",
+  "generated_by": "traceability_gate_test_fixture",
+  "metrics_by_type": {
+    "tool_req": {
+      "include_not_implemented": false,
+      "requirements": {
+        "total": 2,
+        "with_code_link": 2,
+        "with_test_link": 2,
+        "fully_linked": 2,
+        "with_code_link_pct": 100.0,
+        "with_test_link_pct": 100.0,
+        "fully_linked_pct": 100.0,
+        "missing_code_link_ids": [],
+        "missing_test_link_ids": [],
+        "not_fully_linked_ids": []
+      },
+      "tests": {
+        "total": 1,
+        "filtered_test_types": [],
+        "linked_to_requirements": 1,
+        "linked_to_requirements_pct": 100.0,
+        "broken_references": []
+      }
+    },
+    "comp_req": {
+      "include_not_implemented": false,
+      "requirements": {
+        "total": 5,
+        "with_code_link": 0,
+        "with_test_link": 0,
+        "fully_linked": 0,
+        "with_code_link_pct": 0.0,
+        "with_test_link_pct": 0.0,
+        "fully_linked_pct": 0.0,
+        "missing_code_link_ids": ["C1", "C2", "C3", "C4", "C5"],
+        "missing_test_link_ids": ["C1", "C2", "C3", "C4", "C5"],
+        "not_fully_linked_ids": ["C1", "C2", "C3", "C4", "C5"]
+      },
+      "tests": {
+        "total": 0,
+        "filtered_test_types": [],
+        "linked_to_requirements": 0,
+        "linked_to_requirements_pct": 100.0,
+        "broken_references": []
+      }
+    }
+  }
+}

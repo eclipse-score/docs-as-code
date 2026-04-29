@@ -1,0 +1,13 @@
+{
+  "id": "task_003_broken_refs_fail",
+  "description": "Broken testcase reference should fail when fail-on-broken-test-refs is enabled.",
+  "input_path": "score_harness/fixtures/metrics_broken_refs.json",
+  "change_description": "Evaluate a metrics fixture with one broken testcase reference.",
+  "expected_verdict": "fail",
+  "consistency_rules": ["CR-003"],
+  "metrics_json_path": "score_harness/fixtures/metrics_broken_refs.json",
+  "gate_args": ["--fail-on-broken-test-refs"],
+  "responsible_role": "pr_creator",
+  "escalation_role": "harness_maintainer",
+  "waiver_authority": "release_approver"
+}

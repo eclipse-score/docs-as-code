@@ -1,0 +1,28 @@
+{
+  "schema_version": "1",
+  "generated_by": "traceability_gate_test_fixture",
+  "metrics_by_type": {
+    "tool_req": {
+      "include_not_implemented": false,
+      "requirements": {
+        "total": 4,
+        "with_code_link": 3,
+        "with_test_link": 2,
+        "fully_linked": 2,
+        "with_code_link_pct": 75.0,
+        "with_test_link_pct": 50.0,
+        "fully_linked_pct": 50.0,
+        "missing_code_link_ids": ["REQ_4"],
+        "missing_test_link_ids": ["REQ_3", "REQ_4"],
+        "not_fully_linked_ids": ["REQ_3", "REQ_4"]
+      },
+      "tests": {
+        "total": 3,
+        "filtered_test_types": [],
+        "linked_to_requirements": 2,
+        "linked_to_requirements_pct": 66.67,
+        "broken_references": []
+      }
+    }
+  }
+}
