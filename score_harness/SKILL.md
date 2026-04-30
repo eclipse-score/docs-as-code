@@ -42,7 +42,8 @@ The harness variable is: what context is provided to the agent before it edits a
 ## Key files
 
 - `harness/base_harness.py` — base class and baseline candidate. Read before proposing.
-- `evolution_summary.jsonl` — one line per prior candidate (read this first)
+- **`validation_failures.jsonl`** — append-only log of past validation failures. Read this FIRST to avoid repeating mistakes.
+- `evolution_summary.jsonl` — one line per prior candidate (read this second)
 - `runs/` — trace history. Use grep to find patterns across tasks and iterations.
 - `spec/*.json` — task specs defining input, expected verdict, and relevant consistency rules.
 
@@ -50,16 +51,22 @@ The harness variable is: what context is provided to the agent before it edits a
 
 ### Step 1: Analyze
 
-1. Read `evolution_summary.jsonl` to understand what has been tried.
-2. Read `runs/` traces for failed tasks: `impacted_elements.json` and `score.json`.
-3. Read prior candidate harness files in `harness/`.
-4. Form a falsifiable hypothesis: "Providing X before the agent acts will reduce Y failure class."
+1. **Read validation_failures.jsonl FIRST** — learn from past mistakes (linting errors, type errors, interface violations).
+2. Read `evolution_summary.jsonl` to understand what has been tried.
+3. Read `runs/` traces for failed tasks: `impacted_elements.json` and `score.json`.
+4. Read prior candidate harness files in `harness/`.
+5. Form a falsifiable hypothesis: "Providing X before the agent acts will reduce Y failure class."
 
 ### Step 2: Implement
 
 1. Copy `harness/base_harness.py` to `harness/<snake_case_name>.py`.
 2. Override `get_context()` with your mechanism. Keep `post_process()` default unless needed.
-3. Validate import: `python3 -c "from score_harness.harness.<name> import *; print('OK')"`.
+3. **Validate import**: `python3 -c "from score_harness.harness.<name> import *; print('OK')"`.
+4. **Run linting**: `ruff check score_harness/harness/<name>.py` (fix any errors with `ruff check --fix`).
+5. **Run type checking**: `basedpyright score_harness/harness/<name>.py` (fix type errors before submitting).
+6. **Run cheap validation**: `python3 score_harness/validate_candidate.py --candidate score_harness/harness/<name>.py --task-spec score_harness/spec/task_002_threshold_fail.json`.
+
+**If validation fails**, the failure is logged to `validation_failures.jsonl` for the next iteration to learn from.
 
 ### Step 3: Write pending_eval.json
 

@@ -275,7 +275,26 @@ def main() -> None:  # noqa: C901
         validation_result = validate_candidate(
             args.candidate,
             validation_task_spec,
+            skip_external_checks=False,
         )
+
+        # Log validation failures for learning
+        if validation_result["status"] == "failed":
+            from score_harness.validate_candidate import log_validation_failure
+
+            log_validation_failure(
+                args.iteration,
+                validation_result["candidate"],
+                validation_result["failures"],
+            )
+            print(
+                f"[validation] FAILED: {validation_result['candidate']} "
+                f"— {len(validation_result['failures'])} failures logged to validation_failures.jsonl"
+            )
+            for failure in validation_result["failures"]:
+                print(f"  - {failure['failure_type']}: {failure['fix']}")
+            sys.exit(1)
+
         print(
             f"[validation] candidate={validation_result['candidate']} "
             f"task={validation_result['task_id']} status={validation_result['status']}"

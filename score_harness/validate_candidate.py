@@ -38,12 +38,16 @@ Validation covers:
 4. post_process() returns a dict
 5. expected trace filenames are known and stable
 6. task spec provides either needs_json_path or metrics_json_path
+7. linting passes (ruff)
+8. type checking passes (basedpyright)
 """
 
 from __future__ import annotations
 
 import argparse
 import json
+import subprocess
+import sys
 from pathlib import Path
 
 from score_harness.common import load_harness
@@ -55,45 +59,167 @@ REQUIRED_TRACE_FILENAMES = (
 )
 
 
-def validate_candidate(candidate_path: Path, task_spec_path: Path) -> dict:
-    """Return a structured validation result for one candidate and one tiny task."""
-    harness = load_harness(candidate_path)
-    task_spec = json.loads(task_spec_path.read_text())
-    if not task_spec.get("active", True):
-        raise ValueError("task spec is inactive; choose a runnable task spec")
+def validate_candidate(
+    candidate_path: Path, task_spec_path: Path, skip_external_checks: bool = False
+) -> dict:
+    """Return a structured validation result for one candidate and one tiny task.
 
-    if not task_spec.get("needs_json_path") and not task_spec.get("metrics_json_path"):
-        raise ValueError(
-            "task spec must provide either needs_json_path or metrics_json_path"
+    Args:
+        candidate_path: Path to the candidate harness module
+        task_spec_path: Path to a task spec for validation
+        skip_external_checks: If True, skip linting/type checking (for CI environments)
+
+    Returns:
+        dict with status="ok" or status="failed" + failure_type/message/fix
+    """
+    failures = []
+
+    # Check 1-6: Harness interface and basic functionality
+    try:
+        harness = load_harness(candidate_path)
+        task_spec = json.loads(task_spec_path.read_text())
+        if not task_spec.get("active", True):
+            raise ValueError("task spec is inactive; choose a runnable task spec")
+
+        if not task_spec.get("needs_json_path") and not task_spec.get(
+            "metrics_json_path"
+        ):
+            raise ValueError(
+                "task spec must provide either needs_json_path or metrics_json_path"
+            )
+
+        context = harness.get_context(task_spec)
+        if not isinstance(context, str):
+            raise TypeError(
+                f"get_context() must return str, got {type(context).__name__}"
+            )
+
+        post_processed = harness.post_process("", task_spec)
+        if not isinstance(post_processed, dict):
+            raise TypeError(
+                f"post_process() must return dict, got {type(post_processed).__name__}"
+            )
+
+        context_length = len(context)
+
+    except Exception as e:
+        failures.append(
+            {
+                "failure_type": "interface_error",
+                "message": str(e),
+                "fix": "Ensure candidate implements get_context() and post_process() correctly",
+            }
         )
+        context_length = 0
 
-    context = harness.get_context(task_spec)
-    if not isinstance(context, str):
-        raise TypeError(f"get_context() must return str, got {type(context).__name__}")
+    # Check 7: Linting (ruff)
+    if not skip_external_checks:
+        try:
+            result = subprocess.run(
+                ["ruff", "check", str(candidate_path)],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            if result.returncode != 0:
+                failures.append(
+                    {
+                        "failure_type": "linting_error",
+                        "message": result.stdout.strip(),
+                        "fix": "Run: ruff check --fix score_harness/harness/<name>.py",
+                    }
+                )
+        except FileNotFoundError:
+            # ruff not installed - warn but don't fail
+            pass
 
-    post_processed = harness.post_process("", task_spec)
-    if not isinstance(post_processed, dict):
-        raise TypeError(
-            f"post_process() must return dict, got {type(post_processed).__name__}"
-        )
+    # Check 8: Type checking (basedpyright)
+    if not skip_external_checks:
+        try:
+            result = subprocess.run(
+                ["basedpyright", str(candidate_path)],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            if result.returncode != 0:
+                failures.append(
+                    {
+                        "failure_type": "type_error",
+                        "message": result.stdout.strip(),
+                        "fix": "Fix type errors reported by basedpyright",
+                    }
+                )
+        except FileNotFoundError:
+            # basedpyright not installed - warn but don't fail
+            pass
+
+    if failures:
+        return {
+            "candidate": candidate_path.stem,
+            "task_id": task_spec_path.stem,
+            "status": "failed",
+            "failures": failures,
+        }
 
     return {
         "candidate": candidate_path.stem,
-        "task_id": task_spec.get("id", "unknown"),
-        "context_length": len(context),
+        "task_id": task_spec_path.stem,
+        "context_length": context_length,
         "required_trace_filenames": list(REQUIRED_TRACE_FILENAMES),
         "status": "ok",
     }
+
+
+def log_validation_failure(
+    iteration: int, candidate: str, failures: list[dict]
+) -> None:
+    """Append validation failures to validation_failures.jsonl for learning."""
+    log_path = Path(__file__).parent / "validation_failures.jsonl"
+
+    for failure in failures:
+        entry = {
+            "iteration": iteration,
+            "candidate": candidate,
+            "failure_type": failure["failure_type"],
+            "message": failure["message"],
+            "fix": failure["fix"],
+        }
+        with log_path.open("a") as f:
+            f.write(json.dumps(entry) + "\n")
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Validate a score-harness candidate")
     parser.add_argument("--candidate", required=True, type=Path)
     parser.add_argument("--task-spec", required=True, type=Path)
+    parser.add_argument("--iteration", type=int, default=0)
+    parser.add_argument(
+        "--skip-external-checks",
+        action="store_true",
+        help="Skip linting/type checking (for CI)",
+    )
+    parser.add_argument(
+        "--log-failures",
+        action="store_true",
+        help="Write validation failures to validation_failures.jsonl",
+    )
     args = parser.parse_args()
 
-    result = validate_candidate(args.candidate, args.task_spec)
+    result = validate_candidate(
+        args.candidate, args.task_spec, args.skip_external_checks
+    )
+
+    if args.log_failures and result["status"] == "failed":
+        log_validation_failure(
+            args.iteration, result["candidate"], result["failures"]
+        )
+
     print(json.dumps(result, indent=2))
+
+    # Exit with non-zero if validation failed
+    if result["status"] == "failed":
+        sys.exit(1)
 
 
 if __name__ == "__main__":
