@@ -812,7 +812,7 @@ needs_types:
       mitigation_issue: ^https://github.com/.*$
     mandatory_links:
       # req-Id: tool_req__docs_saf_attrs_violates
-      violates: feat_arc_dyn
+      violates: feat_arc_dyn, feat_arc_sta
     optional_links:
       # req-Id: tool_req__docs_saf_attrs_mitigated_by
       # (only mandatory once valid status == valid)
@@ -839,7 +839,7 @@ needs_types:
       mitigation_issue: ^https://github.com/.*$
     mandatory_links:
       # req-Id: tool_req__docs_saf_attrs_violates
-      violates: comp_arc_dyn
+      violates: comp_arc_dyn, comp_arc_sta
     optional_links:
       mitigated_by: comp_req, aou_req
     tags:
