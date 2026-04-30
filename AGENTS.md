@@ -46,4 +46,3 @@ The harness subsystem lives under `score_harness/`.
 
 - Public issues: tooling, schemas, validators, workflows, public task corpora
 - Internal work: release authority, confidential benchmarks, waivers, supplier/legal obligations
-- Internal boundary details live in `docs/internals/requirements/oem_internal_workstreams.md`
