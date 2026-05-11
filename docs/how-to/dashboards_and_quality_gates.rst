@@ -15,22 +15,20 @@
 Build Dashboards and Quality Gates
 ==================================
 
-This guide is for repositories that *consume* docs-as-code as a Bazel
-dependency. Examples are module repositories and integration repositories that
-want to:
+Use this guide in repositories that consume docs-as-code as a Bazel
+dependency.
 
-1. publish their own traceability dashboards,
-2. export ``metrics.json`` during documentation builds, and
-3. enforce quality gates in CI.
+Goals:
 
-The docs-as-code repository itself documents tooling coverage. Consumer
-repositories use the same extensions to document *their own* requirements,
-architecture, source-code links, and verification evidence.
+1. Publish traceability dashboards from repository needs.
+2. Export machine-readable metrics.
+3. Enforce CI thresholds with ``traceability_gate``.
 
 What You Get
 ------------
 
-When a consumer repository integrates docs-as-code correctly, it can:
+With the ``docs(...)`` macro and ``score_metamodel`` extension enabled, your
+repository can:
 
 - build an HTML dashboard from its own Sphinx needs,
 - include external needs from other repositories when desired,
@@ -86,6 +84,12 @@ Use ``score_metamodel_include_external_needs = True`` only in repositories that
 intentionally aggregate traceability across dependencies, such as integration
 repositories.
 
+Configuration split:
+
+- Keep repository policy knobs (for example requirement types and
+   include/exclude external needs) in ``conf.py``.
+- Keep execution and dependency wiring in Bazel targets.
+
 Building the Dashboard
 ----------------------
 
@@ -95,7 +99,7 @@ Run:
 
    bazel run //:docs
 
-This generates HTML output under ``_build/``.
+This produces the HTML output.
 
 Run:
 
@@ -103,14 +107,13 @@ Run:
 
    bazel build //:needs_json
 
-This generates machine-readable output under:
+In this setup, the documentation build writes ``metrics.json`` via
+``score_metamodel``, and the ``needs_json`` artifact contains:
 
 - ``bazel-bin/needs_json/_build/needs/needs.json``
 - ``bazel-bin/needs_json/_build/needs/metrics.json``
 
-The HTML dashboard and the exported ``metrics.json`` are backed by the same
-traceability metric implementation, so the charts and the CI gate evaluate the
-same data.
+The dashboard charts and the CI gate both use the same computed metrics.
 
 Inputs for Linkage Metrics
 --------------------------
@@ -156,6 +159,12 @@ After building ``//:needs_json``, run the gate on the exported metrics:
       --min-req-test 70 \
       --min-req-fully-linked 60 \
       --min-tests-linked 70
+
+In CI, wire targets through Bazel dependencies so test execution and
+``needs_json`` generation happen before the gate target.
+
+In larger repositories, define a dedicated wrapper target for your standard
+gate thresholds so CI calls a single Bazel target.
 
 Useful flags:
 
