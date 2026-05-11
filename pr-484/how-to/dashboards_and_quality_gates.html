@@ -462,20 +462,18 @@
                   
   <section id="build-dashboards-and-quality-gates">
 <h1>Build Dashboards and Quality Gates<a class="headerlink" href="#build-dashboards-and-quality-gates" title="Link to this heading">#</a></h1>
-<p>This guide is for repositories that <em>consume</em> docs-as-code as a Bazel
-dependency. Examples are module repositories and integration repositories that
-want to:</p>
+<p>Use this guide in repositories that consume docs-as-code as a Bazel
+dependency.</p>
+<p>Goals:</p>
 <ol class="arabic simple">
-<li><p>publish their own traceability dashboards,</p></li>
-<li><p>export <code class="docutils literal notranslate"><span class="pre">metrics.json</span></code> during documentation builds, and</p></li>
-<li><p>enforce quality gates in CI.</p></li>
+<li><p>Publish traceability dashboards from repository needs.</p></li>
+<li><p>Export machine-readable metrics.</p></li>
+<li><p>Enforce CI thresholds with <code class="docutils literal notranslate"><span class="pre">traceability_gate</span></code>.</p></li>
 </ol>
-<p>The docs-as-code repository itself documents tooling coverage. Consumer
-repositories use the same extensions to document <em>their own</em> requirements,
-architecture, source-code links, and verification evidence.</p>
 <section id="what-you-get">
 <h2>What You Get<a class="headerlink" href="#what-you-get" title="Link to this heading">#</a></h2>
-<p>When a consumer repository integrates docs-as-code correctly, it can:</p>
+<p>With the <code class="docutils literal notranslate"><span class="pre">docs(...)</span></code> macro and <code class="docutils literal notranslate"><span class="pre">score_metamodel</span></code> extension enabled, your
+repository can:</p>
 <ul class="simple">
 <li><p>build an HTML dashboard from its own Sphinx needs,</p></li>
 <li><p>include external needs from other repositories when desired,</p></li>
@@ -527,6 +525,15 @@ be generated.</p></li>
 <p>Use <code class="docutils literal notranslate"><span class="pre">score_metamodel_include_external_needs</span> <span class="pre">=</span> <span class="pre">True</span></code> only in repositories that
 intentionally aggregate traceability across dependencies, such as integration
 repositories.</p>
+<p>Configuration split:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Keep repository policy knobs (for example requirement types and</dt><dd><p>include/exclude external needs) in <code class="docutils literal notranslate"><span class="pre">conf.py</span></code>.</p>
+</dd>
+</dl>
+</li>
+<li><p>Keep execution and dependency wiring in Bazel targets.</p></li>
+</ul>
 </section>
 <section id="building-the-dashboard">
 <h2>Building the Dashboard<a class="headerlink" href="#building-the-dashboard" title="Link to this heading">#</a></h2>
@@ -534,19 +541,18 @@ repositories.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bazel<span class="w"> </span>run<span class="w"> </span>//:docs
 </pre></div>
 </div>
-<p>This generates HTML output under <code class="docutils literal notranslate"><span class="pre">_build/</span></code>.</p>
+<p>This produces the HTML output.</p>
 <p>Run:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bazel<span class="w"> </span>build<span class="w"> </span>//:needs_json
 </pre></div>
 </div>
-<p>This generates machine-readable output under:</p>
+<p>In this setup, the documentation build writes <code class="docutils literal notranslate"><span class="pre">metrics.json</span></code> via
+<code class="docutils literal notranslate"><span class="pre">score_metamodel</span></code>, and the <code class="docutils literal notranslate"><span class="pre">needs_json</span></code> artifact contains:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">bazel-bin/needs_json/_build/needs/needs.json</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">bazel-bin/needs_json/_build/needs/metrics.json</span></code></p></li>
 </ul>
-<p>The HTML dashboard and the exported <code class="docutils literal notranslate"><span class="pre">metrics.json</span></code> are backed by the same
-traceability metric implementation, so the charts and the CI gate evaluate the
-same data.</p>
+<p>The dashboard charts and the CI gate both use the same computed metrics.</p>
 </section>
 <section id="inputs-for-linkage-metrics">
 <h2>Inputs for Linkage Metrics<a class="headerlink" href="#inputs-for-linkage-metrics" title="Link to this heading">#</a></h2>
@@ -588,6 +594,10 @@ repository purpose.</p></li>
 <span class="w">   </span>--min-tests-linked<span class="w"> </span><span class="m">70</span>
 </pre></div>
 </div>
+<p>In CI, wire targets through Bazel dependencies so test execution and
+<code class="docutils literal notranslate"><span class="pre">needs_json</span></code> generation happen before the gate target.</p>
+<p>In larger repositories, define a dedicated wrapper target for your standard
+gate thresholds so CI calls a single Bazel target.</p>
 <p>Useful flags:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">--require-all-links</span></code> for strict 100 percent gating</p></li>

@@ -497,86 +497,10 @@ If you want a test to be linked, please ensure all requirement properties are pr
 <li><p>Tests must be executed by Bazel first so <cite>test.xml</cite> files exist.</p></li>
 </ul>
 </section>
-<section id="ci-cd-gate-for-linkage-percentage">
-<h2>CI/CD Gate for Linkage Percentage<a class="headerlink" href="#ci-cd-gate-for-linkage-percentage" title="Link to this heading">#</a></h2>
-<p>The traceability tooling uses a <strong>two-step architecture</strong>:</p>
-<ol class="arabic simple">
-<li><p>The <strong>Sphinx build</strong> computes metrics via the <code class="docutils literal notranslate"><span class="pre">score_metamodel</span></code> extension and
-writes a machine-readable <code class="docutils literal notranslate"><span class="pre">metrics.json</span></code> (schema v1) to the build output
-directory alongside <code class="docutils literal notranslate"><span class="pre">needs.json</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">traceability_gate</span></code> reads that <code class="docutils literal notranslate"><span class="pre">metrics.json</span></code> and enforces configurable
-coverage thresholds.</p></li>
-</ol>
-<p>Separating computation (Sphinx extension, during docs build) from gating (thin
-CLI, in CI) keeps the gate decoupled from the Sphinx/Bazel build: it never
-parses <code class="docutils literal notranslate"><span class="pre">needs.json</span></code> itself and has direct access to all sphinx-needs data.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p><code class="docutils literal notranslate"><span class="pre">metrics.json</span></code> is the <strong>single source of truth</strong> for traceability data.
-It is written by the Sphinx docs build (via the <code class="docutils literal notranslate"><span class="pre">score_metamodel</span></code> extension)
-to <code class="docutils literal notranslate"><span class="pre">&lt;outdir&gt;/metrics.json</span></code>.  The same computation that powers the dashboard
-pie charts produces this file, so the gate and the dashboard always show
-the same numbers.</p>
-</div>
-<p class="plantuml">
-<object data="../_images/plantuml-9608a667c91b36ce92fa3fee075ac366634bae4d.svg" type="image/svg+xml" style="width:423px;height:604px;background:#FFFFFF;"></object></p>
-<p>Current workflow:</p>
-<ol class="arabic simple">
-<li><p>Run tests.</p></li>
-<li><p>Build docs (<code class="docutils literal notranslate"><span class="pre">score_metamodel</span></code> extension writes <code class="docutils literal notranslate"><span class="pre">metrics.json</span></code> automatically).</p></li>
-<li><p>Run the gate against the exported metrics.</p></li>
-</ol>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bazel<span class="w"> </span><span class="nb">test</span><span class="w"> </span>//...
-bazel<span class="w"> </span>build<span class="w"> </span>//:needs_json
-
-bazel<span class="w"> </span>run<span class="w"> </span>//scripts_bazel:traceability_gate<span class="w"> </span>--<span class="w"> </span><span class="se">\</span>
-<span class="w">   </span>--metrics-json<span class="w"> </span>bazel-bin/needs_json/_build/needs/metrics.json<span class="w"> </span><span class="se">\</span>
-<span class="w">   </span>--min-req-code<span class="w"> </span><span class="m">100</span><span class="w"> </span><span class="se">\</span>
-<span class="w">   </span>--min-req-test<span class="w"> </span><span class="m">100</span><span class="w"> </span><span class="se">\</span>
-<span class="w">   </span>--min-req-fully-linked<span class="w"> </span><span class="m">100</span><span class="w"> </span><span class="se">\</span>
-<span class="w">   </span>--min-tests-linked<span class="w"> </span><span class="m">100</span><span class="w"> </span><span class="se">\</span>
-<span class="w">   </span>--fail-on-broken-test-refs
-</pre></div>
-</div>
-<p>In repository CI, wire the gate target to depend on the test-report and
-<code class="docutils literal notranslate"><span class="pre">//:needs_json</span></code> targets so Bazel handles the build order automatically.</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">--require-all-links</span></code> shortcut is equivalent to setting all <code class="docutils literal notranslate"><span class="pre">--min-*</span></code>
-flags to 100 and enabling <code class="docutils literal notranslate"><span class="pre">--fail-on-broken-test-refs</span></code>.</p>
-<p>The gate reports:</p>
-<ul class="simple">
-<li><p>Percentage of requirements with <code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></li>
-<li><p>Percentage of requirements with <code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></li>
-<li><p>Percentage of requirements with both links (fully linked)</p></li>
-<li><p>Percentage of testcases linked to at least one requirement</p></li>
-<li><p>Broken testcase references (testcases referencing an unknown requirement ID)</p></li>
-</ul>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Testcase-based metrics depend on testcase needs being present in the
-exported <code class="docutils literal notranslate"><span class="pre">needs.json</span></code>. Testcases are currently generated as external
-needs, so values such as testcase linkage percentage or broken testcase
-references are only meaningful if those external testcase needs are also
-included in the exported dataset.</p>
-</div>
-<p>To restrict which need types are treated as requirements when computing metrics,
-set <code class="docutils literal notranslate"><span class="pre">score_metamodel_requirement_types</span></code> in your Sphinx <code class="docutils literal notranslate"><span class="pre">conf.py</span></code>
-(default: <code class="docutils literal notranslate"><span class="pre">tool_req</span></code>):</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">score_metamodel_requirement_types</span> <span class="o">=</span> <span class="s2">&quot;tool_req,comp_req&quot;</span>
-</pre></div>
-</div>
-<p>By default, dashboard and gate use only needs defined in the current repository
-(<code class="docutils literal notranslate"><span class="pre">is_external</span> <span class="pre">==</span> <span class="pre">False</span></code>). This supports per-repo CI gates.
-For integration repositories that intentionally aggregate across dependencies,
-you can include external needs in both dashboard and gate by setting:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">score_metamodel_include_external_needs</span> <span class="o">=</span> <span class="kc">True</span>
-</pre></div>
-</div>
-<p>You can also override dashboard behaviour per pie chart via filter args:</p>
-<div class="highlight-rst notranslate"><div class="highlight"><pre><span></span><span class="p">..</span> <span class="ow">needpie</span><span class="p">::</span> Requirements with Codelinks
-   <span class="nc">:filter-func:</span> src.extensions.score_metamodel.checks.traceability_dashboard.pie_requirements_with_code_links(tool_req,true)
-</pre></div>
-</div>
-<p>Use lower thresholds during rollout and tighten towards 100% over time.</p>
+<section id="related">
+<h2>Related<a class="headerlink" href="#related" title="Link to this heading">#</a></h2>
+<p>For end-to-end dashboard and CI threshold setup, see
+<a class="reference internal" href="dashboards_and_quality_gates.html"><span class="doc">Build Dashboards and Quality Gates</span></a>.</p>
 </section>
 </section>
 
@@ -628,7 +552,7 @@ you can include external needs in both dashboard and gate by setting:</p>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#limitations">Limitations</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ci-cd-gate-for-linkage-percentage">CI/CD Gate for Linkage Percentage</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#related">Related</a></li>
 </ul>
   </nav></div>
 
