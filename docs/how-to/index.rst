@@ -23,6 +23,7 @@ Here you find practical guides on how to use docs-as-code.
    :maxdepth: 1
 
    get_started
+   agentic_software_development
    setup
    write_docs
    faq

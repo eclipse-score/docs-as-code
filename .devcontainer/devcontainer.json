@@ -1,5 +1,8 @@
 {
     "name": "eclipse-s-core",
     "image": "ghcr.io/eclipse-score/devcontainer:v1.2.0",
-    "updateContentCommand": "bazel run //:ide_support"
+    "updateContentCommand": "bazel run //:ide_support",
+    "mounts": [
+    "source=${localEnv:HOME}/.agents,target=/root/.agents,type=bind,consistency=cached"
+  ]
 }

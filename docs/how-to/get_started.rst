@@ -27,3 +27,11 @@ In a new S-CORE repository, see :ref:`setup`.
 
 After the initial setup, continue with :doc:`dashboards_and_quality_gates` to
 build a repository dashboard and enforce CI quality gates.
+
+Agentic software development
+----------------------------
+
+Docs-as-code also supports an agent-assisted development workflow. Manual and
+agent-generated changes still converge on the same deterministic Lane A checks.
+
+For an overview of that workflow, see :doc:`agentic_software_development`.

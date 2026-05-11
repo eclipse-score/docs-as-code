@@ -21,5 +21,6 @@ Here you find explanations how and why docs-as-code works the way it does.
 .. toctree::
    :maxdepth: 1
 
+   agentic_software_development
    bidirectional_traceability
    docs_deps

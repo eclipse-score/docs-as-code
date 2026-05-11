@@ -46,6 +46,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -205,6 +206,16 @@ def main() -> None:
         help="Write validation failures to validation_failures.jsonl",
     )
     args = parser.parse_args()
+
+    if (
+        args.skip_external_checks
+        and os.getenv("SCORE_HARNESS_ALLOW_SKIP_EXTERNAL_CHECKS") != "1"
+    ):
+        print(
+            "Refusing --skip-external-checks: set "
+            "SCORE_HARNESS_ALLOW_SKIP_EXTERNAL_CHECKS=1 for local debugging only."
+        )
+        sys.exit(2)
 
     result = validate_candidate(
         args.candidate, args.task_spec, args.skip_external_checks

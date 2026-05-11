@@ -2,8 +2,8 @@
 
 Agent harness infrastructure for Eclipse S-CORE docs-as-code.
 
-This directory is the integration gate between agent-generated changes and the
-Lane A traceability gate (`scripts_bazel/traceability_gate.py`).
+This directory is the integration gate between docs-as-code change workflows
+and the Lane A traceability gate (`scripts_bazel/traceability_gate.py`).
 
 Treat this file as the entry map for the harness area. Keep it short. Put deeper
 detail in the structured files below so agents can navigate selectively.
@@ -40,6 +40,10 @@ Every harness candidate is evaluated against the same Lane A gate:
 
 No LLM is required in Lane A. The outer loop is deterministic Python.
 
+Lane A applies equally to manual and agent-assisted change workflows. Agentic
+behavior only changes how candidates are proposed and improved, not how merge
+eligibility is decided.
+
 Note: `traceability_coverage.py` no longer exists as a separate script—coverage extraction is integrated into the Sphinx build via the score_metamodel extension.
 
 ## Queryability rules
@@ -60,24 +64,33 @@ determines merge eligibility.
 
 ```bash
 # Validate a candidate cheaply before full evaluation
-python3 score_harness/validate_candidate.py \
+PYTHONPATH=. python3 score_harness/validate_candidate.py \
   --candidate score_harness/harness/base_harness.py \
   --task-spec score_harness/spec/task_002_threshold_fail.json
 
 # Run the seeded gate-fixture corpus against the baseline harness
-python3 score_harness/outer_loop.py \
+PYTHONPATH=. python3 score_harness/outer_loop.py \
   --candidate score_harness/harness/base_harness.py \
   --tasks score_harness/spec/
 
 # Query prior runs, failed tasks, and candidate deltas
-python3 score_harness/query_runs.py \
+PYTHONPATH=. python3 score_harness/query_runs.py \
   --runs-dir score_harness/runs \
   --failed-tasks \
   --diff-candidates base_harness candidate_x
 ```
 
+## Enforcement and bypass resistance
+
+- Local runs are for fast feedback and can always be bypassed by intent.
+- Merge protection must come from required CI checks.
+- `validate_candidate.py --skip-external-checks` is blocked unless `SCORE_HARNESS_ALLOW_SKIP_EXTERNAL_CHECKS=1`.
+- `outer_loop.py --skip-validation` is blocked unless `SCORE_HARNESS_ALLOW_SKIP_VALIDATION=1`.
+- CI must run both validation and outer loop without skip flags.
+- Configure branch protection so the harness CI workflow is required before merge.
+
 ## Next implementation steps
 
 1. Grow the seeded corpus beyond gate metrics fixtures to full docs build snapshots using the needs_json task path.
 2. Add more candidate harnesses so run-to-run diffs show meaningful behavioral deltas.
-3. Integrate the outer loop into CI as a non-blocking pre-gate pilot.
+3. Keep the harness CI gate required on pull requests and evolve the task corpus over time.

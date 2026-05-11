@@ -242,7 +242,10 @@ def main() -> None:  # noqa: C901
     parser.add_argument(
         "--skip-validation",
         action="store_true",
-        help="Skip the cheap pre-benchmark candidate validation step.",
+        help=(
+            "Skip cheap pre-benchmark candidate validation "
+            "(dev-only; requires SCORE_HARNESS_ALLOW_SKIP_VALIDATION=1)."
+        ),
     )
     args = parser.parse_args()
     args.gate_script = resolve_support_path(args.gate_script)
@@ -257,6 +260,13 @@ def main() -> None:  # noqa: C901
     if not task_specs:
         print(f"No task specs found in {args.tasks}. Create spec/*.json files first.")
         sys.exit(1)
+
+    if args.skip_validation and os.getenv("SCORE_HARNESS_ALLOW_SKIP_VALIDATION") != "1":
+        print(
+            "Refusing --skip-validation: set SCORE_HARNESS_ALLOW_SKIP_VALIDATION=1 "
+            "for local debugging only."
+        )
+        sys.exit(2)
 
     if not args.skip_validation:
         validation_task_spec = None

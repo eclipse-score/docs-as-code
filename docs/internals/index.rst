@@ -21,6 +21,7 @@ This section is not relevant for users of docs-as-code but for developers extend
 .. toctree::
    :maxdepth: 1
 
+   agent_harness
    extensions/index
    benchmark_results
    decisions/index
