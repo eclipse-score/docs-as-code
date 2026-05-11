@@ -557,10 +557,6 @@ Versioning
   Docs-as-Code shall support the ``covers`` link type to establish traceability between
   requirements and their Assumptions of Use (AoU), per SCORE process specification.
 
-  **Purpose**: In SEooC (Safety Element Out of Context) development, AoU capture the
-  operational context and constraints that validate safety cases. Requirements "cover"
-  (are bound to) specific assumptions.
-
   **Allowed connections**:
 
   .. table::
