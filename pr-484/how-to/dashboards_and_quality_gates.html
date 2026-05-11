@@ -526,14 +526,24 @@ be generated.</p></li>
 intentionally aggregate traceability across dependencies, such as integration
 repositories.</p>
 <p>Configuration split:</p>
-<ul class="simple">
-<li><dl class="simple">
-<dt>Keep repository policy knobs (for example requirement types and</dt><dd><p>include/exclude external needs) in <code class="docutils literal notranslate"><span class="pre">conf.py</span></code>.</p>
-</dd>
-</dl>
-</li>
-<li><p>Keep execution and dependency wiring in Bazel targets.</p></li>
-</ul>
+<p><strong>Policy (conf.py):</strong> What needs to filter and whether to aggregate externals.</p>
+<p><strong>Wiring (BUILD):</strong> Which dependencies to pull and how the build executes.</p>
+<p>Example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># docs/conf.py — policy</span>
+<span class="n">score_metamodel_requirement_types</span> <span class="o">=</span> <span class="s2">&quot;feat_req,comp_req&quot;</span>  <span class="c1"># What types to include</span>
+<span class="n">score_metamodel_include_external_needs</span> <span class="o">=</span> <span class="kc">False</span>           <span class="c1"># Aggregate or not</span>
+</pre></div>
+</div>
+<div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="c1"># BUILD — wiring</span>
+<span class="n">docs</span><span class="p">(</span>
+    <span class="n">source_dir</span> <span class="o">=</span> <span class="s2">&quot;docs&quot;</span><span class="p">,</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;@score_process//:needs_json&quot;</span><span class="p">,</span>  <span class="c1"># Which external sources to bring in</span>
+    <span class="p">],</span>
+    <span class="n">scan_code</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;:module_sources&quot;</span><span class="p">],</span>    <span class="c1"># Which source files to scan</span>
+<span class="p">)</span>
+</pre></div>
+</div>
 </section>
 <section id="building-the-dashboard">
 <h2>Building the Dashboard<a class="headerlink" href="#building-the-dashboard" title="Link to this heading">#</a></h2>
