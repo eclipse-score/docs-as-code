@@ -515,51 +515,6 @@ Add <code class="docutils literal notranslate"><span class="pre">score_metamodel
 </div>
 </section>
 </section>
-<section id="seooc-traceability-and-aou-linking">
-<h2>SEooC Traceability and AoU Linking<a class="headerlink" href="#seooc-traceability-and-aou-linking" title="Link to this heading">#</a></h2>
-<section id="id1">
-<h3>Overview<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
-<p>Safety Element Out of Context (SEooC) development requires comprehensive traceability across three dimensions:</p>
-<ol class="arabic simple">
-<li><p><strong>Requirements</strong> (what must be done)</p></li>
-<li><p><strong>Architecture</strong> (how it’s structured)</p></li>
-<li><p><strong>Verification</strong> (proof it works)</p></li>
-</ol>
-<p>Assumptions of Use (AoU) are central to this model, as they capture the operational context and constraints that validate the safety case.</p>
-</section>
-<section id="the-traceability-chain">
-<h3>The Traceability Chain<a class="headerlink" href="#the-traceability-chain" title="Link to this heading">#</a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">covers</span></code> link type establishes the connection between requirements and their operational assumptions:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Stakeholder Requirement
-    ↓ satisfies
-Feature Requirement
-    ↓ covers
-Assumption of Use (AoU)        ← defines operational context &amp; constraints
-    ↓ (informs architecture)
-Component Requirement
-    ↓ fulfils
-Component Architecture
-    ↓ implements
-Source Code
-    ↓ testlink / source_code_link
-Verification Evidence
-</pre></div>
-</div>
-</section>
-<section id="why-aou-matters">
-<h3>Why AoU Matters<a class="headerlink" href="#why-aou-matters" title="Link to this heading">#</a></h3>
-<ul class="simple">
-<li><p><strong>Safety context</strong>: AoU captures assumptions that validate the safety chain</p></li>
-<li><p><strong>Integration risk</strong>: External component assumptions must be explicitly covered</p></li>
-<li><p><strong>Traceability</strong>: Links features to the operational context they depend on</p></li>
-</ul>
-<p><strong>Process Reference</strong>: <a class="reference external" href="https://github.com/eclipse-score/process_description/blob/main/process/process_areas/requirements_engineering/guidance/requirements_process_reqs.rst#gd_req__req_linkage_aou">gd_req__req_linkage_aou</a></p>
-<ul class="simple">
-<li><p>Feature and component requirements SHALL link to AoU via the <code class="docutils literal notranslate"><span class="pre">covers</span></code> link type</p></li>
-<li><p>Bi-directional traceability via <code class="docutils literal notranslate"><span class="pre">covered_by</span></code> back-link</p></li>
-</ul>
-</section>
-</section>
 <section id="need-types">
 <h2>need types<a class="headerlink" href="#need-types" title="Link to this heading">#</a></h2>
 <p>Each type of needs is defined in the <code class="docutils literal notranslate"><span class="pre">needs_types</span></code> section of the <code class="docutils literal notranslate"><span class="pre">metamodel.yaml</span></code> file. Each need type has attributes, links, tags, and other properties that define its structure and behavior within the documentation system.</p>
@@ -816,12 +771,6 @@ The signature is similar to that of local_check, but instead of one need, you wi
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#core-components">Core Components</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#metamodel-definition">Metamodel Definition</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#validation-system">Validation System</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#seooc-traceability-and-aou-linking">SEooC Traceability and AoU Linking</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Overview</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-traceability-chain">The Traceability Chain</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-aou-matters">Why AoU Matters</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#need-types">need types</a></li>
