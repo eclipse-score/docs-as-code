@@ -86,9 +86,28 @@ repositories.
 
 Configuration split:
 
-- Keep repository policy knobs (for example requirement types and
-   include/exclude external needs) in ``conf.py``.
-- Keep execution and dependency wiring in Bazel targets.
+**Policy (conf.py):** What needs to filter and whether to aggregate externals.
+
+**Wiring (BUILD):** Which dependencies to pull and how the build executes.
+
+Example:
+
+.. code-block:: python
+
+   # docs/conf.py — policy
+   score_metamodel_requirement_types = "feat_req,comp_req"  # What types to include
+   score_metamodel_include_external_needs = False           # Aggregate or not
+
+.. code-block:: starlark
+
+   # BUILD — wiring
+   docs(
+       source_dir = "docs",
+       data = [
+           "@score_process//:needs_json",  # Which external sources to bring in
+       ],
+       scan_code = [":module_sources"],    # Which source files to scan
+   )
 
 Building the Dashboard
 ----------------------
