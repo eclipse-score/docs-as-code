@@ -569,10 +569,10 @@ Versioning
      Component Requirements           covers     Assumptions of Use (AoU)
      ================================ ========================================================
 
-  **Traceability chain**: Stakeholder Req → Feature Req → (covers) → AoU → Component Req
+  **Traceability scope**: Applies in both repository types: feature requirements cover
+  AoU in platform repositories, and component requirements cover AoU in module repositories.
 
-  **Process reference**: :need:`gd_req__req_linkage_aou` — Requirements SHALL be linked to AoU
-  via covers if they already cover these.
+  **Process reference**: :need:`gd_req__req_linkage_aou`
 
 .. tool_req:: Safety: enforce safe linking
    :id: tool_req__docs_common_attr_safety_link_check

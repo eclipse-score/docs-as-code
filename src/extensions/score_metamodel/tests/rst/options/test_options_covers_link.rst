@@ -48,7 +48,7 @@
 
 
 .. Positive Test: feat_req pointing to an aou_req via covers is valid.
-#EXPECT-NOT: feat_req__covers__good_1.covers (['aou_req__covers__target']): does not follow pattern `^aou_req__.*$`.
+#EXPECT-NOT: covers
 
 .. feat_req:: Feature requirement with valid covers link
    :id: feat_req__covers__good_1
@@ -63,7 +63,7 @@
 
 
 .. Positive Test: comp_req pointing to an aou_req via covers is valid.
-#EXPECT-NOT: comp_req__covers__good_1.covers (['aou_req__covers__target']): does not follow pattern `^aou_req__.*$`.
+#EXPECT-NOT: covers
 
 .. comp_req:: Component requirement with valid covers link
    :id: comp_req__covers__good_1

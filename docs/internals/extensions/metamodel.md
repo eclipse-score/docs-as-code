@@ -44,44 +44,6 @@ extensions = [
 ]
 ```
 
-## SEooC Traceability and AoU Linking
-
-### Overview
-Safety Element Out of Context (SEooC) development requires comprehensive traceability across three dimensions:
-1. **Requirements** (what must be done)
-2. **Architecture** (how it's structured)
-3. **Verification** (proof it works)
-
-Assumptions of Use (AoU) are central to this model, as they capture the operational context and constraints that validate the safety case.
-
-### The Traceability Chain
-The `covers` link type establishes the connection between requirements and their operational assumptions:
-
-```
-Stakeholder Requirement
-    ↓ satisfies
-Feature Requirement
-    ↓ covers
-Assumption of Use (AoU)        ← defines operational context & constraints
-    ↓ (informs architecture)
-Component Requirement
-    ↓ fulfils
-Component Architecture
-    ↓ implements
-Source Code
-    ↓ testlink / source_code_link
-Verification Evidence
-```
-
-### Why AoU Matters
-- **Safety context**: AoU captures assumptions that validate the safety chain
-- **Integration risk**: External component assumptions must be explicitly covered
-- **Traceability**: Links features to the operational context they depend on
-
-**Process Reference**: [gd_req__req_linkage_aou](https://github.com/eclipse-score/process_description/blob/main/process/process_areas/requirements_engineering/guidance/requirements_process_reqs.rst#gd_req__req_linkage_aou)
-- Feature and component requirements SHALL link to AoU via the `covers` link type
-- Bi-directional traceability via `covered_by` back-link
-
 ## need types
 
 Each type of needs is defined in the `needs_types` section of the `metamodel.yaml` file. Each need type has attributes, links, tags, and other properties that define its structure and behavior within the documentation system.
