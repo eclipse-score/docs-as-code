@@ -250,12 +250,14 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     config_setdefault(app.config, "needs_reproducible_json", True)
     config_setdefault(app.config, "needs_json_remove_defaults", True)
 
-    # Generate schemas.json from the metamodel and register it with sphinx-needs.
-    # This enables sphinx-needs 6 schema validation: required fields, regex
-    # patterns on option values, and (eventually) link target type checks.
-    # Use config-inited event to defer file writing until config is ready,
-    # with error handling to prevent boot crashes on file write failures.
     def _write_schemas_with_error_handling(app: Sphinx, config: Config) -> None:
+        """Generate schemas.json from the metamodel and register it with sphinx-needs.
+
+        This enables sphinx-needs 6 schema validation: required fields, regex
+        patterns on option values, and (eventually) link target type checks.
+        Use config-inited event to defer file writing until config is ready,
+        with error handling to prevent boot crashes on file write failures.
+        """
         try:
             write_sn_schemas(app, metamodel)
         except Exception as e:
