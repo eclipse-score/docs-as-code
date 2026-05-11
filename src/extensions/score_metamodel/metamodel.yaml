@@ -948,11 +948,10 @@ needs_extra_links:
     incoming: fulfilled by
     outgoing: fulfils
 
+  # req-Id: gd_req__req_linkage_aou
   covers:
     incoming: covered by
     outgoing: covers
-    # req-Id: gd_req__req_linkage_aou
-    # Requirement-to-AoU linking per SCORE process specification
 
   implements:
     incoming: implemented by
