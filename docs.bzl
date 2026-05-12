@@ -316,6 +316,12 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
         allow_persistent_workers = False,
     )
 
+    native.alias(
+        name = "traceability_gate",
+        actual = "@score_docs_as_code//scripts_bazel:traceability_gate",
+        tags = ["cli_help=Enforce traceability coverage thresholds:\nbazel run //:traceability_gate -- --metrics-json bazel-bin/needs_json/_build/needs/metrics.json"],
+    )
+
 def _sourcelinks_json(name, srcs):
     """
     Creates a target that generates a JSON file with source code links.
