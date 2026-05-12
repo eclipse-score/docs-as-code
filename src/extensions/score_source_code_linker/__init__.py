@@ -384,7 +384,11 @@ def _log_existing_links(needs: NeedsMutable) -> None:
 
 def _render_code_link(plain_links: bool, metadata: RepoInfo, link: NeedLink) -> str:
     if plain_links:
-        return f"{link.file}:{link.line}"
+        # Bazel sandbox builds have no git metadata, so we can't construct a real GitHub URL.
+        return (
+            "https://github.com/placeholder/placeholder/blob/unknown/"
+            f"{link.file}#L{link.line}<>{link.file}:{link.line}"
+        )
     try:
         base = get_github_link(metadata, link)
     except AssertionError:
