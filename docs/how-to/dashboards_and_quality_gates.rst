@@ -121,8 +121,6 @@ gate thresholds so CI calls a single Bazel target.
 Useful flags:
 
 - ``--require-all-links`` for strict 100 percent gating
-- ``--fail-on-broken-test-refs`` to fail when testcase references point to
-  unknown requirement IDs
 
 Recommended Rollout
 -------------------
