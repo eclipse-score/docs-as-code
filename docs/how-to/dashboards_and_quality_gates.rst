@@ -100,7 +100,9 @@ There are two common modes:
 CI Quality Gate
 ---------------
 
-After building ``//:needs_json``, run the gate on the exported metrics:
+Any docs build (``bazel run //:docs``, ``bazel run //:docs_check``, etc.)
+writes ``metrics.json`` alongside the build output. Run the gate on the
+exported metrics:
 
 .. code-block:: bash
 
@@ -113,7 +115,7 @@ After building ``//:needs_json``, run the gate on the exported metrics:
       --min-tests-linked 70
 
 In CI, wire targets through Bazel dependencies so test execution and
-``needs_json`` generation happen before the gate target.
+docs generation happen before the gate target.
 
 In larger repositories, define a dedicated wrapper target for your standard
 gate thresholds so CI calls a single Bazel target.
