@@ -8,7 +8,7 @@
 
 | Target                                         | What it does                                                                                      |
 | ---------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| `bazel run //:docs`                            | Builds documentation (also writes `metrics.json` via the score_metamodel extension)               |
+| `bazel run //:docs`                            | Builds documentation (also writes `metrics.json`)               |
 | `bazel run //:docs_check`                      | Verifies documentation correctness                                                                |
 | `bazel run //:docs_combo`                      | Builds combined documentation with all external dependencies included                             |
 | `bazel run @score_docs_as_code//scripts_bazel:traceability_gate -- --metrics-json bazel-bin/needs_json/_build/needs/metrics.json --min-req-code 100 --min-req-test 100 --min-req-fully-linked 100 --min-tests-linked 100 --fail-on-broken-test-refs` | Reads the pre-computed metrics.json from the docs build and fails if coverage thresholds are not met |
