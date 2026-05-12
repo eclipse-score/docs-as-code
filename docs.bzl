@@ -125,7 +125,7 @@ def _missing_requirements(deps):
         fail(msg)
     fail("This case should be unreachable?!")
 
-def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good = None):
+def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good = None, metamodel = None):
     """Creates all targets related to documentation.
 
     By using this function, you'll get any and all updates for documentation targets in one place.
@@ -135,12 +135,23 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
       data: Additional data files to include in the documentation build.
       deps: Additional dependencies for the documentation build.
       scan_code: List of code targets to scan for source code links.
+      known_good: Optional label to a "known good" JSON file for source links.
+      metamodel: Optional label to a metamodel.yaml file. When set, the extension loads this
+                 file instead of the default metamodel shipped with score_metamodel.
     """
 
     call_path = native.package_name()
 
     if call_path != "":
         fail("docs() must be called from the root package. Current package: " + call_path)
+
+    metamodel_data = []
+    metamodel_env = {}
+    metamodel_opts = []
+    if metamodel != None:
+        metamodel_data = [metamodel]
+        metamodel_env = {"SCORE_METAMODEL_YAML": "$(location " + str(metamodel) + ")"}
+        metamodel_opts = ["--define=score_metamodel_yaml=$(location " + str(metamodel) + ")"]
 
     module_deps = deps
     deps = deps + _missing_requirements(deps)
@@ -152,7 +163,7 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
     sphinx_build_binary(
         name = "sphinx_build",
         visibility = ["//visibility:private"],
-        data = data,
+        data = data + metamodel_data,
         deps = deps,
     )
 
@@ -187,19 +198,19 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
     data_with_docs_sources = _rewrite_needs_json_to_docs_sources(data)
     additional_combo_sourcelinks = _rewrite_needs_json_to_sourcelinks(data)
     _merge_sourcelinks(name = "merged_sourcelinks", sourcelinks = [":sourcelinks_json"] + additional_combo_sourcelinks, known_good = known_good)
-    docs_data = data + [":sourcelinks_json"]
-    combo_data = data_with_docs_sources + [":merged_sourcelinks"]
+    docs_data = data + metamodel_data + [":sourcelinks_json"]
+    combo_data = data_with_docs_sources + metamodel_data + [":merged_sourcelinks"]
 
     docs_env = {
         "SOURCE_DIRECTORY": source_dir,
         "DATA": str(data),
         "SCORE_SOURCELINKS": "$(location :sourcelinks_json)",
-    }
+    } | metamodel_env
     docs_sources_env = {
         "SOURCE_DIRECTORY": source_dir,
         "DATA": str(data_with_docs_sources),
         "SCORE_SOURCELINKS": "$(location :merged_sourcelinks)",
-    }
+    } | metamodel_env
     if known_good:
         docs_env["KNOWN_GOOD_JSON"] = "$(location "+ known_good + ")"
         docs_sources_env["KNOWN_GOOD_JSON"] = "$(location "+ known_good + ")"

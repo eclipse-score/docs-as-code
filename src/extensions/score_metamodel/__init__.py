@@ -293,11 +293,14 @@ def postprocess_need_links(needs_types_list: list[ScoreNeedType]):
 
 def setup(app: Sphinx) -> dict[str, str | bool]:
     app.add_config_value("external_needs_source", "", rebuild="env")
+    app.add_config_value("score_metamodel_yaml", "", rebuild="env")
     config_setdefault(app.config, "needs_id_required", True)
     config_setdefault(app.config, "needs_id_regex", "^[A-Za-z0-9_-]{6,}")
 
     # load metamodel.yaml via ruamel.yaml
-    metamodel = load_metamodel_data()
+    raw_metamodel_path = app.config.score_metamodel_yaml
+    override_path = Path(raw_metamodel_path) if raw_metamodel_path else None
+    metamodel = load_metamodel_data(override_path)
 
     # Extend sphinx-needs config rather than overwriting
     app.config.needs_types += metamodel.needs_types

@@ -182,11 +182,16 @@ def _collect_all_custom_options(
     }
 
 
-def load_metamodel_data() -> MetaModelData:
+def load_metamodel_data(yaml_path: Path | None = None) -> MetaModelData:
     """
     Load metamodel.yaml and prepare data fields as needed for sphinx-needs.
+
+    Args:
+        yaml_path: Path to the metamodel YAML file. When None, the default
+                   metamodel shipped with this extension is used.
     """
-    yaml_path = Path(__file__).resolve().parent / "metamodel.yaml"
+    if yaml_path is None:
+        yaml_path = Path(__file__).resolve().parent / "metamodel.yaml"
 
     with open(yaml_path, encoding="utf-8") as f:
         data = cast(dict[str, Any], YAML().load(f))
