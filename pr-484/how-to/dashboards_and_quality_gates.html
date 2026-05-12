@@ -483,81 +483,23 @@ repository can:</p>
 </section>
 <section id="typical-setup">
 <h2>Typical Setup<a class="headerlink" href="#typical-setup" title="Link to this heading">#</a></h2>
-<ol class="arabic simple">
-<li><p>Add docs-as-code as a Bazel dependency as described in <a class="reference internal" href="setup.html#setup"><span class="std std-ref">Setup</span></a>.</p></li>
-<li><p>Define the documentation target via the <code class="docutils literal notranslate"><span class="pre">docs(...)</span></code> macro.</p></li>
-<li><p>Provide process or upstream needs via the <code class="docutils literal notranslate"><span class="pre">data</span></code> argument when cross-repo
-traceability is required.</p></li>
-<li><p>Provide implementation sources via <code class="docutils literal notranslate"><span class="pre">scan_code</span></code> so <code class="docutils literal notranslate"><span class="pre">source_code_link</span></code> can
-be generated.</p></li>
-<li><p>Add test metadata so <code class="docutils literal notranslate"><span class="pre">testlink</span></code> and testcase needs can be generated.</p></li>
-</ol>
+<p>For details, see <a class="reference internal" href="setup.html#setup"><span class="std std-ref">Setup</span></a>.</p>
 </section>
-<section id="minimal-consumer-example">
-<h2>Minimal Consumer Example<a class="headerlink" href="#minimal-consumer-example" title="Link to this heading">#</a></h2>
-<p>In <code class="docutils literal notranslate"><span class="pre">BUILD</span></code>:</p>
-<div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;@score_docs_as_code//:docs.bzl&quot;</span><span class="p">,</span> <span class="s2">&quot;docs&quot;</span><span class="p">)</span>
-
-<span class="n">filegroup</span><span class="p">(</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;module_sources&quot;</span><span class="p">,</span>
-    <span class="n">srcs</span> <span class="o">=</span> <span class="n">glob</span><span class="p">([</span>
-        <span class="s2">&quot;src/**/*.py&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;src/**/*.cpp&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;src/**/*.h&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;src/**/*.rs&quot;</span><span class="p">,</span>
-    <span class="p">]),</span>
-<span class="p">)</span>
-
-<span class="n">docs</span><span class="p">(</span>
-    <span class="n">source_dir</span> <span class="o">=</span> <span class="s2">&quot;docs&quot;</span><span class="p">,</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="s2">&quot;@score_process//:needs_json&quot;</span><span class="p">,</span>
-    <span class="p">],</span>
-    <span class="n">scan_code</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;:module_sources&quot;</span><span class="p">],</span>
-<span class="p">)</span>
-</pre></div>
-</div>
+<section id="minimal-configuration-example">
+<h2>Minimal Configuration Example<a class="headerlink" href="#minimal-configuration-example" title="Link to this heading">#</a></h2>
 <p>In <code class="docutils literal notranslate"><span class="pre">docs/conf.py</span></code>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">score_metamodel_requirement_types</span> <span class="o">=</span> <span class="s2">&quot;feat_req,comp_req,aou_req&quot;</span>
 <span class="n">score_metamodel_include_external_needs</span> <span class="o">=</span> <span class="kc">False</span>
 </pre></div>
 </div>
-<p>Use <code class="docutils literal notranslate"><span class="pre">score_metamodel_include_external_needs</span> <span class="pre">=</span> <span class="pre">True</span></code> only in repositories that
-intentionally aggregate traceability across dependencies, such as integration
-repositories.</p>
-<p>Configuration split:</p>
-<p><strong>Policy (conf.py):</strong> What needs to filter and whether to aggregate externals.</p>
-<p><strong>Wiring (BUILD):</strong> Which dependencies to pull and how the build executes.</p>
-<p>Example:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># docs/conf.py — policy</span>
-<span class="n">score_metamodel_requirement_types</span> <span class="o">=</span> <span class="s2">&quot;feat_req,comp_req&quot;</span>  <span class="c1"># What types to include</span>
-<span class="n">score_metamodel_include_external_needs</span> <span class="o">=</span> <span class="kc">False</span>           <span class="c1"># Aggregate or not</span>
-</pre></div>
-</div>
-<div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="c1"># BUILD — wiring</span>
-<span class="n">docs</span><span class="p">(</span>
-    <span class="n">source_dir</span> <span class="o">=</span> <span class="s2">&quot;docs&quot;</span><span class="p">,</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="s2">&quot;@score_process//:needs_json&quot;</span><span class="p">,</span>  <span class="c1"># Which external sources to bring in</span>
-    <span class="p">],</span>
-    <span class="n">scan_code</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;:module_sources&quot;</span><span class="p">],</span>    <span class="c1"># Which source files to scan</span>
-<span class="p">)</span>
-</pre></div>
-</div>
+<p>Use <code class="docutils literal notranslate"><span class="pre">score_metamodel_include_external_needs</span> <span class="pre">=</span> <span class="pre">True</span></code> (aggregate_traceability_across_dependencies)
+only in repositories that intentionally aggregate requirements across module dependencies, such as
+integration repositories. Use <code class="docutils literal notranslate"><span class="pre">False</span></code> for module repositories to gate only on local traceability.</p>
 </section>
 <section id="building-the-dashboard">
 <h2>Building the Dashboard<a class="headerlink" href="#building-the-dashboard" title="Link to this heading">#</a></h2>
-<p>Run:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bazel<span class="w"> </span>run<span class="w"> </span>//:docs
-</pre></div>
-</div>
-<p>This produces the HTML output.</p>
-<p>Run:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bazel<span class="w"> </span>build<span class="w"> </span>//:needs_json
-</pre></div>
-</div>
-<p>In this setup, the documentation build writes <code class="docutils literal notranslate"><span class="pre">metrics.json</span></code> via
-<code class="docutils literal notranslate"><span class="pre">score_metamodel</span></code>, and the <code class="docutils literal notranslate"><span class="pre">needs_json</span></code> artifact contains:</p>
+<p>After building/running any docs command (i.e. <code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">build</span> <span class="pre">//:needs_json</span></code> or <code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">//:docs_verify</span></code> are the fastest):</p>
+<p>The documentation build writes <code class="docutils literal notranslate"><span class="pre">metrics.json</span></code> via <code class="docutils literal notranslate"><span class="pre">score_metamodel</span></code>, and the <code class="docutils literal notranslate"><span class="pre">needs_json</span></code> artifact contains:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">bazel-bin/needs_json/_build/needs/needs.json</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">bazel-bin/needs_json/_build/needs/metrics.json</span></code></p></li>
@@ -596,7 +538,8 @@ repository purpose.</p></li>
 <section id="ci-quality-gate">
 <h2>CI Quality Gate<a class="headerlink" href="#ci-quality-gate" title="Link to this heading">#</a></h2>
 <p>After building <code class="docutils literal notranslate"><span class="pre">//:needs_json</span></code>, run the gate on the exported metrics:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bazel<span class="w"> </span>run<span class="w"> </span>@score_docs_as_code//scripts_bazel:traceability_gate<span class="w"> </span>--<span class="w"> </span><span class="se">\</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bazel<span class="w"> </span>run<span class="w"> </span>//:docs<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+bazel<span class="w"> </span>run<span class="w"> </span>//:traceability_gate<span class="w"> </span>--<span class="w"> </span><span class="se">\</span>
 <span class="w">   </span>--metrics-json<span class="w"> </span>bazel-bin/needs_json/_build/needs/metrics.json<span class="w"> </span><span class="se">\</span>
 <span class="w">   </span>--min-req-code<span class="w"> </span><span class="m">70</span><span class="w"> </span><span class="se">\</span>
 <span class="w">   </span>--min-req-test<span class="w"> </span><span class="m">70</span><span class="w"> </span><span class="se">\</span>
@@ -686,7 +629,7 @@ unknown requirement IDs</p></li>
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-you-get">What You Get</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#typical-setup">Typical Setup</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#minimal-consumer-example">Minimal Consumer Example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#minimal-configuration-example">Minimal Configuration Example</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#building-the-dashboard">Building the Dashboard</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs-for-linkage-metrics">Inputs for Linkage Metrics</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#choosing-local-vs-aggregated-views">Choosing Local vs Aggregated Views</a></li>
