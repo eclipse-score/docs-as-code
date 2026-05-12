@@ -50,14 +50,15 @@ In ``docs/conf.py``:
    score_metamodel_requirement_types = "feat_req,comp_req,aou_req"
    score_metamodel_include_external_needs = False
 
-Use ``score_metamodel_include_external_needs = True`` (aggregate_traceability_across_dependencies)
-only in repositories that intentionally aggregate requirements across module dependencies, such as
-integration repositories. Use ``False`` for module repositories to gate only on local traceability.
+Use ``score_metamodel_include_external_needs = True`` only in repositories that
+intentionally aggregate requirements across module dependencies, such as
+integration repositories. Use ``False`` for module repositories to gate only on
+local traceability.
 
 Building the Dashboard
 ----------------------
 
-After building/running any docs command (i.e. ``bazel build //:needs_json`` or ``bazel run //:docs_verify`` are the fastest):
+After building/running any docs command (i.e. ``bazel build //:needs_json`` or ``bazel run //:docs_check`` are the fastest):
 
 The documentation build writes ``metrics.json`` via ``score_metamodel``, and the ``needs_json`` artifact contains:
 
