@@ -8,11 +8,11 @@
       "requirements": {
         "total": 58,
         "with_code_link": 43,
-        "with_test_link": 3,
-        "fully_linked": 2,
+        "with_test_link": 1,
+        "fully_linked": 1,
         "with_code_link_pct": 74.13793103448276,
-        "with_test_link_pct": 5.172413793103448,
-        "fully_linked_pct": 3.4482758620689653,
+        "with_test_link_pct": 1.7241379310344827,
+        "fully_linked_pct": 1.7241379310344827,
         "missing_code_link_ids": [
           "tool_req__docs_arch_link_fulfils",
           "tool_req__docs_arch_link_safety_to_req",
@@ -39,10 +39,12 @@
           "tool_req__docs_arch_types",
           "tool_req__docs_arch_views",
           "tool_req__docs_common_attr_desc_wording",
+          "tool_req__docs_common_attr_description",
           "tool_req__docs_common_attr_id",
           "tool_req__docs_common_attr_id_scheme",
           "tool_req__docs_common_attr_safety",
           "tool_req__docs_common_attr_safety_link_check",
+          "tool_req__docs_common_attr_security",
           "tool_req__docs_common_attr_status",
           "tool_req__docs_common_attr_suspicious",
           "tool_req__docs_common_attr_title",
@@ -101,6 +103,7 @@
           "tool_req__docs_common_attr_id_scheme",
           "tool_req__docs_common_attr_safety",
           "tool_req__docs_common_attr_safety_link_check",
+          "tool_req__docs_common_attr_security",
           "tool_req__docs_common_attr_status",
           "tool_req__docs_common_attr_suspicious",
           "tool_req__docs_common_attr_title",
@@ -147,9 +150,9 @@
         ]
       },
       "tests": {
-        "total": 16,
+        "total": 10,
         "filtered_test_types": [],
-        "linked_to_requirements": 16,
+        "linked_to_requirements": 10,
         "linked_to_requirements_pct": 100.0,
         "broken_references": []
       }
