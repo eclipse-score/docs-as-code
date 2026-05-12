@@ -47,7 +47,7 @@ The overview pie combines implementation state and traceability evidence:
    requirement has ``implemented == YES`` or ``implemented == PARTIAL``,
    but is missing at least one traceability link (code link and/or test link).
 - ``fully linked``:
-   requirement has both ``source_code_link`` and ``testlink``.
+   requirement is implemented and has both ``source_code_link`` and ``testlink``.
 
 Implementation labels used on this page:
 
