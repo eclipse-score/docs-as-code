@@ -367,7 +367,7 @@ def find_need(all_needs: NeedsMutable, id: str) -> NeedItem | None:
 
 def _log_existing_links(needs: NeedsMutable) -> None:
     """Emit debug logs for needs that already contain source/test links."""
-    if LOGGER.getEffectiveLevel() < 10:
+    if not LOGGER.isEnabledFor(10):
         return
 
     for need_id, need in needs.items():
