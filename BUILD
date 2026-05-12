@@ -26,3 +26,15 @@ docs(
     ],
     source_dir = "docs",
 )
+
+# bazel run //:shellcheck
+alias(
+    name = "shellcheck",
+    actual = "@score_devcontainer//tools:shellcheck",
+)
+
+# bazel run //:actionlint
+alias(
+    name = "actionlint",
+    actual = "@score_devcontainer//tools:actionlint",
+)
