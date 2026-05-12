@@ -28,12 +28,16 @@
   "$defs": {
     "TypeMetrics": {
       "type": "object",
-      "required": ["include_not_implemented", "requirements", "tests"],
+      "required": ["include_not_implemented", "include_external", "requirements", "tests"],
       "additionalProperties": false,
       "properties": {
         "include_not_implemented": {
           "type": "boolean",
           "description": "Whether requirements with implemented==NO were counted in the denominator."
+        },
+        "include_external": {
+          "type": "boolean",
+          "description": "Whether external (imported) requirements were included in the metrics."
         },
         "requirements": {
           "$ref": "#/$defs/RequirementMetrics"
