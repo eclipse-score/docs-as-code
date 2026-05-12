@@ -333,21 +333,21 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
         default="",
         rebuild="env",
         types=str,
-        description="Path to pre-generated source code links JSON (optional fallback)"
+        description="Path to pre-generated source code links JSON (optional fallback)",
     )
     app.add_config_value(
         "score_sourcelinks_json",
         default="",
         rebuild="env",
         types=str,
-        description="Path to pre-generated source code links JSON from Bazel via SCORE_SOURCELINKS env var"
+        description="Path to pre-generated source code links JSON from Bazel via SCORE_SOURCELINKS env var",
     )
     app.add_config_value(
         "score_source_code_linker_plain_links",
         default=False,
         rebuild="env",
         types=bool,
-        description="If True, render links as plain text without GitHub URLs (useful for Bazel sandbox builds)"
+        description="If True, render links as plain text without GitHub URLs (useful for Bazel sandbox builds)",
     )
     setup_once(app)
 
