@@ -33,6 +33,7 @@ def _write_metrics_json(tmp_path: Path, metrics_by_type: dict | None = None) -> 
         metrics_by_type = {
             "tool_req": {
                 "include_not_implemented": False,
+                "include_external": False,
                 "requirements": {
                     "total": 4,
                     "with_code_link": 3,
@@ -111,6 +112,7 @@ def test_gate_fail_on_broken_refs(tmp_path: Path) -> None:
     metrics_by_type = {
         "tool_req": {
             "include_not_implemented": False,
+            "include_external": False,
             "requirements": {
                 "total": 1,
                 "with_code_link": 1,
@@ -146,6 +148,7 @@ def test_gate_specific_need_type(tmp_path: Path) -> None:
     metrics_by_type = {
         "tool_req": {
             "include_not_implemented": False,
+            "include_external": False,
             "requirements": {
                 "total": 2,
                 "with_code_link": 2,
@@ -168,6 +171,7 @@ def test_gate_specific_need_type(tmp_path: Path) -> None:
         },
         "comp_req": {
             "include_not_implemented": False,
+            "include_external": False,
             "requirements": {
                 "total": 5,
                 "with_code_link": 0,
