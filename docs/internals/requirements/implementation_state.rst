@@ -26,7 +26,7 @@ repositories.
 Overview
 --------
 
-.. needpie:: Requirements Status
+.. needpie:: Tool Requirements Status
    :labels: not implemented, implemented but incomplete traceability, fully linked
    :colors: red,yellow, green
    :filter-func: src.extensions.score_metamodel.checks.traceability_dashboard.pie_requirements_status(tool_req)
@@ -57,8 +57,8 @@ Implementation labels used on this page:
 
 Why multiple pies are shown:
 
-- ``Requirements with Codelinks`` shows implementation-to-source traceability.
-- ``Requirements with linked tests`` shows implementation-to-verification traceability.
+- ``Requirements with Codelinks`` shows requirement-to-implementation traceability.
+- ``Requirements with linked tests`` shows requirement-to-verification traceability.
 - ``Requirements fully linked`` is the strict roll-up (both links present).
 
 These are intentionally separate because they answer different diagnostics:

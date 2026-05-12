@@ -18,7 +18,7 @@ Requirements
 This repository provides the docs-as-code tooling used by other SCORE
 repositories. The pages in this section therefore focus on two questions:
 
-1. Which process and tool requirements are covered by the docs-as-code tooling?
+1. Which process requirements are covered by the docs-as-code tooling?
 2. How is the tooling itself verified and qualified for downstream use?
 
 Actual product and module traceability is expected to live in consuming

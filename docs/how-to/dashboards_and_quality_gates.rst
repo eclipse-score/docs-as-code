@@ -38,40 +38,10 @@ repository can:
 Typical Setup
 -------------
 
-1. Add docs-as-code as a Bazel dependency as described in :ref:`setup`.
-2. Define the documentation target via the ``docs(...)`` macro.
-3. Provide process or upstream needs via the ``data`` argument when cross-repo
-   traceability is required.
-4. Provide implementation sources via ``scan_code`` so ``source_code_link`` can
-   be generated.
-5. Add test metadata so ``testlink`` and testcase needs can be generated.
+For details, see :ref:`setup`.
 
-Minimal Consumer Example
-------------------------
-
-In ``BUILD``:
-
-.. code-block:: starlark
-
-   load("@score_docs_as_code//:docs.bzl", "docs")
-
-   filegroup(
-       name = "module_sources",
-       srcs = glob([
-           "src/**/*.py",
-           "src/**/*.cpp",
-           "src/**/*.h",
-           "src/**/*.rs",
-       ]),
-   )
-
-   docs(
-       source_dir = "docs",
-       data = [
-           "@score_process//:needs_json",
-       ],
-       scan_code = [":module_sources"],
-   )
+Minimal Configuration Example
+-----------------------------
 
 In ``docs/conf.py``:
 
@@ -80,54 +50,16 @@ In ``docs/conf.py``:
    score_metamodel_requirement_types = "feat_req,comp_req,aou_req"
    score_metamodel_include_external_needs = False
 
-Use ``score_metamodel_include_external_needs = True`` only in repositories that
-intentionally aggregate traceability across dependencies, such as integration
-repositories.
-
-Configuration split:
-
-**Policy (conf.py):** What needs to filter and whether to aggregate externals.
-
-**Wiring (BUILD):** Which dependencies to pull and how the build executes.
-
-Example:
-
-.. code-block:: python
-
-   # docs/conf.py — policy
-   score_metamodel_requirement_types = "feat_req,comp_req"  # What types to include
-   score_metamodel_include_external_needs = False           # Aggregate or not
-
-.. code-block:: starlark
-
-   # BUILD — wiring
-   docs(
-       source_dir = "docs",
-       data = [
-           "@score_process//:needs_json",  # Which external sources to bring in
-       ],
-       scan_code = [":module_sources"],    # Which source files to scan
-   )
+Use ``score_metamodel_include_external_needs = True`` (aggregate_traceability_across_dependencies)
+only in repositories that intentionally aggregate requirements across module dependencies, such as
+integration repositories. Use ``False`` for module repositories to gate only on local traceability.
 
 Building the Dashboard
 ----------------------
 
-Run:
+After building/running any docs command (i.e. ``bazel build //:needs_json`` or ``bazel run //:docs_verify`` are the fastest):
 
-.. code-block:: bash
-
-   bazel run //:docs
-
-This produces the HTML output.
-
-Run:
-
-.. code-block:: bash
-
-   bazel build //:needs_json
-
-In this setup, the documentation build writes ``metrics.json`` via
-``score_metamodel``, and the ``needs_json`` artifact contains:
+The documentation build writes ``metrics.json`` via ``score_metamodel``, and the ``needs_json`` artifact contains:
 
 - ``bazel-bin/needs_json/_build/needs/needs.json``
 - ``bazel-bin/needs_json/_build/needs/metrics.json``
@@ -172,7 +104,8 @@ After building ``//:needs_json``, run the gate on the exported metrics:
 
 .. code-block:: bash
 
-   bazel run @score_docs_as_code//scripts_bazel:traceability_gate -- \
+   bazel run //:docs && \
+   bazel run //:traceability_gate -- \
       --metrics-json bazel-bin/needs_json/_build/needs/metrics.json \
       --min-req-code 70 \
       --min-req-test 70 \

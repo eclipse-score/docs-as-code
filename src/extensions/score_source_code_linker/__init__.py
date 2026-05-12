@@ -310,6 +310,10 @@ def setup_once(app: Sphinx):
         assert find_git_root()
 
     # Register & Run (if needed) parsing & saving of JSON caches
+    # Note: This extension now runs on both internal and external needs_json invocations.
+    # Both modes aggregate links from local sources and external dependencies, enabling
+    # unified traceability reporting in integration repositories. Impact on external needs
+    # invocations is minimal since they typically don't have local test logs or source code.
     setup_source_code_linker(app, ws_root)
     register_test_code_linker(app)
     register_combined_linker(app)
@@ -322,13 +326,28 @@ def setup_once(app: Sphinx):
 def setup(app: Sphinx) -> dict[str, str | bool]:
     # Esbonio will execute setup() on every iteration.
     # setup_once will only be called once.
-    app.add_config_value("KNOWN_GOOD_JSON", default="", rebuild="env", types=str)
-    app.add_config_value("score_sourcelinks_json", default="", rebuild="env", types=str)
+
+    # Config values for source code linking and testcase metadata integration
+    app.add_config_value(
+        "KNOWN_GOOD_JSON",
+        default="",
+        rebuild="env",
+        types=str,
+        description="Path to pre-generated source code links JSON (optional fallback)"
+    )
+    app.add_config_value(
+        "score_sourcelinks_json",
+        default="",
+        rebuild="env",
+        types=str,
+        description="Path to pre-generated source code links JSON from Bazel via SCORE_SOURCELINKS env var"
+    )
     app.add_config_value(
         "score_source_code_linker_plain_links",
         default=False,
         rebuild="env",
         types=bool,
+        description="If True, render links as plain text without GitHub URLs (useful for Bazel sandbox builds)"
     )
     setup_once(app)
 
