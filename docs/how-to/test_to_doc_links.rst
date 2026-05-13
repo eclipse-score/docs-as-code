@@ -12,6 +12,8 @@
    # SPDX-License-Identifier: Apache-2.0
    # *******************************************************************************
 
+   # Assisted-by: GitHub Copilot
+
 Reference Docs in Tests
 =======================
 
@@ -53,3 +55,9 @@ Limitations
 - Partial properties will lead to no Testlink creation.
   If you want a test to be linked, please ensure all requirement properties are provided.
 - Tests must be executed by Bazel first so `test.xml` files exist.
+
+Related
+-------
+
+For end-to-end dashboard and CI threshold setup, see
+:doc:`dashboards_and_quality_gates`.

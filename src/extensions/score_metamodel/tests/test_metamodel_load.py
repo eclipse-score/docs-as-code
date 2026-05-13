@@ -25,6 +25,15 @@ def load_model_data(model_file: str) -> str:
         return f.read()
 
 
+def test_load_metamodel_data_explicit_path():
+    """When an explicit path is given, load_metamodel_data reads that file."""
+    explicit_path = MODEL_DIR / "simple_model.yaml"
+    result = load_metamodel_data(yaml_path=explicit_path)
+
+    assert len(result.needs_types) == 1
+    assert result.needs_types[0]["directive"] == "type1"
+
+
 def test_load_metamodel_data():
     model_data: str = load_model_data("simple_model.yaml")
 

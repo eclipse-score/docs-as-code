@@ -1,0 +1,176 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://eclipse-score.github.io/docs-as-code/traceability-metrics-schema.json",
+  "title": "Traceability Metrics",
+  "description": "Per-need-type traceability coverage metrics produced by the docs build (score_metamodel Sphinx extension). Consumed by traceability_gate to enforce coverage thresholds without re-parsing needs.json.",
+  "type": "object",
+  "required": ["schema_version", "generated_by", "metrics_by_type"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1",
+      "description": "Schema version. Bump when the shape changes incompatibly."
+    },
+    "generated_by": {
+      "type": "string",
+      "description": "Name of the producer that generated this file (e.g. 'sphinx_build')."
+    },
+    "metrics_by_type": {
+      "type": "object",
+      "description": "Metrics keyed by need type (e.g. 'tool_req', 'comp_req'). Each key is one call-scope: the requirement type string passed via --requirement-types.",
+      "minProperties": 1,
+      "additionalProperties": {
+        "$ref": "#/$defs/TypeMetrics"
+      }
+    }
+  },
+  "$defs": {
+    "TypeMetrics": {
+      "type": "object",
+      "required": ["include_not_implemented", "include_external", "requirements", "tests"],
+      "additionalProperties": false,
+      "properties": {
+        "include_not_implemented": {
+          "type": "boolean",
+          "description": "Whether requirements with implemented==NO were counted in the denominator."
+        },
+        "include_external": {
+          "type": "boolean",
+          "description": "Whether external (imported) requirements were included in the metrics."
+        },
+        "requirements": {
+          "$ref": "#/$defs/RequirementMetrics"
+        },
+        "tests": {
+          "$ref": "#/$defs/TestMetrics"
+        }
+      }
+    },
+    "RequirementMetrics": {
+      "type": "object",
+      "required": [
+        "total",
+        "with_code_link",
+        "with_test_link",
+        "fully_linked",
+        "with_code_link_pct",
+        "with_test_link_pct",
+        "fully_linked_pct",
+        "missing_code_link_ids",
+        "missing_test_link_ids",
+        "not_fully_linked_ids"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "total": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of requirements in scope."
+        },
+        "with_code_link": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Requirements that have a non-empty source_code_link."
+        },
+        "with_test_link": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Requirements that have a non-empty testlink."
+        },
+        "fully_linked": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Requirements that have both source_code_link and testlink."
+        },
+        "with_code_link_pct": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "with_code_link / total * 100, or 100 when total == 0."
+        },
+        "with_test_link_pct": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "with_test_link / total * 100, or 100 when total == 0."
+        },
+        "fully_linked_pct": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "fully_linked / total * 100, or 100 when total == 0."
+        },
+        "missing_code_link_ids": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Sorted IDs of requirements missing source_code_link."
+        },
+        "missing_test_link_ids": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Sorted IDs of requirements missing testlink."
+        },
+        "not_fully_linked_ids": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Sorted IDs of requirements missing either source_code_link or testlink."
+        }
+      }
+    },
+    "TestMetrics": {
+      "type": "object",
+      "required": [
+        "total",
+        "filtered_test_types",
+        "linked_to_requirements",
+        "linked_to_requirements_pct",
+        "broken_references"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "total": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total testcase needs considered (after optional test_type filter)."
+        },
+        "filtered_test_types": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "The test_type values used to filter testcases. Empty means all types."
+        },
+        "linked_to_requirements": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Testcases that reference at least one requirement via partially_verifies or fully_verifies."
+        },
+        "linked_to_requirements_pct": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "linked_to_requirements / total * 100, or 100 when total == 0."
+        },
+        "broken_references": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/BrokenReference" },
+          "description": "Testcase references that point to unknown requirement IDs."
+        }
+      }
+    },
+    "BrokenReference": {
+      "type": "object",
+      "required": ["testcase", "missing_need"],
+      "additionalProperties": false,
+      "properties": {
+        "testcase": {
+          "type": "string",
+          "description": "ID of the testcase containing the broken reference."
+        },
+        "missing_need": {
+          "type": "string",
+          "description": "Requirement ID referenced by the testcase that does not exist in needs.json."
+        }
+      }
+    }
+  }
+}

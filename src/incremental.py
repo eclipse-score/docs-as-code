@@ -84,6 +84,10 @@ if __name__ == "__main__":
         f"--define=external_needs_source={get_env('DATA')}",
     ]
 
+    metamodel_yaml = os.environ.get("SCORE_METAMODEL_YAML", "")
+    if metamodel_yaml:
+        base_arguments.append(f"--define=score_metamodel_yaml={metamodel_yaml}")
+
     # configure sphinx build with GitHub user and repo from CLI
     if args.github_user and args.github_repo:
         base_arguments.append(f"-A=github_user={args.github_user}")

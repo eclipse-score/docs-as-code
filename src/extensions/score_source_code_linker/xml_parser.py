@@ -338,11 +338,22 @@ def construct_and_add_need(app: Sphinx, tn: DataOfTestCase):
     # and either 'Fully' or 'PartiallyVerifies' should not be None here
     assert tn.file is not None
     assert tn.name is not None
-    assert tn.repo_name is not None
-    assert tn.hash is not None
-    assert tn.url is not None
-    # Have to build metadata here for the gh link func
-    metadata = RepoInfo(name=tn.repo_name, hash=tn.hash, url=tn.url)
+    external_url = ""
+    if tn.repo_name is None or tn.hash is None or tn.url is None:
+        logger.info(
+            "Creating testcase need with fallback URL due to incomplete repo metadata: "
+            f"name={tn.name}, file={tn.file}, repo_name={tn.repo_name}, "
+            f"hash={tn.hash}, url={tn.url}",
+            type="score_source_code_linker",
+        )
+        line = tn.line if tn.line is not None else 1
+        external_url = (
+            f"https://github.com/placeholder/placeholder/blob/unknown/{tn.file}#L{line}"
+        )
+    else:
+        # Have to build metadata here for the gh link func
+        metadata = RepoInfo(name=tn.repo_name, hash=tn.hash, url=tn.url)
+        external_url = get_github_link(metadata, tn)
     # IDK if this is ideal or not
     with contextlib.suppress(BaseException):
         _ = add_external_need(
@@ -352,7 +363,7 @@ def construct_and_add_need(app: Sphinx, tn: DataOfTestCase):
             tags="TEST",
             id=f"testcase__{tn.name}_{short_hash(tn.file + tn.name)}",
             name=tn.name,
-            external_url=get_github_link(metadata, tn),
+            external_url=external_url,
             fully_verifies=tn.FullyVerifies if tn.FullyVerifies is not None else "",
             partially_verifies=tn.PartiallyVerifies
             if tn.PartiallyVerifies is not None

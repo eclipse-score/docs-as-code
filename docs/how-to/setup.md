@@ -68,8 +68,11 @@ The `docs()` macro accepts the following arguments:
 | Parameter | Description | Required |
 |-----------|-------------|----------|
 | `source_dir` | Directory of documentation source files (RST, MD) | Yes |
-| `data` | List of `needs_json` targets that should be included in the documentation| No |
-
+| `data` | List of `needs_json` targets that should be included in the documentation | No |
+| `deps` | Additional Bazel Python dependencies | No |
+| `scan_code` | Source code targets to scan for traceability tags | No |
+| `known_good` | Label to a "known good" JSON file for source links | No |
+| `metamodel` | Label to a custom `metamodel.yaml` that replaces the default metamodel | No |
 
 ### 4. Copy conf.py
 
@@ -86,3 +89,9 @@ bazel run //:docs
 #### 6. Access your documentation at
 
 `/_build/index.html`
+
+## Next Step
+
+After basic setup, see {doc}`dashboards_and_quality_gates` to configure
+traceability dashboards, export `metrics.json`, and enforce CI quality gates in
+consumer repositories.

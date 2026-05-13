@@ -23,7 +23,7 @@ source code links from a JSON file and add them to the needs.
 import os
 from copy import deepcopy
 from pathlib import Path
-from typing import cast
+from typing import Any, cast
 
 from sphinx.application import Sphinx
 from sphinx.environment import BuildEnvironment
@@ -41,15 +41,18 @@ from src.extensions.score_source_code_linker.need_source_links import (
     store_source_code_links_combined_json,
 )
 from src.extensions.score_source_code_linker.needlinks import (
+    NeedLink,
     load_source_code_links_json,
     load_source_code_links_with_metadata_json,
 )
 from src.extensions.score_source_code_linker.repo_source_links import (
+    RepoInfo,
     group_needs_by_repo,
     load_repo_source_links_json,
     store_repo_source_links_json,
 )
 from src.extensions.score_source_code_linker.testlink import (
+    DataForTestLink,
     load_data_of_test_case_json,
     load_test_xml_parsed_json,
 )
@@ -104,9 +107,15 @@ def build_and_save_combined_file(outdir: Path):
         source_code_links = load_source_code_links_with_metadata_json(
             source_code_links_json
         )
-    test_code_links = load_test_xml_parsed_json(
-        get_cache_filename(outdir, "score_xml_parser_cache.json")
-    )
+    test_cache = get_cache_filename(outdir, "score_xml_parser_cache.json")
+    if test_cache.exists():
+        test_code_links = load_test_xml_parsed_json(test_cache)
+    else:
+        LOGGER.debug(
+            "No score_xml_parser_cache.json found. Continuing without test XML links.",
+            type="score_source_code_linker",
+        )
+        test_code_links = []
     scl_list = group_by_need(source_code_links, test_code_links)
     store_source_code_links_combined_json(
         outdir / "score_scl_grouped_cache.json", scl_list
@@ -118,7 +127,7 @@ def build_and_save_combined_file(outdir: Path):
 #          ╰──────────────────────────────────────╯
 
 
-def setup_source_code_linker(app: Sphinx, ws_root: Path):
+def setup_source_code_linker(app: Sphinx, ws_root: Path | None):
     """
     Setting up source_code_linker with all needed options.
     Allows us to only have this run once during live_preview & esbonio
@@ -144,9 +153,24 @@ def setup_source_code_linker(app: Sphinx, ws_root: Path):
     )
 
     score_sourcelinks_json = os.environ.get("SCORE_SOURCELINKS")
+    if not score_sourcelinks_json:
+        score_sourcelinks_json = str(
+            getattr(app.config, "score_sourcelinks_json", "")
+        ).strip()
+        if score_sourcelinks_json:
+            # Reuse existing code paths that expect this env var.
+            os.environ["SCORE_SOURCELINKS"] = score_sourcelinks_json
     if score_sourcelinks_json:
         # No need to generate the JSON file if this env var is set
         # because it points to an existing file with the needed data.
+        return
+
+    if ws_root is None:
+        LOGGER.info(
+            "No workspace root found and no SCORE_SOURCELINKS provided. "
+            "Skipping source-code-link scan.",
+            type="score_source_code_linker",
+        )
         return
 
     scl_cache_json = get_cache_filename(
@@ -277,16 +301,19 @@ def setup_once(app: Sphinx):
     )
     LOGGER.debug(f"DEBUG: Git root is {find_git_root()}")
 
-    # Run only for local files!
-    # ws_root is not set when running on external repositories (dependencies).
+    # Run for local files if possible. In Bazel sandbox builds, ws_root may be
+    # unavailable; in that case we can still operate when SCORE_SOURCELINKS
+    # (or score_sourcelinks_json config) is provided.
     ws_root = find_ws_root()
-    if not ws_root:
-        return
-
-    # When BUILD_WORKSPACE_DIRECTORY is set, we are inside a git repository.
-    assert find_git_root()
+    if ws_root:
+        # When BUILD_WORKSPACE_DIRECTORY is set, we are inside a git repository.
+        assert find_git_root()
 
     # Register & Run (if needed) parsing & saving of JSON caches
+    # Note: This extension now runs on both internal and external needs_json invocations.
+    # Both modes aggregate links from local sources and external dependencies, enabling
+    # unified traceability reporting in integration repositories. Impact on external needs
+    # invocations is minimal since they typically don't have local test logs or source code.
     setup_source_code_linker(app, ws_root)
     register_test_code_linker(app)
     register_combined_linker(app)
@@ -299,7 +326,29 @@ def setup_once(app: Sphinx):
 def setup(app: Sphinx) -> dict[str, str | bool]:
     # Esbonio will execute setup() on every iteration.
     # setup_once will only be called once.
-    app.add_config_value("KNOWN_GOOD_JSON", default="", rebuild="env", types=str)
+
+    # Config values for source code linking and testcase metadata integration
+    app.add_config_value(
+        "KNOWN_GOOD_JSON",
+        default="",
+        rebuild="env",
+        types=str,
+        description="Path to pre-generated source code links JSON (optional fallback)",
+    )
+    app.add_config_value(
+        "score_sourcelinks_json",
+        default="",
+        rebuild="env",
+        types=str,
+        description="Path to pre-generated source code links JSON from Bazel via SCORE_SOURCELINKS env var",
+    )
+    app.add_config_value(
+        "score_source_code_linker_plain_links",
+        default=False,
+        rebuild="env",
+        types=bool,
+        description="If True, render links as plain text without GitHub URLs (useful for Bazel sandbox builds)",
+    )
     setup_once(app)
 
     return {
@@ -316,6 +365,103 @@ def find_need(all_needs: NeedsMutable, id: str) -> NeedItem | None:
     return all_needs.get(id)
 
 
+def _log_existing_links(needs: NeedsMutable) -> None:
+    """Emit debug logs for needs that already contain source/test links."""
+    if not LOGGER.isEnabledFor(10):
+        return
+
+    for need_id, need in needs.items():
+        if need.get("source_code_link"):
+            LOGGER.debug(
+                f"?? Need {need_id} already has source_code_link: "
+                f"{need.get('source_code_link')}"
+            )
+        if need.get("testlink"):
+            LOGGER.debug(
+                f"?? Need {need_id} already has testlink: {need.get('testlink')}"
+            )
+
+
+def _render_code_link(plain_links: bool, metadata: RepoInfo, link: NeedLink) -> str:
+    if plain_links:
+        # Bazel sandbox builds have no git metadata, so we can't construct a real GitHub URL.
+        return (
+            "https://github.com/placeholder/placeholder/blob/unknown/"
+            f"{link.file}#L{link.line}<>{link.file}:{link.line}"
+        )
+    try:
+        base = get_github_link(metadata, link)
+    except AssertionError:
+        LOGGER.info(
+            "Falling back to local code-link format (no git remote available): "
+            f"{link.file}:{link.line}",
+            type="score_source_code_linker",
+        )
+        return f"{link.file}:{link.line}"
+    return f"{base}<>{link.file}:{link.line}"
+
+
+def _render_test_link(
+    plain_links: bool,
+    metadata: RepoInfo,
+    link: DataForTestLink,
+) -> str:
+    if plain_links:
+        return str(link.name)
+    try:
+        base = get_github_link(metadata, link)
+    except AssertionError:
+        LOGGER.info(
+            "Falling back to local test-link format (no git remote available): "
+            f"{link.name}",
+            type="score_source_code_linker",
+        )
+        return str(link.name)
+    return f"{base}<>{link.name}"
+
+
+def _warn_missing_need(source_code_links: object) -> None:
+    links = cast(Any, source_code_links).links
+    need_id = cast(Any, source_code_links).need
+
+    for code_link in links.CodeLinks:
+        LOGGER.warning(
+            f"{code_link.file}:{code_link.line}: Could not find {need_id} "
+            "in documentation [CODE LINK]",
+            type="score_source_code_linker",
+        )
+    for test_link in links.TestLinks:
+        LOGGER.warning(
+            f"{test_link.file}:{test_link.line}: Could not find {need_id} "
+            "in documentation [TEST LINK]",
+            type="score_source_code_linker",
+        )
+
+
+def _apply_links_to_need(
+    needs_data: SphinxNeedsData,
+    need: NeedItem,
+    source_code_links: object,
+    metadata: RepoInfo,
+    plain_links: bool,
+) -> None:
+    links = cast(Any, source_code_links).links
+    need_as_dict = cast(dict[str, object], need)
+    need_as_dict["source_code_link"] = ", ".join(
+        _render_code_link(plain_links, metadata, code_link)
+        for code_link in links.CodeLinks
+    )
+    need_as_dict["testlink"] = ", ".join(
+        _render_test_link(plain_links, metadata, test_link)
+        for test_link in links.TestLinks
+    )
+
+    # NOTE: Removing & adding the need is important to make sure
+    # the needs gets 're-evaluated'.
+    needs_data.remove_need(need["id"])
+    needs_data.add_need(need)
+
+
 # re-qid: gd_req__req__attr_impl
 def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
     """
@@ -327,65 +473,36 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
         env: Buildenvironment, this is filled automatically
         app: Sphinx app application, this is filled automatically
     """
-    ws_root = find_ws_root()
-    assert ws_root
-
-    Needs_Data = SphinxNeedsData(env)
-    needs = Needs_Data.get_needs_mutable()
+    needs_data = SphinxNeedsData(env)
+    needs = needs_data.get_needs_mutable()
     needs_copy = deepcopy(
         needs
     )  # TODO: why do we create a copy? Can we also needs_copy = needs[:]? copy(needs)?
 
-    # Enabled automatically for DEBUGGING
-    if LOGGER.getEffectiveLevel() >= 10:
-        for id, need in needs.items():
-            if need.get("source_code_link"):
-                LOGGER.debug(
-                    f"?? Need {id} already has source_code_link: "
-                    f"{need.get('source_code_link')}"
-                )
-            if need.get("testlink"):
-                LOGGER.debug(
-                    f"?? Need {id} already has testlink: {need.get('testlink')}"
-                )
+    _log_existing_links(needs)
 
     scl_by_module = load_repo_source_links_json(
         get_cache_filename(app.outdir, "score_repo_grouped_scl_cache.json")
     )
+    plain_links = bool(
+        getattr(app.config, "score_source_code_linker_plain_links", False)
+    )
+
     for module_grouped_needs in scl_by_module:
         for source_code_links in module_grouped_needs.needs:
             need = find_need(needs_copy, source_code_links.need)
             if need is None:
                 # TODO: print github annotations as in https://github.com/eclipse-score/bazel_registry/blob/7423b9996a45dd0a9ec868e06a970330ee71cf4f/tools/verify_semver_compatibility_level.py#L126-L129
-                for n in source_code_links.links.CodeLinks:
-                    LOGGER.warning(
-                        f"{n.file}:{n.line}: Could not find {source_code_links.need} "
-                        "in documentation [CODE LINK]",
-                        type="score_source_code_linker",
-                    )
-                for n in source_code_links.links.TestLinks:
-                    LOGGER.warning(
-                        f"{n.file}:{n.line}: Could not find {source_code_links.need} "
-                        "in documentation [TEST LINK]",
-                        type="score_source_code_linker",
-                    )
+                _warn_missing_need(source_code_links)
                 continue
 
-            need_as_dict = cast(dict[str, object], need)
-            metadata = module_grouped_needs.repo
-            need_as_dict["source_code_link"] = ", ".join(
-                f"{get_github_link(metadata, n)}<>{n.file}:{n.line}"
-                for n in source_code_links.links.CodeLinks
+            _apply_links_to_need(
+                needs_data=needs_data,
+                need=need,
+                source_code_links=source_code_links,
+                metadata=module_grouped_needs.repo,
+                plain_links=plain_links,
             )
-            need_as_dict["testlink"] = ", ".join(
-                f"{get_github_link(metadata, n)}<>{n.name}"
-                for n in source_code_links.links.TestLinks
-            )
-
-            # NOTE: Removing & adding the need is important to make sure
-            # the needs gets 're-evaluated'.
-            Needs_Data.remove_need(need["id"])
-            Needs_Data.add_need(need)
 
 
 #          ╭──────────────────────────────────────╮

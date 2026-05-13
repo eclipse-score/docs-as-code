@@ -60,6 +60,29 @@ Minimal example (root ``BUILD``)
   If you don't provide the necessary Sphinx packages,
   this function adds its own (but checks for conflicts).
 
+- ``scan_code`` (list of bazel labels)
+  Source code targets to scan for traceability tags (``req-Id:`` annotations).
+  Used to generate the source-code-link JSON that maps tags back to source files.
+
+- ``metamodel`` (bazel label, optional)
+  Path to a custom ``metamodel.yaml`` file.
+  When set, the ``score_metamodel`` extension loads **this file instead of** the default metamodel.
+  The label is automatically added to the ``data`` and ``tools`` of every generated target
+  so the file is available in the Bazel sandbox at build time.
+
+  Example:
+
+  .. code-block:: python
+
+     docs(
+         source_dir = "docs",
+         metamodel = "//:my_metamodel.yaml",
+     )
+
+  The custom ``metamodel.yaml`` must follow the same schema as the default one
+  (see :doc:`score_metamodel </internals/extensions/metamodel>`).
+  When ``metamodel`` is omitted the default metamodel is used unchanged.
+
 Edge cases
 ----------
 

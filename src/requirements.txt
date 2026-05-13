@@ -33,10 +33,10 @@ babel==2.18.0 \
 basedpyright==1.39.0 \
     --hash=sha256:6666f51c378c7ac45877c4c1c7041ee0b5b83d755ebc82f898f47b6fafe0cc4f \
     --hash=sha256:91b8ad50bc85ee4a985b928f9368c35c99eee5a56c44e99b2442fa12ecc3d670
-    # via -r src/requirements.in
+    # via -r requirements.in
 bazel-runfiles==1.9.0 \
     --hash=sha256:66fb0f221e72ad904086eda6b208e873c76a2f5511ea308e7eae449534abc202
-    # via -r src/requirements.in
+    # via -r requirements.in
 beautifulsoup4==4.14.3 \
     --hash=sha256:0918bfe44902e6ad8d57732ba310582e98da931428d231a5ecb9e7c703a735bb \
     --hash=sha256:6292b1c5186d356bba669ef9f7f051757099565ad9ada5dd630bd9de5fa7fb86
@@ -438,7 +438,7 @@ debugpy==1.8.20 \
     --hash=sha256:da11dea6447b2cadbf8ce2bec59ecea87cc18d2c574980f643f2d2dfe4862393 \
     --hash=sha256:eada6042ad88fa1571b74bd5402ee8b86eded7a8f7b827849761700aff171f1b \
     --hash=sha256:eb506e45943cab2efb7c6eafdd65b842f3ae779f020c82221f55aca9de135ed7
-    # via -r src/requirements.in
+    # via -r requirements.in
 docutils==0.22.4 \
     --hash=sha256:4db53b1fde9abecbb74d91230d32ab626d94f6badfc575d6db9194a49df29968 \
     --hash=sha256:d0013f540772d1420576855455d050a2180186c91c15779301ac2ccb3eeb68de
@@ -449,7 +449,7 @@ docutils==0.22.4 \
 esbonio==0.16.5 \
     --hash=sha256:04ba926e3603f7b1fde1abc690b47afd60749b64b1029b6bce8e1de0bb284921 \
     --hash=sha256:acab2e16c6cf8f7232fb04e0d48514ce50566516b1f6fcf669ccf2f247e8b10f
-    # via -r src/requirements.in
+    # via -r requirements.in
 fonttools==4.62.1 \
     --hash=sha256:0aa72c43a601cfa9273bb1ae0518f1acadc01ee181a6fc60cd758d7fdadffc04 \
     --hash=sha256:0b3ae47e8636156a9accff64c02c0924cbebad62854c4a6dbdc110cd5b4b341a \
@@ -506,9 +506,9 @@ gitdb==4.0.12 \
     --hash=sha256:5ef71f855d191a3326fcfbc0d5da835f26b13fbcba60c32c21091c349ffdb571 \
     --hash=sha256:67073e15955400952c6565cc3e707c554a4eea2e428946f7a4c162fab9bd9bcf
     # via gitpython
-gitpython==3.1.46 \
-    --hash=sha256:400124c7d0ef4ea03f7310ac2fbf7151e09ff97f2a3288d64a440c584a29c37f \
-    --hash=sha256:79812ed143d9d25b6d176a10bb511de0f9c67b1fa641d82097b0ab90398a2058
+gitpython==3.1.50 \
+    --hash=sha256:80da2d12504d52e1f998772dc5baf6e553f8d2fcfe1fcc226c9d9a2ee3372dcc \
+    --hash=sha256:d352abe2908d07355014abdd21ddf798c2a961469239afec4962e9da884858f9
     # via sphinx-collections
 h11==0.16.0 \
     --hash=sha256:4e35b956cf45792e4caa5885e69fba00bdbc6ffafbfa020300e549b208ee5ff1 \
@@ -853,11 +853,11 @@ minijinja==2.19.0 \
 myst-parser==5.0.0 \
     --hash=sha256:ab31e516024918296e169139072b81592336f2fef55b8986aa31c9f04b5f7211 \
     --hash=sha256:f6f231452c56e8baa662cc352c548158f6a16fcbd6e3800fc594978002b94f3a
-    # via -r src/requirements.in
+    # via -r requirements.in
 needs-config-writer==0.2.4 \
     --hash=sha256:0f0702574081bb8ed7d896aadfb73c0e48af099dc0d4227cc2bac957ed8ea4f6 \
     --hash=sha256:7c89375848c822e891b3cca48783f3cc3f7cbd3c02cba19418de146ca077f212
-    # via -r src/requirements.in
+    # via -r requirements.in
 nodejs-wheel-binaries==24.14.1 \
     --hash=sha256:404b563467129e6a0ea7006a38b3d8af0ebfbc340b31a6a0af2c59ea3af90b7c \
     --hash=sha256:634f57829ebfdfe95d096f32a50c5cdd3a6c72a94dcf2b92a8bef9868cccb13e \
@@ -1061,11 +1061,11 @@ pycparser==3.0 \
 pydata-sphinx-theme==0.17.0 \
     --hash=sha256:529c5631582cb3328cf4814fb9eb80611d1704c854406d282a75c9c86e3a1955 \
     --hash=sha256:cec5c92f41f4a11541b6df8210c446b4aa9c3badb7fcf2db7893405b786d5c99
-    # via -r src/requirements.in
+    # via -r requirements.in
 pygithub==2.9.0 \
     --hash=sha256:5e2b260ce327bffce9b00f447b65953ef7078ffe93e5a5425624a3075483927c \
     --hash=sha256:a26abda1222febba31238682634cad11d8b966137ed6cc3c5e445b29a11cb0a4
-    # via -r src/requirements.in
+    # via -r requirements.in
 pygls==1.3.1 \
     --hash=sha256:140edceefa0da0e9b3c533547c892a42a7d2fd9217ae848c330c53d266a55018 \
     --hash=sha256:6e00f11efc56321bdeb6eac04f6d86131f654c7d49124344a9ebb968da3dd91e
@@ -1121,7 +1121,7 @@ pyspellchecker==0.9.0 \
 pytest==9.0.3 \
     --hash=sha256:2c5efc453d45394fdd706ade797c0a81091eccd1d6e4bccfcd476e2b8e0ab5d9 \
     --hash=sha256:b86ada508af81d19edeb213c681b1d48246c1a91d304c6c81a427674c17eb91c
-    # via -r src/requirements.in
+    # via -r requirements.in
 python-dateutil==2.9.0.post0 \
     --hash=sha256:37dd54208da7e1cd875388217d5e00ebd4179249f90fb72437e91a35459a0ad3 \
     --hash=sha256:a8b2bc7bffae282281c8140a97d3aa9c14da0b136dfe83f850eea9a5f7470427
@@ -1218,7 +1218,7 @@ requests-file==2.1.0 \
 rich==14.3.3 \
     --hash=sha256:793431c1f8619afa7d3b52b2cdec859562b950ea0d4b6b505397612db8d5362d \
     --hash=sha256:b8daa0b9e4eef54dd8cf7c86c03713f53241884e814f4e2f5fb342fe520f639b
-    # via -r src/requirements.in
+    # via -r requirements.in
 roman-numerals==4.1.0 \
     --hash=sha256:1af8b147eb1405d5839e78aeb93131690495fe9da5c91856cb33ad55a7f1e5b2 \
     --hash=sha256:647ba99caddc2cc1e55a51e4360689115551bf4476d90e8162cf8c345fe233c7
@@ -1226,7 +1226,7 @@ roman-numerals==4.1.0 \
 ruamel-yaml==0.19.1 \
     --hash=sha256:27592957fedf6e0b62f281e96effd28043345e0e66001f97683aa9a40c667c93 \
     --hash=sha256:53eb66cd27849eff968ebf8f0bf61f46cdac2da1d1f3576dd4ccee9b25c31993
-    # via -r src/requirements.in
+    # via -r requirements.in
 six==1.17.0 \
     --hash=sha256:4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274 \
     --hash=sha256:ff70335d468e7eb6ec65b95b99d3a2836546063f63acc5171de367e834932a81
@@ -1247,7 +1247,7 @@ sphinx==9.1.0 \
     --hash=sha256:7741722357dd75f8190766926071fed3bdc211c74dd2d7d4df5404da95930ddb \
     --hash=sha256:c84fdd4e782504495fe4f2c0b3413d6c2bf388589bb352d439b2a3bb99991978
     # via
-    #   -r src/requirements.in
+    #   -r requirements.in
     #   esbonio
     #   myst-parser
     #   needs-config-writer
@@ -1263,11 +1263,11 @@ sphinx==9.1.0 \
 sphinx-autobuild==2025.8.25 \
     --hash=sha256:9cf5aab32853c8c31af572e4fecdc09c997e2b8be5a07daf2a389e270e85b213 \
     --hash=sha256:b750ac7d5a18603e4665294323fd20f6dcc0a984117026d1986704fa68f0379a
-    # via -r src/requirements.in
+    # via -r requirements.in
 sphinx-collections==0.3.1 \
     --hash=sha256:4dda762479d2ad2163ccb074b15f36f72810d9cd08be4daa69854a6e34c99f92 \
     --hash=sha256:fb93b979cc9275bd2ad980a71fd57be5521c0f879f90f8189917a8f7ca0436ab
-    # via -r src/requirements.in
+    # via -r requirements.in
 sphinx-data-viewer==0.1.5 \
     --hash=sha256:a7d5e58613562bb745380bfe61ca8b69997998167fd6fa9aea55606c9a4b17e4 \
     --hash=sha256:b74b1d304c505c464d07c7b225ed0d84ea02dcc88bc1c49cdad7c2275fbbdad4
@@ -1275,12 +1275,12 @@ sphinx-data-viewer==0.1.5 \
 sphinx-design==0.7.0 \
     --hash=sha256:d2a3f5b19c24b916adb52f97c5f00efab4009ca337812001109084a740ec9b7a \
     --hash=sha256:f82bf179951d58f55dca78ab3706aeafa496b741a91b1911d371441127d64282
-    # via -r src/requirements.in
+    # via -r requirements.in
 sphinx-needs[plotting]==8.0.0 \
     --hash=sha256:540c380c074d4088a557ea353e91513bfc1cb7712b10925c13ac9e5ebb7be091 \
     --hash=sha256:c4336ee0e3c949eff9eb11a14910f7b6b68cb8284d731cfddf97694037337674
     # via
-    #   -r src/requirements.in
+    #   -r requirements.in
     #   needs-config-writer
 sphinxcontrib-applehelp==2.0.0 \
     --hash=sha256:2f29ef331735ce958efa4734873f084941970894c6090408b079c61b2e1c06d1 \
@@ -1305,10 +1305,10 @@ sphinxcontrib-jsmath==1.0.1 \
 sphinxcontrib-mermaid==2.0.1 \
     --hash=sha256:9dca7fbe827bad5e7e2b97c4047682cfd26e3e07398cfdc96c7a8842ae7f06e7 \
     --hash=sha256:a21a385a059a6cafd192aa3a586b14bf5c42721e229db67b459dc825d7f0a497
-    # via -r src/requirements.in
+    # via -r requirements.in
 sphinxcontrib-plantuml==0.31 \
     --hash=sha256:fd74752f8ea070e641c3f8a402fccfa1d4a4056e0967b56033d2a76282d9f956
-    # via -r src/requirements.in
+    # via -r requirements.in
 sphinxcontrib-qthelp==2.0.0 \
     --hash=sha256:4fe7d0ac8fc171045be623aba3e2a8f613f8682731f9153bb2e40ece16b9bbab \
     --hash=sha256:b18a828cdba941ccd6ee8445dbe72ffa3ef8cbe7505d8cd1fa0d42d3f2d5f3eb
@@ -1385,9 +1385,9 @@ typing-extensions==4.15.0 \
     #   pygithub
     #   sphinx-needs
     #   starlette
-urllib3==2.6.3 \
-    --hash=sha256:1b62b6884944a57dbe321509ab94fd4d3b307075e0c2eae991ac71ee15ad38ed \
-    --hash=sha256:bf272323e553dfb2e87d9bfd225ca7b0f467b919d7bbd355436d3fd37cb0acd4
+urllib3==2.7.0 \
+    --hash=sha256:231e0ec3b63ceb14667c67be60f2f2c40a518cb38b03af60abc813da26505f4c \
+    --hash=sha256:9fb4c81ebbb1ce9531cce37674bbc6f1360472bc18ca9a553ede278ef7276897
     # via
     #   pygithub
     #   requests
