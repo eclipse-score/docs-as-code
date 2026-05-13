@@ -297,6 +297,9 @@ needs_types:
       derived_from: stkh_req
       satisfies: stkh_req
       belongs_to: feat # for evaluation
+      satisfied_by: feat # new preferred name for belongs_to
+      # req-Id: tool_req__docs_req_link_covers_aou
+      covers: aou_req
     optional_options:
       # req-Id: tool_req__docs_req_attr_reqcov
       reqcovered: ^(YES|NO)$
@@ -306,9 +309,6 @@ needs_types:
       # req-Id: tool_req__docs_req_attr_validity_correctness
       valid_from: ^v(0|[1-9]\d*)\.(0|[1-9]\d*)(\.(0|[1-9]\d*))?$
       valid_until: ^v(0|[1-9]\d*)\.(0|[1-9]\d*)(\.(0|[1-9]\d*))?$
-    optional_links:
-      # req-Id: tool_req__docs_req_link_covers_aou
-      covers: aou_req
     tags:
       - requirement
       - requirement_excl_process
@@ -335,15 +335,15 @@ needs_types:
       # TODO: make derived_from mandatory once downstream repos migrate from satisfies
       derived_from: feat_req
       satisfies: feat_req
+      satisfied_by: comp # new preferred name for belongs_to
+      # req-Id: tool_req__docs_req_link_covers_aou
+      covers: aou_req
     optional_options:
       # req-Id: tool_req__docs_req_attr_reqcov
       reqcovered: ^(YES|NO)$
       # req-Id: tool_req__docs_req_attr_testcov
       testcovered: ^(YES|NO)$
       hash: ^.*$
-    optional_links:
-      # req-Id: tool_req__docs_req_link_covers_aou
-      covers: aou_req
     tags:
       - requirement
       - requirement_excl_process
@@ -444,8 +444,6 @@ needs_types:
       includes: ^logic_arc_int(_op)*__.+$
       belongs_to: feat # make it mandatory for evaluation
     optional_links:
-      # TODO: make satisfies mandatory once downstream repos migrate from fulfils
-      satisfies: feat_req
       fulfils: feat_req
     tags:
       - architecture_element
@@ -468,8 +466,6 @@ needs_types:
     mandatory_links:
       belongs_to: feat
     optional_links:
-      # TODO: make satisfies mandatory once downstream repos migrate from fulfils
-      satisfies: feat_req
       fulfils: feat_req
     tags:
       - architecture_view
@@ -492,7 +488,6 @@ needs_types:
       status: ^(valid|invalid)$
     optional_links:
       includes: logic_arc_int_op
-      satisfies: feat_req
       fulfils: feat_req
     tags:
       - architecture_element
@@ -601,8 +596,6 @@ needs_types:
       belongs_to: comp
     optional_links:
       uses: logic_arc_int, real_arc_int_op
-      # TODO: make satisfies mandatory once downstream repos migrate from fulfils
-      satisfies: comp_req
       fulfils: comp_req
     tags:
       - architecture_view
@@ -624,8 +617,6 @@ needs_types:
     mandatory_links:
       belongs_to: comp
     optional_links:
-      # TODO: make satisfies mandatory once downstream repos migrate from fulfils
-      satisfies: comp_req
       fulfils: comp_req
     tags:
       - architecture_view
@@ -647,7 +638,6 @@ needs_types:
       status: ^(valid|invalid)$
       language: ^(cpp|rust)$
     optional_links:
-      satisfies: comp_req
       fulfils: comp_req
     tags:
       - architecture_element
@@ -1013,6 +1003,10 @@ needs_extra_links:
     incoming: has
     outgoing: belongs to
 
+  satisfied_by:
+    incoming: satisfies
+    outgoing: satisfied by
+
   satisfies:
     incoming: satisfied by
     outgoing: satisfies
@@ -1091,7 +1085,6 @@ graph_checks:
       include: feat_arc_sta, logic_arc_int, logic_arc_int_op, comp_arc_sta, real_arc_int, real_arc_int_op
       condition: safety == QM
     check:
-      satisfies: safety != QM
       fulfils: safety != QM
     explanation: An QM architecture element cannot implement ASIL requirements.
 

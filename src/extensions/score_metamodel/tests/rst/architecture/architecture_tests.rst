@@ -45,7 +45,7 @@
    :security: YES
    :safety: ASIL_B
    :status: invalid
-   :satisfies: feat_req__test_feature_1__test_req_1
+   :fulfils: feat_req__test_feature_1__test_req_1
    :includes: logic_arc_int__test_feature_1__test_interface_1
 
    .. needarch
@@ -59,7 +59,7 @@
    :security: YES
    :safety: ASIL_B
    :status: invalid
-   :satisfies: feat_req__test_feature_1__test_req_1
+   :fulfils: feat_req__test_feature_1__test_req_1
 
    Put here a sequence diagram
 
@@ -116,7 +116,7 @@ Component 1
    :safety: ASIL_B
    :security: YES
    :status: invalid
-   :satisfies: comp_req__test_component_1__requirement_1
+   :fulfils: comp_req__test_component_1__requirement_1
    :implements: logic_arc_int__test_feature_1__test_interface_1
    :belongs_to: comp__test_sub_component_1
 

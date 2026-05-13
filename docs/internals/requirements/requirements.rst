@@ -793,6 +793,7 @@ Architecture Attributes
 ..    :derived_from: gd_req__impl_dynamic_diagram
 
 ..    Provide needs type ``dd_dyn`` for dynamic diagrams showing unit interactions as UML.
+
 Testing
 #######
 
@@ -1247,7 +1248,3 @@ Overview of Tool to Process Requirements
 
 .. needextend:: c.this_doc() and type == 'tool_req' and not status
   :status: valid
-
-.. needextend:: "metamodel.yaml" in source_code_link
-  :+derived_from: tool_req__docs_metamodel
-  :+tags: config
