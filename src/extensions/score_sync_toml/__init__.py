@@ -154,13 +154,16 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     # Generate TOML fragments for types, fields, and links from the metamodel.
     # needs_config_writer cannot serialise these structures itself, so we combine
     # them into a single file and register it for merging.
-    # Write to a deterministic path so it's always overwritten (no temp file leak).
+    # Write to outdir (always writable, even in Bazel sandbox) instead of confdir
+    # to avoid polluting the source tree.
     metamodel_toml = (
         _generate_needs_types_toml(app)
         + _generate_needs_fields_toml(app)
         + _generate_needs_links_toml(app)
     )
-    metamodel_path = Path(app.confdir) / "needs_metamodel_generated.toml"
+    outdir = Path(app.outdir)
+    outdir.mkdir(parents=True, exist_ok=True)
+    metamodel_path = outdir / "needs_metamodel_generated.toml"
     metamodel_path.write_text(metamodel_toml, encoding="utf-8")
     # Merge the generated metamodel TOML (types, fields, links) into the final ubproject.toml.
     app.config.needscfg_merge_toml_files.append(str(metamodel_path))

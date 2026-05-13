@@ -348,8 +348,12 @@ class TestBuildNeedTypeSchema:
 
 class TestWriteSnSchemas:
     def test_writes_json_file(self, tmp_path: Path) -> None:
+        outdir = tmp_path / "output"
+        confdir = tmp_path / "conf"
+        confdir.mkdir()
         app = MagicMock()
-        app.confdir = str(tmp_path)
+        app.outdir = str(outdir)
+        app.confdir = str(confdir)
         app.config = MagicMock()
 
         need_type: dict[str, Any] = {
@@ -363,16 +367,22 @@ class TestWriteSnSchemas:
 
         write_sn_schemas(app, metamodel)
 
-        output_path: Path = tmp_path / "schemas.json"
+        output_path: Path = outdir / "schemas.json"
         assert output_path.exists()
         data = json.loads(output_path.read_text(encoding="utf-8"))
         assert "schemas" in data
         assert len(data["schemas"]) == 1
         assert data["schemas"][0]["id"] == "need-type-req"
+        # Best-effort copy to confdir for ubCode
+        assert (confdir / "schemas.json").exists()
 
     def test_sets_config_value(self, tmp_path: Path) -> None:
+        outdir = tmp_path / "output"
+        confdir = tmp_path / "conf"
+        confdir.mkdir()
         app = MagicMock()
-        app.confdir = str(tmp_path)
+        app.outdir = str(outdir)
+        app.confdir = str(confdir)
         app.config = MagicMock()
 
         metamodel = MagicMock()
@@ -380,11 +390,17 @@ class TestWriteSnSchemas:
 
         write_sn_schemas(app, metamodel)
 
-        assert app.config.needs_schema_definitions_from_json == "schemas.json"
+        assert app.config.needs_schema_definitions_from_json == str(
+            outdir / "schemas.json"
+        )
 
     def test_skips_need_types_without_constraints(self, tmp_path: Path) -> None:
+        outdir = tmp_path / "output"
+        confdir = tmp_path / "conf"
+        confdir.mkdir()
         app = MagicMock()
-        app.confdir = str(tmp_path)
+        app.outdir = str(outdir)
+        app.confdir = str(confdir)
         app.config = MagicMock()
 
         need_type_with: dict[str, Any] = {
@@ -403,14 +419,18 @@ class TestWriteSnSchemas:
 
         write_sn_schemas(app, metamodel)
 
-        output_path: Path = tmp_path / "schemas.json"
+        output_path: Path = outdir / "schemas.json"
         data = json.loads(output_path.read_text(encoding="utf-8"))
         assert len(data["schemas"]) == 1
         assert data["schemas"][0]["id"] == "need-type-req"
 
     def test_writes_valid_json_with_multiple_types(self, tmp_path: Path) -> None:
+        outdir = tmp_path / "output"
+        confdir = tmp_path / "conf"
+        confdir.mkdir()
         app = MagicMock()
-        app.confdir = str(tmp_path)
+        app.outdir = str(outdir)
+        app.confdir = str(confdir)
         app.config = MagicMock()
 
         need_types: list[dict[str, Any]] = [
@@ -432,7 +452,7 @@ class TestWriteSnSchemas:
 
         write_sn_schemas(app, metamodel)
 
-        output_path: Path = tmp_path / "schemas.json"
+        output_path: Path = outdir / "schemas.json"
         data = json.loads(output_path.read_text(encoding="utf-8"))
         assert len(data["schemas"]) == 2
         ids = {s["id"] for s in data["schemas"]}

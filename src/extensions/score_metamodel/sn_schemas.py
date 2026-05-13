@@ -53,7 +53,11 @@ def write_sn_schemas(app: Sphinx, metamodel: MetaModelData) -> None:
 
     Iterates over all need types, builds a schema for each one via
     ``_build_need_type_schema``, and writes the result to
-    ``<confdir>/schemas.json``.
+    ``<outdir>/schemas.json`` (always writable, even inside a Bazel sandbox).
+
+    Also attempts to write a copy to ``<confdir>/schemas.json`` so that the
+    ubCode VS Code extension can find it at edit time (it resolves the path
+    relative to ``ubproject.toml`` which lives in confdir).
     """
     config: Config = app.config
     schemas: list[dict[str, Any]] = []
@@ -65,13 +69,23 @@ def write_sn_schemas(app: Sphinx, metamodel: MetaModelData) -> None:
 
     schema_definitions: dict[str, Any] = {"schemas": schemas}
 
-    # Write the complete schema definitions to a JSON file in confdir
-    schemas_output_path = Path(app.confdir) / "schemas.json"
+    # Write to outdir (always writable, even in Bazel sandbox).
+    outdir = Path(app.outdir)
+    outdir.mkdir(parents=True, exist_ok=True)
+    schemas_output_path = outdir / "schemas.json"
     with open(schemas_output_path, "w", encoding="utf-8") as f:
         json.dump(schema_definitions, f, indent=2, ensure_ascii=False)
 
-    # Tell sphinx-needs to load the schema from the JSON file
-    config.needs_schema_definitions_from_json = "schemas.json"
+    # Tell sphinx-needs to load the schema using the absolute path (outdir).
+    config.needs_schema_definitions_from_json = str(schemas_output_path)
+
+    # Best-effort copy to confdir so ubCode can find it at edit time.
+    try:
+        confdir_path = Path(app.confdir) / "schemas.json"
+        with open(confdir_path, "w", encoding="utf-8") as f:
+            json.dump(schema_definitions, f, indent=2, ensure_ascii=False)
+    except OSError:
+        pass  # Read-only filesystem (e.g. Bazel sandbox) — ubCode copy skipped.
 
 
 def _classify_links(
@@ -113,7 +127,7 @@ def _classify_links(
                     LOGGER.error(
                         f"Multiple regex patterns for {label} link field "
                         f"'{field}' in need type '{type_name}'. "
-                        "Only the first one will be used in the schema."
+                        "Only the last one will be used in the schema."
                     )
                 regexes[field] = link_value
             else:
