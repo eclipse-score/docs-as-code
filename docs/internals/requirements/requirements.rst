@@ -554,25 +554,8 @@ Versioning
   :parent_covered: YES
   :status: valid
 
-  Docs-as-Code shall support the ``covers`` link type to establish traceability between
-  requirements and their Assumptions of Use (AoU), per SCORE process specification.
-
-  **Allowed connections**:
-
-  .. table::
-     :widths: auto
-
-     ================================ ========================================================
-     Source Type                      Link Type  Target Type
-     ================================ ========================================================
-     Feature Requirements             covers     Assumptions of Use (AoU)
-     Component Requirements           covers     Assumptions of Use (AoU)
-     ================================ ========================================================
-
-  **Traceability scope**: Applies in both repository types: feature requirements cover
-  AoU in platform repositories, and component requirements cover AoU in module repositories.
-
-  **Process reference**: :need:`gd_req__req_linkage_aou`
+    Docs-as-Code shall support the ``covers`` link type for linking requirements to
+    Assumptions of Use (AoU) according to :need:`gd_req__req_linkage_aou`.
 
 .. tool_req:: Safety: enforce safe linking
    :id: tool_req__docs_common_attr_safety_link_check
