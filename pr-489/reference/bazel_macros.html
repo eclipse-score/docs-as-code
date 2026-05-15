@@ -32,17 +32,17 @@
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
-    <link rel="stylesheet" type="text/css" href="../_static/css/score.css?v=6e51530f" />
-    <link rel="stylesheet" type="text/css" href="../_static/css/score_needs.css?v=1f5dae2a" />
-    <link rel="stylesheet" type="text/css" href="../_static/css/score_design.css?v=d9fd870c" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/score.css?v=bb63a8e1" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/score_needs.css?v=82a1844f" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/score_design.css?v=8048e6ee" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-data-viewer/jsonview.bundle.css?v=f6ef2277" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/libs/html/datatables.min.css?v=4b4fd840" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_core.css?v=f5b60a78" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_toggle.css?v=5c6620df" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/needstable.css?v=5e1b6797" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_links.css?v=2150a916" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_style.css?v=92936fa5" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/needstable.css?v=5e1b6797" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_toggle.css?v=5c6620df" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_links.css?v=2150a916" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/modern.css?v=803738c0" />
   
   <!-- So that users can add custom icons -->
@@ -491,6 +491,25 @@ Additional Bazel dependencies to add to the Python binaries and the virtual envi
 target. Use this to add project-specific Python modules.</p>
 <p>If you don’t provide the necessary Sphinx packages,
 this function adds its own (but checks for conflicts).</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">scan_code</span></code> (list of bazel labels)
+Source code targets to scan for traceability tags (<code class="docutils literal notranslate"><span class="pre">req-Id:</span></code> annotations).
+Used to generate the source-code-link JSON that maps tags back to source files.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">metamodel</span></code> (bazel label, optional)
+Path to a custom <code class="docutils literal notranslate"><span class="pre">metamodel.yaml</span></code> file.
+When set, the <code class="docutils literal notranslate"><span class="pre">score_metamodel</span></code> extension loads <strong>this file instead of</strong> the default metamodel.
+The label is automatically added to the <code class="docutils literal notranslate"><span class="pre">data</span></code> and <code class="docutils literal notranslate"><span class="pre">tools</span></code> of every generated target
+so the file is available in the Bazel sandbox at build time.</p>
+<p>Example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">docs</span><span class="p">(</span>
+    <span class="n">source_dir</span> <span class="o">=</span> <span class="s2">&quot;docs&quot;</span><span class="p">,</span>
+    <span class="n">metamodel</span> <span class="o">=</span> <span class="s2">&quot;//:my_metamodel.yaml&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>The custom <code class="docutils literal notranslate"><span class="pre">metamodel.yaml</span></code> must follow the same schema as the default one
+(see <a class="reference internal" href="../internals/extensions/metamodel.html"><span class="doc">score_metamodel</span></a>).
+When <code class="docutils literal notranslate"><span class="pre">metamodel</span></code> is omitted the default metamodel is used unchanged.</p>
 </li>
 </ul>
 </section>
