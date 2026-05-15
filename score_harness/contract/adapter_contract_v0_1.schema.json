@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://score.dev/schemas/score-harness/adapter-contract-v0.1.schema.json",
+  "title": "Score Harness Adapter Contract v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "operation",
+    "issue_id",
+    "task_spec",
+    "candidate_path",
+    "artifacts_dir",
+    "profile",
+    "strict"
+  ],
+  "properties": {
+    "contract_version": {
+      "type": "string",
+      "const": "v0.1.0"
+    },
+    "operation": {
+      "type": "string",
+      "enum": [
+        "validate",
+        "run",
+        "report"
+      ]
+    },
+    "issue_id": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "task_spec": {
+      "type": "string",
+      "minLength": 1
+    },
+    "candidate_path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "artifacts_dir": {
+      "type": "string",
+      "minLength": 1
+    },
+    "profile": {
+      "type": "string",
+      "const": "iso26262"
+    },
+    "strict": {
+      "type": "boolean"
+    }
+  }
+}

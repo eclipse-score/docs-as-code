@@ -14,6 +14,7 @@ detail in the structured files below so agents can navigate selectively.
 score_harness/
   spec/                  Task specs (small, structured change scenarios)
   harness/               Harness candidates (one Python file per candidate)
+  contract/              Adapter contract and schema (v0.1)
   runs/                  Execution history (append-only, per iteration/candidate/task)
   consistency_rules.yaml Public docs-as-code rule catalog
   SKILL.md               Domain skill for the outer loop proposer
@@ -24,6 +25,7 @@ score_harness/
 
 - Start here for the overall contract and command sequence
 - Read `spec/` for task units and expected verdicts
+- Read `contract/` for adapter interface and machine-readable schema
 - Read `consistency_rules.yaml` for rule IDs and impact semantics
 - Read `outer_loop.py` for evaluation, distillation, and filesystem layout
 - Read `SKILL.md` only when working on Lane B candidate evolution
