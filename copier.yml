@@ -1,0 +1,64 @@
+# SCORE governance overlay — Copier template configuration
+# Adopter repos run:
+#   copier copy gh:eclipse-score/.github path/to/repo
+#   copier update   (from inside the adopter repo to pull latest SCORE changes)
+
+_subdirectory: template
+_answers_file: .github/score/.copier-answers.yml
+
+_message_after_copy: |
+  SCORE governance overlay applied.
+
+  Next steps:
+    1. Review AGENTS.md as the canonical cross-assistant policy.
+    2. If needed, add assistant-specific notes in CLAUDE.md or .github/<instructions-file>.
+    3. Review .github/score/repo-manifest.json — update build/test/lint commands.
+    4. Commit the generated files.
+    5. Run: python3 scripts/check_markdown_hygiene.py --root . --include .github
+    6. To update SCORE governance in future: copier update
+
+# ── Questions ────────────────────────────────────────────────────────────────
+
+repo_name:
+  type: str
+  help: Repository name (used in repo-manifest.json, e.g. score-baselibc)
+
+repo_language:
+  type: str
+  help: Primary language
+  choices:
+    - C++
+    - Rust
+    - Python
+    - Go
+    - Other
+
+repo_visibility:
+  type: str
+  help: Repository visibility
+  default: public
+  choices:
+    - public
+    - private
+
+build_command:
+  type: str
+  help: Build command (e.g. "bazel build //...")
+  default: "bazel build //..."
+
+test_command:
+  type: str
+  help: Test command (e.g. "bazel test //...")
+  default: "bazel test //..."
+
+lint_command:
+  type: str
+  help: Lint command (e.g. "bazel run //:lint")
+  default: "bazel test //..."
+
+assistant_instructions_file:
+  type: str
+  help: >
+    Filename your AI assistant loads as instructions
+    (Copilot commonly uses copilot-instructions.md; other runtimes may use a different name)
+  default: copilot-instructions.md

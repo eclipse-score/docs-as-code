@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "repository": {
+    "name": "docs-as-code",
+    "language": "python",
+    "visibility": "public",
+    "tags": ["docs", "traceability", "iso26262"]
+  },
+  "bootstrap": {
+    "contract_version": "v0.1.0",
+    "template_version": "v0.1.0"
+  },
+  "execution": {
+    "build": { "command": "bazel build //..." },
+    "test": { "command": "bazel test //..." },
+    "lint": { "command": "bazel test //..." },
+    "typecheck": { "command": "bazel test //..." }
+  },
+  "mcp": {
+    "server_name": "score-repo-tools",
+    "tools": ["build", "test", "lint", "typecheck"]
+  }
+}

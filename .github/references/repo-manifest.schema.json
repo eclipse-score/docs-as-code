@@ -1,0 +1,152 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://score.dev/schemas/repo-manifest.schema.json",
+  "title": "SCORE Repo Manifest",
+  "description": "Minimal federated harness contract for a SCORE repository.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "repository",
+    "bootstrap",
+    "execution",
+    "mcp"
+  ],
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "repository": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "language",
+        "visibility"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "language": {
+          "type": "string",
+          "enum": [
+            "python",
+            "go",
+            "rust",
+            "cpp",
+            "typescript",
+            "mixed",
+            "other"
+          ]
+        },
+        "visibility": {
+          "type": "string",
+          "enum": [
+            "public",
+            "internal",
+            "private"
+          ]
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true,
+          "default": []
+        }
+      }
+    },
+    "bootstrap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract_version"
+      ],
+      "properties": {
+        "contract_version": {
+          "type": "string",
+          "pattern": "^v[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "template_version": {
+          "type": "string",
+          "pattern": "^v[0-9]+\\.[0-9]+\\.[0-9]+$"
+        }
+      }
+    },
+    "execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "build",
+        "test",
+        "lint"
+      ],
+      "properties": {
+        "build": {
+          "$ref": "#/$defs/commandSpec"
+        },
+        "test": {
+          "$ref": "#/$defs/commandSpec"
+        },
+        "lint": {
+          "$ref": "#/$defs/commandSpec"
+        },
+        "typecheck": {
+          "$ref": "#/$defs/commandSpec"
+        }
+      }
+    },
+    "mcp": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "server_name",
+        "tools"
+      ],
+      "properties": {
+        "server_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tools": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "build",
+              "test",
+              "lint",
+              "typecheck",
+              "search"
+            ]
+          },
+          "uniqueItems": true,
+          "minItems": 1
+        }
+      }
+    }
+  },
+  "$defs": {
+    "commandSpec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "command"
+      ],
+      "properties": {
+        "command": {
+          "type": "string",
+          "minLength": 1
+        },
+        "working_directory": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

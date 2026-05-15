@@ -1,0 +1,9 @@
+_src_path: gh:eclipse-score/.github
+_commit: cccecdc7c915d4d3df2e747b7fee97accc1ba812
+repo_name: docs-as-code
+repo_language: Python
+repo_visibility: public
+build_command: bazel build //...
+test_command: bazel test //...
+lint_command: bazel test //...
+assistant_instructions_file: copilot-instructions.md
