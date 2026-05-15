@@ -35,22 +35,26 @@ repos:
         language: system
         pass_filenames: false
         files: '(^|/)(MODULE\.bazel|.*\.bzl|BUILD(\.bazel)?)$'
-
-  - repo: https://github.com/rhysd/actionlint
-    rev: v1.7.11
-    hooks:
       - id: actionlint
-        args:
-          # Disable shellcheck and pyflakes for now, to enforce consistent behavior.
-          - -shellcheck=
-          - -pyflakes=
-
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.9
-    hooks:
+        name: actionlint
+        # Disable shellcheck and pyflakes for now, to enforce consistent behavior.
+        entry: tools/run_tool.sh actionlint -shellcheck= -pyflakes=
+        language: system
+        require_serial: true
+        types: [yaml]
+        files: ^\.github/workflows/
       - id: ruff-check
-        args: [ --fix ]
+        name: ruff-check
+        entry: tools/run_tool.sh ruff check --fix
+        language: system
+        require_serial: true
+        types: [python]
       - id: ruff-format
+        name: ruff-format
+        entry: tools/run_tool.sh ruff format
+        language: system
+        require_serial: true
+        types: [python]
 
   # Note: this is super slow, therefore it is last
   - repo: local

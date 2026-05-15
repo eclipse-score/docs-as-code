@@ -12,15 +12,17 @@
    # SPDX-License-Identifier: Apache-2.0
    # *******************************************************************************
 
-===============================
-Tool Requirements Overview
-===============================
+.. _docs_tool_req_overview:
 
-Here are all our tool requirements
-tersely packed in a table
-with some hopefully useful meta information.
+:orphan:
 
-.. needtable::
-   :types: tool_req
-   :columns: satisfies as "Process Requirement" ;id as "Tool Requirement";implemented;source_code_link
-   :style: table
+Tool Requirements Overview (Deprecated)
+=======================================
+
+This page is deprecated.
+
+Use the canonical requirements dashboard:
+:doc:`implementation_state`
+
+The process-to-tool mapping tables previously shown here are now part of
+the implementation state dashboard.

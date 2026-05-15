@@ -11,21 +11,58 @@
    #
    # SPDX-License-Identifier: Apache-2.0
    # *******************************************************************************
+
+   # Assisted-by: GitHub Copilot
 .. _docs_statistics:
 
-Implementation State Statistics
-================================
+Tooling Coverage
+================
+
+This page shows how the docs-as-code tooling covers process and tool
+requirements. It focuses on tooling capabilities offered to downstream
+repositories rather than on product-specific traceability inside those
+repositories.
 
 Overview
 --------
 
-.. needpie:: Requirements Status
-   :labels: not implemented, implemented but not tested, implemented and tested
+.. needpie:: Tool Requirements Status
+   :labels: not implemented, implemented but incomplete traceability, fully linked
    :colors: red,yellow, green
+   :filter-func: src.extensions.score_metamodel.checks.traceability_dashboard.pie_requirements_status(tool_req)
 
-   type == 'tool_req' and implemented == 'NO'
-   type == 'tool_req' and testlink == '' and (implemented == 'YES' or implemented == 'PARTIAL')
-   type == 'tool_req' and testlink != '' and (implemented == 'YES' or implemented == 'PARTIAL')
+Jump to evidence tables:
+
+- :ref:`Tool Requirement Implementation and Links table <tooling_coverage_table_impl_links>`
+- :ref:`Process Requirement to Tool Requirement mapping table <tooling_coverage_table_process_mapping>`
+
+How To Read These Levels
+------------------------
+
+The overview pie combines implementation state and traceability evidence:
+
+- ``not implemented``:
+   requirement has ``implemented == NO``.
+- ``implemented but incomplete traceability``:
+   requirement has ``implemented == YES`` or ``implemented == PARTIAL``,
+   but is missing at least one traceability link (code link and/or test link).
+- ``fully linked``:
+   requirement is implemented and has both ``source_code_link`` and ``testlink``.
+
+Implementation labels used on this page:
+
+- ``NO``: requirement is not implemented.
+- ``PARTIAL``: requirement is partly implemented.
+- ``YES``: requirement is implemented.
+
+Why multiple pies are shown:
+
+- ``Requirements with Codelinks`` shows requirement-to-implementation traceability.
+- ``Requirements with linked tests`` shows requirement-to-verification traceability.
+- ``Requirements fully linked`` is the strict roll-up (both links present).
+
+These are intentionally separate because they answer different diagnostics:
+missing code links, missing test links, or both.
 
 In Detail
 ---------
@@ -48,78 +85,43 @@ In Detail
       .. needpie:: Requirements with Codelinks
          :labels: no codelink, with codelink
          :colors: red, green
-
-         type == 'tool_req' and source_code_link == ''
-         type == 'tool_req' and source_code_link != ''
+         :filter-func: src.extensions.score_metamodel.checks.traceability_dashboard.pie_requirements_with_code_links(tool_req)
 
    .. grid-item-card::
 
-      .. needpie:: Test Results
-         :labels: passed, failed, skipped
-         :colors: green, red, orange
-
-         type == 'testcase' and result == 'passed'
-         type == 'testcase' and result == 'failed'
-         type == 'testcase' and result == 'skipped'
-
-.. grid:: 2
+      .. needpie:: Requirements with linked tests
+         :labels: no test link, with test link
+         :colors: red, green
+         :filter-func: src.extensions.score_metamodel.checks.traceability_dashboard.pie_requirements_with_test_links(tool_req)
 
    .. grid-item-card::
 
-      Failed Tests
-
-      *Hint: this table is empty by definition, as PRs with failing tests are not allowed to be merged in docs-as-code repo.*
-
-      .. needtable:: FAILED TESTS
-         :filter: result == "failed"
-         :tags: TEST
-         :columns: name as "testcase";result;fully_verifies;partially_verifies;test_type;derivation_technique;id as "link"
+      .. needpie:: Requirements fully linked (code + tests)
+         :labels: not fully linked, fully linked
+         :colors: orange, green
+         :filter-func: src.extensions.score_metamodel.checks.traceability_dashboard.pie_requirements_fully_linked(tool_req)
 
    .. grid-item-card::
 
-      Skipped / Disabled Tests
-
-      *Hint: this table is empty by definition, as we do not allow skipped or disabled tests in docs-as-code repo.*
-
-      .. needtable:: SKIPPED/DISABLED TESTS
-         :filter: result != "failed" and result != "passed"
-         :tags: TEST
-         :columns: name as "testcase";result;fully_verifies;partially_verifies;test_type;derivation_technique;id as "link"
+      .. needpie:: Process requirements linked by tool requirements
+         :labels: not linked, linked
+         :colors: red, green
+         :filter-func: src.extensions.score_metamodel.checks.traceability_dashboard.pie_process_requirements_linked(tool_req,true)
 
 
+Process-to-Tool Mapping
+-----------------------
 
+.. _tooling_coverage_table_process_mapping:
 
-All passed Tests
------------------
+.. needtable:: Process requirement -> tool requirement mapping
+   :types: tool_req
+   :columns: satisfies as "Process Requirement";id as "Tool Requirement"
+   :style: table
 
-.. needtable:: SUCCESSFUL TESTS
-   :filter: result == "passed"
-   :tags: TEST
-   :columns: name as "testcase";result;fully_verifies;partially_verifies;test_type;derivation_technique;id as "link"
+.. _tooling_coverage_table_impl_links:
 
-
-Details About Testcases
-------------------------
-*Data is not filled out yet within the test cases.*
-
-.. needpie:: Test Types Used In Testcases
-   :labels: fault-injection, interface-test, requirements-based, resource-usage
-   :legend:
-
-   type == 'testcase' and test_type == 'fault-injection'
-   type == 'testcase' and test_type == 'interface-test'
-   type == 'testcase' and test_type == 'requirements-based'
-   type == 'testcase' and test_type == 'resource-usage'
-
-
-.. needpie:: Derivation Techniques Used In Testcases
-   :labels: requirements-analysis, design-analysis, boundary-values, equivalence-classes, fuzz-testing, error-guessing, explorative-testing
-   :legend:
-
-   type == 'testcase' and derivation_technique == 'requirements-analysis'
-   type == 'testcase' and derivation_technique == 'design-analysis'
-   type == 'testcase' and derivation_technique == 'boundary-values'
-   type == 'testcase' and derivation_technique == 'equivalence-classes'
-   type == 'testcase' and derivation_technique == 'fuzz-testing'
-   type == 'testcase' and derivation_technique == 'error-guessing'
-   type == 'testcase' and derivation_technique == 'explorative-testing'
+.. needtable:: Tool requirement implementation and links
+   :types: tool_req
+   :columns: id as "Tool Requirement";implemented;source_code_link;testlink
+   :style: table

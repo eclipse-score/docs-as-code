@@ -26,4 +26,4 @@ __pycache__/
 
 # bug: This file is created in repo root on test discovery.
 /consumer_test.log
-/.clwb
+.clwb
