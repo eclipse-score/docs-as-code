@@ -29,6 +29,7 @@ html[data-theme="light"] {
     --pst-color-muted: #FFF;
     /* Text color within cards (same background as page header) */
     --sd-color-card-text: #a382c5;
+    /* Text color for table captions (same background as page header) */
     /* Link color + menu items on hover color */
     --pst-color-primary: #7c4daa;
     /* Page Header */
@@ -37,7 +38,7 @@ html[data-theme="light"] {
     --pst-color-target: #E5FCC2;
     --pst-color-on-surface: #594F4F;
     --pst-color-on-background: var(--pst-color-secondary);
-    --pst-color-text-muted: #FFFFFF;
+    --pst-color-text-muted: #a382c5;
     --pst-color-table-row-zebra-high-bg: #e6e7e8;
     --pst-color-table-row-hover-bg: var(--pst-color-secondary); /*#d7d6d6;*/
 }
