@@ -10,11 +10,22 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
+import re
 from pathlib import Path
 
 from sphinx.application import Sphinx
 
 from src.helper_lib import config_setdefault
+
+_TOML_BARE_KEY_RE = re.compile(r"^[a-zA-Z0-9_]+$")
+
+
+def _assert_toml_bare_key(name: str, context: str) -> None:
+    """Assert that *name* is a valid bare TOML key (alphanumeric + underscore)."""
+    assert _TOML_BARE_KEY_RE.match(name), (
+        f"{context}: name {name!r} contains characters that would produce "
+        "malformed TOML (only [a-zA-Z0-9_] allowed in bare keys)"
+    )
 
 
 def _generate_needs_fields_toml(app: Sphinx) -> str:
@@ -34,6 +45,7 @@ def _generate_needs_fields_toml(app: Sphinx) -> str:
     """
     lines: list[str] = []
     for field_name, field_config in sorted(app.config.needs_fields.items()):
+        _assert_toml_bare_key(field_name, "needs_fields")
         default = field_config.get("default", "")
         # TOML-escape the default value (handle quotes)
         escaped = str(default).replace("\\", "\\\\").replace('"', '\\"')
@@ -57,6 +69,7 @@ def _generate_needs_links_toml(app: Sphinx) -> str:
     """
     lines: list[str] = []
     for link_name, link_config in sorted(app.config.needs_links.items()):
+        _assert_toml_bare_key(link_name, "needs_links")
         incoming = (
             str(link_config.get("incoming", ""))
             .replace("\\", "\\\\")
@@ -91,13 +104,19 @@ def _generate_needs_types_toml(app: Sphinx) -> str:
     """
     lines: list[str] = []
     for nt in app.config.needs_types:
+        _assert_toml_bare_key(nt["directive"], "needs_types.directive")
+        directive = str(nt["directive"]).replace("\\", "\\\\").replace('"', '\\"')
+        title = str(nt["title"]).replace("\\", "\\\\").replace('"', '\\"')
+        prefix = str(nt["prefix"]).replace("\\", "\\\\").replace('"', '\\"')
         lines.append("[[needs.types]]\n")
-        lines.append(f'directive = "{nt["directive"]}"\n')
-        lines.append(f'title = "{nt["title"]}"\n')
-        lines.append(f'prefix = "{nt["prefix"]}"\n')
+        lines.append(f'directive = "{directive}"\n')
+        lines.append(f'title = "{title}"\n')
+        lines.append(f'prefix = "{prefix}"\n')
         if color := nt.get("color"):
+            color = str(color).replace("\\", "\\\\").replace('"', '\\"')
             lines.append(f'color = "{color}"\n')
         if style := nt.get("style"):
+            style = str(style).replace("\\", "\\\\").replace('"', '\\"')
             lines.append(f'style = "{style}"\n')
         lines.append("\n")
     return "".join(lines)

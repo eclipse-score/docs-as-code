@@ -328,7 +328,7 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
         """
         try:
             write_sn_schemas(app, metamodel)
-        except Exception as e:
+        except OSError as e:
             logger.warning(
                 f"Failed to write schemas.json: {e}. "
                 "Schema validation will be unavailable."
