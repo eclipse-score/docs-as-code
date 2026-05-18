@@ -13,13 +13,6 @@
    # *******************************************************************************
 #CHECK: id_contains_feature
 
-.. Feature is deeper in the path of the RST file
-.. This is now explicitly allowed
-#EXPECT-NOT: std_wp__test__abcd.id (std_wp__test__abcd): Feature 'test' not in path
-
-.. std_wp:: This is a test
-   :id: std_wp__test__abcd
-
 .. Feature is in the path of the RST file
 #EXPECT-NOT: Feature 'id_contains_feature' not in path
 

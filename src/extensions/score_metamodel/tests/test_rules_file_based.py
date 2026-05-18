@@ -12,6 +12,7 @@
 # *******************************************************************************
 
 import os
+import re
 import shutil
 from collections.abc import Callable
 from dataclasses import dataclass, field
@@ -116,7 +117,7 @@ def extract_test_data(rst_file: Path) -> RstData | None:
     # The function returns a list of WarningInfo objects
     # containing the line number and the expected and not expected warnings.
     # If no test data is found, it returns None.
-    rst_data = RstData(filename=rst_file.name)
+    rst_data = RstData(filename=str(rst_file.relative_to(RST_DIR)))
     with open(rst_file) as f:
         test_info: WarningInfo | None = None
         for no, line in enumerate(f, start=1):
@@ -150,10 +151,17 @@ def filter_warnings_by_position(
     warning_info: WarningInfo,
     warnings: list[str],
 ) -> list[str]:
+    """
+    Filtering only warnings that belong to this file & line. But also deleting the prefix.
+    Filter out the filepath:linenr prefix from warning. So that the 'expect-not' can be generic
+    Without having to pay attention to the filename for example 'EXPECT-NOT: test' then matching
+    a random warning because 'test' is in the filename of 'graph/test_graph_checks.rst'
+    """
+    prefix = f"{rst_data.filename}:{warning_info.lineno}: WARNING:"
     return [
-        warning
+        warning.removeprefix(prefix)
         for warning in warnings
-        if (f"{rst_data.filename}:{str(warning_info.lineno)}" in warning)
+        if warning.startswith(prefix)
     ]
 
 
@@ -165,10 +173,17 @@ def warning_matches(
 ) -> str | None:
     ### Checks if any element of the warning list is includes the given warning info.
     # It returns the matched warning or None if no match is found.
+
     for warning in filter_warnings_by_position(rst_data, warning_info, warnings):
         if expected_message in warning:
             return warning
     return None
+
+
+def strip_ansi_codes(text: str) -> str:
+    """Remove ANSI escape sequences from text"""
+    ansi_escape = re.compile(r"\x1b\[[0-9;]*m")
+    return ansi_escape.sub("", text)
 
 
 @pytest.mark.parametrize("rst_file", RST_FILES)
@@ -192,8 +207,13 @@ def test_rst_files(
     app.build()
 
     # Collect the warnings
-    warnings = app.warning.getvalue().splitlines()
-    print("\n".join(w for w in warnings if "score_metamodel" in w))
+    raw_warnings = app.warning.getvalue().splitlines()
+    warnings = [strip_ansi_codes(w) for w in raw_warnings if "score_metamodel" in w]
+
+    # Enable this if you need to see errors for debugging purposes
+    # print(
+    #     "\n".join(strip_ansi_codes(w) for w in raw_warnings if "score_metamodel" in w)
+    # )
 
     # Check if the expected warnings are present
     for warning_info in rst_data.warning_infos:

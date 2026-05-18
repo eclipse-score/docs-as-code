@@ -23,7 +23,7 @@
 
 
 .. Title contains no stop word
-#EXPECT-NOT: feat_req__test__title_good: contains a weak word: `must` in option: `title`. Please revise the wording.
+#EXPECT-NOT: title
 
 .. feat_req:: This is a test
    :id: feat_req__test__title_good
@@ -38,7 +38,7 @@
 
 
 
-#EXPECT-NOT: stkh_req__test_title_good: contains a weak word: `must` in option: `title`. Please revise the wording.
+#EXPECT-NOT: title
 
 .. stkh_req:: This is a test
    :id: stkh_req__test_title_good
@@ -67,7 +67,7 @@
 
 
 .. Description of architecture view of type feat_arc_sta is not checked for weak words
-#EXPECT-NOT: feat_arc_sta_desc_good: contains a weak word: `really` in option: `content`. Please revise the wording.
+#EXPECT-NOT: content
 
 .. feat_arc_sta:: This is a test
    :id: feat_arc_sta_desc_good
