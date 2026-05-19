@@ -567,6 +567,16 @@ Versioning
 
    QM requirements (safety == QM) shall not be linked to safety requirements (safety != QM) via the ``satisfies`` attribute.
 
+.. tool_req:: Requirement linkage to AoU via covers
+  :id: tool_req__docs_req_link_covers_aou
+  :implemented: YES
+  :version: 1
+  :satisfies: gd_req__req_linkage_aou
+  :parent_covered: YES
+
+  Feature requirements (feat_req) and component requirements (comp_req)
+  link to Assumptions of Use (aou_req) via the ``covers`` attribute.
+
 🏛️ Architecture
 ################
 
@@ -631,7 +641,7 @@ Architecture Attributes
   :id: tool_req__docs_arch_link_fulfils
   :tags: Architecture
   :implemented: YES
-  :version: 1
+  :version: 2
   :satisfies:
    gd_req__arch_linkage_requirement_type,
    gd_req__arch_attr_fulfils,
@@ -649,13 +659,33 @@ Architecture Attributes
      ====================================  ==========================================
      Link Source                           Allowed Link Target
      ====================================  ==========================================
-     feat_arc_sta                          feat_req
+     feat_arc_sta                          feat_req, aou_req
      feat_arc_dyn                          feat_req
      logic_arc_int                         feat_req
-     comp_arc_sta                          comp_req
+     comp_arc_sta                          comp_req, aou_req
      comp_arc_dyn                          comp_req
      real_arc_int                          comp_req
      ====================================  ==========================================
+
+.. tool_req:: Architecture fulfils linkage to AoU
+  :id: tool_req__docs_arch_link_fulfils_aou
+  :implemented: YES
+  :version: 1
+  :satisfies: gd_req__arch_attr_fulfils_aou
+  :parent_covered: YES
+
+  Architectural static views (feat_arc_sta, comp_arc_sta)
+  link to Assumptions of Use (aou_req) via the ``fulfils`` attribute.
+
+.. tool_req:: Check Architecture linkage to AoU
+  :id: tool_req__docs_arch_link_aou_check
+  :implemented: NO
+  :version: 1
+  :satisfies: gd_req__arch_linkage_aou
+  :parent_covered: YES
+
+  Architectural static views (feat_arc_sta, comp_arc_sta)
+  are not linked to their own AoU via the ``fulfils`` attribute.
 
 
 .. tool_req:: Ensure safety architecture elements link a safety requirement
