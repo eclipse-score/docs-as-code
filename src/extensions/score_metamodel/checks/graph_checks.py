@@ -11,6 +11,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 import operator
+from itertools import chain
 from collections.abc import Callable
 from functools import reduce
 from typing import Any, cast
@@ -22,7 +23,7 @@ from score_metamodel import (
 from sphinx.application import Sphinx
 from sphinx_needs.config import NeedType
 from sphinx_needs.data import NeedsView
-from sphinx_needs.need_item import NeedItem
+from sphinx_needs.need_item import NeedItem, NeedLink
 
 
 def eval_need_check(need: NeedItem, check: str, log: CheckLogger) -> bool:
@@ -198,3 +199,28 @@ def check_metamodel_graph(
                             f" Explanation: {explanation}"
                         )
                         log.warning_for_need(need, msg)
+
+
+@graph_check
+def check_valid_only_links_to_valid(
+    app: Sphinx,
+    all_needs: NeedsView,
+    log: CheckLogger,
+):
+    # Get all possible link types
+    needs_dict_all = {need["id"]: need for need in all_needs.values()}
+    needs_dict_local = {
+        need["id"]: need for need in all_needs.filter_is_external(False).values()
+    }
+    # Pre-Filter for only valid & local needs
+    valid_needs_id_all = [x.id for x in all_needs.values() if x.get("status") == "valid"]
+    valid_needs_local = [
+        x for x in all_needs.filter_is_external(False).values() if x.get("status") == "valid"
+    ]
+
+    for need in valid_needs_local:
+        all_linked_needs: list[NeedLink] = list(chain(*need._links.values()))  # type: ignore
+        for link in all_linked_needs:
+            if link.id not in valid_needs_id_all:
+                msg = f"Is valid but links to invalid need: {link.id}"
+                log.warning_for_need(need, msg, is_new_check=True)
