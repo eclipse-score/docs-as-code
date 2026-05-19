@@ -226,5 +226,5 @@ def check_valid_only_links_to_valid(
         )
         invalid_needs = all_linked_needs.difference(valid_needs_id_all)
         if invalid_needs:
-            msg = f"Is valid but links to invalid need(s): {invalid_needs}"
+            msg = f"is valid but links to invalid need(s): {invalid_needs}"
             log.warning_for_need(need, msg, is_new_check=True)
