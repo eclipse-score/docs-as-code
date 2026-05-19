@@ -306,6 +306,8 @@ needs_types:
       valid_until: ^v(0|[1-9]\d*)\.(0|[1-9]\d*)(\.(0|[1-9]\d*))?$
     optional_links:
       belongs_to: feat # for evaluation
+      # req-Id: tool_req__docs_req_link_covers_aou
+      covers: aou_req
     tags:
       - requirement
       - requirement_excl_process
@@ -336,6 +338,9 @@ needs_types:
       # req-Id: tool_req__docs_req_attr_testcov
       testcovered: ^(YES|NO)$
       hash: ^.*$
+    optional_links:
+      # req-Id: tool_req__docs_req_link_covers_aou
+      covers: aou_req
     tags:
       - requirement
       - requirement_excl_process
@@ -434,7 +439,8 @@ needs_types:
       status: ^(valid|invalid)$
     mandatory_links:
       includes: ^logic_arc_int(_op)*__.+$
-      fulfils: feat_req
+      # req-Id: tool_req__docs_arch_link_fulfils, tool_req__docs_arch_link_fulfils_aou
+      fulfils: feat_req, aou_req
       belongs_to: feat # make it mandatory for evaluation
     tags:
       - architecture_element
@@ -584,7 +590,8 @@ needs_types:
       status: ^(valid|invalid)$
     mandatory_links:
       belongs_to: comp
-      fulfils: comp_req
+      # req-Id: tool_req__docs_arch_link_fulfils, tool_req__docs_arch_link_fulfils_aou
+      fulfils: comp_req, aou_req
     optional_links:
       uses: logic_arc_int, real_arc_int_op
     tags:
@@ -929,6 +936,11 @@ needs_extra_links:
   satisfies:
     incoming: satisfied by
     outgoing: satisfies
+
+  # req-Id: tool_req__docs_req_link_covers_aou
+  covers:
+    incoming: covered by
+    outgoing: covers
 
   # Architecture
   consists_of:
