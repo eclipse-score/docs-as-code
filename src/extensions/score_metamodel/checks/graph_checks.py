@@ -23,7 +23,7 @@ from score_metamodel import (
 from sphinx.application import Sphinx
 from sphinx_needs.config import NeedType
 from sphinx_needs.data import NeedsView
-from sphinx_needs.need_item import NeedItem, NeedLink
+from sphinx_needs.need_item import NeedItem
 
 
 def eval_need_check(need: NeedItem, check: str, log: CheckLogger) -> bool:
