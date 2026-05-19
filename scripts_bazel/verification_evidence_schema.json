@@ -1,0 +1,275 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://eclipse-score.github.io/docs-as-code/verification-evidence-schema.json",
+  "title": "Verification Evidence Sections",
+  "description": "Evidence-heavy sections of an ISO26262-style verification report.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "dfa_report",
+    "safety_analysis_report",
+    "unit_verification",
+    "software_component_qualification",
+    "test_results",
+    "test_logs"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1",
+      "description": "Verification evidence schema version."
+    },
+    "dfa_report": {
+      "$ref": "#/$defs/AnalysisReport"
+    },
+    "safety_analysis_report": {
+      "$ref": "#/$defs/AnalysisReport"
+    },
+    "unit_verification": {
+      "$ref": "#/$defs/UnitVerification"
+    },
+    "software_component_qualification": {
+      "$ref": "#/$defs/QualificationReport"
+    },
+    "test_results": {
+      "$ref": "#/$defs/TestCaseStatusList"
+    },
+    "test_logs": {
+      "$ref": "#/$defs/TestCaseLogList"
+    }
+  },
+  "$defs": {
+    "AnalysisReport": {
+      "type": "object",
+      "required": ["items"],
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AnalysisItem"
+          }
+        }
+      }
+    },
+    "AnalysisItem": {
+      "type": "object",
+      "required": ["item_id", "status", "open_mitigations"],
+      "additionalProperties": false,
+      "properties": {
+        "item_id": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["passed", "failed"]
+        },
+        "open_mitigations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "UnitVerification": {
+      "type": "object",
+      "required": ["structural_coverage", "static_code_analysis", "manual_code_inspection"],
+      "additionalProperties": false,
+      "properties": {
+        "structural_coverage": {
+          "$ref": "#/$defs/UnitCoverageList"
+        },
+        "static_code_analysis": {
+          "$ref": "#/$defs/StaticAnalysisList"
+        },
+        "manual_code_inspection": {
+          "$ref": "#/$defs/ManualInspectionList"
+        }
+      }
+    },
+    "UnitCoverageList": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/UnitCoverageEntry"
+      }
+    },
+    "UnitCoverageEntry": {
+      "type": "object",
+      "required": [
+        "unit_id",
+        "safety_rating",
+        "c0_lines_covered",
+        "c0_lines_total",
+        "c0_pct",
+        "c1_branches_covered",
+        "c1_branches_total",
+        "c1_pct"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "unit_id": {
+          "type": "string"
+        },
+        "safety_rating": {
+          "type": "string",
+          "enum": ["QM", "ASIL_A", "ASIL_B", "ASIL_C", "ASIL_D"]
+        },
+        "c0_lines_covered": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "c0_lines_total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "c0_pct": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "c1_branches_covered": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "c1_branches_total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "c1_pct": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        }
+      }
+    },
+    "StaticAnalysisList": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/StaticAnalysisEntry"
+      }
+    },
+    "StaticAnalysisEntry": {
+      "type": "object",
+      "required": ["unit_id", "safety_rating", "compiler_warnings", "coding_rule_violations"],
+      "additionalProperties": false,
+      "properties": {
+        "unit_id": {
+          "type": "string"
+        },
+        "safety_rating": {
+          "type": "string",
+          "enum": ["QM", "ASIL_A", "ASIL_B", "ASIL_C", "ASIL_D"]
+        },
+        "compiler_warnings": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "coding_rule_violations": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "ManualInspectionList": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/ManualInspectionEntry"
+      }
+    },
+    "ManualInspectionEntry": {
+      "type": "object",
+      "required": ["component_id", "safety_rating", "checklist_id", "verdict"],
+      "additionalProperties": false,
+      "properties": {
+        "component_id": {
+          "type": "string"
+        },
+        "safety_rating": {
+          "type": "string",
+          "enum": ["ASIL_A", "ASIL_B", "ASIL_C", "ASIL_D"]
+        },
+        "checklist_id": {
+          "type": "string"
+        },
+        "verdict": {
+          "type": "string",
+          "enum": ["passed", "failed", "open"]
+        }
+      }
+    },
+    "QualificationReport": {
+      "type": "object",
+      "required": ["components"],
+      "additionalProperties": false,
+      "properties": {
+        "components": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/QualificationEntry"
+          }
+        }
+      }
+    },
+    "QualificationEntry": {
+      "type": "object",
+      "required": ["component_id", "verification_results"],
+      "additionalProperties": false,
+      "properties": {
+        "component_id": {
+          "type": "string"
+        },
+        "verification_results": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "TestCaseStatusList": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/TestCaseStatus"
+      }
+    },
+    "TestCaseStatus": {
+      "type": "object",
+      "required": ["testcase_id", "status"],
+      "additionalProperties": false,
+      "properties": {
+        "testcase_id": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["passed", "failed", "not_run"]
+        }
+      }
+    },
+    "TestCaseLogList": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/TestCaseLog"
+      }
+    },
+    "TestCaseLog": {
+      "type": "object",
+      "required": ["testcase_id", "status", "log_ref"],
+      "additionalProperties": false,
+      "properties": {
+        "testcase_id": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["passed", "failed", "not_run"]
+        },
+        "log_ref": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

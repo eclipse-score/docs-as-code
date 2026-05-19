@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://eclipse-score.github.io/docs-as-code/verification-report-schema.json",
+  "title": "Verification Report",
+  "description": "Top-level schema for generated ISO26262-style module verification reports.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "metadata",
+    "verification_coverage",
+    "dfa_report",
+    "safety_analysis_report",
+    "unit_verification",
+    "software_component_qualification",
+    "test_results",
+    "test_logs",
+    "traceability_metrics"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1",
+      "description": "Verification report schema version."
+    },
+    "metadata": {
+      "$ref": "#/$defs/ReportMetadata"
+    },
+    "verification_coverage": {
+      "description": "Coverage on requirements, architecture, and detailed design including test and inspection results.",
+      "$ref": "./verification_coverage_schema.json"
+    },
+    "dfa_report": {
+      "$ref": "./verification_evidence_schema.json#/$defs/AnalysisReport"
+    },
+    "safety_analysis_report": {
+      "$ref": "./verification_evidence_schema.json#/$defs/AnalysisReport"
+    },
+    "unit_verification": {
+      "$ref": "./verification_evidence_schema.json#/$defs/UnitVerification"
+    },
+    "software_component_qualification": {
+      "$ref": "./verification_evidence_schema.json#/$defs/QualificationReport"
+    },
+    "test_results": {
+      "$ref": "./verification_evidence_schema.json#/$defs/TestCaseStatusList"
+    },
+    "test_logs": {
+      "$ref": "./verification_evidence_schema.json#/$defs/TestCaseLogList"
+    },
+    "traceability_metrics": {
+      "$ref": "./traceability_metrics_schema.json"
+    }
+  },
+  "$defs": {
+    "ReportMetadata": {
+      "type": "object",
+      "required": [
+        "module_name",
+        "module_version_tag",
+        "report_id",
+        "generated_at",
+        "source_commit",
+        "asil_scope"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "module_name": {
+          "type": "string"
+        },
+        "module_version_tag": {
+          "type": "string",
+          "description": "Module version tag covered by this report."
+        },
+        "report_id": {
+          "type": "string"
+        },
+        "generated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "source_commit": {
+          "type": "string"
+        },
+        "asil_scope": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["QM", "ASIL_A", "ASIL_B", "ASIL_C", "ASIL_D"]
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      }
+    }
+  }
+}

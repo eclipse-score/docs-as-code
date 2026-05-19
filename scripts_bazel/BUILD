@@ -45,3 +45,11 @@ py_binary(
     visibility = ["//visibility:public"],
     deps = [],
 )
+
+py_binary(
+    name = "verification_schema_sync_check",
+    srcs = ["verification_schema_sync_check.py"],
+    main = "verification_schema_sync_check.py",
+    visibility = ["//visibility:public"],
+    deps = [],
+)

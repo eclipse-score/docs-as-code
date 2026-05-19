@@ -22,7 +22,7 @@ This script is the CI gate for a metrics.json based workflow:
     CI gate     →  traceability_gate --metrics-json metrics.json [--min-* ...]
 
 The gate never parses needs.json itself; it only reads the pre-computed
-schema-v1 metrics file produced by the docs build.
+schema-v2 metrics file produced by the docs build.
 """
 
 from __future__ import annotations
@@ -34,7 +34,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
-_SUPPORTED_SCHEMA_VERSION = "1"
+_SUPPORTED_SCHEMA_VERSION = "2"
 
 
 def _print_type_summary(need_type: str, metrics: dict[str, Any]) -> None:
@@ -125,7 +125,7 @@ def _check_type_thresholds(
 def main() -> int:
     parser = argparse.ArgumentParser(
         description=(
-            "Read a traceability metrics JSON (schema v1) and enforce coverage "
+            "Read a traceability metrics JSON (schema v2) and enforce coverage "
             "thresholds. Exits 0 on pass, 2 on threshold failure, 1 on input error."
         )
     )

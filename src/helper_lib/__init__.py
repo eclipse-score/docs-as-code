@@ -17,7 +17,17 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from python.runfiles import Runfiles
+try:
+    from python.runfiles import Runfiles
+except ModuleNotFoundError:
+    class Runfiles:  # type: ignore[no-redef]
+        @staticmethod
+        def Create() -> "Runfiles":
+            return Runfiles()
+
+        def EnvVars(self) -> dict[str, str]:
+            return {"RUNFILES_DIR": os.environ.get("RUNFILES_DIR", "")}
+
 from sphinx.config import Config
 from sphinx_needs.logging import get_logger
 
