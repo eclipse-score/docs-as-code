@@ -22,7 +22,7 @@
 .. We can not yet enable this test. As the check is only an 'info' and not yet a true warning
 .. #EXPECT: comp_saf_fmea__child__16: is valid but links to invalid need:
 
-.. comp_saf_fmea:: Child requirement 
+.. comp_saf_fmea:: Child requirement
    :id: comp_saf_fmea__child__1
    :safety: QM
    :status: valid
