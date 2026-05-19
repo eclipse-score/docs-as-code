@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Implementation State Statistics &#8212; Score Docs-as-Code  documentation</title>
+    <title>Tooling Coverage &#8212; Score Docs-as-Code  documentation</title>
   
   
   
@@ -32,17 +32,17 @@
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
-    <link rel="stylesheet" type="text/css" href="../../_static/css/score.css?v=6e51530f" />
-    <link rel="stylesheet" type="text/css" href="../../_static/css/score_needs.css?v=1f5dae2a" />
-    <link rel="stylesheet" type="text/css" href="../../_static/css/score_design.css?v=d9fd870c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/score.css?v=bb63a8e1" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/score_needs.css?v=82a1844f" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/score_design.css?v=8048e6ee" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-data-viewer/jsonview.bundle.css?v=f6ef2277" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/libs/html/datatables.min.css?v=4b4fd840" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_core.css?v=f5b60a78" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_toggle.css?v=5c6620df" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/needstable.css?v=5e1b6797" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_links.css?v=2150a916" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_style.css?v=92936fa5" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/needstable.css?v=5e1b6797" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_toggle.css?v=5c6620df" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_links.css?v=2150a916" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/modern.css?v=803738c0" />
   
   <!-- So that users can add custom icons -->
@@ -73,6 +73,7 @@
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Tooling Verification" href="tooling_verification.html" />
     <link rel="prev" title="Tool Requirements" href="requirements.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -396,9 +397,9 @@
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Requirements</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="capabilities.html">Capabilities - A High Level Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="process_overview.html">Process Requirements Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tool_req_overview.html">Tool Requirements Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="requirements.html">Tool Requirements</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">Implementation State Statistics</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Tooling Coverage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tooling_verification.html">Tooling Verification</a></li>
 </ul>
 </details></li>
 </ul>
@@ -447,7 +448,7 @@
     
     <li class="breadcrumb-item"><a href="index.html" class="nav-link">Requirements</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Implementation State Statistics</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Tooling Coverage</span></li>
   </ul>
 </nav>
 </div>
@@ -464,11 +465,56 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="implementation-state-statistics">
-<span id="docs-statistics"></span><h1>Implementation State Statistics<a class="headerlink" href="#implementation-state-statistics" title="Link to this heading">#</a></h1>
+  <section id="tooling-coverage">
+<span id="docs-statistics"></span><h1>Tooling Coverage<a class="headerlink" href="#tooling-coverage" title="Link to this heading">#</a></h1>
+<p>This page shows how the docs-as-code tooling covers process and tool
+requirements. It focuses on tooling capabilities offered to downstream
+repositories rather than on product-specific traceability inside those
+repositories.</p>
 <section id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
 <img alt="../../_images/need_pie_d952d.svg" id="needpie-internals/requirements/implementation_state-0" src="../../_images/need_pie_d952d.svg" />
+<p>Jump to evidence tables:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#tooling-coverage-table-impl-links"><span class="std std-ref">Tool Requirement Implementation and Links table</span></a></p></li>
+<li><p><a class="reference internal" href="#tooling-coverage-table-process-mapping"><span class="std std-ref">Process Requirement to Tool Requirement mapping table</span></a></p></li>
+</ul>
+</section>
+<section id="how-to-read-these-levels">
+<h2>How To Read These Levels<a class="headerlink" href="#how-to-read-these-levels" title="Link to this heading">#</a></h2>
+<p>The overview pie combines implementation state and traceability evidence:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">not</span> <span class="pre">implemented</span></code>:</dt><dd><p>requirement has <code class="docutils literal notranslate"><span class="pre">implemented</span> <span class="pre">==</span> <span class="pre">NO</span></code>.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">implemented</span> <span class="pre">but</span> <span class="pre">incomplete</span> <span class="pre">traceability</span></code>:</dt><dd><p>requirement has <code class="docutils literal notranslate"><span class="pre">implemented</span> <span class="pre">==</span> <span class="pre">YES</span></code> or <code class="docutils literal notranslate"><span class="pre">implemented</span> <span class="pre">==</span> <span class="pre">PARTIAL</span></code>,
+but is missing at least one traceability link (code link and/or test link).</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">fully</span> <span class="pre">linked</span></code>:</dt><dd><p>requirement is implemented and has both <code class="docutils literal notranslate"><span class="pre">source_code_link</span></code> and <code class="docutils literal notranslate"><span class="pre">testlink</span></code>.</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>Implementation labels used on this page:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">NO</span></code>: requirement is not implemented.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PARTIAL</span></code>: requirement is partly implemented.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">YES</span></code>: requirement is implemented.</p></li>
+</ul>
+<p>Why multiple pies are shown:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Requirements</span> <span class="pre">with</span> <span class="pre">Codelinks</span></code> shows requirement-to-implementation traceability.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Requirements</span> <span class="pre">with</span> <span class="pre">linked</span> <span class="pre">tests</span></code> shows requirement-to-verification traceability.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Requirements</span> <span class="pre">fully</span> <span class="pre">linked</span></code> is the strict roll-up (both links present).</p></li>
+</ul>
+<p>These are intentionally separate because they answer different diagnostics:
+missing code links, missing test links, or both.</p>
 </section>
 <section id="in-detail">
 <h2>In Detail<a class="headerlink" href="#in-detail" title="Link to this heading">#</a></h2>
@@ -495,192 +541,567 @@
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="sd-container-fluid sd-sphinx-override sd-mb-4 docutils">
-<div class="sd-row sd-row-cols-2 sd-row-cols-xs-2 sd-row-cols-sm-2 sd-row-cols-md-2 sd-row-cols-lg-2 docutils">
 <div class="sd-col sd-d-flex-row docutils">
 <div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm docutils">
 <div class="sd-card-body docutils">
-<p class="sd-card-text">Failed Tests</p>
-<p class="sd-card-text"><em>Hint: this table is empty by definition, as PRs with failing tests are not allowed to be merged in docs-as-code repo.</em></p>
-<p class="needs_filter_warning" id="needtable-internals/requirements/implementation_state-0">No needs passed the filters</p>
+<img alt="../../_images/need_pie_899c4.svg" id="needpie-internals/requirements/implementation_state-4" src="../../_images/need_pie_899c4.svg" />
 </div>
 </div>
 </div>
 <div class="sd-col sd-d-flex-row docutils">
 <div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm docutils">
 <div class="sd-card-body docutils">
-<p class="sd-card-text">Skipped / Disabled Tests</p>
-<p class="sd-card-text"><em>Hint: this table is empty by definition, as we do not allow skipped or disabled tests in docs-as-code repo.</em></p>
-<p class="needs_filter_warning" id="needtable-internals/requirements/implementation_state-1">No needs passed the filters</p>
+<img alt="../../_images/need_pie_5e1f8.svg" id="needpie-internals/requirements/implementation_state-5" src="../../_images/need_pie_5e1f8.svg" />
 </div>
 </div>
 </div>
 </div>
 </div>
 </section>
-<section id="all-passed-tests">
-<h2>All passed Tests<a class="headerlink" href="#all-passed-tests" title="Link to this heading">#</a></h2>
-<div class="pst-scrollable-table-container"><span id="needtable-internals/requirements/implementation_state-2"></span><table class="NEEDS_DATATABLES table" id="needtable-internals/requirements/implementation_state-2-table_node">
-<caption><span class="caption-text">SUCCESSFUL TESTS</span><a class="headerlink" href="#needtable-internals/requirements/implementation_state-2-table_node" title="Link to this table">#</a></caption>
+<section id="process-to-tool-mapping">
+<h2>Process-to-Tool Mapping<a class="headerlink" href="#process-to-tool-mapping" title="Link to this heading">#</a></h2>
+<div class="needstable_wrapper docutils container" id="needtable-internals/requirements/implementation_state-0">
+<span id="tooling-coverage-table-process-mapping"></span><div class="pst-scrollable-table-container"><table class="NEEDS_TABLE table" id="needtable-internals/requirements/implementation_state-0-table_node">
+<caption><span class="caption-text">Process requirement -&gt; tool requirement mapping</span><a class="headerlink" href="#needtable-internals/requirements/implementation_state-0-table_node" title="Link to this table">#</a></caption>
 <colgroup>
-<col style="width: 14.3%" />
-<col style="width: 14.3%" />
-<col style="width: 14.3%" />
-<col style="width: 14.3%" />
-<col style="width: 14.3%" />
-<col style="width: 14.3%" />
-<col style="width: 14.3%" />
+<col style="width: 50.0%" />
+<col style="width: 50.0%" />
 </colgroup>
 <thead>
-<tr class="row-odd"><th class="head"><p>testcase</p></th>
-<th class="head"><p>Result</p></th>
-<th class="head"><p>Fully Verifies</p></th>
-<th class="head"><p>Partially Verifies</p></th>
-<th class="head"><p>Test Type</p></th>
-<th class="head"><p>Derivation Technique</p></th>
-<th class="head"><p>link</p></th>
+<tr class="row-odd"><th class="head"><p>Process Requirement</p></th>
+<th class="head"><p>Tool Requirement</p></th>
 </tr>
 </thead>
 <tbody>
-<tr class="need row-even"><td class="needs_name"><p>test_metamodel__init____test_raises_assertion_for_invalid_check</p></td>
-<td class="needs_result"><p>passed</p></td>
-<td class="needs_fully_verifies"><p></p></td>
-<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_common_attr_description">tool_req__docs_common_attr_description</a></p></td>
-<td class="needs_test_type"><p>requirements-based</p></td>
-<td class="needs_derivation_technique"><p>requirements-analysis</p></td>
-<td class="needs_id external_link"><p><a class="external_link reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/034ab3387f17202ea140a24c5b2d5c8a06b37190/src/extensions/score_metamodel/tests/test_metamodel__init__.py#L77">testcase__test_metamodel__init____test_raises_assertion_for_invalid_check_ubfli</a></p></td>
+<tr class="need row-even"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/architecture_design/guidance/architecture_process_reqs.html#gd_req__arch_attr_mandatory">gd_req__arch_attr_mandatory</a><em>; </em><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/architecture_design/guidance/architecture_process_reqs.html#gd_req__arch_attr_fulfils">gd_req__arch_attr_fulfils</a><em>; </em><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/architecture_design/guidance/architecture_process_reqs.html#gd_req__arch_attr_mandatory">gd_req__arch_attr_mandatory</a><em>; </em><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/architecture_design/guidance/architecture_process_reqs.html#gd_req__arch_attr_fulfils">gd_req__arch_attr_fulfils</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_arch_attr_mandatory">tool_req__docs_arch_attr_mandatory</a></p></td>
 </tr>
-<tr class="need row-odd"><td class="needs_name"><p>test_metamodel__init____test_returns_empty_list_when_filter_is_empty</p></td>
-<td class="needs_result"><p>passed</p></td>
-<td class="needs_fully_verifies"><p></p></td>
-<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_common_attr_description">tool_req__docs_common_attr_description</a></p></td>
-<td class="needs_test_type"><p>requirements-based</p></td>
-<td class="needs_derivation_technique"><p>requirements-analysis</p></td>
-<td class="needs_id external_link"><p><a class="external_link reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/034ab3387f17202ea140a24c5b2d5c8a06b37190/src/extensions/score_metamodel/tests/test_metamodel__init__.py#L45">testcase__test_metamodel__init____test_returns_empty_list_when_filter_is_empty_zppdj</a></p></td>
+<tr class="need row-odd"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/architecture_design/guidance/architecture_process_reqs.html#gd_req__arch_linkage_aou">gd_req__arch_linkage_aou</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_arch_link_aou_check">tool_req__docs_arch_link_aou_check</a></p></td>
 </tr>
-<tr class="need row-even"><td class="needs_name"><p>test_metamodel__init____test_returns_valid_checks</p></td>
-<td class="needs_result"><p>passed</p></td>
-<td class="needs_fully_verifies"><p></p></td>
-<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_common_attr_description">tool_req__docs_common_attr_description</a></p></td>
-<td class="needs_test_type"><p>requirements-based</p></td>
-<td class="needs_derivation_technique"><p>requirements-analysis</p></td>
-<td class="needs_id external_link"><p><a class="external_link reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/034ab3387f17202ea140a24c5b2d5c8a06b37190/src/extensions/score_metamodel/tests/test_metamodel__init__.py#L55">testcase__test_metamodel__init____test_returns_valid_checks_xqits</a></p></td>
+<tr class="need row-even"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/architecture_design/guidance/architecture_process_reqs.html#gd_req__arch_linkage_requirement_type">gd_req__arch_linkage_requirement_type</a><em>; </em><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/architecture_design/guidance/architecture_process_reqs.html#gd_req__arch_attr_fulfils">gd_req__arch_attr_fulfils</a><em>; </em><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/architecture_design/guidance/architecture_process_reqs.html#gd_req__arch_traceability">gd_req__arch_traceability</a><em>; </em><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_linkage_fulfill">gd_req__req_linkage_fulfill</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_arch_link_fulfils">tool_req__docs_arch_link_fulfils</a></p></td>
 </tr>
-<tr class="need row-odd"><td class="needs_name"><p>test_metamodel__init____test_strips_whitespace</p></td>
-<td class="needs_result"><p>passed</p></td>
-<td class="needs_fully_verifies"><p></p></td>
-<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_common_attr_description">tool_req__docs_common_attr_description</a></p></td>
-<td class="needs_test_type"><p>requirements-based</p></td>
-<td class="needs_derivation_technique"><p>requirements-analysis</p></td>
-<td class="needs_id external_link"><p><a class="external_link reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/034ab3387f17202ea140a24c5b2d5c8a06b37190/src/extensions/score_metamodel/tests/test_metamodel__init__.py#L66">testcase__test_metamodel__init____test_strips_whitespace_unask</a></p></td>
+<tr class="need row-odd"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/architecture_design/guidance/architecture_process_reqs.html#gd_req__arch_attr_fulfils_aou">gd_req__arch_attr_fulfils_aou</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_arch_link_fulfils_aou">tool_req__docs_arch_link_fulfils_aou</a></p></td>
 </tr>
-<tr class="need row-even"><td class="needs_name"><p>test_testlink__test_clean_text_removes_ansi_and_html_unescapes</p></td>
-<td class="needs_result"><p>passed</p></td>
-<td class="needs_fully_verifies"><p></p></td>
-<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_test_link_testcase">tool_req__docs_test_link_testcase</a></p></td>
-<td class="needs_test_type"><p>requirements-based</p></td>
-<td class="needs_derivation_technique"><p>requirements-analysis</p></td>
-<td class="needs_id external_link"><p><a class="external_link reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/034ab3387f17202ea140a24c5b2d5c8a06b37190/src/extensions/score_source_code_linker/tests/test_testlink.py#L85">testcase__test_testlink__test_clean_text_removes_ansi_and_html_unescapes_sjotr</a></p></td>
+<tr class="need row-even"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/architecture_design/guidance/architecture_process_reqs.html#gd_req__arch_linkage_requirement">gd_req__arch_linkage_requirement</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_arch_link_qm_to_safety_req">tool_req__docs_arch_link_qm_to_safety_req</a></p></td>
 </tr>
-<tr class="need row-odd"><td class="needs_name"><p>test_testlink__test_decoder_ignores_irrelevant_dicts</p></td>
-<td class="needs_result"><p>passed</p></td>
-<td class="needs_fully_verifies"><p></p></td>
-<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_test_link_testcase">tool_req__docs_test_link_testcase</a></p></td>
-<td class="needs_test_type"><p>requirements-based</p></td>
-<td class="needs_derivation_technique"><p>requirements-analysis</p></td>
-<td class="needs_id external_link"><p><a class="external_link reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/034ab3387f17202ea140a24c5b2d5c8a06b37190/src/extensions/score_source_code_linker/tests/test_testlink.py#L73">testcase__test_testlink__test_decoder_ignores_irrelevant_dicts_uecxv</a></p></td>
+<tr class="need row-odd"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/architecture_design/guidance/architecture_process_reqs.html#gd_req__arch_linkage_requirement">gd_req__arch_linkage_requirement</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_arch_link_safety_to_req">tool_req__docs_arch_link_safety_to_req</a></p></td>
 </tr>
-<tr class="need row-even"><td class="needs_name"><p>test_testlink__test_store_and_load_testlinks_roundtrip</p></td>
-<td class="needs_result"><p>passed</p></td>
-<td class="needs_fully_verifies"><p></p></td>
-<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_test_link_testcase">tool_req__docs_test_link_testcase</a></p></td>
-<td class="needs_test_type"><p>requirements-based</p></td>
-<td class="needs_derivation_technique"><p>requirements-analysis</p></td>
-<td class="needs_id external_link"><p><a class="external_link reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/034ab3387f17202ea140a24c5b2d5c8a06b37190/src/extensions/score_source_code_linker/tests/test_testlink.py#L142">testcase__test_testlink__test_store_and_load_testlinks_roundtrip_ijnkz</a></p></td>
+<tr class="need row-even"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/architecture_design/guidance/architecture_process_reqs.html#gd_req__arch_linkage_security_trace">gd_req__arch_linkage_security_trace</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_arch_link_security">tool_req__docs_arch_link_security</a></p></td>
 </tr>
-<tr class="need row-odd"><td class="needs_name"><p>test_testlink__test_testcaseneed_to_dict_multiple_links</p></td>
-<td class="needs_result"><p>passed</p></td>
-<td class="needs_fully_verifies"><p></p></td>
-<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_test_link_testcase">tool_req__docs_test_link_testcase</a></p></td>
-<td class="needs_test_type"><p>requirements-based</p></td>
-<td class="needs_derivation_technique"><p>requirements-analysis</p></td>
-<td class="needs_id external_link"><p><a class="external_link reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/034ab3387f17202ea140a24c5b2d5c8a06b37190/src/extensions/score_source_code_linker/tests/test_testlink.py#L100">testcase__test_testlink__test_testcaseneed_to_dict_multiple_links_vstss</a></p></td>
+<tr class="need row-odd"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/architecture_design/guidance/architecture_process_reqs.html#gd_req__arch_hierarchical_structure">gd_req__arch_hierarchical_structure</a><em>; </em><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/architecture_design/guidance/architecture_process_reqs.html#gd_req__arch_build_blocks">gd_req__arch_build_blocks</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_arch_types">tool_req__docs_arch_types</a></p></td>
 </tr>
-<tr class="need row-even"><td class="needs_name"><p>test_testlink__test_testlink_serialization_roundtrip</p></td>
-<td class="needs_result"><p>passed</p></td>
-<td class="needs_fully_verifies"><p></p></td>
-<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_test_link_testcase">tool_req__docs_test_link_testcase</a></p></td>
-<td class="needs_test_type"><p>requirements-based</p></td>
-<td class="needs_derivation_technique"><p>requirements-analysis</p></td>
-<td class="needs_id external_link"><p><a class="external_link reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/034ab3387f17202ea140a24c5b2d5c8a06b37190/src/extensions/score_source_code_linker/tests/test_testlink.py#L40">testcase__test_testlink__test_testlink_serialization_roundtrip_jmmwb</a></p></td>
+<tr class="need row-even"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/architecture_design/guidance/architecture_process_reqs.html#gd_req__arch_viewpoints">gd_req__arch_viewpoints</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_arch_views">tool_req__docs_arch_views</a></p></td>
 </tr>
-<tr class="need row-odd"><td class="needs_name"><p>test_xml_parser__test_find_xml_files</p></td>
-<td class="needs_result"><p>passed</p></td>
-<td class="needs_fully_verifies"><p></p></td>
-<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_test_link_testcase">tool_req__docs_test_link_testcase</a></p></td>
-<td class="needs_test_type"><p>requirements-based</p></td>
-<td class="needs_derivation_technique"><p>requirements-analysis</p></td>
-<td class="needs_id external_link"><p><a class="external_link reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/034ab3387f17202ea140a24c5b2d5c8a06b37190/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L155">testcase__test_xml_parser__test_find_xml_files_rviwn</a></p></td>
+<tr class="need row-odd"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_desc_weak">gd_req__req_desc_weak</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_common_attr_desc_wording">tool_req__docs_common_attr_desc_wording</a></p></td>
 </tr>
-<tr class="need row-even"><td class="needs_name"><p>test_xml_parser__test_parse_properties</p></td>
-<td class="needs_result"><p>passed</p></td>
-<td class="needs_fully_verifies"><p></p></td>
-<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_test_link_testcase">tool_req__docs_test_link_testcase</a></p></td>
-<td class="needs_test_type"><p>requirements-based</p></td>
-<td class="needs_derivation_technique"><p>requirements-analysis</p></td>
-<td class="needs_id external_link"><p><a class="external_link reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/034ab3387f17202ea140a24c5b2d5c8a06b37190/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L252">testcase__test_xml_parser__test_parse_properties_gkejb</a></p></td>
+<tr class="need row-even"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_attr_description">gd_req__req_attr_description</a><em>; </em><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_check_mandatory">gd_req__req_check_mandatory</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_common_attr_description">tool_req__docs_common_attr_description</a></p></td>
 </tr>
-<tr class="need row-odd"><td class="needs_name"><p>test_xml_parser__test_parse_testcase_result</p></td>
-<td class="needs_result"><p>passed</p></td>
-<td class="needs_fully_verifies"><p></p></td>
-<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_test_link_testcase">tool_req__docs_test_link_testcase</a></p></td>
-<td class="needs_test_type"><p>requirements-based</p></td>
-<td class="needs_derivation_technique"><p>requirements-analysis</p></td>
-<td class="needs_id external_link"><p><a class="external_link reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/034ab3387f17202ea140a24c5b2d5c8a06b37190/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L230">testcase__test_xml_parser__test_parse_testcase_result_uqrng</a></p></td>
+<tr class="need row-odd"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_attr_uid">gd_req__req_attr_uid</a><em>; </em><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/tool_management/guidance/tool_management_reqs.html#gd_req__tool_attr_uid">gd_req__tool_attr_uid</a><em>; </em><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/architecture_design/guidance/architecture_process_reqs.html#gd_req__arch_attribute_uid">gd_req__arch_attribute_uid</a><em>; </em><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/safety_analysis/guidance/safety_analysis_process_reqs.html#gd_req__saf_attr_uid">gd_req__saf_attr_uid</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_common_attr_id">tool_req__docs_common_attr_id</a></p></td>
 </tr>
-<tr class="need row-even"><td class="needs_name"><p>test_xml_parser__test_read_test_xml_file</p></td>
-<td class="needs_result"><p>passed</p></td>
-<td class="needs_fully_verifies"><p></p></td>
-<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_test_link_testcase">tool_req__docs_test_link_testcase</a></p></td>
-<td class="needs_test_type"><p>requirements-based</p></td>
-<td class="needs_derivation_technique"><p>requirements-analysis</p></td>
-<td class="needs_id external_link"><p><a class="external_link reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/034ab3387f17202ea140a24c5b2d5c8a06b37190/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L268">testcase__test_xml_parser__test_read_test_xml_file_xofsm</a></p></td>
+<tr class="need row-even"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_attr_uid">gd_req__req_attr_uid</a><em>; </em><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/architecture_design/guidance/architecture_process_reqs.html#gd_req__arch_attribute_uid">gd_req__arch_attribute_uid</a><em>; </em><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/safety_analysis/guidance/safety_analysis_process_reqs.html#gd_req__saf_attr_uid">gd_req__saf_attr_uid</a><em>; </em><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_check_mandatory">gd_req__req_check_mandatory</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_common_attr_id_scheme">tool_req__docs_common_attr_id_scheme</a></p></td>
 </tr>
-<tr class="need row-odd"><td class="needs_name"><p>test_xml_parser__test_short_hash_consistency_and_format</p></td>
-<td class="needs_result"><p>passed</p></td>
-<td class="needs_fully_verifies"><p></p></td>
-<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_test_link_testcase">tool_req__docs_test_link_testcase</a></p></td>
-<td class="needs_test_type"><p>requirements-based</p></td>
-<td class="needs_derivation_technique"><p>requirements-analysis</p></td>
-<td class="needs_id external_link"><p><a class="external_link reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/034ab3387f17202ea140a24c5b2d5c8a06b37190/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L324">testcase__test_xml_parser__test_short_hash_consistency_and_format_lfalr</a></p></td>
+<tr class="need row-odd"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_check_mandatory">gd_req__req_check_mandatory</a><em>; </em><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_attr_safety">gd_req__req_attr_safety</a><em>; </em><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/architecture_design/guidance/architecture_process_reqs.html#gd_req__arch_attr_safety">gd_req__arch_attr_safety</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_common_attr_safety">tool_req__docs_common_attr_safety</a></p></td>
 </tr>
-<tr class="need row-even"><td class="needs_name"><p>TestCheckOptions__test_unknown_directive</p></td>
-<td class="needs_result"><p>passed</p></td>
-<td class="needs_fully_verifies"><p></p></td>
-<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_common_attr_security">tool_req__docs_common_attr_security</a></p></td>
-<td class="needs_test_type"><p>requirements-based</p></td>
-<td class="needs_derivation_technique"><p>requirements-analysis</p></td>
-<td class="needs_id external_link"><p><a class="external_link reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/034ab3387f17202ea140a24c5b2d5c8a06b37190/src/extensions/score_metamodel/tests/test_check_options.py#L65">testcase__TestCheckOptions__test_unknown_directive_jxeis</a></p></td>
+<tr class="need row-even"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_linkage_safety">gd_req__req_linkage_safety</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_common_attr_safety_link_check">tool_req__docs_common_attr_safety_link_check</a></p></td>
 </tr>
-<tr class="need row-odd"><td class="needs_name"><p>TestCheckOptions__test_unknown_option_present_in_neither_req_opt_neither_opt_opt</p></td>
-<td class="needs_result"><p>passed</p></td>
-<td class="needs_fully_verifies"><p></p></td>
-<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_common_attr_description">tool_req__docs_common_attr_description</a></p></td>
-<td class="needs_test_type"><p>requirements-based</p></td>
-<td class="needs_derivation_technique"><p>requirements-analysis</p></td>
-<td class="needs_id external_link"><p><a class="external_link reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/034ab3387f17202ea140a24c5b2d5c8a06b37190/src/extensions/score_metamodel/tests/test_check_options.py#L89">testcase__TestCheckOptions__test_unknown_option_present_in_neither_req_opt_neither_opt_opt_hljdo</a></p></td>
+<tr class="need row-odd"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_attr_security">gd_req__req_attr_security</a><em>; </em><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/architecture_design/guidance/architecture_process_reqs.html#gd_req__arch_attr_security">gd_req__arch_attr_security</a><em>; </em><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_check_mandatory">gd_req__req_check_mandatory</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_common_attr_security">tool_req__docs_common_attr_security</a></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_attr_status">gd_req__req_attr_status</a><em>; </em><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/architecture_design/guidance/architecture_process_reqs.html#gd_req__arch_attr_status">gd_req__arch_attr_status</a><em>; </em><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/safety_analysis/guidance/safety_analysis_process_reqs.html#gd_req__saf_attr_status">gd_req__saf_attr_status</a><em>; </em><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_check_mandatory">gd_req__req_check_mandatory</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_common_attr_status">tool_req__docs_common_attr_status</a></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_suspicious">gd_req__req_suspicious</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_common_attr_suspicious">tool_req__docs_common_attr_suspicious</a></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_attr_title">gd_req__req_attr_title</a><em>; </em><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/safety_analysis/guidance/safety_analysis_process_reqs.html#gd_req__saf_attr_title">gd_req__saf_attr_title</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_common_attr_title">tool_req__docs_common_attr_title</a></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_attr_version">gd_req__req_attr_version</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_common_attr_version">tool_req__docs_common_attr_version</a></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_linkage_architecture_switch">gd_req__req_linkage_architecture_switch</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_dd_feature_flag">tool_req__docs_dd_feature_flag</a></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_attr_impl">gd_req__req_attr_impl</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_dd_link_source_code_link">tool_req__docs_dd_link_source_code_link</a></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/implementation/guidance/implementation_process_reqs.html#gd_req__impl_static_diagram">gd_req__impl_static_diagram</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_dd_sta">tool_req__docs_dd_sta</a></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/documentation_management/guidance/documentation_process_reqs.html#gd_req__doc_author">gd_req__doc_author</a><em>; </em><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/documentation_management/guidance/documentation_process_reqs.html#gd_req__doc_approver">gd_req__doc_approver</a><em>; </em><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/documentation_management/guidance/documentation_process_reqs.html#gd_req__doc_reviewer">gd_req__doc_reviewer</a><em>; </em><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/change_management/guidance/change_management_reqs.html#gd_req__change_attr_title">gd_req__change_attr_title</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_doc_attr">tool_req__docs_doc_attr</a></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/documentation_management/guidance/documentation_process_reqs.html#gd_req__doc_approver">gd_req__doc_approver</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_doc_attr_approver_autofill">tool_req__docs_doc_attr_approver_autofill</a></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/documentation_management/guidance/documentation_process_reqs.html#gd_req__doc_author">gd_req__doc_author</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_doc_attr_author_autofill">tool_req__docs_doc_attr_author_autofill</a></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/documentation_management/guidance/documentation_process_reqs.html#gd_req__doc_reviewer">gd_req__doc_reviewer</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_doc_attr_reviewer_autofill">tool_req__docs_doc_attr_reviewer_autofill</a></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/documentation_management/guidance/documentation_process_reqs.html#gd_req__doc_attributes_manual">gd_req__doc_attributes_manual</a><em>; </em><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/change_management/guidance/change_management_reqs.html#gd_req__change_attr_impact_safety">gd_req__change_attr_impact_safety</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_doc_generic_mandatory">tool_req__docs_doc_generic_mandatory</a></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/documentation_management/guidance/documentation_process_reqs.html#gd_req__doc_types">gd_req__doc_types</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_doc_types">tool_req__docs_doc_types</a></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/architecture_design/guidance/architecture_process_reqs.html#gd_req__arch_linkage_safety_trace">gd_req__arch_linkage_safety_trace</a><em>; </em><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_linkage_safety">gd_req__req_linkage_safety</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_req_arch_link_safety_to_arch">tool_req__docs_req_arch_link_safety_to_arch</a></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_attr_rationale">gd_req__req_attr_rationale</a><em>; </em><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_check_mandatory">gd_req__req_check_mandatory</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_req_attr_rationale">tool_req__docs_req_attr_rationale</a></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_attr_req_cov">gd_req__req_attr_req_cov</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_req_attr_reqcov">tool_req__docs_req_attr_reqcov</a></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_attr_type">gd_req__req_attr_type</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_req_attr_reqtype">tool_req__docs_req_attr_reqtype</a></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_attr_test_covered">gd_req__req_attr_test_covered</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_req_attr_testcov">tool_req__docs_req_attr_testcov</a></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_validity">gd_req__req_validity</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_req_attr_validity_consistency">tool_req__docs_req_attr_validity_consistency</a></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_validity">gd_req__req_validity</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_req_attr_validity_correctness">tool_req__docs_req_attr_validity_correctness</a></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_linkage_aou">gd_req__req_linkage_aou</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_req_link_covers_aou">tool_req__docs_req_link_covers_aou</a></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_linkage">gd_req__req_linkage</a><em>; </em><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_traceability">gd_req__req_traceability</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_req_link_satisfies_allowed">tool_req__docs_req_link_satisfies_allowed</a></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_structure">gd_req__req_structure</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_req_types">tool_req__docs_req_types</a></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/safety_analysis/guidance/safety_analysis_process_reqs.html#gd_req__saf_attr_failure_id">gd_req__saf_attr_failure_id</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_attr_dfa_failure_id">tool_req__docs_saf_attr_dfa_failure_id</a></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/safety_analysis/guidance/safety_analysis_process_reqs.html#gd_req__saf_attr_feffect">gd_req__saf_attr_feffect</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_attr_fmea_failure_effect">tool_req__docs_saf_attr_fmea_failure_effect</a></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/safety_analysis/guidance/safety_analysis_process_reqs.html#gd_req__saf_attr_fault_id">gd_req__saf_attr_fault_id</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_attr_fmea_fault_id">tool_req__docs_saf_attr_fmea_fault_id</a></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/safety_analysis/guidance/safety_analysis_process_reqs.html#gd_req__saf_argument">gd_req__saf_argument</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_attrs_content">tool_req__docs_saf_attrs_content</a></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/safety_analysis/guidance/safety_analysis_process_reqs.html#gd_req__saf_attr_mandatory">gd_req__saf_attr_mandatory</a><em>; </em><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/security_analysis/guidance/security_analysis_process_reqs.html#gd_req__sec_attr_mandatory">gd_req__sec_attr_mandatory</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_attrs_mandatory">tool_req__docs_saf_attrs_mandatory</a></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/safety_analysis/guidance/safety_analysis_process_reqs.html#gd_req__saf_attr_mitigated_by">gd_req__saf_attr_mitigated_by</a><em>; </em><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/safety_analysis/guidance/safety_analysis_process_reqs.html#gd_req__saf_attr_requirements">gd_req__saf_attr_requirements</a><em>; </em><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/safety_analysis/guidance/safety_analysis_process_reqs.html#gd_req__saf_attr_requirements_check">gd_req__saf_attr_requirements_check</a><em>; </em><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/safety_analysis/guidance/safety_analysis_process_reqs.html#gd_req__saf_attr_aou">gd_req__saf_attr_aou</a><em>; </em><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/safety_analysis/guidance/safety_analysis_process_reqs.html#gd_req__saf_linkage_safety">gd_req__saf_linkage_safety</a><em>; </em><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/security_analysis/guidance/security_analysis_process_reqs.html#gd_req__sec_attr_mitigated_by">gd_req__sec_attr_mitigated_by</a><em>; </em><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/security_analysis/guidance/security_analysis_process_reqs.html#gd_req__sec_attr_requirements_check">gd_req__sec_attr_requirements_check</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_attrs_mitigated_by">tool_req__docs_saf_attrs_mitigated_by</a></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/safety_analysis/guidance/safety_analysis_process_reqs.html#gd_req__saf_attr_mitigation_issue">gd_req__saf_attr_mitigation_issue</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_attrs_mitigation_issue">tool_req__docs_saf_attrs_mitigation_issue</a></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_satisfies"><p></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_attrs_root_cause">tool_req__docs_saf_attrs_root_cause</a></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_satisfies"><p></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_attrs_safety_relevant">tool_req__docs_saf_attrs_safety_relevant</a></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/safety_analysis/guidance/safety_analysis_process_reqs.html#gd_req__saf_attr_sufficient">gd_req__saf_attr_sufficient</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_attrs_sufficient">tool_req__docs_saf_attrs_sufficient</a></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/safety_analysis/guidance/safety_analysis_process_reqs.html#gd_req__saf_attr_sufficient">gd_req__saf_attr_sufficient</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_attrs_sufficient_check">tool_req__docs_saf_attrs_sufficient_check</a></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/safety_analysis/guidance/safety_analysis_process_reqs.html#gd_req__saf_linkage_check">gd_req__saf_linkage_check</a><em>; </em><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/safety_analysis/guidance/safety_analysis_process_reqs.html#gd_req__saf_linkage">gd_req__saf_linkage</a><em>; </em><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/security_analysis/guidance/security_analysis_process_reqs.html#gd_req__sec_linkage_check">gd_req__sec_linkage_check</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_attrs_violates">tool_req__docs_saf_attrs_violates</a></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/safety_analysis/guidance/safety_analysis_process_reqs.html#gd_req__saf_structure">gd_req__saf_structure</a><em>; </em><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/safety_analysis/guidance/safety_analysis_process_reqs.html#gd_req__saf_attr_uid">gd_req__saf_attr_uid</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_types">tool_req__docs_saf_types</a></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_satisfies"><p></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_stdreq_types">tool_req__docs_stdreq_types</a></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_attr_testlink">gd_req__req_attr_testlink</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_test_link_testcase">tool_req__docs_test_link_testcase</a></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/verification/guidance/verification_process_reqs.html#gd_req__verification_checks">gd_req__verification_checks</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_test_metadata_link_levels">tool_req__docs_test_metadata_link_levels</a></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/verification/guidance/verification_process_reqs.html#gd_req__verification_checks">gd_req__verification_checks</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_test_metadata_mandatory_1">tool_req__docs_test_metadata_mandatory_1</a></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/verification/guidance/verification_process_reqs.html#gd_req__verification_checks">gd_req__verification_checks</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_test_metadata_mandatory_2">tool_req__docs_test_metadata_mandatory_2</a></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/tool_management/guidance/tool_management_reqs.html#gd_req__tool_attr_tcl">gd_req__tool_attr_tcl</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_tvr_confidence_level">tool_req__docs_tvr_confidence_level</a></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/tool_management/guidance/tool_management_reqs.html#gd_req__tool_attr_safety_affected">gd_req__tool_attr_safety_affected</a><em>; </em><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/tool_management/guidance/tool_management_reqs.html#gd_req__tool_check_mandatory">gd_req__tool_check_mandatory</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_tvr_safety">tool_req__docs_tvr_safety</a></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/tool_management/guidance/tool_management_reqs.html#gd_req__tool_attr_security_affected">gd_req__tool_attr_security_affected</a><em>; </em><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/tool_management/guidance/tool_management_reqs.html#gd_req__tool_check_mandatory">gd_req__tool_check_mandatory</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_tvr_security">tool_req__docs_tvr_security</a></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/tool_management/guidance/tool_management_reqs.html#gd_req__tool_attr_status">gd_req__tool_attr_status</a><em>; </em><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/tool_management/guidance/tool_management_reqs.html#gd_req__tool_check_mandatory">gd_req__tool_check_mandatory</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_tvr_status">tool_req__docs_tvr_status</a></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/tool_management/guidance/tool_management_reqs.html#gd_req__tool_attr_version">gd_req__tool_attr_version</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_tvr_version">tool_req__docs_tvr_version</a></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_satisfies external_link"><p><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/process_management/guidance/process_management_reqs.html#gd_req__process_management_build_blocks_attr">gd_req__process_management_build_blocks_attr</a><em>; </em><a class="external_link reference internal" href="https://eclipse-score.github.io/process_description//main/process_areas/process_management/guidance/process_management_reqs.html#gd_req__process_management_build_blocks_link">gd_req__process_management_build_blocks_link</a></p></td>
+<td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_wf_types">tool_req__docs_wf_types</a></p></td>
 </tr>
 </tbody>
 </table>
 </div>
-</section>
-<section id="details-about-testcases">
-<h2>Details About Testcases<a class="headerlink" href="#details-about-testcases" title="Link to this heading">#</a></h2>
-<p><em>Data is not filled out yet within the test cases.</em></p>
-<img alt="../../_images/need_pie_899c4.svg" id="needpie-internals/requirements/implementation_state-4" src="../../_images/need_pie_899c4.svg" />
-<img alt="../../_images/need_pie_5e1f8.svg" id="needpie-internals/requirements/implementation_state-5" src="../../_images/need_pie_5e1f8.svg" />
+</div>
+<div class="needstable_wrapper docutils container" id="needtable-internals/requirements/implementation_state-1">
+<span id="tooling-coverage-table-impl-links"></span><div class="pst-scrollable-table-container"><table class="NEEDS_TABLE table" id="needtable-internals/requirements/implementation_state-1-table_node">
+<caption><span class="caption-text">Tool requirement implementation and links</span><a class="headerlink" href="#needtable-internals/requirements/implementation_state-1-table_node" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Tool Requirement</p></th>
+<th class="head"><p>Implemented</p></th>
+<th class="head"><p>Source Code Link</p></th>
+<th class="head"><p>Testlink</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_arch_attr_mandatory">tool_req__docs_arch_attr_mandatory</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/checks/check_options.py#L199">src/extensions/score_metamodel/checks/check_options.py:199</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_arch_link_aou_check">tool_req__docs_arch_link_aou_check</a></p></td>
+<td class="needs_implemented"><p>NO</p></td>
+<td class="needs_source_code_link"><p></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_arch_link_fulfils">tool_req__docs_arch_link_fulfils</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L442">src/extensions/score_metamodel/metamodel.yaml:442</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L593">src/extensions/score_metamodel/metamodel.yaml:593</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_arch_link_fulfils_aou">tool_req__docs_arch_link_fulfils_aou</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L442">src/extensions/score_metamodel/metamodel.yaml:442</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L593">src/extensions/score_metamodel/metamodel.yaml:593</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_arch_link_qm_to_safety_req">tool_req__docs_arch_link_qm_to_safety_req</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L1033">src/extensions/score_metamodel/metamodel.yaml:1033</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_arch_link_safety_to_req">tool_req__docs_arch_link_safety_to_req</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+<td class="needs_source_code_link"><p></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_arch_link_security">tool_req__docs_arch_link_security</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L1057">src/extensions/score_metamodel/metamodel.yaml:1057</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_arch_types">tool_req__docs_arch_types</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L427">src/extensions/score_metamodel/metamodel.yaml:427</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L472">src/extensions/score_metamodel/metamodel.yaml:472</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L494">src/extensions/score_metamodel/metamodel.yaml:494</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L622">src/extensions/score_metamodel/metamodel.yaml:622</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L644">src/extensions/score_metamodel/metamodel.yaml:644</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_arch_views">tool_req__docs_arch_views</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L428">src/extensions/score_metamodel/metamodel.yaml:428</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L451">src/extensions/score_metamodel/metamodel.yaml:451</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L473">src/extensions/score_metamodel/metamodel.yaml:473</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L533">src/extensions/score_metamodel/metamodel.yaml:533</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L579">src/extensions/score_metamodel/metamodel.yaml:579</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L602">src/extensions/score_metamodel/metamodel.yaml:602</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L623">src/extensions/score_metamodel/metamodel.yaml:623</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_common_attr_desc_wording">tool_req__docs_common_attr_desc_wording</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/checks/attributes_format.py#L109">src/extensions/score_metamodel/checks/attributes_format.py:109</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L44">src/extensions/score_metamodel/metamodel.yaml:44</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_common_attr_description">tool_req__docs_common_attr_description</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+<td class="needs_source_code_link"><p></p></td>
+<td class="needs_testlink"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/tests/test_check_options.py#L89">TestCheckOptions__test_unknown_option_present_in_neither_req_opt_neither_opt_opt</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/tests/test_metamodel__init__.py#L45">test_metamodel__init____test_returns_empty_list_when_filter_is_empty</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/tests/test_metamodel__init__.py#L55">test_metamodel__init____test_returns_valid_checks</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/tests/test_metamodel__init__.py#L66">test_metamodel__init____test_strips_whitespace</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/tests/test_metamodel__init__.py#L77">test_metamodel__init____test_raises_assertion_for_invalid_check</a></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_common_attr_id">tool_req__docs_common_attr_id</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+<td class="needs_source_code_link"><p></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_common_attr_id_scheme">tool_req__docs_common_attr_id_scheme</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/checks/attributes_format.py#L30">src/extensions/score_metamodel/checks/attributes_format.py:30</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_common_attr_safety">tool_req__docs_common_attr_safety</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/checks/check_options.py#L196">src/extensions/score_metamodel/checks/check_options.py:196</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L253">src/extensions/score_metamodel/metamodel.yaml:253</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L288">src/extensions/score_metamodel/metamodel.yaml:288</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L324">src/extensions/score_metamodel/metamodel.yaml:324</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L384">src/extensions/score_metamodel/metamodel.yaml:384</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L414">src/extensions/score_metamodel/metamodel.yaml:414</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L436">src/extensions/score_metamodel/metamodel.yaml:436</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L459">src/extensions/score_metamodel/metamodel.yaml:459</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L481">src/extensions/score_metamodel/metamodel.yaml:481</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L502">src/extensions/score_metamodel/metamodel.yaml:502</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L522">src/extensions/score_metamodel/metamodel.yaml:522</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L563">src/extensions/score_metamodel/metamodel.yaml:563</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L587">src/extensions/score_metamodel/metamodel.yaml:587</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L610">src/extensions/score_metamodel/metamodel.yaml:610</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L631">src/extensions/score_metamodel/metamodel.yaml:631</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L652">src/extensions/score_metamodel/metamodel.yaml:652</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_common_attr_safety_link_check">tool_req__docs_common_attr_safety_link_check</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L1024">src/extensions/score_metamodel/metamodel.yaml:1024</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_common_attr_security">tool_req__docs_common_attr_security</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/checks/check_options.py#L195">src/extensions/score_metamodel/checks/check_options.py:195</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L261">src/extensions/score_metamodel/metamodel.yaml:261</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L286">src/extensions/score_metamodel/metamodel.yaml:286</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L322">src/extensions/score_metamodel/metamodel.yaml:322</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L382">src/extensions/score_metamodel/metamodel.yaml:382</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L412">src/extensions/score_metamodel/metamodel.yaml:412</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L434">src/extensions/score_metamodel/metamodel.yaml:434</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L457">src/extensions/score_metamodel/metamodel.yaml:457</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L479">src/extensions/score_metamodel/metamodel.yaml:479</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L500">src/extensions/score_metamodel/metamodel.yaml:500</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L520">src/extensions/score_metamodel/metamodel.yaml:520</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L561">src/extensions/score_metamodel/metamodel.yaml:561</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L585">src/extensions/score_metamodel/metamodel.yaml:585</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L608">src/extensions/score_metamodel/metamodel.yaml:608</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L629">src/extensions/score_metamodel/metamodel.yaml:629</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L650">src/extensions/score_metamodel/metamodel.yaml:650</a></p></td>
+<td class="needs_testlink"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/tests/test_check_options.py#L65">TestCheckOptions__test_unknown_directive</a></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_common_attr_status">tool_req__docs_common_attr_status</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/checks/check_options.py#L197">src/extensions/score_metamodel/checks/check_options.py:197</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L255">src/extensions/score_metamodel/metamodel.yaml:255</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L290">src/extensions/score_metamodel/metamodel.yaml:290</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L326">src/extensions/score_metamodel/metamodel.yaml:326</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L386">src/extensions/score_metamodel/metamodel.yaml:386</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L416">src/extensions/score_metamodel/metamodel.yaml:416</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L438">src/extensions/score_metamodel/metamodel.yaml:438</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L461">src/extensions/score_metamodel/metamodel.yaml:461</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L483">src/extensions/score_metamodel/metamodel.yaml:483</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L504">src/extensions/score_metamodel/metamodel.yaml:504</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L524">src/extensions/score_metamodel/metamodel.yaml:524</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L565">src/extensions/score_metamodel/metamodel.yaml:565</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L589">src/extensions/score_metamodel/metamodel.yaml:589</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L612">src/extensions/score_metamodel/metamodel.yaml:612</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L633">src/extensions/score_metamodel/metamodel.yaml:633</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L654">src/extensions/score_metamodel/metamodel.yaml:654</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_common_attr_suspicious">tool_req__docs_common_attr_suspicious</a></p></td>
+<td class="needs_implemented"><p>NO</p></td>
+<td class="needs_source_code_link"><p></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_common_attr_title">tool_req__docs_common_attr_title</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/checks/attributes_format.py#L110">src/extensions/score_metamodel/checks/attributes_format.py:110</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L38">src/extensions/score_metamodel/metamodel.yaml:38</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_common_attr_version">tool_req__docs_common_attr_version</a></p></td>
+<td class="needs_implemented"><p>PARTIAL</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L22">src/extensions/score_metamodel/metamodel.yaml:22</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_dd_feature_flag">tool_req__docs_dd_feature_flag</a></p></td>
+<td class="needs_implemented"><p>NO</p></td>
+<td class="needs_source_code_link"><p></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_dd_link_source_code_link">tool_req__docs_dd_link_source_code_link</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L17">src/extensions/score_metamodel/metamodel.yaml:17</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_source_code_linker/__init__.py#L20">src/extensions/score_source_code_linker/__init__.py:20</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_source_code_linker/need_source_links.py#L20">src/extensions/score_source_code_linker/need_source_links.py:20</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_source_code_linker/needlinks.py#L13">src/extensions/score_source_code_linker/needlinks.py:13</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_dd_sta">tool_req__docs_dd_sta</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L676">src/extensions/score_metamodel/metamodel.yaml:676</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_doc_attr">tool_req__docs_doc_attr</a></p></td>
+<td class="needs_implemented"><p>NO</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L214">src/extensions/score_metamodel/metamodel.yaml:214</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L238">src/extensions/score_metamodel/metamodel.yaml:238</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_doc_attr_approver_autofill">tool_req__docs_doc_attr_approver_autofill</a></p></td>
+<td class="needs_implemented"><p>NO</p></td>
+<td class="needs_source_code_link"><p></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_doc_attr_author_autofill">tool_req__docs_doc_attr_author_autofill</a></p></td>
+<td class="needs_implemented"><p>NO</p></td>
+<td class="needs_source_code_link"><p></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_doc_attr_reviewer_autofill">tool_req__docs_doc_attr_reviewer_autofill</a></p></td>
+<td class="needs_implemented"><p>NO</p></td>
+<td class="needs_source_code_link"><p></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_doc_generic_mandatory">tool_req__docs_doc_generic_mandatory</a></p></td>
+<td class="needs_implemented"><p>PARTIAL</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L208">src/extensions/score_metamodel/metamodel.yaml:208</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L218">src/extensions/score_metamodel/metamodel.yaml:218</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_doc_types">tool_req__docs_doc_types</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L204">src/extensions/score_metamodel/metamodel.yaml:204</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L223">src/extensions/score_metamodel/metamodel.yaml:223</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_req_arch_link_safety_to_arch">tool_req__docs_req_arch_link_safety_to_arch</a></p></td>
+<td class="needs_implemented"><p>PARTIAL</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L1042">src/extensions/score_metamodel/metamodel.yaml:1042</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_req_attr_rationale">tool_req__docs_req_attr_rationale</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/checks/check_options.py#L198">src/extensions/score_metamodel/checks/check_options.py:198</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L259">src/extensions/score_metamodel/metamodel.yaml:259</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_req_attr_reqcov">tool_req__docs_req_attr_reqcov</a></p></td>
+<td class="needs_implemented"><p>PARTIAL</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L266">src/extensions/score_metamodel/metamodel.yaml:266</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L299">src/extensions/score_metamodel/metamodel.yaml:299</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L336">src/extensions/score_metamodel/metamodel.yaml:336</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L361">src/extensions/score_metamodel/metamodel.yaml:361</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L392">src/extensions/score_metamodel/metamodel.yaml:392</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_req_attr_reqtype">tool_req__docs_req_attr_reqtype</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/checks/check_options.py#L194">src/extensions/score_metamodel/checks/check_options.py:194</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L251">src/extensions/score_metamodel/metamodel.yaml:251</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L284">src/extensions/score_metamodel/metamodel.yaml:284</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L320">src/extensions/score_metamodel/metamodel.yaml:320</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L380">src/extensions/score_metamodel/metamodel.yaml:380</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_req_attr_testcov">tool_req__docs_req_attr_testcov</a></p></td>
+<td class="needs_implemented"><p>PARTIAL</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L268">src/extensions/score_metamodel/metamodel.yaml:268</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L301">src/extensions/score_metamodel/metamodel.yaml:301</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L338">src/extensions/score_metamodel/metamodel.yaml:338</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L363">src/extensions/score_metamodel/metamodel.yaml:363</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L394">src/extensions/score_metamodel/metamodel.yaml:394</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_req_attr_validity_consistency">tool_req__docs_req_attr_validity_consistency</a></p></td>
+<td class="needs_implemented"><p>PARTIAL</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/checks/check_options.py#L267">src/extensions/score_metamodel/checks/check_options.py:267</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_req_attr_validity_correctness">tool_req__docs_req_attr_validity_correctness</a></p></td>
+<td class="needs_implemented"><p>PARTIAL</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L271">src/extensions/score_metamodel/metamodel.yaml:271</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L304">src/extensions/score_metamodel/metamodel.yaml:304</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_req_link_covers_aou">tool_req__docs_req_link_covers_aou</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L309">src/extensions/score_metamodel/metamodel.yaml:309</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L342">src/extensions/score_metamodel/metamodel.yaml:342</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L953">src/extensions/score_metamodel/metamodel.yaml:953</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_req_link_satisfies_allowed">tool_req__docs_req_link_satisfies_allowed</a></p></td>
+<td class="needs_implemented"><p>PARTIAL</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L132">src/extensions/score_metamodel/metamodel.yaml:132</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L294">src/extensions/score_metamodel/metamodel.yaml:294</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L330">src/extensions/score_metamodel/metamodel.yaml:330</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L355">src/extensions/score_metamodel/metamodel.yaml:355</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_req_types">tool_req__docs_req_types</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L126">src/extensions/score_metamodel/metamodel.yaml:126</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L247">src/extensions/score_metamodel/metamodel.yaml:247</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L279">src/extensions/score_metamodel/metamodel.yaml:279</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L316">src/extensions/score_metamodel/metamodel.yaml:316</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L349">src/extensions/score_metamodel/metamodel.yaml:349</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L376">src/extensions/score_metamodel/metamodel.yaml:376</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_attr_dfa_failure_id">tool_req__docs_saf_attr_dfa_failure_id</a></p></td>
+<td class="needs_implemented"><p>NO</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L755">src/extensions/score_metamodel/metamodel.yaml:755</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L784">src/extensions/score_metamodel/metamodel.yaml:784</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_attr_fmea_failure_effect">tool_req__docs_saf_attr_fmea_failure_effect</a></p></td>
+<td class="needs_implemented"><p>NO</p></td>
+<td class="needs_source_code_link"><p></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_attr_fmea_fault_id">tool_req__docs_saf_attr_fmea_fault_id</a></p></td>
+<td class="needs_implemented"><p>NO</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L814">src/extensions/score_metamodel/metamodel.yaml:814</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L845">src/extensions/score_metamodel/metamodel.yaml:845</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_attrs_content">tool_req__docs_saf_attrs_content</a></p></td>
+<td class="needs_implemented"><p>NO</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L761">src/extensions/score_metamodel/metamodel.yaml:761</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L790">src/extensions/score_metamodel/metamodel.yaml:790</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L820">src/extensions/score_metamodel/metamodel.yaml:820</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L851">src/extensions/score_metamodel/metamodel.yaml:851</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_attrs_mandatory">tool_req__docs_saf_attrs_mandatory</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+<td class="needs_source_code_link"><p></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_attrs_mitigated_by">tool_req__docs_saf_attrs_mitigated_by</a></p></td>
+<td class="needs_implemented"><p>NO</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L772">src/extensions/score_metamodel/metamodel.yaml:772</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L801">src/extensions/score_metamodel/metamodel.yaml:801</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L833">src/extensions/score_metamodel/metamodel.yaml:833</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L1071">src/extensions/score_metamodel/metamodel.yaml:1071</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_attrs_mitigation_issue">tool_req__docs_saf_attrs_mitigation_issue</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L767">src/extensions/score_metamodel/metamodel.yaml:767</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L793">src/extensions/score_metamodel/metamodel.yaml:793</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L823">src/extensions/score_metamodel/metamodel.yaml:823</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L854">src/extensions/score_metamodel/metamodel.yaml:854</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_attrs_root_cause">tool_req__docs_saf_attrs_root_cause</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L827">src/extensions/score_metamodel/metamodel.yaml:827</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L858">src/extensions/score_metamodel/metamodel.yaml:858</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_attrs_safety_relevant">tool_req__docs_saf_attrs_safety_relevant</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L769">src/extensions/score_metamodel/metamodel.yaml:769</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L795">src/extensions/score_metamodel/metamodel.yaml:795</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L825">src/extensions/score_metamodel/metamodel.yaml:825</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L856">src/extensions/score_metamodel/metamodel.yaml:856</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_attrs_sufficient">tool_req__docs_saf_attrs_sufficient</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L758">src/extensions/score_metamodel/metamodel.yaml:758</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L787">src/extensions/score_metamodel/metamodel.yaml:787</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L817">src/extensions/score_metamodel/metamodel.yaml:817</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L848">src/extensions/score_metamodel/metamodel.yaml:848</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_attrs_sufficient_check">tool_req__docs_saf_attrs_sufficient_check</a></p></td>
+<td class="needs_implemented"><p>NO</p></td>
+<td class="needs_source_code_link"><p></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_attrs_violates">tool_req__docs_saf_attrs_violates</a></p></td>
+<td class="needs_implemented"><p>NO</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L764">src/extensions/score_metamodel/metamodel.yaml:764</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L798">src/extensions/score_metamodel/metamodel.yaml:798</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L830">src/extensions/score_metamodel/metamodel.yaml:830</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L861">src/extensions/score_metamodel/metamodel.yaml:861</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_types">tool_req__docs_saf_types</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L751">src/extensions/score_metamodel/metamodel.yaml:751</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L780">src/extensions/score_metamodel/metamodel.yaml:780</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L810">src/extensions/score_metamodel/metamodel.yaml:810</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L841">src/extensions/score_metamodel/metamodel.yaml:841</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_stdreq_types">tool_req__docs_stdreq_types</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L91">src/extensions/score_metamodel/metamodel.yaml:91</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_test_link_testcase">tool_req__docs_test_link_testcase</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_source_code_linker/__init__.py#L19">src/extensions/score_source_code_linker/__init__.py:19</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_source_code_linker/need_source_links.py#L19">src/extensions/score_source_code_linker/need_source_links.py:19</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_source_code_linker/testlink.py#L21">src/extensions/score_source_code_linker/testlink.py:21</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_source_code_linker/xml_parser.py#L19">src/extensions/score_source_code_linker/xml_parser.py:19</a></p></td>
+<td class="needs_testlink"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_source_code_linker/tests/test_testlink.py#L40">test_testlink__test_testlink_serialization_roundtrip</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_source_code_linker/tests/test_testlink.py#L73">test_testlink__test_decoder_ignores_irrelevant_dicts</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_source_code_linker/tests/test_testlink.py#L85">test_testlink__test_clean_text_removes_ansi_and_html_unescapes</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_source_code_linker/tests/test_testlink.py#L100">test_testlink__test_testcaseneed_to_dict_multiple_links</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_source_code_linker/tests/test_testlink.py#L142">test_testlink__test_store_and_load_testlinks_roundtrip</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L155">test_xml_parser__test_find_xml_files</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L230">test_xml_parser__test_parse_testcase_result</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L252">test_xml_parser__test_parse_properties</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L268">test_xml_parser__test_read_test_xml_file</a><em>; </em><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L324">test_xml_parser__test_short_hash_consistency_and_format</a></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_test_metadata_link_levels">tool_req__docs_test_metadata_link_levels</a></p></td>
+<td class="needs_implemented"><p>NO</p></td>
+<td class="needs_source_code_link"><p></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_test_metadata_mandatory_1">tool_req__docs_test_metadata_mandatory_1</a></p></td>
+<td class="needs_implemented"><p>NO</p></td>
+<td class="needs_source_code_link"><p></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_test_metadata_mandatory_2">tool_req__docs_test_metadata_mandatory_2</a></p></td>
+<td class="needs_implemented"><p>NO</p></td>
+<td class="needs_source_code_link"><p></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_tvr_confidence_level">tool_req__docs_tvr_confidence_level</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L235">src/extensions/score_metamodel/metamodel.yaml:235</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_tvr_safety">tool_req__docs_tvr_safety</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L231">src/extensions/score_metamodel/metamodel.yaml:231</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_tvr_security">tool_req__docs_tvr_security</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L233">src/extensions/score_metamodel/metamodel.yaml:233</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_tvr_status">tool_req__docs_tvr_status</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L227">src/extensions/score_metamodel/metamodel.yaml:227</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_tvr_version">tool_req__docs_tvr_version</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L229">src/extensions/score_metamodel/metamodel.yaml:229</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_wf_types">tool_req__docs_wf_types</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/etas-contrib/score_docs-as-code/blob/f6e0883378fd420768c34874c0de32096370fc0a/src/extensions/score_metamodel/metamodel.yaml#L109">src/extensions/score_metamodel/metamodel.yaml:109</a></p></td>
+<td class="needs_testlink"><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </section>
 </section>
 
@@ -703,6 +1124,15 @@
         <p class="prev-next-title">Tool Requirements</p>
       </div>
     </a>
+    <a class="right-next"
+       href="tooling_verification.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Tooling Verification</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
 </div>
                 </footer>
               
@@ -723,9 +1153,9 @@
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-read-these-levels">How To Read These Levels</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#in-detail">In Detail</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#all-passed-tests">All passed Tests</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#details-about-testcases">Details About Testcases</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#process-to-tool-mapping">Process-to-Tool Mapping</a></li>
 </ul>
   </nav></div>
 
