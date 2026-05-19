@@ -429,6 +429,10 @@ outgoing = "consists of"
 incoming = "contained by"
 outgoing = "contains"
 
+[needs.links.covers]
+incoming = "covered by"
+outgoing = "covers"
+
 [needs.links.fulfils]
 incoming = "fulfilled by"
 outgoing = "fulfils"

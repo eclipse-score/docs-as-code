@@ -1541,7 +1541,10 @@
               "local": {
                 "properties": {
                   "type": {
-                    "const": "feat_req"
+                    "enum": [
+                      "feat_req",
+                      "aou_req"
+                    ]
                   }
                 },
                 "required": [
@@ -2113,7 +2116,10 @@
               "local": {
                 "properties": {
                   "type": {
-                    "const": "comp_req"
+                    "enum": [
+                      "comp_req",
+                      "aou_req"
+                    ]
                   }
                 },
                 "required": [
