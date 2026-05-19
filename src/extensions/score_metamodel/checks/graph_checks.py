@@ -207,11 +207,11 @@ def check_valid_only_links_to_valid(
     all_needs: NeedsView,
     log: CheckLogger,
 ):
-    # Get all possible link types
-    # Pre-Filter for only valid & local needs
-    valid_needs_id_all = [
+    # Pre-Gather all *valid* need id's (external, & local)
+    valid_needs_id_all = set(
         x.id for x in all_needs.values() if x.get("status") == "valid"
-    ]
+    )
+    # Pre-Gather all LOCAL *valid* id's to iterate over and check
     valid_needs_local = [
         x
         for x in all_needs.filter_is_external(False).values()
@@ -219,8 +219,12 @@ def check_valid_only_links_to_valid(
     ]
 
     for need in valid_needs_local:
-        all_linked_needs: list[NeedLink] = list(chain(*need._links.values()))  # type: ignore
-        for link in all_linked_needs:
-            if link.id not in valid_needs_id_all:
-                msg = f"Is valid but links to invalid need: {link.id}"
-                log.warning_for_need(need, msg, is_new_check=True)
+        # Using set comprehension here to enable faster computation for comparisons
+        all_linked_needs: set[str] = set(
+            x.id
+            for x in set(chain(*need._links.values()))  # type: ignore
+        )
+        invalid_needs = all_linked_needs.difference(valid_needs_id_all)
+        if invalid_needs:
+            msg = f"Is valid but links to invalid need(s): {invalid_needs}"
+            log.warning_for_need(need, msg, is_new_check=True)

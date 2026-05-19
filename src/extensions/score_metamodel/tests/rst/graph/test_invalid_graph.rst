@@ -12,7 +12,7 @@
    # SPDX-License-Identifier: Apache-2.0
    # *******************************************************************************
 
-.. #CHECK: check_valid_only_links_to_valid
+#CHECK: check_valid_only_links_to_valid
 
 .. feat_req:: Parent requirement INVALID QM
    :id: feat_req__parent__QM_invalid
@@ -20,7 +20,10 @@
    :status: invalid
 
 .. We can not yet enable this test. As the check is only an 'info' and not yet a true warning
-.. #EXPECT: comp_saf_fmea__child__16: is valid but links to invalid need:
+.. Therefore the test is the inverse of what we will test once it is enabled.
+
+.. #EXPECT: comp_saf_fmea__child__16: is valid but links to invalid need(s):
+#EXPECT-NOT: invalid need(s):
 
 .. comp_saf_fmea:: Child requirement
    :id: comp_saf_fmea__child__1
