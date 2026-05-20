@@ -297,7 +297,7 @@ def check_validity_consistency(
 @local_check
 def check_needextends_forbidden_options(app: Sphinx, need: NeedItem, log: CheckLogger):
     extends_data = list(SphinxNeedsData(app.env).get_or_create_extends().values())
-    dissallowed: set[str] = {"status", "safety", "security"}
+    dissallowed: list[str] = app.config.unmutable_options
     for needsextends in extends_data:
         location = f"{needsextends['docname']}:{needsextends['lineno']}"
         modifications = needsextends["modifications"]
@@ -307,10 +307,3 @@ def check_needextends_forbidden_options(app: Sphinx, need: NeedItem, log: CheckL
                     f"Needextend in document: {needsextends['docname']} modifies {option} which is not allowed",
                     location,
                 )
-                break
-            # print(f"{option=}, {extend_type.name=}, {value.value=}")
-            break
-        break
-    # # {'needextend-internals/requirements/requirements-0': {'docname': 'internals/requirements/requirements', 'lineno': 1196, 'target_id': 'needextend-internals/requirements/requirements-0', 'filter': "c.this_doc() and type == 'tool_req'", 'filter_is_id': False, 'modifications': [('security', <ExtendType.REPLACE: ''>, FieldLiteralValue(value='NO')), ('safety', <ExtendType.REPLACE: ''>, FieldLiteralValue(value='ASIL_B'))], 'list_modifications': [], 'strict': False}, 'needextend-internals/requirements/requirements-1': {'docname': 'internals/requirements/requirements', 'lineno': 1200, 'target_id': 'needextend-internals/requirements/requirements-1', 'filter': "c.this_doc() and type == 'tool_req' and not status", 'filter_is_id': False, 'modifications': [('status', <ExtendType.REPLACE: ''>, FieldLiteralValue(value='valid'))], 'list_modifications': [], 'strict': False}}
-    #     print(extends_data)
-    pass

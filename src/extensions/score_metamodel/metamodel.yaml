@@ -53,6 +53,12 @@ prohibited_words_checks:
       - thing
       - absolutely
 
+unmutable_options:
+  options:
+    - safety
+    - security
+    - status
+
 needs_types:
   # See metamodel.md for how to define a new need type
 
