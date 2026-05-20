@@ -21,8 +21,8 @@ from score_metamodel import (
 )
 from score_metamodel.metamodel_types import AllowedLinksType
 from sphinx.application import Sphinx
-from sphinx_needs.need_item import NeedItem
 from sphinx_needs.data import SphinxNeedsData
+from sphinx_needs.need_item import NeedItem
 
 
 def get_need_type(needs_types: list[ScoreNeedType], directive: str) -> ScoreNeedType:

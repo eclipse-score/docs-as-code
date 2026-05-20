@@ -13,9 +13,9 @@
 """Functionality related to reading in the SCORE metamodel.yaml"""
 
 from dataclasses import dataclass
+from itertools import chain
 from pathlib import Path
 from typing import Any, cast
-from itertools import chain
 
 from ruamel.yaml import YAML
 from sphinx_needs import logging
