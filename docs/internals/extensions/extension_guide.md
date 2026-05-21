@@ -6,7 +6,7 @@ This document will help you with the most important building blocks and provide 
 
 ## Getting Started
 
-1. Create a new folder in `docs/_tooling/extensions` called `score_<name of your extension>`
+1. Create a new folder in `src/extensions` called `score_<name of your extension>`
 2. Copy the template inside the `__init__.py`
 3. Adapt to your needs
 
@@ -90,16 +90,13 @@ We perform testing with unit tests as well as integration tests that validate th
 ### Where to Place Your Test Code
 
 ```bash
-_tooling/
-├── extensions/
-│   ├── README.md
-│   ├── score_draw_uml_funcs/
-│   ├── YOUR_EXTENSION/
-│   │   ├── __init__.py  # your python code (setup needs to be in here)
-│   │   ├── xyz.py       # your python code (if you need/want to split it across different files)
-│   │   └── tests/
-│   │       ├── test_xyz.py             # unit tests
-│   │       └── test_YOUR_EXTENSION.py  # integration tests
+src/extensions/
+├── YOUR_EXTENSION/
+│   ├── __init__.py  # your python code (setup needs to be in here)
+│   ├── xyz.py       # your python code (if you need/want to split it across different files)
+│   └── tests/
+│       ├── test_xyz.py             # unit tests
+│       └── test_YOUR_EXTENSION.py  # integration tests
 ├── score_metamodel/
 ├── score_plantuml.py
 ```
