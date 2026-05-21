@@ -76,7 +76,7 @@ extensions = [
 ]
 ```
 
-> **Important:** There cannot be any BUILD file inside the entire 'extensions' folder, as that would break the Python imports.
+> **Important:** Each extension needs its own `BUILD` file to declare the `py_library` target and its dependencies.
 
 
 
