@@ -485,21 +485,29 @@ repository can:</p>
 <h2>Typical Setup<a class="headerlink" href="#typical-setup" title="Link to this heading">#</a></h2>
 <p>For details, see <a class="reference internal" href="setup.html#setup"><span class="std std-ref">Setup</span></a>.</p>
 </section>
-<section id="minimal-configuration-example">
-<h2>Minimal Configuration Example<a class="headerlink" href="#minimal-configuration-example" title="Link to this heading">#</a></h2>
-<p>In <code class="docutils literal notranslate"><span class="pre">docs/conf.py</span></code>:</p>
+<section id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="Link to this heading">#</a></h2>
+<section id="default-behavior-no-configuration-needed">
+<h3>Default Behavior (No Configuration Needed)<a class="headerlink" href="#default-behavior-no-configuration-needed" title="Link to this heading">#</a></h3>
+<p>By default, <code class="docutils literal notranslate"><span class="pre">score_metamodel</span></code> autodiscovers requirement types from the
+repository needs present in the current build. Requirement types are identified
+from <code class="docutils literal notranslate"><span class="pre">needs_types</span></code> entries tagged with <code class="docutils literal notranslate"><span class="pre">requirement</span></code> or
+<code class="docutils literal notranslate"><span class="pre">requirement_excl_process</span></code>.</p>
+<p>This is the recommended setup for most repositories.</p>
+</section>
+<section id="optional-override-for-requirement-types">
+<h3>Optional Override for Requirement Types<a class="headerlink" href="#optional-override-for-requirement-types" title="Link to this heading">#</a></h3>
+<p>If a repository needs to force a specific set of requirement types, set an
+explicit override in <code class="docutils literal notranslate"><span class="pre">docs/conf.py</span></code>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">score_metamodel_requirement_types</span> <span class="o">=</span> <span class="s2">&quot;feat_req,comp_req,aou_req&quot;</span>
-<span class="n">score_metamodel_include_external_needs</span> <span class="o">=</span> <span class="kc">False</span>
 </pre></div>
 </div>
-<p>By default, <code class="docutils literal notranslate"><span class="pre">score_metamodel</span></code> autodiscovers requirement types from the
-repository needs that are present in the current build. If
-<code class="docutils literal notranslate"><span class="pre">score_metamodel_requirement_types</span></code> is set, that explicit list overrides
+<p>When this setting is provided, the explicit list is used instead of
 autodiscovery.</p>
 <p>Use <code class="docutils literal notranslate"><span class="pre">score_metamodel_include_external_needs</span> <span class="pre">=</span> <span class="pre">True</span></code> only in repositories that
 intentionally aggregate requirements across module dependencies, such as
-integration repositories. Use <code class="docutils literal notranslate"><span class="pre">False</span></code> for module repositories to gate only on
-local traceability.</p>
+integration repositories.</p>
+</section>
 </section>
 <section id="building-the-dashboard">
 <h2>Building the Dashboard<a class="headerlink" href="#building-the-dashboard" title="Link to this heading">#</a></h2>
@@ -528,7 +536,7 @@ empty or low.</p>
 <p>There are two common modes:</p>
 <p><strong>Module repository</strong></p>
 <ul class="simple">
-<li><p>Set <code class="docutils literal notranslate"><span class="pre">score_metamodel_include_external_needs</span> <span class="pre">=</span> <span class="pre">False</span></code>.</p></li>
+<li><p>No setting needed. Local-only scope is the default.</p></li>
 <li><p>Gate only on the needs owned by the repository itself.</p></li>
 <li><p>Use this for per-module implementation progress and traceability.</p></li>
 </ul>
@@ -634,7 +642,11 @@ gate thresholds so CI calls a single Bazel target.</p>
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-you-get">What You Get</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#typical-setup">Typical Setup</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#minimal-configuration-example">Minimal Configuration Example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configuration">Configuration</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#default-behavior-no-configuration-needed">Default Behavior (No Configuration Needed)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#optional-override-for-requirement-types">Optional Override for Requirement Types</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#building-the-dashboard">Building the Dashboard</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs-for-linkage-metrics">Inputs for Linkage Metrics</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#choosing-local-vs-aggregated-views">Choosing Local vs Aggregated Views</a></li>
