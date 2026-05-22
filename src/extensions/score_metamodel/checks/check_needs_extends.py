@@ -1,6 +1,19 @@
+# *******************************************************************************
+# Copyright (c) 2026 Contributors to the Eclipse Foundation
+#
+# See the NOTICE file(s) distributed with this work for additional
+# information regarding copyright ownership.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Apache License Version 2.0 which is available at
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# SPDX-License-Identifier: Apache-2.0
+# *******************************************************************************
 from __future__ import annotations
-from docutils import nodes
 
+import sphinx_needs.directives.need
+from docutils import nodes
 from sphinx_needs.config import NeedsSphinxConfig
 from sphinx_needs.data import ExtendType, NeedsExtendType, NeedsMutable
 from sphinx_needs.exceptions import NeedsInvalidFilter
@@ -13,7 +26,6 @@ from sphinx_needs.needs_schema import (
     LinksFunctionArray,
     LinksLiteralValue,
 )
-import sphinx_needs.directives.need 
 
 
 class Needextend(nodes.General, nodes.Element):
@@ -21,7 +33,6 @@ class Needextend(nodes.General, nodes.Element):
 
 
 logger = get_logger(__name__)
-
 
 
 def score_extend_needs_data_func(
@@ -47,8 +58,7 @@ def score_extend_needs_data_func(
                 error = f"Provided id {need_filter!r} for needextend does not exist."
                 if current_needextend["strict"]:
                     raise NeedsInvalidFilter(error)
-                else:
-                    log_warning(logger, error, "needextend", location=location)
+                log_warning(logger, error, "needextend", location=location)
                 continue
         else:
             try:
@@ -81,7 +91,6 @@ def score_extend_needs_data_func(
                 current_needextend["docname"],
                 current_needextend["lineno"],
             )
-
 
             for option_name, etype, link_value in current_needextend[
                 "list_modifications"

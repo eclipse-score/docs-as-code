@@ -21,7 +21,6 @@ from score_metamodel import (
 )
 from score_metamodel.metamodel_types import AllowedLinksType
 from sphinx.application import Sphinx
-from sphinx_needs.data import SphinxNeedsData
 from sphinx_needs.need_item import NeedItem
 
 
