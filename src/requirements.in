@@ -35,4 +35,5 @@ bazel-runfiles
 
 # Local development
 pytest
+pyfakefs
 basedpyright
