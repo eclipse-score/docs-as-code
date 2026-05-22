@@ -464,17 +464,17 @@
                   
   <section id="requirements">
 <h1>Requirements<a class="headerlink" href="#requirements" title="Link to this heading">#</a></h1>
-<div class="need_container docutils container" id="SNCB-4ff19c56">
-<div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_req table" id="tool_req__docs_mounts">
+<div class="need_container docutils container" id="SNCB-6c2f3a1c">
+<div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_stkh_req table" id="stkh_req__docs__mounts">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
-<div class="line"><span><span class="needs_title"><span class="needs_data">Mount external source trees via sphinx-mounts</span></span></span></div>
+<div class="line"><span><span class="needs_title"><span class="needs_data">Mount external source trees for IDE consumption</span></span></span></div>
 </div>
 </td>
 <td class="head_center" colspan="2"><div class="needs_head line-block">
 <div class="line"><span><span class="needs_status"><span class="needs_label">status: </span><span class="needs_data">valid</span></span></span></div>
-<div class="line"><span></span></div>
-<div class="line"><span></span></div>
+<div class="line"><span><span class="needs_security"><span class="needs_label">security: </span><span class="needs_data">NO</span></span></span></div>
+<div class="line"><span><span class="needs_safety"><span class="needs_label">safety: </span><span class="needs_data">QM</span></span></span></div>
 </div>
 </td>
 <td class="head_right" colspan="2"><div class="needs_head_right line-block">
@@ -483,28 +483,27 @@
 </td>
 </tr>
 <tr class="meta row-even"><td class="meta" colspan="3"><div class="needs_meta_left line-block">
-<div class="line"><span><span><div class="line"><span class="needs_tags"><span class="needs_label">tags: </span><span class="needs_data_container"><span class="needs_data">Architecture</span></span></span></div>
-<div class="line"><span class="needs_implemented"><span class="needs_label">implemented: </span><span class="needs_data">YES</span></span></div>
-<div class="line"><span class="needs_version"><span class="needs_label">version: </span><span class="needs_data">1</span></span></div>
+<div class="line"><span><span><div class="line"><span class="needs_rationale"><span class="needs_label">rationale: </span><span class="needs_data">Out-of-tree documentation must reach the rendered site without copying, and IDE tooling must read the same project configuration Sphinx reads so editing inside a mounted bundle gets as-you-type validation without invoking Sphinx.</span></span></div>
+<div class="line"><span class="needs_reqtype"><span class="needs_label">reqtype: </span><span class="needs_data">Functional</span></span></div>
 </span></span></div>
-<div class="line"><span><div class="line">implemented by: <span class="implements"><span><a class="reference internal" href="../requirements/requirements.html#tool_req__docs_mount_traceability" title="tool_req__docs_mounts">tool_req__docs_mount_traceability</a></span></span></div>
+<div class="line"><span><div class="line">satisfied by: <span class="satisfies"><span><a class="reference internal" href="../requirements/requirements.html#tool_req__docs_mount_traceability" title="stkh_req__docs__mounts">tool_req__docs_mount_traceability</a></span></span></div>
 </span></div>
 </div>
 </td>
 <td class="meta" colspan="3"></td>
 </tr>
-<tr class="content row-odd"><td class="content" colspan="6"><p>The <code class="docutils literal notranslate"><span class="pre">docs()</span></code> Bazel macro shall accept a <code class="docutils literal notranslate"><span class="pre">mounts</span></code> parameter
-listing external source bundles. Each entry shall produce a
-<code class="docutils literal notranslate"><span class="pre">[[mounts]]</span></code> block in the generated <code class="docutils literal notranslate"><span class="pre">ubproject.toml</span></code> so that
-IDE extensions can resolve mounted documents without invoking
-Sphinx.</p></td>
+<tr class="content row-odd"><td class="content" colspan="6"><p>As a stakeholder of S-CORE docs-as-code, I want the <code class="docutils literal notranslate"><span class="pre">docs()</span></code>
+Bazel macro to expose mounted external source bundles via a
+declarative <code class="docutils literal notranslate"><span class="pre">[[mounts]]</span></code> block in the generated
+<code class="docutils literal notranslate"><span class="pre">ubproject.toml</span></code>, so that IDE extensions can resolve documents
+inside those bundles without invoking Sphinx.</p></td>
 </tr>
 <tr class="footer row-even"><td class="footer_left" colspan="2"><div class="needs_footer_left line-block">
-<div class="line"><span><span class="needs-id"><a class="reference internal" href="#tool_req__docs_mounts" title="tool_req__docs_mounts">tool_req__docs_mounts</a></span></span></div>
+<div class="line"><span><span class="needs-id"><a class="reference internal" href="#stkh_req__docs__mounts" title="stkh_req__docs__mounts">stkh_req__docs__mounts</a></span></span></div>
 </div>
 </td>
 <td class="footer" colspan="2"><div class="needs_footer line-block">
-<div class="line"><span><span class="needs_type_name"><span class="needs_data">Tool Requirement</span></span></span></div>
+<div class="line"><span><span class="needs_type_name"><span class="needs_data">Stakeholder Requirement</span></span></span></div>
 </div>
 </td>
 <td class="footer_right" colspan="2"></td>

@@ -787,15 +787,21 @@ shapes (e.g. a <code class="docutils literal notranslate"><span class="pre">sphi
 <h2><a class="toc-backref" href="#id11" role="doc-backlink">Cross-bundle references work</a><a class="headerlink" href="#cross-bundle-references-work" title="Link to this heading">#</a></h2>
 <p>A need authored inside a mounted bundle can be linked from anywhere in
 the host project, just like a need authored in <code class="docutils literal notranslate"><span class="pre">docs/</span></code> itself. For
-example, the requirement that motivates this feature lives in the
-mounted “Code Docs” bundle at <code class="docutils literal notranslate"><span class="pre">src/docs/requirements.rst</span></code>, and the
-following host-side reference resolves to it directly:</p>
-<p>See <a class="reference internal" href="../internals/code_docs/requirements.html#tool_req__docs_mounts" title="tool_req__docs_mounts"><em class="xref need">Mount external source trees... (tool_req__docs_mounts)</em></a> — authored in the mounted bundle,
-reachable from the host without copying.</p>
-<p>That cross-boundary resolution is exactly what justifies mounts: the
-bundle owns its own <code class="docutils literal notranslate"><span class="pre">.rst</span></code> and lives next to its code, but its
-needs participate in the host’s traceability graph as first-class
-citizens.</p>
+example, the stakeholder requirement that motivates this feature lives
+in the mounted “Code Docs” bundle at <code class="docutils literal notranslate"><span class="pre">src/docs/requirements.rst</span></code>,
+and the host-side <code class="docutils literal notranslate"><span class="pre">tool_req__docs_mount_traceability</span></code> carries a
+<code class="docutils literal notranslate"><span class="pre">:satisfies:</span></code> link directly to it:</p>
+<blockquote>
+<div><p>See <a class="reference internal" href="../internals/code_docs/requirements.html#stkh_req__docs__mounts" title="stkh_req__docs__mounts"><em class="xref need">Mount external source trees... (stkh_req__docs__mounts)</em></a> — a stakeholder requirement
+authored in the mounted bundle, satisfied by a tool requirement
+in <code class="docutils literal notranslate"><span class="pre">docs/</span></code>, with the link enforced by <code class="docutils literal notranslate"><span class="pre">sphinx-needs</span></code> schema
+validation.</p>
+</div></blockquote>
+<p>That cross-boundary link uses only stock relations from
+<code class="docutils literal notranslate"><span class="pre">score_metamodel</span></code> (<code class="docutils literal notranslate"><span class="pre">tool_req</span></code> may satisfy <code class="docutils literal notranslate"><span class="pre">stkh_req</span></code> without any
+metamodel extension): the bundle owns its own <code class="docutils literal notranslate"><span class="pre">.rst</span></code> and lives next
+to its code, but its needs participate in the host’s traceability
+graph as first-class citizens.</p>
 </section>
 <section id="further-reading">
 <h2><a class="toc-backref" href="#id12" role="doc-backlink">Further reading</a><a class="headerlink" href="#further-reading" title="Link to this heading">#</a></h2>
