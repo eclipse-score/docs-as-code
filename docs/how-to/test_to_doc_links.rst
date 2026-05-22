@@ -17,47 +17,76 @@
 Reference Docs in Tests
 =======================
 
-In tests, you want to reference requirements (needs).
-The docs-as-code tool will create backlinks in the documentation.
+This guide explains how to annotate test cases so that
+docs-as-code automatically creates traceability links between tests and requirements.
 
-Docs-as-code parses `test.xml` files produced by Bazel under `bazel-testlogs/`.
-To attach metadata to tests use the project tooling decorator (provided by the
-attribute plugin). Example usage:
+The mechanism is language-agnostic:
+Bazel produces JUnit-style ``test.xml`` files under ``bazel-testlogs/``.
+The ``score_source_code_linker`` extension parses those files, extracts test metadata
+(name, file, line, result, and verification properties),
+and creates backlinks on the referenced requirements.
 
-.. code-block:: python
+Required Properties
+-------------------
 
-	 from attribute_plugin import add_test_properties
+Every linked test must declare the following properties
+(see :need:`gd_guidl__verification_specification`):
 
-	 @add_test_properties(
-			 partially_verifies=["tool_req__docs_common_attr_title", "tool_req__docs_common_attr_description"],
-			 test_type="interface-test",
-			 derivation_technique="boundary-values",
-	 )
-	 def test_feature():
-			 """Short description of what the test does."""
-			 ...
+``PartiallyVerifies`` *and/or* ``FullyVerifies``
+   Comma-separated list of requirement IDs that the test covers.
 
-TestLink will extract test name, file, line, result and verification lists
-(`PartiallyVerifies`, `FullyVerifies`) and create external needs from tests
-and `testlink` attributes on requirements that reference the test.
+``TestType``
+   For example ``requirements-based``, ``interface-test``, or ``fault-injection``.
 
-.. hint::
-   It is possible to have 'additional' properties on tests. They will not show up in the
-   TestLink but also won't break the parsing process.
+``DerivationTechnique``
+   For example ``boundary-values``, ``equivalence-classes``, or ``error-guessing``.
 
+``Description``
+   A human-readable explanation of the test objective and expected outcome.
 
+If any mandatory property is missing the test will be skipped during link creation.
+
+Language-Specific Annotations
+-----------------------------
+
+Each language uses a different mechanism to attach properties to test cases,
+but all produce the same JUnit XML output that the linker consumes.
+
+C++ (gTest)
+   Use ``RecordProperty`` — shared properties go in ``SetUp()``, per-test properties
+   inside each ``TEST_F``.
+   See :need:`gd_req__verification_link_tests_cpp`.
+
+Rust
+   Use the ``#[record_property]`` attribute macro from the ``test_properties`` crate.
+   See :need:`gd_req__verification_link_tests_rust`.
+
+Python (pytest)
+   Use the ``@add_test_properties`` decorator; the docstring serves as ``Description``.
+   See :need:`gd_req__verification_link_tests_python`.
+
+See :need:`gd_temp__verification_specification` for code templates.
+
+Running Tests and Building Docs
+-------------------------------
+
+1. Execute tests so that ``test.xml`` files are generated:
+
+   .. code-block:: bash
+
+      bazel test //...
+
+2. Build the documentation — the linker picks up ``bazel-testlogs/`` automatically:
+
+   .. code-block:: bash
+
+      bazel run //:docs
+
+The resulting documentation shows backlinks on each requirement that is referenced by at least one test.
 
 Limitations
 -----------
 
-- Not compatible with Esbonio/Live_preview.
-- To create a valid Testlink Tags and XML must match the expected format.
-- Partial properties will lead to no Testlink creation.
-  If you want a test to be linked, please ensure all requirement properties are provided.
-- Tests must be executed by Bazel first so `test.xml` files exist.
-
-Related
--------
-
-For end-to-end dashboard and CI threshold setup, see
-:doc:`dashboards_and_quality_gates`.
+- Tests must be executed by Bazel before building docs so ``test.xml`` files exist.
+- Not compatible with Esbonio / live preview (no ``bazel-testlogs/`` available).
+- All mandatory properties must be present; partial metadata causes the test to be silently skipped.
