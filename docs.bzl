@@ -45,6 +45,38 @@ load("@aspect_rules_py//py:defs.bzl", "py_binary", "py_venv")
 load("@docs_as_code_hub_env//:requirements.bzl", "all_requirements")
 load("@rules_python//sphinxdocs:sphinx.bzl", "sphinx_build_binary", "sphinx_docs")
 
+def _files_to_dir_impl(ctx):
+    out = ctx.actions.declare_directory(ctx.label.name)
+    prefix = ctx.attr.strip_prefix
+    cmds = ["set -euo pipefail"]
+    for f in ctx.files.srcs:
+        rel = f.short_path
+        if prefix and rel.startswith(prefix):
+            rel = rel[len(prefix):]
+        rel = rel.lstrip("/")
+        parent = "/".join(rel.split("/")[:-1])
+        if parent:
+            cmds.append("mkdir -p '{}/{}'".format(out.path, parent))
+        cmds.append("cp '{}' '{}/{}'".format(f.path, out.path, rel))
+    ctx.actions.run_shell(
+        inputs = ctx.files.srcs,
+        outputs = [out],
+        command = "\n".join(cmds),
+        progress_message = "Materializing files into directory %{label}",
+    )
+    return [DefaultInfo(files = depset([out]))]
+
+files_to_dir = rule(
+    implementation = _files_to_dir_impl,
+    attrs = {
+        "srcs": attr.label_list(allow_files = True, mandatory = True),
+        "strip_prefix": attr.string(default = ""),
+    },
+    doc = "Materialize a list of source files into a single output " +
+          "directory under bazel-bin. Used by docs() to produce mountable " +
+          "directories for sphinx-mounts.",
+)
+
 def _rewrite_needs_json_to_docs_sources(labels):
     """Replace '@repo//:needs_json' -> '@repo//:docs_sources' for every item."""
     out = []
@@ -125,7 +157,34 @@ def _missing_requirements(deps):
         fail(msg)
     fail("This case should be unreachable?!")
 
-def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good = None, metamodel = None):
+def mount(label, mount_at, attach_to = None, entry_doc = "index", src_root = None):
+    """Declarative mount entry for the docs() macro.
+
+    Args:
+      label: Bazel label producing a single output directory (typically a
+        ``files_to_dir`` target). Examples: ``"//src:docs_dir"``,
+        ``"@score_process//:docs_dir"``.
+      mount_at: Docname prefix under which the bundle appears in the host
+        Sphinx project. Example: ``"_mounted/internal"``.
+      attach_to: Optional host docname whose toctree should receive the
+        bundle's entry_doc.
+      entry_doc: Mount-relative docname of the bundle's entry document.
+        Defaults to ``"index"``.
+      src_root: Optional in-repo source directory for the bundle (e.g.
+        ``"src/docs"``). When set, a ``ubproject.toml`` is generated at
+        ``<workspace>/<src_root>/`` during ``bazel run //:docs_check`` so
+        ubCode and similar IDE extensions can resolve the project's type
+        system when opening files inside the bundle.
+    """
+    return struct(
+        label = label,
+        mount_at = mount_at,
+        attach_to = attach_to,
+        entry_doc = entry_doc,
+        src_root = src_root,
+    )
+
+def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good = None, metamodel = None, mounts = []):
     """Creates all targets related to documentation.
 
     By using this function, you'll get any and all updates for documentation targets in one place.
@@ -138,6 +197,8 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
       known_good: Optional label to a "known good" JSON file for source links.
       metamodel: Optional label to a metamodel.yaml file. When set, the extension loads this
                  file instead of the default metamodel shipped with score_metamodel.
+      mounts: List of mount() entries describing documentation bundles to overlay into
+              this project's Sphinx source tree.
     """
 
     call_path = native.package_name()
@@ -153,6 +214,18 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
         metamodel_env = {"SCORE_METAMODEL_YAML": "$(location " + str(metamodel) + ")"}
         metamodel_opts = ["--define=score_metamodel_yaml=$(location " + str(metamodel) + ")"]
 
+    mounts_payload = json.encode([
+        {
+            "label": m.label,
+            "mount_at": m.mount_at,
+            "attach_to": m.attach_to,
+            "entry_doc": m.entry_doc,
+            "src_root": m.src_root,
+        }
+        for m in mounts
+    ]) if mounts else ""
+    mount_labels = [m.label for m in mounts]
+
     module_deps = deps
     deps = deps + _missing_requirements(deps)
     deps = deps + [
@@ -163,7 +236,7 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
     sphinx_build_binary(
         name = "sphinx_build",
         visibility = ["//visibility:private"],
-        data = data + metamodel_data,
+        data = data + metamodel_data + mount_labels,
         deps = deps,
     )
 
@@ -198,17 +271,19 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
     data_with_docs_sources = _rewrite_needs_json_to_docs_sources(data)
     additional_combo_sourcelinks = _rewrite_needs_json_to_sourcelinks(data)
     _merge_sourcelinks(name = "merged_sourcelinks", sourcelinks = [":sourcelinks_json"] + additional_combo_sourcelinks, known_good = known_good)
-    docs_data = data + metamodel_data + [":sourcelinks_json"]
-    combo_data = data_with_docs_sources + metamodel_data + [":merged_sourcelinks"]
+    docs_data = data + metamodel_data + [":sourcelinks_json"] + mount_labels
+    combo_data = data_with_docs_sources + metamodel_data + [":merged_sourcelinks"] + mount_labels
 
     docs_env = {
         "SOURCE_DIRECTORY": source_dir,
         "DATA": str(data),
+        "MOUNTS": mounts_payload,
         "SCORE_SOURCELINKS": "$(location :sourcelinks_json)",
     } | metamodel_env
     docs_sources_env = {
         "SOURCE_DIRECTORY": source_dir,
         "DATA": str(data_with_docs_sources),
+        "MOUNTS": mounts_payload,
         "SCORE_SOURCELINKS": "$(location :merged_sourcelinks)",
     } | metamodel_env
     if known_good:
@@ -304,15 +379,38 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
             "--jobs",
             "auto",
             "--define=external_needs_source=" + str(data),
+            "--define=mounts_source=" + mounts_payload,
             "--define=score_sourcelinks_json=$(location :sourcelinks_json)",
             "--define=score_source_code_linker_plain_links=1",
         ],
         formats = ["needs"],
         sphinx = ":sphinx_build",
-        tools = data + [":sourcelinks_json"],
+        tools = data + [":sourcelinks_json"] + mount_labels,
         visibility = ["//visibility:public"],
         # Persistent workers cause stale symlinks after dependency version
         # changes, corrupting the Bazel cache.
+        allow_persistent_workers = False,
+    )
+
+    sphinx_docs(
+        name = "docs_html",
+        srcs = [":docs_sources"],
+        config = ":" + source_prefix + "conf.py",
+        extra_opts = [
+            "-W",
+            "--keep-going",
+            "-T",
+            "--jobs",
+            "auto",
+            "--define=external_needs_source=" + str(data),
+            "--define=mounts_source=" + mounts_payload,
+            "--define=score_sourcelinks_json=$(location :sourcelinks_json)",
+            "--define=score_source_code_linker_plain_links=1",
+        ],
+        formats = ["html"],
+        sphinx = ":sphinx_build",
+        tools = data + [":sourcelinks_json"] + mount_labels,
+        visibility = ["//visibility:public"],
         allow_persistent_workers = False,
     )
 

@@ -14,6 +14,7 @@
 load("@aspect_rules_py//py:defs.bzl", "py_library")
 load("@rules_java//java:java_binary.bzl", "java_binary")
 load("@rules_python//python:pip.bzl", "compile_pip_requirements")
+load("//:docs.bzl", "files_to_dir")
 
 # These are only exported because they're passed as files to the //docs.bzl
 # macros, and thus must be visible to other packages. They should only be
@@ -38,6 +39,7 @@ filegroup(
         "//src/extensions/score_draw_uml_funcs:all_sources",
         "//src/extensions/score_layout:all_sources",
         "//src/extensions/score_metamodel:all_sources",
+        "//src/extensions/score_mounts:all_sources",
         "//src/extensions/score_source_code_linker:all_sources",
         "//src/extensions/score_sphinx_bundle:all_sources",
         "//src/extensions/score_sync_toml:all_sources",
@@ -92,5 +94,12 @@ filegroup(
     srcs = [
         "requirements.txt",
     ],
+    visibility = ["//visibility:public"],
+)
+
+files_to_dir(
+    name = "docs_dir",
+    srcs = glob(["docs/**/*.rst"]),
+    strip_prefix = "src/docs/",
     visibility = ["//visibility:public"],
 )

@@ -82,6 +82,7 @@ if __name__ == "__main__":
         "--jobs",
         "auto",
         f"--define=external_needs_source={get_env('DATA')}",
+        f"--define=mounts_source={os.environ.get('MOUNTS', '')}",
     ]
 
     metamodel_yaml = os.environ.get("SCORE_METAMODEL_YAML", "")

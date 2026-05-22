@@ -30,6 +30,12 @@ needs-config-writer == 0.2.4
 # use this for a specific commit for fast development iterations
 # needs-config-writer @ https://github.com/useblocks/needs-config-writer/archive/032a5f8.zip
 
+# Mount external source trees into the Sphinx project without copying.
+sphinx-mounts
+
+# Used by score_mounts to write per-bundle ubproject.toml files.
+tomli-w
+
 # Need this to enable non bazel execution
 bazel-runfiles
 

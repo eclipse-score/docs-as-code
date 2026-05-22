@@ -11,7 +11,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-load("//:docs.bzl", "docs")
+load("//:docs.bzl", "docs", "mount")
 
 package(default_visibility = ["//visibility:public"])
 exports_files(["pyproject.toml"])
@@ -19,6 +19,14 @@ exports_files(["pyproject.toml"])
 docs(
     data = [
         "@score_process//:needs_json",
+    ],
+    mounts = [
+        mount(
+            label = "//src:docs_dir",
+            mount_at = "internals/code_docs",
+            attach_to = "internals/index",
+            src_root = "src/docs",
+        ),
     ],
     scan_code = [
         "//scripts_bazel:sources",
