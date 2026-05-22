@@ -462,45 +462,70 @@
                   
   <section id="reference-docs-in-tests">
 <h1>Reference Docs in Tests<a class="headerlink" href="#reference-docs-in-tests" title="Link to this heading">#</a></h1>
-<p>In tests, you want to reference requirements (needs).
-The docs-as-code tool will create backlinks in the documentation.</p>
-<p>Docs-as-code parses <cite>test.xml</cite> files produced by Bazel under <cite>bazel-testlogs/</cite>.
-To attach metadata to tests use the project tooling decorator (provided by the
-attribute plugin). Example usage:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">attribute_plugin</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_test_properties</span>
-
-<span class="nd">@add_test_properties</span><span class="p">(</span>
-                <span class="n">partially_verifies</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;tool_req__docs_common_attr_title&quot;</span><span class="p">,</span> <span class="s2">&quot;tool_req__docs_common_attr_description&quot;</span><span class="p">],</span>
-                <span class="n">test_type</span><span class="o">=</span><span class="s2">&quot;interface-test&quot;</span><span class="p">,</span>
-                <span class="n">derivation_technique</span><span class="o">=</span><span class="s2">&quot;boundary-values&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">test_feature</span><span class="p">():</span>
-<span class="w">                </span><span class="sd">&quot;&quot;&quot;Short description of what the test does.&quot;&quot;&quot;</span>
-                <span class="o">...</span>
+<p>This guide explains how to annotate test cases so that
+docs-as-code automatically creates traceability links between tests and requirements.</p>
+<p>The mechanism is language-agnostic:
+Bazel produces JUnit-style <code class="docutils literal notranslate"><span class="pre">test.xml</span></code> files under <code class="docutils literal notranslate"><span class="pre">bazel-testlogs/</span></code>.
+The <code class="docutils literal notranslate"><span class="pre">score_source_code_linker</span></code> extension parses those files, extracts test metadata
+(name, file, line, result, and verification properties),
+and creates backlinks on the referenced requirements.</p>
+<section id="required-properties">
+<h2>Required Properties<a class="headerlink" href="#required-properties" title="Link to this heading">#</a></h2>
+<p>Every linked test must declare the following properties
+(see <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/verification/guidance/verification_specification.html#gd_guidl__verification_specification">gd_guidl__verification_specification</a>):</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">PartiallyVerifies</span></code> <em>and/or</em> <code class="docutils literal notranslate"><span class="pre">FullyVerifies</span></code></dt><dd><p>Comma-separated list of requirement IDs that the test covers.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">TestType</span></code></dt><dd><p>For example <code class="docutils literal notranslate"><span class="pre">requirements-based</span></code>, <code class="docutils literal notranslate"><span class="pre">interface-test</span></code>, or <code class="docutils literal notranslate"><span class="pre">fault-injection</span></code>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">DerivationTechnique</span></code></dt><dd><p>For example <code class="docutils literal notranslate"><span class="pre">boundary-values</span></code>, <code class="docutils literal notranslate"><span class="pre">equivalence-classes</span></code>, or <code class="docutils literal notranslate"><span class="pre">error-guessing</span></code>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">Description</span></code></dt><dd><p>A human-readable explanation of the test objective and expected outcome.</p>
+</dd>
+</dl>
+<p>If any mandatory property is missing the test will be skipped during link creation.</p>
+</section>
+<section id="language-specific-annotations">
+<h2>Language-Specific Annotations<a class="headerlink" href="#language-specific-annotations" title="Link to this heading">#</a></h2>
+<p>Each language uses a different mechanism to attach properties to test cases,
+but all produce the same JUnit XML output that the linker consumes.</p>
+<dl class="simple">
+<dt>C++ (gTest)</dt><dd><p>Use <code class="docutils literal notranslate"><span class="pre">RecordProperty</span></code> — shared properties go in <code class="docutils literal notranslate"><span class="pre">SetUp()</span></code>, per-test properties
+inside each <code class="docutils literal notranslate"><span class="pre">TEST_F</span></code>.
+See <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/verification/guidance/verification_process_reqs.html#gd_req__verification_link_tests_cpp">gd_req__verification_link_tests_cpp</a>.</p>
+</dd>
+<dt>Rust</dt><dd><p>Use the <code class="docutils literal notranslate"><span class="pre">#[record_property]</span></code> attribute macro from the <code class="docutils literal notranslate"><span class="pre">test_properties</span></code> crate.
+See <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/verification/guidance/verification_process_reqs.html#gd_req__verification_link_tests_rust">gd_req__verification_link_tests_rust</a>.</p>
+</dd>
+<dt>Python (pytest)</dt><dd><p>Use the <code class="docutils literal notranslate"><span class="pre">&#64;add_test_properties</span></code> decorator; the docstring serves as <code class="docutils literal notranslate"><span class="pre">Description</span></code>.
+See <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/verification/guidance/verification_process_reqs.html#gd_req__verification_link_tests_python">gd_req__verification_link_tests_python</a>.</p>
+</dd>
+</dl>
+<p>See <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/verification/guidance/verification_templates.html#gd_temp__verification_specification">gd_temp__verification_specification</a> for code templates.</p>
+</section>
+<section id="running-tests-and-building-docs">
+<h2>Running Tests and Building Docs<a class="headerlink" href="#running-tests-and-building-docs" title="Link to this heading">#</a></h2>
+<ol class="arabic">
+<li><p>Execute tests so that <code class="docutils literal notranslate"><span class="pre">test.xml</span></code> files are generated:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bazel<span class="w"> </span><span class="nb">test</span><span class="w"> </span>//...
 </pre></div>
 </div>
-<p>TestLink will extract test name, file, line, result and verification lists
-(<cite>PartiallyVerifies</cite>, <cite>FullyVerifies</cite>) and create external needs from tests
-and <cite>testlink</cite> attributes on requirements that reference the test.</p>
-<div class="admonition hint">
-<p class="admonition-title">Hint</p>
-<p>It is possible to have ‘additional’ properties on tests. They will not show up in the
-TestLink but also won’t break the parsing process.</p>
+</li>
+<li><p>Build the documentation — the linker picks up <code class="docutils literal notranslate"><span class="pre">bazel-testlogs/</span></code> automatically:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bazel<span class="w"> </span>run<span class="w"> </span>//:docs
+</pre></div>
 </div>
+</li>
+</ol>
+<p>The resulting documentation shows backlinks on each requirement that is referenced by at least one test.</p>
+</section>
 <section id="limitations">
 <h2>Limitations<a class="headerlink" href="#limitations" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p>Not compatible with Esbonio/Live_preview.</p></li>
-<li><p>To create a valid Testlink Tags and XML must match the expected format.</p></li>
-<li><p>Partial properties will lead to no Testlink creation.
-If you want a test to be linked, please ensure all requirement properties are provided.</p></li>
-<li><p>Tests must be executed by Bazel first so <cite>test.xml</cite> files exist.</p></li>
+<li><p>Tests must be executed by Bazel before building docs so <code class="docutils literal notranslate"><span class="pre">test.xml</span></code> files exist.</p></li>
+<li><p>Not compatible with Esbonio / live preview (no <code class="docutils literal notranslate"><span class="pre">bazel-testlogs/</span></code> available).</p></li>
+<li><p>All mandatory properties must be present; partial metadata causes the test to be silently skipped.</p></li>
 </ul>
-</section>
-<section id="related">
-<h2>Related<a class="headerlink" href="#related" title="Link to this heading">#</a></h2>
-<p>For end-to-end dashboard and CI threshold setup, see
-<a class="reference internal" href="dashboards_and_quality_gates.html"><span class="doc">Build Dashboards and Quality Gates</span></a>.</p>
 </section>
 </section>
 
@@ -551,8 +576,10 @@ If you want a test to be linked, please ensure all requirement properties are pr
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#required-properties">Required Properties</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#language-specific-annotations">Language-Specific Annotations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-tests-and-building-docs">Running Tests and Building Docs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#limitations">Limitations</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#related">Related</a></li>
 </ul>
   </nav></div>
 
