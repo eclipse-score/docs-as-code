@@ -125,7 +125,7 @@ def _missing_requirements(deps):
         fail(msg)
     fail("This case should be unreachable?!")
 
-def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good = None, metamodel = None):
+def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good = None, metamodel = None, plantuml = True):
     """Creates all targets related to documentation.
 
     By using this function, you'll get any and all updates for documentation targets in one place.
@@ -138,6 +138,10 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
       known_good: Optional label to a "known good" JSON file for source links.
       metamodel: Optional label to a metamodel.yaml file. When set, the extension loads this
                  file instead of the default metamodel shipped with score_metamodel.
+      plantuml: Whether to include PlantUML support. Requires Java. Defaults to True.
+                Set to False to skip the PlantUML dependency entirely.
+                Note: this only makes sense if you do not use any Java at all
+                (rules_java pulls Java only if a Java target is in the dependency graph).
     """
 
     call_path = native.package_name()
@@ -155,10 +159,15 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
 
     module_deps = deps
     deps = deps + _missing_requirements(deps)
-    deps = deps + [
-        "@score_docs_as_code//src:plantuml_for_python",
-        "@score_docs_as_code//src/extensions/score_sphinx_bundle:score_sphinx_bundle",
-    ]
+
+    if plantuml:
+        plantuml_dep = ["@score_docs_as_code//src:plantuml_for_python"]
+        plantuml_env = {"SCORE_PLANTUML_ENABLED": "1"}
+    else:
+        plantuml_dep = []
+        plantuml_env = {"SCORE_PLANTUML_ENABLED": "0"}
+
+    deps = deps + plantuml_dep + ["@score_docs_as_code//src/extensions/score_sphinx_bundle:score_sphinx_bundle"]
 
     sphinx_build_binary(
         name = "sphinx_build",
@@ -205,12 +214,13 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
         "SOURCE_DIRECTORY": source_dir,
         "DATA": str(data),
         "SCORE_SOURCELINKS": "$(location :sourcelinks_json)",
-    } | metamodel_env
+    } | metamodel_env | plantuml_env
     docs_sources_env = {
         "SOURCE_DIRECTORY": source_dir,
         "DATA": str(data_with_docs_sources),
         "SCORE_SOURCELINKS": "$(location :merged_sourcelinks)",
-    } | metamodel_env
+    } | metamodel_env | plantuml_env
+
     if known_good:
         docs_env["KNOWN_GOOD_JSON"] = "$(location "+ known_good + ")"
         docs_sources_env["KNOWN_GOOD_JSON"] = "$(location "+ known_good + ")"

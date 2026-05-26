@@ -53,13 +53,17 @@ def find_correct_path(runfiles: Path) -> Path:
 
 
 def setup(app: Sphinx):
-    # we must overwrite the plantuml path due to Bazel
-    app.config.plantuml = str(find_correct_path(get_runfiles_dir()))
-    config_setdefault(app.config, "plantuml_output_format", "svg_obj")
-    config_setdefault(app.config, "plantuml_syntax_error_image", True)
-    config_setdefault(app.config, "needs_build_needumls", "_plantuml_sources")
+    plantuml_path = find_correct_path(get_runfiles_dir())
+    if not plantuml_path.exists():
+        logger.debug("PlantUML binary not found in runfiles, skipping PlantUML setup")
+    else:
+        # we must overwrite the plantuml path due to Bazel
+        app.config.plantuml = str(plantuml_path)
+        config_setdefault(app.config, "plantuml_output_format", "svg_obj")
+        config_setdefault(app.config, "plantuml_syntax_error_image", True)
+        config_setdefault(app.config, "needs_build_needumls", "_plantuml_sources")
 
-    logger.debug(f"PlantUML binary found at {app.config.plantuml}")
+        logger.debug(f"PlantUML binary found at {app.config.plantuml}")
 
     # The extension is not even active at runtime.
     return {"parallel_read_safe": True, "parallel_write_safe": True}

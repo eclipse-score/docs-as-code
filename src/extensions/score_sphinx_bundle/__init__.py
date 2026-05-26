@@ -10,16 +10,23 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
+import os
+
 from sphinx.application import Sphinx
 
 from src.helper_lib import config_setdefault
 
+# Is PlantUML support enabled? Defaults to True to avoid any problems.
+_plantuml_enabled = os.environ.get("SCORE_PLANTUML_ENABLED", "1") != "0"
+
 # Note: order matters!
 # Extensions are loaded in this order.
 # e.g. plantuml MUST be loaded before sphinx-needs
-score_extensions = [
-    "sphinxcontrib.plantuml",
-    "score_plantuml",
+plantuml_extensions = (
+    ["sphinxcontrib.plantuml", "score_plantuml"] if _plantuml_enabled else []
+)
+
+score_extensions = plantuml_extensions + [
     "sphinx_needs",
     "score_metamodel",
     "sphinx_design",
