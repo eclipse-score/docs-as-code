@@ -101,7 +101,7 @@ def _missing_requirements(deps):
     found = []
     missing = []
     def _target_to_packagename(target):
-        return target.split("/")[-1].split(":")[0]
+        return str(target).split("/")[-1].split(":")[0]
     all_packages = [_target_to_packagename(pkg) for pkg in all_requirements]
     def _find(pkg):
         for dep in deps:
@@ -216,8 +216,9 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
         "SCORE_SOURCELINKS": "$(location :merged_sourcelinks)",
     } | metamodel_env
     if known_good:
-        docs_env["KNOWN_GOOD_JSON"] = "$(location "+ known_good + ")"
-        docs_sources_env["KNOWN_GOOD_JSON"] = "$(location "+ known_good + ")"
+        known_good_str = str(known_good)
+        docs_env["KNOWN_GOOD_JSON"] = "$(location " + known_good_str + ")"
+        docs_sources_env["KNOWN_GOOD_JSON"] = "$(location " + known_good_str + ")"
         docs_data.append(known_good)
         combo_data.append(known_good)
 
