@@ -486,7 +486,7 @@ There are multiple ways to do this depending on how you manage third-party/local
 Add the external module’s <code class="docutils literal notranslate"><span class="pre">:needs_json</span></code> target to that list
 to have their needs elements available for cross-referencing.</p>
 <p>Example <cite>BUILD</cite> snippet (consumer module):</p>
-<div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;@rules_docs//:docs.bzl&quot;</span><span class="p">,</span> <span class="s2">&quot;docs&quot;</span><span class="p">)</span>
+<div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;@score_docs_as_code//:docs.bzl&quot;</span><span class="p">,</span> <span class="s2">&quot;docs&quot;</span><span class="p">)</span>
 <span class="n">docs</span><span class="p">(</span>
   <span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
      <span class="s2">&quot;@score_process//:needs_json&quot;</span><span class="p">,</span>
