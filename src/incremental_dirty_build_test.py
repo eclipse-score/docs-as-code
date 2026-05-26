@@ -93,3 +93,14 @@ def test_module_change_after_successful_build_forces_clean(fs) -> None:
     clean_builddir_if_stale(_BUILD, [_MODULE])
 
     assert not _BUILD.exists()
+
+
+def test_missing_hash_file_triggers_clean(fs) -> None:
+    """If _build/ exists but hash file is absent, treat as stale (e.g. upgrade from old version)."""
+    fs.create_dir(_BUILD)
+    fs.create_file(_MODULE, contents="stable")
+    # No hash file written
+
+    clean_builddir_if_stale(_BUILD, [_MODULE])
+
+    assert not _BUILD.exists()
