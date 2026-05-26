@@ -1156,6 +1156,23 @@ Testing
 
    Docs-As-Code shall enforce that every Safety Analysis has a short description of the failure effect (e.g. failure lead to an unintended actuation of the analysed element)
 
+
+.. tool_req:: Cross-bundle traceability via mounts
+   :id: tool_req__docs_mount_traceability
+   :implemented: YES
+   :tags: Architecture
+   :version: 1
+   :satisfies: stkh_req__docs__mounts
+
+   Needs authored inside mounted source bundles shall participate in
+   the host project's traceability graph as first-class citizens.
+   This host-side tool requirement carries a ``:satisfies:`` link
+   to :need:`stkh_req__docs__mounts`, the bundle-side stakeholder
+   requirement that motivates the mount feature; the link resolves
+   at host build time without any copy or materialisation, proving
+   cross-bundle traceability works as a first-class sphinx-needs
+   relation.
+
 ----------------------------------------------------------------
 Safety Analysis (DFA + FMEA) Process to Tool Requirement Mapping
 ----------------------------------------------------------------

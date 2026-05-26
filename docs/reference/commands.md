@@ -18,7 +18,8 @@
 
 ## Internal targets (do not use directly)
 
-| Target                        | What it does                                |
-| ----------------------------- | ------------------------------------------- |
-| `bazel build //:needs_json`   | Creates a 'needs.json' file                 |
-| `bazel build //:docs_sources` | Provides all the documentation source files |
+| Target                        | What it does                                                                                                                                                                  |
+| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `bazel build //:needs_json`   | Creates a 'needs.json' file                                                                                                                                                   |
+| `bazel build //:docs_html`    | Sandboxed HTML build. Useful in CI; produces the rendered site at `bazel-bin/docs_html/_build/html/`. For day-to-day editing prefer `bazel run //:docs` (faster, incremental). |
+| `bazel build //:docs_sources` | Provides all the documentation source files                                                                                                                                   |

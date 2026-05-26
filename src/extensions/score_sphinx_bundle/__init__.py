@@ -24,6 +24,8 @@ score_extensions = [
     "score_metamodel",
     "sphinx_design",
     "myst_parser",
+    "sphinx_mounts",
+    "score_mounts",
     "score_source_code_linker",
     "score_draw_uml_funcs",
     "score_layout",
