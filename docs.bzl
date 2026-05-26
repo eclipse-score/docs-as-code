@@ -81,17 +81,19 @@ def _merge_sourcelinks(name, sourcelinks, known_good = None):
         extra_srcs = [known_good]
         known_good_arg = "--known_good $(location %s)" % known_good
 
+    merge_sourcelinks_tool = Label("//scripts_bazel:merge_sourcelinks")
+
     native.genrule(
         name = name,
         srcs = sourcelinks + extra_srcs,
         outs = [name + ".json"],
         cmd = """
-        $(location @score_docs_as_code//scripts_bazel:merge_sourcelinks) \
+        $(location {merge_sourcelinks_tool}) \
             --output $@ \
             {known_good_arg} \
             $(SRCS)
-        """.format(known_good_arg = known_good_arg),
-        tools = ["@score_docs_as_code//scripts_bazel:merge_sourcelinks"],
+        """.format(known_good_arg = known_good_arg, merge_sourcelinks_tool = merge_sourcelinks_tool),
+        tools = [merge_sourcelinks_tool],
     )
 
 def _missing_requirements(deps):
@@ -156,9 +158,11 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
     module_deps = deps
     deps = deps + _missing_requirements(deps)
     deps = deps + [
-        "@score_docs_as_code//src:plantuml_for_python",
-        "@score_docs_as_code//src/extensions/score_sphinx_bundle:score_sphinx_bundle",
+        Label("//src:plantuml_for_python"),
+        Label("//src/extensions/score_sphinx_bundle:score_sphinx_bundle"),
     ]
+
+    incremental_src = Label("//src:incremental.py")
 
     sphinx_build_binary(
         name = "sphinx_build",
@@ -222,7 +226,7 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
     py_binary(
         name = "docs",
         tags = ["cli_help=Build documentation:\nbazel run //:docs"],
-        srcs = ["@score_docs_as_code//src:incremental.py"],
+        srcs = [incremental_src],
         data = docs_data,
         deps = deps,
         env = docs_env
@@ -232,7 +236,7 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
     py_binary(
         name = "docs_combo",
         tags = ["cli_help=Build full documentation with all dependencies:\nbazel run //:docs_combo"],
-        srcs = ["@score_docs_as_code//src:incremental.py"],
+        srcs = [incremental_src],
         data = combo_data,
         deps = deps,
         env = docs_sources_env
@@ -248,7 +252,7 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
     py_binary(
         name = "docs_link_check",
         tags = ["cli_help=Verify Links inside Documentation:\nbazel run //:link_check\n (Note: this could take a long time)"],
-        srcs = ["@score_docs_as_code//src:incremental.py"],
+        srcs = [incremental_src],
         data = docs_data,
         deps = deps,
         env = docs_env
@@ -258,7 +262,7 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
     py_binary(
         name = "docs_check",
         tags = ["cli_help=Verify documentation:\nbazel run //:docs_check"],
-        srcs = ["@score_docs_as_code//src:incremental.py"],
+        srcs = [incremental_src],
         data = docs_data,
         deps = deps,
         env = docs_env
@@ -268,7 +272,7 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
     py_binary(
         name = "live_preview",
         tags = ["cli_help=Live preview documentation in the browser:\nbazel run //:live_preview"],
-        srcs = ["@score_docs_as_code//src:incremental.py"],
+        srcs = [incremental_src],
         data = docs_data,
         deps = deps,
         env = docs_env
@@ -278,7 +282,7 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
     py_binary(
         name = "live_preview_combo_experimental",
         tags = ["cli_help=Live preview full documentation with all dependencies in the browser:\nbazel run //:live_preview_combo_experimental"],
-        srcs = ["@score_docs_as_code//src:incremental.py"],
+        srcs = [incremental_src],
         data = combo_data,
         deps = deps,
         env = docs_sources_env
@@ -318,7 +322,7 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
 
     native.alias(
         name = "traceability_gate",
-        actual = "@score_docs_as_code//scripts_bazel:traceability_gate",
+        actual = Label("//scripts_bazel:traceability_gate"),
         tags = ["cli_help=Enforce traceability coverage thresholds:\nbazel run //:traceability_gate -- --metrics-json bazel-bin/needs_json/_build/needs/metrics.json"],
     )
 
@@ -334,15 +338,17 @@ def _sourcelinks_json(name, srcs):
     """
     output_file = name + ".json"
 
+    generate_sourcelinks_tool = Label("//scripts_bazel:generate_sourcelinks")
+
     native.genrule(
         name = name,
         srcs = srcs,
         outs = [output_file],
         cmd = """
-        $(location @score_docs_as_code//scripts_bazel:generate_sourcelinks) \
+        $(location {generate_sourcelinks_tool}) \
             --output $@ \
             $(SRCS)
-        """,
-        tools = ["@score_docs_as_code//scripts_bazel:generate_sourcelinks"],
+        """.format(generate_sourcelinks_tool = generate_sourcelinks_tool),
+        tools = [generate_sourcelinks_tool],
         visibility = ["//visibility:public"],
     )
