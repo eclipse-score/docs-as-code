@@ -35,7 +35,8 @@ def get_github_link(
     """
     Get GitHub link for a file and line number using git information from the local repository.
 
-    @param git_root: Optional path to the git repository root. If not provided, it will be auto-detected.
+    Args:
+        git_root: Optional path to the git repository root. If not provided, it will be auto-detected.
     """
     if link is None:
         link = DefaultNeedLink()
