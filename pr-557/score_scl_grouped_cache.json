@@ -1877,15 +1877,15 @@
     }
   },
   {
-    "need": "tool_req__docs_arch_link_safety_belongs_to",
+    "need": "tool_req__docs_arch_link_safety_fulfils",
     "links": {
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
           "line": 1029,
           "tag": "# req-Id:",
-          "need": "tool_req__docs_arch_link_safety_belongs_to",
-          "full_line": "# req-Id: tool_req__docs_arch_link_safety_belongs_to",
+          "need": "tool_req__docs_arch_link_safety_fulfils",
+          "full_line": "# req-Id: tool_req__docs_arch_link_safety_fulfils",
           "repo_name": "local_repo",
           "hash": "",
           "url": ""
