@@ -38,7 +38,7 @@ from src.extensions.score_source_code_linker.tests.test_codelink import (
 from src.extensions.score_source_code_linker.tests.test_need_source_links import (
     SourceCodeLinks_TEST_JSON_Decoder,
 )
-from src.helper_lib import find_ws_root, get_github_base_url
+from src.helper_lib import find_ws_root
 
 
 @pytest.fixture(scope="session")
@@ -212,10 +212,6 @@ def make_test_xml_2():
 
 # flake8: noqa: E501 (end)
 
-
-def construct_gh_url() -> str:
-    gh = get_github_base_url()
-    return f"{gh}/blob/"
 
 
 @pytest.fixture()

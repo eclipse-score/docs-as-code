@@ -16,7 +16,6 @@
 # ╙                                                          ╜
 
 import json
-import os
 import subprocess
 import tempfile
 from collections.abc import Generator
@@ -506,11 +505,9 @@ def another_function():
             assert len(found_links.links.TestLinks) == 0
 
     # Test GitHub link generation
-    # Have to change directories in order to ensure that we get the right/any .git file
-    os.chdir(Path(git_repo).absolute())
     metadata = RepoInfo(name="local_repo", hash="", url="")
     for needlink in loaded_links:
-        github_link = get_github_link(metadata, needlink)
+        github_link = get_github_link(metadata, needlink, git_root=git_repo)
         assert "https://github.com/test-user/test-repo/blob/" in github_link
         assert f"src/{needlink.file.name}#L{needlink.line}" in github_link
 
@@ -545,8 +542,7 @@ def test_multiple_commits_hash_consistency(git_repo: Path) -> None:
     )
 
     metadata = RepoInfo(name="local_repo", hash="", url="")
-    os.chdir(Path(git_repo).absolute())
-    github_link = get_github_link(metadata, needlink)
+    github_link = get_github_link(metadata, needlink, git_root=git_repo)
     assert new_hash in github_link
 
 

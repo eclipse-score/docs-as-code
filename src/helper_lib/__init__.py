@@ -132,7 +132,7 @@ def get_github_repo_info(git_root_cwd: Path) -> str:
     return repo
 
 
-def get_github_base_url() -> str:
+def get_github_base_url(git_root: Path) -> str:
     """
     Generate GitHub base URL for the current repository.
 
@@ -144,10 +144,7 @@ def get_github_base_url() -> str:
     Returns:
         GitHub URL in format 'https://github.com/user/repo'
     """
-    passed_git_root = find_git_root()
-    if passed_git_root is None:
-        passed_git_root = Path()
-    repo_info = get_github_repo_info(passed_git_root)
+    repo_info = get_github_repo_info(git_root)
     return f"https://github.com/{repo_info}"
 
 

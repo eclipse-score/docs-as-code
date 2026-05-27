@@ -11,7 +11,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 import json
-import os
 import subprocess
 import tempfile
 from collections.abc import Generator
@@ -370,7 +369,6 @@ def git_repo(temp_dir: Path) -> Path:
 def test_get_github_link_with_real_repo(git_repo: Path) -> None:
     """
     Test generating GitHub link without url/hash.
-    This expects to be in a git repo
     """
     metadata = RepoInfo(name="some_repo", url="", hash="")
 
@@ -378,10 +376,7 @@ def test_get_github_link_with_real_repo(git_repo: Path) -> None:
     link.file = Path("src/example.py")
     link.line = 42
 
-    # Have to change directories in order to ensure that we get the right/any .git file
-    os.chdir(Path(git_repo).absolute())
-    # ADAPTED: Using get_github_link_from_git for direct local repo testing
-    result = get_github_link(metadata, link)
+    result = get_github_link(metadata, link, git_root=git_repo)
 
     # Should contain the base URL, hash, file path, and line number
     assert "https://github.com/test-user/test-repo/blob/" in result

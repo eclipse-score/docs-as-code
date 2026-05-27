@@ -30,26 +30,32 @@ from src.helper_lib import (
 def get_github_link(
     metadata: RepoInfo,
     link: NeedLink | DataForTestLink | DataOfTestCase | None = None,
+    git_root: Path | None = None,
 ) -> str:
+    """
+    Get GitHub link for a file and line number using git information from the local repository.
+
+    @param git_root: Optional path to the git repository root. If not provided, it will be auto-detected.
+    """
     if link is None:
         link = DefaultNeedLink()
     if not metadata.hash:
+        if not git_root:
+            git_root = find_git_root() or Path()
         # Local path (//:docs)
-        return get_github_link_from_git(link)
+        return get_github_link_from_git(git_root, link)
     # Ref-Integration path (//:docs_combo..)
     return get_github_link_from_json(metadata, link)
 
 
 def get_github_link_from_git(
+    git_root: Path,
     link: NeedLink | DataForTestLink | DataOfTestCase | None = None,
 ) -> str:
     if link is None:
         link = DefaultNeedLink()
-    passed_git_root = find_git_root()
-    if passed_git_root is None:
-        passed_git_root = Path()
-    base_url = get_github_base_url()
-    current_hash = get_current_git_hash(passed_git_root)
+    base_url = get_github_base_url(git_root)
+    current_hash = get_current_git_hash(git_root)
     return f"{base_url}/blob/{current_hash}/{link.file}#L{link.line}"
 
 
