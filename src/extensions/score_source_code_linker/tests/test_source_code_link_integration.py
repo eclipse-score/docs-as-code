@@ -213,7 +213,6 @@ def make_test_xml_2():
 # flake8: noqa: E501 (end)
 
 
-
 @pytest.fixture()
 def sphinx_app_setup(
     sphinx_base_dir: Path, create_demo_files: None, git_repo_setup: Path

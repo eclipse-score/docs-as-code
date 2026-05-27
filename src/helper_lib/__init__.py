@@ -138,7 +138,7 @@ def get_github_base_url(git_root: Path) -> str:
 
     Execution context behavior:
     - 'bazel run' => ✅ Correct GitHub URL
-    - 'bazel build' => ⚠️ Uses Path() fallback when git_root is None
+    - 'bazel build' => ⚠️ git_root must be provided by the caller; no auto-detection here
     - 'direct sphinx' => ✅ Correct GitHub URL
 
     Returns:
