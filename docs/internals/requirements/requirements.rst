@@ -1156,15 +1156,84 @@ Testing
 
    Docs-As-Code shall enforce that every Safety Analysis has a short description of the failure effect (e.g. failure lead to an unintended actuation of the analysed element)
 
-----------------------------------------------------------------
-Safety Analysis (DFA + FMEA) Process to Tool Requirement Mapping
-----------------------------------------------------------------
 
-.. needtable::
-   :style: table
-   :types: gd_req
-   :columns: id;satisfies_back as "tool_req"
-   :filter: "gd_req__saf" in id
+🔒 Security Analysis
+#####################
+
+
+.. tool_req:: Security Analysis Need Types
+  :id: tool_req__docs_sec_types
+  :implemented: YES
+  :tags: Security Analysis
+  :version: 1
+  :satisfies:
+    gd_req__sec_attr_uid,
+    gd_req__sec_attr_title,
+  :parent_covered: YES
+
+  Docs-As-Code shall support the following need types:
+
+  * Feature Security Analysis Threat (STRIDE) -> ``feat_sec_threat``
+  * Component Security Analysis Threat (STRIDE) -> ``comp_sec_threat``
+  * Platform Security Analysis Threat (STRIDE) -> ``plat_sec_threat``
+  * Feature Security Analysis (Threat Scenario) -> ``feat_sec_ana``
+  * Component Security Analysis (Threat Scenario) -> ``comp_sec_ana``
+  * Platform Security Analysis (Threat Scenario) -> ``plat_sec_ana``
+
+  All need types have a mandatory ``title`` and unique ``id``.
+
+
+.. tool_req:: Security Analysis: STRIDE Threat ID Attribute
+  :id: tool_req__docs_sec_attr_stride_threat_id
+  :implemented: YES
+  :tags: Security Analysis
+  :version: 1
+  :satisfies: gd_req__sec_attr_stride_threat_id
+  :parent_covered: YES
+
+  Docs-As-Code shall enforce that STRIDE threat needs
+  (``feat_sec_threat``, ``comp_sec_threat``, ``plat_sec_threat``)
+  have a mandatory ``threat_id`` attribute.
+
+
+.. tool_req:: Security Analysis Threat Scenario Mandatory Attributes
+  :id: tool_req__docs_sec_attrs_mandatory
+  :implemented: YES
+  :tags: Security Analysis
+  :version: 1
+  :satisfies:
+    gd_req__sec_attr_threat_scenario_id,
+    gd_req__sec_attr_status,
+    gd_req__sec_attr_sufficient,
+    gd_req__sec_attr_teffect,
+  :parent_covered: YES
+
+  Docs-As-Code shall enforce that threat scenario needs
+  (``feat_sec_ana``, ``comp_sec_ana``, ``plat_sec_ana``)
+  have the following mandatory attributes:
+
+  * ``threat_scenario_id``
+  * ``status``: ``valid`` or ``invalid``
+  * ``sufficient``: ``yes`` or ``no``
+  * ``teffect``: short description of the threat impact
+
+
+.. tool_req:: Security Analysis Optional Attributes
+  :id: tool_req__docs_sec_attrs_optional
+  :implemented: YES
+  :tags: Security Analysis
+  :version: 1
+  :satisfies:
+    gd_req__sec_attr_mitigation_issue,
+    gd_req__sec_attr_aou,
+  :parent_covered: YES
+
+  Docs-As-Code shall allow threat scenario needs
+  (``feat_sec_ana``, ``comp_sec_ana``, ``plat_sec_ana``)
+  to have the following optional attributes and links:
+
+  * ``mitigation_issue``: link to a GitHub issue
+  * ``mitigated_by``: link to ``aou_req``
 
 
 🗺️ Full Mapping

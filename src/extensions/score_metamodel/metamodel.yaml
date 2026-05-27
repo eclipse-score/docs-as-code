@@ -854,6 +854,107 @@ needs_types:
       - safety_analysis
     parts: 3
 
+  # Security Analysis
+  # req-Id: tool_req__docs_sec_types
+  feat_sec_threat:
+    title: Feature Security Analysis Threat (STRIDE)
+    mandatory_options:
+      # req-Id: tool_req__docs_sec_attr_stride_threat_id
+      threat_id: ^.*$
+      status: ^(valid|invalid)$
+      content: ^[\s\S]+$
+    tags:
+      - stride_threat
+      - security_analysis
+    parts: 3
+
+  # req-Id: tool_req__docs_sec_types
+  comp_sec_threat:
+    title: Component Security Analysis Threat (STRIDE)
+    mandatory_options:
+      # req-Id: tool_req__docs_sec_attr_stride_threat_id
+      threat_id: ^.*$
+      status: ^(valid|invalid)$
+      content: ^[\s\S]+$
+    tags:
+      - stride_threat
+      - security_analysis
+    parts: 3
+
+  # req-Id: tool_req__docs_sec_types
+  plat_sec_threat:
+    title: Platform Security Analysis Threat (STRIDE)
+    mandatory_options:
+      # req-Id: tool_req__docs_sec_attr_stride_threat_id
+      threat_id: ^.*$
+      status: ^(valid|invalid)$
+      content: ^[\s\S]+$
+    tags:
+      - stride_threat
+      - security_analysis
+    parts: 3
+
+  # req-Id: tool_req__docs_sec_types
+  feat_sec_ana:
+    title: Feature Security Analysis (Threat Scenario)
+    mandatory_options:
+      # req-Id: tool_req__docs_sec_attrs_mandatory
+      threat_scenario_id: ^.*$
+      # req-Id: tool_req__docs_sec_attrs_mandatory
+      status: ^(valid|invalid)$
+      # req-Id: tool_req__docs_sec_attrs_mandatory
+      sufficient: ^(yes|no)$
+      # req-Id: tool_req__docs_sec_attrs_mandatory
+      teffect: ^.+$
+      # req-Id: tool_req__docs_sec_argument
+      content: ^[\s\S]+$
+    optional_options:
+      # req-Id: tool_req__docs_sec_attrs_optional
+      mitigation_issue: ^https://github.com/.*$
+    optional_links:
+      # req-Id: tool_req__docs_sec_attrs_optional
+      mitigated_by: feat_req, aou_req
+    tags:
+      - threat_scenario
+      - security_analysis
+    parts: 3
+
+  # req-Id: tool_req__docs_sec_types
+  comp_sec_ana:
+    title: Component Security Analysis (Threat Scenario)
+    mandatory_options:
+      threat_scenario_id: ^.*$
+      status: ^(valid|invalid)$
+      sufficient: ^(yes|no)$
+      teffect: ^.+$
+      content: ^[\s\S]+$
+    optional_options:
+      mitigation_issue: ^https://github.com/.*$
+    optional_links:
+      mitigated_by: comp_req, aou_req
+    tags:
+      - threat_scenario
+      - security_analysis
+    parts: 3
+
+  # req-Id: tool_req__docs_sec_types
+  plat_sec_ana:
+    title: Platform Security Analysis (Threat Scenario)
+    mandatory_options:
+      threat_scenario_id: ^.*$
+      status: ^(valid|invalid)$
+      sufficient: ^(yes|no)$
+      teffect: ^.+$
+      content: ^[\s\S]+$
+    optional_options:
+      mitigation_issue: ^https://github.com/.*$
+    optional_links:
+      mitigated_by: feat_req, aou_req
+    tags:
+      - threat_scenario
+      - security_analysis
+    parts: 3
+
   testcase:
     title: Testcase Needs parsed from test.xml files
     optional_options:
