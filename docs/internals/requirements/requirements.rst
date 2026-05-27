@@ -1208,7 +1208,7 @@ Testing
     gd_req__sec_attr_teffect,
   :parent_covered: YES
 
-  Docs-As-Code shall enforce that threat scenario needs
+  Enforce that threat scenario needs
   (``feat_sec_ana``, ``comp_sec_ana``, ``plat_sec_ana``)
   have the following mandatory attributes:
 
@@ -1216,6 +1216,20 @@ Testing
   * ``status``: ``valid`` or ``invalid``
   * ``sufficient``: ``yes`` or ``no``
   * ``teffect``: short description of the threat impact
+
+
+.. tool_req:: Security Analysis Argument Content
+  :id: tool_req__docs_sec_argument
+  :implemented: YES
+  :tags: Security Analysis
+  :version: 1
+  :satisfies: gd_req__sec_argument
+  :parent_covered: YES
+
+  Enforce that threat scenario needs
+  (``feat_sec_ana``, ``comp_sec_ana``, ``plat_sec_ana``)
+  have a non-empty content body describing the argument
+  for why the mitigation is sufficient or not.
 
 
 .. tool_req:: Security Analysis Optional Attributes
@@ -1228,7 +1242,7 @@ Testing
     gd_req__sec_attr_aou,
   :parent_covered: YES
 
-  Docs-As-Code shall allow threat scenario needs
+  Allow threat scenario needs
   (``feat_sec_ana``, ``comp_sec_ana``, ``plat_sec_ana``)
   to have the following optional attributes and links:
 

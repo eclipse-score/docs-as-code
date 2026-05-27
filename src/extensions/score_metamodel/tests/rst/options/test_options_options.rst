@@ -639,3 +639,13 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
    :mitigation_issue: https://github.com/eclipse-score/score/issues/1
 
    Mitigation not yet implemented.
+
+
+#EXPECT: feat_sec_ana__test__bad_10: is missing required attribute: `content`.
+
+.. feat_sec_ana:: Missing argument content
+   :id: feat_sec_ana__test__bad_10
+   :threat_scenario_id: TS.03
+   :status: invalid
+   :sufficient: no
+   :teffect: Unauthorized data access.
