@@ -36,12 +36,12 @@ def sphinx_base_dir(tmp_path_factory: pytest.TempPathFactory) -> Path:
     ### Create a temporary directory for Sphinx and copy all necessary files.
     base_dir: Path = tmp_path_factory.mktemp("docs")
     shutil.copy(RST_DIR / "conf.py", base_dir)
-    shutil.copytree(
-        DOCS_DIR / TOOLING_DIR_NAME,
-        base_dir / TOOLING_DIR_NAME,
-        dirs_exist_ok=True,
-        ignore=shutil.ignore_patterns("*.rst"),
-    )
+    # shutil.copytree(
+    #     DOCS_DIR / TOOLING_DIR_NAME,
+    #     base_dir / TOOLING_DIR_NAME,
+    #     dirs_exist_ok=True,
+    #     ignore=shutil.ignore_patterns("*.rst"),
+    # )
     return base_dir
 
 
@@ -158,11 +158,7 @@ def filter_warnings_by_position(
     a random warning because 'test' is in the filename of 'graph/test_graph_checks.rst'
     """
     prefix = f"{rst_data.filename}:{warning_info.lineno}: WARNING:"
-    return [
-        warning.removeprefix(prefix)
-        for warning in warnings
-        if warning.startswith(prefix)
-    ]
+    return [warning.removeprefix(prefix) for warning in warnings if prefix in warning]
 
 
 def warning_matches(
@@ -207,13 +203,19 @@ def test_rst_files(
     app.build()
 
     # Collect the warnings
-    raw_warnings = app.warning.getvalue().splitlines()
-    warnings = [strip_ansi_codes(w) for w in raw_warnings if "score_metamodel" in w]
+    raw_warnings: list[str] = app.warning.getvalue().splitlines()
+    warnings = [
+        strip_ansi_codes(w)
+        for w in raw_warnings
+        if "score_metamodel" in w or "needs.needextend" in w
+    ]
 
-    # Enable this if you need to see errors for debugging purposes
-    # print(
-    #     "\n".join(strip_ansi_codes(w) for w in raw_warnings if "score_metamodel" in w)
-    # )
+    # ╓                                                          ╖
+    # ║ Enable this if you need to see errors for debugging      ║
+    # ║ purposes                                                 ║
+    # ╙                                                          ╜
+
+    # print("\n".join(strip_ansi_codes(w) for w in warnings))
 
     # Check if the expected warnings are present
     for warning_info in rst_data.warning_infos:

@@ -12,6 +12,9 @@
 # *******************************************************************************
 from __future__ import annotations
 
+import os
+from pathlib import Path
+
 import sphinx_needs.directives.need
 from sphinx_needs.config import NeedsSphinxConfig
 from sphinx_needs.data import ExtendType, NeedsExtendType, NeedsMutable
@@ -25,7 +28,6 @@ from sphinx_needs.needs_schema import (
     LinksFunctionArray,
     LinksLiteralValue,
 )
-
 logger = get_logger(__name__)
 
 
