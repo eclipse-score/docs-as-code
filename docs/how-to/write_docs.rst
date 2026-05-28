@@ -38,12 +38,14 @@ Needextend allows you to extend needs that are defined in the documentaiton.
 The scope of allowed behaviour in Docs-As-Code for needextend is limited as we do not allow all of its usecases.
 
 Allowed uscases:
-- Setting an attribute or Link **IF** it is not already set in the need that is getting modified
-- Appending to a list of links
+
+* Setting an attribute or Link **IF** it is not already set in the need that is getting modified
+* Appending to a list of links
 
 Not Allowed:
-- Overwriting an attribute or Link that already is set in the need that gets modified
-- Deleting an attribute or Link
+
+* Overwriting an attribute or Link that already is set in the need that gets modified
+* Deleting an attribute or Link
 
 .. code-block:: rst
 
