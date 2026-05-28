@@ -37,7 +37,7 @@ Needextend
 Needextend allows you to extend needs that are defined in the documentaiton.
 The scope of allowed behaviour in Docs-As-Code for needextend is limited as we do not allow all of its usecases.
 
-Allowed uscases: 
+Allowed uscases:
 - Setting an attribute or Link **IF** it is not already set in the need that is getting modified
 - Appending to a list of links
 
@@ -54,7 +54,7 @@ Not Allowed:
 
       # ✅ ALLOWED => The replacing of attributes on needs that are NOT set.
       .. needextend:: c.this_doc() and id == 'stkh_req__test__need_extends_1'
-         :safety: NO 
+         :safety: NO
 
 
       # ❌ NOT ALLOWED => Overwriting attributes that are already set in the need
@@ -64,8 +64,7 @@ Not Allowed:
 
 For further documentation on needextends please `look here <https://sphinx-needs.readthedocs.io/en/latest/directives/needextend.html>`_
 
-.. note:: 
+.. note::
 
-   In the future we will enable a check that needextends will only modify needs in the current document. 
+   In the future we will enable a check that needextends will only modify needs in the current document.
    You can ensure this by adding `c.this_doc()` to the filter string of the need.
-
