@@ -22,7 +22,6 @@ Once we enable those we will need to change the tests
 """
 
 import json
-import os
 import xml.etree.ElementTree as ET
 from collections.abc import Callable
 from pathlib import Path

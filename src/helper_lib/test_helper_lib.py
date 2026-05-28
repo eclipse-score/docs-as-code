@@ -273,7 +273,9 @@ def test_runfiles_dir_found(temp_dir: Path, monkeypatch: pytest.MonkeyPatch):
     assert Path(result) == runfiles_dir
 
 
-def test_runfiles_dir_missing_triggers_exit(temp_dir: Path, monkeypatch: pytest.MonkeyPatch):
+def test_runfiles_dir_missing_triggers_exit(
+    temp_dir: Path, monkeypatch: pytest.MonkeyPatch
+):
     """Testing if the runfiles exit via sys.exit if runfiles are set but don't exist"""
     runfiles_dir = temp_dir / "does_not_exist"
     monkeypatch.setenv("RUNFILES_DIR", str(runfiles_dir))
