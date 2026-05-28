@@ -477,12 +477,16 @@ a Sphinx extension that models requirements, tests, tasks and other “needs” 
 <h3>Needextend<a class="headerlink" href="#needextend" title="Link to this heading">#</a></h3>
 <p>Needextend allows you to extend needs that are defined in the documentaiton.
 The scope of allowed behaviour in Docs-As-Code for needextend is limited as we do not allow all of its usecases.</p>
-<p>Allowed uscases:
-- Setting an attribute or Link <strong>IF</strong> it is not already set in the need that is getting modified
-- Appending to a list of links</p>
-<p>Not Allowed:
-- Overwriting an attribute or Link that already is set in the need that gets modified
-- Deleting an attribute or Link</p>
+<p>Allowed uscases:</p>
+<ul class="simple">
+<li><p>Setting an attribute or Link <strong>IF</strong> it is not already set in the need that is getting modified</p></li>
+<li><p>Appending to a list of links</p></li>
+</ul>
+<p>Not Allowed:</p>
+<ul class="simple">
+<li><p>Overwriting an attribute or Link that already is set in the need that gets modified</p></li>
+<li><p>Deleting an attribute or Link</p></li>
+</ul>
 <div class="highlight-rst notranslate"><div class="highlight"><pre><span></span><span class="p">..</span> <span class="ow">stkh_req</span><span class="p">::</span> Test Req Extends 1
    <span class="nc">:id:</span> stkh_req__test__need_extends_1
    <span class="nc">:status:</span> invalid
