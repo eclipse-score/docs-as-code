@@ -127,6 +127,7 @@ needs_types:
   gd_req:
     title: Process Requirements
     mandatory_options:
+      # req-Id: tool_req__docs_common_attr_description
       content: ^[\s\S]+$
     optional_links:
       # req-Id: tool_req__docs_req_link_satisfies_allowed
@@ -289,6 +290,7 @@ needs_types:
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
+      # req-Id: tool_req__docs_common_attr_description
       content: ^[\s\S]+$
     mandatory_links:
       # req-Id: tool_req__docs_req_link_satisfies_allowed
@@ -325,6 +327,7 @@ needs_types:
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
+      # req-Id: tool_req__docs_common_attr_description
       content: ^[\s\S]+$
     mandatory_links:
       # req-Id: tool_req__docs_req_link_satisfies_allowed
@@ -350,6 +353,7 @@ needs_types:
   tool_req:
     title: Tool Requirement
     mandatory_options:
+      # req-Id: tool_req__docs_common_attr_description
       content: ^[\s\S]+$
     optional_links:
       # req-Id: tool_req__docs_req_link_satisfies_allowed
@@ -385,6 +389,7 @@ needs_types:
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
+      # req-Id: tool_req__docs_common_attr_description
       content: ^[\s\S]+$
     optional_options:
       codelink: ^.*$
@@ -738,11 +743,12 @@ needs_types:
       failure_effect: ^.*$
       sufficient: ^(yes|no)$
       status: ^(valid|invalid)$
+      # req-Id: tool_req__docs_common_attr_description
       content: ^[\s\S]+$
     mandatory_links:
       violates: feat_arc_sta
     optional_options:
-      mitigation_issue: ^https://github.com/.*$
+      mitigation_issue: ^https://github\.com/[^/]+/[^/]+/issues/\d+$
     optional_links:
       mitigated_by: stkh_req, aou_req
     parts: 3
@@ -758,13 +764,14 @@ needs_types:
       sufficient: ^(yes|no)$
       status: ^(valid|invalid)$
       # req-Id: tool_req__docs_saf_attrs_content
+      # req-Id: tool_req__docs_common_attr_description
       content: ^[\s\S]+$
     mandatory_links:
       # req-Id: tool_req__docs_saf_attrs_violates
       violates: feat_arc_sta
     optional_options:
       # req-Id: tool_req__docs_saf_attrs_mitigation_issue
-      mitigation_issue: ^https://github.com/.*$
+      mitigation_issue: ^https://github\.com/[^/]+/[^/]+/issues/\d+$
     optional_links:
       # req-Id: tool_req__docs_saf_attrs_mitigated_by
       # (only mandatory once valid status == valid)
@@ -788,7 +795,7 @@ needs_types:
       content: ^[\s\S]+$
     optional_options:
       # req-Id: tool_req__docs_saf_attrs_mitigation_issue
-      mitigation_issue: ^https://github.com/.*$
+      mitigation_issue: ^https://github\.com/[^/]+/[^/]+/issues/\d+$
     mandatory_links:
       # req-Id: tool_req__docs_saf_attrs_violates
       violates: comp_arc_sta
@@ -816,7 +823,7 @@ needs_types:
       content: ^[\s\S]+$
     optional_options:
       # req-Id: tool_req__docs_saf_attrs_mitigation_issue
-      mitigation_issue: ^https://github.com/.*$
+      mitigation_issue: ^https://github\.com/[^/]+/[^/]+/issues/\d+$
     mandatory_links:
       # req-Id: tool_req__docs_saf_attrs_violates
       violates: feat_arc_dyn, feat_arc_sta
@@ -843,7 +850,7 @@ needs_types:
       content: ^[\s\S]+$
     optional_options:
       # req-Id: tool_req__docs_saf_attrs_mitigation_issue
-      mitigation_issue: ^https://github.com/.*$
+      mitigation_issue: ^https://github\.com/[^/]+/[^/]+/issues/\d+$
     mandatory_links:
       # req-Id: tool_req__docs_saf_attrs_violates
       violates: comp_arc_dyn, comp_arc_sta
@@ -860,7 +867,7 @@ needs_types:
     title: Feature Security Analysis Threat (STRIDE)
     mandatory_options:
       # req-Id: tool_req__docs_sec_attr_stride_threat_id
-      threat_id: ^.*$
+      threat_id: ^(AU_01_0[1-3]|AZ_01_0[1-3]|CT_01_0[1-2]|DS_01_0[1-3]|EX_01_0[1-6]|LA_01_0[1-3]|MT_01_0[1-7])$
       status: ^(valid|invalid)$
       content: ^[\s\S]+$
     tags:
@@ -873,7 +880,7 @@ needs_types:
     title: Component Security Analysis Threat (STRIDE)
     mandatory_options:
       # req-Id: tool_req__docs_sec_attr_stride_threat_id
-      threat_id: ^.*$
+      threat_id: ^(AU_01_0[1-3]|AZ_01_0[1-3]|CT_01_0[1-2]|DS_01_0[1-3]|EX_01_0[1-6]|LA_01_0[1-3]|MT_01_0[1-7])$
       status: ^(valid|invalid)$
       content: ^[\s\S]+$
     tags:
@@ -886,7 +893,7 @@ needs_types:
     title: Platform Security Analysis Threat (STRIDE)
     mandatory_options:
       # req-Id: tool_req__docs_sec_attr_stride_threat_id
-      threat_id: ^.*$
+      threat_id: ^(AU_01_0[1-3]|AZ_01_0[1-3]|CT_01_0[1-2]|DS_01_0[1-3]|EX_01_0[1-6]|LA_01_0[1-3]|MT_01_0[1-7])$
       status: ^(valid|invalid)$
       content: ^[\s\S]+$
     tags:
@@ -899,18 +906,18 @@ needs_types:
     title: Feature Security Analysis (Threat Scenario)
     mandatory_options:
       # req-Id: tool_req__docs_sec_attrs_mandatory
-      threat_scenario_id: ^.*$
+      threat_scenario_id: ^(AS_01_(01|02|04|05|06|07|09|10)|CO_01_0[1-7]|SC_01_0[2-5]|SI_01_0[2-5]|UI_01_(0[1-9]|1[0-2]))$
       # req-Id: tool_req__docs_sec_attrs_mandatory
       status: ^(valid|invalid)$
       # req-Id: tool_req__docs_sec_attrs_mandatory
       sufficient: ^(yes|no)$
       # req-Id: tool_req__docs_sec_attrs_mandatory
       threat_effect: ^.+$
-      # req-Id: tool_req__docs_sec_argument
+      # req-Id: tool_req__docs_common_attr_description
       content: ^[\s\S]+$
     optional_options:
       # req-Id: tool_req__docs_sec_attrs_optional
-      mitigation_issue: ^https://github.com/.*$
+      mitigation_issue: ^https://github\.com/[^/]+/[^/]+/issues/\d+$
     optional_links:
       # req-Id: tool_req__docs_sec_attrs_optional
       mitigated_by: feat_req, aou_req
@@ -923,13 +930,14 @@ needs_types:
   comp_sec_ana:
     title: Component Security Analysis (Threat Scenario)
     mandatory_options:
-      threat_scenario_id: ^.*$
+      threat_scenario_id: ^(AS_01_(01|02|04|05|06|07|09|10)|CO_01_0[1-7]|SC_01_0[2-5]|SI_01_0[2-5]|UI_01_(0[1-9]|1[0-2]))$
       status: ^(valid|invalid)$
       sufficient: ^(yes|no)$
       threat_effect: ^.+$
+      # req-Id: tool_req__docs_common_attr_description
       content: ^[\s\S]+$
     optional_options:
-      mitigation_issue: ^https://github.com/.*$
+      mitigation_issue: ^https://github\.com/[^/]+/[^/]+/issues/\d+$
     optional_links:
       mitigated_by: comp_req, aou_req
     tags:
@@ -941,13 +949,14 @@ needs_types:
   plat_sec_ana:
     title: Platform Security Analysis (Threat Scenario)
     mandatory_options:
-      threat_scenario_id: ^.*$
+      threat_scenario_id: ^(AS_01_(01|02|04|05|06|07|09|10)|CO_01_0[1-7]|SC_01_0[2-5]|SI_01_0[2-5]|UI_01_(0[1-9]|1[0-2]))$
       status: ^(valid|invalid)$
       sufficient: ^(yes|no)$
       threat_effect: ^.+$
+      # req-Id: tool_req__docs_common_attr_description
       content: ^[\s\S]+$
     optional_options:
-      mitigation_issue: ^https://github.com/.*$
+      mitigation_issue: ^https://github\.com/[^/]+/[^/]+/issues/\d+$
     optional_links:
       mitigated_by: feat_req, aou_req
     tags:

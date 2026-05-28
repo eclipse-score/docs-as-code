@@ -585,7 +585,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
 
 .. feat_sec_ana:: Invalid sufficient value
    :id: feat_sec_ana__test__bad_5
-   :threat_scenario_id: TS.01
+   :threat_scenario_id: SC_01_02
    :status: valid
    :sufficient: maybe
    :threat_effect: Unauthorized access to stored data.
@@ -597,7 +597,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
 
 .. feat_sec_ana:: Invalid status value
    :id: feat_sec_ana__test__bad_6
-   :threat_scenario_id: TS.01
+   :threat_scenario_id: SC_01_02
    :status: done
    :sufficient: no
    :threat_effect: Unauthorized access to stored data.
@@ -609,7 +609,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
 
 .. feat_sec_ana:: Missing threat_effect
    :id: feat_sec_ana__test__bad_7
-   :threat_scenario_id: TS.01
+   :threat_scenario_id: SC_01_02
    :status: invalid
    :sufficient: no
 
@@ -620,7 +620,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
 
 .. feat_sec_ana:: Valid threat scenario
    :id: feat_sec_ana__test__ok_8
-   :threat_scenario_id: TS.01
+   :threat_scenario_id: SC_01_02
    :status: valid
    :sufficient: yes
    :threat_effect: Unauthorized access to stored data.
@@ -632,7 +632,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
 
 .. feat_sec_ana:: Valid threat scenario with optional mitigation_issue
    :id: feat_sec_ana__test__ok_9
-   :threat_scenario_id: TS.02
+   :threat_scenario_id: SC_01_03
    :status: invalid
    :sufficient: no
    :threat_effect: Data integrity violation via tampering.
@@ -641,11 +641,24 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
    Mitigation not yet implemented.
 
 
-#EXPECT: feat_sec_ana__test__bad_10: is missing required attribute: `content`.
+#EXPECT: feat_sec_ana__test__bad_10.mitigation_issue (https://github.com/eclipse-score/docs-as-code/pull/508): does not follow pattern
+
+.. feat_sec_ana:: Invalid mitigation_issue (pull request, not issue)
+   :id: feat_sec_ana__test__bad_10
+   :threat_scenario_id: SC_01_04
+   :status: invalid
+   :sufficient: no
+   :threat_effect: Unauthorized data access.
+   :mitigation_issue: https://github.com/eclipse-score/docs-as-code/pull/508
+
+   Mitigation not yet implemented.
+
+
+#EXPECT: feat_sec_ana__test__bad_11: is missing required attribute: `content`.
 
 .. feat_sec_ana:: Missing argument content
-   :id: feat_sec_ana__test__bad_10
-   :threat_scenario_id: TS.03
+   :id: feat_sec_ana__test__bad_11
+   :threat_scenario_id: SC_01_04
    :status: invalid
    :sufficient: no
    :threat_effect: Unauthorized data access.

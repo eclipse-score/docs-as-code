@@ -136,9 +136,9 @@ This section provides an overview of current process requirements and their clar
   :parent_covered: NO: Can not cover 'ISO/IEC/IEEE/29148'
   :version: 1
   :implemented: YES
-  :satisfies: gd_req__req_attr_description, gd_req__req_check_mandatory,
+  :satisfies: gd_req__req_attr_description, gd_req__req_check_mandatory, gd_req__sec_argument
 
-  Docs-as-Code shall enforce that each need of type :need:`tool_req__docs_req_types` has a description (content)
+  Enforce that each need of type :need:`tool_req__docs_req_types` has a description (content)
 
 
 .. tool_req:: Enforces description wording rules
@@ -1216,20 +1216,6 @@ Testing
   * ``status``: ``valid`` or ``invalid``
   * ``sufficient``: ``yes`` or ``no``
   * ``threat_effect``: short description of the threat impact
-
-
-.. tool_req:: Security Analysis Argument Content
-  :id: tool_req__docs_sec_argument
-  :implemented: YES
-  :tags: Security Analysis
-  :version: 1
-  :satisfies: gd_req__sec_argument
-  :parent_covered: YES
-
-  Enforce that threat scenario needs
-  (``feat_sec_ana``, ``comp_sec_ana``, ``plat_sec_ana``)
-  have a non-empty content body describing the argument
-  for why the mitigation is sufficient or not.
 
 
 .. tool_req:: Security Analysis Optional Attributes
