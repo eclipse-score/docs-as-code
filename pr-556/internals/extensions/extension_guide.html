@@ -38,11 +38,11 @@
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-data-viewer/jsonview.bundle.css?v=f6ef2277" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/libs/html/datatables.min.css?v=4b4fd840" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_toggle.css?v=5c6620df" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_core.css?v=f5b60a78" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_style.css?v=92936fa5" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/needstable.css?v=5e1b6797" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_toggle.css?v=5c6620df" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_links.css?v=2150a916" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/needstable.css?v=5e1b6797" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/modern.css?v=803738c0" />
   
   <!-- So that users can add custom icons -->
@@ -472,7 +472,7 @@
 <section id="getting-started">
 <h2>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading">#</a></h2>
 <ol class="arabic simple">
-<li><p>Create a new folder in <code class="docutils literal notranslate"><span class="pre">docs/_tooling/extensions</span></code> called <code class="docutils literal notranslate"><span class="pre">score_&lt;name</span> <span class="pre">of</span> <span class="pre">your</span> <span class="pre">extension&gt;</span></code></p></li>
+<li><p>Create a new folder in <code class="docutils literal notranslate"><span class="pre">src/extensions</span></code> called <code class="docutils literal notranslate"><span class="pre">score_&lt;name</span> <span class="pre">of</span> <span class="pre">your</span> <span class="pre">extension&gt;</span></code></p></li>
 <li><p>Copy the template inside the <code class="docutils literal notranslate"><span class="pre">__init__.py</span></code></p></li>
 <li><p>Adapt to your needs</p></li>
 </ol>
@@ -538,7 +538,7 @@ It must be one of these values:</p>
 </pre></div>
 </div>
 <blockquote>
-<div><p><strong>Important:</strong> There cannot be any BUILD file inside the entire ‘extensions’ folder, as that would break the Python imports.</p>
+<div><p><strong>Important:</strong> Each extension needs its own <code class="docutils literal notranslate"><span class="pre">BUILD</span></code> file to declare the <code class="docutils literal notranslate"><span class="pre">py_library</span></code> target and its dependencies.</p>
 </div></blockquote>
 </section>
 <section id="testing">
@@ -550,16 +550,13 @@ We perform testing with unit tests as well as integration tests that validate th
 </div></blockquote>
 <section id="where-to-place-your-test-code">
 <h3>Where to Place Your Test Code<a class="headerlink" href="#where-to-place-your-test-code" title="Link to this heading">#</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>_tooling/
-├──<span class="w"> </span>extensions/
-│<span class="w">   </span>├──<span class="w"> </span>README.md
-│<span class="w">   </span>├──<span class="w"> </span>score_draw_uml_funcs/
-│<span class="w">   </span>├──<span class="w"> </span>YOUR_EXTENSION/
-│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>__init__.py<span class="w">  </span><span class="c1"># your python code (setup needs to be in here)</span>
-│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>xyz.py<span class="w">       </span><span class="c1"># your python code (if you need/want to split it across different files)</span>
-│<span class="w">   </span>│<span class="w">   </span>└──<span class="w"> </span>tests/
-│<span class="w">   </span>│<span class="w">       </span>├──<span class="w"> </span>test_xyz.py<span class="w">             </span><span class="c1"># unit tests</span>
-│<span class="w">   </span>│<span class="w">       </span>└──<span class="w"> </span>test_YOUR_EXTENSION.py<span class="w">  </span><span class="c1"># integration tests</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>src/extensions/
+├──<span class="w"> </span>YOUR_EXTENSION/
+│<span class="w">   </span>├──<span class="w"> </span>__init__.py<span class="w">  </span><span class="c1"># your python code (setup needs to be in here)</span>
+│<span class="w">   </span>├──<span class="w"> </span>xyz.py<span class="w">       </span><span class="c1"># your python code (if you need/want to split it across different files)</span>
+│<span class="w">   </span>└──<span class="w"> </span>tests/
+│<span class="w">       </span>├──<span class="w"> </span>test_xyz.py<span class="w">             </span><span class="c1"># unit tests</span>
+│<span class="w">       </span>└──<span class="w"> </span>test_YOUR_EXTENSION.py<span class="w">  </span><span class="c1"># integration tests</span>
 ├──<span class="w"> </span>score_metamodel/
 ├──<span class="w"> </span>score_plantuml.py
 </pre></div>
