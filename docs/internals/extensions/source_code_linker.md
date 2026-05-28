@@ -371,14 +371,6 @@ score_source_code_linker/
 
 ---
 
-## Clearing Cache Manually
-
-To clear the build cache, run:
-
-```bash
-rm -rf _build/
-```
-
 ## Examples
 
 To see working examples for CodeLinks & TestLinks, take a look at the Docs-As-Code documentation.

@@ -48,7 +48,7 @@ Example `BUILD` snippet (consumer module):
 
 .. code-block:: starlark
 
-    load("@rules_docs//:docs.bzl", "docs")
+    load("@score_docs_as_code//:docs.bzl", "docs")
     docs(
       data = [
          "@score_process//:needs_json",

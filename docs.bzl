@@ -321,10 +321,18 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
         allow_persistent_workers = False,
     )
 
+    native.genrule(
+        name = "metrics_json",
+        srcs = [":needs_json"],
+        outs = ["metrics.json"],
+        cmd = "cp $(location :needs_json)/metrics.json $@",
+        visibility = ["//visibility:public"],
+    )
+
     native.alias(
         name = "traceability_gate",
         actual = Label("//scripts_bazel:traceability_gate"),
-        tags = ["cli_help=Enforce traceability coverage thresholds:\nbazel run //:traceability_gate -- --metrics-json bazel-bin/needs_json/_build/needs/metrics.json"],
+        tags = ["cli_help=Enforce traceability coverage thresholds:\nbazel run //:traceability_gate -- --metrics-json $(location //:metrics_json)"],
     )
 
 def _sourcelinks_json(name, srcs):

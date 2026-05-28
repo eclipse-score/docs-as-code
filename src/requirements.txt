@@ -1062,6 +1062,10 @@ pydata-sphinx-theme==0.17.0 \
     --hash=sha256:529c5631582cb3328cf4814fb9eb80611d1704c854406d282a75c9c86e3a1955 \
     --hash=sha256:cec5c92f41f4a11541b6df8210c446b4aa9c3badb7fcf2db7893405b786d5c99
     # via -r requirements.in
+pyfakefs==6.2.0 \
+    --hash=sha256:0968a49db692694ffed420e54a9f1cbae4636637b880e8ab09c8ccc0f11bd7ae \
+    --hash=sha256:e59a36db447bf509ce9c97ab3d1510c08cc51895c5311325a560a5e5b5dc1940
+    # via -r requirements.in
 pygithub==2.9.0 \
     --hash=sha256:5e2b260ce327bffce9b00f447b65953ef7078ffe93e5a5425624a3075483927c \
     --hash=sha256:a26abda1222febba31238682634cad11d8b966137ed6cc3c5e445b29a11cb0a4

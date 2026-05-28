@@ -682,6 +682,8 @@ needs_types:
       security: ^(YES|NO)$
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
+      # req-Id: tool_req__docs_dd_description
+      content: ^[\s\S]+$
     mandatory_links:
       implements: comp_req
       satisfies: comp_arc_sta
@@ -698,6 +700,8 @@ needs_types:
       security: ^(YES|NO)$
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
+      # req-Id: tool_req__docs_dd_description
+      content: ^[\s\S]+$
     mandatory_links:
       implements: comp_req
       satisfies: comp_arc_sta
@@ -712,6 +716,8 @@ needs_types:
       security: ^(YES|NO)$
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
+      # req-Id: tool_req__docs_dd_description
+      content: ^[\s\S]+$
     optional_links:
       belongs_to: comp # TODO: make it mandatory
     parts: 3
@@ -724,6 +730,8 @@ needs_types:
       security: ^(YES|NO)$
       safety: ^(QM|ASIL_B)$
       status: ^(valid|invalid)$
+      # req-Id: tool_req__docs_dd_description
+      content: ^[\s\S]+$
     optional_links:
       belongs_to: comp # TODO: make it mandatory
       implements: real_arc_int, real_arc_int_op

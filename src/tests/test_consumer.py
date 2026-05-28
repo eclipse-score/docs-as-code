@@ -550,7 +550,7 @@ def setup_test_environment(sphinx_base_dir: Path, pytestconfig: Config):
 
     assert git_root, "Git root was not found"
 
-    gh_url = get_github_base_url()
+    gh_url = get_github_base_url(git_root)
     current_hash = get_current_git_commit(git_root)
 
     os.chdir(Path(sphinx_base_dir).absolute())

@@ -110,6 +110,8 @@ Component 1
    :safety: ASIL_B
    :status: invalid
 
+   Test unit 1 for component 1.
+
 .. comp:: Test Sub Component 1
    :id: comp__test_sub_component_1
    :security: YES
@@ -132,6 +134,8 @@ Component 1
    :security: YES
    :safety: ASIL_B
    :status: invalid
+
+   Test unit 2 for sub component 1.
 
 Component 1
 ~~~~~~~~~~~

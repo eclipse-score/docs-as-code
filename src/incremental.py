@@ -12,8 +12,10 @@
 # *******************************************************************************
 
 import argparse
+import hashlib
 import logging
 import os
+import shutil
 import sys
 import time
 from pathlib import Path
@@ -26,6 +28,8 @@ from sphinx_autobuild.__main__ import (
 
 logger = logging.getLogger(__name__)
 
+_MODULE_HASH_FILE = ".module_bazel_hash"
+
 
 def get_env(name: str) -> str:
     val = os.environ.get(name, None)
@@ -33,6 +37,38 @@ def get_env(name: str) -> str:
     if val is None:
         raise ValueError(f"Environment variable {name} is not set")
     return val
+
+
+def _compute_hash(files: list[Path]) -> str:
+    h = hashlib.sha256()
+    for f in sorted(files, key=str):
+        h.update(f.read_bytes())
+    return h.hexdigest()
+
+
+def clean_builddir_if_stale(build_dir: Path, sentinel_files: list[Path]) -> None:
+    """Delete build_dir if the previous build had warnings or any sentinel file changed."""
+    if not build_dir.exists():
+        return
+
+    warnings_txt = build_dir / "warnings.txt"
+    has_warnings = warnings_txt.exists() and warnings_txt.stat().st_size > 0
+
+    hash_file = build_dir / _MODULE_HASH_FILE
+    hash_changed = (
+        not hash_file.exists()
+        or hash_file.read_text().strip() != _compute_hash(sentinel_files)
+    )
+
+    if has_warnings or hash_changed:
+        print(
+            "Previous build had warnings or the hash changed. Removing _build to ensure a clean build."
+        )
+        shutil.rmtree(build_dir)
+
+
+def update_module_hash(build_dir: Path, sentinel_files: list[Path]) -> None:
+    (build_dir / _MODULE_HASH_FILE).write_text(_compute_hash(sentinel_files))
 
 
 if __name__ == "__main__":
@@ -73,9 +109,21 @@ if __name__ == "__main__":
     else:
         workspace = ""
 
+    build_dir = Path(workspace + "_build")
+    sentinel_files = [
+        Path(workspace + "MODULE.bazel"),
+        Path(workspace + "MODULE.bazel.lock"),
+        Path(workspace + "BUILD"),
+    ]
+    clean_builddir_if_stale(build_dir, sentinel_files)
+
+    warning_file = Path(workspace + "_build/warnings.txt")
+
     base_arguments = [
         workspace + get_env("SOURCE_DIRECTORY"),
         workspace + "_build",
+        "--warning-file",
+        str(warning_file),
         "-W",  # treat warning as errors
         "--keep-going",  # do not abort after one error
         "-T",  # show details in case of errors in extensions
@@ -134,7 +182,13 @@ if __name__ == "__main__":
         start_time = time.perf_counter()
         exit_code = sphinx_main(base_arguments)
         end_time = time.perf_counter()
-        duration = end_time - start_time
-        print(f"docs ({action}) finished in {duration:.1f} seconds")
+        print(f"docs ({action}) finished in {end_time - start_time:.1f} seconds")
+
+        if exit_code == 0:
+            update_module_hash(build_dir, sentinel_files)
+        else:
+            with warning_file.open("a", encoding="utf-8") as f:
+                f.write("-" * 80 + "\n")
+                f.write(f"Build failed with exit code {exit_code}\n")
 
         sys.exit(exit_code)

@@ -93,9 +93,12 @@ This section provides an overview of current process requirements and their clar
     gd_req__arch_attribute_uid,
     gd_req__saf_attr_uid,
     gd_req__req_check_mandatory,
+    gd_req__impl_diagram_uid,
+    gd_req__impl_unit_uid,
+    gd_req__impl_interface_uid,
   :parent_covered: NO: cannot check non-existent "doc__naming_conventions" in gd_req__req_attr_uid
 
-  Docs-as-Code shall enforce that Need IDs follow the following naming scheme:
+  Enforce that Need IDs follow the following naming scheme:
 
   * A prefix indicating the need type (e.g. `feature__`)
   * A middle part matching the hierarchical structure of the need:
@@ -117,9 +120,10 @@ This section provides an overview of current process requirements and their clar
   :satisfies:
     gd_req__req_attr_title,
     gd_req__saf_attr_title,
+    gd_req__impl_diagram_title
   :parent_covered: NO: Can not ensure summary
 
-  Docs-as-Code shall enforce that all needs have titles and titles do not contain the following words:
+  Enforce that all needs have titles and titles do not contain the following words:
 
   * shall
   * must
@@ -809,6 +813,32 @@ Architecture Attributes
 ..    :satisfies: gd_req__impl_dynamic_diagram
 
 ..    Provide needs type ``dd_dyn`` for dynamic diagrams showing unit interactions as UML.
+
+
+
+.. tool_req:: Diagram mandatory safety and status attributes
+   :id: tool_req__docs_dd_diagram_safety_status
+   :tags: Detailed Design & Code
+   :version: 1
+   :implemented: YES
+   :satisfies:
+     gd_req__impl_diagram_safety,
+     gd_req__impl_diagram_status,
+
+   Diagrams (``dd_sta``, ``dd_dyn``) shall have mandatory ``safety`` (``QM`` or ``ASIL_B``) and ``status`` (``valid`` or ``invalid``) attributes.
+
+
+.. tool_req:: Mandatory description for diagrams, units, and interfaces
+   :id: tool_req__docs_dd_description
+   :tags: Detailed Design & Code
+   :version: 1
+   :implemented: YES
+   :satisfies:
+     gd_req__impl_diagram_description,
+     gd_req__impl_unit_description,
+     gd_req__impl_interface_description,
+
+   ``dd_sta``, ``dd_dyn``, ``sw_unit``, and ``sw_unit_int`` needs shall have non-empty content serving as description.
 
 
 Testing
