@@ -467,41 +467,27 @@ def test_get_metadata_from_test_path_local():
     assert md["url"] == ""
 
 
-def test_get_metadata_from_test_path_combo_with_hash(tmp_path: Path):
+def test_get_metadata_from_test_path_combo_with_hash(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
     """Combo builds with 'hash' in known_good.json populate metadata correctly."""
     json_file = tmp_path / "known_good.json"
     json_file.write_text(json.dumps(_KNOWN_GOOD_WITH_HASH))
-
-    old = os.environ.get("KNOWN_GOOD_JSON")
-    try:
-        os.environ["KNOWN_GOOD_JSON"] = str(json_file)
-        md = xml_parser.get_metadata_from_test_path(_COMBO_TEST_PATH)
-    finally:
-        if old is None:
-            os.environ.pop("KNOWN_GOOD_JSON", None)
-        else:
-            os.environ["KNOWN_GOOD_JSON"] = old
-
+    monkeypatch.setenv("KNOWN_GOOD_JSON", str(json_file))
+    md = xml_parser.get_metadata_from_test_path(_COMBO_TEST_PATH)
     assert md["repo_name"] == "score_docs_as_code"
     assert md["hash"] == "abc123hashvalue"
     assert md["url"] == "https://github.com/eclipse-score/docs-as-code"
 
 
-def test_get_metadata_from_test_path_combo_with_version(tmp_path: Path):
+def test_get_metadata_from_test_path_combo_with_version(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
     """Combo builds with 'version' in known_good.json populate metadata correctly."""
     json_file = tmp_path / "known_good.json"
     json_file.write_text(json.dumps(_KNOWN_GOOD_WITH_VERSION))
-
-    old = os.environ.get("KNOWN_GOOD_JSON")
-    try:
-        os.environ["KNOWN_GOOD_JSON"] = str(json_file)
-        md = xml_parser.get_metadata_from_test_path(_COMBO_TEST_PATH)
-    finally:
-        if old is None:
-            os.environ.pop("KNOWN_GOOD_JSON", None)
-        else:
-            os.environ["KNOWN_GOOD_JSON"] = old
-
+    monkeypatch.setenv("KNOWN_GOOD_JSON", str(json_file))
+    md = xml_parser.get_metadata_from_test_path(_COMBO_TEST_PATH)
     assert md["repo_name"] == "score_docs_as_code"
     assert md["hash"] == "v2.1.0"
     assert md["url"] == "https://github.com/eclipse-score/docs-as-code"

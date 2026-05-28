@@ -41,12 +41,12 @@ from src.extensions.score_source_code_linker.tests.test_need_source_links import
 from src.helper_lib import find_ws_root
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def sphinx_base_dir(tmp_path_factory: TempPathFactory) -> Path:
     return tmp_path_factory.mktemp("test_git_repo")
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def git_repo_setup(sphinx_base_dir: Path) -> Path:
     """Creating git repo, to make testing possible"""
 
@@ -64,11 +64,10 @@ def git_repo_setup(sphinx_base_dir: Path) -> Path:
         cwd=repo_path,
         check=True,
     )
-    os.environ["BUILD_WORKSPACE_DIRECTORY"] = str(repo_path)
     return repo_path
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def create_demo_files(sphinx_base_dir: Path, git_repo_setup: Path):
     repo_path = sphinx_base_dir
 
@@ -511,11 +510,12 @@ def test_source_link_integration_ok(
     sphinx_base_dir: Path,
     git_repo_setup: Path,
     create_demo_files: None,
+    monkeypatch: pytest.MonkeyPatch,
 ):
     """This is a test description"""
+    monkeypatch.setenv("BUILD_WORKSPACE_DIRECTORY", str(sphinx_base_dir))
     app = sphinx_app_setup()
     try:
-        os.environ["BUILD_WORKSPACE_DIRECTORY"] = str(sphinx_base_dir)
         app.build()
         ws_root = find_ws_root()
         assert ws_root is not None
@@ -574,8 +574,10 @@ def test_source_link_integration_non_existent_id(
     sphinx_base_dir: Path,
     git_repo_setup: Path,
     create_demo_files: None,
+    monkeypatch: pytest.MonkeyPatch,
 ):
     """Asserting warning if need not found"""
+    monkeypatch.setenv("BUILD_WORKSPACE_DIRECTORY", str(sphinx_base_dir))
     app = sphinx_app_setup()
     try:
         app.build()

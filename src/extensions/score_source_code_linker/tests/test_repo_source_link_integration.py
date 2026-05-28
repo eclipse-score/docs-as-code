@@ -45,12 +45,12 @@ from src.extensions.score_source_code_linker.repo_source_links import (
 """
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def sphinx_base_dir(tmp_path_factory: TempPathFactory) -> Path:
     return tmp_path_factory.mktemp("test_module_links_repo")
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def git_repo_setup(sphinx_base_dir: Path) -> Path:
     """Creating git repo, to make testing possible"""
     repo_path = sphinx_base_dir
@@ -66,11 +66,10 @@ def git_repo_setup(sphinx_base_dir: Path) -> Path:
         cwd=repo_path,
         check=True,
     )
-    os.environ["BUILD_WORKSPACE_DIRECTORY"] = str(repo_path)
     return repo_path
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def create_demo_files(sphinx_base_dir: Path, git_repo_setup: Path):
     repo_path = sphinx_base_dir
 
@@ -249,11 +248,12 @@ def test_repo_grouped_cache_generated(
     sphinx_base_dir: Path,
     git_repo_setup: Path,
     create_demo_files: None,
+    monkeypatch: pytest.MonkeyPatch,
 ):
     """Happy path: Repo grouped cache file is generated after Sphinx build"""
+    monkeypatch.setenv("BUILD_WORKSPACE_DIRECTORY", str(sphinx_base_dir))
     app = sphinx_app_setup()
     try:
-        os.environ["BUILD_WORKSPACE_DIRECTORY"] = str(sphinx_base_dir)
         app.build()
 
         repo_cache = app.outdir / "score_repo_grouped_scl_cache.json"
@@ -279,11 +279,12 @@ def test_repo_grouping_preserves_metadata(
     sphinx_base_dir: Path,
     git_repo_setup: Path,
     create_demo_files: None,
+    monkeypatch: pytest.MonkeyPatch,
 ):
     """Happy path: Repo metadata (name, hash, url) is preserved in cache"""
+    monkeypatch.setenv("BUILD_WORKSPACE_DIRECTORY", str(sphinx_base_dir))
     app = sphinx_app_setup()
     try:
-        os.environ["BUILD_WORKSPACE_DIRECTORY"] = str(sphinx_base_dir)
         app.build()
 
         repo_cache = app.outdir / "score_repo_grouped_scl_cache.json"
@@ -306,11 +307,12 @@ def test_repo_grouping_multiple_needs_per_repo(
     sphinx_base_dir: Path,
     git_repo_setup: Path,
     create_demo_files: None,
+    monkeypatch: pytest.MonkeyPatch,
 ):
     """Happy path: Multiple needs from same repo are grouped together"""
+    monkeypatch.setenv("BUILD_WORKSPACE_DIRECTORY", str(sphinx_base_dir))
     app = sphinx_app_setup()
     try:
-        os.environ["BUILD_WORKSPACE_DIRECTORY"] = str(sphinx_base_dir)
         app.build()
 
         repo_cache = app.outdir / "score_repo_grouped_scl_cache.json"
@@ -338,14 +340,15 @@ def test_repo_cache_json_format(
     sphinx_base_dir: Path,
     git_repo_setup: Path,
     create_demo_files: None,
+    monkeypatch: pytest.MonkeyPatch,
 ):
     """
     Repo cache JSON has correct
     structure and excludes metadata from links
     """
+    monkeypatch.setenv("BUILD_WORKSPACE_DIRECTORY", str(sphinx_base_dir))
     app = sphinx_app_setup()
     try:
-        os.environ["BUILD_WORKSPACE_DIRECTORY"] = str(sphinx_base_dir)
         app.build()
 
         repo_cache = app.outdir / "score_repo_grouped_scl_cache.json"
@@ -389,11 +392,12 @@ def test_repo_cache_rebuilds_when_missing(
     sphinx_base_dir: Path,
     git_repo_setup: Path,
     create_demo_files: None,
+    monkeypatch: pytest.MonkeyPatch,
 ):
     """Edge case: Repo cache is regenerated if deleted"""
+    monkeypatch.setenv("BUILD_WORKSPACE_DIRECTORY", str(sphinx_base_dir))
     app = sphinx_app_setup()
     try:
-        os.environ["BUILD_WORKSPACE_DIRECTORY"] = str(sphinx_base_dir)
         app.build()
 
         repo_cache = app.outdir / "score_repo_grouped_scl_cache.json"
@@ -423,11 +427,12 @@ def test_repo_grouping_with_golden_file(
     sphinx_base_dir: Path,
     git_repo_setup: Path,
     create_demo_files: None,
+    monkeypatch: pytest.MonkeyPatch,
 ):
     """Happy path: Generated repo cache matches expected golden file"""
+    monkeypatch.setenv("BUILD_WORKSPACE_DIRECTORY", str(sphinx_base_dir))
     app = sphinx_app_setup()
     try:
-        os.environ["BUILD_WORKSPACE_DIRECTORY"] = str(sphinx_base_dir)
         app.build()
 
         repo_cache = app.outdir / "score_repo_grouped_scl_cache.json"

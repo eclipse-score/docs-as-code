@@ -263,25 +263,24 @@ def test_get_current_git_hash_invalid_repo(temp_dir: Path):
         get_current_git_hash(temp_dir)
 
 
-def test_runfiles_dir_found(temp_dir: Path):
+def test_runfiles_dir_found(temp_dir: Path, monkeypatch: pytest.MonkeyPatch):
     """Test Runfiles dir found when provided and it's actually there"""
     runfiles_dir = temp_dir / "runfiles_here"
     runfiles_dir.mkdir(parents=True)
-    os.environ["RUNFILES_DIR"] = str(runfiles_dir)
-    os.chdir(runfiles_dir)
+    monkeypatch.setenv("RUNFILES_DIR", str(runfiles_dir))
+    # No chdir needed: get_runfiles_dir() reads the env var directly and never consults CWD.
     result = get_runfiles_dir()
     assert Path(result) == runfiles_dir
-    os.environ.pop("RUNFILES_DIR", None)
 
 
-def test_runfiles_dir_missing_triggers_exit(temp_dir: Path):
+def test_runfiles_dir_missing_triggers_exit(temp_dir: Path, monkeypatch: pytest.MonkeyPatch):
     """Testing if the runfiles exit via sys.exit if runfiles are set but don't exist"""
     runfiles_dir = temp_dir / "does_not_exist"
-    os.environ["RUNFILES_DIR"] = str(runfiles_dir)
+    monkeypatch.setenv("RUNFILES_DIR", str(runfiles_dir))
     with pytest.raises(SystemExit) as e:
+        # No chdir needed: get_runfiles_dir() reads the env var directly and never consults CWD.
         get_runfiles_dir()
     assert "Could not find runfiles_dir" in str(e.value)
-    os.environ.pop("RUNFILES_DIR", None)
 
 
 def test_git_root_search_success(git_repo: Path, monkeypatch: pytest.MonkeyPatch):
