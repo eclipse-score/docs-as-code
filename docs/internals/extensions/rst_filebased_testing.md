@@ -36,7 +36,7 @@ Message text which is expected/not expected during the
                     This message is checked for the Sphinx-Needs directive
                     specified after the EXPECT/EXPECT-NOT statement.
 
-This message needs a '[+x]'offset after the 'EXPECT/-NOT' that should point to the need 
+This message needs a '[+x]'offset after the 'EXPECT/-NOT' that should point to the need
 that should (not) emit the warning.
 
 **\<need information>**<br>
@@ -55,10 +55,10 @@ This example verifies that the warning message
 *std_wp__test__abcd: is missing required attribute: \`status\`*
 is shown during the Sphinx build. Only the *check_options* check is enabled.
 
-With the '[+2]' after the 'EXPECT' we tell the parser that we want this warning 
+With the '[+2]' after the 'EXPECT' we tell the parser that we want this warning
 to be emitted and checked for 2 lines underneath
 
-There is multiple things that are not allowed for example, you need to have 
+There is multiple things that are not allowed for example, you need to have
 a new line between the EXPECT/-NOT and the need that it refers to
 
 **Negative Example**
@@ -68,5 +68,5 @@ a new line between the EXPECT/-NOT and the need that it refers to
     .. std_wp:: Test requirement
         :id: std_wp__test__abcd
 
-This will error and let you know that an offset of '1' is not allowed and you 
+This will error and let you know that an offset of '1' is not allowed and you
 need to add a new line beneath the Warning Statement
