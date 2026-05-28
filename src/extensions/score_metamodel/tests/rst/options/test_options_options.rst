@@ -552,7 +552,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
 
 .. feat_sec_threat:: Invalid status
    :id: feat_sec_threat__test__bad_2
-   :threat_id: S.01
+   :threat_id: MT_01_03
    :status: done
 
    Some content.
@@ -562,10 +562,10 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
 
 .. feat_sec_threat:: Valid threat
    :id: feat_sec_threat__test__ok_3
-   :threat_id: S.01
+   :threat_id: MT_01_03
    :status: valid
 
-   Some content.
+   message timing is manipulated (Tampering)
 
 
 .. Security Analysis: feat_sec_ana
@@ -576,7 +576,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
    :id: feat_sec_ana__test__bad_4
    :status: invalid
    :sufficient: no
-   :teffect: Unauthorized access to stored data.
+   :threat_effect: Unauthorized access to stored data.
 
    Argument why mitigation is insufficient.
 
@@ -588,7 +588,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
    :threat_scenario_id: TS.01
    :status: valid
    :sufficient: maybe
-   :teffect: Unauthorized access to stored data.
+   :threat_effect: Unauthorized access to stored data.
 
    Argument why mitigation is insufficient.
 
@@ -600,14 +600,14 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
    :threat_scenario_id: TS.01
    :status: done
    :sufficient: no
-   :teffect: Unauthorized access to stored data.
+   :threat_effect: Unauthorized access to stored data.
 
    Argument why mitigation is insufficient.
 
 
-#EXPECT: feat_sec_ana__test__bad_7: is missing required attribute: `teffect`.
+#EXPECT: feat_sec_ana__test__bad_7: is missing required attribute: `threat_effect`.
 
-.. feat_sec_ana:: Missing teffect
+.. feat_sec_ana:: Missing threat_effect
    :id: feat_sec_ana__test__bad_7
    :threat_scenario_id: TS.01
    :status: invalid
@@ -623,7 +623,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
    :threat_scenario_id: TS.01
    :status: valid
    :sufficient: yes
-   :teffect: Unauthorized access to stored data.
+   :threat_effect: Unauthorized access to stored data.
 
    Mitigation is sufficient because access controls are in place.
 
@@ -635,7 +635,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
    :threat_scenario_id: TS.02
    :status: invalid
    :sufficient: no
-   :teffect: Data integrity violation via tampering.
+   :threat_effect: Data integrity violation via tampering.
    :mitigation_issue: https://github.com/eclipse-score/score/issues/1
 
    Mitigation not yet implemented.
@@ -648,4 +648,4 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
    :threat_scenario_id: TS.03
    :status: invalid
    :sufficient: no
-   :teffect: Unauthorized data access.
+   :threat_effect: Unauthorized data access.

@@ -905,7 +905,7 @@ needs_types:
       # req-Id: tool_req__docs_sec_attrs_mandatory
       sufficient: ^(yes|no)$
       # req-Id: tool_req__docs_sec_attrs_mandatory
-      teffect: ^.+$
+      threat_effect: ^.+$
       # req-Id: tool_req__docs_sec_argument
       content: ^[\s\S]+$
     optional_options:
@@ -926,7 +926,7 @@ needs_types:
       threat_scenario_id: ^.*$
       status: ^(valid|invalid)$
       sufficient: ^(yes|no)$
-      teffect: ^.+$
+      threat_effect: ^.+$
       content: ^[\s\S]+$
     optional_options:
       mitigation_issue: ^https://github.com/.*$
@@ -944,7 +944,7 @@ needs_types:
       threat_scenario_id: ^.*$
       status: ^(valid|invalid)$
       sufficient: ^(yes|no)$
-      teffect: ^.+$
+      threat_effect: ^.+$
       content: ^[\s\S]+$
     optional_options:
       mitigation_issue: ^https://github.com/.*$

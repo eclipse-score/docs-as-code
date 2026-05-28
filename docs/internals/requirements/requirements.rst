@@ -1215,7 +1215,7 @@ Testing
   * ``threat_scenario_id``
   * ``status``: ``valid`` or ``invalid``
   * ``sufficient``: ``yes`` or ``no``
-  * ``teffect``: short description of the threat impact
+  * ``threat_effect``: short description of the threat impact
 
 
 .. tool_req:: Security Analysis Argument Content
