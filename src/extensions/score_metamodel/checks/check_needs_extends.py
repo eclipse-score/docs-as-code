@@ -12,33 +12,29 @@
 # *******************************************************************************
 from __future__ import annotations
 
-import os
-from pathlib import Path
-
 import sphinx_needs.directives.need
 from sphinx_needs.config import NeedsSphinxConfig
 from sphinx_needs.data import ExtendType, NeedsExtendType, NeedsMutable
+from sphinx_needs.directives.needextend import extend_needs_data as original_function
 from sphinx_needs.exceptions import NeedsInvalidFilter
 from sphinx_needs.filter_common import filter_needs_mutable
 from sphinx_needs.logging import get_logger, log_warning
-from sphinx_needs.directives.needextend import extend_needs_data as original_function
 from sphinx_needs.needs_schema import (
     FieldFunctionArray,
     FieldLiteralValue,
     LinksFunctionArray,
     LinksLiteralValue,
 )
+
 logger = get_logger(__name__)
 
 
-def score_extend_needs_data_func(
+def score_extend_needs_data_func(  # noqa: C901
     all_needs: NeedsMutable,
     extends: dict[str, NeedsExtendType],
     needs_config: NeedsSphinxConfig,
 ):
     """Use data gathered from needextend directives to modify fields of existing needs."""
-
-    # Sort by (docname, lineno) to ensure deterministic ordering,
     # regardless of parallel build worker completion order.
     sorted_extends = sorted(extends.values(), key=lambda x: (x["docname"], x["lineno"]))
 
@@ -46,9 +42,14 @@ def score_extend_needs_data_func(
     for current_needextend in sorted_extends:
         need_filter = current_needextend["filter"]
         location = (current_needextend["docname"], current_needextend["lineno"])
-        if "c.this_doc()" not in need_filter:
-            error_msg = "Potentially altering needs outside of the document is not allowed. Please add 'c.this_doc()' to the needextend to limit it to only needs in the same document"
-            log_warning(logger, error_msg, "needextend", location=location)
+
+        # ╓                                                          ╖
+        # ║ This is currently as a grace period still allowed, but   ║
+        # ║ will be forbiden in future releases                      ║
+        # ╙                                                          ╜
+        # if "c.this_doc()" not in need_filter:
+        # error_msg = "Potentially altering needs outside of the document is not allowed. Please add 'c.this_doc()' to the needextend to limit it to only needs in the same document"
+        # log_warning(logger, error_msg, "needextend", location=location)
 
         if current_needextend["filter_is_id"]:
             try:
@@ -56,7 +57,7 @@ def score_extend_needs_data_func(
             except KeyError:
                 error = f"Provided id {need_filter!r} for needextend does not exist."
                 if current_needextend["strict"]:
-                    raise NeedsInvalidFilter(error)
+                    raise NeedsInvalidFilter(error) from KeyError
                 log_warning(logger, error, "needextend", location=location)
                 continue
         else:
@@ -92,9 +93,7 @@ def score_extend_needs_data_func(
                 current_needextend["lineno"],
             )
 
-            for option_name, etype, link_value in current_needextend[
-                "list_modifications"
-            ]:
+            for _, etype, link_value in current_needextend["list_modifications"]:
                 match (etype, link_value):
                     case (
                         ExtendType.REPLACE | ExtendType.DELETE,
@@ -104,6 +103,7 @@ def score_extend_needs_data_func(
                         error_msg = (
                             "Replace or Delete action is not allowed via needextends."
                         )
+                        # logger.warning_for_need(current_needextend["id"], error_msg)
                         log_warning(logger, error_msg, "needextend", location=location)
 
             for option_name, etype, field_value in current_needextend["modifications"]:
@@ -124,6 +124,7 @@ def score_extend_needs_data_func(
                     ):
                         if need[option_name]:
                             error_msg = f"Error when extending need: {need['id']}. Replacing of options that are already set is not allowed via needextends."
+
                             log_warning(
                                 logger, error_msg, "needextend", location=location
                             )

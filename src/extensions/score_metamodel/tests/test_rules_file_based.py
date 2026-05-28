@@ -36,12 +36,6 @@ def sphinx_base_dir(tmp_path_factory: pytest.TempPathFactory) -> Path:
     ### Create a temporary directory for Sphinx and copy all necessary files.
     base_dir: Path = tmp_path_factory.mktemp("docs")
     shutil.copy(RST_DIR / "conf.py", base_dir)
-    # shutil.copytree(
-    #     DOCS_DIR / TOOLING_DIR_NAME,
-    #     base_dir / TOOLING_DIR_NAME,
-    #     dirs_exist_ok=True,
-    #     ignore=shutil.ignore_patterns("*.rst"),
-    # )
     return base_dir
 
 
@@ -215,7 +209,7 @@ def test_rst_files(
     # ║ purposes                                                 ║
     # ╙                                                          ╜
 
-    # print("\n".join(strip_ansi_codes(w) for w in warnings))
+    # print("\n".join(strip_ansi_codes(w) for w in raw_warnings))
 
     # Check if the expected warnings are present
     for warning_info in rst_data.warning_infos:

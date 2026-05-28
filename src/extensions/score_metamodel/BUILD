@@ -63,13 +63,16 @@ score_pytest(
     name = "unit_tests",
     size = "small",
     srcs = glob(
-        ["tests/*.py"],
+        [
+            "tests/*.py",
+        ],
         exclude = ["tests/test_rules_file_based.py"],
     ),
-    deps = [":score_metamodel"],
+    data = ["tests/model/simple_model.yaml"],
     pytest_config = "//:pyproject.toml",
+    deps = [":score_metamodel"],
 )
- 
+
 score_pytest(
     name = "file_based_tests",
     size = "medium",
@@ -81,6 +84,6 @@ score_pytest(
             "tests/**/*.yaml",
         ],
     ) + ["tests/rst/conf.py"],
-    deps = [":score_metamodel"],
     pytest_config = "//:pyproject.toml",
+    deps = [":score_metamodel"],
 )
