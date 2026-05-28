@@ -16,7 +16,7 @@
 
 ..
    Required option: `status` is missing
-#EXPECT: std_wp__test__abcd: is missing required attribute: `status`.
+#EXPECT[+2]: std_wp__test__abcd: is missing required attribute: `status`.
 
 .. std_wp:: This is a test
    :id: std_wp__test__abcd
@@ -24,7 +24,7 @@
 
 
 .. All required options are present
-#EXPECT-NOT: attribute
+#EXPECT-NOT[+2]: attribute
 
 .. std_wp:: This is a test
    :id: std_wp__test__abce
@@ -33,7 +33,7 @@
 
 
 .. Required link `satisfies` refers to wrong requirement type
-#EXPECT: feat_req__abce: references 'std_wp__test__abce' as 'satisfies', but it must reference Stakeholder Requirement (stkh_req).
+#EXPECT[+2]: feat_req__abce: references 'std_wp__test__abce' as 'satisfies', but it must reference Stakeholder Requirement (stkh_req).
 
 .. feat_req:: Child requirement
    :id: feat_req__abce
@@ -42,7 +42,7 @@
 
 
 .. All required links are present
-#EXPECT-NOT: feat_req__abcg: is missing required link
+#EXPECT-NOT[+2]: feat_req__abcg: is missing required link
 
 .. feat_req:: Child requirement
    :id: feat_req__abcg
@@ -54,105 +54,105 @@
 
 
 .. Test if the `sufficient` option for Safety Analysis (FMEA and DFA) follows the pattern `^(yes|no)$`
-#EXPECT: feat_saf_fmea__test__bad_1.sufficient (QM): does not follow pattern `^(yes|no)$`.
+#EXPECT[+2]: feat_saf_fmea__test__bad_1.sufficient (QM): does not follow pattern `^(yes|no)$`.
 
 .. feat_saf_fmea:: This is a test
    :id: feat_saf_fmea__test__bad_1
    :sufficient: QM
 
 
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 
 .. feat_saf_fmea:: This is a test
    :id: feat_saf_fmea__test__2
    :sufficient: yes
 
 
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 
 .. feat_saf_fmea:: This is a test
    :id: feat_saf_fmea__test__3
    :sufficient: no
 
 
-#EXPECT: comp_saf_fmea__test__bad_4.sufficient (QM): does not follow pattern `^(yes|no)$`.
+#EXPECT[+2]: comp_saf_fmea__test__bad_4.sufficient (QM): does not follow pattern `^(yes|no)$`.
 
 .. comp_saf_fmea:: This is a test
    :id: comp_saf_fmea__test__bad_4
    :sufficient: QM
 
 
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 
 .. comp_saf_fmea:: This is a test
    :id: comp_saf_fmea__test__5
    :sufficient: yes
 
 
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 
 .. comp_saf_fmea:: This is a test
    :id: comp_saf_fmea__test__6
    :sufficient: no
 
 
-#EXPECT: feat_saf_dfa__test__bad_7.sufficient (QM): does not follow pattern `^(yes|no)$`.
+#EXPECT[+2]: feat_saf_dfa__test__bad_7.sufficient (QM): does not follow pattern `^(yes|no)$`.
 
 .. feat_saf_dfa:: This is a test
    :id: feat_saf_dfa__test__bad_7
    :sufficient: QM
 
 
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 
 .. feat_saf_dfa:: This is a test
    :id: feat_saf_dfa__test__8
    :sufficient: yes
 
 
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 
 .. feat_saf_dfa:: This is a test
    :id: feat_saf_dfa__test__9
    :sufficient: no
 
 
-#EXPECT: feat_saf_dfa__test__bad_10.sufficient (QM): does not follow pattern `^(yes|no)$`.
+#EXPECT[+2]: feat_saf_dfa__test__bad_10.sufficient (QM): does not follow pattern `^(yes|no)$`.
 
 .. feat_saf_dfa:: This is a test
    :id: feat_saf_dfa__test__bad_10
    :sufficient: QM
 
 
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 
 .. feat_saf_dfa:: This is a test
    :id: feat_saf_dfa__test__11
    :sufficient: yes
 
 
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 
 .. feat_saf_dfa:: This is a test
    :id: feat_saf_dfa__test__12
    :sufficient: no
 
 
-#EXPECT: comp_saf_dfa__test__bad_13.sufficient (QM): does not follow pattern `^(yes|no)$`.
+#EXPECT[+2]: comp_saf_dfa__test__bad_13.sufficient (QM): does not follow pattern `^(yes|no)$`.
 
 .. comp_saf_dfa:: This is a test
    :id: comp_saf_dfa__test__bad_13
    :sufficient: QM
 
 
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 
 .. comp_saf_dfa:: This is a test
    :id: comp_saf_dfa__test__14
    :sufficient: yes
 
 
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 
 .. comp_saf_dfa:: This is a test
    :id: comp_saf_dfa__test__15
@@ -161,7 +161,7 @@
 
 
 .. Test that the `sufficient` option is case sensitive and does not accept values other than `yes` or `no`
-#EXPECT: feat_saf_fmea__test__bad_16.sufficient (yEs): does not follow pattern `^(yes|no)$`.
+#EXPECT[+2]: feat_saf_fmea__test__bad_16.sufficient (yEs): does not follow pattern `^(yes|no)$`.
 
 .. feat_saf_fmea:: This is a test
    :id: feat_saf_fmea__test__bad_16
@@ -180,7 +180,7 @@
    This Test can not be tested at the moment without enabeling that optional checks are also linked.
    TODO: Re-enable this check
 .. Negative Test: Linked to a non-allowed requirement type.
-.. #EXPECT: feat_saf_fmea__child__25.mitigated_by (['comp_req__child__ASIL_B']): does not follow pattern `^(feat_req__.*|aou_req__.*)$`.
+.. #EXPECT[+2]: feat_saf_fmea__child__25.mitigated_by (['comp_req__child__ASIL_B']): does not follow pattern `^(feat_req__.*|aou_req__.*)$`.
 ..
 .. .. feat_saf_fmea:: Child requirement 25
 ..    :id: feat_saf_fmea__child__25
@@ -193,7 +193,7 @@
 --- feat_saf_fmea violates begin ---
 
 .. Negative Test: Linked to a non-allowed requirement type.
-#EXPECT: feat_saf_fmea__child__26: references 'comp_req__child__ASIL_B' as 'violates', but it must reference Feature Sequence Diagram (feat_arc_dyn) or Feature & Feature Package Diagram (feat_arc_sta).
+#EXPECT[+2]: feat_saf_fmea__child__26: references 'comp_req__child__ASIL_B' as 'violates', but it must reference Feature Sequence Diagram (feat_arc_dyn) or Feature & Feature Package Diagram (feat_arc_sta).
 
 .. feat_saf_fmea:: Child requirement 26
    :id: feat_saf_fmea__child__26
@@ -202,7 +202,7 @@
 .. feat_saf_fmea can link either feat_arc_dyn or feat_arc_sta
 
 Expect no errors related to "violates" field. We need to be generic for expect-not verifications.
-#EXPECT-NOT: violates
+#EXPECT-NOT[+2]: violates
 
 .. feat_saf_fmea:: This requirement links a feat_arc_dyn
    :id: feat_saf_fmea__violate__dyn
@@ -210,7 +210,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
 
 
 Expect no errors related to "violates" field. We need to be generic for expect-not verifications.
-#EXPECT-NOT: violates
+#EXPECT-NOT[+2]: violates
 
 .. feat_saf_fmea:: This requirement links a feat_arc_sta
    :id: feat_saf_fmea__violate__sta
@@ -220,7 +220,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
 
 
 .. Tests if the attribute `safety` follows the pattern `^(QM|ASIL_B)$`
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 
 .. document:: This is a test document
    :id: doc__test_good_1
@@ -228,7 +228,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
    :safety: QM
 
 
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 
 .. document:: This is a test document
    :id: doc__test_good_2
@@ -236,7 +236,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
    :safety: ASIL_B
 
 
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 
 .. stkh_req:: This is a test
    :id: stkh_req__test_good_1
@@ -244,7 +244,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
    :safety: QM
 
 
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 
 .. stkh_req:: This is a test
    :id: stkh_req__test_good_2
@@ -252,7 +252,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
    :safety: ASIL_B
 
 
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 
 .. feat_req:: This is a test
    :id: feat_req__test_good_1
@@ -260,7 +260,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
    :safety: QM
 
 
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 
 .. feat_req:: This is a test
    :id: feat_req__test_good_2
@@ -268,7 +268,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
    :safety: ASIL_B
 
 
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 
 .. comp_req:: This is a test
    :id: comp_req__test_good_1
@@ -276,7 +276,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
    :safety: QM
 
 
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 
 .. comp_req:: This is a test
    :id: comp_req__test_good_2
@@ -284,7 +284,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
    :safety: ASIL_B
 
 
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 
 .. tool_req:: This is a test
    :id: tool_req__test_good_1
@@ -293,7 +293,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
 
 
 
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 
 .. tool_req:: This is a test
    :id: tool_req__test_good_2
@@ -301,14 +301,14 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
    :safety: ASIL_B
 
 
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 .. aou_req:: This is a test
    :id: aou_req__test_good_1
    :status: valid
    :safety: QM
 
 
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 
 .. aou_req:: This is a test
    :id: aou_req__test_good_2
@@ -316,7 +316,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
    :safety: ASIL_B
 
 
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 
 .. feat_arc_sta:: This is a test
    :id: feat_arc_sta__test_good_1
@@ -324,7 +324,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
    :safety: QM
 
 
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 
 .. feat_arc_sta:: This is a test
    :id: feat_arc_sta__test_good_2
@@ -332,7 +332,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
    :safety: ASIL_B
 
 
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 
 .. feat_arc_dyn:: This is a test
    :id: feat_arc_dyn__test_good_1
@@ -341,7 +341,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
 
 
 
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 
 .. feat_arc_dyn:: This is a test
    :id: feat_arc_dyn__test_good_2
@@ -349,7 +349,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
    :safety: ASIL_B
 
 
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 
 .. logic_arc_int:: This is a test
    :id: logic_arc_int__test_good_1
@@ -358,7 +358,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
 
 
 
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 
 .. logic_arc_int:: This is a test
    :id: logic_arc_int__test_good_2
@@ -366,7 +366,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
    :safety: ASIL_B
 
 
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 
 .. logic_arc_int_op:: This is a test
    :id: logic_arc_int_op__test_good_1
@@ -374,7 +374,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
    :safety: QM
 
 
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 
 .. logic_arc_int_op:: This is a test
    :id: logic_arc_int_op__test_good_2
@@ -382,7 +382,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
    :safety: ASIL_B
 
 
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 
 .. comp_arc_sta:: This is a test
    :id: comp_arc_sta__test_good_1
@@ -390,7 +390,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
    :safety: QM
 
 
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 
 .. comp_arc_sta:: This is a test
    :id: comp_arc_sta__test_good_2
@@ -398,7 +398,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
    :safety: ASIL_B
 
 
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 
 .. comp_arc_dyn:: This is a test
    :id: comp_arc_dyn__test_good_1
@@ -406,7 +406,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
    :safety: QM
 
 
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 
 .. comp_arc_dyn:: This is a test
    :id: comp_arc_dyn__test_good_2
@@ -415,7 +415,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
 
 
 
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 
 .. real_arc_int:: This is a test
    :id: real_arc_int__test_good_1
@@ -423,7 +423,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
    :safety: QM
 
 
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 
 .. real_arc_int:: This is a test
    :id: real_arc_int__test_good_2
@@ -431,14 +431,14 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
    :safety: ASIL_B
 
 
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 
 .. real_arc_int_op:: This is a test
    :id: real_arc_int_op__test_good_1
    :status: valid
    :safety: QM
 
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 
 .. real_arc_int_op:: This is a test
    :id: real_arc_int_op__test_good_2
@@ -446,7 +446,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
    :safety: ASIL_B
 
 
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 
 .. dd_sta:: This is a test
    :id: dd_sta__test_good_1
@@ -455,7 +455,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
 
    Some content to satisfy the mandatory description requirement.
 
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 
 .. dd_sta:: This is a test
    :id: dd_sta__test_good_2
@@ -465,7 +465,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
    Some content to satisfy the mandatory description requirement.
 
 
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 
 .. dd_dyn:: This is a test
    :id: dd_dyn__test_good_1
@@ -474,7 +474,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
 
    Some content to satisfy the mandatory description requirement.
 
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 
 .. dd_dyn:: This is a test
    :id: dd_dyn__test_good_2
@@ -484,7 +484,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
    Some content to satisfy the mandatory description requirement.
 
 
-#EXPECT: dd_sta__test_no_content: is missing required attribute: `content`.
+#EXPECT[+2]: dd_sta__test_no_content: is missing required attribute: `content`.
 
 .. dd_sta:: Missing content
    :id: dd_sta__test_no_content
@@ -492,7 +492,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
    :safety: QM
 
 
-#EXPECT: sw_unit__test_no_content: is missing required attribute: `content`.
+#EXPECT[+2]: sw_unit__test_no_content: is missing required attribute: `content`.
 
 .. sw_unit:: Missing content
    :id: sw_unit__test_no_content
@@ -500,7 +500,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
    :safety: QM
 
 
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 
 .. sw_unit:: This is a test
    :id: sw_unit__test_good_1
@@ -510,7 +510,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
    Some content to satisfy the mandatory description requirement.
 
 
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 
 .. sw_unit:: This is a test
    :id: sw_unit__test_good_2
@@ -520,7 +520,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
    Some content to satisfy the mandatory description requirement.
 
 
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 
 .. sw_unit_int:: This is a test
    :id: sw_unit_int__test_good_1
@@ -530,7 +530,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
    Some content to satisfy the mandatory description requirement.
 
 
-#EXPECT-NOT: does not follow pattern
+#EXPECT-NOT[+2]: does not follow pattern
 
 .. sw_unit_int:: This is a test
    :id: sw_unit_int__test_good_2
@@ -540,7 +540,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
    Some content to satisfy the mandatory description requirement.
 
 
-#EXPECT: sw_unit_int__test_no_content: is missing required attribute: `content`.
+#EXPECT[+2]: sw_unit_int__test_no_content: is missing required attribute: `content`.
 
 .. sw_unit_int:: Missing content
    :id: sw_unit_int__test_no_content
@@ -549,19 +549,10 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
 
 
 
-..
-   Ensuring that empty content is detected correctly
-.. #EXPECT: stkh_req__test_no_content: is missing required attribute: `content`
-..
-.. .. stkh_req:: This is a test
-..    :id: stkh_req__test_no_content
-..    :status: valid
-..    :safety: QM
-
 
 ..
    Ensuring that non empty content is detected correctly
-#EXPECT-NOT: attribute: `content`
+#EXPECT-NOT[+2]: attribute: `content`
 
 .. stkh_req:: This is a test
    :id: stkh_req__test_content
@@ -573,20 +564,20 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
 
 ..
    This should not trigger, as 'std_wp' is not checked for content
-#EXPECT-NOT: attribute: `content`
+#EXPECT-NOT[+2]: attribute: `content`
 
 .. std_wp:: This is a test
    :id: std_wp__test_content
 
 
-#EXPECT: feat_req__random_id3.valid_from (2035-03): does not follow pattern
+#EXPECT[+2]: feat_req__random_id3.valid_from (2035-03): does not follow pattern
 
 .. feat_req:: milestone must be a version
    :id: feat_req__random_id3
    :valid_from: 2035-03
 
 
-#EXPECT: feat_req__random_id4.valid_until (2035-03): does not follow pattern
+#EXPECT[+2]: feat_req__random_id4.valid_until (2035-03): does not follow pattern
 
 .. feat_req:: milestone must be a version
    :id: feat_req__random_id4

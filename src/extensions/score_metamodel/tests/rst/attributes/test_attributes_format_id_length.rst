@@ -14,13 +14,13 @@
 #CHECK: check_id_length
 
 .. Id contains too many characters
-#EXPECT: std_wp__testabcdefghijklmnopqrstuvwxyz123__abcd.id (std_wp__testabcdefghijklmnopqrstuvwxyz123__abcd): exceeds the maximum allowed length of 45 characters (current length: 47).
+#EXPECT[+2]: std_wp__testabcdefghijklmnopqrstuvwxyz123__abcd.id (std_wp__testabcdefghijklmnopqrstuvwxyz123__abcd): exceeds the maximum allowed length of 45 characters (current length: 47).
 
 .. std_wp:: This is a test
    :id: std_wp__testabcdefghijklmnopqrstuvwxyz123__abcd
 
 .. Id has correct length
-#EXPECT-NOT: exceeds the maximum allowed length of 45 characters
+#EXPECT-NOT[+2]: exceeds the maximum
 
 .. std_wp:: This is a test
    :id: std_wp__test__abce

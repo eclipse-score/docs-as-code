@@ -16,7 +16,7 @@
 
 .. Test: No external prefixes (single documentation mega-build)
 .. Verifies links work when all needs are loaded in one Sphinx instance, without prefix logic.
-#EXPECT-NOT tool_req__test_abcd.satisfies (doc_getstrt__req__process): does not follow pattern `^doc_.+$`.
+#EXPECT-NOT[+2]: does not follow pattern `^doc_.+$`.
 
 .. tool_req:: This is a test
    :id: tool_req__test_abcd
@@ -27,8 +27,8 @@
 
 .. Also make sure it works with lists of links
 
-#EXPECT-NOT: tool_req__test_aaaa.satisfies (doc_getstrt__req__process): does not follow pattern `^doc_.+$`.
-#EXPECT-NOT: tool_req__test_aaaa.satisfies (gd_guidl__req__engineering): does not follow pattern `^gd_.+$`.
+#EXPECT-NOT[+3]: does not follow pattern `^doc_.+$`.
+#EXPECT-NOT[+2]: does not follow pattern `^gd_.+$`.
 
 .. tool_req:: This is a test
    :id: tool_req__test_aaaa
