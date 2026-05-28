@@ -291,18 +291,3 @@ def check_validity_consistency(
             f"valid_from ({valid_from}) >= valid_until ({valid_until})."
         )
         log.warning_for_need(need, msg)
-
-
-# @local_check
-# def check_needextends_forbidden_options(app: Sphinx, need: NeedItem, log: CheckLogger):
-#     extends_data = list(SphinxNeedsData(app.env).get_or_create_extends().values())
-#     dissallowed: list[str] = app.config.unmutable_options
-#     for needsextends in extends_data:
-#         location = f"{needsextends['docname']}:{needsextends['lineno']}"
-#         modifications = needsextends["modifications"]
-#         for option, _, _ in modifications:
-#             if option in dissallowed:
-#                 log.warning(
-#                     f"Needextend in document: {needsextends['docname']} modifies {option} which is not allowed",
-#                     location,
-#                 )

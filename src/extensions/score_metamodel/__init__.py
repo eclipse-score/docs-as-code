@@ -314,7 +314,6 @@ def _clear_needs_defaults(app: Sphinx):
 def setup(app: Sphinx) -> dict[str, str | bool]:
     app.add_config_value("external_needs_source", "", rebuild="env")
     app.add_config_value("score_metamodel_yaml", "", rebuild="env")
-    app.add_config_value("unmutable_options", [], rebuild="env")
     config_setdefault(app.config, "needs_id_required", True)
     config_setdefault(app.config, "needs_id_regex", "^[A-Za-z0-9_-]{6,}")
 
@@ -330,7 +329,6 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     app.config.needs_fields.update(metamodel.needs_fields)
     app.config.graph_checks = metamodel.needs_graph_check
     app.config.prohibited_words_checks = metamodel.prohibited_words_checks
-    app.config.unmutable_options = metamodel.unmutable_options
 
     # app.config.stop_words = metamodel["stop_words"]
     # app.config.weak_words = metamodel["weak_words"]

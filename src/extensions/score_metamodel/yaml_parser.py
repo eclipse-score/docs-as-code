@@ -13,7 +13,6 @@
 """Functionality related to reading in the SCORE metamodel.yaml"""
 
 from dataclasses import dataclass
-from itertools import chain
 from pathlib import Path
 from typing import Any, cast
 
@@ -33,7 +32,6 @@ class MetaModelData:
     needs_types: list[ScoreNeedType]
     needs_links: dict[str, dict[str, str]]
     needs_fields: dict[str, dict[str, Any]]
-    unmutable_options: list[str]
     prohibited_words_checks: list[ProhibitedWordCheck]
     needs_graph_check: dict[str, object]
 
@@ -49,10 +47,6 @@ def _parse_prohibited_words(
         )
         for check_name, check_config in checks_dict.items()
     ]
-
-
-def _parse_unmutable_options(option_dict: dict[str, list[str]]) -> list[str]:
-    return list(chain(*option_dict.values()))
 
 
 def default_options():
@@ -222,7 +216,6 @@ def load_metamodel_data(yaml_path: Path | None = None) -> MetaModelData:
         needs_types=list(needs_types.values()),
         needs_links=_parse_links(data.get("needs_extra_links", {})),
         needs_fields=_collect_all_custom_options(needs_types),
-        unmutable_options=_parse_unmutable_options(data.get("unmutable_options", {})),
         prohibited_words_checks=prohibited_words_checks,
         needs_graph_check=data.get("graph_checks", {}),
     )
