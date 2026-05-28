@@ -176,17 +176,14 @@
 
 
 
-..
-   This Test can not be tested at the moment without enabeling that optional checks are also linked.
-   TODO: Re-enable this check
 .. Negative Test: Linked to a non-allowed requirement type.
-.. #EXPECT[+2]: feat_saf_fmea__child__25.mitigated_by (['comp_req__child__ASIL_B']): does not follow pattern `^(feat_req__.*|aou_req__.*)$`.
-..
-.. .. feat_saf_fmea:: Child requirement 25
-..    :id: feat_saf_fmea__child__25
-..    :safety: ASIL_B
-..    :status: valid
-..    :mitigated_by: comp_req__child__ASIL_B
+#EXPECT[+2]: feat_saf_fmea__child__25: references 'comp_req__child__ASIL_B' as 'mitigated_by', but it must reference Feature Requirement (feat_req) or Assumption of Use Requirement (aou_req).
+
+.. feat_saf_fmea:: Child requirement 25
+   :id: feat_saf_fmea__child__25
+   :safety: ASIL_B
+   :status: valid
+   :mitigated_by: comp_req__child__ASIL_B
 
 
 
@@ -201,7 +198,7 @@
 
 .. feat_saf_fmea can link either feat_arc_dyn or feat_arc_sta
 
-Expect no errors related to "violates" field. We need to be generic for expect-not verifications.
+.. Expect no errors related to "violates" field. We need to be generic for expect-not verifications.
 #EXPECT-NOT[+2]: violates
 
 .. feat_saf_fmea:: This requirement links a feat_arc_dyn
@@ -209,7 +206,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
    :violates: feat_arc_dyn__test_good_1
 
 
-Expect no errors related to "violates" field. We need to be generic for expect-not verifications.
+.. Expect no errors related to "violates" field. We need to be generic for expect-not verifications.
 #EXPECT-NOT[+2]: violates
 
 .. feat_saf_fmea:: This requirement links a feat_arc_sta
@@ -302,6 +299,7 @@ Expect no errors related to "violates" field. We need to be generic for expect-n
 
 
 #EXPECT-NOT[+2]: does not follow pattern
+
 .. aou_req:: This is a test
    :id: aou_req__test_good_1
    :status: valid

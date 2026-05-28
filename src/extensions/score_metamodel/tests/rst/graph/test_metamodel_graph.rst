@@ -74,7 +74,7 @@
 
 
 .. Positive Test: Linked to a mitigation that is equal to the safety level of the analysed item.
-#EXPECT-NOT: safety
+#EXPECT-NOT[+2]: safety
 
 .. feat_saf_dfa:: Child requirement 6
    :id: feat_saf_dfa__child__6

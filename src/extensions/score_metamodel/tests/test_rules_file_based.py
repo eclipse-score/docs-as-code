@@ -143,11 +143,10 @@ def extract_test_data(rst_file: Path) -> tuple[RstData, list[ErrorChecks]]:
     rst_data = RstData(filename=str(rst_file.relative_to(RST_DIR)))
     parsed_checks: list[ErrorChecks] = []
     with open(rst_file) as f:
-        for no, raw_line in enumerate(f, start=1):
-            line = raw_line.strip() 
+        for no, line in enumerate(f, start=1):
             # Beginning of new need
             # We filter for '::' as well so we ONLY get directives not comments
-            if line.startswith(".. ") and "::" not in line:
+            if line.startswith(".. ") and "::" in line:
                 rst_data.found_objects.append(no)
                 continue
 
