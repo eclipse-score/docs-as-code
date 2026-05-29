@@ -1180,8 +1180,6 @@ Testing
   * Component Security Analysis (Threat Scenario) -> ``comp_sec_ana``
   * Platform Security Analysis (Threat Scenario) -> ``plat_sec_ana``
 
-  All need types have a mandatory ``title`` and unique ``id``.
-
 
 .. tool_req:: Security Analysis: STRIDE Threat ID Attribute
   :id: tool_req__docs_sec_attr_stride_threat_id

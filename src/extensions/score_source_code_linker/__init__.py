@@ -151,15 +151,6 @@ def setup_source_code_linker(app: Sphinx, ws_root: Path | None):
             "options": ["source_code_link", "testlink"],
         },
     )
-    app.config.needs_string_links.setdefault(
-        "mitigation_issue_linker",
-        {
-            "regex": r"(?P<url>https://github\.com/[^/]+/(?P<repo>[^/]+)/issues/(?P<number>\d+))",
-            "link_url": "{{url}}",
-            "link_name": "{{repo}}#{{number}}",
-            "options": ["mitigation_issue"],
-        },
-    )
 
     score_sourcelinks_json = os.environ.get("SCORE_SOURCELINKS")
     if not score_sourcelinks_json:
