@@ -19,14 +19,11 @@ from pathlib import Path
 
 import pytest
 from sphinx.testing.util import SphinxTestApp
-from sphinx_needs.logging import get_logger
 
 RST_DIR = Path(__file__).absolute().parent / "rst"
 
 ### List of relative paths of all rst files in RST_DIR
 RST_FILES = [str(f.relative_to(RST_DIR)) for f in Path(RST_DIR).rglob("*.rst")]
-
-logger = get_logger(__file__)
 
 
 @pytest.fixture
