@@ -56,7 +56,7 @@
    :satisfies: stkh_req__test__need_extends_abc
 
 
-#EXPECT: Replace or Delete action is not allowed via needextends.
+#EXPECT: Delete action is not allowed via needextends.
 
 .. needextend:: id == 'stkh_req__test__need_extends_1'
    :-safety:
