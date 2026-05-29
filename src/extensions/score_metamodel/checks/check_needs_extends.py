@@ -81,7 +81,8 @@ def score_extend_needs_data_func(  # noqa: C901
             if found_need["is_external"]:
                 log_warning(
                     logger,
-                    "Error. It is not allowed to modify external needs via needextend",
+                    f"Error when extending need: {found_need['id']} "
+                    + "It is not allowed to modify external needs via needextend",
                     "needextend",
                     location,
                 )
@@ -101,6 +102,7 @@ def score_extend_needs_data_func(  # noqa: C901
                     ):
                         # Replacing / Deleting links is not allowed
                         error_msg = (
+                            f"Error when extending need: {found_need['id']} "
                             "Replace or Delete action is not allowed via needextends."
                         )
                         # logger.warning_for_need(current_needextend["id"], error_msg)
@@ -108,12 +110,18 @@ def score_extend_needs_data_func(  # noqa: C901
 
             for option_name, etype, field_value in current_needextend["modifications"]:
                 if etype == ExtendType.DELETE:
-                    error_msg = "Delete action is not allowed via needextends."
+                    error_msg = (
+                        f"Error when extending need: {found_need['id']} "
+                        "Delete action is not allowed via needextends."
+                    )
                     log_warning(logger, error_msg, "needextend", location=location)
                 match (etype, field_value):
                     case (ExtendType.APPEND, FieldLiteralValue()):
                         if isinstance(field_value.value, str):
-                            error_msg = "Append action is not allowed via needextends on 'string type options'."
+                            error_msg = (
+                                f"Error when extending need: {found_need['id']} "
+                                "Append action is not allowed via needextends on 'string type options'."
+                            )
                             log_warning(
                                 logger, error_msg, "needextend", location=location
                             )
@@ -123,7 +131,7 @@ def score_extend_needs_data_func(  # noqa: C901
                         None | FieldLiteralValue() | FieldFunctionArray(),
                     ):
                         if need[option_name]:
-                            error_msg = f"Error when extending need: {need['id']}. Replacing of options that are already set is not allowed via needextends."
+                            error_msg = f"Error when extending need: {need['id']} Replacing of options that are already set is not allowed via needextends."
 
                             log_warning(
                                 logger, error_msg, "needextend", location=location
