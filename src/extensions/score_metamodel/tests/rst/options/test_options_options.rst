@@ -233,6 +233,25 @@
    :safety: ASIL_B
 
 
+.. Tests if the attribute `status` follows the pattern `^(valid|draft|invalid)$`
+#EXPECT-NOT[+2]: does not follow pattern
+
+.. document:: This is a test document
+   :id: doc__test_good_3
+   :status: draft
+   :safety: QM
+
+
+#EXPECT[+4]: doc__test_bad_status_1.status (active): does not follow pattern `^(valid|draft|invalid)$`.
+#EXPECT[+3]: doc__test_bad_status_1: is missing required attribute: `security`.
+#EXPECT[+2]: doc__test_bad_status_1: is missing required link: `realizes`.
+
+.. document:: This is a test document
+   :id: doc__test_bad_status_1
+   :status: active
+   :safety: QM
+
+
 #EXPECT-NOT[+2]: does not follow pattern
 
 .. stkh_req:: This is a test

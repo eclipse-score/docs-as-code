@@ -304,15 +304,16 @@ Versioning
   :id: tool_req__docs_doc_generic_mandatory
   :tags: Documents
   :implemented: PARTIAL
-  :version: 1
+  :version: 2
   :satisfies:
    gd_req__doc_attributes_manual,
-   gd_req__change_attr_impact_safety
+   gd_req__change_attr_impact_safety,
+   gd_req__doc_attr_status,
   :parent_covered: YES
 
-  Docs-as-Code shall enforce that each Generic Document ``doc__*`` has the following attributes:
+  Enforce that each Generic Document ``doc__*`` has the following attributes:
 
-  * status
+  * status (one of: valid, draft, invalid)
   * security
   * safety
   * realizes
