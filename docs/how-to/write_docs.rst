@@ -34,10 +34,10 @@ Advanced
 Needextend
 ~~~~~~~~~~
 
-Needextend allows you to extend needs that are defined in the documentaiton.
+Needextend allows you to extend needs that are defined in the documentation.
 The scope of allowed behaviour in Docs-As-Code for needextend is limited as we do not allow all of its usecases.
 
-Allowed uscases:
+Allowed usecases:
 
 * Setting an attribute or Link **IF** it is not already set in the need that is getting modified
 * Appending to a list of links
