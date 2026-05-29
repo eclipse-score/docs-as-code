@@ -22,11 +22,8 @@ from sphinx.testing.util import SphinxTestApp
 from sphinx_needs.logging import get_logger
 
 RST_DIR = Path(__file__).absolute().parent / "rst"
-DOCS_DIR = Path(__file__).absolute().parent.parent.parent.parent.parent
 
 ### List of relative paths of all rst files in RST_DIR
-
-
 RST_FILES = [str(f.relative_to(RST_DIR)) for f in Path(RST_DIR).rglob("*.rst")]
 
 logger = get_logger(__file__)
@@ -163,7 +160,7 @@ def extract_test_data(rst_file: Path) -> tuple[RstData, list[ErrorChecks]]:
                 # This is not allowed as this will lead to a silent parsing error and the need will not be registered
                 if offset == 1:
                     rst_data.syntax_errors.append(
-                        "Warning lines have '+1' as offset. There *HAS* to be a new line between Warning Statement and need."
+                        "Warning lines have '+1' as offset. There *HAS* to be a new line between Warning Statement and need. "
                         "Please add a new line and increase the offset accordingly to the following line:\n\t"
                         f"{line}"
                     )
@@ -267,9 +264,9 @@ def test_rst_files(
     # The function uses the SphinxTestApp to build the documentation
     # and checks for the expected/unexpected warnings.
     rst_data_raw, parsed_checks_raw = extract_test_data(RST_DIR / rst_file)
-    if not rst_data_raw:
+    if not rst_data_raw.warning_infos:
         raise AssertionError(
-            "Unable to extract test data from the rst file: "
+            "Could not find any Warning Statements (EXPECT/-NOT) in rst file: "
             f"{rst_file}. Please check the file for the correct format."
         )
     rst_data = group_test_data(rst_data_raw, parsed_checks_raw)
@@ -297,6 +294,9 @@ def test_rst_files(
     # ║ purposes                                                 ║
     # ╙                                                          ╜
     raw_warnings = app.warning.getvalue().splitlines()
+    # We have some warnings supressed (in conf.py) therefore we are already
+    # limiting the warnings that could be published here.
+    # We do not want to limit the warnings outright as that will make debugging harder
     warnings = [strip_ansi_codes(w) for w in raw_warnings]
 
     # Enable this if you need to see errors for debugging purposes
