@@ -17,6 +17,15 @@
    :status: invalid
 
 
+.. stkh_req:: Test Req Extends 2
+   :id: stkh_req__test__need_extends_abc
+   :status: valid
+
+
+.. feat_req:: Test Linkage Override
+   :id: feat_req__test__linkage_override
+   :satisfies: stkh_req__test__need_extends_1
+
 
 .. Replacing of options that are already set is not allowed.
 
@@ -33,6 +42,30 @@
 
 .. needextend:: c.this_doc() and id == 'stkh_req__test__need_extends_1'
    :safety: NO
+
+
+#EXPECT-NOT: Replacing of options
+
+.. needextend:: c.this_doc() and id == 'stkh_req__test__need_extends_1'
+   :safety: NO
+
+
+# EXPECT: Replace or Delete action is not allowed via needextends.
+
+.. needextend:: feat_req__test__linkage_override
+   :satisfies: stkh_req__test__need_extends_abc
+
+
+#EXPECT: Replace or Delete action is not allowed via needextends.
+
+.. needextend:: id == 'stkh_req__test__need_extends_1'
+   :-safety:
+
+
+#EXPECT: Append action is not allowed via needextends on 'string type options'
+
+.. needextend:: id == 'stkh_req__test__need_extends_1'
+   :+safety: YES
 
 
 .. This will be activated once we have activated the c.this_doc() check aswell

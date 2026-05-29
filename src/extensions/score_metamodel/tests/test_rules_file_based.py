@@ -208,8 +208,7 @@ def test_rst_files(
     # ║ Enable this if you need to see errors for debugging      ║
     # ║ purposes                                                 ║
     # ╙                                                          ╜
-
-    # print("\n".join(strip_ansi_codes(w) for w in raw_warnings))
+    # print("\n".join(strip_ansi_codes(w) for w in warnings))
 
     # Check if the expected warnings are present
     for warning_info in rst_data.warning_infos:
