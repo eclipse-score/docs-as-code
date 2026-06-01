@@ -484,8 +484,8 @@ The test files can also be organized in a subfolder structure below directory rs
 The test files are expected to contain the following format:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>#CHECK: &lt;check functions&gt;
 
-#EXPECT: &lt;warning message&gt;
-#EXPECT-NOT: &lt;warning message&gt;
+#EXPECT[+x]: &lt;warning message&gt;
+#EXPECT-NOT[+x]: &lt;warning message&gt;
 
 &lt;need information&gt;
 </pre></div>
@@ -500,12 +500,14 @@ Message text which is expected/not expected during the
 Sphinx build to be shown.
 This message is checked for the Sphinx-Needs directive
 specified after the EXPECT/EXPECT-NOT statement.</p>
+<p>This message needs a ‘[+x]’offset after the ‘EXPECT/-NOT’ that should point to the need
+that should (not) emit the warning.</p>
 <p><strong>&lt;need information&gt;</strong><br>
 One or more Sphinx-Needs directives needed for the
 Sphinx document build</p>
 <p><strong>Example:</strong></p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>#CHECK: check_options
-#EXPECT: std_wp__test__abcd: is missing required attribute: `status`.
+#EXPECT[+2]: std_wp__test__abcd: is missing required attribute: `status`.
 
 .. std_wp:: Test requirement
     :id: std_wp__test__abcd
@@ -514,6 +516,18 @@ Sphinx document build</p>
 <p>This example verifies that the warning message
 <em>std_wp__test__abcd: is missing required attribute: `status`</em>
 is shown during the Sphinx build. Only the <em>check_options</em> check is enabled.</p>
+<p>With the ‘[+2]’ after the ‘EXPECT’ we tell the parser that we want this warning
+to be emitted and checked for 2 lines underneath</p>
+<p>There is multiple things that are not allowed for example, you need to have
+a new line between the EXPECT/-NOT and the need that it refers to</p>
+<p><strong>Negative Example</strong></p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>#EXPECT-NOT[+1]: std_wp__test__abcd: is missing required attribute: `status`.
+.. std_wp:: Test requirement
+    :id: std_wp__test__abcd
+</pre></div>
+</div>
+<p>This will error and let you know that an offset of ‘1’ is not allowed and you
+need to add a new line beneath the Warning Statement</p>
 </section>
 </section>
 
