@@ -15,7 +15,7 @@ from typing import cast
 
 from sphinx_needs.need_item import NeedItem
 
-from src.extensions.score_metamodel.sphinx_filters import (
+from score_metrics.sphinx_filters import (
     generic_pie_items_by_tag,
     generic_pie_linked_items,
 )
@@ -39,9 +39,7 @@ def test_generic_pie_linked_items_matches_source_by_id_prefix() -> None:
     generic_pie_linked_items(
         needs,
         results,
-        arg1="std_req__iso26262__",
-        arg2="gd_",
-        arg3="complies",
+        kwargs={"arg1": "std_req__iso26262__", "arg2": "gd_", "arg3": "complies"},
     )
 
     assert results == [1, 0]
@@ -66,9 +64,7 @@ def test_generic_pie_items_by_tag_matches_source_by_id_prefix() -> None:
     generic_pie_items_by_tag(
         needs,
         results,
-        arg1="aspice40_man5",
-        arg2="gd_",
-        arg3="complies",
+        kwargs={"arg1": "aspice40_man5", "arg2": "gd_", "arg3": "complies"},
     )
 
     assert results == [1, 1]

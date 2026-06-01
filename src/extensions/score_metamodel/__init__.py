@@ -31,9 +31,6 @@ from src.extensions.score_metamodel.metamodel_types import (
     ProhibitedWordCheck as ProhibitedWordCheck,
     ScoreNeedType as ScoreNeedType,
 )
-from src.extensions.score_metamodel.traceability_metrics import (
-    compute_traceability_summary,
-)
 from src.extensions.score_metamodel.yaml_parser import (
     default_options as default_options,
     load_metamodel_data as load_metamodel_data,
@@ -97,116 +94,6 @@ def graph_check(func: graph_check_function):
     logger.debug(f"new graph_check: {func}")
     graph_checks.append(func)
     return func
-
-
-def _write_metrics_json(app: Sphinx, exception: Exception | None) -> None:
-    """Write a schema-v1 metrics.json alongside needs.json in the build output.
-
-    This is the single source of truth for traceability metrics. It runs
-    inside the Sphinx build so it has access to all needs (local + external)
-    and produces the same metrics the dashboard pie charts display.
-    The traceability_gate reads this file to enforce CI thresholds.
-    """
-    if exception:
-        return
-
-    all_needs: list[Any] = list(SphinxNeedsData(app.env).get_needs_view().values())
-    include_external: bool = bool(
-        getattr(app.config, "score_metamodel_include_external_needs", False)
-    )
-
-    raw = str(getattr(app.config, "score_metamodel_requirement_types", "")).strip()
-    requirement_types = {t.strip() for t in raw.split(",") if t.strip()}
-    if not requirement_types:
-        requirement_types = _discover_requirement_types(
-            app, all_needs, include_external
-        )
-    include_not_implemented = True
-
-    metrics_by_type: dict[str, Any] = {}
-    if not requirement_types:
-        logger.info(
-            "No requirement types configured or discovered; writing empty metrics.json."
-        )
-    else:
-        for req_type in sorted(requirement_types):
-            type_summary = compute_traceability_summary(
-                all_needs=all_needs,
-                requirement_types={req_type},
-                include_not_implemented=include_not_implemented,
-                filtered_test_types=set(),
-                include_external=include_external,
-            )
-            metrics_by_type[req_type] = {
-                "include_not_implemented": type_summary["include_not_implemented"],
-                "include_external": type_summary["include_external"],
-                "requirements": type_summary["requirements"],
-                "tests": type_summary["tests"],
-            }
-
-    output: dict[str, Any] = {
-        "schema_version": "1",
-        "generated_by": "sphinx_build",
-        "metrics_by_type": metrics_by_type,
-    }
-
-    out_path = Path(app.outdir) / "metrics.json"
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    out_path.write_text(json.dumps(output, indent=2), encoding="utf-8")
-    logger.info(f"Traceability metrics written to: {out_path}")
-
-
-def _get_need_value(need: Any, key: str, default: Any = None) -> Any:
-    return need.get(key, default)
-
-
-def _as_requirement_directive(need_type: Any) -> str | None:
-    if not isinstance(need_type, dict):
-        return None
-    directive = need_type.get("directive")
-    tags = need_type.get("tags", [])
-    if not isinstance(directive, str) or not isinstance(tags, list):
-        return None
-    normalized = {str(tag).strip() for tag in tags}
-    if "requirement_excl_process" in normalized or "requirement" in normalized:
-        return directive
-    return None
-
-
-def _discover_requirement_types(
-    app: Sphinx, all_needs: list[Any], include_external: bool
-) -> set[str]:
-    """Discover requirement directives that are both tagged and present."""
-    tagged_requirements: set[str] = set()
-    needs_types = getattr(app.config, "needs_types", [])
-    for need_type in needs_types or []:
-        directive = _as_requirement_directive(need_type)
-        if directive:
-            tagged_requirements.add(directive)
-
-    present_types: set[str] = set()
-    for need in all_needs:
-        is_external = bool(_get_need_value(need, "is_external", False))
-        if not include_external and is_external:
-            continue
-        need_type: Any = _get_need_value(need, "type", None)
-        if isinstance(need_type, str):
-            present_types.add(need_type)
-
-    discovered = tagged_requirements.intersection(present_types)
-
-    if tagged_requirements and not discovered:
-        logger.warning(
-            "No requirement types discovered in current build for tagged "
-            "needs_types requirement directives."
-        )
-
-    if discovered:
-        logger.info(
-            "score_metamodel_requirement_types is not configured; "
-            f"using discovered requirement types: {', '.join(sorted(discovered))}"
-        )
-    return discovered
 
 
 def _run_checks(app: Sphinx, exception: Exception | None) -> None:
@@ -274,32 +161,6 @@ def _run_checks(app: Sphinx, exception: Exception | None) -> None:
             "They will become fatal in the future. "
             "Please fix them as soon as possible.\n"
         )
-
-
-def _configure_traceability_dashboard(app: Sphinx, config: object) -> None:
-    """Propagate repo-level traceability settings to dashboard filters."""
-    from src.extensions.score_metamodel.checks.traceability_dashboard import (
-        set_default_include_external,
-    )
-
-    include_external = bool(
-        getattr(config, "score_metamodel_include_external_needs", False)
-    )
-    set_default_include_external(include_external)
-
-
-def _remove_prefix(word: str, prefixes: list[str]) -> str:
-    for prefix in prefixes or []:
-        if isinstance(word, str) and word.startswith(prefix):
-            return word.removeprefix(prefix)
-    return word
-
-
-def _get_need_type_for_need(app: Sphinx, need: NeedItem) -> ScoreNeedType:
-    for nt in app.config.needs_types:
-        if nt["directive"] == need["type"]:
-            return nt
-    raise ValueError(f"Need type {need['type']} not found in needs_types")
 
 
 def _resolve_linkable_types(
@@ -424,30 +285,6 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
         ),
     )
 
-    app.add_config_value(
-        "score_metamodel_requirement_types",
-        "",
-        rebuild="env",
-        description=(
-            "Comma-separated list of need types treated as requirements for "
-            "traceability metrics. If empty, requirement types are autodiscovered "
-            "from needs_types tags (requirement, requirement_excl_process)."
-        ),
-    )
-
-    app.add_config_value(
-        "score_metamodel_include_external_needs",
-        False,
-        rebuild="env",
-        description=(
-            "When True, include external requirements in dashboard and CI metrics. "
-            "Default is False so each repo gates only its own needs."
-        ),
-    )
-
-    _ = app.connect("config-inited", _configure_traceability_dashboard, priority=498)
-
-    _ = app.connect("build-finished", _write_metrics_json)
     _ = app.connect("build-finished", _run_checks)
 
     return {

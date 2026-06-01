@@ -29,7 +29,7 @@ Overview
 .. needpie:: Tool Requirements Status
    :labels: not implemented, implemented but incomplete traceability, fully linked
    :colors: red,yellow, green
-   :filter-func: src.extensions.score_metamodel.checks.traceability_dashboard.pie_requirements_status(tool_req)
+   :filter-func: src.extensions.score_metrics.traceability_dashboard.pie_requirements_status(tool_req)
 
 Jump to evidence tables:
 
@@ -85,28 +85,28 @@ In Detail
       .. needpie:: Requirements with Codelinks
          :labels: no codelink, with codelink
          :colors: red, green
-         :filter-func: src.extensions.score_metamodel.checks.traceability_dashboard.pie_requirements_with_code_links(tool_req)
+         :filter-func: src.extensions.score_metrics.traceability_dashboard.pie_requirements_with_code_links(tool_req)
 
    .. grid-item-card::
 
       .. needpie:: Requirements with linked tests
          :labels: no test link, with test link
          :colors: red, green
-         :filter-func: src.extensions.score_metamodel.checks.traceability_dashboard.pie_requirements_with_test_links(tool_req)
+         :filter-func: src.extensions.score_metrics.traceability_dashboard.pie_requirements_with_test_links(tool_req)
 
    .. grid-item-card::
 
       .. needpie:: Requirements fully linked (code + tests)
          :labels: not fully linked, fully linked
          :colors: orange, green
-         :filter-func: src.extensions.score_metamodel.checks.traceability_dashboard.pie_requirements_fully_linked(tool_req)
+         :filter-func: src.extensions.score_metrics.traceability_dashboard.pie_requirements_fully_linked(tool_req)
 
    .. grid-item-card::
 
       .. needpie:: Process requirements linked by tool requirements
          :labels: not linked, linked
          :colors: red, green
-         :filter-func: src.extensions.score_metamodel.checks.traceability_dashboard.pie_process_requirements_linked(tool_req,true)
+         :filter-func: src.extensions.score_metrics.traceability_dashboard.pie_process_requirements_linked(tool_req,true)
 
 
 Process-to-Tool Mapping

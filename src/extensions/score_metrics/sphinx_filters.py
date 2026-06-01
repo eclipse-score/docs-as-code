@@ -55,7 +55,7 @@ def _matches_source_selector(need: NeedItem, selector: str) -> bool:
 
 
 def generic_pie_linked_items(
-    needs: list[NeedItem], results: list[int], **kwargs: str | int | float
+    needs: list[NeedItem], results: list[int], **kwargs: dict[str, str | int | float]
 ) -> None:
     """Count target IDs by whether they are linked by selected source needs.
 
@@ -63,6 +63,7 @@ def generic_pie_linked_items(
     selector prefix, matched against source ``type`` and ``id``), and ``arg3``
     (link field name, default ``complies``).
     """
+    results = []
     id_prefix = str(kwargs.get("arg1", ""))
     source_selector = str(kwargs.get("arg2", ""))
     link_field = str(kwargs.get("arg3", "complies"))
@@ -89,7 +90,7 @@ def generic_pie_linked_items(
 
 
 def generic_pie_items_by_tag(
-    needs: list[NeedItem], results: list[int], **kwargs: str | int | float
+    needs: list[NeedItem], results: list[int], **kwargs: dict[str, str | int | float]
 ) -> None:
     """Count tagged items split by whether selected source needs link them.
 
@@ -123,7 +124,7 @@ def generic_pie_items_by_tag(
 
 
 def generic_pie_items_in_relationships(
-    needs: list[NeedItem], results: list[int], **kwargs: str | int | float
+    needs: list[NeedItem], results: list[int], **kwargs: dict[str, str | int | float]
 ) -> None:
     """Count items of a given type by how many container items reference them.
 
@@ -164,3 +165,11 @@ def generic_pie_items_in_relationships(
     results.append(not_referenced)
     results.append(referenced_once)
     results.append(referenced_multiple)
+
+
+def get_metrics_from_generated_json(
+    needs: list[NeedItem], results: list[int], **kwargs: str | int | float
+) -> None:
+    metrics_json_path = str(kwargs.get("arg1", "_build/metrics.json"))
+    # TODO: Read the Metrics.json and give back the data
+    results

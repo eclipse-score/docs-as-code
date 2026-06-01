@@ -18,7 +18,7 @@
 
 from sphinx_needs.need_item import NeedItem
 
-from ..sphinx_filters import (
+from score_metrics.sphinx_filters import (
     generic_pie_items_by_tag,
     generic_pie_items_in_relationships,
     generic_pie_linked_items,

@@ -219,9 +219,10 @@ def read_test_xml_file(file: Path) -> tuple[list[DataOfTestCase], list[str], lis
             properties_element = testcase.find("properties")
             # HINT: This list is hard coded here, might not be ideal to have that in the
             # long run.
-            if properties_element is None:
-                non_prop_tests.append(testname)
-                continue
+            # Even if we have no properties we still want to create test_case needs
+            # if properties_element is None:
+            # non_prop_tests.append(testname)
+            # continue
 
             # ╓                                      ╖
             # ║ Disabled Temporarily                 ║
@@ -236,12 +237,13 @@ def read_test_xml_file(file: Path) -> tuple[list[DataOfTestCase], list[str], lis
             # I think it should be possible to save the 'from_dict' operation
             # If the is_valid method would return 'False' anyway.
             # I just can't think of it right now, leaving this for future me
-            case_properties = parse_properties(case_properties, properties_element)
-            case_properties.update(md)
+            if properties_element:
+                case_properties = parse_properties(case_properties, properties_element)
+                case_properties.update(md)
             test_case = DataOfTestCase.from_dict(case_properties)
+            # We will check if the testcase is valid, but still will generate the TestCaseNeed
             if not test_case.is_valid():
                 missing_prop_tests.append(testname)
-                continue
             test_case_needs.append(test_case)
     return test_case_needs, non_prop_tests, missing_prop_tests
 
@@ -332,23 +334,21 @@ def short_hash(input_str: str, length: int = 5) -> str:
 
 
 def construct_and_add_need(app: Sphinx, tn: DataOfTestCase):
-    # Asserting worldview to a peace Language Server
-    # And ensure non crashing due to non string concatenation
-    # Everything but 'result_text',
-    # and either 'Fully' or 'PartiallyVerifies' should not be None here
-    assert tn.file is not None
+    # We will now allow file to be empty in case of non fully fleshed out testcases
+    file = tn.file if tn.file is not None else "<placeholder_file>"
     assert tn.name is not None
+    name = tn.name
     external_url = ""
     if tn.repo_name is None or tn.hash is None or tn.url is None:
         logger.info(
             "Creating testcase need with fallback URL due to incomplete repo metadata: "
-            f"name={tn.name}, file={tn.file}, repo_name={tn.repo_name}, "
+            f"name={name}, file={file}, repo_name={tn.repo_name}, "
             f"hash={tn.hash}, url={tn.url}",
             type="score_source_code_linker",
         )
         line = tn.line if tn.line is not None else 1
         external_url = (
-            f"https://github.com/placeholder/placeholder/blob/unknown/{tn.file}#L{line}"
+            f"https://github.com/placeholder/placeholder/blob/unknown/{file}#L{line}"
         )
     else:
         # Have to build metadata here for the gh link func
@@ -359,10 +359,10 @@ def construct_and_add_need(app: Sphinx, tn: DataOfTestCase):
         _ = add_external_need(
             app=app,
             need_type="testcase",
-            title=tn.name,
+            title=name,
             tags="TEST",
-            id=f"testcase__{tn.name}_{short_hash(tn.file + tn.name)}",
-            name=tn.name,
+            id=f"testcase__{name}_{short_hash(file + name)}",
+            name=name,
             external_url=external_url,
             fully_verifies=tn.FullyVerifies if tn.FullyVerifies is not None else "",
             partially_verifies=tn.PartiallyVerifies
@@ -370,7 +370,7 @@ def construct_and_add_need(app: Sphinx, tn: DataOfTestCase):
             else "",
             test_type=tn.TestType,
             derivation_technique=tn.DerivationTechnique,
-            file=tn.file,
+            file=file,
             line=tn.line,
             result=tn.result,  # We just want the 'failed' or whatever
             result_text=tn.result_text if tn.result_text else "",
