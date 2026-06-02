@@ -99,15 +99,19 @@ def _strip_score_docs_overrides(content: str) -> str:
     i = 0
     while i < len(lines):
         line = lines[i]
+        # Check if this line starts an *_override block (e.g. git_override, local_path_override)
         if re.match(r"^\s*\w+_override\s*\(", line):
+            # Collect the entire block by tracking parenthesis depth
             block_start = i
             depth = line.count("(") - line.count(")")
             i += 1
             while i < len(lines) and depth > 0:
                 depth += lines[i].count("(") - lines[i].count(")")
                 i += 1
+            # Extract the block
             block = lines[block_start:i]
             block_text = "\n".join(block)
+            # Comment out if it's for score_docs_as_code
             if (
                 'module_name = "score_docs_as_code"' in block_text
                 or "module_name = 'score_docs_as_code'" in block_text
@@ -121,6 +125,10 @@ def _strip_score_docs_overrides(content: str) -> str:
     return "\n".join(result) + ("\n" if content.endswith("\n") else "")
 
 
+# Match bazel_dep with required name and optional version attribute (anchored to line start, MULTILINE flag required)
+# ^bazel_dep\(name = ["']score_docs_as_code["']  — literal call with either quote style
+# (?:, version = ["'][^"']+["'])?                 — optional version argument, any value
+# \)                                              — closing paren
 _BAZEL_DEP_PATTERN = r"""^bazel_dep\(name = ["']score_docs_as_code["'](?:, version = ["'][^"']+["'])?\)"""
 
 
