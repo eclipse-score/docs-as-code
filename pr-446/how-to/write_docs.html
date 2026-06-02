@@ -32,17 +32,17 @@
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
-    <link rel="stylesheet" type="text/css" href="../_static/css/score.css?v=6e51530f" />
-    <link rel="stylesheet" type="text/css" href="../_static/css/score_needs.css?v=1f5dae2a" />
-    <link rel="stylesheet" type="text/css" href="../_static/css/score_design.css?v=d9fd870c" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/score.css?v=bb63a8e1" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/score_needs.css?v=82a1844f" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/score_design.css?v=8048e6ee" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-data-viewer/jsonview.bundle.css?v=f6ef2277" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/libs/html/datatables.min.css?v=4b4fd840" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_core.css?v=f5b60a78" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_toggle.css?v=5c6620df" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/needstable.css?v=5e1b6797" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_links.css?v=2150a916" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_core.css?v=f5b60a78" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_style.css?v=92936fa5" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_links.css?v=2150a916" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/needstable.css?v=5e1b6797" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/modern.css?v=803738c0" />
   
   <!-- So that users can add custom icons -->
@@ -396,6 +396,7 @@
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Write Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
 <li class="toctree-l1"><a class="reference internal" href="other_modules.html">Reference Other Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dashboards_and_quality_gates.html">Build Dashboards and Quality Gates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="source_to_doc_links.html">Reference Docs in Source Code</a></li>
 <li class="toctree-l1"><a class="reference internal" href="test_to_doc_links.html">Reference Docs in Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="add_extensions.html">Add Extensions</a></li>
@@ -461,12 +462,54 @@
                   
   <section id="write-documentation">
 <h1>Write Documentation<a class="headerlink" href="#write-documentation" title="Link to this heading">#</a></h1>
+<section id="outside-documentation">
+<h2>Outside Documentation<a class="headerlink" href="#outside-documentation" title="Link to this heading">#</a></h2>
 <p><a class="reference external" href="https://www.sphinx-doc.org/en/master/">Sphinx</a>:
 the documentation generator we use.</p>
 <p><a class="reference external" href="https://docutils.sourceforge.io/rst.html">reStructuredText (reST)</a>:
 the plain-text markup language used for most source files in this project.</p>
 <p><a class="reference external" href="https://sphinx-needs.readthedocs.io/en/latest/">Sphinx-Needs</a>:
 a Sphinx extension that models requirements, tests, tasks and other “needs” inside the docs.</p>
+</section>
+<section id="advanced">
+<h2>Advanced<a class="headerlink" href="#advanced" title="Link to this heading">#</a></h2>
+<section id="needextend">
+<h3>Needextend<a class="headerlink" href="#needextend" title="Link to this heading">#</a></h3>
+<p>Needextend allows you to extend needs that are defined in the documentation.
+The scope of allowed behaviour in Docs-As-Code for needextend is limited as we do not allow all of its usecases.</p>
+<p>Allowed usecases:</p>
+<ul class="simple">
+<li><p>Setting an attribute or Link <strong>IF</strong> it is not already set in the need that is getting modified</p></li>
+<li><p>Appending to a list of links</p></li>
+</ul>
+<p>Not Allowed:</p>
+<ul class="simple">
+<li><p>Overwriting an attribute or Link that already is set in the need that gets modified</p></li>
+<li><p>Deleting an attribute or Link</p></li>
+</ul>
+<div class="highlight-rst notranslate"><div class="highlight"><pre><span></span><span class="p">..</span> <span class="ow">stkh_req</span><span class="p">::</span> Test Req Extends 1
+   <span class="nc">:id:</span> stkh_req__test__need_extends_1
+   <span class="nc">:status:</span> invalid
+
+
+# ✅ ALLOWED =&gt; The replacing of attributes on needs that are NOT set.
+<span class="p">..</span> <span class="ow">needextend</span><span class="p">::</span> c.this_doc() and id == &#39;stkh_req__test__need_extends_1&#39;
+   <span class="nc">:safety:</span> NO
+
+
+# ❌ NOT ALLOWED =&gt; Overwriting attributes that are already set in the need
+<span class="p">..</span> <span class="ow">needextend</span><span class="p">::</span> c.this_doc() and id == &#39;stkh_req__test__need_extends_1&#39;
+   <span class="nc">:status:</span> valid
+</pre></div>
+</div>
+<p>For further documentation on needextends please <a class="reference external" href="https://sphinx-needs.readthedocs.io/en/latest/directives/needextend.html">look here</a></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In the future we will enable a check that needextends will only modify needs in the current document.
+You can ensure this by adding <cite>c.this_doc()</cite> to the filter string of the need.</p>
+</div>
+</section>
+</section>
 </section>
 
 
@@ -507,6 +550,22 @@ a Sphinx extension that models requirements, tests, tasks and other “needs” 
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outside-documentation">Outside Documentation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced">Advanced</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#needextend">Needextend</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
 
