@@ -19,22 +19,50 @@
 
 from __future__ import annotations
 
+import json
+from pathlib import Path
+
 from collections.abc import Sequence
 from typing import Any
 
 from sphinx_needs.need_item import NeedItem
-
-from score_metrics.traceability_metrics import (
-    compute_traceability_summary,
-)
+from score_metrics.traceability_metrics import CALCULATED_METRICS
 
 _DEFAULT_INCLUDE_EXTERNAL = False
 
 
-def set_default_include_external(include_external: bool) -> None:
-    """Configure default behaviour for including external requirements."""
-    global _DEFAULT_INCLUDE_EXTERNAL
-    _DEFAULT_INCLUDE_EXTERNAL = bool(include_external)
+def get_linked_metrics_for_type(
+    needs: list[Any], results: list[int], **kwargs: Any
+) -> None:
+    """Append dynamically selected metrics from a nested JSON file to ``results``.
+
+    The ``metric_paths`` argument must be a semicolon-separated list of dot paths,
+    for example: ``overall_metrics.total;overall_metrics.with_test_link``.
+    """
+    # metrics_path = str(kwargs["arg1"]) + ".json"
+    # metrics_json = json.loads(Path(metrics_path).read_text(encoding="utf-8"))
+    metrics_json = CALCULATED_METRICS
+
+    # arg1 = _build/metrics,
+    # arg2 = overall_metrics, :total,overall_metrics:with_test_link
+
+    metric_values = "overall_metrics.total" + str(kwargs["arg2"])
+    for raw_path in metric_values.split(";"):
+        path = raw_path.strip()
+        if not path:
+            continue
+
+        current: Any = metrics_json
+        for key in path.split(":"):
+            current = current[key]
+        results.append(int(current))
+    results[0] -= sum(results[1:])
+
+
+# def set_default_include_external(include_external: bool) -> None:
+#     """Configure default behaviour for including external requirements."""
+#     global _DEFAULT_INCLUDE_EXTERNAL
+#     _DEFAULT_INCLUDE_EXTERNAL = bool(include_external)
 
 
 # def _include_external(kwargs: dict[str, str | int | float]) -> bool:

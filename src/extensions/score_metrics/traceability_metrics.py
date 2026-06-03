@@ -19,9 +19,25 @@
 
 from __future__ import annotations
 
+import json
 from typing import Any
 from sphinx_needs.need_item import NeedItem
 from sphinx_needs.data import NeedsView
+from sphinx.application import Sphinx
+from score_metamodel import ScoreNeedType
+from pathlib import Path
+from sphinx_needs.data import SphinxNeedsData
+from score_metamodel.yaml_parser import load_metamodel_data
+
+CALCULATED_METRICS = {}
+
+def get_need_types_by_tags(needs: list[ScoreNeedType], tags: set[str]) -> list[str]:
+    found_need_types: list[str] = []
+    for need_type in needs:
+        found_tag_set = set(need_type["tags"])
+        if tags.intersection(found_tag_set):
+            found_need_types.append(need_type["directive"])
+    return found_need_types
 
 
 def is_non_empty(value: Any) -> bool:
@@ -39,10 +55,11 @@ def safe_percent(numerator: int, denominator: int) -> float:
 
 
 def calculate_requirement_metrics(
-    all_requirement_needs: list[NeedItem],
+    current_requirement_needs: list[NeedItem],
 ) -> dict[str, Any]:
     """Calculate requirement traceability statistics for links and completeness."""
-    total = len(all_requirement_needs)
+    total = len(current_requirement_needs)
+    print("===============")
     reqs_with_code_link = 0
     reqs_with_test_link = 0
     reqs_fully_linked = 0
@@ -50,7 +67,7 @@ def calculate_requirement_metrics(
     missing_test_links_need_ids: set[str] = set()
     missing_both_links_need_ids: set[str] = set()
 
-    for need in all_requirement_needs:
+    for need in current_requirement_needs:
         # Sourcecode link check
         if is_non_empty(need.get("source_code_link")):
             reqs_with_code_link += 1
@@ -87,11 +104,9 @@ def calculate_requirement_metrics(
 
 
 def calculate_test_metrics(
-    all_needs: NeedsView,
-    filtered_test_types: set[str],
+    test_needs: list[NeedItem], all_needs: NeedsView
 ) -> dict[str, Any]:
     """Calculate testcase linkage and broken testcase-reference statistics."""
-    test_needs = all_needs.filter_types(["testcase"]).values()
     tests_total = len(test_needs)
     tests_linked = 0
     broken_references: list[dict[str, str]] = []
@@ -111,7 +126,6 @@ def calculate_test_metrics(
 
     return {
         "total": tests_total,
-        "filtered_test_types": sorted(filtered_test_types),
         "linked_to_requirements": tests_linked,
         "linked_to_requirements_pct": safe_percent(tests_linked, tests_total),
         "broken_references": broken_references,
@@ -120,17 +134,12 @@ def calculate_test_metrics(
 
 def calculate_process_requirement_metrics(
     all_needs: NeedsView,
-    include_external: bool,
 ) -> dict[str, Any]:
     """Calculate process-requirement coverage via tool_req ``satisfies`` links."""
 
-    process_requirements = all_needs.filter_types(["gd_req"]).filter_is_external(
-        include_external
-    )
+    process_requirements = all_needs.filter_types(["gd_req"])
     process_requirement_ids = set(process_requirements.keys())
-    tool_requirements = all_needs.filter_types(["tool_req"]).filter_is_external(
-        include_external
-    )
+    tool_requirements = all_needs.filter_types(["tool_req"]).filter_is_external(False)
 
     linked_process_requirement_ids: set[str] = set()
     for need in tool_requirements.values():
@@ -154,31 +163,75 @@ def calculate_process_requirement_metrics(
     }
 
 
-def compute_traceability_summary(
-    all_needs: NeedsView,
-    filtered_test_types: set[str],
-    include_external: bool = False,
-) -> dict[str, Any]:
-    """Return full CI/dashboard summary using one shared metric implementation."""
-    requirements = all_needs
-    req_metrics = calculate_requirement_metrics(
-        list(requirements.filter_is_external(False).values())
-    )
+def calculate_full_need_metrics(app: Sphinx, include_external: bool):
+    #            ───────────────[ Getting configuration values ]───────────────
+    global CALCULATED_METRICS
+    # if CALCULATED_METRICS:
+    #     logger.info("Metrics calculated already, skipping re-execution")
+    #     return
+    all_needs: NeedsView = SphinxNeedsData(app.env).get_needs_view()
 
-    test_metrics = calculate_test_metrics(
-        all_needs,
-        filtered_test_types=filtered_test_types,
-    )
+    raw_metamodel_path = app.config.score_metamodel_yaml
+    override_path = Path(raw_metamodel_path) if raw_metamodel_path else None
+    metamodel = load_metamodel_data(override_path)
+
+    raw = getattr(app.config, "score_metamodel_requirement_types", "").strip()
+    filter_reqs = [t.strip() for t in raw.split(",") if t.strip()]
+    if not filter_reqs:
+        filter_reqs = get_need_types_by_tags(
+            metamodel.needs_types, {"reqiurement", "requirement_excl_process"}
+        )
+    #            ──────────────────[ Calculate Test Metrics ]──────────────────
+
+    test_needs = list(all_needs.filter_types(["testcase"]).values())
+    test_metrics = calculate_test_metrics(test_needs, all_needs)
     process_requirement_metrics = calculate_process_requirement_metrics(
         all_needs,
-        include_external=include_external,
     )
 
-    return {
-        # Note: Unsure if we truly need this here. It seems to me to create too much spam
-        # "requirement_types": sorted(requirement_types),
-        "include_external": include_external,
-        "requirements": req_metrics,
+    metrics_by_type: dict[str, Any] = {}
+    overall_metrics: dict[str, Any] = {
+        "total": 0,
+        "with_code_link": 0,
+        "with_test_link": 0,
+        "fully_linked": 0,
+    }
+    for req_type in sorted(filter_reqs):
+        needs_of_req_type = all_needs.filter_types([req_type]).filter_is_external(
+            include_external
+        )
+        # We do not care if there is no requirements of this type.
+        if not list(needs_of_req_type.values()):
+            continue
+        req_metrics = calculate_requirement_metrics(list(needs_of_req_type.values()))
+        overall_metrics["total"] += req_metrics["total"]
+        overall_metrics["with_code_link"] += req_metrics["with_code_link"]
+        overall_metrics["with_test_link"] += req_metrics["with_test_link"]
+        overall_metrics["fully_linked"] += req_metrics["fully_linked"]
+        metrics_by_type[req_type] = req_metrics
+    overall_metrics["with_code_link_pct"] = safe_percent(
+        overall_metrics["with_code_link"], overall_metrics["total"]
+    )
+    overall_metrics["with_test_link_pct"] = safe_percent(
+        overall_metrics["with_test_link"], overall_metrics["total"]
+    )
+    overall_metrics["fully_linked_pct"] = safe_percent(
+        overall_metrics["fully_linked"], overall_metrics["total"]
+    )
+
+    output: dict[str, Any] = {
+        "schema_version": "1",
+        "generated_by": "sphinx_build",
+        "overall_metrics": overall_metrics,
+        "metrics_by_type": metrics_by_type,
         "tests": test_metrics,
         "process_requirements": process_requirement_metrics,
     }
+    app.config.calculated_metrics = output
+    CALCULATED_METRICS = output
+
+    out_path = Path(app.outdir) / "metrics.json"
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text(json.dumps(output, indent=2), encoding="utf-8")
+    print(f"Traceability metrics written to: {out_path}")
+
