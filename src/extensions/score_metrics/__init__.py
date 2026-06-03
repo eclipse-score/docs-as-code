@@ -8,6 +8,8 @@ from sphinx_needs import logging
 from score_metrics.traceability_metrics import calculate_full_need_metrics
 from sphinx.environment import BuildEnvironment
 
+from src.extensions.score_metrics.traceability_metrics import CALCULATED_METRICS
+
 logger = logging.get_logger(__name__)
 
 
@@ -21,11 +23,9 @@ logger = logging.get_logger(__name__)
 #         getattr(config, "score_metamodel_include_external_needs", False)
 #     )
 #     set_default_include_external(include_external)
-
-
-def _write_metrics_json(app: Sphinx, env: BuildEnvironment) -> None:
-    """Write a schema-v1 metrics.json alongside needs.json in the build output.
-
+#
+def calculate_need_metrics(app: Sphinx, env:BuildEnvironment) -> None:
+    """
     This is the single source of truth for traceability metrics. It runs
     inside the Sphinx build so it has access to all needs (local + external)
     and produces the same metrics the dashboard pie charts display.
@@ -35,48 +35,17 @@ def _write_metrics_json(app: Sphinx, env: BuildEnvironment) -> None:
         getattr(app.config, "score_metamodel_include_external_needs", False)
     )
     calculate_full_need_metrics(app=app, include_external=include_external)
-    # all_needs: NeedsView = SphinxNeedsData(app.env).get_needs_view()
-    #
-    # raw_metamodel_path = app.config.score_metamodel_yaml
-    # override_path = Path(raw_metamodel_path) if raw_metamodel_path else None
-    # metamodel = load_metamodel_data(override_path)
-    #
-    # raw = getattr(app.config, "score_metamodel_requirement_types", "").strip()
-    # filter_reqs = [t.strip() for t in raw.split(",") if t.strip()]
-    # if not filter_reqs:
-    #     filter_reqs = get_need_types_by_tags(
-    #         metamodel.needs_types, {"reqiurement", "requirement_excl_process"}
-    #     )
-    # metrics_by_type: dict[str, Any] = {}
-    # test_stats
-    #
-    # test_needs = list(all_needs.filter_types(["testcase"]).values())
-    # test_metrics = calculate_test_metrics(test_needs, current_reqtype_needs)
-    # for req_type in sorted(filter_reqs):
-    #     needs_of_req_type = all_needs.filter_types([req_type]).filter_is_external(False)
-    #     if not list(needs_of_req_type.values()):
-    #         continue
-    #     type_summary = compute_traceability_summary(
-    #         all_needs=all_needs,
-    #         current_reqtype=req_type,
-    #         current_reqtype_needs=needs_of_req_type,
-    #         include_external=include_external,
-    #     )
-    #     metrics_by_type[req_type] = {
-    #         "include_external": type_summary["include_external"],
-    #         "requirements": type_summary["requirements"],
-    #         "tests": type_summary["tests"],
-    #     }
-    #
-    # output: dict[str, Any] = {
-    #     "schema_version": "1",
-    #     "generated_by": "sphinx_build",
-    #     "metrics_by_type": metrics_by_type,
-    # }
-    # out_path = Path(app.outdir) / "metrics.json"
-    # out_path.parent.mkdir(parents=True, exist_ok=True)
-    # out_path.write_text(json.dumps(output, indent=2), encoding="utf-8")
-    # print(f"Traceability metrics written to: {out_path}")
+
+
+def _write_metrics_json(app: Sphinx, exception: Any|None) -> None:
+    """
+    Write a schema-v1 metrics.json alongside needs.json in the build output.
+    """
+
+    out_path = Path(app.outdir) / "metrics.json"
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text(json.dumps(CALCULATED_METRICS, indent=2), encoding="utf-8")
+    print(f"Traceability metrics written to: {out_path}")
 
 
 def setup(app: Sphinx) -> dict[str, str | bool]:
@@ -102,7 +71,8 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     )
 
     # _ = app.connect("config-inited", _configure_traceability_dashboard, priority=498)
-    _ = app.connect("env-updated", _write_metrics_json, priority=550)
+    _ = app.connect("env-updated", calculate_need_metrics, priority=550)
+    _ = app.connect("build-finished", _write_metrics_json, priority=501)
 
     return {
         "version": "0.1",

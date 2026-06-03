@@ -31,7 +31,12 @@ from score_metamodel.yaml_parser import load_metamodel_data
 
 CALCULATED_METRICS = {}
 
+
 def get_need_types_by_tags(needs: list[ScoreNeedType], tags: set[str]) -> list[str]:
+    """
+    Takes a list of 'ScoreNeedTypes' and filters out any that have one or more of the
+    specified tags given.
+    """
     found_need_types: list[str] = []
     for need_type in needs:
         found_tag_set = set(need_type["tags"])
@@ -59,7 +64,6 @@ def calculate_requirement_metrics(
 ) -> dict[str, Any]:
     """Calculate requirement traceability statistics for links and completeness."""
     total = len(current_requirement_needs)
-    print("===============")
     reqs_with_code_link = 0
     reqs_with_test_link = 0
     reqs_fully_linked = 0
@@ -112,9 +116,7 @@ def calculate_test_metrics(
     broken_references: list[dict[str, str]] = []
 
     for test_need in test_needs:
-        # This should never happen (that it has unknown_testcase id
-        # TODO: Remove this:
-        test_id = str(test_need.get("id", "<unknown_testcase>"))
+        test_id = str(test_need.get("id"))
         partially: list[str] = test_need.get("partially_verifies")
         fully: list[str] = test_need.get("fully_verifies")
         refs = set(partially + fully)
@@ -132,70 +134,42 @@ def calculate_test_metrics(
     }
 
 
-def calculate_process_requirement_metrics(
-    all_needs: NeedsView,
-) -> dict[str, Any]:
-    """Calculate process-requirement coverage via tool_req ``satisfies`` links."""
-
-    process_requirements = all_needs.filter_types(["gd_req"])
-    process_requirement_ids = set(process_requirements.keys())
-    tool_requirements = all_needs.filter_types(["tool_req"]).filter_is_external(False)
-
-    linked_process_requirement_ids: set[str] = set()
-    for need in tool_requirements.values():
-        satisfies_ids = need.get("satisfies")
-        for ref_id in satisfies_ids:
-            if ref_id in process_requirement_ids:
-                linked_process_requirement_ids.add(ref_id)
-
-    total = len(process_requirement_ids)
-    linked_by_tool_requirements = len(linked_process_requirement_ids)
-    unlinked_ids = sorted(process_requirement_ids - linked_process_requirement_ids)
-
-    return {
-        "total": total,
-        "linked": linked_by_tool_requirements,
-        "linked_by_tool_requirements": linked_by_tool_requirements,
-        "linked_by_tool_requirements_pct": safe_percent(
-            linked_by_tool_requirements, total
-        ),
-        "unlinked_ids": unlinked_ids,
-    }
-
-
 def calculate_full_need_metrics(app: Sphinx, include_external: bool):
+    """
+    Calculate all tracked metrics for requirements and tests.
+    Will save the result in a global variable 'CALCULATED_METRICS'
+    """
     #            ───────────────[ Getting configuration values ]───────────────
     global CALCULATED_METRICS
-    # if CALCULATED_METRICS:
-    #     logger.info("Metrics calculated already, skipping re-execution")
-    #     return
     all_needs: NeedsView = SphinxNeedsData(app.env).get_needs_view()
 
     raw_metamodel_path = app.config.score_metamodel_yaml
     override_path = Path(raw_metamodel_path) if raw_metamodel_path else None
     metamodel = load_metamodel_data(override_path)
 
+    # We either get the types that should be considered from the configuration
+    # If none are specified the need types declared in the Metamodel with
+    # the tags 'requirement' are taken
     raw = getattr(app.config, "score_metamodel_requirement_types", "").strip()
     filter_reqs = [t.strip() for t in raw.split(",") if t.strip()]
     if not filter_reqs:
-        filter_reqs = get_need_types_by_tags(
-            metamodel.needs_types, {"reqiurement", "requirement_excl_process"}
-        )
+        filter_reqs = get_need_types_by_tags(metamodel.needs_types, {"reqiurement"})
     #            ──────────────────[ Calculate Test Metrics ]──────────────────
 
     test_needs = list(all_needs.filter_types(["testcase"]).values())
     test_metrics = calculate_test_metrics(test_needs, all_needs)
-    process_requirement_metrics = calculate_process_requirement_metrics(
-        all_needs,
-    )
 
     metrics_by_type: dict[str, Any] = {}
+
+    # Metrics accumulated over all requirements types
     overall_metrics: dict[str, Any] = {
         "total": 0,
         "with_code_link": 0,
         "with_test_link": 0,
         "fully_linked": 0,
     }
+
+    #            ─────[ Calculating Metrics for each requirement_type ]───
     for req_type in sorted(filter_reqs):
         needs_of_req_type = all_needs.filter_types([req_type]).filter_is_external(
             include_external
@@ -209,6 +183,7 @@ def calculate_full_need_metrics(app: Sphinx, include_external: bool):
         overall_metrics["with_test_link"] += req_metrics["with_test_link"]
         overall_metrics["fully_linked"] += req_metrics["fully_linked"]
         metrics_by_type[req_type] = req_metrics
+    # Calculating % of each category for the overall metrics
     overall_metrics["with_code_link_pct"] = safe_percent(
         overall_metrics["with_code_link"], overall_metrics["total"]
     )
@@ -225,13 +200,9 @@ def calculate_full_need_metrics(app: Sphinx, include_external: bool):
         "overall_metrics": overall_metrics,
         "metrics_by_type": metrics_by_type,
         "tests": test_metrics,
-        "process_requirements": process_requirement_metrics,
     }
-    app.config.calculated_metrics = output
+    # Save the metrics in a Global Variable to enable access from other parts.
+    # Not a great solution but it is needed, as needpie filter functions for example 
+    # can not access 'app'.
     CALCULATED_METRICS = output
-
-    out_path = Path(app.outdir) / "metrics.json"
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    out_path.write_text(json.dumps(output, indent=2), encoding="utf-8")
-    print(f"Traceability metrics written to: {out_path}")
 
