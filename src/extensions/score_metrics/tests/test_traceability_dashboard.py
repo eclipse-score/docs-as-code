@@ -13,12 +13,8 @@
 
 """Tests that dashboard filters follow local/external settings."""
 
-from collections.abc import Sequence
-from typing import Any
 
-import pytest
-
-#from src.extensions.score_metamodel.checks import traceability_dashboard
+# from src.extensions.score_metamodel.checks import traceability_dashboard
 # from src.extensions.score_metrics.traceability_dashboard import (
 #     pie_process_requirements_linked,
 #     pie_requirements_fully_linked,

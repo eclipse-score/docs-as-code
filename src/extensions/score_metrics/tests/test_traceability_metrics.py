@@ -13,11 +13,6 @@
 
 """Unit tests for traceability_metrics include_external handling."""
 
-from src.extensions.score_metrics.traceability_metrics import (
-    compute_traceability_summary,
-    #filter_requirements,
-)
-
 
 def _needs() -> list[dict[str, object]]:
     return [

@@ -19,13 +19,8 @@
 
 from __future__ import annotations
 
-import json
-from pathlib import Path
-
-from collections.abc import Sequence
 from typing import Any
 
-from sphinx_needs.need_item import NeedItem
 from score_metrics.traceability_metrics import CALCULATED_METRICS
 
 _DEFAULT_INCLUDE_EXTERNAL = False
@@ -35,73 +30,6 @@ _DEFAULT_INCLUDE_EXTERNAL = False
 # ╙                                                          ╜
 
 
-def _get_key_values(results: list[int], argument_paths: list[str]):
-    """Append integer metric values selected by colon-separated paths.
-
-    Each path is resolved against ``CALCULATED_METRICS`` (for example:
-    ``"overall_metrics:total"``), converted to ``int``, and appended to
-    ``results``.
-    """
-    metrics_json = CALCULATED_METRICS
-
-    for raw_path in argument_paths:
-        path = raw_path.strip()
-        if not path:
-            continue
-
-        current: Any = metrics_json
-        for key in path.split(":"):
-            current = current[key]
-
-        results.append(int(current))
-
-
-def get_metrics_with_overall_total_considered(
-    needs: list[Any], results: list[int], **kwargs: Any
-) -> None:
-    """Append selected metrics and compute remainder from overall total.
-
-    This function appends ``overall_metrics:total`` first, then appends all
-    metrics referenced by ``kwargs`` values. Finally, it replaces the first
-    appended value with the remainder after subtracting all other appended
-    values.
-    """
-    # metrics_path = str(kwargs["arg1"]) + ".json"
-    # metrics_json = json.loads(Path(metrics_path).read_text(encoding="utf-8"))
-    metrics_json = CALCULATED_METRICS
-    results.append(int(metrics_json["overall_metrics"]["total"]))
-    _get_key_values(results, [str(value) for value in kwargs.values()])
-    results[0] -= sum(results[1:])
-    print(results)
-
-
-def get_metrics_with_custom_type_total_considered(
-    needs: list[Any], results: list[int], **kwargs: Any
-) -> None:
-    """Append selected metrics, optionally using a custom total path.
-
-    If the last kwarg value ends with ``":total"``, that path is used as
-    baseline total and all preceding paths are treated as components; the first
-    result becomes ``total - sum(components)``. Otherwise, all paths are simply
-    appended as-is.
-    """
-    # Get the 'total' that was specified as the first value
-    values = [str(value) for value in kwargs.values()]
-    if values[-1].endswith(":total"):
-        _get_key_values(results, [values[-1]])  # baseline total
-        _get_key_values(results, values[:-1])  # components
-        results[0] -= sum(results[1:])
-    else:
-        _get_key_values(results, values)
-
-
-def get_just_metrics(needs: list[Any], results: list[int], **kwargs: Any) -> None:
-    """Append selected metric values without any total/remainder calculation.
-
-    All kwarg values are interpreted as colon-separated metric paths and
-    appended to ``results`` in insertion order.
-    """
-    _get_key_values(results, [str(value) for value in kwargs.values()])
 
 
 # def set_default_include_external(include_external: bool) -> None:

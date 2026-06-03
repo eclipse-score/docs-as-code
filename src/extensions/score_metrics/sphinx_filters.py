@@ -38,8 +38,10 @@ Example usage in RST::
 """
 
 from __future__ import annotations
+from typing import Any
 
 from sphinx_needs.need_item import NeedItem
+from score_metrics.traceability_metrics import CALCULATED_METRICS
 
 
 def _matches_source_selector(need: NeedItem, selector: str) -> bool:
@@ -55,7 +57,7 @@ def _matches_source_selector(need: NeedItem, selector: str) -> bool:
 
 
 def generic_pie_linked_items(
-    needs: list[NeedItem], results: list[int], **kwargs: dict[str, str | int | float]
+    needs: list[NeedItem], results: list[int], **kwargs: Any
 ) -> None:
     """Count target IDs by whether they are linked by selected source needs.
 
@@ -63,7 +65,7 @@ def generic_pie_linked_items(
     selector prefix, matched against source ``type`` and ``id``), and ``arg3``
     (link field name, default ``complies``).
     """
-    results = []
+    results.clear()
     id_prefix = str(kwargs.get("arg1", ""))
     source_selector = str(kwargs.get("arg2", ""))
     link_field = str(kwargs.get("arg3", "complies"))
@@ -90,7 +92,7 @@ def generic_pie_linked_items(
 
 
 def generic_pie_items_by_tag(
-    needs: list[NeedItem], results: list[int], **kwargs: dict[str, str | int | float]
+    needs: list[NeedItem], results: list[int], **kwargs: Any
 ) -> None:
     """Count tagged items split by whether selected source needs link them.
 
@@ -98,6 +100,7 @@ def generic_pie_items_by_tag(
     matched against source ``type`` and ``id``), and ``arg3`` (link field
     name, default ``complies``).
     """
+    results.clear()
     tag = str(kwargs.get("arg1", ""))
     source_selector = str(kwargs.get("arg2", ""))
     link_field = str(kwargs.get("arg3", "complies"))
@@ -124,7 +127,7 @@ def generic_pie_items_by_tag(
 
 
 def generic_pie_items_in_relationships(
-    needs: list[NeedItem], results: list[int], **kwargs: dict[str, str | int | float]
+    needs: list[NeedItem], results: list[int], **kwargs: Any
 ) -> None:
     """Count items of a given type by how many container items reference them.
 
@@ -143,6 +146,7 @@ def generic_pie_items_in_relationships(
     Appends to *results*:
     ``[not_referenced_count, referenced_once_count, referenced_multiple_count]``
     """
+    results.clear()
     container_type = str(kwargs.get("arg1", ""))
     field = str(kwargs.get("arg2", ""))
     item_type = str(kwargs.get("arg3", ""))
@@ -167,9 +171,71 @@ def generic_pie_items_in_relationships(
     results.append(referenced_multiple)
 
 
-def get_metrics_from_generated_json(
-    needs: list[NeedItem], results: list[int], **kwargs: str | int | float
+def _get_key_values(results: list[int], argument_paths: list[str]):
+    """Append integer metric values selected by colon-separated paths.
+
+    Each path is resolved against ``CALCULATED_METRICS`` (for example:
+    ``"overall_metrics:total"``), converted to ``int``, and appended to
+    ``results``.
+    """
+    metrics_json = CALCULATED_METRICS
+    for raw_path in argument_paths:
+        path = raw_path.strip()
+        if not path:
+            continue
+
+        current: Any = metrics_json
+        for key in path.split(":"):
+            current = current[key]
+
+        results.append(int(current))
+
+
+def get_metrics_with_overall_total_considered(
+    needs: list[Any], results: list[int], **kwargs: Any
 ) -> None:
-    metrics_json_path = str(kwargs.get("arg1", "_build/metrics.json"))
-    # TODO: Read the Metrics.json and give back the data
-    results
+    """Append selected metrics and compute remainder from overall total.
+
+    This function appends ``overall_metrics:total`` first, then appends all
+    metrics referenced by ``kwargs`` values. Finally, it replaces the first
+    appended value with the remainder after subtracting all other appended
+    values.
+    """
+    results.clear()
+    metrics_json = CALCULATED_METRICS
+    results.append(int(metrics_json["overall_metrics"]["total"]))
+    _get_key_values(results, [str(value) for value in kwargs.values()])
+    results[0] -= sum(results[1:])
+    print(results)
+
+
+def get_metrics_with_custom_type_total_considered(
+    needs: list[Any], results: list[int], **kwargs: Any
+) -> None:
+    """Append selected metrics, optionally using a custom total path.
+
+    If the last kwarg value ends with ``":total"``, that path is used as
+    baseline total and all preceding paths are treated as components; the first
+    result becomes ``total - sum(components)``. Otherwise, all paths are simply
+    appended as-is.
+    """
+    # Get the 'total' that was specified as the first value
+
+    results.clear()
+    values = [str(value) for value in kwargs.values()]
+    if values[-1].endswith(":total"):
+        _get_key_values(results, [values[-1]])  # baseline total
+        _get_key_values(results, values[:-1])  # components
+        results[0] -= sum(results[1:])
+    else:
+        _get_key_values(results, values)
+
+
+def get_just_metrics(needs: list[Any], results: list[int], **kwargs: Any) -> None:
+    """Append selected metric values without any total/remainder calculation.
+
+    All kwarg values are interpreted as colon-separated metric paths and
+    appended to ``results`` in insertion order.
+    """
+    results.clear()
+    _get_key_values(results, [str(value) for value in kwargs.values()])

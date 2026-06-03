@@ -237,13 +237,16 @@ def read_test_xml_file(file: Path) -> tuple[list[DataOfTestCase], list[str], lis
             # I think it should be possible to save the 'from_dict' operation
             # If the is_valid method would return 'False' anyway.
             # I just can't think of it right now, leaving this for future me
-            if properties_element:
+            if properties_element is not None:
                 case_properties = parse_properties(case_properties, properties_element)
                 case_properties.update(md)
-            test_case = DataOfTestCase.from_dict(case_properties)
-            # We will check if the testcase is valid, but still will generate the TestCaseNeed
-            if not test_case.is_valid():
-                missing_prop_tests.append(testname)
+
+                test_case = DataOfTestCase.from_dict(case_properties)
+                if not test_case.is_valid():
+                    missing_prop_tests.append(testname)
+            else:
+                non_prop_tests.append(testname)
+                test_case = DataOfTestCase.from_dict(case_properties)
             test_case_needs.append(test_case)
     return test_case_needs, non_prop_tests, missing_prop_tests
 

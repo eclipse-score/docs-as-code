@@ -30,14 +30,14 @@ repositories.
 .. needpie:: Overall Metrics with Total incooperated
    :labels: without any link, overall with test link, overall with code, overall fully linked
    :colors: red, yellow, blue, green
-   :filter-func: src.extensions.score_metrics.traceability_dashboard.get_metrics_with_overall_total_considered(overall_metrics:with_test_link,overall_metrics:with_code_link,overall_metrics:fully_linked)
+   :filter-func: src.extensions.score_metrics.sphinx_filter.get_metrics_with_overall_total_considered(overall_metrics:with_test_link,overall_metrics:with_code_link,overall_metrics:fully_linked)
 
 
 
 .. needpie:: Metrics without any total incooperated
    :labels: tool req with test link, tool req with code, overall fully linked
    :colors: yellow, blue, green
-   :filter-func: src.extensions.score_metrics.traceability_dashboard.get_just_metrics(metrics_by_type:tool_req:with_test_link,metrics_by_type:tool_req:with_code_link,overall_metrics:fully_linked)
+   :filter-func: src.extensions.score_metrics.sphinx_filter.get_just_metrics(metrics_by_type:tool_req:with_test_link,metrics_by_type:tool_req:with_code_link,overall_metrics:fully_linked)
 
 
 .. Jump to evidence tables:
