@@ -104,14 +104,26 @@ def _parse_need_type(
     global_base_opts: dict[str, Any],
 ):
     """Build a single ScoreNeedType dict from the metamodel entry, incl defaults."""
+    mandatory_options = yaml_data.get("mandatory_options", {})
+    # Merge global base options into optional_options, but exclude fields that
+    # are already declared as mandatory for this type.  Without this filter,
+    # a field like 'version' that appears in both a type's mandatory_options
+    # and in global_base_opts would end up in optional_options too, causing
+    # schema generation to produce conflicting required/pattern entries.
+    type_optional_options = yaml_data.get("optional_options", {})
+    filtered_global_base_opts = {
+        k: v for k, v in global_base_opts.items() if k not in mandatory_options
+    }
+    optional_options = type_optional_options | filtered_global_base_opts
+
     t: ScoreNeedType = {
         "directive": directive_name,
         "title": yaml_data["title"],
         "prefix": yaml_data.get("prefix", f"{directive_name}__"),
         "tags": yaml_data.get("tags", []),
         "parts": yaml_data.get("parts", 3),
-        "mandatory_options": yaml_data.get("mandatory_options", {}),
-        "optional_options": yaml_data.get("optional_options", {}) | global_base_opts,
+        "mandatory_options": mandatory_options,
+        "optional_options": optional_options,
         "mandatory_links": yaml_data.get("mandatory_links", {}),
         "optional_links": yaml_data.get("optional_links", {}),
     }
@@ -119,7 +131,7 @@ def _parse_need_type(
     # Ensure ID regex is set
     if "id" not in t["mandatory_options"]:
         prefix = t["prefix"]
-        t["mandatory_options"]["id"] = f"^{prefix}[0-9a-z_]+$"
+        t["mandatory_options"]["id"] = f"^{prefix}[0-9a-zA-Z_]+$"
 
     if "color" in yaml_data:
         t["color"] = yaml_data["color"]

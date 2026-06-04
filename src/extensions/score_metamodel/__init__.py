@@ -19,6 +19,7 @@ from pathlib import Path
 from typing import Any
 
 from sphinx.application import Sphinx
+from sphinx.config import Config
 from sphinx_needs import logging
 from sphinx_needs.data import NeedsView, SphinxNeedsData
 from sphinx_needs.need_item import NeedItem
@@ -31,6 +32,7 @@ from src.extensions.score_metamodel.metamodel_types import (
     ProhibitedWordCheck as ProhibitedWordCheck,
     ScoreNeedType as ScoreNeedType,
 )
+from src.extensions.score_metamodel.sn_schemas import write_sn_schemas
 from src.extensions.score_metamodel.traceability_metrics import (
     compute_traceability_summary,
 )
@@ -345,6 +347,24 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     config_setdefault(app.config, "needs_build_json", True)
     config_setdefault(app.config, "needs_reproducible_json", True)
     config_setdefault(app.config, "needs_json_remove_defaults", True)
+
+    def _write_schemas_with_error_handling(app: Sphinx, config: Config) -> None:
+        """Generate schemas.json from the metamodel and register it with sphinx-needs.
+
+        This enables sphinx-needs 6 schema validation: required fields, regex
+        patterns on option values, and (eventually) link target type checks.
+        Use config-inited event to defer file writing until config is ready,
+        with error handling to prevent boot crashes on file write failures.
+        """
+        try:
+            write_sn_schemas(app, metamodel)
+        except OSError as e:
+            logger.warning(
+                f"Failed to write schemas.json: {e}. "
+                "Schema validation will be unavailable."
+            )
+
+    _ = app.connect("config-inited", _write_schemas_with_error_handling, priority=499)
 
     # sphinx-collections runs on default prio 500.
     # We need to populate the sphinx-collections config before that happens.

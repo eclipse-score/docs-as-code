@@ -10,11 +10,116 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
+import re
 from pathlib import Path
 
 from sphinx.application import Sphinx
 
 from src.helper_lib import config_setdefault
+
+_TOML_BARE_KEY_RE = re.compile(r"^[a-zA-Z0-9_]+$")
+
+
+def _assert_toml_bare_key(name: str, context: str) -> None:
+    """Assert that *name* is a valid bare TOML key (alphanumeric + underscore)."""
+    assert _TOML_BARE_KEY_RE.match(name), (
+        f"{context}: name {name!r} contains characters that would produce "
+        "malformed TOML (only [a-zA-Z0-9_] allowed in bare keys)"
+    )
+
+
+def _generate_needs_fields_toml(app: Sphinx) -> str:
+    """Serialize ``app.config.needs_fields`` as ``[needs.fields.*]`` TOML entries.
+
+    ``needs_config_writer`` cannot serialize the nested dicts that make up
+    ``needs_fields`` (e.g. ``{"schema": {"type": "string"}, "default": ""}``),
+    so custom fields like ``safety``, ``security``, and ``reqtype`` are missing
+    from ``ubproject.toml``.  Without them, ubCode does not know these are valid
+    options and will report them as unknown fields.
+
+    Returns only the ``default`` value for each field, which is sufficient for
+    ubCode to recognise the field as valid.
+
+    Must be called *after* ``score_metamodel.setup()`` has run (i.e. after
+    ``app.config.needs_fields`` has been extended with the metamodel fields).
+    """
+    lines: list[str] = []
+    for field_name, field_config in sorted(app.config.needs_fields.items()):
+        _assert_toml_bare_key(field_name, "needs_fields")
+        default = field_config.get("default", "")
+        # TOML-escape the default value (handle quotes)
+        escaped = str(default).replace("\\", "\\\\").replace('"', '\\"')
+        lines.append(f"[needs.fields.{field_name}]\n")
+        lines.append(f'default = "{escaped}"\n')
+        lines.append("\n")
+    return "".join(lines)
+
+
+def _generate_needs_links_toml(app: Sphinx) -> str:
+    """Serialize ``app.config.needs_links`` as ``[needs.links.*]`` TOML entries.
+
+    ``needs_config_writer`` cannot serialize the ``needs_links`` dict of dicts
+    (containing ``incoming`` / ``outgoing`` labels), so custom link types like
+    ``satisfies``, ``fulfils``, ``belongs_to`` etc. are absent from
+    ``ubproject.toml``.  Without them, ubCode does not recognise those link
+    fields and may flag them as unknown.
+
+    Must be called *after* ``score_metamodel.setup()`` has run (i.e. after
+    ``app.config.needs_links`` has been updated with the metamodel links).
+    """
+    lines: list[str] = []
+    for link_name, link_config in sorted(app.config.needs_links.items()):
+        _assert_toml_bare_key(link_name, "needs_links")
+        incoming = (
+            str(link_config.get("incoming", ""))
+            .replace("\\", "\\\\")
+            .replace('"', '\\"')
+        )
+        outgoing = (
+            str(link_config.get("outgoing", ""))
+            .replace("\\", "\\\\")
+            .replace('"', '\\"')
+        )
+        lines.append(f"[needs.links.{link_name}]\n")
+        lines.append(f'incoming = "{incoming}"\n')
+        lines.append(f'outgoing = "{outgoing}"\n')
+        lines.append("\n")
+    return "".join(lines)
+
+
+def _generate_needs_types_toml(app: Sphinx) -> str:
+    """Serialize ``app.config.needs_types`` as ``[[needs.types]]`` TOML entries.
+
+    ``needs_config_writer`` cannot serialize the complex ``ScoreNeedType``
+    dicts (it emits an ``unsupported_type`` warning and skips them), so
+    ``ubproject.toml`` ends up with no type definitions.  Without those,
+    the ubCode language server does not recognise any RST directives as needs
+    and indexes nothing.
+
+    Returns only the fields that ubCode requires to identify need directives
+    (``directive``, ``title``, ``prefix``, and optionally ``color``/``style``).
+
+    Must be called *after* ``score_metamodel.setup()`` has run (i.e. after
+    ``app.config.needs_types`` has been extended with the metamodel types).
+    """
+    lines: list[str] = []
+    for nt in app.config.needs_types:
+        _assert_toml_bare_key(nt["directive"], "needs_types.directive")
+        directive = str(nt["directive"]).replace("\\", "\\\\").replace('"', '\\"')
+        title = str(nt["title"]).replace("\\", "\\\\").replace('"', '\\"')
+        prefix = str(nt["prefix"]).replace("\\", "\\\\").replace('"', '\\"')
+        lines.append("[[needs.types]]\n")
+        lines.append(f'directive = "{directive}"\n')
+        lines.append(f'title = "{title}"\n')
+        lines.append(f'prefix = "{prefix}"\n')
+        if color := nt.get("color"):
+            color = str(color).replace("\\", "\\\\").replace('"', '\\"')
+            lines.append(f'color = "{color}"\n')
+        if style := nt.get("style"):
+            style = str(style).replace("\\", "\\\\").replace('"', '\\"')
+            lines.append(f'style = "{style}"\n')
+        lines.append("\n")
+    return "".join(lines)
 
 
 def setup(app: Sphinx) -> dict[str, str | bool]:
@@ -24,28 +129,65 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     See https://needs-config-writer.useblocks.com
     """
 
+    # Write to the confdir directory.
     config_setdefault(app.config, "needscfg_outpath", "ubproject.toml")
-    """Write to the confdir directory."""
 
+    # Any changes to the shared/local configuration updates the generated config.
     config_setdefault(app.config, "needscfg_overwrite", True)
-    """Any changes to the shared/local configuration updates the generated config."""
 
+    # Write full config, so the final configuration is visible in one file.
     config_setdefault(app.config, "needscfg_write_all", True)
-    """Write full config, so the final configuration is visible in one file."""
 
+    # Exclude default values from the generated configuration.
     config_setdefault(app.config, "needscfg_exclude_defaults", True)
-    """Exclude default values from the generated configuration."""
 
     # This is disabled for right now as it causes a lot of issues
     # While we are not using the generated file anywhere
+    # Running Sphinx with -W will fail the CI for uncommitted TOML changes.
     config_setdefault(app.config, "needscfg_warn_on_diff", False)
-    """Running Sphinx with -W will fail the CI for uncommitted TOML changes."""
 
+    # Exclude resolved/generated config values that don't belong in ubproject.toml.
+    # Extend any existing exclusions rather than overwriting them.
+    app.config.needscfg_exclude_vars = list(
+        getattr(app.config, "needscfg_exclude_vars", None) or []
+    ) + [
+        # Default exclusions from needs-config-writer
+        "needs_from_toml",
+        "needs_from_toml_table",
+        "needs_schema_definitions_from_json",
+        # Exclude the expanded schema definitions generated from metamodel.yaml.
+        # These are managed via schemas.json / score_metamodel and must not be
+        # duplicated in ubproject.toml (ubCode only needs schema_definitions_from_json).
+        "needs_schema_definitions",
+        # needs_render_context contains Python callable objects (draw_full_interface,
+        # draw_full_module, etc.) that cannot be serialized to TOML.
+        # needs_config_writer emits unsupported_type warnings for these and skips them.
+        "needs_render_context",
+    ]
+
+    # Merge the static TOML file into the generated configuration.
     app.config.needscfg_merge_toml_files.append(
         str(Path(__file__).parent / "shared.toml")
     )
-    """Merge the static TOML file into the generated configuration."""
 
+    # Generate TOML fragments for types, fields, and links from the metamodel.
+    # needs_config_writer cannot serialise these structures itself, so we combine
+    # them into a single file and register it for merging.
+    # Write to outdir (always writable, even in Bazel sandbox) instead of confdir
+    # to avoid polluting the source tree.
+    metamodel_toml = (
+        _generate_needs_types_toml(app)
+        + _generate_needs_fields_toml(app)
+        + _generate_needs_links_toml(app)
+    )
+    outdir = Path(app.outdir)
+    outdir.mkdir(parents=True, exist_ok=True)
+    metamodel_path = outdir / "needs_metamodel_generated.toml"
+    metamodel_path.write_text(metamodel_toml, encoding="utf-8")
+    # Merge the generated metamodel TOML (types, fields, links) into the final ubproject.toml.
+    app.config.needscfg_merge_toml_files.append(str(metamodel_path))
+
+    # Relative paths to confdir for Bazel provided absolute paths.
     app.config.needscfg_relative_path_fields.extend(
         [
             "needs_external_needs[*].json_path",
@@ -55,13 +197,13 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
             },
         ]
     )
-    """Relative paths to confdir for Bazel provided absolute paths."""
 
     app.config.suppress_warnings += [
-        "needs_config_writer.unsupported_type",
         "needs_config_writer.path_conversion",
+        # needs_render_context values are Python callables; they are excluded via
+        # needscfg_exclude_vars above, but suppress the warning as a safety net.
+        "needs_config_writer.unsupported_type",
     ]
-    # TODO remove the suppress_warnings once fixed
 
     return {
         "version": "0.1",
