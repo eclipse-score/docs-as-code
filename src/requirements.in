@@ -33,6 +33,9 @@ needs-config-writer == 0.2.4
 # Need this to enable non bazel execution
 bazel-runfiles
 
+# Render JSON Schema files as documentation tables
+sphinx-jsonschema
+
 # Local development
 pytest
 pyfakefs

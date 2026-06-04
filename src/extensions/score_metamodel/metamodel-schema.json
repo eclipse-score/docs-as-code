@@ -1,55 +1,94 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://example.com/metamodel-schema.json",
+    "$id": "https://eclipse-score.github.io/docs-as-code/metamodel-schema.json",
     "title": "S-CORE Metamodel Schema",
+    "description": "Validates the structure of metamodel.yaml, which defines all Sphinx-Needs types, their options, and link relationships used across S-CORE documentation.",
     "type": "object",
     "properties": {
       "types": {
         "type": "object",
-        "description": "All Sphinx-Needs types (directives)",
+        "description": "Map of need type identifiers to their definitions. Each key becomes a Sphinx-Needs directive (e.g. ``feat_req``, ``comp_arc_sta``).",
         "additionalProperties": {
           "type": "object",
+          "description": "Definition of a single need type.",
           "properties": {
-            "title":      { "type": "string" },
-            "prefix":     { "type": "string" },
-            "color":      { "type": "string" },
-            "style":      { "type": "string" },
+            "title": {
+              "type": "string",
+              "description": "Human-readable display name shown in rendered documentation (e.g. 'Feature Requirement')."
+            },
+            "prefix": {
+              "type": "string",
+              "description": "ID prefix for auto-generated need IDs. Defaults to ``<type_name>__`` when omitted."
+            },
+            "color": {
+              "type": "string",
+              "description": "CSS color used when rendering this need type in diagrams and tables."
+            },
+            "style": {
+              "type": "string",
+              "description": "Visual style hint for diagram rendering (e.g. Plantuml stereotype)."
+            },
             "mandatory_options": {
               "type": "object",
-              "description": "Map of field_name -> regex pattern (these fields are required).",
-              "additionalProperties": { "type": "string" }
+              "description": "Options that every need of this type must provide. Each key is a field name and its value is a regex pattern the field value must match.",
+              "additionalProperties": {
+                "type": "string"
+              }
             },
             "optional_options": {
               "type": "object",
-              "description": "Map of field_name -> regex pattern (these fields are optional).",
-              "additionalProperties": { "type": "string" }
+              "description": "Options that may optionally appear on a need of this type. Validated against the regex pattern when present.",
+              "additionalProperties": {
+                "type": "string"
+              }
             },
             "mandatory_links": {
               "type": "object",
-              "description": "Map of link_field_name -> regex pattern (these link fields are required).",
-              "additionalProperties": { "type": "string" }
+              "description": "Link fields that every need of this type must include. Values are regex patterns restricting which target need IDs are allowed.",
+              "additionalProperties": {
+                "type": "string"
+              }
             },
             "optional_links": {
               "type": "object",
-              "description": "Map of link_field_name -> regex pattern (these link fields are optional).",
-              "additionalProperties": { "type": "string" }
+              "description": "Link fields that may optionally appear. Values are regex patterns restricting allowed target need IDs.",
+              "additionalProperties": {
+                "type": "string"
+              }
             }
           },
-          "required": ["title", "prefix", "mandatory_options"]
+          "required": [
+            "title",
+            "prefix",
+            "mandatory_options"
+          ]
         }
       },
       "links": {
         "type": "object",
-        "description": "All extra link definitions. Key is the link 'option' name.",
+        "description": "Extra Sphinx-Needs link type definitions. Each key is the link option name used in directives (e.g. ``implements``, ``satisfies``).",
         "additionalProperties": {
           "type": "object",
+          "description": "A bidirectional link type definition.",
           "properties": {
-            "incoming": { "type": "string" },
-            "outgoing": { "type": "string" }
+            "incoming": {
+              "type": "string",
+              "description": "Label shown on the target side of the link (e.g. 'is implemented by')."
+            },
+            "outgoing": {
+              "type": "string",
+              "description": "Label shown on the source side of the link (e.g. 'implements')."
+            }
           },
-          "required": ["incoming", "outgoing"]
+          "required": [
+            "incoming",
+            "outgoing"
+          ]
         }
       }
     },
-    "required": ["types", "links"]
-  }
+    "required": [
+      "types",
+      "links"
+    ]
+}

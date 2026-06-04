@@ -446,6 +446,7 @@ docutils==0.22.4 \
     #   myst-parser
     #   pydata-sphinx-theme
     #   sphinx
+    #   sphinx-jsonschema
 esbonio==0.16.5 \
     --hash=sha256:04ba926e3603f7b1fde1abc690b47afd60749b64b1029b6bce8e1de0bb284921 \
     --hash=sha256:acab2e16c6cf8f7232fb04e0d48514ce50566516b1f6fcf669ccf2f247e8b10f
@@ -536,6 +537,10 @@ jinja2==3.1.6 \
     #   sphinx
     #   sphinx-collections
     #   sphinxcontrib-mermaid
+jsonpointer==3.1.1 \
+    --hash=sha256:0b801c7db33a904024f6004d526dcc53bbb8a4a0f4e32bfd10beadf60adf1900 \
+    --hash=sha256:8ff8b95779d071ba472cf5bc913028df06031797532f08a7d5b602d8b2a488ca
+    # via sphinx-jsonschema
 jsonschema-rs==0.37.4 \
     --hash=sha256:03b34f911e99343fc388651688683010daee538a3cf8cf86a7997bca28fdf16b \
     --hash=sha256:0f17a61deb557faa57dffb9596e4f022873404f935114367788b1eebdec2bb00 \
@@ -1206,6 +1211,7 @@ pyyaml==6.0.3 \
     --hash=sha256:fc09d0aa354569bc501d4e787133afc08552722d3ab34836a80547331bb5d4a0
     # via
     #   myst-parser
+    #   sphinx-jsonschema
     #   sphinxcontrib-mermaid
 requests==2.33.1 \
     --hash=sha256:18817f8c57c6263968bc123d237e3b8b08ac046f5456bd1e307ee8f4250d3517 \
@@ -1214,6 +1220,7 @@ requests==2.33.1 \
     #   pygithub
     #   requests-file
     #   sphinx
+    #   sphinx-jsonschema
     #   sphinx-needs
 requests-file==2.1.0 \
     --hash=sha256:0f549a3f3b0699415ac04d167e9cb39bccfb730cb832b4d20be3d9867356e658 \
@@ -1279,7 +1286,10 @@ sphinx-data-viewer==0.1.5 \
 sphinx-design==0.7.0 \
     --hash=sha256:d2a3f5b19c24b916adb52f97c5f00efab4009ca337812001109084a740ec9b7a \
     --hash=sha256:f82bf179951d58f55dca78ab3706aeafa496b741a91b1911d371441127d64282
-    # via -r requirements.in
+    # via -r src/requirements.in
+sphinx-jsonschema==1.19.2 \
+    --hash=sha256:1a48954217c2b3c6759c89b9ddd2c8e5b668b8730564e0283b009f23932be150
+    # via -r src/requirements.in
 sphinx-needs[plotting]==8.0.0 \
     --hash=sha256:540c380c074d4088a557ea353e91513bfc1cb7712b10925c13ac9e5ebb7be091 \
     --hash=sha256:c4336ee0e3c949eff9eb11a14910f7b6b68cb8284d731cfddf97694037337674

@@ -19,7 +19,7 @@ This extension serves multiple critical functions:
 ### Metamodel Definition
 The extension contains:
 - `metamodel.yaml`: The main metamodel definition
-- `metamodel-schema.json`: JSON schema for validation
+- `metamodel-schema.json`: JSON schema for validation (see the rendered [Schema Reference](../../reference/metamodel.rst))
 - Setting configuration parameters based on input that get passed on to sphinx-needs
 
 ### Validation System

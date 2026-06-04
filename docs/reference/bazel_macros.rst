@@ -80,7 +80,7 @@ Minimal example (root ``BUILD``)
      )
 
   The custom ``metamodel.yaml`` must follow the same schema as the default one
-  (see :doc:`score_metamodel </internals/extensions/metamodel>`).
+  (see :doc:`score_metamodel </internals/extensions/metamodel>` and :ref:`metamodel_reference`).
   You may use ``@score_docs_as_code//src/extensions/score_metamodel:metamodel_yaml``
   for extension processing.
   When ``metamodel`` is omitted the default metamodel is used unchanged.
