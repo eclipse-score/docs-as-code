@@ -14,12 +14,13 @@ import json
 from pathlib import Path
 from typing import Any
 
-from score_metrics.traceability_metrics import calculate_full_need_metrics
+from score_metrics.traceability_metrics import (
+    CALCULATED_METRICS,
+    calculate_full_need_metrics,
+)
 from sphinx.application import Sphinx
 from sphinx.environment import BuildEnvironment
 from sphinx_needs import logging
-
-from score_metrics.traceability_metrics import CALCULATED_METRICS
 
 logger = logging.get_logger(__name__)
 
