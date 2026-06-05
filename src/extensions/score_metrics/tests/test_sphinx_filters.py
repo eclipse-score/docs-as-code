@@ -12,10 +12,10 @@
 # *******************************************************************************
 
 from typing import cast
+
 import pytest
 
 # noqa
-
 import score_metrics.sphinx_filters as sphinx_filters
 from score_metrics.sphinx_filters import (
     generic_pie_items_by_tag,

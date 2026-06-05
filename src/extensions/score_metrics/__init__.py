@@ -11,7 +11,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 import json
-import os
 from pathlib import Path
 from typing import Any
 
@@ -25,17 +24,6 @@ from src.extensions.score_metrics.traceability_metrics import CALCULATED_METRICS
 logger = logging.get_logger(__name__)
 
 
-# def _configure_traceability_dashboard(app: Sphinx, config: object) -> None:
-#     """Propagate repo-level traceability settings to dashboard filters."""
-#     from src.extensions.score_metrics.traceability_dashboard import (
-#         set_default_include_external,
-#     )
-#
-#     include_external = bool(
-#         getattr(config, "score_metamodel_include_external_needs", False)
-#     )
-#     set_default_include_external(include_external)
-#
 def calculate_need_metrics(app: Sphinx, env: BuildEnvironment) -> None:
     """
     This is the single source of truth for traceability metrics. It runs
@@ -82,8 +70,10 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
         ),
     )
 
-    # _ = app.connect("config-inited", _configure_traceability_dashboard, priority=498)
+    # Calculates the metrics & sets global var for access
     _ = app.connect("env-updated", calculate_need_metrics, priority=600)
+
+    # Writes the metrics to a json in '_build'
     _ = app.connect("build-finished", _write_metrics_json, priority=550)
 
     return {

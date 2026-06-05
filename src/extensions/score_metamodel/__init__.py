@@ -11,12 +11,10 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 import importlib
-import json
 import os
 import pkgutil
 from collections.abc import Callable
 from pathlib import Path
-from typing import Any
 
 from sphinx.application import Sphinx
 from sphinx_needs import logging

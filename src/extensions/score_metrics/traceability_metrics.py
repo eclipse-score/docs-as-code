@@ -81,7 +81,6 @@ def calculate_requirement_metrics(
         ):
             reqs_fully_linked += 1
 
-
     return {
         "total": total,
         "with_code_link": reqs_with_code_link,

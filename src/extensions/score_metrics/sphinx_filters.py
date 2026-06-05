@@ -38,10 +38,11 @@ Example usage in RST::
 """
 
 from __future__ import annotations
+
 from typing import Any
 
-from sphinx_needs.need_item import NeedItem
 from score_metrics.traceability_metrics import CALCULATED_METRICS
+from sphinx_needs.need_item import NeedItem
 
 
 def _matches_source_selector(need: NeedItem, selector: str) -> bool:

@@ -16,14 +16,15 @@
 from typing import Any, cast
 
 import pytest
-
-from score_pytest.attribute_plugin import add_test_properties
+import score_metrics.traceability_metrics as metrics
+from score_metamodel import ScoreNeedType
 from sphinx_needs.data import NeedsView
 from sphinx_needs.need_item import NeedItem
-import score_metrics.traceability_metrics as metrics
-#from score_metamodel.tests import need as test_need
+
+from score_pytest.attribute_plugin import add_test_properties
+
+# from score_metamodel.tests import need as test_need
 from src.extensions.score_metamodel.tests import need as test_need
-from score_metamodel import ScoreNeedType
 
 
 @add_test_properties(
@@ -230,4 +231,3 @@ def test_calculate_test_metrics_counts_linked_tests_and_broken_refs() -> None:
     assert result["broken_references"] == [
         {"testcase": "TC_2", "missing_need": "REQ_404"}
     ]
-
