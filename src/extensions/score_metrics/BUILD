@@ -51,6 +51,6 @@ score_pytest(
     deps = [
         ":score_metrics",
         "@score_docs_as_code//src/extensions/score_metamodel",
-        "@score_docs_as_code//src/extensions/score_metamodel:score_metamodel_tests",
+        "@score_docs_as_code//src/extensions/score_metamodel:unit_tests",
     ],
 )
