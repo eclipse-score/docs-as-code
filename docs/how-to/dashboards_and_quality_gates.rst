@@ -47,7 +47,7 @@ Default Behavior (No Configuration Needed)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 By default, ``score_metamodel`` autodiscovers requirement types from the
-repository needs present in the current build. 
+repository needs present in the current build.
 Requirement types are identified from ``needs_types`` entries tagged with ``requirement``.
 
 This is the recommended setup for most repositories.
