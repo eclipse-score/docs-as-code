@@ -71,6 +71,7 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
             "Default is False so each repo gates only its own needs."
         ),
     )
+    app.setup_extension("score_metamodel")
 
     # Calculates the metrics & sets global var for access
     _ = app.connect("env-updated", calculate_need_metrics, priority=600)

@@ -33,7 +33,7 @@ Example usage in RST::
 
     .. needpie:: My Requirements Coverage
        :labels: Linked, Not Linked
-       :filter-func: score_metamodel.sphinx_filters.generic_pie_linked_items(std_req__mystandard__, gd_)
+       :filter-func: score_metrics.sphinx_filters.generic_pie_linked_items(std_req__mystandard__, gd_)
 
 """
 
