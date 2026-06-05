@@ -40,7 +40,7 @@ def calculate_need_metrics(app: Sphinx, env: BuildEnvironment) -> None:
 
 def _write_metrics_json(app: Sphinx, exception: Any | None) -> None:
     """
-    Write a schema-v1 metrics.json alongside needs.json in the build output.
+    Write a schema-v2 metrics.json alongside needs.json in the build output.
     """
     if exception:
         logger.error(f"Sphinx-Exception at end of build: {exception}")

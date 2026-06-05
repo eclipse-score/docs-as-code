@@ -192,43 +192,22 @@ def _get_key_values(results: list[int], argument_paths: list[str]):
         results.append(int(current))
 
 
-def get_metrics_with_overall_total_considered(
+def get_metrics_with_first_value_total(
     needs: list[Any], results: list[int], **kwargs: Any
 ) -> None:
-    """Append selected metrics and compute remainder from overall total.
-
-    This function appends ``overall_metrics:total`` first, then appends all
-    metrics referenced by ``kwargs`` values. Finally, it replaces the first
-    appended value with the remainder after subtracting all other appended
-    values.
+    """
+    This function calculates the first parameter you give it as the 'total'.
+    E.g.
+        - <func_call>(metrics_by_type:tool_req:total, metrics_by_type:tool_req:with_test_link)
+    It will then treat the first arguemnt so 'tool_req-total' as the 'total number', and will
+    subtract all following numbers from it.
+    So in this case it would subtract the 'tool_req-with test link' number from the first.
+    That way you can have a 'missing' value as the first.
     """
     results.clear()
-    metrics_json = CALCULATED_METRICS
-    results.append(int(metrics_json["overall_metrics"]["total"]))
+    # As kwargs ordering is deterministic this will always put the first total into results[0]
     _get_key_values(results, [str(value) for value in kwargs.values()])
     results[0] -= sum(results[1:])
-
-
-def get_metrics_with_custom_type_total_considered(
-    needs: list[Any], results: list[int], **kwargs: Any
-) -> None:
-    """Append selected metrics, optionally using a custom total path.
-
-    If the last kwarg value ends with ``":total"``, that path is used as
-    baseline total and all preceding paths are treated as components; the first
-    result becomes ``total - sum(components)``. Otherwise, all paths are simply
-    appended as-is.
-    """
-    # Get the 'total' that was specified as the first value
-
-    results.clear()
-    values = [str(value) for value in kwargs.values()]
-    if values[-1].endswith(":total"):
-        _get_key_values(results, [values[-1]])  # baseline total
-        _get_key_values(results, values[:-1])  # components
-        results[0] -= sum(results[1:])
-    else:
-        _get_key_values(results, values)
 
 
 def get_just_metrics(needs: list[Any], results: list[int], **kwargs: Any) -> None:

@@ -183,7 +183,7 @@ def calculate_full_need_metrics(app: Sphinx, include_external: bool):
     )
 
     output: dict[str, Any] = {
-        "schema_version": "1",
+        "schema_version": "2",
         "generated_by": "sphinx_build",
         "overall_metrics": overall_metrics,
         "metrics_by_type": metrics_by_type,

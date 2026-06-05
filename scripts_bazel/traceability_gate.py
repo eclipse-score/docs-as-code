@@ -22,7 +22,7 @@ This script is the CI gate for a metrics.json based workflow:
     CI gate     →  traceability_gate --metrics-json metrics.json [--min-* ...]
 
 The gate never parses needs.json itself; it only reads the pre-computed
-schema-v1 metrics file produced by the docs build.
+schema-v2 metrics file produced by the docs build, which is saved in '_build/'.
 """
 
 from __future__ import annotations
@@ -34,23 +34,34 @@ import sys
 from pathlib import Path
 from typing import Any
 
-_SUPPORTED_SCHEMA_VERSION = "1"
+_SUPPORTED_SCHEMA_VERSION = "2"
 
 
-def _print_type_summary(need_type: str, metrics: dict[str, Any]) -> None:
-    req = metrics["requirements"]
-    tst = metrics["tests"]
-    req_total = req["total"]
-    req_with_code_link = req["with_code_link"]
-    req_with_code_link_pct = req["with_code_link_pct"]
-    req_with_test_link = req["with_test_link"]
-    req_with_test_link_pct = req["with_test_link_pct"]
-    req_fully_linked = req["fully_linked"]
-    req_fully_linked_pct = req["fully_linked_pct"]
-    tst_total = tst["total"]
-    tst_linked_to_requirements = tst["linked_to_requirements"]
-    tst_linked_to_requirements_pct = tst["linked_to_requirements_pct"]
-    tst_broken_references = tst["broken_references"]
+def _print_type_summary(
+    need_type: str,
+    req_metrics: dict[str, Any],
+    tst_metrics: dict[str, Any],
+) -> None:
+    """
+    Print a human-readable traceability summary for one requirement type.
+
+    Args:
+        need_type: Requirement type key from ``metrics_by_type``.
+        req_metrics: Requirement coverage metrics for this type.
+        tst_metrics: Global testcase linkage metrics.
+    """
+    req_total = req_metrics["total"]
+    req_with_code_link = req_metrics["with_code_link"]
+    req_with_code_link_pct = req_metrics["with_code_link_pct"]
+    req_with_test_link = req_metrics["with_test_link"]
+    req_with_test_link_pct = req_metrics["with_test_link_pct"]
+    req_fully_linked = req_metrics["fully_linked"]
+    req_fully_linked_pct = req_metrics["fully_linked_pct"]
+
+    tst_total = tst_metrics["total"]
+    tst_linked_to_requirements = tst_metrics["linked_to_requirements"]
+    tst_linked_to_requirements_pct = tst_metrics["linked_to_requirements_pct"]
+    tst_broken_references = tst_metrics["broken_references"]
 
     print(f"[{need_type}]")
     print(
@@ -78,21 +89,39 @@ def _print_type_summary(need_type: str, metrics: dict[str, Any]) -> None:
 
 def _check_type_thresholds(
     need_type: str,
-    metrics: dict[str, Any],
+    req_metrics: dict[str, Any],
+    tst_metrics: dict[str, Any],
     min_req_code: float,
     min_req_test: float,
     min_req_fully_linked: float,
     min_tests_linked: float,
     fail_on_broken_test_refs: bool,
 ) -> list[str]:
+    """
+    Evaluate threshold checks for one requirement type.
+
+    Args:
+        need_type: Requirement type key from ``metrics_by_type``.
+        req_metrics: Requirement coverage metrics for this type.
+        tst_metrics: Global testcase linkage metrics.
+        min_req_code: Minimum percent of requirements with source code links.
+        min_req_test: Minimum percent of requirements with test links.
+        min_req_fully_linked: Minimum percent of fully linked requirements.
+        min_tests_linked: Minimum percent of tests linked to requirements.
+        fail_on_broken_test_refs: If True, fail when broken test references exist.
+
+    Returns:
+        A list of failure messages. Empty list means all thresholds passed.
+    """
     failures: list[str] = []
-    req = metrics["requirements"]
-    tst = metrics["tests"]
-    req_with_code_link_pct = req["with_code_link_pct"]
-    req_with_test_link_pct = req["with_test_link_pct"]
-    req_fully_linked_pct = req["fully_linked_pct"]
-    tst_linked_to_requirements_pct = tst["linked_to_requirements_pct"]
-    tst_broken_references = tst["broken_references"]
+
+    req_with_code_link_pct = req_metrics["with_code_link_pct"]
+    req_with_test_link_pct = req_metrics["with_test_link_pct"]
+    req_fully_linked_pct = req_metrics["fully_linked_pct"]
+
+    tst_linked_to_requirements_pct = tst_metrics["linked_to_requirements_pct"]
+    tst_broken_references = tst_metrics["broken_references"]
+
     prefix = f"[{need_type}] "
 
     if req_with_code_link_pct < min_req_code:
@@ -119,10 +148,20 @@ def _check_type_thresholds(
         failures.append(
             f"{prefix}broken testcase references found: {len(tst_broken_references)}"
         )
+
     return failures
 
 
 def main() -> int:
+    """
+    Run the traceability threshold gate.
+
+    Returns:
+        Process exit code:
+        - 0 on success
+        - 1 on input or schema errors
+        - 2 on threshold failures
+    """
     parser = argparse.ArgumentParser(
         description=(
             "Read a traceability metrics JSON (schema v1) and enforce coverage "
@@ -205,7 +244,16 @@ def main() -> int:
         )
         return 1
 
-    metrics_by_type: dict[str, Any] = data["metrics_by_type"]
+    metrics_by_type: dict[str, Any] = data.get("metrics_by_type", {})
+    tests_metrics: dict[str, Any] = data.get("tests", {})
+
+    if not metrics_by_type:
+        print("Error: missing or empty 'metrics_by_type' section.", file=sys.stderr)
+        return 1
+    if not tests_metrics:
+        print("Error: missing 'tests' section.", file=sys.stderr)
+        return 1
+
     types_to_check = (
         [args.need_type] if args.need_type else list(metrics_by_type.keys())
     )
@@ -222,11 +270,14 @@ def main() -> int:
                 f"(available: {available})"
             )
             continue
-        _print_type_summary(need_type, metrics_by_type[need_type])
+
+        req_metrics = metrics_by_type[need_type]
+        _print_type_summary(need_type, req_metrics, tests_metrics)
         failures.extend(
             _check_type_thresholds(
                 need_type,
-                metrics_by_type[need_type],
+                req_metrics,
+                tests_metrics,
                 args.min_req_code,
                 args.min_req_test,
                 args.min_req_fully_linked,
