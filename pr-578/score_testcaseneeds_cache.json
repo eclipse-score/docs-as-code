@@ -238,7 +238,7 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_traceability_metrics_json_generation__test_need",
+    "name": "test_traceability_metrics__test_need",
     "file": "src/extensions/score_metamodel/tests/__init__.py",
     "line": "110",
     "result": "passed",
@@ -252,9 +252,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_traceability_metrics_json_generation__test_get_need_types_by_tags_returns_matching_directives_only",
-    "file": "src/extensions/score_metrics/tests/test_traceability_metrics_json_generation.py",
-    "line": "30",
+    "name": "test_traceability_metrics__test_get_need_types_by_tags_returns_matching_directives_only",
+    "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
+    "line": "26",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -266,9 +266,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_traceability_metrics_json_generation__test_get_need_types_by_tags_returns_empty_on_non_match",
-    "file": "src/extensions/score_metrics/tests/test_traceability_metrics_json_generation.py",
-    "line": "85",
+    "name": "test_traceability_metrics__test_get_need_types_by_tags_returns_empty_on_non_match",
+    "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
+    "line": "81",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -280,9 +280,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_traceability_metrics_json_generation__test_is_non_empty_string_and_non_string_behavior[  -False]",
-    "file": "src/extensions/score_metrics/tests/test_traceability_metrics_json_generation.py",
-    "line": "112",
+    "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[  -False]",
+    "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
+    "line": "108",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -294,9 +294,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_traceability_metrics_json_generation__test_is_non_empty_string_and_non_string_behavior[text-True]",
-    "file": "src/extensions/score_metrics/tests/test_traceability_metrics_json_generation.py",
-    "line": "112",
+    "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[text-True]",
+    "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
+    "line": "108",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -308,9 +308,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_traceability_metrics_json_generation__test_is_non_empty_string_and_non_string_behavior[value2-False]",
-    "file": "src/extensions/score_metrics/tests/test_traceability_metrics_json_generation.py",
-    "line": "112",
+    "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[value2-False]",
+    "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
+    "line": "108",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -322,9 +322,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_traceability_metrics_json_generation__test_is_non_empty_string_and_non_string_behavior[value3-True]",
-    "file": "src/extensions/score_metrics/tests/test_traceability_metrics_json_generation.py",
-    "line": "112",
+    "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[value3-True]",
+    "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
+    "line": "108",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -336,9 +336,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_traceability_metrics_json_generation__test_is_non_empty_string_and_non_string_behavior[0-False]",
-    "file": "src/extensions/score_metrics/tests/test_traceability_metrics_json_generation.py",
-    "line": "112",
+    "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[0-False]",
+    "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
+    "line": "108",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -350,9 +350,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_traceability_metrics_json_generation__test_is_non_empty_string_and_non_string_behavior[1-True]",
-    "file": "src/extensions/score_metrics/tests/test_traceability_metrics_json_generation.py",
-    "line": "112",
+    "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[1-True]",
+    "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
+    "line": "108",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -364,9 +364,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_traceability_metrics_json_generation__test_is_non_empty_string_and_non_string_behavior[None-False]",
-    "file": "src/extensions/score_metrics/tests/test_traceability_metrics_json_generation.py",
-    "line": "112",
+    "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[None-False]",
+    "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
+    "line": "108",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -378,9 +378,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_traceability_metrics_json_generation__test_safe_percent_zero[3-0-100.0]",
-    "file": "src/extensions/score_metrics/tests/test_traceability_metrics_json_generation.py",
-    "line": "137",
+    "name": "test_traceability_metrics__test_safe_percent_zero[3-0-100.0]",
+    "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
+    "line": "133",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -392,9 +392,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_traceability_metrics_json_generation__test_safe_percent_zero[1-4-25.0]",
-    "file": "src/extensions/score_metrics/tests/test_traceability_metrics_json_generation.py",
-    "line": "137",
+    "name": "test_traceability_metrics__test_safe_percent_zero[1-4-25.0]",
+    "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
+    "line": "133",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -406,9 +406,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_traceability_metrics_json_generation__test_calculate_requirement_metrics_counts_links_and_missing_ids",
-    "file": "src/extensions/score_metrics/tests/test_traceability_metrics_json_generation.py",
-    "line": "151",
+    "name": "test_traceability_metrics__test_calculate_requirement_metrics_counts_links_and_missing_ids",
+    "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
+    "line": "147",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -420,9 +420,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_traceability_metrics_json_generation__test_calculate_requirement_metrics_non_fully_linked",
-    "file": "src/extensions/score_metrics/tests/test_traceability_metrics_json_generation.py",
-    "line": "177",
+    "name": "test_traceability_metrics__test_calculate_requirement_metrics_non_fully_linked",
+    "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
+    "line": "173",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -434,9 +434,23 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_traceability_metrics_json_generation__test_calculate_test_metrics_counts_linked_tests_and_broken_refs",
-    "file": "src/extensions/score_metrics/tests/test_traceability_metrics_json_generation.py",
-    "line": "203",
+    "name": "test_traceability_metrics__test_calculate_requirement_metrics_non_fully_linked_2",
+    "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
+    "line": "199",
+    "result": "passed",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": "",
+    "TestType": "requirements-based",
+    "DerivationTechnique": "equivalence-classes",
+    "result_text": "",
+    "PartiallyVerifies": "tool_req__docs_test_linkage_metrics",
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_traceability_metrics__test_calculate_test_metrics_counts_linked_tests_and_broken_refs",
+    "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
+    "line": "225",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
