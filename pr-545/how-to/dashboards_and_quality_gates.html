@@ -491,9 +491,8 @@ repository can:</p>
 <section id="default-behavior-no-configuration-needed">
 <h3>Default Behavior (No Configuration Needed)<a class="headerlink" href="#default-behavior-no-configuration-needed" title="Link to this heading">#</a></h3>
 <p>By default, <code class="docutils literal notranslate"><span class="pre">score_metamodel</span></code> autodiscovers requirement types from the
-repository needs present in the current build. Requirement types are identified
-from <code class="docutils literal notranslate"><span class="pre">needs_types</span></code> entries tagged with <code class="docutils literal notranslate"><span class="pre">requirement</span></code> or
-<code class="docutils literal notranslate"><span class="pre">requirement_excl_process</span></code>.</p>
+repository needs present in the current build.
+Requirement types are identified from <code class="docutils literal notranslate"><span class="pre">needs_types</span></code> entries tagged with <code class="docutils literal notranslate"><span class="pre">requirement</span></code>.</p>
 <p>This is the recommended setup for most repositories.</p>
 </section>
 <section id="optional-override-for-requirement-types">
@@ -584,271 +583,62 @@ gate thresholds so CI calls a single Bazel target.</p>
 </ol>
 </section>
 </section>
-<section id="metrics-needpie-functions">
-<h1>Metrics Needpie functions<a class="headerlink" href="#metrics-needpie-functions" title="Link to this heading">#</a></h1>
-<section id="overview">
-<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
-<p>These helpers read values from a nested dictionary named <code class="docutils literal notranslate"><span class="pre">CALCULATED_METRICS</span></code>.
-A metric is selected by a <strong>colon-separated path</strong>, for example:</p>
+<section id="needpie-usage-guide-quick-and-practical">
+<h1>Needpie Usage Guide (Quick and Practical)<a class="headerlink" href="#needpie-usage-guide-quick-and-practical" title="Link to this heading">#</a></h1>
+<p>Use these examples as ready-to-copy templates for dashboard-style pie charts.</p>
+<section id="tips-for-readable-charts">
+<h2>Tips for readable charts<a class="headerlink" href="#tips-for-readable-charts" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">overall_metrics:total</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">overall_metrics:with_test_link</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">types:bug:total</span></code></p></li>
+<li><p>Keep labels short and audience-friendly.</p></li>
+<li><p>Put the most important category first.</p></li>
+<li><p>Use high-contrast colors that are easy to distinguish.</p></li>
+<li><p>Avoid red/green-only combinations when possible.</p></li>
 </ul>
-<p>All resolved values are converted to <code class="docutils literal notranslate"><span class="pre">int</span></code> and appended to a mutable
-<code class="docutils literal notranslate"><span class="pre">results</span></code> list passed by the caller.</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">needs</span></code> parameter is accepted for integration compatibility, but it is not
-used by the current implementations.</p>
-</section>
-<section id="path-format">
-<h2>Path format<a class="headerlink" href="#path-format" title="Link to this heading">#</a></h2>
-<p>Paths are split using <code class="docutils literal notranslate"><span class="pre">:</span></code> and then resolved step by step.</p>
-<p>Example:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>path = &quot;overall_metrics:total&quot;
-</pre></div>
-</div>
-<p>is resolved like:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">current</span> <span class="o">=</span> <span class="n">CALCULATED_METRICS</span>
-<span class="n">current</span> <span class="o">=</span> <span class="n">current</span><span class="p">[</span><span class="s2">&quot;overall_metrics&quot;</span><span class="p">]</span>
-<span class="n">current</span> <span class="o">=</span> <span class="n">current</span><span class="p">[</span><span class="s2">&quot;total&quot;</span><span class="p">]</span>
-</pre></div>
-</div>
-</section>
-<section id="function-reference">
-<h2>Function reference<a class="headerlink" href="#function-reference" title="Link to this heading">#</a></h2>
-<section id="get-key-values-results-argument-paths">
-<h3>_get_key_values(results, argument_paths)<a class="headerlink" href="#get-key-values-results-argument-paths" title="Link to this heading">#</a></h3>
-<section id="purpose">
-<h4>Purpose<a class="headerlink" href="#purpose" title="Link to this heading">#</a></h4>
-<p>Internal helper that appends metric values for a list of paths.</p>
-</section>
-<section id="behavior">
-<h4>Behavior<a class="headerlink" href="#behavior" title="Link to this heading">#</a></h4>
-<ol class="arabic simple">
-<li><p>Iterate over each item in <code class="docutils literal notranslate"><span class="pre">argument_paths</span></code>.</p></li>
-<li><p>Strip whitespace.</p></li>
-<li><p>Skip empty paths.</p></li>
-<li><p>Resolve the path inside <code class="docutils literal notranslate"><span class="pre">CALCULATED_METRICS</span></code>.</p></li>
-<li><p>Convert to integer and append to <code class="docutils literal notranslate"><span class="pre">results</span></code>.</p></li>
-</ol>
-</section>
-<section id="notes">
-<h4>Notes<a class="headerlink" href="#notes" title="Link to this heading">#</a></h4>
+<section id="recommended-color-palette">
+<h3>Recommended color palette<a class="headerlink" href="#recommended-color-palette" title="Link to this heading">#</a></h3>
+<p>This palette is generally easier to read:</p>
 <ul class="simple">
-<li><p>Modifies <code class="docutils literal notranslate"><span class="pre">results</span></code> in place.</p></li>
-<li><p>Does not return a new list.</p></li>
-<li><p>Raises <code class="docutils literal notranslate"><span class="pre">KeyError</span></code> if a path key does not exist.</p></li>
-<li><p>Raises <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> if a resolved value cannot be converted to <code class="docutils literal notranslate"><span class="pre">int</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">#4E79A7</span></code> (blue)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">#F28E2B</span></code> (orange)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">#59A14F</span></code> (green)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">#B07AA1</span></code> (purple)</p></li>
 </ul>
 </section>
 </section>
-<section id="get-metrics-with-overall-total-considered">
-<h3>get_metrics_with_overall_total_considered(…)<a class="headerlink" href="#get-metrics-with-overall-total-considered" title="Link to this heading">#</a></h3>
-<section id="id1">
-<h4>Purpose<a class="headerlink" href="#id1" title="Link to this heading">#</a></h4>
-<p>Compute a remainder against global overall total.</p>
-</section>
-<section id="id2">
-<h4>Behavior<a class="headerlink" href="#id2" title="Link to this heading">#</a></h4>
-<ol class="arabic">
-<li><p>Append <code class="docutils literal notranslate"><span class="pre">CALCULATED_METRICS[&quot;overall_metrics&quot;][&quot;total&quot;]</span></code> as first value.</p></li>
-<li><p>Append each metric referenced by <code class="docutils literal notranslate"><span class="pre">kwargs.values()</span></code>.</p></li>
-<li><p>Replace the first value with:</p>
-<p><code class="docutils literal notranslate"><span class="pre">overall_total</span> <span class="pre">-</span> <span class="pre">sum(all</span> <span class="pre">other</span> <span class="pre">appended</span> <span class="pre">values)</span></code></p>
-</li>
-</ol>
-</section>
-<section id="typical-use-case">
-<h4>Typical use case<a class="headerlink" href="#typical-use-case" title="Link to this heading">#</a></h4>
-<p>Use this when your pie/chart needs an “Other” bucket based on the global total.</p>
-</section>
-<section id="example">
-<h4>Example<a class="headerlink" href="#example" title="Link to this heading">#</a></h4>
-<p>Assume:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">CALCULATED_METRICS</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;overall_metrics&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;total&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
-        <span class="s2">&quot;with_test_link&quot;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span>
-        <span class="s2">&quot;with_review&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
-    <span class="p">}</span>
-<span class="p">}</span>
+<section id="example-1-overall-view-including-remaining-unlinked">
+<h2>Example 1: Overall view (including remaining/unlinked)<a class="headerlink" href="#example-1-overall-view-including-remaining-unlinked" title="Link to this heading">#</a></h2>
+<div class="highlight-rst notranslate"><div class="highlight"><pre><span></span><span class="p">..</span> <span class="ow">needpie</span><span class="p">::</span> Overall Requirement Coverage
+   <span class="nc">:labels:</span> Remaining (no selected links), With Test Link, With Code Link, Fully Linked
+   <span class="nc">:colors:</span> #4E79A7, #F28E2B, #59A14F, #B07AA1
+   <span class="nc">:filter-func:</span> score_metrics.sphinx_filters.get_metrics_with_first_value_total(overall_metrics:total,overall_metrics:with_test_link,overall_metrics:with_code_link,overall_metrics:fully_linked)
 </pre></div>
 </div>
-<p>Call:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">get_metrics_with_overall_total_considered</span><span class="p">(</span>
-    <span class="n">needs</span><span class="o">=</span><span class="p">[],</span>
-    <span class="n">results</span><span class="o">=</span><span class="n">results</span><span class="p">,</span>
-    <span class="n">a</span><span class="o">=</span><span class="s2">&quot;overall_metrics:with_test_link&quot;</span><span class="p">,</span>
-    <span class="n">b</span><span class="o">=</span><span class="s2">&quot;overall_metrics:with_review&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<p>Result:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Step 1 append total: [100]</span>
-<span class="c1"># Step 2 append selected: [100, 30, 20]</span>
-<span class="c1"># Step 3 remainder:       [50, 30, 20]</span>
-<span class="n">results</span> <span class="o">==</span> <span class="p">[</span><span class="mi">50</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">20</span><span class="p">]</span>
-</pre></div>
-</div>
-</section>
-</section>
-<section id="get-metrics-with-custom-type-total-considered">
-<h3>get_metrics_with_custom_type_total_considered(…)<a class="headerlink" href="#get-metrics-with-custom-type-total-considered" title="Link to this heading">#</a></h3>
-<section id="id3">
-<h4>Purpose<a class="headerlink" href="#id3" title="Link to this heading">#</a></h4>
-<p>Support custom total path if provided as the last kwarg value.</p>
-</section>
-<section id="id4">
-<h4>Behavior<a class="headerlink" href="#id4" title="Link to this heading">#</a></h4>
-<p>If the <strong>last</strong> provided path ends with <code class="docutils literal notranslate"><span class="pre">:total</span></code>:</p>
-<ol class="arabic">
-<li><p>Append that last path as baseline total.</p></li>
-<li><p>Append all preceding paths as components.</p></li>
-<li><p>Replace the first value with:</p>
-<p><code class="docutils literal notranslate"><span class="pre">baseline_total</span> <span class="pre">-</span> <span class="pre">sum(components)</span></code></p>
-</li>
-</ol>
-<p>Otherwise:</p>
+<p>This chart shows:</p>
 <ul class="simple">
-<li><p>Append all provided paths directly (no subtraction).</p></li>
+<li><p>remaining requirements (calculated from total),</p></li>
+<li><p>requirements with test link,</p></li>
+<li><p>requirements with code link,</p></li>
+<li><p>fully linked requirements.</p></li>
 </ul>
+<img alt="../_images/need_pie_1943a.svg" id="needpie-how-to/dashboards_and_quality_gates-0" src="../_images/need_pie_1943a.svg" />
 </section>
-<section id="important-ordering-rule">
-<h4>Important ordering rule<a class="headerlink" href="#important-ordering-rule" title="Link to this heading">#</a></h4>
-<p>The special total path must be the <strong>last</strong> kwarg value, for example:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">get_metrics_with_custom_type_total_considered</span><span class="p">(</span>
-    <span class="n">needs</span><span class="o">=</span><span class="p">[],</span>
-    <span class="n">results</span><span class="o">=</span><span class="n">results</span><span class="p">,</span>
-    <span class="n">part_a</span><span class="o">=</span><span class="s2">&quot;types:feature:done&quot;</span><span class="p">,</span>
-    <span class="n">part_b</span><span class="o">=</span><span class="s2">&quot;types:feature:in_progress&quot;</span><span class="p">,</span>
-    <span class="n">total</span><span class="o">=</span><span class="s2">&quot;types:feature:total&quot;</span><span class="p">,</span>  <span class="c1"># must be last</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="example-with-custom-total">
-<h4>Example with custom total<a class="headerlink" href="#example-with-custom-total" title="Link to this heading">#</a></h4>
-<p>Assume:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">CALCULATED_METRICS</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;types&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;feature&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;total&quot;</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span>
-            <span class="s2">&quot;done&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
-            <span class="s2">&quot;in_progress&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p>Call:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">get_metrics_with_custom_type_total_considered</span><span class="p">(</span>
-    <span class="n">needs</span><span class="o">=</span><span class="p">[],</span>
-    <span class="n">results</span><span class="o">=</span><span class="n">results</span><span class="p">,</span>
-    <span class="n">done</span><span class="o">=</span><span class="s2">&quot;types:feature:done&quot;</span><span class="p">,</span>
-    <span class="n">in_progress</span><span class="o">=</span><span class="s2">&quot;types:feature:in_progress&quot;</span><span class="p">,</span>
-    <span class="n">total</span><span class="o">=</span><span class="s2">&quot;types:feature:total&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<p>Result:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># baseline total: 40</span>
-<span class="c1"># components: 10, 5</span>
-<span class="c1"># remainder: 40 - (10 + 5) = 25</span>
-<span class="n">results</span> <span class="o">==</span> <span class="p">[</span><span class="mi">25</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>
-</pre></div>
-</div>
-</section>
-<section id="example-without-custom-total">
-<h4>Example without custom total<a class="headerlink" href="#example-without-custom-total" title="Link to this heading">#</a></h4>
-<p>Call:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">get_metrics_with_custom_type_total_considered</span><span class="p">(</span>
-    <span class="n">needs</span><span class="o">=</span><span class="p">[],</span>
-    <span class="n">results</span><span class="o">=</span><span class="n">results</span><span class="p">,</span>
-    <span class="n">done</span><span class="o">=</span><span class="s2">&quot;types:feature:done&quot;</span><span class="p">,</span>
-    <span class="n">in_progress</span><span class="o">=</span><span class="s2">&quot;types:feature:in_progress&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<p>Result:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># no subtraction mode</span>
-<span class="n">results</span> <span class="o">==</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>
-</pre></div>
-</div>
-</section>
-</section>
-<section id="get-just-metrics">
-<h3>get_just_metrics(…)<a class="headerlink" href="#get-just-metrics" title="Link to this heading">#</a></h3>
-<section id="id5">
-<h4>Purpose<a class="headerlink" href="#id5" title="Link to this heading">#</a></h4>
-<p>Append only the selected metric values.</p>
-</section>
-<section id="id6">
-<h4>Behavior<a class="headerlink" href="#id6" title="Link to this heading">#</a></h4>
+<section id="example-2-focused-view-no-total-based-remainder">
+<h2>Example 2: Focused view (no total-based remainder)<a class="headerlink" href="#example-2-focused-view-no-total-based-remainder" title="Link to this heading">#</a></h2>
+<p>This chart shows direct values only (no remaining slice):</p>
 <ul class="simple">
-<li><p>Interprets each kwarg value as a path.</p></li>
-<li><p>Resolves and appends each value.</p></li>
-<li><p>No total baseline and no remainder calculation.</p></li>
+<li><p>tool requirements with test link,</p></li>
+<li><p>tool requirements with code link,</p></li>
+<li><p>overall fully linked requirements.</p></li>
 </ul>
+<img alt="../_images/need_pie_2c96e.svg" id="needpie-how-to/dashboards_and_quality_gates-1" src="../_images/need_pie_2c96e.svg" />
 </section>
-<section id="id7">
-<h4>Example<a class="headerlink" href="#id7" title="Link to this heading">#</a></h4>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">get_just_metrics</span><span class="p">(</span>
-    <span class="n">needs</span><span class="o">=</span><span class="p">[],</span>
-    <span class="n">results</span><span class="o">=</span><span class="n">results</span><span class="p">,</span>
-    <span class="n">a</span><span class="o">=</span><span class="s2">&quot;overall_metrics:with_test_link&quot;</span><span class="p">,</span>
-    <span class="n">b</span><span class="o">=</span><span class="s2">&quot;overall_metrics:with_review&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="c1"># results might become [30, 20]</span>
-</pre></div>
-</div>
-</section>
-</section>
-</section>
-<section id="how-to-use-these-functions-correctly">
-<h2>How to use these functions correctly<a class="headerlink" href="#how-to-use-these-functions-correctly" title="Link to this heading">#</a></h2>
-<ol class="arabic simple">
-<li><p>Pass a mutable list in <code class="docutils literal notranslate"><span class="pre">results</span></code> (usually <code class="docutils literal notranslate"><span class="pre">[]</span></code> initially).</p></li>
-<li><p>Provide metric paths through keyword argument values.</p></li>
-<li><p>Use colon-separated keys (<code class="docutils literal notranslate"><span class="pre">a:b:c</span></code>), not dot notation.</p></li>
-<li><p>For custom-total mode, ensure the total path is the last kwarg value.</p></li>
-<li><p>Expect in-place mutation of <code class="docutils literal notranslate"><span class="pre">results</span></code>.</p></li>
-</ol>
-</section>
-<section id="common-pitfalls">
-<h2>Common pitfalls<a class="headerlink" href="#common-pitfalls" title="Link to this heading">#</a></h2>
+<section id="presentation-checklist">
+<h2>Presentation checklist<a class="headerlink" href="#presentation-checklist" title="Link to this heading">#</a></h2>
+<p>Before publishing, quickly verify:</p>
 <ul class="simple">
-<li><p>Empty kwargs in custom-total function can lead to index errors
-(because <code class="docutils literal notranslate"><span class="pre">values[-1]</span></code> is accessed).</p></li>
-<li><p>Invalid paths raise <code class="docutils literal notranslate"><span class="pre">KeyError</span></code>.</p></li>
-<li><p>Non-integer values raise <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> during <code class="docutils literal notranslate"><span class="pre">int(...)</span></code> conversion.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">print(results)</span></code> currently causes side effects during execution; remove if
-quiet behavior is preferred in production.</p></li>
-</ul>
-</section>
-<section id="testing-recommendations">
-<h2>Testing recommendations<a class="headerlink" href="#testing-recommendations" title="Link to this heading">#</a></h2>
-<p>Add unit tests for:</p>
-<ul class="simple">
-<li><p>Basic path resolution with one and multiple paths.</p></li>
-<li><p>Whitespace and empty-path handling.</p></li>
-<li><p>Overall total remainder logic.</p></li>
-<li><p>Custom total behavior when last path ends with <code class="docutils literal notranslate"><span class="pre">:total</span></code>.</p></li>
-<li><p>Behavior when no custom total is provided.</p></li>
-<li><p>Error handling for missing keys and non-integer values.</p></li>
-<li><p>Empty <code class="docutils literal notranslate"><span class="pre">kwargs</span></code> behavior in custom-total function.</p></li>
-</ul>
-</section>
-<section id="related-guides">
-<h2>Related Guides<a class="headerlink" href="#related-guides" title="Link to this heading">#</a></h2>
-<ul class="simple">
-<li><p><a class="reference internal" href="setup.html#setup"><span class="std std-ref">Setup</span></a></p></li>
-<li><p><a class="reference internal" href="other_modules.html"><span class="doc">Reference Other Modules</span></a></p></li>
-<li><p><a class="reference internal" href="source_to_doc_links.html"><span class="doc">Reference Docs in Source Code</span></a></p></li>
-<li><p><a class="reference internal" href="test_to_doc_links.html"><span class="doc">Reference Docs in Tests</span></a></p></li>
+<li><p>labels are understandable for non-technical readers,</p></li>
+<li><p>colors are distinct and readable on your page theme,</p></li>
+<li><p>title clearly says what the chart represents.</p></li>
 </ul>
 </section>
 </section>
@@ -915,43 +705,14 @@ quiet behavior is preferred in production.</p></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#recommended-rollout">Recommended Rollout</a></li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#metrics-needpie-functions">Metrics Needpie functions</a><ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#path-format">Path format</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#function-reference">Function reference</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-key-values-results-argument-paths">_get_key_values(results, argument_paths)</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#purpose">Purpose</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#behavior">Behavior</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#notes">Notes</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#needpie-usage-guide-quick-and-practical">Needpie Usage Guide (Quick and Practical)</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tips-for-readable-charts">Tips for readable charts</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommended-color-palette">Recommended color palette</a></li>
 </ul>
 </li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-metrics-with-overall-total-considered">get_metrics_with_overall_total_considered(…)</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Purpose</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Behavior</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#typical-use-case">Typical use case</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#example">Example</a></li>
-</ul>
-</li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-metrics-with-custom-type-total-considered">get_metrics_with_custom_type_total_considered(…)</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Purpose</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Behavior</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#important-ordering-rule">Important ordering rule</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#example-with-custom-total">Example with custom total</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#example-without-custom-total">Example without custom total</a></li>
-</ul>
-</li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-just-metrics">get_just_metrics(…)</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">Purpose</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">Behavior</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">Example</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-use-these-functions-correctly">How to use these functions correctly</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#common-pitfalls">Common pitfalls</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#testing-recommendations">Testing recommendations</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#related-guides">Related Guides</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-1-overall-view-including-remaining-unlinked">Example 1: Overall view (including remaining/unlinked)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-2-focused-view-no-total-based-remainder">Example 2: Focused view (no total-based remainder)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#presentation-checklist">Presentation checklist</a></li>
 </ul>
 </li>
 </ul>

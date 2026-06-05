@@ -1,5 +1,5 @@
 {
-  "schema_version": "1",
+  "schema_version": "2",
   "generated_by": "sphinx_build",
   "overall_metrics": {
     "total": 65,
@@ -22,9 +22,9 @@
     }
   },
   "tests": {
-    "total": 239,
+    "total": 241,
     "linked_to_requirements": 31,
-    "linked_to_requirements_pct": 12.97071129707113,
+    "linked_to_requirements_pct": 12.863070539419086,
     "broken_references": []
   }
 }

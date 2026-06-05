@@ -184,7 +184,7 @@
   {
     "name": "test_sphinx_filters__test_get_metrics_with_custom_type_total_considered_with_total_suffix",
     "file": "src/extensions/score_metrics/tests/test_sphinx_filters.py",
-    "line": "149",
+    "line": "150",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -198,7 +198,7 @@
   {
     "name": "test_sphinx_filters__test_get_metrics_with_custom_type_total_considered_without_total_suffix",
     "file": "src/extensions/score_metrics/tests/test_sphinx_filters.py",
-    "line": "165",
+    "line": "167",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -212,7 +212,7 @@
   {
     "name": "test_sphinx_filters__test_get_just_metrics_appends_values_when_metrics_loaded",
     "file": "src/extensions/score_metrics/tests/test_sphinx_filters.py",
-    "line": "180",
+    "line": "183",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -226,7 +226,7 @@
   {
     "name": "test_sphinx_filters__test_get_metrics_with_custom_type_total_considered_empty_kwargs_raises_index_error",
     "file": "src/extensions/score_metrics/tests/test_sphinx_filters.py",
-    "line": "195",
+    "line": "198",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3124,7 +3124,7 @@
   {
     "name": "traceability_gate_test__test_gate_passes_when_thresholds_met",
     "file": "scripts_bazel/tests/traceability_gate_test.py",
-    "line": "77",
+    "line": "147",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3138,7 +3138,7 @@
   {
     "name": "traceability_gate_test__test_gate_fails_when_threshold_not_met",
     "file": "scripts_bazel/tests/traceability_gate_test.py",
-    "line": "89",
+    "line": "173",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3152,7 +3152,7 @@
   {
     "name": "traceability_gate_test__test_gate_require_all_links_fails",
     "file": "scripts_bazel/tests/traceability_gate_test.py",
-    "line": "102",
+    "line": "191",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3164,9 +3164,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "traceability_gate_test__test_gate_fail_on_broken_refs",
+    "name": "traceability_gate_test__test_gate_fail_on_broken_test_refs",
     "file": "scripts_bazel/tests/traceability_gate_test.py",
-    "line": "111",
+    "line": "208",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3178,9 +3178,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "traceability_gate_test__test_gate_specific_need_type",
+    "name": "traceability_gate_test__test_gate_specific_need_type_only",
     "file": "scripts_bazel/tests/traceability_gate_test.py",
-    "line": "147",
+    "line": "246",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3194,7 +3194,7 @@
   {
     "name": "traceability_gate_test__test_gate_unknown_need_type_fails",
     "file": "scripts_bazel/tests/traceability_gate_test.py",
-    "line": "209",
+    "line": "302",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3208,7 +3208,7 @@
   {
     "name": "traceability_gate_test__test_gate_unsupported_schema_version",
     "file": "scripts_bazel/tests/traceability_gate_test.py",
-    "line": "218",
+    "line": "319",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3222,7 +3222,35 @@
   {
     "name": "traceability_gate_test__test_gate_missing_file_returns_error",
     "file": "scripts_bazel/tests/traceability_gate_test.py",
-    "line": "230",
+    "line": "333",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "traceability_gate_test__test_gate_missing_metrics_by_type_returns_error",
+    "file": "scripts_bazel/tests/traceability_gate_test.py",
+    "line": "347",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "traceability_gate_test__test_gate_missing_tests_section_returns_error",
+    "file": "scripts_bazel/tests/traceability_gate_test.py",
+    "line": "381",
     "result": "passed",
     "repo_name": null,
     "hash": null,
