@@ -203,6 +203,4 @@ def test_get_metrics_with_custom_type_total_considered_empty_kwargs_raises_index
     results: list[int] = []
 
     with pytest.raises(IndexError):
-        sphinx_filters.get_metrics_with_first_value_total(
-            needs=[], results=results
-        )
+        sphinx_filters.get_metrics_with_first_value_total(needs=[], results=results)

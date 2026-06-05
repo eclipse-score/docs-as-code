@@ -152,6 +152,39 @@ def _check_type_thresholds(
     return failures
 
 
+def find_failures(
+    metrics_by_type: dict[str, Any],
+    test_metrics: dict[str, Any],
+    types_to_check: list[Any],
+    args: argparse.Namespace,
+) -> list[str]:
+    failures: list[str] = []
+    for need_type in types_to_check:
+        if need_type not in metrics_by_type:
+            available = list(metrics_by_type.keys())
+            failures.append(
+                f"need type '{need_type}' not found in metrics JSON "
+                f"(available: {available})"
+            )
+            continue
+
+        req_metrics = metrics_by_type[need_type]
+        _print_type_summary(need_type, req_metrics, test_metrics)
+        failures.extend(
+            _check_type_thresholds(
+                need_type,
+                req_metrics,
+                test_metrics,
+                args.min_req_code,
+                args.min_req_test,
+                args.min_req_fully_linked,
+                args.min_tests_linked,
+                args.fail_on_broken_test_refs,
+            )
+        )
+    return failures
+
+
 def main() -> int:
     """
     Run the traceability threshold gate.
@@ -260,32 +293,7 @@ def main() -> int:
 
     print(f"Traceability gate input: {metrics_path}")
     print("-" * 72)
-
-    failures: list[str] = []
-    for need_type in types_to_check:
-        if need_type not in metrics_by_type:
-            available = list(metrics_by_type.keys())
-            failures.append(
-                f"need type '{need_type}' not found in metrics JSON "
-                f"(available: {available})"
-            )
-            continue
-
-        req_metrics = metrics_by_type[need_type]
-        _print_type_summary(need_type, req_metrics, tests_metrics)
-        failures.extend(
-            _check_type_thresholds(
-                need_type,
-                req_metrics,
-                tests_metrics,
-                args.min_req_code,
-                args.min_req_test,
-                args.min_req_fully_linked,
-                args.min_tests_linked,
-                args.fail_on_broken_test_refs,
-            )
-        )
-
+    failures = find_failures(metrics_by_type, tests_metrics, types_to_check, args)
     print("-" * 72)
     if failures:
         print("Threshold check failed:")
