@@ -23,105 +23,114 @@ requirements. It focuses on tooling capabilities offered to downstream
 repositories rather than on product-specific traceability inside those
 repositories.
 
-Overview
---------
+.. Overview
+.. --------
+..
 
-.. needpie:: Tool Requirements Status
-   :labels: not implemented, implemented but incomplete traceability, fully linked
-   :colors: red,yellow, green
-   :filter-func: src.extensions.score_metamodel.checks.traceability_dashboard.pie_requirements_status(tool_req)
-
-Jump to evidence tables:
-
-- :ref:`Tool Requirement Implementation and Links table <tooling_coverage_table_impl_links>`
-- :ref:`Process Requirement to Tool Requirement mapping table <tooling_coverage_table_process_mapping>`
-
-How To Read These Levels
-------------------------
-
-The overview pie combines implementation state and traceability evidence:
-
-- ``not implemented``:
-   requirement has ``implemented == NO``.
-- ``implemented but incomplete traceability``:
-   requirement has ``implemented == YES`` or ``implemented == PARTIAL``,
-   but is missing at least one traceability link (code link and/or test link).
-- ``fully linked``:
-   requirement is implemented and has both ``source_code_link`` and ``testlink``.
-
-Implementation labels used on this page:
-
-- ``NO``: requirement is not implemented.
-- ``PARTIAL``: requirement is partly implemented.
-- ``YES``: requirement is implemented.
-
-Why multiple pies are shown:
-
-- ``Requirements with Codelinks`` shows requirement-to-implementation traceability.
-- ``Requirements with linked tests`` shows requirement-to-verification traceability.
-- ``Requirements fully linked`` is the strict roll-up (both links present).
-
-These are intentionally separate because they answer different diagnostics:
-missing code links, missing test links, or both.
-
-In Detail
----------
-
-.. grid:: 2
-   :class-container: score-grid
-
-   .. grid-item-card::
-
-      .. needpie:: Requirements marked as Implemented
-         :labels: not implemented, partial, implemented
-         :colors: red, orange, green
-
-         type == 'tool_req' and implemented == 'NO'
-         type == 'tool_req' and implemented == 'PARTIAL'
-         type == 'tool_req' and implemented == 'YES'
-
-   .. grid-item-card::
-
-      .. needpie:: Requirements with Codelinks
-         :labels: no codelink, with codelink
-         :colors: red, green
-         :filter-func: src.extensions.score_metamodel.checks.traceability_dashboard.pie_requirements_with_code_links(tool_req)
-
-   .. grid-item-card::
-
-      .. needpie:: Requirements with linked tests
-         :labels: no test link, with test link
-         :colors: red, green
-         :filter-func: src.extensions.score_metamodel.checks.traceability_dashboard.pie_requirements_with_test_links(tool_req)
-
-   .. grid-item-card::
-
-      .. needpie:: Requirements fully linked (code + tests)
-         :labels: not fully linked, fully linked
-         :colors: orange, green
-         :filter-func: src.extensions.score_metamodel.checks.traceability_dashboard.pie_requirements_fully_linked(tool_req)
-
-   .. grid-item-card::
-
-      .. needpie:: Process requirements linked by tool requirements
-         :labels: not linked, linked
-         :colors: red, green
-         :filter-func: src.extensions.score_metamodel.checks.traceability_dashboard.pie_process_requirements_linked(tool_req,true)
+.. needpie:: Overall Metrics with Total incooperated
+   :labels: without any link, overall with test link, overall with code, overall fully linked
+   :colors: red, yellow, blue, green
+   :filter-func: score_metrics.sphinx_filters.get_metrics_with_overall_total_considered(overall_metrics:with_test_link,overall_metrics:with_code_link,overall_metrics:fully_linked)
 
 
-Process-to-Tool Mapping
------------------------
 
-.. _tooling_coverage_table_process_mapping:
+.. needpie:: Metrics without any total incooperated
+   :labels: tool req with test link, tool req with code, overall fully linked
+   :colors: yellow, blue, green
+   :filter-func: score_metrics.sphinx_filters.get_just_metrics(metrics_by_type:tool_req:with_test_link,metrics_by_type:tool_req:with_code_link,overall_metrics:fully_linked)
 
-.. needtable:: Process requirement -> tool requirement mapping
-   :types: tool_req
-   :columns: satisfies as "Process Requirement";id as "Tool Requirement"
-   :style: table
 
-.. _tooling_coverage_table_impl_links:
-
-.. needtable:: Tool requirement implementation and links
-   :types: tool_req
-   :columns: id as "Tool Requirement";implemented;source_code_link;testlink
-   :style: table
+.. Jump to evidence tables:
+..
+.. - :ref:`Tool Requirement Implementation and Links table <tooling_coverage_table_impl_links>`
+.. - :ref:`Process Requirement to Tool Requirement mapping table <tooling_coverage_table_process_mapping>`
+..
+.. How To Read These Levels
+.. ------------------------
+..
+.. The overview pie combines implementation state and traceability evidence:
+..
+.. - ``not implemented``:
+..    requirement has ``implemented == NO``.
+.. - ``implemented but incomplete traceability``:
+..    requirement has ``implemented == YES`` or ``implemented == PARTIAL``,
+..    but is missing at least one traceability link (code link and/or test link).
+.. - ``fully linked``:
+..    requirement is implemented and has both ``source_code_link`` and ``testlink``.
+..
+.. Implementation labels used on this page:
+..
+.. - ``NO``: requirement is not implemented.
+.. - ``PARTIAL``: requirement is partly implemented.
+.. - ``YES``: requirement is implemented.
+..
+.. Why multiple pies are shown:
+..
+.. - ``Requirements with Codelinks`` shows requirement-to-implementation traceability.
+.. - ``Requirements with linked tests`` shows requirement-to-verification traceability.
+.. - ``Requirements fully linked`` is the strict roll-up (both links present).
+..
+.. These are intentionally separate because they answer different diagnostics:
+.. missing code links, missing test links, or both.
+..
+.. In Detail
+.. ---------
+..
+.. .. grid:: 2
+..    :class-container: score-grid
+..
+..    .. grid-item-card::
+..
+..       .. needpie:: Requirements marked as Implemented
+..          :labels: not implemented, partial, implemented
+..          :colors: red, orange, green
+..
+..          type == 'tool_req' and implemented == 'NO'
+..          type == 'tool_req' and implemented == 'PARTIAL'
+..          type == 'tool_req' and implemented == 'YES'
+..
+..    .. grid-item-card::
+..
+..       .. needpie:: Requirements with Codelinks
+..          :labels: no codelink, with codelink
+..          :colors: red, green
+..          :filter-func: src.extensions.score_metrics.traceability_dashboard.pie_requirements_with_code_links(tool_req)
+..
+..    .. grid-item-card::
+..
+..       .. needpie:: Requirements with linked tests
+..          :labels: no test link, with test link
+..          :colors: red, green
+..          :filter-func: src.extensions.score_metrics.traceability_dashboard.pie_requirements_with_test_links(tool_req)
+..
+..    .. grid-item-card::
+..
+..       .. needpie:: Requirements fully linked (code + tests)
+..          :labels: not fully linked, fully linked
+..          :colors: orange, green
+..          :filter-func: src.extensions.score_metrics.traceability_dashboard.pie_requirements_fully_linked(tool_req)
+..
+..    .. grid-item-card::
+..
+..       .. needpie:: Process requirements linked by tool requirements
+..          :labels: not linked, linked
+..          :colors: red, green
+..          :filter-func: src.extensions.score_metrics.traceability_dashboard.pie_process_requirements_linked(tool_req,true)
+..
+..
+.. Process-to-Tool Mapping
+.. -----------------------
+..
+.. .. _tooling_coverage_table_process_mapping:
+..
+.. .. needtable:: Process requirement -> tool requirement mapping
+..    :types: tool_req
+..    :columns: satisfies as "Process Requirement";id as "Tool Requirement"
+..    :style: table
+..
+.. .. _tooling_coverage_table_impl_links:
+..
+.. .. needtable:: Tool requirement implementation and links
+..    :types: tool_req
+..    :columns: id as "Tool Requirement";implemented;source_code_link;testlink
+..    :style: table

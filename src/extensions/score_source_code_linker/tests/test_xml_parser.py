@@ -301,7 +301,9 @@ def test_read_test_xml_file(
 
     # No properties at all => Should not be a 'valid' testlink
     needs2, no_props2, missing_props2 = xml_parser.read_test_xml_file(dir2 / "test.xml")
-    assert needs2 == []
+    assert isinstance(needs2, list) and len(needs2) == 1
+    tcneed2 = needs2[0]
+    assert isinstance(tcneed2, DataOfTestCase)
     assert no_props2 == ["tc_no_props"]
     assert missing_props2 == []
 
@@ -315,7 +317,9 @@ def test_read_test_xml_file(
 
     # Missing some properties => Should not be a 'valid' testlink
     needs4, no_props4, missing_props4 = xml_parser.read_test_xml_file(dir4 / "test.xml")
-    assert needs4 == []
+    assert isinstance(needs4, list) and len(needs4) == 1
+    tcneed4 = needs4[0]
+    assert isinstance(tcneed4, DataOfTestCase)
     assert no_props4 == []
     assert missing_props4 == ["tc_with_missing_props"]
 

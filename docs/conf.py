@@ -10,6 +10,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
+import matplotlib
 
 project = "Score Docs-as-Code"
 project_url = "https://eclipse-score.github.io/docs-as-code/"
@@ -18,3 +19,4 @@ version = "0.1"
 extensions = [
     "score_sphinx_bundle",
 ]
+matplotlib.rcParamsDefault["savefig.bbox"] = "tight"

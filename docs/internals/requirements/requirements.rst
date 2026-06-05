@@ -852,6 +852,18 @@ Testing
     - If Partially/FullyVerifies are set in Unit Test these shall link to Component Requirements
 
 
+.. tool_req:: Provide Metrics for linked requirements
+   :id: tool_req__docs_test_linkage_metrics
+   :tags: Testing
+   :version: 1
+   :implemented: YES
+   :parent_covered: NO: Placeholder process requirement
+   :satisfies: gd_req__verification_reporting
+   :status: invalid
+
+   Docs-AS-Code shall provide a way to gather statistics on linkages to implementation(source_code_links) & tests(testlink) for all needs.
+   It shall also be possible to filter these by type and use the provided statistics in the documentation (via diagrams drawn from it etc.)
+
 🧪 Tool Verification Reports
 ############################
 
