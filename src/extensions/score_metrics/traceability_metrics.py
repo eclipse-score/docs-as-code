@@ -192,4 +192,4 @@ def calculate_full_need_metrics(app: Sphinx, include_external: bool):
     # Save the metrics in a Global Variable to enable access from other parts.
     # Not a great solution but it is needed, as needpie filter functions for example
     # can not access 'app'.
-    CALCULATED_METRICS = output
+    CALCULATED_METRICS.update(output)

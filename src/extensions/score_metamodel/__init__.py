@@ -270,7 +270,7 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     # sphinx-collections runs on default prio 500.
     # We need to populate the sphinx-collections config before that happens.
     # --> 499
-    _ = app.connect("config-inited", connect_external_needs, priority=499)
+    _ = app.connect("config-inited", connect_external_needs, priority=450)
 
     discover_checks()
 

@@ -28,7 +28,7 @@ from src.extensions.score_metamodel.tests import need as test_need
 
 
 @add_test_properties(
-    partially_verifies=["<placeholder>"],
+    partially_verifies=["tool_req__docs_test_linkage_metrics"],
     test_type="requirements-based",
     derivation_technique="equivalence-classes",
 )
@@ -83,7 +83,7 @@ def test_get_need_types_by_tags_returns_matching_directives_only() -> None:
 
 
 @add_test_properties(
-    partially_verifies=["<placeholder>"],
+    partially_verifies=["tool_req__docs_test_linkage_metrics"],
     test_type="requirements-based",
     derivation_technique="equivalence-classes",
 )
@@ -110,7 +110,7 @@ def test_get_need_types_by_tags_returns_empty_on_non_match() -> None:
 
 
 @add_test_properties(
-    partially_verifies=["<placeholder>"],
+    partially_verifies=["tool_req__docs_test_linkage_metrics"],
     test_type="interface-test",
     derivation_technique="boundary-values",
 )
@@ -135,7 +135,7 @@ def test_is_non_empty_string_and_non_string_behavior(
 
 
 @add_test_properties(
-    partially_verifies=["<placeholder>"],
+    partially_verifies=["tool_req__docs_test_linkage_metrics"],
     test_type="requirements-based",
     derivation_technique="boundary-values",
 )
@@ -149,7 +149,7 @@ def test_safe_percent_zero(value1: int, value2: int, expected: float) -> None:
 
 
 @add_test_properties(
-    partially_verifies=["<placeholder>"],
+    partially_verifies=["tool_req__docs_test_linkage_metrics"],
     test_type="requirements-based",
     derivation_technique="requirements-analysis",
 )
@@ -175,7 +175,7 @@ def test_calculate_requirement_metrics_counts_links_and_missing_ids() -> None:
 
 
 @add_test_properties(
-    partially_verifies=["<placeholder>"],
+    partially_verifies=["tool_req__docs_test_linkage_metrics"],
     test_type="requirements-based",
     derivation_technique="equivalence-classes",
 )
@@ -201,7 +201,7 @@ def test_calculate_requirement_metrics_non_fully_linked() -> None:
 
 
 @add_test_properties(
-    partially_verifies=["<placeholder>"],
+    partially_verifies=["tool_req__docs_test_linkage_metrics"],
     test_type="interface-test",
     derivation_technique="design-analysis",
 )
