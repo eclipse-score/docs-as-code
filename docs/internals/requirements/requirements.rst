@@ -860,7 +860,7 @@ Testing
    :parent_covered: NO: Placeholder process requirement
    :satisfies: gd_req__verification_reporting
    :status: invalid
-   
+
    Docs-AS-Code shall provide a way to gather statistics on linkages to implementation(source_code_links) & tests(testlink) for all needs.
    It shall also be possible to filter these by type and use the provided statistics in the documentation (via diagrams drawn from it etc.)
 
