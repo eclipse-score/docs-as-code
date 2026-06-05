@@ -55,8 +55,8 @@ py_library(
     visibility = ["//visibility:public"],
     # TODO: Figure out if all requirements are needed or if we can break it down a bit
     deps = all_requirements + [
+        "@score_docs_as_code//src/extensions/score_metrics",
         "@score_docs_as_code//src/helper_lib",
-        "@score_docs_as_code//src/extensions/score_metrics:score_metrics",
     ],
 )
 
@@ -71,13 +71,17 @@ score_pytest(
     ),
     data = ["tests/model/simple_model.yaml"],
     pytest_config = "//:pyproject.toml",
+    visibility = ["//visibility:public"],
     deps = [":score_metamodel"],
 )
 
 score_pytest(
     name = "file_based_tests_architecture",
     srcs = ["tests/test_rules_file_based.py"],
-    data = glob(["tests/rst/architecture/*.rst"]) + ["tests/rst/conf.py", "tests/rst/needs.json"],
+    data = glob(["tests/rst/architecture/*.rst"]) + [
+        "tests/rst/conf.py",
+        "tests/rst/needs.json",
+    ],
     pytest_config = "//:pyproject.toml",
     deps = [":score_metamodel"],
 )
@@ -85,7 +89,10 @@ score_pytest(
 score_pytest(
     name = "file_based_tests_attributes",
     srcs = ["tests/test_rules_file_based.py"],
-    data = glob(["tests/rst/attributes/*.rst"]) + ["tests/rst/conf.py", "tests/rst/needs.json"],
+    data = glob(["tests/rst/attributes/*.rst"]) + [
+        "tests/rst/conf.py",
+        "tests/rst/needs.json",
+    ],
     pytest_config = "//:pyproject.toml",
     deps = [":score_metamodel"],
 )
@@ -93,7 +100,10 @@ score_pytest(
 score_pytest(
     name = "file_based_tests_graph",
     srcs = ["tests/test_rules_file_based.py"],
-    data = glob(["tests/rst/graph/*.rst"]) + ["tests/rst/conf.py", "tests/rst/needs.json"],
+    data = glob(["tests/rst/graph/*.rst"]) + [
+        "tests/rst/conf.py",
+        "tests/rst/needs.json",
+    ],
     pytest_config = "//:pyproject.toml",
     deps = [":score_metamodel"],
 )
@@ -101,7 +111,10 @@ score_pytest(
 score_pytest(
     name = "file_based_tests_id_contains_feature",
     srcs = ["tests/test_rules_file_based.py"],
-    data = glob(["tests/rst/id_contains_feature/*.rst"]) + ["tests/rst/conf.py", "tests/rst/needs.json"],
+    data = glob(["tests/rst/id_contains_feature/*.rst"]) + [
+        "tests/rst/conf.py",
+        "tests/rst/needs.json",
+    ],
     pytest_config = "//:pyproject.toml",
     deps = [":score_metamodel"],
 )
@@ -109,7 +122,10 @@ score_pytest(
 score_pytest(
     name = "file_based_tests_options",
     srcs = ["tests/test_rules_file_based.py"],
-    data = glob(["tests/rst/options/*.rst"]) + ["tests/rst/conf.py", "tests/rst/needs.json"],
+    data = glob(["tests/rst/options/*.rst"]) + [
+        "tests/rst/conf.py",
+        "tests/rst/needs.json",
+    ],
     pytest_config = "//:pyproject.toml",
     deps = [":score_metamodel"],
 )

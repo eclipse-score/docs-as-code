@@ -66,31 +66,21 @@ def calculate_requirement_metrics(
     reqs_with_code_link = 0
     reqs_with_test_link = 0
     reqs_fully_linked = 0
-    missing_code_links_need_ids: set[str] = set()
-    missing_test_links_need_ids: set[str] = set()
-    missing_both_links_need_ids: set[str] = set()
 
     for need in current_requirement_needs:
         # Sourcecode link check
         if is_non_empty(need.get("source_code_link")):
             reqs_with_code_link += 1
-        else:
-            missing_code_links_need_ids.add(need.get("id"))
 
         # Testlink check
         if is_non_empty(need.get("testlink")):
             reqs_with_test_link += 1
-        else:
-            missing_test_links_need_ids.add(need.get("id"))
         # Negative check (both missing)
         if is_non_empty(need.get("testlink")) and is_non_empty(
             need.get("source_code_link")
         ):
             reqs_fully_linked += 1
 
-    missing_both_links_need_ids = missing_code_links_need_ids.intersection(
-        missing_test_links_need_ids
-    )
 
     return {
         "total": total,
@@ -100,9 +90,6 @@ def calculate_requirement_metrics(
         "with_code_link_pct": safe_percent(reqs_with_code_link, total),
         "with_test_link_pct": safe_percent(reqs_with_test_link, total),
         "fully_linked_pct": safe_percent(reqs_fully_linked, total),
-        "missing_code_link_ids": sorted(missing_code_links_need_ids),
-        "missing_test_link_ids": sorted(missing_test_links_need_ids),
-        "not_fully_linked_ids": sorted(missing_both_links_need_ids),
     }
 
 
