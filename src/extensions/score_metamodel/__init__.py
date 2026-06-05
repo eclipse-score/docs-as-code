@@ -389,6 +389,15 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     app.config.needs_types += metamodel.needs_types
     app.config.needs_links.update(metamodel.needs_links)
     app.config.needs_fields.update(metamodel.needs_fields)
+    app.config.needs_string_links.setdefault(
+        "mitigation_issue_linker",
+        {
+            "regex": r"(?P<url>https://github\.com/[^/]+/(?P<repo>[^/]+)/issues/(?P<number>\d+))",
+            "link_url": "{{url}}",
+            "link_name": "{{repo}}#{{number}}",
+            "options": ["mitigation_issue"],
+        },
+    )
     app.config.graph_checks = metamodel.needs_graph_check
     app.config.prohibited_words_checks = metamodel.prohibited_words_checks
 

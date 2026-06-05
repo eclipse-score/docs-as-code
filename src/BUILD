@@ -12,8 +12,10 @@
 # *******************************************************************************
 
 load("@aspect_rules_py//py:defs.bzl", "py_library")
+load("@docs_as_code_hub_env//:requirements.bzl", "all_requirements")
 load("@rules_java//java:java_binary.bzl", "java_binary")
 load("@rules_python//python:pip.bzl", "compile_pip_requirements")
+load("//:score_pytest.bzl", "score_pytest")
 
 # These are only exported because they're passed as files to the //docs.bzl
 # macros, and thus must be visible to other packages. They should only be
@@ -28,6 +30,16 @@ exports_files(
         "generate_sourcelinks_cli.py",
     ],
     visibility = ["//visibility:public"],
+)
+
+score_pytest(
+    name = "incremental_dirty_build_test",
+    srcs = [
+        "incremental_dirty_build_test.py",
+        "incremental.py",
+    ],
+    deps = all_requirements,
+    pytest_config = "//:pyproject.toml",
 )
 
 filegroup(

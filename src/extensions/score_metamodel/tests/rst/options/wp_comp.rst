@@ -26,7 +26,7 @@
 ----
 
 # Expect no warning with "complies"
-#EXPECT-NOT: complies
+#EXPECT-NOT[+2]: complies
 
 .. workproduct:: No Link is ok, since complies is optional
    :id: wp__001
@@ -34,7 +34,7 @@
 ---
 
 # Expect no warning with "complies"
-#EXPECT-NOT: complies
+#EXPECT-NOT[+2]: complies
 
 .. workproduct:: Linking to std_wp is allowed
    :id: wp__002
@@ -54,7 +54,7 @@
 
 
 # Expect no warning with "complies"
-#EXPECT-NOT: complies
+#EXPECT-NOT[+2]: complies
 
 .. workproduct:: But it can refer to std_req if it is an IIC requirement
    :id: wp__003

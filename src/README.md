@@ -58,12 +58,17 @@ It should be treated as a 'get-started' guide, giving you all needed information
 
 ```
 src/
-├── assets/           # Documentation styling (CSS)
-├── decision_records/ # Architecture Decision Records (ADRs)
 ├── extensions/       # Custom Sphinx extensions
-│   └── score_metamodel/
-│       ├── checks/   # Sphinx-needs validation
-│       └── tests/    # Extension test suite
+│   ├── score_metamodel/
+│   │   ├── checks/   # Sphinx-needs validation
+│   │   └── tests/    # Extension test suite
+│   ├── score_source_code_linker/
+│   ├── score_sphinx_bundle/
+│   ├── score_layout/
+│   ├── score_draw_uml_funcs/
+│   ├── score_plantuml.py
+│   └── score_sync_toml/
+├── helper_lib/       # Shared utilities
 └── templates/        # HTML templates
 ```
 
@@ -78,7 +83,7 @@ Find everything related to testing and how to add your own test suite [here](/sr
 2. Create a dedicated test directory
 3. Include an appropriate README in markdown
 
-> If you want to develop your own Sphinx extension, check out the [extensions guide](/src/extensions/README.md)
+> If you want to develop your own Sphinx extension, check out the [extensions guide](/docs/internals/extensions/extension_guide.md)
 
 ## Updating dependencies
 
@@ -101,7 +106,7 @@ bazel run //src:requirements.update -- --upgrade
 
 1. **Documentation**
    - Keep READMEs up-to-date
-   - Document architectural decisions in `decision_records/`
+   - Document architectural decisions in `docs/internals/decisions/`
    - Include examples in extension documentation
 
 2. **Testing**
@@ -129,6 +134,6 @@ Common issues and solutions:
    - Verify extension dependencies
 
 ## Additional Resources
-- [Sphinx extension guide](/src/extensions/README.md)
-- [S-CORE Metamodel Documentation](/src/extensions/score_metamodel/README.md)
-- [Pytest Integration Guide](/tools/testing/pytest/README.md)
+- [Sphinx extension guide](/docs/internals/extensions/extension_guide.md)
+- [S-CORE Metamodel Documentation](/docs/internals/extensions/metamodel.md)
+- [Pytest Integration Guide](/score_pytest/README.md)

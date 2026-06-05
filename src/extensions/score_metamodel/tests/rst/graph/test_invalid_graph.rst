@@ -22,8 +22,8 @@
 .. We can not yet enable this test. As the check is only an 'info' and not yet a true warning
 .. Therefore the test is the inverse of what we will test once it is enabled.
 
-.. #EXPECT: comp_saf_fmea__child__16: is valid but links to invalid need(s):
-#EXPECT-NOT: invalid need(s):
+
+#EXPECT-NOT[+2]: invalid need(s):
 
 .. comp_saf_fmea:: Child requirement
    :id: comp_saf_fmea__child__1

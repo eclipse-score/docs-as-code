@@ -1,0 +1,29 @@
+{
+  "current_version": "1.0",
+  "project": "test",
+  "project_url": "https://eclipse-score.github.io/process_description/main/",
+  "versions": {
+    "1.0": {
+      "needs": {
+        "doc_getstrt__req__process": {
+          "docname": "getting_started",
+          "id": "doc_getstrt__req__process",
+          "lineno": 1,
+          "status": "valid",
+          "title": "Process requirement (stub for tests)",
+          "type": "doc_req",
+          "type_name": "doc_req"
+        },
+        "gd_guidl__req__engineering": {
+          "docname": "guidelines",
+          "id": "gd_guidl__req__engineering",
+          "lineno": 1,
+          "status": "valid",
+          "title": "Engineering guideline requirement (stub for tests)",
+          "type": "gd_req",
+          "type_name": "gd_req"
+        }
+      }
+    }
+  }
+}
