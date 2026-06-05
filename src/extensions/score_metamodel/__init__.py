@@ -270,7 +270,7 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     # sphinx-collections runs on default prio 500.
     # We need to populate the sphinx-collections config before that happens.
     # If we put it anywhere higher it seems that other things already lock the needs
-    # To ensure that this runs first before locking happens priot is => 450 
+    # To ensure that this runs first before locking happens priot is => 450
     # The lower the number the higher priority it has (runs earlier)
     _ = app.connect("config-inited", connect_external_needs, priority=450)
 

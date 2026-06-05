@@ -16,12 +16,11 @@ from typing import Any, cast
 import pytest
 import score_metrics.traceability_metrics as metrics
 from score_metamodel import ScoreNeedType
+from score_metamodel.tests import need as test_need
 from sphinx_needs.data import NeedsView
 from sphinx_needs.need_item import NeedItem
 
 from score_pytest.attribute_plugin import add_test_properties
-
-from score_metamodel.tests import need as test_need
 
 
 @add_test_properties(
