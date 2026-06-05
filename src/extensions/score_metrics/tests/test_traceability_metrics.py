@@ -11,191 +11,246 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-"""Unit tests for traceability_metrics include_external handling."""
+from typing import Any, cast
+
+import pytest
+import score_metrics.traceability_metrics as metrics
+from score_metamodel import ScoreNeedType
+from sphinx_needs.data import NeedsView
+from sphinx_needs.need_item import NeedItem
+
+from score_pytest.attribute_plugin import add_test_properties
+
+from score_metamodel.tests import need as test_need
 
 
-def _needs() -> list[dict[str, object]]:
-    return [
+@add_test_properties(
+    partially_verifies=["tool_req__docs_test_linkage_metrics"],
+    test_type="requirements-based",
+    derivation_technique="equivalence-classes",
+)
+def test_get_need_types_by_tags_returns_matching_directives_only() -> None:
+    """Return directives for need types sharing at least one selected tag."""
+    needs: list[ScoreNeedType] = [
         {
-            "id": "LOCAL_REQ",
-            "type": "tool_req",
-            "implemented": "YES",
-            "source_code_link": "src/local.py:1",
-            "testlink": "tests/test_local.py::test_ok",
-            "is_external": False,
+            "title": "Test Type 1",
+            "prefix": "TR",
+            "tags": ["requirement"],
+            "parts": 1,
+            "directive": "tool_req",
+            "mandatory_options": {
+                "id": "^tool_req__.*$",
+                "some_required_option": "^some_value__.*$",
+            },
+            "optional_options": {},
+            "mandatory_links": {},
+            "optional_links": {},
         },
         {
-            "id": "EXT_REQ",
-            "type": "tool_req",
-            "implemented": "YES",
-            "source_code_link": "src/external.py:9",
-            "testlink": "tests/test_external.py::test_ok",
-            "is_external": True,
+            "title": "Test Type Verification",
+            "prefix": "TRV",
+            "tags": ["verification"],
+            "parts": 1,
+            "directive": "tool_req_ver",
+            "mandatory_options": {
+                "id": "^tool_req__.*$",
+                "some_required_option": "^some_value__.*$",
+            },
+            "optional_options": {},
+            "mandatory_links": {},
+            "optional_links": {},
         },
         {
-            "id": "TC_1",
-            "type": "testcase",
-            "partially_verifies": "LOCAL_REQ",
-            "fully_verifies": "",
-            "is_external": False,
+            "title": "Test Type Extra",
+            "prefix": "TRE",
+            "tags": ["extra"],
+            "parts": 1,
+            "directive": "tool_req_ext",
+            "mandatory_options": {
+                "id": "^tool_req__.*$",
+                "some_required_option": "^some_value__.*$",
+            },
+            "optional_options": {},
+            "mandatory_links": {},
+            "optional_links": {},
         },
     ]
+    result = metrics.get_need_types_by_tags(needs, {"verification", "requirement"})
+    assert result == ["tool_req", "tool_req_ver"]
 
 
-# def test_filter_requirements_defaults_to_local_only() -> None:
-#     filtered = filter_requirements(
-#         _needs(),
-#         requirement_types={"tool_req"},
-#         include_not_implemented=True,
-#     )
-#
-#     assert [need["id"] for need in filtered] == ["LOCAL_REQ"]
-#
-#
-# def test_filter_requirements_can_include_external_needs() -> None:
-#     filtered = filter_requirements(
-#         _needs(),
-#         requirement_types={"tool_req"},
-#         include_not_implemented=True,
-#         include_external=True,
-#     )
-#
-#     assert sorted(need["id"] for need in filtered) == ["EXT_REQ", "LOCAL_REQ"]
-#
-#
-# def test_compute_traceability_summary_propagates_include_external() -> None:
-#     summary_local = compute_traceability_summary(
-#         all_needs=_needs(),
-#         requirement_types={"tool_req"},
-#         include_not_implemented=True,
-#         filtered_test_types=set(),
-#         include_external=False,
-#     )
-#     summary_all = compute_traceability_summary(
-#         all_needs=_needs(),
-#         requirement_types={"tool_req"},
-#         include_not_implemented=True,
-#         filtered_test_types=set(),
-#         include_external=True,
-#     )
-#
-#     assert summary_local["include_external"] is False
-#     assert summary_local["requirements"]["total"] == 1
-#     assert summary_all["include_external"] is True
-#     assert summary_all["requirements"]["total"] == 2
-#
-#
-# def test_compute_traceability_summary_process_requirements_summary() -> None:
-#     summary = compute_traceability_summary(
-#         all_needs=[
-#             {
-#                 "id": "TOOL_REQ_1",
-#                 "type": "tool_req",
-#                 "implemented": "YES",
-#                 "source_code_link": "src/req.py:10",
-#                 "testlink": "tests/test_req.py::test_ok",
-#                 "satisfies": "PR_LOCAL_1,OTHER_REQ",
-#                 "is_external": False,
-#             },
-#             {
-#                 "id": "TOOL_REQ_2",
-#                 "type": "tool_req",
-#                 "implemented": "YES",
-#                 "source_code_link": "src/req.py:20",
-#                 "testlink": "tests/test_req.py::test_ok_2",
-#                 "satisfies": ["PR_LOCAL_1", "PR_LOCAL_2"],
-#                 "is_external": False,
-#             },
-#             {
-#                 "id": "PR_LOCAL_1",
-#                 "type": "process_req",
-#                 "is_external": False,
-#             },
-#             {
-#                 "id": "PR_LOCAL_2",
-#                 "type": "gd_req",
-#                 "is_external": False,
-#             },
-#             {
-#                 "id": "PR_LOCAL_3",
-#                 "type": "gd_req",
-#                 "is_external": False,
-#             },
-#         ],
-#         requirement_types={"tool_req"},
-#         include_not_implemented=True,
-#         filtered_test_types=set(),
-#         include_external=False,
-#     )
-#
-#     process_requirements = summary["process_requirements"]
-#
-#     assert process_requirements["total"] == 3
-#     assert process_requirements["linked_by_tool_requirements"] == 2
-#     assert process_requirements["linked_by_tool_requirements_pct"] == (2 / 3) * 100
-#     assert process_requirements["unlinked_ids"] == ["PR_LOCAL_3"]
-#
-#
-# def test_compute_traceability_summary_process_requirements_respects_include_external() -> (
-#     None
-# ):
-#     all_needs = [
-#         {
-#             "id": "TOOL_REQ_LOCAL",
-#             "type": "tool_req",
-#             "implemented": "YES",
-#             "source_code_link": "src/local.py:1",
-#             "testlink": "tests/test_local.py::test_ok",
-#             "satisfies": "PR_LOCAL",
-#             "is_external": False,
-#         },
-#         {
-#             "id": "TOOL_REQ_EXTERNAL",
-#             "type": "tool_req",
-#             "implemented": "YES",
-#             "source_code_link": "src/external.py:1",
-#             "testlink": "tests/test_external.py::test_ok",
-#             "satisfies": "PR_EXTERNAL",
-#             "is_external": True,
-#         },
-#         {
-#             "id": "PR_LOCAL",
-#             "type": "gd_req",
-#             "is_external": False,
-#         },
-#         {
-#             "id": "PR_EXTERNAL",
-#             "type": "gd_req",
-#             "is_external": True,
-#         },
-#     ]
-#
-#     summary_local = compute_traceability_summary(
-#         all_needs=all_needs,
-#         requirement_types={"tool_req"},
-#         include_not_implemented=True,
-#         filtered_test_types=set(),
-#         include_external=False,
-#     )
-#     summary_all = compute_traceability_summary(
-#         all_needs=all_needs,
-#         requirement_types={"tool_req"},
-#         include_not_implemented=True,
-#         filtered_test_types=set(),
-#         include_external=True,
-#     )
-#
-#     assert summary_local["process_requirements"] == {
-#         "total": 1,
-#         "linked": 1,
-#         "linked_by_tool_requirements": 1,
-#         "linked_by_tool_requirements_pct": 100.0,
-#         "unlinked_ids": [],
-#     }
-#     assert summary_all["process_requirements"] == {
-#         "total": 2,
-#         "linked": 2,
-#         "linked_by_tool_requirements": 2,
-#         "linked_by_tool_requirements_pct": 100.0,
-#         "unlinked_ids": [],
-#     }
+@add_test_properties(
+    partially_verifies=["tool_req__docs_test_linkage_metrics"],
+    test_type="requirements-based",
+    derivation_technique="equivalence-classes",
+)
+def test_get_need_types_by_tags_returns_empty_on_non_match() -> None:
+    """Test if function correctly returns empty list if none of the things match"""
+    needs: list[ScoreNeedType] = [
+        {
+            "title": "Test Type 1",
+            "prefix": "TR",
+            "tags": ["requirement"],
+            "parts": 1,
+            "directive": "tool_req",
+            "mandatory_options": {
+                "id": "^tool_req__.*$",
+                "some_required_option": "^some_value__.*$",
+            },
+            "optional_options": {},
+            "mandatory_links": {},
+            "optional_links": {},
+        },
+    ]
+    result = metrics.get_need_types_by_tags(needs, {"requirements_without_proccess"})
+    assert result == []
+
+
+@add_test_properties(
+    partially_verifies=["tool_req__docs_test_linkage_metrics"],
+    test_type="interface-test",
+    derivation_technique="boundary-values",
+)
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        ("  ", False),
+        ("text", True),
+        ([], False),
+        ([1], True),
+        (0, False),
+        (1, True),
+        (None, False),
+    ],
+)
+def test_is_non_empty_string_and_non_string_behavior(
+    value: Any, expected: bool
+) -> None:
+    """Treat blank strings as empty and all other values by truthiness."""
+    # Unsure if we should test this as this is python behaviour, but might as well
+    assert metrics.is_non_empty(value) is expected
+
+
+@add_test_properties(
+    partially_verifies=["tool_req__docs_test_linkage_metrics"],
+    test_type="requirements-based",
+    derivation_technique="boundary-values",
+)
+@pytest.mark.parametrize(
+    ("value1", "value2", "expected"),
+    [(3, 0, 100.0), (1, 4, 25.0)],
+)
+def test_safe_percent_zero(value1: int, value2: int, expected: float) -> None:
+    """Check if 100 is returned for empty denominator & normal behaviour"""
+    assert metrics.safe_percent(value1, value2) == expected
+
+
+@add_test_properties(
+    partially_verifies=["tool_req__docs_test_linkage_metrics"],
+    test_type="requirements-based",
+    derivation_technique="requirements-analysis",
+)
+def test_calculate_requirement_metrics_counts_links_and_missing_ids() -> None:
+    """Count code/test links and derive missing identifier lists."""
+    current_requirement_needs: list[NeedItem] = [
+        test_need(id="REQ_1", source_code_link="src/main.c", testlink="TC_1"),
+        test_need(id="REQ_2", source_code_link=" ", testlink="TC_2"),
+        test_need(id="REQ_3", source_code_link="src/lib.rs", testlink=""),
+        test_need(id="REQ_4", source_code_link="", testlink=""),
+    ]
+
+    result = metrics.calculate_requirement_metrics(current_requirement_needs)
+
+    assert result["total"] == 4
+    assert result["with_code_link"] == 2
+    assert result["with_test_link"] == 2
+    assert result["fully_linked"] == 1
+
+    assert result["with_code_link_pct"] == 50.0
+    assert result["with_test_link_pct"] == 50.0
+    assert result["fully_linked_pct"] == 25.0
+
+
+@add_test_properties(
+    partially_verifies=["tool_req__docs_test_linkage_metrics"],
+    test_type="requirements-based",
+    derivation_technique="equivalence-classes",
+)
+def test_calculate_requirement_metrics_non_fully_linked() -> None:
+    """Count code/test links and derive missing identifier lists."""
+    current_requirement_needs: list[NeedItem] = [
+        test_need(id="REQ_1", source_code_link="src/main.c", testlink=""),
+        test_need(id="REQ_2", source_code_link=" ", testlink="TC_2"),
+        test_need(id="REQ_3", source_code_link="src/lib.rs", testlink=""),
+        test_need(id="REQ_4", source_code_link="", testlink=""),
+    ]
+
+    result = metrics.calculate_requirement_metrics(current_requirement_needs)
+
+    assert result["total"] == 4
+    assert result["with_code_link"] == 2
+    assert result["with_test_link"] == 1
+    assert result["fully_linked"] == 0
+
+    assert result["with_code_link_pct"] == 50.0
+    assert result["with_test_link_pct"] == 25.0
+    assert result["fully_linked_pct"] == 0.0
+
+
+@add_test_properties(
+    partially_verifies=["tool_req__docs_test_linkage_metrics"],
+    test_type="requirements-based",
+    derivation_technique="equivalence-classes",
+)
+def test_calculate_requirement_metrics_non_fully_linked_2() -> None:
+    """Count code/test links and derive missing identifier lists."""
+    current_requirement_needs: list[NeedItem] = [
+        test_need(id="REQ_1", source_code_link="", testlink=""),
+        test_need(id="REQ_2", source_code_link="", testlink="TC_2"),
+        test_need(id="REQ_3", source_code_link="src/main.c", testlink=""),
+        test_need(id="REQ_4", source_code_link=" ", testlink="TC_4"),
+    ]
+
+    result = metrics.calculate_requirement_metrics(current_requirement_needs)
+
+    assert result["total"] == 4
+    assert result["with_code_link"] == 1
+    assert result["with_test_link"] == 2
+    assert result["fully_linked"] == 0
+
+    assert result["with_code_link_pct"] == 25.0
+    assert result["with_test_link_pct"] == 50.0
+    assert result["fully_linked_pct"] == 0.0
+
+
+@add_test_properties(
+    partially_verifies=["tool_req__docs_test_linkage_metrics"],
+    test_type="interface-test",
+    derivation_technique="design-analysis",
+)
+def test_calculate_test_metrics_counts_linked_tests_and_broken_refs() -> None:
+    """Count linked testcases and list references to missing needs."""
+    test_needs: list[NeedItem] = [
+        test_need(id="TC_1", partially_verifies=["REQ_1"], fully_verifies=[]),
+        test_need(
+            id="TC_2", partially_verifies=[], fully_verifies=["REQ_2", "REQ_404"]
+        ),
+        test_need(id="TC_3", partially_verifies=[], fully_verifies=[]),
+    ]
+
+    all_needs = cast(
+        NeedsView,
+        {
+            "REQ_1": test_need(id="REQ_1"),
+            "REQ_2": test_need(id="REQ_2"),
+        },
+    )
+
+    result = metrics.calculate_test_metrics(test_needs, all_needs)
+
+    assert result["total"] == 3
+    assert result["linked_to_requirements"] == 2
+    assert result["linked_to_requirements_pct"] == pytest.approx(66.6666666667)
+    assert result["broken_references"] == [
+        {"testcase": "TC_2", "missing_need": "REQ_404"}
+    ]
