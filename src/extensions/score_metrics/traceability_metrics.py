@@ -102,8 +102,8 @@ def calculate_test_metrics(
 
     for test_need in test_needs:
         test_id = str(test_need.get("id"))
-        partially: list[str] = test_need.get("partially_verifies")
-        fully: list[str] = test_need.get("fully_verifies")
+        partially: list[str] = test_need.get("partially_verifies", [])
+        fully: list[str] = test_need.get("fully_verifies", [])
         refs = set(partially + fully)
         if refs:
             tests_linked += 1
@@ -138,7 +138,7 @@ def calculate_full_need_metrics(app: Sphinx, include_external: bool):
     raw = getattr(app.config, "score_metamodel_requirement_types", "").strip()
     filter_reqs = [t.strip() for t in raw.split(",") if t.strip()]
     if not filter_reqs:
-        filter_reqs = get_need_types_by_tags(metamodel.needs_types, {"reqiurement"})
+        filter_reqs = get_need_types_by_tags(metamodel.needs_types, {"requirement"})
     #            ──────────────────[ Calculate Test Metrics ]──────────────────
 
     test_needs = list(all_needs.filter_types(["testcase"]).values())
@@ -156,9 +156,12 @@ def calculate_full_need_metrics(app: Sphinx, include_external: bool):
 
     #            ─────[ Calculating Metrics for each requirement_type ]───
     for req_type in sorted(filter_reqs):
-        needs_of_req_type = all_needs.filter_types([req_type]).filter_is_external(
-            include_external
-        )
+        if include_external:
+            needs_of_req_type = all_needs.filter_types([req_type])
+        else:
+            needs_of_req_type = all_needs.filter_types([req_type]).filter_is_external(
+                False
+            )
         # We do not care if there is no requirements of this type.
         if not list(needs_of_req_type.values()):
             continue

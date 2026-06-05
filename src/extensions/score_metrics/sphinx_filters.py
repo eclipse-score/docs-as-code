@@ -207,7 +207,6 @@ def get_metrics_with_overall_total_considered(
     results.append(int(metrics_json["overall_metrics"]["total"]))
     _get_key_values(results, [str(value) for value in kwargs.values()])
     results[0] -= sum(results[1:])
-    print(results)
 
 
 def get_metrics_with_custom_type_total_considered(

@@ -19,7 +19,7 @@ from sphinx.application import Sphinx
 from sphinx.environment import BuildEnvironment
 from sphinx_needs import logging
 
-from src.extensions.score_metrics.traceability_metrics import CALCULATED_METRICS
+from score_metrics.traceability_metrics import CALCULATED_METRICS
 
 logger = logging.get_logger(__name__)
 
@@ -41,7 +41,8 @@ def _write_metrics_json(app: Sphinx, exception: Any | None) -> None:
     """
     Write a schema-v1 metrics.json alongside needs.json in the build output.
     """
-
+    if exception:
+        logger.error(f"Sphinx-Exception at end of build: {exception}")
     out_path = Path(app.outdir) / "metrics.json"
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(json.dumps(CALCULATED_METRICS, indent=2), encoding="utf-8")
