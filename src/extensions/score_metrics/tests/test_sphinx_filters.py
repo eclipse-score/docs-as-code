@@ -135,9 +135,10 @@ def test_get_metrics_with_overall_total_considered_when_metrics_loaded() -> None
     sphinx_filters.CALCULATED_METRICS = EXAMPLE_METRICS
     results: list[int] = []
 
-    sphinx_filters.get_metrics_with_overall_total_considered(
+    sphinx_filters.get_metrics_with_first_value_total(
         needs=[],
         results=results,
+        total="overall_metrics:total",
         code="overall_metrics:with_code_link",
         test="overall_metrics:with_test_link",
         fully="overall_metrics:fully_linked",
@@ -151,13 +152,14 @@ def test_get_metrics_with_custom_type_total_considered_with_total_suffix() -> No
     sphinx_filters.CALCULATED_METRICS = EXAMPLE_METRICS
     results: list[int] = []
 
-    sphinx_filters.get_metrics_with_custom_type_total_considered(
+    sphinx_filters.get_metrics_with_first_value_total(
         needs=[],
         results=results,
+        total="metrics_by_type:tool_req:total",
         code="metrics_by_type:tool_req:with_code_link",
         test="metrics_by_type:tool_req:with_test_link",
-        total="metrics_by_type:tool_req:total",
     )
+    print(results)
 
     assert results == [12, 46, 3]
 
@@ -167,14 +169,15 @@ def test_get_metrics_with_custom_type_total_considered_without_total_suffix() ->
     sphinx_filters.CALCULATED_METRICS = EXAMPLE_METRICS
     results: list[int] = []
 
-    sphinx_filters.get_metrics_with_custom_type_total_considered(
+    sphinx_filters.get_metrics_with_first_value_total(
         needs=[],
         results=results,
         code="metrics_by_type:tool_req:with_code_link",
         test="metrics_by_type:tool_req:with_test_link",
     )
+    print(results)
 
-    assert results == [46, 3]
+    assert results == [43, 3]
 
 
 def test_get_just_metrics_appends_values_when_metrics_loaded() -> None:
@@ -200,6 +203,6 @@ def test_get_metrics_with_custom_type_total_considered_empty_kwargs_raises_index
     results: list[int] = []
 
     with pytest.raises(IndexError):
-        sphinx_filters.get_metrics_with_custom_type_total_considered(
+        sphinx_filters.get_metrics_with_first_value_total(
             needs=[], results=results
         )

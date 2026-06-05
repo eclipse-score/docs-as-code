@@ -182,7 +182,7 @@ This palette is generally easier to read:
 Example 1: Overall view (including remaining/unlinked)
 ------------------------------------------------------
 
-.. code-block:: rst 
+.. code-block:: rst
 
    .. needpie:: Overall Requirement Coverage
       :labels: Remaining (no selected links), With Test Link, With Code Link, Fully Linked
