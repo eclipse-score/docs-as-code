@@ -9,7 +9,7 @@
   "properties": {
     "schema_version": {
       "type": "string",
-      "const": "1",
+      "const": "2",
       "description": "Schema version. Bump when the shape changes incompatibly."
     },
     "generated_by": {
@@ -28,7 +28,13 @@
   "$defs": {
     "TypeMetrics": {
       "type": "object",
-      "required": ["include_not_implemented", "include_external", "requirements", "tests"],
+        "required": [
+          "include_not_implemented",
+          "include_external",
+          "requirements",
+          "tests",
+          "process_requirements"
+        ],
       "additionalProperties": false,
       "properties": {
         "include_not_implemented": {
@@ -44,6 +50,9 @@
         },
         "tests": {
           "$ref": "#/$defs/TestMetrics"
+        },
+        "process_requirements": {
+          "$ref": "#/$defs/ProcessRequirementMetrics"
         }
       }
     },
@@ -154,6 +163,45 @@
           "type": "array",
           "items": { "$ref": "#/$defs/BrokenReference" },
           "description": "Testcase references that point to unknown requirement IDs."
+        }
+      }
+    },
+    "ProcessRequirementMetrics": {
+      "type": "object",
+      "required": [
+        "total",
+        "linked",
+        "linked_by_tool_requirements",
+        "linked_by_tool_requirements_pct",
+        "unlinked_ids"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "total": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of process requirements in scope."
+        },
+        "linked": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Process requirements linked by at least one tool requirement."
+        },
+        "linked_by_tool_requirements": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Process requirements linked by tool requirements."
+        },
+        "linked_by_tool_requirements_pct": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "linked_by_tool_requirements / total * 100, or 100 when total == 0."
+        },
+        "unlinked_ids": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Sorted IDs of process requirements without a matching tool requirement."
         }
       }
     },

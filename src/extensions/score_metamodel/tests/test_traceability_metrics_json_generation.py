@@ -38,6 +38,11 @@ class _FakeNeedsData:
                 "testlink": "",
                 "is_external": False,
             },
+            "LOCAL_PROC_REQ": {
+                "id": "LOCAL_PROC_REQ",
+                "type": "gd_req",
+                "is_external": False,
+            },
             "EXT_REQ": {
                 "id": "EXT_REQ",
                 "type": "tool_req",
@@ -73,10 +78,17 @@ def test_write_metrics_json_defaults_to_local_only(
     payload = json.loads((tmp_path / "metrics.json").read_text(encoding="utf-8"))
     metrics = payload["metrics_by_type"]["tool_req"]
 
-    assert payload["schema_version"] == "1"
+    assert payload["schema_version"] == "2"
     assert metrics["include_not_implemented"] is True
     assert metrics["include_external"] is False
     assert metrics["requirements"]["total"] == 1
+    assert metrics["process_requirements"] == {
+        "total": 1,
+        "linked": 0,
+        "linked_by_tool_requirements": 0,
+        "linked_by_tool_requirements_pct": 0.0,
+        "unlinked_ids": ["LOCAL_PROC_REQ"],
+    }
 
 
 def test_write_metrics_json_can_include_external(
@@ -94,3 +106,4 @@ def test_write_metrics_json_can_include_external(
 
     assert metrics["include_external"] is True
     assert metrics["requirements"]["total"] == 2
+    assert metrics["process_requirements"]["total"] == 1

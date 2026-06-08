@@ -1,0 +1,163 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://eclipse-score.github.io/docs-as-code/verification-coverage-schema.json",
+  "title": "Verification Coverage Section",
+  "description": "Coverage-focused sections of the S-CORE process verification report.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "on_requirements",
+    "on_architecture",
+    "on_detailed_design"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1",
+      "description": "Verification coverage schema version."
+    },
+    "on_requirements": {
+      "$ref": "#/$defs/RequirementCoverage"
+    },
+    "on_architecture": {
+      "$ref": "#/$defs/DomainCoverage"
+    },
+    "on_detailed_design": {
+      "$ref": "#/$defs/DomainCoverage"
+    },
+    "methods": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["test", "analysis", "inspection"]
+      },
+      "description": "Verification methods used to produce the listed evidence."
+    }
+  },
+  "$defs": {
+    "RequirementCoverage": {
+      "type": "object",
+      "required": [
+        "qm_tests",
+        "asil_tests",
+        "inspection_checklists",
+        "external_aou_coverage",
+        "progress"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "qm_tests": {
+          "$ref": "#/$defs/TestCoverageList"
+        },
+        "asil_tests": {
+          "$ref": "#/$defs/TestCoverageList"
+        },
+        "inspection_checklists": {
+          "$ref": "#/$defs/InspectionCoverageList"
+        },
+        "external_aou_coverage": {
+          "$ref": "#/$defs/TestCoverageList"
+        },
+        "progress": {
+          "$ref": "#/$defs/ProgressSummary"
+        }
+      }
+    },
+    "DomainCoverage": {
+      "type": "object",
+      "required": ["qm_tests", "asil_tests", "inspection_checklists", "progress"],
+      "additionalProperties": false,
+      "properties": {
+        "qm_tests": {
+          "$ref": "#/$defs/TestCoverageList"
+        },
+        "asil_tests": {
+          "$ref": "#/$defs/TestCoverageList"
+        },
+        "inspection_checklists": {
+          "$ref": "#/$defs/InspectionCoverageList"
+        },
+        "progress": {
+          "$ref": "#/$defs/ProgressSummary"
+        }
+      }
+    },
+    "TestCoverageList": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/TestCoverageEntry"
+      }
+    },
+    "InspectionCoverageList": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/InspectionCoverageEntry"
+      }
+    },
+    "TestCoverageEntry": {
+      "type": "object",
+      "required": ["item_id", "testcase_id", "status", "completeness_verdict"],
+      "additionalProperties": false,
+      "properties": {
+        "item_id": {
+          "type": "string"
+        },
+        "testcase_id": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["passed", "failed", "not_run"]
+        },
+        "completeness_verdict": {
+          "type": "string",
+          "enum": ["complete", "incomplete"]
+        }
+      }
+    },
+    "InspectionCoverageEntry": {
+      "type": "object",
+      "required": ["item_id", "checklist_id", "verdict"],
+      "additionalProperties": false,
+      "properties": {
+        "item_id": {
+          "type": "string"
+        },
+        "checklist_id": {
+          "type": "string"
+        },
+        "verdict": {
+          "type": "string",
+          "enum": ["passed", "failed", "open"]
+        }
+      }
+    },
+    "ProgressSummary": {
+      "type": "object",
+      "required": ["total", "passed", "failed", "not_run", "complete"],
+      "additionalProperties": false,
+      "properties": {
+        "total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "passed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "failed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "not_run": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "complete": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

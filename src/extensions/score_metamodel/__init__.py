@@ -100,7 +100,7 @@ def graph_check(func: graph_check_function):
 
 
 def _write_metrics_json(app: Sphinx, exception: Exception | None) -> None:
-    """Write a schema-v1 metrics.json alongside needs.json in the build output.
+    """Write a schema-v2 metrics.json alongside needs.json in the build output.
 
     This is the single source of truth for traceability metrics. It runs
     inside the Sphinx build so it has access to all needs (local + external)
@@ -133,10 +133,11 @@ def _write_metrics_json(app: Sphinx, exception: Exception | None) -> None:
             "include_external": type_summary["include_external"],
             "requirements": type_summary["requirements"],
             "tests": type_summary["tests"],
+            "process_requirements": type_summary["process_requirements"],
         }
 
     output: dict[str, Any] = {
-        "schema_version": "1",
+        "schema_version": "2",
         "generated_by": "sphinx_build",
         "metrics_by_type": metrics_by_type,
     }

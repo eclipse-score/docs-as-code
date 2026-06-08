@@ -41,3 +41,12 @@ score_pytest(
     ] + all_requirements,
     pytest_config = "//:pyproject.toml",
 )
+
+score_pytest(
+    name = "verification_schema_sync_check_test",
+    srcs = ["verification_schema_sync_check_test.py"],
+    deps = [
+        "//scripts_bazel:verification_schema_sync_check",
+    ] + all_requirements,
+    pytest_config = "//:pyproject.toml",
+)

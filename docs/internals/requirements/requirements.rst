@@ -928,6 +928,34 @@ Testing
   * LOW
   * HIGH
 
+.. tool_req:: Verification report schema contract
+  :id: tool_req__docs_tvr_report_schema_contract
+  :tags: Tool Verification Reports
+  :implemented: PARTIAL
+  :version: 1
+  :parent_covered: NO
+  :satisfies: gd_req__verification_reporting, gd_req__verification_report_archiving
+  :source_code_link: scripts_bazel/verification_report_schema.json:1; scripts_bazel/verification_coverage_schema.json:1; scripts_bazel/verification_evidence_schema.json:1
+
+  Docs-as-Code shall provide machine-readable schema contracts for module verification
+  reporting and report archiving.
+
+  .. note:: Schema files are in place; generation and enforcement logic is not yet implemented.
+
+.. tool_req:: Verification section schema checks
+  :id: tool_req__docs_tvr_section_schema_checks
+  :tags: Tool Verification Reports
+  :implemented: PARTIAL
+  :version: 1
+  :parent_covered: NO
+  :satisfies: gd_req__verification_checks_extended
+  :source_code_link: scripts_bazel/verification_coverage_schema.json:1; scripts_bazel/verification_evidence_schema.json:1
+
+  Docs-as-Code shall define machine-readable section-level schema contracts for
+  verification coverage and evidence to support extended verification checks.
+
+  .. note:: Schema files are in place; check execution and report generation are not yet implemented.
+
 ⚙️ Process / Other
 ###################
 
