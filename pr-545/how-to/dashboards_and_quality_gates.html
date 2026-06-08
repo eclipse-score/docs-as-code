@@ -473,7 +473,7 @@ dependency.</p>
 </ol>
 <section id="what-you-get">
 <h2>What You Get<a class="headerlink" href="#what-you-get" title="Link to this heading">#</a></h2>
-<p>With the <code class="docutils literal notranslate"><span class="pre">docs(...)</span></code> macro and <code class="docutils literal notranslate"><span class="pre">score_metamodel</span></code> extension enabled, your
+<p>With the <code class="docutils literal notranslate"><span class="pre">docs(...)</span></code> macro and <code class="docutils literal notranslate"><span class="pre">score_metamodel</span></code> as well as the <code class="docutils literal notranslate"><span class="pre">`score_metrics</span></code> extensions enabled, your
 repository can:</p>
 <ul class="simple">
 <li><p>build an HTML dashboard from its own Sphinx needs,</p></li>
@@ -490,7 +490,7 @@ repository can:</p>
 <h2>Configuration<a class="headerlink" href="#configuration" title="Link to this heading">#</a></h2>
 <section id="default-behavior-no-configuration-needed">
 <h3>Default Behavior (No Configuration Needed)<a class="headerlink" href="#default-behavior-no-configuration-needed" title="Link to this heading">#</a></h3>
-<p>By default, <code class="docutils literal notranslate"><span class="pre">score_metamodel</span></code> autodiscovers requirement types from the
+<p>By default, <code class="docutils literal notranslate"><span class="pre">score_metrics</span></code> autodiscovers requirement types from the
 repository needs present in the current build.
 Requirement types are identified from <code class="docutils literal notranslate"><span class="pre">needs_types</span></code> entries tagged with <code class="docutils literal notranslate"><span class="pre">requirement</span></code>.</p>
 <p>This is the recommended setup for most repositories.</p>
@@ -499,23 +499,23 @@ Requirement types are identified from <code class="docutils literal notranslate"
 <h3>Optional Override for Requirement Types<a class="headerlink" href="#optional-override-for-requirement-types" title="Link to this heading">#</a></h3>
 <p>If a repository needs to force a specific set of requirement types, set an
 explicit override in <code class="docutils literal notranslate"><span class="pre">docs/conf.py</span></code>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">score_metamodel_requirement_types</span> <span class="o">=</span> <span class="s2">&quot;feat_req,comp_req,aou_req&quot;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">score_metrics_requirement_types</span> <span class="o">=</span> <span class="s2">&quot;feat_req,comp_req,aou_req&quot;</span>
 </pre></div>
 </div>
 <p>When this setting is provided, the explicit list is used instead of
 autodiscovery.</p>
-<p>Use <code class="docutils literal notranslate"><span class="pre">score_metamodel_include_external_needs</span> <span class="pre">=</span> <span class="pre">True</span></code> only in repositories that
+<p>Use <code class="docutils literal notranslate"><span class="pre">score_metrics_include_external_needs</span> <span class="pre">=</span> <span class="pre">True</span></code> only in repositories that
 intentionally aggregate requirements across module dependencies, such as
 integration repositories.</p>
 </section>
 </section>
 <section id="building-the-dashboard">
 <h2>Building the Dashboard<a class="headerlink" href="#building-the-dashboard" title="Link to this heading">#</a></h2>
-<p>After building/running any docs command (i.e. <code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">build</span> <span class="pre">//:needs_json</span></code> or <code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">//:docs_check</span></code> are the fastest):</p>
-<p>The documentation build writes <code class="docutils literal notranslate"><span class="pre">metrics.json</span></code> via <code class="docutils literal notranslate"><span class="pre">score_metamodel</span></code>, and the <code class="docutils literal notranslate"><span class="pre">needs_json</span></code> artifact contains:</p>
+<p>After building/running any docs and test command (i.e. <code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">build</span> <span class="pre">//:needs_json</span></code> or <code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">//:docs_check</span></code>, <code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">//:docs</span></code>, <code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">test</span> <span class="pre">//...</span></code>):</p>
+<p>The documentation build writes <code class="docutils literal notranslate"><span class="pre">metrics.json</span></code> via <code class="docutils literal notranslate"><span class="pre">score_metrics</span></code>, and the <code class="docutils literal notranslate"><span class="pre">needs_json</span></code> artifact contains:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">bazel-bin/needs_json/_build/needs/needs.json</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">bazel-bin/needs_json/_build/needs/metrics.json</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_build/needs.json</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_build/metrics.json</span></code></p></li>
 </ul>
 <p>The dashboard charts and the CI gate both use the same computed metrics.</p>
 </section>
@@ -542,7 +542,7 @@ empty or low.</p>
 </ul>
 <p><strong>Integration repository</strong></p>
 <ul class="simple">
-<li><p>Set <code class="docutils literal notranslate"><span class="pre">score_metamodel_include_external_needs</span> <span class="pre">=</span> <span class="pre">True</span></code>.</p></li>
+<li><p>Set <code class="docutils literal notranslate"><span class="pre">score_metrics_include_external_needs</span> <span class="pre">=</span> <span class="pre">True</span></code>.</p></li>
 <li><p>Aggregate requirements across module dependencies when that is the intended
 repository purpose.</p></li>
 <li><p>Use this for system or integration-level dashboards.</p></li>
