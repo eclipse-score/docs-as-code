@@ -59,6 +59,7 @@ Each testcase has file as well as it's line number as additional attributes.
 Then as described above, each testcase also has properties inside the XML.
 
 .. code-block:: xml
+
    <?xml version="1.0" encoding="utf-8"?>
    <testsuites name="pytest tests">
      <testsuite errors="0" failures="0" hostname="LG-0005" name="pytest" skipped="0" tests="118" time="6.617" timestamp="2026-06-08T17:56:07.635773+00:00">
