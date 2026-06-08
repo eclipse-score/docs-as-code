@@ -265,17 +265,32 @@ def find_xml_files(search_path: Path) -> list[Path]:
     """
 
     test_file_name = "test.xml"
-    return [x for x in search_path.rglob(test_file_name)]
+    test_files = [x for x in search_path.rglob(test_file_name)]
+    logger.info(f"Found {len(test_files)} test files in total. Parsing them now")
+    if not test_files:
+        logger.info(
+            "Did not find any test.xml files. ",
+            "If you expected xml files to be found, please ensure that you have ran your tests ",
+            "and put all testfiles either in tests-reports or bazel-testlogs.",
+        )
+    return test_files
 
 
 def find_test_folder(base_path: Path | None = None) -> Path | None:
     ws_root = base_path if base_path is not None else find_ws_root()
     assert ws_root is not None
     if os.path.isdir(ws_root / "tests-report"):
+        logger.info(
+            "Found `tests-report` folder. Searching for test.xml files in there"
+        )
         return ws_root / "tests-report"
     if os.path.isdir(ws_root / "bazel-testlogs"):
+        logger.info(
+            "tests-report folder not found. Defaulting to `bazel-testlogs`. Searching for test.xml files in there"
+        )
         return ws_root / "bazel-testlogs"
-    logger.info("could not find tests-report or bazel-testlogs to parse testcases")
+    # This should only happen if bazel was never started in the first place?
+    logger.info("Could not find tests-report or bazel-testlogs to parse testcases")
     return None
 
 
@@ -291,6 +306,9 @@ def run_xml_parser(app: Sphinx, env: BuildEnvironment):
     xml_file_paths = find_xml_files(testlogs_dir)
     test_case_needs = build_test_needs_from_files(app, env, xml_file_paths)
     # Saving the test case needs for cache
+    logger.info(
+        f"Saving {len(test_case_needs)} test case needs to the cache `score_testcaseneeds_cache.json` in _build/."
+    )
     store_data_of_test_case_json(
         app.outdir / "score_testcaseneeds_cache.json", test_case_needs
     )
@@ -299,6 +317,9 @@ def run_xml_parser(app: Sphinx, env: BuildEnvironment):
     )
     # This is not ideal, due to duplication, but I can't think of a better solution
     # right now
+    logger.info(
+        f"Saving {len(output)} parsed testcases to the cache `score_xml_parser_cache.json` in _build/."
+    )
     store_test_xml_parsed_json(app.outdir / "score_xml_parser_cache.json", output)
 
 
@@ -315,10 +336,15 @@ def build_test_needs_from_files(
     tcns: list[DataOfTestCase] = []
     for file in xml_paths:
         # Last value can be ignored. The 'is_valid' function already prints infos
-        test_cases, tests_missing_all_props, _ = read_test_xml_file(file)
+        test_cases, tests_missing_all_props, tests_missing_some_props = (
+            read_test_xml_file(file)
+        )
         non_prop_tests = ", ".join(n for n in tests_missing_all_props)
         if non_prop_tests:
             logger.info(f"Tests missing all properties: {non_prop_tests}")
+        missing_prop_tests = ", ".join(n for n in tests_missing_some_props)
+        if missing_prop_tests:
+            logger.info(f"Tests missing some properties: {missing_prop_tests}")
         tcns.extend(test_cases)
         for tc in test_cases:
             construct_and_add_need(app, tc)
