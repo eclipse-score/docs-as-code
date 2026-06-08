@@ -135,7 +135,7 @@ def calculate_full_need_metrics(app: Sphinx, include_external: bool):
     # We either get the types that should be considered from the configuration
     # If none are specified the need types declared in the Metamodel with
     # the tags 'requirement' are taken
-    raw = getattr(app.config, "score_metamodel_requirement_types", "").strip()
+    raw = getattr(app.config, "score_metrics_requirement_types", "").strip()
     filter_reqs = [t.strip() for t in raw.split(",") if t.strip()]
     if not filter_reqs:
         filter_reqs = get_need_types_by_tags(metamodel.needs_types, {"requirement"})

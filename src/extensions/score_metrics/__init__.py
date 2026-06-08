@@ -33,7 +33,7 @@ def calculate_need_metrics(app: Sphinx, env: BuildEnvironment) -> None:
     The traceability_gate reads this file to enforce CI thresholds.
     """
     include_external: bool = bool(
-        getattr(app.config, "score_metamodel_include_external_needs", False)
+        getattr(app.config, "score_metrics_include_external_needs", False)
     )
     calculate_full_need_metrics(app=app, include_external=include_external)
 
