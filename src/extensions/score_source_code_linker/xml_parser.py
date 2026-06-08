@@ -269,9 +269,9 @@ def find_xml_files(search_path: Path) -> list[Path]:
     logger.info(f"Found {len(test_files)} test files in total. Parsing them now")
     if not test_files:
         logger.info(
-            "Did not find any test.xml files. ",
-            "If you expected xml files to be found, please ensure that you have ran your tests ",
-            "and put all testfiles either in tests-reports or bazel-testlogs.",
+            "Did not find any test.xml files. "
+            "If you expected xml files to be found, please ensure that you have ran your tests "
+            "and put all testfiles either in tests-reports or bazel-testlogs."
         )
     return test_files
 
