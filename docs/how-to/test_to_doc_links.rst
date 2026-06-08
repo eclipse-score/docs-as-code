@@ -50,9 +50,9 @@ Every linked test must declare the following properties
 
 ``Description``
    A human-readable explanation of the test objective and expected outcome.
-   *In python tests a docstring is taking the place of the description attribute*
+   *In Python tests, a docstring takes the place of the description attribute.*
 
-How should a test.xml look like?
+What should a test.xml look like?
 ---------------------------------
 
 Each testcase has file as well as it's line number as additional attributes.

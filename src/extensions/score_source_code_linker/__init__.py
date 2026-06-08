@@ -212,13 +212,14 @@ def setup_test_code_linker(app: Sphinx, env: BuildEnvironment):
         )
         # sanity check if extension is enabled
         bazel_testlogs = ws_root / "bazel-testlogs"
-        if not bazel_testlogs.exists():
+        test_folder = ws_root / "tests-report"
+        if not (bazel_testlogs.exists() or test_folder.exists()):
             LOGGER.info(f"{'=' * 80}", type="score_source_code_linker")
             LOGGER.info(
                 f"{'=' * 32}SCORE XML PARSER{'=' * 32}", type="score_source_code_linker"
             )
             LOGGER.info(
-                "'bazel-testlogs' was not found. If test data should be parsed,"
+                "'bazel-testlogs' and 'tests-report' both were not found. If test data should be parsed,"
                 + "please run tests before building the documentation",
                 type="score_source_code_linker",
             )
