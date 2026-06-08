@@ -53,7 +53,7 @@ Finally, pass the scan results to the ``docs`` rule as ``scan_code`` attribute.
           "foo.py",
           "bar.cpp",
           "data.yaml",
-      ] + glob(["subdir/**/.py"]),
+      ] + glob(["subdir/**/*.py"]),
    )
 
    docs(

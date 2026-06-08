@@ -15,7 +15,7 @@
 
 
 .. Title contains a stop word
-#EXPECT: feat_req__test__title_bad: contains a weak word: `must` in option: `title`. Please revise the wording.
+#EXPECT[+2]: feat_req__test__title_bad: contains a weak word: `must` in option: `title`. Please revise the wording.
 
 .. feat_req:: This must work
    :id: feat_req__test__title_bad
@@ -23,7 +23,7 @@
 
 
 .. Title contains no stop word
-#EXPECT-NOT: feat_req__test__title_good: contains a weak word: `must` in option: `title`. Please revise the wording.
+#EXPECT-NOT[+2]: title
 
 .. feat_req:: This is a test
    :id: feat_req__test__title_good
@@ -31,14 +31,14 @@
 
 
 .. Title of an architecture element contains a stop word
-#EXPECT: stkh_req__test_title_bad: contains a weak word: `must` in option: `title`. Please revise the wording.
+#EXPECT[+2]: stkh_req__test_title_bad: contains a weak word: `must` in option: `title`. Please revise the wording.
 
 .. stkh_req:: This must work
    :id: stkh_req__test_title_bad
 
 
 
-#EXPECT-NOT: stkh_req__test_title_good: contains a weak word: `must` in option: `title`. Please revise the wording.
+#EXPECT-NOT[+2]: title
 
 .. stkh_req:: This is a test
    :id: stkh_req__test_title_good
@@ -47,7 +47,7 @@
 
 
 .. Description contains a weak word
-#EXPECT: stkh_req__test__desc_bad: contains a weak word: `really` in option: `content`. Please revise the wording.
+#EXPECT[+2]: stkh_req__test__desc_bad: contains a weak word: `really` in option: `content`. Please revise the wording.
 
 .. stkh_req:: This is a test
    :id: stkh_req__test__desc_bad
@@ -57,7 +57,7 @@
 
 
 .. Description contains no weak word
-#EXPECT-NOT: stkh_req__test__desc_good: contains a weak word: `really` in option: `content`. Please revise the wording.
+#EXPECT-NOT[+2]: contains a weak word
 
 .. stkh_req:: This is a test
    :id: stkh_req__test__desc_good
@@ -67,7 +67,7 @@
 
 
 .. Description of architecture view of type feat_arc_sta is not checked for weak words
-#EXPECT-NOT: feat_arc_sta_desc_good: contains a weak word: `really` in option: `content`. Please revise the wording.
+#EXPECT-NOT[+2]: content
 
 .. feat_arc_sta:: This is a test
    :id: feat_arc_sta_desc_good
@@ -75,7 +75,7 @@
    This should really work
 
 
-#EXPECT: tool_req__docs_common_attr_desc_wording: contains a weak word: `just` in option: `content`. Please revise the wording.
+#EXPECT[+2]: tool_req__docs_common_attr_desc_wording: contains a weak word: `just` in option: `content`. Please revise the wording.
 
 .. tool_req:: Enforces description wording rules
   :id: tool_req__docs_common_attr_desc_wording

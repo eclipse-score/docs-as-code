@@ -16,12 +16,6 @@ import pytest
 def pytest_addoption(parser: pytest.Parser):
     """Add custom command line options to pytest"""
     parser.addoption(
-        "--repo",
-        action="store",
-        default=None,
-        help="Comma separated string of ConsumerRepo's name tests to run",
-    )
-    parser.addoption(
         "--disable-cache",
         action="store_true",
         default=False,

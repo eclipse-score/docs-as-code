@@ -13,6 +13,7 @@
 import operator
 from collections.abc import Callable
 from functools import reduce
+from itertools import chain
 from typing import Any, cast
 
 from score_metamodel import (
@@ -198,3 +199,32 @@ def check_metamodel_graph(
                             f" Explanation: {explanation}"
                         )
                         log.warning_for_need(need, msg)
+
+
+@graph_check
+def check_valid_only_links_to_valid(
+    app: Sphinx,
+    all_needs: NeedsView,
+    log: CheckLogger,
+):
+    # Pre-Gather all *valid* need id's (external, & local)
+    valid_needs_id_all = set(
+        x.id for x in all_needs.values() if x.get("status") == "valid"
+    )
+    # Pre-Gather all LOCAL *valid* id's to iterate over and check
+    valid_needs_local = [
+        x
+        for x in all_needs.filter_is_external(False).values()
+        if x.get("status") == "valid"
+    ]
+
+    for need in valid_needs_local:
+        # Using set comprehension here to enable faster computation for comparisons
+        all_linked_needs: set[str] = set(
+            x.id
+            for x in set(chain(*need._links.values()))  # type: ignore
+        )
+        invalid_needs = all_linked_needs.difference(valid_needs_id_all)
+        if invalid_needs:
+            msg = f"is valid but links to invalid need(s): {invalid_needs}"
+            log.warning_for_need(need, msg, is_new_check=True)

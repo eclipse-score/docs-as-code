@@ -188,7 +188,7 @@ def validate_links(
                     )
 
     _validate(need_type["mandatory_links"], True)
-    _validate(need_type["optional_links"], False, treat_as_info=True)
+    _validate(need_type["optional_links"], False)
 
 
 # req-Id: tool_req__docs_req_attr_reqtype

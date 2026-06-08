@@ -10,9 +10,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-import contextlib
 import json
-import os
 import shutil
 import subprocess
 from collections import Counter
@@ -38,15 +36,15 @@ from src.extensions.score_source_code_linker.tests.test_codelink import (
 from src.extensions.score_source_code_linker.tests.test_need_source_links import (
     SourceCodeLinks_TEST_JSON_Decoder,
 )
-from src.helper_lib import find_ws_root, get_github_base_url
+from src.helper_lib import find_ws_root
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def sphinx_base_dir(tmp_path_factory: TempPathFactory) -> Path:
     return tmp_path_factory.mktemp("test_git_repo")
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def git_repo_setup(sphinx_base_dir: Path) -> Path:
     """Creating git repo, to make testing possible"""
 
@@ -64,11 +62,10 @@ def git_repo_setup(sphinx_base_dir: Path) -> Path:
         cwd=repo_path,
         check=True,
     )
-    os.environ["BUILD_WORKSPACE_DIRECTORY"] = str(repo_path)
     return repo_path
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def create_demo_files(sphinx_base_dir: Path, git_repo_setup: Path):
     repo_path = sphinx_base_dir
 
@@ -213,43 +210,28 @@ def make_test_xml_2():
 # flake8: noqa: E501 (end)
 
 
-def construct_gh_url() -> str:
-    gh = get_github_base_url()
-    return f"{gh}/blob/"
-
-
 @pytest.fixture()
 def sphinx_app_setup(
-    sphinx_base_dir: Path, create_demo_files: None, git_repo_setup: Path
+    sphinx_base_dir: Path,
+    create_demo_files: None,
+    git_repo_setup: Path,
+    monkeypatch: pytest.MonkeyPatch,
 ) -> Callable[[], SphinxTestApp]:
     def _create_app():
         base_dir = sphinx_base_dir
         docs_dir = base_dir / "docs"
 
-        # CRITICAL: Change to a directory that exists and is accessible
-        # This fixes the "no such file or directory" error in Bazel
-        original_cwd = None
-        # Current working directory doesn't exist, which is the problem
-        with contextlib.suppress(FileNotFoundError):
-            original_cwd = os.getcwd()
+        # Change must be valid during SphinxTestApp construction only.
+        monkeypatch.chdir(base_dir)
 
-        # Change to the base_dir before creating SphinxTestApp
-        os.chdir(base_dir)
-        try:
-            return SphinxTestApp(
-                freshenv=True,
-                srcdir=docs_dir,
-                confdir=docs_dir,
-                outdir=sphinx_base_dir / "out",
-                buildername="html",
-                warningiserror=True,
-            )
-        finally:
-            # Try to restore original directory, but don't fail if it doesn't exist
-            if original_cwd is not None:
-                # Original directory might not exist anymore in Bazel sandbox
-                with contextlib.suppress(FileNotFoundError, OSError):
-                    os.chdir(original_cwd)
+        return SphinxTestApp(
+            freshenv=True,
+            srcdir=docs_dir,
+            confdir=docs_dir,
+            outdir=sphinx_base_dir / "out",
+            buildername="html",
+            warningiserror=True,
+        )
 
     return _create_app
 
@@ -516,11 +498,12 @@ def test_source_link_integration_ok(
     sphinx_base_dir: Path,
     git_repo_setup: Path,
     create_demo_files: None,
+    monkeypatch: pytest.MonkeyPatch,
 ):
     """This is a test description"""
+    monkeypatch.setenv("BUILD_WORKSPACE_DIRECTORY", str(sphinx_base_dir))
     app = sphinx_app_setup()
     try:
-        os.environ["BUILD_WORKSPACE_DIRECTORY"] = str(sphinx_base_dir)
         app.build()
         ws_root = find_ws_root()
         assert ws_root is not None
@@ -579,8 +562,10 @@ def test_source_link_integration_non_existent_id(
     sphinx_base_dir: Path,
     git_repo_setup: Path,
     create_demo_files: None,
+    monkeypatch: pytest.MonkeyPatch,
 ):
     """Asserting warning if need not found"""
+    monkeypatch.setenv("BUILD_WORKSPACE_DIRECTORY", str(sphinx_base_dir))
     app = sphinx_app_setup()
     try:
         app.build()

@@ -35,6 +35,11 @@ filegroup(
 )
 
 filegroup(
+    name = "metamodel_yaml",
+    srcs = ["metamodel.yaml"],
+)
+
+filegroup(
     name = "all_sources",
     srcs = [
         ":sources",
@@ -55,16 +60,55 @@ py_library(
 )
 
 score_pytest(
-    name = "score_metamodel_tests",
+    name = "unit_tests",
     size = "small",
-    srcs = glob(["tests/*.py"]),
-    # All requirements already in the library so no need to have it double
-    data = glob(
+    srcs = glob(
         [
-            "tests/**/*.rst",
-            "tests/**/*.yaml",
+            "tests/*.py",
         ],
-    ) + ["tests/rst/conf.py"],
-    deps = [":score_metamodel"],
+        exclude = ["tests/test_rules_file_based.py"],
+    ),
+    data = ["tests/model/simple_model.yaml"],
     pytest_config = "//:pyproject.toml",
+    deps = [":score_metamodel"],
+)
+
+score_pytest(
+    name = "file_based_tests_architecture",
+    srcs = ["tests/test_rules_file_based.py"],
+    data = glob(["tests/rst/architecture/*.rst"]) + ["tests/rst/conf.py", "tests/rst/needs.json"],
+    pytest_config = "//:pyproject.toml",
+    deps = [":score_metamodel"],
+)
+
+score_pytest(
+    name = "file_based_tests_attributes",
+    srcs = ["tests/test_rules_file_based.py"],
+    data = glob(["tests/rst/attributes/*.rst"]) + ["tests/rst/conf.py", "tests/rst/needs.json"],
+    pytest_config = "//:pyproject.toml",
+    deps = [":score_metamodel"],
+)
+
+score_pytest(
+    name = "file_based_tests_graph",
+    srcs = ["tests/test_rules_file_based.py"],
+    data = glob(["tests/rst/graph/*.rst"]) + ["tests/rst/conf.py", "tests/rst/needs.json"],
+    pytest_config = "//:pyproject.toml",
+    deps = [":score_metamodel"],
+)
+
+score_pytest(
+    name = "file_based_tests_id_contains_feature",
+    srcs = ["tests/test_rules_file_based.py"],
+    data = glob(["tests/rst/id_contains_feature/*.rst"]) + ["tests/rst/conf.py", "tests/rst/needs.json"],
+    pytest_config = "//:pyproject.toml",
+    deps = [":score_metamodel"],
+)
+
+score_pytest(
+    name = "file_based_tests_options",
+    srcs = ["tests/test_rules_file_based.py"],
+    data = glob(["tests/rst/options/*.rst"]) + ["tests/rst/conf.py", "tests/rst/needs.json"],
+    pytest_config = "//:pyproject.toml",
+    deps = [":score_metamodel"],
 )

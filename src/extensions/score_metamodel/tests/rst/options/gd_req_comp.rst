@@ -18,13 +18,13 @@
    :id: std_req__iso26262__001
 
 # Expect to warning with "complies"
-#EXPECT-NOT: complies
+#EXPECT-NOT[+2]: complies
 
 .. gd_req:: No Link is ok, since complies is optional
    :id: gd_req__001
 
 # Expect to warning with "complies"
-#EXPECT-NOT: complies
+#EXPECT-NOT[+2]: complies
 
 .. gd_req:: Correct link to std_req
    :id: gd_req__002

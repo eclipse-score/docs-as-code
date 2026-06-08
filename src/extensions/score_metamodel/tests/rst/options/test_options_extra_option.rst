@@ -14,14 +14,14 @@
 #CHECK: check_extra_options
 
 .. Invalid option: `safety` is not allowed
-#EXPECT: std_wp__test__abcd: has these extra options: `safety`.
+#EXPECT[+2]: std_wp__test__abcd: has these extra options: `safety`.
 
 .. std_wp:: This is a test
    :id: std_wp__test__abcd
    :safety: QM
 
 .. No invalid extra options are present
-#EXPECT-NOT: has these extra options
+#EXPECT-NOT[+2]: has these extra options
 
 .. std_wp:: This is a test
    :id: std_wp__test__abce

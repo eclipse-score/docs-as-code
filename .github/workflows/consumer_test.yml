@@ -25,7 +25,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        consumer: ["process_description", "score", "module_template"]
+        consumer: [
+          "process_description and local",
+          "process_description and remote",
+          "score and local",
+          "score and remote",
+          "module_template and local",
+          "module_template and remote",
+        ]
 
     steps:
       - name: 🛡️ Harden Runner
@@ -35,74 +42,15 @@ jobs:
           egress-policy: audit
 
       - name: Checkout PR
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v6.0.2
 
       - name: Prepare Python
-        run: |
-          bazel run --lockfile_mode=error //:ide_support
+        run: bazel run //:ide_support
 
-      - name: Prepare report directory
-        run: |
-          mkdir -p reports
-
-      # The pipefail ensures that non 0 exit codes inside the pytest execution get carried into the pipe
-      # & make the tests red in the end. Without this we only would check the exit code of the 'tee' command.
       - name: Run Consumer tests
-
-        run: |
-          pytest_rc=0
-          .venv_docs/bin/python -m pytest -vv src/tests/ \
-          --repo="$CONSUMER" \
-          --junitxml="reports/${{ matrix.consumer }}.xml" \
-          || pytest_rc=$?
-
-
-          if [ -f "consumer_test.log" ]; then
-            src_log="consumer_test.log"
-          else
-            echo "consumer_test.log not found; expected at ./consumer_test.log"
-          exit ${pytest_rc:-1}
-          fi
-
-          dest_log="reports/${{ matrix.consumer }}.log"
-          mv "$src_log" "$dest_log"
-
-          tail -n 15 "$dest_log" >> "$GITHUB_STEP_SUMMARY"
-
-          cat "$dest_log"
-          exit $pytest_rc
+        run: .venv_docs/bin/python -m pytest -vv -s src/tests/test_consumer.py -k "$CONSUMER"
         env:
           FORCE_COLOR: "1"
           TERM: xterm-256color
           PYTHONUNBUFFERED: "1"
           CONSUMER: ${{ matrix.consumer }}
-
-      - name: Upload consumer test report
-        if: ${{ always() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: tests-${{ matrix.consumer }}
-          path: reports/
-
-  summarize:
-    needs: test
-    runs-on: ubuntu-latest
-    if: ${{ always() }}
-    steps:
-      - name: Prepare consumer report directory
-        run: |
-          mkdir -p tests-report
-
-      - name: Download individual consumer reports
-        uses: actions/download-artifact@v4
-        with:
-          pattern: tests-*
-          path: tests-report
-          merge-multiple: true
-
-      - name: Upload bundled consumer report
-        if: ${{ always() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: tests-report
-          path: tests-report

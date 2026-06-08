@@ -292,6 +292,26 @@ def postprocess_need_links(needs_types_list: list[ScoreNeedType]):
                 )
 
 
+def _clear_needs_defaults(app: Sphinx):
+    """Clear default need types, links and fields provided by sphinx-needs.
+
+    This ensures that only the need types defined in our metamodel are used,
+    and prevents issues where the defaults get merged with our types and cause
+    unexpected behavior.
+    """
+    default_directives = {"need", "req", "spec", "impl", "test"}
+    existing_directives = {nt["directive"] for nt in app.config.needs_types}
+    if existing_directives == default_directives:
+        app.config.needs_types.clear()
+        logger.info("Cleared default Sphinx-Needs types: %s", default_directives)
+    else:
+        logger.info(
+            f"Expected default need types {default_directives} not found. "
+            "Not clearing needs_types to avoid accidentally removing custom types. "
+            f"Existing directives: {existing_directives}"
+        )
+
+
 def setup(app: Sphinx) -> dict[str, str | bool]:
     app.add_config_value("external_needs_source", "", rebuild="env")
     app.add_config_value("score_metamodel_yaml", "", rebuild="env")
@@ -304,9 +324,19 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     metamodel = load_metamodel_data(override_path)
 
     # Extend sphinx-needs config rather than overwriting
+    _clear_needs_defaults(app)
     app.config.needs_types += metamodel.needs_types
     app.config.needs_links.update(metamodel.needs_links)
     app.config.needs_fields.update(metamodel.needs_fields)
+    app.config.needs_string_links.setdefault(
+        "mitigation_issue_linker",
+        {
+            "regex": r"(?P<url>https://github\.com/[^/]+/(?P<repo>[^/]+)/issues/(?P<number>\d+))",
+            "link_url": "{{url}}",
+            "link_name": "{{repo}}#{{number}}",
+            "options": ["mitigation_issue"],
+        },
+    )
     app.config.graph_checks = metamodel.needs_graph_check
     app.config.prohibited_words_checks = metamodel.prohibited_words_checks
 

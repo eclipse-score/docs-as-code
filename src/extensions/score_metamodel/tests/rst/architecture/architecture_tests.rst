@@ -92,7 +92,7 @@ Component 1
    :status: invalid
    :implements: logic_arc_int__test_feature_1__test_interface_1
    :uses: logic_arc_int__test_feature_1__test_interface_2
-   :consists_of: sw_unit__component_1__test_unit_1, comp__test_sub_component_1
+   :consists_of: comp__test_sub_component_1
 
 .. comp_req:: Test Component 1 Requirement 1
    :id: comp_req__test_component_1__requirement_1
@@ -104,19 +104,12 @@ Component 1
 
    Test Component 1 Requirement
 
-.. sw_unit:: SW Test Unit 1
-   :id: sw_unit__component_1__test_unit_1
-   :security: YES
-   :safety: ASIL_B
-   :status: invalid
-
 .. comp:: Test Sub Component 1
    :id: comp__test_sub_component_1
    :security: YES
    :safety: ASIL_B
    :status: invalid
    :implements: logic_arc_int__test_feature_1__test_interface_1
-   :consists_of: sw_unit__sub_component_1__test_unit_2
 
 .. comp_arc_sta:: Test Component Architecture Component 1
    :id: comp_arc_sta__feature_name__component_name
@@ -126,12 +119,6 @@ Component 1
    :fulfils: comp_req__test_component_1__requirement_1
    :implements: logic_arc_int__test_feature_1__test_interface_1
    :belongs_to: comp__test_sub_component_1
-
-.. sw_unit:: SW Test Unit 2
-   :id: sw_unit__sub_component_1__test_unit_2
-   :security: YES
-   :safety: ASIL_B
-   :status: invalid
 
 Component 1
 ~~~~~~~~~~~

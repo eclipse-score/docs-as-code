@@ -12,17 +12,21 @@
    # SPDX-License-Identifier: Apache-2.0
    # *******************************************************************************
 
-.. _docs_tool_req_overview:
+#CHECK: check_valid_only_links_to_valid
 
-:orphan:
+.. feat_req:: Parent requirement INVALID QM
+   :id: feat_req__parent__QM_invalid
+   :safety: QM
+   :status: invalid
 
-Tool Requirements Overview (Deprecated)
-=======================================
+.. We can not yet enable this test. As the check is only an 'info' and not yet a true warning
+.. Therefore the test is the inverse of what we will test once it is enabled.
 
-This page is deprecated.
 
-Use the canonical requirements dashboard:
-:doc:`implementation_state`
+#EXPECT-NOT[+2]: invalid need(s):
 
-The process-to-tool mapping tables previously shown here are now part of
-the implementation state dashboard.
+.. comp_saf_fmea:: Child requirement
+   :id: comp_saf_fmea__child__1
+   :safety: QM
+   :status: valid
+   :mitigated_by: feat_req__parent__QM_invalid

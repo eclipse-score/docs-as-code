@@ -19,8 +19,6 @@
 Extensions
 ==========
 
-Hello there
-
 
 .. grid:: 1 1 3 3
    :class-container: score-grid

@@ -93,9 +93,12 @@ This section provides an overview of current process requirements and their clar
     gd_req__arch_attribute_uid,
     gd_req__saf_attr_uid,
     gd_req__req_check_mandatory,
+    gd_req__impl_diagram_uid,
+    gd_req__impl_unit_uid,
+    gd_req__impl_interface_uid,
   :parent_covered: NO: cannot check non-existent "doc__naming_conventions" in gd_req__req_attr_uid
 
-  Docs-as-Code shall enforce that Need IDs follow the following naming scheme:
+  Enforce that Need IDs follow the following naming scheme:
 
   * A prefix indicating the need type (e.g. `feature__`)
   * A middle part matching the hierarchical structure of the need:
@@ -117,9 +120,10 @@ This section provides an overview of current process requirements and their clar
   :satisfies:
     gd_req__req_attr_title,
     gd_req__saf_attr_title,
+    gd_req__impl_diagram_title
   :parent_covered: NO: Can not ensure summary
 
-  Docs-as-Code shall enforce that all needs have titles and titles do not contain the following words:
+  Enforce that all needs have titles and titles do not contain the following words:
 
   * shall
   * must
@@ -136,9 +140,9 @@ This section provides an overview of current process requirements and their clar
   :parent_covered: NO: Can not cover 'ISO/IEC/IEEE/29148'
   :version: 1
   :implemented: YES
-  :satisfies: gd_req__req_attr_description, gd_req__req_check_mandatory,
+  :satisfies: gd_req__req_attr_description, gd_req__req_check_mandatory, gd_req__sec_argument
 
-  Docs-as-Code shall enforce that each need of type :need:`tool_req__docs_req_types` has a description (content)
+  Enforce that each need of type :need:`tool_req__docs_req_types` has a description (content)
 
 
 .. tool_req:: Enforces description wording rules
@@ -300,15 +304,16 @@ Versioning
   :id: tool_req__docs_doc_generic_mandatory
   :tags: Documents
   :implemented: PARTIAL
-  :version: 1
+  :version: 2
   :satisfies:
    gd_req__doc_attributes_manual,
-   gd_req__change_attr_impact_safety
+   gd_req__change_attr_impact_safety,
+   gd_req__doc_attr_status,
   :parent_covered: YES
 
-  Docs-as-Code shall enforce that each Generic Document ``doc__*`` has the following attributes:
+  Enforce that each Generic Document ``doc__*`` has the following attributes:
 
-  * status
+  * status (one of: valid, draft, invalid)
   * security
   * safety
   * realizes
@@ -790,27 +795,6 @@ Architecture Attributes
 
    e.g. gd_req__req_linkage_architecture
 
-
-.. tool_req:: Static Diagram for Unit Interactions
-   :id: tool_req__docs_dd_sta
-   :tags: Detailed Design & Code
-   :version: 1
-   :implemented: YES
-   :parent_covered: YES
-   :satisfies: gd_req__impl_static_diagram
-
-   Provide needs type ``dd_sta`` for static diagrams showing unit interactions as UML.
-
-.. .. tool_req:: Dynamic Diagram for Unit Interactions
-..    :id: tool_req__docs_dd_dyn
-..    :tags: Detailed Design & Code
-..    :implemented: YES
-..    :parent_covered: YES
-..    :satisfies: gd_req__impl_dynamic_diagram
-
-..    Provide needs type ``dd_dyn`` for dynamic diagrams showing unit interactions as UML.
-
-
 Testing
 #######
 
@@ -1184,15 +1168,82 @@ Testing
 
    Docs-As-Code shall enforce that every Safety Analysis has a short description of the failure effect (e.g. failure lead to an unintended actuation of the analysed element)
 
-----------------------------------------------------------------
-Safety Analysis (DFA + FMEA) Process to Tool Requirement Mapping
-----------------------------------------------------------------
 
-.. needtable::
-   :style: table
-   :types: gd_req
-   :columns: id;satisfies_back as "tool_req"
-   :filter: "gd_req__saf" in id
+🔒 Security Analysis
+#####################
+
+
+.. tool_req:: Security Analysis Need Types
+  :id: tool_req__docs_sec_types
+  :implemented: YES
+  :tags: Security Analysis
+  :version: 1
+  :satisfies:
+    gd_req__sec_attr_uid,
+    gd_req__sec_attr_title,
+  :parent_covered: YES
+
+  Docs-As-Code shall support the following need types:
+
+  * Feature Security Analysis Threat (STRIDE) -> ``feat_sec_threat``
+  * Component Security Analysis Threat (STRIDE) -> ``comp_sec_threat``
+  * Platform Security Analysis Threat (STRIDE) -> ``plat_sec_threat``
+  * Feature Security Analysis (Threat Scenario) -> ``feat_sec_ana``
+  * Component Security Analysis (Threat Scenario) -> ``comp_sec_ana``
+  * Platform Security Analysis (Threat Scenario) -> ``plat_sec_ana``
+
+
+.. tool_req:: Security Analysis: STRIDE Threat ID Attribute
+  :id: tool_req__docs_sec_attr_stride_threat_id
+  :implemented: YES
+  :tags: Security Analysis
+  :version: 1
+  :satisfies: gd_req__sec_attr_stride_threat_id
+  :parent_covered: YES
+
+  Docs-As-Code shall enforce that STRIDE threat needs
+  (``feat_sec_threat``, ``comp_sec_threat``, ``plat_sec_threat``)
+  have a mandatory ``threat_id`` attribute.
+
+
+.. tool_req:: Security Analysis Threat Scenario Mandatory Attributes
+  :id: tool_req__docs_sec_attrs_mandatory
+  :implemented: YES
+  :tags: Security Analysis
+  :version: 1
+  :satisfies:
+    gd_req__sec_attr_threat_scenario_id,
+    gd_req__sec_attr_status,
+    gd_req__sec_attr_sufficient,
+    gd_req__sec_attr_teffect,
+  :parent_covered: YES
+
+  Enforce that threat scenario needs
+  (``feat_sec_ana``, ``comp_sec_ana``, ``plat_sec_ana``)
+  have the following mandatory attributes:
+
+  * ``threat_scenario_id``
+  * ``status``: ``valid`` or ``invalid``
+  * ``sufficient``: ``yes`` or ``no``
+  * ``threat_effect``: short description of the threat impact
+
+
+.. tool_req:: Security Analysis Optional Attributes
+  :id: tool_req__docs_sec_attrs_optional
+  :implemented: YES
+  :tags: Security Analysis
+  :version: 1
+  :satisfies:
+    gd_req__sec_attr_mitigation_issue,
+    gd_req__sec_attr_aou,
+  :parent_covered: YES
+
+  Allow threat scenario needs
+  (``feat_sec_ana``, ``comp_sec_ana``, ``plat_sec_ana``)
+  to have the following optional attributes and links:
+
+  * ``mitigation_issue``: link to a GitHub issue
+  * ``mitigated_by``: link to ``aou_req``
 
 
 🗺️ Full Mapping
