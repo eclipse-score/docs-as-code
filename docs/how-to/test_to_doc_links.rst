@@ -28,9 +28,9 @@ The ``score_source_code_linker`` extension parses ``test.xml`` files, extracts t
 (name, file, line, result, and verification properties),
 and creates backlinks on the referenced requirements.
 
-The extension will look for ``test.xml`` files in both ``bazel-testlogs/`` 
-as well as a folder named ``tests-report/``. This folder can be created manually if the tests 
-require some pre-run step or are matrix tests or similar. 
+The extension will look for ``test.xml`` files in both ``bazel-testlogs/``
+as well as a folder named ``tests-report/``. This folder can be created manually if the tests
+require some pre-run step or are matrix tests or similar.
 
 
 Required Properties
@@ -80,13 +80,13 @@ Then as described above, each testcase also has properties inside the XML.
      </testsuite>
    </testsuites>
 
-If you are not working in Python and using the provided pytest plugin, please ensure that the xml that is written in the end 
+If you are not working in Python and using the provided pytest plugin, please ensure that the xml that is written in the end
 looks like this, otherwise the extension will not be able to parse the xml correctly.
 
 What happens when properties are missing
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-When properties or attributes are missing for some or all tests inside the test.xml, testcases are still generated. 
+When properties or attributes are missing for some or all tests inside the test.xml, testcases are still generated.
 However, testcases can only be linked to the requirements if either Partially- or FullyVerifies is filled.
 
 Language-Specific Annotations
@@ -101,7 +101,7 @@ C++ (gTest)
    See :need:`gd_req__verification_link_tests_cpp`.
 
 Rust
-   Currently there is no provided official way to do this in Rust. 
+   Currently there is no provided official way to do this in Rust.
    We are working with the rust community to figure this out.
 
 Python (pytest)
@@ -137,7 +137,7 @@ You can create lists or pie diagrams to showcase all tests as well as statistics
 For example you can show all tests like so
 
 .. code-block:: rst
-   
+
    .. needpie:: Test Results
       :labels: passed, failed, skipped
       :colors: green, red, orange
