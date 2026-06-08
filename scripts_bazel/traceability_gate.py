@@ -197,7 +197,7 @@ def main() -> int:
     """
     parser = argparse.ArgumentParser(
         description=(
-            "Read a traceability metrics JSON (schema v1) and enforce coverage "
+            "Read a traceability metrics JSON (schema v2) and enforce coverage "
             "thresholds. Exits 0 on pass, 2 on threshold failure, 1 on input error."
         )
     )

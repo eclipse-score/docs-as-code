@@ -52,18 +52,18 @@ def _write_metrics_json(app: Sphinx, exception: Any | None) -> None:
 
 def setup(app: Sphinx) -> dict[str, str | bool]:
     app.add_config_value(
-        "score_metamodel_requirement_types",
+        "score_metrics_requirement_types",
         "",
         rebuild="env",
         description=(
             "Comma-separated list of need types treated as requirements for "
             "traceability metrics. If empty, requirement types are autodiscovered "
-            "from needs_types tags (requirement, requirement_excl_process)."
+            "from needs_types tags (requirement)."
         ),
     )
 
     app.add_config_value(
-        "score_metamodel_include_external_needs",
+        "score_metrics_include_external_needs",
         False,
         rebuild="env",
         description=(

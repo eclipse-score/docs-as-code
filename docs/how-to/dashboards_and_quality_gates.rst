@@ -27,7 +27,7 @@ Goals:
 What You Get
 ------------
 
-With the ``docs(...)`` macro and ``score_metamodel`` extension enabled, your
+With the ``docs(...)`` macro and ``score_metamodel`` as well as the ```score_metrics`` extensions enabled, your
 repository can:
 
 - build an HTML dashboard from its own Sphinx needs,
@@ -46,7 +46,7 @@ Configuration
 Default Behavior (No Configuration Needed)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-By default, ``score_metamodel`` autodiscovers requirement types from the
+By default, ``score_metrics`` autodiscovers requirement types from the
 repository needs present in the current build.
 Requirement types are identified from ``needs_types`` entries tagged with ``requirement``.
 
@@ -60,24 +60,24 @@ explicit override in ``docs/conf.py``:
 
 .. code-block:: python
 
-   score_metamodel_requirement_types = "feat_req,comp_req,aou_req"
+   score_metrics_requirement_types = "feat_req,comp_req,aou_req"
 
 When this setting is provided, the explicit list is used instead of
 autodiscovery.
 
-Use ``score_metamodel_include_external_needs = True`` only in repositories that
+Use ``score_metrics_include_external_needs = True`` only in repositories that
 intentionally aggregate requirements across module dependencies, such as
 integration repositories.
 
 Building the Dashboard
 ----------------------
 
-After building/running any docs command (i.e. ``bazel build //:needs_json`` or ``bazel run //:docs_check`` are the fastest):
+After building/running any docs and test command (i.e. ``bazel build //:needs_json`` or ``bazel run //:docs_check``, ``bazel run //:docs``, ``bazel test //...``):
 
-The documentation build writes ``metrics.json`` via ``score_metamodel``, and the ``needs_json`` artifact contains:
+The documentation build writes ``metrics.json`` via ``score_metrics``, and the ``needs_json`` artifact contains:
 
-- ``bazel-bin/needs_json/_build/needs/needs.json``
-- ``bazel-bin/needs_json/_build/needs/metrics.json``
+- ``_build/needs.json``
+- ``_build/metrics.json``
 
 The dashboard charts and the CI gate both use the same computed metrics.
 
@@ -107,7 +107,7 @@ There are two common modes:
 
 **Integration repository**
 
-- Set ``score_metamodel_include_external_needs = True``.
+- Set ``score_metrics_include_external_needs = True``.
 - Aggregate requirements across module dependencies when that is the intended
   repository purpose.
 - Use this for system or integration-level dashboards.
