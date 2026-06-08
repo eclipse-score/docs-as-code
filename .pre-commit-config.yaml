@@ -35,6 +35,14 @@ repos:
         language: system
         pass_filenames: false
         files: '(^|/)(MODULE\.bazel|.*\.bzl|BUILD(\.bazel)?)$'
+
+      - id: bzlmod-lockfile
+        name: bazel mod deps lockfile check
+        entry: bazel mod deps --lockfile_mode=error
+        language: system
+        pass_filenames: false
+        files: '(^|/)MODULE\.bazel(\.lock)?$'
+
       - id: actionlint
         name: actionlint
         # Disable shellcheck and pyflakes for now, to enforce consistent behavior.
