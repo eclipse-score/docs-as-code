@@ -134,6 +134,8 @@ if __name__ == "__main__":
         base_arguments.append(f"--define=score_metamodel_yaml={metamodel_yaml}")
 
     if github_repository := os.getenv("GITHUB_REPOSITORY"):
+        # GITHUB_REPOSITORY is expected as "owner/repo"; partition("/") splits
+        # once into (owner, separator, repo), so we can ignore the separator.
         github_user, _, github_repo = github_repository.partition("/")
 
         base_arguments.append(f"-A=github_user={github_user}")
