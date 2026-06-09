@@ -295,7 +295,7 @@ needs_types:
       # req-Id: tool_req__docs_req_link_satisfies_allowed
       # TODO: make derived_from mandatory once downstream repos migrate from satisfies
       derived_from: stkh_req
-      satisfies: stkh_req
+      satisfies: stkh_req # for backward compatibility - remove once downstream repos migrate to derived_from
       belongs_to: feat # for evaluation
       satisfied_by: feat # new preferred name for belongs_to
       # req-Id: tool_req__docs_req_link_covers_aou
@@ -332,7 +332,7 @@ needs_types:
       # req-Id: tool_req__docs_req_link_satisfies_allowed
       # TODO: make derived_from mandatory once downstream repos migrate from satisfies
       derived_from: feat_req
-      satisfies: feat_req
+      satisfies: feat_req # for backward compatibility - remove once downstream repos migrate to derived_from
       belongs_to: comp # for backward compatibility
       satisfied_by: comp # new preferred name for belongs_to
       # TODO: make satisfied_by mandatory once downstream repos migrate from belongs_to
@@ -1005,6 +1005,8 @@ needs_extra_links:
     incoming: satisfies
     outgoing: satisfied by
 
+  # TODO: hard-deprecate satisfies in a follow-up PR once score + module_template migrate to
+  # derived_from. Tracked in https://github.com/eclipse-score/docs-as-code/issues/594
   satisfies:
     incoming: satisfied by
     outgoing: satisfies
