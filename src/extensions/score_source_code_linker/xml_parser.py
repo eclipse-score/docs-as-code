@@ -369,7 +369,8 @@ def construct_and_add_need(app: Sphinx, tn: DataOfTestCase):
     name = tn.name
     external_url = ""
     if tn.repo_name is None or tn.hash is None or tn.url is None:
-        logger.info(
+        # I would change this to debug for now, as it seems too spammy in 'info'
+        logger.debug(
             "Creating testcase need with fallback URL due to incomplete repo metadata: "
             f"name={name}, file={file}, repo_name={tn.repo_name}, "
             f"hash={tn.hash}, url={tn.url}",

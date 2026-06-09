@@ -197,10 +197,11 @@ class DataOfTestCase:
     def check_verifies_fields(self) -> bool:
         if self.PartiallyVerifies is None and self.FullyVerifies is None:
             # This might be a warning in the future, but for now we want be lenient.
-            LOGGER.info(
+            # Changing to debug to keep stdout spam to minimum under default settings
+            LOGGER.debug(
                 f"TestCase: {self.name} Error. Either 'PartiallyVerifies' or "
-                "'FullyVerifies' must be provided."
-                "This test case will be skipped and not linked.",
+                "'FullyVerifies' must be provided to create a link to needs"
+                "Testcase will still be created, but not linked.",
                 type="score_source_code_linker",
             )
             return False
