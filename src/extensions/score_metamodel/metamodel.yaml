@@ -130,8 +130,8 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_description
       content: ^[\s\S]+$
     optional_links:
-      # req-Id: tool_req__docs_req_link_derived_from_allowed
-      derived_from: workflow
+      # req-Id: tool_req__docs_req_link_satisfies_allowed
+      # TODO: fix once process_description is fixed
       satisfies: workflow
       complies: std_req
     tags:
@@ -292,7 +292,7 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_description
       content: ^[\s\S]+$
     optional_links:
-      # req-Id: tool_req__docs_req_link_derived_from_allowed
+      # req-Id: tool_req__docs_req_link_satisfies_allowed
       # TODO: make derived_from mandatory once downstream repos migrate from satisfies
       derived_from: stkh_req
       satisfies: stkh_req
@@ -328,14 +328,14 @@ needs_types:
       status: ^(valid|invalid)$
       # req-Id: tool_req__docs_common_attr_description
       content: ^[\s\S]+$
-    mandatory_links:
-      belongs_to: comp
     optional_links:
-      # req-Id: tool_req__docs_req_link_derived_from_allowed
+      # req-Id: tool_req__docs_req_link_satisfies_allowed
       # TODO: make derived_from mandatory once downstream repos migrate from satisfies
       derived_from: feat_req
       satisfies: feat_req
+      belongs_to: comp # for backward compatibility
       satisfied_by: comp # new preferred name for belongs_to
+      # TODO: make satisfied_by mandatory once downstream repos migrate from belongs_to
       # req-Id: tool_req__docs_req_link_covers_aou
       covers: aou_req
     optional_options:
@@ -356,9 +356,8 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_description
       content: ^[\s\S]+$
     optional_links:
-      # req-Id: tool_req__docs_req_link_derived_from_allowed
+      # req-Id: tool_req__docs_req_link_satisfies_allowed
       # TODO: make it mandatory
-      derived_from: gd_req, stkh_req
       satisfies: gd_req, stkh_req, feat_req, comp_req
     optional_options:
       tags: ^.*$
@@ -442,9 +441,9 @@ needs_types:
       status: ^(valid|invalid)$
     mandatory_links:
       includes: ^logic_arc_int(_op)*__.+$
+      # req-Id: tool_req__docs_arch_link_fulfils, tool_req__docs_arch_link_fulfils_aou
+      fulfils: feat_req, aou_req
       belongs_to: feat # make it mandatory for evaluation
-    optional_links:
-      fulfils: feat_req
     tags:
       - architecture_element
       - architecture_view
@@ -464,9 +463,8 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
     mandatory_links:
-      belongs_to: feat
-    optional_links:
       fulfils: feat_req
+      belongs_to: feat
     tags:
       - architecture_view
       - architecture_element
@@ -594,9 +592,10 @@ needs_types:
       status: ^(valid|invalid)$
     mandatory_links:
       belongs_to: comp
+      # req-Id: tool_req__docs_arch_link_fulfils, tool_req__docs_arch_link_fulfils_aou
+      fulfils: comp_req, aou_req
     optional_links:
       uses: logic_arc_int, real_arc_int_op
-      fulfils: comp_req
     tags:
       - architecture_view
     parts: 3
@@ -616,7 +615,6 @@ needs_types:
       status: ^(valid|invalid)$
     mandatory_links:
       belongs_to: comp
-    optional_links:
       fulfils: comp_req
     tags:
       - architecture_view

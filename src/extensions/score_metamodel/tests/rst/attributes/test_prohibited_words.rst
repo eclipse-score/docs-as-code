@@ -81,7 +81,7 @@
   :id: tool_req__docs_common_attr_desc_wording
   :tags: Common Attributes
   :implemented: YES
-  :derived_from:
+  :satisfies:
     gd_req__req_desc_weak,
   :parent_covered: YES
 
