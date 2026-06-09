@@ -91,7 +91,6 @@ class CheckLogger:
             self._info_count += 1
         else:
             self.warning(msg, location)
-            self._warning_count += 1
 
     def info(
         self,
@@ -106,6 +105,7 @@ class CheckLogger:
         location: Location,
     ):
         self._log.warning(msg, type="score_metamodel", location=location)
+        self._warning_count += 1
 
     @property
     def warnings(self):
