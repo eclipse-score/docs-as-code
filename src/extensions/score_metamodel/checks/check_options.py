@@ -134,6 +134,22 @@ def validate_options(
 #         )
 
 
+def _to_link_pattern(value: "str | ScoreNeedType") -> str:
+    """Convert a link constraint to a regex pattern.
+
+    - A plain type name like ``"stkh_req"`` becomes ``^stkh_req__``
+      (matching IDs that start with the type name followed by ``__``).
+    - A string already starting with ``^`` is treated as an explicit regex
+      and returned unchanged.
+    - A ScoreNeedType dict uses its ``mandatory_options.id`` pattern.
+    """
+    if isinstance(value, str):
+        if value.startswith("^"):
+            return value
+        return f"^{value}__"
+    return value["mandatory_options"]["id"]
+
+
 def validate_links(
     log: CheckLogger,
     need_type: ScoreNeedType,
@@ -153,16 +169,7 @@ def validate_links(
             if mandatory and not values:
                 log.warning_for_need(need, f"is missing required link: `{attribute}`.")
 
-            allowed_regex = "|".join(
-                [
-                    v
-                    if isinstance(v, str) and v.startswith("^")
-                    else f"^{v}__"
-                    if isinstance(v, str)
-                    else v["mandatory_options"]["id"]
-                    for v in allowed_values
-                ]
-            )
+            allowed_regex = "|".join(_to_link_pattern(v) for v in allowed_values)
 
             # regex based validation
             for value in values:
