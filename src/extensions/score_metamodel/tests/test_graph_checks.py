@@ -12,29 +12,15 @@
 # *******************************************************************************
 
 from __future__ import annotations
-from typing import cast
-from unittest.mock import Mock
 
-import pytest
-from attribute_plugin import add_test_properties  # type: ignore[import-untyped]
-from score_metamodel import CheckLogger, ScoreNeedType
-from score_metamodel.checks.check_options import (
-    check_extra_options,
-    check_options,
-    parse_milestone,
-)
-from score_metamodel.tests import fake_check_logger
-from score_metamodel.tests import need as test_need
-from sphinx_needs.config import NeedType
-from sphinx.application import Sphinx  # type: ignore[import-untyped]
-
-from types import SimpleNamespace
 from typing import Any
 
 import pytest
 
 # Adjust this import path if your project layout differs.
 import score_metamodel.checks.graph_checks as graph_checks
+from score_metamodel.tests import fake_check_logger, need as test_need
+from sphinx_needs.config import NeedType
 
 
 class DummyNeedsView:
@@ -48,7 +34,7 @@ class DummyNeedsView:
         """Return all needs."""
         return self._needs
 
-    def filter_is_external(self, is_external: bool) -> "DummyNeedsView":
+    def filter_is_external(self, is_external: bool) -> DummyNeedsView:
         """Filter needs by their is_external flag."""
         return DummyNeedsView(
             [n for n in self._needs if n.get("is_external", False) == is_external]
@@ -64,7 +50,7 @@ class NeedObject(dict):
         return self["id"]
 
     @property
-    def _links(self) -> dict[str, list["NeedObject"]]:
+    def _links(self) -> dict[str, list[NeedObject]]:
         """Return links map."""
         return self["links"]
 
