@@ -17,21 +17,19 @@
 
 from __future__ import annotations
 
-import pytest
-
 import json
 from pathlib import Path
-from sphinx.config import Config
 
+import pytest
 import score_metamodel.external_needs as ext_needs
-
 from score_metamodel.external_needs import (
     ExternalNeedsSource,
-    parse_external_needs_sources_from_DATA,
-    get_external_needs_source,
     add_external_docs_sources,
     add_external_needs_json,
+    get_external_needs_source,
+    parse_external_needs_sources_from_DATA,
 )
+from sphinx.config import Config
 
 
 def test_empty_list():
