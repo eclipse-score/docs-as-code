@@ -80,15 +80,8 @@ if __name__ == "__main__":
     parser.add_argument(
         "--debug", help="Enable Debugging via debugpy", action="store_true"
     )
-    # optional GitHub user forwarded from the Bazel CLI
-    parser.add_argument(
-        "--github_user",
-        help="GitHub username to embed in the Sphinx build",
-    )
-    parser.add_argument(
-        "--github_repo",
-        help="GitHub repository to embed in the Sphinx build",
-    )
+    parser.add_argument("--github_user", help=argparse.SUPPRESS)
+    parser.add_argument("--github_repo", help=argparse.SUPPRESS)
     parser.add_argument(
         "--port",
         type=int,
@@ -140,12 +133,16 @@ if __name__ == "__main__":
         metamodel_yaml = os.path.abspath(metamodel_yaml)
         base_arguments.append(f"--define=score_metamodel_yaml={metamodel_yaml}")
 
-    # configure sphinx build with GitHub user and repo from CLI
-    if args.github_user and args.github_repo:
-        base_arguments.append(f"-A=github_user={args.github_user}")
-        base_arguments.append(f"-A=github_repo={args.github_repo}")
+    if github_repository := os.getenv("GITHUB_REPOSITORY"):
+        # GITHUB_REPOSITORY is expected as "owner/repo"; partition("/") splits
+        # once into (owner, separator, repo), so we can ignore the separator.
+        github_user, _, github_repo = github_repository.partition("/")
+
+        base_arguments.append(f"-A=github_user={github_user}")
+        base_arguments.append(f"-A=github_repo={github_repo}")
         base_arguments.append("-A=github_version=main")
         base_arguments.append(f"-A=doc_path={get_env('SOURCE_DIRECTORY')}")
+
     if os.getenv("KNOWN_GOOD_JSON"):
         base_arguments.append(f"--define=KNOWN_GOOD_JSON={get_env('KNOWN_GOOD_JSON')}")
 

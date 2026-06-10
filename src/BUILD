@@ -53,6 +53,7 @@ filegroup(
         "//src/extensions/score_source_code_linker:all_sources",
         "//src/extensions/score_sphinx_bundle:all_sources",
         "//src/extensions/score_sync_toml:all_sources",
+        "//src/extensions/score_metrics:all_sources",
         "//src/helper_lib:all_sources",
     ],
     visibility = ["//visibility:public"],

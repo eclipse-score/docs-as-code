@@ -107,37 +107,48 @@ def filter_needs_by_criteria(
     needs_selection_criteria: dict[str, str],
     log: CheckLogger,
 ) -> list[NeedItem]:
-    """Create a list of needs that match the selection criteria.:
-    - If it is an include selection add the include to the pattern
-    - If it is an exclude selection add a "^" to the pattern
     """
+    Filter needs by include/exclude type patterns and an additional condition.
 
+    The function:
+    - accepts exactly one selector key: "include" or "exclude"
+    - validates that "condition" exists
+    - logs warnings for unknown need types in selector patterns
+    - returns needs matching selector + condition
+    """
     selected_needs: list[NeedItem] = []
-    pattern: list[str] = []
-    need_pattern: str = list(needs_selection_criteria.keys())[0]
-    # Verify Inputs
-    if need_pattern in ["include", "exclude"]:
-        for pat in list(needs_selection_criteria.values())[0].split(","):
-            pattern.append(pat.lstrip())
+
+    if "include" in needs_selection_criteria and "exclude" in needs_selection_criteria:
+        raise ValueError(
+            f"Invalid need selection: both include and exclude are set: {needs_selection_criteria}"
+        )
+
+    if "include" in needs_selection_criteria:
+        need_pattern = "include"
+        raw_patterns = needs_selection_criteria["include"]
+    elif "exclude" in needs_selection_criteria:
+        need_pattern = "exclude"
+        raw_patterns = needs_selection_criteria["exclude"]
     else:
         raise ValueError(f"Invalid need selection: {needs_selection_criteria}")
 
-    if "condition" in needs_selection_criteria:
-        condition = needs_selection_criteria["condition"]
-    else:
+    if "condition" not in needs_selection_criteria:
         raise ValueError(f"Invalid selection: {needs_selection_criteria}")
+
+    condition = needs_selection_criteria["condition"]
+    pattern = [pat.strip() for pat in raw_patterns.split(",") if pat.strip()]
 
     for pat in pattern:
         if not any(need_type["directive"] == pat for need_type in needs_types):
             log.warning(f"Unknown need type `{pat}` in graph check.", location="")
 
     for need in needs:
-        if need_pattern == "include":
-            sel = need["type"] in pattern
-        else:
-            sel = need["type"] not in pattern
-
-        if sel and (eval_need_condition(need, condition, log)):
+        sel = (
+            need["type"] in pattern
+            if need_pattern == "include"
+            else need["type"] not in pattern
+        )
+        if sel and eval_need_condition(need, condition, log):
             selected_needs.append(need)
 
     return selected_needs

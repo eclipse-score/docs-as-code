@@ -55,6 +55,6 @@ jobs:
       pull-requests: write
       id-token: write
     with:
-      bazel-target: "--lockfile_mode=error //:docs -- --github_user=${{ github.repository_owner }} --github_repo=${{ github.event.repository.name }}"
+      bazel-target: "//:docs"
       retention-days: 3
       tests-report-artifact: tests-report
