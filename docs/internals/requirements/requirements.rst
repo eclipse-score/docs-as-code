@@ -102,7 +102,6 @@ This section provides an overview of current process requirements and their clar
 
   * A prefix indicating the need type (e.g. `feature__`)
   * A middle part matching the hierarchical structure of the need:
-     * For requirements: a portion of the feature tree or a component acronym
      * For architecture elements: the structural element (e.g. a part of the feature tree, component acronym)
      * For safety analysis (FMEA, DFA): name of analyzed structural element (e.g. Persistency, FEO, etc.)
   * Additional descriptive text to ensure human readability
