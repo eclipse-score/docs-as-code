@@ -208,7 +208,6 @@ score_metamodel/
 │   ├── attributes_format.py
 │   ├── check_options.py
 │   ├── graph_checks.py
-│   ├── id_contains_feature.py
 │   └── standards.py
 ├── external_needs.py
 ├── log.py
@@ -222,8 +221,6 @@ score_metamodel/
     │   ├── conf.py
     │   ├── graph
     │   │   └── test_metamodel_graph.rst
-    │   ├── id_contains_feature
-    │   │   └── test_id_contains_feature.rst
     │   └── options
     │       └── test_options_options.rst
     └── ...
