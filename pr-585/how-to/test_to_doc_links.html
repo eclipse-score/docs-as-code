@@ -397,6 +397,7 @@
 <li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
 <li class="toctree-l1"><a class="reference internal" href="other_modules.html">Reference Other Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dashboards_and_quality_gates.html">Build Dashboards and Quality Gates</a></li>
+
 <li class="toctree-l1"><a class="reference internal" href="source_to_doc_links.html">Reference Docs in Source Code</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Reference Docs in Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="add_extensions.html">Add Extensions</a></li>
@@ -464,15 +465,20 @@
 <h1>Reference Docs in Tests<a class="headerlink" href="#reference-docs-in-tests" title="Link to this heading">#</a></h1>
 <p>This guide explains how to annotate test cases so that
 docs-as-code automatically creates traceability links between tests and requirements.</p>
+<section id="details-of-implementation">
+<h2>Details of implementation<a class="headerlink" href="#details-of-implementation" title="Link to this heading">#</a></h2>
 <p>The mechanism is language-agnostic:
-Bazel produces JUnit-style <code class="docutils literal notranslate"><span class="pre">test.xml</span></code> files under <code class="docutils literal notranslate"><span class="pre">bazel-testlogs/</span></code>.
-The <code class="docutils literal notranslate"><span class="pre">score_source_code_linker</span></code> extension parses those files, extracts test metadata
+The <code class="docutils literal notranslate"><span class="pre">score_source_code_linker</span></code> extension parses <code class="docutils literal notranslate"><span class="pre">test.xml</span></code> files, extracts test metadata
 (name, file, line, result, and verification properties),
 and creates backlinks on the referenced requirements.</p>
+<p>The extension will look for <code class="docutils literal notranslate"><span class="pre">test.xml</span></code> files in both <code class="docutils literal notranslate"><span class="pre">bazel-testlogs/</span></code>
+as well as a folder named <code class="docutils literal notranslate"><span class="pre">tests-report/</span></code>. This folder can be created manually if the tests
+require some pre-run step or are matrix tests or similar.</p>
+</section>
 <section id="required-properties">
 <h2>Required Properties<a class="headerlink" href="#required-properties" title="Link to this heading">#</a></h2>
 <p>Every linked test must declare the following properties
-(see <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/verification/guidance/verification_specification.html#gd_guidl__verification_specification">gd_guidl__verification_specification</a>):</p>
+(see <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/verification/guidance/verification_specification.html#gd_guidl__verification_specification">gd_guidl__verification_specification</a> for detailed values):</p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">PartiallyVerifies</span></code> <em>and/or</em> <code class="docutils literal notranslate"><span class="pre">FullyVerifies</span></code></dt><dd><p>Comma-separated list of requirement IDs that the test covers.</p>
 </dd>
@@ -480,10 +486,43 @@ and creates backlinks on the referenced requirements.</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">DerivationTechnique</span></code></dt><dd><p>For example <code class="docutils literal notranslate"><span class="pre">boundary-values</span></code>, <code class="docutils literal notranslate"><span class="pre">equivalence-classes</span></code>, or <code class="docutils literal notranslate"><span class="pre">error-guessing</span></code>.</p>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">Description</span></code></dt><dd><p>A human-readable explanation of the test objective and expected outcome.</p>
+<dt><code class="docutils literal notranslate"><span class="pre">Description</span></code></dt><dd><p>A human-readable explanation of the test objective and expected outcome.
+<em>In Python tests, a docstring takes the place of the description attribute.</em></p>
 </dd>
 </dl>
-<p>If any mandatory property is missing the test will be skipped during link creation.</p>
+</section>
+<section id="what-should-a-test-xml-look-like">
+<h2>What should a test.xml look like?<a class="headerlink" href="#what-should-a-test-xml-look-like" title="Link to this heading">#</a></h2>
+<p>Each testcase has file as well as it’s line number as additional attributes.
+Then as described above, each testcase also has properties inside the XML.</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
+<span class="nt">&lt;testsuites</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;pytest tests&quot;</span><span class="nt">&gt;</span>
+<span class="w">  </span><span class="nt">&lt;testsuite</span><span class="w"> </span><span class="na">errors=</span><span class="s">&quot;0&quot;</span><span class="w"> </span><span class="na">failures=</span><span class="s">&quot;0&quot;</span><span class="w"> </span><span class="na">hostname=</span><span class="s">&quot;LG-0005&quot;</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;pytest&quot;</span><span class="w"> </span><span class="na">skipped=</span><span class="s">&quot;0&quot;</span><span class="w"> </span><span class="na">tests=</span><span class="s">&quot;118&quot;</span><span class="w"> </span><span class="na">time=</span><span class="s">&quot;6.617&quot;</span><span class="w"> </span><span class="na">timestamp=</span><span class="s">&quot;2026-06-08T17:56:07.635773+00:00&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;testcase</span><span class="w"> </span><span class="na">classname=</span><span class="s">&quot;src.extensions.score_source_code_linker.tests.test_testlink&quot;</span><span class="w"> </span><span class="na">file=</span><span class="s">&quot;src/extensions/score_source_code_linker/tests/test_testlink.py&quot;</span><span class="w"> </span><span class="na">line=</span><span class="s">&quot;40&quot;</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;test_testlink_serialization_roundtrip&quot;</span><span class="w"> </span><span class="na">time=</span><span class="s">&quot;0.000&quot;</span><span class="nt">&gt;</span>
+<span class="w">      </span><span class="nt">&lt;properties&gt;</span>
+<span class="w">        </span><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;PartiallyVerifies&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;tool_req__docs_test_link_testcase&quot;</span><span class="nt">&gt;&lt;/property&gt;</span>
+<span class="w">        </span><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;TestType&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;requirements-based&quot;</span><span class="nt">&gt;&lt;/property&gt;</span>
+<span class="w">        </span><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;DerivationTechnique&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;requirements-analysis&quot;</span><span class="nt">&gt;&lt;/property&gt;</span>
+<span class="w">      </span><span class="nt">&lt;/properties&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/testcase&gt;</span>
+<span class="w">    </span><span class="nt">&lt;testcase</span><span class="w"> </span><span class="na">classname=</span><span class="s">&quot;src.extensions.score_source_code_linker.tests.test_testlink&quot;</span><span class="w"> </span><span class="na">file=</span><span class="s">&quot;src/extensions/score_source_code_linker/tests/test_testlink.py&quot;</span><span class="w"> </span><span class="na">line=</span><span class="s">&quot;85&quot;</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;test_clean_text_removes_ansi_and_html_unescapes&quot;</span><span class="w"> </span><span class="na">time=</span><span class="s">&quot;0.000&quot;</span><span class="nt">&gt;</span>
+<span class="w">      </span><span class="nt">&lt;properties&gt;</span>
+<span class="w">        </span><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;PartiallyVerifies&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;tool_req__docs_test_link_testcase&quot;</span><span class="nt">&gt;&lt;/property&gt;</span>
+<span class="w">        </span><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;TestType&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;requirements-based&quot;</span><span class="nt">&gt;&lt;/property&gt;</span>
+<span class="w">        </span><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;DerivationTechnique&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;requirements-analysis&quot;</span><span class="nt">&gt;&lt;/property&gt;</span>
+<span class="w">      </span><span class="nt">&lt;/properties&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/testcase&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/testsuite&gt;</span>
+<span class="nt">&lt;/testsuites&gt;</span>
+</pre></div>
+</div>
+<p>If you are not working in Python and using the provided pytest plugin, please ensure that the xml that is written in the end
+looks like this, otherwise the extension will not be able to parse the xml correctly.</p>
+<section id="what-happens-when-properties-are-missing">
+<h3>What happens when properties are missing<a class="headerlink" href="#what-happens-when-properties-are-missing" title="Link to this heading">#</a></h3>
+<p>When properties or attributes are missing for some or all tests inside the test.xml, testcases are still generated.
+However, testcases can only be linked to the requirements if either Partially- or FullyVerifies is filled.</p>
+</section>
 </section>
 <section id="language-specific-annotations">
 <h2>Language-Specific Annotations<a class="headerlink" href="#language-specific-annotations" title="Link to this heading">#</a></h2>
@@ -494,8 +533,8 @@ but all produce the same JUnit XML output that the linker consumes.</p>
 inside each <code class="docutils literal notranslate"><span class="pre">TEST_F</span></code>.
 See <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/verification/guidance/verification_process_reqs.html#gd_req__verification_link_tests_cpp">gd_req__verification_link_tests_cpp</a>.</p>
 </dd>
-<dt>Rust</dt><dd><p>Use the <code class="docutils literal notranslate"><span class="pre">#[record_property]</span></code> attribute macro from the <code class="docutils literal notranslate"><span class="pre">test_properties</span></code> crate.
-See <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/verification/guidance/verification_process_reqs.html#gd_req__verification_link_tests_rust">gd_req__verification_link_tests_rust</a>.</p>
+<dt>Rust</dt><dd><p>Currently there is no provided official way to do this in Rust.
+We are working with the rust community to figure this out.</p>
 </dd>
 <dt>Python (pytest)</dt><dd><p>Use the <code class="docutils literal notranslate"><span class="pre">&#64;add_test_properties</span></code> decorator; the docstring serves as <code class="docutils literal notranslate"><span class="pre">Description</span></code>.
 See <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/verification/guidance/verification_process_reqs.html#gd_req__verification_link_tests_python">gd_req__verification_link_tests_python</a>.</p>
@@ -519,12 +558,39 @@ See <a class="external_link reference external" href="https://eclipse-score.gith
 </ol>
 <p>The resulting documentation shows backlinks on each requirement that is referenced by at least one test.</p>
 </section>
+<section id="how-do-i-use-the-generated-testcases">
+<h2>How do I use the generated testcases?<a class="headerlink" href="#how-do-i-use-the-generated-testcases" title="Link to this heading">#</a></h2>
+<p>Testcases can be used in different ways inside and outside your documentation.
+You can create lists or pie diagrams to showcase all tests as well as statistics on them.
+For example you can show all tests like so</p>
+<div class="highlight-rst notranslate"><div class="highlight"><pre><span></span><span class="p">..</span> <span class="ow">needpie</span><span class="p">::</span> Test Results
+   <span class="nc">:labels:</span> passed, failed, skipped
+   <span class="nc">:colors:</span> green, red, orange
+
+   type == &#39;testcase&#39; and result == &#39;passed&#39;
+   type == &#39;testcase&#39; and result == &#39;failed&#39;
+   type == &#39;testcase&#39; and result == &#39;skipped&#39;
+</pre></div>
+</div>
+<img alt="../_images/need_pie_f0d9a.svg" id="needpie-how-to/test_to_doc_links-0" src="../_images/need_pie_f0d9a.svg" />
+<p>Or show the different types of properties in case you want</p>
+<div class="highlight-rst notranslate"><div class="highlight"><pre><span></span><span class="p">..</span> <span class="ow">needpie</span><span class="p">::</span> Test Types Used In Testcases
+   <span class="nc">:labels:</span> fault-injection, interface-test, requirements-based, resource-usage
+   <span class="nc">:legend:</span>
+
+   type == &#39;testcase&#39; and test_type == &#39;fault-injection&#39;
+   type == &#39;testcase&#39; and test_type == &#39;interface-test&#39;
+   type == &#39;testcase&#39; and test_type == &#39;requirements-based&#39;
+   type == &#39;testcase&#39; and test_type == &#39;resource-usage&#39;
+</pre></div>
+</div>
+<img alt="../_images/need_pie_4d36d.svg" id="needpie-how-to/test_to_doc_links-1" src="../_images/need_pie_4d36d.svg" />
+</section>
 <section id="limitations">
 <h2>Limitations<a class="headerlink" href="#limitations" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>Tests must be executed by Bazel before building docs so <code class="docutils literal notranslate"><span class="pre">test.xml</span></code> files exist.</p></li>
 <li><p>Not compatible with Esbonio / live preview (no <code class="docutils literal notranslate"><span class="pre">bazel-testlogs/</span></code> available).</p></li>
-<li><p>All mandatory properties must be present; partial metadata causes the test to be silently skipped.</p></li>
 </ul>
 </section>
 </section>
@@ -576,9 +642,15 @@ See <a class="external_link reference external" href="https://eclipse-score.gith
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#details-of-implementation">Details of implementation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#required-properties">Required Properties</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-should-a-test-xml-look-like">What should a test.xml look like?</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-happens-when-properties-are-missing">What happens when properties are missing</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#language-specific-annotations">Language-Specific Annotations</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-tests-and-building-docs">Running Tests and Building Docs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-do-i-use-the-generated-testcases">How do I use the generated testcases?</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#limitations">Limitations</a></li>
 </ul>
   </nav></div>
