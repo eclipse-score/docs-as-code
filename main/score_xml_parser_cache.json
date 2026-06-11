@@ -302,7 +302,7 @@
   {
     "name": "TestCheckOptions__test_unknown_directive",
     "file": "src/extensions/score_metamodel/tests/test_check_options.py",
-    "line": 65,
+    "line": 66,
     "need": "tool_req__docs_common_attr_security",
     "verify_type": "partially",
     "result": "passed",
@@ -314,7 +314,7 @@
   {
     "name": "TestCheckOptions__test_unknown_option_present_in_neither_req_opt_neither_opt_opt",
     "file": "src/extensions/score_metamodel/tests/test_check_options.py",
-    "line": 89,
+    "line": 90,
     "need": "tool_req__docs_common_attr_description",
     "verify_type": "partially",
     "result": "passed",
