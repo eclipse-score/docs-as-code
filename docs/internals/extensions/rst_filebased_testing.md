@@ -70,3 +70,73 @@ a new line between the EXPECT/-NOT and the need that it refers to
 
 This will error and let you know that an offset of '1' is not allowed and you
 need to add a new line beneath the Warning Statement
+
+## Graph check tests
+
+Graph checks (defined in `metamodel.yaml` under `graph_checks:`) are all executed
+by a single Python function `check_metamodel_graph`. Use that function name in `#CHECK:`:
+
+    #CHECK: check_metamodel_graph
+
+Graph check test files live in `tests/rst/graph/`.
+
+### Warning message format
+
+`check_metamodel_graph` emits warnings in this shape:
+
+    {need_id}: Parent need `{parent_id}` does not fulfill condition `{condition}`. Explanation: {explanation}
+
+You only need to match a unique substring, not the full message. For example:
+
+    #EXPECT[+2]: wp__bad: Parent need `std_req__aspice_40__bp`
+
+### Setup needs
+
+Prerequisite needs (link targets, shared fixtures) belong at the top of the file
+with no `EXPECT`/`EXPECT-NOT` annotation. The framework only checks annotated lines,
+so unannotated needs are invisible to the assertion logic.
+
+### The "exempt" case
+
+A need that does not meet the `condition:` in the YAML check definition is not
+selected by the check at all — no warning is emitted. Test this with `EXPECT-NOT`:
+
+    #EXPECT-NOT[+2]: <something from the explanation>
+
+    .. workproduct:: No link at all
+       :id: wp__no_link
+
+### Full example (graph check)
+
+    #CHECK: check_metamodel_graph
+
+    .. std_req:: ASPICE 40 IIC requirement
+       :id: std_req__aspice_40__iic_1
+       :status: valid
+
+    .. std_req:: ASPICE 40 non-IIC requirement
+       :id: std_req__aspice_40__bp_1
+       :status: valid
+
+    .. Positive: links to allowed target — no warning.
+
+    #EXPECT-NOT[+2]: ASPICE 40 IIC
+
+    .. workproduct:: Valid workproduct
+       :id: wp__valid
+       :complies: std_req__aspice_40__iic_1
+
+    .. Exempt: no complies link — condition not met, check skipped.
+
+    #EXPECT-NOT[+2]: ASPICE 40 IIC
+
+    .. workproduct:: Workproduct without link
+       :id: wp__no_link
+
+    .. Negative: links to disallowed target — warning expected.
+
+    #EXPECT[+2]: wp__bad: Parent need `std_req__aspice_40__bp_1`
+
+    .. workproduct:: Invalid workproduct
+       :id: wp__bad
+       :complies: std_req__aspice_40__bp_1

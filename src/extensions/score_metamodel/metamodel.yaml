@@ -66,7 +66,7 @@ needs_types:
       id: ^tsf__[0-9a-zA-Z_-]*$
       status: ^(draft|valid)$
     optional_links:
-      links: ^.*$
+      links: ANY
     parts: 3
 
   tenet:
@@ -75,7 +75,7 @@ needs_types:
       id: ^tenet__[0-9a-zA-Z_-]*$
       status: ^(draft|valid)$
     optional_links:
-      links: "^.*$"
+      links: ANY
     parts: 3
 
   assertion:
@@ -84,7 +84,7 @@ needs_types:
       id: ^assertion__[0-9a-zA-Z_-]*$
       status: ^(draft|valid)$
     optional_links:
-      links: ^.*$
+      links: ANY
     parts: 3
 
   # Standard Requirement and Work Product
@@ -95,7 +95,7 @@ needs_types:
       id: ^std_req__(iso26262|isosae21434|isopas8926|aspice_40)__[0-9a-zA-Z_-]*$
       status: ^(valid)$
     optional_links:
-      links: ^.*$
+      links: ANY
     parts: 3
 
   std_wp:
@@ -119,8 +119,8 @@ needs_types:
       responsible: role
     optional_links:
       supported_by: role
-      contains: ^gd_(req|temp|chklst|guidl|meth)__.*$
-      has: ^doc_(getstrt|concept)__.*$
+      contains: gd_req, gd_temp, gd_chklst, gd_guidl, gd_method
+      has: doc_getstrt, doc_concept
     parts: 2
 
   # req-Id: tool_req__docs_req_types
@@ -178,7 +178,8 @@ needs_types:
     mandatory_options:
       status: ^(valid|draft)$
     optional_links:
-      complies: std_wp, ^std_req__aspice_40__iic.*$
+      # FIXME: only ^std_req__aspice_40__iic.*$
+      complies: std_wp, std_req
     parts: 2
 
   # Role
@@ -418,9 +419,9 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
     optional_links:
-      includes: ^logic_arc_int(_op)*__.+$
-      uses: ^logic_arc_int(_op)*__.+$
-      provides: ^logic_arc_int(_op)*__.+$ # preparation for linking change according to DR-005
+      includes: logic_arc_int, logic_arc_int_op
+      uses: logic_arc_int, logic_arc_int_op
+      provides: logic_arc_int, logic_arc_int_op # preparation for linking change according to DR-005
     tags:
       - architecture_element
     parts: 2
@@ -440,7 +441,7 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
     mandatory_links:
-      includes: ^logic_arc_int(_op)*__.+$
+      includes: logic_arc_int, logic_arc_int_op
       # req-Id: tool_req__docs_arch_link_fulfils, tool_req__docs_arch_link_fulfils_aou
       fulfils: feat_req, aou_req
       belongs_to: feat # make it mandatory for evaluation
@@ -915,8 +916,8 @@ needs_types:
       result: ^.*$
       result_text: ^.*$
     optional_links:
-      fully_verifies: ^.*$
-      partially_verifies: ^.*$
+      fully_verifies: ANY
+      partially_verifies: ANY
 
   # https://eclipse-score.github.io/process_description/main/permalink.html?id=gd_temp__change_decision_record
   dec_rec:
@@ -928,7 +929,7 @@ needs_types:
     optional_options:
       consequences: ^.*$
     optional_links:
-      affects: ^.*$
+      affects: ANY
 
 # Extra link types, which shall be available and allow need types to be linked to each other.
 # We use a dedicated linked type for each type of a connection, for instance from
@@ -1125,3 +1126,15 @@ graph_checks:
     check:
       mitigated_by: safety != QM
     explanation: An ASIL_B safety requirement must link to a ASIL_B requirement. Please ensure that the linked requirements safety level is not QM and it's status is valid.
+
+  # Workproducts may only link to ASPICE 40 IIC stakeholder requirements
+  workproduct_aspice_40:
+    needs:
+      include: workproduct
+      condition: complies != []
+    check:
+      complies:
+        or:
+          - id contains aspice_40__iic
+          - id contains std_wp
+    explanation: Workproducts may only link to ASPICE 40 IIC stakeholder requirements. Please ensure that the linked requirement is an ASPICE 40 IIC stakeholder requirement.

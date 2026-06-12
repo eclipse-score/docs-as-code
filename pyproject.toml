@@ -100,7 +100,14 @@ junit_family = "xunit1"
 
 filterwarnings = [
     "ignore::pytest.PytestExperimentalApiWarning",
+
+    # We'll deal with these when it is time.
+    # No need to spam all the logs all the time.
+    "ignore:.*BuildEnvironment.app.*:sphinx.deprecation.RemovedInSphinx11Warning",
+    "ignore:.*frontend.OptionParser.*:DeprecationWarning",
+    "ignore:.*frontend.Option class.*:DeprecationWarning",
 ]
+
 pythonpath = [
     "src/extensions/",
 ]
