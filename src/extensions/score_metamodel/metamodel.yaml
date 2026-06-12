@@ -178,7 +178,7 @@ needs_types:
     mandatory_options:
       status: ^(valid|draft)$
     optional_links:
-      # FIXME: only ^std_req__aspice_40__iic.*$
+      # Note: std_req is limited to aspice_40__iic via graph check.
       complies: std_wp, std_req
     parts: 2
 
