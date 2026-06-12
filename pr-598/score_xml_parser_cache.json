@@ -14,7 +14,7 @@
   {
     "name": "test_traceability_metrics__test_get_need_types_by_tags_returns_empty_on_non_match",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": 81,
+    "line": 87,
     "need": "tool_req__docs_test_linkage_metrics",
     "verify_type": "partially",
     "result": "passed",
@@ -26,7 +26,7 @@
   {
     "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[  -False]",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": 108,
+    "line": 116,
     "need": "tool_req__docs_test_linkage_metrics",
     "verify_type": "partially",
     "result": "passed",
@@ -38,7 +38,7 @@
   {
     "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[text-True]",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": 108,
+    "line": 116,
     "need": "tool_req__docs_test_linkage_metrics",
     "verify_type": "partially",
     "result": "passed",
@@ -50,7 +50,7 @@
   {
     "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[value2-False]",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": 108,
+    "line": 116,
     "need": "tool_req__docs_test_linkage_metrics",
     "verify_type": "partially",
     "result": "passed",
@@ -62,7 +62,7 @@
   {
     "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[value3-True]",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": 108,
+    "line": 116,
     "need": "tool_req__docs_test_linkage_metrics",
     "verify_type": "partially",
     "result": "passed",
@@ -74,7 +74,7 @@
   {
     "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[0-False]",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": 108,
+    "line": 116,
     "need": "tool_req__docs_test_linkage_metrics",
     "verify_type": "partially",
     "result": "passed",
@@ -86,7 +86,7 @@
   {
     "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[1-True]",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": 108,
+    "line": 116,
     "need": "tool_req__docs_test_linkage_metrics",
     "verify_type": "partially",
     "result": "passed",
@@ -98,7 +98,7 @@
   {
     "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[None-False]",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": 108,
+    "line": 116,
     "need": "tool_req__docs_test_linkage_metrics",
     "verify_type": "partially",
     "result": "passed",
@@ -110,7 +110,7 @@
   {
     "name": "test_traceability_metrics__test_safe_percent_zero[3-0-100.0]",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": 133,
+    "line": 141,
     "need": "tool_req__docs_test_linkage_metrics",
     "verify_type": "partially",
     "result": "passed",
@@ -122,7 +122,7 @@
   {
     "name": "test_traceability_metrics__test_safe_percent_zero[1-4-25.0]",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": 133,
+    "line": 141,
     "need": "tool_req__docs_test_linkage_metrics",
     "verify_type": "partially",
     "result": "passed",
@@ -134,7 +134,7 @@
   {
     "name": "test_traceability_metrics__test_calculate_requirement_metrics_counts_links_and_missing_ids",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": 147,
+    "line": 155,
     "need": "tool_req__docs_test_linkage_metrics",
     "verify_type": "partially",
     "result": "passed",
@@ -146,7 +146,7 @@
   {
     "name": "test_traceability_metrics__test_calculate_requirement_metrics_non_fully_linked",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": 173,
+    "line": 181,
     "need": "tool_req__docs_test_linkage_metrics",
     "verify_type": "partially",
     "result": "passed",
@@ -158,7 +158,7 @@
   {
     "name": "test_traceability_metrics__test_calculate_requirement_metrics_non_fully_linked_2",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": 199,
+    "line": 207,
     "need": "tool_req__docs_test_linkage_metrics",
     "verify_type": "partially",
     "result": "passed",
@@ -170,7 +170,7 @@
   {
     "name": "test_traceability_metrics__test_calculate_test_metrics_counts_linked_tests_and_broken_refs",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": 225,
+    "line": 233,
     "need": "tool_req__docs_test_linkage_metrics",
     "verify_type": "partially",
     "result": "passed",
