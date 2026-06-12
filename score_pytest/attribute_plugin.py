@@ -90,8 +90,8 @@ def add_test_properties(
 def pytest_runtest_makereport(item: pytest.Item, call: pytest.CallInfo[None]):
     """Attach file and line info to the report for use in junitxml output."""
 
-    outcome = yield
-    report = outcome.get_result()
+    outcome = yield  # pyright: ignore[reportUnknownVariableType]
+    report = outcome.get_result()  # pyright: ignore[reportUnknownVariableType]
 
     if report.when != "call":
         return
@@ -115,7 +115,7 @@ def pytest_runtest_makereport(item: pytest.Item, call: pytest.CallInfo[None]):
         )
 
     if isinstance(marker.args[0], dict):
-        for k, v in marker.args[0].items():
+        for k, v in marker.args[0].items():  # pyright: ignore[reportUnknownVariableType]
             item.user_properties.append((k, str(v)))
 
 
@@ -124,11 +124,11 @@ def add_file_and_line_attr(
     record_xml_attribute: Callable[[str, str], None], request: pytest.FixtureRequest
 ) -> None:
     """Adding line & file to the <testcase> attribute in the XML"""
-    node = request.node
-    raw_file_path, line_number, _ = node.location
+    node = request.node  # pyright: ignore[reportUnknownVariableType]
+    raw_file_path, line_number, _ = node.location  # pyright: ignore[reportUnknownVariableType]
 
     # turning `../../../_main/<file_path>` into => <filepath>
-    clean_file_path = raw_file_path.split("_main/")[-1]
+    clean_file_path = raw_file_path.split("_main/")[-1]  # pyright: ignore[reportUnknownVariableType]
     record_xml_attribute("file", str(clean_file_path))
     # Convert pytest's 0-based source line number to 1-based numbering for XML output.
     record_xml_attribute("line", str(line_number + 1))

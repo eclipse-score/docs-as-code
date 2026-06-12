@@ -135,8 +135,10 @@ def _parse_need_type(
         "parts": yaml_data.get("parts", 3),
         "mandatory_options": mandatory_options,
         "optional_options": optional_options | global_base_opts,
-        "mandatory_links": mandatory_links,
-        "optional_links": optional_links,
+        "mandatory_links_str": mandatory_links,
+        "mandatory_links": None,
+        "optional_links_str": optional_links,
+        "optional_links": None,
     }
 
     # Ensure ID regex is set

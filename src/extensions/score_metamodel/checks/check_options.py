@@ -19,7 +19,6 @@ from score_metamodel import (
     default_options,
     local_check,
 )
-from score_metamodel.metamodel_types import AllowedLinksType
 from sphinx.application import Sphinx
 from sphinx_needs.need_item import NeedItem
 
@@ -134,19 +133,23 @@ def validate_options(
 #         )
 
 
-def _to_link_pattern(value: "str | ScoreNeedType") -> str:
-    """Convert a link constraint to a regex pattern.
-
-    - A plain type name like ``"stkh_req"`` becomes ``^stkh_req__``
-      (matching IDs that start with the type name followed by ``__``).
-    - A string already starting with ``^`` is treated as an explicit regex
-      and returned unchanged.
-    - A ScoreNeedType dict uses its ``mandatory_options.id`` pattern.
+def _to_link_pattern(value: ScoreNeedType) -> str:
     """
-    if isinstance(value, str):
-        if value.startswith("^"):
-            return value
-        return f"^{value}__"
+    Convert a link constraint to a regex pattern.
+
+    Note: the pattern is already stored in "id" attribute, this is just a helper
+    function to retrieve it safely.
+    """
+    assert isinstance(value, dict), f"Expected dict for ScoreNeedType, got {value}"
+    assert "mandatory_options" in value, (
+        f"ScoreNeedType dict must have 'mandatory_options', got {value}"
+    )
+    assert isinstance(value["mandatory_options"], dict), (
+        f"'mandatory_options' must be a dict, got {value['mandatory_options']}"
+    )
+    assert "id" in value["mandatory_options"], (
+        f"'mandatory_options' must contain 'id', got {value['mandatory_options']}"
+    )
     return value["mandatory_options"]["id"]
 
 
@@ -160,10 +163,12 @@ def validate_links(
     """
 
     def _validate(
-        attributes_to_allowed_values: AllowedLinksType,
+        attributes_to_allowed_values: dict[str, list[ScoreNeedType]] | None,
         mandatory: bool,
         treat_as_info: bool = False,
     ):
+        assert attributes_to_allowed_values is not None
+
         for attribute, allowed_values in attributes_to_allowed_values.items():
             values = _get_normalized(need, attribute)
             if mandatory and not values:
@@ -238,7 +243,9 @@ def check_extra_options(
         "mandatory_links",
         "optional_links",
     ):
-        allowed_options.update(need_options[o].keys())
+        val = need_options[o]
+        assert val is not None
+        allowed_options.update(val.keys())
 
     extra_options = [
         option

@@ -69,7 +69,7 @@ def test_generic_pie_items_by_tag_matches_source_by_id_prefix() -> None:
     assert results == [1, 1]
 
 
-EXAMPLE_METRICS = {
+EXAMPLE_METRICS: dict[str, object] = {
     "schema_version": "1",
     "generated_by": "sphinx_build",
     "overall_metrics": {
@@ -110,7 +110,7 @@ def test_get_key_values_raises_key_error_when_global_is_empty() -> None:
     """It raises KeyError if CALCULATED_METRICS is still empty."""
     results: list[int] = []
     with pytest.raises(KeyError):
-        sphinx_filters._get_key_values(results, ["overall_metrics:total"])
+        sphinx_filters._get_key_values(results, ["overall_metrics:total"])  # pyright: ignore[reportPrivateUsage]
 
 
 def test_get_key_values_appends_values_when_metrics_loaded() -> None:
@@ -118,7 +118,7 @@ def test_get_key_values_appends_values_when_metrics_loaded() -> None:
     sphinx_filters.CALCULATED_METRICS = EXAMPLE_METRICS
     results: list[int] = []
 
-    sphinx_filters._get_key_values(
+    sphinx_filters._get_key_values(  # pyright: ignore[reportPrivateUsage]
         results,
         [
             "overall_metrics:total",

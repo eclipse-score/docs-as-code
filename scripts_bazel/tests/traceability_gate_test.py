@@ -210,7 +210,7 @@ def test_gate_fail_on_broken_test_refs(
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
 ) -> None:
-    metrics_by_type = {
+    metrics_by_type: dict[str, object] = {
         "tool_req": {
             "include_not_implemented": False,
             "include_external": False,
@@ -223,7 +223,7 @@ def test_gate_fail_on_broken_test_refs(
             "fully_linked_pct": 100.0,
         }
     }
-    tests = {
+    tests: dict[str, object] = {
         "total": 2,
         "linked_to_requirements": 2,
         "linked_to_requirements_pct": 100.0,
@@ -248,7 +248,7 @@ def test_gate_specific_need_type_only(
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
 ) -> None:
-    metrics_by_type = {
+    metrics_by_type: dict[str, object] = {
         "tool_req": {
             "include_not_implemented": False,
             "include_external": False,
@@ -272,7 +272,7 @@ def test_gate_specific_need_type_only(
             "fully_linked_pct": 0.0,
         },
     }
-    tests = {
+    tests: dict[str, object] = {
         "total": 1,
         "linked_to_requirements": 1,
         "linked_to_requirements_pct": 100.0,
@@ -349,7 +349,7 @@ def test_gate_missing_metrics_by_type_returns_error(
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
 ) -> None:
-    payload = {
+    payload: dict[str, object] = {
         "schema_version": "2",
         "generated_by": "sphinx_build",
         "overall_metrics": {
@@ -383,7 +383,7 @@ def test_gate_missing_tests_section_returns_error(
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
 ) -> None:
-    metrics_by_type = {
+    metrics_by_type: dict[str, object] = {
         "tool_req": {
             "include_not_implemented": False,
             "include_external": False,
@@ -396,7 +396,7 @@ def test_gate_missing_tests_section_returns_error(
             "fully_linked_pct": 100.0,
         }
     }
-    payload = {
+    payload: dict[str, object] = {
         "schema_version": "2",
         "generated_by": "sphinx_build",
         "overall_metrics": _derive_overall_metrics(metrics_by_type),

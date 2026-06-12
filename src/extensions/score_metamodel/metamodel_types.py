@@ -27,10 +27,6 @@ class ProhibitedWordCheck:
     types: list[str] = field(default_factory=list)
 
 
-# links to either regexes (str) or a other need types (list of ScoreNeedType).
-AllowedLinksType = dict[str, list["str | ScoreNeedType"]]
-
-
 class ScoreNeedType(NeedType):
     tags: list[str]
     parts: int
@@ -38,5 +34,10 @@ class ScoreNeedType(NeedType):
     mandatory_options: dict[str, str]
     optional_options: dict[str, str]
 
-    mandatory_links: AllowedLinksType
-    optional_links: AllowedLinksType
+    mandatory_links_str: dict[str, str]
+    optional_links_str: dict[str, str]
+
+    # At parse time these are None, as they need to be filled post-parsing when all types are available to resolve the link targets.
+    # The dict maps the link name to a list of need types that are allowed as targets for that link.
+    mandatory_links: None | dict[str, list[ScoreNeedType]]
+    optional_links: None | dict[str, list[ScoreNeedType]]

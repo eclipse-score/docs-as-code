@@ -21,9 +21,14 @@ from score_metamodel import (
     graph_check,
 )
 from sphinx.application import Sphinx
+from sphinx_needs import logging
 from sphinx_needs.config import NeedType
 from sphinx_needs.data import NeedsView
 from sphinx_needs.need_item import NeedItem
+
+# This is the normal logger for this module, not for warnings on specific needs.
+# Use CheckLogger for that, which allows us to log the need id and location together with the warning message.
+logger = logging.get_logger(__name__)
 
 
 def eval_need_check(need: NeedItem, check: str, log: CheckLogger) -> bool:
@@ -40,6 +45,7 @@ def eval_need_check(need: NeedItem, check: str, log: CheckLogger) -> bool:
         "<": operator.lt,
         ">=": operator.ge,
         "<=": operator.le,
+        "contains": lambda a, b: b in a if isinstance(a, str) else False,
     }
 
     parts = check.split(" ")
@@ -69,11 +75,9 @@ def eval_need_condition(
        Recursively call the eval_need_function for each check and combine the
        results with the binary operation which was specified in the yaml file.
     """
-
     oper: dict[str, Any] = {
         "and": operator.and_,
         "or": operator.or_,
-        "not": lambda x: not x,
         "xor": operator.xor,
     }
 
@@ -91,13 +95,18 @@ def eval_need_condition(
     if cond == "not":
         if not isinstance(vals, list) or len(vals) != 1:
             raise ValueError("Operator 'not' requires exactly one operand.")
-        return oper["not"](eval_need_condition(need, vals[0], log))
 
-    if cond in ["and", "or", "xor"]:
+        return not eval_need_condition(need, vals[0], log)
+
+    if cond in oper:
+        if not isinstance(vals, list) or len(vals) <= 1:
+            raise ValueError(f"Operator '{cond}' requires at least two operands.")
+
         return reduce(
             lambda a, b: oper[cond](a, b),
             (eval_need_condition(need, val, log) for val in vals),
         )
+
     raise ValueError(f"Unsupported condition operator: {cond}")
 
 
@@ -175,9 +184,15 @@ def check_metamodel_graph(
             "Explanations are mandatory for graph checks."
         )
         # Get all needs matching the selection criteria
-        selected_needs = filter_needs_by_criteria(
-            app.config.needs_types, needs_local, needs_selection_criteria, log
-        )
+        try:
+            selected_needs = filter_needs_by_criteria(
+                app.config.needs_types, needs_local, needs_selection_criteria, log
+            )
+        except ValueError as e:
+            # Turn a 3 page callstack into a readable error message for the user, since
+            # this is a configuration error in the yaml file.
+            logger.error(f"Error in graph check `{check_name}`: {e}")
+            continue
 
         for need in selected_needs:
             for parent_relation in list(check_to_perform.keys()):

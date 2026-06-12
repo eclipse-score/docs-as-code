@@ -75,7 +75,7 @@ def fake_check_logger():
             assert kwargs["type"] == "score_metamodel"
 
             if expect_location:
-                assert kwargs["location"] == "docname.rst:42"
+                assert kwargs["location"] == "docname.rst:42", kwargs
 
         def assert_info(self, expected_substring: str, expect_location: bool = True):
             """
@@ -102,7 +102,7 @@ def fake_check_logger():
             assert kwargs["type"] == "score_metamodel"
 
             if expect_location:
-                assert kwargs["location"] == "docname.rst:42"
+                assert kwargs["location"] == "docname.rst:42", kwargs
 
     return FakeCheckLogger()
 

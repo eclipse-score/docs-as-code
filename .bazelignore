@@ -1,0 +1,4 @@
+# Claude Code creates .claude directory, e.g. for worktrees.
+# As it contains multiple copies of the entire repository, this totally tripps bazel,
+# which then tries to build all the files in there.
+.claude

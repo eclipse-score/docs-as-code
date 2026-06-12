@@ -15,6 +15,8 @@
 
 from pathlib import Path
 
+from pyfakefs.fake_filesystem import FakeFilesystem as FFS
+
 from incremental import clean_builddir_if_stale, update_module_hash
 
 _BUILD = Path("/build")
@@ -22,7 +24,7 @@ _MODULE = Path("/MODULE.bazel")
 _LOCK = Path("/MODULE.bazel.lock")
 
 
-def _simulate_old_state(fs, warnings: str | None) -> None:
+def _simulate_old_state(fs: FFS, warnings: str | None) -> None:
     """Helper function to set up a build directory with an old hash and warnings."""
 
     fs.create_dir(_BUILD)
@@ -33,7 +35,9 @@ def _simulate_old_state(fs, warnings: str | None) -> None:
         fs.create_file(_BUILD / "warnings.txt", contents=warnings)
 
 
-def test_clean_removes_build_dir_when_previous_build_had_warnings(fs) -> None:
+def test_clean_removes_build_dir_when_previous_build_had_warnings(
+    fs: FFS,
+) -> None:
     """If warnings.txt exists and is not empty, the build dir is removed."""
 
     _simulate_old_state(fs, warnings="WARNING: something went wrong")
@@ -43,7 +47,7 @@ def test_clean_removes_build_dir_when_previous_build_had_warnings(fs) -> None:
     assert not _BUILD.exists()
 
 
-def test_clean_keeps_build_dir_when_warnings_txt_is_empty(fs) -> None:
+def test_clean_keeps_build_dir_when_warnings_txt_is_empty(fs: FFS) -> None:
     """If warnings.txt exists and is empty, the build dir is kept."""
 
     _simulate_old_state(fs, warnings="")
@@ -53,7 +57,7 @@ def test_clean_keeps_build_dir_when_warnings_txt_is_empty(fs) -> None:
     assert _BUILD.exists()
 
 
-def test_clean_is_noop_when_warnings_txt_is_absent(fs) -> None:
+def test_clean_is_noop_when_warnings_txt_is_absent(fs: FFS) -> None:
     """If warnings.txt does not exist, the build dir is kept (no error)."""
 
     _simulate_old_state(fs, warnings=None)
@@ -63,13 +67,15 @@ def test_clean_is_noop_when_warnings_txt_is_absent(fs) -> None:
     assert _BUILD.exists()
 
 
-def test_clean_is_noop_when_build_dir_is_absent(fs) -> None:
+def test_clean_is_noop_when_build_dir_is_absent(fs: FFS) -> None:
     fs.create_file(_MODULE, contents="stable")
 
     clean_builddir_if_stale(_BUILD, [_MODULE])
 
 
-def test_module_changed_removes_build_dir_when_one_sentinel_file_changed(fs) -> None:
+def test_module_changed_removes_build_dir_when_one_sentinel_file_changed(
+    fs: FFS,
+) -> None:
     _simulate_old_state(fs, warnings=None)
 
     _LOCK.write_bytes(b"new lock")
@@ -78,7 +84,9 @@ def test_module_changed_removes_build_dir_when_one_sentinel_file_changed(fs) -> 
     assert not _BUILD.exists()
 
 
-def test_module_changed_keeps_build_dir_when_all_sentinel_files_unchanged(fs) -> None:
+def test_module_changed_keeps_build_dir_when_all_sentinel_files_unchanged(
+    fs: FFS,
+) -> None:
     _simulate_old_state(fs, warnings=None)
 
     clean_builddir_if_stale(_BUILD, [_MODULE, _LOCK])
@@ -86,7 +94,7 @@ def test_module_changed_keeps_build_dir_when_all_sentinel_files_unchanged(fs) ->
     assert _BUILD.exists()
 
 
-def test_module_change_after_successful_build_forces_clean(fs) -> None:
+def test_module_change_after_successful_build_forces_clean(fs: FFS) -> None:
     _simulate_old_state(fs, warnings=None)
 
     _MODULE.write_bytes(b"version 2")
@@ -95,7 +103,7 @@ def test_module_change_after_successful_build_forces_clean(fs) -> None:
     assert not _BUILD.exists()
 
 
-def test_missing_hash_file_triggers_clean(fs) -> None:
+def test_missing_hash_file_triggers_clean(fs: FFS) -> None:
     """If _build/ exists but hash file is absent, treat as stale (e.g. upgrade from old version)."""
     fs.create_dir(_BUILD)
     fs.create_file(_MODULE, contents="stable")

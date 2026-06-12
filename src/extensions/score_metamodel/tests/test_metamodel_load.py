@@ -58,8 +58,8 @@ def test_load_metamodel_data():
         "opt3": "value3",
         "global_opt": "global_value",
     }
-    assert result.needs_types[0]["mandatory_links"] == {"link1": "value1"}
-    assert result.needs_types[0]["optional_links"] == {"link2": "value2"}
+    assert result.needs_types[0]["mandatory_links_str"] == {"link1": "value1"}
+    assert result.needs_types[0]["optional_links_str"] == {"link2": "value2"}
 
     assert result.needs_links == {
         "link_option1": {

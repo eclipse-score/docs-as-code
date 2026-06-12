@@ -41,20 +41,6 @@ class DummyNeedsView:
         )
 
 
-class NeedObject(dict):
-    """Need object that supports both mapping and attribute style access used by code."""
-
-    @property
-    def id(self) -> str:
-        """Return need identifier."""
-        return self["id"]
-
-    @property
-    def _links(self) -> dict[str, list[NeedObject]]:
-        """Return links map."""
-        return self["links"]
-
-
 def test_eval_need_check_invalid_check_parts_raises_value_error() -> None:
     """Raise error when a check does not contain exactly three parts."""
     log = fake_check_logger()

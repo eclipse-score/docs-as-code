@@ -165,51 +165,52 @@ def _resolve_linkable_types(
     link_name: str,
     link_value: str,
     current_need_type: ScoreNeedType,
-    needs_types: list[ScoreNeedType],
-) -> list[ScoreNeedType | str]:
-    needs_types_dict = {nt["directive"]: nt for nt in needs_types}
+    needs_types: dict[str, ScoreNeedType],
+) -> list[ScoreNeedType]:
+    # Anything is allowed if the value is "ANY". This allows to bypass the link type validation for specific links.
+    if link_value == "ANY":
+        return list(needs_types.values())
+
     link_values = [v.strip() for v in link_value.split(",")]
-    linkable_types: list[ScoreNeedType | str] = []
+    linkable_types: list[ScoreNeedType] = []
     for v in link_values:
-        if v.startswith("^"):
-            linkable_types.append(v)  # keep regex as-is
+        target_need_type = needs_types.get(v)
+        if target_need_type is None:
+            logger.error(
+                f"In metamodel.yaml: {current_need_type['directive']}, "
+                f"link '{link_name}' references unknown type '{v}'."
+            )
         else:
-            target_need_type = needs_types_dict.get(v)
-            if target_need_type is None:
-                logger.error(
-                    f"In metamodel.yaml: {current_need_type['directive']}, "
-                    f"link '{link_name}' references unknown type '{v}'."
-                )
-            else:
-                linkable_types.append(target_need_type)
+            linkable_types.append(target_need_type)
     return linkable_types
 
 
 def postprocess_need_links(needs_types_list: list[ScoreNeedType]):
     """Convert link option strings into lists of target need types.
 
-    If a link value starts with '^' it is treated as a regex and left
-    unchanged. Otherwise it is a comma-separated list of type names which
-    are resolved to the corresponding ScoreNeedTypes.
+    Parses comma-separated list of type names which are resolved to the corresponding
+    ScoreNeedTypes.
     """
-    for need_type in needs_types_list:
-        try:
-            link_dicts = (
-                need_type["mandatory_links"],
-                need_type["optional_links"],
+    # "mandatory_links_str" is used to keep only metamodel sourced types. That key is so
+    # specific, that noone but our metamodel should be using it.
+    all_need_types = {
+        nt["directive"]: nt for nt in needs_types_list if "mandatory_links_str" in nt
+    }
+
+    for need_type in all_need_types.values():
+        need_type["mandatory_links"] = {
+            link_name: _resolve_linkable_types(
+                link_name, link_value, need_type, all_need_types
             )
-        except KeyError:
-            # TODO: remove the Sphinx-Needs defaults from our metamodel
-            # Example: {'directive': 'issue', 'title': 'Issue', 'prefix': 'IS_'}
-            continue
+            for link_name, link_value in need_type["mandatory_links_str"].items()
+        }
 
-        for link_dict in link_dicts:
-            for link_name, link_value in link_dict.items():
-                assert isinstance(link_value, str)  # so far all of them are strings
-
-                link_dict[link_name] = _resolve_linkable_types(  # pyright: ignore[reportArgumentType]
-                    link_name, link_value, need_type, needs_types_list
-                )
+        need_type["optional_links"] = {
+            link_name: _resolve_linkable_types(
+                link_name, link_value, need_type, all_need_types
+            )
+            for link_name, link_value in need_type["optional_links_str"].items()
+        }
 
 
 def _clear_needs_defaults(app: Sphinx):
