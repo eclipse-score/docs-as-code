@@ -1085,8 +1085,20 @@ graph_checks:
       include: feat_arc_sta, logic_arc_int, logic_arc_int_op, comp_arc_sta, real_arc_int, real_arc_int_op
       condition: safety == QM
     check:
-      fulfils: safety != QM
+      fulfils: safety == QM
     explanation: An QM architecture element cannot implement ASIL requirements.
+
+  # req-Id: tool_req__docs_arch_link_safety_fulfils
+  tool_req__docs_arch_link_safety_fulfils:
+    needs:
+      include: feat_arc_sta, feat_arc_dyn, comp_arc_sta, comp_arc_dyn
+      condition:
+        and:
+          - safety != QM
+          - status == valid
+    check:
+      fulfils: safety != QM
+    explanation: Safety-critical architecture views must only "fulfil" safety-critical architecture elements.
 
   # req-Id: tool_req__docs_req_arch_link_safety_to_arch
   tool_req__docs_req_arch_link_safety_to_arch:
