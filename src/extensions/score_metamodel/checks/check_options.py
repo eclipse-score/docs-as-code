@@ -243,8 +243,9 @@ def check_extra_options(
         "mandatory_links",
         "optional_links",
     ):
-        assert need_options[o] is not None
-        allowed_options.update(need_options[o].keys())
+        val = need_options[o]
+        assert val is not None
+        allowed_options.update(val.keys())
 
     extra_options = [
         option

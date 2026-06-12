@@ -348,7 +348,7 @@ def _make_params() -> list[pytest.param]:  # type: ignore[type-arg]
                         id=f"{repo.name}-{override}-{_cmd_id(cmd)}",
                     )
                 )
-    return params
+    return params  # pyright: ignore[reportUnknownVariableType]
 
 
 @pytest.mark.parametrize("repo, override_type, cmd", _make_params())

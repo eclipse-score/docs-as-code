@@ -28,7 +28,7 @@ from sphinx.application import Sphinx
 from sphinx_needs.data import NeedsView, SphinxNeedsData
 from sphinx_needs.need_item import NeedItem
 
-CALCULATED_METRICS = {}
+CALCULATED_METRICS: dict[str, object] = {}
 
 
 def get_need_types_by_tags(needs: list[ScoreNeedType], tags: set[str]) -> list[str]:
@@ -44,7 +44,7 @@ def get_need_types_by_tags(needs: list[ScoreNeedType], tags: set[str]) -> list[s
     return found_need_types
 
 
-def is_non_empty(value: Any) -> bool:
+def is_non_empty(value: object) -> bool:
     """Return True if value should be treated as present for traceability checks."""
     if isinstance(value, str):
         return bool(value.strip())
@@ -60,7 +60,7 @@ def safe_percent(numerator: int, denominator: int) -> float:
 
 def calculate_requirement_metrics(
     current_requirement_needs: list[NeedItem],
-) -> dict[str, Any]:
+) -> dict[str, int | float]:
     """Calculate requirement traceability statistics for links and completeness."""
     total = len(current_requirement_needs)
     reqs_with_code_link = 0
@@ -94,7 +94,7 @@ def calculate_requirement_metrics(
 
 def calculate_test_metrics(
     test_needs: list[NeedItem], all_needs: NeedsView
-) -> dict[str, Any]:
+) -> dict[str, object]:
     """Calculate testcase linkage and broken testcase-reference statistics."""
     tests_total = len(test_needs)
     tests_linked = 0
@@ -144,7 +144,7 @@ def calculate_full_need_metrics(app: Sphinx, include_external: bool):
     test_needs = list(all_needs.filter_types(["testcase"]).values())
     test_metrics = calculate_test_metrics(test_needs, all_needs)
 
-    metrics_by_type: dict[str, Any] = {}
+    metrics_by_type: dict[str, dict[str, int | float]] = {}
 
     # Metrics accumulated over all requirements types
     overall_metrics: dict[str, Any] = {
@@ -182,7 +182,7 @@ def calculate_full_need_metrics(app: Sphinx, include_external: bool):
         overall_metrics["fully_linked"], overall_metrics["total"]
     )
 
-    output: dict[str, Any] = {
+    output: dict[str, object] = {
         "schema_version": "2",
         "generated_by": "sphinx_build",
         "overall_metrics": overall_metrics,

@@ -43,7 +43,9 @@ def test_get_need_types_by_tags_returns_matching_directives_only() -> None:
             },
             "optional_options": {},
             "mandatory_links": {},
+            "mandatory_links_str": {},
             "optional_links": {},
+            "optional_links_str": {},
         },
         {
             "title": "Test Type Verification",
@@ -57,7 +59,9 @@ def test_get_need_types_by_tags_returns_matching_directives_only() -> None:
             },
             "optional_options": {},
             "mandatory_links": {},
+            "mandatory_links_str": {},
             "optional_links": {},
+            "optional_links_str": {},
         },
         {
             "title": "Test Type Extra",
@@ -71,7 +75,9 @@ def test_get_need_types_by_tags_returns_matching_directives_only() -> None:
             },
             "optional_options": {},
             "mandatory_links": {},
+            "mandatory_links_str": {},
             "optional_links": {},
+            "optional_links_str": {},
         },
     ]
     result = metrics.get_need_types_by_tags(needs, {"verification", "requirement"})
@@ -98,7 +104,9 @@ def test_get_need_types_by_tags_returns_empty_on_non_match() -> None:
             },
             "optional_options": {},
             "mandatory_links": {},
+            "mandatory_links_str": {},
             "optional_links": {},
+            "optional_links_str": {},
         },
     ]
     result = metrics.get_need_types_by_tags(needs, {"requirements_without_proccess"})
