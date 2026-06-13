@@ -36,8 +36,8 @@
     "url": "https://eclipse-score.github.io/docs-as-code/pr-557/"
   },
   {
-    "version": "pr-597",
-    "url": "https://eclipse-score.github.io/docs-as-code/pr-597/"
+    "version": "pr-598",
+    "url": "https://eclipse-score.github.io/docs-as-code/pr-598/"
   },
   {
     "version": "v3.0.0",
@@ -90,9 +90,5 @@
   {
     "version": "v4.4.1",
     "url": "https://eclipse-score.github.io/docs-as-code/v4.4.1/"
-  },
-  {
-    "version": "pr-598",
-    "url": "https://eclipse-score.github.io/docs-as-code/pr-598/"
   }
 ]
