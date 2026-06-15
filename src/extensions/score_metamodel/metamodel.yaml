@@ -20,7 +20,7 @@ needs_types_base_options:
     # Version will be mandatory global option in future releases
     # For now giving grace periods to consumers
     # req-Id: tool_req__docs_common_attr_version
-    version: ^.*$
+    version: ^[0-9]*$
 
     # Custom semantic validation rules
 

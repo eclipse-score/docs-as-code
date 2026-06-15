@@ -18,6 +18,7 @@ from typing import Any, cast
 
 from ruamel.yaml import YAML
 from sphinx_needs import logging
+from sphinx_needs.config import NeedsCoreFields
 
 from src.extensions.score_metamodel.metamodel_types import (
     ProhibitedWordCheck,
@@ -54,48 +55,13 @@ def default_options():
     Helper function to get a list of all default options defined by
     sphinx, sphinx-needs etc.
     """
-    return {
+    sn_fields = set(NeedsCoreFields.keys())
+    extra = {
         "target_id",
-        "id",
-        "status",
-        "docname",
-        "lineno",
-        "type",
-        "lineno_content",
-        "doctype",
-        "content",
-        "type_name",
-        "type_color",
-        "type_style",
-        "title",
         "full_title",
-        "layout",
-        "template",
-        "id_parent",
-        "id_complete",
-        "external_css",
-        "sections",
-        "section_name",
-        "type_prefix",
-        "constraints_passed",
-        "collapse",
-        "hide",
         "delete",
-        "jinja_content",
-        "is_part",
-        "is_need",
-        "is_external",
-        "is_modified",
-        "modifications",
-        "has_dead_links",
-        "has_forbidden_dead_links",
-        "tags",
-        "arch",
-        "parts",
-        # Introduced with sphinx-needs 6.3.0
-        "is_import",
-        "constraints",
     }
+    return sn_fields | extra
 
 
 def _parse_need_type(
@@ -208,8 +174,28 @@ def _collect_all_custom_options(
     defaults = default_options()
     all_options = _collect_all_options(needs_types)
 
+    # These 5 are intentionally overwritten:
+    overlap = defaults & all_options
+    known_overlaps = {"id", "tags", "status", "content", "template"}
+    if known_overlaps != overlap:
+        logger.warning(
+            f"Some options overlap between the metamodel.yaml and default options, which may cause issues: {overlap}. "
+            f"Known overlaps that are intentionally kept are: {known_overlaps}."
+        )
+
+    # Add all fields, except for standard fields like "id", "content", "tags", "status"
+    # etc. that are already defined by sphinx-needs.
+    #
+    # Use params_int for "version" to ensure it's treated as an integer, and params_str
+    # for all other options.
+    #
+    # Note: "<integer>" is not encoded in the metamodel.yaml as there is no generic
+    # demand exists at the moment.
+    params_str = {"schema": {"type": "string"}, "default": ""}
+    params_int: dict[str, Any] = {"schema": {"type": "integer"}, "default": 0}
+
     return {
-        name: {"schema": {"type": "string"}, "default": ""}
+        name: params_str if name != "version" else params_int
         for name in sorted(all_options - defaults)
     }
 
