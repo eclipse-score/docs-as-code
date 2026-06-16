@@ -58,19 +58,36 @@ def id_contains_feature(app: Sphinx, need: NeedItem, log: CheckLogger):
         for featurepart in featureparts
         if featureparts and featurepart and docname
     )
+    allowed_parts_from_config = app.config.required_in_id
+    found_part_from_config = any(
+        part_from_config.lower() in need.get("id")
+        for part_from_config in allowed_parts_from_config
+        if allowed_parts_from_config
+    )
 
     # allow abbreviation of the feature
     initials = (
         "".join(fp[0].lower() for fp in featureparts) if len(featureparts) > 1 else ""
     )
     foundinitials = bool(initials) and docname and initials in docname.lower()
-
-    if not (foundfeatpart or foundinitials):
-        log.warning_for_option(
-            need,
-            "id",
-            (
-                f"Featurepart '{featureparts}' not in path '{docname}' "
-                f"or abbreviation not ok, expected: '{initials}'."
-            ),
+    if not (foundfeatpart or foundinitials or found_part_from_config):
+        parts_display = ", ".join(f"'{p}'" for p in featureparts)
+        config_display = (
+            ", ".join(f"'{p}'" for p in allowed_parts_from_config)
+            if allowed_parts_from_config
+            else "[]"
         )
+
+        fix_options = [f"rename the feature part to match a segment of '{docname}'"]
+        if initials:
+            fix_options.append(f"use correct abbreviation '{initials}'")
+        fix_options.append(
+            f"Add an allowed part to `required_in_id` in conf.py (currently: {config_display})"
+        )
+
+        combined_msg = (
+            f"Feature part {parts_display} not found in path '{docname}'. "
+            "\nHow can you fix this:\n=>"
+            f"{'\n=> '.join(fix_options)}.\n"
+        )
+        log.warning_for_option(need, "id", combined_msg)

@@ -70,3 +70,47 @@ For further documentation on needextends please `look here <https://sphinx-needs
 
    In the future we will enable a check that needextends will only modify needs in the current document.
    You can ensure this by adding `c.this_doc()` to the filter string of the need.
+
+
+Requirement ID Feature Part
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Requirement IDs with 3 parts (defined by the Metamodel) follow the format ``<Type>__<feature>__<Title>``.
+The ``<feature>`` part must relate to where the requirement lives in the documentation,
+so that IDs stay meaningful and traceable as the project evolves.
+
+The feature part is validated by checking that at least one of the following is true:
+
+* A segment of the feature part (split on ``_`` and ``-``) appears in the document's directory path
+* The initials of the feature part's segments appear in the document's directory path
+* The feature part contains a string explicitly allowed via ``required_in_id`` in ``conf.py``
+
+**Examples** — given a requirement in ``internals/safety/fmea/requirements.rst``:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 45 10 45
+
+   * - ID
+     - 
+     - Reason
+   * - ``feat_saf__fmea__late_message``
+     - ✅
+     - ``fmea`` is in the path
+   * - ``feat_saf__safety_fmea__late_message``
+     - ✅
+     - ``safety`` and ``fmea`` are in the path
+   * - ``feat_saf__sf__late_message``
+     - ✅
+     - ``sf`` are the initials of ``safety_fmea``, which is in the path
+   * - ``feat_saf__blabla__late_message``
+     - ❌
+     - ``blabla`` has no relation to the path ``internals/safety/fmea``
+
+To explicitly allow a feature part that intentionally doesn't match the path
+(e.g. in a single module repository), add a matching string to ``required_in_id`` in ``conf.py``:
+
+.. code-block:: python
+
+   # conf.py
+   required_in_id = ["persistenc"]

@@ -236,6 +236,7 @@ def _clear_needs_defaults(app: Sphinx):
 def setup(app: Sphinx) -> dict[str, str | bool]:
     app.add_config_value("external_needs_source", "", rebuild="env")
     app.add_config_value("score_metamodel_yaml", "", rebuild="env")
+    app.add_config_value("required_in_id", [], rebuild="env")
     config_setdefault(app.config, "needs_id_required", True)
     config_setdefault(app.config, "needs_id_regex", "^[A-Za-z0-9_-]{6,}")
 

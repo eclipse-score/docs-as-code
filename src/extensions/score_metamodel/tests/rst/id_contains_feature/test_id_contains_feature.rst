@@ -11,7 +11,9 @@
    #
    # SPDX-License-Identifier: Apache-2.0
    # *******************************************************************************
+
 #CHECK: id_contains_feature
+
 
 .. Feature is in the path of the RST file
 #EXPECT-NOT[+2]: Feature 'id_contains_feature' not in path
@@ -34,3 +36,19 @@
 
 .. stkh_req:: This is a test
    :id: stkh_req__test__abce
+
+
+
+.. Check if feature is correctly found to not be in path
+#EXPECT[+2]: Feature part 'abcabc' not found in path 'id_contains_feature'.
+
+.. feat_req:: Testing if warning correctly triggers
+   :id: feat_req__abcabc__testing
+
+
+
+.. Check if feature is correctly found to be in path
+#EXPECT-NOT[+2]: Feature part
+
+.. feat_req:: Testing if warning correctly triggers
+   :id: feat_req__id_contains__testing
