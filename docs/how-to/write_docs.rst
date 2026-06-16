@@ -92,7 +92,7 @@ The feature part is validated by checking that at least one of the following is 
    :widths: 45 10 45
 
    * - ID
-     - 
+     -
      - Reason
    * - ``feat_saf__fmea__late_message``
      - ✅
