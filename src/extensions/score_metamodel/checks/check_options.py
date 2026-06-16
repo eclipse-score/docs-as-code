@@ -40,10 +40,10 @@ def _get_normalized(need: NeedItem, key: str) -> list[str]:
         return [raw_value]
     if isinstance(raw_value, list):
         # Verify all elements are strings
-        raw_list = cast(list[object], raw_value)
-        for item in raw_list:
-            if not isinstance(item, str):
-                raise ValueError(f"Expected a string for key '{key}', got {type(item)}")
+        if not all(isinstance(item, str) for item in raw_value):  # pyright: ignore[reportUnknownVariableType]
+            raise ValueError(
+                f"Expected a list of strings for key '{key}', got {raw_value}"
+            )
         return cast(list[str], raw_value)
     if isinstance(raw_value, int):
         # Doesnt make a lot of sense, but this preserves regex matching behavior for
