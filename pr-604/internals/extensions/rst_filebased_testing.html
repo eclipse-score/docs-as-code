@@ -529,6 +529,80 @@ a new line between the EXPECT/-NOT and the need that it refers to</p>
 <p>This will error and let you know that an offset of ‘1’ is not allowed and you
 need to add a new line beneath the Warning Statement</p>
 </section>
+<section id="graph-check-tests">
+<h2>Graph check tests<a class="headerlink" href="#graph-check-tests" title="Link to this heading">#</a></h2>
+<p>Graph checks (defined in <code class="docutils literal notranslate"><span class="pre">metamodel.yaml</span></code> under <code class="docutils literal notranslate"><span class="pre">graph_checks:</span></code>) are all executed
+by a single Python function <code class="docutils literal notranslate"><span class="pre">check_metamodel_graph</span></code>. Use that function name in <code class="docutils literal notranslate"><span class="pre">#CHECK:</span></code>:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>#CHECK: check_metamodel_graph
+</pre></div>
+</div>
+<p>Graph check test files live in <code class="docutils literal notranslate"><span class="pre">tests/rst/graph/</span></code>.</p>
+<section id="warning-message-format">
+<h3>Warning message format<a class="headerlink" href="#warning-message-format" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">check_metamodel_graph</span></code> emits warnings in this shape:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>{need_id}: Parent need `{parent_id}` does not fulfill condition `{condition}`. Explanation: {explanation}
+</pre></div>
+</div>
+<p>You only need to match a unique substring, not the full message. For example:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>#EXPECT[+2]: wp__bad: Parent need `std_req__aspice_40__bp`
+</pre></div>
+</div>
+</section>
+<section id="setup-needs">
+<h3>Setup needs<a class="headerlink" href="#setup-needs" title="Link to this heading">#</a></h3>
+<p>Prerequisite needs (link targets, shared fixtures) belong at the top of the file
+with no <code class="docutils literal notranslate"><span class="pre">EXPECT</span></code>/<code class="docutils literal notranslate"><span class="pre">EXPECT-NOT</span></code> annotation. The framework only checks annotated lines,
+so unannotated needs are invisible to the assertion logic.</p>
+</section>
+<section id="the-exempt-case">
+<h3>The “exempt” case<a class="headerlink" href="#the-exempt-case" title="Link to this heading">#</a></h3>
+<p>A need that does not meet the <code class="docutils literal notranslate"><span class="pre">condition:</span></code> in the YAML check definition is not
+selected by the check at all — no warning is emitted. Test this with <code class="docutils literal notranslate"><span class="pre">EXPECT-NOT</span></code>:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>#EXPECT-NOT[+2]: &lt;something from the explanation&gt;
+
+.. workproduct:: No link at all
+   :id: wp__no_link
+</pre></div>
+</div>
+</section>
+<section id="full-example-graph-check">
+<h3>Full example (graph check)<a class="headerlink" href="#full-example-graph-check" title="Link to this heading">#</a></h3>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>#CHECK: check_metamodel_graph
+
+.. std_req:: ASPICE 40 IIC requirement
+   :id: std_req__aspice_40__iic_1
+   :status: valid
+
+.. std_req:: ASPICE 40 non-IIC requirement
+   :id: std_req__aspice_40__bp_1
+   :status: valid
+
+.. Positive: links to allowed target — no warning.
+
+#EXPECT-NOT[+2]: ASPICE 40 IIC
+
+.. workproduct:: Valid workproduct
+   :id: wp__valid
+   :complies: std_req__aspice_40__iic_1
+
+.. Exempt: no complies link — condition not met, check skipped.
+
+#EXPECT-NOT[+2]: ASPICE 40 IIC
+
+.. workproduct:: Workproduct without link
+   :id: wp__no_link
+
+.. Negative: links to disallowed target — warning expected.
+
+#EXPECT[+2]: wp__bad: Parent need `std_req__aspice_40__bp_1`
+
+.. workproduct:: Invalid workproduct
+   :id: wp__bad
+   :complies: std_req__aspice_40__bp_1
+</pre></div>
+</div>
+</section>
+</section>
 </section>
 
 
@@ -580,6 +654,13 @@ need to add a new line beneath the Warning Statement</p>
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#test-function">Test Function</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#create-a-test-rst-file">Create a test rst file</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#graph-check-tests">Graph check tests</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#warning-message-format">Warning message format</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#setup-needs">Setup needs</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-exempt-case">The “exempt” case</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#full-example-graph-check">Full example (graph check)</a></li>
+</ul>
+</li>
 </ul>
   </nav></div>
 
