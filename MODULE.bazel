@@ -70,5 +70,6 @@ http_file(
 )
 
 bazel_dep(name = "score_process", version = "1.6.0")
+
 # Provide the tools from the devcontainer to Bazel
 bazel_dep(name = "score_devcontainer", version = "1.7.0")
