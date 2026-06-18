@@ -20,7 +20,7 @@ extensions = [
     "sphinx_needs",
     "score_metamodel",
 ]
-
+required_in_id = ["blabla"]
 needs_external_needs = [
     {
         "base_url": "https://eclipse-score.github.io/process_description/main/",

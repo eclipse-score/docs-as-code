@@ -16,8 +16,6 @@ project = "Score Docs-as-Code"
 project_url = "https://eclipse-score.github.io/docs-as-code/"
 version = "0.1"
 
-required_in_id = ["blabasdfasdfsla"]
-
 extensions = [
     "score_sphinx_bundle",
 ]
