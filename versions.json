@@ -94,5 +94,9 @@
   {
     "version": "v4.4.1",
     "url": "https://eclipse-score.github.io/docs-as-code/v4.4.1/"
+  },
+  {
+    "version": "pr-607",
+    "url": "https://eclipse-score.github.io/docs-as-code/pr-607/"
   }
 ]
