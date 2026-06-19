@@ -59,3 +59,10 @@
 
 .. feat_req:: Testing conf.py parameter
    :id: feat_req__blabla__testing
+
+
+.. Testing if additional allowed param in conf.py is valid
+#EXPECT[+2]: Feature part 'abcabcabc' not found in path 'id_contains_feature'.
+
+.. feat_req:: Testing conf.py parameter
+   :id: feat_req__abcabcabc__blabla_testing

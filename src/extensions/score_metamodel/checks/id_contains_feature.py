@@ -60,7 +60,7 @@ def id_contains_feature(app: Sphinx, need: NeedItem, log: CheckLogger):
     )
     allowed_parts_from_config = app.config.required_in_id
     found_part_from_config = any(
-        part_from_config.lower() in need.get("id")
+        part_from_config.lower() in feature.lower()
         for part_from_config in allowed_parts_from_config
         if allowed_parts_from_config
     )
