@@ -510,6 +510,57 @@ The scope of allowed behaviour in Docs-As-Code for needextend is limited as we d
 You can ensure this by adding <cite>c.this_doc()</cite> to the filter string of the need.</p>
 </div>
 </section>
+<section id="requirement-id-feature-part">
+<h3>Requirement ID Feature Part<a class="headerlink" href="#requirement-id-feature-part" title="Link to this heading">#</a></h3>
+<p>Requirement IDs with 3 parts (defined by the Metamodel) follow the format <code class="docutils literal notranslate"><span class="pre">&lt;Type&gt;__&lt;feature&gt;__&lt;Title&gt;</span></code>.
+The <code class="docutils literal notranslate"><span class="pre">&lt;feature&gt;</span></code> part must relate to where the requirement lives in the documentation,
+so that IDs stay meaningful and traceable as the project evolves.</p>
+<p>The feature part is validated by checking that at least one of the following is true:</p>
+<ul class="simple">
+<li><p>A segment of the feature part (split on <code class="docutils literal notranslate"><span class="pre">_</span></code> and <code class="docutils literal notranslate"><span class="pre">-</span></code>) appears in the document’s directory path</p></li>
+<li><p>The initials of the feature part’s segments appear in the document’s directory path</p></li>
+<li><p>The feature part contains a string explicitly allowed via <code class="docutils literal notranslate"><span class="pre">required_in_id</span></code> in <code class="docutils literal notranslate"><span class="pre">conf.py</span></code></p></li>
+</ul>
+<p><strong>Examples</strong> — given a requirement in <code class="docutils literal notranslate"><span class="pre">internals/safety/fmea/requirements.rst</span></code>:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 45.0%" />
+<col style="width: 10.0%" />
+<col style="width: 45.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>ID</p></th>
+<th class="head"></th>
+<th class="head"><p>Reason</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">feat_saf__fmea__late_message</span></code></p></td>
+<td><p>✅</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">fmea</span></code> is in the path</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">feat_saf__safety_fmea__late_message</span></code></p></td>
+<td><p>✅</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">safety</span></code> and <code class="docutils literal notranslate"><span class="pre">fmea</span></code> are in the path</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">feat_saf__sf__late_message</span></code></p></td>
+<td><p>✅</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sf</span></code> are the initials of <code class="docutils literal notranslate"><span class="pre">safety_fmea</span></code>, which is in the path</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">feat_saf__blabla__late_message</span></code></p></td>
+<td><p>❌</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">blabla</span></code> has no relation to the path <code class="docutils literal notranslate"><span class="pre">internals/safety/fmea</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>To explicitly allow a feature part that intentionally doesn’t match the path
+(e.g. in a single module repository), add a matching string to <code class="docutils literal notranslate"><span class="pre">required_in_id</span></code> in <code class="docutils literal notranslate"><span class="pre">conf.py</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># conf.py</span>
+<span class="n">required_in_id</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;persistenc&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
 </section>
 </section>
 
@@ -563,6 +614,7 @@ You can ensure this by adding <cite>c.this_doc()</cite> to the filter string of 
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outside-documentation">Outside Documentation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced">Advanced</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#needextend">Needextend</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#requirement-id-feature-part">Requirement ID Feature Part</a></li>
 </ul>
 </li>
 </ul>
