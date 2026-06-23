@@ -919,6 +919,66 @@ needs_types:
       fully_verifies: ANY
       partially_verifies: ANY
 
+  mod_ver_report:
+    title: Module Verification Report
+    prefix: mod_vrep__
+    mandatory_options:
+      safety: ^(QM|ASIL_B)$
+      security: ^(YES|NO)$
+      status: ^(valid|invalid)$
+      verification_method: ^.*$
+    optional_options:
+      requirements_coverage_percent: ^(100|[1-9]?[0-9])$
+      structural_coverage_percent: ^(100|[1-9]?[0-9])$
+      branch_coverage_percent: ^(100|[1-9]?[0-9])$
+      verdict: ^(pass|fail|open)$
+      report_version: ^.*$
+      release_baseline: ^.*$
+    mandatory_links:
+      belongs_to: mod
+    optional_links:
+      contains: ANY
+      evidence: ANY
+      covers: ANY
+      realizes: workproduct
+    tags:
+      - verification_report
+    parts: 3
+
+  # Formal inspection evidence modeled as a first-class artifact.
+  mod_insp:
+    title: Module Inspection Record
+    prefix: mod_insp__
+    mandatory_options:
+      safety: ^(QM|ASIL_B)$
+      security: ^(YES|NO)$
+      status: ^(valid|invalid)$
+      inspection_type: ^(requirements|architecture|implementation|traceability|safety_analysis|security_analysis|other)$
+      inspection_state: ^(planned|in_review|rework_required|approved)$
+      checklist_ref: ^.*$
+      reviewers: ^.*$
+    optional_options:
+      checklist_type: ^(req|arc|impl|safety|security|custom)$
+      moderator: ^.*$
+      approver: ^.*$
+      findings_total: ^[0-9]+$
+      findings_open: ^[0-9]+$
+      pr_link: ^https://github\.com/[^/]+/[^/]+/pull/\d+$
+      correction_issue: ^https://github\.com/[^/]+/[^/]+/issues/\d+$
+      inspection_date: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
+    mandatory_links:
+      belongs_to: mod
+      inspects: ANY
+    optional_links:
+      contains: ANY
+      evidence: ANY
+      approved_by: role
+      supported_by: role
+    tags:
+      - inspection
+      - verification_evidence
+    parts: 3
+
   # https://eclipse-score.github.io/process_description/main/permalink.html?id=gd_temp__change_decision_record
   dec_rec:
     title: Decision Record
@@ -1052,6 +1112,14 @@ needs_extra_links:
   partially_verifies:
     incoming: partially_verified_by
     outgoing: partially_verifies
+
+  evidence:
+    incoming: evidence_for
+    outgoing: evidence
+
+  inspects:
+    incoming: inspected_by
+    outgoing: inspects
 ##############################################################
 # Graph Checks
 # The graph checks focus on the relation of the needs and their attributes.
