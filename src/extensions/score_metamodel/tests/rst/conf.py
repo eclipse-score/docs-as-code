@@ -20,6 +20,7 @@ extensions = [
     "sphinx_needs",
     "score_metamodel",
 ]
+# Required to test this for the check in id_contains_feature
 required_in_id = ["blabla"]
 needs_external_needs = [
     {
@@ -27,7 +28,6 @@ needs_external_needs = [
         "json_path": "needs.json",
     }
 ]
-
 # We add these suppress_warnings here to ease the load of the warnings
 # In the future we might want to check if ANY warnings comes in the document
 # And then ensure that we error, as this could also be parsing errors etc.

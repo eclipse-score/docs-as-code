@@ -82,6 +82,7 @@ score_pytest(
         "tests/rst/conf.py",
         "tests/rst/needs.json",
     ],
+    args = ["-s", "-vv"],
     pytest_config = "//:pyproject.toml",
     deps = [":score_metamodel"],
 )
@@ -94,6 +95,7 @@ score_pytest(
         "tests/rst/needs.json",
     ],
     pytest_config = "//:pyproject.toml",
+    args = ["-s", "-vv"],
     deps = [":score_metamodel"],
 )
 
@@ -105,6 +107,7 @@ score_pytest(
         "tests/rst/needs.json",
     ],
     pytest_config = "//:pyproject.toml",
+    args = ["-s", "-vv"],
     deps = [":score_metamodel"],
 )
 
@@ -116,6 +119,7 @@ score_pytest(
         "tests/rst/needs.json",
     ],
     pytest_config = "//:pyproject.toml",
+    args = ["-s", "-vv"],
     deps = [":score_metamodel"],
 )
 
@@ -127,5 +131,6 @@ score_pytest(
         "tests/rst/needs.json",
     ],
     pytest_config = "//:pyproject.toml",
+    args = ["-s", "-vv"],
     deps = [":score_metamodel"],
 )

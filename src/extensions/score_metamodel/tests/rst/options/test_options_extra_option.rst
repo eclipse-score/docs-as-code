@@ -11,17 +11,29 @@
    #
    # SPDX-License-Identifier: Apache-2.0
    # *******************************************************************************
-#CHECK: check_extra_options
+
+
+.. test_metadata::
+   :id: test_metadata__extra_options
+   :partially_verifies_list: LACKS TOOL REQ
+   :test_type: requirements_based
+   :derivation_technique: requirements_based
+   :check: check_extra_options
+   
+   Tests if we probhibit / allow extra options correctly for needs
+
 
 .. Invalid option: `safety` is not allowed
-#EXPECT[+2]: std_wp__test__abcd: has these extra options: `safety`.
 
 .. std_wp:: This is a test
    :id: std_wp__test__abcd
    :safety: QM
+   :expect: std_wp__test__abcd: has these extra options: `safety`.
+
+
 
 .. No invalid extra options are present
-#EXPECT-NOT[+2]: has these extra options
 
 .. std_wp:: This is a test
    :id: std_wp__test__abce
+   :expect_not: has these extra options

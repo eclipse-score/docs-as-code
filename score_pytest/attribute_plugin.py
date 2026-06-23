@@ -21,26 +21,34 @@ import pytest
 TestFunction = Callable[..., Any]
 Decorator = Callable[[TestFunction], TestFunction]
 
+# Shared value types, used by both the decorator and the runtime applier
+TestType = Literal[
+    "fault-injection", "interface-test", "requirements-based", "resource-usage"
+]
+DerivationTechnique = Literal[
+    "requirements-analysis",
+    "design-analysis",
+    "boundary-values",
+    "equivalence-classes",
+    "fuzz-testing",
+    "error-guessing",
+    "explorative-testing",
+]
 
-def add_test_properties(
+
+def _build_test_properties(
     *,
-    partially_verifies: list[str] | None = None,
-    fully_verifies: list[str] | None = None,
-    test_type: Literal[
-        "fault-injection", "interface-test", "requirements-based", "resource-usage"
-    ],
-    derivation_technique: Literal[
-        "requirements-analysis",
-        "design-analysis",
-        "boundary-values",
-        "equivalence-classes",
-        "fuzz-testing",
-        "error-guessing",
-        "explorative-testing",
-    ],
-) -> Decorator:
+    partially_verifies: list[str] | None,
+    fully_verifies: list[str] | None,
+    test_type: TestType,
+    derivation_technique: DerivationTechnique,
+) -> dict[str, str]:
     """
-    Decorator to add user properties, file and lineNr to testcases in the XML output
+    Build the cleaned property mapping that ends up in the XML.
+
+    Single source of truth shared by the `add_test_properties` decorator
+    (definition-time, for Python tests) and `apply_test_metadata`
+    (runtime, for parameterized / RST-driven tests).
     """
     # Early error handling
     if partially_verifies is None and fully_verifies is None:
@@ -62,28 +70,84 @@ def add_test_properties(
     #     raise ValueError("'derivation_technique' is required and cannot be empty.")
     #
 
+    properties = {
+        "PartiallyVerifies": ", ".join(partially_verifies)
+        if partially_verifies
+        else "",
+        "FullyVerifies": ", ".join(fully_verifies) if fully_verifies else "",
+        "TestType": test_type,
+        "DerivationTechnique": derivation_technique,
+    }
+    # NOTE: This might come back to bite us in some weird edgecase, though I have not thought of one so far
+    # Remove keys with 'falsey' values
+    return {k: v for k, v in properties.items() if v}
+
+
+def add_test_properties(
+    *,
+    partially_verifies: list[str] | None = None,
+    fully_verifies: list[str] | None = None,
+    test_type: TestType,
+    derivation_technique: DerivationTechnique,
+) -> Decorator:
+    """
+    Decorator to add user properties, file and lineNr to testcases in the XML output
+    """
+
     def decorator(func: TestFunction) -> TestFunction:
-        # Clean properties (skip None)
-        properties = {
-            "PartiallyVerifies": ", ".join(partially_verifies)
-            if partially_verifies
-            else "",
-            "FullyVerifies": ", ".join(fully_verifies) if fully_verifies else "",
-            "TestType": test_type,
-            "DerivationTechnique": derivation_technique,
-        }
+        cleaned_properties = _build_test_properties(
+            partially_verifies=partially_verifies,
+            fully_verifies=fully_verifies,
+            test_type=test_type,
+            derivation_technique=derivation_technique,
+        )
         # Ensure a 'description' is there inside the Docstring
         if not func.__doc__ or not func.__doc__.strip():
             raise ValueError(
                 f"{func.__name__} does not have a description. "
                 + "Descriptions (in docstrings) are mandatory."
             )
-        # NOTE: This might come back to bite us in some weird edgecase, though I have not thought of one so far
-        # Remove keys with 'falsey' values
-        cleaned_properties = {k: v for k, v in properties.items() if v}
         return pytest.mark.test_properties(cleaned_properties)(func)
 
     return decorator
+
+
+def apply_test_metadata(
+    *,
+    record_property: Callable[[str, str], None],
+    metadata: dict[str, list[str] | str],
+    record_xml_attribute: Callable[[str, str], None] | None = None,
+    file: str | None = None,
+    line: int | None = None,
+) -> None:
+    """
+    Runtime equivalent of `add_test_properties` for tests where the metadata is
+    only known inside the test body (e.g. parameterized RST integration tests).
+
+    Call this *early* in the test (before any assertion / pytest.fail) so the
+    properties are attached to the XML even when the test fails.
+
+    `metadata` is the dict parsed from the RST `test-metadata` block and is
+    expected to carry the same keys as the decorator arguments.
+    """
+    if not metadata:  # no test-metadata block present: nothing to attach
+        return
+
+    cleaned_properties = _build_test_properties(
+        partially_verifies=metadata.get("partially_verifies"),  # type: ignore[arg-type]
+        fully_verifies=metadata.get("fully_verifies"),  # type: ignore[arg-type]
+        test_type=metadata["test_type"],  # type: ignore[arg-type]
+        derivation_technique=metadata["derivation_technique"],  # type: ignore[arg-type]
+    )
+    for key, value in cleaned_properties.items():
+        record_property(key, value)
+
+    # Optional: override the <testcase> file/line (otherwise the autouse
+    # fixture below points them at the .py test location).
+    if record_xml_attribute is not None and file is not None:
+        record_xml_attribute("file", file)
+    if record_xml_attribute is not None and line is not None:
+        record_xml_attribute("line", str(line))
 
 
 @pytest.hookimpl(hookwrapper=True)

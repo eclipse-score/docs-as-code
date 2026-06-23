@@ -11,16 +11,28 @@
    #
    # SPDX-License-Identifier: Apache-2.0
    # *******************************************************************************
-#CHECK: check_id_length
+
+
+.. test_metadata:: Test ID Lenght
+   :id: test_metadata__check_id_length
+   :partially_verifies_list: LACKS TOOL REQ
+   :test_type: requirements_based
+   :derivation_technique: requirements_based
+   :check: check_id_length
+   
+   Tests if the id max lenght check is working as intended
+
+
 
 .. Id contains too many characters
-#EXPECT[+2]: std_wp__testabcdefghijklmnopqrstuvwxyz123__abcd.id (std_wp__testabcdefghijklmnopqrstuvwxyz123__abcd): exceeds the maximum allowed length of 45 characters (current length: 47).
 
 .. std_wp:: This is a test
    :id: std_wp__testabcdefghijklmnopqrstuvwxyz123__abcd
+   :expect: std_wp__testabcdefghijklmnopqrstuvwxyz123__abcd.id (std_wp__testabcdefghijklmnopqrstuvwxyz123__abcd): exceeds the maximum allowed length of 45 characters (current length: 47).
+
 
 .. Id has correct length
-#EXPECT-NOT[+2]: exceeds the maximum
 
 .. std_wp:: This is a test
    :id: std_wp__test__abce
+   :expect_not: exceeds the maximum

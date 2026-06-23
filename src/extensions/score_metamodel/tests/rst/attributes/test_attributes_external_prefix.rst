@@ -12,26 +12,32 @@
    # SPDX-License-Identifier: Apache-2.0
    # *******************************************************************************
 
-#CHECK: check_options
+
+.. test_metadata:: Test metamodel options
+   :id: test_metadata__check_options
+   :partially_verifies_list: tool_req__docs_common_attr_id_scheme
+   :test_type: requirements_based
+   :derivation_technique: requirements_based
+   :check: check_options
+   
+   Tests if metamodel defined 'options' regex are followed and adhered to and checked correctly
 
 .. Test: No external prefixes (single documentation mega-build)
 .. Verifies links work when all needs are loaded in one Sphinx instance, without prefix logic.
-#EXPECT-NOT[+2]: does not follow pattern `^doc_.+$`.
 
 .. tool_req:: This is a test
    :id: tool_req__test_abcd
    :satisfies: doc_getstrt__req__process
+   :expect_not: does not follow pattern `^doc_.+$`.
 
    This should not give a warning
 
 
 .. Also make sure it works with lists of links
 
-#EXPECT-NOT[+3]: does not follow pattern `^doc_.+$`.
-#EXPECT-NOT[+2]: does not follow pattern `^gd_.+$`.
-
 .. tool_req:: This is a test
    :id: tool_req__test_aaaa
    :satisfies: doc_getstrt__req__process;gd_guidl__req__engineering
+   :expect_not: does not follow pattern `^doc_.+$`., does not follow pattern `^gd_.+$`.
 
    This should give a warning

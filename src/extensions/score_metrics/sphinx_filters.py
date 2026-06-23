@@ -171,7 +171,6 @@ def generic_pie_items_in_relationships(
     results.append(referenced_once)
     results.append(referenced_multiple)
 
-
 def _get_key_values(results: list[int], argument_paths: list[str]):
     """Append integer metric values selected by colon-separated paths.
 
@@ -207,6 +206,7 @@ def get_metrics_with_first_value_total(
     results.clear()
     # As kwargs ordering is deterministic this will always put the first total into results[0]
     _get_key_values(results, [str(value) for value in kwargs.values()])
+
     results[0] -= sum(results[1:])
 
 

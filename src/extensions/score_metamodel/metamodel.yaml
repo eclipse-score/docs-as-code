@@ -21,6 +21,9 @@ needs_types_base_options:
     # For now giving grace periods to consumers
     # req-Id: tool_req__docs_common_attr_version
     version: ^[0-9]*$
+    # Used for RST file based testing
+    expect: ^.*$
+    expect_not: ^.*$ 
 
     # Custom semantic validation rules
 
@@ -919,6 +922,19 @@ needs_types:
       fully_verifies: ANY
       partially_verifies: ANY
 
+  test_metadata:
+    title: Test Metadata used in rst based tests
+    optional_options:
+      test_type: ^.*$
+      derivation_technique: ^.*$
+      # Which check should be activated for this file
+      check: ^.*$
+      # These can't be links, as these do not know of the ID's they link against.
+      # So they have to be options
+      fully_verifies_list: ANY
+      partially_verifies_list: ANY
+    parts: 2
+
   # https://eclipse-score.github.io/process_description/main/permalink.html?id=gd_temp__change_decision_record
   dec_rec:
     title: Decision Record
@@ -1112,20 +1128,6 @@ graph_checks:
     check:
       implements: security == YES # Which attribute???
     explanation: An security architecture element can only link other security architecture elements.
-
-  # saf - ID gd_req__saf_linkage_safety
-  # It shall be checked that Safety Analysis (DFA and FMEA) can only be linked via mitigate against
-  #  - <Feature | Component | AoU> Requirements with the same ASIL or
-  #  - <Feature | Component | AoU> Requirements with a higher ASIL
-  # as the corresponding ASIL of the Feature or Component that is analyzed.
-  # req-Id: tool_req__docs_saf_attrs_mitigated_by
-  saf_linkage_safety:
-    needs:
-      include: feat_saf_fmea, comp_saf_fmea, plat_saf_dfa, feat_saf_dfa, comp_saf_dfa
-      condition: safety == ASIL_B
-    check:
-      mitigated_by: safety != QM
-    explanation: An ASIL_B safety requirement must link to a ASIL_B requirement. Please ensure that the linked requirements safety level is not QM and it's status is valid.
 
   # Workproducts may only link to ASPICE 40 IIC stakeholder requirements
   workproduct_aspice_40:

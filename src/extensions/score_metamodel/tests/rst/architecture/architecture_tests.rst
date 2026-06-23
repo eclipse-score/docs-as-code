@@ -12,7 +12,17 @@
    # SPDX-License-Identifier: Apache-2.0
    # *******************************************************************************
 
-#CHECK: check_options
+
+.. test_metadata:: Test Architecture Needs
+   :id: test_metadata__architecture
+   :partially_verifies_list: tool_req__docs_arch_types
+   :test_type: requirements_based
+   :derivation_technique: requirements_based
+   :check: check_options
+
+   This file tests if the architecture drawing logic we have is correct. 
+   And if all of the metamodel options for the reqs are correctly followed
+
 
 .. stkh_req:: Test Stakeholder Requirement 1
    :id: stkh_req__test_stakeholder_requirement_1__basic_stkh_req
