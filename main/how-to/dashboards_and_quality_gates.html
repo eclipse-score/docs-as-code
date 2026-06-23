@@ -607,10 +607,10 @@ gate thresholds so CI calls a single Bazel target.</p>
 </section>
 <section id="example-1-overall-view-including-remaining-unlinked">
 <h2>Example 1: Overall view (including remaining/unlinked)<a class="headerlink" href="#example-1-overall-view-including-remaining-unlinked" title="Link to this heading">#</a></h2>
-<div class="highlight-rst notranslate"><div class="highlight"><pre><span></span><span class="p">..</span> <span class="ow">needpie</span><span class="p">::</span> Overall Requirement Coverage
-   <span class="nc">:labels:</span> Remaining (no selected links), With Test Link, With Code Link, Fully Linked
+<div class="highlight-rst notranslate"><div class="highlight"><pre><span></span><span class="p">..</span> <span class="ow">needpie</span><span class="p">::</span> Overall Requirement Coverage (non-overlapping)
+   <span class="nc">:labels:</span> Remaining (no links), Test Link Only, Code Link Only, Fully Linked (Both)
    <span class="nc">:colors:</span> #4E79A7, #F28E2B, #59A14F, #B07AA1
-   <span class="nc">:filter-func:</span> score_metrics.sphinx_filters.get_metrics_with_first_value_total(overall_metrics:total,overall_metrics:with_test_link,overall_metrics:with_code_link,overall_metrics:fully_linked)
+   <span class="nc">:filter-func:</span> score_metrics.sphinx_filters.get_non_overlapping_link_metrics
 </pre></div>
 </div>
 <p>This chart shows:</p>
