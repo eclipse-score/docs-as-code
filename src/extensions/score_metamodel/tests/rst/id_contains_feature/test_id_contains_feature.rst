@@ -18,7 +18,6 @@
    :partially_verifies_list: tool_req__docs_common_attr_id_scheme
    :test_type: requirements_test
    :derivation_technique: requirements_based
-   :check: id_contains_feature
 
    This is the content
 

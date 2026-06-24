@@ -19,7 +19,6 @@
    :partially_verifies_list: tool_req__docs_common_attr_title, tool_req__docs_common_attr_desc_wording
    :test_type: requirements_based
    :derivation_technique: requirements_based
-   :check: check_for_prohibited_words
 
    Tests if that the check of titles and descriptions for have probhieted words works as intended
 

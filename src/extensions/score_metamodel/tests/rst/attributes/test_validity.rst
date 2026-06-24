@@ -18,7 +18,6 @@
    :partially_verifies_list: tool_req__docs_sec_attr_stride_threat_id,tool_req__docs_sec_attrs_mandatory
    :test_type: requirements_based
    :derivation_technique: requirements_based
-   :check: check_validity_consistency
 
    This is a multiline description.
    It can contain blank lines and arbitrary text,

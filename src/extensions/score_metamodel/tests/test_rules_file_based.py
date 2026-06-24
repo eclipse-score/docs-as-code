@@ -23,7 +23,7 @@ from sphinx.testing.util import SphinxTestApp
 from sphinx_needs.data import NeedsExtendType, SphinxNeedsData
 from sphinx_needs.need_item import NeedItem
 
-from score_pytest.attribute_plugin import _build_test_properties
+from score_pytest.attribute_plugin import apply_test_metadata
 
 RST_DIR = Path(__file__).absolute().parent / "rst"
 
@@ -91,21 +91,6 @@ class RstData:
     metadata: dict[str, list[str] | str] = field(default_factory=dict)
 
 
-def parse_line_for_message(line: str) -> str:
-    #### Extract the warning message from the line
-    # The line format is "#EXPECT: <warning message>"
-    # or "#EXPECT-NOT: <warning message>"
-    # or "#CHECK: <checks>"
-    return line.split(": ", 1)[1].strip()
-
-
-def parse_line_nr_in_expect_line(text: str) -> int | None:
-    match = re.search(r"\[(\+\d+)\]", text)
-    if match is None:
-        return None
-    return int(match.group(1).removeprefix("+"))
-
-
 def count_need_objects(rst_file: Path) -> RstData:
     rst_data = RstData(filename=str(rst_file.relative_to(RST_DIR)))
     with open(rst_file) as f:
@@ -167,31 +152,6 @@ def parse_test_metadata(need: NeedItem) -> dict[str, Any]:
         "Either fully_verifies or partially_verifies must be provided"
     )
     return metadata
-
-
-def apply_test_metadata_props(
-    *,
-    record_property,
-    record_xml_attribute=None,
-    metadata: dict[str, Any],
-    file: str | None = None,
-) -> None:
-    if not metadata:  # files without a test-metadata block: nothing to attach
-        return
-    props = _build_test_properties(
-        partially_verifies=metadata.get("partially_verifies"),
-        fully_verifies=metadata.get("fully_verifies"),
-        test_type=metadata["test_type"],
-        derivation_technique=metadata["derivation_technique"],
-    )
-    for key, value in props.items():
-        record_property(key, value)
-
-    if record_xml_attribute is not None:
-        if file:
-            record_xml_attribute("file", file + metadata["file"])
-        if metadata["line_nr"]:
-            record_xml_attribute("line", str(metadata["line_nr"]))
 
 
 def strip_ansi_codes(text: str) -> str:
@@ -315,14 +275,14 @@ def test_rst_files(
     _validate_need_count(all_needs, rst_data)
 
     metadata_need = _get_test_metadata_need(needs_view, rst_data)
-    rst_data.enabled_checks = metadata_need.get("CHECK")
-    app.config.score_metamodel_checks = rst_data.enabled_checks or ""
     rst_data.metadata = parse_test_metadata(metadata_need)
-    apply_test_metadata_props(
+    file_name = clean_filepath(request) + str(rst_data.metadata["file"])
+    apply_test_metadata(
         record_property=record_property,
-        record_xml_attribute=record_xml_attribute,
         metadata=rst_data.metadata,
-        file=clean_filepath(request),
+        record_xml_attribute=record_xml_attribute,
+        file=file_name,
+        line=int(str(rst_data.metadata["line_nr"])),
     )
 
     # Collect warnings and verify each need's expectations

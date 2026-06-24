@@ -18,6 +18,7 @@
 from typing import Any
 
 from sphinx.application import Sphinx
+from pprint import pprint
 
 from src.extensions.score_metamodel import ScoreNeedType
 
@@ -117,4 +118,5 @@ def setup(app: Sphinx):
             need_type["optional_options"] = opts
             changed_needs_types.append(need_type)
             app.config.needs_types = changed_needs_types
+    pprint(app.config.needs_types)
     app.config.needs_fields.update(add_needs_fields)

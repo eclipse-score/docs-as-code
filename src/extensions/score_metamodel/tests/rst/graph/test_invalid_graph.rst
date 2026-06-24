@@ -18,7 +18,6 @@
    :partially_verifies_list: tool_req__docs_req_arch_link_safety_to_arch
    :test_type: requirements_based
    :derivation_technique: requirements_based
-   :check: check_valid_only_links_to_valid
 
    Checks if valid reqs only link to valid reqs
    Note: DISABLED ATM, due to check not being a 'full' warning yet

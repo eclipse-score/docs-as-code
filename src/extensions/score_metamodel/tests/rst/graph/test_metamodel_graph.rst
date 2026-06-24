@@ -17,7 +17,6 @@
    :partially_verifies_list: LACKS TOOL REQ
    :test_type: requirements_based
    :derivation_technique: requirements_based
-   :check: check_metamodel_graph
 
    Tests if metamodel graph checks work as defined / intended
 

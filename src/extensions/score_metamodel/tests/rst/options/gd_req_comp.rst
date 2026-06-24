@@ -18,7 +18,6 @@
    :partially_verifies_list: LACKS TOOL REQ
    :test_type: requirements_based
    :derivation_technique: requirements_based
-   :check: check_options
 
    Tests if metamodel link options are correclty checked
 

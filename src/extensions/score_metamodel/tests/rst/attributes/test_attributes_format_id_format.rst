@@ -18,7 +18,6 @@
    :partially_verifies_list: tool_req__docs_common_attr_id_scheme
    :test_type: requirements_based
    :derivation_technique: requirements_based
-   :check: check_id_format
 
    Tests if the id format is followed.
    3 Part needs, need to follow different conventions than 2 part or undefined part needs

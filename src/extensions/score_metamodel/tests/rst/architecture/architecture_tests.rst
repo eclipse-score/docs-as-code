@@ -18,7 +18,6 @@
    :partially_verifies_list: tool_req__docs_arch_types
    :test_type: requirements_based
    :derivation_technique: requirements_based
-   :check: check_options
 
    This file tests if the architecture drawing logic we have is correct.
    And if all of the metamodel options for the reqs are correctly followed
