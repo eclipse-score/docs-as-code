@@ -234,6 +234,66 @@ def assumptions_of_use(
         visibility = visibility,
     )
 
+def feature_architecture(
+        name,
+        src = "//:needs_json",
+        feature = None,
+        visibility = None):
+    """Extract the feature architecture from a needs.json file.
+
+    Convenience wrapper around `filtered_needs_json`. Produces a `<name>.json`
+    file containing the feature architecture elements. Static (`feat_arc_sta`)
+    and dynamic (`feat_arc_dyn`) architecture are not differentiated; both are
+    kept.
+
+    Args:
+        name: Name of the generated target. The output file is `<name>.json`.
+        src: Label of a `needs_json` build output. Defaults to the calling
+            package's `//:needs_json`.
+        feature: Optional feature name. If given, only feature architecture
+            elements tagged with that feature are kept; if omitted, all feature
+            architecture elements are kept.
+        visibility: Standard Bazel visibility for the generated target.
+    """
+    filtered_needs_json(
+        name = name,
+        src = src,
+        types = ["feat_arc_sta", "feat_arc_dyn"],
+        components = [feature] if feature else [],
+        component_attr = "tags",
+        visibility = visibility,
+    )
+
+def component_architecture(
+        name,
+        src = "//:needs_json",
+        component = None,
+        visibility = None):
+    """Extract the component architecture from a needs.json file.
+
+    Convenience wrapper around `filtered_needs_json`. Produces a `<name>.json`
+    file containing the component architecture elements. Static (`comp_arc_sta`)
+    and dynamic (`comp_arc_dyn`) architecture are not differentiated; both are
+    kept.
+
+    Args:
+        name: Name of the generated target. The output file is `<name>.json`.
+        src: Label of a `needs_json` build output. Defaults to the calling
+            package's `//:needs_json`.
+        component: Optional component name. If given, only component architecture
+            elements tagged with that component are kept; if omitted, all
+            component architecture elements are kept.
+        visibility: Standard Bazel visibility for the generated target.
+    """
+    filtered_needs_json(
+        name = name,
+        src = src,
+        types = ["comp_arc_sta", "comp_arc_dyn"],
+        components = [component] if component else [],
+        component_attr = "tags",
+        visibility = visibility,
+    )
+
 def sphinx_needs_to_md(
         name,
         src,
@@ -360,6 +420,74 @@ def requirements_checklist(
             (e.g. `"req_chklst__bitmanipulation__comp_req"`).
         deps: List of labels whose outputs are hashed and validated. Usually a
             single `component_requirements`/`filtered_needs_json` target.
+        src: Label of a `needs_json` build output containing the checklist need.
+            Defaults to the calling package's `//:needs_json`.
+        visibility: Standard Bazel visibility for the generated target.
+    """
+    validate_tool = Label("//scripts_bazel:validate_checklist")
+
+    dep_args = " ".join(["$(locations %s)" % d for d in deps])
+
+    native.genrule(
+        name = name,
+        srcs = [src] + deps,
+        outs = [name + ".sha256"],
+        cmd = """
+        $(location {validate_tool}) \
+            --needs-json $(location {src})/needs.json \
+            --checklist-id '{checklist_id}' \
+            --output $@ \
+            {dep_args}
+        """.format(
+            validate_tool = validate_tool,
+            checklist_id = checklist_id,
+            src = src,
+            dep_args = dep_args,
+        ),
+        tools = [validate_tool],
+        visibility = visibility,
+    )
+
+def architecture_checklist(
+        name,
+        checklist_id,
+        deps,
+        src = "//:needs_json",
+        visibility = None):
+    """Validate an architecture checklist (`arch_chklst`) against its build output.
+
+    Building this target recomputes the SHA256 over the concatenated outputs of
+    `deps` and compares it to the `sha256` attribute of the `arch_chklst` need
+    `checklist_id` (looked up in `src`'s `needs.json`). The build **fails** when
+    the hashes differ, i.e. when a validated target output has changed since the
+    checklist was last reviewed.
+
+    Typical usage validates the extracted architecture of a component against the
+    checklist that reviewed it:
+
+        component_architecture(
+            name = "bitmanipulation_comp_arch",
+            component = "bitmanipulation",
+        )
+
+        architecture_checklist(
+            name = "bitmanipulation_arch_checklist",
+            checklist_id = "arch_chklst__bitmanipulation__comp_arc",
+            deps = [":bitmanipulation_comp_arch"],
+        )
+
+    Run with `bazel build //:bitmanipulation_arch_checklist`. On the first run (or
+    after the architecture changes) the build fails and prints the actual SHA256;
+    copy it into the `sha256` attribute of the checklist need once the checklist
+    has been (re-)reviewed.
+
+    Args:
+        name: Name of the generated target. The output file is `<name>.sha256`.
+        checklist_id: Id of the `arch_chklst` need to validate
+            (e.g. `"arch_chklst__bitmanipulation__comp_arc"`).
+        deps: List of labels whose outputs are hashed and validated. Usually a
+            single `feature_architecture`/`component_architecture`/
+            `filtered_needs_json` target.
         src: Label of a `needs_json` build output containing the checklist need.
             Defaults to the calling package's `//:needs_json`.
         visibility: Standard Bazel visibility for the generated target.

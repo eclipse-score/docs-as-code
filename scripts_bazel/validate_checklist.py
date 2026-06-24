@@ -103,14 +103,20 @@ def main() -> int:
         return 1
 
     expected = need.get("sha256")
-    if not expected:
-        logger.error(
-            "Checklist need '%s' has no 'sha256' attribute.",
-            args.checklist_id,
-        )
-        return 1
 
     actual = compute_sha256(args.inputs)
+
+    if not expected:
+        logger.error(
+            "Checklist '%s' has an EMPTY 'sha256' attribute.\n"
+            "Review the target output and, if correct, pin it by setting the "
+            "checklist's 'sha256' attribute to:\n"
+            "\n"
+            "  %s\n",
+            args.checklist_id,
+            actual,
+        )
+        return 1
 
     if expected != actual:
         logger.error(
