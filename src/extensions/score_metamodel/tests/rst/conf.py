@@ -111,12 +111,12 @@ def setup(app: Sphinx):
 
     changed_needs_types = list(test_metadata_need_type)
     all_needs_types = app.config.needs_types
-    if "test_metadata" not in all_needs_types:
+    if "test_metadata" not in {nt["directive"] for nt in all_needs_types}:
         for need_type in all_needs_types:
             opts: dict[str, Any] = need_type.get("optional_options") or {}
             opts.update(add_options_regex)
             need_type["optional_options"] = opts
             changed_needs_types.append(need_type)
-            app.config.needs_types = changed_needs_types
+        app.config.needs_types = changed_needs_types
     pprint(app.config.needs_types)
     app.config.needs_fields.update(add_needs_fields)
