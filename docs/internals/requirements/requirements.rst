@@ -46,6 +46,7 @@ This section provides an overview of current process requirements and their clar
   Req,     'tool_req__docs' in id and implemented == "YES" and "Requirements"              in tags and status == "valid", 'tool_req__docs' in id and implemented == "PARTIAL" and "Requirements"              in tags and status == "valid", 'tool_req__docs' in id and implemented == "NO" and              "Requirements" in tags and status == "valid", 'tool_req__docs' in id and              "Requirements" in tags and status != "valid"
   Arch,    'tool_req__docs' in id and implemented == "YES" and "Architecture"              in tags and status == "valid", 'tool_req__docs' in id and implemented == "PARTIAL" and "Architecture"              in tags and status == "valid", 'tool_req__docs' in id and implemented == "NO" and              "Architecture" in tags and status == "valid", 'tool_req__docs' in id and              "Architecture" in tags and status != "valid"
   DDesign, 'tool_req__docs' in id and implemented == "YES" and "Detailed Design & Code"    in tags and status == "valid", 'tool_req__docs' in id and implemented == "PARTIAL" and "Detailed Design & Code"    in tags and status == "valid", 'tool_req__docs' in id and implemented == "NO" and    "Detailed Design & Code" in tags and status == "valid", 'tool_req__docs' in id and    "Detailed Design & Code" in tags and status != "valid"
+  Verif,   'tool_req__docs' in id and implemented == "YES" and "Verification Evidence"      in tags and status == "valid", 'tool_req__docs' in id and implemented == "PARTIAL" and "Verification Evidence"      in tags and status == "valid", 'tool_req__docs' in id and implemented == "NO" and      "Verification Evidence" in tags and status == "valid", 'tool_req__docs' in id and      "Verification Evidence" in tags and status != "valid"
   TVR,     'tool_req__docs' in id and implemented == "YES" and "Tool Verification Reports" in tags and status == "valid", 'tool_req__docs' in id and implemented == "PARTIAL" and "Tool Verification Reports" in tags and status == "valid", 'tool_req__docs' in id and implemented == "NO" and "Tool Verification Reports" in tags and status == "valid", 'tool_req__docs' in id and "Tool Verification Reports" in tags and status != "valid"
   Other,   'tool_req__docs' in id and implemented == "YES" and "Process / Other"           in tags and status == "valid", 'tool_req__docs' in id and implemented == "PARTIAL" and "Process / Other"           in tags and status == "valid", 'tool_req__docs' in id and implemented == "NO" and           "Process / Other" in tags and status == "valid", 'tool_req__docs' in id and           "Process / Other" in tags and status != "valid"
   SftyAn,  'tool_req__docs' in id and implemented == "YES" and "Safety Analysis"           in tags and status == "valid", 'tool_req__docs' in id and implemented == "PARTIAL" and "Safety Analysis"           in tags and status == "valid", 'tool_req__docs' in id and implemented == "NO" and           "Safety Analysis" in tags and status == "valid", 'tool_req__docs' in id and           "Safety Analysis" in tags and status != "valid"
@@ -863,6 +864,47 @@ Testing
 
    Docs-AS-Code shall provide a way to gather statistics on linkages to implementation(source_code_links) & tests(testlink) for all needs.
    It shall also be possible to filter these by type and use the provided statistics in the documentation (via diagrams drawn from it etc.)
+
+🔎 Verification Evidence
+########################
+
+.. tool_req:: Support machine-readable module verification reports
+  :id: tool_req__docs_verification_report_need
+  :tags: Verification Evidence
+  :implemented: YES
+  :version: 1
+  :satisfies: gd_req__verification_reporting
+  :parent_covered: NO: process wording is broader than the currently modeled report artifact.
+
+  Docs-as-Code shall support a machine-readable module verification report need type.
+
+  The need type shall:
+
+  * use ``mod_ver_report`` as directive type
+  * classify the report by ``safety``, ``security``, ``status`` and ``verification_method``
+  * link the report to the verified module via ``belongs_to``
+  * allow links to contained verification evidence via ``contains``
+  * allow links to covered artifacts via ``covers``
+  * allow links to backing documents or work products via ``evidence`` and ``realizes``
+
+.. tool_req:: Support machine-readable inspection records
+  :id: tool_req__docs_inspection_record_need
+  :tags: Verification Evidence
+  :implemented: YES
+  :version: 1
+  :satisfies: gd_req__verification_checks
+  :parent_covered: NO: process wording defines verification checks, while the tool models a first-class inspection record artifact.
+
+  Docs-as-Code shall support a machine-readable inspection record need type.
+
+  The need type shall:
+
+  * use ``mod_insp`` as directive type
+  * classify the inspection by ``inspection_type`` and ``inspection_state``
+  * record the checklist reference and reviewer list via ``checklist_ref`` and ``reviewers``
+  * link the inspection to the verified module via ``belongs_to``
+  * link the inspected artifacts via ``inspects``
+  * allow links to backing evidence via ``evidence``
 
 🧪 Tool Verification Reports
 ############################
