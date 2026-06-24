@@ -19,10 +19,10 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+from score_metamodel.tests import need as test_need
 from sphinx.testing.util import SphinxTestApp
 from sphinx_needs.data import NeedsExtendType, SphinxNeedsData
 from sphinx_needs.need_item import NeedItem
-from score_metamodel.tests import need as test_need
 
 from score_pytest.attribute_plugin import apply_test_metadata
 
