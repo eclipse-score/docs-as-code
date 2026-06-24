@@ -53,17 +53,6 @@ Overview
       No skipped or disabled tests are expected in the current dataset.
 
 
-How many requirements are linked
----------------------------------
-
-*This shows how many of our requirements are linked with tests, in source code, both or neither.*
-
-.. needpie:: Overall Requirement Coverage
-   :labels: Remaining (no selected links), With Test Link, With Code Link, Fully Linked
-   :colors: #4E79A7, #F28E2B, #59A14F, #B07AA1
-   :filter-func: score_metrics.sphinx_filters.get_metrics_with_first_value_total(overall_metrics:total,overall_metrics:with_test_link,overall_metrics:with_code_link,overall_metrics:fully_linked)
-
-
 Testcase Metadata Overview
 --------------------------
 

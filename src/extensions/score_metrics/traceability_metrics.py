@@ -28,7 +28,7 @@ from sphinx.application import Sphinx
 from sphinx_needs.data import NeedsView, SphinxNeedsData
 from sphinx_needs.need_item import NeedItem
 
-CALCULATED_METRICS: dict[str, object] = {}
+CALCULATED_METRICS: dict[str, Any] = {}
 
 
 def get_need_types_by_tags(needs: list[ScoreNeedType], tags: set[str]) -> list[str]:

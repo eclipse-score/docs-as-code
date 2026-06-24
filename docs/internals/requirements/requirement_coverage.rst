@@ -25,10 +25,10 @@ by CI quality gates — they will always match.
 Overall Coverage
 ----------------
 
-.. needpie:: Overall Requirement Coverage
-   :labels: Remaining (no selected links), With Test Link, With Code Link, Fully Linked
+.. needpie:: Overall Requirement Coverage (non-overlapping)
+   :labels: Remaining (no links), Test Link Only, Code Link Only, Fully Linked (Both)
    :colors: #ca2828, #009ad2, #d26403, #37a12d
-   :filter-func: score_metrics.sphinx_filters.get_metrics_with_first_value_total(overall_metrics:total,overall_metrics:with_test_link,overall_metrics:with_code_link,overall_metrics:fully_linked)
+   :filter-func: score_metrics.sphinx_filters.get_non_overlapping_link_metrics
 
 .. needpie:: Test Linkages
    :labels: Tests Not Linked, Tests Linked
