@@ -67,7 +67,7 @@ prerequisite need (for example a link target) and is not asserted against.
 
 **Example:**
 
-.. code-block:: rst 
+.. code-block:: rst
 
     .. test_metadata::
        :id: test_metadata__mandatory_options
@@ -105,7 +105,7 @@ Graph checks (defined in `metamodel.yaml` under `graph_checks:`) are all execute
 by a single Python function `check_metamodel_graph`. Use that function name in the
 `test_metadata` need's `:check:` option:
 
-.. code-block:: rst 
+.. code-block:: rst
 
     .. test_metadata::
        :id: test_metadata__graph_<name>
@@ -140,7 +140,7 @@ A need that does not meet the `condition:` in the YAML check definition is not
 selected by the check at all &mdash; no warning is emitted. Test this with
 `:expect_not:`:
 
-.. code-block:: rst 
+.. code-block:: rst
 
     .. workproduct:: No link at all
        :id: wp__no_link
