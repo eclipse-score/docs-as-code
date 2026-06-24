@@ -63,8 +63,10 @@ def _rewrite_needs_json_to_sourcelinks(labels):
         s = str(x)
         if s.endswith("//:needs_json"):
             out.append(s.replace("//:needs_json", "//:sourcelinks_json"))
+
         #Items which do not end up with '//:needs_json' shall not be appended to 'out'.
         #They are treated separately and are not related to source code linking.
+
     return out
 
 def _merge_sourcelinks(name, sourcelinks, known_good = None):
@@ -319,19 +321,90 @@ def sphinx_needs_to_trlc(
         visibility = visibility,
     )
 
+def requirements_checklist(
+        name,
+        checklist_id,
+        deps,
+        src = "//:needs_json",
+        visibility = None):
+    """Validate a requirement checklist (`req_chklst`) against its build output.
+
+    Building this target recomputes the SHA256 over the concatenated outputs of
+    `deps` and compares it to the `sha256` attribute of the `req_chklst` need
+    `checklist_id` (looked up in `src`'s `needs.json`). The build **fails** when
+    the hashes differ, i.e. when a validated target output has changed since the
+    checklist was last reviewed.
+
+    Typical usage validates the extracted requirements of a component against the
+    checklist that reviewed them:
+
+        component_requirements(
+            name = "bitmanipulation_comp_reqs",
+            component = "bitmanipulation",
+        )
+
+        requirements_checklist(
+            name = "bitmanipulation_req_checklist",
+            checklist_id = "req_chklst__bitmanipulation__comp_req",
+            deps = [":bitmanipulation_comp_reqs"],
+        )
+
+    Run with `bazel build //:bitmanipulation_req_checklist`. On the first run (or
+    after the requirements change) the build fails and prints the actual SHA256;
+    copy it into the `sha256` attribute of the checklist need once the checklist
+    has been (re-)reviewed.
+
+    Args:
+        name: Name of the generated target. The output file is `<name>.sha256`.
+        checklist_id: Id of the `req_chklst` need to validate
+            (e.g. `"req_chklst__bitmanipulation__comp_req"`).
+        deps: List of labels whose outputs are hashed and validated. Usually a
+            single `component_requirements`/`filtered_needs_json` target.
+        src: Label of a `needs_json` build output containing the checklist need.
+            Defaults to the calling package's `//:needs_json`.
+        visibility: Standard Bazel visibility for the generated target.
+    """
+    validate_tool = Label("//scripts_bazel:validate_checklist")
+
+    dep_args = " ".join(["$(locations %s)" % d for d in deps])
+
+    native.genrule(
+        name = name,
+        srcs = [src] + deps,
+        outs = [name + ".sha256"],
+        cmd = """
+        $(location {validate_tool}) \
+            --needs-json $(location {src})/needs.json \
+            --checklist-id '{checklist_id}' \
+            --output $@ \
+            {dep_args}
+        """.format(
+            validate_tool = validate_tool,
+            checklist_id = checklist_id,
+            src = src,
+            dep_args = dep_args,
+        ),
+        tools = [validate_tool],
+        visibility = visibility,
+    )
+
 def _missing_requirements(deps):
     """Add Python hub dependencies if they are missing."""
     found = []
     missing = []
+
     def _target_to_packagename(target):
         return str(target).split("/")[-1].split(":")[0]
+
     all_packages = [_target_to_packagename(pkg) for pkg in all_requirements]
+
     def _find(pkg):
         for dep in deps:
             dep_pkg = _target_to_packagename(dep)
             if dep_pkg == pkg:
                 return True
         return False
+
     for pkg in all_packages:
         if _find(pkg):
             found.append(pkg)
@@ -453,7 +526,7 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
         srcs = [incremental_src],
         data = docs_data,
         deps = deps,
-        env = docs_env
+        env = docs_env,
     )
 
     docs_sources_env["ACTION"] = "incremental"
@@ -463,7 +536,7 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
         srcs = [incremental_src],
         data = combo_data,
         deps = deps,
-        env = docs_sources_env
+        env = docs_sources_env,
     )
 
     native.alias(
@@ -479,7 +552,7 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
         srcs = [incremental_src],
         data = docs_data,
         deps = deps,
-        env = docs_env
+        env = docs_env,
     )
 
     docs_env["ACTION"] = "check"
@@ -489,7 +562,7 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
         srcs = [incremental_src],
         data = docs_data,
         deps = deps,
-        env = docs_env
+        env = docs_env,
     )
 
     docs_env["ACTION"] = "live_preview"
@@ -499,7 +572,7 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
         srcs = [incremental_src],
         data = docs_data,
         deps = deps,
-        env = docs_env
+        env = docs_env,
     )
 
     docs_sources_env["ACTION"] = "live_preview"
@@ -509,7 +582,7 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
         srcs = [incremental_src],
         data = combo_data,
         deps = deps,
-        env = docs_sources_env
+        env = docs_sources_env,
     )
 
     py_venv(

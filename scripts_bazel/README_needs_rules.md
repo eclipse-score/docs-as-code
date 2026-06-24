@@ -17,6 +17,9 @@ the backing Python tools (in this folder) to:
 2. **Render** the selected elements as a human readable Markdown document.
 3. **Convert** S-CORE requirement elements into [TRLC](https://github.com/bmw-software-engineering/trlc)
    data targeting the S-CORE requirements metamodel.
+4. **Validate** a reviewable *requirement checklist* against the build output it
+   was reviewed against, by pinning a SHA256 hash in a `req_chklst` sphinx-needs
+   element and failing the build when the output drifts.
 
 The goal is to show how requirements managed as sphinx-needs can be bridged to
 other consumers (review docs, TRLC-based tooling) without manual copying.
@@ -33,14 +36,24 @@ other consumers (review docs, TRLC-based tooling) without manual copying.
 | `assumptions_of_use` | `<name>.json` | Convenience wrapper for `aou_req` elements. |
 | `sphinx_needs_to_md` | `<name>.md` | Render needs as a Markdown document. |
 | `sphinx_needs_to_trlc` | `<name>.trlc` | Convert S-CORE requirements to TRLC. |
+| `requirements_checklist` | `<name>.sha256` | Validate a `req_chklst` need against its target output via SHA256. |
 
 ### Python tools (`scripts_bazel/`)
 
 - [filter_needs_json.py](filter_needs_json.py) — extract a subset of needs.
 - [sphinx_needs_to_md.py](sphinx_needs_to_md.py) — render needs as Markdown.
 - [sphinx_needs_to_trlc.py](sphinx_needs_to_trlc.py) — convert needs to TRLC.
+- [validate_checklist.py](validate_checklist.py) — validate a checklist hash.
 
 The matching `py_binary` targets are declared in [BUILD](BUILD).
+
+### Metamodel
+
+A new `req_chklst` need type is added in
+[metamodel.yaml](../src/extensions/score_metamodel/metamodel.yaml). It carries a
+mandatory `sha256` attribute, an optional `targets` attribute (the Bazel labels
+it validates), and an optional `checklist` link to the rendered checklist
+document.
 
 ## How to use
 
@@ -81,3 +94,54 @@ bazel build //path/to:my_feature_reqs_trlc
 
 You can also call `filtered_needs_json` directly for full control over the
 `types`, `components`, and `component_attr` filters.
+
+## Requirement checklists
+
+A *requirement checklist* couples a human review (a checklist `.rst` document)
+with the exact build output that was reviewed. The state of that output is
+pinned via a SHA256 hash stored on a `req_chklst` sphinx-needs element. When the
+output later changes, the checklist is considered stale and the build fails
+until the checklist is re-reviewed and the hash updated.
+
+### 1. Declare the checklist need
+
+Add a `req_chklst` element (e.g. next to the checklist `.rst`). It references the
+checklist document, the validated Bazel target(s), and the expected hash:
+
+```rst
+.. req_chklst:: Bitmanipulation Component Requirements Checklist
+   :id: req_chklst__bitmanipulation__comp_req
+   :status: valid
+   :checklist: doc__bitmanipulation_req_inspection
+   :targets: //:bitmanipulation_comp_reqs
+   :sha256: 0000000000000000000000000000000000000000000000000000000000000000
+```
+
+### 2. Declare the validation target
+
+```starlark
+load("@docs-as-code//:docs.bzl", "component_requirements", "requirements_checklist")
+
+component_requirements(
+    name = "bitmanipulation_comp_reqs",
+    component = "bitmanipulation",
+)
+
+requirements_checklist(
+    name = "bitmanipulation_req_checklist",
+    checklist_id = "req_chklst__bitmanipulation__comp_req",
+    deps = [":bitmanipulation_comp_reqs"],
+)
+```
+
+### 3. Validate
+
+```bash
+bazel build //:bitmanipulation_req_checklist
+```
+
+The build hashes the `deps` output and compares it to the `sha256` on the
+checklist need. On the first run (placeholder hash) the build **fails** and
+prints the actual hash — review the checklist, then paste that hash into the
+`sha256` attribute. From then on the build passes until the validated
+requirements change again, at which point it fails and asks for a re-review.

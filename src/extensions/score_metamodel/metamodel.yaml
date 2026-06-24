@@ -402,6 +402,30 @@ needs_types:
       - requirement_excl_process
     parts: 3
 
+  # Requirement Checklist
+  # A reviewable checklist element that pins the state of a set of build outputs
+  # (e.g. the extracted component requirements) via a SHA256 hash. It references
+  # the checklist document (the rendered `.rst`) and the Bazel target(s) whose
+  # output is validated against `sha256`. See the `requirements_checklist`
+  # Bazel rule in `docs.bzl`.
+  req_chklst:
+    title: Requirement Checklist
+    prefix: req_chklst__
+    mandatory_options:
+      # req-Id: tool_req__docs_common_attr_status
+      status: ^(valid|draft|invalid)$
+      # SHA256 (64 lowercase hex chars) of the concatenated target outputs that
+      # this checklist was reviewed against.
+      sha256: ^[0-9a-f]{64}$
+    optional_options:
+      # Bazel target label(s) whose output is validated against `sha256`.
+      # Multiple labels may be separated by spaces or commas.
+      targets: ^.*$
+    optional_links:
+      # Link to the checklist document (the rendered `.rst` checklist file).
+      checklist: document
+    parts: 3
+
   # - Architecture -
 
   # Architecture Element
@@ -992,6 +1016,11 @@ needs_extra_links:
   covers:
     incoming: covered by
     outgoing: covers
+
+  # Requirement Checklist -> checklist document (rendered .rst)
+  checklist:
+    incoming: is checklist for
+    outgoing: checklist document
 
   # Architecture
   consists_of:
