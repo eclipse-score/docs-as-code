@@ -99,7 +99,9 @@ def test_default_metamodel_contains_generic_verification_and_inspection_types():
     """Default metamodel contains generic module verification and inspection types."""
     result = load_metamodel_data()
 
-    needs_types = {need_type["directive"]: need_type for need_type in result.needs_types}
+    needs_types = {
+        need_type["directive"]: need_type for need_type in result.needs_types
+    }
 
     assert "mod_ver_report" in needs_types
     assert "mod_insp" in needs_types
