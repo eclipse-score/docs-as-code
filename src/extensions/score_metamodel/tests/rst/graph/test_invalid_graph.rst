@@ -23,7 +23,7 @@
    Checks if valid reqs only link to valid reqs
    Note: DISABLED ATM, due to check not being a 'full' warning yet
 
-      
+
 
 .. feat_req:: Parent requirement INVALID QM
    :id: feat_req__parent__QM_invalid

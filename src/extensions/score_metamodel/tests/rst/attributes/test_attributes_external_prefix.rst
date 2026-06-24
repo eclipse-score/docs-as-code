@@ -19,7 +19,7 @@
    :test_type: requirements_based
    :derivation_technique: requirements_based
    :check: check_options
-   
+
    Tests if metamodel defined 'options' regex are followed and adhered to and checked correctly
 
 .. Test: No external prefixes (single documentation mega-build)

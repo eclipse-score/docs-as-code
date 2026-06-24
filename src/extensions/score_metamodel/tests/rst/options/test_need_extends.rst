@@ -18,7 +18,7 @@
    :partially_verifies_list: LACKS TOOL REQ
    :test_type: requirements_based
    :derivation_technique: requirements_based
-   
+
    Tests if we correctly prohibit some usages of needextend
 
 
@@ -86,5 +86,5 @@
 .. This will be activated once we have activated the c.this_doc() check aswell
 .. #EXPECT[+2]: Potentially altering needs outside of the document is not allowed. Please add 'c.this_doc()' to the needextend to limit it to only needs in the same document
 
-.. .. needextend:: id == 'stkh_req__test__need_extends_1'
+.. .. needextend: id == 'stkh_req__test__need_extends_1'
 .. :security: QM

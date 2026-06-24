@@ -19,7 +19,7 @@
    :test_type: requirements_based
    :derivation_technique: requirements_based
    :check: check_options
-   
+
    Tests if metamodel link options are correclty checked
 
 
@@ -38,7 +38,7 @@
 .. FIXME: this will currently be printed as an INFO, and not as a warning.
       Re-enable EXCPECT once we can enable that as a warning.
 
-.. .. gd_req:: Cannot refer to non std_req element
+.. .. gd_req: Cannot refer to non std_req element
 ..    :id: gd_req__003
 ..    :complies: gd_req__001
 ..    :expect:  gd_req__003: references 'gd_req__001' as 'complies', but it must reference Standard Requirement (std_req).

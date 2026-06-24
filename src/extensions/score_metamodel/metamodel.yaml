@@ -21,9 +21,6 @@ needs_types_base_options:
     # For now giving grace periods to consumers
     # req-Id: tool_req__docs_common_attr_version
     version: ^[0-9]*$
-    # Used for RST file based testing
-    expect: ^.*$
-    expect_not: ^.*$ 
 
     # Custom semantic validation rules
 
@@ -922,18 +919,6 @@ needs_types:
       fully_verifies: ANY
       partially_verifies: ANY
 
-  test_metadata:
-    title: Test Metadata used in rst based tests
-    optional_options:
-      test_type: ^.*$
-      derivation_technique: ^.*$
-      # Which check should be activated for this file
-      check: ^.*$
-      # These can't be links, as these do not know of the ID's they link against.
-      # So they have to be options
-      fully_verifies_list: ANY
-      partially_verifies_list: ANY
-    parts: 2
 
   # https://eclipse-score.github.io/process_description/main/permalink.html?id=gd_temp__change_decision_record
   dec_rec:

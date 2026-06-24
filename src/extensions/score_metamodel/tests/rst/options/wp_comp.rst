@@ -19,7 +19,7 @@
    :test_type: requirements_based
    :derivation_technique: requirements_based
    :check: check_options
-   
+
    Tests if we correctly enforce mandatory options & links for workproducts
 
 
@@ -67,4 +67,3 @@
    :id: wp__003_two
    :complies: std_req__aspice_40__iic_001
    :expect_not: complies
-

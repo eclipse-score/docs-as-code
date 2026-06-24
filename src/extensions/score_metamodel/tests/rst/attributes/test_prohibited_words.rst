@@ -20,7 +20,7 @@
    :test_type: requirements_based
    :derivation_technique: requirements_based
    :check: check_for_prohibited_words
-   
+
    Tests if that the check of titles and descriptions for have probhieted words works as intended
 
 
@@ -82,7 +82,7 @@
 
 .. feat_arc_sta:: This is a test
    :id: feat_arc_sta__desc_good
-   :expect-not: content
+   :expect_not: content
 
    This should really work
 

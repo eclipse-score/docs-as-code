@@ -20,7 +20,7 @@
    :derivation_technique: requirements_based
    :check: check_options
 
-   This file tests if the architecture drawing logic we have is correct. 
+   This file tests if the architecture drawing logic we have is correct.
    And if all of the metamodel options for the reqs are correctly followed
 
 

@@ -171,6 +171,7 @@ def generic_pie_items_in_relationships(
     results.append(referenced_once)
     results.append(referenced_multiple)
 
+
 def _get_key_values(results: list[int], argument_paths: list[str]):
     """Append integer metric values selected by colon-separated paths.
 

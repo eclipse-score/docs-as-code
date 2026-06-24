@@ -19,7 +19,7 @@
    :test_type: requirements_based
    :derivation_technique: requirements_based
    :check: check_extra_options
-   
+
    Tests if we correctly enforce mandatory options & links
 
 ..
@@ -254,7 +254,7 @@
    :status: active
    :safety: QM
    :expect: doc__test_bad_status_1.status (active): does not follow pattern `^(valid|draft|invalid)$`.,
-      doc__test_bad_status_1: is missing required attribute: `security`., 
+      doc__test_bad_status_1: is missing required attribute: `security`.,
       doc__test_bad_status_1: is missing required link: `realizes`.
 
 

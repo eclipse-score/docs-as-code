@@ -18,7 +18,7 @@
    :test_type: requirements_based
    :derivation_technique: requirements_based
    :check: check_metamodel_graph
-   
+
    Tests if metamodel graph checks work as defined / intended
 
 
@@ -46,7 +46,7 @@
    :safety: QM
    :derived_from: feat_req__parent__QM
    :status: valid
-   :expect_not: safety requirement 
+   :expect_not: safety requirement
 
 
 .. Positive Test: Child requirement ASIL B. Parent requirement has the correct related safety level. Parent requirement is `QM`.
@@ -79,6 +79,3 @@
    :status: valid
    :derived_from: feat_req__parent0__abcd
    :expect: unknown outgoing link
-
-
-
