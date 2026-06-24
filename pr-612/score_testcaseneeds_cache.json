@@ -2212,6 +2212,20 @@
     "FullyVerifies": null
   },
   {
+    "name": "test_rules_file_based__test_rst_files[options/test_options_verification_evidence.rst]",
+    "file": "src/extensions/score_metamodel/tests/test_rules_file_based.py",
+    "line": "255",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
     "name": "test_rules_file_based__test_rst_files[options/test_options_options.rst]",
     "file": "src/extensions/score_metamodel/tests/test_rules_file_based.py",
     "line": "255",
