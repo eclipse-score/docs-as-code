@@ -1,0 +1,2518 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Requirement Test Coverage &#8212; Score Docs-as-Code  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/score.css?v=bb63a8e1" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/score_needs.css?v=82a1844f" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/score_design.css?v=8048e6ee" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-data-viewer/jsonview.bundle.css?v=f6ef2277" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/libs/html/datatables.min.css?v=4b4fd840" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/needstable.css?v=5e1b6797" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_links.css?v=2150a916" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_style.css?v=92936fa5" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_core.css?v=f5b60a78" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_toggle.css?v=5c6620df" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/modern.css?v=803738c0" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=7f76b32a3354e82990f2"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
+
+    <script src="../../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../../_static/documentation_options.js?v=7f41d439"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script src="../../_static/sphinx-data-viewer/jsonview.bundle.js?v=18cd53c5"></script>
+    <script src="../../_static/sphinx-data-viewer/jsonview_loader.js?v=f7ff7e7d"></script>
+    <script src="../../_static/sphinx-needs/libs/html/datatables.min.js?v=8a4aee21"></script>
+    <script src="../../_static/sphinx-needs/libs/html/datatables_loader.js?v=a2cae175"></script>
+    <script src="../../_static/sphinx-needs/libs/html/sphinx_needs_collapse.js?v=dca66431"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'internals/requirements/requirement_coverage';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.17.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://eclipse-score.github.io/docs-as-code/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Tooling Verification" href="tooling_verification.html" />
+    <link rel="prev" title="Tool Requirements" href="requirements.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.1" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">Eclipse S-CORE</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../how-to/index.html">
+    How To
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../reference/index.html">
+    Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../concepts/index.html">
+    Concepts
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Internals
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eclipse-score" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../how-to/index.html">
+    How To
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../reference/index.html">
+    Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../concepts/index.html">
+    Concepts
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Internals
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eclipse-score" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../extensions/index.html">Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../benchmark_results.html">Bazel Mini Benchmark Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../decisions/index.html">Decisions And Concepts</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Requirements</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="capabilities.html">Capabilities - A High Level Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="process_overview.html">Process Requirements Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="requirements.html">Tool Requirements</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Requirement Test Coverage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tooling_verification.html">Tooling Verification</a></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Internals</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Requirements</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Requirement Test Coverage</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="requirement-test-coverage">
+<span id="docs-requirement-coverage"></span><h1>Requirement Test Coverage<a class="headerlink" href="#requirement-test-coverage" title="Link to this heading">#</a></h1>
+<p>This page shows which requirements are linked to tests and which have code
+links.
+The numbers shown here come from the same <code class="docutils literal notranslate"><span class="pre">score_metrics</span></code> calculations used
+by CI quality gates — they will always match.</p>
+<section id="overall-coverage">
+<h2>Overall Coverage<a class="headerlink" href="#overall-coverage" title="Link to this heading">#</a></h2>
+<img alt="../../_images/need_pie_ac098.svg" id="needpie-internals/requirements/requirement_coverage-0" src="../../_images/need_pie_ac098.svg" />
+<img alt="../../_images/need_pie_e0928.svg" id="needpie-internals/requirements/requirement_coverage-1" src="../../_images/need_pie_e0928.svg" />
+</section>
+<section id="requirement-test-traceability">
+<h2>Requirement → Test Traceability<a class="headerlink" href="#requirement-test-traceability" title="Link to this heading">#</a></h2>
+<div class="needstable_wrapper docutils container" id="needtable-internals/requirements/requirement_coverage-0">
+<div class="pst-scrollable-table-container"><table class="NEEDS_TABLE table" id="needtable-internals/requirements/requirement_coverage-0-table_node">
+<caption><span class="caption-text">All tool_req with Linkage Status</span><a class="headerlink" href="#needtable-internals/requirements/requirement_coverage-0-table_node" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>ID</p></th>
+<th class="head"><p>Testlink</p></th>
+<th class="head"><p>Source Code Link</p></th>
+<th class="head"><p>Implemented</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_arch_attr_mandatory">tool_req__docs_arch_attr_mandatory</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/checks/check_options.py#L211">src/extensions/score_metamodel/checks/check_options.py:211</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_arch_link_aou_check">tool_req__docs_arch_link_aou_check</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p></p></td>
+<td class="needs_implemented"><p>NO</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_arch_link_fulfils">tool_req__docs_arch_link_fulfils</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L445">src/extensions/score_metamodel/metamodel.yaml:445</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L596">src/extensions/score_metamodel/metamodel.yaml:596</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_arch_link_fulfils_aou">tool_req__docs_arch_link_fulfils_aou</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L445">src/extensions/score_metamodel/metamodel.yaml:445</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L596">src/extensions/score_metamodel/metamodel.yaml:596</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_arch_link_qm_to_safety_req">tool_req__docs_arch_link_qm_to_safety_req</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L1084">src/extensions/score_metamodel/metamodel.yaml:1084</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_arch_link_safety_to_req">tool_req__docs_arch_link_safety_to_req</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_arch_link_security">tool_req__docs_arch_link_security</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L1108">src/extensions/score_metamodel/metamodel.yaml:1108</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_arch_types">tool_req__docs_arch_types</a></p></td>
+<td class="needs_testlink"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/tests/rst/architecture/architecture_tests#L16">test_rules_file_based__test_rst_files[architecture/architecture_tests.rst]</a></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L430">src/extensions/score_metamodel/metamodel.yaml:430</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L475">src/extensions/score_metamodel/metamodel.yaml:475</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L497">src/extensions/score_metamodel/metamodel.yaml:497</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L625">src/extensions/score_metamodel/metamodel.yaml:625</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L647">src/extensions/score_metamodel/metamodel.yaml:647</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_arch_views">tool_req__docs_arch_views</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L431">src/extensions/score_metamodel/metamodel.yaml:431</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L454">src/extensions/score_metamodel/metamodel.yaml:454</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L476">src/extensions/score_metamodel/metamodel.yaml:476</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L536">src/extensions/score_metamodel/metamodel.yaml:536</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L582">src/extensions/score_metamodel/metamodel.yaml:582</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L605">src/extensions/score_metamodel/metamodel.yaml:605</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L626">src/extensions/score_metamodel/metamodel.yaml:626</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_common_attr_desc_wording">tool_req__docs_common_attr_desc_wording</a></p></td>
+<td class="needs_testlink"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/tests/rst/attributes/test_prohibited_words#L17">test_rules_file_based__test_rst_files[attributes/test_prohibited_words.rst]</a></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/checks/attributes_format.py#L109">src/extensions/score_metamodel/checks/attributes_format.py:109</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L44">src/extensions/score_metamodel/metamodel.yaml:44</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_common_attr_description">tool_req__docs_common_attr_description</a></p></td>
+<td class="needs_testlink"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/tests/test_check_options.py#L93">TestCheckOptions__test_unknown_option_present_in_neither_req_opt_neither_opt_opt</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/tests/test_metamodel__init__.py#L45">test_metamodel__init____test_returns_empty_list_when_filter_is_empty</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/tests/test_metamodel__init__.py#L55">test_metamodel__init____test_returns_valid_checks</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/tests/test_metamodel__init__.py#L66">test_metamodel__init____test_strips_whitespace</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/tests/test_metamodel__init__.py#L77">test_metamodel__init____test_raises_assertion_for_invalid_check</a></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L130">src/extensions/score_metamodel/metamodel.yaml:130</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L293">src/extensions/score_metamodel/metamodel.yaml:293</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L330">src/extensions/score_metamodel/metamodel.yaml:330</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L357">src/extensions/score_metamodel/metamodel.yaml:357</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L392">src/extensions/score_metamodel/metamodel.yaml:392</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L687">src/extensions/score_metamodel/metamodel.yaml:687</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L708">src/extensions/score_metamodel/metamodel.yaml:708</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L857">src/extensions/score_metamodel/metamodel.yaml:857</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L878">src/extensions/score_metamodel/metamodel.yaml:878</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L897">src/extensions/score_metamodel/metamodel.yaml:897</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_common_attr_id">tool_req__docs_common_attr_id</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_common_attr_id_scheme">tool_req__docs_common_attr_id_scheme</a></p></td>
+<td class="needs_testlink"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/tests/rst/id_contains_feature/test_id_contains_feature#L16">test_rules_file_based__test_rst_files[id_contains_feature/test_id_contains_feature.rst]</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/tests/rst/attributes/test_attributes_format_id_format#L16">test_rules_file_based__test_rst_files[attributes/test_attributes_format_id_format.rst]</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/tests/rst/attributes/test_attributes_external_prefix#L16">test_rules_file_based__test_rst_files[attributes/test_attributes_external_prefix.rst]</a></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/checks/attributes_format.py#L30">src/extensions/score_metamodel/checks/attributes_format.py:30</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_common_attr_safety">tool_req__docs_common_attr_safety</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/checks/check_options.py#L208">src/extensions/score_metamodel/checks/check_options.py:208</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L256">src/extensions/score_metamodel/metamodel.yaml:256</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L289">src/extensions/score_metamodel/metamodel.yaml:289</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L326">src/extensions/score_metamodel/metamodel.yaml:326</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L388">src/extensions/score_metamodel/metamodel.yaml:388</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L417">src/extensions/score_metamodel/metamodel.yaml:417</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L439">src/extensions/score_metamodel/metamodel.yaml:439</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L462">src/extensions/score_metamodel/metamodel.yaml:462</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L484">src/extensions/score_metamodel/metamodel.yaml:484</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L505">src/extensions/score_metamodel/metamodel.yaml:505</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L525">src/extensions/score_metamodel/metamodel.yaml:525</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L566">src/extensions/score_metamodel/metamodel.yaml:566</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L590">src/extensions/score_metamodel/metamodel.yaml:590</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L613">src/extensions/score_metamodel/metamodel.yaml:613</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L634">src/extensions/score_metamodel/metamodel.yaml:634</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L655">src/extensions/score_metamodel/metamodel.yaml:655</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_common_attr_safety_link_check">tool_req__docs_common_attr_safety_link_check</a></p></td>
+<td class="needs_testlink"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/tests/rst/graph/test_metamodel_graph#L15">test_rules_file_based__test_rst_files[graph/test_metamodel_graph.rst]</a></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L1074">src/extensions/score_metamodel/metamodel.yaml:1074</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_common_attr_security">tool_req__docs_common_attr_security</a></p></td>
+<td class="needs_testlink"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/tests/test_check_options.py#L69">TestCheckOptions__test_unknown_directive</a></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/checks/check_options.py#L207">src/extensions/score_metamodel/checks/check_options.py:207</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L264">src/extensions/score_metamodel/metamodel.yaml:264</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L287">src/extensions/score_metamodel/metamodel.yaml:287</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L324">src/extensions/score_metamodel/metamodel.yaml:324</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L386">src/extensions/score_metamodel/metamodel.yaml:386</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L415">src/extensions/score_metamodel/metamodel.yaml:415</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L437">src/extensions/score_metamodel/metamodel.yaml:437</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L460">src/extensions/score_metamodel/metamodel.yaml:460</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L482">src/extensions/score_metamodel/metamodel.yaml:482</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L503">src/extensions/score_metamodel/metamodel.yaml:503</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L523">src/extensions/score_metamodel/metamodel.yaml:523</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L564">src/extensions/score_metamodel/metamodel.yaml:564</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L588">src/extensions/score_metamodel/metamodel.yaml:588</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L611">src/extensions/score_metamodel/metamodel.yaml:611</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L632">src/extensions/score_metamodel/metamodel.yaml:632</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L653">src/extensions/score_metamodel/metamodel.yaml:653</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_common_attr_status">tool_req__docs_common_attr_status</a></p></td>
+<td class="needs_testlink"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/tests/rst/options/test_options_options#L16">test_rules_file_based__test_rst_files[options/test_options_options.rst]</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/tests/rst/options/test_options_extra_option#L16">test_rules_file_based__test_rst_files[options/test_options_extra_option.rst]</a></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/checks/check_options.py#L209">src/extensions/score_metamodel/checks/check_options.py:209</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L258">src/extensions/score_metamodel/metamodel.yaml:258</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L291">src/extensions/score_metamodel/metamodel.yaml:291</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L328">src/extensions/score_metamodel/metamodel.yaml:328</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L390">src/extensions/score_metamodel/metamodel.yaml:390</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L419">src/extensions/score_metamodel/metamodel.yaml:419</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L441">src/extensions/score_metamodel/metamodel.yaml:441</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L464">src/extensions/score_metamodel/metamodel.yaml:464</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L486">src/extensions/score_metamodel/metamodel.yaml:486</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L507">src/extensions/score_metamodel/metamodel.yaml:507</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L527">src/extensions/score_metamodel/metamodel.yaml:527</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L568">src/extensions/score_metamodel/metamodel.yaml:568</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L592">src/extensions/score_metamodel/metamodel.yaml:592</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L615">src/extensions/score_metamodel/metamodel.yaml:615</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L636">src/extensions/score_metamodel/metamodel.yaml:636</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L657">src/extensions/score_metamodel/metamodel.yaml:657</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_common_attr_suspicious">tool_req__docs_common_attr_suspicious</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p></p></td>
+<td class="needs_implemented"><p>NO</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_common_attr_title">tool_req__docs_common_attr_title</a></p></td>
+<td class="needs_testlink"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/tests/rst/attributes/test_prohibited_words#L17">test_rules_file_based__test_rst_files[attributes/test_prohibited_words.rst]</a></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/checks/attributes_format.py#L110">src/extensions/score_metamodel/checks/attributes_format.py:110</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L38">src/extensions/score_metamodel/metamodel.yaml:38</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_common_attr_version">tool_req__docs_common_attr_version</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L22">src/extensions/score_metamodel/metamodel.yaml:22</a></p></td>
+<td class="needs_implemented"><p>PARTIAL</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_dd_feature_flag">tool_req__docs_dd_feature_flag</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p></p></td>
+<td class="needs_implemented"><p>NO</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_dd_link_source_code_link">tool_req__docs_dd_link_source_code_link</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L17">src/extensions/score_metamodel/metamodel.yaml:17</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_source_code_linker/__init__.py#L20">src/extensions/score_source_code_linker/__init__.py:20</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_source_code_linker/need_source_links.py#L20">src/extensions/score_source_code_linker/need_source_links.py:20</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_source_code_linker/needlinks.py#L13">src/extensions/score_source_code_linker/needlinks.py:13</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_doc_attr">tool_req__docs_doc_attr</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L216">src/extensions/score_metamodel/metamodel.yaml:216</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L238">src/extensions/score_metamodel/metamodel.yaml:238</a></p></td>
+<td class="needs_implemented"><p>NO</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_doc_attr_approver_autofill">tool_req__docs_doc_attr_approver_autofill</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p></p></td>
+<td class="needs_implemented"><p>NO</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_doc_attr_author_autofill">tool_req__docs_doc_attr_author_autofill</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p></p></td>
+<td class="needs_implemented"><p>NO</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_doc_attr_reviewer_autofill">tool_req__docs_doc_attr_reviewer_autofill</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p></p></td>
+<td class="needs_implemented"><p>NO</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_doc_generic_mandatory">tool_req__docs_doc_generic_mandatory</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L210">src/extensions/score_metamodel/metamodel.yaml:210</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L220">src/extensions/score_metamodel/metamodel.yaml:220</a></p></td>
+<td class="needs_implemented"><p>PARTIAL</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_doc_types">tool_req__docs_doc_types</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L206">src/extensions/score_metamodel/metamodel.yaml:206</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L225">src/extensions/score_metamodel/metamodel.yaml:225</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_req_arch_link_safety_to_arch">tool_req__docs_req_arch_link_safety_to_arch</a></p></td>
+<td class="needs_testlink"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/tests/rst/graph/test_invalid_graph#L16">test_rules_file_based__test_rst_files[graph/test_invalid_graph.rst]</a></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L1093">src/extensions/score_metamodel/metamodel.yaml:1093</a></p></td>
+<td class="needs_implemented"><p>PARTIAL</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_req_attr_rationale">tool_req__docs_req_attr_rationale</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/checks/check_options.py#L210">src/extensions/score_metamodel/checks/check_options.py:210</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L262">src/extensions/score_metamodel/metamodel.yaml:262</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_req_attr_reqcov">tool_req__docs_req_attr_reqcov</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L267">src/extensions/score_metamodel/metamodel.yaml:267</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L305">src/extensions/score_metamodel/metamodel.yaml:305</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L343">src/extensions/score_metamodel/metamodel.yaml:343</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L365">src/extensions/score_metamodel/metamodel.yaml:365</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L395">src/extensions/score_metamodel/metamodel.yaml:395</a></p></td>
+<td class="needs_implemented"><p>PARTIAL</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_req_attr_reqtype">tool_req__docs_req_attr_reqtype</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/checks/check_options.py#L206">src/extensions/score_metamodel/checks/check_options.py:206</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L254">src/extensions/score_metamodel/metamodel.yaml:254</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L285">src/extensions/score_metamodel/metamodel.yaml:285</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L322">src/extensions/score_metamodel/metamodel.yaml:322</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L384">src/extensions/score_metamodel/metamodel.yaml:384</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_req_attr_testcov">tool_req__docs_req_attr_testcov</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L269">src/extensions/score_metamodel/metamodel.yaml:269</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L307">src/extensions/score_metamodel/metamodel.yaml:307</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L345">src/extensions/score_metamodel/metamodel.yaml:345</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L367">src/extensions/score_metamodel/metamodel.yaml:367</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L397">src/extensions/score_metamodel/metamodel.yaml:397</a></p></td>
+<td class="needs_implemented"><p>PARTIAL</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_req_attr_validity_consistency">tool_req__docs_req_attr_validity_consistency</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/checks/check_options.py#L281">src/extensions/score_metamodel/checks/check_options.py:281</a></p></td>
+<td class="needs_implemented"><p>PARTIAL</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_req_attr_validity_correctness">tool_req__docs_req_attr_validity_correctness</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L272">src/extensions/score_metamodel/metamodel.yaml:272</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L310">src/extensions/score_metamodel/metamodel.yaml:310</a></p></td>
+<td class="needs_implemented"><p>PARTIAL</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_req_link_covers_aou">tool_req__docs_req_link_covers_aou</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L302">src/extensions/score_metamodel/metamodel.yaml:302</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L340">src/extensions/score_metamodel/metamodel.yaml:340</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L992">src/extensions/score_metamodel/metamodel.yaml:992</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_req_link_satisfies_allowed">tool_req__docs_req_link_satisfies_allowed</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L133">src/extensions/score_metamodel/metamodel.yaml:133</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L296">src/extensions/score_metamodel/metamodel.yaml:296</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L333">src/extensions/score_metamodel/metamodel.yaml:333</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L360">src/extensions/score_metamodel/metamodel.yaml:360</a></p></td>
+<td class="needs_implemented"><p>PARTIAL</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_req_types">tool_req__docs_req_types</a></p></td>
+<td class="needs_testlink"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/tests/rst/options/gd_req_comp#L16">test_rules_file_based__test_rst_files[options/gd_req_comp.rst]</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/tests/rst/options/test_options_options#L16">test_rules_file_based__test_rst_files[options/test_options_options.rst]</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/tests/rst/options/test_options_extra_option#L16">test_rules_file_based__test_rst_files[options/test_options_extra_option.rst]</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/tests/rst/attributes/test_attributes_format_id_length#L16">test_rules_file_based__test_rst_files[attributes/test_attributes_format_id_length.rst]</a></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L126">src/extensions/score_metamodel/metamodel.yaml:126</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L250">src/extensions/score_metamodel/metamodel.yaml:250</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L280">src/extensions/score_metamodel/metamodel.yaml:280</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L318">src/extensions/score_metamodel/metamodel.yaml:318</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L353">src/extensions/score_metamodel/metamodel.yaml:353</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L380">src/extensions/score_metamodel/metamodel.yaml:380</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_attr_dfa_failure_id">tool_req__docs_saf_attr_dfa_failure_id</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L701">src/extensions/score_metamodel/metamodel.yaml:701</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L729">src/extensions/score_metamodel/metamodel.yaml:729</a></p></td>
+<td class="needs_implemented"><p>NO</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_attr_fmea_failure_effect">tool_req__docs_saf_attr_fmea_failure_effect</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p></p></td>
+<td class="needs_implemented"><p>NO</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_attr_fmea_fault_id">tool_req__docs_saf_attr_fmea_fault_id</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L757">src/extensions/score_metamodel/metamodel.yaml:757</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L784">src/extensions/score_metamodel/metamodel.yaml:784</a></p></td>
+<td class="needs_implemented"><p>NO</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_attrs_content">tool_req__docs_saf_attrs_content</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L707">src/extensions/score_metamodel/metamodel.yaml:707</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L735">src/extensions/score_metamodel/metamodel.yaml:735</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L763">src/extensions/score_metamodel/metamodel.yaml:763</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L790">src/extensions/score_metamodel/metamodel.yaml:790</a></p></td>
+<td class="needs_implemented"><p>NO</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_attrs_mandatory">tool_req__docs_saf_attrs_mandatory</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_attrs_mitigated_by">tool_req__docs_saf_attrs_mitigated_by</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L717">src/extensions/score_metamodel/metamodel.yaml:717</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L744">src/extensions/score_metamodel/metamodel.yaml:744</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L772">src/extensions/score_metamodel/metamodel.yaml:772</a></p></td>
+<td class="needs_implemented"><p>NO</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_attrs_mitigation_issue">tool_req__docs_saf_attrs_mitigation_issue</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L714">src/extensions/score_metamodel/metamodel.yaml:714</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L738">src/extensions/score_metamodel/metamodel.yaml:738</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L766">src/extensions/score_metamodel/metamodel.yaml:766</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L793">src/extensions/score_metamodel/metamodel.yaml:793</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_attrs_sufficient">tool_req__docs_saf_attrs_sufficient</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L704">src/extensions/score_metamodel/metamodel.yaml:704</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L732">src/extensions/score_metamodel/metamodel.yaml:732</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L760">src/extensions/score_metamodel/metamodel.yaml:760</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L787">src/extensions/score_metamodel/metamodel.yaml:787</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_attrs_sufficient_check">tool_req__docs_saf_attrs_sufficient_check</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p></p></td>
+<td class="needs_implemented"><p>NO</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_attrs_violates">tool_req__docs_saf_attrs_violates</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L711">src/extensions/score_metamodel/metamodel.yaml:711</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L741">src/extensions/score_metamodel/metamodel.yaml:741</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L769">src/extensions/score_metamodel/metamodel.yaml:769</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L796">src/extensions/score_metamodel/metamodel.yaml:796</a></p></td>
+<td class="needs_implemented"><p>NO</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_types">tool_req__docs_saf_types</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L697">src/extensions/score_metamodel/metamodel.yaml:697</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L725">src/extensions/score_metamodel/metamodel.yaml:725</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L753">src/extensions/score_metamodel/metamodel.yaml:753</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L780">src/extensions/score_metamodel/metamodel.yaml:780</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_sec_attr_stride_threat_id">tool_req__docs_sec_attr_stride_threat_id</a></p></td>
+<td class="needs_testlink"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/tests/rst/attributes/test_validity#L16">test_rules_file_based__test_rst_files[attributes/test_validity.rst]</a></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L810">src/extensions/score_metamodel/metamodel.yaml:810</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L823">src/extensions/score_metamodel/metamodel.yaml:823</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L836">src/extensions/score_metamodel/metamodel.yaml:836</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_sec_attrs_mandatory">tool_req__docs_sec_attrs_mandatory</a></p></td>
+<td class="needs_testlink"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/tests/rst/attributes/test_validity#L16">test_rules_file_based__test_rst_files[attributes/test_validity.rst]</a></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L849">src/extensions/score_metamodel/metamodel.yaml:849</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L851">src/extensions/score_metamodel/metamodel.yaml:851</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L853">src/extensions/score_metamodel/metamodel.yaml:853</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L855">src/extensions/score_metamodel/metamodel.yaml:855</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_sec_attrs_optional">tool_req__docs_sec_attrs_optional</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L860">src/extensions/score_metamodel/metamodel.yaml:860</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L863">src/extensions/score_metamodel/metamodel.yaml:863</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_sec_types">tool_req__docs_sec_types</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L806">src/extensions/score_metamodel/metamodel.yaml:806</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L819">src/extensions/score_metamodel/metamodel.yaml:819</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L832">src/extensions/score_metamodel/metamodel.yaml:832</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L845">src/extensions/score_metamodel/metamodel.yaml:845</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L870">src/extensions/score_metamodel/metamodel.yaml:870</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L889">src/extensions/score_metamodel/metamodel.yaml:889</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_stdreq_types">tool_req__docs_stdreq_types</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L91">src/extensions/score_metamodel/metamodel.yaml:91</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_stdwp_types">tool_req__docs_stdwp_types</a></p></td>
+<td class="needs_testlink"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/tests/rst/graph/test_workproduct_aspice_40#L16">test_rules_file_based__test_rst_files[graph/test_workproduct_aspice_40.rst]</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/tests/rst/options/wp_comp#L16">test_rules_file_based__test_rst_files[options/wp_comp.rst]</a></p></td>
+<td class="needs_source_code_link"><p></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_test_link_testcase">tool_req__docs_test_link_testcase</a></p></td>
+<td class="needs_testlink"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_source_code_linker/tests/test_testlink.py#L40">test_testlink__test_testlink_serialization_roundtrip</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_source_code_linker/tests/test_testlink.py#L73">test_testlink__test_decoder_ignores_irrelevant_dicts</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_source_code_linker/tests/test_testlink.py#L85">test_testlink__test_clean_text_removes_ansi_and_html_unescapes</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_source_code_linker/tests/test_testlink.py#L100">test_testlink__test_testcaseneed_to_dict_multiple_links</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_source_code_linker/tests/test_testlink.py#L142">test_testlink__test_store_and_load_testlinks_roundtrip</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L154">test_xml_parser__test_find_xml_files</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L229">test_xml_parser__test_parse_testcase_result</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L251">test_xml_parser__test_parse_properties</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L267">test_xml_parser__test_read_test_xml_file</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L327">test_xml_parser__test_short_hash_consistency_and_format</a></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_source_code_linker/__init__.py#L19">src/extensions/score_source_code_linker/__init__.py:19</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_source_code_linker/need_source_links.py#L19">src/extensions/score_source_code_linker/need_source_links.py:19</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_source_code_linker/testlink.py#L21">src/extensions/score_source_code_linker/testlink.py:21</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_source_code_linker/xml_parser.py#L19">src/extensions/score_source_code_linker/xml_parser.py:19</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_test_linkage_metrics">tool_req__docs_test_linkage_metrics</a></p></td>
+<td class="needs_testlink"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metrics/tests/test_traceability_metrics.py#L26">test_traceability_metrics__test_get_need_types_by_tags_returns_matching_directives_only</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metrics/tests/test_traceability_metrics.py#L87">test_traceability_metrics__test_get_need_types_by_tags_returns_empty_on_non_match</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[  -False]</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[text-True]</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[value2-False]</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[value3-True]</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[0-False]</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[1-True]</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[None-False]</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metrics/tests/test_traceability_metrics.py#L141">test_traceability_metrics__test_safe_percent_zero[3-0-100.0]</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metrics/tests/test_traceability_metrics.py#L141">test_traceability_metrics__test_safe_percent_zero[1-4-25.0]</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metrics/tests/test_traceability_metrics.py#L155">test_traceability_metrics__test_calculate_requirement_metrics_counts_links_and_missing_ids</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metrics/tests/test_traceability_metrics.py#L181">test_traceability_metrics__test_calculate_requirement_metrics_non_fully_linked</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metrics/tests/test_traceability_metrics.py#L207">test_traceability_metrics__test_calculate_requirement_metrics_non_fully_linked_2</a><em>; </em><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metrics/tests/test_traceability_metrics.py#L233">test_traceability_metrics__test_calculate_test_metrics_counts_linked_tests_and_broken_refs</a></p></td>
+<td class="needs_source_code_link"><p></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_test_metadata_link_levels">tool_req__docs_test_metadata_link_levels</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p></p></td>
+<td class="needs_implemented"><p>NO</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_test_metadata_mandatory_1">tool_req__docs_test_metadata_mandatory_1</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p></p></td>
+<td class="needs_implemented"><p>NO</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_test_metadata_mandatory_2">tool_req__docs_test_metadata_mandatory_2</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p></p></td>
+<td class="needs_implemented"><p>NO</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_tvr_confidence_level">tool_req__docs_tvr_confidence_level</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L235">src/extensions/score_metamodel/metamodel.yaml:235</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_tvr_safety">tool_req__docs_tvr_safety</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L231">src/extensions/score_metamodel/metamodel.yaml:231</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_tvr_security">tool_req__docs_tvr_security</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L233">src/extensions/score_metamodel/metamodel.yaml:233</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_tvr_status">tool_req__docs_tvr_status</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L229">src/extensions/score_metamodel/metamodel.yaml:229</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_tvr_version">tool_req__docs_tvr_version</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L243">src/extensions/score_metamodel/metamodel.yaml:243</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_wf_types">tool_req__docs_wf_types</a></p></td>
+<td class="needs_testlink"><p></p></td>
+<td class="needs_source_code_link"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/metamodel.yaml#L109">src/extensions/score_metamodel/metamodel.yaml:109</a></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_id"><p><a class="reference internal" href="requirements.html#tool_req__docs_wp_types">tool_req__docs_wp_types</a></p></td>
+<td class="needs_testlink"><p><a class="reference external" href="https://github.com/MaximilianSoerenPollak/docs-as-code/blob/9ca89378d3fb5b7c816dfe8118611641292c5b75/src/extensions/score_metamodel/tests/rst/options/wp_comp#L16">test_rules_file_based__test_rst_files[options/wp_comp.rst]</a></p></td>
+<td class="needs_source_code_link"><p></p></td>
+<td class="needs_implemented"><p>YES</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="test-requirement-traceability">
+<h2>Test → Requirement Traceability<a class="headerlink" href="#test-requirement-traceability" title="Link to this heading">#</a></h2>
+<div class="needstable_wrapper docutils container" id="needtable-internals/requirements/requirement_coverage-1">
+<div class="pst-scrollable-table-container"><table class="NEEDS_TABLE table" id="needtable-internals/requirements/requirement_coverage-1-table_node">
+<caption><span class="caption-text">All Testcases with Covered Requirements</span><a class="headerlink" href="#needtable-internals/requirements/requirement_coverage-1-table_node" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 20.0%" />
+<col style="width: 20.0%" />
+<col style="width: 20.0%" />
+<col style="width: 20.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Testcase</p></th>
+<th class="head"><p>Fully Verifies</p></th>
+<th class="head"><p>Partially Verifies</p></th>
+<th class="head"><p>Test Type</p></th>
+<th class="head"><p>Derivation Technique</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="need row-even"><td class="needs_name"><p>generate_sourcelinks_cli_test__test_clean_external_prefix[input_path0-expected_output0]</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>generate_sourcelinks_cli_test__test_clean_external_prefix[input_path1-expected_output1]</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>generate_sourcelinks_cli_test__test_clean_external_prefix[input_path2-expected_output2]</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>generate_sourcelinks_cli_test__test_clean_external_prefix[input_path3-expected_output3]</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>generate_sourcelinks_cli_test__test_clean_external_prefix[input_path4-expected_output4]</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>generate_sourcelinks_cli_test__test_generate_sourcelinks_cli_basic</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>generate_sourcelinks_cli_test__test_generate_sourcelinks_cli_file_not_exists</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>generate_sourcelinks_cli_test__test_generate_sourcelinks_cli_parse_external_module</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>incremental_dirty_build_test__test_clean_is_noop_when_build_dir_is_absent</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>incremental_dirty_build_test__test_clean_is_noop_when_warnings_txt_is_absent</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>incremental_dirty_build_test__test_clean_keeps_build_dir_when_warnings_txt_is_empty</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>incremental_dirty_build_test__test_clean_removes_build_dir_when_previous_build_had_warnings</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>incremental_dirty_build_test__test_missing_hash_file_triggers_clean</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>incremental_dirty_build_test__test_module_change_after_successful_build_forces_clean</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>incremental_dirty_build_test__test_module_changed_keeps_build_dir_when_all_sentinel_files_unchanged</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>incremental_dirty_build_test__test_module_changed_removes_build_dir_when_one_sentinel_file_changed</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>merge_sourcelinks_test__test_merge_sourcelinks_basic</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>merge_sourcelinks_test__test_merge_sourcelinks_with_known_good</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>merge_sourcelinks_test__test_merge_sourcelinks_with_one_empty_file</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>merge_sourcelinks_test__test_merge_sourcelinks_wrong_schema</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_check_options__test_milestone_parsing</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_codelink__test_cache_file_operations</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_codelink__test_cache_file_with_encoded_comments</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_codelink__test_find_need_direct_match</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_codelink__test_find_need_not_found</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_codelink__test_get_cache_filename</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_codelink__test_group_by_need_and_find_need_integration</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_codelink__test_group_by_need</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_codelink__test_group_by_need_empty_list</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_codelink__test_is_metadata_missing_keys</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_codelink__test_json_format_with_metadata_has_separate_dict</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_codelink__test_load_resolves_relative_path_with_env_var</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_codelink__test_load_validates_all_items_are_needlinks</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_codelink__test_load_validates_list_type</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_codelink__test_load_with_metadata_invalid_items_after_metadata</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_codelink__test_load_with_metadata_missing_metadata_dict</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_codelink__test_load_with_metadata_resolves_relative_path</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_codelink__test_multiple_commits_hash_consistency</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_codelink__test_need</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_codelink__test_needlink_decoder_non_needlink_dict</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_codelink__test_needlink_decoder_with_all_fields</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_codelink__test_needlink_encoder_includes_metadata</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_codelink__test_needlink_equality_same_values</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_codelink__test_needlink_inequality_different_values</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_codelink__test_needlink_to_dict_full</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_codelink__test_needlink_to_dict_without_metadata</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_codelink__test_roundtrip_empty_lists</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_codelink__test_roundtrip_metadata_format_applies_metadata</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_codelink__test_roundtrip_standard_format</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_codelink__test_source_linker_end_to_end_with_real_files</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_codelink__test_store_and_load_with_metadata</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_external_needs__test_add_external_docs_sources_adds_collection</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_external_needs__test_add_external_docs_sources_ide_support_returns_without_changes</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_external_needs__test_add_external_needs_json_appends_entry</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_external_needs__test_add_external_needs_json_missing_file_keeps_list_empty</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_external_needs__test_empty_list</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_external_needs__test_external_str_does_not_start_with_at</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_external_needs__test_invalid_entry</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_external_needs__test_multiple_entries_2</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_external_needs__test_multiple_entries</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_external_needs__test_single_entry_json_no_path</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_external_needs__test_single_entry_no_path</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_external_needs__test_single_entry_with_path</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_graph_checks__test_eval_need_check_invalid_check_parts_raises_value_error</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_graph_checks__test_eval_need_check_missing_attribute_logs_and_returns_false</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_graph_checks__test_eval_need_check_unknown_operator_raises_value_error</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_graph_checks__test_eval_need_condition_and_or_xor_branches</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_graph_checks__test_eval_need_condition_invalid_type_raises_value_error</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_graph_checks__test_eval_need_condition_not_with_wrong_operand_count_raises_value_error</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_graph_checks__test_filter_needs_by_criteria_invalid</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_graph_checks__test_filter_needs_by_criteria_unknown_type_logs_warning</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_graph_checks__test_need</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_helper_lib__test_config_setdefault_does_not_overwrite_user_value</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_helper_lib__test_config_setdefault_sets_when_not_in_raw_config</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_helper_lib__test_get_current_git_hash</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_helper_lib__test_get_current_git_hash_invalid_repo</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_helper_lib__test_get_github_repo_info_https_remote</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_helper_lib__test_get_github_repo_info_multiple_remotes</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_helper_lib__test_get_github_repo_info_ssh_remote</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_helper_lib__test_git_operations_with_no_commits</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_helper_lib__test_git_repo_with_no_remotes</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_helper_lib__test_git_root_search_not_found</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_helper_lib__test_git_root_search_success</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_helper_lib__test_parse_git_output_empty_string</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_helper_lib__test_parse_git_output_https_format</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_helper_lib__test_parse_git_output_invalid_format</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_helper_lib__test_parse_git_output_ssh_format</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_helper_lib__test_parse_git_output_ssh_format_without_git_suffix</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_helper_lib__test_runfiles_dir_found</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_helper_lib__test_runfiles_dir_missing_triggers_exit</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_helpers__test_complete_workflow</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_helpers__test_get_github_link_from_json_happy_path</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_helpers__test_get_github_link_from_json_with_line_zero</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_helpers__test_get_github_link_from_json_with_none_link</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_helpers__test_get_github_link_with_hash</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_helpers__test_get_github_link_with_real_repo</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_helpers__test_parse_info_from_known_good_different_category</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_helpers__test_parse_info_from_known_good_empty_json</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_helpers__test_parse_info_from_known_good_empty_repo_dict_in_json</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_helpers__test_parse_info_from_known_good_happy_path</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_helpers__test_parse_info_from_known_good_neither_hash_nor_version</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_helpers__test_parse_info_from_known_good_no_repo_in_json</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_helpers__test_parse_info_from_known_good_repo_not_found</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_helpers__test_parse_info_from_known_good_with_version</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_helpers__test_parse_info_from_known_good_with_version_different_category</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_helpers__test_parse_repo_name_from_empty_path</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_helpers__test_parse_repo_name_from_external_path_2</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_helpers__test_parse_repo_name_from_external_path</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_helpers__test_parse_repo_name_from_local_path</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_helpers__test_parse_repo_name_without_plus_suffix</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_metamodel__init____test_raises_assertion_for_invalid_check</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_common_attr_description">tool_req__docs_common_attr_description</a></p></td>
+<td class="needs_test_type"><p>requirements-based</p></td>
+<td class="needs_derivation_technique"><p>requirements-analysis</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_metamodel__init____test_returns_empty_list_when_filter_is_empty</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_common_attr_description">tool_req__docs_common_attr_description</a></p></td>
+<td class="needs_test_type"><p>requirements-based</p></td>
+<td class="needs_derivation_technique"><p>requirements-analysis</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_metamodel__init____test_returns_valid_checks</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_common_attr_description">tool_req__docs_common_attr_description</a></p></td>
+<td class="needs_test_type"><p>requirements-based</p></td>
+<td class="needs_derivation_technique"><p>requirements-analysis</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_metamodel__init____test_strips_whitespace</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_common_attr_description">tool_req__docs_common_attr_description</a></p></td>
+<td class="needs_test_type"><p>requirements-based</p></td>
+<td class="needs_derivation_technique"><p>requirements-analysis</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_metamodel_load__test_load_metamodel_data_explicit_path</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_metamodel_load__test_load_metamodel_data</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_need_source_links__test_decoder_reconstructs_object</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_need_source_links__test_encoder_outputs_serializable_dict</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_need_source_links__test_load_invalid_json_items</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_need_source_links__test_load_invalid_json_type</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_need_source_links__test_store_and_load_json</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_repo_source_link_integration__test_repo_cache_json_format</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_repo_source_link_integration__test_repo_cache_rebuilds_when_missing</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_repo_source_link_integration__test_repo_grouped_cache_generated</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_repo_source_link_integration__test_repo_grouping_multiple_needs_per_repo</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_repo_source_link_integration__test_repo_grouping_preserves_metadata</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_repo_source_link_integration__test_repo_grouping_with_golden_file</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_repo_source_links__test_group_needs_empty_list</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_repo_source_links__test_group_needs_mixed_codelinks_and_testlinks</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_repo_source_links__test_group_needs_multiple_repos</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_repo_source_links__test_group_needs_single_repo_with_codelinks</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_repo_source_links__test_group_needs_skips_needs_without_links</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_repo_source_links__test_group_needs_with_testlinks_different_repos</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_repo_source_links__test_group_needs_with_testlinks_only</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_repo_source_links__test_json_decoder_reconstructs_repo_source_links</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_repo_source_links__test_json_decoder_returns_unchanged_for_non_repo_dict</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_repo_source_links__test_json_encoder_converts_path_to_string</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_repo_source_links__test_json_encoder_removes_metadata_from_needlink</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_repo_source_links__test_json_encoder_removes_metadata_from_testlink</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_repo_source_links__test_load_empty_list</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_repo_source_links__test_load_validates_is_list</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_repo_source_links__test_load_validates_items_are_correct_type</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_repo_source_links__test_store_and_load_roundtrip</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_repo_source_links__test_store_creates_parent_directories</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_rules_are_working_correctly__test_score_pytest_loads_conftest</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_rules_file_based__test_need</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_rules_file_based__test_rst_files[architecture/architecture_tests.rst]</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_arch_types">tool_req__docs_arch_types</a></p></td>
+<td class="needs_test_type"><p>requirements_based</p></td>
+<td class="needs_derivation_technique"><p>requirements_based</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_rules_file_based__test_rst_files[attributes/test_attributes_external_prefix.rst]</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_common_attr_id_scheme">tool_req__docs_common_attr_id_scheme</a></p></td>
+<td class="needs_test_type"><p>requirements_based</p></td>
+<td class="needs_derivation_technique"><p>requirements_based</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_rules_file_based__test_rst_files[attributes/test_attributes_format_id_format.rst]</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_common_attr_id_scheme">tool_req__docs_common_attr_id_scheme</a></p></td>
+<td class="needs_test_type"><p>requirements_based</p></td>
+<td class="needs_derivation_technique"><p>requirements_based</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_rules_file_based__test_rst_files[attributes/test_attributes_format_id_length.rst]</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_req_types">tool_req__docs_req_types</a></p></td>
+<td class="needs_test_type"><p>requirements_based</p></td>
+<td class="needs_derivation_technique"><p>requirements_based</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_rules_file_based__test_rst_files[attributes/test_prohibited_words.rst]</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_common_attr_title">tool_req__docs_common_attr_title</a><em>; </em><a class="reference external" href="requirements.html#tool_req__docs_common_attr_desc_wording">tool_req__docs_common_attr_desc_wording</a></p></td>
+<td class="needs_test_type"><p>requirements_based</p></td>
+<td class="needs_derivation_technique"><p>requirements_based</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_rules_file_based__test_rst_files[attributes/test_validity.rst]</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_sec_attr_stride_threat_id">tool_req__docs_sec_attr_stride_threat_id</a><em>; </em><a class="reference external" href="requirements.html#tool_req__docs_sec_attrs_mandatory">tool_req__docs_sec_attrs_mandatory</a></p></td>
+<td class="needs_test_type"><p>requirements_based</p></td>
+<td class="needs_derivation_technique"><p>requirements_based</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_rules_file_based__test_rst_files[graph/test_invalid_graph.rst]</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_req_arch_link_safety_to_arch">tool_req__docs_req_arch_link_safety_to_arch</a></p></td>
+<td class="needs_test_type"><p>requirements_based</p></td>
+<td class="needs_derivation_technique"><p>requirements_based</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_rules_file_based__test_rst_files[graph/test_metamodel_graph.rst]</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_common_attr_safety_link_check">tool_req__docs_common_attr_safety_link_check</a></p></td>
+<td class="needs_test_type"><p>requirements_based</p></td>
+<td class="needs_derivation_technique"><p>requirements_based</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_rules_file_based__test_rst_files[graph/test_workproduct_aspice_40.rst]</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_stdwp_types">tool_req__docs_stdwp_types</a></p></td>
+<td class="needs_test_type"><p>requirements_based</p></td>
+<td class="needs_derivation_technique"><p>requirements_based</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_rules_file_based__test_rst_files[id_contains_feature/test_id_contains_feature.rst]</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_common_attr_id_scheme">tool_req__docs_common_attr_id_scheme</a></p></td>
+<td class="needs_test_type"><p>requirements_test</p></td>
+<td class="needs_derivation_technique"><p>requirements_based</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_rules_file_based__test_rst_files[options/gd_req_comp.rst]</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_req_types">tool_req__docs_req_types</a></p></td>
+<td class="needs_test_type"><p>requirements_based</p></td>
+<td class="needs_derivation_technique"><p>requirements_based</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_rules_file_based__test_rst_files[options/test_need_extends.rst]</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_rules_file_based__test_rst_files[options/test_options_extra_option.rst]</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_req_types">tool_req__docs_req_types</a><em>; </em><a class="reference external" href="requirements.html#tool_req__docs_common_attr_status">tool_req__docs_common_attr_status</a></p></td>
+<td class="needs_test_type"><p>requirements_based</p></td>
+<td class="needs_derivation_technique"><p>requirements_based</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_rules_file_based__test_rst_files[options/test_options_options.rst]</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_common_attr_status">tool_req__docs_common_attr_status</a><em>; </em><a class="reference external" href="requirements.html#tool_req__docs_req_types">tool_req__docs_req_types</a></p></td>
+<td class="needs_test_type"><p>requirements_based</p></td>
+<td class="needs_derivation_technique"><p>requirements_based</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_rules_file_based__test_rst_files[options/wp_comp.rst]</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_stdwp_types">tool_req__docs_stdwp_types</a><em>; </em><a class="reference external" href="requirements.html#tool_req__docs_wp_types">tool_req__docs_wp_types</a></p></td>
+<td class="needs_test_type"><p>requirements_based</p></td>
+<td class="needs_derivation_technique"><p>requirements_based</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_source_code_link_integration__test_source_link_integration_non_existent_id</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_source_code_link_integration__test_source_link_integration_ok</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_sphinx_filters__test_generic_pie_items_by_tag_matches_source_by_id_prefix</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_sphinx_filters__test_generic_pie_linked_items_matches_source_by_id_prefix</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_sphinx_filters__test_get_just_metrics_appends_values_when_metrics_loaded</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_sphinx_filters__test_get_key_values_appends_values_when_metrics_loaded</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_sphinx_filters__test_get_key_values_raises_key_error_when_global_is_empty</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_sphinx_filters__test_get_metrics_with_custom_type_total_considered_empty_kwargs_raises_index_error</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_sphinx_filters__test_get_metrics_with_custom_type_total_considered_with_total_suffix</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_sphinx_filters__test_get_metrics_with_custom_type_total_considered_without_total_suffix</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_sphinx_filters__test_get_metrics_with_overall_total_considered_when_metrics_loaded</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_testlink__test_clean_text_removes_ansi_and_html_unescapes</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_test_link_testcase">tool_req__docs_test_link_testcase</a></p></td>
+<td class="needs_test_type"><p>requirements-based</p></td>
+<td class="needs_derivation_technique"><p>requirements-analysis</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_testlink__test_datafortestlink_decoder_non_testlink_dict</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_testlink__test_datafortestlink_encoder_fallback</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_testlink__test_datafortestlink_equality_with_non_testlink</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_testlink__test_datafortestlink_to_dict_full</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_testlink__test_dataoftestcase_check_verifies_fields_missing_both</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_testlink__test_dataoftestcase_decoder_non_testcase_dict</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_testlink__test_dataoftestcase_decoder_valid_dict</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_testlink__test_dataoftestcase_encoder_fallback</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_testlink__test_dataoftestcase_get_test_links_returns_empty_when_invalid</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_testlink__test_dataoftestcase_is_valid_fails_on_none_field</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_testlink__test_decoder_ignores_irrelevant_dicts</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_test_link_testcase">tool_req__docs_test_link_testcase</a></p></td>
+<td class="needs_test_type"><p>requirements-based</p></td>
+<td class="needs_derivation_technique"><p>requirements-analysis</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_testlink__test_load_data_of_test_case_validates_items</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_testlink__test_load_data_of_test_case_validates_list</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_testlink__test_store_and_load_data_of_test_case_roundtrip</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_testlink__test_store_and_load_testlinks_roundtrip</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_test_link_testcase">tool_req__docs_test_link_testcase</a></p></td>
+<td class="needs_test_type"><p>requirements-based</p></td>
+<td class="needs_derivation_technique"><p>requirements-analysis</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_testlink__test_testcaseneed_to_dict_multiple_links</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_test_link_testcase">tool_req__docs_test_link_testcase</a></p></td>
+<td class="needs_test_type"><p>requirements-based</p></td>
+<td class="needs_derivation_technique"><p>requirements-analysis</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_testlink__test_testlink_encoder_handles_path</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_testlink__test_testlink_serialization_roundtrip</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_test_link_testcase">tool_req__docs_test_link_testcase</a></p></td>
+<td class="needs_test_type"><p>requirements-based</p></td>
+<td class="needs_derivation_technique"><p>requirements-analysis</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_traceability_metrics__test_calculate_requirement_metrics_counts_links_and_missing_ids</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_test_linkage_metrics">tool_req__docs_test_linkage_metrics</a></p></td>
+<td class="needs_test_type"><p>requirements-based</p></td>
+<td class="needs_derivation_technique"><p>requirements-analysis</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_traceability_metrics__test_calculate_requirement_metrics_non_fully_linked_2</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_test_linkage_metrics">tool_req__docs_test_linkage_metrics</a></p></td>
+<td class="needs_test_type"><p>requirements-based</p></td>
+<td class="needs_derivation_technique"><p>equivalence-classes</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_traceability_metrics__test_calculate_requirement_metrics_non_fully_linked</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_test_linkage_metrics">tool_req__docs_test_linkage_metrics</a></p></td>
+<td class="needs_test_type"><p>requirements-based</p></td>
+<td class="needs_derivation_technique"><p>equivalence-classes</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_traceability_metrics__test_calculate_test_metrics_counts_linked_tests_and_broken_refs</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_test_linkage_metrics">tool_req__docs_test_linkage_metrics</a></p></td>
+<td class="needs_test_type"><p>interface-test</p></td>
+<td class="needs_derivation_technique"><p>design-analysis</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_traceability_metrics__test_get_need_types_by_tags_returns_empty_on_non_match</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_test_linkage_metrics">tool_req__docs_test_linkage_metrics</a></p></td>
+<td class="needs_test_type"><p>requirements-based</p></td>
+<td class="needs_derivation_technique"><p>equivalence-classes</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_traceability_metrics__test_get_need_types_by_tags_returns_matching_directives_only</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_test_linkage_metrics">tool_req__docs_test_linkage_metrics</a></p></td>
+<td class="needs_test_type"><p>requirements-based</p></td>
+<td class="needs_derivation_technique"><p>equivalence-classes</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[  -False]</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_test_linkage_metrics">tool_req__docs_test_linkage_metrics</a></p></td>
+<td class="needs_test_type"><p>interface-test</p></td>
+<td class="needs_derivation_technique"><p>boundary-values</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[0-False]</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_test_linkage_metrics">tool_req__docs_test_linkage_metrics</a></p></td>
+<td class="needs_test_type"><p>interface-test</p></td>
+<td class="needs_derivation_technique"><p>boundary-values</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[1-True]</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_test_linkage_metrics">tool_req__docs_test_linkage_metrics</a></p></td>
+<td class="needs_test_type"><p>interface-test</p></td>
+<td class="needs_derivation_technique"><p>boundary-values</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[None-False]</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_test_linkage_metrics">tool_req__docs_test_linkage_metrics</a></p></td>
+<td class="needs_test_type"><p>interface-test</p></td>
+<td class="needs_derivation_technique"><p>boundary-values</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[text-True]</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_test_linkage_metrics">tool_req__docs_test_linkage_metrics</a></p></td>
+<td class="needs_test_type"><p>interface-test</p></td>
+<td class="needs_derivation_technique"><p>boundary-values</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[value2-False]</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_test_linkage_metrics">tool_req__docs_test_linkage_metrics</a></p></td>
+<td class="needs_test_type"><p>interface-test</p></td>
+<td class="needs_derivation_technique"><p>boundary-values</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[value3-True]</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_test_linkage_metrics">tool_req__docs_test_linkage_metrics</a></p></td>
+<td class="needs_test_type"><p>interface-test</p></td>
+<td class="needs_derivation_technique"><p>boundary-values</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_traceability_metrics__test_need</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_traceability_metrics__test_safe_percent_zero[1-4-25.0]</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_test_linkage_metrics">tool_req__docs_test_linkage_metrics</a></p></td>
+<td class="needs_test_type"><p>requirements-based</p></td>
+<td class="needs_derivation_technique"><p>boundary-values</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_traceability_metrics__test_safe_percent_zero[3-0-100.0]</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_test_linkage_metrics">tool_req__docs_test_linkage_metrics</a></p></td>
+<td class="needs_test_type"><p>requirements-based</p></td>
+<td class="needs_derivation_technique"><p>boundary-values</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_xml_parser__test_clean_test_file_name_combo_path</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_xml_parser__test_clean_test_file_name_empty_path_raises_error</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_xml_parser__test_clean_test_file_name_invalid_path_raises_error</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_xml_parser__test_clean_test_file_name_local_path</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_xml_parser__test_clean_test_file_name_nested_bazel_testlogs</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_xml_parser__test_clean_test_file_name_tests_report_path</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_xml_parser__test_construct_and_add_need_uses_fallback_url_for_missing_repo_metadata</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_xml_parser__test_early_return</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_xml_parser__test_find_xml_files</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_test_link_testcase">tool_req__docs_test_link_testcase</a></p></td>
+<td class="needs_test_type"><p>requirements-based</p></td>
+<td class="needs_derivation_technique"><p>requirements-analysis</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_xml_parser__test_find_xml_files_test_reports</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_xml_parser__test_find_xml_folder</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_xml_parser__test_find_xml_folder_test_reports</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_xml_parser__test_get_metadata_from_test_path_combo_with_hash</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_xml_parser__test_get_metadata_from_test_path_combo_with_version</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_xml_parser__test_get_metadata_from_test_path_local</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_xml_parser__test_parse_properties</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_test_link_testcase">tool_req__docs_test_link_testcase</a></p></td>
+<td class="needs_test_type"><p>requirements-based</p></td>
+<td class="needs_derivation_technique"><p>requirements-analysis</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_xml_parser__test_parse_testcase_result</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_test_link_testcase">tool_req__docs_test_link_testcase</a></p></td>
+<td class="needs_test_type"><p>requirements-based</p></td>
+<td class="needs_derivation_technique"><p>requirements-analysis</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>test_xml_parser__test_read_test_xml_file</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_test_link_testcase">tool_req__docs_test_link_testcase</a></p></td>
+<td class="needs_test_type"><p>requirements-based</p></td>
+<td class="needs_derivation_technique"><p>requirements-analysis</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>test_xml_parser__test_short_hash_consistency_and_format</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_test_link_testcase">tool_req__docs_test_link_testcase</a></p></td>
+<td class="needs_test_type"><p>requirements-based</p></td>
+<td class="needs_derivation_technique"><p>requirements-analysis</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>TestCheckOptions__test_unknown_directive</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_common_attr_security">tool_req__docs_common_attr_security</a></p></td>
+<td class="needs_test_type"><p>requirements-based</p></td>
+<td class="needs_derivation_technique"><p>requirements-analysis</p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>TestCheckOptions__test_unknown_option_present_in_neither_req_opt_neither_opt_opt</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p><a class="reference external" href="requirements.html#tool_req__docs_common_attr_description">tool_req__docs_common_attr_description</a></p></td>
+<td class="needs_test_type"><p>requirements-based</p></td>
+<td class="needs_derivation_technique"><p>requirements-analysis</p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>TestNeedHelper__test_combined_core_links_and_extras</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>TestNeedHelper__test_custom_values_override_defaults</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>TestNeedHelper__test_default_values</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>TestNeedHelper__test_empty_links_not_in_kwargs</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>TestNeedHelper__test_extra_fields_in_extras</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>TestNeedHelper__test_link_fields_extracted</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>TestStandards__test_assert_multiple_kwargs</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>TestStandards__test_get_compliance_req_needs</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>TestStandards__test_get_compliance_wp_needs</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>TestStandards__test_get_standards_needs</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>TestStandards__test_get_standards_workproducts</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>TestStandards__test_get_workflows</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>TestStandards__test_get_workproducts</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>TestStandards__test_my_pie_linked_standard_requirements</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>TestStandards__test_my_pie_linked_standard_workproducts</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>TestStandards__test_my_pie_workproducts_contained_in_exactly_one_workflow</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>TestStandards__test_negative_case_no_needs_with_tag</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>TestStandards__test_positive_case_mixed_linked_and_unlinked</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>traceability_gate_test__test_gate_fail_on_broken_test_refs</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>traceability_gate_test__test_gate_fails_when_threshold_not_met</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>traceability_gate_test__test_gate_missing_file_returns_error</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>traceability_gate_test__test_gate_missing_metrics_by_type_returns_error</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>traceability_gate_test__test_gate_missing_tests_section_returns_error</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>traceability_gate_test__test_gate_passes_when_thresholds_met</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>traceability_gate_test__test_gate_require_all_links_fails</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>traceability_gate_test__test_gate_specific_need_type_only</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-even"><td class="needs_name"><p>traceability_gate_test__test_gate_unknown_need_type_fails</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+<tr class="need row-odd"><td class="needs_name"><p>traceability_gate_test__test_gate_unsupported_schema_version</p></td>
+<td class="needs_fully_verifies"><p></p></td>
+<td class="needs_partially_verifies"><p></p></td>
+<td class="needs_test_type"><p></p></td>
+<td class="needs_derivation_technique"><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="requirements.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Tool Requirements</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="tooling_verification.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Tooling Verification</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overall-coverage">Overall Coverage</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#requirement-test-traceability">Requirement → Test Traceability</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#test-requirement-traceability">Test → Requirement Traceability</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  
+  <div class="tocsection editthispage">
+    <a href="https://github.com/eclipse-score/docs-as-code/edit/main/docs/internals/requirements/requirement_coverage.rst">
+      <i class="fa-solid fa-pencil"></i>
+      
+      
+        
+          Edit on GitHub
+        
+      
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.17.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
