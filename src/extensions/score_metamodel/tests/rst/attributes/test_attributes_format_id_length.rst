@@ -15,7 +15,7 @@
 
 .. test_metadata:: Test ID Lenght
    :id: test_metadata__check_id_length
-   :partially_verifies_list: LACKS TOOL REQ
+   :partially_verifies_list: tool_req__docs_req_types
    :test_type: requirements_based
    :derivation_technique: requirements_based
 

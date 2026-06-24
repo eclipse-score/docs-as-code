@@ -15,7 +15,7 @@
 
 .. test_metadata::
    :id: test_metadata__extra_options
-   :partially_verifies_list: LACKS TOOL REQ
+   :partially_verifies_list: tool_req__docs_req_types, tool_req__docs_common_attr_status
    :test_type: requirements_based
    :derivation_technique: requirements_based
 

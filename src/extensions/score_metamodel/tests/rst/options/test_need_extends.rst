@@ -13,16 +13,6 @@
    # *******************************************************************************
 
 
-.. test_metadata::
-   :id: test_metadata__need_extend_check
-   :partially_verifies_list: LACKS TOOL REQ
-   :test_type: requirements_based
-   :derivation_technique: requirements_based
-
-   Tests if we correctly prohibit some usages of needextend
-
-
-
 .. stkh_req:: Test Req Extends 1
    :id: stkh_req__test__need_extends_1
    :status: invalid

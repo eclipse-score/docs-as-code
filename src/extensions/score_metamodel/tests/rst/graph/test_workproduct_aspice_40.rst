@@ -15,7 +15,7 @@
 
 .. test_metadata::
    :id: test_metadata__metamodel_graph_checks_aspice
-   :partially_verifies_list: LACKS TOOL REQ
+   :partially_verifies_list: tool_req__docs_stdwp_types
    :test_type: requirements_based
    :derivation_technique: requirements_based
 

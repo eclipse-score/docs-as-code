@@ -954,15 +954,40 @@ Testing
 
   * Workflow (wf)
 
+
+.. tool_req:: Workproduct Types
+  :id: tool_req__docs_wp_types
+  :tags: Process / Other
+  :implemented: YES
+  :version: 1
+  :satisfies: gd_req__process_management_build_blocks_attr, gd_req__process_management_build_blocks_link
+
+  Docs-as-Code shall support the following workproduct types:
+
+  * Workproduct (wp)
+
 .. tool_req:: Standard Requirement Types
   :id: tool_req__docs_stdreq_types
   :tags: Process / Other
   :version: 1
   :implemented: YES
+  :satisfies: gd_req__process_management_build_blocks_attr, gd_req__process_management_build_blocks_link
 
   Docs-as-Code shall support the following requirement types:
 
   * Standard requirement (std_req)
+
+
+.. tool_req:: Standard Workproduct Types
+  :id: tool_req__docs_stdwp_types
+  :tags: Process / Other
+  :version: 1
+  :implemented: YES
+  :satisfies: gd_req__process_management_build_blocks_attr, gd_req__process_management_build_blocks_link
+
+  Docs-as-Code shall support the following requirement types:
+
+  * Standard Workproduct (std_wp)
 
 
 🛡️ Safety Analysis (DFA + FMEA)

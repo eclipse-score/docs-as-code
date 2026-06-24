@@ -79,10 +79,10 @@ score_pytest(
     name = "file_based_tests_architecture",
     srcs = ["tests/test_rules_file_based.py"],
     data = glob(["tests/rst/architecture/*.rst"]) + [
+        "tests/__init__.py",
         "tests/rst/conf.py",
         "tests/rst/needs.json",
     ],
-    args = ["-s", "-vv"],
     pytest_config = "//:pyproject.toml",
     deps = [":score_metamodel"],
 )
@@ -91,11 +91,11 @@ score_pytest(
     name = "file_based_tests_attributes",
     srcs = ["tests/test_rules_file_based.py"],
     data = glob(["tests/rst/attributes/*.rst"]) + [
+        "tests/__init__.py",
         "tests/rst/conf.py",
         "tests/rst/needs.json",
     ],
     pytest_config = "//:pyproject.toml",
-    args = ["-s", "-vv"],
     deps = [":score_metamodel"],
 )
 
@@ -103,11 +103,11 @@ score_pytest(
     name = "file_based_tests_graph",
     srcs = ["tests/test_rules_file_based.py"],
     data = glob(["tests/rst/graph/*.rst"]) + [
+        "tests/__init__.py",
         "tests/rst/conf.py",
         "tests/rst/needs.json",
     ],
     pytest_config = "//:pyproject.toml",
-    args = ["-s", "-vv"],
     deps = [":score_metamodel"],
 )
 
@@ -115,11 +115,11 @@ score_pytest(
     name = "file_based_tests_id_contains_feature",
     srcs = ["tests/test_rules_file_based.py"],
     data = glob(["tests/rst/id_contains_feature/*.rst"]) + [
+        "tests/__init__.py",
         "tests/rst/conf.py",
         "tests/rst/needs.json",
     ],
     pytest_config = "//:pyproject.toml",
-    args = ["-s", "-vv"],
     deps = [":score_metamodel"],
 )
 
@@ -127,10 +127,10 @@ score_pytest(
     name = "file_based_tests_options",
     srcs = ["tests/test_rules_file_based.py"],
     data = glob(["tests/rst/options/*.rst"]) + [
+        "tests/__init__.py",
         "tests/rst/conf.py",
         "tests/rst/needs.json",
     ],
     pytest_config = "//:pyproject.toml",
-    args = ["-s", "-vv"],
     deps = [":score_metamodel"],
 )

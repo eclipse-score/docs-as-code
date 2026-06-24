@@ -22,6 +22,7 @@ import pytest
 from sphinx.testing.util import SphinxTestApp
 from sphinx_needs.data import NeedsExtendType, SphinxNeedsData
 from sphinx_needs.need_item import NeedItem
+from score_metamodel.tests import need as test_need
 
 from score_pytest.attribute_plugin import apply_test_metadata
 
@@ -147,10 +148,6 @@ def parse_test_metadata(need: NeedItem) -> dict[str, Any]:
         "description": need.get("content"),
         "check": need.get("check"),
     }
-    assert metadata["fully_verifies"] or metadata["partially_verifies"], (
-        f"Error in need: {need.get('id')}. "
-        "Either fully_verifies or partially_verifies must be provided"
-    )
     return metadata
 
 
@@ -185,10 +182,24 @@ def _validate_need_count(
     )
 
 
+def _get_default_metadata_need() -> NeedItem:
+    return test_need(
+        fully_verifies=[],
+        partially_verifies=[],
+        test_type="",
+        line_nr="",
+        file="",
+        derivation_technique="",
+        descdription="",
+    )
+
+
 def _get_test_metadata_need(needs_view, rst_data: RstData) -> NeedItem:
     ### Return the single 'test_metadata' need, failing if there isn't exactly one.
     test_metadata_needs = needs_view.filter_types(["test_metadata"]).values()
-    if len(test_metadata_needs) != 1:
+    if not test_metadata_needs:
+        return _get_default_metadata_need()
+    if len(test_metadata_needs) > 1:
         pytest.fail(
             f"Error in file: {rst_data.filename}. "
             "Only '1' test_metadata need is allowed per RST file.",
@@ -276,13 +287,14 @@ def test_rst_files(
 
     metadata_need = _get_test_metadata_need(needs_view, rst_data)
     rst_data.metadata = parse_test_metadata(metadata_need)
+    line_nr = int(str(rst_data.metadata["line_nr"]))
     file_name = clean_filepath(request) + str(rst_data.metadata["file"])
     apply_test_metadata(
         record_property=record_property,
         metadata=rst_data.metadata,
         record_xml_attribute=record_xml_attribute,
         file=file_name,
-        line=int(str(rst_data.metadata["line_nr"])),
+        line=line_nr,
     )
 
     # Collect warnings and verify each need's expectations
