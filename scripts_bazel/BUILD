@@ -45,3 +45,27 @@ py_binary(
     visibility = ["//visibility:public"],
     deps = [],
 )
+
+py_binary(
+    name = "filter_needs_json",
+    srcs = ["filter_needs_json.py"],
+    main = "filter_needs_json.py",
+    visibility = ["//visibility:public"],
+    deps = [],
+)
+
+py_binary(
+    name = "sphinx_needs_to_md",
+    srcs = ["sphinx_needs_to_md.py"],
+    main = "sphinx_needs_to_md.py",
+    visibility = ["//visibility:public"],
+    deps = [],
+)
+
+py_binary(
+    name = "sphinx_needs_to_trlc",
+    srcs = ["sphinx_needs_to_trlc.py"],
+    main = "sphinx_needs_to_trlc.py",
+    visibility = ["//visibility:public"],
+    deps = [],
+)
