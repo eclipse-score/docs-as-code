@@ -15,7 +15,7 @@ It uses the SphinxTestApp to build the documentation and checks for the
 **It has it's OWN conf.py, so if changes need to be made ensure they are made in there**
 
 ## Create a test rst file
-To add a new test case either create a new rst file in the rst directory, 
+To add a new test case either create a new rst file in the rst directory,
 or add it to an existing one if it tests something similar
 The test files can also be organized in a subfolder structure below directory rst.
 
@@ -124,8 +124,8 @@ You only need to match a unique substring, not the full message. For example:
     :expect: wp__bad: Parent need `std_req__aspice_40__bp`
 
 .. hint::
-   
-   For `:expect:` use as much as possible of the error message, however for `:expect_not:` use as little as possible 
+
+   For `:expect:` use as much as possible of the error message, however for `:expect_not:` use as little as possible
    to catch all other issues that MIGHT occur and to avoid for typos etc.
 
 ### Setup needs
