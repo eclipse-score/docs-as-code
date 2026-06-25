@@ -39,12 +39,12 @@
 
 
 
-.. Required link `satisfies` refers to wrong requirement type
+.. Required link `derived_from` refers to wrong requirement type
 
 .. feat_req:: Child requirement
    :id: feat_req__abce
-   :satisfies: std_wp__test_options__abce
-   :expect: feat_req__abce: references 'std_wp__test_options__abce' as 'satisfies', but it must reference Stakeholder Requirement (stkh_req).
+   :derived_from: std_wp__test_options__abce
+   :expect: feat_req__abce: references 'std_wp__test_options__abce' as 'derived_from', but it must reference Stakeholder Requirement (stkh_req).
 
 
 
