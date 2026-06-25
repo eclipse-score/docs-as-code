@@ -37,7 +37,7 @@
 
 .. feat_req:: This is a test
    :id: feat_req__test__title_good
-   :expect_not: title contains
+   :expect_not: contains a weak word
 
 
 
@@ -52,7 +52,7 @@
 
 .. stkh_req:: This is a test
    :id: stkh_req__test__title_good
-   :expect_not: title contains
+   :expect_not: contains a weak word
 
 
 

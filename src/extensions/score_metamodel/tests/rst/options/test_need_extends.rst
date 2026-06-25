@@ -25,13 +25,13 @@
 
 .. stkh_req:: Test Req Extends 3
    :id: stkh_req__test__need_extends_3
-   :safety: YES
+   :safety: QM
    :status: invalid
 
 
 .. stkh_req:: Test Req Extends 4
    :id: stkh_req__test__need_extends_4
-   :safety: YES
+   :safety: QM
    :status: invalid
 
 
@@ -53,7 +53,7 @@
 
 
 .. needextend:: c.this_doc() and id == 'stkh_req__test__need_extends_1'
-   :safety: NO
+   :safety: ASIL_B
    :expect_not: Replacing of options
 
 
@@ -69,7 +69,7 @@
 
 
 .. needextend:: id == 'stkh_req__test__need_extends_3'
-   :+safety: YES
+   :+safety: QM
    :expect: Error when extending need: stkh_req__test__need_extends_3. Append action is not allowed via needextends on 'string type options'
 
 
