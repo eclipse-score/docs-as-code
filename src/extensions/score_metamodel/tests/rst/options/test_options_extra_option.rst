@@ -36,3 +36,15 @@
 .. std_wp:: This is a test
    :id: std_wp__test__abce
    :expect_not: has these extra options
+
+
+.. stkh_req:: Test Stakeholder Requirement
+   :id: stkh_req__test__abcd
+
+
+.. `satisfies` is hard-deprecated for feat_req (issue #594) — only `derived_from` is allowed now
+
+.. feat_req:: Hard-deprecated satisfies test
+   :id: feat_req__test__satisfies_deprecated
+   :satisfies: stkh_req__test__abcd
+   :expect: feat_req__test__satisfies_deprecated: has these extra options: `satisfies`.

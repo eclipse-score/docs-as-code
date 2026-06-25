@@ -37,7 +37,7 @@
 
 .. feat_req:: Test Linkage Override
    :id: feat_req__test__linkage_override
-   :satisfies: stkh_req__test__need_extends_1
+   :derived_from: stkh_req__test__need_extends_1
 
 
 .. Replacing of options that are already set is not allowed.
@@ -59,7 +59,7 @@
 
 
 .. needextend:: feat_req__test__linkage_override
-   :satisfies: stkh_req__test__need_extends_abc
+   :derived_from: stkh_req__test__need_extends_abc
    :expect: Error when extending need: feat_req__test__linkage_override. Replace or Delete action is not allowed via needextends.
 
 
