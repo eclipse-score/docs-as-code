@@ -94,6 +94,7 @@ def test_load_metamodel_data():
         "link1": "opt1 == test",
     }
 
+
 def test_metamodel_schema_json_is_valid():
     """The metamodel JSON schema file must be syntactically valid JSON."""
     schema_path = Path(__file__).resolve().parent.parent / "metamodel-schema.json"
