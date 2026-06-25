@@ -12,7 +12,14 @@
    # SPDX-License-Identifier: Apache-2.0
    # *******************************************************************************
 
-#CHECK: check_metamodel_graph
+
+.. test_metadata::
+   :id: test_metadata__metamodel_graph_checks_aspice
+   :partially_verifies_list: tool_req__docs_stdwp_types
+   :test_type: requirements_based
+   :derivation_technique: requirements_based
+
+   Tests if metamodel graph checks (aspice_40) work as defined / intended
 
 --- Setup
 
@@ -35,31 +42,33 @@
 
 .. Positive test: workproduct links to an ASPICE 40 IIC requirement — no warning expected.
 
-#EXPECT-NOT[+2]: aspice_40__iic
 
 .. workproduct:: workproduct
    :id: wp__valid
    :complies: std_req__aspice_40__iic_1
+   :expect_not: aspice_40__iic
+
 
 .. Positive test: workproduct with no complies link — check condition not met, no warning.
 
-#EXPECT-NOT[+2]: aspice_40__iic
 
 .. workproduct:: Workproduct without complies
    :id: wp__no_impl
+   :expect_not: aspice_40__iic
+
 
 .. Positive test: workproduct complies with a std_wp — allowed, no warning.
 
-#EXPECT-NOT[+2]: aspice_40__iic
 
 .. workproduct:: workproduct complying with std_wp
    :id: wp__std_wp
    :complies: std_wp__1
+   :expect_not: aspice_40__iic
+
 
 .. Negative test: workproduct links to a non-IIC requirement — warning expected.
-
-#EXPECT[+2]: Workproducts may only link to ASPICE 40 IIC
 
 .. workproduct:: Invalid workproduct
    :id: wp__invalid
    :complies: std_req__aspice_40__bp_1
+   :expect: Workproducts may only link to ASPICE 40 IIC

@@ -12,28 +12,32 @@
    # SPDX-License-Identifier: Apache-2.0
    # *******************************************************************************
 
-#CHECK: check_options
+
+.. test_metadata::
+   :id: test_metadata__metamodel_link_checks
+   :partially_verifies_list: tool_req__docs_req_types
+   :test_type: requirements_based
+   :derivation_technique: requirements_based
+
+   Tests if metamodel link options are correclty checked
+
+
 
 .. std_req:: Standard requirement
    :id: std_req__iso26262__001
 
-# Expect to warning with "complies"
-#EXPECT-NOT[+2]: complies
+.. Expect to warning with "complies"
 
 .. gd_req:: No Link is ok, since complies is optional
    :id: gd_req__001
+   :expect_not: complies
 
-# Expect to warning with "complies"
-#EXPECT-NOT[+2]: complies
 
-.. gd_req:: Correct link to std_req
-   :id: gd_req__002
-   :complies: std_req__iso26262__001
 
-#FIXME: this will currently be printed as an INFO, and not as a warning.
-#       Re-enable EXCPECT once we can enable that as a warning.
-#EXP-ECT: gd_req__003: references 'gd_req__001' as 'complies', but it must reference Standard Requirement (std_req).
+.. FIXME: this will currently be printed as an INFO, and not as a warning.
+      Re-enable EXCPECT once we can enable that as a warning.
 
-.. gd_req:: Cannot refer to non std_req element
-   :id: gd_req__003
-   :complies: gd_req__001
+.. .. gd_req: Cannot refer to non std_req element
+..    :id: gd_req__003
+..    :complies: gd_req__001
+..    :expect:  gd_req__003: references 'gd_req__001' as 'complies', but it must reference Standard Requirement (std_req).

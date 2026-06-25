@@ -11,34 +11,48 @@
    #
    # SPDX-License-Identifier: Apache-2.0
    # *******************************************************************************
-#CHECK: check_id_format
+
+
+.. test_metadata:: Test ID Format
+   :id: test_metadata__check_id_format
+   :partially_verifies_list: tool_req__docs_common_attr_id_scheme
+   :test_type: requirements_based
+   :derivation_technique: requirements_based
+
+   Tests if the id format is followed.
+   3 Part needs, need to follow different conventions than 2 part or undefined part needs
+
 
 .. Id does not consists of 3 parts
-#EXPECT[+2]: stkh_req__test.id (stkh_req__test): expected to consist of this format: `<Req Type>__<Abbreviations>__<Architectural Element>`.
 
 .. stkh_req:: This is a test
    :id: stkh_req__test
+   :expect: stkh_req__test.id (stkh_req__test): expected to consist of this format: `<Req Type>__<Abbreviations>__<Architectural Element>`.
+
 
 .. Id consists of 3 parts
-#EXPECT-NOT[+2]: expected to consist of this format
 
 .. stkh_req:: This is a test
    :id: stkh_req__test__abcd
+   :expect_not: expected to consist of this format
+
 
 .. Id follows pattern
-#EXPECT[+2]: stkh_req__test__test__abcd.id (stkh_req__test__test__abcd): expected to consist of this format: `<Req Type>__<Abbreviations>__<Architectural Element>`.
 
 .. stkh_req:: This is a test
    :id: stkh_req__test__test__abcd
+   :expect: stkh_req__test__test__abcd.id (stkh_req__test__test__abcd): expected to consist of this format: `<Req Type>__<Abbreviations>__<Architectural Element>`.
+
 
 .. Id starts with wp and number of parts is 3
-#EXPECT[+2]: wp__test__abcd.id (wp__test__abcd): expected to consist of this format: `<Req Type>__<Abbreviations>`.
 
 .. workproduct:: This is a test
    :id: wp__test__abcd
+   :expect: wp__test__abcd.id (wp__test__abcd): expected to consist of this format: `<Req Type>__<Abbreviations>`.
+
 
 .. Id is invalid, because it starts with wp and contains 2 parts
-#EXPECT-NOT[+2]: expected to consist of this format
 
 .. workproduct:: This is a test
    :id: wp__test
+   :expect_not: expected to consist of this format

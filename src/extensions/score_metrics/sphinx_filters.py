@@ -207,6 +207,7 @@ def get_metrics_with_first_value_total(
     results.clear()
     # As kwargs ordering is deterministic this will always put the first total into results[0]
     _get_key_values(results, [str(value) for value in kwargs.values()])
+
     results[0] -= sum(results[1:])
 
 
