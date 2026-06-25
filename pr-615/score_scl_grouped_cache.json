@@ -187,7 +187,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 439,
+          "line": 467,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_security",
           "full_line": "# req-Id: tool_req__docs_common_attr_security",
@@ -197,7 +197,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 461,
+          "line": 489,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_security",
           "full_line": "# req-Id: tool_req__docs_common_attr_security",
@@ -207,7 +207,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 484,
+          "line": 512,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_security",
           "full_line": "# req-Id: tool_req__docs_common_attr_security",
@@ -217,7 +217,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 506,
+          "line": 534,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_security",
           "full_line": "# req-Id: tool_req__docs_common_attr_security",
@@ -227,7 +227,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 527,
+          "line": 555,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_security",
           "full_line": "# req-Id: tool_req__docs_common_attr_security",
@@ -237,7 +237,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 547,
+          "line": 575,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_security",
           "full_line": "# req-Id: tool_req__docs_common_attr_security",
@@ -247,7 +247,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 588,
+          "line": 616,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_security",
           "full_line": "# req-Id: tool_req__docs_common_attr_security",
@@ -257,7 +257,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 612,
+          "line": 640,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_security",
           "full_line": "# req-Id: tool_req__docs_common_attr_security",
@@ -267,7 +267,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 635,
+          "line": 663,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_security",
           "full_line": "# req-Id: tool_req__docs_common_attr_security",
@@ -277,7 +277,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 656,
+          "line": 684,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_security",
           "full_line": "# req-Id: tool_req__docs_common_attr_security",
@@ -287,7 +287,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 677,
+          "line": 705,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_security",
           "full_line": "# req-Id: tool_req__docs_common_attr_security",
@@ -368,7 +368,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 441,
+          "line": 469,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_safety",
           "full_line": "# req-Id: tool_req__docs_common_attr_safety",
@@ -378,7 +378,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 463,
+          "line": 491,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_safety",
           "full_line": "# req-Id: tool_req__docs_common_attr_safety",
@@ -388,7 +388,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 486,
+          "line": 514,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_safety",
           "full_line": "# req-Id: tool_req__docs_common_attr_safety",
@@ -398,7 +398,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 508,
+          "line": 536,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_safety",
           "full_line": "# req-Id: tool_req__docs_common_attr_safety",
@@ -408,7 +408,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 529,
+          "line": 557,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_safety",
           "full_line": "# req-Id: tool_req__docs_common_attr_safety",
@@ -418,7 +418,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 549,
+          "line": 577,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_safety",
           "full_line": "# req-Id: tool_req__docs_common_attr_safety",
@@ -428,7 +428,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 590,
+          "line": 618,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_safety",
           "full_line": "# req-Id: tool_req__docs_common_attr_safety",
@@ -438,7 +438,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 614,
+          "line": 642,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_safety",
           "full_line": "# req-Id: tool_req__docs_common_attr_safety",
@@ -448,7 +448,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 637,
+          "line": 665,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_safety",
           "full_line": "# req-Id: tool_req__docs_common_attr_safety",
@@ -458,7 +458,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 658,
+          "line": 686,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_safety",
           "full_line": "# req-Id: tool_req__docs_common_attr_safety",
@@ -468,7 +468,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 679,
+          "line": 707,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_safety",
           "full_line": "# req-Id: tool_req__docs_common_attr_safety",
@@ -546,7 +546,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 443,
+          "line": 441,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_status",
           "full_line": "# req-Id: tool_req__docs_common_attr_status",
@@ -556,7 +556,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 465,
+          "line": 471,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_status",
           "full_line": "# req-Id: tool_req__docs_common_attr_status",
@@ -566,7 +566,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 488,
+          "line": 493,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_status",
           "full_line": "# req-Id: tool_req__docs_common_attr_status",
@@ -576,7 +576,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 510,
+          "line": 516,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_status",
           "full_line": "# req-Id: tool_req__docs_common_attr_status",
@@ -586,7 +586,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 531,
+          "line": 538,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_status",
           "full_line": "# req-Id: tool_req__docs_common_attr_status",
@@ -596,7 +596,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 551,
+          "line": 559,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_status",
           "full_line": "# req-Id: tool_req__docs_common_attr_status",
@@ -606,7 +606,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 592,
+          "line": 579,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_status",
           "full_line": "# req-Id: tool_req__docs_common_attr_status",
@@ -616,7 +616,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 616,
+          "line": 620,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_status",
           "full_line": "# req-Id: tool_req__docs_common_attr_status",
@@ -626,7 +626,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 639,
+          "line": 644,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_status",
           "full_line": "# req-Id: tool_req__docs_common_attr_status",
@@ -636,7 +636,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 660,
+          "line": 667,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_status",
           "full_line": "# req-Id: tool_req__docs_common_attr_status",
@@ -646,7 +646,17 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 681,
+          "line": 688,
+          "tag": "# req-Id:",
+          "need": "tool_req__docs_common_attr_status",
+          "full_line": "# req-Id: tool_req__docs_common_attr_status",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        },
+        {
+          "file": "src/extensions/score_metamodel/metamodel.yaml",
+          "line": 709,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_status",
           "full_line": "# req-Id: tool_req__docs_common_attr_status",
@@ -948,7 +958,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 711,
+          "line": 739,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_description",
           "full_line": "# req-Id: tool_req__docs_common_attr_description",
@@ -958,7 +968,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 732,
+          "line": 760,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_description",
           "full_line": "# req-Id: tool_req__docs_common_attr_description",
@@ -968,7 +978,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 881,
+          "line": 909,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_description",
           "full_line": "# req-Id: tool_req__docs_common_attr_description",
@@ -978,7 +988,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 902,
+          "line": 930,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_description",
           "full_line": "# req-Id: tool_req__docs_common_attr_description",
@@ -988,7 +998,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 921,
+          "line": 949,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_description",
           "full_line": "# req-Id: tool_req__docs_common_attr_description",
@@ -1453,7 +1463,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 1015,
+          "line": 1043,
           "tag": "# req-Id:",
           "need": "tool_req__docs_req_link_covers_aou",
           "full_line": "# req-Id: tool_req__docs_req_link_covers_aou",
@@ -1471,7 +1481,7 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 454,
+          "line": 482,
           "tag": "# req-Id:",
           "need": "tool_req__docs_arch_types",
           "full_line": "# req-Id: tool_req__docs_arch_types",
@@ -1481,7 +1491,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 499,
+          "line": 527,
           "tag": "# req-Id:",
           "need": "tool_req__docs_arch_types",
           "full_line": "# req-Id: tool_req__docs_arch_types",
@@ -1491,7 +1501,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 521,
+          "line": 549,
           "tag": "# req-Id:",
           "need": "tool_req__docs_arch_types",
           "full_line": "# req-Id: tool_req__docs_arch_types",
@@ -1501,7 +1511,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 649,
+          "line": 677,
           "tag": "# req-Id:",
           "need": "tool_req__docs_arch_types",
           "full_line": "# req-Id: tool_req__docs_arch_types",
@@ -1511,7 +1521,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 671,
+          "line": 699,
           "tag": "# req-Id:",
           "need": "tool_req__docs_arch_types",
           "full_line": "# req-Id: tool_req__docs_arch_types",
@@ -1529,7 +1539,7 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 455,
+          "line": 483,
           "tag": "# req-Id:",
           "need": "tool_req__docs_arch_views",
           "full_line": "# req-Id: tool_req__docs_arch_views",
@@ -1539,7 +1549,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 478,
+          "line": 506,
           "tag": "# req-Id:",
           "need": "tool_req__docs_arch_views",
           "full_line": "# req-Id: tool_req__docs_arch_views",
@@ -1549,7 +1559,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 500,
+          "line": 528,
           "tag": "# req-Id:",
           "need": "tool_req__docs_arch_views",
           "full_line": "# req-Id: tool_req__docs_arch_views",
@@ -1559,7 +1569,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 560,
+          "line": 588,
           "tag": "# req-Id:",
           "need": "tool_req__docs_arch_views",
           "full_line": "# req-Id: tool_req__docs_arch_views",
@@ -1569,7 +1579,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 606,
+          "line": 634,
           "tag": "# req-Id:",
           "need": "tool_req__docs_arch_views",
           "full_line": "# req-Id: tool_req__docs_arch_views",
@@ -1579,7 +1589,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 629,
+          "line": 657,
           "tag": "# req-Id:",
           "need": "tool_req__docs_arch_views",
           "full_line": "# req-Id: tool_req__docs_arch_views",
@@ -1589,7 +1599,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 650,
+          "line": 678,
           "tag": "# req-Id:",
           "need": "tool_req__docs_arch_views",
           "full_line": "# req-Id: tool_req__docs_arch_views",
@@ -1607,7 +1617,7 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 469,
+          "line": 497,
           "tag": "# req-Id:",
           "need": "tool_req__docs_arch_link_fulfils",
           "full_line": "# req-Id: tool_req__docs_arch_link_fulfils, tool_req__docs_arch_link_fulfils_aou",
@@ -1617,7 +1627,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 620,
+          "line": 648,
           "tag": "# req-Id:",
           "need": "tool_req__docs_arch_link_fulfils",
           "full_line": "# req-Id: tool_req__docs_arch_link_fulfils, tool_req__docs_arch_link_fulfils_aou",
@@ -1635,7 +1645,7 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 469,
+          "line": 497,
           "tag": "# req-Id:",
           "need": "tool_req__docs_arch_link_fulfils_aou",
           "full_line": "# req-Id: tool_req__docs_arch_link_fulfils, tool_req__docs_arch_link_fulfils_aou",
@@ -1645,7 +1655,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 620,
+          "line": 648,
           "tag": "# req-Id:",
           "need": "tool_req__docs_arch_link_fulfils_aou",
           "full_line": "# req-Id: tool_req__docs_arch_link_fulfils, tool_req__docs_arch_link_fulfils_aou",
@@ -1661,16 +1671,6 @@
     "need": "tool_req__docs_saf_types",
     "links": {
       "CodeLinks": [
-        {
-          "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 721,
-          "tag": "# req-Id:",
-          "need": "tool_req__docs_saf_types",
-          "full_line": "# req-Id: tool_req__docs_saf_types",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
           "line": 749,
@@ -1693,7 +1693,17 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 804,
+          "line": 805,
+          "tag": "# req-Id:",
+          "need": "tool_req__docs_saf_types",
+          "full_line": "# req-Id: tool_req__docs_saf_types",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        },
+        {
+          "file": "src/extensions/score_metamodel/metamodel.yaml",
+          "line": 832,
           "tag": "# req-Id:",
           "need": "tool_req__docs_saf_types",
           "full_line": "# req-Id: tool_req__docs_saf_types",
@@ -1711,7 +1721,7 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 725,
+          "line": 753,
           "tag": "# req-Id:",
           "need": "tool_req__docs_saf_attr_dfa_failure_id",
           "full_line": "# req-Id: tool_req__docs_saf_attr_dfa_failure_id",
@@ -1721,7 +1731,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 753,
+          "line": 781,
           "tag": "# req-Id:",
           "need": "tool_req__docs_saf_attr_dfa_failure_id",
           "full_line": "# req-Id: tool_req__docs_saf_attr_dfa_failure_id",
@@ -1737,16 +1747,6 @@
     "need": "tool_req__docs_saf_attrs_sufficient",
     "links": {
       "CodeLinks": [
-        {
-          "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 728,
-          "tag": "# req-Id:",
-          "need": "tool_req__docs_saf_attrs_sufficient",
-          "full_line": "# req-Id: tool_req__docs_saf_attrs_sufficient",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
           "line": 756,
@@ -1769,7 +1769,17 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 811,
+          "line": 812,
+          "tag": "# req-Id:",
+          "need": "tool_req__docs_saf_attrs_sufficient",
+          "full_line": "# req-Id: tool_req__docs_saf_attrs_sufficient",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        },
+        {
+          "file": "src/extensions/score_metamodel/metamodel.yaml",
+          "line": 839,
           "tag": "# req-Id:",
           "need": "tool_req__docs_saf_attrs_sufficient",
           "full_line": "# req-Id: tool_req__docs_saf_attrs_sufficient",
@@ -1785,16 +1795,6 @@
     "need": "tool_req__docs_saf_attrs_content",
     "links": {
       "CodeLinks": [
-        {
-          "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 731,
-          "tag": "# req-Id:",
-          "need": "tool_req__docs_saf_attrs_content",
-          "full_line": "# req-Id: tool_req__docs_saf_attrs_content",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
           "line": 759,
@@ -1817,7 +1817,17 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 814,
+          "line": 815,
+          "tag": "# req-Id:",
+          "need": "tool_req__docs_saf_attrs_content",
+          "full_line": "# req-Id: tool_req__docs_saf_attrs_content",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        },
+        {
+          "file": "src/extensions/score_metamodel/metamodel.yaml",
+          "line": 842,
           "tag": "# req-Id:",
           "need": "tool_req__docs_saf_attrs_content",
           "full_line": "# req-Id: tool_req__docs_saf_attrs_content",
@@ -1835,17 +1845,7 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 735,
-          "tag": "# req-Id:",
-          "need": "tool_req__docs_saf_attrs_violates",
-          "full_line": "# req-Id: tool_req__docs_saf_attrs_violates",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        },
-        {
-          "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 765,
+          "line": 763,
           "tag": "# req-Id:",
           "need": "tool_req__docs_saf_attrs_violates",
           "full_line": "# req-Id: tool_req__docs_saf_attrs_violates",
@@ -1865,7 +1865,17 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 820,
+          "line": 821,
+          "tag": "# req-Id:",
+          "need": "tool_req__docs_saf_attrs_violates",
+          "full_line": "# req-Id: tool_req__docs_saf_attrs_violates",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        },
+        {
+          "file": "src/extensions/score_metamodel/metamodel.yaml",
+          "line": 848,
           "tag": "# req-Id:",
           "need": "tool_req__docs_saf_attrs_violates",
           "full_line": "# req-Id: tool_req__docs_saf_attrs_violates",
@@ -1883,17 +1893,7 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 738,
-          "tag": "# req-Id:",
-          "need": "tool_req__docs_saf_attrs_mitigation_issue",
-          "full_line": "# req-Id: tool_req__docs_saf_attrs_mitigation_issue",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        },
-        {
-          "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 762,
+          "line": 766,
           "tag": "# req-Id:",
           "need": "tool_req__docs_saf_attrs_mitigation_issue",
           "full_line": "# req-Id: tool_req__docs_saf_attrs_mitigation_issue",
@@ -1913,7 +1913,17 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 817,
+          "line": 818,
+          "tag": "# req-Id:",
+          "need": "tool_req__docs_saf_attrs_mitigation_issue",
+          "full_line": "# req-Id: tool_req__docs_saf_attrs_mitigation_issue",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        },
+        {
+          "file": "src/extensions/score_metamodel/metamodel.yaml",
+          "line": 845,
           "tag": "# req-Id:",
           "need": "tool_req__docs_saf_attrs_mitigation_issue",
           "full_line": "# req-Id: tool_req__docs_saf_attrs_mitigation_issue",
@@ -1931,17 +1941,7 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 741,
-          "tag": "# req-Id:",
-          "need": "tool_req__docs_saf_attrs_mitigated_by",
-          "full_line": "# req-Id: tool_req__docs_saf_attrs_mitigated_by",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        },
-        {
-          "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 768,
+          "line": 769,
           "tag": "# req-Id:",
           "need": "tool_req__docs_saf_attrs_mitigated_by",
           "full_line": "# req-Id: tool_req__docs_saf_attrs_mitigated_by",
@@ -1961,7 +1961,17 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 1150,
+          "line": 824,
+          "tag": "# req-Id:",
+          "need": "tool_req__docs_saf_attrs_mitigated_by",
+          "full_line": "# req-Id: tool_req__docs_saf_attrs_mitigated_by",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        },
+        {
+          "file": "src/extensions/score_metamodel/metamodel.yaml",
+          "line": 1178,
           "tag": "# req-Id:",
           "need": "tool_req__docs_saf_attrs_mitigated_by",
           "full_line": "# req-Id: tool_req__docs_saf_attrs_mitigated_by",
@@ -1979,7 +1989,7 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 781,
+          "line": 809,
           "tag": "# req-Id:",
           "need": "tool_req__docs_saf_attr_fmea_fault_id",
           "full_line": "# req-Id: tool_req__docs_saf_attr_fmea_fault_id",
@@ -1989,7 +1999,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 808,
+          "line": 836,
           "tag": "# req-Id:",
           "need": "tool_req__docs_saf_attr_fmea_fault_id",
           "full_line": "# req-Id: tool_req__docs_saf_attr_fmea_fault_id",
@@ -2007,7 +2017,7 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 830,
+          "line": 858,
           "tag": "# req-Id:",
           "need": "tool_req__docs_sec_types",
           "full_line": "# req-Id: tool_req__docs_sec_types",
@@ -2017,7 +2027,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 843,
+          "line": 871,
           "tag": "# req-Id:",
           "need": "tool_req__docs_sec_types",
           "full_line": "# req-Id: tool_req__docs_sec_types",
@@ -2027,7 +2037,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 856,
+          "line": 884,
           "tag": "# req-Id:",
           "need": "tool_req__docs_sec_types",
           "full_line": "# req-Id: tool_req__docs_sec_types",
@@ -2037,7 +2047,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 869,
+          "line": 897,
           "tag": "# req-Id:",
           "need": "tool_req__docs_sec_types",
           "full_line": "# req-Id: tool_req__docs_sec_types",
@@ -2047,7 +2057,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 894,
+          "line": 922,
           "tag": "# req-Id:",
           "need": "tool_req__docs_sec_types",
           "full_line": "# req-Id: tool_req__docs_sec_types",
@@ -2057,7 +2067,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 913,
+          "line": 941,
           "tag": "# req-Id:",
           "need": "tool_req__docs_sec_types",
           "full_line": "# req-Id: tool_req__docs_sec_types",
@@ -2075,7 +2085,7 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 834,
+          "line": 862,
           "tag": "# req-Id:",
           "need": "tool_req__docs_sec_attr_stride_threat_id",
           "full_line": "# req-Id: tool_req__docs_sec_attr_stride_threat_id",
@@ -2085,7 +2095,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 847,
+          "line": 875,
           "tag": "# req-Id:",
           "need": "tool_req__docs_sec_attr_stride_threat_id",
           "full_line": "# req-Id: tool_req__docs_sec_attr_stride_threat_id",
@@ -2095,7 +2105,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 860,
+          "line": 888,
           "tag": "# req-Id:",
           "need": "tool_req__docs_sec_attr_stride_threat_id",
           "full_line": "# req-Id: tool_req__docs_sec_attr_stride_threat_id",
@@ -2113,7 +2123,7 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 873,
+          "line": 901,
           "tag": "# req-Id:",
           "need": "tool_req__docs_sec_attrs_mandatory",
           "full_line": "# req-Id: tool_req__docs_sec_attrs_mandatory",
@@ -2123,7 +2133,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 875,
+          "line": 903,
           "tag": "# req-Id:",
           "need": "tool_req__docs_sec_attrs_mandatory",
           "full_line": "# req-Id: tool_req__docs_sec_attrs_mandatory",
@@ -2133,7 +2143,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 877,
+          "line": 905,
           "tag": "# req-Id:",
           "need": "tool_req__docs_sec_attrs_mandatory",
           "full_line": "# req-Id: tool_req__docs_sec_attrs_mandatory",
@@ -2143,7 +2153,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 879,
+          "line": 907,
           "tag": "# req-Id:",
           "need": "tool_req__docs_sec_attrs_mandatory",
           "full_line": "# req-Id: tool_req__docs_sec_attrs_mandatory",
@@ -2161,7 +2171,7 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 884,
+          "line": 912,
           "tag": "# req-Id:",
           "need": "tool_req__docs_sec_attrs_optional",
           "full_line": "# req-Id: tool_req__docs_sec_attrs_optional",
@@ -2171,7 +2181,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 887,
+          "line": 915,
           "tag": "# req-Id:",
           "need": "tool_req__docs_sec_attrs_optional",
           "full_line": "# req-Id: tool_req__docs_sec_attrs_optional",
@@ -2189,7 +2199,7 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 1102,
+          "line": 1130,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_safety_link_check",
           "full_line": "# req-Id: tool_req__docs_common_attr_safety_link_check",
@@ -2207,7 +2217,7 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 1112,
+          "line": 1140,
           "tag": "# req-Id:",
           "need": "tool_req__docs_arch_link_qm_to_safety_req",
           "full_line": "# req-Id: tool_req__docs_arch_link_qm_to_safety_req",
@@ -2225,7 +2235,7 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 1121,
+          "line": 1149,
           "tag": "# req-Id:",
           "need": "tool_req__docs_req_arch_link_safety_to_arch",
           "full_line": "# req-Id: tool_req__docs_req_arch_link_safety_to_arch",
@@ -2243,7 +2253,7 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 1136,
+          "line": 1164,
           "tag": "# req-Id:",
           "need": "tool_req__docs_arch_link_security",
           "full_line": "# req-Id: tool_req__docs_arch_link_security",
