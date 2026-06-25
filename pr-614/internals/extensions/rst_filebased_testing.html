@@ -540,7 +540,7 @@ prerequisite need (for example a link target) and is not asserted against.</p>
 </div>
 <p>This example verifies that the warning message
 <em>std_wp__test__abcd: is missing required attribute: `status`</em> is shown during
-the Sphinx build. Only the <em>check_options</em> check is enabled.</p>
+the Sphinx build.</p>
 <p><strong>Expect-not example:</strong></p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>.. std_wp:: Test requirement
    :id: std_wp__test_options__abce
@@ -556,23 +556,6 @@ substring <em>attribute</em> is emitted for it.</p>
 parser counts them as needs.</p>
 </div></blockquote>
 </section>
-</section>
-<section id="graph-check-tests">
-<h2>Graph check tests<a class="headerlink" href="#graph-check-tests" title="Link to this heading">#</a></h2>
-<p>Graph checks (defined in <code class="docutils literal notranslate"><span class="pre">metamodel.yaml</span></code> under <code class="docutils literal notranslate"><span class="pre">graph_checks:</span></code>) are all executed
-by a single Python function <code class="docutils literal notranslate"><span class="pre">check_metamodel_graph</span></code>. Use that function name in the
-<code class="docutils literal notranslate"><span class="pre">test_metadata</span></code> need’s <code class="docutils literal notranslate"><span class="pre">:check:</span></code> option:</p>
-<p>.. code-block:: rst</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>.. test_metadata::
-   :id: test_metadata__graph_&lt;name&gt;
-   :partially_verifies_list: &lt;requirement id&gt;
-   :test_type: requirements_based
-   :derivation_technique: requirements_based
-
-   &lt;description&gt;
-</pre></div>
-</div>
-<p>Graph check test files live in <code class="docutils literal notranslate"><span class="pre">tests/rst/graph/</span></code>.</p>
 <section id="warning-message-format">
 <h3>Warning message format<a class="headerlink" href="#warning-message-format" title="Link to this heading">#</a></h3>
 <p>You only need to match a unique substring, not the full message. For example:</p>
@@ -696,9 +679,6 @@ selected by the check at all — no warning is emitted. Test this with
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#create-a-test-rst-file">Create a test rst file</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-test-metadata-need">The <code class="docutils literal notranslate"><span class="pre">test_metadata</span></code> need</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#needs-with-expectations">Needs with expectations</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#graph-check-tests">Graph check tests</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#warning-message-format">Warning message format</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#setup-needs">Setup needs</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-exempt-case">The “exempt” case</a></li>

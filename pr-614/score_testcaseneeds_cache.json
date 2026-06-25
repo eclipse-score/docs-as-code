@@ -2129,7 +2129,7 @@
   },
   {
     "name": "test_rules_file_based__test_rst_files[architecture/architecture_tests.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/architecture/architecture_tests",
+    "file": "src/extensions/score_metamodel/tests/rst/architecture/architecture_tests.rst",
     "line": "16",
     "result": "passed",
     "repo_name": "local_repo",
@@ -2157,7 +2157,7 @@
   },
   {
     "name": "test_rules_file_based__test_rst_files[graph/test_invalid_graph.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/graph/test_invalid_graph",
+    "file": "src/extensions/score_metamodel/tests/rst/graph/test_invalid_graph.rst",
     "line": "16",
     "result": "passed",
     "repo_name": "local_repo",
@@ -2171,7 +2171,7 @@
   },
   {
     "name": "test_rules_file_based__test_rst_files[graph/test_workproduct_aspice_40.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/graph/test_workproduct_aspice_40",
+    "file": "src/extensions/score_metamodel/tests/rst/graph/test_workproduct_aspice_40.rst",
     "line": "16",
     "result": "passed",
     "repo_name": "local_repo",
@@ -2185,7 +2185,7 @@
   },
   {
     "name": "test_rules_file_based__test_rst_files[graph/test_metamodel_graph.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/graph/test_metamodel_graph",
+    "file": "src/extensions/score_metamodel/tests/rst/graph/test_metamodel_graph.rst",
     "line": "15",
     "result": "passed",
     "repo_name": "local_repo",
@@ -2213,13 +2213,13 @@
   },
   {
     "name": "test_rules_file_based__test_rst_files[id_contains_feature/test_id_contains_feature.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/id_contains_feature/test_id_contains_feature",
+    "file": "src/extensions/score_metamodel/tests/rst/id_contains_feature/test_id_contains_feature.rst",
     "line": "16",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
     "url": "",
-    "TestType": "requirements_test",
+    "TestType": "requirements_based",
     "DerivationTechnique": "requirements_based",
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_common_attr_id_scheme",
@@ -2241,7 +2241,7 @@
   },
   {
     "name": "test_rules_file_based__test_rst_files[options/wp_comp.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/options/wp_comp",
+    "file": "src/extensions/score_metamodel/tests/rst/options/wp_comp.rst",
     "line": "16",
     "result": "passed",
     "repo_name": "local_repo",
@@ -2255,7 +2255,7 @@
   },
   {
     "name": "test_rules_file_based__test_rst_files[options/gd_req_comp.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/options/gd_req_comp",
+    "file": "src/extensions/score_metamodel/tests/rst/options/gd_req_comp.rst",
     "line": "16",
     "result": "passed",
     "repo_name": "local_repo",
@@ -2269,7 +2269,7 @@
   },
   {
     "name": "test_rules_file_based__test_rst_files[options/test_options_options.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/options/test_options_options",
+    "file": "src/extensions/score_metamodel/tests/rst/options/test_options_options.rst",
     "line": "16",
     "result": "passed",
     "repo_name": "local_repo",
@@ -2283,7 +2283,7 @@
   },
   {
     "name": "test_rules_file_based__test_rst_files[options/test_need_extends.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/docname",
+    "file": "src/extensions/score_metamodel/tests/rst/docname.rst",
     "line": "42",
     "result": "passed",
     "repo_name": null,
@@ -2297,7 +2297,7 @@
   },
   {
     "name": "test_rules_file_based__test_rst_files[options/test_options_extra_option.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/options/test_options_extra_option",
+    "file": "src/extensions/score_metamodel/tests/rst/options/test_options_extra_option.rst",
     "line": "16",
     "result": "passed",
     "repo_name": "local_repo",
@@ -2325,7 +2325,7 @@
   },
   {
     "name": "test_rules_file_based__test_rst_files[attributes/test_validity.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/attributes/test_validity",
+    "file": "src/extensions/score_metamodel/tests/rst/attributes/test_validity.rst",
     "line": "16",
     "result": "passed",
     "repo_name": "local_repo",
@@ -2339,7 +2339,7 @@
   },
   {
     "name": "test_rules_file_based__test_rst_files[attributes/test_prohibited_words.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/attributes/test_prohibited_words",
+    "file": "src/extensions/score_metamodel/tests/rst/attributes/test_prohibited_words.rst",
     "line": "17",
     "result": "passed",
     "repo_name": "local_repo",
@@ -2353,7 +2353,7 @@
   },
   {
     "name": "test_rules_file_based__test_rst_files[attributes/test_attributes_format_id_format.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/attributes/test_attributes_format_id_format",
+    "file": "src/extensions/score_metamodel/tests/rst/attributes/test_attributes_format_id_format.rst",
     "line": "16",
     "result": "passed",
     "repo_name": "local_repo",
@@ -2367,7 +2367,7 @@
   },
   {
     "name": "test_rules_file_based__test_rst_files[attributes/test_attributes_external_prefix.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/attributes/test_attributes_external_prefix",
+    "file": "src/extensions/score_metamodel/tests/rst/attributes/test_attributes_external_prefix.rst",
     "line": "16",
     "result": "passed",
     "repo_name": "local_repo",
@@ -2381,7 +2381,7 @@
   },
   {
     "name": "test_rules_file_based__test_rst_files[attributes/test_attributes_format_id_length.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/attributes/test_attributes_format_id_length",
+    "file": "src/extensions/score_metamodel/tests/rst/attributes/test_attributes_format_id_length.rst",
     "line": "16",
     "result": "passed",
     "repo_name": "local_repo",
