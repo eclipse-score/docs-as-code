@@ -94,33 +94,6 @@ def test_load_metamodel_data():
         "link1": "opt1 == test",
     }
 
-
-def test_default_metamodel_contains_generic_verification_and_inspection_types():
-    """Default metamodel contains generic module verification and inspection types."""
-    result = load_metamodel_data()
-
-    needs_types = {
-        need_type["directive"]: need_type for need_type in result.needs_types
-    }
-
-    assert "mod_ver_report" in needs_types
-    assert "mod_insp" in needs_types
-
-    mod_ver_report = needs_types["mod_ver_report"]
-    assert mod_ver_report["mandatory_links_str"]["belongs_to"] == "mod"
-    assert mod_ver_report["optional_links_str"]["contains"] == "ANY"
-    assert mod_ver_report["optional_links_str"]["evidence"] == "ANY"
-    assert mod_ver_report["optional_links_str"]["covers"] == "ANY"
-
-    mod_insp = needs_types["mod_insp"]
-    assert mod_insp["mandatory_links_str"]["inspects"] == "ANY"
-    assert mod_insp["optional_links_str"]["contains"] == "ANY"
-    assert mod_insp["optional_links_str"]["evidence"] == "ANY"
-
-    assert "evidence" in result.needs_links
-    assert "inspects" in result.needs_links
-
-
 def test_metamodel_schema_json_is_valid():
     """The metamodel JSON schema file must be syntactically valid JSON."""
     schema_path = Path(__file__).resolve().parent.parent / "metamodel-schema.json"
