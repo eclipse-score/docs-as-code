@@ -2844,7 +2844,7 @@
   {
     "name": "test_metamodel_load__test_metamodel_schema_json_is_valid",
     "file": "src/extensions/score_metamodel/tests/test_metamodel_load.py",
-    "line": "97",
+    "line": "98",
     "result": "passed",
     "repo_name": null,
     "hash": null,
