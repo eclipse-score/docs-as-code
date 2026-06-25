@@ -2842,23 +2842,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_metamodel_load__test_default_metamodel_contains_generic_verification_and_inspection_types",
-    "file": "src/extensions/score_metamodel/tests/test_metamodel_load.py",
-    "line": "98",
-    "result": "passed",
-    "repo_name": null,
-    "hash": null,
-    "url": null,
-    "TestType": null,
-    "DerivationTechnique": null,
-    "result_text": "",
-    "PartiallyVerifies": null,
-    "FullyVerifies": null
-  },
-  {
     "name": "test_metamodel_load__test_metamodel_schema_json_is_valid",
     "file": "src/extensions/score_metamodel/tests/test_metamodel_load.py",
-    "line": "124",
+    "line": "97",
     "result": "passed",
     "repo_name": null,
     "hash": null,
