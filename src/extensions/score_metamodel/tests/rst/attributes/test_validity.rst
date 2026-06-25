@@ -44,4 +44,4 @@
    :id: stkh_req__random_id1
    :valid_from: v1.0.1
    :valid_until: v0.5
-   :expect: stkh_req__random_id1: inconsistent validity: valid_from (v1.0.1) >= valid_until (v0.5
+   :expect: stkh_req__random_id1: inconsistent validity: valid_from (v1.0.1) >= valid_until (v0.5)

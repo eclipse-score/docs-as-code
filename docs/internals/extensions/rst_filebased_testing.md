@@ -83,7 +83,7 @@ prerequisite need (for example a link target) and is not asserted against.
 
 This example verifies that the warning message
 *std_wp__test__abcd: is missing required attribute: \`status\`* is shown during
-the Sphinx build. Only the *check_options* check is enabled.
+the Sphinx build.
 
 **Expect-not example:**
 
@@ -98,24 +98,6 @@ substring *attribute* is emitted for it.
 > **Note:** RST comments used to separate or describe cases (for example
 > `.. All required options are present`) must not contain `::`, otherwise the
 > parser counts them as needs.
-
-## Graph check tests
-
-Graph checks (defined in `metamodel.yaml` under `graph_checks:`) are all executed
-by a single Python function `check_metamodel_graph`. Use that function name in the
-`test_metadata` need's `:check:` option:
-
-.. code-block:: rst
-
-    .. test_metadata::
-       :id: test_metadata__graph_<name>
-       :partially_verifies_list: <requirement id>
-       :test_type: requirements_based
-       :derivation_technique: requirements_based
-
-       <description>
-
-Graph check test files live in `tests/rst/graph/`.
 
 ### Warning message format
 

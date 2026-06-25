@@ -190,7 +190,7 @@ def _get_default_metadata_need() -> NeedItem:
         line_nr="",
         file="",
         derivation_technique="",
-        descdription="",
+        description="",
     )
 
 
@@ -288,7 +288,11 @@ def test_rst_files(
     metadata_need = _get_test_metadata_need(needs_view, rst_data)
     rst_data.metadata = parse_test_metadata(metadata_need)
     line_nr = int(str(rst_data.metadata["line_nr"]))
-    file_name = clean_filepath(request) + str(rst_data.metadata["file"])
+    file_name = (
+        clean_filepath(request) + str(rst_data.metadata["file"]) + ".rst"
+        if rst_data.metadata["file"]
+        else ""
+    )
     apply_test_metadata(
         record_property=record_property,
         metadata=rst_data.metadata,

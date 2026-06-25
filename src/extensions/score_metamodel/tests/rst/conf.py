@@ -41,13 +41,6 @@ suppress_warnings = ["app.add_directive", "app.add_node", "app.add_role"]
 
 def setup(app: Sphinx):
     add_needs_fields: dict[str, Any] = {
-        "check": {
-            "description": "Define which 'metamodel' check should be activated for this RST check",
-            "schema": {
-                "type": "string",
-            },
-            "nullable": True,
-        },
         "expect_not": {
             "description": "Partial string that is not exepcted to be in rst test warnings",
             "schema": {
@@ -61,6 +54,20 @@ def setup(app: Sphinx):
             "schema": {
                 "type": "array",
                 "items": {"type": "string"},
+            },
+            "nullable": True,
+        },
+        "test_type": {
+            "description": "The test type that this test has",
+            "schema": {
+                "type": "string",
+            },
+            "nullable": True,
+        },
+        "derivation_technique": {
+            "description": "The derivation_technique that this test has",
+            "schema": {
+                "type": "string",
             },
             "nullable": True,
         },
@@ -81,10 +88,12 @@ def setup(app: Sphinx):
             "nullable": True,
         },
     }
-    add_options_regex = {
-        "check": "^.*$",
+    add_options_regex_base = {
         "expect_not": "^.*$",
         "expect": "^.*$",
+    }
+    add_options_test_metadata = {
+        "derivation_technique": "^.*$",
         "fully_verifies_list": "^.*$",
         "partially_verifies_list": "^.*$",
     }
@@ -97,7 +106,7 @@ def setup(app: Sphinx):
             "tags": [],
             "parts": 2,
             "mandatory_options": {"id": "^test_metadata__.*$"},
-            "optional_options": add_options_regex,
+            "optional_options": add_options_regex_base | add_options_test_metadata,
             "mandatory_links_str": {},
             "mandatory_links": {},
             "optional_links_str": {},
@@ -113,7 +122,7 @@ def setup(app: Sphinx):
     if "test_metadata" not in {nt["directive"] for nt in all_needs_types}:
         for need_type in all_needs_types:
             opts: dict[str, Any] = need_type.get("optional_options") or {}
-            opts.update(add_options_regex)
+            opts.update(add_options_regex_base)
             need_type["optional_options"] = opts
             changed_needs_types.append(need_type)
         app.config.needs_types = changed_needs_types

@@ -16,7 +16,7 @@
 .. test_metadata::
    :id: test_metadata__id_contains_feature
    :partially_verifies_list: tool_req__docs_common_attr_id_scheme
-   :test_type: requirements_test
+   :test_type: requirements_based
    :derivation_technique: requirements_based
 
    This is the content
