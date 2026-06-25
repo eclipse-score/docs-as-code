@@ -52,11 +52,27 @@ class ConsumerRepo:
     git_url: str
     commands: list[str]
 
+    def __init__(
+        self, name: str, git_url: str | None = None, commands: list[str] | None = None
+    ) -> None:
+        self.name = name
+
+        if git_url:
+            self.git_url = git_url
+        else:
+            self.git_url = f"https://github.com/eclipse-score/{name}.git"
+
+        if commands:
+            self.commands = commands
+        else:
+            # The minimum is to ensure that the repo can build against the current score_docs_as_code branch.
+            # If docs works, then usually docs_checl and needs_json will work as well.
+            self.commands = ["bazel run //:docs"]
+
 
 REPOS_TO_TEST: list[ConsumerRepo] = [
     ConsumerRepo(
         name="process_description",
-        git_url="https://github.com/eclipse-score/process_description.git",
         commands=[
             "bazel run //:ide_support",
             "bazel run //:docs_check",
@@ -66,7 +82,6 @@ REPOS_TO_TEST: list[ConsumerRepo] = [
     ),
     ConsumerRepo(
         name="score",
-        git_url="https://github.com/eclipse-score/score.git",
         commands=[
             "bazel run //:ide_support",
             "bazel run //:docs_check",
@@ -76,7 +91,6 @@ REPOS_TO_TEST: list[ConsumerRepo] = [
     ),
     ConsumerRepo(
         name="module_template",
-        git_url="https://github.com/eclipse-score/module_template.git",
         commands=[
             "bazel run //:ide_support",
             "bazel run //:docs_check",
@@ -85,6 +99,10 @@ REPOS_TO_TEST: list[ConsumerRepo] = [
             "bazel test //tests/...",
         ],
     ),
+    ConsumerRepo(name="infrastructure"),
+    ConsumerRepo(name="itf"),
+    ConsumerRepo(name="baselibs"),
+    ConsumerRepo(name="inc_someip_gateway"),
 ]
 
 # ---------------------------------------------------------------------------
