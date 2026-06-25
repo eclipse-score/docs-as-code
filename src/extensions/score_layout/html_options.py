@@ -31,7 +31,7 @@ def return_html_theme_options(app: Sphinx) -> dict[str, Any]:
         "use_edit_page_button": True,
         "collapse_navigation": True,
         "logo": {
-            "text": "Eclipse S-CORE",
+            "text": app.config.project if app.config.project else "Eclipse S-CORE"
         },
     }
 
