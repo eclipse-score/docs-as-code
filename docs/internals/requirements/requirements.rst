@@ -310,7 +310,6 @@ Versioning
    gd_req__change_attr_impact_safety,
    gd_req__doc_attr_status,
   :parent_covered: YES
-  :source_code_link: https://github.com/eclipse-score/docs-as-code/blob/main/src/extensions/score_metamodel/metamodel.yaml#L207-L223
 
   Enforce that each Generic Document ``doc__*`` has the following attributes:
 
@@ -318,11 +317,6 @@ Versioning
   * security
   * safety
   * realizes
-
-  Implementation: All four attributes are enforced in
-  `metamodel.yaml L207-L223 <https://github.com/eclipse-score/docs-as-code/blob/main/src/extensions/score_metamodel/metamodel.yaml#L207-L223>`_ —
-  ``status``, ``safety``, and ``security`` as ``mandatory_options`` with regex
-  validation, and ``realizes`` as ``mandatory_links`` to ``workproduct``.
 
 .. tool_req:: Mandatory Document attributes
   :id: tool_req__docs_doc_attr
@@ -503,19 +497,11 @@ Versioning
   :parent_covered: YES
   :satisfies: gd_req__req_validity
   :status: valid
-  :source_code_link: https://github.com/eclipse-score/docs-as-code/blob/main/src/extensions/score_metamodel/metamodel.yaml#L273
 
   Docs-as-Code shall enforce that the ``valid_from`` and ``valid_until`` attributes of stakeholder and feature requirements are correct.
 
   The format of a milestone is something like "v0.5" or "v1.0.1".
   No suffixes like "-SNAPSHOT" or "-beta" are allowed.
-
-  Implementation: Regex validation ``^v(0|[1-9]\d*)\.(0|[1-9]\d*)(\.(0|[1-9]\d*))?$`` is enforced
-  as ``optional_options`` on ``stkh_req``
-  (`L273 <https://github.com/eclipse-score/docs-as-code/blob/main/src/extensions/score_metamodel/metamodel.yaml#L273>`_)
-  and ``feat_req``
-  (`L311 <https://github.com/eclipse-score/docs-as-code/blob/main/src/extensions/score_metamodel/metamodel.yaml#L311>`_)
-  in ``metamodel.yaml``.
 
 .. tool_req:: Enforce validity start is before end
   :id: tool_req__docs_req_attr_validity_consistency
@@ -525,15 +511,10 @@ Versioning
   :parent_covered: YES
   :satisfies: gd_req__req_validity
   :status: valid
-  :source_code_link: https://github.com/eclipse-score/docs-as-code/blob/main/src/extensions/score_metamodel/checks/check_options.py#L283-L307
 
   Docs-as-Code shall enforce that ``valid_from`` is before ``valid_until`` attribute in stakeholder and feature requirements.
   We consider "from" is inclusive but "until" is exclusive, so from v0.5 until v1.0 means valid for v0.5 but not for v1.0.
   If either attribute is missing, no check is performed.
-
-  Implementation: ``check_validity_consistency`` local check in
-  `check_options.py L283-L307 <https://github.com/eclipse-score/docs-as-code/blob/main/src/extensions/score_metamodel/checks/check_options.py#L283-L307>`_
-  parses milestones and verifies ``valid_from < valid_until``.
 
 
 -------------------------
@@ -1122,19 +1103,9 @@ Testing
    :version: 2
    :satisfies: gd_req__saf_argument
    :parent_covered: NO
-   :source_code_link: https://github.com/eclipse-score/docs-as-code/blob/main/src/extensions/score_metamodel/metamodel.yaml#L709
 
    Docs-As-Code shall enforce needs of type :need:`tool_req__docs_saf_types` to have a
    non empty content.
-
-   Implementation: ``content: ^[\s\S]+$`` is defined as ``mandatory_options`` for
-   ``feat_saf_dfa`` (`L709 <https://github.com/eclipse-score/docs-as-code/blob/main/src/extensions/score_metamodel/metamodel.yaml#L709>`_),
-   ``comp_saf_dfa`` (`L736 <https://github.com/eclipse-score/docs-as-code/blob/main/src/extensions/score_metamodel/metamodel.yaml#L736>`_),
-   ``feat_saf_fmea`` (`L764 <https://github.com/eclipse-score/docs-as-code/blob/main/src/extensions/score_metamodel/metamodel.yaml#L764>`_), and
-   ``comp_saf_fmea`` (`L791 <https://github.com/eclipse-score/docs-as-code/blob/main/src/extensions/score_metamodel/metamodel.yaml#L791>`_)
-   in ``metamodel.yaml``. The ``validate_options()`` function in
-   `check_options.py <https://github.com/eclipse-score/docs-as-code/blob/main/src/extensions/score_metamodel/checks/check_options.py#L76-L100>`_
-   enforces this at build time.
 
 
 
@@ -1148,19 +1119,9 @@ Testing
     gd_req__saf_linkage,
     gd_req__sec_linkage_check,
   :parent_covered: YES
-  :source_code_link: https://github.com/eclipse-score/docs-as-code/blob/main/src/extensions/score_metamodel/metamodel.yaml#L710
 
   Docs-As-Code shall enforce that needs of type :need:`tool_req__docs_saf_types` have a
   `violates` links to at least one dynamic / static diagram according to the table.
-
-  Implementation: ``violates`` is defined as ``mandatory_links`` for
-  ``feat_saf_dfa`` (`L710 <https://github.com/eclipse-score/docs-as-code/blob/main/src/extensions/score_metamodel/metamodel.yaml#L710>`_),
-  ``comp_saf_dfa`` (`L740 <https://github.com/eclipse-score/docs-as-code/blob/main/src/extensions/score_metamodel/metamodel.yaml#L740>`_),
-  ``feat_saf_fmea`` (`L768 <https://github.com/eclipse-score/docs-as-code/blob/main/src/extensions/score_metamodel/metamodel.yaml#L768>`_), and
-  ``comp_saf_fmea`` (`L795 <https://github.com/eclipse-score/docs-as-code/blob/main/src/extensions/score_metamodel/metamodel.yaml#L795>`_)
-  in ``metamodel.yaml``. The ``validate_links()`` function in
-  `check_options.py <https://github.com/eclipse-score/docs-as-code/blob/main/src/extensions/score_metamodel/checks/check_options.py#L162-L203>`_
-  enforces the link is present and targets the correct type.
 
   .. table::
      :widths: auto
@@ -1183,17 +1144,11 @@ Testing
    :version: 2
    :satisfies: gd_req__saf_attr_fault_id
    :parent_covered: NO
-   :source_code_link: https://github.com/eclipse-score/docs-as-code/blob/main/src/extensions/score_metamodel/metamodel.yaml#L758
 
    Docs-As-Code shall enforce that needs of type FMEA (see
    :need:`tool_req__docs_saf_types`) have a `fault_id` attribute.
 
    Allowed values are listed as ID in tables at :need:`gd_guidl__dfa_failure_initiators`.
-
-   Implementation: ``fault_id: ^.*$`` is defined as ``mandatory_options`` for
-   ``feat_saf_fmea`` (`L758 <https://github.com/eclipse-score/docs-as-code/blob/main/src/extensions/score_metamodel/metamodel.yaml#L758>`_)
-   and ``comp_saf_fmea`` (`L785 <https://github.com/eclipse-score/docs-as-code/blob/main/src/extensions/score_metamodel/metamodel.yaml#L785>`_)
-   in ``metamodel.yaml``.
 
 
 .. tool_req:: DFA: failure id attribute
@@ -1203,17 +1158,11 @@ Testing
    :version: 2
    :satisfies: gd_req__saf_attr_failure_id
    :parent_covered: NO
-   :source_code_link: https://github.com/eclipse-score/docs-as-code/blob/main/src/extensions/score_metamodel/metamodel.yaml#L702
 
    Docs-As-Code shall enforce that needs of type DFA (see
    :need:`tool_req__docs_saf_types`) have a `failure_id` attribute.
 
    Allowed values are listed as ID in tables at :need:`gd_guidl__dfa_failure_initiators`.
-
-   Implementation: ``failure_id: ^.*$`` is defined as ``mandatory_options`` for
-   ``feat_saf_dfa`` (`L702 <https://github.com/eclipse-score/docs-as-code/blob/main/src/extensions/score_metamodel/metamodel.yaml#L702>`_)
-   and ``comp_saf_dfa`` (`L730 <https://github.com/eclipse-score/docs-as-code/blob/main/src/extensions/score_metamodel/metamodel.yaml#L730>`_)
-   in ``metamodel.yaml``.
 
 
 .. tool_req:: Failure Effect
