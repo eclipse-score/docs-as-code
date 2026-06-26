@@ -19,11 +19,15 @@ A need is kept when it matches *all* of the active filters:
 * ``--type``: the value of the need's ``type`` attribute is in the requested
   list of element types (e.g. ``feat_req``). If no ``--type`` is given, needs
   of any type are kept.
-* ``--component``: the value of the need's component attribute (configurable
-  via ``--component-attr``, default ``component``) matches one of the requested
-  component names. The attribute may hold a single string or a list of strings;
-  a need is kept when any of its values matches. If no ``--component`` is given,
-  needs of any component are kept.
+* ``--name``: the feature/component name encoded in the need's ID matches one
+  of the requested names. Need IDs follow the convention
+  ``<type>__<name>__<rest>`` (e.g. ``feat_req__baselibs__core_utilities``), so
+  the second ``__``-separated segment is the feature/component name. The
+  ``comp_arc_sta`` and ``comp_arc_dyn`` types are an exception: their IDs follow
+  ``<type>__<feature name>__<component name>`` (e.g.
+  ``comp_arc_sta__baselibs__filesystem``), so the *third* segment holds the
+  component name used for matching. If no ``--name`` is given, needs of any
+  feature/component are kept.
 
 The top-level structure of the needs.json file is preserved; only the per-need
 entries are filtered.
@@ -40,27 +44,43 @@ logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
 
 
-def _attribute_values(need: dict[str, Any], attr: str) -> list[str]:
-    """Return the values of ``attr`` on a need as a list of strings."""
-    value = need.get(attr)
-    if value is None:
-        return []
-    if isinstance(value, list):
-        return [str(v) for v in value]  # pyright: ignore[reportUnknownVariableType]
-    return [str(value)]
+# Element types whose IDs follow ``<type>__<feature name>__<component name>``,
+# i.e. the component name used for matching is the *third* ``__`` segment.
+_COMPONENT_NAME_THIRD_SEGMENT_TYPES = frozenset({"comp_arc_sta", "comp_arc_dyn"})
+
+
+def _id_name_segment(need_id: str, need_type: str | None = None) -> str | None:
+    """Return the feature/component name encoded in a need ID.
+
+    Need IDs follow the convention ``<type>__<name>__<rest>`` (e.g.
+    ``feat_req__baselibs__core_utilities``); the second ``__``-separated segment
+    is the feature/component name. The ``comp_arc_sta`` and ``comp_arc_dyn``
+    types are an exception: their IDs follow
+    ``<type>__<feature name>__<component name>`` (e.g.
+    ``comp_arc_sta__baselibs__filesystem``), so the *third* segment holds the
+    component name. Returns ``None`` when the ID does not follow the convention.
+    """
+    parts = need_id.split("__")
+    if need_type in _COMPONENT_NAME_THIRD_SEGMENT_TYPES:
+        if len(parts) < 3 or not parts[2]:
+            return None
+        return parts[2]
+    if len(parts) < 2 or not parts[1]:
+        return None
+    return parts[1]
 
 
 def _keep_need(
+    need_id: str,
     need: dict[str, Any],
     types: set[str],
-    components: set[str],
-    component_attr: str,
+    names: set[str],
 ) -> bool:
     if types and need.get("type") not in types:
         return False
-    if components:
-        values = set(_attribute_values(need, component_attr))
-        if values.isdisjoint(components):
+    if names:
+        segment = _id_name_segment(need_id, need.get("type"))
+        if segment is None or segment not in names:
             return False
     return True
 
@@ -68,8 +88,7 @@ def _keep_need(
 def filter_needs(
     data: dict[str, Any],
     types: set[str],
-    components: set[str],
-    component_attr: str,
+    names: set[str],
 ) -> dict[str, Any]:
     """Return a copy of ``data`` keeping only the needs that match the filters."""
     for version in data.get("versions", {}).values():
@@ -77,7 +96,7 @@ def filter_needs(
         version["needs"] = {
             need_id: need
             for need_id, need in needs.items()
-            if _keep_need(need, types, components, component_attr)
+            if _keep_need(need_id, need, types, names)
         }
     return data
 
@@ -106,22 +125,16 @@ def main() -> int:
         ),
     )
     _ = parser.add_argument(
-        "--component",
-        dest="components",
+        "--name",
+        dest="names",
         action="append",
         default=[],
-        metavar="COMPONENT",
+        metavar="NAME",
         help=(
-            "Component name to keep. May be given multiple times. "
-            "If omitted, all components are kept."
-        ),
-    )
-    _ = parser.add_argument(
-        "--component-attr",
-        default="component",
-        help=(
-            "Need attribute matched against the values given via --component. "
-            "Defaults to 'component'."
+            "Feature/component name to keep, matched against the second "
+            "'__'-separated segment of each need ID (the '<type>__<name>__...' "
+            "naming convention). May be given multiple times. If omitted, all "
+            "features/components are kept."
         ),
     )
     _ = parser.add_argument(
@@ -138,8 +151,7 @@ def main() -> int:
     filtered = filter_needs(
         data,
         types=set(args.types),
-        components=set(args.components),
-        component_attr=args.component_attr,
+        names=set(args.names),
     )
 
     kept = sum(
@@ -147,12 +159,12 @@ def main() -> int:
         for version in filtered.get("versions", {}).values()
     )
     logger.info(
-        "Filtered '%s' -> '%s' (%d needs kept, types=%s, components=%s)",
+        "Filtered '%s' -> '%s' (%d needs kept, types=%s, names=%s)",
         args.input,
         args.output,
         kept,
         sorted(args.types) or "ALL",
-        sorted(args.components) or "ALL",
+        sorted(args.names) or "ALL",
     )
 
     args.output.parent.mkdir(parents=True, exist_ok=True)

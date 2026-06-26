@@ -100,7 +100,7 @@ bazel build //path/to:my_feature_reqs_trlc
 ```
 
 You can also call `filtered_needs_json` directly for full control over the
-`types`, `components`, and `component_attr` filters.
+`types` and `names` filters.
 
 ## Incremental builds and caching
 
@@ -121,33 +121,65 @@ In practice this means:
 
 - Changing an `.rst` file only re-runs the doc build plus the filtered targets
   whose content actually changed.
-- A `requirements_checklist` (or `architecture_checklist`) only re-validates —
-  and can only fail — when the requirements/architecture it pins really change.
-  Unrelated edits elsewhere in the documentation leave it untouched.
+- A `requirements_checklist` (or `architecture_checklist`) re-validates whenever
+  the full `needs.json` changes, but it only **fails** when the elements it pins
+  — the roots in `deps` *or any of their transitive dependencies* (see
+  [Transitive dependencies](#transitive-dependencies)) — really change. Edits to
+  unrelated, unreachable elements leave its hash untouched.
 
-## Requirement checklists
+## Checklists
 
-A *requirement checklist* couples a human review (a checklist `.rst` document)
-with the exact build output that was reviewed. The state of that output is
-pinned via a SHA256 hash stored on a `req_chklst` sphinx-needs element. When the
-output later changes, the checklist is considered stale and the build fails
-until the checklist is re-reviewed and the hash updated.
+A *checklist* couples a human review (a checklist `.rst` document) with the exact
+build output that was reviewed. The state of that output is pinned via a SHA256
+hash stored on a sphinx-needs element. When the output later changes, the
+checklist is considered stale and the build fails until it is re-reviewed and the
+hash updated.
+
+There are two checklist kinds. They behave identically and differ only in the
+need type they pin and the macro that validates them:
+
+| Kind | Need type | Validating macro | Pins the reviewed state of … |
+| --- | --- | --- | --- |
+| Requirements | `req_chklst` | `requirements_checklist` | extracted requirements (`component_requirements` / `feature_requirements`) and, by default, their transitive dependencies |
+| Architecture | `arch_chklst` | `architecture_checklist` | extracted architecture (`component_architecture` / `feature_architecture`) and, by default, their transitive dependencies |
+
+The flow below is a complete, real example from the
+[baselibs](https://github.com/eclipse-score/baselibs) repository, which wires
+both kinds for its `bitmanipulation` component. You can copy it directly.
 
 ### 1. Declare the checklist need
 
-Add a `req_chklst` element (e.g. next to the checklist `.rst`). It references the
-checklist document, the validated Bazel target(s), and the expected hash:
+Add the checklist element next to the inspection `.rst`. It references the
+checklist document and the expected hash. On the
+first build leave the `sha256` as the placeholder (all zeros) and pin the real
+value afterwards.
+
+Requirements (`req_chklst`):
 
 ```rst
 .. req_chklst:: Bitmanipulation Component Requirements Checklist
    :id: req_chklst__bitmanipulation__comp_req
    :status: valid
    :checklist: doc__bitmanipulation_req_inspection
-   :targets: //:bitmanipulation_comp_reqs
+   :sha256: 0000000000000000000000000000000000000000000000000000000000000000
+```
+
+Architecture (`arch_chklst`):
+
+```rst
+.. arch_chklst:: Bitmanipulation Component Architecture Checklist
+   :id: arch_chklst__bitmanipulation__comp_arc
+   :status: valid
+   :checklist: doc__bitmanipulation_arc_inspection
    :sha256: 0000000000000000000000000000000000000000000000000000000000000000
 ```
 
 ### 2. Declare the validation target
+
+Extract the reviewed output (`component_*` wrapper) and validate it against the
+checklist need.
+
+Requirements `BUILD`:
 
 ```starlark
 load("@docs-as-code//:docs.bzl", "component_requirements", "requirements_checklist")
@@ -161,117 +193,16 @@ requirements_checklist(
     name = "bitmanipulation_req_checklist",
     checklist_id = "req_chklst__bitmanipulation__comp_req",
     deps = [":bitmanipulation_comp_reqs"],
+    # Resolve upstream stakeholder requirements so changes to them are detected.
+    extra_needs = ["@score_platform//:needs_json"],
 )
 ```
 
-### 3. Validate
-
-```bash
-bazel build //:bitmanipulation_req_checklist
-```
-
-The build hashes the `deps` output and compares it to the `sha256` on the
-checklist need. On the first run (placeholder hash) the build **fails** and
-prints the actual hash — review the checklist, then paste that hash into the
-`sha256` attribute. From then on the build passes until the validated
-requirements change again, at which point it fails and asks for a re-review.
-
-## Architecture checklists
-
-An *architecture checklist* works exactly like a requirement checklist, but
-pins the reviewed state of an *architecture* output (a feature or component
-architecture) instead of requirements. The review (a checklist `.rst`
-document) is coupled to the extracted architecture via a SHA256 hash stored on
-an `arch_chklst` sphinx-needs element. When the architecture later changes, the
-checklist is considered stale and the build fails until it is re-reviewed and
-the hash updated.
-
-### 1. Declare the checklist need
-
-Add an `arch_chklst` element (e.g. next to the architecture `.rst`). It
-references the checklist document, the validated Bazel target(s), and the
-expected hash:
-
-```rst
-.. arch_chklst:: Baselibs Feature Architecture Checklist
-   :id: arch_chklst__baselibs__feat_arc
-   :status: valid
-   :checklist: doc__baselibs_architecture
-   :targets: //:baselibs_feature_arch
-   :sha256: 0000000000000000000000000000000000000000000000000000000000000000
-```
-
-### 2. Declare the validation target
+Architecture `BUILD`:
 
 ```starlark
-load("@docs-as-code//:docs.bzl", "feature_architecture", "architecture_checklist")
+load("@docs-as-code//:docs.bzl", "component_architecture", "architecture_checklist")
 
-feature_architecture(
-    name = "baselibs_feature_arch",
-    feature = "baselibs",
-)
-
-architecture_checklist(
-    name = "baselibs_feat_arch_checklist",
-    checklist_id = "arch_chklst__baselibs__feat_arc",
-    deps = [":baselibs_feature_arch"],
-)
-```
-
-Use `component_architecture` instead of `feature_architecture` to validate a
-single component's architecture.
-
-### 3. Validate
-
-```bash
-bazel build //:baselibs_feat_arch_checklist
-```
-
-The build hashes the `deps` output and compares it to the `sha256` on the
-checklist need. On the first run (placeholder hash) the build **fails** and
-prints the actual hash — review the checklist, then paste that hash into the
-`sha256` attribute. From then on the build passes until the validated
-architecture changes again, at which point it fails and asks for a re-review.
-
-## Worked example: bitmanipulation (baselibs)
-
-The [baselibs](https://github.com/eclipse-score/baselibs) repository wires both
-checklist kinds for its `bitmanipulation` component. The flow below is a
-complete, real example that you can copy.
-
-### Requirements checklist
-
-`BUILD`:
-
-```starlark
-component_requirements(
-    name = "bitmanipulation_comp_reqs",
-    component = "bitmanipulation",
-)
-
-requirements_checklist(
-    name = "bitmanipulation_req_checklist",
-    checklist_id = "req_chklst__bitmanipulation__comp_req",
-    deps = [":bitmanipulation_comp_reqs"],
-)
-```
-
-Checklist need (next to the requirements inspection `.rst`):
-
-```rst
-.. req_chklst:: Bitmanipulation Component Requirements Checklist
-   :id: req_chklst__bitmanipulation__comp_req
-   :status: valid
-   :checklist: doc__bitmanipulation_req_inspection
-   :targets: //:bitmanipulation_comp_reqs
-   :sha256: <pinned after first build>
-```
-
-### Architecture checklist
-
-`BUILD`:
-
-```starlark
 component_architecture(
     name = "bitmanipulation_comp_arch",
     component = "bitmanipulation",
@@ -281,44 +212,152 @@ architecture_checklist(
     name = "bitmanipulation_arch_checklist",
     checklist_id = "arch_chklst__bitmanipulation__comp_arc",
     deps = [":bitmanipulation_comp_arch"],
+    # Resolve upstream (feature/stakeholder) requirements so changes are detected.
+    extra_needs = ["@score_platform//:needs_json"],
 )
 ```
 
-Checklist need (next to the architecture inspection `.rst`):
+Use the `feature_requirements` / `feature_architecture` wrappers instead of the
+`component_*` ones to validate a whole feature rather than a single component.
 
-```rst
-.. arch_chklst:: Bitmanipulation Component Architecture Checklist
-   :id: arch_chklst__bitmanipulation__comp_arc
-   :status: valid
-   :checklist: doc__bitmanipulation_arc_inspection
-   :targets: //:bitmanipulation_comp_arch
-   :sha256: <pinned after first build>
+The `extra_needs` argument is explained in
+[Resolving external needs (`extra_needs`)](#resolving-external-needs-extra_needs)
+below; drop it if all transitively linked elements live in the same repository.
+
+### 3. Validate
+
+```bash
+bazel build //:bitmanipulation_req_checklist
+bazel build //:bitmanipulation_arch_checklist
 ```
 
-### Gotcha: the component filter matches on `tags`
+The build hashes the `deps` output and compares it to the `sha256` on the
+checklist need. On the first run (placeholder hash) the build **fails** and
+prints the actual hash — review the checklist, then paste that hash into the
+`sha256` attribute. From then on the build passes until the validated
+requirements/architecture change again, at which point it fails and asks for a
+re-review.
 
-`component_requirements` / `component_architecture` keep only needs whose
-`tags` contain the requested component name (see
-[filtered_needs_json](filter_needs_json.py), `--component-attr tags`). In
-baselibs that tag is *not* set on each element directly — it is injected for a
-whole document via `needextend`, e.g. for the requirements:
+### Transitive dependencies
 
-```rst
-.. needextend:: "__bitmanipulation__" in id
-   :+tags: baselibs, bitmanipulation
+By default neither `requirements_checklist` nor `architecture_checklist` hash
+only the elements in `deps`; they also follow the elements' sphinx-needs links
+recursively and include every reachable element in the hash. The followed link
+fields are configurable via the `link_fields` argument:
+
+| Macro | Default `link_fields` |
+| --- | --- |
+| `requirements_checklist` | `derived_from`, `satisfies`, `covers` |
+| `architecture_checklist` | `fulfils`, `includes`, `uses`, `provides`, `derived_from`, `satisfies`, `covers` |
+
+The mechanism is generic and works for any element type and any link fields:
+
+- **Feature requirements** → linked **stakeholder requirements** (via
+  `derived_from`/`satisfies`) are part of the hash.
+- **Component requirements** → linked **feature requirements** (and their
+  stakeholder requirements in turn) are part of the hash. Just point `deps` at a
+  `component_requirements` target; the defaults already cover the
+  `comp_req → feat_req → stkh_req` chain.
+- **Architecture elements** → the requirements they `fulfils` (and those
+  requirements' parents) plus structurally linked architecture elements
+  (`includes`/`uses`/`provides`) are part of the hash.
+
+This means a checklist also goes out of date when an **upstream** dependency
+changes — e.g. when a stakeholder requirement that a feature requirement is
+`derived_from` is edited. The roots (the elements in `deps`) define the entry
+points; the validator walks the link graph in the full `needs.json` (`src`) and
+hashes the canonical serialization of the whole closure (roots + all
+transitively linked elements). Link targets carrying a version constraint
+(`stkh_req__foo[version==1]`) are matched against the plain need id.
+
+```starlark
+# Component requirements: transitively pins feature + stakeholder requirements.
+requirements_checklist(
+    name = "bitmanipulation_req_checklist",
+    checklist_id = "req_chklst__bitmanipulation__comp_req",
+    deps = [":bitmanipulation_comp_reqs"],
+    # default: link_fields = ["derived_from", "satisfies", "covers"]
+)
+
+# Architecture: transitively pins fulfilled requirements (and their parents).
+architecture_checklist(
+    name = "bitmanipulation_arch_checklist",
+    checklist_id = "arch_chklst__bitmanipulation__comp_arc",
+    deps = [":bitmanipulation_comp_arch"],
+)
 ```
 
-The architecture view ids do **not** contain `__bitmanipulation__` (they read
-`comp_arc_sta__baselibs__bit_manipulation`), so that `needextend` does not tag
-them and `component_architecture(component = "bitmanipulation")` would extract
-*zero* needs. Add a matching `needextend` in the architecture document so the
-views get the component tag:
+Pass `link_fields = []` to restore the old behaviour of hashing only the
+elements in `deps`. The full need dict of every element in the closure is
+hashed, so any change to a linked element — its content, attributes *or* links
+(including newly added/removed back-links) — triggers a re-review.
 
-```rst
-.. needextend:: docname is not None and "bitmanipulation" in docname and "architecture" in docname and type in ["comp_arc_sta", "comp_arc_dyn"]
-   :+tags: baselibs, bitmanipulation
+### Resolving external needs (`extra_needs`)
+
+The transitive closure is walked through the link graph of the checklist's
+`src` (`//:needs_json` by default). When a linked element lives in **another
+repository** — e.g. a component requirement is `derived_from` a stakeholder
+requirement that is imported from an upstream repo — that element's full content
+is not contained in the local `needs.json`. The validator then hashes it as
+`<MISSING>`, so **changes to such upstream elements go undetected** and the
+checklist does not go stale even though one of its (transitive) parents changed.
+
+Pass the upstream `needs_json` build outputs via `extra_needs` so the validator
+can resolve the full content of those external needs and include them in the
+hash. Typically these are the same upstream `needs_json` targets you already
+pass as `data` to `docs(...)`:
+
+```starlark
+requirements_checklist(
+    name = "bitmanipulation_req_checklist",
+    checklist_id = "req_chklst__bitmanipulation__comp_req",
+    deps = [":bitmanipulation_comp_reqs"],
+    extra_needs = ["@score_platform//:needs_json"],
+)
+
+architecture_checklist(
+    name = "bitmanipulation_arch_checklist",
+    checklist_id = "arch_chklst__bitmanipulation__comp_arc",
+    deps = [":bitmanipulation_comp_arch"],
+    extra_needs = ["@score_platform//:needs_json"],
+)
 ```
 
-After that, `bazel build //:bitmanipulation_comp_arch` keeps the architecture
-view(s) and the checklist validates as expected. If a `component_*` target
-unexpectedly extracts `0 needs`, check the `tags` of the elements first.
+`extra_needs` is available on both `requirements_checklist` and
+`architecture_checklist` and only fills in needs that are *missing* locally: the
+main `src` keeps precedence for local content, and the extracted root elements
+in `deps` keep precedence over both. You only need it when the closure reaches
+elements that are not defined in the checklist's own repository — if everything
+is local, leave it at its default (`[]`).
+
+
+
+### Gotcha: the feature/component filter matches on the need ID
+
+`component_requirements` / `component_architecture` /
+`feature_requirements` / `feature_architecture` keep only needs whose ID
+encodes the requested feature/component name. Need IDs follow the
+`<type>__<name>__<rest>` naming convention, so the second `__`-separated
+segment is the feature/component name (see
+[filtered_needs_json](filter_needs_json.py), `--name`). For example, the
+following all belong to `bitmanipulation`:
+
+```text
+comp_req__bitmanipulation__shift
+feat_arc_sta__bitmanipulation__static_view
+```
+
+The `comp_arc_sta` and `comp_arc_dyn` types are an exception: their IDs follow
+`<type>__<feature name>__<component name>`, so the *third* segment holds the
+component name used for matching. For example, the following belongs to the
+`filesystem` component:
+
+```text
+comp_arc_sta__baselibs__filesystem
+```
+
+No tags or `needextend` injection are required — extraction is driven purely by
+the ID. Just make sure each element's ID follows the convention with the
+intended feature/component name as its name segment. If a `component_*` /
+`feature_*` target unexpectedly extracts `0 needs`, check that the element IDs
+use the expected name segment.

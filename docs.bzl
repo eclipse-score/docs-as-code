@@ -102,14 +102,13 @@ def filtered_needs_json(
         name,
         src,
         types = [],
-        components = [],
-        component_attr = "component",
+        names = [],
         visibility = None):
     """Extract a subset of sphinx-needs elements from a needs.json file.
 
     Produces a `<name>.json` file containing only the needs that match all of
     the given filters. This is useful to hand a downstream consumer just the
-    elements (e.g. `feat_req`) of one or more particular components.
+    elements (e.g. `feat_req`) of one or more particular features/components.
 
     Args:
         name: Name of the generated target. The output file is `<name>.json`.
@@ -117,16 +116,16 @@ def filtered_needs_json(
             `needs.json`), e.g. `":needs_json"` or `"@score_process//:needs_json"`.
         types: Optional list of sphinx-needs element types to keep
             (e.g. `["feat_req", "comp_req"]`). If empty, all types are kept.
-        components: Optional list of component names to keep. If empty, all
-            components are kept.
-        component_attr: Need attribute matched against `components`.
-            Defaults to `"component"`.
+        names: Optional list of feature/component names to keep, matched against
+            the second `__`-separated segment of each need ID (the
+            `<type>__<name>__...` naming convention). If empty, all
+            features/components are kept.
         visibility: Standard Bazel visibility for the generated target.
     """
     filter_tool = Label("//scripts_bazel:filter_needs_json")
 
     type_args = " ".join(["--type '%s'" % t for t in types])
-    component_args = " ".join(["--component '%s'" % c for c in components])
+    name_args = " ".join(["--name '%s'" % n for n in names])
 
     native.genrule(
         name = name,
@@ -135,15 +134,13 @@ def filtered_needs_json(
         cmd = """
         $(location {filter_tool}) \
             --output $@ \
-            --component-attr '{component_attr}' \
             {type_args} \
-            {component_args} \
+            {name_args} \
             $(location {src})/needs.json
         """.format(
             filter_tool = filter_tool,
-            component_attr = component_attr,
             type_args = type_args,
-            component_args = component_args,
+            name_args = name_args,
             src = src,
         ),
         tools = [filter_tool],
@@ -165,16 +162,16 @@ def component_requirements(
         src: Label of a `needs_json` build output. Defaults to the calling
             package's `//:needs_json`.
         component: Optional component name. If given, only component requirements
-            tagged with that component are kept; if omitted, all component
-            requirements are kept.
+            named with that component (per the `<type>__<name>__...`
+            convention) are kept; if omitted, all component requirements are
+            kept.
         visibility: Standard Bazel visibility for the generated target.
     """
     filtered_needs_json(
         name = name,
         src = src,
         types = ["comp_req"],
-        components = [component] if component else [],
-        component_attr = "tags",
+        names = [component] if component else [],
         visibility = visibility,
     )
 
@@ -193,16 +190,15 @@ def feature_requirements(
         src: Label of a `needs_json` build output. Defaults to the calling
             package's `//:needs_json`.
         feature: Optional feature name. If given, only feature requirements
-            tagged with that feature are kept; if omitted, all feature
-            requirements are kept.
+            named with that feature (per the `<type>__<name>__...` convention)
+            are kept; if omitted, all feature requirements are kept.
         visibility: Standard Bazel visibility for the generated target.
     """
     filtered_needs_json(
         name = name,
         src = src,
         types = ["feat_req"],
-        components = [feature] if feature else [],
-        component_attr = "tags",
+        names = [feature] if feature else [],
         visibility = visibility,
     )
 
@@ -221,16 +217,15 @@ def assumptions_of_use(
         src: Label of a `needs_json` build output. Defaults to the calling
             package's `//:needs_json`.
         component: Optional component name. If given, only assumptions of use
-            tagged with that component are kept; if omitted, all assumptions of
-            use are kept.
+            named with that component (per the `<type>__<name>__...`
+            convention) are kept; if omitted, all assumptions of use are kept.
         visibility: Standard Bazel visibility for the generated target.
     """
     filtered_needs_json(
         name = name,
         src = src,
         types = ["aou_req"],
-        components = [component] if component else [],
-        component_attr = "tags",
+        names = [component] if component else [],
         visibility = visibility,
     )
 
@@ -251,16 +246,16 @@ def feature_architecture(
         src: Label of a `needs_json` build output. Defaults to the calling
             package's `//:needs_json`.
         feature: Optional feature name. If given, only feature architecture
-            elements tagged with that feature are kept; if omitted, all feature
-            architecture elements are kept.
+            elements named with that feature (per the `<type>__<name>__...`
+            convention) are kept; if omitted, all feature architecture elements
+            are kept.
         visibility: Standard Bazel visibility for the generated target.
     """
     filtered_needs_json(
         name = name,
         src = src,
         types = ["feat_arc_sta", "feat_arc_dyn"],
-        components = [feature] if feature else [],
-        component_attr = "tags",
+        names = [feature] if feature else [],
         visibility = visibility,
     )
 
@@ -281,16 +276,16 @@ def component_architecture(
         src: Label of a `needs_json` build output. Defaults to the calling
             package's `//:needs_json`.
         component: Optional component name. If given, only component architecture
-            elements tagged with that component are kept; if omitted, all
-            component architecture elements are kept.
+            elements named with that component (per the `<type>__<name>__...`
+            convention) are kept; if omitted, all component architecture
+            elements are kept.
         visibility: Standard Bazel visibility for the generated target.
     """
     filtered_needs_json(
         name = name,
         src = src,
         types = ["comp_arc_sta", "comp_arc_dyn"],
-        components = [component] if component else [],
-        component_attr = "tags",
+        names = [component] if component else [],
         visibility = visibility,
     )
 
@@ -386,14 +381,26 @@ def requirements_checklist(
         checklist_id,
         deps,
         src = "//:needs_json",
+        link_fields = ["derived_from", "satisfies", "covers"],
+        extra_needs = [],
         visibility = None):
     """Validate a requirement checklist (`req_chklst`) against its build output.
 
-    Building this target recomputes the SHA256 over the concatenated outputs of
-    `deps` and compares it to the `sha256` attribute of the `req_chklst` need
-    `checklist_id` (looked up in `src`'s `needs.json`). The build **fails** when
-    the hashes differ, i.e. when a validated target output has changed since the
-    checklist was last reviewed.
+    Building this target recomputes the SHA256 over the requirements in `deps`
+    **and**, by default, over everything they depend on transitively, and
+    compares it to the `sha256` attribute of the `req_chklst` need `checklist_id`
+    (looked up in `src`'s `needs.json`). The build **fails** when the hashes
+    differ, i.e. when a validated requirement *or one of its (recursive)
+    dependencies* has changed since the checklist was last reviewed.
+
+    The dependency graph is the sphinx-needs link graph: starting from the
+    requirements in `deps` (the *roots*), the `link_fields` (by default
+    `derived_from`, `satisfies` and `covers`) are followed recursively through
+    `src`'s `needs.json`. For feature requirements this means the linked
+    stakeholder requirements (and their parents in turn) are part of the hash, so
+    changing a relevant stakeholder requirement makes this checklist go out of
+    date. Pass `link_fields = []` to restore the old behaviour of hashing only
+    the requirements in `deps`.
 
     Typical usage validates the extracted requirements of a component against the
     checklist that reviewed them:
@@ -418,30 +425,50 @@ def requirements_checklist(
         name: Name of the generated target. The output file is `<name>.sha256`.
         checklist_id: Id of the `req_chklst` need to validate
             (e.g. `"req_chklst__bitmanipulation__comp_req"`).
-        deps: List of labels whose outputs are hashed and validated. Usually a
-            single `component_requirements`/`filtered_needs_json` target.
-        src: Label of a `needs_json` build output containing the checklist need.
-            Defaults to the calling package's `//:needs_json`.
+        deps: List of labels whose outputs define the root requirements that are
+            hashed and validated. Usually a single
+            `component_requirements`/`feature_requirements`/`filtered_needs_json`
+            target.
+        src: Label of a `needs_json` build output containing the checklist need
+            and the full link graph. Defaults to the calling package's
+            `//:needs_json`.
+        link_fields: Sphinx-needs link fields followed recursively from the root
+            requirements to include their (transitive) dependencies in the hash.
+            Defaults to `["derived_from", "satisfies", "covers"]`. Set to `[]` to
+            hash only the requirements in `deps`.
+        extra_needs: Optional list of additional `needs_json` build outputs that
+            provide the full content of needs referenced from the validated
+            requirements but not contained in `src` (e.g. stakeholder
+            requirements imported from an upstream repository). Without them such
+            external needs are hashed as `<MISSING>` and changes to them are not
+            detected. Typically the same upstream `needs_json` targets passed as
+            `data` to `docs(...)` (e.g. `["@score_platform//:needs_json"]`).
         visibility: Standard Bazel visibility for the generated target.
     """
     validate_tool = Label("//scripts_bazel:validate_checklist")
 
     dep_args = " ".join(["$(locations %s)" % d for d in deps])
+    link_args = " ".join(["--link-field '%s'" % f for f in link_fields])
+    extra_args = " ".join(["--extra-needs-json $(location %s)/needs.json" % e for e in extra_needs])
 
     native.genrule(
         name = name,
-        srcs = [src] + deps,
+        srcs = [src] + extra_needs + deps,
         outs = [name + ".sha256"],
         cmd = """
         $(location {validate_tool}) \
             --needs-json $(location {src})/needs.json \
             --checklist-id '{checklist_id}' \
             --output $@ \
+            {link_args} \
+            {extra_args} \
             {dep_args}
         """.format(
             validate_tool = validate_tool,
             checklist_id = checklist_id,
             src = src,
+            link_args = link_args,
+            extra_args = extra_args,
             dep_args = dep_args,
         ),
         tools = [validate_tool],
@@ -453,14 +480,27 @@ def architecture_checklist(
         checklist_id,
         deps,
         src = "//:needs_json",
+        link_fields = ["fulfils", "includes", "uses", "provides", "derived_from", "satisfies", "covers"],
+        extra_needs = [],
         visibility = None):
     """Validate an architecture checklist (`arch_chklst`) against its build output.
 
-    Building this target recomputes the SHA256 over the concatenated outputs of
-    `deps` and compares it to the `sha256` attribute of the `arch_chklst` need
-    `checklist_id` (looked up in `src`'s `needs.json`). The build **fails** when
-    the hashes differ, i.e. when a validated target output has changed since the
-    checklist was last reviewed.
+    Building this target recomputes the SHA256 over the architecture in `deps`
+    **and**, by default, over everything they depend on transitively, and
+    compares it to the `sha256` attribute of the `arch_chklst` need `checklist_id`
+    (looked up in `src`'s `needs.json`). The build **fails** when the hashes
+    differ, i.e. when a validated architecture element *or one of its (recursive)
+    dependencies* has changed since the checklist was last reviewed.
+
+    The dependency graph is the sphinx-needs link graph: starting from the
+    architecture elements in `deps` (the *roots*), the `link_fields` are followed
+    recursively through `src`'s `needs.json`. The defaults follow the structural
+    architecture links (`includes`, `uses`, `provides`) as well as `fulfils` and
+    the requirement links (`derived_from`, `satisfies`, `covers`), so the closure
+    reaches the fulfilled requirements and their parents. Changing a fulfilled
+    requirement (or a stakeholder requirement it derives from) therefore makes
+    this checklist go out of date. Pass `link_fields = []` to restore the old
+    behaviour of hashing only the elements in `deps`.
 
     Typical usage validates the extracted architecture of a component against the
     checklist that reviewed it:
@@ -485,31 +525,50 @@ def architecture_checklist(
         name: Name of the generated target. The output file is `<name>.sha256`.
         checklist_id: Id of the `arch_chklst` need to validate
             (e.g. `"arch_chklst__bitmanipulation__comp_arc"`).
-        deps: List of labels whose outputs are hashed and validated. Usually a
-            single `feature_architecture`/`component_architecture`/
-            `filtered_needs_json` target.
-        src: Label of a `needs_json` build output containing the checklist need.
-            Defaults to the calling package's `//:needs_json`.
+        deps: List of labels whose outputs define the root architecture elements
+            that are hashed and validated. Usually a single
+            `feature_architecture`/`component_architecture`/`filtered_needs_json`
+            target.
+        src: Label of a `needs_json` build output containing the checklist need
+            and the full link graph. Defaults to the calling package's
+            `//:needs_json`.
+        link_fields: Sphinx-needs link fields followed recursively from the root
+            architecture elements to include their (transitive) dependencies in
+            the hash. Defaults to the structural architecture links plus the
+            requirement links. Set to `[]` to hash only the elements in `deps`.
+        extra_needs: Optional list of additional `needs_json` build outputs that
+            provide the full content of needs referenced from the validated
+            architecture elements but not contained in `src` (e.g. feature
+            requirements imported from an upstream repository). Without them such
+            external needs are hashed as `<MISSING>` and changes to them are not
+            detected. Typically the same upstream `needs_json` targets passed as
+            `data` to `docs(...)` (e.g. `["@score_platform//:needs_json"]`).
         visibility: Standard Bazel visibility for the generated target.
     """
     validate_tool = Label("//scripts_bazel:validate_checklist")
 
     dep_args = " ".join(["$(locations %s)" % d for d in deps])
+    link_args = " ".join(["--link-field '%s'" % f for f in link_fields])
+    extra_args = " ".join(["--extra-needs-json $(location %s)/needs.json" % e for e in extra_needs])
 
     native.genrule(
         name = name,
-        srcs = [src] + deps,
+        srcs = [src] + extra_needs + deps,
         outs = [name + ".sha256"],
         cmd = """
         $(location {validate_tool}) \
             --needs-json $(location {src})/needs.json \
             --checklist-id '{checklist_id}' \
             --output $@ \
+            {link_args} \
+            {extra_args} \
             {dep_args}
         """.format(
             validate_tool = validate_tool,
             checklist_id = checklist_id,
             src = src,
+            link_args = link_args,
+            extra_args = extra_args,
             dep_args = dep_args,
         ),
         tools = [validate_tool],
