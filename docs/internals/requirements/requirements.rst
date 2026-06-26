@@ -767,6 +767,28 @@ Architecture Attributes
     but are still defined as architectural elements, which means they have the properties of
     architectural elements.
 
+.. tool_req:: Architecture diagram links
+  :id: tool_req__docs_arch_links
+  :implemented: PARTIAL
+  :version: 1
+  :satisfies:
+    gd_req__impl_diagram_check_id,
+    gd_req__impl_diagram_linkage_id,
+    gd_req__impl_diagram_check_includes,
+    gd_req__impl_diagram_linkage_includes,
+  :parent_covered: YES
+
+  Architectural diagrams (``mod_view_sta``, ``feat_arc_sta``, ``comp_arc_sta``,
+  ``mod_view_dyn``, ``feat_arc_dyn``, ``comp_arc_dyn``)
+  shall provide the following links:
+
+  .. csv-table::
+     :header: "Link Type", "Link Target"
+
+     "belongs_to", "corresponding architecture element same level"
+     "includes", "corresponding architecture element lower level"
+
+
 💻 Detailed Design & Code
 ##########################
 
