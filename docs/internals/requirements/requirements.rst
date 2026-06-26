@@ -1118,7 +1118,7 @@ Testing
     gd_req__saf_linkage_check[version==1],
     gd_req__saf_linkage[version==1],
     gd_req__sec_linkage_check[version==1],
-gd_req__sec_linkage[version==1],
+    gd_req__sec_linkage[version==1],
   :parent_covered: YES
 
   Docs-As-Code shall enforce that needs of type :need:`tool_req__docs_saf_types` have a
@@ -1163,7 +1163,7 @@ gd_req__sec_linkage[version==1],
    Docs-As-Code shall enforce that needs of type DFA (see
    :need:`tool_req__docs_saf_types`) have a `failure_id` attribute.
 
-   Allowed values are listed as ID in tables at :need:`gd_guidl__dfa_failure_initiators`.
+   Note: Allowed values are listed as ID in tables at :need:`gd_guidl__dfa_failure_initiators`. This is not verified.
 
 
 .. tool_req:: Failure Effect
