@@ -306,9 +306,9 @@ Versioning
   :implemented: YES
   :version: 3
   :satisfies:
-   gd_req__doc_attributes_manual,
-   gd_req__change_attr_impact_safety,
-   gd_req__doc_attr_status,
+   gd_req__doc_attributes_manual[version==1],
+   gd_req__change_attr_impact_safety[version==1],
+   gd_req__doc_attr_status[version==1],
   :parent_covered: YES
 
   Enforce that each Generic Document ``doc__*`` has the following attributes:
@@ -495,7 +495,7 @@ Versioning
   :implemented: YES
   :version: 2
   :parent_covered: YES
-  :satisfies: gd_req__req_validity
+  :satisfies: gd_req__req_validity[version==1]
   :status: valid
 
   Docs-as-Code shall enforce that the ``valid_from`` and ``valid_until`` attributes of stakeholder and feature requirements are correct.
@@ -509,7 +509,7 @@ Versioning
   :implemented: YES
   :version: 2
   :parent_covered: YES
-  :satisfies: gd_req__req_validity
+  :satisfies: gd_req__req_validity[version==1]
   :status: valid
 
   Docs-as-Code shall enforce that ``valid_from`` is before ``valid_until`` attribute in stakeholder and feature requirements.
@@ -1101,7 +1101,7 @@ Testing
    :implemented: YES
    :tags: Safety Analysis
    :version: 2
-   :satisfies: gd_req__saf_argument
+   :satisfies: gd_req__saf_argument[version==1]
    :parent_covered: NO
 
    Docs-As-Code shall enforce needs of type :need:`tool_req__docs_saf_types` to have a
@@ -1115,9 +1115,9 @@ Testing
   :tags: Safety Analysis
   :version: 2
   :satisfies:
-    gd_req__saf_linkage_check,
-    gd_req__saf_linkage,
-    gd_req__sec_linkage_check,
+    gd_req__saf_linkage_check[version==1],
+    gd_req__saf_linkage[version==1],
+    gd_req__sec_linkage_check[version==1],
   :parent_covered: YES
 
   Docs-As-Code shall enforce that needs of type :need:`tool_req__docs_saf_types` have a
@@ -1142,7 +1142,7 @@ Testing
    :implemented: YES
    :tags: Safety Analysis
    :version: 2
-   :satisfies: gd_req__saf_attr_fault_id
+   :satisfies: gd_req__saf_attr_fault_id[version==1]
    :parent_covered: NO
 
    Docs-As-Code shall enforce that needs of type FMEA (see
@@ -1156,7 +1156,7 @@ Testing
    :implemented: YES
    :tags: Safety Analysis
    :version: 2
-   :satisfies: gd_req__saf_attr_failure_id
+   :satisfies: gd_req__saf_attr_failure_id[version==1]
    :parent_covered: NO
 
    Docs-As-Code shall enforce that needs of type DFA (see
