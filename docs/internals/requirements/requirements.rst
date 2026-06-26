@@ -140,7 +140,13 @@ This section provides an overview of current process requirements and their clar
   :parent_covered: NO: Can not cover 'ISO/IEC/IEEE/29148'
   :version: 1
   :implemented: YES
-  :satisfies: gd_req__req_attr_description, gd_req__req_check_mandatory, gd_req__sec_argument
+  :satisfies:
+    gd_req__req_attr_description,
+    gd_req__req_check_mandatory,
+    gd_req__sec_argument,
+    gd_req__impl_diagram_description,
+    gd_req__impl_unit_description,
+    gd_req__impl_interface_description,
 
   Enforce that each need of type :need:`tool_req__docs_req_types` has a description (content)
 
@@ -204,6 +210,7 @@ This section provides an overview of current process requirements and their clar
   :satisfies:
      gd_req__req_check_mandatory,
      gd_req__req_attr_safety,
+     gd_req__impl_diagram_safety,
      gd_req__arch_attr_safety
 
   Docs-as-Code shall enforce that the ``safety`` attribute has one of the following values:
@@ -233,6 +240,7 @@ This section provides an overview of current process requirements and their clar
     gd_req__req_attr_status,
     gd_req__arch_attr_status,
     gd_req__saf_attr_status,
+    gd_req__impl_diagram_status,
     gd_req__req_check_mandatory,
 
   Docs-as-Code shall enforce that the ``status`` attribute has one of the following values:
