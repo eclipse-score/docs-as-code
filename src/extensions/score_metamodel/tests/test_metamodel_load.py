@@ -10,6 +10,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
+import json
 from pathlib import Path
 from unittest.mock import mock_open, patch
 
@@ -92,3 +93,13 @@ def test_load_metamodel_data():
     assert defined_graph_check["check"] == {
         "link1": "opt1 == test",
     }
+
+
+def test_metamodel_schema_json_is_valid():
+    """The metamodel JSON schema file must be syntactically valid JSON."""
+    schema_path = Path(__file__).resolve().parent.parent / "metamodel-schema.json"
+    with open(schema_path, encoding="utf-8") as schema_file:
+        parsed = json.load(schema_file)
+
+    assert isinstance(parsed, dict)
+    assert "$schema" in parsed

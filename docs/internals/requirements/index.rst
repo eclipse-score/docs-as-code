@@ -30,6 +30,8 @@ Pages
 
 - ``tooling_verification`` describes verification evidence for the tooling
   itself, including test results and testcase metadata.
+- ``requirement_coverage`` shows per-requirement test and code linkage,
+  using the same metrics as CI quality gates.
 
 .. toctree::
    :maxdepth: 1
@@ -37,4 +39,5 @@ Pages
    capabilities
    process_overview
    requirements
+   requirement_coverage
    tooling_verification

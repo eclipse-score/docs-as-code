@@ -218,3 +218,31 @@ def get_just_metrics(needs: list[Any], results: list[int], **kwargs: Any) -> Non
     """
     results.clear()
     _get_key_values(results, [str(value) for value in kwargs.values()])
+
+
+def get_non_overlapping_link_metrics(
+    needs: list[Any], results: list[int], **kwargs: Any
+) -> None:
+    """Compute mutually exclusive (non-overlapping) requirements-tests linkage categories.
+
+    Use input from global state and overrides results input.
+
+    1. **Remaining** — no testlink, no source_code_link
+    2. **Test link only** — has testlink, no source_code_link
+    3. **Code link only** — has source_code_link, no testlink
+    4. **Fully linked** — has both testlink and source_code_link
+
+    Suitable for ``needpie`` directives where overlapping
+    categories produce misleading visualisations.
+    """
+    results.clear()
+    total = int(CALCULATED_METRICS["overall_metrics"]["total"])
+    with_test = int(CALCULATED_METRICS["overall_metrics"]["with_test_link"])
+    with_code = int(CALCULATED_METRICS["overall_metrics"]["with_code_link"])
+    fully = int(CALCULATED_METRICS["overall_metrics"]["fully_linked"])
+
+    remaining = total - with_test - with_code + fully  # inclusion-exclusion
+    only_test = with_test - fully
+    only_code = with_code - fully
+
+    results.extend([remaining, only_test, only_code, fully])

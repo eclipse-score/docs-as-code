@@ -183,10 +183,10 @@ Example 1: Overall view (including remaining/unlinked)
 
 .. code-block:: rst
 
-   .. needpie:: Overall Requirement Coverage
-      :labels: Remaining (no selected links), With Test Link, With Code Link, Fully Linked
+   .. needpie:: Overall Requirement Coverage (non-overlapping)
+      :labels: Remaining (no links), Test Link Only, Code Link Only, Fully Linked (Both)
       :colors: #4E79A7, #F28E2B, #59A14F, #B07AA1
-      :filter-func: score_metrics.sphinx_filters.get_metrics_with_first_value_total(overall_metrics:total,overall_metrics:with_test_link,overall_metrics:with_code_link,overall_metrics:fully_linked)
+      :filter-func: score_metrics.sphinx_filters.get_non_overlapping_link_metrics
 
 This chart shows:
 
@@ -195,10 +195,10 @@ This chart shows:
 - requirements with code link,
 - fully linked requirements.
 
-.. needpie:: Overall Requirement Coverage
-   :labels: Remaining (no selected links), With Test Link, With Code Link, Fully Linked
+.. needpie:: Overall Requirement Coverage (non-overlapping)
+   :labels: Remaining (no links), Test Link Only, Code Link Only, Fully Linked (Both)
    :colors: #4E79A7, #F28E2B, #59A14F, #B07AA1
-   :filter-func: score_metrics.sphinx_filters.get_metrics_with_first_value_total(overall_metrics:total,overall_metrics:with_test_link,overall_metrics:with_code_link,overall_metrics:fully_linked)
+   :filter-func: score_metrics.sphinx_filters.get_non_overlapping_link_metrics
 
 Example 2: Focused view (no total-based remainder)
 --------------------------------------------------
