@@ -2212,6 +2212,20 @@
     "FullyVerifies": null
   },
   {
+    "name": "test_rules_file_based__test_rst_files[options/test_options_verification_evidence.rst]",
+    "file": "src/extensions/score_metamodel/tests/test_rules_file_based.py",
+    "line": "255",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
     "name": "test_rules_file_based__test_rst_files[options/test_options_options.rst]",
     "file": "src/extensions/score_metamodel/tests/test_rules_file_based.py",
     "line": "255",
@@ -2802,7 +2816,7 @@
   {
     "name": "test_metamodel_load__test_load_metamodel_data_explicit_path",
     "file": "src/extensions/score_metamodel/tests/test_metamodel_load.py",
-    "line": "28",
+    "line": "29",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2816,7 +2830,21 @@
   {
     "name": "test_metamodel_load__test_load_metamodel_data",
     "file": "src/extensions/score_metamodel/tests/test_metamodel_load.py",
-    "line": "37",
+    "line": "38",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_metamodel_load__test_metamodel_schema_json_is_valid",
+    "file": "src/extensions/score_metamodel/tests/test_metamodel_load.py",
+    "line": "98",
     "result": "passed",
     "repo_name": null,
     "hash": null,
