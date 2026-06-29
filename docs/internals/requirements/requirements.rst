@@ -503,7 +503,10 @@ Versioning
   :implemented: YES
   :version: 2
   :parent_covered: YES
-  :satisfies: gd_req__req_validity[version==1]
+  :satisfies:
+    gd_req__req_validity[version==1],
+    gd_req__req_attr_valid_from[version==1],
+    gd_req__req_attr_valid_until[version==1],
   :status: valid
 
   Docs-as-Code shall enforce that the ``valid_from`` and ``valid_until`` attributes of stakeholder and feature requirements are correct.
