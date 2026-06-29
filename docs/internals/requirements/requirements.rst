@@ -807,7 +807,7 @@ but for ease of traceability this is a separate one.
      feat, consist_of, comp, yes, no
      feat, includes, logic_arc_int, yes, only optional
      mod, includes, comp, yes, yes
-     real_arc_int_op, included by, real_arc_int, yes, yes
+     real_arc_int_op, included_by, real_arc_int, yes, yes
      logic_arc_int, includes, logic_arc_int_op, no, yes
      real_arc_int_op, implements, logic_arc_int_op, no, yes
      comp, implements, logic_arc_int, no, yes
