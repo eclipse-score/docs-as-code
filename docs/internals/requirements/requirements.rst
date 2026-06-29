@@ -901,8 +901,10 @@ Testing
 
   * use ``mod_insp`` as directive type
   * classify the inspection by ``inspection_type`` and ``inspection_state``
-  * record the checklist reference and reviewer list via ``checklist_ref`` and ``reviewers``
+  * record the checklist template reference via ``checklist_template``
+  * record the reviewer list via ``reviewers``
   * link the inspection to the verified module via ``belongs_to``
+  * link the filled checklist document via ``checklist``
   * link the inspected artifacts via ``inspects``
   * allow links to backing evidence via ``evidence``
 

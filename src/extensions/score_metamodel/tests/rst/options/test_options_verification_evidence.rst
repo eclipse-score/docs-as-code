@@ -87,7 +87,7 @@
    :status: valid
    :inspection_type: requirements
    :inspection_state: approved
-   :checklist_ref: gd_chklst__req_inspection
+   :checklist_template: gd_chklst__req_inspection
    :reviewers: reviewer_a,reviewer_b
    :checklist_type: req
    :findings_total: 1
@@ -95,6 +95,7 @@
    :inspection_date: 2026-06-24
    :belongs_to: mod__verification_module
    :inspects: comp_req__verification__sample
+   :checklist: doc__verification__filled_checklist
 
 
 .. Invalid inspection_state value in module inspection record
@@ -107,7 +108,8 @@
    :status: invalid
    :inspection_type: architecture
    :inspection_state: approved_late
-   :checklist_ref: gd_chklst__arch_inspection_checklist
+   :checklist_template: gd_chklst__arch_inspection_checklist
    :reviewers: reviewer_a
    :belongs_to: mod__verification_module
    :inspects: comp_req__verification__sample
+   :checklist: doc__verification__filled_checklist

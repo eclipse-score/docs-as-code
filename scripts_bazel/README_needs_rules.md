@@ -17,9 +17,9 @@ the backing Python tools (in this folder) to:
 2. **Render** the selected elements as a human readable Markdown document.
 3. **Convert** S-CORE requirement elements into [TRLC](https://github.com/bmw-software-engineering/trlc)
    data targeting the S-CORE requirements metamodel.
-4. **Validate** a reviewable *requirement checklist* against the build output it
-   was reviewed against, by pinning a SHA256 hash in a `req_chklst` sphinx-needs
-   element and failing the build when the output drifts.
+4. **Validate** a reviewable *requirement / architecture checklist* against the
+   build output it was reviewed against, by pinning a SHA256 hash on a
+   `mod_insp` inspection record and failing the build when the output drifts.
 
 The goal is to show how requirements managed as sphinx-needs can be bridged to
 other consumers (review docs, TRLC-based tooling) without manual copying.
@@ -38,8 +38,8 @@ other consumers (review docs, TRLC-based tooling) without manual copying.
 | `component_architecture` | `<name>.json` | Convenience wrapper for `comp_arc_sta` / `comp_arc_dyn` elements. |
 | `sphinx_needs_to_md` | `<name>.md` | Render needs as a Markdown document. |
 | `sphinx_needs_to_trlc` | `<name>.trlc` | Convert S-CORE requirements to TRLC. |
-| `requirements_checklist` | `<name>.sha256` | Validate a `req_chklst` need against its target output via SHA256. |
-| `architecture_checklist` | `<name>.sha256` | Validate an `arch_chklst` need against its target output via SHA256. |
+| `requirements_checklist` | `<name>.sha256` | Validate a `mod_insp` record against its requirements target output via SHA256. |
+| `architecture_checklist` | `<name>.sha256` | Validate a `mod_insp` record against its architecture target output via SHA256. |
 
 ### Python tools (`scripts_bazel/`)
 
@@ -52,15 +52,12 @@ The matching `py_binary` targets are declared in [BUILD](BUILD).
 
 ### Metamodel
 
-A new `req_chklst` need type is added in
-[metamodel.yaml](../src/extensions/score_metamodel/metamodel.yaml). It carries a
-mandatory `sha256` attribute, an optional `targets` attribute (the Bazel labels
-it validates), and an optional `checklist` link to the rendered checklist
-document.
-
-The analogous `arch_chklst` need type (validated by `architecture_checklist`)
-is defined in the same file and works the same way for feature/component
-architecture outputs.
+The `mod_insp` inspection record need type in
+[metamodel.yaml](../src/extensions/score_metamodel/metamodel.yaml) carries an
+optional `sha256` attribute (the reviewed build output hash), a mandatory
+`checklist` link to the rendered checklist document, and an `inspects` link to
+the inspected artifacts. The same need type is validated by both
+`requirements_checklist` and `architecture_checklist`.
 
 ## How to use
 
@@ -136,40 +133,57 @@ checklist is considered stale and the build fails until it is re-reviewed and th
 hash updated.
 
 There are two checklist kinds. They behave identically and differ only in the
-need type they pin and the macro that validates them:
+macro that validates them; both pin the reviewed state on a `mod_insp`
+inspection record:
 
 | Kind | Need type | Validating macro | Pins the reviewed state of … |
 | --- | --- | --- | --- |
-| Requirements | `req_chklst` | `requirements_checklist` | extracted requirements (`component_requirements` / `feature_requirements`) and, by default, their transitive dependencies |
-| Architecture | `arch_chklst` | `architecture_checklist` | extracted architecture (`component_architecture` / `feature_architecture`) and, by default, their transitive dependencies |
+| Requirements | `mod_insp` | `requirements_checklist` | extracted requirements (`component_requirements` / `feature_requirements`) and, by default, their transitive dependencies |
+| Architecture | `mod_insp` | `architecture_checklist` | extracted architecture (`component_architecture` / `feature_architecture`) and, by default, their transitive dependencies |
 
 The flow below is a complete, real example from the
 [baselibs](https://github.com/eclipse-score/baselibs) repository, which wires
 both kinds for its `bitmanipulation` component. You can copy it directly.
 
-### 1. Declare the checklist need
+### 1. Declare the inspection record need
 
-Add the checklist element next to the inspection `.rst`. It references the
-checklist document and the expected hash. On the
-first build leave the `sha256` as the placeholder (all zeros) and pin the real
-value afterwards.
+Add the `mod_insp` inspection record next to the inspection `.rst`. It links the
+inspected artifacts (`inspects`), the filled checklist document (`checklist`)
+and stores the expected hash. On the first build leave the `sha256` as the
+placeholder (all zeros) and pin the real value afterwards.
 
-Requirements (`req_chklst`):
+Requirements (`mod_insp`):
 
 ```rst
-.. req_chklst:: Bitmanipulation Component Requirements Checklist
-   :id: req_chklst__bitmanipulation__comp_req
+.. mod_insp:: Bitmanipulation Component Requirements Inspection Record
+   :id: mod_insp__bitmanipulation__comp_req
    :status: valid
+   :safety: ASIL_B
+   :security: YES
+   :inspection_type: requirements
+   :inspection_state: approved
+   :checklist_template: gd_chklst__req_inspection
+   :reviewers: mihajlo-k
+   :belongs_to: mod__baselibs
+   :inspects: comp_req__bitmanipulation__bit_operations
    :checklist: doc__bitmanipulation_req_inspection
    :sha256: 0000000000000000000000000000000000000000000000000000000000000000
 ```
 
-Architecture (`arch_chklst`):
+Architecture (`mod_insp`):
 
 ```rst
-.. arch_chklst:: Bitmanipulation Component Architecture Checklist
-   :id: arch_chklst__bitmanipulation__comp_arc
+.. mod_insp:: Bitmanipulation Component Architecture Inspection Record
+   :id: mod_insp__bitmanipulation__comp_arc
    :status: valid
+   :safety: ASIL_B
+   :security: YES
+   :inspection_type: architecture
+   :inspection_state: approved
+   :checklist_template: gd_chklst__arch_inspection_checklist
+   :reviewers: aschemmel-tech
+   :belongs_to: mod__baselibs
+   :inspects: comp_arc_sta__bitmanipulation__component_view
    :checklist: doc__bitmanipulation_arc_inspection
    :sha256: 0000000000000000000000000000000000000000000000000000000000000000
 ```
@@ -191,7 +205,7 @@ component_requirements(
 
 requirements_checklist(
     name = "bitmanipulation_req_checklist",
-    checklist_id = "req_chklst__bitmanipulation__comp_req",
+    mod_insp_id = "mod_insp__bitmanipulation__comp_req",
     deps = [":bitmanipulation_comp_reqs"],
     # Resolve upstream stakeholder requirements so changes to them are detected.
     extra_needs = ["@score_platform//:needs_json"],
@@ -210,7 +224,7 @@ component_architecture(
 
 architecture_checklist(
     name = "bitmanipulation_arch_checklist",
-    checklist_id = "arch_chklst__bitmanipulation__comp_arc",
+    mod_insp_id = "mod_insp__bitmanipulation__comp_arc",
     deps = [":bitmanipulation_comp_arch"],
     # Resolve upstream (feature/stakeholder) requirements so changes are detected.
     extra_needs = ["@score_platform//:needs_json"],
@@ -274,7 +288,7 @@ transitively linked elements). Link targets carrying a version constraint
 # Component requirements: transitively pins feature + stakeholder requirements.
 requirements_checklist(
     name = "bitmanipulation_req_checklist",
-    checklist_id = "req_chklst__bitmanipulation__comp_req",
+    mod_insp_id = "mod_insp__bitmanipulation__comp_req",
     deps = [":bitmanipulation_comp_reqs"],
     # default: link_fields = ["derived_from", "satisfies", "covers"]
 )
@@ -282,7 +296,7 @@ requirements_checklist(
 # Architecture: transitively pins fulfilled requirements (and their parents).
 architecture_checklist(
     name = "bitmanipulation_arch_checklist",
-    checklist_id = "arch_chklst__bitmanipulation__comp_arc",
+    mod_insp_id = "mod_insp__bitmanipulation__comp_arc",
     deps = [":bitmanipulation_comp_arch"],
 )
 ```
@@ -310,14 +324,14 @@ pass as `data` to `docs(...)`:
 ```starlark
 requirements_checklist(
     name = "bitmanipulation_req_checklist",
-    checklist_id = "req_chklst__bitmanipulation__comp_req",
+    mod_insp_id = "mod_insp__bitmanipulation__comp_req",
     deps = [":bitmanipulation_comp_reqs"],
     extra_needs = ["@score_platform//:needs_json"],
 )
 
 architecture_checklist(
     name = "bitmanipulation_arch_checklist",
-    checklist_id = "arch_chklst__bitmanipulation__comp_arc",
+    mod_insp_id = "mod_insp__bitmanipulation__comp_arc",
     deps = [":bitmanipulation_comp_arch"],
     extra_needs = ["@score_platform//:needs_json"],
 )

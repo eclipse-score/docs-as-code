@@ -12,15 +12,15 @@
 # *******************************************************************************
 
 """
-Validate a requirement checklist against the build output it was reviewed against.
+Validate an inspection record against the build output it was reviewed against.
 
-A ``req_chklst`` sphinx-needs element pins the state of one or more build
+A ``mod_insp`` sphinx-needs element pins the state of one or more build
 outputs (e.g. the extracted component requirements) via a ``sha256`` attribute.
 This script:
 
-1. Reads ``needs.json`` and looks up the checklist need by its id.
+1. Reads ``needs.json`` and looks up the inspection record by its id.
 2. Computes the SHA256 over the validated build output.
-3. Compares the computed hash with the ``sha256`` attribute of the checklist need.
+3. Compares the computed hash with the ``sha256`` attribute of the record.
 
 There are two hashing modes:
 
@@ -192,7 +192,7 @@ def compute_closure_sha256(
 def main() -> int:
     parser = argparse.ArgumentParser(
         description=(
-            "Validate a requirement checklist (req_chklst) against the SHA256 of "
+            "Validate an inspection record (mod_insp) against the SHA256 of "
             "the build output it was reviewed against."
         )
     )
@@ -205,7 +205,7 @@ def main() -> int:
     _ = parser.add_argument(
         "--checklist-id",
         required=True,
-        help="Id of the req_chklst need to validate (e.g. 'req_chklst__foo').",
+        help="Id of the mod_insp need to validate (e.g. 'mod_insp__foo').",
     )
     _ = parser.add_argument(
         "--output",

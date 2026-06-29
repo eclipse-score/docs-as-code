@@ -378,20 +378,20 @@ def sphinx_needs_to_trlc(
 
 def requirements_checklist(
         name,
-        checklist_id,
         deps,
+        mod_insp_id,
         src = "//:needs_json",
         link_fields = ["derived_from", "satisfies", "covers"],
         extra_needs = [],
         visibility = None):
-    """Validate a requirement checklist (`req_chklst`) against its build output.
+    """Validate a requirement inspection record against its build output.
 
     Building this target recomputes the SHA256 over the requirements in `deps`
     **and**, by default, over everything they depend on transitively, and
-    compares it to the `sha256` attribute of the `req_chklst` need `checklist_id`
-    (looked up in `src`'s `needs.json`). The build **fails** when the hashes
-    differ, i.e. when a validated requirement *or one of its (recursive)
-    dependencies* has changed since the checklist was last reviewed.
+    compares it to the `sha256` attribute of the `mod_insp` inspection record
+    `mod_insp_id` (looked up in `src`'s `needs.json`). The build **fails** when
+    the hashes differ, i.e. when a validated requirement *or one of its
+    (recursive) dependencies* has changed since the inspection was last reviewed.
 
     The dependency graph is the sphinx-needs link graph: starting from the
     requirements in `deps` (the *roots*), the `link_fields` (by default
@@ -403,7 +403,7 @@ def requirements_checklist(
     the requirements in `deps`.
 
     Typical usage validates the extracted requirements of a component against the
-    checklist that reviewed them:
+    inspection record that reviewed them:
 
         component_requirements(
             name = "bitmanipulation_comp_reqs",
@@ -412,24 +412,24 @@ def requirements_checklist(
 
         requirements_checklist(
             name = "bitmanipulation_req_checklist",
-            checklist_id = "req_chklst__bitmanipulation__comp_req",
+            mod_insp_id = "mod_insp__bitmanipulation__comp_req",
             deps = [":bitmanipulation_comp_reqs"],
         )
 
     Run with `bazel build //:bitmanipulation_req_checklist`. On the first run (or
     after the requirements change) the build fails and prints the actual SHA256;
-    copy it into the `sha256` attribute of the checklist need once the checklist
-    has been (re-)reviewed.
+    copy it into the `sha256` attribute of the inspection record once it has
+    been (re-)reviewed.
 
     Args:
         name: Name of the generated target. The output file is `<name>.sha256`.
-        checklist_id: Id of the `req_chklst` need to validate
-            (e.g. `"req_chklst__bitmanipulation__comp_req"`).
         deps: List of labels whose outputs define the root requirements that are
             hashed and validated. Usually a single
             `component_requirements`/`feature_requirements`/`filtered_needs_json`
             target.
-        src: Label of a `needs_json` build output containing the checklist need
+        mod_insp_id: Id of the `mod_insp` inspection record to validate
+            (e.g. `"mod_insp__bitmanipulation__comp_req"`).
+        src: Label of a `needs_json` build output containing the inspection record
             and the full link graph. Defaults to the calling package's
             `//:needs_json`.
         link_fields: Sphinx-needs link fields followed recursively from the root
@@ -458,14 +458,14 @@ def requirements_checklist(
         cmd = """
         $(location {validate_tool}) \
             --needs-json $(location {src})/needs.json \
-            --checklist-id '{checklist_id}' \
+            --checklist-id '{mod_insp_id}' \
             --output $@ \
             {link_args} \
             {extra_args} \
             {dep_args}
         """.format(
             validate_tool = validate_tool,
-            checklist_id = checklist_id,
+            mod_insp_id = mod_insp_id,
             src = src,
             link_args = link_args,
             extra_args = extra_args,
@@ -477,20 +477,20 @@ def requirements_checklist(
 
 def architecture_checklist(
         name,
-        checklist_id,
         deps,
+        mod_insp_id,
         src = "//:needs_json",
         link_fields = ["fulfils", "includes", "uses", "provides", "derived_from", "satisfies", "covers"],
         extra_needs = [],
         visibility = None):
-    """Validate an architecture checklist (`arch_chklst`) against its build output.
+    """Validate an architecture inspection record against its build output.
 
     Building this target recomputes the SHA256 over the architecture in `deps`
     **and**, by default, over everything they depend on transitively, and
-    compares it to the `sha256` attribute of the `arch_chklst` need `checklist_id`
-    (looked up in `src`'s `needs.json`). The build **fails** when the hashes
-    differ, i.e. when a validated architecture element *or one of its (recursive)
-    dependencies* has changed since the checklist was last reviewed.
+    compares it to the `sha256` attribute of the `mod_insp` inspection record
+    `mod_insp_id` (looked up in `src`'s `needs.json`). The build **fails** when
+    the hashes differ, i.e. when a validated architecture element *or one of its
+    (recursive) dependencies* has changed since the inspection was last reviewed.
 
     The dependency graph is the sphinx-needs link graph: starting from the
     architecture elements in `deps` (the *roots*), the `link_fields` are followed
@@ -503,7 +503,7 @@ def architecture_checklist(
     behaviour of hashing only the elements in `deps`.
 
     Typical usage validates the extracted architecture of a component against the
-    checklist that reviewed it:
+    inspection record that reviewed it:
 
         component_architecture(
             name = "bitmanipulation_comp_arch",
@@ -512,24 +512,24 @@ def architecture_checklist(
 
         architecture_checklist(
             name = "bitmanipulation_arch_checklist",
-            checklist_id = "arch_chklst__bitmanipulation__comp_arc",
+            mod_insp_id = "mod_insp__bitmanipulation__comp_arc",
             deps = [":bitmanipulation_comp_arch"],
         )
 
     Run with `bazel build //:bitmanipulation_arch_checklist`. On the first run (or
     after the architecture changes) the build fails and prints the actual SHA256;
-    copy it into the `sha256` attribute of the checklist need once the checklist
-    has been (re-)reviewed.
+    copy it into the `sha256` attribute of the inspection record once it has
+    been (re-)reviewed.
 
     Args:
         name: Name of the generated target. The output file is `<name>.sha256`.
-        checklist_id: Id of the `arch_chklst` need to validate
-            (e.g. `"arch_chklst__bitmanipulation__comp_arc"`).
         deps: List of labels whose outputs define the root architecture elements
             that are hashed and validated. Usually a single
             `feature_architecture`/`component_architecture`/`filtered_needs_json`
             target.
-        src: Label of a `needs_json` build output containing the checklist need
+        mod_insp_id: Id of the `mod_insp` inspection record to validate
+            (e.g. `"mod_insp__baselibs__feat_arc"`).
+        src: Label of a `needs_json` build output containing the inspection record
             and the full link graph. Defaults to the calling package's
             `//:needs_json`.
         link_fields: Sphinx-needs link fields followed recursively from the root
@@ -558,14 +558,14 @@ def architecture_checklist(
         cmd = """
         $(location {validate_tool}) \
             --needs-json $(location {src})/needs.json \
-            --checklist-id '{checklist_id}' \
+            --checklist-id '{mod_insp_id}' \
             --output $@ \
             {link_args} \
             {extra_args} \
             {dep_args}
         """.format(
             validate_tool = validate_tool,
-            checklist_id = checklist_id,
+            mod_insp_id = mod_insp_id,
             src = src,
             link_args = link_args,
             extra_args = extra_args,
