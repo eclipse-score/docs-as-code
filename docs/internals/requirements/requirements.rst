@@ -791,6 +791,34 @@ Architecture Attributes
      "belongs_to", "corresponding architecture element same level"
      "includes", "corresponding architecture element lower level"
 
+The following requirement maybe be overlapping with other tool requirements,
+but for ease of traceability this is a separate one.
+
+.. tool_req:: Correlations of the architectural building blocks
+  :id: tool_req__arch_linkage_safety
+  :implemented: PARTIAL
+  :version: 1
+  :satisfies: gd_req__arch_linkage_safety[version==1]
+  :parent_covered: YES
+
+  .. csv-table::
+     :header: "Link source", "Relation", "Link Target", "Mandatory", "Implemented"
+
+     feat, consist_of, comp, yes, no
+     feat, includes, logic_arc_int, yes, only optional
+     mod, includes, comp, yes, yes
+     real_arc_int_op, included by, real_arc_int, yes, yes
+     logic_arc_int, includes, logic_arc_int_op, no, yes
+     real_arc_int_op, implements, logic_arc_int_op, no, yes
+     comp, implements, logic_arc_int, no, yes
+     comp, uses, logic_arc_int, no, yes
+     comp, consists_of, comp, no, yes
+
+  .. warning::
+
+    Implementation and this requirement uses ``consists_of``
+    while :need:`gd_req__arch_linkage_safety` uses ``consist_of``
+    without the "s".
 
 💻 Detailed Design & Code
 ##########################
