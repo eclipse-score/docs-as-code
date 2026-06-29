@@ -908,9 +908,9 @@ Testing
 
    Docs-as-Code shall ensure that test cases link to requirements on the correct level:
 
-    - If Partially/FullyVerifies are set in Feature Integration Test these shall link to Feature Requirements
-    - If Partially/FullyVerifies are set in Component Integration Test these shall link to Component Requirements
-    - If Partially/FullyVerifies are set in Unit Test these shall link to Component Requirements
+   - If Partially/FullyVerifies are set in Feature Integration Test these shall link to Feature Requirements
+   - If Partially/FullyVerifies are set in Component Integration Test these shall link to Component Requirements
+   - If Partially/FullyVerifies are set in Unit Test these shall link to Component Requirements
 
 
 .. tool_req:: Provide Metrics for linked requirements
