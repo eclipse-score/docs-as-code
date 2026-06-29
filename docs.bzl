@@ -575,6 +575,160 @@ def architecture_checklist(
         visibility = visibility,
     )
 
+def score_component(
+        name,
+        component = None,
+        req_insp_id = None,
+        arc_insp_id = None,
+        src = "//:needs_json",
+        extra_needs = [],
+        visibility = None):
+    """Bundle the requirement and architecture checklists of a single component.
+
+    Creates the component requirement/architecture extraction targets plus their
+    inspection-record checklists and aggregates the two checklists into a single
+    target `name`. Building `name` builds both the component requirements
+    checklist and the component architecture checklist, so the build fails when
+    either drifts from its reviewed inspection record.
+
+    The following targets are generated:
+
+    * `<name>_comp_reqs`      - extracted component requirements
+    * `<name>_req_checklist`  - requirements inspection-record checklist
+    * `<name>_comp_arch`      - extracted component architecture
+    * `<name>_arch_checklist` - architecture inspection-record checklist
+    * `<name>`                - filegroup bundling both checklists
+
+    Args:
+        name: Name of the aggregate target and prefix for the generated targets.
+        component: Component name used to filter needs. Defaults to `name`.
+        req_insp_id: Id of the `mod_insp` record for the component requirements.
+            Defaults to `mod_insp__<component>__comp_req`.
+        arc_insp_id: Id of the `mod_insp` record for the component architecture.
+            Defaults to `mod_insp__<component>__comp_arc`.
+        src: Label of a `needs_json` build output. Defaults to `//:needs_json`.
+        extra_needs: Additional `needs_json` build outputs forwarded to both
+            checklists (e.g. `["@score_platform//:needs_json"]`).
+        visibility: Standard Bazel visibility for the generated targets.
+    """
+    component = component or name
+    req_insp_id = req_insp_id or "mod_insp__{}__comp_req".format(component)
+    arc_insp_id = arc_insp_id or "mod_insp__{}__comp_arc".format(component)
+
+    component_requirements(
+        name = name + "_comp_reqs",
+        src = src,
+        component = component,
+        visibility = visibility,
+    )
+    requirements_checklist(
+        name = name + "_req_checklist",
+        mod_insp_id = req_insp_id,
+        deps = [":" + name + "_comp_reqs"],
+        extra_needs = extra_needs,
+        visibility = visibility,
+    )
+    component_architecture(
+        name = name + "_comp_arch",
+        src = src,
+        component = component,
+        visibility = visibility,
+    )
+    architecture_checklist(
+        name = name + "_arch_checklist",
+        mod_insp_id = arc_insp_id,
+        deps = [":" + name + "_comp_arch"],
+        extra_needs = extra_needs,
+        visibility = visibility,
+    )
+    native.filegroup(
+        name = name,
+        srcs = [
+            ":" + name + "_req_checklist",
+            ":" + name + "_arch_checklist",
+        ],
+        visibility = visibility,
+    )
+
+def score_module(
+        name,
+        feature = None,
+        components = [],
+        req_insp_id = None,
+        arc_insp_id = None,
+        src = "//:needs_json",
+        extra_needs = [],
+        visibility = None):
+    """Bundle the feature checklists of a module with all of its components.
+
+    Creates the feature requirement/architecture extraction targets plus their
+    inspection-record checklists and aggregates them with every component listed
+    in `components` into a single target `name`. Building `name` builds the
+    feature requirements checklist, the feature architecture checklist and all
+    referenced component targets, so the build fails when any of them drifts from
+    its reviewed inspection record.
+
+    The following targets are generated:
+
+    * `<name>_feature_reqs`   - extracted feature requirements
+    * `<name>_req_checklist`  - feature requirements inspection-record checklist
+    * `<name>_feature_arch`   - extracted feature architecture
+    * `<name>_arch_checklist` - feature architecture inspection-record checklist
+    * `<name>`                - filegroup bundling both checklists and components
+
+    Args:
+        name: Name of the aggregate target and prefix for the generated targets.
+        feature: Feature name used to filter needs. Defaults to `name`.
+        components: Labels of `score_component` targets making up this module.
+            All of them are built together with the module checklists.
+        req_insp_id: Id of the `mod_insp` record for the feature requirements.
+            Defaults to `mod_insp__<feature>__feat_req`.
+        arc_insp_id: Id of the `mod_insp` record for the feature architecture.
+            Defaults to `mod_insp__<feature>__feat_arc`.
+        src: Label of a `needs_json` build output. Defaults to `//:needs_json`.
+        extra_needs: Additional `needs_json` build outputs forwarded to both
+            checklists (e.g. `["@score_platform//:needs_json"]`).
+        visibility: Standard Bazel visibility for the generated targets.
+    """
+    feature = feature or name
+    req_insp_id = req_insp_id or "mod_insp__{}__feat_req".format(feature)
+    arc_insp_id = arc_insp_id or "mod_insp__{}__feat_arc".format(feature)
+
+    feature_requirements(
+        name = name + "_feature_reqs",
+        src = src,
+        feature = feature,
+        visibility = visibility,
+    )
+    requirements_checklist(
+        name = name + "_req_checklist",
+        mod_insp_id = req_insp_id,
+        deps = [":" + name + "_feature_reqs"],
+        extra_needs = extra_needs,
+        visibility = visibility,
+    )
+    feature_architecture(
+        name = name + "_feature_arch",
+        src = src,
+        feature = feature,
+        visibility = visibility,
+    )
+    architecture_checklist(
+        name = name + "_arch_checklist",
+        mod_insp_id = arc_insp_id,
+        deps = [":" + name + "_feature_arch"],
+        extra_needs = extra_needs,
+        visibility = visibility,
+    )
+    native.filegroup(
+        name = name,
+        srcs = [
+            ":" + name + "_req_checklist",
+            ":" + name + "_arch_checklist",
+        ] + components,
+        visibility = visibility,
+    )
+
 def _missing_requirements(deps):
     """Add Python hub dependencies if they are missing."""
     found = []
