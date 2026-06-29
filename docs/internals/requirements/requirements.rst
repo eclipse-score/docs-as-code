@@ -791,7 +791,7 @@ Architecture Attributes
      "belongs_to", "corresponding architecture element same level"
      "includes", "corresponding architecture element lower level"
 
-The following requirement maybe be overlapping with other tool requirements,
+The following requirement may be overlapping with other tool requirements,
 but for ease of traceability this is a separate one.
 
 .. tool_req:: Correlations of the architectural building blocks
