@@ -210,7 +210,6 @@ This section provides an overview of current process requirements and their clar
   :satisfies:
      gd_req__req_check_mandatory,
      gd_req__req_attr_safety,
-     gd_req__impl_diagram_safety,
      gd_req__arch_attr_safety
 
   Docs-as-Code shall enforce that the ``safety`` attribute has one of the following values:
@@ -240,7 +239,6 @@ This section provides an overview of current process requirements and their clar
     gd_req__req_attr_status,
     gd_req__arch_attr_status,
     gd_req__saf_attr_status,
-    gd_req__impl_diagram_status,
     gd_req__req_check_mandatory,
 
   Docs-as-Code shall enforce that the ``status`` attribute has one of the following values:
@@ -766,27 +764,6 @@ Architecture Attributes
     feat_arc_sta, comp_arc_sta, logic_arc_int, real_arc_int are architecture views,
     but are still defined as architectural elements, which means they have the properties of
     architectural elements.
-
-.. tool_req:: Architecture diagram links
-  :id: tool_req__docs_arch_links
-  :implemented: PARTIAL
-  :version: 1
-  :satisfies:
-    gd_req__impl_diagram_check_id,
-    gd_req__impl_diagram_linkage_id,
-    gd_req__impl_diagram_check_includes,
-    gd_req__impl_diagram_linkage_includes,
-  :parent_covered: YES
-
-  Architectural diagrams (``mod_view_sta``, ``feat_arc_sta``, ``comp_arc_sta``,
-  ``mod_view_dyn``, ``feat_arc_dyn``, ``comp_arc_dyn``)
-  shall provide the following links:
-
-  .. csv-table::
-     :header: "Link Type", "Link Target"
-
-     "belongs_to", "corresponding architecture element same level"
-     "includes", "corresponding architecture element lower level"
 
 
 💻 Detailed Design & Code

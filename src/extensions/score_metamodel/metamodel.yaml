@@ -437,12 +437,8 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
     mandatory_links:
-      # req-Id: tool_req__docs_arch_links
-      includes: logic_arc_int, logic_arc_int_op
       # req-Id: tool_req__docs_arch_link_fulfils, tool_req__docs_arch_link_fulfils_aou
       fulfils: feat_req, aou_req
-      # req-Id: tool_req__docs_arch_links
-      belongs_to: feat # make it mandatory for evaluation
     tags:
       - architecture_element
       - architecture_view
@@ -463,8 +459,6 @@ needs_types:
       status: ^(valid|invalid)$
     mandatory_links:
       fulfils: feat_req
-      # req-Id: tool_req__docs_arch_links
-      belongs_to: feat
     tags:
       - architecture_view
       - architecture_element
@@ -537,10 +531,6 @@ needs_types:
     title: Module Architecture Static View
     color: #FEDCD2
     style: card
-    optional_links:
-      # req-Id: tool_req__docs_arch_links
-      belongs_to: mod # for evaluation
-      includes: comp
     tags:
       - architecture_view
     parts: 3
@@ -552,9 +542,6 @@ needs_types:
     color: #FEDCD2
     style: card
     parts: 3
-    optional_links:
-      # req-Id: tool_req__docs_arch_links
-      belongs_to: mod # for evaluation
 
   # Architecture Element
   comp:
@@ -593,8 +580,6 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
     mandatory_links:
-      # req-Id: tool_req__docs_arch_links
-      belongs_to: comp
       # req-Id: tool_req__docs_arch_link_fulfils, tool_req__docs_arch_link_fulfils_aou
       fulfils: comp_req, aou_req
     optional_links:
@@ -617,8 +602,6 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
     mandatory_links:
-      # req-Id: tool_req__docs_arch_links
-      belongs_to: comp
       fulfils: comp_req
     tags:
       - architecture_view
