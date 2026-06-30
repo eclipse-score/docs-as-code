@@ -939,6 +939,11 @@ needs_types:
       verdict: ^(pass|fail|open)$
       report_version: ^.*$
       release_baseline: ^.*$
+      # SHA256 (64 lowercase hex chars) of the reviewed build output (the root
+      # target outputs plus their transitive dependencies). May be left empty to
+      # let the verification report build fail and report the computed SHA256 to
+      # pin (see `validate_checklist.py`).
+      sha256: ^([0-9a-f]{64})?$
     mandatory_links:
       # req-Id: tool_req__docs_verification_report_need
       belongs_to: mod

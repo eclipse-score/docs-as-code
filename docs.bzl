@@ -276,9 +276,12 @@ def component_architecture(
         src: Label of a `needs_json` build output. Defaults to the calling
             package's `//:needs_json`.
         component: Optional component name. If given, only component architecture
-            elements named with that component (per the `<type>__<name>__...`
-            convention) are kept; if omitted, all component architecture
-            elements are kept.
+            elements named with that component are kept; component architecture
+            IDs follow the `<type>__<feature>__<component>` convention (e.g.
+            `comp_arc_sta__baselibs__bit_manipulation`) and any underscores in
+            the component segment are removed for matching (so `bit_manipulation`
+            matches the component name `bitmanipulation`). If omitted, all
+            component architecture elements are kept.
         visibility: Standard Bazel visibility for the generated target.
     """
     filtered_needs_json(
@@ -575,10 +578,220 @@ def architecture_checklist(
         visibility = visibility,
     )
 
+def dfa_checklist(
+        name,
+        deps,
+        mod_insp_id,
+        src = "//:needs_json",
+        link_fields = ["mitigates", "violates", "fulfils", "includes", "uses", "provides", "derived_from", "satisfies", "covers"],
+        extra_needs = [],
+        visibility = None):
+    """Validate a DFA inspection record against its build output.
+
+    Building this target recomputes the SHA256 over the DFA elements in `deps`
+    and, by default, over everything they depend on transitively, and compares
+    it to the `sha256` attribute of the `mod_insp` inspection record
+    `mod_insp_id`. The build **fails** when a validated DFA element *or one of
+    its (recursive) dependencies* changed since the inspection was last reviewed.
+
+    Args:
+        name: Name of the generated target. The output file is `<name>.sha256`.
+        deps: List of labels whose outputs define the root elements that are
+            hashed and validated. Usually the feature/component architecture and
+            requirements the DFA covers (e.g. `feature_architecture` /
+            `feature_requirements` targets).
+        mod_insp_id: Id of the `mod_insp` inspection record to validate.
+        src: Label of a `needs_json` build output. Defaults to `//:needs_json`.
+        link_fields: Sphinx-needs link fields followed recursively to include
+            (transitive) dependencies in the hash. Set to `[]` to hash only the
+            elements in `deps`.
+        extra_needs: Additional `needs_json` build outputs providing external
+            needs referenced but not contained in `src`.
+        visibility: Standard Bazel visibility for the generated target.
+    """
+    validate_tool = Label("//scripts_bazel:validate_checklist")
+
+    dep_args = " ".join(["$(locations %s)" % d for d in deps])
+    link_args = " ".join(["--link-field '%s'" % f for f in link_fields])
+    extra_args = " ".join(["--extra-needs-json $(location %s)/needs.json" % e for e in extra_needs])
+
+    native.genrule(
+        name = name,
+        srcs = [src] + extra_needs + deps,
+        outs = [name + ".sha256"],
+        cmd = """
+        $(location {validate_tool}) \
+            --needs-json $(location {src})/needs.json \
+            --checklist-id '{mod_insp_id}' \
+            --output $@ \
+            {link_args} \
+            {extra_args} \
+            {dep_args}
+        """.format(
+            validate_tool = validate_tool,
+            mod_insp_id = mod_insp_id,
+            src = src,
+            link_args = link_args,
+            extra_args = extra_args,
+            dep_args = dep_args,
+        ),
+        tools = [validate_tool],
+        visibility = visibility,
+    )
+
+def fmea_checklist(
+        name,
+        deps,
+        mod_insp_id,
+        src = "//:needs_json",
+        link_fields = ["mitigates", "violates", "fulfils", "includes", "uses", "provides", "derived_from", "satisfies", "covers"],
+        extra_needs = [],
+        visibility = None):
+    """Validate an FMEA inspection record against its build output.
+
+    Building this target recomputes the SHA256 over the FMEA elements in `deps`
+    and, by default, over everything they depend on transitively, and compares
+    it to the `sha256` attribute of the `mod_insp` inspection record
+    `mod_insp_id`. The build **fails** when a validated FMEA element *or one of
+    its (recursive) dependencies* changed since the inspection was last reviewed.
+
+    Args:
+        name: Name of the generated target. The output file is `<name>.sha256`.
+        deps: List of labels whose outputs define the root elements that are
+            hashed and validated. Usually the feature/component architecture and
+            requirements the FMEA covers (e.g. `feature_architecture` /
+            `feature_requirements` targets).
+        mod_insp_id: Id of the `mod_insp` inspection record to validate.
+        src: Label of a `needs_json` build output. Defaults to `//:needs_json`.
+        link_fields: Sphinx-needs link fields followed recursively to include
+            (transitive) dependencies in the hash. Set to `[]` to hash only the
+            elements in `deps`.
+        extra_needs: Additional `needs_json` build outputs providing external
+            needs referenced but not contained in `src`.
+        visibility: Standard Bazel visibility for the generated target.
+    """
+    validate_tool = Label("//scripts_bazel:validate_checklist")
+
+    dep_args = " ".join(["$(locations %s)" % d for d in deps])
+    link_args = " ".join(["--link-field '%s'" % f for f in link_fields])
+    extra_args = " ".join(["--extra-needs-json $(location %s)/needs.json" % e for e in extra_needs])
+
+    native.genrule(
+        name = name,
+        srcs = [src] + extra_needs + deps,
+        outs = [name + ".sha256"],
+        cmd = """
+        $(location {validate_tool}) \
+            --needs-json $(location {src})/needs.json \
+            --checklist-id '{mod_insp_id}' \
+            --output $@ \
+            {link_args} \
+            {extra_args} \
+            {dep_args}
+        """.format(
+            validate_tool = validate_tool,
+            mod_insp_id = mod_insp_id,
+            src = src,
+            link_args = link_args,
+            extra_args = extra_args,
+            dep_args = dep_args,
+        ),
+        tools = [validate_tool],
+        visibility = visibility,
+    )
+
+def verification_report(
+        name,
+        deps,
+        mod_ver_report_id,
+        src = "//:needs_json",
+        link_fields = ["mitigates", "violates", "fulfils", "includes", "uses", "provides", "derived_from", "satisfies", "covers"],
+        extra_needs = [],
+        visibility = None):
+    """Validate a module verification report record against its build output.
+
+    Works exactly like `dfa_checklist`/`fmea_checklist`, but validates a
+    `mod_ver_report` instead of a `mod_insp`. Building this target recomputes the
+    SHA256 over the elements in `deps` and, by default, over everything they
+    depend on transitively, and compares it to the `sha256` attribute of the
+    verification report record `mod_ver_report_id`. The build **fails** when a
+    covered element *or one of its (recursive) dependencies* changed since the
+    report was last reviewed.
+
+    Args:
+        name: Name of the generated target. The output file is `<name>.sha256`.
+        deps: List of labels whose outputs define the root elements that are
+            hashed and validated (e.g. the verified requirements/architecture).
+        mod_ver_report_id: Id of the `mod_ver_report` record to validate.
+        src: Label of a `needs_json` build output. Defaults to `//:needs_json`.
+        link_fields: Sphinx-needs link fields followed recursively to include
+            (transitive) dependencies in the hash. Set to `[]` to hash only the
+            elements in `deps`.
+        extra_needs: Additional `needs_json` build outputs providing external
+            needs referenced but not contained in `src`.
+        visibility: Standard Bazel visibility for the generated target.
+    """
+    validate_tool = Label("//scripts_bazel:validate_checklist")
+
+    dep_args = " ".join(["$(locations %s)" % d for d in deps])
+    link_args = " ".join(["--link-field '%s'" % f for f in link_fields])
+    extra_args = " ".join(["--extra-needs-json $(location %s)/needs.json" % e for e in extra_needs])
+
+    native.genrule(
+        name = name,
+        srcs = [src] + extra_needs + deps,
+        outs = [name + ".sha256"],
+        cmd = """
+        $(location {validate_tool}) \
+            --needs-json $(location {src})/needs.json \
+            --checklist-id '{mod_ver_report_id}' \
+            --output $@ \
+            {link_args} \
+            {extra_args} \
+            {dep_args}
+        """.format(
+            validate_tool = validate_tool,
+            mod_ver_report_id = mod_ver_report_id,
+            src = src,
+            link_args = link_args,
+            extra_args = extra_args,
+            dep_args = dep_args,
+        ),
+        tools = [validate_tool],
+        visibility = visibility,
+    )
+
+def _emit_module_subtargets(name, visibility, single_labels, label_lists):
+    """Emit per-argument `<name>.<arg>` sub-targets for an aggregate target.
+
+    Single-label arguments (`single_labels`) become an `alias`, label-list
+    arguments (`label_lists`) become a `filegroup`. A sub-target is only created
+    when its argument is actually provided (non-`None` / non-empty list), so a
+    `<name>.<arg>` target exists exactly when `<arg>` is part of the aggregate.
+    Sub-targets carry the aggregate's `visibility`, exposing otherwise private
+    building blocks through the aggregate.
+    """
+    for arg, label in single_labels.items():
+        if label:
+            native.alias(
+                name = name + "." + arg,
+                actual = label,
+                visibility = visibility,
+            )
+    for arg, labels in label_lists.items():
+        if labels:
+            native.filegroup(
+                name = name + "." + arg,
+                srcs = labels,
+                visibility = visibility,
+            )
+
 def score_component(
         name,
         req_chklst = [],
         arch_chklst = [],
+        dfa = None,
+        fmea = None,
         visibility = None):
     """Bundle the requirement and architecture checklists of a single component.
 
@@ -587,23 +800,53 @@ def score_component(
     Building `name` builds every referenced checklist, so the build fails when
     any of them drifts from its reviewed inspection record.
 
+    In addition to the aggregate `name`, a `<name>.<arg>` sub-target is emitted
+    for every provided argument (e.g. `<name>.req_chklst`,
+    `<name>.arch_chklst`, `<name>.dfa`, `<name>.fmea`), so a single part can be
+    referenced through the component while the underlying targets stay private.
+    A sub-target only exists when its argument is part of the component.
+
     Args:
         name: Name of the aggregate target.
         req_chklst: Labels of the component requirements checklist targets.
         arch_chklst: Labels of the component architecture checklist targets.
+        dfa: Label of the dependent failure analysis target. Built together with
+            the component.
+        fmea: Label of the FMEA safety analysis target. Built together with the
+            component.
         visibility: Standard Bazel visibility for the generated target.
     """
+    extra = []
+    for d in [dfa, fmea]:
+        if d and d not in extra:
+            extra.append(d)
     native.filegroup(
         name = name,
-        srcs = req_chklst + arch_chklst,
+        srcs = req_chklst + arch_chklst + extra,
         visibility = visibility,
+    )
+    _emit_module_subtargets(
+        name = name,
+        visibility = visibility,
+        single_labels = {
+            "dfa": dfa,
+            "fmea": fmea,
+        },
+        label_lists = {
+            "req_chklst": req_chklst,
+            "arch_chklst": arch_chklst,
+        },
     )
 
 def score_module(
         name,
+        docs,
         req_chklst = [],
         arch_chklst = [],
         components = [],
+        verif_report = None,
+        dfa = None,
+        fmea = None,
         visibility = None):
     """Bundle the feature checklists of a module with all of its components.
 
@@ -613,18 +856,52 @@ def score_module(
     listed in `components`, so the build fails when any of them drifts from its
     reviewed inspection record.
 
+    In addition to the aggregate `name`, a `<name>.<arg>` sub-target is emitted
+    for every provided argument (e.g. `<name>.docs`, `<name>.req_chklst`,
+    `<name>.dfa`, `<name>.fmea`, `<name>.verif_report`), so a single part can be
+    referenced through the module while the underlying targets stay private. A
+    sub-target only exists when its argument is part of the module.
+
     Args:
         name: Name of the aggregate target.
+        docs: Label of the module documentation target (e.g. `//:docs`).
+            Mandatory; built together with the module.
         req_chklst: Labels of the feature requirements checklist targets.
         arch_chklst: Labels of the feature architecture checklist targets.
         components: Labels of `score_component` targets making up this module.
+        verif_report: Label of the module verification report target. Built
+            together with the module.
+        dfa: Label of the dependent failure analysis target. Built together with
+            the module.
+        fmea: Label of the FMEA safety analysis target. Built together with the
+            module.
         visibility: Standard Bazel visibility for the generated target.
     """
+    extra = []
+    for d in [docs, verif_report, dfa, fmea]:
+        if d and d not in extra:
+            extra.append(d)
     native.filegroup(
         name = name,
-        srcs = req_chklst + arch_chklst + components,
+        srcs = req_chklst + arch_chklst + components + extra,
         visibility = visibility,
     )
+    _emit_module_subtargets(
+        name = name,
+        visibility = visibility,
+        single_labels = {
+            "docs": docs,
+            "verif_report": verif_report,
+            "dfa": dfa,
+            "fmea": fmea,
+        },
+        label_lists = {
+            "req_chklst": req_chklst,
+            "arch_chklst": arch_chklst,
+            "components": components,
+        },
+    )
+
 
 def _missing_requirements(deps):
     """Add Python hub dependencies if they are missing."""

@@ -40,6 +40,11 @@ other consumers (review docs, TRLC-based tooling) without manual copying.
 | `sphinx_needs_to_trlc` | `<name>.trlc` | Convert S-CORE requirements to TRLC. |
 | `requirements_checklist` | `<name>.sha256` | Validate a `mod_insp` record against its requirements target output via SHA256. |
 | `architecture_checklist` | `<name>.sha256` | Validate a `mod_insp` record against its architecture target output via SHA256. |
+| `dfa_checklist` | `<name>.sha256` | Validate a `mod_insp` DFA record against its DFA target output via SHA256. |
+| `fmea_checklist` | `<name>.sha256` | Validate a `mod_insp` FMEA record against its FMEA target output via SHA256. |
+| `verification_report` | `<name>.sha256` | Validate a `mod_ver_report` record against its target output via SHA256. |
+| `score_component` | aggregate (`filegroup`) | Bundle a component's requirement + architecture checklists. |
+| `score_module` | aggregate (`filegroup`) | Bundle a feature's checklists (incl. DFA/FMEA), docs and all of its components. |
 
 ### Python tools (`scripts_bazel/`)
 
@@ -140,6 +145,9 @@ inspection record:
 | --- | --- | --- | --- |
 | Requirements | `mod_insp` | `requirements_checklist` | extracted requirements (`component_requirements` / `feature_requirements`) and, by default, their transitive dependencies |
 | Architecture | `mod_insp` | `architecture_checklist` | extracted architecture (`component_architecture` / `feature_architecture`) and, by default, their transitive dependencies |
+| DFA | `mod_insp` | `dfa_checklist` | the architecture/requirements the DFA covers (passed in `deps`) and, by default, their transitive dependencies |
+| FMEA | `mod_insp` | `fmea_checklist` | the architecture/requirements the FMEA covers (passed in `deps`) and, by default, their transitive dependencies |
+| Verification report | `mod_ver_report` | `verification_report` | the verified elements passed in `deps` and, by default, their transitive dependencies |
 
 The flow below is a complete, real example from the
 [baselibs](https://github.com/eclipse-score/baselibs) repository, which wires
@@ -263,6 +271,9 @@ fields are configurable via the `link_fields` argument:
 | --- | --- |
 | `requirements_checklist` | `derived_from`, `satisfies`, `covers` |
 | `architecture_checklist` | `fulfils`, `includes`, `uses`, `provides`, `derived_from`, `satisfies`, `covers` |
+| `dfa_checklist` | `mitigates`, `violates`, `fulfils`, `includes`, `uses`, `provides`, `derived_from`, `satisfies`, `covers` |
+| `fmea_checklist` | `mitigates`, `violates`, `fulfils`, `includes`, `uses`, `provides`, `derived_from`, `satisfies`, `covers` |
+| `verification_report` | `mitigates`, `violates`, `fulfils`, `includes`, `uses`, `provides`, `derived_from`, `satisfies`, `covers` |
 
 The mechanism is generic and works for any element type and any link fields:
 
@@ -338,12 +349,157 @@ architecture_checklist(
 ```
 
 `extra_needs` is available on both `requirements_checklist` and
-`architecture_checklist` and only fills in needs that are *missing* locally: the
+`architecture_checklist` (and on `dfa_checklist`, `fmea_checklist` and
+`verification_report`) and only fills in needs that are *missing* locally: the
 main `src` keeps precedence for local content, and the extracted root elements
 in `deps` keep precedence over both. You only need it when the closure reaches
 elements that are not defined in the checklist's own repository — if everything
 is local, leave it at its default (`[]`).
 
+## Safety analysis checklists (DFA / FMEA)
+
+`dfa_checklist` (Dependent Failure Analysis) and `fmea_checklist` (Failure Modes
+and Effects Analysis) work exactly like `requirements_checklist` /
+`architecture_checklist`: each pins the reviewed state of its safety-analysis
+elements on the `sha256` attribute of a `mod_insp` inspection record and fails
+the build when a validated element — or any of its transitive dependencies —
+changes after the last review.
+
+They differ only in their default `link_fields`: in addition to the architecture
+and requirement links, they also follow the safety links `mitigates` and
+`violates`, so an analysis goes stale when the architecture/requirements it
+mitigates or the failure modes it describes change. Wire them against the
+feature's architecture and requirements outputs:
+
+```starlark
+load("@docs-as-code//:docs.bzl", "feature_architecture", "feature_requirements", "dfa_checklist", "fmea_checklist")
+
+feature_architecture(
+    name = "baselibs_feature_arch",
+    src = "@score_platform//:needs_json",
+    feature = "baselibs",
+)
+
+feature_requirements(
+    name = "baselibs_feature_reqs",
+    src = "@score_platform//:needs_json",
+    feature = "baselibs",
+)
+
+dfa_checklist(
+    name = "baselibs_dfa_checklist",
+    mod_insp_id = "mod_insp__baselibs__feat_dfa",
+    deps = [":baselibs_feature_arch", ":baselibs_feature_reqs"],
+    extra_needs = ["@score_platform//:needs_json"],
+)
+
+fmea_checklist(
+    name = "baselibs_fmea_checklist",
+    mod_insp_id = "mod_insp__baselibs__feat_fmea",
+    deps = [":baselibs_feature_arch", ":baselibs_feature_reqs"],
+    extra_needs = ["@score_platform//:needs_json"],
+)
+```
+
+The `mod_insp` record is declared exactly like the requirements/architecture
+ones (see [Declare the inspection record need](#1-declare-the-inspection-record-need)),
+using `:inspection_type: dfa` / `fmea` and the matching
+`:checklist_template:` / `:inspects:` links. Validate and pin the hash the same
+way (build the target, paste the printed hash into `:sha256:`).
+
+## Verification report (`verification_report`)
+
+`verification_report` behaves identically to the safety-analysis checklists but
+validates a `mod_ver_report` record instead of a `mod_insp` one (pass its id via
+`mod_ver_report_id`). Use it to pin the reviewed state of the elements a module
+verification report covers:
+
+```starlark
+load("@docs-as-code//:docs.bzl", "verification_report")
+
+verification_report(
+    name = "baselibs_verification_report",
+    mod_ver_report_id = "mod_vrep__baselibs__module",
+    deps = [],
+    extra_needs = ["@score_platform//:needs_json"],
+)
+```
+
+## Module and component aggregates (`score_module` / `score_component`)
+
+`score_component` and `score_module` are convenience aggregates that bundle the
+individual checklist targets so a single `bazel build` covers a whole component
+or feature. Because building the aggregate builds every referenced checklist,
+the build fails when **any** of them drifts from its reviewed inspection record.
+
+- `score_component` bundles a component's requirement and architecture
+  checklists (`req_chklst`, `arch_chklst`) plus optional `dfa` / `fmea`
+  targets.
+- `score_module` bundles a feature's requirement and architecture checklists,
+  its `docs`, optional `dfa` / `fmea` / `verif_report` targets, and every
+  `score_component` listed in `components`. Building the module therefore builds
+  every component too.
+
+```starlark
+load("@docs-as-code//:docs.bzl", "score_component", "score_module")
+
+score_component(
+    name = "bitmanipulation",
+    req_chklst = [":bitmanipulation_req_checklist"],
+    arch_chklst = [":bitmanipulation_arch_checklist"],
+    dfa = ":bitmanipulation_dfa_checklist",
+    fmea = ":bitmanipulation_fmea_checklist",
+    visibility = ["//visibility:private"],
+)
+
+score_module(
+    name = "baselibs",
+    docs = ":docs",
+    req_chklst = [":baselibs_req_checklist"],
+    arch_chklst = [":baselibs_arch_checklist"],
+    components = [":bitmanipulation"],
+    dfa = ":baselibs_dfa_checklist",
+    fmea = ":baselibs_fmea_checklist",
+    # verif_report = ":baselibs_verification_report",
+    visibility = ["//visibility:public"],
+)
+```
+
+```bash
+# Build the whole module (feature checklists + docs + DFA/FMEA + all components).
+bazel build //:baselibs
+```
+
+### Sub-target aliases (`<name>.<arg>`)
+
+Both aggregates keep their underlying checklist targets private while still
+exposing each part individually. For every argument that is actually provided,
+a `<name>.<arg>` sub-target is generated with the aggregate's visibility:
+
+| Aggregate | Sub-targets |
+| --- | --- |
+| `score_component` | `<name>.req_chklst`, `<name>.arch_chklst`, `<name>.dfa`, `<name>.fmea` |
+| `score_module` | `<name>.docs`, `<name>.req_chklst`, `<name>.arch_chklst`, `<name>.components`, `<name>.dfa`, `<name>.fmea`, `<name>.verif_report` |
+
+Single-label arguments (`docs`, `dfa`, `fmea`, `verif_report`) become an
+`alias`; label-list arguments (`req_chklst`, `arch_chklst`, `components`) become
+a `filegroup`. A sub-target only exists when its argument is part of the
+aggregate, so referencing `<name>.fmea` on a module without an FMEA fails.
+
+This lets you build a single part through the module without depending on the
+private checklist target directly:
+
+```bash
+# Just the FMEA of the baselibs module.
+bazel build //:baselibs.fmea
+
+# Just the DFA, or just the docs.
+bazel build //:baselibs.dfa
+bazel build //:baselibs.docs
+
+# Just the requirement checklists of a component.
+bazel build //:bitmanipulation.req_chklst
+```
 
 
 ### Gotcha: the feature/component filter matches on the need ID

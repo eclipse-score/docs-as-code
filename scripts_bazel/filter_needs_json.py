@@ -26,8 +26,10 @@ A need is kept when it matches *all* of the active filters:
   ``comp_arc_sta`` and ``comp_arc_dyn`` types are an exception: their IDs follow
   ``<type>__<feature name>__<component name>`` (e.g.
   ``comp_arc_sta__baselibs__filesystem``), so the *third* segment holds the
-  component name used for matching. If no ``--name`` is given, needs of any
-  feature/component are kept.
+  component name used for matching. Any underscores within that component
+  segment are removed before matching, so ``comp_arc_sta__baselibs__bit_manipulation``
+  matches the component name ``bitmanipulation``. If no ``--name`` is given,
+  needs of any feature/component are kept.
 
 The top-level structure of the needs.json file is preserved; only the per-need
 entries are filtered.
@@ -58,13 +60,15 @@ def _id_name_segment(need_id: str, need_type: str | None = None) -> str | None:
     types are an exception: their IDs follow
     ``<type>__<feature name>__<component name>`` (e.g.
     ``comp_arc_sta__baselibs__filesystem``), so the *third* segment holds the
-    component name. Returns ``None`` when the ID does not follow the convention.
+    component name. Any underscores within that component segment are removed,
+    so ``comp_arc_sta__baselibs__bit_manipulation`` yields ``bitmanipulation``.
+    Returns ``None`` when the ID does not follow the convention.
     """
     parts = need_id.split("__")
     if need_type in _COMPONENT_NAME_THIRD_SEGMENT_TYPES:
         if len(parts) < 3 or not parts[2]:
             return None
-        return parts[2]
+        return parts[2].replace("_", "")
     if len(parts) < 2 or not parts[1]:
         return None
     return parts[1]
