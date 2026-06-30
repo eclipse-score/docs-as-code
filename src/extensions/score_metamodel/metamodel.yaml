@@ -415,6 +415,7 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
     optional_links:
+      # req-Id: tool_req__arch_linkage_safety
       includes: logic_arc_int, logic_arc_int_op
       uses: logic_arc_int, logic_arc_int_op
       provides: logic_arc_int, logic_arc_int_op # preparation for linking change according to DR-005
@@ -485,6 +486,7 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
     optional_links:
+      # req-Id: tool_req__arch_linkage_safety
       includes: logic_arc_int_op
       fulfils: feat_req
     tags:
@@ -526,6 +528,7 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
     mandatory_links:
+      # req-Id: tool_req__arch_linkage_safety
       includes: comp
     tags:
       - architecture_element
@@ -572,6 +575,7 @@ needs_types:
     mandatory_links:
       belongs_to: feat # preparation for linking change according to DR-005
     optional_links:
+      # req-Id: tool_req__arch_linkage_safety
       implements: logic_arc_int, real_arc_int_op
       uses: logic_arc_int, real_arc_int_op
       consists_of: comp
@@ -660,8 +664,10 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
     mandatory_links:
+      # req-Id: tool_req__arch_linkage_safety
       included_by: real_arc_int
     optional_links:
+      # req-Id: tool_req__arch_linkage_safety
       implements: logic_arc_int_op
     tags:
       - architecture_element

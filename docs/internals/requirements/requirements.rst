@@ -503,7 +503,10 @@ Versioning
   :implemented: YES
   :version: 2
   :parent_covered: YES
-  :satisfies: gd_req__req_validity[version==1]
+  :satisfies:
+    gd_req__req_validity[version==1],
+    gd_req__req_attr_valid_from[version==1],
+    gd_req__req_attr_valid_until[version==1],
   :status: valid
 
   Docs-as-Code shall enforce that the ``valid_from`` and ``valid_until`` attributes of stakeholder and feature requirements are correct.
@@ -788,6 +791,29 @@ Architecture Attributes
      "belongs_to", "corresponding architecture element same level"
      "includes", "corresponding architecture element lower level"
 
+The following requirement may be overlapping with other tool requirements,
+but for ease of traceability this is a separate one.
+
+.. tool_req:: Correlations of the architectural building blocks
+  :id: tool_req__arch_linkage_safety
+  :implemented: PARTIAL
+  :version: 1
+  :satisfies: gd_req__arch_linkage_safety[version==1]
+  :parent_covered: YES
+
+  .. csv-table::
+     :header: "Link source", "Relation", "Link Target", "Mandatory", "Implemented"
+
+     feat, consists_of, comp, yes, no
+     feat, includes, logic_arc_int, yes, only optional
+     mod, includes, comp, yes, yes
+     real_arc_int_op, included_by, real_arc_int, yes, yes
+     logic_arc_int, includes, logic_arc_int_op, no, yes
+     real_arc_int_op, implements, logic_arc_int_op, no, yes
+     comp, implements, logic_arc_int, no, yes
+     comp, uses, logic_arc_int, no, yes
+     comp, consists_of, comp, no, yes
+
 
 💻 Detailed Design & Code
 ##########################
@@ -877,9 +903,9 @@ Testing
 
    Docs-as-Code shall ensure that test cases link to requirements on the correct level:
 
-    - If Partially/FullyVerifies are set in Feature Integration Test these shall link to Feature Requirements
-    - If Partially/FullyVerifies are set in Component Integration Test these shall link to Component Requirements
-    - If Partially/FullyVerifies are set in Unit Test these shall link to Component Requirements
+   - If Partially/FullyVerifies are set in Feature Integration Test these shall link to Feature Requirements
+   - If Partially/FullyVerifies are set in Component Integration Test these shall link to Component Requirements
+   - If Partially/FullyVerifies are set in Unit Test these shall link to Component Requirements
 
 
 .. tool_req:: Provide Metrics for linked requirements
@@ -1034,7 +1060,7 @@ Testing
     gd_req__saf_attr_uid,
   :parent_covered: YES
 
-   Docs-As-Code shall support the following need types:
+  Docs-As-Code shall support the following need types:
 
   * Feature FMEA (Failure Modes and Effect Analysis) -> ``feat_saf_fmea``
   * Component FMEA (Failure Modes and Effect Analysis) -> ``comp_saf_fmea``
