@@ -23,3 +23,4 @@ Here you find the API and usage reference for docs-as-code.
 
    commands
    bazel_macros
+   metamodel
