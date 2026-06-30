@@ -804,7 +804,7 @@ but for ease of traceability this is a separate one.
   .. csv-table::
      :header: "Link source", "Relation", "Link Target", "Mandatory", "Implemented"
 
-     feat, consist_of, comp, yes, no
+     feat, consists_of, comp, yes, no
      feat, includes, logic_arc_int, yes, only optional
      mod, includes, comp, yes, yes
      real_arc_int_op, included_by, real_arc_int, yes, yes
@@ -814,11 +814,6 @@ but for ease of traceability this is a separate one.
      comp, uses, logic_arc_int, no, yes
      comp, consists_of, comp, no, yes
 
-  .. warning::
-
-    Implementation and this requirement uses ``consists_of``
-    while :need:`gd_req__arch_linkage_safety` uses ``consist_of``
-    without the "s".
 
 💻 Detailed Design & Code
 ##########################
