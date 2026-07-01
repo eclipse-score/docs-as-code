@@ -63,9 +63,25 @@ py_binary(
 )
 
 py_binary(
+    name = "sphinx_needs_to_rst",
+    srcs = ["sphinx_needs_to_rst.py"],
+    main = "sphinx_needs_to_rst.py",
+    visibility = ["//visibility:public"],
+    deps = [],
+)
+
+py_binary(
     name = "sphinx_needs_to_trlc",
     srcs = ["sphinx_needs_to_trlc.py"],
     main = "sphinx_needs_to_trlc.py",
+    visibility = ["//visibility:public"],
+    deps = [],
+)
+
+py_binary(
+    name = "trlc_to_sphinx_needs",
+    srcs = ["trlc_to_sphinx_needs.py"],
+    main = "trlc_to_sphinx_needs.py",
     visibility = ["//visibility:public"],
     deps = [],
 )

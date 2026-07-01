@@ -132,11 +132,13 @@ def filtered_needs_json(
         srcs = [src],
         outs = [name + ".json"],
         cmd = """
+        SRC="$(location {src})"
+        if [ -d "$$SRC" ]; then SRC="$$SRC/needs.json"; fi
         $(location {filter_tool}) \
             --output $@ \
             {type_args} \
             {name_args} \
-            $(location {src})/needs.json
+            "$$SRC"
         """.format(
             filter_tool = filter_tool,
             type_args = type_args,
@@ -330,6 +332,46 @@ def sphinx_needs_to_md(
         visibility = visibility,
     )
 
+def sphinx_needs_to_rst(
+        name,
+        src,
+        title = "Sphinx-needs elements",
+        visibility = None):
+    """Render the sphinx-needs elements of a needs.json file as reStructuredText.
+
+    Like `sphinx_needs_to_md`, but instead of a human readable description it
+    emits real sphinx-needs directives (`.. comp_req::`, `.. feat_req::`, ...).
+    The resulting `<name>.rst` file can be `include`d into a Sphinx project so
+    the needs are picked up by sphinx-needs itself. Typically `src` is the output
+    of a `filtered_needs_json` target, but any `needs.json`-style file works.
+
+    Args:
+        name: Name of the generated target. The output file is `<name>.rst`.
+        src: Label of a needs.json file, e.g. a `filtered_needs_json` target
+            (`":my_feat_reqs"`) or a `needs_json` directory output.
+        title: Title rendered at the top of the generated document.
+        visibility: Standard Bazel visibility for the generated target.
+    """
+    sphinx_needs_to_rst_tool = Label("//scripts_bazel:sphinx_needs_to_rst")
+
+    native.genrule(
+        name = name,
+        srcs = [src],
+        outs = [name + ".rst"],
+        cmd = """
+        $(location {sphinx_needs_to_rst_tool}) \
+            --output $@ \
+            --title '{title}' \
+            $(location {src})
+        """.format(
+            sphinx_needs_to_rst_tool = sphinx_needs_to_rst_tool,
+            title = title,
+            src = src,
+        ),
+        tools = [sphinx_needs_to_rst_tool],
+        visibility = visibility,
+    )
+
 def sphinx_needs_to_trlc(
         name,
         src,
@@ -376,6 +418,59 @@ def sphinx_needs_to_trlc(
             src = src,
         ),
         tools = [sphinx_needs_to_trlc_tool],
+        visibility = visibility,
+    )
+
+def trlc_to_sphinx_needs(
+        name,
+        srcs,
+        project = "Needs",
+        visibility = None):
+    """Convert TRLC requirements into a sphinx-needs needs.json file.
+
+    Inverse of `sphinx_needs_to_trlc`. Reads one or more TRLC data files written
+    against the S-CORE requirements metamodel (package `ScoreReq`,
+    https://github.com/eclipse-score/tooling/blob/main/bazel/rules/rules_score/trlc/config/score_requirements_model.rsl)
+    and emits the corresponding requirement sphinx-needs elements. Only the
+    S-CORE requirement object types are converted; everything else is ignored:
+
+    * `ScoreReq.FeatReq`          -> `feat_req` (feature requirement)
+    * `ScoreReq.CompReq`          -> `comp_req` (component requirement)
+    * `ScoreReq.AssumedSystemReq` -> `stkh_req` (stakeholder requirement)
+    * `ScoreReq.AoU`              -> `aou_req`  (assumption of use)
+
+    `derived_from` references are rendered as sphinx-needs links carrying a
+    version constraint (e.g. `FEAT_001[version==1]`). Passing the referenced
+    requirement files alongside the deriving ones (e.g. the feature requirements
+    a component requirement derives from) makes those links resolve within the
+    generated needs.json.
+
+    Produces a `<name>.json` needs.json file compatible with sphinx-needs and
+    the S-CORE metamodel (`score_metamodel`).
+
+    Args:
+        name: Name of the generated target. The output file is `<name>.json`.
+        srcs: Labels of the TRLC data files (`.trlc`) to convert. All referenced
+            requirements should be included so that `derived_from` links resolve.
+        project: Project name recorded in the generated needs.json.
+        visibility: Standard Bazel visibility for the generated target.
+    """
+    trlc_to_sphinx_needs_tool = Label("//scripts_bazel:trlc_to_sphinx_needs")
+
+    native.genrule(
+        name = name,
+        srcs = srcs,
+        outs = [name + ".json"],
+        cmd = """
+        $(location {trlc_to_sphinx_needs_tool}) \
+            --output $@ \
+            --project '{project}' \
+            $(SRCS)
+        """.format(
+            trlc_to_sphinx_needs_tool = trlc_to_sphinx_needs_tool,
+            project = project,
+        ),
+        tools = [trlc_to_sphinx_needs_tool],
         visibility = visibility,
     )
 
@@ -792,6 +887,8 @@ def score_component(
         arch_chklst = [],
         dfa = None,
         fmea = None,
+        comp_reqs = None,
+        comp_arch = None,
         visibility = None):
     """Bundle the requirement and architecture checklists of a single component.
 
@@ -802,7 +899,8 @@ def score_component(
 
     In addition to the aggregate `name`, a `<name>.<arg>` sub-target is emitted
     for every provided argument (e.g. `<name>.req_chklst`,
-    `<name>.arch_chklst`, `<name>.dfa`, `<name>.fmea`), so a single part can be
+    `<name>.arch_chklst`, `<name>.dfa`, `<name>.fmea`, `<name>.comp_reqs`,
+    `<name>.comp_arch`), so a single part can be
     referenced through the component while the underlying targets stay private.
     A sub-target only exists when its argument is part of the component.
 
@@ -814,10 +912,18 @@ def score_component(
             the component.
         fmea: Label of the FMEA safety analysis target. Built together with the
             component.
+        comp_reqs: Optional label of a `component_requirements` target extracting
+            the component requirements (`comp_req`) sphinx-needs elements from a
+            needs.json file. Exposed as the `<name>.comp_reqs` sub-target and
+            built together with the component.
+        comp_arch: Optional label of a `component_architecture` target extracting
+            the component architecture (`comp_arc`) sphinx-needs elements from a
+            needs.json file. Exposed as the `<name>.comp_arch` sub-target and
+            built together with the component.
         visibility: Standard Bazel visibility for the generated target.
     """
     extra = []
-    for d in [dfa, fmea]:
+    for d in [dfa, fmea, comp_reqs, comp_arch]:
         if d and d not in extra:
             extra.append(d)
     native.filegroup(
@@ -831,6 +937,8 @@ def score_component(
         single_labels = {
             "dfa": dfa,
             "fmea": fmea,
+            "comp_reqs": comp_reqs,
+            "comp_arch": comp_arch,
         },
         label_lists = {
             "req_chklst": req_chklst,
@@ -847,6 +955,9 @@ def score_module(
         verif_report = None,
         dfa = None,
         fmea = None,
+        aous = None,
+        feat_arch = None,
+        feat_reqs = None,
         visibility = None):
     """Bundle the feature checklists of a module with all of its components.
 
@@ -858,9 +969,10 @@ def score_module(
 
     In addition to the aggregate `name`, a `<name>.<arg>` sub-target is emitted
     for every provided argument (e.g. `<name>.docs`, `<name>.req_chklst`,
-    `<name>.dfa`, `<name>.fmea`, `<name>.verif_report`), so a single part can be
-    referenced through the module while the underlying targets stay private. A
-    sub-target only exists when its argument is part of the module.
+    `<name>.dfa`, `<name>.fmea`, `<name>.verif_report`, `<name>.aous`,
+    `<name>.feat_arch`, `<name>.feat_reqs`), so a single part can be referenced
+    through the module while the underlying targets stay private. A sub-target
+    only exists when its argument is part of the module.
 
     Args:
         name: Name of the aggregate target.
@@ -875,10 +987,22 @@ def score_module(
             the module.
         fmea: Label of the FMEA safety analysis target. Built together with the
             module.
+        aous: Optional label of an `assumptions_of_use` target extracting the
+            assumptions of use (`aou_req`) sphinx-needs elements from a
+            needs.json file. Exposed as the `<name>.aous` sub-target and built
+            together with the module.
+        feat_arch: Optional label of a `feature_architecture` target extracting
+            the feature architecture (`feat_arc`) sphinx-needs elements from a
+            needs.json file. Exposed as the `<name>.feat_arch` sub-target and
+            built together with the module.
+        feat_reqs: Optional label of a `feature_requirements` target extracting
+            the feature requirements (`feat_req`) sphinx-needs elements from a
+            needs.json file. Exposed as the `<name>.feat_reqs` sub-target and
+            built together with the module.
         visibility: Standard Bazel visibility for the generated target.
     """
     extra = []
-    for d in [docs, verif_report, dfa, fmea]:
+    for d in [docs, verif_report, dfa, fmea, aous, feat_arch, feat_reqs]:
         if d and d not in extra:
             extra.append(d)
     native.filegroup(
@@ -894,6 +1018,9 @@ def score_module(
             "verif_report": verif_report,
             "dfa": dfa,
             "fmea": fmea,
+            "aous": aous,
+            "feat_arch": feat_arch,
+            "feat_reqs": feat_reqs,
         },
         label_lists = {
             "req_chklst": req_chklst,

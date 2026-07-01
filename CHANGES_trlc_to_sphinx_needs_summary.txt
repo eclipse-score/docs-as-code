@@ -1,0 +1,89 @@
+Zusammenfassung der Änderungen: trlc_to_sphinx_needs – Vererbung & Links
+==========================================================================
+
+Datum: 2026-07-01
+Branches:
+  - docs-as-code: ankr_rules_score_playground
+  - baselibs:     ankr_score_rules_wip
+
+Ziel
+----
+Der TRLC->sphinx-needs-Konverter soll Vererbung/Links (`derived_from`)
+respektieren und die referenzierten Requirements (z.B. Feature Requirements)
+mit in die generierte needs.json aufnehmen, damit die Links auflösen.
+
+
+1) Konverter: scripts_bazel/trlc_to_sphinx_needs.py (docs-as-code)
+------------------------------------------------------------------
+- `derived_from` wird jetzt als echter sphinx-needs-Link mit Versions-
+  constraint gerendert:
+    TRLC   `SampleSEooC.FEAT_001@1`
+    -> Need `FEAT_001[version==1]`
+  (Paketpräfix `SampleSEooC.` entfernt, `@<version>` -> `[version==N]`).
+  Das entspricht exakt dem Speicherformat von sphinx-needs (an echter
+  needs.json verifiziert, z.B. `satisfies=['wf__cr_mt_featarch[version==1]']`).
+- Parser bewahrt den `@version`-Suffix in Referenzlisten (vorher verworfen).
+- Neue Typ-Zuordnung `AssumedSystemReq -> stkh_req` (Stakeholder Requirement)
+  inkl. Ausgabe des Pflichtfeldes `rationale`.
+- `convert()` / `main()` akzeptieren jetzt mehrere `.trlc`-Eingabedateien
+  (nargs="+"), damit paketübergreifend referenzierte Requirements in
+  derselben needs.json landen und die Links auflösen.
+- Neue Hilfsfunktion `_link_ref()` für die Referenz-/Versionsumwandlung.
+
+
+2) Bazel-Regel: docs.bzl (docs-as-code)
+---------------------------------------
+- `trlc_to_sphinx_needs` nimmt jetzt `srcs` (Liste) statt `src` (Einzeldatei)
+  und übergibt alle Dateien via `$(SRCS)` an das Tool.
+- Docstring entsprechend erweitert (neuer Typ, Link-/Versionsverhalten,
+  Hinweis auf das Mitliefern referenzierter Requirements).
+
+
+3) baselibs
+-----------
+- Referenzierte Requirement-Dateien aus dem tooling-Beispiel kopiert:
+    - feature_requirements.trlc        (package SampleSEooC, FeatReq)
+    - assumed_system_requirements.trlc (package SampleSEooC, AssumedSystemReq)
+  (component_requirements.trlc existierte bereits.)
+- BUILD: Ziel `baselibs_aous_from_trlc` verweist nun auf alle drei TRLC-Dateien
+  über `srcs = [component_requirements.trlc, feature_requirements.trlc,
+  assumed_system_requirements.trlc]`.
+
+
+Metamodell-Hintergrund (score_metamodel)
+----------------------------------------
+- comp_req.derived_from -> feat_req   (optional link)
+- feat_req.derived_from -> stkh_req   (optional link)
+- Link-Werte werden in needs.json inkl. Versionsconstraint gespeichert:
+  z.B. `"derived_from": ["FEAT_001[version==1]"]`.
+- Pflichtfelder stkh_req: reqtype, safety (QM|ASIL_B), status, rationale,
+  security.
+
+
+Verifikation
+------------
+Befehl:
+  cd /workspaces/baselibs && bazel build //:baselibs_aous_from_trlc
+
+Ergebnis: "Converted 3 file(s) -> ... (11 requirements, project 'Baselibs')"
+  - 2x stkh_req (ASR_SAMPLE_001/002, mit rationale)
+  - 4x feat_req (FEAT_001..004, derived_from -> ASR_SAMPLE_00x[version==1])
+  - 5x comp_req (REQ_COMP_001..005, derived_from -> FEAT_00x[version==1])
+    - REQ_COMP_004 mit zwei Links: FEAT_003[version==1], FEAT_004[version==1]
+Aufgelöste Kette: comp_req -> feat_req -> stkh_req.
+
+
+Noch offen / nicht committet
+----------------------------
+- Diese Änderungen sind noch NICHT committet (auf Wunsch).
+- Frühere Commits in dieser Session (bereits erledigt):
+    - docs-as-code: a6eca138 (feat_arch/comp_reqs/comp_arch Sub-Targets +
+      trlc_to_sphinx_needs Regel/Skript)
+    - baselibs:     2afce64  (component_requirements.trlc + BUILD-Verdrahtung)
+- Betroffene, noch uncommittete Dateien:
+    - docs-as-code/docs.bzl
+    - docs-as-code/scripts_bazel/trlc_to_sphinx_needs.py
+    - baselibs/BUILD
+    - baselibs/feature_requirements.trlc (neu)
+    - baselibs/assumed_system_requirements.trlc (neu)
+</content>

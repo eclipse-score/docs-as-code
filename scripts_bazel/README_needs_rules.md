@@ -37,6 +37,7 @@ other consumers (review docs, TRLC-based tooling) without manual copying.
 | `feature_architecture` | `<name>.json` | Convenience wrapper for `feat_arc_sta` / `feat_arc_dyn` elements. |
 | `component_architecture` | `<name>.json` | Convenience wrapper for `comp_arc_sta` / `comp_arc_dyn` elements. |
 | `sphinx_needs_to_md` | `<name>.md` | Render needs as a Markdown document. |
+| `sphinx_needs_to_rst` | `<name>.rst` | Render needs as reStructuredText sphinx-needs directives. |
 | `sphinx_needs_to_trlc` | `<name>.trlc` | Convert S-CORE requirements to TRLC. |
 | `requirements_checklist` | `<name>.sha256` | Validate a `mod_insp` record against its requirements target output via SHA256. |
 | `architecture_checklist` | `<name>.sha256` | Validate a `mod_insp` record against its architecture target output via SHA256. |
@@ -50,6 +51,7 @@ other consumers (review docs, TRLC-based tooling) without manual copying.
 
 - [filter_needs_json.py](filter_needs_json.py) — extract a subset of needs.
 - [sphinx_needs_to_md.py](sphinx_needs_to_md.py) — render needs as Markdown.
+- [sphinx_needs_to_rst.py](sphinx_needs_to_rst.py) — render needs as sphinx-needs RST directives.
 - [sphinx_needs_to_trlc.py](sphinx_needs_to_trlc.py) — convert needs to TRLC.
 - [validate_checklist.py](validate_checklist.py) — validate a checklist hash.
 
