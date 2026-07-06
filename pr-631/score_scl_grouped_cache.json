@@ -363,7 +363,7 @@
         {
           "name": "TestCheckOptions__test_unknown_directive",
           "file": "src/extensions/score_metamodel/tests/test_check_options.py",
-          "line": 70,
+          "line": 69,
           "need": "tool_req__docs_common_attr_security",
           "verify_type": "partially",
           "result": "passed",
@@ -788,7 +788,7 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/checks/check_options.py",
-          "line": 291,
+          "line": 281,
           "tag": "# req-Id:",
           "need": "tool_req__docs_req_attr_validity_consistency",
           "full_line": "# req-Id: tool_req__docs_req_attr_validity_consistency",
@@ -1128,7 +1128,7 @@
         {
           "name": "TestCheckOptions__test_unknown_option_present_in_neither_req_opt_neither_opt_opt",
           "file": "src/extensions/score_metamodel/tests/test_check_options.py",
-          "line": 94,
+          "line": 93,
           "need": "tool_req__docs_common_attr_description",
           "verify_type": "partially",
           "result": "passed",
