@@ -41,9 +41,20 @@ Easy streamlined way for S-CORE docs-as-code.
 #
 # For user-facing documentation, refer to `/README.md`.
 
+load("@aspect_bazel_lib//lib:transitions.bzl", "platform_transition_binary")
 load("@aspect_rules_py//py:defs.bzl", "py_binary", "py_venv")
 load("@docs_as_code_hub_env//:requirements.bzl", "all_requirements")
 load("@rules_python//sphinxdocs:sphinx.bzl", "sphinx_build_binary", "sphinx_docs")
+
+# -- Host-platform transition for host-only documentation tooling --------------
+#
+# The runnable doc targets (docs, ide_support, live_preview, ...) are pure host tools that run
+# Python/Sphinx locally. Under a cross `--platforms` (e.g. QNX) they would be configured for the
+# target platform and fail Python toolchain resolution. To avoid that, each is wrapped with
+# `platform_transition_binary` from aspect_bazel_lib, which transitions the wrapped binary to a fixed
+# `target_platform` (the autodetected host, `@local_config_platform//:host`) while forwarding its
+# executable, runfiles and RunEnvironmentInfo -- so `bazel build //...` under a cross platform and
+# `bazel run //:docs` both keep working.
 
 def _rewrite_needs_json_to_docs_sources(labels):
     """Replace '@repo//:needs_json' -> '@repo//:docs_sources' for every item."""
@@ -63,8 +74,10 @@ def _rewrite_needs_json_to_sourcelinks(labels):
         s = str(x)
         if s.endswith("//:needs_json"):
             out.append(s.replace("//:needs_json", "//:sourcelinks_json"))
+
         #Items which do not end up with '//:needs_json' shall not be appended to 'out'.
         #They are treated separately and are not related to source code linking.
+
     return out
 
 def _merge_sourcelinks(name, sourcelinks, known_good = None):
@@ -100,15 +113,19 @@ def _missing_requirements(deps):
     """Add Python hub dependencies if they are missing."""
     found = []
     missing = []
+
     def _target_to_packagename(target):
         return str(target).split("/")[-1].split(":")[0]
+
     all_packages = [_target_to_packagename(pkg) for pkg in all_requirements]
+
     def _find(pkg):
         for dep in deps:
             dep_pkg = _target_to_packagename(dep)
             if dep_pkg == pkg:
                 return True
         return False
+
     for pkg in all_packages:
         if _find(pkg):
             found.append(pkg)
@@ -166,6 +183,11 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
 
     sphinx_build_binary(
         name = "sphinx_build",
+        # `sphinx_build` is only consumed as a tool (see `needs_json`'s `sphinx` attr below), so Bazel
+        # already builds it in the exec (host) config -- no host transition needed. It is tagged
+        # `manual` so a cross-platform `bazel build //...` doesn't configure it for the target platform
+        # (which would fail Python toolchain resolution).
+        tags = ["manual"],
         visibility = ["//visibility:private"],
         data = data + metamodel_data,
         deps = deps,
@@ -225,22 +247,34 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
     docs_env["ACTION"] = "incremental"
 
     py_binary(
-        name = "docs",
-        tags = ["cli_help=Build documentation:\nbazel run //:docs"],
+        name = "docs_impl",
+        tags = ["manual"],
         srcs = [incremental_src],
         data = docs_data,
         deps = deps,
-        env = docs_env
+        env = docs_env,
+    )
+    platform_transition_binary(
+        name = "docs",
+        binary = ":docs_impl",
+        target_platform = "@local_config_platform//:host",
+        tags = ["cli_help=Build documentation:\nbazel run //:docs"],
     )
 
     docs_sources_env["ACTION"] = "incremental"
     py_binary(
-        name = "docs_combo",
-        tags = ["cli_help=Build full documentation with all dependencies:\nbazel run //:docs_combo"],
+        name = "docs_combo_impl",
+        tags = ["manual"],
         srcs = [incremental_src],
         data = combo_data,
         deps = deps,
-        env = docs_sources_env
+        env = docs_sources_env,
+    )
+    platform_transition_binary(
+        name = "docs_combo",
+        binary = ":docs_combo_impl",
+        target_platform = "@local_config_platform//:host",
+        tags = ["cli_help=Build full documentation with all dependencies:\nbazel run //:docs_combo"],
     )
 
     native.alias(
@@ -251,51 +285,81 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
 
     docs_env["ACTION"] = "linkcheck"
     py_binary(
-        name = "docs_link_check",
-        tags = ["cli_help=Verify Links inside Documentation:\nbazel run //:link_check\n (Note: this could take a long time)"],
+        name = "docs_link_check_impl",
+        tags = ["manual"],
         srcs = [incremental_src],
         data = docs_data,
         deps = deps,
-        env = docs_env
+        env = docs_env,
+    )
+    platform_transition_binary(
+        name = "docs_link_check",
+        binary = ":docs_link_check_impl",
+        target_platform = "@local_config_platform//:host",
+        tags = ["cli_help=Verify Links inside Documentation:\nbazel run //:link_check\n (Note: this could take a long time)"],
     )
 
     docs_env["ACTION"] = "check"
     py_binary(
-        name = "docs_check",
-        tags = ["cli_help=Verify documentation:\nbazel run //:docs_check"],
+        name = "docs_check_impl",
+        tags = ["manual"],
         srcs = [incremental_src],
         data = docs_data,
         deps = deps,
-        env = docs_env
+        env = docs_env,
+    )
+    platform_transition_binary(
+        name = "docs_check",
+        binary = ":docs_check_impl",
+        target_platform = "@local_config_platform//:host",
+        tags = ["cli_help=Verify documentation:\nbazel run //:docs_check"],
     )
 
     docs_env["ACTION"] = "live_preview"
     py_binary(
-        name = "live_preview",
-        tags = ["cli_help=Live preview documentation in the browser:\nbazel run //:live_preview"],
+        name = "live_preview_impl",
+        tags = ["manual"],
         srcs = [incremental_src],
         data = docs_data,
         deps = deps,
-        env = docs_env
+        env = docs_env,
+    )
+    platform_transition_binary(
+        name = "live_preview",
+        binary = ":live_preview_impl",
+        target_platform = "@local_config_platform//:host",
+        tags = ["cli_help=Live preview documentation in the browser:\nbazel run //:live_preview"],
     )
 
     docs_sources_env["ACTION"] = "live_preview"
     py_binary(
-        name = "live_preview_combo_experimental",
-        tags = ["cli_help=Live preview full documentation with all dependencies in the browser:\nbazel run //:live_preview_combo_experimental"],
+        name = "live_preview_combo_experimental_impl",
+        tags = ["manual"],
         srcs = [incremental_src],
         data = combo_data,
         deps = deps,
-        env = docs_sources_env
+        env = docs_sources_env,
+    )
+    platform_transition_binary(
+        name = "live_preview_combo_experimental",
+        binary = ":live_preview_combo_experimental_impl",
+        target_platform = "@local_config_platform//:host",
+        tags = ["cli_help=Live preview full documentation with all dependencies in the browser:\nbazel run //:live_preview_combo_experimental"],
     )
 
     py_venv(
-        name = "ide_support",
-        tags = ["cli_help=Create virtual environment (.venv_docs) for documentation support:\nbazel run //:ide_support"],
+        name = "ide_support_impl",
+        tags = ["manual"],
         venv_name = ".venv_docs",
         deps = deps,
         data = data,
         package_collisions = "warning",
+    )
+    platform_transition_binary(
+        name = "ide_support",
+        binary = ":ide_support_impl",
+        target_platform = "@local_config_platform//:host",
+        tags = ["cli_help=Create virtual environment (.venv_docs) for documentation support:\nbazel run //:ide_support"],
     )
 
     sphinx_docs(
