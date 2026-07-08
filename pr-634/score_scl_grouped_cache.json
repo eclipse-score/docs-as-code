@@ -716,7 +716,7 @@
           "need": "tool_req__docs_common_attr_status",
           "verify_type": "partially",
           "result": "failed",
-          "result_text": "Failed: options/test_options_options.rst:35 Unexpected warning found:   Not expected warning found on line'35'   Warning Text NOT expected:  'attribute'   Actual: ' std_wp__test_options__abce: is missing required attribute: `version`. [score_metamodel]'",
+          "result_text": "Failed: options/test_options_options.rst:560 Unexpected warning found:   Not expected warning found on line'560'   Warning Text NOT expected:  'feat_sec_threat__test_options__ok_3'   Actual: ' feat_sec_threat__test_options__ok_3: is missing required attribute: `version`. [score_metamodel]'",
           "repo_name": "local_repo",
           "hash": "",
           "url": ""
@@ -987,7 +987,7 @@
           "need": "tool_req__docs_req_types",
           "verify_type": "partially",
           "result": "failed",
-          "result_text": "Failed: options/test_options_options.rst:35 Unexpected warning found:   Not expected warning found on line'35'   Warning Text NOT expected:  'attribute'   Actual: ' std_wp__test_options__abce: is missing required attribute: `version`. [score_metamodel]'",
+          "result_text": "Failed: options/test_options_options.rst:560 Unexpected warning found:   Not expected warning found on line'560'   Warning Text NOT expected:  'feat_sec_threat__test_options__ok_3'   Actual: ' feat_sec_threat__test_options__ok_3: is missing required attribute: `version`. [score_metamodel]'",
           "repo_name": "local_repo",
           "hash": "",
           "url": ""
