@@ -38,11 +38,11 @@
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-data-viewer/jsonview.bundle.css?v=f6ef2277" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/libs/html/datatables.min.css?v=4b4fd840" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_core.css?v=f5b60a78" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_style.css?v=92936fa5" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/needstable.css?v=5e1b6797" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_toggle.css?v=5c6620df" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_links.css?v=2150a916" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_style.css?v=92936fa5" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_core.css?v=f5b60a78" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_toggle.css?v=5c6620df" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/modern.css?v=803738c0" />
   
   <!-- So that users can add custom icons -->
@@ -397,6 +397,7 @@
 <li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
 <li class="toctree-l1"><a class="reference internal" href="other_modules.html">Reference Other Modules</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Build Dashboards and Quality Gates</a></li>
+
 <li class="toctree-l1"><a class="reference internal" href="source_to_doc_links.html">Reference Docs in Source Code</a></li>
 <li class="toctree-l1"><a class="reference internal" href="test_to_doc_links.html">Reference Docs in Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="add_extensions.html">Add Extensions</a></li>
@@ -472,7 +473,7 @@ dependency.</p>
 </ol>
 <section id="what-you-get">
 <h2>What You Get<a class="headerlink" href="#what-you-get" title="Link to this heading">#</a></h2>
-<p>With the <code class="docutils literal notranslate"><span class="pre">docs(...)</span></code> macro and <code class="docutils literal notranslate"><span class="pre">score_metamodel</span></code> extension enabled, your
+<p>With the <code class="docutils literal notranslate"><span class="pre">docs(...)</span></code> macro and <code class="docutils literal notranslate"><span class="pre">score_metamodel</span></code> as well as the <code class="docutils literal notranslate"><span class="pre">`score_metrics</span></code> extensions enabled, your
 repository can:</p>
 <ul class="simple">
 <li><p>build an HTML dashboard from its own Sphinx needs,</p></li>
@@ -485,25 +486,36 @@ repository can:</p>
 <h2>Typical Setup<a class="headerlink" href="#typical-setup" title="Link to this heading">#</a></h2>
 <p>For details, see <a class="reference internal" href="setup.html#setup"><span class="std std-ref">Setup</span></a>.</p>
 </section>
-<section id="minimal-configuration-example">
-<h2>Minimal Configuration Example<a class="headerlink" href="#minimal-configuration-example" title="Link to this heading">#</a></h2>
-<p>In <code class="docutils literal notranslate"><span class="pre">docs/conf.py</span></code>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">score_metamodel_requirement_types</span> <span class="o">=</span> <span class="s2">&quot;feat_req,comp_req,aou_req&quot;</span>
-<span class="n">score_metamodel_include_external_needs</span> <span class="o">=</span> <span class="kc">False</span>
+<section id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="Link to this heading">#</a></h2>
+<section id="default-behavior-no-configuration-needed">
+<h3>Default Behavior (No Configuration Needed)<a class="headerlink" href="#default-behavior-no-configuration-needed" title="Link to this heading">#</a></h3>
+<p>By default, <code class="docutils literal notranslate"><span class="pre">score_metrics</span></code> autodiscovers requirement types from the
+repository needs present in the current build.
+Requirement types are identified from <code class="docutils literal notranslate"><span class="pre">needs_types</span></code> entries tagged with <code class="docutils literal notranslate"><span class="pre">requirement</span></code>.</p>
+<p>This is the recommended setup for most repositories.</p>
+</section>
+<section id="optional-override-for-requirement-types">
+<h3>Optional Override for Requirement Types<a class="headerlink" href="#optional-override-for-requirement-types" title="Link to this heading">#</a></h3>
+<p>If a repository needs to force a specific set of requirement types, set an
+explicit override in <code class="docutils literal notranslate"><span class="pre">docs/conf.py</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">score_metrics_requirement_types</span> <span class="o">=</span> <span class="s2">&quot;feat_req,comp_req,aou_req&quot;</span>
 </pre></div>
 </div>
-<p>Use <code class="docutils literal notranslate"><span class="pre">score_metamodel_include_external_needs</span> <span class="pre">=</span> <span class="pre">True</span></code> only in repositories that
+<p>When this setting is provided, the explicit list is used instead of
+autodiscovery.</p>
+<p>Use <code class="docutils literal notranslate"><span class="pre">score_metrics_include_external_needs</span> <span class="pre">=</span> <span class="pre">True</span></code> only in repositories that
 intentionally aggregate requirements across module dependencies, such as
-integration repositories. Use <code class="docutils literal notranslate"><span class="pre">False</span></code> for module repositories to gate only on
-local traceability.</p>
+integration repositories.</p>
+</section>
 </section>
 <section id="building-the-dashboard">
 <h2>Building the Dashboard<a class="headerlink" href="#building-the-dashboard" title="Link to this heading">#</a></h2>
-<p>After building/running any docs command (i.e. <code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">build</span> <span class="pre">//:needs_json</span></code> or <code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">//:docs_check</span></code> are the fastest):</p>
-<p>The documentation build writes <code class="docutils literal notranslate"><span class="pre">metrics.json</span></code> via <code class="docutils literal notranslate"><span class="pre">score_metamodel</span></code>, and the <code class="docutils literal notranslate"><span class="pre">needs_json</span></code> artifact contains:</p>
+<p>After building/running any docs and test command (i.e. <code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">build</span> <span class="pre">//:needs_json</span></code> or <code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">//:docs_check</span></code>, <code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">//:docs</span></code>, <code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">test</span> <span class="pre">//...</span></code>):</p>
+<p>The documentation build writes <code class="docutils literal notranslate"><span class="pre">metrics.json</span></code> via <code class="docutils literal notranslate"><span class="pre">score_metrics</span></code>, and the <code class="docutils literal notranslate"><span class="pre">needs_json</span></code> artifact contains:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">bazel-bin/needs_json/_build/needs/needs.json</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">bazel-bin/needs_json/_build/needs/metrics.json</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_build/needs.json</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_build/metrics.json</span></code></p></li>
 </ul>
 <p>The dashboard charts and the CI gate both use the same computed metrics.</p>
 </section>
@@ -524,13 +536,13 @@ empty or low.</p>
 <p>There are two common modes:</p>
 <p><strong>Module repository</strong></p>
 <ul class="simple">
-<li><p>Set <code class="docutils literal notranslate"><span class="pre">score_metamodel_include_external_needs</span> <span class="pre">=</span> <span class="pre">False</span></code>.</p></li>
+<li><p>No setting needed. Local-only scope is the default.</p></li>
 <li><p>Gate only on the needs owned by the repository itself.</p></li>
 <li><p>Use this for per-module implementation progress and traceability.</p></li>
 </ul>
 <p><strong>Integration repository</strong></p>
 <ul class="simple">
-<li><p>Set <code class="docutils literal notranslate"><span class="pre">score_metamodel_include_external_needs</span> <span class="pre">=</span> <span class="pre">True</span></code>.</p></li>
+<li><p>Set <code class="docutils literal notranslate"><span class="pre">score_metrics_include_external_needs</span> <span class="pre">=</span> <span class="pre">True</span></code>.</p></li>
 <li><p>Aggregate requirements across module dependencies when that is the intended
 repository purpose.</p></li>
 <li><p>Use this for system or integration-level dashboards.</p></li>
@@ -570,13 +582,63 @@ gate thresholds so CI calls a single Bazel target.</p>
 <li><p>Raise thresholds over time as the repository matures.</p></li>
 </ol>
 </section>
-<section id="related-guides">
-<h2>Related Guides<a class="headerlink" href="#related-guides" title="Link to this heading">#</a></h2>
+</section>
+<section id="needpie-usage-guide-quick-and-practical">
+<h1>Needpie Usage Guide (Quick and Practical)<a class="headerlink" href="#needpie-usage-guide-quick-and-practical" title="Link to this heading">#</a></h1>
+<p>Use these examples as ready-to-copy templates for dashboard-style pie charts.</p>
+<section id="tips-for-readable-charts">
+<h2>Tips for readable charts<a class="headerlink" href="#tips-for-readable-charts" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><a class="reference internal" href="setup.html#setup"><span class="std std-ref">Setup</span></a></p></li>
-<li><p><a class="reference internal" href="other_modules.html"><span class="doc">Reference Other Modules</span></a></p></li>
-<li><p><a class="reference internal" href="source_to_doc_links.html"><span class="doc">Reference Docs in Source Code</span></a></p></li>
-<li><p><a class="reference internal" href="test_to_doc_links.html"><span class="doc">Reference Docs in Tests</span></a></p></li>
+<li><p>Keep labels short and audience-friendly.</p></li>
+<li><p>Put the most important category first.</p></li>
+<li><p>Use high-contrast colors that are easy to distinguish.</p></li>
+<li><p>Avoid red/green-only combinations when possible.</p></li>
+</ul>
+<section id="recommended-color-palette">
+<h3>Recommended color palette<a class="headerlink" href="#recommended-color-palette" title="Link to this heading">#</a></h3>
+<p>This palette is generally easier to read:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">#4E79A7</span></code> (blue)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">#F28E2B</span></code> (orange)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">#59A14F</span></code> (green)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">#B07AA1</span></code> (purple)</p></li>
+</ul>
+</section>
+</section>
+<section id="example-1-overall-view-including-remaining-unlinked">
+<h2>Example 1: Overall view (including remaining/unlinked)<a class="headerlink" href="#example-1-overall-view-including-remaining-unlinked" title="Link to this heading">#</a></h2>
+<div class="highlight-rst notranslate"><div class="highlight"><pre><span></span><span class="p">..</span> <span class="ow">needpie</span><span class="p">::</span> Overall Requirement Coverage (non-overlapping)
+   <span class="nc">:labels:</span> Remaining (no links), Test Link Only, Code Link Only, Fully Linked (Both)
+   <span class="nc">:colors:</span> #4E79A7, #F28E2B, #59A14F, #B07AA1
+   <span class="nc">:filter-func:</span> score_metrics.sphinx_filters.get_non_overlapping_link_metrics
+</pre></div>
+</div>
+<p>This chart shows:</p>
+<ul class="simple">
+<li><p>remaining requirements (calculated from total),</p></li>
+<li><p>requirements with test link,</p></li>
+<li><p>requirements with code link,</p></li>
+<li><p>fully linked requirements.</p></li>
+</ul>
+<img alt="../_images/need_pie_1943a.svg" id="needpie-how-to/dashboards_and_quality_gates-0" src="../_images/need_pie_1943a.svg" />
+</section>
+<section id="example-2-focused-view-no-total-based-remainder">
+<h2>Example 2: Focused view (no total-based remainder)<a class="headerlink" href="#example-2-focused-view-no-total-based-remainder" title="Link to this heading">#</a></h2>
+<p>This chart shows direct values only (no remaining slice):</p>
+<ul class="simple">
+<li><p>tool requirements with test link,</p></li>
+<li><p>tool requirements with code link,</p></li>
+<li><p>overall fully linked requirements.</p></li>
+</ul>
+<img alt="../_images/need_pie_2c96e.svg" id="needpie-how-to/dashboards_and_quality_gates-1" src="../_images/need_pie_2c96e.svg" />
+</section>
+<section id="presentation-checklist">
+<h2>Presentation checklist<a class="headerlink" href="#presentation-checklist" title="Link to this heading">#</a></h2>
+<p>Before publishing, quickly verify:</p>
+<ul class="simple">
+<li><p>labels are understandable for non-technical readers,</p></li>
+<li><p>colors are distinct and readable on your page theme,</p></li>
+<li><p>title clearly says what the chart represents.</p></li>
 </ul>
 </section>
 </section>
@@ -628,16 +690,33 @@ gate thresholds so CI calls a single Bazel target.</p>
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Build Dashboards and Quality Gates</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-you-get">What You Get</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#typical-setup">Typical Setup</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#minimal-configuration-example">Minimal Configuration Example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configuration">Configuration</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#default-behavior-no-configuration-needed">Default Behavior (No Configuration Needed)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#optional-override-for-requirement-types">Optional Override for Requirement Types</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#building-the-dashboard">Building the Dashboard</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs-for-linkage-metrics">Inputs for Linkage Metrics</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#choosing-local-vs-aggregated-views">Choosing Local vs Aggregated Views</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ci-quality-gate">CI Quality Gate</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#recommended-rollout">Recommended Rollout</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#related-guides">Related Guides</a></li>
 </ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#needpie-usage-guide-quick-and-practical">Needpie Usage Guide (Quick and Practical)</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tips-for-readable-charts">Tips for readable charts</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommended-color-palette">Recommended color palette</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-1-overall-view-including-remaining-unlinked">Example 1: Overall view (including remaining/unlinked)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-2-focused-view-no-total-based-remainder">Example 2: Focused view (no total-based remainder)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#presentation-checklist">Presentation checklist</a></li>
+</ul>
+</li>
+</ul>
+
   </nav></div>
 
   <div class="sidebar-secondary-item">
