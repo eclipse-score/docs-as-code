@@ -530,8 +530,8 @@
               "line": 16,
               "need": "tool_req__docs_common_attr_status",
               "verify_type": "partially",
-              "result": "failed",
-              "result_text": "Failed: options/test_options_options.rst:560 Unexpected warning found:   Not expected warning found on line'560'   Warning Text NOT expected:  'feat_sec_threat__test_options__ok_3'   Actual: ' feat_sec_threat__test_options__ok_3: is missing required attribute: `version`. [score_metamodel]'"
+              "result": "passed",
+              "result_text": ""
             },
             {
               "name": "test_rules_file_based__test_rst_files[options/test_options_extra_option.rst]",
@@ -741,8 +741,8 @@
               "line": 16,
               "need": "tool_req__docs_req_types",
               "verify_type": "partially",
-              "result": "failed",
-              "result_text": "Failed: options/test_options_options.rst:560 Unexpected warning found:   Not expected warning found on line'560'   Warning Text NOT expected:  'feat_sec_threat__test_options__ok_3'   Actual: ' feat_sec_threat__test_options__ok_3: is missing required attribute: `version`. [score_metamodel]'"
+              "result": "passed",
+              "result_text": ""
             },
             {
               "name": "test_rules_file_based__test_rst_files[options/test_options_extra_option.rst]",
@@ -902,7 +902,7 @@
             },
             {
               "file": "src/extensions/score_metamodel/metamodel.yaml",
-              "line": 295,
+              "line": 296,
               "tag": "# req-Id:",
               "need": "tool_req__docs_req_link_satisfies_allowed",
               "full_line": "# req-Id: tool_req__docs_req_link_satisfies_allowed"
@@ -1072,14 +1072,14 @@
           "CodeLinks": [
             {
               "file": "src/extensions/score_metamodel/metamodel.yaml",
-              "line": 268,
+              "line": 269,
               "tag": "# req-Id:",
               "need": "tool_req__docs_req_attr_testcov",
               "full_line": "# req-Id: tool_req__docs_req_attr_testcov"
             },
             {
               "file": "src/extensions/score_metamodel/metamodel.yaml",
-              "line": 302,
+              "line": 303,
               "tag": "# req-Id:",
               "need": "tool_req__docs_req_attr_testcov",
               "full_line": "# req-Id: tool_req__docs_req_attr_testcov"
@@ -1115,14 +1115,14 @@
           "CodeLinks": [
             {
               "file": "src/extensions/score_metamodel/metamodel.yaml",
-              "line": 271,
+              "line": 272,
               "tag": "# req-Id:",
               "need": "tool_req__docs_req_attr_validity_correctness",
               "full_line": "# req-Id: tool_req__docs_req_attr_validity_correctness"
             },
             {
               "file": "src/extensions/score_metamodel/metamodel.yaml",
-              "line": 305,
+              "line": 306,
               "tag": "# req-Id:",
               "need": "tool_req__docs_req_attr_validity_correctness",
               "full_line": "# req-Id: tool_req__docs_req_attr_validity_correctness"
@@ -1137,7 +1137,7 @@
           "CodeLinks": [
             {
               "file": "src/extensions/score_metamodel/metamodel.yaml",
-              "line": 299,
+              "line": 300,
               "tag": "# req-Id:",
               "need": "tool_req__docs_req_link_covers_aou",
               "full_line": "# req-Id: tool_req__docs_req_link_covers_aou"
