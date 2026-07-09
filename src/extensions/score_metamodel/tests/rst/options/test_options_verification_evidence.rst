@@ -42,7 +42,8 @@
    :security: YES
    :safety: ASIL_B
    :status: valid
-   :content: Requirement text for verification evidence tests.
+
+   Requirement text for verification evidence tests.
 
 
 .. Valid machine-readable verification report need
