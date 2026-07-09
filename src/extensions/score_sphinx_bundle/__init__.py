@@ -32,6 +32,7 @@ score_extensions = [
     "needs_config_writer",
     "score_sync_toml",
     "score_metrics",
+    "broken_link_fix",
 ]
 
 
