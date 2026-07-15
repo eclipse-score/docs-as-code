@@ -34,25 +34,46 @@ class ExternalNeedsSource:
 
 
 def _parse_bazel_external_need(s: str) -> ExternalNeedsSource | None:
-    if not s.startswith("@"):
-        # Local need, not external needs
+    if s.startswith("@"):
+        # @repo//:needs_json or @repo//:docs_sources -- cross-repo convention.
+        # Only repo-root targets with these exact reserved names are supported.
+        if "//" not in s or ":" not in s:
+            raise ValueError(
+                f"Unsuported external data dependency: '{s}'. Must contain '//' & ':'"
+            )
+        repo_and_path, target = s.split(
+            ":", 1
+        )  # @score_process//:needs_json => [@score_process//, needs_json]
+        repo, path_to_target = repo_and_path.split("//", 1)
+        repo = repo.lstrip("@")
+
+        if path_to_target == "" and target in ("needs_json", "docs_sources"):
+            return ExternalNeedsSource(
+                bazel_module=repo, path_to_target=path_to_target, target=target
+            )
+        # Unknown external data target. Probably not a needs.json file.
         return None
 
-    if "//" not in s or ":" not in s:
-        raise ValueError(
-            f"Unsuported external data dependency: '{s}'. Must contain '//' & ':'"
-        )
-    repo_and_path, target = s.split(
-        ":", 1
-    )  # @score_process//:needs_json => [@score_process//, needs_json]
-    repo, path_to_target = repo_and_path.split("//", 1)
-    repo = repo.lstrip("@")
-
-    if path_to_target == "" and target in ("needs_json", "docs_sources"):
+    if s.startswith("//"):
+        # Same-repo (local) needs_json() target, e.g. a sibling package's
+        # requirements/architecture needs.json referenced by another
+        # needs_json() target in the same repo. Unlike the cross-repo "@"
+        # form, any package path and target name are allowed here, since
+        # these always refer to a needs_json() macro instance in this repo.
+        if ":" not in s:
+            raise ValueError(
+                f"Unsuported external data dependency: '{s}'. Must contain ':'"
+            )
+        path_to_target, target = s[len("//"):].split(":", 1)
         return ExternalNeedsSource(
-            bazel_module=repo, path_to_target=path_to_target, target=target
+            bazel_module="", path_to_target=path_to_target, target=target
         )
-    # Unknown data target. Probably not a needs.json file.
+
+    # Relative label (e.g. ":foo") or plain string: not supported here, since
+    # there is no notion of "current package" on this (Python) side. Callers
+    # must pass fully package-qualified "//pkg:target" labels; needs_json()
+    # in needs.bzl canonicalizes relative external_needs entries before they
+    # reach this parser.
     return None
 
 
@@ -150,7 +171,25 @@ def get_external_needs_source(external_needs_source: str) -> list[ExternalNeedsS
 
 
 def add_external_needs_json(e: ExternalNeedsSource, config: Config):
-    json_file_raw = f"{e.bazel_module}+/{e.target}/_build/needs/needs.json"
+    if e.bazel_module:
+        # Cross-repo convention: those needs_json targets are the raw
+        # Sphinx-Needs build directory itself (a TreeArtifact), and the
+        # runfiles dir for external repo "foo" is "foo+".
+        json_file_raw = "/".join(
+            part for part in (f"{e.bazel_module}+", e.path_to_target, e.target) if part
+        ) + "/_build/needs/needs.json"
+    else:
+        # Same-repo (local) needs_json() target: our own needs_json() macro
+        # (see needs.bzl) exposes a flat "<name>.json" file as its public
+        # output -- not the internal Sphinx build directory. With Bzlmod, the
+        # runfiles directory of the main/root repository is always named
+        # "_main" (see rules_python's Runfiles.CurrentRepository()), so that
+        # prefix is required here, unlike the flat "foo+" prefix used above
+        # for actual external repos.
+        json_file_raw = "/".join(
+            part for part in ("_main", e.path_to_target, e.target) if part
+        ) + ".json"
+
     r = get_runfiles_dir()
     json_file = r / json_file_raw
     logger.debug(f"External needs.json: {json_file}")
@@ -204,13 +243,17 @@ def connect_external_needs(app: Sphinx, config: Config):
     config.needs_external_needs = []
 
     for e in external_needs:
-        assert not e.path_to_target  # path_to_target is always empty
-
-        if e.target == "needs_json":
-            add_external_needs_json(e, app.config)
-        elif e.target == "docs_sources":
-            add_external_docs_sources(e, app.config)
+        if e.bazel_module:
+            # @repo//:needs_json or @repo//:docs_sources cross-repo convention.
+            assert not e.path_to_target  # enforced by the parser already
+            if e.target == "needs_json":
+                add_external_needs_json(e, app.config)
+            elif e.target == "docs_sources":
+                add_external_docs_sources(e, app.config)
+            else:
+                raise ValueError(
+                    f"Internal Error. Unknown external needs target: {e.target}"
+                )
         else:
-            raise ValueError(
-                f"Internal Error. Unknown external needs target: {e.target}"
-            )
+            # Same-repo (local) needs_json() target -- always a needs.json source.
+            add_external_needs_json(e, app.config)

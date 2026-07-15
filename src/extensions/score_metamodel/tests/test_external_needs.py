@@ -90,6 +90,36 @@ def test_invalid_entry():
         _ = parse_external_needs_sources_from_DATA('["@not_a_valid_string"]')
 
 
+def test_local_absolute_label_with_path():
+    """Same-repo ("//pkg:target") labels are supported, with any target name."""
+    result = parse_external_needs_sources_from_DATA(
+        '["//score/bitmanipulation:bitman_comp_reqs"]'
+    )
+    assert result == [
+        ExternalNeedsSource(
+            bazel_module="",
+            path_to_target="score/bitmanipulation",
+            target="bitman_comp_reqs",
+        )
+    ]
+
+
+def test_local_absolute_label_no_path():
+    """Same-repo root-package labels ("//:target") are supported too."""
+    result = parse_external_needs_sources_from_DATA('["//:needs_json"]')
+    assert result == [
+        ExternalNeedsSource(bazel_module="", path_to_target="", target="needs_json")
+    ]
+
+
+def test_local_relative_label_is_not_supported():
+    """Relative labels (":foo") have no notion of "current package" here --
+    needs_json() in needs.bzl is responsible for canonicalizing them to an
+    absolute "//pkg:foo" label before they reach this parser."""
+    result = parse_external_needs_sources_from_DATA('[":bitman_comp_reqs"]')
+    assert result == []
+
+
 def test_add_external_needs_json_appends_entry(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
@@ -117,6 +147,39 @@ def test_add_external_needs_json_appends_entry(
     assert len(config.needs_external_needs) == 1
     entry = config.needs_external_needs[0]
     assert entry["base_url"] == "https://example.test/repo/main"
+    assert Path(entry["json_path"]) == json_path
+
+
+def test_add_external_needs_json_local_target_appends_entry(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """Same-repo (local) needs_json() targets are read from the flat
+    "<name>.json" public output, under the "_main" runfiles directory that
+    Bzlmod always uses for the main/root repository."""
+    # Arrange
+    e = ExternalNeedsSource(
+        bazel_module="", path_to_target="score/bitmanipulation", target="bitman_comp_reqs"
+    )
+    config = Config()
+    config.needs_external_needs = []
+
+    runfiles_dir = tmp_path
+    rel_json = Path("_main/score/bitmanipulation/bitman_comp_reqs.json")
+    json_path = runfiles_dir / rel_json
+    json_path.parent.mkdir(parents=True, exist_ok=True)
+    json_path.write_text(
+        json.dumps({"project_url": "https://example.test/local-repo"}),
+        encoding="utf-8",
+    )
+
+    monkeypatch.setattr(ext_needs, "get_runfiles_dir", lambda: runfiles_dir)
+
+    add_external_needs_json(e, config)
+
+    assert config.needs_external_needs is not None
+    assert len(config.needs_external_needs) == 1
+    entry = config.needs_external_needs[0]
+    assert entry["base_url"] == "https://example.test/local-repo/main"
     assert Path(entry["json_path"]) == json_path
 
 
