@@ -528,33 +528,39 @@ but that requires some configuration in your <code class="docutils literal notra
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">source_dir</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">name</span></code></p></td>
+<td><p>Name of the main documentation target. Defaults to <code class="docutils literal notranslate"><span class="pre">&quot;docs&quot;</span></code>. Only needed when calling <code class="docutils literal notranslate"><span class="pre">docs()</span></code> more than once in the same <code class="docutils literal notranslate"><span class="pre">BUILD</span></code> file; each call must then use a distinct name, and all generated targets are prefixed with it (see <a class="reference internal" href="../reference/bazel_macros.html"><span class="doc">bazel_macros</span></a>)</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">source_dir</span></code></p></td>
 <td><p>Directory of documentation source files (RST, MD)</p></td>
 <td><p>Yes</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">data</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">data</span></code></p></td>
 <td><p>List of <code class="docutils literal notranslate"><span class="pre">needs_json</span></code> targets that should be included in the documentation</p></td>
 <td><p>No</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">deps</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">deps</span></code></p></td>
 <td><p>Additional Bazel Python dependencies</p></td>
 <td><p>No</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">scan_code</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">scan_code</span></code></p></td>
 <td><p>Source code targets to scan for traceability tags</p></td>
 <td><p>No</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">known_good</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">known_good</span></code></p></td>
 <td><p>Label to a “known good” JSON file for source links</p></td>
 <td><p>No</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">metamodel</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">metamodel</span></code></p></td>
 <td><p>Label to a custom <code class="docutils literal notranslate"><span class="pre">metamodel.yaml</span></code> that replaces the default metamodel</p></td>
 <td><p>No</p></td>
 </tr>
 </tbody>
 </table>
 </div>
+<p>If you set a custom <code class="docutils literal notranslate"><span class="pre">name</span></code>, and also use non-Bazel execution (e.g. Esbonio/IDE support),
+add <code class="docutils literal notranslate"><span class="pre">docs_target_name</span> <span class="pre">=</span> <span class="pre">&quot;&lt;your</span> <span class="pre">name&gt;&quot;</span></code> to your <code class="docutils literal notranslate"><span class="pre">conf.py</span></code> so it matches.</p>
 </section>
 </section>
 <section id="copy-conf-py">

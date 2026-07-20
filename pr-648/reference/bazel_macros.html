@@ -478,6 +478,26 @@ and to create a Python virtual environment for IDE support (Esbonio).</p>
 </pre></div>
 </div>
 <ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">name</span></code> (string, default: <code class="docutils literal notranslate"><span class="pre">&quot;docs&quot;</span></code>)
+Name of the main documentation target. When left at its default, all generated targets
+keep their historical, unprefixed names (<code class="docutils literal notranslate"><span class="pre">needs_json</span></code>, <code class="docutils literal notranslate"><span class="pre">sourcelinks_json</span></code>,
+<code class="docutils literal notranslate"><span class="pre">docs_check</span></code>, <code class="docutils literal notranslate"><span class="pre">ide_support</span></code>, etc.) for backward compatibility. For any other name,
+every generated target is prefixed with it, e.g. <code class="docutils literal notranslate"><span class="pre">name</span> <span class="pre">=</span> <span class="pre">&quot;foo&quot;</span></code> yields <code class="docutils literal notranslate"><span class="pre">foo</span></code>,
+<code class="docutils literal notranslate"><span class="pre">foo_check</span></code>, <code class="docutils literal notranslate"><span class="pre">foo_needs_json</span></code>, <code class="docutils literal notranslate"><span class="pre">foo_sourcelinks_json</span></code>, <code class="docutils literal notranslate"><span class="pre">foo_ide_support</span></code>, and so on.</p>
+<p>Use a custom <code class="docutils literal notranslate"><span class="pre">name</span></code> when you need to call <code class="docutils literal notranslate"><span class="pre">docs()</span></code> more than once in the same
+<code class="docutils literal notranslate"><span class="pre">BUILD</span></code> file (e.g. to build two independent documentation sets); each call must then
+use a distinct <code class="docutils literal notranslate"><span class="pre">name</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">docs</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;foo&quot;</span><span class="p">,</span>
+    <span class="n">source_dir</span> <span class="o">=</span> <span class="s2">&quot;docs_foo&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>If you use a custom <code class="docutils literal notranslate"><span class="pre">name</span></code> and also rely on non-Bazel execution (e.g. Esbonio/IDE
+support via <code class="docutils literal notranslate"><span class="pre">ide_support</span></code>), set <code class="docutils literal notranslate"><span class="pre">docs_target_name</span> <span class="pre">=</span> <span class="pre">&quot;foo&quot;</span></code> in that <code class="docutils literal notranslate"><span class="pre">source_dir</span></code>’s
+<code class="docutils literal notranslate"><span class="pre">conf.py</span></code> to match, so the tooling can resolve the correctly-prefixed runfiles and
+Bazel targets outside of a <code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span></code> invocation.</p>
+</li>
 <li><p><code class="docutils literal notranslate"><span class="pre">source_dir</span></code> (string, default: <code class="docutils literal notranslate"><span class="pre">&quot;docs&quot;</span></code>)
 Path (relative to repository root) to your Sphinx source directory. This is the folder
 that contains your <code class="docutils literal notranslate"><span class="pre">conf.py</span></code> and the top-level ReST/markdown sources.</p></li>
@@ -522,6 +542,9 @@ When <code class="docutils literal notranslate"><span class="pre">metamodel</spa
 targets are included in the <code class="docutils literal notranslate"><span class="pre">data</span></code> list so they are available to the build driver.</p></li>
 <li><p>The experimental “combo” targets rewrite some <code class="docutils literal notranslate"><span class="pre">data</span></code> labels for combined builds; those
 are intended for advanced use and are optional for normal doc workflows.</p></li>
+<li><p>If you depend on another module’s <code class="docutils literal notranslate"><span class="pre">docs()</span></code> output via <code class="docutils literal notranslate"><span class="pre">data</span></code>, and that module used a
+custom <code class="docutils literal notranslate"><span class="pre">name</span></code>, reference its prefixed target (e.g. <code class="docutils literal notranslate"><span class="pre">&#64;other_repo//:foo_needs_json</span></code>)
+instead of the default <code class="docutils literal notranslate"><span class="pre">needs_json</span></code>.</p></li>
 </ul>
 </section>
 </section>

@@ -496,6 +496,8 @@ to have their needs elements available for cross-referencing.</p>
 <span class="p">)</span>
 </pre></div>
 </div>
+<p>If the other module’s <code class="docutils literal notranslate"><span class="pre">docs()</span></code> call uses a custom <code class="docutils literal notranslate"><span class="pre">name</span></code> (see <a class="reference internal" href="../reference/bazel_macros.html"><span class="doc">bazel_macros</span></a>), reference its prefixed target instead, e.g.
+<code class="docutils literal notranslate"><span class="pre">&quot;&#64;score_process//:foo_needs_json&quot;</span></code>.</p>
 <p>More details in <a class="reference internal" href="../concepts/bidirectional_traceability.html#docs-bidirectional-traceability"><span class="std std-ref">Bi-directional Traceability</span></a>.</p>
 </section>
 <section id="reference-needs-across-modules">
