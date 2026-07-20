@@ -38,9 +38,3 @@ alias(
     name = "actionlint",
     actual = "@score_devcontainer//tools:actionlint",
 )
-
-# bazel run //:lint_check
-alias(
-    name = "link_check",
-    actual = ":docs_link_check",
-)
