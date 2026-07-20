@@ -37,6 +37,7 @@ filegroup(
 filegroup(
     name = "metamodel_yaml",
     srcs = ["metamodel.yaml"],
+    visibility = ["//visibility:public"],
 )
 
 filegroup(

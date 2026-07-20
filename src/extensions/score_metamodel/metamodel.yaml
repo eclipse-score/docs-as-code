@@ -214,7 +214,6 @@ needs_types:
       safety: "^(QM|ASIL_B)$"
       security: "^(YES|NO)$"
     optional_options:
-      # req-Id: tool_req__docs_doc_attr
       author: ^.*$
       approver: ^.*$
       reviewer: ^.*$
@@ -236,7 +235,6 @@ needs_types:
       # req-Id: tool_req__docs_tvr_confidence_level
       tcl: "^(LOW|HIGH)$"
     optional_options:
-      # req-Id: tool_req__docs_doc_attr
       author: ^.*$
       approver: ^.*$
       reviewer: ^.*$
@@ -405,9 +403,10 @@ needs_types:
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
-    optional_links:
+    mandatory_links:
       # req-Id: tool_req__arch_linkage_safety
       includes: logic_arc_int, logic_arc_int_op
+    optional_links:
       uses: logic_arc_int, logic_arc_int_op
       provides: logic_arc_int, logic_arc_int_op # preparation for linking change according to DR-005
     tags:
@@ -1012,6 +1011,7 @@ needs_types:
       decision: ^.*$
     optional_options:
       consequences: ^.*$
+      tracking: ^https://github\.com/[^/]+/[^/]+/issues/\d+$
     optional_links:
       affects: ANY
 
