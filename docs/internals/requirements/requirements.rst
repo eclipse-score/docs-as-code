@@ -829,7 +829,7 @@ Testing
   :tags: Verification Evidence
   :implemented: YES
   :version: 1
-  :satisfies: gd_req__verification_reporting
+  :satisfies: gd_req__verification_reporting[version==1]
   :parent_covered: NO: process wording is broader than the currently modeled report artifact.
 
   Docs-as-Code shall support a machine-readable module verification report need type.
