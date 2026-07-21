@@ -41,3 +41,12 @@ score_pytest(
     ] + all_requirements,
     pytest_config = "//:pyproject.toml",
 )
+
+score_pytest(
+    name = "needs_to_lobster_test",
+    srcs = ["needs_to_lobster_test.py"],
+    deps = [
+        "//scripts_bazel:needs_to_lobster",
+    ] + all_requirements,
+    pytest_config = "//:pyproject.toml",
+)
