@@ -46,3 +46,30 @@ jobs:
 
       - name: Run pre-commit checks
         run: pre-commit run -a
+
+  pinact:
+    name: Run pinact
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      security-events: write
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install pinact
+        run: go install github.com/suzuki-shunsuke/pinact/v4/cmd/pinact@v4.1.0
+
+      - name: Run pinact
+        id: pinact
+        continue-on-error: true
+        run: |
+          "$(go env GOPATH)/bin/pinact" run --format sarif > sarif.json
+
+      - name: Upload SARIF
+        if: ${{ !cancelled() && hashFiles('sarif.json') != '' }}
+        uses: github/codeql-action/upload-sarif@5d4e8d1aca955e8d8589aabd499c5cae939e33c7 # v4.31.9
+        with:
+          sarif_file: sarif.json
+          category: pinact
