@@ -39,6 +39,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 from typing import Any
@@ -176,6 +177,21 @@ def _parse_csv(value: str | None) -> tuple[str, ...]:
     return tuple(part.strip() for part in value.split(",") if part.strip())
 
 
+def _resolve(path: Path) -> Path:
+    """Resolve a relative path against the invocation directory.
+
+    Under ``bazel run`` the process working directory is the runfiles tree, so
+    relative paths would resolve there instead of where the user invoked the
+    command. Bazel exposes the original directory via ``BUILD_WORKING_DIRECTORY``;
+    resolve relative paths against it when present so ``--needs-json``/``--output``
+    behave as expected. Absolute paths are returned unchanged.
+    """
+    if path.is_absolute():
+        return path
+    base = os.environ.get("BUILD_WORKING_DIRECTORY")
+    return Path(base) / path if base else path
+
+
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description=(
@@ -227,7 +243,10 @@ def _build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     args = _build_parser().parse_args(argv)
 
-    needs_data = json.loads(args.needs_json.read_text(encoding="utf-8"))
+    needs_json = _resolve(args.needs_json)
+    output = _resolve(args.output) if args.output is not None else None
+
+    needs_data = json.loads(needs_json.read_text(encoding="utf-8"))
     include_types = set(_parse_csv(args.types)) or None
     report = convert(
         needs_data,
@@ -238,12 +257,12 @@ def main(argv: list[str] | None = None) -> int:
     )
 
     payload = json.dumps(report, indent=2, sort_keys=True)
-    if args.output is None:
+    if output is None:
         print(payload)
     else:
-        args.output.write_text(payload + "\n", encoding="utf-8")
+        output.write_text(payload + "\n", encoding="utf-8")
         print(
-            f"Wrote {len(report['data'])} requirement item(s) to {args.output}",
+            f"Wrote {len(report['data'])} requirement item(s) to {output}",
             file=sys.stderr,
         )
     return 0

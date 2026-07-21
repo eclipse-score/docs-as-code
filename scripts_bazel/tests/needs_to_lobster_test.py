@@ -148,6 +148,26 @@ def test_select_version_explicit_and_fallback() -> None:
         conv.convert(doc, version="2.0")
 
 
+def test_relative_paths_resolve_against_build_working_directory(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    workdir = tmp_path / "workdir"
+    workdir.mkdir()
+    (workdir / "needs.json").write_text(json.dumps(_needs_doc()), encoding="utf-8")
+
+    # Simulate `bazel run`: process cwd differs from the invocation directory.
+    elsewhere = tmp_path / "runfiles"
+    elsewhere.mkdir()
+    monkeypatch.chdir(elsewhere)
+    monkeypatch.setenv("BUILD_WORKING_DIRECTORY", str(workdir))
+
+    rc = conv.main(["--needs-json", "needs.json", "--output", "out.lobster"])
+    assert rc == 0
+    assert (workdir / "out.lobster").is_file()
+    assert not (elsewhere / "out.lobster").exists()
+
+
 def test_main_writes_output_file(tmp_path: Path) -> None:
     needs_path = tmp_path / "needs.json"
     needs_path.write_text(json.dumps(_needs_doc()), encoding="utf-8")

@@ -18,6 +18,11 @@ bazel run //scripts_bazel:needs_to_lobster -- \
     --up-links satisfies
 ```
 
+Under `bazel run` the process working directory is the runfiles tree, so
+relative `--needs-json` / `--output` paths are resolved against
+`$BUILD_WORKING_DIRECTORY` (the directory you invoked `bazel run` from), not the
+sandbox. Absolute paths are always used as-is.
+
 The `satisfies` links (e.g. `tool_req__* -> gd_req__*`) are emitted as LOBSTER
 `refs`, so the process-requirement <-> tool-requirement relationship authored in
 RST is preserved as a LOBSTER up-trace. Model the two sides as separate
