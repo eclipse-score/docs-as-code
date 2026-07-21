@@ -3640,9 +3640,23 @@
     "FullyVerifies": null
   },
   {
-    "name": "needs_to_lobster_test__test_main_writes_output_file",
+    "name": "needs_to_lobster_test__test_relative_paths_resolve_against_build_working_directory",
     "file": "scripts_bazel/tests/needs_to_lobster_test.py",
     "line": "151",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "needs_to_lobster_test__test_main_writes_output_file",
+    "file": "scripts_bazel/tests/needs_to_lobster_test.py",
+    "line": "171",
     "result": "passed",
     "repo_name": null,
     "hash": null,
