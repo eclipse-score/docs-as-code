@@ -26,8 +26,20 @@ sandbox. Absolute paths are always used as-is.
 The `satisfies` links (e.g. `tool_req__* -> gd_req__*`) are emitted as LOBSTER
 `refs`, so the process-requirement <-> tool-requirement relationship authored in
 RST is preserved as a LOBSTER up-trace. Model the two sides as separate
-requirement levels in `lobster.conf` (`Tool Requirements` `trace to:`
-`Process Requirements`).
+requirement levels in a LOBSTER tracing policy (`Tool Requirements` `trace to:`
+`Process Requirements`). A ready-to-run example policy is provided in
+[`lobster.conf.example`](./lobster.conf.example):
+
+```console
+python3 scripts_bazel/needs_to_lobster.py --needs-json _build/needs.json --types tool_req --output tool_reqs.lobster
+python3 scripts_bazel/needs_to_lobster.py --needs-json _build/needs.json --types gd_req  --output process_reqs.lobster
+lobster-report --lobster-config=scripts_bazel/lobster.conf.example --out=report.json
+lobster-ci-report report.json
+```
+
+The tracing policy is intentionally *not* owned by this converter; long term it
+should live centrally (e.g. next to the `rules_score` `*.conf.tpl` templates),
+so it is not duplicated per module.
 
 Licensing: LOBSTER is AGPLv3. This tool never imports LOBSTER; it writes the
 documented JSON schema and is consumed by the LOBSTER CLI as an external
