@@ -301,6 +301,22 @@ def test_git_root_search_success(git_repo: Path, monkeypatch: pytest.MonkeyPatch
     os.environ.pop("RUNFILES_DIR", None)
 
 
+def test_git_root_search_custom_docs_target_name(
+    git_repo: Path, monkeypatch: pytest.MonkeyPatch
+):
+    """A custom docs_target_name looks for '<name>_ide_support.runfiles' instead."""
+    docs_dir = git_repo / "docs"
+    runfiles_dir = git_repo / "bazel-bin" / "foo_ide_support.runfiles"
+    docs_dir.mkdir()
+    runfiles_dir.mkdir(parents=True)
+    os.environ.pop("RUNFILES_DIR", None)
+
+    monkeypatch.setattr(Path, "cwd", lambda: docs_dir)
+    result = get_runfiles_dir(docs_target_name="foo")
+    assert Path(result) == runfiles_dir
+    os.environ.pop("RUNFILES_DIR", None)
+
+
 def test_git_root_search_not_found(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     """
     Test fallback when no .git is found (should sys.exit).

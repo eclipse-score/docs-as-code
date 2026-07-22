@@ -48,7 +48,12 @@ def _parse_bazel_external_need(s: str) -> ExternalNeedsSource | None:
     repo, path_to_target = repo_and_path.split("//", 1)
     repo = repo.lstrip("@")
 
-    if path_to_target == "" and target in ("needs_json", "docs_sources"):
+    # The producer's docs() macro may have used a custom `name`, in which case its targets
+    # are prefixed (e.g. 'foo_needs_json', 'foo_docs_sources') instead of the default,
+    # unprefixed 'needs_json' / 'docs_sources'. Match both.
+    is_needs_json = target == "needs_json" or target.endswith("_needs_json")
+    is_docs_sources = target == "docs_sources" or target.endswith("_docs_sources")
+    if path_to_target == "" and (is_needs_json or is_docs_sources):
         return ExternalNeedsSource(
             bazel_module=repo, path_to_target=path_to_target, target=target
         )
@@ -69,13 +74,21 @@ def parse_external_needs_sources_from_DATA(v: str) -> list[ExternalNeedsSource]:
     return res
 
 
-def parse_external_needs_sources_from_bazel_query() -> list[ExternalNeedsSource]:
+def parse_external_needs_sources_from_bazel_query(
+    docs_target_name: str = "docs",
+) -> list[ExternalNeedsSource]:
     """
     This function detects if the Sphinx app is running without Bazel and sets the
     `external_needs_source` config value accordingly.
 
     When running with Bazel, we pass the `external_needs_source` config value
     from the bazel config.
+
+    Args:
+        docs_target_name: The `name` the local repo's docs() Bazel macro invocation uses
+            (see docs.bzl). Defaults to "docs", the macro's own default. Repos using a
+            custom name must set `docs_target_name` in their conf.py to match, so this
+            queries the right local target.
     """
     try:
         logger.debug(
@@ -85,7 +98,7 @@ def parse_external_needs_sources_from_bazel_query() -> list[ExternalNeedsSource]
         # We could parse it or query bazel.
         # Parsing would be MUCH faster, but querying bazel would be more robust.
         p = subprocess.run(
-            ["bazel", "query", "labels(data, //:docs)"],
+            ["bazel", "query", f"labels(data, //:{docs_target_name})"],
             check=True,
             capture_output=True,
             text=True,
@@ -138,20 +151,24 @@ def extend_needs_json_exporter(config: Config, params: list[str]) -> None:
     NeedsList._finalise = temp  # pyright: ignore[reportPrivateUsage]
 
 
-def get_external_needs_source(external_needs_source: str) -> list[ExternalNeedsSource]:
+def get_external_needs_source(
+    external_needs_source: str, docs_target_name: str = "docs"
+) -> list[ExternalNeedsSource]:
     if external_needs_source:
         # Path taken for all invocations via `bazel`
         external_needs = parse_external_needs_sources_from_DATA(external_needs_source)
     else:
         # This is the path taken for anything that doesn't
         # run via `bazel`  e.g. esbonio or other direct executions
-        external_needs = parse_external_needs_sources_from_bazel_query()  # pyright: ignore[reportAny]
+        external_needs = parse_external_needs_sources_from_bazel_query(docs_target_name)  # pyright: ignore[reportAny]
     return external_needs
 
 
-def add_external_needs_json(e: ExternalNeedsSource, config: Config):
+def add_external_needs_json(
+    e: ExternalNeedsSource, config: Config, docs_target_name: str = "docs"
+):
     json_file_raw = f"{e.bazel_module}+/{e.target}/_build/needs/needs.json"
-    r = get_runfiles_dir()
+    r = get_runfiles_dir(docs_target_name)
     json_file = r / json_file_raw
     logger.debug(f"External needs.json: {json_file}")
     try:
@@ -174,11 +191,18 @@ def add_external_needs_json(e: ExternalNeedsSource, config: Config):
     )
 
 
-def add_external_docs_sources(e: ExternalNeedsSource, config: Config):
+def add_external_docs_sources(
+    e: ExternalNeedsSource, config: Config, docs_target_name: str = "docs"
+):
     # Note that bazel does NOT write the files under e.target!
     # {e.bazel_module}+ matches the original git layout!
-    r = get_runfiles_dir()
-    if "ide_support.runfiles" in str(r):
+    r = get_runfiles_dir(docs_target_name)
+    ide_support_name = (
+        "ide_support"
+        if docs_target_name == "docs"
+        else docs_target_name + "_ide_support"
+    )
+    if f"{ide_support_name}.runfiles" in str(r):
         logger.error("Combo builds are currently only supported with Bazel.")
         return
     docs_source_path = Path(r) / f"{e.bazel_module}+"
@@ -197,7 +221,10 @@ def add_external_docs_sources(e: ExternalNeedsSource, config: Config):
 def connect_external_needs(app: Sphinx, config: Config):
     extend_needs_json_exporter(config, ["project_url"])
 
-    external_needs = get_external_needs_source(app.config.external_needs_source)
+    docs_target_name = app.config.docs_target_name
+    external_needs = get_external_needs_source(
+        app.config.external_needs_source, docs_target_name
+    )
 
     # this sets the default value - required for the needs-config-writer
     # setting 'needscfg_exclude_defaults = True' to see the diff
@@ -206,10 +233,10 @@ def connect_external_needs(app: Sphinx, config: Config):
     for e in external_needs:
         assert not e.path_to_target  # path_to_target is always empty
 
-        if e.target == "needs_json":
-            add_external_needs_json(e, app.config)
-        elif e.target == "docs_sources":
-            add_external_docs_sources(e, app.config)
+        if e.target == "needs_json" or e.target.endswith("_needs_json"):
+            add_external_needs_json(e, app.config, docs_target_name)
+        elif e.target == "docs_sources" or e.target.endswith("_docs_sources"):
+            add_external_docs_sources(e, app.config, docs_target_name)
         else:
             raise ValueError(
                 f"Internal Error. Unknown external needs target: {e.target}"

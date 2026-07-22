@@ -54,7 +54,8 @@ def find_correct_path(runfiles: Path) -> Path:
 
 def setup(app: Sphinx):
     # we must overwrite the plantuml path due to Bazel
-    app.config.plantuml = str(find_correct_path(get_runfiles_dir()))
+    docs_target_name = getattr(app.config, "docs_target_name", "docs")
+    app.config.plantuml = str(find_correct_path(get_runfiles_dir(docs_target_name)))
     config_setdefault(app.config, "plantuml_output_format", "svg_obj")
     config_setdefault(app.config, "plantuml_syntax_error_image", True)
     config_setdefault(app.config, "needs_build_needumls", "_plantuml_sources")

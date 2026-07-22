@@ -80,12 +80,16 @@ The `docs()` macro accepts the following arguments:
 
 | Parameter | Description | Required |
 |-----------|-------------|----------|
+| `name` | Name of the main documentation target. Defaults to `"docs"`. Only needed when calling `docs()` more than once in the same `BUILD` file; each call must then use a distinct name, and all generated targets are prefixed with it (see {doc}`bazel_macros </reference/bazel_macros>`) | No |
 | `source_dir` | Directory of documentation source files (RST, MD) | Yes |
 | `data` | List of `needs_json` targets that should be included in the documentation | No |
 | `deps` | Additional Bazel Python dependencies | No |
 | `scan_code` | Source code targets to scan for traceability tags | No |
 | `known_good` | Label to a "known good" JSON file for source links | No |
 | `metamodel` | Label to a custom `metamodel.yaml` that replaces the default metamodel | No |
+
+If you set a custom `name`, and also use non-Bazel execution (e.g. Esbonio/IDE support),
+add `docs_target_name = "<your name>"` to your `conf.py` so it matches.
 
 ### 4. Copy conf.py
 

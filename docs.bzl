@@ -46,24 +46,36 @@ load("@docs_as_code_hub_env//:requirements.bzl", "all_requirements")
 load("@sphinxdocs//sphinxdocs:sphinx.bzl", "sphinx_build_binary", "sphinx_docs")
 
 def _rewrite_needs_json_to_docs_sources(labels):
-    """Replace '@repo//:needs_json' -> '@repo//:docs_sources' for every item."""
+    """Replace '@repo//:needs_json' -> '@repo//:docs_sources' for every item.
+
+    Also handles a producer using a custom docs() `name`
+    (e.g. '@repo//:foo_needs_json' -> '@repo//:foo_docs_sources').
+    """
     out = []
     for x in labels:
         s = str(x)
         if s.endswith("//:needs_json"):
             out.append(s.replace("//:needs_json", "//:docs_sources"))
+        elif "//:" in s and s.endswith("_needs_json"):
+            out.append(s[:-len("needs_json")] + "docs_sources")
         else:
             out.append(s)
     return out
 
 def _rewrite_needs_json_to_sourcelinks(labels):
-    """Replace '@repo//:needs_json' -> '@repo//:sourcelinks_json' for every item."""
+    """Replace '@repo//:needs_json' -> '@repo//:sourcelinks_json' for every item.
+
+    Also handles a producer using a custom docs() `name`
+    (e.g. '@repo//:foo_needs_json' -> '@repo//:foo_sourcelinks_json').
+    """
     out = []
     for x in labels:
         s = str(x)
         if s.endswith("//:needs_json"):
             out.append(s.replace("//:needs_json", "//:sourcelinks_json"))
-        #Items which do not end up with '//:needs_json' shall not be appended to 'out'.
+        elif "//:" in s and s.endswith("_needs_json"):
+            out.append(s[:-len("needs_json")] + "sourcelinks_json")
+        #Items which do not end up with a 'needs_json' target shall not be appended to 'out'.
         #They are treated separately and are not related to source code linking.
     return out
 
@@ -127,12 +139,21 @@ def _missing_requirements(deps):
         fail(msg)
     fail("This case should be unreachable?!")
 
-def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good = None, metamodel = None):
+def docs(name = "docs", source_dir = "docs", data = [], deps = [], scan_code = [], known_good = None, metamodel = None):
     """Creates all targets related to documentation.
 
     By using this function, you'll get any and all updates for documentation targets in one place.
 
+    The macro can be called multiple times in the same BUILD file as long as each call uses a
+    distinct `name`. When `name` is left at its default ("docs"), all generated targets keep their
+    historical, unprefixed names (e.g. `needs_json`, `sourcelinks_json`, `docs_check`) for backward
+    compatibility. For any other `name`, every generated target is prefixed with it
+    (e.g. `name = "foo"` yields `foo`, `foo_check`, `foo_needs_json`, `foo_sourcelinks_json`, ...).
+
     Args:
+      name: Name of the main documentation target. Defaults to "docs". All other targets created
+            by this macro (needs_json, sourcelinks_json, docs_check, ide_support, etc.) are derived
+            from this name, so multiple calls to docs() in the same BUILD file must use distinct names.
       source_dir: The source directory containing documentation files. Defaults to "docs".
       data: Additional data files to include in the documentation build.
       deps: Additional dependencies for the documentation build.
@@ -142,10 +163,31 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
                  file instead of the default metamodel shipped with score_metamodel.
     """
 
-    call_path = native.package_name()
+    def _n(default_name):
+        """Derive a target name: keep historical unprefixed names when name == "docs", otherwise prefix with `name`."""
+        if name == "docs":
+            return default_name
+        if default_name == "docs":
+            return name
+        if default_name.startswith("docs_"):
+            return name + "_" + default_name[len("docs_"):]
+        return name + "_" + default_name
 
-    if call_path != "":
-        fail("docs() must be called from the root package. Current package: " + call_path)
+    sphinx_build_name = _n("sphinx_build")
+    docs_sources_name = _n("docs_sources")
+    sourcelinks_json_name = _n("sourcelinks_json")
+    merged_sourcelinks_name = _n("merged_sourcelinks")
+    docs_name = _n("docs")
+    docs_combo_name = _n("docs_combo")
+    docs_combo_experimental_name = _n("docs_combo_experimental")
+    docs_link_check_name = _n("docs_link_check")
+    docs_check_name = _n("docs_check")
+    live_preview_name = _n("live_preview")
+    live_preview_combo_name = _n("live_preview_combo_experimental")
+    ide_support_name = _n("ide_support")
+    needs_json_name = _n("needs_json")
+    metrics_json_name = _n("metrics_json")
+    traceability_gate_name = _n("traceability_gate")
 
     metamodel_data = []
     metamodel_env = {}
@@ -165,7 +207,7 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
     incremental_src = Label("//src:incremental.py")
 
     sphinx_build_binary(
-        name = "sphinx_build",
+        name = sphinx_build_name,
         visibility = ["//visibility:private"],
         data = data + metamodel_data,
         deps = deps,
@@ -179,7 +221,7 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
         source_prefix = source_dir + "/"
 
     native.filegroup(
-        name = "docs_sources",
+        name = docs_sources_name,
         srcs = native.glob([
             source_prefix + "**/*.png",
             source_prefix + "**/*.svg",
@@ -197,23 +239,23 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
         visibility = ["//visibility:public"],
     )
 
-    _sourcelinks_json(name = "sourcelinks_json", srcs = scan_code)
+    _sourcelinks_json(name = sourcelinks_json_name, srcs = scan_code)
 
     data_with_docs_sources = _rewrite_needs_json_to_docs_sources(data)
     additional_combo_sourcelinks = _rewrite_needs_json_to_sourcelinks(data)
-    _merge_sourcelinks(name = "merged_sourcelinks", sourcelinks = [":sourcelinks_json"] + additional_combo_sourcelinks, known_good = known_good)
-    docs_data = data + metamodel_data + [":sourcelinks_json"]
-    combo_data = data_with_docs_sources + metamodel_data + [":merged_sourcelinks"]
+    _merge_sourcelinks(name = merged_sourcelinks_name, sourcelinks = [":" + sourcelinks_json_name] + additional_combo_sourcelinks, known_good = known_good)
+    docs_data = data + metamodel_data + [":" + sourcelinks_json_name]
+    combo_data = data_with_docs_sources + metamodel_data + [":" + merged_sourcelinks_name]
 
     docs_env = {
         "SOURCE_DIRECTORY": source_dir,
         "DATA": str(data),
-        "SCORE_SOURCELINKS": "$(location :sourcelinks_json)",
+        "SCORE_SOURCELINKS": "$(location :%s)" % sourcelinks_json_name,
     } | metamodel_env
     docs_sources_env = {
         "SOURCE_DIRECTORY": source_dir,
         "DATA": str(data_with_docs_sources),
-        "SCORE_SOURCELINKS": "$(location :merged_sourcelinks)",
+        "SCORE_SOURCELINKS": "$(location :%s)" % merged_sourcelinks_name,
     } | metamodel_env
     if known_good:
         known_good_str = str(known_good)
@@ -225,8 +267,8 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
     docs_env["ACTION"] = "incremental"
 
     py_binary(
-        name = "docs",
-        tags = ["cli_help=Build documentation:\nbazel run //:docs"],
+        name = docs_name,
+        tags = ["cli_help=Build documentation:\nbazel run //:%s" % docs_name],
         srcs = [incremental_src],
         data = docs_data,
         deps = deps,
@@ -235,8 +277,8 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
 
     docs_sources_env["ACTION"] = "incremental"
     py_binary(
-        name = "docs_combo",
-        tags = ["cli_help=Build full documentation with all dependencies:\nbazel run //:docs_combo"],
+        name = docs_combo_name,
+        tags = ["cli_help=Build full documentation with all dependencies:\nbazel run //:%s" % docs_combo_name],
         srcs = [incremental_src],
         data = combo_data,
         deps = deps,
@@ -244,15 +286,15 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
     )
 
     native.alias(
-        name = "docs_combo_experimental",
-        actual = ":docs_combo",
-        deprecation = "Target '//:docs_combo_experimental' is deprecated. Use '//:docs_combo' instead.",
+        name = docs_combo_experimental_name,
+        actual = ":" + docs_combo_name,
+        deprecation = "Target '//:%s' is deprecated. Use '//:%s' instead." % (docs_combo_experimental_name, docs_combo_name),
     )
 
     docs_env["ACTION"] = "linkcheck"
     py_binary(
-        name = "docs_link_check",
-        tags = ["cli_help=Verify Links inside Documentation:\nbazel run //:link_check\n (Note: this could take a long time)"],
+        name = docs_link_check_name,
+        tags = ["cli_help=Verify Links inside Documentation:\nbazel run //:%s\n (Note: this could take a long time)" % docs_link_check_name],
         srcs = [incremental_src],
         data = docs_data,
         deps = deps,
@@ -261,8 +303,8 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
 
     docs_env["ACTION"] = "check"
     py_binary(
-        name = "docs_check",
-        tags = ["cli_help=Verify documentation:\nbazel run //:docs_check"],
+        name = docs_check_name,
+        tags = ["cli_help=Verify documentation:\nbazel run //:%s" % docs_check_name],
         srcs = [incremental_src],
         data = docs_data,
         deps = deps,
@@ -271,8 +313,8 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
 
     docs_env["ACTION"] = "live_preview"
     py_binary(
-        name = "live_preview",
-        tags = ["cli_help=Live preview documentation in the browser:\nbazel run //:live_preview"],
+        name = live_preview_name,
+        tags = ["cli_help=Live preview documentation in the browser:\nbazel run //:%s" % live_preview_name],
         srcs = [incremental_src],
         data = docs_data,
         deps = deps,
@@ -281,26 +323,27 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
 
     docs_sources_env["ACTION"] = "live_preview"
     py_binary(
-        name = "live_preview_combo_experimental",
-        tags = ["cli_help=Live preview full documentation with all dependencies in the browser:\nbazel run //:live_preview_combo_experimental"],
+        name = live_preview_combo_name,
+        tags = ["cli_help=Live preview full documentation with all dependencies in the browser:\nbazel run //:%s" % live_preview_combo_name],
         srcs = [incremental_src],
         data = combo_data,
         deps = deps,
         env = docs_sources_env
     )
 
+    venv_name = ".venv_docs" if name == "docs" else ".venv_" + name
     py_venv(
-        name = "ide_support",
-        tags = ["cli_help=Create virtual environment (.venv_docs) for documentation support:\nbazel run //:ide_support"],
-        venv_name = ".venv_docs",
+        name = ide_support_name,
+        tags = ["cli_help=Create virtual environment (%s) for documentation support:\nbazel run //:%s" % (venv_name, ide_support_name)],
+        venv_name = venv_name,
         deps = deps,
         data = data,
         package_collisions = "warning",
     )
 
     sphinx_docs(
-        name = "needs_json",
-        srcs = [":docs_sources"],
+        name = needs_json_name,
+        srcs = [":" + docs_sources_name],
         config = ":" + source_prefix + "conf.py",
         extra_opts = [
             "-W",
@@ -309,30 +352,31 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
             "--jobs",
             "auto",
             "--define=external_needs_source=" + str(data),
-            "--define=score_sourcelinks_json=$(location :sourcelinks_json)",
+            "--define=score_sourcelinks_json=$(location :%s)" % sourcelinks_json_name,
             "--define=score_source_code_linker_plain_links=1",
         ],
         formats = ["needs"],
-        sphinx = ":sphinx_build",
-        tools = data + [":sourcelinks_json"],
+        sphinx = ":" + sphinx_build_name,
+        tools = data + [":" + sourcelinks_json_name],
         visibility = ["//visibility:public"],
         # Persistent workers cause stale symlinks after dependency version
         # changes, corrupting the Bazel cache.
         allow_persistent_workers = False,
     )
 
+    metrics_json_out = "metrics.json" if name == "docs" else name + "_metrics.json"
     native.genrule(
-        name = "metrics_json",
-        srcs = [":needs_json"],
-        outs = ["metrics.json"],
-        cmd = "cp $(location :needs_json)/metrics.json $@",
+        name = metrics_json_name,
+        srcs = [":" + needs_json_name],
+        outs = [metrics_json_out],
+        cmd = "cp $(location :%s)/metrics.json $@" % needs_json_name,
         visibility = ["//visibility:public"],
     )
 
     native.alias(
-        name = "traceability_gate",
+        name = traceability_gate_name,
         actual = Label("//scripts_bazel:traceability_gate"),
-        tags = ["cli_help=Enforce traceability coverage thresholds:\nbazel run //:traceability_gate -- --metrics-json $(location //:metrics_json)"],
+        tags = ["cli_help=Enforce traceability coverage thresholds:\nbazel run //:%s -- --metrics-json $(location //:%s)" % (traceability_gate_name, metrics_json_name)],
     )
 
 def _sourcelinks_json(name, srcs):

@@ -187,10 +187,15 @@ def get_current_git_hash(git_root: Path) -> str:
         raise
 
 
-def get_runfiles_dir() -> Path:
+def get_runfiles_dir(docs_target_name: str = "docs") -> Path:
     """
     Find the Bazel runfiles directory using bazel_runfiles convention,
     fallback to RUNFILES_DIR or relative traversal if needed.
+
+    Args:
+        docs_target_name: The `name` the local repo's docs() Bazel macro invocation uses
+            (see docs.bzl). Defaults to "docs", the macro's own default. Only relevant for
+            the non-Bazel fallback below, to find the correctly-named `ide_support` runfiles.
     """
     if (r := Runfiles.Create()) and (rd := r.EnvVars().get("RUNFILES_DIR")):
         runfiles_dir = Path(rd)
@@ -207,7 +212,12 @@ def get_runfiles_dir() -> Path:
         if git_root is None:
             sys.exit("Could not find git root.")
 
-        runfiles_dir = git_root / "bazel-bin" / "ide_support.runfiles"
+        ide_support_name = (
+            "ide_support"
+            if docs_target_name == "docs"
+            else docs_target_name + "_ide_support"
+        )
+        runfiles_dir = git_root / "bazel-bin" / (ide_support_name + ".runfiles")
 
     if not runfiles_dir.exists():
         sys.exit(

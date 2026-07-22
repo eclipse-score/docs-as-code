@@ -23,6 +23,7 @@ from score_metamodel.tests import need as test_need
 from sphinx.testing.util import SphinxTestApp
 from sphinx_needs.data import NeedsExtendType, SphinxNeedsData
 from sphinx_needs.need_item import NeedItem
+from sphinx_needs.views import NeedsView
 
 from score_pytest.attribute_plugin import apply_test_metadata
 
@@ -194,7 +195,7 @@ def _get_default_metadata_need() -> NeedItem:
     )
 
 
-def _get_test_metadata_need(needs_view, rst_data: RstData) -> NeedItem:
+def _get_test_metadata_need(needs_view: NeedsView, rst_data: RstData) -> NeedItem:
     ### Return the single 'test_metadata' need, failing if there isn't exactly one.
     test_metadata_needs = needs_view.filter_types(["test_metadata"]).values()
     if not test_metadata_needs:
@@ -233,8 +234,9 @@ def _check_need_warnings(
 
     line_nr = need.get("lineno")
 
-    for raw in need.get("expect") or []:
-        expected = raw.strip()
+    expect: list[str] = need.get("expect") or []
+    for raw in expect:
+        expected: str = raw.strip()
         if warning_matches(rst_data, line_nr, expected, warnings):
             continue
         actual = filter_warnings_by_position(rst_data, line_nr, warnings)
@@ -247,8 +249,9 @@ def _check_need_warnings(
             pytrace=False,
         )
 
-    for raw in need.get("expect_not") or []:
-        not_expected = raw.strip()
+    expect_not: list[str] = need.get("expect_not") or []
+    for raw in expect_not:
+        not_expected: str = raw.strip()
         unexpected = warning_matches(rst_data, line_nr, not_expected, warnings)
         if not unexpected:
             continue
@@ -263,8 +266,8 @@ def _check_need_warnings(
 
 @pytest.mark.parametrize("rst_file", RST_FILES)
 def test_rst_files(
-    record_property,
-    record_xml_attribute,
+    record_property: Callable[[str, object], None],
+    record_xml_attribute: Callable[[str, object], None],
     rst_file: str,
     sphinx_app_setup: Callable[[Path], SphinxTestApp],
     monkeypatch: pytest.MonkeyPatch,

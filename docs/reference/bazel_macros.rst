@@ -43,6 +43,29 @@ Minimal example (root ``BUILD``)
        ],
    )
 
+- ``name`` (string, default: ``"docs"``)
+  Name of the main documentation target. When left at its default, all generated targets
+  keep their historical, unprefixed names (``needs_json``, ``sourcelinks_json``,
+  ``docs_check``, ``ide_support``, etc.) for backward compatibility. For any other name,
+  every generated target is prefixed with it, e.g. ``name = "foo"`` yields ``foo``,
+  ``foo_check``, ``foo_needs_json``, ``foo_sourcelinks_json``, ``foo_ide_support``, and so on.
+
+  Use a custom ``name`` when you need to call ``docs()`` more than once in the same
+  ``BUILD`` file (e.g. to build two independent documentation sets); each call must then
+  use a distinct ``name``.
+
+  .. code-block:: python
+
+     docs(
+         name = "foo",
+         source_dir = "docs_foo",
+     )
+
+  If you use a custom ``name`` and also rely on non-Bazel execution (e.g. Esbonio/IDE
+  support via ``ide_support``), set ``docs_target_name = "foo"`` in that ``source_dir``'s
+  ``conf.py`` to match, so the tooling can resolve the correctly-prefixed runfiles and
+  Bazel targets outside of a ``bazel run`` invocation.
+
 - ``source_dir`` (string, default: ``"docs"``)
   Path (relative to repository root) to your Sphinx source directory. This is the folder
   that contains your ``conf.py`` and the top-level ReST/markdown sources.
@@ -92,3 +115,6 @@ Edge cases
   targets are included in the ``data`` list so they are available to the build driver.
 - The experimental "combo" targets rewrite some ``data`` labels for combined builds; those
   are intended for advanced use and are optional for normal doc workflows.
+- If you depend on another module's ``docs()`` output via ``data``, and that module used a
+  custom ``name``, reference its prefixed target (e.g. ``@other_repo//:foo_needs_json``)
+  instead of the default ``needs_json``.

@@ -35,3 +35,7 @@
 | ----------------------------- | ------------------------------------------- |
 | `bazel build //:needs_json`   | Creates a 'needs.json' file                 |
 | `bazel build //:docs_sources` | Provides all the documentation source files |
+
+If the `docs()` macro is called with a custom `name` (see {doc}`bazel_macros`), every
+target above is prefixed with it instead, e.g. `name = "foo"` yields `//:foo`,
+`//:foo_check`, `//:foo_needs_json`, `//:foo_ide_support`, etc.

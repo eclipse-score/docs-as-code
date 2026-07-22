@@ -237,6 +237,8 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     app.add_config_value("external_needs_source", "", rebuild="env")
     app.add_config_value("score_metamodel_yaml", "", rebuild="env")
     app.add_config_value("required_in_id", [], rebuild="env")
+    # Registered here too (guarded) so score_metamodel also works when used standalone,
+    # without score_sphinx_bundle (e.g. this extension's own file-based test fixtures).
     config_setdefault(app.config, "needs_id_required", True)
     config_setdefault(app.config, "needs_id_regex", "^[A-Za-z0-9_-]{6,}")
 

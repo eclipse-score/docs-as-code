@@ -197,7 +197,7 @@ def _collect_all_custom_options(
     #
     # Note: "<integer>" is not encoded in the metamodel.yaml as there is no generic
     # demand exists at the moment.
-    params_str = {"schema": {"type": "string"}, "default": ""}
+    params_str: dict[str, Any] = {"schema": {"type": "string"}, "default": ""}
     params_int: dict[str, Any] = {"schema": {"type": "integer"}, "default": 0}
 
     return {

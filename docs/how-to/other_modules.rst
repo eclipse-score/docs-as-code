@@ -56,6 +56,10 @@ Example `BUILD` snippet (consumer module):
       source_dir = "docs",
     )
 
+If the other module's ``docs()`` call uses a custom ``name`` (see :doc:`bazel_macros
+</reference/bazel_macros>`), reference its prefixed target instead, e.g.
+``"@score_process//:foo_needs_json"``.
+
 More details in :ref:`docs_bidirectional_traceability`.
 
 3) Reference needs across modules

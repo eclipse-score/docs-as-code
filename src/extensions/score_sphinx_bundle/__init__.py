@@ -36,6 +36,12 @@ score_extensions = [
 
 
 def setup(app: Sphinx) -> dict[str, object]:
+    # The `name` used for this repo's own docs() Bazel macro invocation (see docs.bzl).
+    # Defaults to "docs", matching the macro's own default. Repos that call
+    # docs(name="something_else") must set `docs_target_name = "something_else"` in their
+    # conf.py, so that IDE/esbonio (non-Bazel) execution can resolve the correctly-named things
+    app.add_config_value("docs_target_name", "docs", "env")
+
     config_setdefault(app.config, "html_copy_source", False)
     config_setdefault(app.config, "html_show_sourcelink", False)
 

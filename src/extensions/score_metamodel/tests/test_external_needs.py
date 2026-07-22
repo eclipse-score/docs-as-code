@@ -90,6 +90,26 @@ def test_invalid_entry():
         _ = parse_external_needs_sources_from_DATA('["@not_a_valid_string"]')
 
 
+def test_custom_name_needs_json_entry():
+    """A producer using docs(name="foo") publishes 'foo_needs_json' instead of 'needs_json'."""
+    result = parse_external_needs_sources_from_DATA('["@repo//:foo_needs_json"]')
+    assert result == [
+        ExternalNeedsSource(
+            bazel_module="repo", path_to_target="", target="foo_needs_json"
+        )
+    ]
+
+
+def test_custom_name_docs_sources_entry():
+    """A producer using docs(name="foo") publishes 'foo_docs_sources' instead of 'docs_sources'."""
+    result = parse_external_needs_sources_from_DATA('["@repo//:foo_docs_sources"]')
+    assert result == [
+        ExternalNeedsSource(
+            bazel_module="repo", path_to_target="", target="foo_docs_sources"
+        )
+    ]
+
+
 def test_add_external_needs_json_appends_entry(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
@@ -109,7 +129,7 @@ def test_add_external_needs_json_appends_entry(
         json.dumps({"project_url": "https://example.test/repo"}), encoding="utf-8"
     )
 
-    monkeypatch.setattr(ext_needs, "get_runfiles_dir", lambda: runfiles_dir)
+    monkeypatch.setattr(ext_needs, "get_runfiles_dir", lambda *_: runfiles_dir)
 
     add_external_needs_json(e, config)
 
@@ -131,7 +151,7 @@ def test_add_external_needs_json_missing_file_keeps_list_empty(
     config = Config()
     config.needs_external_needs = []
 
-    monkeypatch.setattr(ext_needs, "get_runfiles_dir", lambda: tmp_path)
+    monkeypatch.setattr(ext_needs, "get_runfiles_dir", lambda *_: tmp_path)
 
     add_external_needs_json(e, config)
 
@@ -149,7 +169,7 @@ def test_add_external_docs_sources_adds_collection(
     config = Config()
     config.collections = {}
 
-    monkeypatch.setattr(ext_needs, "get_runfiles_dir", lambda: tmp_path)
+    monkeypatch.setattr(ext_needs, "get_runfiles_dir", lambda *_: tmp_path)
 
     add_external_docs_sources(e, config)
 
@@ -172,9 +192,28 @@ def test_add_external_docs_sources_ide_support_returns_without_changes(
     config.collections = {}
 
     monkeypatch.setattr(
-        ext_needs, "get_runfiles_dir", lambda: Path("/tmp/ide_support.runfiles")
+        ext_needs, "get_runfiles_dir", lambda *_: Path("/tmp/ide_support.runfiles")
     )
 
     add_external_docs_sources(e, config)
+
+    assert config.collections == {}
+
+
+def test_add_external_docs_sources_custom_name_ide_support_returns_without_changes(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """With a custom docs_target_name, the ide_support runfiles dir is '<name>_ide_support.runfiles'."""
+    e = ExternalNeedsSource(
+        bazel_module="third_party_docs", target="docs_sources", path_to_target=""
+    )
+    config = Config()
+    config.collections = {}
+
+    monkeypatch.setattr(
+        ext_needs, "get_runfiles_dir", lambda *_: Path("/tmp/foo_ide_support.runfiles")
+    )
+
+    add_external_docs_sources(e, config, docs_target_name="foo")
 
     assert config.collections == {}
