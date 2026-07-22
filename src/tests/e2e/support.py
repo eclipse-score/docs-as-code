@@ -32,6 +32,7 @@ def test_dir() -> Path:
     """
     return Path(__file__).resolve().parent
 
+
 def runfiles_dir() -> Path:
     """
     Return the path to bazel runfiles (content as provided via `data` in the BUILD file).
@@ -44,6 +45,7 @@ def runfiles_dir() -> Path:
     """
     return Path(os.environ["TEST_SRCDIR"]) / os.environ["TEST_WORKSPACE"]
 
+
 def list_runfiles_dir() -> None:
     """List all content of runfiles_dir for debugging purposes."""
 
@@ -51,6 +53,7 @@ def list_runfiles_dir() -> None:
     for item in runfiles_dir().iterdir():
         print(f"runfiles_dir: {item.relative_to(runfiles_dir())}")
     print("----")
+
 
 def runfile(path_env: str) -> Path:
     """Resolve a runfiles-relative path passed through a test environment variable."""
