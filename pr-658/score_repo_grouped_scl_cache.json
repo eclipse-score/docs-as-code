@@ -1711,7 +1711,17 @@
               "full_line": "# req-Id: tool_req__docs_saf_attrs_mitigation_issue"
             }
           ],
-          "TestLinks": []
+          "TestLinks": [
+            {
+              "name": "test_rules_file_based__test_rst_files[safety/test_saf_optional_attrs.rst]",
+              "file": "src/extensions/score_metamodel/tests/rst/safety/test_saf_optional_attrs.rst",
+              "line": 15,
+              "need": "tool_req__docs_saf_attrs_mitigation_issue",
+              "verify_type": "partially",
+              "result": "passed",
+              "result_text": ""
+            }
+          ]
         }
       },
       {
@@ -1787,7 +1797,17 @@
               "full_line": "# req-Id: tool_req__docs_saf_attrs_safety_relevant"
             }
           ],
-          "TestLinks": []
+          "TestLinks": [
+            {
+              "name": "test_rules_file_based__test_rst_files[safety/test_saf_optional_attrs.rst]",
+              "file": "src/extensions/score_metamodel/tests/rst/safety/test_saf_optional_attrs.rst",
+              "line": 15,
+              "need": "tool_req__docs_saf_attrs_safety_relevant",
+              "verify_type": "partially",
+              "result": "passed",
+              "result_text": ""
+            }
+          ]
         }
       },
       {
@@ -1802,7 +1822,17 @@
               "full_line": "# req-Id: tool_req__docs_saf_attrs_root_cause"
             }
           ],
-          "TestLinks": []
+          "TestLinks": [
+            {
+              "name": "test_rules_file_based__test_rst_files[safety/test_saf_optional_attrs.rst]",
+              "file": "src/extensions/score_metamodel/tests/rst/safety/test_saf_optional_attrs.rst",
+              "line": 15,
+              "need": "tool_req__docs_saf_attrs_root_cause",
+              "verify_type": "partially",
+              "result": "passed",
+              "result_text": ""
+            }
+          ]
         }
       },
       {
