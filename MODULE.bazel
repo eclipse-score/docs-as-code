@@ -48,6 +48,10 @@ use_repo(pip, "docs_as_code_hub_env")
 
 # Additional Python rules provided by aspect, e.g. an improved version of
 bazel_dep(name = "aspect_rules_py", version = "1.4.0")
+
+# `platform_transition_binary` (used to build host-only doc tools in the host
+# config under a cross `--platforms`). Already in the graph via aspect_rules_py.
+bazel_dep(name = "aspect_bazel_lib", version = "2.16.0")
 bazel_dep(name = "buildifier_prebuilt", version = "8.2.0.2")
 
 # PlantUML for docs
