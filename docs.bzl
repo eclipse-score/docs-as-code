@@ -45,6 +45,8 @@ load("@aspect_rules_py//py:defs.bzl", "py_binary", "py_venv")
 load("@docs_as_code_hub_env//:requirements.bzl", "all_requirements")
 load("@sphinxdocs//sphinxdocs:sphinx.bzl", "sphinx_build_binary", "sphinx_docs")
 
+load("@score_docs_as_code//:bzl/basics.bzl", "join_path", "dirname", "doc_source_globs")
+
 def _rewrite_needs_json_to_docs_sources(labels):
     """Replace '@repo//:needs_json' -> '@repo//:docs_sources' for every item."""
     out = []
@@ -71,8 +73,9 @@ def _merge_sourcelinks(name, sourcelinks, known_good = None):
     """Merge multiple sourcelinks JSON files into a single file.
 
     Args:
-        name: Name for the merged sourcelinks target
-        sourcelinks: List of sourcelinks JSON file targets
+      name: Name for the merged sourcelinks target.
+      sourcelinks: Sourcelinks JSON file targets.
+      known_good: Optional known-good sourcelinks JSON target.
     """
 
     extra_srcs = []
@@ -96,24 +99,31 @@ def _merge_sourcelinks(name, sourcelinks, known_good = None):
         tools = [merge_sourcelinks_tool],
     )
 
+def _requirement_package_name(target):
+    """Extract the package name represented by a requirement target.
+
+    Args:
+      target: Requirement label or label-like value.
+
+    Returns:
+      The package-name portion used for dependency comparison.
+    """
+    return str(target).split("/")[-1].split(":")[0]
+
+
 def _missing_requirements(deps):
-    """Add Python hub dependencies if they are missing."""
-    found = []
-    missing = []
-    def _target_to_packagename(target):
-        return str(target).split("/")[-1].split(":")[0]
-    all_packages = [_target_to_packagename(pkg) for pkg in all_requirements]
-    def _find(pkg):
-        for dep in deps:
-            dep_pkg = _target_to_packagename(dep)
-            if dep_pkg == pkg:
-                return True
-        return False
-    for pkg in all_packages:
-        if _find(pkg):
-            found.append(pkg)
-        else:
-            missing.append(pkg)
+    """Return missing Python hub dependencies or reject partial inclusion.
+
+    Args:
+      deps: User-provided Python dependency labels.
+
+    Returns:
+      All hub requirements when none are present, otherwise an empty list.
+    """
+    requested_packages = [_requirement_package_name(dep) for dep in deps]
+    all_packages = [_requirement_package_name(pkg) for pkg in all_requirements]
+    found = [pkg for pkg in all_packages if pkg in requested_packages]
+    missing = [pkg for pkg in all_packages if pkg not in requested_packages]
     if len(missing) == len(all_requirements):
         #print("All docs-as-code dependencies are missing, adding all of them.")
         return all_requirements
@@ -142,11 +152,6 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
                  file instead of the default metamodel shipped with score_metamodel.
     """
 
-    call_path = native.package_name()
-
-    if call_path != "":
-        fail("docs() must be called from the root package. Current package: " + call_path)
-
     metamodel_data = []
     metamodel_env = {}
     metamodel_opts = []
@@ -171,30 +176,10 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
         deps = deps,
     )
 
-    # If the source directory is the root (".") we must omit it, otherwise:
-    # > invalid glob pattern './**/*.png': segment '.' not permitted
-    if source_dir == ".":
-        source_prefix = ""
-    else:
-        source_prefix = source_dir + "/"
 
     native.filegroup(
         name = "docs_sources",
-        srcs = native.glob([
-            source_prefix + "**/*.png",
-            source_prefix + "**/*.svg",
-            source_prefix + "**/*.md",
-            source_prefix + "**/*.rst",
-            source_prefix + "**/*.html",
-            source_prefix + "**/*.css",
-            source_prefix + "**/*.puml",
-            source_prefix + "**/*.need",
-            source_prefix + "**/*.yaml",
-            source_prefix + "**/*.json",
-            source_prefix + "**/*.csv",
-            source_prefix + "**/*.inc",
-        ], allow_empty = True),
-        visibility = ["//visibility:public"],
+        srcs = doc_source_globs(source_dir),
     )
 
     _sourcelinks_json(name = "sourcelinks_json", srcs = scan_code)
@@ -301,7 +286,7 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
     sphinx_docs(
         name = "needs_json",
         srcs = [":docs_sources"],
-        config = ":" + source_prefix + "conf.py",
+        config = ":" + join_path(source_dir, "conf.py"),
         extra_opts = [
             "-W",
             "--keep-going",
@@ -342,8 +327,8 @@ def _sourcelinks_json(name, srcs):
     See https://eclipse-score.github.io/docs-as-code/main/how-to/source_to_doc_links.html
 
     Args:
-        name: Name of the target
-        srcs: Source files to scan for traceability tags
+      name: Name of the target.
+      srcs: Source files to scan for traceability tags.
     """
     output_file = name + ".json"
 

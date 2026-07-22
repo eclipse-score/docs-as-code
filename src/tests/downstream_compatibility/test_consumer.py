@@ -222,6 +222,8 @@ def _ensure_repo(repo_path: Path, git_url: str, use_cache: bool) -> None:
 
 def _cleanup_before_cmd(cwd: Path, cmd: str) -> None:
     # ubproject.toml is created by :docs
+    # Delete in cwd (repo root) and any subdir to avoid stale config from previous runs
+    (cwd / "ubproject.toml").unlink(missing_ok=True)
     for p in cwd.glob("*/ubproject.toml"):
         p.unlink()
 
