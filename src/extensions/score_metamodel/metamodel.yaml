@@ -679,8 +679,9 @@ needs_types:
   plat_saf_dfa:
     title: Platform Dependent Failure Analysis
     mandatory_options:
-      failure_id: ^.*$
-      failure_effect: ^.*$
+      failure_id: ^.+$
+      # req-Id: tool_req__docs_saf_attr_fmea_failure_effect
+      failure_effect: ^.+$
       sufficient: ^(yes|no)$
       status: ^(valid|invalid)$
       # req-Id: tool_req__docs_common_attr_description
@@ -699,8 +700,9 @@ needs_types:
     title: Feature DFA (Dependent Failure Analysis)
     mandatory_options:
       # req-Id: tool_req__docs_saf_attr_dfa_failure_id
-      failure_id: ^.*$
-      failure_effect: ^.*$
+      failure_id: ^.+$
+      # req-Id: tool_req__docs_saf_attr_fmea_failure_effect
+      failure_effect: ^.+$
       # req-Id: tool_req__docs_saf_attrs_sufficient
       sufficient: ^(yes|no)$
       status: ^(valid|invalid)$
@@ -729,8 +731,9 @@ needs_types:
     title: Component DFA (Dependent Failure Analysis)
     mandatory_options:
       # req-Id: tool_req__docs_saf_attr_dfa_failure_id
-      failure_id: ^.*$
-      failure_effect: ^.*$
+      failure_id: ^.+$
+      # req-Id: tool_req__docs_saf_attr_fmea_failure_effect
+      failure_effect: ^.+$
       # req-Id: tool_req__docs_saf_attrs_sufficient
       sufficient: ^(yes|no)$
       status: ^(valid|invalid)$
@@ -759,7 +762,8 @@ needs_types:
     mandatory_options:
       # req-Id: tool_req__docs_saf_attr_fmea_fault_id
       fault_id: ^.*$
-      failure_effect: ^.*$
+      # req-Id: tool_req__docs_saf_attr_fmea_failure_effect
+      failure_effect: ^.+$
       # req-Id: tool_req__docs_saf_attrs_sufficient
       sufficient: ^(yes|no)$
       status: ^(valid|invalid)$
@@ -790,7 +794,8 @@ needs_types:
     mandatory_options:
       # req-Id: tool_req__docs_saf_attr_fmea_fault_id
       fault_id: ^.*$
-      failure_effect: ^.*$
+      # req-Id: tool_req__docs_saf_attr_fmea_failure_effect
+      failure_effect: ^.+$
       # req-Id: tool_req__docs_saf_attrs_sufficient
       sufficient: ^(yes|no)$
       status: ^(valid|invalid)$

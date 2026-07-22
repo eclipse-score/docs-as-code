@@ -1125,7 +1125,7 @@ Testing
 
 .. tool_req:: Failure Effect
    :id: tool_req__docs_saf_attr_fmea_failure_effect
-   :implemented: NO
+   :implemented: YES
    :tags: Safety Analysis
    :version: 1
    :satisfies: gd_req__saf_attr_feffect[version==1]

@@ -74,7 +74,8 @@ repos:
         pass_filenames: false
 
   # Ensure every file has a copyright header as per the Eclipse Foundation's requirements
-  - repo: https://github.com/eclipse-score/tooling
-    rev: 31ff8eee214e4e97ef8f5cb46e443273515b63ec
+  # CR_CHECKER
+  - repo: https://github.com/eclipse-score/tools
+    rev: 7694bf823421b5542cd2f45239b8bdf205dbface
     hooks:
       - id: copyright
