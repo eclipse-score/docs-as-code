@@ -273,19 +273,47 @@ Versioning
      In our enviroment it supports whole numbers e.g. (1,2,10,34)
 
 
-
 .. tool_req:: Suspicious: Enforce attribute
    :id: tool_req__docs_common_attr_suspicious
    :tags: Common Attributes
    :implemented: YES
-   :version: 1
-   :parent_covered: NO: parent talks about setting covered to false, but we want to issue a build error.
-   :satisfies: gd_req__req_suspicious[version==2]
+   :version: 2
+   :parent_covered: YES: Together with :need:`tool_req__docs_req_testlink_outdated_check` and :need:`tool_req__docs_req_attr_testcov_update`
+   :satisfies: gd_req__req_suspicious[version==3]
    :status: invalid
 
-   Docs-as-Code shall check if linked parent needs have different versions, compared to
+   Docs-as-Code shall check if linked needs have different versions, compared to
    the version the need was originally linked to.
 
+
+.. tool_req:: Test coverage: Detect outdated test linkage
+   :id: tool_req__docs_req_testlink_outdated_check
+   :tags: Common Attributes, Testing
+   :implemented: NO
+   :version: 1
+   :parent_covered: YES: Together with tool_req__docs_common_attr_suspicious and tool_req__docs_req_attr_testcov_update
+   :satisfies: gd_req__req_suspicious[version==3]
+   :status: invalid
+
+   Docs-as-Code shall check, for each requirement of type :need:`tool_req__docs_req_types`
+   that has one or more linked test needs via the ``testlink`` attribute, whether the
+   requirement's version has changed since the version that was originally linked by
+   each test.
+
+
+.. tool_req:: Test coverage: Set attribute on outdated test linkage
+   :id: tool_req__docs_req_attr_testcov_update
+   :tags: Common Attributes, Testing
+   :implemented: NO
+   :version: 1
+   :parent_covered: YES: Together with tool_req__docs_req_testlink_outdated_check tool_req__docs_common_attr_suspicious
+   :satisfies: gd_req__req_suspicious[version==3]
+   :status: invalid
+
+   Docs-as-Code shall set the ``testcovered`` attribute (see
+   :need:`tool_req__docs_req_attr_testcov`) of a requirement to ``No`` whenever
+   :need:`tool_req__docs_req_testlink_outdated_check` detects that a linked test is
+   outdated with respect to the requirement's version.
 
 
 

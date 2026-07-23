@@ -70,12 +70,7 @@ http_file(
     urls = ["https://github.com/withered-magic/starpls/releases/download/v0.1.21/starpls-linux-amd64"],
 )
 
-bazel_dep(name = "score_process", version = "2.0.1")
-git_override(
-    module_name = "score_process",
-    commit = "292ec1c913a88ed1b724e33fdae658df6dc7b033",
-    remote = "https://github.com/eclipse-score/process_description",
-)
+bazel_dep(name = "score_process", version = "2.0.2")
 
 # Provide the tools from the devcontainer to Bazel
 bazel_dep(name = "score_devcontainer", version = "1.8.0")
