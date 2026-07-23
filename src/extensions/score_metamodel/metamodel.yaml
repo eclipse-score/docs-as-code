@@ -933,6 +933,39 @@ needs_types:
       fully_verifies: ANY
       partially_verifies: ANY
 
+  # req-Id: tool_req__docs_verification_report_need
+  mod_ver_report:
+    title: Module Verification Report
+    prefix: mod_vrep__
+    mandatory_options:
+      # req-Id: tool_req__docs_common_attr_safety
+      safety: ^(QM|ASIL_B)$
+      # req-Id: tool_req__docs_common_attr_security
+      security: ^(YES|NO)$
+      # req-Id: tool_req__docs_common_attr_status
+      status: ^(valid|invalid)$
+      # req-Id: tool_req__docs_verification_report_need
+      verification_method: ^.*$
+    optional_options:
+      requirements_coverage_percent: ^(100|[1-9]?[0-9])$
+      structural_coverage_percent: ^(100|[1-9]?[0-9])$
+      branch_coverage_percent: ^(100|[1-9]?[0-9])$
+      verdict: ^(pass|fail|open)$
+      report_version: ^.*$
+      release_baseline: ^.*$
+    mandatory_links:
+      # req-Id: tool_req__docs_verification_report_need
+      belongs_to: mod
+    optional_links:
+      # req-Id: tool_req__docs_verification_report_need
+      contains: ANY
+      evidence: ANY
+      covers: ANY
+      realizes: workproduct
+    tags:
+      - verification_report
+    parts: 3
+
 
   # https://eclipse-score.github.io/process_description/main/permalink.html?id=gd_temp__change_decision_record
   dec_rec:
@@ -1067,6 +1100,10 @@ needs_extra_links:
   partially_verifies:
     incoming: partially_verified_by
     outgoing: partially_verifies
+
+  evidence:
+    incoming: evidence_for
+    outgoing: evidence
 
 
 ##############################################################
