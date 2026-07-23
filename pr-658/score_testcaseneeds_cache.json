@@ -2138,7 +2138,7 @@
     "TestType": "requirements_based",
     "DerivationTechnique": "requirements_based",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_saf_attrs_violates",
+    "PartiallyVerifies": "tool_req__docs_saf_attrs_violates[version==2]",
     "FullyVerifies": null
   },
   {
@@ -2152,8 +2152,8 @@
     "TestType": "requirements_based",
     "DerivationTechnique": "requirements_based",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_saf_types, tool_req__docs_saf_attrs_mandatory",
-    "FullyVerifies": null
+    "PartiallyVerifies": "tool_req__docs_saf_attrs_mandatory[version==1]",
+    "FullyVerifies": "tool_req__docs_saf_types[version==2]"
   },
   {
     "name": "test_rules_file_based__test_rst_files[safety/test_saf_optional_attrs.rst]",
@@ -2166,8 +2166,8 @@
     "TestType": "requirements_based",
     "DerivationTechnique": "requirements_based",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_saf_attrs_mitigation_issue, tool_req__docs_saf_attrs_safety_relevant, tool_req__docs_saf_attrs_root_cause",
-    "FullyVerifies": null
+    "PartiallyVerifies": null,
+    "FullyVerifies": "tool_req__docs_saf_attrs_mitigation_issue[version==1], tool_req__docs_saf_attrs_safety_relevant[version==1], tool_req__docs_saf_attrs_root_cause[version==1]"
   },
   {
     "name": "test_rules_file_based__test_rst_files[safety/test_saf_mandatory_attrs.rst]",
@@ -2180,8 +2180,8 @@
     "TestType": "requirements_based",
     "DerivationTechnique": "requirements_based",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_saf_attrs_mandatory, tool_req__docs_saf_attr_dfa_failure_id, tool_req__docs_saf_attr_fmea_fault_id, tool_req__docs_saf_attrs_sufficient, tool_req__docs_saf_attrs_content",
-    "FullyVerifies": null
+    "PartiallyVerifies": "tool_req__docs_saf_attrs_mandatory[version==1]",
+    "FullyVerifies": "tool_req__docs_saf_attr_dfa_failure_id[version==2], tool_req__docs_saf_attr_fmea_fault_id[version==2], tool_req__docs_saf_attrs_sufficient[version==1], tool_req__docs_saf_attrs_content[version==2]"
   },
   {
     "name": "TestCheckOptions__test_unknown_directive",
@@ -2950,7 +2950,7 @@
     "TestType": "requirements_based",
     "DerivationTechnique": "requirements_based",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_req_types",
+    "PartiallyVerifies": "tool_req__docs_req_types[version==1]",
     "FullyVerifies": null
   },
   {
@@ -2964,7 +2964,7 @@
     "TestType": "requirements_based",
     "DerivationTechnique": "requirements_based",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_common_attr_status, tool_req__docs_req_types",
+    "PartiallyVerifies": "tool_req__docs_common_attr_status[version==1], tool_req__docs_req_types[version==1]",
     "FullyVerifies": null
   },
   {
@@ -2978,8 +2978,8 @@
     "TestType": "requirements_based",
     "DerivationTechnique": "requirements_based",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_saf_attr_fmea_failure_effect",
-    "FullyVerifies": null
+    "PartiallyVerifies": null,
+    "FullyVerifies": "tool_req__docs_saf_attr_fmea_failure_effect[version==1]"
   },
   {
     "name": "test_rules_file_based__test_rst_files[options/test_options_extra_option.rst]",
@@ -2992,7 +2992,7 @@
     "TestType": "requirements_based",
     "DerivationTechnique": "requirements_based",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_req_types, tool_req__docs_common_attr_status",
+    "PartiallyVerifies": "tool_req__docs_req_types[version==1], tool_req__docs_common_attr_status[version==1]",
     "FullyVerifies": null
   },
   {
@@ -3006,8 +3006,8 @@
     "TestType": "requirements_based",
     "DerivationTechnique": "requirements_based",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_stdwp_types, tool_req__docs_wp_types",
-    "FullyVerifies": null
+    "PartiallyVerifies": null,
+    "FullyVerifies": "tool_req__docs_stdwp_types[version==1], tool_req__docs_wp_types[version==1]"
   },
   {
     "name": "test_rules_file_based__test_need",
@@ -3062,8 +3062,8 @@
     "TestType": "requirements_based",
     "DerivationTechnique": "requirements_based",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_sec_types, tool_req__docs_sec_attrs_mandatory, tool_req__docs_sec_attrs_optional",
-    "FullyVerifies": null
+    "PartiallyVerifies": "tool_req__docs_sec_attrs_optional[version==1]",
+    "FullyVerifies": "tool_req__docs_sec_types[version==2], tool_req__docs_sec_attrs_mandatory[version==1]"
   },
   {
     "name": "test_rules_file_based__test_need",
@@ -3090,8 +3090,8 @@
     "TestType": "requirements_based",
     "DerivationTechnique": "requirements_based",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_stdreq_types, tool_req__docs_stdwp_types",
-    "FullyVerifies": null
+    "PartiallyVerifies": null,
+    "FullyVerifies": "tool_req__docs_stdreq_types[version==1], tool_req__docs_stdwp_types[version==1]"
   },
   {
     "name": "test_rules_file_based__test_rst_files[attributes/test_attributes_format_id_format.rst]",
