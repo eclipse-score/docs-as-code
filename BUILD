@@ -17,8 +17,8 @@ package(default_visibility = ["//visibility:public"])
 exports_files(["pyproject.toml"])
 
 docs(
-    data = [
-        "@score_process//:needs_json",
+    external_needs = [
+        "@score_process//:needs_json_file",
     ],
     bundles = [
         {

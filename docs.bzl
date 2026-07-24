@@ -141,6 +141,7 @@ def docs(
         source_dir = "docs",
         data = [],
         deps = [],
+        external_needs = [],
         scan_code = [],
         test_sources = [],
         known_good = None,
@@ -155,6 +156,7 @@ def docs(
       source_dir: The source directory containing documentation files. Defaults to "docs".
       data: Additional data files to include in the documentation build.
       deps: Additional dependencies for the documentation build.
+      external_needs: List of external needs targets to include in the documentation build.
       scan_code: List of code targets to scan for source code links.
       test_sources: Optional list of repo-relative directory paths which will be used to filter testcases for documentation generation.
                     When empty (default), all testcases found in `bazel-testlogs` will be used.
@@ -171,6 +173,7 @@ def docs(
               Note: a bundle label may also point at another module's auto-exposed
               bundle, e.g. "@score_process//:docs_bundle".
     """
+    # HINT: keep documentation sync docs/reference/bazel_macros.rst
 
     source_config = ":" + ("" if source_dir == "." else source_dir + "/") + "conf.py"
 
@@ -205,7 +208,7 @@ def docs(
     sphinx_build_binary(
         name = "sphinx_build",
         visibility = ["//visibility:private"],
-        data = data + metamodel_label + [":docs_bundle"],
+        data = data + external_needs + metamodel_label + [":docs_bundle"],
         deps = deps,
     )
 
@@ -236,13 +239,14 @@ def docs(
     # complete bundle here would add those files to runfiles and could collide
     # with the executable target name (for example ``docs`` and ``docs/``).
     # External bundles do need runfiles, so keep only those sources.
-    docs_data = data + metamodel_label + [":sourcelinks_json", ":_external_docs_runfiles"] + mounts_manifest_label
+    docs_data = data + external_needs + metamodel_label + [":sourcelinks_json", ":_external_docs_runfiles"] + mounts_manifest_label
 
     docs_env = {
         "SOURCE_DIRECTORY": source_dir,
         "PACKAGE_DIR": native.package_name(),
         "TEST_SOURCES": str(test_sources),
         "DATA": str(data),
+        "EXTERNAL_NEEDS_FILES": str(external_needs),
         # `bazel run` starts from a runfiles tree, so this logical path is
         # resolved by score_mounts through ``RUNFILES_DIR``.
         "MOUNTS_MANIFEST": "$(rlocationpath :_mounts_manifest)" if bundles else "",
@@ -317,7 +321,7 @@ def docs(
             "-T",  # show more details in case of errors
             "--jobs",
             "auto",
-            "--define=external_needs_source=" + str(data),
+            "--define=external_needs_source=" + str(data + external_needs),
             "--define=score_sourcelinks_json=$(location :sourcelinks_json)",
             "--define=score_source_code_linker_plain_links=1",
         ] + (
@@ -327,7 +331,7 @@ def docs(
         ) + (["--define=score_metamodel_yaml=$(location " + str(metamodel) + ")"] if metamodel else []),
         formats = ["needs"],
         sphinx = ":sphinx_build",
-        tools = data + metamodel_label + [":sourcelinks_json", ":docs_bundle"] + mounts_manifest_label,
+        tools = data + external_needs + metamodel_label + [":sourcelinks_json", ":docs_bundle"] + mounts_manifest_label,
         visibility = ["//visibility:public"],
         # Persistent workers cause stale symlinks after dependency version
         # changes, corrupting the Bazel cache.
@@ -339,6 +343,16 @@ def docs(
         srcs = [":needs_json"],
         outs = ["metrics.json"],
         cmd = "cp $(location :needs_json)/metrics.json $@",
+        visibility = ["//visibility:public"],
+    )
+
+    native.genrule(
+        # In contrast to the "needs_json" target represents *only* the needs.json file,
+        # not the whole needs build output.
+        name = "needs_json_file",
+        srcs = [":needs_json"],
+        outs = ["needs.json"],
+        cmd = "cp $(location :needs_json)/needs.json $@",
         visibility = ["//visibility:public"],
     )
 

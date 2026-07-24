@@ -41,9 +41,10 @@ A minimal example (add or extend the existing `bazel_deps` stanza):
 2a) Import the other module's built inventory
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The documentation build in this project is exposed via a Bazel macro/rule that accepts a `data` parameter.
-Add the external module's ``:needs_json`` target to that list
-to have their needs elements available for cross-referencing.
+The documentation build is exposed via a Bazel macro that accepts an ``external_needs`` parameter
+for external ``:needs_json_file`` targets.
+Use ``external_needs`` instead of ``data`` when the target produces needs JSON —
+``data`` is meant for non-needs runfiles (e.g. custom tool outputs).
 
 Example `BUILD` snippet (consumer module):
 
@@ -106,3 +107,21 @@ Which results in:
 
 See the `Sphinx-Needs documentation <https://sphinx-needs.readthedocs.io/en/latest/>`_
 for more details on cross-referencing needs.
+
+Data vs. external_needs
+~~~~~~~~~~~~~~~~~~~~~~~
+
+It might seem like ``data`` and ``external_needs`` behave nearly the same.
+
+.. code-block:: starlark
+
+    docs(
+      data           = ["@score_process//:needs_json"],
+      external_needs = ["@score_process//:needs_json_file"],  # same?
+    )
+
+For a ``:docs`` they behave the same,
+but for ``:docs_combo`` they do not.
+In a combo build, the ``data`` are treated differently and will include the documentation
+instead of just link the needs online.
+However, ``external_needs`` will always be hyperlinks.
