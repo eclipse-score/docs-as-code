@@ -40,19 +40,17 @@ jobs:
           bazelisk-cache: true
           cache-save: ${{ github.event_name == 'push' }}
 
-      - name: Install pytest
-        run: pip install pytest
+      - name: Setup venv
+        run: bazel run --lockfile_mode=error //:ide_support
 
       - name: Run docs_bzl tests
-        run: pytest -vv src/tests/docs_bzl
+        run: .venv/bin/python -m pytest -vv src/tests/docs_bzl
 
       - name: Run bazel test targets
-        run: |
-          bazel run --lockfile_mode=error //:ide_support
-          bazel test --lockfile_mode=error //...
+        run: bazel test --lockfile_mode=error //...
 
       - name: Prepare bundled test report
-        if: always()
+        if: ! cancelled()
         # Creating tests-report directory
         # Follow Symlinks via '-L' to copy correctly
         # Copy everything inside the 'test-reports' folder
