@@ -47,7 +47,11 @@ jobs:
         run: .venv_docs/bin/python -m pytest -vv src/tests/docs_bzl
 
       - name: Run bazel test targets
-        run: bazel test --lockfile_mode=error //...
+        run: bazel test --lockfile_mode=error //... --build_tests_only
+
+      - name: Build all targets
+        # Skip tests, since some are non buildable negative tests
+        run: bazel build --lockfile_mode=error //... -- -//src/tests/...
 
       - name: Prepare bundled test report
         if: ! cancelled()
