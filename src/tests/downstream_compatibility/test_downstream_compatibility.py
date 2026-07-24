@@ -11,14 +11,14 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 """
-Consumer tests: verify that downstream repos build successfully against this branch.
+Downstream compatibility tests: verify that downstream repos build successfully against this branch.
 
 Via Python (requires ide_support to have been run first):
     bazel run //:ide_support  # once, to set up .venv_docs
-    python -m pytest src/tests/downstream_compatibility/test_consumer.py -s
-    python -m pytest src/tests/downstream_compatibility/test_consumer.py -k "score and local"
-    python -m pytest src/tests/downstream_compatibility/test_consumer.py -k "process_description"
-    python -m pytest src/tests/downstream_compatibility/test_consumer.py --disable-cache
+    python -m pytest src/tests/downstream_compatibility -s
+    python -m pytest src/tests/downstream_compatibility -k "score and local"
+    python -m pytest src/tests/downstream_compatibility -k "process_description"
+    python -m pytest src/tests/downstream_compatibility --disable-cache
 
 Known non-passing tests are sometimes marked xfail and do not count as failures.
 """

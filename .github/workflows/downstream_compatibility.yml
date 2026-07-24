@@ -48,7 +48,7 @@ jobs:
         run: bazel run //:ide_support
 
       - name: Run Consumer tests
-        run: .venv_docs/bin/python -m pytest -vv -s src/tests/test_consumer.py -k "$CONSUMER"
+        run: .venv_docs/bin/python -m pytest -vv -s src/tests/downstream_compatibility -k "$CONSUMER"
         env:
           FORCE_COLOR: "1"
           TERM: xterm-256color
