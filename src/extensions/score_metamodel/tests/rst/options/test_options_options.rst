@@ -54,6 +54,7 @@
 .. feat_req:: Child requirement
    :id: feat_req__abcg
    :derived_from: stkh_req__abcd
+   :satisfied_by: feat__abcg
    :expect_not: feat_req__abcg: is missing required link
 
 .. stkh_req:: Parent requirement

@@ -290,11 +290,11 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_description
       content: ^[\s\S]+$
       valid_from: ^v(0|[1-9]\d*)\.(0|[1-9]\d*)(\.(0|[1-9]\d*))?$
+    mandatory_links:
+      satisfied_by: feat
     optional_links:
       # req-Id: tool_req__docs_req_link_satisfies_allowed
       derived_from: stkh_req
-      belongs_to: feat # for evaluation
-      satisfied_by: feat # new preferred name for belongs_to
       # req-Id: tool_req__docs_req_link_covers_aou
       covers: aou_req
     optional_options:
@@ -322,12 +322,11 @@ needs_types:
       status: ^(valid|invalid)$
       # req-Id: tool_req__docs_common_attr_description
       content: ^[\s\S]+$
+    mandatory_links:
+      satisfied_by: comp
     optional_links:
       # req-Id: tool_req__docs_req_link_satisfies_allowed
       derived_from: feat_req
-      belongs_to: comp # for backward compatibility
-      satisfied_by: comp # new preferred name for belongs_to
-      # TODO: make satisfied_by mandatory once downstream repos migrate from belongs_to
       # req-Id: tool_req__docs_req_link_covers_aou
       covers: aou_req
     optional_options:
