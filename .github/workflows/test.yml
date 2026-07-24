@@ -41,7 +41,7 @@ jobs:
           cache-save: ${{ github.event_name == 'push' }}
 
       - name: Run docs_bzl tests
-        run:
+        run: |
           pip install pytest
           pytest -vv src/tests/docs_bzl
 

@@ -11,7 +11,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-name: Consumer Tests
+name: Downstream Compatibility
 on:
   workflow_call:
   pull_request:
