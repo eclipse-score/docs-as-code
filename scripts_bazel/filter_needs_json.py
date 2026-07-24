@@ -19,17 +19,20 @@ A need is kept when it matches *all* of the active filters:
 * ``--type``: the value of the need's ``type`` attribute is in the requested
   list of element types (e.g. ``feat_req``). If no ``--type`` is given, needs
   of any type are kept.
-* ``--name``: the feature/component name encoded in the need's ID matches one
-  of the requested names. Need IDs follow the convention
-  ``<type>__<name>__<rest>`` (e.g. ``feat_req__baselibs__core_utilities``), so
-  the second ``__``-separated segment is the feature/component name. The
-  ``comp_arc_sta`` and ``comp_arc_dyn`` types are an exception: their IDs follow
-  ``<type>__<feature name>__<component name>`` (e.g.
-  ``comp_arc_sta__baselibs__filesystem``), so the *third* segment holds the
-  component name used for matching. Any underscores within that component
-  segment are removed before matching, so ``comp_arc_sta__baselibs__bit_manipulation``
-  matches the component name ``bitmanipulation``. If no ``--name`` is given,
-  needs of any feature/component are kept.
+* ``--name``: the need belongs to one of the requested features/components. The
+  owning feature/component is resolved by following a link and reading the
+  linked element's ``title``:
+
+  * ``feat_req`` / ``comp_req`` follow ``satisfied_by`` (falling back to the
+    legacy ``belongs_to`` link) to their ``feat`` / ``comp`` element.
+  * ``feat_arc_*`` / ``comp_arc_*`` follow ``belongs_to`` to their ``feat`` /
+    ``comp`` element.
+
+  The link target is looked up in the input needs.json (plus any
+  ``--extra-needs-json`` inputs) and its ``title`` is matched against the
+  requested names. For any other element type the name falls back to the second
+  ``__``-separated segment of the need ID (``<type>__<name>__...``). If no
+  ``--name`` is given, needs of any feature/component are kept.
 
 The top-level structure of the needs.json file is preserved; only the per-need
 entries are filtered.
@@ -46,32 +49,61 @@ logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
 
 
-# Element types whose IDs follow ``<type>__<feature name>__<component name>``,
-# i.e. the component name used for matching is the *third* ``__`` segment.
-_COMPONENT_NAME_THIRD_SEGMENT_TYPES = frozenset({"comp_arc_sta", "comp_arc_dyn"})
+# For each element type, the ordered link field(s) whose target ``feat`` /
+# ``comp`` element carries the owning feature/component ``title`` used for
+# --name matching. Requirements prefer the new ``satisfied_by`` link and fall
+# back to the legacy ``belongs_to`` link; architecture views use ``belongs_to``.
+_NAME_LINK_FIELDS: dict[str, tuple[str, ...]] = {
+    "feat_req": ("satisfied_by", "belongs_to"),
+    "comp_req": ("satisfied_by", "belongs_to"),
+    "feat_arc_sta": ("belongs_to",),
+    "feat_arc_dyn": ("belongs_to",),
+    "comp_arc_sta": ("belongs_to",),
+    "comp_arc_dyn": ("belongs_to",),
+}
 
 
-def _id_name_segment(need_id: str, need_type: str | None = None) -> str | None:
-    """Return the feature/component name encoded in a need ID.
+def _id_name_segment(need_id: str) -> str | None:
+    """Return the feature/component name in the second ``__`` segment of a need ID.
 
-    Need IDs follow the convention ``<type>__<name>__<rest>`` (e.g.
-    ``feat_req__baselibs__core_utilities``); the second ``__``-separated segment
-    is the feature/component name. The ``comp_arc_sta`` and ``comp_arc_dyn``
-    types are an exception: their IDs follow
-    ``<type>__<feature name>__<component name>`` (e.g.
-    ``comp_arc_sta__baselibs__filesystem``), so the *third* segment holds the
-    component name. Any underscores within that component segment are removed,
-    so ``comp_arc_sta__baselibs__bit_manipulation`` yields ``bitmanipulation``.
-    Returns ``None`` when the ID does not follow the convention.
+    Fallback for element types without a configured owning link (see
+    ``_NAME_LINK_FIELDS``). Need IDs follow ``<type>__<name>__<rest>`` (e.g.
+    ``aou_req__baselibs__foo``), so the second ``__``-separated segment is the
+    name. Returns ``None`` when the ID does not follow the convention.
     """
     parts = need_id.split("__")
-    if need_type in _COMPONENT_NAME_THIRD_SEGMENT_TYPES:
-        if len(parts) < 3 or not parts[2]:
-            return None
-        return parts[2].replace("_", "")
     if len(parts) < 2 or not parts[1]:
         return None
     return parts[1]
+
+
+def _need_names(
+    need_id: str,
+    need: dict[str, Any],
+    universe: dict[str, dict[str, Any]],
+) -> set[str]:
+    """Return the feature/component names a need belongs to.
+
+    For requirement and architecture element types the owning feature/component
+    is resolved by following the configured link (``satisfied_by`` /
+    ``belongs_to``, see ``_NAME_LINK_FIELDS``) and reading the linked element's
+    ``title`` from ``universe``. For any other type the name falls back to the
+    second ``__`` segment of the need ID.
+    """
+    fields = _NAME_LINK_FIELDS.get(str(need.get("type")))
+    if fields is None:
+        segment = _id_name_segment(need_id)
+        return {segment} if segment is not None else set()
+    names: set[str] = set()
+    for field in fields:
+        for target in _link_targets(need, field):
+            target_need = universe.get(target)
+            if target_need is None:
+                continue
+            title = target_need.get("title")
+            if title:
+                names.add(str(title).strip())
+    return names
 
 
 def _keep_need(
@@ -79,13 +111,12 @@ def _keep_need(
     need: dict[str, Any],
     types: set[str],
     names: set[str],
+    universe: dict[str, dict[str, Any]],
 ) -> bool:
     if types and need.get("type") not in types:
         return False
-    if names:
-        segment = _id_name_segment(need_id, need.get("type"))
-        if segment is None or segment not in names:
-            return False
+    if names and names.isdisjoint(_need_names(need_id, need, universe)):
+        return False
     return True
 
 
@@ -93,6 +124,7 @@ def filter_needs(
     data: dict[str, Any],
     types: set[str],
     names: set[str],
+    universe: dict[str, dict[str, Any]],
 ) -> dict[str, Any]:
     """Return a copy of ``data`` keeping only the needs that match the filters."""
     for version in data.get("versions", {}).values():
@@ -100,7 +132,7 @@ def filter_needs(
         version["needs"] = {
             need_id: need
             for need_id, need in needs.items()
-            if _keep_need(need_id, need, types, names)
+            if _keep_need(need_id, need, types, names, universe)
         }
     return data
 
@@ -200,10 +232,10 @@ def main() -> int:
         default=[],
         metavar="NAME",
         help=(
-            "Feature/component name to keep, matched against the second "
-            "'__'-separated segment of each need ID (the '<type>__<name>__...' "
-            "naming convention). May be given multiple times. If omitted, all "
-            "features/components are kept."
+            "Feature/component name to keep, matched against the 'title' of the "
+            "feat/comp element linked via 'satisfied_by' (requirements) or "
+            "'belongs_to' (architecture). May be given multiple times. If "
+            "omitted, all features/components are kept."
         ),
     )
     _ = parser.add_argument(
@@ -263,10 +295,15 @@ def main() -> int:
         with open(_resolve_needs_json(extra)) as f:
             extra_needs.update(collect_needs(json.load(f)))
 
+    # Universe used to resolve a need's owning feature/component title for --name
+    # filtering (link targets may live in the input or an external needs.json).
+    name_universe = {**source_needs, **extra_needs}
+
     filtered = filter_needs(
         data,
         types=set(args.types),
         names=set(args.names),
+        universe=name_universe,
     )
 
     kept_needs = collect_needs(filtered)

@@ -384,8 +384,10 @@ def filtered_needs_json(
         types: Optional list of sphinx-needs element types to keep
             (e.g. `["feat_req", "comp_req"]`). If empty, all types are kept.
         names: Optional list of feature/component names to keep, matched against
-            the second `__`-separated segment of each need ID (the
-            `<type>__<name>__...` naming convention). If empty, all
+            the `title` of the `feat`/`comp` element the need links to:
+            `feat_req`/`comp_req` via `satisfied_by` (legacy `belongs_to`
+            fallback), `feat_arc_*`/`comp_arc_*` via `belongs_to`. Other types
+            fall back to the second `__`-separated ID segment. If empty, all
             features/components are kept.
         strict: When True the build fails (and no `<name>.json` is written) if any
             kept need has a dangling link, i.e. a link target that is present
@@ -454,8 +456,9 @@ def component_requirements(
         src: Label of a `needs_json` build output. Defaults to the calling
             package's `//:needs_json`.
         component: Optional component name. If given, only component requirements
-            named with that component (per the `<type>__<name>__...`
-            convention) are kept; if omitted, all component requirements are
+            linked to a component whose `title` matches are kept; the component
+            is resolved via the requirement's `satisfied_by` link (legacy
+            `belongs_to` fallback). If omitted, all component requirements are
             kept.
         strict: When True the build fails (no output) on any dangling link in the
             kept needs. See `filtered_needs_json`.
@@ -494,8 +497,10 @@ def feature_requirements(
         src: Label of a `needs_json` build output. Defaults to the calling
             package's `//:needs_json`.
         feature: Optional feature name. If given, only feature requirements
-            named with that feature (per the `<type>__<name>__...` convention)
-            are kept; if omitted, all feature requirements are kept.
+            linked to a feature whose `title` matches are kept; the feature is
+            resolved via the requirement's `satisfied_by` link (legacy
+            `belongs_to` fallback). If omitted, all feature requirements are
+            kept.
         strict: When True the build fails (no output) on any dangling link in the
             kept needs. See `filtered_needs_json`.
         extra_needs: Additional `needs_json` build outputs whose needs count as
@@ -574,9 +579,9 @@ def feature_architecture(
         src: Label of a `needs_json` build output. Defaults to the calling
             package's `//:needs_json`.
         feature: Optional feature name. If given, only feature architecture
-            elements named with that feature (per the `<type>__<name>__...`
-            convention) are kept; if omitted, all feature architecture elements
-            are kept.
+            elements linked to a feature whose `title` matches are kept; the
+            feature is resolved via the element's `belongs_to` link. If omitted,
+            all feature architecture elements are kept.
         strict: When True the build fails (no output) on any dangling link in the
             kept needs. See `filtered_needs_json`.
         extra_needs: Additional `needs_json` build outputs whose needs count as
@@ -616,12 +621,9 @@ def component_architecture(
         src: Label of a `needs_json` build output. Defaults to the calling
             package's `//:needs_json`.
         component: Optional component name. If given, only component architecture
-            elements named with that component are kept; component architecture
-            IDs follow the `<type>__<feature>__<component>` convention (e.g.
-            `comp_arc_sta__baselibs__bit_manipulation`) and any underscores in
-            the component segment are removed for matching (so `bit_manipulation`
-            matches the component name `bitmanipulation`). If omitted, all
-            component architecture elements are kept.
+            elements linked to a component whose `title` matches are kept; the
+            component is resolved via the element's `belongs_to` link. If
+            omitted, all component architecture elements are kept.
         strict: When True the build fails (no output) on any dangling link in the
             kept needs. See `filtered_needs_json`.
         extra_needs: Additional `needs_json` build outputs whose needs count as
