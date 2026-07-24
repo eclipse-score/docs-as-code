@@ -23,4 +23,7 @@ score_pytest(
     data = [],
     deps = [],
     env = {},
+
+    # These tests are huge, don't run them on //...
+    tags = ["manual"]
 )
