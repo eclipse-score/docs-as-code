@@ -29,8 +29,8 @@
               "result_text": ""
             },
             {
-              "name": "test_rules_file_based__test_rst_files[attributes/test_attributes_format_id_format.rst]",
-              "file": "src/extensions/score_metamodel/tests/rst/attributes/test_attributes_format_id_format.rst",
+              "name": "test_rules_file_based__test_rst_files[attributes/test_attributes_external_prefix.rst]",
+              "file": "src/extensions/score_metamodel/tests/rst/attributes/test_attributes_external_prefix.rst",
               "line": 16,
               "need": "tool_req__docs_common_attr_id_scheme",
               "verify_type": "partially",
@@ -38,8 +38,8 @@
               "result_text": ""
             },
             {
-              "name": "test_rules_file_based__test_rst_files[attributes/test_attributes_external_prefix.rst]",
-              "file": "src/extensions/score_metamodel/tests/rst/attributes/test_attributes_external_prefix.rst",
+              "name": "test_rules_file_based__test_rst_files[attributes/test_attributes_format_id_format.rst]",
+              "file": "src/extensions/score_metamodel/tests/rst/attributes/test_attributes_format_id_format.rst",
               "line": 16,
               "need": "tool_req__docs_common_attr_id_scheme",
               "verify_type": "partially",
@@ -727,8 +727,8 @@
           ],
           "TestLinks": [
             {
-              "name": "test_rules_file_based__test_rst_files[options/gd_req_comp.rst]",
-              "file": "src/extensions/score_metamodel/tests/rst/options/gd_req_comp.rst",
+              "name": "test_rules_file_based__test_rst_files[attributes/test_attributes_format_id_length.rst]",
+              "file": "src/extensions/score_metamodel/tests/rst/attributes/test_attributes_format_id_length.rst",
               "line": 16,
               "need": "tool_req__docs_req_types",
               "verify_type": "partially",
@@ -745,8 +745,8 @@
               "result_text": ""
             },
             {
-              "name": "test_rules_file_based__test_rst_files[options/test_options_extra_option.rst]",
-              "file": "src/extensions/score_metamodel/tests/rst/options/test_options_extra_option.rst",
+              "name": "test_rules_file_based__test_rst_files[options/gd_req_comp.rst]",
+              "file": "src/extensions/score_metamodel/tests/rst/options/gd_req_comp.rst",
               "line": 16,
               "need": "tool_req__docs_req_types",
               "verify_type": "partially",
@@ -754,8 +754,8 @@
               "result_text": ""
             },
             {
-              "name": "test_rules_file_based__test_rst_files[attributes/test_attributes_format_id_length.rst]",
-              "file": "src/extensions/score_metamodel/tests/rst/attributes/test_attributes_format_id_length.rst",
+              "name": "test_rules_file_based__test_rst_files[options/test_options_extra_option.rst]",
+              "file": "src/extensions/score_metamodel/tests/rst/options/test_options_extra_option.rst",
               "line": 16,
               "need": "tool_req__docs_req_types",
               "verify_type": "partially",
@@ -2091,6 +2091,69 @@
               "name": "test_xml_parser__test_short_hash_consistency_and_format",
               "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
               "line": 327,
+              "need": "tool_req__docs_test_link_testcase",
+              "verify_type": "partially",
+              "result": "passed",
+              "result_text": ""
+            },
+            {
+              "name": "test_xml_parser__test_is_testcase_in_scope_empty_allow_list_is_unfiltered",
+              "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
+              "line": 385,
+              "need": "tool_req__docs_test_link_testcase",
+              "verify_type": "partially",
+              "result": "passed",
+              "result_text": ""
+            },
+            {
+              "name": "test_xml_parser__test_is_testcase_in_scope_positive_match",
+              "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
+              "line": 397,
+              "need": "tool_req__docs_test_link_testcase",
+              "verify_type": "partially",
+              "result": "passed",
+              "result_text": ""
+            },
+            {
+              "name": "test_xml_parser__test_is_testcase_in_scope_not_under_any_allowed_dir",
+              "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
+              "line": 410,
+              "need": "tool_req__docs_test_link_testcase",
+              "verify_type": "partially",
+              "result": "passed",
+              "result_text": ""
+            },
+            {
+              "name": "test_xml_parser__test_is_testcase_in_scope_none_file_with_allow_list",
+              "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
+              "line": 420,
+              "need": "tool_req__docs_test_link_testcase",
+              "verify_type": "partially",
+              "result": "passed",
+              "result_text": ""
+            },
+            {
+              "name": "test_xml_parser__test_is_testcase_in_scope_no_string_prefix_match",
+              "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
+              "line": 430,
+              "need": "tool_req__docs_test_link_testcase",
+              "verify_type": "partially",
+              "result": "passed",
+              "result_text": ""
+            },
+            {
+              "name": "test_xml_parser__test_parse_testcase_source_dirs",
+              "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
+              "line": 447,
+              "need": "tool_req__docs_test_link_testcase",
+              "verify_type": "partially",
+              "result": "passed",
+              "result_text": ""
+            },
+            {
+              "name": "test_xml_parser__test_parse_testcase_source_dirs_non_list_raises",
+              "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
+              "line": 459,
               "need": "tool_req__docs_test_link_testcase",
               "verify_type": "partially",
               "result": "passed",
