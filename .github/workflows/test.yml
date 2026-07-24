@@ -44,7 +44,7 @@ jobs:
         run: bazel run --lockfile_mode=error //:ide_support
 
       - name: Run docs_bzl tests
-        run: .venv/bin/python -m pytest -vv src/tests/docs_bzl
+        run: .venv_docs/bin/python -m pytest -vv src/tests/docs_bzl
 
       - name: Run bazel test targets
         run: bazel test --lockfile_mode=error //...
