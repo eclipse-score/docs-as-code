@@ -40,10 +40,11 @@ jobs:
           bazelisk-cache: true
           cache-save: ${{ github.event_name == 'push' }}
 
+      - name: Install pytest
+        run: pip install pytest
+
       - name: Run docs_bzl tests
-        run: |
-          pip install pytest
-          pytest -vv src/tests/docs_bzl
+        run: pytest -vv src/tests/docs_bzl
 
       - name: Run bazel test targets
         run: |
