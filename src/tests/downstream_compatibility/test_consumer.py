@@ -15,10 +15,10 @@ Consumer tests: verify that downstream repos build successfully against this bra
 
 Via Python (requires ide_support to have been run first):
     bazel run //:ide_support  # once, to set up .venv_docs
-    python -m pytest src/tests/test_consumer.py -s
-    python -m pytest src/tests/test_consumer.py -k "score and local"
-    python -m pytest src/tests/test_consumer.py -k "process_description"
-    python -m pytest src/tests/test_consumer.py --disable-cache
+    python -m pytest src/tests/downstream_compatibility/test_consumer.py -s
+    python -m pytest src/tests/downstream_compatibility/test_consumer.py -k "score and local"
+    python -m pytest src/tests/downstream_compatibility/test_consumer.py -k "process_description"
+    python -m pytest src/tests/downstream_compatibility/test_consumer.py --disable-cache
 
 Known non-passing tests are sometimes marked xfail and do not count as failures.
 """
@@ -66,7 +66,7 @@ class ConsumerRepo:
             self.commands = commands
         else:
             # The minimum is to ensure that the repo can build against the current score_docs_as_code branch.
-            # If docs works, then usually docs_checl and needs_json will work as well.
+            # If docs works, then usually docs_check and needs_json will work as well.
             self.commands = ["bazel run //:docs"]
 
 
@@ -222,6 +222,8 @@ def _ensure_repo(repo_path: Path, git_url: str, use_cache: bool) -> None:
 
 def _cleanup_before_cmd(cwd: Path, cmd: str) -> None:
     # ubproject.toml is created by :docs
+    # Delete in cwd (repo root) and any subdir to avoid stale config from previous runs
+    (cwd / "ubproject.toml").unlink(missing_ok=True)
     for p in cwd.glob("*/ubproject.toml"):
         p.unlink()
 
