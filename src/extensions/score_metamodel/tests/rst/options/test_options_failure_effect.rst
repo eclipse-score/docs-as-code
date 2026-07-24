@@ -158,7 +158,7 @@
 .. feat_saf_fmea:: Empty failure_effect
    :id: feat_saf_fmea__test__empty_failure_effect
    :fault_id: FMEA_05
-   :failure_effect: 
+   :failure_effect:
    :sufficient: yes
    :status: valid
    :expect: feat_saf_fmea__test__empty_failure_effect: is missing required attribute: `failure_effect`.
