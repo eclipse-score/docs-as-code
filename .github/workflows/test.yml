@@ -25,6 +25,7 @@ jobs:
         uses: step-security/harden-runner@v2.18.0
         with:
           egress-policy: audit
+
       - name: Checkout repository (Handle all events)
         uses: actions/checkout@v4.2.2
         with:
@@ -38,13 +39,22 @@ jobs:
           repository-cache: true
           bazelisk-cache: true
           cache-save: ${{ github.event_name == 'push' }}
-      - name: Run test targets
-        run: |
-          bazel run --lockfile_mode=error //:ide_support
-          bazel test --lockfile_mode=error //...
 
-      - name: Prepare bundled consumer report
-        if: always()
+      - name: Setup venv
+        run: bazel run --lockfile_mode=error //:ide_support
+
+      - name: Run docs_bzl tests
+        run: .venv_docs/bin/python -m pytest -vv src/tests/docs_bzl
+
+      - name: Run bazel test targets
+        run: bazel test --lockfile_mode=error //... --build_tests_only
+
+      - name: Build all targets
+        # Skip tests, since some are non buildable negative tests
+        run: bazel build --lockfile_mode=error //... -- -//src/tests/...
+
+      - name: Prepare bundled test report
+        if: ${{ !cancelled() }}
         # Creating tests-report directory
         # Follow Symlinks via '-L' to copy correctly
         # Copy everything inside the 'test-reports' folder
@@ -52,9 +62,11 @@ jobs:
           mkdir -p tests-report
           rsync -amL --include='*/' --include='test.xml' --include='test.log' --exclude='*' bazel-testlogs/ tests-report/
 
-      - name: Upload bundled consumer report
-        if: always()
-        uses: actions/upload-artifact@v4
+      - name: Upload bundled test report
+        # No need to upload something that doesn't exist.
+        # This would be skipped anyway if the step before isn't running
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: tests-report
           path: tests-report

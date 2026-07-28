@@ -36,13 +36,54 @@ def test_empty_list():
     assert parse_external_needs_sources_from_DATA("[]") == []
 
 
-def test_external_str_does_not_start_with_at():
-    assert get_external_needs_source('["noatrepo//foo/bar:baz"]') == []
+def test_external_str_is_neither_at_nor_slash():
+    # Labels that start with neither "@" nor "//" are not bazel needs sources.
+    assert get_external_needs_source('["noatrepo/foo/bar:baz"]') == []
 
 
-def test_single_entry_with_path():
+def test_same_repo_entry_with_path():
+    # A same-repo `//pkg:needs_json` mount now parses as a local source that
+    # carries its sub-package path.
+    result = parse_external_needs_sources_from_DATA('["//foo/bar:needs_json"]')
+    assert result == [
+        ExternalNeedsSource(
+            bazel_module="",
+            path_to_target="foo/bar",
+            target="needs_json",
+            is_local=True,
+        )
+    ]
+
+
+def test_same_repo_root_entry():
+    result = parse_external_needs_sources_from_DATA('["//:needs_json"]')
+    assert result == [
+        ExternalNeedsSource(
+            bazel_module="",
+            path_to_target="",
+            target="needs_json",
+            is_local=True,
+        )
+    ]
+
+
+def test_cross_module_sub_package_entry():
+    # A cross-module sub-package target now parses (previously rejected) and
+    # keeps its path so the runfiles path can be built correctly.
+    result = parse_external_needs_sources_from_DATA('["@repo//foo/bar:needs_json"]')
+    assert result == [
+        ExternalNeedsSource(
+            bazel_module="repo",
+            path_to_target="foo/bar",
+            target="needs_json",
+            is_local=False,
+        )
+    ]
+
+
+def test_single_entry_with_path_non_target():
+    # A target that is not needs_json / docs_sources is not reported as an external needs source.
     result = parse_external_needs_sources_from_DATA('["@repo//foo/bar:baz"]')
-    # IF a target has a path, it will not be reported as external needs
     assert result == []
 
 
@@ -74,6 +115,7 @@ def test_multiple_entries():
 
 
 def test_multiple_entries_2():
+    # Both targets are named "needs_json" but one is a sub-package target, so the path is preserved.
     result = parse_external_needs_sources_from_DATA(
         '["@repo1//:needs_json", "@repo2//path:needs_json"]'
     )
@@ -81,7 +123,13 @@ def test_multiple_entries_2():
     assert result == [
         ExternalNeedsSource(
             bazel_module="repo1", path_to_target="", target="needs_json"
-        )
+        ),
+        ExternalNeedsSource(
+            bazel_module="repo2",
+            path_to_target="path",
+            target="needs_json",
+            is_local=False,
+        ),
     ]
 
 
@@ -117,6 +165,40 @@ def test_add_external_needs_json_appends_entry(
     assert len(config.needs_external_needs) == 1
     entry = config.needs_external_needs[0]
     assert entry["base_url"] == "https://example.test/repo/main"
+    assert Path(entry["json_path"]) == json_path
+
+
+def test_add_external_needs_json_appends_entry_local(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """A same-repo mount resolves under `_main/<path>/<target>/…`."""
+    e = ExternalNeedsSource(
+        bazel_module="",
+        target="needs_json",
+        path_to_target="src/tests/e2e/external_needs/producer",
+        is_local=True,
+    )
+    config = Config()
+    config.needs_external_needs = []
+
+    runfiles_dir = tmp_path
+    rel_json = Path(
+        "_main/src/tests/e2e/external_needs/producer/needs_json/_build/needs/needs.json"
+    )
+    json_path = runfiles_dir / rel_json
+    json_path.parent.mkdir(parents=True, exist_ok=True)
+    json_path.write_text(
+        json.dumps({"project_url": "https://example.test/local"}), encoding="utf-8"
+    )
+
+    monkeypatch.setattr(ext_needs, "get_runfiles_dir", lambda: runfiles_dir)
+
+    add_external_needs_json(e, config)
+
+    assert config.needs_external_needs is not None
+    assert len(config.needs_external_needs) == 1
+    entry = config.needs_external_needs[0]
+    assert entry["base_url"] == "https://example.test/local/main"
     assert Path(entry["json_path"]) == json_path
 
 
@@ -159,6 +241,70 @@ def test_add_external_docs_sources_adds_collection(
     assert entry["driver"] == "symlink"
     assert entry["source"] == str(tmp_path / "third_party_docs+")
     assert entry["target"] == "third_party_docs"
+
+
+def test_add_external_docs_sources_local_sub_package(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """A same-repo sub-package `docs_sources` mount resolves under `_main/<path>`.
+
+    Mirrors test_add_external_needs_json_appends_entry_local but for the
+    `docs_sources` path: the local branch stages under `_main/…`, appends
+    `path_to_target`, and the collection key falls through the
+    `bazel_module + path_to_target` join (bazel_module empty for a local mount).
+    """
+    e = ExternalNeedsSource(
+        bazel_module="",
+        target="docs_sources",
+        path_to_target="src/tests/e2e/external_needs/producer",
+        is_local=True,
+    )
+    config = Config()
+    config.collections = {}
+
+    monkeypatch.setattr(ext_needs, "get_runfiles_dir", lambda: tmp_path)
+
+    add_external_docs_sources(e, config)
+
+    assert config.collections is not None
+    key = "src/tests/e2e/external_needs/producer"
+    assert key in config.collections
+    entry = config.collections[key]
+    assert entry["driver"] == "symlink"
+    assert entry["source"] == str(
+        tmp_path / "_main" / "src/tests/e2e/external_needs/producer"
+    )
+    assert entry["target"] == key
+
+
+def test_add_external_docs_sources_local_root_key_fallback(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """A same-repo root `docs_sources` mount falls back to the `_main` key.
+
+    With both bazel_module and path_to_target empty, the key join yields "" and
+    the `or "_main"` fallback names the collection, while the source stays at the
+    `_main` runfiles root.
+    """
+    e = ExternalNeedsSource(
+        bazel_module="",
+        target="docs_sources",
+        path_to_target="",
+        is_local=True,
+    )
+    config = Config()
+    config.collections = {}
+
+    monkeypatch.setattr(ext_needs, "get_runfiles_dir", lambda: tmp_path)
+
+    add_external_docs_sources(e, config)
+
+    assert config.collections is not None
+    assert "_main" in config.collections
+    entry = config.collections["_main"]
+    assert entry["driver"] == "symlink"
+    assert entry["source"] == str(tmp_path / "_main")
+    assert entry["target"] == "_main"
 
 
 def test_add_external_docs_sources_ide_support_returns_without_changes(

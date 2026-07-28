@@ -50,8 +50,8 @@ def _rewrite_needs_json_to_docs_sources(labels):
     out = []
     for x in labels:
         s = str(x)
-        if s.endswith("//:needs_json"):
-            out.append(s.replace("//:needs_json", "//:docs_sources"))
+        if s.endswith(":needs_json"):
+            out.append(s.replace(":needs_json", ":docs_sources"))
         else:
             out.append(s)
     return out
@@ -61,9 +61,9 @@ def _rewrite_needs_json_to_sourcelinks(labels):
     out = []
     for x in labels:
         s = str(x)
-        if s.endswith("//:needs_json"):
-            out.append(s.replace("//:needs_json", "//:sourcelinks_json"))
-        #Items which do not end up with '//:needs_json' shall not be appended to 'out'.
+        if s.endswith(":needs_json"):
+            out.append(s.replace(":needs_json", ":sourcelinks_json"))
+        #Items which do not end up with ':needs_json' shall not be appended to 'out'.
         #They are treated separately and are not related to source code linking.
     return out
 
@@ -127,7 +127,7 @@ def _missing_requirements(deps):
         fail(msg)
     fail("This case should be unreachable?!")
 
-def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good = None, metamodel = None):
+def docs(source_dir = "docs", data = [], deps = [], scan_code = [], test_sources = [], known_good = None, metamodel = None):
     """Creates all targets related to documentation.
 
     By using this function, you'll get any and all updates for documentation targets in one place.
@@ -137,15 +137,12 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
       data: Additional data files to include in the documentation build.
       deps: Additional dependencies for the documentation build.
       scan_code: List of code targets to scan for source code links.
+      test_sources: Optional list of repo-relative directory paths which will be used to filter testcases for documentation generation.
+                    When empty (default), all testcases found in `bazel-testlogs` will be used.
       known_good: Optional label to a "known good" JSON file for source links.
       metamodel: Optional label to a metamodel.yaml file. When set, the extension loads this
                  file instead of the default metamodel shipped with score_metamodel.
     """
-
-    call_path = native.package_name()
-
-    if call_path != "":
-        fail("docs() must be called from the root package. Current package: " + call_path)
 
     metamodel_data = []
     metamodel_env = {}
@@ -207,12 +204,16 @@ def docs(source_dir = "docs", data = [], deps = [], scan_code = [], known_good =
 
     docs_env = {
         "SOURCE_DIRECTORY": source_dir,
+        "PACKAGE_DIR": native.package_name(),
         "DATA": str(data),
+        "TEST_SOURCES": str(test_sources),
         "SCORE_SOURCELINKS": "$(location :sourcelinks_json)",
     } | metamodel_env
     docs_sources_env = {
         "SOURCE_DIRECTORY": source_dir,
+        "PACKAGE_DIR": native.package_name(),
         "DATA": str(data_with_docs_sources),
+        "TEST_SOURCES": str(test_sources),
         "SCORE_SOURCELINKS": "$(location :merged_sourcelinks)",
     } | metamodel_env
     if known_good:
@@ -342,8 +343,8 @@ def _sourcelinks_json(name, srcs):
     See https://eclipse-score.github.io/docs-as-code/main/how-to/source_to_doc_links.html
 
     Args:
-        name: Name of the target
-        srcs: Source files to scan for traceability tags
+      name: Name of the target.
+      srcs: Source files to scan for traceability tags.
     """
     output_file = name + ".json"
 

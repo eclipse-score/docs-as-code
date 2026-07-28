@@ -15,7 +15,7 @@
 
 .. test_metadata::
    :id: test_metadata__mandatory_options_and_links
-   :partially_verifies_list: tool_req__docs_common_attr_status, tool_req__docs_req_types
+   :partially_verifies_list: tool_req__docs_common_attr_status[version==1], tool_req__docs_req_types[version==1]
    :test_type: requirements_based
    :derivation_technique: requirements_based
 

@@ -31,10 +31,16 @@ class ExternalNeedsSource:
     bazel_module: str
     path_to_target: str
     target: str
+    # True for a same-repo mount (`//pkg:needs_json`), whose runfiles live under
+    # `_main/…`. False for a cross-module mount (`@repo//…:needs_json`), whose
+    # runfiles live under `{bazel_module}+/…`.
+    is_local: bool = False
 
 
 def _parse_bazel_external_need(s: str) -> ExternalNeedsSource | None:
-    if not s.startswith("@"):
+    is_cross_module = s.startswith("@")
+    is_local = s.startswith("//")
+    if not is_cross_module and not is_local:
         # Local need, not external needs
         return None
 
@@ -46,14 +52,26 @@ def _parse_bazel_external_need(s: str) -> ExternalNeedsSource | None:
         ":", 1
     )  # @score_process//:needs_json => [@score_process//, needs_json]
     repo, path_to_target = repo_and_path.split("//", 1)
-    repo = repo.lstrip("@")
+    repo = repo.lstrip("@")  # empty for same-repo `//pkg:needs_json`
 
-    if path_to_target == "" and target in ("needs_json", "docs_sources"):
+    if target in ("needs_json", "docs_sources"):
         return ExternalNeedsSource(
-            bazel_module=repo, path_to_target=path_to_target, target=target
+            bazel_module=repo,
+            path_to_target=path_to_target,
+            target=target,
+            is_local=is_local,
         )
     # Unknown data target. Probably not a needs.json file.
     return None
+
+
+def _runfiles_module_dir(e: ExternalNeedsSource) -> str:
+    """Runfiles top-level directory holding this source's package tree.
+
+    Same-repo mounts are staged under `_main/…`; cross-module mounts under the
+    module's bzlmod canonical name `{bazel_module}+/…`.
+    """
+    return "_main" if e.is_local else f"{e.bazel_module}+"
 
 
 def parse_external_needs_sources_from_DATA(v: str) -> list[ExternalNeedsSource]:
@@ -150,7 +168,13 @@ def get_external_needs_source(external_needs_source: str) -> list[ExternalNeedsS
 
 
 def add_external_needs_json(e: ExternalNeedsSource, config: Config):
-    json_file_raw = f"{e.bazel_module}+/{e.target}/_build/needs/needs.json"
+    json_file_raw = (
+        Path(_runfiles_module_dir(e))
+        / e.path_to_target
+        / e.target
+        / "_build/needs/needs.json"
+    )
+
     r = get_runfiles_dir()
     json_file = r / json_file_raw
     logger.debug(f"External needs.json: {json_file}")
@@ -176,22 +200,28 @@ def add_external_needs_json(e: ExternalNeedsSource, config: Config):
 
 def add_external_docs_sources(e: ExternalNeedsSource, config: Config):
     # Note that bazel does NOT write the files under e.target!
-    # {e.bazel_module}+ matches the original git layout!
+    # The runfiles layout mirrors the original git layout: same-repo mounts live
+    # under `_main/…`, cross-module mounts under `{e.bazel_module}+/…`
+    # (see _runfiles_module_dir).
     r = get_runfiles_dir()
     if "ide_support.runfiles" in str(r):
         logger.error("Combo builds are currently only supported with Bazel.")
         return
-    docs_source_path = Path(r) / f"{e.bazel_module}+"
+    docs_source_path = Path(r) / _runfiles_module_dir(e) / e.path_to_target
+
+    # A cross-module root mount keeps its module name as the collection key
+    # (unchanged). Sub-package / same-repo mounts disambiguate via the path.
+    key = "/".join(c for c in (e.bazel_module, e.path_to_target) if c) or "_main"
 
     if "collections" not in config:
         config.collections = {}
-    config.collections[e.bazel_module] = {
+    config.collections[key] = {
         "driver": "symlink",
         "source": str(docs_source_path),
-        "target": e.bazel_module,
+        "target": key,
     }
 
-    logger.info(f"Added external docs source: {docs_source_path} -> {e.bazel_module}")
+    logger.info(f"Added external docs source: {docs_source_path} -> {key}")
 
 
 def connect_external_needs(app: Sphinx, config: Config):
@@ -204,8 +234,6 @@ def connect_external_needs(app: Sphinx, config: Config):
     config.needs_external_needs = []
 
     for e in external_needs:
-        assert not e.path_to_target  # path_to_target is always empty
-
         if e.target == "needs_json":
             add_external_needs_json(e, app.config)
         elif e.target == "docs_sources":

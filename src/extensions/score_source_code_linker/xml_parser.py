@@ -22,6 +22,7 @@ import base64
 import contextlib
 import hashlib
 import itertools
+import json
 import os
 import xml.etree.ElementTree as ET
 from pathlib import Path
@@ -52,6 +53,38 @@ from src.helper_lib import find_ws_root
 
 logger = logging.get_logger(__name__)
 logger.setLevel("DEBUG")
+
+
+def parse_testcase_source_dirs(v: str) -> list[str]:
+    """Parse the `testcase_source_dirs` config value into a list of paths.
+
+    The value arrives as a `str(list)` produced by Starlark (double-quoted, i.e.
+    valid JSON), mirroring how `external_needs_source` is parsed in
+    `score_metamodel.external_needs.parse_external_needs_sources_from_DATA`.
+    """
+    if v in ("[]", ""):
+        return []
+    parsed = json.loads(v)
+    if not isinstance(parsed, list):
+        raise ValueError(
+            f"testcase_source_dirs must be a list, got {type(parsed).__name__}: {v!r}"
+        )
+    return parsed
+
+
+def is_testcase_in_scope(test_file: str | None, allowed_dirs: list[str]) -> bool:
+    """Return True if the testcase should be turned into a need.
+
+    An empty `allowed_dirs` disables filtering (everything is in scope). Otherwise
+    a testcase is in scope only if it has a `file` attribute that is located under
+    one of the allowed (repo-relative) directories.
+    """
+    if not allowed_dirs:
+        return True
+    if not test_file:
+        return False
+    file_path = Path(test_file)
+    return any(file_path.is_relative_to(allowed) for allowed in allowed_dirs)
 
 
 def clean_test_file_name(raw_filepath: Path) -> Path:
@@ -163,7 +196,9 @@ def parse_properties(case_properties: dict[str, Any], properties: Element):
     return case_properties
 
 
-def read_test_xml_file(file: Path) -> tuple[list[DataOfTestCase], list[str], list[str]]:
+def read_test_xml_file(
+    file: Path, allowed_dirs: list[str] | None = None
+) -> tuple[list[DataOfTestCase], list[str], list[str]]:
     """
     Reading & parsing the test.xml files into TestCaseNeeds
 
@@ -172,6 +207,7 @@ def read_test_xml_file(file: Path) -> tuple[list[DataOfTestCase], list[str], lis
             - list[TestCaseNeed]
             - list[str] => Testcase Names that did not have the required properties.
     """
+    allowed_dirs = allowed_dirs or []
     test_case_needs: list[DataOfTestCase] = []
     non_prop_tests: list[str] = []
     missing_prop_tests: list[str] = []
@@ -180,6 +216,15 @@ def read_test_xml_file(file: Path) -> tuple[list[DataOfTestCase], list[str], lis
     md = get_metadata_from_test_path(file)
     for testsuite in root.findall("testsuite"):
         for testcase in testsuite.findall("testcase"):
+            test_file = testcase.get("file")
+            # When testcase_source_dirs is configured, only testcases whose source
+            # file lives under one of the allowed directories are turned into needs.
+            # Out-of-scope testcases are skipped here (before the mandatory
+            # name/classname assertion below) so they are neither added as needs nor
+            # cached. Skipping early also keeps a scoped build robust against
+            # malformed test.xml files emitted by unrelated, out-of-scope tests.
+            if not is_testcase_in_scope(test_file, allowed_dirs):
+                continue
             case_properties = {}
             testcasename = testcase.get("name", "")
             testclassname = testcase.get("classname", "")
@@ -192,7 +237,6 @@ def read_test_xml_file(file: Path) -> tuple[list[DataOfTestCase], list[str], lis
                 testname = "__".join([testcn, testcasename])
             else:
                 testname = testcasename
-            test_file = testcase.get("file")
             line = testcase.get("line")
 
             #          ╭──────────────────────────────────────╮
@@ -303,8 +347,18 @@ def run_xml_parser(app: Sphinx, env: BuildEnvironment):
     testlogs_dir = find_test_folder()
     if testlogs_dir is None:
         return
+    allowed_dirs = parse_testcase_source_dirs(
+        getattr(app.config, "testcase_source_dirs", "")
+    )
+    if allowed_dirs:
+        logger.info(
+            f"Scoping testcase needs to source dirs: {allowed_dirs}",
+            type="score_source_code_linker",
+        )
     xml_file_paths = find_xml_files(testlogs_dir)
-    test_case_needs = build_test_needs_from_files(app, env, xml_file_paths)
+    test_case_needs = build_test_needs_from_files(
+        app, env, xml_file_paths, allowed_dirs
+    )
     # Saving the test case needs for cache
     logger.info(
         f"Saving {len(test_case_needs)} test case needs to the cache `score_testcaseneeds_cache.json` in _build/."
@@ -324,11 +378,17 @@ def run_xml_parser(app: Sphinx, env: BuildEnvironment):
 
 
 def build_test_needs_from_files(
-    app: Sphinx, enw_: BuildEnvironment, xml_paths: list[Path]
+    app: Sphinx,
+    enw_: BuildEnvironment,
+    xml_paths: list[Path],
+    allowed_dirs: list[str] | None = None,
 ) -> list[DataOfTestCase]:
     """
     Reading in all test.xml files, and building 'testcase' external need objects out of
     them.
+
+    When `allowed_dirs` is non-empty, only testcases whose source file lives under one
+    of those repo-relative directories are turned into needs (see read_test_xml_file).
 
     Returns:
         - list[TestCaseNeed]
@@ -337,7 +397,7 @@ def build_test_needs_from_files(
     for file in xml_paths:
         # Last value can be ignored. The 'is_valid' function already prints infos
         test_cases, tests_missing_all_props, tests_missing_some_props = (
-            read_test_xml_file(file)
+            read_test_xml_file(file, allowed_dirs)
         )
         non_prop_tests = ", ".join(n for n in tests_missing_all_props)
         if non_prop_tests:

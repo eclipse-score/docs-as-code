@@ -9,8 +9,8 @@ user.bazelrc
 .ruff_cache
 
 # docs build artifacts
-/_build*
-docs/ubproject.toml
+_build/
+ubproject.toml
 
 # Vale - editorial style guide
 .vale.ini
