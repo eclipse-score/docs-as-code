@@ -24,6 +24,7 @@ Sphinx configuration.
 In addition it sets common PlantUML options, like output to svg_obj.
 """
 
+import subprocess
 from pathlib import Path
 
 from sphinx.application import Sphinx
@@ -52,6 +53,30 @@ def find_correct_path(runfiles: Path) -> Path:
     return runfiles / module / "src" / "plantuml"
 
 
+def check_graphviz(app: Sphinx) -> None:
+    """Report a missing Graphviz dependency before rendering any diagrams."""
+
+    # Ensure plantuml only for HTML builder
+    if "html" not in app.builder.name:
+        return
+
+    result = subprocess.run(
+        [app.config.plantuml, "-version"],
+        capture_output=True,
+        check=False,
+        text=True,
+    )
+    output = (result.stdout + result.stderr).strip()
+
+    if "Dot executable does not exist" in output:
+        logger.error(
+            "PlantUML requires Graphviz, but its 'dot' executable is not "
+            "available on PATH. Install the 'graphviz' package in the "
+            "development environment.\n\nPlantUML output:\n" + output
+        )
+        raise SystemExit(1)
+
+
 def setup(app: Sphinx):
     # we must overwrite the plantuml path due to Bazel
     app.config.plantuml = str(find_correct_path(get_runfiles_dir()))
@@ -60,6 +85,7 @@ def setup(app: Sphinx):
     config_setdefault(app.config, "needs_build_needumls", "_plantuml_sources")
 
     logger.debug(f"PlantUML binary found at {app.config.plantuml}")
+    app.connect("builder-inited", check_graphviz)
 
     # The extension is not even active at runtime.
     return {"parallel_read_safe": True, "parallel_write_safe": True}
