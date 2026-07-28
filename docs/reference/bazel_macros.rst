@@ -106,7 +106,7 @@ Bazel macro: ``docs_bundle``
 bundle**: a chunk of RST/Markdown content that can be overlaid into a host
 documentation project. A bundle carries only *content* — it has **no placement of its
 own**. Where it appears is decided by whoever mounts it (a composing
-``docs_bundle`` or the :ref:`docs(bundles=[...]) <mount_external_sources>` call
+``docs_bundle`` or the :ref:`docs(bundles=[...]) <howto_mount_external_sources>` call
 site).
 
 .. code-block:: python

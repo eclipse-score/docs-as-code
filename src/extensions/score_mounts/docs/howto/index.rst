@@ -315,7 +315,7 @@ Further reading
 * `sphinx-mounts documentation`_ — full configuration reference,
   TOML schema, behaviour of ``attach_to`` and ``entry_doc``.
 * `ubCode`_ — the IDE extension that reads ``ubproject.toml``.
-* :doc:`add_extensions` — how to plug other Sphinx extensions into
+* :ref:`howto_add_extensions` — how to plug other Sphinx extensions into
   the docs-as-code build.
 
 .. _sphinx-mounts documentation: https://sphinx-mounts.useblocks.com/
