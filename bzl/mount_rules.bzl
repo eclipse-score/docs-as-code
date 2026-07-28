@@ -35,10 +35,18 @@ def _mounts_manifest_impl(ctx):
     ctx.actions.write(out, json.encode({"mounts": json_mounts}))
     return [DefaultInfo(files = depset([out]))]
 
-create_mounts_manifest = rule(
+_create_mounts_manifest = rule(
     implementation = _mounts_manifest_impl,
     attrs = {
         "bundle": attr.label(providers = [DocsBundleInfo]),
     },
     doc = "Writes a Sphinx mount manifest from reusable documentation bundles.",
 )
+
+def create_mounts_manifest(name, bundle):
+    """Create a Sphinx mount manifest from reusable documentation bundles."""
+    _create_mounts_manifest(
+        name = name,
+        bundle = bundle,
+    )
+    return ":" + name

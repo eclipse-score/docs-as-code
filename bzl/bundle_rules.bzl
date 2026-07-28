@@ -63,6 +63,7 @@ DocsBundleInfo = provider(
     fields = {
         "entries": "Ordered entries, one per source directory, including its final documentation-tree location.",
         "sourcelinks": "Source-code-link JSON files together with their owning repository.",
+        "external_runfiles": "Documentation source files from external repositories needed in runfiles.",
     },
 )
 
@@ -184,7 +185,8 @@ def _parse_bundle_declaration(bundle):
 def _docs_bundle_impl(ctx):
     """Compose source files and nested bundles into a reusable bundle."""
     entries = []
-    direct_files = []
+    own_source_files = []
+    own_external_runfiles = []
 
     if ctx.files.srcs:
         runtime_path = _bundle_runtime_path(ctx)
@@ -201,9 +203,14 @@ def _docs_bundle_impl(ctx):
             external = external,
             repository = ctx.label.workspace_name,
         ))
-        direct_files.extend(ctx.files.srcs)
+        own_source_files.extend(ctx.files.srcs)
+        # Local sources are read directly from the workspace by ``bazel run``.
+        # Only sources from external repositories must be staged in runfiles.
+        if external:
+            own_external_runfiles.extend(ctx.files.srcs)
 
-    transitive_files = []
+    child_source_files = []
+    child_external_runfiles = []
     sourcelinks = [
         struct(file = source_link, repository = ctx.label.workspace_name)
         for source_link in ctx.files.sourcelinks
@@ -218,16 +225,25 @@ def _docs_bundle_impl(ctx):
             )
             for entry in _entries_visible_through(ctx, child)
         ])
-        transitive_files.append(child[DefaultInfo].files)
+        child_source_files.append(child[DefaultInfo].files)
+        child_external_runfiles.append(child[DocsBundleInfo].external_runfiles)
         sourcelinks.extend(_sourcelinks_visible_through(ctx, child))
 
     deduplicated_entries = _validate_and_deduplicate_entries(entries)
-    files = depset(direct = direct_files, transitive = transitive_files)
+    all_source_files = depset(
+        direct = own_source_files,
+        transitive = child_source_files,
+    )
+    external_runfiles = depset(
+        direct = own_external_runfiles,
+        transitive = child_external_runfiles,
+    )
     return [
-        DefaultInfo(files = files),
+        DefaultInfo(files = all_source_files),
         DocsBundleInfo(
             entries = deduplicated_entries,
             sourcelinks = sourcelinks,
+            external_runfiles = external_runfiles,
         ),
     ]
 
@@ -259,6 +275,27 @@ def create_bundle(name, bundles, srcs = [], sourcelinks = [], strip_prefix = "",
         bundle_entry_docs = [bundle.entry_doc for bundle in parsed_bundles],
         visibility = visibility,
         **kwargs
+    )
+    return ":" + name
+
+def _external_docs_runfiles_impl(ctx):
+    """Expose external documentation sources needed under ``bazel run``."""
+    return [DefaultInfo(files = ctx.attr.bundle[DocsBundleInfo].external_runfiles)]
+
+_external_docs_runfiles = rule(
+    implementation = _external_docs_runfiles_impl,
+    attrs = {
+        "bundle": attr.label(providers = [DocsBundleInfo]),
+    },
+    doc = "Internal adapter from a docs bundle to its runtime runfiles.",
+)
+
+def external_docs_runfiles(name, bundle, visibility = None):
+    """Create a target containing only external bundle sources for ``bazel run``."""
+    _external_docs_runfiles(
+        name = name,
+        bundle = bundle,
+        visibility = visibility,
     )
     return ":" + name
 

@@ -53,6 +53,7 @@ load(
     "@score_docs_as_code//:bzl/bundle_rules.bzl",
     "create_bundle",
     "merge_bundle_sourcelinks",
+    "external_docs_runfiles",
 )
 load(
     "@score_docs_as_code//:bzl/mount_rules.bzl",
@@ -178,15 +179,19 @@ def docs(
 
     mounts_manifest_label = []
     if bundles:
-        create_mounts_manifest(
-            name = "_mounts_manifest",
-            bundle = create_bundle(
-                name = "_docs_mounts",
-                bundles = bundles,
-                visibility = ["//visibility:private"],
-            ),
+        mounts_bundle = create_bundle(
+            name = "_docs_mounts",
+            bundles = bundles,
+            visibility = ["//visibility:private"],
         )
-        mounts_manifest_label = [":_mounts_manifest"]
+
+        mounts_manifest_label = [
+            create_mounts_manifest(
+                name = "_mounts_manifest",
+                bundle = mounts_bundle,
+            )
+        ]
+
     deps = deps + _missing_requirements(deps)
     deps = deps + [
         Label("//src:plantuml_for_python"),
@@ -218,7 +223,17 @@ def docs(
         known_good = known_good,
     )
 
-    docs_data = data + metamodel_label + [":sourcelinks_json", ":docs_bundle"] + mounts_manifest_label
+    external_docs_runfiles(
+        name = "_external_docs_runfiles",
+        bundle = ":docs_bundle",
+        visibility = ["//visibility:private"],
+    )
+
+    # ``bazel run`` reads local documentation from the workspace. Passing the
+    # complete bundle here would add those files to runfiles and could collide
+    # with the executable target name (for example ``docs`` and ``docs/``).
+    # External bundles do need runfiles, so keep only those sources.
+    docs_data = data + metamodel_label + [":sourcelinks_json", ":_external_docs_runfiles"] + mounts_manifest_label
 
     docs_env = {
         "SOURCE_DIRECTORY": source_dir,
