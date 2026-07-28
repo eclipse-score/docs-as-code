@@ -15,7 +15,7 @@
 
 .. test_metadata::
    :id: test_metadata__failure_effect
-   :partially_verifies_list: tool_req__docs_saf_attr_fmea_failure_effect
+   :fully_verifies_list: tool_req__docs_saf_attr_fmea_failure_effect[version==1]
    :test_type: requirements_based
    :derivation_technique: requirements_based
 
@@ -158,7 +158,7 @@
 .. feat_saf_fmea:: Empty failure_effect
    :id: feat_saf_fmea__test__empty_failure_effect
    :fault_id: FMEA_05
-   :failure_effect: 
+   :failure_effect:
    :sufficient: yes
    :status: valid
    :expect: feat_saf_fmea__test__empty_failure_effect: is missing required attribute: `failure_effect`.

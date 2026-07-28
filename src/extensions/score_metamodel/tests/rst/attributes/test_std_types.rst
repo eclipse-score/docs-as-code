@@ -12,21 +12,23 @@
    # SPDX-License-Identifier: Apache-2.0
    # *******************************************************************************
 
-.. _docs_how-to:
 
-How To
-======
+.. test_metadata::
+   :id: test_metadata__std_types
+   :fully_verifies_list: tool_req__docs_stdreq_types[version==1], tool_req__docs_stdwp_types[version==1]
+   :test_type: requirements_based
+   :derivation_technique: requirements_based
 
-Here you find practical guides on how to use docs-as-code.
+   Tests that std_req and std_wp directives are supported by the metamodel.
 
-.. toctree::
-   :maxdepth: 1
 
-   get_started
-   setup
-   write_docs
-   other_modules
-   dashboards_and_quality_gates
-   source_to_doc_links
-   test_to_doc_links
-   add_extensions
+.. std_req:: Standard requirement
+   :id: std_req__iso26262__test__001
+   :status: valid
+   :expect_not: unknown directive
+
+
+.. std_wp:: Standard workproduct
+   :id: std_wp__iso26262__test__001
+   :status: valid
+   :expect_not: unknown directive
