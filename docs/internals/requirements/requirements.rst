@@ -273,25 +273,13 @@ Versioning
      In our enviroment it supports whole numbers e.g. (1,2,10,34)
 
 
-.. tool_req:: Suspicious: Enforce attribute
-   :id: tool_req__docs_common_attr_suspicious
-   :tags: Common Attributes
-   :implemented: YES
-   :version: 2
-   :parent_covered: YES: Together with :need:`tool_req__docs_req_testlink_outdated_check` and :need:`tool_req__docs_req_attr_testcov_update`
-   :satisfies: gd_req__req_suspicious[version==3]
-   :status: invalid
-
-   Docs-as-Code shall check if linked needs have different versions, compared to
-   the version the need was originally linked to.
-
 
 .. tool_req:: Test coverage: Detect outdated test linkage
    :id: tool_req__docs_req_testlink_outdated_check
    :tags: Common Attributes, Testing
    :implemented: NO
    :version: 1
-   :parent_covered: YES: Together with tool_req__docs_common_attr_suspicious and tool_req__docs_req_attr_testcov_update
+   :parent_covered: YES: Together tool_req__docs_req_attr_testcov_update
    :satisfies: gd_req__req_suspicious[version==3]
    :status: invalid
 
@@ -306,7 +294,7 @@ Versioning
    :tags: Common Attributes, Testing
    :implemented: NO
    :version: 1
-   :parent_covered: YES: Together with tool_req__docs_req_testlink_outdated_check tool_req__docs_common_attr_suspicious
+   :parent_covered: YES: Together with tool_req__docs_req_testlink_outdated_check
    :satisfies: gd_req__req_suspicious[version==3]
    :status: invalid
 
