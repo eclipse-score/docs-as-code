@@ -124,13 +124,22 @@ if __name__ == "__main__":
         "auto",
         f"--define=external_needs_source={get_env('DATA')}",
         f"--define=testcase_source_dirs={os.environ.get('TEST_SOURCES', '[]')}",
+        # Path to the Bazel-emitted mounts manifest (empty when no mounts are
+        # configured); consumed by the score_mounts extension.
+        f"--define=mounts_manifest={os.environ.get('MOUNTS_MANIFEST', '')}",
     ]
 
     metamodel_yaml = os.environ.get("SCORE_METAMODEL_YAML", "")
     if metamodel_yaml:
-        # Normalize to absolute path so it resolves correctly after Sphinx changes cwd
+        # ``docs`` passes a runfiles-relative path under ``bazel run``.  Keep
+        # the workspace-relative fallback for direct invocations.
         if not os.path.isabs(metamodel_yaml):
-            metamodel_yaml = str(ws_root / metamodel_yaml)
+            runfiles_dir = os.environ.get("RUNFILES_DIR", "")
+            metamodel_yaml = str(
+                (Path(runfiles_dir) / metamodel_yaml)
+                if runfiles_dir
+                else (ws_root / metamodel_yaml)
+            )
         metamodel_yaml = os.path.abspath(metamodel_yaml)
         base_arguments.append(f"--define=score_metamodel_yaml={metamodel_yaml}")
 

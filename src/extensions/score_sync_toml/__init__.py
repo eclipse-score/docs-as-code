@@ -14,7 +14,8 @@ from pathlib import Path
 
 from sphinx.application import Sphinx
 
-from src.helper_lib import config_setdefault
+from src.extensions.score_sync_toml._mounts import register_mounts
+from src.helper_lib import config_setdefault, find_git_root
 
 
 def setup(app: Sphinx) -> dict[str, str | bool]:
@@ -24,8 +25,16 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     See https://needs-config-writer.useblocks.com
     """
 
-    config_setdefault(app.config, "needscfg_outpath", "ubproject.toml")
-    """Write to the confdir directory."""
+    # Emit a single ubproject.toml at the git repo root, where UI extensions
+    # (ubCode / esbonio) look for it. needs-config-writer relativizes every path
+    # field against the output file's directory, so anchoring the file at the
+    # root yields root-relative paths automatically. find_git_root() resolves the
+    # root under `bazel run` and esbonio alike; in a sandbox build it returns None
+    # and we fall back to the confdir default (that copy is ephemeral / discarded).
+    git_root = find_git_root()
+    outpath = str(git_root / "ubproject.toml") if git_root else "ubproject.toml"
+    config_setdefault(app.config, "needscfg_outpath", outpath)
+    """Write a single ubproject.toml at the git repo root."""
 
     config_setdefault(app.config, "needscfg_overwrite", True)
     """Any changes to the shared/local configuration updates the generated config."""
@@ -33,7 +42,7 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     config_setdefault(app.config, "needscfg_write_all", True)
     """Write full config, so the final configuration is visible in one file."""
 
-    config_setdefault(app.config, "needscfg_exclude_defaults", True)
+    config_setdefault(app.config, "needscfg_exclude_defaults", False)
     """Exclude default values from the generated configuration."""
 
     # This is disabled for right now as it causes a lot of issues
@@ -45,6 +54,13 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
         str(Path(__file__).parent / "shared.toml")
     )
     """Merge the static TOML file into the generated configuration."""
+
+    # score_mounts resolves Bazel's JSON manifest during ``config-inited``. Run
+    # afterwards and serialize its structured entries here, alongside the rest
+    # of the needs-config-writer configuration.
+    app.connect(
+        "config-inited", lambda app, config: register_mounts(config), priority=500
+    )
 
     app.config.needscfg_relative_path_fields.extend(
         [

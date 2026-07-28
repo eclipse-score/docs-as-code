@@ -24,6 +24,11 @@ score_extensions = [
     "score_metamodel",
     "sphinx_design",
     "myst_parser",
+    # sphinx_mounts provides the mount machinery; score_mounts feeds it the
+    # Bazel-emitted mount config and must be loaded right after it (its
+    # config-inited hook runs before sphinx_mounts' own, see score_mounts.setup).
+    "sphinx_mounts",
+    "score_mounts",
     "score_source_code_linker",
     "score_draw_uml_funcs",
     "score_layout",

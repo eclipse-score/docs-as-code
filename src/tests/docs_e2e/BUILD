@@ -1,5 +1,5 @@
 # *******************************************************************************
-# Copyright (c) 2025 Contributors to the Eclipse Foundation
+# Copyright (c) 2026 Contributors to the Eclipse Foundation
 #
 # See the NOTICE file(s) distributed with this work for additional
 # information regarding copyright ownership.
@@ -12,34 +12,35 @@
 # *******************************************************************************
 
 load("@aspect_rules_py//py:defs.bzl", "py_library")
+load("//:docs.bzl", "docs")
 load("//:score_pytest.bzl", "score_pytest")
-load("@docs_as_code_hub_env//:requirements.bzl", "requirement")
 
-filegroup(
-    name = "all_sources",
-    srcs = glob([
-        "*.py",
-        "*.toml",
-    ]),
+py_library(
+    name = "e2e_support",
+    srcs = ["support.py"],
+    imports = ["."],
     visibility = ["//visibility:public"],
 )
 
-py_library(
-    name = "score_sync_toml",
-    srcs = [":all_sources"],
-    imports = ["."],
-    visibility = ["//visibility:public"],
-    deps = [
-        requirement("sphinx"),
-        requirement("needs-config-writer"),
-        "//src/helper_lib",
-    ],
+docs(
+    source_dir = "host_docs",
 )
 
 score_pytest(
-    name = "score_sync_toml_tests",
-    size = "small",
-    srcs = ["test_mounts.py"],
-    deps = [":score_sync_toml"],
+    name = "docs_e2e_test",
+    size = "medium",
+    srcs = ["test_docs_e2e.py"],
+    data = [
+        ":docs",
+        ":sourcelinks_json",
+        "host_docs/conf.py",
+        "host_docs/index.rst",
+    ],
+    deps = [":e2e_support"],
+    env = {
+        "DOCS_BINARY": "$(rootpath :docs)",
+        "DOCS_CONF": "$(rootpath host_docs/conf.py)",
+        "SOURCELINKS": "$(rootpath :sourcelinks_json)",
+    },
     pytest_config = "//:pyproject.toml",
 )

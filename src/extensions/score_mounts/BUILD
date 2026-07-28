@@ -1,5 +1,5 @@
 # *******************************************************************************
-# Copyright (c) 2025 Contributors to the Eclipse Foundation
+# Copyright (c) 2026 Contributors to the Eclipse Foundation
 #
 # See the NOTICE file(s) distributed with this work for additional
 # information regarding copyright ownership.
@@ -12,34 +12,44 @@
 # *******************************************************************************
 
 load("@aspect_rules_py//py:defs.bzl", "py_library")
-load("//:score_pytest.bzl", "score_pytest")
 load("@docs_as_code_hub_env//:requirements.bzl", "requirement")
+load("//:score_pytest.bzl", "score_pytest")
+
+filegroup(
+    name = "sources",
+    srcs = glob(["*.py"]),
+)
+
+filegroup(
+    name = "tests",
+    srcs = glob(["tests/*.py"]),
+)
 
 filegroup(
     name = "all_sources",
-    srcs = glob([
-        "*.py",
-        "*.toml",
-    ]),
+    srcs = [
+        ":sources",
+        ":tests",
+    ],
     visibility = ["//visibility:public"],
 )
 
 py_library(
-    name = "score_sync_toml",
-    srcs = [":all_sources"],
+    name = "score_mounts",
+    srcs = [":sources"],
     imports = ["."],
     visibility = ["//visibility:public"],
     deps = [
         requirement("sphinx"),
-        requirement("needs-config-writer"),
+        requirement("sphinx-mounts"),
         "//src/helper_lib",
     ],
 )
 
 score_pytest(
-    name = "score_sync_toml_tests",
+    name = "score_mounts_tests",
     size = "small",
-    srcs = ["test_mounts.py"],
-    deps = [":score_sync_toml"],
+    srcs = glob(["tests/*.py"]),
+    deps = [":score_mounts"],
     pytest_config = "//:pyproject.toml",
 )
