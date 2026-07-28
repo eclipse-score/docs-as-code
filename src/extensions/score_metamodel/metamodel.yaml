@@ -947,12 +947,10 @@ needs_types:
       # req-Id: tool_req__docs_verification_report_need
       verification_method: ^.*$
     optional_options:
-      requirements_coverage_percent: ^(100|[1-9]?[0-9])$
-      structural_coverage_percent: ^(100|[1-9]?[0-9])$
+      requirements_tests_completely_passed_percent: ^(100|[1-9]?[0-9])$
+      line_coverage_percent: ^(100|[1-9]?[0-9])$
       branch_coverage_percent: ^(100|[1-9]?[0-9])$
-      verdict: ^(pass|fail|open)$
-      report_version: ^.*$
-      release_baseline: ^.*$
+      applies_to_module_version: ^.*$
     mandatory_links:
       # req-Id: tool_req__docs_verification_report_need
       belongs_to: mod

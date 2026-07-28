@@ -55,24 +55,22 @@
    :security: YES
    :status: valid
    :verification_method: test_and_inspection
-   :requirements_coverage_percent: 95
-   :structural_coverage_percent: 90
+   :requirements_tests_completely_passed_percent: 95
+   :line_coverage_percent: 90
    :branch_coverage_percent: 85
-   :verdict: pass
-   :report_version: 1.0.0
-   :release_baseline: main
+   :applies_to_module_version: 1.0.0
    :belongs_to: mod__verification_module
    :covers: comp_req__verification__sample
 
 
-.. Invalid verdict value in module verification report
-#EXPECT[+2]: mod_vrep__verification__bad_verdict.verdict (pending): does not follow pattern
+.. Invalid coverage percentage value in module verification report
+#EXPECT[+2]: mod_vrep__verification__bad_coverage.line_coverage_percent (150): does not follow pattern
 
-.. mod_ver_report:: Verification Report Invalid Verdict
-   :id: mod_vrep__verification__bad_verdict
+.. mod_ver_report:: Verification Report Invalid Coverage
+   :id: mod_vrep__verification__bad_coverage
    :safety: ASIL_B
    :security: YES
    :status: invalid
    :verification_method: inspection
-   :verdict: pending
+   :line_coverage_percent: 150
    :belongs_to: mod__verification_module
