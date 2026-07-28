@@ -93,3 +93,14 @@ def load_mounts_manifest(manifest_path: str | Path) -> MountsManifest:
         manifest_path=manifest_path,
         mounts=mounts,
     )
+
+
+def resolve_walk_dir(
+    manifest: MountsManifest, spec: MountSpec, ws_root: Path | None
+) -> Path:
+    """Resolve a mount directory for either ``bazel run`` or a sandbox build."""
+    if spec.external and ws_root is not None:
+        return manifest.runtime_dir(spec)
+    if ws_root is not None:
+        return ws_root / spec.src_root
+    return Path(os.path.abspath(spec.src_root))

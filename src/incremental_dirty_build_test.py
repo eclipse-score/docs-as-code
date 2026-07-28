@@ -13,11 +13,12 @@
 
 # Unit Tests of incremental.py
 
+import json
 from pathlib import Path
 
 from pyfakefs.fake_filesystem import FakeFilesystem as FFS
 
-from incremental import clean_builddir_if_stale, update_module_hash
+from incremental import _mounted_watch_dirs, clean_builddir_if_stale, update_module_hash
 
 _BUILD = Path("/build")
 _MODULE = Path("/MODULE.bazel")
@@ -112,3 +113,33 @@ def test_missing_hash_file_triggers_clean(fs: FFS) -> None:
     clean_builddir_if_stale(_BUILD, [_MODULE])
 
     assert not _BUILD.exists()
+
+
+def test_mounted_watch_dirs_match_sphinx_mount_paths(tmp_path: Path) -> None:
+    manifest_path = tmp_path / "_mounts_manifest.json"
+    manifest_path.write_text(
+        json.dumps(
+            {
+                "mounts": [
+                    {
+                        "src_root": "extensions/local/docs",
+                        "runtime_path": "extensions/local/docs",
+                        "mount_at": "local",
+                    },
+                    {
+                        "src_root": "external/vendor+/docs",
+                        "runtime_path": "../vendor+/docs",
+                        "mount_at": "external",
+                        "external": True,
+                    },
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    workspace = tmp_path / "workspace"
+
+    assert _mounted_watch_dirs(manifest_path, workspace) == [
+        str(workspace / "extensions/local/docs"),
+        str(manifest_path.parent.parent / "vendor+" / "docs"),
+    ]

@@ -32,9 +32,8 @@ from sphinx.config import Config
 from sphinx.util import logging
 
 from src.extensions.score_mounts._resolver import (
-    MountsManifest,
-    MountSpec,
     load_mounts_manifest,
+    resolve_walk_dir,
 )
 from src.helper_lib import find_ws_root, get_runfiles_dir
 
@@ -64,17 +63,6 @@ def _read_manifest(config: Config):
     return load_mounts_manifest(manifest_path)
 
 
-def _resolve_walk_dir(
-    manifest: MountsManifest, spec: MountSpec, ws_root: Path | None
-) -> Path:
-    """Resolve one mount consistently for runfiles and sandboxed builds."""
-    if spec.external and ws_root is not None:
-        return manifest.runtime_dir(spec)
-    if ws_root is not None:
-        return ws_root / spec.src_root
-    return Path(os.path.abspath(spec.src_root))
-
-
 def _on_config_inited(app: Sphinx, config: Config) -> None:
     """Translate the Bazel manifest into ``sphinx_mounts`` runtime config.
 
@@ -101,7 +89,7 @@ def _on_config_inited(app: Sphinx, config: Config) -> None:
 
     runtime_mounts: list[dict[str, object]] = []
     for spec in manifest.mounts:
-        walk_dir = _resolve_walk_dir(manifest, spec, ws_root)
+        walk_dir = resolve_walk_dir(manifest, spec, ws_root)
         if not walk_dir.is_dir():
             raise ValueError(
                 "score_mounts: resolved mount dir does not exist: "

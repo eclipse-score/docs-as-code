@@ -38,7 +38,7 @@ score_pytest(
         "incremental_dirty_build_test.py",
         "incremental.py",
     ],
-    deps = all_requirements,
+    deps = all_requirements + ["//src/extensions/score_sphinx_bundle:score_sphinx_bundle"],
     pytest_config = "//:pyproject.toml",
 )
 

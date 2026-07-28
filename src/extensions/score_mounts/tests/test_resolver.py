@@ -24,10 +24,10 @@ from pathlib import Path
 
 import pytest
 
-from src.extensions.score_mounts.__init__ import _resolve_walk_dir
 from src.extensions.score_mounts._resolver import (
     MountSpec,
     load_mounts_manifest,
+    resolve_walk_dir,
 )
 
 
@@ -177,6 +177,6 @@ def test_external_mount_uses_execroot_path_in_sandbox(tmp_path: Path, monkeypatc
         },
     )
     spec = load_mounts_manifest(manifest).mounts[0]
-    assert _resolve_walk_dir(load_mounts_manifest(manifest), spec, None) == (
+    assert resolve_walk_dir(load_mounts_manifest(manifest), spec, None) == (
         tmp_path / "external" / "score_process+" / "docs_as_mount"
     )

@@ -26,6 +26,9 @@ from sphinx_autobuild.__main__ import (
     main as sphinx_autobuild_main,  # type: ignore[reportUnknownVariableType] # sphinx_autobuild doesn't provide complete type annotations
 )
 
+from src.extensions.score_mounts._resolver import load_mounts_manifest, resolve_walk_dir
+from src.helper_lib import find_ws_root, get_runfiles_dir
+
 logger = logging.getLogger(__name__)
 
 _MODULE_HASH_FILE = ".module_bazel_hash"
@@ -69,6 +72,18 @@ def clean_builddir_if_stale(build_dir: Path, sentinel_files: list[Path]) -> None
 
 def update_module_hash(build_dir: Path, sentinel_files: list[Path]) -> None:
     (build_dir / _MODULE_HASH_FILE).write_text(_compute_hash(sentinel_files))
+
+
+def _mounted_watch_dirs(manifest_path: Path, ws_root: Path | None) -> list[str]:
+    """Return the directories provided by docs bundles for ``sphinx-autobuild``.
+
+    This deliberately uses the same manifest and path-resolution rules as the
+    ``score_mounts`` extension.  The extension consumes the paths during a
+    Sphinx build; autobuild needs them separately to notice edits that happen
+    outside the primary Sphinx source directory.
+    """
+    manifest = load_mounts_manifest(manifest_path)
+    return [str(resolve_walk_dir(manifest, spec, ws_root)) for spec in manifest.mounts]
 
 
 if __name__ == "__main__":
@@ -159,6 +174,18 @@ if __name__ == "__main__":
     action = get_env("ACTION")
     if action == "live_preview":
         (build_dir / "score_source_code_linker_cache.json").unlink(missing_ok=True)
+        mounts_manifest = os.environ.get("MOUNTS_MANIFEST", "")
+        watch_arguments: list[str] = []
+        if mounts_manifest:
+            # ``MOUNTS_MANIFEST`` is runfiles-relative under ``bazel run`` and
+            # an ordinary path for direct invocations, matching score_mounts.
+            manifest_path = (
+                get_runfiles_dir() / mounts_manifest
+                if find_ws_root()
+                else Path(mounts_manifest)
+            )
+            for watch_dir in _mounted_watch_dirs(manifest_path, find_ws_root()):
+                watch_arguments.extend(["--watch", watch_dir])
         sphinx_autobuild_main(
             base_arguments
             + [
@@ -166,6 +193,7 @@ if __name__ == "__main__":
                 "--define=skip_rescanning_via_source_code_linker=1",
                 f"--port={args.port}",
             ]
+            + watch_arguments
         )
     else:
         if action == "incremental":
