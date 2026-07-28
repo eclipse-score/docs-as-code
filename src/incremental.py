@@ -96,25 +96,25 @@ if __name__ == "__main__":
         logger.info("Waiting for client to connect on port: " + str(args.debug_port))
         debugpy.wait_for_client()
 
-    workspace = os.getenv("BUILD_WORKSPACE_DIRECTORY")
-    if workspace:
-        workspace += "/"
-    else:
-        workspace = ""
+    ws_root = Path(os.getenv("BUILD_WORKSPACE_DIRECTORY", ""))
+    # Docs source and output are resolved relative to the package where docs()
+    # was called. For the root BUILD, PACKAGE_DIR == "" so this is unchanged.
+    package_dir = ws_root / os.environ.get("PACKAGE_DIR", "")
 
-    build_dir = Path(workspace + "_build")
+    build_dir = package_dir / "_build"
     sentinel_files = [
-        Path(workspace + "MODULE.bazel"),
-        Path(workspace + "MODULE.bazel.lock"),
-        Path(workspace + "BUILD"),
+        ws_root / "MODULE.bazel",
+        ws_root / "MODULE.bazel.lock",
+        package_dir / "BUILD",
     ]
     clean_builddir_if_stale(build_dir, sentinel_files)
 
-    warning_file = Path(workspace + "_build/warnings.txt")
+    warning_file = build_dir / "warnings.txt"
 
+    source_directory = get_env("SOURCE_DIRECTORY")
     base_arguments = [
-        workspace + get_env("SOURCE_DIRECTORY"),
-        workspace + "_build",
+        str(package_dir / source_directory),
+        str(build_dir),
         "--warning-file",
         str(warning_file),
         "-W",  # treat warning as errors
@@ -123,13 +123,14 @@ if __name__ == "__main__":
         "--jobs",
         "auto",
         f"--define=external_needs_source={get_env('DATA')}",
+        f"--define=testcase_source_dirs={os.environ.get('TEST_SOURCES', '[]')}",
     ]
 
     metamodel_yaml = os.environ.get("SCORE_METAMODEL_YAML", "")
     if metamodel_yaml:
         # Normalize to absolute path so it resolves correctly after Sphinx changes cwd
         if not os.path.isabs(metamodel_yaml):
-            metamodel_yaml = workspace + metamodel_yaml
+            metamodel_yaml = str(ws_root / metamodel_yaml)
         metamodel_yaml = os.path.abspath(metamodel_yaml)
         base_arguments.append(f"--define=score_metamodel_yaml={metamodel_yaml}")
 
@@ -141,16 +142,14 @@ if __name__ == "__main__":
         base_arguments.append(f"-A=github_user={github_user}")
         base_arguments.append(f"-A=github_repo={github_repo}")
         base_arguments.append("-A=github_version=main")
-        base_arguments.append(f"-A=doc_path={get_env('SOURCE_DIRECTORY')}")
+        base_arguments.append(f"-A=doc_path={package_dir / source_directory}")
 
     if os.getenv("KNOWN_GOOD_JSON"):
         base_arguments.append(f"--define=KNOWN_GOOD_JSON={get_env('KNOWN_GOOD_JSON')}")
 
     action = get_env("ACTION")
     if action == "live_preview":
-        Path(workspace + "/_build/score_source_code_linker_cache.json").unlink(
-            missing_ok=True
-        )
+        (build_dir / "score_source_code_linker_cache.json").unlink(missing_ok=True)
         sphinx_autobuild_main(
             base_arguments
             + [

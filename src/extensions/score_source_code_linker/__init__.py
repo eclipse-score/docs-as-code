@@ -350,6 +350,17 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
         types=bool,
         description="If True, render links as plain text without GitHub URLs (useful for Bazel sandbox builds)",
     )
+    app.add_config_value(
+        "testcase_source_dirs",
+        default="",
+        rebuild="env",
+        types=str,
+        description=(
+            "str(list) of repo-relative directory paths. When set, the test-code-linker "
+            "only builds testcase needs for testcases whose source file lives under one of "
+            "these directories. Empty means no filtering (scan the whole workspace)."
+        ),
+    )
     setup_once(app)
 
     return {
