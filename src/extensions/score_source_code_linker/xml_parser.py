@@ -229,7 +229,7 @@ def read_test_xml_file(
             testcasename = testcase.get("name", "")
             testclassname = testcase.get("classname", "")
             assert testclassname or testcasename, (
-                f"Testcase: {testcase} does not have a 'name' or 'classname' attribute."
+                f"One testcase in {file} does not have a 'name' or 'classname' attribute."
                 "One of which is mandatory. This should not happen, something is wrong."
             )
             if testclassname:
