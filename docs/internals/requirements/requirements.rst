@@ -567,16 +567,16 @@ Architecture Attributes
   .. table::
      :widths: auto
 
-     ====================================  ==========================================
-     Link Source                           Allowed Link Target
-     ====================================  ==========================================
-     feat_arc_sta                          feat_req, aou_req
-     feat_arc_dyn                          feat_req
-     logic_arc_int                         feat_req
-     comp_arc_sta                          comp_req, aou_req
-     comp_arc_dyn                          comp_req
-     real_arc_int                          comp_req
-     ====================================  ==========================================
+     ====================================  ==========================================  ==============
+     Link Source                           Allowed Link Target                         Optional/Mandatory
+     ====================================  ==========================================  ==============
+     feat_arc_sta                          feat_req, aou_req                           Optional
+     feat_arc_dyn                          feat_req                                    Mandatory
+     logic_arc_int                         feat_req                                    Mandatory
+     comp_arc_sta                          comp_req, aou_req                           Optional
+     comp_arc_dyn                          comp_req                                    Mandatory
+     real_arc_int                          comp_req                                    Mandatory
+     ====================================  ==========================================  ==============
 
 .. tool_req:: Architecture fulfils linkage to AoU
   :id: tool_req__docs_arch_link_fulfils_aou
