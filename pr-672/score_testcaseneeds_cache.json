@@ -1022,7 +1022,7 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_external_needs__test_load_external_needs_from_bazel_labels_appends_entry",
+    "name": "test_external_needs__test_add_needs_json_file_appends_entry",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
     "line": "206",
     "result": "passed",
@@ -1038,7 +1038,7 @@
   {
     "name": "test_external_needs__test_add_external_needs_json_missing_file_keeps_list_empty",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "235",
+    "line": "241",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1052,7 +1052,7 @@
   {
     "name": "test_external_needs__test_add_external_docs_sources_adds_collection",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "254",
+    "line": "260",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1066,7 +1066,7 @@
   {
     "name": "test_external_needs__test_add_external_docs_sources_local_sub_package",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "276",
+    "line": "282",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1080,7 +1080,7 @@
   {
     "name": "test_external_needs__test_add_external_docs_sources_local_root_key_fallback",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "310",
+    "line": "316",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1094,7 +1094,7 @@
   {
     "name": "test_external_needs__test_add_external_docs_sources_ide_support_returns_without_changes",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "340",
+    "line": "346",
     "result": "passed",
     "repo_name": null,
     "hash": null,
