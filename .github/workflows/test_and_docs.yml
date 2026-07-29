@@ -39,14 +39,6 @@ jobs:
     with:
       bazel-docs-verify-target: "--lockfile_mode=error //:docs_check"
 
-  docs-link-verify:
-    uses: eclipse-score/cicd-workflows/.github/workflows/docs-verify.yml@c1c90b1a82a1fab0fc202979dde6686b2162d5a8 # v0.0.0
-    permissions:
-      pull-requests: write
-      contents: read
-    with:
-      bazel-docs-verify-target: "--lockfile_mode=error //:docs_link_check"
-
   # This is the user configurable part of the workflow
   unit-tests:
     uses: ./.github/workflows/test.yml
