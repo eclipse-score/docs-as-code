@@ -271,7 +271,7 @@ def docs(
     docs_env["ACTION"] = "linkcheck"
     py_binary(
         name = "docs_link_check",
-        tags = ["cli_help=Verify Links inside Documentation:\nbazel run //:link_check\n (Note: this could take a long time)"],
+        tags = ["cli_help=Verify Links inside Documentation:\nbazel run //:docs_link_check\n (Note: this could take a long time)"],
         srcs = [incremental_src],
         data = docs_data,
         deps = deps,

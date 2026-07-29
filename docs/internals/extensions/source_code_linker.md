@@ -388,7 +388,7 @@ score_source_code_linker/
 
 To see working examples for CodeLinks & TestLinks, take a look at the Docs-As-Code documentation.
 
-[Example CodeLink](https://eclipse-score.github.io/docs-as-code/main/requirements/requirements.html#tool_req__docs_common_attr_id_scheme)
-[Example CodeLink](https://eclipse-score.github.io/docs-as-code/main/requirements/requirements.html#tool_req__docs_common_attr_status)
+[Example CodeLink](https://eclipse-score.github.io/docs-as-code/main/internals/requirements/requirements.html#tool_req__docs_common_attr_id_scheme)
+[Example CodeLink](https://eclipse-score.github.io/docs-as-code/main/internals/requirements/requirements.html#tool_req__docs_common_attr_status)
 
-[Example TestLink](https://eclipse-score.github.io/docs-as-code/main/requirements/requirements.html#tool_req__docs_dd_link_source_code_link)
+[Example TestLink](https://eclipse-score.github.io/docs-as-code/main/internals/requirements/requirements.html#tool_req__docs_dd_link_source_code_link)
