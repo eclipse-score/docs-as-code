@@ -370,11 +370,42 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     }
 
 
+def _extract_version_from_id(id: str) -> tuple[str, int | None]:
+    """Extract base ID and version number from a potentially versioned need ID.
+
+    Examples:
+        "req_id" => ("req_id", None)
+        "req_id[version==2]" => ("req_id", 2)
+    """
+    import re
+
+    match = re.search(r"\[version==(\d+)\]", id)
+    if match:
+        return re.sub(r"\[version==[^\]]+\]", "", id), int(match.group(1))
+    return id, None
+
+
 def find_need(all_needs: NeedsMutable, id: str) -> NeedItem | None:
     """
     Finds a need by ID in the needs collection.
+    Strips version suffixes for lookup and warns if test links to older version.
     """
-    return all_needs.get(id)
+    base_id, test_version = _extract_version_from_id(id)
+    need = all_needs.get(base_id)
+
+    # Check version compatibility if version was specified
+    # req-Id: tool_req__docs_common_attr_suspicious
+    if need is not None and test_version is not None:
+        need_version = need.get("version")
+        if need_version is not None and int(need_version) > test_version:
+            LOGGER.warning(
+                f"Test links to outdated version: '{id}' references "
+                f"version {test_version}, but need '{base_id}' is version {need_version}. "
+                f"Update test to reference version {need_version}.",
+                type="score_source_code_linker",
+            )
+
+    return need
 
 
 def _log_existing_links(needs: NeedsMutable) -> None:
