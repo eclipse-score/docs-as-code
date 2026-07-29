@@ -20,3 +20,11 @@ py_library(
     visibility = ["//visibility:public"],
     deps = ["@score_docs_as_code//src/helper_lib"],
 )
+
+py_library(
+    name = "broken_link_fix",
+    srcs = ["@score_docs_as_code//src/extensions:broken_link_fix.py"],
+    imports = ["."],
+    visibility = ["//visibility:public"],
+    deps = ["@score_docs_as_code//src/helper_lib"],
+)
