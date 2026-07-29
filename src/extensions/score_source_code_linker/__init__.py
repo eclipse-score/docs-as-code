@@ -394,7 +394,6 @@ def find_need(all_needs: NeedsMutable, id: str) -> NeedItem | None:
     need = all_needs.get(base_id)
 
     # Check version compatibility if version was specified
-    # req-Id: tool_req__docs_common_attr_suspicious
     if need is not None and test_version is not None:
         need_version = need.get("version")
         if need_version is not None and int(need_version) > test_version:
