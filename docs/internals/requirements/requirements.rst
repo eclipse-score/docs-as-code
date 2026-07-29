@@ -558,9 +558,8 @@ Architecture Attributes
    gd_req__req_linkage_fulfill[version==1],
   :parent_covered: YES
 
-  Docs-as-Code shall permit the ``fulfils`` attribute to be omitted for feat_arc_sta and
-  comp_arc_sta. When ``fulfils`` is present, Docs-as-Code shall enforce that linking via
-  the ``fulfils`` attribute follows defined rules.
+  Docs-as-Code shall allow or enforce where necessary that linking via the ``fulfils``
+  attribute follows the defined rules.
 
   Allowed source and target combinations are defined in the following table:
 
@@ -570,22 +569,22 @@ Architecture Attributes
      ====================================  ==========================================  ==============
      Link Source                           Allowed Link Target                         Optional/Mandatory
      ====================================  ==========================================  ==============
-     feat_arc_sta                          feat_req, aou_req                           Optional
-     feat_arc_dyn                          feat_req                                    Mandatory
-     logic_arc_int                         feat_req                                    Mandatory
-     comp_arc_sta                          comp_req, aou_req                           Optional
-     comp_arc_dyn                          comp_req                                    Mandatory
-     real_arc_int                          comp_req                                    Mandatory
+     feat_arc_sta                          feat_req                                    Optional
+     feat_arc_dyn                          feat_req                                    Optional
+     logic_arc_int                         feat_req                                    Optional
+     comp_arc_sta                          comp_req                                    Optional
+     comp_arc_dyn                          comp_req                                    Optional
+     real_arc_int                          comp_req                                    Optional
      ====================================  ==========================================  ==============
 
 .. tool_req:: Architecture fulfils linkage to AoU
   :id: tool_req__docs_arch_link_fulfils_aou
   :implemented: YES
-  :version: 2
+  :version: 3
   :satisfies: gd_req__arch_attr_fulfils_aou[version==1]
   :parent_covered: YES
 
-  Architectural static views (feat_arc_sta, comp_arc_sta)
+  Architectural static views (feat_arc_sta) and the component itself (comp)
   may link to Assumptions of Use (aou_req) via the ``fulfils`` attribute.
   When such a link is present, Docs-as-Code shall restrict its target to aou_req.
 

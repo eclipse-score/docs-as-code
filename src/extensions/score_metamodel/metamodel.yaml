@@ -454,9 +454,11 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
     mandatory_links:
-      fulfils: feat_req
       # req-Id: tool_req__docs_arch_links
       belongs_to: feat
+    optional_links:
+    # req-Id: tool_req__docs_arch_link_fulfils
+      fulfils: feat_req
     tags:
       - architecture_view
       - architecture_element
@@ -562,7 +564,6 @@ needs_types:
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
-
     mandatory_links:
       belongs_to: feat # preparation for linking change according to DR-005
     optional_links:
@@ -570,6 +571,8 @@ needs_types:
       implements: logic_arc_int, real_arc_int_op
       uses: logic_arc_int, real_arc_int_op
       consists_of: comp
+      # tool_req__docs_arch_link_fulfils_aou
+      fulfils: aou_req
     tags:
       - architecture_element
     parts: 2
@@ -593,7 +596,7 @@ needs_types:
     optional_links:
       uses: logic_arc_int, real_arc_int_op
       # req-Id: tool_req__docs_arch_link_fulfils, tool_req__docs_arch_link_fulfils_aou
-      fulfils: comp_req, aou_req
+      fulfils: comp_req
     tags:
       - architecture_view
     parts: 3
@@ -614,6 +617,7 @@ needs_types:
     mandatory_links:
       # req-Id: tool_req__docs_arch_links
       belongs_to: comp
+    optional_links:
       fulfils: comp_req
     tags:
       - architecture_view
