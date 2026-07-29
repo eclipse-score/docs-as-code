@@ -13,13 +13,11 @@
 """Unit tests for the mounts manifest loader (``_resolver``).
 
 These cover the pure parsing layer only: reading the JSON manifest into
-``MountSpec`` objects, applying defaults, resolving ``runtime_dir`` relative
-to the manifest, and rejecting malformed
+``MountSpec`` objects, applying defaults, and rejecting malformed
 input. Context-dependent path resolution (runfiles vs. exec root) lives in the
 extension's ``__init__`` and is exercised via the consumer tests instead."""
 
 import json
-import os
 from pathlib import Path
 
 import pytest
@@ -32,6 +30,7 @@ from src.extensions.score_mounts._resolver import (
 
 
 def _write_manifest(tmp_path: Path, payload: dict) -> Path:
+    tmp_path.mkdir(parents=True, exist_ok=True)
     manifest = tmp_path / "_mounts_manifest.json"
     manifest.write_text(json.dumps(payload), encoding="utf-8")
     return manifest
@@ -106,23 +105,6 @@ def test_external_mount_keeps_execroot_and_runfiles_locations(tmp_path: Path):
     assert specs[1].external is True
 
 
-def test_runtime_dir_resolves_next_to_manifest(tmp_path: Path):
-    manifest = _write_manifest(
-        tmp_path,
-        {
-            "mounts": [
-                {
-                    "src_root": "src/docs",
-                    "runtime_path": "src/docs_dir",
-                    "mount_at": "x",
-                }
-            ],
-        },
-    )
-    result = load_mounts_manifest(str(manifest))
-    assert result.runtime_dir(result.mounts[0]) == tmp_path / "src" / "docs_dir"
-
-
 def test_load_missing_required_key_raises(tmp_path: Path):
     manifest = _write_manifest(tmp_path, {"mounts": [{"runtime_path": "src/docs_dir"}]})
     with pytest.raises(ValueError, match="missing 'src_root'/'mount_at'"):
@@ -174,31 +156,6 @@ def test_load_rejects_paths_that_escape_bazel_roots(
         load_mounts_manifest(manifest)
 
 
-def test_runtime_dir_external_path_resolves_relative_to_manifest(tmp_path: Path):
-    # Under `bazel run`, the '../<repo>+/...' short_path resolves natively in
-    # the runfiles tree. runtime_dir must NOT remap '../' to 'external/'.
-    manifest = _write_manifest(
-        tmp_path,
-        {
-            "mounts": [
-                {
-                    "src_root": "external/score_process+/docs_as_mount",
-                    "runtime_path": "../score_process+/docs_as_mount",
-                    "mount_at": "process",
-                    "external": True,
-                }
-            ],
-        },
-    )
-    result = load_mounts_manifest(str(manifest))
-    # runtime_dir uses os.path.abspath (lexical, no symlink resolution); mirror
-    # that here so the assertion never diverges on a symlinked tmp dir.
-    expected = Path(
-        os.path.abspath(tmp_path / ".." / "score_process+" / "docs_as_mount")
-    )
-    assert result.runtime_dir(result.mounts[0]) == expected
-
-
 def test_external_mount_uses_execroot_path_in_sandbox(tmp_path: Path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     manifest = _write_manifest(
@@ -218,3 +175,26 @@ def test_external_mount_uses_execroot_path_in_sandbox(tmp_path: Path, monkeypatc
     assert resolve_walk_dir(load_mounts_manifest(manifest), spec, None) == (
         tmp_path / "external" / "score_process+" / "docs_as_mount"
     )
+
+
+def test_external_mount_uses_runfiles_root_under_bazel_run(tmp_path: Path):
+    manifest = _write_manifest(
+        tmp_path / "_main" / "package",
+        {
+            "mounts": [
+                {
+                    "src_root": "external/score_process+/docs_as_mount",
+                    "runtime_path": "../score_process+/docs_as_mount",
+                    "mount_at": "process",
+                    "external": True,
+                }
+            ]
+        },
+    )
+    spec = load_mounts_manifest(manifest).mounts[0]
+    assert resolve_walk_dir(
+        load_mounts_manifest(manifest),
+        spec,
+        tmp_path / "workspace",
+        tmp_path,
+    ) == (tmp_path / "score_process+" / "docs_as_mount")

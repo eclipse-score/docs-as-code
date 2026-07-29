@@ -15,9 +15,8 @@
 
 All mount paths are authored by Bazel (where ``File`` objects have real paths)
 and shipped in a small JSON manifest. This module only *reads* that manifest — it
-performs no label-to-path reconstruction. Every path stored in the manifest is a
-Bazel ``short_path`` and therefore resolves relative to the manifest's own
-directory."""
+performs no label-to-path reconstruction. The caller provides the Bazel execution
+context needed to resolve the manifest's ``short_path`` values safely."""
 
 from __future__ import annotations
 
@@ -39,27 +38,7 @@ class MountSpec:
 
 @dataclass(frozen=True)
 class MountsManifest:
-    manifest_path: Path
     mounts: list[MountSpec]
-
-    @property
-    def root(self) -> Path:
-        """Directory the manifest lives in — the base for its short_path entries."""
-        return self.manifest_path.parent
-
-    def runtime_dir(self, spec: MountSpec) -> Path:
-        """Absolute path of a bundle's staged mount-root directory.
-
-        ``runtime_path`` is a Bazel ``short_path`` (the bundle's source
-        directory, staged in place — not a copy) and resolves relative to the
-        manifest's own directory. Main-repo sources resolve the same way inside a
-        sandbox build. External sources (``../<repo>+/X``) are only ever walked
-        under ``bazel run`` with an external bundle, where ``../`` steps out
-        of ``_main`` to the sibling repo dir in the runfiles tree — so no
-        context-dependent mapping is needed here.
-        """
-        base = self.root.parent if spec.external else self.root
-        return _resolve_below(base, spec.runtime_path)
 
 
 def _validate_relative_path(value: object, field_name: str, *, external: bool) -> str:
@@ -150,17 +129,24 @@ def load_mounts_manifest(manifest_path: str | Path) -> MountsManifest:
             )
         )
     return MountsManifest(
-        manifest_path=manifest_path,
         mounts=mounts,
     )
 
 
 def resolve_walk_dir(
-    manifest: MountsManifest, spec: MountSpec, ws_root: Path | None
+    manifest: MountsManifest,
+    spec: MountSpec,
+    ws_root: Path | None,
+    runfiles_dir: Path | None = None,
 ) -> Path:
     """Resolve a mount directory for either ``bazel run`` or a sandbox build."""
     if spec.external and ws_root is not None:
-        return manifest.runtime_dir(spec)
+        if runfiles_dir is None:
+            raise ValueError("external mounts under bazel run require RUNFILES_DIR")
+        # External short paths begin with ``../<repo>+`` relative to the
+        # runfiles ``_main`` directory, not relative to a manifest nested in a
+        # Bazel package. Prefixing ``_main`` preserves that Bazel convention.
+        return _resolve_below(runfiles_dir, "_main/" + spec.runtime_path)
     if ws_root is not None:
         return _resolve_below(ws_root, spec.src_root)
     return _resolve_below(Path.cwd(), spec.src_root)

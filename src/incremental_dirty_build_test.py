@@ -138,8 +138,9 @@ def test_mounted_watch_dirs_match_sphinx_mount_paths(tmp_path: Path) -> None:
         encoding="utf-8",
     )
     workspace = tmp_path / "workspace"
+    runfiles_dir = tmp_path / "runfiles"
 
-    assert _mounted_watch_dirs(manifest_path, workspace) == [
+    assert _mounted_watch_dirs(manifest_path, workspace, runfiles_dir) == [
         str(workspace / "extensions/local/docs"),
-        str(manifest_path.parent.parent / "vendor+" / "docs"),
+        str(runfiles_dir / "vendor+" / "docs"),
     ]

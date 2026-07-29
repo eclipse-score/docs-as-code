@@ -55,6 +55,15 @@ jobs:
       - name: Run bazel test targets
         run: bazel test --lockfile_mode=error //... --build_tests_only
 
+      - name: Verify mount conflicts are rejected
+        run: |
+          ! bazel build --lockfile_mode=error //src/tests/mounts_conflict:bad
+          ! bazel build --lockfile_mode=error //src/tests/mounts_conflict:bad_attach_to
+          ! bazel build --lockfile_mode=error //src/tests/mounts_conflict:bad_entry_doc
+
+      - name: Build an external documentation bundle from runfiles
+        run: bazel run --lockfile_mode=error //src/tests/mounts_external:docs
+
       - name: Build all targets
         # Skip tests, since some are non buildable negative tests
         run: bazel build --lockfile_mode=error //... -- -//src/tests/...

@@ -238,11 +238,12 @@ Relevant targets wired by the ``docs()`` macro:
 
 * ``bazel run //:docs`` — incremental HTML build for day-to-day
   editing; outputs to ``_build/``. Resolves mounts via runfiles
-  (fast, dev-local).
+  (fast, dev-local) and refreshes the IDE-facing repo-root
+  ``ubproject.toml``.
 
 * ``bazel run //:docs_check`` — same as above but with the ``check``
-  action; also regenerates the repo-root ``ubproject.toml``. Run this
-  after editing the mount list or to refresh the IDE-facing TOML.
+  action; it also refreshes the repo-root ``ubproject.toml``. Run either
+  command after editing the mount list to refresh the IDE-facing TOML.
 
 * ``bazel build //:needs_json`` — sandboxed needs-only build. Verifies
   that mounted bundles resolve correctly without ``bazel run``.

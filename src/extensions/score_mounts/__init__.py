@@ -103,10 +103,11 @@ def _on_config_inited(app: Sphinx, config: Config) -> None:
     #     bazel-out/ and is NOT colocated with them, so src_root is resolved
     #     against the exec root (the sphinx action's cwd), not the manifest.
     ws_root = find_ws_root()
+    runfiles_dir = get_runfiles_dir() if ws_root is not None else None
 
     runtime_mounts: list[dict[str, object]] = []
     for spec in manifest.mounts:
-        walk_dir = resolve_walk_dir(manifest, spec, ws_root)
+        walk_dir = resolve_walk_dir(manifest, spec, ws_root, runfiles_dir)
         if not walk_dir.is_dir():
             raise ValueError(
                 "score_mounts: resolved mount dir does not exist: "

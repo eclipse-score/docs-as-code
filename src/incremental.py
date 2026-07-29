@@ -74,7 +74,9 @@ def update_module_hash(build_dir: Path, sentinel_files: list[Path]) -> None:
     (build_dir / _MODULE_HASH_FILE).write_text(_compute_hash(sentinel_files))
 
 
-def _mounted_watch_dirs(manifest_path: Path, ws_root: Path | None) -> list[str]:
+def _mounted_watch_dirs(
+    manifest_path: Path, ws_root: Path | None, runfiles_dir: Path | None = None
+) -> list[str]:
     """Return the directories provided by docs bundles for ``sphinx-autobuild``.
 
     This deliberately uses the same manifest and path-resolution rules as the
@@ -83,7 +85,10 @@ def _mounted_watch_dirs(manifest_path: Path, ws_root: Path | None) -> list[str]:
     outside the primary Sphinx source directory.
     """
     manifest = load_mounts_manifest(manifest_path)
-    return [str(resolve_walk_dir(manifest, spec, ws_root)) for spec in manifest.mounts]
+    return [
+        str(resolve_walk_dir(manifest, spec, ws_root, runfiles_dir))
+        for spec in manifest.mounts
+    ]
 
 
 if __name__ == "__main__":
@@ -184,7 +189,12 @@ if __name__ == "__main__":
                 if find_ws_root()
                 else Path(mounts_manifest)
             )
-            for watch_dir in _mounted_watch_dirs(manifest_path, find_ws_root()):
+            ws_root = find_ws_root()
+            for watch_dir in _mounted_watch_dirs(
+                manifest_path,
+                ws_root,
+                get_runfiles_dir() if ws_root is not None else None,
+            ):
                 watch_arguments.extend(["--watch", watch_dir])
         sphinx_autobuild_main(
             base_arguments

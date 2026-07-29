@@ -83,18 +83,22 @@ original source directory, differing only in *where* that directory is staged:
 .. code-block:: python
 
    if spec.external and ws_root:  # bazel run: sibling repo in the runfiles tree
-       walk_dir = manifest.runtime_dir(spec)
+       walk_dir = _resolve_below(runfiles_dir, "_main/" + spec.runtime_path)
    elif ws_root is not None:      # bazel run, in-tree: the live workspace source
-       walk_dir = ws_root / spec.src_root
+       walk_dir = _resolve_below(ws_root, spec.src_root)
    else:                          # sandbox, in-tree: source staged at the exec root
-       walk_dir = Path(os.path.abspath(spec.src_root))
+       walk_dir = _resolve_below(Path.cwd(), spec.src_root)
 
 * ``ws_root`` is only set under ``bazel run`` (it points at
   ``BUILD_WORKSPACE_DIRECTORY``); in a sandboxed ``bazel build`` it is ``None``.
 * ``external`` marks a bundle whose sources come from another Bazel module.
-* The manifest (a ``bazel-out`` artifact) is colocated with the sources only in the
-  runfiles tree; in a sandbox the in-tree sources are resolved against the exec
-  root instead, which is why the branch splits three ways.
+* External runtime paths are anchored at the runfiles root (their Bazel
+  ``../<repo>+`` prefix starts below ``_main``). In a sandbox the in-tree
+  sources are instead resolved against the exec root, which is why the branch
+  splits three ways.
+* ``_resolve_below`` normalizes the path and rejects traversal outside that
+  Bazel-controlled root. It is a runtime security boundary; valid manifests
+  emitted by the Bazel rule already satisfy it.
 
 So the mount walks:
 
@@ -151,10 +155,9 @@ cannot select the payload itself:
 #. The content entry then carries that directory ``File`` (alongside, or instead
    of, ``runtime_path``); the emitted ``runtime_path`` points at it.
 #. A materialized directory is a ``bazel-out`` artifact colocated with the manifest
-   in every context, so it resolves via ``manifest.runtime_dir`` — the same
-   manifest-relative rule the external branch already uses. That sidesteps the
-   exec-root vs. runfiles split the in-tree source walk has to handle, which is
-   the resolver-simplicity that materialization used to buy.
+   in every context. A future resolver can therefore resolve it relative to that
+   manifest without the exec-root versus runfiles split required by the current
+   source-directory walk.
 
 **Provider contract.** A content entry must let the runtime resolve a directory to
 walk. Today that is ``runtime_path`` (a source-directory ``short_path``) plus
