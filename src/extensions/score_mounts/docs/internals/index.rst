@@ -64,7 +64,7 @@ Directory resolution
 External short paths begin with ``../<repo>+`` relative to the runfiles
 ``_main`` directory. The resolver therefore prefixes ``_main`` before turning
 that path into an absolute path. This distinction is covered by unit tests and
-by ``//src/tests/mounts_external:docs``; do not resolve an external runtime path
+the public ``docs_bzl`` integration suite; do not resolve an external runtime path
 relative to the manifest file, because the manifest can live below a Bazel
 package directory.
 
@@ -107,8 +107,9 @@ Relevant checks are:
 
 * ``bazel test //src/extensions/score_mounts:score_mounts_tests`` for manifest
   parsing and path resolution;
-* ``bazel test //src/tests/mounts_contract:mount_docs_e2e_test`` for mounted
-  rendering and toctree attachment;
-* ``bazel run //src/tests/mounts_external:docs`` for an external bundle under
-  ``bazel run``; and
-* the negative fixtures in ``src/tests/mounts_conflict`` for placement conflicts.
+* ``.venv_docs/bin/python -m pytest -vv src/tests/docs_bzl/test_nested_bundles.py
+  src/tests/docs_bzl/test_external_bundle.py
+  src/tests/docs_bzl/test_invalid_bundle_placements.py`` for
+  mounted rendering, toctree attachment, external bundles under ``bazel run``,
+  sandboxed external builds, and placement conflicts; and
+* ``bazel test //...`` for the internal extension unit tests.

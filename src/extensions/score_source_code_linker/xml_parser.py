@@ -26,7 +26,7 @@ import json
 import os
 import xml.etree.ElementTree as ET
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 from xml.etree.ElementTree import Element
 
 from sphinx.application import Sphinx
@@ -64,12 +64,15 @@ def parse_testcase_source_dirs(v: str) -> list[str]:
     """
     if v in ("[]", ""):
         return []
-    parsed = json.loads(v)
-    if not isinstance(parsed, list):
+    raw_parsed: object = json.loads(v)
+    if not isinstance(raw_parsed, list):
         raise ValueError(
-            f"testcase_source_dirs must be a list, got {type(parsed).__name__}: {v!r}"
+            f"testcase_source_dirs must be a list, got {type(raw_parsed).__name__}: {v!r}"
         )
-    return parsed
+    parsed = cast("list[object]", raw_parsed)
+    if not all(isinstance(path, str) for path in parsed):
+        raise ValueError("testcase_source_dirs must contain only strings")
+    return [path for path in parsed if isinstance(path, str)]
 
 
 def is_testcase_in_scope(test_file: str | None, allowed_dirs: list[str]) -> bool:

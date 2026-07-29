@@ -18,7 +18,11 @@ from pathlib import Path
 
 from pyfakefs.fake_filesystem import FakeFilesystem as FFS
 
-from incremental import _mounted_watch_dirs, clean_builddir_if_stale, update_module_hash
+from incremental import (
+    _mounted_watch_dirs,  # pyright: ignore[reportPrivateUsage] - white-box unit test
+    clean_builddir_if_stale,
+    update_module_hash,
+)
 
 _BUILD = Path("/build")
 _MODULE = Path("/MODULE.bazel")

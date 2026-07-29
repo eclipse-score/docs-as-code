@@ -13,7 +13,11 @@
 
 load("//:docs.bzl", "docs")
 
+# Mounts the same-repo producer's needs.json so the :need: link in index.rst can
+# resolve. test_sources scopes the test-code-linker to this (test-less) package,
+# avoiding the workspace-wide bazel-testlogs scan during the html build.
 docs(
     source_dir = "docs",
-    test_sources = ["src/tests/docs_bzl/fixtures/basic"],
+    data = ["//src/tests/docs_bzl/scenarios/external_needs/producer:needs_json"],
+    test_sources = ["src/tests/docs_bzl/scenarios/external_needs/consumer"],
 )

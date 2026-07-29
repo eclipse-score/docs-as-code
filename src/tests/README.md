@@ -21,13 +21,21 @@
 
 *Also known as system, product, or black-box tests.*
 
-This directory contains end-to-end tests, namely:
+This directory contains end-to-end tests at two scopes:
 
-- `docs_bzl`: tests based on the public `docs()` macro. Must be executed via plain pytest (run via `.venv_docs`) as they execute real `bazel run`/`bazel build` internally. See [docs_bzl/README.md](docs_bzl/README.md) for details.
+- `docs_bzl`: controlled integration scenarios for the public `docs.bzl` API:
+  `docs()`, `docs_bundle()`, composition, invalid configurations, and external
+  Bzlmod bundles. They run via plain pytest and issue the same real
+  `bazel build` / `bazel run` commands a consumer uses. See
+  [docs_bzl/README.md](docs_bzl/README.md) for layout and commands.
 
 - `downstream_compatibility`: *(formerly consumer tests)* Tests local changes and Git-based overrides against real consumer repositories. This provides broad, intentionally less-controlled coverage and helps detect breaking changes in the docs-as-code system before they affect downstream consumers.
 
-### Targets
+`bazel test //...` covers internal unit tests. It intentionally does not run
+the public `docs_bzl` integration suite; CI and local contributors run that
+suite explicitly through pytest.
+
+### Bazel test targets
 
 You can query targets in this directory with:
 

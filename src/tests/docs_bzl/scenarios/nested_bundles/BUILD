@@ -13,7 +13,6 @@
 
 load("//:bzl/mount_rules.bzl", "create_mounts_manifest")
 load("//:docs.bzl", "docs", "docs_bundle")
-load("//:score_pytest.bzl", "score_pytest")
 
 docs_bundle(
     name = "child",
@@ -58,38 +57,13 @@ create_mounts_manifest(
     bundle = ":ordered_aggregate",
 )
 
-# A complete docs() invocation is the synthetic host project used by the
-# end-to-end test below.
+# A complete docs() invocation is the synthetic host project driven by the
+# pytest integration test in //src/tests/docs_bzl.
 docs(
     source_dir = "host_docs",
+    test_sources = ["src/tests/docs_bzl/scenarios/nested_bundles"],
     bundles = [{
         "bundle": ":parent",
         "mount_at": "concepts/example_bundle",
     }],
-)
-
-score_pytest(
-    name = "mount_docs_e2e_test",
-    size = "medium",
-    srcs = ["test_mount_docs_e2e.py"],
-    data = [
-        ":docs",
-        ":_mounts_manifest",
-        ":ordered_aggregate_manifest",
-        ":sourcelinks_json",
-        ":parent",
-        "host_docs/conf.py",
-        "host_docs/concepts/index.rst",
-        "host_docs/index.rst",
-        "child/landing.rst",
-    ],
-    deps = ["//src/tests/docs_e2e:e2e_support"],
-    env = {
-        "FIXTURE_DOCS_BINARY": "$(rootpath :docs)",
-        "FIXTURE_MOUNTS_MANIFEST": "$(rootpath :_mounts_manifest)",
-        "ORDERED_AGGREGATE_MANIFEST": "$(rootpath :ordered_aggregate_manifest)",
-        "FIXTURE_SOURCELINKS": "$(rootpath :sourcelinks_json)",
-        "HOST_DOCS_CONF": "$(rootpath host_docs/conf.py)",
-    },
-    pytest_config = "//:pyproject.toml",
 )

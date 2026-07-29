@@ -3,6 +3,10 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
+from pathlib import Path
+
+import pytest
+
 from src.extensions.score_sync_toml import _mounts
 from src.extensions.score_sync_toml._mounts import materialize_mounts
 
@@ -42,8 +46,8 @@ def test_materialize_mounts_omits_default_fields():
 
 
 def test_materialize_mounts_maps_external_runfiles_path_to_bazel_bin(
-    tmp_path, monkeypatch
-):
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     runfiles_dir = tmp_path / "runfiles"
     walk_dir = runfiles_dir / "score_process+" / "process"
     walk_dir.mkdir(parents=True)

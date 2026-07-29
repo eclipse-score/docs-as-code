@@ -29,14 +29,14 @@ from src.extensions.score_mounts._resolver import (
 )
 
 
-def _write_manifest(tmp_path: Path, payload: dict) -> Path:
+def _write_manifest(tmp_path: Path, payload: dict[str, object]) -> Path:
     tmp_path.mkdir(parents=True, exist_ok=True)
     manifest = tmp_path / "_mounts_manifest.json"
     manifest.write_text(json.dumps(payload), encoding="utf-8")
     return manifest
 
 
-def test_load_single_entry(tmp_path: Path):
+def test_load_single_entry(tmp_path: Path) -> None:
     manifest = _write_manifest(
         tmp_path,
         {
@@ -60,7 +60,7 @@ def test_load_single_entry(tmp_path: Path):
     ]
 
 
-def test_load_entry_with_attach_to_and_entry_doc(tmp_path: Path):
+def test_load_entry_with_attach_to_and_entry_doc(tmp_path: Path) -> None:
     manifest = _write_manifest(
         tmp_path,
         {
@@ -80,7 +80,7 @@ def test_load_entry_with_attach_to_and_entry_doc(tmp_path: Path):
     assert spec.entry_doc == "start"
 
 
-def test_external_mount_keeps_execroot_and_runfiles_locations(tmp_path: Path):
+def test_external_mount_keeps_execroot_and_runfiles_locations(tmp_path: Path) -> None:
     manifest = _write_manifest(
         tmp_path,
         {
@@ -105,20 +105,22 @@ def test_external_mount_keeps_execroot_and_runfiles_locations(tmp_path: Path):
     assert specs[1].external is True
 
 
-def test_load_missing_required_key_raises(tmp_path: Path):
+def test_load_missing_required_key_raises(tmp_path: Path) -> None:
     manifest = _write_manifest(tmp_path, {"mounts": [{"runtime_path": "src/docs_dir"}]})
     with pytest.raises(ValueError, match="missing 'src_root'/'mount_at'"):
         load_mounts_manifest(str(manifest))
 
 
-def test_load_non_object_raises(tmp_path: Path):
+def test_load_non_object_raises(tmp_path: Path) -> None:
     manifest = tmp_path / "_mounts_manifest.json"
     manifest.write_text('["not", "an", "object"]', encoding="utf-8")
     with pytest.raises(ValueError, match="must be a JSON object"):
         load_mounts_manifest(str(manifest))
 
 
-def test_external_mount_uses_execroot_path_in_sandbox(tmp_path: Path, monkeypatch):
+def test_external_mount_uses_execroot_path_in_sandbox(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     monkeypatch.chdir(tmp_path)
     manifest = _write_manifest(
         tmp_path,
@@ -139,7 +141,7 @@ def test_external_mount_uses_execroot_path_in_sandbox(tmp_path: Path, monkeypatc
     )
 
 
-def test_external_mount_uses_runfiles_root_under_bazel_run(tmp_path: Path):
+def test_external_mount_uses_runfiles_root_under_bazel_run(tmp_path: Path) -> None:
     manifest = _write_manifest(
         tmp_path / "_main" / "package",
         {

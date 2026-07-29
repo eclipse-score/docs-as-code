@@ -24,6 +24,7 @@ import json
 import os
 from dataclasses import dataclass
 from pathlib import Path
+from typing import cast
 
 
 @dataclass(frozen=True)
@@ -48,25 +49,35 @@ def load_mounts_manifest(manifest_path: str | Path) -> MountsManifest:
     exec root in a sandbox) is the caller's responsibility.
     """
     manifest_path = Path(manifest_path)
-    data = json.loads(manifest_path.read_text(encoding="utf-8"))
-    if not isinstance(data, dict):
+    raw_data: object = json.loads(manifest_path.read_text(encoding="utf-8"))
+    if not isinstance(raw_data, dict):
         raise ValueError(
-            f"mounts manifest must be a JSON object, got {type(data).__name__}: {data!r}"
+            f"mounts manifest must be a JSON object, got {type(raw_data).__name__}: {raw_data!r}"
         )
+    data = cast("dict[str, object]", raw_data)
     mounts: list[MountSpec] = []
-    for entry in data.get("mounts", []):
+    mounts_data = data.get("mounts", [])
+    if not isinstance(mounts_data, list):
+        raise ValueError("mounts manifest field 'mounts' must be a list")
+    typed_mounts_data = cast("list[object]", mounts_data)
+    for raw_entry in typed_mounts_data:
+        if not isinstance(raw_entry, dict):
+            raise ValueError(f"mounts manifest entry must be an object: {raw_entry!r}")
+        entry = cast("dict[str, object]", raw_entry)
         if "src_root" not in entry or "mount_at" not in entry:
             raise ValueError(
                 f"mounts manifest entry missing 'src_root'/'mount_at': {entry!r}"
             )
         mounts.append(
             MountSpec(
-                src_root=entry["src_root"],
-                runtime_path=entry.get("runtime_path", ""),
-                mount_at=entry["mount_at"],
-                attach_to=entry.get("attach_to") or None,
-                entry_doc=entry.get("entry_doc") or "index",
-                external=entry.get("external", False),
+                src_root=str(entry["src_root"]),
+                runtime_path=str(entry.get("runtime_path", "")),
+                mount_at=str(entry["mount_at"]),
+                attach_to=str(entry["attach_to"]) if entry.get("attach_to") else None,
+                entry_doc=str(entry["entry_doc"])
+                if entry.get("entry_doc")
+                else "index",
+                external=bool(entry.get("external", False)),
             )
         )
     return MountsManifest(

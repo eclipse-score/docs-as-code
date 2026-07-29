@@ -6,17 +6,39 @@
   *******************************************************************************
 -->
 
-# `docs()` end-to-end tests
+# Public `docs.bzl` integration tests
 
-These tests run **outside** Bazel with pytest and drive the public `docs()`
-macro through real `bazel run` / `bazel build` commands against small fixture
-packages in this directory. They test exactly what a user runs.
+These tests run **outside** Bazel with pytest and drive the public `docs.bzl`
+macros through real `bazel run` / `bazel build` commands. They cover exactly
+what a consumer invokes: `docs()`, `docs_bundle()`, mounts, and failure cases.
+
+```text
+docs_bzl/
+├── scenarios/       # one fixture per consumer scenario
+│   ├── basic_docs/
+│   ├── external_needs/
+│   ├── metamodel_violation/
+│   ├── nested_bundles/
+│   ├── external_bundle/
+│   └── invalid_bundle_placements/
+└── test_<scenario>.py
+```
+
+Each scenario has a fixture folder and a matching pytest file. The names describe
+consumer behavior, not the Bazel mechanism used to execute it. Positive rendering
+uses `bazel run`; sandbox-only behavior uses `bazel build`; invalid package
+definitions are expected build failures. Assertions retain rendered HTML,
+manifest order and metadata, source links, toctree attachment, and diagnostics.
 
 Note that these tests run `bazel` commands, so they are slow. They need to be executed
-sequentially. Use sparingly.
+sequentially. Use sparingly. They do not call `bazel clean`, so the persistent
+Bazel server and its action, repository, and disk caches are reused between
+cases. There is still a small analysis/startup cost per command; keep scenarios
+coarse-grained and use `bazel run` only where runtime behavior matters.
 
 Run via:
 
-    pytest src/tests/docs_bzl -vv
+    .venv_docs/bin/python -m pytest -vv src/tests/docs_bzl
 
-*(no venv is required)*
+The suite is deliberately separate from `bazel test //...`, since pytest is its
+driver. CI stores its JUnit XML together with the Bazel test reports.

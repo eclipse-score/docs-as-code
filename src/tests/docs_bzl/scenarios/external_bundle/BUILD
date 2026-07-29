@@ -11,6 +11,16 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-project = "Docs E2E fixture"
-project_url = "https://example.invalid/docs-e2e"
-extensions = ["score_sphinx_bundle"]
+load("//:docs.bzl", "docs")
+
+# This fixture exercises the public Bzlmod contract. In particular, the
+# sandboxed :needs_json target must be able to walk an external bundle rather
+# than silently omitting it.
+docs(
+    source_dir = "host_docs",
+    test_sources = ["src/tests/docs_bzl/scenarios/external_bundle"],
+    bundles = [{
+        "bundle": "@score_process//:docs_bundle",
+        "mount_at": "process",
+    }],
+)
