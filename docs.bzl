@@ -318,12 +318,13 @@ def docs(
             "--jobs",
             "auto",
             "--define=external_needs_source=" + str(data),
-            # ``sphinx_docs`` is a sandboxed build action, so it needs the
-            # action-input path rather than the runfiles-relative spelling.
-            "--define=mounts_manifest=" + ("$(location :_mounts_manifest)" if bundles else ""),
             "--define=score_sourcelinks_json=$(location :sourcelinks_json)",
             "--define=score_source_code_linker_plain_links=1",
-        ] + (["--define=score_metamodel_yaml=$(location " + str(metamodel) + ")"] if metamodel else []),
+        ] + (
+            # ``sphinx_docs`` is a sandboxed build action, so it needs the
+            # action-input path rather than the runfiles-relative spelling.
+            ["--define=mounts_manifest=$(location :_mounts_manifest)"] if bundles else []
+        ) + (["--define=score_metamodel_yaml=$(location " + str(metamodel) + ")"] if metamodel else []),
         formats = ["needs"],
         sphinx = ":sphinx_build",
         tools = data + metamodel_label + [":sourcelinks_json", ":docs_bundle"] + mounts_manifest_label,
