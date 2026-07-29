@@ -92,21 +92,20 @@ def _validate_relative_path(value: object, field_name: str, *, external: bool) -
 
 def _resolve_below(base: Path, relative_path: str) -> Path:
     """Keep a validated path inside its Bazel-controlled root (security boundary)."""
-    resolved_base = Path(os.path.abspath(base))
+    # Keep this as ``os.path.normpath`` plus ``startswith`` instead of the
+    # equivalent pathlib operations: CodeQL models this pair as a normalized,
+    # root-confined path for its path-injection analysis.
+    resolved_base = os.path.normpath(os.path.abspath(base))
     # External runtime paths begin with '../' but are resolved against the
     # manifest's parent, so their repository directory remains below this base.
     relative = relative_path.removeprefix("../")
     # Do not resolve symlinks here: test runfiles and Bazel workspaces commonly
     # expose in-tree sources through symlinks. The manifest validation above
     # rejects traversal segments, while ``abspath`` normalizes the lexical path.
-    resolved_path = Path(os.path.abspath(resolved_base / relative))
-    try:
-        resolved_path.relative_to(resolved_base)
-    except ValueError as error:
-        raise ValueError(
-            f"mount path escapes its expected root: {relative_path!r}"
-        ) from error
-    return resolved_path
+    resolved_path = os.path.normpath(os.path.join(resolved_base, relative))
+    if not resolved_path.startswith(resolved_base + os.sep):
+        raise ValueError(f"mount path escapes its expected root: {relative_path!r}")
+    return Path(resolved_path)
 
 
 def load_mounts_manifest(manifest_path: str | Path) -> MountsManifest:
