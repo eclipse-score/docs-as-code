@@ -26,6 +26,12 @@ jobs:
         with:
           egress-policy: audit
 
+      - name: Install Graphviz
+        uses: eclipse-score/apt-install@main
+        with:
+          packages: graphviz
+          cache: false
+
       - name: Checkout repository (Handle all events)
         uses: actions/checkout@v4.2.2
         with:
