@@ -41,6 +41,12 @@ jobs:
         with:
           egress-policy: audit
 
+      - name: Install Graphviz
+        uses: eclipse-score/apt-install@main
+        with:
+          packages: graphviz
+          cache: false
+
       - name: Checkout PR
         uses: actions/checkout@v6.0.2
 
