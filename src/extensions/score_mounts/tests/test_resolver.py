@@ -136,6 +136,44 @@ def test_load_non_object_raises(tmp_path: Path):
         load_mounts_manifest(str(manifest))
 
 
+@pytest.mark.parametrize(
+    ("entry", "message"),
+    [
+        (
+            {
+                "src_root": "../outside",
+                "runtime_path": "docs",
+                "mount_at": "x",
+            },
+            "src_root must not contain",
+        ),
+        (
+            {
+                "src_root": "src/docs",
+                "runtime_path": "../../outside",
+                "mount_at": "x",
+            },
+            "runtime_path must not contain",
+        ),
+        (
+            {
+                "src_root": "src/docs",
+                "runtime_path": "docs",
+                "mount_at": "x",
+                "external": True,
+            },
+            "external runtime_path must start",
+        ),
+    ],
+)
+def test_load_rejects_paths_that_escape_bazel_roots(
+    tmp_path: Path, entry: dict[str, object], message: str
+):
+    manifest = _write_manifest(tmp_path, {"mounts": [entry]})
+    with pytest.raises(ValueError, match=message):
+        load_mounts_manifest(manifest)
+
+
 def test_runtime_dir_external_path_resolves_relative_to_manifest(tmp_path: Path):
     # Under `bazel run`, the '../<repo>+/...' short_path resolves natively in
     # the runfiles tree. runtime_dir must NOT remap '../' to 'external/'.
