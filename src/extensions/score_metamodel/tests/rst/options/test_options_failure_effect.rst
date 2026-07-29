@@ -15,7 +15,7 @@
 
 .. test_metadata::
    :id: test_metadata__failure_effect
-   :partially_verifies_list: tool_req__docs_saf_attr_fmea_failure_effect
+   :fully_verifies_list: tool_req__docs_saf_attr_fmea_failure_effect[version==1]
    :test_type: requirements_based
    :derivation_technique: requirements_based
 

@@ -15,7 +15,7 @@
 
 .. test_metadata::
    :id: test_metadata__metamodel_link_checks
-   :partially_verifies_list: tool_req__docs_req_types
+   :partially_verifies_list: tool_req__docs_req_types[version==1]
    :test_type: requirements_based
    :derivation_technique: requirements_based
 
