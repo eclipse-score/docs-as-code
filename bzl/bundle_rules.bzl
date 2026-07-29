@@ -72,29 +72,23 @@ def _parent_index_docname(mount_at):
     parent = mount_at.rsplit("/", 1)[0] if "/" in mount_at else ""
     return join_path(parent, "index")
 
-def _validate_and_deduplicate_entries(entries):
-    """Keep one entry per source directory and reject conflicting metadata."""
+def _ensure_unique_entries(entries):
+    """Reject a source directory reached through more than one bundle path."""
     seen = {}
-    out = []
     for entry in entries:
         key = entry.runtime_path
         if key in seen:
-            differing_fields = [
-                field
-                for field in ["mount_at", "attach_to", "entry_doc", "src_root", "external", "repository"]
-                if getattr(seen[key], field) != getattr(entry, field)
-            ]
-            if differing_fields:
-                fail(("bundle conflict: source directory %r has conflicting %s; " +
-                      "a bundle must resolve to one complete placement declaration") %
-                     (key, differing_fields))
-            continue
+            fail(("bundle conflict: source directory %r is included through more " +
+                  "than one bundle path; include every documentation source directory once") % key)
         seen[key] = entry
-        out.append(entry)
-    return out
 
 def _bundle_runtime_path(ctx):
-    """Return this bundle source directory's Bazel runtime path."""
+    """Return this bundle source directory's Bazel runtime path.
+
+    Bazel spells a source in an external repository as ``../<repo>/...`` in
+    runfiles. Keep that spelling here; ``_bundle_execroot_path`` converts it to
+    the corresponding ``external/<repo>/...`` form for build actions.
+    """
     source_file = ctx.files.srcs[0].short_path
     external_prefix = ""
     if source_file.startswith("../"):
@@ -109,7 +103,12 @@ def _bundle_execroot_path(runtime_path):
     return runtime_path
 
 def _rebase_bundle_entry(entry, mount_at, attach_to):
-    """Place a bundle entry below a requested documentation-tree location."""
+    """Place a bundle entry below a requested documentation-tree location.
+
+    A bundle's own root has no ``mount_at`` yet. For that root, an omitted
+    ``attach_to`` means the parent directory's ``index`` page. Nested entries
+    retain their existing attachment and are rebased below ``mount_at``.
+    """
     is_bundle_root = not entry.mount_at
     if is_bundle_root:
         rebased_attach_to = attach_to or _parent_index_docname(mount_at)
@@ -225,7 +224,7 @@ def _docs_bundle_impl(ctx):
         child_external_runfiles.append(child[DocsBundleInfo].external_runfiles)
         sourcelinks.extend(_sourcelinks_visible_through(ctx, child))
 
-    deduplicated_entries = _validate_and_deduplicate_entries(entries)
+    _ensure_unique_entries(entries)
     all_source_files = depset(
         direct = own_source_files,
         transitive = child_source_files,
@@ -237,7 +236,7 @@ def _docs_bundle_impl(ctx):
     return [
         DefaultInfo(files = all_source_files),
         DocsBundleInfo(
-            entries = deduplicated_entries,
+            entries = entries,
             sourcelinks = sourcelinks,
             external_runfiles = external_runfiles,
         ),

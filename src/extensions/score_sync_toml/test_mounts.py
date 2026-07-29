@@ -4,9 +4,12 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 from pathlib import Path
+from typing import Any, cast
 
 import pytest
+from sphinx.application import Sphinx
 
+from src.extensions import score_sync_toml
 from src.extensions.score_sync_toml import _mounts
 from src.extensions.score_sync_toml._mounts import materialize_mounts
 
@@ -67,3 +70,38 @@ def test_materialize_mounts_maps_external_runfiles_path_to_bazel_bin(
     assert fragment.read_text(encoding="utf-8") == (
         '[[mounts]]\ndir = "bazel-bin/external/score_process+/process"\nmount_at = "process"\n'
     )
+
+
+def test_setup_skips_toml_sync_without_git_worktree(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    class ConfigWithoutTomlSync:
+        suppress_warnings: list[str] = []
+
+        @property
+        def _raw_config(self) -> Any:
+            raise AssertionError(
+                "setup must not configure TOML sync without a Git worktree"
+            )
+
+    class AppWithoutGitWorktree:
+        config = ConfigWithoutTomlSync()
+
+        def connect(self, *args: Any, **kwargs: Any) -> None:
+            raise AssertionError(
+                "setup must not register TOML sync without a Git worktree"
+            )
+
+    monkeypatch.setattr(score_sync_toml, "find_git_root", lambda: None)
+
+    metadata = score_sync_toml.setup(cast(Sphinx, AppWithoutGitWorktree()))
+
+    assert metadata == {
+        "version": "0.1",
+        "parallel_read_safe": True,
+        "parallel_write_safe": True,
+    }
+    assert AppWithoutGitWorktree.config.suppress_warnings == [
+        "needs_config_writer.unsupported_type",
+        "needs_config_writer.path_conversion",
+    ]

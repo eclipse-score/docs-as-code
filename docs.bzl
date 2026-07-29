@@ -74,7 +74,7 @@ def docs_bundle(name, source_dir = None, entry_doc = "index", bundles = [], scan
         {
             "bundle": <docs_bundle label>,
             "mount_at": <where it shall me mounted>,
-            "attach_to": <optional index where the bundle shall be attached, defaults to the mount_at parent's index>
+            "attach_to": <optional document to attach the bundle to; for a bundle root it defaults to the mount_at parent's index>
         }.
       scan_code: Source-code targets to scan for source-code links owned by this
                  bundle.

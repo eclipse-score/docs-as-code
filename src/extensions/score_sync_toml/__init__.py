@@ -25,15 +25,27 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     See https://needs-config-writer.useblocks.com
     """
 
+    # A Bazel build action has no Git worktree. In that context this extension
+    # must be inactive: writing a fallback file into the sandbox is useless and
+    # can make generated configuration appear to work when it is discarded.
+    git_root = find_git_root()
+    if git_root is None:
+        app.config.suppress_warnings += [
+            "needs_config_writer.unsupported_type",
+            "needs_config_writer.path_conversion",
+        ]
+        return {
+            "version": "0.1",
+            "parallel_read_safe": True,
+            "parallel_write_safe": True,
+        }
+
     # Emit a single ubproject.toml at the git repo root, where UI extensions
     # (ubCode / esbonio) look for it. needs-config-writer relativizes every path
     # field against the output file's directory, so anchoring the file at the
     # root yields root-relative paths automatically. find_git_root() resolves the
-    # root under `bazel run` and esbonio alike; in a sandbox build it returns None
-    # and we fall back to the confdir default (that copy is ephemeral / discarded).
-    git_root = find_git_root()
-    outpath = str(git_root / "ubproject.toml") if git_root else "ubproject.toml"
-    config_setdefault(app.config, "needscfg_outpath", outpath)
+    # root under `bazel run` and esbonio alike.
+    config_setdefault(app.config, "needscfg_outpath", str(git_root / "ubproject.toml"))
     """Write a single ubproject.toml at the git repo root."""
 
     config_setdefault(app.config, "needscfg_overwrite", True)
