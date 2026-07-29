@@ -485,19 +485,22 @@
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">//:docs_check</span></code></p></td>
 <td><p>Verifies documentation correctness</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">//:docs_combo</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">//:docs_link_check</span></code></p></td>
+<td><p>Lists broken links</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">//:docs_combo</span></code></p></td>
 <td><p>Builds combined documentation with all external dependencies included</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">//:traceability_gate</span> <span class="pre">--</span> <span class="pre">--metrics-json</span> <span class="pre">bazel-bin/needs_json/_build/needs/metrics.json</span> <span class="pre">--min-req-code</span> <span class="pre">70</span> <span class="pre">--min-req-test</span> <span class="pre">70</span> <span class="pre">--min-req-fully-linked</span> <span class="pre">60</span> <span class="pre">--min-tests-linked</span> <span class="pre">70</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">//:traceability_gate</span> <span class="pre">--</span> <span class="pre">--metrics-json</span> <span class="pre">bazel-bin/needs_json/_build/needs/metrics.json</span> <span class="pre">--min-req-code</span> <span class="pre">70</span> <span class="pre">--min-req-test</span> <span class="pre">70</span> <span class="pre">--min-req-fully-linked</span> <span class="pre">60</span> <span class="pre">--min-tests-linked</span> <span class="pre">70</span></code></p></td>
 <td><p>Reads the pre-computed metrics.json and fails if coverage thresholds are not met</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">//:live_preview</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">//:live_preview</span></code></p></td>
 <td><p>Creates a live_preview of the documentation viewable in a local server</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">//:live_preview_combo_experimental</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">//:live_preview_combo_experimental</span></code></p></td>
 <td><p>Creates a live_preview of the full documentation with all dependencies viewable in a local server</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">//:ide_support</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">//:ide_support</span></code></p></td>
 <td><p>Sets up a Python venv for esbonio (Remember to restart VS Code!)</p></td>
 </tr>
 </tbody>
