@@ -134,25 +134,12 @@ def _entries_visible_through(ctx, child):
     return [entry for entry in entries if entry.repository == child_repository]
 
 def _sourcelinks_visible_through(ctx, child):
-    """Apply the same external-module boundary to traceability metadata."""
+    """Return source-code links that may cross a module boundary."""
     sourcelinks = child[DocsBundleInfo].sourcelinks
     child_repository = child.label.workspace_name
     if child_repository == ctx.label.workspace_name:
         return sourcelinks
     return [link for link in sourcelinks if link.repository == child_repository]
-
-def _validate_docname(value, field_name, allow_empty = False):
-    """Validate a relative documentation docname used in a bundle declaration."""
-    if type(value) != "string":
-        fail("%s must be a string, got %r" % (field_name, value))
-    if not value:
-        if allow_empty:
-            return
-        fail("%s must not be empty" % field_name)
-    invalid_segments = [segment for segment in value.split("/") if not segment or segment in [".", ".."]]
-    if invalid_segments:
-        fail("%s must be a relative docname without empty, '.' or '..' segments; got %r" %
-             (field_name, value))
 
 def _parse_bundle_declaration(bundle):
     """Read one nested-bundle declaration and fill in optional values."""
@@ -169,8 +156,6 @@ def _parse_bundle_declaration(bundle):
 
     mount_at = bundle["mount_at"]
     attach_to = bundle.get("attach_to", "")
-    _validate_docname(mount_at, "mount_at", allow_empty = True)
-    _validate_docname(attach_to, "attach_to", allow_empty = True)
 
     return struct(
         bundle = bundle["bundle"],
@@ -258,7 +243,6 @@ _docs_bundle = rule(
 
 def create_bundle(name, bundles, srcs = [], sourcelinks = [], strip_prefix = "", entry_doc = "index", visibility = None, **kwargs):
     """Create a reusable documentation bundle from files and child declarations."""
-    _validate_docname(entry_doc, "entry_doc")
     parsed_bundles = [_parse_bundle_declaration(declaration) for declaration in bundles]
     _docs_bundle(
         name = name,
