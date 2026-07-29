@@ -15,6 +15,7 @@ load("//:docs.bzl", "docs_bundle")
 docs_bundle(
     name = "child",
     source_dir = "child",
+    entry_doc = "a",
 )
 
 docs_bundle(
@@ -51,22 +52,6 @@ docs_bundle(
     ],
 )
 
-docs_bundle(
-    name = "entry_doc_index",
-    source_dir = "_empty",
-    bundles = [
-        {"bundle": ":child", "mount_at": "same", "entry_doc": "index"},
-    ],
-)
-
-docs_bundle(
-    name = "entry_doc_overview",
-    source_dir = "_empty",
-    bundles = [
-        {"bundle": ":child", "mount_at": "same", "entry_doc": "overview"},
-    ],
-)
-
 # The child reaches the final bundle at two different locations, so analysis
 # must stop before Sphinx would receive two copies of the same pages.
 docs_bundle(
@@ -87,16 +72,6 @@ docs_bundle(
     bundles = [
         {"bundle": ":attach_to_a", "mount_at": "root"},
         {"bundle": ":attach_to_b", "mount_at": "root"},
-    ],
-    tags = ["manual"],
-)
-
-docs_bundle(
-    name = "bad_entry_doc",
-    source_dir = "_empty",
-    bundles = [
-        {"bundle": ":entry_doc_index", "mount_at": "root"},
-        {"bundle": ":entry_doc_overview", "mount_at": "root"},
     ],
     tags = ["manual"],
 )

@@ -60,7 +60,7 @@ load(
     "create_mounts_manifest",
 )
 
-def docs_bundle(name, source_dir = None, bundles = [], scan_code = [], visibility = None, **kwargs):
+def docs_bundle(name, source_dir = None, entry_doc = "index", bundles = [], scan_code = [], visibility = None, **kwargs):
     """A docs bundle, optionally composed of others.
 
     Args:
@@ -68,6 +68,8 @@ def docs_bundle(name, source_dir = None, bundles = [], scan_code = [], visibilit
       source_dir: optional directory holding this bundle's own doc sources. It is
         globbed like `docs()` (same file kinds) and the contents are stored after
         stripping the `source_dir` prefix. Leave it unset for a pure aggregator.
+      entry_doc: bundle-relative docname attached when this bundle is mounted.
+        Defaults to `index`.
       bundles: nested bundles to compose, each a dict
         {
             "bundle": <docs_bundle label>,
@@ -98,6 +100,7 @@ def docs_bundle(name, source_dir = None, bundles = [], scan_code = [], visibilit
         srcs = srcs,
         sourcelinks = sourcelinks,
         strip_prefix = strip_prefix,
+        entry_doc = entry_doc,
         bundles = bundles,
         visibility = visibility,
         **kwargs
@@ -164,7 +167,6 @@ def docs(
                     "bundle": <docs_bundle label>,
                     "mount_at": <where it shall me mounted>,
                     "attach_to": <optional, file where the bundle shall be attached, defaults to the parent section's index>,
-                    "entry_doc": <optional, docname of the bundle's own index, defaults to 'index'>,
                 }.
               Note: a bundle label may also point at another module's auto-exposed
               bundle, e.g. "@score_process//:docs_bundle".
@@ -213,6 +215,7 @@ def docs(
     docs_bundle(
         name = "docs_bundle",
         source_dir = source_dir,
+        entry_doc = "index",
         bundles = bundles,
         scan_code = scan_code,
         visibility = ["//visibility:public"],

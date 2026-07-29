@@ -108,7 +108,7 @@ def _bundle_execroot_path(runtime_path):
         return "external/" + runtime_path[3:]
     return runtime_path
 
-def _rebase_bundle_entry(entry, mount_at, attach_to, entry_doc):
+def _rebase_bundle_entry(entry, mount_at, attach_to):
     """Place a bundle entry below a requested documentation-tree location."""
     is_bundle_root = not entry.mount_at
     if is_bundle_root:
@@ -121,7 +121,7 @@ def _rebase_bundle_entry(entry, mount_at, attach_to, entry_doc):
         src_root = entry.src_root,
         mount_at = join_path(mount_at, entry.mount_at),
         attach_to = rebased_attach_to,
-        entry_doc = entry_doc if is_bundle_root else entry.entry_doc,
+        entry_doc = entry.entry_doc,
         external = entry.external,
         repository = entry.repository,
     )
@@ -160,7 +160,7 @@ def _parse_bundle_declaration(bundle):
     if type(bundle) != "dict":
         fail("each bundle declaration must be a dict, got %r" % bundle)
 
-    allowed_keys = ["bundle", "mount_at", "attach_to", "entry_doc"]
+    allowed_keys = ["bundle", "mount_at", "attach_to"]
     unknown = [key for key in bundle if key not in allowed_keys]
     if unknown:
         fail("unknown key(s) %r in %r; allowed keys: %r" %
@@ -170,16 +170,13 @@ def _parse_bundle_declaration(bundle):
 
     mount_at = bundle["mount_at"]
     attach_to = bundle.get("attach_to", "")
-    entry_doc = bundle.get("entry_doc", "index")
     _validate_docname(mount_at, "mount_at", allow_empty = True)
     _validate_docname(attach_to, "attach_to", allow_empty = True)
-    _validate_docname(entry_doc, "entry_doc")
 
     return struct(
         bundle = bundle["bundle"],
         mount_at = mount_at,
         attach_to = attach_to,
-        entry_doc = entry_doc,
     )
 
 def _docs_bundle_impl(ctx):
@@ -199,7 +196,7 @@ def _docs_bundle_impl(ctx):
             src_root = _bundle_execroot_path(runtime_path),
             mount_at = "",
             attach_to = "",
-            entry_doc = "index",
+            entry_doc = ctx.attr.entry_doc,
             external = external,
             repository = ctx.label.workspace_name,
         ))
@@ -221,7 +218,6 @@ def _docs_bundle_impl(ctx):
                 entry,
                 ctx.attr.bundle_mount_ats[index],
                 ctx.attr.bundle_attach_tos[index],
-                ctx.attr.bundle_entry_docs[index],
             )
             for entry in _entries_visible_through(ctx, child)
         ])
@@ -253,26 +249,27 @@ _docs_bundle = rule(
         "srcs": attr.label_list(allow_files = True),
         "sourcelinks": attr.label_list(allow_files = True),
         "strip_prefix": attr.string(default = ""),
+        "entry_doc": attr.string(default = "index"),
         "bundles": attr.label_list(providers = [DocsBundleInfo]),
         "bundle_mount_ats": attr.string_list(),
         "bundle_attach_tos": attr.string_list(),
-        "bundle_entry_docs": attr.string_list(),
     },
     doc = "Internal rule that carries bundle files and their documentation-tree locations.",
 )
 
-def create_bundle(name, bundles, srcs = [], sourcelinks = [], strip_prefix = "", visibility = None, **kwargs):
+def create_bundle(name, bundles, srcs = [], sourcelinks = [], strip_prefix = "", entry_doc = "index", visibility = None, **kwargs):
     """Create a reusable documentation bundle from files and child declarations."""
+    _validate_docname(entry_doc, "entry_doc")
     parsed_bundles = [_parse_bundle_declaration(declaration) for declaration in bundles]
     _docs_bundle(
         name = name,
         srcs = srcs,
         sourcelinks = sourcelinks,
         strip_prefix = strip_prefix,
+        entry_doc = entry_doc,
         bundles = [bundle.bundle for bundle in parsed_bundles],
         bundle_mount_ats = [bundle.mount_at for bundle in parsed_bundles],
         bundle_attach_tos = [bundle.attach_to for bundle in parsed_bundles],
-        bundle_entry_docs = [bundle.entry_doc for bundle in parsed_bundles],
         visibility = visibility,
         **kwargs
     )

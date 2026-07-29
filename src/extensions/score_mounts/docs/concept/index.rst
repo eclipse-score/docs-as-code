@@ -33,9 +33,11 @@ A **bundle** is a named, mountable documentation directory. It owns its
 content, but not its position in a consuming documentation site.
 
 A **mount** makes a bundle visible in a host site. The host chooses the
-**placement** with ``mount_at`` and can optionally attach the bundle's entry
-document to a host toctree with ``attach_to``. This separation lets different
-projects reuse the same bundle at different locations.
+**placement** with ``mount_at``. The bundle defines its own ``entry_doc``
+(default ``index``); the mount adds that page to the parent ``index`` toctree
+by default. ``attach_to`` overrides that host toctree document. This separation
+lets different projects reuse the same bundle at different locations while
+preserving its canonical entry page.
 
 Bundles are read from their original source directories. Consequently, an
 in-repository bundle remains editable and IDE navigation reaches its real

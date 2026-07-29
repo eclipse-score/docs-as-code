@@ -18,6 +18,7 @@ load("//:score_pytest.bzl", "score_pytest")
 docs_bundle(
     name = "child",
     source_dir = "child",
+    entry_doc = "landing",
     scan_code = [":scan_code"],
 )
 
@@ -80,6 +81,7 @@ score_pytest(
         "host_docs/conf.py",
         "host_docs/concepts/index.rst",
         "host_docs/index.rst",
+        "child/landing.rst",
     ],
     deps = ["//src/tests/docs_e2e:e2e_support"],
     env = {

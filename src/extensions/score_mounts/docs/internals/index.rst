@@ -35,11 +35,13 @@ Each manifest entry contains:
   sandbox execroot;
 * ``runtime_path`` — the Bazel short path used when a staged directory must be
   walked;
-* ``mount_at``, ``attach_to``, and ``entry_doc`` — the already-composed Sphinx
-  placement; and
+* ``mount_at`` and ``attach_to`` — the already-composed Sphinx placement; and
+* ``entry_doc`` — the canonical entry document declared by the source bundle.
 * ``external`` — whether the directory belongs to another Bazel module.
 
-The rule rejects conflicting final placements before Sphinx starts. The Python
+The rule rejects conflicting final placements before Sphinx starts. A mount
+without ``attach_to`` is attached to the ``index`` document beside its
+``mount_at``; ``attach_to`` overrides that target. The Python
 extension may therefore preserve declaration order and only translates each
 manifest entry into the ``sphinx_mounts`` configuration format.
 

@@ -26,6 +26,10 @@ def test_docs_build_mounts_bundle_and_extends_toctree(tmp_path: Path):
         "concepts/example_bundle",
         "concepts/example_bundle/child",
     ]
+    assert [mount["entry_doc"] for mount in manifest["mounts"]] == [
+        "index",
+        "landing",
+    ]
     sourcelinks = json.loads(runfile("FIXTURE_SOURCELINKS").read_text(encoding="utf-8"))
     assert sourcelinks == [
         {
@@ -52,6 +56,9 @@ def test_docs_build_mounts_bundle_and_extends_toctree(tmp_path: Path):
     assert "extended toctree #0 in 'concepts/index'" in result.stdout
     assert (
         tmp_path / "_build" / "concepts" / "example_bundle" / "index.html"
+    ).is_file()
+    assert (
+        tmp_path / "_build" / "concepts" / "example_bundle" / "child" / "landing.html"
     ).is_file()
     toml = (tmp_path / "docs" / "ubproject.toml").read_text(encoding="utf-8")
     assert 'mount_at = "concepts/example_bundle"' in toml

@@ -76,8 +76,7 @@ it: Sphinx cannot extend the expected Toctree or the mounted page is absent.
 
 - `bazel test //src/extensions/score_mounts:score_mounts_tests` contains
   Python unit tests for the `score_mounts` extension.
-- `bazel build //src/tests/mounts_conflict:bad`, `:bad_attach_to`, and
-  `:bad_entry_doc` are manually invoked negative fixtures. They must fail
-  because one source directory cannot produce conflicting mount locations,
-  Toctree targets, or entry documents.
+- `bazel build //src/tests/mounts_conflict:bad` and `:bad_attach_to` are
+  manually invoked negative fixtures. They must fail because one source
+  directory cannot produce conflicting mount locations or Toctree targets.
 - `bazel run //:docs` remains the project-wide documentation smoke check.

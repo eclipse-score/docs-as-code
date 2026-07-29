@@ -38,12 +38,15 @@ Create a ``docs_bundle`` next to the source directory that it exports:
    docs_bundle(
        name = "docs_dir",
        source_dir = "docs",
+       entry_doc = "overview",  # default: "index"
        visibility = ["//visibility:public"],
    )
 
 ``source_dir`` is the root of the mounted tree. Its supported documentation
 files are collected like those of ``docs()``; for example,
 ``src/docs/index.rst`` becomes ``index`` within the bundle.
+``entry_doc`` names the bundle-relative page used for navigation when the
+bundle is mounted.
 
 Mount a bundle in a project
 ---------------------------
@@ -69,9 +72,10 @@ Pass a placement dictionary to ``docs(bundles = [...])``:
 docname prefix in this project. In this example, ``overview.rst`` is available
 as ``internals/code_docs/overview``.
 
-``attach_to`` is optional. When it is set, the bundle entry document (``index``
-by default) is added to the first toctree of the named host document. Set
-``entry_doc`` only when the entry document is not named ``index``.
+Every mount adds the bundle's configured entry document to a host toctree. By
+default that is the ``index`` beside ``mount_at``; ``attach_to`` overrides the
+host document whose first toctree receives the entry. The entry itself belongs
+to the ``docs_bundle`` and defaults to ``index``.
 
 The configuration has two separate responsibilities:
 

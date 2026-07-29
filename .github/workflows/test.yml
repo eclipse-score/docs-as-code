@@ -59,7 +59,6 @@ jobs:
         run: |
           ! bazel build --lockfile_mode=error //src/tests/mounts_conflict:bad
           ! bazel build --lockfile_mode=error //src/tests/mounts_conflict:bad_attach_to
-          ! bazel build --lockfile_mode=error //src/tests/mounts_conflict:bad_entry_doc
 
       - name: Build an external documentation bundle from runfiles
         run: bazel run --lockfile_mode=error //src/tests/mounts_external:docs

@@ -116,11 +116,12 @@ site).
    docs_bundle(
        name = "docs_dir",
        source_dir = "docs",
+       entry_doc = "index",
        bundles = [],
        visibility = ["//visibility:public"],
    )
 
-Signature: ``docs_bundle(name, source_dir = None, bundles = [], scan_code = [], visibility = None)``.
+Signature: ``docs_bundle(name, source_dir = None, entry_doc = "index", bundles = [], scan_code = [], visibility = None)``.
 
 - ``source_dir`` (string, optional)
   Directory holding the bundle's own doc sources. It is globbed the same way as
@@ -132,6 +133,11 @@ Signature: ``docs_bundle(name, source_dir = None, bundles = [], scan_code = [], 
   directory directly — no copy is made. Leave it unset for a pure aggregator that only
   composes ``bundles``.
 
+- ``entry_doc`` (string, optional)
+  Bundle-relative docname used as the canonical navigation entry. It defaults to
+  ``index``. Every mount attaches this entry to the parent ``index`` toctree by
+  default; a placement's ``attach_to`` may override that host document.
+
 - ``bundles`` (list of composition dicts, optional)
   Nested bundles to compose into this one, so a bundle can aggregate other
   bundles transitively. Each entry is a dict:
@@ -140,9 +146,8 @@ Signature: ``docs_bundle(name, source_dir = None, bundles = [], scan_code = [], 
   - ``mount_at`` — the docname prefix at which the child bundle appears *inside*
     this bundle.
   - ``attach_to`` (optional) — a docname (relative to this bundle) whose toctree
-    receives the child's entry document.
-  - ``entry_doc`` (optional, default ``"index"``) — the child-relative docname of
-    the entry document, used together with ``attach_to``.
+    receives the child's bundle-defined entry document. When omitted, the parent
+    ``index`` document receives it.
 
   A child's ``mount_at``/``attach_to`` **prefix-stack** with the placement this
   bundle later receives, so composition is fully transitive. The same underlying
@@ -152,10 +157,10 @@ Signature: ``docs_bundle(name, source_dir = None, bundles = [], scan_code = [], 
 
 .. note::
 
-   A bundle is **placement-free**: its ``mount_at`` / ``attach_to`` /
-   ``entry_doc`` are assigned by the mounter, never by the bundle itself. This is
-   what lets the same bundle be mounted at different locations by different
-   consumers.
+   A bundle is **placement-free**: its ``mount_at`` and ``attach_to`` are assigned
+   by the mounter, while its ``entry_doc`` belongs to the bundle. This lets the
+   same bundle be mounted at different locations by different consumers without
+   changing its canonical entry page.
 
 Edge cases
 ----------
