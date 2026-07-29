@@ -546,11 +546,11 @@ Architecture Attributes
 🔗 Linkage
 ------------------------
 
-.. tool_req:: Mandatory Architecture Attribute: fulfils
+.. tool_req:: Architecture fulfils linkage rules
   :id: tool_req__docs_arch_link_fulfils
   :tags: Architecture
   :implemented: YES
-  :version: 2
+  :version: 3
   :satisfies:
    gd_req__arch_linkage_requirement_type[version==1],
    gd_req__arch_attr_fulfils[version==1],
@@ -558,7 +558,9 @@ Architecture Attributes
    gd_req__req_linkage_fulfill[version==1],
   :parent_covered: YES
 
-  Docs-as-Code shall enforce that linking via the ``fulfils`` attribute follows defined rules.
+  Docs-as-Code shall permit the ``fulfils`` attribute to be omitted for feat_arc_sta and
+  comp_arc_sta. When ``fulfils`` is present, Docs-as-Code shall enforce that linking via
+  the ``fulfils`` attribute follows defined rules.
 
   Allowed source and target combinations are defined in the following table:
 
@@ -579,12 +581,13 @@ Architecture Attributes
 .. tool_req:: Architecture fulfils linkage to AoU
   :id: tool_req__docs_arch_link_fulfils_aou
   :implemented: YES
-  :version: 1
+  :version: 2
   :satisfies: gd_req__arch_attr_fulfils_aou[version==1]
   :parent_covered: YES
 
   Architectural static views (feat_arc_sta, comp_arc_sta)
-  link to Assumptions of Use (aou_req) via the ``fulfils`` attribute.
+  may link to Assumptions of Use (aou_req) via the ``fulfils`` attribute.
+  When such a link is present, Docs-as-Code shall restrict its target to aou_req.
 
 .. tool_req:: Check Architecture linkage to AoU
   :id: tool_req__docs_arch_link_aou_check
