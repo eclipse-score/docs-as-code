@@ -28,3 +28,9 @@ docs_bundle(
     source_dir = "howto",
     visibility = ["//visibility:public"],
 )
+
+docs_bundle(
+    name = "internals",
+    source_dir = "internals",
+    visibility = ["//visibility:public"],
+)

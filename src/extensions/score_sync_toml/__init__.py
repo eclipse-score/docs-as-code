@@ -42,7 +42,7 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     config_setdefault(app.config, "needscfg_write_all", True)
     """Write full config, so the final configuration is visible in one file."""
 
-    config_setdefault(app.config, "needscfg_exclude_defaults", False)
+    config_setdefault(app.config, "needscfg_exclude_defaults", True)
     """Exclude default values from the generated configuration."""
 
     # This is disabled for right now as it causes a lot of issues

@@ -19,20 +19,11 @@ from pathlib import Path
 
 
 def runfile(path_env: str) -> Path:
-    """Resolve a test runfile without allowing its env value to escape runfiles."""
-    runfiles_root = _runfiles_root()
-    candidate = os.path.normpath(os.path.join(runfiles_root, os.environ[path_env]))
-    if not candidate.startswith(str(runfiles_root) + os.sep):
-        raise ValueError(f"runfile path escapes TEST_SRCDIR: {candidate!r}")
-    return Path(candidate)
-
-
-def _runfiles_root() -> Path:
-    """Return this test's Bazel-managed runfiles root."""
-    return Path(
-        os.path.normpath(
-            os.path.join(os.environ["TEST_SRCDIR"], os.environ["TEST_WORKSPACE"])
-        )
+    """Resolve a runfiles-relative path passed through a test environment variable."""
+    return (
+        Path(os.environ["TEST_SRCDIR"])
+        / os.environ["TEST_WORKSPACE"]
+        / os.environ[path_env]
     )
 
 
@@ -50,7 +41,7 @@ def run_docs_build(
     the small writable equivalent needed by a Bazel test while preserving the
     runfiles layout used to resolve in-tree mount sources.
     """
-    runfiles_workspace = _runfiles_root()
+    runfiles_workspace = Path(os.environ["TEST_SRCDIR"]) / os.environ["TEST_WORKSPACE"]
     (tmp_path / "src").symlink_to(runfiles_workspace / "src", target_is_directory=True)
 
     copied_source_dir = tmp_path / "docs"
@@ -60,12 +51,7 @@ def run_docs_build(
 
     env = os.environ.copy()
     env["SOURCE_DIRECTORY"] = str(copied_source_dir)
-    if mounts_manifest:
-        copied_manifest = tmp_path / "_mounts_manifest.json"
-        shutil.copyfile(mounts_manifest, copied_manifest)
-        env["MOUNTS_MANIFEST"] = copied_manifest.name
-    else:
-        env["MOUNTS_MANIFEST"] = ""
+    env["MOUNTS_MANIFEST"] = str(mounts_manifest) if mounts_manifest else ""
     env["DATA"] = "[]"
     env["ACTION"] = "incremental"
     env["SCORE_SOURCELINKS"] = str(sourcelinks)

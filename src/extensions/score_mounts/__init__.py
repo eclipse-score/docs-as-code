@@ -40,22 +40,6 @@ from src.helper_lib import find_ws_root, get_runfiles_dir
 logger = logging.getLogger(__name__)
 
 
-def _manifest_path_below(root: Path, raw_path: str) -> Path:
-    """Normalize a Bazel-provided manifest path inside its expected root.
-
-    ``raw_path`` normally comes from Bazel expansion and is already valid. The
-    containment check is defense-in-depth for direct configuration or a tampered
-    environment, and also makes the filesystem trust boundary explicit.
-    """
-    # CodeQL recognizes this ``normpath``/``startswith`` pair as the relevant
-    # normalization and root-containment guard for path-injection analysis.
-    normalized_root = os.path.normpath(os.path.abspath(root))
-    normalized_path = os.path.normpath(os.path.join(normalized_root, raw_path))
-    if not normalized_path.startswith(normalized_root + os.sep):
-        raise ValueError(f"score_mounts: manifest path escapes its root: {raw_path!r}")
-    return Path(normalized_path)
-
-
 def _read_manifest(config: Config):
     """Locate and load the mounts manifest, or return ``None`` when unset.
 
@@ -74,8 +58,7 @@ def _read_manifest(config: Config):
 
     # ``bazel run`` passes an rlocation-relative path; ``sphinx_docs`` in a
     # sandbox passes its execroot-relative ``$(location)`` path directly.
-    manifest_root = get_runfiles_dir() if find_ws_root() else Path.cwd()
-    manifest_path = _manifest_path_below(manifest_root, raw)
+    manifest_path = get_runfiles_dir() / raw if find_ws_root() else Path(raw)
 
     return load_mounts_manifest(manifest_path)
 
