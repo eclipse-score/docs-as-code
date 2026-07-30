@@ -702,9 +702,8 @@ but for ease of traceability this is a separate one.
   :id: tool_req__arch_linkage_safety
   :implemented: YES
   :version: 2
-  :satisfies: gd_req__arch_linkage_safety[version==1]
-:satisfies: gd_req__arch_linkage_safety
-:parent_covered: NO
+  :satisfies: gd_req__arch_linkage_safety[version==1], gd_req__arch_build_blocks_corr[version==1]
+  :parent_covered: NO
 
   .. csv-table::
      :header: "Link source", "Relation", "Link Target", "Mandatory"
