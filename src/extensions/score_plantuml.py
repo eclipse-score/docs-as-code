@@ -35,6 +35,35 @@ from src.helper_lib import config_setdefault, get_runfiles_dir
 logger = logging.getLogger(__name__)
 
 
+def use_document_source_as_plantuml_cwd(app: Sphinx, doctree, docname: str) -> None:
+    """Make PlantUML includes resolve from the real source-file directory.
+
+    ``sphinx_mounts`` assigns mounted documents a logical docname below the
+    primary project's source directory, while their files live in a Bazel
+    runfiles tree.  ``sphinxcontrib.plantuml`` uses ``incdir`` as its working
+    directory; for generated ``needuml`` nodes that value is derived from the
+    logical docname and therefore does not exist.  Its error message then
+    misleadingly claims that the PlantUML executable is missing.
+
+    An absolute ``incdir`` is accepted by ``sphinxcontrib.plantuml`` and takes
+    precedence over ``builder.srcdir`` when joined.  Run after sphinx-needs has
+    replaced ``needuml`` nodes, so the generated PlantUML nodes carry their
+    actual source path.
+
+    Upstream bug report: https://github.com/useblocks/sphinx-needs/issues/1749
+    Once solved we can remove this function.
+    """
+    from sphinxcontrib.plantuml import plantuml
+
+    del app, docname  # Required by Sphinx's event callback signature.
+    for node in doctree.findall(plantuml):
+        if node.source is None:
+            continue
+        source = Path(node.source)
+        if source.is_file():
+            node["incdir"] = str(source.parent)
+
+
 def find_correct_path(runfiles: Path) -> Path:
     """
     This ensures that the 'plantuml' binary path is found in local 'score_docs_as_code'
@@ -86,6 +115,8 @@ def setup(app: Sphinx):
 
     logger.debug(f"PlantUML binary found at {app.config.plantuml}")
     app.connect("builder-inited", check_graphviz)
+    # sphinx-needs creates PlantUML nodes during ``doctree-resolved``.  Its
+    # standard-priority handler must run first, hence the larger priority.
+    app.connect("doctree-resolved", use_document_source_as_plantuml_cwd, priority=800)
 
-    # The extension is not even active at runtime.
     return {"parallel_read_safe": True, "parallel_write_safe": True}
