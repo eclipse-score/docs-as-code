@@ -403,10 +403,10 @@ needs_types:
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
-    mandatory_links:
-      # req-Id: tool_req__arch_linkage_safety
-      includes: logic_arc_int, logic_arc_int_op
     optional_links:
+      # req-Id: tool_req__arch_linkage_safety
+      # Old direction kept optional during migration; superseded by logic_arc_int included_by feat
+      includes: logic_arc_int, logic_arc_int_op
       uses: logic_arc_int, logic_arc_int_op
       provides: logic_arc_int, logic_arc_int_op # preparation for linking change according to DR-005
     tags:
@@ -480,6 +480,8 @@ needs_types:
       status: ^(valid|invalid)$
     optional_links:
       # req-Id: tool_req__arch_linkage_safety
+      # New direction kept optional during migration; will supersede feat includes logic_arc_int
+      included_by: feat
       includes: logic_arc_int_op
       fulfils: feat_req
     tags:
