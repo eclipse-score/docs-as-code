@@ -703,7 +703,8 @@ but for ease of traceability this is a separate one.
   :implemented: YES
   :version: 2
   :satisfies: gd_req__arch_linkage_safety[version==1]
-  :parent_covered: YES
+:satisfies: gd_req__arch_linkage_safety
+:parent_covered: NO
 
   .. csv-table::
      :header: "Link source", "Relation", "Link Target", "Mandatory"
