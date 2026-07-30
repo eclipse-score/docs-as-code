@@ -1,7 +1,7 @@
 Sphinx>=9.0
 
 # 8.0.0 needed for Sphinx-Needs versioning introduction
-sphinx-needs==8.0.0
+sphinx-needs==8.3.0
 
 # Due to needed bugfix in 0.3.1
 sphinx-collections>=0.3.1

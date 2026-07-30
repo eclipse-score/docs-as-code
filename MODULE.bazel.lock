@@ -1877,8 +1877,8 @@
             "https://files.pythonhosted.org/packages/30/cf/45dd359f6ca0c3762ce0490f681da242f0530c49c81050c035c016bfdd3a/sphinx_design-0.7.0-py3-none-any.whl": "f82bf179951d58f55dca78ab3706aeafa496b741a91b1911d371441127d64282"
           },
           "sphinx-needs": {
-            "https://files.pythonhosted.org/packages/b9/dd/69c5d151e1b4d98e85371fdf8ce2c1fe497f4345f32e0429cec20442d4de/sphinx_needs-8.0.0-py3-none-any.whl": "540c380c074d4088a557ea353e91513bfc1cb7712b10925c13ac9e5ebb7be091",
-            "https://files.pythonhosted.org/packages/e4/77/909f87ae766363e8a0bb3907f54af4a7a963538a7cdc7fe6d331e7098ed1/sphinx_needs-8.0.0.tar.gz": "c4336ee0e3c949eff9eb11a14910f7b6b68cb8284d731cfddf97694037337674"
+            "https://files.pythonhosted.org/packages/1f/30/73b94ef5ae28c3523be1d23f9fb0a060c5f4d1d892218f2ba540a1d84525/sphinx_needs-8.3.0-py3-none-any.whl": "b4b61c3a4295457bc070b38217f87375a427f0472f9206e1f0cf44db1fd9e8de",
+            "https://files.pythonhosted.org/packages/f5/a5/d5f38f8b46d1d198c47b67e54e48b31b9b4f18ff42908b96c4609aa5b4a4/sphinx_needs-8.3.0.tar.gz": "e305ea42293ce7a44214529ca50b28f069baad19e6602fe048156b4edf95cd35"
           },
           "sphinxcontrib-applehelp": {
             "https://files.pythonhosted.org/packages/5d/85/9ebeae2f76e9e77b952f4b274c27238156eae7979c5421fba91a28f4970d/sphinxcontrib_applehelp-2.0.0-py3-none-any.whl": "4cd3f0ec4ac5dd9c17ec65e9ab272c9b867ea77425228e68ecf08d6b28ddbdb5",
