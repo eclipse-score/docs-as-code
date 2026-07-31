@@ -21,6 +21,7 @@ score_extensions = [
     "sphinxcontrib.plantuml",
     "score_plantuml",
     "sphinx_needs",
+    "score_cross_module_compatibility",
     "score_metamodel",
     "sphinx_design",
     "myst_parser",

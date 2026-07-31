@@ -23,6 +23,8 @@
 # *******************************************************************************
 """External docs_bundle() scenario."""
 
+import json
+
 from src.tests.docs_bzl.helpers import run_scenario
 
 
@@ -31,3 +33,7 @@ def test_external_bundle_builds_in_sandbox_and_at_runtime():
     result = run_scenario("run", "external_bundle", ":docs")
 
     assert (result.build_dir / "index.html").is_file()
+    report = json.loads(
+        (result.build_dir / "compatibility-findings.json").read_text(encoding="utf-8")
+    )
+    assert report["summary"]["count"] >= 0

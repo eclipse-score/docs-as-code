@@ -95,6 +95,7 @@ def test_external_mount_keeps_execroot_and_runfiles_locations(tmp_path: Path) ->
                     "runtime_path": "../score_process+/docs_as_mount",
                     "mount_at": "process",
                     "external": True,
+                    "repository": "score_process+",
                 },
             ],
         },
@@ -103,6 +104,7 @@ def test_external_mount_keeps_execroot_and_runfiles_locations(tmp_path: Path) ->
     assert specs[0].src_root == "src/docs"
     assert specs[1].src_root == "external/score_process+/docs_as_mount"
     assert specs[1].external is True
+    assert specs[1].repository == "score_process+"
 
 
 def test_load_missing_required_key_raises(tmp_path: Path) -> None:

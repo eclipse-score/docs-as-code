@@ -12,22 +12,16 @@
    # SPDX-License-Identifier: Apache-2.0
    # *******************************************************************************
 
-.. _docs_how-to:
+Local version mismatch
+======================
 
-How To
-======
+.. test_req:: Origin
+   :id: test_req__local__origin
+   :status: valid
+   :version: 1
+   :links: test_req__local__target[version==1]
 
-Here you find practical guides on how to use docs-as-code.
-
-.. toctree::
-   :maxdepth: 1
-
-   get_started
-   setup
-   write_docs
-   other_modules
-   cross_module_compatibility
-   dashboards_and_quality_gates
-   source_to_doc_links
-   test_to_doc_links
-   add_extensions
+.. test_req:: Target
+   :id: test_req__local__target
+   :status: valid
+   :version: 2

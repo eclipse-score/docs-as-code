@@ -10,7 +10,8 @@
 
 These tests run **outside** Bazel with pytest and drive the public `docs.bzl`
 macros through real `bazel run` / `bazel build` commands. They cover exactly
-what a consumer invokes: `docs()`, `docs_bundle()`, mounts, and failure cases.
+what a consumer invokes: `docs()`, `docs_bundle()`, mounts, cross-module
+compatibility reporting, and failure cases.
 
 ```text
 docs_bzl/
@@ -20,6 +21,7 @@ docs_bzl/
 │   ├── metamodel_violation/
 │   ├── nested_bundles/
 │   ├── external_bundle/
+│   ├── local_version_mismatch/
 │   └── invalid_bundle_placements/
 └── test_<scenario>.py
 ```
@@ -29,6 +31,9 @@ consumer behavior, not the Bazel mechanism used to execute it. Positive renderin
 uses `bazel run`; sandbox-only behavior uses `bazel build`; invalid package
 definitions are expected build failures. Assertions retain rendered HTML,
 manifest order and metadata, source links, toctree attachment, and diagnostics.
+The cross-module compatibility test creates its consumer in a temporary
+workspace, so this repository's production ``MODULE.bazel`` stays free of test
+dependencies while the test still traverses real Bzlmod module boundaries.
 
 Note that these tests run `bazel` commands, so they are slow. They need to be executed
 sequentially. Use sparingly. They do not call `bazel clean`, so the persistent

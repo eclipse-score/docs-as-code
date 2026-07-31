@@ -87,7 +87,9 @@ def validate_options(
             values = _get_normalized(need, attribute)
             if mandatory and not values:
                 log.warning_for_need(
-                    need, f"is missing required attribute: `{attribute}`."
+                    need,
+                    f"is missing required attribute: `{attribute}`.",
+                    category="mandatory-attribute",
                 )
 
             for value in values:
@@ -178,7 +180,11 @@ def validate_links(
         for attribute, allowed_values in attributes_to_allowed_values.items():
             values = _get_normalized(need, attribute)
             if mandatory and not values:
-                log.warning_for_need(need, f"is missing required link: `{attribute}`.")
+                log.warning_for_need(
+                    need,
+                    f"is missing required link: `{attribute}`.",
+                    category="mandatory-link",
+                )
 
             allowed_regex = "|".join(_to_link_pattern(v) for v in allowed_values)
 

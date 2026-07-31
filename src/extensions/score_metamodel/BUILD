@@ -56,6 +56,7 @@ py_library(
     visibility = ["//visibility:public"],
     # TODO: Figure out if all requirements are needed or if we can break it down a bit
     deps = all_requirements + [
+        "@score_docs_as_code//src/extensions/score_cross_module_compatibility",
         "@score_docs_as_code//src/extensions/score_metrics",
         "@score_docs_as_code//src/helper_lib",
     ],

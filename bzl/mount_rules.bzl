@@ -29,6 +29,7 @@ def _mounts_manifest_impl(ctx):
             "attach_to": entry.attach_to,
             "entry_doc": entry.entry_doc,
             "external": entry.external,
+            "repository": entry.repository,
         })
 
     out = ctx.actions.declare_file(ctx.label.name + ".json")
