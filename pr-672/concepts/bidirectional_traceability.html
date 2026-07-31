@@ -393,6 +393,7 @@
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Bi-directional Traceability</a></li>
 <li class="toctree-l1"><a class="reference internal" href="docs_deps.html">Docs Dependencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mounts/index.html">Documentation bundles and mounts</a></li>
 </ul>
 </div>
 </nav></div>
@@ -481,14 +482,15 @@ That other module’s need elements will not have backlinks.
 At least not immediately.
 In a later revision they can update their dependency on the first module and then the references are updated in their documentation.</p>
 </section>
-<section id="build-with-copies">
-<h3>Build with copies<a class="headerlink" href="#build-with-copies" title="Link to this heading">#</a></h3>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>bazel<span class="w"> </span>run<span class="w"> </span>//:docs_combo
+<section id="build-with-mounts">
+<h3>Build with mounts<a class="headerlink" href="#build-with-mounts" title="Link to this heading">#</a></h3>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>bazel<span class="w"> </span>run<span class="w"> </span>//:docs
 </pre></div>
 </div>
-<p>The documentation build does not depend on the needs.json but on whole documentation source code.</p>
-<p>Using <a class="reference external" href="https://sphinx-collections.readthedocs.io/en/latest/">sphinx_collections</a>
-not just the current module is built but all referenced modules are included.</p>
+<p>The documentation build mounts the whole documentation source tree declared through
+<code class="docutils literal notranslate"><span class="pre">bundles</span></code> instead of depending on a copied <code class="docutils literal notranslate"><span class="pre">needs.json</span></code>.</p>
+<p>Using <a class="reference external" href="https://sphinx-mounts.useblocks.com/">sphinx-mounts</a>, the current
+documentation source tree is extended with the declared bundles.</p>
 <p>The advantage is that the produced documentation is consistent and stays that way.
 There is no outwards hyperlink which could break or be outdated.</p>
 <p>The tradeoff is that build takes longer and the output needs more space.
@@ -501,7 +503,7 @@ At the very least for release builds this is acceptable.</p>
 Module and document references may be circular.
 Use the combo build and the copy strategy to produce release documentation that contains all needed pages while keeping Bazel’s graph acyclic.</p>
 <p class="plantuml">
-<object data="../_images/plantuml-3275e52a5fe4b29e550ddc76be5d335359945df7.svg" type="image/svg+xml" style="width:532px;height:312px;background:#FFFFFF;"></object></p>
+<object data="../_images/plantuml-040d3f04ca50e61154ac3d6e7410ba4996297a92.svg" type="image/svg+xml" style="width:532px;height:312px;background:#FFFFFF;"></object></p>
 <p>The diagram above shows the difference between module-level references (which may be circular) and Bazel target dependencies (which must remain acyclic).
 Module A and Module B may reference each other in documentation or design (bi-directional links).
 Their corresponding Bazel targets must be arranged so the build dependency graph has no cycles.</p>
@@ -557,7 +559,7 @@ Their corresponding Bazel targets must be arranged so the build dependency graph
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#strategies-links-vs-copies">Strategies: links vs copies</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#build-with-links">Build with links</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#build-with-copies">Build with copies</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#build-with-mounts">Build with mounts</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-links-vs-bazel-target-deps">Module links vs Bazel target deps</a></li>

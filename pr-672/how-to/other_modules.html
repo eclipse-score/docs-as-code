@@ -400,6 +400,7 @@
 <li class="toctree-l1"><a class="reference internal" href="source_to_doc_links.html">Reference Docs in Source Code</a></li>
 <li class="toctree-l1"><a class="reference internal" href="test_to_doc_links.html">Reference Docs in Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="add_extensions.html">Add Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mounts/index.html">Mount docs bundles</a></li>
 </ul>
 </div>
 </nav></div>
@@ -466,8 +467,9 @@
 In short:</p>
 <ol class="arabic simple">
 <li><p>Make the other module available to Bazel via the <cite>MODULE</cite> (aka <cite>MODULE.bazel</cite>) file.</p></li>
-<li><p>Add the external module’s documentation targets to your <cite>docs(data=[…])</cite> target so Sphinx can see the other module’s built inventory.</p></li>
-<li><p>Reference remote needs using the normal Sphinx-Needs referencing syntax.</p></li>
+<li><p>Choose one integration mode: import its built <code class="docutils literal notranslate"><span class="pre">needs.json</span></code> <strong>or</strong> mount its
+documentation sources.</p></li>
+<li><p>Reference Needs using the normal Sphinx-Needs referencing syntax.</p></li>
 </ol>
 <section id="details-and-example">
 <h2>Details and Example<a class="headerlink" href="#details-and-example" title="Link to this heading">#</a></h2>
@@ -480,8 +482,8 @@ There are multiple ways to do this depending on how you manage third-party/local
 </pre></div>
 </div>
 </section>
-<section id="extend-your-docs-rule-so-sphinx-picks-up-the-other-module-s-inventory">
-<h3>2) Extend your <cite>docs</cite> rule so Sphinx picks up the other module’s inventory<a class="headerlink" href="#extend-your-docs-rule-so-sphinx-picks-up-the-other-module-s-inventory" title="Link to this heading">#</a></h3>
+<section id="a-import-the-other-module-s-built-inventory">
+<h3>2a) Import the other module’s built inventory<a class="headerlink" href="#a-import-the-other-module-s-built-inventory" title="Link to this heading">#</a></h3>
 <p>The documentation build is exposed via a Bazel macro that accepts an <code class="docutils literal notranslate"><span class="pre">external_needs</span></code> parameter
 for external <code class="docutils literal notranslate"><span class="pre">:needs_json_file</span></code> targets.
 Use <code class="docutils literal notranslate"><span class="pre">external_needs</span></code> instead of <code class="docutils literal notranslate"><span class="pre">data</span></code> when the target produces needs JSON —
@@ -497,6 +499,30 @@ Use <code class="docutils literal notranslate"><span class="pre">external_needs<
 </pre></div>
 </div>
 <p>More details in <a class="reference internal" href="../concepts/bidirectional_traceability.html#docs-bidirectional-traceability"><span class="std std-ref">Bi-directional Traceability</span></a>.</p>
+</section>
+<section id="b-mount-the-external-module-s-documentation-bundle">
+<h3>2b) Mount the external module’s documentation bundle<a class="headerlink" href="#b-mount-the-external-module-s-documentation-bundle" title="Link to this heading">#</a></h3>
+<p>The documentation build in this project is exposed via a Bazel macro that accepts
+a <code class="docutils literal notranslate"><span class="pre">bundles</span></code> parameter. Mount the external module’s auto-exposed
+<code class="docutils literal notranslate"><span class="pre">:docs_bundle</span></code> bundle. The mounted sources define their needs in the host
+build, so do <strong>not</strong> also add that module’s <code class="docutils literal notranslate"><span class="pre">:needs_json</span></code> to <code class="docutils literal notranslate"><span class="pre">data</span></code> — doing
+so would create duplicate need IDs.</p>
+<p>Example <cite>BUILD</cite> snippet (consumer module):</p>
+<div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;@score_docs_as_code//:docs.bzl&quot;</span><span class="p">,</span> <span class="s2">&quot;docs&quot;</span><span class="p">)</span>
+<span class="n">docs</span><span class="p">(</span>
+  <span class="n">bundles</span> <span class="o">=</span> <span class="p">[</span>
+      <span class="p">{</span>
+          <span class="s2">&quot;bundle&quot;</span><span class="p">:</span> <span class="s2">&quot;@score_process//:docs_bundle&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;mount_at&quot;</span><span class="p">:</span> <span class="s2">&quot;process&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;attach_to&quot;</span><span class="p">:</span> <span class="s2">&quot;index&quot;</span><span class="p">,</span>
+      <span class="p">},</span>
+  <span class="p">],</span>
+  <span class="n">source_dir</span> <span class="o">=</span> <span class="s2">&quot;docs&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>See <a class="reference internal" href="mounts/index.html#howto-mount-external-sources"><span class="std std-ref">Mount docs bundles</span></a> for the full mount reference, and
+<a class="reference internal" href="../concepts/bidirectional_traceability.html#docs-bidirectional-traceability"><span class="std std-ref">Bi-directional Traceability</span></a> for more on cross-module linking.</p>
 </section>
 <section id="reference-needs-across-modules">
 <h3>3) Reference needs across modules<a class="headerlink" href="#reference-needs-across-modules" title="Link to this heading">#</a></h3>
@@ -580,7 +606,8 @@ However, <code class="docutils literal notranslate"><span class="pre">external_n
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#details-and-example">Details and Example</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#include-the-other-module-in-module-bazel">1) Include the other module in <cite>MODULE.bazel</cite></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#extend-your-docs-rule-so-sphinx-picks-up-the-other-module-s-inventory">2) Extend your <cite>docs</cite> rule so Sphinx picks up the other module’s inventory</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-import-the-other-module-s-built-inventory">2a) Import the other module’s built inventory</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#b-mount-the-external-module-s-documentation-bundle">2b) Mount the external module’s documentation bundle</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reference-needs-across-modules">3) Reference needs across modules</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-vs-external-needs">Data vs. external_needs</a></li>
 </ul>
