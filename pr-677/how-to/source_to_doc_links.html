@@ -486,7 +486,7 @@ of <a class="reference internal" href="../internals/requirements/requirements.ht
 as <code class="docutils literal notranslate"><span class="pre">code_targets</span></code>. Their <code class="docutils literal notranslate"><span class="pre">srcs</span></code>, <code class="docutils literal notranslate"><span class="pre">hdrs</span></code>, and <code class="docutils literal notranslate"><span class="pre">textual_hdrs</span></code> are scanned,
 including those of their <code class="docutils literal notranslate"><span class="pre">deps</span></code> recursively. This means that a
 <code class="docutils literal notranslate"><span class="pre">cc_executable</span></code> also covers source files from the <code class="docutils literal notranslate"><span class="pre">cc_library</span></code> targets it
-uses.</p>
+uses. You may also pass filegroups; their files are scanned directly.</p>
 <div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="n">cc_library</span><span class="p">(</span>
 <span class="linenos"> 2</span>   <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;some_library&quot;</span><span class="p">,</span>
 <span class="linenos"> 3</span>   <span class="n">srcs</span> <span class="o">=</span> <span class="p">[</span>
