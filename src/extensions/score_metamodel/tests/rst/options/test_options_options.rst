@@ -15,7 +15,7 @@
 
 .. test_metadata::
    :id: test_metadata__mandatory_options_and_links
-   :partially_verifies_list: tool_req__docs_common_attr_status, tool_req__docs_req_types
+   :partially_verifies_list: tool_req__docs_common_attr_status[version==1], tool_req__docs_req_types[version==1]
    :test_type: requirements_based
    :derivation_technique: requirements_based
 
@@ -222,6 +222,31 @@
    :expect_not: violates
 
 --- feat_saf_fmea violates end ---
+
+
+--- arch fulfils optional begin ---
+
+.. Positive Test: fulfils is optional for static views, an unlinked feat_arc_sta is accepted.
+
+.. feat_arc_sta:: Static view without fulfils
+   :id: feat_arc_sta__fulfils__optional
+   :status: valid
+   :safety: ASIL_B
+   :security: YES
+   :expect_not: is missing required link: `fulfils`
+
+
+.. Negative Test: when fulfils is present, its target type is still restricted.
+
+.. feat_arc_sta:: Static view with invalid fulfils target
+   :id: feat_arc_sta__fulfils__bad_target
+   :status: valid
+   :safety: ASIL_B
+   :security: YES
+   :fulfils: comp_req__child__ASIL_B
+   :expect: feat_arc_sta__fulfils__bad_target: references 'comp_req__child__ASIL_B' as 'fulfils', but it must reference Feature Requirement (feat_req) or Assumption of Use Requirement (aou_req).
+
+--- arch fulfils optional end ---
 
 
 .. Tests if the attribute `safety` follows the pattern `^(QM|ASIL_B)$`

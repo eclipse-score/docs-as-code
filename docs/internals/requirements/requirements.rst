@@ -46,6 +46,7 @@ This section provides an overview of current process requirements and their clar
   Req,     'tool_req__docs' in id and implemented == "YES" and "Requirements"              in tags and status == "valid", 'tool_req__docs' in id and implemented == "PARTIAL" and "Requirements"              in tags and status == "valid", 'tool_req__docs' in id and implemented == "NO" and              "Requirements" in tags and status == "valid", 'tool_req__docs' in id and              "Requirements" in tags and status != "valid"
   Arch,    'tool_req__docs' in id and implemented == "YES" and "Architecture"              in tags and status == "valid", 'tool_req__docs' in id and implemented == "PARTIAL" and "Architecture"              in tags and status == "valid", 'tool_req__docs' in id and implemented == "NO" and              "Architecture" in tags and status == "valid", 'tool_req__docs' in id and              "Architecture" in tags and status != "valid"
   DDesign, 'tool_req__docs' in id and implemented == "YES" and "Detailed Design & Code"    in tags and status == "valid", 'tool_req__docs' in id and implemented == "PARTIAL" and "Detailed Design & Code"    in tags and status == "valid", 'tool_req__docs' in id and implemented == "NO" and    "Detailed Design & Code" in tags and status == "valid", 'tool_req__docs' in id and    "Detailed Design & Code" in tags and status != "valid"
+  Verif,   'tool_req__docs' in id and implemented == "YES" and "Verification Evidence"      in tags and status == "valid", 'tool_req__docs' in id and implemented == "PARTIAL" and "Verification Evidence"      in tags and status == "valid", 'tool_req__docs' in id and implemented == "NO" and      "Verification Evidence" in tags and status == "valid", 'tool_req__docs' in id and      "Verification Evidence" in tags and status != "valid"
   TVR,     'tool_req__docs' in id and implemented == "YES" and "Tool Verification Reports" in tags and status == "valid", 'tool_req__docs' in id and implemented == "PARTIAL" and "Tool Verification Reports" in tags and status == "valid", 'tool_req__docs' in id and implemented == "NO" and "Tool Verification Reports" in tags and status == "valid", 'tool_req__docs' in id and "Tool Verification Reports" in tags and status != "valid"
   Other,   'tool_req__docs' in id and implemented == "YES" and "Process / Other"           in tags and status == "valid", 'tool_req__docs' in id and implemented == "PARTIAL" and "Process / Other"           in tags and status == "valid", 'tool_req__docs' in id and implemented == "NO" and           "Process / Other" in tags and status == "valid", 'tool_req__docs' in id and           "Process / Other" in tags and status != "valid"
   SftyAn,  'tool_req__docs' in id and implemented == "YES" and "Safety Analysis"           in tags and status == "valid", 'tool_req__docs' in id and implemented == "PARTIAL" and "Safety Analysis"           in tags and status == "valid", 'tool_req__docs' in id and implemented == "NO" and           "Safety Analysis" in tags and status == "valid", 'tool_req__docs' in id and           "Safety Analysis" in tags and status != "valid"
@@ -546,11 +547,11 @@ Architecture Attributes
 🔗 Linkage
 ------------------------
 
-.. tool_req:: Mandatory Architecture Attribute: fulfils
+.. tool_req:: Architecture fulfils linkage rules
   :id: tool_req__docs_arch_link_fulfils
   :tags: Architecture
   :implemented: YES
-  :version: 2
+  :version: 3
   :satisfies:
    gd_req__arch_linkage_requirement_type[version==1],
    gd_req__arch_attr_fulfils[version==1],
@@ -558,33 +559,35 @@ Architecture Attributes
    gd_req__req_linkage_fulfill[version==1],
   :parent_covered: YES
 
-  Docs-as-Code shall enforce that linking via the ``fulfils`` attribute follows defined rules.
+  Docs-as-Code shall allow or enforce where necessary that linking via the ``fulfils``
+  attribute follows the defined rules.
 
   Allowed source and target combinations are defined in the following table:
 
   .. table::
      :widths: auto
 
-     ====================================  ==========================================
-     Link Source                           Allowed Link Target
-     ====================================  ==========================================
-     feat_arc_sta                          feat_req, aou_req
-     feat_arc_dyn                          feat_req
-     logic_arc_int                         feat_req
-     comp_arc_sta                          comp_req, aou_req
-     comp_arc_dyn                          comp_req
-     real_arc_int                          comp_req
-     ====================================  ==========================================
+     ====================================  ==========================================  ==============
+     Link Source                           Allowed Link Target                         Optional/Mandatory
+     ====================================  ==========================================  ==============
+     feat_arc_sta                          feat_req                                    Optional
+     feat_arc_dyn                          feat_req                                    Optional
+     logic_arc_int                         feat_req                                    Optional
+     comp_arc_sta                          comp_req                                    Optional
+     comp_arc_dyn                          comp_req                                    Optional
+     real_arc_int                          comp_req                                    Optional
+     ====================================  ==========================================  ==============
 
 .. tool_req:: Architecture fulfils linkage to AoU
   :id: tool_req__docs_arch_link_fulfils_aou
   :implemented: YES
-  :version: 1
+  :version: 3
   :satisfies: gd_req__arch_attr_fulfils_aou[version==1]
   :parent_covered: YES
 
-  Architectural static views (feat_arc_sta, comp_arc_sta)
-  link to Assumptions of Use (aou_req) via the ``fulfils`` attribute.
+  Architectural static views (feat_arc_sta) and the component itself (comp)
+  may link to Assumptions of Use (aou_req) via the ``fulfils`` attribute.
+  When such a link is present, Docs-as-Code shall restrict its target to aou_req.
 
 .. tool_req:: Check Architecture linkage to AoU
   :id: tool_req__docs_arch_link_aou_check
@@ -699,13 +702,14 @@ but for ease of traceability this is a separate one.
   :id: tool_req__arch_linkage_safety
   :implemented: YES
   :version: 2
-  :satisfies: gd_req__arch_linkage_safety[version==1]
-  :parent_covered: YES
+  :satisfies: gd_req__arch_linkage_safety[version==1], gd_req__arch_build_blocks_corr[version==1]
+  :parent_covered: NO
 
   .. csv-table::
      :header: "Link source", "Relation", "Link Target", "Mandatory"
 
-     feat, includes, logic_arc_int, yes
+     logic_arc_int, included_by, feat, no
+     feat, includes, logic_arc_int, no
      mod, includes, comp, yes
      comp, implements, logic_arc_int, no
      comp, belongs_to, feat, yes
@@ -715,6 +719,11 @@ but for ease of traceability this is a separate one.
      real_arc_int_op, implements, logic_arc_int_op, no
      logic_arc_int, includes, logic_arc_int_op, no
      logic_arc_int_op, included_by, logic_arc_int, yes
+
+  .. note::
+     The link direction between ``feat`` and ``logic_arc_int`` is being switched from
+     ``feat includes logic_arc_int`` to ``logic_arc_int included_by feat``. Both directions
+     are currently accepted as optional links to avoid migration problems.
 
 
 💻 Detailed Design & Code
@@ -819,6 +828,28 @@ Testing
 
    Docs-AS-Code shall provide a way to gather statistics on linkages to implementation(source_code_links) & tests(testlink) for all needs.
    It shall also be possible to filter these by type and use the provided statistics in the documentation (via diagrams drawn from it etc.)
+
+🔎 Verification Evidence
+########################
+
+.. tool_req:: Support machine-readable module verification reports
+  :id: tool_req__docs_verification_report_need
+  :tags: Verification Evidence
+  :implemented: YES
+  :version: 1
+  :satisfies: gd_req__verification_reporting[version==1]
+  :parent_covered: NO: process wording is broader than the currently modeled report artifact.
+
+  Docs-as-Code shall support a machine-readable module verification report need type.
+
+  The need type shall:
+
+  * use ``mod_ver_report`` as directive type
+  * classify the report by ``safety``, ``security``, ``status`` and ``verification_method``
+  * link the report to the verified module via ``belongs_to``
+  * allow links to contained verification evidence via ``contains``
+  * allow links to covered artifacts via ``covers``
+  * allow links to backing documents or work products via ``evidence`` and ``realizes``
 
 🧪 Tool Verification Reports
 ############################

@@ -48,17 +48,18 @@ That other module's need elements will not have backlinks.
 At least not immediately.
 In a later revision they can update their dependency on the first module and then the references are updated in their documentation.
 
-Build with copies
+Build with mounts
 ~~~~~~~~~~~~~~~~~
 
 .. code-block:: sh
 
-	bazel run //:docs_combo
+	bazel run //:docs
 
-The documentation build does not depend on the needs.json but on whole documentation source code.
+The documentation build mounts the whole documentation source tree declared through
+``bundles`` instead of depending on a copied ``needs.json``.
 
-Using `sphinx_collections <https://sphinx-collections.readthedocs.io/en/latest/>`_
-not just the current module is built but all referenced modules are included.
+Using `sphinx-mounts <https://sphinx-mounts.useblocks.com/>`_, the current
+documentation source tree is extended with the declared bundles.
 
 The advantage is that the produced documentation is consistent and stays that way.
 There is no outwards hyperlink which could break or be outdated.

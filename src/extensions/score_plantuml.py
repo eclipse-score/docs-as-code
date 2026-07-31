@@ -24,6 +24,7 @@ Sphinx configuration.
 In addition it sets common PlantUML options, like output to svg_obj.
 """
 
+import subprocess
 from pathlib import Path
 
 from sphinx.application import Sphinx
@@ -32,6 +33,35 @@ from sphinx.util import logging
 from src.helper_lib import config_setdefault, get_runfiles_dir
 
 logger = logging.getLogger(__name__)
+
+
+def use_document_source_as_plantuml_cwd(app: Sphinx, doctree, docname: str) -> None:
+    """Make PlantUML includes resolve from the real source-file directory.
+
+    ``sphinx_mounts`` assigns mounted documents a logical docname below the
+    primary project's source directory, while their files live in a Bazel
+    runfiles tree.  ``sphinxcontrib.plantuml`` uses ``incdir`` as its working
+    directory; for generated ``needuml`` nodes that value is derived from the
+    logical docname and therefore does not exist.  Its error message then
+    misleadingly claims that the PlantUML executable is missing.
+
+    An absolute ``incdir`` is accepted by ``sphinxcontrib.plantuml`` and takes
+    precedence over ``builder.srcdir`` when joined.  Run after sphinx-needs has
+    replaced ``needuml`` nodes, so the generated PlantUML nodes carry their
+    actual source path.
+
+    Upstream bug report: https://github.com/useblocks/sphinx-needs/issues/1749
+    Once solved we can remove this function.
+    """
+    from sphinxcontrib.plantuml import plantuml
+
+    del app, docname  # Required by Sphinx's event callback signature.
+    for node in doctree.findall(plantuml):
+        if node.source is None:
+            continue
+        source = Path(node.source)
+        if source.is_file():
+            node["incdir"] = str(source.parent)
 
 
 def find_correct_path(runfiles: Path) -> Path:
@@ -52,6 +82,30 @@ def find_correct_path(runfiles: Path) -> Path:
     return runfiles / module / "src" / "plantuml"
 
 
+def check_graphviz(app: Sphinx) -> None:
+    """Report a missing Graphviz dependency before rendering any diagrams."""
+
+    # Ensure plantuml only for HTML builder
+    if "html" not in app.builder.name:
+        return
+
+    result = subprocess.run(
+        [app.config.plantuml, "-version"],
+        capture_output=True,
+        check=False,
+        text=True,
+    )
+    output = (result.stdout + result.stderr).strip()
+
+    if "Dot executable does not exist" in output:
+        logger.error(
+            "PlantUML requires Graphviz, but its 'dot' executable is not "
+            "available on PATH. Install the 'graphviz' package in the "
+            "development environment.\n\nPlantUML output:\n" + output
+        )
+        raise SystemExit(1)
+
+
 def setup(app: Sphinx):
     # we must overwrite the plantuml path due to Bazel
     app.config.plantuml = str(find_correct_path(get_runfiles_dir()))
@@ -60,6 +114,9 @@ def setup(app: Sphinx):
     config_setdefault(app.config, "needs_build_needumls", "_plantuml_sources")
 
     logger.debug(f"PlantUML binary found at {app.config.plantuml}")
+    app.connect("builder-inited", check_graphviz)
+    # sphinx-needs creates PlantUML nodes during ``doctree-resolved``.  Its
+    # standard-priority handler must run first, hence the larger priority.
+    app.connect("doctree-resolved", use_document_source_as_plantuml_cwd, priority=800)
 
-    # The extension is not even active at runtime.
     return {"parallel_read_safe": True, "parallel_write_safe": True}

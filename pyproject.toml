@@ -109,5 +109,6 @@ filterwarnings = [
 ]
 
 pythonpath = [
+    ".",
     "src/extensions/",
 ]

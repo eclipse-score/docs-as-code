@@ -19,8 +19,9 @@ This document explains how to enable cross-module (bi-directional) linking betwe
 In short:
 
 1. Make the other module available to Bazel via the `MODULE` (aka `MODULE.bazel`) file.
-2. Add the external module's documentation targets to your `docs(data=[...])` target so Sphinx can see the other module's built inventory.
-3. Reference remote needs using the normal Sphinx-Needs referencing syntax.
+2. Choose one integration mode: import its built ``needs.json`` **or** mount its
+   documentation sources.
+3. Reference Needs using the normal Sphinx-Needs referencing syntax.
 
 Details and Example
 -------------------
@@ -37,8 +38,8 @@ A minimal example (add or extend the existing `bazel_deps` stanza):
 
 	 bazel_dep(name = "score_process", version = "1.5.3")
 
-2) Extend your `docs` rule so Sphinx picks up the other module's inventory
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2a) Import the other module's built inventory
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The documentation build in this project is exposed via a Bazel macro/rule that accepts a `data` parameter.
 Add the external module's ``:needs_json`` target to that list
@@ -57,6 +58,35 @@ Example `BUILD` snippet (consumer module):
     )
 
 More details in :ref:`docs_bidirectional_traceability`.
+
+
+2b) Mount the external module's documentation bundle
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The documentation build in this project is exposed via a Bazel macro that accepts
+a ``bundles`` parameter. Mount the external module's auto-exposed
+``:docs_bundle`` bundle. The mounted sources define their needs in the host
+build, so do **not** also add that module's ``:needs_json`` to ``data`` — doing
+so would create duplicate need IDs.
+
+Example `BUILD` snippet (consumer module):
+
+.. code-block:: starlark
+
+    load("@score_docs_as_code//:docs.bzl", "docs")
+    docs(
+      bundles = [
+          {
+              "bundle": "@score_process//:docs_bundle",
+              "mount_at": "process",
+              "attach_to": "index",
+          },
+      ],
+      source_dir = "docs",
+    )
+
+See :ref:`howto_mount_external_sources` for the full mount reference, and
+:ref:`docs_bidirectional_traceability` for more on cross-module linking.
 
 3) Reference needs across modules
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

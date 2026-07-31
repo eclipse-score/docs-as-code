@@ -402,10 +402,10 @@ needs_types:
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
-    mandatory_links:
-      # req-Id: tool_req__arch_linkage_safety
-      includes: logic_arc_int, logic_arc_int_op
     optional_links:
+      # req-Id: tool_req__arch_linkage_safety
+      # Old direction kept optional during migration; superseded by logic_arc_int included_by feat
+      includes: logic_arc_int, logic_arc_int_op
       uses: logic_arc_int, logic_arc_int_op
       provides: logic_arc_int, logic_arc_int_op # preparation for linking change according to DR-005
     tags:
@@ -429,10 +429,11 @@ needs_types:
     mandatory_links:
       # req-Id: tool_req__docs_arch_links
       includes: logic_arc_int, logic_arc_int_op
-      # req-Id: tool_req__docs_arch_link_fulfils, tool_req__docs_arch_link_fulfils_aou
-      fulfils: feat_req, aou_req
       # req-Id: tool_req__docs_arch_links
       belongs_to: feat # make it mandatory for evaluation
+    optional_links:
+      # req-Id: tool_req__docs_arch_link_fulfils, tool_req__docs_arch_link_fulfils_aou
+      fulfils: feat_req, aou_req
     tags:
       - architecture_element
       - architecture_view
@@ -452,9 +453,11 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
     mandatory_links:
-      fulfils: feat_req
       # req-Id: tool_req__docs_arch_links
       belongs_to: feat
+    optional_links:
+    # req-Id: tool_req__docs_arch_link_fulfils
+      fulfils: feat_req
     tags:
       - architecture_view
       - architecture_element
@@ -476,6 +479,8 @@ needs_types:
       status: ^(valid|invalid)$
     optional_links:
       # req-Id: tool_req__arch_linkage_safety
+      # New direction kept optional during migration; will supersede feat includes logic_arc_int
+      included_by: feat
       includes: logic_arc_int_op
       fulfils: feat_req
     tags:
@@ -560,7 +565,6 @@ needs_types:
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
-
     mandatory_links:
       belongs_to: feat # preparation for linking change according to DR-005
     optional_links:
@@ -568,6 +572,8 @@ needs_types:
       implements: logic_arc_int, real_arc_int_op
       uses: logic_arc_int, real_arc_int_op
       consists_of: comp
+      # tool_req__docs_arch_link_fulfils_aou
+      fulfils: aou_req
     tags:
       - architecture_element
     parts: 2
@@ -588,10 +594,10 @@ needs_types:
     mandatory_links:
       # req-Id: tool_req__docs_arch_links
       belongs_to: comp
-      # req-Id: tool_req__docs_arch_link_fulfils, tool_req__docs_arch_link_fulfils_aou
-      fulfils: comp_req, aou_req
     optional_links:
       uses: logic_arc_int, real_arc_int_op
+      # req-Id: tool_req__docs_arch_link_fulfils, tool_req__docs_arch_link_fulfils_aou
+      fulfils: comp_req
     tags:
       - architecture_view
     parts: 3
@@ -612,6 +618,7 @@ needs_types:
     mandatory_links:
       # req-Id: tool_req__docs_arch_links
       belongs_to: comp
+    optional_links:
       fulfils: comp_req
     tags:
       - architecture_view
@@ -932,6 +939,37 @@ needs_types:
       fully_verifies: ANY
       partially_verifies: ANY
 
+  # req-Id: tool_req__docs_verification_report_need
+  mod_ver_report:
+    title: Module Verification Report
+    prefix: mod_vrep__
+    mandatory_options:
+      # req-Id: tool_req__docs_common_attr_safety
+      safety: ^(QM|ASIL_B)$
+      # req-Id: tool_req__docs_common_attr_security
+      security: ^(YES|NO)$
+      # req-Id: tool_req__docs_common_attr_status
+      status: ^(valid|invalid)$
+      # req-Id: tool_req__docs_verification_report_need
+      verification_method: ^.*$
+    optional_options:
+      requirements_tests_completely_passed_percent: ^(100|[1-9]?[0-9])$
+      line_coverage_percent: ^(100|[1-9]?[0-9])$
+      branch_coverage_percent: ^(100|[1-9]?[0-9])$
+      applies_to_module_version: ^.*$
+    mandatory_links:
+      # req-Id: tool_req__docs_verification_report_need
+      belongs_to: mod
+    optional_links:
+      # req-Id: tool_req__docs_verification_report_need
+      contains: ANY
+      evidence: ANY
+      covers: ANY
+      realizes: workproduct
+    tags:
+      - verification_report
+    parts: 3
+
 
   # https://eclipse-score.github.io/process_description/main/permalink.html?id=gd_temp__change_decision_record
   dec_rec:
@@ -1066,6 +1104,10 @@ needs_extra_links:
   partially_verifies:
     incoming: partially_verified_by
     outgoing: partially_verifies
+
+  evidence:
+    incoming: evidence_for
+    outgoing: evidence
 
 
 ##############################################################

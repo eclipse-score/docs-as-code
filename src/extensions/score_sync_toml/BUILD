@@ -12,6 +12,7 @@
 # *******************************************************************************
 
 load("@aspect_rules_py//py:defs.bzl", "py_library")
+load("//:score_pytest.bzl", "score_pytest")
 load("@docs_as_code_hub_env//:requirements.bzl", "requirement")
 
 filegroup(
@@ -31,5 +32,14 @@ py_library(
     deps = [
         requirement("sphinx"),
         requirement("needs-config-writer"),
+        "//src/helper_lib",
     ],
+)
+
+score_pytest(
+    name = "score_sync_toml_tests",
+    size = "small",
+    srcs = ["test_mounts.py"],
+    deps = [":score_sync_toml"],
+    pytest_config = "//:pyproject.toml",
 )

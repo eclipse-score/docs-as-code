@@ -45,7 +45,7 @@ def get_github_link(
             git_root = find_git_root() or Path()
         # Local path (//:docs)
         return get_github_link_from_git(git_root, link)
-    # Ref-Integration path (//:docs_combo..)
+    # Reference-integration path (mounted external documentation)
     return get_github_link_from_json(metadata, link)
 
 

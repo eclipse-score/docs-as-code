@@ -217,8 +217,7 @@ def load_source_code_links_json(file: Path) -> list[NeedLink]:
     Returns:
       [NeedLink, NeedLink, ...]
 
-    This normally should be the one called in combo builds
-    => :docs_combo_experimental target
+    This is used when mounted external documentation contributes source links.
     """
     if not file.is_absolute():
         # use env variable set by Bazel

@@ -14,7 +14,8 @@ from pathlib import Path
 
 from sphinx.application import Sphinx
 
-from src.helper_lib import config_setdefault
+from src.extensions.score_sync_toml._mounts import register_mounts
+from src.helper_lib import config_setdefault, find_git_root
 
 
 def setup(app: Sphinx) -> dict[str, str | bool]:
@@ -24,8 +25,28 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     See https://needs-config-writer.useblocks.com
     """
 
-    config_setdefault(app.config, "needscfg_outpath", "ubproject.toml")
-    """Write to the confdir directory."""
+    # A Bazel build action has no Git worktree. In that context this extension
+    # must be inactive: writing a fallback file into the sandbox is useless and
+    # can make generated configuration appear to work when it is discarded.
+    git_root = find_git_root()
+    if git_root is None:
+        app.config.suppress_warnings += [
+            "needs_config_writer.unsupported_type",
+            "needs_config_writer.path_conversion",
+        ]
+        return {
+            "version": "0.1",
+            "parallel_read_safe": True,
+            "parallel_write_safe": True,
+        }
+
+    # Emit a single ubproject.toml at the git repo root, where UI extensions
+    # (ubCode / esbonio) look for it. needs-config-writer relativizes every path
+    # field against the output file's directory, so anchoring the file at the
+    # root yields root-relative paths automatically. find_git_root() resolves the
+    # root under `bazel run` and esbonio alike.
+    config_setdefault(app.config, "needscfg_outpath", str(git_root / "ubproject.toml"))
+    """Write a single ubproject.toml at the git repo root."""
 
     config_setdefault(app.config, "needscfg_overwrite", True)
     """Any changes to the shared/local configuration updates the generated config."""
@@ -45,6 +66,13 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
         str(Path(__file__).parent / "shared.toml")
     )
     """Merge the static TOML file into the generated configuration."""
+
+    # score_mounts resolves Bazel's JSON manifest during ``config-inited``. Run
+    # afterwards and serialize its structured entries here, alongside the rest
+    # of the needs-config-writer configuration.
+    app.connect(
+        "config-inited", lambda app, config: register_mounts(config), priority=500
+    )
 
     app.config.needscfg_relative_path_fields.extend(
         [

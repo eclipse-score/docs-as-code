@@ -321,3 +321,26 @@ def test_merge_sourcelinks_with_known_good(
     }
     assert expected_dict1 in data
     assert expected_dict2 in data
+
+
+def test_merge_sourcelinks_without_known_good_preserves_external_metadata(
+    create_external_repo_json_files: tuple[Path, Path, Path],
+    monkeypatch: pytest.MonkeyPatch,
+):
+    file1, file2, output_file = create_external_repo_json_files
+    test_args: list[Path | str] = [
+        _MY_PATH.parent / "merge_sourcelinks.py",
+        "--output",
+        str(output_file),
+        str(file1),
+        str(file2),
+    ]
+    monkeypatch.setattr(sys, "argv", test_args)
+
+    assert scripts_bazel.merge_sourcelinks.main() == 0
+
+    data: list[dict[str, str | int]] = json.loads(output_file.read_text())
+    external_link = next(entry for entry in data if entry["file"] == "test1.py")
+    assert external_link["repo_name"] == "score_baselibs"
+    assert external_link["url"] == "https://github.com/eclipse-score/baselibs.git"
+    assert external_link["hash"] == "158fe6a7b791c58f6eac5f7e4662b8db0cf9ac6e"

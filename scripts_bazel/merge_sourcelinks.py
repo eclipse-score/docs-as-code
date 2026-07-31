@@ -67,7 +67,14 @@ def main():
                 )
                 # As we can't deal with bad JSON structure we just skip it
                 continue
-            if metadata["repo_name"] and metadata["repo_name"] != "local_repo":
+            # A known-good file is optional for standalone builds that include
+            # documentation from external modules.  In that case, keep the
+            # metadata produced by the individual sourcelinks file.
+            if (
+                args.known_good
+                and metadata["repo_name"]
+                and metadata["repo_name"] != "local_repo"
+            ):
                 hash, repo = parse_info_from_known_good(
                     known_good_json=args.known_good, repo_name=metadata["repo_name"]
                 )

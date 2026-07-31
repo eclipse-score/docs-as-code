@@ -77,6 +77,7 @@
    :security: YES
    :safety: ASIL_B
    :status: invalid
+   :included_by: feat__test_feature_1
 
 .. logic_arc_int_op:: Logic Operation Test 1
    :id: logic_arc_int_op__test_feature_1__test_operation_1
@@ -90,6 +91,7 @@
    :security: YES
    :safety: ASIL_B
    :status: invalid
+   :included_by: feat__test_feature_1
 
 Component 1
 ~~~~~~~~~~~

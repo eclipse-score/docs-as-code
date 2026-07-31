@@ -20,6 +20,20 @@ docs(
     data = [
         "@score_process//:needs_json",
     ],
+    bundles = [
+        {
+            "bundle": "//src/extensions/score_mounts/docs:concept",
+            "mount_at": "concepts/mounts",
+        },
+        {
+            "bundle": "//src/extensions/score_mounts/docs:howto",
+            "mount_at": "how-to/mounts",
+        },
+        {
+            "bundle": "//src/extensions/score_mounts/docs:internals",
+            "mount_at": "internals/extensions/mounts",
+        },
+    ],
     scan_code = [
         "//scripts_bazel:sources",
         "//src:all_sources",
