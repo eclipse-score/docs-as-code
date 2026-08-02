@@ -71,6 +71,22 @@ class ConsumerRepo:
 
 
 REPOS_TO_TEST: list[ConsumerRepo] = [
+    ConsumerRepo(name="baselibs"),
+    ConsumerRepo(name="inc_security_crypto"),
+    ConsumerRepo(name="inc_someip_gateway"),
+    ConsumerRepo(name="infrastructure"),
+    ConsumerRepo(name="itf"),
+    ConsumerRepo(
+        name="module_template",
+        commands=[
+            "bazel run //:ide_support",
+            "bazel run //:docs_check",
+            "bazel run //:docs",
+            "bazel build //:needs_json",
+            "bazel test //tests/...",
+        ],
+    ),
+    ConsumerRepo(name="persistency"),
     ConsumerRepo(
         name="process_description",
         commands=[
@@ -89,20 +105,6 @@ REPOS_TO_TEST: list[ConsumerRepo] = [
             "bazel build //:needs_json",
         ],
     ),
-    ConsumerRepo(
-        name="module_template",
-        commands=[
-            "bazel run //:ide_support",
-            "bazel run //:docs_check",
-            "bazel run //:docs",
-            "bazel build //:needs_json",
-            "bazel test //tests/...",
-        ],
-    ),
-    ConsumerRepo(name="infrastructure"),
-    ConsumerRepo(name="itf"),
-    ConsumerRepo(name="baselibs"),
-    ConsumerRepo(name="inc_someip_gateway"),
 ]
 
 # ---------------------------------------------------------------------------
