@@ -52,13 +52,11 @@ Example `BUILD` snippet (consumer module):
 
     load("@score_docs_as_code//:docs.bzl", "docs")
     docs(
-      data = [
+      external_needs = [
          "@score_process//:needs_json",
       ],
       source_dir = "docs",
     )
-
-More details in :ref:`docs_bidirectional_traceability`.
 
 
 2b) Mount the external module's documentation bundle
@@ -107,21 +105,3 @@ Which results in:
 
 See the `Sphinx-Needs documentation <https://sphinx-needs.readthedocs.io/en/latest/>`_
 for more details on cross-referencing needs.
-
-Data vs. external_needs
-~~~~~~~~~~~~~~~~~~~~~~~
-
-It might seem like ``data`` and ``external_needs`` behave nearly the same.
-
-.. code-block:: starlark
-
-    docs(
-      data           = ["@score_process//:needs_json"],
-      external_needs = ["@score_process//:needs_json_file"],  # same?
-    )
-
-For a ``:docs`` they behave the same,
-but for ``:docs_combo`` they do not.
-In a combo build, the ``data`` are treated differently and will include the documentation
-instead of just link the needs online.
-However, ``external_needs`` will always be hyperlinks.

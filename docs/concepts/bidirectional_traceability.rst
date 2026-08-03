@@ -73,9 +73,8 @@ Module links vs Bazel target deps
 
 Remember: Bazel target dependencies must not be circular.
 Module and document references may be circular.
-Use the combo build and the copy strategy to produce release documentation that contains all needed pages while keeping Bazel's graph acyclic.
-
-
+Use bundles to produce release documentation that contains all needed pages
+while keeping Bazel's graph acyclic.
 
 .. plantuml::
 

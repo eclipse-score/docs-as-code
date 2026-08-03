@@ -79,8 +79,7 @@ Minimal example (root ``BUILD``)
 - ``external_needs`` (list of bazel labels)
   External ``:needs_json_file`` targets from other modules/repositories
   for referencing their needs.
-  Users must specify ``:needs_json_file`` explicitly (not ``:needs_json``).
-  Works the same during ``:docs`` and ``:docs_combo``.
+  Do not use ``:needs_json`` targets.
 
 - ``metamodel`` (bazel label, optional)
   Path to a custom ``metamodel.yaml`` file.
