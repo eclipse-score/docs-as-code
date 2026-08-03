@@ -89,6 +89,7 @@ def docs_bundle(name, source_dir = None, entry_doc = "index", bundles = [], scan
     srcs = glob_doc_sources(source_dir) if source_dir != None else []
     sourcelinks = []
     if scan_code:
+        print("WARNING: docs_bundle(%s) uses deprecated scan_code; use code_targets instead." % name)
         sourcelinks_name = name + "_sourcelinks_json"
         _sourcelinks_json(name = sourcelinks_name, srcs = scan_code)
         sourcelinks = [":" + sourcelinks_name]
