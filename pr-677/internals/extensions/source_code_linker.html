@@ -504,9 +504,8 @@ Reads the aggregated JSON, validates and adapts it, and finally injects the link
 <section id="step-1-per-repository-cache-generation">
 <span id="id1"></span><h4>Step 1: Per-repository cache generation<a class="headerlink" href="#step-1-per-repository-cache-generation" title="Link to this heading">#</a></h4>
 <p>Each <code class="docutils literal notranslate"><span class="pre">docs_bundle</span></code> scans the source files selected by its <code class="docutils literal notranslate"><span class="pre">code_targets</span></code>
-attribute. The targets’ <code class="docutils literal notranslate"><span class="pre">srcs</span></code>, <code class="docutils literal notranslate"><span class="pre">hdrs</span></code>, and <code class="docutils literal notranslate"><span class="pre">textual_hdrs</span></code>, including their
-dependencies, are collected recursively. A <em>per bundle JSON cache</em> is then
-generated and saved; Bazel reuses it until its source inputs change.
+attribute. A <em>per bundle JSON cache</em> is then generated and saved; Bazel
+reuses it until its source inputs change.
 <code class="docutils literal notranslate"><span class="pre">scan_code</span></code> remains available for explicit files or filegroups, but is
 deprecated.
 This script <code class="docutils literal notranslate"><span class="pre">scripts_bazel/generate_sourcelinks_cli.py</span></code> finds all codelinks per file, and gathers them into

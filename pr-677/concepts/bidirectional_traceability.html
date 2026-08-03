@@ -501,7 +501,8 @@ At the very least for release builds this is acceptable.</p>
 <h2>Module links vs Bazel target deps<a class="headerlink" href="#module-links-vs-bazel-target-deps" title="Link to this heading">#</a></h2>
 <p>Remember: Bazel target dependencies must not be circular.
 Module and document references may be circular.
-Use the combo build and the copy strategy to produce release documentation that contains all needed pages while keeping Bazel’s graph acyclic.</p>
+Use bundles to produce release documentation that contains all needed pages
+while keeping Bazel’s graph acyclic.</p>
 <p class="plantuml">
 <object data="../_images/plantuml-040d3f04ca50e61154ac3d6e7410ba4996297a92.svg" type="image/svg+xml" style="width:532px;height:312px;background:#FFFFFF;"></object></p>
 <p>The diagram above shows the difference between module-level references (which may be circular) and Bazel target dependencies (which must remain acyclic).
