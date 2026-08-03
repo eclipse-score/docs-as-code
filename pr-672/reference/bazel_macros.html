@@ -510,8 +510,7 @@ Used to generate the source-code-link JSON that maps tags back to source files.<
 <li><p><code class="docutils literal notranslate"><span class="pre">external_needs</span></code> (list of bazel labels)
 External <code class="docutils literal notranslate"><span class="pre">:needs_json_file</span></code> targets from other modules/repositories
 for referencing their needs.
-Users must specify <code class="docutils literal notranslate"><span class="pre">:needs_json_file</span></code> explicitly (not <code class="docutils literal notranslate"><span class="pre">:needs_json</span></code>).
-Works the same during <code class="docutils literal notranslate"><span class="pre">:docs</span></code> and <code class="docutils literal notranslate"><span class="pre">:docs_combo</span></code>.</p></li>
+Do not use <code class="docutils literal notranslate"><span class="pre">:needs_json</span></code> targets.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">metamodel</span></code> (bazel label, optional)
 Path to a custom <code class="docutils literal notranslate"><span class="pre">metamodel.yaml</span></code> file.
 When set, the <code class="docutils literal notranslate"><span class="pre">score_metamodel</span></code> extension loads <strong>this file instead of</strong> the default metamodel.

@@ -491,14 +491,13 @@ Use <code class="docutils literal notranslate"><span class="pre">external_needs<
 <p>Example <cite>BUILD</cite> snippet (consumer module):</p>
 <div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;@score_docs_as_code//:docs.bzl&quot;</span><span class="p">,</span> <span class="s2">&quot;docs&quot;</span><span class="p">)</span>
 <span class="n">docs</span><span class="p">(</span>
-  <span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="n">external_needs</span> <span class="o">=</span> <span class="p">[</span>
      <span class="s2">&quot;@score_process//:needs_json&quot;</span><span class="p">,</span>
   <span class="p">],</span>
   <span class="n">source_dir</span> <span class="o">=</span> <span class="s2">&quot;docs&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>More details in <a class="reference internal" href="../concepts/bidirectional_traceability.html#docs-bidirectional-traceability"><span class="std std-ref">Bi-directional Traceability</span></a>.</p>
 </section>
 <section id="b-mount-the-external-module-s-documentation-bundle">
 <h3>2b) Mount the external module’s documentation bundle<a class="headerlink" href="#b-mount-the-external-module-s-documentation-bundle" title="Link to this heading">#</a></h3>
@@ -538,21 +537,6 @@ The important part is that the inventory name that Sphinx-Needs looks up matches
 </div></blockquote>
 <p>See the <a class="reference external" href="https://sphinx-needs.readthedocs.io/en/latest/">Sphinx-Needs documentation</a>
 for more details on cross-referencing needs.</p>
-</section>
-<section id="data-vs-external-needs">
-<h3>Data vs. external_needs<a class="headerlink" href="#data-vs-external-needs" title="Link to this heading">#</a></h3>
-<p>It might seem like <code class="docutils literal notranslate"><span class="pre">data</span></code> and <code class="docutils literal notranslate"><span class="pre">external_needs</span></code> behave nearly the same.</p>
-<div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="n">docs</span><span class="p">(</span>
-  <span class="n">data</span>           <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;@score_process//:needs_json&quot;</span><span class="p">],</span>
-  <span class="n">external_needs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;@score_process//:needs_json_file&quot;</span><span class="p">],</span>  <span class="c1"># same?</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<p>For a <code class="docutils literal notranslate"><span class="pre">:docs</span></code> they behave the same,
-but for <code class="docutils literal notranslate"><span class="pre">:docs_combo</span></code> they do not.
-In a combo build, the <code class="docutils literal notranslate"><span class="pre">data</span></code> are treated differently and will include the documentation
-instead of just link the needs online.
-However, <code class="docutils literal notranslate"><span class="pre">external_needs</span></code> will always be hyperlinks.</p>
 </section>
 </section>
 </section>
@@ -609,7 +593,6 @@ However, <code class="docutils literal notranslate"><span class="pre">external_n
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-import-the-other-module-s-built-inventory">2a) Import the other module’s built inventory</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#b-mount-the-external-module-s-documentation-bundle">2b) Mount the external module’s documentation bundle</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reference-needs-across-modules">3) Reference needs across modules</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-vs-external-needs">Data vs. external_needs</a></li>
 </ul>
 </li>
 </ul>
