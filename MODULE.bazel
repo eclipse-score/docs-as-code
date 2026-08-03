@@ -70,10 +70,10 @@ http_file(
     urls = ["https://github.com/withered-magic/starpls/releases/download/v0.1.21/starpls-linux-amd64"],
 )
 
-bazel_dep(name = "score_process", version = "2.0.1")
+bazel_dep(name = "score_process", version = "2.0.2")
 git_override(
     module_name = "score_process",
-    commit = "292ec1c913a88ed1b724e33fdae658df6dc7b033",
+    commit = "1bf4c55d68ae7b6f961221a2770ce81feaa28b68",
     remote = "https://github.com/eclipse-score/process_description",
 )
 

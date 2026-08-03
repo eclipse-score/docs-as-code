@@ -281,7 +281,7 @@ Versioning
    :implemented: YES
    :version: 1
    :parent_covered: NO: parent talks about setting covered to false, but we want to issue a build error.
-   :satisfies: gd_req__req_suspicious[version==2]
+   :satisfies: gd_req__req_suspicious[version==3]
    :status: invalid
 
    Docs-as-Code shall check if linked parent needs have different versions, compared to
@@ -702,8 +702,8 @@ but for ease of traceability this is a separate one.
   :id: tool_req__arch_linkage_safety
   :implemented: YES
   :version: 2
-  :satisfies: gd_req__arch_linkage_safety[version==1], gd_req__arch_build_blocks_corr[version==1]
-  :parent_covered: NO
+  :satisfies: gd_req__arch_linkage_safety[version==1], gd_req__arch_build_blocks_corr[version==2]
+  :parent_covered: YES
 
   .. csv-table::
      :header: "Link source", "Relation", "Link Target", "Mandatory"
@@ -724,6 +724,22 @@ but for ease of traceability this is a separate one.
      The link direction between ``feat`` and ``logic_arc_int`` is being switched from
      ``feat includes logic_arc_int`` to ``logic_arc_int included_by feat``. Both directions
      are currently accepted as optional links to avoid migration problems.
+
+
+.. tool_req:: Check consistency of interfaces in modules
+  :id: tool_req__arch_consistency_interf
+  :tags: Architecture
+  :implemented: YES
+  :version: 1
+  :satisfies: gd_req__arch_consistency_interf[version==2]
+  :parent_covered: YES
+
+  Docs-as-Code shall check that any logical architectural interface linked to a feature
+  (via ``logic_arc_int included_by feat``) is matched by an ``implements`` link from a
+  component to that interface. Additionally it shall be checked that each feature
+  architecture is linked against at least one logical architectural interface.
+
+  Note: This requirement shall not break the build in score main, but emit a information instead, as the architecture is not yet complete and only complete visible in the reference integration repository.
 
 
 💻 Detailed Design & Code
