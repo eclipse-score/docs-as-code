@@ -886,6 +886,22 @@ Testing
   * link the inspected artifacts via ``inspects``
   * allow links to backing evidence via ``evidence``
 
+.. tool_req:: Support machine-readable inspection reports
+  :id: tool_req__docs_inspection_report_need
+  :tags: Verification Evidence
+  :implemented: YES
+  :version: 1
+  :satisfies: gd_req__verification_checks
+  :parent_covered: NO: process wording defines inspection completeness, while the tool models an explicit expected inspection set.
+
+  Docs-as-Code shall support a machine-readable module inspection report need type.
+
+  The need type shall:
+
+  * aggregate inspection records via ``contains`` and belong to the module via ``belongs_to``
+  * declare the required checklist categories via ``expected_inspections``
+  * be gated so every expected inspection type has a contained, approved inspection record
+
 🧪 Tool Verification Reports
 ############################
 
