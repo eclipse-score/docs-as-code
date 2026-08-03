@@ -58,10 +58,8 @@
    :inspection_state: approved
    :checklist_ref: gd_chklst__req_inspection
    :reviewers: reviewer_a,reviewer_b
-   :checklist_type: req
-   :findings_total: 1
-   :findings_open: 0
-   :inspection_date: 2026-06-24
+   :moderator: moderator_a
+   :approver: approver_a
    :belongs_to: mod__inspection_module
    :inspects: comp_req__inspection__sample
 
