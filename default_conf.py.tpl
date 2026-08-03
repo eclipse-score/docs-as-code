@@ -10,12 +10,12 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
+# Default Sphinx configuration emitted by the ``docs()`` macro.
+# SCORE Docs-as-Code owns these baseline settings.  Projects needing further
+# Sphinx configuration can provide their own conf.py instead.
 
-load("//:docs.bzl", "docs")
+project = {PROJECT}
+project_url = {PROJECT_URL}
 
-docs(
-    source_dir = "docs",
-    project = "Basic Test",
-    project_url = "https://github.com/eclipse-score/docs-as-code",
-    test_sources = ["src/tests/docs_bzl/scenarios/basic_docs"],
-)
+version = "0.1"
+extensions = ["score_sphinx_bundle"]

@@ -32,3 +32,7 @@ def test_basic_docs_builds_html():
     index_html = result.build_dir / "index.html"
 
     assert "Basic Test" in index_html.read_text(encoding="utf-8")
+
+
+def test_basic_docs_builds_needs_without_conf_py():
+    run_scenario("build", "basic_docs", ":needs_json")

@@ -4,13 +4,15 @@
 # See the NOTICE file(s) distributed with this work for additional
 # information regarding copyright ownership.
 #
-# This program and the accompanying materials are made available under the
-# terms of the Apache License Version 2.0 which is available at
-# https://www.apache.org/licenses/LICENSE-2.0
-#
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
+"""Validation of docs() configuration fallback."""
 
-project = "Basic Test"
-project_url = "https://github.com/eclipse-score/docs-as-code"
-extensions = ["score_sphinx_bundle"]
+from src.tests.docs_bzl.helpers import run_scenario
+
+
+def test_missing_conf_and_macro_values_fails_analysis():
+    result = run_scenario("build", "missing_docs_config", ":docs", expect_error=True)
+
+    assert "no docs/conf.py found" in result.stderr
+    assert "provide both project and project_url" in result.stderr

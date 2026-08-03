@@ -60,6 +60,31 @@ load(
     "create_mounts_manifest",
 )
 
+def _generated_conf_impl(ctx):
+    output = ctx.actions.declare_file(ctx.attr.output_path)
+    ctx.actions.expand_template(
+        template = ctx.file.template,
+        output = output,
+        substitutions = {
+            "{PROJECT}": repr(ctx.attr.project),
+            "{PROJECT_URL}": repr(ctx.attr.project_url),
+        },
+    )
+    return [DefaultInfo(files = depset([output]))]
+
+_generated_conf = rule(
+    implementation = _generated_conf_impl,
+    attrs = {
+        "project": attr.string(mandatory = True),
+        "project_url": attr.string(mandatory = True),
+        "output_path": attr.string(mandatory = True),
+        "template": attr.label(
+            allow_single_file = True,
+            default = Label("@score_docs_as_code//:default_conf.py.tpl"),
+        ),
+    },
+)
+
 def docs_bundle(name, source_dir = None, entry_doc = "index", bundles = [], scan_code = [], visibility = None, **kwargs):
     """A docs bundle, optionally composed of others.
 
@@ -139,6 +164,8 @@ def _missing_requirements(deps):
 
 def docs(
         source_dir = "docs",
+        project = None,
+        project_url = None,
         data = [],
         deps = [],
         external_needs = [],
@@ -154,6 +181,8 @@ def docs(
 
     Args:
       source_dir: The source directory containing documentation files. Defaults to "docs".
+      project: optional project name, prefer setting this here if you can avoid having a conf.py
+      project_url: Optional project URL, prefer setting this here if you can avoid having a conf.py
       data: Additional data files to include in the documentation build.
       deps: Additional dependencies for the documentation build.
       external_needs: List of external needs targets to include in the documentation build.
@@ -175,7 +204,36 @@ def docs(
     """
     # HINT: keep documentation sync docs/reference/bazel_macros.rst
 
-    source_config = ":" + ("" if source_dir == "." else source_dir + "/") + "conf.py"
+    config_file_path = join_path(source_dir, "conf.py")
+    sphinx_config_for_bazel_build = ":" + config_file_path
+    has_source_config = len(native.glob([config_file_path], allow_empty = True)) == 1
+
+    # This 0/1 list is appended to the run targets' data.
+    sphinx_config_for_bazel_run = []
+    if not has_source_config:
+        if not project or not project_url:
+            fail("docs(): no " + config_file_path + " found; provide both project and project_url to docs().")
+        # Generate the config at the source-root location expected by
+        # sphinx_docs: that rule treats the config file's directory as the
+        # Sphinx source directory.
+        _generated_conf(
+            name = "_docs_generated_build_config",
+            project = project,
+            project_url = project_url,
+            output_path = config_file_path,
+        )
+        sphinx_config_for_bazel_build = ":_docs_generated_build_config"
+
+        # Generate the config at an internal location for ``bazel run``
+        # targets. ``source_dir/conf.py`` would conflict with the generated
+        # ``:docs`` executable when source_dir is named ``docs``.
+        _generated_conf(
+            name = "_docs_generated_run_config",
+            project = project,
+            project_url = project_url,
+            output_path = "_docs_generated_config/conf.py",
+        )
+        sphinx_config_for_bazel_run = [":_docs_generated_run_config"]
 
     # Convention in this macro: an optional Bazel label is named ``*_label``
     # but represented as a 0/1 list. This lets it be appended directly to
@@ -239,7 +297,7 @@ def docs(
     # complete bundle here would add those files to runfiles and could collide
     # with the executable target name (for example ``docs`` and ``docs/``).
     # External bundles do need runfiles, so keep only those sources.
-    docs_data = data + external_needs + metamodel_label + [":sourcelinks_json", ":_external_docs_runfiles"] + mounts_manifest_label
+    docs_data = data + external_needs + metamodel_label + [":sourcelinks_json", ":_external_docs_runfiles"] + mounts_manifest_label + sphinx_config_for_bazel_run
 
     docs_env = {
         "SOURCE_DIRECTORY": source_dir,
@@ -252,6 +310,10 @@ def docs(
         "MOUNTS_MANIFEST": "$(rlocationpath :_mounts_manifest)" if bundles else "",
         "SCORE_SOURCELINKS": "$(location :sourcelinks_json)",
     }
+    if sphinx_config_for_bazel_run:
+        # The generated file is named conf.py in its own directory.  The run
+        # targets pass that directory to Sphinx via -c.
+        docs_env["SPHINX_CONFIG_FILE"] = "$(rlocationpath :_docs_generated_run_config)"
     if metamodel:
         # The interactive ``py_binary`` targets run from a runfiles tree.
         # incremental.py resolves this logical path through ``RUNFILES_DIR``.
@@ -314,7 +376,7 @@ def docs(
     sphinx_docs(
         name = "needs_json",
         srcs = [":docs_bundle"],
-        config = source_config,
+        config = sphinx_config_for_bazel_build,
         extra_opts = [
             "-W",
             "--keep-going",
