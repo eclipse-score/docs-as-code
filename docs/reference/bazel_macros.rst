@@ -85,6 +85,11 @@ Minimal example (root ``BUILD``)
   Explicit source files or filegroups to scan. Use ``code_targets`` for
   implementation targets; it follows their dependencies automatically.
 
+- ``external_needs`` (list of bazel labels)
+  External ``:needs_json_file`` targets from other modules/repositories
+  for referencing their needs.
+  Do not use ``:needs_json`` targets.
+
 - ``metamodel`` (bazel label, optional)
   Path to a custom ``metamodel.yaml`` file.
   When set, the ``score_metamodel`` extension loads **this file instead of** the default metamodel.

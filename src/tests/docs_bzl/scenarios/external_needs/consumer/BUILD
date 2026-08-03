@@ -18,6 +18,6 @@ load("//:docs.bzl", "docs")
 # avoiding the workspace-wide bazel-testlogs scan during the html build.
 docs(
     source_dir = "docs",
-    data = ["//src/tests/docs_bzl/scenarios/external_needs/producer:needs_json"],
+    external_needs = ["//src/tests/docs_bzl/scenarios/external_needs/producer:needs_json"],
     test_sources = ["src/tests/docs_bzl/scenarios/external_needs/consumer"],
 )
