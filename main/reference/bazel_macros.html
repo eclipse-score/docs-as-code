@@ -507,6 +507,10 @@ this function adds its own (but checks for conflicts).</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">scan_code</span></code> (list of bazel labels)
 Source code targets to scan for traceability tags (<code class="docutils literal notranslate"><span class="pre">req-Id:</span></code> annotations).
 Used to generate the source-code-link JSON that maps tags back to source files.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">external_needs</span></code> (list of bazel labels)
+External <code class="docutils literal notranslate"><span class="pre">:needs_json_file</span></code> targets from other modules/repositories
+for referencing their needs.
+Do not use <code class="docutils literal notranslate"><span class="pre">:needs_json</span></code> targets.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">metamodel</span></code> (bazel label, optional)
 Path to a custom <code class="docutils literal notranslate"><span class="pre">metamodel.yaml</span></code> file.
 When set, the <code class="docutils literal notranslate"><span class="pre">score_metamodel</span></code> extension loads <strong>this file instead of</strong> the default metamodel.
