@@ -1003,6 +1003,32 @@ needs_types:
       - inspection
     parts: 3
 
+  # Aggregates a module's inspection records and gates inspection completeness.
+  # req-Id: tool_req__docs_inspection_report_need
+  mod_insp_report:
+    title: Module Inspection Report
+    prefix: mod_ispr__
+    mandatory_options:
+      # req-Id: tool_req__docs_common_attr_safety
+      safety: ^(QM|ASIL_B)$
+      # req-Id: tool_req__docs_common_attr_security
+      security: ^(YES|NO)$
+      # req-Id: tool_req__docs_common_attr_status
+      status: ^(valid|invalid)$
+      # req-Id: tool_req__docs_inspection_report_need
+      # comma-separated subset of the three checklist categories the module must cover
+      expected_inspections: ^(requirements|architecture|implementation)(,(requirements|architecture|implementation))*$
+    mandatory_links:
+      # req-Id: tool_req__docs_inspection_report_need
+      belongs_to: mod
+      contains: mod_insp
+    optional_links:
+      # req-Id: tool_req__docs_inspection_report_need
+      evidence: ANY
+    tags:
+      - inspection
+    parts: 3
+
   # https://eclipse-score.github.io/process_description/main/permalink.html?id=gd_temp__change_decision_record
   dec_rec:
     title: Decision Record

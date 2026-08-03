@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import cast
 
 import pytest
 
@@ -21,16 +21,18 @@ import pytest
 import score_metamodel.checks.graph_checks as graph_checks
 from score_metamodel.tests import fake_check_logger, need as test_need
 from sphinx_needs.config import NeedType
+from sphinx_needs.data import NeedsView
+from sphinx_needs.need_item import NeedItem
 
 
 class DummyNeedsView:
     """Minimal NeedsView-like test double."""
 
-    def __init__(self, needs: list[dict[str, Any]]) -> None:
+    def __init__(self, needs: list[NeedItem]) -> None:
         """Create a view over needs represented as dict-like structures."""
         self._needs = needs
 
-    def values(self) -> list[dict[str, Any]]:
+    def values(self) -> list[NeedItem]:
         """Return all needs."""
         return self._needs
 
@@ -180,3 +182,65 @@ def test_filter_needs_by_criteria_unknown_type_logs_warning() -> None:
     log.assert_warning(
         "Unknown need type `unknown` in graph check.", expect_location=False
     )
+
+
+def test_check_inspection_report_completeness_warns_for_missing_approved_type() -> None:
+    """Warn when an expected inspection type is not approved and valid."""
+    report = test_need(
+        id="mod_ispr__incomplete",
+        type="mod_insp_report",
+        expected_inspections="requirements,architecture",
+        contains=["mod_insp__requirements"],
+    )
+    inspection = test_need(
+        id="mod_insp__requirements",
+        type="mod_insp",
+        inspection_type="requirements",
+        inspection_state="approved",
+        status="valid",
+    )
+    log = fake_check_logger()
+
+    graph_checks.check_inspection_report_completeness(
+        None,  # type: ignore[arg-type]
+        cast(NeedsView, DummyNeedsView([report, inspection])),
+        log,
+    )
+
+    log.assert_warning("missing approved inspection(s) for: architecture")
+
+
+def test_check_inspection_report_completeness_accepts_complete_report() -> None:
+    """Do not warn when all expected inspection types are approved and valid."""
+    report = test_need(
+        id="mod_ispr__complete",
+        type="mod_insp_report",
+        expected_inspections="requirements,architecture",
+        contains=["mod_insp__requirements", "mod_insp__architecture"],
+    )
+    requirements_inspection = test_need(
+        id="mod_insp__requirements",
+        type="mod_insp",
+        inspection_type="requirements",
+        inspection_state="approved",
+        status="valid",
+    )
+    architecture_inspection = test_need(
+        id="mod_insp__architecture",
+        type="mod_insp",
+        inspection_type="architecture",
+        inspection_state="approved",
+        status="valid",
+    )
+    log = fake_check_logger()
+
+    graph_checks.check_inspection_report_completeness(
+        None,  # type: ignore[arg-type]
+        cast(
+            NeedsView,
+            DummyNeedsView([report, requirements_inspection, architecture_inspection]),
+        ),
+        log,
+    )
+
+    log.assert_no_warnings()

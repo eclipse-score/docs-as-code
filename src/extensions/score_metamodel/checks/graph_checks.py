@@ -228,6 +228,58 @@ def check_metamodel_graph(
 
 
 @graph_check
+def check_inspection_report_completeness(
+    app: Sphinx,
+    all_needs: NeedsView,
+    log: CheckLogger,
+):
+    needs_dict_all = {need["id"]: need for need in all_needs.values()}
+    for report in all_needs.filter_is_external(False).values():
+        if report.get("type") != "mod_insp_report":
+            continue
+
+        expected_inspections = report.get("expected_inspections")
+        if (
+            not isinstance(expected_inspections, str)
+            or not expected_inspections.strip()
+        ):
+            continue
+
+        expected = [
+            inspection_type.strip()
+            for inspection_type in expected_inspections.split(",")
+            if inspection_type.strip()
+        ]
+        raw_contains = report.get("contains", [])
+        if isinstance(raw_contains, str):
+            contains_ids = [raw_contains]
+        elif isinstance(raw_contains, list | tuple | set):
+            contains_ids = [str(contained_id) for contained_id in raw_contains]
+        else:
+            contains_ids = []
+
+        covered = {
+            contained.get("inspection_type")
+            for contained_id in contains_ids
+            if (contained := needs_dict_all.get(contained_id)) is not None
+            and contained.get("type") == "mod_insp"
+            and contained.get("inspection_state") == "approved"
+            and contained.get("status") == "valid"
+        }
+        missing = [
+            inspection_type
+            for inspection_type in expected
+            if inspection_type not in covered
+        ]
+        if missing:
+            log.warning_for_need(
+                report,
+                "Inspection report is missing approved inspection(s) for: "
+                + ", ".join(missing),
+            )
+
+
+@graph_check
 def check_valid_only_links_to_valid(
     app: Sphinx,
     all_needs: NeedsView,
