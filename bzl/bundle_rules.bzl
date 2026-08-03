@@ -67,6 +67,13 @@ DocsBundleInfo = provider(
     },
 )
 
+DocsBundleTestsInfo = provider(
+    doc = "Test targets declared by a documentation bundle.",
+    fields = {
+        "tests": "Ordered executable test targets declared by this bundle and its children.",
+    },
+)
+
 def _parent_index_docname(mount_at):
     """Choose the page that links to a bundled subtree by default."""
     parent = mount_at.rsplit("/", 1)[0] if "/" in mount_at else ""
@@ -140,6 +147,16 @@ def _sourcelinks_visible_through(ctx, child):
     if child_repository == ctx.label.workspace_name:
         return sourcelinks
     return [link for link in sourcelinks if link.repository == child_repository]
+
+def _deduplicate_tests(tests):
+    """Keep the first occurrence of each target while preserving declaration order."""
+    deduplicated = []
+    seen = {}
+    for test in tests:
+        if test.label not in seen:
+            seen[test.label] = True
+            deduplicated.append(test)
+    return deduplicated
 
 def _parse_bundle_declaration(bundle):
     """Read one nested-bundle declaration and fill in optional values."""
@@ -255,6 +272,83 @@ def create_bundle(name, bundles, srcs = [], sourcelinks = [], strip_prefix = "",
         bundle_attach_tos = [bundle.attach_to for bundle in parsed_bundles],
         visibility = visibility,
         **kwargs
+    )
+    return ":" + name
+
+def _test_runfiles_path(executable):
+    """Return the test-runner path to an executable in its runfiles tree."""
+    short_path = executable.short_path
+    if short_path.startswith("../"):
+        return "$TEST_SRCDIR/" + short_path[3:]
+    return "$TEST_SRCDIR/$TEST_WORKSPACE/" + short_path
+
+def _docs_bundle_test_impl(ctx):
+    """Create the executable for a bundle's hermetic test runner."""
+    tests = list(ctx.attr.tests)
+    for bundle_test in ctx.attr.bundle_tests:
+        tests.extend(bundle_test[DocsBundleTestsInfo].tests)
+    tests = _deduplicate_tests(tests)
+    runfiles = ctx.runfiles()
+    commands = [
+        "#!/usr/bin/env bash",
+        "set -euo pipefail",
+        "output_dir=\"$TEST_UNDECLARED_OUTPUTS_DIR/docs_bundle_tests\"",
+        "mkdir -p \"$output_dir\"",
+    ]
+
+    for index, test in enumerate(tests):
+        files_to_run = test[DefaultInfo].files_to_run
+        executable = files_to_run.executable
+        if executable == None:
+            fail("docs bundle test %s is not executable" % test.label)
+        if test[DefaultInfo].default_runfiles:
+            runfiles = runfiles.merge(test[DefaultInfo].default_runfiles)
+        if test[DefaultInfo].data_runfiles:
+            runfiles = runfiles.merge(test[DefaultInfo].data_runfiles)
+        commands.extend([
+            "echo \"Running docs bundle test %s\"" % test.label,
+            "XML_OUTPUT_FILE=\"$output_dir/%d.xml\" \"%s\"" % (
+                index,
+                _test_runfiles_path(executable),
+            ),
+            "if [[ ! -s \"$output_dir/%d.xml\" ]]; then" % index,
+            "  echo \"docs bundle test %s did not create JUnit XML via XML_OUTPUT_FILE\" >&2" % test.label,
+            "  exit 1",
+            "fi",
+        ])
+
+    executable = ctx.actions.declare_file(ctx.label.name + ".sh")
+    ctx.actions.write(
+        output = executable,
+        content = "\n".join(commands) + "\n",
+        is_executable = True,
+    )
+    return [
+        DefaultInfo(
+            executable = executable,
+            runfiles = runfiles,
+        ),
+        DocsBundleTestsInfo(tests = tests),
+    ]
+
+_docs_bundle_test = rule(
+    implementation = _docs_bundle_test_impl,
+    attrs = {
+        "tests": attr.label_list(),
+        "bundle_tests": attr.label_list(providers = [DocsBundleTestsInfo]),
+    },
+    test = True,
+    doc = "Runs the test targets transitively declared by a documentation bundle.",
+)
+
+def create_bundle_tests(name, tests, bundles, visibility = None):
+    """Create a testonly runner for tests declared by a documentation bundle."""
+    parsed_bundles = [_parse_bundle_declaration(declaration) for declaration in bundles]
+    _docs_bundle_test(
+        name = name,
+        tests = tests,
+        bundle_tests = [str(bundle.bundle) + "_tests" for bundle in parsed_bundles],
+        visibility = visibility,
     )
     return ":" + name
 

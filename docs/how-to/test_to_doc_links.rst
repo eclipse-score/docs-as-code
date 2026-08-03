@@ -114,6 +114,30 @@ See :need:`gd_temp__verification_specification` for code templates.
 Running Tests and Building Docs
 -------------------------------
 
+Bundle-owned verification tests
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+For tests that belong to a mountable ``docs_bundle``, declare them in its
+``tests`` list and run the generated companion target:
+
+.. code-block:: python
+
+   docs_bundle(
+       name = "component_docs",
+       source_dir = "docs",
+       tests = [":component_test"],
+   )
+
+.. code-block:: bash
+
+   bazel test :component_docs_tests
+
+The companion target runs its declared tests, including tests from nested
+bundles. Each test executable must write JUnit XML to ``XML_OUTPUT_FILE``.
+This verifies the bundle's tests without making the normal documentation
+targets ``testonly``. It does not inject test results into Sphinx; the
+existing test-link workflow below remains unchanged.
+
 1. Execute tests so that ``test.xml`` files are generated:
 
    .. code-block:: bash

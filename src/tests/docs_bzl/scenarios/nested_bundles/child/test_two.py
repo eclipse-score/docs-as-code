@@ -1,5 +1,5 @@
 # *******************************************************************************
-# Copyright (c) 2025 Contributors to the Eclipse Foundation
+# Copyright (c) 2026 Contributors to the Eclipse Foundation
 #
 # See the NOTICE file(s) distributed with this work for additional
 # information regarding copyright ownership.
@@ -10,14 +10,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-import os
-import sys
 
-import pytest
 
-if __name__ == "__main__":
-    args = sys.argv[1:]
-    xml_output = os.environ.get("XML_OUTPUT_FILE")
-    if xml_output and not any(arg.startswith("--junitxml") for arg in args):
-        args.insert(0, "--junitxml=" + xml_output)
-    sys.exit(pytest.main(args))
+def test_two() -> None:
+    assert True

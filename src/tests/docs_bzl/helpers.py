@@ -80,7 +80,9 @@ def run_package(
     expect_error: bool = False,
 ) -> RunResult:
     """Run Bazel against one small public-API test package."""
-    assert bazel_cmd in ("build", "run"), "only build and run are supported"
+    assert bazel_cmd in ("build", "run", "test"), (
+        "only build, run, and test are supported"
+    )
     assert target.startswith(":"), "target must be relative to package"
 
     package_dir = TEST_ROOT / package

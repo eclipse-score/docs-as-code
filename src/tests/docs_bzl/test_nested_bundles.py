@@ -69,3 +69,7 @@ def test_nested_bundle_aggregator_preserves_declared_order():
         ).read_text(encoding="utf-8")
     )
     assert [mount["mount_at"] for mount in manifest["mounts"]] == ["first", "second"]
+
+
+def test_nested_bundle_runs_transitive_tests():
+    run_scenario("test", "nested_bundles", ":parent_tests")

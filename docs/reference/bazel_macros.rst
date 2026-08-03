@@ -121,7 +121,7 @@ site).
        visibility = ["//visibility:public"],
    )
 
-Signature: ``docs_bundle(name, source_dir = None, entry_doc = "index", bundles = [], scan_code = [], visibility = None)``.
+Signature: ``docs_bundle(name, source_dir = None, entry_doc = "index", bundles = [], scan_code = [], tests = [], visibility = None)``.
 
 - ``source_dir`` (string, optional)
   Directory holding the bundle's own doc sources. It is globbed the same way as
@@ -161,6 +161,14 @@ Signature: ``docs_bundle(name, source_dir = None, entry_doc = "index", bundles =
    by the mounter, while its ``entry_doc`` belongs to the bundle. This lets the
    same bundle be mounted at different locations by different consumers without
    changing its canonical entry page.
+
+- ``tests`` (list of Bazel labels, optional)
+   Executable test targets verified by the automatically created
+   ``<name>_tests`` target. Run it with ``bazel test :<name>_tests``. Test
+   targets must create non-empty JUnit XML at the path in
+   ``XML_OUTPUT_FILE``. The test runner is transitively composed with nested
+   bundles, but it is separate from the documentation build and does not make
+   documentation targets ``testonly``.
 
 Edge cases
 ----------

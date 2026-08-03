@@ -13,17 +13,32 @@
 
 load("//:bzl/mount_rules.bzl", "create_mounts_manifest")
 load("//:docs.bzl", "docs", "docs_bundle")
+load("//:score_pytest.bzl", "score_pytest")
 
 docs_bundle(
     name = "child",
     source_dir = "child",
     entry_doc = "landing",
     scan_code = [":scan_code"],
+    tests = [
+        ":example_test_one",
+        ":example_test_two",
+    ],
 )
 
 filegroup(
     name = "scan_code",
     srcs = ["child/example.py"],
+)
+
+score_pytest(
+    name = "example_test_one",
+    srcs = ["child/test_one.py"],
+)
+
+score_pytest(
+    name = "example_test_two",
+    srcs = ["child/test_two.py"],
 )
 
 # The child is nested below the parent bundle before the parent itself is
