@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Reference Docs in Source Code &#8212; Score Docs-as-Code  documentation</title>
+    <title>Reference Docs in Source Code &#8212; S-CORE Docs-as-Code  documentation</title>
   
   
   
@@ -482,27 +482,36 @@ of <a class="reference internal" href="../internals/requirements/requirements.ht
 </section>
 <section id="scanning-source-code-for-links">
 <h2>Scanning Source Code for Links<a class="headerlink" href="#scanning-source-code-for-links" title="Link to this heading">#</a></h2>
-<p>In your <code class="docutils literal notranslate"><span class="pre">BUILD</span></code> files, you specify which source files to scan
-with <code class="docutils literal notranslate"><span class="pre">filegroup</span></code> or <code class="docutils literal notranslate"><span class="pre">glob</span></code> or whatever Bazel mechanism you prefer.
-Finally, pass the scan results to the <code class="docutils literal notranslate"><span class="pre">docs</span></code> rule as <code class="docutils literal notranslate"><span class="pre">scan_code</span></code> attribute.</p>
-<div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="n">filegroup</span><span class="p">(</span>
-<span class="linenos"> 2</span>   <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;some_sources&quot;</span><span class="p">,</span>
+<p>In your <code class="docutils literal notranslate"><span class="pre">BUILD</span></code> files, pass the implementation targets to the <code class="docutils literal notranslate"><span class="pre">docs</span></code> rule
+as <code class="docutils literal notranslate"><span class="pre">code_targets</span></code>. Their <code class="docutils literal notranslate"><span class="pre">srcs</span></code>, <code class="docutils literal notranslate"><span class="pre">hdrs</span></code>, and <code class="docutils literal notranslate"><span class="pre">textual_hdrs</span></code> are scanned,
+including those of their <code class="docutils literal notranslate"><span class="pre">deps</span></code> recursively. This means that a
+<code class="docutils literal notranslate"><span class="pre">cc_executable</span></code> also covers source files from the <code class="docutils literal notranslate"><span class="pre">cc_library</span></code> targets it
+uses. You may also pass filegroups; their files are scanned directly.</p>
+<div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="n">cc_library</span><span class="p">(</span>
+<span class="linenos"> 2</span>   <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;some_library&quot;</span><span class="p">,</span>
 <span class="linenos"> 3</span>   <span class="n">srcs</span> <span class="o">=</span> <span class="p">[</span>
-<span class="linenos"> 4</span>       <span class="s2">&quot;foo.py&quot;</span><span class="p">,</span>
-<span class="linenos"> 5</span>       <span class="s2">&quot;bar.cpp&quot;</span><span class="p">,</span>
-<span class="linenos"> 6</span>       <span class="s2">&quot;data.yaml&quot;</span><span class="p">,</span>
-<span class="linenos"> 7</span>   <span class="p">]</span> <span class="o">+</span> <span class="n">glob</span><span class="p">([</span><span class="s2">&quot;subdir/**/*.py&quot;</span><span class="p">]),</span>
-<span class="linenos"> 8</span><span class="p">)</span>
-<span class="linenos"> 9</span>
-<span class="linenos">10</span><span class="n">docs</span><span class="p">(</span>
-<span class="linenos">11</span>   <span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
-<span class="linenos">12</span>          <span class="s2">&quot;@score_process//:needs_json&quot;</span><span class="p">,</span>
-<span class="linenos">13</span>      <span class="p">],</span>
-<span class="linenos">14</span>      <span class="n">source_dir</span> <span class="o">=</span> <span class="s2">&quot;docs&quot;</span><span class="p">,</span>
-<span class="hll"><span class="linenos">15</span>      <span class="n">scan_code</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;:some_sources&quot;</span><span class="p">],</span>
-</span><span class="linenos">16</span><span class="p">)</span>
+<span class="linenos"> 4</span>       <span class="s2">&quot;bar.cpp&quot;</span><span class="p">,</span>
+<span class="linenos"> 5</span>   <span class="p">],</span>
+<span class="linenos"> 6</span><span class="p">)</span>
+<span class="linenos"> 7</span>
+<span class="linenos"> 8</span><span class="n">cc_executable</span><span class="p">(</span>
+<span class="linenos"> 9</span>   <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;some_application&quot;</span><span class="p">,</span>
+<span class="linenos">10</span>   <span class="n">srcs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;main.cpp&quot;</span><span class="p">],</span>
+<span class="linenos">11</span>   <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;:some_library&quot;</span><span class="p">],</span>
+<span class="linenos">12</span><span class="p">)</span>
+<span class="linenos">13</span>
+<span class="hll"><span class="linenos">14</span><span class="n">docs</span><span class="p">(</span>
+</span><span class="linenos">15</span>   <span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
+<span class="linenos">16</span>          <span class="s2">&quot;@score_process//:needs_json&quot;</span><span class="p">,</span>
+<span class="linenos">17</span>      <span class="p">],</span>
+<span class="linenos">18</span>      <span class="n">source_dir</span> <span class="o">=</span> <span class="s2">&quot;docs&quot;</span><span class="p">,</span>
+<span class="linenos">19</span>      <span class="n">code_targets</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;:some_application&quot;</span><span class="p">],</span>
+<span class="linenos">20</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>The older <code class="docutils literal notranslate"><span class="pre">scan_code</span></code> parameter remains available for existing configurations
+that explicitly provide files or filegroups, but it is deprecated. Prefer
+<code class="docutils literal notranslate"><span class="pre">code_targets</span></code> for new configurations.</p>
 </section>
 </section>
 
