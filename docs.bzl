@@ -326,12 +326,20 @@ def docs(
     docs_env["ACTION"] = "incremental"
 
     py_binary(
-        name = "docs",
-        tags = ["cli_help=Build documentation:\nbazel run //:docs"],
+        # Generated documentation artifacts may live below ``docs/``.  A
+        # py_binary named ``docs`` would own the conflicting Bazel output path
+        # ``docs``; expose this binary via the alias below instead.
+        name = "_score_docs_cli",
         srcs = [incremental_src],
         data = docs_data,
         deps = deps,
         env = docs_env
+    )
+
+    native.alias(
+        name = "docs",
+        actual = ":_score_docs_cli",
+        tags = ["cli_help=Build documentation:\nbazel run //:docs"],
     )
 
     docs_env["ACTION"] = "linkcheck"
