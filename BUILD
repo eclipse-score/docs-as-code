@@ -35,7 +35,8 @@ docs(
         },
         {
             "bundle": "//src/extensions/score_metamodel/docs:metamodel",
-            "mount_at": "internals/extensions/metamodel_types",
+            "mount_at": "reference/metamodel",
+            "attach_to": "reference/bazel_macros",
         },
     ],
     scan_code = [

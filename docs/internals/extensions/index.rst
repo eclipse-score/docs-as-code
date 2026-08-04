@@ -33,14 +33,6 @@ Extensions
 
    .. grid-item-card::
 
-      Metamodel Visualization
-      ^^^
-      Browsable table and Mermaid class diagram of all need types from the metamodel.
-      :ref:`Metamodel Types Visualization <metamodel-types-visualization>`.
-
-
-   .. grid-item-card::
-
       Source Code Linker
       ^^^
       Learn about the Source Code Linker extension, and how you can configure it.
@@ -78,7 +70,6 @@ Extensions
    :caption: Contents:
 
    Metamodel <metamodel>
-   Metamodel Types Visualization <metamodel_types/index>
    Filebased Testing <rst_filebased_testing>
    Source Code Linker <source_code_linker>
    Extension Guide <extension_guide>
