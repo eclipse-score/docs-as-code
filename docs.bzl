@@ -54,13 +54,14 @@ load(
     "create_bundle",
     "merge_bundle_sourcelinks",
     "external_docs_runfiles",
+    "generate_code_target_sourcelinks",
 )
 load(
     "@score_docs_as_code//:bzl/mount_rules.bzl",
     "create_mounts_manifest",
 )
 
-def docs_bundle(name, source_dir = None, entry_doc = "index", bundles = [], scan_code = [], data = [], visibility = None, **kwargs):
+def docs_bundle(name, source_dir = None, data = [], entry_doc = "index", bundles = [], scan_code = [], code_targets = [], visibility = None, **kwargs):
     """A docs bundle, optionally composed of others.
 
     Args:
@@ -68,6 +69,9 @@ def docs_bundle(name, source_dir = None, entry_doc = "index", bundles = [], scan
       source_dir: optional directory holding this bundle's own doc sources. It is
         globbed like `docs()` (same file kinds) and the contents are stored after
         stripping the `source_dir` prefix. Leave it unset for a pure aggregator.
+      data:
+        Additional data dependencies for this target.
+        Useful for generated rst sources.
       entry_doc: bundle-relative docname attached when this bundle is mounted.
         Defaults to `index`.
       bundles: nested bundles to compose, each a dict
@@ -76,8 +80,11 @@ def docs_bundle(name, source_dir = None, entry_doc = "index", bundles = [], scan
             "mount_at": <where it shall me mounted>,
             "attach_to": <optional document to attach the bundle to; for a bundle root it defaults to the mount_at parent's index>
         }.
-      scan_code: Source-code targets to scan for source-code links owned by this
-                 bundle.
+      scan_code: Deprecated. Explicit source files or filegroups to scan for
+                 source-code links. Use `code_targets` for implementation targets.
+      code_targets: Implementation targets or filegroups to scan for source-code
+                    links. Implementation target source files and their dependencies
+                    are collected recursively; filegroups expand to their files.
       visibility: Target visibility.
       **kwargs: Additional attributes forwarded to the underlying rule.
     """
@@ -85,9 +92,16 @@ def docs_bundle(name, source_dir = None, entry_doc = "index", bundles = [], scan
     srcs = glob_doc_sources(source_dir) if source_dir != None else []
     sourcelinks = []
     if scan_code:
+        print("WARNING: docs_bundle(%s) uses deprecated scan_code; use code_targets instead." % name)
         sourcelinks_name = name + "_sourcelinks_json"
         _sourcelinks_json(name = sourcelinks_name, srcs = scan_code)
         sourcelinks = [":" + sourcelinks_name]
+    if code_targets:
+        code_targets_sourcelinks = generate_code_target_sourcelinks(
+            name = name + "_code_targets_sourcelinks_json",
+            code_targets = code_targets,
+        )
+        sourcelinks.append(code_targets_sourcelinks)
 
     # Store the source directory relative to the workspace so bundle consumers
     # can locate the original files without copying them.
@@ -144,6 +158,7 @@ def docs(
         deps = [],
         external_needs = [],
         scan_code = [],
+        code_targets = [],
         test_sources = [],
         known_good = None,
         metamodel = None,
@@ -158,7 +173,11 @@ def docs(
       data: Additional data files to include in the documentation build.
       deps: Additional dependencies for the documentation build.
       external_needs: List of external needs targets to include in the documentation build.
-      scan_code: List of code targets to scan for source code links.
+      scan_code: Deprecated. Explicit source files or filegroups to scan for source
+                 code links. Use `code_targets` for implementation targets.
+      code_targets: Implementation targets or filegroups to scan for source code
+                    links. Implementation targets are scanned recursively; filegroups
+                    expand to their files.
       test_sources: Optional list of repo-relative directory paths which will be used to filter testcases for documentation generation.
                     When empty (default), all testcases found in `bazel-testlogs` will be used.
       known_good: Optional label to a "known good" JSON file for source links.
@@ -222,6 +241,7 @@ def docs(
         entry_doc = "index",
         bundles = bundles,
         scan_code = scan_code,
+        code_targets = code_targets,
         visibility = ["//visibility:public"],
     )
     merge_bundle_sourcelinks(
