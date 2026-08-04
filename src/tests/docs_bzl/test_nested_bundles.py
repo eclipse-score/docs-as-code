@@ -49,7 +49,7 @@ def test_nested_bundles_render_and_preserve_metadata():
         m for m in manifest["mounts"] if m["mount_at"] == "concepts/example_bundle"
     )
     assert parent_mount["data"] == [
-        "src/tests/docs_bzl/scenarios/nested_bundles/child/generated_output.txt",
+        "src/tests/docs_bzl/scenarios/nested_bundles/generated/generated_output.txt",
     ]
 
     sourcelinks = json.loads(

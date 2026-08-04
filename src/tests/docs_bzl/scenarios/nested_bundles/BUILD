@@ -41,7 +41,7 @@ filegroup(
 # Simulated generated doc output consumed via the `data` attribute.
 filegroup(
     name = "generated_doc_output",
-    srcs = ["child/generated_output.txt"],
+    srcs = ["generated/generated_output.txt"],
     visibility = ["//visibility:private"],
 )
 
