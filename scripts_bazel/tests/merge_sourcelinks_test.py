@@ -159,6 +159,38 @@ def test_merge_sourcelinks_basic(
     )
 
 
+def test_merge_sourcelinks_deduplicates_identical_references(
+    create_local_json_files: tuple[Path, Path, Path], monkeypatch: pytest.MonkeyPatch
+):
+    file1, _, output_file = create_local_json_files
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            str(_MY_PATH.parent / "merge_sourcelinks.py"),
+            "--output",
+            str(output_file),
+            str(file1),
+            str(file1),
+        ],
+    )
+
+    assert scripts_bazel.merge_sourcelinks.main() == 0
+    assert json.loads(output_file.read_text()) == [
+        {
+            "file": "test1.py",
+            "line": 10,
+            "tag": "# req-Id:",
+            "need": "tool_req__docs_arch_types",
+            "full_line": "# req-Id: tool_req__docs_arch_types",
+            "repo_name": "local_repo",
+            "hash": "",
+            "url": "",
+        }
+    ]
+
+
 def test_merge_sourcelinks_with_one_empty_file(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ):

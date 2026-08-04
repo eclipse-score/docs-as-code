@@ -32,6 +32,8 @@ LOGGER = get_logger(__name__)
 TAGS = [
     "# " + "req-traceability:",
     "# " + "req-Id:",
+    "// " + "req-traceability:",
+    "// " + "req-Id:",
 ]
 
 

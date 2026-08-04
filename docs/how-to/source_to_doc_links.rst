@@ -39,21 +39,27 @@ For other languages (C++, Rust, etc.), use the appropriate comment syntax.
 Scanning Source Code for Links
 ------------------------------
 
-In your ``BUILD`` files, you specify which source files to scan
-with ``filegroup`` or ``glob`` or whatever Bazel mechanism you prefer.
-Finally, pass the scan results to the ``docs`` rule as ``scan_code`` attribute.
+In your ``BUILD`` files, pass the implementation targets to the ``docs`` rule
+as ``code_targets``. Their ``srcs``, ``hdrs``, and ``textual_hdrs`` are scanned,
+including those of their ``deps`` recursively. This means that a
+``cc_executable`` also covers source files from the ``cc_library`` targets it
+uses. You may also pass filegroups; their files are scanned directly.
 
 .. code-block:: starlark
-   :emphasize-lines: 15
+   :emphasize-lines: 14
    :linenos:
 
-   filegroup(
-      name = "some_sources",
+   cc_library(
+      name = "some_library",
       srcs = [
-          "foo.py",
           "bar.cpp",
-          "data.yaml",
-      ] + glob(["subdir/**/*.py"]),
+      ],
+   )
+
+   cc_executable(
+      name = "some_application",
+      srcs = ["main.cpp"],
+      deps = [":some_library"],
    )
 
    docs(
@@ -61,5 +67,9 @@ Finally, pass the scan results to the ``docs`` rule as ``scan_code`` attribute.
              "@score_process//:needs_json",
          ],
          source_dir = "docs",
-         scan_code = [":some_sources"],
+         code_targets = [":some_application"],
    )
+
+The older ``scan_code`` parameter remains available for existing configurations
+that explicitly provide files or filegroups, but it is deprecated. Prefer
+``code_targets`` for new configurations.
