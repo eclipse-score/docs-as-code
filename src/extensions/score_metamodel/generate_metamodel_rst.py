@@ -62,18 +62,20 @@ def _build_table(types: dict) -> list[str]:
 
 def _build_mermaid(types: dict) -> list[str]:
     lines: list[str] = []
+    seen: set[tuple[str, str, str]] = set()
     for name, ty in sorted(types.items()):
-        lines.append(f"class {name} {{")
-        all_opts = set(ty.get("mandatory_options", {}).keys())
-        all_opts.update(ty.get("optional_options", {}).keys())
-        for lk in sorted(ty.get("mandatory_links", {}).keys()):
-            all_opts.add(f"mandatory {lk}")
-        for lk in sorted(ty.get("optional_links", {}).keys()):
-            all_opts.add(f"optional {lk}")
-        for opt in sorted(all_opts):
-            prefix = "+" if not opt.startswith(("optional ", "mandatory ")) else "~"
-            lines.append(f"    {prefix}{opt}")
-        lines.append("}")
+        for link_name, targets in sorted(
+            list(ty.get("mandatory_links", {}).items())
+            + list(ty.get("optional_links", {}).items())
+        ):
+            target_types = targets.split(", ") if targets != "ANY" else []
+            for target in target_types:
+                target = target.strip()
+                if target and target in types:
+                    key = (name, target, link_name)
+                    if key not in seen:
+                        seen.add(key)
+                        lines.append(f"{name} --> {target} : {link_name}")
     return lines
 
 
