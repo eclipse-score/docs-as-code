@@ -14,7 +14,7 @@
 """Generate an RST file with a list-table and Mermaid class diagram from metamodel.yaml.
 
 Usage:
-    generate_metamodel_rst.py --output FILE [METAMODEL_YAML]
+    generate_metamodel_rst.py --rst-output FILE --mmd-output FILE [METAMODEL_YAML]
 """
 
 from __future__ import annotations
@@ -73,13 +73,14 @@ def _build_mermaid(types: dict) -> list[str]:
         for opt in sorted(all_opts):
             prefix = "+" if not opt.startswith(("optional ", "mandatory ")) else "~"
             lines.append(f"    {prefix}{opt}")
-        lines.append("    }")
+        lines.append("}")
     return lines
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Generate RST from metamodel.yaml")
-    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--rst-output", type=Path, required=True)
+    parser.add_argument("--mmd-output", type=Path, required=True)
     parser.add_argument("metamodel", nargs="?", default=None)
     args = parser.parse_args()
 
@@ -106,7 +107,8 @@ def main() -> int:
         return 1
 
     table = _build_table(types)
-    mermaid = _build_mermaid(types)
+    mermaid_lines = ["classDiagram"] + _build_mermaid(types)
+    args.mmd_output.write_text("\n".join(mermaid_lines) + "\n", encoding="utf-8")
     output = "\n".join(
         [
             "..",
@@ -128,15 +130,13 @@ def main() -> int:
             "Class Diagram",
             "-------------",
             "",
-            ".. mermaid::",
+            f".. mermaid:: {args.mmd_output.name}",
             "",
-            "    classDiagram",
         ]
-        + mermaid
         + [""]
     )
 
-    args.output.write_text(output, encoding="utf-8")
+    args.rst_output.write_text(output, encoding="utf-8")
     return 0
 
 

@@ -20,8 +20,8 @@ genrule(
     srcs = [
         "//src/extensions/score_metamodel:metamodel_yaml",
     ],
-    outs = ["index.rst"],
-    cmd = "$(location :generate_metamodel_rst_bin) --output $@ $(location //src/extensions/score_metamodel:metamodel_yaml)",
+    outs = ["index.rst", "metamodel_classes.mmd"],
+    cmd = "$(location :generate_metamodel_rst_bin) --rst-output $(location index.rst) --mmd-output $(location metamodel_classes.mmd) $(location //src/extensions/score_metamodel:metamodel_yaml)",
     tools = [":generate_metamodel_rst_bin"],
     visibility = ["//visibility:private"],
 )
