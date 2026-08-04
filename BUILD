@@ -33,6 +33,10 @@ docs(
             "bundle": "//src/extensions/score_mounts/docs:internals",
             "mount_at": "internals/extensions/mounts",
         },
+        {
+            "bundle": "//src/extensions/score_metamodel/docs:metamodel",
+            "mount_at": "internals/extensions/metamodel_types",
+        },
     ],
     scan_code = [
         "//scripts_bazel:sources",

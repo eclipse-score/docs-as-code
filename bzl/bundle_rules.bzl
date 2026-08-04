@@ -64,6 +64,7 @@ DocsBundleInfo = provider(
         "entries": "Ordered entries, one per source directory, including its final documentation-tree location.",
         "sourcelinks": "Source-code-link JSON files together with their owning repository.",
         "external_runfiles": "Documentation source files from external repositories needed in runfiles.",
+        "data": "Non-source-tree files (e.g. genrule outputs) needed for Sphinx resolution.",
     },
 )
 
@@ -102,7 +103,7 @@ def _bundle_execroot_path(runtime_path):
         return "external/" + runtime_path[3:]
     return runtime_path
 
-def _rebase_bundle_entry(entry, mount_at, attach_to):
+def _rebase_bundle_entry(entry, mount_at, attach_to, data):
     """Place a bundle entry below a requested documentation-tree location.
 
     A bundle's own root has no ``mount_at`` yet. For that root, an omitted
@@ -123,6 +124,7 @@ def _rebase_bundle_entry(entry, mount_at, attach_to):
         entry_doc = entry.entry_doc,
         external = entry.external,
         repository = entry.repository,
+        data = data,
     )
 
 def _entries_visible_through(ctx, child):
@@ -168,6 +170,7 @@ def _docs_bundle_impl(ctx):
     entries = []
     own_source_files = []
     own_external_runfiles = []
+    own_data = list(ctx.files.data)
 
     if ctx.files.srcs:
         runtime_path = _bundle_runtime_path(ctx)
@@ -183,12 +186,25 @@ def _docs_bundle_impl(ctx):
             entry_doc = ctx.attr.entry_doc,
             external = external,
             repository = ctx.label.workspace_name,
+            data = own_data,
         ))
         own_source_files.extend(ctx.files.srcs)
         # Local sources are read directly from the workspace by ``bazel run``.
         # Only sources from external repositories must be staged in runfiles.
         if external:
             own_external_runfiles.extend(ctx.files.srcs)
+    elif own_data:
+        # Pure data bundle: create an entry so the data files appear in the manifest.
+        entries.append(struct(
+            runtime_path = "",
+            src_root = "",
+            mount_at = "",
+            attach_to = "",
+            entry_doc = ctx.attr.entry_doc,
+            external = False,
+            repository = ctx.label.workspace_name,
+            data = own_data,
+        ))
 
     child_source_files = []
     child_external_runfiles = []
@@ -197,11 +213,13 @@ def _docs_bundle_impl(ctx):
         for source_link in ctx.files.sourcelinks
     ]
     for index, child in enumerate(ctx.attr.bundles):
+        child_data = child[DocsBundleInfo].data
         entries.extend([
             _rebase_bundle_entry(
                 entry,
                 ctx.attr.bundle_mount_ats[index],
                 ctx.attr.bundle_attach_tos[index],
+                child_data,
             )
             for entry in _entries_visible_through(ctx, child)
         ])
@@ -218,12 +236,20 @@ def _docs_bundle_impl(ctx):
         direct = own_external_runfiles,
         transitive = child_external_runfiles,
     )
+    all_data = depset(
+        direct = own_data,
+        transitive = [
+            child[DocsBundleInfo].data
+            for child in ctx.attr.bundles
+        ],
+    )
     return [
         DefaultInfo(files = all_source_files),
         DocsBundleInfo(
             entries = entries,
             sourcelinks = sourcelinks,
             external_runfiles = external_runfiles,
+            data = all_data,
         ),
     ]
 
@@ -237,11 +263,12 @@ _docs_bundle = rule(
         "bundles": attr.label_list(providers = [DocsBundleInfo]),
         "bundle_mount_ats": attr.string_list(),
         "bundle_attach_tos": attr.string_list(),
+        "data": attr.label_list(allow_files = True),
     },
     doc = "Internal rule that carries bundle files and their documentation-tree locations.",
 )
 
-def create_bundle(name, bundles, srcs = [], sourcelinks = [], strip_prefix = "", entry_doc = "index", visibility = None, **kwargs):
+def create_bundle(name, bundles, srcs = [], sourcelinks = [], strip_prefix = "", entry_doc = "index", data = [], visibility = None, **kwargs):
     """Create a reusable documentation bundle from files and child declarations."""
     parsed_bundles = [_parse_bundle_declaration(declaration) for declaration in bundles]
     _docs_bundle(
@@ -253,6 +280,7 @@ def create_bundle(name, bundles, srcs = [], sourcelinks = [], strip_prefix = "",
         bundles = [bundle.bundle for bundle in parsed_bundles],
         bundle_mount_ats = [bundle.mount_at for bundle in parsed_bundles],
         bundle_attach_tos = [bundle.attach_to for bundle in parsed_bundles],
+        data = data,
         visibility = visibility,
         **kwargs
     )

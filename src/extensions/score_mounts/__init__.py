@@ -107,6 +107,43 @@ def _on_config_inited(app: Sphinx, config: Config) -> None:
         )
 
     config.mounts = runtime_mounts
+
+    # Resolve data (e.g. genrule outputs in bazel-out).
+    # Data paths are execroot-relative (e.g. bazel-out/.../bin/src/.../index.rst).
+    # During bazel run: compute execroot from RUNFILES_DIR; during sandboxed build:
+    # cwd IS the execroot.
+    # Only the parent directories of resolved files are added to mounts.
+    data_mount_added: dict[str, MountSpec] = {}
+    for spec in manifest.mounts:
+        for data_file in spec.data:
+            if ws_root is not None:
+                runfiles_str = str(get_runfiles_dir())
+                if "/bazel-out/" in runfiles_str:
+                    # Execroot = runfiles path before the first /bazel-out/ occurrence
+                    # e.g. runfiles=execroot/_main/bazel-out/... => execroot=execroot/_main
+                    walk_file = Path(runfiles_str.split("/bazel-out/")[0]) / data_file
+                else:
+                    walk_file = (
+                        find_ws_root()
+                        / "bazel-bin"
+                        / data_file.removeprefix("bazel-out/k8-fastbuild/bin/")
+                    )
+            else:
+                walk_file = Path.cwd() / data_file
+            if walk_file.is_file():
+                walk_dir = walk_file.parent
+                if str(walk_dir) not in data_mount_added:
+                    data_mount_added[str(walk_dir)] = spec
+                    config.mounts.append(
+                        {
+                            "dir": str(walk_dir),
+                            "mount_at": spec.mount_at,
+                            "attach_to": spec.attach_to,
+                            "entry_doc": spec.entry_doc,
+                        }
+                    )
+    logger.info("score_mounts: added %d data mount(s)", len(data_mount_added))
+
     # Prevent sphinx_mounts._on_load_toml from overwriting our config with a
     # possibly-stale docs/ubproject.toml entry.
     config.mounts_from_toml = None

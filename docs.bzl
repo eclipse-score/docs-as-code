@@ -60,7 +60,7 @@ load(
     "create_mounts_manifest",
 )
 
-def docs_bundle(name, source_dir = None, entry_doc = "index", bundles = [], scan_code = [], visibility = None, **kwargs):
+def docs_bundle(name, source_dir = None, entry_doc = "index", bundles = [], scan_code = [], data = [], visibility = None, **kwargs):
     """A docs bundle, optionally composed of others.
 
     Args:
@@ -102,6 +102,7 @@ def docs_bundle(name, source_dir = None, entry_doc = "index", bundles = [], scan
         strip_prefix = strip_prefix,
         entry_doc = entry_doc,
         bundles = bundles,
+        data = data,
         visibility = visibility,
         **kwargs
     )
