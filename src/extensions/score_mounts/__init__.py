@@ -91,6 +91,10 @@ def _on_config_inited(app: Sphinx, config: Config) -> None:
 
     runtime_mounts: list[dict[str, object]] = []
     for spec in manifest.mounts:
+        # Pure-data bundles have empty src_root; skip directory walk.
+        # Data files are handled by the data mount section below.
+        if not spec.src_root:
+            continue
         walk_dir = resolve_walk_dir(manifest, spec, ws_root, runfiles_dir)
         if not walk_dir.is_dir():
             raise ValueError(
