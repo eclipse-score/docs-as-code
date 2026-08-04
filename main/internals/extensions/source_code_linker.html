@@ -503,8 +503,11 @@ Reads the aggregated JSON, validates and adapts it, and finally injects the link
 <p>The Bazel parts are responsible for producing the <strong>intermediate caches</strong> that the source_code_linker extension later will consumes.</p>
 <section id="step-1-per-repository-cache-generation">
 <span id="id1"></span><h4>Step 1: Per-repository cache generation<a class="headerlink" href="#step-1-per-repository-cache-generation" title="Link to this heading">#</a></h4>
-<p>All files provided via the <code class="docutils literal notranslate"><span class="pre">scan_code</span></code> attribute to the docs macro will be scanned for the requirement tags.
-A <em>per repository JSON cache</em> will be generated and saved.
+<p>Each <code class="docutils literal notranslate"><span class="pre">docs_bundle</span></code> scans the source files selected by its <code class="docutils literal notranslate"><span class="pre">code_targets</span></code>
+attribute. A <em>per bundle JSON cache</em> is then generated and saved; Bazel
+reuses it until its source inputs change.
+<code class="docutils literal notranslate"><span class="pre">scan_code</span></code> remains available for explicit files or filegroups, but is
+deprecated.
 This script <code class="docutils literal notranslate"><span class="pre">scripts_bazel/generate_sourcelinks_cli.py</span></code> finds all codelinks per file, and gathers them into
 one JSON cache per repository.
 It also adds metadata to each needlink that is needed in further steps.</p>
