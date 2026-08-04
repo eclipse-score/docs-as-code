@@ -84,7 +84,7 @@
     "FullyVerifies": null
   },
   {
-    "name": "generate_sourcelinks_cli_test__test_generate_sourcelinks_cli_parse_external_module",
+    "name": "generate_sourcelinks_cli_test__test_generate_sourcelinks_cli_parses_cpp_traceability_tag",
     "file": "scripts_bazel/tests/generate_sourcelinks_cli_test.py",
     "line": "114",
     "result": "passed",
@@ -98,9 +98,23 @@
     "FullyVerifies": null
   },
   {
+    "name": "generate_sourcelinks_cli_test__test_generate_sourcelinks_cli_parse_external_module",
+    "file": "scripts_bazel/tests/generate_sourcelinks_cli_test.py",
+    "line": "138",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
     "name": "generate_sourcelinks_cli_test__test_generate_sourcelinks_cli_file_not_exists",
     "file": "scripts_bazel/tests/generate_sourcelinks_cli_test.py",
-    "line": "164",
+    "line": "188",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -266,7 +280,7 @@
     "FullyVerifies": null
   },
   {
-    "name": "merge_sourcelinks_test__test_merge_sourcelinks_with_one_empty_file",
+    "name": "merge_sourcelinks_test__test_merge_sourcelinks_deduplicates_identical_references",
     "file": "scripts_bazel/tests/merge_sourcelinks_test.py",
     "line": "162",
     "result": "passed",
@@ -280,9 +294,23 @@
     "FullyVerifies": null
   },
   {
+    "name": "merge_sourcelinks_test__test_merge_sourcelinks_with_one_empty_file",
+    "file": "scripts_bazel/tests/merge_sourcelinks_test.py",
+    "line": "194",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
     "name": "merge_sourcelinks_test__test_merge_sourcelinks_wrong_schema",
     "file": "scripts_bazel/tests/merge_sourcelinks_test.py",
-    "line": "219",
+    "line": "251",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -296,7 +324,7 @@
   {
     "name": "merge_sourcelinks_test__test_merge_sourcelinks_with_known_good",
     "file": "scripts_bazel/tests/merge_sourcelinks_test.py",
-    "line": "274",
+    "line": "306",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -310,7 +338,7 @@
   {
     "name": "merge_sourcelinks_test__test_merge_sourcelinks_without_known_good_preserves_external_metadata",
     "file": "scripts_bazel/tests/merge_sourcelinks_test.py",
-    "line": "326",
+    "line": "358",
     "result": "passed",
     "repo_name": null,
     "hash": null,
