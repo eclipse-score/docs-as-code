@@ -79,7 +79,7 @@ def load_mounts_manifest(manifest_path: str | Path) -> MountsManifest:
                 if entry.get("entry_doc")
                 else "index",
                 external=bool(entry.get("external", False)),
-                data=[str(f) for f in entry.get("data", [])],
+                data=[str(f) for f in cast("list[object]", entry.get("data", []))],
             )
         )
     return MountsManifest(mounts=mounts)

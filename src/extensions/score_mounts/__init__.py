@@ -32,6 +32,7 @@ from sphinx.config import Config
 from sphinx.util import logging
 
 from src.extensions.score_mounts._resolver import (
+    MountSpec,
     load_mounts_manifest,
     resolve_walk_dir,
 )
@@ -124,7 +125,7 @@ def _on_config_inited(app: Sphinx, config: Config) -> None:
                     walk_file = Path(runfiles_str.split("/bazel-out/")[0]) / data_file
                 else:
                     walk_file = (
-                        find_ws_root()
+                        ws_root
                         / "bazel-bin"
                         / data_file.removeprefix("bazel-out/k8-fastbuild/bin/")
                     )
