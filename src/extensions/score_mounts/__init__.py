@@ -78,8 +78,8 @@ def _resolve_data_mounts(
     data_mounts: dict[str, MountSpec] = {}
     for spec in manifest.mounts:
         for data_file in spec.data:
-            if ws_root is not None:
-                runfiles_str = str(get_runfiles_dir())
+            if ws_root is not None and runfiles_dir is not None:
+                runfiles_str = str(runfiles_dir)
                 if "/bazel-out/" in runfiles_str:
                     # Execroot = runfiles path before the first /bazel-out/ occurrence
                     # e.g. runfiles=execroot/_main/bazel-out/... => execroot=execroot/_main

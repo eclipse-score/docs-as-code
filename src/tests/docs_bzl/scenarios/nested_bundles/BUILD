@@ -38,6 +38,13 @@ filegroup(
     srcs = [":filegroup_sources"],
 )
 
+# Simulated generated doc output consumed via the `data` attribute.
+filegroup(
+    name = "generated_doc_output",
+    srcs = ["child/generated_output.txt"],
+    visibility = ["//visibility:private"],
+)
+
 py_binary(
     name = "example_binary",
     srcs = ["child/example.py"],
@@ -64,6 +71,7 @@ docs_bundle(
         "bundle": ":child",
         "mount_at": "child",
     }],
+    data = [":generated_doc_output"],
 )
 
 # An aggregator deliberately has no source_dir. It only propagates its child

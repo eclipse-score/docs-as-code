@@ -69,6 +69,11 @@ def load_mounts_manifest(manifest_path: str | Path) -> MountsManifest:
             raise ValueError(
                 f"mounts manifest entry missing 'src_root'/'mount_at': {entry!r}"
             )
+        raw_data = entry.get("data", [])
+        if not isinstance(raw_data, list):
+            raise ValueError(
+                f"mounts manifest entry field 'data' must be a list: {raw_data!r}"
+            )
         mounts.append(
             MountSpec(
                 src_root=str(entry["src_root"]),
@@ -79,7 +84,7 @@ def load_mounts_manifest(manifest_path: str | Path) -> MountsManifest:
                 if entry.get("entry_doc")
                 else "index",
                 external=bool(entry.get("external", False)),
-                data=[str(f) for f in cast("list[object]", entry.get("data", []))],
+                data=[str(f) for f in cast("list[object]", raw_data)],
             )
         )
     return MountsManifest(mounts=mounts)

@@ -212,7 +212,7 @@ def _docs_bundle_impl(ctx):
     entries = []
     own_source_files = []
     own_external_runfiles = []
-    own_data = list(ctx.files.data)
+    own_data = depset(direct = ctx.files.data)
 
     if ctx.files.srcs:
         runtime_path = _bundle_runtime_path(ctx)
@@ -279,14 +279,13 @@ def _docs_bundle_impl(ctx):
         transitive = child_external_runfiles,
     )
     all_data = depset(
-        direct = own_data,
-        transitive = [
+        transitive = [own_data] + [
             child[DocsBundleInfo].data
             for child in ctx.attr.bundles
         ],
     )
     return [
-        DefaultInfo(files = all_source_files),
+        DefaultInfo(files = depset(transitive = [all_source_files, all_data])),
         DocsBundleInfo(
             entries = entries,
             sourcelinks = sourcelinks,
