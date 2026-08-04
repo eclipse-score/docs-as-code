@@ -20,6 +20,8 @@ exports_files([
 ])
 
 docs(
+    project = "S-CORE Docs-as-Code",
+    project_url = "https://eclipse-score.github.io/docs-as-code",
     external_needs = [
         "@score_process//:needs_json_file",
     ],
