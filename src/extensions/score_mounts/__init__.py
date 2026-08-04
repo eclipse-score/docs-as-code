@@ -32,6 +32,7 @@ from sphinx.config import Config
 from sphinx.util import logging
 
 from src.extensions.score_mounts._resolver import (
+    MountsManifest,
     MountSpec,
     load_mounts_manifest,
     resolve_walk_dir,
@@ -64,61 +65,17 @@ def _read_manifest(config: Config):
     return load_mounts_manifest(manifest_path)
 
 
-def _on_config_inited(app: Sphinx, config: Config) -> None:
-    """Translate the Bazel manifest into ``sphinx_mounts`` runtime config.
+def _resolve_data_mounts(
+    manifest: MountsManifest,
+    ws_root: Path | None,
+    runfiles_dir: Path | None,
+) -> dict[str, MountSpec]:
+    """Resolve data file mounts from the manifest.
 
-    Runs on Sphinx's ``config-inited`` event (before ``sphinx_mounts``, see the
-    priority in ``setup``). For each mount it resolves the directory
-    ``sphinx_mounts`` should walk and writes the assembled list to
-    ``config.mounts``. A missing or empty manifest is a no-op.
+    Data paths are execroot-relative (e.g. bazel-out/.../bin/src/.../index.rst).
+    Returns resolved mount dicts keyed by directory.
     """
-    manifest = _read_manifest(config)
-    if manifest is None or not manifest.mounts:
-        return
-
-    # In every context sphinx_mounts walks the bundle's original files (no copy is
-    # made); only where those files are staged differs:
-    #   * external bundle: use its runfiles-relative location under ``bazel run``
-    #     and its execroot-relative location in a sandboxed Bazel build.
-    #   * in-tree bundle under `bazel run`: use the live workspace source
-    #     (ws_root/src_root) -- editable, best for live preview / jump-to-def.
-    #   * in-tree bundle in a sandbox build: the bundle's source files are staged
-    #     as inputs at their exec-root-relative path. The manifest lives under
-    #     bazel-out/ and is NOT colocated with them, so src_root is resolved
-    #     against the exec root (the sphinx action's cwd), not the manifest.
-    ws_root = find_ws_root()
-    runfiles_dir = get_runfiles_dir() if ws_root is not None else None
-
-    runtime_mounts: list[dict[str, object]] = []
-    for spec in manifest.mounts:
-        # Pure-data bundles have empty src_root; skip directory walk.
-        # Data files are handled by the data mount section below.
-        if not spec.src_root:
-            continue
-        walk_dir = resolve_walk_dir(manifest, spec, ws_root, runfiles_dir)
-        if not walk_dir.is_dir():
-            raise ValueError(
-                "score_mounts: resolved mount dir does not exist: "
-                f"{walk_dir} (mount_at={spec.mount_at})"
-            )
-
-        runtime_mounts.append(
-            {
-                "dir": str(walk_dir),
-                "mount_at": spec.mount_at,
-                "attach_to": spec.attach_to,
-                "entry_doc": spec.entry_doc,
-            }
-        )
-
-    config.mounts = runtime_mounts
-
-    # Resolve data (e.g. genrule outputs in bazel-out).
-    # Data paths are execroot-relative (e.g. bazel-out/.../bin/src/.../index.rst).
-    # During bazel run: compute execroot from RUNFILES_DIR; during sandboxed build:
-    # cwd IS the execroot.
-    # Only the parent directories of resolved files are added to mounts.
-    data_mount_added: dict[str, MountSpec] = {}
+    data_mounts: dict[str, MountSpec] = {}
     for spec in manifest.mounts:
         for data_file in spec.data:
             if ws_root is not None:
@@ -137,17 +94,71 @@ def _on_config_inited(app: Sphinx, config: Config) -> None:
                 walk_file = Path.cwd() / data_file
             if walk_file.is_file():
                 walk_dir = walk_file.parent
-                if str(walk_dir) not in data_mount_added:
-                    data_mount_added[str(walk_dir)] = spec
-                    config.mounts.append(
-                        {
-                            "dir": str(walk_dir),
-                            "mount_at": spec.mount_at,
-                            "attach_to": spec.attach_to,
-                            "entry_doc": spec.entry_doc,
-                        }
-                    )
-    logger.info("score_mounts: added %d data mount(s)", len(data_mount_added))
+                if str(walk_dir) not in data_mounts:
+                    data_mounts[str(walk_dir)] = spec
+    return data_mounts
+
+
+def _make_mount_entry(walk_dir: Path, spec: MountSpec) -> dict[str, object]:
+    """Build a mount entry dict from a resolved directory and spec."""
+    return {
+        "dir": str(walk_dir),
+        "mount_at": spec.mount_at,
+        "attach_to": spec.attach_to,
+        "entry_doc": spec.entry_doc,
+    }
+
+
+def _on_config_inited(app: Sphinx, config: Config) -> None:
+    """Translate the Bazel manifest into ``sphinx_mounts`` runtime config.
+
+    Runs on Sphinx's ``config-inited`` event (before ``sphinx_mounts``, see the
+    priority in ``setup``). For each mount it resolves the directory
+    ``sphinx_mounts`` should walk and writes the assembled list to
+    ``config.mounts``. A missing or empty manifest is a no-op.
+    """
+    manifest = _read_manifest(config)
+    if manifest is None or not manifest.mounts:
+        return
+
+    ws_root = find_ws_root()
+    runfiles_dir = get_runfiles_dir() if ws_root is not None else None
+
+    # In every context sphinx_mounts walks the bundle's original files (no copy is
+    # made); only where those files are staged differs:
+    #   * external bundle: use its runfiles-relative location under ``bazel run``
+    #     and its execroot-relative location in a sandboxed Bazel build.
+    #   * in-tree bundle under `bazel run`: use the live workspace source
+    #     (ws_root/src_root) -- editable, best for live preview / jump-to-def.
+    #   * in-tree bundle in a sandbox build: the bundle's source files are staged
+    #     as inputs at their exec-root-relative path. The manifest lives under
+    #     bazel-out/ and is NOT colocated with them, so src_root is resolved
+    #     against the exec root (the sphinx action's cwd), not the manifest.
+
+    # Pure-data bundles have empty src_root; skip directory walk.
+    runtime_mounts: list[dict[str, object]] = []
+    for spec in manifest.mounts:
+        if not spec.src_root:
+            continue
+        walk_dir = resolve_walk_dir(manifest, spec, ws_root, runfiles_dir)
+        if not walk_dir.is_dir():
+            raise ValueError(
+                "score_mounts: resolved mount dir does not exist: "
+                f"{walk_dir} (mount_at={spec.mount_at})"
+            )
+        runtime_mounts.append(_make_mount_entry(walk_dir, spec))
+
+    config.mounts = runtime_mounts
+
+    # Resolve data (e.g. genrule outputs in bazel-out).
+    # Data paths are execroot-relative (e.g. bazel-out/.../bin/src/.../index.rst).
+    # During bazel run: compute execroot from RUNFILES_DIR; during sandboxed build:
+    # cwd IS the execroot.
+    # Only the parent directories of resolved files are added to mounts.
+    data_mounts = _resolve_data_mounts(manifest, ws_root, runfiles_dir)
+    for walk_dir_str, spec in data_mounts.items():
+        config.mounts.append(_make_mount_entry(Path(walk_dir_str), spec))
+    logger.info("score_mounts: added %d data mount(s)", len(data_mounts))
 
     # Prevent sphinx_mounts._on_load_toml from overwriting our config with a
     # possibly-stale docs/ubproject.toml entry.
