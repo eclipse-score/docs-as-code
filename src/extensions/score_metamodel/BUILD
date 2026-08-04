@@ -27,8 +27,6 @@ filegroup(
     ),
 )
 
-exports_files(["generate_metamodel_rst.py"])
-
 filegroup(
     name = "tests",
     srcs = glob(

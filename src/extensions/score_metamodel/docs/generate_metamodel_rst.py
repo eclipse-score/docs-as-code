@@ -122,19 +122,13 @@ def main() -> int:
             "Metamodel Types Visualization",
             "==============================",
             "",
+            f".. mermaid:: {args.mmd_output.name}",
+            "",
             "Need Types",
             "----------",
             "",
         ]
         + table
-        + [
-            "",
-            "Class Diagram",
-            "-------------",
-            "",
-            f".. mermaid:: {args.mmd_output.name}",
-            "",
-        ]
         + [""]
     )
 

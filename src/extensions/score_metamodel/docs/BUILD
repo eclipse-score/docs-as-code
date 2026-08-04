@@ -28,7 +28,7 @@ genrule(
 
 py_binary(
     name = "generate_metamodel_rst_bin",
-    srcs = ["//src/extensions/score_metamodel:generate_metamodel_rst.py"],
+    srcs = ["generate_metamodel_rst.py"],
     main = "generate_metamodel_rst.py",
     deps = all_requirements,
     visibility = ["//visibility:private"],
