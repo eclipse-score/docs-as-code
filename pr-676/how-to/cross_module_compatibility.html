@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Cross-Module Compatibility Findings &#8212; Score Docs-as-Code  documentation</title>
+    <title>Handle Cross-Module Compatibility Findings &#8212; Score Docs-as-Code  documentation</title>
   
   
   
@@ -395,11 +395,12 @@
 <li class="toctree-l1"><a class="reference internal" href="setup.html">Setup</a></li>
 <li class="toctree-l1"><a class="reference internal" href="write_docs.html">Write Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="other_modules.html">Reference Other Modules</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Cross-Module Compatibility Findings</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Handle Cross-Module Compatibility Findings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dashboards_and_quality_gates.html">Build Dashboards and Quality Gates</a></li>
 
 <li class="toctree-l1"><a class="reference internal" href="source_to_doc_links.html">Reference Docs in Source Code</a></li>
 <li class="toctree-l1"><a class="reference internal" href="test_to_doc_links.html">Reference Docs in Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated_docs.html">Integrate Generated Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="add_extensions.html">Add Extensions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mounts/index.html">Mount docs bundles</a></li>
 </ul>
@@ -445,7 +446,7 @@
     
     <li class="breadcrumb-item"><a href="index.html" class="nav-link">How To</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Cross-Module Compatibility Findings</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Handle Cross-Module Compatibility Findings</span></li>
   </ul>
 </nav>
 </div>
@@ -462,43 +463,65 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="cross-module-compatibility-findings">
-<h1>Cross-Module Compatibility Findings<a class="headerlink" href="#cross-module-compatibility-findings" title="Link to this heading">#</a></h1>
-<p>When documentation bundles from independently released Bazel modules are
-mounted together, the complete build uses one Sphinx-Needs and metamodel
-baseline.  A supplier can therefore be valid on its own release baseline while
-an integrated build detects a newer requirement.</p>
-<p>Docs-as-code keeps standalone builds strict.  Cross-module compatibility is
-also strict by default: no finding is downgraded unless its category is enabled
-explicitly in <code class="docutils literal notranslate"><span class="pre">conf.py</span></code>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">score_cross_module_compatibility_allow_missing_mandatory_attributes</span> <span class="o">=</span> <span class="kc">True</span>
+  <section id="handle-cross-module-compatibility-findings">
+<h1>Handle Cross-Module Compatibility Findings<a class="headerlink" href="#handle-cross-module-compatibility-findings" title="Link to this heading">#</a></h1>
+<p>Use this guide when mounting documentation from another module causes a
+metamodel or Sphinx-Needs validation failure. The goal is to keep the
+integration build working while making the incompatibility visible and tracking
+the supplier upgrade needed to remove it.</p>
+<section id="identify-the-failing-compatibility-category">
+<h2>1. Identify the failing compatibility category<a class="headerlink" href="#identify-the-failing-compatibility-category" title="Link to this heading">#</a></h2>
+<p>Build the documentation as usual:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bazel<span class="w"> </span>run<span class="w"> </span>//:docs
+</pre></div>
+</div>
+<p>By default, all validation findings fail the build. Check the build output to
+identify whether the mounted module has a missing mandatory attribute, a
+missing mandatory link, or an exact version condition that no longer matches.</p>
+</section>
+<section id="allow-only-the-affected-category">
+<h2>2. Allow only the affected category<a class="headerlink" href="#allow-only-the-affected-category" title="Link to this heading">#</a></h2>
+<p>Add the corresponding temporary setting to the consumer’s <code class="docutils literal notranslate"><span class="pre">docs/conf.py</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Use only the setting that matches the finding.</span>
+<span class="n">score_cross_module_compatibility_allow_missing_mandatory_attributes</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="n">score_cross_module_compatibility_allow_missing_mandatory_links</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="n">score_cross_module_compatibility_allow_version_mismatches</span> <span class="o">=</span> <span class="kc">True</span>
 </pre></div>
 </div>
-<p>Each switch applies only to needs owned by mounted or imported modules.  Local
-findings remain fatal.  The switches enable these non-fatal findings:</p>
+<p>Choose the setting that matches the failure:</p>
 <ul class="simple">
-<li><p>missing mandatory attributes;</p></li>
-<li><p>missing mandatory links; and</p></li>
-<li><p>an exact need-link version condition such as <code class="docutils literal notranslate"><span class="pre">target[version==1]</span></code> that does
-not match when at least one link endpoint is external.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">score_cross_module_compatibility_allow_missing_mandatory_attributes</span></code> for
+a required attribute missing in an external module;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">score_cross_module_compatibility_allow_missing_mandatory_links</span></code> for a
+required link missing in an external module; or</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">score_cross_module_compatibility_allow_version_mismatches</span></code> for an exact
+link condition such as <code class="docutils literal notranslate"><span class="pre">target[version==1]</span></code> that does not match an external
+endpoint.</p></li>
 </ul>
-<p>All other metamodel findings, all-local links, and every malformed or failed
-Sphinx-Needs link condition remain fatal.</p>
-<section id="reports">
-<h2>Reports<a class="headerlink" href="#reports" title="Link to this heading">#</a></h2>
-<p>The HTML landing page displays a warning when findings exist.  Every successful
-HTML build also writes these files into its output directory:</p>
+<p>Do not enable a category merely to suppress an unrelated local validation
+failure: local findings remain fatal.</p>
+</section>
+<section id="review-the-generated-findings">
+<h2>3. Review the generated findings<a class="headerlink" href="#review-the-generated-findings" title="Link to this heading">#</a></h2>
+<p>Build again. The HTML landing page warns when compatibility findings exist, and
+the HTML output directory contains:</p>
 <dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">compatibility-findings.json</span></code></dt><dd><p>Machine-readable summary and findings for CI.  A finding contains the owning
-module, source need, optional target need, category and message.</p>
+<dt><code class="docutils literal notranslate"><span class="pre">compatibility-findings.json</span></code></dt><dd><p>Use this machine-readable report in CI or issue tracking. Each finding
+identifies the owning module, source need, optional target need, category,
+and message.</p>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">compatibility-findings.html</span></code></dt><dd><p>Human-readable detailed report grouped by supplying module.</p>
+<dt><code class="docutils literal notranslate"><span class="pre">compatibility-findings.html</span></code></dt><dd><p>Open this report to review findings grouped by supplying module.</p>
 </dd>
 </dl>
-<p>Treat findings as upgrade work: they make integration possible during a version
-skew, but they do not make the underlying mismatch disappear.</p>
+</section>
+<section id="remove-the-temporary-allowance">
+<h2>4. Remove the temporary allowance<a class="headerlink" href="#remove-the-temporary-allowance" title="Link to this heading">#</a></h2>
+<p>Update or coordinate with the supplying module so that it meets the integrated
+baseline. Then remove the corresponding setting from <code class="docutils literal notranslate"><span class="pre">conf.py</span></code> and rebuild.
+The build must pass with the default strict validation before the compatibility
+work is complete.</p>
+<p>For the policy behind these settings and their exact scope, see
+<a class="reference internal" href="../concepts/cross_module_compatibility.html"><span class="doc">Cross-Module Compatibility</span></a>.</p>
 </section>
 </section>
 
@@ -549,7 +572,10 @@ skew, but they do not make the underlying mismatch disappear.</p>
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reports">Reports</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#identify-the-failing-compatibility-category">1. Identify the failing compatibility category</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#allow-only-the-affected-category">2. Allow only the affected category</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#review-the-generated-findings">3. Review the generated findings</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#remove-the-temporary-allowance">4. Remove the temporary allowance</a></li>
 </ul>
   </nav></div>
 

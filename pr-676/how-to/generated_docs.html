@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Reference Docs in Source Code &#8212; Score Docs-as-Code  documentation</title>
+    <title>Integrate Generated Documentation &#8212; Score Docs-as-Code  documentation</title>
   
   
   
@@ -62,7 +62,7 @@
     <script src="../_static/sphinx-needs/libs/html/datatables.min.js?v=8a4aee21"></script>
     <script src="../_static/sphinx-needs/libs/html/datatables_loader.js?v=a2cae175"></script>
     <script src="../_static/sphinx-needs/libs/html/sphinx_needs_collapse.js?v=dca66431"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'how-to/source_to_doc_links';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'how-to/generated_docs';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.17.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://eclipse-score.github.io/docs-as-code/versions.json';
@@ -73,8 +73,8 @@
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Reference Docs in Tests" href="test_to_doc_links.html" />
-    <link rel="prev" title="Build Dashboards and Quality Gates" href="dashboards_and_quality_gates.html" />
+    <link rel="next" title="Add Extensions" href="add_extensions.html" />
+    <link rel="prev" title="Reference Docs in Tests" href="test_to_doc_links.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.1" />
@@ -398,9 +398,9 @@
 <li class="toctree-l1"><a class="reference internal" href="cross_module_compatibility.html">Handle Cross-Module Compatibility Findings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dashboards_and_quality_gates.html">Build Dashboards and Quality Gates</a></li>
 
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Reference Docs in Source Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="source_to_doc_links.html">Reference Docs in Source Code</a></li>
 <li class="toctree-l1"><a class="reference internal" href="test_to_doc_links.html">Reference Docs in Tests</a></li>
-<li class="toctree-l1"><a class="reference internal" href="generated_docs.html">Integrate Generated Documentation</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Integrate Generated Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="add_extensions.html">Add Extensions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mounts/index.html">Mount docs bundles</a></li>
 </ul>
@@ -446,7 +446,7 @@
     
     <li class="breadcrumb-item"><a href="index.html" class="nav-link">How To</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Reference Docs in Source Code</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Integrate Generated Documentation</span></li>
   </ul>
 </nav>
 </div>
@@ -463,57 +463,99 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="reference-docs-in-source-code">
-<h1>Reference Docs in Source Code<a class="headerlink" href="#reference-docs-in-source-code" title="Link to this heading">#</a></h1>
-<p>In your C++/Rust/Python source code, you want to reference requirements (needs).
-The docs-as-code tool will create backlinks in the documentation in two steps:</p>
-<ol class="arabic simple">
-<li><p>You add a special comment in your source code that references the need ID.</p></li>
-<li><p>Scan for those comments and provide needs links to your documentation.</p></li>
-</ol>
-<p>For an example result, look at the attribute <code class="docutils literal notranslate"><span class="pre">source_code_link</span></code>
-of <a class="reference internal" href="../internals/requirements/requirements.html#tool_req__docs_common_attr_title" title="tool_req__docs_common_attr_title"><em class="xref need">Enforces title wording rules (tool_req__docs_common_attr_title)</em></a>.</p>
-<section id="comments-in-source-code">
-<h2>Comments in Source Code<a class="headerlink" href="#comments-in-source-code" title="Link to this heading">#</a></h2>
-<p>Use a comment and start with <code class="docutils literal notranslate"><span class="pre">req-Id:</span></code> or <code class="docutils literal notranslate"><span class="pre">req-traceability:</span></code> followed by the need ID.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># req-Id: TOOL_REQ__EXAMPLE_ID</span>
-<span class="c1"># req-traceability: TOOL_REQ__EXAMPLE_ID</span>
+  <section id="integrate-generated-documentation">
+<span id="howto-generated-docs"></span><h1>Integrate Generated Documentation<a class="headerlink" href="#integrate-generated-documentation" title="Link to this heading">#</a></h1>
+<p>When a script or tool creates documentation content at build time, collect it
+with a <code class="docutils literal notranslate"><span class="pre">docs_bundle</span></code> and mount the bundle into your documentation tree.</p>
+<p>You find a <a class="reference external" href="https://github.com/eclipse-score/docs-as-code/tree/main/src/extensions/score_metamodel/docs/">complete working example</a>
+in the <a class="reference internal" href="../reference/metamodel/index.html#metamodel-types-visualization"><span class="std std-ref">Metamodel Types Visualization</span></a>.</p>
+<section id="step-1-generate-the-rst-files">
+<h2>Step 1: Generate the RST Files<a class="headerlink" href="#step-1-generate-the-rst-files" title="Link to this heading">#</a></h2>
+<p>Use a <code class="docutils literal notranslate"><span class="pre">genrule</span></code> (or <strong>any build action</strong>) that writes RST files.</p>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-number">Listing 1 </span><span class="caption-text">In your BUILD file</span><a class="headerlink" href="#id1" title="Link to this code">#</a></div>
+<div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="n">genrule</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;generate_design_rst&quot;</span><span class="p">,</span>
+    <span class="n">srcs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;design_model.yaml&quot;</span><span class="p">],</span>
+    <span class="n">outs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;generated/index.rst&quot;</span><span class="p">],</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;$(location :design_rst_tool) --output $(location generated/index.rst) $&lt;&quot;</span><span class="p">,</span>
+    <span class="n">tools</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;:design_rst_tool&quot;</span><span class="p">],</span>
+<span class="p">)</span>
 </pre></div>
 </div>
-<p>For other languages (C++, Rust, etc.), use the appropriate comment syntax.</p>
+</div>
+<p>If your tool writes many files (a second RST, a Mermaid <code class="docutils literal notranslate"><span class="pre">.mmd</span></code> diagram, or
+any other companion asset), add all of them to <code class="docutils literal notranslate"><span class="pre">outs</span></code>.
+Sphinx directives in the RST (for example <code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">mermaid::</span> <span class="pre">arch.mmd</span></code>) use
+relative paths because all files stay in the same generated directory.</p>
+<p>Make sure the generated files include an <code class="docutils literal notranslate"><span class="pre">index.rst</span></code> at the root of the
+output directory.</p>
+<dl class="simple">
+<dt>Verify:</dt><dd><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">build</span> <span class="pre">:generate_design_rst</span></code> must succeed.
+Inspect the output at <code class="docutils literal notranslate"><span class="pre">bazel-bin/&lt;package&gt;/generated/index.rst</span></code>.</p>
+</dd>
+</dl>
 </section>
-<section id="scanning-source-code-for-links">
-<h2>Scanning Source Code for Links<a class="headerlink" href="#scanning-source-code-for-links" title="Link to this heading">#</a></h2>
-<p>In your <code class="docutils literal notranslate"><span class="pre">BUILD</span></code> files, pass the implementation targets to the <code class="docutils literal notranslate"><span class="pre">docs</span></code> rule
-as <code class="docutils literal notranslate"><span class="pre">code_targets</span></code>. Their <code class="docutils literal notranslate"><span class="pre">srcs</span></code>, <code class="docutils literal notranslate"><span class="pre">hdrs</span></code>, and <code class="docutils literal notranslate"><span class="pre">textual_hdrs</span></code> are scanned,
-including those of their <code class="docutils literal notranslate"><span class="pre">deps</span></code> recursively. This means that a
-<code class="docutils literal notranslate"><span class="pre">cc_executable</span></code> also covers source files from the <code class="docutils literal notranslate"><span class="pre">cc_library</span></code> targets it
-uses. You may also pass filegroups; their files are scanned directly.</p>
-<div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="n">cc_library</span><span class="p">(</span>
-<span class="linenos"> 2</span>   <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;some_library&quot;</span><span class="p">,</span>
-<span class="linenos"> 3</span>   <span class="n">srcs</span> <span class="o">=</span> <span class="p">[</span>
-<span class="linenos"> 4</span>       <span class="s2">&quot;bar.cpp&quot;</span><span class="p">,</span>
-<span class="linenos"> 5</span>   <span class="p">],</span>
-<span class="linenos"> 6</span><span class="p">)</span>
-<span class="linenos"> 7</span>
-<span class="linenos"> 8</span><span class="n">cc_executable</span><span class="p">(</span>
-<span class="linenos"> 9</span>   <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;some_application&quot;</span><span class="p">,</span>
-<span class="linenos">10</span>   <span class="n">srcs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;main.cpp&quot;</span><span class="p">],</span>
-<span class="linenos">11</span>   <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;:some_library&quot;</span><span class="p">],</span>
-<span class="linenos">12</span><span class="p">)</span>
-<span class="linenos">13</span>
-<span class="hll"><span class="linenos">14</span><span class="n">docs</span><span class="p">(</span>
-</span><span class="linenos">15</span>   <span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
-<span class="linenos">16</span>          <span class="s2">&quot;@score_process//:needs_json&quot;</span><span class="p">,</span>
-<span class="linenos">17</span>      <span class="p">],</span>
-<span class="linenos">18</span>      <span class="n">source_dir</span> <span class="o">=</span> <span class="s2">&quot;docs&quot;</span><span class="p">,</span>
-<span class="linenos">19</span>      <span class="n">code_targets</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;:some_application&quot;</span><span class="p">],</span>
-<span class="linenos">20</span><span class="p">)</span>
+<section id="step-2-declare-the-bundle">
+<h2>Step 2: Declare the Bundle<a class="headerlink" href="#step-2-declare-the-bundle" title="Link to this heading">#</a></h2>
+<p>Wrap the generated files in a <code class="docutils literal notranslate"><span class="pre">docs_bundle</span></code> with the <code class="docutils literal notranslate"><span class="pre">data</span></code> attribute.
+Do not use <code class="docutils literal notranslate"><span class="pre">srcs</span></code> — that is for handwritten sources in the source tree.</p>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-number">Listing 2 </span><span class="caption-text">In your BUILD file</span><a class="headerlink" href="#id2" title="Link to this code">#</a></div>
+<div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="n">docs_bundle</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;design_bundle&quot;</span><span class="p">,</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;:generate_design_rst&quot;</span><span class="p">],</span>
+<span class="p">)</span>
 </pre></div>
 </div>
-<p>The older <code class="docutils literal notranslate"><span class="pre">scan_code</span></code> parameter remains available for existing configurations
-that explicitly provide files or filegroups, but it is deprecated. Prefer
-<code class="docutils literal notranslate"><span class="pre">code_targets</span></code> for new configurations.</p>
+</div>
+<dl class="simple">
+<dt>Verify:</dt><dd><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">build</span> <span class="pre">:design_bundle</span></code> must succeed.
+The bundle now holds the generated file but does not yet place it anywhere.</p>
+</dd>
+</dl>
+</section>
+<section id="step-3-mount-the-bundle">
+<h2>Step 3: Mount the Bundle<a class="headerlink" href="#step-3-mount-the-bundle" title="Link to this heading">#</a></h2>
+<p>Add the bundle to your <code class="docutils literal notranslate"><span class="pre">docs()</span></code> call.</p>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-number">Listing 3 </span><span class="caption-text">In your BUILD file</span><a class="headerlink" href="#id3" title="Link to this code">#</a></div>
+<div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="n">docs</span><span class="p">(</span>
+    <span class="n">source_dir</span> <span class="o">=</span> <span class="s2">&quot;docs&quot;</span><span class="p">,</span>
+    <span class="n">bundles</span> <span class="o">=</span> <span class="p">[{</span>
+        <span class="s2">&quot;bundle&quot;</span><span class="p">:</span> <span class="s2">&quot;:design_bundle&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;mount_at&quot;</span><span class="p">:</span> <span class="s2">&quot;design&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;attach_to&quot;</span><span class="p">:</span> <span class="s2">&quot;index&quot;</span><span class="p">,</span>
+    <span class="p">}],</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>The generated page becomes <code class="docutils literal notranslate"><span class="pre">design/index.html</span></code> in the output.
+<code class="docutils literal notranslate"><span class="pre">mount_at</span></code> sets the target path; <code class="docutils literal notranslate"><span class="pre">attach_to</span></code> adds the page to that
+document’s toctree (defaults to the parent <code class="docutils literal notranslate"><span class="pre">index</span></code> when omitted).</p>
+<dl class="simple">
+<dt>Verify:</dt><dd><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">//:docs</span></code> must succeed.
+Open <code class="docutils literal notranslate"><span class="pre">_build/design/index.html</span></code> and confirm the generated content.</p>
+</dd>
+</dl>
+</section>
+<section id="common-issues">
+<h2>Common Issues<a class="headerlink" href="#common-issues" title="Link to this heading">#</a></h2>
+<p><strong>The bundle is mounted but the generated file does not appear, or Sphinx
+warns about files not in any toctree.</strong>
+Make sure the genrule’s <code class="docutils literal notranslate"><span class="pre">outs</span></code> uses a subdirectory (for example
+<code class="docutils literal notranslate"><span class="pre">generated/index.rst</span></code>) and not a bare <code class="docutils literal notranslate"><span class="pre">index.rst</span></code>.
+<code class="docutils literal notranslate"><span class="pre">score_mounts</span></code> mounts the parent directory of the genrule output.
+Without a subdirectory, it mounts the genrule output root — which often
+contains other build artifacts and causes Sphinx warnings.</p>
+<p><strong>Attach-to target is missing.</strong>
+<code class="docutils literal notranslate"><span class="pre">attach_to</span></code> must point to a document that exists in the host tree.
+When unsure, point it at <code class="docutils literal notranslate"><span class="pre">&quot;index&quot;</span></code> (the host project’s root <code class="docutils literal notranslate"><span class="pre">index.rst</span></code>).</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="../concepts/mounts/index.html#docs-concept-mounts"><span class="std std-ref">Documentation bundles and mounts</span></a> and the <a class="reference internal" href="mounts/index.html#howto-mount-external-sources"><span class="std std-ref">Mount docs bundles</span></a> How-To.</p>
+</div>
 </section>
 </section>
 
@@ -528,20 +570,20 @@ that explicitly provide files or filegroups, but it is deprecated. Prefer
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="dashboards_and_quality_gates.html"
+       href="test_to_doc_links.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Build Dashboards and Quality Gates</p>
+        <p class="prev-next-title">Reference Docs in Tests</p>
       </div>
     </a>
     <a class="right-next"
-       href="test_to_doc_links.html"
+       href="add_extensions.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Reference Docs in Tests</p>
+        <p class="prev-next-title">Add Extensions</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -564,8 +606,10 @@ that explicitly provide files or filegroups, but it is deprecated. Prefer
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comments-in-source-code">Comments in Source Code</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scanning-source-code-for-links">Scanning Source Code for Links</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-generate-the-rst-files">Step 1: Generate the RST Files</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-declare-the-bundle">Step 2: Declare the Bundle</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-mount-the-bundle">Step 3: Mount the Bundle</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#common-issues">Common Issues</a></li>
 </ul>
   </nav></div>
 
@@ -573,7 +617,7 @@ that explicitly provide files or filegroups, but it is deprecated. Prefer
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/eclipse-score/docs-as-code/edit/main//home/runner/work/docs-as-code/docs-as-code/docs/how-to/source_to_doc_links.rst">
+    <a href="https://github.com/eclipse-score/docs-as-code/edit/main//home/runner/work/docs-as-code/docs-as-code/docs/how-to/generated_docs.rst">
       <i class="fa-solid fa-pencil"></i>
       
       

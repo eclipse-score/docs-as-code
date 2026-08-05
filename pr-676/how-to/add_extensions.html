@@ -74,7 +74,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Mount docs bundles" href="mounts/index.html" />
-    <link rel="prev" title="Reference Docs in Tests" href="test_to_doc_links.html" />
+    <link rel="prev" title="Integrate Generated Documentation" href="generated_docs.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.1" />
@@ -395,11 +395,12 @@
 <li class="toctree-l1"><a class="reference internal" href="setup.html">Setup</a></li>
 <li class="toctree-l1"><a class="reference internal" href="write_docs.html">Write Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="other_modules.html">Reference Other Modules</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cross_module_compatibility.html">Cross-Module Compatibility Findings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cross_module_compatibility.html">Handle Cross-Module Compatibility Findings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dashboards_and_quality_gates.html">Build Dashboards and Quality Gates</a></li>
 
 <li class="toctree-l1"><a class="reference internal" href="source_to_doc_links.html">Reference Docs in Source Code</a></li>
 <li class="toctree-l1"><a class="reference internal" href="test_to_doc_links.html">Reference Docs in Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated_docs.html">Integrate Generated Documentation</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Add Extensions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mounts/index.html">Mount docs bundles</a></li>
 </ul>
@@ -471,7 +472,7 @@ you must duplicate the Python environment first.</p>
 <p>Once you have your own Python environment,
 supply all necessary packages to <code class="docutils literal notranslate"><span class="pre">docs</span></code> via the <code class="docutils literal notranslate"><span class="pre">deps</span></code> attribute.</p>
 <div class="literal-block-wrapper docutils container" id="id1">
-<div class="code-block-caption"><span class="caption-number">Listing 1 </span><span class="caption-text">In your BUILD file</span><a class="headerlink" href="#id1" title="Link to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-number">Listing 4 </span><span class="caption-text">In your BUILD file</span><a class="headerlink" href="#id1" title="Link to this code">#</a></div>
 <div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span> <span class="n">load</span><span class="p">(</span><span class="s2">&quot;@your_python_env//:requirements.bzl&quot;</span><span class="p">,</span> <span class="s2">&quot;all_requirements&quot;</span><span class="p">)</span>
 
  <span class="n">docs</span><span class="p">(</span>
@@ -493,7 +494,7 @@ because it is a solid practice anyways.
 Next, get <code class="docutils literal notranslate"><span class="pre">&#64;score_docs_as_code//src:requirements.in</span></code> as one of the inputs
 to ensure you have all the necessary dependencies for docs-as-code.</p>
 <div class="literal-block-wrapper docutils container" id="id2">
-<div class="code-block-caption"><span class="caption-number">Listing 2 </span><span class="caption-text">Example BUILD file snippet</span><a class="headerlink" href="#id2" title="Link to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-number">Listing 5 </span><span class="caption-text">Example BUILD file snippet</span><a class="headerlink" href="#id2" title="Link to this code">#</a></div>
 <div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span> <span class="n">load</span><span class="p">(</span><span class="s2">&quot;@rules_python//python:pip.bzl&quot;</span><span class="p">,</span> <span class="s2">&quot;compile_pip_requirements&quot;</span><span class="p">)</span>
 
  <span class="n">compile_pip_requirements</span><span class="p">(</span>
@@ -522,12 +523,12 @@ to ensure you have all the necessary dependencies for docs-as-code.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="test_to_doc_links.html"
+       href="generated_docs.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Reference Docs in Tests</p>
+        <p class="prev-next-title">Integrate Generated Documentation</p>
       </div>
     </a>
     <a class="right-next"
