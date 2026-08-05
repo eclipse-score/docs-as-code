@@ -225,35 +225,22 @@ def docs(
     # HINT: keep documentation sync docs/reference/bazel_macros.rst
 
     config_file_path = join_path(source_dir, "conf.py")
-    sphinx_config_for_bazel_build = ":" + config_file_path
-    has_source_config = len(native.glob([config_file_path], allow_empty = True)) == 1
+    sphinx_config = ":" + config_file_path
+    config_is_generated = len(native.glob([config_file_path], allow_empty = True)) == 0
 
-    # This 0/1 list is appended to the run targets' data.
-    sphinx_config_for_bazel_run = []
-    if not has_source_config:
+    if config_is_generated:
         if not project or not project_url:
             fail("docs(): no " + config_file_path + " found; provide both project and project_url to docs().")
         # Generate the config at the source-root location expected by
         # sphinx_docs: that rule treats the config file's directory as the
         # Sphinx source directory.
         _generated_conf(
-            name = "_docs_generated_build_config",
+            name = "_docs_generated_config",
             project = project,
             project_url = project_url,
             output_path = config_file_path,
         )
-        sphinx_config_for_bazel_build = ":_docs_generated_build_config"
-
-        # Generate a separate config for ``bazel run`` targets.  Unlike
-        # ``sphinx_docs``, the runtime receives the config as a runfile and
-        # ``incremental.py`` passes its directory to Sphinx via ``-c``.
-        _generated_conf(
-            name = "_docs_generated_run_config",
-            project = project,
-            project_url = project_url,
-            output_path = "_docs_generated_config/conf.py",
-        )
-        sphinx_config_for_bazel_run = [":_docs_generated_run_config"]
+        sphinx_config = ":_docs_generated_config"
 
     # Convention in this macro: an optional Bazel label is named ``*_label``
     # but represented as a 0/1 list. This lets it be appended directly to
@@ -314,11 +301,18 @@ def docs(
         visibility = ["//visibility:private"],
     )
 
-    # ``bazel run`` reads local documentation from the workspace. Passing the
-    # complete bundle here would add those files to runfiles and could collide
-    # with the executable target name (for example ``docs`` and ``docs/``).
-    # External bundles do need runfiles, so keep only those sources.
-    docs_data = data + external_needs + metamodel_label + [":sourcelinks_json", ":_external_docs_runfiles"] + mounts_manifest_label + sphinx_config_for_bazel_run
+    # ``bazel run`` reads local documentation from the workspace, so including
+    # the complete bundle in runfiles would duplicate those sources. External
+    # bundles do need runfiles, so keep only those sources.
+    docs_data = (
+        data + external_needs + metamodel_label +
+        [":sourcelinks_json", ":_external_docs_runfiles"] +
+        mounts_manifest_label
+    )
+    if config_is_generated:
+        # A source configuration is read from the workspace; only the
+        # generated configuration must be present in the runfiles tree.
+        docs_data += [sphinx_config]
 
     docs_env = {
         "SOURCE_DIRECTORY": source_dir,
@@ -331,10 +325,10 @@ def docs(
         "MOUNTS_MANIFEST": "$(rlocationpath :_mounts_manifest)" if bundles else "",
         "SCORE_SOURCELINKS": "$(location :sourcelinks_json)",
     }
-    if sphinx_config_for_bazel_run:
-        # The generated file is named conf.py in its own directory.  The run
-        # targets pass that directory to Sphinx via -c.
-        docs_env["SPHINX_CONFIG_FILE"] = "$(rlocationpath :_docs_generated_run_config)"
+    if config_is_generated:
+        # The generated file is named conf.py. Run targets pass its containing
+        # directory to Sphinx via -c.
+        docs_env["SPHINX_CONFIG_FILE"] = "$(rlocationpath " + sphinx_config + ")"
     if metamodel:
         # The interactive ``py_binary`` targets run from a runfiles tree.
         # incremental.py resolves this logical path through ``RUNFILES_DIR``.
@@ -405,7 +399,7 @@ def docs(
     sphinx_docs(
         name = "needs_json",
         srcs = [":docs_bundle"],
-        config = sphinx_config_for_bazel_build,
+        config = sphinx_config,
         extra_opts = [
             "-W",
             "--keep-going",
