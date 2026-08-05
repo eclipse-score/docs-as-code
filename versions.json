@@ -158,5 +158,9 @@
   {
     "version": "v6.0.0",
     "url": "https://eclipse-score.github.io/docs-as-code/v6.0.0/"
+  },
+  {
+    "version": "pr-691",
+    "url": "https://eclipse-score.github.io/docs-as-code/pr-691/"
   }
 ]
