@@ -10,6 +10,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
+import matplotlib
 from sphinx.application import Sphinx
 
 from src.helper_lib import config_setdefault
@@ -42,6 +43,8 @@ score_extensions = [
 
 
 def setup(app: Sphinx) -> dict[str, object]:
+    matplotlib.rcParamsDefault["savefig.bbox"] = "tight"
+
     config_setdefault(app.config, "html_copy_source", False)
     config_setdefault(app.config, "html_show_sourcelink", False)
 
