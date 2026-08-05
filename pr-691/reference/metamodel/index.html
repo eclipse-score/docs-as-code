@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Decision Record 001: Test results in Docs-As-Code Workflows &#8212; Score Docs-as-Code  documentation</title>
+    <title>Metamodel Types Visualization &#8212; Score Docs-as-Code  documentation</title>
   
   
   
@@ -498,7 +498,7 @@ mermaid.initialize(
 
 window.addEventListener("load", load);
 window.runMermaid = runMermaid;</script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'internals/decisions/001-test-results-in-workflow';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/metamodel/index';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.17.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://eclipse-score.github.io/docs-as-code/versions.json';
@@ -509,8 +509,8 @@ window.runMermaid = runMermaid;</script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Requirements" href="../requirements/index.html" />
-    <link rel="prev" title="Decisions And Concepts" href="index.html" />
+    <link rel="next" title="Concepts" href="../../concepts/index.html" />
+    <link rel="prev" title="Bazel macro: docs" href="../bazel_macros.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.1" />
@@ -600,8 +600,8 @@ window.runMermaid = runMermaid;</script>
 </li>
 
 
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../reference/index.html">
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
     Reference
   </a>
 </li>
@@ -614,8 +614,8 @@ window.runMermaid = runMermaid;</script>
 </li>
 
 
-<li class="nav-item current active">
-  <a class="nav-link nav-internal" href="../index.html">
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../internals/index.html">
     Internals
   </a>
 </li>
@@ -736,8 +736,8 @@ window.runMermaid = runMermaid;</script>
 </li>
 
 
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../reference/index.html">
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
     Reference
   </a>
 </li>
@@ -750,8 +750,8 @@ window.runMermaid = runMermaid;</script>
 </li>
 
 
-<li class="nav-item current active">
-  <a class="nav-link nav-internal" href="../index.html">
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../internals/index.html">
     Internals
   </a>
 </li>
@@ -827,13 +827,9 @@ window.runMermaid = runMermaid;</script>
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../extensions/index.html">Extensions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../benchmark_results.html">Bazel Mini Benchmark Results</a></li>
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Decisions And Concepts</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">Decision Record 001: Test results in Docs-As-Code Workflows</a></li>
-</ul>
-</details></li>
-<li class="toctree-l1"><a class="reference internal" href="../requirements/index.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands.html">Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../bazel_macros.html">Bazel macro: <code class="docutils literal notranslate"><span class="pre">docs</span></code></a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Metamodel Types Visualization</a></li>
 </ul>
 </div>
 </nav></div>
@@ -875,12 +871,9 @@ window.runMermaid = runMermaid;</script>
       </a>
     </li>
     
-    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Internals</a></li>
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Reference</a></li>
     
-    
-    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Decisions And Concepts</a></li>
-    
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Decision Record 001: Test results in Docs-As-Code Workflows</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Metamodel Types Visualization</span></li>
   </ul>
 </nav>
 </div>
@@ -897,173 +890,381 @@ window.runMermaid = runMermaid;</script>
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <!-- ----------------------------------------------------------------------------
-  Copyright (c) 2026 Contributors to the Eclipse Foundation
+  <section id="metamodel-types-visualization">
+<span id="id1"></span><h1>Metamodel Types Visualization<a class="headerlink" href="#metamodel-types-visualization" title="Link to this heading">#</a></h1>
+<pre  class="mermaid">
+        classDiagram
+comp --&gt; feat : belongs_to
+comp --&gt; comp : consists_of
+comp --&gt; aou_req : fulfils
+comp --&gt; logic_arc_int : implements
+comp --&gt; real_arc_int_op : implements
+comp --&gt; logic_arc_int : uses
+comp --&gt; real_arc_int_op : uses
+comp_arc_dyn --&gt; comp : belongs_to
+comp_arc_dyn --&gt; comp_req : fulfils
+comp_arc_sta --&gt; comp : belongs_to
+comp_arc_sta --&gt; comp_req : fulfils
+comp_arc_sta --&gt; logic_arc_int : uses
+comp_arc_sta --&gt; real_arc_int_op : uses
+comp_req --&gt; aou_req : covers
+comp_req --&gt; feat_req : derived_from
+comp_req --&gt; comp : satisfied_by
+comp_saf_dfa --&gt; comp_req : mitigated_by
+comp_saf_dfa --&gt; aou_req : mitigated_by
+comp_saf_dfa --&gt; comp_arc_sta : violates
+comp_saf_fmea --&gt; comp_req : mitigated_by
+comp_saf_fmea --&gt; aou_req : mitigated_by
+comp_saf_fmea --&gt; comp_arc_dyn : violates
+comp_saf_fmea --&gt; comp_arc_sta : violates
+comp_sec_ana --&gt; comp_req : mitigated_by
+comp_sec_ana --&gt; aou_req : mitigated_by
+doc_tool --&gt; workproduct : realizes
+document --&gt; workproduct : realizes
+feat --&gt; logic_arc_int : includes
+feat --&gt; logic_arc_int_op : includes
+feat --&gt; logic_arc_int : provides
+feat --&gt; logic_arc_int_op : provides
+feat --&gt; logic_arc_int : uses
+feat --&gt; logic_arc_int_op : uses
+feat_arc_dyn --&gt; feat : belongs_to
+feat_arc_dyn --&gt; feat_req : fulfils
+feat_arc_sta --&gt; feat : belongs_to
+feat_arc_sta --&gt; feat_req : fulfils
+feat_arc_sta --&gt; aou_req : fulfils
+feat_arc_sta --&gt; logic_arc_int : includes
+feat_arc_sta --&gt; logic_arc_int_op : includes
+feat_req --&gt; aou_req : covers
+feat_req --&gt; stkh_req : derived_from
+feat_req --&gt; feat : satisfied_by
+feat_saf_dfa --&gt; feat_req : mitigated_by
+feat_saf_dfa --&gt; aou_req : mitigated_by
+feat_saf_dfa --&gt; feat_arc_sta : violates
+feat_saf_fmea --&gt; feat_req : mitigated_by
+feat_saf_fmea --&gt; aou_req : mitigated_by
+feat_saf_fmea --&gt; feat_arc_dyn : violates
+feat_saf_fmea --&gt; feat_arc_sta : violates
+feat_sec_ana --&gt; feat_req : mitigated_by
+feat_sec_ana --&gt; aou_req : mitigated_by
+gd_chklst --&gt; std_req : complies
+gd_guidl --&gt; std_req : complies
+gd_method --&gt; std_req : complies
+gd_req --&gt; std_req : complies
+gd_req --&gt; workflow : satisfies
+gd_temp --&gt; std_req : complies
+logic_arc_int --&gt; feat_req : fulfils
+logic_arc_int --&gt; feat : included_by
+logic_arc_int --&gt; logic_arc_int_op : includes
+logic_arc_int_op --&gt; logic_arc_int : included_by
+mod --&gt; comp : includes
+mod_ver_report --&gt; mod : belongs_to
+mod_ver_report --&gt; workproduct : realizes
+mod_view_dyn --&gt; mod : belongs_to
+mod_view_sta --&gt; mod : belongs_to
+mod_view_sta --&gt; comp : includes
+plat_saf_dfa --&gt; stkh_req : mitigated_by
+plat_saf_dfa --&gt; aou_req : mitigated_by
+plat_saf_dfa --&gt; feat_arc_sta : violates
+plat_sec_ana --&gt; feat_req : mitigated_by
+plat_sec_ana --&gt; aou_req : mitigated_by
+real_arc_int --&gt; comp_req : fulfils
+real_arc_int_op --&gt; logic_arc_int_op : implements
+real_arc_int_op --&gt; real_arc_int : included_by
+role --&gt; role : contains
+tool_req --&gt; gd_req : satisfies
+tool_req --&gt; stkh_req : satisfies
+tool_req --&gt; feat_req : satisfies
+tool_req --&gt; comp_req : satisfies
+workflow --&gt; role : approved_by
+workflow --&gt; gd_req : contains
+workflow --&gt; gd_temp : contains
+workflow --&gt; gd_chklst : contains
+workflow --&gt; gd_guidl : contains
+workflow --&gt; gd_method : contains
+workflow --&gt; doc_getstrt : has
+workflow --&gt; doc_concept : has
+workflow --&gt; workproduct : input
+workflow --&gt; workproduct : output
+workflow --&gt; role : responsible
+workflow --&gt; role : supported_by
+workproduct --&gt; std_wp : complies
+workproduct --&gt; std_req : complies
 
-  See the NOTICE file(s) distributed with this work for additional
-  information regarding copyright ownership.
-
-  This program and the accompanying materials are made available under the
-  terms of the Apache License Version 2.0 which is available at
-  https://www.apache.org/licenses/LICENSE-2.0
-
-  SPDX-License-Identifier: Apache-2.0
------------------------------------------------------------------------------ -->
-<div class="need_container docutils container" id="SNCB-af5019e5">
-<div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_dec_rec table" id="dec_rec__dac__001_test_results_in_workflows">
+    </pre><section id="need-types">
+<h2>Need Types<a class="headerlink" href="#need-types" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table" id="id2">
+<caption><span class="caption-number">Table 1 </span><span class="caption-text">Need Types</span><a class="headerlink" href="#id2" title="Link to this table">#</a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Type</p></th>
+<th class="head"><p>Title</p></th>
+<th class="head"><p>Mandatory Options</p></th>
+<th class="head"><p>Links</p></th>
+</tr>
+</thead>
 <tbody>
-<tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
-<div class="line"><span><span class="needs_title"><span class="needs_data">Decision Record 001: Test results in Docs-As-Code Workflows</span></span></span></div>
-</div>
-</td>
-<td class="head_center" colspan="2"><div class="needs_head line-block">
-<div class="line"><span><span class="needs_status"><span class="needs_label">status: </span><span class="needs_data">accepted</span></span></span></div>
-<div class="line"><span></span></div>
-<div class="line"><span></span></div>
-</div>
-</td>
-<td class="head_right" colspan="2"><div class="needs_head_right line-block">
-<div class="line"><span><span class="needs needs_collapse" id="target__show__meta"><span class="needs collapsed"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-down-circle"><circle cx="12" cy="12" r="10"></circle><polyline points="8 12 12 16 16 12"></polyline><line x1="12" y1="8" x2="12" y2="16"></line></svg></span><span class="needs visible collapse_is_hidden"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right-circle"><circle cx="12" cy="12" r="10"></circle><polyline points="12 16 16 12 12 8"></polyline><line x1="8" y1="12" x2="16" y2="12"></line></svg></span></span></span></div>
+<tr class="row-even"><td><p>aou_req</p></td>
+<td><p>Assumption of Use Requirement</p></td>
+<td><p>content, reqtype, safety, security, status</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-odd"><td><p>assertion</p></td>
+<td><p>Assertion</p></td>
+<td><p>id, status</p></td>
+<td><p>links</p></td>
+</tr>
+<tr class="row-even"><td><p>comp</p></td>
+<td><p>Component</p></td>
+<td><p>safety, security, status</p></td>
+<td><p>consists_of, fulfils, implements, uses | mandatory: belongs_to</p></td>
+</tr>
+<tr class="row-odd"><td><p>comp_arc_dyn</p></td>
+<td><p>Component Sequence Diagram</p></td>
+<td><p>safety, security, status</p></td>
+<td><p>fulfils | mandatory: belongs_to</p></td>
+</tr>
+<tr class="row-even"><td><p>comp_arc_sta</p></td>
+<td><p>Component Package Diagram</p></td>
+<td><p>safety, security, status</p></td>
+<td><p>fulfils, uses | mandatory: belongs_to</p></td>
+</tr>
+<tr class="row-odd"><td><p>comp_req</p></td>
+<td><p>Component Requirement</p></td>
+<td><p>content, reqtype, safety, security, status</p></td>
+<td><p>covers, derived_from | mandatory: satisfied_by</p></td>
+</tr>
+<tr class="row-even"><td><p>comp_saf_dfa</p></td>
+<td><p>Component DFA (Dependent Failure Analysis)</p></td>
+<td><p>content, failure_effect, failure_id, status, sufficient</p></td>
+<td><p>mitigated_by | mandatory: violates</p></td>
+</tr>
+<tr class="row-odd"><td><p>comp_saf_fmea</p></td>
+<td><p>Component FMEA (Failure Mode and Effects Analysis)</p></td>
+<td><p>content, failure_effect, fault_id, status, sufficient</p></td>
+<td><p>mitigated_by | mandatory: violates</p></td>
+</tr>
+<tr class="row-even"><td><p>comp_sec_ana</p></td>
+<td><p>Component Security Analysis (Threat Scenario)</p></td>
+<td><p>content, status, sufficient, threat_effect, threat_scenario_id</p></td>
+<td><p>mitigated_by</p></td>
+</tr>
+<tr class="row-odd"><td><p>comp_sec_threat</p></td>
+<td><p>Component Security Analysis Threat (STRIDE)</p></td>
+<td><p>content, status, threat_id</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-even"><td><p>dec_rec</p></td>
+<td><p>Decision Record</p></td>
+<td><p>context, decision, status</p></td>
+<td><p>affects</p></td>
+</tr>
+<tr class="row-odd"><td><p>doc_concept</p></td>
+<td><p>Concept Definition</p></td>
+<td><p>status</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-even"><td><p>doc_getstrt</p></td>
+<td><p>Getting Started</p></td>
+<td><p>status</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-odd"><td><p>doc_tool</p></td>
+<td><p>Tool Verification Report</p></td>
+<td><p>safety_affected, security_affected, status, tcl</p></td>
+<td><p>realizes</p></td>
+</tr>
+<tr class="row-even"><td><p>document</p></td>
+<td><p>Generic Document</p></td>
+<td><p>safety, security, status</p></td>
+<td><div class="line-block">
+<div class="line">mandatory: realizes</div>
 </div>
 </td>
 </tr>
-<tr class="meta row-even"><td class="meta" colspan="3"><div class="needs_meta_left line-block">
-<div class="line"><span><span><div class="line"><span class="needs_consequences"><span class="needs_label">consequences: </span><span class="needs_data">implementation effort</span></span></div>
-<div class="line"><span class="needs_context"><span class="needs_label">context: </span><span class="needs_data">Need to embed test results into docs, but tests are slow.</span></span></div>
-<div class="line"><span class="needs_decision"><span class="needs_label">decision: </span><span class="needs_data">Run quick docs checks and tests in parallel, then full docs generation sequentially.</span></span></div>
-<div class="line"><span class="needs_version"><span class="needs_label">version: </span>1</span></div>
-</span></span></div>
-<div class="line"><span></span></div>
-</div>
-</td>
-<td class="meta" colspan="3"></td>
+<tr class="row-odd"><td><p>feat</p></td>
+<td><p>Feature</p></td>
+<td><p>safety, security, status</p></td>
+<td><p>includes, provides, uses</p></td>
 </tr>
-<tr class="content row-odd"><td class="content" colspan="6"></td>
+<tr class="row-even"><td><p>feat_arc_dyn</p></td>
+<td><p>Feature Sequence Diagram</p></td>
+<td><p>safety, security, status</p></td>
+<td><p>fulfils | mandatory: belongs_to</p></td>
 </tr>
-<tr class="footer row-even"><td class="footer_left" colspan="2"><div class="needs_footer_left line-block">
-<div class="line"><span><span class="needs-id"><a class="reference internal" href="#dec_rec__dac__001_test_results_in_workflows" title="dec_rec__dac__001_test_results_in_workflows">dec_rec__dac__001_test_results_in_workflows</a></span></span></div>
+<tr class="row-odd"><td><p>feat_arc_sta</p></td>
+<td><p>Feature &amp; Feature Package Diagram</p></td>
+<td><p>safety, security, status</p></td>
+<td><p>fulfils | mandatory: belongs_to, includes</p></td>
+</tr>
+<tr class="row-even"><td><p>feat_req</p></td>
+<td><p>Feature Requirement</p></td>
+<td><p>content, reqtype, safety, security, status, valid_from</p></td>
+<td><p>covers, derived_from | mandatory: satisfied_by</p></td>
+</tr>
+<tr class="row-odd"><td><p>feat_saf_dfa</p></td>
+<td><p>Feature DFA (Dependent Failure Analysis)</p></td>
+<td><p>content, failure_effect, failure_id, status, sufficient</p></td>
+<td><p>mitigated_by | mandatory: violates</p></td>
+</tr>
+<tr class="row-even"><td><p>feat_saf_fmea</p></td>
+<td><p>Feature FMEA (Failure Mode and Effects Analysis)</p></td>
+<td><p>content, failure_effect, fault_id, status, sufficient</p></td>
+<td><p>mitigated_by | mandatory: violates</p></td>
+</tr>
+<tr class="row-odd"><td><p>feat_sec_ana</p></td>
+<td><p>Feature Security Analysis (Threat Scenario)</p></td>
+<td><p>content, status, sufficient, threat_effect, threat_scenario_id</p></td>
+<td><p>mitigated_by</p></td>
+</tr>
+<tr class="row-even"><td><p>feat_sec_threat</p></td>
+<td><p>Feature Security Analysis Threat (STRIDE)</p></td>
+<td><p>content, status, threat_id</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-odd"><td><p>gd_chklst</p></td>
+<td><p>Process Checklist</p></td>
+<td><p>status</p></td>
+<td><p>complies</p></td>
+</tr>
+<tr class="row-even"><td><p>gd_guidl</p></td>
+<td><p>Process Guideline</p></td>
+<td><p>status</p></td>
+<td><p>complies</p></td>
+</tr>
+<tr class="row-odd"><td><p>gd_method</p></td>
+<td><p>Process Method</p></td>
+<td><p>status</p></td>
+<td><p>complies</p></td>
+</tr>
+<tr class="row-even"><td><p>gd_req</p></td>
+<td><p>Process Requirements</p></td>
+<td><p>content</p></td>
+<td><p>complies, satisfies</p></td>
+</tr>
+<tr class="row-odd"><td><p>gd_temp</p></td>
+<td><p>Process Template</p></td>
+<td><p>status</p></td>
+<td><p>complies</p></td>
+</tr>
+<tr class="row-even"><td><p>logic_arc_int</p></td>
+<td><p>Logical Interface &amp; Feature Interface View</p></td>
+<td><p>safety, security, status</p></td>
+<td><p>fulfils, included_by, includes</p></td>
+</tr>
+<tr class="row-odd"><td><p>logic_arc_int_op</p></td>
+<td><p>Logical Interface Operation</p></td>
+<td><p>safety, security, status</p></td>
+<td><div class="line-block">
+<div class="line">mandatory: included_by</div>
 </div>
 </td>
-<td class="footer" colspan="2"><div class="needs_footer line-block">
-<div class="line"><span><span class="needs_type_name"><span class="needs_data">Decision Record</span></span></span></div>
+</tr>
+<tr class="row-even"><td><p>mod</p></td>
+<td><p>Module</p></td>
+<td><p>—</p></td>
+<td><div class="line-block">
+<div class="line">mandatory: includes</div>
 </div>
 </td>
-<td class="footer_right" colspan="2"></td>
+</tr>
+<tr class="row-odd"><td><p>mod_ver_report</p></td>
+<td><p>Module Verification Report</p></td>
+<td><p>safety, security, status, verification_method</p></td>
+<td><p>contains, covers, evidence, realizes | mandatory: belongs_to</p></td>
+</tr>
+<tr class="row-even"><td><p>mod_view_dyn</p></td>
+<td><p>Module Architecture Dynamic View</p></td>
+<td><p>—</p></td>
+<td><p>belongs_to</p></td>
+</tr>
+<tr class="row-odd"><td><p>mod_view_sta</p></td>
+<td><p>Module Architecture Static View</p></td>
+<td><p>—</p></td>
+<td><p>belongs_to, includes</p></td>
+</tr>
+<tr class="row-even"><td><p>plat_saf_dfa</p></td>
+<td><p>Platform Dependent Failure Analysis</p></td>
+<td><p>content, failure_effect, failure_id, status, sufficient</p></td>
+<td><p>mitigated_by | mandatory: violates</p></td>
+</tr>
+<tr class="row-odd"><td><p>plat_sec_ana</p></td>
+<td><p>Platform Security Analysis (Threat Scenario)</p></td>
+<td><p>content, status, sufficient, threat_effect, threat_scenario_id</p></td>
+<td><p>mitigated_by</p></td>
+</tr>
+<tr class="row-even"><td><p>plat_sec_threat</p></td>
+<td><p>Platform Security Analysis Threat (STRIDE)</p></td>
+<td><p>content, status, threat_id</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-odd"><td><p>real_arc_int</p></td>
+<td><p>Interface &amp; Component Interface</p></td>
+<td><p>language, safety, security, status</p></td>
+<td><p>fulfils</p></td>
+</tr>
+<tr class="row-even"><td><p>real_arc_int_op</p></td>
+<td><p>Interface Operation</p></td>
+<td><p>safety, security, status</p></td>
+<td><p>implements | mandatory: included_by</p></td>
+</tr>
+<tr class="row-odd"><td><p>review_header</p></td>
+<td><p>Review Header</p></td>
+<td><p>approvers, hash, reviewers, template</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-even"><td><p>role</p></td>
+<td><p>Role</p></td>
+<td><p>—</p></td>
+<td><p>contains</p></td>
+</tr>
+<tr class="row-odd"><td><p>std_req</p></td>
+<td><p>Standard Requirement</p></td>
+<td><p>id, status</p></td>
+<td><p>links</p></td>
+</tr>
+<tr class="row-even"><td><p>std_wp</p></td>
+<td><p>Standard Work Product</p></td>
+<td><p>id, status</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-odd"><td><p>stkh_req</p></td>
+<td><p>Stakeholder Requirement</p></td>
+<td><p>rationale, reqtype, safety, security, status, valid_from</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-even"><td><p>tenet</p></td>
+<td><p>Tenet</p></td>
+<td><p>id, status</p></td>
+<td><p>links</p></td>
+</tr>
+<tr class="row-odd"><td><p>testcase</p></td>
+<td><p>Testcase Needs parsed from test.xml files</p></td>
+<td><p>—</p></td>
+<td><p>fully_verifies, partially_verifies</p></td>
+</tr>
+<tr class="row-even"><td><p>tool_req</p></td>
+<td><p>Tool Requirement</p></td>
+<td><p>content</p></td>
+<td><p>satisfies</p></td>
+</tr>
+<tr class="row-odd"><td><p>tsf</p></td>
+<td><p>TSF</p></td>
+<td><p>id, status</p></td>
+<td><p>links</p></td>
+</tr>
+<tr class="row-even"><td><p>workflow</p></td>
+<td><p>Workflow</p></td>
+<td><p>status</p></td>
+<td><p>contains, has, supported_by | mandatory: approved_by, input, output, responsible</p></td>
+</tr>
+<tr class="row-odd"><td><p>workproduct</p></td>
+<td><p>Workproduct</p></td>
+<td><p>status</p></td>
+<td><p>complies</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-</div>
-<section id="decision-record-001-test-results-in-docs-as-code-workflows">
-<h1>Decision Record 001: Test results in Docs-As-Code Workflows<a class="headerlink" href="#decision-record-001-test-results-in-docs-as-code-workflows" title="Link to this heading">#</a></h1>
-<section id="goals">
-<h2>Goals<a class="headerlink" href="#goals" title="Link to this heading">#</a></h2>
-<ul class="simple">
-<li><p>PR</p>
-<ul>
-<li><p>Early detection of issues</p></li>
-<li><p>Generate website-preview</p></li>
-</ul>
-</li>
-<li><p>Post-Merge</p>
-<ul>
-<li><p>Generate website</p></li>
-</ul>
-</li>
-</ul>
 </section>
-<section id="problem-statement">
-<h2>Problem Statement<a class="headerlink" href="#problem-statement" title="Link to this heading">#</a></h2>
-<p>Some parts of generating docs are rather slow:</p>
-<ol class="arabic simple">
-<li><p>Embedding test results, implies that we need test results</p></li>
-<li><p>Generating HTML output, especially generating diagrams (PlantUML)</p></li>
-</ol>
-<p>Note: the used tools are irrelevant for the problem statement.</p>
-</section>
-<section id="current-situation">
-<h2>Current Situation<a class="headerlink" href="#current-situation" title="Link to this heading">#</a></h2>
-<pre  class="mermaid">
-        flowchart TD
- subgraph subGraph0[&quot;Pre-Merge Workflow&quot;]
-        parallel[&quot;parallel&quot;]
-        PR[&quot;Pull Request&lt;br&gt;&quot;]
-        DOCS1[&quot;HTML Build&lt;br&gt;&amp;lt;slow&amp;gt;&quot;]
-        TESTS[&quot;tests&lt;br&gt;&amp;lt;slow&amp;gt;&quot;]
-        WP1[&quot;Website Preview&quot;]
-        TF2[&quot;PR Feedback&quot;]
-  end
- subgraph subGraph1[&quot;Post-Merge Workflow&quot;]
-        DOCS2[&quot;HTML Build&lt;br&gt;&amp;lt;slow&amp;gt;&quot;]
-        PM[&quot;Post-Merge&lt;br&gt;&quot;]
-        W[&quot;Website&quot;]
-  end
-    PR --&gt; parallel
-    parallel --&gt; DOCS1 &amp; TESTS
-    DOCS1 --&gt; WP1
-    TESTS --&gt; TF2
-    PM --&gt; DOCS2
-    DOCS2 --&gt; W
-
-    parallel&#64;{ shape: fork}
-    PR&#64;{ shape: event}
-    DOCS1&#64;{ shape: lean-l}
-    TESTS&#64;{ shape: out-in}
-    WP1&#64;{ shape: stored-data}
-    TF2&#64;{ shape: stored-data}
-    DOCS2&#64;{ shape: lean-l}
-    PM&#64;{ shape: event}
-    W&#64;{ shape: stored-data}
-    </pre></section>
-<section id="solution">
-<h2>Solution<a class="headerlink" href="#solution" title="Link to this heading">#</a></h2>
-<p>A combination of test and docs workflows:</p>
-<pre  class="mermaid">
-        flowchart TD
- subgraph subGraph0[&quot;Pre-Merge Workflow&quot;]
-        DC[&quot;Docs Verification&lt;br&gt;&amp;lt;fast&amp;gt;&quot;]
-        DCF[&quot;PR Feedback&quot;]
-        PR[&quot;Pull Request&quot;]
-        T1[&quot;tests&lt;br&gt;&amp;lt;slow&amp;gt;&quot;]
-        TF[&quot;PR Feedback&quot;]
-        HB1[&quot;HTML Build&lt;br&gt;&amp;lt;slow&amp;gt;&quot;]
-        WP[&quot;Website Preview&quot;]
-        parallel[&quot;parallel&quot;]
-  end
- subgraph subGraph1[&quot;Post-Merge Workflow&quot;]
-        T2[&quot;tests&quot;]
-        PM[&quot;Post-Merge&quot;]
-        HB2[&quot;HTML Build&quot;]
-        W[&quot;Website&quot;]
-  end
-
-DC --&gt; DCF
-DC -- cache --&gt; HB1
-T1 -- results --&gt; HB1
-T1 --&gt; TF
-HB1 --&gt; WP
-PR --&gt; parallel
-parallel --&gt; DC &amp; T1
-
-PM --&gt; T2
-T2 --&gt; HB2
-HB2 --&gt; W
-
-PR&#64;{ shape: event}
-
-DC&#64;{ shape: out-in}
-T1&#64;{ shape: out-in}
-HB1&#64;{ shape: out-in}
-parallel&#64;{ shape: fork}
-TF&#64;{ shape: stored-data}
-WP&#64;{ shape: stored-data}
-DCF&#64;{ shape: stored-data}
-
-PM&#64;{ shape: event}
-W&#64;{ shape: stored-data}
-T2&#64;{ shape: out-in}
-HB2&#64;{ shape: out-in}
-    </pre></section>
 </section>
 
 
@@ -1077,20 +1278,20 @@ HB2&#64;{ shape: out-in}
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="index.html"
+       href="../bazel_macros.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Decisions And Concepts</p>
+        <p class="prev-next-title">Bazel macro: <code class="docutils literal notranslate"><span class="pre">docs</span></code></p>
       </div>
     </a>
     <a class="right-next"
-       href="../requirements/index.html"
+       href="../../concepts/index.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Requirements</p>
+        <p class="prev-next-title">Concepts</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -1113,10 +1314,7 @@ HB2&#64;{ shape: out-in}
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#goals">Goals</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-statement">Problem Statement</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#current-situation">Current Situation</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#solution">Solution</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#need-types">Need Types</a></li>
 </ul>
   </nav></div>
 
@@ -1124,7 +1322,7 @@ HB2&#64;{ shape: out-in}
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/eclipse-score/docs-as-code/edit/main//home/runner/work/docs-as-code/docs-as-code/docs/internals/decisions/001-test-results-in-workflow.md">
+    <a href="https://github.com/eclipse-score/docs-as-code/edit/main//home/runner/work/docs-as-code/docs-as-code/docs/reference/metamodel/index/output_base/execroot/_main/bazel-out/k8-fastbuild/bin/src/extensions/score_metamodel/docs/generated/index.rst">
       <i class="fa-solid fa-pencil"></i>
       
       
