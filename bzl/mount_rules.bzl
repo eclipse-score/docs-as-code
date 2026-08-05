@@ -30,6 +30,7 @@ def _mounts_manifest_impl(ctx):
             "attach_to": entry.attach_to,
             "entry_doc": entry.entry_doc,
             "external": entry.external,
+            "repository": entry.repository,
             "data": [f.path for f in entry.data.to_list()],
         })
 

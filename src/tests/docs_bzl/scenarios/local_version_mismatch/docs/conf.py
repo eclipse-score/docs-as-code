@@ -11,11 +11,10 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-load("//:docs.bzl", "docs")
+import os
 
-docs(
-    source_dir = "docs",
-    project = "Basic Test",
-    project_url = "https://github.com/eclipse-score/docs-as-code",
-    test_sources = ["src/tests/docs_bzl/scenarios/basic_docs"],
-)
+project = "Local version mismatch"
+project_url = "https://example.invalid/local-version-mismatch"
+extensions = ["score_sphinx_bundle"]
+score_metamodel_yaml = os.path.join(os.path.dirname(__file__), "metamodel.yaml")
+required_in_id = ["local"]

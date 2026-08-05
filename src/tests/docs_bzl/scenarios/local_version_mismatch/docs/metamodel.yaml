@@ -11,11 +11,19 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-load("//:docs.bzl", "docs")
-
-docs(
-    source_dir = "docs",
-    project = "Basic Test",
-    project_url = "https://github.com/eclipse-score/docs-as-code",
-    test_sources = ["src/tests/docs_bzl/scenarios/basic_docs"],
-)
+needs_types:
+  test_req:
+    title: Test Requirement
+    prefix: test_req__
+    parts: 3
+    mandatory_options:
+      id: ^test_req__[0-9a-zA-Z_]*$
+      status: ^(draft|valid)$
+      version: ^[0-9]+$
+    optional_options:
+      tags: .*
+      content: .*
+      template: .*
+    optional_links:
+      links: ANY
+links: {}

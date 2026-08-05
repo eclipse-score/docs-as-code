@@ -11,16 +11,6 @@
    #
    # SPDX-License-Identifier: Apache-2.0
    # *******************************************************************************
-.. _docs_concepts:
 
-Concepts
-========
-
-Here you find explanations how and why docs-as-code works the way it does.
-
-.. toctree::
-   :maxdepth: 1
-
-   bidirectional_traceability
-   cross_module_compatibility
-   docs_deps
+Missing configuration fixture
+=============================

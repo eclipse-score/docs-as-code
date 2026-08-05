@@ -67,6 +67,8 @@ load("@score_docs_as_code//:docs.bzl", "docs")
 
 docs(
     source_dir = "<your sphinx source dir>",
+    project = "<your project name>",
+    project_url = "https://github.com/eclipse-score/<your-project>",
     data = [
         "@other_repo:needs_json",  # Optional, if you have dependencies
     ],
@@ -75,10 +77,20 @@ docs(
 
 For configuration options see {ref}`docs_bazel-macros`.
 
-### 4. Copy conf.py
+### 4. Optional: add conf.py
 
-Copy the `conf.py` file from the `docs-as-code` module to your `source_dir`.
+No `conf.py` is required for the default setup. The `docs()` macro generates
+one from `project` and `project_url`; the Docs-as-Code version and baseline
+extensions are supplied automatically.
 
+Add a `conf.py` to your source directory only when you need additional Sphinx
+configuration. When it exists, it remains the authoritative configuration.
+
+A custom `conf.py` applies to this repository's documentation targets. Its
+effect on integrated documentation depends on the integration path: it affects
+the exported `:needs_json`, but is not transferred when documentation sources
+are mounted as a bundle, where the host configuration applies. Keep custom
+configuration minimal.
 
 #### 5. Run a documentation build:
 

@@ -35,6 +35,7 @@ class MountSpec:
     attach_to: str | None = None
     entry_doc: str = "index"
     external: bool = False
+    repository: str = ""
     data: list[str] = field(default_factory=list)
 
 
@@ -84,6 +85,7 @@ def load_mounts_manifest(manifest_path: str | Path) -> MountsManifest:
                 if entry.get("entry_doc")
                 else "index",
                 external=bool(entry.get("external", False)),
+                repository=str(entry.get("repository", "")),
                 data=[str(f) for f in cast("list[object]", raw_data)],
             )
         )

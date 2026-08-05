@@ -16,6 +16,7 @@ import pkgutil
 from collections.abc import Callable
 from pathlib import Path
 
+from score_cross_module_compatibility import get_reporter
 from sphinx.application import Sphinx
 from sphinx_needs import logging
 from sphinx_needs.data import NeedsView, SphinxNeedsData
@@ -94,11 +95,7 @@ def graph_check(func: graph_check_function):
     return func
 
 
-def _run_checks(app: Sphinx, exception: Exception | None) -> None:
-    # Do not run checks if an exception occurred during build
-    if exception:
-        return
-
+def _run_checks(app: Sphinx) -> None:
     # First of all postprocess the need links to convert
     # type names into actual need types.
     # This must be done before any checks are run.
@@ -116,7 +113,7 @@ def _run_checks(app: Sphinx, exception: Exception | None) -> None:
     cwd_or_ws_root = Path(ws_root) if ws_root else Path.cwd()
     prefix = str(Path(app.srcdir).relative_to(cwd_or_ws_root))
 
-    log = CheckLogger(logger, prefix)
+    log = CheckLogger(logger, prefix, get_reporter(app))
 
     checks_filter = parse_checks_filter(app.config.score_metamodel_checks)
 
@@ -287,7 +284,7 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
         ),
     )
 
-    _ = app.connect("build-finished", _run_checks)
+    _ = app.connect("write-started", lambda app, _builder: _run_checks(app))
 
     return {
         "version": "0.1",

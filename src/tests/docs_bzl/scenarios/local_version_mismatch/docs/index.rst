@@ -11,16 +11,17 @@
    #
    # SPDX-License-Identifier: Apache-2.0
    # *******************************************************************************
-.. _docs_concepts:
 
-Concepts
-========
+Local version mismatch
+======================
 
-Here you find explanations how and why docs-as-code works the way it does.
+.. test_req:: Origin
+   :id: test_req__local__origin
+   :status: valid
+   :version: 1
+   :links: test_req__local__target[version==1]
 
-.. toctree::
-   :maxdepth: 1
-
-   bidirectional_traceability
-   cross_module_compatibility
-   docs_deps
+.. test_req:: Target
+   :id: test_req__local__target
+   :status: valid
+   :version: 2

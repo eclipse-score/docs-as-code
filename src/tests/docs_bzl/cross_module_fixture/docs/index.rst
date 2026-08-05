@@ -11,16 +11,11 @@
    #
    # SPDX-License-Identifier: Apache-2.0
    # *******************************************************************************
-.. _docs_concepts:
 
-Concepts
-========
+Fixture producer
+================
 
-Here you find explanations how and why docs-as-code works the way it does.
-
-.. toctree::
-   :maxdepth: 1
-
-   bidirectional_traceability
-   cross_module_compatibility
-   docs_deps
+.. test_req:: External compatibility source
+   :id: test_req__fixture__source
+   :version: 1
+   :links: test_req__host__target[version==1]

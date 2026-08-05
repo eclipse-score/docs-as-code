@@ -165,6 +165,15 @@ if __name__ == "__main__":
         f"--define=mounts_manifest={os.environ.get('MOUNTS_MANIFEST', '')}",
     ]
 
+    generated_config = os.environ.get("SPHINX_CONFIG_FILE", "")
+    if generated_config:
+        # Under ``bazel run`` this is a runfiles-relative path.  Sphinx wants
+        # the directory containing a file literally named ``conf.py``.
+        config_file = Path(generated_config)
+        if not config_file.is_absolute():
+            config_file = get_runfiles_dir() / config_file
+        base_arguments.extend(["-c", str(config_file.parent)])
+
     metamodel_yaml = os.environ.get("SCORE_METAMODEL_YAML", "")
     if metamodel_yaml:
         # ``docs`` passes a runfiles-relative path under ``bazel run``.  Keep

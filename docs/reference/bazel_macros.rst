@@ -34,6 +34,8 @@ Minimal example (root ``BUILD``)
 
    docs(
        source_dir = "docs",
+       project = "My Project",
+       project_url = "https://github.com/eclipse-score/my-project",
        data = [
            # labels to any extra tools or data you want included
            # e.g. "//:needs_json" or other tool targets
@@ -49,7 +51,13 @@ Minimal example (root ``BUILD``)
 
 - ``source_dir`` (string, default: ``"docs"``)
   Path (relative to repository root) to your Sphinx source directory. This is the folder
-  that contains your ``conf.py`` and the top-level ReST/markdown sources.
+  that contains the top-level ReST/markdown sources. A ``conf.py`` is optional.
+
+- ``project`` and ``project_url`` (strings, optional)
+  Project name and canonical project URL. They are required when ``source_dir``
+  has no ``conf.py``; in that case ``docs()`` generates the Sphinx configuration
+  and supplies the Docs-as-Code baseline version and extensions. If a ``conf.py``
+  exists, it remains authoritative and these values are not used.
 
 - ``data`` (list of bazel labels)
   Extra runfiles / data targets that should be made available to the documentation targets.
