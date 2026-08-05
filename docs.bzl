@@ -86,7 +86,7 @@ _generated_conf = rule(
     },
 )
 
-def docs_bundle(name, source_dir = None, entry_doc = "index", bundles = [], scan_code = [], code_targets = [], visibility = None, **kwargs):
+def docs_bundle(name, source_dir = None, data = [], entry_doc = "index", bundles = [], scan_code = [], code_targets = [], visibility = None, **kwargs):
     """A docs bundle, optionally composed of others.
 
     Args:
@@ -94,6 +94,9 @@ def docs_bundle(name, source_dir = None, entry_doc = "index", bundles = [], scan
       source_dir: optional directory holding this bundle's own doc sources. It is
         globbed like `docs()` (same file kinds) and the contents are stored after
         stripping the `source_dir` prefix. Leave it unset for a pure aggregator.
+      data:
+        Additional data dependencies for this target.
+        Useful for generated rst sources.
       entry_doc: bundle-relative docname attached when this bundle is mounted.
         Defaults to `index`.
       bundles: nested bundles to compose, each a dict
@@ -138,6 +141,7 @@ def docs_bundle(name, source_dir = None, entry_doc = "index", bundles = [], scan
         strip_prefix = strip_prefix,
         entry_doc = entry_doc,
         bundles = bundles,
+        data = data,
         visibility = visibility,
         **kwargs
     )

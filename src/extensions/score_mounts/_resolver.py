@@ -22,7 +22,7 @@ from __future__ import annotations
 
 import json
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import cast
 
@@ -35,6 +35,7 @@ class MountSpec:
     attach_to: str | None = None
     entry_doc: str = "index"
     external: bool = False
+    data: list[str] = field(default_factory=list)
 
 
 @dataclass(frozen=True)
@@ -68,6 +69,11 @@ def load_mounts_manifest(manifest_path: str | Path) -> MountsManifest:
             raise ValueError(
                 f"mounts manifest entry missing 'src_root'/'mount_at': {entry!r}"
             )
+        raw_data = entry.get("data", [])
+        if not isinstance(raw_data, list):
+            raise ValueError(
+                f"mounts manifest entry field 'data' must be a list: {raw_data!r}"
+            )
         mounts.append(
             MountSpec(
                 src_root=str(entry["src_root"]),
@@ -78,11 +84,10 @@ def load_mounts_manifest(manifest_path: str | Path) -> MountsManifest:
                 if entry.get("entry_doc")
                 else "index",
                 external=bool(entry.get("external", False)),
+                data=[str(f) for f in cast("list[object]", raw_data)],
             )
         )
-    return MountsManifest(
-        mounts=mounts,
-    )
+    return MountsManifest(mounts=mounts)
 
 
 def resolve_walk_dir(
