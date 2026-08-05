@@ -31,7 +31,7 @@ py_binary(
     srcs = ["generate_metamodel_rst.py"],
     main = "generate_metamodel_rst.py",
     deps = all_requirements,
-    visibility = ["//visibility:private"],
+    visibility = ["//visibility:public"], # public to be reuseable for other metamodels
 )
 
 docs_bundle(
