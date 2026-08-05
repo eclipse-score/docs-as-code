@@ -90,7 +90,7 @@ class CompatibilityReporter:
             if not isinstance(entry, dict) or not entry.get("external"):
                 continue
             mount_at = entry.get("mount_at")
-            if not isinstance(mount_at, str) or not mount_at:
+            if not isinstance(mount_at, str):
                 continue
             repository = entry.get("repository", "external")
             mounts.append(ExternalMount(mount_at.strip("/"), str(repository)))
@@ -110,7 +110,8 @@ class CompatibilityReporter:
         candidates = [
             mount
             for mount in self._mounts
-            if normalized == mount.mount_at
+            if not mount.mount_at
+            or normalized == mount.mount_at
             or normalized.startswith(mount.mount_at + "/")
         ]
         return (

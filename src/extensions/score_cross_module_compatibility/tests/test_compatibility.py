@@ -148,6 +148,33 @@ def test_reporter_requires_each_category_to_be_enabled(tmp_path: Path) -> None:
     )
 
 
+def test_reporter_recognizes_an_external_bundle_mounted_at_the_root(
+    tmp_path: Path,
+) -> None:
+    manifest = tmp_path / "mounts.json"
+    manifest.write_text(
+        json.dumps(
+            {
+                "mounts": [
+                    {"mount_at": "", "external": True, "repository": "root+"},
+                    {
+                        "mount_at": "process",
+                        "external": True,
+                        "repository": "process+",
+                    },
+                ]
+            }
+        )
+    )
+    reporter = CompatibilityReporter.from_manifest(
+        manifest, frozenset({MANDATORY_ATTRIBUTE})
+    )
+
+    assert reporter.module_for_need({"docname": "index"}) == "root+"
+    assert reporter.module_for_need({"docname": "other/page"}) == "root+"
+    assert reporter.module_for_need({"docname": "process/index"}) == "process+"
+
+
 def test_cross_module_version_condition_is_reported_and_neutralized(
     tmp_path: Path,
 ) -> None:
