@@ -485,20 +485,20 @@ There are multiple ways to do this depending on how you manage third-party/local
 </section>
 <section id="a-import-the-other-module-s-built-inventory">
 <h3>2a) Import the other module’s built inventory<a class="headerlink" href="#a-import-the-other-module-s-built-inventory" title="Link to this heading">#</a></h3>
-<p>The documentation build in this project is exposed via a Bazel macro/rule that accepts a <cite>data</cite> parameter.
-Add the external module’s <code class="docutils literal notranslate"><span class="pre">:needs_json</span></code> target to that list
-to have their needs elements available for cross-referencing.</p>
+<p>The documentation build is exposed via a Bazel macro that accepts an <code class="docutils literal notranslate"><span class="pre">external_needs</span></code> parameter
+for external <code class="docutils literal notranslate"><span class="pre">:needs_json_file</span></code> targets.
+Use <code class="docutils literal notranslate"><span class="pre">external_needs</span></code> instead of <code class="docutils literal notranslate"><span class="pre">data</span></code> when the target produces needs JSON —
+<code class="docutils literal notranslate"><span class="pre">data</span></code> is meant for non-needs runfiles (e.g. custom tool outputs).</p>
 <p>Example <cite>BUILD</cite> snippet (consumer module):</p>
 <div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;@score_docs_as_code//:docs.bzl&quot;</span><span class="p">,</span> <span class="s2">&quot;docs&quot;</span><span class="p">)</span>
 <span class="n">docs</span><span class="p">(</span>
-  <span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="n">external_needs</span> <span class="o">=</span> <span class="p">[</span>
      <span class="s2">&quot;@score_process//:needs_json&quot;</span><span class="p">,</span>
   <span class="p">],</span>
   <span class="n">source_dir</span> <span class="o">=</span> <span class="s2">&quot;docs&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>More details in <a class="reference internal" href="../concepts/bidirectional_traceability.html#docs-bidirectional-traceability"><span class="std std-ref">Bi-directional Traceability</span></a>.</p>
 </section>
 <section id="b-mount-the-external-module-s-documentation-bundle">
 <h3>2b) Mount the external module’s documentation bundle<a class="headerlink" href="#b-mount-the-external-module-s-documentation-bundle" title="Link to this heading">#</a></h3>
