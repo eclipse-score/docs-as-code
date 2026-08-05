@@ -18,7 +18,8 @@ load("@score_docs_as_code//:bzl/bundle_rules.bzl", "DocsBundleInfo")
 
 def _mounts_manifest_impl(ctx):
     """Generate the canonical Sphinx mount manifest."""
-    entries = ctx.attr.bundle[DocsBundleInfo].entries
+    bundle_info = ctx.attr.bundle[DocsBundleInfo]
+    entries = bundle_info.entries
 
     json_mounts = []
     for entry in entries:
@@ -29,6 +30,7 @@ def _mounts_manifest_impl(ctx):
             "attach_to": entry.attach_to,
             "entry_doc": entry.entry_doc,
             "external": entry.external,
+            "data": [f.path for f in entry.data.to_list()],
         })
 
     out = ctx.actions.declare_file(ctx.label.name + ".json")
