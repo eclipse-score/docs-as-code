@@ -35,7 +35,7 @@ Minimal example (root ``BUILD``)
    docs(
        source_dir = "docs",
        project = "My Project",
-       project_url = "https://example.com/my-project",
+       project_url = "https://github.com/eclipse-score/my-project",
        data = [
            # labels to any extra tools or data you want included
            # e.g. "//:needs_json" or other tool targets

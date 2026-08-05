@@ -68,7 +68,7 @@ load("@score_docs_as_code//:docs.bzl", "docs")
 docs(
     source_dir = "<your sphinx source dir>",
     project = "<your project name>",
-    project_url = "https://example.com/<your-project>",
+    project_url = "https://github.com/eclipse-score/<your-project>",
     data = [
         "@other_repo:needs_json",  # Optional, if you have dependencies
     ],
