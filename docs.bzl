@@ -244,9 +244,9 @@ def docs(
         )
         sphinx_config_for_bazel_build = ":_docs_generated_build_config"
 
-        # Generate the config at an internal location for ``bazel run``
-        # targets. ``source_dir/conf.py`` would conflict with the generated
-        # ``:docs`` executable when source_dir is named ``docs``.
+        # Generate a separate config for ``bazel run`` targets.  Unlike
+        # ``sphinx_docs``, the runtime receives the config as a runfile and
+        # ``incremental.py`` passes its directory to Sphinx via ``-c``.
         _generated_conf(
             name = "_docs_generated_run_config",
             project = project,

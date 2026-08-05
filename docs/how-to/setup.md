@@ -86,10 +86,11 @@ extensions are supplied automatically.
 Add a `conf.py` to your source directory only when you need additional Sphinx
 configuration. When it exists, it remains the authoritative configuration.
 
-Note that conf.py will affect only local builds. It will not affect the integrated
-documentation build by reference_integration. Local builds are useful for testing and
-debugging your documentation before committing changes. Not for final delivery. HAving a
-custom conf.py is highly discouraged.
+Note that conf.py will affect only local builds in your repository.
+It will not affect the integrated documentation build by reference_integration.
+Local builds are useful for testing and debugging your documentation before committing changes.
+Not for final delivery.
+Having a custom conf.py is highly discouraged.
 
 #### 5. Run a documentation build:
 
