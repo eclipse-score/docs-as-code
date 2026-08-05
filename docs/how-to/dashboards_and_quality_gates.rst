@@ -156,12 +156,12 @@ For a new consumer repository:
    ╙                                                          ╜
 
 Needpie Usage Guide (Quick and Practical)
-=========================================
+-----------------------------------------
 
 Use these examples as ready-to-copy templates for dashboard-style pie charts.
 
 Tips for readable charts
-------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 - Keep labels short and audience-friendly.
 - Put the most important category first.
@@ -169,7 +169,7 @@ Tips for readable charts
 - Avoid red/green-only combinations when possible.
 
 Recommended color palette
-~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This palette is generally easier to read:
 
@@ -179,7 +179,7 @@ This palette is generally easier to read:
 - ``#B07AA1`` (purple)
 
 Example 1: Overall view (including remaining/unlinked)
-------------------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: rst
 
@@ -201,7 +201,7 @@ This chart shows:
    :filter-func: score_metrics.sphinx_filters.get_non_overlapping_link_metrics
 
 Example 2: Focused view (no total-based remainder)
---------------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This chart shows direct values only (no remaining slice):
 
@@ -215,7 +215,7 @@ This chart shows direct values only (no remaining slice):
    :filter-func: score_metrics.sphinx_filters.get_just_metrics(metrics_by_type:tool_req:with_test_link,metrics_by_type:tool_req:with_code_link,overall_metrics:fully_linked)
 
 Presentation checklist
-----------------------
+~~~~~~~~~~~~~~~~~~~~~~
 
 Before publishing, quickly verify:
 
