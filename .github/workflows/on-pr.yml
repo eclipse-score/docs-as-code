@@ -21,14 +21,10 @@ on:
   push:
     branches:
       - main
-    tags:
-      - "v*"
   release:
     types: [published]
 
 jobs:
-  # Common S-CORE Workflow
-
   common:
     uses: eclipse-score/cicd-workflows/.github/workflows/on-pr.yml@88cb460c47cb49efeb25cd7b73c8945dd1c5bce2 # on-pr/v0.0.0
     permissions:
@@ -38,6 +34,5 @@ jobs:
     uses: ./.github/workflows/_test.yml
 
   docs-build:
-    # Waits for consumer-tests but run only when docs verification succeeded
     needs: [unit-tests]
     uses: eclipse-score/cicd-workflows/.github/workflows/docs.yml@206a795e30d45de82d541206fde17abe98d2b4bf
