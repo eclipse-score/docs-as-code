@@ -3822,6 +3822,34 @@
     "FullyVerifies": null
   },
   {
+    "name": "test_data_mounts__test_missing_data_file_raises",
+    "file": "src/extensions/score_mounts/tests/test_data_mounts.py",
+    "line": "23",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_data_mounts__test_existing_data_file_resolved",
+    "file": "src/extensions/score_mounts/tests/test_data_mounts.py",
+    "line": "40",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
     "name": "test_resolver__test_load_single_entry",
     "file": "src/extensions/score_mounts/tests/test_resolver.py",
     "line": "39",
