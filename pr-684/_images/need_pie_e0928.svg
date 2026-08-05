@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
   "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="576pt" height="288pt" viewBox="0 0 576 288" xmlns="http://www.w3.org/2000/svg" version="1.1">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="539.840312pt" height="251.278125pt" viewBox="0 0 539.840312 251.278125" xmlns="http://www.w3.org/2000/svg" version="1.1">
  <metadata>
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:date>2026-08-05T10:10:06.133590</dc:date>
+    <dc:date>2026-08-05T10:18:13.930384</dc:date>
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
@@ -21,25 +21,25 @@
  </defs>
  <g id="figure_1">
   <g id="patch_1">
-   <path d="M 0 288 
-L 576 288 
-L 576 0 
+   <path d="M 0 251.278125 
+L 539.840312 251.278125 
+L 539.840312 0 
 L 0 0 
 z
 " style="fill: #ffffff"/>
   </g>
   <g id="axes_1">
    <g id="patch_2">
-    <path d="M 295.200004 44.64 
-C 295.200004 44.64 295.200004 44.64 295.200004 44.64 
-L 295.200004 246.24 
+    <path d="M 230.400004 32.398125 
+C 230.400004 32.398125 230.400004 32.398125 230.400004 32.398125 
+L 230.400004 233.998125 
 z
 " style="fill: #ca2828"/>
    </g>
    <g id="patch_3">
-    <path d="M 295.199996 44.64 
-C 295.199996 44.64 295.199996 44.64 295.199996 44.64 
-L 295.200004 246.24 
+    <path d="M 230.399996 32.398125 
+C 230.399996 32.398125 230.399996 32.398125 230.399996 32.398125 
+L 230.400004 233.998125 
 z
 " style="fill: #37a12d"/>
    </g>
@@ -47,7 +47,7 @@ z
    <g id="matplotlib.axis_2"/>
    <g id="text_1">
     <!-- Test Linkages -->
-    <g transform="translate(254.993437 28.56) scale(0.12 -0.12)">
+    <g transform="translate(190.193437 16.318125) scale(0.12 -0.12)">
      <defs>
       <path id="DejaVuSans-54" d="M -19 4666 
 L 3928 4666 
@@ -278,21 +278,21 @@ z
    </g>
    <g id="legend_1">
     <g id="patch_4">
-     <path d="M 436.12 168.957188 
-L 595.440313 168.957188 
-Q 597.440313 168.957188 597.440313 166.957188 
-L 597.440313 123.922813 
-Q 597.440313 121.922813 595.440313 121.922813 
-L 436.12 121.922813 
-Q 434.12 121.922813 434.12 123.922813 
-L 434.12 166.957188 
-Q 434.12 168.957188 436.12 168.957188 
+     <path d="M 371.32 156.715313 
+L 530.640312 156.715313 
+Q 532.640312 156.715313 532.640312 154.715313 
+L 532.640312 111.680937 
+Q 532.640312 109.680937 530.640312 109.680937 
+L 371.32 109.680937 
+Q 369.32 109.680937 369.32 111.680937 
+L 369.32 154.715313 
+Q 369.32 156.715313 371.32 156.715313 
 z
 " style="fill: #ffffff; opacity: 0.8; stroke: #cccccc; stroke-linejoin: miter"/>
     </g>
     <g id="text_2">
      <!-- legend -->
-     <g transform="translate(498.720781 133.52125) scale(0.1 -0.1)">
+     <g transform="translate(433.920781 121.279375) scale(0.1 -0.1)">
       <defs>
        <path id="DejaVuSans-6c" d="M 603 4863 
 L 1178 4863 
@@ -337,16 +337,16 @@ z
      </g>
     </g>
     <g id="patch_5">
-     <path d="M 438.12 148.199375 
-L 458.12 148.199375 
-L 458.12 141.199375 
-L 438.12 141.199375 
+     <path d="M 373.32 135.9575 
+L 393.32 135.9575 
+L 393.32 128.9575 
+L 373.32 128.9575 
 z
 " style="fill: #ca2828"/>
     </g>
     <g id="text_3">
      <!-- Tests Not Linked 0.0% (0) -->
-     <g transform="translate(466.12 148.199375) scale(0.1 -0.1)">
+     <g transform="translate(401.32 135.9575) scale(0.1 -0.1)">
       <defs>
        <path id="DejaVuSans-4e" d="M 628 4666 
 L 1478 4666 
@@ -512,16 +512,16 @@ z
      </g>
     </g>
     <g id="patch_6">
-     <path d="M 438.12 162.8775 
-L 458.12 162.8775 
-L 458.12 155.8775 
-L 438.12 155.8775 
+     <path d="M 373.32 150.635625 
+L 393.32 150.635625 
+L 393.32 143.635625 
+L 373.32 143.635625 
 z
 " style="fill: #37a12d"/>
     </g>
     <g id="text_4">
      <!-- Tests Linked 0.0% (0) -->
-     <g transform="translate(466.12 162.8775) scale(0.1 -0.1)">
+     <g transform="translate(401.32 150.635625) scale(0.1 -0.1)">
       <use xlink:href="#DejaVuSans-54"/>
       <use xlink:href="#DejaVuSans-65" transform="translate(44.083984 0)"/>
       <use xlink:href="#DejaVuSans-73" transform="translate(105.607422 0)"/>
