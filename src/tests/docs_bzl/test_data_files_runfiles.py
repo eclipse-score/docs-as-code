@@ -10,15 +10,22 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-"""Verify that data files (e.g. genrule outputs) are reachable at runtime."""
+
+"""Verify that genrule-generated RST files are reachable at ``bazel run`` time.
+
+The ``data`` attribute of ``docs_bundle`` carries genrule outputs that live
+in ``bazel-out/.../bin/``.  The fix in ``_external_docs_runfiles_impl`` stages
+them into the runfiles of ``:docs``; ``score_mounts`` then resolves the
+execroot-relative paths against ``<ws_root>/bazel-bin`` and mounts them.  This
+end-to-end test fails if either half of that chain regresses."""
 
 from src.tests.docs_bzl.helpers import run_scenario
 
 
 def test_data_files_reachable_at_runtime():
-    """Data files from genrule must be in runfiles and resolved by Sphinx."""
+    """Genrule output in a docs_bundle data dep must be resolved by Sphinx."""
     result = run_scenario("run", "data_files_runfiles", ":docs")
 
-    index_html = result.build_dir / "index.html"
+    generated_html = result.build_dir / "data_test" / "index.html"
 
-    assert "Data RST Title" in index_html.read_text(encoding="utf-8")
+    assert "Generated Data Page" in generated_html.read_text(encoding="utf-8")

@@ -11,22 +11,36 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-# This fixture exercises the public docs() macro with data (genrule output)
-# that must be reachable through runfiles at ``bazel run`` time. See PR #686.
+# This fixture exercises the public docs() macro with a data bundle whose
+# only content is a genrule output living in ``bazel-out/.../bin/``.  That
+# output must reach the runfiles of ``:docs`` (via _external_docs_runfiles)
+# and be resolved by ``score_mounts`` at ``bazel run`` time.  See PR #686.
 
-load("//:docs.bzl", "docs")
+load("//:docs.bzl", "docs", "docs_bundle")
 
-# Generate an RST file that only exists as a data dep (not in the source tree).
+# Emit into a ``generated/`` subdirectory (as the real metamodel bundle does)
+# so the resolved mount directory contains only the genrule output and not the
+# sibling ``docs.runfiles/`` tree.
 genrule(
-    name = "generated_index",
+    name = "generated_page",
     srcs = [],
-    outs = ["index.rst"],
-    cmd = """echo '::
+    outs = ["generated/index.rst"],
+    cmd = """echo 'Generated Data Page
+===================' > $@""",
+)
 
-Data RST Title' > $@""",
+# Pure-data bundle: the genrule output lives in ``bazel-out/``, not the tree.
+docs_bundle(
+    name = "data_bundle",
+    data = [":generated_page"],
+    entry_doc = "index",
 )
 
 docs(
-    source_dir = ".",
-    data = [":generated_index"],
+    source_dir = "docs",
+    bundles = [{
+        "bundle": ":data_bundle",
+        "mount_at": "data_test",
+        "attach_to": "index",
+    }],
 )
