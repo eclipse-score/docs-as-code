@@ -702,7 +702,7 @@ but for ease of traceability this is a separate one.
   :id: tool_req__arch_linkage_safety
   :implemented: YES
   :version: 2
-  :satisfies: gd_req__arch_linkage_safety[version==1], gd_req__arch_build_blocks_corr[version==2]
+  :satisfies: gd_req__arch_linkage_safety[version==1], gd_req__arch_build_blocks_corr[version==3]
   :parent_covered: YES
 
   .. csv-table::
@@ -717,7 +717,6 @@ but for ease of traceability this is a separate one.
      comp, consists_of, comp, no
      real_arc_int_op, included_by, real_arc_int, yes
      real_arc_int_op, implements, logic_arc_int_op, no
-     logic_arc_int, includes, logic_arc_int_op, no
      logic_arc_int_op, included_by, logic_arc_int, yes
 
   .. note::
