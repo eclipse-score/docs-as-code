@@ -329,7 +329,10 @@ def create_bundle(name, bundles, srcs = [], sourcelinks = [], strip_prefix = "",
 
 def _external_docs_runfiles_impl(ctx):
     """Expose external documentation sources needed under ``bazel run``."""
-    return [DefaultInfo(files = ctx.attr.bundle[DocsBundleInfo].external_runfiles)]
+    bundle = ctx.attr.bundle[DocsBundleInfo]
+    return [DefaultInfo(files = depset(
+        transitive = [bundle.external_runfiles, bundle.data],
+    ))]
 
 _external_docs_runfiles = rule(
     implementation = _external_docs_runfiles_impl,

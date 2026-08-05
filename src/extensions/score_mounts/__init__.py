@@ -92,10 +92,14 @@ def _resolve_data_mounts(
                     )
             else:
                 walk_file = Path.cwd() / data_file
-            if walk_file.is_file():
-                walk_dir = walk_file.parent
-                if str(walk_dir) not in data_mounts:
-                    data_mounts[str(walk_dir)] = spec
+            if not walk_file.is_file():
+                raise ValueError(
+                    "score_mounts: resolved data file does not exist: "
+                    f"{walk_file} (mount_at={spec.mount_at})"
+                )
+            walk_dir = walk_file.parent
+            if str(walk_dir) not in data_mounts:
+                data_mounts[str(walk_dir)] = spec
     return data_mounts
 
 
