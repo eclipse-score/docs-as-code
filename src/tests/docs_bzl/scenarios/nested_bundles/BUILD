@@ -13,17 +13,53 @@
 
 load("//:bzl/mount_rules.bzl", "create_mounts_manifest")
 load("//:docs.bzl", "docs", "docs_bundle")
+load("@aspect_rules_py//py:defs.bzl", "py_binary")
 
 docs_bundle(
     name = "child",
     source_dir = "child",
     entry_doc = "landing",
-    scan_code = [":scan_code"],
+    code_targets = [
+        ":example_binary",
+        ":example_executable",
+        ":nested_filegroup_sources",
+    ],
 )
 
 filegroup(
-    name = "scan_code",
+    name = "filegroup_sources",
+    srcs = ["child/filegroup_source.py"],
+)
+
+# Intentionally reference the same file through a second filegroup to verify
+# that code_targets resolves nested filegroups without duplicate links.
+filegroup(
+    name = "nested_filegroup_sources",
+    srcs = [":filegroup_sources"],
+)
+
+# Simulated generated doc output consumed via the `data` attribute.
+filegroup(
+    name = "generated_doc_output",
+    srcs = ["generated/generated_output.txt"],
+    visibility = ["//visibility:private"],
+)
+
+py_binary(
+    name = "example_binary",
     srcs = ["child/example.py"],
+    main = "child/example.py",
+)
+
+cc_library(
+    name = "example_library",
+    srcs = ["child/example.cc"],
+)
+
+cc_binary(
+    name = "example_executable",
+    srcs = ["child/example_main.cc"],
+    deps = [":example_library"],
 )
 
 # The child is nested below the parent bundle before the parent itself is
@@ -35,6 +71,7 @@ docs_bundle(
         "bundle": ":child",
         "mount_at": "child",
     }],
+    data = [":generated_doc_output"],
 )
 
 # An aggregator deliberately has no source_dir. It only propagates its child

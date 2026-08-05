@@ -26,12 +26,18 @@ jobs:
       fail-fast: false
       matrix:
         consumer: [
+          "baselibs and remote",
+          "inc_security_crypto and remote",
+          "inc_someip_gateway and remote",
+          "infrastructure and remote",
+          "itf and remote",
+          "module_template and local",
+          "module_template and remote",
+          "persistency and remote",
           "process_description and local",
           "process_description and remote",
           "score and local",
           "score and remote",
-          "module_template and local",
-          "module_template and remote",
         ]
 
     steps:

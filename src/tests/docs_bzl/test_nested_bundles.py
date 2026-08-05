@@ -44,16 +44,24 @@ def test_nested_bundles_render_and_preserve_metadata():
         "index",
         "landing",
     ]
+    # Verify that the parent bundle's data (generated doc output) appears in the manifest.
+    parent_mount = next(
+        m for m in manifest["mounts"] if m["mount_at"] == "concepts/example_bundle"
+    )
+    assert parent_mount["data"] == [
+        "src/tests/docs_bzl/scenarios/nested_bundles/generated/generated_output.txt",
+    ]
 
     sourcelinks = json.loads(
         built_output("scenarios/nested_bundles", "sourcelinks_json.json").read_text(
             encoding="utf-8"
         )
     )
-    assert (
-        sourcelinks[0]["file"]
-        == "src/tests/docs_bzl/scenarios/nested_bundles/child/example.py"
-    )
+    assert {link["file"] for link in sourcelinks} == {
+        "src/tests/docs_bzl/scenarios/nested_bundles/child/example.py",
+        "src/tests/docs_bzl/scenarios/nested_bundles/child/example.cc",
+        "src/tests/docs_bzl/scenarios/nested_bundles/child/filegroup_source.py",
+    }
     assert (result.build_dir / "concepts" / "example_bundle" / "index.html").is_file()
     assert (
         result.build_dir / "concepts" / "example_bundle" / "child" / "landing.html"

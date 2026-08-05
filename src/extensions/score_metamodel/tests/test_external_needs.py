@@ -24,6 +24,7 @@ import pytest
 import score_metamodel.external_needs as ext_needs
 from score_metamodel.external_needs import (
     ExternalNeedsSource,
+    _add_needs_json_file,
     add_external_docs_sources,
     add_external_needs_json,
     get_external_needs_source,
@@ -199,6 +200,41 @@ def test_add_external_needs_json_appends_entry_local(
     assert len(config.needs_external_needs) == 1
     entry = config.needs_external_needs[0]
     assert entry["base_url"] == "https://example.test/local/main"
+    assert Path(entry["json_path"]) == json_path
+
+
+def test_add_needs_json_file_appends_entry(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """_add_needs_json_file should load from a :needs_json_file target."""
+    # Arrange: create the needs.json at the runfiles path
+    rel_json = Path("ext_mod+/needs.json")
+    json_path = tmp_path / rel_json
+    json_path.parent.mkdir(parents=True, exist_ok=True)
+    json_path.write_text(
+        json.dumps({"project_url": "https://example.test/json-file"}), encoding="utf-8"
+    )
+
+    runfiles_dir = tmp_path
+    config = Config()
+    config.needs_external_needs = []
+
+    monkeypatch.setattr(ext_needs, "get_runfiles_dir", lambda: runfiles_dir)
+
+    # Act
+    e = ExternalNeedsSource(
+        bazel_module="ext_mod",
+        target="needs_json_file",
+        path_to_target="",
+        is_local=False,
+    )
+    _add_needs_json_file(e, config)
+
+    # Assert
+    assert config.needs_external_needs is not None
+    assert len(config.needs_external_needs) == 1
+    entry = config.needs_external_needs[0]
+    assert entry["base_url"] == "https://example.test/json-file/main"
     assert Path(entry["json_path"]) == json_path
 
 

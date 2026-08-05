@@ -64,7 +64,50 @@ DocsBundleInfo = provider(
         "entries": "Ordered entries, one per source directory, including its final documentation-tree location.",
         "sourcelinks": "Source-code-link JSON files together with their owning repository.",
         "external_runfiles": "Documentation source files from external repositories needed in runfiles.",
+        "data": "Non-source-tree files (e.g. genrule outputs) needed for Sphinx resolution.",
     },
+)
+
+CodeTargetSourcesInfo = provider(
+    doc = "Source files collected from an implementation target and its dependencies.",
+    fields = {
+        "sources": "Depset of direct and transitive source files.",
+    },
+)
+
+def _source_files_from_attributes(ctx):
+    """Return files explicitly declared through source or header attributes."""
+    source_files = []
+    for attribute_name in ["srcs", "hdrs", "textual_hdrs"]:
+        if not hasattr(ctx.rule.attr, attribute_name):
+            continue
+        for source in getattr(ctx.rule.attr, attribute_name):
+            if type(source) == "File":
+                source_files.append(source)
+            else:
+                source_files.extend(source[DefaultInfo].files.to_list())
+    return source_files
+
+def _collect_code_target_sources_impl(target, ctx):
+    """Collect source files from an implementation target and its ``deps`` tree."""
+    dependency_sources = []
+    if hasattr(ctx.rule.attr, "deps"):
+        dependency_sources = [
+            dependency[CodeTargetSourcesInfo].sources
+            for dependency in ctx.rule.attr.deps
+        ]
+    return [CodeTargetSourcesInfo(
+        sources = depset(
+            direct = _source_files_from_attributes(ctx),
+            transitive = dependency_sources,
+        ),
+    )]
+
+_collect_code_target_sources = aspect(
+    implementation = _collect_code_target_sources_impl,
+    attr_aspects = ["deps"],
+    provides = [CodeTargetSourcesInfo],
+    doc = "Collects sources recursively through standard implementation dependencies.",
 )
 
 def _parent_index_docname(mount_at):
@@ -102,7 +145,7 @@ def _bundle_execroot_path(runtime_path):
         return "external/" + runtime_path[3:]
     return runtime_path
 
-def _rebase_bundle_entry(entry, mount_at, attach_to):
+def _rebase_bundle_entry(entry, mount_at, attach_to, data):
     """Place a bundle entry below a requested documentation-tree location.
 
     A bundle's own root has no ``mount_at`` yet. For that root, an omitted
@@ -123,6 +166,7 @@ def _rebase_bundle_entry(entry, mount_at, attach_to):
         entry_doc = entry.entry_doc,
         external = entry.external,
         repository = entry.repository,
+        data = data,
     )
 
 def _entries_visible_through(ctx, child):
@@ -168,6 +212,7 @@ def _docs_bundle_impl(ctx):
     entries = []
     own_source_files = []
     own_external_runfiles = []
+    own_data = depset(direct = ctx.files.data)
 
     if ctx.files.srcs:
         runtime_path = _bundle_runtime_path(ctx)
@@ -183,12 +228,25 @@ def _docs_bundle_impl(ctx):
             entry_doc = ctx.attr.entry_doc,
             external = external,
             repository = ctx.label.workspace_name,
+            data = own_data,
         ))
         own_source_files.extend(ctx.files.srcs)
         # Local sources are read directly from the workspace by ``bazel run``.
         # Only sources from external repositories must be staged in runfiles.
         if external:
             own_external_runfiles.extend(ctx.files.srcs)
+    elif own_data:
+        # Pure data bundle: create an entry so the data files appear in the manifest.
+        entries.append(struct(
+            runtime_path = "",
+            src_root = "",
+            mount_at = "",
+            attach_to = "",
+            entry_doc = ctx.attr.entry_doc,
+            external = False,
+            repository = ctx.label.workspace_name,
+            data = own_data,
+        ))
 
     child_source_files = []
     child_external_runfiles = []
@@ -197,11 +255,13 @@ def _docs_bundle_impl(ctx):
         for source_link in ctx.files.sourcelinks
     ]
     for index, child in enumerate(ctx.attr.bundles):
+        child_data = child[DocsBundleInfo].data
         entries.extend([
             _rebase_bundle_entry(
                 entry,
                 ctx.attr.bundle_mount_ats[index],
                 ctx.attr.bundle_attach_tos[index],
+                child_data,
             )
             for entry in _entries_visible_through(ctx, child)
         ])
@@ -218,12 +278,19 @@ def _docs_bundle_impl(ctx):
         direct = own_external_runfiles,
         transitive = child_external_runfiles,
     )
+    all_data = depset(
+        transitive = [own_data] + [
+            child[DocsBundleInfo].data
+            for child in ctx.attr.bundles
+        ],
+    )
     return [
-        DefaultInfo(files = all_source_files),
+        DefaultInfo(files = depset(transitive = [all_source_files, all_data])),
         DocsBundleInfo(
             entries = entries,
             sourcelinks = sourcelinks,
             external_runfiles = external_runfiles,
+            data = all_data,
         ),
     ]
 
@@ -237,11 +304,12 @@ _docs_bundle = rule(
         "bundles": attr.label_list(providers = [DocsBundleInfo]),
         "bundle_mount_ats": attr.string_list(),
         "bundle_attach_tos": attr.string_list(),
+        "data": attr.label_list(allow_files = True),
     },
     doc = "Internal rule that carries bundle files and their documentation-tree locations.",
 )
 
-def create_bundle(name, bundles, srcs = [], sourcelinks = [], strip_prefix = "", entry_doc = "index", visibility = None, **kwargs):
+def create_bundle(name, bundles, srcs = [], sourcelinks = [], strip_prefix = "", entry_doc = "index", data = [], visibility = None, **kwargs):
     """Create a reusable documentation bundle from files and child declarations."""
     parsed_bundles = [_parse_bundle_declaration(declaration) for declaration in bundles]
     _docs_bundle(
@@ -253,6 +321,7 @@ def create_bundle(name, bundles, srcs = [], sourcelinks = [], strip_prefix = "",
         bundles = [bundle.bundle for bundle in parsed_bundles],
         bundle_mount_ats = [bundle.mount_at for bundle in parsed_bundles],
         bundle_attach_tos = [bundle.attach_to for bundle in parsed_bundles],
+        data = data,
         visibility = visibility,
         **kwargs
     )
@@ -260,7 +329,10 @@ def create_bundle(name, bundles, srcs = [], sourcelinks = [], strip_prefix = "",
 
 def _external_docs_runfiles_impl(ctx):
     """Expose external documentation sources needed under ``bazel run``."""
-    return [DefaultInfo(files = ctx.attr.bundle[DocsBundleInfo].external_runfiles)]
+    bundle = ctx.attr.bundle[DocsBundleInfo]
+    return [DefaultInfo(files = depset(
+        transitive = [bundle.external_runfiles, bundle.data],
+    ))]
 
 _external_docs_runfiles = rule(
     implementation = _external_docs_runfiles_impl,
@@ -321,3 +393,47 @@ def merge_bundle_sourcelinks(name, bundle, known_good = None, visibility = None)
         known_good = known_good,
         visibility = visibility,
     )
+
+def _code_targets_sourcelinks_impl(ctx):
+    """Generate one source-link cache for the implementation targets of a bundle."""
+    source_files = depset(transitive = [
+        target[CodeTargetSourcesInfo].sources
+        for target in ctx.attr.code_targets
+    ])
+    if not source_files.to_list():
+        fail("code_targets must declare source files through filegroups, srcs, hdrs, or textual_hdrs")
+
+    output = ctx.actions.declare_file(ctx.label.name + ".json")
+    arguments = ctx.actions.args()
+    arguments.add("--output", output.path)
+    arguments.add_all(source_files)
+    ctx.actions.run(
+        executable = ctx.executable._generate_sourcelinks,
+        arguments = [arguments],
+        inputs = source_files,
+        outputs = [output],
+        mnemonic = "GenerateCodeTargetSourcelinks",
+    )
+    return [DefaultInfo(files = depset([output]))]
+
+_code_targets_sourcelinks = rule(
+    implementation = _code_targets_sourcelinks_impl,
+    attrs = {
+        "code_targets": attr.label_list(aspects = [_collect_code_target_sources]),
+        "_generate_sourcelinks": attr.label(
+            default = Label("//scripts_bazel:generate_sourcelinks"),
+            cfg = "exec",
+            executable = True,
+        ),
+    },
+    doc = "Generates source-code links from implementation target source files.",
+)
+
+def generate_code_target_sourcelinks(name, code_targets, visibility = None):
+    """Create a cached source-link JSON file for one documentation bundle."""
+    _code_targets_sourcelinks(
+        name = name,
+        code_targets = code_targets,
+        visibility = visibility,
+    )
+    return ":" + name

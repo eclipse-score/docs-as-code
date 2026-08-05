@@ -13,6 +13,7 @@
 
 import argparse
 import hashlib
+import json
 import logging
 import os
 import shutil
@@ -40,6 +41,17 @@ def get_env(name: str) -> str:
     if val is None:
         raise ValueError(f"Environment variable {name} is not set")
     return val
+
+
+def _merged_external_needs() -> str:
+    """Combine DATA and EXTERNAL_NEEDS_FILES into one JSON label list.
+
+    Both env vars hold JSON lists of Bazel labels; the extension parses the
+    resulting `external_needs_source` define uniformly.
+    """
+    data = json.loads(get_env("DATA") or "[]")
+    external = json.loads(os.environ.get("EXTERNAL_NEEDS_FILES", "[]") or "[]")
+    return json.dumps(data + external)
 
 
 def _compute_hash(files: list[Path]) -> str:
@@ -142,7 +154,11 @@ if __name__ == "__main__":
         "-T",  # show details in case of errors in extensions
         "--jobs",
         "auto",
-        f"--define=external_needs_source={get_env('DATA')}",
+        # Merge DATA (:needs_json / :docs_sources) with EXTERNAL_NEEDS_FILES
+        # (:needs_json_file) into a single define. The sphinx_docs rule cannot
+        # receive per-target env vars, so --define is the only channel that
+        # works for both the py_binary and the needs_json target.
+        f"--define=external_needs_source={_merged_external_needs()}",
         f"--define=testcase_source_dirs={os.environ.get('TEST_SOURCES', '[]')}",
         # Path to the Bazel-emitted mounts manifest (empty when no mounts are
         # configured); consumed by the score_mounts extension.

@@ -54,7 +54,7 @@ def _parse_bazel_external_need(s: str) -> ExternalNeedsSource | None:
     repo, path_to_target = repo_and_path.split("//", 1)
     repo = repo.lstrip("@")  # empty for same-repo `//pkg:needs_json`
 
-    if target in ("needs_json", "docs_sources"):
+    if target in ("needs_json", "needs_json_file", "docs_sources"):
         return ExternalNeedsSource(
             bazel_module=repo,
             path_to_target=path_to_target,
@@ -159,12 +159,11 @@ def extend_needs_json_exporter(config: Config, params: list[str]) -> None:
 def get_external_needs_source(external_needs_source: str) -> list[ExternalNeedsSource]:
     if external_needs_source:
         # Path taken for all invocations via `bazel`
-        external_needs = parse_external_needs_sources_from_DATA(external_needs_source)
+        return parse_external_needs_sources_from_DATA(external_needs_source)
     else:
         # This is the path taken for anything that doesn't
         # run via `bazel`  e.g. esbonio or other direct executions
-        external_needs = parse_external_needs_sources_from_bazel_query()  # pyright: ignore[reportAny]
-    return external_needs
+        return parse_external_needs_sources_from_bazel_query()  # pyright: ignore[reportAny]
 
 
 def add_external_needs_json(e: ExternalNeedsSource, config: Config):
@@ -182,9 +181,9 @@ def add_external_needs_json(e: ExternalNeedsSource, config: Config):
         needs_json_data = json.loads(Path(json_file).read_text(encoding="utf-8"))  # pyright: ignore[reportAny]
     except FileNotFoundError:
         logger.error(
-            f"Could not find external needs JSON file at {json_file}. "
-            + "Something went terribly wrong. "
-            + "Try running `bazel clean --async && rm -rf _build`."
+            "Could not find external needs JSON file at %s from target %s.",
+            json_file,
+            e.target,
         )
         # Attempt to continue, exit code will be non-zero after a logged error anyway.
         return
@@ -227,6 +226,7 @@ def add_external_docs_sources(e: ExternalNeedsSource, config: Config):
 def connect_external_needs(app: Sphinx, config: Config):
     extend_needs_json_exporter(config, ["project_url"])
 
+    # Local external needs from DATA (e.g. :needs_json or :docs_sources)
     external_needs = get_external_needs_source(app.config.external_needs_source)
 
     # this sets the default value - required for the needs-config-writer
@@ -236,9 +236,41 @@ def connect_external_needs(app: Sphinx, config: Config):
     for e in external_needs:
         if e.target == "needs_json":
             add_external_needs_json(e, app.config)
+        elif e.target == "needs_json_file":
+            _add_needs_json_file(e, app.config)
         elif e.target == "docs_sources":
             add_external_docs_sources(e, app.config)
         else:
             raise ValueError(
                 f"Internal Error. Unknown external needs target: {e.target}"
             )
+
+
+def _add_needs_json_file(ext_needs: ExternalNeedsSource, config: Config) -> None:
+    """Resolve a needs_json_file target from runfiles and register it."""
+    json_file_raw = (
+        Path(_runfiles_module_dir(ext_needs)) / ext_needs.path_to_target / "needs.json"
+    )
+    r = get_runfiles_dir()
+    json_file = r / json_file_raw
+    logger.debug(f"External needs_json_file: {json_file}")
+    try:
+        needs_json_data = json.loads(
+            Path(json_file).read_text(encoding="utf-8")  # pyright: ignore[reportAny]
+        )
+    except FileNotFoundError:
+        logger.error(
+            "Could not find external needs JSON file at %s from target %s.",
+            json_file,
+            ext_needs.target,
+        )
+        return
+    except json.JSONDecodeError as exc:
+        logger.error(f"Failed to parse external needs JSON file {json_file}: {exc}")
+        return
+    config.needs_external_needs.append(
+        {  # pyright: ignore[reportUnknownMemberType]
+            "base_url": needs_json_data.get("project_url", "") + "/main",
+            "json_path": json_file,
+        }
+    )

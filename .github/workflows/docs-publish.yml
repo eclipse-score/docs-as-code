@@ -11,13 +11,20 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-load("//:docs.bzl", "docs")
+name: Publish Documentation
 
-# Mounts the same-repo producer's needs.json so the :need: link in index.rst can
-# resolve. test_sources scopes the test-code-linker to this (test-less) package,
-# avoiding the workspace-wide bazel-testlogs scan during the html build.
-docs(
-    source_dir = "docs",
-    external_needs = ["//src/tests/docs_bzl/scenarios/external_needs/producer:needs_json"],
-    test_sources = ["src/tests/docs_bzl/scenarios/external_needs/consumer"],
-)
+on:
+  workflow_run:
+    workflows: ["PR Checks"]
+    types: [completed]
+
+jobs:
+  docs-deploy:
+    if: github.event.workflow_run.conclusion == 'success'
+    uses: eclipse-score/cicd-workflows/.github/workflows/docs-publish.yml@206a795e30d45de82d541206fde17abe98d2b4bf
+    permissions:
+      actions: read
+      contents: write
+      id-token: write
+      pages: write
+      pull-requests: write

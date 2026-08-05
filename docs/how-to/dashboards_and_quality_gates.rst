@@ -145,7 +145,7 @@ Recommended Rollout
 For a new consumer repository:
 
 1. Start with local-only metrics.
-2. Enable ``scan_code`` and verify ``source_code_link`` coverage first.
+2. Enable ``code_targets`` and verify ``source_code_link`` coverage first.
 3. Add test metadata and verify ``testlink`` coverage.
 4. Introduce modest thresholds in CI.
 5. Raise thresholds over time as the repository matures.
