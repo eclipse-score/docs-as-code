@@ -23,7 +23,7 @@
 # *******************************************************************************
 """Public docs() smoke scenario."""
 
-from src.tests.docs_bzl.helpers import run_scenario
+from src.tests.docs_bzl.helpers import load_needs_json, run_scenario
 
 
 def test_basic_docs_builds_html():
@@ -35,4 +35,10 @@ def test_basic_docs_builds_html():
 
 
 def test_basic_docs_builds_needs_without_conf_py():
-    run_scenario("build", "basic_docs", ":needs_json")
+    result = run_scenario("build", "basic_docs", ":needs_json")
+
+    # With no docs/conf.py the generated config is used; it must set a non-empty
+    # version so sphinx-needs writes a non-empty current_version into needs.json
+    # (an empty current_version makes the file unusable for external consumers).
+    data = load_needs_json(result.artifacts["needs.json"])
+    assert data["current_version"], "current_version must be non-empty"
