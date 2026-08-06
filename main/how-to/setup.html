@@ -397,7 +397,6 @@
 <li class="toctree-l1"><a class="reference internal" href="other_modules.html">Reference Other Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cross_module_compatibility.html">Handle Cross-Module Compatibility Findings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dashboards_and_quality_gates.html">Build Dashboards and Quality Gates</a></li>
-
 <li class="toctree-l1"><a class="reference internal" href="source_to_doc_links.html">Reference Docs in Source Code</a></li>
 <li class="toctree-l1"><a class="reference internal" href="test_to_doc_links.html">Reference Docs in Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="generated_docs.html">Integrate Generated Documentation</a></li>
@@ -463,55 +462,30 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <!-- ----------------------------------------------------------------------------
-  Copyright (c) 2026 Contributors to the Eclipse Foundation
-
-  See the NOTICE file(s) distributed with this work for additional
-  information regarding copyright ownership.
-
-  This program and the accompanying materials are made available under the
-  terms of the Apache License Version 2.0 which is available at
-  https://www.apache.org/licenses/LICENSE-2.0
-
-  SPDX-License-Identifier: Apache-2.0
------------------------------------------------------------------------------ -->
-<section id="setup">
-<span id="id1"></span><h1>Setup<a class="headerlink" href="#setup" title="Link to this heading">#</a></h1>
-<section id="overview">
-<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
-<p>docs-as-code allows you to easily integrate Sphinx documentation generation into your
-Bazel build system. It provides a collection of utilities and extensions specifically
-designed to enhance documentation capabilities in S-CORE.</p>
-</section>
-<section id="features">
-<h2>Features<a class="headerlink" href="#features" title="Link to this heading">#</a></h2>
-<ul class="simple">
-<li><p>Seamless integration with Bazel build system</p></li>
-<li><p>S-CORE process compliance</p></li>
-<li><p>Support for PlantUML diagrams</p></li>
-<li><p>Source code linking capabilities</p></li>
-<li><p>S-CORE layouts and themes</p></li>
-</ul>
-</section>
-<section id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h2>
+  <section id="setup">
+<h1>Setup<a class="headerlink" href="#setup" title="Link to this heading">#</a></h1>
+<p>docs-as-code enables you to integrate Sphinx documentation generation into a
+Bazel build system.
+It contains utilities and extensions that improve documentation in S-CORE.</p>
 <section id="module-bazel-file">
-<h3>1. MODULE.bazel file<a class="headerlink" href="#module-bazel-file" title="Link to this heading">#</a></h3>
-<p>Add the module to your <code class="docutils literal notranslate"><span class="pre">MODULE.bazel</span></code> file:</p>
-<div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="n">bazel_dep</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;score_docs_as_code&quot;</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;4.1.0&quot;</span><span class="p">)</span>
+<h2>1. MODULE.bazel file<a class="headerlink" href="#module-bazel-file" title="Link to this heading">#</a></h2>
+<p>Add the module to the <code class="docutils literal notranslate"><span class="pre">MODULE.bazel</span></code> file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">bazel_dep</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;score_docs_as_code&quot;</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;7.0.0&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>And make sure to also add the S-core Bazel registry to your <code class="docutils literal notranslate"><span class="pre">.bazelrc</span></code> file</p>
-<div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="n">common</span> <span class="o">--</span><span class="n">registry</span><span class="o">=</span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">raw</span><span class="o">.</span><span class="n">githubusercontent</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">eclipse</span><span class="o">-</span><span class="n">score</span><span class="o">/</span><span class="n">bazel_registry</span><span class="o">/</span><span class="n">main</span><span class="o">/</span>
+<p>Add the S-CORE Bazel registry to the <code class="docutils literal notranslate"><span class="pre">.bazelrc</span></code> file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">common</span> <span class="o">--</span><span class="n">registry</span><span class="o">=</span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">raw</span><span class="o">.</span><span class="n">githubusercontent</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">eclipse</span><span class="o">-</span><span class="n">score</span><span class="o">/</span><span class="n">bazel_registry</span><span class="o">/</span><span class="n">main</span><span class="o">/</span>
 <span class="n">common</span> <span class="o">--</span><span class="n">registry</span><span class="o">=</span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">bcr</span><span class="o">.</span><span class="n">bazel</span><span class="o">.</span><span class="n">build</span>
 </pre></div>
 </div>
 </section>
 <section id="bazelrc-file">
-<h3>2. .bazelrc file<a class="headerlink" href="#bazelrc-file" title="Link to this heading">#</a></h3>
-<p>Since we use <code class="docutils literal notranslate"><span class="pre">PlantUML</span> <span class="pre">&lt;https://www.plantuml.com&gt;</span></code>_ for diagrams, we need some Java.
-If there is no Java on your system, Bazel can download a remote JDK for you
-but that requires some configuration in your <code class="docutils literal notranslate"><span class="pre">.bazelrc</span></code> file:</p>
+<h2>2. .bazelrc file<a class="headerlink" href="#bazelrc-file" title="Link to this heading">#</a></h2>
+<p>The system uses <a class="reference external" href="https://www.plantuml.com">PlantUML</a> for diagrams. This action
+requires Java.
+If the system does not contain Java, Bazel downloads a remote JDK
+from the network.
+This action requires configuration in the <code class="docutils literal notranslate"><span class="pre">.bazelrc</span></code> file:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">build</span> <span class="o">--</span><span class="n">java_language_version</span><span class="o">=</span><span class="mi">17</span>
 <span class="n">build</span> <span class="o">--</span><span class="n">java_runtime_version</span><span class="o">=</span><span class="n">remotejdk_17</span>
 <span class="n">build</span> <span class="o">--</span><span class="n">tool_java_language_version</span><span class="o">=</span><span class="mi">17</span>
@@ -520,50 +494,26 @@ but that requires some configuration in your <code class="docutils literal notra
 </div>
 </section>
 <section id="build-file">
-<h3>3. BUILD file<a class="headerlink" href="#build-file" title="Link to this heading">#</a></h3>
+<h2>3. BUILD file<a class="headerlink" href="#build-file" title="Link to this heading">#</a></h2>
 <div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;@score_docs_as_code//:docs.bzl&quot;</span><span class="p">,</span> <span class="s2">&quot;docs&quot;</span><span class="p">)</span>
 
 <span class="n">docs</span><span class="p">(</span>
-    <span class="n">source_dir</span> <span class="o">=</span> <span class="s2">&quot;&lt;your sphinx source dir&gt;&quot;</span><span class="p">,</span>
-    <span class="n">project</span> <span class="o">=</span> <span class="s2">&quot;&lt;your project name&gt;&quot;</span><span class="p">,</span>
-    <span class="n">project_url</span> <span class="o">=</span> <span class="s2">&quot;https://github.com/eclipse-score/&lt;your-project&gt;&quot;</span><span class="p">,</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">project</span> <span class="o">=</span> <span class="s2">&quot;S-CORE &lt;feature name&gt;&quot;</span><span class="p">,</span>
+    <span class="n">project_url</span> <span class="o">=</span> <span class="s2">&quot;https://eclipse-score.github.io/&lt;repo name&gt;&quot;</span><span class="p">,</span>
+    <span class="n">external_needs</span> <span class="o">=</span> <span class="p">[</span>
         <span class="s2">&quot;@other_repo:needs_json&quot;</span><span class="p">,</span>  <span class="c1"># Optional, if you have dependencies</span>
     <span class="p">],</span>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>For configuration options see <a class="reference internal" href="../reference/bazel_macros.html#docs-bazel-macros"><span class="std std-ref">Bazel macro: docs</span></a>.</p>
+<p>For configuration options, see <a class="reference internal" href="../reference/bazel_macros.html#docs-bazel-macros"><span class="std std-ref">Bazel macro: docs</span></a>.</p>
 </section>
-<section id="optional-add-conf-py">
-<h3>4. Optional: add conf.py<a class="headerlink" href="#optional-add-conf-py" title="Link to this heading">#</a></h3>
-<p>No <code class="docutils literal notranslate"><span class="pre">conf.py</span></code> is required for the default setup. The <code class="docutils literal notranslate"><span class="pre">docs()</span></code> macro generates
-one from <code class="docutils literal notranslate"><span class="pre">project</span></code> and <code class="docutils literal notranslate"><span class="pre">project_url</span></code>; the Docs-as-Code version and baseline
-extensions are supplied automatically.</p>
-<p>Add a <code class="docutils literal notranslate"><span class="pre">conf.py</span></code> to your source directory only when you need additional Sphinx
-configuration. When it exists, it remains the authoritative configuration.</p>
-<p>A custom <code class="docutils literal notranslate"><span class="pre">conf.py</span></code> applies to this repository’s documentation targets. Its
-effect on integrated documentation depends on the integration path: it affects
-the exported <code class="docutils literal notranslate"><span class="pre">:needs_json</span></code>, but is not transferred when documentation sources
-are mounted as a bundle, where the host configuration applies. Keep custom
-configuration minimal.</p>
 <section id="run-a-documentation-build">
-<h4>5. Run a documentation build:<a class="headerlink" href="#run-a-documentation-build" title="Link to this heading">#</a></h4>
+<h2>4. Run a documentation build<a class="headerlink" href="#run-a-documentation-build" title="Link to this heading">#</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bazel<span class="w"> </span>run<span class="w"> </span>//:docs
 </pre></div>
 </div>
-</section>
-<section id="access-your-documentation-at">
-<h4>6. Access your documentation at<a class="headerlink" href="#access-your-documentation-at" title="Link to this heading">#</a></h4>
-<p><code class="docutils literal notranslate"><span class="pre">/_build/index.html</span></code></p>
-</section>
-</section>
-</section>
-<section id="next-step">
-<h2>Next Step<a class="headerlink" href="#next-step" title="Link to this heading">#</a></h2>
-<p>After basic setup, see <a class="reference internal" href="dashboards_and_quality_gates.html"><span class="doc">Build Dashboards and Quality Gates</span></a> to configure
-traceability dashboards, export <code class="docutils literal notranslate"><span class="pre">metrics.json</span></code>, and enforce CI quality gates in
-consumer repositories.</p>
+<p>Access your documentation at <code class="docutils literal notranslate"><span class="pre">/_build/index.html</span></code>.</p>
 </section>
 </section>
 
@@ -614,20 +564,10 @@ consumer repositories.</p>
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#features">Features</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#module-bazel-file">1. MODULE.bazel file</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bazelrc-file">2. .bazelrc file</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#build-file">3. BUILD file</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#optional-add-conf-py">4. Optional: add conf.py</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#run-a-documentation-build">5. Run a documentation build:</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#access-your-documentation-at">6. Access your documentation at</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#next-step">Next Step</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-bazel-file">1. MODULE.bazel file</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bazelrc-file">2. .bazelrc file</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-file">3. BUILD file</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#run-a-documentation-build">4. Run a documentation build</a></li>
 </ul>
   </nav></div>
 
@@ -635,7 +575,7 @@ consumer repositories.</p>
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/eclipse-score/docs-as-code/edit/main//home/runner/work/docs-as-code/docs-as-code/docs/how-to/setup.md">
+    <a href="https://github.com/eclipse-score/docs-as-code/edit/main//home/runner/work/docs-as-code/docs-as-code/docs/how-to/setup.rst">
       <i class="fa-solid fa-pencil"></i>
       
       

@@ -397,7 +397,6 @@
 <li class="toctree-l1"><a class="reference internal" href="other_modules.html">Reference Other Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cross_module_compatibility.html">Handle Cross-Module Compatibility Findings</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Build Dashboards and Quality Gates</a></li>
-
 <li class="toctree-l1"><a class="reference internal" href="source_to_doc_links.html">Reference Docs in Source Code</a></li>
 <li class="toctree-l1"><a class="reference internal" href="test_to_doc_links.html">Reference Docs in Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="generated_docs.html">Integrate Generated Documentation</a></li>
@@ -483,10 +482,6 @@ repository can:</p>
 <li><p>export <code class="docutils literal notranslate"><span class="pre">needs.json</span></code> and <code class="docutils literal notranslate"><span class="pre">metrics.json</span></code> for machine-readable reporting,</p></li>
 <li><p>gate CI on traceability thresholds via <code class="docutils literal notranslate"><span class="pre">traceability_gate</span></code>.</p></li>
 </ul>
-</section>
-<section id="typical-setup">
-<h2>Typical Setup<a class="headerlink" href="#typical-setup" title="Link to this heading">#</a></h2>
-<p>For details, see <a class="reference internal" href="setup.html#setup"><span class="std std-ref">Setup</span></a>.</p>
 </section>
 <section id="configuration">
 <h2>Configuration<a class="headerlink" href="#configuration" title="Link to this heading">#</a></h2>
@@ -584,12 +579,11 @@ gate thresholds so CI calls a single Bazel target.</p>
 <li><p>Raise thresholds over time as the repository matures.</p></li>
 </ol>
 </section>
-</section>
 <section id="needpie-usage-guide-quick-and-practical">
-<h1>Needpie Usage Guide (Quick and Practical)<a class="headerlink" href="#needpie-usage-guide-quick-and-practical" title="Link to this heading">#</a></h1>
+<h2>Needpie Usage Guide (Quick and Practical)<a class="headerlink" href="#needpie-usage-guide-quick-and-practical" title="Link to this heading">#</a></h2>
 <p>Use these examples as ready-to-copy templates for dashboard-style pie charts.</p>
 <section id="tips-for-readable-charts">
-<h2>Tips for readable charts<a class="headerlink" href="#tips-for-readable-charts" title="Link to this heading">#</a></h2>
+<h3>Tips for readable charts<a class="headerlink" href="#tips-for-readable-charts" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p>Keep labels short and audience-friendly.</p></li>
 <li><p>Put the most important category first.</p></li>
@@ -597,7 +591,7 @@ gate thresholds so CI calls a single Bazel target.</p>
 <li><p>Avoid red/green-only combinations when possible.</p></li>
 </ul>
 <section id="recommended-color-palette">
-<h3>Recommended color palette<a class="headerlink" href="#recommended-color-palette" title="Link to this heading">#</a></h3>
+<h4>Recommended color palette<a class="headerlink" href="#recommended-color-palette" title="Link to this heading">#</a></h4>
 <p>This palette is generally easier to read:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">#4E79A7</span></code> (blue)</p></li>
@@ -608,7 +602,7 @@ gate thresholds so CI calls a single Bazel target.</p>
 </section>
 </section>
 <section id="example-1-overall-view-including-remaining-unlinked">
-<h2>Example 1: Overall view (including remaining/unlinked)<a class="headerlink" href="#example-1-overall-view-including-remaining-unlinked" title="Link to this heading">#</a></h2>
+<h3>Example 1: Overall view (including remaining/unlinked)<a class="headerlink" href="#example-1-overall-view-including-remaining-unlinked" title="Link to this heading">#</a></h3>
 <div class="highlight-rst notranslate"><div class="highlight"><pre><span></span><span class="p">..</span> <span class="ow">needpie</span><span class="p">::</span> Overall Requirement Coverage (non-overlapping)
    <span class="nc">:labels:</span> Remaining (no links), Test Link Only, Code Link Only, Fully Linked (Both)
    <span class="nc">:colors:</span> #4E79A7, #F28E2B, #59A14F, #B07AA1
@@ -625,7 +619,7 @@ gate thresholds so CI calls a single Bazel target.</p>
 <img alt="../_images/need_pie_1943a.svg" id="needpie-how-to/dashboards_and_quality_gates-0" src="../_images/need_pie_1943a.svg" />
 </section>
 <section id="example-2-focused-view-no-total-based-remainder">
-<h2>Example 2: Focused view (no total-based remainder)<a class="headerlink" href="#example-2-focused-view-no-total-based-remainder" title="Link to this heading">#</a></h2>
+<h3>Example 2: Focused view (no total-based remainder)<a class="headerlink" href="#example-2-focused-view-no-total-based-remainder" title="Link to this heading">#</a></h3>
 <p>This chart shows direct values only (no remaining slice):</p>
 <ul class="simple">
 <li><p>tool requirements with test link,</p></li>
@@ -635,13 +629,14 @@ gate thresholds so CI calls a single Bazel target.</p>
 <img alt="../_images/need_pie_2c96e.svg" id="needpie-how-to/dashboards_and_quality_gates-1" src="../_images/need_pie_2c96e.svg" />
 </section>
 <section id="presentation-checklist">
-<h2>Presentation checklist<a class="headerlink" href="#presentation-checklist" title="Link to this heading">#</a></h2>
+<h3>Presentation checklist<a class="headerlink" href="#presentation-checklist" title="Link to this heading">#</a></h3>
 <p>Before publishing, quickly verify:</p>
 <ul class="simple">
 <li><p>labels are understandable for non-technical readers,</p></li>
 <li><p>colors are distinct and readable on your page theme,</p></li>
 <li><p>title clearly says what the chart represents.</p></li>
 </ul>
+</section>
 </section>
 </section>
 
@@ -692,9 +687,7 @@ gate thresholds so CI calls a single Bazel target.</p>
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Build Dashboards and Quality Gates</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-you-get">What You Get</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#typical-setup">Typical Setup</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configuration">Configuration</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#default-behavior-no-configuration-needed">Default Behavior (No Configuration Needed)</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#optional-override-for-requirement-types">Optional Override for Requirement Types</a></li>
@@ -705,20 +698,17 @@ gate thresholds so CI calls a single Bazel target.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#choosing-local-vs-aggregated-views">Choosing Local vs Aggregated Views</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ci-quality-gate">CI Quality Gate</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#recommended-rollout">Recommended Rollout</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#needpie-usage-guide-quick-and-practical">Needpie Usage Guide (Quick and Practical)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tips-for-readable-charts">Tips for readable charts</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#recommended-color-palette">Recommended color palette</a></li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#needpie-usage-guide-quick-and-practical">Needpie Usage Guide (Quick and Practical)</a><ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tips-for-readable-charts">Tips for readable charts</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommended-color-palette">Recommended color palette</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-1-overall-view-including-remaining-unlinked">Example 1: Overall view (including remaining/unlinked)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-2-focused-view-no-total-based-remainder">Example 2: Focused view (no total-based remainder)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#presentation-checklist">Presentation checklist</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example-1-overall-view-including-remaining-unlinked">Example 1: Overall view (including remaining/unlinked)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example-2-focused-view-no-total-based-remainder">Example 2: Focused view (no total-based remainder)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#presentation-checklist">Presentation checklist</a></li>
 </ul>
 </li>
 </ul>
-
   </nav></div>
 
   <div class="sidebar-secondary-item">
