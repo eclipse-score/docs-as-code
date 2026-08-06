@@ -10,17 +10,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-
-# *******************************************************************************
-# Copyright (c) 2026 Contributors to the Eclipse Foundation
-#
-# See the NOTICE file(s) distributed with this work for additional
-# information regarding copyright ownership.
-#
-# This program and the accompanying materials are made available under the
-# terms of the Apache License Version 2.0 which is available at
-# https://www.apache.org/licenses/LICENSE-2.0
-# *******************************************************************************
 """Public docs() smoke scenario."""
 
 from src.tests.docs_bzl.helpers import load_needs_json, run_scenario
@@ -40,5 +29,6 @@ def test_basic_docs_builds_needs_without_conf_py():
     # With no docs/conf.py the generated config is used; it must set a non-empty
     # version so sphinx-needs writes a non-empty current_version into needs.json
     # (an empty current_version makes the file unusable for external consumers).
+    assert result.artifacts is not None, "expected artifacts"
     data = load_needs_json(result.artifacts["needs.json"])
     assert data["current_version"], "current_version must be non-empty"
