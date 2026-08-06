@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Metamodel Types Visualization &#8212; Score Docs-as-Code  documentation</title>
+    <title>Metamodel Types Visualization &#8212; S-CORE Docs-as-Code  documentation</title>
   
   
   
@@ -513,7 +513,7 @@ window.runMermaid = runMermaid;</script>
     <link rel="prev" title="Bazel macro: docs" href="../bazel_macros.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1" />
+  <meta name="docsearch:version" content="" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -954,6 +954,7 @@ gd_req --&gt; workflow : satisfies
 gd_temp --&gt; std_req : complies
 logic_arc_int --&gt; feat_req : fulfils
 logic_arc_int --&gt; feat : included_by
+logic_arc_int --&gt; logic_arc_int_op : includes
 logic_arc_int_op --&gt; logic_arc_int : included_by
 mod --&gt; comp : includes
 mod_ver_report --&gt; mod : belongs_to
@@ -1147,7 +1148,7 @@ workproduct --&gt; std_req : complies
 <tr class="row-even"><td><p>logic_arc_int</p></td>
 <td><p>Logical Interface &amp; Feature Interface View</p></td>
 <td><p>safety, security, status</p></td>
-<td><p>fulfils, included_by</p></td>
+<td><p>fulfils, included_by, includes</p></td>
 </tr>
 <tr class="row-odd"><td><p>logic_arc_int_op</p></td>
 <td><p>Logical Interface Operation</p></td>
