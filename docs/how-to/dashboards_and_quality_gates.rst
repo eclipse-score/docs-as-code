@@ -35,11 +35,6 @@ repository can:
 - export ``needs.json`` and ``metrics.json`` for machine-readable reporting,
 - gate CI on traceability thresholds via ``traceability_gate``.
 
-Typical Setup
--------------
-
-For details, see :ref:`setup`.
-
 Configuration
 -------------
 
