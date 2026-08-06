@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Reference Other Modules &#8212; S-CORE Docs-as-Code  documentation</title>
+    <title>Handle Cross-Module Compatibility Findings &#8212; S-CORE Docs-as-Code  documentation</title>
   
   
   
@@ -62,7 +62,7 @@
     <script src="../_static/sphinx-needs/libs/html/datatables.min.js?v=8a4aee21"></script>
     <script src="../_static/sphinx-needs/libs/html/datatables_loader.js?v=a2cae175"></script>
     <script src="../_static/sphinx-needs/libs/html/sphinx_needs_collapse.js?v=dca66431"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'how-to/other_modules';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'how-to/cross_module_compatibility';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.17.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://eclipse-score.github.io/docs-as-code/versions.json';
@@ -73,8 +73,8 @@
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Handle Cross-Module Compatibility Findings" href="cross_module_compatibility.html" />
-    <link rel="prev" title="Write Documentation" href="write_docs.html" />
+    <link rel="next" title="Build Dashboards and Quality Gates" href="dashboards_and_quality_gates.html" />
+    <link rel="prev" title="Reference Other Modules" href="other_modules.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -394,8 +394,8 @@
 <li class="toctree-l1"><a class="reference internal" href="get_started.html">Getting started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="setup.html">Setup</a></li>
 <li class="toctree-l1"><a class="reference internal" href="write_docs.html">Write Documentation</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Reference Other Modules</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cross_module_compatibility.html">Handle Cross-Module Compatibility Findings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="other_modules.html">Reference Other Modules</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Handle Cross-Module Compatibility Findings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dashboards_and_quality_gates.html">Build Dashboards and Quality Gates</a></li>
 
 <li class="toctree-l1"><a class="reference internal" href="source_to_doc_links.html">Reference Docs in Source Code</a></li>
@@ -446,7 +446,7 @@
     
     <li class="breadcrumb-item"><a href="index.html" class="nav-link">How To</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Reference Other Modules</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Handle Cross-Module Compatibility Findings</span></li>
   </ul>
 </nav>
 </div>
@@ -463,83 +463,65 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="reference-other-modules">
-<h1>Reference Other Modules<a class="headerlink" href="#reference-other-modules" title="Link to this heading">#</a></h1>
-<p>This document explains how to enable cross-module (bi-directional) linking between documentation modules with Sphinx-Needs in this project.
-In short:</p>
-<ol class="arabic simple">
-<li><p>Make the other module available to Bazel via the <cite>MODULE</cite> (aka <cite>MODULE.bazel</cite>) file.</p></li>
-<li><p>Choose one integration mode: import its built <code class="docutils literal notranslate"><span class="pre">needs.json</span></code> <strong>or</strong> mount its
-documentation sources.</p></li>
-<li><p>Reference Needs using the normal Sphinx-Needs referencing syntax.</p></li>
-</ol>
-<section id="details-and-example">
-<h2>Details and Example<a class="headerlink" href="#details-and-example" title="Link to this heading">#</a></h2>
-<section id="include-the-other-module-in-module-bazel">
-<h3>1) Include the other module in <cite>MODULE.bazel</cite><a class="headerlink" href="#include-the-other-module-in-module-bazel" title="Link to this heading">#</a></h3>
-<p>The consumer module must declare the other modules as dependencies in the <cite>MODULE.bazel</cite> file so Bazel can fetch them.
-There are multiple ways to do this depending on how you manage third-party/local modules (git, local overrides, etc.).</p>
-<p>A minimal example (add or extend the existing <cite>bazel_deps</cite> stanza):</p>
-<div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="n">bazel_dep</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;score_process&quot;</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;1.5.3&quot;</span><span class="p">)</span>
+  <section id="handle-cross-module-compatibility-findings">
+<h1>Handle Cross-Module Compatibility Findings<a class="headerlink" href="#handle-cross-module-compatibility-findings" title="Link to this heading">#</a></h1>
+<p>Use this guide when mounting documentation from another module causes a
+metamodel or Sphinx-Needs validation failure. The goal is to keep the
+integration build working while making the incompatibility visible and tracking
+the supplier upgrade needed to remove it.</p>
+<section id="identify-the-failing-compatibility-category">
+<h2>1. Identify the failing compatibility category<a class="headerlink" href="#identify-the-failing-compatibility-category" title="Link to this heading">#</a></h2>
+<p>Build the documentation as usual:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bazel<span class="w"> </span>run<span class="w"> </span>//:docs
 </pre></div>
 </div>
+<p>By default, all validation findings fail the build. Check the build output to
+identify whether the mounted module has a missing mandatory attribute, a
+missing mandatory link, or an exact version condition that no longer matches.</p>
 </section>
-<section id="a-import-the-other-module-s-built-inventory">
-<h3>2a) Import the other module’s built inventory<a class="headerlink" href="#a-import-the-other-module-s-built-inventory" title="Link to this heading">#</a></h3>
-<p>The documentation build is exposed via a Bazel macro that accepts an <code class="docutils literal notranslate"><span class="pre">external_needs</span></code> parameter
-for external <code class="docutils literal notranslate"><span class="pre">:needs_json_file</span></code> targets.
-Use <code class="docutils literal notranslate"><span class="pre">external_needs</span></code> instead of <code class="docutils literal notranslate"><span class="pre">data</span></code> when the target produces needs JSON —
-<code class="docutils literal notranslate"><span class="pre">data</span></code> is meant for non-needs runfiles (e.g. custom tool outputs).</p>
-<p>Example <cite>BUILD</cite> snippet (consumer module):</p>
-<div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;@score_docs_as_code//:docs.bzl&quot;</span><span class="p">,</span> <span class="s2">&quot;docs&quot;</span><span class="p">)</span>
-<span class="n">docs</span><span class="p">(</span>
-  <span class="n">external_needs</span> <span class="o">=</span> <span class="p">[</span>
-     <span class="s2">&quot;@score_process//:needs_json&quot;</span><span class="p">,</span>
-  <span class="p">],</span>
-  <span class="n">source_dir</span> <span class="o">=</span> <span class="s2">&quot;docs&quot;</span><span class="p">,</span>
-<span class="p">)</span>
+<section id="allow-only-the-affected-category">
+<h2>2. Allow only the affected category<a class="headerlink" href="#allow-only-the-affected-category" title="Link to this heading">#</a></h2>
+<p>Add the corresponding temporary setting to the consumer’s <code class="docutils literal notranslate"><span class="pre">docs/conf.py</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Use only the setting that matches the finding.</span>
+<span class="n">score_cross_module_compatibility_allow_missing_mandatory_attributes</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">score_cross_module_compatibility_allow_missing_mandatory_links</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">score_cross_module_compatibility_allow_version_mismatches</span> <span class="o">=</span> <span class="kc">True</span>
 </pre></div>
 </div>
+<p>Choose the setting that matches the failure:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">score_cross_module_compatibility_allow_missing_mandatory_attributes</span></code> for
+a required attribute missing in an external module;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">score_cross_module_compatibility_allow_missing_mandatory_links</span></code> for a
+required link missing in an external module; or</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">score_cross_module_compatibility_allow_version_mismatches</span></code> for an exact
+link condition such as <code class="docutils literal notranslate"><span class="pre">target[version==1]</span></code> that does not match an external
+endpoint.</p></li>
+</ul>
+<p>Do not enable a category merely to suppress an unrelated local validation
+failure: local findings remain fatal.</p>
 </section>
-<section id="b-mount-the-external-module-s-documentation-bundle">
-<h3>2b) Mount the external module’s documentation bundle<a class="headerlink" href="#b-mount-the-external-module-s-documentation-bundle" title="Link to this heading">#</a></h3>
-<p>The documentation build in this project is exposed via a Bazel macro that accepts
-a <code class="docutils literal notranslate"><span class="pre">bundles</span></code> parameter. Mount the external module’s auto-exposed
-<code class="docutils literal notranslate"><span class="pre">:docs_bundle</span></code> bundle. The mounted sources define their needs in the host
-build, so do <strong>not</strong> also add that module’s <code class="docutils literal notranslate"><span class="pre">:needs_json</span></code> to <code class="docutils literal notranslate"><span class="pre">data</span></code> — doing
-so would create duplicate need IDs.</p>
-<p>Example <cite>BUILD</cite> snippet (consumer module):</p>
-<div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;@score_docs_as_code//:docs.bzl&quot;</span><span class="p">,</span> <span class="s2">&quot;docs&quot;</span><span class="p">)</span>
-<span class="n">docs</span><span class="p">(</span>
-  <span class="n">bundles</span> <span class="o">=</span> <span class="p">[</span>
-      <span class="p">{</span>
-          <span class="s2">&quot;bundle&quot;</span><span class="p">:</span> <span class="s2">&quot;@score_process//:docs_bundle&quot;</span><span class="p">,</span>
-          <span class="s2">&quot;mount_at&quot;</span><span class="p">:</span> <span class="s2">&quot;process&quot;</span><span class="p">,</span>
-          <span class="s2">&quot;attach_to&quot;</span><span class="p">:</span> <span class="s2">&quot;index&quot;</span><span class="p">,</span>
-      <span class="p">},</span>
-  <span class="p">],</span>
-  <span class="n">source_dir</span> <span class="o">=</span> <span class="s2">&quot;docs&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<p>See <a class="reference internal" href="mounts/index.html#howto-mount-external-sources"><span class="std std-ref">Mount docs bundles</span></a> for the full mount reference, and
-<a class="reference internal" href="../concepts/bidirectional_traceability.html#docs-bidirectional-traceability"><span class="std std-ref">Bi-directional Traceability</span></a> for more on cross-module linking.</p>
+<section id="review-the-generated-findings">
+<h2>3. Review the generated findings<a class="headerlink" href="#review-the-generated-findings" title="Link to this heading">#</a></h2>
+<p>Build again. The HTML landing page warns when compatibility findings exist, and
+the HTML output directory contains:</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">compatibility-findings.json</span></code></dt><dd><p>Use this machine-readable report in CI or issue tracking. Each finding
+identifies the owning module, source need, optional target need, category,
+and message.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">compatibility-findings.html</span></code></dt><dd><p>Open this report to review findings grouped by supplying module.</p>
+</dd>
+</dl>
 </section>
-<section id="reference-needs-across-modules">
-<h3>3) Reference needs across modules<a class="headerlink" href="#reference-needs-across-modules" title="Link to this heading">#</a></h3>
-<p>Once the other module’s are defined as dependencies as explained above, you can reference their needs IDs in the usual Sphinx-Needs way.
-The important part is that the inventory name that Sphinx-Needs looks up matches the module that produced the needs entries.</p>
-<p>Example in reStructuredText:</p>
-<div class="highlight-rst notranslate"><div class="highlight"><pre><span></span>See the requirement <span class="na">:need:</span><span class="nv">`gd_req__req_traceability`</span>, for example.
-</pre></div>
-</div>
-<p>Which results in:</p>
-<blockquote>
-<div><p>See the requirement <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_traceability">gd_req__req_traceability</a>, for example.</p>
-</div></blockquote>
-<p>See the <a class="reference external" href="https://sphinx-needs.readthedocs.io/en/latest/">Sphinx-Needs documentation</a>
-for more details on cross-referencing needs.</p>
-</section>
+<section id="remove-the-temporary-allowance">
+<h2>4. Remove the temporary allowance<a class="headerlink" href="#remove-the-temporary-allowance" title="Link to this heading">#</a></h2>
+<p>Update or coordinate with the supplying module so that it meets the integrated
+baseline. Then remove the corresponding setting from <code class="docutils literal notranslate"><span class="pre">conf.py</span></code> and rebuild.
+The build must pass with the default strict validation before the compatibility
+work is complete.</p>
+<p>For the policy behind these settings and their exact scope, see
+<a class="reference internal" href="../concepts/cross_module_compatibility.html"><span class="doc">Cross-Module Compatibility</span></a>.</p>
 </section>
 </section>
 
@@ -554,20 +536,20 @@ for more details on cross-referencing needs.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="write_docs.html"
+       href="other_modules.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Write Documentation</p>
+        <p class="prev-next-title">Reference Other Modules</p>
       </div>
     </a>
     <a class="right-next"
-       href="cross_module_compatibility.html"
+       href="dashboards_and_quality_gates.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Handle Cross-Module Compatibility Findings</p>
+        <p class="prev-next-title">Build Dashboards and Quality Gates</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -590,13 +572,10 @@ for more details on cross-referencing needs.</p>
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#details-and-example">Details and Example</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#include-the-other-module-in-module-bazel">1) Include the other module in <cite>MODULE.bazel</cite></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-import-the-other-module-s-built-inventory">2a) Import the other module’s built inventory</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#b-mount-the-external-module-s-documentation-bundle">2b) Mount the external module’s documentation bundle</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reference-needs-across-modules">3) Reference needs across modules</a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#identify-the-failing-compatibility-category">1. Identify the failing compatibility category</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#allow-only-the-affected-category">2. Allow only the affected category</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#review-the-generated-findings">3. Review the generated findings</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#remove-the-temporary-allowance">4. Remove the temporary allowance</a></li>
 </ul>
   </nav></div>
 
@@ -604,7 +583,7 @@ for more details on cross-referencing needs.</p>
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/eclipse-score/docs-as-code/edit/main//home/runner/work/docs-as-code/docs-as-code/docs/how-to/other_modules.rst">
+    <a href="https://github.com/eclipse-score/docs-as-code/edit/main//home/runner/work/docs-as-code/docs-as-code/docs/how-to/cross_module_compatibility.rst">
       <i class="fa-solid fa-pencil"></i>
       
       

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Setup &#8212; Score Docs-as-Code  documentation</title>
+    <title>Setup &#8212; S-CORE Docs-as-Code  documentation</title>
   
   
   
@@ -77,7 +77,7 @@
     <link rel="prev" title="Getting started" href="get_started.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1" />
+  <meta name="docsearch:version" content="" />
   
     
     <script src="../_static/searchtools.js"></script>
@@ -395,6 +395,7 @@
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Setup</a></li>
 <li class="toctree-l1"><a class="reference internal" href="write_docs.html">Write Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="other_modules.html">Reference Other Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cross_module_compatibility.html">Handle Cross-Module Compatibility Findings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dashboards_and_quality_gates.html">Build Dashboards and Quality Gates</a></li>
 
 <li class="toctree-l1"><a class="reference internal" href="source_to_doc_links.html">Reference Docs in Source Code</a></li>
@@ -524,6 +525,8 @@ but that requires some configuration in your <code class="docutils literal notra
 
 <span class="n">docs</span><span class="p">(</span>
     <span class="n">source_dir</span> <span class="o">=</span> <span class="s2">&quot;&lt;your sphinx source dir&gt;&quot;</span><span class="p">,</span>
+    <span class="n">project</span> <span class="o">=</span> <span class="s2">&quot;&lt;your project name&gt;&quot;</span><span class="p">,</span>
+    <span class="n">project_url</span> <span class="o">=</span> <span class="s2">&quot;https://github.com/eclipse-score/&lt;your-project&gt;&quot;</span><span class="p">,</span>
     <span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
         <span class="s2">&quot;@other_repo:needs_json&quot;</span><span class="p">,</span>  <span class="c1"># Optional, if you have dependencies</span>
     <span class="p">],</span>
@@ -532,9 +535,18 @@ but that requires some configuration in your <code class="docutils literal notra
 </div>
 <p>For configuration options see <a class="reference internal" href="../reference/bazel_macros.html#docs-bazel-macros"><span class="std std-ref">Bazel macro: docs</span></a>.</p>
 </section>
-<section id="copy-conf-py">
-<h3>4. Copy conf.py<a class="headerlink" href="#copy-conf-py" title="Link to this heading">#</a></h3>
-<p>Copy the <code class="docutils literal notranslate"><span class="pre">conf.py</span></code> file from the <code class="docutils literal notranslate"><span class="pre">docs-as-code</span></code> module to your <code class="docutils literal notranslate"><span class="pre">source_dir</span></code>.</p>
+<section id="optional-add-conf-py">
+<h3>4. Optional: add conf.py<a class="headerlink" href="#optional-add-conf-py" title="Link to this heading">#</a></h3>
+<p>No <code class="docutils literal notranslate"><span class="pre">conf.py</span></code> is required for the default setup. The <code class="docutils literal notranslate"><span class="pre">docs()</span></code> macro generates
+one from <code class="docutils literal notranslate"><span class="pre">project</span></code> and <code class="docutils literal notranslate"><span class="pre">project_url</span></code>; the Docs-as-Code version and baseline
+extensions are supplied automatically.</p>
+<p>Add a <code class="docutils literal notranslate"><span class="pre">conf.py</span></code> to your source directory only when you need additional Sphinx
+configuration. When it exists, it remains the authoritative configuration.</p>
+<p>A custom <code class="docutils literal notranslate"><span class="pre">conf.py</span></code> applies to this repository’s documentation targets. Its
+effect on integrated documentation depends on the integration path: it affects
+the exported <code class="docutils literal notranslate"><span class="pre">:needs_json</span></code>, but is not transferred when documentation sources
+are mounted as a bundle, where the host configuration applies. Keep custom
+configuration minimal.</p>
 <section id="run-a-documentation-build">
 <h4>5. Run a documentation build:<a class="headerlink" href="#run-a-documentation-build" title="Link to this heading">#</a></h4>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bazel<span class="w"> </span>run<span class="w"> </span>//:docs
@@ -608,7 +620,7 @@ consumer repositories.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#module-bazel-file">1. MODULE.bazel file</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bazelrc-file">2. .bazelrc file</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#build-file">3. BUILD file</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#copy-conf-py">4. Copy conf.py</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#optional-add-conf-py">4. Optional: add conf.py</a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#run-a-documentation-build">5. Run a documentation build:</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#access-your-documentation-at">6. Access your documentation at</a></li>
 </ul>
