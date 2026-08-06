@@ -16,5 +16,6 @@
 
 project = {PROJECT}
 project_url = {PROJECT_URL}
+version = "0.0.0"
 
 extensions = ["score_sphinx_bundle"]
