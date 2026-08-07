@@ -13,24 +13,8 @@
 
 load("//:docs.bzl", "docs_bundle")
 
-# The mount feature's own documentation, mounted back into the site via the
-# mount feature itself (dogfooding). One subdirectory per bundle: mounts are
-# directory-scoped, so co-locating both files in one dir would graft both at
-# each mount point.
 docs_bundle(
-    name = "concept",
-    source_dir = "concept",
-    visibility = ["//visibility:public"],
-)
-
-docs_bundle(
-    name = "howto",
-    source_dir = "howto",
-    visibility = ["//visibility:public"],
-)
-
-docs_bundle(
-    name = "internals",
-    source_dir = "internals",
+    name = "extensions",
+    source_dir = "",
     visibility = ["//visibility:public"],
 )

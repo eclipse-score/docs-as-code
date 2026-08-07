@@ -27,16 +27,8 @@ docs(
     ],
     bundles = [
         {
-            "bundle": "//src/extensions/score_mounts/docs:concept",
-            "mount_at": "concepts/mounts",
-        },
-        {
-            "bundle": "//src/extensions/score_mounts/docs:howto",
-            "mount_at": "how-to/mounts",
-        },
-        {
-            "bundle": "//src/extensions/score_mounts/docs:internals",
-            "mount_at": "internals/extensions/mounts",
+            "bundle": "//src/extensions/docs:extensions",
+            "mount_at": "internals/extensions",
         },
         {
             "bundle": "//src/extensions/score_metamodel/docs:metamodel",
@@ -44,7 +36,7 @@ docs(
             "attach_to": "reference/index",
         },
     ],
-    scan_code = [
+    code_targets = [
         "//scripts_bazel:sources",
         "//src:all_sources",
     ],

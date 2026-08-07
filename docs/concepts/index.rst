@@ -24,3 +24,4 @@ Here you find explanations how and why docs-as-code works the way it does.
    bidirectional_traceability
    cross_module_compatibility
    docs_deps
+   mounts/index
