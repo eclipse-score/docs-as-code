@@ -47,6 +47,8 @@ class NeedLink:
     repo_name: str = "local_repo"
     hash: str = ""
     url: str = ""
+    bazel_target: str = ""
+    bazel_type: str = ""
 
     # Adding hashing & equality as this is needed to make comparisions.
     # Since the Dataclass is not 'frozen = true' it isn't automatically hashable
@@ -62,6 +64,8 @@ class NeedLink:
                 self.repo_name,
                 self.hash,
                 self.url,
+                self.bazel_target,
+                self.bazel_type,
             )
         )
 
@@ -77,6 +81,8 @@ class NeedLink:
             and self.repo_name == other.repo_name
             and self.hash == other.hash
             and self.url == other.url
+            and self.bazel_target == other.bazel_target
+            and self.bazel_type == other.bazel_type
         )
 
     # Normal 'dictionary conversion'. Converts all fields
@@ -129,6 +135,8 @@ def needlink_decoder(d: dict[str, Any]) -> NeedLink | dict[str, Any]:
             repo_name=d.get("repo_name", ""),
             hash=d.get("hash", ""),
             url=d.get("url", ""),
+            bazel_target=d.get("bazel_target", ""),
+            bazel_type=d.get("bazel_type", ""),
         )
     # It's something else, pass it on to other decoders
     return d

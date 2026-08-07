@@ -11,4 +11,4 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-# req-traceability: REQ_CHILD
+# req-traceability: doc_concept__child

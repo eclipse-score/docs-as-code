@@ -53,3 +53,29 @@ def create_mounts_manifest(name, bundle):
         bundle = bundle,
     )
     return ":" + name
+
+def _bundle_target_manifest_impl(ctx):
+    """Write the code targets associated with each documentation-tree subtree."""
+    mappings = []
+    for entry in ctx.attr.bundle[DocsBundleInfo].entries:
+        if entry.code_targets:
+            mappings.append({
+                "mount_at": entry.mount_at,
+                "targets": [
+                    {"bazel_target": target.label, "bazel_type": target.type}
+                    for target in entry.code_targets
+                ],
+            })
+    out = ctx.actions.declare_file(ctx.label.name + ".json")
+    ctx.actions.write(out, json.encode({"mappings": mappings}))
+    return [DefaultInfo(files = depset([out]))]
+
+_bundle_target_manifest = rule(
+    implementation = _bundle_target_manifest_impl,
+    attrs = {"bundle": attr.label(providers = [DocsBundleInfo])},
+    doc = "Writes Bazel target metadata associated with documentation bundles.",
+)
+
+def create_bundle_target_manifest(name, bundle):
+    _bundle_target_manifest(name = name, bundle = bundle)
+    return ":" + name

@@ -135,6 +135,44 @@ def test_generate_sourcelinks_cli_parses_cpp_traceability_tag(
     assert data[1]["need"] == "tool_req__docs_arch_types"
 
 
+def test_generate_sourcelinks_cli_adds_bazel_target_metadata(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    test_file = tmp_path / "test_source.cc"
+    test_file.write_text("// req-Id: tool_req__docs_arch_types\n")
+    target_map = tmp_path / "targets.json"
+    target_map.write_text(
+        json.dumps(
+            [
+                {
+                    "file": str(test_file),
+                    "bazel_target": "//components/filesystem:filesystem",
+                    "bazel_type": "cc_library",
+                }
+            ]
+        )
+    )
+    output_file = tmp_path / "output.json"
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            str(_MY_PATH.parent / "generate_sourcelinks_cli.py"),
+            "--output",
+            str(output_file),
+            "--target-map",
+            str(target_map),
+            str(test_file),
+        ],
+    )
+
+    assert scripts_bazel.generate_sourcelinks_cli.main() == 0
+    data = json.loads(output_file.read_text())
+    assert data[1]["bazel_target"] == "//components/filesystem:filesystem"
+    assert data[1]["bazel_type"] == "cc_library"
+
+
 def test_generate_sourcelinks_cli_parse_external_module(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ):
