@@ -59,6 +59,13 @@ def find_git_root() -> Path | None:
     start_path = find_ws_root()
     if start_path is None:
         start_path = Path.cwd()
+        if "execroot" in start_path.resolve().parts:
+            # Build actions do not receive BUILD_WORKSPACE_DIRECTORY. Their
+            # working directory is below Bazel's execroot, so walking parents
+            # can escape the sandbox and find an unrelated host Git worktree.
+            # Treat this as no worktree instead; bazel run uses the explicit
+            # workspace directory and never takes this fallback path.
+            return None
     git_root = Path(start_path).resolve()
     while not (git_root / ".git").exists():
         git_root = git_root.parent
