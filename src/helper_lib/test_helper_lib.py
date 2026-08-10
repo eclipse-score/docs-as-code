@@ -20,6 +20,7 @@ import pytest
 
 from src.helper_lib import (
     config_setdefault,
+    find_git_root,
     get_current_git_hash,
     get_github_repo_info,
     get_runfiles_dir,
@@ -80,6 +81,21 @@ def git_repo(temp_dir: Path) -> Path:
         check=True,
     )
     return git_dir
+
+
+def test_find_git_root_ignores_bazel_sandbox_ancestor_git_repo(
+    temp_dir: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A sandbox must not discover a Git repository outside its execroot."""
+    (temp_dir / ".git").mkdir()
+    sandbox_dir = temp_dir / "sandbox" / "linux-sandbox" / "1" / "execroot" / "_main"
+    sandbox_dir.mkdir(parents=True)
+    monkeypatch.chdir(sandbox_dir)
+    monkeypatch.delenv("BUILD_WORKSPACE_DIRECTORY", raising=False)
+    monkeypatch.delenv("RUNFILES_MANIFEST_FILE", raising=False)
+    monkeypatch.setenv("RUNFILES_DIR", str(temp_dir / "runfiles"))
+
+    assert find_git_root() is None
 
 
 @pytest.fixture

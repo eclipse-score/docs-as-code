@@ -58,11 +58,19 @@ def find_git_root() -> Path | None:
     """
     start_path = find_ws_root()
     if start_path is None:
+        # Bazel-built Python executables receive a runfiles environment. A
+        # build action has no BUILD_WORKSPACE_DIRECTORY, so falling back to its
+        # cwd could escape the action root and discover an unrelated host Git
+        # worktree. ``bazel run`` takes the workspace path above instead.
+        if Runfiles.Create() is not None:
+            return None
+
         start_path = Path.cwd()
-    git_root = Path(start_path).resolve()
+
+    git_root = start_path.resolve()
     while not (git_root / ".git").exists():
         git_root = git_root.parent
-        if git_root == Path("/"):
+        if git_root == git_root.parent:
             return None
     return git_root
 
