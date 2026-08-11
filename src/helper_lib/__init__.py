@@ -14,6 +14,7 @@
 import os
 import subprocess
 import sys
+from enum import Enum
 from pathlib import Path
 from typing import Any
 
@@ -22,6 +23,12 @@ from sphinx.config import Config
 from sphinx_needs.logging import get_logger
 
 LOGGER = get_logger(__name__)
+
+
+class ExecutionEnvironment(Enum):
+    BAZEL_RUN = "bazel_run"
+    BAZEL_BUILD = "bazel_build"
+    DIRECT = "direct"
 
 
 def config_setdefault(config: Config, name: str, value: Any) -> None:
@@ -47,6 +54,15 @@ def find_ws_root() -> Path | None:
     return Path(ws_dir) if ws_dir else None
 
 
+def identify_environment() -> ExecutionEnvironment:
+    """Identify how the current Python process was started."""
+    if find_ws_root() is not None:
+        return ExecutionEnvironment.BAZEL_RUN
+    if Runfiles.Create() is not None:
+        return ExecutionEnvironment.BAZEL_BUILD
+    return ExecutionEnvironment.DIRECT
+
+
 def find_git_root() -> Path | None:
     """
     Find the git root directory, starting from workspace root or current directory.
@@ -56,16 +72,17 @@ def find_git_root() -> Path | None:
     - 'bazel build' => ❌ None (sandbox has no .git)
     - 'direct sphinx' => ✅ Git root path (fallback to cwd)
     """
-    start_path = find_ws_root()
-    if start_path is None:
-        # Bazel-built Python executables receive a runfiles environment. A
-        # build action has no BUILD_WORKSPACE_DIRECTORY, so falling back to its
-        # cwd could escape the action root and discover an unrelated host Git
-        # worktree. ``bazel run`` takes the workspace path above instead.
-        if Runfiles.Create() is not None:
+    match identify_environment():
+        case ExecutionEnvironment.BAZEL_RUN:
+            # A Bazel workspace can be nested inside a larger Git repository,
+            # so the workspace is only the starting point for the search below.
+            start_path = find_ws_root()
+            assert start_path is not None
+        case ExecutionEnvironment.BAZEL_BUILD:
+            # Bazel build actions run inside a sandbox without a Git worktree.
             return None
-
-        start_path = Path.cwd()
+        case ExecutionEnvironment.DIRECT:
+            start_path = Path.cwd()
 
     git_root = start_path.resolve()
     while not (git_root / ".git").exists():
