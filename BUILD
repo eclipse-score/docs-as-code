@@ -14,9 +14,14 @@
 load("//:docs.bzl", "docs")
 
 package(default_visibility = ["//visibility:public"])
-exports_files(["pyproject.toml"])
+exports_files([
+    "default_conf.py.tpl",
+    "pyproject.toml",
+])
 
 docs(
+    project = "S-CORE Docs-as-Code",
+    project_url = "https://eclipse-score.github.io/docs-as-code",
     external_needs = [
         "@score_process//:needs_json_file",
     ],
@@ -32,6 +37,11 @@ docs(
         {
             "bundle": "//src/extensions/score_mounts/docs:internals",
             "mount_at": "internals/extensions/mounts",
+        },
+        {
+            "bundle": "//src/extensions/score_metamodel/docs:metamodel",
+            "mount_at": "reference/metamodel",
+            "attach_to": "reference/index",
         },
     ],
     scan_code = [

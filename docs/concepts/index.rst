@@ -22,4 +22,5 @@ Here you find explanations how and why docs-as-code works the way it does.
    :maxdepth: 1
 
    bidirectional_traceability
+   cross_module_compatibility
    docs_deps

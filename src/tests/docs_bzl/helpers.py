@@ -153,11 +153,15 @@ def built_output(package: str, filename: str) -> Path:
     return root / "bazel-bin" / TEST_ROOT.relative_to(root) / package / filename
 
 
-def load_needs(needs_json: Path) -> dict[str, object]:
+def load_needs_json(needs_json: Path) -> dict[str, object]:
     raw_data: object = json.loads(needs_json.read_text(encoding="utf-8"))
     if not isinstance(raw_data, dict):
         raise ValueError("needs.json must be an object")
-    data = cast("dict[str, object]", raw_data)
+    return cast("dict[str, object]", raw_data)
+
+
+def load_needs(needs_json: Path) -> dict[str, object]:
+    data = load_needs_json(needs_json)
     needs: dict[str, object] = {}
     versions = data.get("versions", {})
     if not isinstance(versions, dict):

@@ -15,15 +15,12 @@
 Getting started
 ===============
 
-In an existing S-CORE repository, you can build the documentation using Bazel:
+In an existing S-CORE repository, build the documentation by using Bazel:
 
 .. code-block:: bash
 
    bazel run //:docs
 
-Open the generated site at ``_build/index.html`` in your browser.
+Open the file ``_build/index.html`` in your browser.
 
-In a new S-CORE repository, see :ref:`setup`.
-
-After the initial setup, continue with :doc:`dashboards_and_quality_gates` to
-build a repository dashboard and enforce CI quality gates.
+In a new S-CORE repository, read :doc:`setup`.

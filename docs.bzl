@@ -61,7 +61,32 @@ load(
     "create_mounts_manifest",
 )
 
-def docs_bundle(name, source_dir = None, entry_doc = "index", bundles = [], scan_code = [], code_targets = [], visibility = None, **kwargs):
+def _generated_conf_impl(ctx):
+    output = ctx.actions.declare_file(ctx.attr.output_path)
+    ctx.actions.expand_template(
+        template = ctx.file.template,
+        output = output,
+        substitutions = {
+            "{PROJECT}": repr(ctx.attr.project),
+            "{PROJECT_URL}": repr(ctx.attr.project_url),
+        },
+    )
+    return [DefaultInfo(files = depset([output]))]
+
+_generated_conf = rule(
+    implementation = _generated_conf_impl,
+    attrs = {
+        "project": attr.string(mandatory = True),
+        "project_url": attr.string(mandatory = True),
+        "output_path": attr.string(mandatory = True),
+        "template": attr.label(
+            allow_single_file = True,
+            default = Label("@score_docs_as_code//:default_conf.py.tpl"),
+        ),
+    },
+)
+
+def docs_bundle(name, source_dir = None, data = [], entry_doc = "index", bundles = [], scan_code = [], code_targets = [], visibility = None, **kwargs):
     """A docs bundle, optionally composed of others.
 
     Args:
@@ -69,6 +94,9 @@ def docs_bundle(name, source_dir = None, entry_doc = "index", bundles = [], scan
       source_dir: optional directory holding this bundle's own doc sources. It is
         globbed like `docs()` (same file kinds) and the contents are stored after
         stripping the `source_dir` prefix. Leave it unset for a pure aggregator.
+      data:
+        Additional data dependencies for this target.
+        Useful for generated rst sources.
       entry_doc: bundle-relative docname attached when this bundle is mounted.
         Defaults to `index`.
       bundles: nested bundles to compose, each a dict
@@ -113,6 +141,7 @@ def docs_bundle(name, source_dir = None, entry_doc = "index", bundles = [], scan
         strip_prefix = strip_prefix,
         entry_doc = entry_doc,
         bundles = bundles,
+        data = data,
         visibility = visibility,
         **kwargs
     )
@@ -150,6 +179,8 @@ def _missing_requirements(deps):
 
 def docs(
         source_dir = "docs",
+        project = None,
+        project_url = None,
         data = [],
         deps = [],
         external_needs = [],
@@ -166,6 +197,8 @@ def docs(
 
     Args:
       source_dir: The source directory containing documentation files. Defaults to "docs".
+      project: optional project name, prefer setting this here if you can avoid having a conf.py
+      project_url: Optional project URL, prefer setting this here if you can avoid having a conf.py
       data: Additional data files to include in the documentation build.
       deps: Additional dependencies for the documentation build.
       external_needs: List of external needs targets to include in the documentation build.
@@ -191,7 +224,23 @@ def docs(
     """
     # HINT: keep documentation sync docs/reference/bazel_macros.rst
 
-    source_config = ":" + ("" if source_dir == "." else source_dir + "/") + "conf.py"
+    config_file_path = join_path(source_dir, "conf.py")
+    sphinx_config = ":" + config_file_path
+    config_is_generated = len(native.glob([config_file_path], allow_empty = True)) == 0
+
+    if config_is_generated:
+        if not project or not project_url:
+            fail("docs(): no " + config_file_path + " found; provide both project and project_url to docs().")
+        # Generate the config at the source-root location expected by
+        # sphinx_docs: that rule treats the config file's directory as the
+        # Sphinx source directory.
+        _generated_conf(
+            name = "_docs_generated_config",
+            project = project,
+            project_url = project_url,
+            output_path = config_file_path,
+        )
+        sphinx_config = ":_docs_generated_config"
 
     # Convention in this macro: an optional Bazel label is named ``*_label``
     # but represented as a 0/1 list. This lets it be appended directly to
@@ -252,11 +301,18 @@ def docs(
         visibility = ["//visibility:private"],
     )
 
-    # ``bazel run`` reads local documentation from the workspace. Passing the
-    # complete bundle here would add those files to runfiles and could collide
-    # with the executable target name (for example ``docs`` and ``docs/``).
-    # External bundles do need runfiles, so keep only those sources.
-    docs_data = data + external_needs + metamodel_label + [":sourcelinks_json", ":_external_docs_runfiles"] + mounts_manifest_label
+    # ``bazel run`` reads local documentation from the workspace, so including
+    # the complete bundle in runfiles would duplicate those sources. External
+    # bundles do need runfiles, so keep only those sources.
+    docs_data = (
+        data + external_needs + metamodel_label +
+        [":sourcelinks_json", ":_external_docs_runfiles"] +
+        mounts_manifest_label
+    )
+    if config_is_generated:
+        # A source configuration is read from the workspace; only the
+        # generated configuration must be present in the runfiles tree.
+        docs_data += [sphinx_config]
 
     docs_env = {
         "SOURCE_DIRECTORY": source_dir,
@@ -269,6 +325,10 @@ def docs(
         "MOUNTS_MANIFEST": "$(rlocationpath :_mounts_manifest)" if bundles else "",
         "SCORE_SOURCELINKS": "$(location :sourcelinks_json)",
     }
+    if config_is_generated:
+        # The generated file is named conf.py. Run targets pass its containing
+        # directory to Sphinx via -c.
+        docs_env["SPHINX_CONFIG_FILE"] = "$(rlocationpath " + sphinx_config + ")"
     if metamodel:
         # The interactive ``py_binary`` targets run from a runfiles tree.
         # incremental.py resolves this logical path through ``RUNFILES_DIR``.
@@ -281,12 +341,20 @@ def docs(
     docs_env["ACTION"] = "incremental"
 
     py_binary(
-        name = "docs",
-        tags = ["cli_help=Build documentation:\nbazel run //:docs"],
+        # Generated documentation artifacts may live below ``docs/``.  A
+        # py_binary named ``docs`` would own the conflicting Bazel output path
+        # ``docs``; expose this binary via the alias below instead.
+        name = "_score_docs_cli",
         srcs = [incremental_src],
         data = docs_data,
         deps = deps,
         env = docs_env
+    )
+
+    native.alias(
+        name = "docs",
+        actual = ":_score_docs_cli",
+        tags = ["cli_help=Build documentation:\nbazel run //:docs"],
     )
 
     docs_env["ACTION"] = "linkcheck"
@@ -331,7 +399,7 @@ def docs(
     sphinx_docs(
         name = "needs_json",
         srcs = [":docs_bundle"],
-        config = source_config,
+        config = sphinx_config,
         extra_opts = [
             "-W",
             "--keep-going",

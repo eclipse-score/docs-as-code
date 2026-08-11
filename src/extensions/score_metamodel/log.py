@@ -14,6 +14,7 @@ import os
 from typing import Any
 
 from docutils.nodes import Node
+from score_cross_module_compatibility import CompatibilityReporter
 from sphinx_needs import logging
 from sphinx_needs.logging import SphinxLoggerAdapter
 from sphinx_needs.need_item import NeedItem
@@ -24,12 +25,18 @@ logger = logging.get_logger(__name__)
 
 
 class CheckLogger:
-    def __init__(self, log: SphinxLoggerAdapter, prefix: str):
+    def __init__(
+        self,
+        log: SphinxLoggerAdapter,
+        prefix: str,
+        compatibility: CompatibilityReporter | None = None,
+    ):
         self._log = log
         self._info_count = 0
         self._warning_count = 0
         self._prefix = prefix
         self._new_checks: list[NewCheck] = []
+        self._compatibility = compatibility
 
     @staticmethod
     def _location(need: NeedItem, prefix: str):
@@ -53,7 +60,7 @@ class CheckLogger:
     ):
         full_msg = f"{need['id']}.{option} ({need.get(option, None)}): {msg}"
         location = CheckLogger._location(need, self._prefix)
-        self._log_message(full_msg, location, is_new_check)
+        self._log_message(full_msg, location, is_new_check, need)
 
     def warning_for_link(
         self,
@@ -73,19 +80,33 @@ class CheckLogger:
         # if allowed_regex:
         #     msg += f" (allowed pattern: `{allowed_regex}`)"
 
-        self.warning_for_need(need, msg, is_new_check=is_new_check)
+        self.warning_for_need(need, msg, is_new_check=is_new_check, category="link")
 
-    def warning_for_need(self, need: NeedItem, msg: str, is_new_check: bool = False):
+    def warning_for_need(
+        self,
+        need: NeedItem,
+        msg: str,
+        is_new_check: bool = False,
+        category: str = "need",
+    ):
         full_msg = f"{need['id']}: {msg}"
         location = CheckLogger._location(need, self._prefix)
-        self._log_message(full_msg, location, is_new_check)
+        self._log_message(full_msg, location, is_new_check, need, category)
 
     def _log_message(
         self,
         msg: str,
         location: Location,
         is_new_check: bool = False,
+        need: NeedItem | None = None,
+        category: str = "metamodel",
     ):
+        if need is not None and self._compatibility is not None:
+            source = (
+                location if isinstance(location, str) else str(need.get("docname", ""))
+            )
+            if self._compatibility.record(need, category, msg, source):
+                return
         if is_new_check:
             self._new_checks.append((msg, location))
             self._info_count += 1
