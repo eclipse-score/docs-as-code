@@ -16,7 +16,7 @@ from pathlib import Path
 
 import pytest
 
-from src.extensions.score_mounts import _resolve_data_mounts
+from src.extensions.score_mounts import _make_mount_entry, _resolve_data_mounts
 from src.extensions.score_mounts._resolver import MountsManifest, MountSpec
 
 
@@ -57,3 +57,29 @@ def test_existing_data_file_resolved(tmp_path: Path) -> None:
     mounts = _resolve_data_mounts(manifest, tmp_path, tmp_path / "runfiles")
 
     assert str(tmp_path / "bazel-bin") in mounts
+
+
+def test_mount_entry_uses_canonical_directory_for_symlinked_bundle(
+    tmp_path: Path,
+) -> None:
+    """The mounted root must match Sphinx's resolved asset paths."""
+    canonical_repo = tmp_path / "repository-cache" / "bundle"
+    canonical_dir = canonical_repo / "docs"
+    canonical_dir.mkdir(parents=True)
+    canonical_source = canonical_dir / "index.rst"
+    canonical_source.write_text("Bundle", encoding="utf-8")
+    staged_repo = tmp_path / "sandbox" / "external" / "bundle"
+    staged_dir = staged_repo / "docs"
+    staged_dir.mkdir(parents=True)
+    staged_dir.joinpath("index.rst").symlink_to(canonical_source)
+    spec = MountSpec(
+        src_root="external/bundle/docs",
+        runtime_path="../bundle/docs",
+        mount_at="bundle",
+        external=True,
+        repository="bundle",
+    )
+
+    entry = _make_mount_entry(staged_dir, spec)
+
+    assert entry["dir"] == str(canonical_dir)
