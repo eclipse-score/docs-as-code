@@ -16,11 +16,8 @@
 # Unified entry point for running a CLI tool by name.
 # Inside a container the tool is expected on PATH; outside, it is resolved via Bazel.
 #
-# Do not modify this file. Its source of truth is:
-# https://github.com/eclipse-score/devcontainer/blob/main/tools/run_tool.sh
-#
-# For usage and rationale, see:
-# https://github.com/eclipse-score/devcontainer/blob/main/tools/README.md
+# Do not modify this file. Its source of truth is managed by the
+# SCORE devcontainer version-alignment policy.
 
 set -euo pipefail
 
@@ -32,18 +29,12 @@ fi
 tool_name="$1"
 shift
 
-script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
-repository_root="$(cd "${script_dir}/.." && pwd -P)"
-
 if { [[ -f /.dockerenv ]] || [[ -f /run/.containerenv ]] || [[ -d /devcontainer ]]; } &&
-    command -v "${tool_name}" >/dev/null 2>&1; then
-    exec "${tool_name}" "$@"
+  command -v "${tool_name}" >/dev/null 2>&1; then
+  exec "${tool_name}" "$@"
+elif command -v bazel >/dev/null 2>&1; then
+  exec bazel run "@score_devcontainer//tools:${tool_name}" -- "$@"
+else
+  echo "Could not run '${tool_name}': not available on PATH in a container, and bazel was not found." >&2
+  exit 127
 fi
-
-if command -v bazel >/dev/null 2>&1; then
-cd "${repository_root}"
-exec bazel run "//tools:${tool_name}" -- "$@"
-fi
-
-echo "Could not run '${tool_name}': not available on PATH in a container, and bazel was not found." >&2
-exit 127
