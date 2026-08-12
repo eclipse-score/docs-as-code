@@ -25,11 +25,7 @@ It provides this functionality by adding classes to `needs_render_context`,
 which then can be invoked inside 'needarch' and 'needuml' blocks in rst files.
 """
 
-import hashlib
-import time
 from collections.abc import Callable
-from functools import cache
-from pathlib import Path
 from typing import Any, cast
 
 from score_draw_uml_funcs.draw_helpers import (
@@ -67,25 +63,6 @@ def setup(app: Sphinx) -> dict[str, object]:
         "parallel_read_safe": True,
         "parallel_write_safe": True,
     }
-
-
-@cache
-def scripts_directory_hash():
-    start = time.time()
-    all = ""
-    for file in Path(".devcontainer/sphinx_conf").glob("**/*.py"):
-        with open(file) as f:
-            all += f.read()
-    hash_object = hashlib.sha256(all.encode("utf-8"))
-    directory_hash = hash_object.hexdigest()
-    logger.info(
-        "calculate directory_hash = "
-        + directory_hash
-        + " within "
-        + str(time.time() - start)
-        + " seconds."
-    )
-    return directory_hash
 
 
 #       ╭──────────────────────────────────────────────────────────────────────────────╮
@@ -433,7 +410,7 @@ def _resolve_component_for_view(
 
 class draw_full_feature:
     def __repr__(self):
-        return "draw_full_feature" + " in " + scripts_directory_hash()
+        return "draw_full_feature"
 
     def _collect_interfaces_and_modules(
         self,
@@ -587,7 +564,7 @@ class draw_full_feature:
 
 class draw_full_module:
     def __repr__(self):
-        return "draw_full_module" + " in " + scripts_directory_hash()
+        return "draw_full_module"
 
     def __call__(
         self, need: dict[str, str], all_needs: dict[str, dict[str, str]]
@@ -604,7 +581,7 @@ class draw_full_module:
 
 class draw_full_component:
     def __repr__(self):
-        return "draw_full_component" + " in " + scripts_directory_hash()
+        return "draw_full_component"
 
     def __call__(
         self, need: dict[str, str], all_needs: dict[str, dict[str, str]]
@@ -631,7 +608,7 @@ class draw_full_component:
 
 class draw_full_interface:
     def __repr__(self):
-        return "draw_full_interface" + " in " + scripts_directory_hash()
+        return "draw_full_interface"
 
     def __call__(
         self, need: dict[str, str], all_needs: dict[str, dict[str, str]]

@@ -63,6 +63,12 @@ Extensions
       `ubCode <https://ubcode.useblocks.com>`__ VS Code extension.
       Getting IDE support for Sphinx-Needs in a Bazel context made easy.
 
+   .. grid-item-card::
+
+      Mounts
+      ^^^
+      Architecture and design of the ``score_mounts`` bridge extension.
+      :ref:`Mounts Extension Internals<score_mounts_internals>`
 
 
 .. toctree::
@@ -74,3 +80,4 @@ Extensions
    Source Code Linker <source_code_linker>
    Extension Guide <extension_guide>
    Sync TOML <sync_toml>
+   mounts_internals
