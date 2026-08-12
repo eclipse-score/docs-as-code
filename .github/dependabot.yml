@@ -31,7 +31,7 @@ updates:
       prefix: chore(github-actions)
 
   - package-ecosystem: pip
-    directory: /
+    directory: /src
     schedule:
       interval: weekly
     groups:
