@@ -1,11 +1,6 @@
-Sphinx>=9.0
-
-# 8.0.0 needed for Sphinx-Needs versioning introduction
-sphinx-needs==8.0.0
-
-# Due to needed bugfix in 0.3.1
-sphinx-collections>=0.3.1
-
+Sphinx
+sphinx-needs
+sphinx-collections
 sphinxcontrib-plantuml
 pydata-sphinx-theme
 sphinx-design
@@ -26,7 +21,7 @@ debugpy
 rich
 
 # write out dynamically assembled Sphinx-Needs configuration in TOML format
-needs-config-writer == 0.2.4
+needs-config-writer
 # use this for a specific commit for fast development iterations
 # needs-config-writer @ https://github.com/useblocks/needs-config-writer/archive/032a5f8.zip
 
