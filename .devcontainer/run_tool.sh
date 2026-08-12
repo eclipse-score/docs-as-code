@@ -15,9 +15,7 @@
 
 # Unified entry point for running a CLI tool by name.
 # Inside a container the tool is expected on PATH; outside, it is resolved via Bazel.
-#
-# Do not modify this file. Its source of truth is managed by the
-# SCORE devcontainer version-alignment policy.
+# See https://github.com/eclipse-score/devcontainer/tree/main/tools for further information.
 
 set -euo pipefail
 
