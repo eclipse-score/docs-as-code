@@ -38,11 +38,11 @@
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-data-viewer/jsonview.bundle.css?v=f6ef2277" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/libs/html/datatables.min.css?v=4b4fd840" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_style.css?v=92936fa5" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/needstable.css?v=5e1b6797" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_toggle.css?v=5c6620df" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_core.css?v=f5b60a78" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_style.css?v=92936fa5" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_links.css?v=2150a916" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/needstable.css?v=5e1b6797" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/modern.css?v=803738c0" />
   
   <!-- So that users can add custom icons -->
@@ -74,7 +74,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="score_metamodel" href="metamodel.html" />
-    <link rel="prev" title="Internals" href="../index.html" />
+    <link rel="prev" title="Tooling Verification" href="../requirements/tooling_verification.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.0.0" />
@@ -391,18 +391,18 @@
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../benchmark_results.html">Bazel Mini Benchmark Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../decisions/index.html">Decisions And Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../requirements/index.html">Requirements</a></li>
 <li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">Extensions</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="metamodel.html">Metamodel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="rst_filebased_testing.html">Filebased Testing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="source_code_linker.html">Source Code Linker</a></li>
 <li class="toctree-l2"><a class="reference internal" href="extension_guide.html">Extension Guide</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sync_toml.html">Sync TOML</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mounts/index.html">Mounts extension internals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mounts_internals.html">Mounts extension internals</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1"><a class="reference internal" href="../benchmark_results.html">Bazel Mini Benchmark Results</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../decisions/index.html">Decisions And Concepts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../requirements/index.html">Requirements</a></li>
 </ul>
 </div>
 </nav></div>
@@ -526,6 +526,17 @@ Getting IDE support for Sphinx-Needs in a Bazel context made easy.</p>
 </div>
 </div>
 </div>
+<div class="sd-col sd-d-flex-row docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm docutils">
+<div class="sd-card-header docutils">
+<p class="sd-card-text">Mounts</p>
+</div>
+<div class="sd-card-body docutils">
+<p class="sd-card-text">Architecture and design of the <code class="docutils literal notranslate"><span class="pre">score_mounts</span></code> bridge extension.
+<a class="reference internal" href="mounts_internals.html#score-mounts-internals"><span class="std std-ref">Mounts Extension Internals</span></a></p>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="toctree-wrapper compound">
@@ -536,7 +547,7 @@ Getting IDE support for Sphinx-Needs in a Bazel context made easy.</p>
 <li class="toctree-l1"><a class="reference internal" href="source_code_linker.html">Source Code Linker</a></li>
 <li class="toctree-l1"><a class="reference internal" href="extension_guide.html">Extension Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sync_toml.html">Sync TOML</a></li>
-<li class="toctree-l1"><a class="reference internal" href="mounts/index.html">Mounts extension internals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mounts_internals.html">Mounts extension internals</a></li>
 </ul>
 </div>
 </section>
@@ -552,12 +563,12 @@ Getting IDE support for Sphinx-Needs in a Bazel context made easy.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../index.html"
+       href="../requirements/tooling_verification.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Internals</p>
+        <p class="prev-next-title">Tooling Verification</p>
       </div>
     </a>
     <a class="right-next"
@@ -584,7 +595,7 @@ Getting IDE support for Sphinx-Needs in a Bazel context made easy.</p>
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/eclipse-score/docs-as-code/edit/main//home/runner/work/docs-as-code/docs-as-code/docs/internals/extensions/index.rst">
+    <a href="https://github.com/eclipse-score/docs-as-code/edit/main//home/runner/work/docs-as-code/docs-as-code/docs/internals/extensions/indexcode/docs-as-code/src/extensions/docs/index.rst">
       <i class="fa-solid fa-pencil"></i>
       
       
