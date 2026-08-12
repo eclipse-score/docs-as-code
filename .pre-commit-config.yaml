@@ -46,20 +46,20 @@ repos:
       - id: actionlint
         name: actionlint
         # Disable shellcheck and pyflakes for now, to enforce consistent behavior.
-        entry: .devcontainer/run_tool.sh actionlint -shellcheck= -pyflakes=
+        entry: .devcontainer/run-tool actionlint -shellcheck= -pyflakes=
         language: system
         require_serial: true
         types: [yaml]
         files: ^\.github/workflows/
       - id: ruff-check
         name: ruff-check
-        entry: .devcontainer/run_tool.sh ruff check --fix
+        entry: .devcontainer/run-tool ruff check --fix
         language: system
         require_serial: true
         types: [python]
       - id: ruff-format
         name: ruff-format
-        entry: .devcontainer/run_tool.sh ruff format
+        entry: .devcontainer/run-tool ruff format
         language: system
         require_serial: true
         types: [python]
