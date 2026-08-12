@@ -189,7 +189,7 @@ def get_current_git_hash(git_root: Path) -> str:
     """
     try:
         result = subprocess.run(
-            ["git", "log", "-n", "1", "--pretty=format:%H"],
+            ["git", "rev-parse", "--verify", "HEAD^{commit}"],
             cwd=git_root,
             text=True,  # ✅ decode automatically
             capture_output=True,
