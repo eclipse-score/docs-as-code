@@ -80,6 +80,10 @@
     "url": "https://eclipse-score.github.io/docs-as-code/pr-719/"
   },
   {
+    "version": "pr-720",
+    "url": "https://eclipse-score.github.io/docs-as-code/pr-720/"
+  },
+  {
     "version": "v3.0.0",
     "url": "https://eclipse-score.github.io/docs-as-code/v3.0.0/"
   },
@@ -154,9 +158,5 @@
   {
     "version": "v7.1.0",
     "url": "https://eclipse-score.github.io/docs-as-code/v7.1.0/"
-  },
-  {
-    "version": "pr-720",
-    "url": "https://eclipse-score.github.io/docs-as-code/pr-720/"
   }
 ]
