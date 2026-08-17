@@ -119,6 +119,40 @@ def calculate_test_metrics(
     }
 
 
+def calculate_needs_overview(
+    all_needs: NeedsView, include_external: bool
+) -> dict[str, Any]:
+    """Summarize the needs in scope of the build.
+
+    Counts every need (not only requirements and tests) that is part of the
+    metrics scope, respecting the ``include_external`` setting. The result is
+    deliberately small and stable: total, external/local split and a count per
+    need type. It is a generic overview that is hard to derive from the other
+    sections, because they only cover requirements and testcases.
+    """
+    if include_external:
+        scoped_needs = list(all_needs.values())
+    else:
+        scoped_needs = list(all_needs.filter_is_external(False).values())
+
+    total = 0
+    external = 0
+    by_type: dict[str, int] = {}
+    for need in scoped_needs:
+        total += 1
+        if need.get("is_external"):
+            external += 1
+        need_type = str(need.get("type", ""))
+        by_type[need_type] = by_type.get(need_type, 0) + 1
+
+    return {
+        "total": total,
+        "external": external,
+        "local": total - external,
+        "by_type": dict(sorted(by_type.items())),
+    }
+
+
 def calculate_full_need_metrics(app: Sphinx, include_external: bool):
     """
     Calculate all tracked metrics for requirements and tests.
@@ -188,6 +222,7 @@ def calculate_full_need_metrics(app: Sphinx, include_external: bool):
         "overall_metrics": overall_metrics,
         "metrics_by_type": metrics_by_type,
         "tests": test_metrics,
+        "needs_overview": calculate_needs_overview(all_needs, include_external),
     }
     # Save the metrics in a Global Variable to enable access from other parts.
     # Not a great solution but it is needed, as needpie filter functions for example
