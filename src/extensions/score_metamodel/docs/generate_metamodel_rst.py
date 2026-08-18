@@ -140,7 +140,13 @@ def main() -> int:
         return 1
 
     table = _build_table(types)
-    mermaid_lines = ["classDiagram"] + _build_mermaid(types)
+    mermaid_lines = [
+        "---",
+        "config:",
+        "  layout: elk",
+        "---",
+        "classDiagram",
+    ] + _build_mermaid(types)
     args.mmd_output.write_text("\n".join(mermaid_lines) + "\n", encoding="utf-8")
     output = "\n".join(
         [
