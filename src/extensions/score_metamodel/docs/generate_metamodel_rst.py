@@ -114,7 +114,7 @@ def _build_mermaid(types: dict) -> list[str]:
     for name, ty in sorted(types.items()):
         color = ty.get("color")
         if color:
-            lines.append(f"style {name} fill:{color}")
+            lines.append(f"style {name} fill:{color},stroke:#666,color:#000")
     return lines
 
 
