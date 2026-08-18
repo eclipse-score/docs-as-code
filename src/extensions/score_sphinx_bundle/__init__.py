@@ -55,6 +55,7 @@ def setup(app: Sphinx) -> dict[str, object]:
     # Same as current VS Code extension
     config_setdefault(app.config, "mermaid_version", "11.6.0")
     config_setdefault(app.config, "mermaid_d3_zoom", True)
+    config_setdefault(app.config, "mermaid_include_elk", True)
 
     # The following entries are not required when building the documentation via
     # 'bazel build //:docs', as that command runs in a sandboxed environment.

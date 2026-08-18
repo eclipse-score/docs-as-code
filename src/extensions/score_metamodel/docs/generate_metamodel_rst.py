@@ -170,6 +170,7 @@ def main() -> int:
         "  layout: elk",
         "---",
         "classDiagram",
+        "  direction BT",
     ] + _build_mermaid(types)
     args.mmd_output.write_text("\n".join(mermaid_lines) + "\n", encoding="utf-8")
     output = "\n".join(
