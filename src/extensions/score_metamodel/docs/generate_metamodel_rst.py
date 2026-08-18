@@ -86,8 +86,16 @@ def _build_table(types: dict) -> list[str]:
 def _build_mermaid(types: dict) -> list[str]:
     lines: list[str] = []
     # Declare every type so isolated nodes render and can be styled.
+    # List the mandatory options as class members (optional ones are omitted).
     for name in sorted(types):
-        lines.append(f"class {name}")
+        mandatory_opts = sorted(types[name].get("mandatory_options", {}).keys())
+        if mandatory_opts:
+            lines.append(f"class {name} {{")
+            for opt in mandatory_opts:
+                lines.append(f"  +{opt}")
+            lines.append("}")
+        else:
+            lines.append(f"class {name}")
     # Edges for all (mandatory + optional) links.
     seen: set[tuple[str, str, str]] = set()
     for name, ty in sorted(types.items()):
