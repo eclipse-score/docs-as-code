@@ -67,12 +67,13 @@ def _build_table(types: dict) -> list[str]:
         mandatory = (
             ", ".join(sorted(ty.get("mandatory_options", {}).keys())) or "\u2014"
         )
-        optional_links = ", ".join(sorted(ty.get("optional_links", {}).keys()))
-        mandatory_links = ", ".join(sorted(ty.get("mandatory_links", {}).keys()))
-        if mandatory_links:
-            links = f"{optional_links} | mandatory: {mandatory_links}"
-        else:
-            links = optional_links or "\u2014"
+        optional_links = ty.get("optional_links", {})
+        mandatory_links = ty.get("mandatory_links", {})
+        link_strs = [
+            f"**{n}**" if n in mandatory_links else n
+            for n in sorted(set(optional_links) | set(mandatory_links))
+        ]
+        links = ", ".join(link_strs) or "\u2014"
         inc = ", ".join(incoming.get(name, [])) or "\u2014"
         lines.append("   * - " + name)
         lines.append("     - " + title)
