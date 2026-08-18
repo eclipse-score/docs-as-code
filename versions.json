@@ -162,5 +162,9 @@
   {
     "version": "pr-724",
     "url": "https://eclipse-score.github.io/docs-as-code/pr-724/"
+  },
+  {
+    "version": "pr-726",
+    "url": "https://eclipse-score.github.io/docs-as-code/pr-726/"
   }
 ]
