@@ -63,6 +63,7 @@ needs_types:
   # TSF
   tsf:
     title: TSF
+    color: "#E1D5E7"
     mandatory_options:
       id: ^tsf__[0-9a-zA-Z_-]*$
       status: ^(draft|valid)$
@@ -72,6 +73,7 @@ needs_types:
 
   tenet:
     title: Tenet
+    color: "#E1D5E7"
     mandatory_options:
       id: ^tenet__[0-9a-zA-Z_-]*$
       status: ^(draft|valid)$
@@ -80,6 +82,7 @@ needs_types:
     parts: 3
 
   assertion:
+    color: "#E1D5E7"
     title: Assertion
     mandatory_options:
       id: ^assertion__[0-9a-zA-Z_-]*$
@@ -92,6 +95,7 @@ needs_types:
   # req-Id: tool_req__docs_stdreq_types
   std_req:
     title: Standard Requirement
+    color: "#E1D5E7"
     mandatory_options:
       id: ^std_req__(iso26262|isosae21434|isopas8926|aspice_40)__[0-9a-zA-Z_-]*$
       status: ^(valid)$
@@ -101,6 +105,7 @@ needs_types:
 
   std_wp:
     title: Standard Work Product
+    color: "#E1D5E7"
     mandatory_options:
       id: ^std_wp__(iso26262|isosae21434|isopas8926|aspice_40)__[0-9a-z_]*$
       status: ^(valid)$
@@ -110,6 +115,7 @@ needs_types:
   # req-Id: tool_req__docs_wf_types
   workflow:
     title: Workflow
+    color: "#E1D5E7"
     prefix: wf__
     mandatory_options:
       status: ^(valid|draft)$
@@ -127,6 +133,7 @@ needs_types:
   # req-Id: tool_req__docs_req_types
   gd_req:
     title: Process Requirements
+    color: "#E1D5E7"
     mandatory_options:
       # req-Id: tool_req__docs_common_attr_description
       content: ^[\s\S]+$
@@ -141,6 +148,7 @@ needs_types:
 
   gd_temp:
     title: Process Template
+    color: "#E1D5E7"
     mandatory_options:
       status: ^(valid|draft)$
     optional_links:
@@ -149,6 +157,7 @@ needs_types:
 
   gd_chklst:
     title: Process Checklist
+    color: "#E1D5E7"
     mandatory_options:
       status: ^(valid|draft)$
     optional_links:
@@ -157,6 +166,7 @@ needs_types:
 
   gd_guidl:
     title: Process Guideline
+    color: "#E1D5E7"
     mandatory_options:
       status: ^(valid|draft)$
     optional_links:
@@ -165,6 +175,7 @@ needs_types:
 
   gd_method:
     title: Process Method
+    color: "#E1D5E7"
     prefix: gd_meth__
     mandatory_options:
       status: ^(valid|draft)$
@@ -175,6 +186,7 @@ needs_types:
   # S-CORE Workproduct
   workproduct:
     title: Workproduct
+    color: "#E1D5E7"
     prefix: wp__
     mandatory_options:
       status: ^(valid|draft)$
@@ -186,6 +198,7 @@ needs_types:
   # Role
   role:
     title: Role
+    color: "#E1D5E7"
     prefix: rl__
     optional_links:
       contains: role
