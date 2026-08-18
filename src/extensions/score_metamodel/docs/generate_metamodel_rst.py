@@ -33,7 +33,26 @@ def _parse_yaml(path: Path) -> dict:
         return yaml.load(fh)  # type: ignore[no-any-return]
 
 
+def _split_targets(targets: str) -> list[str]:
+    """Split a comma-separated target spec, ignoring the ``ANY`` wildcard."""
+    if targets == "ANY":
+        return []
+    return [t.strip() for t in targets.split(",") if t.strip()]
+
+
+def _incoming_mandatory_links(types: dict) -> dict[str, list[str]]:
+    """Map each type to the source types that point at it via mandatory links."""
+    incoming: dict[str, list[str]] = {name: [] for name in types}
+    for source, ty in types.items():
+        for targets in ty.get("mandatory_links", {}).values():
+            for target in _split_targets(targets):
+                if target in incoming and source not in incoming[target]:
+                    incoming[target].append(source)
+    return {name: sorted(sources) for name, sources in incoming.items()}
+
+
 def _build_table(types: dict) -> list[str]:
+    incoming = _incoming_mandatory_links(types)
     lines: list[str] = []
     lines.append(".. list-table:: Need Types")
     lines.append("   :header-rows: 1")
@@ -42,6 +61,7 @@ def _build_table(types: dict) -> list[str]:
     lines.append("     - Title")
     lines.append("     - Mandatory Options")
     lines.append("     - Links")
+    lines.append("     - Incoming Mandatory Links")
     for name, ty in sorted(types.items()):
         title = ty.get("title", name)
         mandatory = (
@@ -53,29 +73,39 @@ def _build_table(types: dict) -> list[str]:
             links = f"{optional_links} | mandatory: {mandatory_links}"
         else:
             links = optional_links or "\u2014"
+        inc = ", ".join(incoming.get(name, [])) or "\u2014"
         lines.append("   * - " + name)
         lines.append("     - " + title)
         lines.append("     - " + mandatory)
         lines.append("     - " + links)
+        lines.append("     - " + inc)
     return lines
 
 
 def _build_mermaid(types: dict) -> list[str]:
     lines: list[str] = []
+    # Declare every type so isolated nodes render and can be styled.
+    for name in sorted(types):
+        lines.append(f"class {name}")
+    # Edges for all (mandatory + optional) links.
     seen: set[tuple[str, str, str]] = set()
     for name, ty in sorted(types.items()):
-        for link_name, targets in sorted(
-            list(ty.get("mandatory_links", {}).items())
-            + list(ty.get("optional_links", {}).items())
-        ):
-            target_types = targets.split(", ") if targets != "ANY" else []
-            for target in target_types:
-                target = target.strip()
-                if target and target in types:
-                    key = (name, target, link_name)
-                    if key not in seen:
-                        seen.add(key)
-                        lines.append(f"{name} --> {target} : {link_name}")
+        links = list(ty.get("mandatory_links", {}).items()) + list(
+            ty.get("optional_links", {}).items()
+        )
+        for link_name, targets in sorted(links):
+            for target in _split_targets(targets):
+                if target not in types:
+                    continue
+                key = (name, target, link_name)
+                if key not in seen:
+                    seen.add(key)
+                    lines.append(f"{name} --> {target} : {link_name}")
+    # Color nodes per the ``color`` option in metamodel.yaml.
+    for name, ty in sorted(types.items()):
+        color = ty.get("color")
+        if color:
+            lines.append(f"style {name} fill:{color}")
     return lines
 
 
