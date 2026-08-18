@@ -83,20 +83,23 @@ def _build_table(types: dict) -> list[str]:
     return lines
 
 
-def _build_mermaid(types: dict) -> list[str]:
+def _class_declarations(types: dict) -> list[str]:
+    """Declare every type, listing mandatory options as class members."""
     lines: list[str] = []
-    # Declare every type so isolated nodes render and can be styled.
-    # List the mandatory options as class members (optional ones are omitted).
     for name in sorted(types):
         mandatory_opts = sorted(types[name].get("mandatory_options", {}).keys())
         if mandatory_opts:
             lines.append(f"class {name} {{")
-            for opt in mandatory_opts:
-                lines.append(f"  +{opt}")
+            lines.extend(f"  +{opt}" for opt in mandatory_opts)
             lines.append("}")
         else:
             lines.append(f"class {name}")
-    # Edges for all (mandatory + optional) links.
+    return lines
+
+
+def _link_edges(types: dict) -> list[str]:
+    """Edges for all (mandatory + optional) links between known types."""
+    lines: list[str] = []
     seen: set[tuple[str, str, str]] = set()
     for name, ty in sorted(types.items()):
         links = list(ty.get("mandatory_links", {}).items()) + list(
@@ -110,12 +113,25 @@ def _build_mermaid(types: dict) -> list[str]:
                 if key not in seen:
                     seen.add(key)
                     lines.append(f"{name} --> {target} : {link_name}")
-    # Color nodes per the ``color`` option in metamodel.yaml.
+    return lines
+
+
+def _node_styles(types: dict) -> list[str]:
+    """Color nodes per the ``color`` option in metamodel.yaml.
+
+    Dark text and a visible border keep pastel-filled nodes readable
+    in both light and dark mermaid themes.
+    """
+    lines: list[str] = []
     for name, ty in sorted(types.items()):
         color = ty.get("color")
         if color:
             lines.append(f"style {name} fill:{color},stroke:#666,color:#000")
     return lines
+
+
+def _build_mermaid(types: dict) -> list[str]:
+    return _class_declarations(types) + _link_edges(types) + _node_styles(types)
 
 
 def main() -> int:
