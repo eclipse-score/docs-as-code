@@ -1062,6 +1062,11 @@ needs_extra_links:
     incoming: realized by
     outgoing: realizes
 
+  # Decision Record
+  affects:
+    incoming: affected by
+    outgoing: affects
+
   ##############################################################
   #  S-CORE Metamodel
   ##############################################################
