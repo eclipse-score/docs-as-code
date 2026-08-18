@@ -112,7 +112,11 @@ def _link_edges(types: dict) -> list[str]:
                 key = (name, target, link_name)
                 if key not in seen:
                     seen.add(key)
-                    lines.append(f"{name} --> {target} : {link_name}")
+                    if link_name.endswith("_by"):
+                        # for layouting, reverse link direction for "passive" verbs
+                        lines.append(f"{target} <-- {name} : {link_name}")
+                    else:
+                        lines.append(f"{name} --> {target} : {link_name}")
     return lines
 
 
