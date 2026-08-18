@@ -43,7 +43,7 @@ jobs:
     steps:
       - name: 🛡️ Harden Runner
         if: github.repository_owner == 'eclipse-score'
-        uses: step-security/harden-runner@v2.18.0
+        uses: step-security/harden-runner@v2.21.0
         with:
           egress-policy: audit
 
@@ -54,7 +54,7 @@ jobs:
           cache: false
 
       - name: Checkout PR
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@v7
 
       - name: Prepare Python
         run: bazel run //:ide_support

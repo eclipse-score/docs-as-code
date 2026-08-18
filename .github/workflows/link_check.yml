@@ -28,11 +28,11 @@ jobs:
     steps:
       - name: 🛡️ Harden Runner
         if: github.repository_owner == 'eclipse-score'
-        uses: step-security/harden-runner@v2.18.0
+        uses: step-security/harden-runner@v2.21.0
         with:
           egress-policy: audit
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Run link check action
         uses: ./.github/actions/link-check
