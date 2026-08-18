@@ -702,6 +702,7 @@ needs_types:
   # No requirement!!
   plat_saf_dfa:
     title: Platform Dependent Failure Analysis
+    color: "#DAE8FC"
     mandatory_options:
       failure_id: ^.+$
       # req-Id: tool_req__docs_saf_attr_fmea_failure_effect
@@ -722,6 +723,7 @@ needs_types:
   # req-Id: tool_req__docs_saf_types
   feat_saf_dfa:
     title: Feature DFA (Dependent Failure Analysis)
+    color: "#FFF2CC"
     mandatory_options:
       # req-Id: tool_req__docs_saf_attr_dfa_failure_id
       failure_id: ^.+$
@@ -753,6 +755,7 @@ needs_types:
   # req-Id: tool_req__docs_saf_types
   comp_saf_dfa:
     title: Component DFA (Dependent Failure Analysis)
+    color: "#D5E8D4"
     mandatory_options:
       # req-Id: tool_req__docs_saf_attr_dfa_failure_id
       failure_id: ^.+$
@@ -783,6 +786,7 @@ needs_types:
   # req-Id: tool_req__docs_saf_types
   feat_saf_fmea:
     title: Feature FMEA (Failure Mode and Effects Analysis)
+    color: "#FFF2CC"
     mandatory_options:
       # req-Id: tool_req__docs_saf_attr_fmea_fault_id
       fault_id: ^.*$
@@ -815,6 +819,7 @@ needs_types:
   # req-Id: tool_req__docs_saf_types
   comp_saf_fmea:
     title: Component FMEA (Failure Mode and Effects Analysis)
+    color: "#D5E8D4"
     mandatory_options:
       # req-Id: tool_req__docs_saf_attr_fmea_fault_id
       fault_id: ^.*$
@@ -844,6 +849,7 @@ needs_types:
   # req-Id: tool_req__docs_sec_types
   feat_sec_threat:
     title: Feature Security Analysis Threat (STRIDE)
+    color: "#FFF2CC"
     mandatory_options:
       # req-Id: tool_req__docs_sec_attr_stride_threat_id
       threat_id: ^(AU_01_0[1-3]|AZ_01_0[1-3]|CT_01_0[1-2]|DS_01_0[1-3]|EX_01_0[1-6]|LA_01_0[1-3]|MT_01_0[1-7])$
@@ -857,6 +863,7 @@ needs_types:
   # req-Id: tool_req__docs_sec_types
   comp_sec_threat:
     title: Component Security Analysis Threat (STRIDE)
+    color: "#D5E8D4"
     mandatory_options:
       # req-Id: tool_req__docs_sec_attr_stride_threat_id
       threat_id: ^(AU_01_0[1-3]|AZ_01_0[1-3]|CT_01_0[1-2]|DS_01_0[1-3]|EX_01_0[1-6]|LA_01_0[1-3]|MT_01_0[1-7])$
@@ -870,6 +877,7 @@ needs_types:
   # req-Id: tool_req__docs_sec_types
   plat_sec_threat:
     title: Platform Security Analysis Threat (STRIDE)
+    color: "#DAE8FC"
     mandatory_options:
       # req-Id: tool_req__docs_sec_attr_stride_threat_id
       threat_id: ^(AU_01_0[1-3]|AZ_01_0[1-3]|CT_01_0[1-2]|DS_01_0[1-3]|EX_01_0[1-6]|LA_01_0[1-3]|MT_01_0[1-7])$
@@ -883,6 +891,7 @@ needs_types:
   # req-Id: tool_req__docs_sec_types
   feat_sec_ana:
     title: Feature Security Analysis (Threat Scenario)
+    color: "#FFF2CC"
     mandatory_options:
       # req-Id: tool_req__docs_sec_attrs_mandatory
       threat_scenario_id: ^(AS_01_(01|02|04|05|06|07|09|10)|CO_01_0[1-7]|SC_01_0[2-5]|SI_01_0[2-5]|UI_01_(0[1-9]|1[0-2]))$
@@ -908,6 +917,7 @@ needs_types:
   # req-Id: tool_req__docs_sec_types
   comp_sec_ana:
     title: Component Security Analysis (Threat Scenario)
+    color: "#D5E8D4"
     mandatory_options:
       threat_scenario_id: ^(AS_01_(01|02|04|05|06|07|09|10)|CO_01_0[1-7]|SC_01_0[2-5]|SI_01_0[2-5]|UI_01_(0[1-9]|1[0-2]))$
       status: ^(valid|invalid)$
@@ -927,6 +937,7 @@ needs_types:
   # req-Id: tool_req__docs_sec_types
   plat_sec_ana:
     title: Platform Security Analysis (Threat Scenario)
+    color: "#DAE8FC"
     mandatory_options:
       threat_scenario_id: ^(AS_01_(01|02|04|05|06|07|09|10)|CO_01_0[1-7]|SC_01_0[2-5]|SI_01_0[2-5]|UI_01_(0[1-9]|1[0-2]))$
       status: ^(valid|invalid)$
