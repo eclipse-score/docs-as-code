@@ -1,0 +1,939 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Hierarchically linked bundle Needs exports &#8212; S-CORE Docs-as-Code  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/score.css?v=bb63a8e1" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/score_needs.css?v=82a1844f" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/score_design.css?v=8048e6ee" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-data-viewer/jsonview.bundle.css?v=f6ef2277" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/libs/html/datatables.min.css?v=4b4fd840" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_style.css?v=92936fa5" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/needstable.css?v=5e1b6797" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_toggle.css?v=5c6620df" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_core.css?v=f5b60a78" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_links.css?v=2150a916" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/modern.css?v=803738c0" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+
+    <script src="../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../_static/documentation_options.js?v=7f41d439"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script src="../_static/sphinx-data-viewer/jsonview.bundle.js?v=18cd53c5"></script>
+    <script src="../_static/sphinx-data-viewer/jsonview_loader.js?v=f7ff7e7d"></script>
+    <script src="../_static/sphinx-needs/libs/html/datatables.min.js?v=8a4aee21"></script>
+    <script src="../_static/sphinx-needs/libs/html/datatables_loader.js?v=a2cae175"></script>
+    <script src="../_static/sphinx-needs/libs/html/sphinx_needs_collapse.js?v=dca66431"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'concepts/hierarchical_bundle_needs';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.20.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://eclipse-score.github.io/docs-as-code/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Documentation bundles and mounts" href="mounts/index.html" />
+    <link rel="prev" title="Docs Dependencies" href="docs_deps.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.0.0" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">Eclipse S-CORE</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../how-to/index.html">
+    How To
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../reference/index.html">
+    Reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Concepts
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../internals/index.html">
+    Internals
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eclipse-score" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../how-to/index.html">
+    How To
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../reference/index.html">
+    Reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Concepts
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../internals/index.html">
+    Internals
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eclipse-score" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="bidirectional_traceability.html">Bi-directional Traceability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cross_module_compatibility.html">Cross-Module Compatibility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs_deps.html">Docs Dependencies</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Hierarchically linked bundle Needs exports</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mounts/index.html">Documentation bundles and mounts</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Concepts</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Hierarchically linked bundle Needs exports</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <!--
+  *******************************************************************************
+  Copyright (c) 2026 Contributors to the Eclipse Foundation
+
+  See the NOTICE file(s) distributed with this work for additional
+  information regarding copyright ownership.
+
+  This program and the accompanying materials are made available under the
+  terms of the Apache License Version 2.0 which is available at
+  https://www.apache.org/licenses/LICENSE-2.0
+
+  SPDX-License-Identifier: Apache-2.0
+  *******************************************************************************
+-->
+<section id="hierarchically-linked-bundle-needs-exports">
+<h1>Hierarchically linked bundle Needs exports<a class="headerlink" href="#hierarchically-linked-bundle-needs-exports" title="Link to this heading">#</a></h1>
+<p>This document defines how reusable documentation bundles own Needs, how those
+Needs may refer to a higher architectural level, and how the individual
+bundle results are combined into the public <code class="docutils literal notranslate"><span class="pre">needs_json</span></code> result.</p>
+<p>The design separates two relationships that are easy to conflate:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">bundles</span></code> describes which documentation sources are composed into a source
+tree and where they are mounted.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">upward_bundles</span></code> describes which Needs from a higher level are available to
+a bundle while its own Needs are processed.</p></li>
+</ul>
+<p>The first relationship is about documentation composition. The second is
+about Needs ownership and validation. Neither relationship is inferred from
+the other.</p>
+<section id="problem-and-rationale">
+<h2>Problem and rationale<a class="headerlink" href="#problem-and-rationale" title="Link to this heading">#</a></h2>
+<p>The existing <code class="docutils literal notranslate"><span class="pre">needs_json</span></code> build runs Sphinx-Needs over the complete composed
+documentation tree. A mounted bundle is therefore processed together with the
+host documentation and all other mounted bundles. This has two important
+consequences:</p>
+<ol class="arabic simple">
+<li><p>A change in one bundle invalidates the complete Needs action.</p></li>
+<li><p>A Need is evaluated only after all source trees have been rebased to their
+final mount locations.</p></li>
+</ol>
+<p>The second property is useful for the final documentation result, but it is
+too coarse for reusable bundles. A bundle must be able to validate and cache
+the Needs it owns without taking ownership of all sources mounted below it.
+At the same time, a lower-level Need must be able to refer to a Need owned by
+an explicitly selected higher-level bundle.</p>
+<p>The solution is to process a bundle’s own sources separately and to exchange
+Needs through an explicit upward interface. A final composition step still
+builds the complete graph, so the public result retains global backlinks,
+constraints, metrics, and final document paths.</p>
+</section>
+<section id="bundle-model">
+<h2>Bundle model<a class="headerlink" href="#bundle-model" title="Link to this heading">#</a></h2>
+<p>A <code class="docutils literal notranslate"><span class="pre">docs_bundle</span></code> is a named documentation component. It can contain its own
+source directory, data, source-code links, a metamodel, and nested bundles.
+The presence of nested sources does not change who owns their Needs: each
+source-bearing bundle owns the Needs created from its own sources.</p>
+<p>There are three relevant kinds of bundle:</p>
+<ul class="simple">
+<li><p>A <strong>source bundle</strong> has a <code class="docutils literal notranslate"><span class="pre">source_dir</span></code> and owns the Needs extracted from
+those sources.</p></li>
+<li><p>A <strong>composed bundle</strong> has nested <code class="docutils literal notranslate"><span class="pre">bundles</span></code>. It exposes one combined source
+tree to its consumer, but it does not take ownership of the child bundles’
+Needs.</p></li>
+<li><p>A <strong>hierarchy group</strong> may have no sources at all and may still declare
+<code class="docutils literal notranslate"><span class="pre">upward_bundles</span></code>. It is a named Bazel node for reusing a hierarchy
+relationship; because it has no sources, it owns no local Needs.</p></li>
+</ul>
+<p>The same <code class="docutils literal notranslate"><span class="pre">docs_bundle</span></code> target can be both a source bundle and a composed
+bundle. These terms describe its two independent roles, not different rule
+types.</p>
+<section id="composition-and-hierarchy-are-different-graphs">
+<h3>Composition and hierarchy are different graphs<a class="headerlink" href="#composition-and-hierarchy-are-different-graphs" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Concern</p></th>
+<th class="head"><p>Bazel attribute</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Documentation composition</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bundles</span></code></p></td>
+<td><p>Downwards</p></td>
+<td><p>Include a child source tree and rebase it below <code class="docutils literal notranslate"><span class="pre">mount_at</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Needs hierarchy</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">upward_bundles</span></code></p></td>
+<td><p>Upwards</p></td>
+<td><p>Make Needs owned by an ancestor available as an input.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">bundles</span></code> controls files, document placement, attachments, data, and source
+links. <code class="docutils literal notranslate"><span class="pre">upward_bundles</span></code> controls the permitted Needs interface. For example,
+mounting <code class="docutils literal notranslate"><span class="pre">engine_bundle</span></code> below <code class="docutils literal notranslate"><span class="pre">powertrain</span></code> does not by itself allow engine
+Needs to link to powertrain Needs. That permission is granted by the explicit
+<code class="docutils literal notranslate"><span class="pre">upward_bundles</span> <span class="pre">=</span> <span class="pre">[&quot;:powertrain_bundle&quot;]</span></code> declaration.</p>
+<p>This distinction is important for Bazel analysis. A source tree can be
+composed downwards while a Needs export depends upwards, without making the
+bundle responsible for all of the sources visible in the final tree.</p>
+</section>
+</section>
+<section id="user-facing-declaration">
+<h2>User-facing declaration<a class="headerlink" href="#user-facing-declaration" title="Link to this heading">#</a></h2>
+<p>A normal reusable bundle does not need a hierarchy declaration. A bundle that
+has Needs links to a higher level names the allowed ancestors explicitly:</p>
+<div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;//:docs.bzl&quot;</span><span class="p">,</span> <span class="s2">&quot;docs&quot;</span><span class="p">,</span> <span class="s2">&quot;docs_bundle&quot;</span><span class="p">)</span>
+
+<span class="c1"># A normal reusable bundle. It owns its own Needs and has no upward interface.</span>
+<span class="n">docs_bundle</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;guidance_bundle&quot;</span><span class="p">,</span>
+    <span class="n">source_dir</span> <span class="o">=</span> <span class="s2">&quot;guidance/docs&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Needs owned by this bundle are available to lower-level bundles that name it.</span>
+<span class="n">docs_bundle</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;powertrain_bundle&quot;</span><span class="p">,</span>
+    <span class="n">source_dir</span> <span class="o">=</span> <span class="s2">&quot;powertrain/docs&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># This bundle may link its Needs to powertrain_bundle or to one of its</span>
+<span class="c1"># declared ancestors. The dependency is explicit in the Bazel graph.</span>
+<span class="n">docs_bundle</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;engine_bundle&quot;</span><span class="p">,</span>
+    <span class="n">source_dir</span> <span class="o">=</span> <span class="s2">&quot;engine/docs&quot;</span><span class="p">,</span>
+    <span class="n">upward_bundles</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;:powertrain_bundle&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+
+<span class="c1"># A source-less named hierarchy group is also valid. It owns no local Needs.</span>
+<span class="n">docs_bundle</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;vehicle_architecture_group&quot;</span><span class="p">,</span>
+    <span class="n">upward_bundles</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;:powertrain_bundle&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+
+<span class="n">docs</span><span class="p">(</span>
+    <span class="n">source_dir</span> <span class="o">=</span> <span class="s2">&quot;docs&quot;</span><span class="p">,</span>
+    <span class="n">bundles</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;bundle&quot;</span><span class="p">:</span> <span class="s2">&quot;:guidance_bundle&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;mount_at&quot;</span><span class="p">:</span> <span class="s2">&quot;guidance&quot;</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;bundle&quot;</span><span class="p">:</span> <span class="s2">&quot;:engine_bundle&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;mount_at&quot;</span><span class="p">:</span> <span class="s2">&quot;powertrain/engine&quot;</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>An upward declaration grants access to the direct target and its transitive
+upward closure. It does not import those Needs into the declaring bundle’s
+own export. The export contains only Needs owned by the declaring bundle.</p>
+<p>The dependency is deliberately declared in Bazel rather than inferred from
+Need links. This makes the allowed interface visible during analysis,
+provides the inputs needed for caching, and prevents accidental links to
+siblings, descendants, or unrelated bundles.</p>
+</section>
+<section id="the-two-bundle-views-created-by-docs">
+<h2>The two bundle views created by <code class="docutils literal notranslate"><span class="pre">docs()</span></code><a class="headerlink" href="#the-two-bundle-views-created-by-docs" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">docs()</span></code> has two different consumers: hierarchy-aware Needs processing and the
+normal composed documentation build. They need different views of the host
+documentation.</p>
+<p>Internally, the macro therefore creates:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>host sources --------------------&gt; :_docs_source_bundle
+                                          |
+                                          | composed with mounted children
+                                          v
+host source bundle + child bundles -&gt; :docs_bundle
+                                          |
+                                          +-&gt; Sphinx documentation build
+                                          +-&gt; docs_check
+                                          +-&gt; public needs_json
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">:_docs_source_bundle</span></code> contains only the host’s own sources, data, source-code
+links, and metamodel. It is the source-level node of the host in the bundle
+graph. The public <code class="docutils literal notranslate"><span class="pre">:docs_bundle</span></code> is an aggregator containing that private node
+and all bundles passed to <code class="docutils literal notranslate"><span class="pre">docs(bundles</span> <span class="pre">=</span> <span class="pre">...)</span></code>.</p>
+<p>This separation prevents a dependency cycle. A lower-level bundle can depend
+on the own-source export of an ancestor, while the ancestor’s composed source
+tree can include the lower-level bundle:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>child Needs export  ----depends upwards----&gt;  parent own-source export
+parent composed tree &lt;----mounts downwards---- child source bundle
+</pre></div>
+</div>
+<p>The documentation tree can consequently express parent/child relationships
+without making the Bazel dependency graph cyclic. The private target name is
+an implementation detail; users configure the host through <code class="docutils literal notranslate"><span class="pre">docs()</span></code> and
+configure reusable components through <code class="docutils literal notranslate"><span class="pre">docs_bundle()</span></code>.</p>
+</section>
+<section id="needs-ownership-and-bundle-exports">
+<h2>Needs ownership and bundle exports<a class="headerlink" href="#needs-ownership-and-bundle-exports" title="Link to this heading">#</a></h2>
+<p>The unit of Needs ownership is a source bundle, not a mount point. Mounting the
+same bundle at another location changes the document path at which its Needs
+are rendered, but it does not create a second owner or a second Need ID.</p>
+<p>A bundle-local Needs export contains:</p>
+<ul class="simple">
+<li><p>Needs created from the bundle’s own documentation sources;</p></li>
+<li><p>the bundle-relative <code class="docutils literal notranslate"><span class="pre">docname</span></code> and source location;</p></li>
+<li><p>the bundle’s ownership/origin information;</p></li>
+<li><p>Need parts, link conditions, and other data needed for later validation;</p></li>
+<li><p>source-link information belonging to the bundle; and</p></li>
+<li><p>the selected metamodel context.</p></li>
+</ul>
+<p>Needs imported from <code class="docutils literal notranslate"><span class="pre">upward_bundles</span></code> are inputs to validation. They are not
+copied into the child export and therefore cannot be mistaken for Needs owned
+by the child.</p>
+<p>Need IDs are the stable cross-bundle identity. A bundle-relative <code class="docutils literal notranslate"><span class="pre">docname</span></code> is
+not stable across mounts: the final path is determined by the consumer’s
+<code class="docutils literal notranslate"><span class="pre">mount_at</span></code>. This is why links between bundles use Need identity while the
+top-level composition is responsible for final document paths and generated
+URLs.</p>
+<section id="direct-and-transitive-upward-dependencies">
+<h3>Direct and transitive upward dependencies<a class="headerlink" href="#direct-and-transitive-upward-dependencies" title="Link to this heading">#</a></h3>
+<p>The direct declaration and its closure have distinct meanings:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">direct_upward_bundles</span></code> is the set written in the current rule’s
+<code class="docutils literal notranslate"><span class="pre">upward_bundles</span></code> attribute.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">upward_bundles</span></code> is the transitive set consisting of those direct targets
+and the upward closure exported by each target.</p></li>
+</ul>
+<p>The closure is the complete validation interface of the bundle. If <code class="docutils literal notranslate"><span class="pre">engine</span></code>
+declares <code class="docutils literal notranslate"><span class="pre">powertrain</span></code>, and <code class="docutils literal notranslate"><span class="pre">powertrain</span></code> declares <code class="docutils literal notranslate"><span class="pre">vehicle</span></code>, engine can use
+Needs from both <code class="docutils literal notranslate"><span class="pre">powertrain</span></code> and <code class="docutils literal notranslate"><span class="pre">vehicle</span></code>. It does not need to repeat the
+transitive declaration, and a consumer can still inspect which edge was
+declared directly.</p>
+</section>
+</section>
+<section id="processing-model">
+<h2>Processing model<a class="headerlink" href="#processing-model" title="Link to this heading">#</a></h2>
+<section id="bundle-local-processing">
+<h3>Bundle-local processing<a class="headerlink" href="#bundle-local-processing" title="Link to this heading">#</a></h3>
+<p>The bundle-local action receives the source bundle’s own sources and its
+metamodel. It also receives the exports of the bundle’s upward closure. The
+Sphinx-Needs run can therefore resolve:</p>
+<ul class="simple">
+<li><p>Needs defined in the current bundle; and</p></li>
+<li><p>Needs defined by a declared upward bundle or one of its ancestors.</p></li>
+</ul>
+<p>The bundle-local action does not see sibling or descendant exports through
+this interface. A link outside the local ownership set and the declared
+upward closure is invalid because the bundle has no declared dependency on
+the target’s ownership context.</p>
+<p>The result is an internal artifact. Its records remain relative to the
+bundle’s own source tree, because no consumer has assigned a mount path yet.</p>
+</section>
+<section id="top-level-composition">
+<h3>Top-level composition<a class="headerlink" href="#top-level-composition" title="Link to this heading">#</a></h3>
+<p>The public <code class="docutils literal notranslate"><span class="pre">needs_json</span></code> action imports the local exports reachable from the
+composed documentation bundle and applies the placements from <code class="docutils literal notranslate"><span class="pre">bundles</span></code>.
+It then performs the operations whose meaning depends on the complete graph:</p>
+<ul class="simple">
+<li><p>rebase each bundle-relative <code class="docutils literal notranslate"><span class="pre">docname</span></code> to its final <code class="docutils literal notranslate"><span class="pre">mount_at</span></code> path;</p></li>
+<li><p>resolve links and calculate backlinks over all imported Needs;</p></li>
+<li><p>evaluate global constraints and dead-link state;</p></li>
+<li><p>calculate metrics and traceability gates; and</p></li>
+<li><p>write the existing public <code class="docutils literal notranslate"><span class="pre">needs_json</span></code> output.</p></li>
+</ul>
+<p>This step is the final graph view, not a second ownership layer. It combines
+the records produced by the owners and adds graph-dependent results; it does
+not copy a parent’s Needs into a child or recreate HTML from the export.</p>
+<p>Rendering, navigation, <code class="docutils literal notranslate"><span class="pre">:doc:</span></code>/<code class="docutils literal notranslate"><span class="pre">:ref:</span></code> resolution, includes, images, and
+other source-tree behavior continue to use the complete composed Sphinx source
+tree. <code class="docutils literal notranslate"><span class="pre">docs_check</span></code> remains the document-level integration check for that tree.</p>
+</section>
+</section>
+<section id="metamodel-and-ownership-context">
+<h2>Metamodel and ownership context<a class="headerlink" href="#metamodel-and-ownership-context" title="Link to this heading">#</a></h2>
+<p>The metamodel belongs to the bundle that owns the Needs. It is selected on
+<code class="docutils literal notranslate"><span class="pre">docs_bundle(metamodel</span> <span class="pre">=</span> <span class="pre">...)</span></code>, defaults to the built-in SCORE metamodel, and
+is propagated in <code class="docutils literal notranslate"><span class="pre">DocsBundleInfo</span></code>.</p>
+<p>Selecting the metamodel per bundle has two reasons:</p>
+<ol class="arabic simple">
+<li><p>A reusable bundle must be analyzable with the schema that defines its own
+Need types and fields.</p></li>
+<li><p>The metamodel is an input to the bundle-local action, so changing it must
+invalidate that bundle’s result rather than an unrelated bundle.</p></li>
+</ol>
+<p>The final composition retains the origin of each Need separately from its
+rendered location. A bundle from another module may be mounted into the local
+documentation tree while remaining foreign for ownership-sensitive metrics
+and release gates. URL placement and ownership are therefore not represented
+by a single boolean such as <code class="docutils literal notranslate"><span class="pre">is_external</span></code>.</p>
+</section>
+<section id="bazel-representation">
+<h2>Bazel representation<a class="headerlink" href="#bazel-representation" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">DocsBundleInfo</span></code> carries the metadata needed by both composition and
+hierarchy-aware processing:</p>
+<ul class="simple">
+<li><p>source entries with their eventual mount metadata;</p></li>
+<li><p>source-code links, data, and external runfiles;</p></li>
+<li><p>the selected metamodel;</p></li>
+<li><p>the directly declared upward bundle targets; and</p></li>
+<li><p>a deduplicated depset containing the direct targets and their transitive
+upward closure.</p></li>
+</ul>
+<p>The closure is calculated while analyzing a bundle:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>upward closure(current) = direct(current)
+                       + union(upward closure(parent))
+</pre></div>
+</div>
+<p>Using a Bazel depset makes the interface transitive, deduplicated, and
+available to downstream rules without requiring each rule to rediscover the
+hierarchy. The same provider is present on source bundles, composed bundles,
+and source-less hierarchy groups. A composed bundle aggregates source entries
+for file placement, but its upward interface remains a separate piece of
+metadata.</p>
+</section>
+<section id="invariants">
+<h2>Invariants<a class="headerlink" href="#invariants" title="Link to this heading">#</a></h2>
+<p>The architecture relies on the following invariants:</p>
+<ul class="simple">
+<li><p>A Need has exactly one owning source bundle.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bundles</span></code> does not transfer Need ownership.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">upward_bundles</span></code> is explicit and is the only cross-bundle validation
+interface.</p></li>
+<li><p>A bundle exports its own Needs, not imported ancestor Needs.</p></li>
+<li><p>Need IDs remain stable when a bundle is mounted at another path.</p></li>
+<li><p>Final document paths, backlinks, and global checks are computed only after
+composition has assigned mount locations.</p></li>
+<li><p>The Bazel dependency graph remains acyclic even though documentation
+composition and Needs references describe opposite semantic directions.</p></li>
+<li><p>The public <code class="docutils literal notranslate"><span class="pre">needs_json</span></code> shape and existing consumer commands remain
+compatible with the composed result.</p></li>
+</ul>
+<p>These invariants are the reason the implementation keeps the private host
+source bundle separate from the public composed <code class="docutils literal notranslate"><span class="pre">docs_bundle</span></code> and propagates
+both direct and transitive upward dependencies.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="docs_deps.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Docs Dependencies</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="mounts/index.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Documentation bundles and mounts</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-and-rationale">Problem and rationale</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bundle-model">Bundle model</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#composition-and-hierarchy-are-different-graphs">Composition and hierarchy are different graphs</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#user-facing-declaration">User-facing declaration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-two-bundle-views-created-by-docs">The two bundle views created by <code class="docutils literal notranslate"><span class="pre">docs()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#needs-ownership-and-bundle-exports">Needs ownership and bundle exports</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#direct-and-transitive-upward-dependencies">Direct and transitive upward dependencies</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#processing-model">Processing model</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bundle-local-processing">Bundle-local processing</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#top-level-composition">Top-level composition</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#metamodel-and-ownership-context">Metamodel and ownership context</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bazel-representation">Bazel representation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#invariants">Invariants</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  
+  <div class="tocsection editthispage">
+    <a href="https://github.com/eclipse-score/docs-as-code/edit/main//home/runner/work/docs-as-code/docs-as-code/docs/concepts/hierarchical_bundle_needs.md">
+      <i class="fa-solid fa-pencil"></i>
+      
+      
+        
+          Edit on GitHub
+        
+      
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.20.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
