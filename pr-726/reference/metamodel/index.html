@@ -66,6 +66,8 @@
     <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.6.0/dist/mermaid.esm.min.mjs";
 
 
+import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.0/dist/mermaid-layout-elk.esm.min.mjs"
+
 
 const initStyles = () => {
     const defaultStyle = document.createElement('style');
@@ -406,6 +408,8 @@ const load = async () => {
     });
 };
 
+
+mermaid.registerLayoutLoaders(elkLayouts);
 
 
 
@@ -829,7 +833,247 @@ window.runMermaid = runMermaid;</script>
   <section id="metamodel-types-visualization">
 <span id="id1"></span><h1>Metamodel Types Visualization<a class="headerlink" href="#metamodel-types-visualization" title="Link to this heading">#</a></h1>
 <pre  class="mermaid">
-        classDiagram
+        ---
+config:
+  layout: elk
+---
+classDiagram
+  direction BT
+class aou_req {
+  +content
+  +reqtype
+  +safety
+  +security
+  +status
+}
+class assertion {
+  +id
+  +status
+}
+class comp {
+  +safety
+  +security
+  +status
+}
+class comp_arc_dyn {
+  +safety
+  +security
+  +status
+}
+class comp_arc_sta {
+  +safety
+  +security
+  +status
+}
+class comp_req {
+  +content
+  +reqtype
+  +safety
+  +security
+  +status
+}
+class comp_saf_dfa {
+  +content
+  +failure_effect
+  +failure_id
+  +status
+  +sufficient
+}
+class comp_saf_fmea {
+  +content
+  +failure_effect
+  +fault_id
+  +status
+  +sufficient
+}
+class comp_sec_ana {
+  +content
+  +status
+  +sufficient
+  +threat_effect
+  +threat_scenario_id
+}
+class comp_sec_threat {
+  +content
+  +status
+  +threat_id
+}
+class dec_rec {
+  +context
+  +decision
+  +status
+}
+class doc_concept {
+  +status
+}
+class doc_getstrt {
+  +status
+}
+class doc_tool {
+  +safety_affected
+  +security_affected
+  +status
+  +tcl
+}
+class document {
+  +safety
+  +security
+  +status
+}
+class feat {
+  +safety
+  +security
+  +status
+}
+class feat_arc_dyn {
+  +safety
+  +security
+  +status
+}
+class feat_arc_sta {
+  +safety
+  +security
+  +status
+}
+class feat_req {
+  +content
+  +reqtype
+  +safety
+  +security
+  +status
+  +valid_from
+}
+class feat_saf_dfa {
+  +content
+  +failure_effect
+  +failure_id
+  +status
+  +sufficient
+}
+class feat_saf_fmea {
+  +content
+  +failure_effect
+  +fault_id
+  +status
+  +sufficient
+}
+class feat_sec_ana {
+  +content
+  +status
+  +sufficient
+  +threat_effect
+  +threat_scenario_id
+}
+class feat_sec_threat {
+  +content
+  +status
+  +threat_id
+}
+class gd_chklst {
+  +status
+}
+class gd_guidl {
+  +status
+}
+class gd_method {
+  +status
+}
+class gd_req {
+  +content
+}
+class gd_temp {
+  +status
+}
+class logic_arc_int {
+  +safety
+  +security
+  +status
+}
+class logic_arc_int_op {
+  +safety
+  +security
+  +status
+}
+class mod
+class mod_ver_report {
+  +safety
+  +security
+  +status
+  +verification_method
+}
+class mod_view_dyn
+class mod_view_sta
+class plat_saf_dfa {
+  +content
+  +failure_effect
+  +failure_id
+  +status
+  +sufficient
+}
+class plat_sec_ana {
+  +content
+  +status
+  +sufficient
+  +threat_effect
+  +threat_scenario_id
+}
+class plat_sec_threat {
+  +content
+  +status
+  +threat_id
+}
+class real_arc_int {
+  +language
+  +safety
+  +security
+  +status
+}
+class real_arc_int_op {
+  +safety
+  +security
+  +status
+}
+class review_header {
+  +approvers
+  +hash
+  +reviewers
+  +template
+}
+class role
+class std_req {
+  +id
+  +status
+}
+class std_wp {
+  +id
+  +status
+}
+class stkh_req {
+  +rationale
+  +reqtype
+  +safety
+  +security
+  +status
+  +valid_from
+}
+class tenet {
+  +id
+  +status
+}
+class testcase
+class tool_req {
+  +content
+}
+class tsf {
+  +id
+  +status
+}
+class workflow {
+  +status
+}
+class workproduct {
+  +status
+}
 comp --&gt; feat : belongs_to
 comp --&gt; comp : consists_of
 comp --&gt; aou_req : fulfils
@@ -845,16 +1089,16 @@ comp_arc_sta --&gt; logic_arc_int : uses
 comp_arc_sta --&gt; real_arc_int_op : uses
 comp_req --&gt; aou_req : covers
 comp_req --&gt; feat_req : derived_from
-comp_req --&gt; comp : satisfied_by
-comp_saf_dfa --&gt; comp_req : mitigated_by
-comp_saf_dfa --&gt; aou_req : mitigated_by
+comp &lt;-- comp_req : satisfied_by
+comp_req &lt;-- comp_saf_dfa : mitigated_by
+aou_req &lt;-- comp_saf_dfa : mitigated_by
 comp_saf_dfa --&gt; comp_arc_sta : violates
-comp_saf_fmea --&gt; comp_req : mitigated_by
-comp_saf_fmea --&gt; aou_req : mitigated_by
+comp_req &lt;-- comp_saf_fmea : mitigated_by
+aou_req &lt;-- comp_saf_fmea : mitigated_by
 comp_saf_fmea --&gt; comp_arc_dyn : violates
 comp_saf_fmea --&gt; comp_arc_sta : violates
-comp_sec_ana --&gt; comp_req : mitigated_by
-comp_sec_ana --&gt; aou_req : mitigated_by
+comp_req &lt;-- comp_sec_ana : mitigated_by
+aou_req &lt;-- comp_sec_ana : mitigated_by
 doc_tool --&gt; workproduct : realizes
 document --&gt; workproduct : realizes
 feat --&gt; logic_arc_int : includes
@@ -872,16 +1116,16 @@ feat_arc_sta --&gt; logic_arc_int : includes
 feat_arc_sta --&gt; logic_arc_int_op : includes
 feat_req --&gt; aou_req : covers
 feat_req --&gt; stkh_req : derived_from
-feat_req --&gt; feat : satisfied_by
-feat_saf_dfa --&gt; feat_req : mitigated_by
-feat_saf_dfa --&gt; aou_req : mitigated_by
+feat &lt;-- feat_req : satisfied_by
+feat_req &lt;-- feat_saf_dfa : mitigated_by
+aou_req &lt;-- feat_saf_dfa : mitigated_by
 feat_saf_dfa --&gt; feat_arc_sta : violates
-feat_saf_fmea --&gt; feat_req : mitigated_by
-feat_saf_fmea --&gt; aou_req : mitigated_by
+feat_req &lt;-- feat_saf_fmea : mitigated_by
+aou_req &lt;-- feat_saf_fmea : mitigated_by
 feat_saf_fmea --&gt; feat_arc_dyn : violates
 feat_saf_fmea --&gt; feat_arc_sta : violates
-feat_sec_ana --&gt; feat_req : mitigated_by
-feat_sec_ana --&gt; aou_req : mitigated_by
+feat_req &lt;-- feat_sec_ana : mitigated_by
+aou_req &lt;-- feat_sec_ana : mitigated_by
 gd_chklst --&gt; std_req : complies
 gd_guidl --&gt; std_req : complies
 gd_method --&gt; std_req : complies
@@ -889,29 +1133,29 @@ gd_req --&gt; std_req : complies
 gd_req --&gt; workflow : satisfies
 gd_temp --&gt; std_req : complies
 logic_arc_int --&gt; feat_req : fulfils
-logic_arc_int --&gt; feat : included_by
+feat &lt;-- logic_arc_int : included_by
 logic_arc_int --&gt; logic_arc_int_op : includes
-logic_arc_int_op --&gt; logic_arc_int : included_by
+logic_arc_int &lt;-- logic_arc_int_op : included_by
 mod --&gt; comp : includes
 mod_ver_report --&gt; mod : belongs_to
 mod_ver_report --&gt; workproduct : realizes
 mod_view_dyn --&gt; mod : belongs_to
 mod_view_sta --&gt; mod : belongs_to
 mod_view_sta --&gt; comp : includes
-plat_saf_dfa --&gt; stkh_req : mitigated_by
-plat_saf_dfa --&gt; aou_req : mitigated_by
+stkh_req &lt;-- plat_saf_dfa : mitigated_by
+aou_req &lt;-- plat_saf_dfa : mitigated_by
 plat_saf_dfa --&gt; feat_arc_sta : violates
-plat_sec_ana --&gt; feat_req : mitigated_by
-plat_sec_ana --&gt; aou_req : mitigated_by
+feat_req &lt;-- plat_sec_ana : mitigated_by
+aou_req &lt;-- plat_sec_ana : mitigated_by
 real_arc_int --&gt; comp_req : fulfils
 real_arc_int_op --&gt; logic_arc_int_op : implements
-real_arc_int_op --&gt; real_arc_int : included_by
+real_arc_int &lt;-- real_arc_int_op : included_by
 role --&gt; role : contains
 tool_req --&gt; gd_req : satisfies
 tool_req --&gt; stkh_req : satisfies
 tool_req --&gt; feat_req : satisfies
 tool_req --&gt; comp_req : satisfies
-workflow --&gt; role : approved_by
+role &lt;-- workflow : approved_by
 workflow --&gt; gd_req : contains
 workflow --&gt; gd_temp : contains
 workflow --&gt; gd_chklst : contains
@@ -922,9 +1166,51 @@ workflow --&gt; doc_concept : has
 workflow --&gt; workproduct : input
 workflow --&gt; workproduct : output
 workflow --&gt; role : responsible
-workflow --&gt; role : supported_by
+role &lt;-- workflow : supported_by
 workproduct --&gt; std_wp : complies
 workproduct --&gt; std_req : complies
+style aou_req fill:#FCFCFC,stroke:#666,color:#000
+style assertion fill:#E1D5E7,stroke:#666,color:#000
+style comp fill:#D5E8D4,stroke:#666,color:#000
+style comp_arc_dyn fill:#D5E8D4,stroke:#666,color:#000
+style comp_arc_sta fill:#D5E8D4,stroke:#666,color:#000
+style comp_req fill:#D5E8D4,stroke:#666,color:#000
+style comp_saf_dfa fill:#D5E8D4,stroke:#666,color:#000
+style comp_saf_fmea fill:#D5E8D4,stroke:#666,color:#000
+style comp_sec_ana fill:#D5E8D4,stroke:#666,color:#000
+style comp_sec_threat fill:#D5E8D4,stroke:#666,color:#000
+style feat fill:#FFF2CC,stroke:#666,color:#000
+style feat_arc_dyn fill:#FFF2CC,stroke:#666,color:#000
+style feat_arc_sta fill:#FFF2CC,stroke:#666,color:#000
+style feat_req fill:#FFF2CC,stroke:#666,color:#000
+style feat_saf_dfa fill:#FFF2CC,stroke:#666,color:#000
+style feat_saf_fmea fill:#FFF2CC,stroke:#666,color:#000
+style feat_sec_ana fill:#FFF2CC,stroke:#666,color:#000
+style feat_sec_threat fill:#FFF2CC,stroke:#666,color:#000
+style gd_chklst fill:#E1D5E7,stroke:#666,color:#000
+style gd_guidl fill:#E1D5E7,stroke:#666,color:#000
+style gd_method fill:#E1D5E7,stroke:#666,color:#000
+style gd_req fill:#E1D5E7,stroke:#666,color:#000
+style gd_temp fill:#E1D5E7,stroke:#666,color:#000
+style logic_arc_int fill:#FFF2CC,stroke:#666,color:#000
+style logic_arc_int_op fill:#FFF2CC,stroke:#666,color:#000
+style mod fill:#D5E8D4,stroke:#666,color:#000
+style mod_view_dyn fill:#D5E8D4,stroke:#666,color:#000
+style mod_view_sta fill:#D5E8D4,stroke:#666,color:#000
+style plat_saf_dfa fill:#DAE8FC,stroke:#666,color:#000
+style plat_sec_ana fill:#DAE8FC,stroke:#666,color:#000
+style plat_sec_threat fill:#DAE8FC,stroke:#666,color:#000
+style real_arc_int fill:#D5E8D4,stroke:#666,color:#000
+style real_arc_int_op fill:#D5E8D4,stroke:#666,color:#000
+style role fill:#E1D5E7,stroke:#666,color:#000
+style std_req fill:#E1D5E7,stroke:#666,color:#000
+style std_wp fill:#E1D5E7,stroke:#666,color:#000
+style stkh_req fill:#DAE8FC,stroke:#666,color:#000
+style tenet fill:#E1D5E7,stroke:#666,color:#000
+style tool_req fill:#F5F5F5,stroke:#666,color:#000
+style tsf fill:#E1D5E7,stroke:#666,color:#000
+style workflow fill:#E1D5E7,stroke:#666,color:#000
+style workproduct fill:#E1D5E7,stroke:#666,color:#000
 
     </pre><section id="need-types">
 <h2>Need Types<a class="headerlink" href="#need-types" title="Link to this heading">#</a></h2>
@@ -935,6 +1221,7 @@ workproduct --&gt; std_req : complies
 <th class="head"><p>Title</p></th>
 <th class="head"><p>Mandatory Options</p></th>
 <th class="head"><p>Links</p></th>
+<th class="head"><p>Incoming Mandatory Links</p></th>
 </tr>
 </thead>
 <tbody>
@@ -942,260 +1229,301 @@ workproduct --&gt; std_req : complies
 <td><p>Assumption of Use Requirement</p></td>
 <td><p>content, reqtype, safety, security, status</p></td>
 <td><p>—</p></td>
+<td><p>—</p></td>
 </tr>
 <tr class="row-odd"><td><p>assertion</p></td>
 <td><p>Assertion</p></td>
 <td><p>id, status</p></td>
 <td><p>links</p></td>
+<td><p>—</p></td>
 </tr>
 <tr class="row-even"><td><p>comp</p></td>
 <td><p>Component</p></td>
 <td><p>safety, security, status</p></td>
-<td><p>consists_of, fulfils, implements, uses | mandatory: belongs_to</p></td>
+<td><p><strong>belongs_to</strong>, consists_of, fulfils, implements, uses</p></td>
+<td><p>comp_arc_dyn, comp_arc_sta, comp_req, mod</p></td>
 </tr>
 <tr class="row-odd"><td><p>comp_arc_dyn</p></td>
 <td><p>Component Sequence Diagram</p></td>
 <td><p>safety, security, status</p></td>
-<td><p>fulfils | mandatory: belongs_to</p></td>
+<td><p><strong>belongs_to</strong>, fulfils</p></td>
+<td><p>comp_saf_fmea</p></td>
 </tr>
 <tr class="row-even"><td><p>comp_arc_sta</p></td>
 <td><p>Component Package Diagram</p></td>
 <td><p>safety, security, status</p></td>
-<td><p>fulfils, uses | mandatory: belongs_to</p></td>
+<td><p><strong>belongs_to</strong>, fulfils, uses</p></td>
+<td><p>comp_saf_dfa, comp_saf_fmea</p></td>
 </tr>
 <tr class="row-odd"><td><p>comp_req</p></td>
 <td><p>Component Requirement</p></td>
 <td><p>content, reqtype, safety, security, status</p></td>
-<td><p>covers, derived_from | mandatory: satisfied_by</p></td>
+<td><p>covers, derived_from, <strong>satisfied_by</strong></p></td>
+<td><p>—</p></td>
 </tr>
 <tr class="row-even"><td><p>comp_saf_dfa</p></td>
 <td><p>Component DFA (Dependent Failure Analysis)</p></td>
 <td><p>content, failure_effect, failure_id, status, sufficient</p></td>
-<td><p>mitigated_by | mandatory: violates</p></td>
+<td><p>mitigated_by, <strong>violates</strong></p></td>
+<td><p>—</p></td>
 </tr>
 <tr class="row-odd"><td><p>comp_saf_fmea</p></td>
 <td><p>Component FMEA (Failure Mode and Effects Analysis)</p></td>
 <td><p>content, failure_effect, fault_id, status, sufficient</p></td>
-<td><p>mitigated_by | mandatory: violates</p></td>
+<td><p>mitigated_by, <strong>violates</strong></p></td>
+<td><p>—</p></td>
 </tr>
 <tr class="row-even"><td><p>comp_sec_ana</p></td>
 <td><p>Component Security Analysis (Threat Scenario)</p></td>
 <td><p>content, status, sufficient, threat_effect, threat_scenario_id</p></td>
 <td><p>mitigated_by</p></td>
+<td><p>—</p></td>
 </tr>
 <tr class="row-odd"><td><p>comp_sec_threat</p></td>
 <td><p>Component Security Analysis Threat (STRIDE)</p></td>
 <td><p>content, status, threat_id</p></td>
+<td><p>—</p></td>
 <td><p>—</p></td>
 </tr>
 <tr class="row-even"><td><p>dec_rec</p></td>
 <td><p>Decision Record</p></td>
 <td><p>context, decision, status</p></td>
 <td><p>affects</p></td>
+<td><p>—</p></td>
 </tr>
 <tr class="row-odd"><td><p>doc_concept</p></td>
 <td><p>Concept Definition</p></td>
 <td><p>status</p></td>
+<td><p>—</p></td>
 <td><p>—</p></td>
 </tr>
 <tr class="row-even"><td><p>doc_getstrt</p></td>
 <td><p>Getting Started</p></td>
 <td><p>status</p></td>
 <td><p>—</p></td>
+<td><p>—</p></td>
 </tr>
 <tr class="row-odd"><td><p>doc_tool</p></td>
 <td><p>Tool Verification Report</p></td>
 <td><p>safety_affected, security_affected, status, tcl</p></td>
 <td><p>realizes</p></td>
+<td><p>—</p></td>
 </tr>
 <tr class="row-even"><td><p>document</p></td>
 <td><p>Generic Document</p></td>
 <td><p>safety, security, status</p></td>
-<td><div class="line-block">
-<div class="line">mandatory: realizes</div>
-</div>
-</td>
+<td><p><strong>realizes</strong></p></td>
+<td><p>—</p></td>
 </tr>
 <tr class="row-odd"><td><p>feat</p></td>
 <td><p>Feature</p></td>
 <td><p>safety, security, status</p></td>
 <td><p>includes, provides, uses</p></td>
+<td><p>comp, feat_arc_dyn, feat_arc_sta, feat_req</p></td>
 </tr>
 <tr class="row-even"><td><p>feat_arc_dyn</p></td>
 <td><p>Feature Sequence Diagram</p></td>
 <td><p>safety, security, status</p></td>
-<td><p>fulfils | mandatory: belongs_to</p></td>
+<td><p><strong>belongs_to</strong>, fulfils</p></td>
+<td><p>feat_saf_fmea</p></td>
 </tr>
 <tr class="row-odd"><td><p>feat_arc_sta</p></td>
 <td><p>Feature &amp; Feature Package Diagram</p></td>
 <td><p>safety, security, status</p></td>
-<td><p>fulfils | mandatory: belongs_to, includes</p></td>
+<td><p><strong>belongs_to</strong>, fulfils, <strong>includes</strong></p></td>
+<td><p>feat_saf_dfa, feat_saf_fmea, plat_saf_dfa</p></td>
 </tr>
 <tr class="row-even"><td><p>feat_req</p></td>
 <td><p>Feature Requirement</p></td>
 <td><p>content, reqtype, safety, security, status, valid_from</p></td>
-<td><p>covers, derived_from | mandatory: satisfied_by</p></td>
+<td><p>covers, derived_from, <strong>satisfied_by</strong></p></td>
+<td><p>—</p></td>
 </tr>
 <tr class="row-odd"><td><p>feat_saf_dfa</p></td>
 <td><p>Feature DFA (Dependent Failure Analysis)</p></td>
 <td><p>content, failure_effect, failure_id, status, sufficient</p></td>
-<td><p>mitigated_by | mandatory: violates</p></td>
+<td><p>mitigated_by, <strong>violates</strong></p></td>
+<td><p>—</p></td>
 </tr>
 <tr class="row-even"><td><p>feat_saf_fmea</p></td>
 <td><p>Feature FMEA (Failure Mode and Effects Analysis)</p></td>
 <td><p>content, failure_effect, fault_id, status, sufficient</p></td>
-<td><p>mitigated_by | mandatory: violates</p></td>
+<td><p>mitigated_by, <strong>violates</strong></p></td>
+<td><p>—</p></td>
 </tr>
 <tr class="row-odd"><td><p>feat_sec_ana</p></td>
 <td><p>Feature Security Analysis (Threat Scenario)</p></td>
 <td><p>content, status, sufficient, threat_effect, threat_scenario_id</p></td>
 <td><p>mitigated_by</p></td>
+<td><p>—</p></td>
 </tr>
 <tr class="row-even"><td><p>feat_sec_threat</p></td>
 <td><p>Feature Security Analysis Threat (STRIDE)</p></td>
 <td><p>content, status, threat_id</p></td>
+<td><p>—</p></td>
 <td><p>—</p></td>
 </tr>
 <tr class="row-odd"><td><p>gd_chklst</p></td>
 <td><p>Process Checklist</p></td>
 <td><p>status</p></td>
 <td><p>complies</p></td>
+<td><p>—</p></td>
 </tr>
 <tr class="row-even"><td><p>gd_guidl</p></td>
 <td><p>Process Guideline</p></td>
 <td><p>status</p></td>
 <td><p>complies</p></td>
+<td><p>—</p></td>
 </tr>
 <tr class="row-odd"><td><p>gd_method</p></td>
 <td><p>Process Method</p></td>
 <td><p>status</p></td>
 <td><p>complies</p></td>
+<td><p>—</p></td>
 </tr>
 <tr class="row-even"><td><p>gd_req</p></td>
 <td><p>Process Requirements</p></td>
 <td><p>content</p></td>
 <td><p>complies, satisfies</p></td>
+<td><p>—</p></td>
 </tr>
 <tr class="row-odd"><td><p>gd_temp</p></td>
 <td><p>Process Template</p></td>
 <td><p>status</p></td>
 <td><p>complies</p></td>
+<td><p>—</p></td>
 </tr>
 <tr class="row-even"><td><p>logic_arc_int</p></td>
 <td><p>Logical Interface &amp; Feature Interface View</p></td>
 <td><p>safety, security, status</p></td>
 <td><p>fulfils, included_by, includes</p></td>
+<td><p>feat_arc_sta, logic_arc_int_op</p></td>
 </tr>
 <tr class="row-odd"><td><p>logic_arc_int_op</p></td>
 <td><p>Logical Interface Operation</p></td>
 <td><p>safety, security, status</p></td>
-<td><div class="line-block">
-<div class="line">mandatory: included_by</div>
-</div>
-</td>
+<td><p><strong>included_by</strong></p></td>
+<td><p>feat_arc_sta</p></td>
 </tr>
 <tr class="row-even"><td><p>mod</p></td>
 <td><p>Module</p></td>
 <td><p>—</p></td>
-<td><div class="line-block">
-<div class="line">mandatory: includes</div>
-</div>
-</td>
+<td><p><strong>includes</strong></p></td>
+<td><p>mod_ver_report</p></td>
 </tr>
 <tr class="row-odd"><td><p>mod_ver_report</p></td>
 <td><p>Module Verification Report</p></td>
 <td><p>safety, security, status, verification_method</p></td>
-<td><p>contains, covers, evidence, realizes | mandatory: belongs_to</p></td>
+<td><p><strong>belongs_to</strong>, contains, covers, evidence, realizes</p></td>
+<td><p>—</p></td>
 </tr>
 <tr class="row-even"><td><p>mod_view_dyn</p></td>
 <td><p>Module Architecture Dynamic View</p></td>
 <td><p>—</p></td>
 <td><p>belongs_to</p></td>
+<td><p>—</p></td>
 </tr>
 <tr class="row-odd"><td><p>mod_view_sta</p></td>
 <td><p>Module Architecture Static View</p></td>
 <td><p>—</p></td>
 <td><p>belongs_to, includes</p></td>
+<td><p>—</p></td>
 </tr>
 <tr class="row-even"><td><p>plat_saf_dfa</p></td>
 <td><p>Platform Dependent Failure Analysis</p></td>
 <td><p>content, failure_effect, failure_id, status, sufficient</p></td>
-<td><p>mitigated_by | mandatory: violates</p></td>
+<td><p>mitigated_by, <strong>violates</strong></p></td>
+<td><p>—</p></td>
 </tr>
 <tr class="row-odd"><td><p>plat_sec_ana</p></td>
 <td><p>Platform Security Analysis (Threat Scenario)</p></td>
 <td><p>content, status, sufficient, threat_effect, threat_scenario_id</p></td>
 <td><p>mitigated_by</p></td>
+<td><p>—</p></td>
 </tr>
 <tr class="row-even"><td><p>plat_sec_threat</p></td>
 <td><p>Platform Security Analysis Threat (STRIDE)</p></td>
 <td><p>content, status, threat_id</p></td>
+<td><p>—</p></td>
 <td><p>—</p></td>
 </tr>
 <tr class="row-odd"><td><p>real_arc_int</p></td>
 <td><p>Interface &amp; Component Interface</p></td>
 <td><p>language, safety, security, status</p></td>
 <td><p>fulfils</p></td>
+<td><p>real_arc_int_op</p></td>
 </tr>
 <tr class="row-even"><td><p>real_arc_int_op</p></td>
 <td><p>Interface Operation</p></td>
 <td><p>safety, security, status</p></td>
-<td><p>implements | mandatory: included_by</p></td>
+<td><p>implements, <strong>included_by</strong></p></td>
+<td><p>—</p></td>
 </tr>
 <tr class="row-odd"><td><p>review_header</p></td>
 <td><p>Review Header</p></td>
 <td><p>approvers, hash, reviewers, template</p></td>
+<td><p>—</p></td>
 <td><p>—</p></td>
 </tr>
 <tr class="row-even"><td><p>role</p></td>
 <td><p>Role</p></td>
 <td><p>—</p></td>
 <td><p>contains</p></td>
+<td><p>workflow</p></td>
 </tr>
 <tr class="row-odd"><td><p>std_req</p></td>
 <td><p>Standard Requirement</p></td>
 <td><p>id, status</p></td>
 <td><p>links</p></td>
+<td><p>—</p></td>
 </tr>
 <tr class="row-even"><td><p>std_wp</p></td>
 <td><p>Standard Work Product</p></td>
 <td><p>id, status</p></td>
+<td><p>—</p></td>
 <td><p>—</p></td>
 </tr>
 <tr class="row-odd"><td><p>stkh_req</p></td>
 <td><p>Stakeholder Requirement</p></td>
 <td><p>rationale, reqtype, safety, security, status, valid_from</p></td>
 <td><p>—</p></td>
+<td><p>—</p></td>
 </tr>
 <tr class="row-even"><td><p>tenet</p></td>
 <td><p>Tenet</p></td>
 <td><p>id, status</p></td>
 <td><p>links</p></td>
+<td><p>—</p></td>
 </tr>
 <tr class="row-odd"><td><p>testcase</p></td>
 <td><p>Testcase Needs parsed from test.xml files</p></td>
 <td><p>—</p></td>
 <td><p>fully_verifies, partially_verifies</p></td>
+<td><p>—</p></td>
 </tr>
 <tr class="row-even"><td><p>tool_req</p></td>
 <td><p>Tool Requirement</p></td>
 <td><p>content</p></td>
 <td><p>satisfies</p></td>
+<td><p>—</p></td>
 </tr>
 <tr class="row-odd"><td><p>tsf</p></td>
 <td><p>TSF</p></td>
 <td><p>id, status</p></td>
 <td><p>links</p></td>
+<td><p>—</p></td>
 </tr>
 <tr class="row-even"><td><p>workflow</p></td>
 <td><p>Workflow</p></td>
 <td><p>status</p></td>
-<td><p>contains, has, supported_by | mandatory: approved_by, input, output, responsible</p></td>
+<td><p><strong>approved_by</strong>, contains, has, <strong>input</strong>, <strong>output</strong>, <strong>responsible</strong>, supported_by</p></td>
+<td><p>—</p></td>
 </tr>
 <tr class="row-odd"><td><p>workproduct</p></td>
 <td><p>Workproduct</p></td>
 <td><p>status</p></td>
 <td><p>complies</p></td>
+<td><p>document, workflow</p></td>
 </tr>
 </tbody>
 </table>
