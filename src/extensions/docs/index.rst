@@ -70,6 +70,14 @@ Extensions
       Architecture and design of the ``score_mounts`` bridge extension.
       :ref:`Mounts Extension Internals<score_mounts_internals>`
 
+   .. grid-item-card::
+
+      Module Verification Report
+      ^^^
+      The ``.. module-verification-report::`` directive that expands
+      into the standard per-module verification report body.
+      :ref:`Module Verification Report<module_verification_report>`
+
 
 .. toctree::
    :maxdepth: 1
@@ -81,3 +89,4 @@ Extensions
    Extension Guide <extension_guide>
    Sync TOML <sync_toml>
    mounts_internals
+   module_verification_report
