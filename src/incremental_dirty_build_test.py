@@ -167,8 +167,11 @@ def test_doc_path_is_relative_for_nested_package() -> None:
 
 
 def test_doc_path_never_contains_absolute_runner_path() -> None:
-    # Simulates the old bug: BUILD_WORKSPACE_DIRECTORY leaking into doc_path.
-    absolute_ws = "/home/runner/work/docs-as-code/docs-as-code"
-    # _doc_path must NOT receive ws_root; only PACKAGE_DIR and source_directory.
-    path = _doc_path("", "docs")
-    assert absolute_ws not in str(path)
+    # Regression test: previously doc_path was derived from BUILD_WORKSPACE_DIRECTORY.
+    absolute_ws = Path("/home/runner/work/docs-as-code/docs-as-code")
+    old_doc_path = absolute_ws / "docs"
+    assert str(absolute_ws) in str(old_doc_path)
+
+    new_doc_path = _doc_path("", "docs")
+    assert str(absolute_ws) not in str(new_doc_path)
+    assert not new_doc_path.is_absolute()
