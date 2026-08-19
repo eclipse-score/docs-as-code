@@ -361,7 +361,7 @@ Missing / malformed JSON is not an error: the loader returns ``{}``.
 Extension architecture
 ----------------------
 
-Implementation is split across five modules under
+Implementation is split across six modules under
 ``src/extensions/score_module_verification_report/`` so that each layer
 can be tested independently:
 
@@ -393,7 +393,20 @@ can be tested independently:
      - The ``ModuleVerificationReportDirective`` class. Loads the
        YAML config, calls the scanner / renderer, and
        ``nested_parse_with_titles`` the resulting RST into the
-       document.
+       document. Registers its docname in
+       ``env.module_verification_report_docnames`` so the annotation
+       hook knows which pages to touch.
+
+   * - :mod:`.testcase_annotations`
+     - ``doctree-resolved`` handler that appends a coloured
+       ``(passed)`` / ``(failed)`` / ``(skipped)`` / ``(disabled)``
+       badge to every ``testcase__…`` back-link on pages that rendered
+       the directive. Sources the status from each testcase need's
+       ``result`` field via ``sphinx_needs.data.SphinxNeedsData``. The
+       hook is a no-op on pages the directive did not touch, when
+       sphinx-needs is not initialised, or when a testcase need has an
+       empty ``result``. Colour palette matches the pie-chart palette
+       used by the report body.
 
    * - ``__init__.py``
      - Thin entry point exposing ``setup(app)``.
@@ -404,7 +417,8 @@ The public surface is intentionally minimal:
 * the event handler
   ``scanner.scan_source_tree`` (connected to ``env-before-read-docs``
   in ``setup``);
-* the cached attribute ``env.module_verification_report_needs``.
+* the cached attributes ``env.module_verification_report_needs`` and
+  ``env.module_verification_report_docnames``.
 
 All other functions are considered internal and covered by unit tests
 under ``tests/``.
@@ -441,6 +455,10 @@ grouped by module:
   measured / spec-only intro decision.
 * ``test_rendering.py`` — slug utilities, override vs. filter row
   rendering, and end-to-end ``render_report`` assembly.
+* ``test_testcase_annotations.py`` — the ``env-before-read-docs`` /
+  ``env-purge-doc`` / ``env-merge-info`` lifecycle handlers plus every
+  branch of ``annotate_testcase_results`` (colours, unknown result,
+  every no-op guard).
 
 Run them with the standard target::
 

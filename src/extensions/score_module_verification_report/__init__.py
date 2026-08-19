@@ -44,6 +44,8 @@ Implementation is split across:
 * :mod:`.templates`   — RST templates + default workproduct lists + CSS
 * :mod:`.rendering`   — template expansion / report body assembly
 * :mod:`.directive`   — the ``ModuleVerificationReportDirective`` class
+* :mod:`.testcase_annotations` — ``doctree-resolved`` badge decoration
+  for ``testcase__…`` back-links on pages that render the directive
 """
 from __future__ import annotations
 
@@ -51,6 +53,12 @@ from typing import Any
 
 from .directive import ModuleVerificationReportDirective
 from .scanner import scan_source_tree
+from .testcase_annotations import (
+    annotate_testcase_results,
+    init_docnames,
+    merge_docnames,
+    purge_docname,
+)
 
 
 def setup(app: Any) -> dict:
@@ -58,8 +66,12 @@ def setup(app: Any) -> dict:
         "module-verification-report", ModuleVerificationReportDirective
     )
     app.connect("env-before-read-docs", scan_source_tree)
+    app.connect("env-before-read-docs", init_docnames)
+    app.connect("env-purge-doc", purge_docname)
+    app.connect("env-merge-info", merge_docnames)
+    app.connect("doctree-resolved", annotate_testcase_results)
     return {
-        "version": "0.6",
+        "version": "0.7",
         "parallel_read_safe": True,
         "parallel_write_safe": True,
     }

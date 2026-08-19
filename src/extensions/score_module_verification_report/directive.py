@@ -137,4 +137,12 @@ class ModuleVerificationReportDirective(SphinxDirective):
         container = nodes.container()
         container.document = self.state.document
         nested_parse_with_titles(self.state, view_list, container)
+
+        # Register this docname so the ``doctree-resolved`` hook in
+        # ``testcase_annotations`` knows to decorate testcase back-links
+        # with a coloured ``(passed)`` / ``(failed)`` badge here.
+        if not hasattr(self.env, "module_verification_report_docnames"):
+            self.env.module_verification_report_docnames = set()
+        self.env.module_verification_report_docnames.add(self.env.docname)
+
         return container.children
