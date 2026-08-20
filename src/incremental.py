@@ -86,11 +86,6 @@ def update_module_hash(build_dir: Path, sentinel_files: list[Path]) -> None:
     (build_dir / _MODULE_HASH_FILE).write_text(_compute_hash(sentinel_files))
 
 
-def _doc_path(package_dir_env: str, source_directory: str) -> Path:
-    """Repo-relative path to the Sphinx source dir (used for the edit-on-GitHub URL)."""
-    return Path(package_dir_env) / source_directory
-
-
 def _mounted_watch_dirs(
     manifest_path: Path, ws_root: Path | None, runfiles_dir: Path | None = None
 ) -> list[str]:
@@ -203,7 +198,7 @@ if __name__ == "__main__":
         base_arguments.append("-A=github_version=main")
         # doc_path must be repo-relative so the edit URL does not contain the
         # absolute runner filesystem path (e.g. /home/runner/work/…/docs).
-        relative_doc_path = Path(os.environ.get("PACKAGE_DIR", ""), source_directory)
+        relative_doc_path = Path(os.environ.get("PACKAGE_DIR", "")) / source_directory
         base_arguments.append(f"-A=doc_path={relative_doc_path}")
 
     if os.getenv("KNOWN_GOOD_JSON"):
