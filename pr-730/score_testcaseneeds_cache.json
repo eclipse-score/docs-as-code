@@ -2828,7 +2828,7 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_consistency_checks__test_no_warning_when_all_links_correct",
+    "name": "test_consistency_checks__test_no_belongs_to_check_when_feature_id_is_none",
     "file": "src/extensions/score_module_verification_report/tests/test_consistency_checks.py",
     "line": "239",
     "result": "passed",
@@ -2842,9 +2842,23 @@
     "FullyVerifies": null
   },
   {
+    "name": "test_consistency_checks__test_no_warning_when_all_links_correct",
+    "file": "src/extensions/score_module_verification_report/tests/test_consistency_checks.py",
+    "line": "252",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
     "name": "test_consistency_checks__test_skips_module_check_when_mod_need_not_found",
     "file": "src/extensions/score_module_verification_report/tests/test_consistency_checks.py",
-    "line": "250",
+    "line": "263",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2858,7 +2872,7 @@
   {
     "name": "test_consistency_checks__test_warns_when_comp_need_not_found",
     "file": "src/extensions/score_module_verification_report/tests/test_consistency_checks.py",
-    "line": "267",
+    "line": "280",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2872,7 +2886,7 @@
   {
     "name": "test_consistency_checks__test_warning_includes_docname",
     "file": "src/extensions/score_module_verification_report/tests/test_consistency_checks.py",
-    "line": "277",
+    "line": "290",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2998,7 +3012,7 @@
   {
     "name": "test_directive__test_parse_single_id",
     "file": "src/extensions/score_module_verification_report/tests/test_directive.py",
-    "line": "62",
+    "line": "66",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3012,7 +3026,7 @@
   {
     "name": "test_directive__test_parse_multiple_ids",
     "file": "src/extensions/score_module_verification_report/tests/test_directive.py",
-    "line": "70",
+    "line": "74",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3026,7 +3040,7 @@
   {
     "name": "test_directive__test_parse_strips_version_qualifier",
     "file": "src/extensions/score_module_verification_report/tests/test_directive.py",
-    "line": "80",
+    "line": "84",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3040,7 +3054,7 @@
   {
     "name": "test_directive__test_parse_empty_string_returns_empty",
     "file": "src/extensions/score_module_verification_report/tests/test_directive.py",
-    "line": "89",
+    "line": "93",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3054,7 +3068,7 @@
   {
     "name": "test_directive__test_parse_whitespace_only_entries_skipped",
     "file": "src/extensions/score_module_verification_report/tests/test_directive.py",
-    "line": "93",
+    "line": "97",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3068,7 +3082,7 @@
   {
     "name": "test_directive__test_parse_without_matching_prefix_uses_full_id_as_slug",
     "file": "src/extensions/score_module_verification_report/tests/test_directive.py",
-    "line": "98",
+    "line": "102",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3082,7 +3096,7 @@
   {
     "name": "test_directive__test_parse_no_prefix_uses_full_id",
     "file": "src/extensions/score_module_verification_report/tests/test_directive.py",
-    "line": "104",
+    "line": "108",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3096,7 +3110,7 @@
   {
     "name": "test_directive__test_parse_title_uses_titlecase",
     "file": "src/extensions/score_module_verification_report/tests/test_directive.py",
-    "line": "109",
+    "line": "113",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3110,7 +3124,7 @@
   {
     "name": "test_directive__test_parse_multiline_string",
     "file": "src/extensions/score_module_verification_report/tests/test_directive.py",
-    "line": "114",
+    "line": "118",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3122,9 +3136,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_directive__test_module_id_option_derives_prefix_and_feature",
+    "name": "test_directive__test_module_id_option_derives_prefix_only_not_feature",
     "file": "src/extensions/score_module_verification_report/tests/test_directive.py",
-    "line": "125",
+    "line": "129",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3138,7 +3152,7 @@
   {
     "name": "test_directive__test_explicit_feature_id_option_overrides_derived",
     "file": "src/extensions/score_module_verification_report/tests/test_directive.py",
-    "line": "134",
+    "line": "139",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3152,7 +3166,7 @@
   {
     "name": "test_directive__test_explicit_component_prefix_option_overrides_derived",
     "file": "src/extensions/score_module_verification_report/tests/test_directive.py",
-    "line": "140",
+    "line": "145",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3166,7 +3180,7 @@
   {
     "name": "test_directive__test_module_id_without_mod_prefix",
     "file": "src/extensions/score_module_verification_report/tests/test_directive.py",
-    "line": "145",
+    "line": "150",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3180,7 +3194,7 @@
   {
     "name": "test_directive__test_empty_module_id_gives_generic_prefix",
     "file": "src/extensions/score_module_verification_report/tests/test_directive.py",
-    "line": "152",
+    "line": "157",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3194,7 +3208,7 @@
   {
     "name": "test_directive__test_feature_slug_splits_on_double_underscore",
     "file": "src/extensions/score_module_verification_report/tests/test_directive.py",
-    "line": "164",
+    "line": "169",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3208,7 +3222,7 @@
   {
     "name": "test_directive__test_feature_slug_falls_back_to_full_id_when_no_double_underscore",
     "file": "src/extensions/score_module_verification_report/tests/test_directive.py",
-    "line": "169",
+    "line": "174",
     "result": "passed",
     "repo_name": null,
     "hash": null,
