@@ -53,7 +53,7 @@ def test_slugify_strips_leading_trailing_dashes() -> None:
 
 
 def test_workproduct_rows_uses_needtable_by_default() -> None:
-    out = workproduct_rows("kvs", overrides={}, workproducts=_WP)
+    out = workproduct_rows("kvs", workproducts=_WP)
     assert ":need:`wp__req`" in out
     assert "Requirements Inspection" in out
     # Both id and status cells rendered as needtables with matching filter.
@@ -63,18 +63,8 @@ def test_workproduct_rows_uses_needtable_by_default() -> None:
     assert '"wp__req" in realizes' in out
 
 
-def test_workproduct_rows_override_uses_direct_need_and_ndf_copy() -> None:
-    overrides = {"workproducts": {"req": "doc__custom_req"}}
-    out = workproduct_rows("kvs", overrides, _WP)
-    # Overridden row: no needtable, direct :need: + :ndf: copy on status.
-    assert ":need:`doc__custom_req`" in out
-    assert "copy('status', need_id='doc__custom_req')" in out
-    # Non-overridden row (arc) still uses needtable.
-    assert '"wp__arc" in realizes' in out
-
-
 def test_workproduct_rows_no_rows_when_workproducts_empty() -> None:
-    assert workproduct_rows("kvs", {}, []) == ""
+    assert workproduct_rows("kvs", []) == ""
 
 
 # ---------------------------------------------------------------------------
@@ -100,7 +90,7 @@ def test_render_overview_empty_components() -> None:
 
 def test_render_component_contains_component_specific_filters() -> None:
     comp = {"id": "comp__demo_kvs", "slug": "kvs", "title": "Key-Value Store"}
-    out = render_component(comp, overrides={}, workproducts=_WP, coverage_data={})
+    out = render_component(comp, workproducts=_WP)
     # Title underline (~ * len(title)).
     assert "~" * len("Key-Value Store") in out
     # comp_id substituted into all filter expressions.
@@ -116,7 +106,6 @@ def test_render_feature_substitutes_feature_id_and_slug() -> None:
     out = render_feature(
         feature_id="feat__demo",
         feature_slug="demo",
-        feature_overrides={},
         feature_workproducts=_WP,
     )
     assert 'id == "feat__demo"' in out
@@ -139,10 +128,8 @@ def test_render_report_assembles_all_sections() -> None:
         components=components,
         feature_id="feat__demo",
         feature_slug="demo",
-        overrides_by_id={},
         workproducts=_WP,
         feature_workproducts=_WP,
-        coverage_data={},
     )
     # CSS block for wp-doc-table styling.
     assert ".wp-doc-table" in out
@@ -154,31 +141,4 @@ def test_render_report_assembles_all_sections() -> None:
     assert '"comp__demo_b" in satisfied_by' in out
 
 
-def test_render_report_applies_feature_overrides() -> None:
-    out = render_report(
-        components=[{"id": "comp__demo_a", "slug": "a", "title": "A"}],
-        feature_id="feat__demo",
-        feature_slug="demo",
-        overrides_by_id={
-            "feat__demo": {"workproducts": {"req": "doc__feat_req"}},
-        },
-        workproducts=_WP,
-        feature_workproducts=_WP,
-        coverage_data={},
-    )
-    assert ":need:`doc__feat_req`" in out
 
-
-def test_render_report_applies_component_overrides() -> None:
-    out = render_report(
-        components=[{"id": "comp__demo_a", "slug": "a", "title": "A"}],
-        feature_id="feat__demo",
-        feature_slug="demo",
-        overrides_by_id={
-            "comp__demo_a": {"workproducts": {"req": "doc__comp_a_req"}},
-        },
-        workproducts=_WP,
-        feature_workproducts=_WP,
-        coverage_data={},
-    )
-    assert ":need:`doc__comp_a_req`" in out

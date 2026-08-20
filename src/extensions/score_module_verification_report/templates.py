@@ -133,31 +133,6 @@ this component. A dash (``\u2014``) means the corresponding document is missing.
 """
 
 
-# Kept for later re-activation. To re-enable the Unit Test Coverage
-# section, append this fragment to ``COMPONENT_TEMPLATE`` and restore
-# the ``coverage_intro=coverage_intro(comp, coverage_data)`` kwarg in
-# ``render_component``.
-COMPONENT_COVERAGE_SECTION_DISABLED = """\
-
-Unit Test Coverage
-^^^^^^^^^^^^^^^^^^
-
-{coverage_intro}
-.. list-table::
-   :header-rows: 1
-   :widths: 30 70
-
-   * - Metric
-     - Coverage
-   * - Lines
-     - |coverage_{slug}_lines|
-   * - Functions
-     - |coverage_{slug}_functions|
-   * - Branches
-     - |coverage_{slug}_branches|
-"""
-
-
 FEATURE_TEMPLATE = """\
 Feature
 -------

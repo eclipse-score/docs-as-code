@@ -21,7 +21,6 @@ from docutils.statemachine import ViewList
 from sphinx.util.docutils import SphinxDirective
 from sphinx.util.nodes import nested_parse_with_titles
 
-from .coverage import load_coverage_summary
 from .rendering import render_report
 from .templates import DEFAULT_FEATURE_WORKPRODUCTS, DEFAULT_WORKPRODUCTS
 
@@ -93,7 +92,6 @@ class ModuleVerificationReportDirective(SphinxDirective):
         )
         workproducts = DEFAULT_WORKPRODUCTS
         feature_workproducts = DEFAULT_FEATURE_WORKPRODUCTS
-        overrides_by_id: dict[str, dict] = {}
 
         components_str = self.options.get("components", "")
         components = _parse_components(components_str, component_prefix)
@@ -105,16 +103,12 @@ class ModuleVerificationReportDirective(SphinxDirective):
             )
             return [error]
 
-        coverage_data = load_coverage_summary(self.env)
-
         rst_text = render_report(
             components,
             feature_id,
             feature_slug,  # type: ignore[arg-type]
-            overrides_by_id,
             workproducts,
             feature_workproducts,
-            coverage_data,
         )
         view_list = ViewList()
         source = "<module-verification-report>"

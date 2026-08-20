@@ -27,7 +27,6 @@ do not follow the standard naming convention.
 
 Implementation is split across:
 
-* :mod:`.coverage`    — ``coverage_summary.json`` loading
 * :mod:`.templates`   — RST templates + default workproduct lists + CSS
 * :mod:`.rendering`   — template expansion / report body assembly
 * :mod:`.directive`   — the ``ModuleVerificationReportDirective`` class
