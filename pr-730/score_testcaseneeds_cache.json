@@ -2760,7 +2760,7 @@
   {
     "name": "test_consistency_checks__test_noop_when_registry_empty",
     "file": "src/extensions/score_module_verification_report/tests/test_consistency_checks.py",
-    "line": "145",
+    "line": "148",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2774,7 +2774,7 @@
   {
     "name": "test_consistency_checks__test_noop_when_registry_missing",
     "file": "src/extensions/score_module_verification_report/tests/test_consistency_checks.py",
-    "line": "152",
+    "line": "158",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2788,7 +2788,7 @@
   {
     "name": "test_consistency_checks__test_noop_when_needs_unavailable",
     "file": "src/extensions/score_module_verification_report/tests/test_consistency_checks.py",
-    "line": "159",
+    "line": "168",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2802,7 +2802,7 @@
   {
     "name": "test_consistency_checks__test_warns_when_comp_missing_from_module_includes",
     "file": "src/extensions/score_module_verification_report/tests/test_consistency_checks.py",
-    "line": "192",
+    "line": "217",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2816,7 +2816,7 @@
   {
     "name": "test_consistency_checks__test_warns_when_feature_missing_from_comp_belongs_to",
     "file": "src/extensions/score_module_verification_report/tests/test_consistency_checks.py",
-    "line": "202",
+    "line": "227",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2830,7 +2830,7 @@
   {
     "name": "test_consistency_checks__test_no_warning_when_all_links_correct",
     "file": "src/extensions/score_module_verification_report/tests/test_consistency_checks.py",
-    "line": "214",
+    "line": "239",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2844,7 +2844,7 @@
   {
     "name": "test_consistency_checks__test_skips_module_check_when_mod_need_not_found",
     "file": "src/extensions/score_module_verification_report/tests/test_consistency_checks.py",
-    "line": "225",
+    "line": "250",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2858,7 +2858,7 @@
   {
     "name": "test_consistency_checks__test_warns_when_comp_need_not_found",
     "file": "src/extensions/score_module_verification_report/tests/test_consistency_checks.py",
-    "line": "242",
+    "line": "267",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2872,7 +2872,7 @@
   {
     "name": "test_consistency_checks__test_warning_includes_docname",
     "file": "src/extensions/score_module_verification_report/tests/test_consistency_checks.py",
-    "line": "252",
+    "line": "277",
     "result": "passed",
     "repo_name": null,
     "hash": null,
