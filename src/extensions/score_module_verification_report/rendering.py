@@ -158,19 +158,22 @@ def render_overview(components: list[dict]) -> str:
 
 def render_report(
     components: list[dict],
-    feature_id: str,
-    feature_slug: str,
+    feature_id: str | None,
+    feature_slug: str | None,
     overrides_by_id: dict[str, dict],
     workproducts: list[dict],
     feature_workproducts: list[dict],
     coverage_data: dict,
 ) -> str:
-    feature_overrides = overrides_by_id.get(feature_id, {})
-    parts = [
-        WP_TABLE_CSS,
-        render_feature(
-            feature_id, feature_slug, feature_overrides, feature_workproducts
-        ),
+    parts = [WP_TABLE_CSS]
+    if feature_id is not None and feature_slug is not None:
+        feature_overrides = overrides_by_id.get(feature_id, {})
+        parts.append(
+            render_feature(
+                feature_id, feature_slug, feature_overrides, feature_workproducts
+            )
+        )
+    parts += [
         COMPONENTS_HEADER,
         render_overview(components),
     ]

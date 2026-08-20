@@ -84,7 +84,7 @@ def merge_registry(app: Any, env: Any, docnames: Any, other: Any) -> None:
 
 def _check_module(app: Any, needs: Any, module_id: str, info: dict) -> None:
     """Check one module's component links and emit warnings for violations."""
-    feature_id: str = info["feature_id"]
+    feature_id: str | None = info["feature_id"]
     comp_ids: list[str] = info["comp_ids"]
     docname: str = info.get("docname", "?")
     mod_need = needs.get(module_id)
@@ -124,7 +124,7 @@ def _check_module(app: Any, needs: Any, module_id: str, info: dict) -> None:
                 )
 
         # Rule 2: feature must be in the component's :belongs_to:
-        if feature_id not in comp_need.get("belongs_to", []):
+        if feature_id is not None and feature_id not in comp_need.get("belongs_to", []):
             logger.warning(
                 "[module-verification-report] %s: "
                 "%s is not in %s :belongs_to: "

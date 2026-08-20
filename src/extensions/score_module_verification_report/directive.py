@@ -85,9 +85,11 @@ class ModuleVerificationReportDirective(SphinxDirective):
         component_prefix = self.options.get("component-prefix") or (
             "comp__" + module_short + "_" if module_short else "comp__"
         )
-        feature_id = self.options.get("feature-id") or f"feat__{module_short}"
+        feature_id: str | None = self.options.get("feature-id") or None
         feature_slug = (
-            feature_id.split("__", 1)[1] if "__" in feature_id else feature_id
+            (feature_id.split("__", 1)[1] if "__" in feature_id else feature_id)
+            if feature_id is not None
+            else None
         )
         workproducts = DEFAULT_WORKPRODUCTS
         feature_workproducts = DEFAULT_FEATURE_WORKPRODUCTS
@@ -108,7 +110,7 @@ class ModuleVerificationReportDirective(SphinxDirective):
         rst_text = render_report(
             components,
             feature_id,
-            feature_slug,
+            feature_slug,  # type: ignore[arg-type]
             overrides_by_id,
             workproducts,
             feature_workproducts,

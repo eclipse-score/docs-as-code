@@ -236,6 +236,19 @@ def test_warns_when_feature_missing_from_comp_belongs_to() -> None:
     )
 
 
+def test_no_belongs_to_check_when_feature_id_is_none() -> None:
+    """When feature_id is None (no :feature-id: option), the belongs_to rule is skipped."""
+    registry = {
+        "mod__m": _registry_entry(feature_id=None, comp_ids=["comp__m_a"])  # type: ignore[arg-type]
+    }
+    needs = {
+        "mod__m": {"includes": ["comp__m_a"]},
+        "comp__m_a": {"belongs_to": []},  # would fail if feature_id were set
+    }
+    warnings = _run_check(registry, needs)
+    assert not any("belongs_to" in w for w in warnings)
+
+
 def test_no_warning_when_all_links_correct() -> None:
     registry = {"mod__m": _registry_entry(comp_ids=["comp__m_a", "comp__m_b"])}
     needs = {

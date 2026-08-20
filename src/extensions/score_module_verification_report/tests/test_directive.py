@@ -43,8 +43,12 @@ def _resolve(
     component_prefix = option_component_prefix or (
         "comp__" + module_short + "_" if module_short else "comp__"
     )
-    feature_id = option_feature_id or f"feat__{module_short}"
-    feature_slug = feature_id.split("__", 1)[1] if "__" in feature_id else feature_id
+    feature_id: str | None = option_feature_id or None
+    feature_slug = (
+        (feature_id.split("__", 1)[1] if "__" in feature_id else feature_id)
+        if feature_id is not None
+        else None
+    )
     return {
         "module_id": module_id,
         "module_short": module_short,
@@ -122,13 +126,14 @@ def test_parse_multiline_string():
 # ---------------------------------------------------------------------------
 
 
-def test_module_id_option_derives_prefix_and_feature():
+def test_module_id_option_derives_prefix_only_not_feature():
+    """Without :feature-id:, feature_id is None — no name guessing."""
     r = _resolve(option_module_id="mod__baselibs")
     assert r["module_id"] == "mod__baselibs"
     assert r["module_short"] == "baselibs"
     assert r["component_prefix"] == "comp__baselibs_"
-    assert r["feature_id"] == "feat__baselibs"
-    assert r["feature_slug"] == "baselibs"
+    assert r["feature_id"] is None
+    assert r["feature_slug"] is None
 
 
 def test_explicit_feature_id_option_overrides_derived():
@@ -146,14 +151,14 @@ def test_module_id_without_mod_prefix():
     r = _resolve(option_module_id="mymodule")
     assert r["module_short"] == "mymodule"
     assert r["component_prefix"] == "comp__mymodule_"
-    assert r["feature_id"] == "feat__mymodule"
+    assert r["feature_id"] is None
 
 
 def test_empty_module_id_gives_generic_prefix():
     r = _resolve()
     assert r["module_id"] == ""
     assert r["component_prefix"] == "comp__"
-    assert r["feature_id"] == "feat__"
+    assert r["feature_id"] is None
 
 
 # ---------------------------------------------------------------------------
