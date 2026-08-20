@@ -533,42 +533,8 @@ are supported. Optional <code class="docutils literal notranslate"><span class="
 for section headings and document-id matching). Default:
 <code class="docutils literal notranslate"><span class="pre">comp__&lt;module-short&gt;_</span></code>.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">:config:</span></code></p></td>
-<td><p>no</p></td>
-<td><p>Path (relative to <code class="docutils literal notranslate"><span class="pre">srcdir</span></code>) to an optional YAML file for
-non-default workproduct lists or per-component doc-id overrides.
-See <a class="reference internal" href="#mvr-config"><span class="std std-ref">Advanced: config YAML</span></a> below.</p></td>
-</tr>
 </tbody>
 </table>
-</div>
-</section>
-<section id="advanced-config-yaml">
-<span id="mvr-config"></span><h2>Advanced: config YAML<a class="headerlink" href="#advanced-config-yaml" title="Link to this heading">#</a></h2>
-<p>Most modules need no config file at all. The <code class="docutils literal notranslate"><span class="pre">:config:</span></code> option is only
-useful when the five default SCORE workproducts do not match, or when a
-component uses a non-standard document-id naming convention.</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># Override the default five workproducts (shown for all components).</span>
-<span class="nt">workproducts</span><span class="p">:</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">requirements_inspect</span><span class="w">        </span><span class="c1"># stable key used in overrides</span>
-<span class="w">    </span><span class="nt">label</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Requirements Inspection</span><span class="w">   </span><span class="c1"># shown in the &quot;Kind&quot; column</span>
-<span class="w">    </span><span class="nt">wp_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">wp__req_inspection</span><span class="w">        </span><span class="c1"># sphinx-needs id</span>
-
-<span class="c1"># Override feature-level workproducts (default: req + arc inspection).</span>
-<span class="nt">feature_workproducts</span><span class="p">:</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
-<span class="w">    </span><span class="nt">label</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
-<span class="w">    </span><span class="nt">wp_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
-
-<span class="c1"># Pin specific &quot;Realized by&quot; cells instead of using the auto-filter.</span>
-<span class="nt">overrides</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">comp__mymodule_a</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">workproducts</span><span class="p">:</span>
-<span class="w">      </span><span class="nt">requirements_inspect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">doc__mymodule_a_req_inspection</span>
-<span class="w">  </span><span class="nt">feat__mymodule</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">workproducts</span><span class="p">:</span>
-<span class="w">      </span><span class="nt">requirements_inspect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">doc__mymodule_req_inspection</span>
-</pre></div>
 </div>
 </section>
 </section>
@@ -612,7 +578,6 @@ component uses a non-standard document-id naming convention.</p>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#options">Options</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced-config-yaml">Advanced: config YAML</a></li>
 </ul>
   </nav></div>
 
