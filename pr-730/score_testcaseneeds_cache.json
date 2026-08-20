@@ -2856,9 +2856,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_consistency_checks__test_skips_belongs_to_check_when_comp_need_not_found",
+    "name": "test_consistency_checks__test_warns_when_comp_need_not_found",
     "file": "src/extensions/score_module_verification_report/tests/test_consistency_checks.py",
-    "line": "240",
+    "line": "242",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2870,9 +2870,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_consistency_checks__test_multiple_violations_all_reported",
+    "name": "test_consistency_checks__test_warning_includes_docname",
     "file": "src/extensions/score_module_verification_report/tests/test_consistency_checks.py",
-    "line": "250",
+    "line": "252",
     "result": "passed",
     "repo_name": null,
     "hash": null,
