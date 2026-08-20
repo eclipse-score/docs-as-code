@@ -4032,7 +4032,7 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_external_needs__test_add_needs_json_file_appends_entry",
+    "name": "test_external_needs__test_add_needs_json_file_trailing_slash_project_url",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
     "line": "206",
     "result": "passed",
@@ -4046,9 +4046,23 @@
     "FullyVerifies": null
   },
   {
+    "name": "test_external_needs__test_add_needs_json_file_appends_entry",
+    "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
+    "line": "235",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
     "name": "test_external_needs__test_add_external_needs_json_missing_file_keeps_list_empty",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "241",
+    "line": "270",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4062,7 +4076,7 @@
   {
     "name": "test_external_needs__test_add_external_docs_sources_adds_collection",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "260",
+    "line": "289",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4076,7 +4090,7 @@
   {
     "name": "test_external_needs__test_add_external_docs_sources_local_sub_package",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "282",
+    "line": "311",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4090,7 +4104,7 @@
   {
     "name": "test_external_needs__test_add_external_docs_sources_local_root_key_fallback",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "316",
+    "line": "345",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4104,7 +4118,7 @@
   {
     "name": "test_external_needs__test_add_external_docs_sources_ide_support_returns_without_changes",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "346",
+    "line": "375",
     "result": "passed",
     "repo_name": null,
     "hash": null,

@@ -22,9 +22,9 @@
     }
   },
   "tests": {
-    "total": 377,
+    "total": 378,
     "linked_to_requirements": 59,
-    "linked_to_requirements_pct": 15.649867374005305,
+    "linked_to_requirements_pct": 15.608465608465607,
     "broken_references": []
   }
 }

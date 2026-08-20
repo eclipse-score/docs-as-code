@@ -494,7 +494,7 @@ require some pre-run step or are matrix tests or similar.</p>
 <section id="required-properties">
 <h2>Required Properties<a class="headerlink" href="#required-properties" title="Link to this heading">#</a></h2>
 <p>Every linked test must declare the following properties
-(see <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/verification/guidance/verification_specification.html#gd_guidl__verification_specification">gd_guidl__verification_specification</a> for detailed values):</p>
+(see <a class="external_link reference external" href="https://eclipse-score.github.io/process_description/main/process_areas/verification/guidance/verification_specification.html#gd_guidl__verification_specification">gd_guidl__verification_specification</a> for detailed values):</p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">PartiallyVerifies</span></code> <em>and/or</em> <code class="docutils literal notranslate"><span class="pre">FullyVerifies</span></code></dt><dd><p>Comma-separated list of requirement IDs that the test covers.</p>
 </dd>
@@ -547,16 +547,16 @@ but all produce the same JUnit XML output that the linker consumes.</p>
 <dl class="simple">
 <dt>C++ (gTest)</dt><dd><p>Use <code class="docutils literal notranslate"><span class="pre">RecordProperty</span></code> — shared properties go in <code class="docutils literal notranslate"><span class="pre">SetUp()</span></code>, per-test properties
 inside each <code class="docutils literal notranslate"><span class="pre">TEST_F</span></code>.
-See <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/verification/guidance/verification_process_reqs.html#gd_req__verification_link_tests_cpp">gd_req__verification_link_tests_cpp</a>.</p>
+See <a class="external_link reference external" href="https://eclipse-score.github.io/process_description/main/process_areas/verification/guidance/verification_process_reqs.html#gd_req__verification_link_tests_cpp">gd_req__verification_link_tests_cpp</a>.</p>
 </dd>
 <dt>Rust</dt><dd><p>Currently there is no provided official way to do this in Rust.
 We are working with the rust community to figure this out.</p>
 </dd>
 <dt>Python (pytest)</dt><dd><p>Use the <code class="docutils literal notranslate"><span class="pre">&#64;add_test_properties</span></code> decorator; the docstring serves as <code class="docutils literal notranslate"><span class="pre">Description</span></code>.
-See <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/verification/guidance/verification_process_reqs.html#gd_req__verification_link_tests_python">gd_req__verification_link_tests_python</a>.</p>
+See <a class="external_link reference external" href="https://eclipse-score.github.io/process_description/main/process_areas/verification/guidance/verification_process_reqs.html#gd_req__verification_link_tests_python">gd_req__verification_link_tests_python</a>.</p>
 </dd>
 </dl>
-<p>See <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/verification/guidance/verification_templates.html#gd_temp__verification_specification">gd_temp__verification_specification</a> for code templates.</p>
+<p>See <a class="external_link reference external" href="https://eclipse-score.github.io/process_description/main/process_areas/verification/guidance/verification_templates.html#gd_temp__verification_specification">gd_temp__verification_specification</a> for code templates.</p>
 </section>
 <section id="running-tests-and-building-docs">
 <h2>Running Tests and Building Docs<a class="headerlink" href="#running-tests-and-building-docs" title="Link to this heading">#</a></h2>
