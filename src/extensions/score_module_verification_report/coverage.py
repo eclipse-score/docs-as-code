@@ -18,16 +18,16 @@ report. Its top-level keys are component slugs (matching
 with real metric values marks that component as *measured*; absence
 marks it as *specification-only*.
 """
+
 from __future__ import annotations
 
 import json
 import os
 
-
 COVERAGE_INTRO_MEASURED = (
     "Aggregated from ``bazel coverage``. Regenerate via\n"
-    "``python3 tools/extract_coverage.py \"$(bazel info output_path)"
-    "/_coverage/_coverage_report.dat\" docs/reporting/coverage_summary.json``.\n"
+    '``python3 tools/extract_coverage.py "$(bazel info output_path)'
+    '/_coverage/_coverage_report.dat" docs/reporting/coverage_summary.json``.\n'
 )
 COVERAGE_INTRO_SPEC_ONLY = (
     "This component is specification-only and has no dedicated unit\n"
@@ -41,7 +41,7 @@ def load_coverage_summary(env) -> dict:
     """Return the parsed ``coverage_summary.json`` (empty dict on failure)."""
     path = os.path.join(env.srcdir, COVERAGE_SUMMARY_REL_PATH)
     try:
-        with open(path, "r", encoding="utf-8") as fh:
+        with open(path, encoding="utf-8") as fh:
             data = json.load(fh)
     except (OSError, ValueError):
         return {}
@@ -61,7 +61,6 @@ def coverage_intro(comp: dict, coverage_data: dict) -> str:
     """
     entry = coverage_data.get(comp["slug"]) or {}
     measured = any(
-        entry.get(f"{m}_pct") is not None
-        for m in ("lines", "functions", "branches")
+        entry.get(f"{m}_pct") is not None for m in ("lines", "functions", "branches")
     )
     return (COVERAGE_INTRO_MEASURED if measured else COVERAGE_INTRO_SPEC_ONLY) + "\n"

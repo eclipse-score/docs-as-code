@@ -20,6 +20,7 @@ document — the directive registers its ``docname`` in
 ``env.module_verification_report_docnames`` so unrelated pages are left
 untouched.
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -77,10 +78,7 @@ def annotate_testcase_results(app, doctree, docname):
         if not result:
             continue
         color = RESULT_COLORS.get(result, _FALLBACK_COLOR)
-        status_html = (
-            f'<span style="color:{color};font-weight:bold">'
-            f" ({result})</span>"
-        )
+        status_html = f'<span style="color:{color};font-weight:bold"> ({result})</span>'
         # Keep the id text, append the coloured status inline.
         ref.replace(first, nodes.Text(text))
         ref.append(nodes.raw("", status_html, format="html"))

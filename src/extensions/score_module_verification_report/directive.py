@@ -11,12 +11,11 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 """The ``.. module-verification-report::`` Sphinx directive."""
+
 from __future__ import annotations
 
-import os
 import re
 
-import yaml
 from docutils import nodes
 from docutils.statemachine import ViewList
 from sphinx.util.docutils import SphinxDirective
@@ -46,7 +45,7 @@ def _parse_components(ids_str: str, component_prefix: str) -> list[dict]:
         if not comp_id:
             continue
         slug = (
-            comp_id[len(component_prefix):]
+            comp_id[len(component_prefix) :]
             if component_prefix and comp_id.startswith(component_prefix)
             else comp_id
         )
@@ -58,15 +57,14 @@ def _parse_components(ids_str: str, component_prefix: str) -> list[dict]:
 class ModuleVerificationReportDirective(SphinxDirective):
     """Expand to the per-module verification report body.
 
-    Minimal usage — no external config file required::
+    Minimal usage::
 
         .. module-verification-report::
            :module-id: mod__mymodule
            :components: comp__mymodule_a, comp__mymodule_b
 
     ``feature-id`` and ``component-prefix`` are optional and derived from
-    ``module-id`` when omitted.  ``config`` is only needed for non-default
-    workproducts or per-component doc-id overrides.
+    ``module-id`` when omitted.
     """
 
     required_arguments = 0
@@ -76,57 +74,24 @@ class ModuleVerificationReportDirective(SphinxDirective):
         "feature-id": str,
         "component-prefix": str,
         "components": str,
-        "config": str,
     }
     has_content = False
 
-    def _load_config(self, rel_config: str | None) -> dict:
-        if not rel_config:
-            return {}
-        srcdir = self.env.srcdir
-        config_path = os.path.join(srcdir, rel_config)
-        if not os.path.isfile(config_path):
-            self.state_machine.reporter.warning(
-                f"module-verification-report: config not found: {config_path}",
-                line=self.lineno,
-            )
-            return {}
-        with open(config_path, "r", encoding="utf-8") as fh:
-            data = yaml.safe_load(fh) or {}
-        self.env.note_dependency(config_path)
-        return data
-
     def run(self) -> list[nodes.Node]:
-        # Directive options take precedence over config file values so that
-        # the common case needs no YAML file at all.
-        config = self._load_config(self.options.get("config"))
-
-        module_id = self.options.get("module-id") or config.get("module_id", "")
+        module_id = self.options.get("module-id", "")
         module_short = (
-            module_id[len("mod__"):]
-            if module_id.startswith("mod__")
-            else module_id
+            module_id[len("mod__") :] if module_id.startswith("mod__") else module_id
         )
-        component_prefix = (
-            self.options.get("component-prefix")
-            or config.get("component_prefix")
-            or ("comp__" + module_short + "_" if module_short else "comp__")
+        component_prefix = self.options.get("component-prefix") or (
+            "comp__" + module_short + "_" if module_short else "comp__"
         )
-        feature_id = (
-            self.options.get("feature-id")
-            or config.get("feature_id")
-            or f"feat__{module_short}"
-        )
+        feature_id = self.options.get("feature-id") or f"feat__{module_short}"
         feature_slug = (
-            feature_id.split("__", 1)[1]
-            if "__" in feature_id
-            else feature_id
+            feature_id.split("__", 1)[1] if "__" in feature_id else feature_id
         )
-        workproducts = config.get("workproducts") or DEFAULT_WORKPRODUCTS
-        feature_workproducts = (
-            config.get("feature_workproducts") or DEFAULT_FEATURE_WORKPRODUCTS
-        )
-        overrides_by_id: dict[str, dict] = config.get("overrides") or {}
+        workproducts = DEFAULT_WORKPRODUCTS
+        feature_workproducts = DEFAULT_FEATURE_WORKPRODUCTS
+        overrides_by_id: dict[str, dict] = {}
 
         components_str = self.options.get("components", "")
         components = _parse_components(components_str, component_prefix)
@@ -169,5 +134,15 @@ class ModuleVerificationReportDirective(SphinxDirective):
         if not hasattr(self.env, "module_verification_report_docnames"):
             self.env.module_verification_report_docnames = set()  # type: ignore[attr-defined]
         self.env.module_verification_report_docnames.add(self.env.docname)  # type: ignore[attr-defined]
+
+        # Register module/feature/component metadata so the build-finished
+        # consistency check can validate need links without a pre-scan.
+        if not hasattr(self.env, "module_verification_report_registry"):
+            self.env.module_verification_report_registry = {}  # type: ignore[attr-defined]
+        self.env.module_verification_report_registry[module_id] = {  # type: ignore[attr-defined]
+            "docname": self.env.docname,
+            "feature_id": feature_id,
+            "comp_ids": [c["id"] for c in components],
+        }
 
         return container.children

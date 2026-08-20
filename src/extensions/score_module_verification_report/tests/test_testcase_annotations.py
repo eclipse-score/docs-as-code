@@ -12,6 +12,7 @@
 # *******************************************************************************
 """Unit tests for
 :mod:`score_module_verification_report.testcase_annotations`."""
+
 from __future__ import annotations
 
 from types import SimpleNamespace
@@ -23,8 +24,8 @@ from src.extensions.score_module_verification_report import (
     testcase_annotations as ta,
 )
 from src.extensions.score_module_verification_report.testcase_annotations import (  # noqa: E501
-    RESULT_COLORS,
     _FALLBACK_COLOR,
+    RESULT_COLORS,
     annotate_testcase_results,
     init_docnames,
     merge_docnames,
@@ -50,7 +51,7 @@ def _patch_needs(needs):
 def _doctree_with_testcase_link(text, refid="testcase__foo"):
     """Build a tiny docutils tree containing a single reference whose
     visible text is ``text`` (mimicking a sphinx-needs back-link)."""
-    doc = nodes.document(None, None)
+    doc = nodes.document(None, None)  # type: ignore[arg-type]
     ref = nodes.reference("", "", nodes.Text(text), refid=refid)
     doc.append(ref)
     return doc, ref

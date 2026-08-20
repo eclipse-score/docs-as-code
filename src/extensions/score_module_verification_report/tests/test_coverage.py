@@ -11,6 +11,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 """Unit tests for :mod:`score_module_verification_report.coverage`."""
+
 from __future__ import annotations
 
 import json
@@ -87,9 +88,7 @@ def test_coverage_intro_measured_when_pct_present() -> None:
 
 
 def test_coverage_intro_spec_only_when_slug_missing() -> None:
-    assert coverage_intro({"slug": "kvs"}, {}).startswith(
-        COVERAGE_INTRO_SPEC_ONLY[:32]
-    )
+    assert coverage_intro({"slug": "kvs"}, {}).startswith(COVERAGE_INTRO_SPEC_ONLY[:32])
 
 
 def test_coverage_intro_spec_only_when_all_metrics_none() -> None:

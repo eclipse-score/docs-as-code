@@ -33,11 +33,20 @@ Implementation is split across:
 * :mod:`.directive`   — the ``ModuleVerificationReportDirective`` class
 * :mod:`.testcase_annotations` — ``doctree-resolved`` badge decoration
   for ``testcase__…`` back-links on pages that render the directive
+* :mod:`.consistency_checks` — ``build-finished`` validation that every
+  component is properly linked in the needs graph
 """
+
 from __future__ import annotations
 
 from typing import Any
 
+from .consistency_checks import (
+    check_consistency,
+    init_registry,
+    merge_registry,
+    purge_registry,
+)
 from .directive import ModuleVerificationReportDirective
 from .testcase_annotations import (
     annotate_testcase_results,
@@ -48,15 +57,17 @@ from .testcase_annotations import (
 
 
 def setup(app: Any) -> dict:
-    app.add_directive(
-        "module-verification-report", ModuleVerificationReportDirective
-    )
+    app.add_directive("module-verification-report", ModuleVerificationReportDirective)
     app.connect("env-before-read-docs", init_docnames)
+    app.connect("env-before-read-docs", init_registry)
     app.connect("env-purge-doc", purge_docname)
+    app.connect("env-purge-doc", purge_registry)
     app.connect("env-merge-info", merge_docnames)
+    app.connect("env-merge-info", merge_registry)
     app.connect("doctree-resolved", annotate_testcase_results)
+    app.connect("build-finished", check_consistency)
     return {
-        "version": "0.8",
+        "version": "0.9",
         "parallel_read_safe": True,
         "parallel_write_safe": True,
     }

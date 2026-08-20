@@ -11,6 +11,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 """Rendering functions that expand :mod:`.templates` for the report body."""
+
 from __future__ import annotations
 
 import re
@@ -69,15 +70,12 @@ def workproduct_rows(
         lines.append(f"        - {wp['label']}")
         if override_doc:
             lines.append(f"        - :need:`{override_doc}`")
-            lines.append(
-                f"        - :ndf:`copy('status', "
-                f"need_id='{override_doc}')`"
-            )
+            lines.append(f"        - :ndf:`copy('status', need_id='{override_doc}')`")
         else:
             filter_expr = (
-                f"type == \"document\" and "
-                f"\"{slug_norm}\" in id.replace(\"_\", \"\") and "
-                f"\"{wp['wp_id']}\" in realizes"
+                f'type == "document" and '
+                f'"{slug_norm}" in id.replace("_", "") and '
+                f'"{wp["wp_id"]}" in realizes'
             )
             lines.append("        - .. needtable::")
             lines.append(f"             :filter: {filter_expr}")

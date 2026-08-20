@@ -11,8 +11,8 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 """RST templates for the module verification report."""
-from __future__ import annotations
 
+from __future__ import annotations
 
 COMPONENT_TEMPLATE = """
 .. _{ref}:
@@ -315,22 +315,35 @@ Component Overview
 
 
 DEFAULT_WORKPRODUCTS = [
-    {"key": "requirements_inspect", "label": "Requirements Inspection",
-     "wp_id": "wp__requirements_inspect"},
-    {"key": "sw_arch_verification", "label": "Architecture Inspection",
-     "wp_id": "wp__sw_arch_verification"},
-    {"key": "sw_implementation_inspection", "label": "Implementation Inspection",
-     "wp_id": "wp__sw_implementation_inspection"},
-    {"key": "sw_component_dfa", "label": "DFA",
-     "wp_id": "wp__sw_component_dfa"},
-    {"key": "sw_component_fmea", "label": "FMEA",
-     "wp_id": "wp__sw_component_fmea"},
+    {
+        "key": "requirements_inspect",
+        "label": "Requirements Inspection",
+        "wp_id": "wp__requirements_inspect",
+    },
+    {
+        "key": "sw_arch_verification",
+        "label": "Architecture Inspection",
+        "wp_id": "wp__sw_arch_verification",
+    },
+    {
+        "key": "sw_implementation_inspection",
+        "label": "Implementation Inspection",
+        "wp_id": "wp__sw_implementation_inspection",
+    },
+    {"key": "sw_component_dfa", "label": "DFA", "wp_id": "wp__sw_component_dfa"},
+    {"key": "sw_component_fmea", "label": "FMEA", "wp_id": "wp__sw_component_fmea"},
 ]
 
 
 DEFAULT_FEATURE_WORKPRODUCTS = [
-    {"key": "requirements_inspect", "label": "Requirements Inspection",
-     "wp_id": "wp__requirements_inspect"},
-    {"key": "sw_arch_verification", "label": "Architecture Inspection",
-     "wp_id": "wp__sw_arch_verification"},
+    {
+        "key": "requirements_inspect",
+        "label": "Requirements Inspection",
+        "wp_id": "wp__requirements_inspect",
+    },
+    {
+        "key": "sw_arch_verification",
+        "label": "Architecture Inspection",
+        "wp_id": "wp__sw_arch_verification",
+    },
 ]

@@ -10,20 +10,18 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-"""Unit tests for the configuration-resolution and component-parsing logic
+"""Unit tests for the component-parsing and option-derivation logic
 in :mod:`score_module_verification_report.directive`.
 
 The directive requires a full Sphinx environment to instantiate, so we test
 the pure derivation rules and the ``_parse_components`` helper in isolation.
 """
-from __future__ import annotations
 
-import pytest
+from __future__ import annotations
 
 from src.extensions.score_module_verification_report.directive import (
     _parse_components,
 )
-
 
 # ---------------------------------------------------------------------------
 # Helpers that mirror the derivation logic in directive.py so we can test
@@ -36,31 +34,17 @@ def _resolve(
     option_module_id: str = "",
     option_feature_id: str = "",
     option_component_prefix: str = "",
-    config: dict | None = None,
 ) -> dict:
-    """Run the same config-resolution logic as ``run()`` and return a
-    dict with the resolved fields."""
-    if config is None:
-        config = {}
-    module_id = option_module_id or config.get("module_id", "")
+    """Mirror the derivation logic from ``run()`` and return resolved fields."""
+    module_id = option_module_id
     module_short = (
-        module_id[len("mod__"):]
-        if module_id.startswith("mod__")
-        else module_id
+        module_id[len("mod__") :] if module_id.startswith("mod__") else module_id
     )
-    component_prefix = (
-        option_component_prefix
-        or config.get("component_prefix")
-        or ("comp__" + module_short + "_" if module_short else "comp__")
+    component_prefix = option_component_prefix or (
+        "comp__" + module_short + "_" if module_short else "comp__"
     )
-    feature_id = (
-        option_feature_id
-        or config.get("feature_id")
-        or f"feat__{module_short}"
-    )
-    feature_slug = (
-        feature_id.split("__", 1)[1] if "__" in feature_id else feature_id
-    )
+    feature_id = option_feature_id or f"feat__{module_short}"
+    feature_slug = feature_id.split("__", 1)[1] if "__" in feature_id else feature_id
     return {
         "module_id": module_id,
         "module_short": module_short,
@@ -129,9 +113,7 @@ def test_parse_title_uses_titlecase():
 
 def test_parse_multiline_string():
     """Continuation lines (as docutils joins them with whitespace) work."""
-    result = _parse_components(
-        "comp__m_json,\n   comp__m_result\n", "comp__m_"
-    )
+    result = _parse_components("comp__m_json,\n   comp__m_result\n", "comp__m_")
     assert len(result) == 2
 
 
@@ -172,58 +154,6 @@ def test_empty_module_id_gives_generic_prefix():
     assert r["module_id"] == ""
     assert r["component_prefix"] == "comp__"
     assert r["feature_id"] == "feat__"
-
-
-# ---------------------------------------------------------------------------
-# Tests — option takes precedence over config
-# ---------------------------------------------------------------------------
-
-
-def test_option_module_id_beats_config():
-    r = _resolve(
-        option_module_id="mod__fromopt",
-        config={"module_id": "mod__fromconfig"},
-    )
-    assert r["module_id"] == "mod__fromopt"
-
-
-def test_option_feature_id_beats_config():
-    r = _resolve(
-        option_module_id="mod__baselibs",
-        option_feature_id="feat__opt",
-        config={"feature_id": "feat__cfg"},
-    )
-    assert r["feature_id"] == "feat__opt"
-
-
-def test_option_component_prefix_beats_config():
-    r = _resolve(
-        option_module_id="mod__baselibs",
-        option_component_prefix="comp__opt_",
-        config={"component_prefix": "comp__cfg_"},
-    )
-    assert r["component_prefix"] == "comp__opt_"
-
-
-def test_config_used_when_no_option_given():
-    r = _resolve(
-        config={
-            "module_id": "mod__cfg",
-            "feature_id": "feat__cfg",
-            "component_prefix": "comp__cfg_",
-        }
-    )
-    assert r["module_id"] == "mod__cfg"
-    assert r["feature_id"] == "feat__cfg"
-    assert r["component_prefix"] == "comp__cfg_"
-
-
-def test_config_feature_id_used_when_no_option():
-    r = _resolve(
-        option_module_id="mod__baselibs",
-        config={"feature_id": "feat__custom"},
-    )
-    assert r["feature_id"] == "feat__custom"
 
 
 # ---------------------------------------------------------------------------

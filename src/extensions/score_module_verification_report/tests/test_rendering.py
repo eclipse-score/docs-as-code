@@ -11,6 +11,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 """Unit tests for :mod:`score_module_verification_report.rendering`."""
+
 from __future__ import annotations
 
 from src.extensions.score_module_verification_report.rendering import (
@@ -22,7 +23,6 @@ from src.extensions.score_module_verification_report.rendering import (
     slugify,
     workproduct_rows,
 )
-
 
 _WP = [
     {"key": "req", "label": "Requirements Inspection", "wp_id": "wp__req"},
@@ -90,7 +90,7 @@ def test_render_overview_builds_id_list_literal() -> None:
 
 
 def test_render_overview_empty_components() -> None:
-    assert 'id in []' in render_overview([])
+    assert "id in []" in render_overview([])
 
 
 # ---------------------------------------------------------------------------
