@@ -12,6 +12,7 @@
 # *******************************************************************************
 """Functionality related to reading in the SCORE metamodel.yaml"""
 
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, cast
@@ -247,3 +248,40 @@ def load_metamodel_data(yaml_path: Path | None = None) -> MetaModelData:
         prohibited_words_checks=prohibited_words_checks,
         needs_graph_check=data.get("graph_checks", {}),
     )
+
+
+def _matches_empty_string(pattern: str) -> bool:
+    """Return True if *pattern* matches the empty string.
+
+    A mandatory attribute whose pattern accepts the empty string
+    provides no real enforcement: the attribute can be omitted or left
+    blank and still "pass" validation.
+    """
+    try:
+        return re.match(pattern, "") is not None
+    except re.error:
+        # An invalid regex is a separate error, handled by the
+        # per-need validate_options check.  Treat it as non-permissive
+        # here to avoid masking that error with a confusing message.
+        return False
+
+
+# req-Id: tool_req__docs_saf_attrs_mandatory
+def validate_mandatory_regexes(
+    needs_types: list[ScoreNeedType] | dict[str, ScoreNeedType],
+) -> list[tuple[str, str, str]]:
+    """Check that no mandatory option allow empty strings.
+
+    A mandatory attribute which can be left empty and still pass validation
+    is not really mandatory.
+    """
+    types_iter = needs_types.values() if isinstance(needs_types, dict) else needs_types
+
+    issues: list[tuple[str, str, str]] = []
+    for need_type in types_iter:
+        directive = need_type["directive"]
+        mandatory_options = need_type.get("mandatory_options", {}) or {}
+        for option, pattern in mandatory_options.items():
+            if _matches_empty_string(pattern):
+                issues.append((directive, option, pattern))
+    return issues

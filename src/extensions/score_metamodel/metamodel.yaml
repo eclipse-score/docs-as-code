@@ -21,7 +21,7 @@ needs_types_base_options:
     # For now giving grace periods to consumers
   mandatory_options:
     # req-Id: tool_req__docs_common_attr_version
-    version: ^[0-9]*$
+    version: ^[0-9]+$
 
     # Custom semantic validation rules
 
@@ -692,10 +692,10 @@ needs_types:
   review_header:
     title: Review Header
     mandatory_options:
-      reviewers: ^.*$
-      approvers: ^.*$
-      hash: ^.*$
-      template: ^.*$
+      reviewers: ^.+$
+      approvers: ^.+$
+      hash: ^.+$
+      template: ^.+$
     parts: 3
 
   # DFA (Dependent Failure Analysis)
@@ -789,7 +789,7 @@ needs_types:
     color: "#FFF2CC"
     mandatory_options:
       # req-Id: tool_req__docs_saf_attr_fmea_fault_id
-      fault_id: ^.*$
+      fault_id: ^.+$
       # req-Id: tool_req__docs_saf_attr_fmea_failure_effect
       failure_effect: ^.+$
       # req-Id: tool_req__docs_saf_attrs_sufficient
@@ -822,7 +822,7 @@ needs_types:
     color: "#D5E8D4"
     mandatory_options:
       # req-Id: tool_req__docs_saf_attr_fmea_fault_id
-      fault_id: ^.*$
+      fault_id: ^.+$
       # req-Id: tool_req__docs_saf_attr_fmea_failure_effect
       failure_effect: ^.+$
       # req-Id: tool_req__docs_saf_attrs_sufficient
@@ -980,7 +980,7 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
       # req-Id: tool_req__docs_verification_report_need
-      verification_method: ^.*$
+      verification_method: ^.+$
     optional_options:
       requirements_tests_completely_passed_percent: ^(100|[1-9]?[0-9])$
       line_coverage_percent: ^(100|[1-9]?[0-9])$
@@ -1005,8 +1005,8 @@ needs_types:
     title: Decision Record
     mandatory_options:
       status: ^(proposed|accepted|deprecated|rejected|superseded)$
-      context: ^.*$
-      decision: ^.*$
+      context: ^.+$
+      decision: ^.+$
     optional_options:
       consequences: ^.*$
       tracking: ^https://github\.com/[^/]+/[^/]+/issues/\d+$
