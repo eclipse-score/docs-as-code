@@ -483,448 +483,91 @@
                   
   <section id="module-verification-report-extension">
 <span id="module-verification-report"></span><h1>Module Verification Report extension<a class="headerlink" href="#module-verification-report-extension" title="Link to this heading">#</a></h1>
-<p><code class="docutils literal notranslate"><span class="pre">score_module_verification_report</span></code> provides a single Sphinx directive,
-<code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">module-verification-report::</span></code>, that expands into the standard
-per-module verification report body: one feature-level section, one
-component overview table, and one detailed section per component. The
-extension does <strong>not</strong> re-implement any traceability logic — every
-attribute, link and status shown in the report is resolved by
-sphinx-needs at render time from <code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">needtable::</span></code> / <code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">needpie::</span></code>
-widgets that the directive emits.</p>
-<p>Typical use is in a module’s <code class="docutils literal notranslate"><span class="pre">verification_report/module_verification_report.rst</span></code>:</p>
-<div class="highlight-rst notranslate"><div class="highlight"><pre><span></span><span class="gh">Auto-generated Report</span>
-<span class="gh">---------------------</span>
-
-<span class="p">..</span> <span class="ow">module-verification-report</span><span class="p">::</span>
+<p><code class="docutils literal notranslate"><span class="pre">score_module_verification_report</span></code> provides the
+<code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">module-verification-report::</span></code> directive, which expands into the
+standard per-module verification report: a feature summary, a component
+overview table, and one detailed section per component. Traceability is
+resolved by sphinx-needs at render time — the directive only emits
+<code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">needtable::</span></code> / <code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">needpie::</span></code> widgets with the right filters.</p>
+<p>The extension is part of the <a class="reference internal" href="index.html#extensions"><span class="std std-ref">score_sphinx_bundle</span></a>.
+No external config file is required for the common case.</p>
+<p>Typical usage (<code class="docutils literal notranslate"><span class="pre">verification_report/module_verification_report.rst</span></code>):</p>
+<div class="highlight-rst notranslate"><div class="highlight"><pre><span></span><span class="p">..</span> <span class="ow">module-verification-report</span><span class="p">::</span>
    <span class="nc">:module-id:</span> mod__mymodule
-   <span class="nc">:feature-id:</span> feat__mymodule
    <span class="nc">:components:</span> comp__mymodule_a, comp__mymodule_b
 </pre></div>
 </div>
-<p>No external config file is required for the common case.</p>
-<p>The extension is shipped as part of the
-<a class="reference internal" href="index.html#extensions"><span class="std std-ref">score_sphinx_bundle</span></a>; consumers only need to add
-<code class="docutils literal notranslate"><span class="pre">score_docs_as_code</span></code> and reference the directive.</p>
-<section id="at-a-glance">
-<h2>At a glance<a class="headerlink" href="#at-a-glance" title="Link to this heading">#</a></h2>
+<section id="options">
+<span id="mvr-directive"></span><h2>Options<a class="headerlink" href="#options" title="Link to this heading">#</a></h2>
 <div class="pst-scrollable-table-container"><table class="table">
 <colgroup>
-<col style="width: 20.0%" />
-<col style="width: 80.0%" />
-</colgroup>
-<thead>
-<tr class="row-odd"><th class="head"><p>Aspect</p></th>
-<th class="head"><p>Contract</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>Directive</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">module-verification-report::</span></code> — no arguments, no content;
-<code class="docutils literal notranslate"><span class="pre">:module-id:</span></code> and <code class="docutils literal notranslate"><span class="pre">:components:</span></code> cover the common case.</p></td>
-</tr>
-<tr class="row-odd"><td><p>Key options</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">:module-id:</span></code>, <code class="docutils literal notranslate"><span class="pre">:feature-id:</span></code>, <code class="docutils literal notranslate"><span class="pre">:component-prefix:</span></code>,
-<code class="docutils literal notranslate"><span class="pre">:components:</span></code> (comma-separated id list);
-<code class="docutils literal notranslate"><span class="pre">:config:</span></code> YAML for non-default workproducts / overrides only.</p></td>
-</tr>
-<tr class="row-even"><td><p>No filesystem scan</p></td>
-<td><p>Component ids are provided directly via <code class="docutils literal notranslate"><span class="pre">:components:</span></code> —
-the extension does not scan <code class="docutils literal notranslate"><span class="pre">.rst</span></code> files at build time.</p></td>
-</tr>
-<tr class="row-odd"><td><p>Reads from JSON</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">&lt;srcdir&gt;/reporting/coverage_summary.json</span></code> (optional).</p></td>
-</tr>
-<tr class="row-even"><td><p>Delegates to sphinx-needs</p></td>
-<td><p>Status, safety, security, requirement / architecture element
-tables, pie charts, “Realized by” cells.</p></td>
-</tr>
-<tr class="row-odd"><td><p>Parallel-read safe</p></td>
-<td><p>Yes (<code class="docutils literal notranslate"><span class="pre">parallel_read_safe</span> <span class="pre">=</span> <span class="pre">True</span></code>).</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="directive-reference">
-<span id="mvr-directive"></span><h2>Directive reference<a class="headerlink" href="#directive-reference" title="Link to this heading">#</a></h2>
-<div class="highlight-rst notranslate"><div class="highlight"><pre><span></span><span class="p">..</span> <span class="ow">module-verification-report</span><span class="p">::</span>
-   <span class="nc">:module-id:</span> mod__mymodule
-   <span class="nc">:feature-id:</span> feat__mymodule      # optional — derived from module-id
-   <span class="nc">:component-prefix:</span> comp__my_    # optional — derived from module-id
-   <span class="nc">:components:</span> comp__mymodule_a,
-                comp__mymodule_b
-   <span class="nc">:config:</span> path/to/overrides.yaml  # optional — WP overrides / custom WPs
-</pre></div>
-</div>
-<dl class="simple">
-<dt><strong>Arguments</strong></dt><dd><p>None.</p>
-</dd>
-<dt><strong>Content</strong></dt><dd><p>None (<code class="docutils literal notranslate"><span class="pre">has_content</span> <span class="pre">=</span> <span class="pre">False</span></code>).</p>
-</dd>
-</dl>
-<p><strong>Options</strong></p>
-<div class="pst-scrollable-table-container"><table class="table">
-<colgroup>
-<col style="width: 20.0%" />
-<col style="width: 80.0%" />
+<col style="width: 22.0%" />
+<col style="width: 12.0%" />
+<col style="width: 66.0%" />
 </colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Option</p></th>
-<th class="head"><p>Meaning</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">:module-id:</span></code></p></td>
-<td><p>The sphinx-needs id of the <code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">mod::</span></code> need that owns this
-report. Used to derive <code class="docutils literal notranslate"><span class="pre">feature-id</span></code> and <code class="docutils literal notranslate"><span class="pre">component-prefix</span></code>
-defaults. <strong>Takes precedence</strong> over the same field in <code class="docutils literal notranslate"><span class="pre">:config:</span></code>.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">:feature-id:</span></code></p></td>
-<td><p>The sphinx-needs id of the <code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">feat::</span></code> need for the feature
-section. Defaults to <code class="docutils literal notranslate"><span class="pre">feat__&lt;module-short&gt;</span></code> (derived from
-<code class="docutils literal notranslate"><span class="pre">:module-id:</span></code> by stripping the <code class="docutils literal notranslate"><span class="pre">mod__</span></code> prefix).
-<strong>Takes precedence</strong> over <code class="docutils literal notranslate"><span class="pre">:config:</span></code>.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">:component-prefix:</span></code></p></td>
-<td><p>Prefix stripped from each component id to produce its short slug
-(used for anchors and document-id substring matching). Defaults
-to <code class="docutils literal notranslate"><span class="pre">comp__&lt;module-short&gt;_</span></code>. <strong>Takes precedence</strong> over
-<code class="docutils literal notranslate"><span class="pre">:config:</span></code>.</p></td>
+<td><p>yes</p></td>
+<td><p>sphinx-needs id of the <code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">mod::</span></code> need (e.g. <code class="docutils literal notranslate"><span class="pre">mod__mymodule</span></code>).
+Drives defaults for <code class="docutils literal notranslate"><span class="pre">:feature-id:</span></code> and <code class="docutils literal notranslate"><span class="pre">:component-prefix:</span></code>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">:components:</span></code></p></td>
-<td><p>Comma-separated list of <code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">comp::</span></code> need ids to include in the
-report. Optional <code class="docutils literal notranslate"><span class="pre">[version==N]</span></code> qualifiers are stripped
-silently. Multi-line values work (continuation lines are joined
-by docutils with a space before splitting on commas). This option
-replaces the old filesystem scan entirely.</p></td>
+<td><p>yes</p></td>
+<td><p>Comma-separated list of <code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">comp::</span></code> need ids. Multi-line values
+are supported. Optional <code class="docutils literal notranslate"><span class="pre">[version==N]</span></code> qualifiers are stripped.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">:feature-id:</span></code></p></td>
+<td><p>no</p></td>
+<td><p>sphinx-needs id of the <code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">feat::</span></code> need. Default:
+<code class="docutils literal notranslate"><span class="pre">feat__&lt;module-short&gt;</span></code> (derived from <code class="docutils literal notranslate"><span class="pre">:module-id:</span></code>).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">:component-prefix:</span></code></p></td>
+<td><p>no</p></td>
+<td><p>Prefix stripped from each component id to derive its slug (used
+for section headings and document-id matching). Default:
+<code class="docutils literal notranslate"><span class="pre">comp__&lt;module-short&gt;_</span></code>.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">:config:</span></code></p></td>
-<td><p>Optional path to a YAML config file, resolved relative to
-<code class="docutils literal notranslate"><span class="pre">srcdir</span></code>. Only needed for non-default workproduct lists or
-per-component doc-id overrides. <code class="docutils literal notranslate"><span class="pre">module_id</span></code> / <code class="docutils literal notranslate"><span class="pre">feature_id</span></code> /
-<code class="docutils literal notranslate"><span class="pre">component_prefix</span></code> in the file are ignored when the
-corresponding directive option is set.</p></td>
+<td><p>no</p></td>
+<td><p>Path (relative to <code class="docutils literal notranslate"><span class="pre">srcdir</span></code>) to an optional YAML file for
+non-default workproduct lists or per-component doc-id overrides.
+See <a class="reference internal" href="#mvr-config"><span class="std std-ref">Advanced: config YAML</span></a> below.</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<p><strong>Errors</strong> (fatal — the directive returns an <code class="docutils literal notranslate"><span class="pre">error</span></code> node):</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">no</span> <span class="pre">components</span> <span class="pre">specified</span></code> — <code class="docutils literal notranslate"><span class="pre">:components:</span></code> was omitted or empty.</p></li>
-</ul>
-<p><strong>Warnings</strong> (non-fatal):</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">config</span> <span class="pre">not</span> <span class="pre">found:</span> <span class="pre">&lt;abs</span> <span class="pre">path&gt;</span></code> — the <code class="docutils literal notranslate"><span class="pre">:config:</span></code> path does not
-exist; the report falls back to defaults and will almost certainly
-fail the <code class="docutils literal notranslate"><span class="pre">mod</span></code> lookup.</p></li>
-</ul>
 </section>
-<section id="config-file-schema-advanced">
-<span id="mvr-config"></span><h2>Config file schema (advanced)<a class="headerlink" href="#config-file-schema-advanced" title="Link to this heading">#</a></h2>
-<p>A <code class="docutils literal notranslate"><span class="pre">:config:</span></code> YAML file is only needed when the default workproducts do not
-match or when specific components use non-standard document-id naming.
-Fields that duplicate directive options (<code class="docutils literal notranslate"><span class="pre">module_id</span></code>, <code class="docutils literal notranslate"><span class="pre">feature_id</span></code>,
-<code class="docutils literal notranslate"><span class="pre">component_prefix</span></code>) are ignored when the corresponding RST option is set.</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># Ignored if :module-id: is set on the directive.</span>
-<span class="nt">module_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mod__&lt;module&gt;</span>
-
-<span class="c1"># Ignored if :component-prefix: is set. Default: ``comp__&lt;module&gt;_``.</span>
-<span class="nt">component_prefix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">comp__&lt;module&gt;_</span>
-
-<span class="c1"># Ignored if :feature-id: is set. Default: ``feat__&lt;module&gt;``.</span>
-<span class="nt">feature_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">feat__&lt;module&gt;</span>
-
-<span class="c1"># Optional. Override the default five standard SCORE workproducts.</span>
+<section id="advanced-config-yaml">
+<span id="mvr-config"></span><h2>Advanced: config YAML<a class="headerlink" href="#advanced-config-yaml" title="Link to this heading">#</a></h2>
+<p>Most modules need no config file at all. The <code class="docutils literal notranslate"><span class="pre">:config:</span></code> option is only
+useful when the five default SCORE workproducts do not match, or when a
+component uses a non-standard document-id naming convention.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># Override the default five workproducts (shown for all components).</span>
 <span class="nt">workproducts</span><span class="p">:</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;stable_short_key&gt;</span><span class="w">          </span><span class="c1"># only used for override lookup</span>
-<span class="w">    </span><span class="nt">label</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;human-readable label&gt;</span><span class="w">    </span><span class="c1"># shown in the &quot;Kind&quot; column</span>
-<span class="w">    </span><span class="nt">wp_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">wp__&lt;work_product&gt;</span><span class="w">        </span><span class="c1"># sphinx-needs id</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">requirements_inspect</span><span class="w">        </span><span class="c1"># stable key used in overrides</span>
+<span class="w">    </span><span class="nt">label</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Requirements Inspection</span><span class="w">   </span><span class="c1"># shown in the &quot;Kind&quot; column</span>
+<span class="w">    </span><span class="nt">wp_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">wp__req_inspection</span><span class="w">        </span><span class="c1"># sphinx-needs id</span>
 
-<span class="c1"># Optional. Feature-level work products. Default: Requirements</span>
-<span class="c1"># Inspection + Architecture Inspection only.</span>
+<span class="c1"># Override feature-level workproducts (default: req + arc inspection).</span>
 <span class="nt">feature_workproducts</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
 <span class="w">    </span><span class="nt">label</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
 <span class="w">    </span><span class="nt">wp_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
 
-<span class="c1"># Optional. Per-need overrides for the &quot;Realized by&quot; / &quot;Status&quot;</span>
-<span class="c1"># cells. Keyed by the ``.. comp::`` need id, or by the ``feat__``</span>
-<span class="c1"># need id for feature-level overrides.</span>
+<span class="c1"># Pin specific &quot;Realized by&quot; cells instead of using the auto-filter.</span>
 <span class="nt">overrides</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">comp__&lt;module&gt;_&lt;slug&gt;</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">comp__mymodule_a</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">workproducts</span><span class="p">:</span>
-<span class="w">      </span><span class="c1"># For each row you want to pin explicitly, map the WP ``key``</span>
-<span class="w">      </span><span class="c1"># (see above) to the concrete document need id.</span>
-<span class="w">      </span><span class="nt">requirements_inspect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">doc__&lt;something&gt;_req_inspection</span>
-<span class="w">      </span><span class="nt">sw_arch_verification</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">doc__&lt;something&gt;_arc_inspection</span>
-<span class="w">  </span><span class="nt">feat__&lt;module&gt;</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">requirements_inspect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">doc__mymodule_a_req_inspection</span>
+<span class="w">  </span><span class="nt">feat__mymodule</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">workproducts</span><span class="p">:</span>
-<span class="w">      </span><span class="nt">requirements_inspect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">doc__&lt;feature&gt;_req_inspection</span>
-</pre></div>
-</div>
-</section>
-<section id="data-model-expectations">
-<span id="mvr-data-model"></span><h2>Data model expectations<a class="headerlink" href="#data-model-expectations" title="Link to this heading">#</a></h2>
-<p>The extension looks up its subject through a chain of sphinx-needs
-directives. Every id follows the <code class="docutils literal notranslate"><span class="pre">&lt;kind&gt;__&lt;slug&gt;</span></code> convention and every
-link uses the field the sphinx-needs data model already defines.</p>
-<div class="pst-scrollable-table-container"><table class="table" id="id1">
-<caption><span class="caption-number">Table 2 </span><span class="caption-text">Needs the extension reads or filters by</span><a class="headerlink" href="#id1" title="Link to this table">#</a></caption>
-<colgroup>
-<col style="width: 15.0%" />
-<col style="width: 20.0%" />
-<col style="width: 65.0%" />
-</colgroup>
-<thead>
-<tr class="row-odd"><th class="head"><p>Directive</p></th>
-<th class="head"><p>Where it lives</p></th>
-<th class="head"><p>How the extension uses it</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">mod::</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">docs/module/index.rst</span></code> (or wherever the module chooses)</p></td>
-<td><p>Filesystem scan; <code class="docutils literal notranslate"><span class="pre">:id:</span></code> must equal <code class="docutils literal notranslate"><span class="pre">module_id</span></code> from the
-config. <code class="docutils literal notranslate"><span class="pre">:includes:</span></code> is a comma-separated list of the form
-<code class="docutils literal notranslate"><span class="pre">comp__&lt;slug&gt;</span></code> or <code class="docutils literal notranslate"><span class="pre">comp__&lt;slug&gt;[version==&lt;N&gt;]</span></code> — the
-whitelist of components rendered by the report.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">comp::</span></code></p></td>
-<td><p>Under any component’s <code class="docutils literal notranslate"><span class="pre">docs/</span></code> folder</p></td>
-<td><p>Filesystem scan; must appear in <code class="docutils literal notranslate"><span class="pre">:includes:</span></code>. Its <code class="docutils literal notranslate"><span class="pre">:id:</span></code>
-drives all component-scoped <code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">needtable::</span></code> /
-<code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">needpie::</span></code> filters (<code class="docutils literal notranslate"><span class="pre">&quot;&lt;comp_id&gt;&quot;</span> <span class="pre">in</span> <span class="pre">satisfied_by</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;&lt;comp_id&gt;&quot;</span> <span class="pre">in</span> <span class="pre">belongs_to</span></code>).
-If <code class="docutils literal notranslate"><span class="pre">[version==N]</span></code> was requested in <code class="docutils literal notranslate"><span class="pre">:includes:</span></code>, the
-<code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">comp::</span></code>’s <code class="docutils literal notranslate"><span class="pre">:version:</span></code> must match.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">feat::</span></code></p></td>
-<td><p>The module’s feature documentation</p></td>
-<td><p>Not scanned; resolved at render time by sphinx-needs. The
-“Feature” summary uses <code class="docutils literal notranslate"><span class="pre">id</span> <span class="pre">==</span> <span class="pre">&quot;&lt;feature_id&gt;&quot;</span></code>; feature
-statistics filter <code class="docutils literal notranslate"><span class="pre">feat_req</span></code> / <code class="docutils literal notranslate"><span class="pre">feat_arc_*</span></code> by
-<code class="docutils literal notranslate"><span class="pre">&quot;&lt;feature_id&gt;&quot;</span> <span class="pre">in</span> <span class="pre">belongs_to</span></code>.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">wp::</span></code></p></td>
-<td><p>Process repo (external)</p></td>
-<td><p>Never scanned; the <code class="docutils literal notranslate"><span class="pre">:need:\`wp__...\`</span></code> links assume the
-<code class="docutils literal notranslate"><span class="pre">wp__*</span></code> needs are registered on the external needs source.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">document::</span></code></p></td>
-<td><p>Anywhere; typically the <code class="docutils literal notranslate"><span class="pre">verification_report/</span></code> folders</p></td>
-<td><p>Not scanned; resolved by sphinx-needs. Each “Realized by” cell
-is a <code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">needtable::</span></code> filtered by
-<code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">==</span> <span class="pre">&quot;document&quot;</span> <span class="pre">and</span> <span class="pre">&quot;&lt;slug_norm&gt;&quot;</span> <span class="pre">in</span> <span class="pre">id.replace(&quot;_&quot;,</span> <span class="pre">&quot;&quot;)</span>
-<span class="pre">and</span> <span class="pre">&quot;&lt;wp_id&gt;&quot;</span> <span class="pre">in</span> <span class="pre">realizes</span></code>.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">comp_req::</span></code>, <code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">comp_arc_sta::</span></code>, <code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">comp_arc_dyn::</span></code></p></td>
-<td><p>Under the component</p></td>
-<td><p>Not scanned; sphinx-needs handles the “Requirements Statistics”
-and “Architecture Statistics” pies and tables via filters on
-<code class="docutils literal notranslate"><span class="pre">satisfied_by</span></code> / <code class="docutils literal notranslate"><span class="pre">belongs_to</span></code>.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">feat_req::</span></code>, <code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">feat_arc_sta::</span></code>, <code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">feat_arc_dyn::</span></code></p></td>
-<td><p>Under the feature</p></td>
-<td><p>Same as above at the feature level.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="no-filesystem-scan">
-<span id="mvr-scan"></span><h2>No filesystem scan<a class="headerlink" href="#no-filesystem-scan" title="Link to this heading">#</a></h2>
-<p>Component ids are supplied directly via <code class="docutils literal notranslate"><span class="pre">:components:</span></code> — the extension
-does <strong>not</strong> scan <code class="docutils literal notranslate"><span class="pre">.rst</span></code> files at build time. The component titles shown
-in section headings and pie-chart labels are derived from the id slug
-(<code class="docutils literal notranslate"><span class="pre">comp__mymod_bit_manipulation</span></code> → slug <code class="docutils literal notranslate"><span class="pre">bit_manipulation</span></code> → title
-<code class="docutils literal notranslate"><span class="pre">Bit</span> <span class="pre">Manipulation</span></code>).</p>
-<p>The previous design used a shallow regex scan of <code class="docutils literal notranslate"><span class="pre">srcdir</span></code> at
-<code class="docutils literal notranslate"><span class="pre">env-before-read-docs</span></code> time to resolve the <code class="docutils literal notranslate"><span class="pre">:includes:</span></code> list of the
-<code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">mod::</span></code> need. Querying <code class="docutils literal notranslate"><span class="pre">SphinxNeedsData</span></code> was impossible at that
-point (it forces <code class="docutils literal notranslate"><span class="pre">parallel_read_safe</span> <span class="pre">=</span> <span class="pre">False</span></code>), so a regex scan was used
-instead. With ids provided directly, neither scan nor
-<code class="docutils literal notranslate"><span class="pre">SphinxNeedsData</span></code> queries are needed, and <code class="docutils literal notranslate"><span class="pre">parallel_read_safe</span> <span class="pre">=</span> <span class="pre">True</span></code>
-is trivially guaranteed.</p>
-</section>
-<section id="what-the-report-renders">
-<span id="mvr-output"></span><h2>What the report renders<a class="headerlink" href="#what-the-report-renders" title="Link to this heading">#</a></h2>
-<p>Given a valid config the directive emits, in order:</p>
-<ol class="arabic simple">
-<li><p><strong>CSS block</strong> — inline <code class="docutils literal notranslate"><span class="pre">&lt;style&gt;</span></code> scoped to the <code class="docutils literal notranslate"><span class="pre">wp-doc-table</span></code>
-class, hiding the internal chrome (headers, datatables toolbar) of
-the nested <code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">needtable::</span></code> widgets used in the WP tables.</p></li>
-<li><p><strong>Feature</strong> section — <code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">needtable::</span></code> filtered by
-<code class="docutils literal notranslate"><span class="pre">id</span> <span class="pre">==</span> <span class="pre">&quot;&lt;feature_id&gt;&quot;</span></code>; then Requirements Statistics
-(<code class="docutils literal notranslate"><span class="pre">needpie</span></code> for status + verification coverage, plus a
-<code class="docutils literal notranslate"><span class="pre">needtable</span></code> in a dropdown), Architecture Statistics (status +
-inspection pie, plus a <code class="docutils literal notranslate"><span class="pre">needtable</span></code>), and Inspection Statistics (a
-work-product presence table).</p></li>
-<li><p><strong>Components</strong> section — an <code class="docutils literal notranslate"><span class="pre">H2</span></code> heading followed by:</p>
-<ol class="loweralpha simple">
-<li><p><strong>Component Overview</strong> — <code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">needtable::</span></code> filtered by
-<code class="docutils literal notranslate"><span class="pre">id</span> <span class="pre">in</span> <span class="pre">[</span> <span class="pre">...</span> <span class="pre">]</span></code> over the whitelisted component ids, showing
-safety / security / status columns.</p></li>
-<li><p>One <strong>per-component section</strong> with, in order:</p>
-<ul class="simple">
-<li><p>Requirements Statistics (pies + traceability table);</p></li>
-<li><p>Architecture Statistics (pies + inspection table);</p></li>
-<li><p>a <strong>Verification &amp; Safety Analysis Documents</strong> work-product
-table.</p></li>
-</ul>
-</li>
-</ol>
-</li>
-</ol>
-<p>The Unit Test Coverage section (<cite>_COMPONENT_COVERAGE_SECTION_DISABLED</cite>
-in <code class="xref py py-mod docutils literal notranslate"><span class="pre">templates</span></code>) is currently disabled at the template level.
-Re-enable by appending the fragment to <code class="docutils literal notranslate"><span class="pre">COMPONENT_TEMPLATE</span></code> and
-passing <code class="docutils literal notranslate"><span class="pre">coverage_intro=coverage_intro(comp,</span> <span class="pre">coverage_data)</span></code> from
-<code class="xref py py-func docutils literal notranslate"><span class="pre">rendering.render_component()</span></code>.</p>
-</section>
-<section id="work-product-row-rendering">
-<span id="mvr-wp-rows"></span><h2>Work-product row rendering<a class="headerlink" href="#work-product-row-rendering" title="Link to this heading">#</a></h2>
-<p>Each row of a “Verification &amp; Safety Analysis Documents” (or feature
-“Inspection Statistics”) table has four columns: <strong>Work Product</strong>,
-<strong>Kind</strong>, <strong>Realized by</strong>, <strong>Status</strong>. The first two are plain text
-(<code class="docutils literal notranslate"><span class="pre">:need:</span></code> link and the WP label from the config). The last two are
-resolved either by an explicit override or by sphinx-needs:</p>
-<ul>
-<li><p><strong>Override</strong> — when the config sets
-<code class="docutils literal notranslate"><span class="pre">overrides[&lt;need_id&gt;].workproducts[&lt;wp_key&gt;]</span> <span class="pre">=</span> <span class="pre">&lt;doc_id&gt;</span></code>, the
-row renders</p>
-<div class="highlight-rst notranslate"><div class="highlight"><pre><span></span><span class="m">-</span> <span class="na">:need:</span><span class="nv">`&lt;doc_id&gt;`</span>
-<span class="m">-</span> <span class="na">:ndf:</span><span class="nv">`copy(&#39;status&#39;, need_id=&#39;&lt;doc_id&gt;&#39;)`</span>
-</pre></div>
-</div>
-</li>
-<li><p><strong>Filter</strong> (default) — both cells emit an identical inner
-<code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">needtable::</span></code> with the filter</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>type == &quot;document&quot;
-  and &quot;&lt;slug_norm&gt;&quot; in id.replace(&quot;_&quot;, &quot;&quot;)
-  and &quot;&lt;wp_id&gt;&quot; in realizes
-</pre></div>
-</div>
-<p>where <code class="docutils literal notranslate"><span class="pre">&lt;slug_norm&gt;</span></code> is the component (or feature) slug with all
-underscores removed and lower-cased (see
-<code class="xref py py-func docutils literal notranslate"><span class="pre">rendering.normalize_slug()</span></code>). This makes <code class="docutils literal notranslate"><span class="pre">bit_manipulation</span></code>
-and <code class="docutils literal notranslate"><span class="pre">bitmanipulation</span></code> compare equal without per-component config.</p>
-</li>
-</ul>
-<p>If neither an override nor a matching document is present, the cells
-are empty.</p>
-</section>
-<section id="coverage-summary-optional">
-<span id="mvr-coverage"></span><h2>Coverage summary (optional)<a class="headerlink" href="#coverage-summary-optional" title="Link to this heading">#</a></h2>
-<p>The extension reads <code class="docutils literal notranslate"><span class="pre">&lt;srcdir&gt;/reporting/coverage_summary.json</span></code> — the
-output of <code class="docutils literal notranslate"><span class="pre">tools/extract_coverage.py</span></code> — via
-<code class="xref py py-func docutils literal notranslate"><span class="pre">coverage.load_coverage_summary()</span></code>. Its top-level keys are
-component slugs; each value has at least the fields <code class="docutils literal notranslate"><span class="pre">lines_pct</span></code>,
-<code class="docutils literal notranslate"><span class="pre">functions_pct</span></code>, <code class="docutils literal notranslate"><span class="pre">branches_pct</span></code>.</p>
-<p>The JSON is only used by the currently disabled Unit Test Coverage
-section (see above). When that section is re-enabled,
-<code class="xref py py-func docutils literal notranslate"><span class="pre">coverage.coverage_intro()</span></code> decides between the “measured” and
-the “specification-only” intro paragraph based on whether the component
-slug has at least one non-null <code class="docutils literal notranslate"><span class="pre">*_pct</span></code> field.</p>
-<p>Missing / malformed JSON is not an error: the loader returns <code class="docutils literal notranslate"><span class="pre">{}</span></code>.</p>
-</section>
-<section id="extension-architecture">
-<span id="mvr-architecture"></span><h2>Extension architecture<a class="headerlink" href="#extension-architecture" title="Link to this heading">#</a></h2>
-<p>Implementation is split across five modules under
-<code class="docutils literal notranslate"><span class="pre">src/extensions/score_module_verification_report/</span></code> so that each layer
-can be tested independently:</p>
-<div class="pst-scrollable-table-container"><table class="table">
-<colgroup>
-<col style="width: 20.0%" />
-<col style="width: 80.0%" />
-</colgroup>
-<thead>
-<tr class="row-odd"><th class="head"><p>Module</p></th>
-<th class="head"><p>Responsibility</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><code class="xref py py-mod docutils literal notranslate"><span class="pre">coverage</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">coverage_summary.json</span></code> loading and intro-paragraph selection.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-mod docutils literal notranslate"><span class="pre">templates</span></code></p></td>
-<td><p>All RST template strings, the scoped WP-table CSS, and the
-default (component / feature) workproduct lists.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-mod docutils literal notranslate"><span class="pre">rendering</span></code></p></td>
-<td><p>Pure functions that expand the templates:
-<code class="docutils literal notranslate"><span class="pre">render_component</span></code>, <code class="docutils literal notranslate"><span class="pre">render_feature</span></code>, <code class="docutils literal notranslate"><span class="pre">render_overview</span></code>,
-<code class="docutils literal notranslate"><span class="pre">render_report</span></code>, and the shared <code class="docutils literal notranslate"><span class="pre">workproduct_rows</span></code> helper.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-mod docutils literal notranslate"><span class="pre">directive</span></code></p></td>
-<td><p>The <code class="docutils literal notranslate"><span class="pre">ModuleVerificationReportDirective</span></code> class. Parses the
-<code class="docutils literal notranslate"><span class="pre">:components:</span></code> option via <code class="docutils literal notranslate"><span class="pre">_parse_components</span></code>, loads the
-optional YAML config, calls the renderer, and
-<code class="docutils literal notranslate"><span class="pre">nested_parse_with_titles</span></code> the resulting RST into the
-document. Registers its docname in
-<code class="docutils literal notranslate"><span class="pre">env.module_verification_report_docnames</span></code> so the annotation
-hook knows which pages to touch.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-mod docutils literal notranslate"><span class="pre">testcase_annotations</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">doctree-resolved</span></code> handler that appends a coloured
-<code class="docutils literal notranslate"><span class="pre">(passed)</span></code> / <code class="docutils literal notranslate"><span class="pre">(failed)</span></code> / <code class="docutils literal notranslate"><span class="pre">(skipped)</span></code> / <code class="docutils literal notranslate"><span class="pre">(disabled)</span></code>
-badge to every <code class="docutils literal notranslate"><span class="pre">testcase__…</span></code> back-link on pages that rendered
-the directive. Sources the status from each testcase need’s
-<code class="docutils literal notranslate"><span class="pre">result</span></code> field via <code class="docutils literal notranslate"><span class="pre">sphinx_needs.data.SphinxNeedsData</span></code>. The
-hook is a no-op on pages the directive did not touch, when
-sphinx-needs is not initialised, or when a testcase need has an
-empty <code class="docutils literal notranslate"><span class="pre">result</span></code>. Colour palette matches the pie-chart palette
-used by the report body.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">__init__.py</span></code></p></td>
-<td><p>Thin entry point exposing <code class="docutils literal notranslate"><span class="pre">setup(app)</span></code>.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>The public surface is intentionally minimal:</p>
-<ul class="simple">
-<li><p>the directive <code class="docutils literal notranslate"><span class="pre">module-verification-report</span></code> (added in <code class="docutils literal notranslate"><span class="pre">setup</span></code>);</p></li>
-<li><p>the cached attribute <code class="docutils literal notranslate"><span class="pre">env.module_verification_report_docnames</span></code>.</p></li>
-</ul>
-<p>All other functions are considered internal and covered by unit tests
-under <code class="docutils literal notranslate"><span class="pre">tests/</span></code>.</p>
-</section>
-<section id="known-limitations">
-<span id="mvr-limitations"></span><h2>Known limitations<a class="headerlink" href="#known-limitations" title="Link to this heading">#</a></h2>
-<ul class="simple">
-<li><p><strong>Feature-only modules</strong> — the feature section is always rendered; if
-the <code class="docutils literal notranslate"><span class="pre">feat__&lt;module&gt;</span></code> need does not exist, sphinx-needs will produce
-an empty table rather than an error.</p></li>
-<li><p><strong>Component title derivation</strong> — section headings and pie-chart labels
-are derived from the slug (underscores → spaces, title-case). For
-acronym-heavy names like <code class="docutils literal notranslate"><span class="pre">safecpp</span></code> the result is <code class="docutils literal notranslate"><span class="pre">Safecpp</span></code> rather
-than <code class="docutils literal notranslate"><span class="pre">SafeCpp</span></code>; use <code class="docutils literal notranslate"><span class="pre">:component-prefix:</span></code> to control slug length
-if needed.</p></li>
-<li><p><strong>Nested tables render inside cells</strong> — the <code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">needtable::</span></code> widgets
-used in the WP rows are hidden by the scoped CSS block, but their
-DataTables initialisation still runs. Very large modules may see a
-measurable per-cell cost.</p></li>
-</ul>
-</section>
-<section id="testing">
-<h2>Testing<a class="headerlink" href="#testing" title="Link to this heading">#</a></h2>
-<p>Unit tests live under
-<code class="docutils literal notranslate"><span class="pre">src/extensions/score_module_verification_report/tests/</span></code> and are
-grouped by module:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">test_directive.py</span></code> — <code class="docutils literal notranslate"><span class="pre">_parse_components</span></code> (id parsing, version
-stripping, title derivation, empty/whitespace input) and option /
-config precedence rules.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">test_coverage.py</span></code> — JSON loading edge cases and the
-measured / spec-only intro decision.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">test_rendering.py</span></code> — slug utilities, override vs. filter row
-rendering, and end-to-end <code class="docutils literal notranslate"><span class="pre">render_report</span></code> assembly.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">test_testcase_annotations.py</span></code> — the <code class="docutils literal notranslate"><span class="pre">env-before-read-docs</span></code> /
-<code class="docutils literal notranslate"><span class="pre">env-purge-doc</span></code> / <code class="docutils literal notranslate"><span class="pre">env-merge-info</span></code> lifecycle handlers plus every
-branch of <code class="docutils literal notranslate"><span class="pre">annotate_testcase_results</span></code> (colours, unknown result,
-every no-op guard).</p></li>
-</ul>
-<p>Run them with the standard target:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">bazel</span> <span class="n">test</span> <span class="o">//</span><span class="n">src</span><span class="o">/</span><span class="n">extensions</span><span class="o">/</span><span class="n">score_module_verification_report</span><span class="p">:</span><span class="n">score_module_verification_report_tests</span>
+<span class="w">      </span><span class="nt">requirements_inspect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">doc__mymodule_req_inspection</span>
 </pre></div>
 </div>
 </section>
@@ -968,17 +611,8 @@ every no-op guard).</p></li>
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#at-a-glance">At a glance</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#directive-reference">Directive reference</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config-file-schema-advanced">Config file schema (advanced)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-model-expectations">Data model expectations</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#no-filesystem-scan">No filesystem scan</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-the-report-renders">What the report renders</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#work-product-row-rendering">Work-product row rendering</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#coverage-summary-optional">Coverage summary (optional)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extension-architecture">Extension architecture</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#known-limitations">Known limitations</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#testing">Testing</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#options">Options</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced-config-yaml">Advanced: config YAML</a></li>
 </ul>
   </nav></div>
 
