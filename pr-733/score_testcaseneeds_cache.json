@@ -4424,7 +4424,7 @@
     "FullyVerifies": null
   },
   {
-    "name": "merge_needs_json_unit_tests__test_ignores_version_metadata_and_recalculates_needs_amount",
+    "name": "merge_needs_json_unit_tests__test_json_comparison_distinguishes_booleans_from_numbers[True-1]",
     "file": "scripts_bazel/tests/merge_needs_json_unit_tests.py",
     "line": "165",
     "result": "passed",
@@ -4438,9 +4438,37 @@
     "FullyVerifies": null
   },
   {
+    "name": "merge_needs_json_unit_tests__test_json_comparison_distinguishes_booleans_from_numbers[False-0]",
+    "file": "scripts_bazel/tests/merge_needs_json_unit_tests.py",
+    "line": "165",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "merge_needs_json_unit_tests__test_ignores_version_metadata_and_recalculates_needs_amount",
+    "file": "scripts_bazel/tests/merge_needs_json_unit_tests.py",
+    "line": "176",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
     "name": "merge_needs_json_unit_tests__test_rejects_invalid_schema[payload0-field 'versions' must be an object]",
     "file": "scripts_bazel/tests/merge_needs_json_unit_tests.py",
-    "line": "212",
+    "line": "223",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4454,7 +4482,7 @@
   {
     "name": "merge_needs_json_unit_tests__test_rejects_invalid_schema[payload1-field 'versions' must contain exactly one entry, got 0]",
     "file": "scripts_bazel/tests/merge_needs_json_unit_tests.py",
-    "line": "212",
+    "line": "223",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4468,7 +4496,7 @@
   {
     "name": "merge_needs_json_unit_tests__test_rejects_invalid_schema[payload2-field 'versions' must contain exactly one entry, got 2]",
     "file": "scripts_bazel/tests/merge_needs_json_unit_tests.py",
-    "line": "212",
+    "line": "223",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4482,7 +4510,7 @@
   {
     "name": "merge_needs_json_unit_tests__test_rejects_invalid_schema[payload3-version '1.0' must contain object 'needs']",
     "file": "scripts_bazel/tests/merge_needs_json_unit_tests.py",
-    "line": "212",
+    "line": "223",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4496,7 +4524,7 @@
   {
     "name": "merge_needs_json_unit_tests__test_rejects_invalid_schema[payload4-Need 'REQ-1' in version '1.0' must be an object]",
     "file": "scripts_bazel/tests/merge_needs_json_unit_tests.py",
-    "line": "212",
+    "line": "223",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4510,7 +4538,7 @@
   {
     "name": "merge_needs_json_unit_tests__test_rejects_invalid_json",
     "file": "scripts_bazel/tests/merge_needs_json_unit_tests.py",
-    "line": "251",
+    "line": "262",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4524,7 +4552,7 @@
   {
     "name": "merge_needs_json_unit_tests__test_rejects_non_canonical_json[{\"versions\": {\"v\": {\"needs\": {}}}, \"versions\": {\"other\": {\"needs\": {}}}}-duplicate object key 'versions']",
     "file": "scripts_bazel/tests/merge_needs_json_unit_tests.py",
-    "line": "262",
+    "line": "273",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4538,7 +4566,7 @@
   {
     "name": "merge_needs_json_unit_tests__test_rejects_non_canonical_json[{\"versions\": {\"v\": {\"needs\": {\"REQ-1\": {\"score\": NaN}}}}}-non-standard JSON constant 'NaN' is not allowed]",
     "file": "scripts_bazel/tests/merge_needs_json_unit_tests.py",
-    "line": "262",
+    "line": "273",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4552,7 +4580,7 @@
   {
     "name": "merge_needs_json_unit_tests__test_failed_output_serialization_keeps_existing_file",
     "file": "scripts_bazel/tests/merge_needs_json_unit_tests.py",
-    "line": "293",
+    "line": "304",
     "result": "passed",
     "repo_name": null,
     "hash": null,
