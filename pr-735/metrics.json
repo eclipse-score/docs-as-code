@@ -1,0 +1,30 @@
+{
+  "schema_version": "2",
+  "generated_by": "sphinx_build",
+  "overall_metrics": {
+    "total": 68,
+    "with_code_link": 39,
+    "with_test_link": 31,
+    "fully_linked": 11,
+    "with_code_link_pct": 57.35294117647059,
+    "with_test_link_pct": 45.588235294117645,
+    "fully_linked_pct": 16.176470588235293
+  },
+  "metrics_by_type": {
+    "tool_req": {
+      "total": 68,
+      "with_code_link": 39,
+      "with_test_link": 31,
+      "fully_linked": 11,
+      "with_code_link_pct": 57.35294117647059,
+      "with_test_link_pct": 45.588235294117645,
+      "fully_linked_pct": 16.176470588235293
+    }
+  },
+  "tests": {
+    "total": 308,
+    "linked_to_requirements": 60,
+    "linked_to_requirements_pct": 19.480519480519483,
+    "broken_references": []
+  }
+}
