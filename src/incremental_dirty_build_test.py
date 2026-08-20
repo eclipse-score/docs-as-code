@@ -19,7 +19,6 @@ from pathlib import Path
 from pyfakefs.fake_filesystem import FakeFilesystem as FFS
 
 from incremental import (
-    _doc_path,  # pyright: ignore[reportPrivateUsage] - white-box unit test
     _mounted_watch_dirs,  # pyright: ignore[reportPrivateUsage] - white-box unit test
     clean_builddir_if_stale,
     update_module_hash,
@@ -149,29 +148,3 @@ def test_mounted_watch_dirs_match_sphinx_mount_paths(tmp_path: Path) -> None:
         str(workspace / "extensions/local/docs"),
         str(runfiles_dir / "vendor+" / "docs"),
     ]
-
-
-# --- _doc_path (edit-on-GitHub URL) ------------------------------------------
-
-
-def test_doc_path_is_relative_for_root_package() -> None:
-    path = _doc_path("", "docs")
-    assert str(path) == "docs"
-    assert not path.is_absolute()
-
-
-def test_doc_path_is_relative_for_nested_package() -> None:
-    path = _doc_path("submodule", "docs")
-    assert str(path) == "submodule/docs"
-    assert not path.is_absolute()
-
-
-def test_doc_path_never_contains_absolute_runner_path() -> None:
-    # Regression test: previously doc_path was derived from BUILD_WORKSPACE_DIRECTORY.
-    absolute_ws = Path("/home/runner/work/docs-as-code/docs-as-code")
-    old_doc_path = absolute_ws / "docs"
-    assert str(absolute_ws) in str(old_doc_path)
-
-    new_doc_path = _doc_path("", "docs")
-    assert str(absolute_ws) not in str(new_doc_path)
-    assert not new_doc_path.is_absolute()

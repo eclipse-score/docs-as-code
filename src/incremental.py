@@ -203,9 +203,7 @@ if __name__ == "__main__":
         base_arguments.append("-A=github_version=main")
         # doc_path must be repo-relative so the edit URL does not contain the
         # absolute runner filesystem path (e.g. /home/runner/work/…/docs).
-        relative_doc_path = _doc_path(
-            os.environ.get("PACKAGE_DIR", ""), source_directory
-        )
+        relative_doc_path = Path(os.environ.get("PACKAGE_DIR", ""), source_directory)
         base_arguments.append(f"-A=doc_path={relative_doc_path}")
 
     if os.getenv("KNOWN_GOOD_JSON"):
