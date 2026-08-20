@@ -30,14 +30,28 @@ from .templates import DEFAULT_FEATURE_WORKPRODUCTS, DEFAULT_WORKPRODUCTS
 class ModuleVerificationReportDirective(SphinxDirective):
     """Expand to the per-module verification report body.
 
-    Discovers components dynamically from the sphinx-needs data model by
-    filtering all needs by ``type == "comp"`` and
-    ``id.startswith(component_prefix)``.
+    Minimal usage::
+
+        .. module-verification-report::
+           :module-id: mod__mymodule
+
+    The ``feature-id`` defaults to ``feat__<module-short>`` and the
+    ``component-prefix`` defaults to ``comp__<module-short>_``.
+
+    An optional ``:config:`` YAML file is still supported for the rare
+    case of custom workproducts or per-component doc-id overrides; all
+    other fields in that file are ignored when ``module-id`` is given as
+    an option.
     """
 
     required_arguments = 0
     optional_arguments = 0
-    option_spec = {"config": str}
+    option_spec = {
+        "module-id": str,
+        "feature-id": str,
+        "component-prefix": str,
+        "config": str,
+    }
     has_content = False
 
     def _load_config(self, rel_config: str | None) -> dict:
@@ -57,20 +71,30 @@ class ModuleVerificationReportDirective(SphinxDirective):
         return data
 
     def run(self) -> list[nodes.Node]:
+        # Directive options take precedence over config file values so that
+        # the common case needs no YAML file at all.
         config = self._load_config(self.options.get("config"))
 
-        module_id = config.get("module_id", "")
-        component_prefix = config.get("component_prefix") or (
-            "comp__" + module_id[len("mod__"):] + "_"
-            if module_id.startswith("mod__")
-            else "comp__"
-        )
+        module_id = self.options.get("module-id") or config.get("module_id", "")
         module_short = (
             module_id[len("mod__"):]
             if module_id.startswith("mod__")
             else module_id
         )
-        feature_id = config.get("feature_id") or f"feat__{module_short}"
+        component_prefix = (
+            self.options.get("component-prefix")
+            or config.get("component_prefix")
+            or (
+                "comp__" + module_short + "_"
+                if module_short
+                else "comp__"
+            )
+        )
+        feature_id = (
+            self.options.get("feature-id")
+            or config.get("feature_id")
+            or f"feat__{module_short}"
+        )
         feature_slug = (
             feature_id.split("__", 1)[1]
             if "__" in feature_id

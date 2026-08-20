@@ -34,7 +34,10 @@ Typical use is in a module's ``verification_report/module_verification_report.rs
    ---------------------
 
    .. module-verification-report::
-      :config: verification_report/module_report.yaml
+      :module-id: mod__mymodule
+
+A separate config file is only needed for the rare case of non-default
+workproducts or per-component doc-id overrides (see ``:config:`` below).
 
 The extension is shipped as part of the
 :ref:`score_sphinx_bundle<extensions>`; consumers only need to add
@@ -52,11 +55,11 @@ At a glance
 
    * - Directive
      - ``.. module-verification-report::`` — no arguments, no content;
-       one optional ``:config:`` option.
+       ``:module-id:`` is the only required option for the common case.
 
-   * - Config option
-     - ``:config: <path>`` — YAML file resolved relative to Sphinx's
-       ``srcdir`` (i.e. the directory containing ``conf.py``).
+   * - Key options
+     - ``:module-id:``, ``:feature-id:``, ``:component-prefix:`` as
+       direct RST options; ``:config:`` YAML for advanced overrides only.
 
    * - Reads from the source tree
      - Every ``.. mod::`` and ``.. comp::`` need, discovered by a
@@ -82,7 +85,10 @@ Directive reference
 .. code-block:: rst
 
    .. module-verification-report::
-      :config: <path/to/module_report.yaml>
+      :module-id: mod__mymodule
+      :feature-id: feat__mymodule      # optional — derived from module-id
+      :component-prefix: comp__my_    # optional — derived from module-id
+      :config: path/to/overrides.yaml  # optional — for WP overrides only
 
 **Arguments**
    None.
@@ -99,11 +105,31 @@ Directive reference
    * - Option
      - Meaning
 
+   * - ``:module-id:``
+     - The sphinx-needs id of the ``.. mod::`` need that owns this
+       report. Effectively required — omitting it leaves ``module_id``
+       as the empty string and the ``.. mod::`` lookup will fail.
+       **Takes precedence** over the same field in ``:config:``.
+
+   * - ``:feature-id:``
+     - The sphinx-needs id of the ``.. feat::`` need for the feature
+       section. Defaults to ``feat__<module-short>`` (derived from
+       ``:module-id:`` by stripping the ``mod__`` prefix).
+       **Takes precedence** over ``:config:``.
+
+   * - ``:component-prefix:``
+     - Prefix used to strip the module slug from each component id when
+       generating short slugs for anchors and coverage lookup. Defaults
+       to ``comp__<module-short>_``. **Takes precedence** over
+       ``:config:``.
+
    * - ``:config:``
      - Optional path to a YAML config file, resolved relative to
-       ``srcdir``. When omitted, all defaults apply and ``module_id`` is
-       treated as the empty string — which will fail the ``.. mod::``
-       lookup below (i.e. the option is effectively required).
+       ``srcdir``. In the common case this option is **not needed** — it
+       is only required for non-default workproduct lists or
+       per-component doc-id overrides. ``module_id`` / ``feature_id`` /
+       ``component_prefix`` in the file are ignored when the
+       corresponding directive option is set.
 
 **Errors** (fatal — the directive returns an ``error`` node):
 
@@ -125,33 +151,26 @@ Directive reference
 
 .. _mvr_config:
 
-Config file schema
-------------------
+Config file schema (advanced)
+------------------------------
 
-The YAML file drives every module-specific choice. Only ``module_id`` is
-strictly required in practice; everything else has a sensible default.
+A ``:config:`` YAML file is only needed when the default workproducts do not
+match or when specific components use non-standard document-id naming.
+Fields that duplicate directive options (``module_id``, ``feature_id``,
+``component_prefix``) are ignored when the corresponding RST option is set.
 
 .. code-block:: yaml
 
-   # Mandatory. Must match the ``:id:`` of a ``.. mod::`` need under
-   # ``srcdir``. Example: ``mod__baselibs``.
+   # Ignored if :module-id: is set on the directive.
    module_id: mod__<module>
 
-   # Optional. Prefix stripped from each component id to produce its
-   # short "slug" (used for anchors and coverage lookup). Default:
-   # ``comp__<module>_`` — derived from ``module_id`` by stripping the
-   # ``mod__`` prefix.
+   # Ignored if :component-prefix: is set. Default: ``comp__<module>_``.
    component_prefix: comp__<module>_
 
-   # Optional. The feature ``.. feat::`` need whose summary and
-   # statistics form the "Feature" section. Default:
-   # ``feat__<module>`` — same rule as component_prefix.
+   # Ignored if :feature-id: is set. Default: ``feat__<module>``.
    feature_id: feat__<module>
 
-   # Optional. The per-component work products checked in the
-   # "Verification & Safety Analysis Documents" table.
-   # Default: the five standard SCORE items — Requirements Inspection,
-   # Architecture Inspection, Implementation Inspection, DFA, FMEA.
+   # Optional. Override the default five standard SCORE workproducts.
    workproducts:
      - key: <stable_short_key>          # only used for override lookup
        label: <human-readable label>    # shown in the "Kind" column
@@ -455,6 +474,9 @@ grouped by module:
   measured / spec-only intro decision.
 * ``test_rendering.py`` — slug utilities, override vs. filter row
   rendering, and end-to-end ``render_report`` assembly.
+* ``test_directive.py`` — option resolution logic: ``module-id`` /
+  ``feature-id`` / ``component-prefix`` derivation and the precedence
+  of directive options over config file values.
 * ``test_testcase_annotations.py`` — the ``env-before-read-docs`` /
   ``env-purge-doc`` / ``env-merge-info`` lifecycle handlers plus every
   branch of ``annotate_testcase_results`` (colours, unknown result,
