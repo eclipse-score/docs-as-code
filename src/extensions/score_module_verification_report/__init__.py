@@ -15,31 +15,18 @@
 Usage in RST::
 
     .. module-verification-report::
-       :config: reporting/module_verification_report.yaml   # optional
+       :module-id: mod__baselibs
+       :feature-id: feat__baselibs
+       :components: comp__baselibs_json,
+                    comp__baselibs_bit_manipulation,
+                    comp__baselibs_containers
 
-The config file has the shape::
-
-    module_id: mod__baselibs
-    # optional; derived from module_id if omitted
-    component_prefix: comp__baselibs_
-    # optional; standard workproducts checked per component
-    workproducts:
-      - key: requirements_inspect
-        label: Requirements Inspection
-        wp_id: wp__requirements_inspect
-      - ...
-    # optional; per-component overrides for irregular cases (documents
-    # whose id does not contain the component slug, e.g.
-    # ``comp__baselibs_nlohman_json`` -> ``doc__json_*``)
-    overrides:
-      comp__baselibs_some_component:
-        workproducts:
-          requirements_inspect: doc__some_component_req_inspection
-          ...
+An optional ``:config:`` YAML file can supply non-default workproducts or
+per-component doc-id overrides for the rare case where component documents
+do not follow the standard naming convention.
 
 Implementation is split across:
 
-* :mod:`.scanner`     — filesystem scan for ``.. mod::`` / ``.. comp::``
 * :mod:`.coverage`    — ``coverage_summary.json`` loading
 * :mod:`.templates`   — RST templates + default workproduct lists + CSS
 * :mod:`.rendering`   — template expansion / report body assembly
@@ -52,7 +39,6 @@ from __future__ import annotations
 from typing import Any
 
 from .directive import ModuleVerificationReportDirective
-from .scanner import scan_source_tree
 from .testcase_annotations import (
     annotate_testcase_results,
     init_docnames,
@@ -65,13 +51,12 @@ def setup(app: Any) -> dict:
     app.add_directive(
         "module-verification-report", ModuleVerificationReportDirective
     )
-    app.connect("env-before-read-docs", scan_source_tree)
     app.connect("env-before-read-docs", init_docnames)
     app.connect("env-purge-doc", purge_docname)
     app.connect("env-merge-info", merge_docnames)
     app.connect("doctree-resolved", annotate_testcase_results)
     return {
-        "version": "0.7",
+        "version": "0.8",
         "parallel_read_safe": True,
         "parallel_write_safe": True,
     }

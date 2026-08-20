@@ -14,6 +14,7 @@
 from __future__ import annotations
 
 import os
+import re
 
 import yaml
 from docutils import nodes
@@ -23,25 +24,49 @@ from sphinx.util.nodes import nested_parse_with_titles
 
 from .coverage import load_coverage_summary
 from .rendering import render_report
-from .scanner import discover_components, module_includes
 from .templates import DEFAULT_FEATURE_WORKPRODUCTS, DEFAULT_WORKPRODUCTS
+
+# Strip an optional ``[version==N]`` qualifier from a component id.
+_VERSION_QUALIFIER_RE = re.compile(r"\[version==\d+\]$")
+
+
+def _parse_components(ids_str: str, component_prefix: str) -> list[dict]:
+    """Parse a comma-separated list of component ids into component dicts.
+
+    Each entry may carry an optional ``[version==N]`` qualifier which is
+    stripped silently — the rendered report does not filter by version.
+
+    The short slug is the component id with ``component_prefix`` removed
+    (or the full id if the prefix is absent). The human-readable title is
+    derived from the slug: underscores replaced with spaces, title-cased.
+    """
+    result = []
+    for raw in ids_str.split(","):
+        comp_id = _VERSION_QUALIFIER_RE.sub("", raw.strip())
+        if not comp_id:
+            continue
+        slug = (
+            comp_id[len(component_prefix):]
+            if component_prefix and comp_id.startswith(component_prefix)
+            else comp_id
+        )
+        title = slug.replace("_", " ").title()
+        result.append({"id": comp_id, "slug": slug, "title": title})
+    return result
 
 
 class ModuleVerificationReportDirective(SphinxDirective):
     """Expand to the per-module verification report body.
 
-    Minimal usage::
+    Minimal usage — no external config file required::
 
         .. module-verification-report::
            :module-id: mod__mymodule
+           :components: comp__mymodule_a, comp__mymodule_b
 
-    The ``feature-id`` defaults to ``feat__<module-short>`` and the
-    ``component-prefix`` defaults to ``comp__<module-short>_``.
-
-    An optional ``:config:`` YAML file is still supported for the rare
-    case of custom workproducts or per-component doc-id overrides; all
-    other fields in that file are ignored when ``module-id`` is given as
-    an option.
+    ``feature-id`` and ``component-prefix`` are optional and derived from
+    ``module-id`` when omitted.  ``config`` is only needed for non-default
+    workproducts or per-component doc-id overrides.
     """
 
     required_arguments = 0
@@ -50,6 +75,7 @@ class ModuleVerificationReportDirective(SphinxDirective):
         "module-id": str,
         "feature-id": str,
         "component-prefix": str,
+        "components": str,
         "config": str,
     }
     has_content = False
@@ -84,11 +110,7 @@ class ModuleVerificationReportDirective(SphinxDirective):
         component_prefix = (
             self.options.get("component-prefix")
             or config.get("component_prefix")
-            or (
-                "comp__" + module_short + "_"
-                if module_short
-                else "comp__"
-            )
+            or ("comp__" + module_short + "_" if module_short else "comp__")
         )
         feature_id = (
             self.options.get("feature-id")
@@ -106,33 +128,12 @@ class ModuleVerificationReportDirective(SphinxDirective):
         )
         overrides_by_id: dict[str, dict] = config.get("overrides") or {}
 
-        all_needs = getattr(self.env, "module_verification_report_needs", [])
-        include_ids = module_includes(all_needs, module_id)
-        if include_ids is None:
-            error = self.state_machine.reporter.error(
-                f"module-verification-report: no '.. mod::' need with "
-                f"id '{module_id}' found in the source tree "
-                f"(is 'module_id' set correctly in the config?)",
-                line=self.lineno,
-            )
-            return [error]
-
-        components = discover_components(
-            self.env, component_prefix, include_ids
-        )
-        missing = set(include_ids) - {c["id"] for c in components}
-        for m in sorted(missing):
-            required = include_ids[m]
-            hint = f" (version=={required})" if required else ""
-            self.state_machine.reporter.warning(
-                f"module-verification-report: '{module_id}' includes "
-                f"'{m}'{hint} but no matching '.. comp::' need was found",
-                line=self.lineno,
-            )
+        components_str = self.options.get("components", "")
+        components = _parse_components(components_str, component_prefix)
         if not components:
             error = self.state_machine.reporter.error(
-                f"module-verification-report: '{module_id}' has no "
-                f"resolvable components in ':includes:'",
+                "module-verification-report: no components specified — "
+                "add ':components: comp__<id>, ...' to the directive",
                 line=self.lineno,
             )
             return [error]
@@ -160,13 +161,13 @@ class ModuleVerificationReportDirective(SphinxDirective):
         # ``Feature Requirements Statistics``.
         container = nodes.container()
         container.document = self.state.document
-        nested_parse_with_titles(self.state, view_list, container)
+        nested_parse_with_titles(self.state, view_list, container)  # type: ignore[arg-type]
 
         # Register this docname so the ``doctree-resolved`` hook in
         # ``testcase_annotations`` knows to decorate testcase back-links
         # with a coloured ``(passed)`` / ``(failed)`` badge here.
         if not hasattr(self.env, "module_verification_report_docnames"):
-            self.env.module_verification_report_docnames = set()
-        self.env.module_verification_report_docnames.add(self.env.docname)
+            self.env.module_verification_report_docnames = set()  # type: ignore[attr-defined]
+        self.env.module_verification_report_docnames.add(self.env.docname)  # type: ignore[attr-defined]
 
         return container.children

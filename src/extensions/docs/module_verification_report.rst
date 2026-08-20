@@ -35,9 +35,10 @@ Typical use is in a module's ``verification_report/module_verification_report.rs
 
    .. module-verification-report::
       :module-id: mod__mymodule
+      :feature-id: feat__mymodule
+      :components: comp__mymodule_a, comp__mymodule_b
 
-A separate config file is only needed for the rare case of non-default
-workproducts or per-component doc-id overrides (see ``:config:`` below).
+No external config file is required for the common case.
 
 The extension is shipped as part of the
 :ref:`score_sphinx_bundle<extensions>`; consumers only need to add
@@ -55,27 +56,26 @@ At a glance
 
    * - Directive
      - ``.. module-verification-report::`` — no arguments, no content;
-       ``:module-id:`` is the only required option for the common case.
+       ``:module-id:`` and ``:components:`` cover the common case.
 
    * - Key options
-     - ``:module-id:``, ``:feature-id:``, ``:component-prefix:`` as
-       direct RST options; ``:config:`` YAML for advanced overrides only.
+     - ``:module-id:``, ``:feature-id:``, ``:component-prefix:``,
+       ``:components:`` (comma-separated id list);
+       ``:config:`` YAML for non-default workproducts / overrides only.
 
-   * - Reads from the source tree
-     - Every ``.. mod::`` and ``.. comp::`` need, discovered by a
-       shallow regex scan at ``env-before-read-docs`` time.
+   * - No filesystem scan
+     - Component ids are provided directly via ``:components:`` —
+       the extension does not scan ``.rst`` files at build time.
 
    * - Reads from JSON
-     - ``<srcdir>/reporting/coverage_summary.json`` (optional; produced
-       by ``tools/extract_coverage.py``).
+     - ``<srcdir>/reporting/coverage_summary.json`` (optional).
 
    * - Delegates to sphinx-needs
      - Status, safety, security, requirement / architecture element
        tables, pie charts, "Realized by" cells.
 
    * - Parallel-read safe
-     - Yes (``parallel_read_safe = True``). The filesystem scan is
-       reproducible in every worker.
+     - Yes (``parallel_read_safe = True``).
 
 .. _mvr_directive:
 
@@ -88,7 +88,9 @@ Directive reference
       :module-id: mod__mymodule
       :feature-id: feat__mymodule      # optional — derived from module-id
       :component-prefix: comp__my_    # optional — derived from module-id
-      :config: path/to/overrides.yaml  # optional — for WP overrides only
+      :components: comp__mymodule_a,
+                   comp__mymodule_b
+      :config: path/to/overrides.yaml  # optional — WP overrides / custom WPs
 
 **Arguments**
    None.
@@ -107,9 +109,8 @@ Directive reference
 
    * - ``:module-id:``
      - The sphinx-needs id of the ``.. mod::`` need that owns this
-       report. Effectively required — omitting it leaves ``module_id``
-       as the empty string and the ``.. mod::`` lookup will fail.
-       **Takes precedence** over the same field in ``:config:``.
+       report. Used to derive ``feature-id`` and ``component-prefix``
+       defaults. **Takes precedence** over the same field in ``:config:``.
 
    * - ``:feature-id:``
      - The sphinx-needs id of the ``.. feat::`` need for the feature
@@ -118,33 +119,31 @@ Directive reference
        **Takes precedence** over ``:config:``.
 
    * - ``:component-prefix:``
-     - Prefix used to strip the module slug from each component id when
-       generating short slugs for anchors and coverage lookup. Defaults
+     - Prefix stripped from each component id to produce its short slug
+       (used for anchors and document-id substring matching). Defaults
        to ``comp__<module-short>_``. **Takes precedence** over
        ``:config:``.
 
+   * - ``:components:``
+     - Comma-separated list of ``.. comp::`` need ids to include in the
+       report. Optional ``[version==N]`` qualifiers are stripped
+       silently. Multi-line values work (continuation lines are joined
+       by docutils with a space before splitting on commas). This option
+       replaces the old filesystem scan entirely.
+
    * - ``:config:``
      - Optional path to a YAML config file, resolved relative to
-       ``srcdir``. In the common case this option is **not needed** — it
-       is only required for non-default workproduct lists or
+       ``srcdir``. Only needed for non-default workproduct lists or
        per-component doc-id overrides. ``module_id`` / ``feature_id`` /
        ``component_prefix`` in the file are ignored when the
        corresponding directive option is set.
 
 **Errors** (fatal — the directive returns an ``error`` node):
 
-* ``no '.. mod::' need with id '<module_id>' found in the source tree``
-  — the config's ``module_id`` does not match any ``.. mod::`` directive
-  visible under ``srcdir``.
-* ``'<module_id>' has no resolvable components in ':includes:'`` — the
-  ``.. mod::`` need was found but no whitelisted component id matched a
-  ``.. comp::`` directive.
+* ``no components specified`` — ``:components:`` was omitted or empty.
 
 **Warnings** (non-fatal):
 
-* ``'<module_id>' includes '<id>' but no matching '.. comp::' need was
-  found`` — one entry of ``:includes:`` is dangling; the report still
-  renders for the remaining components.
 * ``config not found: <abs path>`` — the ``:config:`` path does not
   exist; the report falls back to defaults and will almost certainly
   fail the ``mod`` lookup.
@@ -260,27 +259,22 @@ link uses the field the sphinx-needs data model already defines.
 
 .. _mvr_scan:
 
-Filesystem scan (what the extension actually reads)
----------------------------------------------------
+No filesystem scan
+------------------
 
-At ``env-before-read-docs`` the extension performs one recursive
-``os.walk`` of ``env.srcdir`` and stores the result on
-``env.module_verification_report_needs`` (see
-:mod:`.scanner`). Only ``.rst`` files are considered; unreadable files
-are silently skipped.
+Component ids are supplied directly via ``:components:`` — the extension
+does **not** scan ``.rst`` files at build time. The component titles shown
+in section headings and pie-chart labels are derived from the id slug
+(``comp__mymod_bit_manipulation`` → slug ``bit_manipulation`` → title
+``Bit Manipulation``).
 
-The scan captures every directive whose header matches
-``^\.\. (mod|comp):: <title>`` and reads its ``:id:``,
-``:includes:`` (mod only) and ``:version:`` (comp only) option lines.
-**All other option lines are dropped** — safety, security, status,
-tags, satisfies, etc. are resolved by sphinx-needs at render time from
-the same source RST, so the scanner does not need to interpret them.
-
-Rationale: querying ``SphinxNeedsData`` at directive-run time would
-force ``parallel_read_safe = False`` and produce a "doing serial read"
-warning that is fatal under ``-W``. A shallow regex scan is cheap,
-reproducible in every worker of a parallel build, and only needs to
-enumerate ids and titles.
+The previous design used a shallow regex scan of ``srcdir`` at
+``env-before-read-docs`` time to resolve the ``:includes:`` list of the
+``.. mod::`` need. Querying ``SphinxNeedsData`` was impossible at that
+point (it forces ``parallel_read_safe = False``), so a regex scan was used
+instead. With ids provided directly, neither scan nor
+``SphinxNeedsData`` queries are needed, and ``parallel_read_safe = True``
+is trivially guaranteed.
 
 .. _mvr_output:
 
@@ -380,7 +374,7 @@ Missing / malformed JSON is not an error: the loader returns ``{}``.
 Extension architecture
 ----------------------
 
-Implementation is split across six modules under
+Implementation is split across five modules under
 ``src/extensions/score_module_verification_report/`` so that each layer
 can be tested independently:
 
@@ -390,11 +384,6 @@ can be tested independently:
 
    * - Module
      - Responsibility
-
-   * - :mod:`.scanner`
-     - Filesystem regex scan for ``.. mod::`` / ``.. comp::``,
-       ``:includes:`` parsing, component whitelisting.
-       Registers ``scan_source_tree`` on ``env-before-read-docs``.
 
    * - :mod:`.coverage`
      - ``coverage_summary.json`` loading and intro-paragraph selection.
@@ -409,8 +398,9 @@ can be tested independently:
        ``render_report``, and the shared ``workproduct_rows`` helper.
 
    * - :mod:`.directive`
-     - The ``ModuleVerificationReportDirective`` class. Loads the
-       YAML config, calls the scanner / renderer, and
+     - The ``ModuleVerificationReportDirective`` class. Parses the
+       ``:components:`` option via ``_parse_components``, loads the
+       optional YAML config, calls the renderer, and
        ``nested_parse_with_titles`` the resulting RST into the
        document. Registers its docname in
        ``env.module_verification_report_docnames`` so the annotation
@@ -433,11 +423,7 @@ can be tested independently:
 The public surface is intentionally minimal:
 
 * the directive ``module-verification-report`` (added in ``setup``);
-* the event handler
-  ``scanner.scan_source_tree`` (connected to ``env-before-read-docs``
-  in ``setup``);
-* the cached attributes ``env.module_verification_report_needs`` and
-  ``env.module_verification_report_docnames``.
+* the cached attribute ``env.module_verification_report_docnames``.
 
 All other functions are considered internal and covered by unit tests
 under ``tests/``.
@@ -447,15 +433,14 @@ under ``tests/``.
 Known limitations
 -----------------
 
-* **Feature-only modules are not supported** — the extension hard-fails
-  if it cannot find a ``.. mod::`` need with matching ``:id:`` and at
-  least one resolvable component in its ``:includes:``. Repos like
-  Lifecycle (feature-only, no ``comp``) currently need a small patch to
-  the directive.
-* **The scan is line-oriented** — a ``.. mod::`` / ``.. comp::``
-  directive split across a line-continuation, or preceded by uncommon
-  indentation, may be missed. All in-tree consumers use the canonical
-  form documented above.
+* **Feature-only modules** — the feature section is always rendered; if
+  the ``feat__<module>`` need does not exist, sphinx-needs will produce
+  an empty table rather than an error.
+* **Component title derivation** — section headings and pie-chart labels
+  are derived from the slug (underscores → spaces, title-case). For
+  acronym-heavy names like ``safecpp`` the result is ``Safecpp`` rather
+  than ``SafeCpp``; use ``:component-prefix:`` to control slug length
+  if needed.
 * **Nested tables render inside cells** — the ``.. needtable::`` widgets
   used in the WP rows are hidden by the scoped CSS block, but their
   DataTables initialisation still runs. Very large modules may see a
@@ -468,15 +453,13 @@ Unit tests live under
 ``src/extensions/score_module_verification_report/tests/`` and are
 grouped by module:
 
-* ``test_scanner.py`` — every branch of ``scan_rst_needs``,
-  ``module_includes``, ``discover_components``.
+* ``test_directive.py`` — ``_parse_components`` (id parsing, version
+  stripping, title derivation, empty/whitespace input) and option /
+  config precedence rules.
 * ``test_coverage.py`` — JSON loading edge cases and the
   measured / spec-only intro decision.
 * ``test_rendering.py`` — slug utilities, override vs. filter row
   rendering, and end-to-end ``render_report`` assembly.
-* ``test_directive.py`` — option resolution logic: ``module-id`` /
-  ``feature-id`` / ``component-prefix`` derivation and the precedence
-  of directive options over config file values.
 * ``test_testcase_annotations.py`` — the ``env-before-read-docs`` /
   ``env-purge-doc`` / ``env-merge-info`` lifecycle handlers plus every
   branch of ``annotate_testcase_results`` (colours, unknown result,

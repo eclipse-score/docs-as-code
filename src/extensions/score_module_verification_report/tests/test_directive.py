@@ -10,16 +10,19 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-"""Unit tests for the configuration-resolution logic in
-:mod:`score_module_verification_report.directive`.
+"""Unit tests for the configuration-resolution and component-parsing logic
+in :mod:`score_module_verification_report.directive`.
 
 The directive requires a full Sphinx environment to instantiate, so we test
-the pure derivation rules in isolation via small helper invocations that
-replicate the logic from ``run()`` without standing up Sphinx.
+the pure derivation rules and the ``_parse_components`` helper in isolation.
 """
 from __future__ import annotations
 
 import pytest
+
+from src.extensions.score_module_verification_report.directive import (
+    _parse_components,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -65,6 +68,71 @@ def _resolve(
         "feature_id": feature_id,
         "feature_slug": feature_slug,
     }
+
+
+# ---------------------------------------------------------------------------
+# _parse_components
+# ---------------------------------------------------------------------------
+
+
+def test_parse_single_id():
+    result = _parse_components("comp__mymod_json", "comp__mymod_")
+    assert len(result) == 1
+    assert result[0]["id"] == "comp__mymod_json"
+    assert result[0]["slug"] == "json"
+    assert result[0]["title"] == "Json"
+
+
+def test_parse_multiple_ids():
+    result = _parse_components(
+        "comp__mymod_json, comp__mymod_bit_manipulation", "comp__mymod_"
+    )
+    assert len(result) == 2
+    assert result[0]["slug"] == "json"
+    assert result[1]["slug"] == "bit_manipulation"
+    assert result[1]["title"] == "Bit Manipulation"
+
+
+def test_parse_strips_version_qualifier():
+    result = _parse_components(
+        "comp__mymod_json[version==1], comp__mymod_result[version==2]",
+        "comp__mymod_",
+    )
+    assert result[0]["id"] == "comp__mymod_json"
+    assert result[1]["id"] == "comp__mymod_result"
+
+
+def test_parse_empty_string_returns_empty():
+    assert _parse_components("", "comp__mymod_") == []
+
+
+def test_parse_whitespace_only_entries_skipped():
+    result = _parse_components("comp__mymod_json,  ,  ", "comp__mymod_")
+    assert len(result) == 1
+
+
+def test_parse_without_matching_prefix_uses_full_id_as_slug():
+    result = _parse_components("comp__other_json", "comp__mymod_")
+    assert result[0]["slug"] == "comp__other_json"
+    assert result[0]["title"] == "Comp  Other Json"
+
+
+def test_parse_no_prefix_uses_full_id():
+    result = _parse_components("comp__mymod_json", "")
+    assert result[0]["slug"] == "comp__mymod_json"
+
+
+def test_parse_title_uses_titlecase():
+    result = _parse_components("comp__m_memory_shared", "comp__m_")
+    assert result[0]["title"] == "Memory Shared"
+
+
+def test_parse_multiline_string():
+    """Continuation lines (as docutils joins them with whitespace) work."""
+    result = _parse_components(
+        "comp__m_json,\n   comp__m_result\n", "comp__m_"
+    )
+    assert len(result) == 2
 
 
 # ---------------------------------------------------------------------------
