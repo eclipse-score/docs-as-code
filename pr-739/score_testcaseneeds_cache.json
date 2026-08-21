@@ -1514,7 +1514,7 @@
   {
     "name": "test_testcase_annotations__test_annotates_external_github_testlink",
     "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
-    "line": "60",
+    "line": "61",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1528,7 +1528,7 @@
   {
     "name": "test_testcase_annotations__test_annotates_resolved_testcase_reference_by_refid",
     "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
-    "line": "80",
+    "line": "82",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1542,7 +1542,7 @@
   {
     "name": "test_testcase_annotations__test_escapes_unexpected_result_value",
     "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
-    "line": "92",
+    "line": "94",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1556,7 +1556,7 @@
   {
     "name": "test_testcase_annotations__test_does_not_annotate_ambiguous_external_github_testlink",
     "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
-    "line": "111",
+    "line": "113",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1570,7 +1570,7 @@
   {
     "name": "test_testcase_annotations__test_does_not_annotate_empty_result",
     "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
-    "line": "133",
+    "line": "135",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1584,7 +1584,7 @@
   {
     "name": "test_testcase_annotations__test_does_not_annotate_unknown_external_link",
     "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
-    "line": "150",
+    "line": "152",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1598,7 +1598,7 @@
   {
     "name": "test_testcase_annotations__test_does_not_annotate_same_reference_twice",
     "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
-    "line": "168",
+    "line": "170",
     "result": "passed",
     "repo_name": null,
     "hash": null,
