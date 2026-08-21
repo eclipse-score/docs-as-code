@@ -2828,6 +2828,34 @@
     "FullyVerifies": null
   },
   {
+    "name": "test_check_needs_extends__test_filter_reports_cross_document_or_match_without_changing_directive",
+    "file": "src/extensions/score_metamodel/tests/test_check_needs_extends.py",
+    "line": "83",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_check_needs_extends__test_id_shorthand_reports_cross_document_match",
+    "file": "src/extensions/score_metamodel/tests/test_check_needs_extends.py",
+    "line": "105",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
     "name": "TestCheckOptions__test_unknown_directive",
     "file": "src/extensions/score_metamodel/tests/test_check_options.py",
     "line": "69",
