@@ -36,7 +36,7 @@ A minimal example (add or extend the existing `bazel_deps` stanza):
 
 .. code-block:: starlark
 
-	 bazel_dep(name = "score_process", version = "1.5.3")
+	 bazel_dep(name = "score_process_description", version = "2.1.0")
 
 2a) Import the other module's built inventory
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -53,7 +53,7 @@ Example `BUILD` snippet (consumer module):
     load("@score_docs_as_code//:docs.bzl", "docs")
     docs(
       external_needs = [
-         "@score_process//:needs_json",
+         "@score_process_description//:needs_json",
       ],
       source_dir = "docs",
     )
@@ -76,7 +76,7 @@ Example `BUILD` snippet (consumer module):
     docs(
       bundles = [
           {
-              "bundle": "@score_process//:docs_bundle",
+              "bundle": "@score_process_description//:docs_bundle",
               "mount_at": "process",
               "attach_to": "index",
           },

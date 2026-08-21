@@ -23,6 +23,7 @@ from score_metamodel.tests import need as test_need
 from sphinx.testing.util import SphinxTestApp
 from sphinx_needs.data import NeedsExtendType, SphinxNeedsData
 from sphinx_needs.need_item import NeedItem
+from sphinx_needs.needs_schema import FieldLiteralValue
 from sphinx_needs.views import NeedsView
 
 from score_pytest.attribute_plugin import apply_test_metadata
@@ -223,6 +224,17 @@ def _collect_warnings(app: SphinxTestApp) -> list[str]:
     return warnings
 
 
+def _get_expectations(need: NeedItem | NeedsExtendType, option_name: str) -> list[str]:
+    """Get test warning annotations from a need or needextend directive."""
+    if isinstance(need, NeedItem):
+        return cast("list[str]", need.get(option_name) or [])
+
+    for name, _, value in need["modifications"]:
+        if name == option_name and isinstance(value, FieldLiteralValue):
+            return cast("list[str]", value.value or [])
+    return []
+
+
 def _check_need_warnings(
     rst_data: RstData, need: NeedItem | NeedsExtendType, warnings: list[str]
 ) -> None:
@@ -234,7 +246,7 @@ def _check_need_warnings(
 
     line_nr = need.get("lineno")
 
-    for raw in cast("list[str]", need.get("expect") or []):
+    for raw in _get_expectations(need, "expect"):
         expected = raw.strip()
         if warning_matches(rst_data, line_nr, expected, warnings):
             continue
@@ -248,7 +260,7 @@ def _check_need_warnings(
             pytrace=False,
         )
 
-    for raw in cast("list[str]", need.get("expect_not") or []):
+    for raw in _get_expectations(need, "expect_not"):
         not_expected = raw.strip()
         unexpected = warning_matches(rst_data, line_nr, not_expected, warnings)
         if not unexpected:

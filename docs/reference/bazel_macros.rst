@@ -42,7 +42,7 @@ Minimal example (root ``BUILD``)
        ],
        bundles = [
            # dicts describing bundles to mount into this project
-           # e.g. {"bundle": "@score_process//:docs_bundle", "mount_at": "process"}
+           # e.g. {"bundle": "@score_process_description//:docs_bundle", "mount_at": "process"}
        ],
        deps = [
            # additional bazel labels providing Python deps or other runfiles

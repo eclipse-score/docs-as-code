@@ -229,7 +229,7 @@ def docs(
                     "attach_to": <optional, file where the bundle shall be attached, defaults to the parent section's index>,
                 }.
               Note: a bundle label may also point at another module's auto-exposed
-              bundle, e.g. "@score_process//:docs_bundle".
+              bundle, e.g. "@score_process_description//:docs_bundle".
     """
     # HINT: keep documentation sync docs/reference/bazel_macros.rst
 

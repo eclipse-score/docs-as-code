@@ -64,7 +64,7 @@ uses. You may also pass filegroups; their files are scanned directly.
 
    docs(
       data = [
-             "@score_process//:needs_json",
+             "@score_process_description//:needs_json",
          ],
          source_dir = "docs",
          code_targets = [":some_application"],

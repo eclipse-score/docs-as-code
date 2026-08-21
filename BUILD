@@ -23,7 +23,7 @@ docs(
     project = "S-CORE Docs-as-Code",
     project_url = "https://eclipse-score.github.io/docs-as-code",
     external_needs = [
-        "@score_process//:needs_json_file",
+        "@score_process_description//:needs_json_file",
     ],
     bundles = [
         {

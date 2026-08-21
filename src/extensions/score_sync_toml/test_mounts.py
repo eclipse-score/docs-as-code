@@ -52,7 +52,7 @@ def test_materialize_mounts_maps_external_runfiles_path_to_bazel_bin(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     runfiles_dir = tmp_path / "runfiles"
-    walk_dir = runfiles_dir / "score_process+" / "process"
+    walk_dir = runfiles_dir / "score_process_description+" / "process"
     walk_dir.mkdir(parents=True)
     monkeypatch.setattr(_mounts, "find_git_root", lambda: None)
     monkeypatch.setattr(_mounts, "get_runfiles_dir", lambda: runfiles_dir)
@@ -68,7 +68,7 @@ def test_materialize_mounts_maps_external_runfiles_path_to_bazel_bin(
 
     assert fragment is not None
     assert fragment.read_text(encoding="utf-8") == (
-        '[[mounts]]\ndir = "bazel-bin/external/score_process+/process"\nmount_at = "process"\n'
+        '[[mounts]]\ndir = "bazel-bin/external/score_process_description+/process"\nmount_at = "process"\n'
     )
 
 
