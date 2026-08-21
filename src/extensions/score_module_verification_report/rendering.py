@@ -141,9 +141,7 @@ def render_report(
 ) -> str:
     parts = [WP_TABLE_CSS]
     if feature_id is not None and feature_slug is not None:
-        parts.append(
-            render_feature(feature_id, feature_slug, feature_workproducts)
-        )
+        parts.append(render_feature(feature_id, feature_slug, feature_workproducts))
     parts += [
         COMPONENTS_HEADER,
         render_overview(components),

@@ -139,6 +139,3 @@ def test_render_report_assembles_all_sections() -> None:
     assert 'id in ["comp__demo_a", "comp__demo_b"]' in out
     assert '"comp__demo_a" in satisfied_by' in out
     assert '"comp__demo_b" in satisfied_by' in out
-
-
-
