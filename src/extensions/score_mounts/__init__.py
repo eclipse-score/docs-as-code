@@ -123,6 +123,16 @@ def _canonical_mount_dir(walk_dir: Path, spec: MountSpec) -> Path:
       generated files below it can resolve to the action execroot spelling,
       for example
       ``~/.cache/bazel/.../execroot/_main/bazel-out/.../docs/generated/index.rst``.
+    - for in-tree (same-workspace) source bundles, the mount root directory
+      exists in the sandbox but the individual source files are symlinks back
+      to the original workspace, for example
+      ``.../sandbox/.../execroot/_main/score/socom/docs/index.rst``
+      ``→ /home/user/workspace/score/socom/docs/index.rst``.
+
+    This applies to all bundle types: external repositories, generated data
+    bundles, and in-tree (same-workspace) source bundles.  Resolve one mounted
+    source file first and walk back by its bundle-relative suffix to get the
+    canonical root.
 
     Resolving only ``walk_dir`` therefore keeps the sandbox spelling, while
     resolving a referenced image/include from Sphinx follows the file symlink.
@@ -143,19 +153,6 @@ def _canonical_mount_dir(walk_dir: Path, spec: MountSpec) -> Path:
     the canonical mount root. For ``subdir/page.rst`` we walk back two
     components, yielding the same canonical root.
     """
-    if not spec.external and not spec.data:
-        return walk_dir.resolve()
-
-    # Bazel materializes the mount directory structure in the sandbox but may
-    # symlink the individual files either to the external repository cache or to
-    # the action execroot's bazel-out tree. A mounted documentation source gives
-    # us the same canonical spelling that Sphinx will later see for dependency
-    # files. Walking back by the source file's path relative to the mount
-    # reconstructs the canonical mount root:
-    #
-    #   source_file = walk_dir / "subdir/page.rst"
-    #   relative_path.parts = ("subdir", "page.rst")
-    #   source_file.resolve().parents[1] == canonical walk_dir
     for source_file in walk_dir.rglob("*"):
         if not source_file.is_file() or source_file.suffix not in {".md", ".rst"}:
             continue
