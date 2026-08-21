@@ -491,7 +491,7 @@ and to create a Python virtual environment for IDE support (Esbonio).</p>
     <span class="p">],</span>
     <span class="n">bundles</span> <span class="o">=</span> <span class="p">[</span>
         <span class="c1"># dicts describing bundles to mount into this project</span>
-        <span class="c1"># e.g. {&quot;bundle&quot;: &quot;@score_process//:docs_bundle&quot;, &quot;mount_at&quot;: &quot;process&quot;}</span>
+        <span class="c1"># e.g. {&quot;bundle&quot;: &quot;@score_process_description//:docs_bundle&quot;, &quot;mount_at&quot;: &quot;process&quot;}</span>
     <span class="p">],</span>
     <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span>
         <span class="c1"># additional bazel labels providing Python deps or other runfiles</span>
@@ -506,8 +506,11 @@ that contains the top-level ReST/markdown sources. A <code class="docutils liter
 <li><p><code class="docutils literal notranslate"><span class="pre">project</span></code> and <code class="docutils literal notranslate"><span class="pre">project_url</span></code> (strings, optional)
 Project name and canonical project URL. They are required when <code class="docutils literal notranslate"><span class="pre">source_dir</span></code>
 has no <code class="docutils literal notranslate"><span class="pre">conf.py</span></code>; in that case <code class="docutils literal notranslate"><span class="pre">docs()</span></code> generates the Sphinx configuration
-and supplies the Docs-as-Code baseline version and extensions. If a <code class="docutils literal notranslate"><span class="pre">conf.py</span></code>
-exists, it remains authoritative and these values are not used.</p></li>
+and supplies the Docs-as-Code baseline version, extensions, and a
+<code class="docutils literal notranslate"><span class="pre">required_in_id</span></code> entry derived from the Bazel module name. The first
+underscore-separated prefix is removed (for example,
+<code class="docutils literal notranslate"><span class="pre">score_docs_as_code</span></code> becomes <code class="docutils literal notranslate"><span class="pre">docs_as_code</span></code>). If a <code class="docutils literal notranslate"><span class="pre">conf.py</span></code> exists,
+it remains authoritative and these values are not used.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">data</span></code> (list of bazel labels)
 Extra runfiles / data targets that should be made available to the documentation targets.
 The items in <code class="docutils literal notranslate"><span class="pre">data</span></code> are added to the py_binaries and to the Sphinx tooling so they are

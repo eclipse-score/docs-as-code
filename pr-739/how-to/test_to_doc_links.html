@@ -507,8 +507,7 @@ for complete examples and the required metadata.</p>
 <p>This section is only relevant when your language or test framework does not
 have one of the integrations above. In that case, produce JUnit XML with the
 metadata described below. The generated test results are processed
-automatically and create backlinks from the testcases to the referenced
-requirements.</p>
+automatically and create GitHub links from the requirements to the testcases.</p>
 <section id="required-properties">
 <h3>Required properties<a class="headerlink" href="#required-properties" title="Link to this heading">#</a></h3>
 <p>Every linked test must declare the following properties
@@ -529,9 +528,16 @@ requirements.</p>
 <p>Each testcase must include its source file and line number as attributes,
 along with the verification properties.</p>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
-<span class="nt">&lt;testsuites</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;tests&quot;</span><span class="nt">&gt;</span>
-<span class="w">  </span><span class="nt">&lt;testsuite</span><span class="w"> </span><span class="na">errors=</span><span class="s">&quot;0&quot;</span><span class="w"> </span><span class="na">failures=</span><span class="s">&quot;0&quot;</span><span class="w"> </span><span class="na">hostname=</span><span class="s">&quot;test-host&quot;</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;example&quot;</span><span class="w"> </span><span class="na">skipped=</span><span class="s">&quot;0&quot;</span><span class="w"> </span><span class="na">tests=</span><span class="s">&quot;1&quot;</span><span class="w"> </span><span class="na">time=</span><span class="s">&quot;0.001&quot;</span><span class="nt">&gt;</span>
-<span class="w">    </span><span class="nt">&lt;testcase</span><span class="w"> </span><span class="na">classname=</span><span class="s">&quot;example_tests&quot;</span><span class="w"> </span><span class="na">file=</span><span class="s">&quot;tests/example.cpp&quot;</span><span class="w"> </span><span class="na">line=</span><span class="s">&quot;40&quot;</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;test_requirement&quot;</span><span class="w"> </span><span class="na">time=</span><span class="s">&quot;0.001&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;testsuites</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;pytest tests&quot;</span><span class="nt">&gt;</span>
+<span class="w">  </span><span class="nt">&lt;testsuite</span><span class="w"> </span><span class="na">errors=</span><span class="s">&quot;0&quot;</span><span class="w"> </span><span class="na">failures=</span><span class="s">&quot;0&quot;</span><span class="w"> </span><span class="na">hostname=</span><span class="s">&quot;LG-0005&quot;</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;pytest&quot;</span><span class="w"> </span><span class="na">skipped=</span><span class="s">&quot;0&quot;</span><span class="w"> </span><span class="na">tests=</span><span class="s">&quot;118&quot;</span><span class="w"> </span><span class="na">time=</span><span class="s">&quot;6.617&quot;</span><span class="w"> </span><span class="na">timestamp=</span><span class="s">&quot;2026-06-08T17:56:07.635773+00:00&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;testcase</span><span class="w"> </span><span class="na">classname=</span><span class="s">&quot;src.extensions.score_source_code_linker.tests.test_testlink&quot;</span><span class="w"> </span><span class="na">file=</span><span class="s">&quot;src/extensions/score_source_code_linker/tests/test_testlink.py&quot;</span><span class="w"> </span><span class="na">line=</span><span class="s">&quot;40&quot;</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;test_testlink_serialization_roundtrip&quot;</span><span class="w"> </span><span class="na">time=</span><span class="s">&quot;0.000&quot;</span><span class="nt">&gt;</span>
+<span class="w">      </span><span class="nt">&lt;properties&gt;</span>
+<span class="w">        </span><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;PartiallyVerifies&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;tool_req__docs_test_link_testcase&quot;</span><span class="nt">&gt;&lt;/property&gt;</span>
+<span class="w">        </span><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;TestType&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;requirements-based&quot;</span><span class="nt">&gt;&lt;/property&gt;</span>
+<span class="w">        </span><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;DerivationTechnique&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;requirements-analysis&quot;</span><span class="nt">&gt;&lt;/property&gt;</span>
+<span class="w">      </span><span class="nt">&lt;/properties&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/testcase&gt;</span>
+<span class="w">    </span><span class="nt">&lt;testcase</span><span class="w"> </span><span class="na">classname=</span><span class="s">&quot;src.extensions.score_source_code_linker.tests.test_testlink&quot;</span><span class="w"> </span><span class="na">file=</span><span class="s">&quot;src/extensions/score_source_code_linker/tests/test_testlink.py&quot;</span><span class="w"> </span><span class="na">line=</span><span class="s">&quot;85&quot;</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;test_clean_text_removes_ansi_and_html_unescapes&quot;</span><span class="w"> </span><span class="na">time=</span><span class="s">&quot;0.000&quot;</span><span class="nt">&gt;</span>
 <span class="w">      </span><span class="nt">&lt;properties&gt;</span>
 <span class="w">        </span><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;PartiallyVerifies&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;tool_req__docs_test_link_testcase&quot;</span><span class="nt">&gt;&lt;/property&gt;</span>
 <span class="w">        </span><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;TestType&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;requirements-based&quot;</span><span class="nt">&gt;&lt;/property&gt;</span>
@@ -549,11 +555,11 @@ or <code class="docutils literal notranslate"><span class="pre">FullyVerifies</s
 </section>
 <section id="testcase-result-annotations">
 <h2>Testcase result annotations<a class="headerlink" href="#testcase-result-annotations" title="Link to this heading">#</a></h2>
-<p>Testcase links are also decorated with their result, for example <code class="docutils literal notranslate"><span class="pre">(passed)</span></code>, <code class="docutils literal notranslate"><span class="pre">(failed)</span></code>,
-<code class="docutils literal notranslate"><span class="pre">(skipped)</span></code>, or <code class="docutils literal notranslate"><span class="pre">(disabled)</span></code>. The annotation is applied to testcase
-back-links in any document and uses the <code class="docutils literal notranslate"><span class="pre">result</span></code> parsed from the JUnit XML.
-Unknown result values are shown with a neutral colour; testcases without a
-result are left unchanged.</p>
+<p>GitHub test links are decorated with their result, for example <code class="docutils literal notranslate"><span class="pre">(passed)</span></code>,
+<code class="docutils literal notranslate"><span class="pre">(failed)</span></code>, <code class="docutils literal notranslate"><span class="pre">(skipped)</span></code>, or <code class="docutils literal notranslate"><span class="pre">(disabled)</span></code>. The annotation is applied to
+rendered links that target a testcase need, including the <code class="docutils literal notranslate"><span class="pre">testlink</span></code> entries
+shown on requirements. Unknown result values use a neutral colour; testcases
+without a result are left unchanged.</p>
 </section>
 <section id="running-tests-and-building-docs">
 <h2>Running Tests and Building Docs<a class="headerlink" href="#running-tests-and-building-docs" title="Link to this heading">#</a></h2>

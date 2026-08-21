@@ -1486,7 +1486,7 @@
   {
     "name": "test_source_code_link_integration__test_source_link_integration_ok",
     "file": "src/extensions/score_source_code_linker/tests/test_source_code_link_integration.py",
-    "line": "494",
+    "line": "511",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1500,7 +1500,7 @@
   {
     "name": "test_source_code_link_integration__test_source_link_integration_non_existent_id",
     "file": "src/extensions/score_source_code_linker/tests/test_source_code_link_integration.py",
-    "line": "559",
+    "line": "581",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1512,9 +1512,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_testcase_annotations__test_annotates_passed_result_in_green",
+    "name": "test_testcase_annotations__test_annotates_external_github_testlink",
     "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
-    "line": "84",
+    "line": "62",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1526,9 +1526,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_testcase_annotations__test_annotates_failed_result_in_red",
+    "name": "test_testcase_annotations__test_annotates_resolved_testcase_reference_by_refid",
     "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
-    "line": "102",
+    "line": "80",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1540,9 +1540,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_testcase_annotations__test_unknown_result_uses_fallback_color",
+    "name": "test_testcase_annotations__test_escapes_unexpected_result_value",
     "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
-    "line": "112",
+    "line": "93",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1554,9 +1554,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_testcase_annotations__test_resolves_target_via_refuri_fragment_across_documents",
+    "name": "test_testcase_annotations__test_does_not_annotate_empty_result",
     "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
-    "line": "122",
+    "line": "113",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1568,9 +1568,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_testcase_annotations__test_noop_when_reference_has_no_refid_or_refuri",
+    "name": "test_testcase_annotations__test_does_not_annotate_unknown_external_link",
     "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
-    "line": "140",
+    "line": "130",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1582,37 +1582,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_testcase_annotations__test_noop_when_target_need_is_not_a_testcase",
+    "name": "test_testcase_annotations__test_does_not_annotate_same_reference_twice",
     "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
-    "line": "150",
-    "result": "passed",
-    "repo_name": null,
-    "hash": null,
-    "url": null,
-    "TestType": null,
-    "DerivationTechnique": null,
-    "result_text": "",
-    "PartiallyVerifies": null,
-    "FullyVerifies": null
-  },
-  {
-    "name": "test_testcase_annotations__test_noop_when_need_missing",
-    "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
-    "line": "162",
-    "result": "passed",
-    "repo_name": null,
-    "hash": null,
-    "url": null,
-    "TestType": null,
-    "DerivationTechnique": null,
-    "result_text": "",
-    "PartiallyVerifies": null,
-    "FullyVerifies": null
-  },
-  {
-    "name": "test_testcase_annotations__test_annotates_even_when_result_empty",
-    "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
-    "line": "170",
+    "line": "148",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2646,9 +2618,37 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_data_mounts__test_mount_entry_uses_canonical_directory_for_generated_data_bundle",
+    "name": "test_data_mounts__test_canonical_mount_dir_in_tree_sandbox_bundle",
     "file": "src/extensions/score_mounts/tests/test_data_mounts.py",
     "line": "88",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_data_mounts__test_canonical_mount_dir_empty_bundle_fallback",
+    "file": "src/extensions/score_mounts/tests/test_data_mounts.py",
+    "line": "113",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_data_mounts__test_mount_entry_uses_canonical_directory_for_generated_data_bundle",
+    "file": "src/extensions/score_mounts/tests/test_data_mounts.py",
+    "line": "128",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2929,6 +2929,34 @@
     "name": "test_mounts__test_setup_skips_toml_sync_without_git_worktree",
     "file": "src/extensions/score_sync_toml/test_mounts.py",
     "line": "75",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_check_needs_extends__test_filter_reports_cross_document_or_match_without_changing_directive",
+    "file": "src/extensions/score_metamodel/tests/test_check_needs_extends.py",
+    "line": "83",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_check_needs_extends__test_id_shorthand_reports_cross_document_match",
+    "file": "src/extensions/score_metamodel/tests/test_check_needs_extends.py",
+    "line": "105",
     "result": "passed",
     "repo_name": null,
     "hash": null,
