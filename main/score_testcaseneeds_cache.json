@@ -2534,9 +2534,37 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_data_mounts__test_mount_entry_uses_canonical_directory_for_generated_data_bundle",
+    "name": "test_data_mounts__test_canonical_mount_dir_in_tree_sandbox_bundle",
     "file": "src/extensions/score_mounts/tests/test_data_mounts.py",
     "line": "88",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_data_mounts__test_canonical_mount_dir_empty_bundle_fallback",
+    "file": "src/extensions/score_mounts/tests/test_data_mounts.py",
+    "line": "113",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_data_mounts__test_mount_entry_uses_canonical_directory_for_generated_data_bundle",
+    "file": "src/extensions/score_mounts/tests/test_data_mounts.py",
+    "line": "128",
     "result": "passed",
     "repo_name": null,
     "hash": null,
