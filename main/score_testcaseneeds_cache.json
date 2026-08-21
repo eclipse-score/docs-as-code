@@ -3892,6 +3892,20 @@
     "FullyVerifies": null
   },
   {
+    "name": "test_rules_file_based__test_rst_files[options/test_dec_rec.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/docname.rst",
+    "line": "42",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
     "name": "test_rules_file_based__test_rst_files[options/gd_req_comp.rst]",
     "file": "src/extensions/score_metamodel/tests/rst/options/gd_req_comp.rst",
     "line": "16",
