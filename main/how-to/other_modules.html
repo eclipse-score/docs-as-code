@@ -494,7 +494,7 @@ documentation sources.</p></li>
 <p>The consumer module must declare the other modules as dependencies in the <cite>MODULE.bazel</cite> file so Bazel can fetch them.
 There are multiple ways to do this depending on how you manage third-party/local modules (git, local overrides, etc.).</p>
 <p>A minimal example (add or extend the existing <cite>bazel_deps</cite> stanza):</p>
-<div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="n">bazel_dep</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;score_process&quot;</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;1.5.3&quot;</span><span class="p">)</span>
+<div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="n">bazel_dep</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;score_process_description&quot;</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;2.1.0&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -508,7 +508,7 @@ Use <code class="docutils literal notranslate"><span class="pre">external_needs<
 <div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;@score_docs_as_code//:docs.bzl&quot;</span><span class="p">,</span> <span class="s2">&quot;docs&quot;</span><span class="p">)</span>
 <span class="n">docs</span><span class="p">(</span>
   <span class="n">external_needs</span> <span class="o">=</span> <span class="p">[</span>
-     <span class="s2">&quot;@score_process//:needs_json&quot;</span><span class="p">,</span>
+     <span class="s2">&quot;@score_process_description//:needs_json&quot;</span><span class="p">,</span>
   <span class="p">],</span>
   <span class="n">source_dir</span> <span class="o">=</span> <span class="s2">&quot;docs&quot;</span><span class="p">,</span>
 <span class="p">)</span>
@@ -527,7 +527,7 @@ so would create duplicate need IDs.</p>
 <span class="n">docs</span><span class="p">(</span>
   <span class="n">bundles</span> <span class="o">=</span> <span class="p">[</span>
       <span class="p">{</span>
-          <span class="s2">&quot;bundle&quot;</span><span class="p">:</span> <span class="s2">&quot;@score_process//:docs_bundle&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;bundle&quot;</span><span class="p">:</span> <span class="s2">&quot;@score_process_description//:docs_bundle&quot;</span><span class="p">,</span>
           <span class="s2">&quot;mount_at&quot;</span><span class="p">:</span> <span class="s2">&quot;process&quot;</span><span class="p">,</span>
           <span class="s2">&quot;attach_to&quot;</span><span class="p">:</span> <span class="s2">&quot;index&quot;</span><span class="p">,</span>
       <span class="p">},</span>
