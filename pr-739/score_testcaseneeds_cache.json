@@ -1514,7 +1514,7 @@
   {
     "name": "test_testcase_annotations__test_annotates_external_github_testlink",
     "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
-    "line": "62",
+    "line": "60",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1542,7 +1542,21 @@
   {
     "name": "test_testcase_annotations__test_escapes_unexpected_result_value",
     "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
-    "line": "93",
+    "line": "92",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_testcase_annotations__test_does_not_annotate_ambiguous_external_github_testlink",
+    "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
+    "line": "111",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1556,7 +1570,7 @@
   {
     "name": "test_testcase_annotations__test_does_not_annotate_empty_result",
     "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
-    "line": "113",
+    "line": "133",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1570,7 +1584,7 @@
   {
     "name": "test_testcase_annotations__test_does_not_annotate_unknown_external_link",
     "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
-    "line": "130",
+    "line": "150",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1584,7 +1598,7 @@
   {
     "name": "test_testcase_annotations__test_does_not_annotate_same_reference_twice",
     "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
-    "line": "148",
+    "line": "168",
     "result": "passed",
     "repo_name": null,
     "hash": null,
