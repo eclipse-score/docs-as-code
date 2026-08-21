@@ -68,8 +68,8 @@ For further documentation on needextends please `look here <https://sphinx-needs
 
 .. note::
 
-   In the future we will enable a check that needextends will only modify needs in the current document.
-   You can ensure this by adding `c.this_doc()` to the filter string of the need.
+   Needextends may only modify needs in the current document. Add `c.this_doc()`
+   to the filter string of the needextend as shown in the examples above.
 
 
 Requirement ID Feature Part

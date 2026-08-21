@@ -73,8 +73,8 @@
    :expect: Error when extending need: stkh_req__test__need_extends_3. Append action is not allowed via needextends on 'string type options'
 
 
-.. This will be activated once we have activated the c.this_doc() check aswell
-.. #EXPECT[+2]: Potentially altering needs outside of the document is not allowed. Please add 'c.this_doc()' to the needextend to limit it to only needs in the same document
+.. A needextend must explicitly be limited to needs in its own document.
 
-.. .. needextend: id == 'stkh_req__test__need_extends_1'
-.. :security: QM
+.. needextend:: id == 'stkh_req__test__need_extends_1'
+   :security: QM
+   :expect: needextend in S-CORE must always be used per document only. Please add 'c.this_doc()' to the needextend to limit its effects to the correct document.
