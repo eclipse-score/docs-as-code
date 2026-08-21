@@ -125,7 +125,7 @@ Every project using ``docs()`` exposes its own source directory as
    docs(
        bundles = [
            {
-               "bundle": "@score_process//:docs_bundle",
+               "bundle": "@score_process_description//:docs_bundle",
                "mount_at": "process",
                "attach_to": "index",
            },

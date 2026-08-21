@@ -113,10 +113,10 @@ def _canonical_mount_dir(walk_dir: Path, spec: MountSpec) -> Path:
 
     - for external repositories, the repository directory exists in the action
       sandbox, for example
-      ``.../sandbox/.../execroot/_main/external/score_process+/process``;
+      ``.../sandbox/.../execroot/_main/external/score_process_description+/process``;
       files inside that directory can be symlinks to Bazel's repository
       cache, for example
-      ``~/.cache/bazel/.../external/score_process+/process/index.rst``.
+      ``~/.cache/bazel/.../external/score_process_description+/process/index.rst``.
     - for generated data bundles, the mount root may be the sandbox copy of a
       ``bazel-out`` directory, for example
       ``.../sandbox/.../execroot/_main/bazel-out/.../docs/generated``;
@@ -133,11 +133,11 @@ def _canonical_mount_dir(walk_dir: Path, spec: MountSpec) -> Path:
     source file first and then walk back by its bundle-relative suffix. Example:
 
     ``walk_dir``:
-      ``.../sandbox/.../external/score_process+/process``
+      ``.../sandbox/.../external/score_process_description+/process``
     ``source_file``:
-      ``.../sandbox/.../external/score_process+/process/index.rst``
+      ``.../sandbox/.../external/score_process_description+/process/index.rst``
     ``source_file.resolve()``:
-      ``~/.cache/bazel/.../external/score_process+/process/index.rst``
+      ``~/.cache/bazel/.../external/score_process_description+/process/index.rst``
 
     Since ``index.rst`` is one path component below ``walk_dir``, its parent is
     the canonical mount root. For ``subdir/page.rst`` we walk back two
