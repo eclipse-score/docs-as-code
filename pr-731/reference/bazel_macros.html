@@ -583,7 +583,7 @@ site).</p>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>Signature: <code class="docutils literal notranslate"><span class="pre">docs_bundle(name,</span> <span class="pre">source_dir</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">entry_doc</span> <span class="pre">=</span> <span class="pre">&quot;index&quot;,</span> <span class="pre">metamodel</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">bundles</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">upward_bundles</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">scan_code</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">code_targets</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">visibility</span> <span class="pre">=</span> <span class="pre">None)</span></code>.</p>
+<p>Signature: <code class="docutils literal notranslate"><span class="pre">docs_bundle(name,</span> <span class="pre">source_dir</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">entry_doc</span> <span class="pre">=</span> <span class="pre">&quot;index&quot;,</span> <span class="pre">metamodel</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">bundles</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">upward_bundles</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">scan_code</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">code_targets</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">deps</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">visibility</span> <span class="pre">=</span> <span class="pre">None)</span></code>.</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">source_dir</span></code> (string, optional)
 Directory holding the bundle’s own doc sources. It is globbed the same way as
@@ -601,7 +601,7 @@ default; a placement’s <code class="docutils literal notranslate"><span class=
 <li><p><code class="docutils literal notranslate"><span class="pre">metamodel</span></code> (Bazel label, optional)
 Metamodel used when processing Needs owned by this bundle. If omitted, the
 built-in SCORE metamodel is selected. The metamodel belongs to the bundle and
-is part of the future per-bundle Needs export action key.</p></li>
+is an input to the bundle-local Needs export.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">bundles</span></code> (list of composition dicts, optional)
 Nested bundles to compose into this one, so a bundle can aggregate other
 bundles transitively. Each entry is a dict:</p>
@@ -619,17 +619,30 @@ bundle resolving to two different final <code class="docutils literal notranslat
 error. See <a class="reference internal" href="../how-to/mounts/index.html#howto-mount-external-sources"><span class="std std-ref">Mount docs bundles</span></a> for a worked example and
 <a class="reference internal" href="../concepts/mounts/index.html#docs-concept-mounts"><span class="std std-ref">Documentation bundles and mounts</span></a> for the composition and transitivity semantics.</p>
 </li>
-<li><dl class="simple">
+<li><dl>
 <dt><code class="docutils literal notranslate"><span class="pre">upward_bundles</span></code> (list of labels, optional)</dt><dd><p>Explicit documentation-hierarchy dependencies above this bundle. A source
 bundle may declare one or more ancestor bundles; both the direct declarations
 and their transitive closure are propagated through <code class="docutils literal notranslate"><span class="pre">DocsBundleInfo</span></code> for the
 per-bundle Needs export. A source-less aggregator may also declare them to
 provide a named hierarchy group for consumers.
 Dependencies are declared explicitly and are not inferred from Need links.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">source_dir</span></code> contains documentation sources, the macro creates
+<code class="docutils literal notranslate"><span class="pre">&lt;name&gt;_needs_local</span></code> for the bundle’s own Needs and
+<code class="docutils literal notranslate"><span class="pre">&lt;name&gt;_needs_upward</span></code> for an importable JSON export. The latter merges
+the bundle’s own Needs with the exports of its direct <code class="docutils literal notranslate"><span class="pre">upward_bundles</span></code>;
+those exports already contain their own ancestors. The public file target
+therefore exposes the complete declared upward interface without assigning
+ownership of ancestor Needs to the child.</p>
 </dd>
 </dl>
 </li>
 </ul>
+<p>The top-level <code class="docutils literal notranslate"><span class="pre">docs()</span></code> macro also accepts <code class="docutils literal notranslate"><span class="pre">upward_bundles</span></code>. Those labels are
+attached to the generated <code class="docutils literal notranslate"><span class="pre">:docs_source_bundle</span></code> target, so the module’s own
+Needs can refer to an ancestor bundle while mounted descendants continue to use
+the module source bundle as their upward parent. The older
+<code class="docutils literal notranslate"><span class="pre">:_docs_source_bundle</span></code> label remains available for compatibility, but new
+consumers should use the stable <code class="docutils literal notranslate"><span class="pre">:docs_source_bundle</span></code> name.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>A bundle is <strong>placement-free</strong>: its <code class="docutils literal notranslate"><span class="pre">mount_at</span></code> and <code class="docutils literal notranslate"><span class="pre">attach_to</span></code> are assigned
@@ -644,6 +657,12 @@ Implementation target <code class="docutils literal notranslate"><span class="pr
 recursively from their <code class="docutils literal notranslate"><span class="pre">deps</span></code>; filegroups expand to their files. The bundle
 owns one cached scan result; Bazel only regenerates it when its collected source
 inputs change.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">deps</span></code> (list of Bazel labels, optional)</dt><dd><p>Additional Python dependencies used by the bundle-local Sphinx/Needs
+action.</p>
 </dd>
 </dl>
 </li>
@@ -721,7 +740,7 @@ targets are included in the <code class="docutils literal notranslate"><span cla
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/eclipse-score/docs-as-code/edit/main//home/runner/work/docs-as-code/docs-as-code/docs/reference/bazel_macros.rst">
+    <a href="https://github.com/eclipse-score/docs-as-code/edit/main/docs/reference/bazel_macros.rst">
       <i class="fa-solid fa-pencil"></i>
       
       

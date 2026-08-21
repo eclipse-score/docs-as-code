@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Getting started &#8212; S-CORE Docs-as-Code  documentation</title>
+    <title>Hierarchical Needs with upward_bundles &#8212; S-CORE Docs-as-Code  documentation</title>
   
   
   
@@ -62,7 +62,7 @@
     <script src="../_static/sphinx-needs/libs/html/datatables.min.js?v=8a4aee21"></script>
     <script src="../_static/sphinx-needs/libs/html/datatables_loader.js?v=a2cae175"></script>
     <script src="../_static/sphinx-needs/libs/html/sphinx_needs_collapse.js?v=dca66431"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'how-to/get_started';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'how-to/upward_bundles';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.20.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://eclipse-score.github.io/docs-as-code/versions.json';
@@ -73,8 +73,8 @@
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Setup" href="setup.html" />
-    <link rel="prev" title="How To" href="index.html" />
+    <link rel="next" title="Mount docs bundles" href="mounts/index.html" />
+    <link rel="prev" title="Handle Cross-Module Compatibility Findings" href="cross_module_compatibility.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.0.0" />
@@ -406,12 +406,12 @@
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="get_started.html">Getting started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="setup.html">Setup</a></li>
 <li class="toctree-l1"><a class="reference internal" href="write_docs.html">Write Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="other_modules.html">Reference Other Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cross_module_compatibility.html">Handle Cross-Module Compatibility Findings</a></li>
-<li class="toctree-l1"><a class="reference internal" href="upward_bundles.html">Hierarchical Needs with <code class="docutils literal notranslate"><span class="pre">upward_bundles</span></code></a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Hierarchical Needs with <code class="docutils literal notranslate"><span class="pre">upward_bundles</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="mounts/index.html">Mount docs bundles</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dashboards_and_quality_gates.html">Build Dashboards and Quality Gates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="source_to_doc_links.html">Reference Docs in Source Code</a></li>
@@ -461,7 +461,7 @@
     
     <li class="breadcrumb-item"><a href="index.html" class="nav-link">How To</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Getting started</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Hierarchical Needs with <code class="docutils literal notranslate"><span class="pre">upward_bundles</span></code></span></li>
   </ul>
 </nav>
 </div>
@@ -478,14 +478,188 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="getting-started">
-<h1>Getting started<a class="headerlink" href="#getting-started" title="Link to this heading">#</a></h1>
-<p>In an existing S-CORE repository, build the documentation by using Bazel:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bazel<span class="w"> </span>run<span class="w"> </span>//:docs
+  <section id="hierarchical-needs-with-upward-bundles">
+<span id="howto-upward-bundles"></span><h1>Hierarchical Needs with <code class="docutils literal notranslate"><span class="pre">upward_bundles</span></code><a class="headerlink" href="#hierarchical-needs-with-upward-bundles" title="Link to this heading">#</a></h1>
+<p>Use <code class="docutils literal notranslate"><span class="pre">upward_bundles</span></code> when a documentation bundle owns Needs at a lower
+architectural level and those Needs refer to Needs owned by a higher level.
+The declaration is the validation interface of the bundle; it is separate
+from the <code class="docutils literal notranslate"><span class="pre">bundles</span></code> declarations that decide where documentation is mounted.</p>
+<p>This How-To uses the SCORE metamodel and the following ownership model:</p>
+<ul class="simple">
+<li><p>the module’s <code class="docutils literal notranslate"><span class="pre">docs()</span></code> source owns the external-to-the-components
+<code class="docutils literal notranslate"><span class="pre">feat_req</span></code> and the module architecture Need;</p></li>
+<li><p>a component is a <code class="docutils literal notranslate"><span class="pre">docs_bundle</span></code> and owns a <code class="docutils literal notranslate"><span class="pre">comp</span></code> and a <code class="docutils literal notranslate"><span class="pre">comp_req</span></code>;</p></li>
+<li><p>a subcomponent is another <code class="docutils literal notranslate"><span class="pre">docs_bundle</span></code> and owns its own <code class="docutils literal notranslate"><span class="pre">comp</span></code> and
+<code class="docutils literal notranslate"><span class="pre">comp_req</span></code>;</p></li>
+<li><p>both component requirements derive from the module-level feature
+requirement.</p></li>
+</ul>
+<p>Here, <em>external</em> means external to the component bundle’s ownership. It does
+not necessarily mean a different Bazel module or repository.</p>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#declare-the-hierarchy" id="id1">Declare the hierarchy</a></p></li>
+<li><p><a class="reference internal" href="#write-the-needs" id="id2">Write the Needs</a></p></li>
+<li><p><a class="reference internal" href="#verify-the-composed-graph" id="id3">Verify the composed graph</a></p></li>
+<li><p><a class="reference internal" href="#bundle-local-exports" id="id4">Bundle-local exports</a></p></li>
+</ul>
+</nav>
+<section id="declare-the-hierarchy">
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">Declare the hierarchy</a><a class="headerlink" href="#declare-the-hierarchy" title="Link to this heading">#</a></h2>
+<p>The module and its component bundles can be declared in one Bazel package:</p>
+<div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;//:docs.bzl&quot;</span><span class="p">,</span> <span class="s2">&quot;docs&quot;</span><span class="p">,</span> <span class="s2">&quot;docs_bundle&quot;</span><span class="p">)</span>
+
+<span class="n">docs_bundle</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;component&quot;</span><span class="p">,</span>
+    <span class="n">source_dir</span> <span class="o">=</span> <span class="s2">&quot;component&quot;</span><span class="p">,</span>
+    <span class="n">metamodel</span> <span class="o">=</span> <span class="s2">&quot;//src/extensions/score_metamodel:metamodel_yaml&quot;</span><span class="p">,</span>
+    <span class="c1"># The module&#39;s own source bundle is generated by docs().</span>
+    <span class="n">upward_bundles</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;:docs_source_bundle&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+
+<span class="n">docs_bundle</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;subcomponent&quot;</span><span class="p">,</span>
+    <span class="n">source_dir</span> <span class="o">=</span> <span class="s2">&quot;subcomponent&quot;</span><span class="p">,</span>
+    <span class="n">metamodel</span> <span class="o">=</span> <span class="s2">&quot;//src/extensions/score_metamodel:metamodel_yaml&quot;</span><span class="p">,</span>
+    <span class="c1"># The module is inherited transitively through component.</span>
+    <span class="n">upward_bundles</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;:component&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+
+<span class="n">docs</span><span class="p">(</span>
+    <span class="n">source_dir</span> <span class="o">=</span> <span class="s2">&quot;module&quot;</span><span class="p">,</span>
+    <span class="n">project</span> <span class="o">=</span> <span class="s2">&quot;Example module&quot;</span><span class="p">,</span>
+    <span class="n">project_url</span> <span class="o">=</span> <span class="s2">&quot;https://example.invalid/module&quot;</span><span class="p">,</span>
+    <span class="n">metamodel</span> <span class="o">=</span> <span class="s2">&quot;//src/extensions/score_metamodel:metamodel_yaml&quot;</span><span class="p">,</span>
+    <span class="n">bundles</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">{</span><span class="s2">&quot;bundle&quot;</span><span class="p">:</span> <span class="s2">&quot;:component&quot;</span><span class="p">,</span> <span class="s2">&quot;mount_at&quot;</span><span class="p">:</span> <span class="s2">&quot;component&quot;</span><span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;bundle&quot;</span><span class="p">:</span> <span class="s2">&quot;:subcomponent&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;mount_at&quot;</span><span class="p">:</span> <span class="s2">&quot;component/subcomponent&quot;</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">],</span>
+<span class="p">)</span>
 </pre></div>
 </div>
-<p>Open the file <code class="docutils literal notranslate"><span class="pre">_build/index.html</span></code> in your browser.</p>
-<p>In a new S-CORE repository, read <a class="reference internal" href="setup.html"><span class="doc">Setup</span></a>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">upward_bundles</span></code> points from the child to its parent. The parent does not
+mount the child through this attribute. Mounting remains a separate,
+downward <code class="docutils literal notranslate"><span class="pre">bundles</span></code> relationship in <code class="docutils literal notranslate"><span class="pre">docs()</span></code>.</p>
+<p>The same attribute is available on <code class="docutils literal notranslate"><span class="pre">docs()</span></code> when the module’s own source
+bundle is itself below another documentation bundle:</p>
+<div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="n">docs</span><span class="p">(</span>
+    <span class="n">source_dir</span> <span class="o">=</span> <span class="s2">&quot;docs&quot;</span><span class="p">,</span>
+    <span class="n">upward_bundles</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;@platform_docs//:docs_bundle&quot;</span><span class="p">],</span>
+    <span class="n">bundles</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">{</span><span class="s2">&quot;bundle&quot;</span><span class="p">:</span> <span class="s2">&quot;:component&quot;</span><span class="p">,</span> <span class="s2">&quot;mount_at&quot;</span><span class="p">:</span> <span class="s2">&quot;component&quot;</span><span class="p">},</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>This makes the ancestor export available both to the module’s private source
+bundle and to the final composed <code class="docutils literal notranslate"><span class="pre">needs_json</span></code> build. The generated
+<code class="docutils literal notranslate"><span class="pre">:docs_source_bundle</span></code> remains the upward parent for bundles declared in the
+same module. The legacy <code class="docutils literal notranslate"><span class="pre">:_docs_source_bundle</span></code> label is still accepted, but
+new consumers should use the stable public name.</p>
+<p>The generated <code class="docutils literal notranslate"><span class="pre">:docs_source_bundle</span></code> is the module’s own source-level bundle
+and is available as the host’s upward hierarchy anchor. This allows
+hierarchical bundles to be declared in another Bazel package. Its reusable
+Needs export is available as <code class="docutils literal notranslate"><span class="pre">:docs_source_bundle_needs_upward</span></code>.
+The public <code class="docutils literal notranslate"><span class="pre">:docs_bundle</span></code> target is the composed documentation tree and
+must not be used as the upward parent when it already mounts the child; that
+would introduce a dependency cycle.</p>
+<p>If the module uses a custom <code class="docutils literal notranslate"><span class="pre">conf.py</span></code> and its feature requirement lives in
+<code class="docutils literal notranslate"><span class="pre">module/index.rst</span></code>, add the module name to <code class="docutils literal notranslate"><span class="pre">required_in_id</span></code> so the
+three-part SCORE requirement ID remains meaningful after the source directory
+is stripped:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">extensions</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;score_sphinx_bundle&quot;</span><span class="p">]</span>
+<span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;0.0.0&quot;</span>
+<span class="n">required_in_id</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;module&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<section id="write-the-needs">
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">Write the Needs</a><a class="headerlink" href="#write-the-needs" title="Link to this heading">#</a></h2>
+<p>The module source can own the feature and module Needs:</p>
+<div class="highlight-rst notranslate"><div class="highlight"><pre><span></span><span class="p">..</span> <span class="ow">feat</span><span class="p">::</span> Seat heating
+   <span class="nc">:id:</span> feat__seat_heating
+   <span class="nc">:version:</span> 1
+   <span class="nc">:security:</span> NO
+   <span class="nc">:safety:</span> QM
+   <span class="nc">:status:</span> valid
+
+<span class="p">..</span> <span class="ow">feat_req</span><span class="p">::</span> Seat heating availability
+   <span class="nc">:id:</span> feat_req__module__seat_heating
+   <span class="nc">:version:</span> 1
+   <span class="nc">:reqtype:</span> Functional
+   <span class="nc">:security:</span> NO
+   <span class="nc">:safety:</span> QM
+   <span class="nc">:status:</span> valid
+   <span class="nc">:valid_from:</span> v1.0
+   <span class="nc">:satisfied_by:</span> feat__seat_heating
+
+   The seat heating feature is available to the vehicle user.
+
+<span class="p">..</span> <span class="ow">mod</span><span class="p">::</span> Seat heating module
+   <span class="nc">:id:</span> mod__seat_heating_module
+   <span class="nc">:version:</span> 1
+   <span class="nc">:includes:</span> comp__seat_heating_controller
+</pre></div>
+</div>
+<p>The component bundle can refer to the module-level <code class="docutils literal notranslate"><span class="pre">feat_req</span></code> while owning
+its own requirement and architecture element:</p>
+<div class="highlight-rst notranslate"><div class="highlight"><pre><span></span><span class="p">..</span> <span class="ow">comp</span><span class="p">::</span> Seat heating controller
+   <span class="nc">:id:</span> comp__seat_heating_controller
+   <span class="nc">:version:</span> 1
+   <span class="nc">:security:</span> NO
+   <span class="nc">:safety:</span> QM
+   <span class="nc">:status:</span> valid
+   <span class="nc">:belongs_to:</span> feat__seat_heating
+   <span class="nc">:consists_of:</span> comp__seat_heating_sensor
+
+<span class="p">..</span> <span class="ow">comp_req</span><span class="p">::</span> Controller temperature control
+   <span class="nc">:id:</span> comp_req__component__temperature_control
+   <span class="nc">:version:</span> 1
+   <span class="nc">:reqtype:</span> Functional
+   <span class="nc">:security:</span> NO
+   <span class="nc">:safety:</span> QM
+   <span class="nc">:status:</span> valid
+   <span class="nc">:derived_from:</span> feat_req__module__seat_heating
+   <span class="nc">:satisfied_by:</span> comp__seat_heating_controller
+
+   The controller regulates the requested heating level.
+</pre></div>
+</div>
+<p>The subcomponent follows the same SCORE pattern. Its <code class="docutils literal notranslate"><span class="pre">derived_from</span></code> link
+tests the transitive closure: <code class="docutils literal notranslate"><span class="pre">subcomponent</span></code> declares only <code class="docutils literal notranslate"><span class="pre">component</span></code>,
+while <code class="docutils literal notranslate"><span class="pre">component</span></code> declares the module source bundle.</p>
+</section>
+<section id="verify-the-composed-graph">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Verify the composed graph</a><a class="headerlink" href="#verify-the-composed-graph" title="Link to this heading">#</a></h2>
+<p>Build the normal Needs target from the module package:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>bazel<span class="w"> </span>build<span class="w"> </span>//path/to/module:needs_json
+</pre></div>
+</div>
+<p>The resulting graph must contain the module-level <code class="docutils literal notranslate"><span class="pre">feat_req</span></code>, the component
+and subcomponent <code class="docutils literal notranslate"><span class="pre">comp_req</span></code> Needs, and their resolved <code class="docutils literal notranslate"><span class="pre">derived_from</span></code> links.
+The same fixture should also be rendered with <code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">//path/to/module:docs</span></code>
+to verify the final mounted document paths.</p>
+</section>
+<section id="bundle-local-exports">
+<h2><a class="toc-backref" href="#id4" role="doc-backlink">Bundle-local exports</a><a class="headerlink" href="#bundle-local-exports" title="Link to this heading">#</a></h2>
+<p>For every source-bearing <code class="docutils literal notranslate"><span class="pre">docs_bundle</span></code> the macro also creates
+<code class="docutils literal notranslate"><span class="pre">&lt;name&gt;_needs_local</span></code> and <code class="docutils literal notranslate"><span class="pre">&lt;name&gt;_needs_upward</span></code>. The first parses only the
+bundle’s own sources. The second is the reusable export: it merges the local
+Needs with the direct <code class="docutils literal notranslate"><span class="pre">upward_bundles</span></code> exports, whose files already contain
+their own upward closure. This makes the target useful as an explicit input to
+another bundle while keeping ownership local.</p>
+<p>The public <code class="docutils literal notranslate"><span class="pre">needs_json</span></code> target still evaluates the complete composed source
+tree. It remains the right target for final backlinks, mounted document paths,
+global checks, metrics, and rendered documentation.</p>
+<p>There is no separate <code class="docutils literal notranslate"><span class="pre">&lt;name&gt;_needs_downward</span></code> target: downward composition is
+owned by the host <code class="docutils literal notranslate"><span class="pre">docs()</span></code> target and is exposed as its public <code class="docutils literal notranslate"><span class="pre">needs_json</span></code>
+target.</p>
+<p>For the separation of composition and Needs ownership, see
+<a class="reference internal" href="../concepts/hierarchical_bundle_needs.html"><span class="doc">the architecture concept</span></a>.</p>
+</section>
 </section>
 
 
@@ -499,20 +673,20 @@
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="index.html"
+       href="cross_module_compatibility.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">How To</p>
+        <p class="prev-next-title">Handle Cross-Module Compatibility Findings</p>
       </div>
     </a>
     <a class="right-next"
-       href="setup.html"
+       href="mounts/index.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Setup</p>
+        <p class="prev-next-title">Mount docs bundles</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -528,10 +702,25 @@
 
 
   <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#declare-the-hierarchy">Declare the hierarchy</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#write-the-needs">Write the Needs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#verify-the-composed-graph">Verify the composed graph</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bundle-local-exports">Bundle-local exports</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/eclipse-score/docs-as-code/edit/main/docs/how-to/get_started.rst">
+    <a href="https://github.com/eclipse-score/docs-as-code/edit/main/docs/how-to/upward_bundles.rst">
       <i class="fa-solid fa-pencil"></i>
       
       

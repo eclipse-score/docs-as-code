@@ -62,6 +62,367 @@
     <script src="../_static/sphinx-needs/libs/html/datatables.min.js?v=8a4aee21"></script>
     <script src="../_static/sphinx-needs/libs/html/datatables_loader.js?v=a2cae175"></script>
     <script src="../_static/sphinx-needs/libs/html/sphinx_needs_collapse.js?v=dca66431"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.6.0/dist/mermaid.esm.min.mjs";
+
+
+import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.0/dist/mermaid-layout-elk.esm.min.mjs"
+
+
+const initStyles = () => {
+    const defaultStyle = document.createElement('style');
+    defaultStyle.textContent = "pre.mermaid {\n    /* Same as .mermaid-container > pre */\n    display: block;\n    width: 100%;\n}\n\npre.mermaid > svg {\n    /* Same as .mermaid-container > pre > svg */\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}";
+    document.head.appendChild(defaultStyle);
+
+    const fullscreenStyle = document.createElement('style');
+    fullscreenStyle.textContent = ".mermaid-container {\n    position: relative;\n    display: flex;\n    flex-direction: row;\n    width: 100%;\n}\n\n.mermaid-container > pre {\n    display: block;\n    width: 100%;\n}\n\n.mermaid-container > pre > svg {\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}\n\n.mermaid-fullscreen-btn {\n    position: absolute;\n    width: 28px;\n    height: 28px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.3);\n    border-radius: 4px;\n    cursor: pointer;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    transition: all 0.2s;\n    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);\n    font-size: 14px;\n    line-height: 1;\n    padding: 0;\n    color: #333;\n}\n\n.mermaid-fullscreen-btn:hover {\n    opacity: 100% !important;\n    background: rgba(255, 255, 255, 1);\n    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-btn.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.3);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-btn.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal {\n    display: none;\n    position: fixed !important;\n    top: 0 !important;\n    left: 0 !important;\n    width: 95vw;\n    height: 100vh;\n    background: rgba(255, 255, 255, 0.98);\n    z-index: 9999;\n    padding: 20px;\n    overflow: auto;\n}\n\n.mermaid-fullscreen-modal.dark-theme {\n    background: rgba(0, 0, 0, 0.98);\n}\n\n.mermaid-fullscreen-modal.active {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen {\n    position: relative;\n    width: 95vw;\n    height: 90vh;\n    max-width: 95vw;\n    max-height: 90vh;\n    background: white;\n    border-radius: 8px;\n    padding: 20px;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);\n    overflow: auto;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen.dark-theme {\n    background: #1a1a1a;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);\n}\n\n.mermaid-container-fullscreen pre.mermaid {\n    width: 100%;\n    height: 100%;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen .mermaid svg {\n    height: 100% !important;\n    width: 100% !important;\n    cursor: grab;\n}\n\n.mermaid-fullscreen-close {\n    position: fixed !important;\n    top: 20px !important;\n    right: 20px !important;\n    width: 40px;\n    height: 40px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.2);\n    border-radius: 50%;\n    cursor: pointer;\n    z-index: 10000;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);\n    transition: all 0.2s;\n    font-size: 24px;\n    line-height: 1;\n    color: #333;\n}\n\n.mermaid-fullscreen-close:hover {\n    background: white;\n    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-close.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.2);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-close.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal .mermaid-fullscreen-btn {\n    display: none !important;\n}";
+    document.head.appendChild(fullscreenStyle);
+}
+
+// Detect if page has dark background
+const isDarkTheme = () => {
+    // We use a set of heuristics:
+    // 1. Check for common dark mode classes or attributes
+    // 2. Check computed background color brightness
+    if (document.documentElement.classList.contains('dark') ||
+        document.documentElement.getAttribute('data-theme') === 'dark' ||
+        document.body.classList.contains('dark') ||
+        document.body.getAttribute('data-theme') === 'dark') {
+        // console.log("Dark theme detected via class/attribute");
+        return true;
+    }
+    if (document.documentElement.classList.contains('light') ||
+        document.documentElement.getAttribute('data-theme') === 'light' ||
+        document.body.classList.contains('light') ||
+        document.body.getAttribute('data-theme') === 'light') {
+        // console.log("Light theme detected via class/attribute");
+        return false;
+    }
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        // console.log("Dark theme detected via prefers-color-scheme");
+        return true;
+    }
+    const bgColor = window.getComputedStyle(document.body).backgroundColor;
+    const match = bgColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
+    if (match) {
+        const r = parseInt(match[1]);
+        const g = parseInt(match[2]);
+        const b = parseInt(match[3]);
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        // console.log("Background color brightness:", brightness);
+        return brightness < 128;
+    }
+    // console.log("No dark or light theme detected, defaulting to light theme");
+    return false;
+};
+
+let darkTheme = isDarkTheme();
+let modal = null;
+let modalContent = null;
+let previousScrollOffset = [window.scrollX, window.scrollY];
+let _lazyObserver = null;
+let _renderQueue = Promise.resolve();
+let closeModal = () => {};
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal?.classList.contains('active')) {
+        closeModal();
+    }
+});
+
+// Apply d3 zoom to each SVG. Idempotent: an SVG already wrapped is skipped,
+// so this is safe to call both for the initial batch and for diagrams that
+// render lazily once they become visible.
+const addZoomToSvgs = (svgs) => {
+    svgs.each(function() {
+        if (this.getAttribute('data-zoom-applied') === 'true') return;
+        var svg = d3.select(this);
+        svg.html("<g class='wrapper'>" + svg.html() + "</g>");
+        var inner = svg.select("g");
+        var zoom = d3.zoom().on("zoom", function(event) {
+            inner.attr("transform", event.transform);
+        });
+        svg.call(zoom);
+        this.setAttribute('data-zoom-applied', 'true');
+    });
+};
+
+const runMermaid = async (rerun) => {
+    console.log("Running mermaid diagrams, rerun =", rerun);
+    // clear all existing mermaid charts
+    let all_mermaids = document.querySelectorAll(".mermaid");
+
+    if (rerun) {
+        // Disconnect any previous lazy rendering observer
+        if (_lazyObserver) {
+            _lazyObserver.disconnect();
+            _lazyObserver = null;
+        }
+
+        all_mermaids.forEach((el) => {
+            el.removeAttribute('data-mermaid-deferred');
+            el.removeAttribute('data-mermaid-render-failed');
+            if(!el.hasAttribute("data-original-code")) {
+                // store original code
+                // console.log(`Storing original code for first run: `, el.innerHTML);
+                el.setAttribute('data-original-code', el.innerHTML);
+            }
+            if(el.getAttribute("data-processed") === "true") {
+                // remove and restore original
+                el.removeAttribute("data-processed");
+                // console.log(`Restoring original code for re-run: `, el.getAttribute('data-original-code'));
+                el.innerHTML = el.getAttribute('data-original-code');
+            } else {
+                // store original code
+                // console.log(`Storing original code for re-run: `, el.innerHTML);
+                el.setAttribute('data-original-code', el.innerHTML);
+            }
+        });
+
+        // Separate visible and hidden elements. Mermaid's layout engine measures
+        // text dimensions via the DOM, which fails for elements hidden by a parent
+        // (e.g., Reveal.js non-active slides, sphinx-design unopened tabs),
+        // producing broken SVGs. Render visible elements now, defer hidden ones.
+        const visible = [];
+        const hidden = [];
+        all_mermaids.forEach((el) => {
+            // offsetParent is null for display:none ancestors.
+            // getClientRects().length > 0 catches position:fixed elements
+            // (which also have null offsetParent but are still visible).
+            if (el.offsetParent !== null || el.getClientRects().length > 0) {
+                visible.push(el);
+            } else {
+                hidden.push(el);
+                el.setAttribute('data-mermaid-deferred', 'true');
+            }
+        });
+
+        if (visible.length > 0) {
+            try {
+                await mermaid.run({ nodes: visible });
+            } catch (e) {
+                console.error("Mermaid rendering failed:", e);
+            }
+        }
+
+        // Lazily render hidden elements when they become visible.
+        // Uses a promise chain (_renderQueue) to serialize rendering,
+        // since IntersectionObserver may report multiple entries at once
+        // and mermaid.run() is not safe to call concurrently.
+        if (hidden.length > 0) {
+            if (typeof IntersectionObserver === 'undefined') {
+                console.warn("IntersectionObserver not available; hidden mermaid diagrams will not render.");
+            } else {
+                _renderQueue = Promise.resolve();
+                _lazyObserver = new IntersectionObserver((entries) => {
+                    for (const entry of entries) {
+                        if (entry.isIntersecting && entry.target.getAttribute("data-processed") !== "true") {
+                            _lazyObserver.unobserve(entry.target);
+                            const el = entry.target;
+                            _renderQueue = _renderQueue.then(async () => {
+                                try {
+                                    await mermaid.run({ nodes: [el] });
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    // Apply zoom to the now-rendered diagram, matching
+                                    // the decoration visible diagrams receive.
+                                    if (true) {
+                                        addZoomToSvgs(d3.selectAll(".mermaid").select(function() {
+                                            return this.querySelector("svg");
+                                        }));
+                                    }
+                                } catch (e) {
+                                    console.error("Mermaid deferred rendering failed:", e);
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    el.setAttribute('data-mermaid-render-failed', 'true');
+                                }
+                            });
+                        }
+                    }
+                });
+                hidden.forEach((el) => _lazyObserver.observe(el));
+            }
+        }
+    }
+
+    all_mermaids = document.querySelectorAll(".mermaid");
+    // Exclude deferred (hidden) and render-failed elements from completion checks
+    const mermaids_active = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])");
+    const mermaids_processed = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])[data-processed='true']");
+
+    if (true) {
+        const mermaids_to_add_zoom = -1 === -1 ? mermaids_active.length : -1;
+        if(mermaids_to_add_zoom > 0) {
+            var svgs = d3.selectAll(".mermaid").select(function() {
+                return this.querySelector("svg");
+            });
+            // Wait until every active (visible) diagram has rendered. Deferred
+            // diagrams are excluded, so a fixed d3_node_count that counts a
+            // hidden diagram no longer loops forever waiting for its SVG.
+            if(mermaids_active.length !== mermaids_processed.length) {
+                setTimeout(() => runMermaid(false), 200);
+                return;
+            }
+            addZoomToSvgs(svgs);
+        }
+    } else if(mermaids_active.length !== mermaids_processed.length) {
+        // Wait for mermaid to process all diagrams
+        setTimeout(() => runMermaid(false), 200);
+        return;
+    }
+
+    // Stop here if not adding fullscreen capability
+    if (!true) return;
+
+    if (modal !== null ) {
+        // Destroy existing modal
+        modal.remove();
+        modal = null;
+        modalContent = null;
+    }
+
+    modal = document.createElement('div');
+    modal.className = 'mermaid-fullscreen-modal' + (darkTheme ? ' dark-theme' : '');
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', 'Fullscreen diagram viewer');
+    modal.innerHTML = `
+        <button class="mermaid-fullscreen-close${darkTheme ? ' dark-theme' : ''}" aria-label="Close fullscreen">✕</button>
+        <div class="mermaid-container-fullscreen${darkTheme ? ' dark-theme' : ''}"></div>
+    `;
+    document.body.appendChild(modal);
+
+    modalContent = modal.querySelector('.mermaid-container-fullscreen');
+    const closeBtn = modal.querySelector('.mermaid-fullscreen-close');
+
+    closeModal = () => {
+        modal.classList.remove('active');
+        modalContent.innerHTML = '';
+        document.body.style.overflow = ''
+        window.scrollTo({left: previousScrollOffset[0], top: previousScrollOffset[1], behavior: 'instant'});
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+    document.querySelectorAll('.mermaid').forEach((mermaidDiv) => {
+        if (mermaidDiv.parentNode.classList.contains('mermaid-container') ||
+            mermaidDiv.closest('.mermaid-fullscreen-modal')) {
+            // Already processed, adjust button class if needed
+            const existingBtn = mermaidDiv.parentNode.querySelector('.mermaid-fullscreen-btn');
+            if (existingBtn) {
+                existingBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+            }
+            return;
+        }
+
+        const container = document.createElement('div');
+        container.className = 'mermaid-container';
+        mermaidDiv.parentNode.insertBefore(container, mermaidDiv);
+        container.appendChild(mermaidDiv);
+
+        const fullscreenBtn = document.createElement('button');
+        fullscreenBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+        fullscreenBtn.setAttribute('aria-label', 'View diagram in fullscreen');
+        fullscreenBtn.textContent = "\u26f6";
+        fullscreenBtn.style.opacity = "50%";
+
+        // Calculate dynamic position based on diagram's margin and padding
+        const diagramStyle = window.getComputedStyle(mermaidDiv);
+        const marginTop = parseFloat(diagramStyle.marginTop) || 0;
+        const marginRight = parseFloat(diagramStyle.marginRight) || 0;
+        const paddingTop = parseFloat(diagramStyle.paddingTop) || 0;
+        const paddingRight = parseFloat(diagramStyle.paddingRight) || 0;
+        fullscreenBtn.style.top = `${marginTop + paddingTop + 4}px`;
+        fullscreenBtn.style.right = `${marginRight + paddingRight + 4}px`;
+
+        fullscreenBtn.addEventListener('click', () => {
+            previousScrollOffset = [window.scrollX, window.scrollY];
+            const clone = mermaidDiv.cloneNode(true);
+            modalContent.innerHTML = '';
+            modalContent.appendChild(clone);
+
+            const svg = clone.querySelector('svg');
+            if (svg) {
+                svg.removeAttribute('width');
+                svg.removeAttribute('height');
+                svg.style.width = '100%';
+                svg.style.height = 'auto';
+                svg.style.maxWidth = '100%';
+                svg.style.display = 'block';
+
+                if (true) {
+                    setTimeout(() => {
+                        const g = svg.querySelector('g');
+                        if (g) {
+                            var svgD3 = d3.select(svg);
+                            svgD3.html("<g class='wrapper'>" + svgD3.html() + "</g>");
+                            var inner = svgD3.select("g");
+                            var zoom = d3.zoom().on("zoom", function(event) {
+                                inner.attr("transform", event.transform);
+                            });
+                            svgD3.call(zoom);
+                        }
+                    }, 100);
+                }
+            }
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+        container.appendChild(fullscreenBtn);
+    });
+};
+
+
+
+const load = async () => {
+    initStyles();
+
+
+    await runMermaid(true);
+
+    const reRunIfThemeChanges = async () => {
+        const newDarkTheme = isDarkTheme();
+        if (newDarkTheme !== darkTheme) {
+            darkTheme = newDarkTheme;
+            console.log("Theme change detected, re-running mermaid with", darkTheme ? "dark" : "default", "theme");
+            await mermaid.initialize(
+                {...{"startOnLoad": false},
+                ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
+                }
+            );
+            await runMermaid(true);
+        }
+    };
+
+    // Update theme classes when theme changes
+    const themeObserver = new MutationObserver(reRunIfThemeChanges);
+    themeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+    themeObserver.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+};
+
+
+mermaid.registerLayoutLoaders(elkLayouts);
+
+
+
+
+console.log("Initializing mermaid with", darkTheme ? "dark" : "default", "theme");
+mermaid.initialize(
+    {...{"startOnLoad": false},
+    ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
+    }
+);
+
+window.addEventListener("load", load);
+window.runMermaid = runMermaid;</script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'concepts/hierarchical_bundle_needs';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.20.0';
@@ -623,8 +984,12 @@ has Needs links to a higher level names the allowed ancestors explicitly:</p>
 </pre></div>
 </div>
 <p>An upward declaration grants access to the direct target and its transitive
-upward closure. It does not import those Needs into the declaring bundle’s
-own export. The export contains only Needs owned by the declaring bundle.</p>
+upward closure. The bundle’s <code class="docutils literal notranslate"><span class="pre">*_needs_local</span></code> export contains only Needs
+created from the bundle’s own sources. Its <code class="docutils literal notranslate"><span class="pre">*_needs_upward</span></code> export is the
+reusable interface view: it merges that local export with the exports of the
+declared ancestors. The imported ancestor records remain owned by their
+original source bundles; aggregating them does not transfer ownership to the
+declaring bundle.</p>
 <p>The dependency is deliberately declared in Bazel rather than inferred from
 Need links. This makes the allowed interface visible during analysis,
 provides the inputs needed for caching, and prevents accidental links to
@@ -636,7 +1001,7 @@ siblings, descendants, or unrelated bundles.</p>
 normal composed documentation build. They need different views of the host
 documentation.</p>
 <p>Internally, the macro therefore creates:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>host sources --------------------&gt; :_docs_source_bundle
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>host sources --------------------&gt; :docs_source_bundle
                                           |
                                           | composed with mounted children
                                           v
@@ -647,10 +1012,11 @@ host source bundle + child bundles -&gt; :docs_bundle
                                           +-&gt; public needs_json
 </pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">:_docs_source_bundle</span></code> contains only the host’s own sources, data, source-code
+<p><code class="docutils literal notranslate"><span class="pre">:docs_source_bundle</span></code> contains only the host’s own sources, data, source-code
 links, and metamodel. It is the source-level node of the host in the bundle
-graph. The public <code class="docutils literal notranslate"><span class="pre">:docs_bundle</span></code> is an aggregator containing that private node
-and all bundles passed to <code class="docutils literal notranslate"><span class="pre">docs(bundles</span> <span class="pre">=</span> <span class="pre">...)</span></code>.</p>
+graph and is available as an upward hierarchy anchor. The public
+<code class="docutils literal notranslate"><span class="pre">:docs_bundle</span></code> is an aggregator containing that source node and all bundles
+passed to <code class="docutils literal notranslate"><span class="pre">docs(bundles</span> <span class="pre">=</span> <span class="pre">...)</span></code>.</p>
 <p>This separation prevents a dependency cycle. A lower-level bundle can depend
 on the own-source export of an ancestor, while the ancestor’s composed source
 tree can include the lower-level bundle:</p>
@@ -659,16 +1025,18 @@ parent composed tree &lt;----mounts downwards---- child source bundle
 </pre></div>
 </div>
 <p>The documentation tree can consequently express parent/child relationships
-without making the Bazel dependency graph cyclic. The private target name is
-an implementation detail; users configure the host through <code class="docutils literal notranslate"><span class="pre">docs()</span></code> and
-configure reusable components through <code class="docutils literal notranslate"><span class="pre">docs_bundle()</span></code>.</p>
+without making the Bazel dependency graph cyclic. <code class="docutils literal notranslate"><span class="pre">:docs_source_bundle</span></code> is the
+stable public source-anchor label for cross-package consumers. The historical
+<code class="docutils literal notranslate"><span class="pre">:_docs_source_bundle</span></code> label remains available for compatibility. Users
+configure the host through <code class="docutils literal notranslate"><span class="pre">docs()</span></code> and reusable components through
+<code class="docutils literal notranslate"><span class="pre">docs_bundle()</span></code>.</p>
 </section>
 <section id="needs-ownership-and-bundle-exports">
 <h2>Needs ownership and bundle exports<a class="headerlink" href="#needs-ownership-and-bundle-exports" title="Link to this heading">#</a></h2>
 <p>The unit of Needs ownership is a source bundle, not a mount point. Mounting the
 same bundle at another location changes the document path at which its Needs
 are rendered, but it does not create a second owner or a second Need ID.</p>
-<p>A bundle-local Needs export contains:</p>
+<p>A bundle-local <code class="docutils literal notranslate"><span class="pre">*_needs_local</span></code> export contains:</p>
 <ul class="simple">
 <li><p>Needs created from the bundle’s own documentation sources;</p></li>
 <li><p>the bundle-relative <code class="docutils literal notranslate"><span class="pre">docname</span></code> and source location;</p></li>
@@ -677,9 +1045,11 @@ are rendered, but it does not create a second owner or a second Need ID.</p>
 <li><p>source-link information belonging to the bundle; and</p></li>
 <li><p>the selected metamodel context.</p></li>
 </ul>
-<p>Needs imported from <code class="docutils literal notranslate"><span class="pre">upward_bundles</span></code> are inputs to validation. They are not
-copied into the child export and therefore cannot be mistaken for Needs owned
-by the child.</p>
+<p>The corresponding <code class="docutils literal notranslate"><span class="pre">*_needs_upward</span></code> export additionally contains the Needs
+from the direct <code class="docutils literal notranslate"><span class="pre">upward_bundles</span></code> exports. Those exports already contain their
+own upward closure, so the result exposes the complete declared interface to a
+downstream consumer. Imported records remain distinguishable as ancestor
+records and are not owned by the child bundle.</p>
 <p>Need IDs are the stable cross-bundle identity. A bundle-relative <code class="docutils literal notranslate"><span class="pre">docname</span></code> is
 not stable across mounts: the final path is determined by the consumer’s
 <code class="docutils literal notranslate"><span class="pre">mount_at</span></code>. This is why links between bundles use Need identity while the
@@ -703,6 +1073,124 @@ declared directly.</p>
 </section>
 <section id="processing-model">
 <h2>Processing model<a class="headerlink" href="#processing-model" title="Link to this heading">#</a></h2>
+</section>
+<section id="execution-traces">
+<h2>Execution traces<a class="headerlink" href="#execution-traces" title="Link to this heading">#</a></h2>
+<p>The two entry points below deliberately show different Bazel paths. The public
+module <code class="docutils literal notranslate"><span class="pre">needs_json</span></code> target consumes the complete composed source tree. The
+bundle-local export targets are a separate, cacheable path used when a bundle
+is consumed through <code class="docutils literal notranslate"><span class="pre">upward_bundles</span></code>.</p>
+<section id="trigger-from-the-module-s-public-needs-json-target">
+<h3>Trigger from the module’s public <code class="docutils literal notranslate"><span class="pre">needs_json</span></code> target<a class="headerlink" href="#trigger-from-the-module-s-public-needs-json-target" title="Link to this heading">#</a></h3>
+<p>The module-level build traverses the downward <code class="docutils literal notranslate"><span class="pre">bundles</span></code> composition and runs
+one final Sphinx-Needs build. It does not invoke the intermediate
+<code class="docutils literal notranslate"><span class="pre">*_needs_local</span></code> or <code class="docutils literal notranslate"><span class="pre">*_needs_upward</span></code> targets. If <code class="docutils literal notranslate"><span class="pre">code_targets</span></code> are
+configured, each source bundle first produces its source-link cache; the
+public <code class="docutils literal notranslate"><span class="pre">sourcelinks_json</span></code> target then merges those caches before Sphinx
+consumes them.</p>
+<pre  class="mermaid">
+        sequenceDiagram
+    autonumber
+    participant User as &quot;bazel build //path/to/module:needs_json&quot;
+    participant Needs as &quot;//path/to/module:needs_json&quot;
+    participant Bundle as &quot;//path/to/module:docs_bundle&quot;
+    participant Host as &quot;//path/to/module:docs_source_bundle&quot;
+    participant Component as &quot;//path/to/module:component&quot;
+    participant Subcomponent as &quot;//path/to/module:subcomponent&quot;
+    participant Mounts as &quot;//path/to/module:_mounts_manifest&quot;
+    participant SourceCache as &quot;//path/to/module:sourcelinks_json&quot;
+    participant LinkGen as &quot;//scripts_bazel:generate_sourcelinks&quot;
+    participant LinkMerge as &quot;//scripts_bazel:merge_sourcelinks&quot;
+    participant Sphinx as &quot;//path/to/module:sphinx_build&quot;
+    participant Linker as &quot;score_source_code_linker extension&quot;
+
+    User-&gt;&gt;Needs: request final Needs export
+    Needs-&gt;&gt;Bundle: consume composed source tree
+    Bundle-&gt;&gt;Host: include host sources
+    Bundle-&gt;&gt;Component: include component at mount_at
+    Bundle-&gt;&gt;Subcomponent: include subcomponent at mount_at
+    Bundle-&gt;&gt;Mounts: provide mounted source manifest
+
+    Component-&gt;&gt;LinkGen: run component_code_targets_sourcelinks_json
+    LinkGen--&gt;&gt;Component: component source-link JSON
+    Subcomponent-&gt;&gt;LinkGen: run subcomponent_code_targets_sourcelinks_json
+    LinkGen--&gt;&gt;Subcomponent: subcomponent source-link JSON
+    Host-&gt;&gt;LinkGen: run _docs_source_bundle_code_targets_sourcelinks_json
+    LinkGen--&gt;&gt;Host: module source-link JSON
+    Needs-&gt;&gt;SourceCache: collect propagated source-link caches
+    SourceCache-&gt;&gt;LinkMerge: run merge_sourcelinks
+    LinkMerge--&gt;&gt;SourceCache: merged sourcelinks_json
+    Needs-&gt;&gt;Sphinx: run composed Sphinx-Needs build
+    Sphinx-&gt;&gt;Linker: read sourcelinks_json
+    Linker--&gt;&gt;Sphinx: attach source_code_link and testlink
+    Sphinx--&gt;&gt;Needs: write final needs.json and metrics
+    Needs--&gt;&gt;User: completed public result
+    </pre><p>The diagram shows the <code class="docutils literal notranslate"><span class="pre">code_targets</span></code> path: <code class="docutils literal notranslate"><span class="pre">component_code_targets_sourcelinks_json</span></code>
+and its siblings invoke <code class="docutils literal notranslate"><span class="pre">//scripts_bazel:generate_sourcelinks</span></code>. Without
+<code class="docutils literal notranslate"><span class="pre">code_targets</span></code>, the corresponding bundle-local Needs action uses an empty
+<code class="docutils literal notranslate"><span class="pre">*_needs_sourcelinks_json</span></code> target instead.</p>
+</section>
+<section id="trigger-from-the-subcomponent-s-upward-export">
+<h3>Trigger from the subcomponent’s upward export<a class="headerlink" href="#trigger-from-the-subcomponent-s-upward-export" title="Link to this heading">#</a></h3>
+<p>When the requested target is <code class="docutils literal notranslate"><span class="pre">subcomponent_needs_upward</span></code>, Bazel follows the
+Needs hierarchy in the opposite semantic direction: the subcomponent builds
+its own local export and requests the component export; the component in turn
+requests the module’s private own-source export. Each level runs its own
+Sphinx-Needs action and then <code class="docutils literal notranslate"><span class="pre">merge_needs_json</span></code> adds the local result to the
+already merged parent export.</p>
+<pre  class="mermaid">
+        sequenceDiagram
+    autonumber
+    participant User as &quot;bazel build //path/to/module:subcomponent_needs_upward&quot;
+    participant SubUp as &quot;:subcomponent_needs_upward&quot;
+    participant SubLocal as &quot;:subcomponent_needs_local&quot;
+    participant SubFiles as &quot;:subcomponent_own_files&quot;
+    participant CompUp as &quot;:component_needs_upward&quot;
+    participant CompLocal as &quot;:component_needs_local&quot;
+    participant CompFiles as &quot;:component_own_files&quot;
+    participant HostUp as &quot;:docs_source_bundle_needs_upward&quot;
+    participant HostLocal as &quot;:_docs_source_bundle_needs_local&quot;
+    participant HostFiles as &quot;:_docs_source_bundle_own_files&quot;
+    participant Sphinx as &quot;*_needs_sphinx_build&quot;
+    participant LinkGen as &quot;//scripts_bazel:generate_sourcelinks&quot;
+    participant NeedsMerge as &quot;//scripts_bazel:merge_needs_json&quot;
+
+    User-&gt;&gt;SubUp: request reusable subcomponent export
+    SubUp-&gt;&gt;SubLocal: build :subcomponent_needs_local
+    SubLocal-&gt;&gt;SubFiles: read :subcomponent_own_files
+    SubLocal-&gt;&gt;LinkGen: run :subcomponent_code_targets_sourcelinks_json
+    LinkGen--&gt;&gt;SubLocal: source-link JSON
+    SubLocal-&gt;&gt;Sphinx: run :subcomponent_needs_sphinx_build
+    Sphinx--&gt;&gt;SubLocal: local subcomponent needs.json
+    SubUp-&gt;&gt;CompUp: request :component_needs_upward
+    CompUp-&gt;&gt;CompLocal: build :component_needs_local
+    CompLocal-&gt;&gt;CompFiles: read :component_own_files
+    CompLocal-&gt;&gt;LinkGen: run :component_code_targets_sourcelinks_json
+    LinkGen--&gt;&gt;CompLocal: source-link JSON
+    CompLocal-&gt;&gt;Sphinx: run :component_needs_sphinx_build
+    Sphinx--&gt;&gt;CompLocal: local component needs.json
+    CompUp-&gt;&gt;HostUp: request :docs_source_bundle_needs_upward
+    HostUp-&gt;&gt;HostLocal: build :_docs_source_bundle_needs_local
+    HostLocal-&gt;&gt;HostFiles: read :_docs_source_bundle_own_files
+    HostLocal-&gt;&gt;LinkGen: run :_docs_source_bundle_code_targets_sourcelinks_json
+    LinkGen--&gt;&gt;HostLocal: module source-link JSON
+    HostLocal-&gt;&gt;Sphinx: run :_docs_source_bundle_needs_sphinx_build
+    Sphinx--&gt;&gt;HostLocal: local module needs.json
+    HostUp-&gt;&gt;NeedsMerge: merge local module export
+    NeedsMerge--&gt;&gt;HostUp: :docs_source_bundle_needs_upward/needs.json
+    CompUp-&gt;&gt;NeedsMerge: merge component local + module export
+    NeedsMerge--&gt;&gt;CompUp: :component_needs_upward/needs.json
+    SubUp-&gt;&gt;NeedsMerge: merge subcomponent local + component export
+    NeedsMerge--&gt;&gt;SubUp: :subcomponent_needs_upward/needs.json
+    SubUp--&gt;&gt;User: completed hierarchical export
+    </pre><p>The sequence is shown in dependency order for readability. Bazel may build
+independent prerequisites in parallel: the subcomponent’s local export does
+not depend on the component export. The component export itself waits for the
+module’s own-source export because <code class="docutils literal notranslate"><span class="pre">upward_bundles</span></code> is an explicit
+dependency. The source-code linker path is shown at every level; if a level
+does not configure <code class="docutils literal notranslate"><span class="pre">code_targets</span></code>, its empty <code class="docutils literal notranslate"><span class="pre">*_needs_sourcelinks_json</span></code>
+target replaces the generated source-link cache.</p>
+</section>
 <section id="bundle-local-processing">
 <h3>Bundle-local processing<a class="headerlink" href="#bundle-local-processing" title="Link to this heading">#</a></h3>
 <p>The bundle-local action receives the source bundle’s own sources and its
@@ -721,9 +1209,11 @@ bundle’s own source tree, because no consumer has assigned a mount path yet.</
 </section>
 <section id="top-level-composition">
 <h3>Top-level composition<a class="headerlink" href="#top-level-composition" title="Link to this heading">#</a></h3>
-<p>The public <code class="docutils literal notranslate"><span class="pre">needs_json</span></code> action imports the local exports reachable from the
-composed documentation bundle and applies the placements from <code class="docutils literal notranslate"><span class="pre">bundles</span></code>.
-It then performs the operations whose meaning depends on the complete graph:</p>
+<p>The public <code class="docutils literal notranslate"><span class="pre">needs_json</span></code> action consumes the complete source tree exposed by the
+composed documentation bundle and applies the placements from <code class="docutils literal notranslate"><span class="pre">bundles</span></code>. It
+does not depend on the intermediate <code class="docutils literal notranslate"><span class="pre">*_needs_local</span></code> or <code class="docutils literal notranslate"><span class="pre">*_needs_upward</span></code>
+artifacts. It then performs the operations whose meaning depends on the
+complete graph:</p>
 <ul class="simple">
 <li><p>rebase each bundle-relative <code class="docutils literal notranslate"><span class="pre">docname</span></code> to its final <code class="docutils literal notranslate"><span class="pre">mount_at</span></code> path;</p></li>
 <li><p>resolve links and calculate backlinks over all imported Needs;</p></li>
@@ -731,9 +1221,11 @@ It then performs the operations whose meaning depends on the complete graph:</p>
 <li><p>calculate metrics and traceability gates; and</p></li>
 <li><p>write the existing public <code class="docutils literal notranslate"><span class="pre">needs_json</span></code> output.</p></li>
 </ul>
-<p>This step is the final graph view, not a second ownership layer. It combines
-the records produced by the owners and adds graph-dependent results; it does
-not copy a parent’s Needs into a child or recreate HTML from the export.</p>
+<p>This step is the final graph view, not a second ownership layer. It evaluates
+the records from all composed source owners in one Sphinx run; it does not
+copy a parent’s Needs into a child or recreate HTML from an intermediate
+export. The <code class="docutils literal notranslate"><span class="pre">*_needs_upward</span></code> artifacts are the separate reusable interface
+shown in the second sequence diagram.</p>
 <p>Rendering, navigation, <code class="docutils literal notranslate"><span class="pre">:doc:</span></code>/<code class="docutils literal notranslate"><span class="pre">:ref:</span></code> resolution, includes, images, and
 other source-tree behavior continue to use the complete composed Sphinx source
 tree. <code class="docutils literal notranslate"><span class="pre">docs_check</span></code> remains the document-level integration check for that tree.</p>
@@ -789,7 +1281,9 @@ metadata.</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">bundles</span></code> does not transfer Need ownership.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">upward_bundles</span></code> is explicit and is the only cross-bundle validation
 interface.</p></li>
-<li><p>A bundle exports its own Needs, not imported ancestor Needs.</p></li>
+<li><p>A bundle’s <code class="docutils literal notranslate"><span class="pre">*_needs_local</span></code> export contains its own Needs; its
+<code class="docutils literal notranslate"><span class="pre">*_needs_upward</span></code> export may aggregate imported ancestor Needs without
+transferring ownership.</p></li>
 <li><p>Need IDs remain stable when a bundle is mounted at another path.</p></li>
 <li><p>Final document paths, backlinks, and global checks are computed only after
 composition has assigned mount locations.</p></li>
@@ -862,7 +1356,10 @@ both direct and transitive upward dependencies.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#direct-and-transitive-upward-dependencies">Direct and transitive upward dependencies</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#processing-model">Processing model</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#processing-model">Processing model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#execution-traces">Execution traces</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#trigger-from-the-module-s-public-needs-json-target">Trigger from the module’s public <code class="docutils literal notranslate"><span class="pre">needs_json</span></code> target</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#trigger-from-the-subcomponent-s-upward-export">Trigger from the subcomponent’s upward export</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bundle-local-processing">Bundle-local processing</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#top-level-composition">Top-level composition</a></li>
 </ul>
@@ -877,7 +1374,7 @@ both direct and transitive upward dependencies.</p>
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/eclipse-score/docs-as-code/edit/main//home/runner/work/docs-as-code/docs-as-code/docs/concepts/hierarchical_bundle_needs.md">
+    <a href="https://github.com/eclipse-score/docs-as-code/edit/main/docs/concepts/hierarchical_bundle_needs.md">
       <i class="fa-solid fa-pencil"></i>
       
       
