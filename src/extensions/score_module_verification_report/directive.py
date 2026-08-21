@@ -23,6 +23,7 @@ from sphinx.util.nodes import nested_parse_with_titles
 
 from .rendering import render_report
 from .templates import DEFAULT_FEATURE_WORKPRODUCTS, DEFAULT_WORKPRODUCTS
+from .coverage import load_coverage
 
 # Strip an optional ``[version==N]`` qualifier from a component id.
 _VERSION_QUALIFIER_RE = re.compile(r"\[version==\d+\]$")
@@ -109,6 +110,9 @@ class ModuleVerificationReportDirective(SphinxDirective):
             feature_slug,  # type: ignore[arg-type]
             workproducts,
             feature_workproducts,
+            coverage_records=load_coverage(
+                getattr(self.config, "mvr_coverage_lcov", "")
+            ),
         )
         view_list = ViewList()
         source = "<module-verification-report>"

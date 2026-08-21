@@ -17,12 +17,16 @@ from __future__ import annotations
 import re
 
 from .templates import (
+    COMPONENT_COVERAGE_TEMPLATE,
     COMPONENT_TEMPLATE,
     COMPONENTS_HEADER,
+    COVERAGE_EMPTY_BODY,
+    COVERAGE_TABLE_HEADER,
     FEATURE_TEMPLATE,
     OVERVIEW_TEMPLATE,
     WP_TABLE_CSS,
 )
+from .coverage import FileCoverage, coverage_rows, records_for_slug
 
 
 def normalize_slug(text: str) -> str:
@@ -76,17 +80,26 @@ def workproduct_rows(
 def render_component(
     comp: dict,
     workproducts: list[dict],
+    coverage_records: list[FileCoverage] | None = None,
 ) -> str:
     title = comp["title"]
     slug = comp["slug"]
     ref = "comp-" + slugify(title)
+    slug_norm = normalize_slug(slug)
+    matched = records_for_slug(coverage_records or [], slug_norm)
+    if matched:
+        coverage_body = COVERAGE_TABLE_HEADER + coverage_rows(matched)
+    else:
+        coverage_body = COVERAGE_EMPTY_BODY
+    coverage_block = COMPONENT_COVERAGE_TEMPLATE.format(coverage_body=coverage_body)
     return COMPONENT_TEMPLATE.format(
         ref=ref,
         title=title,
         title_underline="~" * len(title),
         comp_id=comp["id"],
         slug=slug,
-        workproduct_rows=workproduct_rows(normalize_slug(slug), workproducts),
+        workproduct_rows=workproduct_rows(slug_norm, workproducts),
+        coverage_block=coverage_block,
     )
 
 
@@ -138,6 +151,7 @@ def render_report(
     feature_slug: str | None,
     workproducts: list[dict],
     feature_workproducts: list[dict],
+    coverage_records: list[FileCoverage] | None = None,
 ) -> str:
     parts = [WP_TABLE_CSS]
     if feature_id is not None and feature_slug is not None:
@@ -147,5 +161,5 @@ def render_report(
         render_overview(components),
     ]
     for comp in components:
-        parts.append(render_component(comp, workproducts))
+        parts.append(render_component(comp, workproducts, coverage_records))
     return "\n".join(parts)

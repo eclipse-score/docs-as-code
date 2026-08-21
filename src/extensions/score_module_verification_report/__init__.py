@@ -57,6 +57,11 @@ from .testcase_annotations import (
 
 def setup(app: Any) -> dict:
     app.add_directive("module-verification-report", ModuleVerificationReportDirective)
+    app.add_config_value(
+        "mvr_coverage_lcov",
+        "bazel-out/_coverage/_coverage_report.dat",
+        "env",
+    )
     app.connect("env-before-read-docs", init_docnames)
     app.connect("env-before-read-docs", init_registry)
     app.connect("env-purge-doc", purge_docname)

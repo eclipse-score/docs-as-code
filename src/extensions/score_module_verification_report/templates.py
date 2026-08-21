@@ -92,7 +92,7 @@ verification status and the tests that (fully or partially) verify them:
       :columns: id;title;safety;status;fully_verifies_back;partially_verifies_back
       :colwidths: 13,22,8,10,23,24
       :sort: id
-
+{coverage_block}
 Architectural Elements
 ^^^^^^^^^^^^^^^^^^^^^^
 
@@ -130,6 +130,43 @@ this component. A dash (``\u2014``) means the corresponding document is missing.
         - Realized by
         - Status
 {workproduct_rows}
+"""
+
+
+COMPONENT_COVERAGE_TEMPLATE = """
+Test Coverage
+^^^^^^^^^^^^^
+
+Per-source-file line and branch coverage aggregated from the LCOV report
+produced by ``bazel coverage``.
+
+.. dropdown:: Show test coverage table
+   :animate: fade-in
+{coverage_body}
+"""
+
+
+COVERAGE_TABLE_HEADER = """
+   .. list-table::
+      :header-rows: 1
+      :widths: 45 10 10 10 10 10 10
+
+      * - Source
+        - Lines found
+        - Lines hit
+        - Line %
+        - Branches found
+        - Branches hit
+        - Branch %
+"""
+
+
+COVERAGE_EMPTY_BODY = """
+   .. note::
+
+      No coverage data available for this component. Run ``bazel coverage``
+      with the corresponding targets and rebuild the docs to populate this
+      table.
 """
 
 
