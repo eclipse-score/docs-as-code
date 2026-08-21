@@ -13,7 +13,7 @@
 
 """Public docs() smoke scenario."""
 
-from src.tests.docs_bzl.helpers import load_needs_json, run_scenario
+from src.tests.docs_bzl.helpers import built_output, load_needs_json, run_scenario
 
 
 def test_basic_docs_builds_html():
@@ -33,3 +33,8 @@ def test_basic_docs_builds_needs_without_conf_py():
     assert result.artifacts is not None, f"expected artifacts: {result}"
     data = load_needs_json(result.artifacts["needs.json"])
     assert data["current_version"], "current_version must be non-empty"
+
+    generated_conf = built_output("scenarios/basic_docs", "docs/conf.py")
+    assert 'required_in_id = ["docs_as_code"]' in generated_conf.read_text(
+        encoding="utf-8"
+    )

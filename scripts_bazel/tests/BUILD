@@ -15,6 +15,15 @@ load("@docs_as_code_hub_env//:requirements.bzl", "all_requirements")
 load("//:score_pytest.bzl", "score_pytest")
 
 score_pytest(
+    name = "generate_conf_test",
+    srcs = ["generate_conf_test.py"],
+    deps = [
+        "//scripts_bazel:generate_conf",
+    ] + all_requirements,
+    pytest_config = "//:pyproject.toml",
+)
+
+score_pytest(
     name = "generate_sourcelinks_cli_test",
     srcs = ["generate_sourcelinks_cli_test.py"],
     deps = [

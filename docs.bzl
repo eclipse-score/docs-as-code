@@ -61,15 +61,32 @@ load(
     "create_mounts_manifest",
 )
 
+def _module_file_label():
+    """Return the MODULE.bazel label belonging to the calling repository."""
+    repository_name = native.repository_name()
+    if native.package_name() == "":
+        # MODULE.bazel is a source file outside the normal BUILD package
+        # declarations. Export it when docs() is called from a repository root
+        # so the generator can consume the caller's module metadata.
+        native.exports_files(["MODULE.bazel"])
+    if repository_name == "@":
+        return "@//:MODULE.bazel"
+    return repository_name + "//:MODULE.bazel"
+
 def _generated_conf_impl(ctx):
     output = ctx.actions.declare_file(ctx.attr.output_path)
-    ctx.actions.expand_template(
-        template = ctx.file.template,
-        output = output,
-        substitutions = {
-            "{PROJECT}": repr(ctx.attr.project),
-            "{PROJECT_URL}": repr(ctx.attr.project_url),
-        },
+    arguments = ctx.actions.args()
+    arguments.add("--template", ctx.file.template.path)
+    arguments.add("--module-file", ctx.file.module_file.path)
+    arguments.add("--project", ctx.attr.project)
+    arguments.add("--project-url", ctx.attr.project_url)
+    arguments.add("--output", output.path)
+    ctx.actions.run(
+        executable = ctx.executable._generate_conf,
+        arguments = [arguments],
+        inputs = [ctx.file.template, ctx.file.module_file],
+        outputs = [output],
+        mnemonic = "GenerateSphinxConf",
     )
     return [DefaultInfo(files = depset([output]))]
 
@@ -78,10 +95,16 @@ _generated_conf = rule(
     attrs = {
         "project": attr.string(mandatory = True),
         "project_url": attr.string(mandatory = True),
+        "module_file": attr.label(allow_single_file = True, mandatory = True),
         "output_path": attr.string(mandatory = True),
         "template": attr.label(
             allow_single_file = True,
             default = Label("@score_docs_as_code//:default_conf.py.tpl"),
+        ),
+        "_generate_conf": attr.label(
+            cfg = "exec",
+            default = Label("@score_docs_as_code//scripts_bazel:generate_conf"),
+            executable = True,
         ),
     },
 )
@@ -238,6 +261,7 @@ def docs(
             name = "_docs_generated_config",
             project = project,
             project_url = project_url,
+            module_file = _module_file_label(),
             output_path = config_file_path,
         )
         sphinx_config = ":_docs_generated_config"

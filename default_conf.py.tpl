@@ -18,4 +18,9 @@ project = {PROJECT}
 project_url = {PROJECT_URL}
 version = "0.0.0"
 
+# Allow feature IDs that use the Bazel module name without its first
+# underscore-separated prefix (for example, ``score_docs_as_code`` becomes
+# ``docs_as_code``).  A user-provided conf.py remains authoritative.
+required_in_id = {REQUIRED_IN_ID}
+
 extensions = ["score_sphinx_bundle"]
