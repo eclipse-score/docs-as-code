@@ -506,9 +506,9 @@ for complete examples and the required metadata.</p>
 <h2>Advanced usage: JUnit XML for other languages<a class="headerlink" href="#advanced-usage-junit-xml-for-other-languages" title="Link to this heading">#</a></h2>
 <p>This section is only relevant when your language or test framework does not
 have one of the integrations above. In that case, produce JUnit XML with the
-metadata described below. The <code class="docutils literal notranslate"><span class="pre">score_source_code_linker</span></code> extension reads
-<code class="docutils literal notranslate"><span class="pre">test.xml</span></code> files from <code class="docutils literal notranslate"><span class="pre">bazel-testlogs/</span></code> or <code class="docutils literal notranslate"><span class="pre">tests-report/</span></code> and creates
-backlinks from the testcases to the referenced requirements.</p>
+metadata described below. The generated test results are processed
+automatically and create backlinks from the testcases to the referenced
+requirements.</p>
 <section id="required-properties">
 <h3>Required properties<a class="headerlink" href="#required-properties" title="Link to this heading">#</a></h3>
 <p>Every linked test must declare the following properties
@@ -549,8 +549,7 @@ or <code class="docutils literal notranslate"><span class="pre">FullyVerifies</s
 </section>
 <section id="testcase-result-annotations">
 <h2>Testcase result annotations<a class="headerlink" href="#testcase-result-annotations" title="Link to this heading">#</a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">score_source_code_linker</span></code> extension also decorates rendered links to
-testcase needs with their result, for example <code class="docutils literal notranslate"><span class="pre">(passed)</span></code>, <code class="docutils literal notranslate"><span class="pre">(failed)</span></code>,
+<p>Testcase links are also decorated with their result, for example <code class="docutils literal notranslate"><span class="pre">(passed)</span></code>, <code class="docutils literal notranslate"><span class="pre">(failed)</span></code>,
 <code class="docutils literal notranslate"><span class="pre">(skipped)</span></code>, or <code class="docutils literal notranslate"><span class="pre">(disabled)</span></code>. The annotation is applied to testcase
 back-links in any document and uses the <code class="docutils literal notranslate"><span class="pre">result</span></code> parsed from the JUnit XML.
 Unknown result values are shown with a neutral colour; testcases without a
@@ -564,7 +563,7 @@ result are left unchanged.</p>
 </pre></div>
 </div>
 </li>
-<li><p>Build the documentation — the linker picks up <code class="docutils literal notranslate"><span class="pre">bazel-testlogs/</span></code> automatically:</p>
+<li><p>Build the documentation — the generated test results are picked up automatically:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bazel<span class="w"> </span>run<span class="w"> </span>//:docs
 </pre></div>
 </div>
@@ -604,7 +603,7 @@ For example you can show all tests like so</p>
 <h2>Limitations<a class="headerlink" href="#limitations" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>Tests must be executed by Bazel before building docs so <code class="docutils literal notranslate"><span class="pre">test.xml</span></code> files exist.</p></li>
-<li><p>Not compatible with Esbonio / live preview (no <code class="docutils literal notranslate"><span class="pre">bazel-testlogs/</span></code> available).</p></li>
+<li><p>Not compatible with Esbonio / live preview because generated test results are unavailable there.</p></li>
 </ul>
 </section>
 </section>
