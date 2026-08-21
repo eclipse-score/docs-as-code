@@ -1514,7 +1514,7 @@
   {
     "name": "test_testcase_annotations__test_annotates_passed_result_in_green",
     "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
-    "line": "65",
+    "line": "84",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1528,7 +1528,7 @@
   {
     "name": "test_testcase_annotations__test_annotates_failed_result_in_red",
     "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
-    "line": "81",
+    "line": "102",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1542,7 +1542,7 @@
   {
     "name": "test_testcase_annotations__test_unknown_result_uses_fallback_color",
     "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
-    "line": "91",
+    "line": "112",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1554,35 +1554,7 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_testcase_annotations__test_annotates_on_any_document",
-    "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
-    "line": "106",
-    "result": "passed",
-    "repo_name": null,
-    "hash": null,
-    "url": null,
-    "TestType": null,
-    "DerivationTechnique": null,
-    "result_text": "",
-    "PartiallyVerifies": null,
-    "FullyVerifies": null
-  },
-  {
-    "name": "test_testcase_annotations__test_noop_when_text_not_testcase",
-    "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
-    "line": "114",
-    "result": "passed",
-    "repo_name": null,
-    "hash": null,
-    "url": null,
-    "TestType": null,
-    "DerivationTechnique": null,
-    "result_text": "",
-    "PartiallyVerifies": null,
-    "FullyVerifies": null
-  },
-  {
-    "name": "test_testcase_annotations__test_noop_when_need_missing",
+    "name": "test_testcase_annotations__test_resolves_target_via_refuri_fragment_across_documents",
     "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
     "line": "122",
     "result": "passed",
@@ -1596,9 +1568,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_testcase_annotations__test_noop_when_result_empty",
+    "name": "test_testcase_annotations__test_noop_when_reference_has_no_refid_or_refuri",
     "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
-    "line": "130",
+    "line": "140",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1610,9 +1582,37 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_testcase_annotations__test_noop_when_needs_view_unavailable",
+    "name": "test_testcase_annotations__test_noop_when_target_need_is_not_a_testcase",
     "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
-    "line": "138",
+    "line": "150",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_testcase_annotations__test_noop_when_need_missing",
+    "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
+    "line": "162",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_testcase_annotations__test_annotates_even_when_result_empty",
+    "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
+    "line": "170",
     "result": "passed",
     "repo_name": null,
     "hash": null,
