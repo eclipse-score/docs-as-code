@@ -2633,7 +2633,116 @@
           "url": ""
         }
       ],
-      "TestLinks": []
+      "TestLinks": [
+        {
+          "name": "test_validate_mandatory_regexes__test_no_issues_for_strict_regexes",
+          "file": "src/extensions/score_metamodel/tests/test_validate_mandatory_regexes.py",
+          "line": 40,
+          "need": "tool_req__docs_saf_attrs_mandatory",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        },
+        {
+          "name": "test_validate_mandatory_regexes__test_flags_wildcard_star",
+          "file": "src/extensions/score_metamodel/tests/test_validate_mandatory_regexes.py",
+          "line": 54,
+          "need": "tool_req__docs_saf_attrs_mandatory",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        },
+        {
+          "name": "test_validate_mandatory_regexes__test_flags_bare_wildcard",
+          "file": "src/extensions/score_metamodel/tests/test_validate_mandatory_regexes.py",
+          "line": 72,
+          "need": "tool_req__docs_saf_attrs_mandatory",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        },
+        {
+          "name": "test_validate_mandatory_regexes__test_flags_zero_or_more_quantifier",
+          "file": "src/extensions/score_metamodel/tests/test_validate_mandatory_regexes.py",
+          "line": 87,
+          "need": "tool_req__docs_saf_attrs_mandatory",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        },
+        {
+          "name": "test_validate_mandatory_regexes__test_flags_empty_string_only_regex",
+          "file": "src/extensions/score_metamodel/tests/test_validate_mandatory_regexes.py",
+          "line": 102,
+          "need": "tool_req__docs_saf_attrs_mandatory",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        },
+        {
+          "name": "test_validate_mandatory_regexes__test_flags_multiple_issues_in_one_type",
+          "file": "src/extensions/score_metamodel/tests/test_validate_mandatory_regexes.py",
+          "line": 116,
+          "need": "tool_req__docs_saf_attrs_mandatory",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        },
+        {
+          "name": "test_validate_mandatory_regexes__test_flags_across_multiple_types",
+          "file": "src/extensions/score_metamodel/tests/test_validate_mandatory_regexes.py",
+          "line": 139,
+          "need": "tool_req__docs_saf_attrs_mandatory",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        },
+        {
+          "name": "test_validate_mandatory_regexes__test_optional_options_not_checked",
+          "file": "src/extensions/score_metamodel/tests/test_validate_mandatory_regexes.py",
+          "line": 156,
+          "need": "tool_req__docs_saf_attrs_mandatory",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        },
+        {
+          "name": "test_validate_mandatory_regexes__test_accepts_dict_input",
+          "file": "src/extensions/score_metamodel/tests/test_validate_mandatory_regexes.py",
+          "line": 174,
+          "need": "tool_req__docs_saf_attrs_mandatory",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        }
+      ]
     }
   },
   {
