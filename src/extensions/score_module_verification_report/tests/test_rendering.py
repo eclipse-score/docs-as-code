@@ -18,6 +18,7 @@ from src.extensions.score_module_verification_report.rendering import (
     normalize_slug,
     render_component,
     render_feature,
+    render_mod_ver_report,
     render_overview,
     render_report,
     slugify,
@@ -115,6 +116,35 @@ def test_render_feature_substitutes_feature_id_and_slug() -> None:
 
 
 # ---------------------------------------------------------------------------
+# render_mod_ver_report
+# ---------------------------------------------------------------------------
+
+
+def test_render_mod_ver_report_contains_only_mandatory_fields() -> None:
+    out = render_mod_ver_report(
+        module_id="mod__demo",
+        report_id="mod_vrep__demo__report",
+        title="Demo Verification Report",
+        safety="QM",
+        security="YES",
+        status="valid",
+        verification_method="test_and_inspection",
+    )
+    assert ".. mod_ver_report:: Demo Verification Report" in out
+    assert ":id: mod_vrep__demo__report" in out
+    assert ":version: 1" in out
+    assert ":safety: QM" in out
+    assert ":security: YES" in out
+    assert ":status: valid" in out
+    assert ":verification_method: test_and_inspection" in out
+    assert ":belongs_to: mod__demo" in out
+    # Only mandatory fields — no optional coverage/percent/realizes options.
+    assert "coverage_percent" not in out
+    assert ":realizes:" not in out
+    assert ":covers:" not in out
+
+
+# ---------------------------------------------------------------------------
 # render_report
 # ---------------------------------------------------------------------------
 
@@ -139,3 +169,37 @@ def test_render_report_assembles_all_sections() -> None:
     assert 'id in ["comp__demo_a", "comp__demo_b"]' in out
     assert '"comp__demo_a" in satisfied_by' in out
     assert '"comp__demo_b" in satisfied_by' in out
+
+
+def test_render_report_includes_mod_ver_report_when_given() -> None:
+    components = [{"id": "comp__demo_a", "slug": "a", "title": "A"}]
+    out = render_report(
+        components=components,
+        feature_id=None,
+        feature_slug=None,
+        workproducts=_WP,
+        feature_workproducts=_WP,
+        mod_ver_report={
+            "module_id": "mod__demo",
+            "report_id": "mod_vrep__demo__report",
+            "title": "Demo Verification Report",
+            "safety": "QM",
+            "security": "YES",
+            "status": "valid",
+            "verification_method": "test_and_inspection",
+        },
+    )
+    assert ".. mod_ver_report:: Demo Verification Report" in out
+    assert ":belongs_to: mod__demo" in out
+
+
+def test_render_report_omits_mod_ver_report_when_absent() -> None:
+    components = [{"id": "comp__demo_a", "slug": "a", "title": "A"}]
+    out = render_report(
+        components=components,
+        feature_id=None,
+        feature_slug=None,
+        workproducts=_WP,
+        feature_workproducts=_WP,
+    )
+    assert ".. mod_ver_report::" not in out

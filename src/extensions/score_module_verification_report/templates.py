@@ -170,6 +170,25 @@ COVERAGE_EMPTY_BODY = """
 """
 
 
+# Emits an actual sphinx-needs ``mod_ver_report`` need (see metamodel.yaml)
+# so the module verification report is machine-readable, not just a rendered
+# RST page. Only the four type-specific *mandatory* options + the globally
+# mandatory ``version`` + the mandatory ``belongs_to`` link are set here —
+# score_metamodel's generic need-link/option validation (the same mechanism
+# used for every other need type) takes over from there.
+MOD_VER_REPORT_TEMPLATE = """\
+.. mod_ver_report:: {title}
+   :id: {report_id}
+   :version: {version}
+   :safety: {safety}
+   :security: {security}
+   :status: {status}
+   :verification_method: {verification_method}
+   :belongs_to: {module_id}
+
+"""
+
+
 FEATURE_TEMPLATE = """\
 Feature
 -------

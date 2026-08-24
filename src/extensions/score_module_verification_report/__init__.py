@@ -17,9 +17,20 @@ Usage in RST::
     .. module-verification-report::
        :module-id: mod__baselibs
        :feature-id: feat__baselibs
+       :safety: ASIL_B
+       :security: YES
+       :status: valid
+       :verification-method: test_and_inspection
        :components: comp__baselibs_json,
                     comp__baselibs_bit_manipulation,
                     comp__baselibs_containers
+
+``safety``/``security``/``status``/``verification-method`` are the
+mandatory options of the sphinx-needs ``mod_ver_report`` need type (see
+metamodel.yaml). The directive emits one such need
+(``belongs_to: module-id``) so the report is machine-readable and its
+links are validated by score_metamodel's generic need-link checks —
+not just rendered RST.
 
 Implementation is split across:
 

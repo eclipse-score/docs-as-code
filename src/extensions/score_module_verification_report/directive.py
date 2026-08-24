@@ -21,9 +21,9 @@ from docutils.statemachine import ViewList
 from sphinx.util.docutils import SphinxDirective
 from sphinx.util.nodes import nested_parse_with_titles
 
+from .coverage import load_coverage
 from .rendering import render_report
 from .templates import DEFAULT_FEATURE_WORKPRODUCTS, DEFAULT_WORKPRODUCTS
-from .coverage import load_coverage
 
 # Strip an optional ``[version==N]`` qualifier from a component id.
 _VERSION_QUALIFIER_RE = re.compile(r"\[version==\d+\]$")
@@ -54,6 +54,24 @@ def _parse_components(ids_str: str, component_prefix: str) -> list[dict]:
     return result
 
 
+# Mandatory options every ``mod_ver_report`` need requires (see
+# metamodel.yaml) that this directive cannot derive on its own.
+_MOD_VER_REPORT_OPTIONS = ("safety", "security", "status", "verification-method")
+
+
+def _mod_ver_report_id_and_title(module_short: str) -> tuple[str, str]:
+    """Derive the ``mod_vrep__...`` need id and its human-readable title
+    from the module slug.
+
+    The id follows the ``<Req Type>__<Abbreviations>__<Architectural
+    Element>`` scheme mandated for 3-part need types (``mod_ver_report``
+    declares ``parts: 3`` in metamodel.yaml), so exactly two ``__``
+    separators are required: ``mod_vrep__<module_short>__report``.
+    """
+    title_case = module_short.replace("_", " ").title()
+    return f"mod_vrep__{module_short}__report", f"{title_case} Verification Report"
+
+
 class ModuleVerificationReportDirective(SphinxDirective):
     """Expand to the per-module verification report body.
 
@@ -62,9 +80,17 @@ class ModuleVerificationReportDirective(SphinxDirective):
         .. module-verification-report::
            :module-id: mod__mymodule
            :components: comp__mymodule_a, comp__mymodule_b
+           :safety: QM
+           :security: YES
+           :status: valid
+           :verification-method: test_and_inspection
 
     ``feature-id`` and ``component-prefix`` are optional and derived from
-    ``module-id`` when omitted.
+    ``module-id`` when omitted. ``safety``/``security``/``status``/
+    ``verification-method`` are the mandatory options of the sphinx-needs
+    ``mod_ver_report`` need type (see metamodel.yaml) — this directive
+    emits one such need (``belongs_to: module-id``) so the report is
+    machine-readable, not just a rendered page.
     """
 
     required_arguments = 0
@@ -74,6 +100,11 @@ class ModuleVerificationReportDirective(SphinxDirective):
         "feature-id": str,
         "component-prefix": str,
         "components": str,
+        "safety": str,
+        "security": str,
+        "status": str,
+        "verification-method": str,
+        "version": str,
     }
     has_content = False
 
@@ -104,6 +135,28 @@ class ModuleVerificationReportDirective(SphinxDirective):
             )
             return [error]
 
+        missing = [opt for opt in _MOD_VER_REPORT_OPTIONS if not self.options.get(opt)]
+        if missing:
+            error = self.state_machine.reporter.error(
+                "module-verification-report: missing mandatory option(s) "
+                f"{', '.join(':' + m + ':' for m in missing)} required to "
+                "generate the mod_ver_report need",
+                line=self.lineno,
+            )
+            return [error]
+
+        report_id, report_title = _mod_ver_report_id_and_title(module_short)
+        mod_ver_report = {
+            "module_id": module_id,
+            "report_id": report_id,
+            "title": report_title,
+            "safety": self.options["safety"],
+            "security": self.options["security"],
+            "status": self.options["status"],
+            "verification_method": self.options["verification-method"],
+            "version": self.options.get("version", "1"),
+        }
+
         rst_text = render_report(
             components,
             feature_id,
@@ -113,6 +166,7 @@ class ModuleVerificationReportDirective(SphinxDirective):
             coverage_records=load_coverage(
                 getattr(self.config, "mvr_coverage_lcov", "")
             ),
+            mod_ver_report=mod_ver_report,
         )
         view_list = ViewList()
         source = "<module-verification-report>"

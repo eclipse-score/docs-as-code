@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import re
 
+from .coverage import FileCoverage, coverage_rows, records_for_slug
 from .templates import (
     COMPONENT_COVERAGE_TEMPLATE,
     COMPONENT_TEMPLATE,
@@ -23,10 +24,10 @@ from .templates import (
     COVERAGE_EMPTY_BODY,
     COVERAGE_TABLE_HEADER,
     FEATURE_TEMPLATE,
+    MOD_VER_REPORT_TEMPLATE,
     OVERVIEW_TEMPLATE,
     WP_TABLE_CSS,
 )
-from .coverage import FileCoverage, coverage_rows, records_for_slug
 
 
 def normalize_slug(text: str) -> str:
@@ -145,6 +146,29 @@ def render_overview(components: list[dict]) -> str:
     return OVERVIEW_TEMPLATE.format(ids_literal=ids_literal)
 
 
+def render_mod_ver_report(
+    module_id: str,
+    report_id: str,
+    title: str,
+    safety: str,
+    security: str,
+    status: str,
+    verification_method: str,
+    version: str = "1",
+) -> str:
+    """Render the ``.. mod_ver_report::`` need declaration for *module_id*."""
+    return MOD_VER_REPORT_TEMPLATE.format(
+        title=title,
+        report_id=report_id,
+        version=version,
+        safety=safety,
+        security=security,
+        status=status,
+        verification_method=verification_method,
+        module_id=module_id,
+    )
+
+
 def render_report(
     components: list[dict],
     feature_id: str | None,
@@ -152,8 +176,11 @@ def render_report(
     workproducts: list[dict],
     feature_workproducts: list[dict],
     coverage_records: list[FileCoverage] | None = None,
+    mod_ver_report: dict | None = None,
 ) -> str:
     parts = [WP_TABLE_CSS]
+    if mod_ver_report is not None:
+        parts.append(render_mod_ver_report(**mod_ver_report))
     if feature_id is not None and feature_slug is not None:
         parts.append(render_feature(feature_id, feature_slug, feature_workproducts))
     parts += [

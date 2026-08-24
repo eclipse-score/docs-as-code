@@ -20,6 +20,7 @@ the pure derivation rules and the ``_parse_components`` helper in isolation.
 from __future__ import annotations
 
 from src.extensions.score_module_verification_report.directive import (
+    _mod_ver_report_id_and_title,
     _parse_components,
 )
 
@@ -174,3 +175,20 @@ def test_feature_slug_splits_on_double_underscore():
 def test_feature_slug_falls_back_to_full_id_when_no_double_underscore():
     r = _resolve(option_feature_id="noprefix")
     assert r["feature_slug"] == "noprefix"
+
+
+# ---------------------------------------------------------------------------
+# Tests — _mod_ver_report_id_and_title
+# ---------------------------------------------------------------------------
+
+
+def test_mod_ver_report_id_and_title_basic():
+    report_id, title = _mod_ver_report_id_and_title("baselibs")
+    assert report_id == "mod_vrep__baselibs__report"
+    assert title == "Baselibs Verification Report"
+
+
+def test_mod_ver_report_id_and_title_underscored_slug():
+    report_id, title = _mod_ver_report_id_and_title("bit_manipulation")
+    assert report_id == "mod_vrep__bit_manipulation__report"
+    assert title == "Bit Manipulation Verification Report"
