@@ -14,11 +14,15 @@ from __future__ import annotations
 
 import sphinx_needs.directives.need
 from sphinx_needs.config import NeedsSphinxConfig
-from sphinx_needs.data import ExtendType, NeedsExtendType, NeedsMutable
+from sphinx_needs.data import (
+    ExtendType,
+    NeedsExtendType,
+    NeedsMutable,
+)
 from sphinx_needs.directives.needextend import extend_needs_data as original_function
-from sphinx_needs.exceptions import NeedsInvalidFilter
 from sphinx_needs.filter_common import filter_needs_mutable
 from sphinx_needs.logging import get_logger, log_warning
+from sphinx_needs.need_item import NeedItem
 from sphinx_needs.needs_schema import (
     FieldFunctionArray,
     FieldLiteralValue,
@@ -28,114 +32,174 @@ from sphinx_needs.needs_schema import (
 
 logger = get_logger(__name__)
 
+NeedextendLocation = tuple[str, int]
 
-def score_extend_needs_data_func(  # noqa: C901
+
+def _location(needextend: NeedsExtendType) -> NeedextendLocation:
+    """Return the source location used for every diagnostic of one directive."""
+    return needextend["docname"], needextend["lineno"]
+
+
+def _warn(message: str, location: NeedextendLocation) -> None:
+    """Report a needextend violation at the directive, not at its target need."""
+    log_warning(logger, message, "needextend", location=location)
+
+
+def _verify_needs_are_in_document(
+    needs: list[NeedItem], location: NeedextendLocation
+) -> None:
+    """Report selected needs outside the directive's source document.
+
+    Both ID and expression targets resolve to need records. Validating that shared
+    representation keeps the document-boundary policy identical for both syntaxes.
+    """
+    remote_ids = {need["id"] for need in needs if need["docname"] != location[0]}
+    if remote_ids:
+        _warn(
+            "Needextends may only modify needs in the current document. "
+            f"Matching needs: {', '.join(sorted(remote_ids))}.",
+            location,
+        )
+
+
+def _fetch_needs(
+    all_needs: NeedsMutable,
+    needextend: NeedsExtendType,
+    needs_config: NeedsSphinxConfig,
+) -> list[NeedItem]:
+    """Resolve either supported target syntax to the needs it selects."""
+    location = _location(needextend)
+
+    if needextend["filter_is_id"]:
+        # ``.. needextend:: NEED_ID`` has no expression to constrain, so inspect
+        # its resolved target in the shared document-boundary check below.
+        need_id = needextend["filter"]
+        try:
+            return [all_needs[need_id]]
+        except KeyError:
+            _warn(
+                f"Provided id {need_id!r} for needextend does not exist.",
+                location,
+            )
+            return []
+
+    else:
+        need_filter = needextend["filter"]
+
+        if "c.this_doc()" not in need_filter:
+            _warn(
+                "needextend in S-CORE must always be used per document only. "
+                "Please add 'c.this_doc()' to the needextend to limit its effects to the correct document. "
+                "See https://eclipse-score.github.io/docs-as-code/main/how-to/write_docs.html#needextend for more information.",
+                location,
+            )
+
+        try:
+            return filter_needs_mutable(
+                all_needs,
+                needs_config,
+                need_filter,
+                location=location,
+                origin_docname=location[0],
+            )
+        except Exception as e:
+            _warn(f"Invalid filter {need_filter!r}: {e}", location)
+            return []
+
+
+def _validate_list_modifications(
+    need: NeedItem,
+    needextend: NeedsExtendType,
+    location: NeedextendLocation,
+) -> None:
+    """Reject destructive changes to link lists, which would erase traceability."""
+    for _, action, value in needextend["list_modifications"]:
+        replaces_or_deletes_links = action in {
+            ExtendType.REPLACE,
+            ExtendType.DELETE,
+        } and isinstance(value, LinksLiteralValue | LinksFunctionArray)
+        if replaces_or_deletes_links:
+            _warn(
+                f"Error when extending need: {need['id']}. "
+                "Replace or Delete action is not allowed via needextends.",
+                location,
+            )
+
+
+def _validate_field_modifications(
+    need: NeedItem,
+    needextend: NeedsExtendType,
+    location: NeedextendLocation,
+) -> None:
+    """Reject field changes that discard data or append to scalar fields."""
+    for option_name, action, value in needextend["modifications"]:
+        is_scalar_append = (
+            action == ExtendType.APPEND
+            and isinstance(value, FieldLiteralValue)
+            and isinstance(value.value, str)
+        )
+        is_supported_replacement = action == ExtendType.REPLACE and (
+            value is None or isinstance(value, FieldLiteralValue | FieldFunctionArray)
+        )
+
+        if action == ExtendType.DELETE:
+            _warn(
+                f"Error when extending need: {need['id']}. "
+                "Delete action is not allowed via needextends.",
+                location,
+            )
+        elif is_scalar_append:
+            _warn(
+                f"Error when extending need: {need['id']}. "
+                "Append action is not allowed via needextends on 'string type options'.",
+                location,
+            )
+        elif is_supported_replacement and need[option_name]:
+            _warn(
+                f"Error when extending need: {need['id']}. "
+                "Replacing of options that are already set is not allowed via needextends.",
+                location,
+            )
+
+
+def _ensure_non_destructive_changes(
+    need: NeedItem,
+    needextend: NeedsExtendType,
+    location: NeedextendLocation,
+) -> None:
+    """Apply SCORE's non-destructive extension policy to one selected need."""
+    if need["is_external"]:
+        _warn(
+            f"Error when extending need: {need['id']}. "
+            "It is not allowed to modify external needs via needextend",
+            location,
+        )
+    _validate_list_modifications(need, needextend, location)
+    _validate_field_modifications(need, needextend, location)
+
+
+def score_extend_needs_data_func(
     all_needs: NeedsMutable,
     extends: dict[str, NeedsExtendType],
     needs_config: NeedsSphinxConfig,
 ):
-    """Use data gathered from needextend directives to modify fields of existing needs."""
-    # regardless of parallel build worker completion order.
-    sorted_extends = sorted(extends.values(), key=lambda x: (x["docname"], x["lineno"]))
+    """Validate SCORE's needextend policy, then let Sphinx-Needs apply it.
 
-    current_needextend: NeedsExtendType
-    for current_needextend in sorted_extends:
-        need_filter = current_needextend["filter"]
-        location = (current_needextend["docname"], current_needextend["lineno"])
+    This wrapper intentionally only reports violations. The unmodified directives
+    are still passed to Sphinx-Needs so its normal processing and diagnostics remain
+    authoritative.
+    """
+    # Sphinx-Needs applies extensions in source order as well. Matching that order
+    # keeps warning output stable and mirrors the later application order.
+    ordered_extends = sorted(extends.values(), key=_location)
 
-        # ╓                                                          ╖
-        # ║ This is currently as a grace period still allowed, but   ║
-        # ║ will be forbiden in future releases                      ║
-        # ╙                                                          ╜
-        # if "c.this_doc()" not in need_filter:
-        # error_msg = "Potentially altering needs outside of the document is not allowed. Please add 'c.this_doc()' to the needextend to limit it to only needs in the same document"
-        # log_warning(logger, error_msg, "needextend", location=location)
+    for needextend in ordered_extends:
+        needs = _fetch_needs(all_needs, needextend, needs_config)
+        _verify_needs_are_in_document(needs, _location(needextend))
 
-        if current_needextend["filter_is_id"]:
-            try:
-                found_needs = [all_needs[need_filter]]
-            except KeyError:
-                error = f"Provided id {need_filter!r} for needextend does not exist."
-                if current_needextend["strict"]:
-                    raise NeedsInvalidFilter(error) from KeyError
-                log_warning(logger, error, "needextend", location=location)
-                continue
-        else:
-            try:
-                found_needs = filter_needs_mutable(
-                    all_needs,
-                    needs_config,
-                    need_filter,
-                    location=location,
-                    origin_docname=current_needextend["docname"],
-                )
-            except Exception as e:
-                log_warning(
-                    logger,
-                    f"Invalid filter {need_filter!r}: {e}",
-                    "needextend",
-                    location=location,
-                )
-                continue
-        for found_need in found_needs:
-            if found_need["is_external"]:
-                log_warning(
-                    logger,
-                    f"Error when extending need: {found_need['id']}. "
-                    + "It is not allowed to modify external needs via needextend",
-                    "needextend",
-                    location,
-                )
-            # Work in the stored needs, not on the search result
-            need = all_needs[found_need["id"]]
+        for n in needs:
+            _ensure_non_destructive_changes(n, needextend, _location(needextend))
 
-            location = (
-                current_needextend["docname"],
-                current_needextend["lineno"],
-            )
-
-            for _, etype, link_value in current_needextend["list_modifications"]:
-                match (etype, link_value):
-                    case (
-                        ExtendType.REPLACE | ExtendType.DELETE,
-                        LinksLiteralValue() | LinksFunctionArray(),
-                    ):
-                        # Replacing / Deleting links is not allowed
-                        error_msg = (
-                            f"Error when extending need: {need['id']}. "
-                            "Replace or Delete action is not allowed via needextends."
-                        )
-                        # logger.warning_for_need(current_needextend["id"], error_msg)
-                        log_warning(logger, error_msg, "needextend", location=location)
-
-            for option_name, etype, field_value in current_needextend["modifications"]:
-                if etype == ExtendType.DELETE:
-                    error_msg = (
-                        f"Error when extending need: {need['id']}. "
-                        "Delete action is not allowed via needextends."
-                    )
-                    log_warning(logger, error_msg, "needextend", location=location)
-                match (etype, field_value):
-                    case (ExtendType.APPEND, FieldLiteralValue()):
-                        if isinstance(field_value.value, str):
-                            error_msg = (
-                                f"Error when extending need: {need['id']}. "
-                                "Append action is not allowed via needextends on 'string type options'."
-                            )
-                            log_warning(
-                                logger, error_msg, "needextend", location=location
-                            )
-
-                    case (
-                        ExtendType.REPLACE,
-                        None | FieldLiteralValue() | FieldFunctionArray(),
-                    ):
-                        if need[option_name]:
-                            error_msg = f"Error when extending need: {need['id']}. Replacing of options that are already set is not allowed via needextends."
-
-                            log_warning(
-                                logger, error_msg, "needextend", location=location
-                            )
     return original_function(all_needs, extends, needs_config)
 
 

@@ -42,7 +42,7 @@ Minimal example (root ``BUILD``)
        ],
        bundles = [
            # dicts describing bundles to mount into this project
-           # e.g. {"bundle": "@score_process//:docs_bundle", "mount_at": "process"}
+           # e.g. {"bundle": "@score_process_description//:docs_bundle", "mount_at": "process"}
        ],
        deps = [
            # additional bazel labels providing Python deps or other runfiles
@@ -56,8 +56,11 @@ Minimal example (root ``BUILD``)
 - ``project`` and ``project_url`` (strings, optional)
   Project name and canonical project URL. They are required when ``source_dir``
   has no ``conf.py``; in that case ``docs()`` generates the Sphinx configuration
-  and supplies the Docs-as-Code baseline version and extensions. If a ``conf.py``
-  exists, it remains authoritative and these values are not used.
+  and supplies the Docs-as-Code baseline version, extensions, and a
+  ``required_in_id`` entry derived from the Bazel module name. The first
+  underscore-separated prefix is removed (for example,
+  ``score_docs_as_code`` becomes ``docs_as_code``). If a ``conf.py`` exists,
+  it remains authoritative and these values are not used.
 
 - ``data`` (list of bazel labels)
   Extra runfiles / data targets that should be made available to the documentation targets.

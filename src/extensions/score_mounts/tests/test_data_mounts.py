@@ -85,6 +85,46 @@ def test_mount_entry_uses_canonical_directory_for_symlinked_bundle(
     assert entry["dir"] == str(canonical_dir)
 
 
+def test_canonical_mount_dir_in_tree_sandbox_bundle(tmp_path: Path) -> None:
+    """In-tree bundles with symlinked files must resolve to the workspace root."""
+    workspace_docs = tmp_path / "workspace" / "module" / "docs"
+    workspace_docs.mkdir(parents=True)
+    (workspace_docs / "index.rst").write_text("Index", encoding="utf-8")
+    (workspace_docs / "guide").mkdir()
+    (workspace_docs / "guide" / "overview.rst").write_text("Overview", encoding="utf-8")
+
+    sandbox_docs = tmp_path / "sandbox" / "module" / "docs"
+    sandbox_docs.mkdir(parents=True)
+    sandbox_docs.joinpath("index.rst").symlink_to(workspace_docs / "index.rst")
+    (sandbox_docs / "guide").mkdir()
+    sandbox_docs.joinpath("guide", "overview.rst").symlink_to(
+        workspace_docs / "guide" / "overview.rst"
+    )
+
+    spec = MountSpec(
+        src_root="module/docs", runtime_path="module/docs", mount_at="module"
+    )
+
+    entry = _make_mount_entry(sandbox_docs, spec)
+
+    assert entry["dir"] == str(workspace_docs)
+
+
+def test_canonical_mount_dir_empty_bundle_fallback(tmp_path: Path) -> None:
+    """A bundle with no .rst/.md files falls back to walk_dir.resolve()."""
+    bundle_dir = tmp_path / "bundle"
+    bundle_dir.mkdir()
+    (bundle_dir / "diagram.puml").write_text("@startuml\n@enduml", encoding="utf-8")
+
+    spec = MountSpec(
+        src_root="module/docs", runtime_path="module/docs", mount_at="module"
+    )
+
+    entry = _make_mount_entry(bundle_dir, spec)
+
+    assert entry["dir"] == str(bundle_dir.resolve())
+
+
 def test_mount_entry_uses_canonical_directory_for_generated_data_bundle(
     tmp_path: Path,
 ) -> None:

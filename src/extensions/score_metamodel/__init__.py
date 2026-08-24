@@ -33,6 +33,7 @@ from src.extensions.score_metamodel.metamodel_types import (
 from src.extensions.score_metamodel.yaml_parser import (
     default_options as default_options,
     load_metamodel_data as load_metamodel_data,
+    validate_mandatory_regexes as validate_mandatory_regexes,
 )
 from src.helper_lib import config_setdefault
 
@@ -116,6 +117,16 @@ def _run_checks(app: Sphinx) -> None:
     log = CheckLogger(logger, prefix, get_reporter(app))
 
     checks_filter = parse_checks_filter(app.config.score_metamodel_checks)
+
+    for directive, option, pattern in validate_mandatory_regexes(
+        app.config.needs_types
+    ):
+        log.warning(
+            f"metamodel: `{directive}` mandatory option `{option}` "
+            f"has regex `{pattern}` that matches the empty string; "
+            f"mandatory options must not accept empty values.",
+            location="metamodel.yaml",
+        )
 
     def is_check_enabled(check: local_check_function | graph_check_function):
         return not checks_filter or check.__name__ in checks_filter

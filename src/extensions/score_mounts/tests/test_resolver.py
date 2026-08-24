@@ -91,20 +91,20 @@ def test_external_mount_keeps_execroot_and_runfiles_locations(tmp_path: Path) ->
                     "mount_at": "x",
                 },
                 {
-                    "src_root": "external/score_process+/docs_as_mount",
-                    "runtime_path": "../score_process+/docs_as_mount",
+                    "src_root": "external/score_process_description+/docs_as_mount",
+                    "runtime_path": "../score_process_description+/docs_as_mount",
                     "mount_at": "process",
                     "external": True,
-                    "repository": "score_process+",
+                    "repository": "score_process_description+",
                 },
             ],
         },
     )
     specs = load_mounts_manifest(str(manifest)).mounts
     assert specs[0].src_root == "src/docs"
-    assert specs[1].src_root == "external/score_process+/docs_as_mount"
+    assert specs[1].src_root == "external/score_process_description+/docs_as_mount"
     assert specs[1].external is True
-    assert specs[1].repository == "score_process+"
+    assert specs[1].repository == "score_process_description+"
 
 
 def test_load_missing_required_key_raises(tmp_path: Path) -> None:
@@ -129,8 +129,8 @@ def test_external_mount_uses_execroot_path_in_sandbox(
         {
             "mounts": [
                 {
-                    "src_root": "external/score_process+/docs_as_mount",
-                    "runtime_path": "../score_process+/docs_as_mount",
+                    "src_root": "external/score_process_description+/docs_as_mount",
+                    "runtime_path": "../score_process_description+/docs_as_mount",
                     "mount_at": "process",
                     "external": True,
                 }
@@ -139,7 +139,7 @@ def test_external_mount_uses_execroot_path_in_sandbox(
     )
     spec = load_mounts_manifest(manifest).mounts[0]
     assert resolve_walk_dir(load_mounts_manifest(manifest), spec, None) == (
-        tmp_path / "external" / "score_process+" / "docs_as_mount"
+        tmp_path / "external" / "score_process_description+" / "docs_as_mount"
     )
 
 
@@ -149,8 +149,8 @@ def test_external_mount_uses_runfiles_root_under_bazel_run(tmp_path: Path) -> No
         {
             "mounts": [
                 {
-                    "src_root": "external/score_process+/docs_as_mount",
-                    "runtime_path": "../score_process+/docs_as_mount",
+                    "src_root": "external/score_process_description+/docs_as_mount",
+                    "runtime_path": "../score_process_description+/docs_as_mount",
                     "mount_at": "process",
                     "external": True,
                 }
@@ -163,4 +163,4 @@ def test_external_mount_uses_runfiles_root_under_bazel_run(tmp_path: Path) -> No
         spec,
         tmp_path / "workspace",
         tmp_path,
-    ) == (tmp_path / "score_process+" / "docs_as_mount")
+    ) == (tmp_path / "score_process_description+" / "docs_as_mount")
