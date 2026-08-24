@@ -15,8 +15,14 @@
 Testcase needs are external needs. Their ``external_url`` is therefore also
 the URL used by the ``testlink`` metadata rendered on requirements. The same
 URL is used for incoming ``fully_verified_by``/``partially_verified_by`` links.
-This hook matches both forms to the testcase need and appends a coloured,
-theme-compatible result annotation to the rendered reference.
+This hook handles both kinds of references: resolved need links can identify a
+testcase by ``refid``, while GitHub ``testlink`` references can be matched by
+their ``refuri``.
+
+An ``external_url`` points to a repository, file, and source line. It is not
+guaranteed to identify one testcase, because multiple testcases can share a
+source location. ID-based references are therefore preferred; URL-only
+references are annotated only when exactly one testcase matches.
 """
 
 from __future__ import annotations
@@ -27,15 +33,24 @@ from typing import Any
 from docutils import nodes
 from sphinx_needs.data import SphinxNeedsData
 
+# Known result values get semantic classes so the stylesheet can provide
+# readable colours for both light and dark themes.
 RESULT_CLASSES = {
     "passed": "score-testcase-result--passed",
     "failed": "score-testcase-result--failed",
     "skipped": "score-testcase-result--skipped",
     "disabled": "score-testcase-result--disabled",
 }
+# Keep an unknown result visible, but do not assign it the meaning of a known
+# status such as ``passed`` or ``failed``.
 _FALLBACK_CLASS = "score-testcase-result--unknown"
+# The event handler is expected to be idempotent for a doctree. This marker
+# prevents a second invocation from appending the same status again.
 _ANNOTATED_ATTR = "score_source_code_linker_testcase_result_annotated"
 
+# The styles are inserted into a document only when that document contains an
+# annotation. Keeping them in one block avoids repeating inline style rules on
+# every testcase link and lets the same classes handle theme changes.
 _TESTCASE_STATUS_CSS = """
 <style>
 .score-testcase-result {
@@ -87,7 +102,12 @@ html[data-theme="dark"] .score-testcase-result--unknown {
 
 
 def _resolved_target_need_id(ref: nodes.reference) -> str | None:
-    """Return the need ID a resolved reference points to, if available."""
+    """Return the need ID encoded in a resolved reference, if available.
+
+    Depending on how sphinx-needs created the reference, the target is stored
+    either as ``refid`` or as the fragment of a local ``refuri``. The caller
+    can then perform an exact lookup before falling back to URL matching.
+    """
     refid = ref.get("refid")
     if refid:
         return refid
@@ -100,13 +120,20 @@ def _resolved_target_need_id(ref: nodes.reference) -> str | None:
 
 
 def _testcases_by_external_url(needs: Any) -> dict[str, list[dict[str, Any]]]:
-    """Group testcase needs by the URL used for their rendered GitHub link."""
+    """Group testcase needs by their rendered GitHub URL without losing duplicates.
+
+    The URL identifies a source location, not a testcase identity. Keeping a
+    list is important because parameterized tests or multiple reported tests
+    can point to the same file and line.
+    """
     testcases_by_url: dict[str, list[dict[str, Any]]] = {}
     for need in needs.values():
         if need.get("type") != "testcase":
             continue
         external_url = need.get("external_url")
         if external_url:
+            # Do not overwrite an earlier testcase with the same location.
+            # _testcase_for_reference() uses the list to detect ambiguity.
             testcases_by_url.setdefault(external_url, []).append(need)
     return testcases_by_url
 
@@ -116,7 +143,12 @@ def _testcase_for_reference(
     needs: Any,
     testcases_by_url: dict[str, list[dict[str, Any]]],
 ) -> dict[str, Any] | None:
-    """Resolve a reference either by need ID or by its external GitHub URL."""
+    """Resolve a reference by exact need ID or by an unambiguous external URL.
+
+    A need ID identifies one testcase even when its source URL is shared. A
+    URL-only reference is used only when it has exactly one testcase candidate;
+    choosing one of several candidates could display the wrong result.
+    """
     target_id = _resolved_target_need_id(ref)
     if target_id:
         target_need = needs.get(target_id)
@@ -138,13 +170,20 @@ def annotate_testcase_results(app, doctree, docname):
     The handler runs after sphinx-needs' own ``doctree-resolved`` handlers.
     It therefore sees both regular resolved references and the external
     references generated for GitHub ``testlink`` metadata.
+
+    References without a testcase match or without a result are left as they
+    are. This keeps the post-processing safe when test reports are incomplete
+    or when a source URL is shared by multiple testcases.
     """
     needs = SphinxNeedsData(app.env).get_needs_view()
     testcases_by_url = _testcases_by_external_url(needs)
+    # CSS applies to the whole document, so one style block is enough even if
+    # the document contains many annotated references.
     css_added = False
 
     for ref in list(doctree.findall(nodes.reference)):
         if ref.get(_ANNOTATED_ATTR):
+            # A repeated event invocation must not append another badge.
             continue
 
         testneed = _testcase_for_reference(ref, needs, testcases_by_url)
@@ -157,6 +196,8 @@ def annotate_testcase_results(app, doctree, docname):
             continue
 
         result_text = str(result)
+        # Preserve unexpected report values as text, but use a neutral class
+        # instead of presenting them as one of the known statuses.
         result_class = RESULT_CLASSES.get(result_text, _FALLBACK_CLASS)
         status_html = (
             f'<span class="score-testcase-result {result_class}"> '
@@ -165,5 +206,6 @@ def annotate_testcase_results(app, doctree, docname):
         if not css_added:
             doctree.insert(0, nodes.raw("", _TESTCASE_STATUS_CSS, format="html"))
             css_added = True
+        # Preserve the existing link label and append the result annotation.
         ref.append(nodes.raw("", status_html, format="html"))
         ref[_ANNOTATED_ATTR] = True
