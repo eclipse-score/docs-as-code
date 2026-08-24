@@ -27,9 +27,6 @@ from src.extensions.score_module_verification_report.testcase_annotations import
     _FALLBACK_COLOR,
     RESULT_COLORS,
     annotate_testcase_results,
-    init_docnames,
-    merge_docnames,
-    purge_docname,
 )
 
 
@@ -62,55 +59,6 @@ def _app(env):
 
 
 # ---------------------------------------------------------------------------
-# init_docnames / purge_docname / merge_docnames
-# ---------------------------------------------------------------------------
-
-
-def test_init_docnames_creates_empty_set_when_absent():
-    env = SimpleNamespace()
-    init_docnames(None, env, ["doc"])
-    assert env.module_verification_report_docnames == set()
-
-
-def test_init_docnames_preserves_existing_set():
-    env = SimpleNamespace(module_verification_report_docnames={"already"})
-    init_docnames(None, env, ["doc"])
-    assert env.module_verification_report_docnames == {"already"}
-
-
-def test_purge_docname_removes_entry():
-    env = SimpleNamespace(module_verification_report_docnames={"a", "b"})
-    purge_docname(None, env, "a")
-    assert env.module_verification_report_docnames == {"b"}
-
-
-def test_purge_docname_ignores_missing_entry():
-    env = SimpleNamespace(module_verification_report_docnames={"a"})
-    purge_docname(None, env, "does-not-exist")
-    assert env.module_verification_report_docnames == {"a"}
-
-
-def test_purge_docname_noop_when_attr_missing():
-    env = SimpleNamespace()
-    purge_docname(None, env, "a")  # must not raise
-    assert not hasattr(env, "module_verification_report_docnames")
-
-
-def test_merge_docnames_unions_sets():
-    main = SimpleNamespace(module_verification_report_docnames={"a"})
-    other = SimpleNamespace(module_verification_report_docnames={"b", "c"})
-    merge_docnames(None, main, ["b", "c"], other)
-    assert main.module_verification_report_docnames == {"a", "b", "c"}
-
-
-def test_merge_docnames_when_main_has_no_attr():
-    main = SimpleNamespace()
-    other = SimpleNamespace(module_verification_report_docnames={"b"})
-    merge_docnames(None, main, ["b"], other)
-    assert main.module_verification_report_docnames == {"b"}
-
-
-# ---------------------------------------------------------------------------
 # annotate_testcase_results — happy paths
 # ---------------------------------------------------------------------------
 
@@ -118,7 +66,7 @@ def test_merge_docnames_when_main_has_no_attr():
 def test_annotates_passed_result_in_green():
     doc, ref = _doctree_with_testcase_link("testcase__foo")
     env = SimpleNamespace(
-        module_verification_report_docnames={"my_report"},
+        module_verification_report_registry={"mod__foo": {"docname": "my_report"}},
     )
     with _patch_needs({"testcase__foo": {"result": "passed"}}):
         annotate_testcase_results(_app(env), doc, "my_report")
@@ -135,7 +83,9 @@ def test_annotates_passed_result_in_green():
 
 def test_annotates_failed_result_in_red():
     doc, ref = _doctree_with_testcase_link("testcase__bar")
-    env = SimpleNamespace(module_verification_report_docnames={"r"})
+    env = SimpleNamespace(
+        module_verification_report_registry={"mod__r": {"docname": "r"}}
+    )
     with _patch_needs({"testcase__bar": {"result": "failed"}}):
         annotate_testcase_results(_app(env), doc, "r")
     html = ref.children[-1].astext()
@@ -145,7 +95,9 @@ def test_annotates_failed_result_in_red():
 
 def test_unknown_result_uses_fallback_color():
     doc, ref = _doctree_with_testcase_link("testcase__x")
-    env = SimpleNamespace(module_verification_report_docnames={"r"})
+    env = SimpleNamespace(
+        module_verification_report_registry={"mod__r": {"docname": "r"}}
+    )
     with _patch_needs({"testcase__x": {"result": "weird"}}):
         annotate_testcase_results(_app(env), doc, "r")
     html = ref.children[-1].astext()
@@ -160,7 +112,9 @@ def test_unknown_result_uses_fallback_color():
 
 def test_noop_when_docname_not_registered():
     doc, ref = _doctree_with_testcase_link("testcase__foo")
-    env = SimpleNamespace(module_verification_report_docnames={"other"})
+    env = SimpleNamespace(
+        module_verification_report_registry={"mod__other": {"docname": "other"}}
+    )
     with _patch_needs({"testcase__foo": {"result": "passed"}}):
         annotate_testcase_results(_app(env), doc, "my_report")
     # Untouched.
@@ -178,7 +132,9 @@ def test_noop_when_attr_absent():
 
 def test_noop_when_text_not_testcase():
     doc, ref = _doctree_with_testcase_link("comp_req__foo")
-    env = SimpleNamespace(module_verification_report_docnames={"r"})
+    env = SimpleNamespace(
+        module_verification_report_registry={"mod__r": {"docname": "r"}}
+    )
     with _patch_needs({"comp_req__foo": {"result": "passed"}}):
         annotate_testcase_results(_app(env), doc, "r")
     assert len(ref.children) == 1
@@ -186,7 +142,9 @@ def test_noop_when_text_not_testcase():
 
 def test_noop_when_need_missing():
     doc, ref = _doctree_with_testcase_link("testcase__missing")
-    env = SimpleNamespace(module_verification_report_docnames={"r"})
+    env = SimpleNamespace(
+        module_verification_report_registry={"mod__r": {"docname": "r"}}
+    )
     with _patch_needs({}):  # empty
         annotate_testcase_results(_app(env), doc, "r")
     assert len(ref.children) == 1
@@ -194,7 +152,9 @@ def test_noop_when_need_missing():
 
 def test_noop_when_result_empty():
     doc, ref = _doctree_with_testcase_link("testcase__x")
-    env = SimpleNamespace(module_verification_report_docnames={"r"})
+    env = SimpleNamespace(
+        module_verification_report_registry={"mod__r": {"docname": "r"}}
+    )
     with _patch_needs({"testcase__x": {"result": ""}}):
         annotate_testcase_results(_app(env), doc, "r")
     assert len(ref.children) == 1
@@ -202,7 +162,9 @@ def test_noop_when_result_empty():
 
 def test_noop_when_needs_view_unavailable():
     doc, ref = _doctree_with_testcase_link("testcase__x")
-    env = SimpleNamespace(module_verification_report_docnames={"r"})
+    env = SimpleNamespace(
+        module_verification_report_registry={"mod__r": {"docname": "r"}}
+    )
     with _patch_needs(None):  # sphinx_needs not importable / not ready
         annotate_testcase_results(_app(env), doc, "r")
     assert len(ref.children) == 1

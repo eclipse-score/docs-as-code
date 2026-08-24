@@ -21,10 +21,6 @@ Usage in RST::
                     comp__baselibs_bit_manipulation,
                     comp__baselibs_containers
 
-An optional ``:config:`` YAML file can supply non-default workproducts or
-per-component doc-id overrides for the rare case where component documents
-do not follow the standard naming convention.
-
 Implementation is split across:
 
 * :mod:`.templates`   — RST templates + default workproduct lists + CSS
@@ -47,12 +43,7 @@ from .consistency_checks import (
     purge_registry,
 )
 from .directive import ModuleVerificationReportDirective
-from .testcase_annotations import (
-    annotate_testcase_results,
-    init_docnames,
-    merge_docnames,
-    purge_docname,
-)
+from .testcase_annotations import annotate_testcase_results
 
 
 def setup(app: Any) -> dict:
@@ -62,11 +53,8 @@ def setup(app: Any) -> dict:
         "bazel-out/_coverage/_coverage_report.dat",
         "env",
     )
-    app.connect("env-before-read-docs", init_docnames)
     app.connect("env-before-read-docs", init_registry)
-    app.connect("env-purge-doc", purge_docname)
     app.connect("env-purge-doc", purge_registry)
-    app.connect("env-merge-info", merge_docnames)
     app.connect("env-merge-info", merge_registry)
     app.connect("doctree-resolved", annotate_testcase_results)
     app.connect("build-finished", check_consistency)

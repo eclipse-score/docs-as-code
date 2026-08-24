@@ -16,8 +16,8 @@ rendered module verification report with a coloured
 ``result`` field.
 
 The hook is a no-op unless the directive actually ran on the current
-document — the directive registers its ``docname`` in
-``env.module_verification_report_docnames`` so unrelated pages are left
+document — checked by looking for a matching ``docname`` in
+``env.module_verification_report_registry`` so unrelated pages are left
 untouched.
 """
 
@@ -54,8 +54,10 @@ def annotate_testcase_results(app, doctree, docname):
     """``doctree-resolved`` handler: append a coloured ``(<result>)`` span
     to every reference whose visible text starts with ``testcase__`` on
     pages where the module-verification-report directive was rendered."""
-    docnames = getattr(app.env, "module_verification_report_docnames", None)
-    if not docnames or docname not in docnames:
+    registry = getattr(app.env, "module_verification_report_registry", None)
+    if not registry or not any(
+        info["docname"] == docname for info in registry.values()
+    ):
         return
 
     needs = _needs_view(app.env)
@@ -82,26 +84,3 @@ def annotate_testcase_results(app, doctree, docname):
         # Keep the id text, append the coloured status inline.
         ref.replace(first, nodes.Text(text))
         ref.append(nodes.raw("", status_html, format="html"))
-
-
-def init_docnames(app, env, docnames):
-    """``env-before-read-docs`` handler: make sure the tracking set
-    exists on the shared env before parallel workers fork off."""
-    if not hasattr(env, "module_verification_report_docnames"):
-        env.module_verification_report_docnames = set()
-
-
-def purge_docname(app, env, docname):
-    """``env-purge-doc`` handler: drop stale entries on incremental
-    rebuilds so re-reads re-register themselves."""
-    docnames = getattr(env, "module_verification_report_docnames", None)
-    if docnames is not None:
-        docnames.discard(docname)
-
-
-def merge_docnames(app, env, docnames, other):
-    """``env-merge-info`` handler: union the per-worker sets back into
-    the main env when Sphinx runs a parallel read."""
-    main = getattr(env, "module_verification_report_docnames", set())
-    extra = getattr(other, "module_verification_report_docnames", set())
-    env.module_verification_report_docnames = main | extra
