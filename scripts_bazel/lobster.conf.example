@@ -1,0 +1,58 @@
+# *******************************************************************************
+# Copyright (c) 2026 Contributors to the Eclipse Foundation
+#
+# See the NOTICE file(s) distributed with this work for additional
+# information regarding copyright ownership.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Apache License Version 2.0 which is available at
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# SPDX-License-Identifier: Apache-2.0
+# *******************************************************************************
+
+# Example LOBSTER tracing policy for sphinx-needs requirements.
+#
+# This is the "tracing policy" the LOBSTER CLI enforces: it declares the
+# requirement/implementation/activity levels and which level must `trace to:`
+# which. It is plain config -- it does NOT import LOBSTER (AGPLv3); the LOBSTER
+# CLI reads it as an external process.
+#
+# Produce the .lobster inputs from needs.json with needs_to_lobster.py, e.g.:
+#
+#   python3 scripts_bazel/needs_to_lobster.py \
+#       --needs-json _build/needs.json --types tool_req --output tool_reqs.lobster
+#   python3 scripts_bazel/needs_to_lobster.py \
+#       --needs-json _build/needs.json --types gd_req  --output process_reqs.lobster
+#
+# then:
+#
+#   lobster-report --lobster-config=scripts_bazel/lobster.conf.example --out=report.json
+#   lobster-ci-report report.json
+#
+# This example models the process-requirement <-> tool-requirement relationship
+# that is authored in RST via `:satisfies:` links (tool_req__* -> gd_req__*).
+
+requirements "Process Requirements" {
+  source: "process_reqs.lobster";
+}
+
+requirements "Tool Requirements" {
+  source: "tool_reqs.lobster";
+  trace to: "Process Requirements";
+}
+
+# --- Extension points -------------------------------------------------------
+# To grow this into full requirement -> code -> test coverage, add the code and
+# test .lobster files (e.g. produced by rules_score's lobster-cpp / lobster-python
+# / gtest_report) as extra levels and trace them to the requirement levels:
+#
+# implementation "Code" {
+#   source: "code.lobster";
+#   trace to: "Tool Requirements";
+# }
+#
+# activity "Tests" {
+#   source: "tests.lobster";
+#   trace to: "Tool Requirements";
+# }

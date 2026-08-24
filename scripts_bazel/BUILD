@@ -45,3 +45,11 @@ py_binary(
     visibility = ["//visibility:public"],
     deps = [],
 )
+
+py_binary(
+    name = "needs_to_lobster",
+    srcs = ["needs_to_lobster.py"],
+    main = "needs_to_lobster.py",
+    visibility = ["//visibility:public"],
+    deps = [],
+)
