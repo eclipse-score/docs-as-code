@@ -19,6 +19,7 @@ from unittest.mock import patch
 
 from docutils import nodes
 
+from score_pytest.attribute_plugin import add_test_properties
 from src.extensions.score_source_code_linker import testcase_annotations as ta
 from src.extensions.score_source_code_linker.testcase_annotations import (
     RESULT_CLASSES,
@@ -58,7 +59,13 @@ def _app(needs):
     return SimpleNamespace(env=SimpleNamespace(needs_view=_FakeNeedsView(needs)))
 
 
+@add_test_properties(
+    partially_verifies=["tool_req__docs_test_link_testcase"],
+    test_type="requirements-based",
+    derivation_technique="requirements-analysis",
+)
 def test_annotates_external_github_testlink():
+    """Annotate an unambiguous external testcase link with its result."""
     url = "https://github.com/example/repo/blob/abc/tests/test.py#L42"
     doc, ref = _doctree_with_reference(refuri=url, text="test_requirement")
     needs = {
@@ -79,7 +86,13 @@ def test_annotates_external_github_testlink():
     assert 'html[data-theme="dark"]' in doc.astext()
 
 
+@add_test_properties(
+    partially_verifies=["tool_req__docs_test_link_testcase"],
+    test_type="requirements-based",
+    derivation_technique="requirements-analysis",
+)
 def test_annotates_resolved_testcase_reference_by_refid():
+    """Annotate a testcase reference resolved by its need ID."""
     doc, ref = _doctree_with_reference(
         refid="testcase__foo", text="Some testcase title"
     )
@@ -91,7 +104,13 @@ def test_annotates_resolved_testcase_reference_by_refid():
     assert "(failed)" in ref.children[-1].astext()
 
 
+@add_test_properties(
+    partially_verifies=["tool_req__docs_test_link_testcase"],
+    test_type="requirements-based",
+    derivation_technique="requirements-analysis",
+)
 def test_escapes_unexpected_result_value():
+    """Escape unexpected testcase result text before rendering HTML."""
     url = "https://github.com/example/repo/blob/abc/tests/test.py#L42"
     doc, ref = _doctree_with_reference(refuri=url)
     needs = {
@@ -110,7 +129,13 @@ def test_escapes_unexpected_result_value():
     assert "<failed&>" not in html
 
 
+@add_test_properties(
+    partially_verifies=["tool_req__docs_test_link_testcase"],
+    test_type="requirements-based",
+    derivation_technique="requirements-analysis",
+)
 def test_does_not_annotate_ambiguous_external_github_testlink():
+    """Leave URL-only links unchanged when multiple testcases share a URL."""
     url = "https://github.com/example/repo/blob/abc/tests/test.py#L42"
     doc, ref = _doctree_with_reference(refuri=url)
     needs = {
@@ -132,7 +157,13 @@ def test_does_not_annotate_ambiguous_external_github_testlink():
     assert len(ref.children) == 1
 
 
+@add_test_properties(
+    partially_verifies=["tool_req__docs_test_link_testcase"],
+    test_type="requirements-based",
+    derivation_technique="requirements-analysis",
+)
 def test_does_not_annotate_empty_result():
+    """Leave testcase links unchanged when the result is empty."""
     url = "https://github.com/example/repo/blob/abc/tests/test.py#L42"
     doc, ref = _doctree_with_reference(refuri=url)
     needs = {
@@ -149,7 +180,13 @@ def test_does_not_annotate_empty_result():
     assert len(ref.children) == 1
 
 
+@add_test_properties(
+    partially_verifies=["tool_req__docs_test_link_testcase"],
+    test_type="requirements-based",
+    derivation_technique="requirements-analysis",
+)
 def test_does_not_annotate_unknown_external_link():
+    """Leave links unchanged when no testcase matches their URL."""
     doc, ref = _doctree_with_reference(
         refuri="https://github.com/example/repo/blob/abc/src/other.py#L1"
     )
@@ -167,7 +204,13 @@ def test_does_not_annotate_unknown_external_link():
     assert len(ref.children) == 1
 
 
+@add_test_properties(
+    partially_verifies=["tool_req__docs_test_link_testcase"],
+    test_type="requirements-based",
+    derivation_technique="requirements-analysis",
+)
 def test_does_not_annotate_same_reference_twice():
+    """Keep repeated handler invocations from duplicating an annotation."""
     url = "https://github.com/example/repo/blob/abc/tests/test.py#L42"
     doc, ref = _doctree_with_reference(refuri=url)
     needs = {

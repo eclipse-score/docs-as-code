@@ -25,18 +25,9 @@ permissions:
 
 jobs:
   license-check:
-    name: Self Scan (from Action)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
-          persist-credentials: false
-
-      - uses: eclipse-score/dash-license-scan@fe2f9ab2e0cd2bfac7efdbe2637e188b1a5e2025 # dev as of 2026-08-21
-        with:
-          token: ${{ secrets.ECLIPSE_GITLAB_API_TOKEN }}
-          eclipse_project: ${{ vars.ECLIPSE_PROJECT }}
-          lockfiles: src/requirements.txt
-          trigger_review: false
-          comply_with: ASF EF
+    uses: eclipse-score/cicd-workflows/.github/workflows/license-check.yml@8d80e8df150cae21d53cbc8031d0f970648f7a67 # v0.0.3
+    with:
+      repo-url: "${{ github.server_url }}/${{ github.repository }}"
+      bazel-target: "run --lockfile_mode=error //src:license-check"
+    secrets:
+      dash-api-token: ${{ secrets.ECLIPSE_GITLAB_API_TOKEN }}

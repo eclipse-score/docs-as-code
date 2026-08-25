@@ -36,6 +36,11 @@ C++ (gTest)
    Use ``RecordProperty``. Put shared properties in ``SetUp()`` and
    per-test properties inside each ``TEST_F``.
 
+Rust
+^^^^
+   There is currently no provided official way to add this metadata in Rust.
+   Use the advanced JUnit XML path below until Rust support is available.
+
 See the `Verification Templates <https://eclipse-score.github.io/reference_integration/main/_collections/score_process/process/process_areas/verification/guidance/verification_templates.html>`_
 for complete examples and the required metadata.
 
@@ -46,6 +51,10 @@ This section is only relevant when your language or test framework does not
 have one of the integrations above. In that case, produce JUnit XML with the
 metadata described below. The generated test results are processed
 automatically and create GitHub links from the requirements to the testcases.
+
+The extension looks for files named ``test.xml`` under ``bazel-testlogs/`` or
+``tests-report/`` at the workspace root. Create ``tests-report/`` manually when
+the test framework needs a separate pre-run step or produces matrix results.
 
 Required properties
 ^^^^^^^^^^^^^^^^^^^
@@ -104,10 +113,11 @@ GitHub test links are decorated with their result, for example ``(passed)``,
 ``(failed)``, ``(skipped)``, or ``(disabled)``. The annotation is applied to
 rendered links that target a testcase need, including the ``testlink`` entries
 shown on requirements. The status text inherits the surrounding theme colour
-and uses a distinct, contrast-safe colour for each known result in light and
-dark themes. Testcases without a result are left unchanged; links whose
-GitHub URL identifies multiple testcases are also left unchanged because their
-result would be ambiguous.
+and uses CSS classes with colours selected for the current S-CORE light and
+dark themes. These colours are not configurable for arbitrary Sphinx themes.
+Testcases without a result are left unchanged; links whose GitHub URL
+identifies multiple testcases are also left unchanged because their result
+would be ambiguous.
 
 
 Running Tests and Building Docs

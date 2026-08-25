@@ -34,7 +34,7 @@ from docutils import nodes
 from sphinx_needs.data import SphinxNeedsData
 
 # Known result values get semantic classes so the stylesheet can provide
-# readable colours for both light and dark themes.
+# readable colours for the current S-CORE light and dark themes.
 RESULT_CLASSES = {
     "passed": "score-testcase-result--passed",
     "failed": "score-testcase-result--failed",
@@ -165,7 +165,7 @@ def _testcase_for_reference(
 
 
 def annotate_testcase_results(app, doctree, docname):
-    """Append a coloured, theme-compatible result annotation to testcase refs.
+    """Append a coloured result annotation using the S-CORE theme palette.
 
     The handler runs after sphinx-needs' own ``doctree-resolved`` handlers.
     It therefore sees both regular resolved references and the external
