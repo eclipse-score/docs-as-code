@@ -116,9 +116,7 @@ def load_coverage(config_path: str) -> list[FileCoverage]:
     if not path.is_absolute():
         ws_root = _workspace_root()
         if ws_root is None:
-            logger.info(
-                "mvr coverage: workspace root not found; skipping LCOV load"
-            )
+            logger.info("mvr coverage: workspace root not found; skipping LCOV load")
             return []
         path = ws_root / path
     if not path.is_file():
