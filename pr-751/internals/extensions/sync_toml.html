@@ -497,7 +497,7 @@ is needed to extract this information and make it available to the IDE extension
 Sphinx-Needs as it exists in S-CORE, but use it to generate the <code class="docutils literal notranslate"><span class="pre">ubproject.toml</span></code> file.
 A single <code class="docutils literal notranslate"><span class="pre">ubproject.toml</span></code> is generated at the <strong>git repo root</strong> — the one directory
 that is an ancestor of every source tree, so IDE tooling walking up from any open file
-(including files in mounted bundles, see <a class="reference internal" href="../../how-to/bundles/index.html#howto-mount-external-sources"><span class="std std-ref">Get started with bundles</span></a>) reaches it.
+(including files in mounted bundles, see <a class="reference internal" href="../../how-to/bundles/index.html#howto-mount-external-sources"><span class="std std-ref">How to use bundles</span></a>) reaches it.
 The output location is resolved via <code class="docutils literal notranslate"><span class="pre">find_git_root()</span></code>, which works under <code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span></code>
 and esbonio / direct Sphinx alike; a sandboxed <code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">build</span></code> has no git root and its
 copy is discarded.</p>

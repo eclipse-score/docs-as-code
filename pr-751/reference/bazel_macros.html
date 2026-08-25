@@ -544,7 +544,7 @@ for files that belong to mounted documentation.</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">bundles</span></code> (list of placement dicts)
 Documentation bundles to overlay into this project’s documentation tree, each with its
-placement (<code class="docutils literal notranslate"><span class="pre">mount_at</span></code>). See <a class="reference internal" href="../how-to/bundles/index.html#howto-mount-external-sources"><span class="std std-ref">Get started with bundles</span></a> for the full reference.</p></li>
+placement (<code class="docutils literal notranslate"><span class="pre">mount_at</span></code>). See <a class="reference internal" href="../how-to/bundles/index.html#howto-mount-external-sources"><span class="std std-ref">How to use bundles</span></a> for the full reference.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">deps</span></code> (list of bazel labels)
 Additional Bazel dependencies to add to the Python binaries and the virtual environment
 target. Use this to add project-specific Python modules.</p>
@@ -642,7 +642,7 @@ receives the child’s bundle-defined entry document. When omitted, the parent
 <p>A child’s <code class="docutils literal notranslate"><span class="pre">mount_at</span></code>/<code class="docutils literal notranslate"><span class="pre">attach_to</span></code> <strong>prefix-stack</strong> with the placement this
 bundle later receives, so composition is fully transitive. The same underlying
 bundle resolving to two different final <code class="docutils literal notranslate"><span class="pre">mount_at</span></code> values is a hard build
-error. See <a class="reference internal" href="../how-to/bundles/index.html#howto-mount-external-sources"><span class="std std-ref">Get started with bundles</span></a> for a worked example and
+error. See <a class="reference internal" href="../how-to/bundles/index.html#howto-mount-external-sources"><span class="std std-ref">How to use bundles</span></a> for a worked example and
 <a class="reference internal" href="../concepts/mounts/index.html#docs-concept-mounts"><span class="std std-ref">Documentation bundles and mounts</span></a> for the composition and transitivity semantics.</p>
 </li>
 </ul>
