@@ -498,6 +498,13 @@ the <code class="docutils literal notranslate"><span class="pre">Description</sp
 <div><p>Use <code class="docutils literal notranslate"><span class="pre">RecordProperty</span></code>. Put shared properties in <code class="docutils literal notranslate"><span class="pre">SetUp()</span></code> and
 per-test properties inside each <code class="docutils literal notranslate"><span class="pre">TEST_F</span></code>.</p>
 </div></blockquote>
+</section>
+<section id="rust">
+<h3>Rust<a class="headerlink" href="#rust" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p>There is currently no provided official way to add this metadata in Rust.
+Use the advanced JUnit XML path below until Rust support is available.</p>
+</div></blockquote>
 <p>See the <a class="reference external" href="https://eclipse-score.github.io/reference_integration/main/_collections/score_process/process/process_areas/verification/guidance/verification_templates.html">Verification Templates</a>
 for complete examples and the required metadata.</p>
 </section>
@@ -508,6 +515,9 @@ for complete examples and the required metadata.</p>
 have one of the integrations above. In that case, produce JUnit XML with the
 metadata described below. The generated test results are processed
 automatically and create GitHub links from the requirements to the testcases.</p>
+<p>The extension looks for files named <code class="docutils literal notranslate"><span class="pre">test.xml</span></code> under <code class="docutils literal notranslate"><span class="pre">bazel-testlogs/</span></code> or
+<code class="docutils literal notranslate"><span class="pre">tests-report/</span></code> at the workspace root. Create <code class="docutils literal notranslate"><span class="pre">tests-report/</span></code> manually when
+the test framework needs a separate pre-run step or produces matrix results.</p>
 <section id="required-properties">
 <h3>Required properties<a class="headerlink" href="#required-properties" title="Link to this heading">#</a></h3>
 <p>Every linked test must declare the following properties
@@ -559,10 +569,11 @@ or <code class="docutils literal notranslate"><span class="pre">FullyVerifies</s
 <code class="docutils literal notranslate"><span class="pre">(failed)</span></code>, <code class="docutils literal notranslate"><span class="pre">(skipped)</span></code>, or <code class="docutils literal notranslate"><span class="pre">(disabled)</span></code>. The annotation is applied to
 rendered links that target a testcase need, including the <code class="docutils literal notranslate"><span class="pre">testlink</span></code> entries
 shown on requirements. The status text inherits the surrounding theme colour
-and uses a distinct, contrast-safe colour for each known result in light and
-dark themes. Testcases without a result are left unchanged; links whose
-GitHub URL identifies multiple testcases are also left unchanged because their
-result would be ambiguous.</p>
+and uses CSS classes with colours selected for the current S-CORE light and
+dark themes. These colours are not configurable for arbitrary Sphinx themes.
+Testcases without a result are left unchanged; links whose GitHub URL
+identifies multiple testcases are also left unchanged because their result
+would be ambiguous.</p>
 </section>
 <section id="running-tests-and-building-docs">
 <h2>Running Tests and Building Docs<a class="headerlink" href="#running-tests-and-building-docs" title="Link to this heading">#</a></h2>
@@ -667,6 +678,7 @@ For example you can show all tests like so</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-annotate-tests">How to annotate tests</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#python-pytest">Python (pytest)</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c-gtest">C++ (gTest)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rust">Rust</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced-usage-junit-xml-for-other-languages">Advanced usage: JUnit XML for other languages</a><ul class="nav section-nav flex-column">
