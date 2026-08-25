@@ -147,24 +147,42 @@ def records_for_slug(
     ]
 
 
+def _pct_str(hit: int, found: int) -> str:
+    """Format a hit/found ratio as a percentage string.
+
+    Returns an empty string when *found* is 0 — there is nothing to
+    cover, so showing ``0.0`` would misleadingly read as "0% covered".
+    """
+    return f"{100.0 * hit / found:.1f}" if found else ""
+
+
 def coverage_rows(records: list[FileCoverage]) -> str:
     """Render *records* as ``list-table`` rows (no header row).
+
+    Files with neither line nor branch data (``lines_found == 0`` and
+    ``branches_found == 0``, e.g. headers never instrumented by the
+    coverage run) are skipped — a row of all zeroes carries no
+    information and reads as "0% covered" even though nothing was
+    measured at all.
 
     Returns an empty string when *records* is empty so callers can decide
     to omit the whole dropdown block.
     """
     if not records:
         return ""
+    visible = [r for r in records if r.lines_found or r.branches_found]
+    if not visible:
+        return ""
     lines: list[str] = []
     total = FileCoverage(source="**Total**")
-    for r in sorted(records, key=lambda x: x.source):
+    for r in sorted(visible, key=lambda x: x.source):
         lines.append(f"      * - ``{r.source}``")
         lines.append(f"        - {r.lines_found}")
         lines.append(f"        - {r.lines_hit}")
-        lines.append(f"        - {r.line_pct:.1f}")
+        lines.append(f"        - {_pct_str(r.lines_hit, r.lines_found)}")
         lines.append(f"        - {r.branches_found}")
         lines.append(f"        - {r.branches_hit}")
-        lines.append(f"        - {r.branch_pct:.1f}")
+        lines.append(f"        - {_pct_str(r.branches_hit, r.branches_found)}")
         total.lines_found += r.lines_found
         total.lines_hit += r.lines_hit
         total.branches_found += r.branches_found
@@ -172,8 +190,8 @@ def coverage_rows(records: list[FileCoverage]) -> str:
     lines.append(f"      * - {total.source}")
     lines.append(f"        - {total.lines_found}")
     lines.append(f"        - {total.lines_hit}")
-    lines.append(f"        - {total.line_pct:.1f}")
+    lines.append(f"        - {_pct_str(total.lines_hit, total.lines_found)}")
     lines.append(f"        - {total.branches_found}")
     lines.append(f"        - {total.branches_hit}")
-    lines.append(f"        - {total.branch_pct:.1f}")
+    lines.append(f"        - {_pct_str(total.branches_hit, total.branches_found)}")
     return "\n".join(lines)
