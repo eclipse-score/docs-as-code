@@ -72,6 +72,7 @@ CodeTargetSourcesInfo = provider(
     doc = "Source files collected from an implementation target and its dependencies.",
     fields = {
         "sources": "Depset of direct and transitive source files.",
+        "kind": "Bazel rule kind of the target selected by code_targets.",
     },
 )
 
@@ -101,6 +102,7 @@ def _collect_code_target_sources_impl(target, ctx):
             direct = _source_files_from_attributes(ctx),
             transitive = dependency_sources,
         ),
+        kind = ctx.rule.kind,
     )]
 
 _collect_code_target_sources = aspect(
@@ -167,6 +169,7 @@ def _rebase_bundle_entry(entry, mount_at, attach_to, data):
         external = entry.external,
         repository = entry.repository,
         data = data,
+        code_targets = entry.code_targets,
     )
 
 def _entries_visible_through(ctx, child):
@@ -213,6 +216,13 @@ def _docs_bundle_impl(ctx):
     own_source_files = []
     own_external_runfiles = []
     own_data = depset(direct = ctx.files.data)
+    own_code_targets = [
+        struct(
+            label = _format_bazel_label(target.label),
+            type = target[CodeTargetSourcesInfo].kind,
+        )
+        for target in ctx.attr.code_targets
+    ]
 
     if ctx.files.srcs:
         runtime_path = _bundle_runtime_path(ctx)
@@ -229,6 +239,7 @@ def _docs_bundle_impl(ctx):
             external = external,
             repository = ctx.label.workspace_name,
             data = own_data,
+            code_targets = own_code_targets,
         ))
         own_source_files.extend(ctx.files.srcs)
         # Local sources are read directly from the workspace by ``bazel run``.
@@ -246,6 +257,7 @@ def _docs_bundle_impl(ctx):
             external = False,
             repository = ctx.label.workspace_name,
             data = own_data,
+            code_targets = own_code_targets,
         ))
 
     child_source_files = []
@@ -305,11 +317,12 @@ _docs_bundle = rule(
         "bundle_mount_ats": attr.string_list(),
         "bundle_attach_tos": attr.string_list(),
         "data": attr.label_list(allow_files = True),
+        "code_targets": attr.label_list(aspects = [_collect_code_target_sources]),
     },
     doc = "Internal rule that carries bundle files and their documentation-tree locations.",
 )
 
-def create_bundle(name, bundles, srcs = [], sourcelinks = [], strip_prefix = "", entry_doc = "index", data = [], visibility = None, **kwargs):
+def create_bundle(name, bundles, srcs = [], sourcelinks = [], strip_prefix = "", entry_doc = "index", data = [], code_targets = [], visibility = None, **kwargs):
     """Create a reusable documentation bundle from files and child declarations."""
     parsed_bundles = [_parse_bundle_declaration(declaration) for declaration in bundles]
     _docs_bundle(
@@ -322,6 +335,7 @@ def create_bundle(name, bundles, srcs = [], sourcelinks = [], strip_prefix = "",
         bundle_mount_ats = [bundle.mount_at for bundle in parsed_bundles],
         bundle_attach_tos = [bundle.attach_to for bundle in parsed_bundles],
         data = data,
+        code_targets = code_targets,
         visibility = visibility,
         **kwargs
     )
@@ -400,17 +414,28 @@ def _code_targets_sourcelinks_impl(ctx):
         target[CodeTargetSourcesInfo].sources
         for target in ctx.attr.code_targets
     ])
-    if not source_files.to_list():
-        fail("code_targets must declare source files through filegroups, srcs, hdrs, or textual_hdrs")
 
     output = ctx.actions.declare_file(ctx.label.name + ".json")
+    target_map = ctx.actions.declare_file(ctx.label.name + "_targets.json")
+    target_map_entries = []
+    for target in ctx.attr.code_targets:
+        target_info = target[CodeTargetSourcesInfo]
+        for source in target_info.sources.to_list():
+            target_map_entries.append({
+                "file": source.path,
+                "bazel_target": _format_bazel_label(target.label),
+                "bazel_type": target_info.kind,
+            })
+    ctx.actions.write(target_map, json.encode(target_map_entries))
+
     arguments = ctx.actions.args()
     arguments.add("--output", output.path)
+    arguments.add("--target-map", target_map.path)
     arguments.add_all(source_files)
     ctx.actions.run(
         executable = ctx.executable._generate_sourcelinks,
         arguments = [arguments],
-        inputs = source_files,
+        inputs = depset(direct = [target_map], transitive = [source_files]),
         outputs = [output],
         mnemonic = "GenerateCodeTargetSourcelinks",
     )
@@ -437,3 +462,8 @@ def generate_code_target_sourcelinks(name, code_targets, visibility = None):
         visibility = visibility,
     )
     return ":" + name
+
+def _format_bazel_label(label):
+    """Return an apparent-style label without Bzlmod's internal ``@@`` prefix."""
+    result = "//" + label.package + ":" + label.name
+    return "@" + label.workspace_name + result if label.workspace_name else result

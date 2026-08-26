@@ -20,6 +20,7 @@ source code links from a JSON file and add them to the needs.
 # req-Id: tool_req__docs_dd_link_source_code_link
 # This whole directory implements the above mentioned tool requirements
 
+import json
 import os
 from copy import deepcopy
 from pathlib import Path
@@ -63,11 +64,47 @@ from src.extensions.score_source_code_linker.xml_parser import (
 from src.helper_lib import (
     find_git_root,
     find_ws_root,
+    get_runfiles_dir,
 )
 
 LOGGER = get_logger(__name__)
 # Uncomment this to enable more verbose logging
 # LOGGER.setLevel("DEBUG")
+
+
+def _bundle_targets_for_doc(docname: str) -> list[tuple[str, str]]:
+    """Return code targets associated with the most-specific bundle for a page."""
+    raw_manifest_path = os.environ.get("SCORE_BAZEL_TARGETS")
+    if not raw_manifest_path:
+        return []
+    manifest_path = Path(raw_manifest_path)
+    if not manifest_path.is_file():
+        manifest_path = get_runfiles_dir() / raw_manifest_path
+    try:
+        mappings = json.loads(manifest_path.read_text(encoding="utf-8"))["mappings"]
+    except (OSError, KeyError, TypeError, json.JSONDecodeError) as error:
+        LOGGER.warning(
+            "Could not read Bazel target metadata from %s: %s",
+            raw_manifest_path,
+            error,
+            type="score_source_code_linker",
+        )
+        return []
+
+    matching_mappings = [
+        mapping
+        for mapping in mappings
+        if not mapping["mount_at"]
+        or docname == mapping["mount_at"]
+        or docname.startswith(mapping["mount_at"] + "/")
+    ]
+    if not matching_mappings:
+        return []
+    best_match = max(matching_mappings, key=lambda mapping: len(mapping["mount_at"]))
+    return [
+        (target["bazel_target"], target["bazel_type"])
+        for target in best_match["targets"]
+    ]
 
 
 # re-qid: gd_req__req_attr_impl
@@ -151,6 +188,10 @@ def setup_source_code_linker(app: Sphinx, ws_root: Path | None):
             "options": ["source_code_link", "testlink"],
         },
     )
+    for option in ("bazel_target", "bazel_type"):
+        app.config.needs_fields.setdefault(
+            option, {"schema": {"type": "string"}, "default": ""}
+        )
 
     score_sourcelinks_json = os.environ.get("SCORE_SOURCELINKS")
     if not score_sourcelinks_json:
@@ -160,6 +201,14 @@ def setup_source_code_linker(app: Sphinx, ws_root: Path | None):
         if score_sourcelinks_json:
             # Reuse existing code paths that expect this env var.
             os.environ["SCORE_SOURCELINKS"] = score_sourcelinks_json
+
+    score_bazel_targets = os.environ.get("SCORE_BAZEL_TARGETS")
+    if not score_bazel_targets:
+        score_bazel_targets = str(
+            getattr(app.config, "score_bazel_targets", "")
+        ).strip()
+        if score_bazel_targets:
+            os.environ["SCORE_BAZEL_TARGETS"] = score_bazel_targets
     if score_sourcelinks_json:
         # No need to generate the JSON file if this env var is set
         # because it points to an existing file with the needed data.
@@ -344,6 +393,13 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
         description="Path to pre-generated source code links JSON from Bazel via SCORE_SOURCELINKS env var",
     )
     app.add_config_value(
+        "score_bazel_targets",
+        default="",
+        rebuild="env",
+        types=str,
+        description="Path to Bazel target metadata for documentation bundles.",
+    )
+    app.add_config_value(
         "score_source_code_linker_plain_links",
         default=False,
         rebuild="env",
@@ -498,9 +554,35 @@ def _apply_links_to_need(
         _render_test_link(plain_links, metadata, test_link)
         for test_link in links.TestLinks
     )
+    source_targets = [
+        (link.bazel_target, link.bazel_type)
+        for link in links.CodeLinks
+        if link.bazel_target
+    ]
+    bundle_targets = _bundle_targets_for_doc(str(need["docname"]))
+    bazel_targets = sorted({target for target, _ in source_targets + bundle_targets})
+    bazel_types = sorted({kind for _, kind in source_targets + bundle_targets})
+    if bazel_targets:
+        need_as_dict["bazel_target"] = ", ".join(bazel_targets)
+    if bazel_types:
+        need_as_dict["bazel_type"] = ", ".join(bazel_types)
 
     # NOTE: Removing & adding the need is important to make sure
     # the needs gets 're-evaluated'.
+    needs_data.remove_need(need["id"])
+    needs_data.add_need(need)
+
+
+def _apply_bundle_targets_to_need(needs_data: SphinxNeedsData, need: NeedItem) -> None:
+    """Add a bundle's code targets even when no source tag references the need."""
+    bundle_targets = _bundle_targets_for_doc(str(need["docname"]))
+    if not bundle_targets:
+        return
+    need_as_dict = cast(dict[str, object], need)
+    need_as_dict["bazel_target"] = ", ".join(
+        sorted({target for target, _ in bundle_targets})
+    )
+    need_as_dict["bazel_type"] = ", ".join(sorted({kind for _, kind in bundle_targets}))
     needs_data.remove_need(need["id"])
     needs_data.add_need(need)
 
@@ -523,6 +605,9 @@ def inject_links_into_needs(app: Sphinx, env: BuildEnvironment) -> None:
     )  # TODO: why do we create a copy? Can we also needs_copy = needs[:]? copy(needs)?
 
     _log_existing_links(needs)
+
+    for need in needs_copy.values():
+        _apply_bundle_targets_to_need(needs_data, need)
 
     scl_by_module = load_repo_source_links_json(
         get_cache_filename(app.outdir, "score_repo_grouped_scl_cache.json")

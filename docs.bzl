@@ -59,6 +59,7 @@ load(
 load(
     "@score_docs_as_code//:bzl/mount_rules.bzl",
     "create_mounts_manifest",
+    "create_bundle_target_manifest",
 )
 
 def _module_name_without_prefix():
@@ -151,6 +152,7 @@ def docs_bundle(name, source_dir = None, data = [], entry_doc = "index", bundles
         entry_doc = entry_doc,
         bundles = bundles,
         data = data,
+        code_targets = code_targets,
         visibility = visibility,
         **kwargs
     )
@@ -304,6 +306,10 @@ def docs(
         bundle = ":docs_bundle",
         known_good = known_good,
     )
+    create_bundle_target_manifest(
+        name = "bundle_target_manifest",
+        bundle = ":docs_bundle",
+    )
 
     external_docs_runfiles(
         name = "_external_docs_runfiles",
@@ -316,7 +322,7 @@ def docs(
     # bundles do need runfiles, so keep only those sources.
     docs_data = (
         data + external_needs + metamodel_label +
-        [":sourcelinks_json", ":_external_docs_runfiles"] +
+        [":sourcelinks_json", ":bundle_target_manifest", ":_external_docs_runfiles"] +
         mounts_manifest_label
     )
     if config_is_generated:
@@ -334,6 +340,7 @@ def docs(
         # resolved by score_mounts through ``RUNFILES_DIR``.
         "MOUNTS_MANIFEST": "$(rlocationpath :_mounts_manifest)" if bundles else "",
         "SCORE_SOURCELINKS": "$(location :sourcelinks_json)",
+        "SCORE_BAZEL_TARGETS": "$(rlocationpath :bundle_target_manifest)",
     }
     if config_is_generated:
         # The generated file is named conf.py. Run targets pass its containing
@@ -418,6 +425,7 @@ def docs(
             "auto",
             "--define=external_needs_source=" + str(data + external_needs),
             "--define=score_sourcelinks_json=$(location :sourcelinks_json)",
+            "--define=score_bazel_targets=$(location :bundle_target_manifest)",
             "--define=score_source_code_linker_plain_links=1",
         ] + (
             # ``sphinx_docs`` is a sandboxed build action, so it needs the
@@ -426,7 +434,7 @@ def docs(
         ) + (["--define=score_metamodel_yaml=$(location " + str(metamodel) + ")"] if metamodel else []),
         formats = ["needs"],
         sphinx = ":sphinx_build",
-        tools = data + external_needs + metamodel_label + [":sourcelinks_json", ":docs_bundle"] + mounts_manifest_label,
+        tools = data + external_needs + metamodel_label + [":sourcelinks_json", ":bundle_target_manifest", ":docs_bundle"] + mounts_manifest_label,
         visibility = ["//visibility:public"],
         # Persistent workers cause stale symlinks after dependency version
         # changes, corrupting the Bazel cache.

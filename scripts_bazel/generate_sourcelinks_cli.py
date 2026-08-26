@@ -18,6 +18,7 @@ with all source code links for documentation needs.
 """
 
 import argparse
+import json
 import logging
 import sys
 from pathlib import Path
@@ -51,6 +52,19 @@ def clean_external_prefix(path: Path) -> Path:
     return Path("".join(filepath_split[1:]))
 
 
+def _load_target_map(path: Path | None) -> dict[str, list[tuple[str, str]]]:
+    """Return the direct ``code_targets`` owning each scanned source file."""
+    if path is None:
+        return {}
+    entries = json.loads(path.read_text(encoding="utf-8"))
+    target_map: dict[str, list[tuple[str, str]]] = {}
+    for entry in entries:
+        target_map.setdefault(entry["file"], []).append(
+            (entry["bazel_target"], entry["bazel_type"])
+        )
+    return target_map
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Generate source code links JSON from source files"
@@ -62,6 +76,11 @@ def main():
         help="Output JSON file path",
     )
     _ = parser.add_argument(
+        "--target-map",
+        type=Path,
+        help="JSON mapping source paths to their Bazel target labels and rule kinds",
+    )
+    _ = parser.add_argument(
         "files",
         nargs="*",
         type=Path,
@@ -71,6 +90,7 @@ def main():
     args = parser.parse_args()
 
     all_need_references = []
+    target_map = _load_target_map(args.target_map)
 
     metadata = DefaultMetaData()
     metadata_set = False
@@ -84,6 +104,10 @@ def main():
         references = _extract_references_from_file(
             abs_file_path.parent, Path(abs_file_path.name), clean_path
         )
+        target_data = target_map.get(str(file_path), [])
+        for reference in references:
+            reference.bazel_target = ", ".join(target for target, _ in target_data)
+            reference.bazel_type = ", ".join(kind for _, kind in target_data)
         all_need_references.extend(references)
     store_source_code_links_with_metadata_json(
         file=args.output, metadata=metadata, needlist=all_need_references
