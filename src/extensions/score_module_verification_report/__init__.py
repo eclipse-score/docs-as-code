@@ -37,10 +37,13 @@ Implementation is split across:
 * :mod:`.templates`   — RST templates + default workproduct lists + CSS
 * :mod:`.rendering`   — template expansion / report body assembly
 * :mod:`.directive`   — the ``ModuleVerificationReportDirective`` class
-* :mod:`.testcase_annotations` — ``doctree-resolved`` badge decoration
-  for ``testcase__…`` back-links on pages that render the directive
 * :mod:`.consistency_checks` — ``build-finished`` validation that every
   component is properly linked in the needs graph
+
+Testcase back-links rendered by this directive are annotated with a
+``(passed)`` / ``(failed)`` result badge by
+``score_source_code_linker``'s ``doctree-resolved`` hook, not by this
+extension.
 """
 
 from __future__ import annotations
@@ -54,7 +57,6 @@ from .consistency_checks import (
     purge_registry,
 )
 from .directive import ModuleVerificationReportDirective
-from .testcase_annotations import annotate_testcase_results
 
 
 def setup(app: Any) -> dict:
@@ -67,7 +69,6 @@ def setup(app: Any) -> dict:
     app.connect("env-before-read-docs", init_registry)
     app.connect("env-purge-doc", purge_registry)
     app.connect("env-merge-info", merge_registry)
-    app.connect("doctree-resolved", annotate_testcase_results)
     app.connect("build-finished", check_consistency)
     return {
         "version": "0.9",

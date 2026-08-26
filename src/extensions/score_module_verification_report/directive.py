@@ -183,10 +183,7 @@ class ModuleVerificationReportDirective(SphinxDirective):
         nested_parse_with_titles(self.state, view_list, container)  # type: ignore[arg-type]
 
         # Register module/feature/component metadata so the build-finished
-        # consistency check can validate need links without a pre-scan,
-        # and so the ``doctree-resolved`` hook in ``testcase_annotations``
-        # knows to decorate testcase back-links with a coloured
-        # ``(passed)`` / ``(failed)`` badge here.
+        # consistency check can validate need links without a pre-scan.
         if not hasattr(self.env, "module_verification_report_registry"):
             self.env.module_verification_report_registry = {}  # type: ignore[attr-defined]
         self.env.module_verification_report_registry[module_id] = {  # type: ignore[attr-defined]
