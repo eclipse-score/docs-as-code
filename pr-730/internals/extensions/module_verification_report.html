@@ -577,69 +577,6 @@ build runs Sphinx with <code class="docutils literal notranslate"><span class="p
 mismatch aborts the build instead of silently producing an inconsistent
 report.</p>
 </section>
-<section id="running-tests-and-docs-together-docs-and-test">
-<h2>Running tests and docs together: <code class="docutils literal notranslate"><span class="pre">docs_and_test</span></code><a class="headerlink" href="#running-tests-and-docs-together-docs-and-test" title="Link to this heading">#</a></h2>
-<p>A verification report is only meaningful if it reflects a fresh test run.
-Bazel itself has no way to make a build target depend on a test’s
-<em>execution</em>, so <code class="docutils literal notranslate"><span class="pre">score_docs_as_code</span></code> ships a small macro,
-<code class="docutils literal notranslate"><span class="pre">docs_and_test</span></code> (<code class="docutils literal notranslate"><span class="pre">&#64;score_docs_as_code//:bzl/docs_and_test.bzl</span></code>), that
-chains the two steps outside the dependency graph:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;@score_docs_as_code//:bzl/docs_and_test.bzl&quot;</span><span class="p">,</span> <span class="s2">&quot;docs_and_test&quot;</span><span class="p">)</span>
-
-<span class="n">docs_and_test</span><span class="p">(</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;module_verification_report&quot;</span><span class="p">,</span>
-    <span class="n">test_targets</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;//score/...&quot;</span><span class="p">],</span>
-    <span class="n">docs_target</span> <span class="o">=</span> <span class="s2">&quot;//:docs&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<p>Calling the macro declares two <code class="docutils literal notranslate"><span class="pre">py_binary</span></code> targets (declaration only —
-neither runs anything at <code class="docutils literal notranslate"><span class="pre">BUILD</span></code>-load time):</p>
-<div class="pst-scrollable-table-container"><table class="table">
-<colgroup>
-<col style="width: 30.0%" />
-<col style="width: 70.0%" />
-</colgroup>
-<thead>
-<tr class="row-odd"><th class="head"><p>Target</p></th>
-<th class="head"><p>What <code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span></code> does</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;name&gt;</span></code></p></td>
-<td><p>Runs <code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">coverage</span></code> (or <code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">test</span></code>) on <code class="docutils literal notranslate"><span class="pre">test_targets</span></code>,
-then <code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">&lt;docs_target&gt;</span></code> (default <code class="docutils literal notranslate"><span class="pre">//:docs</span></code>) — builds
-static HTML.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;name&gt;_preview</span></code></p></td>
-<td><p>Same test/coverage step, then <code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">&lt;preview_target&gt;</span></code>
-(default <code class="docutils literal notranslate"><span class="pre">//:live_preview</span></code>) — starts the live-reloading preview
-server instead of just building HTML. Omitted if
-<code class="docutils literal notranslate"><span class="pre">preview_target</span> <span class="pre">=</span> <span class="pre">None</span></code> is passed to the macro.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>Each target is fully independent: running one does not run the other, and
-running either does not build/execute both. The driver aborts the whole
-pipeline on the first non-zero exit code, so a failing test (or coverage
-run) prevents a stale or incomplete report from being built.</p>
-<p>By default (<code class="docutils literal notranslate"><span class="pre">coverage</span> <span class="pre">=</span> <span class="pre">True</span></code>) the test step is
-<code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">coverage</span> <span class="pre">--combined_report=lcov</span></code>, whose aggregated LCOV file is
-what the <code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">module-verification-report::</span></code> directive reads (via the
-<code class="docutils literal notranslate"><span class="pre">mvr_coverage_lcov</span></code> Sphinx config value) to render the coverage
-statistics in the report. Set <code class="docutils literal notranslate"><span class="pre">coverage</span> <span class="pre">=</span> <span class="pre">False</span></code> to fall back to plain
-<code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">test</span></code> — faster, but without coverage numbers in the report.</p>
-<p>Extra Bazel flags for the nested test/coverage invocation (e.g. a
-<code class="docutils literal notranslate"><span class="pre">--config</span></code>) are not hard-coded in the macro; pass them after <code class="docutils literal notranslate"><span class="pre">--</span></code> on
-the command line:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">bazel</span> <span class="n">run</span> <span class="o">//</span><span class="p">:</span><span class="n">module_verification_report</span> <span class="o">--</span> \
-    <span class="o">--</span><span class="n">test</span><span class="o">-</span><span class="n">flag</span><span class="o">=--</span><span class="n">config</span><span class="o">=</span><span class="n">bl</span><span class="o">-</span><span class="n">aarch64</span><span class="o">-</span><span class="n">linux</span>
-</pre></div>
-</div>
-<p><code class="docutils literal notranslate"><span class="pre">--test-flag</span></code> is repeatable and forwarded as-is to the underlying
-<code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">test</span></code>/<code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">coverage</span></code> call.</p>
-</section>
 </section>
 
 
@@ -682,7 +619,6 @@ the command line:</p>
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#options">Options</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#metamodel-validation">Metamodel validation</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-tests-and-docs-together-docs-and-test">Running tests and docs together: <code class="docutils literal notranslate"><span class="pre">docs_and_test</span></code></a></li>
 </ul>
   </nav></div>
 
