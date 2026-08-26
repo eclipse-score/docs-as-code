@@ -1,5 +1,53 @@
 [
   {
+    "name": "test_testcase_annotations__test_annotates_external_github_testlink",
+    "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
+    "line": 37,
+    "need": "tool_req__docs_test_link_testcase",
+    "verify_type": "partially",
+    "result": "passed",
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
+  },
+  {
+    "name": "test_testcase_annotations__test_does_not_annotate_reference_without_result_suffix",
+    "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
+    "line": 57,
+    "need": "tool_req__docs_test_link_testcase",
+    "verify_type": "partially",
+    "result": "passed",
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
+  },
+  {
+    "name": "test_testcase_annotations__test_does_not_annotate_link_without_result_suffix",
+    "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
+    "line": 71,
+    "need": "tool_req__docs_test_link_testcase",
+    "verify_type": "partially",
+    "result": "passed",
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
+  },
+  {
+    "name": "test_testcase_annotations__test_does_not_annotate_same_reference_twice",
+    "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
+    "line": 85,
+    "need": "tool_req__docs_test_link_testcase",
+    "verify_type": "partially",
+    "result": "passed",
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
+  },
+  {
     "name": "test_testlink__test_testlink_serialization_roundtrip",
     "file": "src/extensions/score_source_code_linker/tests/test_testlink.py",
     "line": 40,
