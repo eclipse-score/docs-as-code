@@ -17,7 +17,6 @@ package(default_visibility = ["//visibility:public"])
 exports_files([
     "default_conf.py.tpl",
     "pyproject.toml",
-    "bzl/run_docs_and_test.py",
 ])
 
 docs(
