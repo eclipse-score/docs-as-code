@@ -998,6 +998,11 @@ needs_types:
       - verification_report
     parts: 3
 
+  auto_mod_ver_report:
+    title: Module Verification Report (automated)
+    parts: 2
+    mandatory_links:
+      belongs_to: mod
 
   # https://eclipse-score.github.io/process_description/main/permalink.html?id=gd_temp__change_decision_record
   dec_rec:
