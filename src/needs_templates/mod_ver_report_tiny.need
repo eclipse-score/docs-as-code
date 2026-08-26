@@ -1,4 +1,6 @@
 {#
+  score: render-after-needs-collection
+
   The report follows the content and order of the standard module verification
   report used by the baselibs PR report:
 
@@ -6,9 +8,9 @@
   * component overview;
   * component-level verification, traceability, coverage, and work products.
 
-  A need template receives the current need's fields only. The Baselibs
-  component list is therefore kept explicit here, while needtable and needpie
-  filters resolve each component's data from Sphinx-Needs at render time.
+  A need template receives the current need's fields only. The
+  ``linked_needs`` render helper follows the module's outgoing links so that
+  the component sections stay driven by the Need model.
 #}
 {% set module_id = belongs_to|first|default("") %}
 {% set module_short = module_id|replace("mod__", "") %}
@@ -161,20 +163,7 @@ Presence of the feature-level inspection work products.
              :columns: status
              :style: table
 
-{% set report_components = [
-   ("comp__baselibs_json", "Json", "json"),
-   ("comp__baselibs_memory_shared", "Memory Shared", "memory_shared"),
-   ("comp__baselibs_result", "Result", "result"),
-   ("comp__baselibs_bit_manipulation", "Bit Manipulation", "bit_manipulation"),
-   ("comp__baselibs_containers", "Containers", "containers"),
-   ("comp__baselibs_filesystem", "Filesystem", "filesystem"),
-   ("comp__baselibs_concurrency", "Concurrency", "concurrency"),
-   ("comp__baselibs_safecpp", "Safecpp", "safecpp"),
-   ("comp__baselibs_static_reflection", "Static Reflection", "static_reflection"),
-   ("comp__baselibs_hash", "Hash", "hash"),
-   ("comp__baselibs_flatbuffers", "Flatbuffers", "flatbuffers"),
-   ("comp__baselibs_abi_compatible_data_types", "Abi Compatible Data Types", "abi_compatible_data_types")
-] %}
+{% set report_components = linked_needs(module_id, "includes") %}
 
 .. rubric:: Components
 
@@ -363,6 +352,10 @@ this component. A dash (``—``) means the corresponding document is missing.
              :style: table
 {% endmacro %}
 
-{% for component_id, component_title, component_slug in report_components %}
-{{ render_component(component_id, component_title, component_slug) }}
+{% for component in report_components %}
+{{ render_component(
+   component["id"],
+   component["title"],
+   component["id"]|replace("comp__" ~ module_short ~ "_", "")
+) }}
 {% endfor %}

@@ -22,14 +22,11 @@ filegroup(
 py_library(
     name = "score_sphinx_bundle",
     srcs = [":all_sources"],
-    # Keep the shared Sphinx-Needs templates beside the extension in the
-    # Bazel runfiles tree. The Python extension discovers their directory from
-    # its own __file__ instead of receiving a path from docs.bzl.
-    data = ["@score_docs_as_code//src/needs_templates:files"],
     visibility = ["//visibility:public"],
     deps = all_requirements + [
         "@score_docs_as_code//src/extensions:score_plantuml",
         "@score_docs_as_code//src/extensions:broken_link_fix",
+        "@score_docs_as_code//src/extensions/score_sphinx_needs_templates",
         "@score_docs_as_code//src/extensions/score_draw_uml_funcs",
         "@score_docs_as_code//src/extensions/score_cross_module_compatibility",
         "@score_docs_as_code//src/extensions/score_layout",
