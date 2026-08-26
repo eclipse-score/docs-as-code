@@ -449,7 +449,9 @@ def make_test_link(testlinks: list[DataForTestLink]):
         url="",
         hash="",
     )
-    return ", ".join(f"{get_github_link(metadata, n)}<>{n.name}" for n in testlinks)
+    return ", ".join(
+        f"{get_github_link(metadata, n)}<>{n.name}<>{n.result}" for n in testlinks
+    )
 
 
 def compare_json_files(

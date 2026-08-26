@@ -143,15 +143,24 @@ def setup_source_code_linker(app: Sphinx, ws_root: Path | None):
         description="Skip rescanning source code files via the source code linker.",
     )
 
-    # Define need_string_links here to not have it in conf.py
-    # source_code_link and testlinks have the same schema
+    # Define need_string_links here to not have them in conf.py. Test links
+    # carry the result as an additional field in their serialized value.
     app.config.needs_string_links.setdefault(
-        "source_code_linker",
+        "source_code_linker_pure",
         {
             "regex": r"(?P<url>.+)<>(?P<name>.+)",
             "link_url": "{{url}}",
             "link_name": "{{name}}",
-            "options": ["source_code_link", "testlink"],
+            "options": ["source_code_link"],
+        },
+    )
+    app.config.needs_string_links.setdefault(
+        "test_code_linker",
+        {
+            "regex": r"(?P<url>.+)<>(?P<name>.+)<>(?P<result>.+)",
+            "link_url": "{{url}}",
+            "link_name": "{{name}} ({{result}})",
+            "options": ["testlink"],
         },
     )
 
@@ -467,7 +476,7 @@ def _render_test_link(
             type="score_source_code_linker",
         )
         return str(link.name)
-    return f"{base}<>{link.name}"
+    return f"{base}<>{link.name}<>{link.result}"
 
 
 def _warn_missing_need(source_code_links: object) -> None:
