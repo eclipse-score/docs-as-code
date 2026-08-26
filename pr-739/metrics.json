@@ -2,29 +2,29 @@
   "schema_version": "2",
   "generated_by": "sphinx_build",
   "overall_metrics": {
-    "total": 68,
-    "with_code_link": 39,
+    "total": 69,
+    "with_code_link": 40,
     "with_test_link": 30,
     "fully_linked": 10,
-    "with_code_link_pct": 57.35294117647059,
-    "with_test_link_pct": 44.11764705882353,
-    "fully_linked_pct": 14.705882352941178
+    "with_code_link_pct": 57.971014492753625,
+    "with_test_link_pct": 43.47826086956522,
+    "fully_linked_pct": 14.492753623188406
   },
   "metrics_by_type": {
     "tool_req": {
-      "total": 68,
-      "with_code_link": 39,
+      "total": 69,
+      "with_code_link": 40,
       "with_test_link": 30,
       "fully_linked": 10,
-      "with_code_link_pct": 57.35294117647059,
-      "with_test_link_pct": 44.11764705882353,
-      "fully_linked_pct": 14.705882352941178
+      "with_code_link_pct": 57.971014492753625,
+      "with_test_link_pct": 43.47826086956522,
+      "fully_linked_pct": 14.492753623188406
     }
   },
   "tests": {
-    "total": 328,
+    "total": 344,
     "linked_to_requirements": 75,
-    "linked_to_requirements_pct": 22.865853658536587,
+    "linked_to_requirements_pct": 21.802325581395348,
     "broken_references": []
   }
 }

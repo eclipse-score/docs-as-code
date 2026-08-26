@@ -3101,6 +3101,44 @@
     }
   },
   {
+    "need": "tool_req__docs_bzl_nested_bundle",
+    "links": {
+      "CodeLinks": [
+        {
+          "file": "src/tests/docs_bzl/scenarios/nested_bundles/child/example.py",
+          "line": 14,
+          "tag": "# req-traceability:",
+          "need": "tool_req__docs_bzl_nested_bundle",
+          "full_line": "# req-traceability: tool_req__docs_bzl_nested_bundle",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        },
+        {
+          "file": "src/tests/docs_bzl/scenarios/nested_bundles/child/example.cc",
+          "line": 1,
+          "tag": "// req-traceability:",
+          "need": "tool_req__docs_bzl_nested_bundle",
+          "full_line": "// req-traceability: tool_req__docs_bzl_nested_bundle",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        },
+        {
+          "file": "src/tests/docs_bzl/scenarios/nested_bundles/child/filegroup_source.py",
+          "line": 14,
+          "tag": "# req-traceability:",
+          "need": "tool_req__docs_bzl_nested_bundle",
+          "full_line": "# req-traceability: tool_req__docs_bzl_nested_bundle",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        }
+      ],
+      "TestLinks": []
+    }
+  },
+  {
     "need": "tool_req__docs_test_linkage_metrics",
     "links": {
       "CodeLinks": [],
