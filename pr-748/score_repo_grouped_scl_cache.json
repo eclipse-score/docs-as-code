@@ -55,7 +55,7 @@
           "CodeLinks": [
             {
               "file": "src/extensions/score_metamodel/checks/attributes_format.py",
-              "line": 109,
+              "line": 108,
               "tag": "# req-Id:",
               "need": "tool_req__docs_common_attr_desc_wording",
               "full_line": "# req-Id: tool_req__docs_common_attr_desc_wording"
@@ -87,7 +87,7 @@
           "CodeLinks": [
             {
               "file": "src/extensions/score_metamodel/checks/attributes_format.py",
-              "line": 110,
+              "line": 109,
               "tag": "# req-Id:",
               "need": "tool_req__docs_common_attr_title",
               "full_line": "# req-Id: tool_req__docs_common_attr_title"
@@ -2273,10 +2273,39 @@
           "CodeLinks": [
             {
               "file": "src/extensions/score_source_code_linker/__init__.py",
-              "line": 397,
+              "line": 413,
               "tag": "# req-Id:",
               "need": "tool_req__docs_common_attr_suspicious",
               "full_line": "# req-Id: tool_req__docs_common_attr_suspicious"
+            }
+          ],
+          "TestLinks": []
+        }
+      },
+      {
+        "need": "tool_req__docs_bzl_nested_bundle",
+        "links": {
+          "CodeLinks": [
+            {
+              "file": "src/tests/docs_bzl/scenarios/nested_bundles/child/example.py",
+              "line": 14,
+              "tag": "# req-traceability:",
+              "need": "tool_req__docs_bzl_nested_bundle",
+              "full_line": "# req-traceability: tool_req__docs_bzl_nested_bundle"
+            },
+            {
+              "file": "src/tests/docs_bzl/scenarios/nested_bundles/child/example.cc",
+              "line": 1,
+              "tag": "// req-traceability:",
+              "need": "tool_req__docs_bzl_nested_bundle",
+              "full_line": "// req-traceability: tool_req__docs_bzl_nested_bundle"
+            },
+            {
+              "file": "src/tests/docs_bzl/scenarios/nested_bundles/child/filegroup_source.py",
+              "line": 14,
+              "tag": "# req-traceability:",
+              "need": "tool_req__docs_bzl_nested_bundle",
+              "full_line": "# req-traceability: tool_req__docs_bzl_nested_bundle"
             }
           ],
           "TestLinks": []
