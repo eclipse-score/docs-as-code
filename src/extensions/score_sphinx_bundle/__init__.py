@@ -10,6 +10,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
+from pathlib import Path
+
 import matplotlib
 from sphinx.application import Sphinx
 
@@ -43,11 +45,37 @@ score_extensions = [
 ]
 
 
+def _needs_template_folder() -> Path:
+    """Return the shared Sphinx-Needs template directory.
+
+    The extension and the templates are both part of the main ``src`` tree.
+    Deriving the path from ``__file__`` works for the workspace, Bazel
+    runfiles, and the sandbox because the extension's data files preserve that
+    source-tree layout.
+    """
+    # Keep the runfiles/sandbox prefix intact; only walk from the extension's
+    # package directory to the sibling ``needs_templates`` directory.
+    # Basically: src/extensions/score_sphinx_bundle/../../needs_templates.
+    template_folder = Path(__file__).parents[2] / "needs_templates"
+    if not template_folder.is_dir():
+        raise FileNotFoundError(
+            f"Sphinx-Needs template folder does not exist: {template_folder}"
+        )
+    return template_folder
+
+
 def setup(app: Sphinx) -> dict[str, object]:
     matplotlib.rcParamsDefault["savefig.bbox"] = "tight"
 
     config_setdefault(app.config, "html_copy_source", False)
     config_setdefault(app.config, "html_show_sourcelink", False)
+
+    # The templates are a data dependency of this extension. Locate the
+    # shared directory from the extension itself instead of passing a Bazel
+    # label or a list of generated paths through every docs target.
+    config_setdefault(
+        app.config, "needs_template_folder", str(_needs_template_folder())
+    )
 
     # Global settings
     # Note: the "sub-extensions" also set their own config values

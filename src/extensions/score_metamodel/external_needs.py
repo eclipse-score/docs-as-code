@@ -80,7 +80,11 @@ def parse_external_needs_sources_from_DATA(v: str) -> list[ExternalNeedsSource]:
 
     logger.debug(f"Parsing external needs sources: {v}")
 
-    data = json.loads(v)
+    try:
+        data = json.loads(v)
+    except json.JSONDecodeError as e:
+        logger.error(f"Failed to parse external needs sources from DATA {v}: {e}")
+        raise SystemExit(1) from e
 
     res = [res for el in data if (res := _parse_bazel_external_need(el))]
     logger.debug(f"Parsed external needs sources: {res}")
