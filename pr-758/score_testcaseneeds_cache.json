@@ -126,6 +126,20 @@
     "FullyVerifies": null
   },
   {
+    "name": "incremental_dirty_build_test__test_mounted_watch_dirs_use_data_directories_for_pure_data_bundles",
+    "file": "src/incremental_dirty_build_test.py",
+    "line": "153",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
     "name": "test_helper_lib__test_config_setdefault_sets_when_not_in_raw_config",
     "file": "src/helper_lib/test_helper_lib.py",
     "line": "38",
