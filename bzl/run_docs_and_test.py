@@ -106,11 +106,12 @@ def main() -> None:
                     "coverage",
                     "--combined_report=lcov",
                     *args.test_flag,
+                    "--",
                     *test_targets,
                 ]
             )
         else:
-            _run(["bazel", "test", *args.test_flag, *test_targets])
+            _run(["bazel", "test", *args.test_flag, "--", *test_targets])
     _run(["bazel", "run", args.docs])
 
 
