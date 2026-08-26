@@ -69,8 +69,8 @@ def check_id_length(app: Sphinx, need: NeedItem, log: CheckLogger):
     parts = need["id"].split("__")
 
     # Any examples that are required to have 3 parts (2x'__') have an exception,
-    # and get 17 extra characters to compensate for the lenght of `_example_feature_`
-    # that would be replaced by actually feature names.
+    # and get 17 extra characters to compensate for the length of `_example_feature_`
+    # that would be replaced by actual feature names.
     if len(parts) >= 2 and parts[1] == "example_feature":
         max_length += 17  # _example_feature_
 
