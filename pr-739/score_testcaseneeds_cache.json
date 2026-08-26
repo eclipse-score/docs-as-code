@@ -1500,7 +1500,7 @@
   {
     "name": "test_source_code_link_integration__test_source_link_integration_ok",
     "file": "src/extensions/score_source_code_linker/tests/test_source_code_link_integration.py",
-    "line": "511",
+    "line": "513",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1514,7 +1514,7 @@
   {
     "name": "test_source_code_link_integration__test_source_link_integration_non_existent_id",
     "file": "src/extensions/score_source_code_linker/tests/test_source_code_link_integration.py",
-    "line": "581",
+    "line": "583",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1528,7 +1528,7 @@
   {
     "name": "test_testcase_annotations__test_annotates_external_github_testlink",
     "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
-    "line": "62",
+    "line": "37",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -1540,9 +1540,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_testcase_annotations__test_annotates_resolved_testcase_reference_by_refid",
+    "name": "test_testcase_annotations__test_does_not_annotate_reference_without_result_suffix",
     "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
-    "line": "89",
+    "line": "57",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -1554,51 +1554,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_testcase_annotations__test_escapes_unexpected_result_value",
+    "name": "test_testcase_annotations__test_does_not_annotate_link_without_result_suffix",
     "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
-    "line": "107",
-    "result": "passed",
-    "repo_name": "local_repo",
-    "hash": "",
-    "url": "",
-    "TestType": "requirements-based",
-    "DerivationTechnique": "requirements-analysis",
-    "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_test_link_testcase",
-    "FullyVerifies": null
-  },
-  {
-    "name": "test_testcase_annotations__test_does_not_annotate_ambiguous_external_github_testlink",
-    "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
-    "line": "132",
-    "result": "passed",
-    "repo_name": "local_repo",
-    "hash": "",
-    "url": "",
-    "TestType": "requirements-based",
-    "DerivationTechnique": "requirements-analysis",
-    "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_test_link_testcase",
-    "FullyVerifies": null
-  },
-  {
-    "name": "test_testcase_annotations__test_does_not_annotate_empty_result",
-    "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
-    "line": "160",
-    "result": "passed",
-    "repo_name": "local_repo",
-    "hash": "",
-    "url": "",
-    "TestType": "requirements-based",
-    "DerivationTechnique": "requirements-analysis",
-    "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_test_link_testcase",
-    "FullyVerifies": null
-  },
-  {
-    "name": "test_testcase_annotations__test_does_not_annotate_unknown_external_link",
-    "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
-    "line": "183",
+    "line": "71",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -1612,7 +1570,7 @@
   {
     "name": "test_testcase_annotations__test_does_not_annotate_same_reference_twice",
     "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
-    "line": "207",
+    "line": "85",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
