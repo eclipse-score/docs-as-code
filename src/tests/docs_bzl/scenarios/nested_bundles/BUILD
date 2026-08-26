@@ -15,6 +15,12 @@ load("//:bzl/mount_rules.bzl", "create_mounts_manifest")
 load("//:docs.bzl", "docs", "docs_bundle")
 load("@aspect_rules_py//py:defs.bzl", "py_binary")
 
+filegroup(
+    name = "nested_bundle_build",
+    srcs = ["BUILD"],
+    visibility = ["//visibility:public"],
+)
+
 docs_bundle(
     name = "child",
     source_dir = "child",
@@ -64,6 +70,7 @@ cc_binary(
 
 # The child is nested below the parent bundle before the parent itself is
 # mounted into the synthetic host tree below.
+# BEGIN docs-bundle-howto: parent-composition
 docs_bundle(
     name = "parent",
     source_dir = "parent",
@@ -72,7 +79,9 @@ docs_bundle(
         "mount_at": "child",
     }],
     data = [":generated_doc_output"],
+    visibility = ["//visibility:public"],
 )
+# END docs-bundle-howto: parent-composition
 
 # An aggregator deliberately has no source_dir. It only propagates its child
 # and must preserve the declaration order in the generated manifest.

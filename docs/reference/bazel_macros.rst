@@ -25,6 +25,26 @@ See :doc:`commands <commands>` for the targets/commands it creates.
 
 The macro must be called from the repository root package.
 
+Supporting files: project inputs and bundle payloads
+----------------------------------------------------
+
+There are two ``data`` attributes, and they belong to different documentation
+trees:
+
+* ``docs_bundle(data = [...])`` puts files in a bundle payload. The files
+  travel with that bundle and are resolved below the bundle's eventual
+  ``mount_at`` path. Use this for generated documentation, images, and other
+  assets needed by a mounted bundle.
+* ``docs(data = [...])`` puts files in the project-level ``docs()`` build,
+  outside any bundle. These files have no bundle mount path. Use this only for
+  inputs needed by the project-level build itself. ``bazel run`` does not copy
+  generated data into the workspace source tree; generated documentation or
+  assets must use ``docs_bundle(data = [...])``.
+
+If a file belongs to a mounted bundle, use ``docs_bundle(data = [...])``.
+Both attributes make files available to a build; they differ in which
+documentation tree carries the files and where they are resolved.
+
 Minimal example (root ``BUILD``)
 --------------------------------
 
@@ -65,7 +85,9 @@ Minimal example (root ``BUILD``)
 - ``data`` (list of bazel labels)
   Extra runfiles / data targets that should be made available to the documentation targets.
   The items in ``data`` are added to the py_binaries and to the Sphinx tooling so they are
-  available at build time.
+  available at build time. These are project-level inputs; they are not part of
+  a bundle and do not receive a bundle mount path. Use ``docs_bundle(data = [...])``
+  for files that belong to mounted documentation.
 
   .. note::
 
@@ -146,7 +168,7 @@ site).
        visibility = ["//visibility:public"],
    )
 
-Signature: ``docs_bundle(name, source_dir = None, entry_doc = "index", bundles = [], scan_code = [], code_targets = [], visibility = None)``.
+Signature: ``docs_bundle(name, source_dir = None, data = [], entry_doc = "index", bundles = [], scan_code = [], code_targets = [], visibility = None)``.
 
 - ``source_dir`` (string, optional)
   Directory holding the bundle's own doc sources. It is globbed the same way as
@@ -155,8 +177,17 @@ Signature: ``docs_bundle(name, source_dir = None, entry_doc = "index", bundles =
   ``concept/index.rst`` with ``source_dir = "concept"`` becomes ``index.rst``).
   The bundle exposes those files as a Bazel depset (via the ``DocsBundleInfo``
   provider) and records the ``source_dir`` path; sphinx-mounts walks that original
-  directory directly — no copy is made. Leave it unset for a pure aggregator that only
-  composes ``bundles``.
+  directory directly — no copy is made. Leave it unset for a data-only bundle
+  or for an aggregator that only composes other ``bundles``.
+
+- ``data`` (list of bazel labels, optional)
+  Supporting or generated files owned by this bundle. These files are part of
+  the bundle payload and are available at the bundle's eventual mount path;
+  they are useful for generated documentation sources such as a generated
+  ``index.rst``. If ``source_dir`` is omitted and ``data`` contains the
+  bundle's deliverable, the result is a data-only bundle. Use this attribute
+  for any file that belongs with the mounted bundle. Use
+  ``docs(data = [...])`` only for project-level inputs outside a bundle.
 
 - ``entry_doc`` (string, optional)
   Bundle-relative docname used as the canonical navigation entry. It defaults to

@@ -43,7 +43,12 @@ Easy streamlined way for S-CORE docs-as-code.
 
 load("@aspect_rules_py//py:defs.bzl", "py_binary", "py_venv")
 load("@docs_as_code_hub_env//:requirements.bzl", "all_requirements")
-load("@sphinxdocs//sphinxdocs:sphinx.bzl", "sphinx_build_binary", "sphinx_docs")
+load(
+    "@sphinxdocs//sphinxdocs:sphinx.bzl",
+    "sphinx_build_binary",
+    "sphinx_docs",
+)
+load("@sphinxdocs//sphinxdocs:sphinx_docs_library.bzl", "sphinx_docs_library")
 load(
     "@score_docs_as_code//:bzl/basics.bzl",
     "glob_doc_sources",
@@ -52,6 +57,7 @@ load(
 load(
     "@score_docs_as_code//:bzl/bundle_rules.bzl",
     "create_bundle",
+    "bundle_source_files",
     "merge_bundle_sourcelinks",
     "external_docs_runfiles",
     "generate_code_target_sourcelinks",
@@ -103,9 +109,13 @@ def docs_bundle(name, source_dir = None, data = [], entry_doc = "index", bundles
       source_dir: optional directory holding this bundle's own doc sources. It is
         globbed like `docs()` (same file kinds) and the contents are stored after
         stripping the `source_dir` prefix. Leave it unset for a pure aggregator.
-      data:
-        Additional data dependencies for this target.
-        Useful for generated rst sources.
+        data:
+        Files owned by this bundle that are not discovered as documentation
+        sources. Use this for generated RST or other generated files that are
+        part of the bundle payload and belong at the bundle's eventual mount
+        location. Use ``docs(data = [...])`` only for project-level inputs
+        outside a bundle. Both forms make their files available to a build;
+        only bundle data travels with a mounted bundle.
       entry_doc: bundle-relative docname attached when this bundle is mounted.
         Defaults to `index`.
       bundles: nested bundles to compose, each a dict
@@ -208,7 +218,12 @@ def docs(
       source_dir: The source directory containing documentation files. Defaults to "docs".
       project: optional project name, prefer setting this here if you can avoid having a conf.py
       project_url: Optional project URL, prefer setting this here if you can avoid having a conf.py
-      data: Additional data files to include in the documentation build.
+      data: Additional files needed by the project-level documentation build.
+        These files are outside any bundle and have no bundle mount path. If a
+        file should travel with rendered or composable documentation, declare
+        it in a `docs_bundle` and place that bundle through `bundles` instead.
+        Generated documentation and assets are not staged into the workspace
+        source tree for `bazel run`; use a data-only `docs_bundle` for those.
       deps: Additional dependencies for the documentation build.
       external_needs: List of external needs targets to include in the documentation build.
       scan_code: Deprecated. Explicit source files or filegroups to scan for source
@@ -230,6 +245,12 @@ def docs(
                 }.
               Note: a bundle label may also point at another module's auto-exposed
               bundle, e.g. "@score_process_description//:docs_bundle".
+
+    The short rule is about ownership and placement, not build availability:
+    use a bundle for anything that should travel as one portable mount. A
+    bundle may be data-only when its deliverable is generated/supporting data
+    rather than source RST. Use ``docs(data = [...])`` only for project-level
+    inputs that do not belong to a bundle mount.
     """
     # HINT: keep documentation sync docs/reference/bazel_macros.rst
 
@@ -256,6 +277,32 @@ def docs(
     # but represented as a 0/1 list. This lets it be appended directly to
     # list-valued attributes such as ``data`` and ``tools``.
     metamodel_label = [metamodel] if metamodel else []
+
+    data_library_label_for_sphinx_docs = []
+    if data:
+        # ``docs_bundle`` can carry data, including as a pure-data bundle. That
+        # data belongs to the bundle payload and is resolved at its eventual
+        # mount. These ``docs(data = [...])`` inputs are intentionally
+        # project-level instead: they support the project build or its
+        # literalinclude examples and are not assigned to a bundle mount. Both
+        # kinds of data are build inputs; without the staging below, project-
+        # level inputs would
+        # remain only execution inputs for Sphinx's tools rather than files
+        # below Sphinx's source directory, where standard ``literalinclude``
+        # looks for them.
+        #
+        # ``sphinx_docs_library`` is the generic rules_python/rules_sphinxdocs
+        # mechanism for adding such files to the sandboxed needs source tree.
+        # Preserve their workspace-relative paths so one ordinary
+        # literalinclude works in that Sphinx action. The interactive run
+        # target reads the workspace source tree directly; generated files
+        # belong in a data-only docs_bundle instead.
+        sphinx_docs_library(
+            name = "_docs_data",
+            srcs = data,
+            strip_prefix = "",
+        )
+        data_library_label_for_sphinx_docs = [":_docs_data"]
 
     mounts_manifest_label = []
     if bundles:
@@ -298,6 +345,11 @@ def docs(
         scan_code = scan_code,
         code_targets = code_targets,
         visibility = ["//visibility:public"],
+    )
+    sphinx_sources = bundle_source_files(
+        name = "_docs_sphinx_sources",
+        bundle = ":docs_bundle",
+        visibility = ["//visibility:private"],
     )
     merge_bundle_sourcelinks(
         name = "sourcelinks_json",
@@ -408,7 +460,11 @@ def docs(
 
     sphinx_docs(
         name = "needs_json",
-        srcs = [":docs_bundle"],
+        # Nested bundle sources are mounted by score_mounts. Passing the
+        # complete bundle as srcs would also expose those files as raw Sphinx
+        # sources and make every nested need appear twice.
+        srcs = [sphinx_sources],
+        deps = data_library_label_for_sphinx_docs,
         config = sphinx_config,
         extra_opts = [
             "-W",

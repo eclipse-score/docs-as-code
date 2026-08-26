@@ -25,6 +25,12 @@ docs(
     external_needs = [
         "@score_process_description//:needs_json_file",
     ],
+    data = [
+        # These scenario BUILD files are used by literalinclude examples.
+        "//src/tests/docs_bzl/scenarios/nested_bundles:nested_bundle_build",
+        "//src/tests/docs_bzl/scenarios/data_files_runfiles:generated_data_build",
+        "//src/tests/docs_bzl/scenarios/external_bundle:external_bundle_build",
+    ],
     bundles = [
         {
             "bundle": "//src/extensions/docs:extensions",
@@ -34,6 +40,18 @@ docs(
             "bundle": "//src/extensions/score_metamodel/docs:metamodel",
             "mount_at": "reference/metamodel",
             "attach_to": "reference/index",
+        },
+        {
+            # Mount to show what the rendered docs look like when nested bundles are used.
+            "bundle": "//src/tests/docs_bzl/scenarios/nested_bundles:parent",
+            "mount_at": "how-to/bundles/examples/nested",
+            "attach_to": "how-to/bundles/examples",
+        },
+        {
+            # Mount to show what the rendered docs look like when data files are used.
+            "bundle": "//src/tests/docs_bzl/scenarios/data_files_runfiles:data_bundle",
+            "mount_at": "how-to/bundles/examples/generated-data",
+            "attach_to": "how-to/bundles/examples",
         },
     ],
     code_targets = [

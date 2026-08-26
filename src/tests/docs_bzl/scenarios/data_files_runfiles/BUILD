@@ -18,9 +18,16 @@
 
 load("//:docs.bzl", "docs", "docs_bundle")
 
+filegroup(
+    name = "generated_data_build",
+    srcs = ["BUILD"],
+    visibility = ["//visibility:public"],
+)
+
 # Emit into a ``generated/`` subdirectory (as the real metamodel bundle does)
 # so the resolved mount directory contains only the genrule output and not the
 # sibling ``docs.runfiles/`` tree.
+# BEGIN docs-bundle-howto: generated-data
 genrule(
     name = "generated_page",
     srcs = [],
@@ -34,6 +41,7 @@ docs_bundle(
     name = "data_bundle",
     data = [":generated_page"],
     entry_doc = "index",
+    visibility = ["//visibility:public"],
 )
 
 docs(
@@ -44,3 +52,5 @@ docs(
         "attach_to": "index",
     }],
 )
+
+# END docs-bundle-howto: generated-data

@@ -23,6 +23,22 @@ with a ``docs_bundle`` and mount the bundle into your documentation tree.
 You find a `complete working example <https://github.com/eclipse-score/docs-as-code/tree/main/src/extensions/score_metamodel/docs/>`_
 in the :ref:`metamodel-types-visualization`.
 
+Which ``data`` attribute?
+-------------------------
+
+For a mounted documentation bundle, put the generated files in
+``docs_bundle(data = [...])``. Those files are part of the bundle payload: they
+travel with the bundle and are resolved below its eventual ``mount_at`` path.
+
+``docs(data = [...])`` is different. It adds files to the project-level
+``docs()`` build, outside any bundle, and therefore gives those files no bundle
+mount path. Use it only for inputs that belong to the project-level build. If
+the file is documentation, an image, or a supporting asset for a bundle, put
+it in that bundle instead.
+
+For this how-to, the rule is simple: generated documentation belongs in
+``docs_bundle(data = [...])``.
+
 Step 1: Generate the RST Files
 ------------------------------
 
@@ -64,6 +80,12 @@ Do not use ``srcs`` — that is for handwritten sources in the source tree.
        name = "design_bundle",
        data = [":generate_design_rst"],
    )
+
+This is a **data-only bundle**: it has no ``source_dir`` because all of its
+documentation is generated. It is still a normal mountable bundle. The
+generated ``index.rst`` becomes the bundle's entry page and travels with the
+bundle when it is mounted. A bundle with both handwritten sources and
+generated files can use ``source_dir`` and ``data`` together.
 
 Verify:
   ``bazel build :design_bundle`` must succeed.
@@ -107,8 +129,9 @@ Without a subdirectory, it mounts the genrule output root — which often
 contains other build artifacts and causes Sphinx warnings.
 
 **Attach-to target is missing.**
-``attach_to`` must point to a document that exists in the host tree.
-When unsure, point it at ``"index"`` (the host project's root ``index.rst``).
+``attach_to`` must point to a document that exists in the consuming project's
+documentation tree. When unsure, point it at ``"index"`` (the consuming
+project's root ``index.rst``).
 
 .. seealso::
 

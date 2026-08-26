@@ -10,11 +10,6 @@ myst-parser
 PyGithub
 sphinx-needs[plotting]
 sphinxcontrib.mermaid
-# Until release of esbonio 1.x, we need to install it ourselves so the VS Code esbonio-extension
-# can find it.
-# esbonio >= 1 comes bundled with the esbonio-extension >= 1.
-# esbonio<1 is required for the esbonio-extension <1
-esbonio<1
 
 # Although not required in all targets, we want pytest within ide_support to run tests from the IDE.
 debugpy

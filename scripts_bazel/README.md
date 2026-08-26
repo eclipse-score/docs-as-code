@@ -14,3 +14,20 @@
 # Scripts Bazel
 
 This folder contains executables to be used within Bazel rules.
+
+## `merge_needs_json`
+
+Merge one or more Sphinx-Needs inventories while keeping the top-level
+metadata and version container from the first input:
+
+```text
+bazel run //scripts_bazel:merge_needs_json -- \
+  --output bazel-bin/merged-needs.json \
+  path/to/needs-a.json path/to/needs-b.json
+```
+
+Each input must contain exactly one `versions` entry and an object-valued
+`needs` field. Identical Need IDs are accepted only when their complete
+objects match; conflicting definitions fail the command. The output is
+written atomically, so an existing result is preserved when validation or
+serialization fails.

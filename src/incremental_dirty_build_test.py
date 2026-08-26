@@ -148,3 +148,30 @@ def test_mounted_watch_dirs_match_sphinx_mount_paths(tmp_path: Path) -> None:
         str(workspace / "extensions/local/docs"),
         str(runfiles_dir / "vendor+" / "docs"),
     ]
+
+
+def test_mounted_watch_dirs_use_data_directories_for_pure_data_bundles(
+    tmp_path: Path,
+) -> None:
+    manifest_path = tmp_path / "_mounts_manifest.json"
+    manifest_path.write_text(
+        json.dumps(
+            {
+                "mounts": [
+                    {
+                        "src_root": "",
+                        "runtime_path": "__data__/pkg/data_bundle",
+                        "mount_at": "generated",
+                        "data": ["bazel-out/k8-fastbuild/bin/pkg/generated/index.rst"],
+                    }
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    workspace = tmp_path / "workspace"
+    runfiles_dir = tmp_path / "runfiles"
+
+    assert _mounted_watch_dirs(manifest_path, workspace, runfiles_dir) == [
+        str(workspace / "bazel-bin/pkg/generated")
+    ]

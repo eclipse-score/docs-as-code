@@ -12,8 +12,8 @@
    # SPDX-License-Identifier: Apache-2.0
    # *******************************************************************************
 
-External mount fixture
-======================
+External bundle
+===============
 
 .. toctree::
    :maxdepth: 1

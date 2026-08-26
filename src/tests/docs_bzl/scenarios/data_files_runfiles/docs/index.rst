@@ -12,9 +12,8 @@
    # SPDX-License-Identifier: Apache-2.0
    # *******************************************************************************
 
-Data Files Runfiles Test
-========================
+Host page with generated bundle data
+====================================
 
-This scenario verifies that ``data`` files (genrule outputs) from a
-``docs_bundle`` reach the runfiles of ``:docs`` and are resolved by the
-Sphinx preview at ``bazel run`` time.
+The host project can mount a pure-data bundle and include its generated page
+in the documentation navigation.

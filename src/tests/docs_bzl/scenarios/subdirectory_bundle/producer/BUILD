@@ -13,22 +13,15 @@
 
 load("//:docs.bzl", "docs")
 
-filegroup(
-    name = "external_bundle_build",
-    srcs = ["BUILD"],
-    visibility = ["//visibility:public"],
-)
-
-# This fixture exercises the public Bzlmod contract. In particular, the
-# sandboxed :needs_json target must be able to walk an external bundle rather
-# than silently omitting it.
-# BEGIN docs-bundle-howto: external-bundle
+# The embedded bundle lives in a subdirectory package alongside the docs source.
+# The parent docs() must mount it explicitly because it is a separate package.
 docs(
-    source_dir = "host_docs",
-    test_sources = ["src/tests/docs_bzl/scenarios/external_bundle"],
+    source_dir = "docs",
+    project = "Subdirectory Bundle Producer",
+    project_url = "https://example.invalid/subdirectory-bundle-producer",
+    test_sources = ["src/tests/docs_bzl/scenarios/subdirectory_bundle/producer"],
     bundles = [{
-        "bundle": "@score_process_description//:docs_bundle",
-        "mount_at": "process",
+        "bundle": "//src/tests/docs_bzl/scenarios/subdirectory_bundle/producer/embedded:docs_bundle",
+        "mount_at": "embedded",
     }],
 )
-# END docs-bundle-howto: external-bundle

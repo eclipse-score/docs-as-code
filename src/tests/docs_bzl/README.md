@@ -20,6 +20,7 @@ docs_bzl/
 │   ├── external_needs/
 │   ├── metamodel_violation/
 │   ├── nested_bundles/
+│   ├── subdirectory_bundle/
 │   ├── external_bundle/
 │   ├── local_version_mismatch/
 │   └── invalid_bundle_placements/

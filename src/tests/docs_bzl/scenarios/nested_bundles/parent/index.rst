@@ -14,3 +14,10 @@
 
 Parent bundle
 =============
+
+.. tool_req:: A nested bundle can be mounted into a documentation tree
+   :id: tool_req__docs_bzl_nested_bundle
+   :version: 1
+
+   The ``parent`` bundle composes the ``child`` bundle and can be mounted into
+   a host documentation tree together with its generated data.

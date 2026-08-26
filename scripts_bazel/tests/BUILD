@@ -34,6 +34,15 @@ score_pytest(
 )
 
 score_pytest(
+    name = "merge_needs_json_tests",
+    srcs = ["merge_needs_json_tests.py"],
+    deps = [
+        "//scripts_bazel:merge_needs_json",
+    ] + all_requirements,
+    pytest_config = "//:pyproject.toml",
+)
+
+score_pytest(
     name = "traceability_gate_test",
     srcs = ["traceability_gate_test.py"],
     deps = [

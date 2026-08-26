@@ -97,10 +97,41 @@ def _mounted_watch_dirs(
     outside the primary Sphinx source directory.
     """
     manifest = load_mounts_manifest(manifest_path)
-    return [
-        str(resolve_walk_dir(manifest, spec, ws_root, runfiles_dir))
-        for spec in manifest.mounts
-    ]
+    watch_dirs: list[str] = []
+    seen: set[str] = set()
+
+    def add_watch_dir(path: Path) -> None:
+        path_string = str(path)
+        if path_string not in seen:
+            seen.add(path_string)
+            watch_dirs.append(path_string)
+
+    for spec in manifest.mounts:
+        # A data-only bundle has no source directory. Passing its empty
+        # ``src_root`` to resolve_walk_dir would watch the workspace root,
+        # which makes sphinx-autobuild observe unrelated files (including its
+        # own output). Watch the generated data directories instead.
+        if spec.src_root:
+            add_watch_dir(resolve_walk_dir(manifest, spec, ws_root, runfiles_dir))
+
+        for data_file in spec.data:
+            if ws_root is not None and runfiles_dir is not None:
+                runfiles_str = str(runfiles_dir)
+                if "/bazel-out/" in runfiles_str:
+                    # The runfiles path points into the execroot's output
+                    # tree. Use the execroot prefix just like score_mounts.
+                    walk_file = Path(runfiles_str.split("/bazel-out/")[0]) / data_file
+                else:
+                    walk_file = (
+                        ws_root
+                        / "bazel-bin"
+                        / data_file.removeprefix("bazel-out/k8-fastbuild/bin/")
+                    )
+            else:
+                walk_file = Path.cwd() / data_file
+            add_watch_dir(walk_file.parent)
+
+    return watch_dirs
 
 
 if __name__ == "__main__":

@@ -39,6 +39,13 @@ py_binary(
 )
 
 py_binary(
+    name = "merge_needs_json",
+    srcs = ["merge_needs_json.py"],
+    main = "merge_needs_json.py",
+    visibility = ["//visibility:public"],
+)
+
+py_binary(
     name = "traceability_gate",
     srcs = ["traceability_gate.py"],
     main = "traceability_gate.py",

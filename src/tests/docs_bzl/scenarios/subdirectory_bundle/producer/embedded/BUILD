@@ -11,6 +11,10 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-project = "Mount contract fixture"
-project_url = "https://example.invalid/mount-contract"
-extensions = ["score_sphinx_bundle"]
+load("//:docs.bzl", "docs_bundle")
+
+docs_bundle(
+    name = "docs_bundle",
+    source_dir = "content",
+    visibility = ["//visibility:public"],
+)
