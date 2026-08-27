@@ -60,7 +60,7 @@
    :branch_coverage_percent: 85
    :applies_to_module_version: 1.0.0
    :belongs_to: mod__verification_module
-   :covers: comp_req__verification__sample
+   :covers: comp__verification_component, comp_req__verification__sample
 
 
 .. Invalid coverage percentage value in module verification report
@@ -74,3 +74,4 @@
    :verification_method: inspection
    :line_coverage_percent: 150
    :belongs_to: mod__verification_module
+   :covers: comp__verification_component

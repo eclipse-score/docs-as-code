@@ -65,6 +65,15 @@ Extensions
 
    .. grid-item-card::
 
+      Module Verification Report
+      ^^^
+      One Need per module gives that module a report page whose sections behave
+      like ordinary RST.
+      :ref:`Module Verification Report<module-verification-report>`
+
+
+   .. grid-item-card::
+
       Mounts
       ^^^
       Architecture and design of the ``score_mounts`` bridge extension.
@@ -80,4 +89,5 @@ Extensions
    Source Code Linker <source_code_linker>
    Extension Guide <extension_guide>
    Sync TOML <sync_toml>
+   Module Verification Report <module_verification_report>
    mounts_internals
