@@ -336,6 +336,7 @@ def docs(
         visibility = ["//visibility:private"],
         data = data + external_needs + metamodel_label + [":docs_bundle"],
         deps = deps,
+        tags = ["manual"]
     )
 
     known_good_label = [known_good] if known_good else []
@@ -350,6 +351,7 @@ def docs(
         scan_code = scan_code,
         code_targets = code_targets,
         visibility = ["//visibility:public"],
+        tags = ["manual"]
     )
     sphinx_sources = bundle_source_files(
         name = "_docs_sphinx_sources",
