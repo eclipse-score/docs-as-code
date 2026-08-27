@@ -18,16 +18,21 @@ from docutils import nodes
 from docutils.statemachine import ViewList
 from sphinx.util.docutils import SphinxDirective
 
-# ``:template:`` is a Sphinx-Needs core option, so score_metamodel's option
-# check accepts it on a metamodel-defined need type. It selects
+# ``:post_template:`` is a Sphinx-Needs core option, so score_metamodel's
+# option check accepts it on a metamodel-defined need type. It selects
 # ``src/needs_templates/mod_ver_report.need``, which renders the whole report
 # body from the need's own fields — this directive emits the need, nothing more.
+#
+# Post-content, not content: a need's *content* cannot open new sections
+# ("Unexpected section title"), so a ``:template:`` body could only use
+# ``.. rubric::`` and would produce no TOC entries. Post-content is placed
+# after the need at document level, where real section headings work.
 NEEDS_TEMPLATE_NAME = "mod_ver_report"
 
 MOD_VER_REPORT_TEMPLATE = """\
 .. mod_ver_report:: {title}
    :id: {report_id}
-   :template: {template_name}
+   :post_template: {template_name}
    :version: {version}
    :safety: {safety}
    :security: {security}

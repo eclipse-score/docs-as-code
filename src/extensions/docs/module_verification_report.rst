@@ -130,42 +130,11 @@ build runs Sphinx with ``-W`` (warnings treated as errors), any such
 mismatch aborts the build instead of silently producing an inconsistent
 report.
 
-Graph consistency
------------------
-
-Because the emitted need records which architecture needs the report
-describes, the report can be cross-checked against them. That is done by
-``score_metamodel``'s ``check_mod_ver_report_links`` graph check
-(``src/extensions/score_metamodel/checks/mod_ver_report_checks.py``), which
-runs together with every other metamodel check — there is no separate
-build-finished pass any more.
-
-It enforces two rules per ``mod_ver_report`` need:
-
-#. The need's ``components`` and the module's ``:includes:`` must be the same
-   set. The report and the module are two independent statements about which
-   components make up the module; if they disagree, one of them is stale. Both
-   directions are warnings: a report that skips a component of its module is
-   exactly as wrong as one that describes a component the module does not
-   have.
-#. Every listed component must ``:belongs_to:`` one of the listed features. A
-   report naming ``:features: feat__x`` and ``:components: comp__y`` asserts
-   that ``comp__y`` is part of ``feat__x``; the ``.. comp::`` need has to say
-   so too.
-
-Ids in ``:components:`` or ``:features:`` that do not resolve to a need are
-reported as well. Every problem is reported as a warning rather than raised,
-so one build surfaces all of them.
-
-Like every other graph check, it can be disabled or run in isolation via the
-``score_metamodel_checks`` config value, e.g.
-``score_metamodel_checks = "check_mod_ver_report_links"``.
-
 The report template
 -------------------
 
-The body lives in ``src/needs_templates/mod_ver_report.need`` and is rendered
-by Sphinx-Needs, not by this extension. Two consequences are worth knowing:
+The body lives in ``src/needs_templates/mod_ver_report.need``, a Jinja
+template rendered by Sphinx-Needs. Two properties of that mechanism shape it:
 
 *Templates render during the read phase*, when the need is created and the
 needs graph does not exist yet. The template therefore never looks other needs
@@ -174,33 +143,32 @@ itself, derives component slugs and titles from the ids by string
 manipulation, and leaves everything else to ``needtable`` / ``needpie``, which
 resolve at write time.
 
-*A need's content cannot open new sections*, so the report uses
-``.. rubric::`` where a standalone page would use headings. Rubrics carry no
-TOC entries; each component section is still a link target
-(``comp-<slug-with-dashes>``).
+*A need's content cannot open new sections* — docutils rejects them with
+"Unexpected section title". The template is therefore applied as
+``:post_template:``, not ``:template:``: post-content is placed after the need
+at document level, where real section headings work. That is what gives the
+report its TOC entries and per-component navigation. Each component section is
+additionally a stable link target (``comp-<slug-with-dashes>``).
+
+The heading levels are ``-`` for ``Feature`` and ``Components``, ``~`` for
+``Component Overview`` and each component, and ``^`` for the subsections
+within a feature or component.
 
 Graph consistency
 -----------------
 
-Because the emitted need records which architecture needs the report
-describes, the report can be cross-checked against them. That is done by
-``score_metamodel``'s ``check_mod_ver_report_links`` graph check
-(``src/extensions/score_metamodel/checks/mod_ver_report_checks.py``), which
-runs together with every other metamodel check — there is no separate
-build-finished pass any more.
-
-It enforces two rules per ``mod_ver_report`` need:
+Because the need records which architecture needs the report describes, it can
+be cross-checked against them. ``score_metamodel``'s
+``check_mod_ver_report_links`` graph check enforces, per report:
 
 #. The need's ``components`` and the module's ``:includes:`` must be the same
    set. The report and the module are two independent statements about which
    components make up the module; if they disagree, one of them is stale. Both
-   directions are warnings: a report that skips a component of its module is
-   exactly as wrong as one that describes a component the module does not
-   have.
-#. Every listed component must ``:belongs_to:`` one of the listed features. A
-   report naming ``:features: feat__x`` and ``:components: comp__y`` asserts
-   that ``comp__y`` is part of ``feat__x``; the ``.. comp::`` need has to say
-   so too.
+   directions are reported, independently.
+#. Every feature a listed component ``belongs_to`` must itself appear in
+   ``:features:``. A report spanning several features is fine; a component
+   whose feature the report never mentions is not, because the feature-level
+   statistics would silently omit it.
 
 Ids in ``:components:`` or ``:features:`` that do not resolve to a need are
 reported as well. Every problem is reported as a warning rather than raised,
@@ -209,21 +177,3 @@ so one build surfaces all of them.
 Like every other graph check, it can be disabled or run in isolation via the
 ``score_metamodel_checks`` config value, e.g.
 ``score_metamodel_checks = "check_mod_ver_report_links"``.
-
-The report template
--------------------
-
-The body lives in ``src/needs_templates/mod_ver_report.need`` and is rendered
-by Sphinx-Needs, not by this extension. Two consequences are worth knowing:
-
-*Templates render during the read phase*, when the need is created and the
-needs graph does not exist yet. The template therefore never looks other needs
-up. It reads ``belongs_to`` / ``components`` / ``features`` off the need
-itself, derives component slugs and titles from the ids by string
-manipulation, and leaves everything else to ``needtable`` / ``needpie``, which
-resolve at write time.
-
-*A need's content cannot open new sections*, so the report uses
-``.. rubric::`` where a standalone page would use headings. Rubrics carry no
-TOC entries; each component section is still a link target
-(``comp-<slug-with-dashes>``).

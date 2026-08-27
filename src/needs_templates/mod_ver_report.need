@@ -11,8 +11,11 @@
   else is delegated to ``needtable`` / ``needpie``, which resolve at write
   time.
 
-  Sections are ``.. rubric::`` rather than real headings: the template renders
-  *inside* a need, where docutils does not allow new sections.
+  The template is applied as ``:post_template:``, not ``:template:``. A need's
+  *content* cannot open new sections ("Unexpected section title"), but
+  post-content is placed after the need at document level, where real headings
+  work — and real headings are what give the report its TOC entries and
+  per-component navigation.
 #}
 {% set module_id = belongs_to|first|default("") %}
 {% set module_short = module_id|replace("mod__", "") %}
@@ -81,14 +84,16 @@
 {% set feature_slug = feature_id|replace("feat__", "") %}
 {% set feature_slug_norm = feature_slug|replace("_", "")|lower %}
 
-.. rubric:: {% if features|length == 1 %}Feature{% else %}Feature: {{ feature_slug|replace("_", " ")|title }}{% endif %}
+{% set feature_heading = "Feature" if features|length == 1 else "Feature: " ~ feature_slug|replace("_", " ")|title %}{{ feature_heading }}
+{{ "-" * (feature_heading|length) }}
 
 .. needtable::
    :filter: id == "{{ feature_id }}"
    :columns: title as "Name";id as "Id";safety;security;status
    :style: table
 
-.. rubric:: Feature Requirements Statistics
+Feature Requirements Statistics
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. grid:: 1 2 2 2
    :gutter: 3
@@ -124,7 +129,8 @@
       :colwidths: 13,22,8,10,23,24
       :sort: id
 
-.. rubric:: Feature Architecture Statistics
+Feature Architecture Statistics
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. grid:: 1 2 2 2
    :gutter: 3
@@ -159,7 +165,8 @@
       :colwidths: 25,30,10,15,20
       :sort: id
 
-.. rubric:: Feature Inspection Statistics
+Feature Inspection Statistics
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Presence of the feature-level inspection work products.
 
@@ -182,9 +189,11 @@ Presence of the feature-level inspection work products.
 {#- Components                                                             -#}
 {#- ===================================================================== -#}
 
-.. rubric:: Components
+Components
+----------
 
-.. rubric:: Component Overview
+Component Overview
+~~~~~~~~~~~~~~~~~~
 
 .. needtable::
    :filter: id in [{% for c in components %}"{{ c }}"{% if not loop.last %}, {% endif %}{% endfor %}]
@@ -199,13 +208,15 @@ Presence of the feature-level inspection work products.
 
 .. _comp-{{ component_slug|replace("_", "-")|lower }}:
 
-.. rubric:: {{ component_title }}
+{{ component_title }}
+{{ "~" * (component_title|length) }}
 
 .. raw:: html
 
    <hr style="border-top: 2px solid #333333; margin: 0.5em 0 1.5em 0;">
 
-.. rubric:: Component Requirements Statistics
+Component Requirements Statistics
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. grid:: 1 2 2 2
    :gutter: 3
@@ -231,7 +242,8 @@ Presence of the feature-level inspection work products.
          type == "comp_req" and "{{ component_id }}" in satisfied_by and ("partially_verifies_back" in locals() and len(partially_verifies_back) > 0) and not ("fully_verifies_back" in locals() and len(fully_verifies_back) > 0)
          type == "comp_req" and "{{ component_id }}" in satisfied_by and not ("fully_verifies_back" in locals() and len(fully_verifies_back) > 0) and not ("partially_verifies_back" in locals() and len(partially_verifies_back) > 0)
 
-.. rubric:: Component Architecture Statistics
+Component Architecture Statistics
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. grid:: 1 2 2 2
    :gutter: 3
@@ -256,7 +268,8 @@ Presence of the feature-level inspection work products.
          type in ["comp_arc_sta", "comp_arc_dyn"] and "{{ component_id }}" in belongs_to and "inspected" in tags
          type in ["comp_arc_sta", "comp_arc_dyn"] and "{{ component_id }}" in belongs_to and "inspected" not in tags
 
-.. rubric:: Requirements Traceability
+Requirements Traceability
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The following table lists all requirements of this component together with their
 verification status and the tests that (fully or partially) verify them:
@@ -271,7 +284,8 @@ verification status and the tests that (fully or partially) verify them:
       :colwidths: 13,22,8,10,23,24
       :sort: id
 
-.. rubric:: Architectural Elements
+Architectural Elements
+^^^^^^^^^^^^^^^^^^^^^^
 
 The following table lists the architectural elements of this component
 together with their inspection status. Elements that have been formally
@@ -288,7 +302,8 @@ yet been inspected.
       :colwidths: 25,30,10,15,20
       :sort: id
 
-.. rubric:: Verification & Safety Analysis Documents
+Verification & Safety Analysis Documents
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Presence of the standard verification and safety analysis work products for
 this component. A dash (``—``) means the corresponding document is missing.

@@ -59,7 +59,7 @@ def test_feature_section_uses_the_features_link() -> None:
 
 def test_single_feature_keeps_the_plain_heading() -> None:
     out = _render()
-    assert ".. rubric:: Feature\n" in out
+    assert "Feature\n-------\n" in out
     assert "Feature: " not in out
 
 
@@ -67,15 +67,15 @@ def test_one_section_per_feature_with_qualified_headings() -> None:
     out = _render(features=["feat__demo_one", "feat__demo_two"])
     assert 'id == "feat__demo_one"' in out
     assert 'id == "feat__demo_two"' in out
-    assert ".. rubric:: Feature: Demo One" in out
-    assert ".. rubric:: Feature: Demo Two" in out
+    assert "Feature: Demo One\n" + "-" * len("Feature: Demo One") in out
+    assert "Feature: Demo Two\n" + "-" * len("Feature: Demo Two") in out
 
 
 def test_feature_workproducts_match_on_the_feature_slug() -> None:
     out = _render(features=["feat__baselibs"])
     assert '"baselibs" in id.replace("_", "").lower()' in out
     # The feature table carries only the two feature-level work products.
-    feature_block = out[: out.index(".. rubric:: Components")]
+    feature_block = out[: out.index("Components\n----------")]
     assert "wp__requirements_inspect" in feature_block
     assert "wp__sw_arch_verification" in feature_block
     assert "wp__sw_component_fmea" not in feature_block
@@ -97,9 +97,9 @@ def test_component_overview_lists_exactly_the_linked_components() -> None:
 def test_component_title_and_anchor_derive_from_the_id() -> None:
     out = _render()
     assert ".. _comp-bit-manipulation:" in out
-    assert ".. rubric:: Bit Manipulation" in out
+    assert "Bit Manipulation\n" + "~" * len("Bit Manipulation") in out
     assert ".. _comp-json:" in out
-    assert ".. rubric:: Json" in out
+    assert "Json\n~~~~" in out
 
 
 def test_every_component_gets_the_full_set_of_workproducts() -> None:
@@ -142,7 +142,8 @@ def test_needpie_filters_guard_against_missing_verify_fields() -> None:
     ],
 )
 def test_all_report_sections_are_present(rubric: str) -> None:
-    assert f".. rubric:: {rubric}" in _render()
+    """Every section must be a real heading — rubrics produce no TOC entries."""
+    assert f"{rubric}\n" in _render()
 
 
 def test_list_tables_have_a_consistent_number_of_fields_per_row() -> None:
@@ -179,3 +180,25 @@ def test_no_unrendered_jinja_remains() -> None:
     out = _render()
     for marker in ("{{", "}}", "{%", "%}"):
         assert marker not in out, marker
+
+
+def test_no_rubrics_are_used() -> None:
+    """A rubric is not a section: it yields no TOC entry and no anchor."""
+    assert ".. rubric::" not in _render()
+
+
+def test_every_heading_underline_is_long_enough() -> None:
+    """A short underline makes docutils drop the section (and its TOC entry)."""
+    lines = _render().splitlines()
+    headings = 0
+    for title, underline in zip(lines, lines[1:], strict=False):
+        if not underline or set(underline) - set("-~^") or not title.strip():
+            continue
+        if len(set(underline)) != 1 or len(underline) < 3:
+            continue
+        assert len(underline) >= len(title.rstrip()), (
+            f"underline too short for {title!r}"
+        )
+        headings += 1
+    # 3 feature + Components + Component Overview + 2x(title + 5 subsections)
+    assert headings >= 15, headings

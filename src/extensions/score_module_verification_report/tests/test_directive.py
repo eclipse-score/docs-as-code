@@ -142,7 +142,7 @@ def test_emitted_need_carries_every_field():
     for expected in (
         ".. mod_ver_report:: Demo Verification Report",
         ":id: mod_vrep__demo__report",
-        ":template: mod_ver_report",
+        ":post_template: mod_ver_report",
         ":version: 1",
         ":safety: QM",
         ":security: YES",
