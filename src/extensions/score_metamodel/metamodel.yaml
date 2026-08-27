@@ -1143,6 +1143,20 @@ needs_extra_links:
     incoming: evidence_for
     outgoing: evidence
 
+  # req-Id: tool_req__docs_verification_report_need
+  # Mandatory links of `mod_ver_report`: the architecture needs a module
+  # verification report describes. They must be declared here as well, not just
+  # in the need type's `mandatory_links` — sphinx-needs only creates a
+  # directive option for links listed in `needs_extra_links`, and silently
+  # drops the value of any option it does not know.
+  components:
+    incoming: component_reported_by
+    outgoing: components
+
+  features:
+    incoming: feature_reported_by
+    outgoing: features
+
 
 ##############################################################
 # Graph Checks

@@ -34,6 +34,7 @@ Typical usage (``verification_report/module_verification_report.rst``):
 .. code-block:: rst
 
    .. module-verification-report::
+      :id: mod_vrep__mymodule__report
       :module-id: mod__mymodule
       :components: comp__mymodule_a, comp__mymodule_b
       :features: feat__mymodule
@@ -54,6 +55,13 @@ Options
    * - Option
      - Required
      - Description
+
+   * - ``:id:``
+     - yes
+     - Id of the generated ``mod_ver_report`` need, used verbatim. Must
+       follow the 3-part scheme the need type requires
+       (``mod_vrep__<abbrev>__<element>``); ``score_metamodel`` validates it
+       like any other need id.
 
    * - ``:module-id:``
      - yes
@@ -104,8 +112,8 @@ Metamodel validation
 
 ``:safety:``, ``:security:``, ``:status:``, ``:verification-method:`` and
 ``:version:`` are not just directive options — the directive uses them to
-emit a single sphinx-needs ``mod_ver_report`` need (id
-``mod_vrep__<module-short>__report``, linked ``belongs_to`` the module's
+emit a single sphinx-needs ``mod_ver_report`` need (id taken from
+``:id:``, linked ``belongs_to`` the module's
 ``.. mod::`` need). ``:components:`` and ``:features:`` are passed straight
 through to the need's ``components`` and ``features`` links, which
 ``metamodel.yaml`` declares mandatory and types to ``comp`` / ``feat``. This

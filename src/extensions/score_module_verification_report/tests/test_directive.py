@@ -22,7 +22,7 @@ from __future__ import annotations
 from src.extensions.score_module_verification_report.directive import (
     _MOD_VER_REPORT_LINKS,
     _MOD_VER_REPORT_OPTIONS,
-    _mod_ver_report_id_and_title,
+    _mod_ver_report_title,
     _parse_ids,
 )
 
@@ -65,22 +65,27 @@ def test_parse_is_type_agnostic():
 
 
 # ---------------------------------------------------------------------------
-# _mod_ver_report_id_and_title
+# _mod_ver_report_title
 # ---------------------------------------------------------------------------
 
 
-def test_id_and_title_derived_from_module_slug():
-    need_id, title = _mod_ver_report_id_and_title("baselibs")
-    assert need_id == "mod_vrep__baselibs__report"
-    assert title == "Baselibs Verification Report"
+def test_title_derived_from_module_slug():
+    assert _mod_ver_report_title("baselibs") == "Baselibs Verification Report"
 
 
-def test_id_keeps_exactly_two_separators_for_multiword_modules():
-    """``mod_ver_report`` declares ``parts: 3`` — no more, no less."""
-    need_id, title = _mod_ver_report_id_and_title("my_module")
-    assert need_id.count("__") == 2
-    assert need_id == "mod_vrep__my_module__report"
-    assert title == "My Module Verification Report"
+def test_title_title_cases_multiword_modules():
+    assert _mod_ver_report_title("my_module") == "My Module Verification Report"
+
+
+def test_id_is_not_derived():
+    """The need id comes from the author's :id:, never from the module slug."""
+    import inspect
+
+    from src.extensions.score_module_verification_report import directive
+
+    source = inspect.getsource(directive.ModuleVerificationReportDirective.run)
+    assert 'report_id = self.options["id"]' in source
+    assert "mod_vrep__" not in source
 
 
 # ---------------------------------------------------------------------------
@@ -94,7 +99,9 @@ def test_components_and_features_are_the_mandatory_links():
 
 
 def test_mandatory_options_match_the_need_type():
+    """:id: is required too — the directive no longer invents one."""
     assert _MOD_VER_REPORT_OPTIONS == (
+        "id",
         "safety",
         "security",
         "status",

@@ -20,7 +20,7 @@ from src.extensions.score_module_verification_report.rendering import (
 
 _ARGS = dict(
     module_id="mod__demo",
-    report_id="mod_vrep__demo__report",
+    report_id="mod_vrep__demo__report",  # supplied by the directive's :id:
     title="Demo Verification Report",
     safety="QM",
     security="YES",

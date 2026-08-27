@@ -15,6 +15,7 @@
 Usage in RST::
 
     .. module-verification-report::
+       :id: mod_vrep__baselibs__report
        :module-id: mod__baselibs
        :features: feat__baselibs
        :safety: ASIL_B

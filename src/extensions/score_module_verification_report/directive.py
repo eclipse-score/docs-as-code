@@ -44,7 +44,7 @@ def _parse_ids(ids_str: str) -> list[str]:
 
 # Mandatory options every ``mod_ver_report`` need requires (see
 # metamodel.yaml) that this directive cannot derive on its own.
-_MOD_VER_REPORT_OPTIONS = ("safety", "security", "status", "verification-method")
+_MOD_VER_REPORT_OPTIONS = ("id", "safety", "security", "status", "verification-method")
 
 # Mandatory *links* of the ``mod_ver_report`` need type. Both are populated
 # from the directive option of the same name, so the option is required too —
@@ -54,17 +54,16 @@ _MOD_VER_REPORT_OPTIONS = ("safety", "security", "status", "verification-method"
 _MOD_VER_REPORT_LINKS = ("components", "features")
 
 
-def _mod_ver_report_id_and_title(module_short: str) -> tuple[str, str]:
-    """Derive the ``mod_vrep__...`` need id and its human-readable title
-    from the module slug.
+def _mod_ver_report_title(module_short: str) -> str:
+    """Derive the report's human-readable title from the module slug.
 
-    The id follows the ``<Req Type>__<Abbreviations>__<Architectural
-    Element>`` scheme mandated for 3-part need types (``mod_ver_report``
-    declares ``parts: 3`` in metamodel.yaml), so exactly two ``__``
-    separators are required: ``mod_vrep__<module_short>__report``.
+    Only the display title is derived. The need's id comes from the
+    directive's ``:id:`` option and is passed through untouched, so the
+    author stays in control of it — ``mod_ver_report`` declares
+    ``parts: 3`` in metamodel.yaml, and the metamodel's id checks report a
+    value that does not follow that scheme.
     """
-    title_case = module_short.replace("_", " ").title()
-    return f"mod_vrep__{module_short}__report", f"{title_case} Verification Report"
+    return f"{module_short.replace('_', ' ').title()} Verification Report"
 
 
 class ModuleVerificationReportDirective(SphinxDirective):
@@ -73,6 +72,7 @@ class ModuleVerificationReportDirective(SphinxDirective):
     Usage::
 
         .. module-verification-report::
+           :id: mod_vrep__mymodule__report
            :module-id: mod__mymodule
            :components: comp__mymodule_a, comp__mymodule_b
            :features: feat__mymodule
@@ -83,8 +83,9 @@ class ModuleVerificationReportDirective(SphinxDirective):
 
     Every option is required: each maps onto a mandatory option or link of the
     sphinx-needs ``mod_ver_report`` need type (see metamodel.yaml). The
-    directive is a shorthand — it derives the need's id and title from
-    ``:module-id:`` and passes the rest straight through.
+    directive is a shorthand — ``:id:`` becomes the need's id verbatim, the
+    title is derived from ``:module-id:``, and the rest is passed straight
+    through.
 
     The report *body* is not generated here. The emitted need selects the
     ``mod_ver_report`` content template
@@ -95,6 +96,7 @@ class ModuleVerificationReportDirective(SphinxDirective):
     required_arguments = 0
     optional_arguments = 0
     option_spec = {
+        "id": str,
         "module-id": str,
         "components": str,
         "features": str,
@@ -144,7 +146,8 @@ class ModuleVerificationReportDirective(SphinxDirective):
                 "generate the mod_ver_report need"
             )
 
-        report_id, report_title = _mod_ver_report_id_and_title(module_short)
+        report_id = self.options["id"]
+        report_title = _mod_ver_report_title(module_short)
         rst_text = render_mod_ver_report(
             module_id=module_id,
             report_id=report_id,
