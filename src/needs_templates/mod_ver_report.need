@@ -11,11 +11,6 @@
   else is delegated to ``needtable`` / ``needpie``, which resolve at write
   time.
 
-  The single exception is coverage: LCOV data lives on disk, not in the graph.
-  ``score_module_verification_report`` puts a ``mvr_coverage(slug)`` helper into
-  ``needs_render_context``; it returns ready-made ``list-table`` rows for the
-  component, or an empty string when there is no data.
-
   Sections are ``.. rubric::`` rather than real headings: the template renders
   *inside* a need, where docutils does not allow new sections.
 #}
@@ -275,37 +270,6 @@ verification status and the tests that (fully or partially) verify them:
       :columns: id;title;safety;status;fully_verifies_back;partially_verifies_back
       :colwidths: 13,22,8,10,23,24
       :sort: id
-
-.. rubric:: Test Coverage
-
-Per-source-file line and branch coverage aggregated from the LCOV report
-produced by ``bazel coverage``.
-
-.. dropdown:: Show test coverage table
-   :animate: fade-in
-{%- set coverage_body = mvr_coverage(component_slug_norm) %}
-{%- if coverage_body %}
-
-   .. list-table::
-      :header-rows: 1
-      :widths: 45 10 10 10 10 10 10
-
-      * - Source
-        - Lines found
-        - Lines hit
-        - Line %
-        - Branches found
-        - Branches hit
-        - Branch %
-{{ coverage_body }}
-{%- else %}
-
-   .. note::
-
-      No coverage data available for this component. Run ``bazel coverage``
-      with the corresponding targets and rebuild the docs to populate this
-      table.
-{%- endif %}
 
 .. rubric:: Architectural Elements
 

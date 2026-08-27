@@ -14,54 +14,63 @@
 
 from __future__ import annotations
 
-import re
-
 from docutils import nodes
 from docutils.statemachine import ViewList
 from sphinx.util.docutils import SphinxDirective
-from sphinx.util.nodes import nested_parse_with_titles
 
-from .rendering import render_mod_ver_report
+# ``:template:`` is a Sphinx-Needs core option, so score_metamodel's option
+# check accepts it on a metamodel-defined need type. It selects
+# ``src/needs_templates/mod_ver_report.need``, which renders the whole report
+# body from the need's own fields — this directive emits the need, nothing more.
+NEEDS_TEMPLATE_NAME = "mod_ver_report"
 
-# Strip an optional ``[version==N]`` qualifier from a need id.
-_VERSION_QUALIFIER_RE = re.compile(r"\[version==\d+\]$")
+MOD_VER_REPORT_TEMPLATE = """\
+.. mod_ver_report:: {title}
+   :id: {report_id}
+   :template: {template_name}
+   :version: {version}
+   :safety: {safety}
+   :security: {security}
+   :status: {status}
+   :verification_method: {verification_method}
+   :belongs_to: {module_id}
+   :components: {components}
+   :features: {features}
+
+"""
+
+# Every option the directive requires. Each maps onto a mandatory option or
+# link of the ``mod_ver_report`` need type (see metamodel.yaml), so none of
+# them can be defaulted: guessing a traceability link would silently produce a
+# dangling one whenever the guess is wrong.
+_REQUIRED_OPTIONS = (
+    "id",
+    "module-id",
+    "components",
+    "features",
+    "safety",
+    "security",
+    "status",
+    "verification-method",
+)
 
 
-def _parse_ids(ids_str: str) -> list[str]:
-    """Parse a comma-separated option value into a list of need ids.
+def _join_ids(ids_str: str) -> str:
+    """Normalise a comma-separated option value onto a single line.
 
-    Multi-line values are supported (docutils folds them into one string) and
-    an optional ``[version==N]`` qualifier is stripped silently — the report
-    does not filter by version.
+    Multi-line values are supported — docutils folds them into one string with
+    newlines, which would break the emitted option. Version qualifiers such as
+    ``[version==1]`` are passed through: Sphinx-Needs parses them itself, and
+    stripping them here would silently drop the constraint.
     """
-    ids = []
-    for raw in ids_str.split(","):
-        need_id = _VERSION_QUALIFIER_RE.sub("", raw.strip())
-        if need_id:
-            ids.append(need_id)
-    return ids
+    return ", ".join(part.strip() for part in ids_str.split(",") if part.strip())
 
 
-# Mandatory options every ``mod_ver_report`` need requires (see
-# metamodel.yaml) that this directive cannot derive on its own.
-_MOD_VER_REPORT_OPTIONS = ("id", "safety", "security", "status", "verification-method")
-
-# Mandatory *links* of the ``mod_ver_report`` need type. Both are populated
-# from the directive option of the same name, so the option is required too —
-# guessing a traceability link (e.g. deriving ``feat__<module>`` from
-# ``:module-id:``) would silently produce a dangling link whenever the guess
-# is wrong.
-_MOD_VER_REPORT_LINKS = ("components", "features")
-
-
-def _mod_ver_report_title(module_short: str) -> str:
+def _report_title(module_short: str) -> str:
     """Derive the report's human-readable title from the module slug.
 
-    Only the display title is derived. The need's id comes from the
-    directive's ``:id:`` option and is passed through untouched, so the
-    author stays in control of it — ``mod_ver_report`` declares
-    ``parts: 3`` in metamodel.yaml, and the metamodel's id checks report a
-    value that does not follow that scheme.
+    Only the display title is derived. The need's id comes from ``:id:`` and is
+    passed through untouched, so the author stays in control of it.
     """
     return f"{module_short.replace('_', ' ').title()} Verification Report"
 
@@ -81,92 +90,59 @@ class ModuleVerificationReportDirective(SphinxDirective):
            :status: valid
            :verification-method: test_and_inspection
 
-    Every option is required: each maps onto a mandatory option or link of the
-    sphinx-needs ``mod_ver_report`` need type (see metamodel.yaml). The
-    directive is a shorthand — ``:id:`` becomes the need's id verbatim, the
-    title is derived from ``:module-id:``, and the rest is passed straight
-    through.
+    Every option is required. The directive is a shorthand: ``:id:`` becomes
+    the need's id verbatim, the title is derived from ``:module-id:``, and the
+    rest is passed straight through.
 
-    The report *body* is not generated here. The emitted need selects the
-    ``mod_ver_report`` content template
-    (``src/needs_templates/mod_ver_report.need``), which Sphinx-Needs renders
-    from the need's own fields.
+    The report *body* is not generated here — the emitted need selects the
+    ``mod_ver_report`` content template, which Sphinx-Needs renders from the
+    need's own fields.
     """
 
     required_arguments = 0
     optional_arguments = 0
-    option_spec = {
-        "id": str,
-        "module-id": str,
-        "components": str,
-        "features": str,
-        "safety": str,
-        "security": str,
-        "status": str,
-        "verification-method": str,
-        "version": str,
-    }
+    option_spec = {opt: str for opt in _REQUIRED_OPTIONS} | {"version": str}
     has_content = False
 
-    def _error(self, message: str) -> list[nodes.Node]:
-        return [
-            self.state_machine.reporter.error(
-                f"module-verification-report: {message}", line=self.lineno
-            )
-        ]
-
     def run(self) -> list[nodes.Node]:
-        module_id = self.options.get("module-id", "")
+        missing = [opt for opt in _REQUIRED_OPTIONS if not self.options.get(opt)]
+        if missing:
+            # Report here, where the author can see which directive is at
+            # fault, rather than as a metamodel warning about a generated need.
+            return [
+                self.state_machine.reporter.error(
+                    "module-verification-report: missing mandatory option(s) "
+                    f"{', '.join(':' + m + ':' for m in missing)} required to "
+                    "generate the mod_ver_report need",
+                    line=self.lineno,
+                )
+            ]
+
+        module_id = self.options["module-id"]
         module_short = (
             module_id[len("mod__") :] if module_id.startswith("mod__") else module_id
         )
-
-        parsed_links = {
-            name: _parse_ids(self.options.get(name, ""))
-            for name in _MOD_VER_REPORT_LINKS
-        }
-
-        # ``components`` and ``features`` are mandatory links of the
-        # mod_ver_report need type, so an empty list cannot produce a valid
-        # need — report it here, where the author can see which directive is
-        # at fault, rather than as a metamodel warning about a generated need.
-        empty_links = [n for n in _MOD_VER_REPORT_LINKS if not parsed_links[n]]
-        if empty_links:
-            return self._error(
-                f"no {' or '.join(empty_links)} specified — add "
-                + " and ".join(f"':{name}: <id>, ...'" for name in empty_links)
-                + " to the directive"
-            )
-
-        missing = [opt for opt in _MOD_VER_REPORT_OPTIONS if not self.options.get(opt)]
-        if missing:
-            return self._error(
-                "missing mandatory option(s) "
-                f"{', '.join(':' + m + ':' for m in missing)} required to "
-                "generate the mod_ver_report need"
-            )
-
-        report_id = self.options["id"]
-        report_title = _mod_ver_report_title(module_short)
-        rst_text = render_mod_ver_report(
-            module_id=module_id,
-            report_id=report_id,
-            title=report_title,
+        rst_text = MOD_VER_REPORT_TEMPLATE.format(
+            title=_report_title(module_short),
+            report_id=self.options["id"],
+            template_name=NEEDS_TEMPLATE_NAME,
+            version=self.options.get("version", "1"),
             safety=self.options["safety"],
             security=self.options["security"],
             status=self.options["status"],
             verification_method=self.options["verification-method"],
-            version=self.options.get("version", "1"),
-            components=parsed_links["components"],
-            features=parsed_links["features"],
+            module_id=module_id,
+            components=_join_ids(self.options["components"]),
+            features=_join_ids(self.options["features"]),
         )
 
         view_list = ViewList()
-        source = "<module-verification-report>"
         for lineno, line in enumerate(rst_text.splitlines()):
-            view_list.append(line, source, lineno)
+            view_list.append(line, "<module-verification-report>", lineno)
 
+        # A plain nested_parse is enough: the emitted block is a single
+        # directive with no section titles.
         container = nodes.container()
         container.document = self.state.document
-        nested_parse_with_titles(self.state, view_list, container)  # type: ignore[arg-type]
+        self.state.nested_parse(view_list, self.content_offset, container)
         return container.children

@@ -10,81 +10,88 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-"""Unit tests for the option parsing and id derivation in
-:mod:`score_module_verification_report.directive`.
+"""Unit tests for :mod:`score_module_verification_report.directive`.
 
 The directive needs a full Sphinx environment to instantiate, so the pure
-helpers are tested in isolation.
+helpers and the emitted RST are tested in isolation.
 """
 
 from __future__ import annotations
 
 from src.extensions.score_module_verification_report.directive import (
-    _MOD_VER_REPORT_LINKS,
-    _MOD_VER_REPORT_OPTIONS,
-    _mod_ver_report_title,
-    _parse_ids,
+    _REQUIRED_OPTIONS,
+    MOD_VER_REPORT_TEMPLATE,
+    NEEDS_TEMPLATE_NAME,
+    _join_ids,
+    _report_title,
 )
 
 # ---------------------------------------------------------------------------
-# _parse_ids
+# _join_ids
 # ---------------------------------------------------------------------------
 
 
-def test_parse_single_id():
-    assert _parse_ids("comp__mymod_json") == ["comp__mymod_json"]
+def test_join_single_id():
+    assert _join_ids("comp__mymod_json") == "comp__mymod_json"
 
 
-def test_parse_multiple_ids_preserves_order():
-    result = _parse_ids("comp__mymod_json, comp__mymod_bit_manipulation")
-    assert result == ["comp__mymod_json", "comp__mymod_bit_manipulation"]
+def test_join_normalises_spacing_and_order():
+    assert (
+        _join_ids("comp__mymod_json,comp__mymod_bits")
+        == "comp__mymod_json, comp__mymod_bits"
+    )
 
 
-def test_parse_handles_multiline_values():
-    """docutils folds a multi-line option value into one string."""
-    assert _parse_ids("comp__m_json,\n   comp__m_result\n") == [
-        "comp__m_json",
-        "comp__m_result",
-    ]
+def test_join_folds_multiline_values_onto_one_line():
+    """docutils folds a multi-line option value into one string with newlines.
+
+    They must not survive into the emitted option or the RST breaks.
+    """
+    result = _join_ids("comp__m_json,\n   comp__m_result\n")
+    assert result == "comp__m_json, comp__m_result"
+    assert "\n" not in result
 
 
-def test_parse_strips_version_qualifier():
-    result = _parse_ids("comp__m_json[version==1], comp__m_result[version==2]")
-    assert result == ["comp__m_json", "comp__m_result"]
+def test_join_preserves_version_qualifiers():
+    """Sphinx-Needs parses ``id[version==N]`` itself; stripping loses it."""
+    assert (
+        _join_ids("comp__m_json[version==1], comp__m_result")
+        == "comp__m_json[version==1], comp__m_result"
+    )
 
 
-def test_parse_skips_empty_entries():
-    assert _parse_ids("comp__m_json,  ,  ") == ["comp__m_json"]
-    assert _parse_ids("") == []
-    assert _parse_ids("  ,  ") == []
+def test_join_skips_empty_entries():
+    assert _join_ids("comp__m_json,  ,  ") == "comp__m_json"
+    assert _join_ids("") == ""
+    assert _join_ids("  ,  ") == ""
 
 
-def test_parse_is_type_agnostic():
-    """The same parser serves :components: and :features:."""
-    assert _parse_ids("feat__one, feat__two") == ["feat__one", "feat__two"]
+def test_join_is_type_agnostic():
+    """The same helper serves :components: and :features:."""
+    assert _join_ids("feat__one, feat__two") == "feat__one, feat__two"
 
 
 # ---------------------------------------------------------------------------
-# _mod_ver_report_title
+# _report_title
 # ---------------------------------------------------------------------------
 
 
 def test_title_derived_from_module_slug():
-    assert _mod_ver_report_title("baselibs") == "Baselibs Verification Report"
+    assert _report_title("baselibs") == "Baselibs Verification Report"
 
 
 def test_title_title_cases_multiword_modules():
-    assert _mod_ver_report_title("my_module") == "My Module Verification Report"
+    assert _report_title("my_module") == "My Module Verification Report"
 
 
-def test_id_is_not_derived():
+def test_id_is_never_derived():
     """The need id comes from the author's :id:, never from the module slug."""
     import inspect
 
     from src.extensions.score_module_verification_report import directive
 
     source = inspect.getsource(directive.ModuleVerificationReportDirective.run)
-    assert 'report_id = self.options["id"]' in source
+    assert 'report_id=self.options["id"]' in source
     assert "mod_vrep__" not in source
 
 
@@ -93,17 +100,69 @@ def test_id_is_not_derived():
 # ---------------------------------------------------------------------------
 
 
-def test_components_and_features_are_the_mandatory_links():
-    """The directive must require exactly the need type's mandatory links."""
-    assert _MOD_VER_REPORT_LINKS == ("components", "features")
-
-
-def test_mandatory_options_match_the_need_type():
-    """:id: is required too — the directive no longer invents one."""
-    assert _MOD_VER_REPORT_OPTIONS == (
+def test_required_options_cover_every_mandatory_field_and_link():
+    """One list drives both the option spec and the missing-option error."""
+    assert _REQUIRED_OPTIONS == (
         "id",
+        "module-id",
+        "components",
+        "features",
         "safety",
         "security",
         "status",
         "verification-method",
     )
+
+
+# ---------------------------------------------------------------------------
+# Emitted RST
+# ---------------------------------------------------------------------------
+
+
+def _render(**overrides: str) -> str:
+    fields = dict(
+        title="Demo Verification Report",
+        report_id="mod_vrep__demo__report",
+        template_name=NEEDS_TEMPLATE_NAME,
+        version="1",
+        safety="QM",
+        security="YES",
+        status="valid",
+        verification_method="test_and_inspection",
+        module_id="mod__demo",
+        components="comp__demo_a, comp__demo_b",
+        features="feat__demo",
+    )
+    fields.update(overrides)
+    return MOD_VER_REPORT_TEMPLATE.format(**fields)
+
+
+def test_emitted_need_carries_every_field():
+    out = _render()
+    for expected in (
+        ".. mod_ver_report:: Demo Verification Report",
+        ":id: mod_vrep__demo__report",
+        ":template: mod_ver_report",
+        ":version: 1",
+        ":safety: QM",
+        ":security: YES",
+        ":status: valid",
+        ":verification_method: test_and_inspection",
+        ":belongs_to: mod__demo",
+        ":components: comp__demo_a, comp__demo_b",
+        ":features: feat__demo",
+    ):
+        assert expected in out
+
+
+def test_emitted_need_is_only_the_need():
+    """The body comes from the content template, not from here."""
+    out = _render()
+    assert "needtable" not in out
+    assert "needpie" not in out
+
+
+def test_every_option_stays_inside_the_directive_block():
+    body = [line for line in _render().splitlines() if line.strip()]
+    assert body[0].startswith(".. mod_ver_report::")
+    assert all(line.startswith("   :") for line in body[1:])

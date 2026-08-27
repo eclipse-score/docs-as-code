@@ -24,20 +24,9 @@ from pathlib import Path
 import pytest
 from sphinx_needs._jinja import render_template_string
 
-from src.extensions.score_module_verification_report.coverage import (
-    FileCoverage,
-    coverage_rows,
-    records_for_slug,
-)
-
 TEMPLATE = (
     Path(__file__).resolve().parents[3] / "needs_templates" / "mod_ver_report.need"
 )
-
-_COVERAGE = [
-    FileCoverage("src/json/json.cpp", 100, 96, 40, 35),
-    FileCoverage("src/json/json.h", 10, 10, 0, 0),
-]
 
 
 def _render(**overrides: object) -> str:
@@ -47,7 +36,6 @@ def _render(**overrides: object) -> str:
         "belongs_to": ["mod__baselibs"],
         "components": ["comp__baselibs_json", "comp__baselibs_bit_manipulation"],
         "features": ["feat__baselibs"],
-        "mvr_coverage": lambda slug: coverage_rows(records_for_slug(_COVERAGE, slug)),
     }
     context.update(overrides)
     return render_template_string(TEMPLATE.read_text(), context, autoescape=False)
@@ -134,33 +122,6 @@ def test_needpie_filters_guard_against_missing_verify_fields() -> None:
 
 
 # ---------------------------------------------------------------------------
-# Coverage
-# ---------------------------------------------------------------------------
-
-
-def test_coverage_table_rendered_when_data_matches() -> None:
-    out = _render(components=["comp__baselibs_json"])
-    assert "``src/json/json.cpp``" in out
-    assert "**Total**" in out
-    assert "No coverage data available" not in out
-
-
-def test_coverage_note_rendered_when_nothing_matches() -> None:
-    out = _render(components=["comp__baselibs_bit_manipulation"])
-    assert "No coverage data available" in out
-    assert "src/json/json.cpp" not in out
-
-
-def test_coverage_helper_is_called_with_the_normalised_slug() -> None:
-    seen: list[str] = []
-    _render(
-        components=["comp__baselibs_bit_manipulation"],
-        mvr_coverage=lambda slug: seen.append(slug) or "",
-    )
-    assert seen == ["bitmanipulation"]
-
-
-# ---------------------------------------------------------------------------
 # Structure
 # ---------------------------------------------------------------------------
 
@@ -176,7 +137,6 @@ def test_coverage_helper_is_called_with_the_normalised_slug() -> None:
         "Component Requirements Statistics",
         "Component Architecture Statistics",
         "Requirements Traceability",
-        "Test Coverage",
         "Architectural Elements",
         "Verification & Safety Analysis Documents",
     ],
@@ -211,8 +171,8 @@ def test_list_tables_have_a_consistent_number_of_fields_per_row() -> None:
         assert len(set(per_row)) == 1, f"ragged list-table at line {i + 1}: {per_row}"
         checked += 1
         i = j
-    # feature WPs, component overview is a needtable, 2x component WPs, coverage
-    assert checked >= 4
+    # one feature work-product table + one per component
+    assert checked >= 3
 
 
 def test_no_unrendered_jinja_remains() -> None:
