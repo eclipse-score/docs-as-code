@@ -31,6 +31,7 @@ from typing import Any
 
 import pytest
 from docutils import nodes
+from score_module_verification_report import rendering
 from sphinx.testing.util import SphinxTestApp
 
 EXTERNAL_NEEDS: dict[str, Any] = {
@@ -57,52 +58,123 @@ CONF_PY = """
 extensions = ["sphinx_needs", "score_module_verification_report"]
 needs_id_regex = "^[a-zA-Z0-9_]+$"
 needs_types = [
-    dict(directive="feat", title="Feature", prefix="feat__", color="#FFF", style="node"),
-    dict(directive="comp", title="Component", prefix="comp__", color="#FFF", style="node"),
-    dict(directive="mod", title="Module", prefix="mod__", color="#FFF", style="node"),
-    dict(
-        directive="mod_ver_report",
-        title="Module Verification Report",
-        prefix="mod_vrep__",
-        color="#FFF",
-        style="node",
-    ),
-    dict(directive="tcase", title="Test Case", prefix="tcase__", color="#FFF", style="node"),
+    dict(directive=d, title=d, prefix=d + "__", color="#FFF", style="node")
+    for d in (
+        "feat",
+        "feat_req",
+        "feat_arc_sta",
+        "comp",
+        "comp_req",
+        "comp_arc_sta",
+        "mod",
+        "mod_ver_report",
+        "document",
+        "wp",
+        "tcase",
+    )
 ]
 needs_extra_options = ["safety", "security", "verification_method"]
-needs_extra_links = [
-    dict(option="belongs_to", incoming="belongs to", outgoing="belongs to"),
-    dict(option="includes", incoming="included by", outgoing="includes"),
-    dict(option="covers", incoming="covered by", outgoing="covers"),
-    dict(option="contains", incoming="contained by", outgoing="contains"),
-    dict(option="evidence", incoming="evidence for", outgoing="evidence"),
-]
+needs_links = {
+    name: dict(incoming=name, outgoing=name)
+    for name in (
+        "belongs_to",
+        "includes",
+        "covers",
+        "contains",
+        "satisfied_by",
+        "realizes",
+        "fully_verifies",
+        "partially_verifies",
+    )
+}
 needs_external_needs = [
     dict(base_url="https://example.invalid/docs", json_path="external_needs.json")
 ]
 suppress_warnings = ["app.add_directive", "epub.unknown_project_files"]
 """
 
+#: The world the report reports on: a feature, two components, requirements,
+#: architecture elements, a test, and the work products the template lists.
 ARCHITECTURE = """
+.. feat:: Baselibs Feature
+   :id: feat__baselibs
+   :safety: ASIL_B
+   :security: NO
+   :status: valid
+
+.. feat_req:: A feature requirement
+   :id: feat_req__baselibs_one
+   :safety: ASIL_B
+   :status: valid
+   :satisfied_by: feat__baselibs
+
+.. feat_arc_sta:: A feature architecture element
+   :id: feat_arc_sta__baselibs
+   :safety: ASIL_B
+   :status: valid
+   :tags: inspected
+   :belongs_to: feat__baselibs
+
 .. comp:: JSON
    :id: comp__baselibs_json
    :safety: ASIL_B
    :security: NO
    :status: valid
+   :belongs_to: feat__baselibs
 
 .. comp:: Bit Manipulation
    :id: comp__baselibs_bit_manipulation
    :safety: ASIL_B
    :security: NO
    :status: valid
+   :belongs_to: feat__baselibs
+
+.. comp_req:: A JSON requirement
+   :id: comp_req__baselibs_json_one
+   :safety: ASIL_B
+   :status: valid
+   :satisfied_by: comp__baselibs_json
+
+.. comp_arc_sta:: A JSON architecture element
+   :id: comp_arc_sta__baselibs_json
+   :safety: ASIL_B
+   :status: valid
+   :tags: inspected
+   :belongs_to: comp__baselibs_json
+
+.. tcase:: A test case
+   :id: tcase__baselibs_1
+   :status: valid
+   :fully_verifies: comp_req__baselibs_json_one
 
 .. mod:: Baselibs
    :id: mod__baselibs
    :includes: comp__baselibs_json, comp__baselibs_bit_manipulation
 
-.. tcase:: A test case
-   :id: tcase__baselibs_1
+.. wp:: Requirements Inspection
+   :id: wp__requirements_inspect
    :status: valid
+
+.. wp:: Architecture Inspection
+   :id: wp__sw_arch_verification
+   :status: valid
+
+.. wp:: Implementation Inspection
+   :id: wp__sw_implementation_inspection
+   :status: valid
+
+.. wp:: Component DFA
+   :id: wp__sw_component_dfa
+   :status: valid
+
+.. wp:: Component FMEA
+   :id: wp__sw_component_fmea
+   :status: valid
+
+.. document:: Baselibs JSON requirements inspection
+   :id: doc__baselibs_json_requirements_inspection
+   :status: valid
+   :realizes: wp__requirements_inspect
 """
 
 REPORT = """
@@ -123,6 +195,17 @@ Baselibs
 
    Verification report for the Baselibs module.
 """
+
+#: The flat list of sections a report emits, in order.
+EXPECTED_SECTIONS = [
+    "Feature",
+    "Feature Requirements Statistics",
+    "Feature Architecture Statistics",
+    "Feature Inspection Statistics",
+    "Component Overview",
+    "JSON Utilities",
+    "Baselibs Bit Manipulation",
+]
 
 
 def _write_sources(root: Path, docs: dict[str, str], conf: str = CONF_PY) -> None:
@@ -198,11 +281,8 @@ def test_report_emits_real_sections_as_siblings_of_the_need(
     doctree = app.env.get_doctree("report")
 
     titles = _titles(doctree)
-    assert "Report Metadata" in titles
-    assert "Verification Scope" in titles
-    assert "JSON Utilities" in titles  # explicit override
-    assert "Baselibs Bit Manipulation" in titles  # derived fallback
-    assert "Verification Evidence" in titles
+    for expected in EXPECTED_SECTIONS:
+        assert expected in titles
 
     # The Need is a sibling of the sections, not their container: no section
     # may be a descendant of the Need node.
@@ -223,13 +303,7 @@ def test_generated_sections_are_flat(build: AppFactory) -> None:
 
     page = next(iter(doctree.findall(nodes.section)))  # "Baselibs"
     generated = [child for child in page.children if isinstance(child, nodes.section)]
-    assert [child[0].astext() for child in generated] == [
-        "Report Metadata",
-        "Verification Scope",
-        "JSON Utilities",
-        "Baselibs Bit Manipulation",
-        "Verification Evidence",
-    ]
+    assert [child[0].astext() for child in generated] == EXPECTED_SECTIONS
     for section in generated:
         assert not list(section.findall(nodes.section, include_self=False))
 
@@ -270,13 +344,7 @@ def test_toc_contains_every_generated_section(build: AppFactory) -> None:
 
     toc = app.env.tocs["report"]
     toc_titles = [ref.astext() for ref in toc.findall(nodes.reference)]
-    for expected in (
-        "Report Metadata",
-        "Verification Scope",
-        "JSON Utilities",
-        "Baselibs Bit Manipulation",
-        "Verification Evidence",
-    ):
+    for expected in EXPECTED_SECTIONS:
         assert expected in toc_titles
 
     toc_anchors = [ref["anchorname"] for ref in toc.findall(nodes.reference)]
@@ -364,7 +432,7 @@ def test_heading_depth_at_root_and_nested(build: AppFactory) -> None:
     # Nested below an existing heading: one level deeper.
     assert depth_of("nested", "JSON Utilities") == 2
     # ... and still flat among themselves at that level.
-    assert depth_of("nested", "Report Metadata") == 2
+    assert depth_of("nested", "Component Overview") == 2
 
 
 # --------------------------------------------------------------------------
@@ -389,7 +457,8 @@ def test_latex_builder_keeps_sections(build: AppFactory) -> None:
     )
     tex = next(Path(app.outdir).glob("*.tex")).read_text()
     assert "JSON Utilities" in tex
-    assert "Verification Scope" in tex
+    assert "Component Overview" in tex
+    assert "Feature Requirements Statistics" in tex
 
 
 # --------------------------------------------------------------------------
@@ -543,55 +612,95 @@ def test_version_qualifier_warns(build: AppFactory) -> None:
 
 
 # --------------------------------------------------------------------------
-# The extension owns no build lifecycle beyond registering its directives.
+# The report content itself: every number comes out of a needs filter.
 # --------------------------------------------------------------------------
 
 
-NEEDS_EXTRA_LINKS_BLOCK = """needs_extra_links = [
-    dict(option="belongs_to", incoming="belongs to", outgoing="belongs to"),
-    dict(option="includes", incoming="included by", outgoing="includes"),
-    dict(option="covers", incoming="covered by", outgoing="covers"),
-    dict(option="contains", incoming="contained by", outgoing="contains"),
-    dict(option="evidence", incoming="evidence for", outgoing="evidence"),
-]"""
+def test_report_content_is_resolved_by_sphinx_needs(build: AppFactory) -> None:
+    app = build({"index": _index("report"), "report": REPORT + ARCHITECTURE})
+    html = (Path(app.outdir) / "report.html").read_text()
 
-NEEDS_LINKS_BLOCK = """needs_links = {
-    "belongs_to": dict(incoming="belongs to", outgoing="belongs to"),
-    "includes": dict(incoming="included by", outgoing="includes"),
-    "covers": dict(incoming="covered by", outgoing="covers"),
-    "contains": dict(incoming="contained by", outgoing="contains"),
-    "evidence": dict(incoming="evidence for", outgoing="evidence"),
-}"""
+    # Feature sections resolved the feature the report declares.
+    assert "feat__baselibs" in html
+    assert "feat_req__baselibs_one" in html
+    assert "feat_arc_sta__baselibs" in html
 
-NO_EVIDENCE_LINKS_BLOCK = """needs_extra_links = [
-    dict(option="belongs_to", incoming="belongs to", outgoing="belongs to"),
-    dict(option="includes", incoming="included by", outgoing="includes"),
-    dict(option="covers", incoming="covered by", outgoing="covers"),
-]"""
+    # Component sections resolved the component's requirements, architecture
+    # and the test that verifies the requirement (a backlink sphinx-needs
+    # computed, not something the extension went looking for).
+    assert "comp_req__baselibs_json_one" in html
+    assert "comp_arc_sta__baselibs_json" in html
+    assert "tcase__baselibs_1" in html
 
+    # Work products and the document realising one of them.
+    assert "wp__sw_component_dfa" in html
+    assert "doc__baselibs_json_requirements_inspection" in html
 
-def test_evidence_section_honours_the_needs_links_dict(build: AppFactory) -> None:
-    """``score_metamodel`` writes ``needs_links``, not ``needs_extra_links``.
-
-    Looking only at the deprecated list silently drops the Verification
-    Evidence section in every real project.
-    """
-    conf = CONF_PY.replace(NEEDS_EXTRA_LINKS_BLOCK, NEEDS_LINKS_BLOCK)
-    assert conf != CONF_PY
-    app = build({"index": _index("report"), "report": REPORT + ARCHITECTURE}, conf=conf)
-    assert "Verification Evidence" in _titles(app.env.get_doctree("report"))
+    # Statistics are needpie images, one per configured chart.
+    assert html.count("<img") >= 8
+    assert "need_pie" in html
 
 
-def test_evidence_section_is_skipped_when_the_links_are_not_configured(
+def test_feature_is_derived_from_the_module(build: AppFactory) -> None:
+    """``mod__baselibs`` -> ``feat__baselibs``, as the upstream template does."""
+    assert "feat__baselibs" not in REPORT
+    app = build({"index": _index("report"), "report": REPORT + ARCHITECTURE})
+    assert "feat_req__baselibs_one" in (Path(app.outdir) / "report.html").read_text()
+
+
+def test_component_internals_are_rubrics_not_sections(build: AppFactory) -> None:
+    """Flat sections: nothing below a component competes for the sidebar."""
+    app = build({"index": _index("report"), "report": REPORT + ARCHITECTURE})
+    doctree = app.env.get_doctree("report")
+
+    component = next(
+        s for s in doctree.findall(nodes.section) if s[0].astext() == "JSON Utilities"
+    )
+    assert not list(component.findall(nodes.section, include_self=False))
+    rubrics = [r.astext() for r in component.findall(nodes.rubric)]
+    assert "Requirements Traceability" in rubrics
+    assert "Verification & Safety Analysis Documents" in rubrics
+
+
+def test_needs_template_folder_is_set_and_points_at_the_template(
     build: AppFactory,
 ) -> None:
-    conf = CONF_PY.replace(NEEDS_EXTRA_LINKS_BLOCK, NO_EVIDENCE_LINKS_BLOCK)
-    assert conf != CONF_PY
-    report = REPORT.replace("   :contains: tcase__baselibs_1\n", "")
-    app = build({"index": _index("report"), "report": report + ARCHITECTURE}, conf=conf)
-    titles = _titles(app.env.get_doctree("report"))
-    assert "Verification Evidence" not in titles
-    assert "Verification Scope" in titles
+    assert "needs_template_folder" not in CONF_PY
+    app = build({"index": _index("report"), "report": REPORT + ARCHITECTURE})
+
+    folder = Path(app.config.needs_template_folder)
+    assert folder.is_dir()
+    assert (folder / rendering.TEMPLATE_NAME).is_file()
+
+
+def test_project_template_folder_wins_over_the_shipped_one(
+    build: AppFactory, tmp_path: Path
+) -> None:
+    """A project overrides the report by dropping its own ``.need`` in place."""
+    folder = tmp_path / "our_needs_templates"
+    folder.mkdir()
+    (folder / rendering.TEMPLATE_NAME).write_text(
+        "Only one section, for {{ report_id }}\n"
+        "+++++++++++++++++++++++++++++++++++++++++++++\n"
+    )
+    conf = CONF_PY + f"needs_template_folder = {str(folder)!r}\n"
+    app = build({"index": _index("report"), "report": REPORT + ARCHITECTURE}, conf=conf)
+    assert _titles(app.env.get_doctree("report")) == [
+        "Baselibs",
+        "Only one section, for mod_vrep__baselibs",
+    ]
+
+
+def test_shipped_template_is_the_fallback_for_a_project_folder(
+    build: AppFactory, tmp_path: Path
+) -> None:
+    """A project folder without our template must not break the build."""
+    folder = tmp_path / "unrelated_needs_templates"
+    folder.mkdir()
+    (folder / "something_else.need").write_text("unrelated\n")
+    conf = CONF_PY + f"needs_template_folder = {str(folder)!r}\n"
+    app = build({"index": _index("report"), "report": REPORT + ARCHITECTURE}, conf=conf)
+    assert _titles(app.env.get_doctree("report")) == ["Baselibs", *EXPECTED_SECTIONS]
 
 
 def test_extension_has_no_build_lifecycle_hooks() -> None:

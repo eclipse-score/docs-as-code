@@ -53,31 +53,82 @@ One Need per module. That is the whole consumer-facing API:
 
 Scaling to N modules = adding N Needs. Nothing else.
 
-`:covers:` is a **real link field on the Need**, not an opaque directive option.
-That is what lets the metamodel validate it, generate `covers_back` for free and
-report through the normal warning pipeline — and it is why this extension owns
-no consistency-checking code.
+`:covers:` and `:belongs_to:` are **real link fields on the Need**, not opaque
+directive options. That is what lets the metamodel validate them, generate
+backlinks for free and report through the normal warning pipeline — and it is
+why this extension owns no consistency-checking code. The feature the
+statistics are about is derived from the module (`mod__x` → `feat__x`), exactly
+as the upstream template does it; it feeds an `id == ...` filter, so the worst
+case is an empty feature table.
 
-`:titles:` is the only presentation-only option: an optional `id = Heading` per
-line. Without it the heading is derived from the id
-(`comp__baselibs_json` → "Baselibs Json"), which is a deliberate last-resort
-fallback — the *real* title is rendered by the `:need:` reference inside the
-section, resolved by sphinx-needs.
+`:titles:` is the only option that does not reach the Need: `component id =
+Heading`, one per line. Without it the heading is derived from the id
+(`comp__baselibs_json` → "Baselibs Json") — a deliberate last-resort fallback;
+the real title is resolved by sphinx-needs in the component table.
 
 ## What gets emitted
 
-A `mod_ver_report` Need followed by a flat list of sections:
+A `mod_ver_report` Need followed by a **flat** list of sections. The content
+follows the standard module verification report (the upstream
+`mod_ver_report_tiny.need` template):
 
-| Section                | Content                                                     |
-| ---------------------- | ----------------------------------------------------------- |
-| Report Metadata        | `needtable` on the report itself                              |
-| Verification Scope     | `needtable` over the covered components                       |
-| *one per component*    | `:need:` reference plus a `needtable` of related needs        |
-| Verification Evidence  | `needtable` over the report's `contains` / `evidence` backlinks |
+| Section | Content |
+| ------- | ------- |
+| Feature | `needtable` on the verified feature |
+| Feature Requirements Statistics | status + test-coverage `needpie`, plus a requirements `needtable` in a dropdown |
+| Feature Architecture Statistics | status + inspection `needpie`, plus an elements `needtable` |
+| Feature Inspection Statistics | work products and the documents realising them |
+| Component Overview | `needtable` over the covered components |
+| *one per component* | component table, requirements + architecture statistics, requirements traceability, test coverage, architectural elements, and verification/safety-analysis documents |
+
+Inside a component section the sub-parts stay `rubric` directives. Constraint 3
+says no subsection nesting is needed, and nothing below a component level needs
+its own anchor.
 
 Every section is preceded by an explicit target namespaced with the report id
 (`mod_vrep__baselibs__comp__baselibs_json`), so anchors are stable across
 rebuilds and two reports on one page never collide.
+
+## The report body is a template
+
+[`src/needs_templates/mod_ver_report.need`](../../needs_templates/mod_ver_report.need)
+holds the whole report. It is a Sphinx-Needs template file — `.need` extension,
+living in `needs_template_folder` next to every other need template in this
+repository. `setup()` sets `needs_template_folder` to the shipped folder unless
+the project set it itself.
+
+It is rendered by the **directive**, not by Sphinx-Needs' `:template:` option.
+That difference is load-bearing: `:template:` renders into the Need's content,
+which Sphinx-Needs parses with `match_titles=False`, so headings written there
+can never become sections. The directive renders the file with a context built
+only from the directive's options and from configuration, and returns the parsed
+result into the surrounding document.
+
+Changing what a report *says* means editing the template, not Python. A project
+overrides it by dropping its own `mod_ver_report.need` into its
+`needs_template_folder`; that folder is searched first and the shipped one is
+the fallback, so a project template folder that does not contain the file still
+builds.
+
+The whole context is `report_id`, `module_id`, `module_slug`, `feature_id` and
+`components` (each with `id`, `title` and `slug`), plus a `q` filter that safely
+quotes a need id for a filter string. Column lists, table filters, the
+work-product rows and the section list all live in the template — the extension
+has **no configuration values of its own**.
+
+### Differences from the upstream `.need` template
+
+The upstream template is a sphinx-needs `.need` template, rendered *inside* the
+Need node. Two changes were required:
+
+- **Top-level `rubric` directives became sections.** A rubric looks like a
+  heading and is nothing like one: no anchor, no ToC entry, no `:ref:` target,
+  no search-index entry, and nothing at all in non-HTML builders. This is the
+  entire point of the approach.
+- **`linked_needs(module_id, "includes")` is gone.** Reading the Need graph
+  while rendering is what forces the second read pass with its silent-failure
+  mode. The component list comes from the report's own `covers` link field; the
+  metamodel check enforces that it matches the module's `includes`.
 
 ## Two things that look like implementation details but are not
 
@@ -121,28 +172,21 @@ and someone edits one line.
 Everything else — mandatory fields, allowed link targets — is already declared
 in `metamodel.yaml` under `mod_ver_report`.
 
-## Configuration
-
-| Value                                  | Default                                                    |
-| -------------------------------------- | ---------------------------------------------------------- |
-| `mod_ver_report_metadata_columns`      | `id;title;status;safety;security;verification_method`        |
-| `mod_ver_report_scope_columns`         | `id;title;type;status;safety;security`                       |
-| `mod_ver_report_component_columns`     | `id;title;type;status`                                       |
-| `mod_ver_report_component_filter`      | `id == {component_id} or {component_id} in belongs_to`       |
-| `mod_ver_report_evidence_links`        | `["contains", "evidence"]`                                   |
-| `mod_ver_report_evidence_columns`      | `id;title;type;status`                                       |
-
-`{component_id}` is substituted with the *safely quoted* need id. Need ids are
-matched against an allow-list before they reach any filter string; anything else
-is warned about and skipped.
-
 ## Status
 
 Proof of concept. Known gaps:
 
+- **Work-product documents are matched by id substring.** `document` needs carry
+  no link to the component they belong to, so the template's `document_filter`
+  macro falls back to `{slug} in id.replace("_", "").lower()`. This *will*
+  produce false positives (`json` also matches `jsonschema`). It is a filter in
+  a template, not hand-written Python — replace it as soon as the metamodel
+  models the link.
+- **LCOV coverage is not integrated.** Reading a coverage report during
+  directive execution introduces an untracked Sphinx dependency and breaks
+  incremental correctness and Bazel reproducibility. The section renders a note
+  saying so.
 - `:covers:` is still `ANY` in `metamodel.yaml`; narrowing the allowed target
   types is a separate, consumer-affecting change.
 - Two reports placed at *different* heading depths on one page rely on docutils'
   title-style bookkeeping and are untested.
-- No `needflow` / `needpie` in the default template — both are pure additions to
-  the templates when wanted.

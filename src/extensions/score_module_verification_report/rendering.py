@@ -10,184 +10,139 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-"""Pure rendering helpers for the module verification report.
+"""Rendering helpers for the module verification report.
 
-Everything in here is a *string transformation*.  No function in this module
-receives, reads or resolves a Need.  That is deliberate and it is the governing
-design rule of this extension:
+Everything here is a string transformation.  No function in this module
+receives, reads or resolves a Need.  That is the governing design rule:
 
     The extension emits RST.  It never reads the Need model to compute an
     answer.
 
-Rendering, not resolving.  The emitted RST contains ``needtable`` filters and
-``:need:`` references; sphinx-needs resolves those later with its own
-semantics, its own external-need handling and its own backlinks.
+The report body lives in ``src/needs_templates/mod_ver_report.need`` -- a
+Sphinx-Needs template file, resolved through ``needs_template_folder``.  The
+template owns the report's content *and* its section structure; this module
+only builds the context and safely quotes the need ids that end up inside
+filter strings.
 """
 
 from __future__ import annotations
 
 import json
 import re
-from dataclasses import dataclass, field
+from functools import lru_cache
+from pathlib import Path
+from typing import Any
 
-# Section headings emitted by the report all use the same underline character.
-# ``parse_text_to_nodes(allow_section_headings=True)`` parses the generated text
-# in a *fresh title-style context*, so a single character makes every generated
-# heading a sibling of every other one -- a flat list, exactly one level below
-# wherever the directive was placed.  See the module docstring of ``directive``.
-UNDERLINE = "+"
+from jinja2 import Environment, FileSystemLoader, StrictUndefined
 
-# Conservative allow-list for anything that gets interpolated into a
-# sphinx-needs filter string.  Filter strings are evaluated as Python by
-# sphinx-needs, so a need id is never pasted in unchecked.
+#: Sphinx-Needs templates end in ``.need`` and live in ``needs_template_folder``.
+TEMPLATE_NAME = "mod_ver_report.need"
+
+# Conservative allow-list for anything interpolated into a sphinx-needs filter
+# string.  Filters are evaluated as Python, so a need id is never pasted in
+# unchecked.
 NEED_ID_RE = re.compile(r"^[A-Za-z0-9_.\-]+$")
 
-# ``comp__foo[version==1]`` -- a link-version qualifier.  sphinx-needs strips
-# these itself on real link fields; we must not silently drop them while
-# building sections, because the section would then be built for a component
-# the author did not literally write.
+# ``comp__foo[version==1]``. sphinx-needs strips these itself on real link
+# fields; we must not silently drop them while building sections, or the
+# section is built for something the author did not write.
 VERSION_QUALIFIER_RE = re.compile(r"\[[^\]]*\]$")
 
 _SPLIT_RE = re.compile(r"[,\s]+")
 
 
-@dataclass
-class ComponentList:
-    """Result of parsing the ``:covers:`` option."""
-
-    ids: list[str] = field(default_factory=list)
-    warnings: list[str] = field(default_factory=list)
-
-
 def quote_for_filter(need_id: str) -> str:
-    """Return ``need_id`` as a safely quoted literal for a needs filter string.
+    """Return *need_id* as a safely quoted literal for a needs filter string.
 
-    Raises ``ValueError`` for anything that is not a plain need id.  Callers
-    turn that into a Sphinx warning; nothing unvalidated ever reaches the
-    filter string.
+    Raises ``ValueError`` for anything that is not a plain need id; callers
+    turn that into a Sphinx warning.
     """
     if not NEED_ID_RE.match(need_id):
         raise ValueError(f"{need_id!r} is not a valid need id")
-    # json.dumps gives us a double-quoted, escaped literal that is also valid
-    # Python -- belt and braces on top of the allow-list above.
     return json.dumps(need_id)
 
 
-def parse_component_list(raw: str | None) -> ComponentList:
-    """Parse the ``:covers:`` option value into an ordered, de-duplicated list.
+def parse_ids(raw: str | None) -> tuple[list[str], list[str]]:
+    """Parse a link option into an ordered, de-duplicated list of ids.
 
-    Accepts comma and/or whitespace separated ids across multiple lines.
-    Version qualifiers are reported instead of being silently ignored, and
-    duplicates are dropped deterministically (first occurrence wins).
+    Returns ``(ids, warnings)``.  Accepts comma and/or whitespace separated ids
+    across lines.  Version qualifiers are reported rather than silently
+    ignored, and duplicates are dropped deterministically.
     """
-    result = ComponentList()
-    if not raw:
-        return result
-
-    seen: set[str] = set()
-    for token in _SPLIT_RE.split(raw.strip()):
+    ids: list[str] = []
+    warnings: list[str] = []
+    for token in _SPLIT_RE.split((raw or "").strip()):
         if not token:
             continue
-        stripped = VERSION_QUALIFIER_RE.sub("", token)
-        if stripped != token:
-            result.warnings.append(
+        need_id = VERSION_QUALIFIER_RE.sub("", token)
+        if need_id != token:
+            warnings.append(
                 f"ignoring version qualifier on {token!r}; the report section "
-                f"is built for {stripped!r}"
+                f"is built for {need_id!r}"
             )
-        if not NEED_ID_RE.match(stripped):
-            result.warnings.append(
-                f"{stripped!r} is not a valid need id and is skipped"
-            )
-            continue
-        if stripped in seen:
-            result.warnings.append(f"duplicate entry {stripped!r} is listed once")
-            continue
-        seen.add(stripped)
-        result.ids.append(stripped)
-    return result
+        if not NEED_ID_RE.match(need_id):
+            warnings.append(f"{need_id!r} is not a valid need id and is skipped")
+        elif need_id in ids:
+            warnings.append(f"duplicate entry {need_id!r} is listed once")
+        else:
+            ids.append(need_id)
+    return ids, warnings
 
 
-def parse_title_overrides(raw: str | None) -> tuple[dict[str, str], list[str]]:
+def parse_titles(raw: str | None) -> tuple[dict[str, str], list[str]]:
     """Parse the ``:titles:`` option: one ``<need id> = <heading>`` per line."""
-    overrides: dict[str, str] = {}
+    titles: dict[str, str] = {}
     warnings: list[str] = []
-    if not raw:
-        return overrides, warnings
-    for line in raw.splitlines():
-        line = line.strip()
-        if not line:
-            continue
-        if "=" not in line:
-            warnings.append(
-                f"cannot parse title override {line!r}; expected 'id = Title'"
-            )
-            continue
-        need_id, _, title = line.partition("=")
+    for line in (raw or "").splitlines():
+        need_id, sep, title = line.partition("=")
         need_id, title = need_id.strip(), title.strip()
-        if not need_id or not title:
-            warnings.append(
-                f"cannot parse title override {line!r}; expected 'id = Title'"
-            )
+        if not line.strip():
             continue
-        overrides[need_id] = title
-    return overrides, warnings
+        if not sep or not need_id or not title:
+            warnings.append(
+                f"cannot parse title {line.strip()!r}; expected 'id = Title'"
+            )
+        else:
+            titles[need_id] = title
+    return titles, warnings
 
 
 def derive_title(need_id: str) -> str:
-    """Last-resort heading text for a component without an explicit override.
+    """Last-resort heading for a component without an explicit ``:titles:``.
 
-    This is intentionally dumb.  The *real* title lives on the Need and is
-    rendered by the ``:need:`` reference inside the section -- resolved by
-    sphinx-needs, not by us.  ``comp__baselibs_json`` becoming "Baselibs Json"
-    is an accepted fallback, not the intended output; authors who care pass
-    ``:titles:``.
+    Intentionally dumb.  The real title lives on the Need and is rendered by
+    the component table inside the section, resolved by sphinx-needs.
+    ``comp__baselibs_json`` becoming "Baselibs Json" is an accepted fallback.
     """
-    _, _, tail = need_id.partition("__")
-    slug = tail or need_id
+    slug = need_id.partition("__")[2] or need_id
     return slug.replace("_", " ").strip().title() or need_id
 
 
-def anchor(report_id: str, slug: str) -> str:
-    """Deterministic, collision-free RST target name.
+def derive_feature_id(module_id: str) -> str:
+    """``mod__baselibs`` -> ``feat__baselibs``, as the upstream template does.
 
-    Anchors are namespaced by the report id, so two reports on one page never
-    collide and docutils never has to disambiguate with an unstable ``-1``
-    suffix.
+    An exact, total rewrite of one id into another, feeding an ``id == ...``
+    filter -- so the worst case is an empty feature table, never a wrong match.
     """
-    return f"{report_id}__{slug}".lower()
-
-
-def _heading(title: str) -> str:
-    return f"{title}\n{UNDERLINE * max(len(title), 3)}\n"
-
-
-def _section(target: str, title: str, body: str) -> str:
-    return f".. _{target}:\n\n{_heading(title)}\n{body.rstrip()}\n"
-
-
-def section_anchors(report_id: str, component_ids: list[str]) -> list[str]:
-    """Every RST target name the report emits, in document order.
-
-    The directive uses this to promote the namespaced anchor to be each
-    section's *primary* id, so the ToC entry, the HTML element id and the
-    ``:ref:`` target all agree and stay stable when two reports on one page
-    happen to use the same heading text.
-    """
-    return [
-        anchor(report_id, "report-metadata"),
-        anchor(report_id, "verification-scope"),
-        *(anchor(report_id, component_id) for component_id in component_ids),
-        anchor(report_id, "verification-evidence"),
-    ]
-
-
-def _needtable(filter_expr: str, columns: str) -> str:
     return (
-        ".. needtable::\n"
-        f"   :filter: {filter_expr}\n"
-        f"   :columns: {columns}\n"
-        "   :style: table\n"
+        "feat__" + module_id.removeprefix("mod__")
+        if module_id.startswith("mod__")
+        else ""
     )
+
+
+def derive_slug(need_id: str, module_id: str) -> str:
+    """Matching key for the work-product documents of *need_id*.
+
+    Mirrors the upstream template: drop the type prefix and the module name,
+    then remove underscores and lowercase.  This is substring matching and can
+    produce false positives; see the README's "Known gaps".
+    """
+    tail = need_id.partition("__")[2] or need_id
+    module_short = module_id.removeprefix("mod__")
+    if module_short:
+        tail = tail.removeprefix(f"{module_short}_")
+    return tail.replace("_", "").lower()
 
 
 def render_need(
@@ -199,57 +154,50 @@ def render_need(
     """Render the ``mod_ver_report`` Need itself.
 
     Options are passed through verbatim: the metamodel -- not this extension --
-    decides which of them are mandatory, which are links and what they may
-    point at.
+    decides which are mandatory, which are links and what they may point at.
     """
     lines = [f".. {directive_name}:: {title}"]
-    for key, value in options.items():
-        lines.append(f"   :{key}: {'' if value is None else value}")
+    lines += [f"   :{k}: {'' if v is None else v}" for k, v in options.items()]
     if content:
         lines.append("")
-        lines.extend(f"   {line}" if line else "" for line in content)
+        lines += [f"   {line}" if line else "" for line in content]
     return "\n".join(lines) + "\n"
 
 
-def render_metadata_section(report_id: str, columns: str) -> str:
-    return _section(
-        anchor(report_id, "report-metadata"),
-        "Report Metadata",
-        _needtable(f"id == {quote_for_filter(report_id)}", columns),
+def shipped_template_folder() -> Path:
+    """The Sphinx-Needs template folder shipped with docs-as-code.
+
+    Derived from this file's location so it resolves in the workspace, in Bazel
+    runfiles and in the sandbox alike -- the same approach
+    ``score_sphinx_bundle`` uses for the very same directory.
+    """
+    folder = Path(__file__).parents[2] / "needs_templates"
+    if not folder.is_dir():
+        raise FileNotFoundError(f"Needs template folder does not exist: {folder}")
+    return folder
+
+
+@lru_cache(maxsize=4)
+def _environment(folders: tuple[str, ...]) -> Environment:
+    env = Environment(
+        loader=FileSystemLoader(list(folders)),
+        undefined=StrictUndefined,
+        keep_trailing_newline=True,
+        autoescape=False,  # noqa: S701 - RST output, not HTML
     )
+    env.filters["q"] = quote_for_filter
+    return env
 
 
-def render_scope_section(report_id: str, component_ids: list[str], columns: str) -> str:
-    quoted = ", ".join(quote_for_filter(c) for c in component_ids)
-    if quoted:
-        filter_expr = f"id in [{quoted}]"
-        body = _needtable(filter_expr, columns)
-    else:
-        body = "This report does not declare any covered components.\n"
-    return _section(anchor(report_id, "verification-scope"), "Verification Scope", body)
+def render_report(context: dict[str, Any], template_folder: str | None) -> str:
+    """Render the report body.
 
-
-def render_component_section(
-    report_id: str,
-    component_id: str,
-    title: str,
-    filter_template: str,
-    columns: str,
-) -> str:
-    quoted = quote_for_filter(component_id)
-    body = f":need:`{component_id}`\n\n" + _needtable(
-        filter_template.format(component_id=quoted), columns
+    *template_folder* is the project's ``needs_template_folder``.  It is
+    searched first, so a project overrides the report by dropping its own
+    ``mod_ver_report.need`` in there; the shipped folder is the fallback.
+    """
+    shipped = str(shipped_template_folder())
+    folders = dict.fromkeys(
+        [template_folder, shipped] if template_folder else [shipped]
     )
-    return _section(anchor(report_id, component_id), title, body)
-
-
-def render_evidence_section(
-    report_id: str, evidence_links: list[str], columns: str
-) -> str:
-    quoted = quote_for_filter(report_id)
-    clauses = [f"{quoted} in {link}_back" for link in evidence_links]
-    return _section(
-        anchor(report_id, "verification-evidence"),
-        "Verification Evidence",
-        _needtable(" or ".join(clauses), columns),
-    )
+    return _environment(tuple(folders)).get_template(TEMPLATE_NAME).render(**context)

@@ -26,13 +26,15 @@ See :ref:`module-verification-report` for the reference documentation.
 
 .. note::
 
-   The architecture needs on this page exist only to give the example something
-   to point at. They are not part of the Docs-as-Code architecture.
+   The needs on this page exist only to give the example something to point at.
+   They are not part of the Docs-as-Code architecture.
 
-The module being reported on
-============================
+The world being reported on
+===========================
 
-A module with two components:
+A feature with a requirement and an architecture element, a module with two
+components, a component requirement covered by a test, and an inspection
+document realising a work product:
 
 .. feat:: Example Baselibs Feature
    :id: feat__example_baselibs
@@ -42,6 +44,40 @@ A module with two components:
    :status: valid
 
    Container feature for the example components.
+
+.. feat_req:: Example Baselibs Feature Requirement
+   :id: feat_req__example_feature__baselibs
+   :version: 1
+   :reqtype: Functional
+   :security: NO
+   :safety: QM
+   :status: valid
+   :valid_from: v1.0
+   :satisfied_by: feat__example_baselibs
+
+   The feature shall provide basic library utilities.
+
+.. feat_arc_sta:: Example Baselibs Feature Package Diagram
+   :id: feat_arc_sta__example_feature__baselibs
+   :version: 1
+   :security: NO
+   :safety: QM
+   :status: valid
+   :tags: inspected
+   :includes: logic_arc_int__example_feature__baselibs
+   :belongs_to: feat__example_baselibs
+
+   Feature-level architecture view. Carries the ``inspected`` tag, so it shows
+   up as inspected in the feature architecture statistics.
+
+.. logic_arc_int:: Example Baselibs Logical Interface
+   :id: logic_arc_int__example_feature__baselibs
+   :version: 1
+   :security: NO
+   :safety: QM
+   :status: valid
+
+   Referenced by the feature package diagram above.
 
 .. comp:: Example JSON Component
    :id: comp__example_baselibs_json
@@ -63,16 +99,27 @@ A module with two components:
 
    Bit-level helpers.
 
+.. comp_req:: Example JSON Round-Trip Requirement
+   :id: comp_req__example_feature__json_roundtrip
+   :version: 1
+   :reqtype: Functional
+   :security: NO
+   :safety: QM
+   :status: valid
+   :satisfied_by: comp__example_baselibs_json
+
+   The component shall serialise and parse a document without loss.
+
 .. comp_arc_sta:: Example JSON Package Diagram
    :id: comp_arc_sta__example_feature__json
    :version: 1
    :security: NO
    :safety: QM
    :status: valid
+   :tags: inspected
    :belongs_to: comp__example_baselibs_json
 
-   An architecture view of the JSON component. It shows up in the JSON
-   component's table below because it links to that component.
+   Architecture view of the JSON component.
 
 .. comp_arc_sta:: Example Bit Manipulation Package Diagram
    :id: comp_arc_sta__example_feature__bits
@@ -82,16 +129,8 @@ A module with two components:
    :status: valid
    :belongs_to: comp__example_baselibs_bits
 
-   An architecture view of the bit manipulation component.
-
-.. workproduct:: Example Baselibs Test Report
-   :id: wp__example_baselibs_test_report
-   :version: 1
-   :status: valid
-
-   Stands in for the artefact backing the verification report. The report links
-   to it with ``evidence``, so it appears in the report's Verification Evidence
-   section.
+   Architecture view of the bit manipulation component. Deliberately *not*
+   tagged ``inspected``, so the inspection pie chart is not all green.
 
 .. mod:: Example Baselibs Module
    :id: mod__example_baselibs
@@ -102,6 +141,18 @@ A module with two components:
    :includes: comp__example_baselibs_json, comp__example_baselibs_bits
 
    The module the report below is about.
+
+.. document:: Example JSON Requirements Inspection
+   :id: doc__example_json_req_inspect
+   :version: 1
+   :security: NO
+   :safety: QM
+   :status: valid
+   :realizes: wp__requirements_inspect
+
+   The document realising the ``wp__requirements_inspect`` work product from
+   the process description. It is matched into the JSON component's work
+   product table because its id contains the component slug.
 
 What the author writes
 ======================
@@ -114,12 +165,11 @@ One Need. That is the whole input for the page you see below it:
       :id: mod_vrep__example_feature__baselibs
       :version: 1
       :belongs_to: mod__example_baselibs
-      :covers: comp__example_baselibs_json, comp__example_baselibs_bits
+         :covers: comp__example_baselibs_json, comp__example_baselibs_bits
       :safety: QM
       :security: NO
       :status: valid
       :verification_method: test_and_inspection
-      :evidence: wp__example_baselibs_test_report
       :titles:
          comp__example_baselibs_json = JSON Utilities
          comp__example_baselibs_bits = Bit Manipulation
@@ -128,8 +178,13 @@ One Need. That is the whole input for the page you see below it:
 
 ``:covers:`` is a real link field, so ``mod__example_baselibs`` gets a
 ``covered by`` backlink and the metamodel checks that the list matches the
-module's ``includes`` in both directions. ``:titles:`` is optional; without it
-the headings are derived from the component ids.
+module's ``includes`` in both directions.
+
+``:titles:`` is the one presentation-only option: it names each component
+section. Without it the headings are derived from the component ids
+(``comp__example_baselibs_json`` → "Example Baselibs Json"). The feature the
+statistics are about is derived the same way the upstream template derives it,
+by rewriting ``mod__example_baselibs`` to ``feat__example_baselibs``.
 
 Rendered report
 ===============
@@ -143,7 +198,6 @@ Rendered report
    :security: NO
    :status: valid
    :verification_method: test_and_inspection
-   :evidence: wp__example_baselibs_test_report
    :titles:
       comp__example_baselibs_json = JSON Utilities
       comp__example_baselibs_bits = Bit Manipulation
@@ -160,7 +214,12 @@ can be referenced from anywhere like any other section:
 
    See :ref:`mod_vrep__example_feature__baselibs__comp__example_baselibs_json`.
 
-Which renders as: :ref:`mod_vrep__example_feature__baselibs__comp__example_baselibs_json`
+Which renders as:
+:ref:`mod_vrep__example_feature__baselibs__comp__example_baselibs_json`
 — the link text comes from the section title, because the target *is* a
 section. The same anchors appear in the sidebar, in the local contents, in the
 search index and in the LaTeX/PDF bookmarks.
+
+The rubrics *inside* a component section (Requirements Statistics, Test
+Coverage, …) are deliberately not sections: no navigation is needed below the
+component level, and a flat list keeps the sidebar readable.

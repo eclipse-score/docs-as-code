@@ -1,0 +1,299 @@
+{#-
+  Module verification report body.
+
+  This is a Jinja template and it lives in the Sphinx-Needs template folder
+  (``needs_template_folder``) with the ``.need`` extension, alongside every
+  other need template in this repository.
+
+  It is rendered by the ``mod_ver_report`` *directive*, not by Sphinx-Needs'
+  ``:template:`` option, and that difference is load-bearing: ``:template:``
+  renders into the Need's content, which Sphinx-Needs parses with
+  ``match_titles=False``. Headings written there can never become sections, so
+  they would produce no anchors, no ToC entries, no ``:ref:`` targets and
+  nothing at all in non-HTML builders. The directive renders this file itself
+  and returns the result into the surrounding document instead.
+
+  Adapted from ``mod_ver_report_tiny.need``. Two deliberate differences:
+
+  * Top-level ``rubric`` directives became real sections, for the reason above.
+    Rubrics are kept only *inside* a component section, where no navigation is
+    required.
+  * The component list comes from the report Need's ``covers`` link field via
+    the directive, not from a ``linked_needs()`` render helper. Reading the
+    Need graph while rendering is what forces a second read pass; the
+    metamodel checks instead that ``covers`` matches the module's ``includes``
+    in both directions.
+
+  Everything with semantics is still deferred to Sphinx-Needs: every number on
+  this page comes out of a ``needtable``/``needpie`` filter evaluated after
+  need collection.
+
+  Context: ``report_id``, ``module_id``, ``module_slug``, ``feature_id`` and
+  ``components`` (each with ``id``, ``title`` and ``slug``). Plus a ``q``
+  filter that safely quotes a need id for a filter string.
+-#}
+{#- Everything the report shows is decided here, not in Python. -#}
+{% set feature_workproducts = [
+     ("wp__requirements_inspect", "Requirements Inspection"),
+     ("wp__sw_arch_verification", "Architecture Inspection"),
+   ] %}
+{% set component_workproducts = [
+     ("wp__requirements_inspect", "Requirements Inspection"),
+     ("wp__sw_arch_verification", "Architecture Inspection"),
+     ("wp__sw_implementation_inspection", "Implementation Inspection"),
+     ("wp__sw_component_dfa", "DFA"),
+     ("wp__sw_component_fmea", "FMEA"),
+   ] %}
+{#- Documents carry no link to their component, so they are matched on the id
+    substring. This can produce false positives; see the README. -#}
+{% macro document_filter(workproduct_id, slug) -%}
+type == "document" and {{ workproduct_id|q }} in realizes and {{ slug|q }} in id.replace("_", "").lower()
+{%- endmacro %}
+{#- A real section: explicit target namespaced with the report id, so anchors
+    are stable and two reports on one page never collide. One underline
+    character throughout keeps every generated heading a sibling. -#}
+{% macro heading(slug, title) -%}
+.. _{{ report_id }}__{{ slug }}:
+
+{{ title }}
+{{ "+" * title|length }}
+{%- endmacro %}
+{% macro workproduct_table(workproducts, slug) -%}
+.. list-table::
+   :header-rows: 1
+   :widths: 30 25 25 20
+   :class: wp-doc-table
+
+   * - Work Product
+     - Kind
+     - Realized by
+     - Status
+{%- for wp_id, kind in workproducts %}
+   * - :need:`{{ wp_id }}`
+     - {{ kind }}
+     - .. needtable::
+          :filter: {{ document_filter(wp_id, slug) }}
+          :columns: id
+          :style: table
+     - .. needtable::
+          :filter: {{ document_filter(wp_id, slug) }}
+          :columns: status
+          :style: table
+{%- endfor %}
+{%- endmacro %}
+{% macro status_pie(title, type_filter, scope_filter) -%}
+.. needpie:: {{ title }}
+   :labels: valid, invalid
+   :colors: #37a12d, #ca2828
+   :legend:
+
+   {{ type_filter }} and {{ scope_filter }} and status == "valid"
+   {{ type_filter }} and {{ scope_filter }} and status == "invalid"
+{%- endmacro %}
+{% macro coverage_pie(title, type_filter, scope_filter) -%}
+.. needpie:: {{ title }}
+   :labels: fully covered, partially covered, not covered
+   :colors: #37a12d, #f0a500, #ca2828
+   :legend:
+
+   {{ type_filter }} and {{ scope_filter }} and len(fully_verifies_back) > 0
+   {{ type_filter }} and {{ scope_filter }} and len(partially_verifies_back) > 0 and len(fully_verifies_back) == 0
+   {{ type_filter }} and {{ scope_filter }} and len(fully_verifies_back) == 0 and len(partially_verifies_back) == 0
+{%- endmacro %}
+{% macro inspection_pie(title, type_filter, scope_filter) -%}
+.. needpie:: {{ title }}
+   :labels: inspected, not inspected
+   :colors: #37a12d, #ca2828
+   :legend:
+
+   {{ type_filter }} and {{ scope_filter }} and "inspected" in tags
+   {{ type_filter }} and {{ scope_filter }} and "inspected" not in tags
+{%- endmacro %}
+{% macro requirements_table(type_filter, scope_filter) -%}
+.. dropdown:: Show requirements table
+   :animate: fade-in
+
+   .. needtable::
+      :filter: {{ type_filter }} and {{ scope_filter }}
+      :style: table
+      :columns: id;title;safety;status;fully_verifies_back;partially_verifies_back
+      :colwidths: 13,22,8,10,23,24
+      :sort: id
+{%- endmacro %}
+{% macro architecture_table(type_filter, scope_filter) -%}
+.. dropdown:: Show architectural elements table
+   :animate: fade-in
+
+   .. needtable::
+      :filter: {{ type_filter }} and {{ scope_filter }}
+      :style: table
+      :columns: id;title;safety;status;tags
+      :colwidths: 25,30,10,15,20
+      :sort: id
+{%- endmacro %}
+.. raw:: html
+
+   <style>
+   .wp-doc-table td .needstable_wrapper,
+   .wp-doc-table td .pst-scrollable-table-container {
+       margin: 0; padding: 0; overflow: visible;
+   }
+   .wp-doc-table td table.NEEDS_TABLE,
+   .wp-doc-table td table.NEEDS_DATATABLES {
+       border: 0; margin: 0; box-shadow: none; background: transparent;
+       width: auto;
+   }
+   .wp-doc-table td table.NEEDS_TABLE thead,
+   .wp-doc-table td table.NEEDS_DATATABLES thead { display: none; }
+   .wp-doc-table td table.NEEDS_TABLE tbody tr,
+   .wp-doc-table td table.NEEDS_DATATABLES tbody tr { background: transparent; }
+   .wp-doc-table td table.NEEDS_TABLE tbody td,
+   .wp-doc-table td table.NEEDS_DATATABLES tbody td {
+       border: 0; padding: 0; background: transparent;
+   }
+   .wp-doc-table td .dataTables_wrapper .dataTables_length,
+   .wp-doc-table td .dataTables_wrapper .dataTables_filter,
+   .wp-doc-table td .dataTables_wrapper .dataTables_info,
+   .wp-doc-table td .dataTables_wrapper .dataTables_paginate { display: none; }
+   </style>
+
+{{ heading("feature", "Feature") }}
+
+{% if feature_id %}
+.. needtable::
+   :filter: id == {{ feature_id|q }}
+   :columns: title as "Name";id as "Id";safety;security;status
+   :style: table
+{% else %}
+No feature could be derived from ``{{ module_id }}``; the feature sections
+stay empty.
+{% endif %}
+
+{{ heading("feature-requirements-statistics", "Feature Requirements Statistics") }}
+
+{% if feature_id %}
+.. grid:: 1 2 2 2
+   :gutter: 3
+
+   .. grid-item::
+
+      {{ status_pie("Feature Requirements Status", 'type == "feat_req"', feature_id|q ~ " in satisfied_by")|indent(6) }}
+
+   .. grid-item::
+
+      {{ coverage_pie("Feature Requirements Test Coverage", 'type == "feat_req"', feature_id|q ~ " in satisfied_by")|indent(6) }}
+
+{{ requirements_table('type == "feat_req"', feature_id|q ~ " in satisfied_by") }}
+{% else %}
+No feature declared.
+{% endif %}
+
+{{ heading("feature-architecture-statistics", "Feature Architecture Statistics") }}
+
+{% if feature_id %}
+.. grid:: 1 2 2 2
+   :gutter: 3
+
+   .. grid-item::
+
+      {{ status_pie("Feature Architecture Elements Status", 'type in ["feat_arc_sta", "feat_arc_dyn"]', feature_id|q ~ " in belongs_to")|indent(6) }}
+
+   .. grid-item::
+
+      {{ inspection_pie("Feature Architecture Elements Inspection Status", 'type in ["feat_arc_sta", "feat_arc_dyn"]', feature_id|q ~ " in belongs_to")|indent(6) }}
+
+{{ architecture_table('type in ["feat_arc_sta", "feat_arc_dyn"]', feature_id|q ~ " in belongs_to") }}
+{% else %}
+No feature declared.
+{% endif %}
+
+{{ heading("feature-inspection-statistics", "Feature Inspection Statistics") }}
+
+Presence of the feature-level inspection work products.
+
+.. dropdown:: Show work products table
+   :animate: fade-in
+
+   {{ workproduct_table(feature_workproducts, module_slug)|indent(3) }}
+
+{{ heading("component-overview", "Component Overview") }}
+
+{% if components %}
+.. needtable::
+   :filter: id in [{{ components|map(attribute="id")|map("q")|join(", ") }}]
+   :columns: id as "Component";safety;security;status
+   :style: table
+   :sort: id
+{% else %}
+This report does not declare any covered components.
+{% endif %}
+{% for component in components %}
+
+{{ heading(component.id, component.title) }}
+
+.. rubric:: Component
+
+.. needtable::
+   :filter: id == {{ component.id|q }} or {{ component.id|q }} in belongs_to
+   :columns: id;title;type;status;safety;security
+   :style: table
+
+.. rubric:: Component Requirements Statistics
+
+.. grid:: 1 2 2 2
+   :gutter: 3
+
+   .. grid-item::
+
+      {{ status_pie(component.title ~ " Requirements Status", 'type == "comp_req"', component.id|q ~ " in satisfied_by")|indent(6) }}
+
+   .. grid-item::
+
+      {{ coverage_pie(component.title ~ " Requirements Test Coverage", 'type == "comp_req"', component.id|q ~ " in satisfied_by")|indent(6) }}
+
+.. rubric:: Component Architecture Statistics
+
+.. grid:: 1 2 2 2
+   :gutter: 3
+
+   .. grid-item::
+
+      {{ status_pie(component.title ~ " Architecture Elements Status", 'type in ["comp_arc_sta", "comp_arc_dyn"]', component.id|q ~ " in belongs_to")|indent(6) }}
+
+   .. grid-item::
+
+      {{ inspection_pie(component.title ~ " Architecture Elements Inspection Status", 'type in ["comp_arc_sta", "comp_arc_dyn"]', component.id|q ~ " in belongs_to")|indent(6) }}
+
+.. rubric:: Requirements Traceability
+
+All requirements of this component with their verification status and the
+tests that fully or partially verify them.
+
+{{ requirements_table('type == "comp_req"', component.id|q ~ " in satisfied_by") }}
+
+.. rubric:: Test Coverage
+
+.. note::
+
+   Per-source-file line and branch coverage is not part of this extension.
+   Reading an LCOV report while the directive runs would introduce an
+   untracked Sphinx dependency and break incremental correctness and Bazel
+   reproducibility.
+
+.. rubric:: Architectural Elements
+
+Architectural elements of this component with their inspection status.
+Elements that have been formally inspected carry the ``inspected`` tag.
+
+{{ architecture_table('type in ["comp_arc_sta", "comp_arc_dyn"]', component.id|q ~ " in belongs_to") }}
+
+.. rubric:: Verification & Safety Analysis Documents
+
+Presence of the standard verification and safety analysis work products for
+this component. An empty cell means the corresponding document is missing.
+
+.. dropdown:: Show work products table
+   :animate: fade-in
+
+   {{ workproduct_table(component_workproducts, component.slug)|indent(3) }}
+{% endfor %}

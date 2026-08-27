@@ -23,6 +23,10 @@ filegroup(
 py_library(
     name = "score_module_verification_report",
     srcs = [":all_sources"],
+    # The report body is a Sphinx-Needs template. Keep it beside the extension
+    # in the Bazel runfiles tree; the extension derives the folder from its own
+    # __file__ and hands it to Sphinx as ``needs_template_folder``.
+    data = ["@score_docs_as_code//src/needs_templates:files"],
     imports = ["."],
     visibility = ["//visibility:public"],
     deps = all_requirements + [

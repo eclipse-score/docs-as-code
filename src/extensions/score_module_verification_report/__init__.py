@@ -24,8 +24,9 @@ Lifecycle
 ---------
 The extension deliberately has **no** build lifecycle hooks: no ``env-updated``
 re-read, no ``build-finished`` consistency pass, no registry carried across
-parallel workers.  ``setup()`` declares config values and registers two
-directives.
+parallel workers, and no configuration of its own -- the template is the place
+to change what a report says.  ``setup()`` points ``needs_template_folder`` at
+the shipped templates and registers two directives.
 
 The single ``config-inited`` handler exists only because directive registration
 is last-one-wins and sphinx-needs registers ``mod_ver_report`` from its own
@@ -36,6 +37,7 @@ environment state and reads no needs.
 
 from __future__ import annotations
 
+from score_module_verification_report import rendering
 from score_module_verification_report.directive import (
     REPORT_NEED_DIRECTIVE,
     REPORT_TYPE,
@@ -44,6 +46,8 @@ from score_module_verification_report.directive import (
 from sphinx.application import Sphinx
 from sphinx.config import Config
 from sphinx_needs.directives.need import NeedDirective
+
+from src.helper_lib import config_setdefault
 
 __all__ = ["setup"]
 
@@ -71,55 +75,16 @@ def _register_directives(app: Sphinx, config: Config) -> None:
 
 def setup(app: Sphinx) -> dict[str, object]:
     app.setup_extension("sphinx_needs")
+    # The default template uses grid/dropdown (sphinx_design) and needpie.
+    app.setup_extension("sphinx_design")
 
-    app.add_config_value(
-        "mod_ver_report_metadata_columns",
-        "id;title;status;safety;security;verification_method",
-        rebuild="env",
-        types=(str,),
-        description="Columns of the 'Report Metadata' table.",
-    )
-    app.add_config_value(
-        "mod_ver_report_scope_columns",
-        "id;title;type;status;safety;security",
-        rebuild="env",
-        types=(str,),
-        description="Columns of the 'Verification Scope' table.",
-    )
-    app.add_config_value(
-        "mod_ver_report_component_columns",
-        "id;title;type;status",
-        rebuild="env",
-        types=(str,),
-        description="Columns of the per-component table.",
-    )
-    app.add_config_value(
-        "mod_ver_report_component_filter",
-        "id == {component_id} or {component_id} in belongs_to",
-        rebuild="env",
-        types=(str,),
-        description=(
-            "sphinx-needs filter for the per-component table. "
-            "'{component_id}' is substituted with the safely quoted need id."
-        ),
-    )
-    app.add_config_value(
-        "mod_ver_report_evidence_links",
-        ["contains", "evidence"],
-        rebuild="env",
-        types=(list,),
-        description=(
-            "Link fields of the report whose targets are listed in the "
-            "'Verification Evidence' section. Entries that are not configured "
-            "link fields are ignored."
-        ),
-    )
-    app.add_config_value(
-        "mod_ver_report_evidence_columns",
-        "id;title;type;status",
-        rebuild="env",
-        types=(str,),
-        description="Columns of the 'Verification Evidence' table.",
+    # The report body is a Sphinx-Needs template file: ``.need`` extension,
+    # living in ``needs_template_folder`` next to every other need template.
+    # Point that config at the folder shipped with docs-as-code unless the
+    # project set it itself -- in which case the project's folder is searched
+    # first and the shipped one is the fallback.
+    config_setdefault(
+        app.config, "needs_template_folder", str(rendering.shipped_template_folder())
     )
 
     app.connect("config-inited", _register_directives, priority=900)
