@@ -3082,7 +3082,7 @@
   {
     "name": "test_report_integration__test_report_emits_real_sections_as_siblings_of_the_need",
     "file": "src/extensions/score_module_verification_report/tests/test_report_integration.py",
-    "line": "193",
+    "line": "194",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3096,7 +3096,7 @@
   {
     "name": "test_report_integration__test_generated_sections_are_flat",
     "file": "src/extensions/score_module_verification_report/tests/test_report_integration.py",
-    "line": "218",
+    "line": "219",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3110,7 +3110,7 @@
   {
     "name": "test_report_integration__test_ref_from_another_page_resolves",
     "file": "src/extensions/score_module_verification_report/tests/test_report_integration.py",
-    "line": "241",
+    "line": "242",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3124,7 +3124,7 @@
   {
     "name": "test_report_integration__test_toc_contains_every_generated_section",
     "file": "src/extensions/score_module_verification_report/tests/test_report_integration.py",
-    "line": "267",
+    "line": "268",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3138,7 +3138,7 @@
   {
     "name": "test_report_integration__test_two_reports_on_one_page_do_not_collide",
     "file": "src/extensions/score_module_verification_report/tests/test_report_integration.py",
-    "line": "304",
+    "line": "305",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3152,7 +3152,7 @@
   {
     "name": "test_report_integration__test_anchors_are_stable_across_rebuilds",
     "file": "src/extensions/score_module_verification_report/tests/test_report_integration.py",
-    "line": "317",
+    "line": "318",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3166,7 +3166,7 @@
   {
     "name": "test_report_integration__test_heading_depth_at_root_and_nested",
     "file": "src/extensions/score_module_verification_report/tests/test_report_integration.py",
-    "line": "334",
+    "line": "335",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3180,7 +3180,7 @@
   {
     "name": "test_report_integration__test_singlehtml_builder_keeps_sections",
     "file": "src/extensions/score_module_verification_report/tests/test_report_integration.py",
-    "line": "374",
+    "line": "375",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3194,7 +3194,7 @@
   {
     "name": "test_report_integration__test_latex_builder_keeps_sections",
     "file": "src/extensions/score_module_verification_report/tests/test_report_integration.py",
-    "line": "384",
+    "line": "385",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3208,7 +3208,7 @@
   {
     "name": "test_report_integration__test_structure_identical_serial_and_parallel",
     "file": "src/extensions/score_module_verification_report/tests/test_report_integration.py",
-    "line": "399",
+    "line": "400",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3222,7 +3222,7 @@
   {
     "name": "test_report_integration__test_needtable_resolves_an_external_need",
     "file": "src/extensions/score_module_verification_report/tests/test_report_integration.py",
-    "line": "440",
+    "line": "441",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3236,7 +3236,7 @@
   {
     "name": "test_report_integration__test_duplicates_and_title_collisions_are_deterministic",
     "file": "src/extensions/score_module_verification_report/tests/test_report_integration.py",
-    "line": "474",
+    "line": "475",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3250,7 +3250,7 @@
   {
     "name": "test_report_integration__test_hostile_component_id_is_rejected_not_interpolated",
     "file": "src/extensions/score_module_verification_report/tests/test_report_integration.py",
-    "line": "505",
+    "line": "506",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3264,7 +3264,35 @@
   {
     "name": "test_report_integration__test_version_qualifier_warns",
     "file": "src/extensions/score_module_verification_report/tests/test_report_integration.py",
-    "line": "538",
+    "line": "539",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_report_integration__test_evidence_section_honours_the_needs_links_dict",
+    "file": "src/extensions/score_module_verification_report/tests/test_report_integration.py",
+    "line": "573",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_report_integration__test_evidence_section_is_skipped_when_the_links_are_not_configured",
+    "file": "src/extensions/score_module_verification_report/tests/test_report_integration.py",
+    "line": "585",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3278,7 +3306,7 @@
   {
     "name": "test_report_integration__test_extension_has_no_build_lifecycle_hooks",
     "file": "src/extensions/score_module_verification_report/tests/test_report_integration.py",
-    "line": "549",
+    "line": "597",
     "result": "passed",
     "repo_name": null,
     "hash": null,

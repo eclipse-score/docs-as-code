@@ -6,7 +6,7 @@
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:date>2026-08-27T10:19:01.086396</dc:date>
+    <dc:date>2026-08-27T12:11:32.008709</dc:date>
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
@@ -322,7 +322,7 @@ z
      <use xlink:href="#DejaVuSans-Bold-13" transform="translate(246.71875 0)"/>
      <use xlink:href="#DejaVuSans-Bold-8" transform="translate(316.296875 0)"/>
     </g>
-    <!-- (381) -->
+    <!-- (383) -->
     <g transform="translate(218.394375 200.557031) scale(0.08 -0.08)">
      <defs>
       <path id="DejaVuSans-Bold-b" d="M 2413 -844 
@@ -426,7 +426,7 @@ z
      <use xlink:href="#DejaVuSans-Bold-b"/>
      <use xlink:href="#DejaVuSans-Bold-16" transform="translate(45.703125 0)"/>
      <use xlink:href="#DejaVuSans-Bold-1b" transform="translate(115.28125 0)"/>
-     <use xlink:href="#DejaVuSans-Bold-14" transform="translate(184.859375 0)"/>
+     <use xlink:href="#DejaVuSans-Bold-16" transform="translate(184.859375 0)"/>
      <use xlink:href="#DejaVuSans-Bold-c" transform="translate(254.4375 0)"/>
     </g>
    </g>
@@ -628,7 +628,7 @@ z
 " style="fill: #008000"/>
     </g>
     <g id="text_5">
-     <!-- passed 100.0% (381) -->
+     <!-- passed 100.0% (383) -->
      <g transform="translate(401.32 128.295781) scale(0.1 -0.1)">
       <defs>
        <path id="DejaVuSans-14" d="M 794 531 
@@ -835,7 +835,7 @@ z
       <use xlink:href="#DejaVuSans-b" transform="translate(798.828125 0)"/>
       <use xlink:href="#DejaVuSans-16" transform="translate(837.84375 0)"/>
       <use xlink:href="#DejaVuSans-1b" transform="translate(901.46875 0)"/>
-      <use xlink:href="#DejaVuSans-14" transform="translate(965.09375 0)"/>
+      <use xlink:href="#DejaVuSans-16" transform="translate(965.09375 0)"/>
       <use xlink:href="#DejaVuSans-c" transform="translate(1028.71875 0)"/>
      </g>
     </g>
