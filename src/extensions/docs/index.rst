@@ -69,7 +69,9 @@ Extensions
       ^^^
       One Need per module gives that module a report page whose sections behave
       like ordinary RST.
-      :ref:`Module Verification Report<module-verification-report>`
+      :ref:`Module Verification Report<module-verification-report>`,
+      or jump straight to the
+      :ref:`live example<module-verification-report-example>`.
 
 
    .. grid-item-card::
@@ -90,4 +92,5 @@ Extensions
    Extension Guide <extension_guide>
    Sync TOML <sync_toml>
    Module Verification Report <module_verification_report>
+   Module Verification Report Example <module_verification_report_example>
    mounts_internals

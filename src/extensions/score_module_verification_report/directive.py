@@ -188,16 +188,20 @@ class ModuleVerificationReportDirective(SphinxDirective):
     def _configured_evidence_links(self) -> list[str]:
         """Keep only evidence links that are actually configured link fields.
 
-        This reads ``needs_extra_links`` -- configuration, not the Need model --
-        so that a project that does not define ``contains``/``evidence`` gets no
-        section instead of a broken filter.
+        This reads the link *configuration* -- not the Need model -- so that a
+        project which does not define ``contains``/``evidence`` gets no section
+        instead of a filter over a field that does not exist.
+
+        Both spellings are honoured: ``needs_links`` (a dict keyed by option
+        name, what ``score_metamodel`` writes) and the deprecated
+        ``needs_extra_links`` list.
         """
-        extra_links = cast("list[dict[str, Any]]", self.config.needs_extra_links)
-        known = {
+        known = set(cast("dict[str, Any]", self.config.needs_links))
+        known.update(
             str(link["option"])
-            for link in extra_links
+            for link in cast("list[dict[str, Any]]", self.config.needs_extra_links)
             if isinstance(link, dict) and "option" in link
-        }
+        )
         configured = cast("list[str]", self.config.mod_ver_report_evidence_links)
         return [link for link in configured if link in known]
 

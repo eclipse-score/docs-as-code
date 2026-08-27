@@ -125,9 +125,9 @@ Baselibs
 """
 
 
-def _write_sources(root: Path, docs: dict[str, str]) -> None:
+def _write_sources(root: Path, docs: dict[str, str], conf: str = CONF_PY) -> None:
     root.mkdir(parents=True, exist_ok=True)
-    (root / "conf.py").write_text(CONF_PY)
+    (root / "conf.py").write_text(conf)
     (root / "external_needs.json").write_text(json.dumps(EXTERNAL_NEEDS))
     for name, text in docs.items():
         path = root / f"{name}.rst"
@@ -155,9 +155,10 @@ def build(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> AppFactory:
         srcdir: Path | None = None,
         outdir: Path | None = None,
         freshenv: bool = True,
+        conf: str = CONF_PY,
     ) -> SphinxTestApp:
         src = srcdir or (tmp_path / "src")
-        _write_sources(src, docs)
+        _write_sources(src, docs, conf)
         monkeypatch.chdir(src)
         app = SphinxTestApp(
             freshenv=freshenv,
@@ -544,6 +545,53 @@ def test_version_qualifier_warns(build: AppFactory) -> None:
 # --------------------------------------------------------------------------
 # The extension owns no build lifecycle beyond registering its directives.
 # --------------------------------------------------------------------------
+
+
+NEEDS_EXTRA_LINKS_BLOCK = """needs_extra_links = [
+    dict(option="belongs_to", incoming="belongs to", outgoing="belongs to"),
+    dict(option="includes", incoming="included by", outgoing="includes"),
+    dict(option="covers", incoming="covered by", outgoing="covers"),
+    dict(option="contains", incoming="contained by", outgoing="contains"),
+    dict(option="evidence", incoming="evidence for", outgoing="evidence"),
+]"""
+
+NEEDS_LINKS_BLOCK = """needs_links = {
+    "belongs_to": dict(incoming="belongs to", outgoing="belongs to"),
+    "includes": dict(incoming="included by", outgoing="includes"),
+    "covers": dict(incoming="covered by", outgoing="covers"),
+    "contains": dict(incoming="contained by", outgoing="contains"),
+    "evidence": dict(incoming="evidence for", outgoing="evidence"),
+}"""
+
+NO_EVIDENCE_LINKS_BLOCK = """needs_extra_links = [
+    dict(option="belongs_to", incoming="belongs to", outgoing="belongs to"),
+    dict(option="includes", incoming="included by", outgoing="includes"),
+    dict(option="covers", incoming="covered by", outgoing="covers"),
+]"""
+
+
+def test_evidence_section_honours_the_needs_links_dict(build: AppFactory) -> None:
+    """``score_metamodel`` writes ``needs_links``, not ``needs_extra_links``.
+
+    Looking only at the deprecated list silently drops the Verification
+    Evidence section in every real project.
+    """
+    conf = CONF_PY.replace(NEEDS_EXTRA_LINKS_BLOCK, NEEDS_LINKS_BLOCK)
+    assert conf != CONF_PY
+    app = build({"index": _index("report"), "report": REPORT + ARCHITECTURE}, conf=conf)
+    assert "Verification Evidence" in _titles(app.env.get_doctree("report"))
+
+
+def test_evidence_section_is_skipped_when_the_links_are_not_configured(
+    build: AppFactory,
+) -> None:
+    conf = CONF_PY.replace(NEEDS_EXTRA_LINKS_BLOCK, NO_EVIDENCE_LINKS_BLOCK)
+    assert conf != CONF_PY
+    report = REPORT.replace("   :contains: tcase__baselibs_1\n", "")
+    app = build({"index": _index("report"), "report": report + ARCHITECTURE}, conf=conf)
+    titles = _titles(app.env.get_doctree("report"))
+    assert "Verification Evidence" not in titles
+    assert "Verification Scope" in titles
 
 
 def test_extension_has_no_build_lifecycle_hooks() -> None:
