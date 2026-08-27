@@ -16,15 +16,19 @@
   per-component navigation.
 #}
 {% set module_id = belongs_to|first|default("") %}
-{% set module_short = module_id|replace("mod__", "") %}
-{% set module_slug = module_short|replace("_", "")|lower %}
-{% set component_prefix = "comp__" ~ module_short ~ "_" %}
-{% set report_components = linked_needs(module_id, "includes") %}
-{% set first_component = report_components|first|default(None) %}
-{% set report_features = linked_needs(first_component["id"], "belongs_to") if first_component else [] %}
-{% set report_feature = report_features|first|default(None) %}
-{% set feature_id = report_feature["id"] if report_feature else "" %}
-{% set feature_title = report_feature["title"] if report_feature else "Feature" %}
+{# Resolve the component list from the module's outgoing graph links. A module
+   may list a component more than once, so deduplicate the NeedItems by ID. #}
+{% set components_in_mod = linked_needs(module_id, "includes")|unique(attribute="id")|list %}
+
+{# Collect every feature reachable from the module's components. A feature can
+   be linked by multiple components, so collect all candidates first and then
+   keep each feature NeedItem only once in first-seen graph order. The
+   namespace is required because assignments inside a Jinja loop are scoped. #}
+{% set feature_candidates = namespace(items=[]) %}
+{% for component in components_in_mod %}
+{% set feature_candidates.items = feature_candidates.items + linked_needs(component["id"], "belongs_to") %}
+{% endfor %}
+{% set report_features = feature_candidates.items|unique(attribute="id")|list %}
 
 {% set component_workproducts = [
      ["wp__requirements_inspect", "Requirements Inspection"],
@@ -83,20 +87,26 @@
    </style>
 
 {#- ===================================================================== -#}
-{#- Feature section resolved from the first component's belongs_to link.    -#}
+{#- Feature sections resolved from all components' belongs_to links.          -#}
 {#- ===================================================================== -#}
-{% set feature_slug_norm = module_slug %}
+{% for report_feature in report_features %}
+{% set feature_id = report_feature["id"] %}
+{% set feature_title = report_feature["title"] %}
+{# Derive the work-product document selector from the feature Need reached
+   through the graph, rather than reconstructing it from the module ID. #}
+{% set feature_slug_norm = feature_title|replace("_", "")|replace(" ", "")|lower %}
+{% set feature_heading = feature_title if report_features|length == 1 else "Feature: " ~ feature_title %}
 
-{{ feature_title }}
-{{ "-" * (feature_title|length) }}
+{{ feature_heading }}
+{{ "-" * (feature_heading|length) }}
 
 .. needtable::
    :filter: id == "{{ feature_id }}"
    :columns: title as "Name";id as "Id";safety;security;status
    :style: table
 
-Feature Requirements Statistics
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Requirements Statistics
+~~~~~~~~~~~~~~~~~~~~~~~
 
 .. grid:: 1 2 2 2
    :gutter: 3
@@ -132,8 +142,8 @@ Feature Requirements Statistics
       :colwidths: 13,22,8,10,23,24
       :sort: id
 
-Feature Architecture Statistics
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Architecture Statistics
+~~~~~~~~~~~~~~~~~~~~~~~
 
 .. grid:: 1 2 2 2
    :gutter: 3
@@ -168,8 +178,8 @@ Feature Architecture Statistics
       :colwidths: 25,30,10,15,20
       :sort: id
 
-Feature Inspection Statistics
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Inspection Statistics
+~~~~~~~~~~~~~~~~~~~~~
 
 Presence of the feature-level inspection work products.
 
@@ -186,6 +196,7 @@ Presence of the feature-level inspection work products.
         - Realized by
         - Status
 {{ workproduct_rows(feature_slug_norm, feature_workproducts) }}
+{% endfor %}
 
 {# ===================================================================== #}
 {# Components                                                             #}
@@ -198,18 +209,20 @@ Component Overview
 ~~~~~~~~~~~~~~~~~~
 
 .. needtable::
-   :filter: id in [{% for component in report_components %}"{{ component["id"] }}"{% if not loop.last %}, {% endif %}{% endfor %}]
+   :filter: id in [{% for component in components_in_mod %}"{{ component["id"] }}"{% if not loop.last %}, {% endif %}{% endfor %}]
    :columns: id as "Component";safety;security;status
    :style: table
    :sort: id
 
-{% for component in report_components %}
+{% for component in components_in_mod %}
 {% set component_id = component["id"] %}
-{% set component_slug = component_id|replace(component_prefix, "") %}
-{% set component_slug_norm = component_slug|replace("_", "")|lower %}
 {% set component_title = component["title"] %}
+{# The component Need reached through the graph supplies the component's
+   document selector and navigation anchor. #}
+{% set component_slug_norm = component_title|replace("_", "")|replace(" ", "")|lower %}
+{% set component_anchor = component_title|replace("_", "-")|replace(" ", "-")|lower %}
 
-.. _comp-{{ component_slug|replace("_", "-")|lower }}:
+.. _comp-{{ component_anchor }}:
 
 {{ component_title }}
 {{ "~" * (component_title|length) }}
