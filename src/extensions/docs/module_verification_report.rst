@@ -18,11 +18,13 @@ Module Verification Report extension
 ====================================
 
 ``score_module_verification_report`` provides the
-``.. module-verification-report::`` directive, which expands into the
-standard per-module verification report: a feature summary, a component
-overview table, and one detailed section per component. Traceability is
-resolved by sphinx-needs at render time — the directive only emits
-``.. needtable::`` / ``.. needpie::`` widgets with the right filters.
+``.. module-verification-report::`` directive, which emits the module's
+``mod_ver_report`` need. The report body — a feature summary, a component
+overview table, and one detailed section per component — is a Sphinx-Needs
+content template (``src/needs_templates/mod_ver_report.need``) that the need
+selects via ``:template:``. Traceability is resolved by sphinx-needs at render
+time: the template only emits ``.. needtable::`` / ``.. needpie::`` widgets
+with the right filters.
 
 The extension is part of the :ref:`score_sphinx_bundle<extensions>`.
 No external config file is required for the common case.
@@ -56,7 +58,9 @@ Options
    * - ``:module-id:``
      - yes
      - sphinx-needs id of the ``.. mod::`` need (e.g. ``mod__mymodule``).
-       Drives the default for ``:component-prefix:``.
+       Also names the module whose component-id prefix
+       (``comp__<module-short>_``) the template strips to derive component
+       slugs and titles.
 
    * - ``:components:``
      - yes
@@ -73,12 +77,6 @@ Options
        rendered per entry. Not derived from ``:module-id:`` — guessing a
        mandatory traceability link would silently produce a dangling link
        whenever the guess is wrong.
-
-   * - ``:component-prefix:``
-     - no
-     - Prefix stripped from each component id to derive its slug (used
-       for section headings and document-id matching). Default:
-       ``comp__<module-short>_``.
 
    * - ``:safety:``
      - yes
@@ -154,3 +152,28 @@ so one build surfaces all of them.
 Like every other graph check, it can be disabled or run in isolation via the
 ``score_metamodel_checks`` config value, e.g.
 ``score_metamodel_checks = "check_mod_ver_report_links"``.
+
+The report template
+-------------------
+
+The body lives in ``src/needs_templates/mod_ver_report.need`` and is rendered
+by Sphinx-Needs, not by this extension. Two consequences are worth knowing:
+
+*Templates render during the read phase*, when the need is created and the
+needs graph does not exist yet. The template therefore never looks other needs
+up. It reads ``belongs_to`` / ``components`` / ``features`` off the need
+itself, derives component slugs and titles from the ids by string
+manipulation, and leaves everything else to ``needtable`` / ``needpie``, which
+resolve at write time.
+
+*A need's content cannot open new sections*, so the report uses
+``.. rubric::`` where a standalone page would use headings. Rubrics carry no
+TOC entries; each component section is still a link target
+(``comp-<slug-with-dashes>``).
+
+Coverage is the one thing the template cannot reach on its own — LCOV data is
+a file on disk, not a need. ``render_context.py`` registers a
+``mvr_coverage(slug)`` helper in ``needs_render_context`` that returns
+ready-made table rows for a component, or an empty string when there is no
+match, and the template renders either the table or a "no coverage data" note.
+The LCOV file is parsed once per build, on first use.

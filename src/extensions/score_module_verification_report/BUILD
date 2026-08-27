@@ -47,6 +47,9 @@ score_pytest(
     name = "score_module_verification_report_tests",
     size = "small",
     srcs = glob(["tests/*.py"]),
+    # test_needs_template.py renders the shipped ``mod_ver_report.need``
+    # template, so it must be present in the test's runfiles.
+    data = ["@score_docs_as_code//src/needs_templates:files"],
     deps = [":score_module_verification_report"],
     pytest_config = "//:pyproject.toml",
 )

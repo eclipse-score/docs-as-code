@@ -55,6 +55,7 @@ from __future__ import annotations
 from typing import Any
 
 from .directive import ModuleVerificationReportDirective
+from .render_context import register_render_context
 
 
 def setup(app: Any) -> dict:
@@ -64,6 +65,10 @@ def setup(app: Any) -> dict:
         "bazel-out/_coverage/_coverage_report.dat",
         "env",
     )
+    # The ``mod_ver_report`` need template renders coverage tables, but LCOV
+    # data lives on disk rather than in the needs graph — expose it as a
+    # render-context helper the template can call.
+    app.connect("config-inited", register_render_context)
     return {
         "version": "0.9",
         "parallel_read_safe": True,

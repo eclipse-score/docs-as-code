@@ -21,48 +21,25 @@ from docutils.statemachine import ViewList
 from sphinx.util.docutils import SphinxDirective
 from sphinx.util.nodes import nested_parse_with_titles
 
-from .coverage import load_coverage
-from .rendering import render_report
-from .templates import DEFAULT_FEATURE_WORKPRODUCTS, DEFAULT_WORKPRODUCTS
+from .rendering import render_mod_ver_report
 
-# Strip an optional ``[version==N]`` qualifier from a component id.
+# Strip an optional ``[version==N]`` qualifier from a need id.
 _VERSION_QUALIFIER_RE = re.compile(r"\[version==\d+\]$")
 
 
-def _parse_needs(ids_str: str, prefix: str) -> list[dict]:
-    """Parse a comma-separated list of need ids into id/slug/title dicts.
+def _parse_ids(ids_str: str) -> list[str]:
+    """Parse a comma-separated option value into a list of need ids.
 
-    Each entry may carry an optional ``[version==N]`` qualifier which is
-    stripped silently — the rendered report does not filter by version.
-
-    The short slug is the need id with *prefix* removed (or the full id if the
-    prefix is absent). The human-readable title is derived from the slug:
-    underscores replaced with spaces, title-cased.
-
-    Used for both ``:components:`` (with the ``comp__<module>_`` prefix) and
-    ``:features:`` (with the generic ``feat__`` prefix).
+    Multi-line values are supported (docutils folds them into one string) and
+    an optional ``[version==N]`` qualifier is stripped silently — the report
+    does not filter by version.
     """
-    result = []
+    ids = []
     for raw in ids_str.split(","):
         need_id = _VERSION_QUALIFIER_RE.sub("", raw.strip())
-        if not need_id:
-            continue
-        slug = (
-            need_id[len(prefix) :] if prefix and need_id.startswith(prefix) else need_id
-        )
-        title = slug.replace("_", " ").title()
-        result.append({"id": need_id, "slug": slug, "title": title})
-    return result
-
-
-def _parse_components(ids_str: str, component_prefix: str) -> list[dict]:
-    """Parse the ``:components:`` option. See :func:`_parse_needs`."""
-    return _parse_needs(ids_str, component_prefix)
-
-
-def _parse_features(ids_str: str) -> list[dict]:
-    """Parse the ``:features:`` option. See :func:`_parse_needs`."""
-    return _parse_needs(ids_str, "feat__")
+        if need_id:
+            ids.append(need_id)
+    return ids
 
 
 # Mandatory options every ``mod_ver_report`` need requires (see
@@ -91,9 +68,9 @@ def _mod_ver_report_id_and_title(module_short: str) -> tuple[str, str]:
 
 
 class ModuleVerificationReportDirective(SphinxDirective):
-    """Expand to the per-module verification report body.
+    """Emit the ``mod_ver_report`` need for one module.
 
-    Minimal usage::
+    Usage::
 
         .. module-verification-report::
            :module-id: mod__mymodule
@@ -104,24 +81,23 @@ class ModuleVerificationReportDirective(SphinxDirective):
            :status: valid
            :verification-method: test_and_inspection
 
-    ``component-prefix`` is optional and derived from ``module-id`` when
-    omitted. Everything else is required, because it maps onto a mandatory
-    option or link of the sphinx-needs ``mod_ver_report`` need type (see
-    metamodel.yaml) — this directive emits one such need so the report is
-    machine-readable, not just a rendered page.
+    Every option is required: each maps onto a mandatory option or link of the
+    sphinx-needs ``mod_ver_report`` need type (see metamodel.yaml). The
+    directive is a shorthand — it derives the need's id and title from
+    ``:module-id:`` and passes the rest straight through.
 
-    The ``:components:`` and ``:features:`` options are named after the need
-    links they populate: each is a comma-separated id list that is passed
-    straight through to the emitted need.
+    The report *body* is not generated here. The emitted need selects the
+    ``mod_ver_report`` content template
+    (``src/needs_templates/mod_ver_report.need``), which Sphinx-Needs renders
+    from the need's own fields.
     """
 
     required_arguments = 0
     optional_arguments = 0
     option_spec = {
         "module-id": str,
-        "features": str,
-        "component-prefix": str,
         "components": str,
+        "features": str,
         "safety": str,
         "security": str,
         "status": str,
@@ -130,86 +106,64 @@ class ModuleVerificationReportDirective(SphinxDirective):
     }
     has_content = False
 
+    def _error(self, message: str) -> list[nodes.Node]:
+        return [
+            self.state_machine.reporter.error(
+                f"module-verification-report: {message}", line=self.lineno
+            )
+        ]
+
     def run(self) -> list[nodes.Node]:
         module_id = self.options.get("module-id", "")
         module_short = (
             module_id[len("mod__") :] if module_id.startswith("mod__") else module_id
         )
-        component_prefix = self.options.get("component-prefix") or (
-            "comp__" + module_short + "_" if module_short else "comp__"
-        )
-        workproducts = DEFAULT_WORKPRODUCTS
-        feature_workproducts = DEFAULT_FEATURE_WORKPRODUCTS
 
-        components = _parse_components(
-            self.options.get("components", ""), component_prefix
-        )
-        features = _parse_features(self.options.get("features", ""))
+        parsed_links = {
+            name: _parse_ids(self.options.get(name, ""))
+            for name in _MOD_VER_REPORT_LINKS
+        }
 
         # ``components`` and ``features`` are mandatory links of the
         # mod_ver_report need type, so an empty list cannot produce a valid
         # need — report it here, where the author can see which directive is
         # at fault, rather than as a metamodel warning about a generated need.
-        parsed_links = {"components": components, "features": features}
         empty_links = [n for n in _MOD_VER_REPORT_LINKS if not parsed_links[n]]
         if empty_links:
-            error = self.state_machine.reporter.error(
-                "module-verification-report: no "
-                f"{' or '.join(empty_links)} specified — add "
+            return self._error(
+                f"no {' or '.join(empty_links)} specified — add "
                 + " and ".join(f"':{name}: <id>, ...'" for name in empty_links)
-                + " to the directive",
-                line=self.lineno,
+                + " to the directive"
             )
-            return [error]
 
         missing = [opt for opt in _MOD_VER_REPORT_OPTIONS if not self.options.get(opt)]
         if missing:
-            error = self.state_machine.reporter.error(
-                "module-verification-report: missing mandatory option(s) "
+            return self._error(
+                "missing mandatory option(s) "
                 f"{', '.join(':' + m + ':' for m in missing)} required to "
-                "generate the mod_ver_report need",
-                line=self.lineno,
+                "generate the mod_ver_report need"
             )
-            return [error]
 
         report_id, report_title = _mod_ver_report_id_and_title(module_short)
-        mod_ver_report = {
-            "module_id": module_id,
-            "report_id": report_id,
-            "title": report_title,
-            "safety": self.options["safety"],
-            "security": self.options["security"],
-            "status": self.options["status"],
-            "verification_method": self.options["verification-method"],
-            "version": self.options.get("version", "1"),
-            # The two mandatory links, passed straight through from the
-            # options of the same name.
-            "components": [c["id"] for c in components],
-            "features": [f["id"] for f in features],
-        }
-
-        rst_text = render_report(
-            components,
-            features,
-            workproducts,
-            feature_workproducts,
-            coverage_records=load_coverage(
-                getattr(self.config, "mvr_coverage_lcov", "")
-            ),
-            mod_ver_report=mod_ver_report,
+        rst_text = render_mod_ver_report(
+            module_id=module_id,
+            report_id=report_id,
+            title=report_title,
+            safety=self.options["safety"],
+            security=self.options["security"],
+            status=self.options["status"],
+            verification_method=self.options["verification-method"],
+            version=self.options.get("version", "1"),
+            components=parsed_links["components"],
+            features=parsed_links["features"],
         )
+
         view_list = ViewList()
         source = "<module-verification-report>"
         for lineno, line in enumerate(rst_text.splitlines()):
             view_list.append(line, source, lineno)
 
-        # Parse into a plain container (not a ``nodes.section``): a section
-        # wrapper would push every heading we emit one level deeper than the
-        # surrounding document sections, so ``Component Overview`` would
-        # render as ``<h4>`` instead of ``<h3>`` alongside
-        # ``Feature Requirements Statistics``.
         container = nodes.container()
         container.document = self.state.document
         nested_parse_with_titles(self.state, view_list, container)  # type: ignore[arg-type]
-
         return container.children

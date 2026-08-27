@@ -1,0 +1,345 @@
+{#
+  Content template for the ``mod_ver_report`` need type.
+
+  Everything the report needs is read off the need itself, so the template is
+  self-sufficient: ``belongs_to`` names the module, ``components`` and
+  ``features`` name the architecture needs the report describes (all three are
+  mandatory links, see metamodel.yaml). Sphinx-Needs renders this template when
+  the need is created, which is *before* the needs graph exists — so the
+  template must never try to look other needs up. Component titles and slugs
+  are therefore derived from the ids by string manipulation, and everything
+  else is delegated to ``needtable`` / ``needpie``, which resolve at write
+  time.
+
+  The single exception is coverage: LCOV data lives on disk, not in the graph.
+  ``score_module_verification_report`` puts a ``mvr_coverage(slug)`` helper into
+  ``needs_render_context``; it returns ready-made ``list-table`` rows for the
+  component, or an empty string when there is no data.
+
+  Sections are ``.. rubric::`` rather than real headings: the template renders
+  *inside* a need, where docutils does not allow new sections.
+#}
+{% set module_id = belongs_to|first|default("") %}
+{% set module_short = module_id|replace("mod__", "") %}
+{% set component_prefix = "comp__" ~ module_short ~ "_" %}
+
+{% set component_workproducts = [
+     ["wp__requirements_inspect", "Requirements Inspection"],
+     ["wp__sw_arch_verification", "Architecture Inspection"],
+     ["wp__sw_implementation_inspection", "Implementation Inspection"],
+     ["wp__sw_component_dfa", "DFA"],
+     ["wp__sw_component_fmea", "FMEA"],
+   ] %}
+{% set feature_workproducts = [
+     ["wp__requirements_inspect", "Requirements Inspection"],
+     ["wp__sw_arch_verification", "Architecture Inspection"],
+   ] %}
+
+{#- One work-product row: the need link, its kind, the realising document and
+    its status. Both cells are needtables over the same filter, differing only
+    in :columns:, so an empty match renders as an empty cell. -#}
+{% macro workproduct_rows(slug_norm, workproducts) %}
+{%- for wp in workproducts %}
+      * - :need:`{{ wp[0] }}`
+        - {{ wp[1] }}
+        - .. needtable::
+             :filter: type == "document" and "{{ slug_norm }}" in id.replace("_", "").lower() and "{{ wp[0] }}" in realizes
+             :columns: id
+             :style: table
+        - .. needtable::
+             :filter: type == "document" and "{{ slug_norm }}" in id.replace("_", "").lower() and "{{ wp[0] }}" in realizes
+             :columns: status
+             :style: table
+{%- endfor %}
+{% endmacro %}
+
+.. raw:: html
+
+   <style>
+   .wp-doc-table td .needstable_wrapper,
+   .wp-doc-table td .pst-scrollable-table-container {
+       margin: 0; padding: 0; overflow: visible;
+   }
+   .wp-doc-table td table.NEEDS_TABLE,
+   .wp-doc-table td table.NEEDS_DATATABLES {
+       border: 0; margin: 0; box-shadow: none; background: transparent;
+       width: auto;
+   }
+   .wp-doc-table td table.NEEDS_TABLE thead,
+   .wp-doc-table td table.NEEDS_DATATABLES thead { display: none; }
+   .wp-doc-table td table.NEEDS_TABLE tbody tr,
+   .wp-doc-table td table.NEEDS_DATATABLES tbody tr { background: transparent; }
+   .wp-doc-table td table.NEEDS_TABLE tbody td,
+   .wp-doc-table td table.NEEDS_DATATABLES tbody td {
+       border: 0; padding: 0; background: transparent;
+   }
+   .wp-doc-table td .dataTables_wrapper .dataTables_length,
+   .wp-doc-table td .dataTables_wrapper .dataTables_filter,
+   .wp-doc-table td .dataTables_wrapper .dataTables_info,
+   .wp-doc-table td .dataTables_wrapper .dataTables_paginate { display: none; }
+   </style>
+
+{#- ===================================================================== -#}
+{#- Feature sections — one per id in :features:                            -#}
+{#- ===================================================================== -#}
+{% for feature_id in features %}
+{% set feature_slug = feature_id|replace("feat__", "") %}
+{% set feature_slug_norm = feature_slug|replace("_", "")|lower %}
+
+.. rubric:: {% if features|length == 1 %}Feature{% else %}Feature: {{ feature_slug|replace("_", " ")|title }}{% endif %}
+
+.. needtable::
+   :filter: id == "{{ feature_id }}"
+   :columns: title as "Name";id as "Id";safety;security;status
+   :style: table
+
+.. rubric:: Feature Requirements Statistics
+
+.. grid:: 1 2 2 2
+   :gutter: 3
+
+   .. grid-item::
+
+      .. needpie:: Feature Requirements Status
+         :labels: valid, invalid
+         :colors: #37a12d, #ca2828
+         :legend:
+
+         type == "feat_req" and "{{ feature_id }}" in satisfied_by and status == "valid"
+         type == "feat_req" and "{{ feature_id }}" in satisfied_by and status == "invalid"
+
+   .. grid-item::
+
+      .. needpie:: Feature Requirements Test Coverage
+         :labels: fully covered, partially covered, not covered
+         :colors: #37a12d, #f0a500, #ca2828
+         :legend:
+
+         type == "feat_req" and "{{ feature_id }}" in satisfied_by and ("fully_verifies_back" in locals() and len(fully_verifies_back) > 0)
+         type == "feat_req" and "{{ feature_id }}" in satisfied_by and ("partially_verifies_back" in locals() and len(partially_verifies_back) > 0) and not ("fully_verifies_back" in locals() and len(fully_verifies_back) > 0)
+         type == "feat_req" and "{{ feature_id }}" in satisfied_by and not ("fully_verifies_back" in locals() and len(fully_verifies_back) > 0) and not ("partially_verifies_back" in locals() and len(partially_verifies_back) > 0)
+
+.. dropdown:: Show requirements table
+   :animate: fade-in
+
+   .. needtable::
+      :filter: type == "feat_req" and "{{ feature_id }}" in satisfied_by
+      :style: table
+      :columns: id;title;safety;status;fully_verifies_back;partially_verifies_back
+      :colwidths: 13,22,8,10,23,24
+      :sort: id
+
+.. rubric:: Feature Architecture Statistics
+
+.. grid:: 1 2 2 2
+   :gutter: 3
+
+   .. grid-item::
+
+      .. needpie:: Feature Architecture Elements Status
+         :labels: valid, invalid
+         :colors: #37a12d, #ca2828
+         :legend:
+
+         type in ["feat_arc_sta", "feat_arc_dyn"] and "{{ feature_id }}" in belongs_to and status == "valid"
+         type in ["feat_arc_sta", "feat_arc_dyn"] and "{{ feature_id }}" in belongs_to and status == "invalid"
+
+   .. grid-item::
+
+      .. needpie:: Feature Architecture Elements Inspection Status
+         :labels: inspected, not inspected
+         :colors: #37a12d, #ca2828
+         :legend:
+
+         type in ["feat_arc_sta", "feat_arc_dyn"] and "{{ feature_id }}" in belongs_to and "inspected" in tags
+         type in ["feat_arc_sta", "feat_arc_dyn"] and "{{ feature_id }}" in belongs_to and "inspected" not in tags
+
+.. dropdown:: Show architectural elements table
+   :animate: fade-in
+
+   .. needtable::
+      :filter: type in ["feat_arc_sta", "feat_arc_dyn"] and "{{ feature_id }}" in belongs_to
+      :style: table
+      :columns: id;title;safety;status;tags
+      :colwidths: 25,30,10,15,20
+      :sort: id
+
+.. rubric:: Feature Inspection Statistics
+
+Presence of the feature-level inspection work products.
+
+.. dropdown:: Show work products table
+   :animate: fade-in
+
+   .. list-table::
+      :header-rows: 1
+      :widths: 30 25 25 20
+      :class: wp-doc-table
+
+      * - Work Product
+        - Kind
+        - Realized by
+        - Status
+{{- workproduct_rows(feature_slug_norm, feature_workproducts) }}
+{% endfor %}
+
+{#- ===================================================================== -#}
+{#- Components                                                             -#}
+{#- ===================================================================== -#}
+
+.. rubric:: Components
+
+.. rubric:: Component Overview
+
+.. needtable::
+   :filter: id in [{% for c in components %}"{{ c }}"{% if not loop.last %}, {% endif %}{% endfor %}]
+   :columns: id as "Component";safety;security;status
+   :style: table
+   :sort: id
+
+{% for component_id in components %}
+{% set component_slug = component_id|replace(component_prefix, "") %}
+{% set component_slug_norm = component_slug|replace("_", "")|lower %}
+{% set component_title = component_slug|replace("_", " ")|title %}
+
+.. _comp-{{ component_slug|replace("_", "-")|lower }}:
+
+.. rubric:: {{ component_title }}
+
+.. raw:: html
+
+   <hr style="border-top: 2px solid #333333; margin: 0.5em 0 1.5em 0;">
+
+.. rubric:: Component Requirements Statistics
+
+.. grid:: 1 2 2 2
+   :gutter: 3
+
+   .. grid-item::
+
+      .. needpie:: {{ component_title }} Requirements Status
+         :labels: valid, invalid
+         :colors: #37a12d, #ca2828
+         :legend:
+
+         type == "comp_req" and "{{ component_id }}" in satisfied_by and status == "valid"
+         type == "comp_req" and "{{ component_id }}" in satisfied_by and status == "invalid"
+
+   .. grid-item::
+
+      .. needpie:: {{ component_title }} Requirements Test Coverage
+         :labels: fully covered, partially covered, not covered
+         :colors: #37a12d, #f0a500, #ca2828
+         :legend:
+
+         type == "comp_req" and "{{ component_id }}" in satisfied_by and ("fully_verifies_back" in locals() and len(fully_verifies_back) > 0)
+         type == "comp_req" and "{{ component_id }}" in satisfied_by and ("partially_verifies_back" in locals() and len(partially_verifies_back) > 0) and not ("fully_verifies_back" in locals() and len(fully_verifies_back) > 0)
+         type == "comp_req" and "{{ component_id }}" in satisfied_by and not ("fully_verifies_back" in locals() and len(fully_verifies_back) > 0) and not ("partially_verifies_back" in locals() and len(partially_verifies_back) > 0)
+
+.. rubric:: Component Architecture Statistics
+
+.. grid:: 1 2 2 2
+   :gutter: 3
+
+   .. grid-item::
+
+      .. needpie:: {{ component_title }} Architecture Elements Status
+         :labels: valid, invalid
+         :colors: #37a12d, #ca2828
+         :legend:
+
+         type in ["comp_arc_sta", "comp_arc_dyn"] and "{{ component_id }}" in belongs_to and status == "valid"
+         type in ["comp_arc_sta", "comp_arc_dyn"] and "{{ component_id }}" in belongs_to and status == "invalid"
+
+   .. grid-item::
+
+      .. needpie:: {{ component_title }} Architecture Elements Inspection Status
+         :labels: inspected, not inspected
+         :colors: #37a12d, #ca2828
+         :legend:
+
+         type in ["comp_arc_sta", "comp_arc_dyn"] and "{{ component_id }}" in belongs_to and "inspected" in tags
+         type in ["comp_arc_sta", "comp_arc_dyn"] and "{{ component_id }}" in belongs_to and "inspected" not in tags
+
+.. rubric:: Requirements Traceability
+
+The following table lists all requirements of this component together with their
+verification status and the tests that (fully or partially) verify them:
+
+.. dropdown:: Show requirements table
+   :animate: fade-in
+
+   .. needtable::
+      :filter: type == "comp_req" and "{{ component_id }}" in satisfied_by
+      :style: table
+      :columns: id;title;safety;status;fully_verifies_back;partially_verifies_back
+      :colwidths: 13,22,8,10,23,24
+      :sort: id
+
+.. rubric:: Test Coverage
+
+Per-source-file line and branch coverage aggregated from the LCOV report
+produced by ``bazel coverage``.
+
+.. dropdown:: Show test coverage table
+   :animate: fade-in
+{%- set coverage_body = mvr_coverage(component_slug_norm) %}
+{%- if coverage_body %}
+
+   .. list-table::
+      :header-rows: 1
+      :widths: 45 10 10 10 10 10 10
+
+      * - Source
+        - Lines found
+        - Lines hit
+        - Line %
+        - Branches found
+        - Branches hit
+        - Branch %
+{{ coverage_body }}
+{%- else %}
+
+   .. note::
+
+      No coverage data available for this component. Run ``bazel coverage``
+      with the corresponding targets and rebuild the docs to populate this
+      table.
+{%- endif %}
+
+.. rubric:: Architectural Elements
+
+The following table lists the architectural elements of this component
+together with their inspection status. Elements that have been formally
+inspected carry the ``inspected`` tag; elements without that tag have not
+yet been inspected.
+
+.. dropdown:: Show architectural elements table
+   :animate: fade-in
+
+   .. needtable::
+      :filter: type in ["comp_arc_sta", "comp_arc_dyn"] and "{{ component_id }}" in belongs_to
+      :style: table
+      :columns: id;title;safety;status;tags
+      :colwidths: 25,30,10,15,20
+      :sort: id
+
+.. rubric:: Verification & Safety Analysis Documents
+
+Presence of the standard verification and safety analysis work products for
+this component. A dash (``—``) means the corresponding document is missing.
+
+.. dropdown:: Show work products table
+   :animate: fade-in
+
+   .. list-table::
+      :header-rows: 1
+      :widths: 30 25 25 20
+      :class: wp-doc-table
+
+      * - Work Product
+        - Kind
+        - Realized by
+        - Status
+{{- workproduct_rows(component_slug_norm, component_workproducts) }}
+{% endfor %}
