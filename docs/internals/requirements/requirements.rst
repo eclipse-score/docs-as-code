@@ -866,6 +866,25 @@ Testing
   * allow links to covered artifacts via ``covers``
   * allow links to backing documents or work products via ``evidence`` and ``realizes``
 
+.. tool_req:: Support machine-readable inspection records
+  :id: tool_req__docs_inspection_record_need
+  :tags: Verification Evidence
+  :implemented: YES
+  :version: 1
+  :satisfies: gd_req__verification_checks
+  :parent_covered: NO: process wording defines verification checks, while the tool models a first-class inspection record artifact.
+
+  Docs-as-Code shall support a machine-readable inspection record need type.
+
+  The need type shall:
+
+  * use ``mod_insp`` as directive type
+  * classify the inspection by ``inspection_type`` and ``inspection_state``
+  * record the checklist reference and reviewer list via ``checklist_ref`` and ``reviewers``
+  * link the inspection to the verified module via ``belongs_to``
+  * link the inspected artifacts via ``inspects``
+  * allow links to backing evidence via ``evidence``
+
 🧪 Tool Verification Reports
 ############################
 
