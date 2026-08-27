@@ -21,7 +21,7 @@ When a script or tool creates documentation content at build time, collect it
 with a ``docs_bundle`` and mount the bundle into your documentation tree.
 
 You find a `complete working example <https://github.com/eclipse-score/docs-as-code/tree/main/src/extensions/score_metamodel/docs/>`_
-in the :ref:`metamodel-types-visualization`.
+in the :ref:`metamodel-reference`.
 
 Which ``data`` attribute?
 -------------------------

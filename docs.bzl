@@ -44,28 +44,28 @@ Easy streamlined way for S-CORE docs-as-code.
 load("@aspect_rules_py//py:defs.bzl", "py_binary", "py_venv")
 load("@docs_as_code_hub_env//:requirements.bzl", "all_requirements")
 load(
-    "@sphinxdocs//sphinxdocs:sphinx.bzl",
-    "sphinx_build_binary",
-    "sphinx_docs",
-)
-load("@sphinxdocs//sphinxdocs:sphinx_docs_library.bzl", "sphinx_docs_library")
-load(
     "@score_docs_as_code//:bzl/basics.bzl",
     "glob_doc_sources",
     "join_path",
 )
 load(
     "@score_docs_as_code//:bzl/bundle_rules.bzl",
-    "create_bundle",
     "bundle_source_files",
-    "merge_bundle_sourcelinks",
+    "create_bundle",
     "external_docs_runfiles",
     "generate_code_target_sourcelinks",
+    "merge_bundle_sourcelinks",
 )
 load(
     "@score_docs_as_code//:bzl/mount_rules.bzl",
     "create_mounts_manifest",
 )
+load(
+    "@sphinxdocs//sphinxdocs:sphinx.bzl",
+    "sphinx_build_binary",
+    "sphinx_docs",
+)
+load("@sphinxdocs//sphinxdocs:sphinx_docs_library.bzl", "sphinx_docs_library")
 
 def _module_name_without_prefix():
     """Return the current Bazel module name without its first prefix."""
@@ -169,15 +169,19 @@ def _missing_requirements(deps):
     """Add Python hub dependencies if they are missing."""
     found = []
     missing = []
+
     def _target_to_packagename(target):
         return str(target).split("/")[-1].split(":")[0]
+
     all_packages = [_target_to_packagename(pkg) for pkg in all_requirements]
+
     def _find(pkg):
         for dep in deps:
             dep_pkg = _target_to_packagename(dep)
             if dep_pkg == pkg:
                 return True
         return False
+
     for pkg in all_packages:
         if _find(pkg):
             found.append(pkg)
@@ -208,8 +212,7 @@ def docs(
         test_sources = [],
         known_good = None,
         metamodel = None,
-        bundles = [],
-    ):
+        bundles = []):
     """Creates all targets related to documentation.
 
     By using this function, you'll get any and all updates for documentation targets in one place.
@@ -261,6 +264,7 @@ def docs(
     if config_is_generated:
         if not project or not project_url:
             fail("docs(): no " + config_file_path + " found; provide both project and project_url to docs().")
+
         # Generate the config at the source-root location expected by
         # sphinx_docs: that rule treats the config file's directory as the
         # Sphinx source directory.
@@ -316,7 +320,7 @@ def docs(
             create_mounts_manifest(
                 name = "_mounts_manifest",
                 bundle = mounts_bundle,
-            )
+            ),
         ]
 
     deps = deps + _missing_requirements(deps)
@@ -332,9 +336,11 @@ def docs(
         visibility = ["//visibility:private"],
         data = data + external_needs + metamodel_label + [":docs_bundle"],
         deps = deps,
+        tags = ["manual"]
     )
 
     known_good_label = [known_good] if known_good else []
+
     # The public bundle carries both the complete source tree and the
     # transitive source-code links of every nested bundle.
     docs_bundle(
@@ -345,6 +351,7 @@ def docs(
         scan_code = scan_code,
         code_targets = code_targets,
         visibility = ["//visibility:public"],
+        tags = ["manual"]
     )
     sphinx_sources = bundle_source_files(
         name = "_docs_sphinx_sources",
@@ -410,48 +417,49 @@ def docs(
         srcs = [incremental_src],
         data = docs_data,
         deps = deps,
-        env = docs_env
+        env = docs_env,
+        tags = ["manual"],
     )
 
     native.alias(
         name = "docs",
         actual = ":_score_docs_cli",
-        tags = ["cli_help=Build documentation:\nbazel run //:docs"],
+        tags = ["manual"],
     )
 
     docs_env["ACTION"] = "linkcheck"
     py_binary(
         name = "docs_link_check",
-        tags = ["cli_help=Verify Links inside Documentation:\nbazel run //:docs_link_check\n (Note: this could take a long time)"],
+        tags = ["manual"],
         srcs = [incremental_src],
         data = docs_data,
         deps = deps,
-        env = docs_env
+        env = docs_env,
     )
 
     docs_env["ACTION"] = "check"
     py_binary(
         name = "docs_check",
-        tags = ["cli_help=Verify documentation:\nbazel run //:docs_check"],
+        tags = ["manual"],
         srcs = [incremental_src],
         data = docs_data,
         deps = deps,
-        env = docs_env
+        env = docs_env,
     )
 
     docs_env["ACTION"] = "live_preview"
     py_binary(
         name = "live_preview",
-        tags = ["cli_help=Live preview documentation in the browser:\nbazel run //:live_preview"],
+        tags = ["manual"],
         srcs = [incremental_src],
         data = docs_data,
         deps = deps,
-        env = docs_env
+        env = docs_env,
     )
 
     py_venv(
         name = "ide_support",
-        tags = ["cli_help=Create virtual environment (.venv_docs) for documentation support:\nbazel run //:ide_support"],
+        tags = ["manual"],
         venv_name = ".venv_docs",
         deps = deps,
         data = data,
@@ -487,6 +495,7 @@ def docs(
         # Persistent workers cause stale symlinks after dependency version
         # changes, corrupting the Bazel cache.
         allow_persistent_workers = False,
+        tags = ["manual"],
     )
 
     native.genrule(
@@ -495,6 +504,7 @@ def docs(
         outs = ["metrics.json"],
         cmd = "cp $(location :needs_json)/metrics.json $@",
         visibility = ["//visibility:public"],
+        tags = ["manual"],
     )
 
     native.genrule(
@@ -505,12 +515,13 @@ def docs(
         outs = ["needs.json"],
         cmd = "cp $(location :needs_json)/needs.json $@",
         visibility = ["//visibility:public"],
+        tags = ["manual"],
     )
 
     native.alias(
         name = "traceability_gate",
         actual = Label("//scripts_bazel:traceability_gate"),
-        tags = ["cli_help=Enforce traceability coverage thresholds:\nbazel run //:traceability_gate -- --metrics-json $(location //:metrics_json)"],
+        tags = ["manual"],
     )
 
 def _sourcelinks_json(name, srcs):
@@ -538,4 +549,5 @@ def _sourcelinks_json(name, srcs):
         """.format(generate_sourcelinks_tool = generate_sourcelinks_tool),
         tools = [generate_sourcelinks_tool],
         visibility = ["//visibility:public"],
+        tags = ["manual"],
     )

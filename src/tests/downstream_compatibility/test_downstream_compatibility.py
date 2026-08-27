@@ -240,8 +240,16 @@ def _cleanup_before_cmd(cwd: Path, cmd: str) -> None:
 
 def _run_bazel_cmd(cmd: str, repo_name: str, cwd: Path) -> None:
     """Stream a bazel command to stdout; fail on non-zero exit, warn on WARNING lines."""
+
+    # We do not care about broken bazel lock files in downstream repos.
+    # Consumer repositories may configure `common --lockfile_mode=error` in
+    # their `.bazelrc`. Put the override after `bazel <command>` so the
+    # explicit command-line option takes precedence over that configuration.
+    args = cmd.split()
+    args.insert(2, "--lockfile_mode=off")
+
     process = subprocess.Popen(
-        cmd.split(),
+        args,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         universal_newlines=True,
