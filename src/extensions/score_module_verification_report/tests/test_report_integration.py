@@ -27,12 +27,13 @@ import json
 import re
 from collections.abc import Callable
 from pathlib import Path
+from typing import Any
 
 import pytest
 from docutils import nodes
 from sphinx.testing.util import SphinxTestApp
 
-EXTERNAL_NEEDS = {
+EXTERNAL_NEEDS: dict[str, Any] = {
     "current_version": "1.0",
     "project": "external",
     "versions": {

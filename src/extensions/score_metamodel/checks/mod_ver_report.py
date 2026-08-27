@@ -26,6 +26,9 @@ constant; it cannot express set equality between two link fields, which is why
 this one check is written in Python.
 """
 
+from collections.abc import Iterable
+from typing import cast
+
 from score_metamodel import CheckLogger, graph_check
 from sphinx.application import Sphinx
 from sphinx_needs.data import NeedsView
@@ -37,10 +40,13 @@ COMPONENT_TYPE = "comp"
 
 
 def _link_ids(need: NeedItem, option: str) -> list[str]:
-    value = need.get(option, None) or []
+    """Read a link field as a list of ids, tolerating the single-string form."""
+    value: object = need.get(option, None)
+    if not value:
+        return []
     if isinstance(value, str):
         return [value]
-    return list(value)
+    return [str(item) for item in cast("Iterable[object]", value)]
 
 
 @graph_check

@@ -58,8 +58,8 @@ Design decisions that are load-bearing and must not be "cleaned up"
 
 from __future__ import annotations
 
-from collections.abc import Sequence
-from typing import Final
+from collections.abc import Callable, Sequence
+from typing import Any, ClassVar, Final, cast
 
 from docutils import nodes
 from score_module_verification_report import rendering
@@ -90,7 +90,9 @@ class ModuleVerificationReportDirective(SphinxDirective):
     has_content = True
     # Any option is accepted and forwarded to the Need. The metamodel decides
     # which options are mandatory, which are links and what they may target.
-    option_spec: Final[DummyOptionSpec] = DummyOptionSpec()
+    # Annotated with docutils' own type: ``Directive.option_spec`` is a mutable
+    # class variable, so a narrower type here is an invalid override.
+    option_spec: ClassVar[dict[str, Callable[[str], Any]] | None] = DummyOptionSpec()
 
     options: dict[str, str | None]
 
@@ -190,14 +192,14 @@ class ModuleVerificationReportDirective(SphinxDirective):
         so that a project that does not define ``contains``/``evidence`` gets no
         section instead of a broken filter.
         """
+        extra_links = cast("list[dict[str, Any]]", self.config.needs_extra_links)
         known = {
-            link["option"]
-            for link in self.config.needs_extra_links
+            str(link["option"])
+            for link in extra_links
             if isinstance(link, dict) and "option" in link
         }
-        return [
-            link for link in self.config.mod_ver_report_evidence_links if link in known
-        ]
+        configured = cast("list[str]", self.config.mod_ver_report_evidence_links)
+        return [link for link in configured if link in known]
 
 
 def _promote_report_anchors(
