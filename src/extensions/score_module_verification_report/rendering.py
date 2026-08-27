@@ -108,10 +108,16 @@ def render_feature(
     feature_id: str,
     feature_slug: str,
     feature_workproducts: list[dict],
+    heading: str = "Feature",
 ) -> str:
     """Render the ``Feature`` section (Requirements / Architecture /
     Inspection Statistics), delegating all attribute filtering to
     sphinx-needs.
+
+    *heading* names the section. A report normally covers a single feature and
+    keeps the plain ``Feature`` heading; when ``:features:`` lists more than
+    one, :func:`render_report` passes a per-feature heading so the page does
+    not repeat the same title.
 
     Feature statistics filter ``feat_req`` / ``feat_arc_*`` by
     ``"{feature_id}" in belongs_to`` — the same link that the source
@@ -123,6 +129,8 @@ def render_feature(
     ids because documents have no direct link back to the feature.
     """
     return FEATURE_TEMPLATE.format(
+        feature_heading=heading,
+        feature_heading_underline="-" * len(heading),
         feature_id=feature_id,
         feature_slug=feature_slug,
         feature_workproduct_rows=workproduct_rows(
@@ -154,9 +162,19 @@ def render_mod_ver_report(
     security: str,
     status: str,
     verification_method: str,
+    components: list[str],
+    features: list[str],
     version: str = "1",
 ) -> str:
-    """Render the ``.. mod_ver_report::`` need declaration for *module_id*."""
+    """Render the ``.. mod_ver_report::`` need declaration for *module_id*.
+
+    ``components`` and ``features`` are mandatory links of the
+    ``mod_ver_report`` need type (see metamodel.yaml): they record which
+    architecture needs this report describes. Emitting them puts the report
+    into the needs graph, which is what lets score_metamodel's
+    ``check_mod_ver_report_links`` graph check compare it against the module's
+    ``includes`` and the components' ``belongs_to``.
+    """
     return MOD_VER_REPORT_TEMPLATE.format(
         title=title,
         report_id=report_id,
@@ -166,23 +184,40 @@ def render_mod_ver_report(
         status=status,
         verification_method=verification_method,
         module_id=module_id,
+        components=", ".join(components),
+        features=", ".join(features),
     )
 
 
 def render_report(
     components: list[dict],
-    feature_id: str | None,
-    feature_slug: str | None,
+    features: list[dict],
     workproducts: list[dict],
     feature_workproducts: list[dict],
     coverage_records: list[FileCoverage] | None = None,
     mod_ver_report: dict | None = None,
 ) -> str:
+    """Assemble the full report body.
+
+    *features* mirrors *components*: a list of ``{"id", "slug"}`` dicts, one
+    per id in the directive's ``:features:`` option. One ``Feature`` section is
+    rendered per entry; with more than one the heading is qualified with the
+    feature slug so the page has no repeated titles.
+    """
     parts = [WP_TABLE_CSS]
     if mod_ver_report is not None:
         parts.append(render_mod_ver_report(**mod_ver_report))
-    if feature_id is not None and feature_slug is not None:
-        parts.append(render_feature(feature_id, feature_slug, feature_workproducts))
+    for feature in features:
+        heading = (
+            "Feature"
+            if len(features) == 1
+            else f"Feature: {feature['slug'].replace('_', ' ').title()}"
+        )
+        parts.append(
+            render_feature(
+                feature["id"], feature["slug"], feature_workproducts, heading
+            )
+        )
     parts += [
         COMPONENTS_HEADER,
         render_overview(components),

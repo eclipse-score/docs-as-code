@@ -14,14 +14,16 @@
 in :mod:`score_module_verification_report.directive`.
 
 The directive requires a full Sphinx environment to instantiate, so we test
-the pure derivation rules and the ``_parse_components`` helper in isolation.
+the pure derivation rules and the id-parsing helpers in isolation.
 """
 
 from __future__ import annotations
 
 from src.extensions.score_module_verification_report.directive import (
+    _MOD_VER_REPORT_LINKS,
     _mod_ver_report_id_and_title,
     _parse_components,
+    _parse_features,
 )
 
 # ---------------------------------------------------------------------------
@@ -33,10 +35,13 @@ from src.extensions.score_module_verification_report.directive import (
 def _resolve(
     *,
     option_module_id: str = "",
-    option_feature_id: str = "",
     option_component_prefix: str = "",
 ) -> dict:
-    """Mirror the derivation logic from ``run()`` and return resolved fields."""
+    """Mirror the derivation logic from ``run()`` and return resolved fields.
+
+    Only ``component_prefix`` is still derived — ``:features:`` is an explicit
+    option now, parsed by :func:`_parse_features` like any other id list.
+    """
     module_id = option_module_id
     module_short = (
         module_id[len("mod__") :] if module_id.startswith("mod__") else module_id
@@ -44,18 +49,10 @@ def _resolve(
     component_prefix = option_component_prefix or (
         "comp__" + module_short + "_" if module_short else "comp__"
     )
-    feature_id: str | None = option_feature_id or None
-    feature_slug = (
-        (feature_id.split("__", 1)[1] if "__" in feature_id else feature_id)
-        if feature_id is not None
-        else None
-    )
     return {
         "module_id": module_id,
         "module_short": module_short,
         "component_prefix": component_prefix,
-        "feature_id": feature_id,
-        "feature_slug": feature_slug,
     }
 
 
@@ -128,19 +125,11 @@ def test_parse_multiline_string():
 
 
 def test_module_id_option_derives_prefix_only_not_feature():
-    """Without :feature-id:, feature_id is None — no name guessing."""
+    """:module-id: drives the component prefix — never the feature."""
     r = _resolve(option_module_id="mod__baselibs")
     assert r["module_id"] == "mod__baselibs"
     assert r["module_short"] == "baselibs"
     assert r["component_prefix"] == "comp__baselibs_"
-    assert r["feature_id"] is None
-    assert r["feature_slug"] is None
-
-
-def test_explicit_feature_id_option_overrides_derived():
-    r = _resolve(option_module_id="mod__baselibs", option_feature_id="feat__bl")
-    assert r["feature_id"] == "feat__bl"
-    assert r["feature_slug"] == "bl"
 
 
 def test_explicit_component_prefix_option_overrides_derived():
@@ -152,29 +141,52 @@ def test_module_id_without_mod_prefix():
     r = _resolve(option_module_id="mymodule")
     assert r["module_short"] == "mymodule"
     assert r["component_prefix"] == "comp__mymodule_"
-    assert r["feature_id"] is None
 
 
 def test_empty_module_id_gives_generic_prefix():
     r = _resolve()
     assert r["module_id"] == ""
     assert r["component_prefix"] == "comp__"
-    assert r["feature_id"] is None
 
 
 # ---------------------------------------------------------------------------
-# Tests — feature_slug extraction
+# _parse_features
 # ---------------------------------------------------------------------------
 
 
-def test_feature_slug_splits_on_double_underscore():
-    r = _resolve(option_feature_id="feat__my_module")
-    assert r["feature_slug"] == "my_module"
+def test_parse_single_feature():
+    result = _parse_features("feat__my_module")
+    assert result == [
+        {"id": "feat__my_module", "slug": "my_module", "title": "My Module"}
+    ]
 
 
-def test_feature_slug_falls_back_to_full_id_when_no_double_underscore():
-    r = _resolve(option_feature_id="noprefix")
-    assert r["feature_slug"] == "noprefix"
+def test_parse_multiple_features():
+    """:features: is a list link, so the option accepts a list."""
+    result = _parse_features("feat__one,\n   feat__two\n")
+    assert [f["id"] for f in result] == ["feat__one", "feat__two"]
+    assert [f["slug"] for f in result] == ["one", "two"]
+
+
+def test_parse_features_strips_version_qualifier():
+    result = _parse_features("feat__demo[version==2]")
+    assert result[0]["id"] == "feat__demo"
+
+
+def test_parse_features_keeps_full_id_without_feat_prefix():
+    result = _parse_features("noprefix")
+    assert result[0]["id"] == "noprefix"
+    assert result[0]["slug"] == "noprefix"
+
+
+def test_parse_features_empty():
+    assert _parse_features("") == []
+    assert _parse_features("  ,  ") == []
+
+
+def test_components_and_features_are_the_mandatory_links():
+    """The directive must require exactly the need type's mandatory links."""
+    assert _MOD_VER_REPORT_LINKS == ("components", "features")
 
 
 # ---------------------------------------------------------------------------

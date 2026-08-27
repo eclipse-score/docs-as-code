@@ -988,11 +988,12 @@ needs_types:
     mandatory_links:
       # req-Id: tool_req__docs_verification_report_need
       belongs_to: mod
+      components: comp
+      features: feat
     optional_links:
       # req-Id: tool_req__docs_verification_report_need
       contains: ANY
       evidence: ANY
-      covers: ANY
       realizes: workproduct
     tags:
       - verification_report

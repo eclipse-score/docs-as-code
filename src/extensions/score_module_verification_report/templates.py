@@ -185,13 +185,15 @@ MOD_VER_REPORT_TEMPLATE = """\
    :status: {status}
    :verification_method: {verification_method}
    :belongs_to: {module_id}
+   :components: {components}
+   :features: {features}
 
 """
 
 
 FEATURE_TEMPLATE = """\
-Feature
--------
+{feature_heading}
+{feature_heading_underline}
 
 .. needtable::
    :filter: id == "{feature_id}"

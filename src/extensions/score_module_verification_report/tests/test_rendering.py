@@ -129,6 +129,8 @@ def test_render_mod_ver_report_contains_only_mandatory_fields() -> None:
         security="YES",
         status="valid",
         verification_method="test_and_inspection",
+        components=["comp__demo_a", "comp__demo_b"],
+        features=["feat__demo"],
     )
     assert ".. mod_ver_report:: Demo Verification Report" in out
     assert ":id: mod_vrep__demo__report" in out
@@ -138,10 +140,32 @@ def test_render_mod_ver_report_contains_only_mandatory_fields() -> None:
     assert ":status: valid" in out
     assert ":verification_method: test_and_inspection" in out
     assert ":belongs_to: mod__demo" in out
+    # The two mandatory links, comma-joined in option order.
+    assert ":components: comp__demo_a, comp__demo_b" in out
+    assert ":features: feat__demo" in out
     # Only mandatory fields — no optional coverage/percent/realizes options.
     assert "coverage_percent" not in out
     assert ":realizes:" not in out
-    assert ":covers:" not in out
+
+
+def test_render_mod_ver_report_links_stay_inside_the_directive_block() -> None:
+    """The link options must not slip past the terminating blank line."""
+    out = render_mod_ver_report(
+        module_id="mod__demo",
+        report_id="mod_vrep__demo__report",
+        title="Demo Verification Report",
+        safety="QM",
+        security="YES",
+        status="valid",
+        verification_method="test_and_inspection",
+        components=["comp__demo_a"],
+        features=["feat__demo"],
+    )
+    assert out.endswith(
+        ":belongs_to: mod__demo\n"
+        "   :components: comp__demo_a\n"
+        "   :features: feat__demo\n\n"
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -156,8 +180,7 @@ def test_render_report_assembles_all_sections() -> None:
     ]
     out = render_report(
         components=components,
-        feature_id="feat__demo",
-        feature_slug="demo",
+        features=[{"id": "feat__demo", "slug": "demo", "title": "Demo"}],
         workproducts=_WP,
         feature_workproducts=_WP,
     )
@@ -175,8 +198,7 @@ def test_render_report_includes_mod_ver_report_when_given() -> None:
     components = [{"id": "comp__demo_a", "slug": "a", "title": "A"}]
     out = render_report(
         components=components,
-        feature_id=None,
-        feature_slug=None,
+        features=[{"id": "feat__demo", "slug": "demo", "title": "Demo"}],
         workproducts=_WP,
         feature_workproducts=_WP,
         mod_ver_report={
@@ -187,19 +209,57 @@ def test_render_report_includes_mod_ver_report_when_given() -> None:
             "security": "YES",
             "status": "valid",
             "verification_method": "test_and_inspection",
+            "components": ["comp__demo_a"],
+            "features": ["feat__demo"],
         },
     )
     assert ".. mod_ver_report:: Demo Verification Report" in out
     assert ":belongs_to: mod__demo" in out
+    assert ":components: comp__demo_a" in out
+    assert ":features: feat__demo" in out
 
 
 def test_render_report_omits_mod_ver_report_when_absent() -> None:
     components = [{"id": "comp__demo_a", "slug": "a", "title": "A"}]
     out = render_report(
         components=components,
-        feature_id=None,
-        feature_slug=None,
+        features=[{"id": "feat__demo", "slug": "demo", "title": "Demo"}],
         workproducts=_WP,
         feature_workproducts=_WP,
     )
     assert ".. mod_ver_report::" not in out
+
+
+# ---------------------------------------------------------------------------
+# render_report — multiple features
+# ---------------------------------------------------------------------------
+
+
+def test_render_report_renders_one_section_per_feature() -> None:
+    """``:features:`` is a list, so every entry gets its own section."""
+    out = render_report(
+        components=[{"id": "comp__demo_a", "slug": "a", "title": "A"}],
+        features=[
+            {"id": "feat__demo_one", "slug": "one", "title": "One"},
+            {"id": "feat__demo_two", "slug": "two", "title": "Two"},
+        ],
+        workproducts=_WP,
+        feature_workproducts=_WP,
+    )
+    assert 'id == "feat__demo_one"' in out
+    assert 'id == "feat__demo_two"' in out
+    # Headings are qualified so the page has no two identical titles.
+    assert "Feature: One" in out
+    assert "Feature: Two" in out
+    assert "Feature\n-------" not in out
+
+
+def test_single_feature_keeps_the_plain_heading() -> None:
+    out = render_report(
+        components=[{"id": "comp__demo_a", "slug": "a", "title": "A"}],
+        features=[{"id": "feat__demo", "slug": "demo", "title": "Demo"}],
+        workproducts=_WP,
+        feature_workproducts=_WP,
+    )
+    assert "Feature\n-------" in out
+    assert "Feature: " not in out

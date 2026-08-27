@@ -29,34 +29,52 @@ from .templates import DEFAULT_FEATURE_WORKPRODUCTS, DEFAULT_WORKPRODUCTS
 _VERSION_QUALIFIER_RE = re.compile(r"\[version==\d+\]$")
 
 
-def _parse_components(ids_str: str, component_prefix: str) -> list[dict]:
-    """Parse a comma-separated list of component ids into component dicts.
+def _parse_needs(ids_str: str, prefix: str) -> list[dict]:
+    """Parse a comma-separated list of need ids into id/slug/title dicts.
 
     Each entry may carry an optional ``[version==N]`` qualifier which is
     stripped silently — the rendered report does not filter by version.
 
-    The short slug is the component id with ``component_prefix`` removed
-    (or the full id if the prefix is absent). The human-readable title is
-    derived from the slug: underscores replaced with spaces, title-cased.
+    The short slug is the need id with *prefix* removed (or the full id if the
+    prefix is absent). The human-readable title is derived from the slug:
+    underscores replaced with spaces, title-cased.
+
+    Used for both ``:components:`` (with the ``comp__<module>_`` prefix) and
+    ``:features:`` (with the generic ``feat__`` prefix).
     """
     result = []
     for raw in ids_str.split(","):
-        comp_id = _VERSION_QUALIFIER_RE.sub("", raw.strip())
-        if not comp_id:
+        need_id = _VERSION_QUALIFIER_RE.sub("", raw.strip())
+        if not need_id:
             continue
         slug = (
-            comp_id[len(component_prefix) :]
-            if component_prefix and comp_id.startswith(component_prefix)
-            else comp_id
+            need_id[len(prefix) :] if prefix and need_id.startswith(prefix) else need_id
         )
         title = slug.replace("_", " ").title()
-        result.append({"id": comp_id, "slug": slug, "title": title})
+        result.append({"id": need_id, "slug": slug, "title": title})
     return result
+
+
+def _parse_components(ids_str: str, component_prefix: str) -> list[dict]:
+    """Parse the ``:components:`` option. See :func:`_parse_needs`."""
+    return _parse_needs(ids_str, component_prefix)
+
+
+def _parse_features(ids_str: str) -> list[dict]:
+    """Parse the ``:features:`` option. See :func:`_parse_needs`."""
+    return _parse_needs(ids_str, "feat__")
 
 
 # Mandatory options every ``mod_ver_report`` need requires (see
 # metamodel.yaml) that this directive cannot derive on its own.
 _MOD_VER_REPORT_OPTIONS = ("safety", "security", "status", "verification-method")
+
+# Mandatory *links* of the ``mod_ver_report`` need type. Both are populated
+# from the directive option of the same name, so the option is required too —
+# guessing a traceability link (e.g. deriving ``feat__<module>`` from
+# ``:module-id:``) would silently produce a dangling link whenever the guess
+# is wrong.
+_MOD_VER_REPORT_LINKS = ("components", "features")
 
 
 def _mod_ver_report_id_and_title(module_short: str) -> tuple[str, str]:
@@ -80,24 +98,28 @@ class ModuleVerificationReportDirective(SphinxDirective):
         .. module-verification-report::
            :module-id: mod__mymodule
            :components: comp__mymodule_a, comp__mymodule_b
+           :features: feat__mymodule
            :safety: QM
            :security: YES
            :status: valid
            :verification-method: test_and_inspection
 
-    ``feature-id`` and ``component-prefix`` are optional and derived from
-    ``module-id`` when omitted. ``safety``/``security``/``status``/
-    ``verification-method`` are the mandatory options of the sphinx-needs
-    ``mod_ver_report`` need type (see metamodel.yaml) — this directive
-    emits one such need (``belongs_to: module-id``) so the report is
+    ``component-prefix`` is optional and derived from ``module-id`` when
+    omitted. Everything else is required, because it maps onto a mandatory
+    option or link of the sphinx-needs ``mod_ver_report`` need type (see
+    metamodel.yaml) — this directive emits one such need so the report is
     machine-readable, not just a rendered page.
+
+    The ``:components:`` and ``:features:`` options are named after the need
+    links they populate: each is a comma-separated id list that is passed
+    straight through to the emitted need.
     """
 
     required_arguments = 0
     optional_arguments = 0
     option_spec = {
         "module-id": str,
-        "feature-id": str,
+        "features": str,
         "component-prefix": str,
         "components": str,
         "safety": str,
@@ -116,21 +138,26 @@ class ModuleVerificationReportDirective(SphinxDirective):
         component_prefix = self.options.get("component-prefix") or (
             "comp__" + module_short + "_" if module_short else "comp__"
         )
-        feature_id: str | None = self.options.get("feature-id") or None
-        feature_slug = (
-            (feature_id.split("__", 1)[1] if "__" in feature_id else feature_id)
-            if feature_id is not None
-            else None
-        )
         workproducts = DEFAULT_WORKPRODUCTS
         feature_workproducts = DEFAULT_FEATURE_WORKPRODUCTS
 
-        components_str = self.options.get("components", "")
-        components = _parse_components(components_str, component_prefix)
-        if not components:
+        components = _parse_components(
+            self.options.get("components", ""), component_prefix
+        )
+        features = _parse_features(self.options.get("features", ""))
+
+        # ``components`` and ``features`` are mandatory links of the
+        # mod_ver_report need type, so an empty list cannot produce a valid
+        # need — report it here, where the author can see which directive is
+        # at fault, rather than as a metamodel warning about a generated need.
+        parsed_links = {"components": components, "features": features}
+        empty_links = [n for n in _MOD_VER_REPORT_LINKS if not parsed_links[n]]
+        if empty_links:
             error = self.state_machine.reporter.error(
-                "module-verification-report: no components specified — "
-                "add ':components: comp__<id>, ...' to the directive",
+                "module-verification-report: no "
+                f"{' or '.join(empty_links)} specified — add "
+                + " and ".join(f"':{name}: <id>, ...'" for name in empty_links)
+                + " to the directive",
                 line=self.lineno,
             )
             return [error]
@@ -155,12 +182,15 @@ class ModuleVerificationReportDirective(SphinxDirective):
             "status": self.options["status"],
             "verification_method": self.options["verification-method"],
             "version": self.options.get("version", "1"),
+            # The two mandatory links, passed straight through from the
+            # options of the same name.
+            "components": [c["id"] for c in components],
+            "features": [f["id"] for f in features],
         }
 
         rst_text = render_report(
             components,
-            feature_id,
-            feature_slug,  # type: ignore[arg-type]
+            features,
             workproducts,
             feature_workproducts,
             coverage_records=load_coverage(
@@ -181,15 +211,5 @@ class ModuleVerificationReportDirective(SphinxDirective):
         container = nodes.container()
         container.document = self.state.document
         nested_parse_with_titles(self.state, view_list, container)  # type: ignore[arg-type]
-
-        # Register module/feature/component metadata so the build-finished
-        # consistency check can validate need links without a pre-scan.
-        if not hasattr(self.env, "module_verification_report_registry"):
-            self.env.module_verification_report_registry = {}  # type: ignore[attr-defined]
-        self.env.module_verification_report_registry[module_id] = {  # type: ignore[attr-defined]
-            "docname": self.env.docname,
-            "feature_id": feature_id,
-            "comp_ids": [c["id"] for c in components],
-        }
 
         return container.children

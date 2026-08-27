@@ -16,7 +16,7 @@ Usage in RST::
 
     .. module-verification-report::
        :module-id: mod__baselibs
-       :feature-id: feat__baselibs
+       :features: feat__baselibs
        :safety: ASIL_B
        :security: YES
        :status: valid
@@ -26,19 +26,23 @@ Usage in RST::
                     comp__baselibs_containers
 
 ``safety``/``security``/``status``/``verification-method`` are the
-mandatory options of the sphinx-needs ``mod_ver_report`` need type (see
-metamodel.yaml). The directive emits one such need
-(``belongs_to: module-id``) so the report is machine-readable and its
-links are validated by score_metamodel's generic need-link checks —
-not just rendered RST.
+mandatory options of the sphinx-needs ``mod_ver_report`` need type, and
+``components``/``features`` are its mandatory links (see metamodel.yaml). The
+directive emits one such need — ``belongs_to`` the module, ``components`` and
+``features`` passed straight through from the options of the same name — so
+the report is machine-readable and its links are validated by
+score_metamodel's need-link and graph checks, not just rendered RST.
 
 Implementation is split across:
 
 * :mod:`.templates`   — RST templates + default workproduct lists + CSS
 * :mod:`.rendering`   — template expansion / report body assembly
 * :mod:`.directive`   — the ``ModuleVerificationReportDirective`` class
-* :mod:`.consistency_checks` — ``build-finished`` validation that every
-  component is properly linked in the needs graph
+
+Consistency of the emitted need with the rest of the needs graph (does the
+module ``includes`` exactly the components the report lists? does every listed
+component ``belongs_to`` a listed feature?) is validated by ``score_metamodel``
+'s ``check_mod_ver_report_links`` graph check, not by this extension.
 
 Testcase back-links rendered by this directive are annotated with a
 ``(passed)`` / ``(failed)`` result badge by
@@ -50,12 +54,6 @@ from __future__ import annotations
 
 from typing import Any
 
-from .consistency_checks import (
-    check_consistency,
-    init_registry,
-    merge_registry,
-    purge_registry,
-)
 from .directive import ModuleVerificationReportDirective
 
 
@@ -66,10 +64,6 @@ def setup(app: Any) -> dict:
         "bazel-out/_coverage/_coverage_report.dat",
         "env",
     )
-    app.connect("env-before-read-docs", init_registry)
-    app.connect("env-purge-doc", purge_registry)
-    app.connect("env-merge-info", merge_registry)
-    app.connect("build-finished", check_consistency)
     return {
         "version": "0.9",
         "parallel_read_safe": True,
