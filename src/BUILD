@@ -52,6 +52,7 @@ filegroup(
         "//src/extensions/score_metamodel:all_sources",
         "//src/extensions/score_mounts:all_sources",
         "//src/extensions/score_source_code_linker:all_sources",
+        "//src/extensions/score_lobster_report:all_sources",
         "//src/extensions/score_sphinx_bundle:all_sources",
         "//src/extensions/score_sync_toml:all_sources",
         "//src/extensions/score_metrics:all_sources",

@@ -1,5 +1,5 @@
 # *******************************************************************************
-# Copyright (c) 2025 Contributors to the Eclipse Foundation
+# Copyright (c) 2026 Contributors to the Eclipse Foundation
 #
 # See the NOTICE file(s) distributed with this work for additional
 # information regarding copyright ownership.
@@ -15,26 +15,17 @@ load("@docs_as_code_hub_env//:requirements.bzl", "all_requirements")
 
 filegroup(
     name = "all_sources",
-    srcs = ["__init__.py"],
+    srcs = glob(["*.py"]),
     visibility = ["//visibility:public"],
 )
 
 py_library(
-    name = "score_sphinx_bundle",
+    name = "score_lobster_report",
     srcs = [":all_sources"],
+    imports = ["."],
     visibility = ["//visibility:public"],
     deps = all_requirements + [
-        "@score_docs_as_code//src/extensions:score_plantuml",
-        "@score_docs_as_code//src/extensions:broken_link_fix",
-        "@score_docs_as_code//src/extensions/score_draw_uml_funcs",
-        "@score_docs_as_code//src/extensions/score_cross_module_compatibility",
-        "@score_docs_as_code//src/extensions/score_layout",
-        "@score_docs_as_code//src/extensions/score_metamodel",
-        "@score_docs_as_code//src/extensions/score_mounts",
-        "@score_docs_as_code//src/extensions/score_source_code_linker",
-        "@score_docs_as_code//src/extensions/score_lobster_report",
-        "@score_docs_as_code//src/extensions/score_metrics",
-        "@score_docs_as_code//src/extensions/score_sync_toml",
         "@score_docs_as_code//src/helper_lib",
+        "@score_docs_as_code//src/extensions/score_source_code_linker",
     ],
 )
