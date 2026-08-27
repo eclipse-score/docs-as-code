@@ -1,23 +1,60 @@
 {#
   score: render-after-needs-collection
 
-  The report follows the content and order of the standard module verification
-  report used by the baselibs PR report:
+  Content template for the ``mod_ver_report`` need type.
 
-  * feature summary and feature-level verification statistics;
-  * component overview;
-  * component-level verification, traceability, coverage, and work products.
+  The report points to its module via ``belongs_to``. The module's
+  ``includes`` links provide the components, and each component's
+  ``belongs_to`` link provides the feature. The ``linked_needs`` helper resolves
+  this graph during the post-collection reread, so titles and report sections
+  stay driven by the Need model.
 
-  A need template receives the current need's fields only. The
-  ``linked_needs`` render helper follows the module's outgoing links so that
-  the component sections stay driven by the Need model.
+  The template is applied as ``:post_template:``, not ``:template:``. A need's
+  *content* cannot open new sections ("Unexpected section title"), but
+  post-content is placed after the need at document level, where real headings
+  work — and real headings are what give the report its TOC entries and
+  per-component navigation.
 #}
 {% set module_id = belongs_to|first|default("") %}
 {% set module_short = module_id|replace("mod__", "") %}
 {% set module_slug = module_short|replace("_", "")|lower %}
-{% set feature_id = module_id|replace("mod__", "feat__") %}
+{% set component_prefix = "comp__" ~ module_short ~ "_" %}
+{% set report_components = linked_needs(module_id, "includes") %}
+{% set first_component = report_components|first|default(None) %}
+{% set report_features = linked_needs(first_component["id"], "belongs_to") if first_component else [] %}
+{% set report_feature = report_features|first|default(None) %}
+{% set feature_id = report_feature["id"] if report_feature else "" %}
+{% set feature_title = report_feature["title"] if report_feature else "Feature" %}
 
-.. _{{ id }}:
+{% set component_workproducts = [
+     ["wp__requirements_inspect", "Requirements Inspection"],
+     ["wp__sw_arch_verification", "Architecture Inspection"],
+     ["wp__sw_implementation_inspection", "Implementation Inspection"],
+     ["wp__sw_component_dfa", "DFA"],
+     ["wp__sw_component_fmea", "FMEA"],
+   ] %}
+{% set feature_workproducts = [
+     ["wp__requirements_inspect", "Requirements Inspection"],
+     ["wp__sw_arch_verification", "Architecture Inspection"],
+   ] %}
+
+{#- One work-product row: the need link, its kind, the realising document and
+    its status. Both cells are needtables over the same filter, differing only
+    in :columns:, so an empty match renders as an empty cell. -#}
+{% macro workproduct_rows(slug_norm, workproducts) %}
+{%- for wp in workproducts %}
+      * - :need:`{{ wp[0] }}`
+        - {{ wp[1] }}
+        - .. needtable::
+             :filter: type == "document" and "{{ slug_norm }}" in id.replace("_", "").lower() and "{{ wp[0] }}" in realizes
+             :columns: id
+             :style: table
+        - .. needtable::
+             :filter: type == "document" and "{{ slug_norm }}" in id.replace("_", "").lower() and "{{ wp[0] }}" in realizes
+             :columns: status
+             :style: table
+{%- endfor %}
+{% endmacro %}
 
 .. raw:: html
 
@@ -45,17 +82,21 @@
    .wp-doc-table td .dataTables_wrapper .dataTables_paginate { display: none; }
    </style>
 
-This document provides a verification report of the Baselibs feature and its
-associated components.
+{#- ===================================================================== -#}
+{#- Feature section resolved from the first component's belongs_to link.    -#}
+{#- ===================================================================== -#}
+{% set feature_slug_norm = module_slug %}
 
-.. rubric:: Feature
+{{ feature_title }}
+{{ "-" * (feature_title|length) }}
 
 .. needtable::
    :filter: id == "{{ feature_id }}"
    :columns: title as "Name";id as "Id";safety;security;status
    :style: table
 
-.. rubric:: Feature Requirements Statistics
+Feature Requirements Statistics
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. grid:: 1 2 2 2
    :gutter: 3
@@ -77,9 +118,9 @@ associated components.
          :colors: #37a12d, #f0a500, #ca2828
          :legend:
 
-         type == "feat_req" and "{{ feature_id }}" in satisfied_by and len(fully_verifies_back) > 0
-         type == "feat_req" and "{{ feature_id }}" in satisfied_by and len(partially_verifies_back) > 0 and len(fully_verifies_back) == 0
-         type == "feat_req" and "{{ feature_id }}" in satisfied_by and len(fully_verifies_back) == 0 and len(partially_verifies_back) == 0
+         type == "feat_req" and "{{ feature_id }}" in satisfied_by and ("fully_verifies_back" in locals() and len(fully_verifies_back) > 0)
+         type == "feat_req" and "{{ feature_id }}" in satisfied_by and ("partially_verifies_back" in locals() and len(partially_verifies_back) > 0) and not ("fully_verifies_back" in locals() and len(fully_verifies_back) > 0)
+         type == "feat_req" and "{{ feature_id }}" in satisfied_by and not ("fully_verifies_back" in locals() and len(fully_verifies_back) > 0) and not ("partially_verifies_back" in locals() and len(partially_verifies_back) > 0)
 
 .. dropdown:: Show requirements table
    :animate: fade-in
@@ -91,7 +132,8 @@ associated components.
       :colwidths: 13,22,8,10,23,24
       :sort: id
 
-.. rubric:: Feature Architecture Statistics
+Feature Architecture Statistics
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. grid:: 1 2 2 2
    :gutter: 3
@@ -126,7 +168,8 @@ associated components.
       :colwidths: 25,30,10,15,20
       :sort: id
 
-.. rubric:: Feature Inspection Statistics
+Feature Inspection Statistics
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Presence of the feature-level inspection work products.
 
@@ -142,51 +185,41 @@ Presence of the feature-level inspection work products.
         - Kind
         - Realized by
         - Status
-      * - :need:`wp__requirements_inspect`
-        - Requirements Inspection
-        - .. needtable::
-             :filter: type == "document" and "{{ module_slug }}" in id.replace("_", "").lower() and "wp__requirements_inspect" in realizes
-             :columns: id
-             :style: table
-        - .. needtable::
-             :filter: type == "document" and "{{ module_slug }}" in id.replace("_", "").lower() and "wp__requirements_inspect" in realizes
-             :columns: status
-             :style: table
-      * - :need:`wp__sw_arch_verification`
-        - Architecture Inspection
-        - .. needtable::
-             :filter: type == "document" and "{{ module_slug }}" in id.replace("_", "").lower() and "wp__sw_arch_verification" in realizes
-             :columns: id
-             :style: table
-        - .. needtable::
-             :filter: type == "document" and "{{ module_slug }}" in id.replace("_", "").lower() and "wp__sw_arch_verification" in realizes
-             :columns: status
-             :style: table
+{{ workproduct_rows(feature_slug_norm, feature_workproducts) }}
 
-{% set report_components = linked_needs(module_id, "includes") %}
+{# ===================================================================== #}
+{# Components                                                             #}
+{# ===================================================================== #}
 
-.. rubric:: Components
+Components
+----------
 
-.. rubric:: Component Overview
+Component Overview
+~~~~~~~~~~~~~~~~~~
 
 .. needtable::
-   :filter: type == "comp" and "{{ module_id }}" in includes_back
+   :filter: id in [{% for component in report_components %}"{{ component["id"] }}"{% if not loop.last %}, {% endif %}{% endfor %}]
    :columns: id as "Component";safety;security;status
    :style: table
    :sort: id
 
-{% macro render_component(component_id, component_title, component_slug) %}
-.. raw:: html
+{% for component in report_components %}
+{% set component_id = component["id"] %}
+{% set component_slug = component_id|replace(component_prefix, "") %}
+{% set component_slug_norm = component_slug|replace("_", "")|lower %}
+{% set component_title = component["title"] %}
 
-   <span id="comp-{{ component_slug|replace("_", "-") }}"></span>
+.. _comp-{{ component_slug|replace("_", "-")|lower }}:
 
-.. rubric:: {{ component_title }}
+{{ component_title }}
+{{ "~" * (component_title|length) }}
 
 .. raw:: html
 
    <hr style="border-top: 2px solid #333333; margin: 0.5em 0 1.5em 0;">
 
-.. rubric:: Component Requirements Statistics
+Component Requirements Statistics
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. grid:: 1 2 2 2
    :gutter: 3
@@ -208,11 +241,12 @@ Presence of the feature-level inspection work products.
          :colors: #37a12d, #f0a500, #ca2828
          :legend:
 
-         type == "comp_req" and "{{ component_id }}" in satisfied_by and len(fully_verifies_back) > 0
-         type == "comp_req" and "{{ component_id }}" in satisfied_by and len(partially_verifies_back) > 0 and len(fully_verifies_back) == 0
-         type == "comp_req" and "{{ component_id }}" in satisfied_by and len(fully_verifies_back) == 0 and len(partially_verifies_back) == 0
+         type == "comp_req" and "{{ component_id }}" in satisfied_by and ("fully_verifies_back" in locals() and len(fully_verifies_back) > 0)
+         type == "comp_req" and "{{ component_id }}" in satisfied_by and ("partially_verifies_back" in locals() and len(partially_verifies_back) > 0) and not ("fully_verifies_back" in locals() and len(fully_verifies_back) > 0)
+         type == "comp_req" and "{{ component_id }}" in satisfied_by and not ("fully_verifies_back" in locals() and len(fully_verifies_back) > 0) and not ("partially_verifies_back" in locals() and len(partially_verifies_back) > 0)
 
-.. rubric:: Component Architecture Statistics
+Component Architecture Statistics
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. grid:: 1 2 2 2
    :gutter: 3
@@ -237,10 +271,11 @@ Presence of the feature-level inspection work products.
          type in ["comp_arc_sta", "comp_arc_dyn"] and "{{ component_id }}" in belongs_to and "inspected" in tags
          type in ["comp_arc_sta", "comp_arc_dyn"] and "{{ component_id }}" in belongs_to and "inspected" not in tags
 
-.. rubric:: Requirements Traceability
+Requirements Traceability
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The following table lists all requirements of this component together with
-their verification status and the tests that (fully or partially) verify them:
+The following table lists all requirements of this component together with their
+verification status and the tests that (fully or partially) verify them:
 
 .. dropdown:: Show requirements table
    :animate: fade-in
@@ -252,7 +287,8 @@ their verification status and the tests that (fully or partially) verify them:
       :colwidths: 13,22,8,10,23,24
       :sort: id
 
-.. rubric:: Test Coverage
+Test Coverage
+^^^^^^^^^^^^^
 
 Per-source-file line and branch coverage aggregated from the LCOV report
 produced by ``bazel coverage``.
@@ -266,12 +302,13 @@ produced by ``bazel coverage``.
       with the corresponding targets and rebuild the docs to populate this
       table.
 
-.. rubric:: Architectural Elements
+Architectural Elements
+^^^^^^^^^^^^^^^^^^^^^^
 
 The following table lists the architectural elements of this component
 together with their inspection status. Elements that have been formally
-inspected carry the ``inspected`` tag; elements without that tag have not yet
-been inspected.
+inspected carry the ``inspected`` tag; elements without that tag have not
+yet been inspected.
 
 .. dropdown:: Show architectural elements table
    :animate: fade-in
@@ -283,7 +320,8 @@ been inspected.
       :colwidths: 25,30,10,15,20
       :sort: id
 
-.. rubric:: Verification & Safety Analysis Documents
+Verification & Safety Analysis Documents
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Presence of the standard verification and safety analysis work products for
 this component. A dash (``—``) means the corresponding document is missing.
@@ -300,62 +338,5 @@ this component. A dash (``—``) means the corresponding document is missing.
         - Kind
         - Realized by
         - Status
-      * - :need:`wp__requirements_inspect`
-        - Requirements Inspection
-        - .. needtable::
-             :filter: type == "document" and "{{ component_slug|replace("_", "")|lower }}" in id.replace("_", "").lower() and "wp__requirements_inspect" in realizes
-             :columns: id
-             :style: table
-        - .. needtable::
-             :filter: type == "document" and "{{ component_slug|replace("_", "")|lower }}" in id.replace("_", "").lower() and "wp__requirements_inspect" in realizes
-             :columns: status
-             :style: table
-      * - :need:`wp__sw_arch_verification`
-        - Architecture Inspection
-        - .. needtable::
-             :filter: type == "document" and "{{ component_slug|replace("_", "")|lower }}" in id.replace("_", "").lower() and "wp__sw_arch_verification" in realizes
-             :columns: id
-             :style: table
-        - .. needtable::
-             :filter: type == "document" and "{{ component_slug|replace("_", "")|lower }}" in id.replace("_", "").lower() and "wp__sw_arch_verification" in realizes
-             :columns: status
-             :style: table
-      * - :need:`wp__sw_implementation_inspection`
-        - Implementation Inspection
-        - .. needtable::
-             :filter: type == "document" and "{{ component_slug|replace("_", "")|lower }}" in id.replace("_", "").lower() and "wp__sw_implementation_inspection" in realizes
-             :columns: id
-             :style: table
-        - .. needtable::
-             :filter: type == "document" and "{{ component_slug|replace("_", "")|lower }}" in id.replace("_", "").lower() and "wp__sw_implementation_inspection" in realizes
-             :columns: status
-             :style: table
-      * - :need:`wp__sw_component_dfa`
-        - DFA
-        - .. needtable::
-             :filter: type == "document" and "{{ component_slug|replace("_", "")|lower }}" in id.replace("_", "").lower() and "wp__sw_component_dfa" in realizes
-             :columns: id
-             :style: table
-        - .. needtable::
-             :filter: type == "document" and "{{ component_slug|replace("_", "")|lower }}" in id.replace("_", "").lower() and "wp__sw_component_dfa" in realizes
-             :columns: status
-             :style: table
-      * - :need:`wp__sw_component_fmea`
-        - FMEA
-        - .. needtable::
-             :filter: type == "document" and "{{ component_slug|replace("_", "")|lower }}" in id.replace("_", "").lower() and "wp__sw_component_fmea" in realizes
-             :columns: id
-             :style: table
-        - .. needtable::
-             :filter: type == "document" and "{{ component_slug|replace("_", "")|lower }}" in id.replace("_", "").lower() and "wp__sw_component_fmea" in realizes
-             :columns: status
-             :style: table
-{% endmacro %}
-
-{% for component in report_components %}
-{{ render_component(
-   component["id"],
-   component["title"],
-   component["id"]|replace("comp__" ~ module_short ~ "_", "")
-) }}
+{{ workproduct_rows(component_slug_norm, component_workproducts) }}
 {% endfor %}

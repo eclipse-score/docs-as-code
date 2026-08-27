@@ -12,20 +12,38 @@
 # *******************************************************************************
 from pathlib import Path
 
-from docutils import nodes
-from sphinx import addnodes
 from sphinx.application import Sphinx
 from sphinx.environment import BuildEnvironment
 from sphinx_needs.data import SphinxNeedsData
 from sphinx_needs.need_item import NeedItem
-from sphinx_needs.nodes import Need
 
 from src.helper_lib import config_setdefault
 
 _template_environment: BuildEnvironment | None = None
-# Templates containing this marker need a second read after parallel Need
+# Post-templates containing this marker need a second read after parallel Need
 # collection has been merged.
 _RENDER_AFTER_NEEDS_COLLECTION_MARKER = "score: render-after-needs-collection"
+
+
+def _base_need_id(need_id: str) -> str:
+    """Strip link conditions from an ID used to look up a merged Need."""
+    return need_id.split("[", 1)[0]
+
+
+def _find_need(needs: dict[str, NeedItem], need_id: str) -> NeedItem | None:
+    """Find a Need by its address, tolerating version-qualified collection keys."""
+    base_id = _base_need_id(need_id)
+    for candidate_id in (need_id, base_id):
+        candidate = needs.get(candidate_id)
+        if candidate is not None:
+            return candidate
+
+    # Some imported collections use a qualified dictionary key even though the
+    # NeedItem itself keeps the canonical, unqualified ID.
+    for candidate_id, candidate in needs.items():
+        if _base_need_id(candidate_id) == base_id or candidate["id"] == base_id:
+            return candidate
+    return None
 
 
 def _needs_template_folder() -> Path:
@@ -56,13 +74,13 @@ class _LinkedNeeds:
             return []
 
         needs = SphinxNeedsData(_template_environment).get_needs_mutable()
-        source = needs.get(need_id)
+        source = _find_need(needs, need_id)
         if source is None:
             return []
 
         linked: list[NeedItem] = []
         for link in source.get_links(link_name, as_str=False):
-            target = needs.get(link.id)
+            target = _find_need(needs, link.id)
             if target is not None:
                 linked.append(target)
         return linked
@@ -71,9 +89,9 @@ class _LinkedNeeds:
 _linked_needs_callable = _LinkedNeeds()
 
 
-def _complex_template_names(app: Sphinx) -> set[str]:
-    """Return template names opting into the post-merge rendering pass."""
-    template_folder = Path(str(app.config.needs_template_folder))
+def _complex_post_template_names(app: Sphinx) -> set[str]:
+    """Return post-template names opting into the post-merge rendering pass."""
+    template_folder = _needs_template_folder()
     return {
         template.stem
         for template in template_folder.glob("*.need")
@@ -84,136 +102,46 @@ def _complex_template_names(app: Sphinx) -> set[str]:
     }
 
 
-def _rerender_pages_with_complex_templates(
+def _rerender_pages_with_complex_post_templates(
     app: Sphinx, env: BuildEnvironment
 ) -> list[str]:
-    """Re-read marked pages after the parallel Need environments are merged.
+    """Re-read marked post-template pages after Need environments are merged.
 
-    Need templates are expanded while source documents are read. A parallel
-    worker cannot see Needs collected by other workers at that point. The
-    marked pages are therefore purged and read once more from the main
-    environment before Sphinx-Needs post-processing begins.
+    Post-templates are expanded while source documents are read. A parallel
+    worker cannot see Needs collected by other workers at that point. Marked
+    pages are therefore purged and read once more from the main environment
+    before Sphinx-Needs post-processing begins.
     """
     if app.builder.name != "html":
         return []
 
-    complex_templates = _complex_template_names(app)
-    if not complex_templates:
+    complex_post_templates = _complex_post_template_names(app)
+    if not complex_post_templates:
         return []
 
     needs_data = SphinxNeedsData(env)
     if needs_data.needs_is_post_processed:
         return []
 
-    complex_template_docs: set[str] = set()
+    complex_post_template_docs: set[str] = set()
     for need in needs_data.get_needs_mutable().values():
-        if need["template"] not in complex_templates:
+        post_template = need.get("post_template")
+        if (
+            not isinstance(post_template, str)
+            or post_template not in complex_post_templates
+        ):
             continue
         docname = need["docname"]
         if isinstance(docname, str) and docname:
-            complex_template_docs.add(docname)
+            complex_post_template_docs.add(docname)
 
-    pages_to_rerender = sorted(complex_template_docs)
+    pages_to_rerender = sorted(complex_post_template_docs)
     for docname in pages_to_rerender:
         app.events.emit("env-purge-doc", env, docname)
         env.clear_doc(docname)
         app.builder.read_doc(docname)
 
     return pages_to_rerender
-
-
-def _template_rubrics(
-    app: Sphinx, doctree: nodes.document, complex_templates: set[str]
-) -> list[nodes.Element]:
-    """Return headings rendered inside marked Need templates.
-
-    Sphinx-Needs parses Need content with ``match_titles=False``. Consequently,
-    a normal section title inside a template cannot participate in Sphinx's
-    document ToC. The templates use rubrics for these headings, so those nodes
-    are the reliable, already-rendered representation to expose to the ToC.
-    """
-    needs = SphinxNeedsData(app.env).get_needs_mutable()
-    rubrics: list[nodes.Element] = []
-
-    for need_node in doctree.findall(Need):
-        need_id = need_node.get("refid")
-        if not isinstance(need_id, str):
-            continue
-
-        need = needs.get(need_id)
-        if need is None or need["template"] not in complex_templates:
-            continue
-
-        # Only direct rubrics are report headings. Rubrics nested in dropdowns
-        # are control labels and should not become navigation entries.
-        rubrics.extend(
-            child for child in need_node.children if isinstance(child, nodes.rubric)
-        )
-
-    return rubrics
-
-
-def _add_template_rubrics_to_toc(app: Sphinx, doctree: nodes.document) -> None:
-    """Expose headings inside marked Need templates in the local page ToC.
-
-    The regular Sphinx ToC collector deliberately ignores sections nested in
-    arbitrary container nodes such as a Sphinx-Needs Need. This handler runs
-    after that collector, assigns IDs directly to the rendered rubrics, and
-    adds matching local references to its already-built ToC. It therefore
-    changes navigation only; the generated report content stays inside the
-    Need node and does not have to be moved or rendered twice.
-    """
-    if app.builder.name != "html":
-        return
-
-    complex_templates = _complex_template_names(app)
-    if not complex_templates:
-        return
-
-    rubrics = _template_rubrics(app, doctree, complex_templates)
-    if not rubrics:
-        return
-
-    docname = app.env.current_document.docname
-    toc = app.env.tocs.get(docname)
-    if toc is None:
-        return
-
-    used_ids = {
-        node_id
-        for element in doctree.findall(nodes.Element)
-        for node_id in element.get("ids", [])
-    }
-
-    for rubric in rubrics:
-        rubric_ids = rubric.get("ids", [])
-        if rubric_ids:
-            rubric_id = rubric_ids[0]
-        else:
-            rubric_id = nodes.make_id(f"{docname}-{rubric.astext()}")
-            if not rubric_id:
-                rubric_id = f"{docname}-template-heading"
-
-            candidate = rubric_id
-            suffix = 2
-            while candidate in used_ids:
-                candidate = f"{rubric_id}-{suffix}"
-                suffix += 1
-            rubric_id = candidate
-            rubric["ids"] = [rubric_id]
-            used_ids.add(rubric_id)
-
-        reference = nodes.reference(
-            "",
-            "",
-            *(child.deepcopy() for child in rubric.children),
-            internal=True,
-            refuri=docname,
-            anchorname=f"#{rubric_id}",
-        )
-        toc += nodes.list_item("", addnodes.compact_paragraph("", "", reference))
-
-    app.env.toc_num_entries[docname] += len(rubrics)
 
 
 def _capture_template_environment(app: Sphinx) -> None:
@@ -236,10 +164,7 @@ def setup(app: Sphinx) -> dict[str, object]:
     )
     app.config.needs_render_context.setdefault("linked_needs", _linked_needs_callable)
     app.connect("builder-inited", _capture_template_environment)
-    # The priority is intentionally after Sphinx's environment collectors
-    # (default 500), so the handler can augment the collector-owned ToC.
-    app.connect("doctree-read", _add_template_rubrics_to_toc, priority=600)
-    app.connect("env-updated", _rerender_pages_with_complex_templates)
+    app.connect("env-updated", _rerender_pages_with_complex_post_templates)
 
     return {
         "version": "1.0.0",
