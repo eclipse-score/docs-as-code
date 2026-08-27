@@ -72,56 +72,6 @@ def _register_directives(app: Sphinx, config: Config) -> None:
 def setup(app: Sphinx) -> dict[str, object]:
     app.setup_extension("sphinx_needs")
 
-    app.add_config_value(
-        "mod_ver_report_metadata_columns",
-        "id;title;status;safety;security;verification_method",
-        rebuild="env",
-        types=(str,),
-        description="Columns of the 'Report Metadata' table.",
-    )
-    app.add_config_value(
-        "mod_ver_report_scope_columns",
-        "id;title;type;status;safety;security",
-        rebuild="env",
-        types=(str,),
-        description="Columns of the 'Verification Scope' table.",
-    )
-    app.add_config_value(
-        "mod_ver_report_component_columns",
-        "id;title;type;status",
-        rebuild="env",
-        types=(str,),
-        description="Columns of the per-component table.",
-    )
-    app.add_config_value(
-        "mod_ver_report_component_filter",
-        "id == {component_id} or {component_id} in belongs_to",
-        rebuild="env",
-        types=(str,),
-        description=(
-            "sphinx-needs filter for the per-component table. "
-            "'{component_id}' is substituted with the safely quoted need id."
-        ),
-    )
-    app.add_config_value(
-        "mod_ver_report_evidence_links",
-        ["contains", "evidence"],
-        rebuild="env",
-        types=(list,),
-        description=(
-            "Link fields of the report whose targets are listed in the "
-            "'Verification Evidence' section. Entries that are not configured "
-            "link fields are ignored."
-        ),
-    )
-    app.add_config_value(
-        "mod_ver_report_evidence_columns",
-        "id;title;type;status",
-        rebuild="env",
-        types=(str,),
-        description="Columns of the 'Verification Evidence' table.",
-    )
-
     app.connect("config-inited", _register_directives, priority=900)
 
     return {

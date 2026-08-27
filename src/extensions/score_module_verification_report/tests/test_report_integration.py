@@ -120,6 +120,7 @@ Baselibs
    :contains: tcase__baselibs_1
    :titles:
       comp__baselibs_json = JSON Utilities
+      comp__baselibs_bit_manipulation = Bit Manipulation
 
    Verification report for the Baselibs module.
 """
@@ -198,10 +199,10 @@ def test_report_emits_real_sections_as_siblings_of_the_need(
     doctree = app.env.get_doctree("report")
 
     titles = _titles(doctree)
-    assert "Report Metadata" in titles
-    assert "Verification Scope" in titles
+    assert "Feature" in titles
+    assert "Components" in titles
     assert "JSON Utilities" in titles  # explicit override
-    assert "Baselibs Bit Manipulation" in titles  # derived fallback
+    assert "Bit Manipulation" in titles  # explicit template title
     assert "Verification Evidence" in titles
 
     # The Need is a sibling of the sections, not their container: no section
@@ -216,22 +217,25 @@ def test_report_emits_real_sections_as_siblings_of_the_need(
         )
 
 
-def test_generated_sections_are_flat(build: AppFactory) -> None:
-    """Constraint 3: a flat list of top-level entries is sufficient."""
+def test_generated_sections_follow_the_template_hierarchy(build: AppFactory) -> None:
+    """The Jinja template emits top-level report areas and nested details."""
     app = build({"index": _index("report"), "report": REPORT + ARCHITECTURE})
     doctree = app.env.get_doctree("report")
 
     page = next(iter(doctree.findall(nodes.section)))  # "Baselibs"
     generated = [child for child in page.children if isinstance(child, nodes.section)]
     assert [child[0].astext() for child in generated] == [
-        "Report Metadata",
+        "Feature",
         "Verification Scope",
+        "Components",
         "JSON Utilities",
-        "Baselibs Bit Manipulation",
+        "Bit Manipulation",
         "Verification Evidence",
     ]
-    for section in generated:
-        assert not list(section.findall(nodes.section, include_self=False))
+    component = next(
+        section for section in generated if section[0].astext() == "JSON Utilities"
+    )
+    assert "Component Requirements Statistics" in _titles(component)
 
 
 # --------------------------------------------------------------------------
@@ -271,10 +275,11 @@ def test_toc_contains_every_generated_section(build: AppFactory) -> None:
     toc = app.env.tocs["report"]
     toc_titles = [ref.astext() for ref in toc.findall(nodes.reference)]
     for expected in (
-        "Report Metadata",
+        "Feature",
         "Verification Scope",
+        "Components",
         "JSON Utilities",
-        "Baselibs Bit Manipulation",
+        "Bit Manipulation",
         "Verification Evidence",
     ):
         assert expected in toc_titles
@@ -363,8 +368,7 @@ def test_heading_depth_at_root_and_nested(build: AppFactory) -> None:
     assert depth_of("rootlevel", "JSON Utilities") == 1
     # Nested below an existing heading: one level deeper.
     assert depth_of("nested", "JSON Utilities") == 2
-    # ... and still flat among themselves at that level.
-    assert depth_of("nested", "Report Metadata") == 2
+    assert depth_of("nested", "Feature") == 2
 
 
 # --------------------------------------------------------------------------
@@ -389,7 +393,7 @@ def test_latex_builder_keeps_sections(build: AppFactory) -> None:
     )
     tex = next(Path(app.outdir).glob("*.tex")).read_text()
     assert "JSON Utilities" in tex
-    assert "Verification Scope" in tex
+    assert "Components" in tex
 
 
 # --------------------------------------------------------------------------
@@ -435,6 +439,8 @@ External
    :security: NO
    :status: valid
    :verification_method: inspection
+   :titles:
+      comp__external_thing = External Component
 """
 
 
@@ -591,7 +597,7 @@ def test_evidence_section_is_skipped_when_the_links_are_not_configured(
     app = build({"index": _index("report"), "report": report + ARCHITECTURE}, conf=conf)
     titles = _titles(app.env.get_doctree("report"))
     assert "Verification Evidence" not in titles
-    assert "Verification Scope" in titles
+    assert "Components" in titles
 
 
 def test_extension_has_no_build_lifecycle_hooks() -> None:

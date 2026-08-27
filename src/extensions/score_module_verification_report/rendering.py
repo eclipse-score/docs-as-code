@@ -29,13 +29,10 @@ from __future__ import annotations
 import json
 import re
 from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Any
 
-# Section headings emitted by the report all use the same underline character.
-# ``parse_text_to_nodes(allow_section_headings=True)`` parses the generated text
-# in a *fresh title-style context*, so a single character makes every generated
-# heading a sibling of every other one -- a flat list, exactly one level below
-# wherever the directive was placed.  See the module docstring of ``directive``.
-UNDERLINE = "+"
+from jinja2 import Environment, FileSystemLoader, StrictUndefined
 
 # Conservative allow-list for anything that gets interpolated into a
 # sphinx-needs filter string.  Filter strings are evaluated as Python by
@@ -49,6 +46,85 @@ NEED_ID_RE = re.compile(r"^[A-Za-z0-9_.\-]+$")
 VERSION_QUALIFIER_RE = re.compile(r"\[[^\]]*\]$")
 
 _SPLIT_RE = re.compile(r"[,\s]+")
+
+_TEMPLATE_NAME = "mod_ver_report_tiny.need"
+
+
+def _template_environment() -> Environment:
+    """Return the environment for the shared report template.
+
+    The template is a Bazel runfile of this extension.  It is deliberately
+    rendered from the explicit directive inputs only; it receives no Sphinx
+    environment and no Need model.
+    """
+    template_folder = Path(__file__).parents[2] / "needs_templates"
+    return Environment(
+        loader=FileSystemLoader(template_folder),
+        undefined=StrictUndefined,
+        keep_trailing_newline=True,
+        trim_blocks=True,
+        lstrip_blocks=True,
+    )
+
+
+def render_report_template(
+    *,
+    directive_name: str,
+    title: str,
+    options: dict[str, str | None],
+    content: list[str],
+    report_id: str,
+    module_id: str,
+    component_ids: list[str],
+    title_overrides: dict[str, str],
+    evidence_links: list[str],
+    config: Any,
+) -> str:
+    """Render the report from the shared Jinja template.
+
+    ``components`` is intentionally derived from the directive's declared
+    ``:covers:`` list.  Passing Need objects here would turn K into a
+    read-phase model traversal and reintroduce the lifecycle problem this
+    implementation avoids.
+    """
+    module_short = module_id.removeprefix("mod__")
+    components = [
+        {
+            "id": component_id,
+            "title": title_overrides.get(component_id) or derive_title(component_id),
+            "slug": component_id.removeprefix(f"comp__{module_short}_"),
+        }
+        for component_id in component_ids
+    ]
+    return (
+        _template_environment()
+        .get_template(_TEMPLATE_NAME)
+        .render(
+            report_need_directive=directive_name,
+            report_title=title,
+            report_options=options,
+            report_content=content,
+            report_id=report_id,
+            module_id=module_id,
+            module_short=module_short,
+            module_slug=module_short.replace("_", "").lower(),
+            feature_id=module_id.replace("mod__", "feat__", 1),
+            components=components,
+            evidence_filter=" or ".join(
+                f"{quote_for_filter(report_id)} in {link}_back"
+                for link in evidence_links
+            ),
+            scope_filter=(
+                "id in ["
+                + ", ".join(
+                    quote_for_filter(component_id) for component_id in component_ids
+                )
+                + "]"
+                if component_ids
+                else "False"
+            ),
+        )
+    )
 
 
 @dataclass
@@ -134,14 +210,7 @@ def parse_title_overrides(raw: str | None) -> tuple[dict[str, str], list[str]]:
 
 
 def derive_title(need_id: str) -> str:
-    """Last-resort heading text for a component without an explicit override.
-
-    This is intentionally dumb.  The *real* title lives on the Need and is
-    rendered by the ``:need:`` reference inside the section -- resolved by
-    sphinx-needs, not by us.  ``comp__baselibs_json`` becoming "Baselibs Json"
-    is an accepted fallback, not the intended output; authors who care pass
-    ``:titles:``.
-    """
+    """Fallback used because K cannot access the merged Need model at read time."""
     _, _, tail = need_id.partition("__")
     slug = tail or need_id
     return slug.replace("_", " ").strip().title() or need_id
@@ -174,82 +243,9 @@ def section_anchors(report_id: str, component_ids: list[str]) -> list[str]:
     happen to use the same heading text.
     """
     return [
-        anchor(report_id, "report-metadata"),
+        anchor(report_id, "feature"),
         anchor(report_id, "verification-scope"),
+        anchor(report_id, "components"),
         *(anchor(report_id, component_id) for component_id in component_ids),
         anchor(report_id, "verification-evidence"),
     ]
-
-
-def _needtable(filter_expr: str, columns: str) -> str:
-    return (
-        ".. needtable::\n"
-        f"   :filter: {filter_expr}\n"
-        f"   :columns: {columns}\n"
-        "   :style: table\n"
-    )
-
-
-def render_need(
-    directive_name: str,
-    title: str,
-    options: dict[str, str | None],
-    content: list[str],
-) -> str:
-    """Render the ``mod_ver_report`` Need itself.
-
-    Options are passed through verbatim: the metamodel -- not this extension --
-    decides which of them are mandatory, which are links and what they may
-    point at.
-    """
-    lines = [f".. {directive_name}:: {title}"]
-    for key, value in options.items():
-        lines.append(f"   :{key}: {'' if value is None else value}")
-    if content:
-        lines.append("")
-        lines.extend(f"   {line}" if line else "" for line in content)
-    return "\n".join(lines) + "\n"
-
-
-def render_metadata_section(report_id: str, columns: str) -> str:
-    return _section(
-        anchor(report_id, "report-metadata"),
-        "Report Metadata",
-        _needtable(f"id == {quote_for_filter(report_id)}", columns),
-    )
-
-
-def render_scope_section(report_id: str, component_ids: list[str], columns: str) -> str:
-    quoted = ", ".join(quote_for_filter(c) for c in component_ids)
-    if quoted:
-        filter_expr = f"id in [{quoted}]"
-        body = _needtable(filter_expr, columns)
-    else:
-        body = "This report does not declare any covered components.\n"
-    return _section(anchor(report_id, "verification-scope"), "Verification Scope", body)
-
-
-def render_component_section(
-    report_id: str,
-    component_id: str,
-    title: str,
-    filter_template: str,
-    columns: str,
-) -> str:
-    quoted = quote_for_filter(component_id)
-    body = f":need:`{component_id}`\n\n" + _needtable(
-        filter_template.format(component_id=quoted), columns
-    )
-    return _section(anchor(report_id, component_id), title, body)
-
-
-def render_evidence_section(
-    report_id: str, evidence_links: list[str], columns: str
-) -> str:
-    quoted = quote_for_filter(report_id)
-    clauses = [f"{quoted} in {link}_back" for link in evidence_links]
-    return _section(
-        anchor(report_id, "verification-evidence"),
-        "Verification Evidence",
-        _needtable(" or ".join(clauses), columns),
-    )

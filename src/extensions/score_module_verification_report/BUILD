@@ -25,6 +25,7 @@ py_library(
     srcs = [":all_sources"],
     imports = ["."],
     visibility = ["//visibility:public"],
+    data = ["//src/needs_templates:files"],
     deps = all_requirements + [
         "@score_docs_as_code//src/helper_lib",
     ],

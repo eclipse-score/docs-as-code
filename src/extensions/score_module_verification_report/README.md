@@ -123,18 +123,10 @@ in `metamodel.yaml` under `mod_ver_report`.
 
 ## Configuration
 
-| Value                                  | Default                                                    |
-| -------------------------------------- | ---------------------------------------------------------- |
-| `mod_ver_report_metadata_columns`      | `id;title;status;safety;security;verification_method`        |
-| `mod_ver_report_scope_columns`         | `id;title;type;status;safety;security`                       |
-| `mod_ver_report_component_columns`     | `id;title;type;status`                                       |
-| `mod_ver_report_component_filter`      | `id == {component_id} or {component_id} in belongs_to`       |
-| `mod_ver_report_evidence_links`        | `["contains", "evidence"]`                                   |
-| `mod_ver_report_evidence_columns`      | `id;title;type;status`                                       |
-
-`{component_id}` is substituted with the *safely quoted* need id. Need ids are
-matched against an allow-list before they reach any filter string; anything else
-is warned about and skipped.
+The report layout and table columns are defined by the bundled Jinja template.
+There are no report-specific Sphinx config values. The optional evidence table
+uses the standard `contains` and `evidence` link fields when they are configured
+by the consuming project.
 
 ## Status
 

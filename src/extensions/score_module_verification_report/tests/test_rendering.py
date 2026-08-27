@@ -49,9 +49,9 @@ class TestQuoteForFilter:
         # that matches nothing -- never one that evaluates injected code.
         parsed = rendering.parse_component_list("comp__a or True")
         assert parsed.ids == ["comp__a", "or", "True"]
-        assert (
-            rendering.render_scope_section("mod_vrep__x", parsed.ids, "id").count('"')
-            == 6
+        assert all(
+            rendering.quote_for_filter(need_id).startswith('"')
+            for need_id in parsed.ids
         )
 
 
@@ -109,62 +109,4 @@ class TestAnchors:
     def test_anchor_is_stable(self) -> None:
         assert rendering.anchor("mod_vrep__x", "comp__y") == rendering.anchor(
             "mod_vrep__x", "comp__y"
-        )
-
-
-class TestRenderedRst:
-    def test_need_options_are_passed_through_verbatim(self) -> None:
-        text = rendering.render_need(
-            "mod_ver_report_need",
-            "Baselibs Verification Report",
-            {"id": "mod_vrep__baselibs", "covers": "comp__a, comp__b", "flag": None},
-            ["Intro.", "", "More."],
-        )
-        assert ".. mod_ver_report_need:: Baselibs Verification Report" in text
-        assert "   :covers: comp__a, comp__b" in text
-        assert "   :flag: " in text
-        assert "   Intro." in text
-
-    def test_component_section_has_target_heading_ref_and_table(self) -> None:
-        text = rendering.render_component_section(
-            "mod_vrep__baselibs",
-            "comp__a",
-            "JSON Utilities",
-            "id == {component_id} or {component_id} in belongs_to",
-            "id;title",
-        )
-        assert ".. _mod_vrep__baselibs__comp__a:" in text
-        assert "JSON Utilities\n++++++++++++++" in text
-        assert ":need:`comp__a`" in text
-        assert ':filter: id == "comp__a" or "comp__a" in belongs_to' in text
-
-    def test_all_generated_headings_use_one_underline_char(self) -> None:
-        """Flat by construction: same style -> siblings, whatever the placement."""
-        text = "\n".join(
-            [
-                rendering.render_metadata_section("mod_vrep__x", "id"),
-                rendering.render_scope_section("mod_vrep__x", ["comp__a"], "id"),
-                rendering.render_component_section(
-                    "mod_vrep__x", "comp__a", "A", "id == {component_id}", "id"
-                ),
-                rendering.render_evidence_section("mod_vrep__x", ["contains"], "id"),
-            ]
-        )
-        underlines = {
-            line[0] for line in text.splitlines() if set(line) and set(line) == {"+"}
-        }
-        assert underlines == {rendering.UNDERLINE}
-
-    def test_empty_scope_renders_a_sentence_not_a_broken_filter(self) -> None:
-        text = rendering.render_scope_section("mod_vrep__x", [], "id")
-        assert "needtable" not in text
-        assert "does not declare any covered components" in text
-
-    def test_evidence_section_uses_backlinks(self) -> None:
-        text = rendering.render_evidence_section(
-            "mod_vrep__x", ["contains", "evidence"], "id"
-        )
-        assert (
-            ':filter: "mod_vrep__x" in contains_back or "mod_vrep__x" in evidence_back'
-            in text
         )

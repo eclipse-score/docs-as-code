@@ -152,38 +152,20 @@ class ModuleVerificationReportDirective(SphinxDirective):
         component_ids: list[str],
         title_overrides: dict[str, str],
     ) -> str:
-        config = self.config
-        parts = [
-            rendering.render_need(
-                REPORT_NEED_DIRECTIVE, title, options, list(self.content)
-            ),
-            rendering.render_metadata_section(
-                report_id, config.mod_ver_report_metadata_columns
-            ),
-            rendering.render_scope_section(
-                report_id, component_ids, config.mod_ver_report_scope_columns
-            ),
-        ]
-        for component_id in component_ids:
-            parts.append(
-                rendering.render_component_section(
-                    report_id,
-                    component_id,
-                    title_overrides.get(component_id)
-                    or rendering.derive_title(component_id),
-                    config.mod_ver_report_component_filter,
-                    config.mod_ver_report_component_columns,
-                )
-            )
-
-        evidence_links = self._configured_evidence_links()
-        if evidence_links:
-            parts.append(
-                rendering.render_evidence_section(
-                    report_id, evidence_links, config.mod_ver_report_evidence_columns
-                )
-            )
-        return "\n".join(parts)
+        module_ids = rendering.parse_component_list(options.get("belongs_to")).ids
+        module_id = module_ids[0] if module_ids else ""
+        return rendering.render_report_template(
+            directive_name=REPORT_NEED_DIRECTIVE,
+            title=title,
+            options=options,
+            content=list(self.content),
+            report_id=report_id,
+            module_id=module_id,
+            component_ids=component_ids,
+            title_overrides=title_overrides,
+            evidence_links=self._configured_evidence_links(),
+            config=self.config,
+        )
 
     def _configured_evidence_links(self) -> list[str]:
         """Keep only evidence links that are actually configured link fields.
@@ -202,8 +184,7 @@ class ModuleVerificationReportDirective(SphinxDirective):
             for link in cast("list[dict[str, Any]]", self.config.needs_extra_links)
             if isinstance(link, dict) and "option" in link
         )
-        configured = cast("list[str]", self.config.mod_ver_report_evidence_links)
-        return [link for link in configured if link in known]
+        return [link for link in ("contains", "evidence") if link in known]
 
 
 def _promote_report_anchors(

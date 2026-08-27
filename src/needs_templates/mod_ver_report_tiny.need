@@ -1,0 +1,237 @@
+{#
+  Module verification report template.
+
+  This is the read-phase K adaptation of the report template originally used
+  by the complex-template PoC.  In contrast to that PoC, ``components`` is
+  supplied from the report's explicit ``:covers:`` declaration and the report
+  headings are real RST sections, not rubrics inside a Need node.
+#}
+.. {{ report_need_directive }}:: {{ report_title }}
+{% for name, value in report_options.items() %}
+   :{{ name }}: {{ value or "" }}
+{% endfor %}
+{% if report_content %}
+
+{% for line in report_content %}
+   {{ line }}
+{% endfor %}
+{% endif %}
+
+.. raw:: html
+
+   <style>
+   .wp-doc-table td .needstable_wrapper,
+   .wp-doc-table td .pst-scrollable-table-container {
+       margin: 0; padding: 0; overflow: visible;
+   }
+   .wp-doc-table td table.NEEDS_TABLE,
+   .wp-doc-table td table.NEEDS_DATATABLES {
+       border: 0; margin: 0; box-shadow: none; background: transparent;
+       width: auto;
+   }
+   .wp-doc-table td table.NEEDS_TABLE thead,
+   .wp-doc-table td table.NEEDS_DATATABLES thead { display: none; }
+   .wp-doc-table td table.NEEDS_TABLE tbody tr,
+   .wp-doc-table td table.NEEDS_DATATABLES tbody tr { background: transparent; }
+   .wp-doc-table td table.NEEDS_TABLE tbody td,
+   .wp-doc-table td table.NEEDS_DATATABLES tbody td {
+       border: 0; padding: 0; background: transparent;
+   }
+   .wp-doc-table td .dataTables_wrapper .dataTables_length,
+   .wp-doc-table td .dataTables_wrapper .dataTables_filter,
+   .wp-doc-table td .dataTables_wrapper .dataTables_info,
+   .wp-doc-table td .dataTables_wrapper .dataTables_paginate { display: none; }
+   </style>
+
+.. _{{ report_id }}__feature:
+
+Feature
++++++++++++++++++
+
+This document provides a verification report of the {{ module_short }} feature
+and its associated components.
+
+.. needtable::
+   :filter: id == "{{ feature_id }}"
+   :columns: title as "Name";id as "Id";safety;security;status
+   :style: table
+
+Feature Requirements Statistics
+-------------------------------
+
+.. grid:: 1 2 2 2
+   :gutter: 3
+
+   .. grid-item::
+
+      .. needpie:: Feature Requirements Status
+         :labels: valid, invalid
+         :colors: #37a12d, #ca2828
+         :legend:
+
+         type == "feat_req" and "{{ feature_id }}" in satisfied_by and status == "valid"
+         type == "feat_req" and "{{ feature_id }}" in satisfied_by and status == "invalid"
+
+   .. grid-item::
+
+      .. needpie:: Feature Requirements Test Coverage
+         :labels: fully covered, partially covered, not covered
+         :colors: #37a12d, #f0a500, #ca2828
+         :legend:
+
+         type == "feat_req" and "{{ feature_id }}" in satisfied_by and len(fully_verifies_back) > 0
+         type == "feat_req" and "{{ feature_id }}" in satisfied_by and len(partially_verifies_back) > 0 and len(fully_verifies_back) == 0
+         type == "feat_req" and "{{ feature_id }}" in satisfied_by and len(fully_verifies_back) == 0 and len(partially_verifies_back) == 0
+
+.. dropdown:: Show requirements table
+   :animate: fade-in
+
+   .. needtable::
+      :filter: type == "feat_req" and "{{ feature_id }}" in satisfied_by
+      :style: table
+      :columns: id;title;safety;status;fully_verifies_back;partially_verifies_back
+      :colwidths: 13,22,8,10,23,24
+      :sort: id
+
+Feature Architecture Statistics
+-------------------------------
+
+.. needtable::
+   :filter: type in ["feat_arc_sta", "feat_arc_dyn"] and "{{ feature_id }}" in belongs_to
+   :style: table
+   :columns: id;title;safety;status;tags
+   :sort: id
+
+Feature Inspection Statistics
+-----------------------------
+
+Presence of the feature-level inspection work products.
+
+.. _{{ report_id }}__verification-scope:
+
+Verification Scope
+++++++++++++++++++
+
+.. needtable::
+   :filter: {{ scope_filter }}
+   :columns: id;title;type;status;safety;security
+   :style: table
+
+.. _{{ report_id }}__components:
+
+Components
+++++++++++
+
+.. needtable::
+   :filter: type == "comp" and "{{ module_id }}" in includes_back
+   :columns: id as "Component";safety;security;status
+   :style: table
+   :sort: id
+
+{% macro component_work_product(component, work_product, kind) %}
+      * - :need:`{{ work_product }}`
+        - {{ kind }}
+        - .. needtable::
+             :filter: type == "document" and "{{ component.slug|replace("_", "")|lower }}" in id.replace("_", "").lower() and "{{ work_product }}" in realizes
+             :columns: id
+             :style: table
+        - .. needtable::
+             :filter: type == "document" and "{{ component.slug|replace("_", "")|lower }}" in id.replace("_", "").lower() and "{{ work_product }}" in realizes
+             :columns: status
+             :style: table
+{% endmacro %}
+
+{% for component in components %}
+.. _{{ report_id }}__{{ component.id }}:
+
+{{ component.title }}
+{{ "+" * [component.title|length, 3]|max }}
+
+:need:`{{ component.id }}`
+
+Component Requirements Statistics
+---------------------------------
+
+.. grid:: 1 2 2 2
+   :gutter: 3
+
+   .. grid-item::
+
+      .. needpie:: {{ component.title }} Requirements Status
+         :labels: valid, invalid
+         :colors: #37a12d, #ca2828
+         :legend:
+
+         type == "comp_req" and "{{ component.id }}" in satisfied_by and status == "valid"
+         type == "comp_req" and "{{ component.id }}" in satisfied_by and status == "invalid"
+
+   .. grid-item::
+
+      .. needpie:: {{ component.title }} Requirements Test Coverage
+         :labels: fully covered, partially covered, not covered
+         :colors: #37a12d, #f0a500, #ca2828
+         :legend:
+
+         type == "comp_req" and "{{ component.id }}" in satisfied_by and len(fully_verifies_back) > 0
+         type == "comp_req" and "{{ component.id }}" in satisfied_by and len(partially_verifies_back) > 0 and len(fully_verifies_back) == 0
+         type == "comp_req" and "{{ component.id }}" in satisfied_by and len(fully_verifies_back) == 0 and len(partially_verifies_back) == 0
+
+Requirements Traceability
+-------------------------
+
+.. dropdown:: Show requirements table
+   :animate: fade-in
+
+   .. needtable::
+      :filter: type == "comp_req" and "{{ component.id }}" in satisfied_by
+      :style: table
+      :columns: id;title;safety;status;fully_verifies_back;partially_verifies_back
+      :colwidths: 13,22,8,10,23,24
+      :sort: id
+
+Architectural Elements
+----------------------
+
+.. dropdown:: Show architectural elements table
+   :animate: fade-in
+
+   .. needtable::
+      :filter: type in ["comp_arc_sta", "comp_arc_dyn"] and "{{ component.id }}" in belongs_to
+      :style: table
+      :columns: id;title;safety;status;tags
+      :colwidths: 25,30,10,15,20
+      :sort: id
+
+Verification & Safety Analysis Documents
+----------------------------------------
+
+.. dropdown:: Show work products table
+   :animate: fade-in
+
+   .. list-table::
+      :header-rows: 1
+      :widths: 30 25 25 20
+      :class: wp-doc-table
+
+      * - Work Product
+        - Kind
+        - Realized by
+        - Status
+{{ component_work_product(component, "wp__requirements_inspect", "Requirements Inspection") }}
+{{ component_work_product(component, "wp__sw_arch_verification", "Architecture Inspection") }}
+{{ component_work_product(component, "wp__sw_implementation_inspection", "Implementation Inspection") }}
+{{ component_work_product(component, "wp__sw_component_dfa", "DFA") }}
+{{ component_work_product(component, "wp__sw_component_fmea", "FMEA") }}
+{% endfor %}
+
+{% if evidence_filter %}
+.. _{{ report_id }}__verification-evidence:
+
+Verification Evidence
++++++++++++++++++++++
+
+.. needtable::
+   :filter: {{ evidence_filter }}
+   :columns: id;title;type;status
+   :style: table
+{% endif %}
