@@ -3,11 +3,13 @@
 
   Content template for the ``mod_ver_report`` need type.
 
-  The report points to its module via ``belongs_to``. The module's
-  ``includes`` links provide the components, and each component's
-  ``belongs_to`` link provides the feature. The ``linked_needs`` helper resolves
-  this graph during the post-collection reread, so titles and report sections
-  stay driven by the Need model.
+  The report is a ``document`` need whose id encodes the module it covers
+  (``doc__<module>_verification_report``) — the ``document`` type has no
+  ``belongs_to`` link, so the module id is recovered from this need's own id
+  instead. The module's ``includes`` links provide the components, and each
+  component's ``belongs_to`` link provides the feature. The ``linked_needs``
+  helper resolves this graph during the post-collection reread, so titles and
+  report sections stay driven by the Need model.
 
   The template is applied as ``:post_template:``, not ``:template:``. A need's
   *content* cannot open new sections ("Unexpected section title"), but
@@ -15,7 +17,7 @@
   work — and real headings are what give the report its TOC entries and
   per-component navigation.
 #}
-{% set module_id = belongs_to|first|default("") %}
+{% set module_id = "mod__" ~ id|replace("doc__", "")|replace("_verification_report", "") %}
 {# Resolve the component list from the module's outgoing graph links. A module
    may list a component more than once, so deduplicate the NeedItems by ID. #}
 {% set components_in_mod = linked_needs(module_id, "includes")|unique(attribute="id")|list %}

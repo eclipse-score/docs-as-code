@@ -90,9 +90,10 @@ def test_pinned_profile_rejects_non_immutable_revisions(tmp_path: Path) -> None:
 
 def test_need_and_module_override_use_the_current_template_selector() -> None:
     page = report_need("inc_someip_gateway")
-    assert ":id: auto_mod_ver_report__inc_someip_gateway" in page
+    assert ":id: doc__inc_someip_gateway_verification_report" in page
     assert ":post_template: mod_ver_report_tiny" in page
-    assert ":belongs_to: mod__inc_someip_gateway" in page
+    assert ":realizes: wp__verification_module_ver_report" in page
+    assert ":belongs_to:" not in page
     assert ":version: 1" in page
     assert "mod_ver_report\n" not in page
 
@@ -379,14 +380,17 @@ def test_local_fake_downstream_runs_the_real_docs_target(tmp_path: Path) -> None
       tags: .*
       content: .*
       template: .*
-  auto_mod_ver_report:
-    title: Module Verification Report (automated)
-    prefix: auto_mod_ver_report__
+  document:
+    title: Generic Document
+    prefix: doc__
     parts: 2
     mandatory_options:
+      status: ^(valid|draft|invalid)$
+      safety: ^(QM|ASIL_B)$
+      security: ^(YES|NO)$
       version: ^[0-9]+$
     mandatory_links:
-      belongs_to: mod
+      realizes: workproduct
     optional_options:
       tags: .*
       content: .*
@@ -399,6 +403,9 @@ needs_extra_links:
   includes:
     incoming: included by
     outgoing: includes
+  realizes:
+    incoming: realized by
+    outgoing: realizes
 """,
         encoding="utf-8",
     )
@@ -475,6 +482,11 @@ needs_extra_links:
 
 .. workproduct:: FMEA
    :id: wp__sw_component_fmea
+   :status: valid
+   :version: 1
+
+.. workproduct:: Module Verification Report
+   :id: wp__verification_module_ver_report
    :status: valid
    :version: 1
 """,

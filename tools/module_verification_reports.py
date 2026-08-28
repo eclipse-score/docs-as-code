@@ -41,6 +41,7 @@ from urllib.parse import urlparse
 
 GITHUB_ORG = "eclipse-score"
 TEMPLATE_NAME = "mod_ver_report_tiny"
+REPORT_WORKPRODUCT = "wp__verification_module_ver_report"
 DOCS_COMMAND = ("bazel", "run", "--lockfile_mode=off", "//:docs")
 REPORT_DIRECTORY = "module_verification_reports"
 REPORT_GOLDEN_DIRECTORY = "module_verification_reports_goldens"
@@ -455,14 +456,23 @@ def local_module_override(
 
 
 def report_need(repository: str) -> str:
-    """Return the exact temporary Need page injected into a checkout."""
+    """Return the exact temporary Need page injected into a checkout.
+
+    The report is a ``document`` that realizes the module-verification-report
+    workproduct rather than linking ``belongs_to`` the module directly — the
+    ``document`` type does not support that link. ``mod_ver_report_tiny``
+    recovers the module id from this need's own id instead.
+    """
 
     display_name = repository.replace("_", " ").title()
     return (
-        f".. auto_mod_ver_report:: {display_name} Module Verification Report\n"
-        f"   :id: auto_mod_ver_report__{repository}\n"
+        f".. document:: {display_name} Module Verification Report\n"
+        f"   :id: doc__{repository}_verification_report\n"
         f"   :post_template: {TEMPLATE_NAME}\n"
-        f"   :belongs_to: mod__{repository}\n"
+        f"   :status: valid\n"
+        f"   :safety: QM\n"
+        f"   :security: NO\n"
+        f"   :realizes: {REPORT_WORKPRODUCT}\n"
         f"   :version: 1\n"
     )
 
