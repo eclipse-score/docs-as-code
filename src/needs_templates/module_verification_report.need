@@ -130,9 +130,9 @@ Requirements Statistics
          :colors: #37a12d, #f0a500, #ca2828
          :legend:
 
-         type == "feat_req" and "{{ feature_id }}" in satisfied_by and ("fully_verifies_back" in locals() and len(fully_verifies_back) > 0)
-         type == "feat_req" and "{{ feature_id }}" in satisfied_by and ("partially_verifies_back" in locals() and len(partially_verifies_back) > 0) and not ("fully_verifies_back" in locals() and len(fully_verifies_back) > 0)
-         type == "feat_req" and "{{ feature_id }}" in satisfied_by and not ("fully_verifies_back" in locals() and len(fully_verifies_back) > 0) and not ("partially_verifies_back" in locals() and len(partially_verifies_back) > 0)
+         type == "feat_req" and "{{ feature_id }}" in satisfied_by and fully_verifies_back
+         type == "feat_req" and "{{ feature_id }}" in satisfied_by and partially_verifies_back and not fully_verifies_back
+         type == "feat_req" and "{{ feature_id }}" in satisfied_by and not fully_verifies_back and not partially_verifies_back
 
 .. dropdown:: Show requirements table
    :animate: fade-in
@@ -256,9 +256,9 @@ Component Requirements Statistics
          :colors: #37a12d, #f0a500, #ca2828
          :legend:
 
-         type == "comp_req" and "{{ component_id }}" in satisfied_by and ("fully_verifies_back" in locals() and len(fully_verifies_back) > 0)
-         type == "comp_req" and "{{ component_id }}" in satisfied_by and ("partially_verifies_back" in locals() and len(partially_verifies_back) > 0) and not ("fully_verifies_back" in locals() and len(fully_verifies_back) > 0)
-         type == "comp_req" and "{{ component_id }}" in satisfied_by and not ("fully_verifies_back" in locals() and len(fully_verifies_back) > 0) and not ("partially_verifies_back" in locals() and len(partially_verifies_back) > 0)
+         type == "comp_req" and "{{ component_id }}" in satisfied_by and fully_verifies_back
+         type == "comp_req" and "{{ component_id }}" in satisfied_by and partially_verifies_back and not fully_verifies_back
+         type == "comp_req" and "{{ component_id }}" in satisfied_by and not fully_verifies_back and not partially_verifies_back
 
 Component Architecture Statistics
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

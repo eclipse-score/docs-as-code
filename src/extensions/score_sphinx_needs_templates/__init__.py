@@ -137,7 +137,7 @@ def _rerender_pages_with_complex_post_templates(
 
     pages_to_rerender = sorted(complex_post_template_docs)
     for docname in pages_to_rerender:
-        app.events.emit("env-purge-doc", env, docname)
+        app.emit("env-purge-doc", env, docname)
         env.clear_doc(docname)
         app.builder.read_doc(docname)
 
