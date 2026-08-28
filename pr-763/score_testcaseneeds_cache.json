@@ -4284,7 +4284,7 @@
     "FullyVerifies": null
   },
   {
-    "name": "module_verification_reports_test__test_cache_path_prefers_xdg_and_has_default",
+    "name": "module_verification_reports_test__test_cache_path_defaults_inside_the_workspace",
     "file": "tools/tests/module_verification_reports_test.py",
     "line": "45",
     "result": "passed",
@@ -4300,7 +4300,7 @@
   {
     "name": "module_verification_reports_test__test_profiles_and_filters_are_validated",
     "file": "tools/tests/module_verification_reports_test.py",
-    "line": "57",
+    "line": "54",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4314,7 +4314,7 @@
   {
     "name": "module_verification_reports_test__test_pinned_profile_rejects_non_immutable_revisions",
     "file": "tools/tests/module_verification_reports_test.py",
-    "line": "82",
+    "line": "79",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4328,7 +4328,7 @@
   {
     "name": "module_verification_reports_test__test_need_and_module_override_use_the_current_template_selector",
     "file": "tools/tests/module_verification_reports_test.py",
-    "line": "91",
+    "line": "88",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4342,7 +4342,7 @@
   {
     "name": "module_verification_reports_test__test_injection_is_reversible",
     "file": "tools/tests/module_verification_reports_test.py",
-    "line": "135",
+    "line": "131",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4356,7 +4356,7 @@
   {
     "name": "module_verification_reports_test__test_missing_graph_is_a_structural_failure",
     "file": "tools/tests/module_verification_reports_test.py",
-    "line": "152",
+    "line": "148",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4370,7 +4370,7 @@
   {
     "name": "module_verification_reports_test__test_component_without_a_feature_link_is_a_structural_failure",
     "file": "tools/tests/module_verification_reports_test.py",
-    "line": "157",
+    "line": "153",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4384,7 +4384,7 @@
   {
     "name": "module_verification_reports_test__test_feature_resolved_only_through_external_needs_is_not_a_failure",
     "file": "tools/tests/module_verification_reports_test.py",
-    "line": "168",
+    "line": "164",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4398,7 +4398,7 @@
   {
     "name": "module_verification_reports_test__test_checkout_clone_refresh_pinned_selection_and_cleanup",
     "file": "tools/tests/module_verification_reports_test.py",
-    "line": "208",
+    "line": "204",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4412,7 +4412,7 @@
   {
     "name": "module_verification_reports_test__test_cached_checkout_rejects_a_remote_mismatch",
     "file": "tools/tests/module_verification_reports_test.py",
-    "line": "227",
+    "line": "223",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4426,7 +4426,7 @@
   {
     "name": "module_verification_reports_test__test_local_fake_downstream_build_populates_gallery_and_assets",
     "file": "tools/tests/module_verification_reports_test.py",
-    "line": "247",
+    "line": "243",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4440,7 +4440,7 @@
   {
     "name": "module_verification_reports_test__test_local_fake_downstream_runs_the_real_docs_target",
     "file": "tools/tests/module_verification_reports_test.py",
-    "line": "306",
+    "line": "302",
     "result": "skipped",
     "repo_name": null,
     "hash": null,
@@ -4454,7 +4454,7 @@
   {
     "name": "module_verification_reports_test__test_main_is_partial_but_pinned_is_strict_on_build_failure",
     "file": "tools/tests/module_verification_reports_test.py",
-    "line": "545",
+    "line": "541",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4468,7 +4468,7 @@
   {
     "name": "module_verification_reports_test__test_pinned_golden_comparison_is_byte_for_byte",
     "file": "tools/tests/module_verification_reports_test.py",
-    "line": "617",
+    "line": "613",
     "result": "passed",
     "repo_name": null,
     "hash": null,
