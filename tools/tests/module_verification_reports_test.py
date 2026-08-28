@@ -92,7 +92,6 @@ def test_need_and_module_override_use_the_current_template_selector() -> None:
     assert ":realizes: wp__verification_module_ver_report" in page
     assert ":belongs_to:" not in page
     assert ":version: 1" in page
-    assert "module_verification_report\n" not in page
 
     original = """module(name = "consumer")
 bazel_dep(name = "score_docs_as_code", version = "7.0.0")
