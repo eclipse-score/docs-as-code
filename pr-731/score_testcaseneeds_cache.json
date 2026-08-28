@@ -5082,20 +5082,6 @@
     "FullyVerifies": null
   },
   {
-    "name": "merge_needs_json_app_tests__test_merges_needs_json_generated_by_sphinx",
-    "file": "scripts_bazel/tests/merge_needs_json_app_tests.py",
-    "line": "109",
-    "result": "passed",
-    "repo_name": null,
-    "hash": null,
-    "url": null,
-    "TestType": null,
-    "DerivationTechnique": null,
-    "result_text": "",
-    "PartiallyVerifies": null,
-    "FullyVerifies": null
-  },
-  {
     "name": "test_rules_are_working_correctly__test_score_pytest_loads_conftest",
     "file": "tests/test_rules_are_working_correctly.py",
     "line": "13",
