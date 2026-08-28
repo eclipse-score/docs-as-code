@@ -43,7 +43,7 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 GITHUB_ORG = "eclipse-score"
-TEMPLATE_NAME = "mod_ver_report_tiny"
+TEMPLATE_NAME = "module_verification_report"
 REPORT_WORKPRODUCT = "wp__verification_module_ver_report"
 DOCS_COMMAND = ("bazel", "run", "--lockfile_mode=off", "//:docs")
 REPORT_DIRECTORY = "module_verification_reports"
@@ -454,7 +454,7 @@ def report_need(repository: str) -> str:
 
     The report is a ``document`` that realizes the module-verification-report
     workproduct rather than linking ``belongs_to`` the module directly — the
-    ``document`` type does not support that link. ``mod_ver_report_tiny``
+    ``document`` type does not support that link. ``module_verification_report``
     recovers the module id from this need's own id instead.
     """
 
@@ -654,7 +654,7 @@ def validate_module_graph(
     this function therefore means every linked Need already resolves
     *somewhere*, so this only needs to catch what Sphinx-needs does not flag:
     an ``includes`` or ``belongs_to`` link list that is simply empty, which the
-    ``mod_ver_report_tiny`` template would otherwise render as a silently
+    ``module_verification_report`` template would otherwise render as a silently
     empty section.
     """
 

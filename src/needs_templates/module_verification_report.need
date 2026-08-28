@@ -1,7 +1,7 @@
 {#
   score: render-after-needs-collection
 
-  Content template for the ``mod_ver_report`` need type.
+  Content template for the ``document`` need type for ``module_verification_report``.
 
   The report is a ``document`` need whose id encodes the module it covers
   (``doc__<module>_verification_report``) — the ``document`` type has no
