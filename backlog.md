@@ -19,17 +19,18 @@ Last updated: 2026-08-28
 
 ## Current state
 
-The local branch is based on `upstream/main` at `298732e4`. The previous merge
-commit was intentionally removed with a soft reset; the resulting changes are
-currently staged and deliberately have no commit yet.
+The local `upward_bundle` branch is based on `upstream/main` at `298732e4`.
+The WIP integration is secured in commits `9eba2304` and `1a16863c` and has
+been force-updated to `upstream/upward_bundle`. The working tree is clean; no
+staged changes remain.
 
-The staged delta is currently 37 files with approximately 2,580 additions and
-42 deletions. It is a working integration result, not yet a reviewable PR.
+The final WIP delta is currently 33 files with approximately 1,947 additions
+and 42 deletions. It is a working integration result, not yet a reviewable PR.
 
 Verification completed before the split:
 
 ```text
-bazel test //...                                      23/23 passed
+bazel test //...                                      21/21 passed
 .venv_docs/bin/python -m pytest -q src/tests/docs_bzl 28 passed
 ```
 
@@ -86,20 +87,6 @@ The Mermaid-fence handling in `score_sphinx_bundle` supports the diagrams in
 the Markdown documentation. It should remain only if the documentation PR
 needs it and has a rendering regression test.
 
-### 5. Merger application tests
-
-`merge_needs_json.py` is already present in `upstream/main`. The staged
-application-level test exercises merging actual Sphinx-generated inventories.
-The staged `merge_needs_json_unit_tests.py`, however, is byte-for-byte
-identical to the existing `merge_needs_json_tests.py` and must be removed
-before splitting the PRs.
-
-### 6. Developer tooling
-
-`scripts_bazel/docs_targets.sh` lists documentation, bundle-local, and upward
-Needs targets. It is useful convenience tooling but is not required by the
-hierarchy implementation.
-
 ## Proposed PR plan
 
 The PRs should be stacked on `upstream/main` in this order. Test fixtures and
@@ -148,27 +135,10 @@ Include:
 - Mermaid-fence support if required by the new Markdown diagrams, together
   with a small rendering test.
 
-### PR 4 — Sphinx application-level tests for `merge_needs_json` (optional)
-
-Approximate size: 190 LOC.
-
-Keep the application-level test if the stronger Sphinx-generated-inventory
-contract is useful. Do not include the duplicate unit-test file or its BUILD
-target; the existing upstream unit test already covers that behavior.
-
-### PR 5 — `docs_targets.sh` developer utility (optional)
-
-Approximate size: 133 LOC.
-
-Submit this independently if the target-discovery command is useful to users.
-It has no production dependency on the hierarchy implementation.
-
 ## Cleanup before creating the PRs
 
 Remove or split out the following from the current staged integration:
 
-- the duplicate `merge_needs_json_unit_tests.py` and its BUILD entry;
-- `scripts_bazel/docs_targets.sh` unless it is wanted as separate tooling;
 - Mermaid-fence support unless it is required by the documentation PR and is
   covered by a regression test.
 
