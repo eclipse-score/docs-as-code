@@ -35,8 +35,8 @@ def test_producer_needs_json_contains_local_need():
 
 
 def test_consumer_link_resolves():
-    """A consumer renders the producer's need as an external HTML link."""
+    """A consumer renders the producer's need under its canonical site URL."""
     result = run_scenario("run", "external_needs/consumer", ":docs")
 
     html = (result.build_dir / "index.html").read_text(encoding="utf-8")
-    assert "external-needs-producer/main/index.html#test_req__producer__demo" in html
+    assert "external-needs-consumer/main/index.html#test_req__producer__demo" in html

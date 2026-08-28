@@ -10,12 +10,19 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-
-load("//:docs.bzl", "docs_bundle")
-
-docs_bundle(
-    name = "extensions",
-    source_dir = "",
-    upward_bundles = ["//:docs_source_bundle"],
-    visibility = ["//visibility:public"],
-)
+needs_types:
+  test_req:
+    title: Test Requirement
+    prefix: test_req__
+    parts: 3
+    mandatory_options:
+      id: ^test_req__[0-9a-zA-Z_]*$
+      version: ^[0-9]+$
+    optional_options:
+      status: ^(draft|valid)$
+      tags: .*
+      content: .*
+      template: .*
+    optional_links:
+      links: ANY
+links: {}

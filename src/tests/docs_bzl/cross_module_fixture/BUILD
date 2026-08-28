@@ -17,4 +17,5 @@ docs(
     source_dir = "docs",
     project = "Score Docs Compatibility Fixture",
     project_url = "https://eclipse-score.github.io/docs-as-code",
+    metamodel = ":docs/metamodel.yaml",
 )

@@ -54,7 +54,9 @@ def _parse_bazel_external_need(s: str) -> ExternalNeedsSource | None:
     repo, path_to_target = repo_and_path.split("//", 1)
     repo = repo.lstrip("@")  # empty for same-repo `//pkg:needs_json`
 
-    if target in ("needs_json", "needs_json_file", "docs_sources"):
+    if target in ("needs_json", "needs_json_file", "docs_sources") or target.endswith(
+        "_needs_upward"
+    ):
         return ExternalNeedsSource(
             bazel_module=repo,
             path_to_target=path_to_target,
@@ -137,9 +139,11 @@ def extend_needs_json_exporter(config: Config, params: list[str]) -> None:
     """
 
     for p in params:
-        # Note: we are currently addinig these values to config after config-inited.
-        # This is wrong. But good enough.
-        config.add(p, default="", rebuild="env", types=(), description="")
+        # Most callers register values during extension setup, before Sphinx
+        # reads conf.py.  Keep this helper usable for callers that do not, but
+        # do not try to register an already-known value at config-inited.
+        if not hasattr(config, p):
+            config.add(p, default="", rebuild="env", types=(), description="")
 
         if not getattr(config, p):
             logger.error(
@@ -158,6 +162,15 @@ def extend_needs_json_exporter(config: Config, params: list[str]) -> None:
         orig_function(self)
 
     NeedsList._finalise = temp  # pyright: ignore[reportPrivateUsage]
+
+
+def _external_needs_base_url(config: Config, needs_json_data: dict[str, object]) -> str:
+    """Return the consuming documentation project's base URL for imported Needs."""
+    consumer_project_url = getattr(config, "project_url", "")
+    project_url = consumer_project_url or needs_json_data.get("project_url", "")
+    if not isinstance(project_url, str) or not project_url:
+        return ""
+    return project_url.rstrip("/") + "/main"
 
 
 def get_external_needs_source(external_needs_source: str) -> list[ExternalNeedsSource]:
@@ -194,8 +207,7 @@ def add_external_needs_json(e: ExternalNeedsSource, config: Config):
     assert isinstance(config.needs_external_needs, list)  # pyright: ignore[reportUnknownMemberType]
     config.needs_external_needs.append(  # pyright: ignore[reportUnknownMemberType]
         {
-            "base_url": needs_json_data["project_url"]
-            + "/main",  # for now always "main"
+            "base_url": _external_needs_base_url(config, needs_json_data),
             "json_path": json_file,
         }
     )
@@ -228,7 +240,10 @@ def add_external_docs_sources(e: ExternalNeedsSource, config: Config):
 
 
 def connect_external_needs(app: Sphinx, config: Config):
-    extend_needs_json_exporter(config, ["project_url"])
+    # A host docs() config owns the canonical URL. Bundle-local Needs exports
+    # do not need to carry one because they can be imported by different hosts.
+    if getattr(config, "project_url", ""):
+        extend_needs_json_exporter(config, ["project_url"])
 
     # Local external needs from DATA (e.g. :needs_json or :docs_sources)
     external_needs = get_external_needs_source(app.config.external_needs_source)
@@ -240,7 +255,7 @@ def connect_external_needs(app: Sphinx, config: Config):
     for e in external_needs:
         if e.target == "needs_json":
             add_external_needs_json(e, app.config)
-        elif e.target == "needs_json_file":
+        elif e.target == "needs_json_file" or e.target.endswith("_needs_upward"):
             _add_needs_json_file(e, app.config)
         elif e.target == "docs_sources":
             add_external_docs_sources(e, app.config)
@@ -251,16 +266,29 @@ def connect_external_needs(app: Sphinx, config: Config):
 
 
 def _add_needs_json_file(ext_needs: ExternalNeedsSource, config: Config) -> None:
-    """Resolve a needs_json_file target from runfiles and register it."""
-    json_file_raw = (
-        Path(_runfiles_module_dir(ext_needs)) / ext_needs.path_to_target / "needs.json"
-    )
+    """Resolve a needs export target from runfiles and register it."""
     r = get_runfiles_dir()
-    json_file = r / json_file_raw
+    module_dir = Path(_runfiles_module_dir(ext_needs))
+    json_file_candidates = [
+        r / module_dir / ext_needs.path_to_target / "needs.json",
+    ]
+    # Named docs_bundle exports use a target-specific output directory because one
+    # Bazel package may contain several bundles. Keep the historical flat path
+    # above for normal needs_json_file targets and try the namespaced layout
+    # used by bundle-local exports as a fallback.
+    if ext_needs.target != "needs_json_file":
+        json_file_candidates.append(
+            r / module_dir / ext_needs.path_to_target / ext_needs.target / "needs.json"
+        )
+
+    json_file = next(
+        (candidate for candidate in json_file_candidates if candidate.is_file()),
+        json_file_candidates[0],
+    )
     logger.debug(f"External needs_json_file: {json_file}")
     try:
         needs_json_data = json.loads(
-            Path(json_file).read_text(encoding="utf-8")  # pyright: ignore[reportAny]
+            json_file.read_text(encoding="utf-8")  # pyright: ignore[reportAny]
         )
     except FileNotFoundError:
         logger.error(
@@ -274,7 +302,7 @@ def _add_needs_json_file(ext_needs: ExternalNeedsSource, config: Config) -> None
         return
     config.needs_external_needs.append(
         {  # pyright: ignore[reportUnknownMemberType]
-            "base_url": needs_json_data.get("project_url", "") + "/main",
+            "base_url": _external_needs_base_url(config, needs_json_data),
             "json_path": json_file,
         }
     )

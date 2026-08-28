@@ -75,3 +75,18 @@ docs_bundle(
     ],
     tags = ["manual"],
 )
+
+# Upward hierarchy edges are ordinary Bazel dependencies and must remain
+# acyclic. This target is intentionally invalid and is built only by the
+# corresponding negative test.
+docs_bundle(
+    name = "cycle_a",
+    upward_bundles = [":cycle_b"],
+    tags = ["manual"],
+)
+
+docs_bundle(
+    name = "cycle_b",
+    upward_bundles = [":cycle_a"],
+    tags = ["manual"],
+)

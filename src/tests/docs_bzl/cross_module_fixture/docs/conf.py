@@ -5,17 +5,14 @@
 # information regarding copyright ownership.
 #
 # This program and the accompanying materials are made available under the
-# terms of the Apache License Version 2.0 which is available at
+# terms of the Apache License 2.0 which is available at
 # https://www.apache.org/licenses/LICENSE-2.0
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-load("//:docs.bzl", "docs_bundle")
-
-docs_bundle(
-    name = "extensions",
-    source_dir = "",
-    upward_bundles = ["//:docs_source_bundle"],
-    visibility = ["//visibility:public"],
-)
+project = "Score Docs Compatibility Fixture"
+project_url = "https://eclipse-score.github.io/docs-as-code"
+extensions = ["score_sphinx_bundle"]
+required_in_id = ["fixture"]
+suppress_warnings = ["needs.link_outgoing"]

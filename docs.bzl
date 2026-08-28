@@ -52,9 +52,10 @@ load(
     "@score_docs_as_code//:bzl/bundle_rules.bzl",
     "bundle_source_files",
     "create_bundle",
+    "bundle_own_files",
+    "merge_bundle_sourcelinks",
     "external_docs_runfiles",
     "generate_code_target_sourcelinks",
-    "merge_bundle_sourcelinks",
 )
 load(
     "@score_docs_as_code//:bzl/mount_rules.bzl",
@@ -83,6 +84,7 @@ def _generated_conf_impl(ctx):
             "{PROJECT}": repr(ctx.attr.project),
             "{PROJECT_URL}": repr(ctx.attr.project_url),
             "{REQUIRED_IN_ID}": repr([ctx.attr.required_in_id]) if ctx.attr.required_in_id else "[]",
+            "{ENTRY_DOC}": repr(ctx.attr.entry_doc),
         },
     )
     return [DefaultInfo(files = depset([output]))]
@@ -93,6 +95,7 @@ _generated_conf = rule(
         "project": attr.string(mandatory = True),
         "project_url": attr.string(mandatory = True),
         "required_in_id": attr.string(mandatory = True),
+        "entry_doc": attr.string(default = "index"),
         "output_path": attr.string(mandatory = True),
         "template": attr.label(
             allow_single_file = True,
@@ -101,7 +104,50 @@ _generated_conf = rule(
     },
 )
 
-def docs_bundle(name, source_dir = None, data = [], entry_doc = "index", bundles = [], scan_code = [], code_targets = [], visibility = None, **kwargs):
+def _create_metamodel_tool(name, metamodel):
+    """Expose a metamodel file as an executable Sphinx tool input.
+
+    rules_sphinxdocs intentionally restricts ``tools`` to executable targets,
+    while ``$(location ...)`` in a Sphinx action still needs the metamodel's
+    sandboxed path. Copying the file through an executable genrule satisfies
+    both constraints without changing the file contents.
+    """
+    native.genrule(
+        name = name,
+        srcs = [metamodel],
+        outs = [name + ".yaml"],
+        cmd = "cp $(location " + str(metamodel) + ") $@",
+        executable = True,
+        visibility = ["//visibility:private"],
+    )
+    return ":" + name
+
+def _bundle_upward_needs_label(bundle):
+    """Return the generated upward-needs label for a docs_bundle label."""
+    bundle_string = str(bundle)
+    if bundle_string.startswith(":"):
+        bundle_string = "//" + native.package_name() + bundle_string
+    elif not bundle_string.startswith("//") and not bundle_string.startswith("@"):
+        bundle_string = "//" + native.package_name() + ":" + bundle_string
+    return Label(bundle_string + "_needs_upward")
+
+def _external_needs_label(label):
+    """Format a label for score_metamodel's external-needs parser."""
+    label_string = str(label)
+    if label_string.startswith("@@//"):
+        return label_string[2:]
+    if label_string.startswith("@@"):
+        canonical = label_string[2:]
+        repository, separator, package_and_target = canonical.partition("//")
+        # Bazel 8's canonical Bzlmod spelling uses ``repo+``. The runfiles
+        # layout and the external-needs parser use the user-facing module name
+        # and add the ``+`` themselves where needed.
+        if repository.endswith("+"):
+            repository = repository[:-1]
+        return "@" + repository + separator + package_and_target
+    return label_string
+
+def docs_bundle(name, source_dir = None, data = [], entry_doc = "index", metamodel = None, bundles = [], upward_bundles = [], scan_code = [], code_targets = [], deps = [], bundle_conf = None, visibility = None, **kwargs):
     """A docs bundle, optionally composed of others.
 
     Args:
@@ -118,17 +164,29 @@ def docs_bundle(name, source_dir = None, data = [], entry_doc = "index", bundles
         only bundle data travels with a mounted bundle.
       entry_doc: bundle-relative docname attached when this bundle is mounted.
         Defaults to `index`.
+      metamodel: optional metamodel label used for this bundle's Needs
+        processing. If omitted, the built-in SCORE metamodel is used.
       bundles: nested bundles to compose, each a dict
         {
             "bundle": <docs_bundle label>,
             "mount_at": <where it shall me mounted>,
             "attach_to": <optional document to attach the bundle to; for a bundle root it defaults to the mount_at parent's index>
         }.
+      upward_bundles: docs_bundle targets in the documentation hierarchy above
+        this bundle. These are explicit Bazel dependencies used by the
+        bundle-local Needs export; both direct declarations and the complete
+        transitive upward closure are propagated through DocsBundleInfo. A
+        source bundle imports the direct parent's merged export; an aggregator
+        may use the relationship as a named hierarchy group.
       scan_code: Deprecated. Explicit source files or filegroups to scan for
                  source-code links. Use `code_targets` for implementation targets.
       code_targets: Implementation targets or filegroups to scan for source-code
                     links. Implementation target source files and their dependencies
                     are collected recursively; filegroups expand to their files.
+      deps: Additional Python dependencies for the bundle-local Needs export.
+      bundle_conf: Optional Sphinx conf.py label to reuse for the bundle-local
+                   Needs export. This is used by docs() for its generated host
+                   configuration.
       visibility: Target visibility.
       **kwargs: Additional attributes forwarded to the underlying rule.
     """
@@ -153,17 +211,159 @@ def docs_bundle(name, source_dir = None, data = [], entry_doc = "index", bundles
     strip_prefix = join_path(pkg, source_dir) if source_dir != None else ""
 
     # The helper validates child declarations and creates the internal target.
+    selected_metamodel = metamodel or Label("@score_docs_as_code//src/extensions/score_metamodel:metamodel_yaml")
     create_bundle(
         name = name,
         srcs = srcs,
         sourcelinks = sourcelinks,
         strip_prefix = strip_prefix,
         entry_doc = entry_doc,
+        metamodel = selected_metamodel,
         bundles = bundles,
+        upward_bundles = upward_bundles,
         data = data,
         visibility = visibility,
         **kwargs
     )
+
+    upward_needs = [_bundle_upward_needs_label(bundle) for bundle in upward_bundles]
+
+    # A bundle owns Needs only through its own documentation sources.  Keep
+    # nested bundles out of this source set, while still making the generated
+    # target useful for source-less aggregators that only carry no local docs.
+    if srcs:
+        metamodel_tool = None
+        if metamodel:
+            metamodel_tool = _create_metamodel_tool(
+                name + "_needs_metamodel",
+                selected_metamodel,
+            )
+
+        own_files = bundle_own_files(
+            name = name + "_own_files",
+            bundle = ":" + name,
+            visibility = visibility,
+        )
+
+        config_file_path = join_path(source_dir, "conf.py")
+        if bundle_conf:
+            needs_config = bundle_conf
+        elif native.glob([config_file_path], allow_empty = True):
+            needs_config = ":" + config_file_path
+        else:
+            needs_config = ":" + name + "_needs_conf"
+            _generated_conf(
+                name = name + "_needs_conf",
+                project = name,
+                project_url = "",
+                required_in_id = "",
+                entry_doc = entry_doc,
+                output_path = config_file_path,
+                template = Label("@score_docs_as_code//:bundle_needs_conf.py.tpl"),
+            )
+
+        bundle_deps = deps + _missing_requirements(deps) + [
+            Label("//src:plantuml_for_python"),
+            Label("//src/extensions/score_sphinx_bundle:score_sphinx_bundle"),
+        ]
+        bundle_data = [own_files] + upward_needs
+        if metamodel:
+            bundle_data.append(selected_metamodel)
+
+        if len(sourcelinks) == 0:
+            needs_sourcelinks = ":" + name + "_needs_sourcelinks_json"
+            _sourcelinks_json(
+                name = name + "_needs_sourcelinks_json",
+                srcs = [],
+            )
+        elif len(sourcelinks) == 1:
+            needs_sourcelinks = sourcelinks[0]
+        else:
+            needs_sourcelinks_name = name + "_needs_sourcelinks_json"
+            merge_bundle_sourcelinks(
+                name = needs_sourcelinks_name,
+                bundle = ":" + name,
+                visibility = visibility,
+            )
+            needs_sourcelinks = ":" + needs_sourcelinks_name
+        bundle_data.append(needs_sourcelinks)
+
+        sphinx_build_binary(
+            name = name + "_needs_sphinx_build",
+            data = bundle_data,
+            deps = bundle_deps,
+            visibility = visibility,
+        )
+
+        needs_local = ":" + name + "_needs_local"
+        needs_extra_opts = [
+            "--keep-going",
+            "-T",
+            "--define=external_needs_source=" + str([
+                _external_needs_label(label)
+                for label in upward_needs
+            ]),
+        ]
+        if metamodel:
+            needs_extra_opts.append(
+                "--define=score_metamodel_yaml=$(location " + metamodel_tool + ")"
+            )
+        needs_extra_opts.append(
+            "--define=score_sourcelinks_json=$(location " + str(needs_sourcelinks) + ")"
+        )
+
+        needs_tools = list(upward_needs)
+        if metamodel:
+            needs_tools.append(metamodel_tool)
+        needs_tools.append(needs_sourcelinks)
+
+        sphinx_docs(
+            name = name + "_needs_local",
+            srcs = [own_files],
+            config = needs_config,
+            # sphinxdocs removes this string literally from short_path. Keep
+            # the separator so a config at ``source_dir/conf.py`` becomes
+            # ``conf.py`` rather than ``/conf.py``.
+            strip_prefix = strip_prefix + "/" if strip_prefix else "",
+            extra_opts = needs_extra_opts,
+            formats = ["needs"],
+            sphinx = ":" + name + "_needs_sphinx_build",
+            tools = needs_tools,
+            visibility = visibility,
+            allow_persistent_workers = False,
+        )
+
+        needs_upward = name + "_needs_upward"
+        merge_inputs = [needs_local] + upward_needs
+        merge_command = "$(location //scripts_bazel:merge_needs_json) --output $@ $(location " + needs_local + ")/needs.json"
+        for input_label in upward_needs:
+            merge_command += " $(location " + str(input_label) + ")"
+        native.genrule(
+            name = needs_upward,
+            srcs = merge_inputs,
+            outs = [needs_upward + "/needs.json"],
+            cmd = merge_command,
+            tools = [Label("//scripts_bazel:merge_needs_json")],
+            visibility = visibility,
+        )
+    elif upward_needs:
+        # A source-less hierarchy group owns no Needs of its own, but it can
+        # still expose the merged export of its declared ancestors. This lets
+        # a child depend on a named hierarchy group without knowing how the
+        # group's parent chain is assembled.
+        needs_upward = name + "_needs_upward"
+        merge_command = "$(location //scripts_bazel:merge_needs_json) --output $@ $(location " + str(upward_needs[0]) + ")"
+        for input_label in upward_needs[1:]:
+            merge_command += " $(location " + str(input_label) + ")"
+        native.genrule(
+            name = needs_upward,
+            srcs = upward_needs,
+            outs = [needs_upward + "/needs.json"],
+            cmd = merge_command,
+            tools = [Label("//scripts_bazel:merge_needs_json")],
+            visibility = visibility,
+            tags = ["manual"],
+        )
 
 def _missing_requirements(deps):
     """Add Python hub dependencies if they are missing."""
@@ -212,7 +412,9 @@ def docs(
         test_sources = [],
         known_good = None,
         metamodel = None,
-        bundles = []):
+        bundles = [],
+        upward_bundles = [],
+    ):
     """Creates all targets related to documentation.
 
     By using this function, you'll get any and all updates for documentation targets in one place.
@@ -238,7 +440,11 @@ def docs(
                     When empty (default), all testcases found in `bazel-testlogs` will be used.
       known_good: Optional label to a "known good" JSON file for source links.
       metamodel: Optional label to a metamodel.yaml file. When set, the extension loads this
-                 file instead of the default metamodel shipped with score_metamodel.
+                 file instead of the default metamodel shipped with score_metamodel. The same
+                 metamodel is bound to the host source bundle created by this macro.
+      upward_bundles: docs_bundle targets in the documentation hierarchy above the
+                      host's own source bundle. Their Needs are available while
+                      processing the host sources and in the final composed Needs build.
       bundles: List of placement dicts describing documentation bundles to overlay
               into this documentation's source tree. Each entry is a dict
                 {
@@ -256,6 +462,14 @@ def docs(
     inputs that do not belong to a bundle mount.
     """
     # HINT: keep documentation sync docs/reference/bazel_macros.rst
+
+    upward_needs = [_bundle_upward_needs_label(bundle) for bundle in upward_bundles]
+    all_external_needs = external_needs + upward_needs
+    all_external_needs_sources = [
+        _external_needs_label(label)
+        for label in all_external_needs
+    ]
+    data_sources = [str(label) for label in data]
 
     config_file_path = join_path(source_dir, "conf.py")
     sphinx_config = ":" + config_file_path
@@ -331,10 +545,62 @@ def docs(
 
     incremental_src = Label("//src:incremental.py")
 
+    # Keep the host's own source bundle separate from the composed bundle.
+    # Child bundle Needs exports use this source target as their upward
+    # interface; the public bundle remains the complete source tree consumed
+    # by Sphinx and docs_check. The public docs_source_bundle alias below is
+    # the stable cross-package name for this source-level target.
+    docs_bundle(
+        name = "_docs_source_bundle",
+        source_dir = source_dir,
+        entry_doc = "index",
+        metamodel = metamodel,
+        bundle_conf = sphinx_config,
+        scan_code = scan_code,
+        code_targets = code_targets,
+        upward_bundles = upward_bundles,
+        visibility = ["//visibility:public"],
+    )
+
+    # ``_docs_source_bundle`` was the original generated label and is kept for
+    # compatibility with existing consumers. Expose a stable public name for
+    # the host's own-source hierarchy anchor so cross-module users do not need
+    # to depend on a private-looking implementation label.
+    native.alias(
+        name = "docs_source_bundle",
+        actual = ":_docs_source_bundle",
+        visibility = ["//visibility:public"],
+    )
+    if glob_doc_sources(source_dir):
+        # A source-bearing host always gets this generated export from
+        # docs_bundle(). Use a real output target rather than an alias: the
+        # external-needs loader resolves named bundle exports from their
+        # runfiles path, and Bazel aliases retain the implementation target's
+        # output directory.
+        native.genrule(
+            name = "docs_source_bundle_needs_upward",
+            srcs = [":_docs_source_bundle_needs_upward"],
+            outs = ["docs_source_bundle_needs_upward/needs.json"],
+            cmd = "cp $(location :_docs_source_bundle_needs_upward) $@",
+            visibility = ["//visibility:public"],
+        )
+
+    composed_bundles = [{
+        "bundle": ":_docs_source_bundle",
+        "mount_at": "",
+    }] + bundles
+
+    docs_bundle(
+        name = "docs_bundle",
+        metamodel = metamodel,
+        bundles = composed_bundles,
+        visibility = ["//visibility:public"],
+    )
+
     sphinx_build_binary(
         name = "sphinx_build",
         visibility = ["//visibility:private"],
-        data = data + external_needs + metamodel_label + [":docs_bundle"],
+        data = data + all_external_needs + metamodel_label + [":docs_bundle"],
         deps = deps,
         tags = ["manual"]
     )
@@ -342,20 +608,19 @@ def docs(
     known_good_label = [known_good] if known_good else []
 
     # The public bundle carries both the complete source tree and the
-    # transitive source-code links of every nested bundle.
-    docs_bundle(
-        name = "docs_bundle",
-        source_dir = source_dir,
-        entry_doc = "index",
-        bundles = bundles,
-        scan_code = scan_code,
-        code_targets = code_targets,
-        visibility = ["//visibility:public"],
-        tags = ["manual"]
-    )
+    # transitive source-code links of every nested bundle. The own-source
+    # bundle is composed above so it can also be used as a private hierarchy
+    # interface without depending on mounted children.
+    # transitive source-code links of every nested bundle. Sphinx itself only
+    # receives the host's direct sources; mounted children are staged by
+    # score_mounts so their Needs are not discovered a second time.
     sphinx_sources = bundle_source_files(
         name = "_docs_sphinx_sources",
-        bundle = ":docs_bundle",
+        # ``docs_bundle`` is the complete composed aggregator in the
+        # hierarchy-aware implementation. Its direct sources are therefore
+        # the host sources exposed by ``_docs_source_bundle``; mounted child
+        # sources must remain supplied through score_mounts.
+        bundle = ":_docs_source_bundle",
         visibility = ["//visibility:private"],
     )
     merge_bundle_sourcelinks(
@@ -374,7 +639,7 @@ def docs(
     # the complete bundle in runfiles would duplicate those sources. External
     # bundles do need runfiles, so keep only those sources.
     docs_data = (
-        data + external_needs + metamodel_label +
+        data + all_external_needs + metamodel_label +
         [":sourcelinks_json", ":_external_docs_runfiles"] +
         mounts_manifest_label
     )
@@ -387,8 +652,8 @@ def docs(
         "SOURCE_DIRECTORY": source_dir,
         "PACKAGE_DIR": native.package_name(),
         "TEST_SOURCES": str(test_sources),
-        "DATA": str(data),
-        "EXTERNAL_NEEDS_FILES": str(external_needs),
+        "DATA": str(data_sources),
+        "EXTERNAL_NEEDS_FILES": str(all_external_needs_sources),
         # `bazel run` starts from a runfiles tree, so this logical path is
         # resolved by score_mounts through ``RUNFILES_DIR``.
         "MOUNTS_MANIFEST": "$(rlocationpath :_mounts_manifest)" if bundles else "",
@@ -466,6 +731,12 @@ def docs(
         package_collisions = "warning",
     )
 
+    metamodel_tool = []
+    if metamodel:
+        metamodel_tool = [
+            _create_metamodel_tool("_docs_metamodel", metamodel),
+        ]
+
     sphinx_docs(
         name = "needs_json",
         # Nested bundle sources are mounted by score_mounts. Passing the
@@ -480,17 +751,17 @@ def docs(
             "-T",  # show more details in case of errors
             "--jobs",
             "auto",
-            "--define=external_needs_source=" + str(data + external_needs),
+            "--define=external_needs_source=" + str(data_sources + all_external_needs_sources),
             "--define=score_sourcelinks_json=$(location :sourcelinks_json)",
             "--define=score_source_code_linker_plain_links=1",
         ] + (
             # ``sphinx_docs`` is a sandboxed build action, so it needs the
             # action-input path rather than the runfiles-relative spelling.
             ["--define=mounts_manifest=$(location :_mounts_manifest)"] if bundles else []
-        ) + (["--define=score_metamodel_yaml=$(location " + str(metamodel) + ")"] if metamodel else []),
+        ) + (["--define=score_metamodel_yaml=$(location " + metamodel_tool[0] + ")"] if metamodel else []),
         formats = ["needs"],
         sphinx = ":sphinx_build",
-        tools = data + external_needs + metamodel_label + [":sourcelinks_json", ":docs_bundle"] + mounts_manifest_label,
+        tools = data + all_external_needs + metamodel_tool + [":sourcelinks_json", ":docs_bundle"] + mounts_manifest_label,
         visibility = ["//visibility:public"],
         # Persistent workers cause stale symlinks after dependency version
         # changes, corrupting the Bazel cache.

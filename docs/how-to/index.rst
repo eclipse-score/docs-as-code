@@ -27,6 +27,8 @@ Here you find practical guides on how to use docs-as-code.
    write_docs
    other_modules
    cross_module_compatibility
+   upward_bundles
+   mounts/index
    bundles/index
    dashboards_and_quality_gates
    source_to_doc_links

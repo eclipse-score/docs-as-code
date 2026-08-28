@@ -46,6 +46,7 @@ docs_bundle(
 
 docs(
     source_dir = "docs",
+    test_sources = ["src/tests/docs_bzl/scenarios/data_files_runfiles"],
     bundles = [{
         "bundle": ":data_bundle",
         "mount_at": "data_test",

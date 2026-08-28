@@ -101,6 +101,18 @@ def test_single_entry_json_no_path():
     ]
 
 
+def test_named_bundle_needs_upward_entry():
+    result = parse_external_needs_sources_from_DATA('["//docs:component_needs_upward"]')
+    assert result == [
+        ExternalNeedsSource(
+            bazel_module="",
+            path_to_target="docs",
+            target="component_needs_upward",
+            is_local=True,
+        )
+    ]
+
+
 def test_multiple_entries():
     result = parse_external_needs_sources_from_DATA(
         '["@repo1//:needs_json", "@repo2//:needs_json"]'
@@ -203,6 +215,34 @@ def test_add_external_needs_json_appends_entry_local(
     assert Path(entry["json_path"]) == json_path
 
 
+def test_add_external_needs_json_uses_consuming_project_url(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """External Needs links use the importing documentation project's URL."""
+    e = ExternalNeedsSource(
+        bazel_module="ext_mod", target="needs_json", path_to_target=""
+    )
+    config = Config()
+    config.needs_external_needs = []
+    config.project_url = "https://example.test/consumer"
+
+    rel_json = Path("ext_mod+/needs_json/_build/needs/needs.json")
+    json_path = tmp_path / rel_json
+    json_path.parent.mkdir(parents=True, exist_ok=True)
+    json_path.write_text(
+        json.dumps({"project_url": "https://example.test/provider"}),
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(ext_needs, "get_runfiles_dir", lambda: tmp_path)
+
+    add_external_needs_json(e, config)
+
+    assert config.needs_external_needs is not None
+    assert config.needs_external_needs[0]["base_url"] == (
+        "https://example.test/consumer/main"
+    )
+
+
 def test_add_needs_json_file_appends_entry(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
@@ -236,6 +276,36 @@ def test_add_needs_json_file_appends_entry(
     entry = config.needs_external_needs[0]
     assert entry["base_url"] == "https://example.test/json-file/main"
     assert Path(entry["json_path"]) == json_path
+
+
+def test_add_named_bundle_needs_upward_appends_entry(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """Bundle-local exports resolve from their target-specific output directory."""
+    rel_json = Path("_main/docs/component_needs_upward/needs.json")
+    json_path = tmp_path / rel_json
+    json_path.parent.mkdir(parents=True, exist_ok=True)
+    json_path.write_text(
+        json.dumps({"project_url": "https://example.test/bundle"}),
+        encoding="utf-8",
+    )
+
+    config = Config()
+    config.needs_external_needs = []
+    monkeypatch.setattr(ext_needs, "get_runfiles_dir", lambda: tmp_path)
+
+    _add_needs_json_file(
+        ExternalNeedsSource(
+            bazel_module="",
+            target="component_needs_upward",
+            path_to_target="docs",
+            is_local=True,
+        ),
+        config,
+    )
+
+    assert config.needs_external_needs is not None
+    assert Path(config.needs_external_needs[0]["json_path"]) == json_path
 
 
 def test_add_external_needs_json_missing_file_keeps_list_empty(

@@ -41,5 +41,6 @@ docs_bundle(
     name = "metamodel",
     data = [":generate_metamodel_rst"],
     entry_doc = "index",
+    upward_bundles = ["//src/extensions/docs:extensions"],
     visibility = ["//visibility:public"],
 )

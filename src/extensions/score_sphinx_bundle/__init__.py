@@ -78,6 +78,12 @@ def setup(app: Sphinx) -> dict[str, object]:
     for e in score_extensions:
         app.setup_extension(e)
 
+    # Interpret GitHub-compatible Mermaid fences as Sphinx Mermaid directives.
+    # This keeps ``mermaid`` fences rendering in both GitHub Markdown and
+    # the generated Sphinx documentation.
+    if isinstance(app.config.myst_fence_as_directive, set):
+        app.config.myst_fence_as_directive.add("mermaid")
+
     # Enable cross-reference resolution for [text](file.md#anchor) links up to h4.
     # Without this, MyST treats heading anchors as opaque and cannot resolve them.
     config_setdefault(app.config, "myst_heading_anchors", 4)

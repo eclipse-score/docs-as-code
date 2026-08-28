@@ -88,6 +88,53 @@ links: {}
     )
 
 
+def _write_cross_module_upward_consumer(workspace: Path) -> None:
+    """Add a local bundle that consumes an upward export from the fixture."""
+    _write_cross_module_consumer(
+        workspace,
+        "score_cross_module_compatibility_allow_missing_mandatory_attributes = True\n"
+        "score_cross_module_compatibility_allow_version_mismatches = True",
+    )
+    workspace.joinpath("BUILD").write_text(
+        """load(\"@score_docs_as_code//:docs.bzl\", \"docs\", \"docs_bundle\")
+
+docs_bundle(
+    name = "consumer_child",
+    source_dir = "child",
+    metamodel = "//:docs/metamodel.yaml",
+    upward_bundles = ["@score_docs_compatibility_fixture//:docs_source_bundle"],
+)
+
+docs(
+    source_dir = "docs",
+    metamodel = "//:docs/metamodel.yaml",
+    bundles = [
+        {
+            "bundle": "@score_docs_compatibility_fixture//:docs_source_bundle",
+            "mount_at": "fixture",
+        },
+        {"bundle": ":consumer_child", "mount_at": "child"},
+    ],
+)
+""",
+        encoding="utf-8",
+    )
+    child = workspace / "child"
+    child.mkdir()
+    child.joinpath("index.rst").write_text(
+        """Consumer child
+===============
+
+.. test_req:: Consumer child target
+   :id: test_req__child__target
+   :status: valid
+   :version: 2
+   :links: test_req__fixture__source
+""",
+        encoding="utf-8",
+    )
+
+
 def test_cross_module_version_mismatch_is_reported_without_failing(
     tmp_path: Path,
 ) -> None:
@@ -135,6 +182,23 @@ def test_external_findings_remain_fatal_by_default(tmp_path: Path) -> None:
 
     assert result.returncode != 0
     assert "is missing required attribute: `status`" in result.stderr
+
+
+def test_cross_module_upward_bundle_is_consumed_by_a_local_bundle(
+    tmp_path: Path,
+) -> None:
+    _write_cross_module_upward_consumer(tmp_path)
+    result = subprocess.run(
+        ["bazel", f"--bazelrc={repo_root() / '.bazelrc'}", "run", "//:docs"],
+        cwd=tmp_path,
+        text=True,
+        capture_output=True,
+    )
+
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert (tmp_path / "_build/index.html").is_file()
+    assert (tmp_path / "_build/child/index.html").is_file()
+    assert (tmp_path / "_build/fixture/index.html").is_file()
 
 
 def test_local_version_mismatch_remains_fatal() -> None:

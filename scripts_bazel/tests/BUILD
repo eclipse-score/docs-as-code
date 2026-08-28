@@ -34,6 +34,20 @@ score_pytest(
 )
 
 score_pytest(
+    name = "merge_needs_json_app_tests",
+    srcs = ["merge_needs_json_app_tests.py"],
+    data = [
+        "//src/tests/docs_bzl/scenarios/basic_docs:docs_bundle",
+        "//src/tests/docs_bzl/scenarios/external_needs/producer:docs_bundle",
+        "//src/tests/docs_bzl/scenarios/nested_bundles:docs_bundle",
+    ],
+    deps = [
+        "//scripts_bazel:merge_needs_json",
+    ] + all_requirements,
+    pytest_config = "//:pyproject.toml",
+)
+
+score_pytest(
     name = "merge_needs_json_tests",
     srcs = ["merge_needs_json_tests.py"],
     deps = [

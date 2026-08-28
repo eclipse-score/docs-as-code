@@ -243,6 +243,15 @@ def _clear_needs_defaults(app: Sphinx):
 
 def setup(app: Sphinx) -> dict[str, str | bool]:
     app.add_config_value("external_needs_source", "", rebuild="env")
+    # Register this before Sphinx reads conf.py.  The external-needs exporter
+    # augments the needs JSON during ``config-inited`` and therefore cannot
+    # reliably add the value at that point anymore.
+    app.add_config_value(
+        "project_url",
+        "",
+        rebuild="env",
+        description="Canonical URL of the documentation project.",
+    )
     app.add_config_value("score_metamodel_yaml", "", rebuild="env")
     app.add_config_value("required_in_id", [], rebuild="env")
     config_setdefault(app.config, "needs_id_required", True)
