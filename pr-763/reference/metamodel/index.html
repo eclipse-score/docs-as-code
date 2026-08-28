@@ -862,12 +862,6 @@ class assertion {
   +source_code_link [optional]*
   +testlink [optional]*
 }
-class auto_mod_ver_report {
-  +id
-  +version
-  +source_code_link [optional]*
-  +testlink [optional]*
-}
 class comp {
   +id
   +safety
@@ -1339,7 +1333,6 @@ class workproduct {
   +source_code_link [optional]*
   +testlink [optional]*
 }
-auto_mod_ver_report --&gt; mod : belongs_to
 comp --&gt; feat : belongs_to
 comp ..&gt; comp : consists_of
 comp ..&gt; aou_req : fulfils
@@ -1478,7 +1471,6 @@ style workflow fill:#E1D5E7,stroke:#666,color:#000
 style workproduct fill:#E1D5E7,stroke:#666,color:#000
 click aou_req href &quot;#aou-req&quot; &quot;Open aou_req details&quot;
 click assertion href &quot;#assertion&quot; &quot;Open assertion details&quot;
-click auto_mod_ver_report href &quot;#auto-mod-ver-report&quot; &quot;Open auto_mod_ver_report details&quot;
 click comp href &quot;#comp&quot; &quot;Open comp details&quot;
 click comp_arc_dyn href &quot;#comp-arc-dyn&quot; &quot;Open comp_arc_dyn details&quot;
 click comp_arc_sta href &quot;#comp-arc-sta&quot; &quot;Open comp_arc_sta details&quot;
@@ -1534,9 +1526,6 @@ pre#metamodel-type-diagram-aou-req.mermaid > svg {
 }
 pre#metamodel-type-diagram-assertion.mermaid > svg {
     height: 167px !important;
-}
-pre#metamodel-type-diagram-auto-mod-ver-report.mermaid > svg {
-    height: 333px !important;
 }
 pre#metamodel-type-diagram-comp-saf-dfa.mermaid > svg {
     height: 333px !important;
@@ -1959,86 +1948,6 @@ click assertion href &quot;#assertion&quot; &quot;Open assertion details&quot;
 <tr class="row-even"><td><p class="sd-card-text">Optional</p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">links</span></code></p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">ANY</span></code></p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</details></section>
-<section id="auto-mod-ver-report">
-<h2>auto_mod_ver_report<a class="headerlink" href="#auto-mod-ver-report" title="Link to this heading">#</a></h2>
-<p><strong>Module Verification Report (automated)</strong> (<code class="docutils literal notranslate"><span class="pre">auto_mod_ver_report__</span></code>)</p>
-<pre id="metamodel-type-diagram-auto-mod-ver-report" class="mermaid">
-        ---
-config:
-  layout: elk
-  securityLevel: loose
----
-classDiagram
-  direction BT
-class auto_mod_ver_report {
-  +id
-  +version
-  +source_code_link [optional]*
-  +testlink [optional]*
-}
-class mod {
-  +id
-  +version
-  +safety [optional]*
-  +security [optional]*
-  +source_code_link [optional]*
-  +status [optional]*
-  +testlink [optional]*
-}
-auto_mod_ver_report --&gt; mod : belongs_to
-style mod fill:#D5E8D4,stroke:#666,color:#000
-style auto_mod_ver_report fill:#FFFFFF,stroke:#000,stroke-width:3px,color:#000
-click auto_mod_ver_report href &quot;#auto-mod-ver-report&quot; &quot;Open auto_mod_ver_report details&quot;
-click mod href &quot;#mod&quot; &quot;Open mod details&quot;
-    </pre><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
-<summary class="sd-summary-title sd-card-header">
-<span class="sd-summary-text">Options and Links</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
-<p class="sd-card-text"><strong>Options</strong></p>
-<div class="pst-scrollable-table-container"><table class="table">
-<thead>
-<tr class="row-odd"><th class="head"><p class="sd-card-text">Type</p></th>
-<th class="head"><p class="sd-card-text">Option</p></th>
-<th class="head"><p class="sd-card-text">Definition</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p class="sd-card-text">Mandatory</p></td>
-<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">id</span></code></p></td>
-<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^auto_mod_ver_report__[0-9a-z_]+$</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p class="sd-card-text">Mandatory</p></td>
-<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">version</span></code></p></td>
-<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p class="sd-card-text">Optional</p></td>
-<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
-<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p class="sd-card-text">Optional</p></td>
-<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
-<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<p class="sd-card-text"><strong>Links</strong></p>
-<div class="pst-scrollable-table-container"><table class="table">
-<thead>
-<tr class="row-odd"><th class="head"><p class="sd-card-text">Type</p></th>
-<th class="head"><p class="sd-card-text">Link</p></th>
-<th class="head"><p class="sd-card-text">Definition</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p class="sd-card-text">Mandatory</p></td>
-<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">belongs_to</span></code></p></td>
-<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">mod</span></code></p></td>
 </tr>
 </tbody>
 </table>
@@ -5938,12 +5847,6 @@ config:
 ---
 classDiagram
   direction BT
-class auto_mod_ver_report {
-  +id
-  +version
-  +source_code_link [optional]*
-  +testlink [optional]*
-}
 class comp {
   +id
   +safety
@@ -5988,7 +5891,6 @@ class mod_view_sta {
   +source_code_link [optional]*
   +testlink [optional]*
 }
-auto_mod_ver_report --&gt; mod : belongs_to
 mod --&gt; comp : includes
 mod_ver_report --&gt; mod : belongs_to
 mod_view_dyn ..&gt; mod : belongs_to
@@ -5997,7 +5899,6 @@ style comp fill:#D5E8D4,stroke:#666,color:#000
 style mod_view_dyn fill:#D5E8D4,stroke:#666,color:#000
 style mod_view_sta fill:#D5E8D4,stroke:#666,color:#000
 style mod fill:#D5E8D4,stroke:#000,stroke-width:3px,color:#000
-click auto_mod_ver_report href &quot;#auto-mod-ver-report&quot; &quot;Open auto_mod_ver_report details&quot;
 click comp href &quot;#comp&quot; &quot;Open comp details&quot;
 click mod href &quot;#mod&quot; &quot;Open mod details&quot;
 click mod_ver_report href &quot;#mod-ver-report&quot; &quot;Open mod_ver_report details&quot;
@@ -8311,7 +8212,6 @@ click workproduct href &quot;#workproduct&quot; &quot;Open workproduct details&q
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#aou-req">aou_req</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#assertion">assertion</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#auto-mod-ver-report">auto_mod_ver_report</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comp">comp</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comp-arc-dyn">comp_arc_dyn</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comp-arc-sta">comp_arc_sta</a></li>
