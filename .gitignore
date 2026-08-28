@@ -12,6 +12,9 @@ user.bazelrc
 _build/
 ubproject.toml
 
+# tools/module_verification_reports.py downstream repository checkouts
+/.cache/
+
 # Vale - editorial style guide
 .vale.ini
 styles/

@@ -42,16 +42,13 @@ from tools.module_verification_reports import (
 )
 
 
-def test_cache_path_prefers_xdg_and_has_default(tmp_path: Path) -> None:
-    assert resolve_cache_dir(environ={"XDG_CACHE_HOME": str(tmp_path)}) == (
-        tmp_path / "repo-cache"
-    )
-    assert resolve_cache_dir(environ={}, home=tmp_path) == (
+def test_cache_path_defaults_inside_the_workspace(tmp_path: Path) -> None:
+    assert resolve_cache_dir(workspace_root=tmp_path) == (
         tmp_path / ".cache" / "repo-cache"
     )
-    assert resolve_cache_dir(
-        tmp_path / "explicit", environ={"XDG_CACHE_HOME": "other"}
-    ) == (tmp_path / "explicit")
+    assert resolve_cache_dir(tmp_path / "explicit", workspace_root=tmp_path) == (
+        tmp_path / "explicit"
+    )
 
 
 def test_profiles_and_filters_are_validated() -> None:

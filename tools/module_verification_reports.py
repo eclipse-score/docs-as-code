@@ -10,14 +10,17 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-"""Build disposable module-verification report galleries for SCORE modules.
+"""Build module-verification report galleries for SCORE modules.
 
 The command in this file deliberately owns no downstream source.  It keeps a
-shallow checkout in the shared repository cache, overlays the local
-``score_docs_as_code`` checkout for one build, and restores the checkout in a
-``finally`` block.  Keeping the orchestration here (rather than in a Bazel
-rule) is important: the downstream repository is the workspace for the docs
-build and must remain a normal, independently configured Bzlmod workspace.
+shallow checkout per repository under this repo's own ``.cache`` directory,
+reused (not cleaned) across runs so ``_build`` and other incremental-build
+state survive for fast ``//:docs`` iteration.  It overlays the local
+``score_docs_as_code`` checkout for one build and restores the checkout to
+its default branch in a ``finally`` block.  Keeping the orchestration here
+(rather than in a Bazel rule) is important: the downstream repository is the
+workspace for the docs build and must remain a normal, independently
+configured Bzlmod workspace.
 """
 
 from __future__ import annotations
@@ -110,25 +113,19 @@ class RepositoryResult:
 
 
 def resolve_cache_dir(
-    cache_dir: Path | str | None = None,
-    *,
-    environ: Mapping[str, str] | None = None,
-    home: Path | None = None,
+    cache_dir: Path | str | None = None, *, workspace_root: Path
 ) -> Path:
-    """Resolve the cache root using the repo-cache contract.
+    """Resolve the cache root for downstream repository checkouts.
 
-    ``XDG_CACHE_HOME`` is used only when it is non-empty.  An explicit command
-    line path always wins, which makes the command straightforward to use in
-    tests and CI jobs.
+    An explicit ``--cache-dir`` always wins. Otherwise the checkouts live
+    inside this repository's own ``.cache`` directory (not the user's global
+    ``~/.cache``), so they persist across runs for fast incremental ``//:docs``
+    iteration and are trivial to find and delete.
     """
 
     if cache_dir is not None:
         return Path(cache_dir).expanduser()
-    env = os.environ if environ is None else environ
-    xdg_cache_home = env.get("XDG_CACHE_HOME", "")
-    if xdg_cache_home:
-        return Path(xdg_cache_home).expanduser() / "repo-cache"
-    return (Path.home() if home is None else home) / ".cache" / "repo-cache"
+    return Path(workspace_root) / ".cache" / "repo-cache"
 
 
 def _repositories_toml_path(config_dir: Path | None = None) -> Path:
@@ -345,7 +342,6 @@ class CheckoutManager:
 
         self._run_git(path, ["fetch", "--depth=1", "origin", "main"])
         self._run_git(path, ["checkout", "--detach", "--force", "FETCH_HEAD"])
-        self._run_git(path, ["clean", "-fdx"])
         revision = self._revision(path)
         self._record_default_ref(path, spec.name, revision)
         _progress(f"{spec.name}: default checkout at {revision[:12]}")
@@ -361,7 +357,6 @@ class CheckoutManager:
                 f"pinned checkout for {spec.name} resolved to {resolved}, "
                 f"expected {spec.revision}"
             )
-        self._run_git(path, ["clean", "-fdx"])
         return resolved
 
     @contextlib.contextmanager
@@ -392,7 +387,6 @@ class CheckoutManager:
                             path,
                             ["checkout", "--detach", "--force", default_revision],
                         )
-                        self._run_git(path, ["clean", "-fdx"])
                         self._record_default_ref(path, spec.name, default_revision)
                     except ReportToolError as restore_error:
                         if active_error is None:
@@ -948,7 +942,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             selected,
             source_root=source_root,
             output_dir=output_dir,
-            cache_dir=resolve_cache_dir(args.cache_dir),
+            cache_dir=resolve_cache_dir(args.cache_dir, workspace_root=source_root),
             check_goldens=args.check_goldens,
             update_goldens=args.update_goldens,
         )
