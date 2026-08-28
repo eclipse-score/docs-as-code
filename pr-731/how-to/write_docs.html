@@ -412,7 +412,8 @@
 <li class="toctree-l1"><a class="reference internal" href="other_modules.html">Reference Other Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cross_module_compatibility.html">Handle Cross-Module Compatibility Findings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="upward_bundles.html">Hierarchical Needs with <code class="docutils literal notranslate"><span class="pre">upward_bundles</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="mounts/index.html">Mount docs bundles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mounts/index.html">Bundles have moved</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bundles/index.html">How to use bundles</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dashboards_and_quality_gates.html">Build Dashboards and Quality Gates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="source_to_doc_links.html">Reference Docs in Source Code</a></li>
 <li class="toctree-l1"><a class="reference internal" href="test_to_doc_links.html">Reference Docs in Tests</a></li>
@@ -523,8 +524,8 @@ The scope of allowed behaviour in Docs-As-Code for needextend is limited as we d
 <p>For further documentation on needextends please <a class="reference external" href="https://sphinx-needs.readthedocs.io/en/latest/directives/needextend.html">look here</a></p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>In the future we will enable a check that needextends will only modify needs in the current document.
-You can ensure this by adding <cite>c.this_doc()</cite> to the filter string of the need.</p>
+<p>Needextends may only modify needs in the current document. Add <cite>c.this_doc()</cite>
+to the filter string of the needextend as shown in the examples above.</p>
 </div>
 </section>
 <section id="requirement-id-feature-part">

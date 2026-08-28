@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Documentation bundles and mounts &#8212; S-CORE Docs-as-Code  documentation</title>
+    <title>Bundle examples &#8212; S-CORE Docs-as-Code  documentation</title>
   
   
   
@@ -62,7 +62,7 @@
     <script src="../../_static/sphinx-needs/libs/html/datatables.min.js?v=8a4aee21"></script>
     <script src="../../_static/sphinx-needs/libs/html/datatables_loader.js?v=a2cae175"></script>
     <script src="../../_static/sphinx-needs/libs/html/sphinx_needs_collapse.js?v=dca66431"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'concepts/mounts/index';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'how-to/bundles/examples';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.20.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://eclipse-score.github.io/docs-as-code/versions.json';
@@ -73,8 +73,8 @@
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Internals" href="../../internals/index.html" />
-    <link rel="prev" title="Hierarchically linked bundle Needs exports" href="../hierarchical_bundle_needs.html" />
+    <link rel="next" title="Parent bundle" href="examples/nested/index.html" />
+    <link rel="prev" title="How to use bundles" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.0.0" />
@@ -159,8 +159,8 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../how-to/index.html">
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
     How To
   </a>
 </li>
@@ -173,8 +173,8 @@
 </li>
 
 
-<li class="nav-item current active">
-  <a class="nav-link nav-internal" href="../index.html">
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../concepts/index.html">
     Concepts
   </a>
 </li>
@@ -301,8 +301,8 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../how-to/index.html">
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
     How To
   </a>
 </li>
@@ -315,8 +315,8 @@
 </li>
 
 
-<li class="nav-item current active">
-  <a class="nav-link nav-internal" href="../index.html">
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../concepts/index.html">
     Concepts
   </a>
 </li>
@@ -406,11 +406,26 @@
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../bidirectional_traceability.html">Bi-directional Traceability</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cross_module_compatibility.html">Cross-Module Compatibility</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../docs_deps.html">Docs Dependencies</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../hierarchical_bundle_needs.html">Hierarchically linked bundle Needs exports</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Documentation bundles and mounts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../get_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../setup.html">Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../write_docs.html">Write Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../other_modules.html">Reference Other Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cross_module_compatibility.html">Handle Cross-Module Compatibility Findings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../upward_bundles.html">Hierarchical Needs with <code class="docutils literal notranslate"><span class="pre">upward_bundles</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mounts/index.html">Bundles have moved</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">How to use bundles</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active has-children"><a class="current reference internal" href="#">Bundle examples</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="examples/nested/index.html">Parent bundle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/generated-data/index.html">Generated Data Page</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../dashboards_and_quality_gates.html">Build Dashboards and Quality Gates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../source_to_doc_links.html">Reference Docs in Source Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../test_to_doc_links.html">Reference Docs in Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../generated_docs.html">Integrate Generated Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../add_extensions.html">Add Extensions</a></li>
 </ul>
 </div>
 </nav></div>
@@ -452,9 +467,12 @@
       </a>
     </li>
     
-    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Concepts</a></li>
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">How To</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Documentation bundles and mounts</span></li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">How to use bundles</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Bundle examples</span></li>
   </ul>
 </nav>
 </div>
@@ -471,82 +489,111 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="documentation-bundles-and-mounts">
-<span id="docs-concept-mounts"></span><h1>Documentation bundles and mounts<a class="headerlink" href="#documentation-bundles-and-mounts" title="Link to this heading">#</a></h1>
-<p>Documentation does not always live in a project’s <code class="docutils literal notranslate"><span class="pre">docs/</span></code> directory. A
-library may keep its reference material next to its source code, and a Bazel
-module may want to contribute its own documentation to another module’s site.
-Bundles and mounts make that content part of one Sphinx project without copying
-it.</p>
-<p>For the commands and BUILD declarations, see
-<a class="reference internal" href="../../how-to/bundles/index.html#howto-mount-external-sources"><span class="std std-ref">How to use bundles</span></a>.</p>
-<section id="bundle-mount-and-placement">
-<h2>Bundle, mount, and placement<a class="headerlink" href="#bundle-mount-and-placement" title="Link to this heading">#</a></h2>
-<p>A <strong>bundle</strong> is a named, mountable documentation directory. It owns its
-content, but not its position in a consuming documentation site.</p>
-<p>A <strong>mount</strong> makes a bundle visible in a host site. The host chooses the
-<strong>placement</strong> with <code class="docutils literal notranslate"><span class="pre">mount_at</span></code>. The bundle defines its own <code class="docutils literal notranslate"><span class="pre">entry_doc</span></code>
-(default <code class="docutils literal notranslate"><span class="pre">index</span></code>); the mount adds that page to the parent <code class="docutils literal notranslate"><span class="pre">index</span></code> toctree
-by default. <code class="docutils literal notranslate"><span class="pre">attach_to</span></code> overrides that host toctree document. This separation
-lets different projects reuse the same bundle at different locations while
-preserving its canonical entry page.</p>
-<p>Bundles are read from their original source directories. Consequently, an
-in-repository bundle remains editable and IDE navigation reaches its real
-source files rather than generated copies.</p>
+  <section id="bundle-examples">
+<h1>Bundle examples<a class="headerlink" href="#bundle-examples" title="Link to this heading">#</a></h1>
+<p>This page is a catalog of focused bundle patterns. Start with
+<a class="reference internal" href="index.html"><span class="doc">How to use bundles</span></a> for the basic workflow; use these examples when documentation is
+split across bundles, generated during the build, or published by another
+Bazel module. Each example shows the bundle declaration, its placement in the
+consuming project, and the resulting location in the documentation output.</p>
+<section id="nest-bundles">
+<h2>Nest bundles<a class="headerlink" href="#nest-bundles" title="Link to this heading">#</a></h2>
+<p>Use nested bundles when one bundle contains another. The child bundle chooses
+its entry page, the parent chooses the child’s relative location, and the
+consuming project chooses where the assembled bundle appears.</p>
+<p>The tested parent bundle composes the child like this:</p>
+<div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="n">docs_bundle</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;parent&quot;</span><span class="p">,</span>
+    <span class="n">source_dir</span> <span class="o">=</span> <span class="s2">&quot;parent&quot;</span><span class="p">,</span>
+    <span class="n">bundles</span> <span class="o">=</span> <span class="p">[{</span>
+        <span class="s2">&quot;bundle&quot;</span><span class="p">:</span> <span class="s2">&quot;:child&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;mount_at&quot;</span><span class="p">:</span> <span class="s2">&quot;child&quot;</span><span class="p">,</span>
+    <span class="p">}],</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;:generated_doc_output&quot;</span><span class="p">],</span>
+    <span class="n">visibility</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;//visibility:public&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>See the <a class="reference external" href="https://github.com/eclipse-score/docs-as-code/tree/main/src/tests/docs_bzl/scenarios/nested_bundles">complete nested-bundles fixture on GitHub</a>.</p>
+<p>If the parent is mounted at <code class="docutils literal notranslate"><span class="pre">guides/example</span></code>, its page is rendered at
+<code class="docutils literal notranslate"><span class="pre">guides/example/index.html</span></code> and the child landing page at
+<code class="docutils literal notranslate"><span class="pre">guides/example/child/landing.html</span></code>. The consuming project can change
+<code class="docutils literal notranslate"><span class="pre">guides/example</span></code> without changing either bundle.</p>
 </section>
-<section id="composition">
-<h2>Composition<a class="headerlink" href="#composition" title="Link to this heading">#</a></h2>
-<p>A bundle can contain placements for other bundles. Placements compose by
-prefixing their paths: a child placed at <code class="docutils literal notranslate"><span class="pre">reference</span></code> inside a guide that is
-mounted at <code class="docutils literal notranslate"><span class="pre">internals/code_docs</span></code> appears at
-<code class="docutils literal notranslate"><span class="pre">internals/code_docs/reference</span></code>.</p>
-<p>A bundle must have one final location in a documentation build. If the same
-bundle would resolve to two different locations, the build fails instead of
-creating colliding docnames or Need IDs. Repeating the same placement is
-deduplicated.</p>
+<section id="mount-generated-documentation">
+<h2>Mount generated documentation<a class="headerlink" href="#mount-generated-documentation" title="Link to this heading">#</a></h2>
+<p>Use a data-only bundle when a build action produces the documentation rather
+than a source-tree <code class="docutils literal notranslate"><span class="pre">.rst</span></code> file. It has no <code class="docutils literal notranslate"><span class="pre">source_dir</span></code>; its generated files
+are the bundle’s complete payload. You can generate and mount a page like this:</p>
+<div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="n">genrule</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;generated_page&quot;</span><span class="p">,</span>
+    <span class="n">srcs</span> <span class="o">=</span> <span class="p">[],</span>
+    <span class="n">outs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;generated/index.rst&quot;</span><span class="p">],</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;echo &#39;Generated Data Page</span>
+<span class="s2">===================&#39; &gt; $@&quot;&quot;&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Pure-data bundle: the genrule output lives in ``bazel-out/``, not the tree.</span>
+<span class="n">docs_bundle</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;data_bundle&quot;</span><span class="p">,</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;:generated_page&quot;</span><span class="p">],</span>
+    <span class="n">entry_doc</span> <span class="o">=</span> <span class="s2">&quot;index&quot;</span><span class="p">,</span>
+    <span class="n">visibility</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;//visibility:public&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+
+<span class="n">docs</span><span class="p">(</span>
+    <span class="n">source_dir</span> <span class="o">=</span> <span class="s2">&quot;docs&quot;</span><span class="p">,</span>
+    <span class="n">test_sources</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;src/tests/docs_bzl/scenarios/data_files_runfiles&quot;</span><span class="p">],</span>
+    <span class="n">bundles</span> <span class="o">=</span> <span class="p">[{</span>
+        <span class="s2">&quot;bundle&quot;</span><span class="p">:</span> <span class="s2">&quot;:data_bundle&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;mount_at&quot;</span><span class="p">:</span> <span class="s2">&quot;data_test&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;attach_to&quot;</span><span class="p">:</span> <span class="s2">&quot;index&quot;</span><span class="p">,</span>
+    <span class="p">}],</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>See the <a class="reference external" href="https://github.com/eclipse-score/docs-as-code/tree/main/src/tests/docs_bzl/scenarios/data_files_runfiles">complete generated-data fixture on GitHub</a>.</p>
+<p>The generated page is rendered at <code class="docutils literal notranslate"><span class="pre">data_test/index.html</span></code> and is added to the
+consuming project’s index page’s toctree. Although this bundle is data-only,
+it is mounted and navigated in exactly the same way as a bundle with source
+files.</p>
 </section>
-<section id="external-modules-and-needs">
-<h2>External modules and Needs<a class="headerlink" href="#external-modules-and-needs" title="Link to this heading">#</a></h2>
-<p>A bundle from another Bazel module is mounted like an in-repository bundle, but
-its files are read from Bazel’s staged dependency tree. They are useful for
-published documentation but are not editable from the consuming checkout.</p>
-<p>Mounted sources participate in the host’s Sphinx-Needs project, including their
-Need directives and cross-bundle references. By contrast, importing a module’s
-<code class="docutils literal notranslate"><span class="pre">needs.json</span></code> is a data-only integration: its sources are not mounted. Do not
-use both mechanisms for the same module in one build, because that would import
-the same Need IDs twice.</p>
-<p>Mounting an external module does not implicitly mount the external modules it
-uses itself. Consumers select each external documentation dependency explicitly;
-this keeps the published structure and ownership clear.</p>
+<section id="mount-documentation-from-another-module">
+<h2>Mount documentation from another module<a class="headerlink" href="#mount-documentation-from-another-module" title="Link to this heading">#</a></h2>
+<p>Every project using <code class="docutils literal notranslate"><span class="pre">docs()</span></code> exposes its own documentation as a
+<code class="docutils literal notranslate"><span class="pre">:docs_bundle</span></code> target. The external-bundle test fixture mounts that target
+like this:</p>
+<div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="n">docs</span><span class="p">(</span>
+    <span class="n">source_dir</span> <span class="o">=</span> <span class="s2">&quot;host_docs&quot;</span><span class="p">,</span>
+    <span class="n">test_sources</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;src/tests/docs_bzl/scenarios/external_bundle&quot;</span><span class="p">],</span>
+    <span class="n">bundles</span> <span class="o">=</span> <span class="p">[{</span>
+        <span class="s2">&quot;bundle&quot;</span><span class="p">:</span> <span class="s2">&quot;@score_process_description//:docs_bundle&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;mount_at&quot;</span><span class="p">:</span> <span class="s2">&quot;process&quot;</span><span class="p">,</span>
+    <span class="p">}],</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>See the <a class="reference external" href="https://github.com/eclipse-score/docs-as-code/tree/main/src/tests/docs_bzl/scenarios/external_bundle">complete external-bundle fixture on GitHub</a>.</p>
+<p>The external bundle’s entry page is rendered at <code class="docutils literal notranslate"><span class="pre">process/index.html</span></code> and is
+added to the consuming project’s index by <code class="docutils literal notranslate"><span class="pre">attach_to</span></code>. Mounted sources also
+bring their Need directives with them, so do not import the same module’s
+<code class="docutils literal notranslate"><span class="pre">needs_json</span></code> separately.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="index.html#howto-mount-external-sources"><span class="std std-ref">How to use bundles</span></a> for the full mount reference and
+<a class="reference internal" href="../../reference/bazel_macros.html#docs-bazel-macros"><span class="std std-ref">Bazel macro: docs</span></a> for the <code class="docutils literal notranslate"><span class="pre">docs</span></code> and <code class="docutils literal notranslate"><span class="pre">docs_bundle</span></code> attributes.</p>
+</div>
 </section>
-<section id="editor-support-and-generated-configuration">
-<h2>Editor support and generated configuration<a class="headerlink" href="#editor-support-and-generated-configuration" title="Link to this heading">#</a></h2>
-<p>The build writes one <code class="docutils literal notranslate"><span class="pre">ubproject.toml</span></code> at the repository root. It describes
-the host and its mounted directories for Sphinx, ubCode, and similar tools.
-Because the file is an ancestor of both <code class="docutils literal notranslate"><span class="pre">docs/</span></code> and in-repository bundle
-directories, editor tooling can discover one consistent project configuration
-from either location.</p>
-<p>Run <code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">//:docs</span></code> or <code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">//:docs_check</span></code> after changing mounts
-to refresh this generated, gitignored file. A sandboxed <code class="docutils literal notranslate"><span class="pre">needs_json</span></code> build
-checks the same mount configuration without producing a persistent local file.</p>
-</section>
-<section id="design-rationale">
-<h2>Design rationale<a class="headerlink" href="#design-rationale" title="Link to this heading">#</a></h2>
-<p>The bundle model deliberately keeps content ownership separate from site
-placement and avoids materializing copies merely to arrange documentation.
-That follows the infrastructure direction in
-<a class="reference external" href="https://eclipse-score.github.io/score/main/design_decisions/DR-008-infra.html">DR-008-infra</a>.
-It keeps source navigation useful while allowing Bazel modules to compose their
-documentation in a reproducible build.</p>
-</section>
-<section id="further-reading">
-<h2>Further reading<a class="headerlink" href="#further-reading" title="Link to this heading">#</a></h2>
-<ul class="simple">
-<li><p><a class="reference internal" href="../../how-to/bundles/index.html#howto-mount-external-sources"><span class="std std-ref">How to use bundles</span></a> — declare and mount bundles.</p></li>
-<li><p><a class="reference external" href="https://sphinx-mounts.useblocks.com/">sphinx-mounts documentation</a> —
-configuration reference, including <code class="docutils literal notranslate"><span class="pre">attach_to</span></code> and <code class="docutils literal notranslate"><span class="pre">entry_doc</span></code>.</p></li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples/nested/index.html">Parent bundle</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples/nested/child/landing.html">Child landing page</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="examples/nested/child/index.html">Child bundle</a></li>
 </ul>
-</section>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples/generated-data/index.html">Generated Data Page</a></li>
+</ul>
 </section>
 
 
@@ -560,20 +607,20 @@ configuration reference, including <code class="docutils literal notranslate"><s
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../hierarchical_bundle_needs.html"
+       href="index.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Hierarchically linked bundle Needs exports</p>
+        <p class="prev-next-title">How to use bundles</p>
       </div>
     </a>
     <a class="right-next"
-       href="../../internals/index.html"
+       href="examples/nested/index.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Internals</p>
+        <p class="prev-next-title">Parent bundle</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -596,12 +643,9 @@ configuration reference, including <code class="docutils literal notranslate"><s
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bundle-mount-and-placement">Bundle, mount, and placement</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#composition">Composition</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#external-modules-and-needs">External modules and Needs</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#editor-support-and-generated-configuration">Editor support and generated configuration</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#design-rationale">Design rationale</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#further-reading">Further reading</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nest-bundles">Nest bundles</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mount-generated-documentation">Mount generated documentation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mount-documentation-from-another-module">Mount documentation from another module</a></li>
 </ul>
   </nav></div>
 
@@ -609,7 +653,7 @@ configuration reference, including <code class="docutils literal notranslate"><s
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/eclipse-score/docs-as-code/edit/main/docs/concepts/mounts/index.rst">
+    <a href="https://github.com/eclipse-score/docs-as-code/edit/main/docs/how-to/bundles/examples.rst">
       <i class="fa-solid fa-pencil"></i>
       
       

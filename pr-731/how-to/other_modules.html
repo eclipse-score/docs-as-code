@@ -412,7 +412,8 @@
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Reference Other Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cross_module_compatibility.html">Handle Cross-Module Compatibility Findings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="upward_bundles.html">Hierarchical Needs with <code class="docutils literal notranslate"><span class="pre">upward_bundles</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="mounts/index.html">Mount docs bundles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mounts/index.html">Bundles have moved</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bundles/index.html">How to use bundles</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dashboards_and_quality_gates.html">Build Dashboards and Quality Gates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="source_to_doc_links.html">Reference Docs in Source Code</a></li>
 <li class="toctree-l1"><a class="reference internal" href="test_to_doc_links.html">Reference Docs in Tests</a></li>
@@ -495,7 +496,7 @@ documentation sources.</p></li>
 <p>The consumer module must declare the other modules as dependencies in the <cite>MODULE.bazel</cite> file so Bazel can fetch them.
 There are multiple ways to do this depending on how you manage third-party/local modules (git, local overrides, etc.).</p>
 <p>A minimal example (add or extend the existing <cite>bazel_deps</cite> stanza):</p>
-<div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="n">bazel_dep</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;score_process&quot;</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;1.5.3&quot;</span><span class="p">)</span>
+<div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="n">bazel_dep</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;score_process_description&quot;</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;2.1.0&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -509,7 +510,7 @@ Use <code class="docutils literal notranslate"><span class="pre">external_needs<
 <div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;@score_docs_as_code//:docs.bzl&quot;</span><span class="p">,</span> <span class="s2">&quot;docs&quot;</span><span class="p">)</span>
 <span class="n">docs</span><span class="p">(</span>
   <span class="n">external_needs</span> <span class="o">=</span> <span class="p">[</span>
-     <span class="s2">&quot;@score_process//:needs_json&quot;</span><span class="p">,</span>
+     <span class="s2">&quot;@score_process_description//:needs_json&quot;</span><span class="p">,</span>
   <span class="p">],</span>
   <span class="n">source_dir</span> <span class="o">=</span> <span class="s2">&quot;docs&quot;</span><span class="p">,</span>
 <span class="p">)</span>
@@ -528,7 +529,7 @@ so would create duplicate need IDs.</p>
 <span class="n">docs</span><span class="p">(</span>
   <span class="n">bundles</span> <span class="o">=</span> <span class="p">[</span>
       <span class="p">{</span>
-          <span class="s2">&quot;bundle&quot;</span><span class="p">:</span> <span class="s2">&quot;@score_process//:docs_bundle&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;bundle&quot;</span><span class="p">:</span> <span class="s2">&quot;@score_process_description//:docs_bundle&quot;</span><span class="p">,</span>
           <span class="s2">&quot;mount_at&quot;</span><span class="p">:</span> <span class="s2">&quot;process&quot;</span><span class="p">,</span>
           <span class="s2">&quot;attach_to&quot;</span><span class="p">:</span> <span class="s2">&quot;index&quot;</span><span class="p">,</span>
       <span class="p">},</span>
@@ -537,7 +538,7 @@ so would create duplicate need IDs.</p>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>See <a class="reference internal" href="mounts/index.html#howto-mount-external-sources"><span class="std std-ref">Mount docs bundles</span></a> for the full mount reference, and
+<p>See <a class="reference internal" href="bundles/index.html#howto-mount-external-sources"><span class="std std-ref">How to use bundles</span></a> for the full mount reference, and
 <a class="reference internal" href="../concepts/bidirectional_traceability.html#docs-bidirectional-traceability"><span class="std std-ref">Bi-directional Traceability</span></a> for more on cross-module linking.</p>
 </section>
 <section id="reference-needs-across-modules">

@@ -412,7 +412,8 @@
 <li class="toctree-l1"><a class="reference internal" href="other_modules.html">Reference Other Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cross_module_compatibility.html">Handle Cross-Module Compatibility Findings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="upward_bundles.html">Hierarchical Needs with <code class="docutils literal notranslate"><span class="pre">upward_bundles</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="mounts/index.html">Mount docs bundles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mounts/index.html">Bundles have moved</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bundles/index.html">How to use bundles</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dashboards_and_quality_gates.html">Build Dashboards and Quality Gates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="source_to_doc_links.html">Reference Docs in Source Code</a></li>
 <li class="toctree-l1"><a class="reference internal" href="test_to_doc_links.html">Reference Docs in Tests</a></li>
@@ -483,7 +484,20 @@
 <p>When a script or tool creates documentation content at build time, collect it
 with a <code class="docutils literal notranslate"><span class="pre">docs_bundle</span></code> and mount the bundle into your documentation tree.</p>
 <p>You find a <a class="reference external" href="https://github.com/eclipse-score/docs-as-code/tree/main/src/extensions/score_metamodel/docs/">complete working example</a>
-in the <a class="reference internal" href="../reference/metamodel/index.html#metamodel-types-visualization"><span class="std std-ref">Metamodel Types Visualization</span></a>.</p>
+in the <a class="reference internal" href="../reference/metamodel/index.html#metamodel-reference"><span class="std std-ref">Metamodel</span></a>.</p>
+<section id="which-data-attribute">
+<h2>Which <code class="docutils literal notranslate"><span class="pre">data</span></code> attribute?<a class="headerlink" href="#which-data-attribute" title="Link to this heading">#</a></h2>
+<p>For a mounted documentation bundle, put the generated files in
+<code class="docutils literal notranslate"><span class="pre">docs_bundle(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code>. Those files are part of the bundle payload: they
+travel with the bundle and are resolved below its eventual <code class="docutils literal notranslate"><span class="pre">mount_at</span></code> path.</p>
+<p><code class="docutils literal notranslate"><span class="pre">docs(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code> is different. It adds files to the project-level
+<code class="docutils literal notranslate"><span class="pre">docs()</span></code> build, outside any bundle, and therefore gives those files no bundle
+mount path. Use it only for inputs that belong to the project-level build. If
+the file is documentation, an image, or a supporting asset for a bundle, put
+it in that bundle instead.</p>
+<p>For this how-to, the rule is simple: generated documentation belongs in
+<code class="docutils literal notranslate"><span class="pre">docs_bundle(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code>.</p>
+</section>
 <section id="step-1-generate-the-rst-files">
 <h2>Step 1: Generate the RST Files<a class="headerlink" href="#step-1-generate-the-rst-files" title="Link to this heading">#</a></h2>
 <p>Use a <code class="docutils literal notranslate"><span class="pre">genrule</span></code> (or <strong>any build action</strong>) that writes RST files.</p>
@@ -524,6 +538,11 @@ Do not use <code class="docutils literal notranslate"><span class="pre">srcs</sp
 </pre></div>
 </div>
 </div>
+<p>This is a <strong>data-only bundle</strong>: it has no <code class="docutils literal notranslate"><span class="pre">source_dir</span></code> because all of its
+documentation is generated. It is still a normal mountable bundle. The
+generated <code class="docutils literal notranslate"><span class="pre">index.rst</span></code> becomes the bundle’s entry page and travels with the
+bundle when it is mounted. A bundle with both handwritten sources and
+generated files can use <code class="docutils literal notranslate"><span class="pre">source_dir</span></code> and <code class="docutils literal notranslate"><span class="pre">data</span></code> together.</p>
 <dl class="simple">
 <dt>Verify:</dt><dd><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">build</span> <span class="pre">:design_bundle</span></code> must succeed.
 The bundle now holds the generated file but does not yet place it anywhere.</p>
@@ -565,11 +584,12 @@ Make sure the genrule’s <code class="docutils literal notranslate"><span class
 Without a subdirectory, it mounts the genrule output root — which often
 contains other build artifacts and causes Sphinx warnings.</p>
 <p><strong>Attach-to target is missing.</strong>
-<code class="docutils literal notranslate"><span class="pre">attach_to</span></code> must point to a document that exists in the host tree.
-When unsure, point it at <code class="docutils literal notranslate"><span class="pre">&quot;index&quot;</span></code> (the host project’s root <code class="docutils literal notranslate"><span class="pre">index.rst</span></code>).</p>
+<code class="docutils literal notranslate"><span class="pre">attach_to</span></code> must point to a document that exists in the consuming project’s
+documentation tree. When unsure, point it at <code class="docutils literal notranslate"><span class="pre">&quot;index&quot;</span></code> (the consuming
+project’s root <code class="docutils literal notranslate"><span class="pre">index.rst</span></code>).</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="../concepts/mounts/index.html#docs-concept-mounts"><span class="std std-ref">Documentation bundles and mounts</span></a> and the <a class="reference internal" href="mounts/index.html#howto-mount-external-sources"><span class="std std-ref">Mount docs bundles</span></a> How-To.</p>
+<p><a class="reference internal" href="../concepts/mounts/index.html#docs-concept-mounts"><span class="std std-ref">Documentation bundles and mounts</span></a> and the <a class="reference internal" href="bundles/index.html#howto-mount-external-sources"><span class="std std-ref">How to use bundles</span></a> How-To.</p>
 </div>
 </section>
 </section>
@@ -621,6 +641,7 @@ When unsure, point it at <code class="docutils literal notranslate"><span class=
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#which-data-attribute">Which <code class="docutils literal notranslate"><span class="pre">data</span></code> attribute?</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-generate-the-rst-files">Step 1: Generate the RST Files</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-declare-the-bundle">Step 2: Declare the Bundle</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-mount-the-bundle">Step 3: Mount the Bundle</a></li>

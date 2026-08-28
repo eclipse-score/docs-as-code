@@ -73,7 +73,7 @@
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Metamodel Types Visualization" href="metamodel/index.html" />
+    <link rel="next" title="Metamodel" href="metamodel/index.html" />
     <link rel="prev" title="Commands" href="commands.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -408,7 +408,7 @@
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="commands.html">Commands</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Bazel macro: <code class="docutils literal notranslate"><span class="pre">docs</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="metamodel/index.html">Metamodel Types Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metamodel/index.html">Metamodel</a></li>
 </ul>
 </div>
 </nav></div>
@@ -477,6 +477,25 @@ to build, verify and preview the project’s Sphinx documentation,
 and to create a Python virtual environment for IDE support (Esbonio).</p>
 <p>See <a class="reference internal" href="commands.html"><span class="doc">commands</span></a> for the targets/commands it creates.</p>
 <p>The macro must be called from the repository root package.</p>
+<section id="supporting-files-project-inputs-and-bundle-payloads">
+<h2>Supporting files: project inputs and bundle payloads<a class="headerlink" href="#supporting-files-project-inputs-and-bundle-payloads" title="Link to this heading">#</a></h2>
+<p>There are two <code class="docutils literal notranslate"><span class="pre">data</span></code> attributes, and they belong to different documentation
+trees:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">docs_bundle(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code> puts files in a bundle payload. The files
+travel with that bundle and are resolved below the bundle’s eventual
+<code class="docutils literal notranslate"><span class="pre">mount_at</span></code> path. Use this for generated documentation, images, and other
+assets needed by a mounted bundle.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">docs(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code> puts files in the project-level <code class="docutils literal notranslate"><span class="pre">docs()</span></code> build,
+outside any bundle. These files have no bundle mount path. Use this only for
+inputs needed by the project-level build itself. <code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span></code> does not copy
+generated data into the workspace source tree; generated documentation or
+assets must use <code class="docutils literal notranslate"><span class="pre">docs_bundle(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code>.</p></li>
+</ul>
+<p>If a file belongs to a mounted bundle, use <code class="docutils literal notranslate"><span class="pre">docs_bundle(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code>.
+Both attributes make files available to a build; they differ in which
+documentation tree carries the files and where they are resolved.</p>
+</section>
 <section id="minimal-example-root-build">
 <h2>Minimal example (root <code class="docutils literal notranslate"><span class="pre">BUILD</span></code>)<a class="headerlink" href="#minimal-example-root-build" title="Link to this heading">#</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;//:docs.bzl&quot;</span><span class="p">,</span> <span class="s2">&quot;docs&quot;</span><span class="p">)</span>
@@ -491,7 +510,7 @@ and to create a Python virtual environment for IDE support (Esbonio).</p>
     <span class="p">],</span>
     <span class="n">bundles</span> <span class="o">=</span> <span class="p">[</span>
         <span class="c1"># dicts describing bundles to mount into this project</span>
-        <span class="c1"># e.g. {&quot;bundle&quot;: &quot;@score_process//:docs_bundle&quot;, &quot;mount_at&quot;: &quot;process&quot;}</span>
+        <span class="c1"># e.g. {&quot;bundle&quot;: &quot;@score_process_description//:docs_bundle&quot;, &quot;mount_at&quot;: &quot;process&quot;}</span>
     <span class="p">],</span>
     <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span>
         <span class="c1"># additional bazel labels providing Python deps or other runfiles</span>
@@ -506,12 +525,17 @@ that contains the top-level ReST/markdown sources. A <code class="docutils liter
 <li><p><code class="docutils literal notranslate"><span class="pre">project</span></code> and <code class="docutils literal notranslate"><span class="pre">project_url</span></code> (strings, optional)
 Project name and canonical project URL. They are required when <code class="docutils literal notranslate"><span class="pre">source_dir</span></code>
 has no <code class="docutils literal notranslate"><span class="pre">conf.py</span></code>; in that case <code class="docutils literal notranslate"><span class="pre">docs()</span></code> generates the Sphinx configuration
-and supplies the Docs-as-Code baseline version and extensions. If a <code class="docutils literal notranslate"><span class="pre">conf.py</span></code>
-exists, it remains authoritative and these values are not used.</p></li>
+and supplies the Docs-as-Code baseline version, extensions, and a
+<code class="docutils literal notranslate"><span class="pre">required_in_id</span></code> entry derived from the Bazel module name. The first
+underscore-separated prefix is removed (for example,
+<code class="docutils literal notranslate"><span class="pre">score_docs_as_code</span></code> becomes <code class="docutils literal notranslate"><span class="pre">docs_as_code</span></code>). If a <code class="docutils literal notranslate"><span class="pre">conf.py</span></code> exists,
+it remains authoritative and these values are not used.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">data</span></code> (list of bazel labels)
 Extra runfiles / data targets that should be made available to the documentation targets.
 The items in <code class="docutils literal notranslate"><span class="pre">data</span></code> are added to the py_binaries and to the Sphinx tooling so they are
-available at build time.</p>
+available at build time. These are project-level inputs; they are not part of
+a bundle and do not receive a bundle mount path. Use <code class="docutils literal notranslate"><span class="pre">docs_bundle(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code>
+for files that belong to mounted documentation.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>To pull in another module’s needs for cross-referencing, add its
@@ -520,7 +544,7 @@ available at build time.</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">bundles</span></code> (list of placement dicts)
 Documentation bundles to overlay into this project’s documentation tree, each with its
-placement (<code class="docutils literal notranslate"><span class="pre">mount_at</span></code>). See <a class="reference internal" href="../how-to/mounts/index.html#howto-mount-external-sources"><span class="std std-ref">Mount docs bundles</span></a> for the full reference.</p></li>
+placement (<code class="docutils literal notranslate"><span class="pre">mount_at</span></code>). See <a class="reference internal" href="../how-to/bundles/index.html#howto-mount-external-sources"><span class="std std-ref">How to use bundles</span></a> for the full reference.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">deps</span></code> (list of bazel labels)
 Additional Bazel dependencies to add to the Python binaries and the virtual environment
 target. Use this to add project-specific Python modules.</p>
@@ -568,7 +592,7 @@ When <code class="docutils literal notranslate"><span class="pre">metamodel</spa
 bundle</strong>: a chunk of RST/Markdown content that can be overlaid into a host
 documentation project. A bundle carries only <em>content</em> — it has <strong>no placement of its
 own</strong>. Where it appears is decided by whoever mounts it (a composing
-<code class="docutils literal notranslate"><span class="pre">docs_bundle</span></code> or the <a class="reference internal" href="../how-to/mounts/index.html#howto-mount-external-sources"><span class="std std-ref">docs(bundles=[…])</span></a> call
+<code class="docutils literal notranslate"><span class="pre">docs_bundle</span></code> or the <a class="reference internal" href="../how-to/bundles/index.html#howto-mount-external-sources"><span class="std std-ref">docs(bundles=[…])</span></a> call
 site).</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;//:docs.bzl&quot;</span><span class="p">,</span> <span class="s2">&quot;docs_bundle&quot;</span><span class="p">)</span>
 
@@ -583,7 +607,7 @@ site).</p>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>Signature: <code class="docutils literal notranslate"><span class="pre">docs_bundle(name,</span> <span class="pre">source_dir</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">entry_doc</span> <span class="pre">=</span> <span class="pre">&quot;index&quot;,</span> <span class="pre">metamodel</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">bundles</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">upward_bundles</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">scan_code</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">code_targets</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">deps</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">visibility</span> <span class="pre">=</span> <span class="pre">None)</span></code>.</p>
+<p>Signature: <code class="docutils literal notranslate"><span class="pre">docs_bundle(name,</span> <span class="pre">source_dir</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">data</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">entry_doc</span> <span class="pre">=</span> <span class="pre">&quot;index&quot;,</span> <span class="pre">metamodel</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">bundles</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">upward_bundles</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">scan_code</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">code_targets</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">deps</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">bundle_conf</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">visibility</span> <span class="pre">=</span> <span class="pre">None)</span></code>.</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">source_dir</span></code> (string, optional)
 Directory holding the bundle’s own doc sources. It is globbed the same way as
@@ -592,8 +616,16 @@ Directory holding the bundle’s own doc sources. It is globbed the same way as
 <code class="docutils literal notranslate"><span class="pre">concept/index.rst</span></code> with <code class="docutils literal notranslate"><span class="pre">source_dir</span> <span class="pre">=</span> <span class="pre">&quot;concept&quot;</span></code> becomes <code class="docutils literal notranslate"><span class="pre">index.rst</span></code>).
 The bundle exposes those files as a Bazel depset (via the <code class="docutils literal notranslate"><span class="pre">DocsBundleInfo</span></code>
 provider) and records the <code class="docutils literal notranslate"><span class="pre">source_dir</span></code> path; sphinx-mounts walks that original
-directory directly — no copy is made. Leave it unset for a pure aggregator that only
-composes <code class="docutils literal notranslate"><span class="pre">bundles</span></code>.</p></li>
+directory directly — no copy is made. Leave it unset for a data-only bundle
+or for an aggregator that only composes other <code class="docutils literal notranslate"><span class="pre">bundles</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">data</span></code> (list of bazel labels, optional)
+Supporting or generated files owned by this bundle. These files are part of
+the bundle payload and are available at the bundle’s eventual mount path;
+they are useful for generated documentation sources such as a generated
+<code class="docutils literal notranslate"><span class="pre">index.rst</span></code>. If <code class="docutils literal notranslate"><span class="pre">source_dir</span></code> is omitted and <code class="docutils literal notranslate"><span class="pre">data</span></code> contains the
+bundle’s deliverable, the result is a data-only bundle. Use this attribute
+for any file that belongs with the mounted bundle. Use
+<code class="docutils literal notranslate"><span class="pre">docs(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code> only for project-level inputs outside a bundle.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">entry_doc</span></code> (string, optional)
 Bundle-relative docname used as the canonical navigation entry. It defaults to
 <code class="docutils literal notranslate"><span class="pre">index</span></code>. Every mount attaches this entry to the parent <code class="docutils literal notranslate"><span class="pre">index</span></code> toctree by
@@ -616,7 +648,7 @@ receives the child’s bundle-defined entry document. When omitted, the parent
 <p>A child’s <code class="docutils literal notranslate"><span class="pre">mount_at</span></code>/<code class="docutils literal notranslate"><span class="pre">attach_to</span></code> <strong>prefix-stack</strong> with the placement this
 bundle later receives, so composition is fully transitive. The same underlying
 bundle resolving to two different final <code class="docutils literal notranslate"><span class="pre">mount_at</span></code> values is a hard build
-error. See <a class="reference internal" href="../how-to/mounts/index.html#howto-mount-external-sources"><span class="std std-ref">Mount docs bundles</span></a> for a worked example and
+error. See <a class="reference internal" href="../how-to/bundles/index.html#howto-mount-external-sources"><span class="std std-ref">How to use bundles</span></a> for a worked example and
 <a class="reference internal" href="../concepts/mounts/index.html#docs-concept-mounts"><span class="std std-ref">Documentation bundles and mounts</span></a> for the composition and transitivity semantics.</p>
 </li>
 <li><dl>
@@ -707,7 +739,7 @@ targets are included in the <code class="docutils literal notranslate"><span cla
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Metamodel Types Visualization</p>
+        <p class="prev-next-title">Metamodel</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -730,6 +762,7 @@ targets are included in the <code class="docutils literal notranslate"><span cla
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#supporting-files-project-inputs-and-bundle-payloads">Supporting files: project inputs and bundle payloads</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#minimal-example-root-build">Minimal example (root <code class="docutils literal notranslate"><span class="pre">BUILD</span></code>)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bazel-macro-docs-bundle">Bazel macro: <code class="docutils literal notranslate"><span class="pre">docs_bundle</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#edge-cases">Edge cases</a></li>
