@@ -56,6 +56,7 @@ docs(
     ],
     code_targets = [
         "//scripts_bazel:sources",
+        "//tools:module_verification_reports",
         "//src:all_sources",
     ],
     source_dir = "docs",
@@ -71,4 +72,10 @@ alias(
 alias(
     name = "actionlint",
     actual = "@score_devcontainer//tools:actionlint",
+)
+
+# gallery for the standalone module verification report.
+alias(
+    name = "module_verification_reports",
+    actual = "//tools:module_verification_reports",
 )

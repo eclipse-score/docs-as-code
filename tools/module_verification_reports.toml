@@ -1,0 +1,25 @@
+# Repositories covered by the module-verification report gallery.
+#
+# The "main" profile always tracks the moving branch tip; "pinned" checks
+# out the immutable full SHA captured when the standalone report gallery
+# was introduced.
+
+[[repositories]]
+name = "lifecycle"
+pinned = "a9ae76df50426f0761f2c487e5fe0bb00baf1745"
+
+[[repositories]]
+name = "baselibs"
+pinned = "33aad37ad3d12591b0d662ee37e430eedb1c273c"
+
+[[repositories]]
+name = "inc_someip_gateway"
+pinned = "f173ceff11c2a8e70fe3d3bad99afbf22db286e1"
+
+[[repositories]]
+name = "persistency"
+pinned = "412fe8290968a045cc403207d35f151d86115c01"
+
+[[repositories]]
+name = "time"
+pinned = "4a3a6c5a83fb2fcaa8808a6bb5a54008eb2087e6"
