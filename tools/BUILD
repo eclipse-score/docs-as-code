@@ -23,10 +23,10 @@ package(default_visibility = ["//:__subpackages__"])
 py_binary(
     name = "module_verification_reports",
     srcs = ["module_verification_reports.py"],
-    data = glob([
-        "module_verification_profiles/*.toml",
-        "module_verification_reports_goldens/**",
-    ], allow_empty = True),
+    data = ["module_verification_reports.toml"] + glob(
+        ["module_verification_reports_goldens/**"],
+        allow_empty = True,
+    ),
     main = "module_verification_reports.py",
     deps = [],
 )

@@ -80,7 +80,7 @@ class _LinkedNeeds:
 
         linked: list[NeedItem] = []
         for link in source.get_links(link_name, as_str=False):
-            target = _find_need(needs, link.id)
+            target = _find_need(needs, link.to_link_string())
             if target is not None:
                 linked.append(target)
         return linked

@@ -817,7 +817,7 @@ def build_gallery(
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     golden_root = (
-        source_root / "scripts_bazel" / REPORT_GOLDEN_DIRECTORY
+        source_root / "tools" / REPORT_GOLDEN_DIRECTORY
         if golden_root is None
         else Path(golden_root)
     )
