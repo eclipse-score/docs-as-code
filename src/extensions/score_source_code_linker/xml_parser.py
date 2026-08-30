@@ -169,14 +169,20 @@ def parse_testcase_result(testcase: ET.Element) -> tuple[str, str]:
     """
     skipped = testcase.find("skipped")
     failed = testcase.find("failure")
+    # An '<error>' means the testcase did not complete, e.g. an uncaught
+    # exception in Python's unittest or a crashing binary. It must not be
+    # reported as 'passed', so it is treated like a failure.
+    errored = testcase.find("error")
     status = testcase.get("status")
     # NOTE: Special CPP case of 'disabled'
     if status is not None and status == "notrun":
         return "disabled", ""
-    if skipped is None and failed is None:
+    if skipped is None and failed is None and errored is None:
         return "passed", ""
     if failed is not None:
         return "failed", failed.get("message", "")
+    if errored is not None:
+        return "failed", errored.get("message", "")
     if skipped is not None:
         return "skipped", skipped.get("message", "")
     # TODO: Test all possible permuations of this to find if this is unreachable

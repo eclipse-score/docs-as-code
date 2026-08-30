@@ -247,6 +247,17 @@ def test_parse_testcase_result():
     ET.SubElement(tc4, "skipped", {"message": "skp"})
     assert xml_parser.parse_testcase_result(tc4) == ("skipped", "skp")
 
+    # An '<error>' (e.g. uncaught exception) must not be reported as 'passed'.
+    tc5 = ET.Element("testcase", {"name": "e"})
+    ET.SubElement(tc5, "error", {"message": "boom"})
+    assert xml_parser.parse_testcase_result(tc5) == ("failed", "boom")
+
+    # A '<failure>' takes precedence over an additional '<error>'.
+    tc6 = ET.Element("testcase", {"name": "f"})
+    ET.SubElement(tc6, "failure", {"message": "err"})
+    ET.SubElement(tc6, "error", {"message": "boom"})
+    assert xml_parser.parse_testcase_result(tc6) == ("failed", "err")
+
 
 @add_test_properties(
     partially_verifies=["tool_req__docs_test_link_testcase"],
