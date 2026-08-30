@@ -140,8 +140,8 @@ Requirements Statistics
    .. needtable::
       :filter: type == "feat_req" and "{{ feature_id }}" in satisfied_by
       :style: table
-      :columns: id;title;safety;status;fully_verifies_back;partially_verifies_back
-      :colwidths: 13,22,8,10,23,24
+      :columns: id;title;safety;status;testlink
+      :colwidths: 13,22,8,10,47
       :sort: id
 
 Architecture Statistics
@@ -298,8 +298,8 @@ verification status and the tests that (fully or partially) verify them:
    .. needtable::
       :filter: type == "comp_req" and "{{ component_id }}" in satisfied_by
       :style: table
-      :columns: id;title;safety;status;fully_verifies_back;partially_verifies_back
-      :colwidths: 13,22,8,10,23,24
+      :columns: id;title;safety;status;testlink
+      :colwidths: 13,22,8,10,47
       :sort: id
 
 Test Coverage
