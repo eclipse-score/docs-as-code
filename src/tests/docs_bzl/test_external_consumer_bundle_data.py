@@ -62,7 +62,9 @@ The provider bundle is mounted below this page.
     )
 
 
-def test_external_consumer_can_render_data_backed_literalincludes(tmp_path: Path) -> None:
+def test_external_consumer_can_render_data_backed_literalincludes(
+    tmp_path: Path,
+) -> None:
     """A Bzlmod consumer can render a provider's original literalinclude path."""
     source_root = repo_root()
     _write_consumer(tmp_path, source_root)
