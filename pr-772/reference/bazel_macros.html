@@ -659,6 +659,10 @@ local output. List every ancestor that should be visible: ancestors of a
 listed bundle are not included implicitly.
 Here, <code class="docutils literal notranslate"><span class="pre">local</span></code> describes the Needs emitted by the target, not the complete
 set of Needs available while it is built.
+Only source-bearing bundles can be listed in <code class="docutils literal notranslate"><span class="pre">upward_bundles</span></code>. A
+source-less hierarchy group has no own Needs export; list its direct
+source-bearing ancestors explicitly instead of using its merged upward
+export, which would introduce transitive dependencies.
 Data-only bundles do not create Needs targets. Support for Needs declared in
 generated bundle data is intentionally left for a later change.
 Bundle-local exports intentionally leave <code class="docutils literal notranslate"><span class="pre">project_url</span></code> empty because the
