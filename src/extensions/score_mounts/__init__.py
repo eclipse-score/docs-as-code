@@ -77,6 +77,12 @@ def _resolve_data_mounts(
     """
     data_mounts: dict[str, MountSpec] = {}
     for spec in manifest.mounts:
+        # Data on a source-bearing entry is supporting input for that source
+        # tree (for example a BUILD file shown by literalinclude), not a
+        # separate documentation tree. Only pure-data bundle entries need a
+        # directory mount for their generated source files.
+        if spec.src_root:
+            continue
         for data_file in spec.data:
             if ws_root is not None and runfiles_dir is not None:
                 runfiles_str = str(runfiles_dir)
@@ -169,6 +175,13 @@ def _make_mount_entry(walk_dir: Path, spec: MountSpec) -> dict[str, object]:
         "attach_to": spec.attach_to,
         "entry_doc": spec.entry_doc,
         "include": spec.include,
+        # A source bundle may explicitly carry supporting files outside its
+        # source_dir (for example test BUILD files used by literalinclude).
+        # Those files are part of the declared bundle payload, so the
+        # reference is intentional. sphinx-mounts 0.1.x has no per-file
+        # allowlist; keep the strict default for ordinary bundles and relax it
+        # only for an entry carrying explicit bundle data.
+        "path_check": "off" if spec.src_root and spec.data else "error",
     }
 
 
