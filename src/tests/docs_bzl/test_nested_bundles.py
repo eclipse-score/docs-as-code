@@ -52,7 +52,9 @@ def test_nested_bundles_render_and_preserve_metadata():
         "src/tests/docs_bzl/scenarios/nested_bundles/generated/generated_output.txt",
     ]
     child_mount = next(
-        m for m in manifest["mounts"] if m["mount_at"] == "concepts/example_bundle/child"
+        m
+        for m in manifest["mounts"]
+        if m["mount_at"] == "concepts/example_bundle/child"
     )
     assert child_mount["data"] == []
 
