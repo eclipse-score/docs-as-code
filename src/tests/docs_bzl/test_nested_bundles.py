@@ -28,7 +28,8 @@ import json
 from src.tests.docs_bzl.helpers import built_output, run_scenario
 
 
-def test_nested_bundles_render_and_preserve_metadata():
+def test_nested_bundles_keep_data_with_the_mount_that_declares_it():
+    """Keep parent-owned generated data off nested mounts that do not declare it."""
     result = run_scenario("run", "nested_bundles", ":docs")
 
     manifest = json.loads(
@@ -44,7 +45,8 @@ def test_nested_bundles_render_and_preserve_metadata():
         "index",
         "landing",
     ]
-    # Verify that the parent bundle's data (generated doc output) appears in the manifest.
+    # ``:parent`` declares ``generated_doc_output``; ``:child`` declares no data.
+    # Each entry must therefore retain its own data set after the parent is mounted.
     parent_mount = next(
         m for m in manifest["mounts"] if m["mount_at"] == "concepts/example_bundle"
     )
