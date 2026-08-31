@@ -25,7 +25,7 @@
 
 import json
 
-from src.tests.docs_bzl.helpers import run_scenario
+from src.tests.docs_bzl.helpers import repo_root, run_scenario
 
 
 def test_external_bundle_builds_in_sandbox_and_at_runtime():
@@ -37,3 +37,18 @@ def test_external_bundle_builds_in_sandbox_and_at_runtime():
         (result.build_dir / "compatibility-findings.json").read_text(encoding="utf-8")
     )
     assert report["summary"]["count"] >= 0
+
+
+def test_public_bundle_examples_use_only_bundle_sources():
+    page = repo_root() / "docs/how-to/bundles/examples.rst"
+    content = page.read_text(encoding="utf-8")
+
+    for relative_path in (
+        "examples/nested_bundles.inc",
+        "examples/generated_data.inc",
+        "examples/external_bundle.inc",
+    ):
+        assert f"literalinclude:: {relative_path}" in content
+        assert (page.parent / relative_path).is_file()
+
+    assert "../../../src/tests/docs_bzl" not in content
