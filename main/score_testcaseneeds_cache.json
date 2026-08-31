@@ -1934,7 +1934,7 @@
   {
     "name": "test_xml_parser__test_parse_properties",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "251",
+    "line": "262",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -1948,7 +1948,7 @@
   {
     "name": "test_xml_parser__test_read_test_xml_file",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "267",
+    "line": "278",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -1962,7 +1962,7 @@
   {
     "name": "test_xml_parser__test_short_hash_consistency_and_format",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "327",
+    "line": "338",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -1976,7 +1976,7 @@
   {
     "name": "test_xml_parser__test_construct_and_add_need_uses_fallback_url_for_missing_repo_metadata",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "341",
+    "line": "352",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1990,7 +1990,7 @@
   {
     "name": "test_xml_parser__test_is_testcase_in_scope_empty_allow_list_is_unfiltered",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "385",
+    "line": "396",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -2004,7 +2004,7 @@
   {
     "name": "test_xml_parser__test_is_testcase_in_scope_positive_match",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "397",
+    "line": "408",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -2018,7 +2018,7 @@
   {
     "name": "test_xml_parser__test_is_testcase_in_scope_not_under_any_allowed_dir",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "410",
+    "line": "421",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -2032,7 +2032,7 @@
   {
     "name": "test_xml_parser__test_is_testcase_in_scope_none_file_with_allow_list",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "420",
+    "line": "431",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -2046,7 +2046,7 @@
   {
     "name": "test_xml_parser__test_is_testcase_in_scope_no_string_prefix_match",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "430",
+    "line": "441",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -2060,7 +2060,7 @@
   {
     "name": "test_xml_parser__test_parse_testcase_source_dirs",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "447",
+    "line": "458",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -2074,7 +2074,7 @@
   {
     "name": "test_xml_parser__test_parse_testcase_source_dirs_non_list_raises",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "459",
+    "line": "470",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -2088,7 +2088,7 @@
   {
     "name": "test_xml_parser__test_clean_test_file_name_local_path",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "473",
+    "line": "484",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2102,7 +2102,7 @@
   {
     "name": "test_xml_parser__test_clean_test_file_name_combo_path",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "483",
+    "line": "494",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2116,7 +2116,7 @@
   {
     "name": "test_xml_parser__test_clean_test_file_name_tests_report_path",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "493",
+    "line": "504",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2130,7 +2130,7 @@
   {
     "name": "test_xml_parser__test_clean_test_file_name_nested_bazel_testlogs",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "499",
+    "line": "510",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2144,7 +2144,7 @@
   {
     "name": "test_xml_parser__test_clean_test_file_name_invalid_path_raises_error",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "505",
+    "line": "516",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2158,7 +2158,7 @@
   {
     "name": "test_xml_parser__test_clean_test_file_name_empty_path_raises_error",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "513",
+    "line": "524",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2172,7 +2172,7 @@
   {
     "name": "test_xml_parser__test_get_metadata_from_test_path_local",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "552",
+    "line": "563",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2186,7 +2186,7 @@
   {
     "name": "test_xml_parser__test_get_metadata_from_test_path_combo_with_hash",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "563",
+    "line": "574",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2200,7 +2200,7 @@
   {
     "name": "test_xml_parser__test_get_metadata_from_test_path_combo_with_version",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": "576",
+    "line": "587",
     "result": "passed",
     "repo_name": null,
     "hash": null,
