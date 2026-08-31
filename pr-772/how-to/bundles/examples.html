@@ -538,11 +538,8 @@ are the bundle’s complete payload. You can generate and mount a page like this
     <span class="n">entry_doc</span> <span class="o">=</span> <span class="s2">&quot;index&quot;</span><span class="p">,</span>
     <span class="n">visibility</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;//visibility:public&quot;</span><span class="p">],</span>
 <span class="p">)</span>
-  <span class="c1">#- data_bundle &lt; depset...</span>
-  <span class="c1">#- data_bundle.__internal__.needs_sources &lt; filegroup</span>
-  <span class="c1">#- data_bundle.__internal__.needs_conf    &lt; filegroup</span>
-  <span class="c1">#- data_bundle.__internal__.needs_local   &lt; needs.json</span>
-  <span class="c1">#- data_bundle.__internal__.needs_upward  &lt; needs.json</span>
+<span class="c1"># This is a data-only bundle. Because it has no ``srcs`` or ``upward_bundles``,</span>
+<span class="c1"># it intentionally creates no ``data_bundle.__internal__.*`` Needs targets.</span>
 
 <span class="n">docs</span><span class="p">(</span>
     <span class="n">source_dir</span> <span class="o">=</span> <span class="s2">&quot;docs&quot;</span><span class="p">,</span>
