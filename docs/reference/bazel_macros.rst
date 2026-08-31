@@ -96,6 +96,27 @@ Minimal example (root ``BUILD``)
   Explicit source files or filegroups to scan. Use ``code_targets`` for
   implementation targets; it follows their dependencies automatically.
 
+- ``testlink_source`` (string, optional, default ``"xml"``)
+  Selects where the ``score_source_code_linker`` takes test links from.
+
+  ``"xml"``
+     Scan ``bazel-testlogs/**/test.xml``. Requires the tests to have been run
+     via ``bazel test``; a ``cc_test`` that is only consumed as a dependency of
+     ``unit()``/``component()``/``dependable_element()`` does not produce such a
+     file.
+
+  ``"lobster"``
+     Read the ``*.lobster`` activity pools that ``lobster-gtest`` emits below
+     ``bazel-bin``. These are produced by every build of the corresponding
+     traceability target, so no separate test run is required. Two limitations
+     apply: ``lobster-gtest`` discards the ``<failure>`` message, so failed
+     tests carry no result text, and it reports skipped tests as passed.
+     ``test_sources`` has no effect in this mode.
+
+  ``"none"``
+     Do not create testcase needs at all. Source code links
+     (``req-Id:`` annotations) are unaffected and keep working.
+
 - ``external_needs`` (list of bazel labels)
   External ``:needs_json_file`` targets from other modules/repositories
   for referencing their needs.

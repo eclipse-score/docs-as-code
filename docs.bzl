@@ -196,6 +196,7 @@ def docs(
         scan_code = [],
         code_targets = [],
         test_sources = [],
+        testlink_source = "xml",
         known_good = None,
         metamodel = None,
         bundles = [],
@@ -218,6 +219,12 @@ def docs(
                     expand to their files.
       test_sources: Optional list of repo-relative directory paths which will be used to filter testcases for documentation generation.
                     When empty (default), all testcases found in `bazel-testlogs` will be used.
+      testlink_source: Where test links come from. "xml" (default) scans
+                    `bazel-testlogs/**/test.xml`, "lobster" reads the `*.lobster`
+                    activity pools emitted by lobster-gtest, "none" disables test
+                    links. Note that "lobster" carries no failure messages and
+                    reports skipped tests as passed, and that `test_sources` has
+                    no effect in that mode.
       known_good: Optional label to a "known good" JSON file for source links.
       metamodel: Optional label to a metamodel.yaml file. When set, the extension loads this
                  file instead of the default metamodel shipped with score_metamodel.
@@ -328,6 +335,7 @@ def docs(
         "SOURCE_DIRECTORY": source_dir,
         "PACKAGE_DIR": native.package_name(),
         "TEST_SOURCES": str(test_sources),
+        "TESTLINK_SOURCE": testlink_source,
         "DATA": str(data),
         "EXTERNAL_NEEDS_FILES": str(external_needs),
         # `bazel run` starts from a runfiles tree, so this logical path is
