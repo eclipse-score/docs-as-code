@@ -11,26 +11,13 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-load("//:docs.bzl", "docs", "docs_bundle")
+load("//:docs.bzl", "docs")
 
 package(default_visibility = ["//visibility:public"])
 exports_files([
     "default_conf.py.tpl",
     "pyproject.toml",
 ])
-
-_literalinclude_data = [
-    # These scenario BUILD files are used by literalinclude examples.
-    "//src/tests/docs_bzl/scenarios/nested_bundles:nested_bundle_build",
-    "//src/tests/docs_bzl/scenarios/data_files_runfiles:generated_data_build",
-    "//src/tests/docs_bzl/scenarios/external_bundle:external_bundle_build",
-]
-
-docs_bundle(
-    name = "docs_literalinclude_data",
-    data = _literalinclude_data,
-    visibility = ["//visibility:public"],
-)
 
 docs(
     project = "S-CORE Docs-as-Code",
@@ -40,7 +27,7 @@ docs(
     ],
     bundles = [
         {
-            "bundle": ":docs_literalinclude_data",
+            "bundle": "//src/tests/docs_bzl/scenarios:docs_literalinclude_data",
             "mount_at": "_literalinclude_data",
         },
         {
