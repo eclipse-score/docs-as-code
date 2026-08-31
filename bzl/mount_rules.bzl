@@ -48,6 +48,7 @@ def _entry_json(entry):
         "repository": entry.repository,
         "include": _source_includes(entry) if entry.src_root else [],
         "data": [f.path for f in entry.data.to_list()],
+        "path_check": entry.path_check,
     }
 
 def _mounts_manifest_impl(ctx):

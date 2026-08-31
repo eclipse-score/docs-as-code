@@ -38,6 +38,7 @@ class MountSpec:
     repository: str = ""
     include: list[str] = field(default_factory=list)
     data: list[str] = field(default_factory=list)
+    path_check: str = "error"
 
 
 @dataclass(frozen=True)
@@ -75,6 +76,7 @@ def _load_mount_spec(raw_entry: object) -> MountSpec:
         repository=str(entry.get("repository", "")),
         include=[str(path) for path in cast("list[object]", raw_include)],
         data=[str(f) for f in cast("list[object]", raw_data)],
+        path_check=str(entry.get("path_check", "error")),
     )
 
 

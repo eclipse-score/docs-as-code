@@ -72,6 +72,7 @@ def test_load_entry_with_attach_to_and_entry_doc(tmp_path: Path) -> None:
                     "attach_to": "internals/index",
                     "entry_doc": "start",
                     "include": ["/start.rst"],
+                    "path_check": "off",
                 }
             ],
         },
@@ -80,6 +81,7 @@ def test_load_entry_with_attach_to_and_entry_doc(tmp_path: Path) -> None:
     assert spec.attach_to == "internals/index"
     assert spec.entry_doc == "start"
     assert spec.include == ["/start.rst"]
+    assert spec.path_check == "off"
 
 
 def test_load_primary_source(tmp_path: Path) -> None:

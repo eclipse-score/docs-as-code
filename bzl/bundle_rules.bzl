@@ -200,7 +200,29 @@ def _rebase_bundle_entry(entry, mount_at, attach_to):
         repository = entry.repository,
         source_files = entry.source_files,
         data = entry.data,
+        path_check = entry.path_check,
     )
+
+def _entry_with_path_check(entry, path_check):
+    """Return an entry with the requested sphinx-mounts confinement mode."""
+    return struct(
+        runtime_path = entry.runtime_path,
+        src_root = entry.src_root,
+        mount_at = entry.mount_at,
+        attach_to = entry.attach_to,
+        entry_doc = entry.entry_doc,
+        external = entry.external,
+        repository = entry.repository,
+        data = entry.data,
+        path_check = path_check,
+    )
+
+def _has_data_only_entry(entries):
+    """Return whether the entries contain a declared pure-data bundle."""
+    for entry in entries:
+        if not entry.src_root and entry.data.to_list():
+            return True
+    return False
 
 def _entries_visible_through(ctx, child):
     """Keep an external module's own docs, but not its foreign mounts."""
@@ -264,6 +286,7 @@ def _docs_bundle_impl(ctx):
             repository = ctx.label.workspace_name,
             source_files = ctx.files.srcs,
             data = own_data,
+            path_check = "off" if own_data.to_list() else "error",
         )
         entries.append(own_source_entry)
         own_source_files.extend(ctx.files.srcs)
@@ -283,6 +306,7 @@ def _docs_bundle_impl(ctx):
             repository = ctx.label.workspace_name,
             source_files = [],
             data = own_data,
+            path_check = "error",
         ))
 
     child_source_files = []
@@ -292,13 +316,20 @@ def _docs_bundle_impl(ctx):
         for source_link in ctx.files.sourcelinks
     ]
     for index, child in enumerate(ctx.attr.bundles):
+        child_entries = _entries_visible_through(ctx, child)
+        if own_source_entry != None and _has_data_only_entry(child_entries):
+            # Supporting files composed through a data-only child are available
+            # to this source tree. sphinx-mounts 0.1.x has no per-file allowlist,
+            # so the source entry uses its documented non-confining mode.
+            own_source_entry = _entry_with_path_check(own_source_entry, "off")
+            entries[0] = own_source_entry
         entries.extend([
             _rebase_bundle_entry(
                 entry,
                 ctx.attr.bundle_mount_ats[index],
                 ctx.attr.bundle_attach_tos[index],
             )
-            for entry in _entries_visible_through(ctx, child)
+            for entry in child_entries
         ])
         child_source_files.append(child[DefaultInfo].files)
         child_external_runfiles.append(child[DocsBundleInfo].external_runfiles)
