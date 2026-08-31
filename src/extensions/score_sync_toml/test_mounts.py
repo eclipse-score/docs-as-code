@@ -48,6 +48,19 @@ def test_materialize_mounts_omits_default_fields():
     )
 
 
+def test_materialize_mounts_preserves_non_default_path_check():
+    fragment = materialize_mounts(
+        [{"dir": "docs", "mount_at": "guide", "path_check": "off"}]
+    )
+
+    assert fragment is not None
+    assert fragment.read_text(encoding="utf-8") == (
+        '[[mounts]]\ndir = "docs"\n'
+        'mount_at = "guide"\n'
+        'path_check = "off"\n'
+    )
+
+
 def test_materialize_mounts_maps_external_runfiles_path_to_bazel_bin(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
