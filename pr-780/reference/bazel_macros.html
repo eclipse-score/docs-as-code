@@ -632,8 +632,8 @@ bundle’s deliverable, the result is a data-only bundle. Use this attribute
 for any file that belongs with the mounted bundle. Use
 <code class="docutils literal notranslate"><span class="pre">docs(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code> only for project-level inputs outside a bundle. If a
 source page references a file outside its <code class="docutils literal notranslate"><span class="pre">source_dir</span></code>, use a data-only
-child bundle and compose it through <code class="docutils literal notranslate"><span class="pre">bundles</span></code>; keep the same label in
-<code class="docutils literal notranslate"><span class="pre">docs(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code> when the host’s own sandboxed build needs it.</p></li>
+child bundle and compose it through <code class="docutils literal notranslate"><span class="pre">bundles</span></code>. Its non-document payload is
+staged for the host’s sandboxed build automatically.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">entry_doc</span></code> (string, optional)
 Bundle-relative docname used as the canonical navigation entry. It defaults to
 <code class="docutils literal notranslate"><span class="pre">index</span></code>. Every mount attaches this entry to the parent <code class="docutils literal notranslate"><span class="pre">index</span></code> toctree by
