@@ -196,8 +196,8 @@ Signature: ``docs_bundle(name, source_dir = None, data = [], entry_doc = "index"
   for any file that belongs with the mounted bundle. Use
   ``docs(data = [...])`` only for project-level inputs outside a bundle. If a
   source page references a file outside its ``source_dir``, use a data-only
-  child bundle and compose it through ``bundles``; keep the same label in
-  ``docs(data = [...])`` when the host's own sandboxed build needs it.
+  child bundle and compose it through ``bundles``. Its non-document payload is
+  staged for the host's sandboxed build automatically.
 
 - ``entry_doc`` (string, optional)
   Bundle-relative docname used as the canonical navigation entry. It defaults to
