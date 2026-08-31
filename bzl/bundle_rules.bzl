@@ -176,6 +176,12 @@ def _rebase_bundle_entry(entry, mount_at, attach_to):
     A bundle's own root has no ``mount_at`` yet. For that root, an omitted
     ``attach_to`` means the parent directory's ``index`` page. Nested entries
     retain their existing attachment and are rebased below ``mount_at``.
+
+    ``data`` is deliberately kept with the entry that declares it. A composed
+    bundle may expose several source and data-only entries, each resolving its
+    generated files at a different mount. Giving every rebased entry the
+    bundle's aggregate data would associate the same file with unrelated
+    mounts, so the mounts resolver could select the wrong destination.
     """
     is_bundle_root = not entry.mount_at
     if is_bundle_root:
