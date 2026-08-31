@@ -648,16 +648,23 @@ error. See <a class="reference internal" href="../how-to/bundles/index.html#howt
 </dl>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">upward_bundles</span></code> (list of <code class="docutils literal notranslate"><span class="pre">docs_bundle</span></code> labels, optional)
-Documentation bundles whose Needs are above this bundle in the documentation
-hierarchy. A source-bearing bundle creates <code class="docutils literal notranslate"><span class="pre">&lt;name&gt;.__internal__.needs_local</span></code> containing
-its direct sources and <code class="docutils literal notranslate"><span class="pre">&lt;name&gt;.__internal__.needs_upward</span></code> for the merged export of those
-sources and its declared ancestors. While producing the local export, the
-ancestor exports are available as external context so links in the local
-sources are resolved; the ancestor Needs are not repeated in the local output.
+Documentation bundles whose Needs are directly above this bundle in the
+documentation hierarchy. A source-bearing bundle creates
+<code class="docutils literal notranslate"><span class="pre">&lt;name&gt;.__internal__.needs_local</span></code> containing its direct sources and
+<code class="docutils literal notranslate"><span class="pre">&lt;name&gt;.__internal__.needs_upward</span></code> for the merged export of those sources
+and the explicitly listed ancestors. While producing the local export, the
+direct ancestors’ own exports are available as external context so links in
+the local sources are resolved; the ancestor Needs are not repeated in the
+local output. List every ancestor that should be visible: ancestors of a
+listed bundle are not included implicitly.
 Here, <code class="docutils literal notranslate"><span class="pre">local</span></code> describes the Needs emitted by the target, not the complete
 set of Needs available while it is built.
 Data-only bundles do not create Needs targets. Support for Needs declared in
-generated bundle data is intentionally left for a later change.</p></li>
+generated bundle data is intentionally left for a later change.
+Bundle-local exports intentionally leave <code class="docutils literal notranslate"><span class="pre">project_url</span></code> empty because the
+same bundle may be consumed by different documentation hosts. When an own
+export is imported, its links use the URL stored in the export; if that
+value is empty, they fall back to the consuming host’s <code class="docutils literal notranslate"><span class="pre">project_url</span></code>.</p></li>
 </ul>
 <section id="needs-exports-between-bundles">
 <h3>Needs exports between bundles<a class="headerlink" href="#needs-exports-between-bundles" title="Link to this heading">#</a></h3>
@@ -672,20 +679,21 @@ platform.__internal__.needs_local
     ▼
 platform.__internal__.needs_upward
 
-component/index.rst + platform.__internal__.needs_upward as external context
+component/index.rst + platform.__internal__.needs_local as external context
     │ Sphinx, own sources only; links to platform are resolved
     ▼
 component.__internal__.needs_local
-    │ merge_needs_json(platform.__internal__.needs_upward)
+    │ merge_needs_json(platform.__internal__.needs_local)
     ▼
 component.__internal__.needs_upward
 </pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">&lt;name&gt;.__internal__.needs_local</span></code> contains only the Needs from the bundle’s own sources. The
 upward exports are loaded only as external resolution context during this Sphinx
-run. <code class="docutils literal notranslate"><span class="pre">&lt;name&gt;.__internal__.needs_upward</span></code> is then the reusable merge of the own export and the
-already-merged ancestors. A child bundle can therefore import only its direct
-ancestor and still receive the complete transitive hierarchy.</p>
+run. <code class="docutils literal notranslate"><span class="pre">&lt;name&gt;.__internal__.needs_upward</span></code> is then the merge of the own export
+and the own exports of the explicitly listed direct ancestors. A child bundle
+must list every ancestor whose Needs it needs; declaring a parent does not
+implicitly import that parent’s ancestors.</p>
 <p>This separation prevents duplicate Needs and keeps ownership clear: every
 bundle exports its own sources, while the hierarchy is propagated through the
 JSON dependency only. The link direction is intentionally upward: own Needs
