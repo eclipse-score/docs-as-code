@@ -486,19 +486,18 @@ travel with that bundle and are resolved below the bundle’s eventual
 <code class="docutils literal notranslate"><span class="pre">mount_at</span></code> path. Use this for generated documentation, images, and other
 assets needed by a mounted bundle.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">docs(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code> puts files in the project-level <code class="docutils literal notranslate"><span class="pre">docs()</span></code> build,
-outside any bundle. These files have no bundle mount path. Keep a label here
-when the project’s own sandboxed build needs it, for example to resolve a
-<code class="docutils literal notranslate"><span class="pre">literalinclude</span></code>.</p></li>
+outside any bundle. These files have no bundle mount path and do not travel
+with the public bundle.</p></li>
 <li><p>A data-only <code class="docutils literal notranslate"><span class="pre">docs_bundle(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code> is a separate child bundle. Compose
 it through <code class="docutils literal notranslate"><span class="pre">bundles</span></code> when the files must travel with the project’s public
-bundle or with another mounted bundle. This keeps the original files in the
-bundle payload; no snapshot is copied into <code class="docutils literal notranslate"><span class="pre">docs/</span></code>.</p></li>
+bundle or with another mounted bundle. <code class="docutils literal notranslate"><span class="pre">docs()</span></code> stages non-document payloads
+from such children below the sandboxed Sphinx source root, so a project’s
+original <code class="docutils literal notranslate"><span class="pre">literalinclude</span></code> path works without repeating the label in
+<code class="docutils literal notranslate"><span class="pre">docs(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code>. This keeps the original files in the bundle payload;
+no snapshot is copied into <code class="docutils literal notranslate"><span class="pre">docs/</span></code>.</p></li>
 </ul>
 <p>If a file belongs to a nested or generated bundle, use
-<code class="docutils literal notranslate"><span class="pre">docs_bundle(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code> and compose that bundle through <code class="docutils literal notranslate"><span class="pre">bundles</span></code>.
-If the project’s own pages reference the files directly, also list the labels
-in <code class="docutils literal notranslate"><span class="pre">docs(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code> so the sandboxed <code class="docutils literal notranslate"><span class="pre">needs_json</span></code> build can resolve the
-original paths.</p>
+<code class="docutils literal notranslate"><span class="pre">docs_bundle(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code> and compose that bundle through <code class="docutils literal notranslate"><span class="pre">bundles</span></code>.</p>
 </section>
 <section id="minimal-example-root-build">
 <h2>Minimal example (root <code class="docutils literal notranslate"><span class="pre">BUILD</span></code>)<a class="headerlink" href="#minimal-example-root-build" title="Link to this heading">#</a></h2>
@@ -539,7 +538,8 @@ Extra runfiles / data targets that should be made available to the documentation
 The items in <code class="docutils literal notranslate"><span class="pre">data</span></code> are added to the py_binaries and to the Sphinx tooling so they are
 available at build time. These are project-level inputs; they are not part of
 a bundle and do not receive a bundle mount path. Use <code class="docutils literal notranslate"><span class="pre">docs_bundle(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code>
-for files that belong to mounted documentation.</p>
+for files that belong to mounted documentation or must travel with the public
+bundle.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>To pull in another module’s needs for cross-referencing, add its
