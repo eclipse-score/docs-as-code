@@ -649,8 +649,8 @@ error. See <a class="reference internal" href="../how-to/bundles/index.html#howt
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">upward_bundles</span></code> (list of <code class="docutils literal notranslate"><span class="pre">docs_bundle</span></code> labels, optional)
 Documentation bundles whose Needs are above this bundle in the documentation
-hierarchy. A source-bearing bundle creates <code class="docutils literal notranslate"><span class="pre">&lt;name&gt;_needs_local</span></code> containing
-its direct sources and <code class="docutils literal notranslate"><span class="pre">&lt;name&gt;_needs_upward</span></code> for the merged export of those
+hierarchy. A source-bearing bundle creates <code class="docutils literal notranslate"><span class="pre">&lt;name&gt;.__internal__.needs_local</span></code> containing
+its direct sources and <code class="docutils literal notranslate"><span class="pre">&lt;name&gt;.__internal__.needs_upward</span></code> for the merged export of those
 sources and its declared ancestors. While producing the local export, the
 ancestor exports are available as external context so links in the local
 sources are resolved; the ancestor Needs are not repeated in the local output.
@@ -667,23 +667,23 @@ internal artifacts:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>platform/index.rst
     │ Sphinx, own sources only
     ▼
-platform_needs_local
+platform.__internal__.needs_local
     │ merge_needs_json
     ▼
-platform_needs_upward
+platform.__internal__.needs_upward
 
-component/index.rst + platform_needs_upward as external context
+component/index.rst + platform.__internal__.needs_upward as external context
     │ Sphinx, own sources only; links to platform are resolved
     ▼
-component_needs_local
-    │ merge_needs_json(platform_needs_upward)
+component.__internal__.needs_local
+    │ merge_needs_json(platform.__internal__.needs_upward)
     ▼
-component_needs_upward
+component.__internal__.needs_upward
 </pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">*_needs_local</span></code> contains only the Needs from the bundle’s own sources. The
+<p><code class="docutils literal notranslate"><span class="pre">&lt;name&gt;.__internal__.needs_local</span></code> contains only the Needs from the bundle’s own sources. The
 upward exports are loaded only as external resolution context during this Sphinx
-run. <code class="docutils literal notranslate"><span class="pre">*_needs_upward</span></code> is then the reusable merge of the own export and the
+run. <code class="docutils literal notranslate"><span class="pre">&lt;name&gt;.__internal__.needs_upward</span></code> is then the reusable merge of the own export and the
 already-merged ancestors. A child bundle can therefore import only its direct
 ancestor and still receive the complete transitive hierarchy.</p>
 <p>This separation prevents duplicate Needs and keeps ownership clear: every
