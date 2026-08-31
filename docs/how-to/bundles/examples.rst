@@ -30,7 +30,7 @@ consuming project chooses where the assembled bundle appears.
 
 The tested parent bundle composes the child like this:
 
-.. literalinclude:: ../../../src/tests/docs_bzl/scenarios/nested_bundles/BUILD
+.. literalinclude:: examples/nested_bundles.inc
    :language: starlark
    :start-after: BEGIN docs-bundle-howto: parent-composition
    :end-before: END docs-bundle-howto: parent-composition
@@ -50,7 +50,7 @@ Use a data-only bundle when a build action produces the documentation rather
 than a source-tree ``.rst`` file. It has no ``source_dir``; its generated files
 are the bundle's complete payload. You can generate and mount a page like this:
 
-.. literalinclude:: ../../../src/tests/docs_bzl/scenarios/data_files_runfiles/BUILD
+.. literalinclude:: examples/generated_data.inc
    :language: starlark
    :start-after: BEGIN docs-bundle-howto: generated-data
    :end-before: END docs-bundle-howto: generated-data
@@ -70,7 +70,7 @@ Every project using ``docs()`` exposes its own documentation as a
 ``:docs_bundle`` target. The external-bundle test fixture mounts that target
 like this:
 
-.. literalinclude:: ../../../src/tests/docs_bzl/scenarios/external_bundle/BUILD
+.. literalinclude:: examples/external_bundle.inc
    :language: starlark
    :start-after: BEGIN docs-bundle-howto: external-bundle
    :end-before: END docs-bundle-howto: external-bundle
