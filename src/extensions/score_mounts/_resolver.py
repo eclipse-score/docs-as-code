@@ -37,6 +37,7 @@ class MountSpec:
     external: bool = False
     repository: str = ""
     data: list[str] = field(default_factory=list)
+    path_check: str = "error"
 
 
 @dataclass(frozen=True)
@@ -87,6 +88,7 @@ def load_mounts_manifest(manifest_path: str | Path) -> MountsManifest:
                 external=bool(entry.get("external", False)),
                 repository=str(entry.get("repository", "")),
                 data=[str(f) for f in cast("list[object]", raw_data)],
+                path_check=str(entry.get("path_check", "error")),
             )
         )
     return MountsManifest(mounts=mounts)

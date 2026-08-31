@@ -39,18 +39,21 @@ Each manifest entry contains:
 * ``entry_doc`` — the canonical entry document declared by the source bundle.
 * ``external`` — whether the directory belongs to another Bazel module.
 * ``data`` — explicitly declared supporting files carried by that entry. For
-  a source-bearing entry these are allowed references (for example a test
+  a source-bearing entry these are bundle-owned references (for example a test
   fixture shown with ``literalinclude``); for a data-only entry they identify
   the generated files that form the mount.
+* ``path_check`` — the ``sphinx-mounts`` confinement mode selected by the
+  bundle graph. It is normally ``error``; a source entry composed with a
+  data-only child uses ``off`` because sphinx-mounts 0.1.x has no per-file
+  allowlist for references outside the source directory.
 
 The rule rejects conflicting final placements before Sphinx starts. A mount
 without ``attach_to`` is attached to the ``index`` document beside its
 ``mount_at``; ``attach_to`` overrides that target. The Python extension may
 therefore preserve declaration order and only translates each manifest entry
-into the ``sphinx_mounts`` configuration format. Source-bearing entries with
-explicit ``data`` receive ``path_check = "off"`` because sphinx-mounts 0.1.x
-has no per-file allowlist; ordinary entries retain the strict ``"error"``
-setting.
+into the ``sphinx_mounts`` configuration format. Data-only entries containing
+non-document payloads do not create a directory mount; otherwise their parent
+directory could expose unrelated documentation files to Sphinx.
 
 Directory resolution
 --------------------

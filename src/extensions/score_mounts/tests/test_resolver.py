@@ -71,6 +71,7 @@ def test_load_entry_with_attach_to_and_entry_doc(tmp_path: Path) -> None:
                     "mount_at": "x",
                     "attach_to": "internals/index",
                     "entry_doc": "start",
+                    "path_check": "off",
                 }
             ],
         },
@@ -78,6 +79,7 @@ def test_load_entry_with_attach_to_and_entry_doc(tmp_path: Path) -> None:
     spec = load_mounts_manifest(str(manifest)).mounts[0]
     assert spec.attach_to == "internals/index"
     assert spec.entry_doc == "start"
+    assert spec.path_check == "off"
 
 
 def test_external_mount_keeps_execroot_and_runfiles_locations(tmp_path: Path) -> None:

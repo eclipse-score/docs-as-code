@@ -13,11 +13,26 @@
 
 load("//:docs.bzl", "docs")
 
+load("//:docs.bzl", "docs_bundle")
+
 package(default_visibility = ["//visibility:public"])
 exports_files([
     "default_conf.py.tpl",
     "pyproject.toml",
 ])
+
+_literalinclude_data = [
+    # These scenario BUILD files are used by literalinclude examples.
+    "//src/tests/docs_bzl/scenarios/nested_bundles:nested_bundle_build",
+    "//src/tests/docs_bzl/scenarios/data_files_runfiles:generated_data_build",
+    "//src/tests/docs_bzl/scenarios/external_bundle:external_bundle_build",
+]
+
+docs_bundle(
+    name = "docs_literalinclude_data",
+    data = _literalinclude_data,
+    visibility = ["//visibility:public"],
+)
 
 docs(
     project = "S-CORE Docs-as-Code",
@@ -25,13 +40,12 @@ docs(
     external_needs = [
         "@score_process_description//:needs_json_file",
     ],
-    bundle_data = [
-        # These scenario BUILD files are used by literalinclude examples.
-        "//src/tests/docs_bzl/scenarios/nested_bundles:nested_bundle_build",
-        "//src/tests/docs_bzl/scenarios/data_files_runfiles:generated_data_build",
-        "//src/tests/docs_bzl/scenarios/external_bundle:external_bundle_build",
-    ],
+    data = _literalinclude_data,
     bundles = [
+        {
+            "bundle": ":docs_literalinclude_data",
+            "mount_at": "_literalinclude_data",
+        },
         {
             "bundle": "//src/extensions/docs:extensions",
             "mount_at": "internals/extensions",
