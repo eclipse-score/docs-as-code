@@ -416,6 +416,36 @@ def bundle_source_files(name, bundle, visibility = None):
     )
     return ":" + name
 
+def _is_sphinx_source_file(file):
+    """Return whether ``file`` is discovered as a normal Sphinx document."""
+    return file.basename.endswith(".rst") or file.basename.endswith(".md")
+
+def _bundle_supporting_files_impl(ctx):
+    """Expose non-document bundle data for a sandboxed Sphinx source tree."""
+    bundle = ctx.attr.bundle[DocsBundleInfo]
+    return [DefaultInfo(files = depset(direct = [
+        file
+        for file in bundle.data.to_list()
+        if not _is_sphinx_source_file(file)
+    ]))]
+
+_bundle_supporting_files = rule(
+    implementation = _bundle_supporting_files_impl,
+    attrs = {
+        "bundle": attr.label(providers = [DocsBundleInfo]),
+    },
+    doc = "Exposes non-document data from a complete docs bundle.",
+)
+
+def bundle_supporting_files(name, bundle, visibility = None):
+    """Create a target that stages bundle payloads without duplicate documents."""
+    _bundle_supporting_files(
+        name = name,
+        bundle = bundle,
+        visibility = visibility,
+    )
+    return ":" + name
+
 def _external_docs_runfiles_impl(ctx):
     """Expose external documentation sources needed under ``bazel run``."""
     bundle = ctx.attr.bundle[DocsBundleInfo]
