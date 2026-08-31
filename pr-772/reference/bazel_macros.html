@@ -605,7 +605,7 @@ site).</p>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>Signature: <code class="docutils literal notranslate"><span class="pre">docs_bundle(name,</span> <span class="pre">source_dir</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">data</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">entry_doc</span> <span class="pre">=</span> <span class="pre">&quot;index&quot;,</span> <span class="pre">bundles</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">scan_code</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">code_targets</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">visibility</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">upward_bundles</span> <span class="pre">=</span> <span class="pre">[])</span></code>.</p>
+<p>Signature: <code class="docutils literal notranslate"><span class="pre">docs_bundle(name,</span> <span class="pre">source_dir</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">data</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">entry_doc</span> <span class="pre">=</span> <span class="pre">&quot;index&quot;,</span> <span class="pre">bundles</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">scan_code</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">code_targets</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">deps</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">visibility</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">upward_bundles</span> <span class="pre">=</span> <span class="pre">[])</span></code>.</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">source_dir</span></code> (string, optional)
 Directory holding the bundle’s own doc sources. It is globbed the same way as
@@ -647,6 +647,10 @@ error. See <a class="reference internal" href="../how-to/bundles/index.html#howt
 </dd>
 </dl>
 </li>
+<li><p><code class="docutils literal notranslate"><span class="pre">deps</span></code> (list of bazel labels, optional)
+Additional dependencies for the bundle-local Needs Sphinx build. <code class="docutils literal notranslate"><span class="pre">docs()</span></code>
+passes its documentation dependencies through this parameter so custom
+Sphinx extensions used by the bundle configuration are available.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">upward_bundles</span></code> (list of <code class="docutils literal notranslate"><span class="pre">docs_bundle</span></code> labels, optional)
 Documentation bundles whose Needs are directly above this bundle in the
 documentation hierarchy. A source-bearing bundle creates
