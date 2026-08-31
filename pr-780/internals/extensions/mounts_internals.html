@@ -501,18 +501,21 @@ walked;</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">entry_doc</span></code> — the canonical entry document declared by the source bundle.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">external</span></code> — whether the directory belongs to another Bazel module.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">data</span></code> — explicitly declared supporting files carried by that entry. For
-a source-bearing entry these are allowed references (for example a test
+a source-bearing entry these are bundle-owned references (for example a test
 fixture shown with <code class="docutils literal notranslate"><span class="pre">literalinclude</span></code>); for a data-only entry they identify
 the generated files that form the mount.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">path_check</span></code> — the <code class="docutils literal notranslate"><span class="pre">sphinx-mounts</span></code> confinement mode selected by the
+bundle graph. It is normally <code class="docutils literal notranslate"><span class="pre">error</span></code>; a source entry composed with a
+data-only child uses <code class="docutils literal notranslate"><span class="pre">off</span></code> because sphinx-mounts 0.1.x has no per-file
+allowlist for references outside the source directory.</p></li>
 </ul>
 <p>The rule rejects conflicting final placements before Sphinx starts. A mount
 without <code class="docutils literal notranslate"><span class="pre">attach_to</span></code> is attached to the <code class="docutils literal notranslate"><span class="pre">index</span></code> document beside its
 <code class="docutils literal notranslate"><span class="pre">mount_at</span></code>; <code class="docutils literal notranslate"><span class="pre">attach_to</span></code> overrides that target. The Python extension may
 therefore preserve declaration order and only translates each manifest entry
-into the <code class="docutils literal notranslate"><span class="pre">sphinx_mounts</span></code> configuration format. Source-bearing entries with
-explicit <code class="docutils literal notranslate"><span class="pre">data</span></code> receive <code class="docutils literal notranslate"><span class="pre">path_check</span> <span class="pre">=</span> <span class="pre">&quot;off&quot;</span></code> because sphinx-mounts 0.1.x
-has no per-file allowlist; ordinary entries retain the strict <code class="docutils literal notranslate"><span class="pre">&quot;error&quot;</span></code>
-setting.</p>
+into the <code class="docutils literal notranslate"><span class="pre">sphinx_mounts</span></code> configuration format. Data-only entries containing
+non-document payloads do not create a directory mount; otherwise their parent
+directory could expose unrelated documentation files to Sphinx.</p>
 </section>
 <section id="directory-resolution">
 <h2>Directory resolution<a class="headerlink" href="#directory-resolution" title="Link to this heading">#</a></h2>
