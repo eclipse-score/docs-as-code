@@ -35,19 +35,18 @@ The macros expose project inputs and bundle payloads separately:
   ``mount_at`` path. Use this for generated documentation, images, and other
   assets needed by a mounted bundle.
 * ``docs(data = [...])`` puts files in the project-level ``docs()`` build,
-  outside any bundle. These files have no bundle mount path. Keep a label here
-  when the project's own sandboxed build needs it, for example to resolve a
-  ``literalinclude``.
+  outside any bundle. These files have no bundle mount path and do not travel
+  with the public bundle.
 * A data-only ``docs_bundle(data = [...])`` is a separate child bundle. Compose
   it through ``bundles`` when the files must travel with the project's public
-  bundle or with another mounted bundle. This keeps the original files in the
-  bundle payload; no snapshot is copied into ``docs/``.
+  bundle or with another mounted bundle. ``docs()`` stages non-document payloads
+  from such children below the sandboxed Sphinx source root, so a project's
+  original ``literalinclude`` path works without repeating the label in
+  ``docs(data = [...])``. This keeps the original files in the bundle payload;
+  no snapshot is copied into ``docs/``.
 
 If a file belongs to a nested or generated bundle, use
 ``docs_bundle(data = [...])`` and compose that bundle through ``bundles``.
-If the project's own pages reference the files directly, also list the labels
-in ``docs(data = [...])`` so the sandboxed ``needs_json`` build can resolve the
-original paths.
 
 Minimal example (root ``BUILD``)
 --------------------------------
@@ -91,7 +90,8 @@ Minimal example (root ``BUILD``)
   The items in ``data`` are added to the py_binaries and to the Sphinx tooling so they are
   available at build time. These are project-level inputs; they are not part of
   a bundle and do not receive a bundle mount path. Use ``docs_bundle(data = [...])``
-  for files that belong to mounted documentation.
+  for files that belong to mounted documentation or must travel with the public
+  bundle.
 
   .. note::
 

@@ -29,7 +29,6 @@ docs(
     source_dir = "docs",
     project = "Bundle Data Provider",
     project_url = "https://example.invalid/bundle-data-provider",
-    data = [":fixture_build"],
     bundles = [{
         "bundle": ":literalinclude_data",
         "mount_at": "_literalinclude_data",

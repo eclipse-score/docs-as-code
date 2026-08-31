@@ -11,9 +11,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-load("//:docs.bzl", "docs")
-
-load("//:docs.bzl", "docs_bundle")
+load("//:docs.bzl", "docs", "docs_bundle")
 
 package(default_visibility = ["//visibility:public"])
 exports_files([
@@ -40,7 +38,6 @@ docs(
     external_needs = [
         "@score_process_description//:needs_json_file",
     ],
-    data = _literalinclude_data,
     bundles = [
         {
             "bundle": ":docs_literalinclude_data",

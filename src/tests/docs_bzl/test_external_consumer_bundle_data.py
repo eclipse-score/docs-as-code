@@ -15,7 +15,7 @@
 import subprocess
 from pathlib import Path
 
-from src.tests.docs_bzl.helpers import repo_root
+from src.tests.docs_bzl.helpers import repo_root, run_scenario
 
 
 def _write_consumer(workspace: Path, source_root: Path) -> None:
@@ -90,3 +90,8 @@ def test_external_consumer_can_render_data_backed_literalincludes(
     provider_page = tmp_path / "_build" / "provider" / "index.html"
     assert provider_page.is_file()
     assert "filegroup" in provider_page.read_text(encoding="utf-8")
+
+
+def test_sandboxed_needs_build_stages_nested_bundle_supporting_files() -> None:
+    """A nested data bundle supplies the original BUILD path to Sphinx."""
+    run_scenario("build", "bundle_data_provider", ":needs_json")
