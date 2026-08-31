@@ -41,11 +41,12 @@
 # Extending `sphinx_docs_library` is also not a good fit. Its provider represents
 # individual file mappings, while our provider represents complete mounted bundles. Adding
 # the required metadata would therefore not be a small extension of the existing
-# abstraction; it would change its propagated unit and its semantics. It would also couple
-# SCORE-specific composition rules to the generic `rules_sphinxdocs` implementation.
+# abstraction; it would change its propagated unit and its semantics.
 
 # We therefore reimplement the relatively small overlapping part—transitive source
-# collection—while keeping the richer bundle model explicit and independent.
+# collection—while keeping the richer bundle model explicit. The rule exposes a
+# narrow ``SphinxDocsLibraryInfo`` view only for non-document bundle data so a
+# sandboxed Sphinx action can stage those files without duplicating mounted docs.
 
 # The name `docs_bundle` reflects that relationship: it fills the same general role
 # as `sphinx_docs_library`, but uses a SCORE-specific data model for composing structured
@@ -54,6 +55,7 @@
 
 
 load("@score_docs_as_code//:bzl/basics.bzl", "join_path")
+load("@sphinxdocs//sphinxdocs/private:sphinx_docs_library_info.bzl", "SphinxDocsLibraryInfo")
 
 # Internal data passed between bundle targets and eventually consumed by an
 # adapter such as the Sphinx mounts manifest. Users configure bundles through
@@ -346,6 +348,16 @@ def _docs_bundle_impl(ctx):
             for child in ctx.attr.bundles
         ],
     )
+    non_document_data = tuple([
+        file
+        for file in all_data.to_list()
+        if not _is_sphinx_source_file(file)
+    ])
+    sphinx_data_entry = struct(
+        strip_prefix = "/",
+        prefix = "",
+        files = non_document_data,
+    )
     return [
         DefaultInfo(files = depset(transitive = [all_source_files, all_data])),
         DocsBundleInfo(
@@ -354,6 +366,12 @@ def _docs_bundle_impl(ctx):
             sourcelinks = sourcelinks,
             external_runfiles = external_runfiles,
             data = all_data,
+        ),
+        SphinxDocsLibraryInfo(
+            files = depset(direct = non_document_data),
+            strip_prefix = "/",
+            prefix = "",
+            transitive = depset(direct = [sphinx_data_entry]) if non_document_data else depset(),
         ),
     ]
 
@@ -414,32 +432,6 @@ def bundle_source_files(name, bundle, visibility = None):
 def _is_sphinx_source_file(file):
     """Return whether ``file`` is discovered as a normal Sphinx document."""
     return file.basename.endswith(".rst") or file.basename.endswith(".md")
-
-def _bundle_supporting_files_impl(ctx):
-    """Expose non-document bundle data for a sandboxed Sphinx source tree."""
-    bundle = ctx.attr.bundle[DocsBundleInfo]
-    return [DefaultInfo(files = depset(direct = [
-        file
-        for file in bundle.data.to_list()
-        if not _is_sphinx_source_file(file)
-    ]))]
-
-_bundle_supporting_files = rule(
-    implementation = _bundle_supporting_files_impl,
-    attrs = {
-        "bundle": attr.label(providers = [DocsBundleInfo]),
-    },
-    doc = "Exposes non-document data from a complete docs bundle.",
-)
-
-def bundle_supporting_files(name, bundle, visibility = None):
-    """Create a target that stages bundle payloads without duplicate documents."""
-    _bundle_supporting_files(
-        name = name,
-        bundle = bundle,
-        visibility = visibility,
-    )
-    return ":" + name
 
 def _external_docs_runfiles_impl(ctx):
     """Expose external documentation sources needed under ``bazel run``."""

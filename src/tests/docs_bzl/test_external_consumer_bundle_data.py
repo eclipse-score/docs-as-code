@@ -92,6 +92,6 @@ def test_external_consumer_can_render_data_backed_literalincludes(
     assert "filegroup" in provider_page.read_text(encoding="utf-8")
 
 
-def test_sandboxed_needs_build_stages_nested_bundle_supporting_files() -> None:
+def test_sandboxed_needs_build_stages_nested_bundle_non_document_data() -> None:
     """A nested data bundle supplies the original BUILD path to Sphinx."""
     run_scenario("build", "bundle_data_provider", ":needs_json")
