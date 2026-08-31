@@ -55,9 +55,7 @@ def test_materialize_mounts_preserves_non_default_path_check():
 
     assert fragment is not None
     assert fragment.read_text(encoding="utf-8") == (
-        '[[mounts]]\ndir = "docs"\n'
-        'mount_at = "guide"\n'
-        'path_check = "off"\n'
+        '[[mounts]]\ndir = "docs"\nmount_at = "guide"\npath_check = "off"\n'
     )
 
 
