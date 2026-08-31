@@ -38,12 +38,19 @@ Each manifest entry contains:
 * ``mount_at`` and ``attach_to`` — the already-composed Sphinx placement; and
 * ``entry_doc`` — the canonical entry document declared by the source bundle.
 * ``external`` — whether the directory belongs to another Bazel module.
+* ``data`` — explicitly declared supporting files carried by that entry. For
+  a source-bearing entry these are allowed references (for example a test
+  fixture shown with ``literalinclude``); for a data-only entry they identify
+  the generated files that form the mount.
 
 The rule rejects conflicting final placements before Sphinx starts. A mount
 without ``attach_to`` is attached to the ``index`` document beside its
-``mount_at``; ``attach_to`` overrides that target. The Python
-extension may therefore preserve declaration order and only translates each
-manifest entry into the ``sphinx_mounts`` configuration format.
+``mount_at``; ``attach_to`` overrides that target. The Python extension may
+therefore preserve declaration order and only translates each manifest entry
+into the ``sphinx_mounts`` configuration format. Source-bearing entries with
+explicit ``data`` receive ``path_check = "off"`` because sphinx-mounts 0.1.x
+has no per-file allowlist; ordinary entries retain the strict ``"error"``
+setting.
 
 Directory resolution
 --------------------

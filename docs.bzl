@@ -212,7 +212,8 @@ def docs(
         test_sources = [],
         known_good = None,
         metamodel = None,
-        bundles = []):
+        bundles = [],
+        bundle_data = []):
     """Creates all targets related to documentation.
 
     By using this function, you'll get any and all updates for documentation targets in one place.
@@ -227,6 +228,12 @@ def docs(
         it in a `docs_bundle` and place that bundle through `bundles` instead.
         Generated documentation and assets are not staged into the workspace
         source tree for `bazel run`; use a data-only `docs_bundle` for those.
+      bundle_data: Additional files owned by this project's public `docs_bundle`.
+        Use this for source files referenced from the project's documentation,
+        such as test fixtures shown with `literalinclude`. The files remain
+        the original Bazel sources and are carried with the public bundle; they
+        are not copied into the documentation tree. Mounts containing such
+        explicitly declared files relax path confinement for those references.
       deps: Additional dependencies for the documentation build.
       external_needs: List of external needs targets to include in the documentation build.
       scan_code: Deprecated. Explicit source files or filegroups to scan for source
@@ -253,7 +260,8 @@ def docs(
     use a bundle for anything that should travel as one portable mount. A
     bundle may be data-only when its deliverable is generated/supporting data
     rather than source RST. Use ``docs(data = [...])`` only for project-level
-    inputs that do not belong to a bundle mount.
+    inputs that do not belong to a bundle mount, and ``bundle_data`` for
+    supporting files referenced by this project's own public bundle.
     """
     # HINT: keep documentation sync docs/reference/bazel_macros.rst
 
@@ -283,14 +291,17 @@ def docs(
     metamodel_label = [metamodel] if metamodel else []
 
     data_library_label_for_sphinx_docs = []
-    if data:
+    if data or bundle_data:
         # ``docs_bundle`` can carry data, including as a pure-data bundle. That
         # data belongs to the bundle payload and is resolved at its eventual
-        # mount. These ``docs(data = [...])`` inputs are intentionally
-        # project-level instead: they support the project build or its
-        # literalinclude examples and are not assigned to a bundle mount. Both
-        # kinds of data are build inputs; without the staging below, project-
-        # level inputs would
+        # mount. ``bundle_data`` is staged here as well because the ``needs``
+        # action builds the public source tree in a sandbox before
+        # ``score_mounts`` can resolve the mounted bundle.
+        #
+        # These ``docs(data = [...])`` inputs are intentionally project-level
+        # instead: they support the project build and are not assigned to a
+        # bundle mount. Both kinds of data are build inputs; without the staging
+        # below, project-level inputs would
         # remain only execution inputs for Sphinx's tools rather than files
         # below Sphinx's source directory, where standard ``literalinclude``
         # looks for them.
@@ -303,7 +314,7 @@ def docs(
         # belong in a data-only docs_bundle instead.
         sphinx_docs_library(
             name = "_docs_data",
-            srcs = data,
+            srcs = data + bundle_data,
             strip_prefix = "",
         )
         data_library_label_for_sphinx_docs = [":_docs_data"]
@@ -348,6 +359,7 @@ def docs(
         source_dir = source_dir,
         entry_doc = "index",
         bundles = bundles,
+        data = bundle_data,
         scan_code = scan_code,
         code_targets = code_targets,
         visibility = ["//visibility:public"],
