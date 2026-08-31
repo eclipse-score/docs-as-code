@@ -170,7 +170,7 @@ def _pure_data_runtime_path(ctx):
     )
     return "__data__/%s" % encoded_label
 
-def _rebase_bundle_entry(entry, mount_at, attach_to, data):
+def _rebase_bundle_entry(entry, mount_at, attach_to):
     """Place a bundle entry below a requested documentation-tree location.
 
     A bundle's own root has no ``mount_at`` yet. For that root, an omitted
@@ -191,7 +191,7 @@ def _rebase_bundle_entry(entry, mount_at, attach_to, data):
         entry_doc = entry.entry_doc,
         external = entry.external,
         repository = entry.repository,
-        data = data,
+        data = entry.data,
     )
 
 def _entries_visible_through(ctx, child):
@@ -280,13 +280,11 @@ def _docs_bundle_impl(ctx):
         for source_link in ctx.files.sourcelinks
     ]
     for index, child in enumerate(ctx.attr.bundles):
-        child_data = child[DocsBundleInfo].data
         entries.extend([
             _rebase_bundle_entry(
                 entry,
                 ctx.attr.bundle_mount_ats[index],
                 ctx.attr.bundle_attach_tos[index],
-                child_data,
             )
             for entry in _entries_visible_through(ctx, child)
         ])
