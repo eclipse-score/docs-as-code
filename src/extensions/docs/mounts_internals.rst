@@ -39,6 +39,20 @@ Each manifest entry contains:
 * ``entry_doc`` — the canonical entry document declared by the source bundle.
 * ``external`` — whether the directory belongs to another Bazel module.
 
+At ``config-inited``, ``score_mounts`` resolves all directory source mounts before
+constructing ``config.mounts``. A mount below Sphinx's primary source directory
+is added to the primary ``exclude_patterns`` as a relative ``<mount>/**`` pattern.
+A mount below another mount is added to the parent entry's ``sphinx-mounts``
+``exclude`` patterns. This prevents a document from being discovered by both its
+containing directory walk and its owning mount. Because the exclusions are
+directory patterns rather than a snapshot of source files, newly created files
+remain visible to live preview.
+
+Explicit ``docs_bundle(srcs = [...])`` entries remain in file-list mode and are
+not included in these directory exclusions. They are intended for generated
+sources outside the primary source tree; an explicitly mounted workspace file
+below a walked root is a known limitation and would need exact-file exclusions.
+
 The rule rejects conflicting final placements before Sphinx starts. A mount
 without ``attach_to`` is attached to the ``index`` document beside its
 ``mount_at``; ``attach_to`` overrides that target. The Python

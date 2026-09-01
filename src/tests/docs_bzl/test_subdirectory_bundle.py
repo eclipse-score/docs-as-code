@@ -10,7 +10,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-"""Coverage for docs() with a docs_bundle in a nested Bazel package."""
+"""Coverage for bundles in nested Bazel packages and source directories."""
 
 from src.tests.docs_bzl.helpers import load_needs, run_bazel, run_package
 

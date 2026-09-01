@@ -33,8 +33,8 @@ def test_score_platform_publishes_feature_requirement():
     [
         "reference_integration/legacy_module",
         "reference_integration/modern_module",
-        "reference_integration/legacy_component",
-        "reference_integration/modern_component",
+        "reference_integration/legacy_module/docs/components/component",
+        "reference_integration/modern_module/docs/components/component",
     ],
 )
 def test_module_and_component_needs_targets_build(scenario: str):
@@ -42,8 +42,15 @@ def test_module_and_component_needs_targets_build(scenario: str):
     run_scenario("build", scenario, ":needs_json")
 
 
+def test_nested_component_package_is_mounted_by_its_module():
+    """A module run excludes its nested component from primary discovery."""
+    result = run_scenario("run", "reference_integration/legacy_module", ":docs")
+
+    assert (result.build_dir / "components" / "component" / "index.html").is_file()
+
+
 def test_reference_integration_builds_with_platform_requirements():
-    """The integration mounts legacy and modern module documentation."""
+    """The integration mounts modules and their nested component packages."""
     result = run_scenario("run", "reference_integration", ":docs")
 
     html = (result.build_dir / "index.html").read_text(encoding="utf-8")

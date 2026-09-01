@@ -11,10 +11,16 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-load("//:docs.bzl", "docs_bundle")
+load("//:docs.bzl", "docs")
 
-docs_bundle(
-    name = "docs_bundle",
-    source_dir = "content",
-    visibility = ["//visibility:public"],
+# This component is a nested documentation package, like the feature bundles
+# in the S-CORE integration. Its parent module owns the surrounding source
+# tree and mounts this bundle at the component placement.
+docs(
+    project = "S-CORE Modern Component",
+    project_url = "https://example.invalid/score-modern-component",
+    source_dir = ".",
+    external_needs = [
+        "//src/tests/docs_bzl/scenarios/reference_integration/score_platform:needs_json",
+    ],
 )

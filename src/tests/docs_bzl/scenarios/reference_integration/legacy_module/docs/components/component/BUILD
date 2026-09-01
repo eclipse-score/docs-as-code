@@ -5,7 +5,7 @@
 # information regarding copyright ownership.
 #
 # This program and the accompanying materials are made available under the
-# terms of the Apache License 2.0 which is available at
+# terms of the Apache License Version 2.0 which is available at
 # https://www.apache.org/licenses/LICENSE-2.0
 #
 # SPDX-License-Identifier: Apache-2.0
@@ -13,13 +13,15 @@
 
 load("//:docs.bzl", "docs")
 
-# This component uses the current ``external_needs`` API and is mounted by the
-# modern module.
+# Keep the component as a complete documentation producer while placing its
+# Bazel package below the module's source directory. This mirrors the feature
+# package layout used by the S-CORE integration and exercises package-aware
+# source ownership at runtime.
 docs(
-    project = "S-CORE Modern Component",
-    project_url = "https://example.invalid/score-modern-component",
-    source_dir = "docs",
-    external_needs = [
+    project = "S-CORE Legacy Component",
+    project_url = "https://example.invalid/score-legacy-component",
+    source_dir = ".",
+    data = [
         "//src/tests/docs_bzl/scenarios/reference_integration/score_platform:needs_json",
     ],
 )

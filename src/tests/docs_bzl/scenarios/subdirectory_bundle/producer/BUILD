@@ -13,7 +13,7 @@
 
 load("//:docs.bzl", "docs")
 
-# The embedded bundle lives in a subdirectory package alongside the docs source.
+# The embedded bundle lives in a nested package below the docs source.
 # The parent docs() must mount it explicitly because it is a separate package.
 docs(
     source_dir = "docs",
@@ -21,7 +21,7 @@ docs(
     project_url = "https://example.invalid/subdirectory-bundle-producer",
     test_sources = ["src/tests/docs_bzl/scenarios/subdirectory_bundle/producer"],
     bundles = [{
-        "bundle": "//src/tests/docs_bzl/scenarios/subdirectory_bundle/producer/embedded:docs_bundle",
+        "bundle": "//src/tests/docs_bzl/scenarios/subdirectory_bundle/producer/docs/embedded:docs_bundle",
         "mount_at": "embedded",
     }],
 )

@@ -24,6 +24,8 @@ load("//:docs.bzl", "docs")
 # The reference integration is essential because it assembles the module's
 # documentation bundle with the rest of the platform documentation. The
 # module itself assembles its component documentation below ``components/``.
+# The component package is physically below this module's ``docs`` source tree,
+# so the module's primary Sphinx walk must leave ownership to the child mount.
 docs(
     project = "S-CORE Legacy Module",
     project_url = "https://example.invalid/score-legacy-module",
@@ -33,7 +35,7 @@ docs(
         "@score_process_description//:needs_json",
     ],
     bundles = [{
-        "bundle": "//src/tests/docs_bzl/scenarios/reference_integration/legacy_component:docs_bundle",
+        "bundle": "//src/tests/docs_bzl/scenarios/reference_integration/legacy_module/docs/components/component:docs_bundle",
         "mount_at": "components/component",
         "attach_to": "components",
     }],

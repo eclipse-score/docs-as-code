@@ -56,6 +56,14 @@ bundle would resolve to two different locations, the build fails instead of
 creating colliding docnames or Need IDs. Repeating the same placement is
 deduplicated.
 
+Source directories are also ownership boundaries. When a mounted bundle lives
+physically below the host's source directory, the host Sphinx walk excludes the
+bundle subtree and the bundle mount discovers it. When a bundle contains a
+child bundle below its own source directory, the parent mount excludes the
+child subtree and the child mount discovers it. These are directory exclusions,
+so new files remain discoverable during live preview without being discovered
+twice.
+
 External modules and Needs
 --------------------------
 
