@@ -215,6 +215,7 @@ def _entry_with_path_check(entry, path_check):
         entry_doc = entry.entry_doc,
         external = entry.external,
         repository = entry.repository,
+        source_files = entry.source_files,
         data = entry.data,
         path_check = path_check,
     )
