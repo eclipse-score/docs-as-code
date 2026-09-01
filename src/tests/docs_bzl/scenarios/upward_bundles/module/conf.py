@@ -11,11 +11,12 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-load("//:docs.bzl", "docs_bundle")
+project = "SCORE upward bundle example"
+project_url = "https://example.invalid/upward-bundles"
+version = "0.0.0"
 
-docs_bundle(
-    name = "extensions",
-    source_dir = "",
-    upward_bundles = ["//:docs_source_bundle"],
-    visibility = ["//visibility:public"],
-)
+extensions = ["score_sphinx_bundle"]
+
+# The module's feature requirement lives in module/index.rst. Its meaningful
+# ID part is `module`, not the rebased docname `index`.
+required_in_id = ["module"]

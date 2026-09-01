@@ -164,11 +164,13 @@ site).
        name = "docs_dir",
        source_dir = "docs",
        entry_doc = "index",
+       metamodel = "//:my_metamodel.yaml",
        bundles = [],
+       upward_bundles = [],
        visibility = ["//visibility:public"],
    )
 
-Signature: ``docs_bundle(name, source_dir = None, data = [], entry_doc = "index", bundles = [], scan_code = [], code_targets = [], visibility = None)``.
+Signature: ``docs_bundle(name, source_dir = None, data = [], entry_doc = "index", metamodel = None, bundles = [], upward_bundles = [], scan_code = [], code_targets = [], deps = [], bundle_conf = None, visibility = None)``.
 
 - ``source_dir`` (string, optional)
   Directory holding the bundle's own doc sources. It is globbed the same way as
@@ -194,6 +196,11 @@ Signature: ``docs_bundle(name, source_dir = None, data = [], entry_doc = "index"
   ``index``. Every mount attaches this entry to the parent ``index`` toctree by
   default; a placement's ``attach_to`` may override that host document.
 
+- ``metamodel`` (Bazel label, optional)
+  Metamodel used when processing Needs owned by this bundle. If omitted, the
+  built-in SCORE metamodel is selected. The metamodel belongs to the bundle and
+  is an input to the bundle-local Needs export.
+
 - ``bundles`` (list of composition dicts, optional)
   Nested bundles to compose into this one, so a bundle can aggregate other
   bundles transitively. Each entry is a dict:
@@ -211,6 +218,29 @@ Signature: ``docs_bundle(name, source_dir = None, data = [], entry_doc = "index"
   error. See :ref:`howto_mount_external_sources` for a worked example and
   :ref:`docs_concept_mounts` for the composition and transitivity semantics.
 
+- ``upward_bundles`` (list of labels, optional)
+   Explicit documentation-hierarchy dependencies above this bundle. A source
+   bundle may declare one or more ancestor bundles; both the direct declarations
+   and their transitive closure are propagated through ``DocsBundleInfo`` for the
+   per-bundle Needs export. A source-less aggregator may also declare them to
+   provide a named hierarchy group for consumers.
+   Dependencies are declared explicitly and are not inferred from Need links.
+
+   If ``source_dir`` contains documentation sources, the macro creates
+   ``<name>_needs_local`` for the bundle's own Needs and
+   ``<name>_needs_upward`` for an importable JSON export. The latter merges
+   the bundle's own Needs with the exports of its direct ``upward_bundles``;
+   those exports already contain their own ancestors. The public file target
+   therefore exposes the complete declared upward interface without assigning
+   ownership of ancestor Needs to the child.
+
+The top-level ``docs()`` macro also accepts ``upward_bundles``. Those labels are
+attached to the generated ``:docs_source_bundle`` target, so the module's own
+Needs can refer to an ancestor bundle while mounted descendants continue to use
+the module source bundle as their upward parent. The older
+``:_docs_source_bundle`` label remains available for compatibility, but new
+consumers should use the stable ``:docs_source_bundle`` name.
+
 .. note::
 
    A bundle is **placement-free**: its ``mount_at`` and ``attach_to`` are assigned
@@ -224,6 +254,10 @@ Signature: ``docs_bundle(name, source_dir = None, data = [], entry_doc = "index"
    recursively from their ``deps``; filegroups expand to their files. The bundle
    owns one cached scan result; Bazel only regenerates it when its collected source
    inputs change.
+
+- ``deps`` (list of Bazel labels, optional)
+   Additional Python dependencies used by the bundle-local Sphinx/Needs
+   action.
 
 - ``scan_code`` (list of Bazel labels, deprecated)
    Explicit source files or filegroups to scan. Prefer ``code_targets`` for

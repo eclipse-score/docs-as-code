@@ -11,18 +11,27 @@
    #
    # SPDX-License-Identifier: Apache-2.0
    # *******************************************************************************
-.. _docs_concepts:
 
-Concepts
-========
+Component
+=========
 
-Here you find explanations how and why docs-as-code works the way it does.
+.. comp:: Seat heating controller
+   :id: comp__seat_heating_controller
+   :version: 1
+   :security: NO
+   :safety: QM
+   :status: valid
+   :belongs_to: feat__seat_heating
+   :consists_of: comp__seat_heating_sensor
 
-.. toctree::
-   :maxdepth: 1
+.. comp_req:: Controller temperature control
+   :id: comp_req__component__temperature_control
+   :version: 1
+   :reqtype: Functional
+   :security: NO
+   :safety: QM
+   :status: valid
+   :derived_from: feat_req__module__seat_heating
+   :satisfied_by: comp__seat_heating_controller
 
-   bidirectional_traceability
-   cross_module_compatibility
-   docs_deps
-   hierarchical_bundle_needs
-   mounts/index
+   The controller regulates the requested heating level.

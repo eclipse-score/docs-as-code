@@ -31,3 +31,4 @@ def test_invalid_bundle_placements_are_rejected_during_analysis():
     run_scenario(
         "build", "invalid_bundle_placements", ":bad_attach_to", expect_error=True
     )
+    run_scenario("build", "invalid_bundle_placements", ":cycle_a", expect_error=True)

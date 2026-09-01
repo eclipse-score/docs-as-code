@@ -11,18 +11,26 @@
    #
    # SPDX-License-Identifier: Apache-2.0
    # *******************************************************************************
-.. _docs_concepts:
 
-Concepts
-========
+Subcomponent
+============
 
-Here you find explanations how and why docs-as-code works the way it does.
+.. comp:: Seat heating sensor
+   :id: comp__seat_heating_sensor
+   :version: 1
+   :security: NO
+   :safety: QM
+   :status: valid
+   :belongs_to: feat__seat_heating
 
-.. toctree::
-   :maxdepth: 1
+.. comp_req:: Sensor temperature measurement
+   :id: comp_req__subcomponent__temp_measure
+   :version: 1
+   :reqtype: Functional
+   :security: NO
+   :safety: QM
+   :status: valid
+   :derived_from: feat_req__module__seat_heating
+   :satisfied_by: comp__seat_heating_sensor
 
-   bidirectional_traceability
-   cross_module_compatibility
-   docs_deps
-   hierarchical_bundle_needs
-   mounts/index
+   The sensor reports the measured seat temperature.

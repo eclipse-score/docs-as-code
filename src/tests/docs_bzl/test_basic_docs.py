@@ -34,6 +34,13 @@ def test_basic_docs_builds_needs_without_conf_py():
     data = load_needs_json(result.artifacts["needs.json"])
     assert data["current_version"], "current_version must be non-empty"
 
+
+def test_basic_docs_exposes_stable_and_legacy_source_bundle_labels():
+    run_scenario("build", "basic_docs", ":docs_source_bundle")
+    run_scenario("build", "basic_docs", ":_docs_source_bundle")
+
+
+def test_basic_docs_generated_conf_uses_module_name_for_required_in_id():
     generated_conf = built_output("scenarios/basic_docs", "docs/conf.py")
     assert 'required_in_id = ["docs_as_code"]' in generated_conf.read_text(
         encoding="utf-8"

@@ -22,6 +22,7 @@ docs_bzl/
 │   ├── nested_bundles/
 │   ├── subdirectory_bundle/
 │   ├── external_bundle/
+│   ├── upward_bundles/
 │   ├── local_version_mismatch/
 │   └── invalid_bundle_placements/
 └── test_<scenario>.py

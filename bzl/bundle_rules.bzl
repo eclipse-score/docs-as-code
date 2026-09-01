@@ -70,6 +70,13 @@ DocsBundleInfo = provider(
         # these are resolved at this bundle's mount (for example, a generated
         # index.rst).
         "data": "Bundle-owned generated/supporting files resolved at the bundle's mount.",
+        "own_sources": "Depset of documentation sources owned directly by this bundle.",
+        "own_sourcelinks": "Depset of source-code-link JSON files declared directly by this bundle.",
+        "own_data": "Depset of non-source-tree files declared directly by this bundle.",
+        "entry_doc": "Bundle-relative entry document for the bundle's own sources.",
+        "metamodel": "The metamodel file selected for this bundle's Needs processing.",
+        "direct_upward_bundles": "The bundle targets declared directly in upward_bundles.",
+        "upward_bundles": "Depset containing this bundle's declared upward dependencies and their transitive upward closure.",
     },
 )
 
@@ -244,6 +251,13 @@ def _docs_bundle_impl(ctx):
     own_source_files = []
     own_external_runfiles = []
     own_data = depset(direct = ctx.files.data)
+    upward_bundles = depset(
+        direct = ctx.attr.upward_bundles,
+        transitive = [
+            upward_bundle[DocsBundleInfo].upward_bundles
+            for upward_bundle in ctx.attr.upward_bundles
+        ],
+    )
 
     if ctx.files.srcs:
         runtime_path = _bundle_runtime_path(ctx)
@@ -321,6 +335,13 @@ def _docs_bundle_impl(ctx):
             sourcelinks = sourcelinks,
             external_runfiles = external_runfiles,
             data = all_data,
+            own_sources = depset(ctx.files.srcs),
+            own_sourcelinks = depset(ctx.files.sourcelinks),
+            own_data = own_data,
+            entry_doc = ctx.attr.entry_doc,
+            metamodel = ctx.file.metamodel,
+            direct_upward_bundles = ctx.attr.upward_bundles,
+            upward_bundles = upward_bundles,
         ),
     ]
 
@@ -331,7 +352,12 @@ _docs_bundle = rule(
         "sourcelinks": attr.label_list(allow_files = True),
         "strip_prefix": attr.string(default = ""),
         "entry_doc": attr.string(default = "index"),
+        "metamodel": attr.label(
+            allow_single_file = True,
+            default = Label("@score_docs_as_code//src/extensions/score_metamodel:metamodel_yaml"),
+        ),
         "bundles": attr.label_list(providers = [DocsBundleInfo]),
+        "upward_bundles": attr.label_list(providers = [DocsBundleInfo]),
         "bundle_mount_ats": attr.string_list(),
         "bundle_attach_tos": attr.string_list(),
         "data": attr.label_list(allow_files = True),
@@ -339,15 +365,18 @@ _docs_bundle = rule(
     doc = "Internal rule that carries bundle files and their documentation-tree locations.",
 )
 
-def create_bundle(name, bundles, srcs = [], sourcelinks = [], strip_prefix = "", entry_doc = "index", data = [], visibility = None, **kwargs):
+def create_bundle(name, bundles, srcs = [], sourcelinks = [], strip_prefix = "", entry_doc = "index", metamodel = None, upward_bundles = [], data = [], visibility = None, **kwargs):
     """Create a reusable documentation bundle from files and child declarations."""
     parsed_bundles = [_parse_bundle_declaration(declaration) for declaration in bundles]
+    metamodel = metamodel or Label("@score_docs_as_code//src/extensions/score_metamodel:metamodel_yaml")
     _docs_bundle(
         name = name,
         srcs = srcs,
         sourcelinks = sourcelinks,
         strip_prefix = strip_prefix,
         entry_doc = entry_doc,
+        metamodel = metamodel,
+        upward_bundles = upward_bundles,
         bundles = [bundle.bundle for bundle in parsed_bundles],
         bundle_mount_ats = [bundle.mount_at for bundle in parsed_bundles],
         bundle_attach_tos = [bundle.attach_to for bundle in parsed_bundles],
@@ -485,6 +514,31 @@ def generate_code_target_sourcelinks(name, code_targets, visibility = None):
     _code_targets_sourcelinks(
         name = name,
         code_targets = code_targets,
+        visibility = visibility,
+    )
+    return ":" + name
+
+def _bundle_own_files_impl(ctx):
+    """Expose only the files owned directly by a documentation bundle."""
+    bundle = ctx.attr.bundle[DocsBundleInfo]
+    return [DefaultInfo(files = depset(transitive = [
+        bundle.own_sources,
+        bundle.own_data,
+    ]))]
+
+_bundle_own_files = rule(
+    implementation = _bundle_own_files_impl,
+    attrs = {
+        "bundle": attr.label(providers = [DocsBundleInfo]),
+    },
+    doc = "Exposes a bundle's own documentation files without nested bundles.",
+)
+
+def bundle_own_files(name, bundle, visibility = None):
+    """Create a target containing only a bundle's directly owned files."""
+    _bundle_own_files(
+        name = name,
+        bundle = bundle,
         visibility = visibility,
     )
     return ":" + name
