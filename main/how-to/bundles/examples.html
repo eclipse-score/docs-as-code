@@ -520,9 +520,9 @@ consuming project chooses where the assembled bundle appears.</p>
 </section>
 <section id="mount-generated-documentation">
 <h2>Mount generated documentation<a class="headerlink" href="#mount-generated-documentation" title="Link to this heading">#</a></h2>
-<p>Use a data-only bundle when a build action produces the documentation rather
-than a source-tree <code class="docutils literal notranslate"><span class="pre">.rst</span></code> file. It has no <code class="docutils literal notranslate"><span class="pre">source_dir</span></code>; its generated files
-are the bundle’s complete payload. You can generate and mount a page like this:</p>
+<p>When a build action produces documentation rather than a source-tree <code class="docutils literal notranslate"><span class="pre">.rst</span></code>
+file, create a bundle without <code class="docutils literal notranslate"><span class="pre">source_dir</span></code>. Its generated files are the
+bundle’s complete payload. You can generate and mount a page like this:</p>
 <div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="n">genrule</span><span class="p">(</span>
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;generated_page&quot;</span><span class="p">,</span>
     <span class="n">srcs</span> <span class="o">=</span> <span class="p">[],</span>
@@ -551,9 +551,8 @@ are the bundle’s complete payload. You can generate and mount a page like this
 </div>
 <p>See the <a class="reference external" href="https://github.com/eclipse-score/docs-as-code/tree/main/src/tests/docs_bzl/scenarios/data_files_runfiles">complete generated-data fixture on GitHub</a>.</p>
 <p>The generated page is rendered at <code class="docutils literal notranslate"><span class="pre">data_test/index.html</span></code> and is added to the
-consuming project’s index page’s toctree. Although this bundle is data-only,
-it is mounted and navigated in exactly the same way as a bundle with source
-files.</p>
+consuming project’s index page’s toctree. It is mounted and navigated in
+exactly the same way as a bundle with source files.</p>
 </section>
 <section id="mount-documentation-from-another-module">
 <h2>Mount documentation from another module<a class="headerlink" href="#mount-documentation-from-another-module" title="Link to this heading">#</a></h2>

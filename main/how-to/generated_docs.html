@@ -483,18 +483,14 @@
 with a <code class="docutils literal notranslate"><span class="pre">docs_bundle</span></code> and mount the bundle into your documentation tree.</p>
 <p>You find a <a class="reference external" href="https://github.com/eclipse-score/docs-as-code/tree/main/src/extensions/score_metamodel/docs/">complete working example</a>
 in the <a class="reference internal" href="../reference/metamodel/index.html#metamodel-reference"><span class="std std-ref">Metamodel</span></a>.</p>
-<section id="which-data-attribute">
-<h2>Which <code class="docutils literal notranslate"><span class="pre">data</span></code> attribute?<a class="headerlink" href="#which-data-attribute" title="Link to this heading">#</a></h2>
-<p>For a mounted documentation bundle, put the generated files in
-<code class="docutils literal notranslate"><span class="pre">docs_bundle(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code>. Those files are part of the bundle payload: they
-travel with the bundle and are resolved below its eventual <code class="docutils literal notranslate"><span class="pre">mount_at</span></code> path.</p>
-<p><code class="docutils literal notranslate"><span class="pre">docs(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code> is different. It adds files to the project-level
-<code class="docutils literal notranslate"><span class="pre">docs()</span></code> build, outside any bundle, and therefore gives those files no bundle
-mount path. Use it only for inputs that belong to the project-level build. If
-the file is documentation, an image, or a supporting asset for a bundle, put
-it in that bundle instead.</p>
-<p>For this how-to, the rule is simple: generated documentation belongs in
-<code class="docutils literal notranslate"><span class="pre">docs_bundle(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code>.</p>
+<section id="supporting-files-belong-to-bundles">
+<h2>Supporting files belong to bundles<a class="headerlink" href="#supporting-files-belong-to-bundles" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">docs(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code> adds files to the root <code class="docutils literal notranslate"><span class="pre">:docs_bundle</span></code> exposed by the
+macro. A mounted documentation bundle declares its own files with
+<code class="docutils literal notranslate"><span class="pre">docs_bundle(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code>. In both cases the files are bundle payload and,
+when mounted, are resolved below the bundle’s <code class="docutils literal notranslate"><span class="pre">mount_at</span></code> path.</p>
+<p>For this how-to, generated documentation belongs in
+<code class="docutils literal notranslate"><span class="pre">docs_bundle(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code> because it is mounted as a child bundle.</p>
 </section>
 <section id="step-1-generate-the-rst-files">
 <h2>Step 1: Generate the RST Files<a class="headerlink" href="#step-1-generate-the-rst-files" title="Link to this heading">#</a></h2>
@@ -536,11 +532,10 @@ Do not use <code class="docutils literal notranslate"><span class="pre">srcs</sp
 </pre></div>
 </div>
 </div>
-<p>This is a <strong>data-only bundle</strong>: it has no <code class="docutils literal notranslate"><span class="pre">source_dir</span></code> because all of its
-documentation is generated. It is still a normal mountable bundle. The
-generated <code class="docutils literal notranslate"><span class="pre">index.rst</span></code> becomes the bundle’s entry page and travels with the
-bundle when it is mounted. A bundle with both handwritten sources and
-generated files can use <code class="docutils literal notranslate"><span class="pre">source_dir</span></code> and <code class="docutils literal notranslate"><span class="pre">data</span></code> together.</p>
+<p>This bundle has no <code class="docutils literal notranslate"><span class="pre">source_dir</span></code> because all of its documentation is
+generated. The generated <code class="docutils literal notranslate"><span class="pre">index.rst</span></code> becomes the bundle’s entry page and
+travels with the bundle when it is mounted. A bundle with both handwritten
+sources and generated files can use <code class="docutils literal notranslate"><span class="pre">source_dir</span></code> and <code class="docutils literal notranslate"><span class="pre">data</span></code> together.</p>
 <dl class="simple">
 <dt>Verify:</dt><dd><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">build</span> <span class="pre">:design_bundle</span></code> must succeed.
 The bundle now holds the generated file but does not yet place it anywhere.</p>
@@ -639,7 +634,7 @@ project’s root <code class="docutils literal notranslate"><span class="pre">in
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#which-data-attribute">Which <code class="docutils literal notranslate"><span class="pre">data</span></code> attribute?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#supporting-files-belong-to-bundles">Supporting files belong to bundles</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-generate-the-rst-files">Step 1: Generate the RST Files</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-declare-the-bundle">Step 2: Declare the Bundle</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-mount-the-bundle">Step 3: Mount the Bundle</a></li>
