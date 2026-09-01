@@ -54,9 +54,9 @@ If the parent is mounted at ``guides/example``, its page is rendered at
 Mount generated documentation
 -----------------------------
 
-Use a data-only bundle when a build action produces the documentation rather
-than a source-tree ``.rst`` file. It has no ``source_dir``; its generated files
-are the bundle's complete payload. You can generate and mount a page like this:
+When a build action produces documentation rather than a source-tree ``.rst``
+file, create a bundle without ``source_dir``. Its generated files are the
+bundle's complete payload. You can generate and mount a page like this:
 
 .. code-block:: starlark
 
@@ -89,9 +89,8 @@ See the `complete generated-data fixture on GitHub
 <https://github.com/eclipse-score/docs-as-code/tree/main/src/tests/docs_bzl/scenarios/data_files_runfiles>`_.
 
 The generated page is rendered at ``data_test/index.html`` and is added to the
-consuming project's index page's toctree. Although this bundle is data-only,
-it is mounted and navigated in exactly the same way as a bundle with source
-files.
+consuming project's index page's toctree. It is mounted and navigated in
+exactly the same way as a bundle with source files.
 
 Mount documentation from another module
 ----------------------------------------

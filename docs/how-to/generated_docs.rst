@@ -23,21 +23,16 @@ with a ``docs_bundle`` and mount the bundle into your documentation tree.
 You find a `complete working example <https://github.com/eclipse-score/docs-as-code/tree/main/src/extensions/score_metamodel/docs/>`_
 in the :ref:`metamodel-reference`.
 
-Which ``data`` attribute?
--------------------------
+Supporting files belong to bundles
+----------------------------------
 
-For a mounted documentation bundle, put the generated files in
-``docs_bundle(data = [...])``. Those files are part of the bundle payload: they
-travel with the bundle and are resolved below its eventual ``mount_at`` path.
+``docs(data = [...])`` adds files to the root ``:docs_bundle`` exposed by the
+macro. A mounted documentation bundle declares its own files with
+``docs_bundle(data = [...])``. In both cases the files are bundle payload and,
+when mounted, are resolved below the bundle's ``mount_at`` path.
 
-``docs(data = [...])`` is different. It adds files to the project-level
-``docs()`` build, outside any bundle, and therefore gives those files no bundle
-mount path. Use it only for inputs that belong to the project-level build. If
-the file is documentation, an image, or a supporting asset for a bundle, put
-it in that bundle instead.
-
-For this how-to, the rule is simple: generated documentation belongs in
-``docs_bundle(data = [...])``.
+For this how-to, generated documentation belongs in
+``docs_bundle(data = [...])`` because it is mounted as a child bundle.
 
 Step 1: Generate the RST Files
 ------------------------------
@@ -81,11 +76,10 @@ Do not use ``srcs`` — that is for handwritten sources in the source tree.
        data = [":generate_design_rst"],
    )
 
-This is a **data-only bundle**: it has no ``source_dir`` because all of its
-documentation is generated. It is still a normal mountable bundle. The
-generated ``index.rst`` becomes the bundle's entry page and travels with the
-bundle when it is mounted. A bundle with both handwritten sources and
-generated files can use ``source_dir`` and ``data`` together.
+This bundle has no ``source_dir`` because all of its documentation is
+generated. The generated ``index.rst`` becomes the bundle's entry page and
+travels with the bundle when it is mounted. A bundle with both handwritten
+sources and generated files can use ``source_dir`` and ``data`` together.
 
 Verify:
   ``bazel build :design_bundle`` must succeed.

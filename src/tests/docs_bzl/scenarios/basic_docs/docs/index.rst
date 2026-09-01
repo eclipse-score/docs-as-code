@@ -14,3 +14,5 @@
 
 Basic Test
 ==========
+
+.. literalinclude:: ../supporting-example.txt

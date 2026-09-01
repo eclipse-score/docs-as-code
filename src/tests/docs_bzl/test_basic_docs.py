@@ -25,6 +25,7 @@ def test_basic_docs_builds_html():
 
 
 def test_basic_docs_builds_needs_without_conf_py():
+    """Root docs data supports literalinclude in the sandboxed Sphinx build."""
     result = run_scenario("build", "basic_docs", ":needs_json")
 
     # With no docs/conf.py the generated config is used; it must set a non-empty

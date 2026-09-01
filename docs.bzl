@@ -109,13 +109,10 @@ def docs_bundle(name, source_dir = None, data = [], entry_doc = "index", bundles
       source_dir: optional directory holding this bundle's own doc sources. It is
         globbed like `docs()` (same file kinds) and the contents are stored after
         stripping the `source_dir` prefix. Leave it unset for a pure aggregator.
-        data:
-        Files owned by this bundle that are not discovered as documentation
-        sources. Use this for generated RST or other generated files that are
-        part of the bundle payload and belong at the bundle's eventual mount
-        location. Use ``docs(data = [...])`` only for project-level inputs
-        outside a bundle. Both forms make their files available to a build;
-        only bundle data travels with a mounted bundle.
+      data: Files owned by this bundle that are not discovered as documentation
+        sources. This includes generated RST, literalinclude inputs, and assets
+        that belong at the bundle's eventual mount location. Omitting
+        ``source_dir`` creates a bundle containing only these files.
       entry_doc: bundle-relative docname attached when this bundle is mounted.
         Defaults to `index`.
       bundles: nested bundles to compose, each a dict
@@ -221,12 +218,9 @@ def docs(
       source_dir: The source directory containing documentation files. Defaults to "docs".
       project: optional project name, prefer setting this here if you can avoid having a conf.py
       project_url: Optional project URL, prefer setting this here if you can avoid having a conf.py
-      data: Additional files needed by the project-level documentation build.
-        These files are outside any bundle and have no bundle mount path. If a
-        file should travel with rendered or composable documentation, declare
-        it in a `docs_bundle` and place that bundle through `bundles` instead.
-        Generated documentation and assets are not staged into the workspace
-        source tree for `bazel run`; use a data-only `docs_bundle` for those.
+      data: Additional files owned by this project's root ``:docs_bundle``.
+        This is shorthand for declaring the files in that root bundle; mounted
+        child content belongs in the child ``docs_bundle(data = [...])``.
       deps: Additional dependencies for the documentation build.
       external_needs: List of external needs targets to include in the documentation build.
       scan_code: Deprecated. Explicit source files or filegroups to scan for source
@@ -249,11 +243,9 @@ def docs(
               Note: a bundle label may also point at another module's auto-exposed
               bundle, e.g. "@score_process_description//:docs_bundle".
 
-    The short rule is about ownership and placement, not build availability:
-    use a bundle for anything that should travel as one portable mount. A
-    bundle may be data-only when its deliverable is generated/supporting data
-    rather than source RST. Use ``docs(data = [...])`` only for project-level
-    inputs that do not belong to a bundle mount.
+    ``docs(data = [...])`` owns files in the root ``:docs_bundle``. A child
+    bundle uses the same ``data`` attribute and may omit ``source_dir`` when it
+    contains only generated or supporting files.
     """
     # HINT: keep documentation sync docs/reference/bazel_macros.rst
 
@@ -282,31 +274,21 @@ def docs(
     # list-valued attributes such as ``data`` and ``tools``.
     metamodel_label = [metamodel] if metamodel else []
 
-    data_library_label_for_sphinx_docs = []
+    root_bundle_data_for_sphinx = []
     if data:
-        # ``docs_bundle`` can carry data, including as a pure-data bundle. That
-        # data belongs to the bundle payload and is resolved at its eventual
-        # mount. These ``docs(data = [...])`` inputs are intentionally
-        # project-level instead: they support the project build or its
-        # literalinclude examples and are not assigned to a bundle mount. Both
-        # kinds of data are build inputs; without the staging below, project-
-        # level inputs would
-        # remain only execution inputs for Sphinx's tools rather than files
-        # below Sphinx's source directory, where standard ``literalinclude``
-        # looks for them.
-        #
-        # ``sphinx_docs_library`` is the generic rules_python/rules_sphinxdocs
-        # mechanism for adding such files to the sandboxed needs source tree.
-        # Preserve their workspace-relative paths so one ordinary
-        # literalinclude works in that Sphinx action. The interactive run
-        # target reads the workspace source tree directly; generated files
-        # belong in a data-only docs_bundle instead.
+        # The bundle provider records ownership and propagation. Sphinx uses
+        # its standard library provider to map the same files into the
+        # sandboxed source tree while preserving workspace-relative paths for
+        # literalinclude.
         sphinx_docs_library(
-            name = "_docs_data",
+            name = "_root_bundle_data_for_sphinx",
             srcs = data,
-            strip_prefix = "",
+            # rules_sphinxdocs treats an empty strip_prefix as the package
+            # path. An unmatched prefix preserves the workspace-relative paths
+            # used by this macro's direct documentation sources.
+            strip_prefix = "__root_bundle_data__",
         )
-        data_library_label_for_sphinx_docs = [":_docs_data"]
+        root_bundle_data_for_sphinx = [":_root_bundle_data_for_sphinx"]
 
     mounts_manifest_label = []
     if bundles:
@@ -346,6 +328,7 @@ def docs(
     docs_bundle(
         name = "docs_bundle",
         source_dir = source_dir,
+        data = data,
         entry_doc = "index",
         bundles = bundles,
         scan_code = scan_code,
@@ -472,7 +455,7 @@ def docs(
         # complete bundle as srcs would also expose those files as raw Sphinx
         # sources and make every nested need appear twice.
         srcs = [sphinx_sources],
-        deps = data_library_label_for_sphinx_docs,
+        deps = root_bundle_data_for_sphinx,
         config = sphinx_config,
         extra_opts = [
             "-W",
@@ -490,7 +473,7 @@ def docs(
         ) + (["--define=score_metamodel_yaml=$(location " + str(metamodel) + ")"] if metamodel else []),
         formats = ["needs"],
         sphinx = ":sphinx_build",
-        tools = data + external_needs + metamodel_label + [":sourcelinks_json", ":docs_bundle"] + mounts_manifest_label,
+        tools = external_needs + metamodel_label + [":sourcelinks_json", ":docs_bundle"] + mounts_manifest_label,
         visibility = ["//visibility:public"],
         # Persistent workers cause stale symlinks after dependency version
         # changes, corrupting the Bazel cache.
