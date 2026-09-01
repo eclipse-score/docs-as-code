@@ -4,6 +4,13 @@
 # Standard mode + some additional warnings as defined below
 typeCheckingMode = "standard"
 
+# The rules below are configured as "warning" on purpose: they are reported as
+# warnings in the IDE rather than as hard errors. They must still fail a CLI
+# run, otherwise nothing stops them from accumulating in the repository.
+# Without this, basedpyright exits 0 for a warning-only run and the pre-commit
+# hook passes.
+failOnWarnings = true
+
 # Warn if function parameters lack type annotations
 reportMissingParameterType = "warning"
 

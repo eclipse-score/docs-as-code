@@ -14,6 +14,7 @@
 from typing import cast
 from unittest.mock import Mock
 
+import pytest
 from score_metamodel.checks import check_needs_extends
 from sphinx_needs.data import NeedsExtendType, NeedsMutable
 from sphinx_needs.need_item import NeedItem
@@ -51,7 +52,7 @@ def _needextend(target: str, *, target_is_id: bool) -> NeedsExtendType:
 
 
 def _run_check(
-    monkeypatch,
+    monkeypatch: pytest.MonkeyPatch,
     all_needs: NeedsMutable,
     needextend: NeedsExtendType,
     *,
@@ -81,7 +82,7 @@ def _assert_cross_document_warning(warnings: Mock) -> None:
 
 
 def test_filter_reports_cross_document_or_match_without_changing_directive(
-    monkeypatch,
+    monkeypatch: pytest.MonkeyPatch,
 ):
     local_need = _need("local-need", "local")
     remote_need = _need("remote-need", "remote")
@@ -102,7 +103,7 @@ def test_filter_reports_cross_document_or_match_without_changing_directive(
     _assert_cross_document_warning(warnings)
 
 
-def test_id_shorthand_reports_cross_document_match(monkeypatch):
+def test_id_shorthand_reports_cross_document_match(monkeypatch: pytest.MonkeyPatch):
     remote_need = _need("remote-need", "remote")
     all_needs = cast(NeedsMutable, {"remote-need": remote_need})
 

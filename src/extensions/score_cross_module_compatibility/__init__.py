@@ -17,7 +17,7 @@ import os
 import re
 from dataclasses import asdict, dataclass, replace
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from sphinx.application import Sphinx
 from sphinx.util import logging
@@ -86,13 +86,16 @@ class CompatibilityReporter:
         if not isinstance(entries, list):
             return cls([], enabled_categories)
         mounts: list[ExternalMount] = []
-        for entry in entries:
-            if not isinstance(entry, dict) or not entry.get("external"):
+        for entry in cast("list[object]", entries):
+            if not isinstance(entry, dict):
                 continue
-            mount_at = entry.get("mount_at")
+            fields = cast("dict[str, object]", entry)
+            if not fields.get("external"):
+                continue
+            mount_at = fields.get("mount_at")
             if not isinstance(mount_at, str):
                 continue
-            repository = entry.get("repository", "external")
+            repository = fields.get("repository", "external")
             mounts.append(ExternalMount(mount_at.strip("/"), str(repository)))
         return cls(mounts, enabled_categories)
 

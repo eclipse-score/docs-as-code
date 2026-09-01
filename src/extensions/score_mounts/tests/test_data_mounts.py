@@ -16,7 +16,10 @@ from pathlib import Path
 
 import pytest
 
-from src.extensions.score_mounts import _make_mount_entry, _resolve_data_mounts
+from src.extensions.score_mounts import (
+    _make_mount_entry,  # pyright: ignore[reportPrivateUsage] - white-box unit test
+    _resolve_data_mounts,  # pyright: ignore[reportPrivateUsage] - white-box unit test
+)
 from src.extensions.score_mounts._resolver import MountsManifest, MountSpec
 
 

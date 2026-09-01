@@ -265,7 +265,7 @@ def test_local_fake_downstream_build_populates_gallery_and_assets(
         )
         (build / "_static").mkdir()
         (build / "_static/site.css").write_text("body {}\n", encoding="utf-8")
-        needs = {
+        needs: dict[str, object] = {
             "versions": {
                 "1.0": {
                     "needs": {

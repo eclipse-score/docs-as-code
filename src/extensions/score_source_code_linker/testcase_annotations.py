@@ -22,6 +22,7 @@ from __future__ import annotations
 from html import escape
 
 from docutils import nodes
+from sphinx.application import Sphinx
 
 # Known result values get semantic classes so the stylesheet can provide
 # readable colours for the current S-CORE light and dark themes.
@@ -110,13 +111,17 @@ def _color_existing_result_suffix(ref: nodes.reference) -> bool:
     return False
 
 
-def annotate_testcase_results(app, doctree, docname):
+def annotate_testcase_results(
+    app: Sphinx, doctree: nodes.document, docname: str
+) -> None:
     """Color rendered testcase result suffixes using the S-CORE theme palette.
 
     The handler runs after sphinx-needs' own ``doctree-resolved`` handlers.
     It therefore sees the external references generated for GitHub ``testlink``
     metadata, whose labels already contain the result.
     """
+    del app, docname  # Required by Sphinx's event callback signature.
+
     # CSS applies to the whole document, so one style block is enough even if
     # the document contains many annotated references.
     css_added = False

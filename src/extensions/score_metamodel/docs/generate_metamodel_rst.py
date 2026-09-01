@@ -62,7 +62,7 @@ def _parse_yaml(path: Path) -> Mapping[str, Any]:
 def _as_mapping(value: Any) -> Mapping[str, Any]:
     """Return *value* as a mapping or an empty mapping for missing sections."""
     if isinstance(value, Mapping):
-        return value
+        return cast(Mapping[str, Any], value)
     return {}
 
 
