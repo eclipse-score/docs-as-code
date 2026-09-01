@@ -2758,9 +2758,23 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_resolver__test_generated_source_mount_uses_execroot_in_sandbox",
+    "name": "test_resolver__test_generated_root_source_mount_uses_bazel_bin_under_bazel_run",
     "file": "src/extensions/score_mounts/tests/test_resolver.py",
     "line": "196",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_resolver__test_generated_source_mount_uses_execroot_in_sandbox",
+    "file": "src/extensions/score_mounts/tests/test_resolver.py",
+    "line": "221",
     "result": "passed",
     "repo_name": null,
     "hash": null,
