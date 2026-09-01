@@ -165,6 +165,61 @@ def _parse_links(links_dict: dict[str, dict[str, str]]) -> dict[str, dict[str, s
     }
 
 
+# sphinx-needs registers these link names itself whenever a configuration does
+# not define them, so a need type may use them without a `needs_extra_links`
+# entry. Quoting `sphinx_needs/needs.py`: "The default link name. Must exist in
+# all configurations. Therefore we set it here for the user."
+_SPHINX_NEEDS_BUILTIN_LINKS = frozenset({"links", "parent_needs"})
+
+
+def _validate_link_declarations(
+    needs_types: dict[str, ScoreNeedType],
+    needs_links: dict[str, dict[str, str]],
+) -> None:
+    """Reject need types that use a link which is never declared.
+
+    Every link name used in a type's `mandatory_links` / `optional_links` must
+    be declared in `needs_extra_links`. sphinx-needs only creates a need option
+    for links it knows about, so an undeclared link fails silently: the link is
+    never rendered, and graph checks referring to it never fire. Because
+    nothing reports this at build time, it has to be caught while parsing the
+    metamodel.
+
+    This is not hypothetical. `dec_rec` used `affects` as an optional link
+    while `needs_extra_links` did not declare it; the missing declaration was
+    added in #725, and this check was requested in #737 so the next occurrence
+    fails loudly instead.
+    """
+    known_links = set(needs_links) | _SPHINX_NEEDS_BUILTIN_LINKS
+
+    errors: list[str] = []
+    for directive_name, need_type in sorted(needs_types.items()):
+        # Only the "*_links_str" fields hold the link names at this point. The
+        # resolved "*_links" fields stay None until postprocess_need_links()
+        # runs, which is after parsing.
+        used_links = [
+            ("mandatory_links", link_name)
+            for link_name in need_type["mandatory_links_str"]
+        ] + [
+            ("optional_links", link_name)
+            for link_name in need_type["optional_links_str"]
+        ]
+
+        for section, link_name in used_links:
+            if link_name not in known_links:
+                errors.append(
+                    f"Directive '{directive_name}': {section} uses "
+                    f"'{link_name}', which is not declared in 'needs_extra_links'."
+                )
+
+    if errors:
+        raise SystemExit(
+            "ERROR: Please declare these links in 'needs_extra_links' of the "
+            "metamodel.yaml, as undeclared links are silently ignored:\n"
+            + "\n".join(errors)
+        )
+
+
 def _collect_all_options(needs_types: dict[str, ScoreNeedType]) -> set[str]:
     all_options: set[str] = set()
     for t in needs_types.values():
@@ -241,9 +296,12 @@ def load_metamodel_data(yaml_path: Path | None = None) -> MetaModelData:
         global_base_options_mandatory_opts,
     )
 
+    needs_links = _parse_links(data.get("needs_extra_links", {}))
+    _validate_link_declarations(needs_types, needs_links)
+
     return MetaModelData(
         needs_types=list(needs_types.values()),
-        needs_links=_parse_links(data.get("needs_extra_links", {})),
+        needs_links=needs_links,
         needs_fields=_collect_all_custom_options(needs_types),
         prohibited_words_checks=prohibited_words_checks,
         needs_graph_check=data.get("graph_checks", {}),

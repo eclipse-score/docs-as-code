@@ -46,6 +46,14 @@ needs_extra_links:
   link_option1:
     incoming: "incoming1"
     outgoing: "outgoing1"
+  # Declared because type1 uses them; undeclared links are rejected while
+  # parsing, see _validate_link_declarations.
+  link1:
+    incoming: "incoming_link1"
+    outgoing: "outgoing_link1"
+  link2:
+    incoming: "incoming_link2"
+    outgoing: "outgoing_link2"
 
 graph_checks:
   needs_graph_check:

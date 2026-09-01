@@ -13,6 +13,7 @@
 from pathlib import Path
 from unittest.mock import mock_open, patch
 
+import pytest
 from score_metamodel import ProhibitedWordCheck, load_metamodel_data
 
 MODEL_DIR = Path(__file__).absolute().parent / "model"
@@ -65,7 +66,15 @@ def test_load_metamodel_data():
         "link_option1": {
             "incoming": "incoming1",
             "outgoing": "outgoing1",
-        }
+        },
+        "link1": {
+            "incoming": "incoming_link1",
+            "outgoing": "outgoing_link1",
+        },
+        "link2": {
+            "incoming": "incoming_link2",
+            "outgoing": "outgoing_link2",
+        },
     }
 
     assert result.needs_fields == {
@@ -92,3 +101,111 @@ def test_load_metamodel_data():
     assert defined_graph_check["check"] == {
         "link1": "opt1 == test",
     }
+
+
+# A minimal metamodel that is valid on its own. Individual tests below rewrite
+# only the link sections, so the rest stays out of the way.
+_MODEL_TEMPLATE = """
+needs_types:
+  type1:
+    title: "Type 1"
+    prefix: "T1"
+{links_section}
+needs_extra_links:
+{declared_section}
+"""
+
+
+def _write_model(tmp_path: Path, links_section: str, declared_section: str) -> Path:
+    model = tmp_path / "model.yaml"
+    model.write_text(
+        _MODEL_TEMPLATE.format(
+            links_section=links_section, declared_section=declared_section
+        ),
+        encoding="utf-8",
+    )
+    return model
+
+
+_DECLARED_KNOWN = """  known_link:
+    incoming: "incoming"
+    outgoing: "outgoing"
+"""
+
+
+def test_declared_link_is_accepted(tmp_path: Path):
+    """A link declared in needs_extra_links may be used by a type."""
+    model = _write_model(
+        tmp_path,
+        '    optional_links:\n      known_link: "ANY"\n',
+        _DECLARED_KNOWN,
+    )
+
+    result = load_metamodel_data(yaml_path=model)
+
+    assert result.needs_types[0]["optional_links_str"] == {"known_link": "ANY"}
+
+
+@pytest.mark.parametrize("section", ["mandatory_links", "optional_links"])
+def test_undeclared_link_is_rejected(tmp_path: Path, section: str):
+    """Using a link that needs_extra_links does not declare must fail parsing.
+
+    Regression guard for #737: dec_rec used 'affects' before it was declared,
+    and nothing reported it until the link silently failed to render (#725).
+    """
+    model = _write_model(
+        tmp_path,
+        f'    {section}:\n      ghost_link: "ANY"\n',
+        _DECLARED_KNOWN,
+    )
+
+    with pytest.raises(SystemExit) as excinfo:
+        load_metamodel_data(yaml_path=model)
+
+    message = str(excinfo.value)
+    assert "ghost_link" in message
+    assert "type1" in message
+    assert section in message
+
+
+def test_sphinx_needs_builtin_links_are_accepted(tmp_path: Path):
+    """'links' and 'parent_needs' are provided by sphinx-needs itself.
+
+    sphinx-needs registers them when a configuration does not, so the
+    metamodel legitimately uses them without declaring them. Several types
+    (tsf, tenet, assertion, std_req) rely on this.
+    """
+    model = _write_model(
+        tmp_path,
+        '    optional_links:\n      links: "ANY"\n      parent_needs: "ANY"\n',
+        _DECLARED_KNOWN,
+    )
+
+    result = load_metamodel_data(yaml_path=model)
+
+    assert set(result.needs_types[0]["optional_links_str"]) == {
+        "links",
+        "parent_needs",
+    }
+
+
+def test_all_undeclared_links_are_reported_at_once(tmp_path: Path):
+    """Every offending link is listed, so one run shows all the work to do."""
+    model = _write_model(
+        tmp_path,
+        '    mandatory_links:\n      ghost_one: "ANY"\n'
+        '    optional_links:\n      ghost_two: "ANY"\n',
+        _DECLARED_KNOWN,
+    )
+
+    with pytest.raises(SystemExit) as excinfo:
+        load_metamodel_data(yaml_path=model)
+
+    message = str(excinfo.value)
+    assert "ghost_one" in message
+    assert "ghost_two" in message
+
+
+def test_shipped_metamodel_declares_every_link_it_uses():
+    """The metamodel shipped with this extension must satisfy the check."""
+    load_metamodel_data()
