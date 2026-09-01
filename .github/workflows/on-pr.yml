@@ -35,7 +35,7 @@ jobs:
 
   docs-build:
     needs: [tests]
-    uses: eclipse-score/cicd-workflows/.github/workflows/docs.yml@7b1b65cbb59d5f817e639a731f018db5adb3028a
+    uses: eclipse-score/cicd-workflows/.github/workflows/docs.yml@37eaadadfefc263d94a858d25665735659e916fa
     permissions:
       contents: read
     with:
