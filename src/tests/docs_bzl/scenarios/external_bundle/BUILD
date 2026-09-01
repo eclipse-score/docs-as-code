@@ -13,12 +13,6 @@
 
 load("//:docs.bzl", "docs")
 
-filegroup(
-    name = "external_bundle_build",
-    srcs = ["BUILD"],
-    visibility = ["//visibility:public"],
-)
-
 # This fixture exercises the public Bzlmod contract. In particular, the
 # sandboxed :needs_json target must be able to walk an external bundle rather
 # than silently omitting it.

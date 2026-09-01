@@ -15,12 +15,6 @@ load("//:bzl/mount_rules.bzl", "create_mounts_manifest")
 load("//:docs.bzl", "docs", "docs_bundle")
 load("@aspect_rules_py//py:defs.bzl", "py_binary")
 
-filegroup(
-    name = "nested_bundle_build",
-    srcs = ["BUILD"],
-    visibility = ["//visibility:public"],
-)
-
 docs_bundle(
     name = "child",
     source_dir = "child",

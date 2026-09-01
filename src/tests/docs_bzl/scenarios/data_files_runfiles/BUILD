@@ -18,12 +18,6 @@
 
 load("//:docs.bzl", "docs", "docs_bundle")
 
-filegroup(
-    name = "generated_data_build",
-    srcs = ["BUILD"],
-    visibility = ["//visibility:public"],
-)
-
 # Emit into a ``generated/`` subdirectory (as the real metamodel bundle does)
 # so the resolved mount directory contains only the genrule output and not the
 # sibling ``docs.runfiles/`` tree.

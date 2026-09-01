@@ -30,10 +30,18 @@ consuming project chooses where the assembled bundle appears.
 
 The tested parent bundle composes the child like this:
 
-.. literalinclude:: ../../../src/tests/docs_bzl/scenarios/nested_bundles/BUILD
-   :language: starlark
-   :start-after: BEGIN docs-bundle-howto: parent-composition
-   :end-before: END docs-bundle-howto: parent-composition
+.. code-block:: starlark
+
+   docs_bundle(
+       name = "parent",
+       source_dir = "parent",
+       bundles = [{
+           "bundle": ":child",
+           "mount_at": "child",
+       }],
+       data = [":generated_doc_output"],
+       visibility = ["//visibility:public"],
+   )
 
 See the `complete nested-bundles fixture on GitHub
 <https://github.com/eclipse-score/docs-as-code/tree/main/src/tests/docs_bzl/scenarios/nested_bundles>`_.
@@ -50,10 +58,32 @@ Use a data-only bundle when a build action produces the documentation rather
 than a source-tree ``.rst`` file. It has no ``source_dir``; its generated files
 are the bundle's complete payload. You can generate and mount a page like this:
 
-.. literalinclude:: ../../../src/tests/docs_bzl/scenarios/data_files_runfiles/BUILD
-   :language: starlark
-   :start-after: BEGIN docs-bundle-howto: generated-data
-   :end-before: END docs-bundle-howto: generated-data
+.. code-block:: starlark
+
+   genrule(
+       name = "generated_page",
+       srcs = [],
+       outs = ["generated/index.rst"],
+       cmd = """echo 'Generated Data Page
+   ===================' > $@""",
+   )
+
+   # Pure-data bundle: the genrule output lives in ``bazel-out/``, not the tree.
+   docs_bundle(
+       name = "data_bundle",
+       data = [":generated_page"],
+       entry_doc = "index",
+       visibility = ["//visibility:public"],
+   )
+
+   docs(
+       source_dir = "docs",
+       bundles = [{
+           "bundle": ":data_bundle",
+           "mount_at": "data_test",
+           "attach_to": "index",
+       }],
+   )
 
 See the `complete generated-data fixture on GitHub
 <https://github.com/eclipse-score/docs-as-code/tree/main/src/tests/docs_bzl/scenarios/data_files_runfiles>`_.
@@ -70,10 +100,16 @@ Every project using ``docs()`` exposes its own documentation as a
 ``:docs_bundle`` target. The external-bundle test fixture mounts that target
 like this:
 
-.. literalinclude:: ../../../src/tests/docs_bzl/scenarios/external_bundle/BUILD
-   :language: starlark
-   :start-after: BEGIN docs-bundle-howto: external-bundle
-   :end-before: END docs-bundle-howto: external-bundle
+.. code-block:: starlark
+
+   docs(
+       source_dir = "host_docs",
+       test_sources = ["src/tests/docs_bzl/scenarios/external_bundle"],
+       bundles = [{
+           "bundle": "@score_process_description//:docs_bundle",
+           "mount_at": "process",
+       }],
+   )
 
 See the `complete external-bundle fixture on GitHub
 <https://github.com/eclipse-score/docs-as-code/tree/main/src/tests/docs_bzl/scenarios/external_bundle>`_.
