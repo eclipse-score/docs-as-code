@@ -532,10 +532,10 @@ and mount a page like this:</p>
 <span class="s2">===================&#39; &gt; $@&quot;&quot;&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="c1"># Source bundle: the genrule output lives in ``bazel-out/``, not the tree.</span>
+<span class="c1"># Pure-data bundle: the genrule output lives in ``bazel-out/``, not the tree.</span>
 <span class="n">docs_bundle</span><span class="p">(</span>
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;data_bundle&quot;</span><span class="p">,</span>
-    <span class="n">srcs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;:generated_page&quot;</span><span class="p">],</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;:generated_page&quot;</span><span class="p">],</span>
     <span class="n">entry_doc</span> <span class="o">=</span> <span class="s2">&quot;index&quot;</span><span class="p">,</span>
     <span class="n">visibility</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;//visibility:public&quot;</span><span class="p">],</span>
 <span class="p">)</span>
