@@ -276,6 +276,8 @@ def docs(
 
     root_bundle_data_for_sphinx = []
     if data:
+        # TODO: Replace this adapter once the mounts manifest can preserve a
+        # data file's destination path below the root documentation tree.
         # The bundle provider records ownership and propagation. Sphinx uses
         # its standard library provider to map the same files into the
         # sandboxed source tree while preserving workspace-relative paths for
