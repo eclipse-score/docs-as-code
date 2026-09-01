@@ -492,6 +492,11 @@ preserving its canonical entry page.</p>
 <p>Bundles are read from their original source directories. Consequently, an
 in-repository bundle remains editable and IDE navigation reaches its real
 source files rather than generated copies.</p>
+<p>Bazel package boundaries still determine ownership. A host <code class="docutils literal notranslate"><span class="pre">docs()</span></code> source
+glob does not include documentation below a nested <code class="docutils literal notranslate"><span class="pre">BUILD</span></code> package. Such
+content should be declared by a bundle in that package and composed through
+<code class="docutils literal notranslate"><span class="pre">bundles</span></code>; the generated source allowlist prevents the live host directory
+from rediscovering the same files as primary documentation.</p>
 </section>
 <section id="composition">
 <h2>Composition<a class="headerlink" href="#composition" title="Link to this heading">#</a></h2>

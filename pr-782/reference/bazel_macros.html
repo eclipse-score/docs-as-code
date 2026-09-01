@@ -521,7 +521,12 @@ documentation tree carries the files and where they are resolved.</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">source_dir</span></code> (string, default: <code class="docutils literal notranslate"><span class="pre">&quot;docs&quot;</span></code>)
 Path (relative to repository root) to your Sphinx source directory. This is the folder
-that contains the top-level ReST/markdown sources. A <code class="docutils literal notranslate"><span class="pre">conf.py</span></code> is optional.</p></li>
+that contains the top-level ReST/markdown sources. A <code class="docutils literal notranslate"><span class="pre">conf.py</span></code> is optional.
+Bazel package boundaries apply to this glob: a nested directory containing a
+<code class="docutils literal notranslate"><span class="pre">BUILD</span></code> file is not included in the parent package’s source set. Declare
+documentation in such a nested package as a <code class="docutils literal notranslate"><span class="pre">docs_bundle</span></code> and mount it
+through <code class="docutils literal notranslate"><span class="pre">bundles</span></code>; the generated manifest keeps it from being discovered a
+second time from the host directory.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">project</span></code> and <code class="docutils literal notranslate"><span class="pre">project_url</span></code> (strings, optional)
 Project name and canonical project URL. They are required when <code class="docutils literal notranslate"><span class="pre">source_dir</span></code>
 has no <code class="docutils literal notranslate"><span class="pre">conf.py</span></code>; in that case <code class="docutils literal notranslate"><span class="pre">docs()</span></code> generates the Sphinx configuration
@@ -612,6 +617,9 @@ Directory holding the bundle’s own doc sources. It is globbed the same way as
 <code class="docutils literal notranslate"><span class="pre">docs()</span></code> (RST, Markdown, images, and the other doc file kinds). The
 <code class="docutils literal notranslate"><span class="pre">source_dir</span></code> itself is the mount root, so the files mount relative to it (so
 <code class="docutils literal notranslate"><span class="pre">concept/index.rst</span></code> with <code class="docutils literal notranslate"><span class="pre">source_dir</span> <span class="pre">=</span> <span class="pre">&quot;concept&quot;</span></code> becomes <code class="docutils literal notranslate"><span class="pre">index.rst</span></code>).
+Bazel package boundaries are respected. Sources below a nested <code class="docutils literal notranslate"><span class="pre">BUILD</span></code>
+package are owned by that package rather than this bundle and must be exposed
+through a nested bundle if they are part of the composed documentation.
 The bundle exposes those files as a Bazel depset (via the <code class="docutils literal notranslate"><span class="pre">DocsBundleInfo</span></code>
 provider) and records the <code class="docutils literal notranslate"><span class="pre">source_dir</span></code> path; sphinx-mounts walks that original
 directory directly — no copy is made. Leave it unset for a data-only bundle

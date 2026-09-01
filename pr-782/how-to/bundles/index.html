@@ -504,6 +504,10 @@ files are collected like those of <code class="docutils literal notranslate"><sp
 <code class="docutils literal notranslate"><span class="pre">src/docs/overview.rst</span></code> becomes <code class="docutils literal notranslate"><span class="pre">overview</span></code> within the bundle.
 <code class="docutils literal notranslate"><span class="pre">entry_doc</span></code> names the bundle-relative page used for navigation when the
 bundle is mounted.</p>
+<p>Bazel package boundaries are part of source ownership. If a <code class="docutils literal notranslate"><span class="pre">BUILD</span></code> file
+appears below <code class="docutils literal notranslate"><span class="pre">source_dir</span></code>, the parent bundle does not glob that nested
+package’s files. Define those files in a nested <code class="docutils literal notranslate"><span class="pre">docs_bundle</span></code> and compose it
+with <code class="docutils literal notranslate"><span class="pre">bundles</span></code> so the mounted tree contains them exactly once.</p>
 </section>
 <section id="mount-a-bundle-in-a-project">
 <h2>Mount a bundle in a project<a class="headerlink" href="#mount-a-bundle-in-a-project" title="Link to this heading">#</a></h2>

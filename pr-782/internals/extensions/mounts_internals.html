@@ -500,7 +500,20 @@ walked;</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">mount_at</span></code> and <code class="docutils literal notranslate"><span class="pre">attach_to</span></code> — the already-composed Sphinx placement; and</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">entry_doc</span></code> — the canonical entry document declared by the source bundle.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">external</span></code> — whether the directory belongs to another Bazel module.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">repository</span></code> — the Bazel repository that owns the entry;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">include</span></code> — the exact files selected by the entry’s direct Bazel source
+glob, expressed as patterns relative to the mounted directory; and</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">data</span></code> — execroot-relative generated/supporting files resolved at the
+entry’s mount.</p></li>
 </ul>
+<p>The manifest may also contain a top-level <code class="docutils literal notranslate"><span class="pre">primary_source</span></code> entry. <code class="docutils literal notranslate"><span class="pre">docs()</span></code>
+uses it for the host bundle’s own source directory. At runtime,
+<code class="docutils literal notranslate"><span class="pre">score_mounts</span></code> adds every file matching Sphinx’s configured source suffixes
+that is present below that directory but absent from
+<code class="docutils literal notranslate"><span class="pre">primary_source.include</span></code> to Sphinx’s <code class="docutils literal notranslate"><span class="pre">exclude_patterns</span></code>. This mirrors
+Bazel’s package-aware source glob when a nested bundle package is physically
+located below the host’s source directory and prevents duplicate document
+discovery.</p>
 <p>The rule rejects conflicting final placements before Sphinx starts. A mount
 without <code class="docutils literal notranslate"><span class="pre">attach_to</span></code> is attached to the <code class="docutils literal notranslate"><span class="pre">index</span></code> document beside its
 <code class="docutils literal notranslate"><span class="pre">mount_at</span></code>; <code class="docutils literal notranslate"><span class="pre">attach_to</span></code> overrides that target. The Python
@@ -557,6 +570,10 @@ it so the TOML writer sees the resolved structured entries.</p>
 <p>A <code class="docutils literal notranslate"><span class="pre">source_dir</span></code> bundle already has the mount-relative layout on disk.
 Materializing a second directory would duplicate its files, point navigation at
 a generated copy, and add a build action without changing the Sphinx input.</p>
+<p>The direct-source allowlist in the manifest handles the one filtering case
+needed by Bazel package boundaries without copying files: it limits discovery
+to the files owned by the source bundle while leaving the original directory
+available for mounted assets.</p>
 <p>Reconsider materialization only if a future bundle cannot be represented by one
 existing directory, for example for a filtered file set, a custom
 <code class="docutils literal notranslate"><span class="pre">strip_prefix</span></code>, or generated provider content. Prefer native filtering support
