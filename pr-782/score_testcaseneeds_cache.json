@@ -2646,6 +2646,20 @@
     "FullyVerifies": null
   },
   {
+    "name": "test_init__test_unowned_source_paths_only_returns_unselected_documents",
+    "file": "src/extensions/score_mounts/tests/test_init.py",
+    "line": "20",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
     "name": "test_resolver__test_load_single_entry",
     "file": "src/extensions/score_mounts/tests/test_resolver.py",
     "line": "39",
