@@ -31,6 +31,9 @@ jobs:
           "inc_someip_gateway and remote",
           "infrastructure and remote",
           "itf and remote",
+          "kyron and remote",
+          "lifecycle and remote",
+          "logging and remote",
           "module_template and local",
           "module_template and remote",
           "persistency and remote",
@@ -38,6 +41,7 @@ jobs:
           "process_description and remote",
           "score and local",
           "score and remote",
+          "time and remote",
         ]
 
     steps:
