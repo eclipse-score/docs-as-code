@@ -86,6 +86,9 @@ REPOS_TO_TEST: list[ConsumerRepo] = [
             "bazel test //tests/...",
         ],
     ),
+    ConsumerRepo(name="kyron"),
+    ConsumerRepo(name="lifecycle"),
+    ConsumerRepo(name="logging"),
     ConsumerRepo(name="persistency"),
     ConsumerRepo(
         name="process_description",
@@ -105,6 +108,7 @@ REPOS_TO_TEST: list[ConsumerRepo] = [
             "bazel build //:needs_json",
         ],
     ),
+    ConsumerRepo(name="time"),
 ]
 
 # ---------------------------------------------------------------------------

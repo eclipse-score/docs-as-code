@@ -85,9 +85,19 @@ Filters which repositories to test.
 
 ## Currently tested repositories
 
-- [score](https://github.com/eclipse-score/score)
-- [process_description](https://github.com/eclipse-score/process_description)
+- [baselibs](https://github.com/eclipse-score/baselibs)
+- [inc_security_crypto](https://github.com/eclipse-score/inc_security_crypto)
+- [inc_someip_gateway](https://github.com/eclipse-score/inc_someip_gateway)
+- [infrastructure](https://github.com/eclipse-score/infrastructure)
+- [itf](https://github.com/eclipse-score/itf)
+- [kyron](https://github.com/eclipse-score/kyron)
+- [lifecycle](https://github.com/eclipse-score/lifecycle)
+- [logging](https://github.com/eclipse-score/logging)
 - [module_template](https://github.com/eclipse-score/module_template)
+- [persistency](https://github.com/eclipse-score/persistency)
+- [process_description](https://github.com/eclipse-score/process_description)
+- [score](https://github.com/eclipse-score/score)
+- [time](https://github.com/eclipse-score/time)
 
 ## What Gets Tested
 
