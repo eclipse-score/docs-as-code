@@ -112,13 +112,23 @@ class LobsterTraceabilityReportDirective(SphinxDirective):
     def _warning(self, text: str) -> nodes.warning:
         return nodes.warning("", nodes.paragraph(text=text))
 
-    def _need_ref(self, need_id: str) -> list[nodes.Node]:
+    def _need_ref(self, need_id: str, display: str | None = None) -> list[nodes.Node]:
         """Parse a ``:need:`<need_id>``` role, so it resolves (at doctree-
         resolved time) into a real link to that need's directive/element,
         exactly like a hand-written ``:need:`` reference elsewhere in the
-        docs."""
+        docs.
+
+        ``display``, if given, is rendered as explicit link text (RST's
+        ``:need:`text <need_id>``` syntax) instead of the default, which
+        would otherwise show ``need_id`` itself. Useful when ``need_id`` is
+        a generated, machine-friendly id (e.g. ``testcase__Foo__Bar_a1b2c"``)
+        whose repeated double underscores read as stacked lines once the
+        browser's own link-underline decoration overlaps them - passing the
+        original, human-authored name instead avoids that.
+        """
+        role_text = f"{display} <{need_id}>" if display else need_id
         text_nodes, _messages = self.state.inline_text(
-            f":need:`{need_id}`", self.lineno
+            f":need:`{role_text}`", self.lineno
         )
         return list(text_nodes)
 
@@ -284,7 +294,9 @@ class LobsterTraceabilityReportDirective(SphinxDirective):
                     para += self._anchor_target(
                         test.get("tag") or test.get("name") or ""
                     )
-                    para += self._need_ref(self._unit_test_need_id(test))
+                    para += self._need_ref(
+                        self._unit_test_need_id(test), display=test.get("name")
+                    )
                     para += nodes.Text(f" [{test.get('status', '')}]")
                     item += para
                     test_list += item
