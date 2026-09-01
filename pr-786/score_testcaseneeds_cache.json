@@ -2760,7 +2760,7 @@
   {
     "name": "test_resolver__test_generated_source_mount_uses_execroot_in_sandbox",
     "file": "src/extensions/score_mounts/tests/test_resolver.py",
-    "line": "195",
+    "line": "196",
     "result": "passed",
     "repo_name": null,
     "hash": null,
