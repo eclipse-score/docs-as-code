@@ -77,7 +77,18 @@ def _resolve_data_mounts(
     """
     data_mounts: dict[str, MountSpec] = {}
     for spec in manifest.mounts:
+        # Data on a source-bearing entry is supporting input for that source
+        # tree (for example a BUILD file shown by literalinclude), not a
+        # separate documentation tree. Only pure-data bundle entries need a
+        # directory mount for their generated source files.
+        if spec.src_root:
+            continue
         for data_file in spec.data:
+            # Non-document payloads remain available as bundle inputs; mounting
+            # their parent would make sphinx-mounts walk unrelated neighboring
+            # documentation files as part of a data-only bundle.
+            if Path(data_file).suffix not in {".md", ".rst"}:
+                continue
             if ws_root is not None and runfiles_dir is not None:
                 runfiles_str = str(runfiles_dir)
                 if "/bazel-out/" in runfiles_str:
@@ -168,6 +179,7 @@ def _make_mount_entry(walk_dir: Path, spec: MountSpec) -> dict[str, object]:
         "mount_at": spec.mount_at,
         "attach_to": spec.attach_to,
         "entry_doc": spec.entry_doc,
+        "path_check": spec.path_check,
     }
 
 

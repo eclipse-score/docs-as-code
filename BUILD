@@ -25,13 +25,11 @@ docs(
     external_needs = [
         "@score_process_description//:needs_json_file",
     ],
-    data = [
-        # These scenario BUILD files are used by literalinclude examples.
-        "//src/tests/docs_bzl/scenarios/nested_bundles:nested_bundle_build",
-        "//src/tests/docs_bzl/scenarios/data_files_runfiles:generated_data_build",
-        "//src/tests/docs_bzl/scenarios/external_bundle:external_bundle_build",
-    ],
     bundles = [
+        {
+            "bundle": "//src/tests/docs_bzl/scenarios:docs_literalinclude_data",
+            "mount_at": "_literalinclude_data",
+        },
         {
             "bundle": "//src/extensions/docs:extensions",
             "mount_at": "internals/extensions",

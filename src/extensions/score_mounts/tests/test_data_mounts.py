@@ -59,6 +59,53 @@ def test_existing_data_file_resolved(tmp_path: Path) -> None:
     assert str(tmp_path / "bazel-bin") in mounts
 
 
+def test_source_supporting_file_is_not_mounted_as_a_second_source_tree(
+    tmp_path: Path,
+) -> None:
+    """Supporting files on a source bundle do not create a duplicate mount."""
+    source_dir = tmp_path / "docs"
+    source_dir.mkdir()
+    (source_dir / "index.rst").write_text("Index", encoding="utf-8")
+    fixture = tmp_path / "src" / "tests" / "scenario" / "BUILD"
+    fixture.parent.mkdir(parents=True)
+    fixture.write_text("filegroup(name = 'fixture')", encoding="utf-8")
+
+    spec = MountSpec(
+        src_root="docs",
+        runtime_path="docs",
+        mount_at="docs",
+        data=["src/tests/scenario/BUILD"],
+        path_check="off",
+    )
+    manifest = MountsManifest(mounts=[spec])
+
+    assert _resolve_data_mounts(manifest, tmp_path, tmp_path / "runfiles") == {}
+    assert _make_mount_entry(source_dir, spec)["path_check"] == "off"
+
+
+def test_non_document_payload_does_not_mount_its_parent_directory(
+    tmp_path: Path,
+) -> None:
+    """A data-only BUILD payload must not turn neighboring docs into mounts."""
+    data_file = tmp_path / "bazel-bin" / "scenario" / "BUILD"
+    data_file.parent.mkdir(parents=True)
+    data_file.write_text("filegroup(name = 'fixture')", encoding="utf-8")
+    (data_file.parent / "index.rst").write_text("not a bundle page", encoding="utf-8")
+
+    manifest = MountsManifest(
+        mounts=[
+            MountSpec(
+                src_root="",
+                runtime_path="",
+                mount_at="data",
+                data=["bazel-out/k8-fastbuild/bin/scenario/BUILD"],
+            )
+        ]
+    )
+
+    assert _resolve_data_mounts(manifest, tmp_path, tmp_path / "runfiles") == {}
+
+
 def test_mount_entry_uses_canonical_directory_for_symlinked_bundle(
     tmp_path: Path,
 ) -> None:

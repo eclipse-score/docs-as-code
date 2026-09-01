@@ -56,6 +56,8 @@ def materialize_mounts(entries: list[dict[str, Any]]) -> Path | None:
             lines.append(f"attach_to = {_toml_string(entry['attach_to'])}")
         if entry.get("entry_doc", "index") != "index":
             lines.append(f"entry_doc = {_toml_string(entry['entry_doc'])}")
+        if entry.get("path_check", "error") != "error":
+            lines.append(f"path_check = {_toml_string(entry['path_check'])}")
         lines.append("")
     outdir = Path(tempfile.mkdtemp(prefix="score_sync_toml_"))
     fragment = outdir / "score_mounts.toml"

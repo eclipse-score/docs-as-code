@@ -28,22 +28,25 @@ The macro must be called from the repository root package.
 Supporting files: project inputs and bundle payloads
 ----------------------------------------------------
 
-There are two ``data`` attributes, and they belong to different documentation
-trees:
+The macros expose project inputs and bundle payloads separately:
 
 * ``docs_bundle(data = [...])`` puts files in a bundle payload. The files
   travel with that bundle and are resolved below the bundle's eventual
   ``mount_at`` path. Use this for generated documentation, images, and other
   assets needed by a mounted bundle.
 * ``docs(data = [...])`` puts files in the project-level ``docs()`` build,
-  outside any bundle. These files have no bundle mount path. Use this only for
-  inputs needed by the project-level build itself. ``bazel run`` does not copy
-  generated data into the workspace source tree; generated documentation or
-  assets must use ``docs_bundle(data = [...])``.
+  outside any bundle. These files have no bundle mount path and do not travel
+  with the public bundle.
+* A data-only ``docs_bundle(data = [...])`` is a separate child bundle. Compose
+  it through ``bundles`` when the files must travel with the project's public
+  bundle or with another mounted bundle. ``docs()`` stages non-document payloads
+  from such children below the sandboxed Sphinx source root, so a project's
+  original ``literalinclude`` path works without repeating the label in
+  ``docs(data = [...])``. This keeps the original files in the bundle payload;
+  no snapshot is copied into ``docs/``.
 
-If a file belongs to a mounted bundle, use ``docs_bundle(data = [...])``.
-Both attributes make files available to a build; they differ in which
-documentation tree carries the files and where they are resolved.
+If a file belongs to a nested or generated bundle, use
+``docs_bundle(data = [...])`` and compose that bundle through ``bundles``.
 
 Minimal example (root ``BUILD``)
 --------------------------------
@@ -87,7 +90,8 @@ Minimal example (root ``BUILD``)
   The items in ``data`` are added to the py_binaries and to the Sphinx tooling so they are
   available at build time. These are project-level inputs; they are not part of
   a bundle and do not receive a bundle mount path. Use ``docs_bundle(data = [...])``
-  for files that belong to mounted documentation.
+  for files that belong to mounted documentation or must travel with the public
+  bundle.
 
   .. note::
 
@@ -97,6 +101,9 @@ Minimal example (root ``BUILD``)
 - ``bundles`` (list of placement dicts)
   Documentation bundles to overlay into this project's documentation tree, each with its
   placement (``mount_at``). See :ref:`howto_mount_external_sources` for the full reference.
+  A data-only child contributes supporting files without adding a documentation
+  page; use a private-looking mount path when it exists only to carry data for
+  the public bundle.
 
 - ``deps`` (list of bazel labels)
   Additional Bazel dependencies to add to the Python binaries and the virtual environment
@@ -187,7 +194,10 @@ Signature: ``docs_bundle(name, source_dir = None, data = [], entry_doc = "index"
   ``index.rst``. If ``source_dir`` is omitted and ``data`` contains the
   bundle's deliverable, the result is a data-only bundle. Use this attribute
   for any file that belongs with the mounted bundle. Use
-  ``docs(data = [...])`` only for project-level inputs outside a bundle.
+  ``docs(data = [...])`` only for project-level inputs outside a bundle. If a
+  source page references a file outside its ``source_dir``, use a data-only
+  child bundle and compose it through ``bundles``. Its non-document payload is
+  staged for the host's sandboxed build automatically.
 
 - ``entry_doc`` (string, optional)
   Bundle-relative docname used as the canonical navigation entry. It defaults to

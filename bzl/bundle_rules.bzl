@@ -41,11 +41,12 @@
 # Extending `sphinx_docs_library` is also not a good fit. Its provider represents
 # individual file mappings, while our provider represents complete mounted bundles. Adding
 # the required metadata would therefore not be a small extension of the existing
-# abstraction; it would change its propagated unit and its semantics. It would also couple
-# SCORE-specific composition rules to the generic `rules_sphinxdocs` implementation.
+# abstraction; it would change its propagated unit and its semantics.
 
 # We therefore reimplement the relatively small overlapping part—transitive source
-# collection—while keeping the richer bundle model explicit and independent.
+# collection—while keeping the richer bundle model explicit. The rule exposes a
+# narrow ``SphinxDocsLibraryInfo`` view only for non-document bundle data so a
+# sandboxed Sphinx action can stage those files without duplicating mounted docs.
 
 # The name `docs_bundle` reflects that relationship: it fills the same general role
 # as `sphinx_docs_library`, but uses a SCORE-specific data model for composing structured
@@ -54,6 +55,7 @@
 
 
 load("@score_docs_as_code//:bzl/basics.bzl", "join_path")
+load("@sphinxdocs//sphinxdocs/private:sphinx_docs_library_info.bzl", "SphinxDocsLibraryInfo")
 
 # Internal data passed between bundle targets and eventually consumed by an
 # adapter such as the Sphinx mounts manifest. Users configure bundles through
@@ -198,7 +200,29 @@ def _rebase_bundle_entry(entry, mount_at, attach_to):
         external = entry.external,
         repository = entry.repository,
         data = entry.data,
+        path_check = entry.path_check,
     )
+
+def _entry_with_path_check(entry, path_check):
+    """Return an entry with the requested sphinx-mounts confinement mode."""
+    return struct(
+        runtime_path = entry.runtime_path,
+        src_root = entry.src_root,
+        mount_at = entry.mount_at,
+        attach_to = entry.attach_to,
+        entry_doc = entry.entry_doc,
+        external = entry.external,
+        repository = entry.repository,
+        data = entry.data,
+        path_check = path_check,
+    )
+
+def _has_data_only_entry(entries):
+    """Return whether the entries contain a declared pure-data bundle."""
+    for entry in entries:
+        if not entry.src_root and entry.data.to_list():
+            return True
+    return False
 
 def _entries_visible_through(ctx, child):
     """Keep an external module's own docs, but not its foreign mounts."""
@@ -244,11 +268,12 @@ def _docs_bundle_impl(ctx):
     own_source_files = []
     own_external_runfiles = []
     own_data = depset(direct = ctx.files.data)
+    own_source_entry = None
 
     if ctx.files.srcs:
         runtime_path = _bundle_runtime_path(ctx)
         external = runtime_path.startswith("../")
-        entries.append(struct(
+        own_source_entry = struct(
             runtime_path = runtime_path,
             # The execution root and runfiles tree spell external repositories
             # differently. Keep both locations so every public docs() target can
@@ -260,7 +285,9 @@ def _docs_bundle_impl(ctx):
             external = external,
             repository = ctx.label.workspace_name,
             data = own_data,
-        ))
+            path_check = "off" if own_data.to_list() else "error",
+        )
+        entries.append(own_source_entry)
         own_source_files.extend(ctx.files.srcs)
         # Local sources are read directly from the workspace by ``bazel run``.
         # Only sources from external repositories must be staged in runfiles.
@@ -277,6 +304,7 @@ def _docs_bundle_impl(ctx):
             external = False,
             repository = ctx.label.workspace_name,
             data = own_data,
+            path_check = "error",
         ))
 
     child_source_files = []
@@ -286,13 +314,20 @@ def _docs_bundle_impl(ctx):
         for source_link in ctx.files.sourcelinks
     ]
     for index, child in enumerate(ctx.attr.bundles):
+        child_entries = _entries_visible_through(ctx, child)
+        if own_source_entry != None and _has_data_only_entry(child_entries):
+            # Supporting files composed through a data-only child are available
+            # to this source tree. sphinx-mounts 0.1.x has no per-file allowlist,
+            # so the source entry uses its documented non-confining mode.
+            own_source_entry = _entry_with_path_check(own_source_entry, "off")
+            entries[0] = own_source_entry
         entries.extend([
             _rebase_bundle_entry(
                 entry,
                 ctx.attr.bundle_mount_ats[index],
                 ctx.attr.bundle_attach_tos[index],
             )
-            for entry in _entries_visible_through(ctx, child)
+            for entry in child_entries
         ])
         child_source_files.append(child[DefaultInfo].files)
         child_external_runfiles.append(child[DocsBundleInfo].external_runfiles)
@@ -313,6 +348,16 @@ def _docs_bundle_impl(ctx):
             for child in ctx.attr.bundles
         ],
     )
+    non_document_data = tuple([
+        file
+        for file in all_data.to_list()
+        if not _is_sphinx_source_file(file)
+    ])
+    sphinx_data_entry = struct(
+        strip_prefix = "/",
+        prefix = "",
+        files = non_document_data,
+    )
     return [
         DefaultInfo(files = depset(transitive = [all_source_files, all_data])),
         DocsBundleInfo(
@@ -321,6 +366,12 @@ def _docs_bundle_impl(ctx):
             sourcelinks = sourcelinks,
             external_runfiles = external_runfiles,
             data = all_data,
+        ),
+        SphinxDocsLibraryInfo(
+            files = depset(direct = non_document_data),
+            strip_prefix = "/",
+            prefix = "",
+            transitive = depset(direct = [sphinx_data_entry]) if non_document_data else depset(),
         ),
     ]
 
@@ -377,6 +428,10 @@ def bundle_source_files(name, bundle, visibility = None):
         visibility = visibility,
     )
     return ":" + name
+
+def _is_sphinx_source_file(file):
+    """Return whether ``file`` is discovered as a normal Sphinx document."""
+    return file.basename.endswith(".rst") or file.basename.endswith(".md")
 
 def _external_docs_runfiles_impl(ctx):
     """Expose external documentation sources needed under ``bazel run``."""

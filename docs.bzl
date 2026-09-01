@@ -253,7 +253,8 @@ def docs(
     use a bundle for anything that should travel as one portable mount. A
     bundle may be data-only when its deliverable is generated/supporting data
     rather than source RST. Use ``docs(data = [...])`` only for project-level
-    inputs that do not belong to a bundle mount.
+    inputs that do not belong to a bundle mount. Compose a data-only
+    ``docs_bundle`` when those files must travel with the public bundle as well.
     """
     # HINT: keep documentation sync docs/reference/bazel_macros.rst
 
@@ -284,13 +285,12 @@ def docs(
 
     data_library_label_for_sphinx_docs = []
     if data:
-        # ``docs_bundle`` can carry data, including as a pure-data bundle. That
-        # data belongs to the bundle payload and is resolved at its eventual
-        # mount. These ``docs(data = [...])`` inputs are intentionally
-        # project-level instead: they support the project build or its
-        # literalinclude examples and are not assigned to a bundle mount. Both
-        # kinds of data are build inputs; without the staging below, project-
-        # level inputs would
+        # ``docs(data = [...])`` inputs support the project build and are not
+        # assigned to a bundle mount. They must also be staged below the
+        # Sphinx source root for the sandboxed ``needs`` action; without this,
+        # standard literalinclude resolution cannot find them.
+        #
+        # Without the staging below, project-level inputs would
         # remain only execution inputs for Sphinx's tools rather than files
         # below Sphinx's source directory, where standard ``literalinclude``
         # looks for them.
@@ -304,10 +304,13 @@ def docs(
         sphinx_docs_library(
             name = "_docs_data",
             srcs = data,
-            strip_prefix = "",
+            # ``sphinx_docs_library`` otherwise defaults to this package and
+            # would change the path seen by a relative literalinclude.
+            strip_prefix = "/",
         )
         data_library_label_for_sphinx_docs = [":_docs_data"]
 
+    bundle_data_library_label_for_sphinx_docs = []
     mounts_manifest_label = []
     if bundles:
         mounts_bundle = create_bundle(
@@ -315,6 +318,8 @@ def docs(
             bundles = bundles,
             visibility = ["//visibility:private"],
         )
+
+        bundle_data_library_label_for_sphinx_docs = [mounts_bundle]
 
         mounts_manifest_label = [
             create_mounts_manifest(
@@ -472,7 +477,10 @@ def docs(
         # complete bundle as srcs would also expose those files as raw Sphinx
         # sources and make every nested need appear twice.
         srcs = [sphinx_sources],
-        deps = data_library_label_for_sphinx_docs,
+        deps = (
+            data_library_label_for_sphinx_docs +
+            bundle_data_library_label_for_sphinx_docs
+        ),
         config = sphinx_config,
         extra_opts = [
             "-W",
