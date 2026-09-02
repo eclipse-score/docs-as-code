@@ -477,24 +477,26 @@ to build, verify and preview the project’s Sphinx documentation,
 and to create a Python virtual environment for IDE support (Esbonio).</p>
 <p>See <a class="reference internal" href="commands.html"><span class="doc">commands</span></a> for the targets/commands it creates.</p>
 <p>The macro must be called from the repository root package.</p>
-<section id="supporting-files-project-inputs-and-bundle-payloads">
-<h2>Supporting files: project inputs and bundle payloads<a class="headerlink" href="#supporting-files-project-inputs-and-bundle-payloads" title="Link to this heading">#</a></h2>
-<p>There are two <code class="docutils literal notranslate"><span class="pre">data</span></code> attributes, and they belong to different documentation
-trees:</p>
+<section id="bundle-content-and-supporting-files">
+<h2>Bundle content and supporting files<a class="headerlink" href="#bundle-content-and-supporting-files" title="Link to this heading">#</a></h2>
+<p>There are two ways to add files to a bundle. The <code class="docutils literal notranslate"><span class="pre">data</span></code> argument of <code class="docutils literal notranslate"><span class="pre">docs()</span></code>
+is shorthand for supporting files in the root <code class="docutils literal notranslate"><span class="pre">:docs_bundle</span></code>:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">docs_bundle(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code> puts files in a bundle payload. The files
-travel with that bundle and are resolved below the bundle’s eventual
-<code class="docutils literal notranslate"><span class="pre">mount_at</span></code> path. Use this for generated documentation, images, and other
-assets needed by a mounted bundle.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">docs(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code> puts files in the project-level <code class="docutils literal notranslate"><span class="pre">docs()</span></code> build,
-outside any bundle. These files have no bundle mount path. Use this only for
-inputs needed by the project-level build itself. <code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span></code> does not copy
-generated data into the workspace source tree; generated documentation or
-assets must use <code class="docutils literal notranslate"><span class="pre">docs_bundle(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">docs_bundle(srcs</span> <span class="pre">=</span> <span class="pre">[...])</span></code> puts documentation source files in a bundle.
+The files may be generated outputs from another build action; they are
+processed as documentation sources and resolved below the bundle’s eventual
+<code class="docutils literal notranslate"><span class="pre">mount_at</span></code> path.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">docs_bundle(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code> puts supporting or runtime files in a bundle
+payload. Use this for files that belong at the mount but are not themselves
+documentation sources.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">docs(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code> puts supporting files in the root <code class="docutils literal notranslate"><span class="pre">:docs_bundle</span></code>
+exposed by <code class="docutils literal notranslate"><span class="pre">docs()</span></code>. A mounted module puts its files in its own bundle;
+these files travel with that bundle and are resolved below its eventual
+<code class="docutils literal notranslate"><span class="pre">mount_at</span></code> path.</p></li>
 </ul>
-<p>If a file belongs to a mounted bundle, use <code class="docutils literal notranslate"><span class="pre">docs_bundle(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code>.
-Both attributes make files available to a build; they differ in which
-documentation tree carries the files and where they are resolved.</p>
+<p>If a file is mounted documentation, use <code class="docutils literal notranslate"><span class="pre">docs_bundle(srcs</span> <span class="pre">=</span> <span class="pre">[...])</span></code>. Both
+bundle attributes make files available to a build; they differ in whether the
+files are processed as documentation sources or carried as supporting data.</p>
 </section>
 <section id="minimal-example-root-build">
 <h2>Minimal example (root <code class="docutils literal notranslate"><span class="pre">BUILD</span></code>)<a class="headerlink" href="#minimal-example-root-build" title="Link to this heading">#</a></h2>
@@ -531,11 +533,10 @@ underscore-separated prefix is removed (for example,
 <code class="docutils literal notranslate"><span class="pre">score_docs_as_code</span></code> becomes <code class="docutils literal notranslate"><span class="pre">docs_as_code</span></code>). If a <code class="docutils literal notranslate"><span class="pre">conf.py</span></code> exists,
 it remains authoritative and these values are not used.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">data</span></code> (list of bazel labels)
-Extra runfiles / data targets that should be made available to the documentation targets.
-The items in <code class="docutils literal notranslate"><span class="pre">data</span></code> are added to the py_binaries and to the Sphinx tooling so they are
-available at build time. These are project-level inputs; they are not part of
-a bundle and do not receive a bundle mount path. Use <code class="docutils literal notranslate"><span class="pre">docs_bundle(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code>
-for files that belong to mounted documentation.</p>
+Supporting files for this project’s root <code class="docutils literal notranslate"><span class="pre">:docs_bundle</span></code>. The files are
+available to the documentation targets and travel when another project
+mounts this project’s public bundle. Put files belonging to a mounted child
+in that child’s <code class="docutils literal notranslate"><span class="pre">docs_bundle(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code> instead.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>To pull in another module’s needs for cross-referencing, add its
@@ -605,7 +606,7 @@ site).</p>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>Signature: <code class="docutils literal notranslate"><span class="pre">docs_bundle(name,</span> <span class="pre">source_dir</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">data</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">entry_doc</span> <span class="pre">=</span> <span class="pre">&quot;index&quot;,</span> <span class="pre">bundles</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">scan_code</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">code_targets</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">visibility</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">upward_bundles</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">deps</span> <span class="pre">=</span> <span class="pre">[])</span></code>.</p>
+<p>Signature: <code class="docutils literal notranslate"><span class="pre">docs_bundle(name,</span> <span class="pre">source_dir</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">srcs</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">data</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">entry_doc</span> <span class="pre">=</span> <span class="pre">&quot;index&quot;,</span> <span class="pre">bundles</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">scan_code</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">code_targets</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">visibility</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">upward_bundles</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">deps</span> <span class="pre">=</span> <span class="pre">[])</span></code>.</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">source_dir</span></code> (string, optional)
 Directory holding the bundle’s own doc sources. It is globbed the same way as
@@ -614,16 +615,19 @@ Directory holding the bundle’s own doc sources. It is globbed the same way as
 <code class="docutils literal notranslate"><span class="pre">concept/index.rst</span></code> with <code class="docutils literal notranslate"><span class="pre">source_dir</span> <span class="pre">=</span> <span class="pre">&quot;concept&quot;</span></code> becomes <code class="docutils literal notranslate"><span class="pre">index.rst</span></code>).
 The bundle exposes those files as a Bazel depset (via the <code class="docutils literal notranslate"><span class="pre">DocsBundleInfo</span></code>
 provider) and records the <code class="docutils literal notranslate"><span class="pre">source_dir</span></code> path; sphinx-mounts walks that original
-directory directly — no copy is made. Leave it unset for a data-only bundle
-or for an aggregator that only composes other <code class="docutils literal notranslate"><span class="pre">bundles</span></code>.</p></li>
+directory directly — no copy is made. Leave it unset for a bundle whose
+sources are supplied explicitly or for an aggregator that only composes
+other <code class="docutils literal notranslate"><span class="pre">bundles</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">srcs</span></code> (list of bazel labels, optional)
+Explicit documentation source files, including generated outputs from a
+build action. Use this for a source-less bundle whose documentation is
+generated. All files must share one parent directory. It cannot be combined
+with <code class="docutils literal notranslate"><span class="pre">source_dir</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">data</span></code> (list of bazel labels, optional)
-Supporting or generated files owned by this bundle. These files are part of
-the bundle payload and are available at the bundle’s eventual mount path;
-they are useful for generated documentation sources such as a generated
-<code class="docutils literal notranslate"><span class="pre">index.rst</span></code>. If <code class="docutils literal notranslate"><span class="pre">source_dir</span></code> is omitted and <code class="docutils literal notranslate"><span class="pre">data</span></code> contains the
-bundle’s deliverable, the result is a data-only bundle. Use this attribute
-for any file that belongs with the mounted bundle. Use
-<code class="docutils literal notranslate"><span class="pre">docs(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code> only for project-level inputs outside a bundle.</p></li>
+Supporting or runtime files owned by this bundle. These files are part of the
+bundle payload and are available at the bundle’s eventual mount path, but are
+not processed as the bundle’s documentation sources. Use <code class="docutils literal notranslate"><span class="pre">docs(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code>
+for supporting files in the root bundle and this attribute for child bundles.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">entry_doc</span></code> (string, optional)
 Bundle-relative docname used as the canonical navigation entry. It defaults to
 <code class="docutils literal notranslate"><span class="pre">index</span></code>. Every mount attaches this entry to the parent <code class="docutils literal notranslate"><span class="pre">index</span></code> toctree by
@@ -789,7 +793,7 @@ targets are included in the <code class="docutils literal notranslate"><span cla
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#supporting-files-project-inputs-and-bundle-payloads">Supporting files: project inputs and bundle payloads</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bundle-content-and-supporting-files">Bundle content and supporting files</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#minimal-example-root-build">Minimal example (root <code class="docutils literal notranslate"><span class="pre">BUILD</span></code>)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bazel-macro-docs-bundle">Bazel macro: <code class="docutils literal notranslate"><span class="pre">docs_bundle</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#needs-exports-between-bundles">Needs exports between bundles</a></li>
