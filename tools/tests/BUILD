@@ -23,3 +23,12 @@ score_pytest(
     ] + all_requirements,
     pytest_config = "//:pyproject.toml",
 )
+
+score_pytest(
+    name = "docs_delta_test",
+    srcs = ["docs_delta_test.py"],
+    deps = [
+        "//tools:docs_delta",
+    ] + all_requirements,
+    pytest_config = "//:pyproject.toml",
+)
