@@ -2648,7 +2648,7 @@
   {
     "name": "test_resolver__test_load_single_entry",
     "file": "src/extensions/score_mounts/tests/test_resolver.py",
-    "line": "38",
+    "line": "39",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2662,7 +2662,7 @@
   {
     "name": "test_resolver__test_load_entry_with_attach_to_and_entry_doc",
     "file": "src/extensions/score_mounts/tests/test_resolver.py",
-    "line": "62",
+    "line": "63",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2676,7 +2676,7 @@
   {
     "name": "test_resolver__test_external_mount_keeps_execroot_and_runfiles_locations",
     "file": "src/extensions/score_mounts/tests/test_resolver.py",
-    "line": "82",
+    "line": "83",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2690,7 +2690,7 @@
   {
     "name": "test_resolver__test_load_missing_required_key_raises",
     "file": "src/extensions/score_mounts/tests/test_resolver.py",
-    "line": "109",
+    "line": "110",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2704,7 +2704,7 @@
   {
     "name": "test_resolver__test_load_non_object_raises",
     "file": "src/extensions/score_mounts/tests/test_resolver.py",
-    "line": "115",
+    "line": "116",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2718,7 +2718,7 @@
   {
     "name": "test_resolver__test_external_mount_uses_execroot_path_in_sandbox",
     "file": "src/extensions/score_mounts/tests/test_resolver.py",
-    "line": "122",
+    "line": "123",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2732,7 +2732,7 @@
   {
     "name": "test_resolver__test_external_mount_uses_runfiles_root_under_bazel_run",
     "file": "src/extensions/score_mounts/tests/test_resolver.py",
-    "line": "145",
+    "line": "146",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2746,7 +2746,7 @@
   {
     "name": "test_resolver__test_generated_source_mount_uses_bazel_bin_under_bazel_run",
     "file": "src/extensions/score_mounts/tests/test_resolver.py",
-    "line": "168",
+    "line": "169",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2760,7 +2760,21 @@
   {
     "name": "test_resolver__test_generated_root_source_mount_uses_bazel_bin_under_bazel_run",
     "file": "src/extensions/score_mounts/tests/test_resolver.py",
-    "line": "196",
+    "line": "197",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_resolver__test_explicit_source_files_resolve_below_original_root",
+    "file": "src/extensions/score_mounts/tests/test_resolver.py",
+    "line": "222",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2774,7 +2788,7 @@
   {
     "name": "test_resolver__test_generated_source_mount_uses_execroot_in_sandbox",
     "file": "src/extensions/score_mounts/tests/test_resolver.py",
-    "line": "221",
+    "line": "250",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2954,9 +2968,23 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_mounts__test_setup_skips_toml_sync_without_git_worktree",
+    "name": "test_mounts__test_materialize_mounts_preserves_explicit_source_files",
     "file": "src/extensions/score_sync_toml/test_mounts.py",
     "line": "75",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_mounts__test_setup_skips_toml_sync_without_git_worktree",
+    "file": "src/extensions/score_sync_toml/test_mounts.py",
+    "line": "103",
     "result": "passed",
     "repo_name": null,
     "hash": null,
