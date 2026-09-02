@@ -69,9 +69,17 @@ repos:
     hooks:
       - id: BasedPyright
         name: BasedPyright
+        # BasedPyright always checks the whole project, so filenames are not
+        # passed. The file filter below still decides whether this slow hook
+        # has to run at all: only Python sources or its own configuration can
+        # change the result.
+        # Warnings are turned into a non-zero exit code by `failOnWarnings`
+        # in pyproject.toml; without it a warning-only run would exit 0 and
+        # this hook would silently pass.
         entry: bash -c 'bazel run //:ide_support && .venv_docs/bin/python3 -m basedpyright'
         language: system
         pass_filenames: false
+        files: '(\.py$|^pyproject\.toml$|^src/requirements\.(in|txt)$)'
 
   # Ensure every file has a copyright header as per the Eclipse Foundation's requirements
   # CR_CHECKER

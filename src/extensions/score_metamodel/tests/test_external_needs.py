@@ -24,7 +24,7 @@ import pytest
 import score_metamodel.external_needs as ext_needs
 from score_metamodel.external_needs import (
     ExternalNeedsSource,
-    _add_needs_json_file,
+    _add_needs_json_file,  # pyright: ignore[reportPrivateUsage] - white-box unit test
     add_external_docs_sources,
     add_external_needs_json,
     get_external_needs_source,

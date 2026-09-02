@@ -35,6 +35,7 @@ from src.extensions.score_mounts._resolver import (
     MountsManifest,
     MountSpec,
     load_mounts_manifest,
+    resolve_source_files,
     resolve_walk_dir,
 )
 from src.helper_lib import find_ws_root, get_runfiles_dir
@@ -117,7 +118,7 @@ def _canonical_mount_dir(walk_dir: Path, spec: MountSpec) -> Path:
       files inside that directory can be symlinks to Bazel's repository
       cache, for example
       ``~/.cache/bazel/.../external/score_process_description+/process/index.rst``.
-    - for generated data bundles, the mount root may be the sandbox copy of a
+    - for generated bundle sources or data, the mount root may be the sandbox copy of a
       ``bazel-out`` directory, for example
       ``.../sandbox/.../execroot/_main/bazel-out/.../docs/generated``;
       generated files below it can resolve to the action execroot spelling,
@@ -129,8 +130,8 @@ def _canonical_mount_dir(walk_dir: Path, spec: MountSpec) -> Path:
       ``.../sandbox/.../execroot/_main/score/socom/docs/index.rst``
       ``→ /home/user/workspace/score/socom/docs/index.rst``.
 
-    This applies to all bundle types: external repositories, generated data
-    bundles, and in-tree (same-workspace) source bundles.  Resolve one mounted
+    This applies to all bundle types: external repositories, generated bundle
+    sources or data, and in-tree (same-workspace) source bundles. Resolve one mounted
     source file first and walk back by its bundle-relative suffix to get the
     canonical root.
 
@@ -171,6 +172,28 @@ def _make_mount_entry(walk_dir: Path, spec: MountSpec) -> dict[str, object]:
     }
 
 
+def _make_file_mount_entry(
+    source_files: list[Path], spec: MountSpec
+) -> dict[str, object]:
+    """Build a file-list mount entry from the original source files."""
+    return {
+        "files": [str(source_file) for source_file in source_files],
+        "mount_at": spec.mount_at,
+        "attach_to": spec.attach_to,
+        "entry_doc": spec.entry_doc,
+    }
+
+
+def _configured_source_suffixes(config: Config) -> tuple[str, ...]:
+    """Return the source suffixes configured for the current Sphinx build."""
+    configured = config.source_suffix
+    # Sphinx accepts either a sequence of suffixes or a mapping from suffixes
+    # to parser names; both forms expose the suffixes during iteration.
+    if isinstance(configured, str):
+        return (configured,)
+    return tuple(configured)
+
+
 def _on_config_inited(app: Sphinx, config: Config) -> None:
     """Translate the Bazel manifest into ``sphinx_mounts`` runtime config.
 
@@ -186,8 +209,9 @@ def _on_config_inited(app: Sphinx, config: Config) -> None:
     ws_root = find_ws_root()
     runfiles_dir = get_runfiles_dir() if ws_root is not None else None
 
-    # In every context sphinx_mounts walks the bundle's original files (no copy is
-    # made); only where those files are staged differs:
+    # In every context sphinx_mounts reads the bundle's original files (no copy
+    # is made); directory mounts are walked while explicit source mounts use
+    # their declared file list. Only where those files are staged differs:
     #   * external bundle: use its runfiles-relative location under ``bazel run``
     #     and its execroot-relative location in a sandboxed Bazel build.
     #   * in-tree bundle under `bazel run`: use the live workspace source
@@ -201,6 +225,25 @@ def _on_config_inited(app: Sphinx, config: Config) -> None:
     runtime_mounts: list[dict[str, object]] = []
     for spec in manifest.mounts:
         if not spec.src_root:
+            continue
+        if spec.files:
+            # Explicit source bundles use sphinx-mounts' file-list mode so the
+            # original files are read directly without discovering siblings.
+            source_files = resolve_source_files(manifest, spec, ws_root, runfiles_dir)
+            source_suffixes = _configured_source_suffixes(config)
+            document_files = [
+                source_file
+                for source_file in source_files
+                if any(source_file.name.endswith(suffix) for suffix in source_suffixes)
+            ]
+            if not document_files:
+                # An explicit bundle may contain only companion assets. Such
+                # assets remain available at their original paths, but there
+                # is no Sphinx document to register for this mount.
+                continue
+            # Companion assets stay in the original source directory and are
+            # resolved relative to the explicitly mounted document.
+            runtime_mounts.append(_make_file_mount_entry(document_files, spec))
             continue
         walk_dir = resolve_walk_dir(manifest, spec, ws_root, runfiles_dir)
         if not walk_dir.is_dir():

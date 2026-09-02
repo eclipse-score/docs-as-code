@@ -12,10 +12,7 @@
    # SPDX-License-Identifier: Apache-2.0
    # *******************************************************************************
 
-Host page with generated bundle data
-====================================
+Undeclared Sibling Page
+=======================
 
-The host project can mount a pure-data bundle and include its generated page
-in the documentation navigation.
-
-The explicitly declared source bundle also mounts only its declared page.
+This page must not be mounted by the explicit source bundle.

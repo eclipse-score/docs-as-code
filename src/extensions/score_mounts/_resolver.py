@@ -29,6 +29,8 @@ from typing import cast
 
 @dataclass(frozen=True)
 class MountSpec:
+    """Describe one documentation mount and how its source root is resolved."""
+
     src_root: str
     runtime_path: str
     mount_at: str
@@ -36,6 +38,12 @@ class MountSpec:
     entry_doc: str = "index"
     external: bool = False
     repository: str = ""
+    # Generated roots use bazel-bin under ``bazel run`` and bazel-out in a
+    # sandbox; source and external roots follow their normal path rules.
+    generated: bool = False
+    # Explicit source bundles provide paths relative to ``runtime_path`` so
+    # the mount can use the original files without recursively walking peers.
+    files: list[str] = field(default_factory=list)
     data: list[str] = field(default_factory=list)
 
 
@@ -75,6 +83,11 @@ def load_mounts_manifest(manifest_path: str | Path) -> MountsManifest:
             raise ValueError(
                 f"mounts manifest entry field 'data' must be a list: {raw_data!r}"
             )
+        raw_files = entry.get("files", [])
+        if not isinstance(raw_files, list):
+            raise ValueError(
+                f"mounts manifest entry field 'files' must be a list: {raw_files!r}"
+            )
         mounts.append(
             MountSpec(
                 src_root=str(entry["src_root"]),
@@ -86,6 +99,10 @@ def load_mounts_manifest(manifest_path: str | Path) -> MountsManifest:
                 else "index",
                 external=bool(entry.get("external", False)),
                 repository=str(entry.get("repository", "")),
+                # Older manifests do not have this field and represent regular
+                # workspace or external-repository source roots.
+                generated=bool(entry.get("generated", False)),
+                files=[str(f) for f in cast("list[object]", raw_files)],
                 data=[str(f) for f in cast("list[object]", raw_data)],
             )
         )
@@ -98,7 +115,33 @@ def resolve_walk_dir(
     ws_root: Path | None,
     runfiles_dir: Path | None = None,
 ) -> Path:
-    """Resolve a mount directory for either ``bazel run`` or a sandbox build."""
+    """Resolve a mount directory for either ``bazel run`` or a sandbox build.
+
+    Generated source roots are recorded with their execroot-relative bazel-out
+    path, while ``bazel run`` exposes the same artifacts below ``bazel-bin`` in
+    the workspace. The ``generated`` flag selects that translation.
+
+    For example, a generated ``bazel-out/k8-fastbuild/bin/pkg/docs`` root
+    resolves to ``<workspace>/bazel-bin/pkg/docs`` under ``bazel run`` and to
+    ``<execroot>/bazel-out/k8-fastbuild/bin/pkg/docs`` in a sandbox. A regular
+    workspace source resolves to ``<workspace>/<src_root>`` under ``bazel run``
+    and ``<execroot>/<src_root>`` in a sandbox.
+    """
+    if spec.generated:
+        if ws_root is not None:
+            # Generated source files are exposed through bazel-bin at runtime,
+            # while their manifest paths are execroot-relative bazel-out paths.
+            output_parts = spec.src_root.split("/")
+            if (
+                # A generated file may be directly below the configuration's
+                # ``bin`` directory, so the source root itself can end there.
+                len(output_parts) >= 3
+                and output_parts[0] == "bazel-out"
+                and output_parts[2] == "bin"
+            ):
+                return ws_root / "bazel-bin" / "/".join(output_parts[3:])
+            return ws_root / spec.src_root
+        return Path.cwd() / spec.src_root
     if spec.external and ws_root is not None:
         if runfiles_dir is None:
             raise ValueError("external mounts under bazel run require RUNFILES_DIR")
@@ -109,3 +152,28 @@ def resolve_walk_dir(
     if ws_root is not None:
         return ws_root / spec.src_root
     return Path.cwd() / spec.src_root
+
+
+def resolve_source_files(
+    manifest: MountsManifest,
+    spec: MountSpec,
+    ws_root: Path | None,
+    runfiles_dir: Path | None = None,
+) -> list[Path]:
+    """Resolve an explicit source allowlist below its original parent.
+
+    ``src_root`` uses the same context-dependent resolution as directory
+    mounts. The manifest's relative file names then identify only the Bazel
+    artifacts declared by ``docs_bundle(srcs = [...])``.
+    """
+    walk_dir = resolve_walk_dir(manifest, spec, ws_root, runfiles_dir)
+    resolved_files = []
+    for relative_path in spec.files:
+        source_file = walk_dir / relative_path
+        if not source_file.is_file():
+            raise ValueError(
+                "score_mounts: resolved source file does not exist: "
+                f"{source_file} (mount_at={spec.mount_at})"
+            )
+        resolved_files.append(source_file)
+    return resolved_files

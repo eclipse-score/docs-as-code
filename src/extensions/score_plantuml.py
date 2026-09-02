@@ -25,8 +25,11 @@ In addition it sets common PlantUML options, like output to svg_obj.
 """
 
 import subprocess
+from collections.abc import Iterator
 from pathlib import Path
+from typing import cast
 
+from docutils import nodes
 from sphinx.application import Sphinx
 from sphinx.util import logging
 
@@ -35,7 +38,9 @@ from src.helper_lib import config_setdefault, get_runfiles_dir
 logger = logging.getLogger(__name__)
 
 
-def use_document_source_as_plantuml_cwd(app: Sphinx, doctree, docname: str) -> None:
+def use_document_source_as_plantuml_cwd(
+    app: Sphinx, doctree: nodes.document, docname: str
+) -> None:
     """Make PlantUML includes resolve from the real source-file directory.
 
     ``sphinx_mounts`` assigns mounted documents a logical docname below the
@@ -56,7 +61,10 @@ def use_document_source_as_plantuml_cwd(app: Sphinx, doctree, docname: str) -> N
     from sphinxcontrib.plantuml import plantuml
 
     del app, docname  # Required by Sphinx's event callback signature.
-    for node in doctree.findall(plantuml):
+    # ``sphinxcontrib.plantuml`` ships no type information; its nodes are
+    # ordinary docutils elements.
+    plantuml_nodes = cast("Iterator[nodes.Element]", doctree.findall(plantuml))
+    for node in plantuml_nodes:
         if node.source is None:
             continue
         source = Path(node.source)

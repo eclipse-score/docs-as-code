@@ -25,18 +25,27 @@ See :doc:`commands <commands>` for the targets/commands it creates.
 
 The macro must be called from the repository root package.
 
-Supporting files
-----------------
+Bundle content and supporting files
+-----------------------------------
 
-Documentation supporting files always belong to a ``docs_bundle``. The
-``data`` argument of ``docs()`` is shorthand for adding files to the root
-``:docs_bundle`` that the macro exposes. A mounted module puts its files in
-its own ``docs_bundle(data = [...])``; those files travel with that bundle and
-are resolved below its eventual ``mount_at`` path.
+There are two ways to add files to a bundle. The ``data`` argument of ``docs()``
+is shorthand for supporting files in the root ``:docs_bundle``:
 
-A bundle with ``data`` but no ``source_dir`` is simply a bundle whose content
-is generated or supporting files. It uses the same ownership and placement
-mechanism as every other bundle.
+* ``docs_bundle(srcs = [...])`` puts documentation source files in a bundle.
+  The files may be generated outputs from another build action; they are
+  processed as documentation sources and resolved below the bundle's eventual
+  ``mount_at`` path.
+* ``docs_bundle(data = [...])`` puts supporting or runtime files in a bundle
+  payload. Use this for files that belong at the mount but are not themselves
+  documentation sources.
+* ``docs(data = [...])`` puts supporting files in the root ``:docs_bundle``
+  exposed by ``docs()``. A mounted module puts its files in its own bundle;
+  these files travel with that bundle and are resolved below its eventual
+  ``mount_at`` path.
+
+If a file is mounted documentation, use ``docs_bundle(srcs = [...])``. Both
+bundle attributes make files available to a build; they differ in whether the
+files are processed as documentation sources or carried as supporting data.
 
 Minimal example (root ``BUILD``)
 --------------------------------
@@ -160,7 +169,7 @@ site).
        visibility = ["//visibility:public"],
    )
 
-Signature: ``docs_bundle(name, source_dir = None, data = [], entry_doc = "index", bundles = [], scan_code = [], code_targets = [], visibility = None)``.
+Signature: ``docs_bundle(name, source_dir = None, srcs = [], data = [], entry_doc = "index", bundles = [], scan_code = [], code_targets = [], visibility = None)``.
 
 - ``source_dir`` (string, optional)
   Directory holding the bundle's own doc sources. It is globbed the same way as
@@ -169,16 +178,21 @@ Signature: ``docs_bundle(name, source_dir = None, data = [], entry_doc = "index"
   ``concept/index.rst`` with ``source_dir = "concept"`` becomes ``index.rst``).
   The bundle exposes those files as a Bazel depset (via the ``DocsBundleInfo``
   provider) and records the ``source_dir`` path; sphinx-mounts walks that original
-  directory directly — no copy is made. Leave it unset for a data-only bundle
-  or for an aggregator that only composes other ``bundles``.
+  directory directly — no copy is made. Leave it unset for a bundle whose
+  sources are supplied explicitly or for an aggregator that only composes
+  other ``bundles``.
+
+- ``srcs`` (list of bazel labels, optional)
+  Explicit documentation source files, including generated outputs from a
+  build action. Use this for a source-less bundle whose documentation is
+  generated. All files must share one parent directory. It cannot be combined
+  with ``source_dir``.
 
 - ``data`` (list of bazel labels, optional)
-  Supporting or generated files owned by this bundle. These files are part of
-  the bundle payload and are available at the bundle's eventual mount path;
-  they are useful for generated documentation sources such as a generated
-  ``index.rst``. If ``source_dir`` is omitted and ``data`` contains the
-  bundle's deliverable, the result is a bundle containing only supporting
-  files. Use this attribute for every file that belongs with a mounted bundle.
+  Supporting or runtime files owned by this bundle. These files are part of the
+  bundle payload and are available at the bundle's eventual mount path, but are
+  not processed as the bundle's documentation sources. Use ``docs(data = [...])``
+  for supporting files in the root bundle and this attribute for child bundles.
 
 - ``entry_doc`` (string, optional)
   Bundle-relative docname used as the canonical navigation entry. It defaults to

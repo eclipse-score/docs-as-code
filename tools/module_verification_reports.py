@@ -40,6 +40,7 @@ import time
 import tomllib
 from collections.abc import Callable, Iterator, Mapping, Sequence
 from pathlib import Path
+from typing import cast
 from urllib.parse import urlparse
 
 GITHUB_ORG = "eclipse-score"
@@ -172,9 +173,9 @@ def load_profile(profile_name: str, config_dir: Path | None = None) -> Profile:
     except tomllib.TOMLDecodeError as exc:
         raise ReportToolError(f"invalid profile {path}: {exc}") from exc
 
-    raw_repositories = raw_data.get("repositories")
+    raw_repositories: object = raw_data.get("repositories")
     if not isinstance(raw_repositories, list) or not all(
-        isinstance(item, dict) for item in raw_repositories
+        isinstance(item, dict) for item in cast("list[object]", raw_repositories)
     ):
         raise ReportToolError(
             f"repositories file must define repository tables: {path}"
@@ -184,7 +185,7 @@ def load_profile(profile_name: str, config_dir: Path | None = None) -> Profile:
     seen: set[str] = set()
     repositories.extend(
         _parse_repository_entry(entry, profile_name, path, seen)
-        for entry in raw_repositories
+        for entry in cast("list[Mapping[str, object]]", raw_repositories)
     )
 
     if not repositories:
@@ -615,15 +616,21 @@ def _flatten_needs(needs_json: Path) -> dict[str, dict[str, object]]:
         raise ReportToolError(
             f"cannot read generated needs JSON {needs_json}: {exc}"
         ) from exc
-    if not isinstance(payload, dict) or not isinstance(payload.get("versions"), dict):
+    if not isinstance(payload, dict):
+        raise ReportToolError(f"generated needs JSON has no versions map: {needs_json}")
+    versions = cast("dict[str, object]", payload).get("versions")
+    if not isinstance(versions, dict):
         raise ReportToolError(f"generated needs JSON has no versions map: {needs_json}")
     result: dict[str, dict[str, object]] = {}
-    for version in payload["versions"].values():
-        if not isinstance(version, dict) or not isinstance(version.get("needs"), dict):
+    for version in cast("dict[str, object]", versions).values():
+        if not isinstance(version, dict):
             continue
-        for need_id, need in version["needs"].items():
-            if isinstance(need_id, str) and isinstance(need, dict):
-                result[need_id] = need
+        needs = cast("dict[str, object]", version).get("needs")
+        if not isinstance(needs, dict):
+            continue
+        for need_id, need in cast("dict[str, object]", needs).items():
+            if isinstance(need, dict):
+                result[need_id] = cast("dict[str, object]", need)
     return result
 
 
@@ -634,11 +641,13 @@ def _link_ids(need: Mapping[str, object], field: str) -> list[str]:
     if not isinstance(raw, list):
         return []
     result: list[str] = []
-    for value in raw:
+    for value in cast("list[object]", raw):
         if isinstance(value, str):
             result.append(value.split("[", 1)[0])
-        elif isinstance(value, dict) and isinstance(value.get("id"), str):
-            result.append(value["id"])
+        elif isinstance(value, dict):
+            link_id = cast("dict[str, object]", value).get("id")
+            if isinstance(link_id, str):
+                result.append(link_id)
     return result
 
 
@@ -784,7 +793,7 @@ details pre{white-space:pre-wrap;word-break:break-word;background:#fff6f6;paddin
 def _write_manifest(
     output_dir: Path, profile: Profile, results: Sequence[RepositoryResult]
 ) -> None:
-    manifest = {
+    manifest: dict[str, object] = {
         "profile": profile.name,
         "repositories": [result.manifest_entry() for result in results],
     }

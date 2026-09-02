@@ -72,6 +72,34 @@ def test_materialize_mounts_maps_external_runfiles_path_to_bazel_bin(
     )
 
 
+def test_materialize_mounts_preserves_explicit_source_files(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Serialize explicit mounts as files instead of widening them to dirs."""
+    git_root = tmp_path / "workspace"
+    git_root.mkdir()
+    monkeypatch.setattr(_mounts, "find_git_root", lambda: git_root)
+
+    fragment = materialize_mounts(
+        [
+            {
+                "files": [
+                    str(git_root / "generated" / "index.rst"),
+                    str(git_root / "generated" / "guide.rst"),
+                ],
+                "mount_at": "generated",
+            }
+        ]
+    )
+
+    assert fragment is not None
+    assert fragment.read_text(encoding="utf-8") == (
+        "[[mounts]]\n"
+        'files = ["generated/index.rst", "generated/guide.rst"]\n'
+        'mount_at = "generated"\n'
+    )
+
+
 def test_setup_skips_toml_sync_without_git_worktree(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:

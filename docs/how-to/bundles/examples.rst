@@ -51,12 +51,13 @@ If the parent is mounted at ``guides/example``, its page is rendered at
 ``guides/example/child/landing.html``. The consuming project can change
 ``guides/example`` without changing either bundle.
 
-Mount generated documentation
------------------------------
+Mount generated bundle content
+------------------------------
 
-When a build action produces documentation rather than a source-tree ``.rst``
-file, create a bundle without ``source_dir``. Its generated files are the
-bundle's complete payload. You can generate and mount a page like this:
+Use explicit ``srcs`` when a build action produces the documentation rather
+than a source-tree ``.rst`` file. The source-less bundle has no ``source_dir``;
+its generated files are the bundle's complete source payload. You can generate
+and mount a page like this:
 
 .. code-block:: starlark
 
@@ -68,10 +69,10 @@ bundle's complete payload. You can generate and mount a page like this:
    ===================' > $@""",
    )
 
-   # Pure-data bundle: the genrule output lives in ``bazel-out/``, not the tree.
+   # Source bundle: the genrule output lives in ``bazel-out/``, not the tree.
    docs_bundle(
        name = "data_bundle",
-       data = [":generated_page"],
+       srcs = [":generated_page"],
        entry_doc = "index",
        visibility = ["//visibility:public"],
    )
@@ -89,8 +90,8 @@ See the `complete generated-data fixture on GitHub
 <https://github.com/eclipse-score/docs-as-code/tree/main/src/tests/docs_bzl/scenarios/data_files_runfiles>`_.
 
 The generated page is rendered at ``data_test/index.html`` and is added to the
-consuming project's index page's toctree. It is mounted and navigated in
-exactly the same way as a bundle with source files.
+consuming project's index page's toctree. A generated source bundle is mounted
+and navigated in exactly the same way as a bundle with workspace sources.
 
 Mount documentation from another module
 ----------------------------------------

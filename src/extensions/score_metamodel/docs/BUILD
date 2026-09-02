@@ -39,7 +39,8 @@ py_binary(
 
 docs_bundle(
     name = "metamodel",
-    data = [":generate_metamodel_rst"],
+    # The generated RST and Mermaid outputs form one explicit source tree.
+    srcs = [":generate_metamodel_rst"],
     entry_doc = "index",
     visibility = ["//visibility:public"],
 )
