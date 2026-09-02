@@ -1528,7 +1528,7 @@
   {
     "name": "test_testcase_annotations__test_annotates_external_github_testlink",
     "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
-    "line": "37",
+    "line": "49",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -1542,7 +1542,7 @@
   {
     "name": "test_testcase_annotations__test_does_not_annotate_reference_without_result_suffix",
     "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
-    "line": "57",
+    "line": "69",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -1556,7 +1556,7 @@
   {
     "name": "test_testcase_annotations__test_does_not_annotate_link_without_result_suffix",
     "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
-    "line": "71",
+    "line": "83",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -1570,7 +1570,7 @@
   {
     "name": "test_testcase_annotations__test_does_not_annotate_same_reference_twice",
     "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
-    "line": "85",
+    "line": "97",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -2564,7 +2564,7 @@
   {
     "name": "test_data_mounts__test_missing_data_file_raises",
     "file": "src/extensions/score_mounts/tests/test_data_mounts.py",
-    "line": "23",
+    "line": "26",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2578,7 +2578,7 @@
   {
     "name": "test_data_mounts__test_existing_data_file_resolved",
     "file": "src/extensions/score_mounts/tests/test_data_mounts.py",
-    "line": "40",
+    "line": "43",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2592,7 +2592,7 @@
   {
     "name": "test_data_mounts__test_mount_entry_uses_canonical_directory_for_symlinked_bundle",
     "file": "src/extensions/score_mounts/tests/test_data_mounts.py",
-    "line": "62",
+    "line": "65",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2606,7 +2606,7 @@
   {
     "name": "test_data_mounts__test_canonical_mount_dir_in_tree_sandbox_bundle",
     "file": "src/extensions/score_mounts/tests/test_data_mounts.py",
-    "line": "88",
+    "line": "91",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2620,7 +2620,7 @@
   {
     "name": "test_data_mounts__test_canonical_mount_dir_empty_bundle_fallback",
     "file": "src/extensions/score_mounts/tests/test_data_mounts.py",
-    "line": "113",
+    "line": "116",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2634,7 +2634,7 @@
   {
     "name": "test_data_mounts__test_mount_entry_uses_canonical_directory_for_generated_data_bundle",
     "file": "src/extensions/score_mounts/tests/test_data_mounts.py",
-    "line": "128",
+    "line": "131",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2928,7 +2928,7 @@
   {
     "name": "test_check_needs_extends__test_filter_reports_cross_document_or_match_without_changing_directive",
     "file": "src/extensions/score_metamodel/tests/test_check_needs_extends.py",
-    "line": "83",
+    "line": "84",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2942,7 +2942,7 @@
   {
     "name": "test_check_needs_extends__test_id_shorthand_reports_cross_document_match",
     "file": "src/extensions/score_metamodel/tests/test_check_needs_extends.py",
-    "line": "105",
+    "line": "106",
     "result": "passed",
     "repo_name": null,
     "hash": null,
