@@ -38,11 +38,11 @@
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-data-viewer/jsonview.bundle.css?v=f6ef2277" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/libs/html/datatables.min.css?v=4b4fd840" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_style.css?v=92936fa5" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/needstable.css?v=5e1b6797" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_toggle.css?v=5c6620df" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_core.css?v=f5b60a78" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/needstable.css?v=5e1b6797" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_links.css?v=2150a916" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_style.css?v=92936fa5" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_core.css?v=f5b60a78" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/modern.css?v=803738c0" />
   
   <!-- So that users can add custom icons -->
@@ -606,7 +606,7 @@ site).</p>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>Signature: <code class="docutils literal notranslate"><span class="pre">docs_bundle(name,</span> <span class="pre">source_dir</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">srcs</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">data</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">entry_doc</span> <span class="pre">=</span> <span class="pre">&quot;index&quot;,</span> <span class="pre">bundles</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">scan_code</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">code_targets</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">visibility</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">upward_bundles</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">deps</span> <span class="pre">=</span> <span class="pre">[])</span></code>.</p>
+<p>Signature: <code class="docutils literal notranslate"><span class="pre">docs_bundle(name,</span> <span class="pre">source_dir</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">srcs</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">data</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">entry_doc</span> <span class="pre">=</span> <span class="pre">&quot;index&quot;,</span> <span class="pre">bundles</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">scan_code</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">code_targets</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">visibility</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">deps</span> <span class="pre">=</span> <span class="pre">[])</span></code>.</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">source_dir</span></code> (string, optional)
 Directory holding the bundle’s own doc sources. It is globbed the same way as
@@ -620,9 +620,9 @@ sources are supplied explicitly or for an aggregator that only composes
 other <code class="docutils literal notranslate"><span class="pre">bundles</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">srcs</span></code> (list of bazel labels, optional)
 Explicit documentation source files, including generated outputs from a
-build action. Use this for a source-less bundle whose documentation is
-generated. All files must share one parent directory. It cannot be combined
-with <code class="docutils literal notranslate"><span class="pre">source_dir</span></code>.</p></li>
+build action. Use this when the documentation sources are generated. All
+files must share one parent directory. It cannot be combined with
+<code class="docutils literal notranslate"><span class="pre">source_dir</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">data</span></code> (list of bazel labels, optional)
 Supporting or runtime files owned by this bundle. These files are part of the
 bundle payload and are available at the bundle’s eventual mount path, but are
@@ -643,74 +643,24 @@ this bundle.</p></li>
 receives the child’s bundle-defined entry document. When omitted, the parent
 <code class="docutils literal notranslate"><span class="pre">index</span></code> document receives it.</p></li>
 </ul>
-<dl class="simple">
-<dt>A child’s <code class="docutils literal notranslate"><span class="pre">mount_at</span></code>/<code class="docutils literal notranslate"><span class="pre">attach_to</span></code> <strong>prefix-stack</strong> with the placement this</dt><dd><p>bundle later receives, so composition is fully transitive. The same underlying
+<p>A child’s <code class="docutils literal notranslate"><span class="pre">mount_at</span></code>/<code class="docutils literal notranslate"><span class="pre">attach_to</span></code> <strong>prefix-stack</strong> with the placement this
+bundle later receives, so composition is fully transitive. The same underlying
 bundle resolving to two different final <code class="docutils literal notranslate"><span class="pre">mount_at</span></code> values is a hard build
 error. See <a class="reference internal" href="../how-to/bundles/index.html#howto-mount-external-sources"><span class="std std-ref">How to use bundles</span></a> for a worked example and
 <a class="reference internal" href="../concepts/mounts/index.html#docs-concept-mounts"><span class="std std-ref">Documentation bundles and mounts</span></a> for the composition and transitivity semantics.</p>
-</dd>
-</dl>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">upward_bundles</span></code> (list of <code class="docutils literal notranslate"><span class="pre">docs_bundle</span></code> labels, optional)
-Documentation bundles whose Needs are directly above this bundle in the
-documentation hierarchy. A source-bearing bundle creates
-<code class="docutils literal notranslate"><span class="pre">&lt;name&gt;.__internal__.needs_local</span></code> containing its direct sources and
-<code class="docutils literal notranslate"><span class="pre">&lt;name&gt;.__internal__.needs_upward</span></code> for the merged export of those sources
-and the explicitly listed ancestors. While producing the local export, the
-direct ancestors’ own exports are available as external context so links in
-the local sources are resolved; the ancestor Needs are not repeated in the
-local output. List every ancestor that should be visible: ancestors of a
-listed bundle are not included implicitly.
-Here, <code class="docutils literal notranslate"><span class="pre">local</span></code> describes the Needs emitted by the target, not the complete
-set of Needs available while it is built.
-Only source-bearing bundles can be listed in <code class="docutils literal notranslate"><span class="pre">upward_bundles</span></code>. A
-source-less hierarchy group has no own Needs export; list its direct
-source-bearing ancestors explicitly instead of using its merged upward
-export, which would introduce transitive dependencies.
-Data-only bundles do not create Needs targets. Support for Needs declared in
-generated bundle data is intentionally left for a later change.
-Bundle-local exports intentionally leave <code class="docutils literal notranslate"><span class="pre">project_url</span></code> empty because the
-same bundle may be consumed by different documentation hosts. When an own
-export is imported, its links use the URL stored in the export; if that
-value is empty, they fall back to the consuming host’s <code class="docutils literal notranslate"><span class="pre">project_url</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">needs_local</span></code> (internal target)
+A source-bearing bundle creates <code class="docutils literal notranslate"><span class="pre">&lt;name&gt;.__internal__.needs_local</span></code> with the
+Needs declared by its own sources. The standalone build is intentionally
+self-contained in this version: references to Needs defined outside the
+bundle remain unresolved and fail strict builds. Cross-bundle imports and
+merged exports are planned for a later change. Data-only bundles do not
+create a Needs target.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">deps</span></code> (list of bazel labels, optional)
 Additional dependencies for the bundle-local Needs Sphinx build. <code class="docutils literal notranslate"><span class="pre">docs()</span></code>
 passes its documentation dependencies through this parameter so custom
 Sphinx extensions used by the bundle configuration are available.</p></li>
 </ul>
-<section id="needs-exports-between-bundles">
-<h3>Needs exports between bundles<a class="headerlink" href="#needs-exports-between-bundles" title="Link to this heading">#</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">upward_bundles</span></code> describes a Needs dependency only. The listed bundles are
-not mounted as documentation sources. Each source-bearing bundle creates two
-internal artifacts:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>platform/index.rst
-    │ Sphinx, own sources only
-    ▼
-platform.__internal__.needs_local
-    │ merge_needs_json
-    ▼
-platform.__internal__.needs_upward
-
-component/index.rst + platform.__internal__.needs_local as external context
-    │ Sphinx, own sources only; links to platform are resolved
-    ▼
-component.__internal__.needs_local
-    │ merge_needs_json(platform.__internal__.needs_local)
-    ▼
-component.__internal__.needs_upward
-</pre></div>
-</div>
-<p><code class="docutils literal notranslate"><span class="pre">&lt;name&gt;.__internal__.needs_local</span></code> contains only the Needs from the bundle’s own sources. The
-upward exports are loaded only as external resolution context during this Sphinx
-run. <code class="docutils literal notranslate"><span class="pre">&lt;name&gt;.__internal__.needs_upward</span></code> is then the merge of the own export
-and the own exports of the explicitly listed direct ancestors. A child bundle
-must list every ancestor whose Needs it needs; declaring a parent does not
-implicitly import that parent’s ancestors.</p>
-<p>This separation prevents duplicate Needs and keeps ownership clear: every
-bundle exports its own sources, while the hierarchy is propagated through the
-JSON dependency only. The link direction is intentionally upward: own Needs
-may reference own or ancestor Needs; references to sibling or descendant
-bundles are outside this local export model.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>A bundle is <strong>placement-free</strong>: its <code class="docutils literal notranslate"><span class="pre">mount_at</span></code> and <code class="docutils literal notranslate"><span class="pre">attach_to</span></code> are assigned
@@ -735,7 +685,6 @@ implementation targets.</p>
 </dl>
 </li>
 </ul>
-</section>
 </section>
 <section id="edge-cases">
 <h2>Edge cases<a class="headerlink" href="#edge-cases" title="Link to this heading">#</a></h2>
@@ -795,10 +744,7 @@ targets are included in the <code class="docutils literal notranslate"><span cla
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bundle-content-and-supporting-files">Bundle content and supporting files</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#minimal-example-root-build">Minimal example (root <code class="docutils literal notranslate"><span class="pre">BUILD</span></code>)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bazel-macro-docs-bundle">Bazel macro: <code class="docutils literal notranslate"><span class="pre">docs_bundle</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#needs-exports-between-bundles">Needs exports between bundles</a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bazel-macro-docs-bundle">Bazel macro: <code class="docutils literal notranslate"><span class="pre">docs_bundle</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#edge-cases">Edge cases</a></li>
 </ul>
   </nav></div>
