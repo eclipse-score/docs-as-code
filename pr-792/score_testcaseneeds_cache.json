@@ -4480,20 +4480,6 @@
     "FullyVerifies": null
   },
   {
-    "name": "tooling_config_test__test_warning_level_rules_can_fail_a_run",
-    "file": "tools/tests/tooling_config_test.py",
-    "line": "46",
-    "result": "passed",
-    "repo_name": null,
-    "hash": null,
-    "url": null,
-    "TestType": null,
-    "DerivationTechnique": null,
-    "result_text": "",
-    "PartiallyVerifies": null,
-    "FullyVerifies": null
-  },
-  {
     "name": "merge_needs_json_tests__test_merges_all_needs_and_ignores_version_keys",
     "file": "scripts_bazel/tests/merge_needs_json_tests.py",
     "line": "33",
