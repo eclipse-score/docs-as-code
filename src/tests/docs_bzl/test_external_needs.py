@@ -34,20 +34,10 @@ def test_producer_needs_json_contains_local_need():
     assert "test_req__producer__demo" in needs, sorted(needs)
 
 
-def test_consumer_link_resolves_and_legacy_data_bundle_mounts():
-    """A consumer handles explicit needs and a legacy data-based bundle.
-
-    The scenario is deliberately two-level: the legacy consumer imports the
-    producer's directory-valued ``needs_json`` through ``docs(data = [...])``;
-    this consumer then mounts the legacy consumer's ``docs_bundle``. The host
-    run is intentionally end-to-end so it verifies that accepted docs data
-    remains mountable after bundle composition, rather than only checking that
-    the producer target is present in the build graph.
-    """
+def test_consumer_links_external_need_and_mounts_legacy_bundle():
+    """A consumer handles an external need and a bundle from the legacy API."""
     result = run_scenario("run", "external_needs/consumer", ":docs")
 
     html = (result.build_dir / "index.html").read_text(encoding="utf-8")
     assert "external-needs-producer/main/index.html#test_req__producer__demo" in html
-    # The mounted bundle's entry page is available once its data mount has
-    # been resolved successfully.
     assert (result.build_dir / "legacy" / "index.html").is_file()

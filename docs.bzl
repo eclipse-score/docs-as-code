@@ -101,6 +101,19 @@ _generated_conf = rule(
     },
 )
 
+def _is_needs_json_target(label):
+    """Return whether ``label`` names the directory-valued ``needs_json`` target.
+
+    ``docs(data = [...])`` historically accepts ``:needs_json`` labels as
+    external Needs inventories. The target is a Bazel TreeArtifact containing
+    ``needs.json`` and other generated outputs, so it is a build/runfile input
+    rather than a file that belongs in a portable documentation-bundle mount.
+    Keep this compatibility distinction at the public macro boundary instead
+    of making the generic bundle and mount implementations understand a
+    special-purpose generated directory.
+    """
+    return str(label).rsplit(":", 1)[-1] == "needs_json"
+
 def docs_bundle(
     name,
     source_dir = None,
@@ -173,6 +186,18 @@ def docs_bundle(
     pkg = native.package_name()
     strip_prefix = join_path(pkg, source_dir) if source_dir != None else ""
 
+    # ``needs_json`` is an inventory consumed by score_metamodel, not content
+    # owned by this bundle. It must remain in the caller's build/runfile inputs
+    # for the legacy ``docs(data = [...])`` API, but propagating the TreeArtifact
+    # through DocsBundleInfo would make a later bundle mount treat its directory
+    # path as a regular data file. Filter only this special target here; all
+    # ordinary supporting files retain the root-bundle behavior.
+    bundle_data = [
+        data_file
+        for data_file in data
+        if not _is_needs_json_target(data_file)
+    ]
+
     # The helper validates child declarations and creates the internal target.
     create_bundle(
         name = name,
@@ -182,7 +207,7 @@ def docs_bundle(
         strip_prefix = strip_prefix,
         entry_doc = entry_doc,
         bundles = bundles,
-        data = data,
+        data = bundle_data,
         visibility = visibility,
         **kwargs
     )

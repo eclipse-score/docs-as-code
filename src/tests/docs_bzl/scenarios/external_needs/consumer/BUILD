@@ -17,13 +17,9 @@ load("//:docs.bzl", "docs")
 # producer's needs into the host documentation, so the :need: link in
 # index.rst can resolve.
 #
-# The mounted legacy_consumer covers a different, older API path. The complete
-# scenario is producer:needs_json -> legacy_consumer:docs(data = [...]) ->
-# legacy_consumer:docs_bundle -> this consumer's bundle mount. The legacy
-# invocation is valid, but it carries the generated TreeArtifact into its
-# public docs_bundle. Mounting that bundle here forces the mounts manifest and
-# runtime resolver to process the directory-valued data entry, reproducing the
-# integration failure.
+# The mounted legacy_consumer covers the older ``docs(data = [...])`` API path.
+# This keeps the legacy invocation in an end-to-end documentation build while
+# the consumer uses the current ``external_needs`` API for its own need link.
 #
 # test_sources scopes the test-code-linker to this (test-less) package, avoiding
 # the workspace-wide bazel-testlogs scan during the html build.
