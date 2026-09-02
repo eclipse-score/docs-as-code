@@ -167,7 +167,7 @@ def resolve_source_files(
     artifacts declared by ``docs_bundle(srcs = [...])``.
     """
     walk_dir = resolve_walk_dir(manifest, spec, ws_root, runfiles_dir)
-    resolved_files = []
+    resolved_files: list[Path] = []
     for relative_path in spec.files:
         source_file = walk_dir / relative_path
         if not source_file.is_file():
