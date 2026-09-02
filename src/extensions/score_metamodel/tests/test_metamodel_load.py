@@ -165,7 +165,6 @@ def test_undeclared_link_is_rejected(tmp_path: Path, section: str):
     message = str(excinfo.value)
     assert "ghost_link" in message
     assert "type1" in message
-    assert section in message
 
 
 def test_sphinx_needs_builtin_links_are_accepted(tmp_path: Path):

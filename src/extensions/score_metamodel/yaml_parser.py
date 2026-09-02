@@ -184,11 +184,6 @@ def _validate_link_declarations(
     never rendered, and graph checks referring to it never fire. Because
     nothing reports this at build time, it has to be caught while parsing the
     metamodel.
-
-    This is not hypothetical. `dec_rec` used `affects` as an optional link
-    while `needs_extra_links` did not declare it; the missing declaration was
-    added in #725, and this check was requested in #737 so the next occurrence
-    fails loudly instead.
     """
     known_links = set(needs_links) | _SPHINX_NEEDS_BUILTIN_LINKS
 
@@ -197,26 +192,19 @@ def _validate_link_declarations(
         # Only the "*_links_str" fields hold the link names at this point. The
         # resolved "*_links" fields stay None until postprocess_need_links()
         # runs, which is after parsing.
-        used_links = [
-            ("mandatory_links", link_name)
-            for link_name in need_type["mandatory_links_str"]
-        ] + [
-            ("optional_links", link_name)
-            for link_name in need_type["optional_links_str"]
-        ]
+        used_links = need_type["mandatory_links_str"] | need_type["optional_links_str"]
 
-        for section, link_name in used_links:
+        for link_name in used_links:
             if link_name not in known_links:
                 errors.append(
-                    f"Directive '{directive_name}': {section} uses "
-                    f"'{link_name}', which is not declared in 'needs_extra_links'."
+                    f"Directive '{directive_name}': '{link_name}' is not "
+                    "declared in 'needs_extra_links'."
                 )
 
     if errors:
         raise SystemExit(
             "ERROR: Please declare these links in 'needs_extra_links' of the "
-            "metamodel.yaml, as undeclared links are silently ignored:\n"
-            + "\n".join(errors)
+            "metamodel.yaml:\n" + "\n".join(errors)
         )
 
 
