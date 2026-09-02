@@ -20,8 +20,8 @@
           ],
           "TestLinks": [
             {
-              "name": "test_rules_file_based__test_rst_files[attributes/test_attributes_external_prefix.rst]",
-              "file": "src/extensions/score_metamodel/tests/rst/attributes/test_attributes_external_prefix.rst",
+              "name": "test_rules_file_based__test_rst_files[attributes/test_attributes_format_id_format.rst]",
+              "file": "src/extensions/score_metamodel/tests/rst/attributes/test_attributes_format_id_format.rst",
               "line": 16,
               "need": "tool_req__docs_common_attr_id_scheme",
               "verify_type": "partially",
@@ -29,8 +29,8 @@
               "result_text": ""
             },
             {
-              "name": "test_rules_file_based__test_rst_files[attributes/test_attributes_format_id_format.rst]",
-              "file": "src/extensions/score_metamodel/tests/rst/attributes/test_attributes_format_id_format.rst",
+              "name": "test_rules_file_based__test_rst_files[attributes/test_attributes_external_prefix.rst]",
+              "file": "src/extensions/score_metamodel/tests/rst/attributes/test_attributes_external_prefix.rst",
               "line": 16,
               "need": "tool_req__docs_common_attr_id_scheme",
               "verify_type": "partially",
@@ -2114,7 +2114,7 @@
             {
               "name": "test_testcase_annotations__test_annotates_external_github_testlink",
               "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
-              "line": 37,
+              "line": 49,
               "need": "tool_req__docs_test_link_testcase",
               "verify_type": "partially",
               "result": "passed",
@@ -2123,7 +2123,7 @@
             {
               "name": "test_testcase_annotations__test_does_not_annotate_reference_without_result_suffix",
               "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
-              "line": 57,
+              "line": 69,
               "need": "tool_req__docs_test_link_testcase",
               "verify_type": "partially",
               "result": "passed",
@@ -2132,7 +2132,7 @@
             {
               "name": "test_testcase_annotations__test_does_not_annotate_link_without_result_suffix",
               "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
-              "line": 71,
+              "line": 83,
               "need": "tool_req__docs_test_link_testcase",
               "verify_type": "partially",
               "result": "passed",
@@ -2141,7 +2141,7 @@
             {
               "name": "test_testcase_annotations__test_does_not_annotate_same_reference_twice",
               "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
-              "line": 85,
+              "line": 97,
               "need": "tool_req__docs_test_link_testcase",
               "verify_type": "partially",
               "result": "passed",
@@ -2534,6 +2534,101 @@
         }
       },
       {
+        "need": "tool_req__docs_wp_types[version==1]",
+        "links": {
+          "CodeLinks": [],
+          "TestLinks": [
+            {
+              "name": "test_rules_file_based__test_rst_files[options/wp_comp.rst]",
+              "file": "src/extensions/score_metamodel/tests/rst/options/wp_comp.rst",
+              "line": 16,
+              "need": "tool_req__docs_wp_types[version==1]",
+              "verify_type": "fully",
+              "result": "passed",
+              "result_text": ""
+            }
+          ]
+        }
+      },
+      {
+        "need": "tool_req__docs_req_types[version==1]",
+        "links": {
+          "CodeLinks": [],
+          "TestLinks": [
+            {
+              "name": "test_rules_file_based__test_rst_files[options/gd_req_comp.rst]",
+              "file": "src/extensions/score_metamodel/tests/rst/options/gd_req_comp.rst",
+              "line": 16,
+              "need": "tool_req__docs_req_types[version==1]",
+              "verify_type": "partially",
+              "result": "passed",
+              "result_text": ""
+            },
+            {
+              "name": "test_rules_file_based__test_rst_files[options/test_options_extra_option.rst]",
+              "file": "src/extensions/score_metamodel/tests/rst/options/test_options_extra_option.rst",
+              "line": 16,
+              "need": "tool_req__docs_req_types[version==1]",
+              "verify_type": "partially",
+              "result": "passed",
+              "result_text": ""
+            },
+            {
+              "name": "test_rules_file_based__test_rst_files[options/test_options_options.rst]",
+              "file": "src/extensions/score_metamodel/tests/rst/options/test_options_options.rst",
+              "line": 16,
+              "need": "tool_req__docs_req_types[version==1]",
+              "verify_type": "partially",
+              "result": "passed",
+              "result_text": ""
+            }
+          ]
+        }
+      },
+      {
+        "need": "tool_req__docs_common_attr_status[version==1]",
+        "links": {
+          "CodeLinks": [],
+          "TestLinks": [
+            {
+              "name": "test_rules_file_based__test_rst_files[options/test_options_extra_option.rst]",
+              "file": "src/extensions/score_metamodel/tests/rst/options/test_options_extra_option.rst",
+              "line": 16,
+              "need": "tool_req__docs_common_attr_status[version==1]",
+              "verify_type": "partially",
+              "result": "passed",
+              "result_text": ""
+            },
+            {
+              "name": "test_rules_file_based__test_rst_files[options/test_options_options.rst]",
+              "file": "src/extensions/score_metamodel/tests/rst/options/test_options_options.rst",
+              "line": 16,
+              "need": "tool_req__docs_common_attr_status[version==1]",
+              "verify_type": "partially",
+              "result": "passed",
+              "result_text": ""
+            }
+          ]
+        }
+      },
+      {
+        "need": "tool_req__docs_saf_attr_fmea_failure_effect[version==1]",
+        "links": {
+          "CodeLinks": [],
+          "TestLinks": [
+            {
+              "name": "test_rules_file_based__test_rst_files[options/test_options_failure_effect.rst]",
+              "file": "src/extensions/score_metamodel/tests/rst/options/test_options_failure_effect.rst",
+              "line": 16,
+              "need": "tool_req__docs_saf_attr_fmea_failure_effect[version==1]",
+              "verify_type": "fully",
+              "result": "passed",
+              "result_text": ""
+            }
+          ]
+        }
+      },
+      {
         "need": "tool_req__docs_sec_attrs_optional[version==1]",
         "links": {
           "CodeLinks": [],
@@ -2590,15 +2685,6 @@
           "CodeLinks": [],
           "TestLinks": [
             {
-              "name": "test_rules_file_based__test_rst_files[safety/test_saf_mandatory_attrs.rst]",
-              "file": "src/extensions/score_metamodel/tests/rst/safety/test_saf_mandatory_attrs.rst",
-              "line": 16,
-              "need": "tool_req__docs_saf_attrs_mandatory[version==1]",
-              "verify_type": "partially",
-              "result": "passed",
-              "result_text": ""
-            },
-            {
               "name": "test_rules_file_based__test_rst_files[safety/test_saf_types.rst]",
               "file": "src/extensions/score_metamodel/tests/rst/safety/test_saf_types.rst",
               "line": 15,
@@ -2606,72 +2692,13 @@
               "verify_type": "partially",
               "result": "passed",
               "result_text": ""
-            }
-          ]
-        }
-      },
-      {
-        "need": "tool_req__docs_saf_attr_dfa_failure_id[version==2]",
-        "links": {
-          "CodeLinks": [],
-          "TestLinks": [
+            },
             {
               "name": "test_rules_file_based__test_rst_files[safety/test_saf_mandatory_attrs.rst]",
               "file": "src/extensions/score_metamodel/tests/rst/safety/test_saf_mandatory_attrs.rst",
               "line": 16,
-              "need": "tool_req__docs_saf_attr_dfa_failure_id[version==2]",
-              "verify_type": "fully",
-              "result": "passed",
-              "result_text": ""
-            }
-          ]
-        }
-      },
-      {
-        "need": "tool_req__docs_saf_attr_fmea_fault_id[version==2]",
-        "links": {
-          "CodeLinks": [],
-          "TestLinks": [
-            {
-              "name": "test_rules_file_based__test_rst_files[safety/test_saf_mandatory_attrs.rst]",
-              "file": "src/extensions/score_metamodel/tests/rst/safety/test_saf_mandatory_attrs.rst",
-              "line": 16,
-              "need": "tool_req__docs_saf_attr_fmea_fault_id[version==2]",
-              "verify_type": "fully",
-              "result": "passed",
-              "result_text": ""
-            }
-          ]
-        }
-      },
-      {
-        "need": "tool_req__docs_saf_attrs_sufficient[version==1]",
-        "links": {
-          "CodeLinks": [],
-          "TestLinks": [
-            {
-              "name": "test_rules_file_based__test_rst_files[safety/test_saf_mandatory_attrs.rst]",
-              "file": "src/extensions/score_metamodel/tests/rst/safety/test_saf_mandatory_attrs.rst",
-              "line": 16,
-              "need": "tool_req__docs_saf_attrs_sufficient[version==1]",
-              "verify_type": "fully",
-              "result": "passed",
-              "result_text": ""
-            }
-          ]
-        }
-      },
-      {
-        "need": "tool_req__docs_saf_attrs_content[version==2]",
-        "links": {
-          "CodeLinks": [],
-          "TestLinks": [
-            {
-              "name": "test_rules_file_based__test_rst_files[safety/test_saf_mandatory_attrs.rst]",
-              "file": "src/extensions/score_metamodel/tests/rst/safety/test_saf_mandatory_attrs.rst",
-              "line": 16,
-              "need": "tool_req__docs_saf_attrs_content[version==2]",
-              "verify_type": "fully",
+              "need": "tool_req__docs_saf_attrs_mandatory[version==1]",
+              "verify_type": "partially",
               "result": "passed",
               "result_text": ""
             }
@@ -2747,6 +2774,74 @@
         }
       },
       {
+        "need": "tool_req__docs_saf_attr_dfa_failure_id[version==2]",
+        "links": {
+          "CodeLinks": [],
+          "TestLinks": [
+            {
+              "name": "test_rules_file_based__test_rst_files[safety/test_saf_mandatory_attrs.rst]",
+              "file": "src/extensions/score_metamodel/tests/rst/safety/test_saf_mandatory_attrs.rst",
+              "line": 16,
+              "need": "tool_req__docs_saf_attr_dfa_failure_id[version==2]",
+              "verify_type": "fully",
+              "result": "passed",
+              "result_text": ""
+            }
+          ]
+        }
+      },
+      {
+        "need": "tool_req__docs_saf_attr_fmea_fault_id[version==2]",
+        "links": {
+          "CodeLinks": [],
+          "TestLinks": [
+            {
+              "name": "test_rules_file_based__test_rst_files[safety/test_saf_mandatory_attrs.rst]",
+              "file": "src/extensions/score_metamodel/tests/rst/safety/test_saf_mandatory_attrs.rst",
+              "line": 16,
+              "need": "tool_req__docs_saf_attr_fmea_fault_id[version==2]",
+              "verify_type": "fully",
+              "result": "passed",
+              "result_text": ""
+            }
+          ]
+        }
+      },
+      {
+        "need": "tool_req__docs_saf_attrs_sufficient[version==1]",
+        "links": {
+          "CodeLinks": [],
+          "TestLinks": [
+            {
+              "name": "test_rules_file_based__test_rst_files[safety/test_saf_mandatory_attrs.rst]",
+              "file": "src/extensions/score_metamodel/tests/rst/safety/test_saf_mandatory_attrs.rst",
+              "line": 16,
+              "need": "tool_req__docs_saf_attrs_sufficient[version==1]",
+              "verify_type": "fully",
+              "result": "passed",
+              "result_text": ""
+            }
+          ]
+        }
+      },
+      {
+        "need": "tool_req__docs_saf_attrs_content[version==2]",
+        "links": {
+          "CodeLinks": [],
+          "TestLinks": [
+            {
+              "name": "test_rules_file_based__test_rst_files[safety/test_saf_mandatory_attrs.rst]",
+              "file": "src/extensions/score_metamodel/tests/rst/safety/test_saf_mandatory_attrs.rst",
+              "line": 16,
+              "need": "tool_req__docs_saf_attrs_content[version==2]",
+              "verify_type": "fully",
+              "result": "passed",
+              "result_text": ""
+            }
+          ]
+        }
+      },
+      {
         "need": "tool_req__docs_saf_attrs_violates[version==2]",
         "links": {
           "CodeLinks": [],
@@ -2756,101 +2851,6 @@
               "file": "src/extensions/score_metamodel/tests/rst/safety/test_saf_violates.rst",
               "line": 15,
               "need": "tool_req__docs_saf_attrs_violates[version==2]",
-              "verify_type": "partially",
-              "result": "passed",
-              "result_text": ""
-            }
-          ]
-        }
-      },
-      {
-        "need": "tool_req__docs_req_types[version==1]",
-        "links": {
-          "CodeLinks": [],
-          "TestLinks": [
-            {
-              "name": "test_rules_file_based__test_rst_files[options/gd_req_comp.rst]",
-              "file": "src/extensions/score_metamodel/tests/rst/options/gd_req_comp.rst",
-              "line": 16,
-              "need": "tool_req__docs_req_types[version==1]",
-              "verify_type": "partially",
-              "result": "passed",
-              "result_text": ""
-            },
-            {
-              "name": "test_rules_file_based__test_rst_files[options/test_options_extra_option.rst]",
-              "file": "src/extensions/score_metamodel/tests/rst/options/test_options_extra_option.rst",
-              "line": 16,
-              "need": "tool_req__docs_req_types[version==1]",
-              "verify_type": "partially",
-              "result": "passed",
-              "result_text": ""
-            },
-            {
-              "name": "test_rules_file_based__test_rst_files[options/test_options_options.rst]",
-              "file": "src/extensions/score_metamodel/tests/rst/options/test_options_options.rst",
-              "line": 16,
-              "need": "tool_req__docs_req_types[version==1]",
-              "verify_type": "partially",
-              "result": "passed",
-              "result_text": ""
-            }
-          ]
-        }
-      },
-      {
-        "need": "tool_req__docs_wp_types[version==1]",
-        "links": {
-          "CodeLinks": [],
-          "TestLinks": [
-            {
-              "name": "test_rules_file_based__test_rst_files[options/wp_comp.rst]",
-              "file": "src/extensions/score_metamodel/tests/rst/options/wp_comp.rst",
-              "line": 16,
-              "need": "tool_req__docs_wp_types[version==1]",
-              "verify_type": "fully",
-              "result": "passed",
-              "result_text": ""
-            }
-          ]
-        }
-      },
-      {
-        "need": "tool_req__docs_saf_attr_fmea_failure_effect[version==1]",
-        "links": {
-          "CodeLinks": [],
-          "TestLinks": [
-            {
-              "name": "test_rules_file_based__test_rst_files[options/test_options_failure_effect.rst]",
-              "file": "src/extensions/score_metamodel/tests/rst/options/test_options_failure_effect.rst",
-              "line": 16,
-              "need": "tool_req__docs_saf_attr_fmea_failure_effect[version==1]",
-              "verify_type": "fully",
-              "result": "passed",
-              "result_text": ""
-            }
-          ]
-        }
-      },
-      {
-        "need": "tool_req__docs_common_attr_status[version==1]",
-        "links": {
-          "CodeLinks": [],
-          "TestLinks": [
-            {
-              "name": "test_rules_file_based__test_rst_files[options/test_options_extra_option.rst]",
-              "file": "src/extensions/score_metamodel/tests/rst/options/test_options_extra_option.rst",
-              "line": 16,
-              "need": "tool_req__docs_common_attr_status[version==1]",
-              "verify_type": "partially",
-              "result": "passed",
-              "result_text": ""
-            },
-            {
-              "name": "test_rules_file_based__test_rst_files[options/test_options_options.rst]",
-              "file": "src/extensions/score_metamodel/tests/rst/options/test_options_options.rst",
-              "line": 16,
-              "need": "tool_req__docs_common_attr_status[version==1]",
               "verify_type": "partially",
               "result": "passed",
               "result_text": ""
