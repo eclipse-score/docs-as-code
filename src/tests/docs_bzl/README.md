@@ -17,7 +17,7 @@ compatibility reporting, and failure cases.
 docs_bzl/
 ├── scenarios/       # one fixture per consumer scenario
 │   ├── basic_docs/
-│   ├── external_needs/
+│   ├── reference_integration/
 │   ├── metamodel_violation/
 │   ├── nested_bundles/
 │   ├── subdirectory_bundle/

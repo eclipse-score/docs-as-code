@@ -13,10 +13,11 @@
 
 load("//:docs.bzl", "docs")
 
-# FIXME:
-# The custom metamodel is supplied via score_metamodel_yaml in docs/conf.py
-# rather than docs(metamodel=...), because the metamodel= wiring does not reach
-# the :needs_json target in the current docs.bzl (regression from #484).
+# This fixture represents the S-CORE platform documentation. It publishes a
+# feature requirement that is consumed by a software module and by the
+# reference integration.
 docs(
+    project = "S-CORE Platform",
+    project_url = "https://example.invalid/score-platform",
     source_dir = "docs",
 )

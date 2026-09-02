@@ -12,7 +12,9 @@
    # SPDX-License-Identifier: Apache-2.0
    # *******************************************************************************
 
-Legacy External Needs Consumer
-==============================
+Components
+==========
 
-This documentation bundle imports the producer's needs through ``data``.
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1

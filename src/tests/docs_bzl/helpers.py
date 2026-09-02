@@ -112,7 +112,7 @@ def run_package(
             artifacts_dir = Path(p2.stdout.strip().splitlines()[0])
         else:
             assert GIT_ROOT
-            # e.g. bazel-out/k8-fastbuild/bin/src/tests/docs_bzl/scenarios/external_needs/producer/needs_json/_build/needs
+            # e.g. bazel-out/k8-fastbuild/bin/src/tests/docs_bzl/scenarios/reference_integration/score_platform/needs_json/_build/needs
             artifacts_dir = (
                 GIT_ROOT
                 / "bazel-out/k8-fastbuild/bin/"

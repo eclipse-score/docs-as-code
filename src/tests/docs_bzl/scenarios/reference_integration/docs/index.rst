@@ -12,9 +12,16 @@
    # SPDX-License-Identifier: Apache-2.0
    # *******************************************************************************
 
-External Needs Producer
-=======================
+S-CORE Reference Integration
+============================
 
-.. test_req:: Producer demo requirement
-   :id: test_req__producer__demo
-   :status: valid
+The reference integration combines the S-CORE platform, software modules, and
+components into one documentation site.
+
+The platform feature requirement is available to the integrated documentation:
+:need:`feat_req__platform__feature`.
+
+.. toctree::
+   :hidden:
+
+   modules

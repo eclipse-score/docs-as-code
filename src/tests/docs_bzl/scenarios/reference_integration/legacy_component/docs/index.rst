@@ -12,8 +12,8 @@
    # SPDX-License-Identifier: Apache-2.0
    # *******************************************************************************
 
-External Needs Consumer
+S-CORE Legacy Component
 =======================
 
-This document links to a need defined in the producer package:
-:need:`test_req__producer__demo`.
+This component consumes platform feature requirements through the legacy
+``data`` API and is mounted by the legacy module.
