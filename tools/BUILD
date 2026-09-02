@@ -30,3 +30,11 @@ py_binary(
     main = "module_verification_reports.py",
     deps = [],
 )
+
+py_binary(
+    name = "docs_delta",
+    srcs = ["docs_delta.py"],
+    main = "docs_delta.py",
+    visibility = ["//visibility:public"],
+    deps = [],
+)
