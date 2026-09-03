@@ -620,9 +620,9 @@ sources are supplied explicitly or for an aggregator that only composes
 other <code class="docutils literal notranslate"><span class="pre">bundles</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">srcs</span></code> (list of bazel labels, optional)
 Explicit documentation source files, including generated outputs from a
-build action. Use this when the documentation sources are generated. All
-files must share one parent directory. It cannot be combined with
-<code class="docutils literal notranslate"><span class="pre">source_dir</span></code>.</p></li>
+build action. Use this for a source-less bundle whose documentation is
+generated. All files must share one parent directory. It cannot be combined
+with <code class="docutils literal notranslate"><span class="pre">source_dir</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">data</span></code> (list of bazel labels, optional)
 Supporting or runtime files owned by this bundle. These files are part of the
 bundle payload and are available at the bundle’s eventual mount path, but are
