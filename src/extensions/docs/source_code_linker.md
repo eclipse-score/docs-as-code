@@ -46,8 +46,6 @@ The Bazel parts are responsible for producing the **intermediate caches** that t
 Each `docs_bundle` scans the source files selected by its `code_targets`
 attribute. A *per bundle JSON cache* is then generated and saved; Bazel
 reuses it until its source inputs change.
-`scan_code` remains available for explicit files or filegroups, but is
-deprecated.
 This script `scripts_bazel/generate_sourcelinks_cli.py` finds all codelinks per file, and gathers them into
 one JSON cache per repository.
 It also adds metadata to each needlink that is needed in further steps.

@@ -16,6 +16,10 @@ load("//:docs.bzl", "docs")
 # The reference integration combines platform feature requirements and two
 # software modules into one documentation site, just like the real S-CORE
 # integration. Each module's bundle contains its component documentation.
+# Each component also scans an annotated implementation file through
+# ``code_targets``. The integration test verifies that those source links
+# survive the component -> module -> site bundle composition and are rendered
+# on the mounted component pages.
 # The component packages live below the module's ``docs`` source directory,
 # matching the feature-package layout used by the real S-CORE integration.
 #

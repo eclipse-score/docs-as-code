@@ -74,6 +74,10 @@ def _module_name_without_prefix():
         return ""
     return module_name.split("_", 1)[-1]
 
+def _bundle_internal_target(name, target):
+    """Return the conventional name for a target internal to a bundle."""
+    return name + ".__internal__." + target
+
 def _generated_conf_impl(ctx):
     output = ctx.actions.declare_file(ctx.attr.output_path)
     ctx.actions.expand_template(
@@ -121,7 +125,6 @@ def _declare_docs_bundle(
     data = [],
     entry_doc = "index",
     bundles = [],
-    scan_code = [],
     code_targets = [],
     visibility = None,
     **kwargs):
@@ -155,8 +158,6 @@ def _declare_docs_bundle(
             "mount_at": <where it shall me mounted>,
             "attach_to": <optional document to attach the bundle to; for a bundle root it defaults to the mount_at parent's index>
         }.
-      scan_code: Deprecated. Explicit source files or filegroups to scan for
-                 source-code links. Use `code_targets` for implementation targets.
       code_targets: Implementation targets or filegroups to scan for source-code
                     links. Implementation target source files and their dependencies
                     are collected recursively; filegroups expand to their files.
@@ -169,22 +170,15 @@ def _declare_docs_bundle(
             ("docs_bundle(%s): srcs cannot be combined with source_dir; " +
              "put generated sources in a dedicated bundle") % name,
         )
-
     # Keep directory-discovered sources separate from explicit Bazel targets so
     # each kind can retain its own runtime path and staging behavior.
     source_dir_globbed = glob_doc_sources(source_dir) if source_dir != None else []
-    sourcelinks = []
-    if scan_code:
-        print("WARNING: docs_bundle(%s) uses deprecated scan_code; use code_targets instead." % name)
-        sourcelinks_name = name + "_sourcelinks_json"
-        _sourcelinks_json(name = sourcelinks_name, srcs = scan_code)
-        sourcelinks = [":" + sourcelinks_name]
+    sourcelinks_json = None
     if code_targets:
-        code_targets_sourcelinks = generate_code_target_sourcelinks(
-            name = name + "_code_targets_sourcelinks_json",
+        sourcelinks_json = generate_code_target_sourcelinks(
+            name = _bundle_internal_target(name, "sourcelinks_json"),
             code_targets = code_targets,
         )
-        sourcelinks.append(code_targets_sourcelinks)
 
     # Store the source directory relative to the workspace so bundle consumers
     # can locate the original files without copying them.
@@ -208,7 +202,7 @@ def _declare_docs_bundle(
         name = name,
         source_dir_globbed = source_dir_globbed,
         source_targets = srcs,
-        sourcelinks = sourcelinks,
+        sourcelinks_json = sourcelinks_json,
         strip_prefix = strip_prefix,
         entry_doc = entry_doc,
         bundles = bundles,
@@ -224,7 +218,6 @@ def docs_bundle(
     data = [],
     entry_doc = "index",
     bundles = [],
-    scan_code = [],
     code_targets = [],
     visibility = None,
     **kwargs):
@@ -242,7 +235,6 @@ def docs_bundle(
         data = data,
         entry_doc = entry_doc,
         bundles = bundles,
-        scan_code = scan_code,
         code_targets = code_targets,
         visibility = visibility,
         **kwargs
@@ -290,7 +282,6 @@ def docs(
         data = [],
         deps = [],
         external_needs = [],
-        scan_code = [],
         code_targets = [],
         test_sources = [],
         known_good = None,
@@ -312,8 +303,6 @@ def docs(
         files.
       deps: Additional dependencies for the documentation build.
       external_needs: List of external needs targets to include in the documentation build.
-      scan_code: Deprecated. Explicit source files or filegroups to scan for source
-                 code links. Use `code_targets` for implementation targets.
       code_targets: Implementation targets or filegroups to scan for source code
                     links. Implementation targets are scanned recursively; filegroups
                     expand to their files.
@@ -423,7 +412,6 @@ def docs(
         data = data,
         entry_doc = "index",
         bundles = bundles,
-        scan_code = scan_code,
         code_targets = code_targets,
         visibility = ["//visibility:public"],
         tags = ["manual"]
@@ -596,33 +584,5 @@ def docs(
     native.alias(
         name = "traceability_gate",
         actual = Label("//scripts_bazel:traceability_gate"),
-        tags = ["manual"],
-    )
-
-def _sourcelinks_json(name, srcs):
-    """
-    Creates a target that generates a JSON file with source code links.
-
-    See https://eclipse-score.github.io/docs-as-code/main/how-to/source_to_doc_links.html
-
-    Args:
-      name: Name of the target.
-      srcs: Source files to scan for traceability tags.
-    """
-    output_file = name + ".json"
-
-    generate_sourcelinks_tool = Label("//scripts_bazel:generate_sourcelinks")
-
-    native.genrule(
-        name = name,
-        srcs = srcs,
-        outs = [output_file],
-        cmd = """
-        $(location {generate_sourcelinks_tool}) \
-            --output $@ \
-            $(SRCS)
-        """.format(generate_sourcelinks_tool = generate_sourcelinks_tool),
-        tools = [generate_sourcelinks_tool],
-        visibility = ["//visibility:public"],
         tags = ["manual"],
     )

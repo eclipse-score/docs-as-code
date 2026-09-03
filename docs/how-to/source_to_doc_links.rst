@@ -69,7 +69,3 @@ uses. You may also pass filegroups; their files are scanned directly.
          source_dir = "docs",
          code_targets = [":some_application"],
    )
-
-The older ``scan_code`` parameter remains available for existing configurations
-that explicitly provide files or filegroups, but it is deprecated. Prefer
-``code_targets`` for new configurations.

@@ -21,6 +21,7 @@ docs(
     project = "S-CORE Modern Module",
     project_url = "https://example.invalid/score-modern-module",
     source_dir = "docs",
+    test_sources = ["src/tests/docs_bzl/scenarios/reference_integration"],
     external_needs = [
         "//src/tests/docs_bzl/scenarios/reference_integration/score_platform:needs_json",
         "@score_process_description//:needs_json",

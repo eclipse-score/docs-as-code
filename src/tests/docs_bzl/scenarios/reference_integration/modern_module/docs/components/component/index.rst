@@ -17,3 +17,11 @@ S-CORE Modern Component
 
 This component consumes platform feature requirements through the current
 ``external_needs`` API and is mounted by the modern module.
+
+.. tool_req:: Modern component implementation is traceable
+   :id: tool_req__modern_component
+   :version: 1
+
+   The modern component implementation is covered by the component source
+   code-link scan. The integration test checks that this link is preserved
+   when the component is built alone, by its module, and by the full site.

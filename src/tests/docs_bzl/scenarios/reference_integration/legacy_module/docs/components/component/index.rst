@@ -17,3 +17,11 @@ S-CORE Legacy Component
 
 This component consumes platform feature requirements through the legacy
 ``data`` API and is mounted by the legacy module.
+
+.. tool_req:: Legacy component implementation is traceable
+   :id: tool_req__legacy_component
+   :version: 1
+
+   The legacy component implementation is covered by the component source
+   code-link scan. The integration test checks that this link is preserved
+   when the component is built alone, by its module, and by the full site.

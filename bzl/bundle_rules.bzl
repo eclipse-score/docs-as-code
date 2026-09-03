@@ -384,10 +384,12 @@ def _docs_bundle_impl(ctx):
 
     child_source_files = []
     child_external_runfiles = []
-    sourcelinks = [
-        struct(file = source_link, repository = ctx.label.workspace_name)
-        for source_link in ctx.files.sourcelinks
-    ]
+    sourcelinks = []
+    if ctx.file.sourcelinks_json:
+        sourcelinks.append(struct(
+            file = ctx.file.sourcelinks_json,
+            repository = ctx.label.workspace_name,
+        ))
     for index, child in enumerate(ctx.attr.bundles):
         entries.extend([
             _rebase_bundle_entry(
@@ -432,7 +434,7 @@ _docs_bundle = rule(
     attrs = {
         "source_dir_globbed": attr.label_list(allow_files = True),
         "source_targets": attr.label_list(allow_files = True),
-        "sourcelinks": attr.label_list(allow_files = True),
+        "sourcelinks_json": attr.label(allow_single_file = True),
         "strip_prefix": attr.string(default = ""),
         "entry_doc": attr.string(default = "index"),
         "bundles": attr.label_list(providers = [DocsBundleInfo]),
@@ -448,7 +450,7 @@ def create_bundle(
     bundles,
     source_dir_globbed = [],
     source_targets = [],
-    sourcelinks = [],
+    sourcelinks_json = None,
     strip_prefix = "",
     entry_doc = "index",
     data = [],
@@ -464,7 +466,7 @@ def create_bundle(
         name = name,
         source_dir_globbed = source_dir_globbed,
         source_targets = source_targets,
-        sourcelinks = sourcelinks,
+        sourcelinks_json = sourcelinks_json,
         strip_prefix = strip_prefix,
         entry_doc = entry_doc,
         bundles = [bundle.bundle for bundle in parsed_bundles],

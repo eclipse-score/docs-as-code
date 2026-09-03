@@ -115,10 +115,6 @@ Minimal example (root ``BUILD``)
   generated JSON is supplied to ``live_preview`` just like a normal documentation
   build.
 
-- ``scan_code`` (list of Bazel labels, deprecated)
-  Explicit source files or filegroups to scan. Use ``code_targets`` for
-  implementation targets; it follows their dependencies automatically.
-
 - ``external_needs`` (list of bazel labels)
   External ``:needs_json_file`` targets from other modules/repositories
   for referencing their needs.
@@ -169,7 +165,7 @@ site).
        visibility = ["//visibility:public"],
    )
 
-Signature: ``docs_bundle(name, source_dir = None, srcs = [], data = [], entry_doc = "index", bundles = [], scan_code = [], code_targets = [], visibility = None)``.
+Signature: ``docs_bundle(name, source_dir = None, srcs = [], data = [], entry_doc = "index", bundles = [], code_targets = [], visibility = None)``.
 
 - ``source_dir`` (string, optional)
   Directory holding the bundle's own doc sources. It is globbed the same way as
@@ -229,10 +225,6 @@ Signature: ``docs_bundle(name, source_dir = None, srcs = [], data = [], entry_do
    recursively from their ``deps``; filegroups expand to their files. The bundle
    owns one cached scan result; Bazel only regenerates it when its collected source
    inputs change.
-
-- ``scan_code`` (list of Bazel labels, deprecated)
-   Explicit source files or filegroups to scan. Prefer ``code_targets`` for
-   implementation targets.
 
 Edge cases
 ----------

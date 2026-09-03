@@ -30,6 +30,7 @@ docs(
     project = "S-CORE Legacy Module",
     project_url = "https://example.invalid/score-legacy-module",
     source_dir = "docs",
+    test_sources = ["src/tests/docs_bzl/scenarios/reference_integration"],
     data = [
         "//src/tests/docs_bzl/scenarios/reference_integration/score_platform:needs_json",
         "@score_process_description//:needs_json",
