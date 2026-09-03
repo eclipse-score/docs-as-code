@@ -54,6 +54,7 @@ py_library(
         "needlinks.py",
         "testlink.py",
         "xml_parser.py",
+        "lobster_parser.py",
         "helpers.py",
         "repo_source_links.py",
     ],

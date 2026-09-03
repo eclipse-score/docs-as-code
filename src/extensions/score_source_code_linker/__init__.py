@@ -35,6 +35,7 @@ from src.extensions.score_source_code_linker.generate_source_code_links_json imp
     generate_source_code_links_json,
 )
 from src.extensions.score_source_code_linker.helpers import get_github_link
+from src.extensions.score_source_code_linker.lobster_parser import run_lobster_parser
 from src.extensions.score_source_code_linker.need_source_links import (
     group_by_need,
     load_source_code_links_combined_json,
@@ -218,6 +219,29 @@ def setup_test_code_linker(app: Sphinx, env: BuildEnvironment):
         ws_root = find_ws_root()
         if not ws_root:
             return
+
+        source = str(getattr(app.config, "score_testlink_source", "xml"))
+        if source == "none":
+            LOGGER.debug(
+                "Test links are disabled via score_testlink_source='none'.",
+                type="score_source_code_linker",
+            )
+            return
+        if source == "lobster":
+            LOGGER.debug(
+                "INFO: Generating test links from '.lobster' pools.",
+                type="score_source_code_linker",
+            )
+            run_lobster_parser(app, env)
+            return
+        if source != "xml":
+            LOGGER.warning(
+                f"Unknown score_testlink_source '{source}'. "
+                "Expected 'xml', 'lobster' or 'none'. Skipping test links.",
+                type="score_source_code_linker",
+            )
+            return
+
         LOGGER.debug(
             "INFO: Generating score_xml_parser JSON file.",
             type="score_source_code_linker",
@@ -375,6 +399,18 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
             "str(list) of repo-relative directory paths. When set, the test-code-linker "
             "only builds testcase needs for testcases whose source file lives under one of "
             "these directories. Empty means no filtering (scan the whole workspace)."
+        ),
+    )
+    app.add_config_value(
+        "score_testlink_source",
+        default="xml",
+        rebuild="env",
+        types=str,
+        description=(
+            "Where test links come from: 'xml' scans bazel-testlogs/**/test.xml, "
+            "'lobster' reads the *.lobster activity pools produced by lobster-gtest, "
+            "'none' disables test links entirely. Note that 'lobster' cannot provide "
+            "failure messages and reports skipped tests as passed."
         ),
     )
     setup_once(app)

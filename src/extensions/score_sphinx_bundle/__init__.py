@@ -33,6 +33,7 @@ score_extensions = [
     "sphinx_mounts",
     "score_mounts",
     "score_source_code_linker",
+    "score_lobster_report",
     "score_draw_uml_funcs",
     "score_layout",
     "sphinx_collections",

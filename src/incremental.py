@@ -191,6 +191,7 @@ if __name__ == "__main__":
         # works for both the py_binary and the needs_json target.
         f"--define=external_needs_source={_merged_external_needs()}",
         f"--define=testcase_source_dirs={os.environ.get('TEST_SOURCES', '[]')}",
+        f"--define=score_testlink_source={os.environ.get('TESTLINK_SOURCE', 'xml')}",
         # Path to the Bazel-emitted mounts manifest (empty when no mounts are
         # configured); consumed by the score_mounts extension.
         f"--define=mounts_manifest={os.environ.get('MOUNTS_MANIFEST', '')}",

@@ -33,6 +33,7 @@ py_library(
         "@score_docs_as_code//src/extensions/score_metamodel",
         "@score_docs_as_code//src/extensions/score_mounts",
         "@score_docs_as_code//src/extensions/score_source_code_linker",
+        "@score_docs_as_code//src/extensions/score_lobster_report",
         "@score_docs_as_code//src/extensions/score_metrics",
         "@score_docs_as_code//src/extensions/score_sync_toml",
         "@score_docs_as_code//src/helper_lib",
