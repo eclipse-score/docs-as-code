@@ -94,6 +94,53 @@ def create_demo_files(sphinx_base_dir: Path, git_repo_setup: Path):
         curr_dir / "expected_repo_grouped.json",
         repo_path / ".expected_repo_grouped.json",
     )
+    (repo_path / "source_links.json").write_text(
+        json.dumps(
+            [
+                {
+                    "file": "src/repo_a_impl.py",
+                    "line": 3,
+                    "tag": "#" + " req-Id:",
+                    "need": "MOD_REQ_1",
+                    "full_line": "#" + " req-Id: MOD_REQ_1",
+                    "repo_name": "local_repo",
+                    "hash": "",
+                    "url": "",
+                },
+                {
+                    "file": "src/repo_a_impl.py",
+                    "line": 7,
+                    "tag": "#" + " req-Id:",
+                    "need": "MOD_REQ_2",
+                    "full_line": "#" + " req-Id: MOD_REQ_2",
+                    "repo_name": "local_repo",
+                    "hash": "",
+                    "url": "",
+                },
+                {
+                    "file": "src/repo_b_impl.py",
+                    "line": 3,
+                    "tag": "#" + " req-Id:",
+                    "need": "MOD_REQ_1",
+                    "full_line": "#" + " req-Id: MOD_REQ_1",
+                    "repo_name": "local_repo",
+                    "hash": "",
+                    "url": "",
+                },
+                {
+                    "file": "src/repo_b_impl.py",
+                    "line": 7,
+                    "tag": "#" + " req-Id:",
+                    "need": "MOD_REQ_3",
+                    "full_line": "#" + " req-Id: MOD_REQ_3",
+                    "repo_name": "local_repo",
+                    "hash": "",
+                    "url": "",
+                },
+            ]
+        ),
+        encoding="utf-8",
+    )
 
     # Commit everything
     _ = subprocess.run(["git", "add", "."], cwd=repo_path, check=True)
@@ -218,6 +265,10 @@ def sphinx_app_setup(
     git_repo_setup: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> Callable[[], SphinxTestApp]:
+    # Source links are generated before Sphinx starts, matching the Bazel build
+    # contract used by the extension in production.
+    monkeypatch.setenv("SCORE_SOURCELINKS", str(sphinx_base_dir / "source_links.json"))
+
     def _create_app():
         base_dir = sphinx_base_dir
         docs_dir = base_dir / "docs"

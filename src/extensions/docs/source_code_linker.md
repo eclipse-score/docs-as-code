@@ -362,6 +362,7 @@ The bazel part:
 scripts_bazel/
 ├── BUILD   # Declare libraries and filegroups needed for bazel
 ├── generate_sourcelinks_cli.py # Bazel step 1 => Parses sourcefiles for tags
+├── source_code_link_parser.py # Source-file parser used by the generator
 ├── merge_sourcelinks.py
 └── tests
 │   └── ...
@@ -372,7 +373,6 @@ The Sphinx extension
 ```text
 score_source_code_linker/
 ├── __init__.py                   # Main Sphinx extension; combines CodeLinks + TestLinks
-├── generate_source_code_links_json.py  # Most functionality moved to 'scripts_bazel/generate_sourcelinks_cli'
 ├── need_source_links.py         # Data model for combined links
 ├── repo_source_links.py         # Data model for Repo combined links (Final output JSON)
 ├── helpers.py                   # Misc. functions used throughout SCL

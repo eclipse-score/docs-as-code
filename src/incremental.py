@@ -237,7 +237,6 @@ if __name__ == "__main__":
 
     action = get_env("ACTION")
     if action == "live_preview":
-        (build_dir / "score_source_code_linker_cache.json").unlink(missing_ok=True)
         mounts_manifest = os.environ.get("MOUNTS_MANIFEST", "")
         watch_arguments: list[str] = []
         if mounts_manifest:

@@ -31,9 +31,6 @@ from sphinx_needs.data import NeedsMutable, SphinxNeedsData
 from sphinx_needs.logging import get_logger
 from sphinx_needs.need_item import NeedItem
 
-from src.extensions.score_source_code_linker.generate_source_code_links_json import (
-    generate_source_code_links_json,
-)
 from src.extensions.score_source_code_linker.helpers import get_github_link
 from src.extensions.score_source_code_linker.need_source_links import (
     group_by_need,
@@ -63,10 +60,7 @@ from src.extensions.score_source_code_linker.xml_parser import (
     construct_and_add_need,
     run_xml_parser,
 )
-from src.helper_lib import (
-    find_git_root,
-    find_ws_root,
-)
+from src.helper_lib import find_ws_root
 
 LOGGER = get_logger(__name__)
 # Uncomment this to enable more verbose logging
@@ -87,29 +81,30 @@ def get_cache_filename(build_dir: Path, filename: str) -> Path:
     return build_dir / filename
 
 
-def build_and_save_combined_file(outdir: Path):
+def build_and_save_combined_file(outdir: Path, app: Sphinx | None = None):
     """
     Reads the saved partial caches of codelink & testlink
     Builds the combined JSON cache & saves it
     """
-    source_code_links_json = os.environ.get("SCORE_SOURCELINKS")
-    if not source_code_links_json:
-        # Fallback to the obsolete way of doing source code links,
-        # just in case someone is not using the docs(sourcelinks=...) attribute.
-        # TODO: Remove this once backwards compatibility is not needed anymore.
-        source_code_links_json = get_cache_filename(
-            outdir, "score_source_code_linker_cache.json"
-        )
+    source_code_links_path = os.environ.get("SCORE_SOURCELINKS")
+    if not source_code_links_path and app is not None:
+        source_code_links_path = str(
+            getattr(app.config, "score_sourcelinks_json", "")
+        ).strip()
+    if source_code_links_path:
+        source_code_links_json = Path(source_code_links_path)
+        try:
+            source_code_links = load_source_code_links_json(source_code_links_json)
+        except AssertionError:
+            source_code_links = load_source_code_links_with_metadata_json(
+                source_code_links_json
+            )
     else:
-        source_code_links_json = Path(source_code_links_json)
-
-    # This isn't pretty will think of a better solution later, for now this should work
-    try:
-        source_code_links = load_source_code_links_json(source_code_links_json)
-    except AssertionError:
-        source_code_links = load_source_code_links_with_metadata_json(
-            source_code_links_json
+        LOGGER.debug(
+            "No pre-generated source-code links provided. Continuing without code links.",
+            type="score_source_code_linker",
         )
+        source_code_links = []
     test_cache = get_cache_filename(outdir, "score_xml_parser_cache.json")
     if test_cache.exists():
         test_code_links = load_test_xml_parsed_json(test_cache)
@@ -130,7 +125,7 @@ def build_and_save_combined_file(outdir: Path):
 #          ╰──────────────────────────────────────╯
 
 
-def setup_source_code_linker(app: Sphinx, ws_root: Path | None):
+def setup_source_code_linker(app: Sphinx):
     """
     Setting up source_code_linker with all needed options.
     Allows us to only have this run once during live_preview & esbonio
@@ -163,42 +158,6 @@ def setup_source_code_linker(app: Sphinx, ws_root: Path | None):
             "options": ["testlink"],
         },
     )
-
-    score_sourcelinks_json = os.environ.get("SCORE_SOURCELINKS")
-    if not score_sourcelinks_json:
-        score_sourcelinks_json = str(
-            getattr(app.config, "score_sourcelinks_json", "")
-        ).strip()
-        if score_sourcelinks_json:
-            # Reuse existing code paths that expect this env var.
-            os.environ["SCORE_SOURCELINKS"] = score_sourcelinks_json
-    if score_sourcelinks_json:
-        # No need to generate the JSON file if this env var is set
-        # because it points to an existing file with the needed data.
-        return
-
-    if ws_root is None:
-        LOGGER.info(
-            "No workspace root found and no SCORE_SOURCELINKS provided. "
-            "Skipping source-code-link scan.",
-            type="score_source_code_linker",
-        )
-        return
-
-    scl_cache_json = get_cache_filename(
-        app.outdir, "score_source_code_linker_cache.json"
-    )
-
-    if (
-        not scl_cache_json.exists()
-        or not app.config.skip_rescanning_via_source_code_linker
-    ):
-        LOGGER.debug(
-            "INFO: Generating source code links JSON file.",
-            type="score_source_code_linker",
-        )
-
-        generate_source_code_links_json(ws_root, scl_cache_json)
 
 
 def register_test_code_linker(app: Sphinx):
@@ -269,7 +228,7 @@ def setup_combined_linker(app: Sphinx, _: BuildEnvironment):
             "Did not find combined json 'score_scl_grouped_cache.json' in _build."
             "Generating new one"
         )
-        build_and_save_combined_file(app.outdir)
+        build_and_save_combined_file(app.outdir, app)
 
 
 def register_repo_linker(app: Sphinx):
@@ -308,26 +267,12 @@ def setup_once(app: Sphinx):
     # might be the only way to solve this?
     if "skip_rescanning_via_source_code_linker" in app.config:
         return
-    LOGGER.debug(f"DEBUG: Workspace root is {find_ws_root()}")
-    LOGGER.debug(
-        f"DEBUG: Current working directory is {Path('.')} = {Path('.').resolve()}"
-    )
-    LOGGER.debug(f"DEBUG: Git root is {find_git_root()}")
-
-    # Run for local files if possible. In Bazel sandbox builds, ws_root may be
-    # unavailable; in that case we can still operate when SCORE_SOURCELINKS
-    # (or score_sourcelinks_json config) is provided.
-    ws_root = find_ws_root()
-    if ws_root:
-        # When BUILD_WORKSPACE_DIRECTORY is set, we are inside a git repository.
-        assert find_git_root()
-
     # Register & Run (if needed) parsing & saving of JSON caches
     # Note: This extension now runs on both internal and external needs_json invocations.
     # Both modes aggregate links from local sources and external dependencies, enabling
     # unified traceability reporting in integration repositories. Impact on external needs
     # invocations is minimal since they typically don't have local test logs or source code.
-    setup_source_code_linker(app, ws_root)
+    setup_source_code_linker(app)
     register_test_code_linker(app)
     register_combined_linker(app)
     register_repo_linker(app)

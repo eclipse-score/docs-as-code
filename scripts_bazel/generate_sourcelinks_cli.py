@@ -22,9 +22,7 @@ import logging
 import sys
 from pathlib import Path
 
-from src.extensions.score_source_code_linker.generate_source_code_links_json import (
-    _extract_references_from_file,  # pyright: ignore[reportPrivateUsage] TODO: move it out of the extension and into this script
-)
+from scripts_bazel.source_code_link_parser import extract_references_from_file
 from src.extensions.score_source_code_linker.helpers import parse_repo_name_from_path
 from src.extensions.score_source_code_linker.needlinks import (
     DefaultMetaData,
@@ -81,7 +79,7 @@ def main():
         abs_file_path = file_path.resolve()
         assert abs_file_path.exists(), abs_file_path
         clean_path = clean_external_prefix(file_path)
-        references = _extract_references_from_file(
+        references = extract_references_from_file(
             abs_file_path.parent, Path(abs_file_path.name), clean_path
         )
         all_need_references.extend(references)

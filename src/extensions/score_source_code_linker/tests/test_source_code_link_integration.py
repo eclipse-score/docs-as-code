@@ -30,13 +30,9 @@ from src.extensions.score_source_code_linker.testlink import (
     DataForTestLink,
     DataForTestLink_JSON_Decoder,
 )
-from src.extensions.score_source_code_linker.tests.test_codelink import (
-    needlink_test_decoder,
-)
 from src.extensions.score_source_code_linker.tests.test_need_source_links import (
     SourceCodeLinks_TEST_JSON_Decoder,
 )
-from src.helper_lib import find_ws_root
 
 
 @pytest.fixture(scope="module")
@@ -217,6 +213,12 @@ def sphinx_app_setup(
     git_repo_setup: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> Callable[[], SphinxTestApp]:
+    # Source links are generated before Sphinx starts, matching the Bazel build
+    # contract used by the extension in production.
+    monkeypatch.setenv(
+        "SCORE_SOURCELINKS", str(sphinx_base_dir / ".expected_codelink.json")
+    )
+
     def _create_app():
         base_dir = sphinx_base_dir
         docs_dir = base_dir / "docs"
@@ -524,15 +526,8 @@ def test_source_link_integration_ok(
     app = sphinx_app_setup()
     try:
         app.build()
-        ws_root = find_ws_root()
-        assert ws_root is not None
         Needs_Data = SphinxNeedsData(app.env)
         needs_data = {x["id"]: x for x in Needs_Data.get_needs_view().values()}
-        compare_json_files(
-            app.outdir / "score_source_code_linker_cache.json",
-            sphinx_base_dir / ".expected_codelink.json",
-            needlink_test_decoder,
-        )
         compare_json_files(
             app.outdir / "score_xml_parser_cache.json",
             sphinx_base_dir / ".expected_testlink.json",

@@ -22,7 +22,10 @@ filegroup(
 
 py_binary(
     name = "generate_sourcelinks",
-    srcs = ["generate_sourcelinks_cli.py"],
+    srcs = [
+        "generate_sourcelinks_cli.py",
+        "source_code_link_parser.py",
+    ],
     main = "generate_sourcelinks_cli.py",
     visibility = ["//visibility:public"],
     deps = [

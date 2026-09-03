@@ -35,6 +35,7 @@ from sphinx_needs.need_item import (
 )
 
 from src.extensions.score_source_code_linker import (
+    build_and_save_combined_file,
     find_need,
     get_cache_filename,
     group_by_need,
@@ -267,10 +268,10 @@ def sample_needs() -> dict[str, dict[str, str]]:
 
 
 def test_get_cache_filename():
-    """Test cache filename generation."""
+    """Test that cache paths are resolved relative to the build directory."""
     build_dir = Path("/tmp/build")
-    expected = build_dir / "score_source_code_linker_cache.json"
-    result = get_cache_filename(build_dir, "score_source_code_linker_cache.json")
+    expected = build_dir / "source_links.json"
+    result = get_cache_filename(build_dir, "source_links.json")
     assert result == expected
 
 
@@ -355,6 +356,18 @@ def test_cache_file_operations(
     assert loaded_links[1].line == 3
     assert loaded_links[2].line == 9
     assert loaded_links[3].line == 2
+
+
+def test_combining_without_source_links_continues_with_empty_code_links(
+    temp_dir: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A build without a pre-generated source-link input must not scan or fail."""
+    monkeypatch.delenv("SCORE_SOURCELINKS", raising=False)
+
+    build_and_save_combined_file(temp_dir)
+
+    grouped_cache = temp_dir / "score_scl_grouped_cache.json"
+    assert json.loads(grouped_cache.read_text(encoding="utf-8")) == []
 
 
 def test_cache_file_with_encoded_comments(temp_dir: Path) -> None:
@@ -453,7 +466,7 @@ def another_function():
     )
 
     # Create needlinks manually
-    # (simulating what generate_source_code_links_json would do)
+    # Simulate the source-link generator's pre-generated input.
     needlinks = [
         NeedLink(
             file=Path("src/implementation1.py"),
