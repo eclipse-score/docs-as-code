@@ -26,6 +26,12 @@ jobs:
         uses: step-security/harden-runner@v2.21.0
         with:
           egress-policy: audit
+
+      - name: Setup Bazel with shared caching
+        uses: eclipse-score/cicd-actions/setup-bazel-cache@cache
+        with:
+          disk-cache-key: ${{ github.job }}
+
       - name: Checkout repository
         uses: actions/checkout@v7
 

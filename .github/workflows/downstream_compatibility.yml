@@ -57,6 +57,11 @@ jobs:
           packages: graphviz
           cache: false
 
+      - name: Setup Bazel with shared caching
+        uses: eclipse-score/cicd-actions/setup-bazel-cache@cache
+        with:
+          disk-cache-key: ${{ github.job }}
+
       - name: Checkout PR
         uses: actions/checkout@v7
 
