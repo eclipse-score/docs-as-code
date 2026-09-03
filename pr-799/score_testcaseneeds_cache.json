@@ -3080,9 +3080,23 @@
     "FullyVerifies": null
   },
   {
+    "name": "test_external_needs__test_register_project_url_export_uses_configured_value",
+    "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
+    "line": "54",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
     "name": "test_external_needs__test_register_project_url_export_can_override_exported_value",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "53",
+    "line": "70",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3096,7 +3110,7 @@
   {
     "name": "test_external_needs__test_empty_list",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "73",
+    "line": "90",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3110,7 +3124,7 @@
   {
     "name": "test_external_needs__test_external_str_is_neither_at_nor_slash",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "77",
+    "line": "94",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3124,7 +3138,7 @@
   {
     "name": "test_external_needs__test_same_repo_entry_with_path",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "82",
+    "line": "99",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3138,7 +3152,7 @@
   {
     "name": "test_external_needs__test_same_repo_root_entry",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "96",
+    "line": "113",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3152,7 +3166,7 @@
   {
     "name": "test_external_needs__test_cross_module_sub_package_entry",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "108",
+    "line": "125",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3166,7 +3180,7 @@
   {
     "name": "test_external_needs__test_single_entry_with_path_non_target",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "122",
+    "line": "139",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3180,7 +3194,7 @@
   {
     "name": "test_external_needs__test_single_entry_no_path",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "128",
+    "line": "145",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3194,7 +3208,7 @@
   {
     "name": "test_external_needs__test_single_entry_json_no_path",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "134",
+    "line": "151",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3208,7 +3222,7 @@
   {
     "name": "test_external_needs__test_multiple_entries",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "141",
+    "line": "158",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3222,7 +3236,7 @@
   {
     "name": "test_external_needs__test_multiple_entries_2",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "155",
+    "line": "172",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3236,7 +3250,7 @@
   {
     "name": "test_external_needs__test_invalid_entry",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "174",
+    "line": "191",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3250,7 +3264,7 @@
   {
     "name": "test_external_needs__test_add_external_needs_json_appends_entry",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "179",
+    "line": "196",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3264,7 +3278,7 @@
   {
     "name": "test_external_needs__test_add_external_needs_json_appends_entry_local",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "209",
+    "line": "226",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3278,7 +3292,7 @@
   {
     "name": "test_external_needs__test_add_needs_json_file_appends_entry",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "243",
+    "line": "260",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3292,7 +3306,7 @@
   {
     "name": "test_external_needs__test_add_external_needs_json_missing_file_keeps_list_empty",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "278",
+    "line": "295",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3306,7 +3320,7 @@
   {
     "name": "test_external_needs__test_add_external_docs_sources_adds_collection",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "297",
+    "line": "314",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3320,7 +3334,7 @@
   {
     "name": "test_external_needs__test_add_external_docs_sources_local_sub_package",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "319",
+    "line": "336",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3334,7 +3348,7 @@
   {
     "name": "test_external_needs__test_add_external_docs_sources_local_root_key_fallback",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "353",
+    "line": "370",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3348,7 +3362,7 @@
   {
     "name": "test_external_needs__test_add_external_docs_sources_ide_support_returns_without_changes",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "383",
+    "line": "400",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4074,8 +4088,22 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_rules_file_based__test_rst_files[attributes/test_attributes_format_id_format.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/attributes/test_attributes_format_id_format.rst",
+    "name": "test_rules_file_based__test_rst_files[attributes/test_validity.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/attributes/test_validity.rst",
+    "line": "16",
+    "result": "passed",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": "",
+    "TestType": "requirements_based",
+    "DerivationTechnique": "requirements_based",
+    "result_text": "",
+    "PartiallyVerifies": "tool_req__docs_sec_attr_stride_threat_id, tool_req__docs_sec_attrs_mandatory",
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_rules_file_based__test_rst_files[attributes/test_attributes_external_prefix.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/attributes/test_attributes_external_prefix.rst",
     "line": "16",
     "result": "passed",
     "repo_name": "local_repo",
@@ -4085,6 +4113,20 @@
     "DerivationTechnique": "requirements_based",
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_common_attr_id_scheme",
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_rules_file_based__test_rst_files[attributes/test_prohibited_words.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/attributes/test_prohibited_words.rst",
+    "line": "17",
+    "result": "passed",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": "",
+    "TestType": "requirements_based",
+    "DerivationTechnique": "requirements_based",
+    "result_text": "",
+    "PartiallyVerifies": "tool_req__docs_common_attr_title, tool_req__docs_common_attr_desc_wording",
     "FullyVerifies": null
   },
   {
@@ -4102,36 +4144,8 @@
     "FullyVerifies": "tool_req__docs_stdreq_types[version==1], tool_req__docs_stdwp_types[version==1]"
   },
   {
-    "name": "test_rules_file_based__test_rst_files[attributes/test_prohibited_words.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/attributes/test_prohibited_words.rst",
-    "line": "17",
-    "result": "passed",
-    "repo_name": "local_repo",
-    "hash": "",
-    "url": "",
-    "TestType": "requirements_based",
-    "DerivationTechnique": "requirements_based",
-    "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_common_attr_title, tool_req__docs_common_attr_desc_wording",
-    "FullyVerifies": null
-  },
-  {
-    "name": "test_rules_file_based__test_rst_files[attributes/test_validity.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/attributes/test_validity.rst",
-    "line": "16",
-    "result": "passed",
-    "repo_name": "local_repo",
-    "hash": "",
-    "url": "",
-    "TestType": "requirements_based",
-    "DerivationTechnique": "requirements_based",
-    "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_sec_attr_stride_threat_id, tool_req__docs_sec_attrs_mandatory",
-    "FullyVerifies": null
-  },
-  {
-    "name": "test_rules_file_based__test_rst_files[attributes/test_attributes_external_prefix.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/attributes/test_attributes_external_prefix.rst",
+    "name": "test_rules_file_based__test_rst_files[attributes/test_attributes_format_id_format.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/attributes/test_attributes_format_id_format.rst",
     "line": "16",
     "result": "passed",
     "repo_name": "local_repo",
@@ -4172,21 +4186,7 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_rules_file_based__test_rst_files[options/wp_comp.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/options/wp_comp.rst",
-    "line": "16",
-    "result": "passed",
-    "repo_name": "local_repo",
-    "hash": "",
-    "url": "",
-    "TestType": "requirements_based",
-    "DerivationTechnique": "requirements_based",
-    "result_text": "",
-    "PartiallyVerifies": null,
-    "FullyVerifies": "tool_req__docs_stdwp_types[version==1], tool_req__docs_wp_types[version==1]"
-  },
-  {
-    "name": "test_rules_file_based__test_rst_files[options/test_need_extends.rst]",
+    "name": "test_rules_file_based__test_rst_files[options/test_dec_rec.rst]",
     "file": "src/extensions/score_metamodel/tests/rst/docname.rst",
     "line": "42",
     "result": "passed",
@@ -4200,7 +4200,7 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_rules_file_based__test_rst_files[options/test_dec_rec.rst]",
+    "name": "test_rules_file_based__test_rst_files[options/test_options_verification_report.rst]",
     "file": "src/extensions/score_metamodel/tests/rst/docname.rst",
     "line": "42",
     "result": "passed",
@@ -4228,18 +4228,32 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_rules_file_based__test_rst_files[options/test_options_verification_report.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/docname.rst",
-    "line": "42",
+    "name": "test_rules_file_based__test_rst_files[options/wp_comp.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/options/wp_comp.rst",
+    "line": "16",
     "result": "passed",
-    "repo_name": null,
-    "hash": null,
-    "url": null,
-    "TestType": null,
-    "DerivationTechnique": null,
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": "",
+    "TestType": "requirements_based",
+    "DerivationTechnique": "requirements_based",
     "result_text": "",
     "PartiallyVerifies": null,
-    "FullyVerifies": null
+    "FullyVerifies": "tool_req__docs_stdwp_types[version==1], tool_req__docs_wp_types[version==1]"
+  },
+  {
+    "name": "test_rules_file_based__test_rst_files[options/test_options_failure_effect.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/options/test_options_failure_effect.rst",
+    "line": "16",
+    "result": "passed",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": "",
+    "TestType": "requirements_based",
+    "DerivationTechnique": "requirements_based",
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": "tool_req__docs_saf_attr_fmea_failure_effect[version==1]"
   },
   {
     "name": "test_rules_file_based__test_rst_files[options/test_options_extra_option.rst]",
@@ -4256,18 +4270,18 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_rules_file_based__test_rst_files[options/test_options_failure_effect.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/options/test_options_failure_effect.rst",
-    "line": "16",
+    "name": "test_rules_file_based__test_rst_files[options/test_need_extends.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/docname.rst",
+    "line": "42",
     "result": "passed",
-    "repo_name": "local_repo",
-    "hash": "",
-    "url": "",
-    "TestType": "requirements_based",
-    "DerivationTechnique": "requirements_based",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
     "result_text": "",
     "PartiallyVerifies": null,
-    "FullyVerifies": "tool_req__docs_saf_attr_fmea_failure_effect[version==1]"
+    "FullyVerifies": null
   },
   {
     "name": "test_rules_file_based__test_rst_files[options/test_options_options.rst]",
@@ -4354,6 +4368,20 @@
     "FullyVerifies": null
   },
   {
+    "name": "test_rules_file_based__test_rst_files[safety/test_saf_mandatory_attrs.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/safety/test_saf_mandatory_attrs.rst",
+    "line": "16",
+    "result": "passed",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": "",
+    "TestType": "requirements_based",
+    "DerivationTechnique": "requirements_based",
+    "result_text": "",
+    "PartiallyVerifies": "tool_req__docs_saf_attrs_mandatory[version==1]",
+    "FullyVerifies": "tool_req__docs_saf_attr_dfa_failure_id[version==2], tool_req__docs_saf_attr_fmea_fault_id[version==2], tool_req__docs_saf_attrs_sufficient[version==1], tool_req__docs_saf_attrs_content[version==2]"
+  },
+  {
     "name": "test_rules_file_based__test_rst_files[safety/test_saf_types.rst]",
     "file": "src/extensions/score_metamodel/tests/rst/safety/test_saf_types.rst",
     "line": "15",
@@ -4380,20 +4408,6 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": "tool_req__docs_saf_attrs_mitigation_issue[version==1], tool_req__docs_saf_attrs_safety_relevant[version==1], tool_req__docs_saf_attrs_root_cause[version==1]"
-  },
-  {
-    "name": "test_rules_file_based__test_rst_files[safety/test_saf_mandatory_attrs.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/safety/test_saf_mandatory_attrs.rst",
-    "line": "16",
-    "result": "passed",
-    "repo_name": "local_repo",
-    "hash": "",
-    "url": "",
-    "TestType": "requirements_based",
-    "DerivationTechnique": "requirements_based",
-    "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_saf_attrs_mandatory[version==1]",
-    "FullyVerifies": "tool_req__docs_saf_attr_dfa_failure_id[version==2], tool_req__docs_saf_attr_fmea_fault_id[version==2], tool_req__docs_saf_attrs_sufficient[version==1], tool_req__docs_saf_attrs_content[version==2]"
   },
   {
     "name": "test_rules_file_based__test_rst_files[safety/test_saf_violates.rst]",
