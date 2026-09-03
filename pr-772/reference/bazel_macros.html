@@ -38,11 +38,11 @@
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-data-viewer/jsonview.bundle.css?v=f6ef2277" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/libs/html/datatables.min.css?v=4b4fd840" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_toggle.css?v=5c6620df" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/needstable.css?v=5e1b6797" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_links.css?v=2150a916" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_style.css?v=92936fa5" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/needstable.css?v=5e1b6797" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_toggle.css?v=5c6620df" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_core.css?v=f5b60a78" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_links.css?v=2150a916" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/modern.css?v=803738c0" />
   
   <!-- So that users can add custom icons -->
@@ -613,6 +613,8 @@ Directory holding the bundle’s own doc sources. It is globbed the same way as
 <code class="docutils literal notranslate"><span class="pre">docs()</span></code> (RST, Markdown, images, and the other doc file kinds). The
 <code class="docutils literal notranslate"><span class="pre">source_dir</span></code> itself is the mount root, so the files mount relative to it (so
 <code class="docutils literal notranslate"><span class="pre">concept/index.rst</span></code> with <code class="docutils literal notranslate"><span class="pre">source_dir</span> <span class="pre">=</span> <span class="pre">&quot;concept&quot;</span></code> becomes <code class="docutils literal notranslate"><span class="pre">index.rst</span></code>).
+Bundle-local Needs exports always use a generated Sphinx configuration;
+user-provided <code class="docutils literal notranslate"><span class="pre">conf.py</span></code> files are not supported for bundles.
 The bundle exposes those files as a Bazel depset (via the <code class="docutils literal notranslate"><span class="pre">DocsBundleInfo</span></code>
 provider) and records the <code class="docutils literal notranslate"><span class="pre">source_dir</span></code> path; sphinx-mounts walks that original
 directory directly — no copy is made. Leave it unset for a bundle whose
