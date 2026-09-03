@@ -11,8 +11,15 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-"""
-Easy streamlined way for S-CORE docs-as-code.
+"""Public Bazel macros for building and composing S-CORE documentation.
+
+The ``docs_bundle`` macro describes which documentation files belong to a
+reusable bundle and how nested bundles are composed. Source-bearing bundles
+also create a ``<name>.__internal__.needs_local`` export containing Needs from
+their own sources. This first version only supports self-contained bundles;
+references to Needs defined outside the bundle remain unresolved until
+cross-bundle imports are added. The top-level ``docs`` macro continues to use
+its existing project-wide ``needs_json`` export.
 """
 
 # Multiple approaches are available to build the same documentation output:
@@ -74,7 +81,16 @@ def _module_name_without_prefix():
         return ""
     return module_name.split("_", 1)[-1]
 
+def _bundle_internal_target(name, target):
+    """Return the conventional name for a target internal to a bundle."""
+    return name + ".__internal__." + target
+
 def _generated_conf_impl(ctx):
+    """Generate a Sphinx config at the source-root path expected by sphinxdocs.
+
+    ``entry_doc`` determines which document Sphinx treats as the project root
+    when a bundle's entry page is not named ``index``.
+    """
     output = ctx.actions.declare_file(ctx.attr.output_path)
     ctx.actions.expand_template(
         template = ctx.file.template,
@@ -83,6 +99,7 @@ def _generated_conf_impl(ctx):
             "{PROJECT}": repr(ctx.attr.project),
             "{PROJECT_URL}": repr(ctx.attr.project_url),
             "{REQUIRED_IN_ID}": repr([ctx.attr.required_in_id]) if ctx.attr.required_in_id else "[]",
+            "{ENTRY_DOC}": repr(ctx.attr.entry_doc),
         },
     )
     return [DefaultInfo(files = depset([output]))]
@@ -93,6 +110,7 @@ _generated_conf = rule(
         "project": attr.string(mandatory = True),
         "project_url": attr.string(mandatory = True),
         "required_in_id": attr.string(mandatory = True),
+        "entry_doc": attr.string(default = "index"),
         "output_path": attr.string(mandatory = True),
         "template": attr.label(
             allow_single_file = True,
@@ -114,7 +132,22 @@ def _is_needs_json_target(label):
     """
     return str(label).rsplit(":", 1)[-1] == "needs_json"
 
-def docs_bundle(
+def _bundle_sphinx_strip_prefix(source_dir):
+    """Return the source prefix used by a Sphinx action for this repository."""
+    source_prefix = join_path(native.package_name(), source_dir)
+    repository = native.repo_name()
+    if repository:
+        # External repository files use ``../<canonical-repo>/`` in short_path,
+        # while the main repository uses paths without that leading segment.
+        source_prefix = join_path(
+            "../" + repository,
+            source_prefix,
+        )
+    if source_prefix:
+        source_prefix += "/"
+    return source_prefix
+
+def _declare_docs_bundle(
     name,
     source_dir = None,
     srcs = [],
@@ -125,7 +158,7 @@ def docs_bundle(
     code_targets = [],
     visibility = None,
     **kwargs):
-    """A docs bundle, optionally composed of others.
+    """Declare the reusable bundle and return inputs needed by local exports.
 
     Args:
       name: target name.
@@ -182,7 +215,9 @@ def docs_bundle(
         sourcelinks.append(code_targets_sourcelinks)
 
     # Store the source directory relative to the workspace so bundle consumers
-    # can locate the original files without copying them.
+    # can locate the original files without copying them. The internal rule
+    # keeps this path in its provider; the Needs build below uses the same
+    # source root so docnames and link targets remain stable.
     pkg = native.package_name()
     strip_prefix = join_path(pkg, source_dir) if source_dir != None else ""
 
@@ -211,6 +246,139 @@ def docs_bundle(
         visibility = visibility,
         **kwargs
     )
+
+    return struct(
+        source_dir_globbed = source_dir_globbed,
+        sourcelinks = sourcelinks,
+    )
+
+def docs_bundle(
+    name,
+    source_dir = None,
+    srcs = [],
+    data = [],
+    entry_doc = "index",
+    bundles = [],
+    scan_code = [],
+    code_targets = [],
+    visibility = None,
+    **kwargs):
+    """Declare a reusable documentation bundle."""
+    bundle = _declare_docs_bundle(
+        name = name,
+        source_dir = source_dir,
+        srcs = srcs,
+        data = data,
+        entry_doc = entry_doc,
+        bundles = bundles,
+        scan_code = scan_code,
+        code_targets = code_targets,
+        visibility = visibility,
+        **kwargs
+    )
+    source_dir_globbed = bundle.source_dir_globbed
+    sourcelinks = bundle.sourcelinks
+
+    if source_dir_globbed or srcs:
+        # ``bundle_source_files`` is important here: using the complete bundle
+        # would also feed nested child sources into this Sphinx invocation and
+        # export their Needs under the parent's local target. Ownership stays
+        # one-way: every source-bearing bundle exports only its own sources.
+        own_sources = bundle_source_files(
+            name = _bundle_internal_target(name, "needs_sources"),
+            bundle = ":" + name,
+            visibility = visibility,
+            tags = ["manual"],
+        )
+
+        # Sphinx expects conf.py below the source root. Prefer a caller-provided
+        # config, and otherwise generate the same default config used by docs().
+        config_file_path = join_path(source_dir, "conf.py")
+        if native.glob([config_file_path], allow_empty = True):
+            needs_config = ":" + config_file_path
+        else:
+            needs_config = ":" + _bundle_internal_target(name, "needs_conf")
+            _generated_conf(
+                name = _bundle_internal_target(name, "needs_conf"),
+                project = name,
+                project_url = "",
+                required_in_id = "",
+                entry_doc = entry_doc,
+                output_path = config_file_path,
+                tags = ["manual"],
+            )
+
+        # A Needs export also carries source-code-link metadata. Reuse the
+        # bundle's existing link file when there is one; create an empty file
+        # for the common no-code-target case; and merge multiple files when
+        # both deprecated scan_code and code_targets contributed inputs.
+        if len(sourcelinks) == 0:
+            needs_sourcelinks = ":" + _bundle_internal_target(name, "needs_sourcelinks_json")
+            _sourcelinks_json(
+                name = _bundle_internal_target(name, "needs_sourcelinks_json"),
+                srcs = [],
+            )
+        elif len(sourcelinks) == 1:
+            needs_sourcelinks = sourcelinks[0]
+        else:
+            needs_sourcelinks_name = _bundle_internal_target(name, "needs_sourcelinks_json")
+            merge_bundle_sourcelinks(
+                name = needs_sourcelinks_name,
+                bundle = ":" + name,
+                visibility = visibility,
+            )
+            needs_sourcelinks = ":" + needs_sourcelinks_name
+
+        # This is the Sphinx executable used by the action below. The extension
+        # and PlantUML helper are explicit because a bundle-local export is a
+        # standalone Sphinx invocation, not the host docs() invocation.
+        needs_deps = all_requirements + [
+            Label("//src:plantuml_for_python"),
+            Label("//src/extensions/score_sphinx_bundle:score_sphinx_bundle"),
+        ]
+        needs_sphinx_build = _bundle_internal_target(name, "needs_sphinx_build")
+        sphinx_build_binary(
+            name = needs_sphinx_build,
+            deps = needs_deps,
+            visibility = visibility,
+            tags = ["manual"],
+        )
+
+        source_strip_prefix = _bundle_sphinx_strip_prefix(source_dir)
+
+        # The source files are declared with their workspace-relative paths,
+        # while sphinxdocs expects the prefix to remove from those paths before
+        # placing them below the temporary Sphinx source root.
+        #
+        # Build the own export from this bundle's sources only. References to
+        # Needs owned by another bundle are intentionally unsupported until
+        # cross-bundle imports are added.
+        needs_local = _bundle_internal_target(name, "needs_local")
+        sphinx_docs(
+            name = needs_local,
+            srcs = [own_sources],
+            config = needs_config,
+            # ``sphinxdocs`` removes this string literally from short_path.
+            # Keep the separator so a source_dir/conf.py is relocated as
+            # conf.py rather than /conf.py.
+            strip_prefix = source_strip_prefix,
+            extra_opts = [
+                "-W",
+                "--keep-going",
+                "-T",
+                "--define=score_bundle_needs_export=1",
+                # Prevent the non-Bazel fallback query from importing the
+                # host project's external Needs into this standalone export.
+                "--define=external_needs_source=[]",
+                "--define=score_sourcelinks_json=$(location " + str(needs_sourcelinks) + ")",
+            ],
+            formats = ["needs"],
+            sphinx = ":" + needs_sphinx_build,
+            tools = [needs_sourcelinks],
+            visibility = visibility,
+            allow_persistent_workers = False,
+            tags = ["manual"],
+        )
 
 def _missing_requirements(deps):
     """Add Python hub dependencies if they are missing."""
@@ -381,7 +549,7 @@ def docs(
 
     # The public bundle carries both the complete source tree and the
     # transitive source-code links of every nested bundle.
-    docs_bundle(
+    _declare_docs_bundle(
         name = "docs_bundle",
         source_dir = source_dir,
         data = data,

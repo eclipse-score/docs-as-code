@@ -130,30 +130,39 @@ def parse_external_needs_sources_from_bazel_query() -> list[ExternalNeedsSource]
     return res
 
 
-def extend_needs_json_exporter(config: Config, params: list[str]) -> None:
+def register_project_url_export(
+    config: Config,
+    *,
+    exported_project_url: str | None = None,
+) -> None:
+    """Add ``project_url`` to the Needs JSON export.
+
+    By default, the value comes from the Sphinx configuration and an empty
+    value is reported as a configuration error. ``exported_project_url`` is an
+    explicit replacement for the JSON value; supplying it also makes an empty
+    replacement valid without changing the active Sphinx configuration.
     """
-    This will add each param to app.config as a config value.
-    Then it will overwrite the needs.json exporter to include these values.
-    """
+    # ``project_url`` is a SCORE-specific configuration value, so register it
+    # before accessing it. This currently happens during ``config-inited``;
+    # moving the declaration into extension setup is a separate cleanup.
+    config.add("project_url", default="", rebuild="env", types=(), description="")
+    configured_project_url = config.project_url
+    if exported_project_url is None and not configured_project_url:
+        logger.error(
+            "Config value 'project_url' is not set. "
+            + "Please set it in your Sphinx config."
+        )
 
-    for p in params:
-        # Note: we are currently addinig these values to config after config-inited.
-        # This is wrong. But good enough.
-        config.add(p, default="", rebuild="env", types=(), description="")
+    project_url = (
+        configured_project_url if exported_project_url is None else exported_project_url
+    )
 
-        if not getattr(config, p):
-            logger.error(
-                f"Config value '{p}' is not set. "
-                + "Please set it in your Sphinx config."
-            )
-
-    # Patch json exporter to include our custom fields
-    # Note: yeah, NeedsList is the json exporter!
+    # Patch json exporter to include our custom field.
+    # Note: ``NeedsList`` is the sphinx-needs JSON exporter.
     orig_function = NeedsList._finalise  # pyright: ignore[reportPrivateUsage]
 
     def temp(self: NeedsList):
-        for p in params:
-            self.needs_list[p] = getattr(config, p)  # pyright: ignore[reportUnknownMemberType]
+        self.needs_list["project_url"] = project_url
 
         orig_function(self)
 
@@ -228,7 +237,12 @@ def add_external_docs_sources(e: ExternalNeedsSource, config: Config):
 
 
 def connect_external_needs(app: Sphinx, config: Config):
-    extend_needs_json_exporter(config, ["project_url"])
+    # Bundle-local exports intentionally leave project_url empty, while host
+    # builds retain the existing missing-value diagnostic.
+    register_project_url_export(
+        config,
+        exported_project_url="" if config.score_bundle_needs_export else None,
+    )
 
     # Local external needs from DATA (e.g. :needs_json or :docs_sources)
     external_needs = get_external_needs_source(app.config.external_needs_source)

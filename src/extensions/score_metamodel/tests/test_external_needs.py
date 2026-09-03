@@ -19,6 +19,8 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from types import SimpleNamespace
+from typing import cast
 
 import pytest
 import score_metamodel.external_needs as ext_needs
@@ -30,7 +32,91 @@ from score_metamodel.external_needs import (
     get_external_needs_source,
     parse_external_needs_sources_from_DATA,
 )
+from sphinx.application import Sphinx
 from sphinx.config import Config
+from sphinx_needs.needsfile import NeedsList
+
+
+def test_register_project_url_export_reports_missing_config(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """The host export reports a missing project URL as a configuration error."""
+    errors: list[str] = []
+    monkeypatch.setattr(NeedsList, "_finalise", lambda _needs_list: None)
+    monkeypatch.setattr(ext_needs.logger, "error", errors.append)
+
+    ext_needs.register_project_url_export(Config())
+
+    assert errors == [
+        "Config value 'project_url' is not set. Please set it in your Sphinx config."
+    ]
+
+
+def test_register_project_url_export_uses_configured_value(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """The host export writes the configured project URL to the JSON document."""
+    config = Config()
+    config.project_url = "https://example.test/host"
+
+    monkeypatch.setattr(NeedsList, "_finalise", lambda _needs_list: None)
+    ext_needs.register_project_url_export(config)
+
+    needs_list = cast(NeedsList, SimpleNamespace(needs_list={}))
+    NeedsList._finalise(needs_list)  # pyright: ignore[reportPrivateUsage] - white-box test
+
+    assert needs_list.needs_list["project_url"] == "https://example.test/host"
+
+
+def test_register_project_url_export_can_override_exported_value(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """An export override does not mutate the active Sphinx configuration."""
+    config = Config()
+    config.project_url = "https://example.test/host"
+
+    def no_op_finalise(_needs_list: NeedsList) -> None:
+        pass
+
+    monkeypatch.setattr(NeedsList, "_finalise", no_op_finalise)
+    ext_needs.register_project_url_export(config, exported_project_url="")
+
+    needs_list = cast(NeedsList, SimpleNamespace(needs_list={}))
+    NeedsList._finalise(needs_list)  # pyright: ignore[reportPrivateUsage] - white-box test
+
+    assert needs_list.needs_list["project_url"] == ""
+    assert config.project_url == "https://example.test/host"
+
+
+@pytest.mark.parametrize(
+    ("bundle_needs_export", "exported_project_url"),
+    [(False, None), (True, "")],
+)
+def test_connect_external_needs_selects_project_url_export_mode(
+    monkeypatch: pytest.MonkeyPatch,
+    bundle_needs_export: bool,
+    exported_project_url: str | None,
+) -> None:
+    """Only bundle-local exports replace the project URL in the JSON output."""
+    observed: list[str | None] = []
+
+    def record_exporter_call(
+        _config: Config,
+        *,
+        exported_project_url: str | None,
+    ) -> None:
+        observed.append(exported_project_url)
+
+    monkeypatch.setattr(ext_needs, "register_project_url_export", record_exporter_call)
+
+    config = Config()
+    config.external_needs_source = "[]"
+    config.score_bundle_needs_export = bundle_needs_export
+    ext_needs.connect_external_needs(
+        cast(Sphinx, SimpleNamespace(config=config)), config
+    )
+
+    assert observed == [exported_project_url]
 
 
 def test_empty_list():

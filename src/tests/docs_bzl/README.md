@@ -23,7 +23,8 @@ docs_bzl/
 │   ├── subdirectory_bundle/
 │   ├── external_bundle/
 │   ├── local_version_mismatch/
-│   └── invalid_bundle_placements/
+│   ├── invalid_bundle_placements/
+│   └── upward_bundles/
 └── test_<scenario>.py
 ```
 
@@ -35,6 +36,12 @@ manifest order and metadata, source links, toctree attachment, and diagnostics.
 The cross-module compatibility test creates its consumer in a temporary
 workspace, so this repository's production ``MODULE.bazel`` stays free of test
 dependencies while the test still traverses real Bzlmod module boundaries.
+
+The ``upward_bundles`` scenario is a rough specification for cross-bundle Needs
+propagation: local exports remain limited to a bundle's own sources, while a
+separate upward export merges explicitly declared direct ancestors. It also
+covers source-less ancestors and the rule that undeclared transitive ancestors
+are not inherited.
 
 Note that these tests run `bazel` commands, so they are slow. They need to be executed
 sequentially. Use sparingly. They do not call `bazel clean`, so the persistent

@@ -64,10 +64,12 @@ DocsBundleInfo = provider(
         "entries": "Ordered entries, one per source directory, including its final documentation-tree location.",
         "own_source_files": "This bundle's direct source files, excluding nested bundles.",
         "sourcelinks": "Source-code-link JSON files together with their owning repository.",
-        "external_runfiles": "Documentation source files not read from the workspace at runtime.",
-        # Bundle-owned supporting/runtime files. Unlike host-owned docs data,
-        # these are resolved at this bundle's mount.
-        "data": "Bundle-owned supporting/runtime files resolved at the bundle's mount.",
+        "external_runfiles": "Documentation source files from external repositories needed in runfiles.",
+        # Bundle-owned generated/supporting files. Both bundle data and
+        # docs(data = [...]) are build inputs; unlike host-owned docs data,
+        # these are resolved at this bundle's mount (for example, a generated
+        # index.rst).
+        "data": "Bundle-owned generated/supporting files resolved at the bundle's mount.",
     },
 )
 
@@ -488,12 +490,13 @@ _bundle_source_files = rule(
     doc = "Exposes direct bundle sources without nested bundle sources.",
 )
 
-def bundle_source_files(name, bundle, visibility = None):
+def bundle_source_files(name, bundle, visibility = None, tags = None):
     """Create a target containing only the direct sources of a bundle."""
     _bundle_source_files(
         name = name,
         bundle = bundle,
         visibility = visibility,
+        tags = tags,
     )
     return ":" + name
 

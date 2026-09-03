@@ -10,13 +10,17 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-# Default Sphinx configuration emitted by the ``docs()`` macro.
+# Default Sphinx configuration emitted by the ``docs()`` and
+# ``docs_bundle()`` macros.
 # SCORE Docs-as-Code owns these baseline settings.  Projects needing further
 # Sphinx configuration can provide their own conf.py instead.
 
 project = {PROJECT}
 project_url = {PROJECT_URL}
 version = "0.0.0"
+# ``docs_bundle(entry_doc = ...)`` may use a non-index entry page. The regular
+# project-level docs() build uses the default value, ``index``.
+master_doc = {ENTRY_DOC}
 
 # Allow feature IDs that use the Bazel module name without its first
 # underscore-separated prefix (for example, ``score_docs_as_code`` becomes
