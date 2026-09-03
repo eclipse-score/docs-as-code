@@ -3066,7 +3066,7 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_external_needs__test_register_project_url_export_reports_missing_config",
+    "name": "test_external_needs__test_extend_needs_json_exporter_reports_missing_config",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
     "line": "45",
     "result": "passed",
@@ -3080,7 +3080,7 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_external_needs__test_register_project_url_export_uses_configured_or_explicit_value[None-https://example.test/host]",
+    "name": "test_external_needs__test_extend_needs_json_exporter_uses_configured_or_explicit_value[None-https://example.test/host]",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
     "line": "60",
     "result": "passed",
@@ -3094,7 +3094,7 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_external_needs__test_register_project_url_export_uses_configured_or_explicit_value[-]",
+    "name": "test_external_needs__test_extend_needs_json_exporter_uses_configured_or_explicit_value[-]",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
     "line": "60",
     "result": "passed",
@@ -3108,7 +3108,7 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_external_needs__test_register_project_url_export_does_not_stack_wrappers",
+    "name": "test_external_needs__test_extend_needs_json_exporter_does_not_stack_wrappers",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
     "line": "83",
     "result": "passed",
