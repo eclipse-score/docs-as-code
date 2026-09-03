@@ -521,8 +521,6 @@ Reads the aggregated JSON, validates and adapts it, and finally injects the link
 <p>Each <code class="docutils literal notranslate"><span class="pre">docs_bundle</span></code> scans the source files selected by its <code class="docutils literal notranslate"><span class="pre">code_targets</span></code>
 attribute. A <em>per bundle JSON cache</em> is then generated and saved; Bazel
 reuses it until its source inputs change.
-<code class="docutils literal notranslate"><span class="pre">scan_code</span></code> remains available for explicit files or filegroups, but is
-deprecated.
 This script <code class="docutils literal notranslate"><span class="pre">scripts_bazel/generate_sourcelinks_cli.py</span></code> finds all codelinks per file, and gathers them into
 one JSON cache per repository.
 It also adds metadata to each needlink that is needed in further steps.</p>

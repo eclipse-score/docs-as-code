@@ -560,9 +560,6 @@ expand to their files. Each documentation bundle produces one cache for its
 declared targets; Bazel reuses that cache while its inputs are unchanged. The
 generated JSON is supplied to <code class="docutils literal notranslate"><span class="pre">live_preview</span></code> just like a normal documentation
 build.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">scan_code</span></code> (list of Bazel labels, deprecated)
-Explicit source files or filegroups to scan. Use <code class="docutils literal notranslate"><span class="pre">code_targets</span></code> for
-implementation targets; it follows their dependencies automatically.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">external_needs</span></code> (list of bazel labels)
 External <code class="docutils literal notranslate"><span class="pre">:needs_json_file</span></code> targets from other modules/repositories
 for referencing their needs.
@@ -606,7 +603,7 @@ site).</p>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>Signature: <code class="docutils literal notranslate"><span class="pre">docs_bundle(name,</span> <span class="pre">source_dir</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">srcs</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">data</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">entry_doc</span> <span class="pre">=</span> <span class="pre">&quot;index&quot;,</span> <span class="pre">bundles</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">scan_code</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">code_targets</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">visibility</span> <span class="pre">=</span> <span class="pre">None)</span></code>.</p>
+<p>Signature: <code class="docutils literal notranslate"><span class="pre">docs_bundle(name,</span> <span class="pre">source_dir</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">srcs</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">data</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">entry_doc</span> <span class="pre">=</span> <span class="pre">&quot;index&quot;,</span> <span class="pre">bundles</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">code_targets</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">visibility</span> <span class="pre">=</span> <span class="pre">None)</span></code>.</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">source_dir</span></code> (string, optional)
 Directory holding the bundle’s own doc sources. It is globbed the same way as
@@ -664,12 +661,6 @@ Implementation target <code class="docutils literal notranslate"><span class="pr
 recursively from their <code class="docutils literal notranslate"><span class="pre">deps</span></code>; filegroups expand to their files. The bundle
 owns one cached scan result; Bazel only regenerates it when its collected source
 inputs change.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">scan_code</span></code> (list of Bazel labels, deprecated)</dt><dd><p>Explicit source files or filegroups to scan. Prefer <code class="docutils literal notranslate"><span class="pre">code_targets</span></code> for
-implementation targets.</p>
 </dd>
 </dl>
 </li>
