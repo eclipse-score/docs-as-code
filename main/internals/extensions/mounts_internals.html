@@ -38,11 +38,11 @@
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-data-viewer/jsonview.bundle.css?v=f6ef2277" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/libs/html/datatables.min.css?v=4b4fd840" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_toggle.css?v=5c6620df" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/needstable.css?v=5e1b6797" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_links.css?v=2150a916" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_style.css?v=92936fa5" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/needstable.css?v=5e1b6797" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_toggle.css?v=5c6620df" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_core.css?v=f5b60a78" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_links.css?v=2150a916" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/modern.css?v=803738c0" />
   
   <!-- So that users can add custom icons -->
@@ -501,6 +501,18 @@ walked;</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">entry_doc</span></code> — the canonical entry document declared by the source bundle.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">external</span></code> — whether the directory belongs to another Bazel module.</p></li>
 </ul>
+<p>At <code class="docutils literal notranslate"><span class="pre">config-inited</span></code>, <code class="docutils literal notranslate"><span class="pre">score_mounts</span></code> resolves all directory source mounts before
+constructing <code class="docutils literal notranslate"><span class="pre">config.mounts</span></code>. A mount below Sphinx’s primary source directory
+is added to the primary <code class="docutils literal notranslate"><span class="pre">exclude_patterns</span></code> as a relative <code class="docutils literal notranslate"><span class="pre">&lt;mount&gt;/**</span></code> pattern.
+A mount below another mount is added to the parent entry’s <code class="docutils literal notranslate"><span class="pre">sphinx-mounts</span></code>
+<code class="docutils literal notranslate"><span class="pre">exclude</span></code> patterns. This prevents a document from being discovered by both its
+containing directory walk and its owning mount. Because the exclusions are
+directory patterns rather than a snapshot of source files, newly created files
+remain visible to live preview.</p>
+<p>Explicit <code class="docutils literal notranslate"><span class="pre">docs_bundle(srcs</span> <span class="pre">=</span> <span class="pre">[...])</span></code> entries remain in file-list mode and are
+not included in these directory exclusions. They are intended for generated
+sources outside the primary source tree; an explicitly mounted workspace file
+below a walked root is a known limitation and would need exact-file exclusions.</p>
 <p>The rule rejects conflicting final placements before Sphinx starts. A mount
 without <code class="docutils literal notranslate"><span class="pre">attach_to</span></code> is attached to the <code class="docutils literal notranslate"><span class="pre">index</span></code> document beside its
 <code class="docutils literal notranslate"><span class="pre">mount_at</span></code>; <code class="docutils literal notranslate"><span class="pre">attach_to</span></code> overrides that target. The Python
