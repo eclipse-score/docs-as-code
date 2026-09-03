@@ -89,12 +89,18 @@ def build_and_save_combined_file(outdir: Path, app: Sphinx | None = None):
     source_code_links_path = os.environ.get("SCORE_SOURCELINKS")
     if not source_code_links_path and app is not None:
         source_code_links_path = str(
-            getattr(app.config, "score_sourcelinks_json", "")
+            getattr(app.config, "score_sourcelinks_json", "") or ""
         ).strip()
     if source_code_links_path:
         source_code_links_json = Path(source_code_links_path)
         try:
             source_code_links = load_source_code_links_json(source_code_links_json)
+        except FileNotFoundError as exc:
+            raise FileNotFoundError(
+                "Pre-generated source-code links file does not exist: "
+                f"{source_code_links_json}. Check SCORE_SOURCELINKS or "
+                "score_sourcelinks_json."
+            ) from exc
         except AssertionError:
             source_code_links = load_source_code_links_with_metadata_json(
                 source_code_links_json

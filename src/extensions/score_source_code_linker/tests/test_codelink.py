@@ -370,6 +370,22 @@ def test_combining_without_source_links_continues_with_empty_code_links(
     assert json.loads(grouped_cache.read_text(encoding="utf-8")) == []
 
 
+def test_combining_with_missing_source_links_reports_configured_path(
+    temp_dir: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Report the configured source-link file when it cannot be found."""
+    missing_file = temp_dir / "missing_source_links.json"
+    monkeypatch.setenv("SCORE_SOURCELINKS", str(missing_file))
+
+    with pytest.raises(FileNotFoundError) as exc_info:
+        build_and_save_combined_file(temp_dir)
+
+    assert str(exc_info.value) == (
+        "Pre-generated source-code links file does not exist: "
+        f"{missing_file}. Check SCORE_SOURCELINKS or score_sourcelinks_json."
+    )
+
+
 def test_cache_file_with_encoded_comments(temp_dir: Path) -> None:
     """Test that cache file properly handles encoded comments."""
     # Create needlinks with spaces in tags and full_line
