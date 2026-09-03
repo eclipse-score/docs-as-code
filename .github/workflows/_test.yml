@@ -15,7 +15,7 @@ name: Run Bazel Tests
 on:
   workflow_call:
 jobs:
-  code:
+  _tests:
     runs-on: ubuntu-latest
     steps:
       - name: 🛡️ Harden Runner
