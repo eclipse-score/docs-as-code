@@ -15,7 +15,7 @@ name: Run Bazel Tests
 on:
   workflow_call:
 jobs:
-  code:
+  _tests:
     runs-on: ubuntu-latest
     steps:
       - name: 🛡️ Harden Runner
@@ -37,12 +37,9 @@ jobs:
           repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
 
       - name: Setup Bazel with shared caching
-        uses: bazel-contrib/setup-bazel@0.19.0
+        uses: eclipse-score/cicd-actions/setup-bazel-cache@cache
         with:
-          disk-cache: true
-          repository-cache: true
-          bazelisk-cache: true
-          cache-save: ${{ github.event_name == 'push' }}
+          disk-cache-key: ${{ github.job }}
 
       - name: Setup venv
         run: bazel run --lockfile_mode=error //:ide_support
