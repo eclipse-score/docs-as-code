@@ -231,50 +231,46 @@ def _nested_mount_pattern(parent_dir: Path, child_dir: Path) -> str | None:
     return f"{relative_dir.as_posix()}/**"
 
 
-def _primary_mount_excludes(
+def _mount_exclusions(
     source_dir: Path,
     source_mounts: list[tuple[MountSpec, Path]],
-) -> list[str]:
-    """Return primary-walk exclusions for mounts below the app source root.
+) -> tuple[tuple[str, ...], tuple[tuple[str, ...], ...]]:
+    """Return primary and per-mount exclusions in one pairwise traversal.
 
-    Without these patterns, Sphinx's normal walk of ``source_dir`` would also
-    discover documents that ``sphinx_mounts`` is about to register at the bundle's
-    ``mount_at`` location. The mounted directory must be the sole owner of those
-    documents.
+    The primary source walk must exclude every directory mount below
+    ``source_dir``. Each directory mount must also exclude every nested directory
+    mount from its own walk. Computing both sets here avoids rescanning the full
+    mount list once for every parent mount. The two directions of each pair are
+    checked because either directory may be the descendant.
     """
-    patterns: set[str] = set()
-    for _, mount_dir in source_mounts:
-        pattern = _nested_mount_pattern(source_dir, mount_dir)
-        if pattern is not None:
-            patterns.add(pattern)
-    return sorted(patterns)
+    primary_patterns: set[str] = set()
+    nested_patterns = [set[str]() for _ in source_mounts]
 
+    for parent_index, (_, parent_dir) in enumerate(source_mounts):
+        primary_pattern = _nested_mount_pattern(source_dir, parent_dir)
+        if primary_pattern is not None:
+            primary_patterns.add(primary_pattern)
 
-def _nested_mount_excludes(
-    parent_index: int,
-    source_mounts: list[tuple[MountSpec, Path]],
-) -> list[str]:
-    """Return all descendant mount roots excluded from one directory mount.
+        for child_index in range(parent_index + 1, len(source_mounts)):
+            _, child_dir = source_mounts[child_index]
 
-    The result includes direct and deeper descendants. Excluding every descendant
-    makes the ownership boundary independent of manifest order: each nested mount
-    receives its own documents, while the containing mount keeps the rest.
-    """
-    _, parent_dir = source_mounts[parent_index]
-    patterns: set[str] = set()
-    for child_index, (_, child_dir) in enumerate(source_mounts):
-        if child_index == parent_index:
-            continue
-        pattern = _nested_mount_pattern(parent_dir, child_dir)
-        if pattern is not None:
-            patterns.add(pattern)
-    return sorted(patterns)
+            child_pattern = _nested_mount_pattern(parent_dir, child_dir)
+            if child_pattern is not None:
+                nested_patterns[parent_index].add(child_pattern)
+
+            parent_pattern = _nested_mount_pattern(child_dir, parent_dir)
+            if parent_pattern is not None:
+                nested_patterns[child_index].add(parent_pattern)
+
+    return (
+        tuple(sorted(primary_patterns)),
+        tuple(tuple(sorted(patterns)) for patterns in nested_patterns),
+    )
 
 
 def _exclude_mounted_primary_sources(
-    app: Sphinx,
     config: Config,
-    source_mounts: list[tuple[MountSpec, Path]],
+    exclusions: tuple[str, ...],
 ) -> None:
     """Hide mounted bundle roots from Sphinx's primary source discovery.
 
@@ -283,8 +279,6 @@ def _exclude_mounted_primary_sources(
     while ensuring a source file is discovered by either the host tree or its
     owning bundle mount, never both.
     """
-    source_dir = Path(app.srcdir).resolve()
-    exclusions = _primary_mount_excludes(source_dir, source_mounts)
     if exclusions:
         # Preserve project-configured exclusions and append only the bundle roots
         # that are physically inside the primary source tree.
@@ -351,7 +345,10 @@ def _on_config_inited(app: Sphinx, config: Config) -> None:
     # assembled. Only then can their physical roots be compared for nesting and
     # can both Sphinx's primary walk and each parent mount be given exclusions.
     source_mounts = _resolve_source_mounts(manifest, ws_root, runfiles_dir)
-    _exclude_mounted_primary_sources(app, config, source_mounts)
+    primary_exclusions, nested_exclusions = _mount_exclusions(
+        Path(app.srcdir).resolve(), source_mounts
+    )
+    _exclude_mounted_primary_sources(config, primary_exclusions)
 
     # ``source_mounts`` omits pure-data and explicit file-list entries. Explicit
     # ``srcs`` entries intentionally retain their existing file-list behavior;
@@ -398,7 +395,7 @@ def _on_config_inited(app: Sphinx, config: Config) -> None:
             _make_mount_entry(
                 walk_dir,
                 spec,
-                tuple(_nested_mount_excludes(index, source_mounts)),
+                nested_exclusions[index],
             )
         )
 

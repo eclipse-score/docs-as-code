@@ -16,9 +16,8 @@ from pathlib import Path
 
 from src.extensions.score_mounts import (
     _make_mount_entry,  # pyright: ignore[reportPrivateUsage] - white-box unit test
-    _nested_mount_excludes,  # pyright: ignore[reportPrivateUsage] - white-box unit test
+    _mount_exclusions,  # pyright: ignore[reportPrivateUsage] - white-box unit test
     _nested_mount_pattern,  # pyright: ignore[reportPrivateUsage] - white-box unit test
-    _primary_mount_excludes,  # pyright: ignore[reportPrivateUsage] - white-box unit test
 )
 from src.extensions.score_mounts._resolver import MountSpec
 
@@ -37,27 +36,24 @@ def test_nested_mount_pattern_only_matches_descendants(tmp_path: Path) -> None:
     assert _nested_mount_pattern(parent, tmp_path / "sibling") is None
 
 
-def test_primary_mount_excludes_only_mounts_below_source(tmp_path: Path) -> None:
-    """Only physically nested mounts are hidden from primary discovery."""
+def test_mount_exclusions_calculate_primary_and_nested_boundaries(
+    tmp_path: Path,
+) -> None:
+    """Primary and nested ownership boundaries are calculated together."""
     source_dir = tmp_path / "docs"
     source_mounts = [
-        (_spec("nested"), source_dir / "nested"),
+        (_spec("parent"), source_dir / "parent"),
+        (_spec("child"), source_dir / "parent" / "child"),
         (_spec("external"), tmp_path / "external"),
     ]
 
-    assert _primary_mount_excludes(source_dir, source_mounts) == ["nested/**"]
+    primary_exclusions, nested_exclusions = _mount_exclusions(
+        source_dir,
+        source_mounts,
+    )
 
-
-def test_parent_mount_excludes_nested_child_mount(tmp_path: Path) -> None:
-    """A parent directory mount skips a child that has its own mount."""
-    source_mounts = [
-        (_spec("parent"), tmp_path / "parent"),
-        (_spec("child"), tmp_path / "parent" / "child"),
-        (_spec("other"), tmp_path / "other"),
-    ]
-
-    assert _nested_mount_excludes(0, source_mounts) == ["child/**"]
-    assert _nested_mount_excludes(1, source_mounts) == []
+    assert primary_exclusions == ("parent/**", "parent/child/**")
+    assert nested_exclusions == (("child/**",), (), ())
 
 
 def test_mount_entry_serializes_child_exclusions(tmp_path: Path) -> None:
