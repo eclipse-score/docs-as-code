@@ -202,6 +202,8 @@ def _is_needs_json_target(label):
 
 def _bundle_short_path_prefix(path):
     """Return the short-path prefix for a file below ``path``."""
+    if path == ".":
+        path = ""
     prefix = join_path(native.package_name(), path)
     repository = native.repo_name()
     if repository:
@@ -210,11 +212,6 @@ def _bundle_short_path_prefix(path):
     if prefix:
         prefix += "/"
     return prefix
-
-def _path_parent(path):
-    """Return the directory portion of a relative path."""
-    separator = path.rfind("/")
-    return path[:separator] if separator >= 0 else ""
 
 def _declare_docs_bundle(
     name,
@@ -321,7 +318,6 @@ def _declare_docs_bundle(
 
 def _declare_bundle_local_needs(
         name,
-        source_dir,
         source_dir_globbed,
         srcs,
         entry_doc,
@@ -332,10 +328,9 @@ def _declare_bundle_local_needs(
         deps = []):
     """Create a standalone Needs export for a bundle's direct sources.
 
-    The optional ``config`` is used by ``docs()`` when its generated project
-    configuration can be shared with the root bundle. If no config is supplied,
-    a bundle reuses a checked-in ``conf.py`` when present and otherwise receives
-    its own generated configuration.
+    Standalone ``docs_bundle`` exports use a generated baseline configuration.
+    The root bundle created by ``docs()`` may provide the project's own
+    configuration because it is also the project's normal documentation root.
     """
     if not source_dir_globbed and not srcs:
         return
@@ -352,31 +347,24 @@ def _declare_bundle_local_needs(
     )
 
     if config == None:
-        # Sphinx expects conf.py below the source root. Reuse a checked-in
-        # configuration when the bundle provides one so its extensions and
-        # bundle-specific settings remain available to the local export.
-        config_file_path = join_path(source_dir, "conf.py") if source_dir != None else "conf.py"
-        if native.glob([config_file_path], allow_empty = True):
-            needs_config = ":" + config_file_path
-            config_strip_prefix = _bundle_short_path_prefix(_path_parent(config_file_path))
-        else:
-            needs_config = ":" + _bundle_internal_target(name, "needs_conf")
-            config_output_path = join_path(
-                _bundle_internal_target(name, "needs_conf"),
-                "conf.py",
-            )
-            _generated_conf(
-                name = _bundle_internal_target(name, "needs_conf"),
-                project = name,
-                project_url = "",
-                required_in_id = "",
-                output_path = config_output_path,
-                tags = ["manual"],
-            )
-            config_strip_prefix = _bundle_short_path_prefix(
-                _path_parent(config_output_path),
-            )
+        # Sphinx expects conf.py below the source root. Generate a private
+        # config for each standalone export so a source-only bundle remains
+        # independent of the project that composes it.
+        needs_conf = _bundle_internal_target(name, "needs_conf")
+        config_output_path = join_path(needs_conf, "conf.py")
+        _generated_conf(
+            name = needs_conf,
+            project = name,
+            project_url = "",
+            required_in_id = "",
+            output_path = config_output_path,
+            tags = ["manual"],
+        )
+        needs_config = ":" + needs_conf
+        config_strip_prefix = _bundle_short_path_prefix(needs_conf)
     else:
+        # The root bundle belongs to docs(), so its local export must retain
+        # the same project configuration as the normal project-wide export.
         needs_config = config
 
     # The source files are declared with their workspace-relative paths,
@@ -419,7 +407,6 @@ def docs_bundle(
     bundles = [],
     code_targets = [],
     visibility = None,
-    deps = [],
     **kwargs):
     """Declare a reusable documentation bundle.
 
@@ -441,13 +428,11 @@ def docs_bundle(
     )
     _declare_bundle_local_needs(
         name = name,
-        source_dir = source_dir,
         source_dir_globbed = bundle.source_dir_globbed,
         srcs = srcs,
         entry_doc = entry_doc,
         sourcelinks_json = bundle.sourcelinks_json,
         visibility = visibility,
-        deps = deps,
     )
 
 def _missing_requirements(deps):
@@ -620,16 +605,13 @@ def docs(
     )
     _declare_bundle_local_needs(
         name = "docs_bundle",
-        source_dir = source_dir,
         source_dir_globbed = root_bundle.source_dir_globbed,
         srcs = [],
         entry_doc = "index",
         sourcelinks_json = root_bundle.sourcelinks_json,
         visibility = ["//visibility:public"],
-        # Reuse docs()' generated configuration when available. Otherwise the
-        # local export detects and reuses a checked-in source conf.py.
-        config = sphinx_config if config_is_generated else None,
-        config_strip_prefix = _bundle_short_path_prefix(source_dir) if config_is_generated else "",
+        config = sphinx_config,
+        config_strip_prefix = _bundle_short_path_prefix(source_dir),
         deps = deps,
     )
     sphinx_sources = bundle_source_files(
