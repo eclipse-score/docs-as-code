@@ -119,6 +119,12 @@ def _write_metrics_json(
         "overall_metrics": _derive_overall_metrics(metrics_by_type),
         "metrics_by_type": metrics_by_type,
         "tests": tests,
+        "needs_overview": {
+            "total": 7,
+            "external": 0,
+            "local": 7,
+            "by_type": {"testcase": 3, "tool_req": 4},
+        },
     }
 
     out = tmp_path / "metrics.json"
