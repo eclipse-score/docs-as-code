@@ -11,8 +11,16 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-"""
-Easy streamlined way for S-CORE docs-as-code.
+"""Public Bazel macros for building and composing S-CORE documentation.
+
+The ``docs_bundle`` macro describes which documentation files belong to a
+reusable bundle and how nested bundles are composed. Source-bearing bundles
+also create a ``<name>.__internal__.needs_local`` export containing Needs from
+their own sources. The root bundle created by ``docs()`` follows the same rule;
+its existing project-wide ``needs_json`` export remains available as well.
+This first version only supports self-contained bundles; references to Needs
+defined outside the bundle remain unresolved until cross-bundle imports are
+added.
 """
 
 # Multiple approaches are available to build the same documentation output:
@@ -51,6 +59,7 @@ load(
 load(
     "@score_docs_as_code//:bzl/bundle_rules.bzl",
     "bundle_source_files",
+    "bundle_sphinx_source_files",
     "create_bundle",
     "external_docs_runfiles",
     "generate_code_target_sourcelinks",
@@ -67,6 +76,78 @@ load(
 )
 load("@sphinxdocs//sphinxdocs:sphinx_docs_library.bzl", "sphinx_docs_library")
 
+def _sphinx_define(name, value):
+    """Return a Sphinx ``--define`` option when ``value`` is configured."""
+    if value == None:
+        return []
+    return ["--define=" + name + "=" + value]
+
+def _needs_sphinx_docs(
+        name,
+        config,
+        sphinx_build_deps,
+        srcs = [],
+        deps = [],
+        strip_prefix = "",
+        master_doc = None,
+        external_needs_source = None,
+        score_bundle_needs_export = None,
+        score_sourcelinks_json = None,
+        score_source_code_linker_plain_links = None,
+        mounts_manifest = None,
+        score_metamodel_yaml = None,
+        tools = [],
+        sphinx_build_data = [],
+        visibility = None):
+    """Declare a bundle Needs export with the repository-wide Sphinx policy."""
+    sphinx_build_name = _bundle_internal_target(name, "sphinx_build")
+    sphinx_build_binary(
+        name = sphinx_build_name,
+        data = sphinx_build_data,
+        deps = sphinx_build_deps,
+        # The Sphinx executable is an implementation detail of the Needs
+        # target; only the generated Needs target itself needs the requested
+        # visibility.
+        visibility = ["//visibility:private"],
+        tags = ["manual"],
+    )
+    sphinx_docs(
+        name = name,
+        srcs = srcs,
+        deps = deps,
+        config = config,
+        formats = ["needs"],
+        strip_prefix = strip_prefix,
+        extra_opts = (
+            # Keep the baseline diagnostic policy in the Needs wrapper. The
+            # underlying sphinxdocs rule already supplies common Bazel-safe
+            # options such as ``--jobs auto``, ``--fresh-env``, and
+            # ``--write-all``.
+            [
+                "-W",
+                "--keep-going",
+                "-T",
+            ] +
+            _sphinx_define("master_doc", master_doc) +
+            _sphinx_define("external_needs_source", external_needs_source) +
+            _sphinx_define("score_bundle_needs_export", score_bundle_needs_export) +
+            _sphinx_define("score_sourcelinks_json", score_sourcelinks_json) +
+            _sphinx_define(
+                "score_source_code_linker_plain_links",
+                score_source_code_linker_plain_links,
+            ) +
+            _sphinx_define("mounts_manifest", mounts_manifest) +
+            _sphinx_define("score_metamodel_yaml", score_metamodel_yaml)
+        ),
+        sphinx = ":" + sphinx_build_name,
+        tools = tools,
+        visibility = visibility,
+        # Persistent workers can retain stale symlinks after dependency
+        # version changes, corrupting the Bazel cache for Needs exports.
+        allow_persistent_workers = False,
+        tags = ["manual"],
+    )
+
 def _module_name_without_prefix():
     """Return the current Bazel module name without its first prefix."""
     module_name = native.module_name()
@@ -79,6 +160,7 @@ def _bundle_internal_target(name, target):
     return name + ".__internal__." + target
 
 def _generated_conf_impl(ctx):
+    """Generate a Sphinx config at the source-root path expected by sphinxdocs."""
     output = ctx.actions.declare_file(ctx.attr.output_path)
     ctx.actions.expand_template(
         template = ctx.file.template,
@@ -118,6 +200,22 @@ def _is_needs_json_target(label):
     """
     return str(label).rsplit(":", 1)[-1] == "needs_json"
 
+def _bundle_short_path_prefix(path):
+    """Return the short-path prefix for a file below ``path``."""
+    prefix = join_path(native.package_name(), path)
+    repository = native.repo_name()
+    if repository:
+        # External repository files use ``../<repository>/`` in short_path.
+        prefix = join_path("../" + repository, prefix)
+    if prefix:
+        prefix += "/"
+    return prefix
+
+def _path_parent(path):
+    """Return the directory portion of a relative path."""
+    separator = path.rfind("/")
+    return path[:separator] if separator >= 0 else ""
+
 def _declare_docs_bundle(
     name,
     source_dir = None,
@@ -131,10 +229,8 @@ def _declare_docs_bundle(
     """Declare the shared bundle target implementation.
 
     This helper performs the bundle declaration used by both public entry
-    points. It deliberately contains no targets for consuming a bundle on its
-    own; those can be added to the public ``docs_bundle`` wrapper without
-    making ``docs()`` create them for the project root.
-
+    points. It returns the source and sourcelink inputs used by the standalone
+    Needs export created for source-bearing bundles.
     Args:
       name: target name.
       source_dir: optional directory holding this bundle's own doc sources. It is
@@ -181,9 +277,16 @@ def _declare_docs_bundle(
         )
 
     # Store the source directory relative to the workspace so bundle consumers
-    # can locate the original files without copying them.
+    # can locate the original files without copying them. The internal rule
+    # keeps this path in its provider; the Needs build below uses the same
+    # source root so docnames and link targets remain stable.
     pkg = native.package_name()
-    strip_prefix = join_path(pkg, source_dir) if source_dir != None else ""
+    # ``source_dir = "."`` denotes the package root. Keep its provider path
+    # normalized so Sphinx can remove the same prefix from ordinary short_paths
+    # (which never contain the literal ``/.`` segment).
+    strip_prefix = (
+        pkg if source_dir == "." else join_path(pkg, source_dir)
+    ) if source_dir != None else ""
 
     # ``needs_json`` is an inventory consumed by score_metamodel, not content
     # owned by this bundle. It must remain in the caller's build/runfile inputs
@@ -211,6 +314,102 @@ def _declare_docs_bundle(
         **kwargs
     )
 
+    return struct(
+        source_dir_globbed = source_dir_globbed,
+        sourcelinks_json = sourcelinks_json,
+    )
+
+def _declare_bundle_local_needs(
+        name,
+        source_dir,
+        source_dir_globbed,
+        srcs,
+        entry_doc,
+        sourcelinks_json,
+        visibility = None,
+        config = None,
+        config_strip_prefix = "",
+        deps = []):
+    """Create a standalone Needs export for a bundle's direct sources.
+
+    The optional ``config`` is used by ``docs()`` when its generated project
+    configuration can be shared with the root bundle. If no config is supplied,
+    a bundle reuses a checked-in ``conf.py`` when present and otherwise receives
+    its own generated configuration.
+    """
+    if not source_dir_globbed and not srcs:
+        return
+
+    # ``bundle_sphinx_source_files`` is important here: using the complete bundle
+    # would also feed nested child sources into this Sphinx invocation and
+    # export their Needs under the parent's local target. Ownership stays
+    # one-way: every source-bearing bundle exports only its own sources.
+    own_sources = bundle_sphinx_source_files(
+        name = _bundle_internal_target(name, "needs_sources"),
+        bundle = ":" + name,
+        visibility = visibility,
+        tags = ["manual"],
+    )
+
+    if config == None:
+        # Sphinx expects conf.py below the source root. Reuse a checked-in
+        # configuration when the bundle provides one so its extensions and
+        # bundle-specific settings remain available to the local export.
+        config_file_path = join_path(source_dir, "conf.py") if source_dir != None else "conf.py"
+        if native.glob([config_file_path], allow_empty = True):
+            needs_config = ":" + config_file_path
+            config_strip_prefix = _bundle_short_path_prefix(_path_parent(config_file_path))
+        else:
+            needs_config = ":" + _bundle_internal_target(name, "needs_conf")
+            config_output_path = join_path(
+                _bundle_internal_target(name, "needs_conf"),
+                "conf.py",
+            )
+            _generated_conf(
+                name = _bundle_internal_target(name, "needs_conf"),
+                project = name,
+                project_url = "",
+                required_in_id = "",
+                output_path = config_output_path,
+                tags = ["manual"],
+            )
+            config_strip_prefix = _bundle_short_path_prefix(
+                _path_parent(config_output_path),
+            )
+    else:
+        needs_config = config
+
+    # The source files are declared with their workspace-relative paths,
+    # while sphinxdocs expects the prefix to remove from those paths before
+    # placing them below the temporary Sphinx source root.
+    #
+    # Build the own export from this bundle's sources only. References to
+    # Needs owned by another bundle are intentionally unsupported until
+    # cross-bundle imports are added.
+    sphinx_build_deps = deps + _missing_requirements(deps)
+    for fixed_dep in [
+        Label("//src:plantuml_for_python"),
+        Label("//src/extensions/score_sphinx_bundle:score_sphinx_bundle"),
+    ]:
+        if fixed_dep not in sphinx_build_deps:
+            sphinx_build_deps.append(fixed_dep)
+
+    needs_local = _bundle_internal_target(name, "needs_local")
+    _needs_sphinx_docs(
+        name = needs_local,
+        deps = [own_sources],
+        config = needs_config,
+        sphinx_build_deps = sphinx_build_deps,
+        master_doc = entry_doc,
+        external_needs_source = "[]",
+        score_bundle_needs_export = "1",
+        score_sourcelinks_json = "$(location " + str(sourcelinks_json) + ")" if sourcelinks_json else None,
+        score_source_code_linker_plain_links = "1",
+        strip_prefix = config_strip_prefix,
+        tools = [sourcelinks_json] if sourcelinks_json else [],
+        visibility = visibility,
+    )
+
 def docs_bundle(
     name,
     source_dir = None,
@@ -220,6 +419,7 @@ def docs_bundle(
     bundles = [],
     code_targets = [],
     visibility = None,
+    deps = [],
     **kwargs):
     """Declare a reusable documentation bundle.
 
@@ -228,7 +428,7 @@ def docs_bundle(
     distinct home while allowing ``docs()`` to use the shared declaration for
     the project root.
     """
-    _declare_docs_bundle(
+    bundle = _declare_docs_bundle(
         name = name,
         source_dir = source_dir,
         srcs = srcs,
@@ -238,6 +438,16 @@ def docs_bundle(
         code_targets = code_targets,
         visibility = visibility,
         **kwargs
+    )
+    _declare_bundle_local_needs(
+        name = name,
+        source_dir = source_dir,
+        source_dir_globbed = bundle.source_dir_globbed,
+        srcs = srcs,
+        entry_doc = entry_doc,
+        sourcelinks_json = bundle.sourcelinks_json,
+        visibility = visibility,
+        deps = deps,
     )
 
 def _missing_requirements(deps):
@@ -394,19 +604,11 @@ def docs(
 
     incremental_src = Label("//src:incremental.py")
 
-    sphinx_build_binary(
-        name = "sphinx_build",
-        visibility = ["//visibility:private"],
-        data = data + external_needs + metamodel_label + [":docs_bundle"],
-        deps = deps,
-        tags = ["manual"]
-    )
-
     known_good_label = [known_good] if known_good else []
 
     # The public bundle carries both the complete source tree and the
     # transitive source-code links of every nested bundle.
-    _declare_docs_bundle(
+    root_bundle = _declare_docs_bundle(
         name = "docs_bundle",
         source_dir = source_dir,
         data = data,
@@ -415,6 +617,20 @@ def docs(
         code_targets = code_targets,
         visibility = ["//visibility:public"],
         tags = ["manual"]
+    )
+    _declare_bundle_local_needs(
+        name = "docs_bundle",
+        source_dir = source_dir,
+        source_dir_globbed = root_bundle.source_dir_globbed,
+        srcs = [],
+        entry_doc = "index",
+        sourcelinks_json = root_bundle.sourcelinks_json,
+        visibility = ["//visibility:public"],
+        # Reuse docs()' generated configuration when available. Otherwise the
+        # local export detects and reuses a checked-in source conf.py.
+        config = sphinx_config if config_is_generated else None,
+        config_strip_prefix = _bundle_short_path_prefix(source_dir) if config_is_generated else "",
+        deps = deps,
     )
     sphinx_sources = bundle_source_files(
         name = "_docs_sphinx_sources",
@@ -529,7 +745,7 @@ def docs(
         package_collisions = "warning",
     )
 
-    sphinx_docs(
+    _needs_sphinx_docs(
         name = "needs_json",
         # Nested bundle sources are mounted by score_mounts. Passing the
         # complete bundle as srcs would also expose those files as raw Sphinx
@@ -537,28 +753,17 @@ def docs(
         srcs = [sphinx_sources],
         deps = root_bundle_data_for_sphinx,
         config = sphinx_config,
-        extra_opts = [
-            "-W",
-            "--keep-going",
-            "-T",  # show more details in case of errors
-            "--jobs",
-            "auto",
-            "--define=external_needs_source=" + str(data + external_needs),
-            "--define=score_sourcelinks_json=$(location :sourcelinks_json)",
-            "--define=score_source_code_linker_plain_links=1",
-        ] + (
-            # ``sphinx_docs`` is a sandboxed build action, so it needs the
-            # action-input path rather than the runfiles-relative spelling.
-            ["--define=mounts_manifest=$(location :_mounts_manifest)"] if bundles else []
-        ) + (["--define=score_metamodel_yaml=$(location " + str(metamodel) + ")"] if metamodel else []),
-        formats = ["needs"],
-        sphinx = ":sphinx_build",
+        sphinx_build_deps = deps,
+        sphinx_build_data = data + external_needs + metamodel_label + [":docs_bundle"],
+        external_needs_source = str(data + external_needs),
+        score_sourcelinks_json = "$(location :sourcelinks_json)",
+        score_source_code_linker_plain_links = "1",
+        # ``sphinx_docs`` is a sandboxed build action, so it needs the
+        # action-input path rather than the runfiles-relative spelling.
+        mounts_manifest = "$(location :_mounts_manifest)" if bundles else None,
+        score_metamodel_yaml = "$(location " + str(metamodel) + ")" if metamodel else None,
         tools = external_needs + metamodel_label + [":sourcelinks_json", ":docs_bundle"] + mounts_manifest_label,
         visibility = ["//visibility:public"],
-        # Persistent workers cause stale symlinks after dependency version
-        # changes, corrupting the Bazel cache.
-        allow_persistent_workers = False,
-        tags = ["manual"],
     )
 
     native.genrule(

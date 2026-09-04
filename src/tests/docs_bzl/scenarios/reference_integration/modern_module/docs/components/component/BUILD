@@ -11,7 +11,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-load("//:docs.bzl", "docs")
+load("//:docs.bzl", "docs_bundle")
 
 filegroup(
     name = "component_sources",
@@ -23,12 +23,13 @@ filegroup(
 # tree and mounts this bundle at the component placement. The implementation
 # file is supplied through ``code_targets`` to exercise source-link generation
 # for a component that is propagated through the module bundle.
-docs(
-    project = "S-CORE Modern Component",
-    project_url = "https://example.invalid/score-modern-component",
+#
+# The component intentionally does not import the platform Needs itself. Its
+# requirement links to the platform feature, so the component Needs target is
+# valid only when the parent module supplies that external Needs.
+docs_bundle(
+    name = "docs_bundle",
     source_dir = ".",
-    external_needs = [
-        "//src/tests/docs_bzl/scenarios/reference_integration/score_platform:needs_json",
-    ],
     code_targets = [":component_sources"],
+    visibility = ["//visibility:public"],
 )

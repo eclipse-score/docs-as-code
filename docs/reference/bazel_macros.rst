@@ -165,13 +165,15 @@ site).
        visibility = ["//visibility:public"],
    )
 
-Signature: ``docs_bundle(name, source_dir = None, srcs = [], data = [], entry_doc = "index", bundles = [], code_targets = [], visibility = None)``.
+Signature: ``docs_bundle(name, source_dir = None, srcs = [], data = [], entry_doc = "index", bundles = [], code_targets = [], visibility = None, deps = [])``.
 
 - ``source_dir`` (string, optional)
   Directory holding the bundle's own doc sources. It is globbed the same way as
   ``docs()`` (RST, Markdown, images, and the other doc file kinds). The
   ``source_dir`` itself is the mount root, so the files mount relative to it (so
   ``concept/index.rst`` with ``source_dir = "concept"`` becomes ``index.rst``).
+  Bundle-local Needs exports reuse a checked-in ``conf.py`` when present;
+  otherwise a self-contained Sphinx configuration is generated.
   The bundle exposes those files as a Bazel depset (via the ``DocsBundleInfo``
   provider) and records the ``source_dir`` path; sphinx-mounts walks that original
   directory directly — no copy is made. Leave it unset for a bundle whose
@@ -212,6 +214,14 @@ Signature: ``docs_bundle(name, source_dir = None, srcs = [], data = [], entry_do
   error. See :ref:`howto_mount_external_sources` for a worked example and
   :ref:`docs_concept_mounts` for the composition and transitivity semantics.
 
+- ``needs_local`` (internal target)
+  A source-bearing bundle creates ``<name>.__internal__.needs_local`` with the
+  Needs declared by its own sources. The standalone build is intentionally
+  self-contained in this version: references to Needs defined outside the
+  bundle remain unresolved and fail strict builds. Cross-bundle imports and
+  merged exports are planned for a later change. Data-only bundles do not
+  create a Needs target.
+
 .. note::
 
    A bundle is **placement-free**: its ``mount_at`` and ``attach_to`` are assigned
@@ -225,6 +235,11 @@ Signature: ``docs_bundle(name, source_dir = None, srcs = [], data = [], entry_do
    recursively from their ``deps``; filegroups expand to their files. The bundle
    owns one cached scan result; Bazel only regenerates it when its collected source
    inputs change.
+
+- ``deps`` (list of Bazel labels, optional)
+   Additional Python dependencies used by the bundle-local Sphinx build. This
+   is required when the bundle's ``conf.py`` imports project-specific Sphinx
+   extensions or other Python modules.
 
 Edge cases
 ----------

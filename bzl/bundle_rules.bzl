@@ -54,6 +54,10 @@
 
 
 load("@score_docs_as_code//:bzl/basics.bzl", "join_path")
+load(
+    "@sphinxdocs//sphinxdocs/private:sphinx_docs_library_info.bzl",
+    "SphinxDocsLibraryInfo",
+)
 
 # Internal data passed between bundle targets and eventually consumed by an
 # adapter such as the Sphinx mounts manifest. Users configure bundles through
@@ -63,6 +67,8 @@ DocsBundleInfo = provider(
     fields = {
         "entries": "Ordered entries, one per source directory, including its final documentation-tree location.",
         "own_source_files": "This bundle's direct source files, excluding nested bundles.",
+        "own_source_root": "Runtime path of this bundle's direct source root.",
+        "own_source_is_explicit": "Whether the direct sources came from explicit source targets.",
         "sourcelinks": "Source-code-link JSON files together with their owning repository.",
         "external_runfiles": "Documentation source files not read from the workspace at runtime.",
         # Bundle-owned supporting/runtime files. Unlike host-owned docs data,
@@ -300,6 +306,8 @@ def _docs_bundle_impl(ctx):
     """Compose source files and nested bundles into a reusable bundle."""
     entries = []
     own_source_files = []
+    own_source_root = ""
+    own_source_is_explicit = False
     own_external_runfiles = []
     own_data = depset(direct = ctx.files.data)
 
@@ -311,6 +319,7 @@ def _docs_bundle_impl(ctx):
 
     if ctx.files.source_dir_globbed:
         runtime_path = _bundle_runtime_path(ctx)
+        own_source_root = runtime_path
         external = runtime_path.startswith("../")
         entries.append(struct(
             runtime_path = runtime_path,
@@ -339,6 +348,8 @@ def _docs_bundle_impl(ctx):
         # the declared relative file list so runtime discovery cannot include
         # undeclared siblings from the shared parent directory.
         runtime_path = _source_targets_runtime_path(ctx.files.source_targets)
+        own_source_root = runtime_path
+        own_source_is_explicit = True
         source_files = _source_targets_relative_paths(
             ctx.files.source_targets,
             runtime_path,
@@ -423,6 +434,8 @@ def _docs_bundle_impl(ctx):
         DocsBundleInfo(
             entries = entries,
             own_source_files = depset(direct = own_source_files),
+            own_source_root = own_source_root,
+            own_source_is_explicit = own_source_is_explicit,
             sourcelinks = sourcelinks,
             external_runfiles = external_runfiles,
             data = all_data,
@@ -490,12 +503,68 @@ _bundle_source_files = rule(
     doc = "Exposes direct bundle sources without nested bundle sources.",
 )
 
-def bundle_source_files(name, bundle, visibility = None):
+def bundle_source_files(name, bundle, visibility = None, tags = None):
     """Create a target containing only the direct sources of a bundle."""
     _bundle_source_files(
         name = name,
         bundle = bundle,
         visibility = visibility,
+        tags = tags,
+    )
+    return ":" + name
+
+def _bundle_sphinx_source_files_impl(ctx):
+    """Expose direct bundle sources with a Sphinx-specific path mapping."""
+    bundle = ctx.attr.bundle[DocsBundleInfo]
+    source_files = tuple(bundle.own_source_files.to_list())
+    if not source_files:
+        fail("bundle %s has no direct documentation sources" % ctx.attr.bundle)
+
+    # Directory-discovered sources already carry a stable bundle-relative root
+    # in the provider. Explicit source targets instead use the output path
+    # Bazel gives to Sphinx. Deriving that parent from ``short_path`` handles
+    # both workspace files and generated outputs (whose paths include
+    # ``bazel-out``) without making the macro guess a configuration-dependent
+    # output directory.
+    if bundle.own_source_is_explicit:
+        source_path = source_files[0].short_path
+        separator = source_path.rfind("/")
+        strip_prefix = source_path[:separator + 1] if separator >= 0 else ""
+    else:
+        strip_prefix = bundle.own_source_root
+        if strip_prefix and not strip_prefix.endswith("/"):
+            strip_prefix += "/"
+
+    entry = struct(
+        strip_prefix = strip_prefix,
+        prefix = "",
+        files = source_files,
+    )
+    return [
+        DefaultInfo(files = depset(source_files)),
+        SphinxDocsLibraryInfo(
+            strip_prefix = strip_prefix,
+            prefix = "",
+            files = source_files,
+            transitive = depset(direct = [entry]),
+        ),
+    ]
+
+_bundle_sphinx_source_files = rule(
+    implementation = _bundle_sphinx_source_files_impl,
+    attrs = {
+        "bundle": attr.label(providers = [DocsBundleInfo]),
+    },
+    doc = "Exposes direct bundle sources with paths rooted for a Sphinx build.",
+)
+
+def bundle_sphinx_source_files(name, bundle, visibility = None, tags = None):
+    """Create a Sphinx library containing only a bundle's direct sources."""
+    _bundle_sphinx_source_files(
+        name = name,
+        bundle = bundle,
+        visibility = visibility,
+        tags = tags,
     )
     return ":" + name
 

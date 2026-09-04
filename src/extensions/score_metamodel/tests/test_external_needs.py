@@ -19,6 +19,8 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from types import SimpleNamespace
+from typing import cast
 
 import pytest
 import score_metamodel.external_needs as ext_needs
@@ -31,6 +33,46 @@ from score_metamodel.external_needs import (
     parse_external_needs_sources_from_DATA,
 )
 from sphinx.config import Config
+from sphinx_needs.needsfile import NeedsList
+
+
+def test_extend_needs_json_exporter_uses_configured_value(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """The exporter reads the current project URL from Sphinx configuration."""
+    config = Config()
+    config.project_url = "https://example.test/before"
+
+    monkeypatch.setattr(NeedsList, "_finalise", lambda _needs_list: None)
+    ext_needs.extend_needs_json_exporter(config, ["project_url"])
+    config.project_url = "https://example.test/after"
+
+    needs_list = cast(NeedsList, SimpleNamespace(needs_list={}))
+    NeedsList._finalise(needs_list)  # pyright: ignore[reportPrivateUsage] - white-box test
+
+    assert needs_list.needs_list["project_url"] == "https://example.test/after"
+
+
+def test_extend_needs_json_exporter_can_override_bundle_export_metadata(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Bundle exports omit the host URL while Sphinx keeps the config value."""
+    config = Config()
+    config.project_url = "https://example.test/host"
+
+    monkeypatch.setattr(NeedsList, "_finalise", lambda _needs_list: None)
+    ext_needs.extend_needs_json_exporter(
+        config,
+        ["project_url"],
+        log_missing=False,
+        export_values={"project_url": ""},
+    )
+
+    needs_list = cast(NeedsList, SimpleNamespace(needs_list={}))
+    NeedsList._finalise(needs_list)  # pyright: ignore[reportPrivateUsage] - white-box test
+
+    assert config.project_url == "https://example.test/host"
+    assert needs_list.needs_list["project_url"] == ""
 
 
 def test_empty_list():

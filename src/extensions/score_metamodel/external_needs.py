@@ -130,7 +130,13 @@ def parse_external_needs_sources_from_bazel_query() -> list[ExternalNeedsSource]
     return res
 
 
-def extend_needs_json_exporter(config: Config, params: list[str]) -> None:
+def extend_needs_json_exporter(
+    config: Config,
+    params: list[str],
+    *,
+    log_missing: bool = True,
+    export_values: dict[str, str] | None = None,
+) -> None:
     """
     This will add each param to app.config as a config value.
     Then it will overwrite the needs.json exporter to include these values.
@@ -141,7 +147,7 @@ def extend_needs_json_exporter(config: Config, params: list[str]) -> None:
         # This is wrong. But good enough.
         config.add(p, default="", rebuild="env", types=(), description="")
 
-        if not getattr(config, p):
+        if log_missing and not getattr(config, p):
             logger.error(
                 f"Config value '{p}' is not set. "
                 + "Please set it in your Sphinx config."
@@ -153,7 +159,10 @@ def extend_needs_json_exporter(config: Config, params: list[str]) -> None:
 
     def temp(self: NeedsList):
         for p in params:
-            self.needs_list[p] = getattr(config, p)  # pyright: ignore[reportUnknownMemberType]
+            if export_values is not None and p in export_values:
+                self.needs_list[p] = export_values[p]
+            else:
+                self.needs_list[p] = getattr(config, p)  # pyright: ignore[reportUnknownMemberType]
 
         orig_function(self)
 
@@ -228,7 +237,17 @@ def add_external_docs_sources(e: ExternalNeedsSource, config: Config):
 
 
 def connect_external_needs(app: Sphinx, config: Config):
-    extend_needs_json_exporter(config, ["project_url"])
+    # Local bundle exports intentionally omit the host URL from their JSON so
+    # the inventory remains reusable by whichever documentation site consumes
+    # it. Keep the configuration value available to Sphinx itself, and retain
+    # the existing missing-value diagnostic for normal host builds.
+    bundle_export = bool(config.score_bundle_needs_export)
+    extend_needs_json_exporter(
+        config,
+        ["project_url"],
+        log_missing=not bundle_export,
+        export_values={"project_url": ""} if bundle_export else None,
+    )
 
     # Local external needs from DATA (e.g. :needs_json or :docs_sources)
     external_needs = get_external_needs_source(app.config.external_needs_source)

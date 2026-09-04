@@ -19,7 +19,7 @@ in ``bazel-out/.../bin/``. The bundle stages them into the runfiles of
 ``<ws_root>/bazel-bin`` and mounts it. This end-to-end test fails if either half
 of that chain regresses."""
 
-from src.tests.docs_bzl.helpers import run_scenario
+from src.tests.docs_bzl.helpers import built_output, run_bazel, run_scenario
 
 
 def test_generated_source_files_reachable_at_runtime():
@@ -50,3 +50,21 @@ def test_explicit_source_bundle_excludes_undeclared_siblings():
 
     assert "Isolated Declared Page" in declared_html.read_text(encoding="utf-8")
     assert not undeclared_html.exists()
+
+
+def test_explicit_source_bundles_export_local_needs_from_their_source_root():
+    """Explicit source targets are staged with their bundle entry as the root."""
+    run_bazel(
+        [
+            "build",
+            "//src/tests/docs_bzl/scenarios/data_files_runfiles:data_bundle.__internal__.needs_local",
+            "//src/tests/docs_bzl/scenarios/data_files_runfiles:isolated_source_bundle.__internal__.needs_local",
+        ]
+    )
+
+    for target in ("data_bundle", "isolated_source_bundle"):
+        needs_output = built_output(
+            "scenarios/data_files_runfiles",
+            f"{target}.__internal__.needs_local/_build/needs/needs.json",
+        )
+        assert needs_output.is_file()

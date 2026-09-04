@@ -14,9 +14,11 @@
 load("//:docs.bzl", "docs")
 
 # This module uses the current ``external_needs`` API to import platform
-# feature requirements and mounts its component documentation. The component
-# package is nested below this module's ``docs`` source tree, so both the
-# module's primary walk and its parent bundle mount must exclude that child.
+# feature requirements and mounts two component bundles. One component has a
+# requirement linked to the imported platform feature; the other is
+# self-contained. Keeping both under the module's ``docs`` source tree
+# exercises the distinction between a component that needs its parent bundle's
+# external Needs and one that can be built independently.
 docs(
     project = "S-CORE Modern Module",
     project_url = "https://example.invalid/score-modern-module",
@@ -29,6 +31,10 @@ docs(
     bundles = [{
         "bundle": "//src/tests/docs_bzl/scenarios/reference_integration/modern_module/docs/components/component:docs_bundle",
         "mount_at": "components/component",
+        "attach_to": "components",
+    }, {
+        "bundle": "//src/tests/docs_bzl/scenarios/reference_integration/modern_module/docs/components/unlinked_component:docs_bundle",
+        "mount_at": "components/unlinked_component",
         "attach_to": "components",
     }],
 )

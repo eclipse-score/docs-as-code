@@ -5,7 +5,7 @@
 # information regarding copyright ownership.
 #
 # This program and the accompanying materials are made available under the
-# terms of the Apache License Version 2.0 which is available at
+# terms of the Apache License 2.0 which is available at
 # https://www.apache.org/licenses/LICENSE-2.0
 #
 # SPDX-License-Identifier: Apache-2.0
@@ -13,18 +13,12 @@
 
 load("//:docs.bzl", "docs_bundle")
 
-filegroup(
-    name = "component_sources",
-    srcs = ["implementation.py"],
-)
-
-# This component is a nested documentation package below the module's source
-# directory. The implementation file is deliberately supplied through
-# ``code_targets`` so its traceability annotation exercises the source-link
-# generation path used by real component bundles.
+# This component deliberately contains no links to Needs outside its own
+# source tree. It is the control case for the linked component next to it: the
+# same module can mount both bundles, while this one can also produce a local
+# Needs inventory without the module's external Needs.
 docs_bundle(
     name = "docs_bundle",
     source_dir = ".",
-    code_targets = [":component_sources"],
     visibility = ["//visibility:public"],
 )
