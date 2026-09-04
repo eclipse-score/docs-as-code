@@ -603,15 +603,15 @@ site).</p>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>Signature: <code class="docutils literal notranslate"><span class="pre">docs_bundle(name,</span> <span class="pre">source_dir</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">srcs</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">data</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">entry_doc</span> <span class="pre">=</span> <span class="pre">&quot;index&quot;,</span> <span class="pre">bundles</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">code_targets</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">visibility</span> <span class="pre">=</span> <span class="pre">None)</span></code>.</p>
+<p>Signature: <code class="docutils literal notranslate"><span class="pre">docs_bundle(name,</span> <span class="pre">source_dir</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">srcs</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">data</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">entry_doc</span> <span class="pre">=</span> <span class="pre">&quot;index&quot;,</span> <span class="pre">bundles</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">code_targets</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">visibility</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">deps</span> <span class="pre">=</span> <span class="pre">[])</span></code>.</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">source_dir</span></code> (string, optional)
 Directory holding the bundle’s own doc sources. It is globbed the same way as
 <code class="docutils literal notranslate"><span class="pre">docs()</span></code> (RST, Markdown, images, and the other doc file kinds). The
 <code class="docutils literal notranslate"><span class="pre">source_dir</span></code> itself is the mount root, so the files mount relative to it (so
 <code class="docutils literal notranslate"><span class="pre">concept/index.rst</span></code> with <code class="docutils literal notranslate"><span class="pre">source_dir</span> <span class="pre">=</span> <span class="pre">&quot;concept&quot;</span></code> becomes <code class="docutils literal notranslate"><span class="pre">index.rst</span></code>).
-Bundle-local Needs exports always use a generated Sphinx configuration;
-user-provided <code class="docutils literal notranslate"><span class="pre">conf.py</span></code> files are not supported for bundles.
+Bundle-local Needs exports reuse a checked-in <code class="docutils literal notranslate"><span class="pre">conf.py</span></code> when present;
+otherwise a self-contained Sphinx configuration is generated.
 The bundle exposes those files as a Bazel depset (via the <code class="docutils literal notranslate"><span class="pre">DocsBundleInfo</span></code>
 provider) and records the <code class="docutils literal notranslate"><span class="pre">source_dir</span></code> path; sphinx-mounts walks that original
 directory directly — no copy is made. Leave it unset for a bundle whose
@@ -670,6 +670,13 @@ Implementation target <code class="docutils literal notranslate"><span class="pr
 recursively from their <code class="docutils literal notranslate"><span class="pre">deps</span></code>; filegroups expand to their files. The bundle
 owns one cached scan result; Bazel only regenerates it when its collected source
 inputs change.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">deps</span></code> (list of Bazel labels, optional)</dt><dd><p>Additional Python dependencies used by the bundle-local Sphinx build. This
+is required when the bundle’s <code class="docutils literal notranslate"><span class="pre">conf.py</span></code> imports project-specific Sphinx
+extensions or other Python modules.</p>
 </dd>
 </dl>
 </li>
