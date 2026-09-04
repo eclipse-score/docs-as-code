@@ -67,6 +67,7 @@ This section provides an overview of current process requirements and their clar
 
 .. tool_req:: Enforces need ID uniqueness
   :id: tool_req__docs_common_attr_id
+  :safety: ASIL_B
   :implemented: YES
   :tags: Common Attributes
   :version: 1
@@ -86,6 +87,7 @@ This section provides an overview of current process requirements and their clar
 
 .. tool_req:: Enforces need ID scheme
   :id: tool_req__docs_common_attr_id_scheme
+  :safety: ASIL_B
   :implemented: YES
   :tags: Common Attributes
   :version: 1
@@ -115,6 +117,7 @@ This section provides an overview of current process requirements and their clar
 
 .. tool_req:: Enforces title wording rules
   :id: tool_req__docs_common_attr_title
+  :safety: ASIL_B
   :implemented: YES
   :tags: Common Attributes
   :version: 1
@@ -137,6 +140,7 @@ This section provides an overview of current process requirements and their clar
 
 .. tool_req:: Enforces presence of description
   :id: tool_req__docs_common_attr_description
+  :safety: ASIL_B
   :tags: Common Attributes
   :parent_covered: NO: Can not cover 'ISO/IEC/IEEE/29148'
   :version: 1
@@ -154,6 +158,7 @@ This section provides an overview of current process requirements and their clar
 
 .. tool_req:: Enforces description wording rules
   :id: tool_req__docs_common_attr_desc_wording
+  :safety: QM
   :tags: Common Attributes
   :implemented: YES
   :version: 1
@@ -177,6 +182,7 @@ This section provides an overview of current process requirements and their clar
 
 .. tool_req:: Security: enforce classification
   :id: tool_req__docs_common_attr_security
+  :safety: ASIL_B
   :implemented: YES
   :tags: Common Attributes
   :version: 1
@@ -204,6 +210,7 @@ This section provides an overview of current process requirements and their clar
 
 .. tool_req:: Safety: enforce classification
   :id: tool_req__docs_common_attr_safety
+  :safety: ASIL_B
   :tags: Common Attributes
   :implemented: YES
   :parent_covered: YES
@@ -232,6 +239,7 @@ This section provides an overview of current process requirements and their clar
 
 .. tool_req:: Status: enforce attribute
   :id: tool_req__docs_common_attr_status
+  :safety: ASIL_B
   :tags: Common Attributes
   :implemented: YES
   :parent_covered: NO: gd_req__saf_attr_status has additional constraints
@@ -261,6 +269,7 @@ Versioning
 
 .. tool_req:: Versioning: enforce attribute
    :id: tool_req__docs_common_attr_version
+   :safety: ASIL_B
    :tags: Common Attributes
    :implemented: YES
    :version: 1
@@ -277,6 +286,7 @@ Versioning
 
 .. tool_req:: Suspicious: Enforce attribute
    :id: tool_req__docs_common_attr_suspicious
+   :safety: ASIL_B
    :tags: Common Attributes
    :implemented: YES
    :version: 1
@@ -295,6 +305,7 @@ Versioning
 
 .. tool_req:: Document Types
   :id: tool_req__docs_doc_types
+  :safety: QM
   :tags: Documents
   :implemented: YES
   :version: 1
@@ -307,8 +318,11 @@ Versioning
   * Tool Verification Report (doc_tool)
   * Change Request is also a generic document
 
+  .. note:: Only QM as not providing types cannot be harmful.
+
 .. tool_req:: Mandatory attributes of Generic Documents
   :id: tool_req__docs_doc_generic_mandatory
+  :safety: ASIL_B
   :tags: Documents
   :implemented: YES
   :version: 3
@@ -326,17 +340,6 @@ Versioning
   * realizes
 
 
---------
- Mapping
---------
-
-.. needtable::
-   :style: table
-   :types: gd_req
-   :columns: id;satisfies_back as "tool_req"
-   :filter: "gd_req__doc" in id
-
-
 📋 Requirements
 ################
 
@@ -346,6 +349,7 @@ Versioning
 
 .. tool_req:: Requirements Types
   :id: tool_req__docs_req_types
+  :safety: QM
   :tags: Requirements
   :implemented: YES
   :version: 1
@@ -361,12 +365,15 @@ Versioning
   * Process requirement (gd_req)
   * Tool requirement (tool_req)
 
+  .. note:: Only QM as not providing types cannot be harmful.
+
 -------------------------
 🏷️ Attributes
 -------------------------
 
 .. tool_req:: Enforces rationale attribute
   :id: tool_req__docs_req_attr_rationale
+  :safety: ASIL_B
   :tags: Requirements
   :version: 1
   :implemented: YES
@@ -377,6 +384,7 @@ Versioning
 
 .. tool_req:: Enforces requirement type classification
   :id: tool_req__docs_req_attr_reqtype
+  :safety: ASIL_B
   :tags: Requirements
   :implemented: YES
   :version: 1
@@ -394,6 +402,7 @@ Versioning
 
 .. tool_req:: Support requirements test coverage
   :id: tool_req__docs_req_attr_testcov
+  :safety: ASIL_B
   :tags: Requirements
   :implemented: PARTIAL
   :version: 1
@@ -413,6 +422,7 @@ Versioning
 
 .. tool_req:: Enforce validity attribute correctness
   :id: tool_req__docs_req_attr_validity_correctness
+  :safety: ASIL_B
   :tags: Requirements
   :implemented: YES
   :version: 2
@@ -430,6 +440,7 @@ Versioning
 
 .. tool_req:: Enforce validity start is before end
   :id: tool_req__docs_req_attr_validity_consistency
+  :safety: QM
   :tags: Requirements
   :implemented: YES
   :version: 2
@@ -440,6 +451,8 @@ Versioning
   We consider "from" is inclusive but "until" is exclusive, so from v0.5 until v1.0 means valid for v0.5 but not for v1.0.
   If either attribute is missing, no check is performed.
 
+  .. note:: Only QM as an invalid range cannot be harmful.
+
 
 -------------------------
 🔗 Links
@@ -447,6 +460,7 @@ Versioning
 
 .. tool_req:: Enables needs linking via satisfies attribute
   :id: tool_req__docs_req_link_satisfies_allowed
+  :safety: ASIL_B
   :tags: Requirements
   :implemented: YES
   :version: 1
@@ -473,6 +487,7 @@ Versioning
 
 .. tool_req:: Safety: enforce safe linking
    :id: tool_req__docs_common_attr_safety_link_check
+   :safety: ASIL_B
    :tags: Common Attributes
    :version: 1
    :implemented: YES
@@ -483,6 +498,7 @@ Versioning
 
 .. tool_req:: Requirement linkage to AoU via covers
   :id: tool_req__docs_req_link_covers_aou
+  :safety: ASIL_B
   :implemented: YES
   :version: 1
   :satisfies: gd_req__req_linkage_aou[version==1]
@@ -500,6 +516,7 @@ Versioning
 
 .. tool_req:: Architecture Types
   :id: tool_req__docs_arch_types
+  :safety: QM
   :tags: Architecture
   :version: 1
   :satisfies:
@@ -519,12 +536,15 @@ Versioning
   * Interface (real_arc_int)
   * Interface Operation (real_arc_int_op)
 
+  .. note:: Only QM because not providing types cannot be harmful.
+
 --------------------------
 Architecture Attributes
 --------------------------
 
 .. tool_req:: Architecture Mandatory Attributes
    :id: tool_req__docs_arch_attr_mandatory
+   :safety: ASIL_B
    :tags: Architecture
    :version: 2
    :satisfies:
@@ -549,6 +569,7 @@ Architecture Attributes
 
 .. tool_req:: Architecture fulfils linkage rules
   :id: tool_req__docs_arch_link_fulfils
+  :safety: ASIL_B
   :tags: Architecture
   :implemented: YES
   :version: 3
@@ -580,6 +601,7 @@ Architecture Attributes
 
 .. tool_req:: Architecture fulfils linkage to AoU
   :id: tool_req__docs_arch_link_fulfils_aou
+  :safety: ASIL_B
   :implemented: YES
   :version: 3
   :satisfies: gd_req__arch_attr_fulfils_aou[version==1]
@@ -591,6 +613,7 @@ Architecture Attributes
 
 .. tool_req:: Check Architecture linkage to AoU
   :id: tool_req__docs_arch_link_aou_check
+  :safety: ASIL_B
   :implemented: NO
   :version: 1
   :satisfies: gd_req__arch_linkage_aou[version==1]
@@ -602,6 +625,7 @@ Architecture Attributes
 
 .. tool_req:: Ensure safety architecture elements link a safety requirement
   :id: tool_req__docs_arch_link_safety_to_req
+  :safety: ASIL_B
   :tags: Architecture
   :implemented: PARTIAL
   :version: 2
@@ -613,8 +637,9 @@ Architecture Attributes
   requirements of type :need:`tool_req__docs_req_types` with the exact same ``safety``
   value.
 
-.. tool_req:: Ensure qm architecture elements do not fulfill safety requirements
+.. tool_req:: Ensure QM architecture elements do not fulfill safety requirements
   :id: tool_req__docs_arch_link_qm_to_safety_req
+  :safety: ASIL_B
   :tags: Architecture
   :implemented: PARTIAL
   :version: 2
@@ -628,6 +653,7 @@ Architecture Attributes
 
 .. tool_req:: Restrict links for safety requirements
   :id: tool_req__docs_req_arch_link_safety_to_arch
+  :safety: ASIL_B
   :tags: Architecture
   :implemented: YES
   :version: 2
@@ -641,6 +667,7 @@ Architecture Attributes
 
 .. tool_req:: Security: Restrict linkage
   :id: tool_req__docs_arch_link_security
+  :safety: ASIL_B
   :tags: Architecture
   :implemented: YES
   :version: 1
@@ -656,6 +683,7 @@ Architecture Attributes
 
 .. tool_req:: Support Diagram drawing of architecture
   :id: tool_req__docs_arch_views
+  :safety: ASIL_B
   :tags: Architecture
   :implemented: YES
   :version: 1
@@ -680,6 +708,7 @@ Architecture Attributes
 
 .. tool_req:: Architecture diagram links
   :id: tool_req__docs_arch_links
+  :safety: QM
   :implemented: YES
   :version: 1
   :satisfies: gd_req__impl_diagram_check_id[version==1], gd_req__impl_diagram_linkage_id[version==1]
@@ -695,11 +724,14 @@ Architecture Attributes
      "belongs_to", "corresponding architecture element same level"
      "includes", "corresponding architecture element lower level"
 
+  .. note:: Only QM because architecture diagrams get manually reviewed anyways.
+
 The following requirement may be overlapping with other tool requirements,
 but for ease of traceability this is a separate one.
 
 .. tool_req:: Correlations of the architectural building blocks
   :id: tool_req__arch_linkage_safety
+  :safety: ASIL_B
   :implemented: YES
   :version: 2
   :satisfies: gd_req__arch_linkage_safety[version==1], gd_req__arch_build_blocks_corr[version==3]
@@ -727,6 +759,7 @@ but for ease of traceability this is a separate one.
 
 .. tool_req:: Check consistency of interfaces in modules
   :id: tool_req__arch_consistency_interf
+  :safety: ASIL_B
   :tags: Architecture
   :implemented: YES
   :version: 1
@@ -751,6 +784,7 @@ but for ease of traceability this is a separate one.
 .. tool_req:: Supports linking to source code
   :tags: Detailed Design & Code
   :id: tool_req__docs_dd_link_source_code_link
+  :safety: QM
   :implemented: YES
   :version: 1
   :parent_covered: YES
@@ -762,10 +796,12 @@ but for ease of traceability this is a separate one.
   A link to the corresponding source code location in GitHub shall be generated in the
   generated documentation within the linked requirement.
 
+  .. note:: Only QM because these links are only for convenience.
 
 
 .. tool_req:: Feature Flags
    :id: tool_req__docs_dd_feature_flag
+   :safety: ASIL_B
    :tags: Detailed Design & Code
    :version: 1
    :implemented: NO
@@ -783,6 +819,7 @@ Testing
 
 .. tool_req:: Supports linking to test cases
   :id: tool_req__docs_test_link_testcase
+  :safety: ASIL_B
   :tags: Testing
   :version: 1
   :implemented: YES
@@ -797,6 +834,7 @@ Testing
 
 .. tool_req:: Extract Metadata from Tests
    :id: tool_req__docs_test_metadata_mandatory_1
+   :safety: QM
    :tags: Testing
    :version: 1
    :implemented: PARTIAL
@@ -805,8 +843,11 @@ Testing
 
    Docs-as-Code shall ensure that each test case has TestType and DerivationTechnique set.
 
+   .. note:: Only QM because missing these attributes is not critical.
+
 .. tool_req:: Extract Metadata from Tests
    :id: tool_req__docs_test_metadata_mandatory_2
+   :safety: QM
    :tags: Testing
    :version: 1
    :implemented: PARTIAL
@@ -818,8 +859,11 @@ Testing
 
    .. note:: this will probably be implemented outside of docs-as-code.
 
+      Only QM because missing a test description is not critical.
+
 .. tool_req:: Extract Metadata from Tests
    :id: tool_req__docs_test_metadata_link_levels
+   :safety: ASIL_B
    :tags: Testing
    :version: 1
    :implemented: NO
@@ -835,13 +879,14 @@ Testing
 
 .. tool_req:: Provide Metrics for linked requirements
    :id: tool_req__docs_test_linkage_metrics
+   :safety: ASIL_B
    :tags: Testing
    :version: 1
    :implemented: YES
    :parent_covered: NO
    :satisfies: gd_req__verification_reporting[version==1]
 
-   Docs-AS-Code shall provide a way to gather statistics on linkages to implementation(source_code_links) & tests(testlink) for all needs.
+   Docs-as-Code shall provide a way to gather statistics on linkages to implementation(source_code_links) & tests(testlink) for all needs.
    It shall also be possible to filter these by type and use the provided statistics in the documentation (via diagrams drawn from it etc.)
 
 🔎 Verification Evidence
@@ -849,6 +894,7 @@ Testing
 
 .. tool_req:: Support machine-readable module verification reports
   :id: tool_req__docs_verification_report_need
+  :safety: ASIL_B
   :tags: Verification Evidence
   :implemented: YES
   :version: 1
@@ -873,6 +919,7 @@ Testing
 
 .. tool_req:: Enforce safety classification
   :id: tool_req__docs_tvr_safety
+  :safety: ASIL_B
   :tags: Tool Verification Reports
   :version: 1
   :implemented: YES
@@ -887,6 +934,7 @@ Testing
 
 .. tool_req:: Enforce security classification
   :id: tool_req__docs_tvr_security
+  :safety: ASIL_B
   :tags: Tool Verification Reports
   :implemented: YES
   :version: 1
@@ -902,6 +950,7 @@ Testing
 
 .. tool_req:: Enforce status classification
   :id: tool_req__docs_tvr_status
+  :safety: ASIL_B
   :tags: Tool Verification Reports
   :implemented: YES
   :version: 1
@@ -919,6 +968,7 @@ Testing
 
 .. tool_req:: Enforce version attribute
   :id: tool_req__docs_tvr_version
+  :safety: ASIL_B
   :tags: Tool Verification Reports
   :implemented: YES
   :version: 2
@@ -928,8 +978,10 @@ Testing
   Docs-as-Code shall enforce that every Tool Verification Report (`doc_tool`) includes a
   `tool_version` attribute.
 
+
 .. tool_req:: Enforce confidence level classification
   :id: tool_req__docs_tvr_confidence_level
+  :safety: ASIL_B
   :tags: Tool Verification Reports
   :implemented: YES
   :version: 1
@@ -947,6 +999,7 @@ Testing
 
 .. tool_req:: Workflow Types
   :id: tool_req__docs_wf_types
+  :safety: QM
   :tags: Process / Other
   :implemented: YES
   :version: 1
@@ -959,6 +1012,7 @@ Testing
 
 .. tool_req:: Workproduct Types
   :id: tool_req__docs_wp_types
+  :safety: QM
   :tags: Process / Other
   :implemented: YES
   :version: 1
@@ -970,6 +1024,7 @@ Testing
 
 .. tool_req:: Standard Requirement Types
   :id: tool_req__docs_stdreq_types
+  :safety: QM
   :tags: Process / Other
   :version: 1
   :implemented: YES
@@ -982,6 +1037,7 @@ Testing
 
 .. tool_req:: Standard Workproduct Types
   :id: tool_req__docs_stdwp_types
+  :safety: QM
   :tags: Process / Other
   :version: 1
   :implemented: YES
@@ -998,6 +1054,7 @@ Testing
 
 .. tool_req:: Safety Analysis Need Types
   :id: tool_req__docs_saf_types
+  :safety: QM
   :implemented: YES
   :tags: Safety Analysis
   :version: 2
@@ -1014,8 +1071,11 @@ Testing
   * Feature DFA (Dependend Failure Analysis) -> ``feat_saf_dfa``
   * Component DFA (Dependent Failure Analysis) -> ``comp_saf_dfa``
 
+  .. note:: Only QM because lacking these types cannot be harmful.
+
 .. tool_req:: Safety Analysis Mandatory Attributes
   :id: tool_req__docs_saf_attrs_mandatory
+  :safety: ASIL_B
   :implemented: YES
   :tags: Safety Analysis
   :version: 1
@@ -1038,6 +1098,7 @@ Testing
 
 .. tool_req:: Safety Analysis Mitigation Attribute
   :id: tool_req__docs_saf_attrs_mitigated_by
+  :safety: ASIL_B
   :implemented: NO
   :tags: Safety Analysis
   :version: 1
@@ -1063,6 +1124,7 @@ Testing
 
 .. tool_req:: Safety Analysis Mitigation Issue Attribute
   :id: tool_req__docs_saf_attrs_mitigation_issue
+  :safety: QM
   :implemented: YES
   :tags: Safety Analysis
   :version: 1
@@ -1075,6 +1137,7 @@ Testing
 
 .. tool_req:: Safety Analysis Sufficient Attribute
   :id: tool_req__docs_saf_attrs_sufficient
+  :safety: QM
   :implemented: YES
   :tags: Safety Analysis
   :version: 1
@@ -1087,8 +1150,11 @@ Testing
   * yes
   * no
 
+  .. note:: Only QM because missing this attribute cannot be harmful.
+
 .. tool_req:: Safety Analysis Sufficient Check
   :id: tool_req__docs_saf_attrs_sufficient_check
+  :safety: ASIL_B
   :implemented: NO
   :version: 1
   :tags: Safety Analysis
@@ -1101,6 +1167,7 @@ Testing
 
 .. tool_req:: Safety Analysis Mandatory Content
    :id: tool_req__docs_saf_attrs_content
+   :safety: ASIL_B
    :implemented: YES
    :tags: Safety Analysis
    :version: 2
@@ -1114,6 +1181,7 @@ Testing
 
 .. tool_req:: Safety Analysis Linkage Violates
   :id: tool_req__docs_saf_attrs_violates
+  :safety: ASIL_B
   :implemented: YES
   :tags: Safety Analysis
   :version: 2
@@ -1143,6 +1211,7 @@ Testing
 
 .. tool_req:: FMEA: fault id attribute
    :id: tool_req__docs_saf_attr_fmea_fault_id
+   :safety: ASIL_B
    :implemented: YES
    :tags: Safety Analysis
    :version: 2
@@ -1157,6 +1226,7 @@ Testing
 
 .. tool_req:: DFA: failure id attribute
    :id: tool_req__docs_saf_attr_dfa_failure_id
+   :safety: ASIL_B
    :implemented: YES
    :tags: Safety Analysis
    :version: 2
@@ -1171,6 +1241,7 @@ Testing
 
 .. tool_req:: Failure Effect
    :id: tool_req__docs_saf_attr_fmea_failure_effect
+   :safety: ASIL_B
    :implemented: YES
    :tags: Safety Analysis
    :version: 1
@@ -1185,6 +1256,7 @@ Safety Analysis (DFA + FMEA) Process to Tool Requirement Mapping
 
 .. tool_req:: Safety Analysis Safety Relevant Attribute
    :id: tool_req__docs_saf_attrs_safety_relevant
+   :safety: QM
    :implemented: YES
    :tags: Safety Analysis
    :version: 1
@@ -1201,6 +1273,7 @@ Safety Analysis (DFA + FMEA) Process to Tool Requirement Mapping
 
 .. tool_req:: FMEA: Root Cause Attribute
    :id: tool_req__docs_saf_attrs_root_cause
+   :safety: QM
    :implemented: YES
    :tags: Safety Analysis
    :version: 1
@@ -1217,6 +1290,7 @@ Safety Analysis (DFA + FMEA) Process to Tool Requirement Mapping
 
 .. tool_req:: Security Analysis Need Types
   :id: tool_req__docs_sec_types
+  :safety: QM
   :implemented: YES
   :tags: Security Analysis
   :version: 2
@@ -1236,6 +1310,7 @@ Safety Analysis (DFA + FMEA) Process to Tool Requirement Mapping
 
 .. tool_req:: Security Analysis: STRIDE Threat ID Attribute
   :id: tool_req__docs_sec_attr_stride_threat_id
+  :safety: ASIL_B
   :implemented: YES
   :tags: Security Analysis
   :version: 1
@@ -1249,6 +1324,7 @@ Safety Analysis (DFA + FMEA) Process to Tool Requirement Mapping
 
 .. tool_req:: Security Analysis Threat Scenario Mandatory Attributes
   :id: tool_req__docs_sec_attrs_mandatory
+  :safety: ASIL_B
   :implemented: YES
   :tags: Security Analysis
   :version: 1
@@ -1271,6 +1347,7 @@ Safety Analysis (DFA + FMEA) Process to Tool Requirement Mapping
 
 .. tool_req:: Security Analysis Optional Attributes
   :id: tool_req__docs_sec_attrs_optional
+  :safety: QM
   :implemented: YES
   :tags: Security Analysis
   :version: 1
@@ -1287,34 +1364,9 @@ Safety Analysis (DFA + FMEA) Process to Tool Requirement Mapping
   * ``mitigated_by``: link to ``aou_req``
 
 
-🗺️ Full Mapping
-################
-
-Process to tools:
-
-.. needtable::
-   :style: table
-   :types: gd_req
-   :columns: id;satisfies_back as "tool_req"
-
-Overview of Tool to Process Requirements
-########################################
-
-.. needtable::
-   :types: tool_req
-   :filter: any(s.startswith("gd_req") for s in satisfies)
-   :columns: satisfies as "Process Requirement" ;id as "Tool Requirement";implemented;source_code_link
-   :style: table
-
-
-..
-.. ------------------------------------------------------------------------
-..
-
-
+.. according to doc_tool__doc_as_code[version==2] nothing in docs_as_code is security-critical
 
 .. needextend:: c.this_doc() and type == 'tool_req'
-  :safety: ASIL_B
   :security: NO
 
 .. needextend:: c.this_doc() and type == 'tool_req' and not status
