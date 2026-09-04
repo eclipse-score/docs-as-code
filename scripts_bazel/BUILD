@@ -55,3 +55,19 @@ py_binary(
     visibility = ["//visibility:public"],
     deps = [],
 )
+
+py_binary(
+    name = "filter_needs_json",
+    srcs = ["filter_needs_json.py"],
+    main = "filter_needs_json.py",
+    visibility = ["//visibility:public"],
+    deps = [],
+)
+
+py_binary(
+    name = "validate_checklist",
+    srcs = ["validate_checklist.py"],
+    main = "validate_checklist.py",
+    visibility = ["//visibility:public"],
+    deps = [],
+)
