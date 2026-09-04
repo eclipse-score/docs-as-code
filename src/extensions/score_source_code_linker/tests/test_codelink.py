@@ -788,10 +788,8 @@ def test_load_with_metadata_invalid_items_after_metadata(tmp_path: Path):
 #            ────────────────[ File Path Resolution Tests ]────────────────
 
 
-def test_load_resolves_relative_path_with_env_var(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-):
-    """Test if relative path is resolved using BUILD_WORKSPACE_DIRECTORY"""
+def test_load_resolves_absolute_path(tmp_path: Path):
+    """Absolute paths (as emitted by Bazel via ``$(location)``) load directly."""
     workspace = tmp_path / "workspace"
     workspace.mkdir()
 
@@ -805,22 +803,18 @@ def test_load_resolves_relative_path_with_env_var(
         )
     ]
 
-    # Store in workspace
+    # Store in workspace and load via its absolute path.
     cache_file = workspace / "cache.json"
     store_source_code_links_json(cache_file, needlinks)
 
-    # Set env var and load with relative path
-    monkeypatch.setenv("BUILD_WORKSPACE_DIRECTORY", str(workspace))
-    loaded = load_source_code_links_json(Path("cache.json"))
+    loaded = load_source_code_links_json(cache_file)
 
     assert len(loaded) == 1
     assert loaded[0].need == "REQ_1"
 
 
-def test_load_with_metadata_resolves_relative_path(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-):
-    """Edge case: load_with_metadata resolves relative paths using env var"""
+def test_load_with_metadata_absolute_path(tmp_path: Path):
+    """Absolute path: load_with_metadata reads the file directly."""
     workspace = tmp_path / "workspace"
     workspace.mkdir()
 
@@ -842,8 +836,7 @@ def test_load_with_metadata_resolves_relative_path(
     cache_file = workspace / "metadata_cache.json"
     store_source_code_links_with_metadata_json(cache_file, metadata, needlinks)
 
-    monkeypatch.setenv("BUILD_WORKSPACE_DIRECTORY", str(workspace))
-    loaded = load_source_code_links_with_metadata_json(Path("metadata_cache.json"))
+    loaded = load_source_code_links_with_metadata_json(cache_file)
 
     assert len(loaded) == 1
     assert loaded[0].repo_name == "mod"
