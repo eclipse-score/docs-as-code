@@ -65,6 +65,11 @@ docs_bundle(
 
 docs(
     source_dir = "docs",
+    # Keep this fixture's test-source scope local. The default imports every
+    # test report in the repository, including unrelated external-link
+    # warnings that would make this focused runtime scenario fail as an
+    # accidental side effect of the global test corpus.
+    test_sources = ["src/tests/docs_bzl/scenarios/data_files_runfiles"],
     bundles = [{
         "bundle": ":data_bundle",
         "mount_at": "data_test",

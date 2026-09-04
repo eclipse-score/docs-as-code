@@ -8,9 +8,12 @@
 # *******************************************************************************
 """Validation of docs() configuration fallback."""
 
+import pytest
+
 from src.tests.docs_bzl.helpers import repo_root, run_scenario
 
 
+@pytest.mark.bazel_slow
 def test_missing_conf_and_macro_values_fails_analysis():
     scenario_dir = repo_root() / "src/tests/docs_bzl/scenarios/missing_docs_config"
     build_file = scenario_dir / "BUILD"

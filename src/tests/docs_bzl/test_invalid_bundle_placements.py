@@ -23,9 +23,12 @@
 # *******************************************************************************
 """Invalid docs_bundle() placement scenario."""
 
+import pytest
+
 from src.tests.docs_bzl.helpers import repo_root, run_scenario
 
 
+@pytest.mark.bazel_slow
 def test_invalid_bundle_placements_are_rejected_during_analysis():
     run_scenario("build", "invalid_bundle_placements", ":bad", expect_error=True)
     run_scenario(
@@ -33,6 +36,7 @@ def test_invalid_bundle_placements_are_rejected_during_analysis():
     )
 
 
+@pytest.mark.bazel_slow
 def test_source_dir_and_srcs_are_rejected_during_loading():
     scenario_dir = (
         repo_root() / "src/tests/docs_bzl/scenarios/invalid_source_combination"

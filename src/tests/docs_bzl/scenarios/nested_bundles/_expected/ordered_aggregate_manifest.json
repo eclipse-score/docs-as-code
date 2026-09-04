@@ -1,0 +1,26 @@
+{
+  "mounts": [
+    {
+      "attach_to": "index",
+      "data": [],
+      "entry_doc": "index",
+      "external": false,
+      "generated": false,
+      "mount_at": "first",
+      "repository": "",
+      "runtime_path": "src/tests/docs_bzl/scenarios/nested_bundles/other",
+      "src_root": "src/tests/docs_bzl/scenarios/nested_bundles/other"
+    },
+    {
+      "attach_to": "index",
+      "data": [],
+      "entry_doc": "landing",
+      "external": false,
+      "generated": false,
+      "mount_at": "second",
+      "repository": "",
+      "runtime_path": "src/tests/docs_bzl/scenarios/nested_bundles/child",
+      "src_root": "src/tests/docs_bzl/scenarios/nested_bundles/child"
+    }
+  ]
+}

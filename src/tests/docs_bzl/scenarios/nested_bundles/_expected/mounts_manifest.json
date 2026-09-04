@@ -1,0 +1,28 @@
+{
+  "mounts": [
+    {
+      "attach_to": "concepts/index",
+      "data": [
+        "src/tests/docs_bzl/scenarios/nested_bundles/generated/generated_output.txt"
+      ],
+      "entry_doc": "index",
+      "external": false,
+      "generated": false,
+      "mount_at": "concepts/example_bundle",
+      "repository": "",
+      "runtime_path": "src/tests/docs_bzl/scenarios/nested_bundles/parent",
+      "src_root": "src/tests/docs_bzl/scenarios/nested_bundles/parent"
+    },
+    {
+      "attach_to": "concepts/example_bundle/index",
+      "data": [],
+      "entry_doc": "landing",
+      "external": false,
+      "generated": false,
+      "mount_at": "concepts/example_bundle/child",
+      "repository": "",
+      "runtime_path": "src/tests/docs_bzl/scenarios/nested_bundles/child",
+      "src_root": "src/tests/docs_bzl/scenarios/nested_bundles/child"
+    }
+  ]
+}

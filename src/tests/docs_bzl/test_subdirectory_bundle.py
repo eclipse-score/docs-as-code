@@ -12,12 +12,15 @@
 # *******************************************************************************
 """Coverage for bundles in nested Bazel packages and source directories."""
 
-from src.tests.docs_bzl.helpers import load_needs, run_bazel, run_package
+import pytest
+
+from src.tests.docs_bzl.helpers import run_bazel, run_package
 
 PRODUCER = "//src/tests/docs_bzl/scenarios/subdirectory_bundle/producer"
 CONSUMER = "//src/tests/docs_bzl/scenarios/subdirectory_bundle/consumer"
 
 
+@pytest.mark.bazel_cached
 def test_docs_targets_build_with_a_bundle_in_a_subdirectory():
     targets = [
         "docs",
@@ -44,31 +47,9 @@ def test_docs_targets_build_with_a_bundle_in_a_subdirectory():
     )
 
 
-def test_producer_needs_include_subdirectory_bundle_once():
-    result = run_package(
-        "build", "scenarios/subdirectory_bundle/producer", ":needs_json"
-    )
-    assert result.artifacts is not None
-
-    needs = load_needs(result.artifacts["needs.json"])
-    assert set(needs) == {
-        "gd_req__producer_root",
-        "gd_req__embedded",
-    }
-
-
-def test_consumer_can_render_and_check_transitive_bundle_without_duplicate_needs():
-    result = run_package(
-        "build", "scenarios/subdirectory_bundle/consumer", ":needs_json"
-    )
-    assert result.artifacts is not None
-    needs = load_needs(result.artifacts["needs.json"])
-    assert set(needs) == {
-        "gd_req__producer_root",
-        "gd_req__embedded",
-        "gd_req__consumer",
-    }
-
+@pytest.mark.bazel_slow
+def test_consumer_can_render_and_run_documentation_checks():
+    """Runtime rendering and documentation checks work across package boundaries."""
     producer_result = run_package(
         "run", "scenarios/subdirectory_bundle/producer", ":docs"
     )

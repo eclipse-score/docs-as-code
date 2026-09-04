@@ -47,8 +47,11 @@ jobs:
       - name: Prepare test report directory
         run: mkdir -p tests-report
 
-      - name: Run public docs.bzl integration tests
-        run: .venv_docs/bin/python -m pytest -vv src/tests/docs_bzl --junitxml=tests-report/docs_bzl.xml
+      - name: Run cacheable public docs.bzl tests
+        run: .venv_docs/bin/python -m pytest -vv -m bazel_cached src/tests/docs_bzl --junitxml=tests-report/docs_bzl_cached.xml
+
+      - name: Run slow public docs.bzl tests
+        run: .venv_docs/bin/python -m pytest -vv -m bazel_slow src/tests/docs_bzl --junitxml=tests-report/docs_bzl_slow.xml
 
       - name: Run bazel test targets
         run: bazel test --lockfile_mode=error //... --build_tests_only

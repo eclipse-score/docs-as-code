@@ -23,9 +23,12 @@
 # *******************************************************************************
 """Invalid metamodel scenario for the public docs() API."""
 
+import pytest
+
 from src.tests.docs_bzl.helpers import run_scenario
 
 
+@pytest.mark.bazel_slow
 def test_metamodel_violation_fails_build():
     result = run_scenario(
         "build", "metamodel_violation", ":needs_json", expect_error=True

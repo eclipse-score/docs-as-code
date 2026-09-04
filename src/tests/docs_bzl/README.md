@@ -48,3 +48,66 @@ Run via:
 
 The suite is deliberately separate from `bazel test //...`, since pytest is its
 driver. CI stores its JUnit XML together with the Bazel test reports.
+
+Tests are marked according to whether their Bazel work can be reused from the
+action cache. To run only the cacheable cases:
+
+    .venv_docs/bin/python -m pytest -vv -m bazel_cached src/tests/docs_bzl
+
+To run the runtime and expected-failure cases:
+
+    .venv_docs/bin/python -m pytest -vv -m bazel_slow src/tests/docs_bzl
+
+The CI workflow runs these two commands in that order, so the cacheable tests
+provide the fast first feedback before the runtime tests start.
+
+The default command above runs both groups. Golden scenarios are marked
+automatically: scenarios with a `docs` expected output are `bazel_slow` cases;
+scenarios containing only successful build outputs are `bazel_cached` cases.
+Expected-failure tests are also `bazel_slow`, because failed analysis does not
+produce reusable action outputs.
+
+## Expected target outputs
+
+Positive scenarios may check in direct output files below an `_expected`
+directory next to their fixture. An `_expected/<target>` directory contains
+expected files relative to that target's output root; an
+`_expected/<target>.<suffix>` file checks one file output. Only files present
+below an expected directory are compared, so unrelated Bazel or Sphinx output
+is ignored.
+
+For example:
+
+```text
+scenarios/basic_docs/
+└── _expected/
+    ├── docs/
+    │   └── index.html
+    ├── needs_json/
+    │   └── needs.json
+    └── generated_config.py
+```
+
+The short target names are mapped to their real Bazel labels and output roots in
+`expected_outputs.py`; this also includes internal generated targets when their
+output is part of the contract. JSON files are parsed and compared as
+deterministically formatted, sorted JSON so that their checked-in form remains
+readable. Other files, including HTML, are compared byte-for-byte; expected
+files should therefore contain only deterministic output. Missing expected files
+or changed content fail the test, while additional actual files do not.
+
+To refresh the checked-in files after an intentional output change, run the
+updater for one scenario:
+
+    .venv_docs/bin/python -m src.tests.docs_bzl.expected_outputs --update basic_docs
+
+The scenario argument uses the same path as pytest, for example
+`reference_integration/modern_module`. Omitting it updates all scenarios:
+
+    .venv_docs/bin/python -m src.tests.docs_bzl.expected_outputs --update
+
+The updater only overwrites files that already exist below `_expected`; it does
+not add every generated file or remove files. Review the resulting Git diff and
+run the normal pytest suite afterwards. When updating all scenarios, their
+build-only targets are grouped into one Bazel invocation; runtime targets still
+run one at a time.

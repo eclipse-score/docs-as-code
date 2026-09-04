@@ -10,6 +10,8 @@ import shutil
 import subprocess
 from pathlib import Path
 
+import pytest
+
 from src.tests.docs_bzl.helpers import repo_root, run_scenario
 
 
@@ -88,6 +90,7 @@ links: {}
     )
 
 
+@pytest.mark.bazel_slow
 def test_cross_module_version_mismatch_is_reported_without_failing(
     tmp_path: Path,
 ) -> None:
@@ -124,6 +127,7 @@ def test_cross_module_version_mismatch_is_reported_without_failing(
     assert (tmp_path / "_build/compatibility-findings.html").is_file()
 
 
+@pytest.mark.bazel_slow
 def test_external_findings_remain_fatal_by_default(tmp_path: Path) -> None:
     _write_cross_module_consumer(tmp_path)
     result = subprocess.run(
@@ -137,6 +141,7 @@ def test_external_findings_remain_fatal_by_default(tmp_path: Path) -> None:
     assert "is missing required attribute: `status`" in result.stderr
 
 
+@pytest.mark.bazel_slow
 def test_local_version_mismatch_remains_fatal() -> None:
     result = run_scenario("run", "local_version_mismatch", ":docs", expect_error=True)
     assert "condition 'version==1' not satisfied" in result.stderr
