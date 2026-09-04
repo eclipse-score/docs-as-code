@@ -1099,9 +1099,9 @@ pycparser==3.0 \
     --hash=sha256:600f49d217304a5902ac3c37e1281c9fe94e4d0489de643a9504c5cdfdfc6b29 \
     --hash=sha256:b727414169a36b7d524c1c3e31839a521725078d7b2ff038656844266160a992
     # via cffi
-pydata-sphinx-theme==0.20.0 \
-    --hash=sha256:0da172d41e19a66de875f4002f7054b385372ec65763852193791e658d50bb4a \
-    --hash=sha256:56744483c9d72c783e075de716ab95d486108b69605df7528078090b73f11f69
+pydata-sphinx-theme==0.21.0 \
+    --hash=sha256:d36a754bf9580b01789efa8a01869f2d7c87fa6c543ecbcafb14b6bdd4364f90 \
+    --hash=sha256:dc3f71216ea34725ddad68e505497eab4ba134a88abfb971a7df6b28a35c1997
     # via -r requirements.in
 pyfakefs==6.2.0 \
     --hash=sha256:0968a49db692694ffed420e54a9f1cbae4636637b880e8ab09c8ccc0f11bd7ae \
@@ -1314,13 +1314,13 @@ sphinx-design==0.7.0 \
     --hash=sha256:d2a3f5b19c24b916adb52f97c5f00efab4009ca337812001109084a740ec9b7a \
     --hash=sha256:f82bf179951d58f55dca78ab3706aeafa496b741a91b1911d371441127d64282
     # via -r requirements.in
-sphinx-mounts==0.1.4 \
-    --hash=sha256:3369794f5a835d87e771d1c3075fdef95fd4ab7d1b6c6afb30a4abfd48102b54 \
-    --hash=sha256:c88098b57891a8046965c3987f1246af9457cae962ba28b658ffab5f44ed2af7
+sphinx-mounts==0.2.0 \
+    --hash=sha256:7c19e867b463bccbff35281e2c6c20dfaa75d4fa88eef6abe97c9c371df6914b \
+    --hash=sha256:9e43cba60834bb648a7d3f0f43bb3fbbf9743e69933a89081a90a30d6d42d230
     # via -r requirements.in
-sphinx-needs[plotting]==8.3.1 \
-    --hash=sha256:cca706698cbb0c2fac5c8bf21fc30cd825473f97123783713cf5c9a9d01216c2 \
-    --hash=sha256:ecc9807c06dd3698ecf78d3a6c0867a3bbaed56204f8cbc21fdd3e1282c2d2bb
+sphinx-needs[plotting]==8.4.0 \
+    --hash=sha256:016cc98ac8397d7bf7ed2c9642bb4f42fc77c5b448ffb37785c465a69817ce91 \
+    --hash=sha256:17d0bd4dcb9ca13a1da955dddb9e14867b913d96bc212f95b336211e63d5cf1f
     # via
     #   -r requirements.in
     #   needs-config-writer
