@@ -6,108 +6,42 @@
   *******************************************************************************
 -->
 
-# Public `docs.bzl` integration tests
+# Public `docs.bzl` scenario tests
 
-These tests run **outside** Bazel with pytest and drive the public `docs.bzl`
-macros through real `bazel run` / `bazel build` commands. They cover exactly
-what a consumer invokes: `docs()`, `docs_bundle()`, mounts, cross-module
-compatibility reporting, and failure cases.
+These pytest tests exercise the public `docs()` and `docs_bundle()` macros
+through real Bazel builds and runs. Fixtures live below `scenarios/`; the test
+modules are `test_docs_bzl_scenarios.py` and
+`test_expected_output_consistency.py`.
 
-```text
-docs_bzl/
-├── scenarios/       # one fixture per consumer scenario
-│   ├── basic_docs/
-│   ├── reference_integration/
-│   ├── metamodel_violation/
-│   ├── nested_bundles/
-│   ├── subdirectory_bundle/
-│   ├── external_bundle/
-│   ├── local_version_mismatch/
-│   └── invalid_bundle_placements/
-└── test_<scenario>.py
+## Run
+
+```sh
+.venv_docs/bin/python -m pytest -vv src/tests/docs_bzl
 ```
 
-Each scenario has a fixture folder and a matching pytest file. The names describe
-consumer behavior, not the Bazel mechanism used to execute it. Positive rendering
-uses `bazel run`; sandbox-only behavior uses `bazel build`; invalid package
-definitions are expected build failures. Assertions retain rendered HTML,
-manifest order and metadata, source links, toctree attachment, and diagnostics.
-The cross-module compatibility test creates its consumer in a temporary
-workspace, so this repository's production ``MODULE.bazel`` stays free of test
-dependencies while the test still traverses real Bzlmod module boundaries.
+The suite runs Bazel and should be run sequentially. CI splits it into:
 
-Note that these tests run `bazel` commands, so they are slow. They need to be executed
-sequentially. Use sparingly. They do not call `bazel clean`, so the persistent
-Bazel server and its action, repository, and disk caches are reused between
-cases. There is still a small analysis/startup cost per command; keep scenarios
-coarse-grained and use `bazel run` only where runtime behavior matters.
-
-Run via:
-
-    .venv_docs/bin/python -m pytest -vv src/tests/docs_bzl
-
-The suite is deliberately separate from `bazel test //...`, since pytest is its
-driver. CI stores its JUnit XML together with the Bazel test reports.
-
-Tests are marked according to whether their Bazel work can be reused from the
-action cache. To run only the cacheable cases:
-
-    .venv_docs/bin/python -m pytest -vv -m bazel_cached src/tests/docs_bzl
-
-To run the runtime and expected-failure cases:
-
-    .venv_docs/bin/python -m pytest -vv -m bazel_slow src/tests/docs_bzl
-
-The CI workflow runs these two commands in that order, so the cacheable tests
-provide the fast first feedback before the runtime tests start.
-
-The default command above runs both groups. Golden scenarios are marked
-automatically: scenarios with a `docs` expected output are `bazel_slow` cases;
-scenarios containing only successful build outputs are `bazel_cached` cases.
-Expected-failure tests are also `bazel_slow`, because failed analysis does not
-produce reusable action outputs.
-
-## Expected target outputs
-
-Positive scenarios may check in direct output files below an `_expected`
-directory next to their fixture. An `_expected/<target>` directory contains
-expected files relative to that target's output root; an
-`_expected/<target>.<suffix>` file checks one file output. Only files present
-below an expected directory are compared, so unrelated Bazel or Sphinx output
-is ignored.
-
-For example:
-
-```text
-scenarios/basic_docs/
-└── _expected/
-    ├── docs/
-    │   └── index.html
-    ├── needs_json/
-    │   └── needs.json
-    └── generated_config.py
+```sh
+.venv_docs/bin/python -m pytest -vv -m bazel_cached src/tests/docs_bzl
+.venv_docs/bin/python -m pytest -vv -m bazel_slow src/tests/docs_bzl
 ```
 
-The short target names are mapped to their real Bazel labels and output roots in
-`expected_outputs.py`; this also includes internal generated targets when their
-output is part of the contract. JSON files are parsed and compared as
-deterministically formatted, sorted JSON so that their checked-in form remains
-readable. Other files, including HTML, are compared byte-for-byte; expected
-files should therefore contain only deterministic output. Missing expected files
-or changed content fail the test, while additional actual files do not.
+Build-only expected outputs are marked `bazel_cached`; outputs that execute
+Sphinx through `bazel run`, as well as expected-failure tests, are marked
+`bazel_slow`.
 
-To refresh the checked-in files after an intentional output change, run the
-updater for one scenario:
+## Expected outputs
 
-    .venv_docs/bin/python -m src.tests.docs_bzl.expected_outputs --update basic_docs
+Positive scenarios may check in files below a fixture's `_expected/` directory:
 
-The scenario argument uses the same path as pytest, for example
-`reference_integration/modern_module`. Omitting it updates all scenarios:
+- `_expected/<target>/...` checks selected files below a directory output.
+- `_expected/<target>.<suffix>` checks one file output.
 
-    .venv_docs/bin/python -m src.tests.docs_bzl.expected_outputs --update
+Only files already present below `_expected/` are part of the contract. JSON is
+compared as sorted, formatted data; other files, including HTML, are compared
+byte-for-byte.
 
-The updater only overwrites files that already exist below `_expected`; it does
-not add every generated file or remove files. Review the resulting Git diff and
-run the normal pytest suite afterwards. When updating all scenarios, their
-build-only targets are grouped into one Bazel invocation; runtime targets still
-run one at a time.
+Each expected output is its own pytest case. When generated content changes,
+the case updates the checked-in file, prints the unified diff through pytest,
+and fails with exit code 1. Review the change and run pytest again; an
+unchanged output passes. Files are never added or removed automatically.

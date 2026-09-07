@@ -13,9 +13,11 @@
 """Helpers for public docs.bzl integration tests driven through Bazel."""
 
 import json
+import os
 import shutil
 import subprocess
 import time
+from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
 from typing import cast
@@ -34,7 +36,12 @@ def repo_root() -> Path:
     return root
 
 
-def run_bazel(args: list[str], expect_error: bool = False):
+def run_bazel(
+    args: list[str],
+    expect_error: bool = False,
+    env: Mapping[str, str] | None = None,
+):
+    """Run Bazel, optionally overriding the environment of the subprocess."""
     start_time = time.time()
     cmd = ["bazel", *args]
     cmd_str = " ".join(cmd)
@@ -44,6 +51,7 @@ def run_bazel(args: list[str], expect_error: bool = False):
         cwd=repo_root(),
         capture_output=True,
         text=True,
+        env=None if env is None else {**os.environ, **env},
     )
     end_time = time.time()
     print(f"Running 'bazel {' '.join(args)}' took {end_time - start_time:.4f} seconds")
@@ -78,8 +86,9 @@ def run_package(
     package: str,
     target: str,
     expect_error: bool = False,
+    env: Mapping[str, str] | None = None,
 ) -> RunResult:
-    """Run Bazel against one small public-API test package."""
+    """Run Bazel against one package, with optional target environment overrides."""
     assert bazel_cmd in ("build", "run"), "only build and run are supported"
     assert target.startswith(":"), "target must be relative to package"
 
@@ -100,7 +109,7 @@ def run_package(
         runfiles_venv = built_output(package, f"{target[1:]}.runfiles/.docs.venv")
         shutil.rmtree(runfiles_venv, ignore_errors=True)
 
-    p1 = run_bazel([bazel_cmd, full_target], expect_error=expect_error)
+    p1 = run_bazel([bazel_cmd, full_target], expect_error=expect_error, env=env)
 
     if bazel_cmd == "build" and target == ":needs_json":
         # Generic solution needs to use cquery.

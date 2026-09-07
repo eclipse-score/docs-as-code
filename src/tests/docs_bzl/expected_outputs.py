@@ -20,7 +20,6 @@ harness.
 
 from __future__ import annotations
 
-import argparse
 import contextlib
 import difflib
 import json
@@ -36,6 +35,15 @@ from src.tests.docs_bzl.helpers import (
     built_output,
     run_bazel,
     run_package,
+)
+
+# GitHub Actions exposes this variable to the documentation build. Supplying
+# the same repository identity locally makes generated GitHub links and the
+# Sphinx theme configuration match the HTML produced in CI.
+EXPECTED_GITHUB_REPOSITORY = "eclipse-score/docs-as-code"
+EXPECTED_GITHUB_ENV = {"GITHUB_REPOSITORY": EXPECTED_GITHUB_REPOSITORY}
+EXPECTED_GITHUB_ACTION_ENV = (
+    f"--action_env=GITHUB_REPOSITORY={EXPECTED_GITHUB_REPOSITORY}"
 )
 
 
@@ -245,20 +253,16 @@ def _comparison_bytes(path: Path) -> bytes:
     ).encode("utf-8")
 
 
-def _compare_file(expected_path: Path, actual_path: Path) -> None:
+def _expected_file_diff(expected_path: Path, actual_path: Path) -> str | None:
+    """Return a diff for one expected file, or ``None`` when it matches."""
     if not actual_path.is_file():
         raise AssertionError(f"expected file is missing: {actual_path}")
 
     expected = _comparison_bytes(expected_path)
     actual = _comparison_bytes(actual_path)
-    if expected != actual:
-        relative_path = expected_path
-        raise AssertionError(_text_diff(expected, actual, relative_path))
-
-
-def _compare_expected_output(expected: ExpectedOutput, scenario: str) -> None:
-    for expected_path, actual_path in _expected_file_pairs(expected, scenario):
-        _compare_file(expected_path, actual_path)
+    if expected == actual:
+        return None
+    return _text_diff(expected, actual, expected_path)
 
 
 def _expected_file_pairs(
@@ -303,107 +307,52 @@ def _write_expected_file(path: Path, content: bytes) -> None:
         raise
 
 
-def _build_expected_targets(
-    scenario_outputs: list[tuple[str, list[ExpectedOutput]]],
-) -> None:
-    """Build all selected scenarios' build targets in one Bazel invocation."""
-    build_labels = [
-        _full_label(scenario, expected.target)
-        for scenario, expected_outputs in scenario_outputs
-        for expected in expected_outputs
-        if expected.target.command == "build"
-    ]
-    if build_labels:
-        run_bazel(["build", *build_labels])
+def _run_expected_target(scenario: str, expected: ExpectedOutput) -> None:
+    """Build or run one target whose output is checked by a test case."""
+    full_label = _full_label(scenario, expected.target)
+    if expected.target.command == "build":
+        run_bazel(
+            ["build", EXPECTED_GITHUB_ACTION_ENV, full_label],
+            env=EXPECTED_GITHUB_ENV,
+        )
+    elif expected.target.command == "run":
+        run_package(
+            "run",
+            f"scenarios/{scenario}",
+            expected.target.label,
+            env=EXPECTED_GITHUB_ENV,
+        )
+    else:
+        raise ValueError(f"unknown expected target command: {expected.target.command}")
 
 
-def _run_expected_targets(
-    scenario: str,
-    expected_outputs: list[ExpectedOutput],
-    *,
-    build: bool = True,
-) -> None:
-    """Build and run the targets selected by one scenario's expected files."""
-    if build:
-        _build_expected_targets([(scenario, expected_outputs)])
+def update_expected_output(scenario: str, expected_output: ExpectedOutput) -> None:
+    """Update changed expected files and fail when the scenario changed.
 
-    run_outputs = [
-        expected for expected in expected_outputs if expected.target.command == "run"
-    ]
-    for expected in run_outputs:
-        run_package("run", f"scenarios/{scenario}", expected.target.label)
-
-
-def verify_expected_outputs(scenario: str) -> None:
-    """Run discovered targets and compare only the checked-in expected files."""
-    expected_outputs = discover_expected_outputs(scenario)
-    _run_expected_targets(scenario, expected_outputs)
-
-    for expected in expected_outputs:
-        _compare_expected_output(expected, scenario)
-
-
-def update_expected_outputs(scenario: str) -> None:
-    """Refresh existing expected files from the selected scenario's outputs.
-
-    The checked-in expected files define the update scope. This deliberately
-    does not copy every file from an output directory, because generated docs
-    directories often contain additional files or unstable artifacts that are
-    not part of the scenario contract.
+    The checked-in files below this target define the update scope. This
+    deliberately does not copy every file from an output directory, because
+    generated docs directories often contain additional files or unstable
+    artifacts that are not part of the scenario contract. The failure after an
+    update makes this function suitable for a pre-commit-style pytest check:
+    the changed files can be reviewed and committed, then the test passes on
+    the next run.
     """
-    expected_outputs = discover_expected_outputs(scenario)
-    _run_expected_targets(scenario, expected_outputs)
+    _run_expected_target(scenario, expected_output)
 
-    _write_updated_expected_files(scenario, expected_outputs)
+    changes: list[tuple[Path, bytes, str]] = []
+    for expected_path, actual_path in _expected_file_pairs(expected_output, scenario):
+        if not actual_path.is_file():
+            raise AssertionError(f"expected file is missing: {actual_path}")
+        actual_bytes = _comparison_bytes(actual_path)
+        diff = _expected_file_diff(expected_path, actual_path)
+        if diff is not None:
+            changes.append((expected_path, actual_bytes, diff))
 
+    for expected_path, actual_bytes, _ in changes:
+        _write_expected_file(expected_path, actual_bytes)
 
-def _write_updated_expected_files(
-    scenario: str, expected_outputs: list[ExpectedOutput]
-) -> None:
-    """Write the existing expected files from outputs prepared by Bazel."""
-
-    for expected in expected_outputs:
-        for expected_path, actual_path in _expected_file_pairs(expected, scenario):
-            if not actual_path.is_file():
-                raise AssertionError(f"expected file is missing: {actual_path}")
-            _write_expected_file(expected_path, _comparison_bytes(actual_path))
-            print(f"updated {expected_path}")
-
-
-def main() -> None:
-    """Provide a deliberate command for refreshing checked-in golden files."""
-    parser = argparse.ArgumentParser(
-        description="Update existing docs.bzl expected output files."
-    )
-    parser.add_argument(
-        "--update",
-        action="store_true",
-        help="overwrite the discovered expected files from current Bazel output",
-    )
-    parser.add_argument(
-        "scenarios",
-        nargs="*",
-        help="scenario paths below src/tests/docs_bzl/scenarios (default: all)",
-    )
-    args = parser.parse_args()
-    if not args.update:
-        parser.error("pass --update to modify expected files")
-
-    scenarios = args.scenarios or discover_expected_scenarios()
-    scenario_outputs = [
-        (scenario, discover_expected_outputs(scenario)) for scenario in scenarios
-    ]
-    for scenario, _ in scenario_outputs:
-        print(f"updating {scenario}")
-
-    # A full refresh can contain many independent scenario packages. Build all
-    # of their non-runtime outputs together, then execute each runtime target
-    # separately because Bazel run accepts one executable target at a time.
-    _build_expected_targets(scenario_outputs)
-    for scenario, expected_outputs in scenario_outputs:
-        _run_expected_targets(scenario, expected_outputs, build=False)
-        _write_updated_expected_files(scenario, expected_outputs)
-
-
-if __name__ == "__main__":
-    main()
+    if changes:
+        diff = "\n\n".join(change_diff for _, _, change_diff in changes)
+        raise AssertionError(
+            f"expected outputs changed; review and commit the updated files:\n{diff}"
+        )
