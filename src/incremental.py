@@ -193,9 +193,7 @@ if __name__ == "__main__":
         "--jobs",
         "auto",
         # Merge DATA (:needs_json / :docs_sources) with EXTERNAL_NEEDS_FILES
-        # (:needs_json_file) into a single define. The sphinx_docs rule cannot
-        # receive per-target env vars, so --define is the only channel that
-        # works for both the py_binary and the needs_json target.
+        # (:needs_json_file) into one define consumed by the Sphinx extensions.
         f"--define=external_needs_source={_merged_external_needs()}",
         f"--define=testcase_source_dirs={os.environ.get('TEST_SOURCES', '[]')}",
         # Path to the Bazel-emitted mounts manifest (empty when no mounts are
