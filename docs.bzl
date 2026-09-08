@@ -160,7 +160,7 @@ def _bundle_internal_target(name, target):
     return name + ".__internal__." + target
 
 def _generated_conf_impl(ctx):
-    """Generate a Sphinx config at the source-root path expected by sphinxdocs."""
+    """Generate the Sphinx config consumed by the documentation targets."""
     output = ctx.actions.declare_file(ctx.attr.output_path)
     ctx.actions.expand_template(
         template = ctx.file.template,
@@ -374,13 +374,7 @@ def _declare_bundle_local_needs(
     # Build the own export from this bundle's sources only. References to
     # Needs owned by another bundle are intentionally unsupported until
     # cross-bundle imports are added.
-    sphinx_build_deps = deps + _missing_requirements(deps)
-    for fixed_dep in [
-        Label("//src:plantuml_for_python"),
-        Label("//src/extensions/score_sphinx_bundle:score_sphinx_bundle"),
-    ]:
-        if fixed_dep not in sphinx_build_deps:
-            sphinx_build_deps.append(fixed_dep)
+    sphinx_build_deps = _sphinx_runtime_deps(deps)
 
     needs_local = _bundle_internal_target(name, "needs_local")
     _needs_sphinx_docs(
@@ -469,6 +463,33 @@ def _missing_requirements(deps):
               "\nInconsistent deps for docs(): either include all dependencies or none of them."
         fail(msg)
     fail("This case should be unreachable?!")
+
+def _sphinx_deps(deps):
+    """Return the dependency set supplied by the documentation caller."""
+    return deps + _missing_requirements(deps)
+
+def _sphinx_runtime_deps(deps):
+    """Add the extensions required by every Sphinx invocation."""
+    result = _sphinx_deps(deps)
+    for fixed_dep in [
+        Label("//src:plantuml_for_python"),
+        Label("//src/extensions/score_sphinx_bundle:score_sphinx_bundle"),
+    ]:
+        if fixed_dep not in result:
+            result.append(fixed_dep)
+    return result
+
+def _declare_docs_binary(name, srcs, data, deps, env, action):
+    """Declare one of the interactive documentation command targets."""
+    command_env = env | {"ACTION": action}
+    py_binary(
+        name = name,
+        srcs = srcs,
+        data = data,
+        deps = deps,
+        env = command_env,
+        tags = ["manual"],
+    )
 
 def docs(
         source_dir = "docs",
@@ -581,7 +602,7 @@ def docs(
             ),
         ]
 
-    deps = deps + _missing_requirements(deps)
+    deps = _sphinx_deps(deps)
     deps = deps + [
         Label("//src:plantuml_for_python"),
         Label("//src/extensions/score_sphinx_bundle:score_sphinx_bundle"),
@@ -668,18 +689,16 @@ def docs(
         docs_env["KNOWN_GOOD_JSON"] = "$(location " + known_good_str + ")"
         docs_data += known_good_label
 
-    docs_env["ACTION"] = "incremental"
-
-    py_binary(
-        # Generated documentation artifacts may live below ``docs/``.  A
-        # py_binary named ``docs`` would own the conflicting Bazel output path
-        # ``docs``; expose this binary via the alias below instead.
+    # Generated documentation artifacts may live below ``docs/``.  A
+    # py_binary named ``docs`` would own the conflicting Bazel output path
+    # ``docs``; expose this binary via the alias below instead.
+    _declare_docs_binary(
         name = "_score_docs_cli",
         srcs = [incremental_src],
         data = docs_data,
         deps = deps,
         env = docs_env,
-        tags = ["manual"],
+        action = "incremental",
     )
 
     native.alias(
@@ -688,34 +707,29 @@ def docs(
         tags = ["manual"],
     )
 
-    docs_env["ACTION"] = "linkcheck"
-    py_binary(
+    _declare_docs_binary(
         name = "docs_link_check",
-        tags = ["manual"],
         srcs = [incremental_src],
         data = docs_data,
         deps = deps,
         env = docs_env,
+        action = "linkcheck",
     )
-
-    docs_env["ACTION"] = "check"
-    py_binary(
+    _declare_docs_binary(
         name = "docs_check",
-        tags = ["manual"],
         srcs = [incremental_src],
         data = docs_data,
         deps = deps,
         env = docs_env,
+        action = "check",
     )
-
-    docs_env["ACTION"] = "live_preview"
-    py_binary(
+    _declare_docs_binary(
         name = "live_preview",
-        tags = ["manual"],
         srcs = [incremental_src],
         data = docs_data,
         deps = deps,
         env = docs_env,
+        action = "live_preview",
     )
 
     py_venv(

@@ -61,21 +61,28 @@ def _compute_hash(files: list[Path]) -> str:
     return h.hexdigest()
 
 
+def _build_has_warnings(build_dir: Path) -> bool:
+    """Return whether the previous build recorded any warnings."""
+    warnings_txt = build_dir / "warnings.txt"
+    return warnings_txt.exists() and warnings_txt.stat().st_size > 0
+
+
+def _module_hash_changed(build_dir: Path, sentinel_files: list[Path]) -> bool:
+    """Return whether the build's recorded module-input hash is stale."""
+    hash_file = build_dir / _MODULE_HASH_FILE
+    return not hash_file.exists() or hash_file.read_text().strip() != _compute_hash(
+        sentinel_files
+    )
+
+
 def clean_builddir_if_stale(build_dir: Path, sentinel_files: list[Path]) -> None:
     """Delete build_dir if the previous build had warnings or any sentinel file changed."""
     if not build_dir.exists():
         return
 
-    warnings_txt = build_dir / "warnings.txt"
-    has_warnings = warnings_txt.exists() and warnings_txt.stat().st_size > 0
-
-    hash_file = build_dir / _MODULE_HASH_FILE
-    hash_changed = (
-        not hash_file.exists()
-        or hash_file.read_text().strip() != _compute_hash(sentinel_files)
-    )
-
-    if has_warnings or hash_changed:
+    if _build_has_warnings(build_dir) or _module_hash_changed(
+        build_dir, sentinel_files
+    ):
         print(
             "Previous build had warnings or the hash changed. Removing _build to ensure a clean build."
         )
@@ -136,7 +143,7 @@ def _mounted_watch_dirs(
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    # Add debuging functionality
+    # Add debugging functionality
     parser.add_argument(
         "-dp", "--debug_port", help="port to listen to debugging client", default=5678
     )
