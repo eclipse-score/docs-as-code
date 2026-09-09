@@ -39,19 +39,43 @@ workspace root; for a nested package, use a label such as `//component:docs`.
 
 `_declare_docs_binary()` in `docs.bzl` creates a separate `py_binary` for each
 command, using the exported `cli.py` directly as its source. Each binary receives
-its own `ACTION`, documentation environment and dependencies from `docs()`.
+one `SCORE_DOCS_CONFIG` payload and its dependencies from `docs()`.
 
 The `all_sources` filegroup is included by `//src:all_sources` so source-code
 linking can traverse this Bazel package boundary.
 
 ## Configuration and build state
 
-`docs.bzl` provides `SOURCE_DIRECTORY`, `PACKAGE_DIR`, `DATA`, and optional
-configuration such as `SPHINX_CONFIG_FILE`, `SCORE_METAMODEL_YAML`,
-`MOUNTS_MANIFEST`, `EXTERNAL_NEEDS_FILES`, `TEST_SOURCES` and `KNOWN_GOOD_JSON`.
-Bazel provides the workspace and runfiles locations. The CLI resolves source
-and output paths relative to the package containing the `docs()` call; generated
-configuration is resolved through runfiles.
+`SCORE_DOCS_CONFIG` is a versioned JSON object. Version `1` contains the action,
+package/source/output/config paths, merged external Needs labels, testcase source
+directories, and optional mounts, source-links, metamodel, known-good, and Needs
+settings. A typical interactive payload looks like this:
+
+```json
+{
+  "version": 1,
+  "action": "incremental",
+  "package_directory": "component",
+  "source_directory": "docs",
+  "output_directory": "_build",
+  "config_file": "_main/component/docs/conf.py",
+  "external_needs_sources": ["//other:needs_json"],
+  "testcase_source_dirs": ["src/tests"],
+  "mounts_manifest": "_main/component/_mounts_manifest.json",
+  "source_links": "_main/component/sourcelinks_json.json",
+  "metamodel": null,
+  "known_good": null,
+  "master_doc": null,
+  "bundle_needs_export": null,
+  "plain_links": null
+}
+```
+
+Interactive paths are runfiles-relative and sandboxed Needs paths are
+execution-root-relative; the CLI resolves both forms before invoking Sphinx.
+`BUILD_WORKSPACE_DIRECTORY`, `RUNFILES_DIR`, `JAVA_RUNFILES`, and
+`GITHUB_REPOSITORY` remain process environment because they describe runtime or
+CI context rather than documentation-target configuration.
 
 All actions share the package's `_build` directory. Before starting, the CLI
 removes stale output if the previous build recorded warnings, the stored hash

@@ -12,6 +12,7 @@
 # *******************************************************************************
 
 import json
+import os
 from pathlib import Path
 
 import pytest
@@ -34,9 +35,28 @@ _WORKSPACE = Path("/workspace")
 def docs_workspace(fs: FFS, monkeypatch: pytest.MonkeyPatch) -> Path:
     """Create the minimal workspace environment used by ``cli.main``."""
     monkeypatch.setenv("BUILD_WORKSPACE_DIRECTORY", str(_WORKSPACE))
-    monkeypatch.setenv("PACKAGE_DIR", "component")
-    monkeypatch.setenv("SOURCE_DIRECTORY", "docs")
-    monkeypatch.setenv("DATA", "[]")
+    monkeypatch.setenv(
+        "SCORE_DOCS_CONFIG",
+        json.dumps(
+            {
+                "version": 1,
+                "action": "incremental",
+                "package_directory": "component",
+                "source_directory": "docs",
+                "output_directory": "_build",
+                "config_file": "",
+                "external_needs_sources": [],
+                "testcase_source_dirs": [],
+                "mounts_manifest": None,
+                "source_links": None,
+                "metamodel": None,
+                "known_good": None,
+                "master_doc": None,
+                "bundle_needs_export": None,
+                "plain_links": None,
+            }
+        ),
+    )
     fs.create_dir(_WORKSPACE / "component")
     for name in ("MODULE.bazel", "MODULE.bazel.lock", "component/BUILD"):
         fs.create_file(_WORKSPACE / name, contents="stable")
@@ -148,7 +168,9 @@ def test_successful_build_reuses_output_until_module_changes(
     builder: str,
 ) -> None:
     """A successful CLI run records a reusable cache and invalidates it on changes."""
-    monkeypatch.setenv("ACTION", action)
+    config = json.loads(os.environ["SCORE_DOCS_CONFIG"])
+    config["action"] = action
+    monkeypatch.setenv("SCORE_DOCS_CONFIG", json.dumps(config))
     build_dir = docs_workspace / "component/_build"
     reused: list[bool] = []
 

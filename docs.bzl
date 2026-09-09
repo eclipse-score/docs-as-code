@@ -71,37 +71,73 @@ load(
 # Sphinx policy while ``needs_rules.bzl`` owns Bazel's input/output plumbing.
 load("@score_docs_as_code//:bzl/needs_rules.bzl", "sphinx_docs")
 
-def _sphinx_define(name, value):
-    """Return a Sphinx ``--define`` option when ``value`` is configured."""
-    if value == None:
-        return []
-    return ["--define=" + name + "=" + value]
-
-def _needs_sphinx_extra_opts(
-        master_doc,
-        external_needs_source,
-        score_bundle_needs_export,
-        score_sourcelinks_json,
-        score_source_code_linker_plain_links,
+def _docs_config_payload(
+        action,
+        package_directory,
+        source_directory,
+        output_directory,
+        config_file,
+        external_needs_sources,
+        testcase_source_dirs,
         mounts_manifest,
-        score_metamodel_yaml):
-    """Return per-target Sphinx configuration defines for a Needs build."""
-    # The launcher supplies diagnostics shared by every builder. Keep only
-    # target-specific defines here so the action does not receive duplicate
-    # ``-W``, ``--keep-going``, and ``-T`` options after JSON transport.
-    return [
-        option
-        for name, value in [
-        ("master_doc", master_doc),
-        ("external_needs_source", external_needs_source),
-        ("score_bundle_needs_export", score_bundle_needs_export),
-        ("score_sourcelinks_json", score_sourcelinks_json),
-        ("score_source_code_linker_plain_links", score_source_code_linker_plain_links),
-        ("mounts_manifest", mounts_manifest),
-        ("score_metamodel_yaml", score_metamodel_yaml),
-        ]
-        for option in _sphinx_define(name, value)
-    ]
+        source_links,
+        metamodel,
+        known_good,
+        master_doc,
+        bundle_needs_export,
+        plain_links):
+    """Return the versioned configuration shared by all documentation launchers.
+
+    Paths containing Bazel ``$(location ...)`` or ``$(rlocationpath ...)``
+    expressions are intentionally left for the owning rule to expand. This
+    keeps label expansion in Bazel and path interpretation in the Python CLI.
+    """
+    return json.encode({
+        "version": 1,
+        "action": action,
+        "package_directory": package_directory,
+        "source_directory": source_directory,
+        "output_directory": output_directory,
+        "config_file": config_file,
+        "external_needs_sources": [str(source) for source in external_needs_sources],
+        "testcase_source_dirs": testcase_source_dirs,
+        "mounts_manifest": mounts_manifest,
+        "source_links": source_links,
+        "metamodel": metamodel,
+        "known_good": known_good,
+        "master_doc": master_doc,
+        "bundle_needs_export": bundle_needs_export,
+        "plain_links": plain_links,
+    })
+
+def _interactive_docs_config(
+        action,
+        package_directory,
+        source_directory,
+        config_file,
+        external_needs_sources,
+        testcase_source_dirs,
+        mounts_manifest,
+        source_links,
+        metamodel,
+        known_good):
+    """Build the payload for a ``bazel run`` documentation binary."""
+    return _docs_config_payload(
+        action = action,
+        package_directory = package_directory,
+        source_directory = source_directory,
+        output_directory = "_build",
+        config_file = config_file,
+        external_needs_sources = external_needs_sources,
+        testcase_source_dirs = testcase_source_dirs,
+        mounts_manifest = mounts_manifest,
+        source_links = source_links,
+        metamodel = metamodel,
+        known_good = known_good,
+        master_doc = None,
+        bundle_needs_export = None,
+        plain_links = None,
+    )
 
 def _declare_sphinx_build_binary(name, data, deps):
     """Declare the private Sphinx executable used by one Needs target."""
@@ -125,12 +161,13 @@ def _needs_sphinx_docs(
         sphinx_build_deps,
         bundle,
         master_doc = None,
-        external_needs_source = None,
-        score_bundle_needs_export = None,
-        score_sourcelinks_json = None,
-        score_source_code_linker_plain_links = None,
+        external_needs_sources = [],
+        bundle_needs_export = None,
+        source_links = None,
+        plain_links = None,
         mounts_manifest = None,
-        score_metamodel_yaml = None,
+        metamodel = None,
+        testcase_source_dirs = [],
         tools = [],
         sphinx_build_data = [],
         visibility = None):
@@ -148,14 +185,21 @@ def _needs_sphinx_docs(
         # made available as ordinary runtime input.
         config = config,
         data = sphinx_build_data,
-        extra_opts = _needs_sphinx_extra_opts(
-            master_doc,
-            external_needs_source,
-            score_bundle_needs_export,
-            score_sourcelinks_json,
-            score_source_code_linker_plain_links,
-            mounts_manifest,
-            score_metamodel_yaml,
+        config_payload = _docs_config_payload(
+            action = "build_needs_json",
+            package_directory = "",
+            source_directory = None,
+            output_directory = None,
+            config_file = None,
+            external_needs_sources = external_needs_sources,
+            testcase_source_dirs = testcase_source_dirs,
+            mounts_manifest = mounts_manifest,
+            source_links = source_links,
+            metamodel = metamodel,
+            known_good = None,
+            master_doc = master_doc,
+            bundle_needs_export = bundle_needs_export,
+            plain_links = plain_links,
         ),
         sphinx = sphinx_build,
         tools = tools,
@@ -369,10 +413,10 @@ def _declare_bundle_local_needs(
         sphinx_build_deps = sphinx_build_deps,
         sphinx_build_data = data,
         master_doc = entry_doc,
-        external_needs_source = "[]",
-        score_bundle_needs_export = "1",
-        score_sourcelinks_json = "$(location " + str(sourcelinks_json) + ")" if sourcelinks_json else None,
-        score_source_code_linker_plain_links = "1",
+        external_needs_sources = [],
+        bundle_needs_export = True,
+        source_links = "$(location " + str(sourcelinks_json) + ")" if sourcelinks_json else None,
+        plain_links = True,
         tools = [sourcelinks_json] if sourcelinks_json else [],
         visibility = visibility,
     )
@@ -465,16 +509,15 @@ def _sphinx_runtime_deps(deps):
             result.append(fixed_dep)
     return result
 
-def _declare_docs_binary(name, data, deps, env, action):
+def _declare_docs_binary(name, data, deps, config_payload):
     """Declare one of the interactive documentation command targets."""
     docs_cli_src = Label("//src/docs_cli:cli.py")
-    command_env = env | {"ACTION": action}
     py_binary(
         name = name,
         srcs = [docs_cli_src],
         data = data,
         deps = deps,
-        env = command_env,
+        env = {"SCORE_DOCS_CONFIG": config_payload},
         tags = ["manual"],
     )
 
@@ -626,28 +669,15 @@ def docs(
         # generated configuration must be present in the runfiles tree.
         docs_data += [sphinx_config]
 
-    docs_env = {
-        "SOURCE_DIRECTORY": source_dir,
-        "PACKAGE_DIR": native.package_name(),
-        "TEST_SOURCES": str(test_sources),
-        "DATA": str(data),
-        "EXTERNAL_NEEDS_FILES": str(external_needs),
-        # `bazel run` starts from a runfiles tree, so this logical path is
-        # resolved by score_mounts through ``RUNFILES_DIR``.
-        "MOUNTS_MANIFEST": "$(rlocationpath :_mounts_manifest)" if bundles else "",
-        "SCORE_SOURCELINKS": "$(location :sourcelinks_json)",
-    }
-    if config_is_generated:
-        # The generated file is named conf.py. Run targets pass its containing
-        # directory to Sphinx via -c.
-        docs_env["SPHINX_CONFIG_FILE"] = "$(rlocationpath " + sphinx_config + ")"
-    if metamodel:
-        # The interactive ``py_binary`` targets run from a runfiles tree.
-        # docs_cli resolves this logical path through ``RUNFILES_DIR``.
-        docs_env["SCORE_METAMODEL_YAML"] = "$(rlocationpath " + str(metamodel) + ")"
+    # The same target settings are copied into each command's payload; only
+    # the action changes between incremental, linkcheck, check and preview.
+    config_file = "$(rlocationpath " + sphinx_config + ")" if config_is_generated else None
+    mounts_manifest = "$(rlocationpath :_mounts_manifest)" if bundles else None
+    source_links = "$(rlocationpath :sourcelinks_json)"
+    metamodel_path = "$(rlocationpath " + str(metamodel) + ")" if metamodel else None
+    known_good_path = None
     if known_good_label:
-        known_good_str = str(known_good_label[0])
-        docs_env["KNOWN_GOOD_JSON"] = "$(location " + known_good_str + ")"
+        known_good_path = "$(rlocationpath " + str(known_good_label[0]) + ")"
         docs_data += known_good_label
 
     # Generated documentation artifacts may live below ``docs/``.  A
@@ -657,8 +687,18 @@ def docs(
         name = "_score_docs_cli",
         data = docs_data,
         deps = deps,
-        env = docs_env,
-        action = "incremental",
+        config_payload = _interactive_docs_config(
+            "incremental",
+            native.package_name(),
+            source_dir,
+            config_file,
+            data + external_needs,
+            test_sources,
+            mounts_manifest,
+            source_links,
+            metamodel_path,
+            known_good_path,
+        ),
     )
 
     native.alias(
@@ -671,22 +711,52 @@ def docs(
         name = "docs_link_check",
         data = docs_data,
         deps = deps,
-        env = docs_env,
-        action = "linkcheck",
+        config_payload = _interactive_docs_config(
+            "linkcheck",
+            native.package_name(),
+            source_dir,
+            config_file,
+            data + external_needs,
+            test_sources,
+            mounts_manifest,
+            source_links,
+            metamodel_path,
+            known_good_path,
+        ),
     )
     _declare_docs_binary(
         name = "docs_check",
         data = docs_data,
         deps = deps,
-        env = docs_env,
-        action = "check",
+        config_payload = _interactive_docs_config(
+            "check",
+            native.package_name(),
+            source_dir,
+            config_file,
+            data + external_needs,
+            test_sources,
+            mounts_manifest,
+            source_links,
+            metamodel_path,
+            known_good_path,
+        ),
     )
     _declare_docs_binary(
         name = "live_preview",
         data = docs_data,
         deps = deps,
-        env = docs_env,
-        action = "live_preview",
+        config_payload = _interactive_docs_config(
+            "live_preview",
+            native.package_name(),
+            source_dir,
+            config_file,
+            data + external_needs,
+            test_sources,
+            mounts_manifest,
+            source_links,
+            metamodel_path,
+            known_good_path,
+        ),
     )
 
     py_venv(
@@ -704,13 +774,14 @@ def docs(
         config = sphinx_config,
         sphinx_build_deps = deps,
         sphinx_build_data = data + external_needs + metamodel_label + [":docs_bundle"],
-        external_needs_source = str(data + external_needs),
-        score_sourcelinks_json = "$(location :sourcelinks_json)",
-        score_source_code_linker_plain_links = "1",
+        external_needs_sources = data + external_needs,
+        source_links = "$(location :sourcelinks_json)",
+        plain_links = True,
         # The build action runs in a sandbox, so it needs the action-input path
         # rather than the runfiles-relative spelling.
         mounts_manifest = "$(location :_mounts_manifest)" if bundles else None,
-        score_metamodel_yaml = "$(location " + str(metamodel) + ")" if metamodel else None,
+        metamodel = "$(location " + str(metamodel) + ")" if metamodel else None,
+        testcase_source_dirs = test_sources,
         tools = external_needs + metamodel_label + [":sourcelinks_json", ":docs_bundle"] + mounts_manifest_label,
         visibility = ["//visibility:public"],
     )

@@ -68,9 +68,12 @@ def _read_manifest(config: Config):
     if not raw or not raw.strip() or not isinstance(raw, str):
         return None
 
-    # ``bazel run`` passes an rlocation-relative path; ``sphinx_docs`` in a
-    # sandbox passes its execroot-relative ``$(location)`` path directly.
-    manifest_path = get_runfiles_dir() / raw if find_ws_root() else Path(raw)
+    # The CLI resolves both runfiles-relative and execution-root payload paths
+    # before passing them as a Sphinx define. Keep the relative fallback for
+    # extension callers that configure this value without the CLI.
+    manifest_path = Path(raw)
+    if not manifest_path.is_absolute() and find_ws_root():
+        manifest_path = get_runfiles_dir() / manifest_path
 
     return load_mounts_manifest(manifest_path)
 
