@@ -67,6 +67,8 @@ load(
     "@score_docs_as_code//:bzl/mount_rules.bzl",
     "create_mounts_manifest",
 )
+# Keep the low-level action behind this name so this macro owns the shared
+# Sphinx policy while ``needs_rules.bzl`` owns Bazel's input/output plumbing.
 load("@score_docs_as_code//:bzl/needs_rules.bzl", "sphinx_docs")
 
 def _sphinx_define(name, value):
@@ -74,6 +76,49 @@ def _sphinx_define(name, value):
     if value == None:
         return []
     return ["--define=" + name + "=" + value]
+
+def _needs_sphinx_extra_opts(
+        master_doc,
+        external_needs_source,
+        score_bundle_needs_export,
+        score_sourcelinks_json,
+        score_source_code_linker_plain_links,
+        mounts_manifest,
+        score_metamodel_yaml):
+    """Return the common diagnostics and configuration for a Needs build."""
+    return [
+        "-W",
+        "--keep-going",
+        "-T",
+    ] + [
+        option
+        for name, value in [
+        ("master_doc", master_doc),
+        ("external_needs_source", external_needs_source),
+        ("score_bundle_needs_export", score_bundle_needs_export),
+        ("score_sourcelinks_json", score_sourcelinks_json),
+        ("score_source_code_linker_plain_links", score_source_code_linker_plain_links),
+        ("mounts_manifest", mounts_manifest),
+        ("score_metamodel_yaml", score_metamodel_yaml),
+        ]
+        for option in _sphinx_define(name, value)
+    ]
+
+def _declare_sphinx_build_binary(name, data, deps):
+    """Declare the private Sphinx executable used by one Needs target."""
+    sphinx_build_name = _bundle_internal_target(name, "sphinx_build")
+    py_binary(
+        name = sphinx_build_name,
+        srcs = [Label("//src/docs_cli:cli.py")],
+        data = data,
+        deps = deps,
+        # The Sphinx executable is an implementation detail of the Needs
+        # target; only the generated Needs target itself needs the requested
+        # visibility.
+        visibility = ["//visibility:private"],
+        tags = ["manual"],
+    )
+    return ":" + sphinx_build_name
 
 def _needs_sphinx_docs(
         name,
@@ -91,35 +136,29 @@ def _needs_sphinx_docs(
         sphinx_build_data = [],
         visibility = None):
     """Declare a bundle Needs export with the repository-wide Sphinx policy."""
-    # Keep the executable private to the target package. Bazel actions execute
-    # this binary directly against the declared sources and mount manifest.
-    sphinx_build_name = _bundle_internal_target(name, "sphinx_build")
-    py_binary(
-        name = sphinx_build_name,
-        srcs = [Label("//src/docs_cli:cli.py")],
-        data = sphinx_build_data + [tool for tool in tools if tool not in sphinx_build_data],
-        deps = sphinx_build_deps,
-        visibility = ["//visibility:private"],
-        tags = ["manual"],
+    sphinx_build = _declare_sphinx_build_binary(
+        name,
+        sphinx_build_data + [tool for tool in tools if tool not in sphinx_build_data],
+        sphinx_build_deps,
     )
     sphinx_docs(
         name = name,
         bundle = bundle,
+        # Keep conf.py separate from supporting data: the action derives
+        # Sphinx's ``-c`` directory from this file's path, while ``data`` is
+        # made available as ordinary runtime input.
         config = config,
         data = sphinx_build_data,
-        extra_opts = (
-            _sphinx_define("master_doc", master_doc) +
-            _sphinx_define("external_needs_source", external_needs_source) +
-            _sphinx_define("score_bundle_needs_export", score_bundle_needs_export) +
-            _sphinx_define("score_sourcelinks_json", score_sourcelinks_json) +
-            _sphinx_define(
-                "score_source_code_linker_plain_links",
-                score_source_code_linker_plain_links,
-            ) +
-            _sphinx_define("mounts_manifest", mounts_manifest) +
-            _sphinx_define("score_metamodel_yaml", score_metamodel_yaml)
+        extra_opts = _needs_sphinx_extra_opts(
+            master_doc,
+            external_needs_source,
+            score_bundle_needs_export,
+            score_sourcelinks_json,
+            score_source_code_linker_plain_links,
+            mounts_manifest,
+            score_metamodel_yaml,
         ),
-        sphinx = ":" + sphinx_build_name,
+        sphinx = sphinx_build,
         tools = tools,
         visibility = visibility,
         tags = ["manual"],

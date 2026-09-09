@@ -39,6 +39,8 @@ def _sphinx_docs_impl(ctx):
     # Expand file labels at analysis time, then encode the argument list as
     # JSON so spaces, quotes and '=' in Sphinx options survive the environment
     # transport unchanged. The launcher adds these after its default options.
+    # ``config`` is transported separately because the launcher derives
+    # Sphinx's ``-c`` directory from its path; it is not just another data file.
     env = {
         "ACTION": "build_needs_json",
         "SOURCE_DIRECTORY": source_dir or ".",

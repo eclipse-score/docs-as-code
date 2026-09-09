@@ -180,8 +180,11 @@ def sphinx_arguments(ws_root: Path, package_dir: Path, build_dir: Path) -> list[
 
     generated_config = os.environ.get("SPHINX_CONFIG_FILE", "")
     if generated_config:
-        # Actions pass an execution-root path; interactive targets pass a
-        # runfiles-relative path. Sphinx needs the containing directory.
+        # The action receives ctx.file.config.path, which is interpreted from
+        # the action's execution-root working directory. Resolve it locally
+        # instead of using runfiles lookup; interactive targets receive a
+        # runfiles-relative path and need that lookup before Sphinx gets the
+        # containing directory.
         config_file = Path(generated_config)
         if is_bazel_build:
             config_file = config_file.absolute()
@@ -191,8 +194,11 @@ def sphinx_arguments(ws_root: Path, package_dir: Path, build_dir: Path) -> list[
 
     metamodel_yaml = os.environ.get("SCORE_METAMODEL_YAML", "")
     if metamodel_yaml:
-        # ``docs`` passes a runfiles-relative path under ``bazel run``.  Keep
-        # the workspace-relative fallback for direct invocations.
+        # Under ``bazel run``, this environment variable is runfiles-relative
+        # and must be resolved through RUNFILES_DIR. A sandboxed Needs action
+        # instead expands the metamodel label to an execution-root path in
+        # SPHINX_EXTRA_OPTS; applying runfiles lookup there would escape the
+        # action's declared inputs.
         if not is_bazel_build and not os.path.isabs(metamodel_yaml):
             runfiles_dir = os.environ.get("RUNFILES_DIR", "")
             metamodel_yaml = str(
