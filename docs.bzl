@@ -85,12 +85,11 @@ def _needs_sphinx_extra_opts(
         score_source_code_linker_plain_links,
         mounts_manifest,
         score_metamodel_yaml):
-    """Return the common diagnostics and configuration for a Needs build."""
+    """Return per-target Sphinx configuration defines for a Needs build."""
+    # The launcher supplies diagnostics shared by every builder. Keep only
+    # target-specific defines here so the action does not receive duplicate
+    # ``-W``, ``--keep-going``, and ``-T`` options after JSON transport.
     return [
-        "-W",
-        "--keep-going",
-        "-T",
-    ] + [
         option
         for name, value in [
         ("master_doc", master_doc),

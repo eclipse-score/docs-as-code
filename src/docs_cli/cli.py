@@ -171,6 +171,11 @@ def sphinx_arguments(ws_root: Path, package_dir: Path, build_dir: Path) -> list[
         # actions. Keep Sphinx's internal doctree cache beside it instead of
         # mixing action state into the declared output.
         base_arguments.extend(["-d", str(build_dir) + "_doctrees"])
+
+        # The sandboxed Needs rule transports options as JSON so spaces, quotes and
+        # equals signs survive the environment boundary. Append them last so an
+        # action-specific value can override one of the shared defaults above.
+        base_arguments.extend(json.loads(os.environ.get("SPHINX_EXTRA_OPTS", "[]")))
     else:
         # Interactive builds keep warnings in the workspace so developers can
         # inspect them after a failed build. A Bazel action reports failure
@@ -224,11 +229,6 @@ def sphinx_arguments(ws_root: Path, package_dir: Path, build_dir: Path) -> list[
 
     if os.getenv("KNOWN_GOOD_JSON"):
         base_arguments.append(f"--define=KNOWN_GOOD_JSON={get_env('KNOWN_GOOD_JSON')}")
-
-    # The sandboxed Needs rule transports options as JSON so spaces, quotes and
-    # equals signs survive the environment boundary. Append them last so an
-    # action-specific value can override one of the shared defaults above.
-    base_arguments.extend(json.loads(os.environ.get("SPHINX_EXTRA_OPTS", "[]")))
 
     return base_arguments
 
