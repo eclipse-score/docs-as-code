@@ -812,9 +812,23 @@
     "FullyVerifies": null
   },
   {
+    "name": "main_test__test_build_action_selects_sphinx_builder[build_needs_json-needs]",
+    "file": "src/docs_cli/main_test.py",
+    "line": "58",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
     "name": "main_test__test_failed_build_returns_exit_code_and_forces_next_build_clean",
     "file": "src/docs_cli/main_test.py",
-    "line": "95",
+    "line": "106",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -828,7 +842,7 @@
   {
     "name": "main_test__test_live_preview_uses_port_and_bundle_watches",
     "file": "src/docs_cli/main_test.py",
-    "line": "142",
+    "line": "153",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -842,7 +856,7 @@
   {
     "name": "main_test__test_bazel_configuration_resolves_runfiles_and_preserves_repo_relative_edit_path",
     "file": "src/docs_cli/main_test.py",
-    "line": "173",
+    "line": "184",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -856,7 +870,7 @@
   {
     "name": "main_test__test_direct_invocation_resolves_metamodel_relative_to_workspace",
     "file": "src/docs_cli/main_test.py",
-    "line": "207",
+    "line": "218",
     "result": "passed",
     "repo_name": null,
     "hash": null,
