@@ -13,7 +13,6 @@
 # req-Id: tool_req__docs_dd_link_source_code_link
 
 import json
-import os
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, TypedDict, TypeGuard
@@ -176,13 +175,11 @@ def load_source_code_links_with_metadata_json(file: Path) -> list[NeedLink]:
       [ meta_dict, needlink1, needlink2, ... ]
     Returns:
       [NeedLink, NeedLink, ...]
-
-    This normally should be the one called 'locally' => :docs target
     """
-    if not file.is_absolute():
-        ws_root = os.environ.get("BUILD_WORKSPACE_DIRECTORY")
-        if ws_root:
-            file = Path(ws_root) / file
+
+    # Bazel passes an absolute path (``$(location :sourcelinks_json)`` under
+    # ``bazel run``) or an execroot-relative path (sandbox, where CWD *is* the
+    # execroot); both are usable as ``Path(file)`` directly.
 
     data: list[object] = json.loads(
         file.read_text(encoding="utf-8"),
@@ -219,12 +216,6 @@ def load_source_code_links_json(file: Path) -> list[NeedLink]:
 
     This is used when mounted external documentation contributes source links.
     """
-    if not file.is_absolute():
-        # use env variable set by Bazel
-        ws_root = os.environ.get("BUILD_WORKSPACE_DIRECTORY")
-        if ws_root:
-            file = Path(ws_root) / file
-
     links: list[NeedLink] = json.loads(
         file.read_text(encoding="utf-8"),
         object_hook=needlink_decoder,
