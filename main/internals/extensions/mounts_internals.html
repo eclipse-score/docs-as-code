@@ -548,7 +548,7 @@ that path into an absolute path. This distinction is covered by unit tests and
 the public <code class="docutils literal notranslate"><span class="pre">docs_bzl</span></code> integration suite; do not resolve an external runtime path
 relative to the manifest file, because the manifest can live below a Bazel
 package directory.</p>
-<p>Incremental builds use the same resolver in <code class="docutils literal notranslate"><span class="pre">src/incremental.py</span></code> to add every
+<p>Incremental builds use the same resolver in <code class="docutils literal notranslate"><span class="pre">src/docs_cli/cli.py</span></code> to add every
 mounted directory to <code class="docutils literal notranslate"><span class="pre">sphinx-autobuild</span></code>’s watch list. Keep these two call
 sites aligned when the manifest contract changes.</p>
 </section>
