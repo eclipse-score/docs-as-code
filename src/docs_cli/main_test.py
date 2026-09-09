@@ -61,6 +61,7 @@ def workspace(fs: FFS, monkeypatch: pytest.MonkeyPatch) -> Path:
         ("incremental", "html"),
         ("check", "needs"),
         ("linkcheck", "linkcheck"),
+        ("build_needs_json", "needs"),
     ],
 )
 def test_build_action_selects_sphinx_builder(
@@ -74,9 +75,15 @@ def test_build_action_selects_sphinx_builder(
     # Arrange
     monkeypatch.setenv("ACTION", action)
     build_dir = workspace / "component/_build"
+    if action == "build_needs_json":
+        # The sandboxed action uses its declared output, not the package cache.
+        monkeypatch.chdir(workspace)
+        monkeypatch.setenv("OUTPUT_DIRECTORY", "outputs/needs")
+        build_dir = workspace / "outputs/needs"
     noop_sphinx = Mock(return_value=0)
+    update_hash = Mock()
     monkeypatch.setattr(docs_cli, "sphinx_main", noop_sphinx)
-    monkeypatch.setattr(docs_cli, "update_module_hash", Mock())
+    monkeypatch.setattr(docs_cli, "update_module_hash", update_hash)
 
     # Act
     exit_code = docs_cli.main([])
@@ -87,7 +94,11 @@ def test_build_action_selects_sphinx_builder(
     noop_sphinx.assert_called_once()
     arguments = noop_sphinx.call_args.args[0]
     # The source and output paths are derived from the Bazel package directory.
-    assert arguments[:2] == [str(workspace / "component/docs"), str(build_dir)]
+    if action == "build_needs_json":
+        assert arguments[:2] == [str(workspace / "docs"), str(build_dir)]
+        update_hash.assert_not_called()
+    else:
+        assert arguments[:2] == [str(workspace / "component/docs"), str(build_dir)]
     # The action selects the builder exposed by its public Bazel target.
     assert arguments[-2:] == ["-b", builder]
 

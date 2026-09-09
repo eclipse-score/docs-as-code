@@ -20,7 +20,6 @@ module(name = "score_docs_as_code")
 #
 ###############################################################################
 bazel_dep(name = "rules_python", version = "1.8.5")
-bazel_dep(name = "sphinxdocs", version = "2.2.0")
 
 PYTHON_VERSION = "3.12"
 

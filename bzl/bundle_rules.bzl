@@ -12,18 +12,8 @@
 # *******************************************************************************
 """Internal Bazel support for composing reusable documentation bundles."""
 
-# `docs_bundle` and `sphinx_docs_library` operate at a similar architectural level:
-# both describe reusable, transitively composable collections of documentation sources
-# that are later assembled into a Sphinx source tree.
-
-# However, their data models and responsibilities differ significantly.
-
-# `sphinx_docs_library` primarily models file placement. Each library contributes files
-# together with a `strip_prefix` and a `prefix`, allowing the final Sphinx rule to map
-# every source file to a new location in the generated source tree.
-
-# `docs_bundle` instead models documentation structure at the bundle level. In
-# addition to the source files, it propagates information such as:
+# `docs_bundle` models documentation structure at the bundle level. In addition to
+# source files, it propagates information such as:
 
 # * where a bundle is mounted, * which document it is attached to, * which document acts
 # as its entry point, * which repository owns its sources, * whether it is an internal
@@ -34,30 +24,13 @@
 # is therefore not just a set of files with path transformations, but a structured
 # documentation component with composition semantics.
 
-# Using `sphinx_docs_library` directly would not preserve the metadata required by this
-# model. We would need a second provider alongside it and would still have to implement
-# most of the bundle traversal, rebasing, validation, and composition logic ourselves.
-
-# Extending `sphinx_docs_library` is also not a good fit. Its provider represents
-# individual file mappings, while our provider represents complete mounted bundles. Adding
-# the required metadata would therefore not be a small extension of the existing
-# abstraction; it would change its propagated unit and its semantics. It would also couple
-# SCORE-specific composition rules to the generic `rules_sphinxdocs` implementation.
-
-# We therefore reimplement the relatively small overlapping part—transitive source
-# collection—while keeping the richer bundle model explicit and independent.
-
-# The name `docs_bundle` reflects that relationship: it fills the same general role
-# as `sphinx_docs_library`, but uses a SCORE-specific data model for composing structured
-# documentation bundles.
+# The provider is consumed directly by the repository-owned Needs action, while
+# its entries are consumed by the mounts manifest action. Keeping both consumers
+# on this provider ensures that source ownership and runtime placement agree.
 
 
 
 load("@score_docs_as_code//:bzl/basics.bzl", "join_path")
-load(
-    "@sphinxdocs//sphinxdocs/private:sphinx_docs_library_info.bzl",
-    "SphinxDocsLibraryInfo",
-)
 
 # Internal data passed between bundle targets and eventually consumed by an
 # adapter such as the Sphinx mounts manifest. Users configure bundles through
@@ -506,61 +479,6 @@ _bundle_source_files = rule(
 def bundle_source_files(name, bundle, visibility = None, tags = None):
     """Create a target containing only the direct sources of a bundle."""
     _bundle_source_files(
-        name = name,
-        bundle = bundle,
-        visibility = visibility,
-        tags = tags,
-    )
-    return ":" + name
-
-def _bundle_sphinx_source_files_impl(ctx):
-    """Expose direct bundle sources with a Sphinx-specific path mapping."""
-    bundle = ctx.attr.bundle[DocsBundleInfo]
-    source_files = tuple(bundle.own_source_files.to_list())
-    if not source_files:
-        fail("bundle %s has no direct documentation sources" % ctx.attr.bundle)
-
-    # Directory-discovered sources already carry a stable bundle-relative root
-    # in the provider. Explicit source targets instead use the output path
-    # Bazel gives to Sphinx. Deriving that parent from ``short_path`` handles
-    # both workspace files and generated outputs (whose paths include
-    # ``bazel-out``) without making the macro guess a configuration-dependent
-    # output directory.
-    if bundle.own_source_is_explicit:
-        source_path = source_files[0].short_path
-        separator = source_path.rfind("/")
-        strip_prefix = source_path[:separator + 1] if separator >= 0 else ""
-    else:
-        strip_prefix = bundle.own_source_root
-        if strip_prefix and not strip_prefix.endswith("/"):
-            strip_prefix += "/"
-
-    entry = struct(
-        strip_prefix = strip_prefix,
-        prefix = "",
-        files = source_files,
-    )
-    return [
-        DefaultInfo(files = depset(source_files)),
-        SphinxDocsLibraryInfo(
-            strip_prefix = strip_prefix,
-            prefix = "",
-            files = source_files,
-            transitive = depset(direct = [entry]),
-        ),
-    ]
-
-_bundle_sphinx_source_files = rule(
-    implementation = _bundle_sphinx_source_files_impl,
-    attrs = {
-        "bundle": attr.label(providers = [DocsBundleInfo]),
-    },
-    doc = "Exposes direct bundle sources with paths rooted for a Sphinx build.",
-)
-
-def bundle_sphinx_source_files(name, bundle, visibility = None, tags = None):
-    """Create a Sphinx library containing only a bundle's direct sources."""
-    _bundle_sphinx_source_files(
         name = name,
         bundle = bundle,
         visibility = visibility,
