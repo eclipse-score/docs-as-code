@@ -114,7 +114,9 @@ def clean_test_file_name(raw_filepath: Path) -> Path:
     )
 
 
-def get_metadata_from_test_path(raw_filepath: Path) -> MetaData:
+def get_metadata_from_test_path(
+    raw_filepath: Path, known_good_json: str | None = None
+) -> MetaData:
     """
     Will parse out the metadata from the testpath.
     If test is local then the metadata will be:
@@ -144,7 +146,10 @@ def get_metadata_from_test_path(raw_filepath: Path) -> MetaData:
     Removing everything up to and including 'bazel-testlogs' or 'tests-report'
     """
     # print("THIs IS FILEPATH IN GET MD FROm TestPATH: ", raw_filepath)
-    known_good_json = os.environ.get("KNOWN_GOOD_JSON")
+    # Sphinx configuration defines are the normal transport for Bazel builds;
+    # retain the environment fallback for direct extension callers and older
+    # integrations that invoke this helper without a Sphinx app.
+    known_good_json = known_good_json or os.environ.get("KNOWN_GOOD_JSON")
     clean_filepath = clean_test_file_name(raw_filepath)
     # print(f"This is the cleaned filepath: {clean_filepath}")
     repo_name = parse_repo_name_from_path(clean_filepath)
@@ -206,7 +211,9 @@ def parse_properties(case_properties: dict[str, Any], properties: Element):
 
 
 def read_test_xml_file(
-    file: Path, allowed_dirs: list[str] | None = None
+    file: Path,
+    allowed_dirs: list[str] | None = None,
+    known_good_json: str | None = None,
 ) -> tuple[list[DataOfTestCase], list[str], list[str]]:
     """
     Reading & parsing the test.xml files into TestCaseNeeds
@@ -222,7 +229,7 @@ def read_test_xml_file(
     missing_prop_tests: list[str] = []
     tree = ET.parse(file)
     root = tree.getroot()
-    md = get_metadata_from_test_path(file)
+    md = get_metadata_from_test_path(file, known_good_json)
     for testsuite in root.findall("testsuite"):
         for testcase in testsuite.findall("testcase"):
             test_file = testcase.get("file")
@@ -406,7 +413,11 @@ def build_test_needs_from_files(
     for file in xml_paths:
         # Last value can be ignored. The 'is_valid' function already prints infos
         test_cases, tests_missing_all_props, tests_missing_some_props = (
-            read_test_xml_file(file, allowed_dirs)
+            read_test_xml_file(
+                file,
+                allowed_dirs,
+                str(getattr(app.config, "KNOWN_GOOD_JSON", "") or ""),
+            )
         )
         non_prop_tests = ", ".join(n for n in tests_missing_all_props)
         if non_prop_tests:

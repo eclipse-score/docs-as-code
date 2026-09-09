@@ -36,21 +36,21 @@ def _sphinx_docs_impl(ctx):
     if source_dir.startswith("../"):
         source_dir = "external/" + source_dir[3:]
 
-    # Expand file labels at analysis time, then encode the argument list as
-    # JSON so spaces, quotes and '=' in Sphinx options survive the environment
-    # transport unchanged. The launcher adds these after its default options.
-    # ``config`` is transported separately because the launcher derives
-    # Sphinx's ``-c`` directory from its path; it is not just another data file.
+    # Expand file labels at analysis time, then add the paths that only exist
+    # once this action's output and execution inputs have been declared. The
+    # resulting object is the complete versioned contract consumed by cli.py.
+    # Keeping this as one JSON environment value avoids shell quoting problems
+    # for paths and labels containing spaces, quotes or equals signs.
+    config_payload = json.decode(
+        ctx.expand_location(ctx.attr.config_payload, targets = ctx.attr.tools),
+    )
+    config_payload["action"] = "build_needs_json"
+    config_payload["source_directory"] = source_dir or "."
+    config_payload["output_directory"] = output.path
+    config_payload["config_file"] = ctx.file.config.path
+
     env = {
-        "ACTION": "build_needs_json",
-        "SOURCE_DIRECTORY": source_dir or ".",
-        "OUTPUT_DIRECTORY": output.path,
-        "SPHINX_CONFIG_FILE": ctx.file.config.path,
-        "DATA": "[]",
-        "SPHINX_EXTRA_OPTS": json.encode([
-            ctx.expand_location(option, targets = ctx.attr.tools)
-            for option in ctx.attr.extra_opts
-        ]),
+        "SCORE_DOCS_CONFIG": json.encode(config_payload),
     }
 
     # Data and mounted sources must be present at their execution-root paths.
@@ -77,7 +77,7 @@ sphinx_docs = rule(
         "bundle": attr.label(providers = [DocsBundleInfo], mandatory = True),
         "data": attr.label_list(allow_files = True),
         "tools": attr.label_list(allow_files = True),
-        "extra_opts": attr.string_list(),
+        "config_payload": attr.string(mandatory = True),
         # The launcher runs on the build host and carries extension runfiles.
         "sphinx": attr.label(cfg = "exec", executable = True, mandatory = True),
     },
