@@ -21,9 +21,11 @@ import tempfile
 from collections.abc import Generator
 from dataclasses import asdict
 from pathlib import Path
-from typing import Any
+from types import SimpleNamespace
+from typing import Any, cast
 
 import pytest
+from sphinx.application import Sphinx
 
 # S-CORE plugin to allow for properties/attributes in xml
 # Enables Testlinking
@@ -362,27 +364,40 @@ def test_combining_without_source_links_continues_with_empty_code_links(
     temp_dir: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """A build without a pre-generated source-link input must not scan or fail."""
-    monkeypatch.delenv("SCORE_SOURCELINKS", raising=False)
-
-    build_and_save_combined_file(temp_dir)
+    # The extension consumes Sphinx config, not the legacy process variable.
+    monkeypatch.setenv("SCORE_SOURCELINKS", str(temp_dir / "ignored.json"))
+    build_and_save_combined_file(
+        temp_dir,
+        cast(
+            Sphinx,
+            SimpleNamespace(config=SimpleNamespace(score_sourcelinks_json="")),
+        ),
+    )
 
     grouped_cache = temp_dir / "score_scl_grouped_cache.json"
     assert json.loads(grouped_cache.read_text(encoding="utf-8")) == []
 
 
 def test_combining_with_missing_source_links_reports_configured_path(
-    temp_dir: Path, monkeypatch: pytest.MonkeyPatch
+    temp_dir: Path,
 ) -> None:
     """Report the configured source-link file when it cannot be found."""
     missing_file = temp_dir / "missing_source_links.json"
-    monkeypatch.setenv("SCORE_SOURCELINKS", str(missing_file))
 
     with pytest.raises(FileNotFoundError) as exc_info:
-        build_and_save_combined_file(temp_dir)
+        build_and_save_combined_file(
+            temp_dir,
+            cast(
+                Sphinx,
+                SimpleNamespace(
+                    config=SimpleNamespace(score_sourcelinks_json=str(missing_file))
+                ),
+            ),
+        )
 
     assert str(exc_info.value) == (
         "Pre-generated source-code links file does not exist: "
-        f"{missing_file}. Check SCORE_SOURCELINKS or score_sourcelinks_json."
+        f"{missing_file}. Check score_sourcelinks_json."
     )
 
 
@@ -788,10 +803,8 @@ def test_load_with_metadata_invalid_items_after_metadata(tmp_path: Path):
 #            ────────────────[ File Path Resolution Tests ]────────────────
 
 
-def test_load_resolves_relative_path_with_env_var(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-):
-    """Test if relative path is resolved using BUILD_WORKSPACE_DIRECTORY"""
+def test_load_accepts_absolute_source_links_path(tmp_path: Path):
+    """Source-link consumers receive paths already resolved by the CLI."""
     workspace = tmp_path / "workspace"
     workspace.mkdir()
 
@@ -809,18 +822,14 @@ def test_load_resolves_relative_path_with_env_var(
     cache_file = workspace / "cache.json"
     store_source_code_links_json(cache_file, needlinks)
 
-    # Set env var and load with relative path
-    monkeypatch.setenv("BUILD_WORKSPACE_DIRECTORY", str(workspace))
-    loaded = load_source_code_links_json(Path("cache.json"))
+    loaded = load_source_code_links_json(cache_file)
 
     assert len(loaded) == 1
     assert loaded[0].need == "REQ_1"
 
 
-def test_load_with_metadata_resolves_relative_path(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-):
-    """Edge case: load_with_metadata resolves relative paths using env var"""
+def test_load_with_metadata_accepts_absolute_source_links_path(tmp_path: Path):
+    """Metadata source-link consumers receive paths already resolved by the CLI."""
     workspace = tmp_path / "workspace"
     workspace.mkdir()
 
@@ -842,8 +851,7 @@ def test_load_with_metadata_resolves_relative_path(
     cache_file = workspace / "metadata_cache.json"
     store_source_code_links_with_metadata_json(cache_file, metadata, needlinks)
 
-    monkeypatch.setenv("BUILD_WORKSPACE_DIRECTORY", str(workspace))
-    loaded = load_source_code_links_with_metadata_json(Path("metadata_cache.json"))
+    loaded = load_source_code_links_with_metadata_json(cache_file)
 
     assert len(loaded) == 1
     assert loaded[0].repo_name == "mod"

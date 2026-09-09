@@ -33,7 +33,6 @@ tree, and nested workspace ``srcs`` are a known limitation of this logic.
 
 from __future__ import annotations
 
-import os
 from pathlib import Path
 
 from sphinx.application import Sphinx
@@ -55,24 +54,29 @@ logger = logging.getLogger(__name__)
 def _read_manifest(config: Config):
     """Locate and load the mounts manifest, or return ``None`` when unset.
 
-    The manifest path is passed by Bazel either via the ``mounts_manifest`` config
-    value or the ``MOUNTS`` env var. Its interpretation depends on the build
-    context: under ``bazel run`` it is a runfiles-relative path
+    The manifest path is passed through the ``mounts_manifest`` Sphinx config
+    value. Its interpretation depends on the build context: under ``bazel run``
+    it is a runfiles-relative path
     (``$(rlocationpath)``) resolved against the runfiles dir; in a sandbox build
     it is relative to the exec root (``$(location)``). Resolving the path here
     keeps that context branch out of the pure ``_resolver`` module.
     """
-    raw = getattr(config, "mounts_manifest", None) or os.environ.get(
-        "MOUNTS_MANIFEST", None
-    )
-    if not raw or not raw.strip() or not isinstance(raw, str):
+    raw = getattr(config, "mounts_manifest", None)
+    if not isinstance(raw, str) or not raw.strip():
         return None
 
-    # ``bazel run`` passes an rlocation-relative path; ``sphinx_docs`` in a
-    # sandbox passes its execroot-relative ``$(location)`` path directly.
-    manifest_path = get_runfiles_dir() / raw if find_ws_root() else Path(raw)
-
-    return load_mounts_manifest(manifest_path)
+    manifest_path = Path(raw)
+    if manifest_path.is_absolute():
+        # The documentation launcher resolves configured paths before passing
+        # them to Sphinx. Absolute paths are already in the consumer's view.
+        return load_mounts_manifest(manifest_path)
+    elif find_ws_root():
+        # Preserve support for direct extension users that still provide the
+        # runfiles-relative value from ``$(rlocationpath)``.
+        manifest_path = get_runfiles_dir() / manifest_path
+        return load_mounts_manifest(manifest_path)
+    else:
+        return load_mounts_manifest(manifest_path)
 
 
 def _resolve_data_mounts(

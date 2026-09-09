@@ -13,7 +13,6 @@ from __future__ import annotations
 
 import html
 import json
-import os
 import re
 from dataclasses import asdict, dataclass, replace
 from pathlib import Path
@@ -220,21 +219,21 @@ class CompatibilityReporter:
 
 
 def _manifest_path(app: Sphinx) -> Path | None:
-    raw = getattr(app.config, "mounts_manifest", "") or os.environ.get(
-        "MOUNTS_MANIFEST", ""
-    )
+    raw = getattr(app.config, "mounts_manifest", "")
     if not isinstance(raw, str) or not raw.strip():
         return None
     direct = Path(raw)
-    runfiles = get_runfiles_dir() / raw
-    # ``mounts_manifest`` may be an execroot path, while the environment value
-    # passed to ``bazel run`` is runfiles-relative.  Prefer an existing path so
-    # the policy does not depend on the current working directory.
-    if direct.is_file():
+    if direct.is_absolute():
         return direct
-    if runfiles.is_file():
-        return runfiles
-    return runfiles if find_ws_root() else direct
+    elif direct.is_file():
+        # A direct path is already usable from the current Sphinx process.
+        return direct
+    elif find_ws_root():
+        # ``bazel run`` may provide a runfiles-relative path when this
+        # extension is used without the documentation launcher.
+        return get_runfiles_dir() / direct
+    else:
+        return direct
 
 
 def get_reporter(app: Sphinx) -> CompatibilityReporter:

@@ -10,7 +10,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-import os
 from typing import Any
 
 from docutils.nodes import Node
@@ -18,6 +17,8 @@ from score_cross_module_compatibility import CompatibilityReporter
 from sphinx_needs import logging
 from sphinx_needs.logging import SphinxLoggerAdapter
 from sphinx_needs.need_item import NeedItem
+
+from src.helper_lib import ExecutionEnvironment, identify_environment
 
 Location = str | tuple[str | None, int | None] | Node | None
 NewCheck = tuple[str, Location]
@@ -47,7 +48,10 @@ class CheckLogger:
             # Note: passing the location as a string allows us to use
             # readable relative paths, passing as a tuple results
             # in absolute paths to ~/.cache/.../bazel-out/..
-            if "RUNFILES_DIR" in os.environ or "RUNFILES_MANIFEST_FILE" in os.environ:
+            if identify_environment() in (
+                ExecutionEnvironment.BAZEL_RUN,
+                ExecutionEnvironment.BAZEL_BUILD,
+            ):
                 matching_file = f"{need['docname']}{need['doctype']}"
             else:
                 matching_file = f"{prefix}/{need['docname']}{need['doctype']}"

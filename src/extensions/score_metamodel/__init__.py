@@ -11,7 +11,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 import importlib
-import os
 import pkgutil
 from collections.abc import Callable
 from pathlib import Path
@@ -35,7 +34,7 @@ from src.extensions.score_metamodel.yaml_parser import (
     load_metamodel_data as load_metamodel_data,
     validate_mandatory_regexes as validate_mandatory_regexes,
 )
-from src.helper_lib import config_setdefault
+from src.helper_lib import config_setdefault, find_ws_root
 
 logger = logging.get_logger(__name__)
 
@@ -110,8 +109,8 @@ def _run_checks(app: Sphinx) -> None:
 
     logger.debug(f"Running checks for {len(needs_all_needs)} needs")
 
-    ws_root = os.environ.get("BUILD_WORKSPACE_DIRECTORY", None)
-    cwd_or_ws_root = Path(ws_root) if ws_root else Path.cwd()
+    ws_root = find_ws_root()
+    cwd_or_ws_root = ws_root or Path.cwd()
     prefix = str(Path(app.srcdir).relative_to(cwd_or_ws_root))
 
     log = CheckLogger(logger, prefix, get_reporter(app))

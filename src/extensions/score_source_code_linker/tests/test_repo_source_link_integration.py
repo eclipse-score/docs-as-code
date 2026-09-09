@@ -265,10 +265,6 @@ def sphinx_app_setup(
     git_repo_setup: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> Callable[[], SphinxTestApp]:
-    # Source links are generated before Sphinx starts, matching the Bazel build
-    # contract used by the extension in production.
-    monkeypatch.setenv("SCORE_SOURCELINKS", str(sphinx_base_dir / "source_links.json"))
-
     def _create_app():
         base_dir = sphinx_base_dir
         docs_dir = base_dir / "docs"
@@ -283,6 +279,9 @@ def sphinx_app_setup(
             outdir=sphinx_base_dir / "out",
             buildername="html",
             warningiserror=True,
+            confoverrides={
+                "score_sourcelinks_json": str(sphinx_base_dir / "source_links.json")
+            },
         )
 
     return _create_app

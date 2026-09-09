@@ -38,6 +38,7 @@ def docs_workspace(fs: FFS, monkeypatch: pytest.MonkeyPatch) -> Path:
     monkeypatch.setenv("SOURCE_DIRECTORY", "docs")
     monkeypatch.setenv("DATA", "[]")
     fs.create_dir(_WORKSPACE / "component")
+    fs.create_dir(_WORKSPACE / "component/docs")
     for name in ("MODULE.bazel", "MODULE.bazel.lock", "component/BUILD"):
         fs.create_file(_WORKSPACE / name, contents="stable")
     return _WORKSPACE

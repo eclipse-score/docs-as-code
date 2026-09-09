@@ -20,7 +20,6 @@ source code links from a JSON file and add them to the needs.
 # req-Id: tool_req__docs_dd_link_source_code_link
 # This whole directory implements the above mentioned tool requirements
 
-import os
 from copy import deepcopy
 from pathlib import Path
 from typing import Any, cast
@@ -86,8 +85,8 @@ def build_and_save_combined_file(outdir: Path, app: Sphinx | None = None):
     Reads the saved partial caches of codelink & testlink
     Builds the combined JSON cache & saves it
     """
-    source_code_links_path = os.environ.get("SCORE_SOURCELINKS")
-    if not source_code_links_path and app is not None:
+    source_code_links_path = ""
+    if app is not None:
         source_code_links_path = str(
             getattr(app.config, "score_sourcelinks_json", "") or ""
         ).strip()
@@ -98,8 +97,7 @@ def build_and_save_combined_file(outdir: Path, app: Sphinx | None = None):
         except FileNotFoundError as exc:
             raise FileNotFoundError(
                 "Pre-generated source-code links file does not exist: "
-                f"{source_code_links_json}. Check SCORE_SOURCELINKS or "
-                "score_sourcelinks_json."
+                f"{source_code_links_json}. Check score_sourcelinks_json."
             ) from exc
         except AssertionError:
             source_code_links = load_source_code_links_with_metadata_json(
@@ -308,7 +306,7 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
         default="",
         rebuild="env",
         types=str,
-        description="Path to pre-generated source code links JSON from Bazel via SCORE_SOURCELINKS env var",
+        description="Path to pre-generated source code links JSON provided by the docs CLI",
     )
     app.add_config_value(
         "score_source_code_linker_plain_links",
