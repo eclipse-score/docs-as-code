@@ -11,6 +11,8 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
+"""Run local documentation builds and live preview from Bazel's docs targets."""
+
 import argparse
 import hashlib
 import json
@@ -32,12 +34,13 @@ from src.helper_lib import find_ws_root, get_runfiles_dir
 
 logger = logging.getLogger(__name__)
 
+
 _MODULE_HASH_FILE = ".module_bazel_hash"
 
 
 def get_env(name: str) -> str:
-    val = os.environ.get(name, None)
-    logger.debug(f"DEBUG: Env: {name} = {val}")
+    val = os.environ.get(name)
+    logger.debug("Env: %s = %s", name, val)
     if val is None:
         raise ValueError(f"Environment variable {name} is not set")
     return val
@@ -93,7 +96,7 @@ def update_module_hash(build_dir: Path, sentinel_files: list[Path]) -> None:
     (build_dir / _MODULE_HASH_FILE).write_text(_compute_hash(sentinel_files))
 
 
-def _mounted_watch_dirs(
+def mounted_watch_dirs(
     manifest_path: Path, ws_root: Path | None, runfiles_dir: Path | None = None
 ) -> list[str]:
     """Return the directories provided by docs bundles for ``sphinx-autobuild``.
@@ -141,52 +144,14 @@ def _mounted_watch_dirs(
     return watch_dirs
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    # Add debugging functionality
-    parser.add_argument(
-        "-dp", "--debug_port", help="port to listen to debugging client", default=5678
-    )
-    parser.add_argument(
-        "--debug", help="Enable Debugging via debugpy", action="store_true"
-    )
-    parser.add_argument("--github_user", help=argparse.SUPPRESS)
-    parser.add_argument("--github_repo", help=argparse.SUPPRESS)
-    parser.add_argument(
-        "--port",
-        type=int,
-        help="Port to use for the live_preview ACTION. Default is 8000. "
-        "Use 0 for auto detection of a free port.",
-        default=8000,
-    )
-
-    args = parser.parse_args()
-    if args.debug:
-        debugpy.listen(("0.0.0.0", args.debug_port))
-        logger.info("Waiting for client to connect on port: " + str(args.debug_port))
-        debugpy.wait_for_client()
-
-    ws_root = Path(os.getenv("BUILD_WORKSPACE_DIRECTORY", ""))
-    # Docs source and output are resolved relative to the package where docs()
-    # was called. For the root BUILD, PACKAGE_DIR == "" so this is unchanged.
-    package_dir = ws_root / os.environ.get("PACKAGE_DIR", "")
-
-    build_dir = package_dir / "_build"
-    sentinel_files = [
-        ws_root / "MODULE.bazel",
-        ws_root / "MODULE.bazel.lock",
-        package_dir / "BUILD",
-    ]
-    clean_builddir_if_stale(build_dir, sentinel_files)
-
-    warning_file = build_dir / "warnings.txt"
-
+def sphinx_arguments(ws_root: Path, package_dir: Path, build_dir: Path) -> list[str]:
+    """Resolve package sources and Bazel-provided configuration for every builder."""
     source_directory = get_env("SOURCE_DIRECTORY")
     base_arguments = [
         str(package_dir / source_directory),
         str(build_dir),
         "--warning-file",
-        str(warning_file),
+        str(build_dir / "warnings.txt"),
         "-W",  # treat warning as errors
         "--keep-going",  # do not abort after one error
         "-T",  # show details in case of errors in extensions
@@ -240,25 +205,78 @@ if __name__ == "__main__":
     if os.getenv("KNOWN_GOOD_JSON"):
         base_arguments.append(f"--define=KNOWN_GOOD_JSON={get_env('KNOWN_GOOD_JSON')}")
 
+    return base_arguments
+
+
+def watch_arguments() -> list[str]:
+    """Build autobuild options using the same runfiles resolution as Sphinx."""
+    mounts_manifest = os.environ.get("MOUNTS_MANIFEST", "")
+    watch_arguments: list[str] = []
+    if mounts_manifest:
+        # ``MOUNTS_MANIFEST`` is runfiles-relative under ``bazel run`` and
+        # an ordinary path for direct invocations, matching score_mounts.
+        ws_root = find_ws_root()
+        manifest_path = (
+            get_runfiles_dir() / mounts_manifest
+            if ws_root is not None
+            else Path(mounts_manifest)
+        )
+        for watch_dir in mounted_watch_dirs(
+            manifest_path,
+            ws_root,
+            get_runfiles_dir() if ws_root is not None else None,
+        ):
+            watch_arguments.extend(["--watch", watch_dir])
+    return watch_arguments
+
+
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-dp", "--debug_port", help="port to listen to debugging client", default=5678
+    )
+    parser.add_argument(
+        "--debug", help="Enable Debugging via debugpy", action="store_true"
+    )
+    parser.add_argument("--github_user", help=argparse.SUPPRESS)
+    parser.add_argument("--github_repo", help=argparse.SUPPRESS)
+    parser.add_argument(
+        "--port",
+        type=int,
+        help="Port to use for the live_preview ACTION. Default is 8000. "
+        "Use 0 for auto detection of a free port.",
+        default=8000,
+    )
+
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> int:
+    """Run the requested builder and record whether its output can be reused."""
+    args = parse_args(argv)
+    if args.debug:
+        debugpy.listen(("0.0.0.0", args.debug_port))
+        logger.info("Waiting for client to connect on port: " + str(args.debug_port))
+        debugpy.wait_for_client()
+
+    ws_root = Path(os.getenv("BUILD_WORKSPACE_DIRECTORY", ""))
+    # Docs source and output are resolved relative to the package where docs()
+    # was called; an empty PACKAGE_DIR denotes the workspace root.
+    package_dir = ws_root / os.environ.get("PACKAGE_DIR", "")
+
+    build_dir = package_dir / "_build"
+    sentinel_files = [
+        ws_root / "MODULE.bazel",
+        ws_root / "MODULE.bazel.lock",
+        package_dir / "BUILD",
+    ]
+    clean_builddir_if_stale(build_dir, sentinel_files)
+
+    warning_file = build_dir / "warnings.txt"
+    base_arguments = sphinx_arguments(ws_root, package_dir, build_dir)
+
     action = get_env("ACTION")
     if action == "live_preview":
-        mounts_manifest = os.environ.get("MOUNTS_MANIFEST", "")
-        watch_arguments: list[str] = []
-        if mounts_manifest:
-            # ``MOUNTS_MANIFEST`` is runfiles-relative under ``bazel run`` and
-            # an ordinary path for direct invocations, matching score_mounts.
-            manifest_path = (
-                get_runfiles_dir() / mounts_manifest
-                if find_ws_root()
-                else Path(mounts_manifest)
-            )
-            ws_root = find_ws_root()
-            for watch_dir in _mounted_watch_dirs(
-                manifest_path,
-                ws_root,
-                get_runfiles_dir() if ws_root is not None else None,
-            ):
-                watch_arguments.extend(["--watch", watch_dir])
         sphinx_autobuild_main(
             base_arguments
             + [
@@ -266,35 +284,35 @@ if __name__ == "__main__":
                 "--define=skip_rescanning_via_source_code_linker=1",
                 f"--port={args.port}",
             ]
-            + watch_arguments
+            + watch_arguments()
         )
+        return 0
+
+    if action == "incremental":
+        builder = "html"
+    elif action == "check":
+        builder = "needs"
+    elif action == "linkcheck":
+        builder = "linkcheck"
     else:
-        if action == "incremental":
-            builder = "html"
-        elif action == "check":
-            builder = "needs"
-        elif action == "linkcheck":
-            builder = "linkcheck"
-        else:
-            raise ValueError(f"Unknown action: {action}")
+        raise ValueError(f"Unknown action: {action}")
 
-        base_arguments.extend(
-            [
-                "-b",
-                builder,
-            ]
-        )
+    base_arguments.extend(["-b", builder])
 
-        start_time = time.perf_counter()
-        exit_code = sphinx_main(base_arguments)
-        end_time = time.perf_counter()
-        print(f"docs ({action}) finished in {end_time - start_time:.1f} seconds")
+    start_time = time.perf_counter()
+    exit_code = sphinx_main(base_arguments)
+    end_time = time.perf_counter()
+    print(f"docs ({action}) finished in {end_time - start_time:.1f} seconds")
 
-        if exit_code == 0:
-            update_module_hash(build_dir, sentinel_files)
-        else:
-            with warning_file.open("a", encoding="utf-8") as f:
-                f.write("-" * 80 + "\n")
-                f.write(f"Build failed with exit code {exit_code}\n")
+    if exit_code == 0:
+        update_module_hash(build_dir, sentinel_files)
+    else:
+        with warning_file.open("a", encoding="utf-8") as f:
+            f.write("-" * 80 + "\n")
+            f.write(f"Build failed with exit code {exit_code}\n")
 
-        sys.exit(exit_code)
+    return exit_code
+
+
+if __name__ == "__main__":
+    sys.exit(main())

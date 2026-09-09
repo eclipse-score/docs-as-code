@@ -82,7 +82,7 @@ the public ``docs_bzl`` integration suite; do not resolve an external runtime pa
 relative to the manifest file, because the manifest can live below a Bazel
 package directory.
 
-Incremental builds use the same resolver in ``src/incremental.py`` to add every
+Incremental builds use the same resolver in ``src/docs_cli/cli.py`` to add every
 mounted directory to ``sphinx-autobuild``'s watch list. Keep these two call
 sites aligned when the manifest contract changes.
 

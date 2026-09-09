@@ -410,7 +410,7 @@ needs_extra_links:
     )
     (checkout / ".bazelrc").write_bytes((source_root / ".bazelrc").read_bytes())
     # A real downstream clone always carries its own committed lockfile;
-    # incremental.py hashes it unconditionally as a build-cache sentinel.
+    # docs_cli hashes it unconditionally as a build-cache sentinel.
     (checkout / "MODULE.bazel.lock").write_text("{}\n", encoding="utf-8")
     (checkout / "MODULE.bazel").write_text(
         'module(name = "fake_report_consumer")\n'

@@ -11,22 +11,36 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-# Unit Tests of incremental.py
-
 import json
 from pathlib import Path
 
+import pytest
 from pyfakefs.fake_filesystem import FakeFilesystem as FFS
 
-from incremental import (
-    _mounted_watch_dirs,  # pyright: ignore[reportPrivateUsage] - white-box unit test
+from src.docs_cli import cli as docs_cli
+from src.docs_cli.cli import (
     clean_builddir_if_stale,
+    mounted_watch_dirs,
     update_module_hash,
 )
 
 _BUILD = Path("/build")
 _MODULE = Path("/MODULE.bazel")
 _LOCK = Path("/MODULE.bazel.lock")
+_WORKSPACE = Path("/workspace")
+
+
+@pytest.fixture
+def docs_workspace(fs: FFS, monkeypatch: pytest.MonkeyPatch) -> Path:
+    """Create the minimal workspace environment used by ``cli.main``."""
+    monkeypatch.setenv("BUILD_WORKSPACE_DIRECTORY", str(_WORKSPACE))
+    monkeypatch.setenv("PACKAGE_DIR", "component")
+    monkeypatch.setenv("SOURCE_DIRECTORY", "docs")
+    monkeypatch.setenv("DATA", "[]")
+    fs.create_dir(_WORKSPACE / "component")
+    for name in ("MODULE.bazel", "MODULE.bazel.lock", "component/BUILD"):
+        fs.create_file(_WORKSPACE / name, contents="stable")
+    return _WORKSPACE
 
 
 def _simulate_old_state(fs: FFS, warnings: str | None) -> None:
@@ -119,6 +133,44 @@ def test_missing_hash_file_triggers_clean(fs: FFS) -> None:
     assert not _BUILD.exists()
 
 
+@pytest.mark.parametrize(
+    "action,builder",
+    [
+        ("incremental", "html"),
+        ("check", "needs"),
+        ("linkcheck", "linkcheck"),
+    ],
+)
+def test_successful_build_reuses_output_until_module_changes(
+    docs_workspace: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    action: str,
+    builder: str,
+) -> None:
+    """A successful CLI run records a reusable cache and invalidates it on changes."""
+    monkeypatch.setenv("ACTION", action)
+    build_dir = docs_workspace / "component/_build"
+    reused: list[bool] = []
+
+    def build(arguments: list[str]) -> int:
+        assert arguments[-2:] == ["-b", builder]
+        reused.append((build_dir / "output").exists())
+        build_dir.mkdir(exist_ok=True)
+        (build_dir / "output").touch()
+        return 0
+
+    monkeypatch.setattr(docs_cli, "sphinx_main", build)
+
+    # The first run creates the output and records its module-input hash.
+    assert docs_cli.main([]) == 0
+    # An unchanged successful build can reuse the existing output directory.
+    assert docs_cli.main([]) == 0
+    (docs_workspace / "MODULE.bazel.lock").write_text("changed")
+    # A changed module input forces a clean build before Sphinx runs again.
+    assert docs_cli.main([]) == 0
+    assert reused == [False, True, False]
+
+
 def test_mounted_watch_dirs_match_sphinx_mount_paths(tmp_path: Path) -> None:
     manifest_path = tmp_path / "_mounts_manifest.json"
     manifest_path.write_text(
@@ -144,7 +196,7 @@ def test_mounted_watch_dirs_match_sphinx_mount_paths(tmp_path: Path) -> None:
     workspace = tmp_path / "workspace"
     runfiles_dir = tmp_path / "runfiles"
 
-    assert _mounted_watch_dirs(manifest_path, workspace, runfiles_dir) == [
+    assert mounted_watch_dirs(manifest_path, workspace, runfiles_dir) == [
         str(workspace / "extensions/local/docs"),
         str(runfiles_dir / "vendor+" / "docs"),
     ]
@@ -172,6 +224,6 @@ def test_mounted_watch_dirs_use_data_directories_for_pure_data_bundles(
     workspace = tmp_path / "workspace"
     runfiles_dir = tmp_path / "runfiles"
 
-    assert _mounted_watch_dirs(manifest_path, workspace, runfiles_dir) == [
+    assert mounted_watch_dirs(manifest_path, workspace, runfiles_dir) == [
         str(workspace / "bazel-bin/pkg/generated")
     ]

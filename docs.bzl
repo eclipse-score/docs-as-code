@@ -503,12 +503,13 @@ def _sphinx_runtime_deps(deps):
             result.append(fixed_dep)
     return result
 
-def _declare_docs_binary(name, srcs, data, deps, env, action):
+def _declare_docs_binary(name, data, deps, env, action):
     """Declare one of the interactive documentation command targets."""
+    docs_cli_src = Label("//src/docs_cli:cli.py")
     command_env = env | {"ACTION": action}
     py_binary(
         name = name,
-        srcs = srcs,
+        srcs = [docs_cli_src],
         data = data,
         deps = deps,
         env = command_env,
@@ -632,7 +633,6 @@ def docs(
         Label("//src/extensions/score_sphinx_bundle:score_sphinx_bundle"),
     ]
 
-    incremental_src = Label("//src:incremental.py")
 
     known_good_label = [known_good] if known_good else []
 
@@ -706,7 +706,7 @@ def docs(
         docs_env["SPHINX_CONFIG_FILE"] = "$(rlocationpath " + sphinx_config + ")"
     if metamodel:
         # The interactive ``py_binary`` targets run from a runfiles tree.
-        # incremental.py resolves this logical path through ``RUNFILES_DIR``.
+        # docs_cli resolves this logical path through ``RUNFILES_DIR``.
         docs_env["SCORE_METAMODEL_YAML"] = "$(rlocationpath " + str(metamodel) + ")"
     if known_good_label:
         known_good_str = str(known_good_label[0])
@@ -718,7 +718,6 @@ def docs(
     # ``docs``; expose this binary via the alias below instead.
     _declare_docs_binary(
         name = "_score_docs_cli",
-        srcs = [incremental_src],
         data = docs_data,
         deps = deps,
         env = docs_env,
@@ -733,7 +732,6 @@ def docs(
 
     _declare_docs_binary(
         name = "docs_link_check",
-        srcs = [incremental_src],
         data = docs_data,
         deps = deps,
         env = docs_env,
@@ -741,7 +739,6 @@ def docs(
     )
     _declare_docs_binary(
         name = "docs_check",
-        srcs = [incremental_src],
         data = docs_data,
         deps = deps,
         env = docs_env,
@@ -749,7 +746,6 @@ def docs(
     )
     _declare_docs_binary(
         name = "live_preview",
-        srcs = [incremental_src],
         data = docs_data,
         deps = deps,
         env = docs_env,
