@@ -772,7 +772,7 @@
   {
     "name": "main_test__test_build_action_selects_sphinx_builder[incremental-html]",
     "file": "src/docs_cli/main_test.py",
-    "line": "58",
+    "line": "59",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -786,7 +786,7 @@
   {
     "name": "main_test__test_build_action_selects_sphinx_builder[check-needs]",
     "file": "src/docs_cli/main_test.py",
-    "line": "58",
+    "line": "59",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -800,7 +800,7 @@
   {
     "name": "main_test__test_build_action_selects_sphinx_builder[linkcheck-linkcheck]",
     "file": "src/docs_cli/main_test.py",
-    "line": "58",
+    "line": "59",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -814,7 +814,7 @@
   {
     "name": "main_test__test_build_action_selects_sphinx_builder[build_needs_json-needs]",
     "file": "src/docs_cli/main_test.py",
-    "line": "58",
+    "line": "59",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -828,7 +828,7 @@
   {
     "name": "main_test__test_failed_build_returns_exit_code_and_forces_next_build_clean",
     "file": "src/docs_cli/main_test.py",
-    "line": "106",
+    "line": "110",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -842,7 +842,7 @@
   {
     "name": "main_test__test_live_preview_uses_port_and_bundle_watches",
     "file": "src/docs_cli/main_test.py",
-    "line": "153",
+    "line": "157",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -856,7 +856,7 @@
   {
     "name": "main_test__test_bazel_configuration_resolves_runfiles_and_preserves_repo_relative_edit_path",
     "file": "src/docs_cli/main_test.py",
-    "line": "184",
+    "line": "188",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -870,7 +870,7 @@
   {
     "name": "main_test__test_direct_invocation_resolves_metamodel_relative_to_workspace",
     "file": "src/docs_cli/main_test.py",
-    "line": "218",
+    "line": "228",
     "result": "passed",
     "repo_name": null,
     "hash": null,
