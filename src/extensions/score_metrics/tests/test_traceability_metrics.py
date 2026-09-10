@@ -11,6 +11,8 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
+from __future__ import annotations
+
 from typing import Any, cast
 
 import pytest
@@ -21,6 +23,21 @@ from sphinx_needs.data import NeedsView
 from sphinx_needs.need_item import NeedItem
 
 from score_pytest.attribute_plugin import add_test_properties
+
+
+class _OverviewNeedsView:
+    """Minimal NeedsView-like test double with external filtering."""
+
+    def __init__(self, needs: list[dict[str, Any]]) -> None:
+        self._needs = needs
+
+    def values(self) -> list[dict[str, Any]]:
+        return self._needs
+
+    def filter_is_external(self, is_external: bool) -> _OverviewNeedsView:
+        return _OverviewNeedsView(
+            [n for n in self._needs if n.get("is_external", False) is is_external]
+        )
 
 
 @add_test_properties(
@@ -261,3 +278,58 @@ def test_calculate_test_metrics_counts_linked_tests_and_broken_refs() -> None:
     assert result["broken_references"] == [
         {"testcase": "TC_2", "missing_need": "REQ_404"}
     ]
+
+
+@add_test_properties(
+    partially_verifies=["tool_req__docs_test_linkage_metrics"],
+    test_type="requirements-based",
+    derivation_technique="requirements-analysis",
+)
+def test_calculate_needs_overview_counts_types_and_external_split() -> None:
+    """Count all needs with their type and external/local split."""
+    needs = _OverviewNeedsView(
+        [
+            {"id": "REQ_1", "type": "tool_req", "is_external": False},
+            {"id": "REQ_2", "type": "tool_req", "is_external": False},
+            {"id": "REQ_3", "type": "comp_req", "is_external": False},
+            {"id": "EXT_1", "type": "tool_req", "is_external": True},
+            {"id": "TC_1", "type": "testcase", "is_external": False},
+        ]
+    )
+
+    result = metrics.calculate_needs_overview(needs, include_external=True)
+
+    assert result["total"] == 5
+    assert result["external"] == 1
+    assert result["local"] == 4
+    assert result["by_type"] == {
+        "comp_req": 1,
+        "testcase": 1,
+        "tool_req": 3,
+    }
+
+
+@add_test_properties(
+    partially_verifies=["tool_req__docs_test_linkage_metrics"],
+    test_type="requirements-based",
+    derivation_technique="requirements-analysis",
+)
+def test_calculate_needs_overview_excludes_external_when_not_included() -> None:
+    """Count only local needs when external needs are not in the metrics scope."""
+    needs = _OverviewNeedsView(
+        [
+            {"id": "REQ_1", "type": "tool_req", "is_external": False},
+            {"id": "REQ_2", "type": "comp_req", "is_external": False},
+            {"id": "EXT_1", "type": "tool_req", "is_external": True},
+        ]
+    )
+
+    result = metrics.calculate_needs_overview(needs, include_external=False)
+
+    assert result["total"] == 2
+    assert result["external"] == 0
+    assert result["local"] == 2
+    assert result["by_type"] == {
+        "comp_req": 1,
+        "tool_req": 1,
+    }
