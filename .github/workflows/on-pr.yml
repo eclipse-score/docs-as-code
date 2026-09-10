@@ -41,3 +41,95 @@ jobs:
     with:
       bazel-target: "//:docs"
       tests-report-artifact: tests-report
+
+  docs-delta:
+    needs: [docs-build]
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    permissions:
+      actions: read
+      contents: read
+    steps:
+      - name: Check out pull request
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Check out published documentation history
+        continue-on-error: true
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: ${{ github.repository }}
+          ref: gh-pages
+          path: .docs-baseline
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Download documentation artifact
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: github-pages
+          path: docs-artifact
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+
+      - name: Generate documentation delta report
+        run: |
+          set -euo pipefail
+          uv run --no-project python tools/docs_delta.py
+
+      - name: Upload documentation delta artifact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: docs-delta
+          path: docs-artifact/docs-delta.md
+          if-no-files-found: error
+
+  docs-comment:
+    needs: [docs-delta]
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    permissions:
+      actions: read
+      pull-requests: write
+    steps:
+      - name: Download documentation delta artifact
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: docs-delta
+          path: docs-delta
+
+      - name: Prepare documentation preview comment
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPOSITORY_OWNER: ${{ github.repository_owner }}
+          REPOSITORY_NAME: ${{ github.event.repository.name }}
+        run: |
+          set -euo pipefail
+          {
+            echo "Documentation preview for this pull request is available at:"
+            echo "**pr-${PR_NUMBER}**: https://${REPOSITORY_OWNER}.github.io/${REPOSITORY_NAME}/pr-${PR_NUMBER}/"
+            echo
+            cat docs-delta/docs-delta.md
+          } > "$RUNNER_TEMP/docs-comment.md"
+
+      - name: Find existing documentation preview comment
+        id: find-comment
+        uses: peter-evans/find-comment@b30e6a3c0ed37e7c023ccd3f1db5c6c0b0c23aad # v4.0.0
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: github-actions[bot]
+          body-includes: Documentation preview for this pull request
+
+      - name: Create or update documentation preview comment
+        uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5.0.0
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-id: ${{ steps.find-comment.outputs.comment-id }}
+          body-path: ${{ runner.temp }}/docs-comment.md
+          edit-mode: replace

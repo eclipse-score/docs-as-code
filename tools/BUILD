@@ -32,3 +32,11 @@ py_binary(
         "//src/helper_lib",
     ],
 )
+
+py_binary(
+    name = "docs_delta",
+    srcs = ["docs_delta.py"],
+    main = "docs_delta.py",
+    visibility = ["//visibility:public"],
+    deps = [],
+)
