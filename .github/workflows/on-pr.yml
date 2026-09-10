@@ -24,20 +24,20 @@ on:
   release:
     types: [published]
 
+permissions:
+  contents: read
+  actions: write # cleanup old caches
+
 jobs:
   common:
-    uses: eclipse-score/cicd-workflows/.github/workflows/on-pr.yml@88cb460c47cb49efeb25cd7b73c8945dd1c5bce2 # on-pr/v0.0.0
-    permissions:
-      contents: read
+    uses: eclipse-score/cicd-workflows/.github/workflows/on-pr.yml@cache
 
   tests:
     uses: ./.github/workflows/_test.yml
 
   docs-build:
     needs: [tests]
-    uses: eclipse-score/cicd-workflows/.github/workflows/docs.yml@37eaadadfefc263d94a858d25665735659e916fa
-    permissions:
-      contents: read
+    uses: eclipse-score/cicd-workflows/.github/workflows/docs.yml@cache
     with:
       bazel-target: "//:docs"
       tests-report-artifact: tests-report

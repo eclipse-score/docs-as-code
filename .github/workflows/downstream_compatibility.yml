@@ -15,12 +15,26 @@ name: Downstream Compatibility
 on:
   workflow_call:
   pull_request:
+    # Parallel to review
     types: [opened, reopened, synchronize]
   merge_group:
+    # Post-review, pre-merge
     types: [checks_requested]
+  push:
+    # Update cache
+    branches:
+      - main
+  schedule:
+    # Update cache
+    # Runs every day at midnight UTC
+    - cron: '0 0 * * *'
+
+permissions:
+  contents: read
+  actions: write # cleanup old caches
 
 jobs:
-  test:
+  downstream-test:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
