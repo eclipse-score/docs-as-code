@@ -19,6 +19,7 @@ from pyfakefs.fake_filesystem import FakeFilesystem as FFS
 
 from src.docs_cli import cli as docs_cli
 from src.docs_cli.cli import sphinx_arguments
+from src.helper_lib.config import DocsCliConfig
 
 
 @pytest.fixture
@@ -77,6 +78,9 @@ def test_build_action_selects_sphinx_builder(
     build_dir = workspace / "component/_build"
     if action == "build_needs_json":
         # The sandboxed action uses its declared output, not the package cache.
+        # BUILD_WORKSPACE_DIRECTORY is available to ``bazel run`` only; leaving
+        # it unset lets DocsCliConfig identify this as the build environment.
+        monkeypatch.delenv("BUILD_WORKSPACE_DIRECTORY")
         monkeypatch.chdir(workspace)
         monkeypatch.setenv("OUTPUT_DIRECTORY", "outputs/needs")
         build_dir = workspace / "outputs/needs"
@@ -192,10 +196,16 @@ def test_bazel_configuration_resolves_runfiles_and_preserves_repo_relative_edit_
     monkeypatch.setenv("EXTERNAL_NEEDS_FILES", '["@vendor//:needs"]')
     monkeypatch.setenv("GITHUB_REPOSITORY", "owner/repo")
     monkeypatch.setenv("KNOWN_GOOD_JSON", "baseline.json")
+    monkeypatch.setenv("ACTION", "incremental")
     package = workspace / "component"
 
     # Act
-    arguments = sphinx_arguments(workspace, package, package / "_build")
+    arguments = sphinx_arguments(
+        workspace,
+        package,
+        package / "_build",
+        DocsCliConfig.from_environment(),
+    )
 
     # Assert
     expected_arguments = {
@@ -223,9 +233,15 @@ def test_direct_invocation_resolves_metamodel_relative_to_workspace(
     # This test covers the non-Bazel fallback, so no runfiles directory exists.
     monkeypatch.delenv("RUNFILES_DIR", raising=False)
     monkeypatch.setenv("SCORE_METAMODEL_YAML", "metamodel.yaml")
+    monkeypatch.setenv("ACTION", "incremental")
 
     # Act
-    arguments = sphinx_arguments(workspace, workspace, workspace / "_build")
+    arguments = sphinx_arguments(
+        workspace,
+        workspace,
+        workspace / "_build",
+        DocsCliConfig.from_environment(),
+    )
 
     # Assert
     # Without Bazel runfiles, the metamodel falls back to the workspace root.
