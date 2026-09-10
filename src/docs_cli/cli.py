@@ -30,7 +30,8 @@ from sphinx_autobuild.__main__ import (
 )
 
 from src.extensions.score_mounts._resolver import load_mounts_manifest, resolve_walk_dir
-from src.helper_lib import Environment, find_ws_root, get_runfiles_dir
+from src.helper_lib import Environment, get_runfiles_dir
+from src.helper_lib.config import DocsCliConfig
 
 logger = logging.getLogger(__name__)
 
@@ -137,9 +138,13 @@ def mounted_watch_dirs(
     return watch_dirs
 
 
-def sphinx_arguments(ws_root: Path, package_dir: Path, build_dir: Path) -> list[str]:
+def sphinx_arguments(
+    ws_root: Path,
+    package_dir: Path,
+    build_dir: Path,
+    config: DocsCliConfig,
+) -> list[str]:
     """Resolve package sources and Bazel-provided configuration for every builder."""
-    is_bazel_build = env.get("ACTION", "") == "build_needs_json"
     source_directory = env.required_path("SOURCE_DIRECTORY")
     base_arguments = [
         str(package_dir / source_directory),
@@ -158,7 +163,7 @@ def sphinx_arguments(ws_root: Path, package_dir: Path, build_dir: Path) -> list[
         f"--define=mounts_manifest={env.optional_path('MOUNTS_MANIFEST') or ''}",
     ]
 
-    if is_bazel_build:
+    if config.is_bazel_build:
         # The Bazel action declares ``build_dir`` as its output tree, and that
         # tree must contain only the Needs inventory consumed by downstream
         # actions. Keep Sphinx's internal doctree cache beside it instead of
@@ -182,7 +187,7 @@ def sphinx_arguments(ws_root: Path, package_dir: Path, build_dir: Path) -> list[
         # instead of using runfiles lookup; interactive targets receive a
         # runfiles-relative path and need that lookup before Sphinx gets the
         # containing directory.
-        if is_bazel_build:
+        if config.is_bazel_build:
             config_file = config_file.absolute()
         elif not config_file.is_absolute():
             config_file = get_runfiles_dir() / config_file
@@ -194,7 +199,7 @@ def sphinx_arguments(ws_root: Path, package_dir: Path, build_dir: Path) -> list[
         # instead expands the metamodel label to an execution-root path in
         # SPHINX_EXTRA_OPTS; applying runfiles lookup there would escape the
         # action's declared inputs.
-        if not is_bazel_build and not metamodel_yaml.is_absolute():
+        if not config.is_bazel_build and not metamodel_yaml.is_absolute():
             runfiles_dir = env.optional_path("RUNFILES_DIR")
             metamodel_yaml = (
                 runfiles_dir / metamodel_yaml
@@ -225,23 +230,22 @@ def sphinx_arguments(ws_root: Path, package_dir: Path, build_dir: Path) -> list[
     return base_arguments
 
 
-def watch_arguments() -> list[str]:
+def watch_arguments(config: DocsCliConfig) -> list[str]:
     """Build autobuild options using the same runfiles resolution as Sphinx."""
     mounts_manifest = env.optional_path("MOUNTS_MANIFEST")
     watch_arguments: list[str] = []
     if mounts_manifest:
         # ``MOUNTS_MANIFEST`` is runfiles-relative under ``bazel run`` and
         # an ordinary path for direct invocations, matching score_mounts.
-        ws_root = find_ws_root()
         manifest_path = (
             get_runfiles_dir() / mounts_manifest
-            if ws_root is not None
+            if config.is_bazel_run
             else mounts_manifest
         )
         for watch_dir in mounted_watch_dirs(
             manifest_path,
-            ws_root,
-            get_runfiles_dir() if ws_root is not None else None,
+            config.ws_root,
+            get_runfiles_dir() if config.is_bazel_run else None,
         ):
             watch_arguments.extend(["--watch", watch_dir])
     return watch_arguments
@@ -276,14 +280,13 @@ def main(argv: list[str] | None = None) -> int:
         logger.info("Waiting for client to connect on port: " + str(args.debug_port))
         debugpy.wait_for_client()
 
-    action = env.get("ACTION")
-    is_bazel_build = action == "build_needs_json"
-    ws_root = env.optional_path("BUILD_WORKSPACE_DIRECTORY") or Path()
+    config = DocsCliConfig.from_environment(env)
+    ws_root = config.ws_root or Path()
     # Docs source and output are resolved relative to the package where docs()
     # was called; an empty PACKAGE_DIR denotes the workspace root.
     package_dir = ws_root / (env.optional_path("PACKAGE_DIR") or Path())
     build_dir = package_dir / "_build"
-    if is_bazel_build:
+    if config.is_bazel_build:
         # Bazel owns the action's paths; never use the caller's workspace cache.
         package_dir = Path.cwd()
         build_dir = env.required_path("OUTPUT_DIRECTORY").absolute()
@@ -293,13 +296,13 @@ def main(argv: list[str] | None = None) -> int:
         ws_root / "MODULE.bazel.lock",
         package_dir / "BUILD",
     ]
-    if not is_bazel_build:
+    if not config.is_bazel_build:
         clean_builddir_if_stale(build_dir, sentinel_files)
 
     warning_file = build_dir / "warnings.txt"
-    base_arguments = sphinx_arguments(ws_root, package_dir, build_dir)
+    base_arguments = sphinx_arguments(ws_root, package_dir, build_dir, config)
 
-    if action == "live_preview":
+    if config.action == "live_preview":
         sphinx_autobuild_main(
             base_arguments
             + [
@@ -307,27 +310,27 @@ def main(argv: list[str] | None = None) -> int:
                 "--define=skip_rescanning_via_source_code_linker=1",
                 f"--port={args.port}",
             ]
-            + watch_arguments()
+            + watch_arguments(config)
         )
         return 0
 
-    if action == "incremental":
+    if config.action == "incremental":
         builder = "html"
-    elif action in ("check", "build_needs_json"):
+    elif config.action in ("check", "build_needs_json"):
         builder = "needs"
-    elif action == "linkcheck":
+    elif config.action == "linkcheck":
         builder = "linkcheck"
     else:
-        raise ValueError(f"Unknown action: {action}")
+        raise ValueError(f"Unknown action: {config.action}")
 
     base_arguments.extend(["-b", builder])
 
     start_time = time.perf_counter()
     exit_code = sphinx_main(base_arguments)
     end_time = time.perf_counter()
-    print(f"docs ({action}) finished in {end_time - start_time:.1f} seconds")
+    print(f"docs ({config.action}) finished in {end_time - start_time:.1f} seconds")
 
-    if is_bazel_build:
+    if config.is_bazel_build:
         # The declared output is owned by the action. Do not record an
         # interactive cache hash or write a warning marker into the workspace.
         return exit_code
