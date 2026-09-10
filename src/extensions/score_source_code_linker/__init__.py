@@ -20,7 +20,6 @@ source code links from a JSON file and add them to the needs.
 # req-Id: tool_req__docs_dd_link_source_code_link
 # This whole directory implements the above mentioned tool requirements
 
-import os
 from copy import deepcopy
 from pathlib import Path
 from typing import Any, cast
@@ -60,7 +59,9 @@ from src.extensions.score_source_code_linker.xml_parser import (
     construct_and_add_need,
     run_xml_parser,
 )
-from src.helper_lib import find_ws_root
+from src.helper_lib import Environment, find_ws_root
+
+env = Environment()
 
 LOGGER = get_logger(__name__)
 # Uncomment this to enable more verbose logging
@@ -86,7 +87,7 @@ def build_and_save_combined_file(outdir: Path, app: Sphinx | None = None):
     Reads the saved partial caches of codelink & testlink
     Builds the combined JSON cache & saves it
     """
-    source_code_links_path = os.environ.get("SCORE_SOURCELINKS")
+    source_code_links_path = env.get("SCORE_SOURCELINKS", "")
     if not source_code_links_path and app is not None:
         source_code_links_path = str(
             getattr(app.config, "score_sourcelinks_json", "") or ""

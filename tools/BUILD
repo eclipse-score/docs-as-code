@@ -28,5 +28,7 @@ py_binary(
         allow_empty = True,
     ),
     main = "module_verification_reports.py",
-    deps = [],
+    deps = [
+        "//src/helper_lib",
+    ],
 )

@@ -31,7 +31,6 @@ import dataclasses
 import fcntl
 import html
 import json
-import os
 import re
 import shutil
 import subprocess
@@ -42,6 +41,10 @@ from collections.abc import Callable, Iterator, Mapping, Sequence
 from pathlib import Path
 from typing import cast
 from urllib.parse import urlparse
+
+from src.helper_lib import Environment
+
+env = Environment()
 
 GITHUB_ORG = "eclipse-score"
 TEMPLATE_NAME = "module_verification_report"
@@ -917,9 +920,8 @@ def build_gallery(
 
 
 def _workspace_root() -> Path:
-    workspace = os.environ.get("BUILD_WORKSPACE_DIRECTORY")
-    if workspace:
-        return Path(workspace).resolve()
+    if workspace := env.optional_path("BUILD_WORKSPACE_DIRECTORY"):
+        return workspace.resolve()
     return Path(__file__).resolve().parents[1]
 
 

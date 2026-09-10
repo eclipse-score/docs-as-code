@@ -30,20 +30,13 @@ from sphinx_autobuild.__main__ import (
 )
 
 from src.extensions.score_mounts._resolver import load_mounts_manifest, resolve_walk_dir
-from src.helper_lib import find_ws_root, get_runfiles_dir
+from src.helper_lib import Environment, find_ws_root, get_runfiles_dir
 
 logger = logging.getLogger(__name__)
 
 
 _MODULE_HASH_FILE = ".module_bazel_hash"
-
-
-def get_env(name: str) -> str:
-    val = os.environ.get(name)
-    logger.debug("Env: %s = %s", name, val)
-    if val is None:
-        raise ValueError(f"Environment variable {name} is not set")
-    return val
+env = Environment()
 
 
 def _merged_external_needs() -> str:
@@ -52,8 +45,8 @@ def _merged_external_needs() -> str:
     Both env vars hold JSON lists of Bazel labels; the extension parses the
     resulting `external_needs_source` define uniformly.
     """
-    data = json.loads(get_env("DATA") or "[]")
-    external = json.loads(os.environ.get("EXTERNAL_NEEDS_FILES", "[]") or "[]")
+    data = env.string_list("DATA")
+    external = env.string_list("EXTERNAL_NEEDS_FILES", "[]")
     return json.dumps(data + external)
 
 
@@ -146,8 +139,8 @@ def mounted_watch_dirs(
 
 def sphinx_arguments(ws_root: Path, package_dir: Path, build_dir: Path) -> list[str]:
     """Resolve package sources and Bazel-provided configuration for every builder."""
-    is_bazel_build = os.environ.get("ACTION") == "build_needs_json"
-    source_directory = get_env("SOURCE_DIRECTORY")
+    is_bazel_build = env.get("ACTION", "") == "build_needs_json"
+    source_directory = env.required_path("SOURCE_DIRECTORY")
     base_arguments = [
         str(package_dir / source_directory),
         str(build_dir),
@@ -159,10 +152,10 @@ def sphinx_arguments(ws_root: Path, package_dir: Path, build_dir: Path) -> list[
         # Merge DATA (:needs_json / :docs_sources) with EXTERNAL_NEEDS_FILES
         # (:needs_json_file) into one define consumed by the Sphinx extensions.
         f"--define=external_needs_source={_merged_external_needs()}",
-        f"--define=testcase_source_dirs={os.environ.get('TEST_SOURCES', '[]')}",
+        f"--define=testcase_source_dirs={env.get('TEST_SOURCES', '[]')}",
         # Path to the Bazel-emitted mounts manifest (empty when no mounts are
         # configured); consumed by the score_mounts extension.
-        f"--define=mounts_manifest={os.environ.get('MOUNTS_MANIFEST', '')}",
+        f"--define=mounts_manifest={env.optional_path('MOUNTS_MANIFEST') or ''}",
     ]
 
     if is_bazel_build:
@@ -175,7 +168,7 @@ def sphinx_arguments(ws_root: Path, package_dir: Path, build_dir: Path) -> list[
         # The sandboxed Needs rule transports options as JSON so spaces, quotes and
         # equals signs survive the environment boundary. Append them last so an
         # action-specific value can override one of the shared defaults above.
-        base_arguments.extend(json.loads(os.environ.get("SPHINX_EXTRA_OPTS", "[]")))
+        base_arguments.extend(env.string_list("SPHINX_EXTRA_OPTS", "[]"))
     else:
         # Interactive builds keep warnings in the workspace so developers can
         # inspect them after a failed build. A Bazel action reports failure
@@ -183,38 +176,35 @@ def sphinx_arguments(ws_root: Path, package_dir: Path, build_dir: Path) -> list[
         # this diagnostic side file.
         base_arguments.extend(["--warning-file", str(build_dir / "warnings.txt")])
 
-    generated_config = os.environ.get("SPHINX_CONFIG_FILE", "")
-    if generated_config:
+    if config_file := env.optional_path("SPHINX_CONFIG_FILE"):
         # The action receives ctx.file.config.path, which is interpreted from
         # the action's execution-root working directory. Resolve it locally
         # instead of using runfiles lookup; interactive targets receive a
         # runfiles-relative path and need that lookup before Sphinx gets the
         # containing directory.
-        config_file = Path(generated_config)
         if is_bazel_build:
             config_file = config_file.absolute()
         elif not config_file.is_absolute():
             config_file = get_runfiles_dir() / config_file
         base_arguments.extend(["-c", str(config_file.parent)])
 
-    metamodel_yaml = os.environ.get("SCORE_METAMODEL_YAML", "")
-    if metamodel_yaml:
+    if metamodel_yaml := env.optional_path("SCORE_METAMODEL_YAML"):
         # Under ``bazel run``, this environment variable is runfiles-relative
         # and must be resolved through RUNFILES_DIR. A sandboxed Needs action
         # instead expands the metamodel label to an execution-root path in
         # SPHINX_EXTRA_OPTS; applying runfiles lookup there would escape the
         # action's declared inputs.
-        if not is_bazel_build and not os.path.isabs(metamodel_yaml):
-            runfiles_dir = os.environ.get("RUNFILES_DIR", "")
-            metamodel_yaml = str(
-                (Path(runfiles_dir) / metamodel_yaml)
-                if runfiles_dir
-                else (ws_root / metamodel_yaml)
+        if not is_bazel_build and not metamodel_yaml.is_absolute():
+            runfiles_dir = env.optional_path("RUNFILES_DIR")
+            metamodel_yaml = (
+                runfiles_dir / metamodel_yaml
+                if runfiles_dir is not None
+                else ws_root / metamodel_yaml
             )
-        metamodel_yaml = os.path.abspath(metamodel_yaml)
+        metamodel_yaml = metamodel_yaml.absolute()
         base_arguments.append(f"--define=score_metamodel_yaml={metamodel_yaml}")
 
-    if github_repository := os.getenv("GITHUB_REPOSITORY"):
+    if github_repository := env.get("GITHUB_REPOSITORY", ""):
         # GITHUB_REPOSITORY is expected as "owner/repo"; partition("/") splits
         # once into (owner, separator, repo), so we can ignore the separator.
         github_user, _, github_repo = github_repository.partition("/")
@@ -224,18 +214,20 @@ def sphinx_arguments(ws_root: Path, package_dir: Path, build_dir: Path) -> list[
         base_arguments.append("-A=github_version=main")
         # doc_path must be repo-relative so the edit URL does not contain the
         # absolute runner filesystem path (e.g. /home/runner/work/…/docs).
-        relative_doc_path = Path(os.environ.get("PACKAGE_DIR", "")) / source_directory
+        relative_doc_path = (
+            env.optional_path("PACKAGE_DIR") or Path()
+        ) / source_directory
         base_arguments.append(f"-A=doc_path={relative_doc_path}")
 
-    if os.getenv("KNOWN_GOOD_JSON"):
-        base_arguments.append(f"--define=KNOWN_GOOD_JSON={get_env('KNOWN_GOOD_JSON')}")
+    if known_good_json := env.optional_path("KNOWN_GOOD_JSON"):
+        base_arguments.append(f"--define=KNOWN_GOOD_JSON={known_good_json}")
 
     return base_arguments
 
 
 def watch_arguments() -> list[str]:
     """Build autobuild options using the same runfiles resolution as Sphinx."""
-    mounts_manifest = os.environ.get("MOUNTS_MANIFEST", "")
+    mounts_manifest = env.optional_path("MOUNTS_MANIFEST")
     watch_arguments: list[str] = []
     if mounts_manifest:
         # ``MOUNTS_MANIFEST`` is runfiles-relative under ``bazel run`` and
@@ -244,7 +236,7 @@ def watch_arguments() -> list[str]:
         manifest_path = (
             get_runfiles_dir() / mounts_manifest
             if ws_root is not None
-            else Path(mounts_manifest)
+            else mounts_manifest
         )
         for watch_dir in mounted_watch_dirs(
             manifest_path,
@@ -284,17 +276,17 @@ def main(argv: list[str] | None = None) -> int:
         logger.info("Waiting for client to connect on port: " + str(args.debug_port))
         debugpy.wait_for_client()
 
-    action = get_env("ACTION")
+    action = env.get("ACTION")
     is_bazel_build = action == "build_needs_json"
-    ws_root = Path(os.getenv("BUILD_WORKSPACE_DIRECTORY", ""))
+    ws_root = env.optional_path("BUILD_WORKSPACE_DIRECTORY") or Path()
     # Docs source and output are resolved relative to the package where docs()
     # was called; an empty PACKAGE_DIR denotes the workspace root.
-    package_dir = ws_root / os.environ.get("PACKAGE_DIR", "")
+    package_dir = ws_root / (env.optional_path("PACKAGE_DIR") or Path())
     build_dir = package_dir / "_build"
     if is_bazel_build:
         # Bazel owns the action's paths; never use the caller's workspace cache.
         package_dir = Path.cwd()
-        build_dir = Path(get_env("OUTPUT_DIRECTORY")).absolute()
+        build_dir = env.required_path("OUTPUT_DIRECTORY").absolute()
 
     sentinel_files = [
         ws_root / "MODULE.bazel",
@@ -353,7 +345,8 @@ def main(argv: list[str] | None = None) -> int:
 if __name__ == "__main__":
     # Extensions need stable runfiles paths even when Sphinx changes directory.
     for variable in ("RUNFILES_DIR", "JAVA_RUNFILES"):
-        if os.environ.get(variable):
-            os.environ[variable] = str(Path(os.environ[variable]).absolute())
+        value = env.optional_path(variable)
+        if value:
+            os.environ[variable] = str(value.absolute())
 
     sys.exit(main())

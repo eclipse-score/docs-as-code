@@ -49,7 +49,9 @@ from src.extensions.score_source_code_linker.testlink import (
     store_data_of_test_case_json,
     store_test_xml_parsed_json,
 )
-from src.helper_lib import find_ws_root
+from src.helper_lib import Environment, find_ws_root
+
+env = Environment()
 
 logger = logging.get_logger(__name__)
 logger.setLevel("DEBUG")
@@ -144,16 +146,14 @@ def get_metadata_from_test_path(raw_filepath: Path) -> MetaData:
     Removing everything up to and including 'bazel-testlogs' or 'tests-report'
     """
     # print("THIs IS FILEPATH IN GET MD FROm TestPATH: ", raw_filepath)
-    known_good_json = os.environ.get("KNOWN_GOOD_JSON")
+    known_good_json = env.optional_path("KNOWN_GOOD_JSON")
     clean_filepath = clean_test_file_name(raw_filepath)
     # print(f"This is the cleaned filepath: {clean_filepath}")
     repo_name = parse_repo_name_from_path(clean_filepath)
     md = DefaultMetaData()
     md["repo_name"] = repo_name
     if repo_name != "local_repo" and known_good_json:
-        md["hash"], md["url"] = parse_info_from_known_good(
-            Path(known_good_json), repo_name
-        )
+        md["hash"], md["url"] = parse_info_from_known_good(known_good_json, repo_name)
     return md
 
 

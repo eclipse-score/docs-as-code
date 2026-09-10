@@ -59,6 +59,7 @@ py_library(
     ],
     imports = ["."],
     visibility = ["//visibility:public"],
+    deps = ["//src/helper_lib"],
 )
 
 score_pytest(

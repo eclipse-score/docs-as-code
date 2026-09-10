@@ -11,7 +11,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-import os
 import subprocess
 import sys
 from enum import Enum
@@ -21,6 +20,8 @@ from typing import Any
 from python.runfiles import Runfiles
 from sphinx.config import Config
 from sphinx_needs.logging import get_logger
+
+from .env import Environment
 
 LOGGER = get_logger(__name__)
 
@@ -50,8 +51,7 @@ def find_ws_root() -> Path | None:
     - 'bazel build' => ❌ None (sandbox isolation)
     - 'direct sphinx' => ❌ None (no Bazel environment)
     """
-    ws_dir = os.environ.get("BUILD_WORKSPACE_DIRECTORY", None)
-    return Path(ws_dir) if ws_dir else None
+    return Environment().optional_path("BUILD_WORKSPACE_DIRECTORY")
 
 
 def identify_environment() -> ExecutionEnvironment:
@@ -217,9 +217,13 @@ def get_runfiles_dir() -> Path:
     Find the Bazel runfiles directory using bazel_runfiles convention,
     fallback to RUNFILES_DIR or relative traversal if needed.
     """
-    if (r := Runfiles.Create()) and (rd := r.EnvVars().get("RUNFILES_DIR")):
-        runfiles_dir = Path(rd)
-    else:
+    runfiles = Runfiles.Create()
+    runfiles_dir = (
+        Environment(runfiles.EnvVars()).optional_path("RUNFILES_DIR")
+        if runfiles is not None
+        else None
+    )
+    if runfiles_dir is None:
         # The only way to land here is when running from within the virtual
         # environment created by the `:ide_support` rule in the BUILD file.
         # i.e. esbonio or manual sphinx-build execution within the virtual

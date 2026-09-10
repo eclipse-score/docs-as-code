@@ -33,7 +33,6 @@ tree, and nested workspace ``srcs`` are a known limitation of this logic.
 
 from __future__ import annotations
 
-import os
 from pathlib import Path
 
 from sphinx.application import Sphinx
@@ -47,7 +46,9 @@ from src.extensions.score_mounts._resolver import (
     resolve_source_files,
     resolve_walk_dir,
 )
-from src.helper_lib import find_ws_root, get_runfiles_dir
+from src.helper_lib import Environment, find_ws_root, get_runfiles_dir
+
+env = Environment()
 
 logger = logging.getLogger(__name__)
 
@@ -62,9 +63,7 @@ def _read_manifest(config: Config):
     it is relative to the exec root (``$(location)``). Resolving the path here
     keeps that context branch out of the pure ``_resolver`` module.
     """
-    raw = getattr(config, "mounts_manifest", None) or os.environ.get(
-        "MOUNTS_MANIFEST", None
-    )
+    raw = getattr(config, "mounts_manifest", None) or env.get("MOUNTS_MANIFEST", "")
     if not raw or not raw.strip() or not isinstance(raw, str):
         return None
 

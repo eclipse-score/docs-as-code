@@ -32,5 +32,8 @@ py_library(
     # python package if we ever want to do that.
     imports = ["."],
     visibility = ["//visibility:public"],
-    deps = [requirement("sphinx")],
+    deps = [
+        requirement("sphinx"),
+        "//src/helper_lib",
+    ],
 )

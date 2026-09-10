@@ -29,12 +29,14 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import sys
 from pathlib import Path
 from typing import Any
 
+from src.helper_lib import Environment
+
 _SUPPORTED_SCHEMA_VERSION = "2"
+env = Environment()
 
 
 def _print_type_summary(
@@ -259,9 +261,9 @@ def main() -> int:
         args.fail_on_broken_test_refs = True
 
     metrics_path = Path(args.metrics_json)
-    workspace_dir = os.environ.get("BUILD_WORKSPACE_DIRECTORY", "").strip()
+    workspace_dir = env.optional_path("BUILD_WORKSPACE_DIRECTORY")
     if not metrics_path.is_absolute() and workspace_dir:
-        metrics_path = Path(workspace_dir) / metrics_path
+        metrics_path = workspace_dir / metrics_path
     if not metrics_path.exists():
         print(f"Error: metrics JSON not found: {metrics_path}", file=sys.stderr)
         return 1

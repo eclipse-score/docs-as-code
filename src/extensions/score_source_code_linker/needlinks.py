@@ -13,10 +13,13 @@
 # req-Id: tool_req__docs_dd_link_source_code_link
 
 import json
-import os
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, TypedDict, TypeGuard
+
+from src.helper_lib import Environment
+
+env = Environment()
 
 
 class MetaData(TypedDict):
@@ -180,7 +183,7 @@ def load_source_code_links_with_metadata_json(file: Path) -> list[NeedLink]:
     This normally should be the one called 'locally' => :docs target
     """
     if not file.is_absolute():
-        ws_root = os.environ.get("BUILD_WORKSPACE_DIRECTORY")
+        ws_root = env.get("BUILD_WORKSPACE_DIRECTORY", "")
         if ws_root:
             file = Path(ws_root) / file
 
@@ -221,9 +224,9 @@ def load_source_code_links_json(file: Path) -> list[NeedLink]:
     """
     if not file.is_absolute():
         # use env variable set by Bazel
-        ws_root = os.environ.get("BUILD_WORKSPACE_DIRECTORY")
+        ws_root = env.optional_path("BUILD_WORKSPACE_DIRECTORY")
         if ws_root:
-            file = Path(ws_root) / file
+            file = ws_root / file
 
     links: list[NeedLink] = json.loads(
         file.read_text(encoding="utf-8"),

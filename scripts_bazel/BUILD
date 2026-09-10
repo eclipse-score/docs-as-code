@@ -53,5 +53,7 @@ py_binary(
     srcs = ["traceability_gate.py"],
     main = "traceability_gate.py",
     visibility = ["//visibility:public"],
-    deps = [],
+    deps = [
+        "//src/helper_lib",
+    ],
 )
