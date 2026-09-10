@@ -26,7 +26,6 @@ on:
 
 permissions:
   contents: read
-  actions: write # cleanup old caches
 
 jobs:
   common:
@@ -34,6 +33,9 @@ jobs:
 
   tests:
     uses: ./.github/workflows/_test.yml
+    permissions:
+      contents: read
+      actions: write # cleanup old caches
 
   docs-build:
     needs: [tests]

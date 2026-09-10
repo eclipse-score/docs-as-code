@@ -71,13 +71,17 @@ jobs:
           packages: graphviz
           cache: false
 
+      - name: Checkout PR
+        uses: actions/checkout@v7
+
       - name: Setup Bazel with shared caching
         uses: eclipse-score/cicd-actions/setup-bazel-cache@cache
         with:
-          disk-cache-key: ${{ github.job }}
-
-      - name: Checkout PR
-        uses: actions/checkout@v7
+          # Matrix jobs need separate disk-cache archives because GitHub Actions
+          # cannot merge archives written concurrently under one cache key.
+          disk-cache-key: ${{ github.job }}-${{ matrix.consumer }}
+          # Keep the shared repository cache consistent by assigning one writer.
+          repository-cache-save: ${{ matrix.consumer == 'score and remote' && 'auto' || 'false' }}
 
       - name: Prepare Python
         run: bazel run //:ide_support
