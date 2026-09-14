@@ -14,6 +14,9 @@
 # Versioning is handled by GitHub Releases.
 module(name = "score_docs_as_code")
 
+# For bzl-unittests
+bazel_dep(name = "bazel_skylib", version = "1.8.2", dev_dependency = True)
+
 ###############################################################################
 #
 # Python version

@@ -11,7 +11,9 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 def join_path(prefix, rest):
-    """Compose two docname segments with `/`.
+    """
+    Compose two docname segments with `/`.
+    Removes trailing `/` from the second segment.
 
     Args:
       prefix: Leading docname segment, possibly empty.
@@ -20,10 +22,14 @@ def join_path(prefix, rest):
     Returns:
       The combined docname.
     """
+    rest = rest.rstrip("/")
+    prefix = prefix.rstrip("/")
+
     if not prefix or prefix == ".":
         return rest
-    if not rest:
+    if not rest or rest == ".":
         return prefix
+
     return prefix + "/" + rest
 
 def dirname(path):
