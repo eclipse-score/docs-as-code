@@ -41,7 +41,6 @@ DocsBundleInfo = provider(
         "entries": "Ordered entries, one per source directory, including its final documentation-tree location.",
         "own_source_files": "This bundle's direct source files, excluding nested bundles.",
         "source_dir_execroot_path": "Execution-root-relative path of this bundle's direct source root.",
-        "own_source_is_explicit": "Whether the direct sources came from explicit source targets.",
         "sourcelinks": "Source-code-link JSON files together with their owning repository.",
         "external_runfiles": "Documentation source files not read from the workspace at runtime.",
         # Bundle-owned supporting/runtime files. Unlike host-owned docs data,
@@ -282,7 +281,6 @@ def _docs_bundle_impl(ctx):
     entries = []
     own_source_files = []
     source_dir_execroot_path = ""
-    own_source_is_explicit = False
     own_external_runfiles = []
     own_data = depset(direct = ctx.files.data)
 
@@ -324,7 +322,6 @@ def _docs_bundle_impl(ctx):
         # undeclared siblings from the shared parent directory.
         runtime_path = _source_targets_runtime_path(ctx.files.source_targets)
         source_dir_execroot_path = _convert_runtime_path_to_execroot_path(runtime_path)
-        own_source_is_explicit = True
         source_files = _source_targets_relative_paths(
             ctx.files.source_targets,
             runtime_path,
@@ -410,7 +407,6 @@ def _docs_bundle_impl(ctx):
             entries = entries,
             own_source_files = depset(direct = own_source_files),
             source_dir_execroot_path = source_dir_execroot_path,
-            own_source_is_explicit = own_source_is_explicit,
             sourcelinks = sourcelinks,
             external_runfiles = external_runfiles,
             data = all_data,
