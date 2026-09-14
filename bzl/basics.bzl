@@ -42,10 +42,6 @@ def glob_doc_sources(prefix):
         "png", "svg", "md", "rst", "html", "css",
         "puml", "need", "yaml", "json", "csv", "inc",
     ]
-    if prefix == ".":
-        prefix = ""
-    elif prefix and not prefix.endswith("/"):
-        prefix += "/"
-    param = [prefix + "**/*." + ext for ext in extensions]
+    param = [join_path(prefix, "**/*." + ext) for ext in extensions]
     srcs = native.glob(param, allow_empty = True)
     return srcs

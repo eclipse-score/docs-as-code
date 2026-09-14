@@ -275,17 +275,10 @@ def _declare_docs_bundle(
             code_targets = code_targets,
         )
 
-    # Store the source directory relative to the workspace so bundle consumers
-    # can locate the original files without copying them. The internal rule
-    # keeps this path in its provider; the Needs build below uses the same
-    # source root so docnames and link targets remain stable.
+    # Keep the bundle source root relative to the workspace. ``join_path``
+    # normalizes ``source_dir = "."`` to the package path.
     pkg = native.package_name()
-    # ``source_dir = "."`` denotes the package root. Keep its provider path
-    # normalized so Sphinx can remove the same prefix from ordinary short_paths
-    # (which never contain the literal ``/.`` segment).
-    strip_prefix = (
-        pkg if source_dir == "." else join_path(pkg, source_dir)
-    ) if source_dir != None else ""
+    strip_prefix = join_path(pkg, source_dir) if source_dir != None else ""
 
     # ``needs_json`` is an inventory consumed by score_metamodel, not content
     # owned by this bundle. It must remain in the caller's build/runfile inputs
