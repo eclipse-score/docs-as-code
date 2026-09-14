@@ -111,7 +111,8 @@ def _source_dir_runtime_path(ctx):
     """Return this bundle source directory's Bazel runtime path.
 
     Bazel spells a source in an external repository as ``../<repo>/...`` in
-    runfiles. Keep that spelling here; ``_bundle_execroot_path`` converts it to
+    runfiles. Keep that spelling here; ``_convert_runtime_path_to_execroot_path``
+    converts it to
     the corresponding ``external/<repo>/...`` form for build actions.
 
     Local sources use ``<package>/<source_dir>``; sources from an external
@@ -177,8 +178,8 @@ def _source_targets_relative_paths(files, runtime_path):
         relative_paths.append(source_path[len(prefix):])
     return relative_paths
 
-def _bundle_execroot_path(runtime_path):
-    """Return the execroot-relative spelling of an external runtime path."""
+def _convert_runtime_path_to_execroot_path(runtime_path):
+    """Convert a runtime path to its execroot-relative spelling."""
     if runtime_path.startswith("../"):
         return "external/" + runtime_path[3:]
     return runtime_path
@@ -300,7 +301,7 @@ def _docs_bundle_impl(ctx):
             # The execution root and runfiles tree spell external repositories
             # differently. Keep both locations so every public docs() target can
             # resolve them in its own context.
-            src_root = _bundle_execroot_path(runtime_path),
+            src_root = _convert_runtime_path_to_execroot_path(runtime_path),
             mount_at = "",
             attach_to = "",
             entry_doc = ctx.attr.entry_doc,
@@ -331,7 +332,7 @@ def _docs_bundle_impl(ctx):
         external = runtime_path.startswith("../")
         entries.append(struct(
             runtime_path = runtime_path,
-            src_root = _bundle_execroot_path(runtime_path),
+            src_root = _convert_runtime_path_to_execroot_path(runtime_path),
             mount_at = "",
             attach_to = "",
             entry_doc = ctx.attr.entry_doc,
