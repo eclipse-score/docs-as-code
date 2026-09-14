@@ -13,7 +13,9 @@
 def join_path(prefix, rest):
     """
     Compose two docname segments with `/`.
-    Removes trailing `/` from the second segment.
+
+    Removes trailing `/` from both segments. A `.` segment is treated as empty
+    when the other segment is non-empty.
 
     Args:
       prefix: Leading docname segment, possibly empty.
