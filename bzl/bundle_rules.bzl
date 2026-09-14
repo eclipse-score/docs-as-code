@@ -40,7 +40,7 @@ DocsBundleInfo = provider(
     fields = {
         "entries": "Ordered entries, one per source directory, including its final documentation-tree location.",
         "own_source_files": "This bundle's direct source files, excluding nested bundles.",
-        "own_source_root": "Runtime path of this bundle's direct source root.",
+        "source_dir_execroot_path": "Execution-root-relative path of this bundle's direct source root.",
         "own_source_is_explicit": "Whether the direct sources came from explicit source targets.",
         "sourcelinks": "Source-code-link JSON files together with their owning repository.",
         "external_runfiles": "Documentation source files not read from the workspace at runtime.",
@@ -281,7 +281,7 @@ def _docs_bundle_impl(ctx):
     """Compose source files and nested bundles into a reusable bundle."""
     entries = []
     own_source_files = []
-    own_source_root = ""
+    source_dir_execroot_path = ""
     own_source_is_explicit = False
     own_external_runfiles = []
     own_data = depset(direct = ctx.files.data)
@@ -293,15 +293,15 @@ def _docs_bundle_impl(ctx):
               "targets") % ctx.label)
 
     if ctx.files.source_dir_globbed:
-        runtime_path = _source_dir_runtime_path(ctx)
-        own_source_root = runtime_path
-        external = runtime_path.startswith("../")
+        source_dir_runtime_path = _source_dir_runtime_path(ctx)
+        source_dir_execroot_path = _convert_runtime_path_to_execroot_path(source_dir_runtime_path)
+        external = source_dir_runtime_path.startswith("../")
         entries.append(struct(
-            runtime_path = runtime_path,
+            runtime_path = source_dir_runtime_path,
             # The execution root and runfiles tree spell external repositories
             # differently. Keep both locations so every public docs() target can
             # resolve them in its own context.
-            src_root = _convert_runtime_path_to_execroot_path(runtime_path),
+            src_root = source_dir_execroot_path,
             mount_at = "",
             attach_to = "",
             entry_doc = ctx.attr.entry_doc,
@@ -323,7 +323,7 @@ def _docs_bundle_impl(ctx):
         # the declared relative file list so runtime discovery cannot include
         # undeclared siblings from the shared parent directory.
         runtime_path = _source_targets_runtime_path(ctx.files.source_targets)
-        own_source_root = runtime_path
+        source_dir_execroot_path = _convert_runtime_path_to_execroot_path(runtime_path)
         own_source_is_explicit = True
         source_files = _source_targets_relative_paths(
             ctx.files.source_targets,
@@ -332,7 +332,7 @@ def _docs_bundle_impl(ctx):
         external = runtime_path.startswith("../")
         entries.append(struct(
             runtime_path = runtime_path,
-            src_root = _convert_runtime_path_to_execroot_path(runtime_path),
+            src_root = source_dir_execroot_path,
             mount_at = "",
             attach_to = "",
             entry_doc = ctx.attr.entry_doc,
@@ -409,7 +409,7 @@ def _docs_bundle_impl(ctx):
         DocsBundleInfo(
             entries = entries,
             own_source_files = depset(direct = own_source_files),
-            own_source_root = own_source_root,
+            source_dir_execroot_path = source_dir_execroot_path,
             own_source_is_explicit = own_source_is_explicit,
             sourcelinks = sourcelinks,
             external_runfiles = external_runfiles,
