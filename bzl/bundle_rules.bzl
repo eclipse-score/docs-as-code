@@ -107,21 +107,22 @@ def _ensure_unique_entries(entries):
                   "than one bundle path; include every documentation source directory once") % key)
         seen[key] = entry
 
-def _bundle_runtime_path(ctx):
+def _source_dir_runtime_path(ctx):
     """Return this bundle source directory's Bazel runtime path.
 
     Bazel spells a source in an external repository as ``../<repo>/...`` in
     runfiles. Keep that spelling here; ``_bundle_execroot_path`` converts it to
     the corresponding ``external/<repo>/...`` form for build actions.
+
+    Local sources use ``<package>/<source_dir>``; sources from an external
+    repository use ``../<repository>/<package>/<source_dir>``. If ``source_dir``
+    is ``.`` the package path itself is returned.
     """
-    # All files were globbed from this bundle's one source_dir, so the first
-    # file is representative for detecting an external-repository prefix.
-    source_file = ctx.files.source_dir_globbed[0].short_path
-    external_prefix = ""
-    if source_file.startswith("../"):
-        path_parts = source_file.split("/")
-        external_prefix = path_parts[0] + "/" + path_parts[1] + "/"
-    return external_prefix + ctx.attr.strip_prefix.rstrip("/")
+    source_root = join_path(ctx.label.package, ctx.attr.source_dir)
+    if ctx.label.workspace_name:
+        return "../" + ctx.label.workspace_name + "/" + source_root
+    else:
+        return source_root
 
 def _source_target_path(source_file):
     """Return the path spelling used by the source-target staging action."""
@@ -291,7 +292,7 @@ def _docs_bundle_impl(ctx):
               "targets") % ctx.label)
 
     if ctx.files.source_dir_globbed:
-        runtime_path = _bundle_runtime_path(ctx)
+        runtime_path = _source_dir_runtime_path(ctx)
         own_source_root = runtime_path
         external = runtime_path.startswith("../")
         entries.append(struct(
@@ -421,7 +422,9 @@ _docs_bundle = rule(
         "source_dir_globbed": attr.label_list(allow_files = True),
         "source_targets": attr.label_list(allow_files = True),
         "sourcelinks_json": attr.label(allow_single_file = True),
-        "strip_prefix": attr.string(default = ""),
+        # An empty value is used for explicit-source and data-only bundles;
+        # those cases do not call _source_dir_runtime_path().
+        "source_dir": attr.string(default = ""),
         "entry_doc": attr.string(default = "index"),
         "bundles": attr.label_list(providers = [DocsBundleInfo]),
         "bundle_mount_ats": attr.string_list(),
@@ -437,7 +440,7 @@ def create_bundle(
     source_dir_globbed = [],
     source_targets = [],
     sourcelinks_json = None,
-    strip_prefix = "",
+    source_dir = None,
     entry_doc = "index",
     data = [],
     visibility = None,
@@ -453,7 +456,7 @@ def create_bundle(
         source_dir_globbed = source_dir_globbed,
         source_targets = source_targets,
         sourcelinks_json = sourcelinks_json,
-        strip_prefix = strip_prefix,
+        source_dir = source_dir if source_dir != None else "",
         entry_doc = entry_doc,
         bundles = [bundle.bundle for bundle in parsed_bundles],
         bundle_mount_ats = [bundle.mount_at for bundle in parsed_bundles],
