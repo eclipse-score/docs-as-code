@@ -277,6 +277,10 @@ def test_parse_properties():
 
 @add_test_properties(
     partially_verifies=["tool_req__docs_test_link_testcase"],
+    fully_verifies=[
+        "tool_malfunction__docs_as_code__test_linkage",
+        "tool_malfunction__docs_as_code__test_refs",
+    ],
     test_type="requirements-based",
     derivation_technique="requirements-analysis",
 )

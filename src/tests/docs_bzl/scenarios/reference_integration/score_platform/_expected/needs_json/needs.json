@@ -58,6 +58,15 @@
       "needs_schema": {
         "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
+          "additional_safety_measure_required": {
+            "default": "",
+            "description": "Added by needs_fields config",
+            "field_type": "extra",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "affects": {
             "default": [],
             "description": "Link field",
@@ -372,6 +381,15 @@
               "type": "string"
             },
             "type": "array"
+          },
+          "detection_sufficient": {
+            "default": "",
+            "description": "Added by needs_fields config",
+            "field_type": "extra",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "docname": {
             "default": null,
@@ -1054,6 +1072,15 @@
             ]
           },
           "safety_affected": {
+            "default": "",
+            "description": "Added by needs_fields config",
+            "field_type": "extra",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "safety_measure": {
             "default": "",
             "description": "Added by needs_fields config",
             "field_type": "extra",

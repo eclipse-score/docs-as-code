@@ -78,6 +78,18 @@ def _split_targets(targets: str) -> list[str]:
     return [target.strip() for target in targets.split(",") if target.strip()]
 
 
+def _mermaid_identifier(name: str) -> str:
+    """Return a Mermaid-safe identifier for a metamodel type name.
+
+    Metamodel type names are also directive names and may contain hyphens.
+    Mermaid class declarations accept those names, but Mermaid's ``style``
+    statements do not accept a hyphenated target.  Underscores preserve a
+    readable, deterministic identifier while the original name remains the
+    displayed class label.
+    """
+    return name.replace("-", "_")
+
+
 @dataclass(frozen=True)
 class NeedLink:
     """A link definition belonging to one need type."""
@@ -209,6 +221,7 @@ class MermaidNode:
     """A generic class-diagram node."""
 
     name: str
+    identifier: str
     attributes: tuple[str, ...] = ()
     optional_attributes: tuple[str, ...] = ()
     color: str | None = None
@@ -284,8 +297,13 @@ class MermaidRenderer:
     def _class_declarations(self, diagram: MermaidDiagram) -> list[str]:
         lines: list[str] = []
         for node in sorted(diagram.nodes, key=lambda item: item.name):
+            label = (
+                f'["{self._escape_label(node.name)}"]'
+                if node.identifier != node.name
+                else ""
+            )
             if node.attributes or node.optional_attributes:
-                lines.append(f"class {node.name} {{")
+                lines.append(f"class {node.identifier}{label} {{")
                 lines.extend(f"  +{attribute}" for attribute in sorted(node.attributes))
                 # Mermaid's trailing '*' member classifier renders the complete
                 # attribute line in italics.  Keep the textual marker as part
@@ -298,29 +316,32 @@ class MermaidRenderer:
                 )
                 lines.append("}")
             else:
-                lines.append(f"class {node.name}")
+                lines.append(f"class {node.identifier}{label}")
         return lines
 
     def _edge_declarations(self, diagram: MermaidDiagram) -> list[str]:
         lines: list[str] = []
         seen: set[tuple[str, str, str]] = set()
+        identifiers = {node.name: node.identifier for node in diagram.nodes}
         for edge in diagram.edges:
             key = (edge.source, edge.target, edge.label)
             if key in seen:
                 continue
             seen.add(key)
             arrow = "..>" if edge.optional else "-->"
-            lines.append(f"{edge.source} {arrow} {edge.target} : {edge.label}")
+            source = identifiers.get(edge.source, edge.source)
+            target = identifiers.get(edge.target, edge.target)
+            lines.append(f"{source} {arrow} {target} : {edge.label}")
         return lines
 
     def _style_declarations(self, diagram: MermaidDiagram) -> list[str]:
         lines = [
-            f"style {node.name} fill:{node.color},stroke:#666,color:#000"
+            f"style {node.identifier} fill:{node.color},stroke:#666,color:#000"
             for node in sorted(diagram.nodes, key=lambda item: item.name)
             if node.color and node.style_override is None
         ]
         lines.extend(
-            f"style {node.name} {node.style_override}"
+            f"style {node.identifier} {node.style_override}"
             for node in sorted(diagram.nodes, key=lambda item: item.name)
             if node.style_override
         )
@@ -331,11 +352,16 @@ class MermaidRenderer:
         for node in sorted(diagram.nodes, key=lambda item: item.name):
             if node.href is None:
                 continue
-            line = f'click {node.name} href "{node.href}"'
+            line = f'click {node.identifier} href "{node.href}"'
             if node.tooltip:
                 line += f' "{node.tooltip}"'
             lines.append(line)
         return lines
+
+    @staticmethod
+    def _escape_label(value: str) -> str:
+        """Escape a type name used inside a Mermaid quoted class label."""
+        return value.replace("\\", "\\\\").replace('"', '\\"')
 
 
 @dataclass(frozen=True)
@@ -375,6 +401,7 @@ class NeedDiagramBuilder:
     def _node(need_type: NeedType) -> MermaidNode:
         return MermaidNode(
             name=need_type.name,
+            identifier=_mermaid_identifier(need_type.name),
             attributes=tuple(need_type.mandatory_options),
             optional_attributes=tuple(need_type.optional_options),
             color=need_type.color,
