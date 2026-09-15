@@ -1175,8 +1175,9 @@ graph_checks:
       include: feat_arc_sta, logic_arc_int, logic_arc_int_op, comp_arc_sta, real_arc_int, real_arc_int_op
       condition: safety == QM
     check:
-      fulfils: safety != QM
-    explanation: An QM architecture element cannot implement ASIL requirements.
+      fulfils: safety == QM
+    explanation: A QM architecture element cannot fulfil an ASIL requirement; the
+      implemented requirement must be at least as safe as the architecture element.
 
   # req-Id: tool_req__docs_req_arch_link_safety_to_arch
   tool_req__docs_req_arch_link_safety_to_arch:
@@ -1201,6 +1202,26 @@ graph_checks:
     check:
       implements: security == YES # Which attribute???
     explanation: An security architecture element can only link other security architecture elements.
+
+  # req-Id: tool_req__docs_common_attr_safety_link_check
+  safety_link_check_satisfied_by:
+    needs:
+      include: feat_req, comp_req
+      condition: safety != QM
+    check:
+      satisfied_by: safety != QM
+    explanation: A safety requirement cannot be satisfied by a QM element; the
+      satisfying element must be at least as safe as the requirement.
+
+  # req-Id: tool_req__docs_common_attr_safety_link_check
+  safety_link_check_covers:
+    needs:
+      include: feat_req, comp_req
+      condition: safety == QM
+    check:
+      covers: safety == QM
+    explanation: A QM requirement cannot cover an ASIL assumption of use; the
+      requirement must be at least as safe as the assumption it covers.
 
   # Workproducts may only link to ASPICE 40 IIC stakeholder requirements
   workproduct_aspice_40:
