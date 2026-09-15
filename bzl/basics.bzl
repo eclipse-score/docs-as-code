@@ -11,7 +11,11 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 def join_path(prefix, rest):
-    """Compose two docname segments with `/`.
+    """
+    Compose two docname segments with `/`.
+
+    Removes trailing `/` from both segments. A `.` segment is treated as empty
+    when the other segment is non-empty.
 
     Args:
       prefix: Leading docname segment, possibly empty.
@@ -20,10 +24,14 @@ def join_path(prefix, rest):
     Returns:
       The combined docname.
     """
+    rest = rest.rstrip("/")
+    prefix = prefix.rstrip("/")
+
     if not prefix or prefix == ".":
         return rest
-    if not rest:
+    if not rest or rest == ".":
         return prefix
+
     return prefix + "/" + rest
 
 def dirname(path):
@@ -36,10 +44,6 @@ def glob_doc_sources(prefix):
         "png", "svg", "md", "rst", "html", "css",
         "puml", "need", "yaml", "json", "csv", "inc",
     ]
-    if prefix == ".":
-        prefix = ""
-    elif prefix and not prefix.endswith("/"):
-        prefix += "/"
-    param = [prefix + "**/*." + ext for ext in extensions]
+    param = [join_path(prefix, "**/*." + ext) for ext in extensions]
     srcs = native.glob(param, allow_empty = True)
     return srcs

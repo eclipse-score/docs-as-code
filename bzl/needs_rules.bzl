@@ -26,15 +26,11 @@ def _sphinx_docs_impl(ctx):
     output = ctx.actions.declare_directory(ctx.label.name + "/_build/needs")
 
     bundle = ctx.attr.bundle[DocsBundleInfo]
-    # The bundle owns both the direct inputs and their root. Nested sources
-    # are provided separately for score_mounts, so local exports retain their
-    # bundle ownership. Generated roots already use execution-root paths;
-    # external source roots use runfiles spelling and need this translation.
+    # The bundle owns both the direct inputs and their execution-root-relative
+    # source root. Nested sources are provided separately for score_mounts, so
+    # local exports retain their bundle ownership.
     if not bundle.own_source_files.to_list():
         fail("Sphinx requires a bundle with direct documentation sources")
-    source_dir = bundle.own_source_root
-    if source_dir.startswith("../"):
-        source_dir = "external/" + source_dir[3:]
 
     # Expand file labels at analysis time, then encode the argument list as
     # JSON so spaces, quotes and '=' in Sphinx options survive the environment
@@ -43,7 +39,7 @@ def _sphinx_docs_impl(ctx):
     # Sphinx's ``-c`` directory from its path; it is not just another data file.
     env = {
         "ACTION": "build_needs_json",
-        "SOURCE_DIRECTORY": source_dir or ".",
+        "SOURCE_DIRECTORY": bundle.source_dir_execroot_path,
         "OUTPUT_DIRECTORY": output.path,
         "SPHINX_CONFIG_FILE": ctx.file.config.path,
         "DATA": "[]",

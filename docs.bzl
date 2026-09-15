@@ -235,6 +235,10 @@ def _declare_docs_bundle(
       source_dir: optional directory holding this bundle's own doc sources. It is
         globbed like `docs()` (same file kinds) and the contents are stored after
         stripping the `source_dir` prefix. Leave it unset for a pure aggregator.
+        For a source-bearing bundle this is a package-relative directory name;
+        `"."` means the package root. If `srcs` is supplied instead, those
+        explicit files determine the Sphinx action's source root. `None` means
+        that the bundle has no directory-glob source root.
       srcs: Explicit documentation source files, including generated files.
         Use this for a source-less bundle whose documentation is produced by a
         build action. All files must share one parent directory so they can be
@@ -275,18 +279,6 @@ def _declare_docs_bundle(
             code_targets = code_targets,
         )
 
-    # Store the source directory relative to the workspace so bundle consumers
-    # can locate the original files without copying them. The internal rule
-    # keeps this path in its provider; the Needs build below uses the same
-    # source root so docnames and link targets remain stable.
-    pkg = native.package_name()
-    # ``source_dir = "."`` denotes the package root. Keep its provider path
-    # normalized so Sphinx can remove the same prefix from ordinary short_paths
-    # (which never contain the literal ``/.`` segment).
-    strip_prefix = (
-        pkg if source_dir == "." else join_path(pkg, source_dir)
-    ) if source_dir != None else ""
-
     # ``needs_json`` is an inventory consumed by score_metamodel, not content
     # owned by this bundle. It must remain in the caller's build/runfile inputs
     # for the legacy ``docs(data = [...])`` API, but propagating the TreeArtifact
@@ -305,7 +297,7 @@ def _declare_docs_bundle(
         source_dir_globbed = source_dir_globbed,
         source_targets = srcs,
         sourcelinks_json = sourcelinks_json,
-        strip_prefix = strip_prefix,
+        source_dir = source_dir,
         entry_doc = entry_doc,
         bundles = bundles,
         data = bundle_data,

@@ -19,6 +19,7 @@ from pyfakefs.fake_filesystem import FakeFilesystem as FFS
 
 from src.docs_cli import cli as docs_cli
 from src.docs_cli.cli import sphinx_arguments
+from src.helper_lib import config as config_module
 from src.helper_lib.config import DocsCliConfig
 
 
@@ -83,7 +84,7 @@ def test_build_action_selects_sphinx_builder(
         monkeypatch.delenv("BUILD_WORKSPACE_DIRECTORY")
         monkeypatch.chdir(workspace)
         monkeypatch.setenv("OUTPUT_DIRECTORY", "outputs/needs")
-        build_dir = workspace / "outputs/needs"
+        build_dir = Path("outputs/needs")
     noop_sphinx = Mock(return_value=0)
     update_hash = Mock()
     monkeypatch.setattr(docs_cli, "sphinx_main", noop_sphinx)
@@ -97,9 +98,9 @@ def test_build_action_selects_sphinx_builder(
     assert exit_code == 0
     noop_sphinx.assert_called_once()
     arguments = noop_sphinx.call_args.args[0]
-    # The source and output paths are derived from the Bazel package directory.
+    # Build actions pass their source and output paths relative to the execroot.
     if action == "build_needs_json":
-        assert arguments[:2] == [str(workspace / "docs"), str(build_dir)]
+        assert arguments[:2] == ["docs", str(build_dir)]
         update_hash.assert_not_called()
     else:
         assert arguments[:2] == [str(workspace / "component/docs"), str(build_dir)]
@@ -197,15 +198,9 @@ def test_bazel_configuration_resolves_runfiles_and_preserves_repo_relative_edit_
     monkeypatch.setenv("GITHUB_REPOSITORY", "owner/repo")
     monkeypatch.setenv("KNOWN_GOOD_JSON", "baseline.json")
     monkeypatch.setenv("ACTION", "incremental")
-    package = workspace / "component"
 
     # Act
-    arguments = sphinx_arguments(
-        workspace,
-        package,
-        package / "_build",
-        DocsCliConfig.from_environment(),
-    )
+    arguments = sphinx_arguments(DocsCliConfig.from_environment())
 
     # Assert
     expected_arguments = {
@@ -225,26 +220,34 @@ def test_bazel_configuration_resolves_runfiles_and_preserves_repo_relative_edit_
     assert expected_arguments <= set(arguments)
 
 
-def test_direct_invocation_resolves_metamodel_relative_to_workspace(
+def test_direct_invocation_resolves_paths_relative_to_cwd(
     workspace: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     # Arrange
-    # This test covers the non-Bazel fallback, so no runfiles directory exists.
+    # A direct invocation has neither Bazel's workspace marker nor a runfiles
+    # tree. PACKAGE_DIR is a docs.bzl value and must not be needed here.
+    monkeypatch.delenv("BUILD_WORKSPACE_DIRECTORY")
+    monkeypatch.delenv("PACKAGE_DIR")
     monkeypatch.delenv("RUNFILES_DIR", raising=False)
+    monkeypatch.delenv("RUNFILES_MANIFEST_FILE", raising=False)
+    monkeypatch.setattr(
+        config_module.Runfiles,
+        "Create",
+        staticmethod(lambda: None),
+    )
+    monkeypatch.chdir(workspace)
     monkeypatch.setenv("SCORE_METAMODEL_YAML", "metamodel.yaml")
     monkeypatch.setenv("ACTION", "incremental")
 
     # Act
-    arguments = sphinx_arguments(
-        workspace,
-        workspace,
-        workspace / "_build",
-        DocsCliConfig.from_environment(),
-    )
+    config = DocsCliConfig.from_environment()
+    arguments = sphinx_arguments(config)
 
     # Assert
-    # Without Bazel runfiles, the metamodel falls back to the workspace root.
+    assert config.is_direct
+    assert arguments[:2] == ["docs", "_build"]
+    # Without Bazel metadata, relative inputs are resolved from cwd.
     assert f"--define=score_metamodel_yaml={workspace}/metamodel.yaml" in arguments
     # A direct invocation has no generated Sphinx config to resolve.
     assert "-c" not in arguments

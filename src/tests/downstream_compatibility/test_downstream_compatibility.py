@@ -83,7 +83,7 @@ REPOS_TO_TEST: list[ConsumerRepo] = [
             "bazel run //:docs_check",
             "bazel run //:docs",
             "bazel build //:needs_json",
-            "bazel test //tests/...",
+            "bazel test //score/tests/...",
         ],
     ),
     ConsumerRepo(name="kyron"),

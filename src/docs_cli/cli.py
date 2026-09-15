@@ -139,16 +139,13 @@ def mounted_watch_dirs(
 
 
 def sphinx_arguments(
-    ws_root: Path,
-    package_dir: Path,
-    build_dir: Path,
     config: DocsCliConfig,
 ) -> list[str]:
-    """Resolve package sources and Bazel-provided configuration for every builder."""
-    source_directory = env.required_path("SOURCE_DIRECTORY")
+    """Build Sphinx arguments from the resolved launcher configuration."""
+    output_dir = config.output_dir
     base_arguments = [
-        str(package_dir / source_directory),
-        str(build_dir),
+        str(config.source_dir),
+        str(output_dir),
         "-W",  # treat warning as errors
         "--keep-going",  # do not abort after one error
         "-T",  # show details in case of errors in extensions
@@ -164,11 +161,11 @@ def sphinx_arguments(
     ]
 
     if config.is_bazel_build:
-        # The Bazel action declares ``build_dir`` as its output tree, and that
+        # The Bazel action declares ``output_dir`` as its output tree, and that
         # tree must contain only the Needs inventory consumed by downstream
         # actions. Keep Sphinx's internal doctree cache beside it instead of
         # mixing action state into the declared output.
-        base_arguments.extend(["-d", str(build_dir) + "_doctrees"])
+        base_arguments.extend(["-d", str(output_dir) + "_doctrees"])
 
         # The sandboxed Needs rule transports options as JSON so spaces, quotes and
         # equals signs survive the environment boundary. Append them last so an
@@ -179,7 +176,7 @@ def sphinx_arguments(
         # inspect them after a failed build. A Bazel action reports failure
         # through its exit code and must leave its declared output tree free of
         # this diagnostic side file.
-        base_arguments.extend(["--warning-file", str(build_dir / "warnings.txt")])
+        base_arguments.extend(["--warning-file", str(output_dir / "warnings.txt")])
 
     if config_file := env.optional_path("SPHINX_CONFIG_FILE"):
         # The action receives ctx.file.config.path, which is interpreted from
@@ -201,6 +198,7 @@ def sphinx_arguments(
         # action's declared inputs.
         if not config.is_bazel_build and not metamodel_yaml.is_absolute():
             runfiles_dir = env.optional_path("RUNFILES_DIR")
+            ws_root = config.ws_root or Path()
             metamodel_yaml = (
                 runfiles_dir / metamodel_yaml
                 if runfiles_dir is not None
@@ -219,9 +217,7 @@ def sphinx_arguments(
         base_arguments.append("-A=github_version=main")
         # doc_path must be repo-relative so the edit URL does not contain the
         # absolute runner filesystem path (e.g. /home/runner/work/…/docs).
-        relative_doc_path = (
-            env.optional_path("PACKAGE_DIR") or Path()
-        ) / source_directory
+        relative_doc_path = config.source_dir_relative_to_ws
         base_arguments.append(f"-A=doc_path={relative_doc_path}")
 
     if known_good_json := env.optional_path("KNOWN_GOOD_JSON"):
@@ -282,14 +278,8 @@ def main(argv: list[str] | None = None) -> int:
 
     config = DocsCliConfig.from_environment(env)
     ws_root = config.ws_root or Path()
-    # Docs source and output are resolved relative to the package where docs()
-    # was called; an empty PACKAGE_DIR denotes the workspace root.
-    package_dir = ws_root / (env.optional_path("PACKAGE_DIR") or Path())
-    build_dir = package_dir / "_build"
-    if config.is_bazel_build:
-        # Bazel owns the action's paths; never use the caller's workspace cache.
-        package_dir = Path.cwd()
-        build_dir = env.required_path("OUTPUT_DIRECTORY").absolute()
+    package_dir = config.package_dir
+    output_dir = config.output_dir
 
     sentinel_files = [
         ws_root / "MODULE.bazel",
@@ -297,10 +287,10 @@ def main(argv: list[str] | None = None) -> int:
         package_dir / "BUILD",
     ]
     if not config.is_bazel_build:
-        clean_builddir_if_stale(build_dir, sentinel_files)
+        clean_builddir_if_stale(output_dir, sentinel_files)
 
-    warning_file = build_dir / "warnings.txt"
-    base_arguments = sphinx_arguments(ws_root, package_dir, build_dir, config)
+    warning_file = output_dir / "warnings.txt"
+    base_arguments = sphinx_arguments(config)
 
     if config.action == "live_preview":
         sphinx_autobuild_main(
@@ -336,7 +326,7 @@ def main(argv: list[str] | None = None) -> int:
         return exit_code
 
     if exit_code == 0:
-        update_module_hash(build_dir, sentinel_files)
+        update_module_hash(output_dir, sentinel_files)
     else:
         with warning_file.open("a", encoding="utf-8") as f:
             f.write("-" * 80 + "\n")
