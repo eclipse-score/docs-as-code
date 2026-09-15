@@ -23,6 +23,10 @@ _template_environment: BuildEnvironment | None = None
 # Post-templates containing this marker need a second read after parallel Need
 # collection has been merged.
 _RENDER_AFTER_NEEDS_COLLECTION_MARKER = "score: render-after-needs-collection"
+# During that second read, the document being reread is temporarily absent
+# from Sphinx's Need collection. Keep its already-collected Needs available so
+# a post-template can traverse nested children of its own report Need.
+_template_rerender_needs: dict[str, NeedItem] = {}
 
 
 def _base_need_id(need_id: str) -> str:
@@ -46,6 +50,18 @@ def _find_need(needs: dict[str, NeedItem], need_id: str) -> NeedItem | None:
     return None
 
 
+def _template_needs() -> dict[str, NeedItem]:
+    """Return the current Needs, including the temporary reread snapshot."""
+    if _template_environment is None:
+        return {}
+
+    needs = SphinxNeedsData(_template_environment).get_needs_mutable()
+    if _template_rerender_needs:
+        needs = dict(needs)
+        needs.update(_template_rerender_needs)
+    return needs
+
+
 def _needs_template_folder() -> Path:
     """Locate the shared ``.need`` template directory for Sphinx-Needs."""
     template_folder = Path(__file__).parents[2] / "needs_templates"
@@ -60,8 +76,9 @@ class _LinkedNeeds:
     """Provide link traversal to Need templates as a pickleable callable.
 
     Calling the object with a Need ID and a link field returns the target
-    ``NeedItem`` objects in the order declared by the source Need. This lets a
-    template derive sections from the Need graph instead of embedding IDs.
+    ``NeedItem`` objects in the order declared by the source Need. Backlink
+    fields ending in ``_back`` are also supported. This lets a template derive
+    sections from the Need graph instead of embedding IDs.
 
     The object is deliberately a top-level class instance because Sphinx puts
     the render context into its parallel-reader configuration. A plain
@@ -70,16 +87,44 @@ class _LinkedNeeds:
     """
 
     def __call__(self, need_id: str, link_name: str) -> list[NeedItem]:
-        if _template_environment is None:
+        needs = _template_needs()
+        if not needs:
             return []
 
-        needs = SphinxNeedsData(_template_environment).get_needs_mutable()
         source = _find_need(needs, need_id)
-        if source is None:
-            return []
+        if link_name.endswith("_back"):
+            link_type = link_name.removesuffix("_back")
+            if source is not None:
+                links = source.get_backlinks(link_type, as_str=False)
+                if links:
+                    return [
+                        target
+                        for link in links
+                        if (target := _find_need(needs, link.to_link_string()))
+                        is not None
+                    ]
+
+            # During a post-template reread, Sphinx-Needs may not have rebuilt
+            # backlink caches yet. The current Need is also not registered in
+            # the environment while its own post-template is being rendered.
+            # Derive the reverse relation from outgoing links so both cases
+            # remain usable by graph-driven templates.
+            source_id = _base_need_id(need_id)
+            return [
+                candidate
+                for candidate in needs.values()
+                if any(
+                    _base_need_id(link.to_link_string()) == source_id
+                    for link in candidate.get_links(link_type, as_str=False)
+                )
+            ]
+        else:
+            if source is None:
+                return []
+            links = source.get_links(link_name, as_str=False)
 
         linked: list[NeedItem] = []
-        for link in source.get_links(link_name, as_str=False):
+        for link in links:
             target = _find_need(needs, link.to_link_string())
             if target is not None:
                 linked.append(target)
@@ -87,6 +132,18 @@ class _LinkedNeeds:
 
 
 _linked_needs_callable = _LinkedNeeds()
+
+
+class _NeedsOfType:
+    """Provide all Needs of a given type to graph-driven templates."""
+
+    def __call__(self, need_type: str) -> list[NeedItem]:
+        return [
+            need for need in _template_needs().values() if need["type"] == need_type
+        ]
+
+
+_needs_of_type_callable = _NeedsOfType()
 
 
 def _complex_post_template_names(app: Sphinx) -> set[str]:
@@ -136,10 +193,19 @@ def _rerender_pages_with_complex_post_templates(
             complex_post_template_docs.add(docname)
 
     pages_to_rerender = sorted(complex_post_template_docs)
-    for docname in pages_to_rerender:
-        app.emit("env-purge-doc", env, docname)
-        env.clear_doc(docname)
-        app.builder.read_doc(docname)
+    global _template_rerender_needs
+    _template_rerender_needs = {
+        need["id"]: need
+        for need in needs_data.get_needs_mutable().values()
+        if need.get("docname") in pages_to_rerender
+    }
+    try:
+        for docname in pages_to_rerender:
+            app.emit("env-purge-doc", env, docname)
+            env.clear_doc(docname)
+            app.builder.read_doc(docname)
+    finally:
+        _template_rerender_needs = {}
 
     return pages_to_rerender
 
@@ -163,8 +229,14 @@ def setup(app: Sphinx) -> dict[str, object]:
         app.config, "needs_template_folder", str(_needs_template_folder())
     )
     app.config.needs_render_context.setdefault("linked_needs", _linked_needs_callable)
+    app.config.needs_render_context.setdefault("needs_of_type", _needs_of_type_callable)
     app.connect("builder-inited", _capture_template_environment)
-    app.connect("env-updated", _rerender_pages_with_complex_post_templates)
+    # Run after the source-code linker has injected generated testcase Needs and
+    # their verification backlinks (priority 525), so report templates can
+    # include those testcases in their traceability tables.
+    app.connect(
+        "env-updated", _rerender_pages_with_complex_post_templates, priority=600
+    )
 
     return {
         "version": "1.0.0",
