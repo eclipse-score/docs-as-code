@@ -98,9 +98,10 @@ def count_need_objects(rst_file: Path) -> RstData:
     rst_data = RstData(filename=str(rst_file.relative_to(RST_DIR)))
     with open(rst_file) as f:
         for no, line in enumerate(f, start=1):
-            # Beginning of new need
-            # We filter for '::' as well so we ONLY get directives not comments
-            if line.startswith(".. ") and "::" in line:
+            # Beginning of a new need. Nested needs are indented below their
+            # containing need, so inspect the directive after leading whitespace.
+            # We filter for '::' as well so we ONLY get directives, not comments.
+            if line.lstrip().startswith(".. ") and "::" in line:
                 rst_data.found_objects.append(no)
     return rst_data
 
