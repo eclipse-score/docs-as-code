@@ -53,7 +53,7 @@ def setup(app: Sphinx) -> dict[str, object]:
     # Global settings
     # Note: the "sub-extensions" also set their own config values
 
-    # Match the current GitHub and ubCode Mermaid renderers.
+    # Match the current GitHub and VS Code Mermaid renderers.
     config_setdefault(app.config, "mermaid_version", "11.17.2")
     config_setdefault(app.config, "mermaid_d3_zoom", True)
     config_setdefault(app.config, "mermaid_include_elk", True)

@@ -20,9 +20,11 @@ from sphinx_needs.need_item import NeedItem
 from src.helper_lib import config_setdefault
 
 _build_environment: BuildEnvironment | None = None
+
 # Post-templates containing this marker need a second read after parallel Need
 # collection has been merged.
 _RENDER_AFTER_NEEDS_COLLECTION_MARKER = "score: render-after-needs-collection"
+
 # During that second read, ``env.clear_doc()`` temporarily removes all Needs
 # belonging to the document from Sphinx's collection. Keep those temporarily
 # removed Needs available so templates can resolve links while the document is
@@ -54,10 +56,16 @@ def _find_need(needs: dict[str, NeedItem], need_id: str) -> NeedItem | None:
 def _get_available_needs() -> dict[str, NeedItem]:
     """Return the current Needs, including temporarily removed Needs."""
     if _build_environment is None:
+        # The render helpers are registered before ``builder-inited`` captures
+        # the environment. There is no Need collection to query before then.
         return {}
 
     needs = SphinxNeedsData(_build_environment).get_needs_mutable()
     if _temporarily_removed_needs:
+        # ``env.clear_doc()`` removes the Needs belonging to the page being
+        # reread. Preserve the live collection and overlay the saved entries
+        # so templates can resolve links during that reread without mutating
+        # Sphinx's collection while it is being rebuilt.
         needs = dict(needs)
         needs.update(_temporarily_removed_needs)
     return needs
@@ -94,8 +102,14 @@ class _LinkedNeeds:
 
         source = _find_need(needs, need_id)
         if link_name.endswith("_back"):
+            # A ``*_back`` name asks for the reverse of an ordinary outgoing
+            # link. Strip the suffix because Sphinx-Needs stores backlinks
+            # under the original link type.
             link_type = link_name.removesuffix("_back")
             if source is not None:
+                # Prefer Sphinx-Needs' backlink index when the source Need is
+                # present. Resolving each backlink through ``needs`` also
+                # handles version-qualified or imported Need IDs uniformly.
                 links = source.get_backlinks(link_type, as_str=False)
                 if links:
                     return [
@@ -106,10 +120,10 @@ class _LinkedNeeds:
                     ]
 
             # During a post-template reread, Sphinx-Needs may not have rebuilt
-            # backlink caches yet. The current Need is also not registered in
-            # the environment while its own post-template is being rendered.
-            # Derive the reverse relation from outgoing links so both cases
-            # remain usable by graph-driven templates.
+            # backlink caches yet. The current Need may also be temporarily
+            # absent from the live environment while its document is reread.
+            # Derive the reverse relation from outgoing links so templates can
+            # still find all Needs that point to the requested Need.
             source_id = _base_need_id(need_id)
             return [
                 candidate
@@ -122,6 +136,9 @@ class _LinkedNeeds:
         else:
             if source is None:
                 return []
+            # For an ordinary link name, Sphinx-Needs already stores the
+            # outgoing links on the source Need. Resolve those links against
+            # the combined live-and-snapshot collection below.
             links = source.get_links(link_name, as_str=False)
 
         linked: list[NeedItem] = []
@@ -206,6 +223,9 @@ def _reread_post_template_pages(app: Sphinx, env: BuildEnvironment) -> list[str]
             env.clear_doc(docname)
             app.builder.read_doc(docname)
     finally:
+        # The exception, if any, must still propagate. Clear the process-local
+        # snapshot first so stale Needs cannot affect later rereads or builds
+        # that continue in the same Python process.
         _temporarily_removed_needs = {}
 
     return pages_to_reread

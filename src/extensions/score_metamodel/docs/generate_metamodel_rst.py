@@ -46,6 +46,7 @@ import argparse
 import sys
 from collections.abc import Iterable, Iterator, Mapping
 from dataclasses import dataclass, replace
+from hashlib import sha256
 from pathlib import Path
 from typing import Any, cast
 
@@ -83,11 +84,15 @@ def _mermaid_identifier(name: str) -> str:
 
     Metamodel type names are also directive names and may contain hyphens.
     Mermaid class declarations accept those names, but Mermaid's ``style``
-    statements do not accept a hyphenated target.  Underscores preserve a
-    readable, deterministic identifier while the original name remains the
-    displayed class label.
+    statements do not accept a hyphenated target. A short stable digest
+    distinguishes names that normalize to the same identifier, while the
+    original name remains the displayed class label.
     """
-    return name.replace("-", "_")
+    normalized = name.replace("-", "_")
+    if normalized == name:
+        return name
+    suffix = sha256(name.encode("utf-8")).hexdigest()[:8]
+    return f"{normalized}_{suffix}"
 
 
 @dataclass(frozen=True)
