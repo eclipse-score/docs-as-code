@@ -182,5 +182,9 @@
   {
     "version": "pr-827",
     "url": "https://eclipse-score.github.io/docs-as-code/pr-827/"
+  },
+  {
+    "version": "pr-828",
+    "url": "https://eclipse-score.github.io/docs-as-code/pr-828/"
   }
 ]
