@@ -19,14 +19,15 @@ from sphinx_needs.need_item import NeedItem
 
 from src.helper_lib import config_setdefault
 
-_template_environment: BuildEnvironment | None = None
+_build_environment: BuildEnvironment | None = None
 # Post-templates containing this marker need a second read after parallel Need
 # collection has been merged.
 _RENDER_AFTER_NEEDS_COLLECTION_MARKER = "score: render-after-needs-collection"
-# During that second read, the document being reread is temporarily absent
-# from Sphinx's Need collection. Keep its already-collected Needs available so
-# a post-template can traverse nested children of its own report Need.
-_template_rerender_needs: dict[str, NeedItem] = {}
+# During that second read, ``env.clear_doc()`` temporarily removes all Needs
+# belonging to the document from Sphinx's collection. Keep those temporarily
+# removed Needs available so templates can resolve links while the document is
+# reread.
+_temporarily_removed_needs: dict[str, NeedItem] = {}
 
 
 def _base_need_id(need_id: str) -> str:
@@ -50,15 +51,15 @@ def _find_need(needs: dict[str, NeedItem], need_id: str) -> NeedItem | None:
     return None
 
 
-def _template_needs() -> dict[str, NeedItem]:
-    """Return the current Needs, including the temporary reread snapshot."""
-    if _template_environment is None:
+def _get_available_needs() -> dict[str, NeedItem]:
+    """Return the current Needs, including temporarily removed Needs."""
+    if _build_environment is None:
         return {}
 
-    needs = SphinxNeedsData(_template_environment).get_needs_mutable()
-    if _template_rerender_needs:
+    needs = SphinxNeedsData(_build_environment).get_needs_mutable()
+    if _temporarily_removed_needs:
         needs = dict(needs)
-        needs.update(_template_rerender_needs)
+        needs.update(_temporarily_removed_needs)
     return needs
 
 
@@ -87,7 +88,7 @@ class _LinkedNeeds:
     """
 
     def __call__(self, need_id: str, link_name: str) -> list[NeedItem]:
-        needs = _template_needs()
+        needs = _get_available_needs()
         if not needs:
             return []
 
@@ -139,14 +140,16 @@ class _NeedsOfType:
 
     def __call__(self, need_type: str) -> list[NeedItem]:
         return [
-            need for need in _template_needs().values() if need["type"] == need_type
+            need
+            for need in _get_available_needs().values()
+            if need["type"] == need_type
         ]
 
 
 _needs_of_type_callable = _NeedsOfType()
 
 
-def _complex_post_template_names(app: Sphinx) -> set[str]:
+def _post_templates_requiring_reread(app: Sphinx) -> set[str]:
     """Return post-template names opting into the post-merge rendering pass."""
     template_folder = _needs_template_folder()
     return {
@@ -159,9 +162,7 @@ def _complex_post_template_names(app: Sphinx) -> set[str]:
     }
 
 
-def _rerender_pages_with_complex_post_templates(
-    app: Sphinx, env: BuildEnvironment
-) -> list[str]:
+def _reread_post_template_pages(app: Sphinx, env: BuildEnvironment) -> list[str]:
     """Re-read marked post-template pages after Need environments are merged.
 
     Post-templates are expanded while source documents are read. A parallel
@@ -172,53 +173,53 @@ def _rerender_pages_with_complex_post_templates(
     if app.builder.name != "html":
         return []
 
-    complex_post_templates = _complex_post_template_names(app)
-    if not complex_post_templates:
+    post_templates_requiring_reread = _post_templates_requiring_reread(app)
+    if not post_templates_requiring_reread:
         return []
 
     needs_data = SphinxNeedsData(env)
     if needs_data.needs_is_post_processed:
         return []
 
-    complex_post_template_docs: set[str] = set()
+    post_template_docs: set[str] = set()
     for need in needs_data.get_needs_mutable().values():
         post_template = need.get("post_template")
         if (
             not isinstance(post_template, str)
-            or post_template not in complex_post_templates
+            or post_template not in post_templates_requiring_reread
         ):
             continue
         docname = need["docname"]
         if isinstance(docname, str) and docname:
-            complex_post_template_docs.add(docname)
+            post_template_docs.add(docname)
 
-    pages_to_rerender = sorted(complex_post_template_docs)
-    global _template_rerender_needs
-    _template_rerender_needs = {
+    pages_to_reread = sorted(post_template_docs)
+    global _temporarily_removed_needs
+    _temporarily_removed_needs = {
         need["id"]: need
         for need in needs_data.get_needs_mutable().values()
-        if need.get("docname") in pages_to_rerender
+        if need.get("docname") in pages_to_reread
     }
     try:
-        for docname in pages_to_rerender:
+        for docname in pages_to_reread:
             app.emit("env-purge-doc", env, docname)
             env.clear_doc(docname)
             app.builder.read_doc(docname)
     finally:
-        _template_rerender_needs = {}
+        _temporarily_removed_needs = {}
 
-    return pages_to_rerender
+    return pages_to_reread
 
 
-def _capture_template_environment(app: Sphinx) -> None:
+def _capture_build_environment(app: Sphinx) -> None:
     """Give the link helper the environment in which it should resolve Needs.
 
     The helper is registered during ``setup()``, but Sphinx creates ``app.env``
     only after extension setup has completed. ``builder-inited`` is the first
     lifecycle event at which the final build environment is available.
     """
-    global _template_environment
-    _template_environment = app.env
+    global _build_environment
+    _build_environment = app.env
 
 
 def setup(app: Sphinx) -> dict[str, object]:
@@ -230,13 +231,11 @@ def setup(app: Sphinx) -> dict[str, object]:
     )
     app.config.needs_render_context.setdefault("linked_needs", _linked_needs_callable)
     app.config.needs_render_context.setdefault("needs_of_type", _needs_of_type_callable)
-    app.connect("builder-inited", _capture_template_environment)
+    app.connect("builder-inited", _capture_build_environment)
     # Run after the source-code linker has injected generated testcase Needs and
     # their verification backlinks (priority 525), so report templates can
     # include those testcases in their traceability tables.
-    app.connect(
-        "env-updated", _rerender_pages_with_complex_post_templates, priority=600
-    )
+    app.connect("env-updated", _reread_post_template_pages, priority=600)
 
     return {
         "version": "1.0.0",
