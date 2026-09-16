@@ -81,10 +81,7 @@ def _needs_sphinx_extra_opts(
         master_doc,
         external_needs_source,
         score_bundle_needs_export,
-        score_sourcelinks_json,
-        score_source_code_linker_plain_links,
-        mounts_manifest,
-        score_metamodel_yaml):
+        score_source_code_linker_plain_links):
     """Return per-target Sphinx configuration defines for a Needs build."""
     # The launcher supplies diagnostics shared by every builder. Keep only
     # target-specific defines here so the action does not receive duplicate
@@ -95,10 +92,7 @@ def _needs_sphinx_extra_opts(
         ("master_doc", master_doc),
         ("external_needs_source", external_needs_source),
         ("score_bundle_needs_export", score_bundle_needs_export),
-        ("score_sourcelinks_json", score_sourcelinks_json),
         ("score_source_code_linker_plain_links", score_source_code_linker_plain_links),
-        ("mounts_manifest", mounts_manifest),
-        ("score_metamodel_yaml", score_metamodel_yaml),
         ]
         for option in _sphinx_define(name, value)
     ]
@@ -135,6 +129,14 @@ def _needs_sphinx_docs(
         sphinx_build_data = [],
         visibility = None):
     """Declare a bundle Needs export with the repository-wide Sphinx policy."""
+    # These three are consumed as their own typed rule attributes (below), not
+    # as ordinary tools; still list them here so the caller does not have to
+    # repeat them when building its own ``tools`` list.
+    tools = tools + [
+        label
+        for label in [score_sourcelinks_json, mounts_manifest, score_metamodel_yaml]
+        if label
+    ]
     sphinx_build = _declare_sphinx_build_binary(
         name,
         sphinx_build_data + [tool for tool in tools if tool not in sphinx_build_data],
@@ -152,11 +154,14 @@ def _needs_sphinx_docs(
             master_doc,
             external_needs_source,
             score_bundle_needs_export,
-            score_sourcelinks_json,
             score_source_code_linker_plain_links,
-            mounts_manifest,
-            score_metamodel_yaml,
         ),
+        # Keep these as labels rather than path strings in ``extra_opts``. The
+        # private rule declares them as action inputs and provides execroot
+        # paths directly through the environment.
+        score_sourcelinks_json = score_sourcelinks_json,
+        mounts_manifest = mounts_manifest,
+        score_metamodel_yaml = score_metamodel_yaml,
         sphinx = sphinx_build,
         tools = tools,
         visibility = visibility,
@@ -354,6 +359,9 @@ def _declare_bundle_local_needs(
     sphinx_build_deps = _sphinx_runtime_deps(deps)
 
     needs_local = _bundle_internal_target(name, "needs_local")
+    # The generated source-links target stays typed as a label here; the
+    # private Needs rule owns translating it to an action environment path
+    # and declaring it as an input.
     _needs_sphinx_docs(
         name = needs_local,
         bundle = ":" + name,
@@ -363,9 +371,8 @@ def _declare_bundle_local_needs(
         master_doc = entry_doc,
         external_needs_source = "[]",
         score_bundle_needs_export = "1",
-        score_sourcelinks_json = "$(location " + str(sourcelinks_json) + ")" if sourcelinks_json else None,
+        score_sourcelinks_json = sourcelinks_json,
         score_source_code_linker_plain_links = "1",
-        tools = [sourcelinks_json] if sourcelinks_json else [],
         visibility = visibility,
     )
 
@@ -547,20 +554,18 @@ def docs(
     # list-valued attributes such as ``data`` and ``tools``.
     metamodel_label = [metamodel] if metamodel else []
 
-    mounts_manifest_label = []
+    mounts_manifest = None
     if bundles:
         mounts_bundle = create_bundle(
             name = "_docs_mounts",
             bundles = bundles,
             visibility = ["//visibility:private"],
         )
-
-        mounts_manifest_label = [
-            create_mounts_manifest(
-                name = "_mounts_manifest",
-                bundle = mounts_bundle,
-            ),
-        ]
+        mounts_manifest = create_mounts_manifest(
+            name = "_mounts_manifest",
+            bundle = mounts_bundle,
+        )
+    mounts_manifest_label = [mounts_manifest] if mounts_manifest else []
 
     deps = _sphinx_deps(deps)
     deps = deps + [
@@ -626,7 +631,7 @@ def docs(
         "EXTERNAL_NEEDS_FILES": str(external_needs),
         # `bazel run` starts from a runfiles tree, so this logical path is
         # resolved by score_mounts through ``RUNFILES_DIR``.
-        "MOUNTS_MANIFEST": "$(rlocationpath :_mounts_manifest)" if bundles else "",
+        "MOUNTS_MANIFEST": "$(rlocationpath :_mounts_manifest)" if mounts_manifest else "",
         "SCORE_SOURCELINKS": "$(location :sourcelinks_json)",
     }
     if config_is_generated:
@@ -697,13 +702,11 @@ def docs(
         sphinx_build_deps = deps,
         sphinx_build_data = data + external_needs + metamodel_label + [":docs_bundle"],
         external_needs_source = str(data + external_needs),
-        score_sourcelinks_json = "$(location :sourcelinks_json)",
+        score_sourcelinks_json = ":sourcelinks_json",
         score_source_code_linker_plain_links = "1",
-        # The build action runs in a sandbox, so it needs the action-input path
-        # rather than the runfiles-relative spelling.
-        mounts_manifest = "$(location :_mounts_manifest)" if bundles else None,
-        score_metamodel_yaml = "$(location " + str(metamodel) + ")" if metamodel else None,
-        tools = external_needs + metamodel_label + [":sourcelinks_json", ":docs_bundle"] + mounts_manifest_label,
+        mounts_manifest = mounts_manifest,
+        score_metamodel_yaml = metamodel,
+        tools = external_needs + [":docs_bundle"],
         visibility = ["//visibility:public"],
     )
 

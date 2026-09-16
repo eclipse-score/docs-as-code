@@ -32,9 +32,10 @@ def _sphinx_docs_impl(ctx):
     if not bundle.own_source_files.to_list():
         fail("Sphinx requires a bundle with direct documentation sources")
 
-    # Expand file labels at analysis time, then encode the argument list as
-    # JSON so spaces, quotes and '=' in Sphinx options survive the environment
-    # transport unchanged. The launcher adds these after its default options.
+    # File labels provide execroot-relative paths for this action's sandbox.
+    # Pass them through the environment variables already consumed by the CLI
+    # and extensions; reserve the JSON option list for non-path Sphinx overrides.
+    # Encode that list as JSON so spaces, quotes and '=' survive transport.
     # ``config`` is transported separately because the launcher derives
     # Sphinx's ``-c`` directory from its path; it is not just another data file.
     env = {
@@ -43,10 +44,16 @@ def _sphinx_docs_impl(ctx):
         "OUTPUT_DIRECTORY": output.path,
         "SPHINX_CONFIG_FILE": ctx.file.config.path,
         "DATA": "[]",
-        "SPHINX_EXTRA_OPTS": json.encode([
-            ctx.expand_location(option, targets = ctx.attr.tools)
-            for option in ctx.attr.extra_opts
-        ]),
+        "SCORE_SOURCELINKS": (
+            ctx.file.score_sourcelinks_json.path if ctx.file.score_sourcelinks_json else ""
+        ),
+        "MOUNTS_MANIFEST": (
+            ctx.file.mounts_manifest.path if ctx.file.mounts_manifest else ""
+        ),
+        "SCORE_METAMODEL_YAML": (
+            ctx.file.score_metamodel_yaml.path if ctx.file.score_metamodel_yaml else ""
+        ),
+        "SPHINX_EXTRA_OPTS": json.encode(ctx.attr.extra_opts),
     }
 
     # Data and mounted sources must be present at their execution-root paths.
@@ -56,7 +63,15 @@ def _sphinx_docs_impl(ctx):
         executable = ctx.executable.sphinx,
         env = env,
         inputs = depset(
-            [ctx.file.config] + ctx.files.data + ctx.files.tools,
+            [ctx.file.config] + ctx.files.data + ctx.files.tools + [
+                file
+                for file in [
+                    ctx.file.score_sourcelinks_json,
+                    ctx.file.mounts_manifest,
+                    ctx.file.score_metamodel_yaml,
+                ]
+                if file
+            ],
             transitive = [bundle.own_source_files],
         ),
         outputs = [output],
@@ -73,6 +88,11 @@ sphinx_docs = rule(
         "bundle": attr.label(providers = [DocsBundleInfo], mandatory = True),
         "data": attr.label_list(allow_files = True),
         "tools": attr.label_list(allow_files = True),
+        # Typed labels let the action pass their execroot paths through the
+        # environment contract above and still declare sandbox inputs.
+        "score_sourcelinks_json": attr.label(allow_single_file = True),
+        "mounts_manifest": attr.label(allow_single_file = True),
+        "score_metamodel_yaml": attr.label(allow_single_file = True),
         "extra_opts": attr.string_list(),
         # The launcher runs on the build host and carries extension runfiles.
         "sphinx": attr.label(cfg = "exec", executable = True, mandatory = True),
