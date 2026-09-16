@@ -53,6 +53,8 @@ jobs:
           "persistency and remote",
           "process_description and local",
           "process_description and remote",
+          "reference_integration and local",
+          "reference_integration and remote",
           "score and local",
           "score and remote",
           "time and remote",
