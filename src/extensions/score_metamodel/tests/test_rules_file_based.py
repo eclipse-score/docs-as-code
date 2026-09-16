@@ -13,7 +13,8 @@
 
 import re
 import shutil
-from collections.abc import Callable
+import sys
+from collections.abc import Callable, Collection
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, cast
@@ -32,6 +33,7 @@ RST_DIR = Path(__file__).absolute().parent / "rst"
 
 # Relative paths of all rst files in RST_DIR
 RST_FILES = [str(f.relative_to(RST_DIR)) for f in Path(RST_DIR).rglob("*.rst")]
+_NEED_DIRECTIVE_PATTERN = re.compile(r"^\s*\.\.\s+([A-Za-z][\w-]*)::")
 
 
 @pytest.fixture
@@ -94,15 +96,45 @@ class RstData:
     metadata: dict[str, list[str] | str] = field(default_factory=dict)
 
 
-def count_need_objects(rst_file: Path) -> RstData:
+def count_need_objects(rst_file: Path, need_directives: Collection[str]) -> RstData:
     rst_data = RstData(filename=str(rst_file.relative_to(RST_DIR)))
+    need_directive_names = set(need_directives) | {"needextend"}
     with open(rst_file) as f:
         for no, line in enumerate(f, start=1):
-            # Beginning of new need
-            # We filter for '::' as well so we ONLY get directives not comments
-            if line.startswith(".. ") and "::" in line:
+            # Nested Needs are indented below their containing Need. Parse the
+            # directive name so nested notes, code blocks, and other ordinary
+            # reStructuredText directives are not mistaken for Needs.
+            match = _NEED_DIRECTIVE_PATTERN.match(line)
+            if match and match.group(1) in need_directive_names:
                 rst_data.found_objects.append(no)
     return rst_data
+
+
+def test_count_need_objects_ignores_nested_non_need_directives(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Only configured Need directives count, including an explicit needextend."""
+    monkeypatch.setattr(sys.modules[__name__], "RST_DIR", tmp_path)
+    rst_file = tmp_path / "nested.rst"
+    rst_file.write_text(
+        """.. stkh_req:: Parent
+   :id: stkh_req__parent
+
+   .. note::
+      This ordinary directive must not be counted.
+
+   .. code-block:: text
+
+      This ordinary directive must not be counted either.
+
+.. needextend:: stkh_req__parent
+""",
+        encoding="utf-8",
+    )
+
+    rst_data = count_need_objects(rst_file, {"stkh_req"})
+
+    assert rst_data.found_objects == [1, 11]
 
 
 def filter_warnings_by_position(
@@ -284,12 +316,15 @@ def test_rst_files(
     request: pytest.FixtureRequest,
 ) -> None:
     ### Build the given rst file with Sphinx and check expected/unexpected warnings.
-    rst_data = count_need_objects(RST_DIR / rst_file)
-
     # Build the documentation
     app = sphinx_app_setup(RST_DIR / rst_file)
     monkeypatch.chdir(app.srcdir)  # Sphinx resolves paths relative to the source dir
     app.build()
+
+    need_directives = {
+        str(need_type["directive"]) for need_type in app.config.needs_types
+    }
+    rst_data = count_need_objects(RST_DIR / rst_file, need_directives)
 
     # Get & parse metadata needs
     needs_data = SphinxNeedsData(app.env)
