@@ -27,6 +27,7 @@ import score_metamodel.external_needs as ext_needs
 from score_metamodel.external_needs import (
     ExternalNeedsSource,
     _add_needs_json_file,  # pyright: ignore[reportPrivateUsage] - white-box unit test
+    _external_needs_runfiles_path,  # pyright: ignore[reportPrivateUsage] - white-box unit test
     add_external_docs_sources,
     add_external_needs_json,
     get_external_needs_source,
@@ -77,6 +78,36 @@ def test_extend_needs_json_exporter_can_override_bundle_export_metadata(
 
 def test_empty_list():
     assert parse_external_needs_sources_from_DATA("[]") == []
+
+
+@pytest.mark.parametrize(
+    ("source", "suffix", "expected"),
+    [
+        (
+            ExternalNeedsSource(
+                bazel_module="repo",
+                path_to_target="docs",
+                target="needs_json",
+            ),
+            ("needs_json", "_build", "needs", "needs.json"),
+            Path("/runfiles/repo+/docs/needs_json/_build/needs/needs.json"),
+        ),
+        (
+            ExternalNeedsSource(
+                bazel_module="",
+                path_to_target="docs",
+                target="docs_sources",
+                is_local=True,
+            ),
+            (),
+            Path("/runfiles/_main/docs"),
+        ),
+    ],
+)
+def test_external_needs_runfiles_path_is_environment_independent(
+    source: ExternalNeedsSource, suffix: tuple[str, ...], expected: Path
+) -> None:
+    assert _external_needs_runfiles_path(Path("/runfiles"), source, *suffix) == expected
 
 
 def test_external_str_is_neither_at_nor_slash():

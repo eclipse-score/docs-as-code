@@ -74,6 +74,18 @@ def _runfiles_module_dir(e: ExternalNeedsSource) -> str:
     return "_main" if e.is_local else f"{e.bazel_module}+"
 
 
+def _external_needs_runfiles_path(
+    runfiles_dir: Path, source: ExternalNeedsSource, *suffix: str
+) -> Path:
+    """Build an external source path without reading the process environment."""
+    return (
+        runfiles_dir
+        / _runfiles_module_dir(source)
+        / source.path_to_target
+        / Path(*suffix)
+    )
+
+
 def parse_external_needs_sources_from_DATA(v: str) -> list[ExternalNeedsSource]:
     if v in ["[]", ""]:
         return []
@@ -180,15 +192,10 @@ def get_external_needs_source(external_needs_source: str) -> list[ExternalNeedsS
 
 
 def add_external_needs_json(e: ExternalNeedsSource, config: Config):
-    json_file_raw = (
-        Path(_runfiles_module_dir(e))
-        / e.path_to_target
-        / e.target
-        / "_build/needs/needs.json"
-    )
-
     r = get_runfiles_dir()
-    json_file = r / json_file_raw
+    json_file = _external_needs_runfiles_path(
+        r, e, e.target, "_build", "needs", "needs.json"
+    )
     logger.debug(f"External needs.json: {json_file}")
     try:
         needs_json_data = json.loads(Path(json_file).read_text(encoding="utf-8"))  # pyright: ignore[reportAny]
@@ -219,7 +226,7 @@ def add_external_docs_sources(e: ExternalNeedsSource, config: Config):
     if "ide_support.runfiles" in str(r):
         logger.error("Combo builds are currently only supported with Bazel.")
         return
-    docs_source_path = Path(r) / _runfiles_module_dir(e) / e.path_to_target
+    docs_source_path = _external_needs_runfiles_path(r, e)
 
     # A cross-module root mount keeps its module name as the collection key
     # (unchanged). Sub-package / same-repo mounts disambiguate via the path.
@@ -271,11 +278,8 @@ def connect_external_needs(app: Sphinx, config: Config):
 
 def _add_needs_json_file(ext_needs: ExternalNeedsSource, config: Config) -> None:
     """Resolve a needs_json_file target from runfiles and register it."""
-    json_file_raw = (
-        Path(_runfiles_module_dir(ext_needs)) / ext_needs.path_to_target / "needs.json"
-    )
     r = get_runfiles_dir()
-    json_file = r / json_file_raw
+    json_file = _external_needs_runfiles_path(r, ext_needs, "needs.json")
     logger.debug(f"External needs_json_file: {json_file}")
     try:
         needs_json_data = json.loads(
