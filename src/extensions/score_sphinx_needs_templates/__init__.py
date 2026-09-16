@@ -95,6 +95,44 @@ class _LinkedNeeds:
     is kept process-local and captured once Sphinx has created ``app.env``.
     """
 
+    @staticmethod
+    def _resolve_backlinks(
+        needs: dict[str, NeedItem],
+        source: NeedItem | None,
+        need_id: str,
+        link_type: str,
+    ) -> list[NeedItem]:
+        """Merge indexed backlinks with links found in the live Need fields."""
+        linked: list[NeedItem] = []
+        linked_ids: set[str] = set()
+        if source is not None:
+            # Prefer Sphinx-Needs' backlink index when the source Need is
+            # present. Keep these results first, but do not assume that a
+            # non-empty index is complete: links injected later in the build
+            # may only be visible on the outgoing Need fields.
+            for link in source.get_backlinks(link_type, as_str=False):
+                target = _find_need(needs, link.to_link_string())
+                if target is not None and target["id"] not in linked_ids:
+                    linked.append(target)
+                    linked_ids.add(target["id"])
+
+        # During a post-template reread, Sphinx-Needs may not have rebuilt
+        # backlink caches yet. The current Need may also be temporarily absent
+        # from the live environment while its document is reread. Derive the
+        # reverse relation from outgoing links in all cases and merge it with
+        # the indexed results above. This catches new links while preserving
+        # the index order and avoids duplicate Needs.
+        source_id = _base_need_id(need_id)
+        for candidate in needs.values():
+            points_to_source = any(
+                _base_need_id(link.to_link_string()) == source_id
+                for link in candidate.get_links(link_type, as_str=False)
+            )
+            if points_to_source and candidate["id"] not in linked_ids:
+                linked.append(candidate)
+                linked_ids.add(candidate["id"])
+        return linked
+
     def __call__(self, need_id: str, link_name: str) -> list[NeedItem]:
         needs = _get_available_needs()
         if not needs:
@@ -106,33 +144,7 @@ class _LinkedNeeds:
             # link. Strip the suffix because Sphinx-Needs stores backlinks
             # under the original link type.
             link_type = link_name.removesuffix("_back")
-            if source is not None:
-                # Prefer Sphinx-Needs' backlink index when the source Need is
-                # present. Resolving each backlink through ``needs`` also
-                # handles version-qualified or imported Need IDs uniformly.
-                links = source.get_backlinks(link_type, as_str=False)
-                if links:
-                    return [
-                        target
-                        for link in links
-                        if (target := _find_need(needs, link.to_link_string()))
-                        is not None
-                    ]
-
-            # During a post-template reread, Sphinx-Needs may not have rebuilt
-            # backlink caches yet. The current Need may also be temporarily
-            # absent from the live environment while its document is reread.
-            # Derive the reverse relation from outgoing links so templates can
-            # still find all Needs that point to the requested Need.
-            source_id = _base_need_id(need_id)
-            return [
-                candidate
-                for candidate in needs.values()
-                if any(
-                    _base_need_id(link.to_link_string()) == source_id
-                    for link in candidate.get_links(link_type, as_str=False)
-                )
-            ]
+            return self._resolve_backlinks(needs, source, need_id, link_type)
         else:
             if source is None:
                 return []
