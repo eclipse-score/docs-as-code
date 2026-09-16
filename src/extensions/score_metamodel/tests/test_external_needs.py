@@ -200,7 +200,11 @@ def test_add_external_needs_json_appends_entry(
         json.dumps({"project_url": "https://example.test/repo"}), encoding="utf-8"
     )
 
-    monkeypatch.setattr(ext_needs, "get_runfiles_dir", lambda: runfiles_dir)
+    monkeypatch.setattr(
+        ext_needs.DocsCliConfig,
+        "resolve_input_path",
+        lambda _, path, *, runfiles_relative: runfiles_dir / path,
+    )
 
     add_external_needs_json(e, config)
 
@@ -234,7 +238,11 @@ def test_add_external_needs_json_appends_entry_local(
         json.dumps({"project_url": "https://example.test/local"}), encoding="utf-8"
     )
 
-    monkeypatch.setattr(ext_needs, "get_runfiles_dir", lambda: runfiles_dir)
+    monkeypatch.setattr(
+        ext_needs.DocsCliConfig,
+        "resolve_input_path",
+        lambda _, path, *, runfiles_relative: runfiles_dir / path,
+    )
 
     add_external_needs_json(e, config)
 
@@ -261,7 +269,11 @@ def test_add_needs_json_file_appends_entry(
     config = Config()
     config.needs_external_needs = []
 
-    monkeypatch.setattr(ext_needs, "get_runfiles_dir", lambda: runfiles_dir)
+    monkeypatch.setattr(
+        ext_needs.DocsCliConfig,
+        "resolve_input_path",
+        lambda _, path, *, runfiles_relative: runfiles_dir / path,
+    )
 
     # Act
     e = ExternalNeedsSource(
@@ -291,7 +303,11 @@ def test_add_external_needs_json_missing_file_keeps_list_empty(
     config = Config()
     config.needs_external_needs = []
 
-    monkeypatch.setattr(ext_needs, "get_runfiles_dir", lambda: tmp_path)
+    monkeypatch.setattr(
+        ext_needs.DocsCliConfig,
+        "resolve_input_path",
+        lambda _, path, *, runfiles_relative: tmp_path / path,
+    )
 
     add_external_needs_json(e, config)
 
@@ -309,7 +325,11 @@ def test_add_external_docs_sources_adds_collection(
     config = Config()
     config.collections = {}
 
-    monkeypatch.setattr(ext_needs, "get_runfiles_dir", lambda: tmp_path)
+    monkeypatch.setattr(
+        ext_needs.DocsCliConfig,
+        "resolve_input_path",
+        lambda _, path, *, runfiles_relative: tmp_path / path,
+    )
 
     add_external_docs_sources(e, config)
 
@@ -340,7 +360,11 @@ def test_add_external_docs_sources_local_sub_package(
     config = Config()
     config.collections = {}
 
-    monkeypatch.setattr(ext_needs, "get_runfiles_dir", lambda: tmp_path)
+    monkeypatch.setattr(
+        ext_needs.DocsCliConfig,
+        "resolve_input_path",
+        lambda _, path, *, runfiles_relative: tmp_path / path,
+    )
 
     add_external_docs_sources(e, config)
 
@@ -373,7 +397,11 @@ def test_add_external_docs_sources_local_root_key_fallback(
     config = Config()
     config.collections = {}
 
-    monkeypatch.setattr(ext_needs, "get_runfiles_dir", lambda: tmp_path)
+    monkeypatch.setattr(
+        ext_needs.DocsCliConfig,
+        "resolve_input_path",
+        lambda _, path, *, runfiles_relative: tmp_path / path,
+    )
 
     add_external_docs_sources(e, config)
 
@@ -396,7 +424,9 @@ def test_add_external_docs_sources_ide_support_returns_without_changes(
     config.collections = {}
 
     monkeypatch.setattr(
-        ext_needs, "get_runfiles_dir", lambda: Path("/tmp/ide_support.runfiles")
+        ext_needs.DocsCliConfig,
+        "uses_ide_support_runfiles",
+        property(lambda _: True),
     )
 
     add_external_docs_sources(e, config)

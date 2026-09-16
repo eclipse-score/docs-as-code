@@ -50,6 +50,7 @@ from src.extensions.score_source_code_linker.testlink import (
     store_test_xml_parsed_json,
 )
 from src.helper_lib import Environment, find_ws_root
+from src.helper_lib.config import DocsCliConfig
 
 env = Environment()
 
@@ -147,6 +148,12 @@ def get_metadata_from_test_path(raw_filepath: Path) -> MetaData:
     """
     # print("THIs IS FILEPATH IN GET MD FROm TestPATH: ", raw_filepath)
     known_good_json = env.optional_path("KNOWN_GOOD_JSON")
+    if known_good_json is not None:
+        # docs.bzl supplies this file as a runfiles address to interactive
+        # Bazel targets; resolve it before the JSON reader opens the file.
+        known_good_json = DocsCliConfig().resolve_input_path(known_good_json)
+        if known_good_json is None:
+            raise FileNotFoundError("Could not resolve KNOWN_GOOD_JSON runfile")
     clean_filepath = clean_test_file_name(raw_filepath)
     # print(f"This is the cleaned filepath: {clean_filepath}")
     repo_name = parse_repo_name_from_path(clean_filepath)

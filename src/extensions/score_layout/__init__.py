@@ -20,10 +20,10 @@ import html_options
 import sphinx_options
 from sphinx.application import Sphinx
 
-from src.helper_lib import Environment, config_setdefault
+from src.helper_lib import config_setdefault
+from src.helper_lib.config import DocsCliConfig
 
 logger = logging.getLogger(__name__)
-env = Environment()
 
 # TEMP UNTIL UPSTREAM FIX - BEGIN
 # Bug ref: https://github.com/useblocks/sphinx-needs/issues/1913
@@ -119,7 +119,7 @@ def configure_mounted_source_controls(
         return
 
     source_path = source_path.resolve()
-    workspace_directory = env.optional_path("BUILD_WORKSPACE_DIRECTORY")
+    workspace_directory = DocsCliConfig().ws_root
     if workspace_directory:
         workspace_root = workspace_directory.resolve()
         if (

@@ -81,10 +81,7 @@ def _needs_sphinx_extra_opts(
         master_doc,
         external_needs_source,
         score_bundle_needs_export,
-        score_sourcelinks_json,
-        score_source_code_linker_plain_links,
-        mounts_manifest,
-        score_metamodel_yaml):
+        score_source_code_linker_plain_links):
     """Return per-target Sphinx configuration defines for a Needs build."""
     # The launcher supplies diagnostics shared by every builder. Keep only
     # target-specific defines here so the action does not receive duplicate
@@ -95,10 +92,7 @@ def _needs_sphinx_extra_opts(
         ("master_doc", master_doc),
         ("external_needs_source", external_needs_source),
         ("score_bundle_needs_export", score_bundle_needs_export),
-        ("score_sourcelinks_json", score_sourcelinks_json),
         ("score_source_code_linker_plain_links", score_source_code_linker_plain_links),
-        ("mounts_manifest", mounts_manifest),
-        ("score_metamodel_yaml", score_metamodel_yaml),
         ]
         for option in _sphinx_define(name, value)
     ]
@@ -152,11 +146,14 @@ def _needs_sphinx_docs(
             master_doc,
             external_needs_source,
             score_bundle_needs_export,
-            score_sourcelinks_json,
             score_source_code_linker_plain_links,
-            mounts_manifest,
-            score_metamodel_yaml,
         ),
+        # TEMPORARY DIFF NOTE: Keep these as labels rather than path strings in
+        # ``extra_opts``. The private rule can then declare them as action
+        # inputs and provide execroot paths directly through the environment.
+        score_sourcelinks_json = score_sourcelinks_json,
+        mounts_manifest = mounts_manifest,
+        score_metamodel_yaml = score_metamodel_yaml,
         sphinx = sphinx_build,
         tools = tools,
         visibility = visibility,
@@ -354,6 +351,9 @@ def _declare_bundle_local_needs(
     sphinx_build_deps = _sphinx_runtime_deps(deps)
 
     needs_local = _bundle_internal_target(name, "needs_local")
+    # TEMPORARY DIFF NOTE: Keep the generated source-links target typed as a
+    # label here; the private Needs rule now owns translating it to an action
+    # environment path and declaring it as an input.
     _needs_sphinx_docs(
         name = needs_local,
         bundle = ":" + name,
@@ -363,7 +363,7 @@ def _declare_bundle_local_needs(
         master_doc = entry_doc,
         external_needs_source = "[]",
         score_bundle_needs_export = "1",
-        score_sourcelinks_json = "$(location " + str(sourcelinks_json) + ")" if sourcelinks_json else None,
+        score_sourcelinks_json = sourcelinks_json,
         score_source_code_linker_plain_links = "1",
         tools = [sourcelinks_json] if sourcelinks_json else [],
         visibility = visibility,
@@ -618,6 +618,11 @@ def docs(
         # generated configuration must be present in the runfiles tree.
         docs_data += [sphinx_config]
 
+    # TEMPORARY DIFF NOTE: Interactive file dependencies use runfiles keys so
+    # the Python runfiles library can resolve them in directory- and
+    # manifest-based layouts; these are not build-action execroot paths.
+    # SOURCE_DIRECTORY is intentionally different: it points at the checkout
+    # read by the developer, not at a copy of the local sources in runfiles.
     docs_env = {
         "SOURCE_DIRECTORY": source_dir,
         "PACKAGE_DIR": native.package_name(),
@@ -625,9 +630,9 @@ def docs(
         "DATA": str(data),
         "EXTERNAL_NEEDS_FILES": str(external_needs),
         # `bazel run` starts from a runfiles tree, so this logical path is
-        # resolved by score_mounts through ``RUNFILES_DIR``.
+        # resolved by score_mounts through DocsCliConfig's runfiles resolver.
         "MOUNTS_MANIFEST": "$(rlocationpath :_mounts_manifest)" if bundles else "",
-        "SCORE_SOURCELINKS": "$(location :sourcelinks_json)",
+        "SCORE_SOURCELINKS": "$(rlocationpath :sourcelinks_json)",
     }
     if config_is_generated:
         # The generated file is named conf.py. Run targets pass its containing
@@ -635,11 +640,11 @@ def docs(
         docs_env["SPHINX_CONFIG_FILE"] = "$(rlocationpath " + sphinx_config + ")"
     if metamodel:
         # The interactive ``py_binary`` targets run from a runfiles tree.
-        # docs_cli resolves this logical path through ``RUNFILES_DIR``.
+        # docs_cli resolves this logical path through DocsCliConfig.
         docs_env["SCORE_METAMODEL_YAML"] = "$(rlocationpath " + str(metamodel) + ")"
     if known_good_label:
         known_good_str = str(known_good_label[0])
-        docs_env["KNOWN_GOOD_JSON"] = "$(location " + known_good_str + ")"
+        docs_env["KNOWN_GOOD_JSON"] = "$(rlocationpath " + known_good_str + ")"
         docs_data += known_good_label
 
     # Generated documentation artifacts may live below ``docs/``.  A
@@ -697,21 +702,24 @@ def docs(
         sphinx_build_deps = deps,
         sphinx_build_data = data + external_needs + metamodel_label + [":docs_bundle"],
         external_needs_source = str(data + external_needs),
-        score_sourcelinks_json = "$(location :sourcelinks_json)",
+        score_sourcelinks_json = ":sourcelinks_json",
         score_source_code_linker_plain_links = "1",
-        # The build action runs in a sandbox, so it needs the action-input path
-        # rather than the runfiles-relative spelling.
-        mounts_manifest = "$(location :_mounts_manifest)" if bundles else None,
-        score_metamodel_yaml = "$(location " + str(metamodel) + ")" if metamodel else None,
+        # TEMPORARY DIFF NOTE: Pass labels, not ``$(location ...)`` strings, so
+        # the action can declare each input and use its execution-root path
+        # directly, without string expansion or placeholder substitution.
+        mounts_manifest = ":_mounts_manifest" if bundles else None,
+        score_metamodel_yaml = metamodel if metamodel else None,
         tools = external_needs + metamodel_label + [":sourcelinks_json", ":docs_bundle"] + mounts_manifest_label,
         visibility = ["//visibility:public"],
     )
 
+    # TEMPORARY DIFF NOTE: These commands consume build outputs from the
+    # execution root. ``execpath`` states that action-path contract explicitly.
     native.genrule(
         name = "metrics_json",
         srcs = [":needs_json"],
         outs = ["metrics.json"],
-        cmd = "cp $(location :needs_json)/metrics.json $@",
+        cmd = "cp $(execpath :needs_json)/metrics.json $@",
         visibility = ["//visibility:public"],
         tags = ["manual"],
     )
@@ -722,7 +730,7 @@ def docs(
         name = "needs_json_file",
         srcs = [":needs_json"],
         outs = ["needs.json"],
-        cmd = "cp $(location :needs_json)/needs.json $@",
+        cmd = "cp $(execpath :needs_json)/needs.json $@",
         visibility = ["//visibility:public"],
         tags = ["manual"],
     )

@@ -30,7 +30,7 @@ from sphinx_autobuild.__main__ import (
 )
 
 from src.extensions.score_mounts._resolver import load_mounts_manifest, resolve_walk_dir
-from src.helper_lib import Environment, get_runfiles_dir
+from src.helper_lib import Environment
 from src.helper_lib.config import DocsCliConfig
 
 logger = logging.getLogger(__name__)
@@ -90,9 +90,7 @@ def update_module_hash(build_dir: Path, sentinel_files: list[Path]) -> None:
     (build_dir / _MODULE_HASH_FILE).write_text(_compute_hash(sentinel_files))
 
 
-def mounted_watch_dirs(
-    manifest_path: Path, ws_root: Path | None, runfiles_dir: Path | None = None
-) -> list[str]:
+def mounted_watch_dirs(manifest_path: Path, config: DocsCliConfig) -> list[str]:
     """Return the directories provided by docs bundles for ``sphinx-autobuild``.
 
     This deliberately uses the same manifest and path-resolution rules as the
@@ -116,23 +114,10 @@ def mounted_watch_dirs(
         # which makes sphinx-autobuild observe unrelated files (including its
         # own output). Watch the generated data directories instead.
         if spec.src_root:
-            add_watch_dir(resolve_walk_dir(manifest, spec, ws_root, runfiles_dir))
+            add_watch_dir(resolve_walk_dir(spec, config))
 
         for data_file in spec.data:
-            if ws_root is not None and runfiles_dir is not None:
-                runfiles_str = str(runfiles_dir)
-                if "/bazel-out/" in runfiles_str:
-                    # The runfiles path points into the execroot's output
-                    # tree. Use the execroot prefix just like score_mounts.
-                    walk_file = Path(runfiles_str.split("/bazel-out/")[0]) / data_file
-                else:
-                    walk_file = (
-                        ws_root
-                        / "bazel-bin"
-                        / data_file.removeprefix("bazel-out/k8-fastbuild/bin/")
-                    )
-            else:
-                walk_file = Path.cwd() / data_file
+            walk_file = config.resolve_bazel_output_path(data_file)
             add_watch_dir(walk_file.parent)
 
     return watch_dirs
@@ -143,8 +128,9 @@ def sphinx_arguments(
 ) -> list[str]:
     """Build Sphinx arguments from the resolved launcher configuration."""
     output_dir = config.output_dir
+    source_dir = config.package_dir / env.required_path("SOURCE_DIRECTORY")
     base_arguments = [
-        str(config.source_dir),
+        str(source_dir),
         str(output_dir),
         "-W",  # treat warning as errors
         "--keep-going",  # do not abort after one error
@@ -167,9 +153,9 @@ def sphinx_arguments(
         # mixing action state into the declared output.
         base_arguments.extend(["-d", str(output_dir) + "_doctrees"])
 
-        # The sandboxed Needs rule transports options as JSON so spaces, quotes and
-        # equals signs survive the environment boundary. Append them last so an
-        # action-specific value can override one of the shared defaults above.
+        # The sandboxed Needs rule transports non-path Sphinx overrides as JSON
+        # so spaces, quotes and '=' survive the environment boundary. Append
+        # them last so action-specific values can override shared defaults.
         base_arguments.extend(env.string_list("SPHINX_EXTRA_OPTS", "[]"))
     else:
         # Interactive builds keep warnings in the workspace so developers can
@@ -179,32 +165,18 @@ def sphinx_arguments(
         base_arguments.extend(["--warning-file", str(output_dir / "warnings.txt")])
 
     if config_file := env.optional_path("SPHINX_CONFIG_FILE"):
-        # The action receives ctx.file.config.path, which is interpreted from
-        # the action's execution-root working directory. Resolve it locally
-        # instead of using runfiles lookup; interactive targets receive a
-        # runfiles-relative path and need that lookup before Sphinx gets the
-        # containing directory.
-        if config.is_bazel_build:
-            config_file = config_file.absolute()
-        elif not config_file.is_absolute():
-            config_file = get_runfiles_dir() / config_file
+        # Bazel run targets pass an rlocationpath, build actions pass the
+        # declared input's execution-root path, and direct callers use
+        # cwd-relative paths. The config owns those execution-mode differences.
+        config_file = config.resolve_input_path(config_file)
+        if config_file is None:
+            raise ValueError("Could not resolve SPHINX_CONFIG_FILE")
         base_arguments.extend(["-c", str(config_file.parent)])
 
     if metamodel_yaml := env.optional_path("SCORE_METAMODEL_YAML"):
-        # Under ``bazel run``, this environment variable is runfiles-relative
-        # and must be resolved through RUNFILES_DIR. A sandboxed Needs action
-        # instead expands the metamodel label to an execution-root path in
-        # SPHINX_EXTRA_OPTS; applying runfiles lookup there would escape the
-        # action's declared inputs.
-        if not config.is_bazel_build and not metamodel_yaml.is_absolute():
-            runfiles_dir = env.optional_path("RUNFILES_DIR")
-            ws_root = config.ws_root or Path()
-            metamodel_yaml = (
-                runfiles_dir / metamodel_yaml
-                if runfiles_dir is not None
-                else ws_root / metamodel_yaml
-            )
-        metamodel_yaml = metamodel_yaml.absolute()
+        metamodel_yaml = config.resolve_input_path(metamodel_yaml)
+        if metamodel_yaml is None:
+            raise ValueError("Could not resolve SCORE_METAMODEL_YAML")
         base_arguments.append(f"--define=score_metamodel_yaml={metamodel_yaml}")
 
     if github_repository := env.get("GITHUB_REPOSITORY", ""):
@@ -217,7 +189,13 @@ def sphinx_arguments(
         base_arguments.append("-A=github_version=main")
         # doc_path must be repo-relative so the edit URL does not contain the
         # absolute runner filesystem path (e.g. /home/runner/work/…/docs).
-        relative_doc_path = config.source_dir_relative_to_ws
+        if config.is_bazel_run:
+            assert config.ws_root
+            relative_doc_path = source_dir.relative_to(config.ws_root)
+        else:
+            # Direct calls and sandbox actions already use cwd-relative source
+            # paths; only bazel run needs its workspace prefix stripped.
+            relative_doc_path = source_dir
         base_arguments.append(f"-A=doc_path={relative_doc_path}")
 
     if known_good_json := env.optional_path("KNOWN_GOOD_JSON"):
@@ -231,17 +209,14 @@ def watch_arguments(config: DocsCliConfig) -> list[str]:
     mounts_manifest = env.optional_path("MOUNTS_MANIFEST")
     watch_arguments: list[str] = []
     if mounts_manifest:
-        # ``MOUNTS_MANIFEST`` is runfiles-relative under ``bazel run`` and
-        # an ordinary path for direct invocations, matching score_mounts.
-        manifest_path = (
-            get_runfiles_dir() / mounts_manifest
-            if config.is_bazel_run
-            else mounts_manifest
-        )
+        # The manifest is an rlocationpath under ``bazel run`` and a regular
+        # path for direct calls. Build actions do not invoke sphinx-autobuild.
+        manifest_path = config.resolve_input_path(mounts_manifest)
+        if manifest_path is None:
+            raise ValueError("Could not resolve MOUNTS_MANIFEST")
         for watch_dir in mounted_watch_dirs(
             manifest_path,
-            config.ws_root,
-            get_runfiles_dir() if config.is_bazel_run else None,
+            config,
         ):
             watch_arguments.extend(["--watch", watch_dir])
     return watch_arguments
@@ -276,7 +251,7 @@ def main(argv: list[str] | None = None) -> int:
         logger.info("Waiting for client to connect on port: " + str(args.debug_port))
         debugpy.wait_for_client()
 
-    config = DocsCliConfig.from_environment(env)
+    config = DocsCliConfig(env)
     ws_root = config.ws_root or Path()
     package_dir = config.package_dir
     output_dir = config.output_dir

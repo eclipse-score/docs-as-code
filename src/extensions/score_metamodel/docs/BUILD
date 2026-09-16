@@ -15,6 +15,9 @@ load("//:docs.bzl", "docs_bundle")
 load("@aspect_rules_py//py:defs.bzl", "py_binary")
 load("@docs_as_code_hub_env//:requirements.bzl", "all_requirements")
 
+# TEMPORARY DIFF NOTE: The generator, YAML input, and declared outputs are all
+# addressed from this genrule's execution root. ``execpath`` makes that action
+# path contract explicit for both its executable and file arguments.
 genrule(
     name = "generate_metamodel_rst",
     srcs = [
@@ -24,7 +27,7 @@ genrule(
         "generated/index.rst",
         "generated/metamodel_classes.mmd",
     ],
-    cmd = "$(location :generate_metamodel_rst_bin) --rst-output $(location generated/index.rst) --mmd-output $(location generated/metamodel_classes.mmd) $(location //src/extensions/score_metamodel:metamodel_yaml)",
+    cmd = "$(execpath :generate_metamodel_rst_bin) --rst-output $(execpath generated/index.rst) --mmd-output $(execpath generated/metamodel_classes.mmd) $(execpath //src/extensions/score_metamodel:metamodel_yaml)",
     tools = [":generate_metamodel_rst_bin"],
     visibility = ["//visibility:private"],
 )

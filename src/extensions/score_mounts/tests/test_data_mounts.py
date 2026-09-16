@@ -13,6 +13,7 @@
 """Tests for ``_resolve_data_mounts`` in the ``score_mounts`` extension."""
 
 from pathlib import Path
+from unittest.mock import Mock
 
 import pytest
 
@@ -36,8 +37,11 @@ def test_missing_data_file_raises(tmp_path: Path) -> None:
         ]
     )
 
+    cli_config = Mock()
+    cli_config.resolve_bazel_output_path.side_effect = lambda path: tmp_path / path
+
     with pytest.raises(ValueError, match="resolved data file does not exist"):
-        _resolve_data_mounts(manifest, tmp_path, tmp_path)
+        _resolve_data_mounts(manifest, cli_config)
 
 
 def test_existing_data_file_resolved(tmp_path: Path) -> None:
@@ -57,7 +61,11 @@ def test_existing_data_file_resolved(tmp_path: Path) -> None:
         ]
     )
 
-    mounts = _resolve_data_mounts(manifest, tmp_path, tmp_path / "runfiles")
+    cli_config = Mock()
+    cli_config.resolve_bazel_output_path.side_effect = lambda path: (
+        tmp_path / "bazel-bin" / Path(path).name
+    )
+    mounts = _resolve_data_mounts(manifest, cli_config)
 
     assert str(tmp_path / "bazel-bin") in mounts
 

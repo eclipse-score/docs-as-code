@@ -33,7 +33,8 @@ from docutils import nodes
 from sphinx.application import Sphinx
 from sphinx.util import logging
 
-from src.helper_lib import config_setdefault, get_runfiles_dir
+from src.helper_lib import config_setdefault
+from src.helper_lib.config import DocsCliConfig
 
 logger = logging.getLogger(__name__)
 
@@ -72,22 +73,22 @@ def use_document_source_as_plantuml_cwd(
             node["incdir"] = str(source.parent)
 
 
-def find_correct_path(runfiles: Path) -> Path:
+def find_correct_path(cli_config: DocsCliConfig) -> Path:
     """
     This ensures that the 'plantuml' binary path is found in local 'score_docs_as_code'
     and module use.
     """
-    if (Path(runfiles) / "score_docs_as_code+").exists():
-        # Docs-as-code used as a module with bazel 8
-        module = "score_docs_as_code+"
-    elif (Path(runfiles) / "score_docs_as_code~").exists():
-        # Docs-as-code used as a module with bazel 7
-        module = "score_docs_as_code~"
-    else:
-        # Docs-as-code is the current module
-        module = "_main"
+    # Bazel 8 and 7 use different canonical names for a module repository;
+    # local workspace use places this module under ``_main``.
+    for module in ("score_docs_as_code+", "score_docs_as_code~", "_main"):
+        plantuml_path = cli_config.resolve_input_path(
+            Path(module) / "src" / "plantuml",
+            runfiles_relative=True,
+        )
+        if plantuml_path is not None and plantuml_path.exists():
+            return plantuml_path
 
-    return runfiles / module / "src" / "plantuml"
+    raise FileNotFoundError("Could not locate PlantUML files in Bazel runfiles")
 
 
 def check_graphviz(app: Sphinx) -> None:
@@ -116,7 +117,7 @@ def check_graphviz(app: Sphinx) -> None:
 
 def setup(app: Sphinx):
     # we must overwrite the plantuml path due to Bazel
-    app.config.plantuml = str(find_correct_path(get_runfiles_dir()))
+    app.config.plantuml = str(find_correct_path(DocsCliConfig()))
     config_setdefault(app.config, "plantuml_output_format", "svg_obj")
     config_setdefault(app.config, "plantuml_syntax_error_image", True)
     config_setdefault(app.config, "needs_build_needumls", "_plantuml_sources")

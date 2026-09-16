@@ -46,38 +46,39 @@ from src.extensions.score_mounts._resolver import (
     resolve_source_files,
     resolve_walk_dir,
 )
-from src.helper_lib import Environment, find_ws_root, get_runfiles_dir
+from src.helper_lib import Environment
+from src.helper_lib.config import DocsCliConfig
 
 env = Environment()
 
 logger = logging.getLogger(__name__)
 
 
-def _read_manifest(config: Config):
+def _read_manifest(config: Config, cli_config: DocsCliConfig):
     """Locate and load the mounts manifest, or return ``None`` when unset.
 
     The manifest path is passed by Bazel either via the ``mounts_manifest`` config
     value or the ``MOUNTS`` env var. Its interpretation depends on the build
-    context: under ``bazel run`` it is a runfiles-relative path
-    (``$(rlocationpath)``) resolved against the runfiles dir; in a sandbox build
-    it is relative to the exec root (``$(location)``). Resolving the path here
-    keeps that context branch out of the pure ``_resolver`` module.
+    context: under ``bazel run`` it is a runfiles address; in a sandbox build
+    it is relative to the execution root. The launcher config resolves either
+    spelling before the pure ``_resolver`` module reads the manifest.
     """
     raw = getattr(config, "mounts_manifest", None) or env.get("MOUNTS_MANIFEST", "")
     if not raw or not raw.strip() or not isinstance(raw, str):
         return None
 
-    # ``bazel run`` passes an rlocation-relative path; ``sphinx_docs`` in a
-    # sandbox passes its execroot-relative ``$(location)`` path directly.
-    manifest_path = get_runfiles_dir() / raw if find_ws_root() else Path(raw)
+    # ``bazel run`` passes a runfiles address; ``sphinx_docs`` in a sandbox
+    # passes the declared input's execution-root-relative path directly.
+    manifest_path = cli_config.resolve_input_path(Path(raw))
+    if manifest_path is None:
+        raise ValueError(f"Could not resolve mounts manifest: {raw}")
 
     return load_mounts_manifest(manifest_path)
 
 
 def _resolve_data_mounts(
     manifest: MountsManifest,
-    ws_root: Path | None,
-    runfiles_dir: Path | None,
+    cli_config: DocsCliConfig,
 ) -> dict[str, MountSpec]:
     """Resolve data file mounts from the manifest.
 
@@ -87,20 +88,7 @@ def _resolve_data_mounts(
     data_mounts: dict[str, MountSpec] = {}
     for spec in manifest.mounts:
         for data_file in spec.data:
-            if ws_root is not None and runfiles_dir is not None:
-                runfiles_str = str(runfiles_dir)
-                if "/bazel-out/" in runfiles_str:
-                    # Execroot = runfiles path before the first /bazel-out/ occurrence
-                    # e.g. runfiles=execroot/_main/bazel-out/... => execroot=execroot/_main
-                    walk_file = Path(runfiles_str.split("/bazel-out/")[0]) / data_file
-                else:
-                    walk_file = (
-                        ws_root
-                        / "bazel-bin"
-                        / data_file.removeprefix("bazel-out/k8-fastbuild/bin/")
-                    )
-            else:
-                walk_file = Path.cwd() / data_file
+            walk_file = cli_config.resolve_bazel_output_path(data_file)
             if not walk_file.is_file():
                 raise ValueError(
                     "score_mounts: resolved data file does not exist: "
@@ -286,8 +274,7 @@ def _exclude_mounted_primary_sources(
 
 def _resolve_source_mounts(
     manifest: MountsManifest,
-    ws_root: Path | None,
-    runfiles_dir: Path | None,
+    cli_config: DocsCliConfig,
 ) -> list[tuple[MountSpec, Path]]:
     """Resolve and validate the directory mounts used for ownership checks.
 
@@ -302,7 +289,7 @@ def _resolve_source_mounts(
     for spec in manifest.mounts:
         if not spec.src_root or spec.files:
             continue
-        walk_dir = resolve_walk_dir(manifest, spec, ws_root, runfiles_dir)
+        walk_dir = resolve_walk_dir(spec, cli_config)
         if not walk_dir.is_dir():
             raise ValueError(
                 "score_mounts: resolved mount dir does not exist: "
@@ -321,12 +308,10 @@ def _on_config_inited(app: Sphinx, config: Config) -> None:
     walks, and writes the assembled list to ``config.mounts``. A missing or
     empty manifest is a no-op.
     """
-    manifest = _read_manifest(config)
+    cli_config = DocsCliConfig()
+    manifest = _read_manifest(config, cli_config)
     if manifest is None or not manifest.mounts:
         return
-
-    ws_root = find_ws_root()
-    runfiles_dir = get_runfiles_dir() if ws_root is not None else None
 
     # In every context sphinx_mounts reads the bundle's original files (no copy
     # is made); directory mounts are walked while explicit source mounts use
@@ -343,7 +328,7 @@ def _on_config_inited(app: Sphinx, config: Config) -> None:
     # Directory mounts need to be resolved as a group before runtime entries are
     # assembled. Only then can their physical roots be compared for nesting and
     # can both Sphinx's primary walk and each parent mount be given exclusions.
-    source_mounts = _resolve_source_mounts(manifest, ws_root, runfiles_dir)
+    source_mounts = _resolve_source_mounts(manifest, cli_config)
     primary_exclusions, nested_exclusions = _mount_exclusions(
         Path(app.srcdir).resolve(), source_mounts
     )
@@ -369,7 +354,7 @@ def _on_config_inited(app: Sphinx, config: Config) -> None:
         if spec.files:
             # Explicit source bundles use sphinx-mounts' file-list mode so the
             # original files are read directly without discovering siblings.
-            source_files = resolve_source_files(manifest, spec, ws_root, runfiles_dir)
+            source_files = resolve_source_files(spec, cli_config)
             source_suffixes = _configured_source_suffixes(config)
             document_files = [
                 source_file
@@ -402,10 +387,10 @@ def _on_config_inited(app: Sphinx, config: Config) -> None:
 
     # Resolve data (e.g. genrule outputs in bazel-out).
     # Data paths are execroot-relative (e.g. bazel-out/.../bin/src/.../index.rst).
-    # During bazel run: compute execroot from RUNFILES_DIR; during sandboxed build:
+    # During bazel run: compute execroot from the runfiles tree; in a sandboxed build:
     # cwd IS the execroot.
     # Only the parent directories of resolved files are added to mounts.
-    data_mounts = _resolve_data_mounts(manifest, ws_root, runfiles_dir)
+    data_mounts = _resolve_data_mounts(manifest, cli_config)
     for walk_dir_str, spec in data_mounts.items():
         config.mounts.append(_make_mount_entry(Path(walk_dir_str), spec))
     logger.info("score_mounts: added %d data mount(s)", len(data_mounts))

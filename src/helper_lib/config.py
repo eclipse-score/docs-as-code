@@ -12,6 +12,7 @@
 # *******************************************************************************
 
 import logging
+import os
 from enum import Enum
 from functools import cached_property
 from pathlib import Path
@@ -34,9 +35,9 @@ class DocsCliConfig:
 
     Keeping environment parsing in one place lets the launcher operate on a
     stable configuration object. Paths stored on this object are resolved to
-    the filesystem visible to the current process. The logical package and
-    source paths remain available for repository metadata such as GitHub edit
-    links.
+    the filesystem visible to the current process. Paths inside the Sphinx
+    source tree belong to Sphinx itself; this config handles launcher paths,
+    including inputs located through Bazel runfiles.
     """
 
     def _identify_environment(self) -> ExecutionEnvironment:
@@ -62,22 +63,26 @@ class DocsCliConfig:
         """Whether the launcher was started outside Bazel."""
         return self.environment == ExecutionEnvironment.DIRECT
 
-    @classmethod
-    def from_environment(cls, env: Environment | None = None) -> "DocsCliConfig":
-        """Load configuration from the process environment or a test mapping."""
-        return cls(env if env is not None else Environment())
+    @property
+    def uses_ide_support_runfiles(self) -> bool:
+        """Whether direct invocation found the dedicated IDE runfiles tree."""
+        return (
+            self.is_direct
+            and self._runfiles_dir is not None
+            and self._runfiles_dir.name == "ide_support.runfiles"
+        )
 
-    def __init__(self, env: Environment):
+    def __init__(self, env: Environment | None = None):
         """
         Load launcher configuration from the current Bazel environment.
 
         Specifically, this method handles bazel build and run differences.
         """
 
-        self._env = env
+        self._env = env if env is not None else Environment()
 
         # These three must be queried first:
-        self.ws_root = env.optional_path("BUILD_WORKSPACE_DIRECTORY")
+        self.ws_root = self._env.optional_path("BUILD_WORKSPACE_DIRECTORY")
         self._runfiles = Runfiles.Create()
         self.environment = self._identify_environment()
 
@@ -85,17 +90,20 @@ class DocsCliConfig:
         if self.ws_root:
             self._require_directory(self.ws_root, "BUILD_WORKSPACE_DIRECTORY")
 
-        self.action = env.get("ACTION")
-
         logger.debug(
-            "Resolved documentation paths: environment=%s, cwd=%s, "
-            "package_dir=%s, source_directory=%s, output_dir=%s",
+            "Resolved documentation environment: environment=%s, cwd=%s, "
+            "workspace_root=%s, action=%s",
             self.environment.value,
             Path.cwd(),
-            self.package_dir,
-            self.source_dir_relative_to_ws,
-            self.output_dir,
+            self.ws_root,
+            self.action,
         )
+
+    @cached_property
+    def action(self) -> str | None:
+        # Environment.get uses an empty string as its optional default; expose
+        # a missing or empty action as None to distinguish it from real actions.
+        return self._env.get("ACTION", "") or None
 
     @cached_property
     def git_root(self) -> Path | None:
@@ -146,46 +154,118 @@ class DocsCliConfig:
             return self.package_dir / "_build"
 
     @cached_property
-    def source_dir(self) -> Path:
-        """Return the source directory in the current execution context."""
-        # SOURCE_DIRECTORY is relative in every mode. package_dir is empty for
-        # build and direct modes because those paths are already relative to
-        # their execution directory; bazel run adds its workspace package
-        # prefix here.
-        source_dir_relative = self._env.required_path("SOURCE_DIRECTORY")
-        assert not source_dir_relative.is_absolute()
-        return self.package_dir / source_dir_relative
+    def _runfiles_dir(self) -> Path | None:
+        """Return the runfiles tree when one is available to this process."""
+        if self._runfiles:
+            # RUNFILES_DIR is optional when Bazel uses a manifest-only layout;
+            # resolve_input_path can still use the runfiles library in that case.
+            runfiles_dir = Environment(self._runfiles.EnvVars()).optional_path(
+                "RUNFILES_DIR"
+            )
+            if runfiles_dir is not None:
+                return runfiles_dir
 
-    @cached_property
-    def source_dir_relative_to_ws(self) -> Path:
-        """Return the source directory relative to the workspace when running."""
-        if self.is_bazel_run:
-            # bazel run has an absolute workspace root, so remove that prefix
-            # to produce the workspace-relative path used by GitHub edit links.
-            assert self.ws_root
-            return self.source_dir.relative_to(self.ws_root)
+        if self.is_direct:
+            # IDE builds run outside Bazel but still consume the runfiles tree
+            # produced by the dedicated ide_support target.
+            if self.git_root is not None:
+                ide_runfiles_dir = self.git_root / "bazel-bin" / "ide_support.runfiles"
+                if ide_runfiles_dir.is_dir():
+                    return ide_runfiles_dir
+            else:
+                return None
         else:
-            # Build actions intentionally have no workspace root in their
-            # sandbox, and direct invocations use cwd as their path base. Their
-            # source path is therefore already in the most useful relative
-            # form available here.
-            assert not self.ws_root
-            return self.source_dir
+            # A sandboxed process can resolve runfiles through its manifest
+            # even when no directory-form runfiles root is exposed.
+            return None
 
-    def _resolve_input_path(self, path: Path) -> Path | None:
+        return None
+
+    def _resolve_runfiles_path(self, path: Path | str) -> Path | None:
+        """Resolve a runfiles-relative input through Bazel or the IDE runfiles tree.
+
+        ``Rlocation`` supports manifest-only runfiles layouts. Direct IDE
+        invocations do not have a runfiles library instance, so they use the
+        runfiles directory discovered from the local ``ide_support`` target.
         """
-        Resolve an optional config input in its current execution context.
+        path = Path(path)
+        if path.is_absolute():
+            return path
+
+        # Bazel's external repository paths can be expressed as
+        # ``_main/../<canonical-repo>/...``. Normalize that intentional parent
+        # traversal before asking the runfiles library to resolve the key.
+        normalized_path = Path(os.path.normpath(path.as_posix()))
+        if normalized_path.parts and normalized_path.parts[0] == "..":
+            return None
+
+        if self._runfiles:
+            location = self._runfiles.Rlocation(normalized_path.as_posix())
+            if location:
+                return Path(location).absolute()
+
+        if self._runfiles_dir is not None:
+            return Path(os.path.abspath(self._runfiles_dir / normalized_path))
+        return None
+
+    def relative_to_runfiles(self, path: Path) -> Path | None:
+        """Return a path's runfiles-relative spelling when it lies in runfiles."""
+        if self._runfiles_dir is None:
+            return None
+        try:
+            return path.resolve().relative_to(self._runfiles_dir.resolve())
+        except ValueError:
+            return None
+
+    def resolve_bazel_output_path(self, path: Path | str) -> Path:
+        """Resolve an execroot-relative Bazel output in the current context.
+
+        ``bazel run`` exposes generated outputs below ``bazel-bin``. Some
+        runfiles layouts instead point into the execroot's ``bazel-out`` tree,
+        in which case the execroot prefix is recovered from that runfiles path.
+        Sandboxed builds already run from the execroot.
         """
-        if self.is_bazel_build or self.is_bazel_run:
-            # Interactive Bazel targets receive runfiles-relative paths from
-            # ``rlocationpath``. The runfiles tree is the only stable location
-            # for generated files and external repository inputs.
-            assert self._runfiles
-            loc = self._runfiles.Rlocation(str(path))
-            return Path(loc).absolute() if loc else None
+        path = Path(path)
+        if path.is_absolute():
+            return path
+
+        runfiles_dir = self._runfiles_dir
+        if self.is_bazel_run and runfiles_dir is not None:
+            runfiles_spelling = runfiles_dir.as_posix()
+            if "/bazel-out/" in runfiles_spelling:
+                execroot = Path(runfiles_spelling.split("/bazel-out/", 1)[0])
+                return execroot / path
+
+        if self.is_bazel_run and self.ws_root is not None:
+            parts = path.parts
+            if len(parts) >= 3 and parts[0] == "bazel-out" and parts[2] == "bin":
+                return self.ws_root / "bazel-bin" / Path(*parts[3:])
+
+        return Path.cwd() / path
+
+    def resolve_input_path(
+        self, path: Path, *, runfiles_relative: bool = False
+    ) -> Path | None:
+        """Resolve an input path for the current mode or explicitly from runfiles.
+
+        ``runfiles_relative`` is for callers that already know the value is a
+        runfiles address, including direct IDE invocations using ide_support.
+        Otherwise the path origin follows the active launcher mode.
+        """
+        if path.is_absolute():
+            return path
+
+        if runfiles_relative or self.is_bazel_run:
+            # docs.bzl passes rlocationpath values to interactive Bazel targets;
+            # this also handles manifest-only layouts and direct IDE callers.
+            return self._resolve_runfiles_path(path)
+        elif self.is_bazel_build:
+            # Build actions pass declared input paths relative to their
+            # execution root, not runfiles-relative paths.
+            return path.absolute()
         else:
-            # Direct invocations resolve relative inputs from the workspace or
-            # current working directory.
+            # Direct invocations resolve relative inputs from the workspace
+            # when present, or otherwise from the caller's current directory.
             base = self.ws_root or Path.cwd()
             return (base / path).absolute()
 

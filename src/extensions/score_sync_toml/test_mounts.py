@@ -12,6 +12,7 @@ from sphinx.application import Sphinx
 from src.extensions import score_sync_toml
 from src.extensions.score_sync_toml import _mounts
 from src.extensions.score_sync_toml._mounts import materialize_mounts
+from src.helper_lib import config as config_module
 
 
 def test_materialize_mounts_serializes_structured_entries():
@@ -54,8 +55,12 @@ def test_materialize_mounts_maps_external_runfiles_path_to_bazel_bin(
     runfiles_dir = tmp_path / "runfiles"
     walk_dir = runfiles_dir / "score_process_description+" / "process"
     walk_dir.mkdir(parents=True)
-    monkeypatch.setattr(_mounts, "find_git_root", lambda: None)
-    monkeypatch.setattr(_mounts, "get_runfiles_dir", lambda: runfiles_dir)
+    monkeypatch.setattr(config_module, "find_git_root", lambda: None)
+    monkeypatch.setattr(
+        _mounts.DocsCliConfig,
+        "relative_to_runfiles",
+        lambda _, path: path.relative_to(runfiles_dir),
+    )
 
     fragment = materialize_mounts(
         [
@@ -78,7 +83,11 @@ def test_materialize_mounts_preserves_explicit_source_files(
     """Serialize explicit mounts as files instead of widening them to dirs."""
     git_root = tmp_path / "workspace"
     git_root.mkdir()
-    monkeypatch.setattr(_mounts, "find_git_root", lambda: git_root)
+    monkeypatch.setattr(
+        _mounts.DocsCliConfig,
+        "git_root",
+        property(lambda _: git_root),
+    )
 
     fragment = materialize_mounts(
         [
@@ -120,7 +129,7 @@ def test_setup_skips_toml_sync_without_git_worktree(
                 "setup must not register TOML sync without a Git worktree"
             )
 
-    monkeypatch.setattr(score_sync_toml, "find_git_root", lambda: None)
+    monkeypatch.setattr(config_module, "find_git_root", lambda: None)
 
     metadata = score_sync_toml.setup(cast(Sphinx, AppWithoutGitWorktree()))
 

@@ -15,7 +15,8 @@ from pathlib import Path
 from sphinx.application import Sphinx
 
 from src.extensions.score_sync_toml._mounts import register_mounts
-from src.helper_lib import config_setdefault, find_git_root
+from src.helper_lib import config_setdefault
+from src.helper_lib.config import DocsCliConfig
 
 
 def setup(app: Sphinx) -> dict[str, str | bool]:
@@ -28,7 +29,7 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     # A Bazel build action has no Git worktree. In that context this extension
     # must be inactive: writing a fallback file into the sandbox is useless and
     # can make generated configuration appear to work when it is discarded.
-    git_root = find_git_root()
+    git_root = DocsCliConfig().git_root
     if git_root is None:
         app.config.suppress_warnings += [
             "needs_config_writer.unsupported_type",

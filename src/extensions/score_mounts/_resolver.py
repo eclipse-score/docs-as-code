@@ -21,10 +21,11 @@ context needed to resolve the manifest's ``short_path`` values safely."""
 from __future__ import annotations
 
 import json
-import os
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import cast
+
+from src.helper_lib.config import DocsCliConfig
 
 
 @dataclass(frozen=True)
@@ -110,16 +111,16 @@ def load_mounts_manifest(manifest_path: str | Path) -> MountsManifest:
 
 
 def resolve_walk_dir(
-    manifest: MountsManifest,
     spec: MountSpec,
-    ws_root: Path | None,
-    runfiles_dir: Path | None = None,
+    cli_config: DocsCliConfig,
 ) -> Path:
-    """Resolve a mount directory for either ``bazel run`` or a sandbox build.
+    """Resolve a mount directory through the launcher execution config.
 
     Generated source roots are recorded with their execroot-relative bazel-out
     path, while ``bazel run`` exposes the same artifacts below ``bazel-bin`` in
-    the workspace. The ``generated`` flag selects that translation.
+    the workspace. The ``generated`` flag selects that translation. External
+    source roots use their runfiles address under ``bazel run``; all other source
+    roots are relative to the visible workspace or current execution root.
 
     For example, a generated ``bazel-out/k8-fastbuild/bin/pkg/docs`` root
     resolves to ``<workspace>/bazel-bin/pkg/docs`` under ``bazel run`` and to
@@ -128,37 +129,27 @@ def resolve_walk_dir(
     and ``<execroot>/<src_root>`` in a sandbox.
     """
     if spec.generated:
-        if ws_root is not None:
-            # Generated source files are exposed through bazel-bin at runtime,
-            # while their manifest paths are execroot-relative bazel-out paths.
-            output_parts = spec.src_root.split("/")
-            if (
-                # A generated file may be directly below the configuration's
-                # ``bin`` directory, so the source root itself can end there.
-                len(output_parts) >= 3
-                and output_parts[0] == "bazel-out"
-                and output_parts[2] == "bin"
-            ):
-                return ws_root / "bazel-bin" / "/".join(output_parts[3:])
-            return ws_root / spec.src_root
-        return Path.cwd() / spec.src_root
-    if spec.external and ws_root is not None:
-        if runfiles_dir is None:
-            raise ValueError("external mounts under bazel run require RUNFILES_DIR")
+        return cli_config.resolve_bazel_output_path(spec.src_root)
+
+    if spec.external and cli_config.is_bazel_run:
         # External short paths begin with ``../<repo>+`` relative to the
-        # runfiles ``_main`` directory, not relative to a manifest nested in a
-        # Bazel package. Prefixing ``_main`` preserves that Bazel convention.
-        return Path(os.path.abspath(runfiles_dir / "_main" / spec.runtime_path))
-    if ws_root is not None:
-        return ws_root / spec.src_root
-    return Path.cwd() / spec.src_root
+        # runfiles ``_main`` directory, not relative to the manifest package.
+        # This branch is specific to bazel run, where relative inputs already
+        # resolve through runfiles in DocsCliConfig.
+        runfile_path = cli_config.resolve_input_path(Path("_main") / spec.runtime_path)
+        if runfile_path is None:
+            raise ValueError(
+                "score_mounts: cannot resolve external mount from runfiles: "
+                f"{spec.runtime_path} (mount_at={spec.mount_at})"
+            )
+        return runfile_path
+
+    return (cli_config.ws_root or Path.cwd()) / spec.src_root
 
 
 def resolve_source_files(
-    manifest: MountsManifest,
     spec: MountSpec,
-    ws_root: Path | None,
-    runfiles_dir: Path | None = None,
+    cli_config: DocsCliConfig,
 ) -> list[Path]:
     """Resolve an explicit source allowlist below its original parent.
 
@@ -166,7 +157,7 @@ def resolve_source_files(
     mounts. The manifest's relative file names then identify only the Bazel
     artifacts declared by ``docs_bundle(srcs = [...])``.
     """
-    walk_dir = resolve_walk_dir(manifest, spec, ws_root, runfiles_dir)
+    walk_dir = resolve_walk_dir(spec, cli_config)
     resolved_files: list[Path] = []
     for relative_path in spec.files:
         source_file = walk_dir / relative_path

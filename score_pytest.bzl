@@ -42,8 +42,11 @@ def score_pytest(name, srcs, args = [], data = [], deps = [], env = {}, plugins 
             pytest_bootstrap,
         ] + srcs,
         main = pytest_bootstrap,
+        # TEMPORARY DIFF NOTE: Config and test-file arguments now use runfiles
+        # keys instead of location expansions. The bootstrap resolves them
+        # before pytest starts, including in manifest-only runfiles layouts.
         args = [
-                   "-c $(location %s)" % pytest_config,
+                   "-c $(rlocationpath %s)" % pytest_config,
                    "-p no:cacheprovider",
 
                    # XML_OUTPUT_FILE: Location to which test actions should write a test
@@ -54,8 +57,14 @@ def score_pytest(name, srcs, args = [], data = [], deps = [], env = {}, plugins 
                ] +
                args +
                plugins +
-               ["$(location %s)" % x for x in srcs],
-        deps = deps + ["@score_docs_as_code//score_pytest:attribute_plugin"],
+               ["$(rlocationpath %s)" % x for x in srcs],
+        # pytest consumes filesystem paths, not runfiles addresses. The
+        # bootstrap resolves these rlocationpaths before handing arguments to
+        # pytest.
+        deps = deps + [
+            "@score_docs_as_code//score_pytest:attribute_plugin",
+            "@rules_python//python/runfiles",
+        ],
         data = [
             pytest_config,
         ] + data,

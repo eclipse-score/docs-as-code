@@ -58,6 +58,7 @@ from src.extensions.score_source_code_linker.repo_source_links import RepoInfo
 from src.helper_lib import (
     get_current_git_hash,
 )
+from src.helper_lib.config import DocsCliConfig
 
 
 def test_need(**kwargs: Any) -> NeedItem:
@@ -363,6 +364,25 @@ def test_combining_without_source_links_continues_with_empty_code_links(
 ) -> None:
     """A build without a pre-generated source-link input must not scan or fail."""
     monkeypatch.delenv("SCORE_SOURCELINKS", raising=False)
+
+    build_and_save_combined_file(temp_dir)
+
+    grouped_cache = temp_dir / "score_scl_grouped_cache.json"
+    assert json.loads(grouped_cache.read_text(encoding="utf-8")) == []
+
+
+def test_combining_resolves_source_links_runfile(
+    temp_dir: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Resolve Bazel's logical runfiles address before opening the JSON input."""
+    source_links = temp_dir / "source_links.json"
+    source_links.write_text("[]", encoding="utf-8")
+    monkeypatch.setenv("SCORE_SOURCELINKS", "_main/generated/source_links.json")
+    monkeypatch.setattr(
+        DocsCliConfig,
+        "resolve_input_path",
+        lambda _self, _path: source_links,
+    )
 
     build_and_save_combined_file(temp_dir)
 

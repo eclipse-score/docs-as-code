@@ -59,7 +59,8 @@ from src.extensions.score_source_code_linker.xml_parser import (
     construct_and_add_need,
     run_xml_parser,
 )
-from src.helper_lib import Environment, find_ws_root
+from src.helper_lib import Environment
+from src.helper_lib.config import DocsCliConfig
 
 env = Environment()
 
@@ -93,7 +94,15 @@ def build_and_save_combined_file(outdir: Path, app: Sphinx | None = None):
             getattr(app.config, "score_sourcelinks_json", "") or ""
         ).strip()
     if source_code_links_path:
-        source_code_links_json = Path(source_code_links_path)
+        raw_source_code_links_json = Path(source_code_links_path)
+        source_code_links_json = DocsCliConfig().resolve_input_path(
+            raw_source_code_links_json
+        )
+        if source_code_links_json is None:
+            raise FileNotFoundError(
+                "Could not resolve pre-generated source-code links file: "
+                f"{raw_source_code_links_json}"
+            )
         try:
             source_code_links = load_source_code_links_json(source_code_links_json)
         except FileNotFoundError as exc:
@@ -174,14 +183,14 @@ def register_test_code_linker(app: Sphinx):
     app.connect("env-updated", setup_test_code_linker, priority=505)
 
 
-def setup_test_code_linker(app: Sphinx, env: BuildEnvironment):
+def setup_test_code_linker(app: Sphinx, build_env: BuildEnvironment):
     # TODO instead of implementing our own caching here, we should rely on Bazel
     tl_cache_json = get_cache_filename(app.outdir, "score_xml_parser_cache.json")
     if (
         not tl_cache_json.exists()
         or not app.config.skip_rescanning_via_source_code_linker
     ):
-        ws_root = find_ws_root()
+        ws_root = DocsCliConfig().ws_root
         if not ws_root:
             return
         LOGGER.debug(
@@ -204,7 +213,7 @@ def setup_test_code_linker(app: Sphinx, env: BuildEnvironment):
             LOGGER.info(f"{'=' * 80}", type="score_source_code_linker")
             return
 
-        run_xml_parser(app, env)
+        run_xml_parser(app, build_env)
         return
     tcn_cache = get_cache_filename(app.outdir, "score_testcaseneeds_cache.json")
     assert tcn_cache.exists(), (

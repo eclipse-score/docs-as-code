@@ -34,10 +34,10 @@ from src.extensions.score_metamodel.yaml_parser import (
     load_metamodel_data as load_metamodel_data,
     validate_mandatory_regexes as validate_mandatory_regexes,
 )
-from src.helper_lib import Environment, config_setdefault
+from src.helper_lib import config_setdefault
+from src.helper_lib.config import DocsCliConfig
 
 logger = logging.get_logger(__name__)
-env = Environment()
 
 local_check_function = Callable[[Sphinx, NeedItem, CheckLogger], None]
 graph_check_function = Callable[[Sphinx, NeedsView, CheckLogger], None]
@@ -110,7 +110,7 @@ def _run_checks(app: Sphinx) -> None:
 
     logger.debug(f"Running checks for {len(needs_all_needs)} needs")
 
-    ws_root = env.optional_path("BUILD_WORKSPACE_DIRECTORY")
+    ws_root = DocsCliConfig().ws_root
     cwd_or_ws_root = ws_root if ws_root else Path.cwd()
     prefix = str(Path(app.srcdir).relative_to(cwd_or_ws_root))
 

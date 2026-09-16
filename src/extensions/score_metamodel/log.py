@@ -18,12 +18,11 @@ from sphinx_needs import logging
 from sphinx_needs.logging import SphinxLoggerAdapter
 from sphinx_needs.need_item import NeedItem
 
-from src.helper_lib import Environment
+from src.helper_lib.config import DocsCliConfig
 
 Location = str | tuple[str | None, int | None] | Node | None
 NewCheck = tuple[str, Location]
 logger = logging.get_logger(__name__)
-env = Environment()
 
 
 class CheckLogger:
@@ -39,9 +38,10 @@ class CheckLogger:
         self._prefix = prefix
         self._new_checks: list[NewCheck] = []
         self._compatibility = compatibility
+        cli_config = DocsCliConfig()
+        self._has_bazel_runfiles = cli_config.is_bazel_run or cli_config.is_bazel_build
 
-    @staticmethod
-    def _location(need: NeedItem, prefix: str):
+    def _location(self, need: NeedItem):
         def get(key: str) -> Any:
             return need.get(key, None)
 
@@ -49,12 +49,10 @@ class CheckLogger:
             # Note: passing the location as a string allows us to use
             # readable relative paths, passing as a tuple results
             # in absolute paths to ~/.cache/.../bazel-out/..
-            if env.optional_path("RUNFILES_DIR") or env.optional_path(
-                "RUNFILES_MANIFEST_FILE"
-            ):
+            if self._has_bazel_runfiles:
                 matching_file = f"{need['docname']}{need['doctype']}"
             else:
-                matching_file = f"{prefix}/{need['docname']}{need['doctype']}"
+                matching_file = f"{self._prefix}/{need['docname']}{need['doctype']}"
 
             return f"{matching_file}:{need['lineno']}"
         return None
@@ -63,7 +61,7 @@ class CheckLogger:
         self, need: NeedItem, option: str, msg: str, is_new_check: bool = False
     ):
         full_msg = f"{need['id']}.{option} ({need.get(option, None)}): {msg}"
-        location = CheckLogger._location(need, self._prefix)
+        location = self._location(need)
         self._log_message(full_msg, location, is_new_check, need)
 
     def warning_for_link(
@@ -94,7 +92,7 @@ class CheckLogger:
         category: str = "need",
     ):
         full_msg = f"{need['id']}: {msg}"
-        location = CheckLogger._location(need, self._prefix)
+        location = self._location(need)
         self._log_message(full_msg, location, is_new_check, need, category)
 
     def _log_message(

@@ -29,17 +29,19 @@ genrule(
         "generated/index.rst",
         "generated/generated_data.mmd",
     ],
+    # TEMPORARY DIFF NOTE: The command writes declared outputs from the
+    # execution root, so ``execpath`` states the output-path contract explicitly.
     # The RST and Mermaid file are both declared sources, but only the RST
-    # should be registered as a Sphinx document. The Mermaid file is a
-    # companion asset that must remain readable next to the original RST.
-    cmd = """cat > $(location generated/index.rst) <<'EOF'
+    # should be registered as a Sphinx document. The Mermaid file is a companion
+    # asset that must remain readable next to the original RST.
+    cmd = """cat > $(execpath generated/index.rst) <<'EOF'
 Generated Data Page
 ===================
 
 .. mermaid:: generated_data.mmd
    :name: generated-data-diagram
 EOF
-cat > $(location generated/generated_data.mmd) <<'EOF'
+cat > $(execpath generated/generated_data.mmd) <<'EOF'
 classDiagram
   class GeneratedData
 EOF""",

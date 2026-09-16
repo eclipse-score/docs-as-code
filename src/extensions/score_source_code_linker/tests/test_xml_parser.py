@@ -35,6 +35,7 @@ from attribute_plugin import add_test_properties  # type: ignore[import-untyped]
 
 import src.extensions.score_source_code_linker.xml_parser as xml_parser
 from src.extensions.score_source_code_linker.testlink import DataOfTestCase
+from src.helper_lib.config import DocsCliConfig
 
 
 # Unsure if I should make these last a session or not
@@ -579,6 +580,26 @@ def test_get_metadata_from_test_path_combo_with_hash(
     json_file.write_text(json.dumps(_KNOWN_GOOD_WITH_HASH))
     monkeypatch.setenv("KNOWN_GOOD_JSON", str(json_file))
     md = xml_parser.get_metadata_from_test_path(_COMBO_TEST_PATH)
+    assert md["repo_name"] == "score_docs_as_code"
+    assert md["hash"] == "abc123hashvalue"
+    assert md["url"] == "https://github.com/eclipse-score/docs-as-code"
+
+
+def test_get_metadata_from_test_path_resolves_known_good_runfile(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
+    """Resolve the Bazel runfiles address before reading known-good metadata."""
+    json_file = tmp_path / "known_good.json"
+    json_file.write_text(json.dumps(_KNOWN_GOOD_WITH_HASH), encoding="utf-8")
+    monkeypatch.setenv("KNOWN_GOOD_JSON", "_main/config/known_good.json")
+    monkeypatch.setattr(
+        DocsCliConfig,
+        "resolve_input_path",
+        lambda _self, _path: json_file,
+    )
+
+    md = xml_parser.get_metadata_from_test_path(_COMBO_TEST_PATH)
+
     assert md["repo_name"] == "score_docs_as_code"
     assert md["hash"] == "abc123hashvalue"
     assert md["url"] == "https://github.com/eclipse-score/docs-as-code"

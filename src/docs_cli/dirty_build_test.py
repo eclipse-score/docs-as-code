@@ -13,6 +13,7 @@
 
 import json
 from pathlib import Path
+from unittest.mock import Mock
 
 import pytest
 from pyfakefs.fake_filesystem import FakeFilesystem as FFS
@@ -195,8 +196,20 @@ def test_mounted_watch_dirs_match_sphinx_mount_paths(tmp_path: Path) -> None:
     )
     workspace = tmp_path / "workspace"
     runfiles_dir = tmp_path / "runfiles"
+    config = Mock(is_bazel_run=True)
+    config.ws_root = workspace
 
-    assert mounted_watch_dirs(manifest_path, workspace, runfiles_dir) == [
+    def resolve_input_path(path: Path) -> Path:
+        # In bazel run, DocsCliConfig interprets every relative input as a
+        # runfiles address; callers do not need to select that mode themselves.
+        relative_path = Path(
+            *(part for part in Path(path).parts if part not in {"_main", ".."})
+        )
+        return runfiles_dir / relative_path
+
+    config.resolve_input_path.side_effect = resolve_input_path
+
+    assert mounted_watch_dirs(manifest_path, config) == [
         str(workspace / "extensions/local/docs"),
         str(runfiles_dir / "vendor+" / "docs"),
     ]
@@ -222,8 +235,11 @@ def test_mounted_watch_dirs_use_data_directories_for_pure_data_bundles(
         encoding="utf-8",
     )
     workspace = tmp_path / "workspace"
-    runfiles_dir = tmp_path / "runfiles"
+    config = Mock()
+    config.resolve_bazel_output_path.return_value = (
+        workspace / "bazel-bin/pkg/generated/index.rst"
+    )
 
-    assert mounted_watch_dirs(manifest_path, workspace, runfiles_dir) == [
+    assert mounted_watch_dirs(manifest_path, config) == [
         str(workspace / "bazel-bin/pkg/generated")
     ]

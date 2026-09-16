@@ -21,7 +21,7 @@ from sphinx.config import Config
 from sphinx.util import logging
 from sphinx_needs.needsfile import NeedsList
 
-from src.helper_lib import get_runfiles_dir
+from src.helper_lib.config import DocsCliConfig
 
 logger = logging.getLogger(__name__)
 
@@ -187,8 +187,12 @@ def add_external_needs_json(e: ExternalNeedsSource, config: Config):
         / "_build/needs/needs.json"
     )
 
-    r = get_runfiles_dir()
-    json_file = r / json_file_raw
+    json_file = DocsCliConfig().resolve_input_path(
+        json_file_raw, runfiles_relative=True
+    )
+    if json_file is None:
+        logger.error("Could not resolve external needs JSON runfile %s", json_file_raw)
+        return
     logger.debug(f"External needs.json: {json_file}")
     try:
         needs_json_data = json.loads(Path(json_file).read_text(encoding="utf-8"))  # pyright: ignore[reportAny]
@@ -215,11 +219,20 @@ def add_external_docs_sources(e: ExternalNeedsSource, config: Config):
     # The runfiles layout mirrors the original git layout: same-repo mounts live
     # under `_main/…`, cross-module mounts under `{e.bazel_module}+/…`
     # (see _runfiles_module_dir).
-    r = get_runfiles_dir()
-    if "ide_support.runfiles" in str(r):
+    cli_config = DocsCliConfig()
+    if cli_config.uses_ide_support_runfiles:
         logger.error("Combo builds are currently only supported with Bazel.")
         return
-    docs_source_path = Path(r) / _runfiles_module_dir(e) / e.path_to_target
+    docs_source_path = cli_config.resolve_input_path(
+        Path(_runfiles_module_dir(e)) / e.path_to_target,
+        runfiles_relative=True,
+    )
+    if docs_source_path is None:
+        logger.error(
+            "Could not resolve external documentation source runfile %s",
+            Path(_runfiles_module_dir(e)) / e.path_to_target,
+        )
+        return
 
     # A cross-module root mount keeps its module name as the collection key
     # (unchanged). Sub-package / same-repo mounts disambiguate via the path.
@@ -274,8 +287,12 @@ def _add_needs_json_file(ext_needs: ExternalNeedsSource, config: Config) -> None
     json_file_raw = (
         Path(_runfiles_module_dir(ext_needs)) / ext_needs.path_to_target / "needs.json"
     )
-    r = get_runfiles_dir()
-    json_file = r / json_file_raw
+    json_file = DocsCliConfig().resolve_input_path(
+        json_file_raw, runfiles_relative=True
+    )
+    if json_file is None:
+        logger.error("Could not resolve external needs JSON runfile %s", json_file_raw)
+        return
     logger.debug(f"External needs_json_file: {json_file}")
     try:
         needs_json_data = json.loads(
