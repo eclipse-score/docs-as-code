@@ -364,7 +364,9 @@ def test_combining_without_source_links_continues_with_empty_code_links(
     temp_dir: Path,
 ) -> None:
     """A build without a configured source-link input must not scan or fail."""
-    build_and_save_combined_file(temp_dir)
+    fake_config = SimpleNamespace(score_sourcelinks_json="")
+    app = cast(Sphinx, SimpleNamespace(config=fake_config))
+    build_and_save_combined_file(temp_dir, app)
 
     grouped_cache = temp_dir / "score_scl_grouped_cache.json"
     assert json.loads(grouped_cache.read_text(encoding="utf-8")) == []

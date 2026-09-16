@@ -80,16 +80,12 @@ def get_cache_filename(build_dir: Path, filename: str) -> Path:
     return build_dir / filename
 
 
-def build_and_save_combined_file(outdir: Path, app: Sphinx | None = None):
+def build_and_save_combined_file(outdir: Path, app: Sphinx):
     """
     Reads the saved partial caches of codelink & testlink
     Builds the combined JSON cache & saves it
     """
-    source_code_links_path = (
-        str(getattr(app.config, "score_sourcelinks_json", "") or "").strip()
-        if app is not None
-        else ""
-    )
+    source_code_links_path = app.config.score_sourcelinks_json.strip()
     if source_code_links_path:
         source_code_links_json = Path(source_code_links_path)
         try:
