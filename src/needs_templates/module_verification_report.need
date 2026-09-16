@@ -305,17 +305,68 @@ verification status and the tests that (fully or partially) verify them:
 Test Coverage
 ^^^^^^^^^^^^^
 
-Per-source-file line and branch coverage aggregated from the LCOV report
-produced by ``bazel coverage``.
+{# The coverage data is resolved through the Need graph by the
+   score_coverage_report extension, so this section stays a pure rendering of
+   structured values instead of pre-formatted text. #}
+{% set coverage = component_coverage(component_id) %}
+{% if coverage %}
+Per-source-file line and branch coverage of this component, aggregated from the
+LCOV tracefile produced by ``bazel coverage``.
+
+.. grid:: 1 2 2 2
+   :gutter: 3
+
+   .. grid-item::
+
+      .. needpie:: {{ component_title }} Line Coverage
+         :labels: covered, not covered
+         :colors: #37a12d, #ca2828
+         :legend:
+
+         {{ coverage.lines_hit }}
+         {{ coverage.lines_found - coverage.lines_hit }}
+
+   .. grid-item::
+
+      .. needpie:: {{ component_title }} Branch Coverage
+         :labels: covered, not covered
+         :colors: #37a12d, #ca2828
+         :legend:
+
+         {{ coverage.branches_hit }}
+         {{ coverage.branches_found - coverage.branches_hit }}
 
 .. dropdown:: Show test coverage table
    :animate: fade-in
 
-   .. note::
+   .. list-table::
+      :header-rows: 1
+      :widths: 52 12 12 12 12
+      :class: longtable
 
-      No coverage data available for this component. Run ``bazel coverage``
-      with the corresponding targets and rebuild the docs to populate this
-      table.
+      * - Source file
+        - Lines
+        - Line %
+        - Branches
+        - Branch %
+{%- for file in coverage.files %}
+      * - ``{{ file.path }}``
+        - {{ file.lines_hit }} / {{ file.lines_found }}
+        - {% if file.line_percent is none %}n/a{% else %}{{ file.line_percent }} %{% endif %}
+        - {{ file.branches_hit }} / {{ file.branches_found }}
+        - {% if file.branch_percent is none %}n/a{% else %}{{ file.branch_percent }} %{% endif %}
+{%- endfor %}
+      * - **Total**
+        - {{ coverage.lines_hit }} / {{ coverage.lines_found }}
+        - {% if coverage.line_percent is none %}n/a{% else %}**{{ coverage.line_percent }} %**{% endif %}
+        - {{ coverage.branches_hit }} / {{ coverage.branches_found }}
+        - {% if coverage.branch_percent is none %}n/a{% else %}**{{ coverage.branch_percent }} %**{% endif %}
+{% else %}
+.. note::
+
+   No coverage data available for this component. Run ``bazel coverage`` with
+   the corresponding targets and rebuild the docs to populate this section.
+{% endif %}
 
 Architectural Elements
 ^^^^^^^^^^^^^^^^^^^^^^
