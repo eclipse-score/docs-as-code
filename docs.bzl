@@ -711,7 +711,10 @@ def docs(
         name = "metrics_json",
         srcs = [":needs_json"],
         outs = ["metrics.json"],
-        cmd = "cp $(location :needs_json)/metrics.json $@",
+        # Copy metrics.json out of the directory produced by :needs_json.
+        # $(execpath ...) expands to that input directory's path for this build
+        # action, and $@ is the path of the metrics.json output created here.
+        cmd = "cp $(execpath :needs_json)/metrics.json $@",
         visibility = ["//visibility:public"],
         tags = ["manual"],
     )
@@ -722,7 +725,10 @@ def docs(
         name = "needs_json_file",
         srcs = [":needs_json"],
         outs = ["needs.json"],
-        cmd = "cp $(location :needs_json)/needs.json $@",
+        # Copy needs.json out of the directory produced by :needs_json.
+        # $(execpath ...) gives this build action the input directory's path;
+        # $@ is the path of the needs.json output created here.
+        cmd = "cp $(execpath :needs_json)/needs.json $@",
         visibility = ["//visibility:public"],
         tags = ["manual"],
     )

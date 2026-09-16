@@ -32,14 +32,17 @@ genrule(
     # The RST and Mermaid file are both declared sources, but only the RST
     # should be registered as a Sphinx document. The Mermaid file is a
     # companion asset that must remain readable next to the original RST.
-    cmd = """cat > $(location generated/index.rst) <<'EOF'
+    # The shell writes the text below, up to each EOF marker, into the
+    # generated RST and Mermaid files. $(execpath ...) expands to each declared
+    # output's path in this build action, so the files land where Bazel expects.
+    cmd = """cat > $(execpath generated/index.rst) <<'EOF'
 Generated Data Page
 ===================
 
 .. mermaid:: generated_data.mmd
    :name: generated-data-diagram
 EOF
-cat > $(location generated/generated_data.mmd) <<'EOF'
+cat > $(execpath generated/generated_data.mmd) <<'EOF'
 classDiagram
   class GeneratedData
 EOF""",

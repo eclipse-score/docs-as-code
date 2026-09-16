@@ -24,7 +24,10 @@ genrule(
         "generated/index.rst",
         "generated/metamodel_classes.mmd",
     ],
-    cmd = "$(location :generate_metamodel_rst_bin) --rst-output $(location generated/index.rst) --mmd-output $(location generated/metamodel_classes.mmd) $(location //src/extensions/score_metamodel:metamodel_yaml)",
+    # Run the generator on the YAML input and tell it where to write the RST
+    # and Mermaid files. Bazel expands each $(execpath ...) to the named tool
+    # or file's path in this build action, so the command can find them.
+    cmd = "$(execpath :generate_metamodel_rst_bin) --rst-output $(execpath generated/index.rst) --mmd-output $(execpath generated/metamodel_classes.mmd) $(execpath //src/extensions/score_metamodel:metamodel_yaml)",
     tools = [":generate_metamodel_rst_bin"],
     visibility = ["//visibility:private"],
 )
