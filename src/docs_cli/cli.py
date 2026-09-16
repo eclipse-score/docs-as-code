@@ -194,15 +194,7 @@ def sphinx_arguments(
         base_arguments.extend(["--warning-file", str(output_dir / "warnings.txt")])
 
     if config_file := env.optional_path("SPHINX_CONFIG_FILE"):
-        # The action receives ctx.file.config.path, which is interpreted from
-        # the action's execution-root working directory. Resolve it locally
-        # instead of using runfiles lookup; interactive targets receive a
-        # runfiles-relative path and need that lookup before Sphinx gets the
-        # containing directory.
-        if config.is_bazel_build:
-            config_file = config_file.absolute()
-        elif not config_file.is_absolute():
-            config_file = get_runfiles_dir() / config_file
+        config_file = _resolve_runfiles_relative_path(config, config_file)
         base_arguments.extend(["-c", str(config_file.parent)])
 
     if metamodel_yaml := env.optional_path("SCORE_METAMODEL_YAML"):
