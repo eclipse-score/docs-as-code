@@ -229,6 +229,7 @@ def sphinx_arguments(
         base_arguments.append(f"-A=doc_path={relative_doc_path}")
 
     if known_good_json := env.optional_path("KNOWN_GOOD_JSON"):
+        known_good_json = _resolve_runfiles_relative_path(config, known_good_json)
         base_arguments.append(f"--define=KNOWN_GOOD_JSON={known_good_json}")
 
     return base_arguments

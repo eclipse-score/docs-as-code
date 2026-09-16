@@ -296,7 +296,9 @@ def test_read_test_xml_file(
     dir1: Path
     dir2: Path
     _, dir1, dir2, dir3, dir4 = tmp_xml_dirs()
-    needs1, no_props1, missing_props1 = xml_parser.read_test_xml_file(dir1 / "test.xml")
+    needs1, no_props1, missing_props1 = xml_parser.read_test_xml_file(
+        dir1 / "test.xml", None
+    )
     # Should parse the properties and create a 'valid' testlink
     assert isinstance(needs1, list) and len(needs1) == 1
     tcneed = needs1[0]
@@ -311,7 +313,9 @@ def test_read_test_xml_file(
     assert missing_props1 == []
 
     # No properties at all => Should not be a 'valid' testlink
-    needs2, no_props2, missing_props2 = xml_parser.read_test_xml_file(dir2 / "test.xml")
+    needs2, no_props2, missing_props2 = xml_parser.read_test_xml_file(
+        dir2 / "test.xml", None
+    )
     assert isinstance(needs2, list) and len(needs2) == 1
     tcneed2 = needs2[0]
     assert isinstance(tcneed2, DataOfTestCase)
@@ -319,7 +323,9 @@ def test_read_test_xml_file(
     assert missing_props2 == []
 
     # Extra Properties => Should not cause an error
-    needs3, no_props3, missing_props3 = xml_parser.read_test_xml_file(dir3 / "test.xml")
+    needs3, no_props3, missing_props3 = xml_parser.read_test_xml_file(
+        dir3 / "test.xml", None
+    )
     assert isinstance(needs3, list) and len(needs3) == 1
     tcneed3 = needs3[0]
     assert isinstance(tcneed3, DataOfTestCase)
@@ -327,7 +333,9 @@ def test_read_test_xml_file(
     assert missing_props3 == []
 
     # Missing some properties => Should not be a 'valid' testlink
-    needs4, no_props4, missing_props4 = xml_parser.read_test_xml_file(dir4 / "test.xml")
+    needs4, no_props4, missing_props4 = xml_parser.read_test_xml_file(
+        dir4 / "test.xml", None
+    )
     assert isinstance(needs4, list) and len(needs4) == 1
     tcneed4 = needs4[0]
     assert isinstance(tcneed4, DataOfTestCase)
@@ -565,33 +573,27 @@ def test_get_metadata_from_test_path_local():
     local_path = Path(
         "/home/root/docs-as-code/bazel-testlogs/src/extensions/foo/test.xml"
     )
-    md = xml_parser.get_metadata_from_test_path(local_path)
+    md = xml_parser.get_metadata_from_test_path(local_path, None)
     assert md["repo_name"] == "local_repo"
     assert md["hash"] == ""
     assert md["url"] == ""
 
 
-def test_get_metadata_from_test_path_combo_with_hash(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-):
+def test_get_metadata_from_test_path_combo_with_hash(tmp_path: Path):
     """Combo builds with 'hash' in known_good.json populate metadata correctly."""
     json_file = tmp_path / "known_good.json"
     json_file.write_text(json.dumps(_KNOWN_GOOD_WITH_HASH))
-    monkeypatch.setenv("KNOWN_GOOD_JSON", str(json_file))
-    md = xml_parser.get_metadata_from_test_path(_COMBO_TEST_PATH)
+    md = xml_parser.get_metadata_from_test_path(_COMBO_TEST_PATH, json_file)
     assert md["repo_name"] == "score_docs_as_code"
     assert md["hash"] == "abc123hashvalue"
     assert md["url"] == "https://github.com/eclipse-score/docs-as-code"
 
 
-def test_get_metadata_from_test_path_combo_with_version(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-):
+def test_get_metadata_from_test_path_combo_with_version(tmp_path: Path):
     """Combo builds with 'version' in known_good.json populate metadata correctly."""
     json_file = tmp_path / "known_good.json"
     json_file.write_text(json.dumps(_KNOWN_GOOD_WITH_VERSION))
-    monkeypatch.setenv("KNOWN_GOOD_JSON", str(json_file))
-    md = xml_parser.get_metadata_from_test_path(_COMBO_TEST_PATH)
+    md = xml_parser.get_metadata_from_test_path(_COMBO_TEST_PATH, json_file)
     assert md["repo_name"] == "score_docs_as_code"
     assert md["hash"] == "v2.1.0"
     assert md["url"] == "https://github.com/eclipse-score/docs-as-code"

@@ -214,7 +214,7 @@ def test_bazel_configuration_resolves_runfiles_and_preserves_repo_relative_edit_
         "-A=github_user=owner",
         "-A=github_repo=repo",
         "-A=doc_path=component/docs",
-        "--define=KNOWN_GOOD_JSON=baseline.json",
+        f"--define=KNOWN_GOOD_JSON={workspace}/runfiles/baseline.json",
     }
     # Every expected option is present; their relative order is irrelevant here.
     assert expected_arguments <= set(arguments)

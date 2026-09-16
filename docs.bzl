@@ -644,7 +644,7 @@ def docs(
         docs_env["SCORE_METAMODEL_YAML"] = "$(rlocationpath " + str(metamodel) + ")"
     if known_good_label:
         known_good_str = str(known_good_label[0])
-        docs_env["KNOWN_GOOD_JSON"] = "$(location " + known_good_str + ")"
+        docs_env["KNOWN_GOOD_JSON"] = "$(rlocationpath " + known_good_str + ")"
         docs_data += known_good_label
 
     # Generated documentation artifacts may live below ``docs/``.  A
