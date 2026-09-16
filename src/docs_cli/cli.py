@@ -285,6 +285,12 @@ def main(argv: list[str] | None = None) -> int:
         debugpy.wait_for_client()
 
     config = DocsCliConfig.from_environment(env)
+    # cli.py is only ever invoked via `bazel run` (a _declare_docs_binary
+    # target) or as the sandboxed Needs action's executable; see
+    # src/docs_cli/README.md. ExecutionEnvironment.DIRECT exists so
+    # DocsCliConfig/sphinx_arguments stay unit-testable without a real
+    # runfiles tree (see main_test.py) and should never occur here.
+    assert not config.is_direct, "cli.py must run via bazel run or a Bazel action"
     ws_root = config.ws_root or Path()
     package_dir = config.package_dir
     output_dir = config.output_dir
