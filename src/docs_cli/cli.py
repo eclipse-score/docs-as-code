@@ -138,6 +138,21 @@ def mounted_watch_dirs(
     return watch_dirs
 
 
+def _resolve_runfiles_relative_path(config: DocsCliConfig, value: Path) -> Path:
+    """Resolve a Bazel-provided path that may be runfiles-relative.
+
+    Build actions and direct calls already receive an absolute or
+    execroot/cwd-relative path. ``bazel run`` instead passes an
+    rlocationpath, which must be joined with the launcher's own runfiles
+    directory before use.
+    """
+    if not config.is_bazel_build and not value.is_absolute():
+        runfiles_dir = env.optional_path("RUNFILES_DIR")
+        ws_root = config.ws_root or Path()
+        value = runfiles_dir / value if runfiles_dir is not None else ws_root / value
+    return value.absolute()
+
+
 def sphinx_arguments(
     config: DocsCliConfig,
 ) -> list[str]:
@@ -191,21 +206,14 @@ def sphinx_arguments(
         base_arguments.extend(["-c", str(config_file.parent)])
 
     if metamodel_yaml := env.optional_path("SCORE_METAMODEL_YAML"):
-        # Under ``bazel run``, this environment variable is runfiles-relative
-        # and must be resolved through RUNFILES_DIR. A sandboxed Needs action
-        # instead expands the metamodel label to an execution-root path in
-        # SPHINX_EXTRA_OPTS; applying runfiles lookup there would escape the
-        # action's declared inputs.
-        if not config.is_bazel_build and not metamodel_yaml.is_absolute():
-            runfiles_dir = env.optional_path("RUNFILES_DIR")
-            ws_root = config.ws_root or Path()
-            metamodel_yaml = (
-                runfiles_dir / metamodel_yaml
-                if runfiles_dir is not None
-                else ws_root / metamodel_yaml
-            )
-        metamodel_yaml = metamodel_yaml.absolute()
+        metamodel_yaml = _resolve_runfiles_relative_path(config, metamodel_yaml)
         base_arguments.append(f"--define=score_metamodel_yaml={metamodel_yaml}")
+
+    if sourcelinks_json := env.optional_path("SCORE_SOURCELINKS"):
+        # The sandboxed Needs action and ``bazel run`` both set this env var;
+        # only the extension reads ``app.config.score_sourcelinks_json``.
+        sourcelinks_json = _resolve_runfiles_relative_path(config, sourcelinks_json)
+        base_arguments.append(f"--define=score_sourcelinks_json={sourcelinks_json}")
 
     if github_repository := env.get("GITHUB_REPOSITORY", ""):
         # GITHUB_REPOSITORY is expected as "owner/repo"; partition("/") splits

@@ -22,11 +22,10 @@ from sphinx.application import Sphinx
 from sphinx.util import logging
 from sphinx_needs.need_item import NeedItem
 
-from src.helper_lib import Environment, find_ws_root, get_runfiles_dir
+from src.helper_lib import find_ws_root, get_runfiles_dir
 
 _VERSION_CONDITION = re.compile(r"^\s*version\s*==\s*(\d+)\s*$")
 logger = logging.getLogger(__name__)
-env = Environment()
 
 MANDATORY_ATTRIBUTE = "mandatory-attribute"
 MANDATORY_LINK = "mandatory-link"
@@ -220,7 +219,7 @@ class CompatibilityReporter:
 
 
 def _manifest_path(app: Sphinx) -> Path | None:
-    raw = getattr(app.config, "mounts_manifest", "") or env.get("MOUNTS_MANIFEST", "")
+    raw = getattr(app.config, "mounts_manifest", "")
     if not isinstance(raw, str) or not raw.strip():
         return None
     direct = Path(raw)

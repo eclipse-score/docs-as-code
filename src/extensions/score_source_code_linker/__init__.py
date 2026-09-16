@@ -59,9 +59,7 @@ from src.extensions.score_source_code_linker.xml_parser import (
     construct_and_add_need,
     run_xml_parser,
 )
-from src.helper_lib import Environment, find_ws_root
-
-env = Environment()
+from src.helper_lib import find_ws_root
 
 LOGGER = get_logger(__name__)
 # Uncomment this to enable more verbose logging
@@ -87,11 +85,11 @@ def build_and_save_combined_file(outdir: Path, app: Sphinx | None = None):
     Reads the saved partial caches of codelink & testlink
     Builds the combined JSON cache & saves it
     """
-    source_code_links_path = env.get("SCORE_SOURCELINKS", "")
-    if not source_code_links_path and app is not None:
-        source_code_links_path = str(
-            getattr(app.config, "score_sourcelinks_json", "") or ""
-        ).strip()
+    source_code_links_path = (
+        str(getattr(app.config, "score_sourcelinks_json", "") or "").strip()
+        if app is not None
+        else ""
+    )
     if source_code_links_path:
         source_code_links_json = Path(source_code_links_path)
         try:
@@ -99,8 +97,8 @@ def build_and_save_combined_file(outdir: Path, app: Sphinx | None = None):
         except FileNotFoundError as exc:
             raise FileNotFoundError(
                 "Pre-generated source-code links file does not exist: "
-                f"{source_code_links_json}. Check SCORE_SOURCELINKS or "
-                "score_sourcelinks_json."
+                f"{source_code_links_json}. Check the score_sourcelinks_json "
+                "Sphinx config value (set from SCORE_SOURCELINKS by the docs CLI)."
             ) from exc
         except AssertionError:
             source_code_links = load_source_code_links_with_metadata_json(

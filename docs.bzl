@@ -632,7 +632,7 @@ def docs(
         # `bazel run` starts from a runfiles tree, so this logical path is
         # resolved by score_mounts through ``RUNFILES_DIR``.
         "MOUNTS_MANIFEST": "$(rlocationpath :_mounts_manifest)" if mounts_manifest else "",
-        "SCORE_SOURCELINKS": "$(location :sourcelinks_json)",
+        "SCORE_SOURCELINKS": "$(rlocationpath :sourcelinks_json)",
     }
     if config_is_generated:
         # The generated file is named conf.py. Run targets pass its containing

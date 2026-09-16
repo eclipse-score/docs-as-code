@@ -21,9 +21,11 @@ import tempfile
 from collections.abc import Generator
 from dataclasses import asdict
 from pathlib import Path
-from typing import Any
+from types import SimpleNamespace
+from typing import Any, cast
 
 import pytest
+from sphinx.application import Sphinx
 
 # S-CORE plugin to allow for properties/attributes in xml
 # Enables Testlinking
@@ -359,11 +361,9 @@ def test_cache_file_operations(
 
 
 def test_combining_without_source_links_continues_with_empty_code_links(
-    temp_dir: Path, monkeypatch: pytest.MonkeyPatch
+    temp_dir: Path,
 ) -> None:
-    """A build without a pre-generated source-link input must not scan or fail."""
-    monkeypatch.delenv("SCORE_SOURCELINKS", raising=False)
-
+    """A build without a configured source-link input must not scan or fail."""
     build_and_save_combined_file(temp_dir)
 
     grouped_cache = temp_dir / "score_scl_grouped_cache.json"
@@ -371,18 +371,20 @@ def test_combining_without_source_links_continues_with_empty_code_links(
 
 
 def test_combining_with_missing_source_links_reports_configured_path(
-    temp_dir: Path, monkeypatch: pytest.MonkeyPatch
+    temp_dir: Path,
 ) -> None:
     """Report the configured source-link file when it cannot be found."""
     missing_file = temp_dir / "missing_source_links.json"
-    monkeypatch.setenv("SCORE_SOURCELINKS", str(missing_file))
+    fake_config = SimpleNamespace(score_sourcelinks_json=str(missing_file))
+    app = cast(Sphinx, SimpleNamespace(config=fake_config))
 
     with pytest.raises(FileNotFoundError) as exc_info:
-        build_and_save_combined_file(temp_dir)
+        build_and_save_combined_file(temp_dir, app)
 
     assert str(exc_info.value) == (
         "Pre-generated source-code links file does not exist: "
-        f"{missing_file}. Check SCORE_SOURCELINKS or score_sourcelinks_json."
+        f"{missing_file}. Check the score_sourcelinks_json Sphinx config value "
+        "(set from SCORE_SOURCELINKS by the docs CLI)."
     )
 
 
