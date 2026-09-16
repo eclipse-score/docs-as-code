@@ -235,9 +235,8 @@ def _reread_post_template_pages(app: Sphinx, env: BuildEnvironment) -> list[str]
             env.clear_doc(docname)
             app.builder.read_doc(docname)
     finally:
-        # The exception, if any, must still propagate. Clear the process-local
-        # snapshot first so stale Needs cannot affect later rereads or builds
-        # that continue in the same Python process.
+        # Always clear the temporary snapshot, whether rereading succeeds or
+        # fails. Any reread exception still propagates after this cleanup.
         _temporarily_removed_needs = {}
 
     return pages_to_reread
