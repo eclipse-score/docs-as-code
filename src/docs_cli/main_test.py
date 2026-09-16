@@ -161,11 +161,11 @@ def test_live_preview_uses_port_and_bundle_watches(
 ) -> None:
     # Arrange
     monkeypatch.setenv("ACTION", "live_preview")
-    manifest = workspace / "mounts.json"
+    manifest = workspace / "runfiles/mounts.json"
     manifest.write_text(
         '{"mounts": [{"src_root": "extra/docs", "runtime_path": "extra/docs", "mount_at": "extra"}]}'
     )
-    monkeypatch.setenv("MOUNTS_MANIFEST", str(manifest))
+    monkeypatch.setenv("MOUNTS_MANIFEST", "mounts.json")
     autobuild = Mock()
     monkeypatch.setattr(docs_cli, "sphinx_autobuild_main", autobuild)
 
@@ -180,6 +180,7 @@ def test_live_preview_uses_port_and_bundle_watches(
     # The requested port and source-linker setting are forwarded unchanged.
     assert "--port=42424242424" in arguments
     assert "--define=skip_rescanning_via_source_code_linker=1" in arguments
+    assert f"--define=mounts_manifest={manifest}" in arguments
     # Mounted bundle sources are watched in addition to the main docs tree.
     assert arguments[-2:] == ["--watch", str(workspace / "extra/docs")]
     # Live preview does not write the successful-build hash.
@@ -193,6 +194,7 @@ def test_bazel_configuration_resolves_runfiles_and_preserves_repo_relative_edit_
     # Arrange
     monkeypatch.setenv("SPHINX_CONFIG_FILE", "config/conf.py")
     monkeypatch.setenv("SCORE_METAMODEL_YAML", "config/metamodel.yaml")
+    monkeypatch.setenv("MOUNTS_MANIFEST", "mounts.json")
     monkeypatch.setenv("DATA", '[":bundle"]')
     monkeypatch.setenv("EXTERNAL_NEEDS_FILES", '["@vendor//:needs"]')
     monkeypatch.setenv("GITHUB_REPOSITORY", "owner/repo")
@@ -208,6 +210,7 @@ def test_bazel_configuration_resolves_runfiles_and_preserves_repo_relative_edit_
         "-c",
         str(workspace / "runfiles/config"),
         f"--define=score_metamodel_yaml={workspace}/runfiles/config/metamodel.yaml",
+        f"--define=mounts_manifest={workspace}/runfiles/mounts.json",
         # DATA and EXTERNAL_NEEDS_FILES are passed as one Sphinx define.
         '--define=external_needs_source=[":bundle", "@vendor//:needs"]',
         # GitHub metadata must keep edit links repository-relative.
@@ -218,6 +221,32 @@ def test_bazel_configuration_resolves_runfiles_and_preserves_repo_relative_edit_
     }
     # Every expected option is present; their relative order is irrelevant here.
     assert expected_arguments <= set(arguments)
+
+
+def test_bazel_build_resolves_mount_manifest_from_execroot(
+    workspace: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # Arrange
+    monkeypatch.delenv("BUILD_WORKSPACE_DIRECTORY")
+    monkeypatch.chdir(workspace)
+    monkeypatch.setenv("ACTION", "build_needs_json")
+    monkeypatch.setenv("OUTPUT_DIRECTORY", "outputs/needs")
+    monkeypatch.setenv(
+        "MOUNTS_MANIFEST",
+        "bazel-out/k8-fastbuild/bin/component/mounts.json",
+    )
+
+    # Act
+    config = DocsCliConfig.from_environment()
+    arguments = sphinx_arguments(config)
+
+    # Assert
+    assert config.is_bazel_build
+    assert (
+        f"--define=mounts_manifest={workspace}/bazel-out/k8-fastbuild/bin/component/mounts.json"
+        in arguments
+    )
 
 
 def test_direct_invocation_resolves_paths_relative_to_cwd(

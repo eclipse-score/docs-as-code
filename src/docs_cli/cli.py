@@ -158,6 +158,10 @@ def sphinx_arguments(
 ) -> list[str]:
     """Build Sphinx arguments from the resolved launcher configuration."""
     output_dir = config.output_dir
+    mounts_manifest = env.optional_path("MOUNTS_MANIFEST")
+    if mounts_manifest:
+        mounts_manifest = _resolve_runfiles_relative_path(config, mounts_manifest)
+
     base_arguments = [
         str(config.source_dir),
         str(output_dir),
@@ -172,7 +176,7 @@ def sphinx_arguments(
         f"--define=testcase_source_dirs={env.get('TEST_SOURCES', '[]')}",
         # Path to the Bazel-emitted mounts manifest (empty when no mounts are
         # configured); consumed by the score_mounts extension.
-        f"--define=mounts_manifest={env.optional_path('MOUNTS_MANIFEST') or ''}",
+        f"--define=mounts_manifest={mounts_manifest or ''}",
     ]
 
     if config.is_bazel_build:
@@ -232,17 +236,12 @@ def watch_arguments(config: DocsCliConfig) -> list[str]:
     mounts_manifest = env.optional_path("MOUNTS_MANIFEST")
     watch_arguments: list[str] = []
     if mounts_manifest:
-        # ``MOUNTS_MANIFEST`` is runfiles-relative under ``bazel run`` and
-        # an ordinary path for direct invocations, matching score_mounts.
-        manifest_path = (
-            get_runfiles_dir() / mounts_manifest
-            if config.is_bazel_run
-            else mounts_manifest
-        )
+        manifest_path = _resolve_runfiles_relative_path(config, mounts_manifest)
+        runfiles_dir = get_runfiles_dir() if config.is_bazel_run else None
         for watch_dir in mounted_watch_dirs(
             manifest_path,
             config.ws_root,
-            get_runfiles_dir() if config.is_bazel_run else None,
+            runfiles_dir,
         ):
             watch_arguments.extend(["--watch", watch_dir])
     return watch_arguments

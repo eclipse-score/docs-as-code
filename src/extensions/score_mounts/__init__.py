@@ -55,21 +55,14 @@ def _read_manifest(config: Config):
     """Locate and load the mounts manifest, or return ``None`` when unset.
 
     ``mounts_manifest`` is set by the docs CLI via ``--define`` from Bazel's
-    ``MOUNTS_MANIFEST`` env var. Its interpretation depends on the build
-    context: under ``bazel run`` it is a runfiles-relative path
-    (``$(rlocationpath)``) resolved against the runfiles dir; in a sandbox build
-    it is already relative to the exec root. Resolving the path here keeps
-    that context branch out of the pure ``_resolver`` module.
+    ``MOUNTS_MANIFEST`` env var. The CLI resolves the path for the active
+    execution context before passing it to Sphinx.
     """
     raw = getattr(config, "mounts_manifest", "")
     if not raw or not raw.strip() or not isinstance(raw, str):
         return None
 
-    # ``bazel run`` passes an rlocation-relative path; ``sphinx_docs`` in a
-    # sandbox passes its execroot-relative ``$(location)`` path directly.
-    manifest_path = get_runfiles_dir() / raw if find_ws_root() else Path(raw)
-
-    return load_mounts_manifest(manifest_path)
+    return load_mounts_manifest(Path(raw))
 
 
 def _resolve_data_mounts(

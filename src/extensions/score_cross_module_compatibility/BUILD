@@ -12,7 +12,7 @@ py_library(
     srcs = ["__init__.py"],
     imports = ["."],
     visibility = ["//visibility:public"],
-    deps = all_requirements + ["@score_docs_as_code//src/helper_lib"],
+    deps = all_requirements,
 )
 
 score_pytest(

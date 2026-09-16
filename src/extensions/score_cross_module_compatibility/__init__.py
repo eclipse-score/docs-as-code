@@ -22,8 +22,6 @@ from sphinx.application import Sphinx
 from sphinx.util import logging
 from sphinx_needs.need_item import NeedItem
 
-from src.helper_lib import find_ws_root, get_runfiles_dir
-
 _VERSION_CONDITION = re.compile(r"^\s*version\s*==\s*(\d+)\s*$")
 logger = logging.getLogger(__name__)
 
@@ -222,16 +220,9 @@ def _manifest_path(app: Sphinx) -> Path | None:
     raw = getattr(app.config, "mounts_manifest", "")
     if not isinstance(raw, str) or not raw.strip():
         return None
-    direct = Path(raw)
-    runfiles = get_runfiles_dir() / raw
-    # ``mounts_manifest`` may be an execroot path, while the environment value
-    # passed to ``bazel run`` is runfiles-relative.  Prefer an existing path so
-    # the policy does not depend on the current working directory.
-    if direct.is_file():
-        return direct
-    if runfiles.is_file():
-        return runfiles
-    return runfiles if find_ws_root() else direct
+    # The docs CLI resolves Bazel runfiles paths before passing this config
+    # value to Sphinx.
+    return Path(raw)
 
 
 def get_reporter(app: Sphinx) -> CompatibilityReporter:
