@@ -18,20 +18,14 @@ Testing
 =======
 
 docs-as-code verifies itself on several layers.
-Each layer targets a different part of the system,
-from a single Python function up to building whole downstream consumer repositories.
-The relationship between the layers is sketched in ``src/tests/test-levels.drawio.svg``.
-(That file is part of the repository, but not part of the built documentation.)
-
 The following sections describe each testing method,
 what it is used for,
 and how to run it.
 
-Compliance checks (pre-commit)
-------------------------------
+Development checks (pre-commit)
+-------------------------------
 
-The pre-commit hooks run a set of static checks on every change.
-They are the cheapest layer and fail a push before anything is compiled.
+To be executed before ``git-commit``.
 
 .. code-block:: bash
 
@@ -48,16 +42,12 @@ The hooks cover:
 - Bazel module hygiene, including ``bazel mod tidy`` and a lockfile consistency check.
 - Eclipse copyright header presence.
 
-Use this layer for everything.
-It is the gate that keeps the other layers cheap,
-because it runs in seconds.
 
 Python unit tests (score_pytest)
 --------------------------------
 
 The unit tests exercise individual Python functions and extensions
 in isolation, without a Sphinx build.
-They are the "unit test scope" in the diagram above.
 
 They are defined with the custom ``score_pytest`` Bazel rule,
 which wraps pytest and pins a single pytest version for the whole repository.
@@ -69,15 +59,12 @@ which wraps pytest and pins a single pytest version for the whole repository.
 Use this layer for logic inside the extensions,
 the helper library,
 and the command-line tools.
-Every extension ships at least one ``_test`` target,
-for example ``//src/extensions/score_metamodel:unit_tests``.
-
-See also the paragraph on *Build all targets* below.
 
 File-based RST rule checks (metamodel)
 --------------------------------------
 
-The file-based tests verify the Sphinx build rules and metamodel checks.
+The file-based tests verify the Sphinx build rules and metamodel checks
+including our whole S-CORE-specific Sphinx setup with extensions.
 Each RST file under ``src/extensions/score_metamodel/tests/rst/`` is a small,
 self-contained Sphinx document with its own ``conf.py``.
 A SphinxTestApp builds it and the framework asserts on the resulting warnings,
@@ -108,7 +95,8 @@ invalid configurations, external Bzlmod bundles,
 and golden HTML/JSON output comparison.
 
 They are not Bazel test targets,
-but plain pytest tests that issue Bazel underneath:
+but plain pytest tests that issue Bazel underneath
+because these tests also verify our Bazel/Starlark code.
 
 .. code-block:: bash
 
@@ -118,10 +106,6 @@ The suite must be run sequentially.
 CI splits it with custom markers:
 ``bazel_cached`` (build-only, fast) and ``bazel_slow``
 (Sphinx runs and expected-failure tests).
-
-Expected outputs are checked in below a fixture's ``_expected/`` directory.
-JSON is compared as sorted, formatted data;
-all other files, including HTML, are compared byte-for-byte.
 
 Use this layer for changes to the Bazel macros,
 the bundle composition,
@@ -145,28 +129,12 @@ They live under ``src/tests/downstream_compatibility``:
 You can restrict the run to a single consumer with ``--repo``.
 In CI they run on demand, triggered by a ``/consumer-test`` comment on a PR.
 
-Use this layer before merging anything that changes the public API,
-the generated layouts, or the minimum Bazel/version requirements.
-It is deliberately broad and less controlled than the docs_bzl tests,
-and therefore slower.
-
-Documentation link checks
--------------------------
-
-A nightly CI workflow checks that the external links in the documentation
-are still reachable.
-It runs outside the merge gate because it can fail for reasons
-unrelated to a change, for example a third-party page going offline.
-
-Use this layer when you change links or add external references,
-and run the link check workflow manually if you want early feedback.
-
 How CI orchestrates the layers
 ------------------------------
 
 The PR workflow (``.github/workflows/_test.yml``) runs, in order:
 
-1. the pre-commit compliance checks,
+1. the pre-commit development checks,
 2. the ``docs_bzl`` end-to-end tests (``bazel_cached`` then ``bazel_slow``),
 3. ``bazel test --lockfile_mode=error //... --build_tests_only``
    (all unit and file-based tests),
@@ -181,6 +149,9 @@ The documentation itself is rebuilt from the merged state afterwards.
 Which test for what
 -------------------
 
+Use the first suitable one in the table below.
+The later tests are slower.
+
 .. list-table::
    :widths: 45 55
    :header-rows: 1
@@ -188,7 +159,7 @@ Which test for what
    * - Change
      - Relevant layer
    * - Any change
-     - Compliance checks (pre-commit)
+     - Development checks (pre-commit)
    * - Python logic in extensions / helper library / CLI
      - Unit tests (``bazel test //...``)
    * - Metamodel or its checks
