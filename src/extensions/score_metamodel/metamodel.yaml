@@ -538,6 +538,17 @@ needs_types:
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
+      # Maps included components to the repository-relative root directory of
+      # their implementation, written as one ``<comp-id>: <path>`` pair per line:
+      #
+      #   :source_roots:
+      #      comp__example_parser: src/parser
+      #      comp__example_logging: src/logging
+      #
+      # Coverage data is attributed to the component that declares the most
+      # specific matching root, so nested components each report their own code.
+      # Components without an entry report no coverage.
+      source_roots: ^[ \t]*[A-Za-z0-9_]+[ \t]*:[ \t]*[A-Za-z0-9_][A-Za-z0-9_-]*(/[A-Za-z0-9_][A-Za-z0-9_-]*)*[ \t]*(\n[ \t]*[A-Za-z0-9_]+[ \t]*:[ \t]*[A-Za-z0-9_][A-Za-z0-9_-]*(/[A-Za-z0-9_][A-Za-z0-9_-]*)*[ \t]*)*\n?$
     mandatory_links:
       # req-Id: tool_req__arch_linkage_safety
       includes: comp
