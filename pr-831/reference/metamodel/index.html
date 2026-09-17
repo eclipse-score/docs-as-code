@@ -63,7 +63,7 @@
     <script src="../../_static/sphinx-needs/libs/html/datatables_loader.js?v=a2cae175"></script>
     <script src="../../_static/sphinx-needs/libs/html/sphinx_needs_collapse.js?v=dca66431"></script>
     <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
-    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.6.0/dist/mermaid.esm.min.mjs";
+    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.17.2/dist/mermaid.esm.min.mjs";
 
 
 import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.0/dist/mermaid-layout-elk.esm.min.mjs"
@@ -1293,7 +1293,7 @@ class testcase {
   +test_type [optional]*
   +testlink [optional]*
 }
-class tool-malfunction {
+class tool_malfunction_87f13fc6[&quot;tool-malfunction&quot;] {
   +additional_safety_measure_required
   +detection_sufficient
   +id
@@ -1303,7 +1303,7 @@ class tool-malfunction {
   +source_code_link [optional]*
   +testlink [optional]*
 }
-class tool-usecase {
+class tool_usecase_ebf4ad03[&quot;tool-usecase&quot;] {
   +id
   +version
   +source_code_link [optional]*
@@ -1421,13 +1421,13 @@ real_arc_int ..&gt; comp_req : fulfils
 real_arc_int_op --&gt; real_arc_int : included_by
 real_arc_int_op ..&gt; logic_arc_int_op : implements
 role ..&gt; role : contains
-tool-malfunction --&gt; tool-usecase : parent_needs
-tool-malfunction --&gt; gd_req : violates
-tool-malfunction --&gt; stkh_req : violates
-tool-malfunction --&gt; feat_req : violates
-tool-malfunction --&gt; comp_req : violates
-tool-malfunction --&gt; tool_req : violates
-tool-malfunction --&gt; aou_req : violates
+tool_malfunction_87f13fc6 --&gt; tool_usecase_ebf4ad03 : parent_needs
+tool_malfunction_87f13fc6 --&gt; gd_req : violates
+tool_malfunction_87f13fc6 --&gt; stkh_req : violates
+tool_malfunction_87f13fc6 --&gt; feat_req : violates
+tool_malfunction_87f13fc6 --&gt; comp_req : violates
+tool_malfunction_87f13fc6 --&gt; tool_req : violates
+tool_malfunction_87f13fc6 --&gt; aou_req : violates
 tool_req ..&gt; gd_req : satisfies
 tool_req ..&gt; stkh_req : satisfies
 tool_req ..&gt; feat_req : satisfies
@@ -1484,8 +1484,8 @@ style std_req fill:#E1D5E7,stroke:#666,color:#000
 style std_wp fill:#E1D5E7,stroke:#666,color:#000
 style stkh_req fill:#DAE8FC,stroke:#666,color:#000
 style tenet fill:#E1D5E7,stroke:#666,color:#000
-style tool-malfunction fill:#F8CECC,stroke:#666,color:#000
-style tool-usecase fill:#E1D5E7,stroke:#666,color:#000
+style tool_malfunction_87f13fc6 fill:#F8CECC,stroke:#666,color:#000
+style tool_usecase_ebf4ad03 fill:#E1D5E7,stroke:#666,color:#000
 style tool_req fill:#F5F5F5,stroke:#666,color:#000
 style tsf fill:#E1D5E7,stroke:#666,color:#000
 style workflow fill:#E1D5E7,stroke:#666,color:#000
@@ -1536,8 +1536,8 @@ click std_wp href &quot;#std-wp&quot; &quot;Open std_wp details&quot;
 click stkh_req href &quot;#stkh-req&quot; &quot;Open stkh_req details&quot;
 click tenet href &quot;#tenet&quot; &quot;Open tenet details&quot;
 click testcase href &quot;#testcase&quot; &quot;Open testcase details&quot;
-click tool-malfunction href &quot;#tool-malfunction&quot; &quot;Open tool-malfunction details&quot;
-click tool-usecase href &quot;#tool-usecase&quot; &quot;Open tool-usecase details&quot;
+click tool_malfunction_87f13fc6 href &quot;#tool-malfunction&quot; &quot;Open tool-malfunction details&quot;
+click tool_usecase_ebf4ad03 href &quot;#tool-usecase&quot; &quot;Open tool-usecase details&quot;
 click tool_req href &quot;#tool-req&quot; &quot;Open tool_req details&quot;
 click tsf href &quot;#tsf&quot; &quot;Open tsf details&quot;
 click workflow href &quot;#workflow&quot; &quot;Open workflow details&quot;
@@ -1808,7 +1808,7 @@ class plat_sec_ana {
   +source_code_link [optional]*
   +testlink [optional]*
 }
-class tool-malfunction {
+class tool_malfunction_87f13fc6[&quot;tool-malfunction&quot;] {
   +additional_safety_measure_required
   +detection_sufficient
   +id
@@ -1830,7 +1830,7 @@ feat_saf_fmea ..&gt; aou_req : mitigated_by
 feat_sec_ana ..&gt; aou_req : mitigated_by
 plat_saf_dfa ..&gt; aou_req : mitigated_by
 plat_sec_ana ..&gt; aou_req : mitigated_by
-tool-malfunction --&gt; aou_req : violates
+tool_malfunction_87f13fc6 --&gt; aou_req : violates
 style comp fill:#D5E8D4,stroke:#666,color:#000
 style comp_req fill:#D5E8D4,stroke:#666,color:#000
 style comp_saf_dfa fill:#D5E8D4,stroke:#666,color:#000
@@ -1843,7 +1843,7 @@ style feat_saf_fmea fill:#FFF2CC,stroke:#666,color:#000
 style feat_sec_ana fill:#FFF2CC,stroke:#666,color:#000
 style plat_saf_dfa fill:#DAE8FC,stroke:#666,color:#000
 style plat_sec_ana fill:#DAE8FC,stroke:#666,color:#000
-style tool-malfunction fill:#F8CECC,stroke:#666,color:#000
+style tool_malfunction_87f13fc6 fill:#F8CECC,stroke:#666,color:#000
 style aou_req fill:#FCFCFC,stroke:#000,stroke-width:3px,color:#000
 click aou_req href &quot;#aou-req&quot; &quot;Open aou_req details&quot;
 click comp href &quot;#comp&quot; &quot;Open comp details&quot;
@@ -1858,7 +1858,7 @@ click feat_saf_fmea href &quot;#feat-saf-fmea&quot; &quot;Open feat_saf_fmea det
 click feat_sec_ana href &quot;#feat-sec-ana&quot; &quot;Open feat_sec_ana details&quot;
 click plat_saf_dfa href &quot;#plat-saf-dfa&quot; &quot;Open plat_saf_dfa details&quot;
 click plat_sec_ana href &quot;#plat-sec-ana&quot; &quot;Open plat_sec_ana details&quot;
-click tool-malfunction href &quot;#tool-malfunction&quot; &quot;Open tool-malfunction details&quot;
+click tool_malfunction_87f13fc6 href &quot;#tool-malfunction&quot; &quot;Open tool-malfunction details&quot;
     </pre><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
 <summary class="sd-summary-title sd-card-header">
 <span class="sd-summary-text">Options and Links</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
@@ -2644,7 +2644,7 @@ class real_arc_int {
   +source_code_link [optional]*
   +testlink [optional]*
 }
-class tool-malfunction {
+class tool_malfunction_87f13fc6[&quot;tool-malfunction&quot;] {
   +additional_safety_measure_required
   +detection_sufficient
   +id
@@ -2678,7 +2678,7 @@ comp_saf_dfa ..&gt; comp_req : mitigated_by
 comp_saf_fmea ..&gt; comp_req : mitigated_by
 comp_sec_ana ..&gt; comp_req : mitigated_by
 real_arc_int ..&gt; comp_req : fulfils
-tool-malfunction --&gt; comp_req : violates
+tool_malfunction_87f13fc6 --&gt; comp_req : violates
 tool_req ..&gt; comp_req : satisfies
 style aou_req fill:#FCFCFC,stroke:#666,color:#000
 style comp fill:#D5E8D4,stroke:#666,color:#000
@@ -2689,7 +2689,7 @@ style comp_saf_fmea fill:#D5E8D4,stroke:#666,color:#000
 style comp_sec_ana fill:#D5E8D4,stroke:#666,color:#000
 style feat_req fill:#FFF2CC,stroke:#666,color:#000
 style real_arc_int fill:#D5E8D4,stroke:#666,color:#000
-style tool-malfunction fill:#F8CECC,stroke:#666,color:#000
+style tool_malfunction_87f13fc6 fill:#F8CECC,stroke:#666,color:#000
 style tool_req fill:#F5F5F5,stroke:#666,color:#000
 style comp_req fill:#D5E8D4,stroke:#000,stroke-width:3px,color:#000
 click aou_req href &quot;#aou-req&quot; &quot;Open aou_req details&quot;
@@ -2702,7 +2702,7 @@ click comp_saf_fmea href &quot;#comp-saf-fmea&quot; &quot;Open comp_saf_fmea det
 click comp_sec_ana href &quot;#comp-sec-ana&quot; &quot;Open comp_sec_ana details&quot;
 click feat_req href &quot;#feat-req&quot; &quot;Open feat_req details&quot;
 click real_arc_int href &quot;#real-arc-int&quot; &quot;Open real_arc_int details&quot;
-click tool-malfunction href &quot;#tool-malfunction&quot; &quot;Open tool-malfunction details&quot;
+click tool_malfunction_87f13fc6 href &quot;#tool-malfunction&quot; &quot;Open tool-malfunction details&quot;
 click tool_req href &quot;#tool-req&quot; &quot;Open tool_req details&quot;
     </pre><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
 <summary class="sd-summary-title sd-card-header">
@@ -4430,7 +4430,7 @@ class stkh_req {
   +testlink [optional]*
   +valid_until [optional]*
 }
-class tool-malfunction {
+class tool_malfunction_87f13fc6[&quot;tool-malfunction&quot;] {
   +additional_safety_measure_required
   +detection_sufficient
   +id
@@ -4466,7 +4466,7 @@ feat_saf_fmea ..&gt; feat_req : mitigated_by
 feat_sec_ana ..&gt; feat_req : mitigated_by
 logic_arc_int ..&gt; feat_req : fulfils
 plat_sec_ana ..&gt; feat_req : mitigated_by
-tool-malfunction --&gt; feat_req : violates
+tool_malfunction_87f13fc6 --&gt; feat_req : violates
 tool_req ..&gt; feat_req : satisfies
 style aou_req fill:#FCFCFC,stroke:#666,color:#000
 style comp_req fill:#D5E8D4,stroke:#666,color:#000
@@ -4479,7 +4479,7 @@ style feat_sec_ana fill:#FFF2CC,stroke:#666,color:#000
 style logic_arc_int fill:#FFF2CC,stroke:#666,color:#000
 style plat_sec_ana fill:#DAE8FC,stroke:#666,color:#000
 style stkh_req fill:#DAE8FC,stroke:#666,color:#000
-style tool-malfunction fill:#F8CECC,stroke:#666,color:#000
+style tool_malfunction_87f13fc6 fill:#F8CECC,stroke:#666,color:#000
 style tool_req fill:#F5F5F5,stroke:#666,color:#000
 style feat_req fill:#FFF2CC,stroke:#000,stroke-width:3px,color:#000
 click aou_req href &quot;#aou-req&quot; &quot;Open aou_req details&quot;
@@ -4494,7 +4494,7 @@ click feat_sec_ana href &quot;#feat-sec-ana&quot; &quot;Open feat_sec_ana detail
 click logic_arc_int href &quot;#logic-arc-int&quot; &quot;Open logic_arc_int details&quot;
 click plat_sec_ana href &quot;#plat-sec-ana&quot; &quot;Open plat_sec_ana details&quot;
 click stkh_req href &quot;#stkh-req&quot; &quot;Open stkh_req details&quot;
-click tool-malfunction href &quot;#tool-malfunction&quot; &quot;Open tool-malfunction details&quot;
+click tool_malfunction_87f13fc6 href &quot;#tool-malfunction&quot; &quot;Open tool-malfunction details&quot;
 click tool_req href &quot;#tool-req&quot; &quot;Open tool_req details&quot;
     </pre><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
 <summary class="sd-summary-title sd-card-header">
@@ -5415,7 +5415,7 @@ class std_req {
   +source_code_link [optional]*
   +testlink [optional]*
 }
-class tool-malfunction {
+class tool_malfunction_87f13fc6[&quot;tool-malfunction&quot;] {
   +additional_safety_measure_required
   +detection_sufficient
   +id
@@ -5449,17 +5449,17 @@ class workflow {
 }
 gd_req ..&gt; std_req : complies
 gd_req ..&gt; workflow : satisfies
-tool-malfunction --&gt; gd_req : violates
+tool_malfunction_87f13fc6 --&gt; gd_req : violates
 tool_req ..&gt; gd_req : satisfies
 workflow ..&gt; gd_req : contains
 style std_req fill:#E1D5E7,stroke:#666,color:#000
-style tool-malfunction fill:#F8CECC,stroke:#666,color:#000
+style tool_malfunction_87f13fc6 fill:#F8CECC,stroke:#666,color:#000
 style tool_req fill:#F5F5F5,stroke:#666,color:#000
 style workflow fill:#E1D5E7,stroke:#666,color:#000
 style gd_req fill:#E1D5E7,stroke:#000,stroke-width:3px,color:#000
 click gd_req href &quot;#gd-req&quot; &quot;Open gd_req details&quot;
 click std_req href &quot;#std-req&quot; &quot;Open std_req details&quot;
-click tool-malfunction href &quot;#tool-malfunction&quot; &quot;Open tool-malfunction details&quot;
+click tool_malfunction_87f13fc6 href &quot;#tool-malfunction&quot; &quot;Open tool-malfunction details&quot;
 click tool_req href &quot;#tool-req&quot; &quot;Open tool_req details&quot;
 click workflow href &quot;#workflow&quot; &quot;Open workflow details&quot;
     </pre><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
@@ -7377,7 +7377,7 @@ class stkh_req {
   +testlink [optional]*
   +valid_until [optional]*
 }
-class tool-malfunction {
+class tool_malfunction_87f13fc6[&quot;tool-malfunction&quot;] {
   +additional_safety_measure_required
   +detection_sufficient
   +id
@@ -7404,17 +7404,17 @@ class tool_req {
 }
 feat_req ..&gt; stkh_req : derived_from
 plat_saf_dfa ..&gt; stkh_req : mitigated_by
-tool-malfunction --&gt; stkh_req : violates
+tool_malfunction_87f13fc6 --&gt; stkh_req : violates
 tool_req ..&gt; stkh_req : satisfies
 style feat_req fill:#FFF2CC,stroke:#666,color:#000
 style plat_saf_dfa fill:#DAE8FC,stroke:#666,color:#000
-style tool-malfunction fill:#F8CECC,stroke:#666,color:#000
+style tool_malfunction_87f13fc6 fill:#F8CECC,stroke:#666,color:#000
 style tool_req fill:#F5F5F5,stroke:#666,color:#000
 style stkh_req fill:#DAE8FC,stroke:#000,stroke-width:3px,color:#000
 click feat_req href &quot;#feat-req&quot; &quot;Open feat_req details&quot;
 click plat_saf_dfa href &quot;#plat-saf-dfa&quot; &quot;Open plat_saf_dfa details&quot;
 click stkh_req href &quot;#stkh-req&quot; &quot;Open stkh_req details&quot;
-click tool-malfunction href &quot;#tool-malfunction&quot; &quot;Open tool-malfunction details&quot;
+click tool_malfunction_87f13fc6 href &quot;#tool-malfunction&quot; &quot;Open tool-malfunction details&quot;
 click tool_req href &quot;#tool-req&quot; &quot;Open tool_req details&quot;
     </pre><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
 <summary class="sd-summary-title sd-card-header">
@@ -7739,7 +7739,7 @@ class stkh_req {
   +testlink [optional]*
   +valid_until [optional]*
 }
-class tool-malfunction {
+class tool_malfunction_87f13fc6[&quot;tool-malfunction&quot;] {
   +additional_safety_measure_required
   +detection_sufficient
   +id
@@ -7749,7 +7749,7 @@ class tool-malfunction {
   +source_code_link [optional]*
   +testlink [optional]*
 }
-class tool-usecase {
+class tool_usecase_ebf4ad03[&quot;tool-usecase&quot;] {
   +id
   +version
   +source_code_link [optional]*
@@ -7770,28 +7770,28 @@ class tool_req {
   +testcovered [optional]*
   +testlink [optional]*
 }
-tool-malfunction --&gt; tool-usecase : parent_needs
-tool-malfunction --&gt; gd_req : violates
-tool-malfunction --&gt; stkh_req : violates
-tool-malfunction --&gt; feat_req : violates
-tool-malfunction --&gt; comp_req : violates
-tool-malfunction --&gt; tool_req : violates
-tool-malfunction --&gt; aou_req : violates
+tool_malfunction_87f13fc6 --&gt; tool_usecase_ebf4ad03 : parent_needs
+tool_malfunction_87f13fc6 --&gt; gd_req : violates
+tool_malfunction_87f13fc6 --&gt; stkh_req : violates
+tool_malfunction_87f13fc6 --&gt; feat_req : violates
+tool_malfunction_87f13fc6 --&gt; comp_req : violates
+tool_malfunction_87f13fc6 --&gt; tool_req : violates
+tool_malfunction_87f13fc6 --&gt; aou_req : violates
 style aou_req fill:#FCFCFC,stroke:#666,color:#000
 style comp_req fill:#D5E8D4,stroke:#666,color:#000
 style feat_req fill:#FFF2CC,stroke:#666,color:#000
 style gd_req fill:#E1D5E7,stroke:#666,color:#000
 style stkh_req fill:#DAE8FC,stroke:#666,color:#000
-style tool-usecase fill:#E1D5E7,stroke:#666,color:#000
+style tool_usecase_ebf4ad03 fill:#E1D5E7,stroke:#666,color:#000
 style tool_req fill:#F5F5F5,stroke:#666,color:#000
-style tool-malfunction fill:#F8CECC,stroke:#000,stroke-width:3px,color:#000
+style tool_malfunction_87f13fc6 fill:#F8CECC,stroke:#000,stroke-width:3px,color:#000
 click aou_req href &quot;#aou-req&quot; &quot;Open aou_req details&quot;
 click comp_req href &quot;#comp-req&quot; &quot;Open comp_req details&quot;
 click feat_req href &quot;#feat-req&quot; &quot;Open feat_req details&quot;
 click gd_req href &quot;#gd-req&quot; &quot;Open gd_req details&quot;
 click stkh_req href &quot;#stkh-req&quot; &quot;Open stkh_req details&quot;
-click tool-malfunction href &quot;#tool-malfunction&quot; &quot;Open tool-malfunction details&quot;
-click tool-usecase href &quot;#tool-usecase&quot; &quot;Open tool-usecase details&quot;
+click tool_malfunction_87f13fc6 href &quot;#tool-malfunction&quot; &quot;Open tool-malfunction details&quot;
+click tool_usecase_ebf4ad03 href &quot;#tool-usecase&quot; &quot;Open tool-usecase details&quot;
 click tool_req href &quot;#tool-req&quot; &quot;Open tool_req details&quot;
     </pre><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
 <summary class="sd-summary-title sd-card-header">
@@ -7873,7 +7873,7 @@ config:
 ---
 classDiagram
   direction BT
-class tool-malfunction {
+class tool_malfunction_87f13fc6[&quot;tool-malfunction&quot;] {
   +additional_safety_measure_required
   +detection_sufficient
   +id
@@ -7883,17 +7883,17 @@ class tool-malfunction {
   +source_code_link [optional]*
   +testlink [optional]*
 }
-class tool-usecase {
+class tool_usecase_ebf4ad03[&quot;tool-usecase&quot;] {
   +id
   +version
   +source_code_link [optional]*
   +testlink [optional]*
 }
-tool-malfunction --&gt; tool-usecase : parent_needs
-style tool-malfunction fill:#F8CECC,stroke:#666,color:#000
-style tool-usecase fill:#E1D5E7,stroke:#000,stroke-width:3px,color:#000
-click tool-malfunction href &quot;#tool-malfunction&quot; &quot;Open tool-malfunction details&quot;
-click tool-usecase href &quot;#tool-usecase&quot; &quot;Open tool-usecase details&quot;
+tool_malfunction_87f13fc6 --&gt; tool_usecase_ebf4ad03 : parent_needs
+style tool_malfunction_87f13fc6 fill:#F8CECC,stroke:#666,color:#000
+style tool_usecase_ebf4ad03 fill:#E1D5E7,stroke:#000,stroke-width:3px,color:#000
+click tool_malfunction_87f13fc6 href &quot;#tool-malfunction&quot; &quot;Open tool-malfunction details&quot;
+click tool_usecase_ebf4ad03 href &quot;#tool-usecase&quot; &quot;Open tool-usecase details&quot;
     </pre><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
 <summary class="sd-summary-title sd-card-header">
 <span class="sd-summary-text">Options and Links</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
@@ -7988,7 +7988,7 @@ class stkh_req {
   +testlink [optional]*
   +valid_until [optional]*
 }
-class tool-malfunction {
+class tool_malfunction_87f13fc6[&quot;tool-malfunction&quot;] {
   +additional_safety_measure_required
   +detection_sufficient
   +id
@@ -8013,7 +8013,7 @@ class tool_req {
   +testcovered [optional]*
   +testlink [optional]*
 }
-tool-malfunction --&gt; tool_req : violates
+tool_malfunction_87f13fc6 --&gt; tool_req : violates
 tool_req ..&gt; gd_req : satisfies
 tool_req ..&gt; stkh_req : satisfies
 tool_req ..&gt; feat_req : satisfies
@@ -8022,13 +8022,13 @@ style comp_req fill:#D5E8D4,stroke:#666,color:#000
 style feat_req fill:#FFF2CC,stroke:#666,color:#000
 style gd_req fill:#E1D5E7,stroke:#666,color:#000
 style stkh_req fill:#DAE8FC,stroke:#666,color:#000
-style tool-malfunction fill:#F8CECC,stroke:#666,color:#000
+style tool_malfunction_87f13fc6 fill:#F8CECC,stroke:#666,color:#000
 style tool_req fill:#F5F5F5,stroke:#000,stroke-width:3px,color:#000
 click comp_req href &quot;#comp-req&quot; &quot;Open comp_req details&quot;
 click feat_req href &quot;#feat-req&quot; &quot;Open feat_req details&quot;
 click gd_req href &quot;#gd-req&quot; &quot;Open gd_req details&quot;
 click stkh_req href &quot;#stkh-req&quot; &quot;Open stkh_req details&quot;
-click tool-malfunction href &quot;#tool-malfunction&quot; &quot;Open tool-malfunction details&quot;
+click tool_malfunction_87f13fc6 href &quot;#tool-malfunction&quot; &quot;Open tool-malfunction details&quot;
 click tool_req href &quot;#tool-req&quot; &quot;Open tool_req details&quot;
     </pre><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
 <summary class="sd-summary-title sd-card-header">
