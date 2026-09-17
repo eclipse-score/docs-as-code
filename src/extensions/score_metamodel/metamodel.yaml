@@ -582,6 +582,8 @@ needs_types:
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
+    optional_options:
+      maturity: ^(preview|experimental|release)$
     mandatory_links:
       belongs_to: feat # preparation for linking change according to DR-005
     optional_links:
