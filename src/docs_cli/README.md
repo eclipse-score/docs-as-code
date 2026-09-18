@@ -49,6 +49,8 @@ linking can traverse this Bazel package boundary.
 `docs.bzl` provides `SOURCE_DIRECTORY`, `PACKAGE_DIR`, `DATA`, and optional
 configuration such as `SPHINX_CONFIG_FILE`, `SCORE_METAMODEL_YAML`,
 `MOUNTS_MANIFEST`, `EXTERNAL_NEEDS_FILES`, `TEST_SOURCES` and `KNOWN_GOOD_JSON`.
+The sandboxed Needs action passes its external-needs labels separately through
+the internal `EXTERNAL_NEEDS_LABELS` variable.
 Bazel provides the workspace and runfiles locations. The CLI resolves source
 and output paths relative to the package containing the `docs()` call; generated
 configuration is resolved through runfiles.

@@ -243,6 +243,13 @@ def _clear_needs_defaults(app: Sphinx):
 
 def setup(app: Sphinx) -> dict[str, str | bool]:
     app.add_config_value("external_needs_source", "", rebuild="env")
+    app.add_config_value(
+        "runfiles_dir",
+        "",
+        rebuild="env",
+        types=str,
+        description="Bazel runfiles root supplied by the documentation CLI.",
+    )
     app.add_config_value("score_metamodel_yaml", "", rebuild="env")
     app.add_config_value("required_in_id", [], rebuild="env")
     app.add_config_value("score_bundle_needs_export", False, rebuild="env")

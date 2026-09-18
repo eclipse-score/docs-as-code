@@ -60,7 +60,7 @@ def parse_testcase_source_dirs(v: str) -> list[str]:
 
     The value arrives as a `str(list)` produced by Starlark (double-quoted, i.e.
     valid JSON), mirroring how `external_needs_source` is parsed in
-    `score_metamodel.external_needs.parse_external_needs_sources_from_DATA`.
+    `    score_metamodel.external_needs.get_external_needs_source`.
     """
     if v in ("[]", ""):
         return []

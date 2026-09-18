@@ -79,7 +79,6 @@ def _sphinx_define(name, value):
 
 def _needs_sphinx_extra_opts(
         master_doc,
-        external_needs_source,
         score_bundle_needs_export,
         score_source_code_linker_plain_links):
     """Return per-target Sphinx configuration defines for a Needs build."""
@@ -90,7 +89,6 @@ def _needs_sphinx_extra_opts(
         option
         for name, value in [
         ("master_doc", master_doc),
-        ("external_needs_source", external_needs_source),
         ("score_bundle_needs_export", score_bundle_needs_export),
         ("score_source_code_linker_plain_links", score_source_code_linker_plain_links),
         ]
@@ -119,7 +117,7 @@ def _needs_sphinx_docs(
         sphinx_build_deps,
         bundle,
         master_doc = None,
-        external_needs_source = None,
+        external_needs_labels = "[]",
         score_bundle_needs_export = None,
         score_sourcelinks_json = None,
         score_source_code_linker_plain_links = None,
@@ -152,13 +150,13 @@ def _needs_sphinx_docs(
         data = sphinx_build_data,
         extra_opts = _needs_sphinx_extra_opts(
             master_doc,
-            external_needs_source,
             score_bundle_needs_export,
             score_source_code_linker_plain_links,
         ),
         # Keep these as labels rather than path strings in ``extra_opts``. The
         # private rule declares them as action inputs and provides execroot
         # paths directly through the environment.
+        external_needs_labels = external_needs_labels,
         score_sourcelinks_json = score_sourcelinks_json,
         mounts_manifest = mounts_manifest,
         score_metamodel_yaml = score_metamodel_yaml,
@@ -369,7 +367,7 @@ def _declare_bundle_local_needs(
         sphinx_build_deps = sphinx_build_deps,
         sphinx_build_data = data,
         master_doc = entry_doc,
-        external_needs_source = "[]",
+        external_needs_labels = "[]",
         score_bundle_needs_export = "1",
         score_sourcelinks_json = sourcelinks_json,
         score_source_code_linker_plain_links = "1",
@@ -701,7 +699,7 @@ def docs(
         config = sphinx_config,
         sphinx_build_deps = deps,
         sphinx_build_data = data + external_needs + metamodel_label + [":docs_bundle"],
-        external_needs_source = str(data + external_needs),
+        external_needs_labels = str(data + external_needs),
         score_sourcelinks_json = ":sourcelinks_json",
         score_source_code_linker_plain_links = "1",
         mounts_manifest = mounts_manifest,

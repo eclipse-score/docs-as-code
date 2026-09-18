@@ -68,8 +68,7 @@ class Environment:
     def string_list(self, name: str, default: str | None = None) -> list[str]:
         """Read a JSON list and validate that every item is a string."""
         raw_value = self.get(name, default)
-        # DATA was historically allowed to be present but empty. Treat that as
-        # an empty list while still requiring the environment variable itself.
+        # Treat an explicitly empty value as an empty list.
         if not raw_value:
             return []
         value = json.loads(raw_value)

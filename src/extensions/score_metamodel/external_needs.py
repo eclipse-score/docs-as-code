@@ -13,7 +13,6 @@
 
 import json
 import subprocess
-from dataclasses import dataclass
 from pathlib import Path
 
 from sphinx.application import Sphinx
@@ -22,85 +21,26 @@ from sphinx.util import logging
 from sphinx_needs.needsfile import NeedsList
 
 from src.helper_lib import get_runfiles_dir
+from src.helper_lib.external_needs import (
+    ExternalNeedsSource as ExternalNeedsSource,
+    external_needs_runfiles_path,
+    external_needs_source_path as _external_needs_source_path,
+    parse_bazel_external_need,
+    parse_external_needs_source_config as _parse_external_needs_source_config,
+)
 
 logger = logging.getLogger(__name__)
 
-
-@dataclass
-class ExternalNeedsSource:
-    bazel_module: str
-    path_to_target: str
-    target: str
-    # True for a same-repo mount (`//pkg:needs_json`), whose runfiles live under
-    # `_main/…`. False for a cross-module mount (`@repo//…:needs_json`), whose
-    # runfiles live under `{bazel_module}+/…`.
-    is_local: bool = False
+_external_needs_runfiles_path = external_needs_runfiles_path
+_parse_bazel_external_need = parse_bazel_external_need
 
 
-def _parse_bazel_external_need(s: str) -> ExternalNeedsSource | None:
-    is_cross_module = s.startswith("@")
-    is_local = s.startswith("//")
-    if not is_cross_module and not is_local:
-        # Local need, not external needs
-        return None
-
-    if "//" not in s or ":" not in s:
-        raise ValueError(
-            f"Unsuported external data dependency: '{s}'. Must contain '//' & ':'"
-        )
-    repo_and_path, target = s.split(
-        ":", 1
-    )  # @score_process//:needs_json => [@score_process//, needs_json]
-    repo, path_to_target = repo_and_path.split("//", 1)
-    repo = repo.lstrip("@")  # empty for same-repo `//pkg:needs_json`
-
-    if target in ("needs_json", "needs_json_file", "docs_sources"):
-        return ExternalNeedsSource(
-            bazel_module=repo,
-            path_to_target=path_to_target,
-            target=target,
-            is_local=is_local,
-        )
-    # Unknown data target. Probably not a needs.json file.
-    return None
-
-
-def _runfiles_module_dir(e: ExternalNeedsSource) -> str:
-    """Runfiles top-level directory holding this source's package tree.
-
-    Same-repo mounts are staged under `_main/…`; cross-module mounts under the
-    module's bzlmod canonical name `{bazel_module}+/…`.
-    """
-    return "_main" if e.is_local else f"{e.bazel_module}+"
-
-
-def _external_needs_runfiles_path(
-    runfiles_dir: Path, source: ExternalNeedsSource, *suffix: str
-) -> Path:
-    """Build an external source path without reading the process environment."""
-    return (
-        runfiles_dir
-        / _runfiles_module_dir(source)
-        / source.path_to_target
-        / Path(*suffix)
-    )
-
-
-def parse_external_needs_sources_from_DATA(v: str) -> list[ExternalNeedsSource]:
-    if v in ["[]", ""]:
-        return []
-
-    logger.debug(f"Parsing external needs sources: {v}")
-
-    try:
-        data = json.loads(v)
-    except json.JSONDecodeError as e:
-        logger.error(f"Failed to parse external needs sources from DATA {v}: {e}")
-        raise SystemExit(1) from e
-
-    res = [res for el in data if (res := _parse_bazel_external_need(el))]
-    logger.debug(f"Parsed external needs sources: {res}")
-    return res
+def _runfiles_dir(config: Config) -> Path:
+    """Use the CLI-provided runfiles root, with a direct-invocation fallback."""
+    raw = getattr(config, "runfiles_dir", "")
+    if isinstance(raw, str) and raw.strip():
+        return Path(raw)
+    return get_runfiles_dir()
 
 
 def parse_external_needs_sources_from_bazel_query() -> list[ExternalNeedsSource]:
@@ -183,19 +123,25 @@ def extend_needs_json_exporter(
 
 def get_external_needs_source(external_needs_source: str) -> list[ExternalNeedsSource]:
     if external_needs_source:
-        # Path taken for all invocations via `bazel`
-        return parse_external_needs_sources_from_DATA(external_needs_source)
+        # The CLI supplies resolved descriptors for Bazel invocations.
+        try:
+            return _parse_external_needs_source_config(external_needs_source)
+        except json.JSONDecodeError as e:
+            logger.error(
+                f"Failed to parse external needs sources from "
+                f"external_needs_source {external_needs_source}: {e}"
+            )
+            raise SystemExit(1) from e
     else:
         # This is the path taken for anything that doesn't
         # run via `bazel`  e.g. esbonio or other direct executions
         return parse_external_needs_sources_from_bazel_query()  # pyright: ignore[reportAny]
 
 
-def add_external_needs_json(e: ExternalNeedsSource, config: Config):
-    r = get_runfiles_dir()
-    json_file = _external_needs_runfiles_path(
-        r, e, e.target, "_build", "needs", "needs.json"
-    )
+def add_external_needs_json(
+    e: ExternalNeedsSource, config: Config, runfiles_dir: Path | None
+):
+    json_file = _external_needs_source_path(runfiles_dir, e)
     logger.debug(f"External needs.json: {json_file}")
     try:
         needs_json_data = json.loads(Path(json_file).read_text(encoding="utf-8"))  # pyright: ignore[reportAny]
@@ -217,16 +163,14 @@ def add_external_needs_json(e: ExternalNeedsSource, config: Config):
     )
 
 
-def add_external_docs_sources(e: ExternalNeedsSource, config: Config):
+def add_external_docs_sources(
+    e: ExternalNeedsSource, config: Config, runfiles_dir: Path | None
+):
     # Note that bazel does NOT write the files under e.target!
     # The runfiles layout mirrors the original git layout: same-repo mounts live
     # under `_main/…`, cross-module mounts under `{e.bazel_module}+/…`
     # (see _runfiles_module_dir).
-    r = get_runfiles_dir()
-    if "ide_support.runfiles" in str(r):
-        logger.error("Combo builds are currently only supported with Bazel.")
-        return
-    docs_source_path = _external_needs_runfiles_path(r, e)
+    docs_source_path = _external_needs_source_path(runfiles_dir, e)
 
     # A cross-module root mount keeps its module name as the collection key
     # (unchanged). Sub-package / same-repo mounts disambiguate via the path.
@@ -256,30 +200,37 @@ def connect_external_needs(app: Sphinx, config: Config):
         export_values={"project_url": ""} if bundle_export else None,
     )
 
-    # Local external needs from DATA (e.g. :needs_json or :docs_sources)
+    # External needs descriptors supplied by the documentation CLI.
     external_needs = get_external_needs_source(app.config.external_needs_source)
 
     # this sets the default value - required for the needs-config-writer
     # setting 'needscfg_exclude_defaults = True' to see the diff
     config.needs_external_needs = []
 
-    for e in external_needs:
-        if e.target == "needs_json":
-            add_external_needs_json(e, app.config)
-        elif e.target == "needs_json_file":
-            _add_needs_json_file(e, app.config)
-        elif e.target == "docs_sources":
-            add_external_docs_sources(e, app.config)
-        else:
-            raise ValueError(
-                f"Internal Error. Unknown external needs target: {e.target}"
-            )
+    if external_needs:
+        runfiles_dir = (
+            _runfiles_dir(app.config)
+            if any(source.resolved_path is None for source in external_needs)
+            else None
+        )
+        for e in external_needs:
+            if e.target == "needs_json":
+                add_external_needs_json(e, app.config, runfiles_dir)
+            elif e.target == "needs_json_file":
+                _add_needs_json_file(e, app.config, runfiles_dir)
+            elif e.target == "docs_sources":
+                add_external_docs_sources(e, app.config, runfiles_dir)
+            else:
+                raise ValueError(
+                    f"Internal Error. Unknown external needs target: {e.target}"
+                )
 
 
-def _add_needs_json_file(ext_needs: ExternalNeedsSource, config: Config) -> None:
+def _add_needs_json_file(
+    ext_needs: ExternalNeedsSource, config: Config, runfiles_dir: Path | None
+) -> None:
     """Resolve a needs_json_file target from runfiles and register it."""
-    r = get_runfiles_dir()
-    json_file = _external_needs_runfiles_path(r, ext_needs, "needs.json")
+    json_file = _external_needs_source_path(runfiles_dir, ext_needs)
     logger.debug(f"External needs_json_file: {json_file}")
     try:
         needs_json_data = json.loads(

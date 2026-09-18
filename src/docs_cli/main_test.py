@@ -11,6 +11,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
+import json
 from pathlib import Path
 from unittest.mock import Mock
 
@@ -31,6 +32,7 @@ def workspace(fs: FFS, monkeypatch: pytest.MonkeyPatch) -> Path:
     # optional values left behind by the test runner before setting the basics.
     ENVIRONMENT_OVERRIDES = (
         "EXTERNAL_NEEDS_FILES",
+        "EXTERNAL_NEEDS_LABELS",
         "TEST_SOURCES",
         "MOUNTS_MANIFEST",
         "SPHINX_CONFIG_FILE",
@@ -195,8 +197,8 @@ def test_bazel_configuration_resolves_runfiles_and_preserves_repo_relative_edit_
     monkeypatch.setenv("SPHINX_CONFIG_FILE", "config/conf.py")
     monkeypatch.setenv("SCORE_METAMODEL_YAML", "config/metamodel.yaml")
     monkeypatch.setenv("MOUNTS_MANIFEST", "mounts.json")
-    monkeypatch.setenv("DATA", '[":bundle"]')
-    monkeypatch.setenv("EXTERNAL_NEEDS_FILES", '["@vendor//:needs"]')
+    monkeypatch.setenv("DATA", '["//:needs_json"]')
+    monkeypatch.setenv("EXTERNAL_NEEDS_FILES", '["@vendor//:needs_json"]')
     monkeypatch.setenv("GITHUB_REPOSITORY", "owner/repo")
     monkeypatch.setenv("KNOWN_GOOD_JSON", "baseline.json")
     monkeypatch.setenv("ACTION", "incremental")
@@ -205,14 +207,37 @@ def test_bazel_configuration_resolves_runfiles_and_preserves_repo_relative_edit_
     arguments = sphinx_arguments(DocsCliConfig.from_environment())
 
     # Assert
+    external_needs = json.dumps(
+        [
+            {
+                "bazel_module": "",
+                "path_to_target": "",
+                "target": "needs_json",
+                "is_local": True,
+                "resolved_path": str(
+                    workspace / "runfiles/_main/needs_json/_build/needs/needs.json"
+                ),
+            },
+            {
+                "bazel_module": "vendor",
+                "path_to_target": "",
+                "target": "needs_json",
+                "is_local": False,
+                "resolved_path": str(
+                    workspace / "runfiles/vendor+/needs_json/_build/needs/needs.json"
+                ),
+            },
+        ]
+    )
     expected_arguments = {
         # Generated configuration and metamodel paths use the runfiles tree.
         "-c",
         str(workspace / "runfiles/config"),
         f"--define=score_metamodel_yaml={workspace}/runfiles/config/metamodel.yaml",
         f"--define=mounts_manifest={workspace}/runfiles/mounts.json",
+        f"--define=runfiles_dir={workspace}/runfiles",
         # DATA and EXTERNAL_NEEDS_FILES are passed as one Sphinx define.
-        '--define=external_needs_source=[":bundle", "@vendor//:needs"]',
+        f"--define=external_needs_source={external_needs}",
         # GitHub metadata must keep edit links repository-relative.
         "-A=github_user=owner",
         "-A=github_repo=repo",
@@ -246,6 +271,35 @@ def test_bazel_build_resolves_mount_manifest_from_execroot(
     assert (
         f"--define=mounts_manifest={workspace}/bazel-out/k8-fastbuild/bin/component/mounts.json"
         in arguments
+    )
+
+
+def test_bazel_needs_action_uses_external_needs_labels_channel(
+    workspace: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # Arrange
+    monkeypatch.delenv("BUILD_WORKSPACE_DIRECTORY")
+    monkeypatch.chdir(workspace)
+    monkeypatch.setenv("ACTION", "build_needs_json")
+    monkeypatch.setenv("OUTPUT_DIRECTORY", "outputs/needs")
+    monkeypatch.setenv("EXTERNAL_NEEDS_LABELS", '["//:needs_json"]')
+
+    # Act
+    arguments = sphinx_arguments(DocsCliConfig.from_environment())
+
+    # Assert
+    expected_source: dict[str, object] = {
+        "bazel_module": "",
+        "path_to_target": "",
+        "target": "needs_json",
+        "is_local": True,
+        "resolved_path": str(
+            workspace / "runfiles/_main/needs_json/_build/needs/needs.json"
+        ),
+    }
+    assert (
+        f"--define=external_needs_source={json.dumps([expected_source])}" in arguments
     )
 
 

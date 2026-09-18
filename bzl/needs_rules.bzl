@@ -33,8 +33,8 @@ def _sphinx_docs_impl(ctx):
         fail("Sphinx requires a bundle with direct documentation sources")
 
     # File labels provide execroot-relative paths for this action's sandbox.
-    # Pass them through the environment variables already consumed by the CLI
-    # and extensions; reserve the JSON option list for non-path Sphinx overrides.
+    # Pass them through the environment variables consumed by the CLI; reserve
+    # the JSON option list for non-path Sphinx overrides.
     # Encode that list as JSON so spaces, quotes and '=' survive transport.
     # ``config`` is transported separately because the launcher derives
     # Sphinx's ``-c`` directory from its path; it is not just another data file.
@@ -43,7 +43,7 @@ def _sphinx_docs_impl(ctx):
         "SOURCE_DIRECTORY": bundle.source_dir_execroot_path,
         "OUTPUT_DIRECTORY": output.path,
         "SPHINX_CONFIG_FILE": ctx.file.config.path,
-        "DATA": "[]",
+        "EXTERNAL_NEEDS_LABELS": ctx.attr.external_needs_labels,
         "SCORE_SOURCELINKS": (
             ctx.file.score_sourcelinks_json.path if ctx.file.score_sourcelinks_json else ""
         ),
@@ -93,6 +93,7 @@ sphinx_docs = rule(
         "score_sourcelinks_json": attr.label(allow_single_file = True),
         "mounts_manifest": attr.label(allow_single_file = True),
         "score_metamodel_yaml": attr.label(allow_single_file = True),
+        "external_needs_labels": attr.string(default = "[]"),
         "extra_opts": attr.string_list(),
         # The launcher runs on the build host and carries extension runfiles.
         "sphinx": attr.label(cfg = "exec", executable = True, mandatory = True),

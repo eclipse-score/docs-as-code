@@ -28,10 +28,11 @@ from score_metamodel.external_needs import (
     ExternalNeedsSource,
     _add_needs_json_file,  # pyright: ignore[reportPrivateUsage] - white-box unit test
     _external_needs_runfiles_path,  # pyright: ignore[reportPrivateUsage] - white-box unit test
+    _external_needs_source_path,  # pyright: ignore[reportPrivateUsage] - white-box unit test
+    _runfiles_dir,  # pyright: ignore[reportPrivateUsage] - white-box unit test
     add_external_docs_sources,
     add_external_needs_json,
     get_external_needs_source,
-    parse_external_needs_sources_from_DATA,
 )
 from sphinx.config import Config
 from sphinx_needs.needsfile import NeedsList
@@ -76,10 +77,6 @@ def test_extend_needs_json_exporter_can_override_bundle_export_metadata(
     assert needs_list.needs_list["project_url"] == ""
 
 
-def test_empty_list():
-    assert parse_external_needs_sources_from_DATA("[]") == []
-
-
 @pytest.mark.parametrize(
     ("source", "suffix", "expected"),
     [
@@ -110,110 +107,92 @@ def test_external_needs_runfiles_path_is_environment_independent(
     assert _external_needs_runfiles_path(Path("/runfiles"), source, *suffix) == expected
 
 
-def test_external_str_is_neither_at_nor_slash():
-    # Labels that start with neither "@" nor "//" are not bazel needs sources.
-    assert get_external_needs_source('["noatrepo/foo/bar:baz"]') == []
+@pytest.mark.parametrize(
+    ("source", "expected"),
+    [
+        (
+            ExternalNeedsSource(
+                bazel_module="repo",
+                path_to_target="docs",
+                target="needs_json",
+            ),
+            Path("/runfiles/repo+/docs/needs_json/_build/needs/needs.json"),
+        ),
+        (
+            ExternalNeedsSource(
+                bazel_module="repo",
+                path_to_target="docs",
+                target="needs_json_file",
+            ),
+            Path("/runfiles/repo+/docs/needs.json"),
+        ),
+        (
+            ExternalNeedsSource(
+                bazel_module="",
+                path_to_target="docs",
+                target="docs_sources",
+                is_local=True,
+            ),
+            Path("/runfiles/_main/docs"),
+        ),
+    ],
+)
+def test_external_needs_source_path_selects_target_layout(
+    source: ExternalNeedsSource, expected: Path
+) -> None:
+    assert _external_needs_source_path(Path("/runfiles"), source) == expected
 
 
-def test_same_repo_entry_with_path():
-    # A same-repo `//pkg:needs_json` mount now parses as a local source that
-    # carries its sub-package path.
-    result = parse_external_needs_sources_from_DATA('["//foo/bar:needs_json"]')
-    assert result == [
+def test_configured_runfiles_dir_is_used_for_external_sources(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    config = Config()
+    configured_runfiles = tmp_path / "configured.runfiles"
+    config.runfiles_dir = str(configured_runfiles)
+
+    monkeypatch.setattr(
+        ext_needs,
+        "get_runfiles_dir",
+        lambda: pytest.fail("configured runfiles root should be preferred"),
+    )
+
+    assert _runfiles_dir(config) == configured_runfiles
+
+
+def test_descriptor_config_preserves_resolved_source_path() -> None:
+    resolved_path = Path("/runfiles/vendor+/needs_json/_build/needs/needs.json")
+    raw = json.dumps(
+        [
+            {
+                "bazel_module": "vendor",
+                "path_to_target": "",
+                "target": "needs_json",
+                "is_local": False,
+                "resolved_path": str(resolved_path),
+            }
+        ]
+    )
+
+    sources = get_external_needs_source(raw)
+
+    assert sources == [
         ExternalNeedsSource(
-            bazel_module="",
-            path_to_target="foo/bar",
-            target="needs_json",
-            is_local=True,
-        )
-    ]
-
-
-def test_same_repo_root_entry():
-    result = parse_external_needs_sources_from_DATA('["//:needs_json"]')
-    assert result == [
-        ExternalNeedsSource(
-            bazel_module="",
+            bazel_module="vendor",
             path_to_target="",
             target="needs_json",
-            is_local=True,
+            resolved_path=resolved_path,
         )
     ]
+    assert _external_needs_source_path(None, sources[0]) == resolved_path
 
 
-def test_cross_module_sub_package_entry():
-    # A cross-module sub-package target now parses (previously rejected) and
-    # keeps its path so the runfiles path can be built correctly.
-    result = parse_external_needs_sources_from_DATA('["@repo//foo/bar:needs_json"]')
-    assert result == [
-        ExternalNeedsSource(
-            bazel_module="repo",
-            path_to_target="foo/bar",
-            target="needs_json",
-            is_local=False,
-        )
-    ]
-
-
-def test_single_entry_with_path_non_target():
-    # A target that is not needs_json / docs_sources is not reported as an external needs source.
-    result = parse_external_needs_sources_from_DATA('["@repo//foo/bar:baz"]')
-    assert result == []
-
-
-def test_single_entry_no_path():
-    result = parse_external_needs_sources_from_DATA('["@repo//:target"]')
-    # If a target is not named "needs_json", it will not be reported as external needs
-    assert result == []
-
-
-def test_single_entry_json_no_path():
-    result = parse_external_needs_sources_from_DATA('["@repo//:needs_json"]')
-    assert result == [
-        ExternalNeedsSource(bazel_module="repo", path_to_target="", target="needs_json")
-    ]
-
-
-def test_multiple_entries():
-    result = parse_external_needs_sources_from_DATA(
-        '["@repo1//:needs_json", "@repo2//:needs_json"]'
-    )
-    assert result == [
-        ExternalNeedsSource(
-            bazel_module="repo1", path_to_target="", target="needs_json"
-        ),
-        ExternalNeedsSource(
-            bazel_module="repo2", path_to_target="", target="needs_json"
-        ),
-    ]
-
-
-def test_multiple_entries_2():
-    # Both targets are named "needs_json" but one is a sub-package target, so the path is preserved.
-    result = parse_external_needs_sources_from_DATA(
-        '["@repo1//:needs_json", "@repo2//path:needs_json"]'
-    )
-
-    assert result == [
-        ExternalNeedsSource(
-            bazel_module="repo1", path_to_target="", target="needs_json"
-        ),
-        ExternalNeedsSource(
-            bazel_module="repo2",
-            path_to_target="path",
-            target="needs_json",
-            is_local=False,
-        ),
-    ]
-
-
-def test_invalid_entry():
-    with pytest.raises(ValueError):
-        _ = parse_external_needs_sources_from_DATA('["@not_a_valid_string"]')
+def test_external_needs_source_rejects_label_lists() -> None:
+    with pytest.raises(ValueError, match="descriptor objects"):
+        get_external_needs_source('["//:needs_json"]')
 
 
 def test_add_external_needs_json_appends_entry(
-    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+    tmp_path: Path,
 ) -> None:
     """add_external_needs_json should append one external needs mapping entry."""
     # Arrange
@@ -231,9 +210,7 @@ def test_add_external_needs_json_appends_entry(
         json.dumps({"project_url": "https://example.test/repo"}), encoding="utf-8"
     )
 
-    monkeypatch.setattr(ext_needs, "get_runfiles_dir", lambda: runfiles_dir)
-
-    add_external_needs_json(e, config)
+    add_external_needs_json(e, config, runfiles_dir)
 
     assert config.needs_external_needs is not None
     assert len(config.needs_external_needs) == 1
@@ -243,7 +220,7 @@ def test_add_external_needs_json_appends_entry(
 
 
 def test_add_external_needs_json_appends_entry_local(
-    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+    tmp_path: Path,
 ) -> None:
     """A same-repo mount resolves under `_main/<path>/<target>/…`."""
     e = ExternalNeedsSource(
@@ -265,9 +242,7 @@ def test_add_external_needs_json_appends_entry_local(
         json.dumps({"project_url": "https://example.test/local"}), encoding="utf-8"
     )
 
-    monkeypatch.setattr(ext_needs, "get_runfiles_dir", lambda: runfiles_dir)
-
-    add_external_needs_json(e, config)
+    add_external_needs_json(e, config, runfiles_dir)
 
     assert config.needs_external_needs is not None
     assert len(config.needs_external_needs) == 1
@@ -277,7 +252,7 @@ def test_add_external_needs_json_appends_entry_local(
 
 
 def test_add_needs_json_file_appends_entry(
-    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+    tmp_path: Path,
 ) -> None:
     """_add_needs_json_file should load from a :needs_json_file target."""
     # Arrange: create the needs.json at the runfiles path
@@ -292,8 +267,6 @@ def test_add_needs_json_file_appends_entry(
     config = Config()
     config.needs_external_needs = []
 
-    monkeypatch.setattr(ext_needs, "get_runfiles_dir", lambda: runfiles_dir)
-
     # Act
     e = ExternalNeedsSource(
         bazel_module="ext_mod",
@@ -301,7 +274,7 @@ def test_add_needs_json_file_appends_entry(
         path_to_target="",
         is_local=False,
     )
-    _add_needs_json_file(e, config)
+    _add_needs_json_file(e, config, runfiles_dir)
 
     # Assert
     assert config.needs_external_needs is not None
@@ -312,7 +285,7 @@ def test_add_needs_json_file_appends_entry(
 
 
 def test_add_external_needs_json_missing_file_keeps_list_empty(
-    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+    tmp_path: Path,
 ) -> None:
     """add_external_needs_json should return gracefully when JSON file is missing."""
     # Arrange
@@ -322,16 +295,14 @@ def test_add_external_needs_json_missing_file_keeps_list_empty(
     config = Config()
     config.needs_external_needs = []
 
-    monkeypatch.setattr(ext_needs, "get_runfiles_dir", lambda: tmp_path)
-
-    add_external_needs_json(e, config)
+    add_external_needs_json(e, config, tmp_path)
 
     # Assert
     assert config.needs_external_needs == []
 
 
 def test_add_external_docs_sources_adds_collection(
-    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+    tmp_path: Path,
 ) -> None:
     """add_external_docs_sources should add one symlink collection entry."""
     e = ExternalNeedsSource(
@@ -340,9 +311,7 @@ def test_add_external_docs_sources_adds_collection(
     config = Config()
     config.collections = {}
 
-    monkeypatch.setattr(ext_needs, "get_runfiles_dir", lambda: tmp_path)
-
-    add_external_docs_sources(e, config)
+    add_external_docs_sources(e, config, tmp_path)
 
     assert config.collections is not None
     assert "third_party_docs" in config.collections
@@ -353,7 +322,7 @@ def test_add_external_docs_sources_adds_collection(
 
 
 def test_add_external_docs_sources_local_sub_package(
-    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+    tmp_path: Path,
 ) -> None:
     """A same-repo sub-package `docs_sources` mount resolves under `_main/<path>`.
 
@@ -371,9 +340,7 @@ def test_add_external_docs_sources_local_sub_package(
     config = Config()
     config.collections = {}
 
-    monkeypatch.setattr(ext_needs, "get_runfiles_dir", lambda: tmp_path)
-
-    add_external_docs_sources(e, config)
+    add_external_docs_sources(e, config, tmp_path)
 
     assert config.collections is not None
     key = "src/tests/e2e/external_needs/producer"
@@ -387,7 +354,7 @@ def test_add_external_docs_sources_local_sub_package(
 
 
 def test_add_external_docs_sources_local_root_key_fallback(
-    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+    tmp_path: Path,
 ) -> None:
     """A same-repo root `docs_sources` mount falls back to the `_main` key.
 
@@ -404,9 +371,7 @@ def test_add_external_docs_sources_local_root_key_fallback(
     config = Config()
     config.collections = {}
 
-    monkeypatch.setattr(ext_needs, "get_runfiles_dir", lambda: tmp_path)
-
-    add_external_docs_sources(e, config)
+    add_external_docs_sources(e, config, tmp_path)
 
     assert config.collections is not None
     assert "_main" in config.collections
@@ -416,20 +381,20 @@ def test_add_external_docs_sources_local_root_key_fallback(
     assert entry["target"] == "_main"
 
 
-def test_add_external_docs_sources_ide_support_returns_without_changes(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    """add_external_docs_sources should exit early for ide_support.runfiles paths."""
+def test_add_external_docs_sources_ide_support_uses_runfiles_tree() -> None:
+    """add_external_docs_sources should use the IDE fallback runfiles tree."""
     e = ExternalNeedsSource(
         bazel_module="third_party_docs", target="docs_sources", path_to_target=""
     )
     config = Config()
     config.collections = {}
 
-    monkeypatch.setattr(
-        ext_needs, "get_runfiles_dir", lambda: Path("/tmp/ide_support.runfiles")
-    )
+    add_external_docs_sources(e, config, Path("/tmp/ide_support.runfiles"))
 
-    add_external_docs_sources(e, config)
-
-    assert config.collections == {}
+    assert config.collections == {
+        "third_party_docs": {
+            "driver": "symlink",
+            "source": "/tmp/ide_support.runfiles/third_party_docs+",
+            "target": "third_party_docs",
+        }
+    }
