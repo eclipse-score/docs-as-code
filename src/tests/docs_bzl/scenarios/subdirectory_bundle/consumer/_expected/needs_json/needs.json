@@ -725,6 +725,15 @@
             },
             "type": "array"
           },
+          "maturity": {
+            "default": "",
+            "description": "Added by needs_fields config",
+            "field_type": "extra",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "max_amount": {
             "default": null,
             "description": "Added by service github-issues",
