@@ -219,9 +219,7 @@ class _RequirementInScope:
                 return False
 
         linked_feat_reqs = _linked_needs_callable(need["id"], "derived_from")
-        return any(
-            self(feat_req, report_version) for feat_req in linked_feat_reqs
-        )
+        return any(self(feat_req, report_version) for feat_req in linked_feat_reqs)
 
 
 _req_in_scope_callable = _RequirementInScope()
@@ -237,9 +235,7 @@ class _AnyRequirementInScope:
     ones without any requirement at all, as before).
     """
 
-    def __call__(
-        self, reqs: list[NeedItem], report_version: str | None
-    ) -> bool:
+    def __call__(self, reqs: list[NeedItem], report_version: str | None) -> bool:
         if not report_version:
             return True
         return any(_req_in_scope_callable(req, report_version) for req in reqs)
