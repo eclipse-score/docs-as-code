@@ -10,7 +10,8 @@
     "generated_by",
     "overall_metrics",
     "metrics_by_type",
-    "tests"
+    "tests",
+    "needs_overview"
   ],
   "properties": {
     "schema_version": {
@@ -40,6 +41,43 @@
     },
     "tests": {
       "$ref": "#/$defs/testMetrics"
+    },
+    "needs_overview": {
+      "type": "object",
+      "description": "Overview of all needs in the metrics scope, respecting the include_external setting.",
+      "additionalProperties": false,
+      "required": [
+        "total",
+        "external",
+        "local",
+        "by_type"
+      ],
+      "properties": {
+        "total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "external": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "local": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "by_type": {
+          "type": "object",
+          "description": "Count of needs per need type.",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "propertyNames": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
     }
   },
   "$defs": {
