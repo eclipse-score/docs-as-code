@@ -258,6 +258,36 @@ needs_types:
       realizes: workproduct
     parts: 2
 
+  # Tool qualification reports keep use cases top-level for readable rendering.
+  # Their malfunctions are nested below them and use parent_needs as their
+  # semantic relationship.
+  tool-usecase:
+    title: Tool Verification Use Case
+    color: "#E1D5E7"
+    prefix: tool_usecase__
+    mandatory_options:
+      id: ^tool_usecase__docs_as_code__[0-9a-z_-]+$
+    parts: 3
+
+  # A malfunction describes a violation of one or more requirements. Safety
+  # measures are deliberately kept as free text on the malfunction because
+  # they are report evidence, not independently traceable model elements.
+  tool-malfunction:
+    title: Tool Verification Malfunction
+    color: "#F8CECC"
+    prefix: tool_malfunction__
+    mandatory_options:
+      id: ^tool_malfunction__docs_as_code__[0-9a-z_-]+$
+      safety_affected: "^(YES|NO)$"
+      detection_sufficient: "^(YES|NO)$"
+      additional_safety_measure_required: "^(YES|NO)$"
+    optional_options:
+      safety_measure: ^.+$
+    mandatory_links:
+      parent_needs: tool-usecase
+      violates: gd_req, stkh_req, feat_req, comp_req, tool_req, aou_req
+    parts: 3
+
   # Requirements
   # req-Id: tool_req__docs_req_types
   stkh_req:
@@ -1060,6 +1090,13 @@ needs_extra_links:
   realizes:
     incoming: realized by
     outgoing: realizes
+
+  # Sphinx-Needs stores nested Need relationships under parent_needs. Use
+  # report-oriented labels so generated links describe the containment rather
+  # than exposing the implementation-oriented word "parent".
+  parent_needs:
+    incoming: contains
+    outgoing: contained by
 
   # Decision Record
   affects:

@@ -1,0 +1,102 @@
+{#
+  score: render-after-needs-collection
+
+  Reusable post-template for a ``doc_tool`` qualification report. Use cases are
+  top-level Needs for readable rendering; malfunctions are resolved through
+  their nested Need graph. Generated testcases are discovered through the
+  existing verification backlinks.
+#}
+{% set usecases = needs_of_type("tool-usecase")|list %}
+
+{% macro text(value, fallback="—") -%}
+{{ (value|default("", true)|replace("\n", " ")|trim) or fallback }}
+{%- endmacro %}
+
+{% macro need_reference(need) -%}
+{% if need.get("external_url") %}`{{ need["id"] }} <{{ need["external_url"] }}>`_{% else %}:need:`{{ need["id"] }}`{% endif %}
+{%- endmacro %}
+
+{% macro need_list(needs) -%}
+{% if needs %}{% for need in needs %}{{ need_reference(need) }}{% if not loop.last %}, {% endif %}{% endfor %}{% else %}—{% endif %}
+{%- endmacro %}
+
+**Automatically generated overview starts here.**
+
+Tool qualification matrix
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The following table summarizes the tool use cases and their identified
+malfunctions. Each malfunction is nested below its use case and links to the
+requirements it violates.
+
+.. list-table:: Tool qualification matrix
+   :header-rows: 1
+   :widths: 18 18 25 10 20 12 16 10
+
+   * - Malfunction identification
+     - Use case description
+     - Malfunction
+     - Impact on safety?
+     - Safety measure available?
+     - Detection sufficient?
+     - Additional safety measure required?
+     - Confidence
+{% for usecase in usecases %}
+{% set malfunctions = linked_needs(usecase["id"], "parent_needs_back")|list %}
+{% for malfunction in malfunctions %}
+   * - {{ need_reference(malfunction) }}
+     - {{ text(usecase.get("title")) }}
+     - {{ text(malfunction.get("content"), malfunction["title"]) }}
+     - {{ malfunction.get("safety_affected", "—") }}
+     - {{ "YES" if malfunction.get("safety_measure") else "NO" }}
+     - {{ malfunction.get("detection_sufficient", "—") }}
+     - {{ malfunction.get("additional_safety_measure_required", "—") }}
+     - {{ "LOW" if malfunction.get("additional_safety_measure_required") == "YES" else "HIGH" }}
+{% endfor %}
+{% endfor %}
+{% if not usecases %}
+   * - Report data is collected after the document Needs are merged.
+     - —
+     - —
+     - —
+     - —
+     - —
+     - —
+     - —
+{% endif %}
+
+Traceability evidence
+^^^^^^^^^^^^^^^^^^^^^
+
+The evidence below keeps requirement violations, safety measures and generated
+testcase links visible without hiding them in the summary table.
+
+.. list-table:: Malfunction traceability
+   :header-rows: 1
+   :widths: 20 25 25 15 15
+
+   * - Malfunction
+     - Violates requirements
+     - Safety measure
+     - Fully verified by
+     - Partially verified by
+{% for usecase in usecases %}
+{% set malfunctions = linked_needs(usecase["id"], "parent_needs_back")|list %}
+{% for malfunction in malfunctions %}
+{% set requirements = linked_needs(malfunction["id"], "violates")|list %}
+{% set fully_verifying_tests = linked_needs(malfunction["id"], "fully_verifies_back")|list %}
+{% set partially_verifying_tests = linked_needs(malfunction["id"], "partially_verifies_back")|list %}
+   * - {{ need_reference(malfunction) }}
+     - {{ need_list(requirements) }}
+     - {{ text(malfunction.get("safety_measure")) }}
+     - {{ need_list(fully_verifying_tests) }}
+     - {{ need_list(partially_verifying_tests) }}
+{% endfor %}
+{% endfor %}
+{% if not usecases %}
+   * - Report data is collected after the document Needs are merged.
+     - —
+     - —
+     - —
+     - —
+{% endif %}

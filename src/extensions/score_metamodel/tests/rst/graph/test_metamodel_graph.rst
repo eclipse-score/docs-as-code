@@ -14,6 +14,7 @@
 
 .. test_metadata::
    :id: test_metadata__metamodel_graph_checks
+   :fully_verifies_list: tool_malfunction__docs_as_code__safety_links
    :partially_verifies_list: tool_req__docs_common_attr_safety_link_check
    :test_type: requirements_based
    :derivation_technique: requirements_based
@@ -78,3 +79,29 @@
    :status: valid
    :derived_from: feat_req__parent0__abcd
    :expect: unknown outgoing link
+
+
+.. doc_tool:: Nested tool qualification report
+   :id: doc_tool__nested_qualification
+   :status: evaluated
+   :safety_affected: YES
+   :security_affected: NO
+   :tcl: LOW
+   :version: 1
+
+.. tool-usecase:: Nested tool use case
+   :id: tool_usecase__blabla__nested
+   :version: 1
+
+   A use case contains its tool malfunctions as nested needs.
+
+   .. tool-malfunction:: Nested tool malfunction
+      :id: tool_malfunction__blabla__nested
+      :safety_affected: YES
+      :detection_sufficient: NO
+      :additional_safety_measure_required: YES
+      :safety_measure: Review the generated result before release.
+      :violates: gd_guidl__req__engineering
+      :version: 1
+
+      The generated result may contain a silent error.

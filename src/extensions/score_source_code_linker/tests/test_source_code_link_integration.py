@@ -23,6 +23,7 @@ from pytest import TempPathFactory
 from sphinx.testing.util import SphinxTestApp
 from sphinx_needs.data import SphinxNeedsData
 
+from score_pytest.attribute_plugin import add_test_properties
 from src.extensions.score_source_code_linker.helpers import get_github_link
 from src.extensions.score_source_code_linker.needlinks import NeedLink
 from src.extensions.score_source_code_linker.repo_source_links import RepoInfo
@@ -514,6 +515,14 @@ def compare_grouped_json_files(file1: Path, golden_file: Path):
         )
 
 
+@add_test_properties(
+    fully_verifies=[
+        "tool_malfunction__docs_as_code__backlinks",
+        "tool_malfunction__docs_as_code__generation",
+    ],
+    test_type="requirements-based",
+    derivation_technique="requirements-analysis",
+)
 def test_source_link_integration_ok(
     sphinx_app_setup: Callable[[], SphinxTestApp],
     example_source_link_text_all_ok: dict[str, list[NeedLink]],
