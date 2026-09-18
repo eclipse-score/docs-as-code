@@ -1143,6 +1143,7 @@ class logic_arc_int_op {
 class mod {
   +id
   +version
+  +maturity [optional]*
   +safety [optional]*
   +security [optional]*
   +source_code_link [optional]*
@@ -2035,6 +2036,7 @@ class logic_arc_int {
 class mod {
   +id
   +version
+  +maturity [optional]*
   +safety [optional]*
   +security [optional]*
   +source_code_link [optional]*
@@ -5855,6 +5857,7 @@ class comp {
 class mod {
   +id
   +version
+  +maturity [optional]*
   +safety [optional]*
   +security [optional]*
   +source_code_link [optional]*
@@ -5921,22 +5924,26 @@ click mod_view_sta href &quot;#mod-view-sta&quot; &quot;Open mod_view_sta detail
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p class="sd-card-text">Optional</p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">maturity</span></code></p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^(preview|experimental|release)$</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p class="sd-card-text">Optional</p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">safety</span></code></p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^(QM|ASIL_B)$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p class="sd-card-text">Optional</p></td>
+<tr class="row-even"><td><p class="sd-card-text">Optional</p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">security</span></code></p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^(YES|NO)$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p class="sd-card-text">Optional</p></td>
+<tr class="row-odd"><td><p class="sd-card-text">Optional</p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p class="sd-card-text">Optional</p></td>
+<tr class="row-even"><td><p class="sd-card-text">Optional</p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">status</span></code></p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^(valid|invalid)$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p class="sd-card-text">Optional</p></td>
+<tr class="row-odd"><td><p class="sd-card-text">Optional</p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -5975,6 +5982,7 @@ classDiagram
 class mod {
   +id
   +version
+  +maturity [optional]*
   +safety [optional]*
   +security [optional]*
   +source_code_link [optional]*
@@ -6121,6 +6129,7 @@ classDiagram
 class mod {
   +id
   +version
+  +maturity [optional]*
   +safety [optional]*
   +security [optional]*
   +source_code_link [optional]*
@@ -6210,6 +6219,7 @@ class comp {
 class mod {
   +id
   +version
+  +maturity [optional]*
   +safety [optional]*
   +security [optional]*
   +source_code_link [optional]*
