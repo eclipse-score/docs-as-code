@@ -993,6 +993,7 @@ class document {
   +version
   +approver [optional]*
   +author [optional]*
+  +report_version [optional]*
   +reviewer [optional]*
   +source_code_link [optional]*
   +testlink [optional]*
@@ -3613,6 +3614,7 @@ class document {
   +version
   +approver [optional]*
   +author [optional]*
+  +report_version [optional]*
   +reviewer [optional]*
   +source_code_link [optional]*
   +testlink [optional]*
@@ -3670,14 +3672,18 @@ click workproduct href &quot;#workproduct&quot; &quot;Open workproduct details&q
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p class="sd-card-text">Optional</p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">report_version</span></code></p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^v(0|[1-9]\d*)\.(0|[1-9]\d*)(\.(0|[1-9]\d*))?$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p class="sd-card-text">Optional</p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">reviewer</span></code></p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p class="sd-card-text">Optional</p></td>
+<tr class="row-odd"><td><p class="sd-card-text">Optional</p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p class="sd-card-text">Optional</p></td>
+<tr class="row-even"><td><p class="sd-card-text">Optional</p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -8039,6 +8045,7 @@ class document {
   +version
   +approver [optional]*
   +author [optional]*
+  +report_version [optional]*
   +reviewer [optional]*
   +source_code_link [optional]*
   +testlink [optional]*
