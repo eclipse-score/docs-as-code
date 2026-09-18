@@ -285,11 +285,7 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     config_setdefault(app.config, "needs_reproducible_json", True)
     config_setdefault(app.config, "needs_json_remove_defaults", True)
 
-    # sphinx-collections runs on default prio 500.
-    # We need to populate the sphinx-collections config before that happens.
-    # If we put it anywhere higher it seems that other things already lock the needs
-    # To ensure that this runs first before locking happens priot is => 425
-    # The lower the number the higher priority it has (runs earlier)
+    # Populate external Needs before Sphinx-Needs locks its configuration.
     _ = app.connect("config-inited", connect_external_needs, priority=425)
 
     discover_checks()

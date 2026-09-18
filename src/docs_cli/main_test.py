@@ -207,28 +207,7 @@ def test_bazel_configuration_resolves_runfiles_and_preserves_repo_relative_edit_
     arguments = sphinx_arguments(DocsCliConfig.from_environment())
 
     # Assert
-    external_needs = json.dumps(
-        [
-            {
-                "bazel_module": "",
-                "path_to_target": "",
-                "target": "needs_json",
-                "is_local": True,
-                "resolved_path": str(
-                    workspace / "runfiles/_main/needs_json/_build/needs/needs.json"
-                ),
-            },
-            {
-                "bazel_module": "vendor",
-                "path_to_target": "",
-                "target": "needs_json",
-                "is_local": False,
-                "resolved_path": str(
-                    workspace / "runfiles/vendor+/needs_json/_build/needs/needs.json"
-                ),
-            },
-        ]
-    )
+    external_needs = json.dumps(["//:needs_json", "@vendor//:needs_json"])
     expected_arguments = {
         # Generated configuration and metamodel paths use the runfiles tree.
         "-c",
@@ -289,18 +268,7 @@ def test_bazel_needs_action_uses_external_needs_labels_channel(
     arguments = sphinx_arguments(DocsCliConfig.from_environment())
 
     # Assert
-    expected_source: dict[str, object] = {
-        "bazel_module": "",
-        "path_to_target": "",
-        "target": "needs_json",
-        "is_local": True,
-        "resolved_path": str(
-            workspace / "runfiles/_main/needs_json/_build/needs/needs.json"
-        ),
-    }
-    assert (
-        f"--define=external_needs_source={json.dumps([expected_source])}" in arguments
-    )
+    assert '--define=external_needs_source=["//:needs_json"]' in arguments
 
 
 def test_direct_invocation_resolves_paths_relative_to_cwd(

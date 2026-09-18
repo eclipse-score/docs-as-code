@@ -15,6 +15,7 @@
 
 import argparse
 import hashlib
+import json
 import logging
 import os
 import shutil
@@ -31,11 +32,6 @@ from sphinx_autobuild.__main__ import (
 from src.extensions.score_mounts._resolver import load_mounts_manifest, resolve_walk_dir
 from src.helper_lib import Environment, get_runfiles_dir
 from src.helper_lib.config import DocsCliConfig
-from src.helper_lib.external_needs import (
-    parse_external_needs_labels,
-    resolve_external_needs_sources,
-    serialize_external_needs_sources,
-)
 
 logger = logging.getLogger(__name__)
 
@@ -45,7 +41,7 @@ env = Environment()
 
 
 def _build_external_needs_source_config() -> str:
-    """Build the JSON for Sphinx's ``external_needs_source`` configuration.
+    """Build the JSON label list for Sphinx's ``external_needs_source`` config.
 
     ``DATA`` contains all data dependencies of the documentation target,
     ``EXTERNAL_NEEDS_FILES`` contains explicitly declared external-needs
@@ -53,21 +49,14 @@ def _build_external_needs_source_config() -> str:
     ``EXTERNAL_NEEDS_LABELS`` for its explicitly declared label list. All
     variables contain JSON arrays of Bazel labels.
 
-    The CLI combines those arrays, discards ordinary data dependencies, turns
-    supported external-needs labels into descriptors, resolves their paths in
-    the Bazel runfiles tree, and serializes the descriptors for the Sphinx
-    extension. If no runfiles directory is available, the descriptors retain
-    no resolved path and the extension resolves them through its own fallback
-    (for now).
+    The metamodel extension filters ordinary data dependencies and resolves
+    supported labels against the runfiles directory supplied as a separate
+    Sphinx configuration value.
     """
     data = env.string_list("DATA", "[]")
     external = env.string_list("EXTERNAL_NEEDS_FILES", "[]")
     labels = env.string_list("EXTERNAL_NEEDS_LABELS", "[]")
-    sources = parse_external_needs_labels(data + external + labels)
-    runfiles_dir = env.optional_path("RUNFILES_DIR")
-    if runfiles_dir is not None:
-        sources = resolve_external_needs_sources(sources, runfiles_dir.absolute())
-    return serialize_external_needs_sources(sources)
+    return json.dumps(data + external + labels)
 
 
 def _compute_hash(files: list[Path]) -> str:
@@ -190,8 +179,7 @@ def sphinx_arguments(
         "-T",  # show details in case of errors in extensions
         "--jobs",
         "auto",
-        # Convert Bazel data dependencies into descriptors consumed by the
-        # score_metamodel extension.
+        # Forward Bazel data dependencies to the score_metamodel extension.
         f"--define=external_needs_source={_build_external_needs_source_config()}",
         f"--define=testcase_source_dirs={env.get('TEST_SOURCES', '[]')}",
         # Path to the Bazel-emitted mounts manifest (empty when no mounts are

@@ -30,7 +30,6 @@ from score_metamodel.external_needs import (
     _external_needs_runfiles_path,  # pyright: ignore[reportPrivateUsage] - white-box unit test
     _external_needs_source_path,  # pyright: ignore[reportPrivateUsage] - white-box unit test
     _runfiles_dir,  # pyright: ignore[reportPrivateUsage] - white-box unit test
-    add_external_docs_sources,
     add_external_needs_json,
     get_external_needs_source,
 )
@@ -89,16 +88,6 @@ def test_extend_needs_json_exporter_can_override_bundle_export_metadata(
             ("needs_json", "_build", "needs", "needs.json"),
             Path("/runfiles/repo+/docs/needs_json/_build/needs/needs.json"),
         ),
-        (
-            ExternalNeedsSource(
-                bazel_module="",
-                path_to_target="docs",
-                target="docs_sources",
-                is_local=True,
-            ),
-            (),
-            Path("/runfiles/_main/docs"),
-        ),
     ],
 )
 def test_external_needs_runfiles_path_is_environment_independent(
@@ -126,15 +115,6 @@ def test_external_needs_runfiles_path_is_environment_independent(
             ),
             Path("/runfiles/repo+/docs/needs.json"),
         ),
-        (
-            ExternalNeedsSource(
-                bazel_module="",
-                path_to_target="docs",
-                target="docs_sources",
-                is_local=True,
-            ),
-            Path("/runfiles/_main/docs"),
-        ),
     ],
 )
 def test_external_needs_source_path_selects_target_layout(
@@ -159,18 +139,9 @@ def test_configured_runfiles_dir_is_used_for_external_sources(
     assert _runfiles_dir(config) == configured_runfiles
 
 
-def test_descriptor_config_preserves_resolved_source_path() -> None:
-    resolved_path = Path("/runfiles/vendor+/needs_json/_build/needs/needs.json")
+def test_external_needs_source_config_parses_labels() -> None:
     raw = json.dumps(
-        [
-            {
-                "bazel_module": "vendor",
-                "path_to_target": "",
-                "target": "needs_json",
-                "is_local": False,
-                "resolved_path": str(resolved_path),
-            }
-        ]
+        ["@vendor//:needs_json"],
     )
 
     sources = get_external_needs_source(raw)
@@ -180,15 +151,26 @@ def test_descriptor_config_preserves_resolved_source_path() -> None:
             bazel_module="vendor",
             path_to_target="",
             target="needs_json",
-            resolved_path=resolved_path,
         )
     ]
-    assert _external_needs_source_path(None, sources[0]) == resolved_path
+    assert _external_needs_source_path(Path("/runfiles"), sources[0]) == Path(
+        "/runfiles/vendor+/needs_json/_build/needs/needs.json"
+    )
 
 
-def test_external_needs_source_rejects_label_lists() -> None:
-    with pytest.raises(ValueError, match="descriptor objects"):
-        get_external_needs_source('["//:needs_json"]')
+def test_external_needs_source_rejects_descriptors() -> None:
+    with pytest.raises(ValueError, match="Bazel label strings"):
+        get_external_needs_source(
+            json.dumps(
+                [
+                    {
+                        "bazel_module": "vendor",
+                        "path_to_target": "",
+                        "target": "needs_json",
+                    }
+                ]
+            )
+        )
 
 
 def test_add_external_needs_json_appends_entry(
@@ -299,102 +281,3 @@ def test_add_external_needs_json_missing_file_keeps_list_empty(
 
     # Assert
     assert config.needs_external_needs == []
-
-
-def test_add_external_docs_sources_adds_collection(
-    tmp_path: Path,
-) -> None:
-    """add_external_docs_sources should add one symlink collection entry."""
-    e = ExternalNeedsSource(
-        bazel_module="third_party_docs", target="docs_sources", path_to_target=""
-    )
-    config = Config()
-    config.collections = {}
-
-    add_external_docs_sources(e, config, tmp_path)
-
-    assert config.collections is not None
-    assert "third_party_docs" in config.collections
-    entry = config.collections["third_party_docs"]
-    assert entry["driver"] == "symlink"
-    assert entry["source"] == str(tmp_path / "third_party_docs+")
-    assert entry["target"] == "third_party_docs"
-
-
-def test_add_external_docs_sources_local_sub_package(
-    tmp_path: Path,
-) -> None:
-    """A same-repo sub-package `docs_sources` mount resolves under `_main/<path>`.
-
-    Mirrors test_add_external_needs_json_appends_entry_local but for the
-    `docs_sources` path: the local branch stages under `_main/…`, appends
-    `path_to_target`, and the collection key falls through the
-    `bazel_module + path_to_target` join (bazel_module empty for a local mount).
-    """
-    e = ExternalNeedsSource(
-        bazel_module="",
-        target="docs_sources",
-        path_to_target="src/tests/e2e/external_needs/producer",
-        is_local=True,
-    )
-    config = Config()
-    config.collections = {}
-
-    add_external_docs_sources(e, config, tmp_path)
-
-    assert config.collections is not None
-    key = "src/tests/e2e/external_needs/producer"
-    assert key in config.collections
-    entry = config.collections[key]
-    assert entry["driver"] == "symlink"
-    assert entry["source"] == str(
-        tmp_path / "_main" / "src/tests/e2e/external_needs/producer"
-    )
-    assert entry["target"] == key
-
-
-def test_add_external_docs_sources_local_root_key_fallback(
-    tmp_path: Path,
-) -> None:
-    """A same-repo root `docs_sources` mount falls back to the `_main` key.
-
-    With both bazel_module and path_to_target empty, the key join yields "" and
-    the `or "_main"` fallback names the collection, while the source stays at the
-    `_main` runfiles root.
-    """
-    e = ExternalNeedsSource(
-        bazel_module="",
-        target="docs_sources",
-        path_to_target="",
-        is_local=True,
-    )
-    config = Config()
-    config.collections = {}
-
-    add_external_docs_sources(e, config, tmp_path)
-
-    assert config.collections is not None
-    assert "_main" in config.collections
-    entry = config.collections["_main"]
-    assert entry["driver"] == "symlink"
-    assert entry["source"] == str(tmp_path / "_main")
-    assert entry["target"] == "_main"
-
-
-def test_add_external_docs_sources_ide_support_uses_runfiles_tree() -> None:
-    """add_external_docs_sources should use the IDE fallback runfiles tree."""
-    e = ExternalNeedsSource(
-        bazel_module="third_party_docs", target="docs_sources", path_to_target=""
-    )
-    config = Config()
-    config.collections = {}
-
-    add_external_docs_sources(e, config, Path("/tmp/ide_support.runfiles"))
-
-    assert config.collections == {
-        "third_party_docs": {
-            "driver": "symlink",
-            "source": "/tmp/ide_support.runfiles/third_party_docs+",
-            "target": "third_party_docs",
-        }
-    }

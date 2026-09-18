@@ -14,6 +14,7 @@
 import json
 import subprocess
 from pathlib import Path
+from typing import cast
 
 from sphinx.application import Sphinx
 from sphinx.config import Config
@@ -26,7 +27,7 @@ from src.helper_lib.external_needs import (
     external_needs_runfiles_path,
     external_needs_source_path as _external_needs_source_path,
     parse_bazel_external_need,
-    parse_external_needs_source_config as _parse_external_needs_source_config,
+    parse_external_needs_labels,
 )
 
 logger = logging.getLogger(__name__)
@@ -123,15 +124,26 @@ def extend_needs_json_exporter(
 
 def get_external_needs_source(external_needs_source: str) -> list[ExternalNeedsSource]:
     if external_needs_source:
-        # The CLI supplies resolved descriptors for Bazel invocations.
         try:
-            return _parse_external_needs_source_config(external_needs_source)
+            raw_labels: object = json.loads(external_needs_source)
         except json.JSONDecodeError as e:
             logger.error(
                 f"Failed to parse external needs sources from "
                 f"external_needs_source {external_needs_source}: {e}"
             )
             raise SystemExit(1) from e
+        if not isinstance(raw_labels, list):
+            raise ValueError(
+                "External needs configuration must contain Bazel label strings."
+            )
+        labels: list[str] = []
+        for label in cast(list[object], raw_labels):
+            if not isinstance(label, str):
+                raise ValueError(
+                    "External needs configuration must contain Bazel label strings."
+                )
+            labels.append(label)
+        return parse_external_needs_labels(labels)
     else:
         # This is the path taken for anything that doesn't
         # run via `bazel`  e.g. esbonio or other direct executions
@@ -163,30 +175,6 @@ def add_external_needs_json(
     )
 
 
-def add_external_docs_sources(
-    e: ExternalNeedsSource, config: Config, runfiles_dir: Path | None
-):
-    # Note that bazel does NOT write the files under e.target!
-    # The runfiles layout mirrors the original git layout: same-repo mounts live
-    # under `_main/…`, cross-module mounts under `{e.bazel_module}+/…`
-    # (see _runfiles_module_dir).
-    docs_source_path = _external_needs_source_path(runfiles_dir, e)
-
-    # A cross-module root mount keeps its module name as the collection key
-    # (unchanged). Sub-package / same-repo mounts disambiguate via the path.
-    key = "/".join(c for c in (e.bazel_module, e.path_to_target) if c) or "_main"
-
-    if "collections" not in config:
-        config.collections = {}
-    config.collections[key] = {
-        "driver": "symlink",
-        "source": str(docs_source_path),
-        "target": key,
-    }
-
-    logger.info(f"Added external docs source: {docs_source_path} -> {key}")
-
-
 def connect_external_needs(app: Sphinx, config: Config):
     # Local bundle exports intentionally omit the host URL from their JSON so
     # the inventory remains reusable by whichever documentation site consumes
@@ -200,7 +188,7 @@ def connect_external_needs(app: Sphinx, config: Config):
         export_values={"project_url": ""} if bundle_export else None,
     )
 
-    # External needs descriptors supplied by the documentation CLI.
+    # External needs labels supplied by the documentation CLI.
     external_needs = get_external_needs_source(app.config.external_needs_source)
 
     # this sets the default value - required for the needs-config-writer
@@ -208,18 +196,12 @@ def connect_external_needs(app: Sphinx, config: Config):
     config.needs_external_needs = []
 
     if external_needs:
-        runfiles_dir = (
-            _runfiles_dir(app.config)
-            if any(source.resolved_path is None for source in external_needs)
-            else None
-        )
+        runfiles_dir = _runfiles_dir(app.config)
         for e in external_needs:
             if e.target == "needs_json":
                 add_external_needs_json(e, app.config, runfiles_dir)
             elif e.target == "needs_json_file":
                 _add_needs_json_file(e, app.config, runfiles_dir)
-            elif e.target == "docs_sources":
-                add_external_docs_sources(e, app.config, runfiles_dir)
             else:
                 raise ValueError(
                     f"Internal Error. Unknown external needs target: {e.target}"
