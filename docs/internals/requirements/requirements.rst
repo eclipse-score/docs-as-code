@@ -474,12 +474,17 @@ Versioning
 .. tool_req:: Safety: enforce safe linking
    :id: tool_req__docs_common_attr_safety_link_check
    :tags: Common Attributes
-   :version: 1
+   :version: 2
    :implemented: YES
    :parent_covered: YES
    :satisfies: gd_req__req_linkage_safety[version==1]
 
-   QM requirements (safety == QM) shall not be linked to safety requirements (safety != QM) via the ``derived_from`` attribute.
+   The implementing side of a requirement link must be at least as safe as the
+   specified side.
+   QM requirements (safety == QM) shall not be linked to safety requirements
+   (safety != QM) via the ``derived_from`` or ``covers`` attributes.
+   Safety requirements (safety != QM) shall not be satisfied by QM elements
+   (safety == QM) via the ``satisfied_by`` attribute.
 
 .. tool_req:: Requirement linkage to AoU via covers
   :id: tool_req__docs_req_link_covers_aou
@@ -616,7 +621,7 @@ Architecture Attributes
 .. tool_req:: Ensure qm architecture elements do not fulfill safety requirements
   :id: tool_req__docs_arch_link_qm_to_safety_req
   :tags: Architecture
-  :implemented: PARTIAL
+  :implemented: YES
   :version: 2
   :satisfies: gd_req__arch_linkage_requirement[version==1]
   :parent_covered: YES
