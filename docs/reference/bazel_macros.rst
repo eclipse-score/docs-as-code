@@ -96,8 +96,9 @@ Minimal example (root ``BUILD``)
      ``:needs_json`` target here.
 
 - ``bundles`` (list of placement dicts)
-  Documentation bundles to overlay into this project's documentation tree, each with its
-  placement (``mount_at``). See :ref:`howto_mount_external_sources` for the full reference.
+  Documentation bundles to overlay into this project's documentation tree,
+  each with its placement (``mount_at``, optional ``attach_to`` and
+  ``toctree_index``). See :ref:`howto_mount_external_sources` for the full reference.
 
 - ``deps`` (list of bazel labels)
   Additional Bazel dependencies to add to the Python binaries and the virtual environment
@@ -196,7 +197,8 @@ Signature: ``docs_bundle(name, source_dir = None, srcs = [], data = [], entry_do
 - ``entry_doc`` (string, optional)
   Bundle-relative docname used as the canonical navigation entry. It defaults to
   ``index``. Every mount attaches this entry to the parent ``index`` toctree by
-  default; a placement's ``attach_to`` may override that host document.
+  default; a placement's ``attach_to`` may override that host document, and its
+  ``toctree_index`` selects which toctree of that document receives the entry.
 
 - ``bundles`` (list of composition dicts, optional)
   Nested bundles to compose into this one, so a bundle can aggregate other
@@ -208,6 +210,9 @@ Signature: ``docs_bundle(name, source_dir = None, srcs = [], data = [], entry_do
   - ``attach_to`` (optional) — a docname (relative to this bundle) whose toctree
     receives the child's bundle-defined entry document. When omitted, the parent
     ``index`` document receives it.
+  - ``toctree_index`` (optional) — the 0-based index of the toctree inside the
+    ``attach_to`` document that receives the entry. It defaults to ``0`` (the
+    first toctree).
 
   A child's ``mount_at``/``attach_to`` **prefix-stack** with the placement this
   bundle later receives, so composition is fully transitive. The same underlying
@@ -225,8 +230,9 @@ Signature: ``docs_bundle(name, source_dir = None, srcs = [], data = [], entry_do
 
 .. note::
 
-   A bundle is **placement-free**: its ``mount_at`` and ``attach_to`` are assigned
-   by the mounter, while its ``entry_doc`` belongs to the bundle. This lets the
+   A bundle is **placement-free**: its ``mount_at``, ``attach_to``, and
+   ``toctree_index`` are assigned by the mounter, while its ``entry_doc`` belongs to
+   the bundle. This lets the
    same bundle be mounted at different locations by different consumers without
    changing its canonical entry page.
 

@@ -35,9 +35,10 @@ content, but not its position in a consuming documentation site.
 A **mount** makes a bundle visible in a host site. The host chooses the
 **placement** with ``mount_at``. The bundle defines its own ``entry_doc``
 (default ``index``); the mount adds that page to the parent ``index`` toctree
-by default. ``attach_to`` overrides that host toctree document. This separation
-lets different projects reuse the same bundle at different locations while
-preserving its canonical entry page.
+by default. ``attach_to`` overrides that host toctree document; ``toctree_index``
+selects which of its toctrees receives the entry (``0`` is the first). This
+separation lets different projects reuse the same bundle at different
+locations while preserving its canonical entry page.
 
 Bundles are read from their original source directories. Consequently, an
 in-repository bundle remains editable and IDE navigation reaches its real
@@ -109,4 +110,5 @@ Further reading
 
 * :ref:`howto_mount_external_sources` — declare and mount bundles.
 * `sphinx-mounts documentation <https://sphinx-mounts.useblocks.com/>`_ —
-  configuration reference, including ``attach_to`` and ``entry_doc``.
+  configuration reference, including ``attach_to``, ``toctree_index``, and
+  ``entry_doc``.
