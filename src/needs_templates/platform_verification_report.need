@@ -16,7 +16,19 @@
   work — and real headings are what give the report its TOC entries and
   per-feature navigation.
 #}
-{% set report_features = needs_of_type("feat")|unique(attribute="id")|sort(attribute="title")|list %}
+{# Unset/empty ``report_version`` keeps the report unscoped (all Features and
+   requirements shown), which is what the "_latest" report relies on. #}
+{% set report_version = report_version|default(None, true) %}
+{#- A Feature with no requirement in scope is dropped from the report
+    entirely instead of rendering an empty section. -#}
+{% set ns_features = namespace(list=[]) %}
+{% for feature in needs_of_type("feat")|unique(attribute="id")|sort(attribute="title")|list %}
+{% set feature_reqs = linked_needs(feature["id"], "satisfied_by_back")|selectattr("type", "eq", "feat_req")|list %}
+{% if any_req_in_scope(feature_reqs, report_version) %}
+{% set ns_features.list = ns_features.list + [feature] %}
+{% endif %}
+{% endfor %}
+{% set report_features = ns_features.list %}
 
 {% set feature_workproducts = [
      ["wp__requirements_inspect", "Requirements Inspection"],
@@ -40,6 +52,13 @@
              :style: table
 {%- endfor %}
 {% endmacro %}
+
+{#- Bracketed, quoted Sphinx-Needs ``id in [...]`` filter literal for a list
+    of Need IDs, used to scope needpie/needtable filters below to the
+    requirements that are in scope for ``report_version``. -#}
+{% macro id_filter_list(ids) -%}
+[{% for req_id in ids %}"{{ req_id }}"{% if not loop.last %}, {% endif %}{% endfor %}]
+{%- endmacro %}
 
 .. raw:: html
 
@@ -100,6 +119,17 @@ Feature Overview
 
    <hr style="border-top: 2px solid #333333; margin: 0.5em 0 1.5em 0;">
 
+{% set feature_reqs_all = linked_needs(feature_id, "satisfied_by_back")
+     |selectattr("type", "eq", "feat_req")
+     |list %}
+{% set ns = namespace(req_ids=[]) %}
+{% for req in feature_reqs_all %}
+{% if req_in_scope(req, report_version) %}
+{% set ns.req_ids = ns.req_ids + [req["id"]] %}
+{% endif %}
+{% endfor %}
+{% set feature_req_filter = 'id in ' ~ id_filter_list(ns.req_ids) %}
+
 Requirements Statistics
 ^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -113,8 +143,8 @@ Requirements Statistics
          :colors: #37a12d, #ca2828
          :legend:
 
-         type == "feat_req" and "{{ feature_id }}" in satisfied_by and status == "valid"
-         type == "feat_req" and "{{ feature_id }}" in satisfied_by and status == "invalid"
+         type == "feat_req" and "{{ feature_id }}" in satisfied_by and status == "valid" and {{ feature_req_filter }}
+         type == "feat_req" and "{{ feature_id }}" in satisfied_by and status == "invalid" and {{ feature_req_filter }}
 
    .. grid-item::
 
@@ -123,15 +153,15 @@ Requirements Statistics
          :colors: #37a12d, #f0a500, #ca2828
          :legend:
 
-         type == "feat_req" and "{{ feature_id }}" in satisfied_by and fully_verifies_back
-         type == "feat_req" and "{{ feature_id }}" in satisfied_by and partially_verifies_back and not fully_verifies_back
-         type == "feat_req" and "{{ feature_id }}" in satisfied_by and not fully_verifies_back and not partially_verifies_back
+         type == "feat_req" and "{{ feature_id }}" in satisfied_by and fully_verifies_back and {{ feature_req_filter }}
+         type == "feat_req" and "{{ feature_id }}" in satisfied_by and partially_verifies_back and not fully_verifies_back and {{ feature_req_filter }}
+         type == "feat_req" and "{{ feature_id }}" in satisfied_by and not fully_verifies_back and not partially_verifies_back and {{ feature_req_filter }}
 
 .. dropdown:: Show requirements table
    :animate: fade-in
 
    .. needtable::
-      :filter: type == "feat_req" and "{{ feature_id }}" in satisfied_by
+      :filter: type == "feat_req" and "{{ feature_id }}" in satisfied_by and {{ feature_req_filter }}
       :style: table
       :columns: id;title;safety;status;testlink
       :colwidths: 13,22,8,10,47
