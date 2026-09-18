@@ -78,17 +78,17 @@
 
 
 
-.. Test if the optional `maturity` option for `comp` follows the pattern `^(preview|experimental|release)$`
+.. Test if the optional `maturity` option for `mod` follows the pattern `^(preview|experimental|release)$`
 
-.. comp:: Test Component Maturity Bad
-   :id: comp__test_options__maturity_bad
+.. mod:: Test Module Maturity Bad
+   :id: mod__test_options__maturity_bad
    :maturity: stable
-   :expect: comp__test_options__maturity_bad.maturity (stable): does not follow pattern `^(preview|experimental|release)$`.
+   :expect: mod__test_options__maturity_bad.maturity (stable): does not follow pattern `^(preview|experimental|release)$`.
 
 
 
-.. comp:: Test Component Maturity Good
-   :id: comp__test_options__maturity_good
+.. mod:: Test Module Maturity Good
+   :id: mod__test_options__maturity_good
    :maturity: preview
    :expect_not: does not follow pattern
 
