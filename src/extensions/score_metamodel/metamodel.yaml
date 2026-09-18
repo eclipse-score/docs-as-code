@@ -230,6 +230,10 @@ needs_types:
       author: ^.*$
       approver: ^.*$
       reviewer: ^.*$
+      # Scopes module_verification_report/platform_verification_report to
+      # requirements with valid_from <= report_version. Unset means unscoped
+      # (all requirements shown), used e.g. for the "_latest" reports.
+      report_version: ^v(0|[1-9]\d*)\.(0|[1-9]\d*)(\.(0|[1-9]\d*))?$
     # req-Id: tool_req__docs_doc_generic_mandatory
     mandatory_links:
       realizes: workproduct
