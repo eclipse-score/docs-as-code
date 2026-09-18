@@ -15,7 +15,8 @@
       "mount_at": "first",
       "repository": "",
       "runtime_path": "src/tests/docs_bzl/scenarios/nested_bundles/other",
-      "src_root": "src/tests/docs_bzl/scenarios/nested_bundles/other"
+      "src_root": "src/tests/docs_bzl/scenarios/nested_bundles/other",
+      "toctree_index": 0
     },
     {
       "attach_to": "index",
@@ -45,7 +46,8 @@
       "mount_at": "second",
       "repository": "",
       "runtime_path": "src/tests/docs_bzl/scenarios/nested_bundles/child",
-      "src_root": "src/tests/docs_bzl/scenarios/nested_bundles/child"
+      "src_root": "src/tests/docs_bzl/scenarios/nested_bundles/child",
+      "toctree_index": 0
     }
   ]
 }

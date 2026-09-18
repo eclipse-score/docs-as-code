@@ -2,16 +2,15 @@
   "mounts": [
     {
       "attach_to": "",
-      "root_bundle": true,
       "bundle": {
-        "label": "@@//src/tests/docs_bzl/scenarios/nested_bundles:docs_bundle",
-        "name": "docs_bundle",
         "code_targets": [
           {
             "label": "@@//src/tests/docs_bzl/scenarios/nested_bundles:example_binary",
             "type": "py_binary"
           }
-        ]
+        ],
+        "label": "@@//src/tests/docs_bzl/scenarios/nested_bundles:docs_bundle",
+        "name": "docs_bundle"
       },
       "data": [],
       "entry_doc": "index",
@@ -19,16 +18,17 @@
       "generated": false,
       "mount_at": "",
       "repository": "",
+      "root_bundle": true,
       "runtime_path": "src/tests/docs_bzl/scenarios/nested_bundles/host_docs",
-      "src_root": "src/tests/docs_bzl/scenarios/nested_bundles/host_docs"
+      "src_root": "src/tests/docs_bzl/scenarios/nested_bundles/host_docs",
+      "toctree_index": 0
     },
     {
       "attach_to": "concepts/index",
-      "root_bundle": false,
       "bundle": {
+        "code_targets": [],
         "label": "@@//src/tests/docs_bzl/scenarios/nested_bundles:parent",
-        "name": "parent",
-        "code_targets": []
+        "name": "parent"
       },
       "data": [
         "src/tests/docs_bzl/scenarios/nested_bundles/generated/generated_output.txt"
@@ -38,15 +38,14 @@
       "generated": false,
       "mount_at": "concepts/example_bundle",
       "repository": "",
+      "root_bundle": false,
       "runtime_path": "src/tests/docs_bzl/scenarios/nested_bundles/parent",
-      "src_root": "src/tests/docs_bzl/scenarios/nested_bundles/parent"
+      "src_root": "src/tests/docs_bzl/scenarios/nested_bundles/parent",
+      "toctree_index": 1
     },
     {
       "attach_to": "concepts/example_bundle/index",
-      "root_bundle": false,
       "bundle": {
-        "label": "@@//src/tests/docs_bzl/scenarios/nested_bundles:child",
-        "name": "child",
         "code_targets": [
           {
             "label": "@@//src/tests/docs_bzl/scenarios/nested_bundles:example_binary",
@@ -60,7 +59,9 @@
             "label": "@@//src/tests/docs_bzl/scenarios/nested_bundles:nested_filegroup_sources",
             "type": "filegroup"
           }
-        ]
+        ],
+        "label": "@@//src/tests/docs_bzl/scenarios/nested_bundles:child",
+        "name": "child"
       },
       "data": [],
       "entry_doc": "landing",
@@ -68,8 +69,10 @@
       "generated": false,
       "mount_at": "concepts/example_bundle/child",
       "repository": "",
+      "root_bundle": false,
       "runtime_path": "src/tests/docs_bzl/scenarios/nested_bundles/child",
-      "src_root": "src/tests/docs_bzl/scenarios/nested_bundles/child"
+      "src_root": "src/tests/docs_bzl/scenarios/nested_bundles/child",
+      "toctree_index": 0
     }
   ]
 }

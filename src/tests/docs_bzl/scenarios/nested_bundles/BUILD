@@ -106,5 +106,7 @@ docs(
     bundles = [{
         "bundle": ":parent",
         "mount_at": "concepts/example_bundle",
+        # Attach to the second toctree (index 1) of concepts/index.rst.
+        "toctree_index": 1,
     }],
 )
