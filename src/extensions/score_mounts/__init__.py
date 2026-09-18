@@ -184,6 +184,7 @@ def _make_mount_entry(
         "dir": str(_canonical_mount_dir(walk_dir, spec)),
         "mount_at": spec.mount_at,
         "attach_to": spec.attach_to,
+        "toctree_index": spec.toctree_index,
         "entry_doc": spec.entry_doc,
         "exclude": list(exclude),
     }
@@ -197,6 +198,7 @@ def _make_file_mount_entry(
         "files": [str(source_file) for source_file in source_files],
         "mount_at": spec.mount_at,
         "attach_to": spec.attach_to,
+        "toctree_index": spec.toctree_index,
         "entry_doc": spec.entry_doc,
     }
 

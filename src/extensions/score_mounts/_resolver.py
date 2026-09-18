@@ -101,6 +101,7 @@ class MountSpec:
     runtime_path: str
     mount_at: str
     attach_to: str | None = None
+    toctree_index: int = 0
     entry_doc: str = "index"
     external: bool = False
     repository: str = ""
@@ -127,6 +128,7 @@ class MountSpec:
             runtime_path=cast("str", entry["runtime_path"]),
             mount_at=cast("str", entry["mount_at"]),
             attach_to=attach_to or None,
+            toctree_index=cast("int", entry.get("toctree_index", 0)),
             entry_doc=cast("str", entry["entry_doc"]),
             external=cast("bool", entry["external"]),
             repository=cast("str", entry["repository"]),

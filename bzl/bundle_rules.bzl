@@ -211,12 +211,14 @@ def _pure_data_runtime_path(ctx):
     )
     return "__data__/%s" % encoded_label
 
-def _rebase_bundle_entry(entry, mount_at, attach_to):
+def _rebase_bundle_entry(entry, mount_at, attach_to, toctree_index):
     """Place a bundle entry below a requested documentation-tree location.
 
     A bundle's own root has no ``mount_at`` yet. For that root, an omitted
-    ``attach_to`` means the parent directory's ``index`` page. Nested entries
-    retain their existing attachment and are rebased below ``mount_at``.
+    ``attach_to`` means the parent directory's ``index`` page, and the
+    placement's ``toctree_index`` selects which toctree of that page receives
+    the entry. Nested entries retain their existing attachment (including its
+    own ``toctree_index``) and are rebased below ``mount_at``.
 
     ``data`` is deliberately kept with the entry that declares it. A composed
     bundle may expose several source and data-only entries, each resolving its
@@ -229,17 +231,20 @@ def _rebase_bundle_entry(entry, mount_at, attach_to):
         # Its default attachment is therefore the parent directory's index;
         # an explicit attach_to still overrides that default.
         rebased_attach_to = attach_to or _parent_index_docname(mount_at)
+        rebased_toctree_index = toctree_index
     else:
         # This entry is already below another location in the child bundle.
         # Keep its attachment relative to that location and prefix the whole
         # placement with the mount point chosen by the parent.
         rebased_attach_to = join_path(mount_at, entry.attach_to)
+        rebased_toctree_index = entry.toctree_index
 
     return struct(
         runtime_path = entry.runtime_path,
         src_root = entry.src_root,
         mount_at = join_path(mount_at, entry.mount_at),
         attach_to = rebased_attach_to,
+        toctree_index = rebased_toctree_index,
         entry_doc = entry.entry_doc,
         external = entry.external,
         repository = entry.repository,
@@ -282,7 +287,7 @@ def _parse_bundle_declaration(bundle):
     if type(bundle) != "dict":
         fail("each bundle declaration must be a dict, got %r" % bundle)
 
-    allowed_keys = ["bundle", "mount_at", "attach_to"]
+    allowed_keys = ["bundle", "mount_at", "attach_to", "toctree_index"]
     unknown = [key for key in bundle if key not in allowed_keys]
     if unknown:
         fail("unknown key(s) %r in %r; allowed keys: %r" %
@@ -292,11 +297,16 @@ def _parse_bundle_declaration(bundle):
 
     mount_at = bundle["mount_at"]
     attach_to = bundle.get("attach_to", "")
+    toctree_index = bundle.get("toctree_index", 0)
+    if type(toctree_index) != "int" or toctree_index < 0:
+        fail("each entry's 'toctree_index' must be a non-negative int; got %r" %
+             toctree_index)
 
     return struct(
         bundle = bundle["bundle"],
         mount_at = mount_at,
         attach_to = attach_to,
+        toctree_index = toctree_index,
     )
 
 def _docs_bundle_impl(ctx):
@@ -334,6 +344,7 @@ def _docs_bundle_impl(ctx):
             src_root = source_dir_execroot_path,
             mount_at = "",
             attach_to = "",
+            toctree_index = 0,
             entry_doc = ctx.attr.entry_doc,
             external = external,
             repository = ctx.label.workspace_name,
@@ -371,6 +382,9 @@ def _docs_bundle_impl(ctx):
             src_root = source_dir_execroot_path,
             mount_at = "",
             attach_to = "",
+            # The bundle root has no toctree_index of its own; the placement
+            # that mounts this bundle supplies it (default 0).
+            toctree_index = 0,
             entry_doc = ctx.attr.entry_doc,
             external = external,
             repository = ctx.label.workspace_name,
@@ -401,6 +415,9 @@ def _docs_bundle_impl(ctx):
             src_root = "",
             mount_at = "",
             attach_to = "",
+            # The bundle root has no toctree_index of its own; the placement
+            # that mounts this bundle supplies it (default 0).
+            toctree_index = 0,
             entry_doc = ctx.attr.entry_doc,
             external = False,
             repository = ctx.label.workspace_name,
@@ -432,6 +449,7 @@ def _docs_bundle_impl(ctx):
                 entry,
                 ctx.attr.bundle_mount_ats[index],
                 ctx.attr.bundle_attach_tos[index],
+                ctx.attr.bundle_toctree_indices[index],
             )
             for entry in _entries_visible_through(ctx, child)
         ])
@@ -479,6 +497,7 @@ _docs_bundle = rule(
         "bundles": attr.label_list(providers = [DocsBundleInfo]),
         "bundle_mount_ats": attr.string_list(),
         "bundle_attach_tos": attr.string_list(),
+        "bundle_toctree_indices": attr.int_list(),
         "data": attr.label_list(allow_files = True),
         # The aspect preserves the selected target's rule kind while
         # recursively collecting its source files for source-link generation.
@@ -515,6 +534,7 @@ def create_bundle(
         bundles = [bundle.bundle for bundle in parsed_bundles],
         bundle_mount_ats = [bundle.mount_at for bundle in parsed_bundles],
         bundle_attach_tos = [bundle.attach_to for bundle in parsed_bundles],
+        bundle_toctree_indices = [bundle.toctree_index for bundle in parsed_bundles],
         data = data,
         code_targets = code_targets,
         visibility = visibility,

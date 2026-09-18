@@ -28,6 +28,7 @@ def _composition_manifest_impl(ctx):
             "runtime_path": entry.runtime_path,
             "mount_at": entry.mount_at,
             "attach_to": entry.attach_to,
+            "toctree_index": entry.toctree_index,
             "entry_doc": entry.entry_doc,
             "external": entry.external,
             "repository": entry.repository,
