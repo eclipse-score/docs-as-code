@@ -37,7 +37,7 @@ def parse_bazel_external_need(s: str) -> ExternalNeedsSource | None:
 
     if "//" not in s or ":" not in s:
         raise ValueError(
-            f"Unsuported external data dependency: '{s}'. Must contain '//' & ':'"
+            f"Unsupported external data dependency: '{s}'. Must contain '//' & ':'"
         )
     repo_and_path, target = s.split(":", 1)
     repo, path_to_target = repo_and_path.split("//", 1)

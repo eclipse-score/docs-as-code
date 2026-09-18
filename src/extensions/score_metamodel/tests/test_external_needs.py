@@ -36,6 +36,11 @@ from score_metamodel.external_needs import (
 from sphinx.config import Config
 from sphinx_needs.needsfile import NeedsList
 
+from src.helper_lib.external_needs import (
+    parse_bazel_external_need,
+    parse_external_needs_labels,
+)
+
 
 def test_extend_needs_json_exporter_uses_configured_value(
     monkeypatch: pytest.MonkeyPatch,
@@ -94,6 +99,28 @@ def test_external_needs_runfiles_path_is_environment_independent(
     source: ExternalNeedsSource, suffix: tuple[str, ...], expected: Path
 ) -> None:
     assert _external_needs_runfiles_path(Path("/runfiles"), source, *suffix) == expected
+
+
+def test_parse_bazel_external_need_marks_same_repository_labels_local() -> None:
+    assert parse_bazel_external_need("//pkg:needs_json") == ExternalNeedsSource(
+        bazel_module="",
+        path_to_target="pkg",
+        target="needs_json",
+        is_local=True,
+    )
+
+
+def test_parse_external_needs_labels_filters_ordinary_data_labels() -> None:
+    assert parse_external_needs_labels(
+        ["docs/index.rst", "//pkg:needs_json", "assets/logo.svg"]
+    ) == [
+        ExternalNeedsSource(
+            bazel_module="",
+            path_to_target="pkg",
+            target="needs_json",
+            is_local=True,
+        )
+    ]
 
 
 @pytest.mark.parametrize(
