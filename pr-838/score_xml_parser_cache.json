@@ -950,7 +950,7 @@
   {
     "name": "test_xml_parser__test_short_hash_consistency_and_format",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": 338,
+    "line": 346,
     "need": "tool_req__docs_test_link_testcase",
     "verify_type": "partially",
     "result": "passed",
@@ -962,7 +962,7 @@
   {
     "name": "test_xml_parser__test_is_testcase_in_scope_empty_allow_list_is_unfiltered",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": 396,
+    "line": 404,
     "need": "tool_req__docs_test_link_testcase",
     "verify_type": "partially",
     "result": "passed",
@@ -974,7 +974,7 @@
   {
     "name": "test_xml_parser__test_is_testcase_in_scope_positive_match",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": 408,
+    "line": 416,
     "need": "tool_req__docs_test_link_testcase",
     "verify_type": "partially",
     "result": "passed",
@@ -986,7 +986,7 @@
   {
     "name": "test_xml_parser__test_is_testcase_in_scope_not_under_any_allowed_dir",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": 421,
+    "line": 429,
     "need": "tool_req__docs_test_link_testcase",
     "verify_type": "partially",
     "result": "passed",
@@ -998,7 +998,7 @@
   {
     "name": "test_xml_parser__test_is_testcase_in_scope_none_file_with_allow_list",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": 431,
+    "line": 439,
     "need": "tool_req__docs_test_link_testcase",
     "verify_type": "partially",
     "result": "passed",
@@ -1010,7 +1010,7 @@
   {
     "name": "test_xml_parser__test_is_testcase_in_scope_no_string_prefix_match",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": 441,
+    "line": 449,
     "need": "tool_req__docs_test_link_testcase",
     "verify_type": "partially",
     "result": "passed",
@@ -1022,7 +1022,7 @@
   {
     "name": "test_xml_parser__test_parse_testcase_source_dirs",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": 458,
+    "line": 466,
     "need": "tool_req__docs_test_link_testcase",
     "verify_type": "partially",
     "result": "passed",
@@ -1034,7 +1034,7 @@
   {
     "name": "test_xml_parser__test_parse_testcase_source_dirs_non_list_raises",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": 470,
+    "line": 478,
     "need": "tool_req__docs_test_link_testcase",
     "verify_type": "partially",
     "result": "passed",
