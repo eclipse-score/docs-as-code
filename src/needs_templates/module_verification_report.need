@@ -6,10 +6,13 @@
   The report is a ``document`` need whose id encodes the module it covers
   (``doc__<module>_verification_report``) — the ``document`` type has no
   ``belongs_to`` link, so the module id is recovered from this need's own id
-  instead. The module's ``includes`` links provide the components, and each
-  component's ``belongs_to`` link provides the feature. The ``linked_needs``
-  helper resolves this graph during the post-collection reread, so titles and
-  report sections stay driven by the Need model.
+  instead. The module's ``includes`` links provide the components. The
+  ``linked_needs`` helper resolves this graph during the post-collection
+  reread, so titles and report sections stay driven by the Need model.
+
+  This report is module- and component-scoped only. The platform-wide,
+  feature-scoped counterpart (all Features and their statistics) lives in the
+  sibling ``platform_verification_report`` template.
 
   The template is applied as ``:post_template:``, not ``:template:``. A need's
   *content* cannot open new sections ("Unexpected section title"), but
@@ -18,19 +21,21 @@
   per-component navigation.
 #}
 {% set module_id = "mod__" ~ id|replace("doc__", "")|replace("_verification_report", "") %}
+{# Unset/empty ``report_version`` keeps the report unscoped (all components
+   and requirements shown), which is what the "_latest" report relies on. #}
+{% set report_version = report_version|default(None, true) %}
 {# Resolve the component list from the module's outgoing graph links. A module
-   may list a component more than once, so deduplicate the NeedItems by ID. #}
-{% set components_in_mod = linked_needs(module_id, "includes")|unique(attribute="id")|list %}
-
-{# Collect every feature reachable from the module's components. A feature can
-   be linked by multiple components, so collect all candidates first and then
-   keep each feature NeedItem only once in first-seen graph order. The
-   namespace is required because assignments inside a Jinja loop are scoped. #}
-{% set feature_candidates = namespace(items=[]) %}
-{% for component in components_in_mod %}
-{% set feature_candidates.items = feature_candidates.items + linked_needs(component["id"], "belongs_to") %}
+   may list a component more than once, so deduplicate the NeedItems by ID.
+   A component with no requirement in scope is dropped from the report
+   entirely instead of rendering an empty section. #}
+{% set ns_components = namespace(list=[]) %}
+{% for component in linked_needs(module_id, "includes")|unique(attribute="id")|list %}
+{% set component_reqs = linked_needs(component["id"], "satisfied_by_back")|selectattr("type", "eq", "comp_req")|list %}
+{% if any_req_in_scope(component_reqs, report_version) %}
+{% set ns_components.list = ns_components.list + [component] %}
+{% endif %}
 {% endfor %}
-{% set report_features = feature_candidates.items|unique(attribute="id")|list %}
+{% set components_in_mod = ns_components.list %}
 
 {% set component_workproducts = [
      ["wp__requirements_inspect", "Requirements Inspection"],
@@ -38,10 +43,6 @@
      ["wp__sw_implementation_inspection", "Implementation Inspection"],
      ["wp__sw_component_dfa", "DFA"],
      ["wp__sw_component_fmea", "FMEA"],
-   ] %}
-{% set feature_workproducts = [
-     ["wp__requirements_inspect", "Requirements Inspection"],
-     ["wp__sw_arch_verification", "Architecture Inspection"],
    ] %}
 
 {#- One work-product row: the need link, its kind, the realising document and
@@ -61,6 +62,13 @@
              :style: table
 {%- endfor %}
 {% endmacro %}
+
+{#- Bracketed, quoted Sphinx-Needs ``id in [...]`` filter literal for a list
+    of Need IDs, used to scope needpie/needtable filters below to the
+    requirements that are in scope for ``report_version``. -#}
+{% macro id_filter_list(ids) -%}
+[{% for req_id in ids %}"{{ req_id }}"{% if not loop.last %}, {% endif %}{% endfor %}]
+{%- endmacro %}
 
 .. raw:: html
 
@@ -87,118 +95,6 @@
    .wp-doc-table td .dataTables_wrapper .dataTables_info,
    .wp-doc-table td .dataTables_wrapper .dataTables_paginate { display: none; }
    </style>
-
-{#- ===================================================================== -#}
-{#- Feature sections resolved from all components' belongs_to links.          -#}
-{#- ===================================================================== -#}
-{% for report_feature in report_features %}
-{% set feature_id = report_feature["id"] %}
-{% set feature_title = report_feature["title"] %}
-{# Derive the work-product document selector from the feature Need reached
-   through the graph, rather than reconstructing it from the module ID. #}
-{% set feature_slug_norm = feature_title|replace("_", "")|replace(" ", "")|lower %}
-{% set feature_heading = feature_title if report_features|length == 1 else "Feature: " ~ feature_title %}
-
-{{ feature_heading }}
-{{ "-" * (feature_heading|length) }}
-
-.. needtable::
-   :filter: id == "{{ feature_id }}"
-   :columns: title as "Name";id as "Id";safety;security;status
-   :style: table
-
-Requirements Statistics
-~~~~~~~~~~~~~~~~~~~~~~~
-
-.. grid:: 1 2 2 2
-   :gutter: 3
-
-   .. grid-item::
-
-      .. needpie:: Feature Requirements Status
-         :labels: valid, invalid
-         :colors: #37a12d, #ca2828
-         :legend:
-
-         type == "feat_req" and "{{ feature_id }}" in satisfied_by and status == "valid"
-         type == "feat_req" and "{{ feature_id }}" in satisfied_by and status == "invalid"
-
-   .. grid-item::
-
-      .. needpie:: Feature Requirements Test Coverage
-         :labels: fully covered, partially covered, not covered
-         :colors: #37a12d, #f0a500, #ca2828
-         :legend:
-
-         type == "feat_req" and "{{ feature_id }}" in satisfied_by and fully_verifies_back
-         type == "feat_req" and "{{ feature_id }}" in satisfied_by and partially_verifies_back and not fully_verifies_back
-         type == "feat_req" and "{{ feature_id }}" in satisfied_by and not fully_verifies_back and not partially_verifies_back
-
-.. dropdown:: Show requirements table
-   :animate: fade-in
-
-   .. needtable::
-      :filter: type == "feat_req" and "{{ feature_id }}" in satisfied_by
-      :style: table
-      :columns: id;title;safety;status;testlink
-      :colwidths: 13,22,8,10,47
-      :sort: id
-
-Architecture Statistics
-~~~~~~~~~~~~~~~~~~~~~~~
-
-.. grid:: 1 2 2 2
-   :gutter: 3
-
-   .. grid-item::
-
-      .. needpie:: Feature Architecture Elements Status
-         :labels: valid, invalid
-         :colors: #37a12d, #ca2828
-         :legend:
-
-         type in ["feat_arc_sta", "feat_arc_dyn"] and "{{ feature_id }}" in belongs_to and status == "valid"
-         type in ["feat_arc_sta", "feat_arc_dyn"] and "{{ feature_id }}" in belongs_to and status == "invalid"
-
-   .. grid-item::
-
-      .. needpie:: Feature Architecture Elements Inspection Status
-         :labels: inspected, not inspected
-         :colors: #37a12d, #ca2828
-         :legend:
-
-         type in ["feat_arc_sta", "feat_arc_dyn"] and "{{ feature_id }}" in belongs_to and "inspected" in tags
-         type in ["feat_arc_sta", "feat_arc_dyn"] and "{{ feature_id }}" in belongs_to and "inspected" not in tags
-
-.. dropdown:: Show architectural elements table
-   :animate: fade-in
-
-   .. needtable::
-      :filter: type in ["feat_arc_sta", "feat_arc_dyn"] and "{{ feature_id }}" in belongs_to
-      :style: table
-      :columns: id;title;safety;status;tags
-      :colwidths: 25,30,10,15,20
-      :sort: id
-
-Inspection Statistics
-~~~~~~~~~~~~~~~~~~~~~
-
-Presence of the feature-level inspection work products.
-
-.. dropdown:: Show work products table
-   :animate: fade-in
-
-   .. list-table::
-      :header-rows: 1
-      :widths: 30 25 25 20
-      :class: wp-doc-table
-
-      * - Work Product
-        - Kind
-        - Realized by
-        - Status
-{{ workproduct_rows(feature_slug_norm, feature_workproducts) }}
-{% endfor %}
 
 {# ===================================================================== #}
 {# Components                                                             #}
@@ -233,6 +129,17 @@ Component Overview
 
    <hr style="border-top: 2px solid #333333; margin: 0.5em 0 1.5em 0;">
 
+{% set component_reqs_all = linked_needs(component_id, "satisfied_by_back")
+     |selectattr("type", "eq", "comp_req")
+     |list %}
+{% set ns = namespace(req_ids=[]) %}
+{% for req in component_reqs_all %}
+{% if req_in_scope(req, report_version) %}
+{% set ns.req_ids = ns.req_ids + [req["id"]] %}
+{% endif %}
+{% endfor %}
+{% set component_req_filter = 'id in ' ~ id_filter_list(ns.req_ids) %}
+
 Component Requirements Statistics
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -246,8 +153,8 @@ Component Requirements Statistics
          :colors: #37a12d, #ca2828
          :legend:
 
-         type == "comp_req" and "{{ component_id }}" in satisfied_by and status == "valid"
-         type == "comp_req" and "{{ component_id }}" in satisfied_by and status == "invalid"
+         type == "comp_req" and "{{ component_id }}" in satisfied_by and status == "valid" and {{ component_req_filter }}
+         type == "comp_req" and "{{ component_id }}" in satisfied_by and status == "invalid" and {{ component_req_filter }}
 
    .. grid-item::
 
@@ -256,9 +163,9 @@ Component Requirements Statistics
          :colors: #37a12d, #f0a500, #ca2828
          :legend:
 
-         type == "comp_req" and "{{ component_id }}" in satisfied_by and fully_verifies_back
-         type == "comp_req" and "{{ component_id }}" in satisfied_by and partially_verifies_back and not fully_verifies_back
-         type == "comp_req" and "{{ component_id }}" in satisfied_by and not fully_verifies_back and not partially_verifies_back
+         type == "comp_req" and "{{ component_id }}" in satisfied_by and fully_verifies_back and {{ component_req_filter }}
+         type == "comp_req" and "{{ component_id }}" in satisfied_by and partially_verifies_back and not fully_verifies_back and {{ component_req_filter }}
+         type == "comp_req" and "{{ component_id }}" in satisfied_by and not fully_verifies_back and not partially_verifies_back and {{ component_req_filter }}
 
 Component Architecture Statistics
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -296,7 +203,7 @@ verification status and the tests that (fully or partially) verify them:
    :animate: fade-in
 
    .. needtable::
-      :filter: type == "comp_req" and "{{ component_id }}" in satisfied_by
+      :filter: type == "comp_req" and "{{ component_id }}" in satisfied_by and {{ component_req_filter }}
       :style: table
       :columns: id;title;safety;status;testlink
       :colwidths: 13,22,8,10,47

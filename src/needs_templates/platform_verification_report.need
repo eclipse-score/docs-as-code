@@ -1,0 +1,224 @@
+{#
+  score: render-after-needs-collection
+
+  Content template for the ``document`` need type for ``platform_verification_report``.
+
+  Unlike ``module_verification_report``, this report is not scoped to a single
+  module: it collects every Feature in the current build's Need graph via the
+  ``needs_of_type`` helper, so it always reflects the full platform surface
+  regardless of which document instantiates it. This is the platform-wide,
+  feature-scoped counterpart to ``module_verification_report``'s
+  module-and-component-scoped report.
+
+  The template is applied as ``:post_template:``, not ``:template:``. A need's
+  *content* cannot open new sections ("Unexpected section title"), but
+  post-content is placed after the need at document level, where real headings
+  work — and real headings are what give the report its TOC entries and
+  per-feature navigation.
+#}
+{# Unset/empty ``report_version`` keeps the report unscoped (all Features and
+   requirements shown), which is what the "_latest" report relies on. #}
+{% set report_version = report_version|default(None, true) %}
+{#- A Feature with no requirement in scope is dropped from the report
+    entirely instead of rendering an empty section. -#}
+{% set ns_features = namespace(list=[]) %}
+{% for feature in needs_of_type("feat")|unique(attribute="id")|sort(attribute="title")|list %}
+{% set feature_reqs = linked_needs(feature["id"], "satisfied_by_back")|selectattr("type", "eq", "feat_req")|list %}
+{% if any_req_in_scope(feature_reqs, report_version) %}
+{% set ns_features.list = ns_features.list + [feature] %}
+{% endif %}
+{% endfor %}
+{% set report_features = ns_features.list %}
+
+{% set feature_workproducts = [
+     ["wp__requirements_inspect", "Requirements Inspection"],
+     ["wp__sw_arch_verification", "Architecture Inspection"],
+   ] %}
+
+{#- One work-product row: the need link, its kind, the realising document and
+    its status. Both cells are needtables over the same filter, differing only
+    in :columns:, so an empty match renders as an empty cell. -#}
+{% macro workproduct_rows(slug_norm, workproducts) %}
+{%- for wp in workproducts %}
+      * - :need:`{{ wp[0] }}`
+        - {{ wp[1] }}
+        - .. needtable::
+             :filter: type == "document" and "{{ slug_norm }}" in id.replace("_", "").lower() and "{{ wp[0] }}" in realizes
+             :columns: id
+             :style: table
+        - .. needtable::
+             :filter: type == "document" and "{{ slug_norm }}" in id.replace("_", "").lower() and "{{ wp[0] }}" in realizes
+             :columns: status
+             :style: table
+{%- endfor %}
+{% endmacro %}
+
+{#- Bracketed, quoted Sphinx-Needs ``id in [...]`` filter literal for a list
+    of Need IDs, used to scope needpie/needtable filters below to the
+    requirements that are in scope for ``report_version``. -#}
+{% macro id_filter_list(ids) -%}
+[{% for req_id in ids %}"{{ req_id }}"{% if not loop.last %}, {% endif %}{% endfor %}]
+{%- endmacro %}
+
+.. raw:: html
+
+   <style>
+   .wp-doc-table td .needstable_wrapper,
+   .wp-doc-table td .pst-scrollable-table-container {
+       margin: 0; padding: 0; overflow: visible;
+   }
+   .wp-doc-table td table.NEEDS_TABLE,
+   .wp-doc-table td table.NEEDS_DATATABLES {
+       border: 0; margin: 0; box-shadow: none; background: transparent;
+       width: auto;
+   }
+   .wp-doc-table td table.NEEDS_TABLE thead,
+   .wp-doc-table td table.NEEDS_DATATABLES thead { display: none; }
+   .wp-doc-table td table.NEEDS_TABLE tbody tr,
+   .wp-doc-table td table.NEEDS_DATATABLES tbody tr { background: transparent; }
+   .wp-doc-table td table.NEEDS_TABLE tbody td,
+   .wp-doc-table td table.NEEDS_DATATABLES tbody td {
+       border: 0; padding: 0; background: transparent;
+   }
+   .wp-doc-table td .dataTables_wrapper .dataTables_length,
+   .wp-doc-table td .dataTables_wrapper .dataTables_filter,
+   .wp-doc-table td .dataTables_wrapper .dataTables_info,
+   .wp-doc-table td .dataTables_wrapper .dataTables_paginate { display: none; }
+   </style>
+
+{# ===================================================================== #}
+{# Features                                                               #}
+{# ===================================================================== #}
+
+Features
+--------
+
+Feature Overview
+~~~~~~~~~~~~~~~~
+
+.. needtable::
+   :filter: id in [{% for feature in report_features %}"{{ feature["id"] }}"{% if not loop.last %}, {% endif %}{% endfor %}]
+   :columns: id as "Feature";safety;security;status
+   :style: table
+   :sort: id
+
+{% for feature in report_features %}
+{% set feature_id = feature["id"] %}
+{% set feature_title = feature["title"] %}
+{# The feature Need supplies the work-product document selector and the
+   navigation anchor, the same way components do in module_verification_report. #}
+{% set feature_slug_norm = feature_title|replace("_", "")|replace(" ", "")|lower %}
+{% set feature_anchor = feature_title|replace("_", "-")|replace(" ", "-")|lower %}
+
+.. _feat-{{ feature_anchor }}:
+
+{{ feature_title }}
+{{ "~" * (feature_title|length) }}
+
+.. raw:: html
+
+   <hr style="border-top: 2px solid #333333; margin: 0.5em 0 1.5em 0;">
+
+{% set feature_reqs_all = linked_needs(feature_id, "satisfied_by_back")
+     |selectattr("type", "eq", "feat_req")
+     |list %}
+{% set ns = namespace(req_ids=[]) %}
+{% for req in feature_reqs_all %}
+{% if req_in_scope(req, report_version) %}
+{% set ns.req_ids = ns.req_ids + [req["id"]] %}
+{% endif %}
+{% endfor %}
+{% set feature_req_filter = 'id in ' ~ id_filter_list(ns.req_ids) %}
+
+Requirements Statistics
+^^^^^^^^^^^^^^^^^^^^^^^
+
+.. grid:: 1 2 2 2
+   :gutter: 3
+
+   .. grid-item::
+
+      .. needpie:: {{ feature_title }} Requirements Status
+         :labels: valid, invalid
+         :colors: #37a12d, #ca2828
+         :legend:
+
+         type == "feat_req" and "{{ feature_id }}" in satisfied_by and status == "valid" and {{ feature_req_filter }}
+         type == "feat_req" and "{{ feature_id }}" in satisfied_by and status == "invalid" and {{ feature_req_filter }}
+
+   .. grid-item::
+
+      .. needpie:: {{ feature_title }} Requirements Test Coverage
+         :labels: fully covered, partially covered, not covered
+         :colors: #37a12d, #f0a500, #ca2828
+         :legend:
+
+         type == "feat_req" and "{{ feature_id }}" in satisfied_by and fully_verifies_back and {{ feature_req_filter }}
+         type == "feat_req" and "{{ feature_id }}" in satisfied_by and partially_verifies_back and not fully_verifies_back and {{ feature_req_filter }}
+         type == "feat_req" and "{{ feature_id }}" in satisfied_by and not fully_verifies_back and not partially_verifies_back and {{ feature_req_filter }}
+
+.. dropdown:: Show requirements table
+   :animate: fade-in
+
+   .. needtable::
+      :filter: type == "feat_req" and "{{ feature_id }}" in satisfied_by and {{ feature_req_filter }}
+      :style: table
+      :columns: id;title;safety;status;testlink
+      :colwidths: 13,22,8,10,47
+      :sort: id
+
+Architecture Statistics
+^^^^^^^^^^^^^^^^^^^^^^^
+
+.. grid:: 1 2 2 2
+   :gutter: 3
+
+   .. grid-item::
+
+      .. needpie:: {{ feature_title }} Architecture Elements Status
+         :labels: valid, invalid
+         :colors: #37a12d, #ca2828
+         :legend:
+
+         type in ["feat_arc_sta", "feat_arc_dyn"] and "{{ feature_id }}" in belongs_to and status == "valid"
+         type in ["feat_arc_sta", "feat_arc_dyn"] and "{{ feature_id }}" in belongs_to and status == "invalid"
+
+   .. grid-item::
+
+      .. needpie:: {{ feature_title }} Architecture Elements Inspection Status
+         :labels: inspected, not inspected
+         :colors: #37a12d, #ca2828
+         :legend:
+
+         type in ["feat_arc_sta", "feat_arc_dyn"] and "{{ feature_id }}" in belongs_to and "inspected" in tags
+         type in ["feat_arc_sta", "feat_arc_dyn"] and "{{ feature_id }}" in belongs_to and "inspected" not in tags
+
+.. dropdown:: Show architectural elements table
+   :animate: fade-in
+
+   .. needtable::
+      :filter: type in ["feat_arc_sta", "feat_arc_dyn"] and "{{ feature_id }}" in belongs_to
+      :style: table
+      :columns: id;title;safety;status;tags
+      :colwidths: 25,30,10,15,20
+      :sort: id
+
+Inspection Statistics
+^^^^^^^^^^^^^^^^^^^^^
+
+Presence of the feature-level inspection work products.
+
+.. dropdown:: Show work products table
+   :animate: fade-in
+
+   .. list-table::
+      :header-rows: 1
+      :widths: 30 25 25 20
+      :class: wp-doc-table
+
+      * - Work Product
+        - Kind
+        - Realized by
+        - Status
+{{ workproduct_rows(feature_slug_norm, feature_workproducts) }}
+{% endfor %}

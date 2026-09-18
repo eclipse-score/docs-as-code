@@ -178,6 +178,72 @@ class _NeedsOfType:
 _needs_of_type_callable = _NeedsOfType()
 
 
+def _parse_version(value: str) -> tuple[int, int, int]:
+    """Parse a ``valid_from``/``report_version``-style milestone string.
+
+    Accepts ``vMAJOR.MINOR`` or ``vMAJOR.MINOR.PATCH`` (e.g. ``v0.8`` or
+    ``v1.0.1``), matching the format enforced by the metamodel for
+    ``valid_from``/``valid_until``/``report_version``.
+    """
+    numbers = [int(part) for part in value.strip().lstrip("vV").split(".")]
+    while len(numbers) < 3:
+        numbers.append(0)
+    return (numbers[0], numbers[1], numbers[2])
+
+
+class _RequirementInScope:
+    """Decide whether a requirement Need belongs to a ``report_version`` scope.
+
+    ``feat_req`` (and ``stkh_req``) carry ``valid_from`` directly. ``comp_req``
+    has no ``valid_from`` of its own, so its scope is inherited from the
+    ``feat_req`` Need(s) it is ``derived_from``. A requirement without a
+    resolvable ``valid_from`` (directly or through ``derived_from``) is
+    excluded whenever a ``report_version`` scope is active, matching the rule
+    that only requirements with ``valid_from`` set are considered relevant for
+    a given release.
+
+    Calling with an empty/``None`` ``report_version`` always returns ``True``,
+    which keeps unscoped reports (e.g. "latest") showing every requirement as
+    before.
+    """
+
+    def __call__(self, need: NeedItem, report_version: str | None) -> bool:
+        if not report_version:
+            return True
+
+        valid_from = need.get("valid_from")
+        if valid_from:
+            try:
+                return _parse_version(valid_from) <= _parse_version(report_version)
+            except ValueError:
+                return False
+
+        linked_feat_reqs = _linked_needs_callable(need["id"], "derived_from")
+        return any(self(feat_req, report_version) for feat_req in linked_feat_reqs)
+
+
+_req_in_scope_callable = _RequirementInScope()
+
+
+class _AnyRequirementInScope:
+    """Decide whether a Feature/Component has any requirement in scope.
+
+    Used to drop an entire Feature/Component section from the report when
+    ``report_version`` is set and none of its requirements qualify, instead of
+    rendering an empty section. An empty/``None`` ``report_version`` always
+    returns ``True`` (unscoped reports keep every Feature/Component, even
+    ones without any requirement at all, as before).
+    """
+
+    def __call__(self, reqs: list[NeedItem], report_version: str | None) -> bool:
+        if not report_version:
+            return True
+        return any(_req_in_scope_callable(req, report_version) for req in reqs)
+
+
+_any_req_in_scope_callable = _AnyRequirementInScope()
+
+
 def _post_templates_requiring_reread(app: Sphinx) -> set[str]:
     """Return post-template names opting into the post-merge rendering pass."""
     template_folder = _needs_template_folder()
@@ -262,6 +328,10 @@ def setup(app: Sphinx) -> dict[str, object]:
     )
     app.config.needs_render_context.setdefault("linked_needs", _linked_needs_callable)
     app.config.needs_render_context.setdefault("needs_of_type", _needs_of_type_callable)
+    app.config.needs_render_context.setdefault("req_in_scope", _req_in_scope_callable)
+    app.config.needs_render_context.setdefault(
+        "any_req_in_scope", _any_req_in_scope_callable
+    )
     app.connect("builder-inited", _capture_build_environment)
     # Run after the source-code linker has injected generated testcase Needs and
     # their verification backlinks (priority 525), so report templates can
