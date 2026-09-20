@@ -11,6 +11,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
+import json
 from pathlib import Path
 from unittest.mock import Mock
 
@@ -163,7 +164,29 @@ def test_live_preview_uses_port_and_bundle_watches(
     monkeypatch.setenv("ACTION", "live_preview")
     manifest = workspace / "runfiles/mounts.json"
     manifest.write_text(
-        '{"mounts": [{"src_root": "extra/docs", "runtime_path": "extra/docs", "mount_at": "extra"}]}'
+        json.dumps(
+            {
+                "mounts": [
+                    {
+                        "src_root": "extra/docs",
+                        "runtime_path": "extra/docs",
+                        "mount_at": "extra",
+                        "attach_to": "",
+                        "entry_doc": "index",
+                        "external": False,
+                        "repository": "",
+                        "generated": False,
+                        "data": [],
+                        "root_bundle": False,
+                        "bundle": {
+                            "label": "@@//:extra_bundle",
+                            "name": "extra_bundle",
+                            "code_targets": [],
+                        },
+                    }
+                ]
+            }
+        )
     )
     monkeypatch.setenv("MOUNTS_MANIFEST", "mounts.json")
     autobuild = Mock()

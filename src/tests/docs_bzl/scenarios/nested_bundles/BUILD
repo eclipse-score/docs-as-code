@@ -19,12 +19,10 @@ docs_bundle(
     name = "child",
     source_dir = "child",
     entry_doc = "landing",
-    # Keep declarations deliberately unsorted; the manifest contract requires
-    # deterministic label/type ordering independent of BUILD-file order.
     code_targets = [
-        ":nested_filegroup_sources",
-        ":example_executable",
         ":example_binary",
+        ":example_executable",
+        ":nested_filegroup_sources",
     ],
 )
 
