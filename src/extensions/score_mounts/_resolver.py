@@ -11,7 +11,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-"""Load the mounts manifest JSON emitted by the ``_mounts_manifest`` Bazel rule.
+"""Load the composition manifest emitted by Bazel.
 
 All mount paths are authored by Bazel (where ``File`` objects have real paths)
 and shipped in a small JSON manifest. This module only *reads* that manifest — it
@@ -28,8 +28,56 @@ from typing import cast
 
 
 @dataclass(frozen=True)
+class BazelTarget:
+    """One direct code target associated with a bundle.
+
+    This is deliberately not just a Bazel label: the label identifies the
+    target, while ``type`` carries ``ctx.rule.kind`` (for example
+    ``cc_library`` or ``filegroup``). Both values are needed by consumers of
+    the composition manifest.
+    """
+
+    # Canonical Bazel label, for example
+    # ``@@//score/components/memory:implementation``.
+    label: str
+    # Bazel rule kind, for example ``cc_library`` or ``filegroup``. The rule
+    # kind is not encoded in the label itself.
+    type: str
+
+
+@dataclass(frozen=True)
+class BundleMetadata:
+    """Identity and direct targets of one bundle in a composition.
+
+    ``MountSpec`` describes one physical source entry and its placement.
+    ``BundleMetadata`` describes the logical bundle that declared that entry.
+    A bundle can produce several mount entries after nesting and rebasing, so
+    each of those ``MountSpec`` objects carries the same bundle metadata while
+    retaining its own source and placement fields.
+    """
+
+    # Canonical Bazel label of the declaring bundle, for example
+    # ``@@//score/components/memory:docs``.
+    label: str = ""
+    # The name passed to ``docs_bundle(name = ...)``, for example ``docs``.
+    name: str = ""
+    # Targets declared directly by this bundle, for example
+    # ``(BazelTarget("@@//score/components/memory:implementation", "cc_library"),)``.
+    # Targets inherited from dependencies or nested bundles do not belong here.
+    code_targets: tuple[BazelTarget, ...] = ()
+
+
+@dataclass(frozen=True)
 class MountSpec:
-    """Describe one documentation mount and how its source root is resolved."""
+    """Describe one physical mount and its logical bundle owner.
+
+    The source, path, and placement fields describe where this particular
+    entry is read and mounted. ``bundle`` links that physical entry back to
+    the logical bundle that declared it. For example, the bundle
+    ``@@//score/components/memory:docs`` may be rebased to
+    ``components/memory``: ``mount_at`` changes, while ``bundle.name`` remains
+    ``docs`` and ``bundle.label`` remains the bundle's Bazel label.
+    """
 
     src_root: str
     runtime_path: str
@@ -45,11 +93,50 @@ class MountSpec:
     # the mount can use the original files without recursively walking peers.
     files: list[str] = field(default_factory=list)
     data: list[str] = field(default_factory=list)
+    # Whether this physical entry belongs to the composition's root bundle.
+    # Rebasing a nested bundle changes this to false while preserving the
+    # logical bundle metadata below.
+    root_bundle: bool = False
+    # Logical owner and direct-target metadata for this physical mount entry.
+    bundle: BundleMetadata = field(default_factory=BundleMetadata)
 
 
 @dataclass(frozen=True)
 class MountsManifest:
     mounts: list[MountSpec]
+
+
+def _read_bundle_metadata(entry: dict[str, object]) -> BundleMetadata:
+    """Map the producer-owned bundle fields to their runtime dataclass."""
+    bundle = cast("dict[str, object]", entry["bundle"])
+    targets = cast("list[dict[str, str]]", bundle["code_targets"])
+    return BundleMetadata(
+        label=cast("str", bundle["label"]),
+        name=cast("str", bundle["name"]),
+        code_targets=tuple(
+            BazelTarget(label=target["label"], type=target["type"])
+            for target in targets
+        ),
+    )
+
+
+def _read_mount_spec(entry: dict[str, object]) -> MountSpec:
+    """Map one producer-owned manifest entry to a runtime mount spec."""
+    attach_to = cast("str", entry["attach_to"])
+    return MountSpec(
+        src_root=cast("str", entry["src_root"]),
+        runtime_path=cast("str", entry["runtime_path"]),
+        mount_at=cast("str", entry["mount_at"]),
+        attach_to=attach_to or None,
+        entry_doc=cast("str", entry["entry_doc"]),
+        external=cast("bool", entry["external"]),
+        repository=cast("str", entry["repository"]),
+        generated=cast("bool", entry["generated"]),
+        files=cast("list[str]", entry.get("files", [])),
+        data=cast("list[str]", entry["data"]),
+        root_bundle=cast("bool", entry["root_bundle"]),
+        bundle=_read_bundle_metadata(entry),
+    )
 
 
 def load_mounts_manifest(manifest_path: str | Path) -> MountsManifest:
@@ -59,54 +146,12 @@ def load_mounts_manifest(manifest_path: str | Path) -> MountsManifest:
     exec root in a sandbox) is the caller's responsibility.
     """
     manifest_path = Path(manifest_path)
-    raw_data: object = json.loads(manifest_path.read_text(encoding="utf-8"))
-    if not isinstance(raw_data, dict):
-        raise ValueError(
-            f"mounts manifest must be a JSON object, got {type(raw_data).__name__}: {raw_data!r}"
-        )
-    data = cast("dict[str, object]", raw_data)
-    mounts: list[MountSpec] = []
-    mounts_data = data.get("mounts", [])
-    if not isinstance(mounts_data, list):
-        raise ValueError("mounts manifest field 'mounts' must be a list")
-    typed_mounts_data = cast("list[object]", mounts_data)
-    for raw_entry in typed_mounts_data:
-        if not isinstance(raw_entry, dict):
-            raise ValueError(f"mounts manifest entry must be an object: {raw_entry!r}")
-        entry = cast("dict[str, object]", raw_entry)
-        if "src_root" not in entry or "mount_at" not in entry:
-            raise ValueError(
-                f"mounts manifest entry missing 'src_root'/'mount_at': {entry!r}"
-            )
-        raw_data = entry.get("data", [])
-        if not isinstance(raw_data, list):
-            raise ValueError(
-                f"mounts manifest entry field 'data' must be a list: {raw_data!r}"
-            )
-        raw_files = entry.get("files", [])
-        if not isinstance(raw_files, list):
-            raise ValueError(
-                f"mounts manifest entry field 'files' must be a list: {raw_files!r}"
-            )
-        mounts.append(
-            MountSpec(
-                src_root=str(entry["src_root"]),
-                runtime_path=str(entry.get("runtime_path", "")),
-                mount_at=str(entry["mount_at"]),
-                attach_to=str(entry["attach_to"]) if entry.get("attach_to") else None,
-                entry_doc=str(entry["entry_doc"])
-                if entry.get("entry_doc")
-                else "index",
-                external=bool(entry.get("external", False)),
-                repository=str(entry.get("repository", "")),
-                # Older manifests do not have this field and represent regular
-                # workspace or external-repository source roots.
-                generated=bool(entry.get("generated", False)),
-                files=[str(f) for f in cast("list[object]", raw_files)],
-                data=[str(f) for f in cast("list[object]", raw_data)],
-            )
-        )
-    return MountsManifest(mounts=mounts)
+    data = cast(
+        "dict[str, object]",
+        json.loads(manifest_path.read_text(encoding="utf-8")),
+    )
+    entries = cast("list[dict[str, object]]", data["mounts"])
+    return MountsManifest(mounts=[_read_mount_spec(entry) for entry in entries])
 
 
 def resolve_walk_dir(

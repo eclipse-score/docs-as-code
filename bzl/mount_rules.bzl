@@ -16,8 +16,27 @@ Conversion of documentation bundles from Bazel into mount metadata.
 
 load("@score_docs_as_code//:bzl/bundle_rules.bzl", "DocsBundleInfo")
 
-def _mounts_manifest_impl(ctx):
-    """Generate the canonical Sphinx mount manifest."""
+def _sorted_code_targets(targets):
+    """Return target metadata in deterministic label/type order.
+
+    Bundle declarations are ordered for source composition, but metadata
+    consumers should not observe incidental declaration ordering. Encoding the
+    pair before sorting keeps each label associated with its rule type.
+    """
+    encoded = sorted([
+        target.label + "\n" + target.type
+        for target in targets
+    ])
+    return [
+        {
+            "label": value.split("\n")[0],
+            "type": value.split("\n", 1)[1],
+        }
+        for value in encoded
+    ]
+
+def _composition_manifest_impl(ctx):
+    """Generate the bundle composition manifest."""
     bundle_info = ctx.attr.bundle[DocsBundleInfo]
     entries = bundle_info.entries
 
@@ -35,6 +54,14 @@ def _mounts_manifest_impl(ctx):
             # tree rather than a workspace or external-repository directory.
             "generated": entry.generated,
             "data": [f.path for f in entry.data.to_list()],
+            # Keep identity and direct-target metadata in the same manifest as
+            # placement so all runtime consumers use one composition snapshot.
+            "root_bundle": entry.root_bundle,
+            "bundle": {
+                "label": entry.bundle_label,
+                "name": entry.bundle_name,
+                "code_targets": _sorted_code_targets(entry.code_targets),
+            },
         }
         # Explicit source targets are mounted as a file allowlist. Directory
         # bundles omit this key and retain the existing recursive behavior.
@@ -46,18 +73,19 @@ def _mounts_manifest_impl(ctx):
     ctx.actions.write(out, json.encode({"mounts": json_mounts}))
     return [DefaultInfo(files = depset([out]))]
 
-_create_mounts_manifest = rule(
-    implementation = _mounts_manifest_impl,
+_composition_manifest = rule(
+    implementation = _composition_manifest_impl,
     attrs = {
         "bundle": attr.label(providers = [DocsBundleInfo]),
     },
-    doc = "Writes a Sphinx mount manifest from reusable documentation bundles.",
+    doc = "Writes the composition consumed by runtime documentation tools.",
 )
 
-def create_mounts_manifest(name, bundle):
-    """Create a Sphinx mount manifest from reusable documentation bundles."""
-    _create_mounts_manifest(
+def create_composition_manifest(name, bundle, visibility = None):
+    """Create a common mount and bundle-metadata manifest."""
+    _composition_manifest(
         name = name,
         bundle = bundle,
+        visibility = visibility,
     )
     return ":" + name

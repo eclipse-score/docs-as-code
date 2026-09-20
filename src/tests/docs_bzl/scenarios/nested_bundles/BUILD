@@ -11,7 +11,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-load("//:bzl/mount_rules.bzl", "create_mounts_manifest")
+load("//:bzl/mount_rules.bzl", "create_composition_manifest")
 load("//:docs.bzl", "docs", "docs_bundle")
 load("@aspect_rules_py//py:defs.bzl", "py_binary")
 
@@ -19,10 +19,12 @@ docs_bundle(
     name = "child",
     source_dir = "child",
     entry_doc = "landing",
+    # Keep declarations deliberately unsorted; the manifest contract requires
+    # deterministic label/type ordering independent of BUILD-file order.
     code_targets = [
-        ":example_binary",
-        ":example_executable",
         ":nested_filegroup_sources",
+        ":example_executable",
+        ":example_binary",
     ],
 )
 
@@ -92,7 +94,7 @@ docs_bundle(
     source_dir = "other",
 )
 
-create_mounts_manifest(
+create_composition_manifest(
     name = "ordered_aggregate_manifest",
     bundle = ":ordered_aggregate",
 )
@@ -101,6 +103,7 @@ create_mounts_manifest(
 # pytest integration test in //src/tests/docs_bzl.
 docs(
     source_dir = "host_docs",
+    code_targets = [":example_binary"],
     test_sources = ["src/tests/docs_bzl/scenarios/nested_bundles"],
     bundles = [{
         "bundle": ":parent",

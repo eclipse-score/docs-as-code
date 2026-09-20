@@ -24,10 +24,10 @@ semantics are documented in :ref:`docs_concept_mounts`; BUILD usage is in
 Architecture and manifest contract
 ----------------------------------
 
-``docs.bzl`` owns bundle graph traversal. Its ``_mounts_manifest`` rule turns
+``docs.bzl`` owns bundle graph traversal. Its composition-manifest rule turns
 the ``DocsBundleInfo`` provider graph and each consumer placement into one JSON
-manifest. Python deliberately receives paths rather than Bazel labels, so it
-does not reconstruct Bazel repository names at Sphinx runtime.
+manifest. Python receives paths and stable bundle metadata rather than Bazel
+providers, so it does not reconstruct Bazel repository names at Sphinx runtime.
 
 Each manifest entry contains:
 
@@ -37,7 +37,13 @@ Each manifest entry contains:
   walked;
 * ``mount_at`` and ``attach_to`` — the already-composed Sphinx placement; and
 * ``entry_doc`` — the canonical entry document declared by the source bundle.
-* ``external`` — whether the directory belongs to another Bazel module.
+* ``external`` — whether the directory belongs to another Bazel module;
+* ``bundle`` — the declaring bundle's Bazel label, name, and direct targets;
+* ``root_bundle`` — whether this physical entry belongs to the composition's
+  root bundle.
+
+Bundle metadata is mandatory for every entry. The Bazel producer and Python
+consumer are kept in sync as one repository-owned contract.
 
 At ``config-inited``, ``score_mounts`` resolves all directory source mounts before
 constructing ``config.mounts``. A mount below Sphinx's primary source directory

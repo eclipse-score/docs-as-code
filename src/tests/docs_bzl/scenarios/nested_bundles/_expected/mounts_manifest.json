@@ -1,7 +1,35 @@
 {
   "mounts": [
     {
+      "attach_to": "",
+      "root_bundle": true,
+      "bundle": {
+        "label": "@@//src/tests/docs_bzl/scenarios/nested_bundles:docs_bundle",
+        "name": "docs_bundle",
+        "code_targets": [
+          {
+            "label": "@@//src/tests/docs_bzl/scenarios/nested_bundles:example_binary",
+            "type": "py_binary"
+          }
+        ]
+      },
+      "data": [],
+      "entry_doc": "index",
+      "external": false,
+      "generated": false,
+      "mount_at": "",
+      "repository": "",
+      "runtime_path": "src/tests/docs_bzl/scenarios/nested_bundles/host_docs",
+      "src_root": "src/tests/docs_bzl/scenarios/nested_bundles/host_docs"
+    },
+    {
       "attach_to": "concepts/index",
+      "root_bundle": false,
+      "bundle": {
+        "label": "@@//src/tests/docs_bzl/scenarios/nested_bundles:parent",
+        "name": "parent",
+        "code_targets": []
+      },
       "data": [
         "src/tests/docs_bzl/scenarios/nested_bundles/generated/generated_output.txt"
       ],
@@ -15,6 +43,25 @@
     },
     {
       "attach_to": "concepts/example_bundle/index",
+      "root_bundle": false,
+      "bundle": {
+        "label": "@@//src/tests/docs_bzl/scenarios/nested_bundles:child",
+        "name": "child",
+        "code_targets": [
+          {
+            "label": "@@//src/tests/docs_bzl/scenarios/nested_bundles:example_binary",
+            "type": "py_binary"
+          },
+          {
+            "label": "@@//src/tests/docs_bzl/scenarios/nested_bundles:example_executable",
+            "type": "cc_binary"
+          },
+          {
+            "label": "@@//src/tests/docs_bzl/scenarios/nested_bundles:nested_filegroup_sources",
+            "type": "filegroup"
+          }
+        ]
+      },
       "data": [],
       "entry_doc": "landing",
       "external": false,
