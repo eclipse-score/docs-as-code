@@ -5530,7 +5530,7 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_needs_templates__test_req_in_scope_unscoped_report_version_always_true",
+    "name": "test_needs_templates__test_req_in_report_version_unscoped_report_version_always_true",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
     "line": "82",
     "result": "passed",
@@ -5544,7 +5544,7 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_needs_templates__test_req_in_scope_direct_valid_from_boundary",
+    "name": "test_needs_templates__test_req_in_report_version_direct_valid_from_boundary",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
     "line": "91",
     "result": "passed",
@@ -5558,7 +5558,7 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_needs_templates__test_req_in_scope_malformed_valid_from_is_excluded",
+    "name": "test_needs_templates__test_req_in_report_version_malformed_valid_from_is_excluded",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
     "line": "102",
     "result": "passed",
@@ -5572,7 +5572,7 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_needs_templates__test_req_in_scope_missing_valid_from_without_derived_from_is_excluded",
+    "name": "test_needs_templates__test_req_in_report_version_missing_valid_from_without_derived_from_is_excluded",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
     "line": "111",
     "result": "passed",
@@ -5586,7 +5586,7 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_needs_templates__test_req_in_scope_comp_req_inherits_via_derived_from",
+    "name": "test_needs_templates__test_req_in_report_version_comp_req_inherits_via_derived_from",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
     "line": "124",
     "result": "passed",
@@ -5600,7 +5600,7 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_needs_templates__test_any_req_in_scope_unscoped_true_even_for_empty_list",
+    "name": "test_needs_templates__test_any_req_in_report_version_unscoped_true_even_for_empty_list",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
     "line": "140",
     "result": "passed",
@@ -5614,7 +5614,7 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_needs_templates__test_any_req_in_scope_scoped_empty_list_is_excluded",
+    "name": "test_needs_templates__test_any_req_in_report_version_scoped_empty_list_is_excluded",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
     "line": "147",
     "result": "passed",
@@ -5628,7 +5628,7 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_needs_templates__test_any_req_in_scope_true_if_at_least_one_requirement_matches",
+    "name": "test_needs_templates__test_any_req_in_report_version_true_if_at_least_one_requirement_matches",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
     "line": "154",
     "result": "passed",
@@ -5642,7 +5642,7 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_needs_templates__test_any_req_in_scope_false_if_no_requirement_matches",
+    "name": "test_needs_templates__test_any_req_in_report_version_false_if_no_requirement_matches",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
     "line": "164",
     "result": "passed",
