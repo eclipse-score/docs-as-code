@@ -501,8 +501,9 @@ walked;</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">entry_doc</span></code> — the canonical entry document declared by the source bundle.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">external</span></code> — whether the directory belongs to another Bazel module;</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">bundle</span></code> — the declaring bundle’s Bazel label, name, and direct targets;</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">root_bundle</span></code> — whether this physical entry belongs to the composition’s
-root bundle.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">root_bundle</span></code> — whether this physical entry belongs to the root bundle of
+the current composition. This is composition-specific: the same bundle can
+be a root in a standalone manifest and a child in another composition.</p></li>
 </ul>
 <p>Bundle metadata is mandatory for every entry. The Bazel producer and Python
 consumer are kept in sync as one repository-owned contract.</p>
