@@ -24,10 +24,11 @@ semantics are documented in :ref:`docs_concept_mounts`; BUILD usage is in
 Architecture and manifest contract
 ----------------------------------
 
-``docs.bzl`` owns bundle graph traversal. Its composition-manifest rule turns
-the ``DocsBundleInfo`` provider graph and each consumer placement into one JSON
-manifest. Python receives paths and stable bundle metadata rather than Bazel
-providers, so it does not reconstruct Bazel repository names at Sphinx runtime.
+``docs.bzl`` owns bundle graph traversal. Its composition-manifest rule turns the
+``DocsBundleInfo`` provider graph and each consumer placement into one JSON composition
+manifest. The same manifest supplies both mount placement and document-to-bundle
+metadata. Python deliberately receives paths and stable bundle metadata rather than
+Bazel providers, so it does not reconstruct Bazel repository names at Sphinx runtime.
 
 Each manifest entry contains:
 
@@ -43,8 +44,9 @@ Each manifest entry contains:
   the current composition. This is composition-specific: the same bundle can
   be a root in a standalone manifest and a child in another composition.
 
-Bundle metadata is mandatory for every entry. The Bazel producer and Python
-consumer are kept in sync as one repository-owned contract.
+Standalone bundle Needs actions receive a local-only view containing the
+bundle's own root entries; composed builds receive the complete active
+composition. Both views use the same schema and runtime resolver.
 
 At ``config-inited``, ``score_mounts`` resolves all directory source mounts before
 constructing ``config.mounts``. A mount below Sphinx's primary source directory
@@ -59,6 +61,17 @@ Explicit ``docs_bundle(srcs = [...])`` entries remain in file-list mode and are
 not included in these directory exclusions. They are intended for generated
 sources outside the primary source tree; an explicitly mounted workspace file
 below a walked root is a known limitation and would need exact-file exclusions.
+
+Document-to-bundle mapping
+--------------------------
+
+After Sphinx has updated its environment, ``score_mounts`` exposes
+``get_document_bundles(app)``. The result maps each actually discovered
+docname to one bundle instance. Mounted docnames come from the mount
+integration's recorded output, while primary docnames come from Sphinx's
+discovery set. This avoids assigning a bundle to skipped or conflicting
+mounts. The matcher in ``score_metamodel`` will consume this mapping without
+inspecting paths or mount configuration.
 
 The rule rejects conflicting final placements before Sphinx starts. A mount
 without ``attach_to`` is attached to the ``index`` document beside its

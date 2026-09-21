@@ -87,7 +87,7 @@ class BundleMetadata:
 
 @dataclass(frozen=True)
 class MountSpec:
-    """Describe one physical mount and its logical bundle owner.
+    """Describe one physical mount and its associated logical bundle.
 
     The source, path, and placement fields describe where this particular
     entry is read and mounted. ``bundle`` links that physical entry back to
@@ -115,7 +115,8 @@ class MountSpec:
     # Rebasing a nested bundle changes this to false while preserving the
     # logical bundle metadata below.
     root_bundle: bool = False
-    # Logical owner and direct-target metadata for this physical mount entry.
+    # Logical bundle association and direct-target metadata for this physical
+    # mount entry.
     bundle: BundleMetadata = field(default_factory=BundleMetadata)
 
     @classmethod

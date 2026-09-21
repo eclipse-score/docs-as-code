@@ -13,6 +13,7 @@
 """Tests for ``_resolve_data_mounts`` in the ``score_mounts`` extension."""
 
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -20,8 +21,13 @@ from src.extensions.score_mounts import (
     _make_mount_entry,  # pyright: ignore[reportPrivateUsage] - white-box unit test
     _resolve_data_mounts,  # pyright: ignore[reportPrivateUsage] - white-box unit test
     _resolve_source_mounts,  # pyright: ignore[reportPrivateUsage] - white-box unit test
+    _set_document_bundles,  # pyright: ignore[reportPrivateUsage]
 )
-from src.extensions.score_mounts._resolver import MountsManifest, MountSpec
+from src.extensions.score_mounts._resolver import (
+    BundleMetadata,
+    MountsManifest,
+    MountSpec,
+)
 
 
 def test_missing_data_file_raises(tmp_path: Path) -> None:
@@ -96,6 +102,89 @@ def test_root_bundle_data_is_not_mounted_but_child_data_is(
 
     assert str(root_data.parent) not in mounts
     assert mounts[str(child_data.parent)] is manifest.mounts[1]
+
+
+def test_data_mount_documents_do_not_get_a_bundle() -> None:
+    """Mounted data documents stay unassociated instead of inheriting the root bundle."""
+    primary = BundleMetadata(
+        label="//:root",
+        name="root",
+    )
+    manifest = MountsManifest(
+        mounts=[
+            MountSpec(
+                src_root="",
+                runtime_path="",
+                mount_at="generated",
+                root_bundle=False,
+                bundle=BundleMetadata(
+                    label="//:data",
+                    name="data",
+                ),
+            ),
+            MountSpec(
+                src_root="docs",
+                runtime_path="docs",
+                mount_at="",
+                root_bundle=True,
+                bundle=primary,
+            ),
+        ]
+    )
+    env = SimpleNamespace(
+        project=SimpleNamespace(_mount_entry_docnames={0: ["generated/page"]}),
+        found_docs={"generated/page", "index"},
+    )
+    app = SimpleNamespace(
+        env=env,
+        _score_mounts_manifest=manifest,
+        _score_mount_runtime_specs=(None,),
+    )
+
+    _set_document_bundles(app, env)
+
+    document_bundles = env._score_document_bundles
+    assert "generated/page" not in document_bundles
+    assert document_bundles["index"] == primary
+
+
+def test_mounted_documents_get_their_declaring_bundle() -> None:
+    """Mounted docnames use the bundle metadata attached to their mount."""
+    primary = BundleMetadata(label="//:root", name="root")
+    child = BundleMetadata(label="//:child", name="child")
+    manifest = MountsManifest(
+        mounts=[
+            MountSpec(
+                src_root="docs",
+                runtime_path="docs",
+                mount_at="",
+                root_bundle=True,
+                bundle=primary,
+            ),
+            MountSpec(
+                src_root="child/docs",
+                runtime_path="child/docs",
+                mount_at="child",
+                root_bundle=False,
+                bundle=child,
+            ),
+        ]
+    )
+    env = SimpleNamespace(
+        project=SimpleNamespace(_mount_entry_docnames={0: ["child/page"]}),
+        found_docs={"child/page", "index"},
+    )
+    app = SimpleNamespace(
+        env=env,
+        _score_mounts_manifest=manifest,
+        _score_mount_runtime_specs=(manifest.mounts[1],),
+    )
+
+    _set_document_bundles(app, env)
+
+    document_bundles = env._score_document_bundles
+    assert document_bundles["child/page"] == child
+    assert document_bundles["index"] == primary
 
 
 def test_root_bundle_source_is_not_a_runtime_mount_but_child_source_is(
