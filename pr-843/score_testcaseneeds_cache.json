@@ -786,7 +786,7 @@
   {
     "name": "main_test__test_build_action_selects_sphinx_builder[incremental-html]",
     "file": "src/docs_cli/main_test.py",
-    "line": "60",
+    "line": "62",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -800,7 +800,7 @@
   {
     "name": "main_test__test_build_action_selects_sphinx_builder[check-needs]",
     "file": "src/docs_cli/main_test.py",
-    "line": "60",
+    "line": "62",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -814,7 +814,7 @@
   {
     "name": "main_test__test_build_action_selects_sphinx_builder[linkcheck-linkcheck]",
     "file": "src/docs_cli/main_test.py",
-    "line": "60",
+    "line": "62",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -828,7 +828,7 @@
   {
     "name": "main_test__test_build_action_selects_sphinx_builder[build_needs_json-needs]",
     "file": "src/docs_cli/main_test.py",
-    "line": "60",
+    "line": "62",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -842,7 +842,7 @@
   {
     "name": "main_test__test_failed_build_returns_exit_code_and_forces_next_build_clean",
     "file": "src/docs_cli/main_test.py",
-    "line": "111",
+    "line": "113",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -856,7 +856,7 @@
   {
     "name": "main_test__test_live_preview_uses_port_and_bundle_watches",
     "file": "src/docs_cli/main_test.py",
-    "line": "158",
+    "line": "160",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -870,7 +870,7 @@
   {
     "name": "main_test__test_bazel_configuration_resolves_runfiles_and_preserves_repo_relative_edit_path",
     "file": "src/docs_cli/main_test.py",
-    "line": "190",
+    "line": "192",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -884,7 +884,21 @@
   {
     "name": "main_test__test_bazel_build_resolves_mount_manifest_from_execroot",
     "file": "src/docs_cli/main_test.py",
-    "line": "226",
+    "line": "230",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "main_test__test_bazel_needs_action_uses_external_needs_labels_channel",
+    "file": "src/docs_cli/main_test.py",
+    "line": "256",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -898,7 +912,7 @@
   {
     "name": "main_test__test_direct_invocation_resolves_paths_relative_to_cwd",
     "file": "src/docs_cli/main_test.py",
-    "line": "252",
+    "line": "274",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2382,7 +2396,7 @@
   {
     "name": "test_external_needs__test_extend_needs_json_exporter_uses_configured_value",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "40",
+    "line": "45",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2396,21 +2410,7 @@
   {
     "name": "test_external_needs__test_extend_needs_json_exporter_can_override_bundle_export_metadata",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "57",
-    "result": "passed",
-    "repo_name": null,
-    "hash": null,
-    "url": null,
-    "TestType": null,
-    "DerivationTechnique": null,
-    "result_text": "",
-    "PartiallyVerifies": null,
-    "FullyVerifies": null
-  },
-  {
-    "name": "test_external_needs__test_empty_list",
-    "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "79",
+    "line": "62",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2424,7 +2424,7 @@
   {
     "name": "test_external_needs__test_external_needs_runfiles_path_is_environment_independent[source0-suffix0-expected0]",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "83",
+    "line": "84",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2436,9 +2436,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_external_needs__test_external_needs_runfiles_path_is_environment_independent[source1-suffix1-expected1]",
+    "name": "test_external_needs__test_parse_bazel_external_need_marks_same_repository_labels_local",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "83",
+    "line": "104",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2450,7 +2450,7 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_external_needs__test_external_str_is_neither_at_nor_slash",
+    "name": "test_external_needs__test_parse_external_needs_labels_filters_ordinary_data_labels",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
     "line": "113",
     "result": "passed",
@@ -2464,9 +2464,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_external_needs__test_same_repo_entry_with_path",
+    "name": "test_external_needs__test_external_needs_source_path_selects_target_layout[source0-expected0]",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "118",
+    "line": "126",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2478,9 +2478,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_external_needs__test_same_repo_root_entry",
+    "name": "test_external_needs__test_external_needs_source_path_selects_target_layout[source1-expected1]",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "132",
+    "line": "126",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2492,9 +2492,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_external_needs__test_cross_module_sub_package_entry",
+    "name": "test_external_needs__test_configured_runfiles_dir_is_used_for_external_sources",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "144",
+    "line": "153",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2506,9 +2506,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_external_needs__test_single_entry_with_path_non_target",
+    "name": "test_external_needs__test_external_needs_source_config_parses_labels",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "158",
+    "line": "169",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2520,65 +2520,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_external_needs__test_single_entry_no_path",
+    "name": "test_external_needs__test_external_needs_source_rejects_descriptors",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "164",
-    "result": "passed",
-    "repo_name": null,
-    "hash": null,
-    "url": null,
-    "TestType": null,
-    "DerivationTechnique": null,
-    "result_text": "",
-    "PartiallyVerifies": null,
-    "FullyVerifies": null
-  },
-  {
-    "name": "test_external_needs__test_single_entry_json_no_path",
-    "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "170",
-    "result": "passed",
-    "repo_name": null,
-    "hash": null,
-    "url": null,
-    "TestType": null,
-    "DerivationTechnique": null,
-    "result_text": "",
-    "PartiallyVerifies": null,
-    "FullyVerifies": null
-  },
-  {
-    "name": "test_external_needs__test_multiple_entries",
-    "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "177",
-    "result": "passed",
-    "repo_name": null,
-    "hash": null,
-    "url": null,
-    "TestType": null,
-    "DerivationTechnique": null,
-    "result_text": "",
-    "PartiallyVerifies": null,
-    "FullyVerifies": null
-  },
-  {
-    "name": "test_external_needs__test_multiple_entries_2",
-    "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "191",
-    "result": "passed",
-    "repo_name": null,
-    "hash": null,
-    "url": null,
-    "TestType": null,
-    "DerivationTechnique": null,
-    "result_text": "",
-    "PartiallyVerifies": null,
-    "FullyVerifies": null
-  },
-  {
-    "name": "test_external_needs__test_invalid_entry",
-    "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "210",
+    "line": "188",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2592,7 +2536,7 @@
   {
     "name": "test_external_needs__test_add_external_needs_json_appends_entry",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "215",
+    "line": "203",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2606,7 +2550,7 @@
   {
     "name": "test_external_needs__test_add_external_needs_json_appends_entry_local",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "245",
+    "line": "231",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2620,7 +2564,7 @@
   {
     "name": "test_external_needs__test_add_needs_json_file_appends_entry",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "279",
+    "line": "263",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2634,63 +2578,7 @@
   {
     "name": "test_external_needs__test_add_external_needs_json_missing_file_keeps_list_empty",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "314",
-    "result": "passed",
-    "repo_name": null,
-    "hash": null,
-    "url": null,
-    "TestType": null,
-    "DerivationTechnique": null,
-    "result_text": "",
-    "PartiallyVerifies": null,
-    "FullyVerifies": null
-  },
-  {
-    "name": "test_external_needs__test_add_external_docs_sources_adds_collection",
-    "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "333",
-    "result": "passed",
-    "repo_name": null,
-    "hash": null,
-    "url": null,
-    "TestType": null,
-    "DerivationTechnique": null,
-    "result_text": "",
-    "PartiallyVerifies": null,
-    "FullyVerifies": null
-  },
-  {
-    "name": "test_external_needs__test_add_external_docs_sources_local_sub_package",
-    "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "355",
-    "result": "passed",
-    "repo_name": null,
-    "hash": null,
-    "url": null,
-    "TestType": null,
-    "DerivationTechnique": null,
-    "result_text": "",
-    "PartiallyVerifies": null,
-    "FullyVerifies": null
-  },
-  {
-    "name": "test_external_needs__test_add_external_docs_sources_local_root_key_fallback",
-    "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "389",
-    "result": "passed",
-    "repo_name": null,
-    "hash": null,
-    "url": null,
-    "TestType": null,
-    "DerivationTechnique": null,
-    "result_text": "",
-    "PartiallyVerifies": null,
-    "FullyVerifies": null
-  },
-  {
-    "name": "test_external_needs__test_add_external_docs_sources_ide_support_returns_without_changes",
-    "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "419",
+    "line": "296",
     "result": "passed",
     "repo_name": null,
     "hash": null,
