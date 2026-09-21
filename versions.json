@@ -158,5 +158,9 @@
   {
     "version": "pr-842",
     "url": "https://eclipse-score.github.io/docs-as-code/pr-842/"
+  },
+  {
+    "version": "pr-843",
+    "url": "https://eclipse-score.github.io/docs-as-code/pr-843/"
   }
 ]
