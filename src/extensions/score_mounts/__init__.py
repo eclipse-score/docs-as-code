@@ -33,13 +33,16 @@ tree, and nested workspace ``srcs`` are a known limitation of this logic.
 
 from __future__ import annotations
 
+from collections.abc import Mapping, Sequence
 from pathlib import Path
+from typing import cast
 
 from sphinx.application import Sphinx
 from sphinx.config import Config
 from sphinx.util import logging
 
 from src.extensions.score_mounts._resolver import (
+    BundleMetadata,
     MountsManifest,
     MountSpec,
     load_mounts_manifest,
@@ -310,6 +313,96 @@ def _resolve_source_mounts(
     return source_mounts
 
 
+def _docnames_by_mount_index(
+    project: object,
+    runtime_specs: Sequence[MountSpec | None],
+) -> dict[int, tuple[str, ...]]:
+    """Return the docnames produced by each configured runtime mount.
+
+    The returned dictionary uses the mount's index in ``config.mounts`` as its
+    key and contains the docnames that ``sphinx-mounts`` actually discovered
+    for that mount. ``_set_document_bundles`` combines those indexes with the
+    corresponding ``MountSpec`` objects to associate each mounted document
+    with a bundle.
+
+    ``score_mounts`` and ``sphinx_mounts`` are version-bound together, so the
+    adapter's shape is part of their shared contract. Casting documents that
+    contract for the type checker without re-validating every value keeps this
+    bridge focused on translating bundle associations, rather than duplicating
+    manifest validation in Python.
+    """
+    if not runtime_specs:
+        return {}
+
+    # The mapping is produced by the matching sphinx-mounts version and uses
+    # the same indexes as the runtime mount list assembled below.
+    raw_docnames = cast(
+        "Mapping[int, Sequence[str]]",
+        project._mount_entry_docnames,
+    )
+    return {index: tuple(docnames) for index, docnames in raw_docnames.items()}
+
+
+def _set_document_bundles(app: Sphinx, env: object) -> None:
+    """Record the bundle associated with each document in the current build."""
+    # ``config-inited`` stores the manifest on the application because the
+    # later ``env-updated`` event receives the environment, not the config.
+    manifest: MountsManifest | None = getattr(app, "_score_mounts_manifest", None)
+    if manifest is None:
+        env._score_document_bundles = {}
+        return
+
+    # Keep the manifest order next to the mount indexes reported by
+    # sphinx-mounts. Data mounts have no associated bundle and are represented
+    # by ``None`` in this parallel list.
+    runtime_specs: tuple[MountSpec | None, ...] = getattr(
+        app, "_score_mount_runtime_specs", ()
+    )
+    project = getattr(env, "project", None)
+    docnames_by_mount = _docnames_by_mount_index(project, runtime_specs)
+    document_bundles: dict[str, BundleMetadata] = {}
+    mounted_docnames: set[str] = set()
+    for index, docnames in docnames_by_mount.items():
+        spec = runtime_specs[index]
+        mounted_docnames.update(docnames)
+        if spec is None or not spec.bundle.label:
+            continue
+        # A mounted document is associated with the bundle that supplied its
+        # mount, not with the primary source tree where its file is staged.
+        for docname in docnames:
+            document_bundles[docname] = spec.bundle
+
+    # Bazel emits one root source entry for a composition. Taking that entry
+    # directly keeps this consumer aligned with the producer-owned contract.
+    primary_bundle = next(
+        (
+            spec.bundle
+            for spec in manifest.mounts
+            if spec.root_bundle and spec.bundle.label and spec.src_root
+        ),
+        None,
+    )
+    if primary_bundle is not None:
+        found_docs = cast("set[str]", getattr(env, "found_docs", set()))
+        for docname in found_docs:
+            # Sphinx's discovery set is the authoritative list for the primary
+            # tree. Do not overwrite a bundle association already assigned to a
+            # mounted bundle, including entries skipped during its walk.
+            if docname not in mounted_docnames:
+                document_bundles.setdefault(docname, primary_bundle)
+
+    # Store only the final docname-to-bundle mapping on the environment so the
+    # later matcher can consume it without re-reading paths or mounts.
+    env._score_document_bundles = document_bundles
+
+
+def get_document_bundles(app: Sphinx) -> dict[str, BundleMetadata]:
+    """Return the bundle associated with each document in the active build."""
+    # Return a copy because consumers should not be able to mutate Sphinx's
+    # environment state while they inspect the document-to-bundle mapping.
+    return dict(getattr(app.env, "_score_document_bundles", {}))
+
+
 def _on_config_inited(app: Sphinx, config: Config) -> None:
     """Translate the Bazel manifest into ``sphinx_mounts`` runtime config.
 
@@ -320,6 +413,11 @@ def _on_config_inited(app: Sphinx, config: Config) -> None:
     empty manifest is a no-op.
     """
     manifest = _read_manifest(config)
+    # Keep the input and the runtime index mapping on the app for
+    # ``env-updated``, which is where Sphinx exposes the documents it actually
+    # discovered.
+    app._score_mounts_manifest = manifest
+    app._score_mount_runtime_specs = ()
     if manifest is None or not manifest.mounts:
         return
 
@@ -361,9 +459,10 @@ def _on_config_inited(app: Sphinx, config: Config) -> None:
 
     # Pure-data bundles have empty src_root; skip directory walk.
     runtime_mounts: list[dict[str, object]] = []
+    # This list mirrors ``config.mounts`` so an index from sphinx-mounts can be
+    # translated back to the bundle that owns the resulting docnames.
+    runtime_specs: list[MountSpec | None] = []
     for spec in manifest.mounts:
-        # The primary source tree is discovered by Sphinx itself. Its manifest
-        # entry is metadata for Python consumers, not an additional mount.
         if not spec.src_root or spec.root_bundle:
             continue
         if spec.files:
@@ -384,6 +483,7 @@ def _on_config_inited(app: Sphinx, config: Config) -> None:
             # Companion assets stay in the original source directory and are
             # resolved relative to the explicitly mounted document.
             runtime_mounts.append(_make_file_mount_entry(document_files, spec))
+            runtime_specs.append(spec)
             continue
 
         # This directory was validated during the ownership pass above. Reuse its
@@ -397,6 +497,7 @@ def _on_config_inited(app: Sphinx, config: Config) -> None:
                 nested_exclusions[index],
             )
         )
+        runtime_specs.append(spec)
 
     config.mounts = runtime_mounts
 
@@ -408,6 +509,7 @@ def _on_config_inited(app: Sphinx, config: Config) -> None:
     data_mounts = _resolve_data_mounts(manifest, ws_root, runfiles_dir)
     for walk_dir_str, spec in data_mounts.items():
         config.mounts.append(_make_mount_entry(Path(walk_dir_str), spec))
+        runtime_specs.append(None)
     logger.info("score_mounts: added %d data mount(s)", len(data_mounts))
 
     # Prevent sphinx_mounts._on_load_toml from overwriting our config with a
@@ -415,6 +517,7 @@ def _on_config_inited(app: Sphinx, config: Config) -> None:
     config.mounts_from_toml = None
 
     logger.info("score_mounts: registered %d mount(s)", len(runtime_mounts))
+    app._score_mount_runtime_specs = tuple(runtime_specs)
 
 
 def setup(app: Sphinx) -> dict[str, object]:
@@ -427,6 +530,9 @@ def setup(app: Sphinx) -> dict[str, object]:
     """
     app.add_config_value("mounts_manifest", default="", rebuild="env", types=(str,))
     app.connect("config-inited", _on_config_inited, priority=300)
+    # The document-to-bundle mapping is calculated after Sphinx has completed
+    # discovery so it contains only documents that really entered the environment.
+    app.connect("env-updated", _set_document_bundles, priority=500)
     return {
         "version": "0.1",
         "parallel_read_safe": True,

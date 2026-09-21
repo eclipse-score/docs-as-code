@@ -311,9 +311,20 @@ def _declare_docs_bundle(
         **kwargs
     )
 
+    # Standalone Needs actions must resolve document-to-bundle mappings against
+    # this bundle's own root entries. Nested entries belong to the eventual
+    # composing build and are therefore omitted from this local manifest view.
+    local_manifest = create_composition_manifest(
+        name = _bundle_internal_target(name, "local_manifest"),
+        bundle = ":" + name,
+        own_only = True,
+        visibility = visibility,
+    )
+
     return struct(
         source_dir_globbed = source_dir_globbed,
         sourcelinks_json = sourcelinks_json,
+        local_manifest = local_manifest,
     )
 
 def _declare_bundle_local_needs(
@@ -322,6 +333,7 @@ def _declare_bundle_local_needs(
         srcs,
         entry_doc,
         sourcelinks_json,
+        mounts_manifest,
         data = [],
         visibility = None,
         config = None,
@@ -363,6 +375,8 @@ def _declare_bundle_local_needs(
     # The generated source-links target stays typed as a label here; the
     # private Needs rule owns translating it to an action environment path
     # and declaring it as an input.
+    # Pass the local manifest to the Needs action so its Python Sphinx process
+    # sees the same bundle boundary as this standalone export.
     _needs_sphinx_docs(
         name = needs_local,
         bundle = ":" + name,
@@ -374,6 +388,7 @@ def _declare_bundle_local_needs(
         score_bundle_needs_export = "1",
         score_sourcelinks_json = sourcelinks_json,
         score_source_code_linker_plain_links = "1",
+        mounts_manifest = mounts_manifest,
         visibility = visibility,
     )
 
@@ -411,6 +426,7 @@ def docs_bundle(
         srcs = srcs,
         entry_doc = entry_doc,
         sourcelinks_json = bundle.sourcelinks_json,
+        mounts_manifest = bundle.local_manifest,
         data = data,
         visibility = visibility,
     )
@@ -588,6 +604,7 @@ def docs(
         srcs = [],
         entry_doc = "index",
         sourcelinks_json = root_bundle.sourcelinks_json,
+        mounts_manifest = root_bundle.local_manifest,
         data = data,
         visibility = ["//visibility:public"],
         config = sphinx_config,

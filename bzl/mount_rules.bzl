@@ -23,6 +23,12 @@ def _composition_manifest_impl(ctx):
 
     json_mounts = []
     for entry in entries:
+        # A standalone bundle's Needs action must see only the entries it owns.
+        # Composed documentation still receives every entry through the normal
+        # manifest, so this filter changes only the manifest view requested by
+        # the caller.
+        if ctx.attr.own_only and not entry.root_bundle:
+            continue
         mount = {
             "src_root": entry.src_root,
             "runtime_path": entry.runtime_path,
@@ -67,15 +73,19 @@ _composition_manifest = rule(
     implementation = _composition_manifest_impl,
     attrs = {
         "bundle": attr.label(providers = [DocsBundleInfo]),
+        # ``own_only`` creates the local view used by a bundle's standalone
+        # Needs export; the default keeps the complete composition unchanged.
+        "own_only": attr.bool(default = False),
     },
-    doc = "Writes the composition consumed by runtime documentation tools.",
+    doc = "Writes the bundle composition consumed by runtime documentation tools.",
 )
 
-def create_composition_manifest(name, bundle, visibility = None):
-    """Create a common mount and bundle-metadata manifest."""
+def create_composition_manifest(name, bundle, own_only = False, visibility = None):
+    """Create a mount manifest for composed builds or local Needs document mapping."""
     _composition_manifest(
         name = name,
         bundle = bundle,
+        own_only = own_only,
         visibility = visibility,
     )
     return ":" + name
