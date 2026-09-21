@@ -224,13 +224,15 @@ def _rebase_bundle_entry(entry, mount_at, attach_to):
     bundle's aggregate data would associate the same file with unrelated
     mounts, so the mounts resolver could select the wrong destination.
     """
-    # This is the child bundle's own root before it is placed in the parent.
-    # It is distinct from ``root_bundle``, which describes ownership by the
-    # root bundle of the complete composition.
-    is_unplaced_bundle_root = not entry.mount_at
-    if is_unplaced_bundle_root:
+    if not entry.mount_at:
+        # The child bundle's own root has not been placed below the parent yet.
+        # Its default attachment is therefore the parent directory's index;
+        # an explicit attach_to still overrides that default.
         rebased_attach_to = attach_to or _parent_index_docname(mount_at)
     else:
+        # This entry is already below another location in the child bundle.
+        # Keep its attachment relative to that location and prefix the whole
+        # placement with the mount point chosen by the parent.
         rebased_attach_to = join_path(mount_at, entry.attach_to)
 
     return struct(
@@ -253,6 +255,9 @@ def _rebase_bundle_entry(entry, mount_at, attach_to):
         bundle_label = entry.bundle_label,
         bundle_name = entry.bundle_name,
         code_targets = entry.code_targets,
+        # This entry is now part of a parent composition. It may have been the
+        # root of its own standalone bundle, but it is a child entry here and
+        # must be handled as a mounted source rather than as the parent's root.
         root_bundle = False,
     )
 
@@ -339,6 +344,9 @@ def _docs_bundle_impl(ctx):
             data = own_data,
             bundle_label = own_bundle_label,
             bundle_name = own_bundle_name,
+            # This direct entry belongs to the current composition's root
+            # bundle. _rebase_bundle_entry changes this to false if a parent
+            # embeds the bundle as a child.
             root_bundle = True,
             code_targets = own_code_targets,
         ))
@@ -375,6 +383,9 @@ def _docs_bundle_impl(ctx):
             data = own_data,
             bundle_label = own_bundle_label,
             bundle_name = own_bundle_name,
+            # This direct entry belongs to the current composition's root
+            # bundle. _rebase_bundle_entry changes this to false if a parent
+            # embeds the bundle as a child.
             root_bundle = True,
             code_targets = own_code_targets,
         ))
@@ -400,6 +411,9 @@ def _docs_bundle_impl(ctx):
             data = own_data,
             bundle_label = own_bundle_label,
             bundle_name = own_bundle_name,
+            # This direct entry belongs to the current composition's root
+            # bundle. _rebase_bundle_entry changes this to false if a parent
+            # embeds the bundle as a child.
             root_bundle = True,
             code_targets = own_code_targets,
         ))

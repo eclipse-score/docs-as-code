@@ -44,6 +44,11 @@ class BazelTarget:
     # kind is not encoded in the label itself.
     type: str
 
+    @classmethod
+    def from_manifest_entry(cls, entry: dict[str, str]) -> BazelTarget:
+        """Create a target from the producer-owned manifest representation."""
+        return cls(label=entry["label"], type=entry["type"])
+
 
 @dataclass(frozen=True)
 class BundleMetadata:
@@ -65,6 +70,19 @@ class BundleMetadata:
     # ``(BazelTarget("@@//score/components/memory:implementation", "cc_library"),)``.
     # Targets inherited from dependencies or nested bundles do not belong here.
     code_targets: tuple[BazelTarget, ...] = ()
+
+    @classmethod
+    def from_manifest_entry(cls, entry: dict[str, object]) -> BundleMetadata:
+        """Create bundle metadata from one producer-owned manifest entry."""
+        bundle = cast("dict[str, object]", entry["bundle"])
+        targets = cast("list[dict[str, str]]", bundle["code_targets"])
+        return cls(
+            label=cast("str", bundle["label"]),
+            name=cast("str", bundle["name"]),
+            code_targets=tuple(
+                BazelTarget.from_manifest_entry(target) for target in targets
+            ),
+        )
 
 
 @dataclass(frozen=True)
@@ -100,43 +118,29 @@ class MountSpec:
     # Logical owner and direct-target metadata for this physical mount entry.
     bundle: BundleMetadata = field(default_factory=BundleMetadata)
 
+    @classmethod
+    def from_manifest_entry(cls, entry: dict[str, object]) -> MountSpec:
+        """Create one mount spec from the producer-owned manifest entry."""
+        attach_to = cast("str", entry["attach_to"])
+        return cls(
+            src_root=cast("str", entry["src_root"]),
+            runtime_path=cast("str", entry["runtime_path"]),
+            mount_at=cast("str", entry["mount_at"]),
+            attach_to=attach_to or None,
+            entry_doc=cast("str", entry["entry_doc"]),
+            external=cast("bool", entry["external"]),
+            repository=cast("str", entry["repository"]),
+            generated=cast("bool", entry["generated"]),
+            files=cast("list[str]", entry.get("files", [])),
+            data=cast("list[str]", entry["data"]),
+            root_bundle=cast("bool", entry["root_bundle"]),
+            bundle=BundleMetadata.from_manifest_entry(entry),
+        )
+
 
 @dataclass(frozen=True)
 class MountsManifest:
     mounts: list[MountSpec]
-
-
-def _read_bundle_metadata(entry: dict[str, object]) -> BundleMetadata:
-    """Map the producer-owned bundle fields to their runtime dataclass."""
-    bundle = cast("dict[str, object]", entry["bundle"])
-    targets = cast("list[dict[str, str]]", bundle["code_targets"])
-    return BundleMetadata(
-        label=cast("str", bundle["label"]),
-        name=cast("str", bundle["name"]),
-        code_targets=tuple(
-            BazelTarget(label=target["label"], type=target["type"])
-            for target in targets
-        ),
-    )
-
-
-def _read_mount_spec(entry: dict[str, object]) -> MountSpec:
-    """Map one producer-owned manifest entry to a runtime mount spec."""
-    attach_to = cast("str", entry["attach_to"])
-    return MountSpec(
-        src_root=cast("str", entry["src_root"]),
-        runtime_path=cast("str", entry["runtime_path"]),
-        mount_at=cast("str", entry["mount_at"]),
-        attach_to=attach_to or None,
-        entry_doc=cast("str", entry["entry_doc"]),
-        external=cast("bool", entry["external"]),
-        repository=cast("str", entry["repository"]),
-        generated=cast("bool", entry["generated"]),
-        files=cast("list[str]", entry.get("files", [])),
-        data=cast("list[str]", entry["data"]),
-        root_bundle=cast("bool", entry["root_bundle"]),
-        bundle=_read_bundle_metadata(entry),
-    )
 
 
 def load_mounts_manifest(manifest_path: str | Path) -> MountsManifest:
@@ -151,7 +155,9 @@ def load_mounts_manifest(manifest_path: str | Path) -> MountsManifest:
         json.loads(manifest_path.read_text(encoding="utf-8")),
     )
     entries = cast("list[dict[str, object]]", data["mounts"])
-    return MountsManifest(mounts=[_read_mount_spec(entry) for entry in entries])
+    return MountsManifest(
+        mounts=[MountSpec.from_manifest_entry(entry) for entry in entries]
+    )
 
 
 def resolve_walk_dir(

@@ -78,9 +78,8 @@ def _resolve_data_mounts(
     data_mounts: dict[str, MountSpec] = {}
     for spec in manifest.mounts:
         # TODO: Remove this data-mount path, including the root-bundle
-        # distinction, once callers have migrated generated documentation from
-        # ``docs_bundle(data = [...])`` to ``docs_bundle(srcs = [...])``. See
-        # ``deprecations.md`` in the repository root.
+        # distinction, once callers migrate generated documentation from
+        # ``docs_bundle(data = [...])`` to ``docs_bundle(srcs = [...])``.
         # Data belonging to the primary bundle is already part of the Sphinx
         # action inputs. Only rebased child data has a documentation-tree mount.
         if spec.root_bundle:
