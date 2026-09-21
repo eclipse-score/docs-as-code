@@ -191,7 +191,7 @@ def _parse_version(value: str) -> tuple[int, int, int]:
     return (numbers[0], numbers[1], numbers[2])
 
 
-class _RequirementInScope:
+class _RequirementInReportVersion:
     """Decide whether a requirement Need belongs to a ``report_version`` scope.
 
     ``feat_req`` (and ``stkh_req``) carry ``valid_from`` directly. ``comp_req``
@@ -222,10 +222,10 @@ class _RequirementInScope:
         return any(self(feat_req, report_version) for feat_req in linked_feat_reqs)
 
 
-_req_in_scope_callable = _RequirementInScope()
+_req_in_report_version_callable = _RequirementInReportVersion()
 
 
-class _AnyRequirementInScope:
+class _AnyRequirementInReportVersion:
     """Decide whether a Feature/Component has any requirement in scope.
 
     Used to drop an entire Feature/Component section from the report when
@@ -238,10 +238,10 @@ class _AnyRequirementInScope:
     def __call__(self, reqs: list[NeedItem], report_version: str | None) -> bool:
         if not report_version:
             return True
-        return any(_req_in_scope_callable(req, report_version) for req in reqs)
+        return any(_req_in_report_version_callable(req, report_version) for req in reqs)
 
 
-_any_req_in_scope_callable = _AnyRequirementInScope()
+_any_req_in_report_version_callable = _AnyRequirementInReportVersion()
 
 
 def _post_templates_requiring_reread(app: Sphinx) -> set[str]:
@@ -328,9 +328,11 @@ def setup(app: Sphinx) -> dict[str, object]:
     )
     app.config.needs_render_context.setdefault("linked_needs", _linked_needs_callable)
     app.config.needs_render_context.setdefault("needs_of_type", _needs_of_type_callable)
-    app.config.needs_render_context.setdefault("req_in_scope", _req_in_scope_callable)
     app.config.needs_render_context.setdefault(
-        "any_req_in_scope", _any_req_in_scope_callable
+        "req_in_report_version", _req_in_report_version_callable
+    )
+    app.config.needs_render_context.setdefault(
+        "any_req_in_report_version", _any_req_in_report_version_callable
     )
     app.connect("builder-inited", _capture_build_environment)
     # Run after the source-code linker has injected generated testcase Needs and

@@ -24,7 +24,7 @@
 {% set ns_features = namespace(list=[]) %}
 {% for feature in needs_of_type("feat")|unique(attribute="id")|sort(attribute="title")|list %}
 {% set feature_reqs = linked_needs(feature["id"], "satisfied_by_back")|selectattr("type", "eq", "feat_req")|list %}
-{% if any_req_in_scope(feature_reqs, report_version) %}
+{% if any_req_in_report_version(feature_reqs, report_version) %}
 {% set ns_features.list = ns_features.list + [feature] %}
 {% endif %}
 {% endfor %}
@@ -124,7 +124,7 @@ Feature Overview
      |list %}
 {% set ns = namespace(req_ids=[]) %}
 {% for req in feature_reqs_all %}
-{% if req_in_scope(req, report_version) %}
+{% if req_in_report_version(req, report_version) %}
 {% set ns.req_ids = ns.req_ids + [req["id"]] %}
 {% endif %}
 {% endfor %}

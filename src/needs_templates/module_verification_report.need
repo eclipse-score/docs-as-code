@@ -31,7 +31,7 @@
 {% set ns_components = namespace(list=[]) %}
 {% for component in linked_needs(module_id, "includes")|unique(attribute="id")|list %}
 {% set component_reqs = linked_needs(component["id"], "satisfied_by_back")|selectattr("type", "eq", "comp_req")|list %}
-{% if any_req_in_scope(component_reqs, report_version) %}
+{% if any_req_in_report_version(component_reqs, report_version) %}
 {% set ns_components.list = ns_components.list + [component] %}
 {% endif %}
 {% endfor %}
@@ -134,7 +134,7 @@ Component Overview
      |list %}
 {% set ns = namespace(req_ids=[]) %}
 {% for req in component_reqs_all %}
-{% if req_in_scope(req, report_version) %}
+{% if req_in_report_version(req, report_version) %}
 {% set ns.req_ids = ns.req_ids + [req["id"]] %}
 {% endif %}
 {% endfor %}
