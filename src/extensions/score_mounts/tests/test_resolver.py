@@ -156,6 +156,44 @@ def test_load_bundle_metadata_and_direct_targets(tmp_path: Path) -> None:
     )
 
 
+def test_load_entry_with_toctree_index(tmp_path: Path) -> None:
+    manifest = _write_manifest(
+        tmp_path,
+        {
+            "mounts": [
+                {
+                    "src_root": "src/docs",
+                    "runtime_path": "src/docs_dir",
+                    "mount_at": "x",
+                    "attach_to": "internals/index",
+                    "toctree_index": 1,
+                }
+            ],
+        },
+    )
+    spec = load_mounts_manifest(str(manifest)).mounts[0]
+    assert spec.toctree_index == 1
+
+
+def test_load_entry_without_toctree_index_defaults_to_zero(tmp_path: Path) -> None:
+    """Older manifests lack the field; they must extend the first toctree."""
+    manifest = _write_manifest(
+        tmp_path,
+        {
+            "mounts": [
+                {
+                    "src_root": "src/docs",
+                    "runtime_path": "src/docs_dir",
+                    "mount_at": "x",
+                    "attach_to": "internals/index",
+                }
+            ],
+        },
+    )
+    spec = load_mounts_manifest(str(manifest)).mounts[0]
+    assert spec.toctree_index == 0
+
+
 def test_external_mount_keeps_execroot_and_runfiles_locations(tmp_path: Path) -> None:
     manifest = _write_manifest(
         tmp_path,
