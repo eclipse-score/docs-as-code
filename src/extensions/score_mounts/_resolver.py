@@ -123,12 +123,19 @@ class MountSpec:
     def from_manifest_entry(cls, entry: dict[str, object]) -> MountSpec:
         """Create one mount spec from the producer-owned manifest entry."""
         attach_to = cast("str", entry["attach_to"])
+        raw_toctree_index = entry.get("toctree_index", 0)
+        # ``type is`` (not ``isinstance``) also rejects booleans, which are ints.
+        if type(raw_toctree_index) is not int:
+            raise ValueError(
+                "mounts manifest entry field 'toctree_index' must be an int: "
+                f"{raw_toctree_index!r}"
+            )
         return cls(
             src_root=cast("str", entry["src_root"]),
             runtime_path=cast("str", entry["runtime_path"]),
             mount_at=cast("str", entry["mount_at"]),
             attach_to=attach_to or None,
-            toctree_index=cast("int", entry.get("toctree_index", 0)),
+            toctree_index=raw_toctree_index,
             entry_doc=cast("str", entry["entry_doc"]),
             external=cast("bool", entry["external"]),
             repository=cast("str", entry["repository"]),
