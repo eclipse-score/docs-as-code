@@ -224,9 +224,12 @@ def _rebase_bundle_entry(entry, mount_at, attach_to):
     bundle's aggregate data would associate the same file with unrelated
     mounts, so the mounts resolver could select the wrong destination.
     """
-    # This is the child bundle's own root before it is placed in the parent.
-    # It is distinct from ``root_bundle``, which describes ownership by the
-    # root bundle of the complete composition.
+    # This is a temporary placement check for the child bundle's own root
+    # before it is placed in the parent. It is distinct from ``root_bundle``:
+    # that field belongs to the resulting manifest entry and says whether the
+    # entry belongs to the root bundle of this composition. The same bundle
+    # can therefore be a root in a standalone composition and a child after it
+    # is rebased into another composition.
     is_unplaced_bundle_root = not entry.mount_at
     if is_unplaced_bundle_root:
         rebased_attach_to = attach_to or _parent_index_docname(mount_at)
@@ -303,6 +306,9 @@ def _docs_bundle_impl(ctx):
     own_data = depset(direct = ctx.files.data)
     own_bundle_label = str(ctx.label)
     own_bundle_name = ctx.label.name
+    # These metadata values are attached to entries declared directly by this
+    # bundle. Such entries start as part of this composition's root bundle;
+    # _rebase_bundle_entry changes that flag when a parent embeds them.
     own_code_targets = [
         struct(
             label = str(target.label),

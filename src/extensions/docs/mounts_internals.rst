@@ -39,8 +39,9 @@ Each manifest entry contains:
 * ``entry_doc`` — the canonical entry document declared by the source bundle.
 * ``external`` — whether the directory belongs to another Bazel module;
 * ``bundle`` — the declaring bundle's Bazel label, name, and direct targets;
-* ``root_bundle`` — whether this physical entry belongs to the composition's
-  root bundle.
+* ``root_bundle`` — whether this physical entry belongs to the root bundle of
+  the current composition. This is composition-specific: the same bundle can
+  be a root in a standalone manifest and a child in another composition.
 
 Bundle metadata is mandatory for every entry. The Bazel producer and Python
 consumer are kept in sync as one repository-owned contract.
