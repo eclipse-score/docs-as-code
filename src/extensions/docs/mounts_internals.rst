@@ -67,11 +67,13 @@ Document-to-bundle mapping
 
 After Sphinx has updated its environment, ``score_mounts`` exposes
 ``get_document_bundles(app)``. The result maps each actually discovered
-docname to one bundle instance. Mounted docnames come from the mount
-integration's recorded output, while primary docnames come from Sphinx's
-discovery set. This avoids assigning a bundle to skipped or conflicting
-mounts. The matcher in ``score_metamodel`` will consume this mapping without
-inspecting paths or mount configuration.
+bundle-owned docname to one bundle instance. Mounted source docnames come from
+the mount integration's recorded output, while primary docnames come from
+Sphinx's discovery set. Documents discovered through data-only mounts are
+intentionally omitted because those mounts provide auxiliary files rather than
+bundle-owned source roots. This avoids assigning a bundle to skipped,
+conflicting, or data-only mounts. The matcher in ``score_metamodel`` will
+consume this mapping without inspecting paths or mount configuration.
 
 The rule rejects conflicting final placements before Sphinx starts. A mount
 without ``attach_to`` is attached to the ``index`` document beside its
