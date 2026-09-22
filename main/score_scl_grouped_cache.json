@@ -560,7 +560,20 @@
           "url": ""
         }
       ],
-      "TestLinks": []
+      "TestLinks": [
+        {
+          "name": "test_rules_file_based__test_rst_files[attributes/test_common_attr_safety.rst]",
+          "file": "src/extensions/score_metamodel/tests/rst/attributes/test_common_attr_safety.rst",
+          "line": 16,
+          "need": "tool_req__docs_common_attr_safety",
+          "verify_type": "fully",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        }
+      ]
     }
   },
   {
@@ -881,7 +894,20 @@
           "url": ""
         }
       ],
-      "TestLinks": []
+      "TestLinks": [
+        {
+          "name": "test_rules_file_based__test_rst_files[attributes/test_common_attr_version.rst]",
+          "file": "src/extensions/score_metamodel/tests/rst/attributes/test_common_attr_version.rst",
+          "line": 16,
+          "need": "tool_req__docs_common_attr_version",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        }
+      ]
     }
   },
   {
@@ -3116,15 +3142,67 @@
     }
   },
   {
-    "need": "tool_req__docs_test_linkage_metrics",
+    "need": "tool_req__docs_stdwp_types[version==1]",
     "links": {
       "CodeLinks": [],
       "TestLinks": [
         {
-          "name": "test_traceability_metrics__test_get_need_types_by_tags_returns_matching_directives_only",
-          "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 26,
-          "need": "tool_req__docs_test_linkage_metrics",
+          "name": "test_rules_file_based__test_rst_files[options/wp_comp.rst]",
+          "file": "src/extensions/score_metamodel/tests/rst/options/wp_comp.rst",
+          "line": 16,
+          "need": "tool_req__docs_stdwp_types[version==1]",
+          "verify_type": "fully",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        },
+        {
+          "name": "test_rules_file_based__test_rst_files[attributes/test_std_types.rst]",
+          "file": "src/extensions/score_metamodel/tests/rst/attributes/test_std_types.rst",
+          "line": 16,
+          "need": "tool_req__docs_stdwp_types[version==1]",
+          "verify_type": "fully",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        }
+      ]
+    }
+  },
+  {
+    "need": "tool_req__docs_wp_types[version==1]",
+    "links": {
+      "CodeLinks": [],
+      "TestLinks": [
+        {
+          "name": "test_rules_file_based__test_rst_files[options/wp_comp.rst]",
+          "file": "src/extensions/score_metamodel/tests/rst/options/wp_comp.rst",
+          "line": 16,
+          "need": "tool_req__docs_wp_types[version==1]",
+          "verify_type": "fully",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        }
+      ]
+    }
+  },
+  {
+    "need": "tool_req__docs_req_types[version==1]",
+    "links": {
+      "CodeLinks": [],
+      "TestLinks": [
+        {
+          "name": "test_rules_file_based__test_rst_files[options/gd_req_comp.rst]",
+          "file": "src/extensions/score_metamodel/tests/rst/options/gd_req_comp.rst",
+          "line": 16,
+          "need": "tool_req__docs_req_types[version==1]",
           "verify_type": "partially",
           "result": "passed",
           "result_text": "",
@@ -3133,10 +3211,10 @@
           "url": ""
         },
         {
-          "name": "test_traceability_metrics__test_get_need_types_by_tags_returns_empty_on_non_match",
-          "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 87,
-          "need": "tool_req__docs_test_linkage_metrics",
+          "name": "test_rules_file_based__test_rst_files[options/test_options_options.rst]",
+          "file": "src/extensions/score_metamodel/tests/rst/options/test_options_options.rst",
+          "line": 16,
+          "need": "tool_req__docs_req_types[version==1]",
           "verify_type": "partially",
           "result": "passed",
           "result_text": "",
@@ -3145,10 +3223,30 @@
           "url": ""
         },
         {
-          "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[  -False]",
-          "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 116,
-          "need": "tool_req__docs_test_linkage_metrics",
+          "name": "test_rules_file_based__test_rst_files[options/test_options_extra_option.rst]",
+          "file": "src/extensions/score_metamodel/tests/rst/options/test_options_extra_option.rst",
+          "line": 16,
+          "need": "tool_req__docs_req_types[version==1]",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        }
+      ]
+    }
+  },
+  {
+    "need": "tool_req__docs_common_attr_status[version==1]",
+    "links": {
+      "CodeLinks": [],
+      "TestLinks": [
+        {
+          "name": "test_rules_file_based__test_rst_files[options/test_options_options.rst]",
+          "file": "src/extensions/score_metamodel/tests/rst/options/test_options_options.rst",
+          "line": 16,
+          "need": "tool_req__docs_common_attr_status[version==1]",
           "verify_type": "partially",
           "result": "passed",
           "result_text": "",
@@ -3157,143 +3255,31 @@
           "url": ""
         },
         {
-          "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[text-True]",
-          "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 116,
-          "need": "tool_req__docs_test_linkage_metrics",
+          "name": "test_rules_file_based__test_rst_files[options/test_options_extra_option.rst]",
+          "file": "src/extensions/score_metamodel/tests/rst/options/test_options_extra_option.rst",
+          "line": 16,
+          "need": "tool_req__docs_common_attr_status[version==1]",
           "verify_type": "partially",
           "result": "passed",
           "result_text": "",
           "repo_name": "local_repo",
           "hash": "",
           "url": ""
-        },
+        }
+      ]
+    }
+  },
+  {
+    "need": "tool_req__docs_saf_attr_fmea_failure_effect[version==1]",
+    "links": {
+      "CodeLinks": [],
+      "TestLinks": [
         {
-          "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[value2-False]",
-          "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 116,
-          "need": "tool_req__docs_test_linkage_metrics",
-          "verify_type": "partially",
-          "result": "passed",
-          "result_text": "",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        },
-        {
-          "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[value3-True]",
-          "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 116,
-          "need": "tool_req__docs_test_linkage_metrics",
-          "verify_type": "partially",
-          "result": "passed",
-          "result_text": "",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        },
-        {
-          "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[0-False]",
-          "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 116,
-          "need": "tool_req__docs_test_linkage_metrics",
-          "verify_type": "partially",
-          "result": "passed",
-          "result_text": "",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        },
-        {
-          "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[1-True]",
-          "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 116,
-          "need": "tool_req__docs_test_linkage_metrics",
-          "verify_type": "partially",
-          "result": "passed",
-          "result_text": "",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        },
-        {
-          "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[None-False]",
-          "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 116,
-          "need": "tool_req__docs_test_linkage_metrics",
-          "verify_type": "partially",
-          "result": "passed",
-          "result_text": "",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        },
-        {
-          "name": "test_traceability_metrics__test_safe_percent_zero[3-0-100.0]",
-          "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 141,
-          "need": "tool_req__docs_test_linkage_metrics",
-          "verify_type": "partially",
-          "result": "passed",
-          "result_text": "",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        },
-        {
-          "name": "test_traceability_metrics__test_safe_percent_zero[1-4-25.0]",
-          "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 141,
-          "need": "tool_req__docs_test_linkage_metrics",
-          "verify_type": "partially",
-          "result": "passed",
-          "result_text": "",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        },
-        {
-          "name": "test_traceability_metrics__test_calculate_requirement_metrics_counts_links_and_missing_ids",
-          "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 155,
-          "need": "tool_req__docs_test_linkage_metrics",
-          "verify_type": "partially",
-          "result": "passed",
-          "result_text": "",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        },
-        {
-          "name": "test_traceability_metrics__test_calculate_requirement_metrics_non_fully_linked",
-          "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 181,
-          "need": "tool_req__docs_test_linkage_metrics",
-          "verify_type": "partially",
-          "result": "passed",
-          "result_text": "",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        },
-        {
-          "name": "test_traceability_metrics__test_calculate_requirement_metrics_non_fully_linked_2",
-          "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 207,
-          "need": "tool_req__docs_test_linkage_metrics",
-          "verify_type": "partially",
-          "result": "passed",
-          "result_text": "",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        },
-        {
-          "name": "test_traceability_metrics__test_calculate_test_metrics_counts_linked_tests_and_broken_refs",
-          "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 233,
-          "need": "tool_req__docs_test_linkage_metrics",
-          "verify_type": "partially",
+          "name": "test_rules_file_based__test_rst_files[options/test_options_failure_effect.rst]",
+          "file": "src/extensions/score_metamodel/tests/rst/options/test_options_failure_effect.rst",
+          "line": 16,
+          "need": "tool_req__docs_saf_attr_fmea_failure_effect[version==1]",
+          "verify_type": "fully",
           "result": "passed",
           "result_text": "",
           "repo_name": "local_repo",
@@ -3313,98 +3299,6 @@
           "file": "src/extensions/score_metamodel/tests/rst/attributes/test_std_types.rst",
           "line": 16,
           "need": "tool_req__docs_stdreq_types[version==1]",
-          "verify_type": "fully",
-          "result": "passed",
-          "result_text": "",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        }
-      ]
-    }
-  },
-  {
-    "need": "tool_req__docs_stdwp_types[version==1]",
-    "links": {
-      "CodeLinks": [],
-      "TestLinks": [
-        {
-          "name": "test_rules_file_based__test_rst_files[attributes/test_std_types.rst]",
-          "file": "src/extensions/score_metamodel/tests/rst/attributes/test_std_types.rst",
-          "line": 16,
-          "need": "tool_req__docs_stdwp_types[version==1]",
-          "verify_type": "fully",
-          "result": "passed",
-          "result_text": "",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        },
-        {
-          "name": "test_rules_file_based__test_rst_files[options/wp_comp.rst]",
-          "file": "src/extensions/score_metamodel/tests/rst/options/wp_comp.rst",
-          "line": 16,
-          "need": "tool_req__docs_stdwp_types[version==1]",
-          "verify_type": "fully",
-          "result": "passed",
-          "result_text": "",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        }
-      ]
-    }
-  },
-  {
-    "need": "tool_req__docs_sec_attrs_optional[version==1]",
-    "links": {
-      "CodeLinks": [],
-      "TestLinks": [
-        {
-          "name": "test_rules_file_based__test_rst_files[security/test_security_types.rst]",
-          "file": "src/extensions/score_metamodel/tests/rst/security/test_security_types.rst",
-          "line": 15,
-          "need": "tool_req__docs_sec_attrs_optional[version==1]",
-          "verify_type": "partially",
-          "result": "passed",
-          "result_text": "",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        }
-      ]
-    }
-  },
-  {
-    "need": "tool_req__docs_sec_types[version==2]",
-    "links": {
-      "CodeLinks": [],
-      "TestLinks": [
-        {
-          "name": "test_rules_file_based__test_rst_files[security/test_security_types.rst]",
-          "file": "src/extensions/score_metamodel/tests/rst/security/test_security_types.rst",
-          "line": 15,
-          "need": "tool_req__docs_sec_types[version==2]",
-          "verify_type": "fully",
-          "result": "passed",
-          "result_text": "",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        }
-      ]
-    }
-  },
-  {
-    "need": "tool_req__docs_sec_attrs_mandatory[version==1]",
-    "links": {
-      "CodeLinks": [],
-      "TestLinks": [
-        {
-          "name": "test_rules_file_based__test_rst_files[security/test_security_types.rst]",
-          "file": "src/extensions/score_metamodel/tests/rst/security/test_security_types.rst",
-          "line": 15,
-          "need": "tool_req__docs_sec_attrs_mandatory[version==1]",
           "verify_type": "fully",
           "result": "passed",
           "result_text": "",
@@ -3628,15 +3522,35 @@
     }
   },
   {
-    "need": "tool_req__docs_wp_types[version==1]",
+    "need": "tool_req__docs_sec_attrs_optional[version==1]",
     "links": {
       "CodeLinks": [],
       "TestLinks": [
         {
-          "name": "test_rules_file_based__test_rst_files[options/wp_comp.rst]",
-          "file": "src/extensions/score_metamodel/tests/rst/options/wp_comp.rst",
-          "line": 16,
-          "need": "tool_req__docs_wp_types[version==1]",
+          "name": "test_rules_file_based__test_rst_files[security/test_security_types.rst]",
+          "file": "src/extensions/score_metamodel/tests/rst/security/test_security_types.rst",
+          "line": 15,
+          "need": "tool_req__docs_sec_attrs_optional[version==1]",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        }
+      ]
+    }
+  },
+  {
+    "need": "tool_req__docs_sec_types[version==2]",
+    "links": {
+      "CodeLinks": [],
+      "TestLinks": [
+        {
+          "name": "test_rules_file_based__test_rst_files[security/test_security_types.rst]",
+          "file": "src/extensions/score_metamodel/tests/rst/security/test_security_types.rst",
+          "line": 15,
+          "need": "tool_req__docs_sec_types[version==2]",
           "verify_type": "fully",
           "result": "passed",
           "result_text": "",
@@ -3648,91 +3562,15 @@
     }
   },
   {
-    "need": "tool_req__docs_req_types[version==1]",
+    "need": "tool_req__docs_sec_attrs_mandatory[version==1]",
     "links": {
       "CodeLinks": [],
       "TestLinks": [
         {
-          "name": "test_rules_file_based__test_rst_files[options/gd_req_comp.rst]",
-          "file": "src/extensions/score_metamodel/tests/rst/options/gd_req_comp.rst",
-          "line": 16,
-          "need": "tool_req__docs_req_types[version==1]",
-          "verify_type": "partially",
-          "result": "passed",
-          "result_text": "",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        },
-        {
-          "name": "test_rules_file_based__test_rst_files[options/test_options_options.rst]",
-          "file": "src/extensions/score_metamodel/tests/rst/options/test_options_options.rst",
-          "line": 16,
-          "need": "tool_req__docs_req_types[version==1]",
-          "verify_type": "partially",
-          "result": "passed",
-          "result_text": "",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        },
-        {
-          "name": "test_rules_file_based__test_rst_files[options/test_options_extra_option.rst]",
-          "file": "src/extensions/score_metamodel/tests/rst/options/test_options_extra_option.rst",
-          "line": 16,
-          "need": "tool_req__docs_req_types[version==1]",
-          "verify_type": "partially",
-          "result": "passed",
-          "result_text": "",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        }
-      ]
-    }
-  },
-  {
-    "need": "tool_req__docs_common_attr_status[version==1]",
-    "links": {
-      "CodeLinks": [],
-      "TestLinks": [
-        {
-          "name": "test_rules_file_based__test_rst_files[options/test_options_options.rst]",
-          "file": "src/extensions/score_metamodel/tests/rst/options/test_options_options.rst",
-          "line": 16,
-          "need": "tool_req__docs_common_attr_status[version==1]",
-          "verify_type": "partially",
-          "result": "passed",
-          "result_text": "",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        },
-        {
-          "name": "test_rules_file_based__test_rst_files[options/test_options_extra_option.rst]",
-          "file": "src/extensions/score_metamodel/tests/rst/options/test_options_extra_option.rst",
-          "line": 16,
-          "need": "tool_req__docs_common_attr_status[version==1]",
-          "verify_type": "partially",
-          "result": "passed",
-          "result_text": "",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        }
-      ]
-    }
-  },
-  {
-    "need": "tool_req__docs_saf_attr_fmea_failure_effect[version==1]",
-    "links": {
-      "CodeLinks": [],
-      "TestLinks": [
-        {
-          "name": "test_rules_file_based__test_rst_files[options/test_options_failure_effect.rst]",
-          "file": "src/extensions/score_metamodel/tests/rst/options/test_options_failure_effect.rst",
-          "line": 16,
-          "need": "tool_req__docs_saf_attr_fmea_failure_effect[version==1]",
+          "name": "test_rules_file_based__test_rst_files[security/test_security_types.rst]",
+          "file": "src/extensions/score_metamodel/tests/rst/security/test_security_types.rst",
+          "line": 15,
+          "need": "tool_req__docs_sec_attrs_mandatory[version==1]",
           "verify_type": "fully",
           "result": "passed",
           "result_text": "",
@@ -3753,6 +3591,194 @@
           "file": "src/extensions/score_metamodel/tests/rst/graph/test_workproduct_aspice_40.rst",
           "line": 16,
           "need": "tool_req__docs_stdwp_types",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        }
+      ]
+    }
+  },
+  {
+    "need": "tool_req__docs_test_linkage_metrics",
+    "links": {
+      "CodeLinks": [],
+      "TestLinks": [
+        {
+          "name": "test_traceability_metrics__test_get_need_types_by_tags_returns_matching_directives_only",
+          "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
+          "line": 26,
+          "need": "tool_req__docs_test_linkage_metrics",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        },
+        {
+          "name": "test_traceability_metrics__test_get_need_types_by_tags_returns_empty_on_non_match",
+          "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
+          "line": 87,
+          "need": "tool_req__docs_test_linkage_metrics",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        },
+        {
+          "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[  -False]",
+          "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
+          "line": 116,
+          "need": "tool_req__docs_test_linkage_metrics",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        },
+        {
+          "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[text-True]",
+          "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
+          "line": 116,
+          "need": "tool_req__docs_test_linkage_metrics",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        },
+        {
+          "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[value2-False]",
+          "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
+          "line": 116,
+          "need": "tool_req__docs_test_linkage_metrics",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        },
+        {
+          "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[value3-True]",
+          "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
+          "line": 116,
+          "need": "tool_req__docs_test_linkage_metrics",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        },
+        {
+          "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[0-False]",
+          "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
+          "line": 116,
+          "need": "tool_req__docs_test_linkage_metrics",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        },
+        {
+          "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[1-True]",
+          "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
+          "line": 116,
+          "need": "tool_req__docs_test_linkage_metrics",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        },
+        {
+          "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[None-False]",
+          "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
+          "line": 116,
+          "need": "tool_req__docs_test_linkage_metrics",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        },
+        {
+          "name": "test_traceability_metrics__test_safe_percent_zero[3-0-100.0]",
+          "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
+          "line": 141,
+          "need": "tool_req__docs_test_linkage_metrics",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        },
+        {
+          "name": "test_traceability_metrics__test_safe_percent_zero[1-4-25.0]",
+          "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
+          "line": 141,
+          "need": "tool_req__docs_test_linkage_metrics",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        },
+        {
+          "name": "test_traceability_metrics__test_calculate_requirement_metrics_counts_links_and_missing_ids",
+          "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
+          "line": 155,
+          "need": "tool_req__docs_test_linkage_metrics",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        },
+        {
+          "name": "test_traceability_metrics__test_calculate_requirement_metrics_non_fully_linked",
+          "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
+          "line": 181,
+          "need": "tool_req__docs_test_linkage_metrics",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        },
+        {
+          "name": "test_traceability_metrics__test_calculate_requirement_metrics_non_fully_linked_2",
+          "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
+          "line": 207,
+          "need": "tool_req__docs_test_linkage_metrics",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        },
+        {
+          "name": "test_traceability_metrics__test_calculate_test_metrics_counts_linked_tests_and_broken_refs",
+          "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
+          "line": 233,
+          "need": "tool_req__docs_test_linkage_metrics",
           "verify_type": "partially",
           "result": "passed",
           "result_text": "",
