@@ -11,7 +11,16 @@
    #
    # SPDX-License-Identifier: Apache-2.0
    # *******************************************************************************
-#CHECK: check_options
+
+
+.. test_metadata::
+   :id: test_metadata__verification_report_need
+   :partially_verifies_list: tool_req__docs_verification_report_need
+   :test_type: requirements_based
+   :derivation_technique: requirements_based
+
+   Tests that the mod_ver_report need type renders and validates machine-readable
+   module verification report contents.
 
 
 .. Base architecture and requirement objects used by verification report tests
@@ -47,7 +56,6 @@
 
 
 .. Valid machine-readable verification report need
-#EXPECT-NOT[+2]: does not follow pattern
 
 .. mod_ver_report:: Verification Report Valid
    :id: mod_vrep__verification__valid
@@ -61,10 +69,10 @@
    :applies_to_module_version: 1.0.0
    :belongs_to: mod__verification_module
    :covers: comp_req__verification__sample
+   :expect_not: does not follow pattern
 
 
 .. Invalid coverage percentage value in module verification report
-#EXPECT[+2]: mod_vrep__verification__bad_coverage.line_coverage_percent (150): does not follow pattern
 
 .. mod_ver_report:: Verification Report Invalid Coverage
    :id: mod_vrep__verification__bad_coverage
@@ -74,3 +82,4 @@
    :verification_method: inspection
    :line_coverage_percent: 150
    :belongs_to: mod__verification_module
+   :expect: mod_vrep__verification__bad_coverage.line_coverage_percent (150): does not follow pattern
