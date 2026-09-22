@@ -66,7 +66,7 @@ File-based RST rule checks (metamodel)
 The file-based tests verify the Sphinx build rules and metamodel checks
 including our whole S-CORE-specific Sphinx setup with extensions.
 Each RST file under ``src/extensions/score_metamodel/tests/rst/`` is a small,
-self-contained Sphinx document with its own ``conf.py``.
+self-contained Sphinx document.
 A SphinxTestApp builds it and the framework asserts on the resulting warnings,
 using the ``:expect:`` / ``:expect_not:`` options on the needs.
 
@@ -126,25 +126,11 @@ They live under ``src/tests/downstream_compatibility``:
 
    .venv_docs/bin/python -m pytest -s src/tests/downstream_compatibility
 
-You can restrict the run to a single consumer with ``--repo``.
-In CI they run on demand, triggered by a ``/consumer-test`` comment on a PR.
+You can restrict the run to selected consumers
+with a pytest ``-k`` expression,
+for example ``-k "score"`` or ``-k "baselibs and remote"``.
+In CI they run automatically.
 
-How CI orchestrates the layers
-------------------------------
-
-The PR workflow (``.github/workflows/_test.yml``) runs, in order:
-
-1. the pre-commit development checks,
-2. the ``docs_bzl`` end-to-end tests (``bazel_cached`` then ``bazel_slow``),
-3. ``bazel test --lockfile_mode=error //... --build_tests_only``
-   (all unit and file-based tests),
-4. ``bazel build --lockfile_mode=error //...``,
-   skipping the test directories because some contain non-buildable
-   negative test scenarios.
-
-The downstream compatibility tests run only on request,
-and the link check runs nightly.
-The documentation itself is rebuilt from the merged state afterwards.
 
 Which test for what
 -------------------
