@@ -35,7 +35,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 from pathlib import Path
-from typing import cast
+from typing import Protocol, cast
 
 from sphinx.application import Sphinx
 from sphinx.config import Config
@@ -52,6 +52,17 @@ from src.extensions.score_mounts._resolver import (
 from src.helper_lib import find_ws_root, get_runfiles_dir
 
 logger = logging.getLogger(__name__)
+
+
+class _MountAwareProject(Protocol):
+    """The sphinx-mounts project fields used by the ownership adapter."""
+
+    _mount_entry_docnames: Mapping[int, Sequence[str]]
+
+
+def _set_runtime_attribute(target: object, name: str, value: object) -> None:
+    """Store extension state on an object without requiring third-party stubs."""
+    setattr(target, name, value)
 
 
 def _read_manifest(config: Config):
@@ -336,10 +347,8 @@ def _docnames_by_mount_index(
 
     # The mapping is produced by the matching sphinx-mounts version and uses
     # the same indexes as the runtime mount list assembled below.
-    raw_docnames = cast(
-        "Mapping[int, Sequence[str]]",
-        project._mount_entry_docnames,
-    )
+    mount_aware_project = cast(_MountAwareProject, project)
+    raw_docnames = mount_aware_project._mount_entry_docnames  # pyright: ignore[reportPrivateUsage] - sphinx-mounts exposes this mapping on its project object
     return {index: tuple(docnames) for index, docnames in raw_docnames.items()}
 
 
@@ -349,7 +358,7 @@ def _set_document_bundles(app: Sphinx, env: object) -> None:
     # later ``env-updated`` event receives the environment, not the config.
     manifest: MountsManifest | None = getattr(app, "_score_mounts_manifest", None)
     if manifest is None:
-        env._score_document_bundles = {}
+        _set_runtime_attribute(env, "_score_document_bundles", {})
         return
 
     # Keep the manifest order next to the mount indexes reported by
@@ -393,7 +402,7 @@ def _set_document_bundles(app: Sphinx, env: object) -> None:
 
     # Store only the final docname-to-bundle mapping on the environment so the
     # later matcher can consume it without re-reading paths or mounts.
-    env._score_document_bundles = document_bundles
+    _set_runtime_attribute(env, "_score_document_bundles", document_bundles)
 
 
 def get_document_bundles(app: Sphinx) -> dict[str, BundleMetadata]:
@@ -416,8 +425,8 @@ def _on_config_inited(app: Sphinx, config: Config) -> None:
     # Keep the input and the runtime index mapping on the app for
     # ``env-updated``, which is where Sphinx exposes the documents it actually
     # discovered.
-    app._score_mounts_manifest = manifest
-    app._score_mount_runtime_specs = ()
+    _set_runtime_attribute(app, "_score_mounts_manifest", manifest)
+    _set_runtime_attribute(app, "_score_mount_runtime_specs", ())
     if manifest is None or not manifest.mounts:
         return
 
@@ -517,7 +526,7 @@ def _on_config_inited(app: Sphinx, config: Config) -> None:
     config.mounts_from_toml = None
 
     logger.info("score_mounts: registered %d mount(s)", len(runtime_mounts))
-    app._score_mount_runtime_specs = tuple(runtime_specs)
+    _set_runtime_attribute(app, "_score_mount_runtime_specs", tuple(runtime_specs))
 
 
 def setup(app: Sphinx) -> dict[str, object]:

@@ -14,8 +14,10 @@
 
 from pathlib import Path
 from types import SimpleNamespace
+from typing import cast
 
 import pytest
+from sphinx.application import Sphinx
 
 from src.extensions.score_mounts import (
     _make_mount_entry,  # pyright: ignore[reportPrivateUsage] - white-box unit test
@@ -141,7 +143,7 @@ def test_data_mount_documents_do_not_get_a_bundle() -> None:
         _score_mount_runtime_specs=(None,),
     )
 
-    _set_document_bundles(app, env)
+    _set_document_bundles(cast(Sphinx, app), env)
 
     document_bundles = env._score_document_bundles
     assert "generated/page" not in document_bundles
@@ -180,7 +182,7 @@ def test_mounted_documents_get_their_declaring_bundle() -> None:
         _score_mount_runtime_specs=(manifest.mounts[1],),
     )
 
-    _set_document_bundles(app, env)
+    _set_document_bundles(cast(Sphinx, app), env)
 
     document_bundles = env._score_document_bundles
     assert document_bundles["child/page"] == child
