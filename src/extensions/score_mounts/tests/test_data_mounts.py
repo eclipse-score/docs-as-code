@@ -19,6 +19,7 @@ import pytest
 from src.extensions.score_mounts import (
     _make_mount_entry,  # pyright: ignore[reportPrivateUsage] - white-box unit test
     _resolve_data_mounts,  # pyright: ignore[reportPrivateUsage] - white-box unit test
+    _resolve_source_mounts,  # pyright: ignore[reportPrivateUsage] - white-box unit test
 )
 from src.extensions.score_mounts._resolver import MountsManifest, MountSpec
 
@@ -60,6 +61,73 @@ def test_existing_data_file_resolved(tmp_path: Path) -> None:
     mounts = _resolve_data_mounts(manifest, tmp_path, tmp_path / "runfiles")
 
     assert str(tmp_path / "bazel-bin") in mounts
+
+
+def test_root_bundle_data_is_not_mounted_but_child_data_is(
+    tmp_path: Path,
+) -> None:
+    """Only rebased child data creates a runtime data mount."""
+    root_data = tmp_path / "bazel-bin" / "root.txt"
+    child_data = tmp_path / "bazel-bin" / "child" / "child.txt"
+    root_data.parent.mkdir(parents=True)
+    child_data.parent.mkdir()
+    root_data.write_text("root", encoding="utf-8")
+    child_data.write_text("child", encoding="utf-8")
+    manifest = MountsManifest(
+        mounts=[
+            MountSpec(
+                src_root="",
+                runtime_path="",
+                mount_at="",
+                data=["bazel-out/k8-fastbuild/bin/root.txt"],
+                root_bundle=True,
+            ),
+            MountSpec(
+                src_root="",
+                runtime_path="",
+                mount_at="child",
+                data=["bazel-out/k8-fastbuild/bin/child/child.txt"],
+                root_bundle=False,
+            ),
+        ]
+    )
+
+    mounts = _resolve_data_mounts(manifest, tmp_path, tmp_path / "runfiles")
+
+    assert str(root_data.parent) not in mounts
+    assert mounts[str(child_data.parent)] is manifest.mounts[1]
+
+
+def test_root_bundle_source_is_not_a_runtime_mount_but_child_source_is(
+    tmp_path: Path,
+) -> None:
+    """Only rebased child source roots enter the runtime mount set."""
+    root_dir = tmp_path / "root"
+    child_dir = tmp_path / "child"
+    root_dir.mkdir()
+    child_dir.mkdir()
+    (root_dir / "index.rst").write_text("Root", encoding="utf-8")
+    (child_dir / "index.rst").write_text("Child", encoding="utf-8")
+    manifest = MountsManifest(
+        mounts=[
+            MountSpec(
+                src_root="root",
+                runtime_path="root",
+                mount_at="",
+                root_bundle=True,
+            ),
+            MountSpec(
+                src_root="child",
+                runtime_path="child",
+                mount_at="child",
+                root_bundle=False,
+            ),
+        ]
+    )
+
+    mounts = _resolve_source_mounts(manifest, tmp_path, None)
+
+    assert mounts == [(manifest.mounts[1], child_dir.resolve())]
 
 
 def test_mount_entry_uses_canonical_directory_for_symlinked_bundle(

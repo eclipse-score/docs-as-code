@@ -15,7 +15,7 @@
 
 .. test_metadata::
    :id: test_metadata__validity_correct
-   :partially_verifies_list: tool_req__docs_sec_attr_stride_threat_id,tool_req__docs_sec_attrs_mandatory
+   :partially_verifies_list: tool_req__docs_req_attr_validity_correctness,tool_req__docs_req_attr_validity_consistency
    :test_type: requirements_based
    :derivation_technique: requirements_based
 

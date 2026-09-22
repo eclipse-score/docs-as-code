@@ -59,7 +59,6 @@
 {% macro id_filter_list(ids) -%}
 [{% for req_id in ids %}"{{ req_id }}"{% if not loop.last %}, {% endif %}{% endfor %}]
 {%- endmacro %}
-
 .. raw:: html
 
    <style>
@@ -129,7 +128,6 @@ Feature Overview
 {% endif %}
 {% endfor %}
 {% set feature_req_filter = 'id in ' ~ id_filter_list(ns.req_ids) %}
-
 Requirements Statistics
 ^^^^^^^^^^^^^^^^^^^^^^^
 

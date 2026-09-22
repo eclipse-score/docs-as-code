@@ -65,7 +65,7 @@ load(
 )
 load(
     "@score_docs_as_code//:bzl/mount_rules.bzl",
-    "create_mounts_manifest",
+    "create_composition_manifest",
 )
 # Keep the low-level action behind this name so this macro owns the shared
 # Sphinx policy while ``needs_rules.bzl`` owns Bazel's input/output plumbing.
@@ -304,6 +304,7 @@ def _declare_docs_bundle(
         entry_doc = entry_doc,
         bundles = bundles,
         data = bundle_data,
+        code_targets = code_targets,
         visibility = visibility,
         **kwargs
     )
@@ -552,19 +553,6 @@ def docs(
     # list-valued attributes such as ``data`` and ``tools``.
     metamodel_label = [metamodel] if metamodel else []
 
-    mounts_manifest = None
-    if bundles:
-        mounts_bundle = create_bundle(
-            name = "_docs_mounts",
-            bundles = bundles,
-            visibility = ["//visibility:private"],
-        )
-        mounts_manifest = create_mounts_manifest(
-            name = "_mounts_manifest",
-            bundle = mounts_bundle,
-        )
-    mounts_manifest_label = [mounts_manifest] if mounts_manifest else []
-
     deps = _sphinx_deps(deps)
     deps = deps + [
         Label("//src:plantuml_for_python"),
@@ -584,6 +572,13 @@ def docs(
         code_targets = code_targets,
         visibility = ["//visibility:public"],
         tags = ["manual"]
+    )
+    # The runtime manifest must be generated from the actual root bundle. The
+    # root entry carries the project's direct code_targets and gives Python a
+    # complete composition snapshot alongside the nested mounts.
+    mounts_manifest = create_composition_manifest(
+        name = "_mounts_manifest",
+        bundle = ":docs_bundle",
     )
     _declare_bundle_local_needs(
         name = "docs_bundle",
@@ -614,7 +609,7 @@ def docs(
     docs_data = (
         data + external_needs + metamodel_label +
         [":sourcelinks_json", ":_external_docs_runfiles"] +
-        mounts_manifest_label
+        [mounts_manifest]
     )
     if config_is_generated:
         # A source configuration is read from the workspace; only the

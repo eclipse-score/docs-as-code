@@ -38,7 +38,10 @@ load("@score_docs_as_code//:bzl/basics.bzl", "join_path")
 DocsBundleInfo = provider(
     doc = "A documentation bundle with its source and placement metadata.",
     fields = {
-        "entries": "Ordered entries, one per source directory, including its final documentation-tree location.",
+        # Each entry carries the source and placement information needed by
+        # the runtime manifest, plus the identity and direct-target metadata
+        # of the bundle that declared it.
+        "entries": "Ordered entries with source, placement, and direct-target metadata.",
         "own_source_files": "This bundle's direct source files, excluding nested bundles.",
         "source_dir_execroot_path": "Execution-root-relative path of this bundle's direct source root.",
         "sourcelinks": "Source-code-link JSON files together with their owning repository.",
@@ -53,6 +56,7 @@ CodeTargetSourcesInfo = provider(
     doc = "Source files collected from an implementation target and its dependencies.",
     fields = {
         "sources": "Depset of direct and transitive source files.",
+        "kind": "Bazel rule kind of the selected code target.",
     },
 )
 
@@ -82,6 +86,10 @@ def _collect_code_target_sources_impl(target, ctx):
             direct = _source_files_from_attributes(ctx),
             transitive = dependency_sources,
         ),
+        # The aspect follows dependencies to collect source files, but the
+        # manifest needs the kind of the target explicitly selected by the
+        # bundle rather than the kinds of those transitive dependencies.
+        kind = ctx.rule.kind,
     )]
 
 _collect_code_target_sources = aspect(
@@ -216,10 +224,15 @@ def _rebase_bundle_entry(entry, mount_at, attach_to):
     bundle's aggregate data would associate the same file with unrelated
     mounts, so the mounts resolver could select the wrong destination.
     """
-    is_bundle_root = not entry.mount_at
-    if is_bundle_root:
+    if not entry.mount_at:
+        # The child bundle's own root has not been placed below the parent yet.
+        # Its default attachment is therefore the parent directory's index;
+        # an explicit attach_to still overrides that default.
         rebased_attach_to = attach_to or _parent_index_docname(mount_at)
     else:
+        # This entry is already below another location in the child bundle.
+        # Keep its attachment relative to that location and prefix the whole
+        # placement with the mount point chosen by the parent.
         rebased_attach_to = join_path(mount_at, entry.attach_to)
 
     return struct(
@@ -236,6 +249,16 @@ def _rebase_bundle_entry(entry, mount_at, attach_to):
         # Preserve the explicit file allowlist when the entry is rebased.
         files = entry.files,
         data = entry.data,
+        # Rebasing changes only placement. Keep the declaring bundle identity
+        # and direct targets attached to the source entry as it moves through
+        # the composition graph.
+        bundle_label = entry.bundle_label,
+        bundle_name = entry.bundle_name,
+        code_targets = entry.code_targets,
+        # This entry is now part of a parent composition. It may have been the
+        # root of its own standalone bundle, but it is a child entry here and
+        # must be handled as a mounted source rather than as the parent's root.
+        root_bundle = False,
     )
 
 def _entries_visible_through(ctx, child):
@@ -283,6 +306,15 @@ def _docs_bundle_impl(ctx):
     source_dir_execroot_path = ""
     own_external_runfiles = []
     own_data = depset(direct = ctx.files.data)
+    own_bundle_label = str(ctx.label)
+    own_bundle_name = ctx.label.name
+    own_code_targets = [
+        struct(
+            label = str(target.label),
+            type = target[CodeTargetSourcesInfo].kind,
+        )
+        for target in ctx.attr.code_targets
+    ]
 
     # The macro validates this combination before creating the rule; retain
     # the rule-level check for callers of the internal helper as well.
@@ -310,6 +342,13 @@ def _docs_bundle_impl(ctx):
             # Directory mounts discover all supported files below this root.
             files = [],
             data = own_data,
+            bundle_label = own_bundle_label,
+            bundle_name = own_bundle_name,
+            # This direct entry belongs to the current composition's root
+            # bundle. _rebase_bundle_entry changes this to false if a parent
+            # embeds the bundle as a child.
+            root_bundle = True,
+            code_targets = own_code_targets,
         ))
         own_source_files.extend(ctx.files.source_dir_globbed)
         # Local sources are read directly from the workspace by ``bazel run``.
@@ -342,6 +381,13 @@ def _docs_bundle_impl(ctx):
             # original source root and therefore visits only declared files.
             files = source_files,
             data = own_data,
+            bundle_label = own_bundle_label,
+            bundle_name = own_bundle_name,
+            # This direct entry belongs to the current composition's root
+            # bundle. _rebase_bundle_entry changes this to false if a parent
+            # embeds the bundle as a child.
+            root_bundle = True,
+            code_targets = own_code_targets,
         ))
         own_source_files.extend(ctx.files.source_targets)
         # Explicit artifacts outside the workspace source tree need to be
@@ -363,6 +409,13 @@ def _docs_bundle_impl(ctx):
             # Pure-data entries have no documentation source allowlist.
             files = [],
             data = own_data,
+            bundle_label = own_bundle_label,
+            bundle_name = own_bundle_name,
+            # This direct entry belongs to the current composition's root
+            # bundle. _rebase_bundle_entry changes this to false if a parent
+            # embeds the bundle as a child.
+            root_bundle = True,
+            code_targets = own_code_targets,
         ))
 
     child_source_files = []
@@ -427,6 +480,9 @@ _docs_bundle = rule(
         "bundle_mount_ats": attr.string_list(),
         "bundle_attach_tos": attr.string_list(),
         "data": attr.label_list(allow_files = True),
+        # The aspect preserves the selected target's rule kind while
+        # recursively collecting its source files for source-link generation.
+        "code_targets": attr.label_list(aspects = [_collect_code_target_sources]),
     },
     doc = "Internal rule that carries bundle files and their documentation-tree locations.",
 )
@@ -440,6 +496,7 @@ def create_bundle(
     source_dir = None,
     entry_doc = "index",
     data = [],
+    code_targets = [],
     visibility = None,
     **kwargs):
     """Create a bundle from directory-discovered files and source targets.
@@ -459,6 +516,7 @@ def create_bundle(
         bundle_mount_ats = [bundle.mount_at for bundle in parsed_bundles],
         bundle_attach_tos = [bundle.attach_to for bundle in parsed_bundles],
         data = data,
+        code_targets = code_targets,
         visibility = visibility,
         **kwargs
     )
