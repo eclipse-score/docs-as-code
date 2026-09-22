@@ -596,7 +596,17 @@
               "full_line": "# req-Id: tool_req__docs_req_attr_validity_consistency"
             }
           ],
-          "TestLinks": []
+          "TestLinks": [
+            {
+              "name": "test_rules_file_based__test_rst_files[attributes/test_validity.rst]",
+              "file": "src/extensions/score_metamodel/tests/rst/attributes/test_validity.rst",
+              "line": 16,
+              "need": "tool_req__docs_req_attr_validity_consistency",
+              "verify_type": "partially",
+              "result": "passed",
+              "result_text": ""
+            }
+          ]
         }
       },
       {
@@ -1081,7 +1091,17 @@
               "full_line": "# req-Id: tool_req__docs_req_attr_validity_correctness"
             }
           ],
-          "TestLinks": []
+          "TestLinks": [
+            {
+              "name": "test_rules_file_based__test_rst_files[attributes/test_validity.rst]",
+              "file": "src/extensions/score_metamodel/tests/rst/attributes/test_validity.rst",
+              "line": 16,
+              "need": "tool_req__docs_req_attr_validity_correctness",
+              "verify_type": "partially",
+              "result": "passed",
+              "result_text": ""
+            }
+          ]
         }
       },
       {
@@ -1783,17 +1803,7 @@
               "full_line": "# req-Id: tool_req__docs_sec_attr_stride_threat_id"
             }
           ],
-          "TestLinks": [
-            {
-              "name": "test_rules_file_based__test_rst_files[attributes/test_validity.rst]",
-              "file": "src/extensions/score_metamodel/tests/rst/attributes/test_validity.rst",
-              "line": 16,
-              "need": "tool_req__docs_sec_attr_stride_threat_id",
-              "verify_type": "partially",
-              "result": "passed",
-              "result_text": ""
-            }
-          ]
+          "TestLinks": []
         }
       },
       {
@@ -1829,17 +1839,7 @@
               "full_line": "# req-Id: tool_req__docs_sec_attrs_mandatory"
             }
           ],
-          "TestLinks": [
-            {
-              "name": "test_rules_file_based__test_rst_files[attributes/test_validity.rst]",
-              "file": "src/extensions/score_metamodel/tests/rst/attributes/test_validity.rst",
-              "line": 16,
-              "need": "tool_req__docs_sec_attrs_mandatory",
-              "verify_type": "partially",
-              "result": "passed",
-              "result_text": ""
-            }
-          ]
+          "TestLinks": []
         }
       },
       {
@@ -1897,7 +1897,17 @@
               "full_line": "# req-Id: tool_req__docs_verification_report_need"
             }
           ],
-          "TestLinks": []
+          "TestLinks": [
+            {
+              "name": "test_rules_file_based__test_rst_files[options/test_options_verification_report.rst]",
+              "file": "src/extensions/score_metamodel/tests/rst/options/test_options_verification_report.rst",
+              "line": 16,
+              "need": "tool_req__docs_verification_report_need",
+              "verify_type": "partially",
+              "result": "passed",
+              "result_text": ""
+            }
+          ]
         }
       },
       {
