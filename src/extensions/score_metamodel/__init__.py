@@ -21,6 +21,7 @@ from sphinx_needs import logging
 from sphinx_needs.data import NeedsView, SphinxNeedsData
 from sphinx_needs.need_item import NeedItem
 
+from src.extensions.score_metamodel.bundle_metadata import apply_bundle_metadata
 from src.extensions.score_metamodel.external_needs import connect_external_needs
 from src.extensions.score_metamodel.log import CheckLogger
 
@@ -300,6 +301,9 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     )
 
     _ = app.connect("write-started", lambda app, _builder: _run_checks(app))
+    # The template extension may purge and reread report pages at priority 600.
+    # Matching after that pass makes the final Need collection authoritative.
+    _ = app.connect("env-updated", apply_bundle_metadata, priority=650)
 
     return {
         "version": "0.1",

@@ -29,7 +29,7 @@ docs(
         "@score_process_description//:needs_json",
     ],
     bundles = [{
-        "bundle": "//src/tests/docs_bzl/scenarios/reference_integration/modern_module/docs/components/component:docs_bundle",
+        "bundle": "//src/tests/docs_bzl/scenarios/reference_integration/modern_module/docs/components/component:modern_component",
         "mount_at": "components/component",
         "attach_to": "components",
     }, {

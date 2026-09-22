@@ -28,7 +28,7 @@ filegroup(
 # requirement links to the platform feature, so the component Needs target is
 # valid only when the parent module supplies that external Needs.
 docs_bundle(
-    name = "docs_bundle",
+    name = "modern_component",
     source_dir = ".",
     code_targets = [":component_sources"],
     visibility = ["//visibility:public"],

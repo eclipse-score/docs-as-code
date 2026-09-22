@@ -15,7 +15,7 @@
 
 import pytest
 
-from src.tests.docs_bzl.helpers import run_scenario
+from src.tests.docs_bzl.helpers import load_needs, run_scenario
 
 
 @pytest.mark.bazel_slow
@@ -41,7 +41,7 @@ def test_linked_component_requires_parent_context():
         run_scenario(
             "build",
             "reference_integration/modern_module/docs/components/component",
-            ":docs_bundle.__internal__.needs_local",
+            ":modern_component.__internal__.needs_local",
         )
     assert "feat_req__platform__feature" in str(exc_info.value)
 
@@ -101,3 +101,28 @@ def test_reference_integration_builds_with_platform_requirements():
         / "component"
         / "index.html"
     ).is_file()
+
+
+@pytest.mark.bazel_cached
+def test_bundle_metadata_is_added_to_the_matching_need():
+    """A component bundle contributes its direct Bazel target to its Need.
+
+    The fixture's bundle is named ``legacy_component`` and declares the local
+    Need ``tool_req__legacy_component``.  The matching rule uses exactly this
+    ``<need type>__<bundle name>`` relationship, so the metadata must be added
+    to that Need rather than to another Need from the imported input data.
+    """
+    result = run_scenario("build", "reference_integration", ":needs_json")
+    assert result.artifacts is not None
+
+    needs = load_needs(result.artifacts["needs.json"])
+    # The ID is the expected match for the ``legacy_component`` bundle:
+    # ``tool_req`` is the Need type and ``legacy_component`` is the bundle name.
+    legacy_need = needs["tool_req__legacy_component"]
+    assert isinstance(legacy_need, dict)
+    assert (
+        legacy_need["bazel_target"]
+        == "@@//src/tests/docs_bzl/scenarios/reference_integration/legacy_module/"
+        "docs/components/component:component_sources"
+    )
+    assert legacy_need["bazel_type"] == "filegroup"

@@ -23,7 +23,7 @@ filegroup(
 # ``code_targets`` so its traceability annotation exercises the source-link
 # generation path used by real component bundles.
 docs_bundle(
-    name = "docs_bundle",
+    name = "legacy_component",
     source_dir = ".",
     code_targets = [":component_sources"],
     visibility = ["//visibility:public"],

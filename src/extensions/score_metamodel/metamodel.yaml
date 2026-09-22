@@ -17,6 +17,8 @@ needs_types_base_options:
     # req-Id: tool_req__docs_dd_link_source_code_link
     source_code_link: ^https://github.com/.*
     testlink: ^https://github.com/.*
+    bazel_target: ^.*$
+    bazel_type: ^.*$
     # Version will be mandatory global option in future releases
     # For now giving grace periods to consumers
   mandatory_options:
