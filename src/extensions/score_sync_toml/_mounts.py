@@ -69,6 +69,8 @@ def materialize_mounts(entries: list[dict[str, Any]]) -> Path | None:
         lines.append(f"mount_at = {_toml_string(entry['mount_at'])}")
         if entry.get("attach_to"):
             lines.append(f"attach_to = {_toml_string(entry['attach_to'])}")
+        if entry.get("toctree_index", 0) != 0:
+            lines.append(f"toctree_index = {entry['toctree_index']}")
         if entry.get("entry_doc", "index") != "index":
             lines.append(f"entry_doc = {_toml_string(entry['entry_doc'])}")
         lines.append("")
