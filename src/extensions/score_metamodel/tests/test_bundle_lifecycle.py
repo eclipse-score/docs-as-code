@@ -76,6 +76,27 @@ def _bundle() -> BundleMetadata:
     )
 
 
+def test_multiple_bundle_targets_keep_declaration_order_in_json() -> None:
+    """Multiple targets use matching compact JSON arrays in source order."""
+    bundle = BundleMetadata(
+        label="//:memory",
+        name="memory",
+        code_targets=(
+            BazelTarget(label="//:memory_core", type="cc_library"),
+            BazelTarget(label="//:memory_test", type="cc_test"),
+        ),
+    )
+
+    values = bundle_metadata._render_target_values(  # pyright: ignore[reportPrivateUsage]
+        bundle
+    )
+
+    assert values == {
+        "bazel_target": '["//:memory_core","//:memory_test"]',
+        "bazel_type": '["cc_library","cc_test"]',
+    }
+
+
 def test_matching_updates_need_in_place_and_returns_affected_document(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
