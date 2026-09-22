@@ -408,6 +408,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../benchmark_results.html">Bazel Mini Benchmark Results</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../decisions/index.html">Decisions And Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../requirements/index.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testing.html">Testing</a></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Extensions</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="metamodel.html">Metamodel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="rst_filebased_testing.html">Filebased Testing</a></li>
@@ -487,10 +488,10 @@ semantics are documented in <a class="reference internal" href="../../concepts/m
 <a class="reference internal" href="../../how-to/bundles/index.html#howto-mount-external-sources"><span class="std std-ref">How to use bundles</span></a>.</p>
 <section id="architecture-and-manifest-contract">
 <h2>Architecture and manifest contract<a class="headerlink" href="#architecture-and-manifest-contract" title="Link to this heading">#</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">docs.bzl</span></code> owns bundle graph traversal. Its <code class="docutils literal notranslate"><span class="pre">_mounts_manifest</span></code> rule turns
+<p><code class="docutils literal notranslate"><span class="pre">docs.bzl</span></code> owns bundle graph traversal. Its composition-manifest rule turns
 the <code class="docutils literal notranslate"><span class="pre">DocsBundleInfo</span></code> provider graph and each consumer placement into one JSON
-manifest. Python deliberately receives paths rather than Bazel labels, so it
-does not reconstruct Bazel repository names at Sphinx runtime.</p>
+manifest. Python receives paths and stable bundle metadata rather than Bazel
+providers, so it does not reconstruct Bazel repository names at Sphinx runtime.</p>
 <p>Each manifest entry contains:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">src_root</span></code> — the source directory relative to the main workspace or the
@@ -499,8 +500,14 @@ sandbox execroot;</p></li>
 walked;</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">mount_at</span></code> and <code class="docutils literal notranslate"><span class="pre">attach_to</span></code> — the already-composed Sphinx placement; and</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">entry_doc</span></code> — the canonical entry document declared by the source bundle.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">external</span></code> — whether the directory belongs to another Bazel module.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">external</span></code> — whether the directory belongs to another Bazel module;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bundle</span></code> — the declaring bundle’s Bazel label, name, and direct targets;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">root_bundle</span></code> — whether this physical entry belongs to the root bundle of
+the current composition. This is composition-specific: the same bundle can
+be a root in a standalone manifest and a child in another composition.</p></li>
 </ul>
+<p>Bundle metadata is mandatory for every entry. The Bazel producer and Python
+consumer are kept in sync as one repository-owned contract.</p>
 <p>At <code class="docutils literal notranslate"><span class="pre">config-inited</span></code>, <code class="docutils literal notranslate"><span class="pre">score_mounts</span></code> resolves all directory source mounts before
 constructing <code class="docutils literal notranslate"><span class="pre">config.mounts</span></code>. A mount below Sphinx’s primary source directory
 is added to the primary <code class="docutils literal notranslate"><span class="pre">exclude_patterns</span></code> as a relative <code class="docutils literal notranslate"><span class="pre">&lt;mount&gt;/**</span></code> pattern.
