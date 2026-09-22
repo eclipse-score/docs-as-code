@@ -1,0 +1,2123 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>How to Apply the SCORE Tool Management Process &#8212; S-CORE Docs-as-Code  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/score.css?v=415257cb" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/score_needs.css?v=82a1844f" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/score_design.css?v=8048e6ee" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-data-viewer/jsonview.bundle.css?v=f6ef2277" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/libs/html/datatables.min.css?v=4b4fd840" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/needstable.css?v=5e1b6797" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_core.css?v=f5b60a78" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_style.css?v=92936fa5" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_toggle.css?v=5c6620df" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_links.css?v=2150a916" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/modern.css?v=803738c0" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+
+    <script src="../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../_static/documentation_options.js?v=7f41d439"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script src="../_static/sphinx-data-viewer/jsonview.bundle.js?v=18cd53c5"></script>
+    <script src="../_static/sphinx-data-viewer/jsonview_loader.js?v=f7ff7e7d"></script>
+    <script src="../_static/sphinx-needs/libs/html/datatables.min.js?v=8a4aee21"></script>
+    <script src="../_static/sphinx-needs/libs/html/datatables_loader.js?v=a2cae175"></script>
+    <script src="../_static/sphinx-needs/libs/html/sphinx_needs_collapse.js?v=dca66431"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.17.2/dist/mermaid.esm.min.mjs";
+
+
+import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.0/dist/mermaid-layout-elk.esm.min.mjs"
+
+
+const initStyles = () => {
+    const defaultStyle = document.createElement('style');
+    defaultStyle.textContent = "pre.mermaid {\n    /* Same as .mermaid-container > pre */\n    display: block;\n    width: 100%;\n}\n\npre.mermaid > svg {\n    /* Same as .mermaid-container > pre > svg */\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}";
+    document.head.appendChild(defaultStyle);
+
+    const fullscreenStyle = document.createElement('style');
+    fullscreenStyle.textContent = ".mermaid-container {\n    position: relative;\n    display: flex;\n    flex-direction: row;\n    width: 100%;\n}\n\n.mermaid-container > pre {\n    display: block;\n    width: 100%;\n}\n\n.mermaid-container > pre > svg {\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}\n\n.mermaid-fullscreen-btn {\n    position: absolute;\n    width: 28px;\n    height: 28px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.3);\n    border-radius: 4px;\n    cursor: pointer;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    transition: all 0.2s;\n    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);\n    font-size: 14px;\n    line-height: 1;\n    padding: 0;\n    color: #333;\n}\n\n.mermaid-fullscreen-btn:hover {\n    opacity: 100% !important;\n    background: rgba(255, 255, 255, 1);\n    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-btn.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.3);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-btn.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal {\n    display: none;\n    position: fixed !important;\n    top: 0 !important;\n    left: 0 !important;\n    width: 95vw;\n    height: 100vh;\n    background: rgba(255, 255, 255, 0.98);\n    z-index: 9999;\n    padding: 20px;\n    overflow: auto;\n}\n\n.mermaid-fullscreen-modal.dark-theme {\n    background: rgba(0, 0, 0, 0.98);\n}\n\n.mermaid-fullscreen-modal.active {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen {\n    position: relative;\n    width: 95vw;\n    height: 90vh;\n    max-width: 95vw;\n    max-height: 90vh;\n    background: white;\n    border-radius: 8px;\n    padding: 20px;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);\n    overflow: auto;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen.dark-theme {\n    background: #1a1a1a;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);\n}\n\n.mermaid-container-fullscreen pre.mermaid {\n    width: 100%;\n    height: 100%;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen .mermaid svg {\n    height: 100% !important;\n    width: 100% !important;\n    cursor: grab;\n}\n\n.mermaid-fullscreen-close {\n    position: fixed !important;\n    top: 20px !important;\n    right: 20px !important;\n    width: 40px;\n    height: 40px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.2);\n    border-radius: 50%;\n    cursor: pointer;\n    z-index: 10000;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);\n    transition: all 0.2s;\n    font-size: 24px;\n    line-height: 1;\n    color: #333;\n}\n\n.mermaid-fullscreen-close:hover {\n    background: white;\n    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-close.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.2);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-close.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal .mermaid-fullscreen-btn {\n    display: none !important;\n}";
+    document.head.appendChild(fullscreenStyle);
+}
+
+// Detect if page has dark background
+const isDarkTheme = () => {
+    // We use a set of heuristics:
+    // 1. Check for common dark mode classes or attributes
+    // 2. Check computed background color brightness
+    if (document.documentElement.classList.contains('dark') ||
+        document.documentElement.getAttribute('data-theme') === 'dark' ||
+        document.body.classList.contains('dark') ||
+        document.body.getAttribute('data-theme') === 'dark') {
+        // console.log("Dark theme detected via class/attribute");
+        return true;
+    }
+    if (document.documentElement.classList.contains('light') ||
+        document.documentElement.getAttribute('data-theme') === 'light' ||
+        document.body.classList.contains('light') ||
+        document.body.getAttribute('data-theme') === 'light') {
+        // console.log("Light theme detected via class/attribute");
+        return false;
+    }
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        // console.log("Dark theme detected via prefers-color-scheme");
+        return true;
+    }
+    const bgColor = window.getComputedStyle(document.body).backgroundColor;
+    const match = bgColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
+    if (match) {
+        const r = parseInt(match[1]);
+        const g = parseInt(match[2]);
+        const b = parseInt(match[3]);
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        // console.log("Background color brightness:", brightness);
+        return brightness < 128;
+    }
+    // console.log("No dark or light theme detected, defaulting to light theme");
+    return false;
+};
+
+let darkTheme = isDarkTheme();
+let modal = null;
+let modalContent = null;
+let previousScrollOffset = [window.scrollX, window.scrollY];
+let _lazyObserver = null;
+let _renderQueue = Promise.resolve();
+let closeModal = () => {};
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal?.classList.contains('active')) {
+        closeModal();
+    }
+});
+
+// Apply d3 zoom to each SVG. Idempotent: an SVG already wrapped is skipped,
+// so this is safe to call both for the initial batch and for diagrams that
+// render lazily once they become visible.
+const addZoomToSvgs = (svgs) => {
+    svgs.each(function() {
+        if (this.getAttribute('data-zoom-applied') === 'true') return;
+        var svg = d3.select(this);
+        svg.html("<g class='wrapper'>" + svg.html() + "</g>");
+        var inner = svg.select("g");
+        var zoom = d3.zoom().on("zoom", function(event) {
+            inner.attr("transform", event.transform);
+        });
+        svg.call(zoom);
+        this.setAttribute('data-zoom-applied', 'true');
+    });
+};
+
+const runMermaid = async (rerun) => {
+    console.log("Running mermaid diagrams, rerun =", rerun);
+    // clear all existing mermaid charts
+    let all_mermaids = document.querySelectorAll(".mermaid");
+
+    if (rerun) {
+        // Disconnect any previous lazy rendering observer
+        if (_lazyObserver) {
+            _lazyObserver.disconnect();
+            _lazyObserver = null;
+        }
+
+        all_mermaids.forEach((el) => {
+            el.removeAttribute('data-mermaid-deferred');
+            el.removeAttribute('data-mermaid-render-failed');
+            if(!el.hasAttribute("data-original-code")) {
+                // store original code
+                // console.log(`Storing original code for first run: `, el.innerHTML);
+                el.setAttribute('data-original-code', el.innerHTML);
+            }
+            if(el.getAttribute("data-processed") === "true") {
+                // remove and restore original
+                el.removeAttribute("data-processed");
+                // console.log(`Restoring original code for re-run: `, el.getAttribute('data-original-code'));
+                el.innerHTML = el.getAttribute('data-original-code');
+            } else {
+                // store original code
+                // console.log(`Storing original code for re-run: `, el.innerHTML);
+                el.setAttribute('data-original-code', el.innerHTML);
+            }
+        });
+
+        // Separate visible and hidden elements. Mermaid's layout engine measures
+        // text dimensions via the DOM, which fails for elements hidden by a parent
+        // (e.g., Reveal.js non-active slides, sphinx-design unopened tabs),
+        // producing broken SVGs. Render visible elements now, defer hidden ones.
+        const visible = [];
+        const hidden = [];
+        all_mermaids.forEach((el) => {
+            // offsetParent is null for display:none ancestors.
+            // getClientRects().length > 0 catches position:fixed elements
+            // (which also have null offsetParent but are still visible).
+            if (el.offsetParent !== null || el.getClientRects().length > 0) {
+                visible.push(el);
+            } else {
+                hidden.push(el);
+                el.setAttribute('data-mermaid-deferred', 'true');
+            }
+        });
+
+        if (visible.length > 0) {
+            try {
+                await mermaid.run({ nodes: visible });
+            } catch (e) {
+                console.error("Mermaid rendering failed:", e);
+            }
+        }
+
+        // Lazily render hidden elements when they become visible.
+        // Uses a promise chain (_renderQueue) to serialize rendering,
+        // since IntersectionObserver may report multiple entries at once
+        // and mermaid.run() is not safe to call concurrently.
+        if (hidden.length > 0) {
+            if (typeof IntersectionObserver === 'undefined') {
+                console.warn("IntersectionObserver not available; hidden mermaid diagrams will not render.");
+            } else {
+                _renderQueue = Promise.resolve();
+                _lazyObserver = new IntersectionObserver((entries) => {
+                    for (const entry of entries) {
+                        if (entry.isIntersecting && entry.target.getAttribute("data-processed") !== "true") {
+                            _lazyObserver.unobserve(entry.target);
+                            const el = entry.target;
+                            _renderQueue = _renderQueue.then(async () => {
+                                try {
+                                    await mermaid.run({ nodes: [el] });
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    // Apply zoom to the now-rendered diagram, matching
+                                    // the decoration visible diagrams receive.
+                                    if (true) {
+                                        addZoomToSvgs(d3.selectAll(".mermaid").select(function() {
+                                            return this.querySelector("svg");
+                                        }));
+                                    }
+                                } catch (e) {
+                                    console.error("Mermaid deferred rendering failed:", e);
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    el.setAttribute('data-mermaid-render-failed', 'true');
+                                }
+                            });
+                        }
+                    }
+                });
+                hidden.forEach((el) => _lazyObserver.observe(el));
+            }
+        }
+    }
+
+    all_mermaids = document.querySelectorAll(".mermaid");
+    // Exclude deferred (hidden) and render-failed elements from completion checks
+    const mermaids_active = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])");
+    const mermaids_processed = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])[data-processed='true']");
+
+    if (true) {
+        const mermaids_to_add_zoom = -1 === -1 ? mermaids_active.length : -1;
+        if(mermaids_to_add_zoom > 0) {
+            var svgs = d3.selectAll(".mermaid").select(function() {
+                return this.querySelector("svg");
+            });
+            // Wait until every active (visible) diagram has rendered. Deferred
+            // diagrams are excluded, so a fixed d3_node_count that counts a
+            // hidden diagram no longer loops forever waiting for its SVG.
+            if(mermaids_active.length !== mermaids_processed.length) {
+                setTimeout(() => runMermaid(false), 200);
+                return;
+            }
+            addZoomToSvgs(svgs);
+        }
+    } else if(mermaids_active.length !== mermaids_processed.length) {
+        // Wait for mermaid to process all diagrams
+        setTimeout(() => runMermaid(false), 200);
+        return;
+    }
+
+    // Stop here if not adding fullscreen capability
+    if (!true) return;
+
+    if (modal !== null ) {
+        // Destroy existing modal
+        modal.remove();
+        modal = null;
+        modalContent = null;
+    }
+
+    modal = document.createElement('div');
+    modal.className = 'mermaid-fullscreen-modal' + (darkTheme ? ' dark-theme' : '');
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', 'Fullscreen diagram viewer');
+    modal.innerHTML = `
+        <button class="mermaid-fullscreen-close${darkTheme ? ' dark-theme' : ''}" aria-label="Close fullscreen">✕</button>
+        <div class="mermaid-container-fullscreen${darkTheme ? ' dark-theme' : ''}"></div>
+    `;
+    document.body.appendChild(modal);
+
+    modalContent = modal.querySelector('.mermaid-container-fullscreen');
+    const closeBtn = modal.querySelector('.mermaid-fullscreen-close');
+
+    closeModal = () => {
+        modal.classList.remove('active');
+        modalContent.innerHTML = '';
+        document.body.style.overflow = ''
+        window.scrollTo({left: previousScrollOffset[0], top: previousScrollOffset[1], behavior: 'instant'});
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+    document.querySelectorAll('.mermaid').forEach((mermaidDiv) => {
+        if (mermaidDiv.parentNode.classList.contains('mermaid-container') ||
+            mermaidDiv.closest('.mermaid-fullscreen-modal')) {
+            // Already processed, adjust button class if needed
+            const existingBtn = mermaidDiv.parentNode.querySelector('.mermaid-fullscreen-btn');
+            if (existingBtn) {
+                existingBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+            }
+            return;
+        }
+
+        const container = document.createElement('div');
+        container.className = 'mermaid-container';
+        mermaidDiv.parentNode.insertBefore(container, mermaidDiv);
+        container.appendChild(mermaidDiv);
+
+        const fullscreenBtn = document.createElement('button');
+        fullscreenBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+        fullscreenBtn.setAttribute('aria-label', 'View diagram in fullscreen');
+        fullscreenBtn.textContent = "\u26f6";
+        fullscreenBtn.style.opacity = "50%";
+
+        // Calculate dynamic position based on diagram's margin and padding
+        const diagramStyle = window.getComputedStyle(mermaidDiv);
+        const marginTop = parseFloat(diagramStyle.marginTop) || 0;
+        const marginRight = parseFloat(diagramStyle.marginRight) || 0;
+        const paddingTop = parseFloat(diagramStyle.paddingTop) || 0;
+        const paddingRight = parseFloat(diagramStyle.paddingRight) || 0;
+        fullscreenBtn.style.top = `${marginTop + paddingTop + 4}px`;
+        fullscreenBtn.style.right = `${marginRight + paddingRight + 4}px`;
+
+        fullscreenBtn.addEventListener('click', () => {
+            previousScrollOffset = [window.scrollX, window.scrollY];
+            const clone = mermaidDiv.cloneNode(true);
+            modalContent.innerHTML = '';
+            modalContent.appendChild(clone);
+
+            const svg = clone.querySelector('svg');
+            if (svg) {
+                svg.removeAttribute('width');
+                svg.removeAttribute('height');
+                svg.style.width = '100%';
+                svg.style.height = 'auto';
+                svg.style.maxWidth = '100%';
+                svg.style.display = 'block';
+
+                if (true) {
+                    setTimeout(() => {
+                        const g = svg.querySelector('g');
+                        if (g) {
+                            var svgD3 = d3.select(svg);
+                            svgD3.html("<g class='wrapper'>" + svgD3.html() + "</g>");
+                            var inner = svgD3.select("g");
+                            var zoom = d3.zoom().on("zoom", function(event) {
+                                inner.attr("transform", event.transform);
+                            });
+                            svgD3.call(zoom);
+                        }
+                    }, 100);
+                }
+            }
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+        container.appendChild(fullscreenBtn);
+    });
+};
+
+
+
+const load = async () => {
+    initStyles();
+
+
+    await runMermaid(true);
+
+    const reRunIfThemeChanges = async () => {
+        const newDarkTheme = isDarkTheme();
+        if (newDarkTheme !== darkTheme) {
+            darkTheme = newDarkTheme;
+            console.log("Theme change detected, re-running mermaid with", darkTheme ? "dark" : "default", "theme");
+            await mermaid.initialize(
+                {...{"startOnLoad": false},
+                ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
+                }
+            );
+            await runMermaid(true);
+        }
+    };
+
+    // Update theme classes when theme changes
+    const themeObserver = new MutationObserver(reRunIfThemeChanges);
+    themeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+    themeObserver.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+};
+
+
+mermaid.registerLayoutLoaders(elkLayouts);
+
+
+
+
+console.log("Initializing mermaid with", darkTheme ? "dark" : "default", "theme");
+mermaid.initialize(
+    {...{"startOnLoad": false},
+    ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
+    }
+);
+
+window.addEventListener("load", load);
+window.runMermaid = runMermaid;</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'how-to/perform_tool_verification';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.20.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://eclipse-score.github.io/docs-as-code/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Integrate Generated Documentation" href="generated_docs.html" />
+    <link rel="prev" title="Reference Docs in Tests" href="test_to_doc_links.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.0.0" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">Eclipse S-CORE</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    How To
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../reference/index.html">
+    Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/index.html">
+    Concepts
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../internals/index.html">
+    Internals
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eclipse-score" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    How To
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../reference/index.html">
+    Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../concepts/index.html">
+    Concepts
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../internals/index.html">
+    Internals
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eclipse-score" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="get_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="setup.html">Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="write_docs.html">Write Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="other_modules.html">Reference Other Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cross_module_compatibility.html">Handle Cross-Module Compatibility Findings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bundles/index.html">How to use bundles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dashboards_and_quality_gates.html">Build Dashboards and Quality Gates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="source_to_doc_links.html">Reference Docs in Source Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="test_to_doc_links.html">Reference Docs in Tests</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">How to Apply the SCORE Tool Management Process</a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="generated_docs.html">Integrate Generated Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="add_extensions.html">Add Extensions</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">How To</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">How to Apply the SCORE Tool Management Process</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <!-- ----------------------------------------------------------------------------
+  Copyright (c) 2026 Contributors to the Eclipse Foundation
+
+  See the NOTICE file(s) distributed with this work for additional
+  information regarding copyright ownership.
+
+  This program and the accompanying materials are made available under the
+  terms of the Apache License Version 2.0 which is available at
+  https://www.apache.org/licenses/LICENSE-2.0
+
+  SPDX-License-Identifier: Apache-2.0
+----------------------------------------------------------------------------- -->
+<section id="how-to-apply-the-score-tool-management-process">
+<h1>How to Apply the SCORE Tool Management Process<a class="headerlink" href="#how-to-apply-the-score-tool-management-process" title="Link to this heading">#</a></h1>
+<p>This guide explains how to execute the
+<a class="reference external" href="https://eclipse-score.github.io/process_description/main/process_areas/tool_management/tool_management_workflow.html">Eclipse SCORE Tool Management Process</a>
+using the SCORE Docs-as-Code / Sphinx-Needs tooling.</p>
+<p>The goal is <strong>not</strong> to reproduce ISO 26262 or define a separate qualification
+process. SCORE already defines the process. This guide explains how to represent
+and execute that process with the available Sphinx-Needs model.</p>
+<blockquote>
+<div><p>[!NOTE]
+This guide focuses on the safety-related evaluation and qualification aspects
+of SCORE Tool Management. Security-related evaluation remains part of the Tool
+Verification Report and must be handled where applicable.</p>
+</div></blockquote>
+<section id="rendering-and-examples">
+<h2>Rendering and examples<a class="headerlink" href="#rendering-and-examples" title="Link to this heading">#</a></h2>
+<p>This file is written as MyST-flavoured GitHub Markdown as used by the SCORE
+Docs-as-Code tooling.</p>
+<p>Diagrams use Mermaid:</p>
+<div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>```{mermaid}
+flowchart LR
+    A --&gt; B
+```
+</pre></div>
+</div>
+<p>The Sphinx-Needs snippets in this guide are deliberately shown as Markdown code
+examples instead of creating real example needs in this document. This avoids
+polluting the project’s actual requirements and verification data. Copy the
+snippets into the real Tool Verification Report and adapt the IDs and content.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="mental-model">
+<h1>Mental model<a class="headerlink" href="#mental-model" title="Link to this heading">#</a></h1>
+<p>The important distinction is between:</p>
+<ul class="simple">
+<li><p><strong>Tool Verification Report (<code class="docutils literal notranslate"><span class="pre">doc_tool</span></code>)</strong> — records the SCORE tool-management
+state and the overall evaluation result.</p></li>
+<li><p><strong>Tool requirements (<code class="docutils literal notranslate"><span class="pre">tool_req</span></code>)</strong> — what the project relies on the tool to do.</p></li>
+<li><p><strong>Tool use cases (<code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code>)</strong> — the usage context in which the project
+relies on those requirements.</p></li>
+<li><p><strong>Potential tool malfunctions (<code class="docutils literal notranslate"><span class="pre">potential_tool_malfunction</span></code>)</strong> — ways in which
+the expected tool behaviour can fail.</p></li>
+<li><p><strong>Safety measures</strong> — measures active during intended tool usage that prevent
+or detect a potential malfunction.</p></li>
+<li><p><strong>Testcases (<code class="docutils literal notranslate"><span class="pre">testcase</span></code>)</strong> — verification evidence for requirements. For tool
+qualification, these verify the relevant <code class="docutils literal notranslate"><span class="pre">tool_req</span></code> needs.</p></li>
+</ul>
+<pre  class="mermaid">
+        flowchart LR
+    STKH[&quot;stkh_req&lt;br/&gt;Stakeholder Requirement&quot;]
+    DT[&quot;doc_tool&lt;br/&gt;Tool Verification Report&quot;]
+    UC[&quot;tool_usecase&lt;br/&gt;Tool Use Case&quot;]
+    TR[&quot;tool_req&lt;br/&gt;Tool Requirement&quot;]
+    PM[&quot;potential_tool_malfunction&lt;br/&gt;Potential Tool Malfunction&quot;]
+    TC[&quot;testcase&lt;br/&gt;Qualification Evidence&quot;]
+
+    UC --&gt;|&quot;belongs_to&lt;br/&gt;(mandatory)&quot;| DT
+    UC --&gt;|&quot;realizes&lt;br/&gt;(optional)&quot;| STKH
+    UC --&gt;|&quot;realized_by&quot;| TR
+
+    PM --&gt;|&quot;parent_needs&quot;| UC
+    PM --&gt;|&quot;violates&quot;| STKH
+    PM --&gt;|&quot;violates&quot;| TR
+
+    TC --&gt;|&quot;fully_verifies /&lt;br/&gt;partially_verifies&quot;| TR
+    TC --&gt;|&quot;realizes&lt;br/&gt;(optional)&quot;| STKH
+
+    style UC fill:#E1D5E7
+    style PM fill:#F8CECC
+    style STKH fill:#DAE8FC
+    style TR fill:#F5F5F5
+    </pre><p>The two analysis views answer different questions:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>View</p></th>
+<th class="head"><p>Question</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Evaluation / classification</strong></p></td>
+<td><p>How can our intended use of the tool fail, and would the intended usage detect or prevent that failure?</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Qualification</strong></p></td>
+<td><p>Do we have sufficient evidence that the specific tool version satisfies the tool requirements we rely on?</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Qualification tests do <strong>not</strong> automatically make
+<code class="docutils literal notranslate"><span class="pre">detection_sufficient:</span> <span class="pre">YES</span></code>.</p>
+</section>
+<hr class="docutils" />
+<section id="external-vs-self-developed-tools">
+<h1>External vs. self-developed tools<a class="headerlink" href="#external-vs-self-developed-tools" title="Link to this heading">#</a></h1>
+<p>The evaluation is based on <strong>how the project uses the tool</strong>, not on who
+developed it.</p>
+<p>Use cases, potential malfunctions, safety impact, and detection are therefore
+evaluated the same way for external and self-developed tools.</p>
+<p>The differences matter mainly when defining requirements and qualification
+evidence.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Topic</p></th>
+<th class="head"><p>External tool</p></th>
+<th class="head"><p>Self-developed tool</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Version</p></td>
+<td><p>Pin the exact external version and relevant configuration</p></td>
+<td><p>Identify the exact internal release/version</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">tool_req</span></code></p></td>
+<td><p>Define the behaviour <strong>our project relies on</strong></p></td>
+<td><p>Reuse existing tool requirements where suitable</p></td>
+</tr>
+<tr class="row-even"><td><p>Implementation</p></td>
+<td><p>Usually treated largely as a black box</p></td>
+<td><p>Architecture and implementation may be available</p></td>
+</tr>
+<tr class="row-odd"><td><p>Existing tests</p></td>
+<td><p>Vendor/upstream tests can be supporting information</p></td>
+<td><p>Existing development tests may already provide qualification evidence</p></td>
+</tr>
+<tr class="row-even"><td><p>Qualification</p></td>
+<td><p>Usually validate our <code class="docutils literal notranslate"><span class="pre">tool_req</span></code> against the configured external tool</p></td>
+<td><p>Reuse suitable requirements-based tests where possible</p></td>
+</tr>
+<tr class="row-odd"><td><p>Corrective action</p></td>
+<td><p>Upgrade, configure, constrain usage, add detection, or replace</p></td>
+<td><p>The tool implementation itself can also be changed</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Do not duplicate requirements or tests solely because a self-developed tool is
+now managed through the SCORE Tool Management process.</p>
+</section>
+<hr class="docutils" />
+<section id="score-workflow-at-a-glance">
+<h1>SCORE workflow at a glance<a class="headerlink" href="#score-workflow-at-a-glance" title="Link to this heading">#</a></h1>
+<pre  class="mermaid">
+        flowchart TD
+    A[&quot;Create Tool Verification Report&quot;] --&gt; B[&quot;status = draft&quot;]
+    B --&gt; C[&quot;Evaluate Tool&quot;]
+    C --&gt; D[&quot;status = evaluated&quot;]
+    D --&gt; E{&quot;Qualification required?&quot;}
+
+    E --&gt;|&quot;No&quot;| H[&quot;Review / approve TVR&quot;]
+    E --&gt;|&quot;Yes&quot;| F[&quot;Qualify Tool&quot;]
+    F --&gt; G[&quot;status = qualified&quot;]
+    G --&gt; H
+
+    H --&gt; I[&quot;status = released&quot;]
+
+    H -. unsuccessful .-&gt; J[&quot;status = rejected&quot;]
+    </pre><p>The remainder of this guide follows these steps.</p>
+</section>
+<hr class="docutils" />
+<section id="step-1-create-the-tool-verification-report">
+<h1>Step 1 — Create the Tool Verification Report<a class="headerlink" href="#step-1-create-the-tool-verification-report" title="Link to this heading">#</a></h1>
+<section id="what-to-model">
+<h2>What to model<a class="headerlink" href="#what-to-model" title="Link to this heading">#</a></h2>
+<p>The SCORE Tool Verification Report is represented by <code class="docutils literal notranslate"><span class="pre">doc_tool</span></code>.</p>
+<p>The current metamodel contains the following relevant attributes:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">status</span></code>: <code class="docutils literal notranslate"><span class="pre">draft</span> <span class="pre">|</span> <span class="pre">evaluated</span> <span class="pre">|</span> <span class="pre">qualified</span> <span class="pre">|</span> <span class="pre">released</span> <span class="pre">|</span> <span class="pre">rejected</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">safety_affected</span></code>: <code class="docutils literal notranslate"><span class="pre">YES</span> <span class="pre">|</span> <span class="pre">NO</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">security_affected</span></code>: <code class="docutils literal notranslate"><span class="pre">YES</span> <span class="pre">|</span> <span class="pre">NO</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tcl</span></code>: <code class="docutils literal notranslate"><span class="pre">LOW</span> <span class="pre">|</span> <span class="pre">HIGH</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tool_version</span></code>: optional in the current metamodel</p></li>
+</ul>
+<p>Example structure:</p>
+<div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>```{doc_tool} Sphinx-Needs Tool Verification Report
+:id: doc_tool__sphinx_needs
+:status: draft
+:safety_affected: YES
+:security_affected: NO
+:tcl: LOW
+:tool_version: &lt;exact version&gt;
+
+Describe the tool, its intended use, relevant configuration, environment,
+constraints, inputs, outputs, and available documentation.
+```
+</pre></div>
+</div>
+<blockquote>
+<div><p>[!NOTE]
+<code class="docutils literal notranslate"><span class="pre">tcl</span></code> is mandatory in the current metamodel even while the report is still
+<code class="docutils literal notranslate"><span class="pre">draft</span></code>. Update it to the actual evaluation result once Step 5 is complete.</p>
+</div></blockquote>
+</section>
+<section id="external-tool">
+<h2>External tool<a class="headerlink" href="#external-tool" title="Link to this heading">#</a></h2>
+<p>Identify the exact version and configuration that is actually used.</p>
+<p>Do not evaluate “Sphinx-Needs”, “Clang”, or “GitHub” generically if the project
+relies on a specific version, plugin set, configuration, or usage restriction.</p>
+</section>
+<section id="self-developed-tool">
+<h2>Self-developed tool<a class="headerlink" href="#self-developed-tool" title="Link to this heading">#</a></h2>
+<p>Reference the project’s normal version/release identification. The TVR must make
+clear which released tool version the evaluation applies to.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="step-2-define-how-the-project-uses-the-tool">
+<h1>Step 2 — Define how the project uses the tool<a class="headerlink" href="#step-2-define-how-the-project-uses-the-tool" title="Link to this heading">#</a></h1>
+<p>SCORE evaluates the tool in the context of its <strong>use cases</strong>.</p>
+<p>A <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code> captures:</p>
+<blockquote>
+<div><p><strong>What are we relying on this tool to do in our development process?</strong></p>
+</div></blockquote>
+<p>The current metamodel defines:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">tool_usecase</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">mandatory_links</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">belongs_to</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">doc_tool</span>
+<span class="w">    </span><span class="nt">realized_by</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tool_req</span>
+<span class="w">  </span><span class="nt">optional_links</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">realizes</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stkh_req</span>
+</pre></div>
+</div>
+<p>The normal relationship is therefore:</p>
+<pre  class="mermaid">
+        flowchart LR
+    STKH[&quot;stkh_req&quot;]
+    DT[&quot;doc_tool&quot;]
+    UC[&quot;tool_usecase&quot;]
+    TR[&quot;tool_req&quot;]
+
+    UC --&gt;|&quot;belongs_to&lt;br/&gt;(mandatory)&quot;| DT
+    UC --&gt;|&quot;realizes&lt;br/&gt;(optional)&quot;| STKH
+    UC --&gt;|&quot;realized_by&lt;br/&gt;(mandatory)&quot;| TR
+
+    style STKH fill:#DAE8FC
+    style UC fill:#E1D5E7
+    style TR fill:#F5F5F5
+    </pre><section id="when-is-tool-usecase-useful">
+<h2>When is <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code> useful?<a class="headerlink" href="#when-is-tool-usecase-useful" title="Link to this heading">#</a></h2>
+<p>Use <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code> when the stakeholder requirements are too high-level and the
+tool requirements are too detailed to clearly express the usage context.</p>
+<p>For example:</p>
+<ul class="simple">
+<li><p>stakeholder requirement: the system-development process must provide valid
+requirements traceability,</p></li>
+<li><p>tool use case: validate requirement traceability during documentation builds,</p></li>
+<li><p>tool requirement: unresolved requirement links must be reported.</p></li>
+</ul>
+<p>If an existing requirement already expresses the usage context exactly, avoid
+inventing additional behaviour in the use case. The use case can remain a thin
+grouping/context element.</p>
+<blockquote>
+<div><p>[!IMPORTANT]
+With the current metamodel, every <code class="docutils literal notranslate"><span class="pre">potential_tool_malfunction</span></code> has a mandatory
+<code class="docutils literal notranslate"><span class="pre">parent_needs</span></code> link to a <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code>. Therefore, once you model
+malfunctions, a <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code> is structurally required even if it merely
+references an already well-scoped requirement.</p>
+</div></blockquote>
+</section>
+<section id="sphinx-needs-example">
+<h2>Sphinx-Needs example<a class="headerlink" href="#sphinx-needs-example" title="Link to this heading">#</a></h2>
+<div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>```{tool_usecase} Validate requirement traceability during documentation builds
+:id: tool_usecase__docs_as_code__traceability
+:belongs_to: doc_tool__sphinx_needs
+:realized_by: tool_req__docs_as_code__unresolved_links
+:realizes: stkh_req__docs_as_code__traceability
+
+The project relies on the documentation tooling to identify invalid or
+unresolved requirement links before documentation is accepted.
+```
+</pre></div>
+</div>
+<p>A good use case describes project usage, not an implementation detail.</p>
+<p><strong>Avoid:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Call Python function resolve_links().
+</pre></div>
+</div>
+<p><strong>Prefer:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Validate requirement links during the documentation build.
+</pre></div>
+</div>
+</section>
+<section id="id1">
+<h2>External tool<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<p>Define the <code class="docutils literal notranslate"><span class="pre">tool_req</span></code> needs from <strong>our expectations of the tool</strong>, not by
+importing the vendor’s complete specification.</p>
+<p>Example:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Tool use case:
+Validate requirement traceability during documentation builds.
+
+Tool requirement:
+The tool shall report unresolved requirement links.
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h2>Self-developed tool<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
+<p>Prefer linking the use case to existing <code class="docutils literal notranslate"><span class="pre">tool_req</span></code> needs.</p>
+<p>Do not create separate “qualification requirements” when the normal tool
+requirements already describe the behaviour relied upon by the project.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="step-3-identify-potential-tool-malfunctions">
+<h1>Step 3 — Identify potential tool malfunctions<a class="headerlink" href="#step-3-identify-potential-tool-malfunctions" title="Link to this heading">#</a></h1>
+<p>For every tool use case, identify relevant ways in which the expected tool
+behaviour could fail.</p>
+<p>The current metamodel defines:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">potential_tool_malfunction</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">mandatory_options</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">safety_affected</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;^(YES|NO)$&quot;</span>
+<span class="w">  </span><span class="nt">optional_options</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">detection_sufficient</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;^(YES|NO)$&quot;</span>
+<span class="w">    </span><span class="nt">safety_measures</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^.+$</span>
+<span class="w">  </span><span class="nt">mandatory_links</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">parent_needs</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tool_usecase</span>
+<span class="w">    </span><span class="nt">violates</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stkh_req, tool_req</span>
+</pre></div>
+</div>
+<p>The relationship is:</p>
+<pre  class="mermaid">
+        flowchart LR
+    UC[&quot;tool_usecase&quot;]
+    PM[&quot;potential_tool_malfunction&quot;]
+    STKH[&quot;stkh_req&quot;]
+    TR[&quot;tool_req&quot;]
+
+    PM --&gt;|&quot;parent_needs&quot;| UC
+    PM --&gt;|&quot;violates&quot;| STKH
+    PM --&gt;|&quot;violates&quot;| TR
+
+    style UC fill:#E1D5E7
+    style PM fill:#F8CECC
+    style STKH fill:#DAE8FC
+    style TR fill:#F5F5F5
+    </pre><section id="what-is-a-useful-malfunction">
+<h2>What is a useful malfunction?<a class="headerlink" href="#what-is-a-useful-malfunction" title="Link to this heading">#</a></h2>
+<p>Describe <strong>incorrect behaviour relevant to the use case</strong>.</p>
+<p><strong>Too generic:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>The tool crashes.
+The tool has a bug.
+The tool produces a wrong result.
+</pre></div>
+</div>
+<p><strong>Better:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>An unresolved requirement link is accepted as valid.
+A valid requirement is omitted from generated documentation.
+Generated source code does not represent the configured input model correctly.
+</pre></div>
+</div>
+<p>A useful question is:</p>
+<blockquote>
+<div><p><strong>What could the tool do incorrectly, or fail to do, such that one of the
+requirements we rely on is violated?</strong></p>
+</div></blockquote>
+</section>
+<section id="violates">
+<h2><code class="docutils literal notranslate"><span class="pre">violates</span></code><a class="headerlink" href="#violates" title="Link to this heading">#</a></h2>
+<p>Use <code class="docutils literal notranslate"><span class="pre">violates</span></code> for requirements whose expected behaviour is directly broken by
+the malfunction.</p>
+<p>Typical targets are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">stkh_req</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tool_req</span></code></p></li>
+</ul>
+<p>Do not link arbitrary downstream requirements merely because the malfunction
+could eventually contribute to an incorrect engineering decision.</p>
+</section>
+<section id="id3">
+<h2>Sphinx-Needs example<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
+<div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>```{potential_tool_malfunction} Unresolved requirement link is accepted as valid
+:id: potential_tool_malfunction__docs_as_code__unresolved_link_accepted
+:parent_needs: tool_usecase__docs_as_code__traceability
+:violates:
+  tool_req__docs_as_code__unresolved_links,
+  stkh_req__docs_as_code__traceability
+:safety_affected: YES
+:detection_sufficient: NO
+
+An unresolved requirement link is accepted as valid and the documentation build
+does not report the problem.
+```
+</pre></div>
+</div>
+<p>There is no conceptual difference between external and self-developed tools in
+this step. Malfunctions are derived from the intended usage and the requirements
+the project relies on.</p>
+<p><code class="docutils literal notranslate"><span class="pre">detection_sufficient</span></code> is conditional. It is required for
+<code class="docutils literal notranslate"><span class="pre">safety_affected:</span> <span class="pre">YES</span></code>; it is not required for <code class="docutils literal notranslate"><span class="pre">safety_affected:</span> <span class="pre">NO</span></code> and is
+omitted for non-safety malfunctions. A safety-relevant malfunction with
+<code class="docutils literal notranslate"><span class="pre">detection_sufficient:</span> <span class="pre">YES</span></code> must also document a non-empty <code class="docutils literal notranslate"><span class="pre">safety_measures</span></code>
+value. The malfunction body remains the place for the human-readable reasoning
+that explains why the measure is sufficient or insufficient.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="step-4-evaluate-safety-impact-and-detection">
+<h1>Step 4 — Evaluate safety impact and detection<a class="headerlink" href="#step-4-evaluate-safety-impact-and-detection" title="Link to this heading">#</a></h1>
+<p>For each <code class="docutils literal notranslate"><span class="pre">potential_tool_malfunction</span></code>, answer two questions.</p>
+<section id="does-the-malfunction-affect-safety">
+<h2>Does the malfunction affect safety?<a class="headerlink" href="#does-the-malfunction-affect-safety" title="Link to this heading">#</a></h2>
+<p>Use:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>:safety_affected: YES
+</pre></div>
+</div>
+<p>if the malfunction can:</p>
+<ul class="simple">
+<li><p>introduce an error into safety-related work, or</p></li>
+<li><p>prevent an existing error from being detected.</p></li>
+</ul>
+<p>Use:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>:safety_affected: NO
+</pre></div>
+</div>
+<p>if the malfunction has no relevant safety impact in this usage context.</p>
+<p>This is a property of the <strong>usage context and malfunction</strong>, not a generic label
+for the tool.</p>
+<p>The same tool can therefore have safety-relevant and non-safety-relevant use
+cases.</p>
+</section>
+<hr class="docutils" />
+<section id="is-detection-sufficient">
+<h2>Is detection sufficient?<a class="headerlink" href="#is-detection-sufficient" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">detection_sufficient</span></code> asks:</p>
+<blockquote>
+<div><p><strong>If this malfunction occurs during the intended use of the tool, do the
+measures that are part of that intended usage prevent or detect it with
+sufficient confidence?</strong></p>
+</div></blockquote>
+<p>These measures can be:</p>
+<ul class="simple">
+<li><p>internal to the tool,</p></li>
+<li><p>provided by another tool,</p></li>
+<li><p>part of the surrounding workflow or process.</p></li>
+</ul>
+<p>Examples include:</p>
+<ul class="simple">
+<li><p>generated source is compiled before integration,</p></li>
+<li><p>an independent consistency checker validates generated output,</p></li>
+<li><p>a review compares the generated artifact against its source,</p></li>
+<li><p>the tool performs an internal integrity check and rejects inconsistent input,</p></li>
+<li><p>a downstream tool independently validates critical information.</p></li>
+</ul>
+<p>Document the relevant measure using <code class="docutils literal notranslate"><span class="pre">safety_measures</span></code>.</p>
+<div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>```{potential_tool_malfunction} Generated source contains invalid syntax
+:id: potential_tool_malfunction__generator__invalid_syntax
+:parent_needs: tool_usecase__generator__generate_source
+:violates: tool_req__generator__valid_source
+:safety_affected: YES
+:detection_sufficient: YES
+:safety_measures: Generated source is compiled before it can be integrated.
+
+The generator may emit syntactically invalid source code. The mandatory
+downstream compilation detects this malfunction before the output can be used.
+```
+</pre></div>
+</div>
+<p>The important point is that the measure is part of the <strong>defined intended
+usage</strong>.</p>
+<p>It does not matter whether the measure existed before the TVR was written or
+was introduced as a result of the evaluation. If it becomes a mandatory part of
+the intended usage, evaluate the malfunction with that usage concept.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="step-5-determine-confidence-and-qualification-need">
+<h1>Step 5 — Determine confidence and qualification need<a class="headerlink" href="#step-5-determine-confidence-and-qualification-need" title="Link to this heading">#</a></h1>
+<p>For the SCORE safety evaluation, the simplified decision is:</p>
+<pre  class="mermaid">
+        flowchart TD
+    A{&quot;safety_affected?&quot;}
+    A --&gt;|&quot;NO&quot;| B[&quot;HIGH confidence&lt;br/&gt;No qualification required&quot;]
+    A --&gt;|&quot;YES&quot;| C{&quot;detection_sufficient?&quot;}
+    C --&gt;|&quot;YES&quot;| B
+    C --&gt;|&quot;NO&quot;| D[&quot;LOW confidence&lt;br/&gt;Qualification required&quot;]
+    </pre><div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p><code class="docutils literal notranslate"><span class="pre">safety_affected</span></code></p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">detection_sufficient</span></code></p></th>
+<th class="head"><p>TVR <code class="docutils literal notranslate"><span class="pre">tcl</span></code></p></th>
+<th class="head"><p>Qualification</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">NO</span></code></p></td>
+<td><p>not relevant</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">HIGH</span></code></p></td>
+<td><p>not required</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">YES</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">YES</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">HIGH</span></code></p></td>
+<td><p>not required</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">YES</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">NO</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">LOW</span></code></p></td>
+<td><p>required</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The tooling derives the TVR values from the owned graph rather than treating
+them as independent labels:</p>
+<ol class="arabic simple">
+<li><p>Follow <code class="docutils literal notranslate"><span class="pre">doc_tool</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code> through the mandatory <code class="docutils literal notranslate"><span class="pre">belongs_to</span></code> link.</p></li>
+<li><p>Follow each use case -&gt; <code class="docutils literal notranslate"><span class="pre">potential_tool_malfunction</span></code> through
+<code class="docutils literal notranslate"><span class="pre">parent_needs</span></code>.</p></li>
+<li><p>Set <code class="docutils literal notranslate"><span class="pre">doc_tool.safety_affected</span></code> to <code class="docutils literal notranslate"><span class="pre">YES</span></code> if any owned malfunction is safety
+affected; otherwise set it to <code class="docutils literal notranslate"><span class="pre">NO</span></code>.</p></li>
+<li><p>Set <code class="docutils literal notranslate"><span class="pre">doc_tool.tcl</span></code> to <code class="docutils literal notranslate"><span class="pre">LOW</span></code> if any owned malfunction is safety affected and
+has <code class="docutils literal notranslate"><span class="pre">detection_sufficient:</span> <span class="pre">NO</span></code>; otherwise set it to <code class="docutils literal notranslate"><span class="pre">HIGH</span></code>.</p></li>
+</ol>
+<p>The stored <code class="docutils literal notranslate"><span class="pre">safety_affected</span></code> and <code class="docutils literal notranslate"><span class="pre">tcl</span></code> values remain mandatory SCORE TVR data,
+but validation reports a mismatch when they do not match this derivation.
+Qualification evidence does not change either value and does not change a
+malfunction’s <code class="docutils literal notranslate"><span class="pre">detection_sufficient</span></code> result.</p>
+<p>After the evaluation is complete, update the <code class="docutils literal notranslate"><span class="pre">doc_tool</span></code>:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>:status: evaluated
+:tcl: HIGH
+</pre></div>
+</div>
+<p>or:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>:status: evaluated
+:tcl: LOW
+</pre></div>
+</div>
+<p>The report must clearly state whether qualification is required.</p>
+<section id="multiple-use-cases-and-malfunctions">
+<h2>Multiple use cases and malfunctions<a class="headerlink" href="#multiple-use-cases-and-malfunctions" title="Link to this heading">#</a></h2>
+<p>The overall TVR result must reflect the relevant worst case.</p>
+<p>If any safety-relevant malfunction has insufficient detection, the tool cannot
+be treated as <code class="docutils literal notranslate"><span class="pre">HIGH</span></code> merely because the other use cases are well protected.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="step-5a-improve-the-usage-concept-instead-of-qualifying">
+<h1>Step 5a — Improve the usage concept instead of qualifying<a class="headerlink" href="#step-5a-improve-the-usage-concept-instead-of-qualifying" title="Link to this heading">#</a></h1>
+<p>A <code class="docutils literal notranslate"><span class="pre">LOW</span></code> evaluation does not mean qualification is the only possible response.</p>
+<p>You may change the intended usage by adding an appropriate detection or
+prevention measure.</p>
+<pre  class="mermaid">
+        flowchart LR
+    subgraph Before
+        A1[&quot;Generator&quot;] --&gt; A2[&quot;Generated output&quot;]
+        A2 --&gt; A3[&quot;Used directly&quot;]
+    end
+
+    subgraph After
+        B1[&quot;Generator&quot;] --&gt; B2[&quot;Generated output&quot;]
+        B2 --&gt; B3[&quot;Independent check&quot;]
+        B3 --&gt; B4[&quot;Accepted output&quot;]
+    end
+    </pre><p>Before:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>:safety_affected: YES
+:detection_sufficient: NO
+</pre></div>
+</div>
+<p>After the independent check becomes a mandatory part of intended usage:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>:safety_affected: YES
+:safety_measures: Independent checker validates every generated artifact.
+:detection_sufficient: YES
+</pre></div>
+</div>
+<p>This requires <strong>re-evaluating the affected malfunction because the usage concept
+changed</strong>.</p>
+<p>It is not a reclassification caused by qualification.</p>
+</section>
+<hr class="docutils" />
+<section id="step-6-qualify-the-tool-if-required">
+<h1>Step 6 — Qualify the tool if required<a class="headerlink" href="#step-6-qualify-the-tool-if-required" title="Link to this heading">#</a></h1>
+<p>Qualification is required when the evaluation results in insufficient
+confidence and the project does not resolve that through a changed usage
+concept.</p>
+<p>SCORE uses validation of the software tool as the qualification approach.</p>
+<p>The qualification view starts from <code class="docutils literal notranslate"><span class="pre">tool_req</span></code>:</p>
+<pre  class="mermaid">
+        flowchart LR
+    TR[&quot;tool_req&quot;]
+    TC[&quot;testcase&quot;]
+    RESULT[&quot;Test result / evidence&quot;]
+
+    TC --&gt;|&quot;fully_verifies or&lt;br/&gt;partially_verifies&quot;| TR
+    TC --&gt; RESULT
+
+    style TR fill:#F5F5F5
+    </pre><p>In the current SCORE Docs-as-Code model, test execution results are represented
+as <code class="docutils literal notranslate"><span class="pre">testcase</span></code> needs. Their normal links to requirements are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">fully_verifies</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">partially_verifies</span></code></p></li>
+</ul>
+<p>For qualification, the relevant testcases should verify the <code class="docutils literal notranslate"><span class="pre">tool_req</span></code> needs
+that define the behaviour relied upon by the tool use cases.</p>
+<section id="qualification-is-not-a-detection-measure">
+<h2>Qualification is not a detection measure<a class="headerlink" href="#qualification-is-not-a-detection-measure" title="Link to this heading">#</a></h2>
+<p>Compare the two roles:</p>
+<pre  class="mermaid">
+        flowchart TB
+    subgraph Usage[&quot;Detection during intended tool usage&quot;]
+        U1[&quot;Tool execution&quot;] --&gt; U2[&quot;Output&quot;]
+        U2 --&gt; U3[&quot;Independent / internal check&quot;]
+        U3 --&gt; U4[&quot;Output accepted&quot;]
+    end
+
+    subgraph Qualification[&quot;Qualification evidence&quot;]
+        Q1[&quot;Specific tool version&quot;] --&gt; Q2[&quot;Requirements-based testcase&quot;]
+        Q2 --&gt; Q3[&quot;Evidence that tool_req is satisfied&quot;]
+    end
+    </pre><p>A qualification testcase answers:</p>
+<blockquote>
+<div><p>Does this tool version satisfy the requirement?</p>
+</div></blockquote>
+<p>A safety measure used for <code class="docutils literal notranslate"><span class="pre">detection_sufficient</span></code> answers:</p>
+<blockquote>
+<div><p>If the malfunction happens during real intended usage, will it be prevented or
+detected before its result is relied upon?</p>
+</div></blockquote>
+<p>The same technical check can only count for both if it actually performs both
+roles.</p>
+</section>
+<hr class="docutils" />
+<section id="external-tool-qualification">
+<h2>External tool qualification<a class="headerlink" href="#external-tool-qualification" title="Link to this heading">#</a></h2>
+<p>External tools are commonly validated largely as black boxes.</p>
+<p>Example requirement:</p>
+<div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>```{tool_req} Report unresolved requirement links
+:id: tool_req__docs_as_code__unresolved_links
+
+The tool shall report an unresolved requirement link as an error.
+```
+</pre></div>
+</div>
+<p>A requirements-based qualification test can then:</p>
+<ol class="arabic simple">
+<li><p>create input containing a known unresolved link,</p></li>
+<li><p>execute the exact configured tool version,</p></li>
+<li><p>verify that the expected error is reported.</p></li>
+</ol>
+<p>The resulting SCORE <code class="docutils literal notranslate"><span class="pre">testcase</span></code> should link to the tool requirement via
+<code class="docutils literal notranslate"><span class="pre">fully_verifies</span></code> or <code class="docutils literal notranslate"><span class="pre">partially_verifies</span></code>, as appropriate.</p>
+<p>Vendor documentation, release notes, and upstream tests can support the
+argument, but the qualification evidence needs to address the behaviour that
+<strong>our project relies on</strong>.</p>
+</section>
+<hr class="docutils" />
+<section id="self-developed-tool-qualification">
+<h2>Self-developed tool qualification<a class="headerlink" href="#self-developed-tool-qualification" title="Link to this heading">#</a></h2>
+<p>For a self-developed tool, do not automatically create a second qualification
+test suite.</p>
+<p>If the normal development process already produces testcases that:</p>
+<ul class="simple">
+<li><p>verify the relevant <code class="docutils literal notranslate"><span class="pre">tool_req</span></code> needs,</p></li>
+<li><p>execute against the tool version being qualified,</p></li>
+<li><p>provide suitable recorded results,</p></li>
+</ul>
+<p>reuse those testcases as qualification evidence.</p>
+<p>Prefer:</p>
+<pre  class="mermaid">
+        flowchart LR
+    TR[&quot;Existing tool_req&quot;] --&gt; IMPL[&quot;Tool implementation&quot;]
+    TC[&quot;Existing testcase&quot;] --&gt;|&quot;fully_verifies / partially_verifies&quot;| TR
+    TC --&gt; E[&quot;Existing test evidence&quot;]
+    </pre><p>over duplicating the same requirement and test solely for qualification.</p>
+<p>Additional qualification tests are needed only where the existing evidence is
+insufficient.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="step-7-update-the-tool-verification-report">
+<h1>Step 7 — Update the Tool Verification Report<a class="headerlink" href="#step-7-update-the-tool-verification-report" title="Link to this heading">#</a></h1>
+<p>If no qualification was required, the evaluated report can proceed to review.</p>
+<p>If qualification was required and completed successfully:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>:status: qualified
+</pre></div>
+</div>
+<p>The evaluation result itself does <strong>not</strong> automatically change.</p>
+<p>This is a valid final state before release:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>:tcl: LOW
+:status: qualified
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">LOW</span></code> records why qualification was necessary.</p>
+<p><code class="docutils literal notranslate"><span class="pre">qualified</span></code> records that the additional qualification evidence has been
+provided.</p>
+<p>Qualification does not turn:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>:detection_sufficient: NO
+</pre></div>
+</div>
+<p>into:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>:detection_sufficient: YES
+</pre></div>
+</div>
+<p>unless the intended usage was also changed by introducing a new mandatory
+detection mechanism.</p>
+</section>
+<hr class="docutils" />
+<section id="step-8-review-and-release-the-tool-verification-report">
+<h1>Step 8 — Review and release the Tool Verification Report<a class="headerlink" href="#step-8-review-and-release-the-tool-verification-report" title="Link to this heading">#</a></h1>
+<p>Review the completed TVR against the SCORE Tool Verification Report Review
+Checklist.</p>
+<p>The review should cover, where applicable:</p>
+<ul class="simple">
+<li><p>unique tool identification,</p></li>
+<li><p>exact tool version,</p></li>
+<li><p>purpose and tool use cases,</p></li>
+<li><p>inputs and outputs,</p></li>
+<li><p>configuration,</p></li>
+<li><p>environment and limitations,</p></li>
+<li><p>documentation,</p></li>
+<li><p>usage constraints,</p></li>
+<li><p>potential malfunctions,</p></li>
+<li><p>safety impact,</p></li>
+<li><p>safety measures,</p></li>
+<li><p>error detection,</p></li>
+<li><p>overall confidence,</p></li>
+<li><p>qualification evidence where required.</p></li>
+</ul>
+<p>After successful approval:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>:status: released
+</pre></div>
+</div>
+<p>If verification is unsuccessful:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>:status: rejected
+</pre></div>
+</div>
+<p>See:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://eclipse-score.github.io/process_description/main/process_areas/tool_management/tool_management_workflow.html">SCORE Tool Management Workflow</a></p></li>
+<li><p><a class="reference external" href="https://eclipse-score.github.io/process_description/main/folder_templates/tools/tool_verification_report_template.html">SCORE Tool Verification Report Template</a></p></li>
+<li><p><a class="reference external" href="https://eclipse-score.github.io/process_description/main/process_areas/tool_management/guidance/tool_management_reqs.html">SCORE Tool Management Process Requirements</a></p></li>
+<li><p><a class="reference external" href="https://eclipse-score.github.io/process_description/main/process_areas/tool_management/guidance/tool_management_checklist.html">SCORE Tool Verification Report Review Checklist</a></p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="complete-example-external-tool">
+<h1>Complete example — external tool<a class="headerlink" href="#complete-example-external-tool" title="Link to this heading">#</a></h1>
+<p>Assume an external documentation tool is used to validate requirement
+traceability.</p>
+<section id="stakeholder-requirement">
+<h2>Stakeholder requirement<a class="headerlink" href="#stakeholder-requirement" title="Link to this heading">#</a></h2>
+<p>A real <code class="docutils literal notranslate"><span class="pre">stkh_req</span></code> must provide the mandatory metadata defined by the SCORE
+metamodel. For example:</p>
+<div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>```{stkh_req} Provide valid verification traceability
+:id: stkh_req__docs_as_code__traceability
+:reqtype: Process
+:safety: ASIL_B
+:security: NO
+:status: valid
+:rationale: Invalid traceability can hide missing verification.
+:valid_from: v1.0
+
+Safety-related requirements shall have valid verification traceability.
+```
+</pre></div>
+</div>
+</section>
+<section id="tool-requirement">
+<h2>Tool requirement<a class="headerlink" href="#tool-requirement" title="Link to this heading">#</a></h2>
+<div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>```{tool_req} Report unresolved requirement links
+:id: tool_req__docs_as_code__unresolved_links
+:satisfies: stkh_req__docs_as_code__traceability
+
+The tool shall report unresolved requirement links as errors.
+```
+</pre></div>
+</div>
+</section>
+<section id="tool-use-case">
+<h2>Tool use case<a class="headerlink" href="#tool-use-case" title="Link to this heading">#</a></h2>
+<div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>```{tool_usecase} Validate requirement traceability during documentation builds
+:id: tool_usecase__docs_as_code__traceability
+:belongs_to: doc_tool__sphinx_needs
+:realized_by: tool_req__docs_as_code__unresolved_links
+:realizes: stkh_req__docs_as_code__traceability
+
+The project relies on the documentation tool to detect invalid traceability
+before generated documentation is accepted.
+```
+</pre></div>
+</div>
+</section>
+<section id="potential-malfunction">
+<h2>Potential malfunction<a class="headerlink" href="#potential-malfunction" title="Link to this heading">#</a></h2>
+<div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>```{potential_tool_malfunction} Unresolved requirement link is accepted as valid
+:id: potential_tool_malfunction__docs_as_code__unresolved_link_accepted
+:parent_needs: tool_usecase__docs_as_code__traceability
+:violates:
+  tool_req__docs_as_code__unresolved_links,
+  stkh_req__docs_as_code__traceability
+:safety_affected: YES
+:detection_sufficient: NO
+
+An unresolved requirement link is accepted as valid and no error is reported.
+```
+</pre></div>
+</div>
+<p>The resulting model is:</p>
+<pre  class="mermaid">
+        flowchart LR
+    STKH[&quot;stkh_req__docs_as_code__traceability&quot;]
+    UC[&quot;tool_usecase__docs_as_code__traceability&quot;]
+    TR[&quot;tool_req__docs_as_code__unresolved_links&quot;]
+    PM[&quot;potential_tool_malfunction__docs_as_code__&lt;br/&gt;unresolved_link_accepted&quot;]
+
+    UC --&gt;|&quot;realizes&quot;| STKH
+    UC --&gt;|&quot;realized_by&quot;| TR
+    PM --&gt;|&quot;parent_needs&quot;| UC
+    PM --&gt;|&quot;violates&quot;| STKH
+    PM --&gt;|&quot;violates&quot;| TR
+
+    style STKH fill:#DAE8FC
+    style UC fill:#E1D5E7
+    style TR fill:#F5F5F5
+    style PM fill:#F8CECC
+    </pre><p>Because the malfunction is safety relevant and detection is insufficient:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>tcl = LOW
+qualification required = YES
+</pre></div>
+</div>
+<p>Qualification then validates
+<code class="docutils literal notranslate"><span class="pre">tool_req__docs_as_code__unresolved_links</span></code>.</p>
+<p>The resulting test execution must produce a <code class="docutils literal notranslate"><span class="pre">testcase</span></code> that links to the tool
+requirement using the normal SCORE verification links, for example
+<code class="docutils literal notranslate"><span class="pre">fully_verifies</span></code>.</p>
+<p>The TVR remains <code class="docutils literal notranslate"><span class="pre">LOW</span></code>, but after successful qualification its lifecycle can
+progress:</p>
+<pre  class="mermaid">
+        flowchart LR
+    A[&quot;evaluated&lt;br/&gt;tcl = LOW&quot;] --&gt; B[&quot;qualification tests pass&quot;]
+    B --&gt; C[&quot;qualified&lt;br/&gt;tcl = LOW&quot;]
+    C --&gt; D[&quot;released&lt;br/&gt;tcl = LOW&quot;]
+    </pre></section>
+</section>
+<hr class="docutils" />
+<section id="complete-example-self-developed-tool">
+<h1>Complete example — self-developed tool<a class="headerlink" href="#complete-example-self-developed-tool" title="Link to this heading">#</a></h1>
+<p>Assume the project develops its own model-to-code generator.</p>
+<section id="existing-requirements">
+<h2>Existing requirements<a class="headerlink" href="#existing-requirements" title="Link to this heading">#</a></h2>
+<div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>```{stkh_req} Generate software from the approved model
+:id: stkh_req__generator__approved_model
+:reqtype: Functional
+:safety: ASIL_B
+:security: NO
+:status: valid
+:rationale: Production code must represent the approved behavioural model.
+:valid_from: v1.0
+
+Software source shall be generated from the approved model.
+```
+</pre></div>
+</div>
+<div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>```{tool_req} Preserve configured state transitions
+:id: tool_req__generator__state_transitions
+:satisfies: stkh_req__generator__approved_model
+
+The generator shall preserve configured state transitions in generated source
+code.
+```
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h2>Tool use case<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
+<div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>```{tool_usecase} Generate production source from the approved model
+:id: tool_usecase__generator__generate_source
+:belongs_to: doc_tool__sphinx_needs
+:realized_by: tool_req__generator__state_transitions
+:realizes: stkh_req__generator__approved_model
+
+The project relies on the generator to transform the approved model into
+production source code.
+```
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h2>Potential malfunction<a class="headerlink" href="#id5" title="Link to this heading">#</a></h2>
+<div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>```{potential_tool_malfunction} State transition is omitted from generated source
+:id: potential_tool_malfunction__generator__missing_transition
+:parent_needs: tool_usecase__generator__generate_source
+:violates:
+  tool_req__generator__state_transitions,
+  stkh_req__generator__approved_model
+:safety_affected: YES
+:detection_sufficient: NO
+
+A state transition present in the approved input model is omitted from the
+generated source code.
+```
+</pre></div>
+</div>
+<p>Result:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>tcl = LOW
+qualification required = YES
+</pre></div>
+</div>
+<p>If an existing requirements-based test already verifies
+<code class="docutils literal notranslate"><span class="pre">tool_req__generator__state_transitions</span></code> for the released generator version,
+reuse its generated <code class="docutils literal notranslate"><span class="pre">testcase</span></code> and test evidence for qualification.</p>
+<p>Do not create another requirement and another test solely to label them
+“qualification”.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="when-to-evaluate-the-tool-again">
+<h1>When to evaluate the tool again<a class="headerlink" href="#when-to-evaluate-the-tool-again" title="Link to this heading">#</a></h1>
+<p>Re-evaluate affected malfunctions when information used by the evaluation
+changes.</p>
+<p>Typical triggers include:</p>
+<ul class="simple">
+<li><p>a new or changed tool use case,</p></li>
+<li><p>new or changed stakeholder requirements,</p></li>
+<li><p>new or changed tool requirements,</p></li>
+<li><p>a changed tool version,</p></li>
+<li><p>a changed relevant configuration,</p></li>
+<li><p>a changed integration/environment,</p></li>
+<li><p>a newly identified potential malfunction,</p></li>
+<li><p>a new, changed, or removed safety measure,</p></li>
+<li><p>a changed surrounding workflow/toolchain,</p></li>
+<li><p>evidence that an assumed detection measure is not sufficient.</p></li>
+</ul>
+<p>Do <strong>not</strong> re-evaluate merely because qualification tests passed.</p>
+<p>Qualification adds evidence about the tool. It does not by itself change the
+intended usage or the detection measures.</p>
+<pre  class="mermaid">
+        flowchart TD
+    A{&quot;What changed?&quot;}
+
+    A --&gt;|&quot;Tool version / use case / requirement /&lt;br/&gt;workflow / safety measure&quot;| B[&quot;Re-evaluate affected malfunctions&quot;]
+    A --&gt;|&quot;Only qualification tests executed&quot;| C[&quot;No re-evaluation required&quot;]
+
+    B --&gt; D[&quot;Update TVR evaluation if result changed&quot;]
+    </pre></section>
+<hr class="docutils" />
+<section id="common-mistakes">
+<h1>Common mistakes<a class="headerlink" href="#common-mistakes" title="Link to this heading">#</a></h1>
+<section id="treating-tool-usecase-as-a-new-requirement-level">
+<h2>Treating <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code> as a new requirement level<a class="headerlink" href="#treating-tool-usecase-as-a-new-requirement-level" title="Link to this heading">#</a></h2>
+<p>Do not invent new normative behaviour in <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code>.</p>
+<p>It is a <strong>usage-context / grouping element</strong> between stakeholder intent and
+concrete tool behaviour.</p>
+<pre  class="mermaid">
+        flowchart LR
+    STKH[&quot;Stakeholder intent&quot;]
+    UC[&quot;Usage context&quot;]
+    TR[&quot;Concrete tool behaviour&quot;]
+
+    UC --&gt;|&quot;realizes&quot;| STKH
+    UC --&gt;|&quot;realized_by&quot;| TR
+    </pre></section>
+<hr class="docutils" />
+<section id="using-generic-malfunctions">
+<h2>Using generic malfunctions<a class="headerlink" href="#using-generic-malfunctions" title="Link to this heading">#</a></h2>
+<p>Avoid:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>The tool crashes.
+The tool has a bug.
+The result is wrong.
+</pre></div>
+</div>
+<p>Prefer:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>A missing link is accepted as valid.
+A required artifact is omitted from generated output.
+The generated value differs from the configured source value.
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="treating-every-existing-test-as-a-safety-measure">
+<h2>Treating every existing test as a safety measure<a class="headerlink" href="#treating-every-existing-test-as-a-safety-measure" title="Link to this heading">#</a></h2>
+<p>A test executed during development or release validation is not automatically a
+measure for <code class="docutils literal notranslate"><span class="pre">detection_sufficient</span></code>.</p>
+<p>Ask:</p>
+<blockquote>
+<div><p>If the malfunction occurs during actual intended tool usage, does this
+mechanism prevent or detect it before the result is relied upon?</p>
+</div></blockquote>
+<p>If not, it is not sufficient justification for:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>:detection_sufficient: YES
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="treating-qualification-as-reclassification">
+<h2>Treating qualification as reclassification<a class="headerlink" href="#treating-qualification-as-reclassification" title="Link to this heading">#</a></h2>
+<p>Qualification may leave the evaluation unchanged:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>:safety_affected: YES
+:detection_sufficient: NO
+:tcl: LOW
+:status: qualified
+</pre></div>
+</div>
+<p>This is not contradictory.</p>
+<p><code class="docutils literal notranslate"><span class="pre">LOW</span></code> describes the evaluation.</p>
+<p><code class="docutils literal notranslate"><span class="pre">qualified</span></code> describes the additional evidence.</p>
+</section>
+<hr class="docutils" />
+<section id="duplicating-external-specifications">
+<h2>Duplicating external specifications<a class="headerlink" href="#duplicating-external-specifications" title="Link to this heading">#</a></h2>
+<p>Do not copy an external tool’s complete specification into <code class="docutils literal notranslate"><span class="pre">tool_req</span></code>.</p>
+<p>Model the behaviour <strong>our project relies on</strong>.</p>
+</section>
+<hr class="docutils" />
+<section id="duplicating-self-developed-tests">
+<h2>Duplicating self-developed tests<a class="headerlink" href="#duplicating-self-developed-tests" title="Link to this heading">#</a></h2>
+<p>Do not build a parallel qualification-test world when existing SCORE testcases
+already verify the relevant <code class="docutils literal notranslate"><span class="pre">tool_req</span></code> needs with suitable evidence.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="quick-reference">
+<h1>Quick reference<a class="headerlink" href="#quick-reference" title="Link to this heading">#</a></h1>
+<pre  class="mermaid">
+        flowchart TD
+    A[&quot;1. Identify exact tool version / configuration&quot;]
+    B[&quot;2. Create doc_tool&lt;br/&gt;status = draft&quot;]
+    C[&quot;3. Define tool_usecase&quot;]
+    D[&quot;4. Link tool_req&lt;br/&gt;and optionally stkh_req&quot;]
+    E[&quot;5. Identify potential_tool_malfunction&quot;]
+    F[&quot;6. Set safety_affected&quot;]
+    G[&quot;7. Document safety_measures&lt;br/&gt;and detection_sufficient&quot;]
+    H[&quot;8. Determine tcl&quot;]
+    I[&quot;status = evaluated&quot;]
+    J{&quot;tcl = LOW?&quot;}
+    K[&quot;Verify relevant tool_req&lt;br/&gt;with testcase evidence&quot;]
+    L[&quot;status = qualified&quot;]
+    M[&quot;Review / approve TVR&quot;]
+    N[&quot;status = released&quot;]
+
+    A --&gt; B --&gt; C --&gt; D --&gt; E --&gt; F --&gt; G --&gt; H --&gt; I --&gt; J
+    J --&gt;|&quot;No&quot;| M
+    J --&gt;|&quot;Yes&quot;| K --&gt; L --&gt; M
+    M --&gt; N
+    </pre><p>In short:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>tool_usecase
+    -&gt; defines the context in which we rely on the tool
+
+potential_tool_malfunction
+    -&gt; describes how that reliance can fail
+
+safety_affected
+    -&gt; says whether the failure matters for safety
+
+safety_measures + detection_sufficient
+    -&gt; describe whether intended usage prevents/detects the failure
+
+LOW
+    -&gt; qualification is required
+
+testcase -&gt; fully_verifies/partially_verifies -&gt; tool_req
+    -&gt; provides qualification evidence
+
+qualified
+    -&gt; qualification evidence exists; it does not mean tcl became HIGH
+</pre></div>
+</div>
+</section>
+<section id="score-references">
+<h1>SCORE references<a class="headerlink" href="#score-references" title="Link to this heading">#</a></h1>
+<ul class="simple">
+<li><p><a class="reference external" href="https://eclipse-score.github.io/process_description/main/process_areas/tool_management/tool_management_workflow.html">Tool Management Workflow</a></p></li>
+<li><p><a class="reference external" href="https://eclipse-score.github.io/process_description/main/folder_templates/tools/tool_verification_report_template.html">Tool Verification Report Template</a></p></li>
+<li><p><a class="reference external" href="https://eclipse-score.github.io/process_description/main/process_areas/tool_management/guidance/tool_management_reqs.html">Tool Management Process Requirements</a></p></li>
+<li><p><a class="reference external" href="https://eclipse-score.github.io/process_description/main/process_areas/tool_management/guidance/tool_management_checklist.html">Tool Verification Report Review Checklist</a></p></li>
+</ul>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="test_to_doc_links.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Reference Docs in Tests</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="generated_docs.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Integrate Generated Documentation</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">How to Apply the SCORE Tool Management Process</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rendering-and-examples">Rendering and examples</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#mental-model">Mental model</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#external-vs-self-developed-tools">External vs. self-developed tools</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#score-workflow-at-a-glance">SCORE workflow at a glance</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-create-the-tool-verification-report">Step 1 — Create the Tool Verification Report</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-to-model">What to model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#external-tool">External tool</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#self-developed-tool">Self-developed tool</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-define-how-the-project-uses-the-tool">Step 2 — Define how the project uses the tool</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-is-tool-usecase-useful">When is <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code> useful?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sphinx-needs-example">Sphinx-Needs example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">External tool</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Self-developed tool</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-identify-potential-tool-malfunctions">Step 3 — Identify potential tool malfunctions</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-a-useful-malfunction">What is a useful malfunction?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#violates"><code class="docutils literal notranslate"><span class="pre">violates</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Sphinx-Needs example</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#step-4-evaluate-safety-impact-and-detection">Step 4 — Evaluate safety impact and detection</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#does-the-malfunction-affect-safety">Does the malfunction affect safety?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#is-detection-sufficient">Is detection sufficient?</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#step-5-determine-confidence-and-qualification-need">Step 5 — Determine confidence and qualification need</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multiple-use-cases-and-malfunctions">Multiple use cases and malfunctions</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#step-5a-improve-the-usage-concept-instead-of-qualifying">Step 5a — Improve the usage concept instead of qualifying</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#step-6-qualify-the-tool-if-required">Step 6 — Qualify the tool if required</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#qualification-is-not-a-detection-measure">Qualification is not a detection measure</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#external-tool-qualification">External tool qualification</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#self-developed-tool-qualification">Self-developed tool qualification</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#step-7-update-the-tool-verification-report">Step 7 — Update the Tool Verification Report</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#step-8-review-and-release-the-tool-verification-report">Step 8 — Review and release the Tool Verification Report</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#complete-example-external-tool">Complete example — external tool</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stakeholder-requirement">Stakeholder requirement</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tool-requirement">Tool requirement</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tool-use-case">Tool use case</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#potential-malfunction">Potential malfunction</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#complete-example-self-developed-tool">Complete example — self-developed tool</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#existing-requirements">Existing requirements</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Tool use case</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">Potential malfunction</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#when-to-evaluate-the-tool-again">When to evaluate the tool again</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#common-mistakes">Common mistakes</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#treating-tool-usecase-as-a-new-requirement-level">Treating <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code> as a new requirement level</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-generic-malfunctions">Using generic malfunctions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#treating-every-existing-test-as-a-safety-measure">Treating every existing test as a safety measure</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#treating-qualification-as-reclassification">Treating qualification as reclassification</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#duplicating-external-specifications">Duplicating external specifications</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#duplicating-self-developed-tests">Duplicating self-developed tests</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-reference">Quick reference</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#score-references">SCORE references</a></li>
+</ul>
+
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  
+  <div class="tocsection editthispage">
+    <a href="https://github.com/eclipse-score/docs-as-code/edit/main/docs/how-to/perform_tool_verification.md">
+      <i class="fa-solid fa-pencil"></i>
+      
+      
+        
+          Edit on GitHub
+        
+      
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.20.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

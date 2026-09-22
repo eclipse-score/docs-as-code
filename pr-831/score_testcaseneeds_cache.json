@@ -1718,7 +1718,7 @@
     "TestType": "requirements-based",
     "DerivationTechnique": "requirements-analysis",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_test_linkage_metrics, tool_malfunction__docs_as_code__coverage",
+    "PartiallyVerifies": "tool_req__docs_test_linkage_metrics, potential_tool_malfunction__docs_as_code__m3",
     "FullyVerifies": null
   },
   {
@@ -1760,7 +1760,7 @@
     "TestType": "interface-test",
     "DerivationTechnique": "design-analysis",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_test_linkage_metrics, tool_malfunction__docs_as_code__coverage",
+    "PartiallyVerifies": "tool_req__docs_test_linkage_metrics, potential_tool_malfunction__docs_as_code__m3",
     "FullyVerifies": null
   },
   {
@@ -1957,7 +1957,7 @@
     "DerivationTechnique": "requirements_based",
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_arch_types",
-    "FullyVerifies": "tool_malfunction__docs_as_code__arch_view"
+    "FullyVerifies": "potential_tool_malfunction__docs_as_code__m4"
   },
   {
     "name": "test_rules_file_based__test_need",
@@ -2254,6 +2254,20 @@
     "FullyVerifies": null
   },
   {
+    "name": "test_rules_file_based__test_rst_files[graph/test_tool_qualification.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/graph/test_tool_qualification.rst",
+    "line": "15",
+    "result": "passed",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": "",
+    "TestType": "requirements_based",
+    "DerivationTechnique": "requirements_based",
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
     "name": "test_rules_file_based__test_rst_files[graph/test_workproduct_aspice_40.rst]",
     "file": "src/extensions/score_metamodel/tests/rst/graph/test_workproduct_aspice_40.rst",
     "line": "16",
@@ -2293,7 +2307,7 @@
     "DerivationTechnique": "requirements_based",
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_common_attr_safety_link_check",
-    "FullyVerifies": "tool_malfunction__docs_as_code__safety_links"
+    "FullyVerifies": "potential_tool_malfunction__docs_as_code__m2"
   },
   {
     "name": "test_check_needs_extends__test_filter_reports_cross_document_or_match_without_changing_directive",
@@ -3021,7 +3035,7 @@
     "DerivationTechnique": "requirements-analysis",
     "result_text": "",
     "PartiallyVerifies": null,
-    "FullyVerifies": "tool_malfunction__docs_as_code__metamodel"
+    "FullyVerifies": "potential_tool_malfunction__docs_as_code__m1"
   },
   {
     "name": "test_metamodel_load__test_shipped_metamodel_declares_every_link_it_uses",
@@ -3035,7 +3049,7 @@
     "DerivationTechnique": "requirements-analysis",
     "result_text": "",
     "PartiallyVerifies": null,
-    "FullyVerifies": "tool_malfunction__docs_as_code__metamodel"
+    "FullyVerifies": "potential_tool_malfunction__docs_as_code__m1"
   },
   {
     "name": "test_metamodel_load__test_tool_qualification_types_model_nested_traceability",
@@ -3049,7 +3063,7 @@
     "DerivationTechnique": "requirements-analysis",
     "result_text": "",
     "PartiallyVerifies": null,
-    "FullyVerifies": "tool_malfunction__docs_as_code__metamodel"
+    "FullyVerifies": "potential_tool_malfunction__docs_as_code__m1"
   },
   {
     "name": "TestStandards__test_my_pie_linked_standard_requirements",
@@ -3209,6 +3223,258 @@
     "name": "TestStandards__test_assert_multiple_kwargs",
     "file": "src/extensions/score_metamodel/tests/test_standards.py",
     "line": "940",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_tool_qualification__test_safety_malfunction_requires_conditional_evaluation_data[YES-None-None-safety-relevant malfunctions]",
+    "file": "src/extensions/score_metamodel/tests/test_tool_qualification.py",
+    "line": "78",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_tool_qualification__test_safety_malfunction_requires_conditional_evaluation_data[YES-YES--non-empty `safety_measures`]",
+    "file": "src/extensions/score_metamodel/tests/test_tool_qualification.py",
+    "line": "78",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_tool_qualification__test_positive_detection_requires_non_empty_safety_measure",
+    "file": "src/extensions/score_metamodel/tests/test_tool_qualification.py",
+    "line": "105",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_tool_qualification__test_positive_detection_with_measure_is_valid",
+    "file": "src/extensions/score_metamodel/tests/test_tool_qualification.py",
+    "line": "120",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_tool_qualification__test_safety_malfunction_with_insufficient_detection_needs_no_measure",
+    "file": "src/extensions/score_metamodel/tests/test_tool_qualification.py",
+    "line": "135",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_tool_qualification__test_non_safety_malfunction_does_not_need_detection",
+    "file": "src/extensions/score_metamodel/tests/test_tool_qualification.py",
+    "line": "149",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_tool_qualification__test_non_safety_malfunction_rejects_meaningless_detection",
+    "file": "src/extensions/score_metamodel/tests/test_tool_qualification.py",
+    "line": "162",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_tool_qualification__test_low_malfunction_with_tool_requirement_is_valid",
+    "file": "src/extensions/score_metamodel/tests/test_tool_qualification.py",
+    "line": "176",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_tool_qualification__test_low_malfunction_with_only_stakeholder_requirement_is_invalid",
+    "file": "src/extensions/score_metamodel/tests/test_tool_qualification.py",
+    "line": "184",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_tool_qualification__test_mismatching_derived_safety_value_is_invalid",
+    "file": "src/extensions/score_metamodel/tests/test_tool_qualification.py",
+    "line": "196",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_tool_qualification__test_mismatching_derived_tcl_is_invalid",
+    "file": "src/extensions/score_metamodel/tests/test_tool_qualification.py",
+    "line": "207",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_tool_qualification__test_mixed_use_cases_derive_low_from_one_low_malfunction",
+    "file": "src/extensions/score_metamodel/tests/test_tool_qualification.py",
+    "line": "218",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_tool_qualification__test_qualified_low_report_requires_successful_full_evidence",
+    "file": "src/extensions/score_metamodel/tests/test_tool_qualification.py",
+    "line": "242",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_tool_qualification__test_qualified_low_report_with_passed_full_evidence_is_valid",
+    "file": "src/extensions/score_metamodel/tests/test_tool_qualification.py",
+    "line": "252",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_tool_qualification__test_partial_evidence_alone_does_not_complete_low_qualification",
+    "file": "src/extensions/score_metamodel/tests/test_tool_qualification.py",
+    "line": "268",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_tool_qualification__test_released_low_report_also_requires_successful_full_evidence",
+    "file": "src/extensions/score_metamodel/tests/test_tool_qualification.py",
+    "line": "284",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_tool_qualification__test_high_report_does_not_require_qualification",
+    "file": "src/extensions/score_metamodel/tests/test_tool_qualification.py",
+    "line": "294",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_tool_qualification__test_qualification_does_not_reclassify_detection_or_tcl",
+    "file": "src/extensions/score_metamodel/tests/test_tool_qualification.py",
+    "line": "323",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4757,7 +5023,7 @@
     "DerivationTechnique": "requirements-analysis",
     "result_text": "",
     "PartiallyVerifies": null,
-    "FullyVerifies": "tool_malfunction__docs_as_code__backlinks, tool_malfunction__docs_as_code__generation"
+    "FullyVerifies": "potential_tool_malfunction__docs_as_code__m8, potential_tool_malfunction__docs_as_code__m9"
   },
   {
     "name": "test_source_code_link_integration__test_source_link_integration_non_existent_id",
@@ -4897,7 +5163,7 @@
     "DerivationTechnique": "requirements-analysis",
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_test_link_testcase",
-    "FullyVerifies": "tool_malfunction__docs_as_code__test_linkage, tool_malfunction__docs_as_code__test_refs"
+    "FullyVerifies": "potential_tool_malfunction__docs_as_code__m5, potential_tool_malfunction__docs_as_code__m6"
   },
   {
     "name": "test_testlink__test_store_and_load_testlinks_roundtrip",
@@ -5205,7 +5471,7 @@
     "DerivationTechnique": "requirements-analysis",
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_test_link_testcase",
-    "FullyVerifies": "tool_malfunction__docs_as_code__test_linkage, tool_malfunction__docs_as_code__test_refs"
+    "FullyVerifies": "potential_tool_malfunction__docs_as_code__m5, potential_tool_malfunction__docs_as_code__m6"
   },
   {
     "name": "test_xml_parser__test_short_hash_consistency_and_format",

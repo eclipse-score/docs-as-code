@@ -1143,6 +1143,7 @@ class logic_arc_int_op {
 class mod {
   +id
   +version
+  +maturity [optional]*
   +safety [optional]*
   +security [optional]*
   +source_code_link [optional]*
@@ -1206,6 +1207,15 @@ class plat_sec_threat {
   +status
   +threat_id
   +version
+  +source_code_link [optional]*
+  +testlink [optional]*
+}
+class potential_tool_malfunction {
+  +id
+  +safety_affected
+  +version
+  +detection_sufficient [optional]*
+  +safety_measures [optional]*
   +source_code_link [optional]*
   +testlink [optional]*
 }
@@ -1293,22 +1303,6 @@ class testcase {
   +test_type [optional]*
   +testlink [optional]*
 }
-class tool_malfunction_87f13fc6[&quot;tool-malfunction&quot;] {
-  +additional_safety_measure_required
-  +detection_sufficient
-  +id
-  +safety_affected
-  +version
-  +safety_measure [optional]*
-  +source_code_link [optional]*
-  +testlink [optional]*
-}
-class tool_usecase_ebf4ad03[&quot;tool-usecase&quot;] {
-  +id
-  +version
-  +source_code_link [optional]*
-  +testlink [optional]*
-}
 class tool_req {
   +content
   +id
@@ -1322,6 +1316,12 @@ class tool_req {
   +source_code_link [optional]*
   +tags [optional]*
   +testcovered [optional]*
+  +testlink [optional]*
+}
+class tool_usecase {
+  +id
+  +version
+  +source_code_link [optional]*
   +testlink [optional]*
 }
 class tsf {
@@ -1417,21 +1417,20 @@ plat_saf_dfa ..&gt; stkh_req : mitigated_by
 plat_saf_dfa ..&gt; aou_req : mitigated_by
 plat_sec_ana ..&gt; feat_req : mitigated_by
 plat_sec_ana ..&gt; aou_req : mitigated_by
+potential_tool_malfunction --&gt; tool_usecase : parent_needs
+potential_tool_malfunction --&gt; stkh_req : violates
+potential_tool_malfunction --&gt; tool_req : violates
 real_arc_int ..&gt; comp_req : fulfils
 real_arc_int_op --&gt; real_arc_int : included_by
 real_arc_int_op ..&gt; logic_arc_int_op : implements
 role ..&gt; role : contains
-tool_malfunction_87f13fc6 --&gt; tool_usecase_ebf4ad03 : parent_needs
-tool_malfunction_87f13fc6 --&gt; gd_req : violates
-tool_malfunction_87f13fc6 --&gt; stkh_req : violates
-tool_malfunction_87f13fc6 --&gt; feat_req : violates
-tool_malfunction_87f13fc6 --&gt; comp_req : violates
-tool_malfunction_87f13fc6 --&gt; tool_req : violates
-tool_malfunction_87f13fc6 --&gt; aou_req : violates
 tool_req ..&gt; gd_req : satisfies
 tool_req ..&gt; stkh_req : satisfies
 tool_req ..&gt; feat_req : satisfies
 tool_req ..&gt; comp_req : satisfies
+tool_usecase --&gt; doc_tool : belongs_to
+tool_usecase --&gt; tool_req : realized_by
+tool_usecase ..&gt; stkh_req : realizes
 workflow --&gt; role : approved_by
 workflow --&gt; workproduct : input
 workflow --&gt; workproduct : output
@@ -1477,6 +1476,7 @@ style mod_view_sta fill:#D5E8D4,stroke:#666,color:#000
 style plat_saf_dfa fill:#DAE8FC,stroke:#666,color:#000
 style plat_sec_ana fill:#DAE8FC,stroke:#666,color:#000
 style plat_sec_threat fill:#DAE8FC,stroke:#666,color:#000
+style potential_tool_malfunction fill:#F8CECC,stroke:#666,color:#000
 style real_arc_int fill:#D5E8D4,stroke:#666,color:#000
 style real_arc_int_op fill:#D5E8D4,stroke:#666,color:#000
 style role fill:#E1D5E7,stroke:#666,color:#000
@@ -1484,9 +1484,8 @@ style std_req fill:#E1D5E7,stroke:#666,color:#000
 style std_wp fill:#E1D5E7,stroke:#666,color:#000
 style stkh_req fill:#DAE8FC,stroke:#666,color:#000
 style tenet fill:#E1D5E7,stroke:#666,color:#000
-style tool_malfunction_87f13fc6 fill:#F8CECC,stroke:#666,color:#000
-style tool_usecase_ebf4ad03 fill:#E1D5E7,stroke:#666,color:#000
 style tool_req fill:#F5F5F5,stroke:#666,color:#000
+style tool_usecase fill:#E1D5E7,stroke:#666,color:#000
 style tsf fill:#E1D5E7,stroke:#666,color:#000
 style workflow fill:#E1D5E7,stroke:#666,color:#000
 style workproduct fill:#E1D5E7,stroke:#666,color:#000
@@ -1527,6 +1526,7 @@ click mod_view_sta href &quot;#mod-view-sta&quot; &quot;Open mod_view_sta detail
 click plat_saf_dfa href &quot;#plat-saf-dfa&quot; &quot;Open plat_saf_dfa details&quot;
 click plat_sec_ana href &quot;#plat-sec-ana&quot; &quot;Open plat_sec_ana details&quot;
 click plat_sec_threat href &quot;#plat-sec-threat&quot; &quot;Open plat_sec_threat details&quot;
+click potential_tool_malfunction href &quot;#potential-tool-malfunction&quot; &quot;Open potential_tool_malfunction details&quot;
 click real_arc_int href &quot;#real-arc-int&quot; &quot;Open real_arc_int details&quot;
 click real_arc_int_op href &quot;#real-arc-int-op&quot; &quot;Open real_arc_int_op details&quot;
 click review_header href &quot;#review-header&quot; &quot;Open review_header details&quot;
@@ -1536,9 +1536,8 @@ click std_wp href &quot;#std-wp&quot; &quot;Open std_wp details&quot;
 click stkh_req href &quot;#stkh-req&quot; &quot;Open stkh_req details&quot;
 click tenet href &quot;#tenet&quot; &quot;Open tenet details&quot;
 click testcase href &quot;#testcase&quot; &quot;Open testcase details&quot;
-click tool_malfunction_87f13fc6 href &quot;#tool-malfunction&quot; &quot;Open tool-malfunction details&quot;
-click tool_usecase_ebf4ad03 href &quot;#tool-usecase&quot; &quot;Open tool-usecase details&quot;
 click tool_req href &quot;#tool-req&quot; &quot;Open tool_req details&quot;
+click tool_usecase href &quot;#tool-usecase&quot; &quot;Open tool_usecase details&quot;
 click tsf href &quot;#tsf&quot; &quot;Open tsf details&quot;
 click workflow href &quot;#workflow&quot; &quot;Open workflow details&quot;
 click workproduct href &quot;#workproduct&quot; &quot;Open workproduct details&quot;
@@ -1569,9 +1568,6 @@ pre#metamodel-type-diagram-doc-concept.mermaid > svg {
     height: 333px !important;
 }
 pre#metamodel-type-diagram-doc-getstrt.mermaid > svg {
-    height: 333px !important;
-}
-pre#metamodel-type-diagram-doc-tool.mermaid > svg {
     height: 333px !important;
 }
 pre#metamodel-type-diagram-document.mermaid > svg {
@@ -1607,6 +1603,9 @@ pre#metamodel-type-diagram-plat-sec-ana.mermaid > svg {
 pre#metamodel-type-diagram-plat-sec-threat.mermaid > svg {
     height: 167px !important;
 }
+pre#metamodel-type-diagram-potential-tool-malfunction.mermaid > svg {
+    height: 333px !important;
+}
 pre#metamodel-type-diagram-review-header.mermaid > svg {
     height: 167px !important;
 }
@@ -1624,12 +1623,6 @@ pre#metamodel-type-diagram-tenet.mermaid > svg {
 }
 pre#metamodel-type-diagram-testcase.mermaid > svg {
     height: 167px !important;
-}
-pre#metamodel-type-diagram-tool-malfunction.mermaid > svg {
-    height: 333px !important;
-}
-pre#metamodel-type-diagram-tool-usecase.mermaid > svg {
-    height: 333px !important;
 }
 pre#metamodel-type-diagram-tsf.mermaid > svg {
     height: 167px !important;
@@ -1808,16 +1801,6 @@ class plat_sec_ana {
   +source_code_link [optional]*
   +testlink [optional]*
 }
-class tool_malfunction_87f13fc6[&quot;tool-malfunction&quot;] {
-  +additional_safety_measure_required
-  +detection_sufficient
-  +id
-  +safety_affected
-  +version
-  +safety_measure [optional]*
-  +source_code_link [optional]*
-  +testlink [optional]*
-}
 comp ..&gt; aou_req : fulfils
 comp_req ..&gt; aou_req : covers
 comp_saf_dfa ..&gt; aou_req : mitigated_by
@@ -1830,7 +1813,6 @@ feat_saf_fmea ..&gt; aou_req : mitigated_by
 feat_sec_ana ..&gt; aou_req : mitigated_by
 plat_saf_dfa ..&gt; aou_req : mitigated_by
 plat_sec_ana ..&gt; aou_req : mitigated_by
-tool_malfunction_87f13fc6 --&gt; aou_req : violates
 style comp fill:#D5E8D4,stroke:#666,color:#000
 style comp_req fill:#D5E8D4,stroke:#666,color:#000
 style comp_saf_dfa fill:#D5E8D4,stroke:#666,color:#000
@@ -1843,7 +1825,6 @@ style feat_saf_fmea fill:#FFF2CC,stroke:#666,color:#000
 style feat_sec_ana fill:#FFF2CC,stroke:#666,color:#000
 style plat_saf_dfa fill:#DAE8FC,stroke:#666,color:#000
 style plat_sec_ana fill:#DAE8FC,stroke:#666,color:#000
-style tool_malfunction_87f13fc6 fill:#F8CECC,stroke:#666,color:#000
 style aou_req fill:#FCFCFC,stroke:#000,stroke-width:3px,color:#000
 click aou_req href &quot;#aou-req&quot; &quot;Open aou_req details&quot;
 click comp href &quot;#comp&quot; &quot;Open comp details&quot;
@@ -1858,7 +1839,6 @@ click feat_saf_fmea href &quot;#feat-saf-fmea&quot; &quot;Open feat_saf_fmea det
 click feat_sec_ana href &quot;#feat-sec-ana&quot; &quot;Open feat_sec_ana details&quot;
 click plat_saf_dfa href &quot;#plat-saf-dfa&quot; &quot;Open plat_saf_dfa details&quot;
 click plat_sec_ana href &quot;#plat-sec-ana&quot; &quot;Open plat_sec_ana details&quot;
-click tool_malfunction_87f13fc6 href &quot;#tool-malfunction&quot; &quot;Open tool-malfunction details&quot;
     </pre><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
 <summary class="sd-summary-title sd-card-header">
 <span class="sd-summary-text">Options and Links</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
@@ -2078,6 +2058,7 @@ class logic_arc_int {
 class mod {
   +id
   +version
+  +maturity [optional]*
   +safety [optional]*
   +security [optional]*
   +source_code_link [optional]*
@@ -2644,16 +2625,6 @@ class real_arc_int {
   +source_code_link [optional]*
   +testlink [optional]*
 }
-class tool_malfunction_87f13fc6[&quot;tool-malfunction&quot;] {
-  +additional_safety_measure_required
-  +detection_sufficient
-  +id
-  +safety_affected
-  +version
-  +safety_measure [optional]*
-  +source_code_link [optional]*
-  +testlink [optional]*
-}
 class tool_req {
   +content
   +id
@@ -2678,7 +2649,6 @@ comp_saf_dfa ..&gt; comp_req : mitigated_by
 comp_saf_fmea ..&gt; comp_req : mitigated_by
 comp_sec_ana ..&gt; comp_req : mitigated_by
 real_arc_int ..&gt; comp_req : fulfils
-tool_malfunction_87f13fc6 --&gt; comp_req : violates
 tool_req ..&gt; comp_req : satisfies
 style aou_req fill:#FCFCFC,stroke:#666,color:#000
 style comp fill:#D5E8D4,stroke:#666,color:#000
@@ -2689,7 +2659,6 @@ style comp_saf_fmea fill:#D5E8D4,stroke:#666,color:#000
 style comp_sec_ana fill:#D5E8D4,stroke:#666,color:#000
 style feat_req fill:#FFF2CC,stroke:#666,color:#000
 style real_arc_int fill:#D5E8D4,stroke:#666,color:#000
-style tool_malfunction_87f13fc6 fill:#F8CECC,stroke:#666,color:#000
 style tool_req fill:#F5F5F5,stroke:#666,color:#000
 style comp_req fill:#D5E8D4,stroke:#000,stroke-width:3px,color:#000
 click aou_req href &quot;#aou-req&quot; &quot;Open aou_req details&quot;
@@ -2702,7 +2671,6 @@ click comp_saf_fmea href &quot;#comp-saf-fmea&quot; &quot;Open comp_saf_fmea det
 click comp_sec_ana href &quot;#comp-sec-ana&quot; &quot;Open comp_sec_ana details&quot;
 click feat_req href &quot;#feat-req&quot; &quot;Open feat_req details&quot;
 click real_arc_int href &quot;#real-arc-int&quot; &quot;Open real_arc_int details&quot;
-click tool_malfunction_87f13fc6 href &quot;#tool-malfunction&quot; &quot;Open tool-malfunction details&quot;
 click tool_req href &quot;#tool-req&quot; &quot;Open tool_req details&quot;
     </pre><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
 <summary class="sd-summary-title sd-card-header">
@@ -3557,6 +3525,12 @@ class doc_tool {
   +testlink [optional]*
   +tool_version [optional]*
 }
+class tool_usecase {
+  +id
+  +version
+  +source_code_link [optional]*
+  +testlink [optional]*
+}
 class workproduct {
   +id
   +status
@@ -3565,9 +3539,12 @@ class workproduct {
   +testlink [optional]*
 }
 doc_tool ..&gt; workproduct : realizes
+tool_usecase --&gt; doc_tool : belongs_to
+style tool_usecase fill:#E1D5E7,stroke:#666,color:#000
 style workproduct fill:#E1D5E7,stroke:#666,color:#000
 style doc_tool fill:#FFFFFF,stroke:#000,stroke-width:3px,color:#000
 click doc_tool href &quot;#doc-tool&quot; &quot;Open doc_tool details&quot;
+click tool_usecase href &quot;#tool-usecase&quot; &quot;Open tool_usecase details&quot;
 click workproduct href &quot;#workproduct&quot; &quot;Open workproduct details&quot;
     </pre><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
 <summary class="sd-summary-title sd-card-header">
@@ -4430,16 +4407,6 @@ class stkh_req {
   +testlink [optional]*
   +valid_until [optional]*
 }
-class tool_malfunction_87f13fc6[&quot;tool-malfunction&quot;] {
-  +additional_safety_measure_required
-  +detection_sufficient
-  +id
-  +safety_affected
-  +version
-  +safety_measure [optional]*
-  +source_code_link [optional]*
-  +testlink [optional]*
-}
 class tool_req {
   +content
   +id
@@ -4466,7 +4433,6 @@ feat_saf_fmea ..&gt; feat_req : mitigated_by
 feat_sec_ana ..&gt; feat_req : mitigated_by
 logic_arc_int ..&gt; feat_req : fulfils
 plat_sec_ana ..&gt; feat_req : mitigated_by
-tool_malfunction_87f13fc6 --&gt; feat_req : violates
 tool_req ..&gt; feat_req : satisfies
 style aou_req fill:#FCFCFC,stroke:#666,color:#000
 style comp_req fill:#D5E8D4,stroke:#666,color:#000
@@ -4479,7 +4445,6 @@ style feat_sec_ana fill:#FFF2CC,stroke:#666,color:#000
 style logic_arc_int fill:#FFF2CC,stroke:#666,color:#000
 style plat_sec_ana fill:#DAE8FC,stroke:#666,color:#000
 style stkh_req fill:#DAE8FC,stroke:#666,color:#000
-style tool_malfunction_87f13fc6 fill:#F8CECC,stroke:#666,color:#000
 style tool_req fill:#F5F5F5,stroke:#666,color:#000
 style feat_req fill:#FFF2CC,stroke:#000,stroke-width:3px,color:#000
 click aou_req href &quot;#aou-req&quot; &quot;Open aou_req details&quot;
@@ -4494,7 +4459,6 @@ click feat_sec_ana href &quot;#feat-sec-ana&quot; &quot;Open feat_sec_ana detail
 click logic_arc_int href &quot;#logic-arc-int&quot; &quot;Open logic_arc_int details&quot;
 click plat_sec_ana href &quot;#plat-sec-ana&quot; &quot;Open plat_sec_ana details&quot;
 click stkh_req href &quot;#stkh-req&quot; &quot;Open stkh_req details&quot;
-click tool_malfunction_87f13fc6 href &quot;#tool-malfunction&quot; &quot;Open tool-malfunction details&quot;
 click tool_req href &quot;#tool-req&quot; &quot;Open tool_req details&quot;
     </pre><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
 <summary class="sd-summary-title sd-card-header">
@@ -5415,16 +5379,6 @@ class std_req {
   +source_code_link [optional]*
   +testlink [optional]*
 }
-class tool_malfunction_87f13fc6[&quot;tool-malfunction&quot;] {
-  +additional_safety_measure_required
-  +detection_sufficient
-  +id
-  +safety_affected
-  +version
-  +safety_measure [optional]*
-  +source_code_link [optional]*
-  +testlink [optional]*
-}
 class tool_req {
   +content
   +id
@@ -5449,17 +5403,14 @@ class workflow {
 }
 gd_req ..&gt; std_req : complies
 gd_req ..&gt; workflow : satisfies
-tool_malfunction_87f13fc6 --&gt; gd_req : violates
 tool_req ..&gt; gd_req : satisfies
 workflow ..&gt; gd_req : contains
 style std_req fill:#E1D5E7,stroke:#666,color:#000
-style tool_malfunction_87f13fc6 fill:#F8CECC,stroke:#666,color:#000
 style tool_req fill:#F5F5F5,stroke:#666,color:#000
 style workflow fill:#E1D5E7,stroke:#666,color:#000
 style gd_req fill:#E1D5E7,stroke:#000,stroke-width:3px,color:#000
 click gd_req href &quot;#gd-req&quot; &quot;Open gd_req details&quot;
 click std_req href &quot;#std-req&quot; &quot;Open std_req details&quot;
-click tool_malfunction_87f13fc6 href &quot;#tool-malfunction&quot; &quot;Open tool-malfunction details&quot;
 click tool_req href &quot;#tool-req&quot; &quot;Open tool_req details&quot;
 click workflow href &quot;#workflow&quot; &quot;Open workflow details&quot;
     </pre><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
@@ -5937,6 +5888,7 @@ class comp {
 class mod {
   +id
   +version
+  +maturity [optional]*
   +safety [optional]*
   +security [optional]*
   +source_code_link [optional]*
@@ -6003,22 +5955,26 @@ click mod_view_sta href &quot;#mod-view-sta&quot; &quot;Open mod_view_sta detail
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p class="sd-card-text">Optional</p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">maturity</span></code></p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^(preview|experimental|release)$</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p class="sd-card-text">Optional</p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">safety</span></code></p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^(QM|ASIL_B)$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p class="sd-card-text">Optional</p></td>
+<tr class="row-even"><td><p class="sd-card-text">Optional</p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">security</span></code></p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^(YES|NO)$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p class="sd-card-text">Optional</p></td>
+<tr class="row-odd"><td><p class="sd-card-text">Optional</p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p class="sd-card-text">Optional</p></td>
+<tr class="row-even"><td><p class="sd-card-text">Optional</p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">status</span></code></p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^(valid|invalid)$</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p class="sd-card-text">Optional</p></td>
+<tr class="row-odd"><td><p class="sd-card-text">Optional</p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
 </tr>
@@ -6057,6 +6013,7 @@ classDiagram
 class mod {
   +id
   +version
+  +maturity [optional]*
   +safety [optional]*
   +security [optional]*
   +source_code_link [optional]*
@@ -6203,6 +6160,7 @@ classDiagram
 class mod {
   +id
   +version
+  +maturity [optional]*
   +safety [optional]*
   +security [optional]*
   +source_code_link [optional]*
@@ -6292,6 +6250,7 @@ class comp {
 class mod {
   +id
   +version
+  +maturity [optional]*
   +safety [optional]*
   +security [optional]*
   +source_code_link [optional]*
@@ -6711,6 +6670,138 @@ click plat_sec_threat href &quot;#plat-sec-threat&quot; &quot;Open plat_sec_thre
 <tr class="row-even"><td><p class="sd-card-text">Optional</p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</details></section>
+<section id="potential-tool-malfunction">
+<h2>potential_tool_malfunction<a class="headerlink" href="#potential-tool-malfunction" title="Link to this heading">#</a></h2>
+<p><strong>Potential Tool Malfunction</strong> (<code class="docutils literal notranslate"><span class="pre">potential_tool_malfunction__</span></code>)</p>
+<pre id="metamodel-type-diagram-potential-tool-malfunction" class="mermaid">
+        ---
+config:
+  layout: elk
+  securityLevel: loose
+---
+classDiagram
+  direction BT
+class potential_tool_malfunction {
+  +id
+  +safety_affected
+  +version
+  +detection_sufficient [optional]*
+  +safety_measures [optional]*
+  +source_code_link [optional]*
+  +testlink [optional]*
+}
+class stkh_req {
+  +id
+  +rationale
+  +reqtype
+  +safety
+  +security
+  +status
+  +valid_from
+  +version
+  +hash [optional]*
+  +source_code_link [optional]*
+  +testcovered [optional]*
+  +testlink [optional]*
+  +valid_until [optional]*
+}
+class tool_req {
+  +content
+  +id
+  +version
+  +hash [optional]*
+  +implemented [optional]*
+  +parent_covered [optional]*
+  +parent_has_problem [optional]*
+  +safety [optional]*
+  +security [optional]*
+  +source_code_link [optional]*
+  +tags [optional]*
+  +testcovered [optional]*
+  +testlink [optional]*
+}
+class tool_usecase {
+  +id
+  +version
+  +source_code_link [optional]*
+  +testlink [optional]*
+}
+potential_tool_malfunction --&gt; tool_usecase : parent_needs
+potential_tool_malfunction --&gt; stkh_req : violates
+potential_tool_malfunction --&gt; tool_req : violates
+style stkh_req fill:#DAE8FC,stroke:#666,color:#000
+style tool_req fill:#F5F5F5,stroke:#666,color:#000
+style tool_usecase fill:#E1D5E7,stroke:#666,color:#000
+style potential_tool_malfunction fill:#F8CECC,stroke:#000,stroke-width:3px,color:#000
+click potential_tool_malfunction href &quot;#potential-tool-malfunction&quot; &quot;Open potential_tool_malfunction details&quot;
+click stkh_req href &quot;#stkh-req&quot; &quot;Open stkh_req details&quot;
+click tool_req href &quot;#tool-req&quot; &quot;Open tool_req details&quot;
+click tool_usecase href &quot;#tool-usecase&quot; &quot;Open tool_usecase details&quot;
+    </pre><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Options and Links</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text"><strong>Options</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p class="sd-card-text">Type</p></th>
+<th class="head"><p class="sd-card-text">Option</p></th>
+<th class="head"><p class="sd-card-text">Definition</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p class="sd-card-text">Mandatory</p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">id</span></code></p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^potential_tool_malfunction__[0-9a-z_]+$</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p class="sd-card-text">Mandatory</p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">safety_affected</span></code></p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^(YES|NO)$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p class="sd-card-text">Mandatory</p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">version</span></code></p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p class="sd-card-text">Optional</p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">detection_sufficient</span></code></p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^(YES|NO)$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p class="sd-card-text">Optional</p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">safety_measures</span></code></p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^.+$</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p class="sd-card-text">Optional</p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p class="sd-card-text">Optional</p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="sd-card-text"><strong>Links</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p class="sd-card-text">Type</p></th>
+<th class="head"><p class="sd-card-text">Link</p></th>
+<th class="head"><p class="sd-card-text">Definition</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p class="sd-card-text">Mandatory</p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">parent_needs</span></code></p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p class="sd-card-text">Mandatory</p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">violates</span></code></p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">stkh_req,</span> <span class="pre">tool_req</span></code></p></td>
 </tr>
 </tbody>
 </table>
@@ -7362,6 +7453,15 @@ class plat_saf_dfa {
   +source_code_link [optional]*
   +testlink [optional]*
 }
+class potential_tool_malfunction {
+  +id
+  +safety_affected
+  +version
+  +detection_sufficient [optional]*
+  +safety_measures [optional]*
+  +source_code_link [optional]*
+  +testlink [optional]*
+}
 class stkh_req {
   +id
   +rationale
@@ -7376,16 +7476,6 @@ class stkh_req {
   +testcovered [optional]*
   +testlink [optional]*
   +valid_until [optional]*
-}
-class tool_malfunction_87f13fc6[&quot;tool-malfunction&quot;] {
-  +additional_safety_measure_required
-  +detection_sufficient
-  +id
-  +safety_affected
-  +version
-  +safety_measure [optional]*
-  +source_code_link [optional]*
-  +testlink [optional]*
 }
 class tool_req {
   +content
@@ -7402,20 +7492,29 @@ class tool_req {
   +testcovered [optional]*
   +testlink [optional]*
 }
+class tool_usecase {
+  +id
+  +version
+  +source_code_link [optional]*
+  +testlink [optional]*
+}
 feat_req ..&gt; stkh_req : derived_from
 plat_saf_dfa ..&gt; stkh_req : mitigated_by
-tool_malfunction_87f13fc6 --&gt; stkh_req : violates
+potential_tool_malfunction --&gt; stkh_req : violates
 tool_req ..&gt; stkh_req : satisfies
+tool_usecase ..&gt; stkh_req : realizes
 style feat_req fill:#FFF2CC,stroke:#666,color:#000
 style plat_saf_dfa fill:#DAE8FC,stroke:#666,color:#000
-style tool_malfunction_87f13fc6 fill:#F8CECC,stroke:#666,color:#000
+style potential_tool_malfunction fill:#F8CECC,stroke:#666,color:#000
 style tool_req fill:#F5F5F5,stroke:#666,color:#000
+style tool_usecase fill:#E1D5E7,stroke:#666,color:#000
 style stkh_req fill:#DAE8FC,stroke:#000,stroke-width:3px,color:#000
 click feat_req href &quot;#feat-req&quot; &quot;Open feat_req details&quot;
 click plat_saf_dfa href &quot;#plat-saf-dfa&quot; &quot;Open plat_saf_dfa details&quot;
+click potential_tool_malfunction href &quot;#potential-tool-malfunction&quot; &quot;Open potential_tool_malfunction details&quot;
 click stkh_req href &quot;#stkh-req&quot; &quot;Open stkh_req details&quot;
-click tool_malfunction_87f13fc6 href &quot;#tool-malfunction&quot; &quot;Open tool-malfunction details&quot;
 click tool_req href &quot;#tool-req&quot; &quot;Open tool_req details&quot;
+click tool_usecase href &quot;#tool-usecase&quot; &quot;Open tool_usecase details&quot;
     </pre><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
 <summary class="sd-summary-title sd-card-header">
 <span class="sd-summary-text">Options and Links</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
@@ -7665,268 +7764,6 @@ click testcase href &quot;#testcase&quot; &quot;Open testcase details&quot;
 </div>
 </div>
 </details></section>
-<section id="tool-malfunction">
-<h2>tool-malfunction<a class="headerlink" href="#tool-malfunction" title="Link to this heading">#</a></h2>
-<p><strong>Tool Verification Malfunction</strong> (<code class="docutils literal notranslate"><span class="pre">tool_malfunction__</span></code>)</p>
-<pre id="metamodel-type-diagram-tool-malfunction" class="mermaid">
-        ---
-config:
-  layout: elk
-  securityLevel: loose
----
-classDiagram
-  direction BT
-class aou_req {
-  +content
-  +id
-  +reqtype
-  +safety
-  +security
-  +status
-  +version
-  +hash [optional]*
-  +source_code_link [optional]*
-  +testcovered [optional]*
-  +testlink [optional]*
-}
-class comp_req {
-  +content
-  +id
-  +reqtype
-  +safety
-  +security
-  +status
-  +version
-  +hash [optional]*
-  +source_code_link [optional]*
-  +testcovered [optional]*
-  +testlink [optional]*
-}
-class feat_req {
-  +content
-  +id
-  +reqtype
-  +safety
-  +security
-  +status
-  +valid_from
-  +version
-  +hash [optional]*
-  +source_code_link [optional]*
-  +testcovered [optional]*
-  +testlink [optional]*
-  +valid_until [optional]*
-}
-class gd_req {
-  +content
-  +id
-  +version
-  +source_code_link [optional]*
-  +testlink [optional]*
-}
-class stkh_req {
-  +id
-  +rationale
-  +reqtype
-  +safety
-  +security
-  +status
-  +valid_from
-  +version
-  +hash [optional]*
-  +source_code_link [optional]*
-  +testcovered [optional]*
-  +testlink [optional]*
-  +valid_until [optional]*
-}
-class tool_malfunction_87f13fc6[&quot;tool-malfunction&quot;] {
-  +additional_safety_measure_required
-  +detection_sufficient
-  +id
-  +safety_affected
-  +version
-  +safety_measure [optional]*
-  +source_code_link [optional]*
-  +testlink [optional]*
-}
-class tool_usecase_ebf4ad03[&quot;tool-usecase&quot;] {
-  +id
-  +version
-  +source_code_link [optional]*
-  +testlink [optional]*
-}
-class tool_req {
-  +content
-  +id
-  +version
-  +hash [optional]*
-  +implemented [optional]*
-  +parent_covered [optional]*
-  +parent_has_problem [optional]*
-  +safety [optional]*
-  +security [optional]*
-  +source_code_link [optional]*
-  +tags [optional]*
-  +testcovered [optional]*
-  +testlink [optional]*
-}
-tool_malfunction_87f13fc6 --&gt; tool_usecase_ebf4ad03 : parent_needs
-tool_malfunction_87f13fc6 --&gt; gd_req : violates
-tool_malfunction_87f13fc6 --&gt; stkh_req : violates
-tool_malfunction_87f13fc6 --&gt; feat_req : violates
-tool_malfunction_87f13fc6 --&gt; comp_req : violates
-tool_malfunction_87f13fc6 --&gt; tool_req : violates
-tool_malfunction_87f13fc6 --&gt; aou_req : violates
-style aou_req fill:#FCFCFC,stroke:#666,color:#000
-style comp_req fill:#D5E8D4,stroke:#666,color:#000
-style feat_req fill:#FFF2CC,stroke:#666,color:#000
-style gd_req fill:#E1D5E7,stroke:#666,color:#000
-style stkh_req fill:#DAE8FC,stroke:#666,color:#000
-style tool_usecase_ebf4ad03 fill:#E1D5E7,stroke:#666,color:#000
-style tool_req fill:#F5F5F5,stroke:#666,color:#000
-style tool_malfunction_87f13fc6 fill:#F8CECC,stroke:#000,stroke-width:3px,color:#000
-click aou_req href &quot;#aou-req&quot; &quot;Open aou_req details&quot;
-click comp_req href &quot;#comp-req&quot; &quot;Open comp_req details&quot;
-click feat_req href &quot;#feat-req&quot; &quot;Open feat_req details&quot;
-click gd_req href &quot;#gd-req&quot; &quot;Open gd_req details&quot;
-click stkh_req href &quot;#stkh-req&quot; &quot;Open stkh_req details&quot;
-click tool_malfunction_87f13fc6 href &quot;#tool-malfunction&quot; &quot;Open tool-malfunction details&quot;
-click tool_usecase_ebf4ad03 href &quot;#tool-usecase&quot; &quot;Open tool-usecase details&quot;
-click tool_req href &quot;#tool-req&quot; &quot;Open tool_req details&quot;
-    </pre><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
-<summary class="sd-summary-title sd-card-header">
-<span class="sd-summary-text">Options and Links</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
-<p class="sd-card-text"><strong>Options</strong></p>
-<div class="pst-scrollable-table-container"><table class="table">
-<thead>
-<tr class="row-odd"><th class="head"><p class="sd-card-text">Type</p></th>
-<th class="head"><p class="sd-card-text">Option</p></th>
-<th class="head"><p class="sd-card-text">Definition</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p class="sd-card-text">Mandatory</p></td>
-<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">additional_safety_measure_required</span></code></p></td>
-<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^(YES|NO)$</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p class="sd-card-text">Mandatory</p></td>
-<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">detection_sufficient</span></code></p></td>
-<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^(YES|NO)$</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p class="sd-card-text">Mandatory</p></td>
-<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">id</span></code></p></td>
-<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^tool_malfunction__docs_as_code__[0-9a-z_-]+$</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p class="sd-card-text">Mandatory</p></td>
-<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">safety_affected</span></code></p></td>
-<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^(YES|NO)$</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p class="sd-card-text">Mandatory</p></td>
-<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">version</span></code></p></td>
-<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p class="sd-card-text">Optional</p></td>
-<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">safety_measure</span></code></p></td>
-<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^.+$</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p class="sd-card-text">Optional</p></td>
-<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
-<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p class="sd-card-text">Optional</p></td>
-<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
-<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<p class="sd-card-text"><strong>Links</strong></p>
-<div class="pst-scrollable-table-container"><table class="table">
-<thead>
-<tr class="row-odd"><th class="head"><p class="sd-card-text">Type</p></th>
-<th class="head"><p class="sd-card-text">Link</p></th>
-<th class="head"><p class="sd-card-text">Definition</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p class="sd-card-text">Mandatory</p></td>
-<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">parent_needs</span></code></p></td>
-<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">tool-usecase</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p class="sd-card-text">Mandatory</p></td>
-<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">violates</span></code></p></td>
-<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">gd_req,</span> <span class="pre">stkh_req,</span> <span class="pre">feat_req,</span> <span class="pre">comp_req,</span> <span class="pre">tool_req,</span> <span class="pre">aou_req</span></code></p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</details></section>
-<section id="tool-usecase">
-<h2>tool-usecase<a class="headerlink" href="#tool-usecase" title="Link to this heading">#</a></h2>
-<p><strong>Tool Verification Use Case</strong> (<code class="docutils literal notranslate"><span class="pre">tool_usecase__</span></code>)</p>
-<pre id="metamodel-type-diagram-tool-usecase" class="mermaid">
-        ---
-config:
-  layout: elk
-  securityLevel: loose
----
-classDiagram
-  direction BT
-class tool_malfunction_87f13fc6[&quot;tool-malfunction&quot;] {
-  +additional_safety_measure_required
-  +detection_sufficient
-  +id
-  +safety_affected
-  +version
-  +safety_measure [optional]*
-  +source_code_link [optional]*
-  +testlink [optional]*
-}
-class tool_usecase_ebf4ad03[&quot;tool-usecase&quot;] {
-  +id
-  +version
-  +source_code_link [optional]*
-  +testlink [optional]*
-}
-tool_malfunction_87f13fc6 --&gt; tool_usecase_ebf4ad03 : parent_needs
-style tool_malfunction_87f13fc6 fill:#F8CECC,stroke:#666,color:#000
-style tool_usecase_ebf4ad03 fill:#E1D5E7,stroke:#000,stroke-width:3px,color:#000
-click tool_malfunction_87f13fc6 href &quot;#tool-malfunction&quot; &quot;Open tool-malfunction details&quot;
-click tool_usecase_ebf4ad03 href &quot;#tool-usecase&quot; &quot;Open tool-usecase details&quot;
-    </pre><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
-<summary class="sd-summary-title sd-card-header">
-<span class="sd-summary-text">Options and Links</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
-<p class="sd-card-text"><strong>Options</strong></p>
-<div class="pst-scrollable-table-container"><table class="table">
-<thead>
-<tr class="row-odd"><th class="head"><p class="sd-card-text">Type</p></th>
-<th class="head"><p class="sd-card-text">Option</p></th>
-<th class="head"><p class="sd-card-text">Definition</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p class="sd-card-text">Mandatory</p></td>
-<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">id</span></code></p></td>
-<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^tool_usecase__docs_as_code__[0-9a-z_-]+$</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p class="sd-card-text">Mandatory</p></td>
-<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">version</span></code></p></td>
-<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p class="sd-card-text">Optional</p></td>
-<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
-<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p class="sd-card-text">Optional</p></td>
-<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
-<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</details></section>
 <section id="tool-req">
 <h2>tool_req<a class="headerlink" href="#tool-req" title="Link to this heading">#</a></h2>
 <p><strong>Tool Requirement</strong> (<code class="docutils literal notranslate"><span class="pre">tool_req__</span></code>)</p>
@@ -7973,6 +7810,15 @@ class gd_req {
   +source_code_link [optional]*
   +testlink [optional]*
 }
+class potential_tool_malfunction {
+  +id
+  +safety_affected
+  +version
+  +detection_sufficient [optional]*
+  +safety_measures [optional]*
+  +source_code_link [optional]*
+  +testlink [optional]*
+}
 class stkh_req {
   +id
   +rationale
@@ -7987,16 +7833,6 @@ class stkh_req {
   +testcovered [optional]*
   +testlink [optional]*
   +valid_until [optional]*
-}
-class tool_malfunction_87f13fc6[&quot;tool-malfunction&quot;] {
-  +additional_safety_measure_required
-  +detection_sufficient
-  +id
-  +safety_affected
-  +version
-  +safety_measure [optional]*
-  +source_code_link [optional]*
-  +testlink [optional]*
 }
 class tool_req {
   +content
@@ -8013,23 +7849,32 @@ class tool_req {
   +testcovered [optional]*
   +testlink [optional]*
 }
-tool_malfunction_87f13fc6 --&gt; tool_req : violates
+class tool_usecase {
+  +id
+  +version
+  +source_code_link [optional]*
+  +testlink [optional]*
+}
+potential_tool_malfunction --&gt; tool_req : violates
 tool_req ..&gt; gd_req : satisfies
 tool_req ..&gt; stkh_req : satisfies
 tool_req ..&gt; feat_req : satisfies
 tool_req ..&gt; comp_req : satisfies
+tool_usecase --&gt; tool_req : realized_by
 style comp_req fill:#D5E8D4,stroke:#666,color:#000
 style feat_req fill:#FFF2CC,stroke:#666,color:#000
 style gd_req fill:#E1D5E7,stroke:#666,color:#000
+style potential_tool_malfunction fill:#F8CECC,stroke:#666,color:#000
 style stkh_req fill:#DAE8FC,stroke:#666,color:#000
-style tool_malfunction_87f13fc6 fill:#F8CECC,stroke:#666,color:#000
+style tool_usecase fill:#E1D5E7,stroke:#666,color:#000
 style tool_req fill:#F5F5F5,stroke:#000,stroke-width:3px,color:#000
 click comp_req href &quot;#comp-req&quot; &quot;Open comp_req details&quot;
 click feat_req href &quot;#feat-req&quot; &quot;Open feat_req details&quot;
 click gd_req href &quot;#gd-req&quot; &quot;Open gd_req details&quot;
+click potential_tool_malfunction href &quot;#potential-tool-malfunction&quot; &quot;Open potential_tool_malfunction details&quot;
 click stkh_req href &quot;#stkh-req&quot; &quot;Open stkh_req details&quot;
-click tool_malfunction_87f13fc6 href &quot;#tool-malfunction&quot; &quot;Open tool-malfunction details&quot;
 click tool_req href &quot;#tool-req&quot; &quot;Open tool_req details&quot;
+click tool_usecase href &quot;#tool-usecase&quot; &quot;Open tool_usecase details&quot;
     </pre><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
 <summary class="sd-summary-title sd-card-header">
 <span class="sd-summary-text">Options and Links</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
@@ -8109,6 +7954,146 @@ click tool_req href &quot;#tool-req&quot; &quot;Open tool_req details&quot;
 <tr class="row-even"><td><p class="sd-card-text">Optional</p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">satisfies</span></code></p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">gd_req,</span> <span class="pre">stkh_req,</span> <span class="pre">feat_req,</span> <span class="pre">comp_req</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</details></section>
+<section id="tool-usecase">
+<h2>tool_usecase<a class="headerlink" href="#tool-usecase" title="Link to this heading">#</a></h2>
+<p><strong>Tool Use Case</strong> (<code class="docutils literal notranslate"><span class="pre">tool_usecase__</span></code>)</p>
+<pre id="metamodel-type-diagram-tool-usecase" class="mermaid">
+        ---
+config:
+  layout: elk
+  securityLevel: loose
+---
+classDiagram
+  direction BT
+class doc_tool {
+  +id
+  +safety_affected
+  +security_affected
+  +status
+  +tcl
+  +version
+  +approver [optional]*
+  +author [optional]*
+  +reviewer [optional]*
+  +source_code_link [optional]*
+  +testlink [optional]*
+  +tool_version [optional]*
+}
+class potential_tool_malfunction {
+  +id
+  +safety_affected
+  +version
+  +detection_sufficient [optional]*
+  +safety_measures [optional]*
+  +source_code_link [optional]*
+  +testlink [optional]*
+}
+class stkh_req {
+  +id
+  +rationale
+  +reqtype
+  +safety
+  +security
+  +status
+  +valid_from
+  +version
+  +hash [optional]*
+  +source_code_link [optional]*
+  +testcovered [optional]*
+  +testlink [optional]*
+  +valid_until [optional]*
+}
+class tool_req {
+  +content
+  +id
+  +version
+  +hash [optional]*
+  +implemented [optional]*
+  +parent_covered [optional]*
+  +parent_has_problem [optional]*
+  +safety [optional]*
+  +security [optional]*
+  +source_code_link [optional]*
+  +tags [optional]*
+  +testcovered [optional]*
+  +testlink [optional]*
+}
+class tool_usecase {
+  +id
+  +version
+  +source_code_link [optional]*
+  +testlink [optional]*
+}
+potential_tool_malfunction --&gt; tool_usecase : parent_needs
+tool_usecase --&gt; doc_tool : belongs_to
+tool_usecase --&gt; tool_req : realized_by
+tool_usecase ..&gt; stkh_req : realizes
+style potential_tool_malfunction fill:#F8CECC,stroke:#666,color:#000
+style stkh_req fill:#DAE8FC,stroke:#666,color:#000
+style tool_req fill:#F5F5F5,stroke:#666,color:#000
+style tool_usecase fill:#E1D5E7,stroke:#000,stroke-width:3px,color:#000
+click doc_tool href &quot;#doc-tool&quot; &quot;Open doc_tool details&quot;
+click potential_tool_malfunction href &quot;#potential-tool-malfunction&quot; &quot;Open potential_tool_malfunction details&quot;
+click stkh_req href &quot;#stkh-req&quot; &quot;Open stkh_req details&quot;
+click tool_req href &quot;#tool-req&quot; &quot;Open tool_req details&quot;
+click tool_usecase href &quot;#tool-usecase&quot; &quot;Open tool_usecase details&quot;
+    </pre><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Options and Links</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text"><strong>Options</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p class="sd-card-text">Type</p></th>
+<th class="head"><p class="sd-card-text">Option</p></th>
+<th class="head"><p class="sd-card-text">Definition</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p class="sd-card-text">Mandatory</p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">id</span></code></p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^tool_usecase__[0-9a-z_]+$</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p class="sd-card-text">Mandatory</p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">version</span></code></p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^[0-9]+$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p class="sd-card-text">Optional</p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p class="sd-card-text">Optional</p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="sd-card-text"><strong>Links</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p class="sd-card-text">Type</p></th>
+<th class="head"><p class="sd-card-text">Link</p></th>
+<th class="head"><p class="sd-card-text">Definition</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p class="sd-card-text">Mandatory</p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">belongs_to</span></code></p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">doc_tool</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p class="sd-card-text">Mandatory</p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">realized_by</span></code></p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">tool_req</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p class="sd-card-text">Optional</p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">realizes</span></code></p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">stkh_req</span></code></p></td>
 </tr>
 </tbody>
 </table>
