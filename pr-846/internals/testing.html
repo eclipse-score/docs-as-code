@@ -513,7 +513,7 @@ and the command-line tools.</p>
 <p>The file-based tests verify the Sphinx build rules and metamodel checks
 including our whole S-CORE-specific Sphinx setup with extensions.
 Each RST file under <code class="docutils literal notranslate"><span class="pre">src/extensions/score_metamodel/tests/rst/</span></code> is a small,
-self-contained Sphinx document with its own <code class="docutils literal notranslate"><span class="pre">conf.py</span></code>.
+self-contained Sphinx document.
 A SphinxTestApp builds it and the framework asserts on the resulting warnings,
 using the <code class="docutils literal notranslate"><span class="pre">:expect:</span></code> / <code class="docutils literal notranslate"><span class="pre">:expect_not:</span></code> options on the needs.</p>
 <p>You need one target per check category:</p>
@@ -560,24 +560,10 @@ using the changed docs-as-code as a dependency.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>.venv_docs/bin/python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>-s<span class="w"> </span>src/tests/downstream_compatibility
 </pre></div>
 </div>
-<p>You can restrict the run to a single consumer with <code class="docutils literal notranslate"><span class="pre">--repo</span></code>.
-In CI they run on demand, triggered by a <code class="docutils literal notranslate"><span class="pre">/consumer-test</span></code> comment on a PR.</p>
-</section>
-<section id="how-ci-orchestrates-the-layers">
-<h2>How CI orchestrates the layers<a class="headerlink" href="#how-ci-orchestrates-the-layers" title="Link to this heading">#</a></h2>
-<p>The PR workflow (<code class="docutils literal notranslate"><span class="pre">.github/workflows/_test.yml</span></code>) runs, in order:</p>
-<ol class="arabic simple">
-<li><p>the pre-commit development checks,</p></li>
-<li><p>the <code class="docutils literal notranslate"><span class="pre">docs_bzl</span></code> end-to-end tests (<code class="docutils literal notranslate"><span class="pre">bazel_cached</span></code> then <code class="docutils literal notranslate"><span class="pre">bazel_slow</span></code>),</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">test</span> <span class="pre">--lockfile_mode=error</span> <span class="pre">//...</span> <span class="pre">--build_tests_only</span></code>
-(all unit and file-based tests),</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">build</span> <span class="pre">--lockfile_mode=error</span> <span class="pre">//...</span></code>,
-skipping the test directories because some contain non-buildable
-negative test scenarios.</p></li>
-</ol>
-<p>The downstream compatibility tests run only on request,
-and the link check runs nightly.
-The documentation itself is rebuilt from the merged state afterwards.</p>
+<p>You can restrict the run to selected consumers
+with a pytest <code class="docutils literal notranslate"><span class="pre">-k</span></code> expression,
+for example <code class="docutils literal notranslate"><span class="pre">-k</span> <span class="pre">&quot;score&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">-k</span> <span class="pre">&quot;baselibs</span> <span class="pre">and</span> <span class="pre">remote&quot;</span></code>.
+In CI they run automatically.</p>
 </section>
 <section id="which-test-for-what">
 <h2>Which test for what<a class="headerlink" href="#which-test-for-what" title="Link to this heading">#</a></h2>
@@ -670,7 +656,6 @@ The later tests are slower.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#file-based-rst-rule-checks-metamodel">File-based RST rule checks (metamodel)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#end-to-end-docs-bzl-tests-docs-bzl">End-to-end docs.bzl tests (docs_bzl)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#downstream-compatibility-tests">Downstream compatibility tests</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-ci-orchestrates-the-layers">How CI orchestrates the layers</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#which-test-for-what">Which test for what</a></li>
 </ul>
   </nav></div>
