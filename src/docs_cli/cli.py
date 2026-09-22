@@ -119,6 +119,13 @@ def mounted_watch_dirs(
             watch_dirs.append(path_string)
 
     for spec in manifest.mounts:
+        # The root entry describes the primary source tree already passed to
+        # Sphinx. It is present so Python receives complete bundle metadata,
+        # but it is not an additional external mount for live preview. In
+        # particular, its data paths are action inputs and must not be
+        # reinterpreted as generated files below bazel-bin.
+        if spec.root_bundle:
+            continue
         # A data-only bundle has no source directory. Passing its empty
         # ``src_root`` to resolve_walk_dir would watch the workspace root,
         # which makes sphinx-autobuild observe unrelated files (including its

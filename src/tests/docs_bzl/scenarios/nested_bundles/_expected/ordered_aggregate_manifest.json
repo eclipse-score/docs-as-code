@@ -2,6 +2,12 @@
   "mounts": [
     {
       "attach_to": "index",
+      "root_bundle": false,
+      "bundle": {
+        "label": "@@//src/tests/docs_bzl/scenarios/nested_bundles:other",
+        "name": "other",
+        "code_targets": []
+      },
       "data": [],
       "entry_doc": "index",
       "external": false,
@@ -13,6 +19,25 @@
     },
     {
       "attach_to": "index",
+      "root_bundle": false,
+      "bundle": {
+        "label": "@@//src/tests/docs_bzl/scenarios/nested_bundles:child",
+        "name": "child",
+        "code_targets": [
+          {
+            "label": "@@//src/tests/docs_bzl/scenarios/nested_bundles:example_binary",
+            "type": "py_binary"
+          },
+          {
+            "label": "@@//src/tests/docs_bzl/scenarios/nested_bundles:example_executable",
+            "type": "cc_binary"
+          },
+          {
+            "label": "@@//src/tests/docs_bzl/scenarios/nested_bundles:nested_filegroup_sources",
+            "type": "filegroup"
+          }
+        ]
+      },
       "data": [],
       "entry_doc": "landing",
       "external": false,

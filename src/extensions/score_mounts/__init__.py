@@ -77,6 +77,13 @@ def _resolve_data_mounts(
     """
     data_mounts: dict[str, MountSpec] = {}
     for spec in manifest.mounts:
+        # TODO: Remove this data-mount path, including the root-bundle
+        # distinction, once callers migrate generated documentation from
+        # ``docs_bundle(data = [...])`` to ``docs_bundle(srcs = [...])``.
+        # Data belonging to the primary bundle is already part of the Sphinx
+        # action inputs. Only rebased child data has a documentation-tree mount.
+        if spec.root_bundle:
+            continue
         for data_file in spec.data:
             if ws_root is not None and runfiles_dir is not None:
                 runfiles_str = str(runfiles_dir)
@@ -291,7 +298,7 @@ def _resolve_source_mounts(
     """
     source_mounts: list[tuple[MountSpec, Path]] = []
     for spec in manifest.mounts:
-        if not spec.src_root or spec.files:
+        if not spec.src_root or spec.files or spec.root_bundle:
             continue
         walk_dir = resolve_walk_dir(manifest, spec, ws_root, runfiles_dir)
         if not walk_dir.is_dir():
@@ -355,7 +362,9 @@ def _on_config_inited(app: Sphinx, config: Config) -> None:
     # Pure-data bundles have empty src_root; skip directory walk.
     runtime_mounts: list[dict[str, object]] = []
     for spec in manifest.mounts:
-        if not spec.src_root:
+        # The primary source tree is discovered by Sphinx itself. Its manifest
+        # entry is metadata for Python consumers, not an additional mount.
+        if not spec.src_root or spec.root_bundle:
             continue
         if spec.files:
             # Explicit source bundles use sphinx-mounts' file-list mode so the

@@ -178,15 +178,55 @@ def test_mounted_watch_dirs_match_sphinx_mount_paths(tmp_path: Path) -> None:
             {
                 "mounts": [
                     {
+                        "src_root": "primary/docs",
+                        "runtime_path": "primary/docs",
+                        "mount_at": "",
+                        "attach_to": "",
+                        "entry_doc": "index",
+                        "external": False,
+                        "repository": "",
+                        "generated": False,
+                        "data": ["bazel-out/k8-fastbuild/bin/primary/generated.rst"],
+                        "root_bundle": True,
+                        "bundle": {
+                            "label": "@@//:root_bundle",
+                            "name": "root_bundle",
+                            "code_targets": [],
+                        },
+                    },
+                    {
                         "src_root": "extensions/local/docs",
                         "runtime_path": "extensions/local/docs",
                         "mount_at": "local",
+                        "attach_to": "",
+                        "entry_doc": "index",
+                        "external": False,
+                        "repository": "",
+                        "generated": False,
+                        "data": [],
+                        "root_bundle": False,
+                        "bundle": {
+                            "label": "@@//:local_bundle",
+                            "name": "local_bundle",
+                            "code_targets": [],
+                        },
                     },
                     {
                         "src_root": "external/vendor+/docs",
                         "runtime_path": "../vendor+/docs",
                         "mount_at": "external",
+                        "attach_to": "",
+                        "entry_doc": "index",
                         "external": True,
+                        "repository": "vendor+",
+                        "generated": False,
+                        "data": [],
+                        "root_bundle": False,
+                        "bundle": {
+                            "label": "@@vendor+//:docs_bundle",
+                            "name": "docs_bundle",
+                            "code_targets": [],
+                        },
                     },
                 ]
             }
@@ -214,7 +254,18 @@ def test_mounted_watch_dirs_use_data_directories_for_pure_data_bundles(
                         "src_root": "",
                         "runtime_path": "__data__/pkg/data_bundle",
                         "mount_at": "generated",
+                        "attach_to": "",
+                        "entry_doc": "index",
+                        "external": False,
+                        "repository": "",
+                        "generated": False,
                         "data": ["bazel-out/k8-fastbuild/bin/pkg/generated/index.rst"],
+                        "root_bundle": False,
+                        "bundle": {
+                            "label": "@@//:data_bundle",
+                            "name": "data_bundle",
+                            "code_targets": [],
+                        },
                     }
                 ]
             }
