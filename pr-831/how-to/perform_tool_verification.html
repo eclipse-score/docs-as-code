@@ -862,18 +862,22 @@ and execute that process with the available S-CORE Docs-as-Code model.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This guide focuses on the safety-related evaluation and qualification aspects
-of SCORE Tool Management. Security-related evaluation remains unsolved for now.</p>
+of SCORE Tool Management. Security evaluation is outside this guide. Use the
+<a class="reference external" href="https://eclipse-score.github.io/process_description/main/process_areas/security_analysis/guidance/security_analysis_guideline.html">SCORE Security Analysis Guideline</a>
+and applicable work products to identify relevant assets, threats, and impacts.
+For example, data integrity may matter for a tool use case while data
+availability does not; reflect that result in the TVR.</p>
 </div>
 <hr class="docutils" />
 <section id="mental-model">
 <h2>Mental model<a class="headerlink" href="#mental-model" title="Link to this heading">#</a></h2>
 <p>The important distinction is between:</p>
 <ul class="simple">
-<li><p><strong>Tool Verification Report (<code class="docutils literal notranslate"><span class="pre">doc_tool</span></code>)</strong> — records the SCORE tool-management
-state and the overall evaluation result.</p></li>
+<li><p><strong>Tool Verification Report (TVR, <code class="docutils literal notranslate"><span class="pre">doc_tool</span></code>)</strong> — records the SCORE
+tool-management state and the overall evaluation result.</p></li>
 <li><p><strong>Tool requirements (<code class="docutils literal notranslate"><span class="pre">tool_req</span></code>)</strong> — what the project relies on the tool to do.</p></li>
 <li><p><strong>Tool use cases (<code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code>)</strong> — the usage context in which the project
-relies on those requirements.</p></li>
+relies on the tool.</p></li>
 <li><p><strong>Potential tool malfunctions (<code class="docutils literal notranslate"><span class="pre">potential_tool_malfunction</span></code>)</strong> — ways in which
 the expected tool behaviour can fail.</p></li>
 <li><p><strong>Safety measures</strong> — measures active during intended tool usage that prevent
@@ -891,9 +895,9 @@ qualification, these verify the relevant <code class="docutils literal notransla
     TC[&quot;testcase&lt;br/&gt;Qualification Evidence&quot;]
 
     UC --&gt;|&quot;realizes&lt;br/&gt;(optional)&quot;| STKH
-    UC --&gt;|&quot;realized_by&quot;| TR
+    UC --&gt;|&quot;realized_by&lt;br/&gt;(optional)&quot;| TR
 
-    PM --&gt;|&quot;violates&quot;| UC
+    PM --&gt;|&quot;nested under&lt;br/&gt;(parent_needs)&quot;| UC
     PM --&gt;|&quot;violates&quot;| STKH
     PM --&gt;|&quot;violates&quot;| TR
 
@@ -996,22 +1000,24 @@ now managed through the SCORE Tool Management process.</p>
 <h2>Step 1 — Create the Tool Verification Report<a class="headerlink" href="#step-1-create-the-tool-verification-report" title="Link to this heading">#</a></h2>
 <section id="what-to-model">
 <h3>What to model<a class="headerlink" href="#what-to-model" title="Link to this heading">#</a></h3>
-<p>The SCORE Tool Verification Report is represented by <code class="docutils literal notranslate"><span class="pre">doc_tool</span></code>.</p>
-<p>The current metamodel contains the following relevant attributes:</p>
+<p>The SCORE Tool Verification Report (TVR) is represented by <code class="docutils literal notranslate"><span class="pre">doc_tool</span></code>.</p>
+<p>The TVR uses the following relevant attributes:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">status</span></code>: <code class="docutils literal notranslate"><span class="pre">draft</span> <span class="pre">|</span> <span class="pre">evaluated</span> <span class="pre">|</span> <span class="pre">qualified</span> <span class="pre">|</span> <span class="pre">released</span> <span class="pre">|</span> <span class="pre">rejected</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">safety_affected</span></code>: <code class="docutils literal notranslate"><span class="pre">YES</span> <span class="pre">|</span> <span class="pre">NO</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">security_affected</span></code>: <code class="docutils literal notranslate"><span class="pre">YES</span> <span class="pre">|</span> <span class="pre">NO</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">tcl</span></code>: <code class="docutils literal notranslate"><span class="pre">LOW</span> <span class="pre">|</span> <span class="pre">HIGH</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">tool_version</span></code>: optional in the current metamodel</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tool_version</span></code>: optional</p></li>
 </ul>
+<p>The generated TVR report additionally shows:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">safety_affected</span></code>, derived from the owned malfunctions</p></li>
+<li><p>SCORE Tool Confidence Level (SCORE TCL), derived from the owned malfunctions</p></li>
+</ul>
+<p>The report author does not provide these summary values.</p>
 <p>Example structure:</p>
 <div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>```{doc_tool} S-CORE Docs-as-Code Tool Verification Report
 :id: doc_tool__s_core_docs_as_code
 :status: draft
-:safety_affected: YES
 :security_affected: NO
-:tcl: LOW
 :tool_version: &lt;exact version&gt;
 
 Describe the tool, its intended use, relevant configuration, environment,
@@ -1021,21 +1027,22 @@ constraints, inputs, outputs, and available documentation.
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p><code class="docutils literal notranslate"><span class="pre">tcl</span></code> is mandatory in the current metamodel even while the report is still
-<code class="docutils literal notranslate"><span class="pre">draft</span></code>. Update it to the actual evaluation result once Step 5 is complete.</p>
+<p>The report author provides the tool identity, status, and security relevance.
+The safety summary and SCORE TCL are derived from the owned malfunction graph.</p>
 </div>
 </section>
 <section id="external-tool">
 <h3>External tool<a class="headerlink" href="#external-tool" title="Link to this heading">#</a></h3>
 <p>Identify the exact version and configuration that is actually used.</p>
-<p>Do not evaluate the S-CORE Docs-as-Code tool, Clang, or GitHub generically when
-the project relies on a specific version, plugin set, configuration, or usage
-restriction.</p>
+<p>Evaluate the exact tool instance used by the project, including its version,
+plugins, configuration, and usage restrictions.</p>
 </section>
 <section id="self-developed-tool">
 <h3>Self-developed tool<a class="headerlink" href="#self-developed-tool" title="Link to this heading">#</a></h3>
-<p>Reference the project’s normal version/release identification. The TVR must make
-clear which released tool version the evaluation applies to.</p>
+<p>Reference the project’s normal version, release, or source-revision
+identification. For example, a Git commit can identify the evaluated tool when
+the relevant source and build context are clear. The TVR must make clear which
+specific tool version or revision the evaluation applies to.</p>
 </section>
 </section>
 <hr class="docutils" />
@@ -1046,12 +1053,12 @@ clear which released tool version the evaluation applies to.</p>
 <blockquote>
 <div><p><strong>What are we relying on this tool to do in our development process?</strong></p>
 </div></blockquote>
-<p>The current metamodel defines:</p>
+<p>Represent a <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code> with the following relationships:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">tool_usecase</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">mandatory_links</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">belongs_to</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">doc_tool</span>
-<span class="w">    </span><span class="nt">realized_by</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tool_req</span>
 <span class="w">  </span><span class="nt">optional_links</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">realized_by</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tool_req</span>
 <span class="w">    </span><span class="nt">realizes</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stkh_req</span>
 </pre></div>
 </div>
@@ -1065,15 +1072,18 @@ clear which released tool version the evaluation applies to.</p>
 
     UC --&gt;|&quot;belongs_to&lt;br/&gt;(mandatory)&quot;| DT
     UC --&gt;|&quot;realizes&lt;br/&gt;(optional)&quot;| STKH
-    UC --&gt;|&quot;realized_by&lt;br/&gt;(mandatory)&quot;| TR
+    UC --&gt;|&quot;realized_by&lt;br/&gt;(optional)&quot;| TR
 
     style STKH fill:#DAE8FC
     style UC fill:#E1D5E7
     style TR fill:#F5F5F5
-    </pre><section id="when-is-tool-usecase-useful">
-<h3>When is <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code> useful?<a class="headerlink" href="#when-is-tool-usecase-useful" title="Link to this heading">#</a></h3>
-<p>Use <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code> when the stakeholder requirements are too high-level and the
-tool requirements are too detailed to clearly express the usage context.</p>
+    </pre><section id="how-to-model-tool-usecase">
+<h3>How to model <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code><a class="headerlink" href="#how-to-model-tool-usecase" title="Link to this heading">#</a></h3>
+<p>Every <code class="docutils literal notranslate"><span class="pre">evaluated</span></code>, <code class="docutils literal notranslate"><span class="pre">qualified</span></code>, or <code class="docutils literal notranslate"><span class="pre">released</span></code> TVR must own at least one
+<code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code>. The use case records the context in which the project relies on
+the tool. Link it to a <code class="docutils literal notranslate"><span class="pre">tool_req</span></code> when a matching requirement exists; the
+<code class="docutils literal notranslate"><span class="pre">realized_by</span></code> link is optional so the context can be documented before that
+requirement has been defined.</p>
 <p>For example:</p>
 <ul class="simple">
 <li><p>stakeholder requirement: the system-development process must provide valid
@@ -1082,14 +1092,15 @@ requirements traceability,</p></li>
 <li><p>tool requirement: unresolved requirement links must be reported.</p></li>
 </ul>
 <p>If an existing requirement already expresses the usage context exactly, avoid
-inventing additional behaviour in the use case. The use case can remain a thin
-grouping/context element.</p>
+inventing additional behaviour in the use case. Keep it as a thin
+grouping/context element, whether or not it links to a <code class="docutils literal notranslate"><span class="pre">tool_req</span></code>.</p>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
-<p>With the current metamodel, every <code class="docutils literal notranslate"><span class="pre">potential_tool_malfunction</span></code> has a mandatory
-<code class="docutils literal notranslate"><span class="pre">parent_needs</span></code> link to a <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code>. Therefore, once you model
-malfunctions, a <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code> is structurally required even if it merely
-references an already well-scoped requirement.</p>
+<p>Write each <code class="docutils literal notranslate"><span class="pre">potential_tool_malfunction</span></code> nested inside its <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code>. The
+nested structure creates the <code class="docutils literal notranslate"><span class="pre">parent_needs</span></code> relationship automatically; do not
+add a separate <code class="docutils literal notranslate"><span class="pre">parent_needs</span></code> option. Therefore, once you model malfunctions,
+place them under a <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code> even if that use case merely provides context
+for an already well-scoped requirement.</p>
 </div>
 </section>
 <section id="tool-model-example">
@@ -1140,7 +1151,7 @@ requirements already describe the behaviour relied upon by the project.</p>
 <h2>Step 3 — Identify potential tool malfunctions<a class="headerlink" href="#step-3-identify-potential-tool-malfunctions" title="Link to this heading">#</a></h2>
 <p>For every tool use case, identify relevant ways in which the expected tool
 behaviour could fail.</p>
-<p>The current metamodel defines:</p>
+<p>Represent a <code class="docutils literal notranslate"><span class="pre">potential_tool_malfunction</span></code> with the following options and links:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">potential_tool_malfunction</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">mandatory_options</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">safety_affected</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;^(YES|NO)$&quot;</span>
@@ -1148,6 +1159,7 @@ behaviour could fail.</p>
 <span class="w">    </span><span class="nt">detection_sufficient</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;^(YES|NO)$&quot;</span>
 <span class="w">    </span><span class="nt">safety_measures</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^.+$</span>
 <span class="w">  </span><span class="nt">mandatory_links</span><span class="p">:</span>
+<span class="w">    </span><span class="c1"># Established by nesting the malfunction inside its tool use case.</span>
 <span class="w">    </span><span class="nt">parent_needs</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tool_usecase</span>
 <span class="w">    </span><span class="nt">violates</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stkh_req, tool_req</span>
 </pre></div>
@@ -1160,7 +1172,7 @@ behaviour could fail.</p>
     STKH[&quot;stkh_req&quot;]
     TR[&quot;tool_req&quot;]
 
-    PM --&gt;|&quot;parent_needs&quot;| UC
+    PM --&gt;|&quot;nested under&lt;br/&gt;(parent_needs)&quot;| UC
     PM --&gt;|&quot;violates&quot;| STKH
     PM --&gt;|&quot;violates&quot;| TR
 
@@ -1203,9 +1215,16 @@ could eventually contribute to an incorrect engineering decision.</p>
 </section>
 <section id="id3">
 <h3>Tool model example<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
-<div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>```{potential_tool_malfunction} Unresolved requirement link is accepted as valid
+<div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>::::{tool_usecase} Validate requirement traceability during documentation builds
+:id: tool_usecase__docs_as_code__traceability
+:belongs_to: doc_tool__s_core_docs_as_code
+:realized_by: tool_req__docs_as_code__unresolved_links
+:realizes: stkh_req__docs_as_code__traceability
+
+The project relies on the documentation tool to detect invalid traceability.
+
+:::{potential_tool_malfunction} Unresolved requirement link is accepted as valid
 :id: potential_tool_malfunction__docs_as_code__unresolved_link_accepted
-:parent_needs: tool_usecase__docs_as_code__traceability
 :violates:
   tool_req__docs_as_code__unresolved_links,
   stkh_req__docs_as_code__traceability
@@ -1214,7 +1233,8 @@ could eventually contribute to an incorrect engineering decision.</p>
 
 An unresolved requirement link is accepted as valid and the documentation build
 does not report the problem.
-```
+:::
+::::
 </pre></div>
 </div>
 <p>There is no conceptual difference between external and self-developed tools in
@@ -1277,9 +1297,12 @@ sufficient confidence?</strong></p>
 <li><p>a downstream tool independently validates critical information.</p></li>
 </ul>
 <p>Document the relevant measure using <code class="docutils literal notranslate"><span class="pre">safety_measures</span></code>.</p>
-<div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>```{potential_tool_malfunction} Generated source contains invalid syntax
+<div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>::::{tool_usecase} Generate production source from the approved model
+:id: tool_usecase__generator__generate_source
+:belongs_to: doc_tool__s_core_docs_as_code
+
+:::{potential_tool_malfunction} Generated source contains invalid syntax
 :id: potential_tool_malfunction__generator__invalid_syntax
-:parent_needs: tool_usecase__generator__generate_source
 :violates: tool_req__generator__valid_source
 :safety_affected: YES
 :detection_sufficient: YES
@@ -1287,7 +1310,8 @@ sufficient confidence?</strong></p>
 
 The generator may emit syntactically invalid source code. The mandatory
 downstream compilation detects this malfunction before the output can be used.
-```
+:::
+::::
 </pre></div>
 </div>
 <p>The important point is that the measure is part of the <strong>defined intended
@@ -1298,8 +1322,8 @@ the intended usage, evaluate the malfunction with that usage concept.</p>
 </section>
 </section>
 <hr class="docutils" />
-<section id="step-5-determine-confidence-and-qualification-need">
-<h2>Step 5 — Determine confidence and qualification need<a class="headerlink" href="#step-5-determine-confidence-and-qualification-need" title="Link to this heading">#</a></h2>
+<section id="step-5-determine-classification-and-qualification-need">
+<h2>Step 5 — Determine classification and qualification need<a class="headerlink" href="#step-5-determine-classification-and-qualification-need" title="Link to this heading">#</a></h2>
 <p>For the SCORE safety evaluation, the simplified decision is:</p>
 <pre  class="mermaid">
         flowchart TD
@@ -1312,7 +1336,7 @@ the intended usage, evaluate the malfunction with that usage concept.</p>
 <thead>
 <tr class="row-odd"><th class="head"><p><code class="docutils literal notranslate"><span class="pre">safety_affected</span></code></p></th>
 <th class="head"><p><code class="docutils literal notranslate"><span class="pre">detection_sufficient</span></code></p></th>
-<th class="head"><p>TVR <code class="docutils literal notranslate"><span class="pre">tcl</span></code></p></th>
+<th class="head"><p>TVR SCORE TCL</p></th>
 <th class="head"><p>Qualification</p></th>
 </tr>
 </thead>
@@ -1335,32 +1359,39 @@ the intended usage, evaluate the malfunction with that usage concept.</p>
 </tbody>
 </table>
 </div>
-<p>The tooling derives the TVR values from the owned graph rather than treating
-them as independent labels:</p>
+<p>The workflow automatically calculates the TVR summary from the owned
+malfunction graph:</p>
 <ol class="arabic simple">
-<li><p>Follow <code class="docutils literal notranslate"><span class="pre">doc_tool</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code> through the mandatory <code class="docutils literal notranslate"><span class="pre">belongs_to</span></code> link.</p></li>
-<li><p>Follow each use case -&gt; <code class="docutils literal notranslate"><span class="pre">potential_tool_malfunction</span></code> through
-<code class="docutils literal notranslate"><span class="pre">parent_needs</span></code>.</p></li>
-<li><p>Set <code class="docutils literal notranslate"><span class="pre">doc_tool.safety_affected</span></code> to <code class="docutils literal notranslate"><span class="pre">YES</span></code> if any owned malfunction is safety
-affected; otherwise set it to <code class="docutils literal notranslate"><span class="pre">NO</span></code>.</p></li>
-<li><p>Set <code class="docutils literal notranslate"><span class="pre">doc_tool.tcl</span></code> to <code class="docutils literal notranslate"><span class="pre">LOW</span></code> if any owned malfunction is safety affected and
-has <code class="docutils literal notranslate"><span class="pre">detection_sufficient:</span> <span class="pre">NO</span></code>; otherwise set it to <code class="docutils literal notranslate"><span class="pre">HIGH</span></code>.</p></li>
+<li><p>It follows <code class="docutils literal notranslate"><span class="pre">doc_tool</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code> through the mandatory <code class="docutils literal notranslate"><span class="pre">belongs_to</span></code>
+link.</p></li>
+<li><p>It follows each use case -&gt; nested <code class="docutils literal notranslate"><span class="pre">potential_tool_malfunction</span></code> needs
+through the generated <code class="docutils literal notranslate"><span class="pre">parent_needs</span></code> relationship.</p></li>
+<li><p>It reports safety affected as <code class="docutils literal notranslate"><span class="pre">YES</span></code> if any owned malfunction is safety
+affected; otherwise it reports <code class="docutils literal notranslate"><span class="pre">NO</span></code>.</p></li>
+<li><p>It reports SCORE TCL as <code class="docutils literal notranslate"><span class="pre">LOW</span></code> if any owned malfunction is safety affected
+and has <code class="docutils literal notranslate"><span class="pre">detection_sufficient:</span> <span class="pre">NO</span></code>; otherwise it reports <code class="docutils literal notranslate"><span class="pre">HIGH</span></code>.</p></li>
 </ol>
-<p>The stored <code class="docutils literal notranslate"><span class="pre">safety_affected</span></code> and <code class="docutils literal notranslate"><span class="pre">tcl</span></code> values remain mandatory SCORE TVR data,
-but validation reports a mismatch when they do not match this derivation.
-Qualification evidence does not change either value and does not change a
-malfunction’s <code class="docutils literal notranslate"><span class="pre">detection_sufficient</span></code> result.</p>
-<p>After the evaluation is complete, update the <code class="docutils literal notranslate"><span class="pre">doc_tool</span></code>:</p>
+<p>The generated report exposes the classification result as <code class="docutils literal notranslate"><span class="pre">HIGH</span></code> or <code class="docutils literal notranslate"><span class="pre">LOW</span></code>. In
+this model, <code class="docutils literal notranslate"><span class="pre">HIGH</span></code> means no qualification is required and <code class="docutils literal notranslate"><span class="pre">LOW</span></code> means
+qualification is required. A <code class="docutils literal notranslate"><span class="pre">LOW</span></code> result identifies the evidence that must be
+provided; it does not mean that qualification has already happened. The
+evaluation result and <code class="docutils literal notranslate"><span class="pre">detection_sufficient</span></code> remain unchanged by qualification.</p>
+<p>After the evaluation is complete, the generated report exposes the derived
+summary. No manual <code class="docutils literal notranslate"><span class="pre">safety_affected</span></code> or <code class="docutils literal notranslate"><span class="pre">tcl</span></code> values are required on the
+<code class="docutils literal notranslate"><span class="pre">doc_tool</span></code>.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>:status: evaluated
-:tcl: HIGH
+SCORE TCL: HIGH
+Qualification required: NO
 </pre></div>
 </div>
 <p>or:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>:status: evaluated
-:tcl: LOW
+SCORE TCL: LOW
+Qualification required: YES
 </pre></div>
 </div>
-<p>The report must clearly state whether qualification is required.</p>
+<p>For a <code class="docutils literal notranslate"><span class="pre">LOW</span></code> result, the generated qualification view identifies the required
+tool requirements and their current evidence status.</p>
 <section id="multiple-use-cases-and-malfunctions">
 <h3>Multiple use cases and malfunctions<a class="headerlink" href="#multiple-use-cases-and-malfunctions" title="Link to this heading">#</a></h3>
 <p>The overall TVR result must reflect the relevant worst case.</p>
@@ -1391,6 +1422,9 @@ prevention measure.</p>
 :detection_sufficient: NO
 </pre></div>
 </div>
+<p>An <strong>independent check</strong> is a separate opportunity to prevent or detect the
+failure; it may be a downstream tool, compiler, consistency check, or review and
+does not require a different organisation.</p>
 <p>After the independent check becomes a mandatory part of intended usage:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>:safety_affected: YES
 :safety_measures: Independent checker validates every generated artifact.
@@ -1399,14 +1433,19 @@ prevention measure.</p>
 </div>
 <p>This requires <strong>re-evaluating the affected malfunction because the usage concept
 changed</strong>.</p>
+<p>The check must be mandatory for every applicable artifact or execution and gate
+acceptance. Verify this through workflow or test-campaign evidence, such as a
+CI gate, configured checker, or recorded review, and describe it in
+<code class="docutils literal notranslate"><span class="pre">safety_measures</span></code>. An occasional or merely proposed check is insufficient.</p>
 <p>It is not a reclassification caused by qualification.</p>
 </section>
 <hr class="docutils" />
 <section id="step-6-qualify-the-tool-if-required">
 <h2>Step 6 — Qualify the tool if required<a class="headerlink" href="#step-6-qualify-the-tool-if-required" title="Link to this heading">#</a></h2>
-<p>Qualification is required when the evaluation results in insufficient
-confidence and the project does not resolve that through a changed usage
-concept.</p>
+<p>Qualification is an evidence activity required when the evaluation results in
+insufficient confidence and the project does not resolve that through a changed
+usage concept. It does not happen merely because the qualification view is
+generated.</p>
 <p>SCORE uses validation of the software tool as the qualification approach.</p>
 <p>The qualification view starts from <code class="docutils literal notranslate"><span class="pre">tool_req</span></code>:</p>
 <pre  class="mermaid">
@@ -1425,8 +1464,10 @@ as <code class="docutils literal notranslate"><span class="pre">testcase</span><
 <li><p><code class="docutils literal notranslate"><span class="pre">fully_verifies</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">partially_verifies</span></code></p></li>
 </ul>
-<p>For qualification, the relevant testcases should verify the <code class="docutils literal notranslate"><span class="pre">tool_req</span></code> needs
-that define the behaviour relied upon by the tool use cases.</p>
+<p>For each qualification-relevant <code class="docutils literal notranslate"><span class="pre">tool_req</span></code>, qualification requires at least one
+recorded testcase with <code class="docutils literal notranslate"><span class="pre">result:</span> <span class="pre">passed</span></code> and a <code class="docutils literal notranslate"><span class="pre">fully_verifies</span></code> link to that
+requirement. A <code class="docutils literal notranslate"><span class="pre">partially_verifies</span></code> link is useful supplemental traceability,
+but does not complete qualification by itself.</p>
 <section id="qualification-is-not-a-detection-measure">
 <h3>Qualification is not a detection measure<a class="headerlink" href="#qualification-is-not-a-detection-measure" title="Link to this heading">#</a></h3>
 <p>Compare the two roles:</p>
@@ -1471,28 +1512,36 @@ The tool shall report an unresolved requirement link as an error.
 ```
 </pre></div>
 </div>
-<p>A requirements-based qualification test can then:</p>
+<p>This is an example of a requirements-based qualification test; other campaign
+tests need not be requirements-based:</p>
 <ol class="arabic simple">
 <li><p>create input containing a known unresolved link,</p></li>
-<li><p>execute the exact configured tool version,</p></li>
+<li><p>execute the configured tool version with the relevant configured invocation,</p></li>
 <li><p>verify that the expected error is reported.</p></li>
 </ol>
-<p>The resulting SCORE <code class="docutils literal notranslate"><span class="pre">testcase</span></code> should link to the tool requirement via
-<code class="docutils literal notranslate"><span class="pre">fully_verifies</span></code> or <code class="docutils literal notranslate"><span class="pre">partially_verifies</span></code>, as appropriate.</p>
-<p>Vendor documentation, release notes, and upstream tests can support the
-argument, but the qualification evidence needs to address the behaviour that
-<strong>our project relies on</strong>.</p>
+<p>The campaign shall record the exact tool version, relevant configuration,
+environment and dependencies, invocation, input, expected and actual results,
+and outcome.</p>
+<p>The resulting SCORE <code class="docutils literal notranslate"><span class="pre">testcase</span></code> must link to the tool requirement via
+<code class="docutils literal notranslate"><span class="pre">fully_verifies</span></code> for the requirement to count as qualified. A
+<code class="docutils literal notranslate"><span class="pre">partially_verifies</span></code> link may be recorded as supplemental evidence, but does not
+complete qualification by itself.</p>
+<p>Vendor documentation, release notes, and <strong>upstream tests</strong>—tests maintained
+by the vendor or originating project—can support the argument. They remain
+supporting information unless accepted under the recorded conditions and traced
+to the relevant <code class="docutils literal notranslate"><span class="pre">tool_req</span></code>.</p>
 </section>
 <hr class="docutils" />
 <section id="self-developed-tool-qualification">
 <h3>Self-developed tool qualification<a class="headerlink" href="#self-developed-tool-qualification" title="Link to this heading">#</a></h3>
-<p>For a self-developed tool, do not automatically create a second qualification
+<p>For a self-developed tool, do not automatically create a separate qualification
 test suite.</p>
 <p>If the normal development process already produces testcases that:</p>
 <ul class="simple">
 <li><p>verify the relevant <code class="docutils literal notranslate"><span class="pre">tool_req</span></code> needs,</p></li>
 <li><p>execute against the tool version being qualified,</p></li>
-<li><p>provide suitable recorded results,</p></li>
+<li><p>provide a recorded <code class="docutils literal notranslate"><span class="pre">result:</span> <span class="pre">passed</span></code>, and</p></li>
+<li><p>link to each relevant requirement with <code class="docutils literal notranslate"><span class="pre">fully_verifies</span></code>,</p></li>
 </ul>
 <p>reuse those testcases as qualification evidence.</p>
 <p>Prefer:</p>
@@ -1510,14 +1559,13 @@ insufficient.</p>
 <section id="step-7-update-the-tool-verification-report">
 <h2>Step 7 — Update the Tool Verification Report<a class="headerlink" href="#step-7-update-the-tool-verification-report" title="Link to this heading">#</a></h2>
 <p>If no qualification was required, the evaluated report can proceed to review.</p>
-<p>If qualification was required and completed successfully:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>:status: qualified
-</pre></div>
-</div>
+<p>If qualification was required and every relevant <code class="docutils literal notranslate"><span class="pre">tool_req</span></code> has the required
+passed <code class="docutils literal notranslate"><span class="pre">fully_verifies</span></code> evidence, set the report status to <code class="docutils literal notranslate"><span class="pre">qualified</span></code>.</p>
 <p>The evaluation result itself does <strong>not</strong> automatically change.</p>
-<p>This is a valid final state before release:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>:tcl: LOW
-:status: qualified
+<p>Changing the status does not create qualification evidence; it records that the
+required evidence has already been provided.</p>
+<p>This is a valid final state before release; the generated summary remains LOW:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>:status: qualified
 </pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">LOW</span></code> records why qualification was necessary.</p>
@@ -1539,10 +1587,10 @@ detection mechanism.</p>
 <h2>Step 8 — Review and release the Tool Verification Report<a class="headerlink" href="#step-8-review-and-release-the-tool-verification-report" title="Link to this heading">#</a></h2>
 <p>Review the completed TVR against the SCORE Tool Verification Report Review
 Checklist.</p>
-<p>The review should cover, where applicable:</p>
+<p>The review shall describe, where applicable:</p>
 <ul class="simple">
 <li><p>unique tool identification,</p></li>
-<li><p>exact tool version,</p></li>
+<li><p>exact tool version and the relevant test-campaign execution conditions,</p></li>
 <li><p>purpose and tool use cases,</p></li>
 <li><p>inputs and outputs,</p></li>
 <li><p>configuration,</p></li>
@@ -1579,8 +1627,7 @@ Checklist.</p>
 traceability.</p>
 <section id="stakeholder-requirement">
 <h3>Stakeholder requirement<a class="headerlink" href="#stakeholder-requirement" title="Link to this heading">#</a></h3>
-<p>A real <code class="docutils literal notranslate"><span class="pre">stkh_req</span></code> must provide the mandatory metadata defined by the SCORE
-metamodel. For example:</p>
+<p>A real <code class="docutils literal notranslate"><span class="pre">stkh_req</span></code> must provide the required SCORE metadata. For example:</p>
 <div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>```{stkh_req} Provide valid verification traceability
 :id: stkh_req__docs_as_code__traceability
 :reqtype: Process
@@ -1606,9 +1653,9 @@ The tool shall report unresolved requirement links as errors.
 </pre></div>
 </div>
 </section>
-<section id="tool-use-case">
-<h3>Tool use case<a class="headerlink" href="#tool-use-case" title="Link to this heading">#</a></h3>
-<div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>```{tool_usecase} Validate requirement traceability during documentation builds
+<section id="tool-use-case-and-potential-malfunction">
+<h3>Tool use case and potential malfunction<a class="headerlink" href="#tool-use-case-and-potential-malfunction" title="Link to this heading">#</a></h3>
+<div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>::::{tool_usecase} Validate requirement traceability during documentation builds
 :id: tool_usecase__docs_as_code__traceability
 :belongs_to: doc_tool__s_core_docs_as_code
 :realized_by: tool_req__docs_as_code__unresolved_links
@@ -1616,15 +1663,9 @@ The tool shall report unresolved requirement links as errors.
 
 The project relies on the documentation tool to detect invalid traceability
 before generated documentation is accepted.
-```
-</pre></div>
-</div>
-</section>
-<section id="potential-malfunction">
-<h3>Potential malfunction<a class="headerlink" href="#potential-malfunction" title="Link to this heading">#</a></h3>
-<div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>```{potential_tool_malfunction} Unresolved requirement link is accepted as valid
+
+:::{potential_tool_malfunction} Unresolved requirement link is accepted as valid
 :id: potential_tool_malfunction__docs_as_code__unresolved_link_accepted
-:parent_needs: tool_usecase__docs_as_code__traceability
 :violates:
   tool_req__docs_as_code__unresolved_links,
   stkh_req__docs_as_code__traceability
@@ -1632,7 +1673,8 @@ before generated documentation is accepted.
 :detection_sufficient: NO
 
 An unresolved requirement link is accepted as valid and no error is reported.
-```
+:::
+::::
 </pre></div>
 </div>
 <p>The resulting model is:</p>
@@ -1644,8 +1686,8 @@ An unresolved requirement link is accepted as valid and no error is reported.
     PM[&quot;potential_tool_malfunction__docs_as_code__&lt;br/&gt;unresolved_link_accepted&quot;]
 
     UC --&gt;|&quot;realizes&quot;| STKH
-    UC --&gt;|&quot;realized_by&quot;| TR
-    PM --&gt;|&quot;parent_needs&quot;| UC
+    UC --&gt;|&quot;realized_by (optional)&quot;| TR
+    PM --&gt;|&quot;nested under&lt;br/&gt;(parent_needs)&quot;| UC
     PM --&gt;|&quot;violates&quot;| STKH
     PM --&gt;|&quot;violates&quot;| TR
 
@@ -1654,7 +1696,7 @@ An unresolved requirement link is accepted as valid and no error is reported.
     style TR fill:#F5F5F5
     style PM fill:#F8CECC
     </pre><p>Because the malfunction is safety relevant and detection is insufficient:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>tcl = LOW
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>SCORE TCL = LOW
 qualification required = YES
 </pre></div>
 </div>
@@ -1667,9 +1709,9 @@ requirement using the normal SCORE verification links, for example
 progress:</p>
 <pre  class="mermaid">
         flowchart LR
-    A[&quot;evaluated&lt;br/&gt;tcl = LOW&quot;] --&gt; B[&quot;qualification tests pass&quot;]
-    B --&gt; C[&quot;qualified&lt;br/&gt;tcl = LOW&quot;]
-    C --&gt; D[&quot;released&lt;br/&gt;tcl = LOW&quot;]
+    A[&quot;evaluated&lt;br/&gt;SCORE TCL = LOW&quot;] --&gt; B[&quot;qualification tests pass&quot;]
+    B --&gt; C[&quot;qualified&lt;br/&gt;SCORE TCL = LOW&quot;]
+    C --&gt; D[&quot;released&lt;br/&gt;SCORE TCL = LOW&quot;]
     </pre></section>
 </section>
 <hr class="docutils" />
@@ -1702,8 +1744,8 @@ code.
 </div>
 </section>
 <section id="id4">
-<h3>Tool use case<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
-<div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>```{tool_usecase} Generate production source from the approved model
+<h3>Tool use case and potential malfunction<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
+<div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>::::{tool_usecase} Generate production source from the approved model
 :id: tool_usecase__generator__generate_source
 :belongs_to: doc_tool__s_core_docs_as_code
 :realized_by: tool_req__generator__state_transitions
@@ -1711,15 +1753,9 @@ code.
 
 The project relies on the generator to transform the approved model into
 production source code.
-```
-</pre></div>
-</div>
-</section>
-<section id="id5">
-<h3>Potential malfunction<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
-<div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>```{potential_tool_malfunction} State transition is omitted from generated source
+
+:::{potential_tool_malfunction} State transition is omitted from generated source
 :id: potential_tool_malfunction__generator__missing_transition
-:parent_needs: tool_usecase__generator__generate_source
 :violates:
   tool_req__generator__state_transitions,
   stkh_req__generator__approved_model
@@ -1728,11 +1764,12 @@ production source code.
 
 A state transition present in the approved input model is omitted from the
 generated source code.
-```
+:::
+::::
 </pre></div>
 </div>
 <p>Result:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>tcl = LOW
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>SCORE TCL = LOW
 qualification required = YES
 </pre></div>
 </div>
@@ -1759,7 +1796,8 @@ changes.</p>
 <li><p>a newly identified potential malfunction,</p></li>
 <li><p>a new, changed, or removed safety measure,</p></li>
 <li><p>a changed surrounding workflow/toolchain,</p></li>
-<li><p>evidence that an assumed detection measure is not sufficient.</p></li>
+<li><p>evidence that a previously sufficient detection measure is no longer
+sufficient.</p></li>
 </ul>
 <p>Do <strong>not</strong> re-evaluate merely because qualification tests passed.</p>
 <p>Qualification adds evidence about the tool. It does not by itself change the
@@ -1780,7 +1818,9 @@ intended usage or the detection measures.</p>
 <h3>Treating <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code> as a new requirement level<a class="headerlink" href="#treating-tool-usecase-as-a-new-requirement-level" title="Link to this heading">#</a></h3>
 <p>Do not invent new normative behaviour in <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code>.</p>
 <p>It is a <strong>usage-context / grouping element</strong> between stakeholder intent and
-concrete tool behaviour.</p>
+concrete tool behaviour. For example, “validate requirement traceability during
+documentation builds” is a use case; “the tool shall report unresolved links”
+is the requirement. The use case adds context, not another requirement level.</p>
 <pre  class="mermaid">
         flowchart LR
     STKH[&quot;Stakeholder intent&quot;]
@@ -1788,7 +1828,7 @@ concrete tool behaviour.</p>
     TR[&quot;Concrete tool behaviour&quot;]
 
     UC --&gt;|&quot;realizes&quot;| STKH
-    UC --&gt;|&quot;realized_by&quot;| TR
+    UC --&gt;|&quot;realized_by (optional)&quot;| TR
     </pre></section>
 <hr class="docutils" />
 <section id="using-generic-malfunctions">
@@ -1811,6 +1851,10 @@ The generated value differs from the configured source value.
 <h3>Treating every existing test as a safety measure<a class="headerlink" href="#treating-every-existing-test-as-a-safety-measure" title="Link to this heading">#</a></h3>
 <p>A test executed during development or release validation is not automatically a
 measure for <code class="docutils literal notranslate"><span class="pre">detection_sufficient</span></code>.</p>
+<p>Development and qualification tests provide evidence about a tool version;
+detection sufficiency requires a mechanism that runs during intended use and
+prevents or detects the malfunction before the result is relied upon. Therefore,
+adding a campaign test does not by itself make detection sufficient.</p>
 <p>Ask:</p>
 <blockquote>
 <div><p>If the malfunction occurs during actual intended tool usage, does this
@@ -1827,7 +1871,6 @@ mechanism prevent or detect it before the result is relied upon?</p>
 <p>Qualification may leave the evaluation unchanged:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>:safety_affected: YES
 :detection_sufficient: NO
-:tcl: LOW
 :status: qualified
 </pre></div>
 </div>
@@ -1839,6 +1882,9 @@ mechanism prevent or detect it before the result is relied upon?</p>
 <section id="duplicating-external-specifications">
 <h3>Duplicating external specifications<a class="headerlink" href="#duplicating-external-specifications" title="Link to this heading">#</a></h3>
 <p>Do not copy an external tool’s complete specification into <code class="docutils literal notranslate"><span class="pre">tool_req</span></code>.</p>
+<p>Do not copy almost the entire external C&amp;Q or qualification specification from
+the Internet either; capture only the behaviour and assumptions our project
+relies on.</p>
 <p>Model the behaviour <strong>our project relies on</strong>.</p>
 </section>
 <hr class="docutils" />
@@ -1856,13 +1902,13 @@ already verify the relevant <code class="docutils literal notranslate"><span cla
     A[&quot;1. Identify exact tool version / configuration&quot;]
     B[&quot;2. Create doc_tool&lt;br/&gt;status = draft&quot;]
     C[&quot;3. Define tool_usecase&quot;]
-    D[&quot;4. Link tool_req&lt;br/&gt;and optionally stkh_req&quot;]
+    D[&quot;4. Link available tool_req&lt;br/&gt;and optionally stkh_req&quot;]
     E[&quot;5. Identify potential_tool_malfunction&quot;]
-    F[&quot;6. Set safety_affected&quot;]
+    F[&quot;6. Read generated TVR summary&quot;]
     G[&quot;7. Document safety_measures&lt;br/&gt;and detection_sufficient&quot;]
-    H[&quot;8. Determine tcl&quot;]
+    H[&quot;8. Read generated SCORE TCL&quot;]
     I[&quot;status = evaluated&quot;]
-    J{&quot;tcl = LOW?&quot;}
+    J{&quot;SCORE TCL = LOW?&quot;}
     K[&quot;Verify relevant tool_req&lt;br/&gt;with testcase evidence&quot;]
     L[&quot;status = qualified&quot;]
     M[&quot;Review / approve TVR&quot;]
@@ -1892,7 +1938,7 @@ testcase -&gt; fully_verifies/partially_verifies -&gt; tool_req
     -&gt; provides qualification evidence
 
 qualified
-    -&gt; qualification evidence exists; it does not mean tcl became HIGH
+    -&gt; qualification evidence exists; it does not change the generated SCORE TCL
 </pre></div>
 </div>
 </section>
@@ -1964,7 +2010,7 @@ qualified
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-define-how-the-project-uses-the-tool">Step 2 — Define how the project uses the tool</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#when-is-tool-usecase-useful">When is <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code> useful?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-model-tool-usecase">How to model <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tool-model-example">Tool model example</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">External tool</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Self-developed tool</a></li>
@@ -1981,7 +2027,7 @@ qualified
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#is-detection-sufficient">Is detection sufficient?</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-5-determine-confidence-and-qualification-need">Step 5 — Determine confidence and qualification need</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-5-determine-classification-and-qualification-need">Step 5 — Determine classification and qualification need</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#multiple-use-cases-and-malfunctions">Multiple use cases and malfunctions</a></li>
 </ul>
 </li>
@@ -1997,14 +2043,12 @@ qualified
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#complete-example-external-tool">Complete example — external tool</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stakeholder-requirement">Stakeholder requirement</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tool-requirement">Tool requirement</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tool-use-case">Tool use case</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#potential-malfunction">Potential malfunction</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tool-use-case-and-potential-malfunction">Tool use case and potential malfunction</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#complete-example-self-developed-tool">Complete example — self-developed tool</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#existing-requirements">Existing requirements</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Tool use case</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">Potential malfunction</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Tool use case and potential malfunction</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-to-evaluate-the-tool-again">When to evaluate the tool again</a></li>

@@ -973,15 +973,15 @@ class doc_getstrt {
 }
 class doc_tool {
   +id
-  +safety_affected
   +security_affected
   +status
-  +tcl
   +version
   +approver [optional]*
   +author [optional]*
   +reviewer [optional]*
+  +safety_affected [optional]*
   +source_code_link [optional]*
+  +tcl [optional]*
   +testlink [optional]*
   +tool_version [optional]*
 }
@@ -1430,7 +1430,7 @@ tool_req ..&gt; stkh_req : satisfies
 tool_req ..&gt; feat_req : satisfies
 tool_req ..&gt; comp_req : satisfies
 tool_usecase --&gt; doc_tool : belongs_to
-tool_usecase --&gt; tool_req : realized_by
+tool_usecase ..&gt; tool_req : realized_by
 tool_usecase ..&gt; stkh_req : realizes
 workflow --&gt; role : approved_by
 workflow --&gt; workproduct : input
@@ -3514,15 +3514,15 @@ classDiagram
   direction BT
 class doc_tool {
   +id
-  +safety_affected
   +security_affected
   +status
-  +tcl
   +version
   +approver [optional]*
   +author [optional]*
   +reviewer [optional]*
+  +safety_affected [optional]*
   +source_code_link [optional]*
+  +tcl [optional]*
   +testlink [optional]*
   +tool_version [optional]*
 }
@@ -3564,20 +3564,12 @@ click workproduct href &quot;#workproduct&quot; &quot;Open workproduct details&q
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^doc_tool__[0-9a-z_]+$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p class="sd-card-text">Mandatory</p></td>
-<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">safety_affected</span></code></p></td>
-<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^(YES|NO)$</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p class="sd-card-text">Mandatory</p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">security_affected</span></code></p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^(YES|NO)$</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p class="sd-card-text">Mandatory</p></td>
+<tr class="row-even"><td><p class="sd-card-text">Mandatory</p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">status</span></code></p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^(draft|evaluated|qualified|released|rejected)$</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p class="sd-card-text">Mandatory</p></td>
-<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">tcl</span></code></p></td>
-<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^(LOW|HIGH)$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p class="sd-card-text">Mandatory</p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">version</span></code></p></td>
@@ -3596,8 +3588,16 @@ click workproduct href &quot;#workproduct&quot; &quot;Open workproduct details&q
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^.*$</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p class="sd-card-text">Optional</p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">safety_affected</span></code></p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^(YES|NO)$</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p class="sd-card-text">Optional</p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">source_code_link</span></code></p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^https://github.com/.*</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p class="sd-card-text">Optional</p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">tcl</span></code></p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">^(LOW|HIGH)$</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p class="sd-card-text">Optional</p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">testlink</span></code></p></td>
@@ -7866,7 +7866,7 @@ tool_req ..&gt; gd_req : satisfies
 tool_req ..&gt; stkh_req : satisfies
 tool_req ..&gt; feat_req : satisfies
 tool_req ..&gt; comp_req : satisfies
-tool_usecase --&gt; tool_req : realized_by
+tool_usecase ..&gt; tool_req : realized_by
 style comp_req fill:#D5E8D4,stroke:#666,color:#000
 style feat_req fill:#FFF2CC,stroke:#666,color:#000
 style gd_req fill:#E1D5E7,stroke:#666,color:#000
@@ -7979,15 +7979,15 @@ classDiagram
   direction BT
 class doc_tool {
   +id
-  +safety_affected
   +security_affected
   +status
-  +tcl
   +version
   +approver [optional]*
   +author [optional]*
   +reviewer [optional]*
+  +safety_affected [optional]*
   +source_code_link [optional]*
+  +tcl [optional]*
   +testlink [optional]*
   +tool_version [optional]*
 }
@@ -8038,7 +8038,7 @@ class tool_usecase {
 }
 potential_tool_malfunction --&gt; tool_usecase : parent_needs
 tool_usecase --&gt; doc_tool : belongs_to
-tool_usecase --&gt; tool_req : realized_by
+tool_usecase ..&gt; tool_req : realized_by
 tool_usecase ..&gt; stkh_req : realizes
 style potential_tool_malfunction fill:#F8CECC,stroke:#666,color:#000
 style stkh_req fill:#DAE8FC,stroke:#666,color:#000
@@ -8093,7 +8093,7 @@ click tool_usecase href &quot;#tool-usecase&quot; &quot;Open tool_usecase detail
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">belongs_to</span></code></p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">doc_tool</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p class="sd-card-text">Mandatory</p></td>
+<tr class="row-odd"><td><p class="sd-card-text">Optional</p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">realized_by</span></code></p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">tool_req</span></code></p></td>
 </tr>
@@ -8380,15 +8380,15 @@ classDiagram
   direction BT
 class doc_tool {
   +id
-  +safety_affected
   +security_affected
   +status
-  +tcl
   +version
   +approver [optional]*
   +author [optional]*
   +reviewer [optional]*
+  +safety_affected [optional]*
   +source_code_link [optional]*
+  +tcl [optional]*
   +testlink [optional]*
   +tool_version [optional]*
 }
