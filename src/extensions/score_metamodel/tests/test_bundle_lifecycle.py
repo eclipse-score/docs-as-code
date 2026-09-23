@@ -133,6 +133,39 @@ def test_matching_updates_need_in_place_and_returns_affected_document(
     assert need["bazel_type"] == "cc_library"
 
 
+def test_external_bundle_updates_local_need_like_internal_bundle(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """A mounted external bundle receives metadata through the same path."""
+    need = _need()
+
+    class FakeNeedsData:
+        def __init__(self, _env: object) -> None:
+            self.needs = {"comp__memory": need}
+
+        def get_needs_mutable(self):
+            return self.needs
+
+    external_bundle = BundleMetadata(
+        label="@@external_repo//:memory",
+        name="memory",
+        code_targets=_bundle().code_targets,
+    )
+    monkeypatch.setattr(bundle_metadata, "SphinxNeedsData", FakeNeedsData)
+    monkeypatch.setattr(
+        bundle_metadata,
+        "get_document_bundles",
+        lambda _app: {"index": external_bundle},
+    )
+    app = SimpleNamespace(env=SimpleNamespace(), srcdir=".")
+
+    changed = bundle_metadata.apply_bundle_metadata(cast(Sphinx, app), None)
+
+    assert changed == ["index"]
+    assert need["bazel_target"] == "//:memory_core"
+    assert need["bazel_type"] == "cc_library"
+
+
 def test_unchanged_bundle_metadata_does_not_rewrite_the_document(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:

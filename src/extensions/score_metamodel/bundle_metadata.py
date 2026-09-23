@@ -129,9 +129,12 @@ def _group_bundle_needs(
     can occur in different documents, while a bundle must only receive
     metadata for Needs declared in its own documents.
 
-    Imported and external Needs are excluded: a bundle must only receive
-    metadata for Needs declared in its own documents, not for requirements
-    copied in from another documentation bundle.
+    Imported Needs and external-reference Needs are excluded: a bundle must
+    only receive metadata for Needs declared in its own documents, not for
+    requirements copied in from another documentation bundle. A bundle
+    mounted from another repository is still parsed into this Sphinx build, so
+    its local Needs are intentionally handled like Needs from an in-tree
+    bundle.
     """
     grouped: dict[str, list[NeedItem]] = defaultdict(list)
     bundle_by_label: dict[str, BundleMetadata] = {}
@@ -208,9 +211,10 @@ def _clear_unmatched_bundle_metadata(
     This must run once, after ``_apply_matching_bundles`` has seen every
     bundle; running it earlier could clear a Need before a later bundle has a
     chance to match it.  It is necessary because Sphinx reuses Needs from
-    unchanged documents, so removed or renamed bundles otherwise leave their
-    old generated Bazel values behind.  The returned document names tell
-    Sphinx to include documents affected by that cleanup in the rebuild.
+    unchanged documents, including documents mounted from external bundles,
+    so removed or renamed bundles otherwise leave their old generated Bazel
+    values behind.  The returned document names tell Sphinx to include
+    documents affected by that cleanup in the rebuild.
     """
     changed_docnames: set[str] = set()
     for need_id, current_need in needs.items():
