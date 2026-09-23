@@ -486,9 +486,10 @@ content, but not its position in a consuming documentation site.</p>
 <p>A <strong>mount</strong> makes a bundle visible in a host site. The host chooses the
 <strong>placement</strong> with <code class="docutils literal notranslate"><span class="pre">mount_at</span></code>. The bundle defines its own <code class="docutils literal notranslate"><span class="pre">entry_doc</span></code>
 (default <code class="docutils literal notranslate"><span class="pre">index</span></code>); the mount adds that page to the parent <code class="docutils literal notranslate"><span class="pre">index</span></code> toctree
-by default. <code class="docutils literal notranslate"><span class="pre">attach_to</span></code> overrides that host toctree document. This separation
-lets different projects reuse the same bundle at different locations while
-preserving its canonical entry page.</p>
+by default. <code class="docutils literal notranslate"><span class="pre">attach_to</span></code> overrides that host toctree document; <code class="docutils literal notranslate"><span class="pre">toctree_index</span></code>
+selects which of its toctrees receives the entry (<code class="docutils literal notranslate"><span class="pre">0</span></code> is the first). This
+separation lets different projects reuse the same bundle at different
+locations while preserving its canonical entry page.</p>
 <p>Bundles are read from their original source directories. Consequently, an
 in-repository bundle remains editable and IDE navigation reaches its real
 source files rather than generated copies.</p>
@@ -550,7 +551,8 @@ documentation in a reproducible build.</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="../../how-to/bundles/index.html#howto-mount-external-sources"><span class="std std-ref">How to use bundles</span></a> — declare and mount bundles.</p></li>
 <li><p><a class="reference external" href="https://sphinx-mounts.useblocks.com/">sphinx-mounts documentation</a> —
-configuration reference, including <code class="docutils literal notranslate"><span class="pre">attach_to</span></code> and <code class="docutils literal notranslate"><span class="pre">entry_doc</span></code>.</p></li>
+configuration reference, including <code class="docutils literal notranslate"><span class="pre">attach_to</span></code>, <code class="docutils literal notranslate"><span class="pre">toctree_index</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">entry_doc</span></code>.</p></li>
 </ul>
 </section>
 </section>

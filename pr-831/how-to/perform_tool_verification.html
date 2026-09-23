@@ -777,24 +777,6 @@ window.runMermaid = runMermaid;</script>
 <li class="toctree-l1"><a class="reference internal" href="source_to_doc_links.html">Reference Docs in Source Code</a></li>
 <li class="toctree-l1"><a class="reference internal" href="test_to_doc_links.html">Reference Docs in Tests</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">How to Apply the SCORE Tool Management Process</a></li>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <li class="toctree-l1"><a class="reference internal" href="generated_docs.html">Integrate Generated Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="add_extensions.html">Add Extensions</a></li>
 </ul>
@@ -873,36 +855,18 @@ window.runMermaid = runMermaid;</script>
 <h1>How to Apply the SCORE Tool Management Process<a class="headerlink" href="#how-to-apply-the-score-tool-management-process" title="Link to this heading">#</a></h1>
 <p>This guide explains how to execute the
 <a class="reference external" href="https://eclipse-score.github.io/process_description/main/process_areas/tool_management/tool_management_workflow.html">Eclipse SCORE Tool Management Process</a>
-using the SCORE Docs-as-Code / Sphinx-Needs tooling.</p>
+using SCORE Docs-as-Code.</p>
 <p>The goal is <strong>not</strong> to reproduce ISO 26262 or define a separate qualification
 process. SCORE already defines the process. This guide explains how to represent
-and execute that process with the available Sphinx-Needs model.</p>
-<blockquote>
-<div><p>[!NOTE]
-This guide focuses on the safety-related evaluation and qualification aspects
-of SCORE Tool Management. Security-related evaluation remains part of the Tool
-Verification Report and must be handled where applicable.</p>
-</div></blockquote>
-<section id="rendering-and-examples">
-<h2>Rendering and examples<a class="headerlink" href="#rendering-and-examples" title="Link to this heading">#</a></h2>
-<p>This file is written as MyST-flavoured GitHub Markdown as used by the SCORE
-Docs-as-Code tooling.</p>
-<p>Diagrams use Mermaid:</p>
-<div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>```{mermaid}
-flowchart LR
-    A --&gt; B
-```
-</pre></div>
+and execute that process with the available S-CORE Docs-as-Code model.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This guide focuses on the safety-related evaluation and qualification aspects
+of SCORE Tool Management. Security-related evaluation remains unsolved for now.</p>
 </div>
-<p>The Sphinx-Needs snippets in this guide are deliberately shown as Markdown code
-examples instead of creating real example needs in this document. This avoids
-polluting the project’s actual requirements and verification data. Copy the
-snippets into the real Tool Verification Report and adapt the IDs and content.</p>
-</section>
-</section>
 <hr class="docutils" />
 <section id="mental-model">
-<h1>Mental model<a class="headerlink" href="#mental-model" title="Link to this heading">#</a></h1>
+<h2>Mental model<a class="headerlink" href="#mental-model" title="Link to this heading">#</a></h2>
 <p>The important distinction is between:</p>
 <ul class="simple">
 <li><p><strong>Tool Verification Report (<code class="docutils literal notranslate"><span class="pre">doc_tool</span></code>)</strong> — records the SCORE tool-management
@@ -919,23 +883,22 @@ qualification, these verify the relevant <code class="docutils literal notransla
 </ul>
 <pre  class="mermaid">
         flowchart LR
-    STKH[&quot;stkh_req&lt;br/&gt;Stakeholder Requirement&quot;]
-    DT[&quot;doc_tool&lt;br/&gt;Tool Verification Report&quot;]
     UC[&quot;tool_usecase&lt;br/&gt;Tool Use Case&quot;]
-    TR[&quot;tool_req&lt;br/&gt;Tool Requirement&quot;]
     PM[&quot;potential_tool_malfunction&lt;br/&gt;Potential Tool Malfunction&quot;]
+
+    STKH[&quot;stkh_req&lt;br/&gt;Stakeholder Requirement&quot;]
+    TR[&quot;tool_req&lt;br/&gt;Tool Requirement&quot;]
     TC[&quot;testcase&lt;br/&gt;Qualification Evidence&quot;]
 
-    UC --&gt;|&quot;belongs_to&lt;br/&gt;(mandatory)&quot;| DT
     UC --&gt;|&quot;realizes&lt;br/&gt;(optional)&quot;| STKH
     UC --&gt;|&quot;realized_by&quot;| TR
 
-    PM --&gt;|&quot;parent_needs&quot;| UC
+    PM --&gt;|&quot;violates&quot;| UC
     PM --&gt;|&quot;violates&quot;| STKH
     PM --&gt;|&quot;violates&quot;| TR
 
     TC --&gt;|&quot;fully_verifies /&lt;br/&gt;partially_verifies&quot;| TR
-    TC --&gt;|&quot;realizes&lt;br/&gt;(optional)&quot;| STKH
+    TR --&gt;|&quot;realizes&lt;br/&gt;(optional)&quot;| STKH
 
     style UC fill:#E1D5E7
     style PM fill:#F8CECC
@@ -958,12 +921,12 @@ qualification, these verify the relevant <code class="docutils literal notransla
 </tbody>
 </table>
 </div>
-<p>Qualification tests do <strong>not</strong> automatically make
-<code class="docutils literal notranslate"><span class="pre">detection_sufficient:</span> <span class="pre">YES</span></code>.</p>
+<p>Qualification evidence and detection sufficiency are separate decisions; see
+<a class="reference internal" href="#qualification-is-not-a-detection-measure">Qualification is not a detection measure</a>.</p>
 </section>
 <hr class="docutils" />
 <section id="external-vs-self-developed-tools">
-<h1>External vs. self-developed tools<a class="headerlink" href="#external-vs-self-developed-tools" title="Link to this heading">#</a></h1>
+<h2>External vs. self-developed tools<a class="headerlink" href="#external-vs-self-developed-tools" title="Link to this heading">#</a></h2>
 <p>The evaluation is based on <strong>how the project uses the tool</strong>, not on who
 developed it.</p>
 <p>Use cases, potential malfunctions, safety impact, and detection are therefore
@@ -1010,9 +973,9 @@ now managed through the SCORE Tool Management process.</p>
 </section>
 <hr class="docutils" />
 <section id="score-workflow-at-a-glance">
-<h1>SCORE workflow at a glance<a class="headerlink" href="#score-workflow-at-a-glance" title="Link to this heading">#</a></h1>
+<h2>SCORE workflow at a glance<a class="headerlink" href="#score-workflow-at-a-glance" title="Link to this heading">#</a></h2>
 <pre  class="mermaid">
-        flowchart TD
+        flowchart LR
     A[&quot;Create Tool Verification Report&quot;] --&gt; B[&quot;status = draft&quot;]
     B --&gt; C[&quot;Evaluate Tool&quot;]
     C --&gt; D[&quot;status = evaluated&quot;]
@@ -1030,9 +993,9 @@ now managed through the SCORE Tool Management process.</p>
 </section>
 <hr class="docutils" />
 <section id="step-1-create-the-tool-verification-report">
-<h1>Step 1 — Create the Tool Verification Report<a class="headerlink" href="#step-1-create-the-tool-verification-report" title="Link to this heading">#</a></h1>
+<h2>Step 1 — Create the Tool Verification Report<a class="headerlink" href="#step-1-create-the-tool-verification-report" title="Link to this heading">#</a></h2>
 <section id="what-to-model">
-<h2>What to model<a class="headerlink" href="#what-to-model" title="Link to this heading">#</a></h2>
+<h3>What to model<a class="headerlink" href="#what-to-model" title="Link to this heading">#</a></h3>
 <p>The SCORE Tool Verification Report is represented by <code class="docutils literal notranslate"><span class="pre">doc_tool</span></code>.</p>
 <p>The current metamodel contains the following relevant attributes:</p>
 <ul class="simple">
@@ -1043,8 +1006,8 @@ now managed through the SCORE Tool Management process.</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">tool_version</span></code>: optional in the current metamodel</p></li>
 </ul>
 <p>Example structure:</p>
-<div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>```{doc_tool} Sphinx-Needs Tool Verification Report
-:id: doc_tool__sphinx_needs
+<div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>```{doc_tool} S-CORE Docs-as-Code Tool Verification Report
+:id: doc_tool__s_core_docs_as_code
 :status: draft
 :safety_affected: YES
 :security_affected: NO
@@ -1056,27 +1019,28 @@ constraints, inputs, outputs, and available documentation.
 ```
 </pre></div>
 </div>
-<blockquote>
-<div><p>[!NOTE]
-<code class="docutils literal notranslate"><span class="pre">tcl</span></code> is mandatory in the current metamodel even while the report is still
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">tcl</span></code> is mandatory in the current metamodel even while the report is still
 <code class="docutils literal notranslate"><span class="pre">draft</span></code>. Update it to the actual evaluation result once Step 5 is complete.</p>
-</div></blockquote>
+</div>
 </section>
 <section id="external-tool">
-<h2>External tool<a class="headerlink" href="#external-tool" title="Link to this heading">#</a></h2>
+<h3>External tool<a class="headerlink" href="#external-tool" title="Link to this heading">#</a></h3>
 <p>Identify the exact version and configuration that is actually used.</p>
-<p>Do not evaluate “Sphinx-Needs”, “Clang”, or “GitHub” generically if the project
-relies on a specific version, plugin set, configuration, or usage restriction.</p>
+<p>Do not evaluate the S-CORE Docs-as-Code tool, Clang, or GitHub generically when
+the project relies on a specific version, plugin set, configuration, or usage
+restriction.</p>
 </section>
 <section id="self-developed-tool">
-<h2>Self-developed tool<a class="headerlink" href="#self-developed-tool" title="Link to this heading">#</a></h2>
+<h3>Self-developed tool<a class="headerlink" href="#self-developed-tool" title="Link to this heading">#</a></h3>
 <p>Reference the project’s normal version/release identification. The TVR must make
 clear which released tool version the evaluation applies to.</p>
 </section>
 </section>
 <hr class="docutils" />
 <section id="step-2-define-how-the-project-uses-the-tool">
-<h1>Step 2 — Define how the project uses the tool<a class="headerlink" href="#step-2-define-how-the-project-uses-the-tool" title="Link to this heading">#</a></h1>
+<h2>Step 2 — Define how the project uses the tool<a class="headerlink" href="#step-2-define-how-the-project-uses-the-tool" title="Link to this heading">#</a></h2>
 <p>SCORE evaluates the tool in the context of its <strong>use cases</strong>.</p>
 <p>A <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code> captures:</p>
 <blockquote>
@@ -1107,7 +1071,7 @@ clear which released tool version the evaluation applies to.</p>
     style UC fill:#E1D5E7
     style TR fill:#F5F5F5
     </pre><section id="when-is-tool-usecase-useful">
-<h2>When is <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code> useful?<a class="headerlink" href="#when-is-tool-usecase-useful" title="Link to this heading">#</a></h2>
+<h3>When is <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code> useful?<a class="headerlink" href="#when-is-tool-usecase-useful" title="Link to this heading">#</a></h3>
 <p>Use <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code> when the stakeholder requirements are too high-level and the
 tool requirements are too detailed to clearly express the usage context.</p>
 <p>For example:</p>
@@ -1120,19 +1084,19 @@ requirements traceability,</p></li>
 <p>If an existing requirement already expresses the usage context exactly, avoid
 inventing additional behaviour in the use case. The use case can remain a thin
 grouping/context element.</p>
-<blockquote>
-<div><p>[!IMPORTANT]
-With the current metamodel, every <code class="docutils literal notranslate"><span class="pre">potential_tool_malfunction</span></code> has a mandatory
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>With the current metamodel, every <code class="docutils literal notranslate"><span class="pre">potential_tool_malfunction</span></code> has a mandatory
 <code class="docutils literal notranslate"><span class="pre">parent_needs</span></code> link to a <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code>. Therefore, once you model
 malfunctions, a <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code> is structurally required even if it merely
 references an already well-scoped requirement.</p>
-</div></blockquote>
+</div>
 </section>
-<section id="sphinx-needs-example">
-<h2>Sphinx-Needs example<a class="headerlink" href="#sphinx-needs-example" title="Link to this heading">#</a></h2>
+<section id="tool-model-example">
+<h3>Tool model example<a class="headerlink" href="#tool-model-example" title="Link to this heading">#</a></h3>
 <div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>```{tool_usecase} Validate requirement traceability during documentation builds
 :id: tool_usecase__docs_as_code__traceability
-:belongs_to: doc_tool__sphinx_needs
+:belongs_to: doc_tool__s_core_docs_as_code
 :realized_by: tool_req__docs_as_code__unresolved_links
 :realizes: stkh_req__docs_as_code__traceability
 
@@ -1152,7 +1116,7 @@ unresolved requirement links before documentation is accepted.
 </div>
 </section>
 <section id="id1">
-<h2>External tool<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<h3>External tool<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
 <p>Define the <code class="docutils literal notranslate"><span class="pre">tool_req</span></code> needs from <strong>our expectations of the tool</strong>, not by
 importing the vendor’s complete specification.</p>
 <p>Example:</p>
@@ -1165,7 +1129,7 @@ The tool shall report unresolved requirement links.
 </div>
 </section>
 <section id="id2">
-<h2>Self-developed tool<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
+<h3>Self-developed tool<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
 <p>Prefer linking the use case to existing <code class="docutils literal notranslate"><span class="pre">tool_req</span></code> needs.</p>
 <p>Do not create separate “qualification requirements” when the normal tool
 requirements already describe the behaviour relied upon by the project.</p>
@@ -1173,7 +1137,7 @@ requirements already describe the behaviour relied upon by the project.</p>
 </section>
 <hr class="docutils" />
 <section id="step-3-identify-potential-tool-malfunctions">
-<h1>Step 3 — Identify potential tool malfunctions<a class="headerlink" href="#step-3-identify-potential-tool-malfunctions" title="Link to this heading">#</a></h1>
+<h2>Step 3 — Identify potential tool malfunctions<a class="headerlink" href="#step-3-identify-potential-tool-malfunctions" title="Link to this heading">#</a></h2>
 <p>For every tool use case, identify relevant ways in which the expected tool
 behaviour could fail.</p>
 <p>The current metamodel defines:</p>
@@ -1205,7 +1169,7 @@ behaviour could fail.</p>
     style STKH fill:#DAE8FC
     style TR fill:#F5F5F5
     </pre><section id="what-is-a-useful-malfunction">
-<h2>What is a useful malfunction?<a class="headerlink" href="#what-is-a-useful-malfunction" title="Link to this heading">#</a></h2>
+<h3>What is a useful malfunction?<a class="headerlink" href="#what-is-a-useful-malfunction" title="Link to this heading">#</a></h3>
 <p>Describe <strong>incorrect behaviour relevant to the use case</strong>.</p>
 <p><strong>Too generic:</strong></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>The tool crashes.
@@ -1226,7 +1190,7 @@ requirements we rely on is violated?</strong></p>
 </div></blockquote>
 </section>
 <section id="violates">
-<h2><code class="docutils literal notranslate"><span class="pre">violates</span></code><a class="headerlink" href="#violates" title="Link to this heading">#</a></h2>
+<h3><code class="docutils literal notranslate"><span class="pre">violates</span></code><a class="headerlink" href="#violates" title="Link to this heading">#</a></h3>
 <p>Use <code class="docutils literal notranslate"><span class="pre">violates</span></code> for requirements whose expected behaviour is directly broken by
 the malfunction.</p>
 <p>Typical targets are:</p>
@@ -1238,7 +1202,7 @@ the malfunction.</p>
 could eventually contribute to an incorrect engineering decision.</p>
 </section>
 <section id="id3">
-<h2>Sphinx-Needs example<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
+<h3>Tool model example<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
 <div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>```{potential_tool_malfunction} Unresolved requirement link is accepted as valid
 :id: potential_tool_malfunction__docs_as_code__unresolved_link_accepted
 :parent_needs: tool_usecase__docs_as_code__traceability
@@ -1266,10 +1230,10 @@ that explains why the measure is sufficient or insufficient.</p>
 </section>
 <hr class="docutils" />
 <section id="step-4-evaluate-safety-impact-and-detection">
-<h1>Step 4 — Evaluate safety impact and detection<a class="headerlink" href="#step-4-evaluate-safety-impact-and-detection" title="Link to this heading">#</a></h1>
+<h2>Step 4 — Evaluate safety impact and detection<a class="headerlink" href="#step-4-evaluate-safety-impact-and-detection" title="Link to this heading">#</a></h2>
 <p>For each <code class="docutils literal notranslate"><span class="pre">potential_tool_malfunction</span></code>, answer two questions.</p>
 <section id="does-the-malfunction-affect-safety">
-<h2>Does the malfunction affect safety?<a class="headerlink" href="#does-the-malfunction-affect-safety" title="Link to this heading">#</a></h2>
+<h3>Does the malfunction affect safety?<a class="headerlink" href="#does-the-malfunction-affect-safety" title="Link to this heading">#</a></h3>
 <p>Use:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>:safety_affected: YES
 </pre></div>
@@ -1291,7 +1255,7 @@ cases.</p>
 </section>
 <hr class="docutils" />
 <section id="is-detection-sufficient">
-<h2>Is detection sufficient?<a class="headerlink" href="#is-detection-sufficient" title="Link to this heading">#</a></h2>
+<h3>Is detection sufficient?<a class="headerlink" href="#is-detection-sufficient" title="Link to this heading">#</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">detection_sufficient</span></code> asks:</p>
 <blockquote>
 <div><p><strong>If this malfunction occurs during the intended use of the tool, do the
@@ -1335,7 +1299,7 @@ the intended usage, evaluate the malfunction with that usage concept.</p>
 </section>
 <hr class="docutils" />
 <section id="step-5-determine-confidence-and-qualification-need">
-<h1>Step 5 — Determine confidence and qualification need<a class="headerlink" href="#step-5-determine-confidence-and-qualification-need" title="Link to this heading">#</a></h1>
+<h2>Step 5 — Determine confidence and qualification need<a class="headerlink" href="#step-5-determine-confidence-and-qualification-need" title="Link to this heading">#</a></h2>
 <p>For the SCORE safety evaluation, the simplified decision is:</p>
 <pre  class="mermaid">
         flowchart TD
@@ -1398,7 +1362,7 @@ malfunction’s <code class="docutils literal notranslate"><span class="pre">det
 </div>
 <p>The report must clearly state whether qualification is required.</p>
 <section id="multiple-use-cases-and-malfunctions">
-<h2>Multiple use cases and malfunctions<a class="headerlink" href="#multiple-use-cases-and-malfunctions" title="Link to this heading">#</a></h2>
+<h3>Multiple use cases and malfunctions<a class="headerlink" href="#multiple-use-cases-and-malfunctions" title="Link to this heading">#</a></h3>
 <p>The overall TVR result must reflect the relevant worst case.</p>
 <p>If any safety-relevant malfunction has insufficient detection, the tool cannot
 be treated as <code class="docutils literal notranslate"><span class="pre">HIGH</span></code> merely because the other use cases are well protected.</p>
@@ -1406,7 +1370,7 @@ be treated as <code class="docutils literal notranslate"><span class="pre">HIGH<
 </section>
 <hr class="docutils" />
 <section id="step-5a-improve-the-usage-concept-instead-of-qualifying">
-<h1>Step 5a — Improve the usage concept instead of qualifying<a class="headerlink" href="#step-5a-improve-the-usage-concept-instead-of-qualifying" title="Link to this heading">#</a></h1>
+<h2>Step 5a — Improve the usage concept instead of qualifying<a class="headerlink" href="#step-5a-improve-the-usage-concept-instead-of-qualifying" title="Link to this heading">#</a></h2>
 <p>A <code class="docutils literal notranslate"><span class="pre">LOW</span></code> evaluation does not mean qualification is the only possible response.</p>
 <p>You may change the intended usage by adding an appropriate detection or
 prevention measure.</p>
@@ -1439,7 +1403,7 @@ changed</strong>.</p>
 </section>
 <hr class="docutils" />
 <section id="step-6-qualify-the-tool-if-required">
-<h1>Step 6 — Qualify the tool if required<a class="headerlink" href="#step-6-qualify-the-tool-if-required" title="Link to this heading">#</a></h1>
+<h2>Step 6 — Qualify the tool if required<a class="headerlink" href="#step-6-qualify-the-tool-if-required" title="Link to this heading">#</a></h2>
 <p>Qualification is required when the evaluation results in insufficient
 confidence and the project does not resolve that through a changed usage
 concept.</p>
@@ -1455,7 +1419,7 @@ concept.</p>
     TC --&gt; RESULT
 
     style TR fill:#F5F5F5
-    </pre><p>In the current SCORE Docs-as-Code model, test execution results are represented
+    </pre><p>In the current S-CORE Docs-as-Code model, test execution results are represented
 as <code class="docutils literal notranslate"><span class="pre">testcase</span></code> needs. Their normal links to requirements are:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">fully_verifies</span></code></p></li>
@@ -1464,7 +1428,7 @@ as <code class="docutils literal notranslate"><span class="pre">testcase</span><
 <p>For qualification, the relevant testcases should verify the <code class="docutils literal notranslate"><span class="pre">tool_req</span></code> needs
 that define the behaviour relied upon by the tool use cases.</p>
 <section id="qualification-is-not-a-detection-measure">
-<h2>Qualification is not a detection measure<a class="headerlink" href="#qualification-is-not-a-detection-measure" title="Link to this heading">#</a></h2>
+<h3>Qualification is not a detection measure<a class="headerlink" href="#qualification-is-not-a-detection-measure" title="Link to this heading">#</a></h3>
 <p>Compare the two roles:</p>
 <pre  class="mermaid">
         flowchart TB
@@ -1487,12 +1451,17 @@ that define the behaviour relied upon by the tool use cases.</p>
 <div><p>If the malfunction happens during real intended usage, will it be prevented or
 detected before its result is relied upon?</p>
 </div></blockquote>
+<p>In other words, a qualification test checks whether the tool version satisfies
+a <code class="docutils literal notranslate"><span class="pre">tool_req</span></code>. <code class="docutils literal notranslate"><span class="pre">detection_sufficient</span></code> checks whether the measures used during
+normal tool usage will detect or prevent a malfunction before its output is
+relied upon. Passing a qualification test therefore does <strong>not</strong> by itself
+justify setting <code class="docutils literal notranslate"><span class="pre">detection_sufficient:</span> <span class="pre">YES</span></code>.</p>
 <p>The same technical check can only count for both if it actually performs both
 roles.</p>
 </section>
 <hr class="docutils" />
 <section id="external-tool-qualification">
-<h2>External tool qualification<a class="headerlink" href="#external-tool-qualification" title="Link to this heading">#</a></h2>
+<h3>External tool qualification<a class="headerlink" href="#external-tool-qualification" title="Link to this heading">#</a></h3>
 <p>External tools are commonly validated largely as black boxes.</p>
 <p>Example requirement:</p>
 <div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>```{tool_req} Report unresolved requirement links
@@ -1516,7 +1485,7 @@ argument, but the qualification evidence needs to address the behaviour that
 </section>
 <hr class="docutils" />
 <section id="self-developed-tool-qualification">
-<h2>Self-developed tool qualification<a class="headerlink" href="#self-developed-tool-qualification" title="Link to this heading">#</a></h2>
+<h3>Self-developed tool qualification<a class="headerlink" href="#self-developed-tool-qualification" title="Link to this heading">#</a></h3>
 <p>For a self-developed tool, do not automatically create a second qualification
 test suite.</p>
 <p>If the normal development process already produces testcases that:</p>
@@ -1539,7 +1508,7 @@ insufficient.</p>
 </section>
 <hr class="docutils" />
 <section id="step-7-update-the-tool-verification-report">
-<h1>Step 7 — Update the Tool Verification Report<a class="headerlink" href="#step-7-update-the-tool-verification-report" title="Link to this heading">#</a></h1>
+<h2>Step 7 — Update the Tool Verification Report<a class="headerlink" href="#step-7-update-the-tool-verification-report" title="Link to this heading">#</a></h2>
 <p>If no qualification was required, the evaluated report can proceed to review.</p>
 <p>If qualification was required and completed successfully:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>:status: qualified
@@ -1567,7 +1536,7 @@ detection mechanism.</p>
 </section>
 <hr class="docutils" />
 <section id="step-8-review-and-release-the-tool-verification-report">
-<h1>Step 8 — Review and release the Tool Verification Report<a class="headerlink" href="#step-8-review-and-release-the-tool-verification-report" title="Link to this heading">#</a></h1>
+<h2>Step 8 — Review and release the Tool Verification Report<a class="headerlink" href="#step-8-review-and-release-the-tool-verification-report" title="Link to this heading">#</a></h2>
 <p>Review the completed TVR against the SCORE Tool Verification Report Review
 Checklist.</p>
 <p>The review should cover, where applicable:</p>
@@ -1605,11 +1574,11 @@ Checklist.</p>
 </section>
 <hr class="docutils" />
 <section id="complete-example-external-tool">
-<h1>Complete example — external tool<a class="headerlink" href="#complete-example-external-tool" title="Link to this heading">#</a></h1>
+<h2>Complete example — external tool<a class="headerlink" href="#complete-example-external-tool" title="Link to this heading">#</a></h2>
 <p>Assume an external documentation tool is used to validate requirement
 traceability.</p>
 <section id="stakeholder-requirement">
-<h2>Stakeholder requirement<a class="headerlink" href="#stakeholder-requirement" title="Link to this heading">#</a></h2>
+<h3>Stakeholder requirement<a class="headerlink" href="#stakeholder-requirement" title="Link to this heading">#</a></h3>
 <p>A real <code class="docutils literal notranslate"><span class="pre">stkh_req</span></code> must provide the mandatory metadata defined by the SCORE
 metamodel. For example:</p>
 <div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>```{stkh_req} Provide valid verification traceability
@@ -1627,7 +1596,7 @@ Safety-related requirements shall have valid verification traceability.
 </div>
 </section>
 <section id="tool-requirement">
-<h2>Tool requirement<a class="headerlink" href="#tool-requirement" title="Link to this heading">#</a></h2>
+<h3>Tool requirement<a class="headerlink" href="#tool-requirement" title="Link to this heading">#</a></h3>
 <div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>```{tool_req} Report unresolved requirement links
 :id: tool_req__docs_as_code__unresolved_links
 :satisfies: stkh_req__docs_as_code__traceability
@@ -1638,10 +1607,10 @@ The tool shall report unresolved requirement links as errors.
 </div>
 </section>
 <section id="tool-use-case">
-<h2>Tool use case<a class="headerlink" href="#tool-use-case" title="Link to this heading">#</a></h2>
+<h3>Tool use case<a class="headerlink" href="#tool-use-case" title="Link to this heading">#</a></h3>
 <div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>```{tool_usecase} Validate requirement traceability during documentation builds
 :id: tool_usecase__docs_as_code__traceability
-:belongs_to: doc_tool__sphinx_needs
+:belongs_to: doc_tool__s_core_docs_as_code
 :realized_by: tool_req__docs_as_code__unresolved_links
 :realizes: stkh_req__docs_as_code__traceability
 
@@ -1652,7 +1621,7 @@ before generated documentation is accepted.
 </div>
 </section>
 <section id="potential-malfunction">
-<h2>Potential malfunction<a class="headerlink" href="#potential-malfunction" title="Link to this heading">#</a></h2>
+<h3>Potential malfunction<a class="headerlink" href="#potential-malfunction" title="Link to this heading">#</a></h3>
 <div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>```{potential_tool_malfunction} Unresolved requirement link is accepted as valid
 :id: potential_tool_malfunction__docs_as_code__unresolved_link_accepted
 :parent_needs: tool_usecase__docs_as_code__traceability
@@ -1705,10 +1674,10 @@ progress:</p>
 </section>
 <hr class="docutils" />
 <section id="complete-example-self-developed-tool">
-<h1>Complete example — self-developed tool<a class="headerlink" href="#complete-example-self-developed-tool" title="Link to this heading">#</a></h1>
+<h2>Complete example — self-developed tool<a class="headerlink" href="#complete-example-self-developed-tool" title="Link to this heading">#</a></h2>
 <p>Assume the project develops its own model-to-code generator.</p>
 <section id="existing-requirements">
-<h2>Existing requirements<a class="headerlink" href="#existing-requirements" title="Link to this heading">#</a></h2>
+<h3>Existing requirements<a class="headerlink" href="#existing-requirements" title="Link to this heading">#</a></h3>
 <div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>```{stkh_req} Generate software from the approved model
 :id: stkh_req__generator__approved_model
 :reqtype: Functional
@@ -1733,10 +1702,10 @@ code.
 </div>
 </section>
 <section id="id4">
-<h2>Tool use case<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
+<h3>Tool use case<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
 <div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>```{tool_usecase} Generate production source from the approved model
 :id: tool_usecase__generator__generate_source
-:belongs_to: doc_tool__sphinx_needs
+:belongs_to: doc_tool__s_core_docs_as_code
 :realized_by: tool_req__generator__state_transitions
 :realizes: stkh_req__generator__approved_model
 
@@ -1747,7 +1716,7 @@ production source code.
 </div>
 </section>
 <section id="id5">
-<h2>Potential malfunction<a class="headerlink" href="#id5" title="Link to this heading">#</a></h2>
+<h3>Potential malfunction<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
 <div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>```{potential_tool_malfunction} State transition is omitted from generated source
 :id: potential_tool_malfunction__generator__missing_transition
 :parent_needs: tool_usecase__generator__generate_source
@@ -1776,7 +1745,7 @@ reuse its generated <code class="docutils literal notranslate"><span class="pre"
 </section>
 <hr class="docutils" />
 <section id="when-to-evaluate-the-tool-again">
-<h1>When to evaluate the tool again<a class="headerlink" href="#when-to-evaluate-the-tool-again" title="Link to this heading">#</a></h1>
+<h2>When to evaluate the tool again<a class="headerlink" href="#when-to-evaluate-the-tool-again" title="Link to this heading">#</a></h2>
 <p>Re-evaluate affected malfunctions when information used by the evaluation
 changes.</p>
 <p>Typical triggers include:</p>
@@ -1806,9 +1775,9 @@ intended usage or the detection measures.</p>
     </pre></section>
 <hr class="docutils" />
 <section id="common-mistakes">
-<h1>Common mistakes<a class="headerlink" href="#common-mistakes" title="Link to this heading">#</a></h1>
+<h2>Common mistakes<a class="headerlink" href="#common-mistakes" title="Link to this heading">#</a></h2>
 <section id="treating-tool-usecase-as-a-new-requirement-level">
-<h2>Treating <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code> as a new requirement level<a class="headerlink" href="#treating-tool-usecase-as-a-new-requirement-level" title="Link to this heading">#</a></h2>
+<h3>Treating <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code> as a new requirement level<a class="headerlink" href="#treating-tool-usecase-as-a-new-requirement-level" title="Link to this heading">#</a></h3>
 <p>Do not invent new normative behaviour in <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code>.</p>
 <p>It is a <strong>usage-context / grouping element</strong> between stakeholder intent and
 concrete tool behaviour.</p>
@@ -1823,7 +1792,7 @@ concrete tool behaviour.</p>
     </pre></section>
 <hr class="docutils" />
 <section id="using-generic-malfunctions">
-<h2>Using generic malfunctions<a class="headerlink" href="#using-generic-malfunctions" title="Link to this heading">#</a></h2>
+<h3>Using generic malfunctions<a class="headerlink" href="#using-generic-malfunctions" title="Link to this heading">#</a></h3>
 <p>Avoid:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>The tool crashes.
 The tool has a bug.
@@ -1839,7 +1808,7 @@ The generated value differs from the configured source value.
 </section>
 <hr class="docutils" />
 <section id="treating-every-existing-test-as-a-safety-measure">
-<h2>Treating every existing test as a safety measure<a class="headerlink" href="#treating-every-existing-test-as-a-safety-measure" title="Link to this heading">#</a></h2>
+<h3>Treating every existing test as a safety measure<a class="headerlink" href="#treating-every-existing-test-as-a-safety-measure" title="Link to this heading">#</a></h3>
 <p>A test executed during development or release validation is not automatically a
 measure for <code class="docutils literal notranslate"><span class="pre">detection_sufficient</span></code>.</p>
 <p>Ask:</p>
@@ -1854,7 +1823,7 @@ mechanism prevent or detect it before the result is relied upon?</p>
 </section>
 <hr class="docutils" />
 <section id="treating-qualification-as-reclassification">
-<h2>Treating qualification as reclassification<a class="headerlink" href="#treating-qualification-as-reclassification" title="Link to this heading">#</a></h2>
+<h3>Treating qualification as reclassification<a class="headerlink" href="#treating-qualification-as-reclassification" title="Link to this heading">#</a></h3>
 <p>Qualification may leave the evaluation unchanged:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>:safety_affected: YES
 :detection_sufficient: NO
@@ -1868,20 +1837,20 @@ mechanism prevent or detect it before the result is relied upon?</p>
 </section>
 <hr class="docutils" />
 <section id="duplicating-external-specifications">
-<h2>Duplicating external specifications<a class="headerlink" href="#duplicating-external-specifications" title="Link to this heading">#</a></h2>
+<h3>Duplicating external specifications<a class="headerlink" href="#duplicating-external-specifications" title="Link to this heading">#</a></h3>
 <p>Do not copy an external tool’s complete specification into <code class="docutils literal notranslate"><span class="pre">tool_req</span></code>.</p>
 <p>Model the behaviour <strong>our project relies on</strong>.</p>
 </section>
 <hr class="docutils" />
 <section id="duplicating-self-developed-tests">
-<h2>Duplicating self-developed tests<a class="headerlink" href="#duplicating-self-developed-tests" title="Link to this heading">#</a></h2>
+<h3>Duplicating self-developed tests<a class="headerlink" href="#duplicating-self-developed-tests" title="Link to this heading">#</a></h3>
 <p>Do not build a parallel qualification-test world when existing SCORE testcases
 already verify the relevant <code class="docutils literal notranslate"><span class="pre">tool_req</span></code> needs with suitable evidence.</p>
 </section>
 </section>
 <hr class="docutils" />
 <section id="quick-reference">
-<h1>Quick reference<a class="headerlink" href="#quick-reference" title="Link to this heading">#</a></h1>
+<h2>Quick reference<a class="headerlink" href="#quick-reference" title="Link to this heading">#</a></h2>
 <pre  class="mermaid">
         flowchart TD
     A[&quot;1. Identify exact tool version / configuration&quot;]
@@ -1928,13 +1897,14 @@ qualified
 </div>
 </section>
 <section id="score-references">
-<h1>SCORE references<a class="headerlink" href="#score-references" title="Link to this heading">#</a></h1>
+<h2>SCORE references<a class="headerlink" href="#score-references" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><a class="reference external" href="https://eclipse-score.github.io/process_description/main/process_areas/tool_management/tool_management_workflow.html">Tool Management Workflow</a></p></li>
 <li><p><a class="reference external" href="https://eclipse-score.github.io/process_description/main/folder_templates/tools/tool_verification_report_template.html">Tool Verification Report Template</a></p></li>
 <li><p><a class="reference external" href="https://eclipse-score.github.io/process_description/main/process_areas/tool_management/guidance/tool_management_reqs.html">Tool Management Process Requirements</a></p></li>
 <li><p><a class="reference external" href="https://eclipse-score.github.io/process_description/main/process_areas/tool_management/guidance/tool_management_checklist.html">Tool Verification Report Review Checklist</a></p></li>
 </ul>
+</section>
 </section>
 
 
@@ -1984,77 +1954,72 @@ qualified
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">How to Apply the SCORE Tool Management Process</a><ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rendering-and-examples">Rendering and examples</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mental-model">Mental model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#external-vs-self-developed-tools">External vs. self-developed tools</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#score-workflow-at-a-glance">SCORE workflow at a glance</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-create-the-tool-verification-report">Step 1 — Create the Tool Verification Report</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-to-model">What to model</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#external-tool">External tool</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#self-developed-tool">Self-developed tool</a></li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#mental-model">Mental model</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#external-vs-self-developed-tools">External vs. self-developed tools</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#score-workflow-at-a-glance">SCORE workflow at a glance</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-create-the-tool-verification-report">Step 1 — Create the Tool Verification Report</a><ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-to-model">What to model</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#external-tool">External tool</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#self-developed-tool">Self-developed tool</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-define-how-the-project-uses-the-tool">Step 2 — Define how the project uses the tool</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#when-is-tool-usecase-useful">When is <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code> useful?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tool-model-example">Tool model example</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">External tool</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Self-developed tool</a></li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-define-how-the-project-uses-the-tool">Step 2 — Define how the project uses the tool</a><ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-is-tool-usecase-useful">When is <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code> useful?</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sphinx-needs-example">Sphinx-Needs example</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">External tool</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Self-developed tool</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-identify-potential-tool-malfunctions">Step 3 — Identify potential tool malfunctions</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-a-useful-malfunction">What is a useful malfunction?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#violates"><code class="docutils literal notranslate"><span class="pre">violates</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Tool model example</a></li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-identify-potential-tool-malfunctions">Step 3 — Identify potential tool malfunctions</a><ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-a-useful-malfunction">What is a useful malfunction?</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#violates"><code class="docutils literal notranslate"><span class="pre">violates</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Sphinx-Needs example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-4-evaluate-safety-impact-and-detection">Step 4 — Evaluate safety impact and detection</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#does-the-malfunction-affect-safety">Does the malfunction affect safety?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#is-detection-sufficient">Is detection sufficient?</a></li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#step-4-evaluate-safety-impact-and-detection">Step 4 — Evaluate safety impact and detection</a><ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#does-the-malfunction-affect-safety">Does the malfunction affect safety?</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#is-detection-sufficient">Is detection sufficient?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-5-determine-confidence-and-qualification-need">Step 5 — Determine confidence and qualification need</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#multiple-use-cases-and-malfunctions">Multiple use cases and malfunctions</a></li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#step-5-determine-confidence-and-qualification-need">Step 5 — Determine confidence and qualification need</a><ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multiple-use-cases-and-malfunctions">Multiple use cases and malfunctions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-5a-improve-the-usage-concept-instead-of-qualifying">Step 5a — Improve the usage concept instead of qualifying</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-6-qualify-the-tool-if-required">Step 6 — Qualify the tool if required</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#qualification-is-not-a-detection-measure">Qualification is not a detection measure</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#external-tool-qualification">External tool qualification</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#self-developed-tool-qualification">Self-developed tool qualification</a></li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#step-5a-improve-the-usage-concept-instead-of-qualifying">Step 5a — Improve the usage concept instead of qualifying</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#step-6-qualify-the-tool-if-required">Step 6 — Qualify the tool if required</a><ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#qualification-is-not-a-detection-measure">Qualification is not a detection measure</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#external-tool-qualification">External tool qualification</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#self-developed-tool-qualification">Self-developed tool qualification</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-7-update-the-tool-verification-report">Step 7 — Update the Tool Verification Report</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-8-review-and-release-the-tool-verification-report">Step 8 — Review and release the Tool Verification Report</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#complete-example-external-tool">Complete example — external tool</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stakeholder-requirement">Stakeholder requirement</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tool-requirement">Tool requirement</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tool-use-case">Tool use case</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#potential-malfunction">Potential malfunction</a></li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#step-7-update-the-tool-verification-report">Step 7 — Update the Tool Verification Report</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#step-8-review-and-release-the-tool-verification-report">Step 8 — Review and release the Tool Verification Report</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#complete-example-external-tool">Complete example — external tool</a><ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stakeholder-requirement">Stakeholder requirement</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tool-requirement">Tool requirement</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tool-use-case">Tool use case</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#potential-malfunction">Potential malfunction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#complete-example-self-developed-tool">Complete example — self-developed tool</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#existing-requirements">Existing requirements</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Tool use case</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">Potential malfunction</a></li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#complete-example-self-developed-tool">Complete example — self-developed tool</a><ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#existing-requirements">Existing requirements</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Tool use case</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">Potential malfunction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-to-evaluate-the-tool-again">When to evaluate the tool again</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#common-mistakes">Common mistakes</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#treating-tool-usecase-as-a-new-requirement-level">Treating <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code> as a new requirement level</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#using-generic-malfunctions">Using generic malfunctions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#treating-every-existing-test-as-a-safety-measure">Treating every existing test as a safety measure</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#treating-qualification-as-reclassification">Treating qualification as reclassification</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#duplicating-external-specifications">Duplicating external specifications</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#duplicating-self-developed-tests">Duplicating self-developed tests</a></li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#when-to-evaluate-the-tool-again">When to evaluate the tool again</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#common-mistakes">Common mistakes</a><ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#treating-tool-usecase-as-a-new-requirement-level">Treating <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code> as a new requirement level</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-generic-malfunctions">Using generic malfunctions</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#treating-every-existing-test-as-a-safety-measure">Treating every existing test as a safety measure</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#treating-qualification-as-reclassification">Treating qualification as reclassification</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#duplicating-external-specifications">Duplicating external specifications</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#duplicating-self-developed-tests">Duplicating self-developed tests</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-reference">Quick reference</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#score-references">SCORE references</a></li>
 </ul>
-</li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-reference">Quick reference</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#score-references">SCORE references</a></li>
-</ul>
-
   </nav></div>
 
   <div class="sidebar-secondary-item">

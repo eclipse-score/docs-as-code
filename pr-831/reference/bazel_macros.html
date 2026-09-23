@@ -544,8 +544,9 @@ in that child’s <code class="docutils literal notranslate"><span class="pre">d
 </div>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">bundles</span></code> (list of placement dicts)
-Documentation bundles to overlay into this project’s documentation tree, each with its
-placement (<code class="docutils literal notranslate"><span class="pre">mount_at</span></code>). See <a class="reference internal" href="../how-to/bundles/index.html#howto-mount-external-sources"><span class="std std-ref">How to use bundles</span></a> for the full reference.</p></li>
+Documentation bundles to overlay into this project’s documentation tree,
+each with its placement (<code class="docutils literal notranslate"><span class="pre">mount_at</span></code>, optional <code class="docutils literal notranslate"><span class="pre">attach_to</span></code> and
+<code class="docutils literal notranslate"><span class="pre">toctree_index</span></code>). See <a class="reference internal" href="../how-to/bundles/index.html#howto-mount-external-sources"><span class="std std-ref">How to use bundles</span></a> for the full reference.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">deps</span></code> (list of bazel labels)
 Additional Bazel dependencies to add to the Python binaries and the virtual environment
 target. Use this to add project-specific Python modules.</p>
@@ -631,7 +632,8 @@ for supporting files in the root bundle and this attribute for child bundles.</p
 <li><p><code class="docutils literal notranslate"><span class="pre">entry_doc</span></code> (string, optional)
 Bundle-relative docname used as the canonical navigation entry. It defaults to
 <code class="docutils literal notranslate"><span class="pre">index</span></code>. Every mount attaches this entry to the parent <code class="docutils literal notranslate"><span class="pre">index</span></code> toctree by
-default; a placement’s <code class="docutils literal notranslate"><span class="pre">attach_to</span></code> may override that host document.</p></li>
+default; a placement’s <code class="docutils literal notranslate"><span class="pre">attach_to</span></code> may override that host document, and its
+<code class="docutils literal notranslate"><span class="pre">toctree_index</span></code> selects which toctree of that document receives the entry.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">bundles</span></code> (list of composition dicts, optional)
 Nested bundles to compose into this one, so a bundle can aggregate other
 bundles transitively. Each entry is a dict:</p>
@@ -642,6 +644,9 @@ this bundle.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">attach_to</span></code> (optional) — a docname (relative to this bundle) whose toctree
 receives the child’s bundle-defined entry document. When omitted, the parent
 <code class="docutils literal notranslate"><span class="pre">index</span></code> document receives it.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">toctree_index</span></code> (optional) — the 0-based index of the toctree inside the
+<code class="docutils literal notranslate"><span class="pre">attach_to</span></code> document that receives the entry. It defaults to <code class="docutils literal notranslate"><span class="pre">0</span></code> (the
+first toctree).</p></li>
 </ul>
 <p>A child’s <code class="docutils literal notranslate"><span class="pre">mount_at</span></code>/<code class="docutils literal notranslate"><span class="pre">attach_to</span></code> <strong>prefix-stack</strong> with the placement this
 bundle later receives, so composition is fully transitive. The same underlying
@@ -659,8 +664,9 @@ create a Needs target.</p></li>
 </ul>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>A bundle is <strong>placement-free</strong>: its <code class="docutils literal notranslate"><span class="pre">mount_at</span></code> and <code class="docutils literal notranslate"><span class="pre">attach_to</span></code> are assigned
-by the mounter, while its <code class="docutils literal notranslate"><span class="pre">entry_doc</span></code> belongs to the bundle. This lets the
+<p>A bundle is <strong>placement-free</strong>: its <code class="docutils literal notranslate"><span class="pre">mount_at</span></code>, <code class="docutils literal notranslate"><span class="pre">attach_to</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">toctree_index</span></code> are assigned by the mounter, while its <code class="docutils literal notranslate"><span class="pre">entry_doc</span></code> belongs to
+the bundle. This lets the
 same bundle be mounted at different locations by different consumers without
 changing its canonical entry page.</p>
 </div>

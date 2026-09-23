@@ -779,6 +779,7 @@ window.runMermaid = runMermaid;</script>
 <li class="toctree-l2"><a class="reference internal" href="qualification.html">Doc-as-Code Tool Qualification</a></li>
 </ul>
 </details></li>
+<li class="toctree-l1"><a class="reference internal" href="../testing.html">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../extensions/index.html">Extensions</a></li>
 </ul>
 </div>
@@ -1070,7 +1071,7 @@ There are two exceptions, the architecture views (see M4) and backlinks (see M8)
 Rendering/preview defects affect reviewer convenience, not safety evidence.</p>
 </dd>
 </dl>
-<div class="need_container docutils container" id="SNCB-36ac4fd4">
+<div class="need_container docutils container" id="SNCB-36acd028">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_usecase table" id="tool_usecase__docs_as_code__build_ci">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -1093,7 +1094,7 @@ Rendering/preview defects affect reviewer convenience, not safety evidence.</p>
 </span></span></div>
 <div class="line"><span><div class="line">realizes: <span class="realized_by"><span><a class="reference internal" href="requirements.html#tool_req__docs_common_attr_safety_link_check" title="tool_usecase__docs_as_code__build_ci">tool_req__docs_common_attr_safety_link_check</a>, <a class="reference internal" href="requirements.html#tool_req__docs_doc_types" title="tool_usecase__docs_as_code__build_ci">tool_req__docs_doc_types</a>, <a class="reference internal" href="requirements.html#tool_req__docs_req_link_covers_aou" title="tool_usecase__docs_as_code__build_ci">tool_req__docs_req_link_covers_aou</a>, <a class="reference internal" href="requirements.html#tool_req__docs_test_link_testcase" title="tool_usecase__docs_as_code__build_ci">tool_req__docs_test_link_testcase</a>, <a class="reference internal" href="requirements.html#tool_req__docs_test_linkage_metrics" title="tool_usecase__docs_as_code__build_ci">tool_req__docs_test_linkage_metrics</a></span></span></div>
 <div class="line">contains: <span class="parent_needs"><span><a class="reference internal" href="#potential_tool_malfunction__docs_as_code__m1" title="tool_usecase__docs_as_code__build_ci">potential_tool_malfunction__docs_as_code__m1</a>, <a class="reference internal" href="#potential_tool_malfunction__docs_as_code__m2" title="tool_usecase__docs_as_code__build_ci">potential_tool_malfunction__docs_as_code__m2</a>, <a class="reference internal" href="#potential_tool_malfunction__docs_as_code__m3" title="tool_usecase__docs_as_code__build_ci">potential_tool_malfunction__docs_as_code__m3</a>, <a class="reference internal" href="#potential_tool_malfunction__docs_as_code__m5" title="tool_usecase__docs_as_code__build_ci">potential_tool_malfunction__docs_as_code__m5</a>, <a class="reference internal" href="#potential_tool_malfunction__docs_as_code__m6" title="tool_usecase__docs_as_code__build_ci">potential_tool_malfunction__docs_as_code__m6</a>, <a class="reference internal" href="#potential_tool_malfunction__docs_as_code__m7" title="tool_usecase__docs_as_code__build_ci">potential_tool_malfunction__docs_as_code__m7</a></span></span></div>
-<div class="line">belongs to: <span class="belongs_to"><span><a class="reference internal" href="qualification.html#doc_tool__doc_as_code" title="tool_usecase__docs_as_code__build_ci">doc_tool__doc_as_code</a></span></span></div>
+<div class="line">belongs to: <span class="belongs_to"><span><a class="reference internal" href="qualification.html#doc_tool__score_docs_as_code" title="tool_usecase__docs_as_code__build_ci">doc_tool__score_docs_as_code</a></span></span></div>
 </span></div>
 </div>
 </td>
@@ -1103,7 +1104,7 @@ Rendering/preview defects affect reviewer convenience, not safety evidence.</p>
 safety-relevant danger is the <em>silent</em> failure — a missing warning
 or a wrong output published undetected.
 A loud CI abort is safe: no wrong output enters the baseline.</p>
-<div class="need_container docutils container" id="SNCB-f6fdc0bd">
+<div class="need_container docutils container" id="SNCB-5c60f95d">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_potential_tool_malfunction table" id="potential_tool_malfunction__docs_as_code__m1">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -1125,7 +1126,7 @@ A loud CI abort is safe: no wrong output enters the baseline.</p>
 <div class="line"><span><span><div class="line"><span class="needs_detection_sufficient"><span class="needs_label">detection_sufficient: </span><span class="needs_data">NO</span></span></div>
 <div class="line"><span class="needs_safety_affected"><span class="needs_label">safety_affected: </span><span class="needs_data">YES</span></span></div>
 <div class="line"><span class="needs_safety_measures"><span class="needs_label">safety_measures: </span><span class="needs_data">PR review</span></span></div>
-<div class="line"><span class="needs_testlink"><span class="needs_label">testlink: </span><span class="needs_data"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/9ec14ad110b10caf6ac25c22caa094d3352b12ec/src/extensions/score_metamodel/tests/test_metamodel_load.py#L192">test_metamodel_load__test_all_undeclared_links_are_reported_at_once<span class="score-testcase-result score-testcase-result--passed"> (passed)</span></a><em>; </em><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/9ec14ad110b10caf6ac25c22caa094d3352b12ec/src/extensions/score_metamodel/tests/test_metamodel_load.py#L214">test_metamodel_load__test_shipped_metamodel_declares_every_link_it_uses<span class="score-testcase-result score-testcase-result--passed"> (passed)</span></a><em>; </em><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/9ec14ad110b10caf6ac25c22caa094d3352b12ec/src/extensions/score_metamodel/tests/test_metamodel_load.py#L224">test_metamodel_load__test_tool_qualification_types_model_nested_traceability<span class="score-testcase-result score-testcase-result--passed"> (passed)</span></a><em>; </em></span></span></div>
+<div class="line"><span class="needs_testlink"><span class="needs_label">testlink: </span><span class="needs_data"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/4e70b7b1b0cd4346ae7c71479dea15a3a3c54971/src/extensions/score_metamodel/tests/test_metamodel_load.py#L192">test_metamodel_load__test_all_undeclared_links_are_reported_at_once<span class="score-testcase-result score-testcase-result--passed"> (passed)</span></a><em>; </em><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/4e70b7b1b0cd4346ae7c71479dea15a3a3c54971/src/extensions/score_metamodel/tests/test_metamodel_load.py#L214">test_metamodel_load__test_shipped_metamodel_declares_every_link_it_uses<span class="score-testcase-result score-testcase-result--passed"> (passed)</span></a><em>; </em><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/4e70b7b1b0cd4346ae7c71479dea15a3a3c54971/src/extensions/score_metamodel/tests/test_metamodel_load.py#L224">test_metamodel_load__test_tool_qualification_types_model_nested_traceability<span class="score-testcase-result score-testcase-result--passed"> (passed)</span></a><em>; </em></span></span></div>
 <div class="line"><span class="needs_version"><span class="needs_label">version: </span>1</span></div>
 </span></span></div>
 <div class="line"><span><div class="line">contained by: <span class="parent_needs"><span><a class="reference internal" href="#tool_usecase__docs_as_code__build_ci" title="potential_tool_malfunction__docs_as_code__m1">tool_usecase__docs_as_code__build_ci</a></span></span></div>
@@ -1160,7 +1161,7 @@ Confidence (automatic calculation): low.</p>
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-97af414b">
+<div class="need_container docutils container" id="SNCB-6db854d9">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_potential_tool_malfunction table" id="potential_tool_malfunction__docs_as_code__m2">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -1182,7 +1183,7 @@ Confidence (automatic calculation): low.</p>
 <div class="line"><span><span><div class="line"><span class="needs_detection_sufficient"><span class="needs_label">detection_sufficient: </span><span class="needs_data">NO</span></span></div>
 <div class="line"><span class="needs_safety_affected"><span class="needs_label">safety_affected: </span><span class="needs_data">YES</span></span></div>
 <div class="line"><span class="needs_safety_measures"><span class="needs_label">safety_measures: </span><span class="needs_data">PR review</span></span></div>
-<div class="line"><span class="needs_testlink"><span class="needs_label">testlink: </span><span class="needs_data"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/9ec14ad110b10caf6ac25c22caa094d3352b12ec/src/extensions/score_metamodel/tests/rst/graph/test_metamodel_graph.rst#L15">test_rules_file_based__test_rst_files[graph/test_metamodel_graph.rst]<span class="score-testcase-result score-testcase-result--passed"> (passed)</span></a><em>; </em></span></span></div>
+<div class="line"><span class="needs_testlink"><span class="needs_label">testlink: </span><span class="needs_data"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/4e70b7b1b0cd4346ae7c71479dea15a3a3c54971/src/extensions/score_metamodel/tests/rst/graph/test_metamodel_graph.rst#L15">test_rules_file_based__test_rst_files[graph/test_metamodel_graph.rst]<span class="score-testcase-result score-testcase-result--passed"> (passed)</span></a><em>; </em></span></span></div>
 <div class="line"><span class="needs_version"><span class="needs_label">version: </span>1</span></div>
 </span></span></div>
 <div class="line"><span><div class="line">contained by: <span class="parent_needs"><span><a class="reference internal" href="#tool_usecase__docs_as_code__build_ci" title="potential_tool_malfunction__docs_as_code__m2">tool_usecase__docs_as_code__build_ci</a></span></span></div>
@@ -1217,7 +1218,7 @@ Further additional safety measure required: yes (qualification).</p>
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-b294937c">
+<div class="need_container docutils container" id="SNCB-bb8747c0">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_potential_tool_malfunction table" id="potential_tool_malfunction__docs_as_code__m3">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -1238,7 +1239,7 @@ Further additional safety measure required: yes (qualification).</p>
 <tr class="meta row-even"><td class="meta" colspan="3"><div class="needs_meta_left line-block">
 <div class="line"><span><span><div class="line"><span class="needs_detection_sufficient"><span class="needs_label">detection_sufficient: </span><span class="needs_data">NO</span></span></div>
 <div class="line"><span class="needs_safety_affected"><span class="needs_label">safety_affected: </span><span class="needs_data">YES</span></span></div>
-<div class="line"><span class="needs_testlink"><span class="needs_label">testlink: </span><span class="needs_data"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/9ec14ad110b10caf6ac25c22caa094d3352b12ec/src/extensions/score_metrics/tests/test_traceability_metrics.py#L155">test_traceability_metrics__test_calculate_requirement_metrics_counts_links_and_missing_ids<span class="score-testcase-result score-testcase-result--passed"> (passed)</span></a><em>; </em><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/9ec14ad110b10caf6ac25c22caa094d3352b12ec/src/extensions/score_metrics/tests/test_traceability_metrics.py#L236">test_traceability_metrics__test_calculate_test_metrics_counts_linked_tests_and_broken_refs<span class="score-testcase-result score-testcase-result--passed"> (passed)</span></a><em>; </em></span></span></div>
+<div class="line"><span class="needs_testlink"><span class="needs_label">testlink: </span><span class="needs_data"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/4e70b7b1b0cd4346ae7c71479dea15a3a3c54971/src/extensions/score_metrics/tests/test_traceability_metrics.py#L155">test_traceability_metrics__test_calculate_requirement_metrics_counts_links_and_missing_ids<span class="score-testcase-result score-testcase-result--passed"> (passed)</span></a><em>; </em><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/4e70b7b1b0cd4346ae7c71479dea15a3a3c54971/src/extensions/score_metrics/tests/test_traceability_metrics.py#L236">test_traceability_metrics__test_calculate_test_metrics_counts_linked_tests_and_broken_refs<span class="score-testcase-result score-testcase-result--passed"> (passed)</span></a><em>; </em></span></span></div>
 <div class="line"><span class="needs_version"><span class="needs_label">version: </span>1</span></div>
 </span></span></div>
 <div class="line"><span><div class="line">contained by: <span class="parent_needs"><span><a class="reference internal" href="#tool_usecase__docs_as_code__build_ci" title="potential_tool_malfunction__docs_as_code__m3">tool_usecase__docs_as_code__build_ci</a></span></span></div>
@@ -1272,7 +1273,7 @@ Confidence (automatic calculation): low.</p>
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-6c1027d6">
+<div class="need_container docutils container" id="SNCB-12a32da4">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_potential_tool_malfunction table" id="potential_tool_malfunction__docs_as_code__m5">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -1293,7 +1294,7 @@ Confidence (automatic calculation): low.</p>
 <tr class="meta row-even"><td class="meta" colspan="3"><div class="needs_meta_left line-block">
 <div class="line"><span><span><div class="line"><span class="needs_detection_sufficient"><span class="needs_label">detection_sufficient: </span><span class="needs_data">NO</span></span></div>
 <div class="line"><span class="needs_safety_affected"><span class="needs_label">safety_affected: </span><span class="needs_data">YES</span></span></div>
-<div class="line"><span class="needs_testlink"><span class="needs_label">testlink: </span><span class="needs_data"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/9ec14ad110b10caf6ac25c22caa094d3352b12ec/src/extensions/score_source_code_linker/tests/test_testlink.py#L100">test_testlink__test_testcaseneed_to_dict_multiple_links<span class="score-testcase-result score-testcase-result--passed"> (passed)</span></a><em>; </em><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/9ec14ad110b10caf6ac25c22caa094d3352b12ec/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L278">test_xml_parser__test_read_test_xml_file<span class="score-testcase-result score-testcase-result--passed"> (passed)</span></a><em>; </em></span></span></div>
+<div class="line"><span class="needs_testlink"><span class="needs_label">testlink: </span><span class="needs_data"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/4e70b7b1b0cd4346ae7c71479dea15a3a3c54971/src/extensions/score_source_code_linker/tests/test_testlink.py#L100">test_testlink__test_testcaseneed_to_dict_multiple_links<span class="score-testcase-result score-testcase-result--passed"> (passed)</span></a><em>; </em><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/4e70b7b1b0cd4346ae7c71479dea15a3a3c54971/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L278">test_xml_parser__test_read_test_xml_file<span class="score-testcase-result score-testcase-result--passed"> (passed)</span></a><em>; </em></span></span></div>
 <div class="line"><span class="needs_version"><span class="needs_label">version: </span>1</span></div>
 </span></span></div>
 <div class="line"><span><div class="line">contained by: <span class="parent_needs"><span><a class="reference internal" href="#tool_usecase__docs_as_code__build_ci" title="potential_tool_malfunction__docs_as_code__m5">tool_usecase__docs_as_code__build_ci</a></span></span></div>
@@ -1328,7 +1329,7 @@ Confidence (automatic calculation): low.</p>
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-807913e7">
+<div class="need_container docutils container" id="SNCB-15fec2d8">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_potential_tool_malfunction table" id="potential_tool_malfunction__docs_as_code__m6">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -1350,7 +1351,7 @@ Confidence (automatic calculation): low.</p>
 <div class="line"><span><span><div class="line"><span class="needs_detection_sufficient"><span class="needs_label">detection_sufficient: </span><span class="needs_data">NO</span></span></div>
 <div class="line"><span class="needs_safety_affected"><span class="needs_label">safety_affected: </span><span class="needs_data">YES</span></span></div>
 <div class="line"><span class="needs_safety_measures"><span class="needs_label">safety_measures: </span><span class="needs_data">PR review</span></span></div>
-<div class="line"><span class="needs_testlink"><span class="needs_label">testlink: </span><span class="needs_data"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/9ec14ad110b10caf6ac25c22caa094d3352b12ec/src/extensions/score_source_code_linker/tests/test_testlink.py#L100">test_testlink__test_testcaseneed_to_dict_multiple_links<span class="score-testcase-result score-testcase-result--passed"> (passed)</span></a><em>; </em><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/9ec14ad110b10caf6ac25c22caa094d3352b12ec/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L278">test_xml_parser__test_read_test_xml_file<span class="score-testcase-result score-testcase-result--passed"> (passed)</span></a><em>; </em></span></span></div>
+<div class="line"><span class="needs_testlink"><span class="needs_label">testlink: </span><span class="needs_data"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/4e70b7b1b0cd4346ae7c71479dea15a3a3c54971/src/extensions/score_source_code_linker/tests/test_testlink.py#L100">test_testlink__test_testcaseneed_to_dict_multiple_links<span class="score-testcase-result score-testcase-result--passed"> (passed)</span></a><em>; </em><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/4e70b7b1b0cd4346ae7c71479dea15a3a3c54971/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L278">test_xml_parser__test_read_test_xml_file<span class="score-testcase-result score-testcase-result--passed"> (passed)</span></a><em>; </em></span></span></div>
 <div class="line"><span class="needs_version"><span class="needs_label">version: </span>1</span></div>
 </span></span></div>
 <div class="line"><span><div class="line">contained by: <span class="parent_needs"><span><a class="reference internal" href="#tool_usecase__docs_as_code__build_ci" title="potential_tool_malfunction__docs_as_code__m6">tool_usecase__docs_as_code__build_ci</a></span></span></div>
@@ -1385,7 +1386,7 @@ Confidence (automatic calculation): low.</p>
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-b0dcf934">
+<div class="need_container docutils container" id="SNCB-91ba9366">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_potential_tool_malfunction table" id="potential_tool_malfunction__docs_as_code__m7">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -1456,7 +1457,7 @@ Confidence (automatic calculation): low.</p>
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-7142846f">
+<div class="need_container docutils container" id="SNCB-d62d415b">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_usecase table" id="tool_usecase__docs_as_code__pr_review">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -1478,7 +1479,7 @@ Confidence (automatic calculation): low.</p>
 <div class="line"><span><span><div class="line"><span class="needs_version"><span class="needs_label">version: </span>1</span></div>
 </span></span></div>
 <div class="line"><span><div class="line">realizes: <span class="realized_by"><span><a class="reference internal" href="requirements.html#tool_req__docs_doc_types" title="tool_usecase__docs_as_code__pr_review">tool_req__docs_doc_types</a></span></span></div>
-<div class="line">belongs to: <span class="belongs_to"><span><a class="reference internal" href="qualification.html#doc_tool__doc_as_code" title="tool_usecase__docs_as_code__pr_review">doc_tool__doc_as_code</a></span></span></div>
+<div class="line">belongs to: <span class="belongs_to"><span><a class="reference internal" href="qualification.html#doc_tool__score_docs_as_code" title="tool_usecase__docs_as_code__pr_review">doc_tool__score_docs_as_code</a></span></span></div>
 </span></div>
 </div>
 </td>
@@ -1503,7 +1504,7 @@ Still, for silent wrong outputs the gated CI stays green.</p></td>
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-87b930b9">
+<div class="need_container docutils container" id="SNCB-28aa0502">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_usecase table" id="tool_usecase__docs_as_code__derived_view">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -1526,7 +1527,7 @@ Still, for silent wrong outputs the gated CI stays green.</p></td>
 </span></span></div>
 <div class="line"><span><div class="line">realizes: <span class="realized_by"><span><a class="reference internal" href="requirements.html#tool_req__docs_arch_views" title="tool_usecase__docs_as_code__derived_view">tool_req__docs_arch_views</a>, <a class="reference internal" href="requirements.html#tool_req__docs_req_link_satisfies_allowed" title="tool_usecase__docs_as_code__derived_view">tool_req__docs_req_link_satisfies_allowed</a>, <a class="reference internal" href="requirements.html#tool_req__docs_verification_report_need" title="tool_usecase__docs_as_code__derived_view">tool_req__docs_verification_report_need</a></span></span></div>
 <div class="line">contains: <span class="parent_needs"><span><a class="reference internal" href="#potential_tool_malfunction__docs_as_code__m4" title="tool_usecase__docs_as_code__derived_view">potential_tool_malfunction__docs_as_code__m4</a>, <a class="reference internal" href="#potential_tool_malfunction__docs_as_code__m8" title="tool_usecase__docs_as_code__derived_view">potential_tool_malfunction__docs_as_code__m8</a>, <a class="reference internal" href="#potential_tool_malfunction__docs_as_code__m9" title="tool_usecase__docs_as_code__derived_view">potential_tool_malfunction__docs_as_code__m9</a></span></span></div>
-<div class="line">belongs to: <span class="belongs_to"><span><a class="reference internal" href="qualification.html#doc_tool__doc_as_code" title="tool_usecase__docs_as_code__derived_view">doc_tool__doc_as_code</a></span></span></div>
+<div class="line">belongs to: <span class="belongs_to"><span><a class="reference internal" href="qualification.html#doc_tool__score_docs_as_code" title="tool_usecase__docs_as_code__derived_view">doc_tool__score_docs_as_code</a></span></span></div>
 </span></div>
 </div>
 </td>
@@ -1536,7 +1537,7 @@ Still, for silent wrong outputs the gated CI stays green.</p></td>
 the authoritative safety artifacts are mostly the source-controlled work products.
 There are two exceptions, the architecture views (see M4) and backlinks (see M8).
 Rendering/preview defects affect reviewer convenience, not safety evidence.</p>
-<div class="need_container docutils container" id="SNCB-dcdf6c66">
+<div class="need_container docutils container" id="SNCB-b76efec5">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_potential_tool_malfunction table" id="potential_tool_malfunction__docs_as_code__m4">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -1558,7 +1559,7 @@ Rendering/preview defects affect reviewer convenience, not safety evidence.</p>
 <div class="line"><span><span><div class="line"><span class="needs_detection_sufficient"><span class="needs_label">detection_sufficient: </span><span class="needs_data">YES</span></span></div>
 <div class="line"><span class="needs_safety_affected"><span class="needs_label">safety_affected: </span><span class="needs_data">YES</span></span></div>
 <div class="line"><span class="needs_safety_measures"><span class="needs_label">safety_measures: </span><span class="needs_data">PR review includes architecture inspection</span></span></div>
-<div class="line"><span class="needs_testlink"><span class="needs_label">testlink: </span><span class="needs_data"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/9ec14ad110b10caf6ac25c22caa094d3352b12ec/src/extensions/score_metamodel/tests/rst/architecture/architecture_tests.rst#L16">test_rules_file_based__test_rst_files[architecture/architecture_tests.rst]<span class="score-testcase-result score-testcase-result--passed"> (passed)</span></a><em>; </em></span></span></div>
+<div class="line"><span class="needs_testlink"><span class="needs_label">testlink: </span><span class="needs_data"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/4e70b7b1b0cd4346ae7c71479dea15a3a3c54971/src/extensions/score_metamodel/tests/rst/architecture/architecture_tests.rst#L16">test_rules_file_based__test_rst_files[architecture/architecture_tests.rst]<span class="score-testcase-result score-testcase-result--passed"> (passed)</span></a><em>; </em></span></span></div>
 <div class="line"><span class="needs_version"><span class="needs_label">version: </span>1</span></div>
 </span></span></div>
 <div class="line"><span><div class="line">contained by: <span class="parent_needs"><span><a class="reference internal" href="#tool_usecase__docs_as_code__derived_view" title="potential_tool_malfunction__docs_as_code__m4">tool_usecase__docs_as_code__derived_view</a></span></span></div>
@@ -1592,7 +1593,7 @@ Confidence (automatic calculation): high.</p>
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-c5cd598c">
+<div class="need_container docutils container" id="SNCB-244cf773">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_potential_tool_malfunction table" id="potential_tool_malfunction__docs_as_code__m8">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -1613,7 +1614,7 @@ Confidence (automatic calculation): high.</p>
 <tr class="meta row-even"><td class="meta" colspan="3"><div class="needs_meta_left line-block">
 <div class="line"><span><span><div class="line"><span class="needs_detection_sufficient"><span class="needs_label">detection_sufficient: </span><span class="needs_data">NO</span></span></div>
 <div class="line"><span class="needs_safety_affected"><span class="needs_label">safety_affected: </span><span class="needs_data">YES</span></span></div>
-<div class="line"><span class="needs_testlink"><span class="needs_label">testlink: </span><span class="needs_data"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/9ec14ad110b10caf6ac25c22caa094d3352b12ec/src/extensions/score_source_code_linker/tests/test_source_code_link_integration.py#L516">test_source_code_link_integration__test_source_link_integration_ok<span class="score-testcase-result score-testcase-result--passed"> (passed)</span></a><em>; </em></span></span></div>
+<div class="line"><span class="needs_testlink"><span class="needs_label">testlink: </span><span class="needs_data"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/4e70b7b1b0cd4346ae7c71479dea15a3a3c54971/src/extensions/score_source_code_linker/tests/test_source_code_link_integration.py#L518">test_source_code_link_integration__test_source_link_integration_ok<span class="score-testcase-result score-testcase-result--passed"> (passed)</span></a><em>; </em></span></span></div>
 <div class="line"><span class="needs_version"><span class="needs_label">version: </span>1</span></div>
 </span></span></div>
 <div class="line"><span><div class="line">contained by: <span class="parent_needs"><span><a class="reference internal" href="#tool_usecase__docs_as_code__derived_view" title="potential_tool_malfunction__docs_as_code__m8">tool_usecase__docs_as_code__derived_view</a></span></span></div>
@@ -1647,7 +1648,7 @@ Confidence (automatic calculation): low.</p>
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-02fa1d27">
+<div class="need_container docutils container" id="SNCB-e8a7b4b7">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_potential_tool_malfunction table" id="potential_tool_malfunction__docs_as_code__m9">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -1667,7 +1668,7 @@ Confidence (automatic calculation): low.</p>
 </tr>
 <tr class="meta row-even"><td class="meta" colspan="3"><div class="needs_meta_left line-block">
 <div class="line"><span><span><div class="line"><span class="needs_safety_affected"><span class="needs_label">safety_affected: </span><span class="needs_data">NO</span></span></div>
-<div class="line"><span class="needs_testlink"><span class="needs_label">testlink: </span><span class="needs_data"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/9ec14ad110b10caf6ac25c22caa094d3352b12ec/src/extensions/score_source_code_linker/tests/test_source_code_link_integration.py#L516">test_source_code_link_integration__test_source_link_integration_ok<span class="score-testcase-result score-testcase-result--passed"> (passed)</span></a><em>; </em></span></span></div>
+<div class="line"><span class="needs_testlink"><span class="needs_label">testlink: </span><span class="needs_data"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/4e70b7b1b0cd4346ae7c71479dea15a3a3c54971/src/extensions/score_source_code_linker/tests/test_source_code_link_integration.py#L518">test_source_code_link_integration__test_source_link_integration_ok<span class="score-testcase-result score-testcase-result--passed"> (passed)</span></a><em>; </em></span></span></div>
 <div class="line"><span class="needs_version"><span class="needs_label">version: </span>1</span></div>
 </span></span></div>
 <div class="line"><span><div class="line">contained by: <span class="parent_needs"><span><a class="reference internal" href="#tool_usecase__docs_as_code__derived_view" title="potential_tool_malfunction__docs_as_code__m9">tool_usecase__docs_as_code__derived_view</a></span></span></div>

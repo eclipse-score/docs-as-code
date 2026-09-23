@@ -408,6 +408,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../benchmark_results.html">Bazel Mini Benchmark Results</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../decisions/index.html">Decisions And Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../requirements/index.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testing.html">Testing</a></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Extensions</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="metamodel.html">Metamodel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="rst_filebased_testing.html">Filebased Testing</a></li>
@@ -487,10 +488,11 @@ semantics are documented in <a class="reference internal" href="../../concepts/m
 <a class="reference internal" href="../../how-to/bundles/index.html#howto-mount-external-sources"><span class="std std-ref">How to use bundles</span></a>.</p>
 <section id="architecture-and-manifest-contract">
 <h2>Architecture and manifest contract<a class="headerlink" href="#architecture-and-manifest-contract" title="Link to this heading">#</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">docs.bzl</span></code> owns bundle graph traversal. Its <code class="docutils literal notranslate"><span class="pre">_mounts_manifest</span></code> rule turns
-the <code class="docutils literal notranslate"><span class="pre">DocsBundleInfo</span></code> provider graph and each consumer placement into one JSON
-manifest. Python deliberately receives paths rather than Bazel labels, so it
-does not reconstruct Bazel repository names at Sphinx runtime.</p>
+<p><code class="docutils literal notranslate"><span class="pre">docs.bzl</span></code> owns bundle graph traversal. Its composition-manifest rule turns the
+<code class="docutils literal notranslate"><span class="pre">DocsBundleInfo</span></code> provider graph and each consumer placement into one JSON composition
+manifest. The same manifest supplies both mount placement and document-to-bundle
+metadata. Python deliberately receives paths and stable bundle metadata rather than
+Bazel providers, so it does not reconstruct Bazel repository names at Sphinx runtime.</p>
 <p>Each manifest entry contains:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">src_root</span></code> — the source directory relative to the main workspace or the
@@ -499,8 +501,15 @@ sandbox execroot;</p></li>
 walked;</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">mount_at</span></code> and <code class="docutils literal notranslate"><span class="pre">attach_to</span></code> — the already-composed Sphinx placement; and</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">entry_doc</span></code> — the canonical entry document declared by the source bundle.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">external</span></code> — whether the directory belongs to another Bazel module.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">external</span></code> — whether the directory belongs to another Bazel module;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bundle</span></code> — the declaring bundle’s Bazel label, name, and direct targets;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">root_bundle</span></code> — whether this physical entry belongs to the root bundle of
+the current composition. This is composition-specific: the same bundle can
+be a root in a standalone manifest and a child in another composition.</p></li>
 </ul>
+<p>Standalone bundle Needs actions receive a local-only view containing the
+bundle’s own root entries; composed builds receive the complete active
+composition. Both views use the same schema and runtime resolver.</p>
 <p>At <code class="docutils literal notranslate"><span class="pre">config-inited</span></code>, <code class="docutils literal notranslate"><span class="pre">score_mounts</span></code> resolves all directory source mounts before
 constructing <code class="docutils literal notranslate"><span class="pre">config.mounts</span></code>. A mount below Sphinx’s primary source directory
 is added to the primary <code class="docutils literal notranslate"><span class="pre">exclude_patterns</span></code> as a relative <code class="docutils literal notranslate"><span class="pre">&lt;mount&gt;/**</span></code> pattern.
@@ -513,6 +522,18 @@ remain visible to live preview.</p>
 not included in these directory exclusions. They are intended for generated
 sources outside the primary source tree; an explicitly mounted workspace file
 below a walked root is a known limitation and would need exact-file exclusions.</p>
+</section>
+<section id="document-to-bundle-mapping">
+<h2>Document-to-bundle mapping<a class="headerlink" href="#document-to-bundle-mapping" title="Link to this heading">#</a></h2>
+<p>After Sphinx has updated its environment, <code class="docutils literal notranslate"><span class="pre">score_mounts</span></code> exposes
+<code class="docutils literal notranslate"><span class="pre">get_document_bundles(app)</span></code>. The result maps each actually discovered
+bundle-owned docname to one bundle instance. Mounted source docnames come from
+the mount integration’s recorded output, while primary docnames come from
+Sphinx’s discovery set. Documents discovered through data-only mounts are
+intentionally omitted because those mounts provide auxiliary files rather than
+bundle-owned source roots. This avoids assigning a bundle to skipped,
+conflicting, or data-only mounts. The matcher in <code class="docutils literal notranslate"><span class="pre">score_metamodel</span></code> will
+consume this mapping without inspecting paths or mount configuration.</p>
 <p>The rule rejects conflicting final placements before Sphinx starts. A mount
 without <code class="docutils literal notranslate"><span class="pre">attach_to</span></code> is attached to the <code class="docutils literal notranslate"><span class="pre">index</span></code> document beside its
 <code class="docutils literal notranslate"><span class="pre">mount_at</span></code>; <code class="docutils literal notranslate"><span class="pre">attach_to</span></code> overrides that target. The Python
@@ -631,6 +652,7 @@ sandboxed external builds, and placement conflicts; and</p></li>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#architecture-and-manifest-contract">Architecture and manifest contract</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#document-to-bundle-mapping">Document-to-bundle mapping</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#directory-resolution">Directory resolution</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#toml-synchronization">TOML synchronization</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-bundles-are-not-materialized">Why bundles are not materialized</a></li>

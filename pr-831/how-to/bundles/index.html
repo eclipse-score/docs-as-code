@@ -419,24 +419,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../source_to_doc_links.html">Reference Docs in Source Code</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../test_to_doc_links.html">Reference Docs in Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../perform_tool_verification.html">How to Apply the SCORE Tool Management Process</a></li>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <li class="toctree-l1"><a class="reference internal" href="../generated_docs.html">Integrate Generated Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../add_extensions.html">Add Extensions</a></li>
 </ul>
@@ -545,11 +527,13 @@ docname prefix in this project. In this example, <code class="docutils literal n
 as <code class="docutils literal notranslate"><span class="pre">internals/code_docs/overview</span></code>.</p>
 <p>Every mount adds the bundle’s configured entry document to a host toctree. By
 default that is the <code class="docutils literal notranslate"><span class="pre">index</span></code> beside <code class="docutils literal notranslate"><span class="pre">mount_at</span></code>; <code class="docutils literal notranslate"><span class="pre">attach_to</span></code> overrides the
-host document whose first toctree receives the entry. The entry itself belongs
-to the <code class="docutils literal notranslate"><span class="pre">docs_bundle</span></code> and defaults to <code class="docutils literal notranslate"><span class="pre">index</span></code>.</p>
+host document that receives the entry. The host document may contain several
+toctrees. <code class="docutils literal notranslate"><span class="pre">toctree_index</span></code> selects which one receives the entry, counting from
+<code class="docutils literal notranslate"><span class="pre">0</span></code> (the first toctree). The entry itself belongs to the <code class="docutils literal notranslate"><span class="pre">docs_bundle</span></code> and
+defaults to <code class="docutils literal notranslate"><span class="pre">index</span></code>.</p>
 <p>The configuration has two separate responsibilities:</p>
 <p class="plantuml">
-<object data="../../_images/plantuml-162ec79db907aa4efafe1eeed306a4c87ab8f3b8.svg" type="image/svg+xml" style="width:754px;height:65px;background:#FFFFFF;"></object></p>
+<object data="../../_images/plantuml-645937fa9d30e153527cb5d05ac850a3a9c22c56.svg" type="image/svg+xml" style="width:856px;height:65px;background:#FFFFFF;"></object></p>
 <p>For nested composition, generated bundle data, and bundles published by
 another Bazel module, see <a class="reference internal" href="examples.html"><span class="doc">Bundle examples</span></a>.</p>
 </section>
