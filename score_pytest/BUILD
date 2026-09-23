@@ -12,6 +12,7 @@
 # *******************************************************************************
 
 load("@aspect_rules_py//py:defs.bzl", "py_library")
+load("@docs_as_code_hub_env//:requirements.bzl", "requirement")
 load("//:score_pytest.bzl", "score_pytest")
 
 exports_files([
@@ -22,11 +23,5 @@ exports_files([
 score_pytest(
     name = "test_rules_are_working_correctly",
     srcs = glob(["tests/*.py"]),
-)
-
-py_library(
-    name = "attribute_plugin",
-    srcs = ["attribute_plugin.py"],
-    imports = ["."],
-    visibility = ["//visibility:public"],
+    deps = [requirement("sphinx-test-reports")]
 )

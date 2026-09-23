@@ -15,6 +15,15 @@
 load("@docs_as_code_hub_env//:requirements.bzl", "requirement")
 load("@rules_python//python:defs.bzl", "py_test")
 
+# Taken from the documentation: https://sphinx-test-reports.readthedocs.io/en/latest/pytest.html#declaring-the-properties
+# Current version of sphinx-test-reports: 2.0.0
+_TEST_REPORTS_PROPERTIES = [
+    "partially_verifies = PartiallyVerifies, list",
+    "fully_verifies = FullyVerifies, list",
+    "test_type = TestType",
+    "derivation_technique = DerivationTechnique",
+]
+
 def score_pytest(name, srcs, args = [], data = [], deps = [], env = {}, plugins = [], pytest_config = None, **kwargs):
     pytest_bootstrap = Label("@score_docs_as_code//score_pytest:main.py")
 
@@ -24,7 +33,7 @@ def score_pytest(name, srcs, args = [], data = [], deps = [], env = {}, plugins 
     if not srcs:
         fail("No source files provided for %s! (Is your glob empty?)" % name)
 
-    plugins = ["-p attribute_plugin"] + ["-p %s" % plugin for plugin in plugins]
+    plugins = ["-p sphinxcontrib.test_reports.pytest_plugin"] + ["-p %s" % plugin for plugin in plugins]
 
     docs_pytest = requirement("pytest")
     pytest_in_deps = False
@@ -53,9 +62,14 @@ def score_pytest(name, srcs, args = [], data = [], deps = [], env = {}, plugins 
                    "--junitxml=$$XML_OUTPUT_FILE",
                ] +
                args +
+               # Extra here so we can make sure they are appended last to the args
+               [
+                   "-o junit_family=xunit1",
+                   "-o 'test_reports_properties=%s'" % "\n".join(_TEST_REPORTS_PROPERTIES),
+               ] +
                plugins +
                ["$(location %s)" % x for x in srcs],
-        deps = deps + ["@score_docs_as_code//score_pytest:attribute_plugin"],
+        deps = deps, #["@score_docs_as_code//score_pytest:attribute_plugin"],
         data = [
             pytest_config,
         ] + data,
