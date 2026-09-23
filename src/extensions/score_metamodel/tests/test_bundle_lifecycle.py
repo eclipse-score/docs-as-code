@@ -87,7 +87,7 @@ def test_multiple_bundle_targets_keep_declaration_order_in_json() -> None:
         ),
     )
 
-    values = bundle_metadata._render_target_values(  # pyright: ignore[reportPrivateUsage]
+    values = bundle_metadata._encode_target_values(  # pyright: ignore[reportPrivateUsage]
         bundle
     )
 

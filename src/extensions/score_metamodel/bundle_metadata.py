@@ -54,13 +54,12 @@ class _BundleMetadataUpdate:
     changed_docnames: set[str]
 
 
-def _render_target_values(bundle: BundleMetadata) -> dict[str, str]:
-    """Convert a bundle's Bazel targets to values stored on a Need.
+def _encode_target_values(bundle: BundleMetadata) -> dict[str, str]:
+    """Encode a bundle's Bazel target metadata for storage in Need fields.
 
     This is called for an unambiguous bundle match during ``env-updated``.
     Bundle metadata is the authoritative source for these extension-owned
-    fields, so the current targets must be rendered before they are written to
-    the Need.  A single target keeps the existing scalar representation;
+    fields.  A single target keeps the existing scalar representation;
     multiple targets use compact JSON because the Need fields are strings.
 
     A single target is stored as a plain label and rule type.  Multiple targets
@@ -183,7 +182,7 @@ def _apply_matching_bundles(
         need_id = str(matching_need["id"])
         changed = _update_bundle_values(
             matching_need,
-            _render_target_values(bundle),
+            _encode_target_values(bundle),
         )
         matched_need_ids.add(need_id)
         if changed:
