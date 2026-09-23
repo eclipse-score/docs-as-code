@@ -178,6 +178,22 @@ def discover_expected_outputs(scenario: str) -> list[ExpectedOutput]:
 
         short_name = matches[0]
         target = TARGETS[short_name]
+        # The component fixture uses a descriptive bundle target name because
+        # bundle metadata is matched against that name. Keep the generic
+        # ``needs_local`` contract name in the checked-in tree while resolving
+        # it to the fixture's actual internal target here.
+        if (
+            scenario == "reference_integration/legacy_module/docs/components/component"
+            and short_name == "needs_local"
+        ):
+            target = ExpectedTarget(
+                label=":legacy_component.__internal__.needs_local",
+                command="build",
+                output_kind="file",
+                output_path=(
+                    "legacy_component.__internal__.needs_local/_build/needs/needs.json"
+                ),
+            )
         if target.output_kind == "directory" and not path.is_dir():
             raise ValueError(
                 f"expected output {path} must be a directory for target {target.label}"

@@ -1,6 +1,6 @@
 {
   "current_version": "0.0.0",
-  "project": "docs_bundle",
+  "project": "legacy_component",
   "project_url": "",
   "versions": {
     "0.0.0": {
@@ -10,6 +10,8 @@
       },
       "needs": {
         "tool_req__legacy_component": {
+          "bazel_target": "@@//src/tests/docs_bzl/scenarios/reference_integration/legacy_module/docs/components/component:component_sources",
+          "bazel_type": "filegroup",
           "content": "The legacy component implementation is covered by the component source\ncode-link scan. The integration test checks that this link is preserved\nwhen the component is built through its module and by the full site.",
           "docname": "index",
           "external_css": "external_link",
@@ -115,6 +117,24 @@
           "avatar": {
             "default": null,
             "description": "Added by service github-issues",
+            "field_type": "extra",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "bazel_target": {
+            "default": "",
+            "description": "Added by needs_fields config",
+            "field_type": "extra",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "bazel_type": {
+            "default": "",
+            "description": "Added by needs_fields config",
             "field_type": "extra",
             "type": [
               "string",
