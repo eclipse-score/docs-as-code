@@ -305,7 +305,8 @@ Versioning
 
   * Generic Document (document)
   * Tool Verification Report (doc_tool)
-  * Change Request is also a generic document
+
+  A change request is also a generic document but not a Sphinx-Needs type, so out of scope here.
 
 .. tool_req:: Mandatory attributes of Generic Documents
   :id: tool_req__docs_doc_generic_mandatory
