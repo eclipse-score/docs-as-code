@@ -144,7 +144,7 @@ If TestLinks should be generated in a combo build please ensure that you have th
 
 ```python
 # Import the decorator
-from attribute_plugin import add_test_properties
+from sphinxcontrib.test_reports.pytest_plugin import add_test_properties
 
 # Add the decorator to your test
 @add_test_properties(

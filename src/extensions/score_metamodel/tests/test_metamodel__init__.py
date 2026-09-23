@@ -11,7 +11,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 import pytest
-from attribute_plugin import add_test_properties  # type: ignore[import-untyped]
+from sphinxcontrib.test_reports.pytest_plugin import add_test_properties  # type: ignore[import-untyped]
 from sphinx.application import Sphinx
 from sphinx_needs.data import NeedsView
 from sphinx_needs.need_item import NeedItem

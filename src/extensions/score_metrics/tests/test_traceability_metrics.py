@@ -20,7 +20,7 @@ from score_metamodel.tests import need as test_need
 from sphinx_needs.data import NeedsView
 from sphinx_needs.need_item import NeedItem
 
-from score_pytest.attribute_plugin import add_test_properties
+from sphinxcontrib.test_reports.pytest_plugin import add_test_properties
 
 
 @add_test_properties(

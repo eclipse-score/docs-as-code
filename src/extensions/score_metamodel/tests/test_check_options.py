@@ -15,7 +15,7 @@ from typing import cast
 from unittest.mock import Mock
 
 import pytest
-from attribute_plugin import add_test_properties  # type: ignore[import-untyped]
+from sphinxcontrib.test_reports.pytest_plugin import add_test_properties
 from score_metamodel import CheckLogger, ScoreNeedType
 from score_metamodel.checks.check_options import (
     check_extra_options,

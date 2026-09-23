@@ -31,7 +31,7 @@ from unittest.mock import patch
 import pytest
 
 # This depends on the `attribute_plugin` in our tooling repository
-from attribute_plugin import add_test_properties  # type: ignore[import-untyped]
+from sphinxcontrib.test_reports.pytest_plugin import add_test_properties  # type: ignore[import-untyped]
 
 import src.extensions.score_source_code_linker.xml_parser as xml_parser
 from src.extensions.score_source_code_linker.testlink import DataOfTestCase
