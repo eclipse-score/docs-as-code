@@ -101,7 +101,7 @@ Design rationale
 The bundle model deliberately keeps content ownership separate from site
 placement and avoids materializing copies merely to arrange documentation.
 That follows the infrastructure direction in
-`DR-008-infra <https://eclipse-score.github.io/score/main/design_decisions/DR-008-infra.html>`_.
+`DR-008-infra <https://eclipse-score.github.io/score/main/design_decisions/infrastructure/DR-008-infra.html>`_.
 It keeps source navigation useful while allowing Bazel modules to compose their
 documentation in a reproducible build.
 
