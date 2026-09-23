@@ -26,7 +26,6 @@ from sphinx_needs.data import NeedsExtendType, SphinxNeedsData
 from sphinx_needs.need_item import NeedItem
 from sphinx_needs.needs_schema import FieldLiteralValue
 from sphinx_needs.views import NeedsView
-
 from sphinxcontrib.test_reports.pytest_plugin import apply_test_metadata
 
 RST_DIR = Path(__file__).absolute().parent / "rst"

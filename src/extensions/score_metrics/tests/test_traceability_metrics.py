@@ -19,7 +19,6 @@ from score_metamodel import ScoreNeedType
 from score_metamodel.tests import need as test_need
 from sphinx_needs.data import NeedsView
 from sphinx_needs.need_item import NeedItem
-
 from sphinxcontrib.test_reports.pytest_plugin import add_test_properties
 
 
