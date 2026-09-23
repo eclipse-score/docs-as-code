@@ -2709,6 +2709,23 @@
         }
       },
       {
+        "need": "tool_req__docs_saf_types[version==2]",
+        "links": {
+          "CodeLinks": [],
+          "TestLinks": [
+            {
+              "name": "test_rules_file_based__test_rst_files[safety/test_saf_types.rst]",
+              "file": "src/extensions/score_metamodel/tests/rst/safety/test_saf_types.rst",
+              "line": 15,
+              "need": "tool_req__docs_saf_types[version==2]",
+              "verify_type": "fully",
+              "result": "passed",
+              "result_text": ""
+            }
+          ]
+        }
+      },
+      {
         "need": "tool_req__docs_saf_attrs_mitigation_issue[version==1]",
         "links": {
           "CodeLinks": [],
@@ -2777,16 +2794,34 @@
         }
       },
       {
-        "need": "tool_req__docs_saf_types[version==2]",
+        "need": "tool_req__docs_req_types[version==1]",
         "links": {
           "CodeLinks": [],
           "TestLinks": [
             {
-              "name": "test_rules_file_based__test_rst_files[safety/test_saf_types.rst]",
-              "file": "src/extensions/score_metamodel/tests/rst/safety/test_saf_types.rst",
-              "line": 15,
-              "need": "tool_req__docs_saf_types[version==2]",
-              "verify_type": "fully",
+              "name": "test_rules_file_based__test_rst_files[options/gd_req_comp.rst]",
+              "file": "src/extensions/score_metamodel/tests/rst/options/gd_req_comp.rst",
+              "line": 16,
+              "need": "tool_req__docs_req_types[version==1]",
+              "verify_type": "partially",
+              "result": "passed",
+              "result_text": ""
+            },
+            {
+              "name": "test_rules_file_based__test_rst_files[options/test_options_extra_option.rst]",
+              "file": "src/extensions/score_metamodel/tests/rst/options/test_options_extra_option.rst",
+              "line": 16,
+              "need": "tool_req__docs_req_types[version==1]",
+              "verify_type": "partially",
+              "result": "passed",
+              "result_text": ""
+            },
+            {
+              "name": "test_rules_file_based__test_rst_files[options/test_options_options.rst]",
+              "file": "src/extensions/score_metamodel/tests/rst/options/test_options_options.rst",
+              "line": 16,
+              "need": "tool_req__docs_req_types[version==1]",
+              "verify_type": "partially",
               "result": "passed",
               "result_text": ""
             }
@@ -2811,34 +2846,16 @@
         }
       },
       {
-        "need": "tool_req__docs_req_types[version==1]",
+        "need": "tool_req__docs_saf_attr_fmea_failure_effect[version==1]",
         "links": {
           "CodeLinks": [],
           "TestLinks": [
             {
-              "name": "test_rules_file_based__test_rst_files[options/gd_req_comp.rst]",
-              "file": "src/extensions/score_metamodel/tests/rst/options/gd_req_comp.rst",
+              "name": "test_rules_file_based__test_rst_files[options/test_options_failure_effect.rst]",
+              "file": "src/extensions/score_metamodel/tests/rst/options/test_options_failure_effect.rst",
               "line": 16,
-              "need": "tool_req__docs_req_types[version==1]",
-              "verify_type": "partially",
-              "result": "passed",
-              "result_text": ""
-            },
-            {
-              "name": "test_rules_file_based__test_rst_files[options/test_options_options.rst]",
-              "file": "src/extensions/score_metamodel/tests/rst/options/test_options_options.rst",
-              "line": 16,
-              "need": "tool_req__docs_req_types[version==1]",
-              "verify_type": "partially",
-              "result": "passed",
-              "result_text": ""
-            },
-            {
-              "name": "test_rules_file_based__test_rst_files[options/test_options_extra_option.rst]",
-              "file": "src/extensions/score_metamodel/tests/rst/options/test_options_extra_option.rst",
-              "line": 16,
-              "need": "tool_req__docs_req_types[version==1]",
-              "verify_type": "partially",
+              "need": "tool_req__docs_saf_attr_fmea_failure_effect[version==1]",
+              "verify_type": "fully",
               "result": "passed",
               "result_text": ""
             }
@@ -2851,15 +2868,6 @@
           "CodeLinks": [],
           "TestLinks": [
             {
-              "name": "test_rules_file_based__test_rst_files[options/test_options_options.rst]",
-              "file": "src/extensions/score_metamodel/tests/rst/options/test_options_options.rst",
-              "line": 16,
-              "need": "tool_req__docs_common_attr_status[version==1]",
-              "verify_type": "partially",
-              "result": "passed",
-              "result_text": ""
-            },
-            {
               "name": "test_rules_file_based__test_rst_files[options/test_options_extra_option.rst]",
               "file": "src/extensions/score_metamodel/tests/rst/options/test_options_extra_option.rst",
               "line": 16,
@@ -2867,21 +2875,13 @@
               "verify_type": "partially",
               "result": "passed",
               "result_text": ""
-            }
-          ]
-        }
-      },
-      {
-        "need": "tool_req__docs_saf_attr_fmea_failure_effect[version==1]",
-        "links": {
-          "CodeLinks": [],
-          "TestLinks": [
+            },
             {
-              "name": "test_rules_file_based__test_rst_files[options/test_options_failure_effect.rst]",
-              "file": "src/extensions/score_metamodel/tests/rst/options/test_options_failure_effect.rst",
+              "name": "test_rules_file_based__test_rst_files[options/test_options_options.rst]",
+              "file": "src/extensions/score_metamodel/tests/rst/options/test_options_options.rst",
               "line": 16,
-              "need": "tool_req__docs_saf_attr_fmea_failure_effect[version==1]",
-              "verify_type": "fully",
+              "need": "tool_req__docs_common_attr_status[version==1]",
+              "verify_type": "partially",
               "result": "passed",
               "result_text": ""
             }
