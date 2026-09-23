@@ -11,8 +11,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-load("@aspect_rules_py//py:defs.bzl", "py_library")
-load("@docs_as_code_hub_env//:requirements.bzl", "requirement")
 load("//:score_pytest.bzl", "score_pytest")
 
 exports_files([
@@ -23,5 +21,4 @@ exports_files([
 score_pytest(
     name = "test_rules_are_working_correctly",
     srcs = glob(["tests/*.py"]),
-    deps = [requirement("sphinx-test-reports")]
 )
