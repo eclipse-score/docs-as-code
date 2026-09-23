@@ -22,6 +22,14 @@ module.
 .. tool_req:: Modern unlinked component is self-contained
    :id: tool_req__modern_unlinked_component
    :version: 1
+   :satisfies: gd_req__modern_unlinked_self_contained
 
    This requirement is intentionally not linked to the platform feature
    requirement. It verifies the independent-component control case.
+
+.. gd_req:: Self-contained components build without external needs
+   :id: gd_req__modern_unlinked_self_contained
+   :version: 1
+
+   A component that has no dependency on a requirement owned by another
+   bundle must build both independently and through its parent module.

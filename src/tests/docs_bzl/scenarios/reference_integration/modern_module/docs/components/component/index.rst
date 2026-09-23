@@ -50,6 +50,7 @@ requirement is imported by the module, not by this standalone component.
 .. tool_req:: Modern component implementation is traceable
    :id: tool_req__modern_component
    :version: 1
+   :satisfies: comp_req__modern_component__platform_feature
 
    The modern component implementation is covered by the component source
    code-link scan. The linked component requirement above depends on the

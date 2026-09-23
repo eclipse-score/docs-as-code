@@ -360,6 +360,7 @@
    :id: tool_req__test_good_1
    :status: valid
    :safety: QM
+   :satisfies: comp_req__test_good_1
    :expect_not: does not follow pattern
 
 
@@ -370,6 +371,7 @@
    :id: tool_req__test_good_2
    :status: valid
    :safety: ASIL_B
+   :satisfies: comp_req__test_good_2
    :expect_not: does not follow pattern
 
 

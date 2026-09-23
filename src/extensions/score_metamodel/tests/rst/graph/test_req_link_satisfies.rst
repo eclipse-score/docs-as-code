@@ -23,8 +23,8 @@
    The table rows Feature Requirement -> Stakeholder Requirement and
    Component Requirement -> Feature Requirement are implemented via
    ``derived_from`` because ``satisfies`` is hard-deprecated for those types.
-   Having at least one link is not yet enforced because ``satisfies`` is still
-   optional for gd_req and tool_req (TODO in metamodel.yaml).
+   Having at least one link is enforced for ``tool_req``.
+   It is not yet enforced for ``gd_req`` (TODO in metamodel.yaml).
 
 
 .. Setup: link targets used by the tests below.
@@ -129,5 +129,12 @@
    :id: comp_req__test_derived_from_bad
    :derived_from: stkh_req__test_satisfies
    :expect: comp_req__test_derived_from_bad: references 'stkh_req__test_satisfies' as 'derived_from', but it must reference Feature Requirement (feat_req).
+
+   Some content.
+
+
+.. tool_req:: Tool requirement without any satisfies link
+   :id: tool_req__test_missing_satisfies
+   :expect: tool_req__test_missing_satisfies: is missing required link: `satisfies`.
 
    Some content.

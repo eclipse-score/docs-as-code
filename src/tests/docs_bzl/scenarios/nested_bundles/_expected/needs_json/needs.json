@@ -9,12 +9,33 @@
         "version": "8.3.1"
       },
       "needs": {
+        "gd_req__docs_bzl_nested_bundle": {
+          "content": "When a nested bundle is mounted into a host documentation tree, the\ngenerated data of its child bundle must be composed with the parent bundle.",
+          "docname": "concepts/example_bundle/index",
+          "external_css": "external_link",
+          "id": "gd_req__docs_bzl_nested_bundle",
+          "lineno": 26,
+          "satisfies_back": [
+            "tool_req__docs_bzl_nested_bundle"
+          ],
+          "section_name": "Parent bundle",
+          "sections": [
+            "Parent bundle"
+          ],
+          "title": "Nested bundles compose generated data through mount points",
+          "type": "gd_req",
+          "type_name": "Process Requirements",
+          "version": 1
+        },
         "tool_req__docs_bzl_nested_bundle": {
           "content": "The ``parent`` bundle composes the ``child`` bundle and can be mounted into\na host documentation tree together with its generated data.",
           "docname": "concepts/example_bundle/index",
           "external_css": "external_link",
           "id": "tool_req__docs_bzl_nested_bundle",
           "lineno": 18,
+          "satisfies": [
+            "gd_req__docs_bzl_nested_bundle"
+          ],
           "section_name": "Parent bundle",
           "sections": [
             "Parent bundle"
@@ -26,7 +47,7 @@
           "version": 1
         }
       },
-      "needs_amount": 1,
+      "needs_amount": 2,
       "needs_defaults_removed": true,
       "needs_schema": {
         "$schema": "http://json-schema.org/draft-07/schema#",

@@ -46,6 +46,9 @@
           "satisfied_by": [
             "comp__modern_component"
           ],
+          "satisfies_back": [
+            "tool_req__modern_component"
+          ],
           "section_name": "S-CORE Modern Component",
           "sections": [
             "S-CORE Modern Component"
@@ -77,12 +80,33 @@
           "type_name": "Feature",
           "version": 1
         },
+        "gd_req__modern_unlinked_self_contained": {
+          "content": "A component that has no dependency on a requirement owned by another\nbundle must build both independently and through its parent module.",
+          "docname": "components/unlinked_component/index",
+          "external_css": "external_link",
+          "id": "gd_req__modern_unlinked_self_contained",
+          "lineno": 30,
+          "satisfies_back": [
+            "tool_req__modern_unlinked_component"
+          ],
+          "section_name": "S-CORE Modern Unlinked Component",
+          "sections": [
+            "S-CORE Modern Unlinked Component"
+          ],
+          "title": "Self-contained components build without external needs",
+          "type": "gd_req",
+          "type_name": "Process Requirements",
+          "version": 1
+        },
         "tool_req__modern_component": {
           "content": "The modern component implementation is covered by the component source\ncode-link scan. The linked component requirement above depends on the\nplatform feature requirement. The integration test checks that the\ncomponent can be built through its module, where that requirement is\navailable, but not as a standalone bundle.",
           "docname": "components/component/index",
           "external_css": "external_link",
           "id": "tool_req__modern_component",
           "lineno": 50,
+          "satisfies": [
+            "comp_req__modern_component__platform_feature"
+          ],
           "section_name": "S-CORE Modern Component",
           "sections": [
             "S-CORE Modern Component"
@@ -99,6 +123,9 @@
           "external_css": "external_link",
           "id": "tool_req__modern_unlinked_component",
           "lineno": 22,
+          "satisfies": [
+            "gd_req__modern_unlinked_self_contained"
+          ],
           "section_name": "S-CORE Modern Unlinked Component",
           "sections": [
             "S-CORE Modern Unlinked Component"
@@ -109,7 +136,7 @@
           "version": 1
         }
       },
-      "needs_amount": 5,
+      "needs_amount": 6,
       "needs_defaults_removed": true,
       "needs_schema": {
         "$schema": "http://json-schema.org/draft-07/schema#",
