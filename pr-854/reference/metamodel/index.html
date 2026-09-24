@@ -1507,10 +1507,10 @@ real_arc_int ..&gt; comp_req : fulfils
 real_arc_int_op --&gt; real_arc_int : included_by
 real_arc_int_op ..&gt; logic_arc_int_op : implements
 role ..&gt; role : contains
-tool_req ..&gt; gd_req : satisfies
-tool_req ..&gt; stkh_req : satisfies
-tool_req ..&gt; feat_req : satisfies
-tool_req ..&gt; comp_req : satisfies
+tool_req --&gt; gd_req : satisfies
+tool_req --&gt; stkh_req : satisfies
+tool_req --&gt; feat_req : satisfies
+tool_req --&gt; comp_req : satisfies
 workflow --&gt; role : approved_by
 workflow --&gt; workproduct : input
 workflow --&gt; workproduct : output
@@ -2860,7 +2860,7 @@ comp_saf_dfa ..&gt; comp_req : mitigated_by
 comp_saf_fmea ..&gt; comp_req : mitigated_by
 comp_sec_ana ..&gt; comp_req : mitigated_by
 real_arc_int ..&gt; comp_req : fulfils
-tool_req ..&gt; comp_req : satisfies
+tool_req --&gt; comp_req : satisfies
 style aou_req fill:#FCFCFC,stroke:#666,color:#000
 style comp fill:#D5E8D4,stroke:#666,color:#000
 style comp_arc_dyn fill:#D5E8D4,stroke:#666,color:#000
@@ -4854,7 +4854,7 @@ feat_saf_fmea ..&gt; feat_req : mitigated_by
 feat_sec_ana ..&gt; feat_req : mitigated_by
 logic_arc_int ..&gt; feat_req : fulfils
 plat_sec_ana ..&gt; feat_req : mitigated_by
-tool_req ..&gt; feat_req : satisfies
+tool_req --&gt; feat_req : satisfies
 style aou_req fill:#FCFCFC,stroke:#666,color:#000
 style comp_req fill:#D5E8D4,stroke:#666,color:#000
 style feat fill:#FFF2CC,stroke:#666,color:#000
@@ -5940,7 +5940,7 @@ class workflow {
 }
 gd_req ..&gt; std_req : complies
 gd_req ..&gt; workflow : satisfies
-tool_req ..&gt; gd_req : satisfies
+tool_req --&gt; gd_req : satisfies
 workflow ..&gt; gd_req : contains
 style std_req fill:#E1D5E7,stroke:#666,color:#000
 style tool_req fill:#F5F5F5,stroke:#666,color:#000
@@ -8146,7 +8146,7 @@ class tool_req {
 }
 feat_req ..&gt; stkh_req : derived_from
 plat_saf_dfa ..&gt; stkh_req : mitigated_by
-tool_req ..&gt; stkh_req : satisfies
+tool_req --&gt; stkh_req : satisfies
 style feat_req fill:#FFF2CC,stroke:#666,color:#000
 style plat_saf_dfa fill:#DAE8FC,stroke:#666,color:#000
 style tool_req fill:#F5F5F5,stroke:#666,color:#000
@@ -8518,10 +8518,10 @@ class tool_req {
   +testcovered [optional]*
   +testlink [optional]*
 }
-tool_req ..&gt; gd_req : satisfies
-tool_req ..&gt; stkh_req : satisfies
-tool_req ..&gt; feat_req : satisfies
-tool_req ..&gt; comp_req : satisfies
+tool_req --&gt; gd_req : satisfies
+tool_req --&gt; stkh_req : satisfies
+tool_req --&gt; feat_req : satisfies
+tool_req --&gt; comp_req : satisfies
 style comp_req fill:#D5E8D4,stroke:#666,color:#000
 style feat_req fill:#FFF2CC,stroke:#666,color:#000
 style gd_req fill:#E1D5E7,stroke:#666,color:#000
@@ -8616,7 +8616,7 @@ click tool_req href &quot;#tool-req&quot; &quot;Open tool_req details&quot;
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p class="sd-card-text">Optional</p></td>
+<tr class="row-even"><td><p class="sd-card-text">Mandatory</p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">satisfies</span></code></p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">gd_req,</span> <span class="pre">stkh_req,</span> <span class="pre">feat_req,</span> <span class="pre">comp_req</span></code></p></td>
 </tr>
