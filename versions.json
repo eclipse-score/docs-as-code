@@ -20,14 +20,6 @@
     "url": "https://eclipse-score.github.io/docs-as-code/pr-661/"
   },
   {
-    "version": "pr-735",
-    "url": "https://eclipse-score.github.io/docs-as-code/pr-735/"
-  },
-  {
-    "version": "pr-736",
-    "url": "https://eclipse-score.github.io/docs-as-code/pr-736/"
-  },
-  {
     "version": "pr-749",
     "url": "https://eclipse-score.github.io/docs-as-code/pr-749/"
   },
@@ -48,8 +40,16 @@
     "url": "https://eclipse-score.github.io/docs-as-code/pr-834/"
   },
   {
-    "version": "pr-853",
-    "url": "https://eclipse-score.github.io/docs-as-code/pr-853/"
+    "version": "pr-854",
+    "url": "https://eclipse-score.github.io/docs-as-code/pr-854/"
+  },
+  {
+    "version": "pr-855",
+    "url": "https://eclipse-score.github.io/docs-as-code/pr-855/"
+  },
+  {
+    "version": "pr-856",
+    "url": "https://eclipse-score.github.io/docs-as-code/pr-856/"
   },
   {
     "version": "v3.0.0",
@@ -154,21 +154,5 @@
   {
     "version": "v8.2.0",
     "url": "https://eclipse-score.github.io/docs-as-code/v8.2.0/"
-  },
-  {
-    "version": "pr-855",
-    "url": "https://eclipse-score.github.io/docs-as-code/pr-855/"
-  },
-  {
-    "version": "pr-854",
-    "url": "https://eclipse-score.github.io/docs-as-code/pr-854/"
-  },
-  {
-    "version": "pr-856",
-    "url": "https://eclipse-score.github.io/docs-as-code/pr-856/"
-  },
-  {
-    "version": "pr-857",
-    "url": "https://eclipse-score.github.io/docs-as-code/pr-857/"
   }
 ]
