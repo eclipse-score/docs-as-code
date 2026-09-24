@@ -153,7 +153,17 @@
               "full_line": "# req-Id: tool_req__docs_req_attr_reqtype"
             }
           ],
-          "TestLinks": []
+          "TestLinks": [
+            {
+              "name": "test_rules_file_based__test_rst_files[options/test_req_attr_reqtype.rst]",
+              "file": "src/extensions/score_metamodel/tests/rst/options/test_req_attr_reqtype.rst",
+              "line": 16,
+              "need": "tool_req__docs_req_attr_reqtype",
+              "verify_type": "fully",
+              "result": "passed",
+              "result_text": ""
+            }
+          ]
         }
       },
       {
@@ -576,7 +586,17 @@
               "full_line": "# req-Id: tool_req__docs_req_attr_rationale"
             }
           ],
-          "TestLinks": []
+          "TestLinks": [
+            {
+              "name": "test_rules_file_based__test_rst_files[options/test_req_attr_rationale.rst]",
+              "file": "src/extensions/score_metamodel/tests/rst/options/test_req_attr_rationale.rst",
+              "line": 16,
+              "need": "tool_req__docs_req_attr_rationale",
+              "verify_type": "fully",
+              "result": "passed",
+              "result_text": ""
+            }
+          ]
         }
       },
       {

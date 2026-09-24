@@ -2184,6 +2184,20 @@
     "FullyVerifies": null
   },
   {
+    "name": "test_rules_file_based__test_rst_files[options/test_req_attr_reqtype.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/options/test_req_attr_reqtype.rst",
+    "line": "16",
+    "result": "passed",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": "",
+    "TestType": "requirements_based",
+    "DerivationTechnique": "requirements_based",
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": "tool_req__docs_req_attr_reqtype"
+  },
+  {
     "name": "test_rules_file_based__test_rst_files[options/test_options_verification_report.rst]",
     "file": "src/extensions/score_metamodel/tests/rst/options/test_options_verification_report.rst",
     "line": "16",
@@ -2294,6 +2308,20 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null
+  },
+  {
+    "name": "test_rules_file_based__test_rst_files[options/test_req_attr_rationale.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/options/test_req_attr_rationale.rst",
+    "line": "16",
+    "result": "passed",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": "",
+    "TestType": "requirements_based",
+    "DerivationTechnique": "requirements_based",
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": "tool_req__docs_req_attr_rationale"
   },
   {
     "name": "test_rules_file_based__test_rst_files[options/test_options_options.rst]",
