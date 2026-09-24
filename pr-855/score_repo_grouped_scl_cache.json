@@ -2709,23 +2709,6 @@
         }
       },
       {
-        "need": "tool_req__docs_saf_types[version==2]",
-        "links": {
-          "CodeLinks": [],
-          "TestLinks": [
-            {
-              "name": "test_rules_file_based__test_rst_files[safety/test_saf_types.rst]",
-              "file": "safety/test_saf_types",
-              "line": 15,
-              "need": "tool_req__docs_saf_types[version==2]",
-              "verify_type": "fully",
-              "result": "passed",
-              "result_text": ""
-            }
-          ]
-        }
-      },
-      {
         "need": "tool_req__docs_saf_attrs_mitigation_issue[version==1]",
         "links": {
           "CodeLinks": [],
@@ -2794,34 +2777,16 @@
         }
       },
       {
-        "need": "tool_req__docs_req_types[version==1]",
+        "need": "tool_req__docs_saf_types[version==2]",
         "links": {
           "CodeLinks": [],
           "TestLinks": [
             {
-              "name": "test_rules_file_based__test_rst_files[options/gd_req_comp.rst]",
-              "file": "options/gd_req_comp",
-              "line": 16,
-              "need": "tool_req__docs_req_types[version==1]",
-              "verify_type": "partially",
-              "result": "passed",
-              "result_text": ""
-            },
-            {
-              "name": "test_rules_file_based__test_rst_files[options/test_options_extra_option.rst]",
-              "file": "options/test_options_extra_option",
-              "line": 16,
-              "need": "tool_req__docs_req_types[version==1]",
-              "verify_type": "partially",
-              "result": "passed",
-              "result_text": ""
-            },
-            {
-              "name": "test_rules_file_based__test_rst_files[options/test_options_options.rst]",
-              "file": "options/test_options_options",
-              "line": 16,
-              "need": "tool_req__docs_req_types[version==1]",
-              "verify_type": "partially",
+              "name": "test_rules_file_based__test_rst_files[safety/test_saf_types.rst]",
+              "file": "safety/test_saf_types",
+              "line": 15,
+              "need": "tool_req__docs_saf_types[version==2]",
+              "verify_type": "fully",
               "result": "passed",
               "result_text": ""
             }
@@ -2846,6 +2811,67 @@
         }
       },
       {
+        "need": "tool_req__docs_req_types[version==1]",
+        "links": {
+          "CodeLinks": [],
+          "TestLinks": [
+            {
+              "name": "test_rules_file_based__test_rst_files[options/gd_req_comp.rst]",
+              "file": "options/gd_req_comp",
+              "line": 16,
+              "need": "tool_req__docs_req_types[version==1]",
+              "verify_type": "partially",
+              "result": "passed",
+              "result_text": ""
+            },
+            {
+              "name": "test_rules_file_based__test_rst_files[options/test_options_options.rst]",
+              "file": "options/test_options_options",
+              "line": 16,
+              "need": "tool_req__docs_req_types[version==1]",
+              "verify_type": "partially",
+              "result": "passed",
+              "result_text": ""
+            },
+            {
+              "name": "test_rules_file_based__test_rst_files[options/test_options_extra_option.rst]",
+              "file": "options/test_options_extra_option",
+              "line": 16,
+              "need": "tool_req__docs_req_types[version==1]",
+              "verify_type": "partially",
+              "result": "passed",
+              "result_text": ""
+            }
+          ]
+        }
+      },
+      {
+        "need": "tool_req__docs_common_attr_status[version==1]",
+        "links": {
+          "CodeLinks": [],
+          "TestLinks": [
+            {
+              "name": "test_rules_file_based__test_rst_files[options/test_options_options.rst]",
+              "file": "options/test_options_options",
+              "line": 16,
+              "need": "tool_req__docs_common_attr_status[version==1]",
+              "verify_type": "partially",
+              "result": "passed",
+              "result_text": ""
+            },
+            {
+              "name": "test_rules_file_based__test_rst_files[options/test_options_extra_option.rst]",
+              "file": "options/test_options_extra_option",
+              "line": 16,
+              "need": "tool_req__docs_common_attr_status[version==1]",
+              "verify_type": "partially",
+              "result": "passed",
+              "result_text": ""
+            }
+          ]
+        }
+      },
+      {
         "need": "tool_req__docs_saf_attr_fmea_failure_effect[version==1]",
         "links": {
           "CodeLinks": [],
@@ -2863,32 +2889,6 @@
         }
       },
       {
-        "need": "tool_req__docs_common_attr_status[version==1]",
-        "links": {
-          "CodeLinks": [],
-          "TestLinks": [
-            {
-              "name": "test_rules_file_based__test_rst_files[options/test_options_extra_option.rst]",
-              "file": "options/test_options_extra_option",
-              "line": 16,
-              "need": "tool_req__docs_common_attr_status[version==1]",
-              "verify_type": "partially",
-              "result": "passed",
-              "result_text": ""
-            },
-            {
-              "name": "test_rules_file_based__test_rst_files[options/test_options_options.rst]",
-              "file": "options/test_options_options",
-              "line": 16,
-              "need": "tool_req__docs_common_attr_status[version==1]",
-              "verify_type": "partially",
-              "result": "passed",
-              "result_text": ""
-            }
-          ]
-        }
-      },
-      {
         "need": "tool_req__docs_stdwp_types",
         "links": {
           "CodeLinks": [],
@@ -2898,6 +2898,40 @@
               "file": "graph/test_workproduct_aspice_40",
               "line": 16,
               "need": "tool_req__docs_stdwp_types",
+              "verify_type": "partially",
+              "result": "passed",
+              "result_text": ""
+            }
+          ]
+        }
+      },
+      {
+        "need": "tool_req__docs_req_link_covers_aou[version==1]",
+        "links": {
+          "CodeLinks": [],
+          "TestLinks": [
+            {
+              "name": "test_rules_file_based__test_rst_files[graph/test_req_link_covers_aou.rst]",
+              "file": "graph/test_req_link_covers_aou",
+              "line": 16,
+              "need": "tool_req__docs_req_link_covers_aou[version==1]",
+              "verify_type": "fully",
+              "result": "passed",
+              "result_text": ""
+            }
+          ]
+        }
+      },
+      {
+        "need": "tool_req__docs_req_link_satisfies_allowed[version==1]",
+        "links": {
+          "CodeLinks": [],
+          "TestLinks": [
+            {
+              "name": "test_rules_file_based__test_rst_files[graph/test_req_link_satisfies.rst]",
+              "file": "graph/test_req_link_satisfies",
+              "line": 16,
+              "need": "tool_req__docs_req_link_satisfies_allowed[version==1]",
               "verify_type": "partially",
               "result": "passed",
               "result_text": ""
