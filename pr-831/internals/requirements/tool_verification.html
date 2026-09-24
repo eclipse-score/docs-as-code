@@ -856,7 +856,7 @@ downstream process.</p>
 </section>
 <section id="report-record">
 <h2>Report record<a class="headerlink" href="#report-record" title="Link to this heading">#</a></h2>
-<div class="need_container docutils container" id="SNCB-1c2b7ae3">
+<div class="need_container docutils container" id="SNCB-12dd792e">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_doc_tool table" id="doc_tool__score_docs_as_code">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -912,18 +912,14 @@ downstream process.</p>
 <ul class="simple">
 <li><p><strong>Safety:</strong> <code class="docutils literal notranslate"><span class="pre">8/9</span></code> potential tool
 malfunctions affect safety → <code class="docutils literal notranslate"><span class="pre">safety_affected:</span> <span class="pre">YES</span></code>.</p></li>
-<li><p><strong>Detection:</strong> <code class="docutils literal notranslate"><span class="pre">1/8</span></code> safety-
-relevant malfunctions have sufficient detection, <code class="docutils literal notranslate"><span class="pre">7</span></code>
-do not, and <code class="docutils literal notranslate"><span class="pre">0</span></code> are not assessed.</p></li>
-<li><p><strong>TCL:</strong> <code class="docutils literal notranslate"><span class="pre">7</span></code> safety-relevant malfunctions have
-insufficient detection → <code class="docutils literal notranslate"><span class="pre">tcl:</span> <span class="pre">LOW</span></code>.</p></li>
-<li><p><strong>Qualification:</strong> <code class="docutils literal notranslate"><span class="pre">48</span></code> tool
-requirements are in qualification scope → <strong>qualification is
-required</strong>.</p></li>
+<li><p><strong>Detection:</strong> <code class="docutils literal notranslate"><span class="pre">7/8</span></code> safety-
+relevant malfunctions have insufficient detection → <code class="docutils literal notranslate"><span class="pre">tcl:</span> <span class="pre">LOW</span></code>.</p></li>
+<li><p><strong>Qualification:</strong> → qualification of <code class="docutils literal notranslate"><span class="pre">48</span></code> tool
+requirements is <strong>required</strong>.</p></li>
+<li><p><strong>Testcase coverage:</strong> <code class="docutils literal notranslate"><span class="pre">0/7</span></code>
+qualification-relevant malfunctions are fully covered by passed,
+fully-verifying testcases.</p></li>
 </ul>
-<p>Here, <code class="docutils literal notranslate"><span class="pre">safety_affected:</span> <span class="pre">YES</span></code> means that at least one modeled malfunction
-affects safety. <code class="docutils literal notranslate"><span class="pre">tcl:</span> <span class="pre">LOW</span></code> means that the relevant tool requirements need
-passed, fully-verifying testcase evidence.</p>
 <div class="sd-container-fluid sd-sphinx-override sd-mb-4 docutils">
 <div class="sd-row sd-row-cols-1 sd-row-cols-xs-1 sd-row-cols-sm-2 sd-row-cols-md-2 sd-row-cols-lg-2 sd-g-3 sd-g-xs-3 sd-g-sm-3 sd-g-md-3 sd-g-lg-3 docutils">
 <div class="sd-col sd-d-flex-column docutils">
@@ -938,6 +934,9 @@ passed, fully-verifying testcase evidence.</p>
 <div class="sd-col sd-d-flex-column docutils">
 <img alt="../../_images/need_pie_36a0d.svg" id="needpie-internals/requirements/tool_verification-3" src="../../_images/need_pie_36a0d.svg" />
 </div>
+<div class="sd-col sd-d-flex-column docutils">
+<img alt="../../_images/need_pie_22d26.svg" id="needpie-internals/requirements/tool_verification-4" src="../../_images/need_pie_22d26.svg" />
+</div>
 </div>
 </div>
 </section>
@@ -945,7 +944,7 @@ passed, fully-verifying testcase evidence.</p>
 <h3>Tool verification graph<a class="headerlink" href="#tool-verification-graph" title="Link to this heading">#</a></h3>
 <p><em>Generated from linked report records.</em></p>
 <p>The box labels show the Need type. Colors distinguish the report, tool
-requirements, testcases, use cases, and potential malfunctions.</p>
+requirements, use cases, and potential malfunctions.</p>
 <pre  class="mermaid">
         ---
 config:
@@ -955,20 +954,15 @@ config:
 flowchart LR
 classDef report fill:#D5E8D4,stroke:#82B366,color:#000
 classDef requirement fill:#DAE8FC,stroke:#6C8EBF,color:#000
-classDef testcase fill:#FFF2CC,stroke:#D6B656,color:#000
 classDef usecase fill:#E1D5E7,stroke:#9673A6,color:#000
 classDef malfunction fill:#F8CECC,stroke:#B85450,color:#000
 
 report[&quot;Tool Verification Report (doc_tool)&quot;]
 requirements[&quot;Tool requirements (tool_req)&quot;]
-testcases[&quot;Passed fully-verifying testcases (testcase)&quot;]
 class report report
 class requirements requirement
-class testcases testcase
-testcases --&gt;|fully verifies| requirements
 click report href &quot;#doc_tool__score_docs_as_code&quot;
 click requirements href &quot;#tool-qualification-matrix&quot;
-click testcases href &quot;#qualification-evidence&quot;
 
 
 usecase_1[&quot;Build/CI behavior (tool_usecase)&quot;]
@@ -1389,10 +1383,10 @@ traceability evidence but does not by itself complete qualification.</p>
 <tbody>
 <tr class="row-even"><td><p><a class="reference internal" href="requirements.html#tool_req__docs_req_types" title="tool_req__docs_req_types"><em class="xref need">Requirements Types (tool_req__docs_req_types)</em></a></p></td>
 <td><div class="line-block">
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/options/gd_req_comp.rst#L16">testcase__test_rules_file_based__test_rst_files[options/gd_req_comp.rst]_mtcck</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/options/test_options_extra_option.rst#L16">testcase__test_rules_file_based__test_rst_files[options/test_options_extra_option.rst]_juqyk</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/options/test_options_options.rst#L16">testcase__test_rules_file_based__test_rst_files[options/test_options_options.rst]_dohtw</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/attributes/test_attributes_format_id_length.rst#L16">testcase__test_rules_file_based__test_rst_files[attributes/test_attributes_format_id_length.rst]_yelaq</a> (passed)</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/options/gd_req_comp.rst#L16">testcase__test_rules_file_based__test_rst_files[options/gd_req_comp.rst]_mtcck</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/options/test_options_extra_option.rst#L16">testcase__test_rules_file_based__test_rst_files[options/test_options_extra_option.rst]_juqyk</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/options/test_options_options.rst#L16">testcase__test_rules_file_based__test_rst_files[options/test_options_options.rst]_dohtw</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/attributes/test_attributes_format_id_length.rst#L16">testcase__test_rules_file_based__test_rst_files[attributes/test_attributes_format_id_length.rst]_yelaq</a> (passed)</div>
 </div>
 </td>
 <td><p>not fully qualified</p></td>
@@ -1407,55 +1401,55 @@ traceability evidence but does not by itself complete qualification.</p>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="requirements.html#tool_req__docs_test_link_testcase" title="tool_req__docs_test_link_testcase"><em class="xref need">Supports linking to test cases (tool_req__docs_test_link_testcase)</em></a></p></td>
 <td><div class="line-block">
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_testcase_annotations.py#L49">testcase__test_testcase_annotations__test_annotates_external_github_testlink_hkvid</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_testcase_annotations.py#L69">testcase__test_testcase_annotations__test_does_not_annotate_reference_without_result_suffix_uvfnh</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_testcase_annotations.py#L83">testcase__test_testcase_annotations__test_does_not_annotate_link_without_result_suffix_naany</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_testcase_annotations.py#L97">testcase__test_testcase_annotations__test_does_not_annotate_same_reference_twice_ujuoz</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_testlink.py#L40">testcase__test_testlink__test_testlink_serialization_roundtrip_jmmwb</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_testlink.py#L73">testcase__test_testlink__test_decoder_ignores_irrelevant_dicts_uecxv</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_testlink.py#L85">testcase__test_testlink__test_clean_text_removes_ansi_and_html_unescapes_sjotr</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_testlink.py#L100">testcase__test_testlink__test_testcaseneed_to_dict_multiple_links_vstss</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_testlink.py#L146">testcase__test_testlink__test_store_and_load_testlinks_roundtrip_ijnkz</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L154">testcase__test_xml_parser__test_find_xml_files_rviwn</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L229">testcase__test_xml_parser__test_parse_testcase_result_uqrng</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L262">testcase__test_xml_parser__test_parse_properties_gkejb</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L278">testcase__test_xml_parser__test_read_test_xml_file_xofsm</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L350">testcase__test_xml_parser__test_short_hash_consistency_and_format_lfalr</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L408">testcase__test_xml_parser__test_is_testcase_in_scope_empty_allow_list_is_unfiltered_rvmyk</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L420">testcase__test_xml_parser__test_is_testcase_in_scope_positive_match_ryuns</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L433">testcase__test_xml_parser__test_is_testcase_in_scope_not_under_any_allowed_dir_wspmp</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L443">testcase__test_xml_parser__test_is_testcase_in_scope_none_file_with_allow_list_iijlo</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L453">testcase__test_xml_parser__test_is_testcase_in_scope_no_string_prefix_match_gwmyv</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L470">testcase__test_xml_parser__test_parse_testcase_source_dirs_mnwly</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L482">testcase__test_xml_parser__test_parse_testcase_source_dirs_non_list_raises_alkfg</a> (passed)</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_testcase_annotations.py#L49">testcase__test_testcase_annotations__test_annotates_external_github_testlink_hkvid</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_testcase_annotations.py#L69">testcase__test_testcase_annotations__test_does_not_annotate_reference_without_result_suffix_uvfnh</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_testcase_annotations.py#L83">testcase__test_testcase_annotations__test_does_not_annotate_link_without_result_suffix_naany</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_testcase_annotations.py#L97">testcase__test_testcase_annotations__test_does_not_annotate_same_reference_twice_ujuoz</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_testlink.py#L40">testcase__test_testlink__test_testlink_serialization_roundtrip_jmmwb</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_testlink.py#L73">testcase__test_testlink__test_decoder_ignores_irrelevant_dicts_uecxv</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_testlink.py#L85">testcase__test_testlink__test_clean_text_removes_ansi_and_html_unescapes_sjotr</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_testlink.py#L100">testcase__test_testlink__test_testcaseneed_to_dict_multiple_links_vstss</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_testlink.py#L146">testcase__test_testlink__test_store_and_load_testlinks_roundtrip_ijnkz</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L154">testcase__test_xml_parser__test_find_xml_files_rviwn</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L229">testcase__test_xml_parser__test_parse_testcase_result_uqrng</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L262">testcase__test_xml_parser__test_parse_properties_gkejb</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L278">testcase__test_xml_parser__test_read_test_xml_file_xofsm</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L350">testcase__test_xml_parser__test_short_hash_consistency_and_format_lfalr</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L408">testcase__test_xml_parser__test_is_testcase_in_scope_empty_allow_list_is_unfiltered_rvmyk</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L420">testcase__test_xml_parser__test_is_testcase_in_scope_positive_match_ryuns</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L433">testcase__test_xml_parser__test_is_testcase_in_scope_not_under_any_allowed_dir_wspmp</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L443">testcase__test_xml_parser__test_is_testcase_in_scope_none_file_with_allow_list_iijlo</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L453">testcase__test_xml_parser__test_is_testcase_in_scope_no_string_prefix_match_gwmyv</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L470">testcase__test_xml_parser__test_parse_testcase_source_dirs_mnwly</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L482">testcase__test_xml_parser__test_parse_testcase_source_dirs_non_list_raises_alkfg</a> (passed)</div>
 </div>
 </td>
 <td><p>not fully qualified</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="requirements.html#tool_req__docs_test_linkage_metrics" title="tool_req__docs_test_linkage_metrics"><em class="xref need">Provide Metrics for linked ... (tool_req__docs_test_linkage_metrics)</em></a></p></td>
 <td><div class="line-block">
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L26">testcase__test_traceability_metrics__test_get_need_types_by_tags_returns_matching_directives_only_cqzop</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L87">testcase__test_traceability_metrics__test_get_need_types_by_tags_returns_empty_on_non_match_bzaaz</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[  -False]_oqnnm</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[text-True]_vynor</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[value2-False]_obmrz</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[value3-True]_pyolk</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[0-False]_dlylm</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[1-True]_lpcqy</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[None-False]_camsg</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L141">testcase__test_traceability_metrics__test_safe_percent_zero[3-0-100.0]_vqmuf</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L141">testcase__test_traceability_metrics__test_safe_percent_zero[1-4-25.0]_mxxkz</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L155">testcase__test_traceability_metrics__test_calculate_requirement_metrics_counts_links_and_missing_ids_zjedt</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L184">testcase__test_traceability_metrics__test_calculate_requirement_metrics_non_fully_linked_pldcv</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L210">testcase__test_traceability_metrics__test_calculate_requirement_metrics_non_fully_linked_2_ohrrq</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L236">testcase__test_traceability_metrics__test_calculate_test_metrics_counts_linked_tests_and_broken_refs_atrpa</a> (passed)</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L26">testcase__test_traceability_metrics__test_get_need_types_by_tags_returns_matching_directives_only_cqzop</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L87">testcase__test_traceability_metrics__test_get_need_types_by_tags_returns_empty_on_non_match_bzaaz</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[  -False]_oqnnm</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[text-True]_vynor</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[value2-False]_obmrz</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[value3-True]_pyolk</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[0-False]_dlylm</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[1-True]_lpcqy</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[None-False]_camsg</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L141">testcase__test_traceability_metrics__test_safe_percent_zero[3-0-100.0]_vqmuf</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L141">testcase__test_traceability_metrics__test_safe_percent_zero[1-4-25.0]_mxxkz</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L155">testcase__test_traceability_metrics__test_calculate_requirement_metrics_counts_links_and_missing_ids_zjedt</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L184">testcase__test_traceability_metrics__test_calculate_requirement_metrics_non_fully_linked_pldcv</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L210">testcase__test_traceability_metrics__test_calculate_requirement_metrics_non_fully_linked_2_ohrrq</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L236">testcase__test_traceability_metrics__test_calculate_test_metrics_counts_linked_tests_and_broken_refs_atrpa</a> (passed)</div>
 </div>
 </td>
 <td><p>not fully qualified</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="requirements.html#tool_req__docs_verification_report_need" title="tool_req__docs_verification_report_need"><em class="xref need">Support machine-readable mo... (tool_req__docs_verification_report_need)</em></a></p></td>
 <td><div class="line-block">
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/options/test_options_verification_report.rst#L16">testcase__test_rules_file_based__test_rst_files[options/test_options_verification_report.rst]_esxsi</a> (passed)</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/options/test_options_verification_report.rst#L16">testcase__test_rules_file_based__test_rst_files[options/test_options_verification_report.rst]_esxsi</a> (passed)</div>
 </div>
 </td>
 <td><p>not fully qualified</p></td>
@@ -1474,27 +1468,27 @@ traceability evidence but does not by itself complete qualification.</p>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="requirements.html#tool_req__docs_test_link_testcase" title="tool_req__docs_test_link_testcase"><em class="xref need">Supports linking to test cases (tool_req__docs_test_link_testcase)</em></a></p></td>
 <td><div class="line-block">
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_testcase_annotations.py#L49">testcase__test_testcase_annotations__test_annotates_external_github_testlink_hkvid</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_testcase_annotations.py#L69">testcase__test_testcase_annotations__test_does_not_annotate_reference_without_result_suffix_uvfnh</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_testcase_annotations.py#L83">testcase__test_testcase_annotations__test_does_not_annotate_link_without_result_suffix_naany</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_testcase_annotations.py#L97">testcase__test_testcase_annotations__test_does_not_annotate_same_reference_twice_ujuoz</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_testlink.py#L40">testcase__test_testlink__test_testlink_serialization_roundtrip_jmmwb</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_testlink.py#L73">testcase__test_testlink__test_decoder_ignores_irrelevant_dicts_uecxv</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_testlink.py#L85">testcase__test_testlink__test_clean_text_removes_ansi_and_html_unescapes_sjotr</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_testlink.py#L100">testcase__test_testlink__test_testcaseneed_to_dict_multiple_links_vstss</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_testlink.py#L146">testcase__test_testlink__test_store_and_load_testlinks_roundtrip_ijnkz</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L154">testcase__test_xml_parser__test_find_xml_files_rviwn</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L229">testcase__test_xml_parser__test_parse_testcase_result_uqrng</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L262">testcase__test_xml_parser__test_parse_properties_gkejb</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L278">testcase__test_xml_parser__test_read_test_xml_file_xofsm</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L350">testcase__test_xml_parser__test_short_hash_consistency_and_format_lfalr</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L408">testcase__test_xml_parser__test_is_testcase_in_scope_empty_allow_list_is_unfiltered_rvmyk</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L420">testcase__test_xml_parser__test_is_testcase_in_scope_positive_match_ryuns</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L433">testcase__test_xml_parser__test_is_testcase_in_scope_not_under_any_allowed_dir_wspmp</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L443">testcase__test_xml_parser__test_is_testcase_in_scope_none_file_with_allow_list_iijlo</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L453">testcase__test_xml_parser__test_is_testcase_in_scope_no_string_prefix_match_gwmyv</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L470">testcase__test_xml_parser__test_parse_testcase_source_dirs_mnwly</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L482">testcase__test_xml_parser__test_parse_testcase_source_dirs_non_list_raises_alkfg</a> (passed)</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_testcase_annotations.py#L49">testcase__test_testcase_annotations__test_annotates_external_github_testlink_hkvid</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_testcase_annotations.py#L69">testcase__test_testcase_annotations__test_does_not_annotate_reference_without_result_suffix_uvfnh</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_testcase_annotations.py#L83">testcase__test_testcase_annotations__test_does_not_annotate_link_without_result_suffix_naany</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_testcase_annotations.py#L97">testcase__test_testcase_annotations__test_does_not_annotate_same_reference_twice_ujuoz</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_testlink.py#L40">testcase__test_testlink__test_testlink_serialization_roundtrip_jmmwb</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_testlink.py#L73">testcase__test_testlink__test_decoder_ignores_irrelevant_dicts_uecxv</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_testlink.py#L85">testcase__test_testlink__test_clean_text_removes_ansi_and_html_unescapes_sjotr</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_testlink.py#L100">testcase__test_testlink__test_testcaseneed_to_dict_multiple_links_vstss</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_testlink.py#L146">testcase__test_testlink__test_store_and_load_testlinks_roundtrip_ijnkz</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L154">testcase__test_xml_parser__test_find_xml_files_rviwn</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L229">testcase__test_xml_parser__test_parse_testcase_result_uqrng</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L262">testcase__test_xml_parser__test_parse_properties_gkejb</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L278">testcase__test_xml_parser__test_read_test_xml_file_xofsm</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L350">testcase__test_xml_parser__test_short_hash_consistency_and_format_lfalr</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L408">testcase__test_xml_parser__test_is_testcase_in_scope_empty_allow_list_is_unfiltered_rvmyk</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L420">testcase__test_xml_parser__test_is_testcase_in_scope_positive_match_ryuns</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L433">testcase__test_xml_parser__test_is_testcase_in_scope_not_under_any_allowed_dir_wspmp</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L443">testcase__test_xml_parser__test_is_testcase_in_scope_none_file_with_allow_list_iijlo</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L453">testcase__test_xml_parser__test_is_testcase_in_scope_no_string_prefix_match_gwmyv</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L470">testcase__test_xml_parser__test_parse_testcase_source_dirs_mnwly</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L482">testcase__test_xml_parser__test_parse_testcase_source_dirs_non_list_raises_alkfg</a> (passed)</div>
 </div>
 </td>
 <td><p>not fully qualified</p></td>
@@ -1513,63 +1507,63 @@ traceability evidence but does not by itself complete qualification.</p>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="requirements.html#tool_req__docs_common_attr_id_scheme" title="tool_req__docs_common_attr_id_scheme"><em class="xref need">Enforces need ID scheme (tool_req__docs_common_attr_id_scheme)</em></a></p></td>
 <td><div class="line-block">
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/attributes/test_attributes_external_prefix.rst#L16">testcase__test_rules_file_based__test_rst_files[attributes/test_attributes_external_prefix.rst]_iuemz</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/attributes/test_attributes_format_id_format.rst#L16">testcase__test_rules_file_based__test_rst_files[attributes/test_attributes_format_id_format.rst]_erbpm</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/id_contains_feature/test_id_contains_feature.rst#L16">testcase__test_rules_file_based__test_rst_files[id_contains_feature/test_id_contains_feature.rst]_mfmpm</a> (passed)</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/attributes/test_attributes_external_prefix.rst#L16">testcase__test_rules_file_based__test_rst_files[attributes/test_attributes_external_prefix.rst]_iuemz</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/attributes/test_attributes_format_id_format.rst#L16">testcase__test_rules_file_based__test_rst_files[attributes/test_attributes_format_id_format.rst]_erbpm</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/id_contains_feature/test_id_contains_feature.rst#L16">testcase__test_rules_file_based__test_rst_files[id_contains_feature/test_id_contains_feature.rst]_mfmpm</a> (passed)</div>
 </div>
 </td>
 <td><p>not fully qualified</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="requirements.html#tool_req__docs_common_attr_status" title="tool_req__docs_common_attr_status"><em class="xref need">Status: enforce attribute (tool_req__docs_common_attr_status)</em></a></p></td>
 <td><div class="line-block">
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/options/test_options_extra_option.rst#L16">testcase__test_rules_file_based__test_rst_files[options/test_options_extra_option.rst]_juqyk</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/options/test_options_options.rst#L16">testcase__test_rules_file_based__test_rst_files[options/test_options_options.rst]_dohtw</a> (passed)</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/options/test_options_extra_option.rst#L16">testcase__test_rules_file_based__test_rst_files[options/test_options_extra_option.rst]_juqyk</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/options/test_options_options.rst#L16">testcase__test_rules_file_based__test_rst_files[options/test_options_options.rst]_dohtw</a> (passed)</div>
 </div>
 </td>
 <td><p>not fully qualified</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="requirements.html#tool_req__docs_common_attr_description" title="tool_req__docs_common_attr_description"><em class="xref need">Enforces presence of descri... (tool_req__docs_common_attr_description)</em></a></p></td>
 <td><div class="line-block">
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/test_check_options.py#L93">testcase__TestCheckOptions__test_unknown_option_present_in_neither_req_opt_neither_opt_opt_hljdo</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/test_metamodel__init__.py#L45">testcase__test_metamodel__init____test_returns_empty_list_when_filter_is_empty_zppdj</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/test_metamodel__init__.py#L55">testcase__test_metamodel__init____test_returns_valid_checks_xqits</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/test_metamodel__init__.py#L66">testcase__test_metamodel__init____test_strips_whitespace_unask</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/test_metamodel__init__.py#L77">testcase__test_metamodel__init____test_raises_assertion_for_invalid_check_ubfli</a> (passed)</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/test_check_options.py#L93">testcase__TestCheckOptions__test_unknown_option_present_in_neither_req_opt_neither_opt_opt_hljdo</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/test_metamodel__init__.py#L45">testcase__test_metamodel__init____test_returns_empty_list_when_filter_is_empty_zppdj</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/test_metamodel__init__.py#L55">testcase__test_metamodel__init____test_returns_valid_checks_xqits</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/test_metamodel__init__.py#L66">testcase__test_metamodel__init____test_strips_whitespace_unask</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/test_metamodel__init__.py#L77">testcase__test_metamodel__init____test_raises_assertion_for_invalid_check_ubfli</a> (passed)</div>
 </div>
 </td>
 <td><p>not fully qualified</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="requirements.html#tool_req__docs_common_attr_title" title="tool_req__docs_common_attr_title"><em class="xref need">Enforces title wording rules (tool_req__docs_common_attr_title)</em></a></p></td>
 <td><div class="line-block">
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/attributes/test_prohibited_words.rst#L17">testcase__test_rules_file_based__test_rst_files[attributes/test_prohibited_words.rst]_bfndn</a> (passed)</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/attributes/test_prohibited_words.rst#L17">testcase__test_rules_file_based__test_rst_files[attributes/test_prohibited_words.rst]_bfndn</a> (passed)</div>
 </div>
 </td>
 <td><p>not fully qualified</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="requirements.html#tool_req__docs_common_attr_desc_wording" title="tool_req__docs_common_attr_desc_wording"><em class="xref need">Enforces description wordin... (tool_req__docs_common_attr_desc_wording)</em></a></p></td>
 <td><div class="line-block">
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/attributes/test_prohibited_words.rst#L17">testcase__test_rules_file_based__test_rst_files[attributes/test_prohibited_words.rst]_bfndn</a> (passed)</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/attributes/test_prohibited_words.rst#L17">testcase__test_rules_file_based__test_rst_files[attributes/test_prohibited_words.rst]_bfndn</a> (passed)</div>
 </div>
 </td>
 <td><p>not fully qualified</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="requirements.html#tool_req__docs_common_attr_security" title="tool_req__docs_common_attr_security"><em class="xref need">Security: enforce classific... (tool_req__docs_common_attr_security)</em></a></p></td>
 <td><div class="line-block">
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/test_check_options.py#L69">testcase__TestCheckOptions__test_unknown_directive_jxeis</a> (passed)</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/test_check_options.py#L69">testcase__TestCheckOptions__test_unknown_directive_jxeis</a> (passed)</div>
 </div>
 </td>
 <td><p>not fully qualified</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="requirements.html#tool_req__docs_common_attr_safety" title="tool_req__docs_common_attr_safety"><em class="xref need">Safety: enforce classification (tool_req__docs_common_attr_safety)</em></a></p></td>
 <td><div class="line-block">
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/attributes/test_common_attr_safety.rst#L16">testcase__test_rules_file_based__test_rst_files[attributes/test_common_attr_safety.rst]_etjyx</a> (passed)</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/attributes/test_common_attr_safety.rst#L16">testcase__test_rules_file_based__test_rst_files[attributes/test_common_attr_safety.rst]_etjyx</a> (passed)</div>
 </div>
 </td>
 <td><p>passed</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="requirements.html#tool_req__docs_common_attr_version" title="tool_req__docs_common_attr_version"><em class="xref need">Versioning: enforce attribute (tool_req__docs_common_attr_version)</em></a></p></td>
 <td><div class="line-block">
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/attributes/test_common_attr_version.rst#L16">testcase__test_rules_file_based__test_rst_files[attributes/test_common_attr_version.rst]_znvwq</a> (passed)</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/attributes/test_common_attr_version.rst#L16">testcase__test_rules_file_based__test_rst_files[attributes/test_common_attr_version.rst]_znvwq</a> (passed)</div>
 </div>
 </td>
 <td><p>not fully qualified</p></td>
@@ -1592,14 +1586,14 @@ traceability evidence but does not by itself complete qualification.</p>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="requirements.html#tool_req__docs_req_attr_validity_correctness" title="tool_req__docs_req_attr_validity_correctness"><em class="xref need">Enforce validity attribute ... (tool_req__docs_req_attr_validity_correctness)</em></a></p></td>
 <td><div class="line-block">
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/attributes/test_validity.rst#L16">testcase__test_rules_file_based__test_rst_files[attributes/test_validity.rst]_mvgxy</a> (passed)</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/attributes/test_validity.rst#L16">testcase__test_rules_file_based__test_rst_files[attributes/test_validity.rst]_mvgxy</a> (passed)</div>
 </div>
 </td>
 <td><p>not fully qualified</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="requirements.html#tool_req__docs_req_attr_validity_consistency" title="tool_req__docs_req_attr_validity_consistency"><em class="xref need">Enforce validity start is b... (tool_req__docs_req_attr_validity_consistency)</em></a></p></td>
 <td><div class="line-block">
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/attributes/test_validity.rst#L16">testcase__test_rules_file_based__test_rst_files[attributes/test_validity.rst]_mvgxy</a> (passed)</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/attributes/test_validity.rst#L16">testcase__test_rules_file_based__test_rst_files[attributes/test_validity.rst]_mvgxy</a> (passed)</div>
 </div>
 </td>
 <td><p>not fully qualified</p></td>
@@ -1638,14 +1632,14 @@ traceability evidence but does not by itself complete qualification.</p>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_attrs_mitigation_issue" title="tool_req__docs_saf_attrs_mitigation_issue"><em class="xref need">Safety Analysis Mitigation ... (tool_req__docs_saf_attrs_mitigation_issue)</em></a></p></td>
 <td><div class="line-block">
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/safety/test_saf_optional_attrs.rst#L15">testcase__test_rules_file_based__test_rst_files[safety/test_saf_optional_attrs.rst]_qiggj</a> (passed)</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/safety/test_saf_optional_attrs.rst#L15">testcase__test_rules_file_based__test_rst_files[safety/test_saf_optional_attrs.rst]_qiggj</a> (passed)</div>
 </div>
 </td>
 <td><p>passed</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_attrs_sufficient" title="tool_req__docs_saf_attrs_sufficient"><em class="xref need">Safety Analysis Sufficient ... (tool_req__docs_saf_attrs_sufficient)</em></a></p></td>
 <td><div class="line-block">
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/safety/test_saf_mandatory_attrs.rst#L16">testcase__test_rules_file_based__test_rst_files[safety/test_saf_mandatory_attrs.rst]_nxowp</a> (passed)</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/safety/test_saf_mandatory_attrs.rst#L16">testcase__test_rules_file_based__test_rst_files[safety/test_saf_mandatory_attrs.rst]_nxowp</a> (passed)</div>
 </div>
 </td>
 <td><p>passed</p></td>
@@ -1656,42 +1650,42 @@ traceability evidence but does not by itself complete qualification.</p>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_attrs_content" title="tool_req__docs_saf_attrs_content"><em class="xref need">Safety Analysis Mandatory C... (tool_req__docs_saf_attrs_content)</em></a></p></td>
 <td><div class="line-block">
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/safety/test_saf_mandatory_attrs.rst#L16">testcase__test_rules_file_based__test_rst_files[safety/test_saf_mandatory_attrs.rst]_nxowp</a> (passed)</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/safety/test_saf_mandatory_attrs.rst#L16">testcase__test_rules_file_based__test_rst_files[safety/test_saf_mandatory_attrs.rst]_nxowp</a> (passed)</div>
 </div>
 </td>
 <td><p>passed</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_attrs_violates" title="tool_req__docs_saf_attrs_violates"><em class="xref need">Safety Analysis Linkage Vio... (tool_req__docs_saf_attrs_violates)</em></a></p></td>
 <td><div class="line-block">
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/safety/test_saf_violates.rst#L15">testcase__test_rules_file_based__test_rst_files[safety/test_saf_violates.rst]_jyeej</a> (passed)</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/safety/test_saf_violates.rst#L15">testcase__test_rules_file_based__test_rst_files[safety/test_saf_violates.rst]_jyeej</a> (passed)</div>
 </div>
 </td>
 <td><p>not fully qualified</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_attr_fmea_fault_id" title="tool_req__docs_saf_attr_fmea_fault_id"><em class="xref need">FMEA: fault id attribute (tool_req__docs_saf_attr_fmea_fault_id)</em></a></p></td>
 <td><div class="line-block">
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/safety/test_saf_mandatory_attrs.rst#L16">testcase__test_rules_file_based__test_rst_files[safety/test_saf_mandatory_attrs.rst]_nxowp</a> (passed)</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/safety/test_saf_mandatory_attrs.rst#L16">testcase__test_rules_file_based__test_rst_files[safety/test_saf_mandatory_attrs.rst]_nxowp</a> (passed)</div>
 </div>
 </td>
 <td><p>passed</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="requirements.html#tool_req__docs_saf_attr_fmea_failure_effect" title="tool_req__docs_saf_attr_fmea_failure_effect"><em class="xref need">Failure Effect (tool_req__docs_saf_attr_fmea_failure_effect)</em></a></p></td>
 <td><div class="line-block">
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/options/test_options_failure_effect.rst#L16">testcase__test_rules_file_based__test_rst_files[options/test_options_failure_effect.rst]_qrirw</a> (passed)</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/options/test_options_failure_effect.rst#L16">testcase__test_rules_file_based__test_rst_files[options/test_options_failure_effect.rst]_qrirw</a> (passed)</div>
 </div>
 </td>
 <td><p>passed</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="requirements.html#tool_req__docs_common_attr_safety_link_check" title="tool_req__docs_common_attr_safety_link_check"><em class="xref need">Safety: enforce safe linking (tool_req__docs_common_attr_safety_link_check)</em></a></p></td>
 <td><div class="line-block">
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/graph/test_metamodel_graph.rst#L15">testcase__test_rules_file_based__test_rst_files[graph/test_metamodel_graph.rst]_cjues</a> (passed)</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/graph/test_metamodel_graph.rst#L15">testcase__test_rules_file_based__test_rst_files[graph/test_metamodel_graph.rst]_cjues</a> (passed)</div>
 </div>
 </td>
 <td><p>not fully qualified</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="requirements.html#tool_req__docs_req_arch_link_safety_to_arch" title="tool_req__docs_req_arch_link_safety_to_arch"><em class="xref need">Restrict links for safety r... (tool_req__docs_req_arch_link_safety_to_arch)</em></a></p></td>
 <td><div class="line-block">
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/graph/test_invalid_graph.rst#L16">testcase__test_rules_file_based__test_rst_files[graph/test_invalid_graph.rst]_jsazl</a> (passed)</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/graph/test_invalid_graph.rst#L16">testcase__test_rules_file_based__test_rst_files[graph/test_invalid_graph.rst]_jsazl</a> (passed)</div>
 </div>
 </td>
 <td><p>not fully qualified</p></td>
@@ -1726,28 +1720,28 @@ traceability evidence but does not by itself complete qualification.</p>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="requirements.html#tool_req__docs_test_linkage_metrics" title="tool_req__docs_test_linkage_metrics"><em class="xref need">Provide Metrics for linked ... (tool_req__docs_test_linkage_metrics)</em></a></p></td>
 <td><div class="line-block">
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L26">testcase__test_traceability_metrics__test_get_need_types_by_tags_returns_matching_directives_only_cqzop</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L87">testcase__test_traceability_metrics__test_get_need_types_by_tags_returns_empty_on_non_match_bzaaz</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[  -False]_oqnnm</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[text-True]_vynor</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[value2-False]_obmrz</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[value3-True]_pyolk</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[0-False]_dlylm</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[1-True]_lpcqy</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[None-False]_camsg</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L141">testcase__test_traceability_metrics__test_safe_percent_zero[3-0-100.0]_vqmuf</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L141">testcase__test_traceability_metrics__test_safe_percent_zero[1-4-25.0]_mxxkz</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L155">testcase__test_traceability_metrics__test_calculate_requirement_metrics_counts_links_and_missing_ids_zjedt</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L184">testcase__test_traceability_metrics__test_calculate_requirement_metrics_non_fully_linked_pldcv</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L210">testcase__test_traceability_metrics__test_calculate_requirement_metrics_non_fully_linked_2_ohrrq</a> (passed),</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L236">testcase__test_traceability_metrics__test_calculate_test_metrics_counts_linked_tests_and_broken_refs_atrpa</a> (passed)</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L26">testcase__test_traceability_metrics__test_get_need_types_by_tags_returns_matching_directives_only_cqzop</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L87">testcase__test_traceability_metrics__test_get_need_types_by_tags_returns_empty_on_non_match_bzaaz</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[  -False]_oqnnm</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[text-True]_vynor</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[value2-False]_obmrz</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[value3-True]_pyolk</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[0-False]_dlylm</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[1-True]_lpcqy</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[None-False]_camsg</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L141">testcase__test_traceability_metrics__test_safe_percent_zero[3-0-100.0]_vqmuf</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L141">testcase__test_traceability_metrics__test_safe_percent_zero[1-4-25.0]_mxxkz</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L155">testcase__test_traceability_metrics__test_calculate_requirement_metrics_counts_links_and_missing_ids_zjedt</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L184">testcase__test_traceability_metrics__test_calculate_requirement_metrics_non_fully_linked_pldcv</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L210">testcase__test_traceability_metrics__test_calculate_requirement_metrics_non_fully_linked_2_ohrrq</a> (passed),</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L236">testcase__test_traceability_metrics__test_calculate_test_metrics_counts_linked_tests_and_broken_refs_atrpa</a> (passed)</div>
 </div>
 </td>
 <td><p>not fully qualified</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="requirements.html#tool_req__docs_verification_report_need" title="tool_req__docs_verification_report_need"><em class="xref need">Support machine-readable mo... (tool_req__docs_verification_report_need)</em></a></p></td>
 <td><div class="line-block">
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/options/test_options_verification_report.rst#L16">testcase__test_rules_file_based__test_rst_files[options/test_options_verification_report.rst]_esxsi</a> (passed)</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/options/test_options_verification_report.rst#L16">testcase__test_rules_file_based__test_rst_files[options/test_options_verification_report.rst]_esxsi</a> (passed)</div>
 </div>
 </td>
 <td><p>not fully qualified</p></td>
@@ -1793,10 +1787,10 @@ for the qualification-relevant malfunctions.</p>
 <td><p>PR review</p></td>
 <td><p>—</p></td>
 <td><div class="line-block">
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/options/gd_req_comp.rst#L16">testcase__test_rules_file_based__test_rst_files[options/gd_req_comp.rst]_mtcck</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/options/test_options_extra_option.rst#L16">testcase__test_rules_file_based__test_rst_files[options/test_options_extra_option.rst]_juqyk</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/options/test_options_options.rst#L16">testcase__test_rules_file_based__test_rst_files[options/test_options_options.rst]_dohtw</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/attributes/test_attributes_format_id_length.rst#L16">testcase__test_rules_file_based__test_rst_files[attributes/test_attributes_format_id_length.rst]_yelaq</a></div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/options/gd_req_comp.rst#L16">testcase__test_rules_file_based__test_rst_files[options/gd_req_comp.rst]_mtcck</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/options/test_options_extra_option.rst#L16">testcase__test_rules_file_based__test_rst_files[options/test_options_extra_option.rst]_juqyk</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/options/test_options_options.rst#L16">testcase__test_rules_file_based__test_rst_files[options/test_options_options.rst]_dohtw</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/attributes/test_attributes_format_id_length.rst#L16">testcase__test_rules_file_based__test_rst_files[attributes/test_attributes_format_id_length.rst]_yelaq</a></div>
 </div>
 </td>
 </tr>
@@ -1813,43 +1807,43 @@ for the qualification-relevant malfunctions.</p>
 <td><p>—</p></td>
 <td><p>—</p></td>
 <td><div class="line-block">
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_testcase_annotations.py#L49">testcase__test_testcase_annotations__test_annotates_external_github_testlink_hkvid</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_testcase_annotations.py#L69">testcase__test_testcase_annotations__test_does_not_annotate_reference_without_result_suffix_uvfnh</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_testcase_annotations.py#L83">testcase__test_testcase_annotations__test_does_not_annotate_link_without_result_suffix_naany</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_testcase_annotations.py#L97">testcase__test_testcase_annotations__test_does_not_annotate_same_reference_twice_ujuoz</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_testlink.py#L40">testcase__test_testlink__test_testlink_serialization_roundtrip_jmmwb</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_testlink.py#L73">testcase__test_testlink__test_decoder_ignores_irrelevant_dicts_uecxv</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_testlink.py#L85">testcase__test_testlink__test_clean_text_removes_ansi_and_html_unescapes_sjotr</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_testlink.py#L100">testcase__test_testlink__test_testcaseneed_to_dict_multiple_links_vstss</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_testlink.py#L146">testcase__test_testlink__test_store_and_load_testlinks_roundtrip_ijnkz</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L154">testcase__test_xml_parser__test_find_xml_files_rviwn</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L229">testcase__test_xml_parser__test_parse_testcase_result_uqrng</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L262">testcase__test_xml_parser__test_parse_properties_gkejb</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L278">testcase__test_xml_parser__test_read_test_xml_file_xofsm</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L350">testcase__test_xml_parser__test_short_hash_consistency_and_format_lfalr</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L408">testcase__test_xml_parser__test_is_testcase_in_scope_empty_allow_list_is_unfiltered_rvmyk</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L420">testcase__test_xml_parser__test_is_testcase_in_scope_positive_match_ryuns</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L433">testcase__test_xml_parser__test_is_testcase_in_scope_not_under_any_allowed_dir_wspmp</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L443">testcase__test_xml_parser__test_is_testcase_in_scope_none_file_with_allow_list_iijlo</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L453">testcase__test_xml_parser__test_is_testcase_in_scope_no_string_prefix_match_gwmyv</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L470">testcase__test_xml_parser__test_parse_testcase_source_dirs_mnwly</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L482">testcase__test_xml_parser__test_parse_testcase_source_dirs_non_list_raises_alkfg</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L26">testcase__test_traceability_metrics__test_get_need_types_by_tags_returns_matching_directives_only_cqzop</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L87">testcase__test_traceability_metrics__test_get_need_types_by_tags_returns_empty_on_non_match_bzaaz</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[  -False]_oqnnm</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[text-True]_vynor</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[value2-False]_obmrz</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[value3-True]_pyolk</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[0-False]_dlylm</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[1-True]_lpcqy</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[None-False]_camsg</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L141">testcase__test_traceability_metrics__test_safe_percent_zero[3-0-100.0]_vqmuf</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L141">testcase__test_traceability_metrics__test_safe_percent_zero[1-4-25.0]_mxxkz</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L155">testcase__test_traceability_metrics__test_calculate_requirement_metrics_counts_links_and_missing_ids_zjedt</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L184">testcase__test_traceability_metrics__test_calculate_requirement_metrics_non_fully_linked_pldcv</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L210">testcase__test_traceability_metrics__test_calculate_requirement_metrics_non_fully_linked_2_ohrrq</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L236">testcase__test_traceability_metrics__test_calculate_test_metrics_counts_linked_tests_and_broken_refs_atrpa</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/options/test_options_verification_report.rst#L16">testcase__test_rules_file_based__test_rst_files[options/test_options_verification_report.rst]_esxsi</a></div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_testcase_annotations.py#L49">testcase__test_testcase_annotations__test_annotates_external_github_testlink_hkvid</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_testcase_annotations.py#L69">testcase__test_testcase_annotations__test_does_not_annotate_reference_without_result_suffix_uvfnh</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_testcase_annotations.py#L83">testcase__test_testcase_annotations__test_does_not_annotate_link_without_result_suffix_naany</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_testcase_annotations.py#L97">testcase__test_testcase_annotations__test_does_not_annotate_same_reference_twice_ujuoz</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_testlink.py#L40">testcase__test_testlink__test_testlink_serialization_roundtrip_jmmwb</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_testlink.py#L73">testcase__test_testlink__test_decoder_ignores_irrelevant_dicts_uecxv</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_testlink.py#L85">testcase__test_testlink__test_clean_text_removes_ansi_and_html_unescapes_sjotr</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_testlink.py#L100">testcase__test_testlink__test_testcaseneed_to_dict_multiple_links_vstss</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_testlink.py#L146">testcase__test_testlink__test_store_and_load_testlinks_roundtrip_ijnkz</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L154">testcase__test_xml_parser__test_find_xml_files_rviwn</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L229">testcase__test_xml_parser__test_parse_testcase_result_uqrng</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L262">testcase__test_xml_parser__test_parse_properties_gkejb</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L278">testcase__test_xml_parser__test_read_test_xml_file_xofsm</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L350">testcase__test_xml_parser__test_short_hash_consistency_and_format_lfalr</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L408">testcase__test_xml_parser__test_is_testcase_in_scope_empty_allow_list_is_unfiltered_rvmyk</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L420">testcase__test_xml_parser__test_is_testcase_in_scope_positive_match_ryuns</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L433">testcase__test_xml_parser__test_is_testcase_in_scope_not_under_any_allowed_dir_wspmp</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L443">testcase__test_xml_parser__test_is_testcase_in_scope_none_file_with_allow_list_iijlo</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L453">testcase__test_xml_parser__test_is_testcase_in_scope_no_string_prefix_match_gwmyv</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L470">testcase__test_xml_parser__test_parse_testcase_source_dirs_mnwly</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L482">testcase__test_xml_parser__test_parse_testcase_source_dirs_non_list_raises_alkfg</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L26">testcase__test_traceability_metrics__test_get_need_types_by_tags_returns_matching_directives_only_cqzop</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L87">testcase__test_traceability_metrics__test_get_need_types_by_tags_returns_empty_on_non_match_bzaaz</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[  -False]_oqnnm</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[text-True]_vynor</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[value2-False]_obmrz</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[value3-True]_pyolk</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[0-False]_dlylm</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[1-True]_lpcqy</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[None-False]_camsg</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L141">testcase__test_traceability_metrics__test_safe_percent_zero[3-0-100.0]_vqmuf</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L141">testcase__test_traceability_metrics__test_safe_percent_zero[1-4-25.0]_mxxkz</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L155">testcase__test_traceability_metrics__test_calculate_requirement_metrics_counts_links_and_missing_ids_zjedt</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L184">testcase__test_traceability_metrics__test_calculate_requirement_metrics_non_fully_linked_pldcv</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L210">testcase__test_traceability_metrics__test_calculate_requirement_metrics_non_fully_linked_2_ohrrq</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L236">testcase__test_traceability_metrics__test_calculate_test_metrics_counts_linked_tests_and_broken_refs_atrpa</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/options/test_options_verification_report.rst#L16">testcase__test_rules_file_based__test_rst_files[options/test_options_verification_report.rst]_esxsi</a></div>
 </div>
 </td>
 </tr>
@@ -1861,27 +1855,27 @@ for the qualification-relevant malfunctions.</p>
 <td><p>PR review</p></td>
 <td><p>—</p></td>
 <td><div class="line-block">
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_testcase_annotations.py#L49">testcase__test_testcase_annotations__test_annotates_external_github_testlink_hkvid</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_testcase_annotations.py#L69">testcase__test_testcase_annotations__test_does_not_annotate_reference_without_result_suffix_uvfnh</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_testcase_annotations.py#L83">testcase__test_testcase_annotations__test_does_not_annotate_link_without_result_suffix_naany</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_testcase_annotations.py#L97">testcase__test_testcase_annotations__test_does_not_annotate_same_reference_twice_ujuoz</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_testlink.py#L40">testcase__test_testlink__test_testlink_serialization_roundtrip_jmmwb</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_testlink.py#L73">testcase__test_testlink__test_decoder_ignores_irrelevant_dicts_uecxv</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_testlink.py#L85">testcase__test_testlink__test_clean_text_removes_ansi_and_html_unescapes_sjotr</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_testlink.py#L100">testcase__test_testlink__test_testcaseneed_to_dict_multiple_links_vstss</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_testlink.py#L146">testcase__test_testlink__test_store_and_load_testlinks_roundtrip_ijnkz</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L154">testcase__test_xml_parser__test_find_xml_files_rviwn</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L229">testcase__test_xml_parser__test_parse_testcase_result_uqrng</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L262">testcase__test_xml_parser__test_parse_properties_gkejb</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L278">testcase__test_xml_parser__test_read_test_xml_file_xofsm</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L350">testcase__test_xml_parser__test_short_hash_consistency_and_format_lfalr</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L408">testcase__test_xml_parser__test_is_testcase_in_scope_empty_allow_list_is_unfiltered_rvmyk</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L420">testcase__test_xml_parser__test_is_testcase_in_scope_positive_match_ryuns</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L433">testcase__test_xml_parser__test_is_testcase_in_scope_not_under_any_allowed_dir_wspmp</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L443">testcase__test_xml_parser__test_is_testcase_in_scope_none_file_with_allow_list_iijlo</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L453">testcase__test_xml_parser__test_is_testcase_in_scope_no_string_prefix_match_gwmyv</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L470">testcase__test_xml_parser__test_parse_testcase_source_dirs_mnwly</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L482">testcase__test_xml_parser__test_parse_testcase_source_dirs_non_list_raises_alkfg</a></div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_testcase_annotations.py#L49">testcase__test_testcase_annotations__test_annotates_external_github_testlink_hkvid</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_testcase_annotations.py#L69">testcase__test_testcase_annotations__test_does_not_annotate_reference_without_result_suffix_uvfnh</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_testcase_annotations.py#L83">testcase__test_testcase_annotations__test_does_not_annotate_link_without_result_suffix_naany</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_testcase_annotations.py#L97">testcase__test_testcase_annotations__test_does_not_annotate_same_reference_twice_ujuoz</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_testlink.py#L40">testcase__test_testlink__test_testlink_serialization_roundtrip_jmmwb</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_testlink.py#L73">testcase__test_testlink__test_decoder_ignores_irrelevant_dicts_uecxv</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_testlink.py#L85">testcase__test_testlink__test_clean_text_removes_ansi_and_html_unescapes_sjotr</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_testlink.py#L100">testcase__test_testlink__test_testcaseneed_to_dict_multiple_links_vstss</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_testlink.py#L146">testcase__test_testlink__test_store_and_load_testlinks_roundtrip_ijnkz</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L154">testcase__test_xml_parser__test_find_xml_files_rviwn</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L229">testcase__test_xml_parser__test_parse_testcase_result_uqrng</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L262">testcase__test_xml_parser__test_parse_properties_gkejb</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L278">testcase__test_xml_parser__test_read_test_xml_file_xofsm</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L350">testcase__test_xml_parser__test_short_hash_consistency_and_format_lfalr</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L408">testcase__test_xml_parser__test_is_testcase_in_scope_empty_allow_list_is_unfiltered_rvmyk</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L420">testcase__test_xml_parser__test_is_testcase_in_scope_positive_match_ryuns</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L433">testcase__test_xml_parser__test_is_testcase_in_scope_not_under_any_allowed_dir_wspmp</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L443">testcase__test_xml_parser__test_is_testcase_in_scope_none_file_with_allow_list_iijlo</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L453">testcase__test_xml_parser__test_is_testcase_in_scope_no_string_prefix_match_gwmyv</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L470">testcase__test_xml_parser__test_parse_testcase_source_dirs_mnwly</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_source_code_linker/tests/test_xml_parser.py#L482">testcase__test_xml_parser__test_parse_testcase_source_dirs_non_list_raises_alkfg</a></div>
 </div>
 </td>
 </tr>
@@ -1923,28 +1917,28 @@ for the qualification-relevant malfunctions.</p>
 </td>
 <td><p>PR review</p></td>
 <td><div class="line-block">
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/attributes/test_common_attr_safety.rst#L16">testcase__test_rules_file_based__test_rst_files[attributes/test_common_attr_safety.rst]_etjyx</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/safety/test_saf_optional_attrs.rst#L15">testcase__test_rules_file_based__test_rst_files[safety/test_saf_optional_attrs.rst]_qiggj</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/safety/test_saf_mandatory_attrs.rst#L16">testcase__test_rules_file_based__test_rst_files[safety/test_saf_mandatory_attrs.rst]_nxowp</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/options/test_options_failure_effect.rst#L16">testcase__test_rules_file_based__test_rst_files[options/test_options_failure_effect.rst]_qrirw</a></div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/attributes/test_common_attr_safety.rst#L16">testcase__test_rules_file_based__test_rst_files[attributes/test_common_attr_safety.rst]_etjyx</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/safety/test_saf_optional_attrs.rst#L15">testcase__test_rules_file_based__test_rst_files[safety/test_saf_optional_attrs.rst]_qiggj</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/safety/test_saf_mandatory_attrs.rst#L16">testcase__test_rules_file_based__test_rst_files[safety/test_saf_mandatory_attrs.rst]_nxowp</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/options/test_options_failure_effect.rst#L16">testcase__test_rules_file_based__test_rst_files[options/test_options_failure_effect.rst]_qrirw</a></div>
 </div>
 </td>
 <td><div class="line-block">
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/attributes/test_attributes_external_prefix.rst#L16">testcase__test_rules_file_based__test_rst_files[attributes/test_attributes_external_prefix.rst]_iuemz</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/attributes/test_attributes_format_id_format.rst#L16">testcase__test_rules_file_based__test_rst_files[attributes/test_attributes_format_id_format.rst]_erbpm</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/id_contains_feature/test_id_contains_feature.rst#L16">testcase__test_rules_file_based__test_rst_files[id_contains_feature/test_id_contains_feature.rst]_mfmpm</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/options/test_options_extra_option.rst#L16">testcase__test_rules_file_based__test_rst_files[options/test_options_extra_option.rst]_juqyk</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/options/test_options_options.rst#L16">testcase__test_rules_file_based__test_rst_files[options/test_options_options.rst]_dohtw</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/test_check_options.py#L93">testcase__TestCheckOptions__test_unknown_option_present_in_neither_req_opt_neither_opt_opt_hljdo</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/test_metamodel__init__.py#L45">testcase__test_metamodel__init____test_returns_empty_list_when_filter_is_empty_zppdj</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/test_metamodel__init__.py#L55">testcase__test_metamodel__init____test_returns_valid_checks_xqits</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/test_metamodel__init__.py#L66">testcase__test_metamodel__init____test_strips_whitespace_unask</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/test_metamodel__init__.py#L77">testcase__test_metamodel__init____test_raises_assertion_for_invalid_check_ubfli</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/attributes/test_prohibited_words.rst#L17">testcase__test_rules_file_based__test_rst_files[attributes/test_prohibited_words.rst]_bfndn</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/test_check_options.py#L69">testcase__TestCheckOptions__test_unknown_directive_jxeis</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/attributes/test_common_attr_version.rst#L16">testcase__test_rules_file_based__test_rst_files[attributes/test_common_attr_version.rst]_znvwq</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/attributes/test_validity.rst#L16">testcase__test_rules_file_based__test_rst_files[attributes/test_validity.rst]_mvgxy</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/safety/test_saf_violates.rst#L15">testcase__test_rules_file_based__test_rst_files[safety/test_saf_violates.rst]_jyeej</a></div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/attributes/test_attributes_external_prefix.rst#L16">testcase__test_rules_file_based__test_rst_files[attributes/test_attributes_external_prefix.rst]_iuemz</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/attributes/test_attributes_format_id_format.rst#L16">testcase__test_rules_file_based__test_rst_files[attributes/test_attributes_format_id_format.rst]_erbpm</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/id_contains_feature/test_id_contains_feature.rst#L16">testcase__test_rules_file_based__test_rst_files[id_contains_feature/test_id_contains_feature.rst]_mfmpm</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/options/test_options_extra_option.rst#L16">testcase__test_rules_file_based__test_rst_files[options/test_options_extra_option.rst]_juqyk</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/options/test_options_options.rst#L16">testcase__test_rules_file_based__test_rst_files[options/test_options_options.rst]_dohtw</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/test_check_options.py#L93">testcase__TestCheckOptions__test_unknown_option_present_in_neither_req_opt_neither_opt_opt_hljdo</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/test_metamodel__init__.py#L45">testcase__test_metamodel__init____test_returns_empty_list_when_filter_is_empty_zppdj</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/test_metamodel__init__.py#L55">testcase__test_metamodel__init____test_returns_valid_checks_xqits</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/test_metamodel__init__.py#L66">testcase__test_metamodel__init____test_strips_whitespace_unask</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/test_metamodel__init__.py#L77">testcase__test_metamodel__init____test_raises_assertion_for_invalid_check_ubfli</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/attributes/test_prohibited_words.rst#L17">testcase__test_rules_file_based__test_rst_files[attributes/test_prohibited_words.rst]_bfndn</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/test_check_options.py#L69">testcase__TestCheckOptions__test_unknown_directive_jxeis</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/attributes/test_common_attr_version.rst#L16">testcase__test_rules_file_based__test_rst_files[attributes/test_common_attr_version.rst]_znvwq</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/attributes/test_validity.rst#L16">testcase__test_rules_file_based__test_rst_files[attributes/test_validity.rst]_mvgxy</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/safety/test_saf_violates.rst#L15">testcase__test_rules_file_based__test_rst_files[safety/test_saf_violates.rst]_jyeej</a></div>
 </div>
 </td>
 </tr>
@@ -1964,8 +1958,8 @@ for the qualification-relevant malfunctions.</p>
 <td><p>PR review</p></td>
 <td><p>—</p></td>
 <td><div class="line-block">
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/graph/test_metamodel_graph.rst#L15">testcase__test_rules_file_based__test_rst_files[graph/test_metamodel_graph.rst]_cjues</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/graph/test_invalid_graph.rst#L16">testcase__test_rules_file_based__test_rst_files[graph/test_invalid_graph.rst]_jsazl</a></div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/graph/test_metamodel_graph.rst#L15">testcase__test_rules_file_based__test_rst_files[graph/test_metamodel_graph.rst]_cjues</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/graph/test_invalid_graph.rst#L16">testcase__test_rules_file_based__test_rst_files[graph/test_invalid_graph.rst]_jsazl</a></div>
 </div>
 </td>
 </tr>
@@ -1978,22 +1972,22 @@ for the qualification-relevant malfunctions.</p>
 <td><p>—</p></td>
 <td><p>—</p></td>
 <td><div class="line-block">
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L26">testcase__test_traceability_metrics__test_get_need_types_by_tags_returns_matching_directives_only_cqzop</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L87">testcase__test_traceability_metrics__test_get_need_types_by_tags_returns_empty_on_non_match_bzaaz</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[  -False]_oqnnm</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[text-True]_vynor</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[value2-False]_obmrz</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[value3-True]_pyolk</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[0-False]_dlylm</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[1-True]_lpcqy</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[None-False]_camsg</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L141">testcase__test_traceability_metrics__test_safe_percent_zero[3-0-100.0]_vqmuf</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L141">testcase__test_traceability_metrics__test_safe_percent_zero[1-4-25.0]_mxxkz</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L155">testcase__test_traceability_metrics__test_calculate_requirement_metrics_counts_links_and_missing_ids_zjedt</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L184">testcase__test_traceability_metrics__test_calculate_requirement_metrics_non_fully_linked_pldcv</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L210">testcase__test_traceability_metrics__test_calculate_requirement_metrics_non_fully_linked_2_ohrrq</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metrics/tests/test_traceability_metrics.py#L236">testcase__test_traceability_metrics__test_calculate_test_metrics_counts_linked_tests_and_broken_refs_atrpa</a>,</div>
-<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/a91792f8f02878f0ec5d2defca6306f7770b5eb5/src/extensions/score_metamodel/tests/rst/options/test_options_verification_report.rst#L16">testcase__test_rules_file_based__test_rst_files[options/test_options_verification_report.rst]_esxsi</a></div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L26">testcase__test_traceability_metrics__test_get_need_types_by_tags_returns_matching_directives_only_cqzop</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L87">testcase__test_traceability_metrics__test_get_need_types_by_tags_returns_empty_on_non_match_bzaaz</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[  -False]_oqnnm</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[text-True]_vynor</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[value2-False]_obmrz</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[value3-True]_pyolk</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[0-False]_dlylm</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[1-True]_lpcqy</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L116">testcase__test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[None-False]_camsg</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L141">testcase__test_traceability_metrics__test_safe_percent_zero[3-0-100.0]_vqmuf</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L141">testcase__test_traceability_metrics__test_safe_percent_zero[1-4-25.0]_mxxkz</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L155">testcase__test_traceability_metrics__test_calculate_requirement_metrics_counts_links_and_missing_ids_zjedt</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L184">testcase__test_traceability_metrics__test_calculate_requirement_metrics_non_fully_linked_pldcv</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L210">testcase__test_traceability_metrics__test_calculate_requirement_metrics_non_fully_linked_2_ohrrq</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metrics/tests/test_traceability_metrics.py#L236">testcase__test_traceability_metrics__test_calculate_test_metrics_counts_linked_tests_and_broken_refs_atrpa</a>,</div>
+<div class="line"><a class="reference external" href="https://github.com/eclipse-score/docs-as-code/blob/28f9800d72408d2f1d173760a43ff967f0c03b78/src/extensions/score_metamodel/tests/rst/options/test_options_verification_report.rst#L16">testcase__test_rules_file_based__test_rst_files[options/test_options_verification_report.rst]_esxsi</a></div>
 </div>
 </td>
 </tr>
@@ -2013,7 +2007,7 @@ for the qualification-relevant malfunctions.</p>
 </section>
 <section id="details">
 <h2>Details<a class="headerlink" href="#details" title="Link to this heading">#</a></h2>
-<div class="need_container docutils container" id="SNCB-4a17c341">
+<div class="need_container docutils container" id="SNCB-d22777e0">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_usecase table" id="tool_usecase__docs_as_code__build_ci">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -2046,7 +2040,7 @@ for the qualification-relevant malfunctions.</p>
 safety-relevant danger is the <em>silent</em> failure — a missing warning
 or a wrong output published undetected.
 A loud CI abort is safe: no wrong output enters the baseline.</p>
-<div class="need_container docutils container" id="SNCB-a7cd86e2">
+<div class="need_container docutils container" id="SNCB-2d66f87c">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_potential_tool_malfunction table" id="potential_tool_malfunction__docs_as_code__m1">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -2102,7 +2096,7 @@ Confidence (automatic calculation): low.</p>
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-e4be1c24">
+<div class="need_container docutils container" id="SNCB-8f83a765">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_potential_tool_malfunction table" id="potential_tool_malfunction__docs_as_code__m2">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -2158,7 +2152,7 @@ Further additional safety measure required: yes (qualification).</p>
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-eb4b57fe">
+<div class="need_container docutils container" id="SNCB-7da1c628">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_potential_tool_malfunction table" id="potential_tool_malfunction__docs_as_code__m3">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -2212,7 +2206,7 @@ Confidence (automatic calculation): low.</p>
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-69d2b676">
+<div class="need_container docutils container" id="SNCB-8c2beefc">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_potential_tool_malfunction table" id="potential_tool_malfunction__docs_as_code__m5">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -2267,7 +2261,7 @@ Confidence (automatic calculation): low.</p>
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-94a7dff3">
+<div class="need_container docutils container" id="SNCB-b41a9c37">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_potential_tool_malfunction table" id="potential_tool_malfunction__docs_as_code__m6">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -2323,7 +2317,7 @@ Confidence (automatic calculation): low.</p>
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-334415d6">
+<div class="need_container docutils container" id="SNCB-68f176af">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_potential_tool_malfunction table" id="potential_tool_malfunction__docs_as_code__m7">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -2394,7 +2388,7 @@ Confidence (automatic calculation): low.</p>
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-31a59f41">
+<div class="need_container docutils container" id="SNCB-259b1eb1">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_usecase table" id="tool_usecase__docs_as_code__pr_review">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -2441,7 +2435,7 @@ Still, for silent wrong outputs the gated CI stays green.</p></td>
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-37822cfb">
+<div class="need_container docutils container" id="SNCB-12a2129c">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_usecase table" id="tool_usecase__docs_as_code__derived_view">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -2474,7 +2468,7 @@ Still, for silent wrong outputs the gated CI stays green.</p></td>
 the authoritative safety artifacts are mostly the source-controlled work products.
 There are two exceptions, the architecture views (see M4) and backlinks (see M8).
 Rendering/preview defects affect reviewer convenience, not safety evidence.</p>
-<div class="need_container docutils container" id="SNCB-049ba3ed">
+<div class="need_container docutils container" id="SNCB-7523d12f">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_potential_tool_malfunction table" id="potential_tool_malfunction__docs_as_code__m4">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -2529,7 +2523,7 @@ Confidence (automatic calculation): high.</p>
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-ed8c447d">
+<div class="need_container docutils container" id="SNCB-134c7429">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_potential_tool_malfunction table" id="potential_tool_malfunction__docs_as_code__m8">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -2583,7 +2577,7 @@ Confidence (automatic calculation): low.</p>
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-fb0ece3d">
+<div class="need_container docutils container" id="SNCB-d3ac279f">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_potential_tool_malfunction table" id="potential_tool_malfunction__docs_as_code__m9">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
