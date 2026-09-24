@@ -53,8 +53,8 @@ def score_pytest(name, srcs, args = [], data = [], deps = [], env = {}, plugins 
         already_in_deps = False
         for dep in deps:
             if str(dep).endswith(label_suffix):
-                # if str(dep) != docs_dep:
-                #     fail("Please do not provide your own %s version. We want to use the same %s version everywhere." % (pkg, pkg))
+                if str(dep) != docs_dep:
+                    fail("Please do not provide your own %s version. We want to use the same %s version everywhere." % (pkg, pkg))
                 already_in_deps = True
         if not already_in_deps:
             deps = deps + [docs_dep]
