@@ -10,6 +10,8 @@
       },
       "needs": {
         "comp__modern_component": {
+          "bazel_target": "@@//src/tests/docs_bzl/scenarios/reference_integration/modern_module/docs/components/component:component_sources",
+          "bazel_type": "filegroup",
           "belongs_to": [
             "feat__modern_component"
           ],

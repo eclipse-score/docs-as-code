@@ -23,8 +23,11 @@ filegroup(
 # ``code_targets`` so its traceability annotation exercises the source-link
 # generation path used by real component bundles.
 docs_bundle(
-    name = "legacy_component",
+    # Deliberately keep the Bazel target name independent from the Need ID.
+    # The explicit primary_need_id is the only association used for metadata.
+    name = "docs_bundle",
     source_dir = ".",
     code_targets = [":component_sources"],
+    primary_need_id = "tool_req__legacy_component",
     visibility = ["//visibility:public"],
 )

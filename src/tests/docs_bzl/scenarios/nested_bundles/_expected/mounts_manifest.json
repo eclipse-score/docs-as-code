@@ -10,7 +10,8 @@
           }
         ],
         "label": "@@//src/tests/docs_bzl/scenarios/nested_bundles:docs_bundle",
-        "name": "docs_bundle"
+        "name": "docs_bundle",
+        "primary_need_id": ""
       },
       "data": [],
       "entry_doc": "index",
@@ -28,7 +29,8 @@
       "bundle": {
         "code_targets": [],
         "label": "@@//src/tests/docs_bzl/scenarios/nested_bundles:parent",
-        "name": "parent"
+        "name": "parent",
+        "primary_need_id": ""
       },
       "data": [
         "src/tests/docs_bzl/scenarios/nested_bundles/generated/generated_output.txt"
@@ -61,7 +63,8 @@
           }
         ],
         "label": "@@//src/tests/docs_bzl/scenarios/nested_bundles:child",
-        "name": "child"
+        "name": "child",
+        "primary_need_id": ""
       },
       "data": [],
       "entry_doc": "landing",

@@ -68,10 +68,11 @@ def _need(
 
 
 def _bundle() -> BundleMetadata:
-    """Create a bundle named ``memory`` with one direct Bazel target."""
+    """Create a bundle with an explicitly selected primary Need."""
     return BundleMetadata(
         label="//:memory",
-        name="memory",
+        name="unrelated_bundle_name",
+        primary_need_id="comp__memory",
         code_targets=(BazelTarget(label="//:memory_core", type="cc_library"),),
     )
 
@@ -97,10 +98,10 @@ def test_multiple_bundle_targets_keep_declaration_order_in_json() -> None:
     }
 
 
-def test_matching_updates_need_in_place_and_returns_affected_document(
+def test_explicit_primary_need_is_updated_in_place_and_returns_affected_document(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    """The ``memory`` bundle adds its target to the local ``comp__memory`` Need."""
+    """The configured primary Need receives the bundle's direct target."""
     need = _need()
     original_content = need.content
 
@@ -148,7 +149,8 @@ def test_external_bundle_updates_local_need_like_internal_bundle(
 
     external_bundle = BundleMetadata(
         label="@@external_repo//:memory",
-        name="memory",
+        name="another_unrelated_name",
+        primary_need_id="comp__memory",
         code_targets=_bundle().code_targets,
     )
     monkeypatch.setattr(bundle_metadata, "SphinxNeedsData", FakeNeedsData)
@@ -197,10 +199,10 @@ def test_unchanged_bundle_metadata_does_not_rewrite_the_document(
     assert need["bazel_type"] == "cc_library"
 
 
-def test_bundle_metadata_is_cleared_when_matching_is_lost(
+def test_bundle_metadata_is_cleared_when_primary_need_is_missing(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    """A renamed bundle no longer matches and loses its old metadata."""
+    """A missing primary Need association loses stale bundle metadata."""
     need = _need(
         bazel_target="//:memory_core",
         bazel_type="cc_library",
@@ -216,6 +218,7 @@ def test_bundle_metadata_is_cleared_when_matching_is_lost(
     unmatched_bundle = BundleMetadata(
         label="//:memory",
         name="other",
+        primary_need_id="comp__other",
         code_targets=_bundle().code_targets,
     )
     monkeypatch.setattr(bundle_metadata, "SphinxNeedsData", FakeNeedsData)

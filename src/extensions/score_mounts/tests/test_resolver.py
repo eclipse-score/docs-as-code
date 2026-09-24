@@ -133,6 +133,7 @@ def test_load_bundle_metadata_and_direct_targets(tmp_path: Path) -> None:
                     "bundle": {
                         "label": "@@//pkg:memory",
                         "name": "memory",
+                        "primary_need_id": "comp__memory",
                         "code_targets": [
                             {"label": "@@//pkg:memory_core", "type": "cc_library"},
                             {"label": "@@//pkg:memory_api", "type": "cc_library"},
@@ -149,6 +150,7 @@ def test_load_bundle_metadata_and_direct_targets(tmp_path: Path) -> None:
     assert result.mounts[0].bundle == BundleMetadata(
         label="@@//pkg:memory",
         name="memory",
+        primary_need_id="comp__memory",
         code_targets=(
             BazelTarget(label="@@//pkg:memory_core", type="cc_library"),
             BazelTarget(label="@@//pkg:memory_api", type="cc_library"),

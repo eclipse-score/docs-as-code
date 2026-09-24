@@ -226,6 +226,7 @@ def _declare_docs_bundle(
     entry_doc = "index",
     bundles = [],
     code_targets = [],
+    primary_need_id = "",
     visibility = None,
     **kwargs):
     """Declare the shared bundle target implementation.
@@ -263,6 +264,9 @@ def _declare_docs_bundle(
       code_targets: Implementation targets or filegroups to scan for source-code
                     links. Implementation target source files and their dependencies
                     are collected recursively; filegroups expand to their files.
+      primary_need_id: Sphinx-Needs ID of the primary Need representing this
+                       bundle. Other Needs may remain in the bundle; only this
+                       Need receives bundle-level target metadata.
       visibility: Target visibility.
       **kwargs: Additional attributes forwarded to the underlying rule.
     """
@@ -305,6 +309,7 @@ def _declare_docs_bundle(
         bundles = bundles,
         data = bundle_data,
         code_targets = code_targets,
+        primary_need_id = primary_need_id,
         visibility = visibility,
         **kwargs
     )
@@ -398,6 +403,7 @@ def docs_bundle(
     entry_doc = "index",
     bundles = [],
     code_targets = [],
+    primary_need_id = "",
     visibility = None,
     **kwargs):
     """Declare a reusable documentation bundle.
@@ -415,6 +421,7 @@ def docs_bundle(
         entry_doc = entry_doc,
         bundles = bundles,
         code_targets = code_targets,
+        primary_need_id = primary_need_id,
         visibility = visibility,
         **kwargs
     )
@@ -500,6 +507,7 @@ def docs(
         deps = [],
         external_needs = [],
         code_targets = [],
+        primary_need_id = "",
         test_sources = [],
         known_good = None,
         metamodel = None,
@@ -523,6 +531,9 @@ def docs(
       code_targets: Implementation targets or filegroups to scan for source code
                     links. Implementation targets are scanned recursively; filegroups
                     expand to their files.
+      primary_need_id: Sphinx-Needs ID of the primary Need representing this
+                       documentation project and its root bundle. Other Needs
+                       remain unchanged.
       test_sources: Optional list of repo-relative directory paths which will be used to filter testcases for documentation generation.
                     When empty (default), all testcases found in `bazel-testlogs` will be used.
       known_good: Optional label to a "known good" JSON file for source links.
@@ -586,6 +597,7 @@ def docs(
         entry_doc = "index",
         bundles = bundles,
         code_targets = code_targets,
+        primary_need_id = primary_need_id,
         visibility = ["//visibility:public"],
         tags = ["manual"]
     )

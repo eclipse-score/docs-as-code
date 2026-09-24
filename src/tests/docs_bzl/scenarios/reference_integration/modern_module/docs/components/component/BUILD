@@ -28,8 +28,12 @@ filegroup(
 # requirement links to the platform feature, so the component Needs target is
 # valid only when the parent module supplies that external Needs.
 docs_bundle(
-    name = "modern_component",
+    # Deliberately keep the Bazel target name independent from the Need ID.
+    # The component Need is selected explicitly even though this page contains
+    # feature, component, requirement, and tool Needs.
+    name = "docs_bundle",
     source_dir = ".",
     code_targets = [":component_sources"],
+    primary_need_id = "comp__modern_component",
     visibility = ["//visibility:public"],
 )

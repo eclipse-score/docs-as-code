@@ -39,7 +39,8 @@ Each manifest entry contains:
 * ``mount_at`` and ``attach_to`` — the already-composed Sphinx placement; and
 * ``entry_doc`` — the canonical entry document declared by the source bundle.
 * ``external`` — whether the directory belongs to another Bazel module;
-* ``bundle`` — the declaring bundle's Bazel label, name, and direct targets;
+* ``bundle`` — the declaring bundle's Bazel label, name, explicit primary Need
+  ID, and direct targets;
 * ``root_bundle`` — whether this physical entry belongs to the root bundle of
   the current composition. This is composition-specific: the same bundle can
   be a root in a standalone manifest and a child in another composition.
@@ -72,8 +73,9 @@ the mount integration's recorded output, while primary docnames come from
 Sphinx's discovery set. Documents discovered through data-only mounts are
 intentionally omitted because those mounts provide auxiliary files rather than
 bundle-owned source roots. This avoids assigning a bundle to skipped,
-conflicting, or data-only mounts. The matcher in ``score_metamodel`` will
-consume this mapping without inspecting paths or mount configuration.
+conflicting, or data-only mounts. The bundle metadata pass in
+``score_metamodel`` consumes this mapping without inspecting paths or mount
+configuration.
 
 The rule rejects conflicting final placements before Sphinx starts. A mount
 without ``attach_to`` is attached to the ``index`` document beside its

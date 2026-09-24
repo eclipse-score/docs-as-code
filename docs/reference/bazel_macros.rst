@@ -116,6 +116,11 @@ Minimal example (root ``BUILD``)
   generated JSON is supplied to ``live_preview`` just like a normal documentation
   build.
 
+- ``primary_need_id`` (string, optional)
+  ID of the Sphinx-Needs item that represents the primary subject of this
+  documentation project. A project may contain many other Needs; when this
+  value is set, bundle-level target metadata is written only to this Need.
+
 - ``external_needs`` (list of bazel labels)
   External ``:needs_json_file`` targets from other modules/repositories
   for referencing their needs.
@@ -166,7 +171,7 @@ site).
        visibility = ["//visibility:public"],
    )
 
-Signature: ``docs_bundle(name, source_dir = None, srcs = [], data = [], entry_doc = "index", bundles = [], code_targets = [], visibility = None)``.
+Signature: ``docs_bundle(name, source_dir = None, srcs = [], data = [], entry_doc = "index", bundles = [], code_targets = [], primary_need_id = "", visibility = None)``.
 
 - ``source_dir`` (string, optional)
   Directory holding the bundle's own doc sources. It is globbed the same way as
@@ -242,3 +247,9 @@ Signature: ``docs_bundle(name, source_dir = None, srcs = [], data = [], entry_do
    recursively from their ``deps``; filegroups expand to their files. The bundle
    owns one cached scan result; Bazel only regenerates it when its collected source
    inputs change.
+
+- ``primary_need_id`` (string, optional)
+   ID of the local Sphinx-Needs item representing the primary subject of this
+   bundle. The bundle may contain many additional Needs; only this explicitly
+   selected Need receives bundle-level target metadata. The ID is independent
+   of the Bazel bundle target name.

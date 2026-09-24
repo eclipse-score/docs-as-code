@@ -68,4 +68,10 @@ uses. You may also pass filegroups; their files are scanned directly.
          ],
          source_dir = "docs",
          code_targets = [":some_application"],
+         primary_need_id = "comp__some_component",
    )
+
+``primary_need_id`` is optional and identifies the single Need representing
+the bundle's primary subject. A bundle can contain many other Needs; target
+metadata is attached only to this explicitly selected Need. The ID is never
+derived from the Bazel bundle name.

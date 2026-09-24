@@ -39,9 +39,9 @@ DocsBundleInfo = provider(
     doc = "A documentation bundle with its source and placement metadata.",
     fields = {
         # Each entry carries the source and placement information needed by
-        # the runtime manifest, plus the identity and direct-target metadata
-        # of the bundle that declared it.
-        "entries": "Ordered entries with source, placement, and direct-target metadata.",
+        # the runtime manifest, plus the identity, primary Need, and
+        # direct-target metadata of the bundle that declared it.
+        "entries": "Ordered entries with source, placement, primary Need, and direct-target metadata.",
         "own_source_files": "This bundle's direct source files, excluding nested bundles.",
         "source_dir_execroot_path": "Execution-root-relative path of this bundle's direct source root.",
         "sourcelinks": "Source-code-link JSON files together with their owning repository.",
@@ -259,6 +259,7 @@ def _rebase_bundle_entry(entry, mount_at, attach_to, toctree_index):
         # the composition graph.
         bundle_label = entry.bundle_label,
         bundle_name = entry.bundle_name,
+        primary_need_id = entry.primary_need_id,
         code_targets = entry.code_targets,
         # This entry is now part of a parent composition. It may have been the
         # root of its own standalone bundle, but it is a child entry here and
@@ -318,6 +319,7 @@ def _docs_bundle_impl(ctx):
     own_data = depset(direct = ctx.files.data)
     own_bundle_label = str(ctx.label)
     own_bundle_name = ctx.label.name
+    own_primary_need_id = ctx.attr.primary_need_id
     own_code_targets = [
         struct(
             label = str(target.label),
@@ -355,6 +357,7 @@ def _docs_bundle_impl(ctx):
             data = own_data,
             bundle_label = own_bundle_label,
             bundle_name = own_bundle_name,
+            primary_need_id = own_primary_need_id,
             # This direct entry belongs to the current composition's root
             # bundle. _rebase_bundle_entry changes this to false if a parent
             # embeds the bundle as a child.
@@ -397,6 +400,7 @@ def _docs_bundle_impl(ctx):
             data = own_data,
             bundle_label = own_bundle_label,
             bundle_name = own_bundle_name,
+            primary_need_id = own_primary_need_id,
             # This direct entry belongs to the current composition's root
             # bundle. _rebase_bundle_entry changes this to false if a parent
             # embeds the bundle as a child.
@@ -428,6 +432,7 @@ def _docs_bundle_impl(ctx):
             data = own_data,
             bundle_label = own_bundle_label,
             bundle_name = own_bundle_name,
+            primary_need_id = own_primary_need_id,
             # This direct entry belongs to the current composition's root
             # bundle. _rebase_bundle_entry changes this to false if a parent
             # embeds the bundle as a child.
@@ -494,6 +499,9 @@ _docs_bundle = rule(
         # those cases do not call _source_dir_runtime_path().
         "source_dir": attr.string(default = ""),
         "entry_doc": attr.string(default = "index"),
+        # Optional explicit association with the Need representing this
+        # bundle. The value is a Sphinx-Needs ID, not a Bazel label.
+        "primary_need_id": attr.string(default = ""),
         "bundles": attr.label_list(providers = [DocsBundleInfo]),
         "bundle_mount_ats": attr.string_list(),
         "bundle_attach_tos": attr.string_list(),
@@ -514,6 +522,7 @@ def create_bundle(
     sourcelinks_json = None,
     source_dir = None,
     entry_doc = "index",
+    primary_need_id = "",
     data = [],
     code_targets = [],
     visibility = None,
@@ -531,6 +540,7 @@ def create_bundle(
         sourcelinks_json = sourcelinks_json,
         source_dir = source_dir if source_dir != None else "",
         entry_doc = entry_doc,
+        primary_need_id = primary_need_id,
         bundles = [bundle.bundle for bundle in parsed_bundles],
         bundle_mount_ats = [bundle.mount_at for bundle in parsed_bundles],
         bundle_attach_tos = [bundle.attach_to for bundle in parsed_bundles],
