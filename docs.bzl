@@ -226,7 +226,7 @@ def _declare_docs_bundle(
     entry_doc = "index",
     bundles = [],
     code_targets = [],
-    primary_need_id = "",
+    primary_need_id = None,
     visibility = None,
     **kwargs):
     """Declare the shared bundle target implementation.
@@ -403,7 +403,7 @@ def docs_bundle(
     entry_doc = "index",
     bundles = [],
     code_targets = [],
-    primary_need_id = "",
+    primary_need_id = None,
     visibility = None,
     **kwargs):
     """Declare a reusable documentation bundle.
@@ -507,7 +507,7 @@ def docs(
         deps = [],
         external_needs = [],
         code_targets = [],
-        primary_need_id = "",
+        primary_need_id = None,
         test_sources = [],
         known_good = None,
         metamodel = None,

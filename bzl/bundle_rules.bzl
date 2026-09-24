@@ -522,7 +522,7 @@ def create_bundle(
     sourcelinks_json = None,
     source_dir = None,
     entry_doc = "index",
-    primary_need_id = "",
+    primary_need_id = None,
     data = [],
     code_targets = [],
     visibility = None,
@@ -533,6 +533,13 @@ def create_bundle(
     because they use different runtime path and staging rules.
     """
     parsed_bundles = [_parse_bundle_declaration(declaration) for declaration in bundles]
+    # The public macros use ``None`` to represent an omitted optional ID, but
+    # the underlying Bazel rule has a string attribute and the manifest schema
+    # keeps this field string-valued. Normalize at that boundary so callers do
+    # not need to know about the rule's empty-string sentinel.
+    normalized_primary_need_id = (
+        primary_need_id if primary_need_id != None else ""
+    )
     _docs_bundle(
         name = name,
         source_dir_globbed = source_dir_globbed,
@@ -540,7 +547,7 @@ def create_bundle(
         sourcelinks_json = sourcelinks_json,
         source_dir = source_dir if source_dir != None else "",
         entry_doc = entry_doc,
-        primary_need_id = primary_need_id,
+        primary_need_id = normalized_primary_need_id,
         bundles = [bundle.bundle for bundle in parsed_bundles],
         bundle_mount_ats = [bundle.mount_at for bundle in parsed_bundles],
         bundle_attach_tos = [bundle.attach_to for bundle in parsed_bundles],
