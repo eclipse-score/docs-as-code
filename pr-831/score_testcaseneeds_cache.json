@@ -5628,7 +5628,7 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_needs_templates__test_qualification_evidence_deduplicates_shared_requirements",
+    "name": "test_needs_templates__test_tool_qualification_matrix_groups_shared_requirements",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
     "line": "176",
     "result": "passed",
