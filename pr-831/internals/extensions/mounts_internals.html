@@ -502,7 +502,8 @@ walked;</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">mount_at</span></code> and <code class="docutils literal notranslate"><span class="pre">attach_to</span></code> — the already-composed Sphinx placement; and</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">entry_doc</span></code> — the canonical entry document declared by the source bundle.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">external</span></code> — whether the directory belongs to another Bazel module;</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">bundle</span></code> — the declaring bundle’s Bazel label, name, and direct targets;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bundle</span></code> — the declaring bundle’s Bazel label, name, explicit primary Need
+ID, and direct targets;</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">root_bundle</span></code> — whether this physical entry belongs to the root bundle of
 the current composition. This is composition-specific: the same bundle can
 be a root in a standalone manifest and a child in another composition.</p></li>
@@ -532,8 +533,9 @@ the mount integration’s recorded output, while primary docnames come from
 Sphinx’s discovery set. Documents discovered through data-only mounts are
 intentionally omitted because those mounts provide auxiliary files rather than
 bundle-owned source roots. This avoids assigning a bundle to skipped,
-conflicting, or data-only mounts. The matcher in <code class="docutils literal notranslate"><span class="pre">score_metamodel</span></code> will
-consume this mapping without inspecting paths or mount configuration.</p>
+conflicting, or data-only mounts. The bundle metadata pass in
+<code class="docutils literal notranslate"><span class="pre">score_metamodel</span></code> consumes this mapping without inspecting paths or mount
+configuration.</p>
 <p>The rule rejects conflicting final placements before Sphinx starts. A mount
 without <code class="docutils literal notranslate"><span class="pre">attach_to</span></code> is attached to the <code class="docutils literal notranslate"><span class="pre">index</span></code> document beside its
 <code class="docutils literal notranslate"><span class="pre">mount_at</span></code>; <code class="docutils literal notranslate"><span class="pre">attach_to</span></code> overrides that target. The Python

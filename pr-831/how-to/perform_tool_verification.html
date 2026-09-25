@@ -875,7 +875,8 @@ availability does not; reflect that result in the TVR.</p>
 <ul class="simple">
 <li><p><strong>Tool Verification Report (TVR, <code class="docutils literal notranslate"><span class="pre">doc_tool</span></code>)</strong> — records the SCORE
 tool-management state and the overall evaluation result.</p></li>
-<li><p><strong>Tool requirements (<code class="docutils literal notranslate"><span class="pre">tool_req</span></code>)</strong> — what the project relies on the tool to do.</p></li>
+<li><p><strong>Tool requirements (<code class="docutils literal notranslate"><span class="pre">tool_req</span></code>)</strong> — capabilities or behaviours provided by
+the tool, independent of whether a particular project use case uses them.</p></li>
 <li><p><strong>Tool use cases (<code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code>)</strong> — the usage context in which the project
 relies on the tool.</p></li>
 <li><p><strong>Potential tool malfunctions (<code class="docutils literal notranslate"><span class="pre">potential_tool_malfunction</span></code>)</strong> — ways in which
@@ -890,28 +891,24 @@ qualification, these verify the relevant <code class="docutils literal notransla
     UC[&quot;tool_usecase&lt;br/&gt;Tool Use Case&quot;]
     PM[&quot;potential_tool_malfunction&lt;br/&gt;Potential Tool Malfunction&quot;]
 
-    STKH[&quot;stkh_req&lt;br/&gt;Stakeholder Requirement&quot;]
+    UP[&quot;upstream requirements&lt;br/&gt;(stkh_req, gd_req, feat_req, comp_req)&quot;]
     TR[&quot;tool_req&lt;br/&gt;Tool Requirement&quot;]
     TC[&quot;testcase&lt;br/&gt;Qualification Evidence&quot;]
 
-    UC --&gt;|&quot;realizes&lt;br/&gt;(optional)&quot;| STKH
-    UC --&gt;|&quot;realized_by&lt;br/&gt;(optional)&quot;| TR
-
     PM --&gt;|&quot;nested under&lt;br/&gt;(parent_needs)&quot;| UC
-    PM --&gt;|&quot;violates&quot;| STKH
     PM --&gt;|&quot;violates&quot;| TR
 
+    TR --&gt;|&quot;satisfies&lt;br/&gt;(optional)&quot;| UP
     TC --&gt;|&quot;fully_verifies /&lt;br/&gt;partially_verifies&quot;| TR
-    TR --&gt;|&quot;realizes&lt;br/&gt;(optional)&quot;| STKH
 
     style UC fill:#E1D5E7
     style PM fill:#F8CECC
-    style STKH fill:#DAE8FC
+    style UP fill:#DAE8FC
     style TR fill:#F5F5F5
-    </pre><p>The two analysis views answer different questions:</p>
+    </pre><p>Two analysis perspectives answer different questions:</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
-<tr class="row-odd"><th class="head"><p>View</p></th>
+<tr class="row-odd"><th class="head"><p>Perspective</p></th>
 <th class="head"><p>Question</p></th>
 </tr>
 </thead>
@@ -950,7 +947,7 @@ evidence.</p>
 <td><p>Identify the exact internal release/version</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">tool_req</span></code></p></td>
-<td><p>Define the behaviour <strong>our project relies on</strong></p></td>
+<td><p>Select the tool capabilities relevant to the evaluated use cases</p></td>
 <td><p>Reuse existing tool requirements where suitable</p></td>
 </tr>
 <tr class="row-even"><td><p>Implementation</p></td>
@@ -1013,15 +1010,26 @@ now managed through the SCORE Tool Management process.</p>
 <li><p>SCORE Tool Confidence Level (SCORE TCL), derived from the owned malfunctions</p></li>
 </ul>
 <p>The report author does not provide these summary values.</p>
-<p>Example structure:</p>
+<p>Record the tool’s scope and purpose, relevant configuration, environment, constraints,
+inputs, outputs, and available documentation when creating the TVR. Inputs and outputs
+define the usage boundary and are needed to identify potential malfunctions.</p>
+<p>The introduction should make the purpose and intended use visible before the
+detailed evaluation. Model each intended use as a <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code>; the generated
+report places an overview of those use cases before the evaluation result.</p>
+<pre  class="mermaid">
+        flowchart LR
+    P[&quot;Tool purpose and scope&quot;] --&gt; U[&quot;Intended use cases&lt;br/&gt;(tool_usecase)&quot;]
+    U --&gt; M[&quot;Potential malfunctions&quot;]
+    M --&gt; Q[&quot;Qualification of relevant&lt;br/&gt;(tool_req) capabilities&quot;]
+    </pre><p>Example structure:</p>
 <div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>```{doc_tool} S-CORE Docs-as-Code Tool Verification Report
 :id: doc_tool__s_core_docs_as_code
 :status: draft
 :security_affected: NO
 :tool_version: &lt;exact version&gt;
 
-Describe the tool, its intended use, relevant configuration, environment,
-constraints, inputs, outputs, and available documentation.
+Describe the tool, its purpose and intended use, relevant configuration,
+environment, constraints, inputs, outputs, and available documentation.
 ```
 </pre></div>
 </div>
@@ -1057,43 +1065,44 @@ specific tool version or revision the evaluation applies to.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">tool_usecase</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">mandatory_links</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">belongs_to</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">doc_tool</span>
-<span class="w">  </span><span class="nt">optional_links</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">realized_by</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tool_req</span>
-<span class="w">    </span><span class="nt">realizes</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stkh_req</span>
 </pre></div>
 </div>
 <p>The normal relationship is therefore:</p>
 <pre  class="mermaid">
         flowchart LR
-    STKH[&quot;stkh_req&quot;]
+    UP[&quot;upstream requirements&lt;br/&gt;(stkh_req, gd_req, comp_req, feat_req)&quot;]
     DT[&quot;doc_tool&quot;]
     UC[&quot;tool_usecase&quot;]
     TR[&quot;tool_req&quot;]
 
     UC --&gt;|&quot;belongs_to&lt;br/&gt;(mandatory)&quot;| DT
-    UC --&gt;|&quot;realizes&lt;br/&gt;(optional)&quot;| STKH
-    UC --&gt;|&quot;realized_by&lt;br/&gt;(optional)&quot;| TR
+    TR --&gt;|&quot;satisfies&lt;br/&gt;(optional)&quot;| UP
 
-    style STKH fill:#DAE8FC
+    style UP fill:#DAE8FC
     style UC fill:#E1D5E7
     style TR fill:#F5F5F5
-    </pre><section id="how-to-model-tool-usecase">
+    </pre><p>Tool requirements may satisfy upstream requirements, including <code class="docutils literal notranslate"><span class="pre">stkh_req</span></code>,
+<code class="docutils literal notranslate"><span class="pre">gd_req</span></code>, <code class="docutils literal notranslate"><span class="pre">feat_req</span></code>, and <code class="docutils literal notranslate"><span class="pre">comp_req</span></code>. The relevant upstream requirements should
+be linked through <code class="docutils literal notranslate"><span class="pre">tool_req.satisfies</span></code> when relating a tool capability to an
+upstream need.</p>
+<section id="how-to-model-tool-usecase">
 <h3>How to model <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code><a class="headerlink" href="#how-to-model-tool-usecase" title="Link to this heading">#</a></h3>
 <p>Every <code class="docutils literal notranslate"><span class="pre">evaluated</span></code>, <code class="docutils literal notranslate"><span class="pre">qualified</span></code>, or <code class="docutils literal notranslate"><span class="pre">released</span></code> TVR must own at least one
 <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code>. The use case records the context in which the project relies on
-the tool. Link it to a <code class="docutils literal notranslate"><span class="pre">tool_req</span></code> when a matching requirement exists; the
-<code class="docutils literal notranslate"><span class="pre">realized_by</span></code> link is optional so the context can be documented before that
-requirement has been defined.</p>
+the tool. The use case itself has no direct requirement links; the relevant
+<code class="docutils literal notranslate"><span class="pre">tool_req</span></code> needs are associated through the nested malfunctions, and upstream
+requirements are linked from those <code class="docutils literal notranslate"><span class="pre">tool_req</span></code> needs.</p>
 <p>For example:</p>
 <ul class="simple">
-<li><p>stakeholder requirement: the system-development process must provide valid
-requirements traceability,</p></li>
+<li><p>upstream requirement (e.g. <code class="docutils literal notranslate"><span class="pre">stkh_req</span></code>, <code class="docutils literal notranslate"><span class="pre">gd_req</span></code>, <code class="docutils literal notranslate"><span class="pre">feat_req</span></code>, <code class="docutils literal notranslate"><span class="pre">comp_req</span></code>): the
+system-development process must provide valid requirements traceability,</p></li>
 <li><p>tool use case: validate requirement traceability during documentation builds,</p></li>
 <li><p>tool requirement: unresolved requirement links must be reported.</p></li>
 </ul>
 <p>If an existing requirement already expresses the usage context exactly, avoid
 inventing additional behaviour in the use case. Keep it as a thin
-grouping/context element, whether or not it links to a <code class="docutils literal notranslate"><span class="pre">tool_req</span></code>.</p>
+grouping/context element. The relevant <code class="docutils literal notranslate"><span class="pre">tool_req</span></code> needs remain linked through
+the nested malfunctions.</p>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
 <p>Write each <code class="docutils literal notranslate"><span class="pre">potential_tool_malfunction</span></code> nested inside its <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code>. The
@@ -1108,8 +1117,6 @@ for an already well-scoped requirement.</p>
 <div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>```{tool_usecase} Validate requirement traceability during documentation builds
 :id: tool_usecase__docs_as_code__traceability
 :belongs_to: doc_tool__s_core_docs_as_code
-:realized_by: tool_req__docs_as_code__unresolved_links
-:realizes: stkh_req__docs_as_code__traceability
 
 The project relies on the documentation tooling to identify invalid or
 unresolved requirement links before documentation is accepted.
@@ -1128,7 +1135,7 @@ unresolved requirement links before documentation is accepted.
 </section>
 <section id="id1">
 <h3>External tool<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
-<p>Define the <code class="docutils literal notranslate"><span class="pre">tool_req</span></code> needs from <strong>our expectations of the tool</strong>, not by
+<p>Define the <code class="docutils literal notranslate"><span class="pre">tool_req</span></code> needs from the tool capability being evaluated, not by
 importing the vendor’s complete specification.</p>
 <p>Example:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Tool use case:
@@ -1141,9 +1148,9 @@ The tool shall report unresolved requirement links.
 </section>
 <section id="id2">
 <h3>Self-developed tool<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
-<p>Prefer linking the use case to existing <code class="docutils literal notranslate"><span class="pre">tool_req</span></code> needs.</p>
+<p>Prefer reusing existing <code class="docutils literal notranslate"><span class="pre">tool_req</span></code> needs in the nested malfunctions.</p>
 <p>Do not create separate “qualification requirements” when the normal tool
-requirements already describe the behaviour relied upon by the project.</p>
+requirements already describe the capability relevant to the project use case.</p>
 </section>
 </section>
 <hr class="docutils" />
@@ -1161,7 +1168,7 @@ behaviour could fail.</p>
 <span class="w">  </span><span class="nt">mandatory_links</span><span class="p">:</span>
 <span class="w">    </span><span class="c1"># Established by nesting the malfunction inside its tool use case.</span>
 <span class="w">    </span><span class="nt">parent_needs</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tool_usecase</span>
-<span class="w">    </span><span class="nt">violates</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stkh_req, tool_req</span>
+<span class="w">    </span><span class="nt">violates</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tool_req</span>
 </pre></div>
 </div>
 <p>The relationship is:</p>
@@ -1169,16 +1176,16 @@ behaviour could fail.</p>
         flowchart LR
     UC[&quot;tool_usecase&quot;]
     PM[&quot;potential_tool_malfunction&quot;]
-    STKH[&quot;stkh_req&quot;]
+    UP[&quot;upstream requirement&quot;]
     TR[&quot;tool_req&quot;]
 
     PM --&gt;|&quot;nested under&lt;br/&gt;(parent_needs)&quot;| UC
-    PM --&gt;|&quot;violates&quot;| STKH
     PM --&gt;|&quot;violates&quot;| TR
+    TR --&gt;|&quot;satisfies&quot;| UP
 
     style UC fill:#E1D5E7
     style PM fill:#F8CECC
-    style STKH fill:#DAE8FC
+    style UP fill:#DAE8FC
     style TR fill:#F5F5F5
     </pre><section id="what-is-a-useful-malfunction">
 <h3>What is a useful malfunction?<a class="headerlink" href="#what-is-a-useful-malfunction" title="Link to this heading">#</a></h3>
@@ -1207,27 +1214,21 @@ requirements we rely on is violated?</strong></p>
 the malfunction.</p>
 <p>Typical targets are:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">stkh_req</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">tool_req</span></code></p></li>
 </ul>
-<p>Do not link arbitrary downstream requirements merely because the malfunction
-could eventually contribute to an incorrect engineering decision.</p>
 </section>
 <section id="id3">
 <h3>Tool model example<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
 <div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>::::{tool_usecase} Validate requirement traceability during documentation builds
 :id: tool_usecase__docs_as_code__traceability
 :belongs_to: doc_tool__s_core_docs_as_code
-:realized_by: tool_req__docs_as_code__unresolved_links
-:realizes: stkh_req__docs_as_code__traceability
 
 The project relies on the documentation tool to detect invalid traceability.
 
 :::{potential_tool_malfunction} Unresolved requirement link is accepted as valid
 :id: potential_tool_malfunction__docs_as_code__unresolved_link_accepted
 :violates:
-  tool_req__docs_as_code__unresolved_links,
-  stkh_req__docs_as_code__traceability
+  tool_req__docs_as_code__unresolved_links
 :safety_affected: YES
 :detection_sufficient: NO
 
@@ -1238,14 +1239,14 @@ does not report the problem.
 </pre></div>
 </div>
 <p>There is no conceptual difference between external and self-developed tools in
-this step. Malfunctions are derived from the intended usage and the requirements
-the project relies on.</p>
-<p><code class="docutils literal notranslate"><span class="pre">detection_sufficient</span></code> is conditional. It is required for
-<code class="docutils literal notranslate"><span class="pre">safety_affected:</span> <span class="pre">YES</span></code>; it is not required for <code class="docutils literal notranslate"><span class="pre">safety_affected:</span> <span class="pre">NO</span></code> and is
-omitted for non-safety malfunctions. A safety-relevant malfunction with
-<code class="docutils literal notranslate"><span class="pre">detection_sufficient:</span> <span class="pre">YES</span></code> must also document a non-empty <code class="docutils literal notranslate"><span class="pre">safety_measures</span></code>
-value. The malfunction body remains the place for the human-readable reasoning
-that explains why the measure is sufficient or insufficient.</p>
+this step. Malfunctions are derived from the intended usage and the tool
+capabilities relevant to that usage.</p>
+<p><code class="docutils literal notranslate"><span class="pre">detection_sufficient</span></code> is only required in case of <code class="docutils literal notranslate"><span class="pre">safety_affected:</span> <span class="pre">YES</span></code>. A
+safety-relevant malfunction with <code class="docutils literal notranslate"><span class="pre">detection_sufficient:</span> <span class="pre">YES</span></code> must also document a
+non-empty <code class="docutils literal notranslate"><span class="pre">safety_measures</span></code> value. The malfunction body remains the place for the
+human-readable reasoning that explains why the measure is sufficient or insufficient.</p>
+<p>The same <code class="docutils literal notranslate"><span class="pre">tool_req</span></code> may be relevant to multiple use cases;
+evaluate its potential malfunctions separately for each usage context.</p>
 </section>
 </section>
 <hr class="docutils" />
@@ -1625,9 +1626,11 @@ Checklist.</p>
 <h2>Complete example — external tool<a class="headerlink" href="#complete-example-external-tool" title="Link to this heading">#</a></h2>
 <p>Assume an external documentation tool is used to validate requirement
 traceability.</p>
-<section id="stakeholder-requirement">
-<h3>Stakeholder requirement<a class="headerlink" href="#stakeholder-requirement" title="Link to this heading">#</a></h3>
-<p>A real <code class="docutils literal notranslate"><span class="pre">stkh_req</span></code> must provide the required SCORE metadata. For example:</p>
+<section id="upstream-requirement">
+<h3>Upstream requirement<a class="headerlink" href="#upstream-requirement" title="Link to this heading">#</a></h3>
+<p>An upstream requirement is represented by a concrete SCORE requirement type, such
+as <code class="docutils literal notranslate"><span class="pre">stkh_req</span></code>, <code class="docutils literal notranslate"><span class="pre">gd_req</span></code>, <code class="docutils literal notranslate"><span class="pre">feat_req</span></code>, or <code class="docutils literal notranslate"><span class="pre">comp_req</span></code>. This example uses the
+existing <code class="docutils literal notranslate"><span class="pre">stkh_req</span></code> type:</p>
 <div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>```{stkh_req} Provide valid verification traceability
 :id: stkh_req__docs_as_code__traceability
 :reqtype: Process
@@ -1658,8 +1661,6 @@ The tool shall report unresolved requirement links as errors.
 <div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>::::{tool_usecase} Validate requirement traceability during documentation builds
 :id: tool_usecase__docs_as_code__traceability
 :belongs_to: doc_tool__s_core_docs_as_code
-:realized_by: tool_req__docs_as_code__unresolved_links
-:realizes: stkh_req__docs_as_code__traceability
 
 The project relies on the documentation tool to detect invalid traceability
 before generated documentation is accepted.
@@ -1667,8 +1668,7 @@ before generated documentation is accepted.
 :::{potential_tool_malfunction} Unresolved requirement link is accepted as valid
 :id: potential_tool_malfunction__docs_as_code__unresolved_link_accepted
 :violates:
-  tool_req__docs_as_code__unresolved_links,
-  stkh_req__docs_as_code__traceability
+  tool_req__docs_as_code__unresolved_links
 :safety_affected: YES
 :detection_sufficient: NO
 
@@ -1680,18 +1680,16 @@ An unresolved requirement link is accepted as valid and no error is reported.
 <p>The resulting model is:</p>
 <pre  class="mermaid">
         flowchart LR
-    STKH[&quot;stkh_req__docs_as_code__traceability&quot;]
+    UP[&quot;stkh_req__docs_as_code__traceability&quot;]
     UC[&quot;tool_usecase__docs_as_code__traceability&quot;]
     TR[&quot;tool_req__docs_as_code__unresolved_links&quot;]
     PM[&quot;potential_tool_malfunction__docs_as_code__&lt;br/&gt;unresolved_link_accepted&quot;]
 
-    UC --&gt;|&quot;realizes&quot;| STKH
-    UC --&gt;|&quot;realized_by (optional)&quot;| TR
     PM --&gt;|&quot;nested under&lt;br/&gt;(parent_needs)&quot;| UC
-    PM --&gt;|&quot;violates&quot;| STKH
     PM --&gt;|&quot;violates&quot;| TR
+    TR --&gt;|&quot;satisfies&quot;| UP
 
-    style STKH fill:#DAE8FC
+    style UP fill:#DAE8FC
     style UC fill:#E1D5E7
     style TR fill:#F5F5F5
     style PM fill:#F8CECC
@@ -1748,8 +1746,6 @@ code.
 <div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>::::{tool_usecase} Generate production source from the approved model
 :id: tool_usecase__generator__generate_source
 :belongs_to: doc_tool__s_core_docs_as_code
-:realized_by: tool_req__generator__state_transitions
-:realizes: stkh_req__generator__approved_model
 
 The project relies on the generator to transform the approved model into
 production source code.
@@ -1757,8 +1753,7 @@ production source code.
 :::{potential_tool_malfunction} State transition is omitted from generated source
 :id: potential_tool_malfunction__generator__missing_transition
 :violates:
-  tool_req__generator__state_transitions,
-  stkh_req__generator__approved_model
+  tool_req__generator__state_transitions
 :safety_affected: YES
 :detection_sufficient: NO
 
@@ -1788,7 +1783,7 @@ changes.</p>
 <p>Typical triggers include:</p>
 <ul class="simple">
 <li><p>a new or changed tool use case,</p></li>
-<li><p>new or changed stakeholder requirements,</p></li>
+<li><p>new or changed upstream requirements (<code class="docutils literal notranslate"><span class="pre">stkh_req</span></code>, <code class="docutils literal notranslate"><span class="pre">gd_req</span></code>, <code class="docutils literal notranslate"><span class="pre">feat_req</span></code>, or <code class="docutils literal notranslate"><span class="pre">comp_req</span></code>),</p></li>
 <li><p>new or changed tool requirements,</p></li>
 <li><p>a changed tool version,</p></li>
 <li><p>a changed relevant configuration,</p></li>
@@ -1817,18 +1812,24 @@ intended usage or the detection measures.</p>
 <section id="treating-tool-usecase-as-a-new-requirement-level">
 <h3>Treating <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code> as a new requirement level<a class="headerlink" href="#treating-tool-usecase-as-a-new-requirement-level" title="Link to this heading">#</a></h3>
 <p>Do not invent new normative behaviour in <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code>.</p>
-<p>It is a <strong>usage-context / grouping element</strong> between stakeholder intent and
-concrete tool behaviour. For example, “validate requirement traceability during
+<p>A <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code> describes how the project uses the tool. A <code class="docutils literal notranslate"><span class="pre">tool_req</span></code> describes
+a capability or behaviour provided by the tool, regardless of whether the project
+uses it in a particular use case. The use case provides context and grouping
+without introducing an additional normative requirement level.</p>
+<p>For example, “validate requirement traceability during
 documentation builds” is a use case; “the tool shall report unresolved links”
-is the requirement. The use case adds context, not another requirement level.</p>
+is the tool requirement.</p>
+<p>Another example is the pair of use cases “Produce the platform components binaries”
+and “Create unit test binaries”, which both map to the tool requirement
+“the compiler shall create an executable from C++ source code”.</p>
+<p>The use case adds context, not another requirement level.</p>
 <pre  class="mermaid">
         flowchart LR
-    STKH[&quot;Stakeholder intent&quot;]
+    UP[&quot;Upstream requirement&quot;]
     UC[&quot;Usage context&quot;]
     TR[&quot;Concrete tool behaviour&quot;]
 
-    UC --&gt;|&quot;realizes&quot;| STKH
-    UC --&gt;|&quot;realized_by (optional)&quot;| TR
+    TR --&gt;|&quot;satisfies&quot;| UP
     </pre></section>
 <hr class="docutils" />
 <section id="using-generic-malfunctions">
@@ -1883,9 +1884,10 @@ mechanism prevent or detect it before the result is relied upon?</p>
 <h3>Duplicating external specifications<a class="headerlink" href="#duplicating-external-specifications" title="Link to this heading">#</a></h3>
 <p>Do not copy an external tool’s complete specification into <code class="docutils literal notranslate"><span class="pre">tool_req</span></code>.</p>
 <p>Do not copy almost the entire external C&amp;Q or qualification specification from
-the Internet either; capture only the behaviour and assumptions our project
-relies on.</p>
-<p>Model the behaviour <strong>our project relies on</strong>.</p>
+the Internet either; capture only the capabilities and assumptions relevant to
+the evaluated use cases.</p>
+<p>Model the tool capability being evaluated; describe the project context in the
+corresponding <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code>.</p>
 </section>
 <hr class="docutils" />
 <section id="duplicating-self-developed-tests">
@@ -1902,7 +1904,7 @@ already verify the relevant <code class="docutils literal notranslate"><span cla
     A[&quot;1. Identify exact tool version / configuration&quot;]
     B[&quot;2. Create doc_tool&lt;br/&gt;status = draft&quot;]
     C[&quot;3. Define tool_usecase&quot;]
-    D[&quot;4. Link available tool_req&lt;br/&gt;and optionally stkh_req&quot;]
+    D[&quot;4. Link available tool_req&lt;br/&gt;to upstream requirements&quot;]
     E[&quot;5. Identify potential_tool_malfunction&quot;]
     F[&quot;6. Read generated TVR summary&quot;]
     G[&quot;7. Document safety_measures&lt;br/&gt;and detection_sufficient&quot;]
@@ -2041,7 +2043,7 @@ qualified
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-7-update-the-tool-verification-report">Step 7 — Update the Tool Verification Report</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-8-review-and-release-the-tool-verification-report">Step 8 — Review and release the Tool Verification Report</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#complete-example-external-tool">Complete example — external tool</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stakeholder-requirement">Stakeholder requirement</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#upstream-requirement">Upstream requirement</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tool-requirement">Tool requirement</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tool-use-case-and-potential-malfunction">Tool use case and potential malfunction</a></li>
 </ul>

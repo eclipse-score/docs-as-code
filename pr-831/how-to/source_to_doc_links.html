@@ -523,9 +523,14 @@ uses. You may also pass filegroups; their files are scanned directly.</p>
 <span class="linenos">17</span>      <span class="p">],</span>
 <span class="linenos">18</span>      <span class="n">source_dir</span> <span class="o">=</span> <span class="s2">&quot;docs&quot;</span><span class="p">,</span>
 <span class="linenos">19</span>      <span class="n">code_targets</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;:some_application&quot;</span><span class="p">],</span>
-<span class="linenos">20</span><span class="p">)</span>
+<span class="linenos">20</span>      <span class="n">primary_need_id</span> <span class="o">=</span> <span class="s2">&quot;comp__some_component&quot;</span><span class="p">,</span>
+<span class="linenos">21</span><span class="p">)</span>
 </pre></div>
 </div>
+<p><code class="docutils literal notranslate"><span class="pre">primary_need_id</span></code> is optional and identifies the single Need representing
+the bundle’s primary subject. A bundle can contain many other Needs; target
+metadata is attached only to this explicitly selected Need. The ID is never
+derived from the Bazel bundle name.</p>
 </section>
 </section>
 
