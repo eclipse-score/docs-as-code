@@ -884,11 +884,11 @@ Testing
   :parent_covered: YES
   :satisfies: gd_req__tool_attr_safety_affected[version==1], gd_req__tool_check_mandatory[version==1]
 
-  Docs-as-Code shall enforce that every Tool Verification Report (`doc_tool`) includes a
-  ``safety_affected`` attribute with one of the following values:
+  Docs-as-Code shall derive the Tool Verification Report safety classification
+  from its owned potential tool malfunctions:
 
-  * YES
-  * NO
+  * ``YES`` if at least one owned malfunction is safety affected
+  * ``NO`` otherwise
 
 .. tool_req:: Enforce security classification
   :id: tool_req__docs_tvr_security
@@ -941,11 +941,11 @@ Testing
   :satisfies: gd_req__tool_attr_tcl[version==1]
   :parent_covered: YES
 
-  Docs-as-Code shall enforce that every Tool Verification Report (`doc_tool`) includes a
-  `tcl` attribute with one of the following values:
+  Docs-as-Code shall derive the Tool Confidence Level of a Tool Verification
+  Report from its owned potential tool malfunctions:
 
-  * LOW
-  * HIGH
+  * ``LOW`` if an owned safety-relevant malfunction has insufficient detection
+  * ``HIGH`` otherwise
 
 ⚙️ Process / Other
 ###################

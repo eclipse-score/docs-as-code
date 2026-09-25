@@ -32,6 +32,9 @@ Pages
   itself, including test results and testcase metadata.
 - ``requirement_coverage`` shows per-requirement test and code linkage,
   using the same metrics as CI quality gates.
+- ``tool_verification`` is the authoritative Tool Verification Report, including
+  the owned use cases, potential malfunctions, qualification evidence and
+  lifecycle state.
 
 .. toctree::
    :maxdepth: 1
@@ -41,3 +44,4 @@ Pages
    requirements
    requirement_coverage
    tooling_verification
+   tool_verification

@@ -385,6 +385,15 @@
             },
             "type": "array"
           },
+          "detection_sufficient": {
+            "default": "",
+            "description": "Added by needs_fields config",
+            "field_type": "extra",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "docname": {
             "default": null,
             "description": "Name of the document where the need is defined (None if external).",
@@ -966,6 +975,24 @@
               "null"
             ]
           },
+          "realized_by": {
+            "default": [],
+            "description": "Link field",
+            "field_type": "links",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "realized_by_back": {
+            "default": [],
+            "description": "Backlink field",
+            "field_type": "backlinks",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
           "realizes": {
             "default": [],
             "description": "Link field",
@@ -1084,6 +1111,15 @@
             ]
           },
           "safety_affected": {
+            "default": "",
+            "description": "Added by needs_fields config",
+            "field_type": "extra",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "safety_measures": {
             "default": "",
             "description": "Added by needs_fields config",
             "field_type": "extra",

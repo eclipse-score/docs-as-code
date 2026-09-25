@@ -14,6 +14,7 @@
 
 .. test_metadata::
    :id: test_metadata__metamodel_graph_checks
+   :fully_verifies_list: potential_tool_malfunction__docs_as_code__m2
    :partially_verifies_list: tool_req__docs_common_attr_safety_link_check
    :test_type: requirements_based
    :derivation_technique: requirements_based
@@ -78,3 +79,33 @@
    :status: valid
    :derived_from: feat_req__parent0__abcd
    :expect: unknown outgoing link
+
+
+.. doc_tool:: Nested tool qualification report
+   :id: doc_tool__nested_qualification
+   :status: evaluated
+   :security_affected: NO
+   :version: 1
+
+.. tool_usecase:: Nested tool use case
+   :id: tool_usecase__blabla__nested
+   :belongs_to: doc_tool__nested_qualification
+   :version: 1
+
+   A use case contains its tool malfunctions as nested needs.
+
+   .. potential_tool_malfunction:: Nested tool malfunction
+      :id: potential_tool_malfunction__blabla__nested
+      :safety_affected: YES
+      :detection_sufficient: NO
+      :safety_measures: Review the generated result before release.
+      :violates: tool_req__test__qualification
+      :version: 1
+
+      The generated result may contain a silent error.
+
+.. tool_req:: Test tool requirement
+   :id: tool_req__test__qualification
+   :version: 1
+
+   The test fixture uses this requirement as the target of tool qualification links.

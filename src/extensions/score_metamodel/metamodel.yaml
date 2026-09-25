@@ -247,13 +247,16 @@ needs_types:
     mandatory_options:
       # req-Id: tool_req__docs_tvr_status
       status: ^(draft|evaluated|qualified|released|rejected)$
-      # req-Id: tool_req__docs_tvr_safety
-      safety_affected: "^(YES|NO)$"
       # req-Id: tool_req__docs_tvr_security
       security_affected: "^(YES|NO)$"
+    optional_options:
+      # These summary fields are rendered from the owned malfunction graph by
+      # the structured TVR workflow. They are optional so process templates
+      # can declare their output shape; report authors must not duplicate them.
+      # req-Id: tool_req__docs_tvr_safety
+      safety_affected: "^(YES|NO)$"
       # req-Id: tool_req__docs_tvr_confidence_level
       tcl: "^(LOW|HIGH)$"
-    optional_options:
       author: ^.*$
       approver: ^.*$
       reviewer: ^.*$
@@ -263,6 +266,43 @@ needs_types:
     optional_links:
       realizes: workproduct
     parts: 2
+
+  # Tool qualification reports keep use cases top-level for readable rendering.
+  # Their malfunctions are nested below them and use parent_needs as their
+  # semantic relationship.
+  # Structured tool qualification reports use tool_usecase as the context
+  # anchor for their evaluation. Legacy reports without use cases remain
+  # accepted for compatibility and are left unchanged by the workflow check.
+  # Tool requirements are linked through malfunctions; upstream requirements
+  # are linked from those tool requirements.
+  tool_usecase:
+    title: Tool Use Case
+    description: |
+      Defines the usage context in which the tool is evaluated.
+      A tool use case does not introduce additional requirements.
+      Where applicable, its nested malfunctions provide context for the tool
+      requirements relevant to a particular way the project relies on the tool.
+      Those tool requirements may satisfy upstream requirements.
+    color: "#E1D5E7"
+    mandatory_links:
+      belongs_to: doc_tool
+    parts: 3
+
+  # A malfunction describes a violation of one or more requirements. Safety
+  # measures are deliberately kept as free text on the malfunction because
+  # they are report evidence, not independently traceable model elements.
+  potential_tool_malfunction:
+    title: Potential Tool Malfunction
+    color: "#F8CECC"
+    mandatory_options:
+      safety_affected: "^(YES|NO)$"
+    optional_options:
+      detection_sufficient: "^(YES|NO)$"
+      safety_measures: ^.+$
+    mandatory_links:
+      parent_needs: tool_usecase
+      violates: tool_req
+    parts: 3
 
   # Requirements
   # req-Id: tool_req__docs_req_types
@@ -1065,6 +1105,17 @@ needs_extra_links:
   realizes:
     incoming: realized by
     outgoing: realizes
+
+  realized_by:
+    incoming: realized by
+    outgoing: realizes
+
+  # Sphinx-Needs stores nested Need relationships under parent_needs. Use
+  # report-oriented labels so generated links describe the containment rather
+  # than exposing the implementation-oriented word "parent".
+  parent_needs:
+    incoming: contains
+    outgoing: contained by
 
   # Decision Record
   affects:

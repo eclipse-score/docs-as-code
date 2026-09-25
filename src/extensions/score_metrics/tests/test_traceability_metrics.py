@@ -153,7 +153,10 @@ def test_safe_percent_zero(value1: int, value2: int, expected: float) -> None:
 
 
 @add_test_properties(
-    partially_verifies=["tool_req__docs_test_linkage_metrics"],
+    partially_verifies=[
+        "tool_req__docs_test_linkage_metrics",
+        "potential_tool_malfunction__docs_as_code__m3",
+    ],
     test_type="requirements-based",
     derivation_technique="requirements-analysis",
 )
@@ -231,7 +234,10 @@ def test_calculate_requirement_metrics_non_fully_linked_2() -> None:
 
 
 @add_test_properties(
-    partially_verifies=["tool_req__docs_test_linkage_metrics"],
+    partially_verifies=[
+        "tool_req__docs_test_linkage_metrics",
+        "potential_tool_malfunction__docs_as_code__m3",
+    ],
     test_type="interface-test",
     derivation_technique="design-analysis",
 )

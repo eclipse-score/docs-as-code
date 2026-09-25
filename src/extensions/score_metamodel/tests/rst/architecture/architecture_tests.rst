@@ -15,6 +15,7 @@
 
 .. test_metadata:: Test Architecture Needs
    :id: test_metadata__architecture
+   :fully_verifies_list: potential_tool_malfunction__docs_as_code__m4
    :partially_verifies_list: tool_req__docs_arch_types
    :test_type: requirements_based
    :derivation_technique: requirements_based

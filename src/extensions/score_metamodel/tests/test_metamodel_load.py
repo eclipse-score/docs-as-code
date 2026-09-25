@@ -14,6 +14,7 @@ from pathlib import Path
 from unittest.mock import mock_open, patch
 
 import pytest
+from attribute_plugin import add_test_properties  # type: ignore[import-untyped]
 from score_metamodel import ProhibitedWordCheck, load_metamodel_data
 
 MODEL_DIR = Path(__file__).absolute().parent / "model"
@@ -188,6 +189,11 @@ def test_sphinx_needs_builtin_links_are_accepted(tmp_path: Path):
     }
 
 
+@add_test_properties(
+    fully_verifies=["potential_tool_malfunction__docs_as_code__m1"],
+    test_type="requirements-based",
+    derivation_technique="requirements-analysis",
+)
 def test_all_undeclared_links_are_reported_at_once(tmp_path: Path):
     """Every offending link is listed, so one run shows all the work to do."""
     model = _write_model(
@@ -205,6 +211,52 @@ def test_all_undeclared_links_are_reported_at_once(tmp_path: Path):
     assert "ghost_two" in message
 
 
+@add_test_properties(
+    fully_verifies=["potential_tool_malfunction__docs_as_code__m1"],
+    test_type="requirements-based",
+    derivation_technique="requirements-analysis",
+)
 def test_shipped_metamodel_declares_every_link_it_uses():
     """The metamodel shipped with this extension must satisfy the check."""
     load_metamodel_data()
+
+
+@add_test_properties(
+    fully_verifies=["potential_tool_malfunction__docs_as_code__m1"],
+    test_type="requirements-based",
+    derivation_technique="requirements-analysis",
+)
+def test_tool_qualification_types_model_nested_traceability():
+    """Tool malfunctions are nested under use cases and carry safety text."""
+    result = load_metamodel_data()
+    types = {need_type["directive"]: need_type for need_type in result.needs_types}
+
+    report_options = types["doc_tool"]
+    assert "safety_affected" not in report_options["mandatory_options"]
+    assert report_options["optional_options"]["safety_affected"] == "^(YES|NO)$"
+    assert "tcl" not in report_options["mandatory_options"]
+    assert report_options["optional_options"]["tcl"] == "^(LOW|HIGH)$"
+
+    assert types["tool_usecase"]["mandatory_links_str"] == {
+        "belongs_to": "doc_tool",
+    }
+    assert types["tool_usecase"]["optional_links_str"] == {}
+    assert types["potential_tool_malfunction"]["mandatory_links_str"] == {
+        "parent_needs": "tool_usecase",
+        "violates": "tool_req",
+    }
+    malfunction_options = types["potential_tool_malfunction"]
+    assert malfunction_options["mandatory_options"]["safety_affected"] == "^(YES|NO)$"
+    assert "detection_sufficient" not in malfunction_options["mandatory_options"]
+    assert (
+        malfunction_options["optional_options"]["detection_sufficient"] == "^(YES|NO)$"
+    )
+    assert malfunction_options["optional_options"]["safety_measures"] == "^.+$"
+    assert (
+        types["potential_tool_malfunction"]["optional_options"]["safety_measures"]
+        == "^.+$"
+    )
+    assert result.needs_links["parent_needs"] == {
+        "incoming": "contains",
+        "outgoing": "contained by",
+    }

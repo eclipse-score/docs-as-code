@@ -32,7 +32,13 @@ py_library(
 
 score_pytest(
     name = "unit_tests",
+    # The template regression test builds a temporary Sphinx HTML project,
+    # so it needs more time than a pure Python unit test.
+    size = "medium",
     srcs = ["tests/test_needs_templates.py"],
-    deps = [":score_sphinx_needs_templates"],
+    deps = [
+        ":score_sphinx_needs_templates",
+        "//src/extensions/score_metamodel:score_metamodel",
+    ],
     pytest_config = "//:pyproject.toml",
 )

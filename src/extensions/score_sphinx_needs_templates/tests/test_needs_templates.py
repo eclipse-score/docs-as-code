@@ -13,9 +13,11 @@
 """Tests for graph traversal helpers used by Sphinx-Needs templates."""
 
 from collections.abc import Iterable
+from pathlib import Path
 
 import pytest
 import score_sphinx_needs_templates as templates
+from sphinx.testing.util import SphinxTestApp
 
 
 class FakeLink:
@@ -169,3 +171,143 @@ def test_any_req_in_report_version_false_if_no_requirement_matches() -> None:
     b["valid_from"] = "v3.0"
 
     assert any_req_in_report_version([a, b], "v1.0") is False
+
+
+def test_tool_qualification_matrix_groups_shared_requirements(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Render shared tool requirements in the qualification matrix.
+
+    A tool requirement is reusable across project use cases. This fixture models
+    two use cases, each with a different LOW-confidence malfunction, while both
+    malfunctions violate the same tool requirement. The matrix must expose the
+    three verification categories and place the unlinked requirement in the
+    corresponding column for each malfunction.
+
+    This is an integration test because the category assignment and table
+    structure are produced by the Jinja post-template.
+    """
+    monkeypatch.setenv("BUILD_WORKSPACE_DIRECTORY", str(tmp_path))
+    (tmp_path / "conf.py").write_text(
+        """
+extensions = ["sphinx_needs", "score_sphinx_needs_templates", "score_metamodel"]
+master_doc = "index"
+needs_id_regex = r"^[a-zA-Z0-9_]+$"
+""",
+        encoding="utf-8",
+    )
+    (tmp_path / "index.rst").write_text(
+        """
+.. doc_tool:: Shared requirement report
+   :id: doc_tool__shared_requirement_report
+   :status: evaluated
+   :security_affected: NO
+   :tool_version: v1
+   :post_template: tool_qualification_report
+
+.. gd_req:: Shared process requirement
+   :id: gd_req__shared_requirement
+
+   The process shall preserve shared qualification evidence.
+
+.. tool_req:: Shared tool requirement
+   :id: tool_req__shared_requirement
+   :satisfies: gd_req__shared_requirement
+
+   The tool shall satisfy the shared capability.
+
+.. tool_usecase:: First use case
+   :id: tool_usecase__shared_requirement_first
+   :belongs_to: doc_tool__shared_requirement_report
+
+   The tool is used to prepare the first project artifact.
+
+   .. potential_tool_malfunction:: First malfunction
+      :id: potential_tool_malfunction__shared_requirement_first
+      :violates: tool_req__shared_requirement
+      :safety_affected: YES
+      :detection_sufficient: NO
+      :safety_measures: Independent review
+
+.. tool_usecase:: Second use case
+   :id: tool_usecase__shared_requirement_second
+   :belongs_to: doc_tool__shared_requirement_report
+
+   The tool is used to prepare the second project artifact.
+
+   .. potential_tool_malfunction:: Second malfunction
+      :id: potential_tool_malfunction__shared_requirement_second
+      :violates: tool_req__shared_requirement
+      :safety_affected: YES
+      :detection_sufficient: NO
+      :safety_measures: Independent review
+""",
+        encoding="utf-8",
+    )
+
+    app = SphinxTestApp(
+        srcdir=tmp_path,
+        outdir=tmp_path / "_build",
+        buildername="html",
+        freshenv=True,
+    )
+    try:
+        app.build(force_all=True)
+        html = (app.outdir / "index.html").read_text(encoding="utf-8")
+    finally:
+        app.cleanup()
+
+    purpose_section = html.split('<section id="purpose-and-intended-use">', maxsplit=1)[
+        1
+    ].split('<section id="conclusion">', maxsplit=1)[0]
+    assert "<table" not in purpose_section
+    assert "First use case" in purpose_section
+    assert "The tool is used to prepare the first project artifact." in purpose_section
+    assert 'href="#tool_usecase__shared_requirement_first"' in purpose_section
+    assert "First malfunction" not in purpose_section
+    assert "safety_affected" not in purpose_section
+
+    evaluation_section = html.split('<section id="evaluation-overview">', maxsplit=1)[
+        1
+    ].split('<section id="tool-qualification-matrix">', maxsplit=1)[0]
+    assert "Violates" not in evaluation_section
+    assert "Safety affected" in evaluation_section
+    assert "SCORE TCL" in evaluation_section
+    assert "<em>Capability being evaluated.</em>" in evaluation_section
+    assert "table.tool-qualification-report tbody a" in evaluation_section
+    assert "LOW" in evaluation_section
+    assert "First use case (" not in evaluation_section
+    assert "First malfunction (" not in evaluation_section
+    assert '<div class="line">First use case</div>' in evaluation_section
+    assert (
+        '<div class="line"><a class="reference external" '
+        'href="#tool_usecase__shared_requirement_first">'
+        "tool_usecase__shared_requirement_first</a></div>" in evaluation_section
+    )
+    assert 'href="#tool_usecase__shared_requirement_first"' in evaluation_section
+    assert (
+        'href="#potential_tool_malfunction__shared_requirement_first"'
+        in evaluation_section
+    )
+
+    matrix_section = html.split('<section id="tool-qualification-matrix">', maxsplit=1)[
+        1
+    ]
+    assert "Fully verified tool requirements" in matrix_section
+    assert "Partially verified tool requirements" in matrix_section
+    assert "Unverified tool requirements" in matrix_section
+    assert "Tool requirements (with testlinks)" not in matrix_section
+    assert "Tool requirements (without testlinks)" not in matrix_section
+    assert matrix_section.index("First use case") < matrix_section.index(
+        "First malfunction"
+    )
+    assert (
+        matrix_section.count(
+            '<a class="reference external" '
+            'href="#tool_req__shared_requirement">tool_req__shared_requirement</a>'
+        )
+        == 2
+    )
+    assert '<section id="qualification-evidence">' not in html
+    assert '<section id="traceability-evidence">' not in html
