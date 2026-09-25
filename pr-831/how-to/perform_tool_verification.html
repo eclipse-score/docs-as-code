@@ -1087,11 +1087,14 @@ be linked through <code class="docutils literal notranslate"><span class="pre">t
 upstream need.</p>
 <section id="how-to-model-tool-usecase">
 <h3>How to model <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code><a class="headerlink" href="#how-to-model-tool-usecase" title="Link to this heading">#</a></h3>
-<p>Every <code class="docutils literal notranslate"><span class="pre">evaluated</span></code>, <code class="docutils literal notranslate"><span class="pre">qualified</span></code>, or <code class="docutils literal notranslate"><span class="pre">released</span></code> TVR must own at least one
-<code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code>. The use case records the context in which the project relies on
-the tool. The use case itself has no direct requirement links; the relevant
-<code class="docutils literal notranslate"><span class="pre">tool_req</span></code> needs are associated through the nested malfunctions, and upstream
-requirements are linked from those <code class="docutils literal notranslate"><span class="pre">tool_req</span></code> needs.</p>
+<p>In the structured verification workflow, an <code class="docutils literal notranslate"><span class="pre">evaluated</span></code>, <code class="docutils literal notranslate"><span class="pre">qualified</span></code>, or
+<code class="docutils literal notranslate"><span class="pre">released</span></code> TVR owns one or more <code class="docutils literal notranslate"><span class="pre">tool_usecase</span></code> records. A use case records the
+context in which the project relies on the tool. The use case itself has no
+direct requirement links; the relevant <code class="docutils literal notranslate"><span class="pre">tool_req</span></code> needs are associated through
+the nested malfunctions, and upstream requirements are linked from those
+<code class="docutils literal notranslate"><span class="pre">tool_req</span></code> needs. Existing TVRs without structured use cases remain accepted
+for compatibility, but the workflow checker does not derive summary values for
+them.</p>
 <p>For example:</p>
 <ul class="simple">
 <li><p>upstream requirement (e.g. <code class="docutils literal notranslate"><span class="pre">stkh_req</span></code>, <code class="docutils literal notranslate"><span class="pre">gd_req</span></code>, <code class="docutils literal notranslate"><span class="pre">feat_req</span></code>, <code class="docutils literal notranslate"><span class="pre">comp_req</span></code>): the
