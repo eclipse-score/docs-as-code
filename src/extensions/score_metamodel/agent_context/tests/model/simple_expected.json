@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "metamodel_digest": "sha256:6d6cca74c544bef3b157c6147f922eb3691ae83a1c63ca8c086a7bbed79dd3d0",
+  "base_options": {
+    "mandatory": [],
+    "optional": [
+      {
+        "name": "global_opt",
+        "pattern": "global_value"
+      }
+    ]
+  },
+  "prohibited_words": [
+    {
+      "check": "content_check",
+      "option": "content",
+      "applies_to_tags": [
+        "req_type"
+      ],
+      "words": [
+        "weak_word1"
+      ]
+    },
+    {
+      "check": "title_check",
+      "option": "title",
+      "applies_to_tags": [],
+      "words": [
+        "stop_word1"
+      ]
+    }
+  ],
+  "link_types": [
+    {
+      "name": "link1",
+      "outgoing": "outgoing_link1",
+      "incoming": "incoming_link1",
+      "declared": true
+    },
+    {
+      "name": "link2",
+      "outgoing": "outgoing_link2",
+      "incoming": "incoming_link2",
+      "declared": true
+    },
+    {
+      "name": "link_option1",
+      "outgoing": "outgoing1",
+      "incoming": "incoming1",
+      "declared": true
+    }
+  ],
+  "need_types": [
+    {
+      "name": "type1",
+      "title": "Type 1",
+      "prefix": "T1",
+      "tags": [
+        "req_type"
+      ],
+      "parts": null,
+      "options": [
+        {
+          "name": "global_opt",
+          "pattern": "global_value",
+          "required": false,
+          "inherited": true
+        },
+        {
+          "name": "opt1",
+          "pattern": "value1",
+          "required": true,
+          "inherited": false
+        },
+        {
+          "name": "opt2",
+          "pattern": "value2",
+          "required": false,
+          "inherited": false
+        },
+        {
+          "name": "opt3",
+          "pattern": "value3",
+          "required": false,
+          "inherited": false
+        }
+      ],
+      "links": [
+        {
+          "name": "link1",
+          "targets": [
+            "value1"
+          ],
+          "any_target": false,
+          "required": true
+        },
+        {
+          "name": "link2",
+          "targets": [
+            "value2"
+          ],
+          "any_target": false,
+          "required": false
+        }
+      ]
+    }
+  ],
+  "graph_rules": [
+    {
+      "name": "needs_graph_check",
+      "applies_to": [
+        "type1"
+      ],
+      "condition_raw": "opt1 == test",
+      "check_raw": {
+        "link1": "opt1 == test"
+      },
+      "explanation": null
+    }
+  ]
+}

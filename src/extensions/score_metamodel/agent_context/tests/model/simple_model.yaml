@@ -1,0 +1,64 @@
+# *******************************************************************************
+# Copyright (c) 2026 Contributors to the Eclipse Foundation
+#
+# See the NOTICE file(s) distributed with this work for additional
+# information regarding copyright ownership.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Apache License Version 2.0 which is available at
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# SPDX-License-Identifier: Apache-2.0
+# *******************************************************************************
+needs_types_base_options:
+  optional_options:
+    global_opt: "global_value"
+
+prohibited_words_checks:
+  title_check:
+    title:
+      - stop_word1
+  content_check:
+    types:
+      - req_type
+    content:
+      - weak_word1
+
+needs_types:
+  type1:
+    title: "Type 1"
+    prefix: "T1"
+    color: "blue"
+    style: "bold"
+    mandatory_options:
+      opt1: "value1"
+    optional_options:
+      opt2: "value2"
+      opt3: "value3"
+    mandatory_links:
+      link1: "value1"
+    optional_links:
+      link2: "value2"
+    tags:
+      - req_type
+
+needs_extra_links:
+  link_option1:
+    incoming: "incoming1"
+    outgoing: "outgoing1"
+  # Declared because type1 uses them; undeclared links are rejected while
+  # parsing, see _validate_link_declarations.
+  link1:
+    incoming: "incoming_link1"
+    outgoing: "outgoing_link1"
+  link2:
+    incoming: "incoming_link2"
+    outgoing: "outgoing_link2"
+
+graph_checks:
+  needs_graph_check:
+    needs:
+      include: type1
+      condition: opt1 == test
+    check:
+      link1: opt1 == test
