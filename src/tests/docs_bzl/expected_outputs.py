@@ -103,12 +103,6 @@ TARGETS: dict[str, ExpectedTarget] = {
         output_kind="file",
         output_path="metrics.json",
     ),
-    "generated_config": ExpectedTarget(
-        label=":_docs_generated_config",
-        command="build",
-        output_kind="file",
-        output_path="docs/conf.py",
-    ),
     "mounts_manifest": ExpectedTarget(
         label=":_mounts_manifest",
         command="build",

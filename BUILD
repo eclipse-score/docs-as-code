@@ -15,7 +15,6 @@ load("//:docs.bzl", "docs")
 
 package(default_visibility = ["//visibility:public"])
 exports_files([
-    "default_conf.py.tpl",
     "pyproject.toml",
 ])
 
