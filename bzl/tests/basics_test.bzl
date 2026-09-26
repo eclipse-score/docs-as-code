@@ -24,7 +24,13 @@ def _join_path_test_impl(ctx):
         ("", "docs", "docs"),
         (".", "docs", "docs"),
         ("docs", "", "docs"),
+        ("docs", None, "docs"),
+        (None, "docs", "docs"),
+        ("", None, ""),
+        (None, "", ""),
         ("package/docs", ".", "package/docs"),
+        ("package/", None, "package"),
+        (None, "docs/", "docs"),
         ("package/", "docs/", "package/docs"),
     ]
     for prefix, rest, expected in cases:

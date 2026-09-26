@@ -12,20 +12,20 @@
 # *******************************************************************************
 def join_path(prefix, rest):
     """
-    Compose two docname segments with `/`.
+    Compose two docname segments with `/`. No trailing `/` is preserved.
 
-    Removes trailing `/` from both segments. A `.` segment is treated as empty
-    when the other segment is non-empty.
+    When a segment is ``None``, it contributes no path text; the remaining
+    segment is normalized in the same way.
 
     Args:
-      prefix: Leading docname segment, possibly empty.
-      rest: Trailing docname segment, possibly empty.
+      prefix: Leading docname segment, possibly empty or ``None``.
+      rest: Trailing docname segment, possibly empty or ``None``.
 
     Returns:
       The combined docname.
     """
-    rest = rest.rstrip("/")
-    prefix = prefix.rstrip("/")
+    rest = (rest or "").rstrip("/")
+    prefix = (prefix or "").rstrip("/")
 
     if not prefix or prefix == ".":
         return rest
