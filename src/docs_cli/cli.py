@@ -215,9 +215,22 @@ def sphinx_arguments(
         # this diagnostic side file.
         base_arguments.extend(["--warning-file", str(output_dir / "warnings.txt")])
 
+    config_options = env.string_list("SPHINX_CONFIG_OPTS", "[]")
     if config_file := env.optional_path("SPHINX_CONFIG_FILE"):
         config_file = _resolve_runfiles_relative_path(config, config_file)
         base_arguments.extend(["-c", str(config_file.parent)])
+    elif config_options:
+        # Sphinx normally expects a conf.py. ``-C`` explicitly selects the
+        # configuration-free mode used by Bazel targets whose structured
+        # options are supplied through ``SPHINX_CONFIG_OPTS``.
+        base_arguments.append("-C")
+        base_arguments.extend(config_options)
+    else:
+        # Interactive builds with a checked-in ``conf.py`` intentionally leave
+        # both variables empty and let Sphinx discover the file below the
+        # source directory. Bazel Needs actions validate their structured
+        # configuration earlier in ``needs_rules.bzl``.
+        pass
 
     if metamodel_yaml := env.optional_path("SCORE_METAMODEL_YAML"):
         metamodel_yaml = _resolve_runfiles_relative_path(config, metamodel_yaml)

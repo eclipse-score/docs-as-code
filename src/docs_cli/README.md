@@ -48,12 +48,16 @@ linking can traverse this Bazel package boundary.
 
 `docs.bzl` provides `SOURCE_DIRECTORY`, `PACKAGE_DIR`, `DATA`, and optional
 configuration such as `SPHINX_CONFIG_FILE`, `SCORE_METAMODEL_YAML`,
-`MOUNTS_MANIFEST`, `EXTERNAL_NEEDS_FILES`, `TEST_SOURCES` and `KNOWN_GOOD_JSON`.
+`SPHINX_CONFIG_OPTS`, `MOUNTS_MANIFEST`,
+`EXTERNAL_NEEDS_FILES`, `TEST_SOURCES` and `KNOWN_GOOD_JSON`.
 The sandboxed Needs action passes its external-needs labels separately through
 the internal `EXTERNAL_NEEDS_LABELS` variable.
 Bazel provides the workspace and runfiles locations. The CLI resolves source
-and output paths relative to the package containing the `docs()` call; generated
-configuration is resolved through runfiles.
+and output paths relative to the package containing the `docs()` call. A
+checked-in `conf.py` is resolved from the source tree; configuration-free
+targets receive structured Sphinx overrides through `SPHINX_CONFIG_OPTS`. When
+no config file is supplied and that option list is non-empty, the CLI selects
+Sphinx's configuration-free mode automatically.
 
 All actions share the package's `_build` directory. Before starting, the CLI
 removes stale output if the previous build recorded warnings, the stored hash

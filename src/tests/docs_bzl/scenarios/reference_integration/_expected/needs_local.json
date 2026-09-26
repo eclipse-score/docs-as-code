@@ -1,7 +1,7 @@
 {
   "current_version": "0.0.0",
   "project": "S-CORE Reference Integration",
-  "project_url": "",
+  "project_url": "https://example.invalid/score-reference-integration/src/tests/docs_bzl/scenarios/reference_integration",
   "versions": {
     "0.0.0": {
       "creator": {

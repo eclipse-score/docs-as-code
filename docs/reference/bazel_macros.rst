@@ -77,10 +77,13 @@ Minimal example (root ``BUILD``)
 
 - ``project`` and ``project_url`` (strings, optional)
   Project name and canonical project URL. They are required when ``source_dir``
-  has no ``conf.py``; in that case ``docs()`` generates the Sphinx configuration
-  and supplies the Docs-as-Code baseline version, extensions, and a
-  ``required_in_id`` entry derived from the Bazel module name. The first
-  underscore-separated prefix is removed (for example,
+  has no ``conf.py``; in that case ``docs()`` runs Sphinx in configuration-free
+  mode and supplies these values, the Docs-as-Code baseline extensions and
+  version, and a ``required_in_id`` entry derived from the Bazel module name.
+  The URL is extended with the calling Bazel package path relative to the
+  workspace, so documentation declared from a nested package points at that
+  package's documentation root.
+  The first underscore-separated prefix is removed (for example,
   ``score_docs_as_code`` becomes ``docs_as_code``). If a ``conf.py`` exists,
   it remains authoritative and these values are not used.
 
@@ -178,9 +181,10 @@ Signature: ``docs_bundle(name, source_dir = None, srcs = [], data = [], entry_do
   ``docs()`` (RST, Markdown, images, and the other doc file kinds). The
   ``source_dir`` itself is the mount root, so the files mount relative to it (so
   ``concept/index.rst`` with ``source_dir = "concept"`` becomes ``index.rst``).
-  Standalone bundle-local Needs exports always use a self-contained, generated
-  Sphinx configuration. A root bundle created by ``docs()`` instead uses the
-  project's ``conf.py`` so its local export matches the normal project build.
+  Standalone bundle-local Needs exports use Sphinx's configuration-free mode
+  with a self-contained set of baseline overrides. A root bundle created by
+  ``docs()`` uses the project's ``conf.py`` when one exists, so its local export
+  remains compatible while that legacy path is phased out.
   The bundle exposes those files as a Bazel depset (via the ``DocsBundleInfo``
   provider) and records the ``source_dir`` path; sphinx-mounts walks that original
   directory directly — no copy is made. Leave it unset for a bundle whose

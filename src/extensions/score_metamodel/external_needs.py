@@ -98,7 +98,11 @@ def extend_needs_json_exporter(
     for p in params:
         # Note: we are currently addinig these values to config after config-inited.
         # This is wrong. But good enough.
-        config.add(p, default="", rebuild="env", types=(), description="")
+        # Core configuration can register a value before this exporter hook
+        # runs. Keep that registration (and any CLI override attached to it)
+        # instead of trying to add the same Sphinx setting twice.
+        if p not in config:
+            config.add(p, default="", rebuild="env", types=(), description="")
 
         if log_missing and not getattr(config, p):
             logger.error(
@@ -176,16 +180,14 @@ def add_external_needs_json(
 
 
 def connect_external_needs(app: Sphinx, config: Config):
-    # Local bundle exports intentionally omit the host URL from their JSON so
-    # the inventory remains reusable by whichever documentation site consumes
-    # it. Keep the configuration value available to Sphinx itself, and retain
-    # the existing missing-value diagnostic for normal host builds.
+    # Export each bundle's resolved project URL. The Bazel bundle provider
+    # supplies the package-relative value, so inventories from different
+    # bundles retain stable links to their own documentation roots.
     bundle_export = bool(config.score_bundle_needs_export)
     extend_needs_json_exporter(
         config,
         ["project_url"],
         log_missing=not bundle_export,
-        export_values={"project_url": ""} if bundle_export else None,
     )
 
     # External needs labels supplied by the documentation CLI.

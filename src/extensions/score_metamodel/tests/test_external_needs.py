@@ -59,10 +59,10 @@ def test_extend_needs_json_exporter_uses_configured_value(
     assert needs_list.needs_list["project_url"] == "https://example.test/after"
 
 
-def test_extend_needs_json_exporter_can_override_bundle_export_metadata(
+def test_extend_needs_json_exporter_can_override_export_metadata(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    """Bundle exports omit the host URL while Sphinx keeps the config value."""
+    """An explicit export override wins while Sphinx keeps the config value."""
     config = Config()
     config.project_url = "https://example.test/host"
 
