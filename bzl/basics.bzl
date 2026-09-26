@@ -14,7 +14,8 @@ def join_path(prefix, rest):
     """
     Compose two docname segments with `/`. No trailing `/` is preserved.
 
-    When either segment is ``None``, the other segment is returned as-is.
+    When a segment is ``None``, it contributes no path text; the remaining
+    segment is normalized in the same way.
 
     Args:
       prefix: Leading docname segment, possibly empty or ``None``.
