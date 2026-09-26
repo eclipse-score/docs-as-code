@@ -39,7 +39,11 @@ def _sphinx_docs_impl(ctx):
     bundle_config = bundle.config
     config_file = ctx.file.config
     if config_file:
+        # A checked-in conf.py owns Sphinx configuration. In particular, do
+        # not inject the bundle's fallback metamodel because that would
+        # override ``score_metamodel_yaml`` configured by conf.py.
         config_options = []
+        metamodel_file = ctx.file.score_metamodel_yaml
     else:
         # Serialize the semantic provider values only at the action boundary.
         # ``required_in_id`` is the effective value from the bundle provider;
@@ -50,10 +54,12 @@ def _sphinx_docs_impl(ctx):
             project_url = bundle_config.project_url,
             required_in_id = bundle_config.required_in_id,
         )
-    metamodel_file = ctx.file.score_metamodel_yaml or bundle_config.metamodel
+        # Configuration-free actions need a concrete metamodel input. Use an
+        # explicitly supplied label first, then the bundle's inherited default.
+        metamodel_file = ctx.file.score_metamodel_yaml or bundle_config.metamodel
     if not config_file and not config_options:
         fail("Sphinx Needs action requires structured configuration options")
-    if not metamodel_file:
+    if not config_file and not metamodel_file:
         fail("Sphinx Needs action requires a metamodel")
 
     # File labels provide execroot-relative paths for this action's sandbox.
@@ -76,7 +82,7 @@ def _sphinx_docs_impl(ctx):
         "MOUNTS_MANIFEST": (
             ctx.file.mounts_manifest.path if ctx.file.mounts_manifest else ""
         ),
-        "SCORE_METAMODEL_YAML": metamodel_file.path,
+        "SCORE_METAMODEL_YAML": metamodel_file.path if metamodel_file else "",
         "SPHINX_EXTRA_OPTS": json.encode(ctx.attr.extra_opts),
     }
 

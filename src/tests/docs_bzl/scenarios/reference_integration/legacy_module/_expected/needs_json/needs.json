@@ -1,7 +1,7 @@
 {
   "current_version": "0.0.0",
   "project": "S-CORE Legacy Module",
-  "project_url": "https://example.invalid/score-legacy-module/src/tests/docs_bzl/scenarios/reference_integration/legacy_module",
+  "project_url": "https://example.invalid/score-legacy-module",
   "versions": {
     "0.0.0": {
       "creator": {

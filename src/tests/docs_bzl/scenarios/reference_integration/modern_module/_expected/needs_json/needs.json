@@ -1,7 +1,7 @@
 {
   "current_version": "0.0.0",
   "project": "S-CORE Modern Module",
-  "project_url": "https://example.invalid/score-modern-module/src/tests/docs_bzl/scenarios/reference_integration/modern_module",
+  "project_url": "https://example.invalid/score-modern-module",
   "versions": {
     "0.0.0": {
       "creator": {

@@ -59,7 +59,7 @@ load(
 load(
     "@score_docs_as_code//:bzl/bundle_rules.bzl",
     "create_bundle",
-    "create_docs_config",
+    "declare_docs_config_target",
     "external_docs_runfiles",
     "generate_code_target_sourcelinks",
     "merge_bundle_sourcelinks",
@@ -206,6 +206,7 @@ def _declare_docs_bundle(
     code_targets = [],
     primary_need_id = None,
     root_docs_config = None,
+    is_root_bundle = False,
     visibility = None,
     **kwargs):
     """Declare the shared bundle target implementation.
@@ -248,6 +249,8 @@ def _declare_docs_bundle(
                        Need receives bundle-level target metadata.
       root_docs_config: Internal provider target for the root bundle's
                          structured ``docs()`` configuration.
+      is_root_bundle: Whether this is the project root bundle. Root bundles
+                      retain the configured canonical project URL.
       visibility: Target visibility.
       **kwargs: Additional attributes forwarded to the underlying rule.
     """
@@ -293,6 +296,7 @@ def _declare_docs_bundle(
         code_targets = code_targets,
         primary_need_id = primary_need_id,
         root_docs_config = root_docs_config,
+        is_root_bundle = is_root_bundle,
         visibility = visibility,
         **kwargs
     )
@@ -539,10 +543,7 @@ def docs(
         # of materializing a generated ``conf.py`` in the output tree.
         interactive_config_options = sphinx_config_options(
             project = project,
-            project_url = _package_relative_project_url(
-                project_url,
-                native.package_name(),
-            ),
+            project_url = project_url,
             required_in_id = _module_name_without_prefix(),
         )
 
@@ -552,7 +553,7 @@ def docs(
     bundle_config_metamodel = metamodel or Label(
         "@score_docs_as_code//src/extensions/score_metamodel:metamodel_yaml",
     )
-    root_docs_config = create_docs_config(
+    root_docs_config = declare_docs_config_target(
         name = _bundle_internal_target("docs", "config"),
         project = project or _module_name_without_prefix(),
         project_url = project_url or "",
@@ -584,6 +585,7 @@ def docs(
         code_targets = code_targets,
         primary_need_id = primary_need_id,
         root_docs_config = root_docs_config,
+        is_root_bundle = True,
         visibility = ["//visibility:public"],
         tags = ["manual"]
     )
