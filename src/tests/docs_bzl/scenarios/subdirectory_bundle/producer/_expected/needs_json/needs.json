@@ -1,7 +1,7 @@
 {
   "current_version": "0.0.0",
   "project": "Subdirectory Bundle Producer",
-  "project_url": "https://example.invalid/subdirectory-bundle-producer/src/tests/docs_bzl/scenarios/subdirectory_bundle/producer",
+  "project_url": "https://example.invalid/subdirectory-bundle-producer",
   "versions": {
     "0.0.0": {
       "creator": {

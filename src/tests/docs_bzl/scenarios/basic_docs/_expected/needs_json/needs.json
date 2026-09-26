@@ -1,7 +1,7 @@
 {
   "current_version": "0.0.0",
   "project": "Basic Test",
-  "project_url": "https://github.com/eclipse-score/docs-as-code/src/tests/docs_bzl/scenarios/basic_docs",
+  "project_url": "https://github.com/eclipse-score/docs-as-code",
   "versions": {
     "0.0.0": {
       "creator": {

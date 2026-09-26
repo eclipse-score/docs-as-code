@@ -65,7 +65,10 @@ DocsBundleInfo = provider(
 DocsConfigInfo = provider(
     doc = "Structured configuration published by a repository's docs() root.",
     fields = {
-        "config": "Structured project, URL base, ID prefix, and metamodel configuration.",
+        # This is the Starlark struct payload carried by the provider. The
+        # target that publishes this provider is referenced through a Bazel
+        # label; callers must first obtain the provider from that target.
+        "values": "Structured project, URL base, ID prefix, and metamodel configuration.",
     },
 )
 
@@ -147,7 +150,7 @@ def sphinx_config_options(project, project_url = "", required_in_id = ""):
 
 def _docs_config_impl(ctx):
     """Publish the structured configuration for one ``docs()`` root."""
-    return [DocsConfigInfo(config = struct(
+    return [DocsConfigInfo(values = struct(
         project = ctx.attr.project,
         project_url_base = ctx.attr.project_url,
         required_in_id = ctx.attr.required_in_id,
@@ -168,14 +171,14 @@ _docs_config = rule(
     doc = "Internal structured configuration target for a docs() root.",
 )
 
-def create_docs_config(
+def declare_docs_config_target(
         name,
         project,
         project_url,
         required_in_id,
         metamodel,
         visibility = None):
-    """Create the internal config target addressed through ``root_docs``."""
+    """Declare the internal config target addressed through ``root_docs``."""
     _docs_config(
         name = name,
         project = project,
@@ -570,13 +573,21 @@ def _docs_bundle_impl(ctx):
     # The provider carries semantic values; Sphinx CLI options are assembled
     # later by the Needs action.
     if ctx.attr.root_docs_config:
-        root_config = ctx.attr.root_docs_config[DocsConfigInfo].config
-        bundle_config = struct(
-            project = root_config.project,
+        root_config = ctx.attr.root_docs_config[DocsConfigInfo].values
+        project_url = root_config.project_url_base
+        if not ctx.attr.is_root_bundle:
+            # A reusable bundle represents the package in which it is
+            # declared, so its local Needs inventory gets a package-relative
+            # URL. The root bundle itself represents the configured project;
+            # keeping its canonical URL unchanged is required by consumers
+            # that import the root inventory as external Needs.
             project_url = _package_relative_project_url(
                 root_config.project_url_base,
                 ctx.label.package,
-            ),
+            )
+        bundle_config = struct(
+            project = root_config.project,
+            project_url = project_url,
             project_url_base = root_config.project_url_base,
             required_in_id = root_config.required_in_id,
             metamodel = root_config.metamodel,
@@ -633,6 +644,10 @@ _docs_bundle = rule(
             default = Label("@score_docs_as_code//src/extensions/score_metamodel:metamodel_yaml"),
         ),
         "root_docs_config": attr.label(providers = [DocsConfigInfo]),
+        # ``docs()`` marks its own bundle so its exported project URL stays at
+        # the configured canonical root. Standalone docs_bundle targets use
+        # their Bazel package as the relative URL suffix.
+        "is_root_bundle": attr.bool(default = False),
     },
     doc = "Internal rule that carries bundle files and their documentation-tree locations.",
 )
@@ -649,6 +664,7 @@ def create_bundle(
     data = [],
     code_targets = [],
     root_docs_config = None,
+    is_root_bundle = False,
     visibility = None,
     **kwargs):
     """Create a bundle from directory-discovered files and source targets.
@@ -679,6 +695,7 @@ def create_bundle(
         data = data,
         code_targets = code_targets,
         root_docs_config = root_docs_config,
+        is_root_bundle = is_root_bundle,
         visibility = visibility,
         **kwargs
     )

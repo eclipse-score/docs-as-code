@@ -80,12 +80,12 @@ Minimal example (root ``BUILD``)
   has no ``conf.py``; in that case ``docs()`` runs Sphinx in configuration-free
   mode and supplies these values, the Docs-as-Code baseline extensions and
   version, and a ``required_in_id`` entry derived from the Bazel module name.
-  The URL is extended with the calling Bazel package path relative to the
-  workspace, so documentation declared from a nested package points at that
-  package's documentation root.
   The first underscore-separated prefix is removed (for example,
   ``score_docs_as_code`` becomes ``docs_as_code``). If a ``conf.py`` exists,
-  it remains authoritative and these values are not used.
+  it remains authoritative for the root Sphinx build; these macro arguments
+  are not used to override it. They are still published when supplied so an
+  associated child bundle can receive explicit root metadata. Values are not
+  read back from ``conf.py`` or inherited from it.
 
 - ``data`` (list of bazel labels)
   Supporting files for this project's root ``:docs_bundle``. The files are

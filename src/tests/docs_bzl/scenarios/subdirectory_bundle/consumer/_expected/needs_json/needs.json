@@ -1,7 +1,7 @@
 {
   "current_version": "0.0.0",
   "project": "Subdirectory Bundle Consumer",
-  "project_url": "https://example.invalid/subdirectory-bundle-consumer/src/tests/docs_bzl/scenarios/subdirectory_bundle/consumer",
+  "project_url": "https://example.invalid/subdirectory-bundle-consumer",
   "versions": {
     "0.0.0": {
       "creator": {
