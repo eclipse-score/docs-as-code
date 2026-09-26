@@ -12,6 +12,8 @@
 # *******************************************************************************
 """Integration coverage for configuration supplied by a root docs target."""
 
+import pytest
+
 from src.tests.docs_bzl.helpers import (
     built_output,
     load_needs,
@@ -20,6 +22,7 @@ from src.tests.docs_bzl.helpers import (
 )
 
 
+@pytest.mark.bazel_cached
 def test_child_bundle_uses_root_docs_config_without_a_child_conf_py():
     """The child uses root config, metamodel, and ID namespace."""
     run_scenario("build", "root_docs_config", ":component.__internal__.needs_local")
@@ -39,6 +42,7 @@ def test_child_bundle_uses_root_docs_config_without_a_child_conf_py():
     )
 
 
+@pytest.mark.bazel_slow
 def test_child_bundle_does_not_inherit_the_root_legacy_conf_py():
     """A legacy root conf.py is not part of the root config contract."""
     result = run_scenario(

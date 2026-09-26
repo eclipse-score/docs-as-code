@@ -84,8 +84,9 @@ Minimal example (root ``BUILD``)
   ``score_docs_as_code`` becomes ``docs_as_code``). If a ``conf.py`` exists,
   it remains authoritative for the root Sphinx build; these macro arguments
   are not used to override it. They are still published when supplied so an
-  associated child bundle can receive explicit root metadata. Values are not
-  read back from ``conf.py`` or inherited from it.
+  associated child bundle can receive explicit root metadata; supply them
+  explicitly when associated bundles need that metadata. Values are not read
+  back from ``conf.py`` or inherited from it.
   The root bundle nevertheless publishes the module-derived
   ``required_in_id`` through the root docs configuration; associated child
   bundles inherit it and cannot override it locally.
@@ -268,8 +269,9 @@ Signature: ``docs_bundle(name, source_dir = None, srcs = [], data = [], entry_do
   ``//:docs``. The reference is resolved to an internal configuration target,
   so the bundle does not depend on the root bundle's composed content. It is
   deliberately opt-in: standalone bundles otherwise keep their own local
-  configuration. The generated ``docs_config`` target is an implementation
-  detail and is not part of the public target surface.
+  configuration. The generated ``docs.__internal__.config`` target is an
+  implementation detail and is not part of the public target surface; it
+  publishes a structured provider for the bundle rule to consume.
   This includes the effective ``required_in_id`` namespace; a bundle associated
   with root docs cannot override it locally. A ``conf.py`` is never inherited.
 
