@@ -18,9 +18,10 @@ reusable bundle and how nested bundles are composed. Source-bearing bundles
 also create a ``<name>.__internal__.needs_local`` export containing Needs from
 their own sources. The root bundle created by ``docs()`` follows the same rule;
 its existing project-wide ``needs_json`` export remains available as well.
-This first version only supports self-contained bundles; references to Needs
-defined outside the bundle remain unresolved until cross-bundle imports are
-added.
+Standalone exports remain self-contained; references to Needs defined outside
+the bundle remain unresolved until cross-bundle imports are added. A bundle can
+associate itself with a repository's root docs configuration without depending
+on the root bundle's composed content.
 """
 
 # Multiple approaches are available to build the same documentation output:
@@ -183,6 +184,20 @@ def _package_relative_project_url(base_url, package_path):
     """Append a workspace-relative Bazel package to a project URL."""
     return join_path(base_url, package_path)
 
+def _root_docs_config_label(root_docs):
+    """Map a public ``docs`` label to its internal config target.
+
+    ``root_docs`` is intentionally the user-facing label. The executable
+    ``//:docs`` target may depend on the bundles that reference it, so using it
+    directly as a provider dependency would create a Bazel cycle. ``docs()``
+    publishes the provider on the sibling ``.__internal__.config`` target
+    instead; that target contains only scalar configuration and the metamodel.
+    """
+    root_docs_label = str(root_docs)
+    if ":" not in root_docs_label:
+        fail("root_docs must be a Bazel target label, got %r" % root_docs)
+    return root_docs_label + ".__internal__.config"
+
 def _is_needs_json_target(label):
     """Return whether ``label`` names the directory-valued ``needs_json`` target.
 
@@ -251,6 +266,8 @@ def _declare_docs_bundle(
                          structured ``docs()`` configuration.
       is_root_bundle: Whether this is the project root bundle. Root bundles
                       retain the configured canonical project URL.
+                         Public callers provide the corresponding ``root_docs``
+                         label instead.
       visibility: Target visibility.
       **kwargs: Additional attributes forwarded to the underlying rule.
     """
@@ -259,6 +276,12 @@ def _declare_docs_bundle(
         fail(
             ("docs_bundle(%s): srcs cannot be combined with source_dir; " +
              "put generated sources in a dedicated bundle") % name,
+        )
+
+    if "required_in_id" in kwargs:
+        fail(
+            ("docs_bundle(%s): required_in_id is inherited from root_docs " +
+             "and cannot be set on the child bundle") % name,
         )
 
     # Keep directory-discovered sources separate from explicit Bazel targets so
@@ -373,6 +396,7 @@ def docs_bundle(
     bundles = [],
     code_targets = [],
     primary_need_id = None,
+    root_docs = None,
     visibility = None,
     **kwargs):
     """Declare a reusable documentation bundle.
@@ -380,7 +404,10 @@ def docs_bundle(
     The declaration itself is delegated to the shared helper. Keeping this
     public entry point separate gives bundle-specific consumer targets a
     distinct home while allowing ``docs()`` to use the shared declaration for
-    the project root.
+    the project root. ``root_docs`` associates the bundle with the root
+    documentation project's structured configuration, including
+    ``required_in_id``, without making it depend on the root bundle's composed
+    documentation sources.
     """
     bundle = _declare_docs_bundle(
         name = name,
@@ -391,6 +418,7 @@ def docs_bundle(
         bundles = bundles,
         code_targets = code_targets,
         primary_need_id = primary_need_id,
+        root_docs_config = _root_docs_config_label(root_docs) if root_docs != None else None,
         visibility = visibility,
         **kwargs
     )
@@ -553,12 +581,18 @@ def docs(
     bundle_config_metamodel = metamodel or Label(
         "@score_docs_as_code//src/extensions/score_metamodel:metamodel_yaml",
     )
+    config_visibility = _bundle_internal_target("docs", "config_visibility")
+    native.package_group(
+        name = config_visibility,
+        packages = ["//..."],
+    )
     root_docs_config = declare_docs_config_target(
         name = _bundle_internal_target("docs", "config"),
         project = project or _module_name_without_prefix(),
         project_url = project_url or "",
         required_in_id = _module_name_without_prefix(),
         metamodel = bundle_config_metamodel,
+        visibility = [":" + config_visibility],
     )
 
     # Convention in this macro: an optional Bazel label is named ``*_label``
