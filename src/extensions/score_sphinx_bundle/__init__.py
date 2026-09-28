@@ -46,6 +46,11 @@ score_extensions = [
 def setup(app: Sphinx) -> dict[str, object]:
     matplotlib.rcParamsDefault["savefig.bbox"] = "tight"
 
+    # Keep the project URL available when Sphinx runs in configuration-free
+    # mode. A normal conf.py can define arbitrary values directly, but CLI
+    # overrides require custom settings to be registered first.
+    app.add_config_value("project_url", "", rebuild="env")
+
     config_setdefault(app.config, "html_copy_source", False)
     config_setdefault(app.config, "html_show_sourcelink", False)
 

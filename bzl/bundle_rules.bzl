@@ -49,6 +49,26 @@ DocsBundleInfo = provider(
         # Bundle-owned supporting/runtime files. Unlike host-owned docs data,
         # these are resolved at this bundle's mount.
         "data": "Bundle-owned supporting/runtime files resolved at the bundle's mount.",
+        # Structured Sphinx configuration for this bundle's standalone Needs
+        # export. These are semantic values; the Sphinx ``--define`` list is
+        # assembled only at the action boundary.
+        "config": "Structured project, URL, ID prefix, and metamodel configuration.",
+    },
+)
+
+# ``docs()`` exposes its structured project configuration through this
+# provider on a separate internal target. Keeping the config target separate
+# from the root ``DocsBundleInfo`` target is important: the root bundle may
+# compose a child bundle, while that child still needs to read the root
+# project's configuration. A separate target avoids creating a dependency
+# cycle between the root bundle and its children.
+DocsConfigInfo = provider(
+    doc = "Structured configuration published by a repository's docs() root.",
+    fields = {
+        # This is the Starlark struct payload carried by the provider. The
+        # target that publishes this provider is referenced through a Bazel
+        # label; callers must first obtain the provider from that target.
+        "values": "Structured project, URL base, ID prefix, and metamodel configuration.",
     },
 )
 
@@ -103,6 +123,74 @@ def _parent_index_docname(mount_at):
     """Choose the page that links to a bundled subtree by default."""
     parent = mount_at.rsplit("/", 1)[0] if "/" in mount_at else ""
     return join_path(parent, "index")
+
+def _package_relative_project_url(base_url, package_path):
+    """Append a bundle's workspace-relative Bazel package to its project URL.
+
+    ``project_url`` identifies the documentation root represented by the
+    bundle. A bundle declared from a nested Bazel package therefore needs a
+    package-specific URL, while an empty root package keeps the configured URL
+    unchanged. The base URL is retained separately in ``DocsBundleInfo`` so a
+    child of a child does not append all ancestor package paths repeatedly.
+    """
+    return join_path(base_url, package_path)
+
+def sphinx_config_options(project, project_url = "", required_in_id = ""):
+    """Serialize semantic bundle configuration for the Sphinx action boundary."""
+    options = [
+        "--define=extensions=score_sphinx_bundle",
+        "--define=project=" + project,
+        "--define=version=0.0.0",
+    ]
+    if project_url:
+        options.append("--define=project_url=" + project_url)
+    if required_in_id:
+        options.append("--define=required_in_id=" + required_in_id)
+    return options
+
+def _docs_config_impl(ctx):
+    """Publish the structured configuration for one ``docs()`` root."""
+    return [DocsConfigInfo(values = struct(
+        project = ctx.attr.project,
+        project_url_base = ctx.attr.project_url,
+        required_in_id = ctx.attr.required_in_id,
+        metamodel = ctx.file.metamodel,
+    ))]
+
+_docs_config = rule(
+    implementation = _docs_config_impl,
+    attrs = {
+        "project": attr.string(mandatory = True),
+        "project_url": attr.string(mandatory = True),
+        "required_in_id": attr.string(mandatory = True),
+        "metamodel": attr.label(
+            allow_single_file = True,
+            mandatory = True,
+        ),
+    },
+    doc = "Internal structured configuration target for a docs() root.",
+)
+
+def declare_docs_config_target(
+        name,
+        project,
+        project_url,
+        required_in_id,
+        metamodel,
+        visibility = None):
+    """Declare the internal config target addressed through ``root_docs``."""
+    _docs_config(
+        name = name,
+        project = project,
+        project_url = project_url,
+        required_in_id = required_in_id,
+        metamodel = metamodel,
+        # The target is internal by naming convention, but bundles in nested
+        # packages still need to consume its provider through ``root_docs``.
+        visibility = visibility,
+        tags = ["manual"],
+    )
+    return ":" + name
 
 def _ensure_unique_entries(entries):
     """Reject a source directory reached through more than one bundle path."""
@@ -477,6 +565,46 @@ def _docs_bundle_impl(ctx):
             for child in ctx.attr.bundles
         ],
     )
+
+    # A bundle associated with a root docs project inherits that project's
+    # structured configuration. The root config target is deliberately
+    # separate from the root bundle: the root bundle may compose this bundle,
+    # so making the child depend on ``:docs_bundle`` would create a cycle.
+    # The provider carries semantic values; Sphinx CLI options are assembled
+    # later by the Needs action.
+    if ctx.attr.root_docs_config:
+        root_config = ctx.attr.root_docs_config[DocsConfigInfo].values
+        project_url = root_config.project_url_base
+        if not ctx.attr.is_root_bundle:
+            # A reusable bundle represents the package in which it is
+            # declared, so its local Needs inventory gets a package-relative
+            # URL. The root bundle itself represents the configured project;
+            # keeping its canonical URL unchanged is required by consumers
+            # that import the root inventory as external Needs.
+            project_url = _package_relative_project_url(
+                root_config.project_url_base,
+                ctx.label.package,
+            )
+        bundle_config = struct(
+            project = root_config.project,
+            project_url = project_url,
+            project_url_base = root_config.project_url_base,
+            required_in_id = root_config.required_in_id,
+            metamodel = root_config.metamodel,
+        )
+    else:
+        # A standalone bundle has no repository-level configuration to inherit.
+        # Keep its local Needs export self-contained: use the bundle target as
+        # its project name, leave the URL and ID namespace empty, and use the
+        # standard metamodel supplied by the internal rule attribute.
+        bundle_config = struct(
+            project = ctx.label.name,
+            project_url = "",
+            project_url_base = "",
+            required_in_id = "",
+            metamodel = ctx.file.metamodel,
+        )
+
     return [
         DefaultInfo(files = depset(transitive = [all_source_files, all_data])),
         DocsBundleInfo(
@@ -486,6 +614,7 @@ def _docs_bundle_impl(ctx):
             sourcelinks = sourcelinks,
             external_runfiles = external_runfiles,
             data = all_data,
+            config = bundle_config,
         ),
     ]
 
@@ -510,6 +639,15 @@ _docs_bundle = rule(
         # The aspect preserves the selected target's rule kind while
         # recursively collecting its source files for source-link generation.
         "code_targets": attr.label_list(aspects = [_collect_code_target_sources]),
+        "metamodel": attr.label(
+            allow_single_file = True,
+            default = Label("@score_docs_as_code//src/extensions/score_metamodel:metamodel_yaml"),
+        ),
+        "root_docs_config": attr.label(providers = [DocsConfigInfo]),
+        # ``docs()`` marks its own bundle so its exported project URL stays at
+        # the configured canonical root. Standalone docs_bundle targets use
+        # their Bazel package as the relative URL suffix.
+        "is_root_bundle": attr.bool(default = False),
     },
     doc = "Internal rule that carries bundle files and their documentation-tree locations.",
 )
@@ -525,6 +663,8 @@ def create_bundle(
     primary_need_id = None,
     data = [],
     code_targets = [],
+    root_docs_config = None,
+    is_root_bundle = False,
     visibility = None,
     **kwargs):
     """Create a bundle from directory-discovered files and source targets.
@@ -554,6 +694,8 @@ def create_bundle(
         bundle_toctree_indices = [bundle.toctree_index for bundle in parsed_bundles],
         data = data,
         code_targets = code_targets,
+        root_docs_config = root_docs_config,
+        is_root_bundle = is_root_bundle,
         visibility = visibility,
         **kwargs
     )
