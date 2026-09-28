@@ -1025,7 +1025,7 @@ Testing
   :satisfies: gd_req__config_consistent_attributes[version==1]
 
   Docs-as-Code shall only allow a ``needextend`` to add values to options that are
-  not yet set on the extended need. In particular it shall report an error when a
+  not yet set on the extended need. In particular it shall report a warning when a
   ``needextend``:
 
   * replaces an option value that is already set
