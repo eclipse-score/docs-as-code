@@ -270,10 +270,12 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     # metamodel. A consumer may intentionally provide a smaller metamodel than
     # SCORE's default one, so only configure the linker for fields that exist
     # in this build.
+    configured_fields = set(app.config.needs_fields)
+    configured_fields.update(app.config.needs_extra_options)
     github_issue_options = [
         field
         for field in ("mitigation_issue", "tracking")
-        if field in app.config.needs_fields
+        if field in configured_fields
     ]
     if github_issue_options:
         app.config.needs_string_links.setdefault(

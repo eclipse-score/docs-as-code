@@ -142,8 +142,11 @@ def setup_source_code_linker(app: Sphinx):
     # Define need_string_links here to not have them in conf.py. Test links
     # carry the result as an additional field in their serialized value. A
     # custom metamodel may omit either extension field, and Sphinx-Needs 8.5
-    # reports a warning when a linker names an unavailable field.
+    # reports a warning when a linker names an unavailable field. Consumers
+    # may declare fields through either SCORE's needs_fields or Sphinx-Needs'
+    # needs_extra_options, so both configuration sources must be considered.
     configured_fields = set(app.config.needs_fields)
+    configured_fields.update(app.config.needs_extra_options)
     if "source_code_link" in configured_fields:
         app.config.needs_string_links.setdefault(
             "source_code_linker_pure",
