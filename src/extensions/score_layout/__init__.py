@@ -43,6 +43,13 @@ _NEEDS_COMMON_CSS_POSITION = {
 }
 # TEMP UNTIL UPSTREAM FIX - END
 
+# TEMP UNTIL UPSTREAM FIX - BEGIN
+# Bug ref: https://github.com/useblocks/sphinx-mounts/issues/47
+# Secondary sidebar components that need a resolvable source file. Every other
+# component - most importantly ``page-toc`` - works fine on mounted pages.
+_SOURCE_DEPENDENT_SIDEBAR_ITEMS = frozenset({"edit-this-page", "sourcelink"})
+# TEMP UNTIL UPSTREAM FIX - END
+
 
 def setup(app: Sphinx) -> dict[str, str | bool]:
     logger.debug("score_layout setup called")
@@ -113,6 +120,10 @@ def configure_mounted_source_controls(
     safe repository-relative URL. Generated and external sources have no such
     guaranteed URL, so their controls remain hidden until the mount extension
     exposes a logical source path and repository mapping.
+
+    Only the source-dependent controls are hidden. The rest of the secondary
+    sidebar, such as the "On this page" table of contents, is unaffected by the
+    malformed path and stays available.
     """
     source_path = Path(app.env.doc2path(pagename, base=False))
     if not source_path.is_absolute():
@@ -131,7 +142,27 @@ def configure_mounted_source_controls(
 
     context["page_source_suffix"] = ""
     context["sourcename"] = ""
-    context["secondary_sidebar_items"] = []
+    _hide_source_dependent_sidebar_items(context)
+
+
+def _hide_source_dependent_sidebar_items(context: dict[str, Any]) -> None:
+    """Remove the secondary sidebar components that require a source file.
+
+    The PyData theme fills ``secondary_sidebar_items`` before this handler
+    runs, while the malformed source path is still in the context, so the
+    source-dependent components are still part of the list at this point.
+    Dropping the whole list would also drop unrelated components and leave
+    mounted pages without their table of contents.
+    """
+    sidebar_items = context.get("secondary_sidebar_items")
+    if not isinstance(sidebar_items, list):
+        return
+
+    context["secondary_sidebar_items"] = [
+        item
+        for item in cast(list[str], sidebar_items)
+        if Path(item).stem not in _SOURCE_DEPENDENT_SIDEBAR_ITEMS
+    ]
 
 
 def _configure_workspace_edit_url(
