@@ -33,8 +33,3 @@ module.
 
    A component that has no dependency on a requirement owned by another
    bundle must build both independently and through its parent module.
-
-.. toctree::
-   :hidden:
-
-   toc
