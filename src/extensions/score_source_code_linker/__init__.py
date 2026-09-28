@@ -140,25 +140,30 @@ def setup_source_code_linker(app: Sphinx):
     )
 
     # Define need_string_links here to not have them in conf.py. Test links
-    # carry the result as an additional field in their serialized value.
-    app.config.needs_string_links.setdefault(
-        "source_code_linker_pure",
-        {
-            "regex": r"(?P<url>.+)<>(?P<name>.+)",
-            "link_url": "{{url}}",
-            "link_name": "{{name}}",
-            "options": ["source_code_link"],
-        },
-    )
-    app.config.needs_string_links.setdefault(
-        "test_code_linker",
-        {
-            "regex": r"(?P<url>.+)<>(?P<name>.+)<>(?P<result>.+)",
-            "link_url": "{{url}}",
-            "link_name": "{{name}} ({{result}})",
-            "options": ["testlink"],
-        },
-    )
+    # carry the result as an additional field in their serialized value. A
+    # custom metamodel may omit either extension field, and Sphinx-Needs 8.5
+    # reports a warning when a linker names an unavailable field.
+    configured_fields = set(app.config.needs_fields)
+    if "source_code_link" in configured_fields:
+        app.config.needs_string_links.setdefault(
+            "source_code_linker_pure",
+            {
+                "regex": r"(?P<url>.+)<>(?P<name>.+)",
+                "link_url": "{{url}}",
+                "link_name": "{{name}}",
+                "options": ["source_code_link"],
+            },
+        )
+    if "testlink" in configured_fields:
+        app.config.needs_string_links.setdefault(
+            "test_code_linker",
+            {
+                "regex": r"(?P<url>.+)<>(?P<name>.+)<>(?P<result>.+)",
+                "link_url": "{{url}}",
+                "link_name": "{{name}} ({{result}})",
+                "options": ["testlink"],
+            },
+        )
 
 
 def register_test_code_linker(app: Sphinx):

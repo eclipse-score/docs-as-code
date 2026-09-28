@@ -266,15 +266,25 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     app.config.needs_types += metamodel.needs_types
     app.config.needs_links.update(metamodel.needs_links)
     app.config.needs_fields.update(metamodel.needs_fields)
-    app.config.needs_string_links.setdefault(
-        "github_issue_linker",
-        {
-            "regex": r"(?P<url>https://github\.com/[^/]+/(?P<repo>[^/]+)/issues/(?P<number>\d+))",
-            "link_url": "{{url}}",
-            "link_name": "{{repo}}#{{number}}",
-            "options": ["mitigation_issue", "tracking"],
-        },
-    )
+    # Sphinx-Needs validates every string-link option against the active
+    # metamodel. A consumer may intentionally provide a smaller metamodel than
+    # SCORE's default one, so only configure the linker for fields that exist
+    # in this build.
+    github_issue_options = [
+        field
+        for field in ("mitigation_issue", "tracking")
+        if field in app.config.needs_fields
+    ]
+    if github_issue_options:
+        app.config.needs_string_links.setdefault(
+            "github_issue_linker",
+            {
+                "regex": r"(?P<url>https://github\.com/[^/]+/(?P<repo>[^/]+)/issues/(?P<number>\d+))",
+                "link_url": "{{url}}",
+                "link_name": "{{repo}}#{{number}}",
+                "options": github_issue_options,
+            },
+        )
     app.config.graph_checks = metamodel.needs_graph_check
     app.config.prohibited_words_checks = metamodel.prohibited_words_checks
 

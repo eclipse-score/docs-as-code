@@ -6,7 +6,7 @@
     "0.0.0": {
       "creator": {
         "program": "sphinx_needs",
-        "version": "8.3.1"
+        "version": "8.5.0"
       },
       "needs": {
         "tool_req__modern_unlinked_component": {
