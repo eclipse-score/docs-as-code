@@ -1,5 +1,29 @@
 [
   {
+    "name": "test_source_code_link_integration__test_source_link_integration_ok",
+    "file": "src/extensions/score_source_code_linker/tests/test_source_code_link_integration.py",
+    "line": 518,
+    "need": "potential_tool_malfunction__docs_as_code__m8",
+    "verify_type": "fully",
+    "result": "passed",
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
+  },
+  {
+    "name": "test_source_code_link_integration__test_source_link_integration_ok",
+    "file": "src/extensions/score_source_code_linker/tests/test_source_code_link_integration.py",
+    "line": 518,
+    "need": "potential_tool_malfunction__docs_as_code__m9",
+    "verify_type": "fully",
+    "result": "passed",
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
+  },
+  {
     "name": "test_testcase_annotations__test_annotates_external_github_testlink",
     "file": "src/extensions/score_source_code_linker/tests/test_testcase_annotations.py",
     "line": 49,
@@ -96,9 +120,33 @@
     "url": ""
   },
   {
+    "name": "test_testlink__test_testcaseneed_to_dict_multiple_links",
+    "file": "src/extensions/score_source_code_linker/tests/test_testlink.py",
+    "line": 100,
+    "need": "potential_tool_malfunction__docs_as_code__m5",
+    "verify_type": "fully",
+    "result": "passed",
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
+  },
+  {
+    "name": "test_testlink__test_testcaseneed_to_dict_multiple_links",
+    "file": "src/extensions/score_source_code_linker/tests/test_testlink.py",
+    "line": 100,
+    "need": "potential_tool_malfunction__docs_as_code__m6",
+    "verify_type": "fully",
+    "result": "passed",
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
+  },
+  {
     "name": "test_testlink__test_store_and_load_testlinks_roundtrip",
     "file": "src/extensions/score_source_code_linker/tests/test_testlink.py",
-    "line": 142,
+    "line": 146,
     "need": "tool_req__docs_test_link_testcase",
     "verify_type": "partially",
     "result": "passed",
@@ -156,9 +204,33 @@
     "url": ""
   },
   {
+    "name": "test_xml_parser__test_read_test_xml_file",
+    "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
+    "line": 278,
+    "need": "potential_tool_malfunction__docs_as_code__m5",
+    "verify_type": "fully",
+    "result": "passed",
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
+  },
+  {
+    "name": "test_xml_parser__test_read_test_xml_file",
+    "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
+    "line": 278,
+    "need": "potential_tool_malfunction__docs_as_code__m6",
+    "verify_type": "fully",
+    "result": "passed",
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
+  },
+  {
     "name": "test_xml_parser__test_short_hash_consistency_and_format",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": 346,
+    "line": 350,
     "need": "tool_req__docs_test_link_testcase",
     "verify_type": "partially",
     "result": "passed",
@@ -170,7 +242,7 @@
   {
     "name": "test_xml_parser__test_is_testcase_in_scope_empty_allow_list_is_unfiltered",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": 404,
+    "line": 408,
     "need": "tool_req__docs_test_link_testcase",
     "verify_type": "partially",
     "result": "passed",
@@ -182,7 +254,7 @@
   {
     "name": "test_xml_parser__test_is_testcase_in_scope_positive_match",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": 416,
+    "line": 420,
     "need": "tool_req__docs_test_link_testcase",
     "verify_type": "partially",
     "result": "passed",
@@ -194,7 +266,7 @@
   {
     "name": "test_xml_parser__test_is_testcase_in_scope_not_under_any_allowed_dir",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": 429,
+    "line": 433,
     "need": "tool_req__docs_test_link_testcase",
     "verify_type": "partially",
     "result": "passed",
@@ -206,7 +278,7 @@
   {
     "name": "test_xml_parser__test_is_testcase_in_scope_none_file_with_allow_list",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": 439,
+    "line": 443,
     "need": "tool_req__docs_test_link_testcase",
     "verify_type": "partially",
     "result": "passed",
@@ -218,7 +290,7 @@
   {
     "name": "test_xml_parser__test_is_testcase_in_scope_no_string_prefix_match",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": 449,
+    "line": 453,
     "need": "tool_req__docs_test_link_testcase",
     "verify_type": "partially",
     "result": "passed",
@@ -230,7 +302,7 @@
   {
     "name": "test_xml_parser__test_parse_testcase_source_dirs",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": 466,
+    "line": 470,
     "need": "tool_req__docs_test_link_testcase",
     "verify_type": "partially",
     "result": "passed",
@@ -242,7 +314,7 @@
   {
     "name": "test_xml_parser__test_parse_testcase_source_dirs_non_list_raises",
     "file": "src/extensions/score_source_code_linker/tests/test_xml_parser.py",
-    "line": 478,
+    "line": 482,
     "need": "tool_req__docs_test_link_testcase",
     "verify_type": "partially",
     "result": "passed",
@@ -408,6 +480,30 @@
     "url": ""
   },
   {
+    "name": "test_rules_file_based__test_rst_files[options/test_need_extends.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/options/test_need_extends.rst",
+    "line": 15,
+    "need": "tool_req__docs_restrict_needextend",
+    "verify_type": "partially",
+    "result": "passed",
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
+  },
+  {
+    "name": "test_rules_file_based__test_rst_files[options/test_dec_rec.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/options/test_dec_rec.rst",
+    "line": 15,
+    "need": "tool_req__docs_dec_rec_type",
+    "verify_type": "partially",
+    "result": "passed",
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
+  },
+  {
     "name": "test_rules_file_based__test_rst_files[options/test_req_attr_reqtype.rst]",
     "file": "src/extensions/score_metamodel/tests/rst/options/test_req_attr_reqtype.rst",
     "line": 16,
@@ -473,6 +569,18 @@
     "line": 16,
     "need": "tool_req__docs_arch_types",
     "verify_type": "partially",
+    "result": "passed",
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
+  },
+  {
+    "name": "test_rules_file_based__test_rst_files[architecture/architecture_tests.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/architecture/architecture_tests.rst",
+    "line": 16,
+    "need": "potential_tool_malfunction__docs_as_code__m4",
+    "verify_type": "fully",
     "result": "passed",
     "result_text": "",
     "repo_name": "local_repo",
@@ -677,6 +785,42 @@
     "line": 77,
     "need": "tool_req__docs_common_attr_description",
     "verify_type": "partially",
+    "result": "passed",
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
+  },
+  {
+    "name": "test_metamodel_load__test_all_undeclared_links_are_reported_at_once",
+    "file": "src/extensions/score_metamodel/tests/test_metamodel_load.py",
+    "line": 192,
+    "need": "potential_tool_malfunction__docs_as_code__m1",
+    "verify_type": "fully",
+    "result": "passed",
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
+  },
+  {
+    "name": "test_metamodel_load__test_shipped_metamodel_declares_every_link_it_uses",
+    "file": "src/extensions/score_metamodel/tests/test_metamodel_load.py",
+    "line": 214,
+    "need": "potential_tool_malfunction__docs_as_code__m1",
+    "verify_type": "fully",
+    "result": "passed",
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
+  },
+  {
+    "name": "test_metamodel_load__test_tool_qualification_types_model_nested_traceability",
+    "file": "src/extensions/score_metamodel/tests/test_metamodel_load.py",
+    "line": 224,
+    "need": "potential_tool_malfunction__docs_as_code__m1",
+    "verify_type": "fully",
     "result": "passed",
     "result_text": "",
     "repo_name": "local_repo",
@@ -984,6 +1128,18 @@
     "url": ""
   },
   {
+    "name": "test_rules_file_based__test_rst_files[graph/test_metamodel_graph.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/graph/test_metamodel_graph.rst",
+    "line": 15,
+    "need": "potential_tool_malfunction__docs_as_code__m2",
+    "verify_type": "fully",
+    "result": "passed",
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
+  },
+  {
     "name": "test_rules_file_based__test_rst_files[graph/test_workproduct_aspice_40.rst]",
     "file": "src/extensions/score_metamodel/tests/rst/graph/test_workproduct_aspice_40.rst",
     "line": 16,
@@ -1176,9 +1332,21 @@
     "url": ""
   },
   {
+    "name": "test_traceability_metrics__test_calculate_requirement_metrics_counts_links_and_missing_ids",
+    "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
+    "line": 155,
+    "need": "potential_tool_malfunction__docs_as_code__m3",
+    "verify_type": "partially",
+    "result": "passed",
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
+  },
+  {
     "name": "test_traceability_metrics__test_calculate_requirement_metrics_non_fully_linked",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": 181,
+    "line": 184,
     "need": "tool_req__docs_test_linkage_metrics",
     "verify_type": "partially",
     "result": "passed",
@@ -1190,7 +1358,7 @@
   {
     "name": "test_traceability_metrics__test_calculate_requirement_metrics_non_fully_linked_2",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": 207,
+    "line": 210,
     "need": "tool_req__docs_test_linkage_metrics",
     "verify_type": "partially",
     "result": "passed",
@@ -1202,8 +1370,20 @@
   {
     "name": "test_traceability_metrics__test_calculate_test_metrics_counts_linked_tests_and_broken_refs",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": 233,
+    "line": 236,
     "need": "tool_req__docs_test_linkage_metrics",
+    "verify_type": "partially",
+    "result": "passed",
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
+  },
+  {
+    "name": "test_traceability_metrics__test_calculate_test_metrics_counts_linked_tests_and_broken_refs",
+    "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
+    "line": 236,
+    "need": "potential_tool_malfunction__docs_as_code__m3",
     "verify_type": "partially",
     "result": "passed",
     "result_text": "",
