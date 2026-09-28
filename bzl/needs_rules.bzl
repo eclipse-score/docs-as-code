@@ -93,16 +93,13 @@ def _sphinx_docs_impl(ctx):
         executable = ctx.executable.sphinx,
         env = env,
         inputs = depset(
-            [file for file in [config_file, metamodel_file] if file] +
-            ctx.files.data +
-            ctx.files.tools + [
-                file
-                for file in [
-                    ctx.file.score_sourcelinks_json,
-                    ctx.file.mounts_manifest,
-                ]
-                if file
-            ],
+            [file for file in [
+                config_file,
+                metamodel_file,
+                ctx.file.score_sourcelinks_json,
+                ctx.file.mounts_manifest,
+            ] if file] +
+            ctx.files.data + ctx.files.tools,
             transitive = [bundle.own_source_files],
         ),
         outputs = [output],
