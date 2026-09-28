@@ -12,7 +12,8 @@
 # *******************************************************************************
 """Unit tests for the small Starlark helpers in ``bzl/basics.bzl``."""
 
-load("@bazel_skylib//lib:unittest.bzl", "asserts", "unittest")
+load("@bazel_skylib//lib:partial.bzl", "partial")
+load("@bazel_skylib//lib:unittest.bzl", "analysistest", "asserts", "unittest")
 load("//:bzl/basics.bzl", "join_path")
 
 def _join_path_test_impl(ctx):
@@ -39,6 +40,34 @@ def _join_path_test_impl(ctx):
 
 join_path_test = unittest.make(_join_path_test_impl)
 
+def _join_path_none_none_target_impl(ctx):
+    """Invoke the invalid input so the analysis test can inspect its failure."""
+    join_path(None, None)
+    return []
+
+_join_path_none_none_target = rule(
+    implementation = _join_path_none_none_target_impl,
+)
+
+def _join_path_none_none_test_impl(ctx):
+    """Require ``join_path(None, None)`` to fail during analysis."""
+    env = analysistest.begin(ctx)
+    asserts.expect_failure(env, "join_path requires at least one non-None segment")
+    return analysistest.end(env)
+
+join_path_none_none_test = analysistest.make(
+    _join_path_none_none_test_impl,
+    expect_failure = True,
+)
+
 def basics_test_suite(name):
     """Declare the unit-test suite for the basic Starlark helpers."""
-    unittest.suite(name, join_path_test)
+    _join_path_none_none_target(name = name + "_none_none_target")
+    unittest.suite(
+        name,
+        join_path_test,
+        partial.make(
+            join_path_none_none_test,
+            target_under_test = ":" + name + "_none_none_target",
+        ),
+    )

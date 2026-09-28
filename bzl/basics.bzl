@@ -24,8 +24,11 @@ def join_path(prefix, rest):
     Returns:
       The combined docname.
     """
-    rest = (rest or "").rstrip("/")
-    prefix = (prefix or "").rstrip("/")
+    if prefix == None and rest == None:
+        fail("join_path requires at least one non-None segment")
+
+    rest = "" if rest == None else rest.rstrip("/")
+    prefix = "" if prefix == None else prefix.rstrip("/")
 
     if not prefix or prefix == ".":
         return rest
