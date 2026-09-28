@@ -1002,15 +1002,17 @@ Testing
   :tags: Process / Other
   :version: 1
   :implemented: YES
-  :satisfies: gd_req__process_management_build_blocks_attr[version==1]
+  :satisfies: 
+   gd_req__process_management_build_blocks_attr[version==1], 
+   doc__number_decision_record_template[version==3]
 
-  Docs-as-Code shall support the Decision Record (dec_rec) need type with the following attributes:
+  Docs-as-Code shall support the Decision Record (dec_rec) need type with the following options:
 
-  * status (mandatory, one of: proposed, accepted, deprecated, rejected, superseded)
-  * context (mandatory)
-  * decision (mandatory)
-  * consequences (optional)
-  * tracking (optional, link to a GitHub issue)
+  * ``status`` (mandatory, one of: proposed, accepted, deprecated, rejected, superseded)
+  * ``context`` (mandatory)
+  * ``decision`` (mandatory)
+  * ``consequences`` (optional)
+  * ``tracking`` (optional, link to a GitHub issue)
 
   A Decision Record shall be able to link to other needs via the optional ``affects`` link.
 
