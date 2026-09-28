@@ -1,5 +1,19 @@
 [
   {
+    "name": "bzl/tests/basics_tests_test_1.sh",
+    "file": null,
+    "line": null,
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
     "name": "bzl/tests/basics_tests_test_0.sh",
     "file": null,
     "line": null,
