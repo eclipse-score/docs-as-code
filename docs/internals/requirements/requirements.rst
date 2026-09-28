@@ -997,6 +997,42 @@ Testing
   * Standard Workproduct (std_wp)
 
 
+.. tool_req:: Decision Record Type
+  :id: tool_req__docs_dec_rec_type
+  :tags: Process / Other
+  :version: 1
+  :implemented: YES
+  :satisfies: gd_req__process_management_build_blocks_attr[version==1]
+
+  Docs-as-Code shall support the Decision Record (dec_rec) need type with the following attributes:
+
+  * status (mandatory, one of: proposed, accepted, deprecated, rejected, superseded)
+  * context (mandatory)
+  * decision (mandatory)
+  * consequences (optional)
+  * tracking (optional, link to a GitHub issue)
+
+  A Decision Record shall be able to link to other needs via the optional ``affects`` link.
+
+
+.. tool_req:: Restrict needextend usage
+  :id: tool_req__docs_restrict_needextend
+  :tags: Process / Other
+  :version: 1
+  :implemented: YES
+  :satisfies: gd_req__config_consistent_attributes[version==1]
+
+  Docs-as-Code shall only allow a ``needextend`` to add values to options that are
+  not yet set on the extended need. In particular it shall report an error when a
+  ``needextend``:
+
+  * replaces an option value that is already set
+  * replaces or deletes links
+  * deletes an option
+  * appends to a string type option
+  * is not limited to the needs of its own document via ``c.this_doc()``
+
+
 🛡️ Safety Analysis (DFA + FMEA)
 ###############################
 

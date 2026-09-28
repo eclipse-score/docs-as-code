@@ -12,6 +12,15 @@
    # SPDX-License-Identifier: Apache-2.0
    # *******************************************************************************
 
+.. test_metadata:: Test Decision Record Type
+   :id: test_metadata__dec_rec
+   :partially_verifies_list: tool_req__docs_dec_rec_type
+   :test_type: requirements_based
+   :derivation_technique: requirements_based
+
+   Tests that the dec_rec need type with its mandatory attributes and the
+   affects link is supported.
+
 
 .. dec_rec:: Test Decision Record 1
    :id: dec_rec__test__decision_record_1
