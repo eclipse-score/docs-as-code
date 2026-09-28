@@ -526,12 +526,19 @@ Path (relative to repository root) to your Sphinx source directory. This is the 
 that contains the top-level ReST/markdown sources. A <code class="docutils literal notranslate"><span class="pre">conf.py</span></code> is optional.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">project</span></code> and <code class="docutils literal notranslate"><span class="pre">project_url</span></code> (strings, optional)
 Project name and canonical project URL. They are required when <code class="docutils literal notranslate"><span class="pre">source_dir</span></code>
-has no <code class="docutils literal notranslate"><span class="pre">conf.py</span></code>; in that case <code class="docutils literal notranslate"><span class="pre">docs()</span></code> generates the Sphinx configuration
-and supplies the Docs-as-Code baseline version, extensions, and a
-<code class="docutils literal notranslate"><span class="pre">required_in_id</span></code> entry derived from the Bazel module name. The first
-underscore-separated prefix is removed (for example,
+has no <code class="docutils literal notranslate"><span class="pre">conf.py</span></code>; in that case <code class="docutils literal notranslate"><span class="pre">docs()</span></code> runs Sphinx in configuration-free
+mode and supplies these values, the Docs-as-Code baseline extensions and
+version, and a <code class="docutils literal notranslate"><span class="pre">required_in_id</span></code> entry derived from the Bazel module name.
+The first underscore-separated prefix is removed (for example,
 <code class="docutils literal notranslate"><span class="pre">score_docs_as_code</span></code> becomes <code class="docutils literal notranslate"><span class="pre">docs_as_code</span></code>). If a <code class="docutils literal notranslate"><span class="pre">conf.py</span></code> exists,
-it remains authoritative and these values are not used.</p></li>
+it remains authoritative for the root Sphinx build; these macro arguments
+are not used to override it. They are still published when supplied so an
+associated child bundle can receive explicit root metadata; supply them
+explicitly when associated bundles need that metadata. Values are not read
+back from <code class="docutils literal notranslate"><span class="pre">conf.py</span></code> or inherited from it.
+The root bundle nevertheless publishes the module-derived
+<code class="docutils literal notranslate"><span class="pre">required_in_id</span></code> through the root docs configuration; associated child
+bundles inherit it and cannot override it locally.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">data</span></code> (list of bazel labels)
 Supporting files for this project’s root <code class="docutils literal notranslate"><span class="pre">:docs_bundle</span></code>. The files are
 available to the documentation targets and travel when another project
@@ -608,16 +615,17 @@ site).</p>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>Signature: <code class="docutils literal notranslate"><span class="pre">docs_bundle(name,</span> <span class="pre">source_dir</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">srcs</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">data</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">entry_doc</span> <span class="pre">=</span> <span class="pre">&quot;index&quot;,</span> <span class="pre">bundles</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">code_targets</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">primary_need_id</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">visibility</span> <span class="pre">=</span> <span class="pre">None)</span></code>.</p>
+<p>Signature: <code class="docutils literal notranslate"><span class="pre">docs_bundle(name,</span> <span class="pre">source_dir</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">srcs</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">data</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">entry_doc</span> <span class="pre">=</span> <span class="pre">&quot;index&quot;,</span> <span class="pre">bundles</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">code_targets</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">primary_need_id</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">root_docs</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">visibility</span> <span class="pre">=</span> <span class="pre">None)</span></code>.</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">source_dir</span></code> (string, optional)
 Directory holding the bundle’s own doc sources. It is globbed the same way as
 <code class="docutils literal notranslate"><span class="pre">docs()</span></code> (RST, Markdown, images, and the other doc file kinds). The
 <code class="docutils literal notranslate"><span class="pre">source_dir</span></code> itself is the mount root, so the files mount relative to it (so
 <code class="docutils literal notranslate"><span class="pre">concept/index.rst</span></code> with <code class="docutils literal notranslate"><span class="pre">source_dir</span> <span class="pre">=</span> <span class="pre">&quot;concept&quot;</span></code> becomes <code class="docutils literal notranslate"><span class="pre">index.rst</span></code>).
-Standalone bundle-local Needs exports always use a self-contained, generated
-Sphinx configuration. A root bundle created by <code class="docutils literal notranslate"><span class="pre">docs()</span></code> instead uses the
-project’s <code class="docutils literal notranslate"><span class="pre">conf.py</span></code> so its local export matches the normal project build.
+Standalone bundle-local Needs exports use Sphinx’s configuration-free mode
+with a self-contained set of baseline overrides. A root bundle created by
+<code class="docutils literal notranslate"><span class="pre">docs()</span></code> uses the project’s <code class="docutils literal notranslate"><span class="pre">conf.py</span></code> when one exists, so its local export
+remains compatible while that legacy path is phased out.
 The bundle exposes those files as a Bazel depset (via the <code class="docutils literal notranslate"><span class="pre">DocsBundleInfo</span></code>
 provider) and records the <code class="docutils literal notranslate"><span class="pre">source_dir</span></code> path; sphinx-mounts walks that original
 directory directly — no copy is made. Leave it unset for a bundle whose
@@ -674,7 +682,7 @@ the bundle. This lets the
 same bundle be mounted at different locations by different consumers without
 changing its canonical entry page.</p>
 </div>
-<ul class="simple">
+<ul>
 <li><dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">code_targets</span></code> (list of Bazel labels, optional)</dt><dd><p>Implementation targets or filegroups to scan for requirement tags.
 Implementation target <code class="docutils literal notranslate"><span class="pre">srcs</span></code>, <code class="docutils literal notranslate"><span class="pre">hdrs</span></code>, and <code class="docutils literal notranslate"><span class="pre">textual_hdrs</span></code> are collected
@@ -691,6 +699,21 @@ selected Need receives bundle-level target metadata. The ID is independent
 of the Bazel bundle target name.</p>
 </dd>
 </dl>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">root_docs</span></code> (bazel label, optional)
+Root documentation target whose structured project configuration and
+metamodel are used by this bundle’s standalone Needs export. For a root
+documentation target declared in the same repository’s root package, use
+<code class="docutils literal notranslate"><span class="pre">//:docs</span></code>. The reference is resolved to an internal configuration target,
+so the bundle does not depend on the root bundle’s composed content. It is
+deliberately opt-in: standalone bundles otherwise keep their own local
+configuration. The generated <code class="docutils literal notranslate"><span class="pre">docs.__internal__.config</span></code> target is an
+implementation detail and is not part of the public target surface; it
+publishes a structured provider for the bundle rule to consume.
+This includes the effective <code class="docutils literal notranslate"><span class="pre">required_in_id</span></code> namespace; a bundle associated
+with root docs cannot override it locally. A <code class="docutils literal notranslate"><span class="pre">conf.py</span></code> is never inherited.</p>
+<p>The root project’s <code class="docutils literal notranslate"><span class="pre">project_url</span></code> is resolved for the declaring bundle by
+appending its workspace-relative Bazel package path.</p>
 </li>
 </ul>
 </section>

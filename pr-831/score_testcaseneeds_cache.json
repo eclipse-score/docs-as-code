@@ -1,5 +1,19 @@
 [
   {
+    "name": "bzl/tests/basics_tests_test_1.sh",
+    "file": null,
+    "line": null,
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
     "name": "bzl/tests/basics_tests_test_0.sh",
     "file": null,
     "line": null,
@@ -2857,30 +2871,30 @@
   },
   {
     "name": "test_rules_file_based__test_rst_files[options/test_need_extends.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/docname.rst",
-    "line": "42",
+    "file": "src/extensions/score_metamodel/tests/rst/options/test_need_extends.rst",
+    "line": "15",
     "result": "passed",
-    "repo_name": null,
-    "hash": null,
-    "url": null,
-    "TestType": null,
-    "DerivationTechnique": null,
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": "",
+    "TestType": "requirements_based",
+    "DerivationTechnique": "requirements_based",
     "result_text": "",
-    "PartiallyVerifies": null,
+    "PartiallyVerifies": "tool_req__docs_restrict_needextend",
     "FullyVerifies": null
   },
   {
     "name": "test_rules_file_based__test_rst_files[options/test_dec_rec.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/docname.rst",
-    "line": "42",
+    "file": "src/extensions/score_metamodel/tests/rst/options/test_dec_rec.rst",
+    "line": "15",
     "result": "passed",
-    "repo_name": null,
-    "hash": null,
-    "url": null,
-    "TestType": null,
-    "DerivationTechnique": null,
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": "",
+    "TestType": "requirements_based",
+    "DerivationTechnique": "requirements_based",
     "result_text": "",
-    "PartiallyVerifies": null,
+    "PartiallyVerifies": "tool_req__docs_dec_rec_type",
     "FullyVerifies": null
   },
   {
@@ -3290,7 +3304,7 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_external_needs__test_extend_needs_json_exporter_can_override_bundle_export_metadata",
+    "name": "test_external_needs__test_extend_needs_json_exporter_can_override_export_metadata",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
     "line": "62",
     "result": "passed",
@@ -5910,7 +5924,7 @@
   {
     "name": "main_test__test_build_action_selects_sphinx_builder[incremental-html]",
     "file": "src/docs_cli/main_test.py",
-    "line": "62",
+    "line": "63",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -5924,7 +5938,7 @@
   {
     "name": "main_test__test_build_action_selects_sphinx_builder[check-needs]",
     "file": "src/docs_cli/main_test.py",
-    "line": "62",
+    "line": "63",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -5938,7 +5952,7 @@
   {
     "name": "main_test__test_build_action_selects_sphinx_builder[linkcheck-linkcheck]",
     "file": "src/docs_cli/main_test.py",
-    "line": "62",
+    "line": "63",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -5952,7 +5966,7 @@
   {
     "name": "main_test__test_build_action_selects_sphinx_builder[build_needs_json-needs]",
     "file": "src/docs_cli/main_test.py",
-    "line": "62",
+    "line": "63",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -5966,7 +5980,7 @@
   {
     "name": "main_test__test_failed_build_returns_exit_code_and_forces_next_build_clean",
     "file": "src/docs_cli/main_test.py",
-    "line": "113",
+    "line": "114",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -5980,7 +5994,7 @@
   {
     "name": "main_test__test_live_preview_uses_port_and_bundle_watches",
     "file": "src/docs_cli/main_test.py",
-    "line": "160",
+    "line": "161",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -5994,7 +6008,21 @@
   {
     "name": "main_test__test_bazel_configuration_resolves_runfiles_and_preserves_repo_relative_edit_path",
     "file": "src/docs_cli/main_test.py",
-    "line": "214",
+    "line": "215",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "main_test__test_configuration_free_build_forwards_structured_sphinx_options",
+    "file": "src/docs_cli/main_test.py",
+    "line": "253",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -6008,7 +6036,7 @@
   {
     "name": "main_test__test_bazel_build_resolves_mount_manifest_from_execroot",
     "file": "src/docs_cli/main_test.py",
-    "line": "252",
+    "line": "272",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -6022,7 +6050,7 @@
   {
     "name": "main_test__test_bazel_needs_action_uses_external_needs_labels_channel",
     "file": "src/docs_cli/main_test.py",
-    "line": "278",
+    "line": "298",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -6036,7 +6064,7 @@
   {
     "name": "main_test__test_direct_invocation_resolves_paths_relative_to_cwd",
     "file": "src/docs_cli/main_test.py",
-    "line": "296",
+    "line": "316",
     "result": "passed",
     "repo_name": null,
     "hash": null,

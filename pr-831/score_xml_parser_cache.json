@@ -480,6 +480,30 @@
     "url": ""
   },
   {
+    "name": "test_rules_file_based__test_rst_files[options/test_need_extends.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/options/test_need_extends.rst",
+    "line": 15,
+    "need": "tool_req__docs_restrict_needextend",
+    "verify_type": "partially",
+    "result": "passed",
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
+  },
+  {
+    "name": "test_rules_file_based__test_rst_files[options/test_dec_rec.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/options/test_dec_rec.rst",
+    "line": 15,
+    "need": "tool_req__docs_dec_rec_type",
+    "verify_type": "partially",
+    "result": "passed",
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
+  },
+  {
     "name": "test_rules_file_based__test_rst_files[options/test_req_attr_reqtype.rst]",
     "file": "src/extensions/score_metamodel/tests/rst/options/test_req_attr_reqtype.rst",
     "line": 16,
