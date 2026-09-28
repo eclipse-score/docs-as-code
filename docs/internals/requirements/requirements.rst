@@ -1002,9 +1002,9 @@ Testing
   :tags: Process / Other
   :version: 1
   :implemented: YES
-  :satisfies: 
-   gd_req__process_management_build_blocks_attr[version==1], 
-   doc__number_decision_record_template[version==3]
+  :satisfies:
+   gd_req__process_management_build_blocks_attr[version==1],
+   gd_req__process_management_build_blocks_link[version==1],
 
   Docs-as-Code shall support the Decision Record (dec_rec) need type with the following options:
 
