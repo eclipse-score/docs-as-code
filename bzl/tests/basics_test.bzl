@@ -62,7 +62,12 @@ join_path_none_none_test = analysistest.make(
 
 def basics_test_suite(name):
     """Declare the unit-test suite for the basic Starlark helpers."""
-    _join_path_none_none_target(name = name + "_none_none_target")
+    _join_path_none_none_target(
+        name = name + "_none_none_target",
+        # This target is intentionally invalid; it is consumed only by the
+        # analysis test that asserts the expected loading-phase failure.
+        tags = ["manual"],
+    )
     unittest.suite(
         name,
         join_path_test,
