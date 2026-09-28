@@ -9,12 +9,33 @@
         "version": "8.5.0"
       },
       "needs": {
+        "gd_req__modern_unlinked_self_contained": {
+          "content": "A component that has no dependency on a requirement owned by another\nbundle must build both independently and through its parent module.",
+          "docname": "index",
+          "external_css": "external_link",
+          "id": "gd_req__modern_unlinked_self_contained",
+          "lineno": 30,
+          "satisfies_back": [
+            "tool_req__modern_unlinked_component"
+          ],
+          "section_name": "S-CORE Modern Unlinked Component",
+          "sections": [
+            "S-CORE Modern Unlinked Component"
+          ],
+          "title": "Self-contained components build without external needs",
+          "type": "gd_req",
+          "type_name": "Process Requirements",
+          "version": 1
+        },
         "tool_req__modern_unlinked_component": {
           "content": "This requirement is intentionally not linked to the platform feature\nrequirement. It verifies the independent-component control case.",
           "docname": "index",
           "external_css": "external_link",
           "id": "tool_req__modern_unlinked_component",
           "lineno": 22,
+          "satisfies": [
+            "gd_req__modern_unlinked_self_contained"
+          ],
           "section_name": "S-CORE Modern Unlinked Component",
           "sections": [
             "S-CORE Modern Unlinked Component"
@@ -25,7 +46,7 @@
           "version": 1
         }
       },
-      "needs_amount": 1,
+      "needs_amount": 2,
       "needs_defaults_removed": true,
       "needs_schema": {
         "$schema": "http://json-schema.org/draft-07/schema#",
@@ -114,6 +135,24 @@
           "avatar": {
             "default": null,
             "description": "Added by service github-issues",
+            "field_type": "extra",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "bazel_target": {
+            "default": "",
+            "description": "Added by needs_fields config",
+            "field_type": "extra",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "bazel_type": {
+            "default": "",
+            "description": "Added by needs_fields config",
             "field_type": "extra",
             "type": [
               "string",
@@ -344,6 +383,15 @@
               "type": "string"
             },
             "type": "array"
+          },
+          "detection_sufficient": {
+            "default": "",
+            "description": "Added by needs_fields config",
+            "field_type": "extra",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "docname": {
             "default": null,
@@ -926,6 +974,24 @@
               "null"
             ]
           },
+          "realized_by": {
+            "default": [],
+            "description": "Link field",
+            "field_type": "links",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "realized_by_back": {
+            "default": [],
+            "description": "Backlink field",
+            "field_type": "backlinks",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
           "realizes": {
             "default": [],
             "description": "Link field",
@@ -1044,6 +1110,15 @@
             ]
           },
           "safety_affected": {
+            "default": "",
+            "description": "Added by needs_fields config",
+            "field_type": "extra",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "safety_measures": {
             "default": "",
             "description": "Added by needs_fields config",
             "field_type": "extra",

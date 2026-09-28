@@ -48,6 +48,10 @@ def _composition_manifest_impl(ctx):
             "bundle": {
                 "label": entry.bundle_label,
                 "name": entry.bundle_name,
+                # This explicit ID identifies the primary Need represented by
+                # the bundle. It is intentionally independent of the Bazel
+                # target name and of any other Need IDs in the bundle.
+                "primary_need_id": entry.primary_need_id,
                 # Each direct target contributes its Bazel label and rule kind
                 # to the bundle metadata consumed by Python.
                 "code_targets": [

@@ -9,12 +9,35 @@
         "version": "8.5.0"
       },
       "needs": {
+        "gd_req__legacy_component_traceability": {
+          "content": "Source-code traceability links of a component must survive mounting into\nits parent module and the full site.",
+          "docname": "index",
+          "external_css": "external_link",
+          "id": "gd_req__legacy_component_traceability",
+          "lineno": 30,
+          "satisfies_back": [
+            "tool_req__legacy_component"
+          ],
+          "section_name": "S-CORE Legacy Component",
+          "sections": [
+            "S-CORE Legacy Component"
+          ],
+          "title": "Mounted components preserve source-code traceability",
+          "type": "gd_req",
+          "type_name": "Process Requirements",
+          "version": 1
+        },
         "tool_req__legacy_component": {
+          "bazel_target": "@@//src/tests/docs_bzl/scenarios/reference_integration/legacy_module/docs/components/component:component_sources",
+          "bazel_type": "filegroup",
           "content": "The legacy component implementation is covered by the component source\ncode-link scan. The integration test checks that this link is preserved\nwhen the component is built through its module and by the full site.",
           "docname": "index",
           "external_css": "external_link",
           "id": "tool_req__legacy_component",
           "lineno": 21,
+          "satisfies": [
+            "gd_req__legacy_component_traceability"
+          ],
           "section_name": "S-CORE Legacy Component",
           "sections": [
             "S-CORE Legacy Component"
@@ -26,7 +49,7 @@
           "version": 1
         }
       },
-      "needs_amount": 1,
+      "needs_amount": 2,
       "needs_defaults_removed": true,
       "needs_schema": {
         "$schema": "http://json-schema.org/draft-07/schema#",
@@ -115,6 +138,24 @@
           "avatar": {
             "default": null,
             "description": "Added by service github-issues",
+            "field_type": "extra",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "bazel_target": {
+            "default": "",
+            "description": "Added by needs_fields config",
+            "field_type": "extra",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "bazel_type": {
+            "default": "",
+            "description": "Added by needs_fields config",
             "field_type": "extra",
             "type": [
               "string",
@@ -345,6 +386,15 @@
               "type": "string"
             },
             "type": "array"
+          },
+          "detection_sufficient": {
+            "default": "",
+            "description": "Added by needs_fields config",
+            "field_type": "extra",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "docname": {
             "default": null,
@@ -927,6 +977,24 @@
               "null"
             ]
           },
+          "realized_by": {
+            "default": [],
+            "description": "Link field",
+            "field_type": "links",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "realized_by_back": {
+            "default": [],
+            "description": "Backlink field",
+            "field_type": "backlinks",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
           "realizes": {
             "default": [],
             "description": "Link field",
@@ -1045,6 +1113,15 @@
             ]
           },
           "safety_affected": {
+            "default": "",
+            "description": "Added by needs_fields config",
+            "field_type": "extra",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "safety_measures": {
             "default": "",
             "description": "Added by needs_fields config",
             "field_type": "extra",

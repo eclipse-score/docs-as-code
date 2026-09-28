@@ -305,7 +305,8 @@ Versioning
 
   * Generic Document (document)
   * Tool Verification Report (doc_tool)
-  * Change Request is also a generic document
+
+  A change request is also a generic document but not a Sphinx-Needs type, so out of scope here.
 
 .. tool_req:: Mandatory attributes of Generic Documents
   :id: tool_req__docs_doc_generic_mandatory
@@ -448,7 +449,7 @@ Versioning
 .. tool_req:: Enables needs linking via satisfies attribute
   :id: tool_req__docs_req_link_satisfies_allowed
   :tags: Requirements
-  :implemented: YES
+  :implemented: PARTIAL
   :version: 1
   :satisfies: gd_req__req_linkage[version==1], gd_req__req_traceability[version==1]
   :parent_covered: YES
@@ -457,6 +458,10 @@ Versioning
   attribute follows defined rules. Having at least one link is mandatory.
 
   Allowed source and target combinations are defined in the following table:
+
+  .. note::
+     The "having at least one link is mandatory" clause is not enforced yet for ``gd_req``.
+     It is blocked by ``gd_req__impl_complexity_analysis`` in ``process_description``, which has no ``satisfies`` link yet.
 
   .. table::
      :widths: auto
@@ -879,11 +884,11 @@ Testing
   :parent_covered: YES
   :satisfies: gd_req__tool_attr_safety_affected[version==1], gd_req__tool_check_mandatory[version==1]
 
-  Docs-as-Code shall enforce that every Tool Verification Report (`doc_tool`) includes a
-  ``safety_affected`` attribute with one of the following values:
+  Docs-as-Code shall derive the Tool Verification Report safety classification
+  from its owned potential tool malfunctions:
 
-  * YES
-  * NO
+  * ``YES`` if at least one owned malfunction is safety affected
+  * ``NO`` otherwise
 
 .. tool_req:: Enforce security classification
   :id: tool_req__docs_tvr_security
@@ -936,11 +941,11 @@ Testing
   :satisfies: gd_req__tool_attr_tcl[version==1]
   :parent_covered: YES
 
-  Docs-as-Code shall enforce that every Tool Verification Report (`doc_tool`) includes a
-  `tcl` attribute with one of the following values:
+  Docs-as-Code shall derive the Tool Confidence Level of a Tool Verification
+  Report from its owned potential tool malfunctions:
 
-  * LOW
-  * HIGH
+  * ``LOW`` if an owned safety-relevant malfunction has insufficient detection
+  * ``HIGH`` otherwise
 
 ⚙️ Process / Other
 ###################
@@ -990,6 +995,44 @@ Testing
   Docs-as-Code shall support the following requirement types:
 
   * Standard Workproduct (std_wp)
+
+
+.. tool_req:: Decision Record Type
+  :id: tool_req__docs_dec_rec_type
+  :tags: Process / Other
+  :version: 1
+  :implemented: YES
+  :satisfies:
+   gd_req__process_management_build_blocks_attr[version==1],
+   gd_req__process_management_build_blocks_link[version==1],
+
+  Docs-as-Code shall support the Decision Record (dec_rec) need type with the following options:
+
+  * ``status`` (mandatory, one of: proposed, accepted, deprecated, rejected, superseded)
+  * ``context`` (mandatory)
+  * ``decision`` (mandatory)
+  * ``consequences`` (optional)
+  * ``tracking`` (optional, link to a GitHub issue)
+
+  A Decision Record shall be able to link to other needs via the optional ``affects`` link.
+
+
+.. tool_req:: Restrict needextend usage
+  :id: tool_req__docs_restrict_needextend
+  :tags: Process / Other
+  :version: 1
+  :implemented: YES
+  :satisfies: gd_req__config_consistent_attributes[version==1]
+
+  Docs-as-Code shall only allow a ``needextend`` to add values to options that are
+  not yet set on the extended need. In particular it shall report a warning when a
+  ``needextend``:
+
+  * replaces an option value that is already set
+  * replaces or deletes links
+  * deletes an option
+  * appends to a string type option
+  * is not limited to the needs of its own document via ``c.this_doc()``
 
 
 🛡️ Safety Analysis (DFA + FMEA)

@@ -15,7 +15,7 @@
 
 import pytest
 
-from src.tests.docs_bzl.helpers import run_scenario
+from src.tests.docs_bzl.helpers import load_needs, run_scenario
 
 
 @pytest.mark.bazel_slow
@@ -101,3 +101,26 @@ def test_reference_integration_builds_with_platform_requirements():
         / "component"
         / "index.html"
     ).is_file()
+
+
+@pytest.mark.bazel_cached
+def test_bundle_metadata_is_added_to_the_explicit_primary_need():
+    """A component bundle contributes its direct Bazel target to its Need.
+
+    The fixture's bundle uses the generic Bazel target name ``docs_bundle`` but
+    explicitly selects ``tool_req__legacy_component``. This proves that the
+    association is independent of both the bundle name and imported Needs.
+    """
+    result = run_scenario("build", "reference_integration", ":needs_json")
+    assert result.artifacts is not None
+
+    needs = load_needs(result.artifacts["needs.json"])
+    # The Need is selected by the bundle's explicit ``primary_need_id``.
+    legacy_need = needs["tool_req__legacy_component"]
+    assert isinstance(legacy_need, dict)
+    assert (
+        legacy_need["bazel_target"]
+        == "@@//src/tests/docs_bzl/scenarios/reference_integration/legacy_module/"
+        "docs/components/component:component_sources"
+    )
+    assert legacy_need["bazel_type"] == "filegroup"

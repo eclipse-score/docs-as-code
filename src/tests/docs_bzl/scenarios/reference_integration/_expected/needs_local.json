@@ -1,7 +1,7 @@
 {
   "current_version": "0.0.0",
   "project": "S-CORE Reference Integration",
-  "project_url": "",
+  "project_url": "https://example.invalid/score-reference-integration",
   "versions": {
     "0.0.0": {
       "creator": {
@@ -98,6 +98,24 @@
           "avatar": {
             "default": null,
             "description": "Added by service github-issues",
+            "field_type": "extra",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "bazel_target": {
+            "default": "",
+            "description": "Added by needs_fields config",
+            "field_type": "extra",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "bazel_type": {
+            "default": "",
+            "description": "Added by needs_fields config",
             "field_type": "extra",
             "type": [
               "string",
@@ -328,6 +346,15 @@
               "type": "string"
             },
             "type": "array"
+          },
+          "detection_sufficient": {
+            "default": "",
+            "description": "Added by needs_fields config",
+            "field_type": "extra",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "docname": {
             "default": null,
@@ -910,6 +937,24 @@
               "null"
             ]
           },
+          "realized_by": {
+            "default": [],
+            "description": "Link field",
+            "field_type": "links",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "realized_by_back": {
+            "default": [],
+            "description": "Backlink field",
+            "field_type": "backlinks",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
           "realizes": {
             "default": [],
             "description": "Link field",
@@ -1028,6 +1073,15 @@
             ]
           },
           "safety_affected": {
+            "default": "",
+            "description": "Added by needs_fields config",
+            "field_type": "extra",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "safety_measures": {
             "default": "",
             "description": "Added by needs_fields config",
             "field_type": "extra",

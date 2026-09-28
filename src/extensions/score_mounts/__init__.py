@@ -26,9 +26,11 @@ For directory mounts, the source-ownership invariant is that every document is
 discovered exactly once: the primary Sphinx source tree owns files outside mounted
 roots, and a directory mount owns its root except for nested directory mounts. The
 exclusions below encode those boundaries as directory patterns so the ownership
-remains correct when files are added later. Explicit file-list mounts remain in
-file-list mode; they are intended for generated sources outside the primary source
-tree, and nested workspace ``srcs`` are a known limitation of this logic.
+remains correct when files are added later. Explicit ``srcs`` have two
+different runtime paths: the root bundle (the manifest entry with
+``root_bundle=True``) stays in Sphinx's source tree and is restricted by
+positive ``include_patterns``, while a mounted child bundle uses
+``sphinx_mounts`` file-list mode at its declared mount location.
 """
 
 from __future__ import annotations
@@ -94,8 +96,9 @@ def _resolve_data_mounts(
         # TODO: Remove this data-mount path, including the root-bundle
         # distinction, once callers migrate generated documentation from
         # ``docs_bundle(data = [...])`` to ``docs_bundle(srcs = [...])``.
-        # Data belonging to the primary bundle is already part of the Sphinx
-        # action inputs. Only rebased child data has a documentation-tree mount.
+        # Data belonging to the root bundle, which owns Sphinx's source tree,
+        # is already part of the Sphinx action inputs. Only rebased child data
+        # has a documentation-tree mount.
         if spec.root_bundle:
             continue
         for data_file in spec.data:
@@ -305,12 +308,14 @@ def _resolve_source_mounts(
 ) -> list[tuple[MountSpec, Path]]:
     """Resolve and validate the directory mounts used for ownership checks.
 
-    Explicit source bundles are deliberately omitted: ``docs_bundle(srcs = [...])``
-    owns a declared file list, not the directory containing those files, so it
-    must remain in ``sphinx_mounts`` file-list mode and must not create a directory
-    exclusion. ``srcs`` is intended for generated sources outside the primary
-    source tree; an explicitly mounted workspace file below a walked root remains
-    a known limitation because exact-file exclusions are not derived here.
+    Explicit source bundles are deliberately omitted from directory ownership:
+    ``docs_bundle(srcs = [...])`` owns a declared file list, not the directory
+    containing those files, so it must not create a directory exclusion. A
+    mounted child bundle uses ``sphinx_mounts`` file-list mode, while a primary
+    bundle's explicit ``srcs`` are restricted through Sphinx's positive
+    ``include_patterns`` selection. An explicitly mounted workspace file below
+    a walked root remains a known limitation because exact-file exclusions are
+    not derived here.
     """
     source_mounts: list[tuple[MountSpec, Path]] = []
     for spec in manifest.mounts:
@@ -324,6 +329,50 @@ def _resolve_source_mounts(
             )
         source_mounts.append((spec, walk_dir.resolve()))
     return source_mounts
+
+
+def _configure_root_bundle_srcs_allowlist(
+    app: Sphinx,
+    config: Config,
+    manifest: MountsManifest,
+    ws_root: Path | None,
+    runfiles_dir: Path | None,
+) -> None:
+    """Restrict the root bundle's explicit ``srcs`` to its declared documents.
+
+    ``docs_bundle(srcs = [...])`` is a positive source selection. It must not
+    be represented as a ``sphinx_mounts`` file-list mount: the root bundle
+    already owns Sphinx's source tree, and a second mount would duplicate that
+    ownership. ``include_patterns`` is evaluated by Sphinx before the read
+    phase and keeps undeclared siblings out without depending on which files
+    happen to be present as sandbox symlinks.
+    """
+    root_bundle_src_specs = [
+        spec for spec in manifest.mounts if spec.root_bundle and spec.files
+    ]
+    if not root_bundle_src_specs:
+        return
+    if len(root_bundle_src_specs) > 1:
+        raise ValueError(
+            "score_mounts: composition manifest contains more than one root "
+            "bundle with explicit ``srcs``"
+        )
+
+    sphinx_source_root = Path(app.srcdir)
+    include_patterns: set[str] = set()
+    for source_file in resolve_source_files(
+        manifest, root_bundle_src_specs[0], ws_root, runfiles_dir
+    ):
+        try:
+            relative = source_file.relative_to(sphinx_source_root)
+        except ValueError as exc:
+            raise ValueError(
+                "score_mounts: explicit ``srcs`` source is outside the Sphinx "
+                f"source directory: {source_file} "
+                f"(source directory={sphinx_source_root})"
+            ) from exc
+        include_patterns.add(relative.as_posix())
+    config.include_patterns = sorted(include_patterns)
 
 
 def _docnames_by_mount_index(
@@ -455,10 +504,18 @@ def _on_config_inited(app: Sphinx, config: Config) -> None:
         Path(app.srcdir).resolve(), source_mounts
     )
     _exclude_mounted_primary_sources(config, primary_exclusions)
+    _configure_root_bundle_srcs_allowlist(
+        app,
+        config,
+        manifest,
+        ws_root,
+        runfiles_dir,
+    )
 
     # ``source_mounts`` omits pure-data and explicit file-list entries. Explicit
-    # ``srcs`` entries intentionally retain their existing file-list behavior;
-    # generated sources are expected to live outside the primary source tree.
+    # ``srcs`` entries mounted below a primary source tree retain
+    # file-list behavior; the root bundle's ``srcs`` are restricted through
+    # ``include_patterns`` above.
     # Map the remaining specs back to their prevalidated paths by object identity
     # so the following loop can preserve manifest declaration order. ``MountSpec``
     # contains lists and is therefore not usable as a dictionary key, despite its

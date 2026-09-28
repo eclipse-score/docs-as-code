@@ -36,6 +36,7 @@ def workspace(fs: FFS, monkeypatch: pytest.MonkeyPatch) -> Path:
         "TEST_SOURCES",
         "MOUNTS_MANIFEST",
         "SPHINX_CONFIG_FILE",
+        "SPHINX_CONFIG_OPTS",
         "SCORE_METAMODEL_YAML",
         "GITHUB_REPOSITORY",
         "KNOWN_GOOD_JSON",
@@ -231,7 +232,7 @@ def test_bazel_configuration_resolves_runfiles_and_preserves_repo_relative_edit_
     # Assert
     external_needs = json.dumps(["//:needs_json", "@vendor//:needs_json"])
     expected_arguments = {
-        # Generated configuration and metamodel paths use the runfiles tree.
+        # Configuration and metamodel paths use the runfiles tree.
         "-c",
         str(workspace / "runfiles/config"),
         f"--define=score_metamodel_yaml={workspace}/runfiles/config/metamodel.yaml",
@@ -247,6 +248,25 @@ def test_bazel_configuration_resolves_runfiles_and_preserves_repo_relative_edit_
     }
     # Every expected option is present; their relative order is irrelevant here.
     assert expected_arguments <= set(arguments)
+
+
+def test_configuration_free_build_forwards_structured_sphinx_options(
+    workspace: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Configuration-free targets pass macro values directly to Sphinx."""
+
+    monkeypatch.setenv("ACTION", "incremental")
+    monkeypatch.setenv(
+        "SPHINX_CONFIG_OPTS",
+        '["--define=project=Basic Test", "--define=extensions=score_sphinx_bundle"]',
+    )
+
+    arguments = sphinx_arguments(DocsCliConfig.from_environment())
+
+    assert "-C" in arguments
+    assert "--define=project=Basic Test" in arguments
+    assert "--define=extensions=score_sphinx_bundle" in arguments
 
 
 def test_bazel_build_resolves_mount_manifest_from_execroot(
@@ -322,5 +342,5 @@ def test_direct_invocation_resolves_paths_relative_to_cwd(
     assert arguments[:2] == ["docs", "_build"]
     # Without Bazel metadata, relative inputs are resolved from cwd.
     assert f"--define=score_metamodel_yaml={workspace}/metamodel.yaml" in arguments
-    # A direct invocation has no generated Sphinx config to resolve.
+    # A direct invocation has no Sphinx config path to resolve.
     assert "-c" not in arguments

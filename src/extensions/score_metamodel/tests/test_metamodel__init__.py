@@ -122,7 +122,7 @@ class TestNeedHelper:
         assert n["tags"] == ["tag1", "tag2"]
 
     def test_link_fields_extracted(self):
-        """Verify link fields are extracted and accessible via .get()."""
+        """Verify link fields use NeedItem's link storage and accessors."""
         n = need(
             complies=["std_req_1", "std_req_2"],
             input=["wp_input_1"],
@@ -136,6 +136,7 @@ class TestNeedHelper:
         assert n.get("output", []) == ["wp_output_1", "wp_output_2"]
         assert n.get("contains", []) == ["item_1"]
         assert n.get("satisfies", []) == ["req_1"]
+        assert n.get_links("satisfies", as_str=True) == ["req_1"]
 
     def test_extra_fields_in_extras(self):
         """Verify extra fields (not core, not links) go into extras."""

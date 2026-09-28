@@ -18,9 +18,10 @@ reusable bundle and how nested bundles are composed. Source-bearing bundles
 also create a ``<name>.__internal__.needs_local`` export containing Needs from
 their own sources. The root bundle created by ``docs()`` follows the same rule;
 its existing project-wide ``needs_json`` export remains available as well.
-This first version only supports self-contained bundles; references to Needs
-defined outside the bundle remain unresolved until cross-bundle imports are
-added.
+Standalone exports remain self-contained; references to Needs defined outside
+the bundle remain unresolved until cross-bundle imports are added. A bundle can
+associate itself with a repository's root docs configuration without depending
+on the root bundle's composed content.
 """
 
 # Multiple approaches are available to build the same documentation output:
@@ -59,9 +60,11 @@ load(
 load(
     "@score_docs_as_code//:bzl/bundle_rules.bzl",
     "create_bundle",
+    "declare_docs_config_target",
     "external_docs_runfiles",
     "generate_code_target_sourcelinks",
     "merge_bundle_sourcelinks",
+    "sphinx_config_options",
 )
 load(
     "@score_docs_as_code//:bzl/mount_rules.bzl",
@@ -143,9 +146,9 @@ def _needs_sphinx_docs(
     sphinx_docs(
         name = name,
         bundle = bundle,
-        # Keep conf.py separate from supporting data: the action derives
-        # Sphinx's ``-c`` directory from this file's path, while ``data`` is
-        # made available as ordinary runtime input.
+        # A source conf.py is an optional action input. When it is absent,
+        # ``config_options`` puts the structured settings on Sphinx's command
+        # line and the launcher selects configuration-free mode.
         config = config,
         data = sphinx_build_data,
         extra_opts = _needs_sphinx_extra_opts(
@@ -177,33 +180,23 @@ def _bundle_internal_target(name, target):
     """Return the conventional name for a target internal to a bundle."""
     return name + ".__internal__." + target
 
-def _generated_conf_impl(ctx):
-    """Generate the Sphinx config consumed by the documentation targets."""
-    output = ctx.actions.declare_file(ctx.attr.output_path)
-    ctx.actions.expand_template(
-        template = ctx.file.template,
-        output = output,
-        substitutions = {
-            "{PROJECT}": repr(ctx.attr.project),
-            "{PROJECT_URL}": repr(ctx.attr.project_url),
-            "{REQUIRED_IN_ID}": repr([ctx.attr.required_in_id]) if ctx.attr.required_in_id else "[]",
-        },
-    )
-    return [DefaultInfo(files = depset([output]))]
+def _package_relative_project_url(base_url, package_path):
+    """Append a workspace-relative Bazel package to a project URL."""
+    return join_path(base_url, package_path)
 
-_generated_conf = rule(
-    implementation = _generated_conf_impl,
-    attrs = {
-        "project": attr.string(mandatory = True),
-        "project_url": attr.string(mandatory = True),
-        "required_in_id": attr.string(mandatory = True),
-        "output_path": attr.string(mandatory = True),
-        "template": attr.label(
-            allow_single_file = True,
-            default = Label("@score_docs_as_code//:default_conf.py.tpl"),
-        ),
-    },
-)
+def _root_docs_config_label(root_docs):
+    """Map a public ``docs`` label to its internal config target.
+
+    ``root_docs`` is intentionally the user-facing label. The executable
+    ``//:docs`` target may depend on the bundles that reference it, so using it
+    directly as a provider dependency would create a Bazel cycle. ``docs()``
+    publishes the provider on the sibling ``.__internal__.config`` target
+    instead; that target contains only scalar configuration and the metamodel.
+    """
+    root_docs_label = str(root_docs)
+    if ":" not in root_docs_label:
+        fail("root_docs must be a Bazel target label, got %r" % root_docs)
+    return root_docs_label + ".__internal__.config"
 
 def _is_needs_json_target(label):
     """Return whether ``label`` names the directory-valued ``needs_json`` target.
@@ -226,6 +219,9 @@ def _declare_docs_bundle(
     entry_doc = "index",
     bundles = [],
     code_targets = [],
+    primary_need_id = None,
+    root_docs_config = None,
+    is_root_bundle = False,
     visibility = None,
     **kwargs):
     """Declare the shared bundle target implementation.
@@ -263,6 +259,15 @@ def _declare_docs_bundle(
       code_targets: Implementation targets or filegroups to scan for source-code
                     links. Implementation target source files and their dependencies
                     are collected recursively; filegroups expand to their files.
+      primary_need_id: Sphinx-Needs ID of the primary Need representing this
+                       bundle. Other Needs may remain in the bundle; only this
+                       Need receives bundle-level target metadata.
+      root_docs_config: Internal provider target for the root bundle's
+                         structured ``docs()`` configuration.
+      is_root_bundle: Whether this is the project root bundle. Root bundles
+                      retain the configured canonical project URL.
+                         Public callers provide the corresponding ``root_docs``
+                         label instead.
       visibility: Target visibility.
       **kwargs: Additional attributes forwarded to the underlying rule.
     """
@@ -272,6 +277,13 @@ def _declare_docs_bundle(
             ("docs_bundle(%s): srcs cannot be combined with source_dir; " +
              "put generated sources in a dedicated bundle") % name,
         )
+
+    if "required_in_id" in kwargs:
+        fail(
+            ("docs_bundle(%s): required_in_id is inherited from root_docs " +
+             "and cannot be set on the child bundle") % name,
+        )
+
     # Keep directory-discovered sources separate from explicit Bazel targets so
     # each kind can retain its own runtime path and staging behavior.
     source_dir_globbed = glob_doc_sources(source_dir) if source_dir != None else []
@@ -305,6 +317,9 @@ def _declare_docs_bundle(
         bundles = bundles,
         data = bundle_data,
         code_targets = code_targets,
+        primary_need_id = primary_need_id,
+        root_docs_config = root_docs_config,
+        is_root_bundle = is_root_bundle,
         visibility = visibility,
         **kwargs
     )
@@ -338,31 +353,13 @@ def _declare_bundle_local_needs(
         deps = []):
     """Create a standalone Needs export for a bundle's direct sources.
 
-    Standalone ``docs_bundle`` exports use a generated baseline configuration.
-    The root bundle created by ``docs()`` may provide the project's own
-    configuration because it is also the project's normal documentation root.
+    Standalone ``docs_bundle`` exports use Sphinx's configuration-free mode
+    with structured baseline overrides. The root bundle created by ``docs()``
+    may provide the project's own ``conf.py`` while that compatibility path is
+    being phased out.
     """
     if not source_dir_globbed and not srcs:
         return
-
-    if config == None:
-        # Sphinx receives this private conf.py through its -c option, so the
-        # standalone export stays independent of the composing project.
-        needs_conf = _bundle_internal_target(name, "needs_conf")
-        config_output_path = join_path(needs_conf, "conf.py")
-        _generated_conf(
-            name = needs_conf,
-            project = name,
-            project_url = "",
-            required_in_id = "",
-            output_path = config_output_path,
-            tags = ["manual"],
-        )
-        needs_config = ":" + needs_conf
-    else:
-        # The root bundle belongs to docs(), so its local export must retain
-        # the same project configuration as the normal project-wide export.
-        needs_config = config
 
     # Build the own export from this bundle's sources only. References to
     # Needs owned by another bundle are intentionally unsupported until
@@ -378,7 +375,7 @@ def _declare_bundle_local_needs(
     _needs_sphinx_docs(
         name = needs_local,
         bundle = ":" + name,
-        config = needs_config,
+        config = config,
         sphinx_build_deps = sphinx_build_deps,
         sphinx_build_data = data,
         master_doc = entry_doc,
@@ -398,6 +395,8 @@ def docs_bundle(
     entry_doc = "index",
     bundles = [],
     code_targets = [],
+    primary_need_id = None,
+    root_docs = None,
     visibility = None,
     **kwargs):
     """Declare a reusable documentation bundle.
@@ -405,7 +404,10 @@ def docs_bundle(
     The declaration itself is delegated to the shared helper. Keeping this
     public entry point separate gives bundle-specific consumer targets a
     distinct home while allowing ``docs()`` to use the shared declaration for
-    the project root.
+    the project root. ``root_docs`` associates the bundle with the root
+    documentation project's structured configuration, including
+    ``required_in_id``, without making it depend on the root bundle's composed
+    documentation sources.
     """
     bundle = _declare_docs_bundle(
         name = name,
@@ -415,6 +417,8 @@ def docs_bundle(
         entry_doc = entry_doc,
         bundles = bundles,
         code_targets = code_targets,
+        primary_need_id = primary_need_id,
+        root_docs_config = _root_docs_config_label(root_docs) if root_docs != None else None,
         visibility = visibility,
         **kwargs
     )
@@ -500,6 +504,7 @@ def docs(
         deps = [],
         external_needs = [],
         code_targets = [],
+        primary_need_id = None,
         test_sources = [],
         known_good = None,
         metamodel = None,
@@ -510,8 +515,13 @@ def docs(
 
     Args:
       source_dir: The source directory containing documentation files. Defaults to "docs".
-      project: optional project name, prefer setting this here if you can avoid having a conf.py
-      project_url: Optional project URL, prefer setting this here if you can avoid having a conf.py
+      project: Optional project name. Required with ``project_url`` when no
+                root ``conf.py`` exists; passed to Sphinx as a structured
+                configuration override.
+      project_url: Optional project URL. Required with ``project`` when no
+                   root ``conf.py`` exists; passed to Sphinx as a structured
+                   configuration override. The calling Bazel package path is
+                   appended relative to the workspace.
       data: Additional files owned by this project's root ``:docs_bundle``.
         This is shorthand for declaring the files in that root bundle; mounted
         child content belongs in the child ``docs_bundle(data = [...])``.
@@ -523,6 +533,9 @@ def docs(
       code_targets: Implementation targets or filegroups to scan for source code
                     links. Implementation targets are scanned recursively; filegroups
                     expand to their files.
+      primary_need_id: Sphinx-Needs ID of the primary Need representing this
+                       documentation project and its root bundle. Other Needs
+                       remain unchanged.
       test_sources: Optional list of repo-relative directory paths which will be used to filter testcases for documentation generation.
                     When empty (default), all testcases found in `bazel-testlogs` will be used.
       known_good: Optional label to a "known good" JSON file for source links.
@@ -546,23 +559,41 @@ def docs(
     # HINT: keep documentation sync docs/reference/bazel_macros.rst
 
     config_file_path = join_path(source_dir, "conf.py")
-    sphinx_config = ":" + config_file_path
-    config_is_generated = len(native.glob([config_file_path], allow_empty = True)) == 0
+    config_is_missing = len(native.glob([config_file_path], allow_empty = True)) == 0
+    sphinx_config = None if config_is_missing else ":" + config_file_path
+    interactive_config_options = []
 
-    if config_is_generated:
+    if config_is_missing:
         if not project or not project_url:
             fail("docs(): no " + config_file_path + " found; provide both project and project_url to docs().")
-
-        # Keep the generated config at the same package-relative location
-        # as a checked-in conf.py so the interactive launcher can find it.
-        _generated_conf(
-            name = "_docs_generated_config",
+        # Sphinx can run without a configuration file when ``-C`` is used.
+        # Keep the macro's structured values as command-line overrides instead
+        # of materializing a generated ``conf.py`` in the output tree.
+        interactive_config_options = sphinx_config_options(
             project = project,
             project_url = project_url,
             required_in_id = _module_name_without_prefix(),
-            output_path = config_file_path,
         )
-        sphinx_config = ":_docs_generated_config"
+
+    # Publish the root project's structured configuration independently from
+    # the root bundle. Keeping the scalar configuration separate from the
+    # composed bundle leaves the bundle graph free of configuration cycles.
+    bundle_config_metamodel = metamodel or Label(
+        "@score_docs_as_code//src/extensions/score_metamodel:metamodel_yaml",
+    )
+    config_visibility = _bundle_internal_target("docs", "config_visibility")
+    native.package_group(
+        name = config_visibility,
+        packages = ["//..."],
+    )
+    root_docs_config = declare_docs_config_target(
+        name = _bundle_internal_target("docs", "config"),
+        project = project or _module_name_without_prefix(),
+        project_url = project_url or "",
+        required_in_id = _module_name_without_prefix(),
+        metamodel = bundle_config_metamodel,
+        visibility = [":" + config_visibility],
+    )
 
     # Convention in this macro: an optional Bazel label is named ``*_label``
     # but represented as a 0/1 list. This lets it be appended directly to
@@ -586,6 +617,9 @@ def docs(
         entry_doc = "index",
         bundles = bundles,
         code_targets = code_targets,
+        primary_need_id = primary_need_id,
+        root_docs_config = root_docs_config,
+        is_root_bundle = True,
         visibility = ["//visibility:public"],
         tags = ["manual"]
     )
@@ -628,10 +662,6 @@ def docs(
         [":sourcelinks_json", ":_external_docs_runfiles"] +
         [mounts_manifest]
     )
-    if config_is_generated:
-        # A source configuration is read from the workspace; only the
-        # generated configuration must be present in the runfiles tree.
-        docs_data += [sphinx_config]
 
     docs_env = {
         "SOURCE_DIRECTORY": source_dir,
@@ -643,11 +673,8 @@ def docs(
         # resolved by score_mounts through ``RUNFILES_DIR``.
         "MOUNTS_MANIFEST": "$(rlocationpath :_mounts_manifest)" if mounts_manifest else "",
         "SCORE_SOURCELINKS": "$(rlocationpath :sourcelinks_json)",
+        "SPHINX_CONFIG_OPTS": json.encode(interactive_config_options),
     }
-    if config_is_generated:
-        # The generated file is named conf.py. Run targets pass its containing
-        # directory to Sphinx via -c.
-        docs_env["SPHINX_CONFIG_FILE"] = "$(rlocationpath " + sphinx_config + ")"
     if metamodel:
         # The interactive ``py_binary`` targets run from a runfiles tree.
         # docs_cli resolves this logical path through ``RUNFILES_DIR``.

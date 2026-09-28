@@ -9,12 +9,33 @@
         "version": "8.5.0"
       },
       "needs": {
+        "gd_req__docs_bzl_nested_bundle": {
+          "content": "When a nested bundle is mounted into a host documentation tree, the\ngenerated data of its child bundle must be composed with the parent bundle.",
+          "docname": "concepts/example_bundle/index",
+          "external_css": "external_link",
+          "id": "gd_req__docs_bzl_nested_bundle",
+          "lineno": 26,
+          "satisfies_back": [
+            "tool_req__docs_bzl_nested_bundle"
+          ],
+          "section_name": "Parent bundle",
+          "sections": [
+            "Parent bundle"
+          ],
+          "title": "Nested bundles compose generated data through mount points",
+          "type": "gd_req",
+          "type_name": "Process Requirements",
+          "version": 1
+        },
         "tool_req__docs_bzl_nested_bundle": {
           "content": "The ``parent`` bundle composes the ``child`` bundle and can be mounted into\na host documentation tree together with its generated data.",
           "docname": "concepts/example_bundle/index",
           "external_css": "external_link",
           "id": "tool_req__docs_bzl_nested_bundle",
           "lineno": 18,
+          "satisfies": [
+            "gd_req__docs_bzl_nested_bundle"
+          ],
           "section_name": "Parent bundle",
           "sections": [
             "Parent bundle"
@@ -26,7 +47,7 @@
           "version": 1
         }
       },
-      "needs_amount": 1,
+      "needs_amount": 2,
       "needs_defaults_removed": true,
       "needs_schema": {
         "$schema": "http://json-schema.org/draft-07/schema#",
@@ -115,6 +136,24 @@
           "avatar": {
             "default": null,
             "description": "Added by service github-issues",
+            "field_type": "extra",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "bazel_target": {
+            "default": "",
+            "description": "Added by needs_fields config",
+            "field_type": "extra",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "bazel_type": {
+            "default": "",
+            "description": "Added by needs_fields config",
             "field_type": "extra",
             "type": [
               "string",
@@ -345,6 +384,15 @@
               "type": "string"
             },
             "type": "array"
+          },
+          "detection_sufficient": {
+            "default": "",
+            "description": "Added by needs_fields config",
+            "field_type": "extra",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "docname": {
             "default": null,
@@ -927,6 +975,24 @@
               "null"
             ]
           },
+          "realized_by": {
+            "default": [],
+            "description": "Link field",
+            "field_type": "links",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "realized_by_back": {
+            "default": [],
+            "description": "Backlink field",
+            "field_type": "backlinks",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
           "realizes": {
             "default": [],
             "description": "Link field",
@@ -1045,6 +1111,15 @@
             ]
           },
           "safety_affected": {
+            "default": "",
+            "description": "Added by needs_fields config",
+            "field_type": "extra",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "safety_measures": {
             "default": "",
             "description": "Added by needs_fields config",
             "field_type": "extra",

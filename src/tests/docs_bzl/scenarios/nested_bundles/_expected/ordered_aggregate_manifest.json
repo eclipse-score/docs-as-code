@@ -6,7 +6,8 @@
       "bundle": {
         "label": "@@//src/tests/docs_bzl/scenarios/nested_bundles:other",
         "name": "other",
-        "code_targets": []
+        "code_targets": [],
+        "primary_need_id": ""
       },
       "data": [],
       "entry_doc": "index",
@@ -24,6 +25,7 @@
       "bundle": {
         "label": "@@//src/tests/docs_bzl/scenarios/nested_bundles:child",
         "name": "child",
+        "primary_need_id": "",
         "code_targets": [
           {
             "label": "@@//src/tests/docs_bzl/scenarios/nested_bundles:example_binary",

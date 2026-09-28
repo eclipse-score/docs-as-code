@@ -18,8 +18,10 @@ from typing import cast
 
 import pytest
 from sphinx.application import Sphinx
+from sphinx.config import Config
 
 from src.extensions.score_mounts import (
+    _configure_root_bundle_srcs_allowlist,  # pyright: ignore[reportPrivateUsage]
     _make_mount_entry,  # pyright: ignore[reportPrivateUsage] - white-box unit test
     _resolve_data_mounts,  # pyright: ignore[reportPrivateUsage] - white-box unit test
     _resolve_source_mounts,  # pyright: ignore[reportPrivateUsage] - white-box unit test
@@ -69,6 +71,43 @@ def test_existing_data_file_resolved(tmp_path: Path) -> None:
     mounts = _resolve_data_mounts(manifest, tmp_path, tmp_path / "runfiles")
 
     assert str(tmp_path / "bazel-bin") in mounts
+
+
+def test_root_bundle_srcs_are_a_positive_allowlist(tmp_path: Path) -> None:
+    """Explicit ``srcs`` remain discoverable without undeclared siblings."""
+    source_root = tmp_path / "docs"
+    source_root.mkdir()
+    selected = source_root / "selected.rst"
+    sibling = source_root / "sibling.rst"
+    selected.write_text("Selected", encoding="utf-8")
+    sibling.write_text("Sibling", encoding="utf-8")
+    manifest = MountsManifest(
+        mounts=[
+            MountSpec(
+                src_root="docs",
+                runtime_path="docs",
+                mount_at="",
+                files=["selected.rst"],
+                root_bundle=True,
+                bundle=BundleMetadata(
+                    label="//:bundle",
+                    name="bundle",
+                ),
+            )
+        ]
+    )
+    app = SimpleNamespace(srcdir=str(source_root))
+    config = SimpleNamespace(include_patterns=["**"])
+
+    _configure_root_bundle_srcs_allowlist(
+        cast(Sphinx, app),
+        cast(Config, config),
+        manifest,
+        tmp_path,
+        None,
+    )
+
+    assert config.include_patterns == ["selected.rst"]
 
 
 def test_root_bundle_data_is_not_mounted_but_child_data_is(

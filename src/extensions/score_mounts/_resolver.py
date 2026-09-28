@@ -52,7 +52,7 @@ class BazelTarget:
 
 @dataclass(frozen=True)
 class BundleMetadata:
-    """Identity and direct targets of one bundle in a composition.
+    """Identity, primary Need, and direct targets of one bundle in a composition.
 
     ``MountSpec`` describes one physical source entry and its placement.
     ``BundleMetadata`` describes the logical bundle that declared that entry.
@@ -70,6 +70,10 @@ class BundleMetadata:
     # ``(BazelTarget("@@//score/components/memory:implementation", "cc_library"),)``.
     # Targets inherited from dependencies or nested bundles do not belong here.
     code_targets: tuple[BazelTarget, ...] = ()
+    # The local Sphinx-Needs ID representing the primary subject of this
+    # bundle. A bundle may contain many other Needs; this identifies the one
+    # that receives metadata belonging to the bundle itself.
+    primary_need_id: str = ""
 
     @classmethod
     def from_manifest_entry(cls, entry: dict[str, object]) -> BundleMetadata:
@@ -79,6 +83,10 @@ class BundleMetadata:
         return cls(
             label=cast("str", bundle["label"]),
             name=cast("str", bundle["name"]),
+            # Older manifests do not carry an explicit primary Need. Treat
+            # the field as absent so those manifests remain readable while
+            # avoiding any name-based fallback.
+            primary_need_id=cast("str", bundle.get("primary_need_id", "")),
             code_targets=tuple(
                 BazelTarget.from_manifest_entry(target) for target in targets
             ),
