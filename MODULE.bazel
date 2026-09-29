@@ -68,12 +68,18 @@ pip.parse(
 use_repo(pip, "docs_as_code_hub_env")
 
 # Additional Python rules provided by aspect, e.g. an improved version of
-bazel_dep(name = "aspect_rules_py", version = "1.4.0")
+bazel_dep(name = "aspect_rules_py", version = "1.6.3")
 
 bazel_dep(name = "buildifier_prebuilt", version = "8.2.0.2", dev_dependency = True)
 
 # PlantUML for docs
 bazel_dep(name = "rules_java", version = "8.15.1")
+bazel_dep(name = "score_tools")
+git_override(
+    module_name = "score_tools",
+    commit = "05fcc7ad2639885fa1e671181dbc5436def73cc0",  # 29.09.2026
+    remote = "https://github.com/eclipse-score/tools",
+)
 
 http_jar = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_jar")
 
