@@ -71,6 +71,13 @@ _VOLATILE_ATTRIBUTE = re.compile(
     r"\s+data-(?:build|generated|timestamp|last-modified)(?:-[\w-]+)?\s*=\s*(?:\"[^\"]*\"|'[^']*'|[^\s>]+)",
     re.IGNORECASE,
 )
+# PR documentation builds run on GitHub's synthetic merge commit, while the
+# published baseline was built from the base commit. Keep source paths and line
+# numbers comparable, but ignore the revision segment in generated blob links.
+_GITHUB_BLOB_COMMIT = re.compile(r"(?<=/blob/)[0-9a-f]{40}(?=/)", re.IGNORECASE)
+# Sphinx-Needs derives these wrapper IDs from rendered content, including the
+# source-link revision above. Need IDs and visible content remain compared.
+_NEED_CONTAINER_ID = re.compile(r"\bSNCB-[0-9a-f]{8}\b", re.IGNORECASE)
 _VOLATILE_META_NAMES = frozenset(
     {
         "build-date",
@@ -285,6 +292,8 @@ def normalize_html(content: str) -> str:
 
     normalized = _HTML_COMMENT.sub(remove_comment, normalized)
     normalized = _VOLATILE_ATTRIBUTE.sub("", normalized)
+    normalized = _GITHUB_BLOB_COMMIT.sub("<source-commit>", normalized)
+    normalized = _NEED_CONTAINER_ID.sub("SNCB-<generated>", normalized)
     normalized = "\n".join(line.rstrip() for line in normalized.splitlines())
     return normalized.strip()
 

@@ -150,16 +150,21 @@ def test_normalize_html_ignores_generated_metadata_but_keeps_content_changes() -
         '<html data-build-timestamp="2026-09-01T10:00:00Z">\r\n'
         '<meta name="generator" content="Sphinx 8">\r\n'
         "<!-- generated at 10:00 -->\r\n"
+        '<div id="SNCB-0123abcd"><a href="https://github.com/example/repo/blob/0123456789abcdef0123456789abcdef01234567/src/example.py#L12">source</a></div>\r\n'
         "<p>Documentation</p>  \r\n</html>"
     )
     new = (
         '<html data-build-timestamp="2026-09-02T10:00:00Z">\n'
         '<meta name="generator" content="Sphinx 8">\n'
         "<!-- generated at 11:00 -->\n"
+        '<div id="SNCB-fedcba98"><a href="https://github.com/example/repo/blob/fedcba9876543210fedcba9876543210fedcba98/src/example.py#L12">source</a></div>\n'
         "<p>Documentation</p>\n</html>"
     )
 
     assert docs_delta.normalize_html(old) == docs_delta.normalize_html(new)
+    assert docs_delta.normalize_html(
+        new.replace("src/example.py", "src/changed.py")
+    ) != docs_delta.normalize_html(old)
     assert docs_delta.normalize_html(new).replace(
         "Documentation", "Changed"
     ) != docs_delta.normalize_html(old)
