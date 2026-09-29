@@ -46,7 +46,11 @@ py_binary(
     name = "generate_all_bin",
     srcs = ["generate_all.py"],
     main = "generate_all.py",
-    data = ["//src/extensions/score_metamodel:metamodel_yaml"],
+    data = [
+        "//src/extensions/score_metamodel:metamodel_yaml",
+        "generate_schema.py",
+        "export_data.py",
+    ],
     deps = all_requirements,
     visibility = ["//visibility:public"],
 )

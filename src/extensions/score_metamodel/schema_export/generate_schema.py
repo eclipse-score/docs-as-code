@@ -252,7 +252,7 @@ def build_json_schema(data: Mapping[str, Any], digest: str) -> dict[str, Any]:
         "properties": {
             "$schema": {
                 "type": "string",
-                "const": "https://json-schema.org/draft/2020-12/schema",
+                "description": "Reference to this metamodel schema",
             },
             "metamodel_digest": {
                 "type": "string",
@@ -302,7 +302,8 @@ def resolve_metamodel_path(
     """Resolve the metamodel input path for both direct and Bazel invocations."""
     default_relative = Path("src/extensions/score_metamodel/metamodel.yaml")
     if argument is None:
-        packaged = Path(__file__).resolve().parents[2] / "metamodel.yaml"
+        # Path: schema_export/generate_schema.py -> score_metamodel/metamodel.yaml
+        packaged = Path(__file__).resolve().parent.parent / "metamodel.yaml"
         if packaged.is_file() or workspace is None:
             return packaged
         return Path(workspace) / default_relative

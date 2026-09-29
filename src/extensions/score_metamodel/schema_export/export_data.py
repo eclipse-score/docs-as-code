@@ -174,6 +174,8 @@ def _need_types(
                 "name": str(name),
                 "title": raw_type.get("title"),
                 "prefix": raw_type.get("prefix"),
+                "color": raw_type.get("color"),
+                "style": raw_type.get("style"),
                 "tags": _as_string_list(raw_type.get("tags")),
                 "parts": raw_type.get("parts"),
                 "options": _type_options(raw_type, base),

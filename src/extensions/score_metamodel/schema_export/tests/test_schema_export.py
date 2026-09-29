@@ -69,7 +69,9 @@ def test_build_json_schema(metamodel_data: dict):
 
 def test_build_metamodel_data(metamodel_data: dict):
     """Test metamodel data export."""
-    data = build_metamodel_data(metamodel_data, "sha256:test")
+    # Use a valid SHA-256 digest (64 hex characters)
+    test_digest = "sha256:" + "a" * 64
+    data = build_metamodel_data(metamodel_data, test_digest)
 
     # Check data structure
     assert (
@@ -77,7 +79,7 @@ def test_build_metamodel_data(metamodel_data: dict):
         == "https://eclipse-score.github.io/schemas/metamodel-schema.json"
     )
     assert data["schema_version"] == 1
-    assert data["metamodel_digest"] == "sha256:test"
+    assert data["metamodel_digest"] == test_digest
 
     # Check that all major sections are present
     assert "need_types" in data
@@ -98,8 +100,9 @@ def test_schema_data_consistency(metamodel_data: dict):
     except ImportError:
         pytest.skip("jsonschema package not available")
 
-    schema = build_json_schema(metamodel_data, "sha256:test")
-    data = build_metamodel_data(metamodel_data, "sha256:test")
+    test_digest = "sha256:" + "a" * 64
+    schema = build_json_schema(metamodel_data, test_digest)
+    data = build_metamodel_data(metamodel_data, test_digest)
 
     # Validate data against schema (basic validation)
     # Note: Full validation may require adjustments to schema structure
@@ -112,14 +115,15 @@ def test_schema_data_consistency(metamodel_data: dict):
 
 def test_deterministic_output(metamodel_data: dict):
     """Test that generation is deterministic."""
-    schema1 = build_json_schema(metamodel_data, "sha256:test")
-    schema2 = build_json_schema(metamodel_data, "sha256:test")
+    test_digest = "sha256:" + "a" * 64
+    schema1 = build_json_schema(metamodel_data, test_digest)
+    schema2 = build_json_schema(metamodel_data, test_digest)
 
     # Should produce identical output
     assert json.dumps(schema1, sort_keys=True) == json.dumps(schema2, sort_keys=True)
 
-    data1 = build_metamodel_data(metamodel_data, "sha256:test")
-    data2 = build_metamodel_data(metamodel_data, "sha256:test")
+    data1 = build_metamodel_data(metamodel_data, test_digest)
+    data2 = build_metamodel_data(metamodel_data, test_digest)
 
     assert json.dumps(data1, sort_keys=True) == json.dumps(data2, sort_keys=True)
 
