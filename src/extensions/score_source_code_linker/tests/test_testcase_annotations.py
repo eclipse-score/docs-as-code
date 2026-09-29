@@ -17,9 +17,9 @@ from __future__ import annotations
 from typing import cast
 
 from docutils import nodes
+from score_pytest.attribute_plugin import add_test_properties
 from sphinx.application import Sphinx
 
-from score_pytest.attribute_plugin import add_test_properties
 from src.extensions.score_source_code_linker.testcase_annotations import (
     annotate_testcase_results,
 )

@@ -12,7 +12,7 @@
 # *******************************************************************************
 
 load("@docs_as_code_hub_env//:requirements.bzl", "all_requirements")
-load("//:score_pytest.bzl", "score_pytest")
+load("@score_tools//score_pytest:pytest.bzl", "score_pytest")
 
 # docs.bzl passes this entry script as the source of each interactive binary.
 # Exporting it allows docs() to declare those binaries in consumer packages.

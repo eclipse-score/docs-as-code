@@ -20,10 +20,10 @@ from typing import Any
 
 import pytest
 from pytest import TempPathFactory
+from score_pytest.attribute_plugin import add_test_properties
 from sphinx.testing.util import SphinxTestApp
 from sphinx_needs.data import SphinxNeedsData
 
-from score_pytest.attribute_plugin import add_test_properties
 from src.extensions.score_source_code_linker.helpers import get_github_link
 from src.extensions.score_source_code_linker.needlinks import NeedLink
 from src.extensions.score_source_code_linker.repo_source_links import RepoInfo

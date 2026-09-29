@@ -17,10 +17,9 @@ import pytest
 import score_metrics.traceability_metrics as metrics
 from score_metamodel import ScoreNeedType
 from score_metamodel.tests import need as test_need
+from score_pytest.attribute_plugin import add_test_properties
 from sphinx_needs.data import NeedsView
 from sphinx_needs.need_item import NeedItem
-
-from score_pytest.attribute_plugin import add_test_properties
 
 
 @add_test_properties(
