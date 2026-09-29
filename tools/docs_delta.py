@@ -492,9 +492,6 @@ def _page_section(
     if not entries:
         return
     lines.extend([f"### {title} ({len(entries)})", ""])
-    if len(entries) > DETAIL_LIMIT:
-        lines.extend([f"{len(entries)} entries changed; details omitted.", ""])
-        return
     for entry in entries:
         lines.append(formatter(entry, base_url=base_url, pr_url=pr_url, kind=kind))
     lines.append("")
@@ -512,8 +509,9 @@ def render_report(
     lines = [
         "# Documentation delta",
         "",
-        f"Baseline: {_markdown_link(base_url, base_url)}  ",
-        f"PR preview: {_markdown_link(pr_url, pr_url)}",
+        "Documentation preview for this pull request: "
+        f"{_markdown_link('open preview', pr_url)} · "
+        f"Baseline: {_markdown_link('open baseline', base_url)}",
         "",
         "## Summary",
         "",
@@ -521,65 +519,95 @@ def render_report(
         f"{len(needs.modified)} modified, {needs.unchanged_count} unchanged",
         f"- Rendered pages: {len(pages.added)} added, {len(pages.removed)} removed, "
         f"{len(pages.modified)} modified, {pages.unchanged_count} unchanged",
-        "",
-        "## Needs",
-        "",
     ]
-    _need_section(
-        lines,
-        "Added",
-        needs.added,
-        _format_need_entry,
-        base_url=base_url,
-        pr_url=pr_url,
-        kind="added",
-    )
-    _need_section(
-        lines,
-        "Removed",
-        needs.removed,
-        _format_need_entry,
-        base_url=base_url,
-        pr_url=pr_url,
-        kind="removed",
-    )
-    _need_section(
-        lines,
-        "Modified",
-        needs.modified,
-        _format_need_entry,
-        base_url=base_url,
-        pr_url=pr_url,
-        kind="modified",
-    )
-    lines.extend(["## Rendered HTML pages", ""])
-    _page_section(
-        lines,
-        "Added",
-        pages.added,
-        _format_page_entry,
-        base_url=base_url,
-        pr_url=pr_url,
-        kind="added",
-    )
-    _page_section(
-        lines,
-        "Removed",
-        pages.removed,
-        _format_page_entry,
-        base_url=base_url,
-        pr_url=pr_url,
-        kind="removed",
-    )
-    _page_section(
-        lines,
-        "Modified",
-        pages.modified,
-        _format_page_entry,
-        base_url=base_url,
-        pr_url=pr_url,
-        kind="modified",
-    )
+
+    need_change_count = len(needs.added) + len(needs.removed) + len(needs.modified)
+    if need_change_count:
+        need_lines: list[str] = []
+        _need_section(
+            need_lines,
+            "Added",
+            needs.added,
+            _format_need_entry,
+            base_url=base_url,
+            pr_url=pr_url,
+            kind="added",
+        )
+        _need_section(
+            need_lines,
+            "Removed",
+            needs.removed,
+            _format_need_entry,
+            base_url=base_url,
+            pr_url=pr_url,
+            kind="removed",
+        )
+        _need_section(
+            need_lines,
+            "Modified",
+            needs.modified,
+            _format_need_entry,
+            base_url=base_url,
+            pr_url=pr_url,
+            kind="modified",
+        )
+        if need_change_count > DETAIL_LIMIT:
+            lines.extend(
+                [
+                    "",
+                    "<details>",
+                    f"<summary>Need changes ({need_change_count})</summary>",
+                    "",
+                    *need_lines,
+                    "</details>",
+                ]
+            )
+        else:
+            lines.extend(["", "## Need changes", "", *need_lines])
+
+    page_change_count = len(pages.added) + len(pages.removed) + len(pages.modified)
+    if page_change_count:
+        page_lines: list[str] = []
+        _page_section(
+            page_lines,
+            "Added",
+            pages.added,
+            _format_page_entry,
+            base_url=base_url,
+            pr_url=pr_url,
+            kind="added",
+        )
+        _page_section(
+            page_lines,
+            "Removed",
+            pages.removed,
+            _format_page_entry,
+            base_url=base_url,
+            pr_url=pr_url,
+            kind="removed",
+        )
+        _page_section(
+            page_lines,
+            "Modified",
+            pages.modified,
+            _format_page_entry,
+            base_url=base_url,
+            pr_url=pr_url,
+            kind="modified",
+        )
+        if page_change_count > DETAIL_LIMIT:
+            lines.extend(
+                [
+                    "",
+                    "<details>",
+                    f"<summary>Page changes ({page_change_count})</summary>",
+                    "",
+                    *page_lines,
+                    "</details>",
+                ]
+            )
+        else:
+            lines.extend(["", "## Page changes", "", *page_lines])
     return "\n".join(lines).rstrip() + "\n"
 
 

@@ -110,20 +110,12 @@ jobs:
 
       - name: Prepare documentation preview comment
         env:
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          REPOSITORY_OWNER: ${{ github.repository_owner }}
-          REPOSITORY_NAME: ${{ github.event.repository.name }}
           DOCS_BUILD_RESULT: ${{ needs.docs-build.result }}
           DOCS_DELTA_RESULT: ${{ needs.docs-delta.result }}
         run: |
           set -euo pipefail
           if [ "$DOCS_BUILD_RESULT" = success ] && [ "$DOCS_DELTA_RESULT" = success ]; then
-            {
-              echo "Documentation preview for this pull request is available at:"
-              echo "**pr-${PR_NUMBER}**: https://${REPOSITORY_OWNER}.github.io/${REPOSITORY_NAME}/pr-${PR_NUMBER}/"
-              echo
-              cat docs-delta/docs-delta.md
-            } > "$RUNNER_TEMP/docs-comment.md"
+            cat docs-delta/docs-delta.md > "$RUNNER_TEMP/docs-comment.md"
           else
             {
               echo "Documentation preview for this pull request is unavailable."

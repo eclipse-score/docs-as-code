@@ -205,7 +205,7 @@ def test_detail_threshold_is_independent_for_needs_and_pages() -> None:
         unchanged_count=0,
     )
     pages = docs_delta.PageComparison(
-        added=tuple(docs_delta.PageChange(f"page-{index}.html") for index in range(2)),
+        added=tuple(docs_delta.PageChange(f"page-{index}.html") for index in range(16)),
         removed=(),
         modified=(),
         unchanged_count=0,
@@ -219,6 +219,7 @@ def test_detail_threshold_is_independent_for_needs_and_pages() -> None:
     )
 
     assert "16 entries changed; details omitted." in report
+    assert "<summary>Page changes (16)</summary>" in report
     assert "`page-0.html`" in report
     assert "`0`" not in report
 
