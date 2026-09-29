@@ -282,7 +282,7 @@
   {
     "name": "docs_delta_test__test_compare_html_categorizes_added_removed_modified_and_unchanged",
     "file": "tools/tests/docs_delta_test.py",
-    "line": "168",
+    "line": "173",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -296,7 +296,7 @@
   {
     "name": "docs_delta_test__test_detail_threshold_is_independent_for_needs_and_pages",
     "file": "tools/tests/docs_delta_test.py",
-    "line": "192",
+    "line": "197",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -310,7 +310,7 @@
   {
     "name": "docs_delta_test__test_missing_baseline_writes_unavailable_report",
     "file": "tools/tests/docs_delta_test.py",
-    "line": "221",
+    "line": "227",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -324,7 +324,7 @@
   {
     "name": "docs_delta_test__test_cli_writes_complete_fixture_report",
     "file": "tools/tests/docs_delta_test.py",
-    "line": "244",
+    "line": "250",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -338,7 +338,7 @@
   {
     "name": "docs_delta_test__test_cli_uses_github_environment_urls_when_options_are_omitted",
     "file": "tools/tests/docs_delta_test.py",
-    "line": "297",
+    "line": "303",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -352,7 +352,7 @@
   {
     "name": "docs_delta_test__test_cli_automatically_selects_matching_gh_pages_baseline",
     "file": "tools/tests/docs_delta_test.py",
-    "line": "329",
+    "line": "335",
     "result": "passed",
     "repo_name": null,
     "hash": null,
