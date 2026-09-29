@@ -93,7 +93,10 @@ def test_build_metamodel_data(metamodel_data: dict):
 
 def test_schema_data_consistency(metamodel_data: dict):
     """Test that generated data is consistent with schema."""
-    import jsonschema
+    try:
+        import jsonschema
+    except ImportError:
+        pytest.skip("jsonschema package not available")
 
     schema = build_json_schema(metamodel_data, "sha256:test")
     data = build_metamodel_data(metamodel_data, "sha256:test")

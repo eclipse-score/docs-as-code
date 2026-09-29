@@ -12,6 +12,7 @@
 # *******************************************************************************
 
 load("@aspect_rules_py//py:defs.bzl", "py_binary", "py_library")
+load("@docs_as_code_hub_env//:requirements.bzl", "all_requirements")
 load("//:score_pytest.bzl", "score_pytest")
 
 package(default_visibility = ["//visibility:public"])
@@ -20,7 +21,7 @@ py_library(
     name = "schema_export_lib",
     srcs = ["generate_schema.py", "export_data.py"],
     imports = ["."],
-    deps = ["@docs_as_code_hub_env//:ruamel_yaml"],
+    deps = all_requirements,
 )
 
 py_binary(
@@ -28,7 +29,7 @@ py_binary(
     srcs = ["generate_schema.py"],
     main = "generate_schema.py",
     data = ["//src/extensions/score_metamodel:metamodel_yaml"],
-    deps = ["@docs_as_code_hub_env//:ruamel_yaml"],
+    deps = all_requirements,
     visibility = ["//visibility:public"],
 )
 
@@ -37,7 +38,7 @@ py_binary(
     srcs = ["export_data.py"],
     main = "export_data.py",
     data = ["//src/extensions/score_metamodel:metamodel_yaml"],
-    deps = ["@docs_as_code_hub_env//:ruamel_yaml"],
+    deps = all_requirements,
     visibility = ["//visibility:public"],
 )
 
@@ -46,7 +47,7 @@ py_binary(
     srcs = ["generate_all.py"],
     main = "generate_all.py",
     data = ["//src/extensions/score_metamodel:metamodel_yaml"],
-    deps = ["@docs_as_code_hub_env//:ruamel_yaml"],
+    deps = all_requirements,
     visibility = ["//visibility:public"],
 )
 
@@ -59,7 +60,5 @@ score_pytest(
     visibility = ["//visibility:public"],
     deps = [
         ":schema_export_lib",
-        "@docs_as_code_hub_env//:pytest",
-        "@docs_as_code_hub_env//:jsonschema",
-    ],
+    ] + all_requirements,
 )

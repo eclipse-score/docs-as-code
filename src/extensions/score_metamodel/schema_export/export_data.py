@@ -259,10 +259,13 @@ def build_metamodel_data(
 ) -> dict[str, Any]:
     """Build the complete metamodel data export."""
     base = _base_options(data)
+    # Add sha256: prefix if not already present
+    if not digest.startswith("sha256:"):
+        digest = f"sha256:{digest}"
     return {
         "$schema": "https://eclipse-score.github.io/schemas/metamodel-schema.json",
         "schema_version": 1,
-        "metamodel_digest": f"sha256:{digest}",
+        "metamodel_digest": digest,
         "source": {
             "repo_url": source_repo,
             "commit": os.environ.get("SOURCE_COMMIT", "unknown"),
