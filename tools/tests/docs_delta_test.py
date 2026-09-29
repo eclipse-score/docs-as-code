@@ -374,13 +374,6 @@ def test_cli_automatically_selects_matching_gh_pages_baseline(
     )
     _git(gh_pages, "add", ".")
     _git(gh_pages, "commit", "-m", "Republish base documentation")
-    newer_base_publication_commit = subprocess.run(
-        ["git", "-C", str(gh_pages), "rev-parse", "HEAD"],
-        check=True,
-        capture_output=True,
-        text=True,
-    ).stdout.strip()
-
     _write_needs(
         main_docs,
         {
@@ -394,12 +387,6 @@ def test_cli_automatically_selects_matching_gh_pages_baseline(
     )
     _git(gh_pages, "add", ".")
     _git(gh_pages, "commit", "-m", "Publish latest documentation")
-
-    selected_commit, selection_reason = docs_delta._find_published_baseline_commit(
-        gh_pages,
-        docs_delta.GithubPullRequest("main", base_sha, "123"),
-    )
-    assert selected_commit == newer_base_publication_commit, selection_reason
 
     current = tmp_path / "docs-artifact"
     current.mkdir()

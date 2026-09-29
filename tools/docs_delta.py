@@ -34,10 +34,12 @@ from collections.abc import Iterator, Mapping, Sequence
 from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Protocol, cast
 from urllib.parse import quote
 
 JsonObject = dict[str, object]
 NeedMap = Mapping[str, JsonObject]
+
 
 DETAIL_LIMIT = 15
 MAX_RENDERED_VALUE_LENGTH = 600
@@ -158,6 +160,32 @@ class PageComparison:
     unchanged_count: int
 
 
+class NeedFormatter(Protocol):
+    """Format a Need change for a Markdown report section."""
+
+    def __call__(
+        self,
+        change: NeedChange,
+        *,
+        base_url: str,
+        pr_url: str,
+        include_diff: bool = False,
+    ) -> list[str]: ...
+
+
+class PageFormatter(Protocol):
+    """Format a rendered page change for a Markdown report section."""
+
+    def __call__(
+        self,
+        change: PageChange,
+        *,
+        base_url: str,
+        pr_url: str,
+        kind: str,
+    ) -> str: ...
+
+
 def _json_values_equal(left: object, right: object) -> bool:
     """Compare JSON values without conflating booleans and numbers."""
 
@@ -179,14 +207,20 @@ def _flatten_needs(path: Path) -> dict[str, JsonObject]:
     if not isinstance(payload, dict) or not isinstance(payload.get("versions"), dict):
         raise DocsDeltaError(f"needs JSON has no versions map: {path}")
 
+    versions = cast(dict[str, object], payload["versions"])
     result: dict[str, JsonObject] = {}
-    for version in payload["versions"].values():
-        if not isinstance(version, dict) or not isinstance(version.get("needs"), dict):
+    for version_value in versions.values():
+        if not isinstance(version_value, dict):
             continue
-        for need_id, need in version["needs"].items():
+        version = cast(dict[str, object], version_value)
+        needs_value = version.get("needs")
+        if not isinstance(needs_value, dict):
+            continue
+        needs = cast(dict[object, object], needs_value)
+        for need_id, need in needs.items():
             if not isinstance(need_id, str) or not isinstance(need, dict):
                 raise DocsDeltaError(f"invalid Need entry in {path}")
-            result[need_id] = need
+            result[need_id] = cast(JsonObject, need)
     return result
 
 
@@ -408,11 +442,11 @@ def _format_page_entry(
     return f"- `{change.path}` ({' / '.join(links)})"
 
 
-def _section(
+def _need_section(
     lines: list[str],
     title: str,
-    entries: Sequence[object],
-    formatter,
+    entries: Sequence[NeedChange],
+    formatter: NeedFormatter,
     *,
     base_url: str,
     pr_url: str,
@@ -425,17 +459,35 @@ def _section(
         lines.extend([f"{len(entries)} entries changed; details omitted.", ""])
         return
     for entry in entries:
-        if isinstance(entry, NeedChange):
-            lines.extend(
-                formatter(
-                    entry,
-                    base_url=base_url,
-                    pr_url=pr_url,
-                    include_diff=kind == "modified",
-                )
+        lines.extend(
+            formatter(
+                entry,
+                base_url=base_url,
+                pr_url=pr_url,
+                include_diff=kind == "modified",
             )
-        else:
-            lines.append(formatter(entry, base_url=base_url, pr_url=pr_url, kind=kind))
+        )
+    lines.append("")
+
+
+def _page_section(
+    lines: list[str],
+    title: str,
+    entries: Sequence[PageChange],
+    formatter: PageFormatter,
+    *,
+    base_url: str,
+    pr_url: str,
+    kind: str,
+) -> None:
+    if not entries:
+        return
+    lines.extend([f"### {title} ({len(entries)})", ""])
+    if len(entries) > DETAIL_LIMIT:
+        lines.extend([f"{len(entries)} entries changed; details omitted.", ""])
+        return
+    for entry in entries:
+        lines.append(formatter(entry, base_url=base_url, pr_url=pr_url, kind=kind))
     lines.append("")
 
 
@@ -464,7 +516,7 @@ def render_report(
         "## Needs",
         "",
     ]
-    _section(
+    _need_section(
         lines,
         "Added",
         needs.added,
@@ -473,7 +525,7 @@ def render_report(
         pr_url=pr_url,
         kind="added",
     )
-    _section(
+    _need_section(
         lines,
         "Removed",
         needs.removed,
@@ -482,7 +534,7 @@ def render_report(
         pr_url=pr_url,
         kind="removed",
     )
-    _section(
+    _need_section(
         lines,
         "Modified",
         needs.modified,
@@ -492,7 +544,7 @@ def render_report(
         kind="modified",
     )
     lines.extend(["## Rendered HTML pages", ""])
-    _section(
+    _page_section(
         lines,
         "Added",
         pages.added,
@@ -501,7 +553,7 @@ def render_report(
         pr_url=pr_url,
         kind="added",
     )
-    _section(
+    _page_section(
         lines,
         "Removed",
         pages.removed,
@@ -510,7 +562,7 @@ def render_report(
         pr_url=pr_url,
         kind="removed",
     )
-    _section(
+    _page_section(
         lines,
         "Modified",
         pages.modified,
@@ -584,12 +636,15 @@ def _github_pull_request(environ: Mapping[str, str]) -> GithubPullRequest | None
     if not isinstance(payload, dict):
         raise DocsDeltaError(f"GitHub event payload is not an object: {event_path}")
 
-    pull_request = payload.get("pull_request")
-    if not isinstance(pull_request, dict):
+    event_payload = cast(dict[str, object], payload)
+    pull_request_value = event_payload.get("pull_request")
+    if not isinstance(pull_request_value, dict):
         return None
-    base = pull_request.get("base")
-    if not isinstance(base, dict):
+    pull_request = cast(dict[str, object], pull_request_value)
+    base_value = pull_request.get("base")
+    if not isinstance(base_value, dict):
         return None
+    base = cast(dict[str, object], base_value)
 
     base_ref = environ.get("GITHUB_BASE_REF") or base.get("ref")
     base_sha = environ.get("GITHUB_BASE_SHA") or base.get("sha")
@@ -598,7 +653,7 @@ def _github_pull_request(environ: Mapping[str, str]) -> GithubPullRequest | None
     if not isinstance(base_sha, str) or not base_sha:
         return None
 
-    number = pull_request.get("number")
+    number: object = pull_request.get("number")
     if not isinstance(number, int | str) or isinstance(number, bool):
         number = None
     else:

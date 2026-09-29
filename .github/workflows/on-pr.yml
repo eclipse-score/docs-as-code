@@ -91,8 +91,9 @@ jobs:
           if-no-files-found: error
 
   docs-comment:
-    needs: [docs-delta]
+    needs: [docs-build, docs-delta]
     if: >-
+      always() &&
       github.event_name == 'pull_request' &&
       github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-24.04
@@ -101,6 +102,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Download documentation delta artifact
+        if: needs.docs-delta.result == 'success'
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: docs-delta
@@ -111,14 +113,28 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
           REPOSITORY_OWNER: ${{ github.repository_owner }}
           REPOSITORY_NAME: ${{ github.event.repository.name }}
+          DOCS_BUILD_RESULT: ${{ needs.docs-build.result }}
+          DOCS_DELTA_RESULT: ${{ needs.docs-delta.result }}
         run: |
           set -euo pipefail
-          {
-            echo "Documentation preview for this pull request is available at:"
-            echo "**pr-${PR_NUMBER}**: https://${REPOSITORY_OWNER}.github.io/${REPOSITORY_NAME}/pr-${PR_NUMBER}/"
-            echo
-            cat docs-delta/docs-delta.md
-          } > "$RUNNER_TEMP/docs-comment.md"
+          if [ "$DOCS_BUILD_RESULT" = success ] && [ "$DOCS_DELTA_RESULT" = success ]; then
+            {
+              echo "Documentation preview for this pull request is available at:"
+              echo "**pr-${PR_NUMBER}**: https://${REPOSITORY_OWNER}.github.io/${REPOSITORY_NAME}/pr-${PR_NUMBER}/"
+              echo
+              cat docs-delta/docs-delta.md
+            } > "$RUNNER_TEMP/docs-comment.md"
+          else
+            {
+              echo "Documentation preview for this pull request is unavailable."
+              echo
+              if [ "$DOCS_BUILD_RESULT" != success ]; then
+                echo "The documentation build did not complete successfully (result: ${DOCS_BUILD_RESULT})."
+              else
+                echo "The documentation delta job did not complete successfully (result: ${DOCS_DELTA_RESULT})."
+              fi
+            } > "$RUNNER_TEMP/docs-comment.md"
+          fi
 
       - name: Find existing documentation preview comment
         id: find-comment
