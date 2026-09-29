@@ -21,7 +21,7 @@ load("@rules_python//python:pip.bzl", "compile_pip_requirements")
 
 exports_files(
     [
-        "requirements_py312.txt",
+        "requirements.txt",
         "requirements_py314.txt",
         "requirements.in",
         "dummy.py",
@@ -72,19 +72,19 @@ py_library(
 )
 
 # In order to update the requirements, change the `requirements.in` file and run:
-# `bazel run //src:requirements_py312.update`.
-# This will update the `requirements_py312.txt` file.
+# `bazel run //src:requirements.update`.
+# This will update the `requirements.txt` file.
 # The additional Python 3.14 lock is maintained from the same input file with
 # its matching Bazel toolchain selected:
 # `bazel run --@rules_python//python/config_settings:python_version=3.14 //src:requirements_py314.update`.
 # To upgrade all dependencies to their latest versions, run:
-# `bazel run //src:requirements_py312.update -- --upgrade`.
+# `bazel run //src:requirements.update -- --upgrade`.
 compile_pip_requirements(
-    name = "requirements_py312",
+    name = "requirements",
     srcs = [
         "requirements.in",
     ],
-    requirements_txt = "requirements_py312.txt",
+    requirements_txt = "requirements.txt",
     tags = [
         "manual",
     ],
@@ -108,7 +108,7 @@ compile_pip_requirements(
 filegroup(
     name = "requirements_lock",
     srcs = [
-        "requirements_py312.txt",
+        "requirements.txt",
         "requirements_py314.txt",
     ],
     visibility = ["//visibility:public"],

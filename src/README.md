@@ -110,7 +110,7 @@ Find everything related to testing and how to add your own test suite [here](/sr
 
 The file [requirements.in](./requirements.in) is a [PIP requirements file](https://pip.pypa.io/en/stable/reference/requirements-file-format/) that describe first level dependencies.
 
-The files [requirements_py312.txt](./requirements_py312.txt) and
+The files [requirements.txt](./requirements.txt) and
 [requirements_py314.txt](./requirements_py314.txt) are [pip-compile lock
 files](https://pip-tools.readthedocs.io/en/latest/cli/pip-compile/) for Python
 3.12 and Python 3.14 respectively. Both hold the pinned dependency tree
@@ -118,7 +118,7 @@ calculated from [requirements.in](./requirements.in).
 
 To update dependencies (e.g. after adding a dependency), run:
 ```
-bazel run //src:requirements_py312.update
+bazel run //src:requirements.update
 ```
 
 Update the Python 3.14 dependency lock with its matching toolchain:
@@ -129,7 +129,7 @@ bazel run --@rules_python//python/config_settings:python_version=3.14 //src:requ
 
 To update the full dependency tree, run
 ```
-bazel run //src:requirements_py312.update -- --upgrade
+bazel run //src:requirements.update -- --upgrade
 ```
 
 To upgrade the Python 3.14 dependency tree, run:
