@@ -5,7 +5,7 @@
 # information regarding copyright ownership.
 #
 # This program and the accompanying materials are made available under the
-# terms of the Apache License, Version 2.0 which is available at
+# terms of the Apache License Version 2.0 which is available at
 # https://www.apache.org/licenses/LICENSE-2.0
 #
 # SPDX-License-Identifier: Apache-2.0
@@ -34,9 +34,17 @@ py_binary(
 )
 
 py_binary(
-    name = "docs_delta",
-    srcs = ["docs_delta.py"],
-    main = "docs_delta.py",
+    name = "docs_delta_cli",
+    srcs = ["docs_delta_main.py"] + glob(["docs_delta/*.py"]),
+    main = "docs_delta_main.py",
     visibility = ["//visibility:public"],
     deps = [],
+)
+
+# Retain the original Bazel label for callers while the package itself now
+# occupies the ``tools/docs_delta`` source path.
+alias(
+    name = "docs_delta",
+    actual = ":docs_delta_cli",
+    visibility = ["//visibility:public"],
 )

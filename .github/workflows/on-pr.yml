@@ -81,7 +81,7 @@ jobs:
       - name: Generate documentation delta report
         run: |
           set -euo pipefail
-          uv run --no-project python tools/docs_delta.py
+          uv run --locked --project tools/docs_delta docs-delta
 
       - name: Upload documentation delta artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
