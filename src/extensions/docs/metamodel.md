@@ -131,6 +131,11 @@ This applies to every link attribute inside `check_all` / `check_one`.
 With `info_only: true` violations are reported as info instead of warning, so they do not break the build.
 Use this to introduce a new check before it is enforced.
 
+A condition may reference an attribute of the need the check is applied to via `self.<attribute>`.
+This compares each linked need against the need it is linked from,
+e.g. `fulfils: safety == self.safety` requires a linked need with the same `safety` value
+as the architecture element it is linked from.
+
 A complete example might look like so:
 
 ```yaml
