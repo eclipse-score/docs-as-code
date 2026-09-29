@@ -27,29 +27,29 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
-    <link rel="stylesheet" type="text/css" href="../_static/css/score.css?v=bb63a8e1" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/score.css?v=415257cb" />
     <link rel="stylesheet" type="text/css" href="../_static/css/score_needs.css?v=82a1844f" />
     <link rel="stylesheet" type="text/css" href="../_static/css/score_design.css?v=8048e6ee" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-data-viewer/jsonview.bundle.css?v=f6ef2277" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/libs/html/datatables.min.css?v=4b4fd840" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_style.css?v=92936fa5" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/needstable.css?v=5e1b6797" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_toggle.css?v=5c6620df" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_core.css?v=f5b60a78" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_style.css?v=92936fa5" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_toggle.css?v=5c6620df" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_links.css?v=2150a916" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/modern.css?v=803738c0" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <script defer src="../_static/scripts/fontawesome.js?digest=cb8930eaaf36d9849b67"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
 
     <script src="../_static/jquery.js?v=5d32c60e"></script>
     <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
@@ -64,7 +64,7 @@
     <script src="../_static/sphinx-needs/libs/html/sphinx_needs_collapse.js?v=dca66431"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'reference/bazel_macros';</script>
     <script>
-        DOCUMENTATION_OPTIONS.theme_version = '0.20.0';
+        DOCUMENTATION_OPTIONS.theme_version = '0.21.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://eclipse-score.github.io/docs-as-code/versions.json';
         DOCUMENTATION_OPTIONS.theme_switcher_version_match = '';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
@@ -477,16 +477,26 @@ to build, verify and preview the project’s Sphinx documentation,
 and to create a Python virtual environment for IDE support (Esbonio).</p>
 <p>See <a class="reference internal" href="commands.html"><span class="doc">commands</span></a> for the targets/commands it creates.</p>
 <p>The macro must be called from the repository root package.</p>
-<section id="supporting-files">
-<h2>Supporting files<a class="headerlink" href="#supporting-files" title="Link to this heading">#</a></h2>
-<p>Documentation supporting files always belong to a <code class="docutils literal notranslate"><span class="pre">docs_bundle</span></code>. The
-<code class="docutils literal notranslate"><span class="pre">data</span></code> argument of <code class="docutils literal notranslate"><span class="pre">docs()</span></code> is shorthand for adding files to the root
-<code class="docutils literal notranslate"><span class="pre">:docs_bundle</span></code> that the macro exposes. A mounted module puts its files in
-its own <code class="docutils literal notranslate"><span class="pre">docs_bundle(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code>; those files travel with that bundle and
-are resolved below its eventual <code class="docutils literal notranslate"><span class="pre">mount_at</span></code> path.</p>
-<p>A bundle with <code class="docutils literal notranslate"><span class="pre">data</span></code> but no <code class="docutils literal notranslate"><span class="pre">source_dir</span></code> is simply a bundle whose content
-is generated or supporting files. It uses the same ownership and placement
-mechanism as every other bundle.</p>
+<section id="bundle-content-and-supporting-files">
+<h2>Bundle content and supporting files<a class="headerlink" href="#bundle-content-and-supporting-files" title="Link to this heading">#</a></h2>
+<p>There are two ways to add files to a bundle. The <code class="docutils literal notranslate"><span class="pre">data</span></code> argument of <code class="docutils literal notranslate"><span class="pre">docs()</span></code>
+is shorthand for supporting files in the root <code class="docutils literal notranslate"><span class="pre">:docs_bundle</span></code>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">docs_bundle(srcs</span> <span class="pre">=</span> <span class="pre">[...])</span></code> puts documentation source files in a bundle.
+The files may be generated outputs from another build action; they are
+processed as documentation sources and resolved below the bundle’s eventual
+<code class="docutils literal notranslate"><span class="pre">mount_at</span></code> path.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">docs_bundle(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code> puts supporting or runtime files in a bundle
+payload. Use this for files that belong at the mount but are not themselves
+documentation sources.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">docs(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code> puts supporting files in the root <code class="docutils literal notranslate"><span class="pre">:docs_bundle</span></code>
+exposed by <code class="docutils literal notranslate"><span class="pre">docs()</span></code>. A mounted module puts its files in its own bundle;
+these files travel with that bundle and are resolved below its eventual
+<code class="docutils literal notranslate"><span class="pre">mount_at</span></code> path.</p></li>
+</ul>
+<p>If a file is mounted documentation, use <code class="docutils literal notranslate"><span class="pre">docs_bundle(srcs</span> <span class="pre">=</span> <span class="pre">[...])</span></code>. Both
+bundle attributes make files available to a build; they differ in whether the
+files are processed as documentation sources or carried as supporting data.</p>
 </section>
 <section id="minimal-example-root-build">
 <h2>Minimal example (root <code class="docutils literal notranslate"><span class="pre">BUILD</span></code>)<a class="headerlink" href="#minimal-example-root-build" title="Link to this heading">#</a></h2>
@@ -516,12 +526,19 @@ Path (relative to repository root) to your Sphinx source directory. This is the 
 that contains the top-level ReST/markdown sources. A <code class="docutils literal notranslate"><span class="pre">conf.py</span></code> is optional.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">project</span></code> and <code class="docutils literal notranslate"><span class="pre">project_url</span></code> (strings, optional)
 Project name and canonical project URL. They are required when <code class="docutils literal notranslate"><span class="pre">source_dir</span></code>
-has no <code class="docutils literal notranslate"><span class="pre">conf.py</span></code>; in that case <code class="docutils literal notranslate"><span class="pre">docs()</span></code> generates the Sphinx configuration
-and supplies the Docs-as-Code baseline version, extensions, and a
-<code class="docutils literal notranslate"><span class="pre">required_in_id</span></code> entry derived from the Bazel module name. The first
-underscore-separated prefix is removed (for example,
+has no <code class="docutils literal notranslate"><span class="pre">conf.py</span></code>; in that case <code class="docutils literal notranslate"><span class="pre">docs()</span></code> runs Sphinx in configuration-free
+mode and supplies these values, the Docs-as-Code baseline extensions and
+version, and a <code class="docutils literal notranslate"><span class="pre">required_in_id</span></code> entry derived from the Bazel module name.
+The first underscore-separated prefix is removed (for example,
 <code class="docutils literal notranslate"><span class="pre">score_docs_as_code</span></code> becomes <code class="docutils literal notranslate"><span class="pre">docs_as_code</span></code>). If a <code class="docutils literal notranslate"><span class="pre">conf.py</span></code> exists,
-it remains authoritative and these values are not used.</p></li>
+it remains authoritative for the root Sphinx build; these macro arguments
+are not used to override it. They are still published when supplied so an
+associated child bundle can receive explicit root metadata; supply them
+explicitly when associated bundles need that metadata. Values are not read
+back from <code class="docutils literal notranslate"><span class="pre">conf.py</span></code> or inherited from it.
+The root bundle nevertheless publishes the module-derived
+<code class="docutils literal notranslate"><span class="pre">required_in_id</span></code> through the root docs configuration; associated child
+bundles inherit it and cannot override it locally.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">data</span></code> (list of bazel labels)
 Supporting files for this project’s root <code class="docutils literal notranslate"><span class="pre">:docs_bundle</span></code>. The files are
 available to the documentation targets and travel when another project
@@ -534,8 +551,9 @@ in that child’s <code class="docutils literal notranslate"><span class="pre">d
 </div>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">bundles</span></code> (list of placement dicts)
-Documentation bundles to overlay into this project’s documentation tree, each with its
-placement (<code class="docutils literal notranslate"><span class="pre">mount_at</span></code>). See <a class="reference internal" href="../how-to/bundles/index.html#howto-mount-external-sources"><span class="std std-ref">How to use bundles</span></a> for the full reference.</p></li>
+Documentation bundles to overlay into this project’s documentation tree,
+each with its placement (<code class="docutils literal notranslate"><span class="pre">mount_at</span></code>, optional <code class="docutils literal notranslate"><span class="pre">attach_to</span></code> and
+<code class="docutils literal notranslate"><span class="pre">toctree_index</span></code>). See <a class="reference internal" href="../how-to/bundles/index.html#howto-mount-external-sources"><span class="std std-ref">How to use bundles</span></a> for the full reference.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">deps</span></code> (list of bazel labels)
 Additional Bazel dependencies to add to the Python binaries and the virtual environment
 target. Use this to add project-specific Python modules.</p>
@@ -550,9 +568,10 @@ expand to their files. Each documentation bundle produces one cache for its
 declared targets; Bazel reuses that cache while its inputs are unchanged. The
 generated JSON is supplied to <code class="docutils literal notranslate"><span class="pre">live_preview</span></code> just like a normal documentation
 build.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">scan_code</span></code> (list of Bazel labels, deprecated)
-Explicit source files or filegroups to scan. Use <code class="docutils literal notranslate"><span class="pre">code_targets</span></code> for
-implementation targets; it follows their dependencies automatically.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">primary_need_id</span></code> (string, optional)
+ID of the Sphinx-Needs item that represents the primary subject of this
+documentation project. A project may contain many other Needs; when this
+value is set, bundle-level target metadata is written only to this Need.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">external_needs</span></code> (list of bazel labels)
 External <code class="docutils literal notranslate"><span class="pre">:needs_json_file</span></code> targets from other modules/repositories
 for referencing their needs.
@@ -596,28 +615,37 @@ site).</p>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>Signature: <code class="docutils literal notranslate"><span class="pre">docs_bundle(name,</span> <span class="pre">source_dir</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">data</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">entry_doc</span> <span class="pre">=</span> <span class="pre">&quot;index&quot;,</span> <span class="pre">bundles</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">scan_code</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">code_targets</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">visibility</span> <span class="pre">=</span> <span class="pre">None)</span></code>.</p>
+<p>Signature: <code class="docutils literal notranslate"><span class="pre">docs_bundle(name,</span> <span class="pre">source_dir</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">srcs</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">data</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">entry_doc</span> <span class="pre">=</span> <span class="pre">&quot;index&quot;,</span> <span class="pre">bundles</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">code_targets</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">primary_need_id</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">root_docs</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">visibility</span> <span class="pre">=</span> <span class="pre">None)</span></code>.</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">source_dir</span></code> (string, optional)
 Directory holding the bundle’s own doc sources. It is globbed the same way as
 <code class="docutils literal notranslate"><span class="pre">docs()</span></code> (RST, Markdown, images, and the other doc file kinds). The
 <code class="docutils literal notranslate"><span class="pre">source_dir</span></code> itself is the mount root, so the files mount relative to it (so
 <code class="docutils literal notranslate"><span class="pre">concept/index.rst</span></code> with <code class="docutils literal notranslate"><span class="pre">source_dir</span> <span class="pre">=</span> <span class="pre">&quot;concept&quot;</span></code> becomes <code class="docutils literal notranslate"><span class="pre">index.rst</span></code>).
+Standalone bundle-local Needs exports use Sphinx’s configuration-free mode
+with a self-contained set of baseline overrides. A root bundle created by
+<code class="docutils literal notranslate"><span class="pre">docs()</span></code> uses the project’s <code class="docutils literal notranslate"><span class="pre">conf.py</span></code> when one exists, so its local export
+remains compatible while that legacy path is phased out.
 The bundle exposes those files as a Bazel depset (via the <code class="docutils literal notranslate"><span class="pre">DocsBundleInfo</span></code>
 provider) and records the <code class="docutils literal notranslate"><span class="pre">source_dir</span></code> path; sphinx-mounts walks that original
-directory directly — no copy is made. Leave it unset for a data-only bundle
-or for an aggregator that only composes other <code class="docutils literal notranslate"><span class="pre">bundles</span></code>.</p></li>
+directory directly — no copy is made. Leave it unset for a bundle whose
+sources are supplied explicitly or for an aggregator that only composes
+other <code class="docutils literal notranslate"><span class="pre">bundles</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">srcs</span></code> (list of bazel labels, optional)
+Explicit documentation source files, including generated outputs from a
+build action. Use this for a source-less bundle whose documentation is
+generated. All files must share one parent directory. It cannot be combined
+with <code class="docutils literal notranslate"><span class="pre">source_dir</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">data</span></code> (list of bazel labels, optional)
-Supporting or generated files owned by this bundle. These files are part of
-the bundle payload and are available at the bundle’s eventual mount path;
-they are useful for generated documentation sources such as a generated
-<code class="docutils literal notranslate"><span class="pre">index.rst</span></code>. If <code class="docutils literal notranslate"><span class="pre">source_dir</span></code> is omitted and <code class="docutils literal notranslate"><span class="pre">data</span></code> contains the
-bundle’s deliverable, the result is a bundle containing only supporting
-files. Use this attribute for every file that belongs with a mounted bundle.</p></li>
+Supporting or runtime files owned by this bundle. These files are part of the
+bundle payload and are available at the bundle’s eventual mount path, but are
+not processed as the bundle’s documentation sources. Use <code class="docutils literal notranslate"><span class="pre">docs(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code>
+for supporting files in the root bundle and this attribute for child bundles.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">entry_doc</span></code> (string, optional)
 Bundle-relative docname used as the canonical navigation entry. It defaults to
 <code class="docutils literal notranslate"><span class="pre">index</span></code>. Every mount attaches this entry to the parent <code class="docutils literal notranslate"><span class="pre">index</span></code> toctree by
-default; a placement’s <code class="docutils literal notranslate"><span class="pre">attach_to</span></code> may override that host document.</p></li>
+default; a placement’s <code class="docutils literal notranslate"><span class="pre">attach_to</span></code> may override that host document, and its
+<code class="docutils literal notranslate"><span class="pre">toctree_index</span></code> selects which toctree of that document receives the entry.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">bundles</span></code> (list of composition dicts, optional)
 Nested bundles to compose into this one, so a bundle can aggregate other
 bundles transitively. Each entry is a dict:</p>
@@ -628,6 +656,9 @@ this bundle.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">attach_to</span></code> (optional) — a docname (relative to this bundle) whose toctree
 receives the child’s bundle-defined entry document. When omitted, the parent
 <code class="docutils literal notranslate"><span class="pre">index</span></code> document receives it.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">toctree_index</span></code> (optional) — the 0-based index of the toctree inside the
+<code class="docutils literal notranslate"><span class="pre">attach_to</span></code> document that receives the entry. It defaults to <code class="docutils literal notranslate"><span class="pre">0</span></code> (the
+first toctree).</p></li>
 </ul>
 <p>A child’s <code class="docutils literal notranslate"><span class="pre">mount_at</span></code>/<code class="docutils literal notranslate"><span class="pre">attach_to</span></code> <strong>prefix-stack</strong> with the placement this
 bundle later receives, so composition is fully transitive. The same underlying
@@ -635,15 +666,23 @@ bundle resolving to two different final <code class="docutils literal notranslat
 error. See <a class="reference internal" href="../how-to/bundles/index.html#howto-mount-external-sources"><span class="std std-ref">How to use bundles</span></a> for a worked example and
 <a class="reference internal" href="../concepts/mounts/index.html#docs-concept-mounts"><span class="std std-ref">Documentation bundles and mounts</span></a> for the composition and transitivity semantics.</p>
 </li>
+<li><p><code class="docutils literal notranslate"><span class="pre">needs_local</span></code> (internal target)
+A source-bearing bundle creates <code class="docutils literal notranslate"><span class="pre">&lt;name&gt;.__internal__.needs_local</span></code> with the
+Needs declared by its own sources. The standalone build is intentionally
+self-contained in this version: references to Needs defined outside the
+bundle remain unresolved and fail strict builds. Cross-bundle imports and
+merged exports are planned for a later change. Data-only bundles do not
+create a Needs target.</p></li>
 </ul>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>A bundle is <strong>placement-free</strong>: its <code class="docutils literal notranslate"><span class="pre">mount_at</span></code> and <code class="docutils literal notranslate"><span class="pre">attach_to</span></code> are assigned
-by the mounter, while its <code class="docutils literal notranslate"><span class="pre">entry_doc</span></code> belongs to the bundle. This lets the
+<p>A bundle is <strong>placement-free</strong>: its <code class="docutils literal notranslate"><span class="pre">mount_at</span></code>, <code class="docutils literal notranslate"><span class="pre">attach_to</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">toctree_index</span></code> are assigned by the mounter, while its <code class="docutils literal notranslate"><span class="pre">entry_doc</span></code> belongs to
+the bundle. This lets the
 same bundle be mounted at different locations by different consumers without
 changing its canonical entry page.</p>
 </div>
-<ul class="simple">
+<ul>
 <li><dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">code_targets</span></code> (list of Bazel labels, optional)</dt><dd><p>Implementation targets or filegroups to scan for requirement tags.
 Implementation target <code class="docutils literal notranslate"><span class="pre">srcs</span></code>, <code class="docutils literal notranslate"><span class="pre">hdrs</span></code>, and <code class="docutils literal notranslate"><span class="pre">textual_hdrs</span></code> are collected
@@ -654,18 +693,28 @@ inputs change.</p>
 </dl>
 </li>
 <li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">scan_code</span></code> (list of Bazel labels, deprecated)</dt><dd><p>Explicit source files or filegroups to scan. Prefer <code class="docutils literal notranslate"><span class="pre">code_targets</span></code> for
-implementation targets.</p>
+<dt><code class="docutils literal notranslate"><span class="pre">primary_need_id</span></code> (string, optional)</dt><dd><p>ID of the local Sphinx-Needs item representing the primary subject of this
+bundle. The bundle may contain many additional Needs; only this explicitly
+selected Need receives bundle-level target metadata. The ID is independent
+of the Bazel bundle target name.</p>
 </dd>
 </dl>
 </li>
-</ul>
-</section>
-<section id="edge-cases">
-<h2>Edge cases<a class="headerlink" href="#edge-cases" title="Link to this heading">#</a></h2>
-<ul class="simple">
-<li><p>If your Sphinx <code class="docutils literal notranslate"><span class="pre">conf.py</span></code> expects files generated by other Bazel targets, make sure those
-targets are included in the <code class="docutils literal notranslate"><span class="pre">data</span></code> list so they are available to the build driver.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">root_docs</span></code> (bazel label, optional)
+Root documentation target whose structured project configuration and
+metamodel are used by this bundle’s standalone Needs export. For a root
+documentation target declared in the same repository’s root package, use
+<code class="docutils literal notranslate"><span class="pre">//:docs</span></code>. The reference is resolved to an internal configuration target,
+so the bundle does not depend on the root bundle’s composed content. It is
+deliberately opt-in: standalone bundles otherwise keep their own local
+configuration. The generated <code class="docutils literal notranslate"><span class="pre">docs.__internal__.config</span></code> target is an
+implementation detail and is not part of the public target surface; it
+publishes a structured provider for the bundle rule to consume.
+This includes the effective <code class="docutils literal notranslate"><span class="pre">required_in_id</span></code> namespace; a bundle associated
+with root docs cannot override it locally. A <code class="docutils literal notranslate"><span class="pre">conf.py</span></code> is never inherited.</p>
+<p>The root project’s <code class="docutils literal notranslate"><span class="pre">project_url</span></code> is resolved for the declaring bundle by
+appending its workspace-relative Bazel package path.</p>
+</li>
 </ul>
 </section>
 </section>
@@ -717,10 +766,9 @@ targets are included in the <code class="docutils literal notranslate"><span cla
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#supporting-files">Supporting files</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bundle-content-and-supporting-files">Bundle content and supporting files</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#minimal-example-root-build">Minimal example (root <code class="docutils literal notranslate"><span class="pre">BUILD</span></code>)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bazel-macro-docs-bundle">Bazel macro: <code class="docutils literal notranslate"><span class="pre">docs_bundle</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#edge-cases">Edge cases</a></li>
 </ul>
   </nav></div>
 
@@ -753,8 +801,8 @@ targets are included in the <code class="docutils literal notranslate"><span cla
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
-<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+  <script defer src="../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -778,7 +826,7 @@ targets are included in the <code class="docutils literal notranslate"><span cla
         <div class="footer-item">
 <p class="theme-version">
   <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.20.0.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.21.0.
 </p></div>
       
     </div>

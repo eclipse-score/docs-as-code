@@ -27,29 +27,29 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
-    <link rel="stylesheet" type="text/css" href="../_static/css/score.css?v=bb63a8e1" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/score.css?v=415257cb" />
     <link rel="stylesheet" type="text/css" href="../_static/css/score_needs.css?v=82a1844f" />
     <link rel="stylesheet" type="text/css" href="../_static/css/score_design.css?v=8048e6ee" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-data-viewer/jsonview.bundle.css?v=f6ef2277" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/libs/html/datatables.min.css?v=4b4fd840" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_style.css?v=92936fa5" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/needstable.css?v=5e1b6797" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_toggle.css?v=5c6620df" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_core.css?v=f5b60a78" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_style.css?v=92936fa5" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_toggle.css?v=5c6620df" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/common_css/need_links.css?v=2150a916" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/modern.css?v=803738c0" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <script defer src="../_static/scripts/fontawesome.js?digest=cb8930eaaf36d9849b67"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
 
     <script src="../_static/jquery.js?v=5d32c60e"></script>
     <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
@@ -64,7 +64,7 @@
     <script src="../_static/sphinx-needs/libs/html/sphinx_needs_collapse.js?v=dca66431"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'how-to/generated_docs';</script>
     <script>
-        DOCUMENTATION_OPTIONS.theme_version = '0.20.0';
+        DOCUMENTATION_OPTIONS.theme_version = '0.21.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://eclipse-score.github.io/docs-as-code/versions.json';
         DOCUMENTATION_OPTIONS.theme_switcher_version_match = '';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
@@ -74,7 +74,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Add Extensions" href="add_extensions.html" />
-    <link rel="prev" title="Reference Docs in Tests" href="test_to_doc_links.html" />
+    <link rel="prev" title="How to Apply the SCORE Tool Management Process" href="perform_tool_verification.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.0.0" />
@@ -415,6 +415,7 @@
 <li class="toctree-l1"><a class="reference internal" href="dashboards_and_quality_gates.html">Build Dashboards and Quality Gates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="source_to_doc_links.html">Reference Docs in Source Code</a></li>
 <li class="toctree-l1"><a class="reference internal" href="test_to_doc_links.html">Reference Docs in Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="perform_tool_verification.html">How to Apply the SCORE Tool Management Process</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Integrate Generated Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="add_extensions.html">Add Extensions</a></li>
 </ul>
@@ -483,14 +484,18 @@
 with a <code class="docutils literal notranslate"><span class="pre">docs_bundle</span></code> and mount the bundle into your documentation tree.</p>
 <p>You find a <a class="reference external" href="https://github.com/eclipse-score/docs-as-code/tree/main/src/extensions/score_metamodel/docs/">complete working example</a>
 in the <a class="reference internal" href="../reference/metamodel/index.html#metamodel-reference"><span class="std std-ref">Metamodel</span></a>.</p>
-<section id="supporting-files-belong-to-bundles">
-<h2>Supporting files belong to bundles<a class="headerlink" href="#supporting-files-belong-to-bundles" title="Link to this heading">#</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">docs(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code> adds files to the root <code class="docutils literal notranslate"><span class="pre">:docs_bundle</span></code> exposed by the
-macro. A mounted documentation bundle declares its own files with
-<code class="docutils literal notranslate"><span class="pre">docs_bundle(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code>. In both cases the files are bundle payload and,
-when mounted, are resolved below the bundle’s <code class="docutils literal notranslate"><span class="pre">mount_at</span></code> path.</p>
-<p>For this how-to, generated documentation belongs in
-<code class="docutils literal notranslate"><span class="pre">docs_bundle(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code> because it is mounted as a child bundle.</p>
+<section id="which-bundle-attribute">
+<h2>Which bundle attribute?<a class="headerlink" href="#which-bundle-attribute" title="Link to this heading">#</a></h2>
+<p>For generated documentation, put the generated files in
+<code class="docutils literal notranslate"><span class="pre">docs_bundle(srcs</span> <span class="pre">=</span> <span class="pre">[...])</span></code>. This follows Bazel’s normal <code class="docutils literal notranslate"><span class="pre">srcs</span></code> semantics:
+the files are inputs that Sphinx processes, even when they are generated by
+another build action.</p>
+<p>Use <code class="docutils literal notranslate"><span class="pre">docs_bundle(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code> for runtime or supporting files that belong at
+the bundle’s mount but are not themselves documentation sources. The
+<code class="docutils literal notranslate"><span class="pre">docs(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code> argument is shorthand for supporting files in the root
+<code class="docutils literal notranslate"><span class="pre">:docs_bundle</span></code>; it is not a substitute for <code class="docutils literal notranslate"><span class="pre">docs_bundle(srcs</span> <span class="pre">=</span> <span class="pre">[...])</span></code>.</p>
+<p>For this how-to, the rule is simple: generated documentation belongs in
+<code class="docutils literal notranslate"><span class="pre">docs_bundle(srcs</span> <span class="pre">=</span> <span class="pre">[...])</span></code>.</p>
 </section>
 <section id="step-1-generate-the-rst-files">
 <h2>Step 1: Generate the RST Files<a class="headerlink" href="#step-1-generate-the-rst-files" title="Link to this heading">#</a></h2>
@@ -521,21 +526,22 @@ Inspect the output at <code class="docutils literal notranslate"><span class="pr
 </section>
 <section id="step-2-declare-the-bundle">
 <h2>Step 2: Declare the Bundle<a class="headerlink" href="#step-2-declare-the-bundle" title="Link to this heading">#</a></h2>
-<p>Wrap the generated files in a <code class="docutils literal notranslate"><span class="pre">docs_bundle</span></code> with the <code class="docutils literal notranslate"><span class="pre">data</span></code> attribute.
-Do not use <code class="docutils literal notranslate"><span class="pre">srcs</span></code> — that is for handwritten sources in the source tree.</p>
+<p>Wrap the generated files in a <code class="docutils literal notranslate"><span class="pre">docs_bundle</span></code> with the <code class="docutils literal notranslate"><span class="pre">srcs</span></code> attribute.
+Explicit <code class="docutils literal notranslate"><span class="pre">srcs</span></code> may point to generated files; they are not limited to
+handwritten sources.</p>
 <div class="literal-block-wrapper docutils container" id="id2">
 <div class="code-block-caption"><span class="caption-number">Listing 2 </span><span class="caption-text">In your BUILD file</span><a class="headerlink" href="#id2" title="Link to this code">#</a></div>
 <div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="n">docs_bundle</span><span class="p">(</span>
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;design_bundle&quot;</span><span class="p">,</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;:generate_design_rst&quot;</span><span class="p">],</span>
+    <span class="n">srcs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;:generate_design_rst&quot;</span><span class="p">],</span>
 <span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<p>This bundle has no <code class="docutils literal notranslate"><span class="pre">source_dir</span></code> because all of its documentation is
-generated. The generated <code class="docutils literal notranslate"><span class="pre">index.rst</span></code> becomes the bundle’s entry page and
-travels with the bundle when it is mounted. A bundle with both handwritten
-sources and generated files can use <code class="docutils literal notranslate"><span class="pre">source_dir</span></code> and <code class="docutils literal notranslate"><span class="pre">data</span></code> together.</p>
+<p>This is a source bundle without a <code class="docutils literal notranslate"><span class="pre">source_dir</span></code>: all of its documentation is
+generated. It is still a normal mountable bundle. The generated <code class="docutils literal notranslate"><span class="pre">index.rst</span></code>
+becomes the bundle’s entry page and travels with the bundle when it is mounted.
+All explicit source files must share one parent directory.</p>
 <dl class="simple">
 <dt>Verify:</dt><dd><p><code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">build</span> <span class="pre">:design_bundle</span></code> must succeed.
 The bundle now holds the generated file but does not yet place it anywhere.</p>
@@ -598,12 +604,12 @@ project’s root <code class="docutils literal notranslate"><span class="pre">in
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="test_to_doc_links.html"
+       href="perform_tool_verification.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Reference Docs in Tests</p>
+        <p class="prev-next-title">How to Apply the SCORE Tool Management Process</p>
       </div>
     </a>
     <a class="right-next"
@@ -634,7 +640,7 @@ project’s root <code class="docutils literal notranslate"><span class="pre">in
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#supporting-files-belong-to-bundles">Supporting files belong to bundles</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#which-bundle-attribute">Which bundle attribute?</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-generate-the-rst-files">Step 1: Generate the RST Files</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-declare-the-bundle">Step 2: Declare the Bundle</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-mount-the-bundle">Step 3: Mount the Bundle</a></li>
@@ -671,8 +677,8 @@ project’s root <code class="docutils literal notranslate"><span class="pre">in
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
-<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+  <script defer src="../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -696,7 +702,7 @@ project’s root <code class="docutils literal notranslate"><span class="pre">in
         <div class="footer-item">
 <p class="theme-version">
   <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.20.0.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.21.0.
 </p></div>
       
     </div>

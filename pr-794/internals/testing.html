@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Internals &#8212; S-CORE Docs-as-Code  documentation</title>
+    <title>Testing &#8212; S-CORE Docs-as-Code  documentation</title>
   
   
   
@@ -62,7 +62,7 @@
     <script src="../_static/sphinx-needs/libs/html/datatables.min.js?v=8a4aee21"></script>
     <script src="../_static/sphinx-needs/libs/html/datatables_loader.js?v=a2cae175"></script>
     <script src="../_static/sphinx-needs/libs/html/sphinx_needs_collapse.js?v=dca66431"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'internals/index';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'internals/testing';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.21.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://eclipse-score.github.io/docs-as-code/versions.json';
@@ -73,8 +73,8 @@
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Bazel Mini Benchmark Results" href="benchmark_results.html" />
-    <link rel="prev" title="Documentation bundles and mounts" href="../concepts/mounts/index.html" />
+    <link rel="next" title="Extensions" href="extensions/index.html" />
+    <link rel="prev" title="Doc-as-Code Tool Verification Report" href="requirements/tool_verification.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.0.0" />
@@ -181,7 +181,7 @@
 
 
 <li class="nav-item current active">
-  <a class="nav-link nav-internal" href="#">
+  <a class="nav-link nav-internal" href="index.html">
     Internals
   </a>
 </li>
@@ -323,7 +323,7 @@
 
 
 <li class="nav-item current active">
-  <a class="nav-link nav-internal" href="#">
+  <a class="nav-link nav-internal" href="index.html">
     Internals
   </a>
 </li>
@@ -405,11 +405,11 @@
 <nav class="bd-docs-nav bd-links"
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
-  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="benchmark_results.html">Bazel Mini Benchmark Results</a></li>
 <li class="toctree-l1"><a class="reference internal" href="decisions/index.html">Decisions And Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="requirements/index.html">Requirements</a></li>
-<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="extensions/index.html">Extensions</a></li>
 </ul>
 </div>
@@ -451,7 +451,10 @@
         <i class="fa-solid fa-home"></i>
       </a>
     </li>
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Internals</span></li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Internals</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Testing</span></li>
   </ul>
 </nav>
 </div>
@@ -468,18 +471,137 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="internals">
-<span id="docs-internals"></span><h1>Internals<a class="headerlink" href="#internals" title="Link to this heading">#</a></h1>
-<p>This section is not relevant for users of docs-as-code but for developers extending or maintaining it.</p>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="benchmark_results.html">Bazel Mini Benchmark Results</a></li>
-<li class="toctree-l1"><a class="reference internal" href="decisions/index.html">Decisions And Concepts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="requirements/index.html">Requirements</a></li>
-<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="extensions/index.html">Extensions</a></li>
-</ul>
+  <section id="testing">
+<span id="docs-internals-testing"></span><h1>Testing<a class="headerlink" href="#testing" title="Link to this heading">#</a></h1>
+<p>docs-as-code verifies itself on several layers.
+The following sections describe each testing method,
+what it is used for,
+and how to run it.</p>
+<section id="development-checks-pre-commit">
+<h2>Development checks (pre-commit)<a class="headerlink" href="#development-checks-pre-commit" title="Link to this heading">#</a></h2>
+<p>To be executed before <code class="docutils literal notranslate"><span class="pre">git-commit</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uvx<span class="w"> </span>pre-commit<span class="w"> </span>run<span class="w"> </span>--all-files
+</pre></div>
 </div>
+<p>The hooks cover:</p>
+<ul class="simple">
+<li><p>Generic file hygiene:
+YAML/TOML/JSON validity, trailing whitespace, end-of-file newlines,
+merge-conflict markers, case conflicts, and private keys.</p></li>
+<li><p>Python style and linting with Ruff (fix in place).</p></li>
+<li><p>Python type checking with BasedPyright.</p></li>
+<li><p>GitHub Actions workflow linting with actionlint.</p></li>
+<li><p>Bazel module hygiene, including <code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">mod</span> <span class="pre">tidy</span></code> and a lockfile consistency check.</p></li>
+<li><p>Eclipse copyright header presence.</p></li>
+</ul>
+</section>
+<section id="python-unit-tests-score-pytest">
+<h2>Python unit tests (score_pytest)<a class="headerlink" href="#python-unit-tests-score-pytest" title="Link to this heading">#</a></h2>
+<p>The unit tests exercise individual Python functions and extensions
+in isolation, without a Sphinx build.</p>
+<p>They are defined with the custom <code class="docutils literal notranslate"><span class="pre">score_pytest</span></code> Bazel rule,
+which wraps pytest and pins a single pytest version for the whole repository.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bazel<span class="w"> </span><span class="nb">test</span><span class="w"> </span>--lockfile_mode<span class="o">=</span>error<span class="w"> </span>//...<span class="w"> </span>--build_tests_only
+</pre></div>
+</div>
+<p>Use this layer for logic inside the extensions,
+the helper library,
+and the command-line tools.</p>
+</section>
+<section id="file-based-rst-rule-checks-metamodel">
+<h2>File-based RST rule checks (metamodel)<a class="headerlink" href="#file-based-rst-rule-checks-metamodel" title="Link to this heading">#</a></h2>
+<p>The file-based tests verify the Sphinx build rules and metamodel checks
+including our whole S-CORE-specific Sphinx setup with extensions.
+Each RST file under <code class="docutils literal notranslate"><span class="pre">src/extensions/score_metamodel/tests/rst/</span></code> is a small,
+self-contained Sphinx document.
+A SphinxTestApp builds it and the framework asserts on the resulting warnings,
+using the <code class="docutils literal notranslate"><span class="pre">:expect:</span></code> / <code class="docutils literal notranslate"><span class="pre">:expect_not:</span></code> options on the needs.</p>
+<p>You need one target per check category:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bazel<span class="w"> </span><span class="nb">test</span><span class="w"> </span>//src/extensions/score_metamodel:file_based_tests_&lt;category&gt;
+</pre></div>
+</div>
+<p>The categories are <code class="docutils literal notranslate"><span class="pre">architecture</span></code>, <code class="docutils literal notranslate"><span class="pre">attributes</span></code>, <code class="docutils literal notranslate"><span class="pre">graph</span></code>,
+<code class="docutils literal notranslate"><span class="pre">id_contains_feature</span></code>, <code class="docutils literal notranslate"><span class="pre">options</span></code>, <code class="docutils literal notranslate"><span class="pre">safety</span></code>, and <code class="docutils literal notranslate"><span class="pre">security</span></code>.</p>
+<p>Use this layer whenever you change the metamodel (<code class="docutils literal notranslate"><span class="pre">metamodel.yaml</span></code>)
+or one of its checks.
+How to write such a test file is described in
+<a class="reference internal" href="extensions/rst_filebased_testing.html"><span class="doc">File based rule checks</span></a>.</p>
+</section>
+<section id="end-to-end-docs-bzl-tests-docs-bzl">
+<h2>End-to-end docs.bzl tests (docs_bzl)<a class="headerlink" href="#end-to-end-docs-bzl-tests-docs-bzl" title="Link to this heading">#</a></h2>
+<p>The end-to-end tests exercise the public <code class="docutils literal notranslate"><span class="pre">docs()</span></code> and <code class="docutils literal notranslate"><span class="pre">docs_bundle()</span></code>
+macros through real Bazel builds and <code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span></code> invocations,
+exactly like a consumer would use them.
+They live under <code class="docutils literal notranslate"><span class="pre">src/tests/docs_bzl</span></code> and cover composition,
+invalid configurations, external Bzlmod bundles,
+and golden HTML/JSON output comparison.</p>
+<p>They are not Bazel test targets,
+but plain pytest tests that issue Bazel underneath
+because these tests also verify our Bazel/Starlark code.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>.venv_docs/bin/python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>-vv<span class="w"> </span>src/tests/docs_bzl
+</pre></div>
+</div>
+<p>The suite must be run sequentially.
+CI splits it with custom markers:
+<code class="docutils literal notranslate"><span class="pre">bazel_cached</span></code> (build-only, fast) and <code class="docutils literal notranslate"><span class="pre">bazel_slow</span></code>
+(Sphinx runs and expected-failure tests).</p>
+<p>Use this layer for changes to the Bazel macros,
+the bundle composition,
+or the generated output format.
+It is the “docs-bzl scope” in the diagram above.</p>
+</section>
+<section id="downstream-compatibility-tests">
+<h2>Downstream compatibility tests<a class="headerlink" href="#downstream-compatibility-tests" title="Link to this heading">#</a></h2>
+<p>The downstream compatibility tests check that changes to docs-as-code
+do not break real consumer repositories.
+They build selected consumers both from a local checkout and from a Git remote,
+using the changed docs-as-code as a dependency.</p>
+<p>They live under <code class="docutils literal notranslate"><span class="pre">src/tests/downstream_compatibility</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>.venv_docs/bin/python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>-s<span class="w"> </span>src/tests/downstream_compatibility
+</pre></div>
+</div>
+<p>You can restrict the run to selected consumers
+with a pytest <code class="docutils literal notranslate"><span class="pre">-k</span></code> expression,
+for example <code class="docutils literal notranslate"><span class="pre">-k</span> <span class="pre">&quot;score&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">-k</span> <span class="pre">&quot;baselibs</span> <span class="pre">and</span> <span class="pre">remote&quot;</span></code>.
+In CI they run automatically.</p>
+</section>
+<section id="which-test-for-what">
+<h2>Which test for what<a class="headerlink" href="#which-test-for-what" title="Link to this heading">#</a></h2>
+<p>Use the first suitable one in the table below.
+The later tests are slower.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 45.0%" />
+<col style="width: 55.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Change</p></th>
+<th class="head"><p>Relevant layer</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Any change</p></td>
+<td><p>Development checks (pre-commit)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Python logic in extensions / helper library / CLI</p></td>
+<td><p>Unit tests (<code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">test</span> <span class="pre">//...</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p>Metamodel or its checks</p></td>
+<td><p>File-based RST rule checks</p></td>
+</tr>
+<tr class="row-odd"><td><p>Bazel macros, bundles, or output format</p></td>
+<td><p>End-to-end docs_bzl tests</p></td>
+</tr>
+<tr class="row-even"><td><p>Public API, layouts, or version requirements</p></td>
+<td><p>Downstream compatibility tests</p></td>
+</tr>
+<tr class="row-odd"><td><p>Links or external references in the docs</p></td>
+<td><p>Documentation link checks</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
 </section>
 
 
@@ -493,20 +615,20 @@
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../concepts/mounts/index.html"
+       href="requirements/tool_verification.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Documentation bundles and mounts</p>
+        <p class="prev-next-title">Doc-as-Code Tool Verification Report</p>
       </div>
     </a>
     <a class="right-next"
-       href="benchmark_results.html"
+       href="extensions/index.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Bazel Mini Benchmark Results</p>
+        <p class="prev-next-title">Extensions</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -522,10 +644,27 @@
 
 
   <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#development-checks-pre-commit">Development checks (pre-commit)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#python-unit-tests-score-pytest">Python unit tests (score_pytest)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#file-based-rst-rule-checks-metamodel">File-based RST rule checks (metamodel)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#end-to-end-docs-bzl-tests-docs-bzl">End-to-end docs.bzl tests (docs_bzl)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#downstream-compatibility-tests">Downstream compatibility tests</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#which-test-for-what">Which test for what</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/eclipse-score/docs-as-code/edit/main/docs/internals/index.rst">
+    <a href="https://github.com/eclipse-score/docs-as-code/edit/main/docs/internals/testing.rst">
       <i class="fa-solid fa-pencil"></i>
       
       

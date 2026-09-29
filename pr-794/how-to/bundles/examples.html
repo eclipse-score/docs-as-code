@@ -27,29 +27,29 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
-    <link rel="stylesheet" type="text/css" href="../../_static/css/score.css?v=bb63a8e1" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/score.css?v=415257cb" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/score_needs.css?v=82a1844f" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/score_design.css?v=8048e6ee" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-data-viewer/jsonview.bundle.css?v=f6ef2277" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/libs/html/datatables.min.css?v=4b4fd840" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_style.css?v=92936fa5" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/needstable.css?v=5e1b6797" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_toggle.css?v=5c6620df" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_core.css?v=f5b60a78" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_style.css?v=92936fa5" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_toggle.css?v=5c6620df" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/common_css/need_links.css?v=2150a916" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-needs/modern.css?v=803738c0" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <script defer src="../../_static/scripts/fontawesome.js?digest=cb8930eaaf36d9849b67"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
 
     <script src="../../_static/jquery.js?v=5d32c60e"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
@@ -64,7 +64,7 @@
     <script src="../../_static/sphinx-needs/libs/html/sphinx_needs_collapse.js?v=dca66431"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'how-to/bundles/examples';</script>
     <script>
-        DOCUMENTATION_OPTIONS.theme_version = '0.20.0';
+        DOCUMENTATION_OPTIONS.theme_version = '0.21.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://eclipse-score.github.io/docs-as-code/versions.json';
         DOCUMENTATION_OPTIONS.theme_switcher_version_match = '';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
@@ -422,6 +422,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../dashboards_and_quality_gates.html">Build Dashboards and Quality Gates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../source_to_doc_links.html">Reference Docs in Source Code</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../test_to_doc_links.html">Reference Docs in Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../perform_tool_verification.html">How to Apply the SCORE Tool Management Process</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../generated_docs.html">Integrate Generated Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../add_extensions.html">Add Extensions</a></li>
 </ul>
@@ -518,11 +519,12 @@ consuming project chooses where the assembled bundle appears.</p>
 <code class="docutils literal notranslate"><span class="pre">guides/example/child/landing.html</span></code>. The consuming project can change
 <code class="docutils literal notranslate"><span class="pre">guides/example</span></code> without changing either bundle.</p>
 </section>
-<section id="mount-generated-documentation">
-<h2>Mount generated documentation<a class="headerlink" href="#mount-generated-documentation" title="Link to this heading">#</a></h2>
-<p>When a build action produces documentation rather than a source-tree <code class="docutils literal notranslate"><span class="pre">.rst</span></code>
-file, create a bundle without <code class="docutils literal notranslate"><span class="pre">source_dir</span></code>. Its generated files are the
-bundle’s complete payload. You can generate and mount a page like this:</p>
+<section id="mount-generated-bundle-content">
+<h2>Mount generated bundle content<a class="headerlink" href="#mount-generated-bundle-content" title="Link to this heading">#</a></h2>
+<p>Use explicit <code class="docutils literal notranslate"><span class="pre">srcs</span></code> when a build action produces the documentation rather
+than a source-tree <code class="docutils literal notranslate"><span class="pre">.rst</span></code> file. The source-less bundle has no <code class="docutils literal notranslate"><span class="pre">source_dir</span></code>;
+its generated files are the bundle’s complete source payload. You can generate
+and mount a page like this:</p>
 <div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="n">genrule</span><span class="p">(</span>
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;generated_page&quot;</span><span class="p">,</span>
     <span class="n">srcs</span> <span class="o">=</span> <span class="p">[],</span>
@@ -531,10 +533,10 @@ bundle’s complete payload. You can generate and mount a page like this:</p>
 <span class="s2">===================&#39; &gt; $@&quot;&quot;&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="c1"># Pure-data bundle: the genrule output lives in ``bazel-out/``, not the tree.</span>
+<span class="c1"># Source bundle: the genrule output lives in ``bazel-out/``, not the tree.</span>
 <span class="n">docs_bundle</span><span class="p">(</span>
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;data_bundle&quot;</span><span class="p">,</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;:generated_page&quot;</span><span class="p">],</span>
+    <span class="n">srcs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;:generated_page&quot;</span><span class="p">],</span>
     <span class="n">entry_doc</span> <span class="o">=</span> <span class="s2">&quot;index&quot;</span><span class="p">,</span>
     <span class="n">visibility</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;//visibility:public&quot;</span><span class="p">],</span>
 <span class="p">)</span>
@@ -551,8 +553,8 @@ bundle’s complete payload. You can generate and mount a page like this:</p>
 </div>
 <p>See the <a class="reference external" href="https://github.com/eclipse-score/docs-as-code/tree/main/src/tests/docs_bzl/scenarios/data_files_runfiles">complete generated-data fixture on GitHub</a>.</p>
 <p>The generated page is rendered at <code class="docutils literal notranslate"><span class="pre">data_test/index.html</span></code> and is added to the
-consuming project’s index page’s toctree. It is mounted and navigated in
-exactly the same way as a bundle with source files.</p>
+consuming project’s index page’s toctree. A generated source bundle is mounted
+and navigated in exactly the same way as a bundle with workspace sources.</p>
 </section>
 <section id="mount-documentation-from-another-module">
 <h2>Mount documentation from another module<a class="headerlink" href="#mount-documentation-from-another-module" title="Link to this heading">#</a></h2>
@@ -640,7 +642,7 @@ bring their Need directives with them, so do not import the same module’s
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nest-bundles">Nest bundles</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mount-generated-documentation">Mount generated documentation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mount-generated-bundle-content">Mount generated bundle content</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mount-documentation-from-another-module">Mount documentation from another module</a></li>
 </ul>
   </nav></div>
@@ -674,8 +676,8 @@ bring their Need directives with them, so do not import the same module’s
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
-<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -699,7 +701,7 @@ bring their Need directives with them, so do not import the same module’s
         <div class="footer-item">
 <p class="theme-version">
   <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.20.0.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.21.0.
 </p></div>
       
     </div>
