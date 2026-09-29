@@ -303,31 +303,33 @@ def main() -> int:
     )
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("metamodel", type=Path, nargs="?", default=None)
-    parser.add_argument("--source-repo", default="https://github.com/eclipse-score/docs-as-code.git")
+    parser.add_argument(
+        "--source-repo", default="https://github.com/eclipse-score/docs-as-code.git"
+    )
     args = parser.parse_args()
-    
+
     meta_path = resolve_metamodel_path(
         args.metamodel,
         workspace=os.environ.get("BUILD_WORKSPACE_DIRECTORY"),
     )
-    
+
     if not meta_path.is_file():
         print(f"Error: metamodel.yaml not found at {meta_path}", file=sys.stderr)
         return 1
-    
+
     raw_bytes = meta_path.read_bytes()
     try:
         data = load_metamodel_yaml(meta_path)
     except Exception as exc:
         print(f"Error parsing YAML: {exc}", file=sys.stderr)
         return 1
-    
+
     digest = hashlib.sha256(raw_bytes).hexdigest()
     metamodel_data = build_metamodel_data(data, digest, args.source_repo)
-    
+
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(render_data(metamodel_data), encoding="utf-8")
-    
+
     print(f"Exported metamodel data to {args.output}")
     return 0
 

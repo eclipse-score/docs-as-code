@@ -60,6 +60,7 @@ def _as_string_mapping(value: Any) -> dict[str, str]:
 def _as_string_list(value: Any) -> list[str]:
     """Convert a YAML sequence into a list of strings."""
     from collections.abc import Sequence
+
     if isinstance(value, Sequence) and not isinstance(value, str | bytes):
         sequence = cast(Sequence[object], value)
         return [str(item) for item in sequence]
@@ -69,7 +70,7 @@ def _as_string_list(value: Any) -> list[str]:
 def _build_base_options_schema(data: Mapping[str, Any]) -> dict[str, Any]:
     """Build JSON Schema for base options."""
     base = _as_mapping(data.get("needs_types_base_options"))
-    
+
     schema = {
         "type": "object",
         "description": "Base options inherited by all need types",
@@ -81,10 +82,10 @@ def _build_base_options_schema(data: Mapping[str, Any]) -> dict[str, Any]:
                     "type": "object",
                     "properties": {
                         "name": {"type": "string"},
-                        "pattern": {"type": "string", "format": "regex"}
+                        "pattern": {"type": "string", "format": "regex"},
                     },
-                    "required": ["name", "pattern"]
-                }
+                    "required": ["name", "pattern"],
+                },
             },
             "optional": {
                 "type": "object",
@@ -93,18 +94,20 @@ def _build_base_options_schema(data: Mapping[str, Any]) -> dict[str, Any]:
                     "type": "object",
                     "properties": {
                         "name": {"type": "string"},
-                        "pattern": {"type": "string", "format": "regex"}
+                        "pattern": {"type": "string", "format": "regex"},
                     },
-                    "required": ["name", "pattern"]
-                }
-            }
-        }
+                    "required": ["name", "pattern"],
+                },
+            },
+        },
     }
-    
+
     return schema
 
 
-def _build_need_type_schema(type_name: str, type_data: Mapping[str, Any]) -> dict[str, Any]:
+def _build_need_type_schema(
+    type_name: str, type_data: Mapping[str, Any]
+) -> dict[str, Any]:
     """Build JSON Schema for a single need type."""
     schema = {
         "type": "object",
@@ -114,55 +117,51 @@ def _build_need_type_schema(type_name: str, type_data: Mapping[str, Any]) -> dic
             "prefix": {"type": "string"},
             "color": {"type": "string"},
             "style": {"type": "string"},
-            "tags": {
-                "type": "array",
-                "items": {"type": "string"}
-            },
+            "tags": {"type": "array", "items": {"type": "string"}},
             "parts": {"type": "integer"},
             "mandatory_options": {
                 "type": "object",
                 "description": "Mandatory field patterns for this type",
-                "additionalProperties": {"type": "string", "format": "regex"}
+                "additionalProperties": {"type": "string", "format": "regex"},
             },
             "optional_options": {
                 "type": "object",
                 "description": "Optional field patterns for this type",
-                "additionalProperties": {"type": "string", "format": "regex"}
+                "additionalProperties": {"type": "string", "format": "regex"},
             },
             "mandatory_links": {
                 "type": "object",
                 "description": "Mandatory link patterns for this type",
-                "additionalProperties": {"type": "string"}
+                "additionalProperties": {"type": "string"},
             },
             "optional_links": {
                 "type": "object",
                 "description": "Optional link patterns for this type",
-                "additionalProperties": {"type": "string"}
-            }
+                "additionalProperties": {"type": "string"},
+            },
         },
-        "required": ["title"]
+        "required": ["title"],
     }
-    
+
     return schema
 
 
-def _build_link_type_schema(link_name: str, link_data: Mapping[str, Any]) -> dict[str, Any]:
+def _build_link_type_schema(
+    link_name: str, link_data: Mapping[str, Any]
+) -> dict[str, Any]:
     """Build JSON Schema for a link type."""
     return {
         "type": "object",
         "description": f"Definition of {link_name} link type",
-        "properties": {
-            "outgoing": {"type": "string"},
-            "incoming": {"type": "string"}
-        },
-        "required": ["outgoing", "incoming"]
+        "properties": {"outgoing": {"type": "string"}, "incoming": {"type": "string"}},
+        "required": ["outgoing", "incoming"],
     }
 
 
 def _build_prohibited_words_schema(data: Mapping[str, Any]) -> dict[str, Any]:
     """Build JSON Schema for prohibited words checks."""
     checks = _as_mapping(data.get("prohibited_words_checks"))
-    
+
     checks_schema = {}
     for check_name, check_data in checks.items():
         check_schema = {
@@ -172,30 +171,32 @@ def _build_prohibited_words_schema(data: Mapping[str, Any]) -> dict[str, Any]:
                 "types": {
                     "type": "array",
                     "items": {"type": "string"},
-                    "description": "Tag types this check applies to"
+                    "description": "Tag types this check applies to",
                 }
-            }
+            },
         }
-        
+
         # Add dynamic properties for each option being checked
         for option, words in _as_mapping(check_data).items():
             if option != "types":
                 check_schema["properties"][option] = {
                     "type": "array",
                     "items": {"type": "string"},
-                    "description": f"Prohibited words for {option}"
+                    "description": f"Prohibited words for {option}",
                 }
-        
+
         checks_schema[check_name] = check_schema
-    
+
     return {
         "type": "object",
         "description": "Prohibited words validation rules",
-        "properties": checks_schema
+        "properties": checks_schema,
     }
 
 
-def _build_graph_rule_schema(rule_name: str, rule_data: Mapping[str, Any]) -> dict[str, Any]:
+def _build_graph_rule_schema(
+    rule_name: str, rule_data: Mapping[str, Any]
+) -> dict[str, Any]:
     """Build JSON Schema for a graph validation rule."""
     return {
         "type": "object",
@@ -205,37 +206,43 @@ def _build_graph_rule_schema(rule_name: str, rule_data: Mapping[str, Any]) -> di
                 "type": "object",
                 "properties": {
                     "include": {"type": "string"},
-                    "condition": {"type": "object"}
-                }
+                    "condition": {"type": "object"},
+                },
             },
             "check": {"type": "object"},
-            "explanation": {"type": "string"}
+            "explanation": {"type": "string"},
         },
-        "required": ["needs", "check"]
+        "required": ["needs", "check"],
     }
 
 
 def build_json_schema(data: Mapping[str, Any], digest: str) -> dict[str, Any]:
     """Build the complete JSON Schema from metamodel data."""
-    
+
     # Build need types schema
     need_types = _as_mapping(data.get("needs_types"))
     need_types_properties = {}
     for type_name, type_data in need_types.items():
-        need_types_properties[type_name] = _build_need_type_schema(type_name, _as_mapping(type_data))
-    
+        need_types_properties[type_name] = _build_need_type_schema(
+            type_name, _as_mapping(type_data)
+        )
+
     # Build link types schema
     link_types = _as_mapping(data.get("needs_extra_links"))
     link_types_properties = {}
     for link_name, link_data in link_types.items():
-        link_types_properties[link_name] = _build_link_type_schema(link_name, _as_mapping(link_data))
-    
+        link_types_properties[link_name] = _build_link_type_schema(
+            link_name, _as_mapping(link_data)
+        )
+
     # Build graph rules schema
     graph_rules = _as_mapping(data.get("graph_checks"))
     graph_rules_properties = {}
     for rule_name, rule_data in graph_rules.items():
-        graph_rules_properties[rule_name] = _build_graph_rule_schema(rule_name, _as_mapping(rule_data))
-    
+        graph_rules_properties[rule_name] = _build_graph_rule_schema(
+            rule_name, _as_mapping(rule_data)
+        )
+
     schema = {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "$id": "https://eclipse-score.github.io/schemas/metamodel-schema.json",
@@ -245,40 +252,40 @@ def build_json_schema(data: Mapping[str, Any], digest: str) -> dict[str, Any]:
         "properties": {
             "$schema": {
                 "type": "string",
-                "const": "https://json-schema.org/draft/2020-12/schema"
+                "const": "https://json-schema.org/draft/2020-12/schema",
             },
             "metamodel_digest": {
                 "type": "string",
                 "pattern": "^sha256:[a-f0-9]{64}$",
-                "description": "SHA256 digest of the source metamodel.yaml"
+                "description": "SHA256 digest of the source metamodel.yaml",
             },
             "schema_version": {
                 "type": "integer",
                 "const": 1,
-                "description": "Schema version identifier"
+                "description": "Schema version identifier",
             },
             "needs_types_base_options": _build_base_options_schema(data),
             "needs_types": {
                 "type": "object",
                 "description": "All Sphinx-Needs types (directives)",
-                "properties": need_types_properties
+                "properties": need_types_properties,
             },
             "needs_extra_links": {
                 "type": "object",
                 "description": "All extra link definitions",
-                "properties": link_types_properties
+                "properties": link_types_properties,
             },
             "prohibited_words_checks": _build_prohibited_words_schema(data),
             "graph_checks": {
                 "type": "object",
                 "description": "Graph validation rules",
-                "properties": graph_rules_properties
-            }
+                "properties": graph_rules_properties,
+            },
         },
         "required": ["$schema", "schema_version", "metamodel_digest"],
-        "additionalProperties": False
+        "additionalProperties": False,
     }
-    
+
     return schema
 
 
@@ -311,29 +318,29 @@ def main() -> int:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("metamodel", type=Path, nargs="?", default=None)
     args = parser.parse_args()
-    
+
     meta_path = resolve_metamodel_path(
         args.metamodel,
         workspace=__file__ if "BUILD_WORKSPACE_DIRECTORY" not in __file__ else None,
     )
-    
+
     if not meta_path.is_file():
         print(f"Error: metamodel.yaml not found at {meta_path}", file=sys.stderr)
         return 1
-    
+
     raw_bytes = meta_path.read_bytes()
     try:
         data = load_metamodel_yaml(meta_path)
     except Exception as exc:
         print(f"Error parsing YAML: {exc}", file=sys.stderr)
         return 1
-    
+
     digest = hashlib.sha256(raw_bytes).hexdigest()
     schema = build_json_schema(data, f"sha256:{digest}")
-    
+
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(render_schema(schema), encoding="utf-8")
-    
+
     print(f"Generated JSON Schema at {args.output}")
     return 0
 

@@ -35,26 +35,30 @@ def main() -> int:
     )
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("metamodel", type=Path, nargs="?", default=None)
-    parser.add_argument("--source-commit", default=os.environ.get("SOURCE_COMMIT", "unknown"))
-    parser.add_argument("--source-repo", default="https://github.com/eclipse-score/docs-as-code.git")
+    parser.add_argument(
+        "--source-commit", default=os.environ.get("SOURCE_COMMIT", "unknown")
+    )
+    parser.add_argument(
+        "--source-repo", default="https://github.com/eclipse-score/docs-as-code.git"
+    )
     args = parser.parse_args()
-    
+
     # Resolve metamodel path
     meta_path = args.metamodel
     if meta_path is None:
         meta_path = Path(__file__).resolve().parent.parent / "metamodel.yaml"
-    
+
     if not meta_path.is_file():
         print(f"Error: metamodel.yaml not found at {meta_path}", file=sys.stderr)
         return 1
-    
+
     # Create output directory
     args.output_dir.mkdir(parents=True, exist_ok=True)
-    
+
     # Set environment for subprocesses
     env = os.environ.copy()
     env["SOURCE_COMMIT"] = args.source_commit
-    
+
     # Generate schema
     schema_path = args.output_dir / "metamodel-schema.json"
     print(f"Generating JSON Schema: {schema_path}")
@@ -62,14 +66,15 @@ def main() -> int:
         [
             sys.executable,
             Path(__file__).parent / "generate_schema.py",
-            "--output", str(schema_path),
+            "--output",
+            str(schema_path),
             str(meta_path),
         ],
         env=env,
     )
     if result.returncode != 0:
         return result.returncode
-    
+
     # Generate data export
     data_path = args.output_dir / "metamodel-data.json"
     print(f"Exporting metamodel data: {data_path}")
@@ -77,19 +82,21 @@ def main() -> int:
         [
             sys.executable,
             Path(__file__).parent / "export_data.py",
-            "--output", str(data_path),
-            "--source-repo", args.source_repo,
+            "--output",
+            str(data_path),
+            "--source-repo",
+            args.source_repo,
             str(meta_path),
         ],
         env=env,
     )
     if result.returncode != 0:
         return result.returncode
-    
+
     print(f"\n✓ Generated files in {args.output_dir}:")
     print(f"  - {schema_path.name}")
     print(f"  - {data_path.name}")
-    
+
     return 0
 
 
