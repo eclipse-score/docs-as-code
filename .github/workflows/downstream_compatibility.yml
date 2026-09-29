@@ -61,14 +61,14 @@ jobs:
           "time and remote",
         ]
         include:
-          - consumer: "module_template and local"
-            python-version: "3.14"
-          - consumer: "module_template and remote"
-            python-version: "3.14"
-          - consumer: "reference_integration and local"
-            python-version: "3.14"
-          - consumer: "reference_integration and remote"
-            python-version: "3.14"
+          - python-version: "3.14"
+            consumer: "module_template and local"
+          - python-version: "3.14"
+            consumer: "module_template and remote"
+          - python-version: "3.14"
+            consumer: "reference_integration and local"
+          - python-version: "3.14"
+            consumer: "reference_integration and remote"
 
     steps:
       - name: 🛡️ Harden Runner
