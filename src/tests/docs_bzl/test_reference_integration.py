@@ -20,7 +20,7 @@ from src.tests.docs_bzl.helpers import load_needs, run_scenario
 
 @pytest.mark.bazel_slow
 def test_nested_component_package_is_mounted_by_its_module():
-    """Nested component bundles are rendered at both module mount points."""
+    """Mounted component pages retain navigation and filter source controls."""
     result = run_scenario("run", "reference_integration/modern_module", ":docs")
 
     # The parent module owns the surrounding ``components`` tree, while each
@@ -29,6 +29,22 @@ def test_nested_component_package_is_mounted_by_its_module():
     assert (
         result.build_dir / "components" / "unlinked_component" / "index.html"
     ).is_file()
+
+    # The nested metamodel bundle is generated below bazel-out, so this page
+    # exercises the mounted-source branch that cannot provide a repository edit
+    # URL. The page table of contents is independent of that source control and
+    # must remain available.
+    generated_page = (
+        result.build_dir
+        / "components"
+        / "unlinked_component"
+        / "generated_metamodel"
+        / "index.html"
+    )
+    assert generated_page.is_file()
+    generated_html = generated_page.read_text(encoding="utf-8")
+    assert 'aria-label="On this page"' in generated_html
+    assert "Edit on GitHub" not in generated_html
 
 
 @pytest.mark.bazel_slow
