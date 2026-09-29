@@ -59,6 +59,16 @@
 {% macro id_filter_list(ids) -%}
 [{% for req_id in ids %}"{{ req_id }}"{% if not loop.last %}, {% endif %}{% endfor %}]
 {%- endmacro %}
+{#- Stakeholder requirements are not scoped to a Feature, so they are
+    collected once for the whole report rather than per-Feature like
+    ``feat_req``. -#}
+{% set ns_stkh_reqs = namespace(list=[]) %}
+{% for req in needs_of_type("stkh_req")|unique(attribute="id")|list %}
+{% if req_in_report_version(req, report_version) %}
+{% set ns_stkh_reqs.list = ns_stkh_reqs.list + [req["id"]] %}
+{% endif %}
+{% endfor %}
+{% set stkh_req_filter = 'id in ' ~ id_filter_list(ns_stkh_reqs.list) %}
 .. raw:: html
 
    <style>
@@ -84,6 +94,47 @@
    .wp-doc-table td .dataTables_wrapper .dataTables_info,
    .wp-doc-table td .dataTables_wrapper .dataTables_paginate { display: none; }
    </style>
+
+{# ===================================================================== #}
+{# Stakeholder Requirements                                               #}
+{# ===================================================================== #}
+
+Stakeholder Requirements
+------------------------
+
+.. grid:: 1 2 2 2
+   :gutter: 3
+
+   .. grid-item::
+
+      .. needpie:: Stakeholder Requirements Status
+         :labels: valid, invalid
+         :colors: #37a12d, #ca2828
+         :legend:
+
+         type == "stkh_req" and status == "valid" and {{ stkh_req_filter }}
+         type == "stkh_req" and status == "invalid" and {{ stkh_req_filter }}
+
+   .. grid-item::
+
+      .. needpie:: Stakeholder Requirements Test Coverage
+         :labels: fully covered, partially covered, not covered
+         :colors: #37a12d, #f0a500, #ca2828
+         :legend:
+
+         type == "stkh_req" and fully_verifies_back and {{ stkh_req_filter }}
+         type == "stkh_req" and partially_verifies_back and not fully_verifies_back and {{ stkh_req_filter }}
+         type == "stkh_req" and not fully_verifies_back and not partially_verifies_back and {{ stkh_req_filter }}
+
+.. dropdown:: Show requirements table
+   :animate: fade-in
+
+   .. needtable::
+      :filter: type == "stkh_req" and {{ stkh_req_filter }}
+      :style: table
+      :columns: id;title;safety;status;testlink
+      :colwidths: 13,22,8,10,47
+      :sort: id
 
 {# ===================================================================== #}
 {# Features                                                               #}
