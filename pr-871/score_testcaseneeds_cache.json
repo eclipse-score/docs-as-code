@@ -924,6 +924,34 @@
     "FullyVerifies": null
   },
   {
+    "name": "test_mounted_source_controls__test_local_page_keeps_all_source_controls",
+    "file": "src/extensions/score_layout/tests/test_mounted_source_controls.py",
+    "line": "44",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_mounted_source_controls__test_mounted_page_keeps_page_toc",
+    "file": "src/extensions/score_layout/tests/test_mounted_source_controls.py",
+    "line": "55",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
     "name": "test_codelink__test_need",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
     "line": "65",
