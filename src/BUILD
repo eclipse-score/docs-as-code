@@ -92,6 +92,11 @@ compile_pip_requirements(
 
 compile_pip_requirements(
     name = "requirements_py314",
+    # Keep the Python version selector in pip-compile's generated header so
+    # developers regenerate this lock with its matching toolchain.
+    env = {
+        "CUSTOM_COMPILE_COMMAND": "bazel run --@rules_python//python/config_settings:python_version=3.14 //src:requirements_py314.update",
+    },
     srcs = [
         "requirements.in",
     ],
