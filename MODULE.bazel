@@ -94,5 +94,12 @@ http_file(
 
 bazel_dep(name = "score_process_description", version = "2.1.2")
 
+# Security process checks (#796) are not yet released
+git_override(
+    module_name = "score_process_description",
+    commit = "5f80e45c89e99e1c964e556c93ff8acfb19c6718",
+    remote = "https://github.com/eclipse-score/process_description.git",
+)
+
 # Provide the tools from the devcontainer to Bazel
 bazel_dep(name = "score_devcontainer", version = "1.11.1")

@@ -11,6 +11,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 import operator
+from collections import defaultdict
 from collections.abc import Callable
 from functools import reduce
 from itertools import chain
@@ -183,6 +184,8 @@ def check_metamodel_graph(
             f"Explanation for graph check {check_name} is missing. "
             "Explanations are mandatory for graph checks."
         )
+        # New checks only report infos until existing data has been cleaned up.
+        is_new_check = bool(check_config.get("new_check", False))
         # Get all needs matching the selection criteria
         try:
             selected_needs = filter_needs_by_criteria(
@@ -224,7 +227,7 @@ def check_metamodel_graph(
                             f"condition `{check_to_perform[parent_relation]}`."
                             f" Explanation: {explanation}"
                         )
-                        log.warning_for_need(need, msg)
+                        log.warning_for_need(need, msg, is_new_check=is_new_check)
 
 
 @graph_check
@@ -253,4 +256,38 @@ def check_valid_only_links_to_valid(
         invalid_needs = all_linked_needs.difference(valid_needs_id_all)
         if invalid_needs:
             msg = f"is valid but links to invalid need(s): {invalid_needs}"
+            log.warning_for_need(need, msg, is_new_check=True)
+
+
+# req-Id: tool_req__docs_req_link_security_child
+@graph_check
+def check_security_parent_keeps_security_child(
+    app: Sphinx,
+    all_needs: NeedsView,
+    log: CheckLogger,
+):
+    """
+    A security relevant requirement with child requirements (derived_from)
+    must keep at least one security relevant child. Unlike safety, children
+    which are not security relevant are allowed, the security aspect must just
+    not get lost during refinement.
+    """
+    req_types = {"stkh_req", "feat_req", "comp_req"}
+    children: defaultdict[str, list[NeedItem]] = defaultdict(list)
+    for need in all_needs.values():
+        if need["type"] in req_types:
+            parents = cast(list[str], need.get("derived_from") or [])
+            for parent in parents:
+                # Strip version conditions like `[version==1]`
+                children[parent.split("[")[0]].append(need)
+
+    for need in all_needs.filter_is_external(False).values():
+        if need["type"] not in req_types or need.get("security") != "YES":
+            continue
+        kids = children.get(need["id"], [])
+        if kids and not any(k.get("security") == "YES" for k in kids):
+            msg = (
+                "is security relevant, but none of its child requirements is: "
+                + ", ".join(k["id"] for k in kids)
+            )
             log.warning_for_need(need, msg, is_new_check=True)

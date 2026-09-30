@@ -144,12 +144,16 @@ def filter_warnings_by_position(
 ) -> list[str]:
     """
     Filtering only warnings that belong to this file & line. But also deleting the prefix.
-    Filter out the filepath:linenr prefix from warning. So that the 'expect-not' can be generic
+    Filter out the filepath:linenr prefix (and WARNING: for warnings, infos of new checks have none). So that the 'expect-not' can be generic
     Without having to pay attention to the filename for example 'EXPECT-NOT: test' then matching
     a random warning because 'test' is in the filename of 'graph/test_graph_checks.rst'
     """
-    prefix = f"{rst_data.filename}:{line_nr}: WARNING:"
-    return [warning.removeprefix(prefix) for warning in warnings if prefix in warning]
+    prefix = f"{rst_data.filename}:{line_nr}:"
+    return [
+        warning.split(prefix, 1)[1].removeprefix(" WARNING:")
+        for warning in warnings
+        if prefix in warning
+    ]
 
 
 def warning_matches(
@@ -246,6 +250,8 @@ def _collect_warnings(app: SphinxTestApp) -> list[str]:
     ### Return cleaned build warnings, failing fast on unknown-option errors.
     # Some warnings are suppressed in conf.py, so the set here is already limited.
     warnings = [strip_ansi_codes(w) for w in app.warning.getvalue().splitlines()]
+    # New checks report infos instead of warnings, they are expected in the same way.
+    warnings += [strip_ansi_codes(w) for w in app.status.getvalue().splitlines()]
     unknown_option = [w for w in warnings if "unknown option" in w.lower()]
     if unknown_option:
         pytest.fail(

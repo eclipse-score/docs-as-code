@@ -1253,10 +1253,10 @@ graph_checks:
   # req-Id: tool_req__docs_arch_link_security
   tool_req__docs_arch_link_security:
     needs:
-      include: feat_arc_sta, logic_arc_int, logic_arc_int_op, comp_arc_sta, real_arc_int, real_arc_int_op
+      include: feat_arc_sta, logic_arc_int, logic_arc_int_op, comp, comp_arc_sta, real_arc_int, real_arc_int_op
       condition: security == YES
     check:
-      implements: security == YES # Which attribute???
+      implements: security == YES
     explanation: An security architecture element can only link other security architecture elements.
 
   # Workproducts may only link to ASPICE 40 IIC stakeholder requirements
@@ -1270,3 +1270,25 @@ graph_checks:
           - id contains aspice_40__iic
           - id contains std_wp
     explanation: Workproducts may only link to ASPICE 40 IIC stakeholder requirements. Please ensure that the linked requirement is an ASPICE 40 IIC stakeholder requirement.
+
+  # req-Id: tool_req__docs_req_link_security_to_arch
+  tool_req__docs_req_link_security_to_arch:
+    needs:
+      include: feat_req, comp_req
+      condition: security == YES
+    check:
+      satisfied_by: security == YES
+    # Reported as info until existing data has been cleaned up.
+    new_check: true
+    explanation: A security relevant requirement can only be satisfied by security relevant architecture elements.
+
+  # req-Id: tool_req__docs_arch_link_nonsec_to_sec_req
+  tool_req__docs_arch_link_nonsec_to_sec_req:
+    needs:
+      include: feat_arc_sta, feat_arc_dyn, logic_arc_int, comp, comp_arc_sta, comp_arc_dyn, real_arc_int
+      condition: security == NO
+    check:
+      fulfils: security == NO
+    # Reported as info until existing data has been cleaned up.
+    new_check: true
+    explanation: An architecture element which is not security relevant cannot fulfil security relevant requirements or AoUs.

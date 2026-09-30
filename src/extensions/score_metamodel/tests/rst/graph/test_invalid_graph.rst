@@ -20,7 +20,7 @@
    :derivation_technique: requirements_based
 
    Checks if valid reqs only link to valid reqs
-   Note: DISABLED ATM, due to check not being a 'full' warning yet
+   Note: The check is a new check, so its finding is reported as info.
 
 
 
@@ -31,13 +31,9 @@
 
 
 
-.. We can not yet enable this test. As the check is only an 'info' and not yet a true warning
-.. Therefore the test is the inverse of what we will test once it is enabled.
-
-
 .. comp_saf_fmea:: Child requirement
    :id: comp_saf_fmea__child__1
    :safety: QM
    :status: valid
    :mitigated_by: feat_req__parent__QM_invalid
-   :expect_not: invalid need(s)
+   :expect: is valid but links to invalid need(s): {'feat_req__parent__QM_invalid'}

@@ -647,13 +647,56 @@ Architecture Attributes
 .. tool_req:: Security: Restrict linkage
   :id: tool_req__docs_arch_link_security
   :tags: Architecture
-  :implemented: YES
+  :implemented: PARTIAL
   :version: 1
   :parent_covered: YES
   :satisfies: gd_req__arch_linkage_security_trace[version==1]
 
   Docs-as-Code shall enforce that security relevant :need:`tool_req__docs_arch_types` (Security ==
   YES) can only be linked against security relevant :need:`tool_req__docs_arch_types`.
+
+  .. note::
+     Currently only the ``implements`` link is checked.
+
+.. tool_req:: Security: Requirement satisfied by security architecture
+  :id: tool_req__docs_req_link_security_to_arch
+  :tags: Architecture
+  :implemented: YES
+  :version: 1
+  :parent_covered: YES
+  :satisfies: gd_req__arch_linkage_requirement_security[version==1]
+
+  Docs-as-Code shall enforce that security relevant requirements (Security == YES) are only
+  satisfied (``satisfied_by``) by security relevant :need:`tool_req__docs_arch_types`
+  (Security == YES).
+
+.. tool_req:: Security: Non-security architecture fulfils no security requirement
+  :id: tool_req__docs_arch_link_nonsec_to_sec_req
+  :tags: Architecture
+  :implemented: YES
+  :version: 1
+  :parent_covered: YES
+  :satisfies: gd_req__arch_linkage_requirement_security[version==1]
+
+  Docs-as-Code shall enforce that :need:`tool_req__docs_arch_types` which are not security
+  relevant (Security == NO) do not fulfil (``fulfils``) security relevant requirements or AoUs
+  (Security == YES).
+
+.. tool_req:: Security: Security requirement keeps a security child
+  :id: tool_req__docs_req_link_security_child
+  :tags: Architecture
+  :implemented: YES
+  :version: 1
+  :parent_covered: YES
+  :satisfies: gd_req__req_linkage_security[version==1]
+
+  Docs-as-Code shall enforce that every security relevant requirement (Security == YES) which
+  has child requirements (``derived_from``) has at least one security relevant child requirement
+  (Security == YES).
+
+  .. note::
+     Parent-child pairs across repository boundaries are not checked, because either the
+     children are missing in the build or the parent is external.
 
 ----------------------
 🖼️ Diagram Related
