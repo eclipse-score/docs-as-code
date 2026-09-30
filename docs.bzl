@@ -347,6 +347,11 @@ def _declare_docs_bundle(
     source_bundle_name = _bundle_internal_target(name, "source_bundle")
     source_bundle = create_bundle(
         name = source_bundle_name,
+        # The synthetic target name only separates this provider's dependency
+        # graph from the rendered bundle's graph. Sphinx writes its project
+        # name into needs.json, so keep that public metadata tied to the
+        # owning docs_bundle target rather than exposing the internal name.
+        project_name = name,
         bundles = [],
         source_dir_globbed = source_dir_globbed,
         source_targets = srcs,

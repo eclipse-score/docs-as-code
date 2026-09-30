@@ -594,11 +594,12 @@ def _docs_bundle_impl(ctx):
         )
     else:
         # A standalone bundle has no repository-level configuration to inherit.
-        # Keep its local Needs export self-contained: use the bundle target as
-        # its project name, leave the URL and ID namespace empty, and use the
-        # standard metamodel supplied by the internal rule attribute.
+        # Use the owner-provided project name when an internal source-only
+        # sibling is being constructed; a public bundle defaults to its target
+        # name. Its URL and ID namespace stay empty, and its metamodel comes
+        # from the internal rule attribute.
         bundle_config = struct(
-            project = ctx.label.name,
+            project = ctx.attr.project_name or ctx.label.name,
             project_url = "",
             project_url_base = "",
             required_in_id = "",
@@ -631,6 +632,9 @@ _docs_bundle = rule(
         # Optional explicit association with the Need representing this
         # bundle. The value is a Sphinx-Needs ID, not a Bazel label.
         "primary_need_id": attr.string(default = ""),
+        # The semantic Sphinx project name can differ from this rule's target
+        # name when an internal sibling provider represents a public bundle.
+        "project_name": attr.string(default = ""),
         "bundles": attr.label_list(providers = [DocsBundleInfo]),
         "bundle_mount_ats": attr.string_list(),
         "bundle_attach_tos": attr.string_list(),
@@ -665,12 +669,17 @@ def create_bundle(
     code_targets = [],
     root_docs_config = None,
     is_root_bundle = False,
+    project_name = None,
     visibility = None,
     **kwargs):
     """Create a bundle from directory-discovered files and source targets.
 
     ``source_dir_globbed`` and ``source_targets`` are separate internal inputs
     because they use different runtime path and staging rules.
+
+    ``project_name`` preserves the Sphinx identity of a public bundle when an
+    internal sibling target carries only that bundle's direct source files.
+    A root docs configuration, when present, remains authoritative.
     """
     parsed_bundles = [_parse_bundle_declaration(declaration) for declaration in bundles]
     # The public macros use ``None`` to represent an omitted optional ID, but
@@ -692,6 +701,10 @@ def create_bundle(
         bundle_mount_ats = [bundle.mount_at for bundle in parsed_bundles],
         bundle_attach_tos = [bundle.attach_to for bundle in parsed_bundles],
         bundle_toctree_indices = [bundle.toctree_index for bundle in parsed_bundles],
+        # The rule target normally defines the project name. An explicit
+        # semantic name lets an internal provider keep the identity of the
+        # public bundle whose direct sources it exposes.
+        project_name = project_name if project_name != None else name,
         data = data,
         code_targets = code_targets,
         root_docs_config = root_docs_config,
