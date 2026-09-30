@@ -178,7 +178,7 @@ site).
        visibility = ["//visibility:public"],
    )
 
-Signature: ``docs_bundle(name, source_dir = None, srcs = [], data = [], entry_doc = "index", bundles = [], code_targets = [], primary_need_id = None, root_docs = None, visibility = None)``.
+Signature: ``docs_bundle(name, source_dir = None, srcs = [], data = [], entry_doc = "index", bundles = [], code_targets = [], primary_need_id = None, root_docs = None, visibility = None, upward_bundles = [])``.
 
 - ``source_dir`` (string, optional)
   Directory holding the bundle's own doc sources. It is globbed the same way as
@@ -233,13 +233,21 @@ Signature: ``docs_bundle(name, source_dir = None, srcs = [], data = [], entry_do
   error. See :ref:`howto_mount_external_sources` for a worked example and
   :ref:`docs_concept_mounts` for the composition and transitivity semantics.
 
+- ``upward_bundles`` (list of ``docs_bundle`` labels, optional)
+  Source-bearing bundles whose locally owned Needs this bundle is allowed to
+  reference. Use this for ancestors in the architecture hierarchy, and list
+  every ancestor export needed by this bundle. The local Needs build imports
+  those exports for normal Sphinx-Needs link validation. Sphinx-Needs' default
+  builder filter keeps those external Needs out of this bundle's own output.
+  This declares a traceability dependency; it does not mount or compose the
+  referenced documentation.
+
 - ``needs_local`` (internal target)
   A source-bearing bundle creates ``<name>.__internal__.needs_local`` with the
-  Needs declared by its own sources. The standalone build is intentionally
-  self-contained in this version: references to Needs defined outside the
-  bundle remain unresolved and fail strict builds. Cross-bundle imports and
-  merged exports are planned for a later change. Data-only bundles do not
-  create a Needs target.
+  Needs declared by its own sources. Targets listed in ``upward_bundles`` are
+  validation inputs only; imported Needs do not appear in this export. Links
+  outside the declared imports remain unresolved and fail strict builds.
+  Data-only bundles do not create a Needs target.
 
 .. note::
 

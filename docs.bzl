@@ -191,6 +191,38 @@ def _bundle_internal_target(name, target):
     """Return the conventional name for a target internal to a bundle."""
     return name + ".__internal__." + target
 
+def _bundle_needs_local_label(bundle):
+    """Map a public bundle label to its private, owner-only Needs export.
+
+    ``upward_bundles`` is public API and therefore names ``docs_bundle``
+    targets. The generated Sphinx inventory is a sibling internal target named
+    ``<bundle>.__internal__.needs_local``; keeping this translation here means
+    callers never need to depend on that implementation detail directly.
+    """
+    label = str(bundle)
+    # Resolve ``:parent`` against the package declaring this bundle. Absolute
+    # workspace and external-module labels already carry their package path.
+    if label.startswith(":"):
+        label = "//" + native.package_name() + label
+
+    # The macro accepts Bazel targets because their generated inventory must
+    # become an action dependency. Reject file paths and other string forms at
+    # this boundary, before constructing the private target label.
+    if not (label.startswith("//") or label.startswith("@")) or ":" not in label:
+        fail(
+            "upward_bundles entries must be Bazel target labels, got %r" % label,
+        )
+
+    package, target = label.rsplit(":", 1)
+    # The public API names docs_bundle targets, not generated implementation
+    # targets. Reject an internal export label instead of appending the suffix
+    # twice and leaking our private target naming convention to callers.
+    if target.endswith(".__internal__.needs_local"):
+        fail(
+            "upward_bundles entries must name docs_bundle targets, got %r" % label,
+        )
+    return package + ":" + _bundle_internal_target(target, "needs_local")
+
 def _package_relative_project_url(base_url, package_path):
     """Append a workspace-relative Bazel package to a project URL."""
     return join_path(base_url, package_path)
@@ -342,8 +374,8 @@ def _declare_docs_bundle(
     # Needs ownership has a different boundary. Create a sibling provider
     # from only this target's direct sources, so its Needs export will neither
     # absorb descendants as locally owned Needs nor acquire dependencies on
-    # those descendants. Consumers can therefore use this bundle's own
-    # inventory without inheriting its full rendered composition.
+    # those descendants. An ancestor's own Needs export can then be imported
+    # upward without pulling its entire rendered composition into the child.
     source_bundle_name = _bundle_internal_target(name, "source_bundle")
     source_bundle = create_bundle(
         name = source_bundle_name,
@@ -396,7 +428,8 @@ def _declare_bundle_local_needs(
         data = [],
         visibility = None,
         config = None,
-        deps = []):
+        deps = [],
+        upward_bundles = []):
     """Create a standalone Needs export for a bundle's direct sources.
 
     Standalone ``docs_bundle`` exports use Sphinx's configuration-free mode
@@ -404,22 +437,39 @@ def _declare_bundle_local_needs(
     may provide the project's own ``conf.py`` while that compatibility path is
     being phased out.
 
-    The action consumes a sibling source-only provider instead of the public
-    composed provider, so this inventory contains Needs only from this
-    bundle's directly owned documents.
+    ``upward_bundles`` supplies ancestor inventories as validation context.
+    Sphinx loads them before resolving RST links, but this target's JSON output
+    remains an inventory of the ``source_bundle``'s directly owned Needs.
     """
     if not source_dir_globbed and not srcs:
         return
 
-    # Build this inventory from the direct source provider. The public
-    # bundle may contain nested children; those descendants keep their own
-    # Needs export instead of being treated as locally owned here.
+    # Ancestor inventories must be available during Sphinx's link-resolution
+    # phase. They are external Needs in this build, unlike Needs from the
+    # source_bundle, which remain local and are owned by this export.
     sphinx_build_deps = _sphinx_runtime_deps(deps)
 
     needs_local = _bundle_internal_target(name, "needs_local")
-    # The source provider and local manifest describe the same owner-only
-    # document set. Pass both to Sphinx so mounted descendants are neither
-    # loaded as local sources nor assigned to this bundle's Needs export.
+    # Convert the public bundle declarations to the internal JSON inventories
+    # that the Python extension can load. Deduplicate repeated labels here so
+    # one source is not imported twice into the same Sphinx environment.
+    upward_needs_labels = []
+    for upward_bundle in upward_bundles:
+        needs_label = _bundle_needs_local_label(upward_bundle)
+        if needs_label not in upward_needs_labels:
+            upward_needs_labels.append(needs_label)
+
+    # The labels travel through two Bazel interfaces for different reasons:
+    # external_needs_labels tells the Python extension which JSON inventories
+    # to register with Sphinx-Needs; tools declares the corresponding Bazel
+    # targets as action inputs and executable runfiles so those JSON files are
+    # present when the extension resolves the labels.
+    #
+    # source_bundle and mounts_manifest describe the local side of the same
+    # boundary. The source-only provider excludes mounted descendants as local
+    # content. Sphinx-Needs' default builder_filter excludes imported ancestors
+    # because they are external Needs, while keeping them available for link
+    # resolution. Together these defaults produce an owner-only inventory.
     _needs_sphinx_docs(
         name = needs_local,
         bundle = source_bundle,
@@ -427,11 +477,12 @@ def _declare_bundle_local_needs(
         sphinx_build_deps = sphinx_build_deps,
         sphinx_build_data = data,
         master_doc = entry_doc,
-        external_needs_labels = "[]",
+        external_needs_labels = json.encode(upward_needs_labels),
         score_bundle_needs_export = "1",
         score_sourcelinks_json = sourcelinks_json,
         score_source_code_linker_plain_links = "1",
         mounts_manifest = mounts_manifest,
+        tools = upward_needs_labels,
         visibility = visibility,
     )
 
@@ -446,6 +497,7 @@ def docs_bundle(
     primary_need_id = None,
     root_docs = None,
     visibility = None,
+    upward_bundles = [],
     **kwargs):
     """Declare a reusable documentation bundle.
 
@@ -456,6 +508,11 @@ def docs_bundle(
     documentation project's structured configuration, including
     ``required_in_id``, without making it depend on the root bundle's composed
     documentation sources.
+
+    ``upward_bundles`` lists the bundle exports this bundle may reference.
+    Include every permitted ancestor export needed by this bundle. These are
+    validation dependencies only: they do not add pages to this bundle's
+    rendered composition, and their Needs are not copied into its local export.
     """
     bundle = _declare_docs_bundle(
         name = name,
@@ -483,6 +540,7 @@ def docs_bundle(
         mounts_manifest = bundle.local_manifest,
         data = data,
         visibility = visibility,
+        upward_bundles = upward_bundles,
     )
 
 def _missing_requirements(deps):

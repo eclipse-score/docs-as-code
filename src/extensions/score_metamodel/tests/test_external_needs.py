@@ -93,11 +93,25 @@ def test_extend_needs_json_exporter_can_override_export_metadata(
             ("needs_json", "_build", "needs", "needs.json"),
             Path("/runfiles/repo+/docs/needs_json/_build/needs/needs.json"),
         ),
+        (
+            ExternalNeedsSource(
+                bazel_module="",
+                path_to_target="pkg",
+                target="parent.__internal__.needs_local",
+                is_local=True,
+            ),
+            ("parent.__internal__.needs_local", "_build", "needs", "needs.json"),
+            Path(
+                "/runfiles/_main/pkg/parent.__internal__.needs_local/"
+                "_build/needs/needs.json"
+            ),
+        ),
     ],
 )
 def test_external_needs_runfiles_path_is_environment_independent(
     source: ExternalNeedsSource, suffix: tuple[str, ...], expected: Path
 ) -> None:
+    """Resolve both public inventories and private bundle exports via runfiles."""
     assert _external_needs_runfiles_path(Path("/runfiles"), source, *suffix) == expected
 
 
@@ -106,6 +120,18 @@ def test_parse_bazel_external_need_marks_same_repository_labels_local() -> None:
         bazel_module="",
         path_to_target="pkg",
         target="needs_json",
+        is_local=True,
+    )
+
+
+def test_parse_bazel_external_need_accepts_local_bundle_exports() -> None:
+    """A same-repository bundle label is a supported external inventory input."""
+    assert parse_bazel_external_need(
+        "//pkg:parent.__internal__.needs_local"
+    ) == ExternalNeedsSource(
+        bazel_module="",
+        path_to_target="pkg",
+        target="parent.__internal__.needs_local",
         is_local=True,
     )
 
@@ -142,11 +168,24 @@ def test_parse_external_needs_labels_filters_ordinary_data_labels() -> None:
             ),
             Path("/runfiles/repo+/docs/needs.json"),
         ),
+        (
+            ExternalNeedsSource(
+                bazel_module="",
+                path_to_target="pkg",
+                target="parent.__internal__.needs_local",
+                is_local=True,
+            ),
+            Path(
+                "/runfiles/_main/pkg/parent.__internal__.needs_local/"
+                "_build/needs/needs.json"
+            ),
+        ),
     ],
 )
 def test_external_needs_source_path_selects_target_layout(
     source: ExternalNeedsSource, expected: Path
 ) -> None:
+    """Each public or private target name determines its generated file layout."""
     assert _external_needs_source_path(Path("/runfiles"), source) == expected
 
 
@@ -258,6 +297,45 @@ def test_add_external_needs_json_appends_entry_local(
     entry = config.needs_external_needs[0]
     assert entry["base_url"] == "https://example.test/local/main"
     assert Path(entry["json_path"]) == json_path
+
+
+def test_add_bundle_needs_json_adds_source_identity_to_base_url(
+    tmp_path: Path,
+) -> None:
+    """A private bundle label distinguishes sources sharing a project URL.
+
+    Sphinx-Needs uses the base URL to recognize an already loaded external
+    source. Including the Bazel label keeps equal IDs from different bundles
+    from being mistaken for a reload of the same source.
+    """
+    e = ExternalNeedsSource(
+        bazel_module="",
+        target="parent.__internal__.needs_local",
+        path_to_target="src/docs",
+        is_local=True,
+    )
+    config = Config()
+    config.needs_external_needs = []
+
+    json_path = (
+        tmp_path
+        / "_main/src/docs/parent.__internal__.needs_local/_build/needs/needs.json"
+    )
+    json_path.parent.mkdir(parents=True, exist_ok=True)
+    json_path.write_text(
+        json.dumps({"project_url": "https://example.test/project"}),
+        encoding="utf-8",
+    )
+
+    add_external_needs_json(e, config, tmp_path, bundle_export=True)
+
+    assert config.needs_external_needs == [
+        {
+            "base_url": "https://example.test/project/main/_bundles/"
+            "src/docs/parent.__internal__.needs_local",
+            "json_path": json_path,
+        }
+    ]
 
 
 def test_add_needs_json_file_appends_entry(

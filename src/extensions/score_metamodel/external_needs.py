@@ -15,6 +15,7 @@ import json
 import subprocess
 from pathlib import Path
 from typing import cast
+from urllib.parse import quote
 
 from sphinx.application import Sphinx
 from sphinx.config import Config
@@ -127,6 +128,13 @@ def extend_needs_json_exporter(
 
 
 def get_external_needs_source(external_needs_source: str) -> list[ExternalNeedsSource]:
+    """Get inventory labels from Bazel-provided config or query Bazel locally.
+
+    The documented Sphinx target passes a JSON list of Bazel labels through
+    ``external_needs_source``. Direct editor invocations have no such action
+    environment, so they query ``//:docs`` and parse its data dependencies.
+    Both paths produce the same structured sources for runfiles resolution.
+    """
     if external_needs_source:
         try:
             raw_labels: object = json.loads(external_needs_source)
@@ -155,8 +163,19 @@ def get_external_needs_source(external_needs_source: str) -> list[ExternalNeedsS
 
 
 def add_external_needs_json(
-    e: ExternalNeedsSource, config: Config, runfiles_dir: Path | None
+    e: ExternalNeedsSource,
+    config: Config,
+    runfiles_dir: Path | None,
+    *,
+    bundle_export: bool = False,
 ):
+    """Register a Bazel-produced JSON inventory with Sphinx-Needs.
+
+    Public ``needs_json`` inventories keep their configured project URL.
+    ``bundle_export`` marks a private ``.__internal__.needs_local`` inventory:
+    its source label is added to the URL so Sphinx-Needs can distinguish
+    separate bundle sources that share one project URL.
+    """
     json_file = _external_needs_source_path(runfiles_dir, e)
     logger.debug(f"External needs.json: {json_file}")
     try:
@@ -170,27 +189,60 @@ def add_external_needs_json(
         # Attempt to continue, exit code will be non-zero after a logged error anyway.
         return
     assert isinstance(config.needs_external_needs, list)  # pyright: ignore[reportUnknownMemberType]
+    if bundle_export:
+        # Normalize an optional trailing slash before appending ``/main`` and
+        # the bundle path, so the derived URL has one separator per segment.
+        project_url = needs_json_data.get("project_url", "").rstrip("/")
+        if not project_url:
+            # root_docs is optional for docs_bundle, so a valid standalone
+            # bundle can have no published project URL. Sphinx-Needs still
+            # needs a base URL for imported records; use a reserved placeholder
+            # rather than inventing a link to a real site. The bundle builder
+            # uses Sphinx-Needs' default filter to keep these external records
+            # out of its own JSON export.
+            project_url = "https://score-needs.invalid"
+        # Sphinx-Needs uses base_url both when constructing external links and
+        # when deciding whether a previously loaded external Need came from
+        # the same source. A package can contain multiple bundles with the
+        # same project_url, so append the Bazel source identity. If two such
+        # sources contain the same Need ID, Sphinx then reports the duplicate
+        # instead of treating the second inventory as a replacement for the
+        # first.
+        base_url = project_url + "/main"  # for now always "main"
+        # The main workspace has an empty repository component. Omit empty
+        # components so its package and target still form a clean URL path.
+        identity = "/".join(
+            part for part in (e.bazel_module, e.path_to_target, e.target) if part
+        )
+        # Bazel labels can contain characters with URL syntax, so encode the
+        # identity before using it as a path component; keep package separators
+        # readable because they are already path separators in the label.
+        base_url += "/_bundles/" + quote(identity, safe="/._-+")
+    else:
+        base_url = needs_json_data["project_url"] + "/main"  # for now always "main"
     config.needs_external_needs.append(  # pyright: ignore[reportUnknownMemberType]
-        {
-            "base_url": needs_json_data["project_url"]
-            + "/main",  # for now always "main"
-            "json_path": json_file,
-        }
+        {"base_url": base_url, "json_path": json_file}
     )
 
 
 def connect_external_needs(app: Sphinx, config: Config):
+    """Connect Bazel inventory labels to Sphinx-Needs' external source list."""
     # Export each bundle's resolved project URL. The Bazel bundle provider
     # supplies the package-relative value, so inventories from different
     # bundles retain stable links to their own documentation roots.
     bundle_export = bool(config.score_bundle_needs_export)
+    # Internal bundle exports can be built without a root docs configuration,
+    # which means project_url may legitimately be empty. Public needs_json
+    # exports retain the existing required-project-URL diagnostic.
     extend_needs_json_exporter(
         config,
         ["project_url"],
         log_missing=not bundle_export,
     )
 
-    # External needs labels supplied by the documentation CLI.
+    # The CLI transports Bazel labels rather than filesystem paths. Resolve
+    # each label against runfiles here, where both the repository name and the
+    # package/target layout are available.
     external_needs = get_external_needs_source(app.config.external_needs_source)
 
     # this sets the default value - required for the needs-config-writer
@@ -201,9 +253,21 @@ def connect_external_needs(app: Sphinx, config: Config):
         runfiles_dir = _runfiles_dir(app.config)
         for e in external_needs:
             if e.target == "needs_json":
+                # Keep the public project inventory's established URL scheme.
                 add_external_needs_json(e, app.config, runfiles_dir)
             elif e.target == "needs_json_file":
                 _add_needs_json_file(e, app.config, runfiles_dir)
+            elif e.target.endswith(".__internal__.needs_local"):
+                # Private bundle exports are validation context for another
+                # bundle. Give each label a source-specific URL; the Needs
+                # builder's default filter keeps these imports out of the
+                # consumer's owner-only inventory after resolving its links.
+                add_external_needs_json(
+                    e,
+                    app.config,
+                    runfiles_dir,
+                    bundle_export=True,
+                )
             else:
                 raise ValueError(
                     f"Internal Error. Unknown external needs target: {e.target}"
