@@ -33,6 +33,8 @@
 {% set feature_workproducts = [
      ["wp__requirements_inspect", "Requirements Inspection"],
      ["wp__sw_arch_verification", "Architecture Inspection"],
+     ["wp__feature_dfa", "DFA"],
+     ["wp__feature_fmea", "FMEA"],
    ] %}
 
 {#- One work-product row: the need link, its kind, the realising document and
