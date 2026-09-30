@@ -29,7 +29,7 @@ The schema export package enables AI agents and other tools to:
 Generates a JSON Schema that describes the structure and validation rules of the S-CORE metamodel.
 
 ```bash
-bazel run //src/extensions/score_metamodel/schema_export:generate_schema_bin -- \
+bazel run //tools/schema_export:generate_schema_bin -- \
   --output path/to/metamodel-schema.json
 ```
 
@@ -43,11 +43,11 @@ specified via the `--source-commit` argument.
 ```bash
 # Using environment variable
 export SOURCE_COMMIT=$(git rev-parse HEAD)
-bazel run //src/extensions/score_metamodel/schema_export:export_data_bin -- \
+bazel run //tools/schema_export:export_data_bin -- \
   --output path/to/metamodel-data.json
 
 # Or using argument
-bazel run //src/extensions/score_metamodel/schema_export:export_data_bin -- \
+bazel run //tools/schema_export:export_data_bin -- \
   --output path/to/metamodel-data.json \
   --source-commit $(git rev-parse HEAD)
 ```
@@ -62,11 +62,11 @@ specified via the `--source-commit` argument.
 ```bash
 # Using environment variable
 export SOURCE_COMMIT=$(git rev-parse HEAD)
-bazel run //src/extensions/score_metamodel/schema_export:generate_all_bin -- \
+bazel run //tools/schema_export:generate_all_bin -- \
   --output-dir path/to/output
 
 # Or using argument
-bazel run //src/extensions/score_metamodel/schema_export:generate_all_bin -- \
+bazel run //tools/schema_export:generate_all_bin -- \
   --output-dir path/to/output \
   --source-commit $(git rev-parse HEAD)
 ```
@@ -105,7 +105,7 @@ The tools are designed to be run in CI/CD pipelines to generate schema and data 
 # In your CI configuration
 - name: Generate Metamodel Schema
   run: |
-    bazel run //src/extensions/score_metamodel/schema_export:generate_all_bin -- \
+    bazel run //tools/schema_export:generate_all_bin -- \
       --output-dir bazel-out/metamodel \
       --source-commit ${{ github.sha }}
 

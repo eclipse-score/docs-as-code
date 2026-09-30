@@ -293,7 +293,9 @@ def resolve_metamodel_path(
     """Resolve the metamodel input path for both direct and Bazel invocations."""
     default_relative = Path("src/extensions/score_metamodel/metamodel.yaml")
     if argument is None:
-        packaged = Path(__file__).resolve().parent.parent / "metamodel.yaml"
+        # Path: tools/schema_export/export_data.py -> score_metamodel/metamodel.yaml
+        # From tools/schema_export, go up 2 levels to reach root, then into src/extensions/score_metamodel
+        packaged = Path(__file__).resolve().parent.parent.parent / default_relative
         if packaged.is_file() or workspace is None:
             return packaged
         return Path(workspace) / default_relative

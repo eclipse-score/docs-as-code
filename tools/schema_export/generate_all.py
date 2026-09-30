@@ -46,7 +46,12 @@ def main() -> int:
     # Resolve metamodel path
     meta_path = args.metamodel
     if meta_path is None:
-        meta_path = Path(__file__).resolve().parent.parent / "metamodel.yaml"
+        # Path: tools/schema_export/generate_all.py -> src/extensions/score_metamodel/metamodel.yaml
+        # From tools/schema_export, go up 2 levels to reach root
+        meta_path = (
+            Path(__file__).resolve().parent.parent.parent
+            / "src/extensions/score_metamodel/metamodel.yaml"
+        )
 
     if not meta_path.is_file():
         print(f"Error: metamodel.yaml not found at {meta_path}", file=sys.stderr)

@@ -29,7 +29,12 @@ from generate_schema import build_json_schema, load_metamodel_yaml
 @pytest.fixture
 def metamodel_path() -> Path:
     """Provide path to the actual metamodel.yaml."""
-    return Path(__file__).parent.parent.parent / "metamodel.yaml"
+    # From tools/schema_export/tests, go up 3 levels to reach root
+    # then into src/extensions/score_metamodel
+    return (
+        Path(__file__).parent.parent.parent.parent
+        / "src/extensions/score_metamodel/metamodel.yaml"
+    )
 
 
 @pytest.fixture
