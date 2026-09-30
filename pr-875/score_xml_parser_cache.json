@@ -564,6 +564,18 @@
     "url": ""
   },
   {
+    "name": "test_rules_file_based__test_rst_files[architecture/test_arch_link_fulfils_aou.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/architecture/test_arch_link_fulfils_aou.rst",
+    "line": 15,
+    "need": "tool_req__docs_arch_link_fulfils_aou[version==3]",
+    "verify_type": "fully",
+    "result": "passed",
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
+  },
+  {
     "name": "test_rules_file_based__test_rst_files[architecture/architecture_tests.rst]",
     "file": "src/extensions/score_metamodel/tests/rst/architecture/architecture_tests.rst",
     "line": 16,
@@ -1068,6 +1080,18 @@
     "url": ""
   },
   {
+    "name": "test_rules_file_based__test_rst_files[security/test_sec_attr_stride_threat_id.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/security/test_sec_attr_stride_threat_id.rst",
+    "line": 15,
+    "need": "tool_req__docs_sec_attr_stride_threat_id[version==1]",
+    "verify_type": "fully",
+    "result": "passed",
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
+  },
+  {
     "name": "test_rules_file_based__test_rst_files[security/test_security_types.rst]",
     "file": "src/extensions/score_metamodel/tests/rst/security/test_security_types.rst",
     "line": 15,
@@ -1145,6 +1169,18 @@
     "line": 16,
     "need": "tool_req__docs_stdwp_types",
     "verify_type": "partially",
+    "result": "passed",
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
+  },
+  {
+    "name": "test_rules_file_based__test_rst_files[graph/test_arch_link_security.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/graph/test_arch_link_security.rst",
+    "line": 15,
+    "need": "tool_req__docs_arch_link_security[version==1]",
+    "verify_type": "fully",
     "result": "passed",
     "result_text": "",
     "repo_name": "local_repo",
