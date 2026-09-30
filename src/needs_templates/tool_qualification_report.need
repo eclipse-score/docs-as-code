@@ -43,7 +43,7 @@
 {% endfor %}
 
 {% macro need_reference(need) -%}
-{% if need.get("external_url") %}`{{ need["id"] }} <{{ need["external_url"] }}>`_{% else %}`{{ need["id"] }} <#{{ need["id"] }}>`_{% endif %}
+{% if need.get("external_url") %}`{{ need["id"] }} <{{ need["external_url"] }}>`_{% else %}:need:`[[id]] <{{ need["id"] }}>`{% endif %}
 {%- endmacro %}
 
 {% macro need_title_reference(need) -%}

@@ -281,9 +281,11 @@ needs_id_regex = r"^[a-zA-Z0-9_]+$"
     assert "First malfunction (" not in evaluation_section
     assert '<div class="line">First use case</div>' in evaluation_section
     assert (
-        '<div class="line"><a class="reference external" '
-        'href="#tool_usecase__shared_requirement_first">'
-        "tool_usecase__shared_requirement_first</a></div>" in evaluation_section
+        '<div class="line"><a class="reference internal" '
+        'href="#tool_usecase__shared_requirement_first" '
+        'title="tool_usecase__shared_requirement_first">'
+        '<em class="xref need">tool_usecase__shared_requirement_first</em></a></div>'
+        in evaluation_section
     )
     assert 'href="#tool_usecase__shared_requirement_first"' in evaluation_section
     assert (
@@ -304,8 +306,10 @@ needs_id_regex = r"^[a-zA-Z0-9_]+$"
     )
     assert (
         matrix_section.count(
-            '<a class="reference external" '
-            'href="#tool_req__shared_requirement">tool_req__shared_requirement</a>'
+            '<a class="reference internal" '
+            'href="#tool_req__shared_requirement" '
+            'title="tool_req__shared_requirement">'
+            '<em class="xref need">tool_req__shared_requirement</em></a>'
         )
         == 2
     )

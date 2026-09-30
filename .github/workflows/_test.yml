@@ -20,6 +20,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        suite: ["cached", "runtime"]
+        python-version: ["3.12", "3.14"]
         include:
           - suite: cached
             marker: bazel_cached
@@ -50,10 +52,13 @@ jobs:
         with:
           # Each matrix entry needs its own disk cache because the jobs run in
           # parallel and GitHub Actions cannot merge concurrent cache writers.
-          disk-cache-key: ${{ github.job }}-${{ matrix.suite }}
+          disk-cache-key: ${{ github.job }}-${{ matrix.python-version }}-${{ matrix.suite }}
 
       - name: Setup venv
-        run: bazel run --lockfile_mode=error //:ide_support
+        run: >-
+          bazel run --lockfile_mode=error
+          --@rules_python//python/config_settings:python_version=${{ matrix.python-version }}
+          //:ide_support
 
       - name: Prepare test report directory
         run: mkdir -p tests-report
@@ -63,7 +68,7 @@ jobs:
           .venv_docs/bin/python -m pytest -vv
           -m "${{ matrix.marker }}"
           src/tests/docs_bzl
-          --junitxml=tests-report/docs_bzl_${{ matrix.suite }}.xml
+          --junitxml=tests-report/docs_bzl_${{ matrix.python-version }}_${{ matrix.suite }}.xml
 
       - name: Upload docs.bzl test report
         # No need to upload something that doesn't exist.
@@ -71,11 +76,15 @@ jobs:
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: tests-report-docs-bzl-${{ matrix.suite }}
+          name: tests-report-docs-bzl-${{ matrix.python-version }}-${{ matrix.suite }}
           path: tests-report
 
   bazel_tests:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.14"]
     steps:
       - name: 🛡️ Harden Runner
         if: github.repository_owner == 'eclipse-score'
@@ -98,14 +107,20 @@ jobs:
       - name: Setup Bazel with shared caching
         uses: eclipse-score/cicd-actions/setup-bazel-cache@cache
         with:
-          disk-cache-key: ${{ github.job }}
+          disk-cache-key: ${{ github.job }}-${{ matrix.python-version }}
 
       - name: Run bazel test targets
-        run: bazel test --lockfile_mode=error //... --build_tests_only
+        run: >-
+          bazel test --lockfile_mode=error
+          --@rules_python//python/config_settings:python_version=${{ matrix.python-version }}
+          //... --build_tests_only
 
       - name: Build all targets
         # Skip tests, since some are non buildable negative tests.
-        run: bazel build --lockfile_mode=error //... -- -//src/tests/...
+        run: >-
+          bazel build --lockfile_mode=error
+          --@rules_python//python/config_settings:python_version=${{ matrix.python-version }}
+          //... -- -//src/tests/...
 
       - name: Prepare bundled test report
         if: ${{ !cancelled() }}
@@ -118,7 +133,7 @@ jobs:
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: tests-report-bazel
+          name: tests-report-bazel-${{ matrix.python-version }}
           path: tests-report
 
   merge_test_reports:
