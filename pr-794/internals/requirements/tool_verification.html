@@ -899,7 +899,7 @@ using the configured Sphinx, Python, and diagram-generation toolchains.</p>
 </section>
 <section id="report-record">
 <h2>Report record<a class="headerlink" href="#report-record" title="Link to this heading">#</a></h2>
-<div class="need_container docutils container" id="SNCB-7fd4e483">
+<div class="need_container docutils container" id="SNCB-59e6aaad">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_doc_tool table" id="doc_tool__score_docs_as_code">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -932,7 +932,9 @@ using the configured Sphinx, Python, and diagram-generation toolchains.</p>
 <td class="meta" colspan="3"></td>
 </tr>
 <tr class="content row-odd"><td class="content" colspan="6"><p>Evaluates the S-CORE Docs-as-Code tool for building and checking
-documentation and traceability data from RST/Markdown sources.</p></td>
+documentation and traceability data from RST/Markdown sources. It also
+summarizes changed Needs between the published documentation and a pull
+request’s proposed documentation.</p></td>
 </tr>
 <tr class="footer row-even"><td class="footer_left" colspan="2"><div class="needs_footer_left line-block">
 <div class="line"><span><span class="needs-id"><a class="reference internal" href="#doc_tool__score_docs_as_code" title="doc_tool__score_docs_as_code">doc_tool__score_docs_as_code</a></span></span></div>
@@ -1585,7 +1587,7 @@ Rendering/preview defects affect reviewer convenience, not safety evidence.</p><
 </ul>
 <p>Each of the following tool capabilities is evaluated as an intended use case
 with its corresponding potential malfunction.</p>
-<div class="need_container docutils container" id="SNCB-0c6f14e0">
+<div class="need_container docutils container" id="SNCB-b739d5ff">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_usecase table" id="tool_usecase__docs_as_code__metamodel">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -1618,7 +1620,7 @@ security, safety, and realizes. See, for example,
 <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/documentation_management/guidance/documentation_process_reqs.html#gd_req__doc_attr_status">gd_req__doc_attr_status</a>, <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_attr_uid">gd_req__req_attr_uid</a>,
 <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_attr_safety">gd_req__req_attr_safety</a>, <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/architecture_design/guidance/architecture_process_reqs.html#gd_req__arch_attr_safety">gd_req__arch_attr_safety</a>,
 and <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_check_mandatory">gd_req__req_check_mandatory</a>.</p>
-<div class="need_container docutils container" id="SNCB-eeb6feaa">
+<div class="need_container docutils container" id="SNCB-26ac05a5">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_potential_tool_malfunction table" id="potential_tool_malfunction__docs_as_code__m1">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -1688,7 +1690,7 @@ Confidence (automatic calculation): low.</p>
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-4a51039a">
+<div class="need_container docutils container" id="SNCB-5b82953a">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_usecase table" id="tool_usecase__docs_as_code__safety_links">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -1718,7 +1720,7 @@ Confidence (automatic calculation): low.</p>
 </tr>
 <tr class="content row-odd"><td class="content" colspan="6"><p>Enforce that links between safety-relevant needs preserve the required
 safety relationships. See <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_linkage_safety">gd_req__req_linkage_safety</a>.</p>
-<div class="need_container docutils container" id="SNCB-cfee1475">
+<div class="need_container docutils container" id="SNCB-81d2c0c1">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_potential_tool_malfunction table" id="potential_tool_malfunction__docs_as_code__m2">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -1791,7 +1793,7 @@ carry the same “target at least as safe” obligation as the checked
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-3d80220e">
+<div class="need_container docutils container" id="SNCB-d02d318f">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_usecase table" id="tool_usecase__docs_as_code__coverage">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -1822,7 +1824,7 @@ carry the same “target at least as safe” obligation as the checked
 <tr class="content row-odd"><td class="content" colspan="6"><p>Count, per requirement type, the requirements carrying a <code class="docutils literal notranslate"><span class="pre">testlink</span></code> and
 compute link-coverage percentages. See
 <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/verification/guidance/verification_process_reqs.html#gd_req__verification_reporting">gd_req__verification_reporting</a>.</p>
-<div class="need_container docutils container" id="SNCB-af18b68c">
+<div class="need_container docutils container" id="SNCB-872fa723">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_potential_tool_malfunction table" id="potential_tool_malfunction__docs_as_code__m3">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -1890,7 +1892,7 @@ Confidence (automatic calculation): low.</p>
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-e1296247">
+<div class="need_container docutils container" id="SNCB-3a5b3fbb">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_usecase table" id="tool_usecase__docs_as_code__architecture">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -1919,7 +1921,7 @@ Confidence (automatic calculation): low.</p>
 <td class="meta" colspan="3"></td>
 </tr>
 <tr class="content row-odd"><td class="content" colspan="6"><p>Generate architecture diagrams. See <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/architecture_design/guidance/architecture_process_reqs.html#gd_req__arch_viewpoints">gd_req__arch_viewpoints</a>.</p>
-<div class="need_container docutils container" id="SNCB-b50d1e7d">
+<div class="need_container docutils container" id="SNCB-856a060c">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_potential_tool_malfunction table" id="potential_tool_malfunction__docs_as_code__m4">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -1989,7 +1991,7 @@ Confidence (automatic calculation): high.</p>
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-bbaf79d8">
+<div class="need_container docutils container" id="SNCB-6674e4e4">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_usecase table" id="tool_usecase__docs_as_code__test_linkage">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -2021,7 +2023,7 @@ Confidence (automatic calculation): high.</p>
 <code class="docutils literal notranslate"><span class="pre">partially_verifies</span></code>/<code class="docutils literal notranslate"><span class="pre">fully_verifies</span></code> references against the needs set.
 See <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_attr_testlink">gd_req__req_attr_testlink</a> and
 <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/verification/guidance/verification_process_reqs.html#gd_req__verification_reporting">gd_req__verification_reporting</a>.</p>
-<div class="need_container docutils container" id="SNCB-fdcdf109">
+<div class="need_container docutils container" id="SNCB-7725c811">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_potential_tool_malfunction table" id="potential_tool_malfunction__docs_as_code__m5">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -2090,7 +2092,7 @@ Confidence (automatic calculation): low.</p>
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-a0538666">
+<div class="need_container docutils container" id="SNCB-b82c18d0">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_usecase table" id="tool_usecase__docs_as_code__test_refs">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -2120,7 +2122,7 @@ Confidence (automatic calculation): low.</p>
 </tr>
 <tr class="content row-odd"><td class="content" colspan="6"><p>Check that test references are present and point to the intended
 requirements. See <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/requirements_engineering/guidance/requirements_process_reqs.html#gd_req__req_attr_testlink">gd_req__req_attr_testlink</a>.</p>
-<div class="need_container docutils container" id="SNCB-25d98095">
+<div class="need_container docutils container" id="SNCB-541241ff">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_potential_tool_malfunction table" id="potential_tool_malfunction__docs_as_code__m6">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -2190,7 +2192,7 @@ Confidence (automatic calculation): low.</p>
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-aba400c9">
+<div class="need_container docutils container" id="SNCB-b6fb517e">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_usecase table" id="tool_usecase__docs_as_code__assumptions">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -2221,7 +2223,7 @@ Confidence (automatic calculation): low.</p>
 <tr class="content row-odd"><td class="content" colspan="6"><p>Use <code class="docutils literal notranslate"><span class="pre">needtable</span></code> to communicate safety-critical assumptions of use in
 safety manuals. See <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/safety_management/guidance/guideline_safety_management.html#gd_guidl__saf_man">gd_guidl__saf_man</a> and
 <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/safety_management/safety_management_workproducts.html#wp__platform_safety_manual">wp__platform_safety_manual</a>.</p>
-<div class="need_container docutils container" id="SNCB-ccae4dd0">
+<div class="need_container docutils container" id="SNCB-03316f0e">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_potential_tool_malfunction table" id="potential_tool_malfunction__docs_as_code__m7">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -2290,7 +2292,7 @@ Confidence (automatic calculation): low.</p>
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-57a5d55b">
+<div class="need_container docutils container" id="SNCB-11363619">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_usecase table" id="tool_usecase__docs_as_code__backlinks">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -2320,7 +2322,7 @@ Confidence (automatic calculation): low.</p>
 </tr>
 <tr class="content row-odd"><td class="content" colspan="6"><p>Generate correct backlinks for links between Needs items to provide
 bi-directional traceability. See <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/general_concepts/score_traceability_concept.html#doc_concept__general_traceability">doc_concept__general_traceability</a>.</p>
-<div class="need_container docutils container" id="SNCB-e979e1c1">
+<div class="need_container docutils container" id="SNCB-01a72cf2">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_potential_tool_malfunction table" id="potential_tool_malfunction__docs_as_code__m8">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -2388,7 +2390,7 @@ Confidence (automatic calculation): low.</p>
 </table>
 </div>
 </div>
-<div class="need_container docutils container" id="SNCB-f6f5154c">
+<div class="need_container docutils container" id="SNCB-60b70277">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_tool_usecase table" id="tool_usecase__docs_as_code__generation">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
@@ -2419,7 +2421,7 @@ Confidence (automatic calculation): low.</p>
 <tr class="content row-odd"><td class="content" colspan="6"><p>Generate complete and correct HTML apart from the aspects covered by the
 other use cases. See <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/documentation_management/guidance/documentation_process_reqs.html#gd_req__doc_attributes_manual">gd_req__doc_attributes_manual</a> and
 <a class="external_link reference external" href="https://eclipse-score.github.io/process_description//main/process_areas/documentation_management/guidance/documentation_process_reqs.html#gd_req__doc_attr_status">gd_req__doc_attr_status</a>.</p>
-<div class="need_container docutils container" id="SNCB-e2a579b0">
+<div class="need_container docutils container" id="SNCB-27a119b9">
 <div class="pst-scrollable-table-container"><table class="need needs_grid_complex needs_layout_score needs_style_none needs_type_potential_tool_malfunction table" id="potential_tool_malfunction__docs_as_code__m9">
 <tbody>
 <tr class="head row-odd"><td class="head_left" colspan="2"><div class="needs_head_left line-block">
