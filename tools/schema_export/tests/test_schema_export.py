@@ -101,8 +101,8 @@ def test_build_metamodel_data(metamodel_data: dict[str, Any]):
 def test_schema_data_consistency(metamodel_data: dict[str, Any]):
     """Test that generated data is consistent with schema."""
     try:
-        import jsonschema
-        from jsonschema import exceptions as jsonschema_exceptions
+        import jsonschema  # type: ignore[import-not-found]
+        from jsonschema import exceptions as jsonschema_exceptions  # type: ignore[import-not-found]
     except ImportError:
         pytest.skip("jsonschema package not available")
 
@@ -114,7 +114,7 @@ def test_schema_data_consistency(metamodel_data: dict[str, Any]):
     # Note: Full validation may require adjustments to schema structure
     # This is a sanity check that the basic structure matches
     try:
-        jsonschema.validate(data, schema)
+        jsonschema.validate(data, schema)  # type: ignore[no-untyped-call]
     except jsonschema_exceptions.SchemaError:
         pytest.skip("Schema validation requires jsonschema package")
 

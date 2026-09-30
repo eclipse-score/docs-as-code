@@ -158,9 +158,9 @@ def _build_prohibited_words_schema(data: Mapping[str, Any]) -> dict[str, Any]:
     """Build JSON Schema for prohibited words checks."""
     checks = _as_mapping(data.get("prohibited_words_checks"))
 
-    checks_schema = {}
+    checks_schema: dict[str, Any] = {}
     for check_name, check_data in checks.items():
-        check_schema = {
+        check_schema: dict[str, Any] = {
             "type": "object",
             "description": f"Prohibited words check: {check_name}",
             "properties": {
