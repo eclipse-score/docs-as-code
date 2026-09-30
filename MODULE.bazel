@@ -77,7 +77,7 @@ bazel_dep(name = "rules_java", version = "8.15.1")
 bazel_dep(name = "score_tools")
 git_override(
     module_name = "score_tools",
-    commit = "39bed0104c48460b5189a2eeac046f54a118a75f",  # 30.09.2026
+    commit = "8df5b21017de93df67f1ac1b632900beee859fd6",  # 30.09.2026
     remote = "https://github.com/eclipse-score/tools",
 )
 
