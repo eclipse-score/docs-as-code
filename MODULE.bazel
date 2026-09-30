@@ -74,12 +74,7 @@ bazel_dep(name = "buildifier_prebuilt", version = "8.2.0.2", dev_dependency = Tr
 
 # PlantUML for docs
 bazel_dep(name = "rules_java", version = "8.15.1")
-bazel_dep(name = "score_tools")
-git_override(
-    module_name = "score_tools",
-    commit = "8df5b21017de93df67f1ac1b632900beee859fd6",  # 30.09.2026
-    remote = "https://github.com/eclipse-score/tools",
-)
+bazel_dep(name = "score_tools", version = "0.0.3")
 
 http_jar = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_jar")
 
