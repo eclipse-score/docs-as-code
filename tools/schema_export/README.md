@@ -22,6 +22,19 @@ The schema export package enables AI agents and other tools to:
 2. Validate metamodel instances
 3. Consume metamodel data for downstream processing
 
+## Why JSON Schema?
+
+**JSON Schema is the standard schema language for both JSON and YAML.**
+
+Although the metamodel is written in YAML, JSON Schema is the appropriate choice because:
+
+- **No YAML Schema specification exists** - JSON Schema is designed to validate both JSON and YAML documents
+- **Industry standard** - Widely adopted by AI tools and validation libraries
+- **YAML is a JSON superset** - JSON Schema validates YAML perfectly
+- **Tool ecosystem** - Rich support across all major programming languages
+
+We export as JSON (rather than YAML) for maximum tool compatibility, but the schema can validate both JSON and YAML instances.
+
 ## Tools
 
 ### 1. `generate_schema.py` - JSON Schema Generator
