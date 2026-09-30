@@ -3,12 +3,12 @@
   "generated_by": "sphinx_build",
   "overall_metrics": {
     "total": 72,
-    "with_code_link": 34,
-    "with_test_link": 50,
-    "fully_linked": 22,
-    "with_code_link_pct": 47.22222222222222,
-    "with_test_link_pct": 69.44444444444444,
-    "fully_linked_pct": 30.555555555555557
+    "with_code_link": 31,
+    "with_test_link": 51,
+    "fully_linked": 20,
+    "with_code_link_pct": 43.05555555555556,
+    "with_test_link_pct": 70.83333333333334,
+    "fully_linked_pct": 27.77777777777778
   },
   "metrics_by_type": {
     "gd_req": {
@@ -22,18 +22,18 @@
     },
     "tool_req": {
       "total": 71,
-      "with_code_link": 34,
-      "with_test_link": 50,
-      "fully_linked": 22,
-      "with_code_link_pct": 47.88732394366197,
-      "with_test_link_pct": 70.4225352112676,
-      "fully_linked_pct": 30.985915492957744
+      "with_code_link": 31,
+      "with_test_link": 51,
+      "fully_linked": 20,
+      "with_code_link_pct": 43.66197183098591,
+      "with_test_link_pct": 71.83098591549296,
+      "fully_linked_pct": 28.169014084507044
     }
   },
   "tests": {
-    "total": 441,
-    "linked_to_requirements": 85,
-    "linked_to_requirements_pct": 19.27437641723356,
+    "total": 443,
+    "linked_to_requirements": 87,
+    "linked_to_requirements_pct": 19.63882618510158,
     "broken_references": []
   }
 }
