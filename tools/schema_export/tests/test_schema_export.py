@@ -102,7 +102,9 @@ def test_schema_data_consistency(metamodel_data: dict[str, Any]):
     """Test that generated data is consistent with schema."""
     try:
         import jsonschema  # type: ignore[import-not-found]
-        from jsonschema import exceptions as jsonschema_exceptions  # type: ignore[import-not-found]
+        from jsonschema import (  # type: ignore[import-not-found]
+            exceptions as jsonschema_exceptions,  # type: ignore[import-not-found]
+        )
     except ImportError:
         pytest.skip("jsonschema package not available")
 
