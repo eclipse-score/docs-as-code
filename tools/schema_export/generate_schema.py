@@ -69,9 +69,9 @@ def _as_string_list(value: Any) -> list[str]:
 
 def _build_base_options_schema(data: Mapping[str, Any]) -> dict[str, Any]:
     """Build JSON Schema for base options."""
-    base = _as_mapping(data.get("needs_types_base_options"))
-
-    schema = {
+    # Note: The base options schema is a placeholder that describes the structure
+    # Actual validation of base options is done at the need-type level
+    return {
         "type": "object",
         "description": "Base options inherited by all need types",
         "properties": {
@@ -102,14 +102,12 @@ def _build_base_options_schema(data: Mapping[str, Any]) -> dict[str, Any]:
         },
     }
 
-    return schema
-
 
 def _build_need_type_schema(
     type_name: str, type_data: Mapping[str, Any]
 ) -> dict[str, Any]:
     """Build JSON Schema for a single need type."""
-    schema = {
+    return {
         "type": "object",
         "description": f"Definition of {type_name} need type",
         "properties": {
@@ -143,8 +141,6 @@ def _build_need_type_schema(
         "required": ["title"],
     }
 
-    return schema
-
 
 def _build_link_type_schema(
     link_name: str, link_data: Mapping[str, Any]
@@ -177,7 +173,7 @@ def _build_prohibited_words_schema(data: Mapping[str, Any]) -> dict[str, Any]:
         }
 
         # Add dynamic properties for each option being checked
-        for option, words in _as_mapping(check_data).items():
+        for option, _words in _as_mapping(check_data).items():
             if option != "types":
                 check_schema["properties"][option] = {
                     "type": "array",
@@ -243,7 +239,7 @@ def build_json_schema(data: Mapping[str, Any], digest: str) -> dict[str, Any]:
             rule_name, _as_mapping(rule_data)
         )
 
-    schema = {
+    return {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "$id": "https://eclipse-score.github.io/schemas/metamodel-schema.json",
         "title": "S-CORE Metamodel Schema",
@@ -285,8 +281,6 @@ def build_json_schema(data: Mapping[str, Any], digest: str) -> dict[str, Any]:
         "required": ["$schema", "schema_version", "metamodel_digest"],
         "additionalProperties": False,
     }
-
-    return schema
 
 
 def render_schema(schema: Mapping[str, Any]) -> str:

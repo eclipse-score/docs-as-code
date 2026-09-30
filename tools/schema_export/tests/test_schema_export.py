@@ -13,10 +13,9 @@
 """Tests for schema export functionality."""
 
 import json
-
-# Import the modules to test
 import sys
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -38,10 +37,11 @@ def metamodel_path() -> Path:
 
 
 @pytest.fixture
-def metamodel_data(metamodel_path: Path) -> dict:
+def metamodel_data(metamodel_path: Path) -> dict[str, Any]:
     """Load actual metamodel data."""
     assert metamodel_path.is_file(), f"metamodel.yaml not found at {metamodel_path}"
-    return load_metamodel_yaml(metamodel_path)
+    data = load_metamodel_yaml(metamodel_path)
+    return dict(data)
 
 
 def test_load_metamodel_yaml(metamodel_path: Path):
@@ -55,7 +55,7 @@ def test_load_metamodel_yaml(metamodel_path: Path):
     assert len(data["needs_types"]) > 0
 
 
-def test_build_json_schema(metamodel_data: dict):
+def test_build_json_schema(metamodel_data: dict[str, Any]):
     """Test JSON Schema generation."""
     schema = build_json_schema(metamodel_data, "sha256:test")
 
@@ -72,7 +72,7 @@ def test_build_json_schema(metamodel_data: dict):
     assert "graph_checks" in props
 
 
-def test_build_metamodel_data(metamodel_data: dict):
+def test_build_metamodel_data(metamodel_data: dict[str, Any]):
     """Test metamodel data export."""
     # Use a valid SHA-256 digest (64 hex characters)
     test_digest = "sha256:" + "a" * 64
@@ -98,10 +98,11 @@ def test_build_metamodel_data(metamodel_data: dict):
     assert len(data["link_types"]) > 0
 
 
-def test_schema_data_consistency(metamodel_data: dict):
+def test_schema_data_consistency(metamodel_data: dict[str, Any]):
     """Test that generated data is consistent with schema."""
     try:
         import jsonschema
+        from jsonschema import exceptions as jsonschema_exceptions
     except ImportError:
         pytest.skip("jsonschema package not available")
 
@@ -114,11 +115,11 @@ def test_schema_data_consistency(metamodel_data: dict):
     # This is a sanity check that the basic structure matches
     try:
         jsonschema.validate(data, schema)
-    except jsonschema.exceptions.SchemaError:
+    except jsonschema_exceptions.SchemaError:
         pytest.skip("Schema validation requires jsonschema package")
 
 
-def test_deterministic_output(metamodel_data: dict):
+def test_deterministic_output(metamodel_data: dict[str, Any]):
     """Test that generation is deterministic."""
     test_digest = "sha256:" + "a" * 64
     schema1 = build_json_schema(metamodel_data, test_digest)
