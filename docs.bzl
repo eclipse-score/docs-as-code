@@ -727,7 +727,9 @@ def docs(
         name = "ide_support",
         tags = ["manual"],
         venv_name = ".venv_docs",
-        deps = deps,
+        # Tests import score_pytest (e.g. add_test_properties), so the IDE
+        # venv needs it for type checking and for running tests from the IDE.
+        deps = deps + [Label("@score_tools//score_pytest:attribute_plugin")],
         data = data,
         package_collisions = "warning",
     )
