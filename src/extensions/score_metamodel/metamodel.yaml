@@ -1214,6 +1214,10 @@ needs_extra_links:
 #   - <relation>: defines the relation which is used derive the type of the parent need
 #   - condition: defines the condition that should be checked
 #     - [and / or / xor / not]
+# - check_type [OPTIONAL]: defines how many linked needs have to fulfill the check condition
+#   - all: every linked need has to fulfill the condition (default)
+#   - one: at least one linked need has to fulfill the condition
+#          (a need without any linked needs passes)
 ##############################################################
 
 graph_checks:
@@ -1224,6 +1228,7 @@ graph_checks:
       condition: safety == QM
     check:
       derived_from: safety == QM
+    check_type: all
     explanation: QM requirements cannot be derived from ASIL requirements.
 
   # req-Id: tool_req__docs_arch_link_qm_to_safety_req
@@ -1233,6 +1238,7 @@ graph_checks:
       condition: safety == QM
     check:
       fulfils: safety != QM
+    check_type: all
     explanation: An QM architecture element cannot implement ASIL requirements.
 
   # req-Id: tool_req__docs_req_arch_link_safety_to_arch
@@ -1248,6 +1254,7 @@ graph_checks:
         and:
           - safety != QM
           - status == valid
+    check_type: all
     explanation: An safety architecture element can only link other safety architecture elements.
 
   # req-Id: tool_req__docs_arch_link_security
@@ -1257,6 +1264,7 @@ graph_checks:
       condition: security == YES
     check:
       implements: security == YES # Which attribute???
+    check_type: one
     explanation: An security architecture element can only link other security architecture elements.
 
   # Workproducts may only link to ASPICE 40 IIC stakeholder requirements
@@ -1269,4 +1277,5 @@ graph_checks:
         or:
           - id contains aspice_40__iic
           - id contains std_wp
+    check_type: all
     explanation: Workproducts may only link to ASPICE 40 IIC stakeholder requirements. Please ensure that the linked requirement is an ASPICE 40 IIC stakeholder requirement.

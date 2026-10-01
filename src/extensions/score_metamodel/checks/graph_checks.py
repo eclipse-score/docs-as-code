@@ -14,7 +14,7 @@ import operator
 from collections.abc import Callable
 from functools import reduce
 from itertools import chain
-from typing import Any, cast
+from typing import Any, Literal, cast, get_args
 
 from score_metamodel import (
     CheckLogger,
@@ -163,6 +163,53 @@ def filter_needs_by_criteria(
     return selected_needs
 
 
+CheckType = Literal["one", "all"]
+CHECK_TYPES = get_args(CheckType)
+
+
+def get_check_type(check_config: dict[str, Any]) -> CheckType:
+    """
+    Get the `check_type` of a graph check.
+
+    `check_type` is only allowed on the same level as `check` and must be one of:
+    - all: every linked need must fulfill the condition (default)
+    - one: at least one linked need must fulfill the condition.
+           A need without any linked needs passes.
+    """
+    if "check_type" in check_config.get("check", {}) or "check_type" in (
+        check_config.get("needs", {})
+    ):
+        raise ValueError("`check_type` is only allowed on the same level as `check`.")
+
+    check_type = check_config.get("check_type", "all")
+    if check_type not in CHECK_TYPES:
+        raise ValueError(
+            f"Invalid check_type `{check_type}`, expected one of {CHECK_TYPES}."
+        )
+
+    return check_type
+
+
+def check_needs_with_check_type_context(
+    parents: list[NeedItem],
+    condition: str | dict[str, list[Any]],
+    check_type: str,
+    log: CheckLogger,
+) -> list[str]:
+    # Go through all parent_ids
+    # Early return if we find one that fulfills the check if check_type is one
+    # Otherwise write error for each that doesnt fulfill the `all` check
+    failed_needs: list[str] = []
+    for need in parents:
+        need_ok = eval_need_condition(need, condition, log)
+        if need_ok:
+            if check_type == "one":
+                return []
+        else:
+            failed_needs.append(need.id)
+    return failed_needs
+
+
 @graph_check
 def check_metamodel_graph(
     app: Sphinx,
@@ -170,8 +217,6 @@ def check_metamodel_graph(
     log: CheckLogger,
 ):
     graph_checks_global = app.config.graph_checks
-    # Convert list to dictionary for easy lookup
-    needs_dict_all = {need["id"]: need for need in all_needs.values()}
     needs_local = list(all_needs.filter_is_external(False).values())
 
     # Iterate over all graph checks
@@ -185,6 +230,7 @@ def check_metamodel_graph(
         )
         # Get all needs matching the selection criteria
         try:
+            check_type = get_check_type(check_config)
             selected_needs = filter_needs_by_criteria(
                 app.config.needs_types, needs_local, needs_selection_criteria, log
             )
@@ -195,7 +241,7 @@ def check_metamodel_graph(
             continue
 
         for need in selected_needs:
-            for parent_relation in list(check_to_perform.keys()):
+            for parent_relation, condition in check_to_perform.items():
                 if parent_relation not in need:
                     msg = (
                         f"Attribute not defined: `{parent_relation}` "
@@ -203,28 +249,32 @@ def check_metamodel_graph(
                     )
                     log.warning_for_need(need, msg)
                     continue
-
                 parent_ids = cast(list[str] | Any, need[parent_relation])
                 if not isinstance(parent_ids, list):
                     continue
-
-                parent_ids_list = cast(list[str], parent_ids)
-                for parent_id in parent_ids_list:
-                    parent_need = needs_dict_all.get(parent_id)
-                    if parent_need is None:
-                        msg = f"Parent need `{parent_id}` not found in needs_dict."
-                        log.warning_for_need(need, msg)
-                        continue
-
-                    if not eval_need_condition(
-                        parent_need, check_to_perform[parent_relation], log
-                    ):
+                # Unknown ids are dropped; sphinx-needs already warns about them.
+                parents: list[NeedItem] = list(
+                    all_needs.filter_ids(parent_ids).values()
+                )
+                failed_needs = check_needs_with_check_type_context(
+                    parents, condition, check_type, log
+                )
+                if failed_needs:
+                    if check_type == "one":
                         msg = (
-                            f"Parent need `{parent_id}` does not fulfill "
-                            f"condition `{check_to_perform[parent_relation]}`."
+                            f"No need from linked needs in link_attribute `{parent_relation}` of need {need.id}"
+                            f"condition `{condition}`."
                             f" Explanation: {explanation}"
                         )
                         log.warning_for_need(need, msg)
+                    else:
+                        for need_id in failed_needs:
+                            msg = (
+                                f"Parent need `{need_id}` does not fulfill "
+                                f"condition `{condition}`."
+                                f" Explanation: {explanation}"
+                            )
+                            log.warning_for_need(need, msg)
 
 
 @graph_check
