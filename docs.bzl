@@ -84,7 +84,11 @@ def _needs_sphinx_extra_opts(
         master_doc,
         score_bundle_needs_export,
         score_source_code_linker_plain_links):
-    """Return per-target Sphinx configuration defines for a Needs build."""
+    """Return Sphinx ``--define`` options that vary between Needs actions.
+
+    These values cross the Bazel action boundary as command-line options. The
+    shared warning and traceback flags are supplied by the launcher instead.
+    """
     # The launcher supplies diagnostics shared by every builder. Keep only
     # target-specific defines here so the action does not receive duplicate
     # ``-W``, ``--keep-going``, and ``-T`` options after JSON transport.
@@ -129,10 +133,17 @@ def _needs_sphinx_docs(
         tools = [],
         sphinx_build_data = [],
         visibility = None):
-    """Declare a bundle Needs export with the repository-wide Sphinx policy."""
-    # These three are consumed as their own typed rule attributes (below), not
-    # as ordinary tools; still list them here so the caller does not have to
-    # repeat them when building its own ``tools`` list.
+    """Declare one Bazel action that runs Sphinx's Needs builder.
+
+    String settings travel as Sphinx ``--define`` options. Bazel labels stay
+    typed until the private rule can declare them as sandbox inputs, while the
+    serialized external-needs label list is passed to the Python extension.
+    """
+    # These three files use typed rule attributes below so the private rule can
+    # pass their paths to the action. Add them to ``tools`` as well: that puts
+    # the files in the Sphinx executable's runfiles (for Python-side lookup)
+    # and declares them as action inputs (for sandbox availability). Callers
+    # therefore do not need to list the same labels twice.
     tools = tools + [
         label
         for label in [score_sourcelinks_json, mounts_manifest, score_metamodel_yaml]
@@ -306,7 +317,9 @@ def _declare_docs_bundle(
         if not _is_needs_json_target(data_file)
     ]
 
-    # The helper validates child declarations and creates the internal target.
+    # The helper validates child declarations and creates the composed target
+    # that consumers mount or render. Keep this target's provider complete so
+    # documentation builds retain all nested bundle inputs and placements.
     create_bundle(
         name = name,
         source_dir_globbed = source_dir_globbed,
@@ -324,12 +337,43 @@ def _declare_docs_bundle(
         **kwargs
     )
 
-    # Standalone Needs actions must resolve document-to-bundle mappings against
-    # this bundle's own root entries. Nested entries belong to the eventual
-    # composing build and are therefore omitted from this local manifest view.
+    # The public provider above represents the complete documentation tree:
+    # it includes nested bundles so consumers can mount and render them.
+    # Needs ownership has a different boundary. Create a sibling provider
+    # from only this target's direct sources, so its Needs export will neither
+    # absorb descendants as locally owned Needs nor acquire dependencies on
+    # those descendants. Consumers can therefore use this bundle's own
+    # inventory without inheriting its full rendered composition.
+    source_bundle_name = _bundle_internal_target(name, "source_bundle")
+    source_bundle = create_bundle(
+        name = source_bundle_name,
+        # The synthetic target name only separates this provider's dependency
+        # graph from the rendered bundle's graph. Sphinx writes its project
+        # name into needs.json, so keep that public metadata tied to the
+        # owning docs_bundle target rather than exposing the internal name.
+        project_name = name,
+        bundles = [],
+        source_dir_globbed = source_dir_globbed,
+        source_targets = srcs,
+        sourcelinks_json = sourcelinks_json,
+        source_dir = source_dir,
+        entry_doc = entry_doc,
+        primary_need_id = primary_need_id,
+        data = bundle_data,
+        code_targets = code_targets,
+        root_docs_config = root_docs_config,
+        is_root_bundle = is_root_bundle,
+        visibility = visibility,
+        tags = ["manual"],
+    )
+
+    # The Sphinx action also needs the source-to-bundle manifest used to
+    # resolve ownership for each document. Build it from the same source-only
+    # provider as the local inventory; using the public manifest here would
+    # make mounted descendants appear to belong to this bundle's own export.
     local_manifest = create_composition_manifest(
         name = _bundle_internal_target(name, "local_manifest"),
-        bundle = ":" + name,
+        bundle = source_bundle,
         own_only = True,
         visibility = visibility,
     )
@@ -337,11 +381,13 @@ def _declare_docs_bundle(
     return struct(
         source_dir_globbed = source_dir_globbed,
         sourcelinks_json = sourcelinks_json,
+        source_bundle = source_bundle,
         local_manifest = local_manifest,
     )
 
 def _declare_bundle_local_needs(
         name,
+        source_bundle,
         source_dir_globbed,
         srcs,
         entry_doc,
@@ -357,24 +403,26 @@ def _declare_bundle_local_needs(
     with structured baseline overrides. The root bundle created by ``docs()``
     may provide the project's own ``conf.py`` while that compatibility path is
     being phased out.
+
+    The action consumes a sibling source-only provider instead of the public
+    composed provider, so this inventory contains Needs only from this
+    bundle's directly owned documents.
     """
     if not source_dir_globbed and not srcs:
         return
 
-    # Build the own export from this bundle's sources only. References to
-    # Needs owned by another bundle are intentionally unsupported until
-    # cross-bundle imports are added.
+    # Build this inventory from the direct source provider. The public
+    # bundle may contain nested children; those descendants keep their own
+    # Needs export instead of being treated as locally owned here.
     sphinx_build_deps = _sphinx_runtime_deps(deps)
 
     needs_local = _bundle_internal_target(name, "needs_local")
-    # The generated source-links target stays typed as a label here; the
-    # private Needs rule owns translating it to an action environment path
-    # and declaring it as an input.
-    # Pass the local manifest to the Needs action so its Python Sphinx process
-    # sees the same bundle boundary as this standalone export.
+    # The source provider and local manifest describe the same owner-only
+    # document set. Pass both to Sphinx so mounted descendants are neither
+    # loaded as local sources nor assigned to this bundle's Needs export.
     _needs_sphinx_docs(
         name = needs_local,
-        bundle = ":" + name,
+        bundle = source_bundle,
         config = config,
         sphinx_build_deps = sphinx_build_deps,
         sphinx_build_data = data,
@@ -422,8 +470,12 @@ def docs_bundle(
         visibility = visibility,
         **kwargs
     )
+    # The public bundle target above is composable and may contain nested
+    # bundles. The local Needs inventory must instead use its source-only
+    # sibling, so exported Needs reflect this bundle's ownership boundary.
     _declare_bundle_local_needs(
         name = name,
+        source_bundle = bundle.source_bundle,
         source_dir_globbed = bundle.source_dir_globbed,
         srcs = srcs,
         entry_doc = entry_doc,
@@ -630,8 +682,12 @@ def docs(
         name = "_mounts_manifest",
         bundle = ":docs_bundle",
     )
+    # As with child docs_bundle targets, export Needs from the root's direct
+    # source provider. Nested bundles are rendered by docs_bundle but keep
+    # separate ownership and separate local Needs inventories.
     _declare_bundle_local_needs(
         name = "docs_bundle",
+        source_bundle = root_bundle.source_bundle,
         source_dir_globbed = root_bundle.source_dir_globbed,
         srcs = [],
         entry_doc = "index",
