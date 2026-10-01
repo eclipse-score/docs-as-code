@@ -109,3 +109,16 @@
    :included_by: real_arc_int__arch_sec__real_if_nosec
    :implements: logic_arc_int_op__arch_sec__logic_op_nosec
    :expect_not: does not fulfill condition
+
+
+.. Negative: with `check_type: all` only the violating target is reported.
+
+.. real_arc_int_op:: Security source implements security and non-security target
+   :id: real_arc_int_op__arch_sec__src_mixed
+   :security: YES
+   :safety: QM
+   :status: valid
+   :included_by: real_arc_int__arch_sec__real_if
+   :implements: logic_arc_int_op__arch_sec__logic_op_sec, logic_arc_int_op__arch_sec__logic_op_nosec
+   :expect: Parent need `logic_arc_int_op__arch_sec__logic_op_nosec` does not fulfill condition `security == YES`
+   :expect_not: Parent need `logic_arc_int_op__arch_sec__logic_op_sec`

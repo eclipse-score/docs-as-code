@@ -193,20 +193,23 @@ def get_check_type(check_config: dict[str, Any]) -> CheckType:
 def check_needs_with_check_type_context(
     parents: list[NeedItem],
     condition: str | dict[str, list[Any]],
-    check_type: str,
+    check_type: CheckType,
     log: CheckLogger,
 ) -> list[str]:
-    # Go through all parent_ids
-    # Early return if we find one that fulfills the check if check_type is one
-    # Otherwise write error for each that doesnt fulfill the `all` check
+    """
+    Return the ids of the parents that make the check fail.
+
+    - all: every parent that does not fulfill the condition.
+    - one: [] as soon as one parent fulfills the condition,
+           otherwise all parents, since every one of them fails.
+    """
     failed_needs: list[str] = []
-    for need in parents:
-        need_ok = eval_need_condition(need, condition, log)
-        if need_ok:
+    for parent in parents:
+        if eval_need_condition(parent, condition, log):
             if check_type == "one":
                 return []
         else:
-            failed_needs.append(need.id)
+            failed_needs.append(parent.id)
     return failed_needs
 
 
@@ -262,9 +265,9 @@ def check_metamodel_graph(
                 if failed_needs:
                     if check_type == "one":
                         msg = (
-                            f"No need from linked needs in link_attribute `{parent_relation}` of need {need.id}"
-                            f"condition `{condition}`."
-                            f" Explanation: {explanation}"
+                            f"No linked need in `{parent_relation}` fulfills "
+                            f"condition `{condition}`. "
+                            f"Explanation: {explanation}"
                         )
                         log.warning_for_need(need, msg)
                     else:
