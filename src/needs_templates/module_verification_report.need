@@ -149,11 +149,12 @@ Component Requirements Statistics
    .. grid-item::
 
       .. needpie:: {{ component_title }} Requirements Status
-         :labels: valid, invalid
-         :colors: #37a12d, #ca2828
+         :labels: valid, valid_inspected, invalid
+         :colors: #37a12d, #1f6feb, #ca2828
          :legend:
 
-         type == "comp_req" and "{{ component_id }}" in satisfied_by and status in ["valid", "valid_inspected"] and {{ component_req_filter }}
+         type == "comp_req" and "{{ component_id }}" in satisfied_by and status == "valid" and {{ component_req_filter }}
+         type == "comp_req" and "{{ component_id }}" in satisfied_by and status == "valid_inspected" and {{ component_req_filter }}
          type == "comp_req" and "{{ component_id }}" in satisfied_by and status == "invalid" and {{ component_req_filter }}
 
    .. grid-item::
@@ -167,17 +168,6 @@ Component Requirements Statistics
          type == "comp_req" and "{{ component_id }}" in satisfied_by and partially_verifies_back and not fully_verifies_back and {{ component_req_filter }}
          type == "comp_req" and "{{ component_id }}" in satisfied_by and not fully_verifies_back and not partially_verifies_back and {{ component_req_filter }}
 
-   .. grid-item::
-      :margin: 0 0 auto auto
-
-      .. needpie:: {{ component_title }} Requirements Inspection Status
-         :labels: inspected, not inspected
-         :colors: #37a12d, #ca2828
-         :legend:
-
-         type == "comp_req" and "{{ component_id }}" in satisfied_by and status == "valid_inspected" and {{ component_req_filter }}
-         type == "comp_req" and "{{ component_id }}" in satisfied_by and status != "valid_inspected" and {{ component_req_filter }}
-
 Component Architecture Statistics
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -187,22 +177,13 @@ Component Architecture Statistics
    .. grid-item::
 
       .. needpie:: {{ component_title }} Architecture Elements Status
-         :labels: valid, invalid
-         :colors: #37a12d, #ca2828
+         :labels: valid, valid_inspected, invalid
+         :colors: #37a12d, #1f6feb, #ca2828
          :legend:
 
-         type in ["comp_arc_sta", "comp_arc_dyn"] and "{{ component_id }}" in belongs_to and status in ["valid", "valid_inspected"]
-         type in ["comp_arc_sta", "comp_arc_dyn"] and "{{ component_id }}" in belongs_to and status == "invalid"
-
-   .. grid-item::
-
-      .. needpie:: {{ component_title }} Architecture Elements Inspection Status
-         :labels: inspected, not inspected
-         :colors: #37a12d, #ca2828
-         :legend:
-
+         type in ["comp_arc_sta", "comp_arc_dyn"] and "{{ component_id }}" in belongs_to and status == "valid"
          type in ["comp_arc_sta", "comp_arc_dyn"] and "{{ component_id }}" in belongs_to and status == "valid_inspected"
-         type in ["comp_arc_sta", "comp_arc_dyn"] and "{{ component_id }}" in belongs_to and status != "valid_inspected"
+         type in ["comp_arc_sta", "comp_arc_dyn"] and "{{ component_id }}" in belongs_to and status == "invalid"
 
 Requirements Traceability
 ^^^^^^^^^^^^^^^^^^^^^^^^^
