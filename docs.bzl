@@ -195,10 +195,10 @@ def _bundle_needs_local_label(bundle, attribute = "external_needs"):
     """Map a public docs or bundle label to its owner-only Needs export.
 
     ``external_needs`` names public ``docs_bundle`` targets or the public
-    ``docs`` target created by ``docs()``. The root ``docs`` target maps to the
-    internal Needs export of its root ``docs_bundle``; other bundle targets map
-    to their own sibling export. Keeping this translation here means callers
-    never need to depend on internal target names directly.
+    ``docs`` target created by ``docs()``. Both kinds of public target map to a
+    sibling ``.__internal__.needs_local`` target. ``docs()`` provides that
+    sibling as an alias to the root bundle's owner-only export, so callers do
+    not need to know that the root bundle has a different internal name.
     """
     label = str(bundle)
     # Resolve ``:parent`` against the package declaring this bundle. Absolute
@@ -224,12 +224,6 @@ def _bundle_needs_local_label(bundle, attribute = "external_needs"):
             "%s entries must name a docs() or docs_bundle target, got %r" %
             (attribute, label),
         )
-    # ``docs()`` has no name parameter. Its public target is always ``docs``;
-    # the macro's root bundle is an implementation detail named ``docs_bundle``.
-    # Accept the name authors already use to invoke the root documentation and
-    # route it to that root bundle's owner-only Needs export.
-    if target == "docs":
-        target = "docs_bundle"
     return package + ":" + _bundle_internal_target(target, "needs_local")
 
 def _resolve_legacy_external_needs_labels(external_needs):
@@ -806,6 +800,16 @@ def docs(
         config = sphinx_config,
         deps = deps,
     )
+    # The public project target is named ``docs``, so let external_needs use
+    # the same sibling naming convention as it does for public docs_bundle
+    # targets. Keep the implementation's existing target name intact for
+    # internal callers that already depend on it.
+    if root_bundle.source_dir_globbed:
+        native.alias(
+            name = _bundle_internal_target("docs", "needs_local"),
+            actual = ":" + _bundle_internal_target("docs_bundle", "needs_local"),
+            visibility = ["//visibility:public"],
+        )
     merge_bundle_sourcelinks(
         name = "sourcelinks_json",
         bundle = ":docs_bundle",
