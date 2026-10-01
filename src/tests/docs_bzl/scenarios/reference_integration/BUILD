@@ -23,9 +23,10 @@ load("//:docs.bzl", "docs")
 # The component packages live below the module's ``docs`` source directory,
 # matching the feature-package layout used by the real S-CORE integration.
 #
-# One module and its component use the older ``docs(data = [...])`` API; the
-# other module and component use ``external_needs``. The integration mounts
-# both module bundles, exercising both paths through the complete hierarchy.
+# One module uses the older ``docs(data = [...])`` API; the other module and
+# this integration use public ``docs`` labels in ``external_needs``. The
+# integration mounts both module bundles, exercising both paths through the
+# complete hierarchy.
 #
 # test_sources scopes the test-code-linker to this (test-less) package, avoiding
 # the workspace-wide bazel-testlogs scan during the html build.
@@ -33,7 +34,7 @@ docs(
     project = "S-CORE Reference Integration",
     project_url = "https://example.invalid/score-reference-integration",
     source_dir = "docs",
-    external_needs = ["//src/tests/docs_bzl/scenarios/reference_integration/score_platform:needs_json"],
+    external_needs = ["//src/tests/docs_bzl/scenarios/reference_integration/score_platform:docs"],
     test_sources = ["src/tests/docs_bzl/scenarios/reference_integration"],
     bundles = [
         {

@@ -10,10 +10,10 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-"""Integration coverage for declared upward Needs visibility.
+"""Integration coverage for bundle Needs visibility declared with external_needs.
 
 The fixture separates three concerns: ``root_docs`` supplies project
-configuration, ``upward_bundles`` supplies link-validation inputs, and
+configuration, ``external_needs`` supplies link-validation inputs, and
 ``docs(bundles=...)`` composes pages for rendering. These tests exercise the
 standalone child export so those relationships cannot be conflated.
 """
@@ -47,11 +47,11 @@ def test_bundle_resolves_declared_parent_and_exports_only_owned_needs():
 
 
 @pytest.mark.bazel_cached
-def test_bundle_rejects_parent_links_without_declared_upward_import():
+def test_bundle_rejects_parent_links_without_external_needs_declaration():
     """The child cannot resolve an ancestor merely because it shares root_docs.
 
     This builds the same RST with the same project config as the successful
-    case, but without ``upward_bundles``. The missing parent ID must therefore
+    case, but without ``external_needs``. The missing parent ID must therefore
     remain an unresolved Sphinx-Needs link.
     """
     result = run_scenario(

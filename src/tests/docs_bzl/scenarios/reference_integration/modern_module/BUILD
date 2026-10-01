@@ -25,8 +25,8 @@ docs(
     source_dir = "docs",
     test_sources = ["src/tests/docs_bzl/scenarios/reference_integration"],
     external_needs = [
-        "//src/tests/docs_bzl/scenarios/reference_integration/score_platform:needs_json",
-        "@score_process_description//:needs_json",
+        "//src/tests/docs_bzl/scenarios/reference_integration/score_platform:docs",
+        "@score_process_description//:docs",
     ],
     bundles = [{
         "bundle": "//src/tests/docs_bzl/scenarios/reference_integration/modern_module/docs/components/component:docs_bundle",
