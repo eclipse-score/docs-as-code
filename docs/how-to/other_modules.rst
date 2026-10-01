@@ -38,13 +38,16 @@ A minimal example (add or extend the existing `bazel_deps` stanza):
 
 	 bazel_dep(name = "score_process_description", version = "2.1.0")
 
-2a) Import the other module's built inventory
+2a) Import the other module's bundle Needs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The documentation build is exposed via a Bazel macro that accepts an ``external_needs`` parameter
-for external ``:needs_json_file`` targets.
-Use ``external_needs`` instead of ``data`` when the target produces needs JSON —
-``data`` is meant for non-needs runfiles (e.g. custom tool outputs).
+The documentation build is exposed via a Bazel macro that accepts an
+``external_needs`` parameter for another module's ``docs`` target. This makes
+the bundle's locally owned Needs available for cross-referencing without
+mounting its documentation pages. Use ``external_needs`` instead of ``data``
+for this purpose — ``data`` is meant for non-needs runfiles (e.g. custom tool
+outputs). Existing ``needs_json`` and ``needs_json_file`` labels remain
+supported by ``docs(external_needs = [...])`` for backwards compatibility.
 
 Example `BUILD` snippet (consumer module):
 
@@ -53,7 +56,7 @@ Example `BUILD` snippet (consumer module):
     load("@score_docs_as_code//:docs.bzl", "docs")
     docs(
       external_needs = [
-         "@score_process_description//:needs_json",
+         "@score_process_description//:docs",
       ],
       source_dir = "docs",
     )
@@ -65,7 +68,8 @@ Example `BUILD` snippet (consumer module):
 The documentation build in this project is exposed via a Bazel macro that accepts
 a ``bundles`` parameter. Mount the external module's auto-exposed
 ``:docs_bundle`` bundle. The mounted sources define their needs in the host
-build, so do **not** also add that module's ``:needs_json`` to ``data`` — doing
+build, so do **not** also add that module's public ``:docs`` target to
+``external_needs`` — doing
 so would create duplicate need IDs.
 
 Example `BUILD` snippet (consumer module):

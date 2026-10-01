@@ -60,7 +60,7 @@ Minimal example (root ``BUILD``)
        project_url = "https://github.com/eclipse-score/my-project",
        data = [
            # labels to any extra tools or data you want included
-           # e.g. "//:needs_json" or other tool targets
+           # e.g. "//tools:my_tool"
        ],
        bundles = [
            # dicts describing bundles to mount into this project
@@ -97,11 +97,6 @@ Minimal example (root ``BUILD``)
   mounts this project's public bundle. Put files belonging to a mounted child
   in that child's ``docs_bundle(data = [...])`` instead.
 
-  .. note::
-
-     To pull in another module's needs for cross-referencing, add its
-     ``:needs_json`` target here.
-
 - ``bundles`` (list of placement dicts)
   Documentation bundles to overlay into this project's documentation tree,
   each with its placement (``mount_at``, optional ``attach_to`` and
@@ -129,9 +124,14 @@ Minimal example (root ``BUILD``)
   value is set, bundle-level target metadata is written only to this Need.
 
 - ``external_needs`` (list of bazel labels)
-  External ``:needs_json_file`` targets from other modules/repositories
-  for referencing their needs.
-  Do not use ``:needs_json`` targets.
+  Public ``docs`` targets created by another repository's ``docs()`` macro,
+  or named ``docs_bundle`` targets. Their locally owned Needs can be
+  referenced by this project's documentation. Their pages are not mounted by
+  this setting; use ``bundles`` when those pages should appear in the rendered
+  site. A ``docs()`` target is named ``:docs`` and resolves to the root
+  bundle's locally owned Needs export.
+  For compatibility, existing ``:needs_json`` and ``:needs_json_file`` target
+  labels are also accepted and continue to work without a deprecation warning.
 
 - ``metamodel`` (bazel label, optional)
   Path to a custom ``metamodel.yaml`` file.
@@ -178,7 +178,7 @@ site).
        visibility = ["//visibility:public"],
    )
 
-Signature: ``docs_bundle(name, source_dir = None, srcs = [], data = [], entry_doc = "index", bundles = [], code_targets = [], primary_need_id = None, root_docs = None, visibility = None)``.
+Signature: ``docs_bundle(name, source_dir = None, srcs = [], data = [], entry_doc = "index", bundles = [], code_targets = [], primary_need_id = None, root_docs = None, visibility = None, external_needs = [])``.
 
 - ``source_dir`` (string, optional)
   Directory holding the bundle's own doc sources. It is globbed the same way as
@@ -233,13 +233,21 @@ Signature: ``docs_bundle(name, source_dir = None, srcs = [], data = [], entry_do
   error. See :ref:`howto_mount_external_sources` for a worked example and
   :ref:`docs_concept_mounts` for the composition and transitivity semantics.
 
+- ``external_needs`` (list of public docs or bundle labels, optional)
+  Public ``docs`` targets created by ``docs()`` or named ``docs_bundle``
+  targets whose locally owned Needs this bundle is allowed to reference. The
+  local Needs build imports those exports for normal Sphinx-Needs link
+  validation. Sphinx-Needs' default builder filter keeps those external Needs
+  out of this bundle's own output. This declares a traceability dependency; it
+  does not mount or compose the referenced documentation. The root ``docs``
+  target resolves to the root documentation macro's own Needs export.
+
 - ``needs_local`` (internal target)
   A source-bearing bundle creates ``<name>.__internal__.needs_local`` with the
-  Needs declared by its own sources. The standalone build is intentionally
-  self-contained in this version: references to Needs defined outside the
-  bundle remain unresolved and fail strict builds. Cross-bundle imports and
-  merged exports are planned for a later change. Data-only bundles do not
-  create a Needs target.
+  Needs declared by its own sources. Targets listed in ``external_needs`` are
+  validation inputs only; imported Needs do not appear in this export. Links
+  outside the declared imports remain unresolved and fail strict builds.
+  Data-only bundles do not create a Needs target.
 
 .. note::
 

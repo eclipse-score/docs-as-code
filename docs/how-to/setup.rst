@@ -37,13 +37,9 @@ Add the S-CORE Bazel registry to the ``.bazelrc`` file::
 The system uses `PlantUML <https://www.plantuml.com>`_ for diagrams. This action
 requires Java.
 If the system does not contain Java, Bazel downloads a remote JDK
-from the network.
-This action requires configuration in the ``.bazelrc`` file::
+from the network. Select that runtime in the ``.bazelrc`` file::
 
-    build --java_language_version=17
     build --java_runtime_version=remotejdk_17
-    build --tool_java_language_version=17
-    build --tool_java_runtime_version=remotejdk_17
 
 3. BUILD file
 -------------
@@ -56,7 +52,7 @@ This action requires configuration in the ``.bazelrc`` file::
         project = "S-CORE <feature name>",
         project_url = "https://eclipse-score.github.io/<repo name>",
         external_needs = [
-            "@other_repo:needs_json",  # Optional, if you have dependencies
+            "@other_repo//:docs",  # Optional, if you have dependencies
         ],
     )
 

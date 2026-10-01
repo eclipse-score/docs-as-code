@@ -74,10 +74,10 @@ TARGETS: dict[str, ExpectedTarget] = {
         output_path="needs_json/_build/needs",
     ),
     "needs_local": ExpectedTarget(
-        label=":docs_bundle.__internal__.needs_local",
+        label=":docs.__internal__.needs_local",
         command="build",
         output_kind="file",
-        output_path="docs_bundle.__internal__.needs_local/_build/needs/needs.json",
+        output_path="docs.__internal__.needs_local/_build/needs/needs.json",
     ),
     "data_bundle_needs": ExpectedTarget(
         label=":data_bundle.__internal__.needs_local",
