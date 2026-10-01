@@ -185,6 +185,17 @@ Component Architecture Statistics
          type in ["comp_arc_sta", "comp_arc_dyn"] and "{{ component_id }}" in belongs_to and status == "valid_inspected"
          type in ["comp_arc_sta", "comp_arc_dyn"] and "{{ component_id }}" in belongs_to and status == "invalid"
 
+   .. grid-item::
+
+      .. needpie:: {{ component_title }} Architecture Elements Test Coverage
+         :labels: fully covered, partially covered, not covered
+         :colors: #37a12d, #f0a500, #ca2828
+         :legend:
+
+         type in ["comp_arc_sta", "comp_arc_dyn"] and "{{ component_id }}" in belongs_to and fully_verifies_back
+         type in ["comp_arc_sta", "comp_arc_dyn"] and "{{ component_id }}" in belongs_to and partially_verifies_back and not fully_verifies_back
+         type in ["comp_arc_sta", "comp_arc_dyn"] and "{{ component_id }}" in belongs_to and not fully_verifies_back and not partially_verifies_back
+
 Requirements Traceability
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
