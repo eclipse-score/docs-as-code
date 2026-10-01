@@ -246,6 +246,7 @@ This section provides an overview of current process requirements and their clar
 
   * valid
   * invalid
+  * valid_inspected (requirement types and architecture elements only)
 
   This rule applies to:
 
