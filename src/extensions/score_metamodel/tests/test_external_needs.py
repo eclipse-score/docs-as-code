@@ -30,9 +30,11 @@ from score_metamodel.external_needs import (
     _external_needs_runfiles_path,  # pyright: ignore[reportPrivateUsage] - white-box unit test
     _external_needs_source_path,  # pyright: ignore[reportPrivateUsage] - white-box unit test
     _runfiles_dir,  # pyright: ignore[reportPrivateUsage] - white-box unit test
+    _warn_for_duplicate_external_need_ids,  # pyright: ignore[reportPrivateUsage] - white-box unit test
     add_external_needs_json,
     get_external_needs_source,
 )
+from sphinx.application import Sphinx
 from sphinx.config import Config
 from sphinx_needs.needsfile import NeedsList
 
@@ -308,3 +310,153 @@ def test_add_external_needs_json_missing_file_keeps_list_empty(
 
     # Assert
     assert config.needs_external_needs == []
+
+
+def _write_needs_inventory(
+    runfiles_dir: Path,
+    source: ExternalNeedsSource,
+    *,
+    project_url: str,
+    need_ids: list[str],
+) -> None:
+    """Write a minimal versioned Sphinx-Needs inventory at its runfiles path."""
+    json_file = _external_needs_source_path(runfiles_dir, source)
+    json_file.parent.mkdir(parents=True, exist_ok=True)
+    json_file.write_text(
+        json.dumps(
+            {
+                "project_url": project_url,
+                "current_version": "1.0",
+                "versions": {
+                    "1.0": {"needs": {need_id: {"id": need_id} for need_id in need_ids}}
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+
+
+def _external_source(repo: str, target: str) -> ExternalNeedsSource:
+    """Create a root-level external-needs target from a Bazel repository."""
+    return ExternalNeedsSource(
+        bazel_module=repo,
+        path_to_target="",
+        target=target,
+    )
+
+
+def test_duplicate_external_need_ids_with_same_base_url_are_reported(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """The preflight warns when same-URL inventories contain the same Need ID."""
+    sources = [
+        _external_source("first_repo", target="needs_json"),
+        _external_source("second_repo", target="needs_json_file"),
+    ]
+    for source in sources:
+        _write_needs_inventory(
+            tmp_path,
+            source,
+            project_url="https://example.test/shared",
+            need_ids=["REQ-1"],
+        )
+
+    config = Config()
+    config.external_needs_source = "test sources"
+    config.runfiles_dir = str(tmp_path)
+    config.score_bundle_needs_export = False
+
+    warnings: list[tuple[str, str, object | None]] = []
+
+    def capture_warning(
+        _logger: object,
+        message: str,
+        warning_type: str,
+        location: object | None = None,
+    ) -> None:
+        # The preflight must report the collision before registering either source.
+        assert config.needs_external_needs == []
+        warnings.append((message, warning_type, location))
+
+    monkeypatch.setattr(
+        ext_needs,
+        "extend_needs_json_exporter",
+        lambda *_args, **_kwargs: None,
+    )
+    monkeypatch.setattr(ext_needs, "get_external_needs_source", lambda _raw: sources)
+    monkeypatch.setattr(ext_needs, "log_warning", capture_warning)
+
+    app = cast(Sphinx, SimpleNamespace(config=config))
+    ext_needs.connect_external_needs(app, config)
+
+    assert len(warnings) == 1
+    message, warning_type, location = warnings[0]
+    assert warning_type == "load_external_need"
+    assert location is None
+    assert "REQ-1" in message
+    assert "@first_repo//:needs_json" in message
+    assert "@second_repo//:needs_json_file" in message
+    assert "https://example.test/shared/main" in message
+    assert len(config.needs_external_needs) == 2
+
+
+def test_duplicate_external_need_ids_with_different_base_urls_do_not_warn(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """The preflight only warns when both the base URL and Need ID overlap."""
+    sources = [
+        _external_source("first_repo", target="needs_json"),
+        _external_source("second_repo", target="needs_json"),
+    ]
+    for source, project_url in zip(
+        sources,
+        ("https://example.test/first", "https://example.test/second"),
+        strict=True,
+    ):
+        _write_needs_inventory(
+            tmp_path,
+            source,
+            project_url=project_url,
+            need_ids=["REQ-1"],
+        )
+
+    monkeypatch.setattr(
+        ext_needs,
+        "log_warning",
+        lambda *_args, **_kwargs: pytest.fail("different URLs should not warn here"),
+    )
+
+    _warn_for_duplicate_external_need_ids(sources, tmp_path)
+
+
+def test_same_base_url_without_duplicate_ids_does_not_warn(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """Sharing a project URL alone is harmless when Need IDs do not overlap."""
+    sources = [
+        _external_source("first_repo", target="needs_json"),
+        _external_source("second_repo", target="needs_json_file"),
+    ]
+    _write_needs_inventory(
+        tmp_path,
+        sources[0],
+        project_url="https://example.test/shared",
+        need_ids=["REQ-1"],
+    )
+    _write_needs_inventory(
+        tmp_path,
+        sources[1],
+        project_url="https://example.test/shared",
+        need_ids=["REQ-2"],
+    )
+
+    monkeypatch.setattr(
+        ext_needs,
+        "log_warning",
+        lambda *_args, **_kwargs: pytest.fail("disjoint inventories should not warn"),
+    )
+
+    _warn_for_duplicate_external_need_ids(sources, tmp_path)
