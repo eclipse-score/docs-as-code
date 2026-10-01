@@ -792,11 +792,16 @@ def docs(
         name = "_mounts_manifest",
         bundle = ":docs_bundle",
     )
-    # As with child docs_bundle targets, export Needs from the root's direct
-    # source provider. Nested bundles are rendered by docs_bundle but keep
-    # separate ownership and separate local Needs inventories.
+    # Export Needs from the root's direct source provider. The composed root is
+    # named ``docs_bundle`` for rendering, while the public project target is
+    # named ``docs``. The local export must use that public target name because
+    # external bundle declarations resolve ``:docs`` to
+    # ``:docs.__internal__.needs_local``. This is the actual producer target,
+    # so its output is present at the runfiles path the Python loader computes.
+    # Nested bundles remain independently owned and keep their own local
+    # inventories.
     _declare_bundle_local_needs(
-        name = "docs_bundle",
+        name = "docs",
         source_bundle = root_bundle.source_bundle,
         source_dir_globbed = root_bundle.source_dir_globbed,
         srcs = [],
@@ -813,16 +818,6 @@ def docs(
         # exports only Needs owned by the root source bundle.
         resolved_external_needs_labels = external_needs_labels,
     )
-    # The public project target is named ``docs``, so let external_needs use
-    # the same sibling naming convention as it does for public docs_bundle
-    # targets. Keep the implementation's existing target name intact for
-    # internal callers that already depend on it.
-    if root_bundle.source_dir_globbed:
-        native.alias(
-            name = _bundle_internal_target("docs", "needs_local"),
-            actual = ":" + _bundle_internal_target("docs_bundle", "needs_local"),
-            visibility = ["//visibility:public"],
-        )
     merge_bundle_sourcelinks(
         name = "sourcelinks_json",
         bundle = ":docs_bundle",
