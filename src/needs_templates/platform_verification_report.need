@@ -109,7 +109,7 @@ Stakeholder Requirements
 
       .. needpie:: Stakeholder Requirements Status
          :labels: valid, valid_inspected, invalid
-         :colors: #37a12d, #1f6feb, #ca2828
+         :colors: #f5c518, #37a12d, #ca2828
          :legend:
 
          type == "stkh_req" and status == "valid" and {{ stkh_req_filter }}
@@ -190,7 +190,7 @@ Requirements Statistics
 
       .. needpie:: {{ feature_title }} Requirements Status
          :labels: valid, valid_inspected, invalid
-         :colors: #37a12d, #1f6feb, #ca2828
+         :colors: #f5c518, #37a12d, #ca2828
          :legend:
 
          type == "feat_req" and "{{ feature_id }}" in satisfied_by and status == "valid" and {{ feature_req_filter }}
@@ -228,7 +228,7 @@ Architecture Statistics
 
       .. needpie:: {{ feature_title }} Architecture Elements Status
          :labels: valid, valid_inspected, invalid
-         :colors: #37a12d, #1f6feb, #ca2828
+         :colors: #f5c518, #37a12d, #ca2828
          :legend:
 
          type in ["feat_arc_sta", "feat_arc_dyn"] and "{{ feature_id }}" in belongs_to and status == "valid"

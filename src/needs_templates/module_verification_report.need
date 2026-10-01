@@ -150,7 +150,7 @@ Component Requirements Statistics
 
       .. needpie:: {{ component_title }} Requirements Status
          :labels: valid, valid_inspected, invalid
-         :colors: #37a12d, #1f6feb, #ca2828
+         :colors: #f5c518, #37a12d, #ca2828
          :legend:
 
          type == "comp_req" and "{{ component_id }}" in satisfied_by and status == "valid" and {{ component_req_filter }}
@@ -178,7 +178,7 @@ Component Architecture Statistics
 
       .. needpie:: {{ component_title }} Architecture Elements Status
          :labels: valid, valid_inspected, invalid
-         :colors: #37a12d, #1f6feb, #ca2828
+         :colors: #f5c518, #37a12d, #ca2828
          :legend:
 
          type in ["comp_arc_sta", "comp_arc_dyn"] and "{{ component_id }}" in belongs_to and status == "valid"
