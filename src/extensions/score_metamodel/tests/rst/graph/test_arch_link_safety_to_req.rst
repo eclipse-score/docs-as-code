@@ -20,7 +20,7 @@
 
    Tests that safety relevant (safety != QM) architecture elements fulfil at
    least one requirement with the same safety level (graph check with
-   `check_type: one`):
+   `check_one`):
    - one of the fulfilled requirements has the same safety level: no warning
    - none of the fulfilled requirements has the same safety level: one warning
      for the link, not one per requirement

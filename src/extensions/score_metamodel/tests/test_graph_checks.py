@@ -197,13 +197,12 @@ PARENTS = [
 ]
 
 
-def graph_check_config(**overrides: Any) -> dict[str, Any]:
+def graph_check_config(*check_keys: str) -> dict[str, Any]:
     """Graph check that requires linked `implements` needs to be safety relevant."""
     return {
         "needs": {"include": "req", "condition": "status == valid"},
-        "check": {"implements": "safety != QM"},
+        **{key: {"implements": "safety != QM"} for key in check_keys},
         "explanation": "Test explanation.",
-        **overrides,
     }
 
 
@@ -220,41 +219,32 @@ def run_graph_check(check_config: dict[str, Any], parent_ids: list[str]):
     return log
 
 
-def test_get_check_type_defaults_to_all() -> None:
-    """Use `all` when no check_type is configured."""
-    assert graph_checks.get_check_type(graph_check_config()) == "all"
-    assert graph_checks.get_check_type(graph_check_config(check_type="one")) == "one"
-
-
 @pytest.mark.parametrize(
-    ("overrides", "error"),
+    ("check_keys", "error"),
     [
-        ({"check_type": "One"}, "Invalid check_type `One`"),
+        ((), "test_check. Either `check_all` or `check_one` are mandatory"),
+        (("check",), "test_check. Either `check_all` or `check_one` are mandatory"),
         (
-            {"check": {"implements": "safety != QM", "check_type": "one"}},
-            "only allowed on the same level as `check`",
-        ),
-        (
-            {"needs": {"include": "req", "condition": "", "check_type": "one"}},
-            "only allowed on the same level as `check`",
+            ("check_all", "check_one"),
+            "Both `check_one` and `check_all` are present in graph_check: test_check",
         ),
     ],
-    ids=["invalid_value", "inside_check", "inside_needs"],
+    ids=["missing", "old_check_key", "both"],
 )
-def test_get_check_type_invalid_raises_value_error(
-    overrides: dict[str, Any], error: str
+def test_invalid_check_keys_raise_value_error(
+    check_keys: tuple[str, ...], error: str
 ) -> None:
-    """Raise error for unknown or misplaced check_type."""
+    """Fail unless exactly one of check_all / check_one is defined."""
     with pytest.raises(ValueError, match=error):
-        graph_checks.get_check_type(graph_check_config(**overrides))
+        run_graph_check(graph_check_config(*check_keys), ["qm_1"])
 
 
-def test_check_type_all_warns_once_per_failing_parent() -> None:
+def test_check_all_warns_once_per_failing_parent() -> None:
     """Report every linked need that does not fulfill the condition."""
-    log = run_graph_check(graph_check_config(), ["safe_1", "qm_1", "qm_2"])
+    log = run_graph_check(graph_check_config("check_all"), ["safe_1", "qm_1", "qm_2"])
     assert log.warnings == 2
 
-    log = run_graph_check(graph_check_config(), ["safe_1", "qm_1"])
+    log = run_graph_check(graph_check_config("check_all"), ["safe_1", "qm_1"])
     log.assert_warning(
         "Parent need `qm_1` does not fulfill condition `safety != QM`."
         " Explanation: Test explanation."
@@ -271,9 +261,9 @@ def test_check_type_all_warns_once_per_failing_parent() -> None:
     ],
     ids=["one_fulfills", "none_fulfill", "no_parents", "unknown_parent"],
 )
-def test_check_type_one(parent_ids: list[str], expected_warnings: int) -> None:
+def test_check_one(parent_ids: list[str], expected_warnings: int) -> None:
     """Pass if at least one linked need fulfills the condition."""
-    log = run_graph_check(graph_check_config(check_type="one"), parent_ids)
+    log = run_graph_check(graph_check_config("check_one"), parent_ids)
 
     assert log.warnings == expected_warnings
     if expected_warnings:
@@ -281,17 +271,3 @@ def test_check_type_one(parent_ids: list[str], expected_warnings: int) -> None:
             "No linked need in `implements` fulfills condition `safety != QM`."
             " Explanation: Test explanation."
         )
-
-
-def test_invalid_check_type_logs_error_and_skips_check(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    """Log a config error instead of running a check with an invalid check_type."""
-    logger = MagicMock()
-    monkeypatch.setattr(graph_checks, "logger", logger)
-
-    log = run_graph_check(graph_check_config(check_type="some"), ["qm_1"])
-
-    log.assert_no_warnings()
-    logger.error.assert_called_once()
-    assert "Invalid check_type `some`" in logger.error.call_args.args[0]

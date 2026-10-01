@@ -1210,14 +1210,13 @@ needs_extra_links:
 #                          to perform the check on all needs types, set include to .
 #   - condition: defines (together with apply) the condition which the needs need to fulfill
 #     - [and / or / xor / not]
-# - check: defines the check that should be applied
+# - check_all / check_one: defines the check that should be applied (exactly one of them)
+#   - check_all: every linked need has to fulfill the condition
+#   - check_one: at least one linked need has to fulfill the condition
+#                (a need without any linked needs passes)
 #   - <relation>: defines the relation which is used derive the type of the parent need
 #   - condition: defines the condition that should be checked
 #     - [and / or / xor / not]
-# - check_type [OPTIONAL]: defines how many linked needs have to fulfill the check condition
-#   - all: every linked need has to fulfill the condition (default)
-#   - one: at least one linked need has to fulfill the condition
-#          (a need without any linked needs passes)
 ##############################################################
 
 graph_checks:
@@ -1226,9 +1225,8 @@ graph_checks:
     needs:
       include: stkh_req, feat_req, comp_req, aou_req, gd_req, tool_req
       condition: safety == QM
-    check:
+    check_all:
       derived_from: safety == QM
-    check_type: all
     explanation: QM requirements cannot be derived from ASIL requirements.
 
   # req-Id: tool_req__docs_arch_link_qm_to_safety_req
@@ -1238,10 +1236,9 @@ graph_checks:
     needs:
       include: feat_arc_sta, feat, logic_arc_int, logic_arc_int_op, comp_arc_sta, comp, real_arc_int, real_arc_int_op
       condition: safety == QM
-    check:
+    check_all:
       fulfils: safety == QM
       satisfied_by_back: safety == QM
-    check_type: all
     explanation: A QM architecture element cannot be linked to ASIL requirements.
 
   # req-Id: tool_req__docs_arch_link_safety_to_req
@@ -1251,9 +1248,8 @@ graph_checks:
     needs:
       include: feat_arc_sta, feat, logic_arc_int, logic_arc_int_op, comp_arc_sta, comp, real_arc_int, real_arc_int_op
       condition: safety != QM
-    check:
+    check_one:
       fulfils: safety == ASIL_B
-    check_type: one
     explanation: A safety architecture element has to fulfil at least one requirement with the same safety level.
 
   # req-Id: tool_req__docs_req_arch_link_safety_to_arch
@@ -1264,12 +1260,11 @@ graph_checks:
         and:
           - safety != QM
           - status == valid
-    check:
+    check_all:
       implements: # TODO: which attribute???
         and:
           - safety != QM
           - status == valid
-    check_type: all
     explanation: An safety architecture element can only link other safety architecture elements.
 
   # req-Id: tool_req__docs_arch_link_security
@@ -1277,9 +1272,8 @@ graph_checks:
     needs:
       include: feat_arc_sta, logic_arc_int, logic_arc_int_op, comp_arc_sta, real_arc_int, real_arc_int_op
       condition: security == YES
-    check:
+    check_all:
       implements: security == YES # Which attribute???
-    check_type: all
     explanation: An security architecture element can only link other security architecture elements.
 
   # Workproducts may only link to ASPICE 40 IIC stakeholder requirements
@@ -1287,10 +1281,9 @@ graph_checks:
     needs:
       include: workproduct
       condition: complies != []
-    check:
+    check_all:
       complies:
         or:
           - id contains aspice_40__iic
           - id contains std_wp
-    check_type: all
     explanation: Workproducts may only link to ASPICE 40 IIC stakeholder requirements. Please ensure that the linked requirement is an ASPICE 40 IIC stakeholder requirement.

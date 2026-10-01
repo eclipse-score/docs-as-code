@@ -111,7 +111,7 @@
    :expect_not: does not fulfill condition
 
 
-.. Negative: with `check_type: all` only the violating target is reported.
+.. Negative: with `check_all` only the violating target is reported.
 
 .. real_arc_int_op:: Security source implements security and non-security target
    :id: real_arc_int_op__arch_sec__src_mixed

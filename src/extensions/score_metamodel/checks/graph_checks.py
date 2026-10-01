@@ -14,7 +14,7 @@ import operator
 from collections.abc import Callable
 from functools import reduce
 from itertools import chain
-from typing import Any, Literal, cast, get_args
+from typing import Any, Literal, cast
 
 from score_metamodel import (
     CheckLogger,
@@ -163,37 +163,10 @@ def filter_needs_by_criteria(
     return selected_needs
 
 
-CheckType = Literal["one", "all"]
-CHECK_TYPES = get_args(CheckType)
-
-
-def get_check_type(check_config: dict[str, Any]) -> CheckType:
-    """
-    Get the `check_type` of a graph check.
-
-    `check_type` is only allowed on the same level as `check` and must be one of:
-    - all: every linked need must fulfill the condition (default)
-    - one: at least one linked need must fulfill the condition.
-           A need without any linked needs passes.
-    """
-    if "check_type" in check_config.get("check", {}) or "check_type" in (
-        check_config.get("needs", {})
-    ):
-        raise ValueError("`check_type` is only allowed on the same level as `check`.")
-
-    check_type = check_config.get("check_type", "all")
-    if check_type not in CHECK_TYPES:
-        raise ValueError(
-            f"Invalid check_type `{check_type}`, expected one of {CHECK_TYPES}."
-        )
-
-    return check_type
-
-
 def check_needs_with_check_type_context(
     parents: list[NeedItem],
     condition: str | dict[str, list[Any]],
-    check_type: CheckType,
+    check_type: str,
     log: CheckLogger,
 ) -> list[str]:
     """
@@ -206,7 +179,7 @@ def check_needs_with_check_type_context(
     failed_needs: list[str] = []
     for parent in parents:
         if eval_need_condition(parent, condition, log):
-            if check_type == "one":
+            if check_type == "check_one":
                 return []
         else:
             failed_needs.append(parent.id)
@@ -225,7 +198,24 @@ def check_metamodel_graph(
     # Iterate over all graph checks
     for check_name, check_config in graph_checks_global.items():
         needs_selection_criteria: dict[str, str] = check_config.get("needs")
-        check_to_perform: dict[str, str | dict[str, Any]] = check_config.get("check")
+        check_type = ""
+        if "check_one" in check_config and "check_all" in check_config:
+            raise ValueError(
+                f"Both `check_one` and `check_all` are present in graph_check: {check_name}. Please delete one"
+            )
+        elif "check_one" not in check_config and "check_all" not in check_config:
+            raise ValueError(
+                f"Check is not defined in the graph check {check_name}. Either `check_all` "
+                "or `check_one` are mandatory. Please add one of them "
+                "depending if all or one requirement need to fulfill the condition."
+            )
+        elif "check_one" in check_config:
+            check_type = "check_one"
+        elif "check_all" in check_config:
+            check_type = "check_all"
+        # Access the correct check
+        check_to_perform = check_config.get(check_type)
+
         explanation = check_config.get("explanation", "")
         assert explanation != "", (
             f"Explanation for graph check {check_name} is missing. "
@@ -233,7 +223,6 @@ def check_metamodel_graph(
         )
         # Get all needs matching the selection criteria
         try:
-            check_type = get_check_type(check_config)
             selected_needs = filter_needs_by_criteria(
                 app.config.needs_types, needs_local, needs_selection_criteria, log
             )
@@ -263,7 +252,7 @@ def check_metamodel_graph(
                     parents, condition, check_type, log
                 )
                 if failed_needs:
-                    if check_type == "one":
+                    if check_type == "check_one":
                         msg = (
                             f"No linked need in `{parent_relation}` fulfills "
                             f"condition `{condition}`. "
