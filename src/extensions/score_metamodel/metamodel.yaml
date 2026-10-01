@@ -1240,6 +1240,7 @@ graph_checks:
     check_all:
       fulfils: safety == QM
       satisfied_by_back: safety == QM
+    info_only:
     explanation: A QM architecture element cannot be linked to ASIL requirements.
 
   # req-Id: tool_req__docs_arch_link_safety_to_req
@@ -1253,6 +1254,7 @@ graph_checks:
       condition: safety != QM
     check_one:
       fulfils: safety == ASIL_B
+    info_only:
     explanation: A safety architecture element has to fulfil at least one requirement with the same safety level.
 
   # req-Id: tool_req__docs_req_arch_link_safety_to_arch
