@@ -215,9 +215,10 @@ def _bundle_needs_local_label(bundle):
 
     package, target = label.rsplit(":", 1)
     # The public API names docs_bundle targets, not generated implementation
-    # targets. Reject an internal export label instead of appending the suffix
-    # twice and leaking our private target naming convention to callers.
-    if target.endswith(".__internal__.needs_local"):
+    # targets. Reject every internal target here rather than recognizing only
+    # today's needs_local export; this keeps private target names out of the
+    # public API as other internal bundle targets are added.
+    if "__internal__" in target:
         fail(
             "upward_bundles entries must name docs_bundle targets, got %r" % label,
         )
@@ -451,19 +452,23 @@ def _declare_bundle_local_needs(
 
     needs_local = _bundle_internal_target(name, "needs_local")
     # Convert the public bundle declarations to the internal JSON inventories
-    # that the Python extension can load. Deduplicate repeated labels here so
-    # one source is not imported twice into the same Sphinx environment.
+    # that the Python extension can load. A repeated inventory is a declaration
+    # error, so fail instead of silently hiding it. Check normalized labels so
+    # two spellings of the same Bazel target are treated as duplicates too.
     upward_needs_labels = []
     for upward_bundle in upward_bundles:
         needs_label = _bundle_needs_local_label(upward_bundle)
-        if needs_label not in upward_needs_labels:
-            upward_needs_labels.append(needs_label)
+        if needs_label in upward_needs_labels:
+            fail(
+                "upward_bundles contains the same bundle more than once: %r" % upward_bundle,
+            )
+        upward_needs_labels.append(needs_label)
 
-    # The labels travel through two Bazel interfaces for different reasons:
-    # external_needs_labels tells the Python extension which JSON inventories
-    # to register with Sphinx-Needs; tools declares the corresponding Bazel
-    # targets as action inputs and executable runfiles so those JSON files are
-    # present when the extension resolves the labels.
+    # These are runtime JSON inputs for this Needs action, so pass them as
+    # build data. This makes each inventory available in both the sandbox and
+    # the Sphinx launcher's runfiles; the separate label list tells the Python
+    # extension which files to register with Sphinx-Needs. They do not become
+    # documentation sources or composition mounts.
     #
     # source_bundle and mounts_manifest describe the local side of the same
     # boundary. The source-only provider excludes mounted descendants as local
@@ -475,14 +480,13 @@ def _declare_bundle_local_needs(
         bundle = source_bundle,
         config = config,
         sphinx_build_deps = sphinx_build_deps,
-        sphinx_build_data = data,
+        sphinx_build_data = data + upward_needs_labels,
         master_doc = entry_doc,
         external_needs_labels = json.encode(upward_needs_labels),
         score_bundle_needs_export = "1",
         score_sourcelinks_json = sourcelinks_json,
         score_source_code_linker_plain_links = "1",
         mounts_manifest = mounts_manifest,
-        tools = upward_needs_labels,
         visibility = visibility,
     )
 

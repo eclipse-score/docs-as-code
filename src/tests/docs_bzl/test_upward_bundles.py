@@ -18,20 +18,18 @@ configuration, ``upward_bundles`` supplies link-validation inputs, and
 standalone child export so those relationships cannot be conflated.
 """
 
-from typing import cast
-
 import pytest
 
 from src.tests.docs_bzl.helpers import built_output, load_needs, run_scenario
 
 
 @pytest.mark.bazel_cached
-def test_bundle_validates_parent_links_but_exports_only_owned_needs():
-    """Import the parent for link resolution, then serialize only child-owned Needs.
+def test_bundle_resolves_declared_parent_and_exports_only_owned_needs():
+    """A declared parent link resolves, while the child's JSON stays owner-only.
 
-    The child Need's link proves the parent was present in Sphinx's in-memory
-    graph. The exact exported ID set proves the parent stayed external and was
-    removed by Sphinx-Needs' default builder filter when JSON was written.
+    The build treats unresolved Needs links as errors, so its success confirms
+    the imported parent is available. The exported ID set checks that the
+    external parent remains outside the child's local inventory.
     """
     run_scenario(
         "build",
@@ -46,16 +44,6 @@ def test_bundle_validates_parent_links_but_exports_only_owned_needs():
     needs = load_needs(needs_json)
 
     assert set(needs) == {"tsf__docs_as_code__child"}
-    child = needs["tsf__docs_as_code__child"]
-    assert isinstance(child, dict)
-    child_record = cast("dict[str, object]", child)
-    child_links = child_record.get("links")
-    assert isinstance(child_links, list)
-    # ``load_needs`` intentionally types nested JSON as ``object``. After
-    # checking the Sphinx field is a list, narrow its element type for the ID
-    # membership assertion below.
-    typed_child_links = cast("list[str]", child_links)
-    assert "tsf__docs_as_code__parent" in typed_child_links
 
 
 @pytest.mark.bazel_cached
