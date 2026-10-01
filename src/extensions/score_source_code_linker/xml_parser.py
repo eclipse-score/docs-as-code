@@ -408,13 +408,9 @@ def build_test_needs_from_files(
     tcns: list[DataOfTestCase] = []
     for file in xml_paths:
         # Last value can be ignored. The 'is_valid' function already prints infos
-        try:
-            test_cases, tests_missing_all_props, tests_missing_some_props = (
-                read_test_xml_file(file, known_good_json, allowed_dirs)
-            )
-        except ET.ParseError as exc:
-            logger.info(f"Skipping malformed test report {file}: {exc}")
-            continue
+        test_cases, tests_missing_all_props, tests_missing_some_props = (
+            read_test_xml_file(file, known_good_json, allowed_dirs)
+        )
         non_prop_tests = ", ".join(n for n in tests_missing_all_props)
         if non_prop_tests:
             logger.info(f"Tests missing all properties: {non_prop_tests}")

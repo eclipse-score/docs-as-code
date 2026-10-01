@@ -26,7 +26,7 @@ import xml.etree.ElementTree as ET
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 
 import pytest
 
@@ -345,32 +345,6 @@ def test_read_test_xml_file(
     assert isinstance(tcneed4, DataOfTestCase)
     assert no_props4 == []
     assert missing_props4 == ["tc_with_missing_props"]
-
-
-def test_malformed_test_report_does_not_abort_other_reports(tmp_path: Path):
-    reports = tmp_path / "tests-report"
-    good = reports / "good" / "test.xml"
-    bad = reports / "bad" / "test.xml"
-    good.parent.mkdir(parents=True)
-    bad.parent.mkdir(parents=True)
-    _write_test_xml(good, name="valid_case")
-    _write_test_xml(bad, name="invalid_case")
-    bad.write_bytes(bad.read_bytes() + b">")
-
-    app = Mock()
-    app.config.KNOWN_GOOD_JSON = ""
-    with (
-        patch.object(xml_parser, "construct_and_add_need") as add_need,
-        patch.object(xml_parser.logger, "info") as log_info,
-    ):
-        needs = xml_parser.build_test_needs_from_files(app, Mock(), [bad, good])
-
-    assert [need.name for need in needs] == ["valid_case"]
-    add_need.assert_called_once_with(app, needs[0])
-    assert any(
-        str(bad) in str(call) and "junk after document element" in str(call)
-        for call in log_info.call_args_list
-    )
 
 
 @add_test_properties(
