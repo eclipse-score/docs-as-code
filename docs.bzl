@@ -195,10 +195,9 @@ def _bundle_needs_local_label(bundle, attribute = "external_needs"):
     """Map a public docs or bundle label to its owner-only Needs export.
 
     ``external_needs`` names public ``docs_bundle`` targets or the public
-    ``docs`` target created by ``docs()``. Both kinds of public target map to a
-    sibling ``.__internal__.needs_local`` target. ``docs()`` provides that
-    sibling as an alias to the root bundle's owner-only export, so callers do
-    not need to know that the root bundle has a different internal name.
+    ``docs`` target created by ``docs()``. In either case, the public target
+    name determines the sibling ``.__internal__.needs_local`` target. The
+    target's implementation name therefore stays hidden from callers.
     """
     label = str(bundle)
     # Resolve ``:parent`` against the package declaring this bundle. Absolute
