@@ -481,7 +481,10 @@
 <li><p>Optionally, merge source links using the <code class="docutils literal notranslate"><span class="pre">merge_sourcelinks</span></code> rule.</p></li>
 </ul>
 </li>
-<li><p>Needs (requirements) are gathered from various <code class="docutils literal notranslate"><span class="pre">needs_json</span></code> targets specified in the <code class="docutils literal notranslate"><span class="pre">data</span></code> attribute.</p></li>
+<li><p>Needs (requirements) are gathered from the bundles listed in
+<code class="docutils literal notranslate"><span class="pre">external_needs</span></code>. The older <code class="docutils literal notranslate"><span class="pre">needs_json</span></code> and <code class="docutils literal notranslate"><span class="pre">needs_json_file</span></code>
+targets are still accepted there, and even <code class="docutils literal notranslate"><span class="pre">data</span></code> can still supply legacy
+<code class="docutils literal notranslate"><span class="pre">needs_json</span></code> dependencies.</p></li>
 </ul>
 </li>
 <li><p>Documentation sources are read from the specified source directory (default: <code class="docutils literal notranslate"><span class="pre">docs/</span></code>).

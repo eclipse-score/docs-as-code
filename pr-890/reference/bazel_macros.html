@@ -508,7 +508,7 @@ files are processed as documentation sources or carried as supporting data.</p>
     <span class="n">project_url</span> <span class="o">=</span> <span class="s2">&quot;https://github.com/eclipse-score/my-project&quot;</span><span class="p">,</span>
     <span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
         <span class="c1"># labels to any extra tools or data you want included</span>
-        <span class="c1"># e.g. &quot;//:needs_json&quot; or other tool targets</span>
+        <span class="c1"># e.g. &quot;//tools:my_tool&quot;</span>
     <span class="p">],</span>
     <span class="n">bundles</span> <span class="o">=</span> <span class="p">[</span>
         <span class="c1"># dicts describing bundles to mount into this project</span>
@@ -543,13 +543,7 @@ bundles inherit it and cannot override it locally.</p></li>
 Supporting files for this project’s root <code class="docutils literal notranslate"><span class="pre">:docs_bundle</span></code>. The files are
 available to the documentation targets and travel when another project
 mounts this project’s public bundle. Put files belonging to a mounted child
-in that child’s <code class="docutils literal notranslate"><span class="pre">docs_bundle(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code> instead.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>To pull in another module’s needs for cross-referencing, add its
-<code class="docutils literal notranslate"><span class="pre">:needs_json</span></code> target here.</p>
-</div>
-</li>
+in that child’s <code class="docutils literal notranslate"><span class="pre">docs_bundle(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code> instead.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">bundles</span></code> (list of placement dicts)
 Documentation bundles to overlay into this project’s documentation tree,
 each with its placement (<code class="docutils literal notranslate"><span class="pre">mount_at</span></code>, optional <code class="docutils literal notranslate"><span class="pre">attach_to</span></code> and
@@ -573,9 +567,14 @@ ID of the Sphinx-Needs item that represents the primary subject of this
 documentation project. A project may contain many other Needs; when this
 value is set, bundle-level target metadata is written only to this Need.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">external_needs</span></code> (list of bazel labels)
-External <code class="docutils literal notranslate"><span class="pre">:needs_json_file</span></code> targets from other modules/repositories
-for referencing their needs.
-Do not use <code class="docutils literal notranslate"><span class="pre">:needs_json</span></code> targets.</p></li>
+Public <code class="docutils literal notranslate"><span class="pre">docs</span></code> targets created by another repository’s <code class="docutils literal notranslate"><span class="pre">docs()</span></code> macro,
+or named <code class="docutils literal notranslate"><span class="pre">docs_bundle</span></code> targets. Their locally owned Needs can be
+referenced by this project’s documentation. Their pages are not mounted by
+this setting; use <code class="docutils literal notranslate"><span class="pre">bundles</span></code> when those pages should appear in the rendered
+site. A <code class="docutils literal notranslate"><span class="pre">docs()</span></code> target is named <code class="docutils literal notranslate"><span class="pre">:docs</span></code> and resolves to the root
+bundle’s locally owned Needs export.
+For compatibility, existing <code class="docutils literal notranslate"><span class="pre">:needs_json</span></code> and <code class="docutils literal notranslate"><span class="pre">:needs_json_file</span></code> target
+labels are also accepted and continue to work without a deprecation warning.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">metamodel</span></code> (bazel label, optional)
 Path to a custom <code class="docutils literal notranslate"><span class="pre">metamodel.yaml</span></code> file.
 When set, the <code class="docutils literal notranslate"><span class="pre">score_metamodel</span></code> extension loads <strong>this file instead of</strong> the default metamodel.
@@ -615,7 +614,7 @@ site).</p>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>Signature: <code class="docutils literal notranslate"><span class="pre">docs_bundle(name,</span> <span class="pre">source_dir</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">srcs</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">data</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">entry_doc</span> <span class="pre">=</span> <span class="pre">&quot;index&quot;,</span> <span class="pre">bundles</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">code_targets</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">primary_need_id</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">root_docs</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">visibility</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">upward_bundles</span> <span class="pre">=</span> <span class="pre">[])</span></code>.</p>
+<p>Signature: <code class="docutils literal notranslate"><span class="pre">docs_bundle(name,</span> <span class="pre">source_dir</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">srcs</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">data</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">entry_doc</span> <span class="pre">=</span> <span class="pre">&quot;index&quot;,</span> <span class="pre">bundles</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">code_targets</span> <span class="pre">=</span> <span class="pre">[],</span> <span class="pre">primary_need_id</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">root_docs</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">visibility</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">external_needs</span> <span class="pre">=</span> <span class="pre">[])</span></code>.</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">source_dir</span></code> (string, optional)
 Directory holding the bundle’s own doc sources. It is globbed the same way as
@@ -666,17 +665,17 @@ bundle resolving to two different final <code class="docutils literal notranslat
 error. See <a class="reference internal" href="../how-to/bundles/index.html#howto-mount-external-sources"><span class="std std-ref">How to use bundles</span></a> for a worked example and
 <a class="reference internal" href="../concepts/mounts/index.html#docs-concept-mounts"><span class="std std-ref">Documentation bundles and mounts</span></a> for the composition and transitivity semantics.</p>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">upward_bundles</span></code> (list of <code class="docutils literal notranslate"><span class="pre">docs_bundle</span></code> labels, optional)
-Source-bearing bundles whose locally owned Needs this bundle is allowed to
-reference. Use this for ancestors in the architecture hierarchy, and list
-every ancestor export needed by this bundle. The local Needs build imports
-those exports for normal Sphinx-Needs link validation. Sphinx-Needs’ default
-builder filter keeps those external Needs out of this bundle’s own output.
-This declares a traceability dependency; it does not mount or compose the
-referenced documentation.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">external_needs</span></code> (list of public docs or bundle labels, optional)
+Public <code class="docutils literal notranslate"><span class="pre">docs</span></code> targets created by <code class="docutils literal notranslate"><span class="pre">docs()</span></code> or named <code class="docutils literal notranslate"><span class="pre">docs_bundle</span></code>
+targets whose locally owned Needs this bundle is allowed to reference. The
+local Needs build imports those exports for normal Sphinx-Needs link
+validation. Sphinx-Needs’ default builder filter keeps those external Needs
+out of this bundle’s own output. This declares a traceability dependency; it
+does not mount or compose the referenced documentation. The root <code class="docutils literal notranslate"><span class="pre">docs</span></code>
+target resolves to the root documentation macro’s own Needs export.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">needs_local</span></code> (internal target)
 A source-bearing bundle creates <code class="docutils literal notranslate"><span class="pre">&lt;name&gt;.__internal__.needs_local</span></code> with the
-Needs declared by its own sources. Targets listed in <code class="docutils literal notranslate"><span class="pre">upward_bundles</span></code> are
+Needs declared by its own sources. Targets listed in <code class="docutils literal notranslate"><span class="pre">external_needs</span></code> are
 validation inputs only; imported Needs do not appear in this export. Links
 outside the declared imports remain unresolved and fail strict builds.
 Data-only bundles do not create a Needs target.</p></li>

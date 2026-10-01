@@ -3542,7 +3542,7 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_external_needs__test_add_bundle_needs_json_adds_source_identity_to_base_url",
+    "name": "test_external_needs__test_add_bundle_needs_json_keeps_the_canonical_base_url",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
     "line": "302",
     "result": "passed",
@@ -3558,7 +3558,7 @@
   {
     "name": "test_external_needs__test_add_needs_json_file_appends_entry",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "341",
+    "line": "335",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3572,7 +3572,7 @@
   {
     "name": "test_external_needs__test_add_external_needs_json_missing_file_keeps_list_empty",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "374",
+    "line": "368",
     "result": "passed",
     "repo_name": null,
     "hash": null,
