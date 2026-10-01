@@ -14,7 +14,7 @@ import operator
 from collections.abc import Callable
 from functools import reduce
 from itertools import chain
-from typing import Any, Literal, cast
+from typing import Any, cast
 
 from score_metamodel import (
     CheckLogger,
@@ -186,6 +186,70 @@ def check_needs_with_check_type_context(
     return failed_needs
 
 
+def get_check(
+    check_name: str, check_config: dict[str, Any]
+) -> tuple[str, dict[str, str | dict[str, list[Any]]]]:
+    """
+    Return the check type (`check_one` / `check_all`) and the checks to perform.
+
+    Exactly one of `check_one` / `check_all` must be defined.
+    """
+    if "check_one" in check_config and "check_all" in check_config:
+        raise ValueError(
+            f"Both `check_one` and `check_all` are present in graph_check: {check_name}. Please delete one"
+        )
+    if "check_one" not in check_config and "check_all" not in check_config:
+        raise ValueError(
+            f"Check is not defined in the graph check {check_name}. Either `check_all` "
+            "or `check_one` are mandatory. Please add one of them "
+            "depending if all or one requirement need to fulfill the condition."
+        )
+    check_type = "check_one" if "check_one" in check_config else "check_all"
+    return check_type, check_config[check_type]
+
+
+def check_parent_relation(
+    need: NeedItem,
+    parent_relation: str,
+    condition: str | dict[str, list[Any]],
+    check_type: str,
+    explanation: str,
+    all_needs: NeedsView,
+    log: CheckLogger,
+) -> None:
+    """Check the needs linked via `parent_relation` and warn about violations."""
+    if parent_relation not in need:
+        msg = f"Attribute not defined: `{parent_relation}` in need `{need['id']}`."
+        log.warning_for_need(need, msg)
+        return
+    parent_ids = cast(list[str] | Any, need[parent_relation])
+    if not isinstance(parent_ids, list):
+        return
+    # Unknown ids are dropped; sphinx-needs already warns about them.
+    parents: list[NeedItem] = list(all_needs.filter_ids(parent_ids).values())
+    failed_needs = check_needs_with_check_type_context(
+        parents, condition, check_type, log
+    )
+    if not failed_needs:
+        return
+
+    if check_type == "check_one":
+        msg = (
+            f"No linked need in `{parent_relation}` fulfills "
+            f"condition `{condition}`. "
+            f"Explanation: {explanation}"
+        )
+        log.warning_for_need(need, msg)
+    else:
+        for need_id in failed_needs:
+            msg = (
+                f"Parent need `{need_id}` does not fulfill "
+                f"condition `{condition}`."
+                f" Explanation: {explanation}"
+            )
+            log.warning_for_need(need, msg)
+
+
 @graph_check
 def check_metamodel_graph(
     app: Sphinx,
@@ -198,24 +262,7 @@ def check_metamodel_graph(
     # Iterate over all graph checks
     for check_name, check_config in graph_checks_global.items():
         needs_selection_criteria: dict[str, str] = check_config.get("needs")
-        check_type = ""
-        if "check_one" in check_config and "check_all" in check_config:
-            raise ValueError(
-                f"Both `check_one` and `check_all` are present in graph_check: {check_name}. Please delete one"
-            )
-        elif "check_one" not in check_config and "check_all" not in check_config:
-            raise ValueError(
-                f"Check is not defined in the graph check {check_name}. Either `check_all` "
-                "or `check_one` are mandatory. Please add one of them "
-                "depending if all or one requirement need to fulfill the condition."
-            )
-        elif "check_one" in check_config:
-            check_type = "check_one"
-        elif "check_all" in check_config:
-            check_type = "check_all"
-        # Access the correct check
-        check_to_perform = check_config.get(check_type)
-
+        check_type, check_to_perform = get_check(check_name, check_config)
         explanation = check_config.get("explanation", "")
         assert explanation != "", (
             f"Explanation for graph check {check_name} is missing. "
@@ -234,39 +281,15 @@ def check_metamodel_graph(
 
         for need in selected_needs:
             for parent_relation, condition in check_to_perform.items():
-                if parent_relation not in need:
-                    msg = (
-                        f"Attribute not defined: `{parent_relation}` "
-                        f"in need `{need['id']}`."
-                    )
-                    log.warning_for_need(need, msg)
-                    continue
-                parent_ids = cast(list[str] | Any, need[parent_relation])
-                if not isinstance(parent_ids, list):
-                    continue
-                # Unknown ids are dropped; sphinx-needs already warns about them.
-                parents: list[NeedItem] = list(
-                    all_needs.filter_ids(parent_ids).values()
+                check_parent_relation(
+                    need,
+                    parent_relation,
+                    condition,
+                    check_type,
+                    explanation,
+                    all_needs,
+                    log,
                 )
-                failed_needs = check_needs_with_check_type_context(
-                    parents, condition, check_type, log
-                )
-                if failed_needs:
-                    if check_type == "check_one":
-                        msg = (
-                            f"No linked need in `{parent_relation}` fulfills "
-                            f"condition `{condition}`. "
-                            f"Explanation: {explanation}"
-                        )
-                        log.warning_for_need(need, msg)
-                    else:
-                        for need_id in failed_needs:
-                            msg = (
-                                f"Parent need `{need_id}` does not fulfill "
-                                f"condition `{condition}`."
-                                f" Explanation: {explanation}"
-                            )
-                            log.warning_for_need(need, msg)
 
 
 @graph_check
