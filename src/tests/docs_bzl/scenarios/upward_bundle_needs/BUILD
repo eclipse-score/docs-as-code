@@ -36,6 +36,31 @@ docs_bundle(
     root_docs = ":docs",
 )
 
+# This bundle intentionally reuses the same RST source as ``component``. The
+# Need ID is therefore identical, while the Bazel target still represents a
+# separate imported inventory. Like ``component``, it works on its own because
+# it imports the root Need that its RST links to.
+docs_bundle(
+    name = "component_with_duplicate_need_id",
+    source_dir = "component",
+    root_docs = ":docs",
+    external_needs = [":docs"],
+    visibility = ["//visibility:public"],
+)
+
+# Importing both otherwise-valid components into one bundle must expose their
+# duplicate Need ID. Both inventories have the same package-relative project
+# URL, which is the Sphinx-Needs case that used to silently replace one record.
+docs_bundle(
+    name = "top_level_with_duplicate_child_need_id",
+    source_dir = "docs",
+    root_docs = ":docs",
+    external_needs = [
+        ":component",
+        ":component_with_duplicate_need_id",
+    ],
+)
+
 # Mounting the successful child creates the public rendered composition. The
 # tests also build its owner-only Needs export directly to check that the
 # parent's imported inventory is not copied into that artifact.

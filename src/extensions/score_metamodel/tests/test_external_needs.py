@@ -299,15 +299,10 @@ def test_add_external_needs_json_appends_entry_local(
     assert Path(entry["json_path"]) == json_path
 
 
-def test_add_bundle_needs_json_adds_source_identity_to_base_url(
+def test_add_bundle_needs_json_keeps_the_canonical_base_url(
     tmp_path: Path,
 ) -> None:
-    """A private bundle label distinguishes sources sharing a project URL.
-
-    Sphinx-Needs uses the base URL to recognize an already loaded external
-    source. Including the Bazel label keeps equal IDs from different bundles
-    from being mistaken for a reload of the same source.
-    """
+    """Imported bundle links use the URL where the bundle is published."""
     e = ExternalNeedsSource(
         bazel_module="",
         target="parent.__internal__.needs_local",
@@ -327,12 +322,11 @@ def test_add_bundle_needs_json_adds_source_identity_to_base_url(
         encoding="utf-8",
     )
 
-    add_external_needs_json(e, config, tmp_path, bundle_export=True)
+    add_external_needs_json(e, config, tmp_path)
 
     assert config.needs_external_needs == [
         {
-            "base_url": "https://example.test/project/main/_bundles/"
-            "src/docs/parent.__internal__.needs_local",
+            "base_url": "https://example.test/project/main",
             "json_path": json_path,
         }
     ]

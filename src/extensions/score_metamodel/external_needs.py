@@ -15,11 +15,11 @@ import json
 import subprocess
 from pathlib import Path
 from typing import cast
-from urllib.parse import quote
 
 from sphinx.application import Sphinx
 from sphinx.config import Config
 from sphinx.util import logging
+from sphinx_needs.logging import log_warning
 from sphinx_needs.needsfile import NeedsList
 
 from src.helper_lib import get_runfiles_dir
@@ -162,19 +162,127 @@ def get_external_needs_source(external_needs_source: str) -> list[ExternalNeedsS
         return parse_external_needs_sources_from_bazel_query()  # pyright: ignore[reportAny]
 
 
+def _external_needs_base_url(
+    source: ExternalNeedsSource,
+    needs_json_data: dict[str, object],
+) -> str:
+    """Return the same canonical base URL used when registering this inventory."""
+    if source.target.endswith(".__internal__.needs_local"):
+        project_url = needs_json_data.get("project_url", "")
+        if not isinstance(project_url, str):
+            project_url = ""
+        project_url = project_url.rstrip("/")
+        if not project_url:
+            # Standalone bundles have no published root URL, but Sphinx-Needs
+            # still requires a base URL. This reserved host is never a real link.
+            project_url = "https://score-needs.invalid"
+        return project_url + "/main"  # for now always "main"
+
+    if source.target == "needs_json_file":
+        # Preserve the legacy file target's behavior when project_url is absent.
+        project_url = needs_json_data.get("project_url", "")
+    else:
+        project_url = needs_json_data["project_url"]
+    return cast(str, project_url) + "/main"  # for now always "main"
+
+
+def _external_needs_source_label(source: ExternalNeedsSource) -> str:
+    """Format the Bazel source label for a useful duplicate-ID diagnostic."""
+    repository = f"@{source.bazel_module}" if source.bazel_module else ""
+    return f"{repository}//{source.path_to_target}:{source.target}"
+
+
+def _current_version_needs(
+    needs_json_data: dict[str, object],
+) -> dict[str, object] | None:
+    """Return the Need inventory selected by a needs.json file's current version."""
+    current_version = needs_json_data.get("current_version")
+    versions = needs_json_data.get("versions")
+    if not isinstance(current_version, str) or not isinstance(versions, dict):
+        return None
+
+    version_data = cast(dict[str, object], versions).get(current_version)
+    if not isinstance(version_data, dict):
+        return None
+    needs = cast(dict[str, object], version_data).get("needs")
+    if not isinstance(needs, dict):
+        return None
+    return cast(dict[str, object], needs)
+
+
+def _read_inventory_for_duplicate_check(
+    source: ExternalNeedsSource, runfiles_dir: Path
+) -> tuple[str, dict[str, object]] | None:
+    """Read one valid inventory's canonical URL and current Need-ID map.
+
+    Invalid or unavailable inventory files are left to the regular Sphinx-Needs
+    loader, which owns their established error messages.
+    """
+    json_file = _external_needs_source_path(runfiles_dir, source)
+    try:
+        raw_data: object = json.loads(Path(json_file).read_text(encoding="utf-8"))
+    except (FileNotFoundError, json.JSONDecodeError):
+        return None
+    if not isinstance(raw_data, dict):
+        return None
+
+    needs_json_data = cast(dict[str, object], raw_data)
+    needs = _current_version_needs(needs_json_data)
+    if needs is None:
+        return None
+    try:
+        base_url = _external_needs_base_url(source, needs_json_data)
+    except (KeyError, TypeError):
+        return None
+    return base_url, needs
+
+
+def _warn_for_duplicate_external_need_ids(
+    sources: list[ExternalNeedsSource], runfiles_dir: Path
+) -> None:
+    """Warn about same-URL ID collisions before Sphinx-Needs replaces a source.
+
+    Sphinx-Needs uses ``base_url`` to decide whether an external need was loaded
+    from the same inventory before checking for duplicate IDs. If two inventories
+    share a base URL, it removes the earlier record as a reload and never reaches
+    its normal duplicate-ID warning. Compare those inventories first so the
+    collision remains visible while their links keep the real project URL.
+    """
+    first_source_by_base_url_and_id: dict[tuple[str, str], str] = {}
+    for source in sources:
+        inventory = _read_inventory_for_duplicate_check(source, runfiles_dir)
+        if inventory is None:
+            continue
+        base_url, needs = inventory
+
+        source_label = _external_needs_source_label(source)
+        for need_id in needs:
+            key = (base_url, need_id)
+            if key not in first_source_by_base_url_and_id:
+                first_source_by_base_url_and_id[key] = source_label
+                continue
+
+            first_source = first_source_by_base_url_and_id[key]
+            log_warning(
+                logger,
+                f"External need ID {need_id!r} is present in both {first_source} "
+                f"and {source_label}. Both inventories use base URL {base_url!r}, "
+                "so Sphinx-Needs would otherwise replace the earlier need without "
+                "reporting the duplicate.",
+                "load_external_need",
+                location=None,
+            )
+
+
 def add_external_needs_json(
     e: ExternalNeedsSource,
     config: Config,
     runfiles_dir: Path | None,
-    *,
-    bundle_export: bool = False,
 ):
     """Register a Bazel-produced JSON inventory with Sphinx-Needs.
 
-    Public ``needs_json`` inventories keep their configured project URL.
-    ``bundle_export`` marks a private ``.__internal__.needs_local`` inventory:
-    its source label is added to the URL so Sphinx-Needs can distinguish
-    separate bundle sources that share one project URL.
+    Public ``needs_json`` inventories and private bundle exports both keep
+    their canonical project URL so imported links resolve to the published site.
     """
     json_file = _external_needs_source_path(runfiles_dir, e)
     logger.debug(f"External needs.json: {json_file}")
@@ -189,37 +297,10 @@ def add_external_needs_json(
         # Attempt to continue, exit code will be non-zero after a logged error anyway.
         return
     assert isinstance(config.needs_external_needs, list)  # pyright: ignore[reportUnknownMemberType]
-    if bundle_export:
-        # Normalize an optional trailing slash before appending ``/main`` and
-        # the bundle path, so the derived URL has one separator per segment.
-        project_url = needs_json_data.get("project_url", "").rstrip("/")
-        if not project_url:
-            # root_docs is optional for docs_bundle, so a valid standalone
-            # bundle can have no published project URL. Sphinx-Needs still
-            # needs a base URL for imported records; use a reserved placeholder
-            # rather than inventing a link to a real site. The bundle builder
-            # uses Sphinx-Needs' default filter to keep these external records
-            # out of its own JSON export.
-            project_url = "https://score-needs.invalid"
-        # Sphinx-Needs uses base_url both when constructing external links and
-        # when deciding whether a previously loaded external Need came from
-        # the same source. A package can contain multiple bundles with the
-        # same project_url, so append the Bazel source identity. If two such
-        # sources contain the same Need ID, Sphinx then reports the duplicate
-        # instead of treating the second inventory as a replacement for the
-        # first.
-        base_url = project_url + "/main"  # for now always "main"
-        # The main workspace has an empty repository component. Omit empty
-        # components so its package and target still form a clean URL path.
-        identity = "/".join(
-            part for part in (e.bazel_module, e.path_to_target, e.target) if part
-        )
-        # Bazel labels can contain characters with URL syntax, so encode the
-        # identity before using it as a path component; keep package separators
-        # readable because they are already path separators in the label.
-        base_url += "/_bundles/" + quote(identity, safe="/._-+")
-    else:
-        base_url = needs_json_data["project_url"] + "/main"  # for now always "main"
+    base_url = _external_needs_base_url(
+        e,
+        cast(dict[str, object], needs_json_data),
+    )
     config.needs_external_needs.append(  # pyright: ignore[reportUnknownMemberType]
         {"base_url": base_url, "json_path": json_file}
     )
@@ -251,6 +332,11 @@ def connect_external_needs(app: Sphinx, config: Config):
 
     if external_needs:
         runfiles_dir = _runfiles_dir(app.config)
+        # Sphinx-Needs silently replaces an earlier record when the same Need
+        # ID arrives from an inventory with the same base URL. Check inventory
+        # keys before registering sources so this collision is reported while
+        # keeping base_url available for constructing correct published links.
+        _warn_for_duplicate_external_need_ids(external_needs, runfiles_dir)
         for e in external_needs:
             if e.target == "needs_json":
                 # Keep the public project inventory's established URL scheme.
@@ -259,15 +345,9 @@ def connect_external_needs(app: Sphinx, config: Config):
                 _add_needs_json_file(e, app.config, runfiles_dir)
             elif e.target.endswith(".__internal__.needs_local"):
                 # Private bundle exports are validation context for another
-                # bundle. Give each label a source-specific URL; the Needs
-                # builder's default filter keeps these imports out of the
-                # consumer's owner-only inventory after resolving its links.
-                add_external_needs_json(
-                    e,
-                    app.config,
-                    runfiles_dir,
-                    bundle_export=True,
-                )
+                # bundle. Keep their canonical URL for imported links; the
+                # preflight above reports duplicate IDs hidden by shared URLs.
+                add_external_needs_json(e, app.config, runfiles_dir)
             else:
                 raise ValueError(
                     f"Internal Error. Unknown external needs target: {e.target}"
@@ -296,7 +376,7 @@ def _add_needs_json_file(
         return
     config.needs_external_needs.append(
         {  # pyright: ignore[reportUnknownMemberType]
-            "base_url": needs_json_data.get("project_url", "") + "/main",
+            "base_url": _external_needs_base_url(ext_needs, needs_json_data),
             "json_path": json_file,
         }
     )
