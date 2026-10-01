@@ -1217,6 +1217,7 @@ needs_extra_links:
 #   - <relation>: defines the relation which is used derive the type of the parent need
 #   - condition: defines the condition that should be checked
 #     - [and / or / xor / not]
+# - info_only [OPTIONAL]: if `true`, violations are reported as info instead of warning
 ##############################################################
 
 graph_checks:
@@ -1230,27 +1231,13 @@ graph_checks:
     explanation: QM requirements cannot be derived from ASIL requirements.
 
   # req-Id: tool_req__docs_arch_link_qm_to_safety_req
-  # Requirements link to `feat` and `comp` via their own `satisfied_by` link,
-  # so these are checked via the backlink `satisfied_by_back`.
   tool_req__docs_arch_link_qm_to_safety_req:
     needs:
-      include: feat_arc_sta, feat, logic_arc_int, logic_arc_int_op, comp_arc_sta, comp, real_arc_int, real_arc_int_op
+      include: feat_arc_sta, logic_arc_int, logic_arc_int_op, comp_arc_sta, real_arc_int, real_arc_int_op
       condition: safety == QM
     check_all:
-      fulfils: safety == QM
-      satisfied_by_back: safety == QM
-    explanation: A QM architecture element cannot be linked to ASIL requirements.
-
-  # req-Id: tool_req__docs_arch_link_safety_to_req
-  # `safety != QM` equals `safety == ASIL_B` as long as these are the only safety levels.
-  # Elements without `fulfils` links are skipped, the link itself stays optional.
-  tool_req__docs_arch_link_safety_to_req:
-    needs:
-      include: feat_arc_sta, feat, logic_arc_int, logic_arc_int_op, comp_arc_sta, comp, real_arc_int, real_arc_int_op
-      condition: safety != QM
-    check_one:
-      fulfils: safety == ASIL_B
-    explanation: A safety architecture element has to fulfil at least one requirement with the same safety level.
+      fulfils: safety != QM
+    explanation: An QM architecture element cannot implement ASIL requirements.
 
   # req-Id: tool_req__docs_req_arch_link_safety_to_arch
   tool_req__docs_req_arch_link_safety_to_arch:

@@ -197,12 +197,13 @@ PARENTS = [
 ]
 
 
-def graph_check_config(*check_keys: str) -> dict[str, Any]:
+def graph_check_config(*check_keys: str, **options: Any) -> dict[str, Any]:
     """Graph check that requires linked `implements` needs to be safety relevant."""
     return {
         "needs": {"include": "req", "condition": "status == valid"},
         **{key: {"implements": "safety != QM"} for key in check_keys},
         "explanation": "Test explanation.",
+        **options,
     }
 
 
@@ -271,3 +272,39 @@ def test_check_one(parent_ids: list[str], expected_warnings: int) -> None:
             "No linked need in `implements` fulfills condition `safety != QM`."
             " Explanation: Test explanation."
         )
+
+
+@pytest.mark.parametrize(
+    ("check_key", "options", "expected_warnings", "expected_infos"),
+    [
+        ("check_all", {}, 2, 0),
+        ("check_all", {"info_only": False}, 2, 0),
+        ("check_all", {"info_only": True}, 0, 2),
+        ("check_one", {}, 1, 0),
+        ("check_one", {"info_only": True}, 0, 1),
+    ],
+    ids=["all_default", "all_false", "all_true", "one_default", "one_true"],
+)
+def test_info_only(
+    check_key: str,
+    options: dict[str, Any],
+    expected_warnings: int,
+    expected_infos: int,
+) -> None:
+    """Report violations as info instead of warning if info_only is true."""
+    log = run_graph_check(graph_check_config(check_key, **options), ["qm_1", "qm_2"])
+
+    assert (log.warnings, log.infos) == (expected_warnings, expected_infos)
+
+
+def test_info_only_keeps_message() -> None:
+    """Report the same message as info that would otherwise be a warning."""
+    log = run_graph_check(
+        graph_check_config("check_one", info_only=True), ["qm_1", "qm_2"]
+    )
+
+    log.flush_new_checks()
+    log.assert_info(
+        "No linked need in `implements` fulfills condition `safety != QM`."
+        " Explanation: Test explanation."
+    )

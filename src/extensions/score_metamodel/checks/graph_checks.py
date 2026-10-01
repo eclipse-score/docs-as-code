@@ -216,6 +216,7 @@ def check_parent_relation(
     explanation: str,
     all_needs: NeedsView,
     log: CheckLogger,
+    info_only: bool,
 ) -> None:
     """Check the needs linked via `parent_relation` and warn about violations."""
     if parent_relation not in need:
@@ -239,7 +240,7 @@ def check_parent_relation(
             f"condition `{condition}`. "
             f"Explanation: {explanation}"
         )
-        log.warning_for_need(need, msg)
+        log.warning_for_need(need, msg, is_new_check=info_only)
     else:
         for need_id in failed_needs:
             msg = (
@@ -247,7 +248,7 @@ def check_parent_relation(
                 f"condition `{condition}`."
                 f" Explanation: {explanation}"
             )
-            log.warning_for_need(need, msg)
+            log.warning_for_need(need, msg, is_new_check=info_only)
 
 
 @graph_check
@@ -264,6 +265,7 @@ def check_metamodel_graph(
         needs_selection_criteria: dict[str, str] = check_config.get("needs")
         check_type, check_to_perform = get_check(check_name, check_config)
         explanation = check_config.get("explanation", "")
+        info_only = check_config.get("info_only", False) is True
         assert explanation != "", (
             f"Explanation for graph check {check_name} is missing. "
             "Explanations are mandatory for graph checks."
@@ -289,6 +291,7 @@ def check_metamodel_graph(
                     explanation,
                     all_needs,
                     log,
+                    info_only,
                 )
 
 

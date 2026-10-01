@@ -113,6 +113,7 @@ These checks follow the same structure:
     condition: <your condition(s) that need to be fulfilled>
   check_all: # or check_one
     <link attribute to check>: <condition to be checked in each need inside the link attribute>
+  info_only: true # OPTIONAL, defaults to false
   explanation: <A short sentence that explains what is required to be adhered to. This will be
               < part of the error message if the check fails>
 ```
@@ -126,6 +127,9 @@ Each graph check defines exactly one of the following, which decides how many li
   Use a mandatory link check if the link itself is required.
 
 This applies to every link attribute inside `check_all` / `check_one`.
+
+With `info_only: true` violations are reported as info instead of warning, so they do not break the build.
+Use this to introduce a new check before it is enforced.
 
 A complete example might look like so:
 
