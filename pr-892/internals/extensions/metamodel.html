@@ -597,6 +597,7 @@ These checks follow the same structure:</p>
 <span class="w">    </span><span class="nt">condition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;your condition(s) that need to be fulfilled&gt;</span>
 <span class="w">  </span><span class="nt">check_all</span><span class="p">:</span><span class="w"> </span><span class="c1"># or check_one</span>
 <span class="w">    </span><span class="nt">&lt;link attribute to check&gt;</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;condition to be checked in each need inside the link attribute&gt;</span>
+<span class="w">  </span><span class="nt">info_only</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"> </span><span class="c1"># OPTIONAL, defaults to false</span>
 <span class="w">  </span><span class="nt">explanation</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;A short sentence that explains what is required to be adhered to. This will be</span>
 <span class="w">              </span><span class="l l-Scalar l-Scalar-Plain">&lt; part of the error message if the check fails&gt;</span>
 </pre></div>
@@ -611,6 +612,8 @@ These checks follow the same structure:</p>
 Use a mandatory link check if the link itself is required.</p></li>
 </ul>
 <p>This applies to every link attribute inside <code class="docutils literal notranslate"><span class="pre">check_all</span></code> / <code class="docutils literal notranslate"><span class="pre">check_one</span></code>.</p>
+<p>With <code class="docutils literal notranslate"><span class="pre">info_only:</span> <span class="pre">true</span></code> violations are reported as info instead of warning, so they do not break the build.
+Use this to introduce a new check before it is enforced.</p>
 <p>A complete example might look like so:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">graph_checks</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">tool_req__docs_req_arch_link_safety_to_arch</span><span class="p">:</span>

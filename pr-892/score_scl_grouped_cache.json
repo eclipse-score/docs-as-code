@@ -2682,7 +2682,7 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 1223,
+          "line": 1224,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_safety_link_check",
           "full_line": "# req-Id: tool_req__docs_common_attr_safety_link_check",
@@ -2713,28 +2713,10 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 1232,
+          "line": 1233,
           "tag": "# req-Id:",
           "need": "tool_req__docs_arch_link_qm_to_safety_req",
           "full_line": "# req-Id: tool_req__docs_arch_link_qm_to_safety_req",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        }
-      ],
-      "TestLinks": []
-    }
-  },
-  {
-    "need": "tool_req__docs_arch_link_safety_to_req",
-    "links": {
-      "CodeLinks": [
-        {
-          "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 1244,
-          "tag": "# req-Id:",
-          "need": "tool_req__docs_arch_link_safety_to_req",
-          "full_line": "# req-Id: tool_req__docs_arch_link_safety_to_req",
           "repo_name": "local_repo",
           "hash": "",
           "url": ""
@@ -2749,7 +2731,7 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 1255,
+          "line": 1242,
           "tag": "# req-Id:",
           "need": "tool_req__docs_req_arch_link_safety_to_arch",
           "full_line": "# req-Id: tool_req__docs_req_arch_link_safety_to_arch",
@@ -2780,7 +2762,7 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 1270,
+          "line": 1257,
           "tag": "# req-Id:",
           "need": "tool_req__docs_arch_link_security",
           "full_line": "# req-Id: tool_req__docs_arch_link_security",
@@ -3965,26 +3947,6 @@
     }
   },
   {
-    "need": "tool_req__docs_arch_link_qm_to_safety_req[version==2]",
-    "links": {
-      "CodeLinks": [],
-      "TestLinks": [
-        {
-          "name": "test_rules_file_based__test_rst_files[graph/test_arch_link_qm_to_safety_req.rst]",
-          "file": "src/extensions/score_metamodel/tests/rst/graph/test_arch_link_qm_to_safety_req.rst",
-          "line": 15,
-          "need": "tool_req__docs_arch_link_qm_to_safety_req[version==2]",
-          "verify_type": "partially",
-          "result": "passed",
-          "result_text": "",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        }
-      ]
-    }
-  },
-  {
     "need": "potential_tool_malfunction__docs_as_code__m2",
     "links": {
       "CodeLinks": [],
@@ -4035,26 +3997,6 @@
           "line": 15,
           "need": "tool_req__docs_arch_link_security[version==1]",
           "verify_type": "fully",
-          "result": "passed",
-          "result_text": "",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        }
-      ]
-    }
-  },
-  {
-    "need": "tool_req__docs_arch_link_safety_to_req[version==2]",
-    "links": {
-      "CodeLinks": [],
-      "TestLinks": [
-        {
-          "name": "test_rules_file_based__test_rst_files[graph/test_arch_link_safety_to_req.rst]",
-          "file": "src/extensions/score_metamodel/tests/rst/graph/test_arch_link_safety_to_req.rst",
-          "line": 15,
-          "need": "tool_req__docs_arch_link_safety_to_req[version==2]",
-          "verify_type": "partially",
           "result": "passed",
           "result_text": "",
           "repo_name": "local_repo",
