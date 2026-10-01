@@ -458,7 +458,8 @@ def _declare_bundle_local_needs(
         visibility = None,
         config = None,
         deps = [],
-        external_needs = []):
+        external_needs = [],
+        resolved_external_needs_labels = []):
     """Create a standalone Needs export for a bundle's direct sources.
 
     Standalone ``docs_bundle`` exports use Sphinx's configuration-free mode
@@ -469,7 +470,8 @@ def _declare_bundle_local_needs(
     ``external_needs`` supplies other bundles' local inventories as validation
     context. Sphinx loads them before resolving RST links, but this target's
     JSON output remains an inventory of the ``source_bundle``'s directly owned
-    Needs.
+    Needs. ``resolved_external_needs_labels`` lets ``docs()`` pass labels it
+    has already resolved, including the legacy ``needs_json`` forms.
     """
     if not source_dir_globbed and not srcs:
         return
@@ -491,6 +493,12 @@ def _declare_bundle_local_needs(
         if needs_label in external_needs_labels:
             fail(
                 "external_needs contains the same bundle more than once: %r" % external_bundle,
+            )
+        external_needs_labels.append(needs_label)
+    for needs_label in resolved_external_needs_labels:
+        if needs_label in external_needs_labels:
+            fail(
+                "external_needs contains the same bundle more than once: %r" % needs_label,
             )
         external_needs_labels.append(needs_label)
 
@@ -799,6 +807,11 @@ def docs(
         visibility = ["//visibility:public"],
         config = sphinx_config,
         deps = deps,
+        # The root's owner-only export runs Sphinx on root sources separately
+        # from the full project build. Give it the same external Needs context
+        # so links in those sources can be checked; the Needs builder still
+        # exports only Needs owned by the root source bundle.
+        resolved_external_needs_labels = external_needs_labels,
     )
     # The public project target is named ``docs``, so let external_needs use
     # the same sibling naming convention as it does for public docs_bundle
