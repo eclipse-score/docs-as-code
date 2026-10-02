@@ -270,6 +270,11 @@ def test_dataoftestcase_is_valid_fails_on_none_field():
     assert case.is_valid() is False
 
 
+@add_test_properties(
+    partially_verifies=["tool_req__docs_test_link_testcase"],
+    test_type="requirements-based",
+    derivation_technique="boundary-values",
+)
 def test_dataoftestcase_get_test_links_returns_empty_when_invalid():
     """Cover line 245: get_test_links returns [] when is_valid is False"""
     case = DataOfTestCase(

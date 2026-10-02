@@ -367,9 +367,9 @@ def find_need(all_needs: NeedsMutable, id: str) -> NeedItem | None:
     # req-Id: tool_req__docs_common_attr_suspicious
     if need is not None and test_version is not None:
         need_version = need.get("version")
-        if need_version is not None and int(need_version) > test_version:
+        if need_version is not None and int(need_version) != test_version:
             LOGGER.warning(
-                f"Test links to outdated version: '{id}' references "
+                f"Test links to mismatched version: '{id}' references "
                 f"version {test_version}, but need '{base_id}' is version {need_version}. "
                 f"Update test to reference version {need_version}.",
                 type="score_source_code_linker",

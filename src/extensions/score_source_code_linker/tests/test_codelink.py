@@ -36,6 +36,7 @@ from sphinx_needs.need_item import (
     NeedsContent,
 )
 
+from score_pytest.attribute_plugin import add_test_properties
 from src.extensions.score_source_code_linker import (
     build_and_save_combined_file,
     find_need,
@@ -85,6 +86,7 @@ def test_need(**kwargs: Any) -> NeedItem:
     kwargs.setdefault("signature", None)
     kwargs.setdefault("has_dead_links", False)
     kwargs.setdefault("has_forbidden_dead_links", False)
+    extras = kwargs.pop("extras", {})
 
     # Create source
     source = NeedItemSourceUnknown(
@@ -104,7 +106,7 @@ def test_need(**kwargs: Any) -> NeedItem:
         source=source,
         content=content,
         core=NeedsInfoType(**kwargs),
-        extras={},
+        extras=extras,
         links={},
     )
 
@@ -295,6 +297,32 @@ def test_find_need_direct_match():
     result = find_need(all_needs, "REQ_001")
     assert result is not None
     assert result["id"] == "REQ_001"
+
+
+@add_test_properties(
+    fully_verifies=["tool_req__docs_common_attr_suspicious"],
+    test_type="requirements-based",
+    derivation_technique="requirements-analysis",
+)
+def test_find_need_warns_for_mismatched_versioned_links(
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Warn for any version mismatch, but not for current or unversioned links."""
+    need = make_needs({"REQ_001": {"id": "REQ_001", "extras": {"version": "3"}}})
+
+    # Older reference should warn.
+    assert find_need(need, "REQ_001[version==2]") is not None
+    assert "references version 2, but need 'REQ_001' is version 3" in caplog.text
+
+    # Newer reference should warn too.
+    assert find_need(need, "REQ_001[version==4]") is not None
+    assert "references version 4, but need 'REQ_001' is version 3" in caplog.text
+
+    # Current and unversioned links should not warn.
+    caplog.clear()
+    assert find_need(need, "REQ_001[version==3]") is not None
+    assert find_need(need, "REQ_001") is not None
+    assert "mismatched version" not in caplog.text
 
 
 def test_find_need_not_found():

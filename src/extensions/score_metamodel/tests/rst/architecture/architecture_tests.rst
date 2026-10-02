@@ -16,7 +16,7 @@
 .. test_metadata:: Test Architecture Needs
    :id: test_metadata__architecture
    :fully_verifies_list: potential_tool_malfunction__docs_as_code__m4
-   :partially_verifies_list: tool_req__docs_arch_types
+   :partially_verifies_list: tool_req__docs_arch_types,tool_req__arch_linkage_safety
    :test_type: requirements_based
    :derivation_technique: requirements_based
 
@@ -102,6 +102,7 @@ Component 1
    :security: YES
    :safety: ASIL_B
    :status: invalid
+   :belongs_to: feat__test_feature_1
    :implements: logic_arc_int__test_feature_1__test_interface_1
    :uses: logic_arc_int__test_feature_1__test_interface_2
    :consists_of: comp__test_sub_component_1
@@ -121,6 +122,7 @@ Component 1
    :security: YES
    :safety: ASIL_B
    :status: invalid
+   :belongs_to: feat__test_feature_1
    :implements: logic_arc_int__test_feature_1__test_interface_1
 
 .. comp_arc_sta:: Test Component Architecture Component 1
@@ -140,7 +142,15 @@ Component 1
    :security: YES
    :safety: QM
    :status: invalid
+   :belongs_to: feat__test_feature_1
    :implements: logic_arc_int__test_feature_1__test_interface_2
+
+.. comp:: Component missing owning feature
+   :id: comp__test_component_missing_feature
+   :security: YES
+   :safety: QM
+   :status: invalid
+   :expect: is missing required link: `belongs_to`.
 
 .. mod:: Feature Test Module 1
    :id: mod__test_feature_1_module_1

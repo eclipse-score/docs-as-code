@@ -564,6 +564,7 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
     mandatory_links:
+      # req-Id: tool_req__arch_linkage_safety
       included_by: logic_arc_int
     tags:
       - architecture_element
@@ -629,6 +630,7 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_status
       status: ^(valid|invalid)$
     mandatory_links:
+      # req-Id: tool_req__arch_linkage_safety
       belongs_to: feat # preparation for linking change according to DR-005
     optional_links:
       # req-Id: tool_req__arch_linkage_safety

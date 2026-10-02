@@ -15,7 +15,7 @@
 
 .. test_metadata::
    :id: test_metadata__verification_report_need
-   :partially_verifies_list: tool_req__docs_verification_report_need
+   :fully_verifies_list: tool_req__docs_verification_report_need
    :test_type: requirements_based
    :derivation_technique: requirements_based
 
@@ -55,6 +55,18 @@
    Requirement text for verification report tests.
 
 
+.. Supporting artifacts linked by the verification report.
+   While testcase items are usually created externally,
+   we can create them inline as well for testing purposes here.
+
+.. testcase:: Verification Evidence
+   :id: testcase__verification_evidence
+
+.. workproduct:: Verification Record
+   :id: wp__verification_record
+   :status: valid
+
+
 .. Valid machine-readable verification report need
 
 .. mod_ver_report:: Verification Report Valid
@@ -68,7 +80,10 @@
    :branch_coverage_percent: 85
    :applies_to_module_version: 1.0.0
    :belongs_to: mod__verification_module
+   :contains: testcase__verification_evidence
    :covers: comp_req__verification__sample
+   :evidence: wp__verification_record
+   :realizes: wp__verification_record
    :expect_not: does not follow pattern
 
 
@@ -83,3 +98,33 @@
    :line_coverage_percent: 150
    :belongs_to: mod__verification_module
    :expect: mod_vrep__verification__bad_coverage.line_coverage_percent (150): does not follow pattern
+
+
+.. Invalid verification report module link target
+
+.. mod_ver_report:: Verification Report Invalid Module Link
+   :id: mod_vrep__verification__bad_module
+   :safety: ASIL_B
+   :security: YES
+   :status: invalid
+   :verification_method: inspection
+   :belongs_to: feat__verification_feature
+   :expect: belongs_to
+
+
+.. mod_ver_report:: Verification Report Missing Method
+   :id: mod_vrep__verification__missing_method
+   :safety: ASIL_B
+   :security: YES
+   :status: valid
+   :belongs_to: mod__verification_module
+   :expect: mod_vrep__verification__missing_method: is missing required attribute: `verification_method`.
+
+
+.. mod_ver_report:: Verification Report Missing Module Link
+   :id: mod_vrep__verification__missing_module
+   :safety: ASIL_B
+   :security: YES
+   :status: valid
+   :verification_method: inspection
+   :expect: mod_vrep__verification__missing_module: is missing required link: `belongs_to`.
