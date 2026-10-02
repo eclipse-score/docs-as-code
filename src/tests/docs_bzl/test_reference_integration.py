@@ -15,13 +15,16 @@
 
 import pytest
 
-from src.tests.docs_bzl.helpers import load_needs, run_scenario
+from src.tests.docs_bzl.helpers import load_needs, run_bazel, run_scenario
 
 
 @pytest.mark.bazel_slow
 def test_nested_component_package_is_mounted_by_its_module():
     """Mounted component pages retain navigation and filter source controls."""
     result = run_scenario("run", "reference_integration/modern_module", ":docs")
+    # ``needs_json`` remains accepted in ``external_needs`` without the INFO
+    # message reserved for Needs inventories passed through ``data``.
+    assert "Passing a Needs inventory through" not in (result.stdout + result.stderr)
 
     # The parent module owns the surrounding ``components`` tree, while each
     # child bundle supplies its own page below the corresponding mount point.
@@ -140,3 +143,18 @@ def test_bundle_metadata_is_added_to_the_explicit_primary_need():
         "docs/components/component:component_sources"
     )
     assert legacy_need["bazel_type"] == "filegroup"
+
+
+@pytest.mark.bazel_cached
+def test_legacy_needs_in_data_prints_deprecation_info():
+    """Needs inventories in docs(data = [...]) announce the migration path."""
+    result = run_bazel(
+        [
+            "query",
+            "//src/tests/docs_bzl/scenarios/reference_integration/legacy_module:docs",
+        ]
+    )
+
+    output = result.stdout + result.stderr
+    assert "INFO: ⚠️ DEPRECATED: Passing a Needs inventory through" in output
+    assert "Move it to external_needs = [...] instead." in output

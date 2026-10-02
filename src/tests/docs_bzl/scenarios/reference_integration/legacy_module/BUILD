@@ -15,8 +15,8 @@ load("//:docs.bzl", "docs")
 
 # This fixture represents an S-CORE software module using the legacy API:
 #
-#   score_platform:needs_json
-#       -> legacy_module: docs(data = [score_platform:needs_json])
+#   score_platform:needs_json_file
+#       -> legacy_module: docs(data = [score_platform:needs_json_file])
 #       -> legacy_module:docs_bundle
 #       -> reference integration mounts that bundle
 #
@@ -32,7 +32,7 @@ docs(
     source_dir = "docs",
     test_sources = ["src/tests/docs_bzl/scenarios/reference_integration"],
     data = [
-        "//src/tests/docs_bzl/scenarios/reference_integration/score_platform:needs_json",
+        "//src/tests/docs_bzl/scenarios/reference_integration/score_platform:needs_json_file",
         "@score_process_description//:needs_json",
     ],
     bundles = [{
