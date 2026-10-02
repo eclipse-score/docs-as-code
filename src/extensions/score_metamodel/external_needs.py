@@ -164,7 +164,7 @@ def _external_needs_base_url(
         # A `needs_json` producer always exports its project URL.
         project_url = needs_json_data["project_url"]
     elif source.target == "needs_json_file":
-        # Older standalone files may not have a project URL.
+        # A standalone inventory file may not have a project URL.
         project_url = needs_json_data.get("project_url", "")
     elif source.target.endswith(".__internal__.needs_local"):
         # Standalone bundles may not have a published project URL. Use the

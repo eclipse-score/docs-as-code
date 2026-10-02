@@ -88,8 +88,8 @@ def external_needs_source_path(
     """Find the inventory JSON emitted by the selected Bazel target.
 
     Public `needs_json` and private bundle-local exports are directory outputs
-    containing `_build/needs/needs.json`. The legacy `needs_json_file` target
-    already points at the file itself.
+    containing `_build/needs/needs.json`. The `needs_json_file` target points
+    directly at the inventory file.
     """
     if runfiles_dir is None:
         raise ValueError("An external needs source has no runfiles root.")

@@ -44,8 +44,9 @@ A minimal example (add or extend the existing `bazel_deps` stanza):
 The documentation build is exposed via a Bazel macro that accepts an
 ``external_needs`` parameter. Prefer another module's public ``:docs`` or
 ``:docs_bundle`` target. ``docs()`` resolves that label to the target's locally
-owned Needs inventory. Existing ``:needs_json`` and ``:needs_json_file`` labels
-remain accepted for compatibility. Use ``external_needs`` instead of
+owned Needs inventory. Existing ``:needs_json`` labels remain accepted for
+compatibility; use ``:needs_json_file`` to name an inventory file directly.
+Use ``external_needs`` instead of
 ``data`` for Needs inventories; ``data`` is for non-needs runfiles such as
 custom tool outputs.
 

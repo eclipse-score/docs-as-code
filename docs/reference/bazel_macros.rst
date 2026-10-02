@@ -106,9 +106,9 @@ Minimal example (root ``BUILD``)
 
      To reference Needs owned by another documentation project, use
      ``external_needs`` with that project's public ``:docs`` target or a
-     public ``:docs_bundle`` target. Existing ``:needs_json`` and
-     ``:needs_json_file`` inventory labels remain accepted by
-     ``external_needs`` for compatibility.
+     public ``:docs_bundle`` target. Existing ``:needs_json`` labels remain
+     accepted for compatibility; use ``:needs_json_file`` to name an inventory
+     file directly.
 
 - ``bundles`` (list of placement dicts)
   Documentation bundles to overlay into this project's documentation tree,
@@ -142,7 +142,8 @@ Minimal example (root ``BUILD``)
   Needs inventory, so imported descendants are not treated as part of the
   target's own inventory. The referenced Needs can then be used by this
   project's documentation and its ``needs_json`` output. For compatibility,
-  existing ``:needs_json`` and ``:needs_json_file`` labels are still accepted.
+  existing ``:needs_json`` labels are still accepted. ``:needs_json_file`` is
+  also supported as a direct inventory-file target.
 
 - ``metamodel`` (bazel label, optional)
   Path to a custom ``metamodel.yaml`` file.

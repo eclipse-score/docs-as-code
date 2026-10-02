@@ -223,12 +223,13 @@ def _bundle_needs_local_label(bundle):
         )
     return package + ":" + _bundle_internal_target(target, "needs_local")
 
-def _resolve_legacy_external_needs_labels(external_needs):
-    """Resolve docs() inputs while preserving its historical inventory labels.
+def _resolve_external_needs_labels(external_needs):
+    """Resolve public bundle labels and preserve supported inventory labels.
 
     Public ``docs()`` and ``docs_bundle`` targets are translated to their
-    owner-only Needs exports. The older ``needs_json`` and ``needs_json_file``
-    targets already identify inventories, so keep those labels unchanged.
+    owner-only Needs exports. ``needs_json_file`` directly identifies an
+    inventory file, so keep that supported target unchanged. Also keep the
+    existing ``needs_json`` form working for callers that already use it.
     """
     inventory_labels = []
     for external_need in external_needs:
@@ -641,8 +642,9 @@ def docs(
       deps: Additional dependencies for the documentation build.
       external_needs: Labels of public ``docs()`` or ``docs_bundle`` targets
                       whose Needs can be referenced by this project. For
-                      compatibility, ``needs_json`` and ``needs_json_file``
-                      inventory labels are also accepted.
+                      compatibility, existing ``needs_json`` labels are also
+                      accepted. A ``needs_json_file`` label can be used to
+                      point directly at an inventory file.
       code_targets: Implementation targets or filegroups to scan for source code
                     links. Implementation targets are scanned recursively; filegroups
                     expand to their files.
@@ -671,10 +673,10 @@ def docs(
     """
     # HINT: keep documentation sync docs/reference/bazel_macros.rst
 
-    # Resolve the public bundle names once, then pass the generated inventory
-    # labels to both the interactive build and the Needs export action. The two
-    # legacy inventory targets retain their established paths and behavior.
-    external_needs_labels = _resolve_legacy_external_needs_labels(external_needs)
+    # Resolve public bundle names once, then pass the generated inventory labels
+    # to both the interactive build and the Needs export action. Preserve the
+    # direct needs_json_file target and the existing needs_json input form.
+    external_needs_labels = _resolve_external_needs_labels(external_needs)
 
     config_file_path = join_path(source_dir, "conf.py")
     config_is_missing = len(native.glob([config_file_path], allow_empty = True)) == 0
