@@ -2880,7 +2880,7 @@
     "TestType": "requirements_based",
     "DerivationTechnique": "requirements_based",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_common_attr_status[version==1], tool_req__docs_req_types[version==1]",
+    "PartiallyVerifies": "tool_req__docs_common_attr_status[version==2], tool_req__docs_req_types[version==1]",
     "FullyVerifies": null
   },
   {
@@ -2964,7 +2964,7 @@
     "TestType": "requirements_based",
     "DerivationTechnique": "requirements_based",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_req_types[version==1], tool_req__docs_common_attr_status[version==1]",
+    "PartiallyVerifies": "tool_req__docs_req_types[version==1], tool_req__docs_common_attr_status[version==2]",
     "FullyVerifies": null
   },
   {
