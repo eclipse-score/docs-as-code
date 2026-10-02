@@ -804,30 +804,31 @@ Testing
    :id: tool_req__docs_test_metadata_mandatory_1
    :tags: Testing
    :version: 1
-   :implemented: PARTIAL
+   :implemented: YES
    :parent_covered: YES: Together with tool_req__docs_test_metadata_mandatory_2, tool_req__docs_test_metadata_link_levels
    :satisfies: gd_req__verification_checks[version==1]
 
    Docs-as-Code shall ensure that each test case has TestType and DerivationTechnique set.
 
+   .. note:: `test_type` and `derivation_technique` are mandatory options of the `testcase` need type in the metamodel.
+
 .. tool_req:: Extract Metadata from Tests
    :id: tool_req__docs_test_metadata_mandatory_2
    :tags: Testing
    :version: 1
-   :implemented: PARTIAL
+   :implemented: YES
    :parent_covered: YES: Together with tool_req__docs_test_metadata_mandatory_1, tool_req__docs_test_metadata_link_levels
    :satisfies: gd_req__verification_checks[version==1]
-   :status: invalid
 
    Docs-as-Code shall ensure that each test case has a non empty description.
 
-   .. note:: this will probably be implemented outside of docs-as-code.
+   .. note:: `content` is a mandatory option of the `testcase` need type in the metamodel. For Testcases parsed from test.xml (external needs) the non-empty description is enforced by the test tooling itself, outside of docs-as-code.
 
 .. tool_req:: Extract Metadata from Tests
    :id: tool_req__docs_test_metadata_link_levels
    :tags: Testing
    :version: 1
-   :implemented: NO
+   :implemented: YES
    :parent_covered: YES: Together with tool_req__docs_test_metadata_mandatory_1, tool_req__docs_test_metadata_mandatory_2
    :satisfies: gd_req__verification_checks[version==1]
 

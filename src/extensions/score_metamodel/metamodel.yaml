@@ -1001,12 +1001,18 @@ needs_types:
 
   testcase:
     title: Testcase Needs parsed from test.xml files
+    mandatory_options:
+      # req-Id: tool_req__docs_test_metadata_mandatory_1
+      test_type: ^.+$
+      derivation_technique: ^.+$
+      # req-Id: tool_req__docs_test_metadata_mandatory_2
+      content: ^[\s\S]+$
     optional_options:
       name: ^.*$
       file: ^.*$
       line: ^.*$
-      test_type: ^.*$
-      derivation_technique: ^.*$
+      # req-Id: tool_req__docs_test_metadata_link_levels
+      test_level: ^(feature_integration_test|component_integration_test|unit_test)$
       result: ^.*$
       result_text: ^.*$
     optional_links:
