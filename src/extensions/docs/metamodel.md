@@ -141,12 +141,16 @@ graph_checks:
       condition:
         and:
           - safety != QM
-          - status == valid
+          - or:
+              - status == valid
+              - status == valid_inspected
     check_all:
       implements:
         and:
           - safety != QM
-          - status == valid
+          - or:
+              - status == valid
+              - status == valid_inspected
     explanation: A safety architecture element can only link other safety architecture elements.
 ```
 

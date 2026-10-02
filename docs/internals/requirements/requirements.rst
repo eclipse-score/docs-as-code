@@ -235,17 +235,18 @@ This section provides an overview of current process requirements and their clar
   :tags: Common Attributes
   :implemented: YES
   :parent_covered: NO: gd_req__saf_attr_status has additional constraints
-  :version: 1
+  :version: 2
   :satisfies:
-    gd_req__req_attr_status[version==1],
-    gd_req__arch_attr_status[version==1],
-    gd_req__saf_attr_status[version==1],
-    gd_req__req_check_mandatory[version==1],
+    gd_req__req_attr_status,
+    gd_req__arch_attr_status,
+    gd_req__saf_attr_status,
+    gd_req__req_check_mandatory,
 
   Docs-as-Code shall enforce that the ``status`` attribute has one of the following values:
 
   * valid
   * invalid
+  * valid_inspected (requirement types and architecture elements only)
 
   This rule applies to:
 

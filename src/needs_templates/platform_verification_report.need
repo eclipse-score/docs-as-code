@@ -110,11 +110,12 @@ Stakeholder Requirements
    .. grid-item::
 
       .. needpie:: Stakeholder Requirements Status
-         :labels: valid, invalid
-         :colors: #37a12d, #ca2828
+         :labels: valid, valid_inspected, invalid
+         :colors: #f5c518, #37a12d, #ca2828
          :legend:
 
          type == "stkh_req" and status == "valid" and {{ stkh_req_filter }}
+         type == "stkh_req" and status == "valid_inspected" and {{ stkh_req_filter }}
          type == "stkh_req" and status == "invalid" and {{ stkh_req_filter }}
 
    .. grid-item::
@@ -190,11 +191,12 @@ Requirements Statistics
    .. grid-item::
 
       .. needpie:: {{ feature_title }} Requirements Status
-         :labels: valid, invalid
-         :colors: #37a12d, #ca2828
+         :labels: valid, valid_inspected, invalid
+         :colors: #f5c518, #37a12d, #ca2828
          :legend:
 
          type == "feat_req" and "{{ feature_id }}" in satisfied_by and status == "valid" and {{ feature_req_filter }}
+         type == "feat_req" and "{{ feature_id }}" in satisfied_by and status == "valid_inspected" and {{ feature_req_filter }}
          type == "feat_req" and "{{ feature_id }}" in satisfied_by and status == "invalid" and {{ feature_req_filter }}
 
    .. grid-item::
@@ -227,22 +229,24 @@ Architecture Statistics
    .. grid-item::
 
       .. needpie:: {{ feature_title }} Architecture Elements Status
-         :labels: valid, invalid
-         :colors: #37a12d, #ca2828
+         :labels: valid, valid_inspected, invalid
+         :colors: #f5c518, #37a12d, #ca2828
          :legend:
 
          type in ["feat_arc_sta", "feat_arc_dyn"] and "{{ feature_id }}" in belongs_to and status == "valid"
+         type in ["feat_arc_sta", "feat_arc_dyn"] and "{{ feature_id }}" in belongs_to and status == "valid_inspected"
          type in ["feat_arc_sta", "feat_arc_dyn"] and "{{ feature_id }}" in belongs_to and status == "invalid"
 
    .. grid-item::
 
-      .. needpie:: {{ feature_title }} Architecture Elements Inspection Status
-         :labels: inspected, not inspected
-         :colors: #37a12d, #ca2828
+      .. needpie:: {{ feature_title }} Architecture Elements Test Coverage
+         :labels: fully covered, partially covered, not covered
+         :colors: #37a12d, #f0a500, #ca2828
          :legend:
 
-         type in ["feat_arc_sta", "feat_arc_dyn"] and "{{ feature_id }}" in belongs_to and "inspected" in tags
-         type in ["feat_arc_sta", "feat_arc_dyn"] and "{{ feature_id }}" in belongs_to and "inspected" not in tags
+         type in ["feat_arc_sta", "feat_arc_dyn"] and "{{ feature_id }}" in belongs_to and fully_verifies_back
+         type in ["feat_arc_sta", "feat_arc_dyn"] and "{{ feature_id }}" in belongs_to and partially_verifies_back and not fully_verifies_back
+         type in ["feat_arc_sta", "feat_arc_dyn"] and "{{ feature_id }}" in belongs_to and not fully_verifies_back and not partially_verifies_back
 
 .. dropdown:: Show architectural elements table
    :animate: fade-in

@@ -301,15 +301,18 @@ def check_valid_only_links_to_valid(
     all_needs: NeedsView,
     log: CheckLogger,
 ):
+    # valid_inspected implies valid (element passed formal inspection), so both
+    # statuses are treated as valid link targets here.
+    valid_statuses = ("valid", "valid_inspected")
     # Pre-Gather all *valid* need id's (external, & local)
     valid_needs_id_all = set(
-        x.id for x in all_needs.values() if x.get("status") == "valid"
+        x.id for x in all_needs.values() if x.get("status") in valid_statuses
     )
     # Pre-Gather all LOCAL *valid* id's to iterate over and check
     valid_needs_local = [
         x
         for x in all_needs.filter_is_external(False).values()
-        if x.get("status") == "valid"
+        if x.get("status") in valid_statuses
     ]
 
     for need in valid_needs_local:
