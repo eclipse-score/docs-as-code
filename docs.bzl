@@ -478,11 +478,12 @@ def _declare_bundle_local_needs(
     sphinx_build_deps = _sphinx_runtime_deps(deps)
 
     needs_local = _bundle_internal_target(name, "needs_local")
+    needs_local_builder = _bundle_internal_target(name, "needs_local_builder")
     # The source provider and local manifest describe the same owner-only
     # document set. Pass both to Sphinx so mounted descendants are neither
     # loaded as local sources nor assigned to this bundle's Needs export.
     _needs_sphinx_docs(
-        name = needs_local,
+        name = needs_local_builder,
         bundle = source_bundle,
         config = config,
         sphinx_build_deps = sphinx_build_deps,
@@ -496,7 +497,24 @@ def _declare_bundle_local_needs(
         score_sourcelinks_json = sourcelinks_json,
         score_source_code_linker_plain_links = "1",
         mounts_manifest = mounts_manifest,
+        # Sphinx writes a directory containing several builder outputs. Keep
+        # that implementation output private; external consumers need only
+        # the extracted needs.json file below.
+        visibility = ["//visibility:private"],
+    )
+
+    # A Bazel directory artifact cannot also expose one of its children as a
+    # separate output of the same action. Keep Sphinx's directory output as an
+    # intermediate and publish just needs.json through the stable
+    # needs_local target. External-Needs loading then depends on a file artifact
+    # instead of reconstructing Sphinx's private output layout.
+    native.genrule(
+        name = needs_local,
+        srcs = [":" + needs_local_builder],
+        outs = [needs_local + "/needs.json"],
+        cmd = "cp $(execpath :" + needs_local_builder + ")/needs.json $@",
         visibility = visibility,
+        tags = ["manual"],
     )
 
 def docs_bundle(
