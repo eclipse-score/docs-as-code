@@ -102,13 +102,16 @@ Minimal example (root ``BUILD``)
   mounts this project's public bundle. Put files belonging to a mounted child
   in that child's ``docs_bundle(data = [...])`` instead.
 
+  Passing a Needs inventory target through ``data`` is rejected. Put Needs
+  inventory targets in ``external_needs`` instead.
+
   .. note::
 
      To reference Needs owned by another documentation project, use
      ``external_needs`` with that project's public ``:docs`` target or a
-     public ``:docs_bundle`` target. Existing ``:needs_json`` labels remain
-     accepted for compatibility; use ``:needs_json_file`` to name an inventory
-     file directly.
+     public ``:docs_bundle`` target. The ``:needs_json`` label remains accepted
+     as a deprecated form without a warning for now. ``:needs_json_file`` is
+     also supported for directly naming an inventory file.
 
 - ``bundles`` (list of placement dicts)
   Documentation bundles to overlay into this project's documentation tree,
@@ -141,9 +144,9 @@ Minimal example (root ``BUILD``)
   repositories. ``docs()`` maps each label to that target's locally owned
   Needs inventory, so imported descendants are not treated as part of the
   target's own inventory. The referenced Needs can then be used by this
-  project's documentation and its ``needs_json`` output. For compatibility,
-  existing ``:needs_json`` labels are still accepted. ``:needs_json_file`` is
-  also supported as a direct inventory-file target.
+  project's documentation and its ``needs_json`` output. The ``:needs_json``
+  label remains accepted as a deprecated form without a warning for now;
+  ``:needs_json_file`` remains supported as a direct inventory-file target.
 
 - ``metamodel`` (bazel label, optional)
   Path to a custom ``metamodel.yaml`` file.

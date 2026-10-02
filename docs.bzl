@@ -136,8 +136,7 @@ def _needs_sphinx_docs(
     """Declare one Bazel action that runs Sphinx's Needs builder.
 
     String settings travel as Sphinx ``--define`` options. Bazel labels stay
-    typed until the private rule can declare them as sandbox inputs, while the
-    serialized external-needs label list is passed to the Python extension.
+    typed until the private rule can declare them as sandbox inputs.
     """
     # These three files use typed rule attributes below so the private rule can
     # pass their paths to the action. Add them to ``tools`` as well: that puts
@@ -228,8 +227,8 @@ def _resolve_external_needs_labels(external_needs):
 
     Public ``docs()`` and ``docs_bundle`` targets are translated to their
     owner-only Needs exports. ``needs_json_file`` directly identifies an
-    inventory file, so keep that supported target unchanged. Also keep the
-    existing ``needs_json`` form working for callers that already use it.
+    inventory file, so keep that supported target unchanged. Also keep
+    ``needs_json`` working as a deprecated form without a warning for now.
     """
     inventory_labels = []
     for external_need in external_needs:
@@ -265,15 +264,22 @@ def _root_docs_config_label(root_docs):
 def _is_needs_json_target(label):
     """Return whether ``label`` names the directory-valued ``needs_json`` target.
 
-    ``docs(data = [...])`` historically accepts ``:needs_json`` labels as
-    external Needs inventories. The target is a Bazel TreeArtifact containing
-    ``needs.json`` and other generated outputs, so it is a build/runfile input
-    rather than a file that belongs in a portable documentation-bundle mount.
-    Keep this compatibility distinction at the public macro boundary instead
-    of making the generic bundle and mount implementations understand a
-    special-purpose generated directory.
+    The target is a Bazel TreeArtifact containing ``needs.json`` and other
+    generated outputs, so it is a build/runfile input rather than a file that
+    belongs in a portable documentation-bundle mount. Keep this distinction at
+    the public macro boundary instead of making generic bundle and mount logic
+    handle the special-purpose generated directory.
     """
     return str(label).rsplit(":", 1)[-1] == "needs_json"
+
+def _is_needs_inventory_target(label):
+    """Return whether ``label`` directly names a Needs inventory target.
+
+    These inventory targets are still accepted through ``external_needs``.
+    Identifying them separately lets ``docs()`` reject the old ``data`` route
+    without affecting ordinary files and runtime dependencies.
+    """
+    return str(label).rsplit(":", 1)[-1] in ("needs_json", "needs_json_file")
 
 def _declare_docs_bundle(
     name,
@@ -359,11 +365,10 @@ def _declare_docs_bundle(
         )
 
     # ``needs_json`` is an inventory consumed by score_metamodel, not content
-    # owned by this bundle. It must remain in the caller's build/runfile inputs
-    # for the legacy ``docs(data = [...])`` API, but propagating the TreeArtifact
-    # through DocsBundleInfo would make a later bundle mount treat its directory
-    # path as a regular data file. Filter only this special target here; all
-    # ordinary supporting files retain the root-bundle behavior.
+    # owned by this bundle. Do not propagate its TreeArtifact through
+    # DocsBundleInfo: a later bundle mount would treat that directory as a
+    # regular data file. Filter only this special target here; ordinary
+    # supporting files retain the usual behavior.
     bundle_data = [
         data_file
         for data_file in data
@@ -638,13 +643,14 @@ def docs(
         child content belongs in the child ``docs_bundle(data = [...])``.
         For generated documentation in a mounted child, use that bundle's
         explicit ``srcs`` instead; ``data`` remains for supporting/runtime
-        files.
+        files. Passing a Needs inventory target through ``data`` is rejected;
+        put it in ``external_needs`` instead.
       deps: Additional dependencies for the documentation build.
       external_needs: Labels of public ``docs()`` or ``docs_bundle`` targets
-                      whose Needs can be referenced by this project. For
-                      compatibility, existing ``needs_json`` labels are also
-                      accepted. A ``needs_json_file`` label can be used to
-                      point directly at an inventory file.
+                      whose Needs can be referenced by this project. The
+                      ``needs_json`` label remains accepted as a deprecated
+                      form, without a warning for now. ``needs_json_file`` is
+                      also supported for directly naming an inventory file.
       code_targets: Implementation targets or filegroups to scan for source code
                     links. Implementation targets are scanned recursively; filegroups
                     expand to their files.
@@ -673,9 +679,19 @@ def docs(
     """
     # HINT: keep documentation sync docs/reference/bazel_macros.rst
 
+    # Reject external Needs inventories in ``data`` while the original labels
+    # are still visible at the public macro boundary. After this point, ``data``
+    # and explicit ``external_needs`` labels are combined for the Needs builder,
+    # so their origin is no longer available.
+    if any([_is_needs_inventory_target(label) for label in data]):
+        fail(
+            "docs(): Needs inventory targets passed through data are not supported; " +
+            "declare them through external_needs instead.",
+        )
+
     # Resolve public bundle names once, then pass the generated inventory labels
-    # to both the interactive build and the Needs export action. Preserve the
-    # direct needs_json_file target and the existing needs_json input form.
+    # to both the interactive build and the Needs export action. The deprecated
+    # ``needs_json`` form remains accepted through explicit ``external_needs``.
     external_needs_labels = _resolve_external_needs_labels(external_needs)
 
     config_file_path = join_path(source_dir, "conf.py")

@@ -44,10 +44,11 @@ A minimal example (add or extend the existing `bazel_deps` stanza):
 The documentation build is exposed via a Bazel macro that accepts an
 ``external_needs`` parameter. Prefer another module's public ``:docs`` or
 ``:docs_bundle`` target. ``docs()`` resolves that label to the target's locally
-owned Needs inventory. Existing ``:needs_json`` labels remain accepted for
-compatibility; use ``:needs_json_file`` to name an inventory file directly.
-Use ``external_needs`` instead of
-``data`` for Needs inventories; ``data`` is for non-needs runfiles such as
+owned Needs inventory. The ``:needs_json`` label remains accepted as a
+deprecated form without a warning for now. ``:needs_json_file`` remains a
+supported way to name an inventory file directly. Passing a Needs inventory
+through ``data`` is rejected; use ``external_needs`` instead. Reserve
+``data`` for non-needs runfiles such as
 custom tool outputs.
 
 Example `BUILD` snippet (consumer module):
@@ -68,9 +69,9 @@ Example `BUILD` snippet (consumer module):
 
 The documentation build in this project is exposed via a Bazel macro that accepts
 a ``bundles`` parameter. Mount the external module's auto-exposed
-``:docs_bundle`` bundle. The mounted sources define their needs in the host
-build, so do **not** also add that module's ``:needs_json`` to ``data`` — doing
-so would create duplicate need IDs.
+``:docs_bundle`` bundle. The mounted sources define their Needs in the host
+build, so do **not** also add that module's ``:needs_json`` to ``data``. The
+old path can create duplicate Need IDs and is rejected by ``docs()``.
 
 Example `BUILD` snippet (consumer module):
 
