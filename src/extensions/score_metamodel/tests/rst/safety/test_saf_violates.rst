@@ -14,7 +14,7 @@
 
 .. test_metadata::
    :id: test_metadata__saf_violates
-   :partially_verifies_list: tool_req__docs_saf_attrs_violates[version==2]
+   :fully_verifies_list: tool_req__docs_saf_attrs_violates[version==2]
    :test_type: requirements_based
    :derivation_technique: requirements_based
 
@@ -130,3 +130,22 @@
    :status: valid
    :violates: feat_arc_sta__bad_001
    :expect: must reference Component Package Diagram
+
+
+.. comp_saf_fmea:: comp FMEA violates feat arc
+   :id: comp_saf_fmea__viol__bad_001
+   :fault_id: fault_bad_005
+   :failure_effect: wrong link target
+   :sufficient: no
+   :status: valid
+   :violates: feat_arc_dyn__001
+   :expect: must reference Component Sequence Diagram
+
+
+.. feat_saf_dfa:: Missing violates link
+   :id: feat_saf_dfa__viol__missing_001
+   :failure_id: df_missing_violates
+   :failure_effect: missing link
+   :sufficient: no
+   :status: valid
+   :expect: is missing required link: `violates`

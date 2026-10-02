@@ -14,9 +14,9 @@
 #CHECK: check_for_prohibited_words
 
 
-.. test_metadata:: Test Prohibeted Words
-   :id: test_metadata__check_prohibeted_words
-   :partially_verifies_list: tool_req__docs_common_attr_title, tool_req__docs_common_attr_desc_wording
+.. test_metadata:: Prohibited Word Checks
+   :id: test_metadata__check_prohibited_words
+   :fully_verifies_list: tool_req__docs_common_attr_title, tool_req__docs_common_attr_desc_wording
    :test_type: requirements_based
    :derivation_technique: requirements_based
 
@@ -84,6 +84,86 @@
    :expect_not: content
 
    This should really work
+
+
+.. stkh_req:: This shall work
+   :id: stkh_req__test__title_shall
+   :version: 1
+   :reqtype: Functional
+   :safety: QM
+   :security: NO
+   :status: valid
+   :rationale: test title wording
+   :valid_from: v1.0
+   :expect: contains a weak word: `shall` in option: `title`
+
+
+.. stkh_req:: This will work
+   :id: stkh_req__test__title_will
+   :version: 1
+   :reqtype: Functional
+   :safety: QM
+   :security: NO
+   :status: valid
+   :rationale: test title wording
+   :valid_from: v1.0
+   :expect: contains a weak word: `will` in option: `title`
+
+
+.. stkh_req:: Description contains about
+   :id: stkh_req__test__desc_about
+   :version: 1
+   :reqtype: Functional
+   :safety: QM
+   :security: NO
+   :status: valid
+   :rationale: test description wording
+   :valid_from: v1.0
+   :expect: contains a weak word: `about` in option: `content`
+
+   This description is about the behavior.
+
+
+.. stkh_req:: Description contains some
+   :id: stkh_req__test__desc_some
+   :version: 1
+   :reqtype: Functional
+   :safety: QM
+   :security: NO
+   :status: valid
+   :rationale: test description wording
+   :valid_from: v1.0
+   :expect: contains a weak word: `some` in option: `content`
+
+   Some behavior is described here.
+
+
+.. stkh_req:: Description contains thing
+   :id: stkh_req__test__desc_thing
+   :version: 1
+   :reqtype: Functional
+   :safety: QM
+   :security: NO
+   :status: valid
+   :rationale: test description wording
+   :valid_from: v1.0
+   :expect: contains a weak word: `thing` in option: `content`
+
+   The thing is described here.
+
+
+.. stkh_req:: Description contains absolutely
+   :id: stkh_req__test__desc_absolutely
+   :version: 1
+   :reqtype: Functional
+   :safety: QM
+   :security: NO
+   :status: valid
+   :rationale: test description wording
+   :valid_from: v1.0
+   :expect: contains a weak word: `absolutely` in option: `content`
+
+   This absolutely describes behavior.
 
 
 

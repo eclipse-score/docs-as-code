@@ -15,11 +15,84 @@
 
 .. test_metadata::
    :id: test_metadata__mandatory_options_and_links
-   :partially_verifies_list: tool_req__docs_common_attr_status[version==1], tool_req__docs_req_types[version==1]
+   :fully_verifies_list: tool_req__docs_common_attr_status[version==1], tool_req__docs_common_attr_security[version==1]
+   :partially_verifies_list: tool_req__docs_req_types[version==1]
    :test_type: requirements_based
    :derivation_technique: requirements_based
 
    Tests if we correctly enforce mandatory options & links
+
+
+.. stkh_req:: Valid common status and security values
+   :id: stkh_req__common_attrs__good
+   :version: 1
+   :reqtype: Functional
+   :safety: QM
+   :security: YES
+   :status: valid
+   :rationale: valid common attributes
+   :valid_from: v1.0
+   :expect_not: does not follow pattern, missing required attribute: `status`, missing required attribute: `security`
+
+
+.. stkh_req:: Invalid common status
+   :id: stkh_req__common_attrs__bad_status
+   :version: 1
+   :reqtype: Functional
+   :safety: QM
+   :security: NO
+   :status: draft
+   :rationale: invalid status
+   :valid_from: v1.0
+   :expect: status (draft): does not follow pattern
+   :expect_not: security (NO): does not follow pattern
+
+
+.. stkh_req:: Missing common status
+   :id: stkh_req__common_attrs__missing_status
+   :version: 1
+   :reqtype: Functional
+   :safety: QM
+   :security: NO
+   :rationale: missing status
+   :valid_from: v1.0
+   :expect: is missing required attribute: `status`
+
+
+.. stkh_req:: Invalid common security
+   :id: stkh_req__common_attrs__bad_security
+   :version: 1
+   :reqtype: Functional
+   :safety: QM
+   :security: MAYBE
+   :status: valid
+   :rationale: invalid security
+   :valid_from: v1.0
+   :expect: security (MAYBE): does not follow pattern
+   :expect_not: status (valid): does not follow pattern
+
+
+.. stkh_req:: Missing common security
+   :id: stkh_req__common_attrs__missing_security
+   :version: 1
+   :reqtype: Functional
+   :safety: QM
+   :status: valid
+   :rationale: missing security
+   :valid_from: v1.0
+   :expect: is missing required attribute: `security`
+
+
+.. stkh_req:: Valid invalid status and NO security values
+   :id: stkh_req__common_attrs__invalid_no
+   :version: 1
+   :reqtype: Functional
+   :safety: QM
+   :security: NO
+   :status: invalid
+   :rationale: both values are allowed
+   :valid_from: v1.0
+   :expect_not: does not follow pattern
 
 ..
    Required option: `status` is missing
