@@ -41,10 +41,13 @@ A minimal example (add or extend the existing `bazel_deps` stanza):
 2a) Import the other module's built inventory
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The documentation build is exposed via a Bazel macro that accepts an ``external_needs`` parameter
-for external ``:needs_json_file`` targets.
-Use ``external_needs`` instead of ``data`` when the target produces needs JSON —
-``data`` is meant for non-needs runfiles (e.g. custom tool outputs).
+The documentation build is exposed via a Bazel macro that accepts an
+``external_needs`` parameter. Prefer another module's public ``:docs`` or
+``:docs_bundle`` target. ``docs()`` resolves that label to the target's locally
+owned Needs inventory. Existing ``:needs_json`` and ``:needs_json_file`` labels
+remain accepted for compatibility. Use ``external_needs`` instead of
+``data`` for Needs inventories; ``data`` is for non-needs runfiles such as
+custom tool outputs.
 
 Example `BUILD` snippet (consumer module):
 
@@ -53,7 +56,7 @@ Example `BUILD` snippet (consumer module):
     load("@score_docs_as_code//:docs.bzl", "docs")
     docs(
       external_needs = [
-         "@score_process_description//:needs_json",
+         "@score_process_description//:docs",
       ],
       source_dir = "docs",
     )

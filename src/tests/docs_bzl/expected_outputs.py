@@ -79,6 +79,12 @@ TARGETS: dict[str, ExpectedTarget] = {
         output_kind="file",
         output_path="docs_bundle.__internal__.needs_local/_build/needs/needs.json",
     ),
+    "root_needs_local": ExpectedTarget(
+        label=":docs.__internal__.needs_local",
+        command="build",
+        output_kind="file",
+        output_path="docs.__internal__.needs_local/_build/needs/needs.json",
+    ),
     "data_bundle_needs": ExpectedTarget(
         label=":data_bundle.__internal__.needs_local",
         command="build",

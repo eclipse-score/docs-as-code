@@ -26,7 +26,9 @@ When running ``bazel run :docs``, the documentation build system orchestrates mu
 
      * Optionally, merge source links using the ``merge_sourcelinks`` rule.
 
-   * Needs (requirements) are gathered from various ``needs_json`` targets specified in the ``data`` attribute.
+   * Imported Needs are gathered from public ``docs()`` or ``docs_bundle``
+     targets specified in ``external_needs``. Existing ``needs_json`` and
+     ``needs_json_file`` labels remain supported for compatibility.
 
 2. Documentation sources are read from the specified source directory (default: ``docs/``).
    Sphinx processes the documentation sources along with the merged data to generate the final HTML output.

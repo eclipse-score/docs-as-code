@@ -33,7 +33,10 @@ docs(
     project = "S-CORE Reference Integration",
     project_url = "https://example.invalid/score-reference-integration",
     source_dir = "docs",
-    external_needs = ["//src/tests/docs_bzl/scenarios/reference_integration/score_platform:needs_json"],
+    # Import the public docs target rather than its implementation-level
+    # needs_json output. The integration page references a Need owned by this
+    # target, so this also exercises resolution through the imported inventory.
+    external_needs = ["//src/tests/docs_bzl/scenarios/reference_integration/score_platform:docs"],
     test_sources = ["src/tests/docs_bzl/scenarios/reference_integration"],
     bundles = [
         {

@@ -60,7 +60,12 @@ Minimal example (root ``BUILD``)
        project_url = "https://github.com/eclipse-score/my-project",
        data = [
            # labels to any extra tools or data you want included
-           # e.g. "//:needs_json" or other tool targets
+           # e.g. "//:some_tool" or other supporting files
+       ],
+       external_needs = [
+           # public docs() or docs_bundle targets whose Needs are referenced
+           # by this project's documentation
+           "@score_process_description//:docs_bundle",
        ],
        bundles = [
            # dicts describing bundles to mount into this project
@@ -99,8 +104,11 @@ Minimal example (root ``BUILD``)
 
   .. note::
 
-     To pull in another module's needs for cross-referencing, add its
-     ``:needs_json`` target here.
+     To reference Needs owned by another documentation project, use
+     ``external_needs`` with that project's public ``:docs`` target or a
+     public ``:docs_bundle`` target. Existing ``:needs_json`` and
+     ``:needs_json_file`` inventory labels remain accepted by
+     ``external_needs`` for compatibility.
 
 - ``bundles`` (list of placement dicts)
   Documentation bundles to overlay into this project's documentation tree,
@@ -129,9 +137,12 @@ Minimal example (root ``BUILD``)
   value is set, bundle-level target metadata is written only to this Need.
 
 - ``external_needs`` (list of bazel labels)
-  External ``:needs_json_file`` targets from other modules/repositories
-  for referencing their needs.
-  Do not use ``:needs_json`` targets.
+  Public ``:docs`` or ``:docs_bundle`` targets from other modules or
+  repositories. ``docs()`` maps each label to that target's locally owned
+  Needs inventory, so imported descendants are not treated as part of the
+  target's own inventory. The referenced Needs can then be used by this
+  project's documentation and its ``needs_json`` output. For compatibility,
+  existing ``:needs_json`` and ``:needs_json_file`` labels are still accepted.
 
 - ``metamodel`` (bazel label, optional)
   Path to a custom ``metamodel.yaml`` file.

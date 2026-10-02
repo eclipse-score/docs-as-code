@@ -67,8 +67,8 @@ def test_reference_integration_builds_with_platform_requirements():
     """Mount modules and render nested component source-code links."""
     result = run_scenario("run", "reference_integration", ":docs")
 
-    # The top-level site imports the platform bundle, so its feature link is
-    # rendered on the main page before the module mounts are traversed.
+    # The top-level site imports the platform's public ``docs`` target, so its
+    # feature link is rendered before the module mounts are traversed.
     html = (result.build_dir / "index.html").read_text(encoding="utf-8")
     assert (
         "score-platform/main/platform/feature.html#feat_req__platform__feature" in html
