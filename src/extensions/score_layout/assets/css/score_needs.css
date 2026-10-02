@@ -33,17 +33,6 @@ table.NEEDS_DATATABLES {
     table-layout: fixed;
 }
 
-/* Opt-in: wide requirement tables (e.g. the verification report, which carries
-   an extra "Referenced by" column) get a larger minimum width so all columns
-   stay readable; the wrapper scrolls horizontally on narrower viewports. */
-table.score-wide-needs-table {
-    min-width: 60rem;
-}
-
-.needstable_wrapper:has(table.score-wide-needs-table) {
-    overflow-x: auto;
-}
-
 .needstable_wrapper table.NEEDS_TABLE th,
 .needstable_wrapper table.NEEDS_TABLE td,
 .needstable_wrapper table.NEEDS_DATATABLES th,
