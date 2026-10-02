@@ -102,8 +102,8 @@ Minimal example (root ``BUILD``)
   mounts this project's public bundle. Put files belonging to a mounted child
   in that child's ``docs_bundle(data = [...])`` instead.
 
-  Passing a Needs inventory target through ``data`` is rejected. Put Needs
-  inventory targets in ``external_needs`` instead.
+  Passing a Needs inventory target through ``data`` is deprecated and prints
+  an INFO message. Put Needs inventory targets in ``external_needs`` instead.
 
   .. note::
 

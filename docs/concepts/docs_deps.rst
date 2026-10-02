@@ -30,8 +30,8 @@ When running ``bazel run :docs``, the documentation build system orchestrates mu
      targets specified in ``external_needs``. The ``needs_json`` label remains
      accepted as a deprecated form without a warning for now; ``needs_json_file``
      remains supported for directly naming an inventory file. Passing a Needs
-     inventory through ``data`` is rejected; declare it through
-     ``external_needs`` instead.
+     inventory through ``data`` is deprecated and prints an informational
+     message; declare it through ``external_needs`` instead.
 
 2. Documentation sources are read from the specified source directory (default: ``docs/``).
    Sphinx processes the documentation sources along with the merged data to generate the final HTML output.

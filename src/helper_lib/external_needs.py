@@ -35,8 +35,8 @@ def parse_bazel_external_need(s: str) -> ExternalNeedsSource | None:
     """Recognize supported Bazel inventory labels and ignore ordinary data.
 
     ``needs_json`` and ``needs_json_file`` are both accepted inventory labels.
-    The docs macro rejects inventory labels in the older ``data`` input route
-    before combining labels with explicit ``external_needs``.
+    The docs macro reports inventory labels in the deprecated ``data`` input
+    route before combining labels with explicit ``external_needs``.
     """
     is_cross_module = s.startswith("@")
     is_local = s.startswith("//")
