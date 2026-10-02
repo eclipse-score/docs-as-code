@@ -1217,6 +1217,8 @@ needs_extra_links:
 #   - <relation>: defines the relation which is used derive the type of the parent need
 #   - condition: defines the condition that should be checked
 #     - [and / or / xor / not]
+#     - `self.<attribute>` refers to an attribute of the need the check is applied to,
+#       e.g. `safety == self.safety` compares the linked need with its origin
 # - info_only [OPTIONAL]: if `true`, violations are reported as info instead of warning
 ##############################################################
 
@@ -1238,6 +1240,15 @@ graph_checks:
     check_all:
       fulfils: safety != QM
     explanation: An QM architecture element cannot implement ASIL requirements.
+
+  # req-Id: tool_req__docs_arch_link_safety_to_req
+  tool_req__docs_arch_link_safety_to_req:
+    needs:
+      include: feat_arc_sta, feat_arc_dyn, logic_arc_int, comp, comp_arc_sta, comp_arc_dyn, real_arc_int
+      condition: safety != QM
+    check_one:
+      fulfils: safety == self.safety
+    explanation: A safety relevant architecture element must be linked to at least one requirement with the exact same safety value via fulfils.
 
   # req-Id: tool_req__docs_req_arch_link_safety_to_arch
   tool_req__docs_req_arch_link_safety_to_arch:

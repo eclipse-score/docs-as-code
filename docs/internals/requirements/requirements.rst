@@ -608,7 +608,7 @@ Architecture Attributes
 .. tool_req:: Ensure safety architecture elements link a safety requirement
   :id: tool_req__docs_arch_link_safety_to_req
   :tags: Architecture
-  :implemented: PARTIAL
+  :implemented: YES
   :version: 2
   :satisfies: gd_req__arch_linkage_requirement[version==1]
   :parent_covered: YES
