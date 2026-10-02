@@ -1132,7 +1132,7 @@ Testing
 
 .. tool_req:: Safety Analysis Sufficient Check
   :id: tool_req__docs_saf_attrs_sufficient_check
-  :implemented: NO
+  :implemented: YES
   :version: 1
   :tags: Safety Analysis
   :satisfies: gd_req__saf_attr_sufficient[version==1]

@@ -273,6 +273,43 @@ def check_extra_options(
         log.warning_for_need(need, msg)
 
 
+# req-Id: tool_req__docs_saf_types
+SAF_TYPES = (
+    "plat_saf_dfa",
+    "feat_saf_dfa",
+    "comp_saf_dfa",
+    "feat_saf_fmea",
+    "comp_saf_fmea",
+)
+
+
+# req-Id: tool_req__docs_saf_attrs_sufficient_check
+@local_check
+def check_sufficient_requires_mitigation(
+    _: Sphinx,
+    need: NeedItem,
+    log: CheckLogger,
+):
+    """
+    Check that safety analysis needs which rate their mitigation as sufficient
+    (``sufficient == yes``) actually link at least one mitigation via
+    ``mitigated_by``.
+
+    A mitigation can only be rated as sufficient if it is linked, so a
+    ``sufficient: yes`` without a ``mitigated_by`` entry is inconsistent.
+    """
+    if need["type"] not in SAF_TYPES:
+        return
+    if need.get("sufficient") != "yes":
+        return
+    if not need.get("mitigated_by"):
+        log.warning_for_need(
+            need,
+            "`sufficient: yes` requires at least one `mitigated_by` entry.",
+            category="mandatory-link-conditional",
+        )
+
+
 def parse_milestone(value: str) -> tuple[int, int, int]:
     """Parse a string like 'v0.5' or 'v1.0.0'. No suffixes."""
     match = re.match(r"v(\d+)(\.(\d+))?(\.(\d+))?$", value)
