@@ -22,6 +22,7 @@ import shutil
 import sys
 import time
 from pathlib import Path
+from typing import cast
 
 import debugpy
 from sphinx.cmd.build import main as sphinx_main
@@ -40,14 +41,15 @@ _MODULE_HASH_FILE = ".module_bazel_hash"
 env = Environment()
 
 
-def _build_external_needs_source_config() -> str:
+def _build_external_needs_source_config(config: DocsCliConfig) -> str:
     """Build the JSON label list for Sphinx's ``external_needs_source`` config.
 
     ``DATA`` contains all data dependencies of the documentation target,
-    ``EXTERNAL_NEEDS_FILES`` contains explicitly declared external-needs
-    dependencies, and the sandboxed Needs action uses
-    ``EXTERNAL_NEEDS_LABELS`` for its explicitly declared label list. All
-    variables contain JSON arrays of Bazel labels.
+    ``EXTERNAL_NEEDS_MANIFEST`` contains the labels selected by Bazel's
+    provider resolver, and the sandboxed Needs action uses
+    ``EXTERNAL_NEEDS_LABELS`` for data labels declared as action inputs.
+    ``EXTERNAL_NEEDS_FILES`` remains readable for existing launchers. These
+    values are combined here because the Sphinx extension consumes one list.
 
     The metamodel extension filters ordinary data dependencies and resolves
     supported labels against the runfiles directory supplied as a separate
@@ -56,7 +58,17 @@ def _build_external_needs_source_config() -> str:
     data = env.string_list("DATA", "[]")
     external = env.string_list("EXTERNAL_NEEDS_FILES", "[]")
     labels = env.string_list("EXTERNAL_NEEDS_LABELS", "[]")
-    return json.dumps(data + external + labels)
+    manifest_labels: list[str] = []
+    manifest_path = env.optional_path("EXTERNAL_NEEDS_MANIFEST")
+    if manifest_path is not None:
+        # Share the same execroot/runfiles path rules used for the mounts and
+        # metamodel inputs later in this module.
+        manifest_path = _resolve_runfiles_relative_path(config, manifest_path)
+        # The Bazel resolver writes this manifest from validated target labels.
+        manifest_labels = cast(
+            list[str], json.loads(manifest_path.read_text(encoding="utf-8"))
+        )
+    return json.dumps(data + external + labels + manifest_labels)
 
 
 def _compute_hash(files: list[Path]) -> str:
@@ -187,7 +199,7 @@ def sphinx_arguments(
         "--jobs",
         "auto",
         # Forward Bazel data dependencies to the score_metamodel extension.
-        f"--define=external_needs_source={_build_external_needs_source_config()}",
+        f"--define=external_needs_source={_build_external_needs_source_config(config)}",
         f"--define=testcase_source_dirs={env.get('TEST_SOURCES', '[]')}",
         # Path to the Bazel-emitted mounts manifest (empty when no mounts are
         # configured); consumed by the score_mounts extension.

@@ -22,8 +22,8 @@ class ExternalNeedsSource:
     bazel_module: str
     path_to_target: str
     # `needs_json` and `needs_json_file` are the public inventory labels.
-    # A public `docs()` or `docs_bundle` label is resolved earlier by the Bazel
-    # macro to its private `.__internal__.needs_local` sibling.
+    # Bazel's analysis-time resolver replaces public docs targets with the
+    # private inventory label carried by their LocalNeedsInfo provider.
     target: str
     # True for a same-repo mount (`//pkg:needs_json`), whose runfiles live under
     # `_main/…`. False for a cross-module mount (`@repo//…:needs_json`), whose
@@ -38,6 +38,13 @@ def parse_bazel_external_need(s: str) -> ExternalNeedsSource | None:
     The docs macro reports inventory labels in the deprecated ``data`` input
     route before combining labels with explicit ``external_needs``.
     """
+    # Analysis-time provider labels may use Bazel's canonical ``@@`` spelling.
+    # The runfiles resolver uses the corresponding public label form instead.
+    if s.startswith("@@//"):
+        s = s[2:]
+    elif s.startswith("@@"):
+        s = s[1:]
+
     is_cross_module = s.startswith("@")
     is_local = s.startswith("//")
     if not is_cross_module and not is_local:
@@ -74,7 +81,14 @@ def parse_external_needs_labels(labels: list[str]) -> list[ExternalNeedsSource]:
 
 
 def _runfiles_module_dir(source: ExternalNeedsSource) -> str:
-    return "_main" if source.is_local else f"{source.bazel_module}+"
+    if source.is_local:
+        return "_main"
+    # Provider labels may already contain Bazel's canonical repository name,
+    # including the ``+`` used for Bzlmod runfiles. Older public labels contain
+    # the apparent module name and still need that suffix added here.
+    if source.bazel_module.endswith("+"):
+        return source.bazel_module
+    return f"{source.bazel_module}+"
 
 
 def external_needs_runfiles_path(
