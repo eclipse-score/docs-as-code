@@ -186,48 +186,42 @@ def _read_need_json_identities(
 ) -> list[tuple[str, str]]:
     """Read each current-version Need's (base URL, ID) identity pair.
 
-    Files that cannot be read as a current-version inventory are left to the
-    normal loaders, preserving their existing error handling. This preflight
-    only inspects inputs that it can interpret safely. An empty result means
-    there are no IDs to compare, either because the inventory is empty or
-    because the normal loader should handle its unreadable or invalid data.
+    The Sphinx-Needs build creates these inventories, so this preflight follows
+    its generated JSON structure instead of trying to validate the full file.
+    Unreadable JSON is left to the normal loader. If readable JSON has an
+    unexpected shape, warn and let that loader report the format error.
     """
     json_file = _external_needs_source_path(runfiles_dir, source)
     try:
         raw_data: object = json.loads(Path(json_file).read_text(encoding="utf-8"))
     except (FileNotFoundError, json.JSONDecodeError):
         return []
-    if not isinstance(raw_data, dict):
-        return []
-
-    needs_json_data = cast(dict[str, object], raw_data)
-    current_version = needs_json_data.get("current_version")
-    versions = needs_json_data.get("versions")
-    if not isinstance(current_version, str) or not isinstance(versions, dict):
-        return []
-
-    version = cast(dict[str, object], versions).get(current_version)
-    if not isinstance(version, dict):
-        return []
-    needs = cast(dict[str, object], version).get("needs")
-    if not isinstance(needs, dict):
-        return []
-
     try:
+        needs_json_data = cast(dict[str, object], raw_data)
+        current_version = cast(str, needs_json_data["current_version"])
+        versions = cast(dict[str, object], needs_json_data["versions"])
+        version = cast(dict[str, object], versions[current_version])
+        needs = cast(dict[str, object], version["needs"])
         base_url = _external_needs_base_url(source, needs_json_data)
-    except (KeyError, TypeError):
+        need_identities: list[tuple[str, str]] = []
+        for need_data in needs.values():
+            need_id = cast(dict[str, object], need_data)["id"]
+            if not isinstance(need_id, str):
+                raise TypeError("Need ID must be a string")
+            need_identities.append((base_url, need_id))
+    except (AttributeError, KeyError, TypeError):
+        source_label = _external_needs_source_label(source)
+        log_warning(
+            logger,
+            f"Could not inspect external Needs inventory {source_label} for duplicate IDs "
+            "because its JSON does not match the generated needs.json structure. "
+            "The duplicate-ID preflight was skipped; the regular external-Needs "
+            "loader will handle the file.",
+            "load_external_need",
+            location=None,
+        )
         return []
 
-    # Sphinx-Needs reads each ID from the Need data, not from the JSON map key.
-    # Build only the keys this duplicate check uses instead of returning the
-    # full inventory to its caller.
-    need_identities: list[tuple[str, str]] = []
-    for need_data in cast(dict[str, object], needs).values():
-        if not isinstance(need_data, dict):
-            continue
-        need_id = cast(dict[str, object], need_data).get("id")
-        if isinstance(need_id, str):
-            need_identities.append((base_url, need_id))
     return need_identities
 
 
@@ -263,7 +257,8 @@ def _warn_for_duplicate_external_need_ids(
                 f"External need ID {need_id!r} is present in both {first_source} "
                 f"and {source_label}. Both inventories use base URL {base_url!r}, "
                 "so Sphinx-Needs would otherwise replace the earlier need "
-                "without reporting the duplicate.",
+                "without reporting the duplicate. To fix this, give one of "
+                "the Needs a different ID.",
                 "load_external_need",
                 location=None,
             )
