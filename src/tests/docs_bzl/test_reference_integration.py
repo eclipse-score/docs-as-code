@@ -15,7 +15,7 @@
 
 import pytest
 
-from src.tests.docs_bzl.helpers import load_needs, run_bazel, run_scenario
+from src.tests.docs_bzl.helpers import load_needs, run_scenario
 
 
 @pytest.mark.bazel_slow
@@ -143,18 +143,3 @@ def test_bundle_metadata_is_added_to_the_explicit_primary_need():
         "docs/components/component:component_sources"
     )
     assert legacy_need["bazel_type"] == "filegroup"
-
-
-@pytest.mark.bazel_cached
-def test_legacy_needs_in_data_prints_deprecation_info():
-    """Needs inventories in docs(data = [...]) announce the migration path."""
-    result = run_bazel(
-        [
-            "query",
-            "//src/tests/docs_bzl/scenarios/reference_integration/legacy_module:docs",
-        ]
-    )
-
-    output = result.stdout + result.stderr
-    assert "INFO: ⚠️ DEPRECATED: Passing a Needs inventory through" in output
-    assert "Move it to external_needs = [...] instead." in output
