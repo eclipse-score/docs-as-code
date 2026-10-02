@@ -2,7 +2,7 @@
   {
     "name": "test_codelink__test_find_need_warns_for_mismatched_versioned_links",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": 304,
+    "line": 302,
     "need": "tool_req__docs_common_attr_suspicious",
     "verify_type": "fully",
     "result": "passed",
