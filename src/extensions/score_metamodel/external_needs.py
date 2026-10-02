@@ -162,23 +162,23 @@ def _external_needs_base_url(
     """Return the base URL passed to Sphinx-Needs for this inventory."""
     if source.target == "needs_json":
         # A `needs_json` producer always exports its project URL.
-        project_url = needs_json_data["project_url"]
+        project_url = cast(str, needs_json_data["project_url"])
     elif source.target == "needs_json_file":
         # A standalone inventory file may not have a project URL.
-        project_url = needs_json_data.get("project_url", "")
+        project_url = cast(str, needs_json_data.get("project_url", ""))
     elif source.target.endswith(".__internal__.needs_local"):
-        # Standalone bundles may not have a published project URL. Use the
-        # same reserved host as the normal bundle-local inventory loader.
-        project_url = needs_json_data.get("project_url", "")
-        if not isinstance(project_url, str):
-            project_url = ""
+        # A standalone docs_bundle may not have a published project URL. Sphinx-Needs
+        # still requires a base URL to load its Needs as external context, so use a
+        # reserved host when the exported value is absent or empty. Root-associated
+        # bundles use their exported project URL here.
+        project_url = cast(str, needs_json_data.get("project_url", ""))
         project_url = project_url.rstrip("/") or "https://score-needs.invalid"
     else:
         raise ValueError(f"Unsupported external needs target: {source.target}")
 
     # Keep the same URL construction as the regular loaders. Sphinx-Needs uses
     # this URL when deciding whether an external Need should be replaced.
-    return cast(str, project_url) + "/main"  # for now always "main"
+    return project_url + "/main"  # for now always "main"
 
 
 def _external_needs_source_label(source: ExternalNeedsSource) -> str:
@@ -304,14 +304,7 @@ def add_external_needs_json(
 def _add_bundle_local_needs_json(
     e: ExternalNeedsSource, config: Config, runfiles_dir: Path | None
 ) -> None:
-    """Register a private bundle-local inventory using its exported URL.
-
-    A standalone ``docs_bundle`` may not be associated with a published root
-    project, so its inventory can have no ``project_url``. Sphinx-Needs still
-    requires a base URL to load it as external context; use a reserved host for
-    that validation-only case. Public ``docs()`` inventories retain their real
-    URL, which Sphinx uses when rendering cross-project links.
-    """
+    """Load a private bundle-local inventory and register it as external context."""
     json_file = _external_needs_source_path(runfiles_dir, e)
     logger.debug(f"External local Needs JSON: {json_file}")
     try:
