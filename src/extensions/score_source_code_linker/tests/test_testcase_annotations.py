@@ -18,8 +18,8 @@ from typing import cast
 
 from docutils import nodes
 from sphinx.application import Sphinx
+from sphinxcontrib.test_reports.pytest_plugin import add_test_properties
 
-from score_pytest.attribute_plugin import add_test_properties
 from src.extensions.score_source_code_linker.testcase_annotations import (
     annotate_testcase_results,
 )

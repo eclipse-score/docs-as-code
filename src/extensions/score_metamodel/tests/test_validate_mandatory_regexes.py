@@ -12,9 +12,11 @@
 # *******************************************************************************
 """Tests for the metamodel lint: permissive mandatory regex detection."""
 
-from attribute_plugin import add_test_properties  # type: ignore[import-untyped]
 from score_metamodel import ScoreNeedType
 from score_metamodel.yaml_parser import validate_mandatory_regexes
+from sphinxcontrib.test_reports.pytest_plugin import (
+    add_test_properties,  # type: ignore[import-untyped]
+)
 
 
 def _need_type(
