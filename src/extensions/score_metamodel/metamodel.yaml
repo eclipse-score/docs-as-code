@@ -1210,10 +1210,14 @@ needs_extra_links:
 #                          to perform the check on all needs types, set include to .
 #   - condition: defines (together with apply) the condition which the needs need to fulfill
 #     - [and / or / xor / not]
-# - check: defines the check that should be applied
+# - check_all / check_one: defines the check that should be applied (exactly one of them)
+#   - check_all: every linked need has to fulfill the condition
+#   - check_one: at least one linked need has to fulfill the condition
+#                (a need without any linked needs passes)
 #   - <relation>: defines the relation which is used derive the type of the parent need
 #   - condition: defines the condition that should be checked
 #     - [and / or / xor / not]
+# - info_only [OPTIONAL]: if `true`, violations are reported as info instead of warning
 ##############################################################
 
 graph_checks:
@@ -1222,7 +1226,7 @@ graph_checks:
     needs:
       include: stkh_req, feat_req, comp_req, aou_req, gd_req, tool_req
       condition: safety == QM
-    check:
+    check_all:
       derived_from: safety == QM
     explanation: QM requirements cannot be derived from ASIL requirements.
 
@@ -1231,7 +1235,7 @@ graph_checks:
     needs:
       include: feat_arc_sta, logic_arc_int, logic_arc_int_op, comp_arc_sta, real_arc_int, real_arc_int_op
       condition: safety == QM
-    check:
+    check_all:
       fulfils: safety != QM
     explanation: An QM architecture element cannot implement ASIL requirements.
 
@@ -1245,7 +1249,7 @@ graph_checks:
           - or:
               - status == valid
               - status == valid_inspected
-    check:
+    check_all:
       implements: # TODO: which attribute???
         and:
           - safety != QM
@@ -1259,7 +1263,7 @@ graph_checks:
     needs:
       include: feat_arc_sta, logic_arc_int, logic_arc_int_op, comp_arc_sta, real_arc_int, real_arc_int_op
       condition: security == YES
-    check:
+    check_all:
       implements: security == YES # Which attribute???
     explanation: An security architecture element can only link other security architecture elements.
 
@@ -1268,7 +1272,7 @@ graph_checks:
     needs:
       include: workproduct
       condition: complies != []
-    check:
+    check_all:
       complies:
         or:
           - id contains aspice_40__iic

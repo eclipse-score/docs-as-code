@@ -163,6 +163,94 @@ def filter_needs_by_criteria(
     return selected_needs
 
 
+def check_needs_with_check_type_context(
+    parents: list[NeedItem],
+    condition: str | dict[str, list[Any]],
+    check_type: str,
+    log: CheckLogger,
+) -> list[str]:
+    """
+    Return the ids of the parents that make the check fail.
+
+    - all: every parent that does not fulfill the condition.
+    - one: [] as soon as one parent fulfills the condition,
+           otherwise all parents, since every one of them fails.
+    """
+    failed_needs: list[str] = []
+    for parent in parents:
+        if eval_need_condition(parent, condition, log):
+            if check_type == "check_one":
+                return []
+        else:
+            failed_needs.append(parent.id)
+    return failed_needs
+
+
+def get_check(
+    check_name: str, check_config: dict[str, Any]
+) -> tuple[str, dict[str, str | dict[str, list[Any]]]]:
+    """
+    Return the check type (`check_one` / `check_all`) and the checks to perform.
+
+    Exactly one of `check_one` / `check_all` must be defined.
+    """
+    if "check_one" in check_config and "check_all" in check_config:
+        raise ValueError(
+            f"Both `check_one` and `check_all` are present in graph_check: {check_name}. Please delete one"
+        )
+    if "check_one" not in check_config and "check_all" not in check_config:
+        raise ValueError(
+            f"Check is not defined in the graph check {check_name}. Either `check_all` "
+            "or `check_one` are mandatory. Please add one of them "
+            "depending if all or one requirement need to fulfill the condition."
+        )
+    check_type = "check_one" if "check_one" in check_config else "check_all"
+    return check_type, check_config[check_type]
+
+
+def check_parent_relation(
+    need: NeedItem,
+    parent_relation: str,
+    condition: str | dict[str, list[Any]],
+    check_type: str,
+    explanation: str,
+    all_needs: NeedsView,
+    log: CheckLogger,
+    info_only: bool,
+) -> None:
+    """Check the needs linked via `parent_relation` and warn about violations."""
+    if parent_relation not in need:
+        msg = f"Attribute not defined: `{parent_relation}` in need `{need['id']}`."
+        log.warning_for_need(need, msg)
+        return
+    parent_ids = cast(list[str] | Any, need[parent_relation])
+    if not isinstance(parent_ids, list):
+        return
+    # Unknown ids are dropped; sphinx-needs already warns about them.
+    parents: list[NeedItem] = list(all_needs.filter_ids(parent_ids).values())
+    failed_needs = check_needs_with_check_type_context(
+        parents, condition, check_type, log
+    )
+    if not failed_needs:
+        return
+
+    if check_type == "check_one":
+        msg = (
+            f"No linked need in `{parent_relation}` fulfills "
+            f"condition `{condition}`. "
+            f"Explanation: {explanation}"
+        )
+        log.warning_for_need(need, msg, is_new_check=info_only)
+    else:
+        for need_id in failed_needs:
+            msg = (
+                f"Parent need `{need_id}` does not fulfill "
+                f"condition `{condition}`."
+                f" Explanation: {explanation}"
+            )
+            log.warning_for_need(need, msg, is_new_check=info_only)
+
+
 @graph_check
 def check_metamodel_graph(
     app: Sphinx,
@@ -170,15 +258,14 @@ def check_metamodel_graph(
     log: CheckLogger,
 ):
     graph_checks_global = app.config.graph_checks
-    # Convert list to dictionary for easy lookup
-    needs_dict_all = {need["id"]: need for need in all_needs.values()}
     needs_local = list(all_needs.filter_is_external(False).values())
 
     # Iterate over all graph checks
     for check_name, check_config in graph_checks_global.items():
         needs_selection_criteria: dict[str, str] = check_config.get("needs")
-        check_to_perform: dict[str, str | dict[str, Any]] = check_config.get("check")
+        check_type, check_to_perform = get_check(check_name, check_config)
         explanation = check_config.get("explanation", "")
+        info_only = check_config.get("info_only", False) is True
         assert explanation != "", (
             f"Explanation for graph check {check_name} is missing. "
             "Explanations are mandatory for graph checks."
@@ -195,36 +282,17 @@ def check_metamodel_graph(
             continue
 
         for need in selected_needs:
-            for parent_relation in list(check_to_perform.keys()):
-                if parent_relation not in need:
-                    msg = (
-                        f"Attribute not defined: `{parent_relation}` "
-                        f"in need `{need['id']}`."
-                    )
-                    log.warning_for_need(need, msg)
-                    continue
-
-                parent_ids = cast(list[str] | Any, need[parent_relation])
-                if not isinstance(parent_ids, list):
-                    continue
-
-                parent_ids_list = cast(list[str], parent_ids)
-                for parent_id in parent_ids_list:
-                    parent_need = needs_dict_all.get(parent_id)
-                    if parent_need is None:
-                        msg = f"Parent need `{parent_id}` not found in needs_dict."
-                        log.warning_for_need(need, msg)
-                        continue
-
-                    if not eval_need_condition(
-                        parent_need, check_to_perform[parent_relation], log
-                    ):
-                        msg = (
-                            f"Parent need `{parent_id}` does not fulfill "
-                            f"condition `{check_to_perform[parent_relation]}`."
-                            f" Explanation: {explanation}"
-                        )
-                        log.warning_for_need(need, msg)
+            for parent_relation, condition in check_to_perform.items():
+                check_parent_relation(
+                    need,
+                    parent_relation,
+                    condition,
+                    check_type,
+                    explanation,
+                    all_needs,
+                    log,
+                    info_only,
+                )
 
 
 @graph_check

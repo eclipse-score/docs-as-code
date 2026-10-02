@@ -13,7 +13,8 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, cast
+from unittest.mock import MagicMock
 
 import pytest
 
@@ -21,18 +22,24 @@ import pytest
 import score_metamodel.checks.graph_checks as graph_checks
 from score_metamodel.tests import fake_check_logger, need as test_need
 from sphinx_needs.config import NeedType
+from sphinx_needs.data import NeedsView
+from sphinx_needs.need_item import NeedItem
 
 
 class DummyNeedsView:
     """Minimal NeedsView-like test double."""
 
-    def __init__(self, needs: list[dict[str, Any]]) -> None:
-        """Create a view over needs represented as dict-like structures."""
+    def __init__(self, needs: list[NeedItem]) -> None:
+        """Create a view over the given needs."""
         self._needs = needs
 
-    def values(self) -> list[dict[str, Any]]:
+    def values(self) -> list[NeedItem]:
         """Return all needs."""
         return self._needs
+
+    def filter_ids(self, ids: list[str]) -> DummyNeedsView:
+        """Filter needs by id. Unknown ids are dropped, like in sphinx-needs."""
+        return DummyNeedsView([n for n in self._needs if n["id"] in ids])
 
     def filter_is_external(self, is_external: bool) -> DummyNeedsView:
         """Filter needs by their is_external flag."""
@@ -179,4 +186,125 @@ def test_filter_needs_by_criteria_unknown_type_logs_warning() -> None:
     assert log.warnings == 1
     log.assert_warning(
         "Unknown need type `unknown` in graph check.", expect_location=False
+    )
+
+
+NEEDS_TYPES = [NeedType({"title": "testtype", "prefix": "t", "directive": "req"})]
+PARENTS = [
+    test_need(id="safe_1", type="parent", safety="ASIL_B"),
+    test_need(id="qm_1", type="parent", safety="QM"),
+    test_need(id="qm_2", type="parent", safety="QM"),
+]
+
+
+def graph_check_config(*check_keys: str, **options: Any) -> dict[str, Any]:
+    """Graph check that requires linked `implements` needs to be safety relevant."""
+    return {
+        "needs": {"include": "req", "condition": "status == valid"},
+        **{key: {"implements": "safety != QM"} for key in check_keys},
+        "explanation": "Test explanation.",
+        **options,
+    }
+
+
+def run_graph_check(check_config: dict[str, Any], parent_ids: list[str]):
+    """Run the graph check on one child need linking to the given parents."""
+    log = fake_check_logger()
+    app = MagicMock()
+    app.config.graph_checks = {"test_check": check_config}
+    app.config.needs_types = NEEDS_TYPES
+    child = test_need(id="child", type="req", status="valid", implements=parent_ids)
+    all_needs = cast(NeedsView, DummyNeedsView([child, *PARENTS]))
+
+    graph_checks.check_metamodel_graph(app, all_needs, log)
+    return log
+
+
+@pytest.mark.parametrize(
+    ("check_keys", "error"),
+    [
+        ((), "test_check. Either `check_all` or `check_one` are mandatory"),
+        (("check",), "test_check. Either `check_all` or `check_one` are mandatory"),
+        (
+            ("check_all", "check_one"),
+            "Both `check_one` and `check_all` are present in graph_check: test_check",
+        ),
+    ],
+    ids=["missing", "old_check_key", "both"],
+)
+def test_invalid_check_keys_raise_value_error(
+    check_keys: tuple[str, ...], error: str
+) -> None:
+    """Fail unless exactly one of check_all / check_one is defined."""
+    with pytest.raises(ValueError, match=error):
+        run_graph_check(graph_check_config(*check_keys), ["qm_1"])
+
+
+def test_check_all_warns_once_per_failing_parent() -> None:
+    """Report every linked need that does not fulfill the condition."""
+    log = run_graph_check(graph_check_config("check_all"), ["safe_1", "qm_1", "qm_2"])
+    assert log.warnings == 2
+
+    log = run_graph_check(graph_check_config("check_all"), ["safe_1", "qm_1"])
+    log.assert_warning(
+        "Parent need `qm_1` does not fulfill condition `safety != QM`."
+        " Explanation: Test explanation."
+    )
+
+
+@pytest.mark.parametrize(
+    ("parent_ids", "expected_warnings"),
+    [
+        (["qm_1", "safe_1"], 0),
+        (["qm_1", "qm_2"], 1),
+        ([], 0),
+        (["unknown_parent"], 0),
+    ],
+    ids=["one_fulfills", "none_fulfill", "no_parents", "unknown_parent"],
+)
+def test_check_one(parent_ids: list[str], expected_warnings: int) -> None:
+    """Pass if at least one linked need fulfills the condition."""
+    log = run_graph_check(graph_check_config("check_one"), parent_ids)
+
+    assert log.warnings == expected_warnings
+    if expected_warnings:
+        log.assert_warning(
+            "No linked need in `implements` fulfills condition `safety != QM`."
+            " Explanation: Test explanation."
+        )
+
+
+@pytest.mark.parametrize(
+    ("check_key", "options", "expected_warnings", "expected_infos"),
+    [
+        ("check_all", {}, 2, 0),
+        ("check_all", {"info_only": False}, 2, 0),
+        ("check_all", {"info_only": True}, 0, 2),
+        ("check_one", {}, 1, 0),
+        ("check_one", {"info_only": True}, 0, 1),
+    ],
+    ids=["all_default", "all_false", "all_true", "one_default", "one_true"],
+)
+def test_info_only(
+    check_key: str,
+    options: dict[str, Any],
+    expected_warnings: int,
+    expected_infos: int,
+) -> None:
+    """Report violations as info instead of warning if info_only is true."""
+    log = run_graph_check(graph_check_config(check_key, **options), ["qm_1", "qm_2"])
+
+    assert (log.warnings, log.infos) == (expected_warnings, expected_infos)
+
+
+def test_info_only_keeps_message() -> None:
+    """Report the same message as info that would otherwise be a warning."""
+    log = run_graph_check(
+        graph_check_config("check_one", info_only=True), ["qm_1", "qm_2"]
+    )
+
+    log.flush_new_checks()
+    log.assert_info(
+        "No linked need in `implements` fulfills condition `safety != QM`."
+        " Explanation: Test explanation."
     )

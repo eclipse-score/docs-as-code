@@ -99,7 +99,7 @@ def test_load_metamodel_data():
         "include": "type1",
         "condition": "opt1 == test",
     }
-    assert defined_graph_check["check"] == {
+    assert defined_graph_check["check_all"] == {
         "link1": "opt1 == test",
     }
 

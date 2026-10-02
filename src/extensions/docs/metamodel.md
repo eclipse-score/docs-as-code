@@ -111,13 +111,25 @@ These checks follow the same structure:
   needs:
     include: <need1>, <need2> #list of your needs
     condition: <your condition(s) that need to be fulfilled>
-  check:
+  check_all: # or check_one
     <link attribute to check>: <condition to be checked in each need inside the link attribute>
+  info_only: true # OPTIONAL, defaults to false
   explanation: <A short sentence that explains what is required to be adhered to. This will be
               < part of the error message if the check fails>
 ```
 
 > *Note:* You can also use multiple conditions or negate conditions in either the needs or check part.
+
+Each graph check defines exactly one of the following, which decides how many linked needs have to fulfill the condition:
+
+- `check_all`: every linked need has to fulfill the condition. Each violating need gets its own warning.
+- `check_one`: at least one linked need has to fulfill the condition. A need without any linked needs passes.
+  Use a mandatory link check if the link itself is required.
+
+This applies to every link attribute inside `check_all` / `check_one`.
+
+With `info_only: true` violations are reported as info instead of warning, so they do not break the build.
+Use this to introduce a new check before it is enforced.
 
 A complete example might look like so:
 
@@ -132,7 +144,7 @@ graph_checks:
           - or:
               - status == valid
               - status == valid_inspected
-    check:
+    check_all:
       implements:
         and:
           - safety != QM
