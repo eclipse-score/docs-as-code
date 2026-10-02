@@ -3118,8 +3118,8 @@
     "TestType": "requirements_based",
     "DerivationTechnique": "requirements_based",
     "result_text": "",
-    "PartiallyVerifies": null,
-    "FullyVerifies": "tool_req__docs_common_attr_description"
+    "PartiallyVerifies": "tool_req__docs_common_attr_description",
+    "FullyVerifies": null
   },
   {
     "name": "test_rules_file_based__test_rst_files[attributes/test_attributes_format_id_length.rst]",
@@ -3160,8 +3160,8 @@
     "TestType": "requirements_based",
     "DerivationTechnique": "requirements_based",
     "result_text": "",
-    "PartiallyVerifies": null,
-    "FullyVerifies": "tool_req__docs_common_attr_id_scheme"
+    "PartiallyVerifies": "tool_req__docs_common_attr_id_scheme",
+    "FullyVerifies": null
   },
   {
     "name": "test_rules_file_based__test_rst_files[attributes/test_prohibited_words.rst]",
@@ -4533,7 +4533,7 @@
     "DerivationTechnique": "requirements_based",
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_saf_attrs_mandatory[version==1]",
-    "FullyVerifies": "tool_req__docs_saf_attr_dfa_failure_id[version==2], tool_req__docs_saf_attr_fmea_fault_id[version==2], tool_req__docs_saf_attrs_sufficient[version==1], tool_req__docs_saf_attrs_content[version==2], tool_req__docs_common_attr_description"
+    "FullyVerifies": "tool_req__docs_saf_attr_dfa_failure_id[version==2], tool_req__docs_saf_attr_fmea_fault_id[version==2], tool_req__docs_saf_attrs_sufficient[version==1], tool_req__docs_saf_attrs_content[version==2]"
   },
   {
     "name": "test_rules_file_based__test_rst_files[safety/test_saf_optional_attrs.rst]",

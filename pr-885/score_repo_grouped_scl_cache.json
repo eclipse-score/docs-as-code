@@ -33,7 +33,7 @@
               "file": "src/extensions/score_metamodel/tests/rst/attributes/test_attributes_format_id_format.rst",
               "line": 16,
               "need": "tool_req__docs_common_attr_id_scheme",
-              "verify_type": "fully",
+              "verify_type": "partially",
               "result": "passed",
               "result_text": ""
             },
@@ -610,7 +610,7 @@
           "CodeLinks": [
             {
               "file": "src/extensions/score_metamodel/checks/check_options.py",
-              "line": 287,
+              "line": 297,
               "tag": "# req-Id:",
               "need": "tool_req__docs_req_attr_validity_consistency",
               "full_line": "# req-Id: tool_req__docs_req_attr_validity_consistency"
@@ -861,16 +861,7 @@
               "file": "src/extensions/score_metamodel/tests/rst/attributes/test_common_attr_description.rst",
               "line": 16,
               "need": "tool_req__docs_common_attr_description",
-              "verify_type": "fully",
-              "result": "passed",
-              "result_text": ""
-            },
-            {
-              "name": "test_rules_file_based__test_rst_files[safety/test_saf_mandatory_attrs.rst]",
-              "file": "src/extensions/score_metamodel/tests/rst/safety/test_saf_mandatory_attrs.rst",
-              "line": 16,
-              "need": "tool_req__docs_common_attr_description",
-              "verify_type": "fully",
+              "verify_type": "partially",
               "result": "passed",
               "result_text": ""
             }
@@ -1989,7 +1980,7 @@
           "CodeLinks": [
             {
               "file": "src/extensions/score_metamodel/metamodel.yaml",
-              "line": 1220,
+              "line": 1224,
               "tag": "# req-Id:",
               "need": "tool_req__docs_common_attr_safety_link_check",
               "full_line": "# req-Id: tool_req__docs_common_attr_safety_link_check"
@@ -2004,7 +1995,7 @@
           "CodeLinks": [
             {
               "file": "src/extensions/score_metamodel/metamodel.yaml",
-              "line": 1229,
+              "line": 1233,
               "tag": "# req-Id:",
               "need": "tool_req__docs_arch_link_qm_to_safety_req",
               "full_line": "# req-Id: tool_req__docs_arch_link_qm_to_safety_req"
@@ -2019,7 +2010,7 @@
           "CodeLinks": [
             {
               "file": "src/extensions/score_metamodel/metamodel.yaml",
-              "line": 1238,
+              "line": 1242,
               "tag": "# req-Id:",
               "need": "tool_req__docs_req_arch_link_safety_to_arch",
               "full_line": "# req-Id: tool_req__docs_req_arch_link_safety_to_arch"
@@ -2044,7 +2035,7 @@
           "CodeLinks": [
             {
               "file": "src/extensions/score_metamodel/metamodel.yaml",
-              "line": 1253,
+              "line": 1257,
               "tag": "# req-Id:",
               "need": "tool_req__docs_arch_link_security",
               "full_line": "# req-Id: tool_req__docs_arch_link_security"
