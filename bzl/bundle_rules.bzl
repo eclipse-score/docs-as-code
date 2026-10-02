@@ -56,6 +56,19 @@ DocsBundleInfo = provider(
     },
 )
 
+# Public docs targets publish this provider so ``external_needs`` can discover
+# the local inventory during Bazel analysis. The file is the concrete artifact
+# dependency; the label is the runfiles identity consumed by the Sphinx
+# extension. Keeping both together avoids reconstructing private target names
+# in the public macro.
+LocalNeedsInfo = provider(
+    doc = "The local Needs inventory exported by a public docs target.",
+    fields = {
+        "file": "The generated needs.json file.",
+        "label": "The Bazel label whose runfiles path contains that file.",
+    },
+)
+
 # ``docs()`` exposes its structured project configuration through this
 # provider on a separate internal target. Keeping the config target separate
 # from the root ``DocsBundleInfo`` target is important: the root bundle may
@@ -405,8 +418,12 @@ def _docs_bundle_impl(ctx):
     source_dir_execroot_path = ""
     own_external_runfiles = []
     own_data = depset(direct = ctx.files.data)
-    own_bundle_label = str(ctx.label)
-    own_bundle_name = ctx.label.name
+    # Composition targets are private implementation targets, but manifests
+    # describe the public bundle that owns each source. Rebuild that public
+    # identity from the target's package/repository and the semantic name
+    # supplied by the macro.
+    own_bundle_name = ctx.attr.bundle_identity_name or ctx.label.name
+    own_bundle_label = str(ctx.label).rsplit(":", 1)[0] + ":" + own_bundle_name
     own_primary_need_id = ctx.attr.primary_need_id
     own_code_targets = [
         struct(
@@ -635,6 +652,9 @@ _docs_bundle = rule(
         # The semantic Sphinx project name can differ from this rule's target
         # name when an internal sibling provider represents a public bundle.
         "project_name": attr.string(default = ""),
+        # The composition implementation has a private target name. Preserve
+        # the public docs_bundle name in source ownership and mount metadata.
+        "bundle_identity_name": attr.string(default = ""),
         "bundles": attr.label_list(providers = [DocsBundleInfo]),
         "bundle_mount_ats": attr.string_list(),
         "bundle_attach_tos": attr.string_list(),
@@ -670,6 +690,7 @@ def create_bundle(
     root_docs_config = None,
     is_root_bundle = False,
     project_name = None,
+    bundle_identity_name = None,
     visibility = None,
     **kwargs):
     """Create a bundle from directory-discovered files and source targets.
@@ -680,6 +701,9 @@ def create_bundle(
     ``project_name`` preserves the Sphinx identity of a public bundle when an
     internal sibling target carries only that bundle's direct source files.
     A root docs configuration, when present, remains authoritative.
+    ``bundle_identity_name`` keeps mount metadata tied to the public target
+    name when the complete composition itself uses a private implementation
+    target.
     """
     parsed_bundles = [_parse_bundle_declaration(declaration) for declaration in bundles]
     # The public macros use ``None`` to represent an omitted optional ID, but
@@ -705,6 +729,7 @@ def create_bundle(
         # semantic name lets an internal provider keep the identity of the
         # public bundle whose direct sources it exposes.
         project_name = project_name if project_name != None else name,
+        bundle_identity_name = bundle_identity_name if bundle_identity_name != None else name,
         data = data,
         code_targets = code_targets,
         root_docs_config = root_docs_config,
