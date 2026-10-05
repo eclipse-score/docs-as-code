@@ -3024,6 +3024,20 @@
     "FullyVerifies": "potential_tool_malfunction__docs_as_code__m4"
   },
   {
+    "name": "test_rules_file_based__test_rst_files[architecture/test_arch_link_fulfils.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/architecture/test_arch_link_fulfils.rst",
+    "line": "15",
+    "result": "passed",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": "",
+    "TestType": "requirements_based",
+    "DerivationTechnique": "requirements_based",
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": "tool_req__docs_arch_link_fulfils[version==3]"
+  },
+  {
     "name": "test_rules_file_based__test_need",
     "file": "src/extensions/score_metamodel/tests/__init__.py",
     "line": "110",
