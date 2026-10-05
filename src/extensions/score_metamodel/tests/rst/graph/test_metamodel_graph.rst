@@ -14,8 +14,7 @@
 
 .. test_metadata::
    :id: test_metadata__metamodel_graph_checks
-   :fully_verifies_list: potential_tool_malfunction__docs_as_code__m2,
-      tool_req__docs_common_attr_safety_link_check[version==1]
+   :fully_verifies_list: tool_req__docs_common_attr_safety_link_check[version==1]
    :test_type: requirements_based
    :derivation_technique: requirements_based
 
