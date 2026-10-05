@@ -1242,7 +1242,7 @@ graph_checks:
   # req-Id: tool_req__docs_req_arch_link_safety_to_arch
   tool_req__docs_req_arch_link_safety_to_arch:
     needs:
-      include: feat_arc_sta, logic_arc_int, logic_arc_int_op, comp_arc_sta, real_arc_int, real_arc_int_op
+      include: feat_arc_sta, logic_arc_int, logic_arc_int_op, comp_arc_sta, real_arc_int, real_arc_int_op, comp, feat
       condition:
         and:
           - safety != QM
