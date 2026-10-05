@@ -14,7 +14,7 @@
 
 .. test_metadata::
    :id: test_metadata__common_attrs
-   :fully_verifies_list: tool_req__docs_common_attr_status[version==1], tool_req__docs_common_attr_security[version==1]
+   :fully_verifies_list: tool_req__docs_common_attr_status[version==2], tool_req__docs_common_attr_security[version==1]
    :test_type: requirements_based
    :derivation_technique: requirements_based
 
