@@ -36,7 +36,7 @@
    :status: valid
    :failure_effect: signal lost
    :sufficient: yes
-   :expect: is missing required attribute: `failure_id`
+   :expect: is missing required attribute: `failure_id`.
 
 
 .. comp_saf_dfa:: Valid failure_id
