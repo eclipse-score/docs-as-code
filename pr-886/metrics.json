@@ -4,11 +4,11 @@
   "overall_metrics": {
     "total": 72,
     "with_code_link": 35,
-    "with_test_link": 52,
-    "fully_linked": 25,
+    "with_test_link": 51,
+    "fully_linked": 24,
     "with_code_link_pct": 48.61111111111111,
-    "with_test_link_pct": 72.22222222222221,
-    "fully_linked_pct": 34.72222222222222
+    "with_test_link_pct": 70.83333333333334,
+    "fully_linked_pct": 33.33333333333333
   },
   "metrics_by_type": {
     "gd_req": {
@@ -23,17 +23,17 @@
     "tool_req": {
       "total": 71,
       "with_code_link": 35,
-      "with_test_link": 52,
-      "fully_linked": 25,
+      "with_test_link": 51,
+      "fully_linked": 24,
       "with_code_link_pct": 49.29577464788733,
-      "with_test_link_pct": 73.23943661971832,
-      "fully_linked_pct": 35.2112676056338
+      "with_test_link_pct": 71.83098591549296,
+      "fully_linked_pct": 33.80281690140845
     }
   },
   "tests": {
-    "total": 459,
-    "linked_to_requirements": 93,
-    "linked_to_requirements_pct": 20.26143790849673,
+    "total": 457,
+    "linked_to_requirements": 92,
+    "linked_to_requirements_pct": 20.13129102844639,
     "broken_references": []
   }
 }

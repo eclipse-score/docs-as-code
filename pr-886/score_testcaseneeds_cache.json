@@ -224,20 +224,6 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_rules_are_working_correctly__test_score_pytest_loads_conftest",
-    "file": "tests/test_rules_are_working_correctly.py",
-    "line": "13",
-    "result": "passed",
-    "repo_name": null,
-    "hash": null,
-    "url": null,
-    "TestType": null,
-    "DerivationTechnique": null,
-    "result_text": "",
-    "PartiallyVerifies": null,
-    "FullyVerifies": null
-  },
-  {
     "name": "traceability_gate_test__test_gate_passes_when_thresholds_met",
     "file": "scripts_bazel/tests/traceability_gate_test.py",
     "line": "147",
@@ -954,7 +940,7 @@
   {
     "name": "test_codelink__test_need",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "66",
+    "line": "65",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -968,7 +954,7 @@
   {
     "name": "test_codelink__test_get_cache_filename",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "274",
+    "line": "272",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -982,7 +968,7 @@
   {
     "name": "test_codelink__test_find_need_direct_match",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "289",
+    "line": "287",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -994,23 +980,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_codelink__test_find_need_warns_for_mismatched_versioned_links",
-    "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "302",
-    "result": "passed",
-    "repo_name": "local_repo",
-    "hash": "",
-    "url": "",
-    "TestType": "requirements-based",
-    "DerivationTechnique": "requirements-analysis",
-    "result_text": "",
-    "PartiallyVerifies": null,
-    "FullyVerifies": "tool_req__docs_common_attr_suspicious"
-  },
-  {
     "name": "test_codelink__test_find_need_not_found",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "328",
+    "line": "300",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1024,7 +996,7 @@
   {
     "name": "test_codelink__test_group_by_need",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "340",
+    "line": "312",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1038,7 +1010,7 @@
   {
     "name": "test_codelink__test_group_by_need_empty_list",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "359",
+    "line": "331",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1052,7 +1024,7 @@
   {
     "name": "test_codelink__test_cache_file_operations",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "365",
+    "line": "337",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1066,7 +1038,7 @@
   {
     "name": "test_codelink__test_combining_without_source_links_continues_with_empty_code_links",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "391",
+    "line": "363",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1080,7 +1052,7 @@
   {
     "name": "test_codelink__test_combining_with_missing_source_links_reports_configured_path",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "403",
+    "line": "375",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1094,7 +1066,7 @@
   {
     "name": "test_codelink__test_cache_file_with_encoded_comments",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "421",
+    "line": "393",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1108,7 +1080,7 @@
   {
     "name": "test_codelink__test_group_by_need_and_find_need_integration",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "453",
+    "line": "425",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1122,7 +1094,7 @@
   {
     "name": "test_codelink__test_source_linker_end_to_end_with_real_files",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "476",
+    "line": "448",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1136,7 +1108,7 @@
   {
     "name": "test_codelink__test_multiple_commits_hash_consistency",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "576",
+    "line": "548",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1150,7 +1122,7 @@
   {
     "name": "test_codelink__test_is_metadata_missing_keys",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "610",
+    "line": "582",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1164,7 +1136,7 @@
   {
     "name": "test_codelink__test_needlink_to_dict_without_metadata",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "619",
+    "line": "591",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1178,7 +1150,7 @@
   {
     "name": "test_codelink__test_needlink_to_dict_full",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "640",
+    "line": "612",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1192,7 +1164,7 @@
   {
     "name": "test_codelink__test_needlink_encoder_includes_metadata",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "663",
+    "line": "635",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1206,7 +1178,7 @@
   {
     "name": "test_codelink__test_needlink_decoder_with_all_fields",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "689",
+    "line": "661",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1220,7 +1192,7 @@
   {
     "name": "test_codelink__test_needlink_decoder_non_needlink_dict",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "709",
+    "line": "681",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1234,7 +1206,7 @@
   {
     "name": "test_codelink__test_load_validates_list_type",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "719",
+    "line": "691",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1248,7 +1220,7 @@
   {
     "name": "test_codelink__test_load_validates_all_items_are_needlinks",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "728",
+    "line": "700",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1262,7 +1234,7 @@
   {
     "name": "test_codelink__test_store_and_load_with_metadata",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "740",
+    "line": "712",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1276,7 +1248,7 @@
   {
     "name": "test_codelink__test_load_with_metadata_missing_metadata_dict",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "782",
+    "line": "754",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1290,7 +1262,7 @@
   {
     "name": "test_codelink__test_load_with_metadata_invalid_items_after_metadata",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "806",
+    "line": "778",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1304,7 +1276,7 @@
   {
     "name": "test_codelink__test_load_resolves_relative_path_with_env_var",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "823",
+    "line": "795",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1318,7 +1290,7 @@
   {
     "name": "test_codelink__test_load_with_metadata_resolves_relative_path",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "852",
+    "line": "824",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1332,7 +1304,7 @@
   {
     "name": "test_codelink__test_roundtrip_standard_format",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "887",
+    "line": "859",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1346,7 +1318,7 @@
   {
     "name": "test_codelink__test_roundtrip_metadata_format_applies_metadata",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "922",
+    "line": "894",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1360,7 +1332,7 @@
   {
     "name": "test_codelink__test_roundtrip_empty_lists",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "958",
+    "line": "930",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1374,7 +1346,7 @@
   {
     "name": "test_codelink__test_json_format_with_metadata_has_separate_dict",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "970",
+    "line": "942",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1388,7 +1360,7 @@
   {
     "name": "test_codelink__test_needlink_equality_same_values",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "1002",
+    "line": "974",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -1402,7 +1374,7 @@
   {
     "name": "test_codelink__test_needlink_inequality_different_values",
     "file": "src/extensions/score_source_code_linker/tests/test_codelink.py",
-    "line": "1029",
+    "line": "1001",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2816,7 +2788,7 @@
   {
     "name": "test_rules_file_based__test_count_need_objects_ignores_nested_non_need_directives",
     "file": "src/extensions/score_metamodel/tests/test_rules_file_based.py",
-    "line": "113",
+    "line": "112",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2894,7 +2866,7 @@
     "TestType": "requirements_based",
     "DerivationTechnique": "requirements_based",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_common_attr_status[version==1], tool_req__docs_req_types[version==1]",
+    "PartiallyVerifies": "tool_req__docs_common_attr_status[version==2], tool_req__docs_req_types[version==1]",
     "FullyVerifies": null
   },
   {
@@ -2978,7 +2950,7 @@
     "TestType": "requirements_based",
     "DerivationTechnique": "requirements_based",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_req_types[version==1], tool_req__docs_common_attr_status[version==1]",
+    "PartiallyVerifies": "tool_req__docs_req_types[version==1], tool_req__docs_common_attr_status[version==2]",
     "FullyVerifies": null
   },
   {
@@ -3012,7 +2984,7 @@
   {
     "name": "test_rules_file_based__test_count_need_objects_ignores_nested_non_need_directives",
     "file": "src/extensions/score_metamodel/tests/test_rules_file_based.py",
-    "line": "113",
+    "line": "112",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3068,7 +3040,7 @@
   {
     "name": "test_rules_file_based__test_count_need_objects_ignores_nested_non_need_directives",
     "file": "src/extensions/score_metamodel/tests/test_rules_file_based.py",
-    "line": "113",
+    "line": "112",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4748,7 +4720,7 @@
   {
     "name": "test_rules_file_based__test_count_need_objects_ignores_nested_non_need_directives",
     "file": "src/extensions/score_metamodel/tests/test_rules_file_based.py",
-    "line": "113",
+    "line": "112",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4832,7 +4804,7 @@
   {
     "name": "test_rules_file_based__test_count_need_objects_ignores_nested_non_need_directives",
     "file": "src/extensions/score_metamodel/tests/test_rules_file_based.py",
-    "line": "113",
+    "line": "112",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4888,7 +4860,7 @@
   {
     "name": "test_rules_file_based__test_count_need_objects_ignores_nested_non_need_directives",
     "file": "src/extensions/score_metamodel/tests/test_rules_file_based.py",
-    "line": "113",
+    "line": "112",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -5014,7 +4986,7 @@
   {
     "name": "test_rules_file_based__test_count_need_objects_ignores_nested_non_need_directives",
     "file": "src/extensions/score_metamodel/tests/test_rules_file_based.py",
-    "line": "113",
+    "line": "112",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -5616,7 +5588,7 @@
   {
     "name": "test_traceability_metrics__test_get_need_types_by_tags_returns_matching_directives_only",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": "26",
+    "line": "25",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5630,7 +5602,7 @@
   {
     "name": "test_traceability_metrics__test_get_need_types_by_tags_returns_empty_on_non_match",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": "87",
+    "line": "86",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5644,7 +5616,7 @@
   {
     "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[  -False]",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": "116",
+    "line": "115",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5658,7 +5630,7 @@
   {
     "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[text-True]",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": "116",
+    "line": "115",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5672,7 +5644,7 @@
   {
     "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[value2-False]",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": "116",
+    "line": "115",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5686,7 +5658,7 @@
   {
     "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[value3-True]",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": "116",
+    "line": "115",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5700,7 +5672,7 @@
   {
     "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[0-False]",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": "116",
+    "line": "115",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5714,7 +5686,7 @@
   {
     "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[1-True]",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": "116",
+    "line": "115",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5728,7 +5700,7 @@
   {
     "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[None-False]",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": "116",
+    "line": "115",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5742,7 +5714,7 @@
   {
     "name": "test_traceability_metrics__test_safe_percent_zero[3-0-100.0]",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": "141",
+    "line": "140",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5756,7 +5728,7 @@
   {
     "name": "test_traceability_metrics__test_safe_percent_zero[1-4-25.0]",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": "141",
+    "line": "140",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5770,7 +5742,7 @@
   {
     "name": "test_traceability_metrics__test_calculate_requirement_metrics_counts_links_and_missing_ids",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": "155",
+    "line": "154",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5784,7 +5756,7 @@
   {
     "name": "test_traceability_metrics__test_calculate_requirement_metrics_non_fully_linked",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": "184",
+    "line": "183",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5798,7 +5770,7 @@
   {
     "name": "test_traceability_metrics__test_calculate_requirement_metrics_non_fully_linked_2",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": "210",
+    "line": "209",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5812,7 +5784,7 @@
   {
     "name": "test_traceability_metrics__test_calculate_test_metrics_counts_linked_tests_and_broken_refs",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": "236",
+    "line": "235",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
