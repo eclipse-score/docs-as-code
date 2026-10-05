@@ -481,7 +481,12 @@
 <li><p>Optionally, merge source links using the <code class="docutils literal notranslate"><span class="pre">merge_sourcelinks</span></code> rule.</p></li>
 </ul>
 </li>
-<li><p>Needs (requirements) are gathered from various <code class="docutils literal notranslate"><span class="pre">needs_json</span></code> targets specified in the <code class="docutils literal notranslate"><span class="pre">data</span></code> attribute.</p></li>
+<li><p>Imported Needs are gathered from public <code class="docutils literal notranslate"><span class="pre">docs()</span></code> or <code class="docutils literal notranslate"><span class="pre">docs_bundle</span></code>
+targets specified in <code class="docutils literal notranslate"><span class="pre">external_needs</span></code>. The <code class="docutils literal notranslate"><span class="pre">needs_json</span></code> label remains
+accepted as a deprecated form without a warning for now; <code class="docutils literal notranslate"><span class="pre">needs_json_file</span></code>
+remains supported for directly naming an inventory file. Passing a Needs
+inventory through <code class="docutils literal notranslate"><span class="pre">data</span></code> is deprecated and prints an informational
+message; declare it through <code class="docutils literal notranslate"><span class="pre">external_needs</span></code> instead.</p></li>
 </ul>
 </li>
 <li><p>Documentation sources are read from the specified source directory (default: <code class="docutils literal notranslate"><span class="pre">docs/</span></code>).
