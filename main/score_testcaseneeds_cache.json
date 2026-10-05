@@ -4882,8 +4882,8 @@
     "TestType": "requirements_based",
     "DerivationTechnique": "requirements_based",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_common_attr_safety_link_check",
-    "FullyVerifies": "potential_tool_malfunction__docs_as_code__m2"
+    "PartiallyVerifies": null,
+    "FullyVerifies": "tool_req__docs_common_attr_safety_link_check[version==1]"
   },
   {
     "name": "test_rules_file_based__test_rst_files[graph/test_workproduct_aspice_40.rst]",
