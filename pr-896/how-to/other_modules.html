@@ -34,7 +34,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/css/score.css?v=415257cb" />
     <link rel="stylesheet" type="text/css" href="../_static/css/score_needs.css?v=82a1844f" />
-    <link rel="stylesheet" type="text/css" href="../_static/css/score_design.css?v=8048e6ee" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/score_design.css?v=1ed25149" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-data-viewer/jsonview.bundle.css?v=f6ef2277" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/libs/html/datatables.min.css?v=4b4fd840" />
@@ -501,15 +501,20 @@ There are multiple ways to do this depending on how you manage third-party/local
 </section>
 <section id="a-import-the-other-module-s-built-inventory">
 <h3>2a) Import the other module’s built inventory<a class="headerlink" href="#a-import-the-other-module-s-built-inventory" title="Link to this heading">#</a></h3>
-<p>The documentation build is exposed via a Bazel macro that accepts an <code class="docutils literal notranslate"><span class="pre">external_needs</span></code> parameter
-for external <code class="docutils literal notranslate"><span class="pre">:needs_json_file</span></code> targets.
-Use <code class="docutils literal notranslate"><span class="pre">external_needs</span></code> instead of <code class="docutils literal notranslate"><span class="pre">data</span></code> when the target produces needs JSON —
-<code class="docutils literal notranslate"><span class="pre">data</span></code> is meant for non-needs runfiles (e.g. custom tool outputs).</p>
+<p>The documentation build is exposed via a Bazel macro that accepts an
+<code class="docutils literal notranslate"><span class="pre">external_needs</span></code> parameter. Prefer another module’s public <code class="docutils literal notranslate"><span class="pre">:docs</span></code> or
+<code class="docutils literal notranslate"><span class="pre">:docs_bundle</span></code> target. <code class="docutils literal notranslate"><span class="pre">docs()</span></code> resolves that label to the target’s locally
+owned Needs inventory. The <code class="docutils literal notranslate"><span class="pre">:needs_json</span></code> label remains accepted as a
+deprecated form without a warning for now. <code class="docutils literal notranslate"><span class="pre">:needs_json_file</span></code> remains a
+supported way to name an inventory file directly. Passing a Needs inventory
+through <code class="docutils literal notranslate"><span class="pre">data</span></code> is deprecated and prints an INFO message; use
+<code class="docutils literal notranslate"><span class="pre">external_needs</span></code> instead. Reserve <code class="docutils literal notranslate"><span class="pre">data</span></code> for non-needs runfiles such as
+custom tool outputs.</p>
 <p>Example <cite>BUILD</cite> snippet (consumer module):</p>
 <div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;@score_docs_as_code//:docs.bzl&quot;</span><span class="p">,</span> <span class="s2">&quot;docs&quot;</span><span class="p">)</span>
 <span class="n">docs</span><span class="p">(</span>
   <span class="n">external_needs</span> <span class="o">=</span> <span class="p">[</span>
-     <span class="s2">&quot;@score_process_description//:needs_json&quot;</span><span class="p">,</span>
+     <span class="s2">&quot;@score_process_description//:docs&quot;</span><span class="p">,</span>
   <span class="p">],</span>
   <span class="n">source_dir</span> <span class="o">=</span> <span class="s2">&quot;docs&quot;</span><span class="p">,</span>
 <span class="p">)</span>
@@ -520,9 +525,9 @@ Use <code class="docutils literal notranslate"><span class="pre">external_needs<
 <h3>2b) Mount the external module’s documentation bundle<a class="headerlink" href="#b-mount-the-external-module-s-documentation-bundle" title="Link to this heading">#</a></h3>
 <p>The documentation build in this project is exposed via a Bazel macro that accepts
 a <code class="docutils literal notranslate"><span class="pre">bundles</span></code> parameter. Mount the external module’s auto-exposed
-<code class="docutils literal notranslate"><span class="pre">:docs_bundle</span></code> bundle. The mounted sources define their needs in the host
-build, so do <strong>not</strong> also add that module’s <code class="docutils literal notranslate"><span class="pre">:needs_json</span></code> to <code class="docutils literal notranslate"><span class="pre">data</span></code> — doing
-so would create duplicate need IDs.</p>
+<code class="docutils literal notranslate"><span class="pre">:docs_bundle</span></code> bundle. The mounted sources define their Needs in the host
+build, so do <strong>not</strong> also add that module’s <code class="docutils literal notranslate"><span class="pre">:needs_json</span></code> to <code class="docutils literal notranslate"><span class="pre">data</span></code>. The
+deprecated path prints an INFO message and can create duplicate Need IDs.</p>
 <p>Example <cite>BUILD</cite> snippet (consumer module):</p>
 <div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;@score_docs_as_code//:docs.bzl&quot;</span><span class="p">,</span> <span class="s2">&quot;docs&quot;</span><span class="p">)</span>
 <span class="n">docs</span><span class="p">(</span>

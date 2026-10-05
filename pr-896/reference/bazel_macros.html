@@ -34,7 +34,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/css/score.css?v=415257cb" />
     <link rel="stylesheet" type="text/css" href="../_static/css/score_needs.css?v=82a1844f" />
-    <link rel="stylesheet" type="text/css" href="../_static/css/score_design.css?v=8048e6ee" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/score_design.css?v=1ed25149" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-data-viewer/jsonview.bundle.css?v=f6ef2277" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/libs/html/datatables.min.css?v=4b4fd840" />
@@ -508,7 +508,12 @@ files are processed as documentation sources or carried as supporting data.</p>
     <span class="n">project_url</span> <span class="o">=</span> <span class="s2">&quot;https://github.com/eclipse-score/my-project&quot;</span><span class="p">,</span>
     <span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
         <span class="c1"># labels to any extra tools or data you want included</span>
-        <span class="c1"># e.g. &quot;//:needs_json&quot; or other tool targets</span>
+        <span class="c1"># e.g. &quot;//:some_tool&quot; or other supporting files</span>
+    <span class="p">],</span>
+    <span class="n">external_needs</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="c1"># public docs() or docs_bundle targets whose Needs are referenced</span>
+        <span class="c1"># by this project&#39;s documentation</span>
+        <span class="s2">&quot;@score_process_description//:docs_bundle&quot;</span><span class="p">,</span>
     <span class="p">],</span>
     <span class="n">bundles</span> <span class="o">=</span> <span class="p">[</span>
         <span class="c1"># dicts describing bundles to mount into this project</span>
@@ -544,10 +549,15 @@ Supporting files for this project’s root <code class="docutils literal notrans
 available to the documentation targets and travel when another project
 mounts this project’s public bundle. Put files belonging to a mounted child
 in that child’s <code class="docutils literal notranslate"><span class="pre">docs_bundle(data</span> <span class="pre">=</span> <span class="pre">[...])</span></code> instead.</p>
+<p>Passing a Needs inventory target through <code class="docutils literal notranslate"><span class="pre">data</span></code> is deprecated and prints
+an INFO message. Put Needs inventory targets in <code class="docutils literal notranslate"><span class="pre">external_needs</span></code> instead.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>To pull in another module’s needs for cross-referencing, add its
-<code class="docutils literal notranslate"><span class="pre">:needs_json</span></code> target here.</p>
+<p>To reference Needs owned by another documentation project, use
+<code class="docutils literal notranslate"><span class="pre">external_needs</span></code> with that project’s public <code class="docutils literal notranslate"><span class="pre">:docs</span></code> target or a
+public <code class="docutils literal notranslate"><span class="pre">:docs_bundle</span></code> target. The <code class="docutils literal notranslate"><span class="pre">:needs_json</span></code> label remains accepted
+as a deprecated form without a warning for now. <code class="docutils literal notranslate"><span class="pre">:needs_json_file</span></code> is
+also supported for directly naming an inventory file.</p>
 </div>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">bundles</span></code> (list of placement dicts)
@@ -573,9 +583,13 @@ ID of the Sphinx-Needs item that represents the primary subject of this
 documentation project. A project may contain many other Needs; when this
 value is set, bundle-level target metadata is written only to this Need.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">external_needs</span></code> (list of bazel labels)
-External <code class="docutils literal notranslate"><span class="pre">:needs_json_file</span></code> targets from other modules/repositories
-for referencing their needs.
-Do not use <code class="docutils literal notranslate"><span class="pre">:needs_json</span></code> targets.</p></li>
+Public <code class="docutils literal notranslate"><span class="pre">:docs</span></code> or <code class="docutils literal notranslate"><span class="pre">:docs_bundle</span></code> targets from other modules or
+repositories. <code class="docutils literal notranslate"><span class="pre">docs()</span></code> maps each label to that target’s locally owned
+Needs inventory, so imported descendants are not treated as part of the
+target’s own inventory. The referenced Needs can then be used by this
+project’s documentation and its <code class="docutils literal notranslate"><span class="pre">needs_json</span></code> output. The <code class="docutils literal notranslate"><span class="pre">:needs_json</span></code>
+label remains accepted as a deprecated form without a warning for now;
+<code class="docutils literal notranslate"><span class="pre">:needs_json_file</span></code> remains supported as a direct inventory-file target.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">metamodel</span></code> (bazel label, optional)
 Path to a custom <code class="docutils literal notranslate"><span class="pre">metamodel.yaml</span></code> file.
 When set, the <code class="docutils literal notranslate"><span class="pre">score_metamodel</span></code> extension loads <strong>this file instead of</strong> the default metamodel.

@@ -2762,7 +2762,7 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 1257,
+          "line": 1261,
           "tag": "# req-Id:",
           "need": "tool_req__docs_arch_link_security",
           "full_line": "# req-Id: tool_req__docs_arch_link_security",
@@ -3459,7 +3459,7 @@
     }
   },
   {
-    "need": "tool_req__docs_common_attr_status[version==1]",
+    "need": "tool_req__docs_common_attr_status[version==2]",
     "links": {
       "CodeLinks": [],
       "TestLinks": [
@@ -3467,7 +3467,7 @@
           "name": "test_rules_file_based__test_rst_files[options/test_options_options.rst]",
           "file": "src/extensions/score_metamodel/tests/rst/options/test_options_options.rst",
           "line": 16,
-          "need": "tool_req__docs_common_attr_status[version==1]",
+          "need": "tool_req__docs_common_attr_status[version==2]",
           "verify_type": "partially",
           "result": "passed",
           "result_text": "",
@@ -3479,7 +3479,7 @@
           "name": "test_rules_file_based__test_rst_files[options/test_options_extra_option.rst]",
           "file": "src/extensions/score_metamodel/tests/rst/options/test_options_extra_option.rst",
           "line": 16,
-          "need": "tool_req__docs_common_attr_status[version==1]",
+          "need": "tool_req__docs_common_attr_status[version==2]",
           "verify_type": "partially",
           "result": "passed",
           "result_text": "",
@@ -4054,7 +4054,7 @@
         {
           "name": "test_traceability_metrics__test_get_need_types_by_tags_returns_matching_directives_only",
           "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 26,
+          "line": 25,
           "need": "tool_req__docs_test_linkage_metrics",
           "verify_type": "partially",
           "result": "passed",
@@ -4066,7 +4066,7 @@
         {
           "name": "test_traceability_metrics__test_get_need_types_by_tags_returns_empty_on_non_match",
           "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 87,
+          "line": 86,
           "need": "tool_req__docs_test_linkage_metrics",
           "verify_type": "partially",
           "result": "passed",
@@ -4078,7 +4078,7 @@
         {
           "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[  -False]",
           "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 116,
+          "line": 115,
           "need": "tool_req__docs_test_linkage_metrics",
           "verify_type": "partially",
           "result": "passed",
@@ -4090,7 +4090,7 @@
         {
           "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[text-True]",
           "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 116,
+          "line": 115,
           "need": "tool_req__docs_test_linkage_metrics",
           "verify_type": "partially",
           "result": "passed",
@@ -4102,7 +4102,7 @@
         {
           "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[value2-False]",
           "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 116,
+          "line": 115,
           "need": "tool_req__docs_test_linkage_metrics",
           "verify_type": "partially",
           "result": "passed",
@@ -4114,7 +4114,7 @@
         {
           "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[value3-True]",
           "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 116,
+          "line": 115,
           "need": "tool_req__docs_test_linkage_metrics",
           "verify_type": "partially",
           "result": "passed",
@@ -4126,7 +4126,7 @@
         {
           "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[0-False]",
           "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 116,
+          "line": 115,
           "need": "tool_req__docs_test_linkage_metrics",
           "verify_type": "partially",
           "result": "passed",
@@ -4138,7 +4138,7 @@
         {
           "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[1-True]",
           "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 116,
+          "line": 115,
           "need": "tool_req__docs_test_linkage_metrics",
           "verify_type": "partially",
           "result": "passed",
@@ -4150,7 +4150,7 @@
         {
           "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[None-False]",
           "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 116,
+          "line": 115,
           "need": "tool_req__docs_test_linkage_metrics",
           "verify_type": "partially",
           "result": "passed",
@@ -4162,7 +4162,7 @@
         {
           "name": "test_traceability_metrics__test_safe_percent_zero[3-0-100.0]",
           "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 141,
+          "line": 140,
           "need": "tool_req__docs_test_linkage_metrics",
           "verify_type": "partially",
           "result": "passed",
@@ -4174,7 +4174,7 @@
         {
           "name": "test_traceability_metrics__test_safe_percent_zero[1-4-25.0]",
           "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 141,
+          "line": 140,
           "need": "tool_req__docs_test_linkage_metrics",
           "verify_type": "partially",
           "result": "passed",
@@ -4186,7 +4186,7 @@
         {
           "name": "test_traceability_metrics__test_calculate_requirement_metrics_counts_links_and_missing_ids",
           "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 155,
+          "line": 154,
           "need": "tool_req__docs_test_linkage_metrics",
           "verify_type": "partially",
           "result": "passed",
@@ -4198,7 +4198,7 @@
         {
           "name": "test_traceability_metrics__test_calculate_requirement_metrics_non_fully_linked",
           "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 184,
+          "line": 183,
           "need": "tool_req__docs_test_linkage_metrics",
           "verify_type": "partially",
           "result": "passed",
@@ -4210,7 +4210,7 @@
         {
           "name": "test_traceability_metrics__test_calculate_requirement_metrics_non_fully_linked_2",
           "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 210,
+          "line": 209,
           "need": "tool_req__docs_test_linkage_metrics",
           "verify_type": "partially",
           "result": "passed",
@@ -4222,7 +4222,7 @@
         {
           "name": "test_traceability_metrics__test_calculate_test_metrics_counts_linked_tests_and_broken_refs",
           "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 236,
+          "line": 235,
           "need": "tool_req__docs_test_linkage_metrics",
           "verify_type": "partially",
           "result": "passed",
@@ -4242,7 +4242,7 @@
         {
           "name": "test_traceability_metrics__test_calculate_requirement_metrics_counts_links_and_missing_ids",
           "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 155,
+          "line": 154,
           "need": "potential_tool_malfunction__docs_as_code__m3",
           "verify_type": "partially",
           "result": "passed",
@@ -4254,7 +4254,7 @@
         {
           "name": "test_traceability_metrics__test_calculate_test_metrics_counts_linked_tests_and_broken_refs",
           "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 236,
+          "line": 235,
           "need": "potential_tool_malfunction__docs_as_code__m3",
           "verify_type": "partially",
           "result": "passed",

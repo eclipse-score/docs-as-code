@@ -34,7 +34,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/css/score.css?v=415257cb" />
     <link rel="stylesheet" type="text/css" href="../_static/css/score_needs.css?v=82a1844f" />
-    <link rel="stylesheet" type="text/css" href="../_static/css/score_design.css?v=8048e6ee" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/score_design.css?v=1ed25149" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-data-viewer/jsonview.bundle.css?v=f6ef2277" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-needs/libs/html/datatables.min.css?v=4b4fd840" />
@@ -517,7 +517,7 @@ This action requires configuration in the <code class="docutils literal notransl
     <span class="n">project</span> <span class="o">=</span> <span class="s2">&quot;S-CORE &lt;feature name&gt;&quot;</span><span class="p">,</span>
     <span class="n">project_url</span> <span class="o">=</span> <span class="s2">&quot;https://eclipse-score.github.io/&lt;repo name&gt;&quot;</span><span class="p">,</span>
     <span class="n">external_needs</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="s2">&quot;@other_repo:needs_json&quot;</span><span class="p">,</span>  <span class="c1"># Optional, if you have dependencies</span>
+        <span class="s2">&quot;@other_repo//:docs&quot;</span><span class="p">,</span>  <span class="c1"># Optional, if you reference another project&#39;s Needs</span>
     <span class="p">],</span>
 <span class="p">)</span>
 </pre></div>

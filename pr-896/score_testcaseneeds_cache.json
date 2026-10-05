@@ -224,20 +224,6 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_rules_are_working_correctly__test_score_pytest_loads_conftest",
-    "file": "tests/test_rules_are_working_correctly.py",
-    "line": "13",
-    "result": "passed",
-    "repo_name": null,
-    "hash": null,
-    "url": null,
-    "TestType": null,
-    "DerivationTechnique": null,
-    "result_text": "",
-    "PartiallyVerifies": null,
-    "FullyVerifies": null
-  },
-  {
     "name": "traceability_gate_test__test_gate_passes_when_thresholds_met",
     "file": "scripts_bazel/tests/traceability_gate_test.py",
     "line": "147",
@@ -2802,7 +2788,7 @@
   {
     "name": "test_rules_file_based__test_count_need_objects_ignores_nested_non_need_directives",
     "file": "src/extensions/score_metamodel/tests/test_rules_file_based.py",
-    "line": "113",
+    "line": "112",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2880,7 +2866,7 @@
     "TestType": "requirements_based",
     "DerivationTechnique": "requirements_based",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_common_attr_status[version==1], tool_req__docs_req_types[version==1]",
+    "PartiallyVerifies": "tool_req__docs_common_attr_status[version==2], tool_req__docs_req_types[version==1]",
     "FullyVerifies": null
   },
   {
@@ -2964,7 +2950,7 @@
     "TestType": "requirements_based",
     "DerivationTechnique": "requirements_based",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_req_types[version==1], tool_req__docs_common_attr_status[version==1]",
+    "PartiallyVerifies": "tool_req__docs_req_types[version==1], tool_req__docs_common_attr_status[version==2]",
     "FullyVerifies": null
   },
   {
@@ -2998,7 +2984,7 @@
   {
     "name": "test_rules_file_based__test_count_need_objects_ignores_nested_non_need_directives",
     "file": "src/extensions/score_metamodel/tests/test_rules_file_based.py",
-    "line": "113",
+    "line": "112",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3054,7 +3040,7 @@
   {
     "name": "test_rules_file_based__test_count_need_objects_ignores_nested_non_need_directives",
     "file": "src/extensions/score_metamodel/tests/test_rules_file_based.py",
-    "line": "113",
+    "line": "112",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3334,7 +3320,7 @@
   {
     "name": "test_external_needs__test_extend_needs_json_exporter_uses_configured_value",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "45",
+    "line": "47",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3348,7 +3334,7 @@
   {
     "name": "test_external_needs__test_extend_needs_json_exporter_can_override_export_metadata",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "62",
+    "line": "64",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3362,7 +3348,7 @@
   {
     "name": "test_external_needs__test_external_needs_runfiles_path_is_environment_independent[source0-suffix0-expected0]",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "84",
+    "line": "86",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3376,7 +3362,7 @@
   {
     "name": "test_external_needs__test_parse_bazel_external_need_marks_same_repository_labels_local",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "104",
+    "line": "106",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3390,7 +3376,7 @@
   {
     "name": "test_external_needs__test_parse_external_needs_labels_filters_ordinary_data_labels",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "113",
+    "line": "115",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3404,7 +3390,7 @@
   {
     "name": "test_external_needs__test_external_needs_source_path_selects_target_layout[source0-expected0]",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "126",
+    "line": "128",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3418,7 +3404,7 @@
   {
     "name": "test_external_needs__test_external_needs_source_path_selects_target_layout[source1-expected1]",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "126",
+    "line": "128",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3432,7 +3418,7 @@
   {
     "name": "test_external_needs__test_configured_runfiles_dir_is_used_for_external_sources",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "153",
+    "line": "155",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3446,7 +3432,7 @@
   {
     "name": "test_external_needs__test_external_needs_source_config_parses_labels",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "169",
+    "line": "171",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3460,7 +3446,7 @@
   {
     "name": "test_external_needs__test_external_needs_source_rejects_descriptors",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "188",
+    "line": "190",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3474,7 +3460,7 @@
   {
     "name": "test_external_needs__test_add_external_needs_json_appends_entry",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "203",
+    "line": "205",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3488,7 +3474,7 @@
   {
     "name": "test_external_needs__test_add_external_needs_json_appends_entry_local",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "231",
+    "line": "233",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3502,7 +3488,7 @@
   {
     "name": "test_external_needs__test_add_needs_json_file_appends_entry",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "263",
+    "line": "265",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3516,7 +3502,49 @@
   {
     "name": "test_external_needs__test_add_external_needs_json_missing_file_keeps_list_empty",
     "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
-    "line": "296",
+    "line": "298",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_external_needs__test_duplicate_external_need_ids_with_same_base_url_are_reported",
+    "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
+    "line": "348",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_external_needs__test_duplicate_external_need_ids_with_different_base_urls_do_not_warn",
+    "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
+    "line": "404",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_external_needs__test_same_base_url_without_duplicate_ids_does_not_warn",
+    "file": "src/extensions/score_metamodel/tests/test_external_needs.py",
+    "line": "434",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4678,7 +4706,7 @@
   {
     "name": "test_rules_file_based__test_count_need_objects_ignores_nested_non_need_directives",
     "file": "src/extensions/score_metamodel/tests/test_rules_file_based.py",
-    "line": "113",
+    "line": "112",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4762,7 +4790,7 @@
   {
     "name": "test_rules_file_based__test_count_need_objects_ignores_nested_non_need_directives",
     "file": "src/extensions/score_metamodel/tests/test_rules_file_based.py",
-    "line": "113",
+    "line": "112",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4818,7 +4846,7 @@
   {
     "name": "test_rules_file_based__test_count_need_objects_ignores_nested_non_need_directives",
     "file": "src/extensions/score_metamodel/tests/test_rules_file_based.py",
-    "line": "113",
+    "line": "112",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4944,7 +4972,7 @@
   {
     "name": "test_rules_file_based__test_count_need_objects_ignores_nested_non_need_directives",
     "file": "src/extensions/score_metamodel/tests/test_rules_file_based.py",
-    "line": "113",
+    "line": "112",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -5546,7 +5574,7 @@
   {
     "name": "test_traceability_metrics__test_get_need_types_by_tags_returns_matching_directives_only",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": "26",
+    "line": "25",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5560,7 +5588,7 @@
   {
     "name": "test_traceability_metrics__test_get_need_types_by_tags_returns_empty_on_non_match",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": "87",
+    "line": "86",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5574,7 +5602,7 @@
   {
     "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[  -False]",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": "116",
+    "line": "115",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5588,7 +5616,7 @@
   {
     "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[text-True]",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": "116",
+    "line": "115",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5602,7 +5630,7 @@
   {
     "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[value2-False]",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": "116",
+    "line": "115",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5616,7 +5644,7 @@
   {
     "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[value3-True]",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": "116",
+    "line": "115",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5630,7 +5658,7 @@
   {
     "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[0-False]",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": "116",
+    "line": "115",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5644,7 +5672,7 @@
   {
     "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[1-True]",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": "116",
+    "line": "115",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5658,7 +5686,7 @@
   {
     "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[None-False]",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": "116",
+    "line": "115",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5672,7 +5700,7 @@
   {
     "name": "test_traceability_metrics__test_safe_percent_zero[3-0-100.0]",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": "141",
+    "line": "140",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5686,7 +5714,7 @@
   {
     "name": "test_traceability_metrics__test_safe_percent_zero[1-4-25.0]",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": "141",
+    "line": "140",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5700,7 +5728,7 @@
   {
     "name": "test_traceability_metrics__test_calculate_requirement_metrics_counts_links_and_missing_ids",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": "155",
+    "line": "154",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5714,7 +5742,7 @@
   {
     "name": "test_traceability_metrics__test_calculate_requirement_metrics_non_fully_linked",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": "184",
+    "line": "183",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5728,7 +5756,7 @@
   {
     "name": "test_traceability_metrics__test_calculate_requirement_metrics_non_fully_linked_2",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": "210",
+    "line": "209",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5742,7 +5770,7 @@
   {
     "name": "test_traceability_metrics__test_calculate_test_metrics_counts_linked_tests_and_broken_refs",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": "236",
+    "line": "235",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
