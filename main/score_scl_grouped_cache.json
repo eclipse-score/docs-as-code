@@ -2762,7 +2762,7 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 1257,
+          "line": 1261,
           "tag": "# req-Id:",
           "need": "tool_req__docs_arch_link_security",
           "full_line": "# req-Id: tool_req__docs_arch_link_security",
@@ -3459,7 +3459,7 @@
     }
   },
   {
-    "need": "tool_req__docs_common_attr_status[version==1]",
+    "need": "tool_req__docs_common_attr_status[version==2]",
     "links": {
       "CodeLinks": [],
       "TestLinks": [
@@ -3467,7 +3467,7 @@
           "name": "test_rules_file_based__test_rst_files[options/test_options_options.rst]",
           "file": "src/extensions/score_metamodel/tests/rst/options/test_options_options.rst",
           "line": 16,
-          "need": "tool_req__docs_common_attr_status[version==1]",
+          "need": "tool_req__docs_common_attr_status[version==2]",
           "verify_type": "partially",
           "result": "passed",
           "result_text": "",
@@ -3479,7 +3479,7 @@
           "name": "test_rules_file_based__test_rst_files[options/test_options_extra_option.rst]",
           "file": "src/extensions/score_metamodel/tests/rst/options/test_options_extra_option.rst",
           "line": 16,
-          "need": "tool_req__docs_common_attr_status[version==1]",
+          "need": "tool_req__docs_common_attr_status[version==2]",
           "verify_type": "partially",
           "result": "passed",
           "result_text": "",
@@ -3836,7 +3836,7 @@
           "file": "src/extensions/score_metamodel/tests/rst/safety/test_saf_violates.rst",
           "line": 15,
           "need": "tool_req__docs_saf_attrs_violates[version==2]",
-          "verify_type": "partially",
+          "verify_type": "fully",
           "result": "passed",
           "result_text": "",
           "repo_name": "local_repo",
