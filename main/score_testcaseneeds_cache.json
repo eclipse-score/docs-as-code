@@ -3160,8 +3160,8 @@
     "TestType": "requirements_based",
     "DerivationTechnique": "requirements_based",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_req_attr_validity_correctness, tool_req__docs_req_attr_validity_consistency",
-    "FullyVerifies": null
+    "PartiallyVerifies": null,
+    "FullyVerifies": "tool_req__docs_req_attr_validity_correctness, tool_req__docs_req_attr_validity_consistency"
   },
   {
     "name": "test_bundle_lifecycle__test_multiple_bundle_targets_keep_declaration_order_in_json",
