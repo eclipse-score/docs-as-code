@@ -63,12 +63,12 @@ uses. You may also pass filegroups; their files are scanned directly.
    )
 
    docs(
-      data = [
-             "@score_process_description//:needs_json",
-         ],
-         source_dir = "docs",
-         code_targets = [":some_application"],
-         primary_need_id = "comp__some_component",
+      external_needs = [
+         "@score_process_description//:docs",
+      ],
+      source_dir = "docs",
+      code_targets = [":some_application"],
+      primary_need_id = "comp__some_component",
    )
 
 ``primary_need_id`` is optional and identifies the single Need representing

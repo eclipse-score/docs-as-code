@@ -18,10 +18,10 @@ reusable bundle and how nested bundles are composed. Source-bearing bundles
 also create a ``<name>.__internal__.needs_local`` export containing Needs from
 their own sources. The root bundle created by ``docs()`` follows the same rule;
 its existing project-wide ``needs_json`` export remains available as well.
-Standalone exports remain self-contained; references to Needs defined outside
-the bundle remain unresolved until cross-bundle imports are added. A bundle can
-associate itself with a repository's root docs configuration without depending
-on the root bundle's composed content.
+The root ``docs()`` build can import another public bundle's local inventory to
+resolve references to Needs owned by that bundle. A bundle can associate itself
+with a repository's root docs configuration without depending on the root
+bundle's composed content.
 """
 
 # Multiple approaches are available to build the same documentation output:
@@ -136,8 +136,7 @@ def _needs_sphinx_docs(
     """Declare one Bazel action that runs Sphinx's Needs builder.
 
     String settings travel as Sphinx ``--define`` options. Bazel labels stay
-    typed until the private rule can declare them as sandbox inputs, while the
-    serialized external-needs label list is passed to the Python extension.
+    typed until the private rule can declare them as sandbox inputs.
     """
     # These three files use typed rule attributes below so the private rule can
     # pass their paths to the action. Add them to ``tools`` as well: that puts
@@ -191,6 +190,59 @@ def _bundle_internal_target(name, target):
     """Return the conventional name for a target internal to a bundle."""
     return name + ".__internal__." + target
 
+def _bundle_needs_local_label(bundle):
+    """Map a public docs or docs_bundle label to its local Needs export.
+
+    The public target identifies the bundle that owns the Needs. Its private
+    sibling export has a predictable name, but callers should not have to use
+    that implementation name directly.
+    """
+    label = str(bundle)
+    # A package-local label is meaningful inside the BUILD file invoking the
+    # macro. Turn it into an absolute workspace label before passing it to the
+    # Python extension, which resolves inventory paths from Bazel runfiles.
+    if label.startswith(":"):
+        label = "//" + native.package_name() + label
+
+    # The public API accepts Bazel targets, not file paths or arbitrary data
+    # labels. Check that here so malformed values fail close to the BUILD file
+    # declaration instead of much later during Sphinx startup.
+    if not (label.startswith("//") or label.startswith("@")) or ":" not in label:
+        fail(
+            "external_needs entries must be Bazel target labels, got %r" % label,
+        )
+
+    package, target = label.rsplit(":", 1)
+    # Bundle callers name public targets. Keep generated implementation names
+    # private as more internal targets are added over time.
+    if "__internal__" in target:
+        fail(
+            "external_needs entries must name a docs() or docs_bundle target, got %r" %
+            label,
+        )
+    return package + ":" + _bundle_internal_target(target, "needs_local")
+
+def _resolve_external_needs_labels(external_needs):
+    """Resolve public bundle labels and preserve supported inventory labels.
+
+    Public ``docs()`` and ``docs_bundle`` targets are translated to their
+    owner-only Needs exports. ``needs_json_file`` directly identifies an
+    inventory file, so keep that supported target unchanged. Also keep
+    ``needs_json`` working as a deprecated form without a warning for now.
+    """
+    inventory_labels = []
+    for external_need in external_needs:
+        label = str(external_need)
+        if label.startswith(":"):
+            label = "//" + native.package_name() + label
+
+        target = label.rsplit(":", 1)[-1]
+        if target in ("needs_json", "needs_json_file"):
+            inventory_labels.append(label)
+        else:
+            inventory_labels.append(_bundle_needs_local_label(label))
+    return inventory_labels
+
 def _package_relative_project_url(base_url, package_path):
     """Append a workspace-relative Bazel package to a project URL."""
     return join_path(base_url, package_path)
@@ -212,15 +264,22 @@ def _root_docs_config_label(root_docs):
 def _is_needs_json_target(label):
     """Return whether ``label`` names the directory-valued ``needs_json`` target.
 
-    ``docs(data = [...])`` historically accepts ``:needs_json`` labels as
-    external Needs inventories. The target is a Bazel TreeArtifact containing
-    ``needs.json`` and other generated outputs, so it is a build/runfile input
-    rather than a file that belongs in a portable documentation-bundle mount.
-    Keep this compatibility distinction at the public macro boundary instead
-    of making the generic bundle and mount implementations understand a
-    special-purpose generated directory.
+    The target is a Bazel TreeArtifact containing ``needs.json`` and other
+    generated outputs, so it is a build/runfile input rather than a file that
+    belongs in a portable documentation-bundle mount. Keep this distinction at
+    the public macro boundary instead of making generic bundle and mount logic
+    handle the special-purpose generated directory.
     """
     return str(label).rsplit(":", 1)[-1] == "needs_json"
+
+def _is_needs_inventory_target(label):
+    """Return whether ``label`` directly names a Needs inventory target.
+
+    These inventory targets are still accepted through ``external_needs``.
+    Identifying them separately lets ``docs()`` report the old ``data`` route
+    without reporting ordinary files and runtime dependencies.
+    """
+    return str(label).rsplit(":", 1)[-1] in ("needs_json", "needs_json_file")
 
 def _declare_docs_bundle(
     name,
@@ -306,11 +365,10 @@ def _declare_docs_bundle(
         )
 
     # ``needs_json`` is an inventory consumed by score_metamodel, not content
-    # owned by this bundle. It must remain in the caller's build/runfile inputs
-    # for the legacy ``docs(data = [...])`` API, but propagating the TreeArtifact
-    # through DocsBundleInfo would make a later bundle mount treat its directory
-    # path as a regular data file. Filter only this special target here; all
-    # ordinary supporting files retain the root-bundle behavior.
+    # owned by this bundle. Do not propagate its TreeArtifact through
+    # DocsBundleInfo: a later bundle mount would treat that directory as a
+    # regular data file. Filter only this special target here; ordinary
+    # supporting files retain the usual behavior.
     bundle_data = [
         data_file
         for data_file in data
@@ -396,7 +454,8 @@ def _declare_bundle_local_needs(
         data = [],
         visibility = None,
         config = None,
-        deps = []):
+        deps = [],
+        resolved_external_needs_labels = []):
     """Create a standalone Needs export for a bundle's direct sources.
 
     Standalone ``docs_bundle`` exports use Sphinx's configuration-free mode
@@ -406,7 +465,9 @@ def _declare_bundle_local_needs(
 
     The action consumes a sibling source-only provider instead of the public
     composed provider, so this inventory contains Needs only from this
-    bundle's directly owned documents.
+    bundle's directly owned documents. A root ``docs()`` export may also load
+    already-resolved external inventories while checking links in its sources;
+    those imported Needs are not included in the output inventory.
     """
     if not source_dir_globbed and not srcs:
         return
@@ -425,9 +486,12 @@ def _declare_bundle_local_needs(
         bundle = source_bundle,
         config = config,
         sphinx_build_deps = sphinx_build_deps,
-        sphinx_build_data = data,
+        # External inventories are action inputs so Sphinx can resolve links
+        # while building this local export. The source-only bundle still
+        # determines which Needs the builder writes to its own output.
+        sphinx_build_data = data + resolved_external_needs_labels,
         master_doc = entry_doc,
-        external_needs_labels = "[]",
+        external_needs_labels = json.encode(resolved_external_needs_labels),
         score_bundle_needs_export = "1",
         score_sourcelinks_json = sourcelinks_json,
         score_source_code_linker_plain_links = "1",
@@ -579,9 +643,14 @@ def docs(
         child content belongs in the child ``docs_bundle(data = [...])``.
         For generated documentation in a mounted child, use that bundle's
         explicit ``srcs`` instead; ``data`` remains for supporting/runtime
-        files.
+        files. Passing a Needs inventory target through ``data`` is deprecated
+        and prints an informational message; put it in ``external_needs``.
       deps: Additional dependencies for the documentation build.
-      external_needs: List of external needs targets to include in the documentation build.
+      external_needs: Labels of public ``docs()`` or ``docs_bundle`` targets
+                      whose Needs can be referenced by this project. The
+                      ``needs_json`` label remains accepted as a deprecated
+                      form, without a warning for now. ``needs_json_file`` is
+                      also supported for directly naming an inventory file.
       code_targets: Implementation targets or filegroups to scan for source code
                     links. Implementation targets are scanned recursively; filegroups
                     expand to their files.
@@ -609,6 +678,22 @@ def docs(
     child bundle when its documentation is generated by a build action.
     """
     # HINT: keep documentation sync docs/reference/bazel_macros.rst
+
+    # Report external Needs inventories in ``data`` while the original labels
+    # are still visible at the public macro boundary. After this point, ``data``
+    # and explicit ``external_needs`` labels are combined for the Needs builder,
+    # so their origin is no longer available.
+    if any([_is_needs_inventory_target(label) for label in data]):
+        print(
+            "INFO: ⚠️ DEPRECATED: Passing a Needs inventory through " +
+            "docs(data = [...]) is deprecated!!! Move it to " +
+            "external_needs = [...] instead.",
+        )
+
+    # Resolve public bundle names once, then pass the generated inventory labels
+    # to both the interactive build and the Needs export action. The deprecated
+    # ``needs_json`` form remains accepted through explicit ``external_needs``.
+    external_needs_labels = _resolve_external_needs_labels(external_needs)
 
     config_file_path = join_path(source_dir, "conf.py")
     config_is_missing = len(native.glob([config_file_path], allow_empty = True)) == 0
@@ -686,7 +771,10 @@ def docs(
     # source provider. Nested bundles are rendered by docs_bundle but keep
     # separate ownership and separate local Needs inventories.
     _declare_bundle_local_needs(
-        name = "docs_bundle",
+        # The public producer target is named ``docs``. Its local Needs export
+        # uses the same name so another project's ``external_needs = [":docs"]``
+        # resolves to the inventory this macro actually creates.
+        name = "docs",
         source_bundle = root_bundle.source_bundle,
         source_dir_globbed = root_bundle.source_dir_globbed,
         srcs = [],
@@ -697,6 +785,7 @@ def docs(
         visibility = ["//visibility:public"],
         config = sphinx_config,
         deps = deps,
+        resolved_external_needs_labels = external_needs_labels,
     )
     merge_bundle_sourcelinks(
         name = "sourcelinks_json",
@@ -714,7 +803,7 @@ def docs(
     # the complete bundle in runfiles would duplicate those sources. External
     # bundles do need runfiles, so keep only those sources.
     docs_data = (
-        data + external_needs + metamodel_label +
+        data + external_needs_labels + metamodel_label +
         [":sourcelinks_json", ":_external_docs_runfiles"] +
         [mounts_manifest]
     )
@@ -724,7 +813,7 @@ def docs(
         "PACKAGE_DIR": native.package_name(),
         "TEST_SOURCES": str(test_sources),
         "DATA": str(data),
-        "EXTERNAL_NEEDS_FILES": str(external_needs),
+        "EXTERNAL_NEEDS_FILES": str(external_needs_labels),
         # `bazel run` starts from a runfiles tree, so this logical path is
         # resolved by score_mounts through ``RUNFILES_DIR``.
         "MOUNTS_MANIFEST": "$(rlocationpath :_mounts_manifest)" if mounts_manifest else "",
@@ -783,7 +872,9 @@ def docs(
         name = "ide_support",
         tags = ["manual"],
         venv_name = ".venv_docs",
-        deps = deps,
+        # Tests import score_pytest (e.g. add_test_properties), so the IDE
+        # venv needs it for type checking and for running tests from the IDE.
+        deps = deps + [Label("@score_tools//score_pytest:attribute_plugin")],
         data = data,
         package_collisions = "warning",
     )
@@ -793,13 +884,13 @@ def docs(
         bundle = ":docs_bundle",
         config = sphinx_config,
         sphinx_build_deps = deps,
-        sphinx_build_data = data + external_needs + metamodel_label + [":docs_bundle"],
-        external_needs_labels = str(data + external_needs),
+        sphinx_build_data = data + external_needs_labels + metamodel_label + [":docs_bundle"],
+        external_needs_labels = str(data + external_needs_labels),
         score_sourcelinks_json = ":sourcelinks_json",
         score_source_code_linker_plain_links = "1",
         mounts_manifest = mounts_manifest,
         score_metamodel_yaml = metamodel,
-        tools = external_needs + [":docs_bundle"],
+        tools = external_needs_labels + [":docs_bundle"],
         visibility = ["//visibility:public"],
     )
 

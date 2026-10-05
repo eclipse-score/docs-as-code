@@ -21,6 +21,9 @@ from pathlib import Path
 class ExternalNeedsSource:
     bazel_module: str
     path_to_target: str
+    # `needs_json` and `needs_json_file` are the public inventory labels.
+    # A public `docs()` or `docs_bundle` label is resolved earlier by the Bazel
+    # macro to its private `.__internal__.needs_local` sibling.
     target: str
     # True for a same-repo mount (`//pkg:needs_json`), whose runfiles live under
     # `_main/…`. False for a cross-module mount (`@repo//…:needs_json`), whose
@@ -29,6 +32,12 @@ class ExternalNeedsSource:
 
 
 def parse_bazel_external_need(s: str) -> ExternalNeedsSource | None:
+    """Recognize supported Bazel inventory labels and ignore ordinary data.
+
+    ``needs_json`` and ``needs_json_file`` are both accepted inventory labels.
+    The docs macro reports inventory labels in the deprecated ``data`` input
+    route before combining labels with explicit ``external_needs``.
+    """
     is_cross_module = s.startswith("@")
     is_local = s.startswith("//")
     if not is_cross_module and not is_local:
@@ -43,7 +52,9 @@ def parse_bazel_external_need(s: str) -> ExternalNeedsSource | None:
     repo, path_to_target = repo_and_path.split("//", 1)
     repo = repo.lstrip("@")
 
-    if target in ("needs_json", "needs_json_file"):
+    if target in ("needs_json", "needs_json_file") or target.endswith(
+        ".__internal__.needs_local"
+    ):
         return ExternalNeedsSource(
             bazel_module=repo,
             path_to_target=path_to_target,
@@ -80,7 +91,12 @@ def external_needs_runfiles_path(
 def external_needs_source_path(
     runfiles_dir: Path | None, source: ExternalNeedsSource
 ) -> Path:
-    """Derive a source path from the Bazel runfiles root."""
+    """Find the inventory JSON emitted by the selected Bazel target.
+
+    Public `needs_json` and private bundle-local exports are directory outputs
+    containing `_build/needs/needs.json`. The `needs_json_file` target points
+    directly at the inventory file.
+    """
     if runfiles_dir is None:
         raise ValueError("An external needs source has no runfiles root.")
 
@@ -88,6 +104,8 @@ def external_needs_source_path(
         suffix = (source.target, "_build", "needs", "needs.json")
     elif source.target == "needs_json_file":
         suffix = ("needs.json",)
+    elif source.target.endswith(".__internal__.needs_local"):
+        suffix = (source.target, "_build", "needs", "needs.json")
     else:
         raise ValueError(f"Unsupported external needs target: {source.target}")
     return external_needs_runfiles_path(runfiles_dir, source, *suffix)

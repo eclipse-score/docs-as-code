@@ -162,16 +162,23 @@ def _external_needs_base_url(
     """Return the base URL passed to Sphinx-Needs for this inventory."""
     if source.target == "needs_json":
         # A `needs_json` producer always exports its project URL.
-        project_url = needs_json_data["project_url"]
+        project_url = cast(str, needs_json_data["project_url"])
     elif source.target == "needs_json_file":
-        # Older standalone files may not have a project URL.
-        project_url = needs_json_data.get("project_url", "")
+        # A standalone inventory file may not have a project URL.
+        project_url = cast(str, needs_json_data.get("project_url", ""))
+    elif source.target.endswith(".__internal__.needs_local"):
+        # A standalone docs_bundle may not have a published project URL. Sphinx-Needs
+        # still requires a base URL to load its Needs as external context, so use a
+        # reserved host when the exported value is absent or empty. Root-associated
+        # bundles use their exported project URL here.
+        project_url = cast(str, needs_json_data.get("project_url", ""))
+        project_url = project_url.rstrip("/") or "https://score-needs.invalid"
     else:
         raise ValueError(f"Unsupported external needs target: {source.target}")
 
     # Keep the same URL construction as the regular loaders. Sphinx-Needs uses
     # this URL when deciding whether an external Need should be replaced.
-    return cast(str, project_url) + "/main"  # for now always "main"
+    return project_url + "/main"  # for now always "main"
 
 
 def _external_needs_source_label(source: ExternalNeedsSource) -> str:
@@ -294,6 +301,34 @@ def add_external_needs_json(
     )
 
 
+def _add_bundle_local_needs_json(
+    e: ExternalNeedsSource, config: Config, runfiles_dir: Path | None
+) -> None:
+    """Load a private bundle-local inventory and register it as external context."""
+    json_file = _external_needs_source_path(runfiles_dir, e)
+    logger.debug(f"External local Needs JSON: {json_file}")
+    try:
+        needs_json_data = cast(
+            dict[str, object],
+            json.loads(Path(json_file).read_text(encoding="utf-8")),
+        )
+    except FileNotFoundError:
+        logger.error(
+            "Could not find external needs JSON file at %s from target %s.",
+            json_file,
+            e.target,
+        )
+        return
+
+    assert isinstance(config.needs_external_needs, list)  # pyright: ignore[reportUnknownMemberType]
+    config.needs_external_needs.append(  # pyright: ignore[reportUnknownMemberType]
+        {
+            "base_url": _external_needs_base_url(e, needs_json_data),
+            "json_path": json_file,
+        }
+    )
+
+
 def connect_external_needs(app: Sphinx, config: Config):
     # Export each bundle's resolved project URL. The Bazel bundle provider
     # supplies the package-relative value, so inventories from different
@@ -322,6 +357,11 @@ def connect_external_needs(app: Sphinx, config: Config):
                 add_external_needs_json(e, app.config, runfiles_dir)
             elif e.target == "needs_json_file":
                 _add_needs_json_file(e, app.config, runfiles_dir)
+            elif e.target.endswith(".__internal__.needs_local"):
+                # The Bazel macro resolved a public docs target to its local
+                # owner inventory. Load it as external context so links resolve
+                # without copying those Needs into this project's own export.
+                _add_bundle_local_needs_json(e, app.config, runfiles_dir)
             else:
                 raise ValueError(
                     f"Internal Error. Unknown external needs target: {e.target}"

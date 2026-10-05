@@ -74,6 +74,7 @@ bazel_dep(name = "buildifier_prebuilt", version = "8.2.0.2", dev_dependency = Tr
 
 # PlantUML for docs
 bazel_dep(name = "rules_java", version = "8.15.1")
+bazel_dep(name = "score_tools", version = "0.0.3")
 
 http_jar = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_jar")
 

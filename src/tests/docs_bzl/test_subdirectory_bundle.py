@@ -60,7 +60,7 @@ def test_parent_needs_export_does_not_depend_on_mounted_child_bundle():
     result = run_bazel(
         [
             "query",
-            f"deps({PRODUCER}:docs_bundle.__internal__.needs_local)",
+            f"deps({PRODUCER}:docs.__internal__.needs_local)",
             "--output=label",
         ]
     )

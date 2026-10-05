@@ -8,9 +8,11 @@ user.bazelrc
 # Ruff
 .ruff_cache
 
-# docs build artifacts
+# docs-as-code build artifacts
+# Please don't edit locally; repo_policy_sync keeps this block in sync from score_tools.
 _build/
 ubproject.toml
+# end docs-as-code build artifacts
 
 # tools/module_verification_reports.py downstream repository checkouts
 /.cache/
