@@ -32,22 +32,9 @@
      (feat_saf_fmea, comp_saf_fmea, plat_saf_dfa, feat_saf_dfa,
      comp_saf_dfa).
 
-   One representative from each class is tested for invalid values.
-   Since ``status`` is mandatory only for requirement types,
-   the missing-value case is covered only for that class.
-
-   Pseudo-code for generating the test cases::
-
-       CLASSES = [
-           ("req/arch", types=[stkh_req, feat, ...], regex="^(valid|invalid|valid_inspected)$"),
-           ("safety",   types=[feat_saf_fmea, ...],     regex="^(valid|invalid)$"),
-       ]
-       for class in CLASSES:
-           representative = class.types[0]
-           emit_valid_case(representative)
-           emit_invalid_value_case(representative, bad_value="draft")
-           if class.is_mandatory:
-               emit_missing_case(representative)
+   One representative from each class is tested for valid and invalid values.
+   Missing-attribute is verified on all requirement types and one
+   representative safety-analysis type.
 
 
 .. stkh_req:: Valid status on a requirement type
@@ -107,6 +94,48 @@
    :expect: status (draft): does not follow pattern
 
 
+.. feat_req:: Missing status on a feature requirement
+   :id: feat_req__status__missing
+   :version: 1
+   :reqtype: Functional
+   :safety: QM
+   :security: NO
+   :rationale: missing status
+   :valid_from: v1.0
+   :satisfied_by: feat__status_support
+   :expect: is missing required attribute: `status`
+
+
+.. comp_req:: Missing status on a component requirement
+   :id: comp_req__status__missing
+   :reqtype: Interface
+   :safety: QM
+   :security: NO
+   :satisfied_by: comp__status_support
+   :expect: is missing required attribute: `status`
+
+   Missing status test for comp_req.
+
+
+.. aou_req:: Missing status on an assumption-of-use requirement
+   :id: aou_req__status__missing
+   :reqtype: Functional
+   :safety: QM
+   :security: NO
+   :expect: is missing required attribute: `status`
+
+   Missing status test for aou_req.
+
+
+.. feat_saf_fmea:: Missing status on a safety-analysis type
+   :id: feat_saf_fmea__status__missing
+   :fault_id: FD_NEG
+   :failure_effect: Negative `status` test for feat_saf_fmea.
+   :sufficient: no
+   :violates: feat_arc_sta__status_support
+   :expect: is missing required attribute: `status`
+
+
 ..
    Support needs used as link targets by the negative fixtures above.
    All are valid so they do not interact with the safety graph checks.
@@ -114,6 +143,14 @@
 
 .. feat:: Support feature for status tests
    :id: feat__status_support
+   :version: 1
+   :security: NO
+   :safety: QM
+   :status: valid
+
+
+.. comp:: Support component for status tests
+   :id: comp__status_support
    :version: 1
    :security: NO
    :safety: QM
