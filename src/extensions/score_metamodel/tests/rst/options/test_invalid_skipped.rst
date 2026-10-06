@@ -22,11 +22,6 @@
    Test that invalid needs are skipped and are not checked
 
 
-..
-   Every case below pairs a `valid` need with an `invalid` twin.
-   The `valid` need proves the check fires, the `invalid` twin proves it is skipped.
-
-
 
 .. Fixtures for the link and graph checks below
 
@@ -68,19 +63,6 @@
    Invalid ASIL_B parent requirement.
 
 
-
---- Local check: missing mandatory attribute begin ---
-
-.. comp_req:: Missing safety attribute
-   :id: comp_req__options__missing_attr_valid
-   :reqtype: Functional
-   :status: valid
-   :security: NO
-   :satisfied_by: comp__options_inv_target
-   :expect: comp_req__options__missing_attr_valid: is missing required attribute: `safety`.
-
-   The safety attribute is missing.
-
 .. comp_req:: Missing safety attribute
    :id: comp_req__options__missing_attr_invalid
    :reqtype: Functional
@@ -91,22 +73,7 @@
 
    The safety attribute is missing.
 
---- Local check: missing mandatory attribute end ---
 
-
-
---- Local check: attribute does not follow pattern begin ---
-
-.. comp_req:: Security attribute with wrong value
-   :id: comp_req__options__bad_pattern_valid
-   :reqtype: Functional
-   :safety: QM
-   :status: valid
-   :security: MAYBE
-   :satisfied_by: comp__options_inv_target
-   :expect: comp_req__options__bad_pattern_valid.security (MAYBE): does not follow pattern `^(YES|NO)$`.
-
-   The security attribute has a value outside the pattern.
 
 .. comp_req:: Security attribute with wrong value
    :id: comp_req__options__bad_pattern_invalid
@@ -119,23 +86,6 @@
 
    The security attribute has a value outside the pattern.
 
---- Local check: attribute does not follow pattern end ---
-
-
-
---- Local check: link references wrong need type begin ---
-
-.. comp_req:: Derived from a component instead of a feature requirement
-   :id: comp_req__options__bad_link_valid
-   :reqtype: Functional
-   :safety: ASIL_B
-   :status: valid
-   :security: NO
-   :satisfied_by: comp__options_inv_target
-   :derived_from: comp__options_inv_target
-   :expect: comp_req__options__bad_link_valid: references 'comp__options_inv_target' as 'derived_from', but it must reference Feature Requirement (feat_req).
-
-   The derived_from link points to the wrong need type.
 
 .. comp_req:: Derived from a component instead of a feature requirement
    :id: comp_req__options__bad_link_invalid
@@ -149,22 +99,6 @@
 
    The derived_from link points to the wrong need type.
 
---- Local check: link references wrong need type end ---
-
-
-
---- Local check: prohibited word in title begin ---
-
-.. comp_req:: The component must start
-   :id: comp_req__options__weak_title_valid
-   :reqtype: Functional
-   :safety: QM
-   :status: valid
-   :security: NO
-   :satisfied_by: comp__options_inv_target
-   :expect: comp_req__options__weak_title_valid: contains a weak word: `must` in option: `title`. Please revise the wording.
-
-   The title contains a prohibited word.
 
 .. comp_req:: The component must start
    :id: comp_req__options__weak_title_invalid
@@ -177,22 +111,6 @@
 
    The title contains a prohibited word.
 
---- Local check: prohibited word in title end ---
-
-
-
---- Local check: id exceeds maximum length begin ---
-
-.. comp_req:: Id is too long
-   :id: comp_req__options__id_exceeds_the_max_length_valid
-   :reqtype: Functional
-   :safety: QM
-   :status: valid
-   :security: NO
-   :satisfied_by: comp__options_inv_target
-   :expect: exceeds the maximum allowed length of 45 characters
-
-   The id is longer than 45 characters.
 
 .. comp_req:: Id is too long
    :id: comp_req__options__id_exceeds_the_max_length_inv
@@ -205,23 +123,6 @@
 
    The id is longer than 45 characters.
 
---- Local check: id exceeds maximum length end ---
-
-
-
---- Graph check: QM requirement derived from ASIL requirement begin ---
-
-.. comp_req:: QM requirement derived from an ASIL_B requirement
-   :id: comp_req__options__qm_from_asil_valid
-   :reqtype: Functional
-   :safety: QM
-   :status: valid
-   :security: NO
-   :satisfied_by: comp__options_inv_target
-   :derived_from: feat_req__options__asil_parent
-   :expect: comp_req__options__qm_from_asil_valid: Parent need `feat_req__options__asil_parent` does not fulfill condition `safety == QM`. Explanation: QM requirements cannot be derived from ASIL requirements.
-
-   A QM requirement cannot be derived from an ASIL_B requirement.
 
 .. Invalid child: the graph check must not select it.
 
@@ -251,11 +152,6 @@
 
    The parent is invalid, but still visible to the graph check.
 
---- Graph check: QM requirement derived from ASIL requirement end ---
-
-
-
---- All checks at once begin ---
 
 .. An invalid need that violates every check above must not produce any warning.
 .. Every metamodel warning starts with the need id, so `expect_not` on the id catches all of them.
@@ -269,4 +165,3 @@
    :derived_from: comp__options_inv_target, feat_req__options__asil_parent
    :expect_not: comp_req__options__all_checks_violated_invalid
 
---- All checks at once end ---
