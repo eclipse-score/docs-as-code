@@ -16,7 +16,7 @@
 
 .. test_metadata:: Prohibited Word Checks
    :id: test_metadata__check_prohibited_words
-   :fully_verifies_list: tool_req__docs_common_attr_title, tool_req__docs_common_attr_desc_wording
+   :fully_verifies_list: tool_req__docs_common_attr_title[version==1], tool_req__docs_common_attr_desc_wording[version==1]
    :test_type: requirements_based
    :derivation_technique: requirements_based
 
