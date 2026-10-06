@@ -682,11 +682,11 @@ error. See <a class="reference internal" href="../how-to/bundles/index.html#howt
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">needs_local</span></code> (internal target)
 A source-bearing bundle creates <code class="docutils literal notranslate"><span class="pre">&lt;name&gt;.__internal__.needs_local</span></code> with the
-Needs declared by its own sources. The standalone build is intentionally
-self-contained in this version: references to Needs defined outside the
-bundle remain unresolved and fail strict builds. Cross-bundle imports and
-merged exports are planned for a later change. Data-only bundles do not
-create a Needs target.</p></li>
+<code class="docutils literal notranslate"><span class="pre">needs.json</span></code> file for Needs declared by its own sources. The standalone
+build is intentionally self-contained in this version: references to Needs
+defined outside the bundle remain unresolved and fail strict builds.
+Cross-bundle imports and merged exports are planned for a later change.
+Data-only bundles do not create a Needs target.</p></li>
 </ul>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
