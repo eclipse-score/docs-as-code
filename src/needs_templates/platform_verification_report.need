@@ -168,8 +168,8 @@ Stakeholder Requirements
    .. needtable::
       :filter: type == "stkh_req" and {{ stkh_req_filter }}
       :style: table
-      :columns: id;title;safety;status;testlink;derived_from_back as "Referenced by"
-      :colwidths: 12,20,7,9,32,20
+      :columns: id;title;safety;status;testlink
+      :colwidths: 13,22,8,10,47
       :sort: id
 
 {# ===================================================================== #}
@@ -285,8 +285,8 @@ Requirements Statistics
    .. needtable::
       :filter: type == "feat_req" and "{{ feature_id }}" in satisfied_by and {{ feature_req_filter }}
       :style: table
-      :columns: id;title;safety;status;testlink;derived_from_back as "Referenced by"
-      :colwidths: 12,20,7,9,32,20
+      :columns: id;title;safety;status;testlink
+      :colwidths: 13,22,8,10,47
       :sort: id
 
 Architecture Statistics
