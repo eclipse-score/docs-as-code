@@ -858,6 +858,24 @@
     }
   },
   {
+    "need": "tool_req__docs_common_attr_status_invalid",
+    "links": {
+      "CodeLinks": [
+        {
+          "file": "src/extensions/score_metamodel/log.py",
+          "line": 108,
+          "tag": "# req-Id:",
+          "need": "tool_req__docs_common_attr_status_invalid",
+          "full_line": "# req-Id: tool_req__docs_common_attr_status_invalid",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        }
+      ],
+      "TestLinks": []
+    }
+  },
+  {
     "need": "tool_req__docs_dd_link_source_code_link",
     "links": {
       "CodeLinks": [
@@ -3468,6 +3486,26 @@
           "line": 16,
           "need": "tool_req__docs_common_attr_status[version==2]",
           "verify_type": "partially",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        }
+      ]
+    }
+  },
+  {
+    "need": "tool_req__docs_common_attr_status_invalid[version==1]",
+    "links": {
+      "CodeLinks": [],
+      "TestLinks": [
+        {
+          "name": "test_rules_file_based__test_rst_files[options/test_invalid_skipped.rst]",
+          "file": "src/extensions/score_metamodel/tests/rst/options/test_invalid_skipped.rst",
+          "line": 16,
+          "need": "tool_req__docs_common_attr_status_invalid[version==1]",
+          "verify_type": "fully",
           "result": "passed",
           "result_text": "",
           "repo_name": "local_repo",
