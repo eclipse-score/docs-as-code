@@ -78,7 +78,7 @@
    :id: mod_vrep__verification__bad_coverage
    :safety: ASIL_B
    :security: YES
-   :status: invalid
+   :status: valid
    :verification_method: inspection
    :line_coverage_percent: 150
    :belongs_to: mod__verification_module

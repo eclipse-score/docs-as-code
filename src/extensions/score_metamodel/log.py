@@ -105,6 +105,10 @@ class CheckLogger:
         need: NeedItem | None = None,
         category: str = "metamodel",
     ):
+        # Needs with status `invalid` are exempt from all checks. They stay part
+        # of the graph, so valid needs linking to them are still reported.
+        if need is not None and need.get("status") == "invalid":
+            return
         if need is not None and self._compatibility is not None:
             source = (
                 location if isinstance(location, str) else str(need.get("docname", ""))

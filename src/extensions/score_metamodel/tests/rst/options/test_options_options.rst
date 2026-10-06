@@ -617,7 +617,7 @@
 
 .. feat_sec_ana:: Missing threat_scenario_id
    :id: feat_sec_ana__test_options__bad_4
-   :status: invalid
+   :status: valid
    :sufficient: no
    :threat_effect: Unauthorized access to stored data.
    :expect: feat_sec_ana__test_options__bad_4: is missing required attribute: `threat_scenario_id`.
@@ -656,7 +656,7 @@
 .. feat_sec_ana:: Missing threat_effect
    :id: feat_sec_ana__test_options__bad_7
    :threat_scenario_id: SC_01_02
-   :status: invalid
+   :status: valid
    :sufficient: no
    :expect: feat_sec_ana__test_options__bad_7: is missing required attribute: `threat_effect`.
 
@@ -697,7 +697,7 @@
 .. feat_sec_ana:: Invalid mitigation_issue (pull request, not issue)
    :id: feat_sec_ana__test_options__bad_10
    :threat_scenario_id: SC_01_04
-   :status: invalid
+   :status: valid
    :sufficient: no
    :threat_effect: Unauthorized data access.
    :mitigation_issue: https://github.com/eclipse-score/docs-as-code/pull/508
@@ -711,7 +711,7 @@
 .. feat_sec_ana:: Missing argument content
    :id: feat_sec_ana__test_options__bad_11
    :threat_scenario_id: SC_01_04
-   :status: invalid
+   :status: valid
    :sufficient: no
    :threat_effect: Unauthorized data access.
    :expect: feat_sec_ana__test_options__bad_11: is missing required attribute: `content`.
