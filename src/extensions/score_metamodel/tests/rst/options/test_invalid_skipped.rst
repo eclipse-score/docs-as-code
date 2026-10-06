@@ -164,4 +164,3 @@
    :satisfied_by: comp__options_inv_target
    :derived_from: comp__options_inv_target, feat_req__options__asil_parent
    :expect_not: comp_req__options__all_checks_violated_invalid
-
