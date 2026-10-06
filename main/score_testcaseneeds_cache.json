@@ -2884,6 +2884,20 @@
     "FullyVerifies": "tool_req__docs_req_attr_rationale"
   },
   {
+    "name": "test_rules_file_based__test_rst_files[options/test_invalid_skipped.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/options/test_invalid_skipped.rst",
+    "line": "16",
+    "result": "passed",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": "",
+    "TestType": "requirements_based",
+    "DerivationTechnique": "requirements_based",
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": "tool_req__docs_common_attr_status_invalid[version==1]"
+  },
+  {
     "name": "test_rules_file_based__test_rst_files[options/test_need_extends.rst]",
     "file": "src/extensions/score_metamodel/tests/rst/options/test_need_extends.rst",
     "line": "15",
