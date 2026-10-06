@@ -15,7 +15,7 @@
 
 .. test_metadata:: Invalid Needs are skipped and not tested
    :id: test_metadata__invalid_needs_skipped
-   :fully_verifies_list:
+   :fully_verifies_list: tool_req__docs_common_attr_status_invalid[version==1]
    :test_type: requirements_based
    :derivation_technique: requirements_based
 

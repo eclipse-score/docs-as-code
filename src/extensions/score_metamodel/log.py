@@ -105,6 +105,7 @@ class CheckLogger:
         need: NeedItem | None = None,
         category: str = "metamodel",
     ):
+        # req-Id: tool_req__docs_common_attr_status_invalid
         # Needs with status `invalid` are exempt from all checks. They stay part
         # of the graph, so valid needs linking to them are still reported.
         if need is not None and need.get("status") == "invalid":
