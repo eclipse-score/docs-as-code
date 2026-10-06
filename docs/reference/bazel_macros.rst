@@ -250,11 +250,11 @@ Signature: ``docs_bundle(name, source_dir = None, srcs = [], data = [], entry_do
 
 - ``needs_local`` (internal target)
   A source-bearing bundle creates ``<name>.__internal__.needs_local`` with the
-  Needs declared by its own sources. The standalone build is intentionally
-  self-contained in this version: references to Needs defined outside the
-  bundle remain unresolved and fail strict builds. Cross-bundle imports and
-  merged exports are planned for a later change. Data-only bundles do not
-  create a Needs target.
+  ``needs.json`` file for Needs declared by its own sources. The standalone
+  build is intentionally self-contained in this version: references to Needs
+  defined outside the bundle remain unresolved and fail strict builds.
+  Cross-bundle imports and merged exports are planned for a later change.
+  Data-only bundles do not create a Needs target.
 
 .. note::
 

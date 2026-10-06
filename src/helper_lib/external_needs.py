@@ -93,9 +93,9 @@ def external_needs_source_path(
 ) -> Path:
     """Find the inventory JSON emitted by the selected Bazel target.
 
-    Public `needs_json` and private bundle-local exports are directory outputs
-    containing `_build/needs/needs.json`. The `needs_json_file` target points
-    directly at the inventory file.
+    The public `needs_json` target is a directory output containing
+    `_build/needs/needs.json`. The `needs_json_file` target and private
+    bundle-local exports point directly at JSON file artifacts.
     """
     if runfiles_dir is None:
         raise ValueError("An external needs source has no runfiles root.")
@@ -105,7 +105,9 @@ def external_needs_source_path(
     elif source.target == "needs_json_file":
         suffix = ("needs.json",)
     elif source.target.endswith(".__internal__.needs_local"):
-        suffix = (source.target, "_build", "needs", "needs.json")
+        # The genrule exposes `<target>/needs.json`. This target-scoped path is
+        # independent of the private Sphinx builder's output directory layout.
+        suffix = (source.target, "needs.json")
     else:
         raise ValueError(f"Unsupported external needs target: {source.target}")
     return external_needs_runfiles_path(runfiles_dir, source, *suffix)
