@@ -3122,8 +3122,8 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_rules_file_based__test_rst_files[attributes/test_attributes_external_prefix.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/attributes/test_attributes_external_prefix.rst",
+    "name": "test_rules_file_based__test_rst_files[attributes/test_attributes_id_scheme.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/attributes/test_attributes_id_scheme.rst",
     "line": "16",
     "result": "passed",
     "repo_name": "local_repo",
@@ -3132,8 +3132,8 @@
     "TestType": "requirements_based",
     "DerivationTechnique": "requirements_based",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_common_attr_id_scheme",
-    "FullyVerifies": null
+    "PartiallyVerifies": null,
+    "FullyVerifies": "tool_req__docs_common_attr_id_scheme"
   },
   {
     "name": "test_rules_file_based__test_rst_files[attributes/test_attributes_format_id_length.rst]",
@@ -3162,20 +3162,6 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": "tool_req__docs_stdreq_types[version==1], tool_req__docs_stdwp_types[version==1]"
-  },
-  {
-    "name": "test_rules_file_based__test_rst_files[attributes/test_attributes_format_id_format.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/attributes/test_attributes_format_id_format.rst",
-    "line": "16",
-    "result": "passed",
-    "repo_name": "local_repo",
-    "hash": "",
-    "url": "",
-    "TestType": "requirements_based",
-    "DerivationTechnique": "requirements_based",
-    "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_common_attr_id_scheme",
-    "FullyVerifies": null
   },
   {
     "name": "test_rules_file_based__test_rst_files[attributes/test_prohibited_words.rst]",
@@ -4914,20 +4900,6 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_rules_file_based__test_rst_files[graph/test_invalid_graph.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/graph/test_invalid_graph.rst",
-    "line": "16",
-    "result": "passed",
-    "repo_name": "local_repo",
-    "hash": "",
-    "url": "",
-    "TestType": "requirements_based",
-    "DerivationTechnique": "requirements_based",
-    "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_req_arch_link_safety_to_arch",
-    "FullyVerifies": null
-  },
-  {
     "name": "test_rules_file_based__test_rst_files[graph/test_metamodel_graph.rst]",
     "file": "src/extensions/score_metamodel/tests/rst/graph/test_metamodel_graph.rst",
     "line": "15",
@@ -5024,48 +4996,6 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": "tool_req__docs_req_arch_link_safety_to_arch[version==2]"
-  },
-  {
-    "name": "test_rules_file_based__test_need",
-    "file": "src/extensions/score_metamodel/tests/__init__.py",
-    "line": "110",
-    "result": "passed",
-    "repo_name": null,
-    "hash": null,
-    "url": null,
-    "TestType": null,
-    "DerivationTechnique": null,
-    "result_text": "",
-    "PartiallyVerifies": null,
-    "FullyVerifies": null
-  },
-  {
-    "name": "test_rules_file_based__test_count_need_objects_ignores_nested_non_need_directives",
-    "file": "src/extensions/score_metamodel/tests/test_rules_file_based.py",
-    "line": "112",
-    "result": "passed",
-    "repo_name": null,
-    "hash": null,
-    "url": null,
-    "TestType": null,
-    "DerivationTechnique": null,
-    "result_text": "",
-    "PartiallyVerifies": null,
-    "FullyVerifies": null
-  },
-  {
-    "name": "test_rules_file_based__test_rst_files[id_contains_feature/test_id_contains_feature.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/id_contains_feature/test_id_contains_feature.rst",
-    "line": "16",
-    "result": "passed",
-    "repo_name": "local_repo",
-    "hash": "",
-    "url": "",
-    "TestType": "requirements_based",
-    "DerivationTechnique": "requirements_based",
-    "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_common_attr_id_scheme",
-    "FullyVerifies": null
   },
   {
     "name": "test_mounts__test_materialize_mounts_serializes_structured_entries",
