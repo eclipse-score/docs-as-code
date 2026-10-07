@@ -26,15 +26,22 @@ run's), optionally labelled as ``LABEL=PATH``:
 
 Branch names are rewritten to numbers: recent coverage.py versions name them
 ("jump to line 45"), which lcov/genhtml 1.x silently drop.
+
+To show what a change does to coverage, write the numbers of main with
+``--json main.json`` and pass them to a later run with ``--compare-with
+main.json``. The Markdown summary then shows the change per suite, package and
+file. CI takes main.json from the latest run on main.
 """
 
 import argparse
+import json
 import os
 import re
 import subprocess
 import tempfile
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any
 
 import coverage
 
@@ -165,70 +172,193 @@ def package_of(path: str) -> str:
     return "/".join(parts[:-1]) or "."
 
 
-def _ratio(hit: int, total: int) -> str:
-    return f"{100 * hit / total:.1f}% ({hit}/{total})" if total else "–"
+# (hit, total) per kind ("lines", "branches") of a file, package or suite.
+Counts = dict[str, list[int]]
+KINDS = ("lines", "branches")
 
 
-def _totals(files: list[FileCoverage]) -> tuple[str, str]:
+def _counts(files: list[FileCoverage]) -> Counts:
     lines = [hit for f in files for hit in f.lines.values()]
     branches = [hit for f in files for hit in f.branches.values()]
-    return _ratio(sum(lines), len(lines)), _ratio(sum(branches), len(branches))
+    return {
+        "lines": [sum(lines), len(lines)],
+        "branches": [sum(branches), len(branches)],
+    }
+
+
+def summarize(
+    suites: list[tuple[str, dict[str, FileCoverage] | None]],
+    combined: dict[str, FileCoverage],
+) -> dict[str, Any]:
+    """Return the numbers of the summary.
+
+    Also written as JSON: a pull request compares its numbers with the ones
+    the latest main run stored.
+    """
+    # Files without code (empty __init__.py) have nothing to test and would
+    # only add empty rows.
+    files = {path: file for path, file in combined.items() if file.lines}
+    packages: dict[str, list[FileCoverage]] = {}
+    for path, file in files.items():
+        packages.setdefault(package_of(path), []).append(file)
+    commit = subprocess.run(
+        ["git", "rev-parse", "HEAD"], capture_output=True, text=True, check=False
+    ).stdout.strip()
+    return {
+        "commit": commit,
+        "suites": {
+            label: _counts(list(s.values())) if s else None for label, s in suites
+        },
+        "combined": _counts(list(combined.values())),
+        "packages": {name: _counts(fs) for name, fs in packages.items()},
+        "files": {path: _counts([file]) for path, file in files.items()},
+    }
+
+
+def _percent(counts: Counts | None, kind: str) -> float | None:
+    if not counts or not counts[kind][1]:
+        return None
+    hit, total = counts[kind]
+    return 100 * hit / total
+
+
+def _change(now: float | None, before: float | None) -> str:
+    if now is None or before is None:
+        return "–"
+    change = now - before
+    # Left empty so the rows that did change stand out. Below the rounding
+    # precision, because "+0.0%" would read like a change.
+    if abs(change) < 0.05:
+        return ""
+    return f"{change:+.1f}%"
+
+
+def _header(first: str, compare: bool) -> list[str]:
+    if compare:
+        return [f"| {first} | Lines | Δ | Branches | Δ |", "|---|---:|---:|---:|---:|"]
+    return [f"| {first} | Lines | Branches |", "|---|---:|---:|"]
+
+
+def _row(
+    label: str,
+    counts: Counts | None,
+    reference: dict[str, Any] | None,
+    key: str,
+    show_counts: bool = False,
+) -> str:
+    """Render one table row; ``reference`` is the matching section of main's."""
+    cells = [label]
+    for kind in KINDS:
+        now = _percent(counts, kind)
+        if counts is None:
+            cells.append("no data")
+        elif now is None:
+            cells.append("–")
+        elif show_counts:
+            hit, total = counts[kind]
+            cells.append(f"{now:.1f}% ({hit}/{total})")
+        else:
+            cells.append(f"{now:.1f}%")
+        if reference is not None:
+            before = _percent(reference[key], kind) if key in reference else None
+            cells.append(_change(now, before) if key in reference else "new")
+    return "| " + " | ".join(cells) + " |"
+
+
+def _changed(now: Counts, before: Counts | None) -> bool:
+    if before is None:
+        return True
+    for kind in KINDS:
+        a, b = _percent(now, kind), _percent(before, kind)
+        if (a is None) != (b is None) or (
+            a is not None and b is not None and abs(a - b) >= 0.05
+        ):
+            return True
+    return False
 
 
 def markdown(
-    suites: list[tuple[str, dict[str, FileCoverage] | None]],
-    combined: dict[str, FileCoverage],
+    summary: dict[str, Any], reference: dict[str, Any] | None, note: str | None
 ) -> str:
-    """Render the coverage summary posted on pull requests."""
-    out = [
-        COMMENT_MARKER,
-        "### Python coverage",
-        "",
-        "| Tests | Lines | Branches |",
-        "|---|---:|---:|",
-    ]
-    for label, files in suites:
-        lines, branches = _totals(list(files.values())) if files else ("no data",) * 2
-        out.append(f"| {label} | {lines} | {branches} |")
-    lines, branches = _totals(list(combined.values()))
+    """Render the summary posted on pull requests, compared with ``reference``."""
+    compare = reference is not None
+    ref: dict[str, Any] = reference or {}
+    out = [COMMENT_MARKER, "### Python coverage", "", *_header("Tests", compare)]
+    for label, counts in summary["suites"].items():
+        out.append(_row(label, counts, ref.get("suites"), label, show_counts=True))
+    out.append(
+        _row(
+            "**Combined**",
+            summary["combined"],
+            {"combined": ref["combined"]} if compare else None,
+            "combined",
+            show_counts=True,
+        )
+    )
     out += [
-        f"| **Combined** | **{lines}** | **{branches}** |",
         "",
         "Percentages cover every tracked non-test Python file; "
         "files that no test imports count as 0%.",
-        "",
     ]
-
-    packages: dict[str, list[FileCoverage]] = {}
-    for path, file in combined.items():
-        # Files without code (empty __init__.py) have nothing to test and
-        # would only add empty rows.
-        if file.lines:
-            packages.setdefault(package_of(path), []).append(file)
-    rows = sorted(
-        (
-            sum(h for f in files for h in f.lines.values())
-            / max(1, sum(len(f.lines) for f in files)),
-            name,
-            files,
+    if compare:
+        out.append(
+            f"Δ is the change in percentage points against main at `{ref['commit'][:8]}`."
         )
-        for name, files in packages.items()
+    if note:
+        out.append(note)
+    out.append("")
+
+    if compare:
+        files = summary["files"]
+        changed = [p for p, c in files.items() if _changed(c, ref["files"].get(p))]
+
+        def biggest_drop_first(path: str) -> tuple[bool, float]:
+            before = _percent(ref["files"].get(path), "lines")
+            now = _percent(files[path], "lines")
+            if path not in ref["files"] or before is None or now is None:
+                return (True, 0.0)  # new files after the changed ones
+            return (False, now - before)
+
+        # Collapsed like the other details: the totals above are the overview,
+        # the files are for whoever wants to know where it changed.
+        if changed:
+            out += [
+                "<details><summary>Files with changed coverage "
+                f"({len(changed)}, biggest drop first)</summary>",
+                "",
+                *_header("File", compare),
+                *(
+                    _row(f"`{path}`", files[path], ref["files"], path)
+                    for path in sorted(changed, key=biggest_drop_first)
+                ),
+                "",
+                "</details>",
+            ]
+        else:
+            out.append("No file changed its coverage.")
+        out.append("")
+
+    packages = sorted(
+        summary["packages"].items(),
+        key=lambda item: (_percent(item[1], "lines") or 0.0, item[0]),
     )
     out += [
         "<details><summary>Per package (lowest line coverage first)</summary>",
         "",
-        "| Package | Lines | Branches |",
-        "|---|---:|---:|",
+        *_header("Package", compare),
+        *(
+            _row(f"`{name}`", counts, ref.get("packages"), name)
+            for name, counts in packages
+        ),
+        "",
+        "</details>",
+        "",
     ]
-    for _, name, files in rows:
-        lines, branches = _totals(files)
-        out.append(f"| `{name}` | {lines} | {branches} |")
-    out += ["", "</details>", ""]
 
     untested = sorted(
-        (path, len(file.lines))
-        for path, file in combined.items()
-        if file.lines and not any(file.lines.values())
+        (path, counts["lines"][1])
+        for path, counts in summary["files"].items()
+        if counts["lines"][0] == 0
     )
     if untested:
         out += [
@@ -240,6 +370,66 @@ def markdown(
             "",
         ]
     return "\n".join(out)
+
+
+def load_reports(
+    args: list[str], tracked: set[str], names: dict[tuple[str, str, str], list[str]]
+) -> list[tuple[str, str | None]]:
+    """Return the numbered LCOV of each ``[LABEL=]PATH``, or None if it has no data."""
+    suites: list[tuple[str, str | None]] = []
+    for arg in args:
+        label, sep, path = arg.partition("=")
+        if not sep:
+            label, path = arg, arg
+        report = Path(path)
+        # A test job that failed early uploads no data; that must not hide
+        # the coverage of the other suites.
+        if not report.exists():
+            print(f"warning: {path} does not exist; reporting '{label}' as no data")
+            suites.append((label, None))
+            continue
+        text = coverage_data_lcov(report) if report.is_dir() else report.read_text()
+        # Test code is not under test, and the merged LCOV must count the same
+        # files as the Markdown summary so genhtml shows the same totals.
+        records = "".join(
+            m[0]
+            for m in RECORD.finditer(numeric_branches(text, names))
+            if m[1] in tracked
+        )
+        # An empty report means measuring failed (e.g. `bazel coverage` on a
+        # Python version without a rules_python coverage tool). Shown as 0% it
+        # would look like real, untested code.
+        if not records:
+            print(
+                f"warning: {path} has no coverage data; reporting '{label}' as no data"
+            )
+            suites.append((label, None))
+            continue
+        suites.append((label, records))
+    return suites
+
+
+def write_summary(
+    summary: dict[str, Any],
+    json_file: str | None,
+    markdown_file: str | None,
+    compare_with: str | None,
+) -> None:
+    if json_file:
+        Path(json_file).write_text(json.dumps(summary, indent=2, sort_keys=True))
+        print(f"Wrote {Path(json_file).absolute()}")
+    if not markdown_file:
+        return
+    reference, note = None, None
+    if compare_with:
+        # Main has no report yet before its first run with this tool, or after
+        # its artifact expired.
+        if Path(compare_with).exists():
+            reference = json.loads(Path(compare_with).read_text())
+        else:
+            note = "No coverage of main available to compare with."
+    Path(markdown_file).write_text(markdown(summary, reference, note))
+    print(f"Wrote {Path(markdown_file).absolute()}")
 
 
 def main() -> None:
@@ -260,6 +450,13 @@ def main() -> None:
         help="merged LCOV file to write (default: %(default)s)",
     )
     parser.add_argument("--markdown", help="also write a Markdown summary to this file")
+    parser.add_argument("--json", help="also write the summary's numbers to this file")
+    parser.add_argument(
+        "--compare-with",
+        metavar="JSON",
+        help="numbers written by --json for main; adds the change to the Markdown "
+        "summary. A missing file is noted in the summary.",
+    )
     args = parser.parse_args()
 
     # `bazel run` starts in the runfiles tree. Work from the checkout instead so
@@ -271,28 +468,7 @@ def main() -> None:
     names: dict[tuple[str, str, str], list[str]] = {}
     baseline = numeric_branches(baseline_lcov(tracked), names)
 
-    def tracked_records(text: str) -> str:
-        """Keep only tracked non-test files.
-
-        Test code is not under test, and the merged LCOV must count the same
-        files as the Markdown summary so genhtml shows the same totals.
-        """
-        return "".join(m.group(0) for m in RECORD.finditer(text) if m[1] in tracked)
-
-    suites: list[tuple[str, str | None]] = []
-    for arg in args.reports:
-        label, sep, path = arg.partition("=")
-        if not sep:
-            label, path = arg, arg
-        report = Path(path)
-        # A test job that failed early uploads no data; that must not hide
-        # the coverage of the other suites.
-        if not report.exists():
-            print(f"warning: {path} does not exist; reporting '{label}' as no data")
-            suites.append((label, None))
-            continue
-        text = coverage_data_lcov(report) if report.is_dir() else report.read_text()
-        suites.append((label, tracked_records(numeric_branches(text, names))))
+    suites = load_reports(args.reports, set(tracked), names)
 
     reports = [text for _, text in suites if text]
     covered = {sf for text in reports for sf in re.findall(r"^SF:(.*)$", text, re.M)}
@@ -301,18 +477,17 @@ def main() -> None:
     output.write_text("".join(reports + missing))
     print(f"Wrote {output.absolute()}: {len(missing)} untested Python files added")
 
-    if args.markdown:
+    if args.markdown or args.json:
         # Merging each suite with the baseline gives all of them the same
         # denominators: every line and branch of every tracked file.
-        summary = markdown(
+        summary = summarize(
             [
                 (label, parse_lcov(baseline + text) if text else None)
                 for label, text in suites
             ],
             parse_lcov(baseline + "".join(reports)),
         )
-        Path(args.markdown).write_text(summary)
-        print(f"Wrote {Path(args.markdown).absolute()}")
+        write_summary(summary, args.json, args.markdown, args.compare_with)
 
 
 if __name__ == "__main__":
