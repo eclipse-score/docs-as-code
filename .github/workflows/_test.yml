@@ -29,7 +29,7 @@ jobs:
             marker: bazel_slow
           # Which lines run does not depend on the Python version, and measuring
           # slows the job down: one version is enough.
-          - python-version: "3.14"
+          - python-version: "3.12"
             coverage: true
 
     steps:
@@ -106,7 +106,7 @@ jobs:
         include:
           # Which lines run does not depend on the Python version, and measuring
           # slows the job down: one version is enough.
-          - python-version: "3.14"
+          - python-version: "3.12"
             coverage: true
     steps:
       - name: 🛡️ Harden Runner
