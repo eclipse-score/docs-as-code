@@ -51,10 +51,3 @@ details.sd-dropdown summary.sd-card-header + div.sd-summary-content
     background-color: transparent;
 
 }
-
-/* Center a grid item that wraps onto a row of its own (e.g. the third pie
-   chart in the verification report's two-column pie grids). */
-.score-centered-grid-item {
-    margin-left: auto;
-    margin-right: auto;
-}
