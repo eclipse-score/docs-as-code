@@ -2800,6 +2800,20 @@
     "FullyVerifies": null
   },
   {
+    "name": "test_rules_file_based__test_rst_files[options/test_options_common_attrs_security.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/options/test_options_common_attrs_security.rst",
+    "line": "15",
+    "result": "passed",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": "",
+    "TestType": "requirements_based",
+    "DerivationTechnique": "requirements_based",
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": "tool_req__docs_common_attr_security[version==1]"
+  },
+  {
     "name": "test_rules_file_based__test_rst_files[options/test_doc_types.rst]",
     "file": "src/extensions/score_metamodel/tests/rst/options/test_doc_types.rst",
     "line": "16",
@@ -2882,6 +2896,20 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": "tool_req__docs_req_attr_rationale"
+  },
+  {
+    "name": "test_rules_file_based__test_rst_files[options/test_options_common_attrs_status.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/options/test_options_common_attrs_status.rst",
+    "line": "15",
+    "result": "passed",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": "",
+    "TestType": "requirements_based",
+    "DerivationTechnique": "requirements_based",
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": "tool_req__docs_common_attr_status[version==2]"
   },
   {
     "name": "test_rules_file_based__test_rst_files[options/test_invalid_skipped.rst]",
@@ -3160,8 +3188,8 @@
     "TestType": "requirements_based",
     "DerivationTechnique": "requirements_based",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_common_attr_title, tool_req__docs_common_attr_desc_wording",
-    "FullyVerifies": null
+    "PartiallyVerifies": null,
+    "FullyVerifies": "tool_req__docs_common_attr_title[version==1], tool_req__docs_common_attr_desc_wording[version==1]"
   },
   {
     "name": "test_rules_file_based__test_rst_files[attributes/test_common_attr_safety.rst]",
@@ -3311,10 +3339,10 @@
     "repo_name": "local_repo",
     "hash": "",
     "url": "",
-    "TestType": "requirements-based",
-    "DerivationTechnique": "requirements-analysis",
+    "TestType": "interface-test",
+    "DerivationTechnique": "error-guessing",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_common_attr_security",
+    "PartiallyVerifies": null,
     "FullyVerifies": null
   },
   {
@@ -3325,10 +3353,10 @@
     "repo_name": "local_repo",
     "hash": "",
     "url": "",
-    "TestType": "requirements-based",
-    "DerivationTechnique": "requirements-analysis",
+    "TestType": "interface-test",
+    "DerivationTechnique": "error-guessing",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_common_attr_description",
+    "PartiallyVerifies": null,
     "FullyVerifies": null
   },
   {
@@ -3913,10 +3941,10 @@
     "repo_name": "local_repo",
     "hash": "",
     "url": "",
-    "TestType": "requirements-based",
-    "DerivationTechnique": "requirements-analysis",
+    "TestType": "interface-test",
+    "DerivationTechnique": "equivalence-classes",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_common_attr_description",
+    "PartiallyVerifies": null,
     "FullyVerifies": null
   },
   {
@@ -3927,10 +3955,10 @@
     "repo_name": "local_repo",
     "hash": "",
     "url": "",
-    "TestType": "requirements-based",
-    "DerivationTechnique": "requirements-analysis",
+    "TestType": "interface-test",
+    "DerivationTechnique": "equivalence-classes",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_common_attr_description",
+    "PartiallyVerifies": null,
     "FullyVerifies": null
   },
   {
@@ -3941,10 +3969,10 @@
     "repo_name": "local_repo",
     "hash": "",
     "url": "",
-    "TestType": "requirements-based",
-    "DerivationTechnique": "requirements-analysis",
+    "TestType": "interface-test",
+    "DerivationTechnique": "equivalence-classes",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_common_attr_description",
+    "PartiallyVerifies": null,
     "FullyVerifies": null
   },
   {
@@ -3955,10 +3983,10 @@
     "repo_name": "local_repo",
     "hash": "",
     "url": "",
-    "TestType": "requirements-based",
-    "DerivationTechnique": "requirements-analysis",
+    "TestType": "interface-test",
+    "DerivationTechnique": "error-guessing",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_common_attr_description",
+    "PartiallyVerifies": null,
     "FullyVerifies": null
   },
   {
@@ -4984,6 +5012,20 @@
     "FullyVerifies": null
   },
   {
+    "name": "test_rules_file_based__test_rst_files[graph/test_arch_link_safety.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/graph/test_arch_link_safety.rst",
+    "line": "15",
+    "result": "passed",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": "",
+    "TestType": "requirements_based",
+    "DerivationTechnique": "requirements_based",
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": "tool_req__docs_req_arch_link_safety_to_arch[version==2]"
+  },
+  {
     "name": "test_rules_file_based__test_need",
     "file": "src/extensions/score_metamodel/tests/__init__.py",
     "line": "110",
@@ -5967,6 +6009,20 @@
     "name": "test_needs_templates__test_tool_qualification_matrix_groups_shared_requirements",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
     "line": "176",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_needs_templates__test_platform_report_gap_table_is_report_version_scoped",
+    "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
+    "line": "320",
     "result": "passed",
     "repo_name": null,
     "hash": null,
