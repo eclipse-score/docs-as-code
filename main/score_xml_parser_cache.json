@@ -324,6 +324,18 @@
     "url": ""
   },
   {
+    "name": "test_rules_file_based__test_rst_files[options/test_options_common_attrs_security.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/options/test_options_common_attrs_security.rst",
+    "line": 15,
+    "need": "tool_req__docs_common_attr_security[version==1]",
+    "verify_type": "fully",
+    "result": "passed",
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
+  },
+  {
     "name": "test_rules_file_based__test_rst_files[options/test_doc_types.rst]",
     "file": "src/extensions/score_metamodel/tests/rst/options/test_doc_types.rst",
     "line": 16,
@@ -472,6 +484,18 @@
     "file": "src/extensions/score_metamodel/tests/rst/options/test_req_attr_rationale.rst",
     "line": 16,
     "need": "tool_req__docs_req_attr_rationale",
+    "verify_type": "fully",
+    "result": "passed",
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
+  },
+  {
+    "name": "test_rules_file_based__test_rst_files[options/test_options_common_attrs_status.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/options/test_options_common_attrs_status.rst",
+    "line": 15,
+    "need": "tool_req__docs_common_attr_status[version==2]",
     "verify_type": "fully",
     "result": "passed",
     "result_text": "",
