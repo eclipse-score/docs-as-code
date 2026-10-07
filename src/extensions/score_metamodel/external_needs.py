@@ -19,6 +19,7 @@ from typing import cast
 from sphinx.application import Sphinx
 from sphinx.config import Config
 from sphinx.util import logging
+from sphinx_needs.logging import log_warning
 from sphinx_needs.needsfile import NeedsList
 
 from src.helper_lib import get_runfiles_dir
@@ -154,13 +155,132 @@ def get_external_needs_source(external_needs_source: str) -> list[ExternalNeedsS
         return parse_external_needs_sources_from_bazel_query()  # pyright: ignore[reportAny]
 
 
+def _external_needs_base_url(
+    source: ExternalNeedsSource,
+    needs_json_data: dict[str, object],
+) -> str:
+    """Return the base URL passed to Sphinx-Needs for this inventory."""
+    if source.target == "needs_json":
+        # A `needs_json` producer always exports its project URL.
+        project_url = cast(str, needs_json_data["project_url"])
+    elif source.target == "needs_json_file":
+        # A standalone inventory file may not have a project URL.
+        project_url = cast(str, needs_json_data.get("project_url", ""))
+    elif source.target.endswith(".__internal__.needs_local"):
+        # A standalone docs_bundle may not have a published project URL. Sphinx-Needs
+        # still requires a base URL to load its Needs as external context, so use a
+        # reserved host when the exported value is absent or empty. Root-associated
+        # bundles use their exported project URL here.
+        project_url = cast(str, needs_json_data.get("project_url", ""))
+        project_url = project_url.rstrip("/") or "https://score-needs.invalid"
+    else:
+        raise ValueError(f"Unsupported external needs target: {source.target}")
+
+    # Keep the same URL construction as the regular loaders. Sphinx-Needs uses
+    # this URL when deciding whether an external Need should be replaced.
+    return project_url + "/main"  # for now always "main"
+
+
+def _external_needs_source_label(source: ExternalNeedsSource) -> str:
+    """Format a Bazel label for duplicate-ID warnings."""
+    repository = f"@{source.bazel_module}" if source.bazel_module else ""
+    return f"{repository}//{source.path_to_target}:{source.target}"
+
+
+def _read_need_json_identities(
+    source: ExternalNeedsSource,
+    runfiles_dir: Path,
+) -> list[tuple[str, str]]:
+    """Read each current-version Need's (base URL, ID) identity pair.
+
+    The Sphinx-Needs build creates these inventories, so this preflight follows
+    its generated JSON structure instead of trying to validate the full file.
+    Unreadable JSON is left to the normal loader. If readable JSON has an
+    unexpected shape, warn and let that loader report the format error.
+    """
+    json_file = _external_needs_source_path(runfiles_dir, source)
+    try:
+        raw_data: object = json.loads(Path(json_file).read_text(encoding="utf-8"))
+    except (FileNotFoundError, json.JSONDecodeError):
+        return []
+    try:
+        needs_json_data = cast(dict[str, object], raw_data)
+        current_version = cast(str, needs_json_data["current_version"])
+        versions = cast(dict[str, object], needs_json_data["versions"])
+        version = cast(dict[str, object], versions[current_version])
+        needs = cast(dict[str, object], version["needs"])
+        base_url = _external_needs_base_url(source, needs_json_data)
+        need_identities: list[tuple[str, str]] = []
+        for need_data in needs.values():
+            need_id = cast(dict[str, object], need_data)["id"]
+            if not isinstance(need_id, str):
+                raise TypeError("Need ID must be a string")
+            need_identities.append((base_url, need_id))
+    except (AttributeError, KeyError, TypeError):
+        source_label = _external_needs_source_label(source)
+        log_warning(
+            logger,
+            f"Could not inspect external Needs inventory {source_label} for duplicate IDs "
+            "because its JSON does not match the generated needs.json structure. "
+            "The duplicate-ID preflight was skipped; the regular external-Needs "
+            "loader will handle the file.",
+            "load_external_need",
+            location=None,
+        )
+        return []
+
+    return need_identities
+
+
+# Work around https://github.com/useblocks/sphinx-needs/issues/2003: importing
+# separate inventories with the same base URL can silently replace duplicate IDs.
+def _warn_for_duplicate_external_need_ids(
+    sources: list[ExternalNeedsSource],
+    runfiles_dir: Path,
+) -> None:
+    """Warn before same-URL inventories can silently replace matching Needs.
+
+    Sphinx-Needs checks whether the new source's base URL appears in an
+    existing external Need's URL. Shared base URLs satisfy that check, so
+    Sphinx-Needs deletes the earlier Need before its normal duplicate-ID
+    check. Scan the source files first to report the overlap before replacement.
+    """
+    first_source_by_base_url_and_id: dict[tuple[str, str], str] = {}
+    for source in sources:
+        need_identities = _read_need_json_identities(source, runfiles_dir)
+        if not need_identities:
+            continue
+        source_label = _external_needs_source_label(source)
+
+        for base_url, need_id in need_identities:
+            key = (base_url, need_id)
+            if key not in first_source_by_base_url_and_id:
+                first_source_by_base_url_and_id[key] = source_label
+                continue
+
+            first_source = first_source_by_base_url_and_id[key]
+            log_warning(
+                logger,
+                f"External need ID {need_id!r} is present in both {first_source} "
+                f"and {source_label}. Both inventories use base URL {base_url!r}, "
+                "so Sphinx-Needs would otherwise replace the earlier need "
+                "without reporting the duplicate. To fix this, give one of "
+                "the Needs a different ID.",
+                "load_external_need",
+                location=None,
+            )
+
+
 def add_external_needs_json(
     e: ExternalNeedsSource, config: Config, runfiles_dir: Path | None
 ):
     json_file = _external_needs_source_path(runfiles_dir, e)
     logger.debug(f"External needs.json: {json_file}")
     try:
-        needs_json_data = json.loads(Path(json_file).read_text(encoding="utf-8"))  # pyright: ignore[reportAny]
+        needs_json_data = cast(
+            dict[str, object],
+            json.loads(Path(json_file).read_text(encoding="utf-8")),
+        )
     except FileNotFoundError:
         logger.error(
             "Could not find external needs JSON file at %s from target %s.",
@@ -172,8 +292,38 @@ def add_external_needs_json(
     assert isinstance(config.needs_external_needs, list)  # pyright: ignore[reportUnknownMemberType]
     config.needs_external_needs.append(  # pyright: ignore[reportUnknownMemberType]
         {
-            "base_url": needs_json_data["project_url"]
-            + "/main",  # for now always "main"
+            "base_url": _external_needs_base_url(
+                e,
+                needs_json_data,
+            ),
+            "json_path": json_file,
+        }
+    )
+
+
+def _add_bundle_local_needs_json(
+    e: ExternalNeedsSource, config: Config, runfiles_dir: Path | None
+) -> None:
+    """Load a private bundle-local inventory and register it as external context."""
+    json_file = _external_needs_source_path(runfiles_dir, e)
+    logger.debug(f"External local Needs JSON: {json_file}")
+    try:
+        needs_json_data = cast(
+            dict[str, object],
+            json.loads(Path(json_file).read_text(encoding="utf-8")),
+        )
+    except FileNotFoundError:
+        logger.error(
+            "Could not find external needs JSON file at %s from target %s.",
+            json_file,
+            e.target,
+        )
+        return
+
+    assert isinstance(config.needs_external_needs, list)  # pyright: ignore[reportUnknownMemberType]
+    config.needs_external_needs.append(  # pyright: ignore[reportUnknownMemberType]
+        {
+            "base_url": _external_needs_base_url(e, needs_json_data),
             "json_path": json_file,
         }
     )
@@ -199,11 +349,19 @@ def connect_external_needs(app: Sphinx, config: Config):
 
     if external_needs:
         runfiles_dir = _runfiles_dir(app.config)
+        # Inspect the files before registering them: Sphinx-Needs may replace
+        # matching Needs as it loads a later source with the same base URL.
+        _warn_for_duplicate_external_need_ids(external_needs, runfiles_dir)
         for e in external_needs:
             if e.target == "needs_json":
                 add_external_needs_json(e, app.config, runfiles_dir)
             elif e.target == "needs_json_file":
                 _add_needs_json_file(e, app.config, runfiles_dir)
+            elif e.target.endswith(".__internal__.needs_local"):
+                # The Bazel macro resolved a public docs target to its local
+                # owner inventory. Load it as external context so links resolve
+                # without copying those Needs into this project's own export.
+                _add_bundle_local_needs_json(e, app.config, runfiles_dir)
             else:
                 raise ValueError(
                     f"Internal Error. Unknown external needs target: {e.target}"
@@ -217,8 +375,11 @@ def _add_needs_json_file(
     json_file = _external_needs_source_path(runfiles_dir, ext_needs)
     logger.debug(f"External needs_json_file: {json_file}")
     try:
-        needs_json_data = json.loads(
-            Path(json_file).read_text(encoding="utf-8")  # pyright: ignore[reportAny]
+        needs_json_data = cast(
+            dict[str, object],
+            json.loads(
+                Path(json_file).read_text(encoding="utf-8")  # pyright: ignore[reportAny]
+            ),
         )
     except FileNotFoundError:
         logger.error(
@@ -232,7 +393,10 @@ def _add_needs_json_file(
         return
     config.needs_external_needs.append(
         {  # pyright: ignore[reportUnknownMemberType]
-            "base_url": needs_json_data.get("project_url", "") + "/main",
+            "base_url": _external_needs_base_url(
+                ext_needs,
+                needs_json_data,
+            ),
             "json_path": json_file,
         }
     )

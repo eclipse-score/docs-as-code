@@ -59,6 +59,16 @@ jobs:
           "score and remote",
           "time and remote",
         ]
+        python-version: ["3.12"]
+        include:
+          - consumer: "module_template and local"
+            python-version: "3.14"
+          - consumer: "module_template and remote"
+            python-version: "3.14"
+          - consumer: "reference_integration and local"
+            python-version: "3.14"
+          - consumer: "reference_integration and remote"
+            python-version: "3.14"
 
     steps:
       - name: 🛡️ Harden Runner
@@ -81,12 +91,15 @@ jobs:
         with:
           # Matrix jobs need separate disk-cache archives because GitHub Actions
           # cannot merge archives written concurrently under one cache key.
-          disk-cache-key: ${{ github.job }}-${{ matrix.consumer }}
+          disk-cache-key: ${{ github.job }}-${{ matrix.python-version }}-${{ matrix.consumer }}
           # Keep the shared repository cache consistent by assigning one writer.
           repository-cache-save: ${{ matrix.consumer == 'score and remote' && 'auto' || 'false' }}
 
       - name: Prepare Python
-        run: bazel run //:ide_support
+        run: >-
+          bazel run
+          --@rules_python//python/config_settings:python_version=${{ matrix.python-version }}
+          //:ide_support
 
       - name: Run Consumer tests
         run: .venv_docs/bin/python -m pytest -vv -s src/tests/downstream_compatibility -k "$CONSUMER"
@@ -95,3 +108,4 @@ jobs:
           TERM: xterm-256color
           PYTHONUNBUFFERED: "1"
           CONSUMER: ${{ matrix.consumer }}
+          DOCS_AS_CODE_TEST_PYTHON_VERSION: ${{ matrix.python-version }}

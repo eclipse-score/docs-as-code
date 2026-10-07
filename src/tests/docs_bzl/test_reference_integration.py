@@ -22,6 +22,9 @@ from src.tests.docs_bzl.helpers import load_needs, run_scenario
 def test_nested_component_package_is_mounted_by_its_module():
     """Mounted component pages retain navigation and filter source controls."""
     result = run_scenario("run", "reference_integration/modern_module", ":docs")
+    # ``needs_json`` remains accepted in ``external_needs`` without the INFO
+    # message reserved for Needs inventories passed through ``data``.
+    assert "Passing a Needs inventory through" not in (result.stdout + result.stderr)
 
     # The parent module owns the surrounding ``components`` tree, while each
     # child bundle supplies its own page below the corresponding mount point.
@@ -67,8 +70,8 @@ def test_reference_integration_builds_with_platform_requirements():
     """Mount modules and render nested component source-code links."""
     result = run_scenario("run", "reference_integration", ":docs")
 
-    # The top-level site imports the platform bundle, so its feature link is
-    # rendered on the main page before the module mounts are traversed.
+    # The top-level site imports the platform's public ``docs`` target, so its
+    # feature link is rendered before the module mounts are traversed.
     html = (result.build_dir / "index.html").read_text(encoding="utf-8")
     assert (
         "score-platform/main/platform/feature.html#feat_req__platform__feature" in html

@@ -14,8 +14,7 @@
 
 .. test_metadata::
    :id: test_metadata__metamodel_graph_checks
-   :fully_verifies_list: potential_tool_malfunction__docs_as_code__m2
-   :partially_verifies_list: tool_req__docs_common_attr_safety_link_check
+   :fully_verifies_list: tool_req__docs_common_attr_safety_link_check[version==1]
    :test_type: requirements_based
    :derivation_technique: requirements_based
 
@@ -62,12 +61,36 @@
 
 .. Negative Test: Child requirement QM. Parent requirement is `ASIL_B`. Child cant fulfill the safety level of the parent.
 
-.. comp_req:: Child requirement 3
-   :id: feat_req__qm_child_with_asil_parent
+.. feat:: Parent feature of the component requirement
+   :id: feat__graph_parent
+   :version: 1
    :safety: QM
-   :derived_from: feat_req__parent__ASIL_B
    :status: valid
+   :security: NO
+
+   This feature is the parent of the component requirement fixture.
+
+.. comp:: Component target of the component requirement
+   :id: comp__qm_child_target
+   :version: 1
+   :safety: QM
+   :status: valid
+   :security: NO
+   :belongs_to: feat__graph_parent
+
+   This component is satisfied by the component requirement fixture.
+
+.. comp_req:: Child requirement 3
+   :id: comp_req__qm_child_with_asil_parent
+   :reqtype: Functional
+   :safety: QM
+   :status: valid
+   :security: NO
+   :satisfied_by: comp__qm_child_target
+   :derived_from: feat_req__parent__ASIL_B
    :expect: QM requirements cannot be derived from ASIL requirements.
+
+   This component requirement cannot fulfill the safety level of its parent requirement.
 
 
 
@@ -79,33 +102,3 @@
    :status: valid
    :derived_from: feat_req__parent0__abcd
    :expect: unknown outgoing link
-
-
-.. doc_tool:: Nested tool qualification report
-   :id: doc_tool__nested_qualification
-   :status: evaluated
-   :security_affected: NO
-   :version: 1
-
-.. tool_usecase:: Nested tool use case
-   :id: tool_usecase__blabla__nested
-   :belongs_to: doc_tool__nested_qualification
-   :version: 1
-
-   A use case contains its tool malfunctions as nested needs.
-
-   .. potential_tool_malfunction:: Nested tool malfunction
-      :id: potential_tool_malfunction__blabla__nested
-      :safety_affected: YES
-      :detection_sufficient: NO
-      :safety_measures: Review the generated result before release.
-      :violates: tool_req__test__qualification
-      :version: 1
-
-      The generated result may contain a silent error.
-
-.. tool_req:: Test tool requirement
-   :id: tool_req__test__qualification
-   :version: 1
-
-   The test fixture uses this requirement as the target of tool qualification links.

@@ -23,6 +23,7 @@ Via Python (requires ide_support to have been run first):
 Known non-passing tests are sometimes marked xfail and do not count as failures.
 """
 
+import os
 import re
 import shutil
 import subprocess
@@ -257,7 +258,7 @@ def _cleanup_before_cmd(cwd: Path, cmd: str) -> None:
         subprocess.run(["bazel", "clean", "--async"], check=True, text=True, cwd=cwd)
 
 
-def _run_bazel_cmd(cmd: str, repo_name: str, cwd: Path) -> None:
+def _run_bazel_cmd(cmd: str, repo_name: str, cwd: Path, python_version: str) -> None:
     """Stream a bazel command to stdout; fail on non-zero exit, warn on WARNING lines."""
 
     # We do not care about broken bazel lock files in downstream repos.
@@ -266,6 +267,11 @@ def _run_bazel_cmd(cmd: str, repo_name: str, cwd: Path) -> None:
     # explicit command-line option takes precedence over that configuration.
     args = cmd.split()
     args.insert(2, "--lockfile_mode=off")
+    if python_version != "3.12":
+        args.insert(
+            2,
+            f"--@rules_python//python/config_settings:python_version={python_version}",
+        )
 
     process = subprocess.Popen(
         args,
@@ -425,4 +431,9 @@ def test_consumer_repo(
         module_file=repo.module_file,
     )
     _cleanup_before_cmd(repo_path, cmd)
-    _run_bazel_cmd(cmd, repo.name, repo_path)
+    _run_bazel_cmd(
+        cmd,
+        repo.name,
+        repo_path,
+        os.environ.get("DOCS_AS_CODE_TEST_PYTHON_VERSION", "3.12"),
+    )

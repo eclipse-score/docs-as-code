@@ -29,7 +29,7 @@ def test_child_bundle_uses_root_docs_config_without_a_child_conf_py():
 
     needs_json = built_output(
         "scenarios/root_docs_config",
-        "component.__internal__.needs_local/_build/needs/needs.json",
+        "component.__internal__.needs_local/needs.json",
     )
     needs = load_needs(needs_json)
     metadata = load_needs_json(needs_json)

@@ -315,7 +315,7 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_safety
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
-      status: ^(valid|invalid)$
+      status: ^(valid|invalid|valid_inspected)$
       # WARNING: THis will be activated again with new process release (1.1.0)
       # content: ^[\s\S]+$
       # req-Id: tool_req__docs_req_attr_rationale
@@ -347,7 +347,7 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_safety
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
-      status: ^(valid|invalid)$
+      status: ^(valid|invalid|valid_inspected)$
       # req-Id: tool_req__docs_common_attr_description
       content: ^[\s\S]+$
       valid_from: ^v(0|[1-9]\d*)\.(0|[1-9]\d*)(\.(0|[1-9]\d*))?$
@@ -381,7 +381,7 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_safety
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
-      status: ^(valid|invalid)$
+      status: ^(valid|invalid|valid_inspected)$
       # req-Id: tool_req__docs_common_attr_description
       content: ^[\s\S]+$
     mandatory_links:
@@ -437,7 +437,7 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_safety
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
-      status: ^(valid|invalid)$
+      status: ^(valid|invalid|valid_inspected)$
       # req-Id: tool_req__docs_common_attr_description
       content: ^[\s\S]+$
     optional_options:
@@ -464,7 +464,7 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_safety
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
-      status: ^(valid|invalid)$
+      status: ^(valid|invalid|valid_inspected)$
     optional_links:
       # req-Id: tool_req__arch_linkage_safety
       # Old direction kept optional during migration; superseded by logic_arc_int included_by feat
@@ -488,7 +488,7 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_safety
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
-      status: ^(valid|invalid)$
+      status: ^(valid|invalid|valid_inspected)$
     mandatory_links:
       # req-Id: tool_req__docs_arch_links
       includes: logic_arc_int, logic_arc_int_op
@@ -514,7 +514,7 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_safety
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
-      status: ^(valid|invalid)$
+      status: ^(valid|invalid|valid_inspected)$
     mandatory_links:
       # req-Id: tool_req__docs_arch_links
       belongs_to: feat
@@ -539,7 +539,7 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_safety
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
-      status: ^(valid|invalid)$
+      status: ^(valid|invalid|valid_inspected)$
     optional_links:
       # req-Id: tool_req__arch_linkage_safety
       # New direction kept optional during migration; will supersede feat includes logic_arc_int
@@ -562,7 +562,7 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_safety
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
-      status: ^(valid|invalid)$
+      status: ^(valid|invalid|valid_inspected)$
     mandatory_links:
       included_by: logic_arc_int
     tags:
@@ -582,7 +582,7 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_safety
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
-      status: ^(valid|invalid)$
+      status: ^(valid|invalid|valid_inspected)$
       maturity: ^(preview|experimental|release)$
     mandatory_links:
       # req-Id: tool_req__arch_linkage_safety
@@ -627,7 +627,7 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_safety
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
-      status: ^(valid|invalid)$
+      status: ^(valid|invalid|valid_inspected)$
     mandatory_links:
       belongs_to: feat # preparation for linking change according to DR-005
     optional_links:
@@ -653,7 +653,7 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_safety
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
-      status: ^(valid|invalid)$
+      status: ^(valid|invalid|valid_inspected)$
     mandatory_links:
       # req-Id: tool_req__docs_arch_links
       belongs_to: comp
@@ -677,7 +677,7 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_safety
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
-      status: ^(valid|invalid)$
+      status: ^(valid|invalid|valid_inspected)$
     mandatory_links:
       # req-Id: tool_req__docs_arch_links
       belongs_to: comp
@@ -700,7 +700,7 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_safety
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
-      status: ^(valid|invalid)$
+      status: ^(valid|invalid|valid_inspected)$
       language: ^(cpp|rust)$
     optional_links:
       fulfils: comp_req
@@ -721,7 +721,7 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_safety
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
-      status: ^(valid|invalid)$
+      status: ^(valid|invalid|valid_inspected)$
     mandatory_links:
       # req-Id: tool_req__arch_linkage_safety
       included_by: real_arc_int
@@ -1210,10 +1210,14 @@ needs_extra_links:
 #                          to perform the check on all needs types, set include to .
 #   - condition: defines (together with apply) the condition which the needs need to fulfill
 #     - [and / or / xor / not]
-# - check: defines the check that should be applied
+# - check_all / check_one: defines the check that should be applied (exactly one of them)
+#   - check_all: every linked need has to fulfill the condition
+#   - check_one: at least one linked need has to fulfill the condition
+#                (a need without any linked needs passes)
 #   - <relation>: defines the relation which is used derive the type of the parent need
 #   - condition: defines the condition that should be checked
 #     - [and / or / xor / not]
+# - info_only [OPTIONAL]: if `true`, violations are reported as info instead of warning
 ##############################################################
 
 graph_checks:
@@ -1222,7 +1226,7 @@ graph_checks:
     needs:
       include: stkh_req, feat_req, comp_req, aou_req, gd_req, tool_req
       condition: safety == QM
-    check:
+    check_all:
       derived_from: safety == QM
     explanation: QM requirements cannot be derived from ASIL requirements.
 
@@ -1231,23 +1235,27 @@ graph_checks:
     needs:
       include: feat_arc_sta, logic_arc_int, logic_arc_int_op, comp_arc_sta, real_arc_int, real_arc_int_op
       condition: safety == QM
-    check:
+    check_all:
       fulfils: safety != QM
     explanation: An QM architecture element cannot implement ASIL requirements.
 
   # req-Id: tool_req__docs_req_arch_link_safety_to_arch
   tool_req__docs_req_arch_link_safety_to_arch:
     needs:
-      include: feat_arc_sta, logic_arc_int, logic_arc_int_op, comp_arc_sta, real_arc_int, real_arc_int_op
+      include: feat_arc_sta, logic_arc_int, logic_arc_int_op, comp_arc_sta, real_arc_int, real_arc_int_op, comp, feat
       condition:
         and:
           - safety != QM
-          - status == valid
-    check:
+          - or:
+              - status == valid
+              - status == valid_inspected
+    check_all:
       implements: # TODO: which attribute???
         and:
           - safety != QM
-          - status == valid
+          - or:
+              - status == valid
+              - status == valid_inspected
     explanation: An safety architecture element can only link other safety architecture elements.
 
   # req-Id: tool_req__docs_arch_link_security
@@ -1255,7 +1263,7 @@ graph_checks:
     needs:
       include: feat_arc_sta, logic_arc_int, logic_arc_int_op, comp_arc_sta, real_arc_int, real_arc_int_op
       condition: security == YES
-    check:
+    check_all:
       implements: security == YES # Which attribute???
     explanation: An security architecture element can only link other security architecture elements.
 
@@ -1264,7 +1272,7 @@ graph_checks:
     needs:
       include: workproduct
       condition: complies != []
-    check:
+    check_all:
       complies:
         or:
           - id contains aspice_40__iic

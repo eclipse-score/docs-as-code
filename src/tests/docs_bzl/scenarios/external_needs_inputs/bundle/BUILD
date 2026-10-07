@@ -1,5 +1,5 @@
 # *******************************************************************************
-# Copyright (c) 2025 Contributors to the Eclipse Foundation
+# Copyright (c) 2026 Contributors to the Eclipse Foundation
 #
 # See the NOTICE file(s) distributed with this work for additional
 # information regarding copyright ownership.
@@ -10,5 +10,13 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-def test_score_pytest_loads_conftest(fixture42):  # pyright: ignore[reportMissingParameterType]
-    assert fixture42 == 42
+
+load("//:docs.bzl", "docs_bundle")
+
+# This bundle is intentionally independent of the producer's composed docs
+# tree, so importing its Needs cannot duplicate a Need from another input.
+docs_bundle(
+    name = "docs_bundle",
+    source_dir = "content",
+    visibility = ["//visibility:public"],
+)

@@ -235,23 +235,42 @@ This section provides an overview of current process requirements and their clar
   :tags: Common Attributes
   :implemented: YES
   :parent_covered: NO: gd_req__saf_attr_status has additional constraints
-  :version: 1
+  :version: 2
   :satisfies:
-    gd_req__req_attr_status[version==1],
-    gd_req__arch_attr_status[version==1],
-    gd_req__saf_attr_status[version==1],
-    gd_req__req_check_mandatory[version==1],
+    gd_req__req_attr_status,
+    gd_req__arch_attr_status,
+    gd_req__saf_attr_status,
+    gd_req__req_check_mandatory,
 
   Docs-as-Code shall enforce that the ``status`` attribute has one of the following values:
 
   * valid
   * invalid
+  * valid_inspected (requirement types and architecture elements only)
 
   This rule applies to:
 
   * all requirement types defined in :need:`tool_req__docs_req_types`, except process and tool requirements.
   * all architecture elements defined in :need:`tool_req__docs_arch_types`.
   * all safety analysis elements defined in :need:`tool_req__docs_saf_types`.
+
+
+.. tool_req:: Status: skip checks for invalid needs
+  :id: tool_req__docs_common_attr_status_invalid
+  :tags: Common Attributes
+  :implemented: YES
+  :version: 1
+  :satisfies:
+    gd_req__req_attr_status[version==1],
+    gd_req__arch_attr_status[version==1],
+    gd_req__saf_attr_status[version==1],
+    gd_req__sec_attr_status[version==1],
+  :parent_covered: NO: process requirements only define the status values
+
+  Docs-as-Code shall not report any check findings for needs with ``status == invalid``.
+
+  Needs with ``status == invalid`` shall stay visible to the checks of other needs.
+  Findings on a valid need that links to an invalid need shall still be reported.
 
 
 
