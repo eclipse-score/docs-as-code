@@ -6020,6 +6020,20 @@
     "FullyVerifies": null
   },
   {
+    "name": "test_needs_templates__test_platform_report_gap_table_is_report_version_scoped",
+    "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
+    "line": "320",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
     "name": "test_helper_lib__test_config_setdefault_sets_when_not_in_raw_config",
     "file": "src/helper_lib/test_helper_lib.py",
     "line": "38",
