@@ -13,6 +13,24 @@
 
 load("@docs_as_code_hub_env//:requirements.bzl", "all_requirements")
 load("@score_tools//score_pytest:pytest.bzl", "score_pytest")
+load("//:bzl/needs_rules.bzl", "python_coverage_setting")
+
+# Flags rather than environment variables, because Bazel does not pass the
+# environment into the Sphinx Needs action (see bzl/needs_rules.bzl). Empty by
+# default so builds are unchanged unless src/tests/docs_bzl/helpers.py sets
+# them for a coverage run. Public because every sphinx_docs target, also in
+# consumer modules, depends on them.
+python_coverage_setting(
+    name = "coverage_process_start",
+    build_setting_default = "",
+    visibility = ["//visibility:public"],
+)
+
+python_coverage_setting(
+    name = "coverage_file",
+    build_setting_default = "",
+    visibility = ["//visibility:public"],
+)
 
 # docs.bzl passes this entry script as the source of each interactive binary.
 # Exporting it allows docs() to declare those binaries in consumer packages.

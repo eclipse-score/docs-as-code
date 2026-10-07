@@ -25,6 +25,25 @@ load(
     "sphinx_config_options",
 )
 
+# The Sphinx action's environment is the fixed dict built in _sphinx_docs_impl,
+# so `--action_env` cannot switch coverage on inside it; these string flags
+# carry the coverage.py settings in instead. An own minimal rule instead of
+# bazel_skylib's string_flag: skylib is only a dev dependency of this module,
+# so consumers could not load it.
+PythonCoverageSettingInfo = provider(
+    doc = "A coverage.py setting forwarded to the Sphinx Needs action.",
+    fields = ["value"],
+)
+
+def _python_coverage_setting_impl(ctx):
+    return [PythonCoverageSettingInfo(value = ctx.build_setting_value)]
+
+python_coverage_setting = rule(
+    implementation = _python_coverage_setting_impl,
+    build_setting = config.string(flag = True),
+    doc = "String flag holding one coverage.py environment value; empty disables it.",
+)
+
 def _sphinx_docs_impl(ctx):
     """Run Sphinx against the Bazel execution-root source tree."""
     output = ctx.actions.declare_directory(ctx.label.name + "/_build/needs")
@@ -86,6 +105,20 @@ def _sphinx_docs_impl(ctx):
         "SPHINX_EXTRA_OPTS": json.encode(ctx.attr.extra_opts),
     }
 
+    # The docs.bzl scenario tests measure the code Sphinx runs in this action;
+    # the hook in src/docs_cli/cli.py reads these variables. Only add them when
+    # the flags are set, so normal builds keep their environment and with it
+    # their cache keys.
+    execution_requirements = {}
+    coverage_process_start = ctx.attr._coverage_process_start[PythonCoverageSettingInfo].value
+    if coverage_process_start:
+        env["COVERAGE_PROCESS_START"] = coverage_process_start
+        env["COVERAGE_FILE"] = ctx.attr._coverage_file[PythonCoverageSettingInfo].value
+        # The coverage data file is not a declared output. A cache hit would
+        # restore the Needs output without running Sphinx, and the scenario
+        # would silently drop out of the coverage report.
+        execution_requirements["no-cache"] = "1"
+
     # Data and mounted sources must be present at their execution-root paths.
     # The executable separately carries these labels in its Python runfiles
     # for extensions that locate external inventories through Bazel labels.
@@ -103,6 +136,7 @@ def _sphinx_docs_impl(ctx):
             transitive = [bundle.own_source_files],
         ),
         outputs = [output],
+        execution_requirements = execution_requirements,
         mnemonic = "ScoreNeedsBuild",
         progress_message = "Building Needs inventory for %s" % ctx.label,
     )
@@ -125,6 +159,11 @@ sphinx_docs = rule(
         "extra_opts": attr.string_list(),
         # The launcher runs on the build host and carries extension runfiles.
         "sphinx": attr.label(cfg = "exec", executable = True, mandatory = True),
+        # A rule can only read a flag's value through an attribute.
+        "_coverage_file": attr.label(default = Label("//src/docs_cli:coverage_file")),
+        "_coverage_process_start": attr.label(
+            default = Label("//src/docs_cli:coverage_process_start"),
+        ),
     },
     doc = "Private action that builds Needs from declared execution-root inputs.",
 )

@@ -12,6 +12,7 @@
 # *******************************************************************************
 
 load("@aspect_rules_py//py:defs.bzl", "py_binary")
+load("@docs_as_code_hub_env//:requirements.bzl", "requirement")
 
 # Standalone maintenance tools for this repository (as opposed to
 # //scripts_bazel, which holds executables invoked by Bazel rules). Not part
@@ -31,4 +32,14 @@ py_binary(
     deps = [
         "//src/helper_lib",
     ],
+)
+
+# Bazel's coverage report only lists files that a test imported. This tool adds
+# the rest at 0% so untested files are visible, and writes the summary posted on
+# pull requests. A py_binary so CI and developers use the locked coverage.py.
+py_binary(
+    name = "coverage_report",
+    srcs = ["coverage_report.py"],
+    main = "coverage_report.py",
+    deps = [requirement("coverage")],
 )

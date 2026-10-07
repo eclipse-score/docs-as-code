@@ -36,6 +36,50 @@ def repo_root() -> Path:
     return root
 
 
+def _coverage_env() -> dict[str, str]:
+    """Return the coverage.py settings for the Sphinx runs Bazel starts.
+
+    Coverage is switched on through DOCS_BZL_COVERAGE_DIR rather than the
+    COVERAGE_* variables themselves: coverage.py's .pth start-up hook would
+    otherwise also measure this pytest process, whose code is not under test.
+    The directory must be outside /tmp, because each Bazel sandbox gets a
+    private /tmp and data written there is lost.
+    """
+    directory = os.environ.get("DOCS_BZL_COVERAGE_DIR")
+    if not directory:
+        return {}
+    data_dir = Path(directory).absolute()
+    data_dir.mkdir(parents=True, exist_ok=True)
+    return {
+        # An absolute path in the checkout is readable from every sandbox and
+        # runfiles tree the Sphinx runs start in.
+        "COVERAGE_PROCESS_START": str(repo_root() / "pyproject.toml"),
+        "COVERAGE_FILE": str(data_dir / ".coverage"),
+    }
+
+
+def _coverage_flags(command: str, coverage_env: Mapping[str, str]) -> list[str]:
+    """Forward coverage.py settings into Bazel's Sphinx Needs actions.
+
+    `bazel run` hands its environment to cli.py; build actions only see the
+    settings through these flags.
+    """
+    # Commands that build share one configuration, so a coverage run neither
+    # rebuilds nor looks up outputs of a different one. `query` takes no build
+    # flags at all.
+    if not coverage_env or command not in ("build", "run", "cquery"):
+        return []
+    coverage_file = Path(coverage_env["COVERAGE_FILE"])
+    return [
+        "--//src/docs_cli:coverage_process_start="
+        + coverage_env["COVERAGE_PROCESS_START"],
+        f"--//src/docs_cli:coverage_file={coverage_file}",
+        # Sandboxed actions may only write their declared outputs; this lets
+        # the Sphinx action write its coverage data as well.
+        f"--sandbox_writable_path={coverage_file.parent}",
+    ]
+
+
 def run_bazel(
     args: list[str],
     expect_error: bool = False,
@@ -43,7 +87,8 @@ def run_bazel(
 ):
     """Run Bazel, optionally overriding the environment of the subprocess."""
     start_time = time.time()
-    cmd = ["bazel", *args]
+    coverage_env = _coverage_env()
+    cmd = ["bazel", args[0], *_coverage_flags(args[0], coverage_env), *args[1:]]
     cmd_str = " ".join(cmd)
 
     p = subprocess.run(
@@ -51,7 +96,13 @@ def run_bazel(
         cwd=repo_root(),
         capture_output=True,
         text=True,
-        env=None if env is None else {**os.environ, **env},
+        # `bazel run` hands this environment on to cli.py, which is how the
+        # coverage settings reach the Sphinx runs that are not build actions.
+        env=(
+            None
+            if env is None and not coverage_env
+            else {**os.environ, **coverage_env, **(env or {})}
+        ),
     )
     end_time = time.time()
     print(f"Running 'bazel {' '.join(args)}' took {end_time - start_time:.4f} seconds")

@@ -13,11 +13,20 @@
 
 """Run local documentation builds and live preview from Bazel's docs targets."""
 
+import os
+
+# Started before all other imports so module-level code of the src.* modules
+# below is measured too. Only set during coverage runs of the docs.bzl scenario
+# tests, see src/tests/docs_bzl/README.md.
+if os.environ.get("COVERAGE_PROCESS_START"):
+    import coverage
+
+    coverage.process_startup()
+
 import argparse
 import hashlib
 import json
 import logging
-import os
 import shutil
 import sys
 import time
