@@ -171,6 +171,21 @@ Stakeholder Requirements
       :columns: id;title;safety;status;testlink
       :colwidths: 13,22,8,10,47
       :sort: id
+{% if ns_stkh_ref.missing %}
+{#- Detail view of the "not referenced" slice of the reference coverage pie
+    above; both are rendered from the same in-scope ID list. -#}
+
+.. dropdown:: Not referenced by feature requirements ({{ ns_stkh_ref.missing|length }})
+   :animate: fade-in
+   :color: warning
+
+   .. needtable::
+      :filter: id in {{ id_filter_list(ns_stkh_ref.missing) }}
+      :style: table
+      :columns: id;title;safety;status
+      :colwidths: 15,45,15,25
+      :sort: id
+{% endif %}
 
 {# ===================================================================== #}
 {# Features                                                               #}
@@ -288,6 +303,19 @@ Requirements Statistics
       :columns: id;title;safety;status;testlink
       :colwidths: 13,22,8,10,47
       :sort: id
+{% if ns_feat_ref.missing %}
+
+.. dropdown:: Not referenced by component requirements ({{ ns_feat_ref.missing|length }})
+   :animate: fade-in
+   :color: warning
+
+   .. needtable::
+      :filter: id in {{ id_filter_list(ns_feat_ref.missing) }}
+      :style: table
+      :columns: id;title;safety;status
+      :colwidths: 15,45,15,25
+      :sort: id
+{% endif %}
 
 Architecture Statistics
 ^^^^^^^^^^^^^^^^^^^^^^^
