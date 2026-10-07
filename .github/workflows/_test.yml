@@ -28,8 +28,9 @@ jobs:
           - suite: runtime
             marker: bazel_slow
           # Which lines run does not depend on the Python version, and measuring
-          # slows the job down: one version is enough.
-          - python-version: "3.14"
+          # slows the job down: one version is enough. Not 3.14 yet: rules_python
+          # < 2.1 has no coverage tool for it, so `bazel coverage` measures nothing.
+          - python-version: "3.12"
             coverage: true
 
     steps:
@@ -105,8 +106,9 @@ jobs:
         python-version: ["3.12", "3.14"]
         include:
           # Which lines run does not depend on the Python version, and measuring
-          # slows the job down: one version is enough.
-          - python-version: "3.14"
+          # slows the job down: one version is enough. Not 3.14 yet: rules_python
+          # < 2.1 has no coverage tool for it, so `bazel coverage` measures nothing.
+          - python-version: "3.12"
             coverage: true
     steps:
       - name: 🛡️ Harden Runner
@@ -235,13 +237,46 @@ jobs:
           path: coverage-data/docs_bzl
           merge-multiple: true
 
+      # Pull requests show their change against main, so they need main's
+      # numbers. Main's own runs of this job upload them (on push), which saves
+      # measuring main a second time here.
+      - name: Find coverage report of main
+        id: main_report
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        # Newest artifact first. A fork's pull request can come from a branch
+        # with the same name, so only this repository's own runs count.
+        run: |
+          run_id=$(gh api "repos/$REPO/actions/artifacts?name=coverage-report&per_page=100" --jq "
+            [.artifacts[]
+             | select(.expired | not)
+             | select(.workflow_run.head_branch == \"$DEFAULT_BRANCH\")
+             | select(.workflow_run.head_repository_id == .workflow_run.repository_id)
+            ][0].workflow_run.id // empty")
+          echo "run_id=$run_id" >> "$GITHUB_OUTPUT"
+
+      - name: Download coverage report of main
+        if: steps.main_report.outputs.run_id
+        uses: actions/download-artifact@v8
+        with:
+          name: coverage-report
+          path: coverage-data/main
+          run-id: ${{ steps.main_report.outputs.run_id }}
+          github-token: ${{ github.token }}
+
       - name: Merge coverage
+        # coverage.json is what later pull requests compare against.
         run: >-
           bazel run --lockfile_mode=error //tools:coverage_report --
           "Unit tests=coverage-data/unit_tests/unit_tests.lcov"
           "docs.bzl scenarios=coverage-data/docs_bzl"
           --output coverage-data/coverage.lcov
           --markdown coverage-data/summary.md
+          --json coverage-data/coverage.json
+          ${{ github.event_name == 'pull_request' && '--compare-with coverage-data/main/coverage.json' || '' }}
 
       # Pushes to main and merge queue runs get no PR comment; this makes their
       # coverage visible on the run page.
@@ -262,5 +297,6 @@ jobs:
           name: coverage-report
           path: |
             coverage-data/coverage.lcov
+            coverage-data/coverage.json
             coverage-data/summary.md
             coverage-data/pr_number
