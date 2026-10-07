@@ -3311,10 +3311,10 @@
     "repo_name": "local_repo",
     "hash": "",
     "url": "",
-    "TestType": "requirements-based",
-    "DerivationTechnique": "requirements-analysis",
+    "TestType": "interface-test",
+    "DerivationTechnique": "error-guessing",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_common_attr_security",
+    "PartiallyVerifies": null,
     "FullyVerifies": null
   },
   {
@@ -3325,10 +3325,10 @@
     "repo_name": "local_repo",
     "hash": "",
     "url": "",
-    "TestType": "requirements-based",
-    "DerivationTechnique": "requirements-analysis",
+    "TestType": "interface-test",
+    "DerivationTechnique": "error-guessing",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_common_attr_description",
+    "PartiallyVerifies": null,
     "FullyVerifies": null
   },
   {
@@ -3913,10 +3913,10 @@
     "repo_name": "local_repo",
     "hash": "",
     "url": "",
-    "TestType": "requirements-based",
-    "DerivationTechnique": "requirements-analysis",
+    "TestType": "interface-test",
+    "DerivationTechnique": "equivalence-classes",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_common_attr_description",
+    "PartiallyVerifies": null,
     "FullyVerifies": null
   },
   {
@@ -3927,10 +3927,10 @@
     "repo_name": "local_repo",
     "hash": "",
     "url": "",
-    "TestType": "requirements-based",
-    "DerivationTechnique": "requirements-analysis",
+    "TestType": "interface-test",
+    "DerivationTechnique": "equivalence-classes",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_common_attr_description",
+    "PartiallyVerifies": null,
     "FullyVerifies": null
   },
   {
@@ -3941,10 +3941,10 @@
     "repo_name": "local_repo",
     "hash": "",
     "url": "",
-    "TestType": "requirements-based",
-    "DerivationTechnique": "requirements-analysis",
+    "TestType": "interface-test",
+    "DerivationTechnique": "equivalence-classes",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_common_attr_description",
+    "PartiallyVerifies": null,
     "FullyVerifies": null
   },
   {
@@ -3955,10 +3955,10 @@
     "repo_name": "local_repo",
     "hash": "",
     "url": "",
-    "TestType": "requirements-based",
-    "DerivationTechnique": "requirements-analysis",
+    "TestType": "interface-test",
+    "DerivationTechnique": "error-guessing",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_common_attr_description",
+    "PartiallyVerifies": null,
     "FullyVerifies": null
   },
   {
