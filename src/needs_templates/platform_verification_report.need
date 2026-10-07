@@ -95,6 +95,11 @@
    .wp-doc-table td .dataTables_wrapper .dataTables_filter,
    .wp-doc-table td .dataTables_wrapper .dataTables_info,
    .wp-doc-table td .dataTables_wrapper .dataTables_paginate { display: none; }
+   /* Centers a pie that wraps onto a row of its own in the two-column grids. */
+   .score-centered-grid-item {
+       margin-left: auto;
+       margin-right: auto;
+   }
    </style>
 
 {# ===================================================================== #}
