@@ -29,3 +29,7 @@ bazel-runfiles
 pytest
 pyfakefs
 basedpyright
+
+# Measure what the docs.bzl scenario tests exercise inside Sphinx, and merge
+# coverage reports in //tools:coverage_report.
+coverage
