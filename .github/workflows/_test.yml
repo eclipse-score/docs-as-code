@@ -28,8 +28,7 @@ jobs:
           - suite: runtime
             marker: bazel_slow
           # Which lines run does not depend on the Python version, and measuring
-          # slows the job down: one version is enough. Not 3.14 yet: rules_python
-          # < 2.1 has no coverage tool for it, so `bazel coverage` measures nothing.
+          # slows the job down: one version is enough.
           - python-version: "3.12"
             coverage: true
 
@@ -106,8 +105,7 @@ jobs:
         python-version: ["3.12", "3.14"]
         include:
           # Which lines run does not depend on the Python version, and measuring
-          # slows the job down: one version is enough. Not 3.14 yet: rules_python
-          # < 2.1 has no coverage tool for it, so `bazel coverage` measures nothing.
+          # slows the job down: one version is enough.
           - python-version: "3.12"
             coverage: true
     steps:

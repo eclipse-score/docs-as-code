@@ -107,6 +107,8 @@ def _run_checks(app: Sphinx) -> None:
 
     # Filter out external needs, as checks are only intended to be run
     # on internal needs.
+    # Needs with status `invalid` are not filtered here: graph checks must still
+    # see them as link targets. CheckLogger drops all findings for them.
     needs_all_needs = SphinxNeedsData(app.env).get_needs_view()
 
     logger.debug(f"Running checks for {len(needs_all_needs)} needs")
@@ -134,9 +136,7 @@ def _run_checks(app: Sphinx) -> None:
 
     enabled_local_checks = [c for c in local_checks if is_check_enabled(c)]
 
-    needs_local_needs = (
-        SphinxNeedsData(app.env).get_needs_view().filter_is_external(False)
-    )
+    needs_local_needs = needs_all_needs.filter_is_external(False)
     # Need-Local checks: checks which can be checked file-local, without a
     # graph of other needs.
     for need in needs_local_needs.values():

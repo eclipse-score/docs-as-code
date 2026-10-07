@@ -43,9 +43,9 @@ def setup_checks():
 
 
 @add_test_properties(
-    partially_verifies=["tool_req__docs_common_attr_description"],
-    test_type="requirements-based",
-    derivation_technique="requirements-analysis",
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
 )
 def test_returns_empty_list_when_filter_is_empty():
     """Return an empty list if no filter string is provided."""
@@ -53,9 +53,9 @@ def test_returns_empty_list_when_filter_is_empty():
 
 
 @add_test_properties(
-    partially_verifies=["tool_req__docs_common_attr_description"],
-    test_type="requirements-based",
-    derivation_technique="requirements-analysis",
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
 )
 def test_returns_valid_checks():
     """Return the provided valid check names."""
@@ -64,9 +64,9 @@ def test_returns_valid_checks():
 
 
 @add_test_properties(
-    partially_verifies=["tool_req__docs_common_attr_description"],
-    test_type="requirements-based",
-    derivation_technique="requirements-analysis",
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="equivalence-classes",
 )
 def test_strips_whitespace():
     """Remove surrounding spaces from each check name."""
@@ -75,9 +75,9 @@ def test_strips_whitespace():
 
 
 @add_test_properties(
-    partially_verifies=["tool_req__docs_common_attr_description"],
-    test_type="requirements-based",
-    derivation_technique="requirements-analysis",
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="error-guessing",
 )
 def test_raises_assertion_for_invalid_check():
     """Raise AssertionError if a check name is unknown."""
