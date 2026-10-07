@@ -431,4 +431,3 @@ needs_id_regex = r"^[a-zA-Z0-9_]+$"
     # Referenced only outside the report scope, so it still counts as a gap.
     assert 'href="#stkh_req__only_out_of_scope"' in gap_table
     assert 'href="#stkh_req__referenced"' not in gap_table
-
