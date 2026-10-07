@@ -110,27 +110,12 @@ Stakeholder Requirements
 ------------------------
 
 {#- Reference coverage: a stakeholder requirement is "referenced" when at least
-    one in-scope feature requirement is ``derived_from`` it. Iterate the lower
-    requirements once and follow their cheap outgoing ``derived_from`` link,
-    instead of scanning the whole Need graph per stakeholder requirement. -#}
-{% set ns_ref = namespace(up_ids=[]) %}
-{% for low in needs_of_type("feat_req") %}
-{% if req_in_report_version(low, report_version) %}
-{% for up in linked_needs(low["id"], "derived_from") %}
-{% if up["type"] == "stkh_req" and up["id"] in ns_stkh_reqs.list %}
-{% set ns_ref.up_ids = ns_ref.up_ids + [up["id"]] %}
-{% endif %}
-{% endfor %}
-{% endif %}
-{% endfor %}
-{% set ns_stkh_ref = namespace(referenced=[], missing=[]) %}
-{% for req_id in ns_stkh_reqs.list %}
-{% if req_id in ns_ref.up_ids %}
-{% set ns_stkh_ref.referenced = ns_stkh_ref.referenced + [req_id] %}
-{% else %}
-{% set ns_stkh_ref.missing = ns_stkh_ref.missing + [req_id] %}
-{% endif %}
-{% endfor %}
+    one in-scope feature requirement is ``derived_from`` it. The index is built
+    and applied in Python, because every ``in`` test evaluated here would cross
+    the Rust/Python boundary once per comparison. -#}
+{% set ns_stkh_ref = split_by_reference(
+     ns_stkh_reqs.list,
+     referenced_ids("feat_req", "derived_from", report_version)) %}
 .. grid:: 1 2 2 2
    :gutter: 3
 
@@ -210,19 +195,8 @@ Feature Overview
 
 {#- Reference coverage index, built once for all Features: a feature
     requirement is "referenced" when at least one in-scope component
-    requirement is ``derived_from`` it. Iterate the component requirements once
-    and follow their cheap outgoing ``derived_from`` link, so the per-feature
-    sections below only test membership instead of rescanning the graph. -#}
-{% set ns_comp_ref = namespace(feat_ids=[]) %}
-{% for low in needs_of_type("comp_req") %}
-{% if req_in_report_version(low, report_version) %}
-{% for up in linked_needs(low["id"], "derived_from") %}
-{% if up["type"] == "feat_req" %}
-{% set ns_comp_ref.feat_ids = ns_comp_ref.feat_ids + [up["id"]] %}
-{% endif %}
-{% endfor %}
-{% endif %}
-{% endfor %}
+    requirement is ``derived_from`` it. -#}
+{% set comp_referenced_ids = referenced_ids("comp_req", "derived_from", report_version) %}
 {% for feature in report_features %}
 {% set feature_id = feature["id"] %}
 {% set feature_title = feature["title"] %}
@@ -250,16 +224,9 @@ Feature Overview
 {% endif %}
 {% endfor %}
 {% set feature_req_filter = 'id in ' ~ id_filter_list(ns.req_ids) %}
-{#- Reference coverage: partition this Feature's in-scope requirements by the
-    pre-built index above instead of rescanning the graph per requirement. -#}
-{% set ns_feat_ref = namespace(referenced=[], missing=[]) %}
-{% for req_id in ns.req_ids %}
-{% if req_id in ns_comp_ref.feat_ids %}
-{% set ns_feat_ref.referenced = ns_feat_ref.referenced + [req_id] %}
-{% else %}
-{% set ns_feat_ref.missing = ns_feat_ref.missing + [req_id] %}
-{% endif %}
-{% endfor %}
+{#- Reference coverage: partition this Feature's in-scope requirements against
+    the index built once above. -#}
+{% set ns_feat_ref = split_by_reference(ns.req_ids, comp_referenced_ids) %}
 Requirements Statistics
 ^^^^^^^^^^^^^^^^^^^^^^^
 
