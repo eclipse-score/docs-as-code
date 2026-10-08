@@ -21,13 +21,13 @@ load("//:bzl/needs_rules.bzl", "python_coverage_setting")
 # them for a coverage run. Public because every sphinx_docs target, also in
 # consumer modules, depends on them.
 python_coverage_setting(
-    name = "coverage_process_start",
+    name = "__internal__.coverage_process_start",
     build_setting_default = "",
     visibility = ["//visibility:public"],
 )
 
 python_coverage_setting(
-    name = "coverage_file",
+    name = "__internal__.coverage_file",
     build_setting_default = "",
     visibility = ["//visibility:public"],
 )

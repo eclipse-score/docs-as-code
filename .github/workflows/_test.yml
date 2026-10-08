@@ -289,6 +289,7 @@ jobs:
       - name: Merge coverage
         # coverage.json is what later pull requests compare against.
         run: >-
+          mkdir -p coverage-data &&
           bazel run --lockfile_mode=error //tools:coverage_report --
           "Unit tests=coverage-data/unit_tests/unit_tests.lcov"
           "docs.bzl scenarios=coverage-data/docs_bzl"

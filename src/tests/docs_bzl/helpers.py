@@ -51,7 +51,7 @@ def _coverage_env() -> dict[str, str]:
     data_dir = Path(directory).absolute()
     data_dir.mkdir(parents=True, exist_ok=True)
     return {
-        # An absolute path in the checkout is readable from every sandbox and
+        # An absolute path in the checkout is readable from every (non remote) sandbox and
         # runfiles tree the Sphinx runs start in.
         "COVERAGE_PROCESS_START": str(repo_root() / "pyproject.toml"),
         "COVERAGE_FILE": str(data_dir / ".coverage"),
@@ -71,9 +71,9 @@ def _coverage_flags(command: str, coverage_env: Mapping[str, str]) -> list[str]:
         return []
     coverage_file = Path(coverage_env["COVERAGE_FILE"])
     return [
-        "--//src/docs_cli:coverage_process_start="
+        "--//src/docs_cli:__internal__.coverage_process_start="
         + coverage_env["COVERAGE_PROCESS_START"],
-        f"--//src/docs_cli:coverage_file={coverage_file}",
+        f"--//src/docs_cli:__internal__.coverage_file={coverage_file}",
         # Sandboxed actions may only write their declared outputs; this lets
         # the Sphinx action write its coverage data as well.
         f"--sandbox_writable_path={coverage_file.parent}",
