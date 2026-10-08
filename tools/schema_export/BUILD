@@ -13,7 +13,7 @@
 
 load("@aspect_rules_py//py:defs.bzl", "py_binary", "py_library")
 load("@docs_as_code_hub_env//:requirements.bzl", "all_requirements")
-load("//:score_pytest.bzl", "score_pytest")
+load("@score_tools//score_pytest:pytest.bzl", "score_pytest")
 
 package(default_visibility = ["//visibility:public"])
 
