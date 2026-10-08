@@ -160,9 +160,9 @@ sphinx_docs = rule(
         # The launcher runs on the build host and carries extension runfiles.
         "sphinx": attr.label(cfg = "exec", executable = True, mandatory = True),
         # A rule can only read a flag's value through an attribute.
-        "_coverage_file": attr.label(default = Label("//src/docs_cli:coverage_file")),
+        "_coverage_file": attr.label(default = Label("//src/docs_cli:__internal__.coverage_file")),
         "_coverage_process_start": attr.label(
-            default = Label("//src/docs_cli:coverage_process_start"),
+            default = Label("//src/docs_cli:__internal__.coverage_process_start"),
         ),
     },
     doc = "Private action that builds Needs from declared execution-root inputs.",

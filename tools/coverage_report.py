@@ -180,8 +180,26 @@ class TotalCoverage:
 
     @classmethod
     def from_json(cls, data: dict[str, list[int]]) -> Self:
+        # Ensure that they have 2 values
+        assert len(data["lines"]) == 2
+        assert len(data["branches"]) == 2
         lines_hit, lines_total = data["lines"]
         branches_hit, branches_total = data["branches"]
+        # Ensure all values are integers
+        if any(
+            type(value) is not int
+            for value in (lines_hit, lines_total, branches_hit, branches_total)
+        ):
+            raise ValueError(
+                "coverage data for lines & branches must be pairs of integers"
+            )
+        assert lines_hit <= lines_total, ValueError(
+            "`Lines hit` can not be higher than `total lines`"
+        )
+        assert branches_hit <= branches_total, ValueError(
+            "`branches hit` can not be higher than `total branches`"
+        )
+
         return cls(lines_hit, lines_total, branches_hit, branches_total)
 
 
