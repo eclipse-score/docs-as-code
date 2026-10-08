@@ -244,6 +244,52 @@ class _AnyRequirementInReportVersion:
 _any_req_in_report_version_callable = _AnyRequirementInReportVersion()
 
 
+class _ReferencedIds:
+    """Collect the IDs that in-scope lower-level requirements point at.
+
+    Reference coverage asks the reverse question ("is this requirement
+    referenced?"), but answering it per requirement means rescanning the Need
+    graph for every row. Walking the lower requirements once and following
+    their cheap outgoing link instead turns that into a single pass.
+
+    Returned as a sorted list because the result travels back through the
+    template; ``split_by_reference`` turns it into a set again for lookups.
+    """
+
+    def __call__(
+        self, lower_type: str, link_name: str, report_version: str | None
+    ) -> list[str]:
+        referenced: set[str] = set()
+        for lower in _needs_of_type_callable(lower_type):
+            if not _req_in_report_version_callable(lower, report_version):
+                continue
+            for upper in _linked_needs_callable(lower["id"], link_name):
+                referenced.add(upper["id"])
+        return sorted(referenced)
+
+
+_referenced_ids_callable = _ReferencedIds()
+
+
+class _SplitByReference:
+    """Partition requirement IDs into referenced and unreferenced ones.
+
+    Doing this in Python keeps the membership tests out of the template: every
+    ``in`` test evaluated by MiniJinja crosses the Rust/Python boundary, which
+    costs far more than the lookup itself.
+    """
+
+    def __call__(self, ids: list[str], referenced: list[str]) -> dict[str, list[str]]:
+        index = set(referenced)
+        return {
+            "referenced": [need_id for need_id in ids if need_id in index],
+            "missing": [need_id for need_id in ids if need_id not in index],
+        }
+
+
+_split_by_reference_callable = _SplitByReference()
+
+
 def _post_templates_requiring_reread(app: Sphinx) -> set[str]:
     """Return post-template names opting into the post-merge rendering pass."""
     template_folder = _needs_template_folder()
@@ -333,6 +379,12 @@ def setup(app: Sphinx) -> dict[str, object]:
     )
     app.config.needs_render_context.setdefault(
         "any_req_in_report_version", _any_req_in_report_version_callable
+    )
+    app.config.needs_render_context.setdefault(
+        "referenced_ids", _referenced_ids_callable
+    )
+    app.config.needs_render_context.setdefault(
+        "split_by_reference", _split_by_reference_callable
     )
     app.connect("builder-inited", _capture_build_environment)
     # Run after the source-code linker has injected generated testcase Needs and

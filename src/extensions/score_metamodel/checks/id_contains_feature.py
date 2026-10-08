@@ -21,6 +21,7 @@ from sphinx.application import Sphinx
 from sphinx_needs.need_item import NeedItem
 
 
+# req-Id: tool_req__docs_common_attr_id_scheme
 @local_check
 def id_contains_feature(app: Sphinx, need: NeedItem, log: CheckLogger):
     """

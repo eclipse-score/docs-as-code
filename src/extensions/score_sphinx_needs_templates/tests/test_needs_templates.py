@@ -315,3 +315,119 @@ needs_id_regex = r"^[a-zA-Z0-9_]+$"
     )
     assert '<section id="qualification-evidence">' not in html
     assert '<section id="traceability-evidence">' not in html
+
+
+def test_platform_report_gap_table_is_report_version_scoped(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """The gap table lists requirements lacking an *in-scope* reference.
+
+    A stakeholder requirement that is only referenced by a feature requirement
+    outside the report's ``report_version`` counts as a gap, because the
+    reference coverage pie classifies it as "not referenced" too. Both are
+    rendered from the same pre-scoped ID list, so they cannot disagree.
+    """
+    monkeypatch.setenv("BUILD_WORKSPACE_DIRECTORY", str(tmp_path))
+    (tmp_path / "conf.py").write_text(
+        """
+extensions = [
+    "sphinx_needs",
+    "score_sphinx_needs_templates",
+    "score_metamodel",
+    "sphinx_design",
+]
+master_doc = "index"
+needs_id_regex = r"^[a-zA-Z0-9_]+$"
+""",
+        encoding="utf-8",
+    )
+    (tmp_path / "index.rst").write_text(
+        """
+.. workproduct:: Platform report work product
+   :id: wp__platform_report
+   :status: valid
+
+.. document:: Platform verification report
+   :id: doc__platform_report
+   :status: valid
+   :safety: ASIL_B
+   :security: NO
+   :realizes: wp__platform_report
+   :report_version: v1.0
+   :post_template: platform_verification_report
+
+.. stkh_req:: Referenced stakeholder requirement
+   :id: stkh_req__referenced
+   :reqtype: Functional
+   :safety: ASIL_B
+   :security: NO
+   :status: valid
+   :rationale: Referenced by an in-scope feature requirement.
+   :valid_from: v0.8
+
+   The platform shall satisfy the referenced stakeholder need.
+
+.. stkh_req:: Stakeholder requirement referenced out of scope only
+   :id: stkh_req__only_out_of_scope
+   :reqtype: Functional
+   :safety: ASIL_B
+   :security: NO
+   :status: valid
+   :rationale: Referenced only by an out-of-scope feature requirement.
+   :valid_from: v0.8
+
+   The platform shall satisfy the out-of-scope referenced stakeholder need.
+
+.. feat:: Scoped feature
+   :id: feat__scoped
+   :security: NO
+   :safety: ASIL_B
+   :status: valid
+
+.. feat_req:: In-scope feature requirement
+   :id: feat_req__in_scope
+   :reqtype: Functional
+   :security: NO
+   :safety: ASIL_B
+   :status: valid
+   :satisfied_by: feat__scoped
+   :derived_from: stkh_req__referenced
+   :valid_from: v0.8
+
+   This requirement is inside the report version scope.
+
+.. feat_req:: Out-of-scope feature requirement
+   :id: feat_req__out_of_scope
+   :reqtype: Functional
+   :security: NO
+   :safety: ASIL_B
+   :status: valid
+   :satisfied_by: feat__scoped
+   :derived_from: stkh_req__only_out_of_scope
+   :valid_from: v2.0
+
+   This requirement is outside the report version scope.
+""",
+        encoding="utf-8",
+    )
+
+    app = SphinxTestApp(
+        srcdir=tmp_path,
+        outdir=tmp_path / "_build",
+        buildername="html",
+        freshenv=True,
+    )
+    try:
+        app.build(force_all=True)
+        html = (app.outdir / "index.html").read_text(encoding="utf-8")
+    finally:
+        app.cleanup()
+
+    assert "Not referenced by feature requirements" in html
+    gap_table = html.split("Not referenced by feature requirements", 1)[1].split(
+        '<section id="features"', 1
+    )[0]
+    # Referenced only outside the report scope, so it still counts as a gap.
+    assert 'href="#stkh_req__only_out_of_scope"' in gap_table
+    assert 'href="#stkh_req__referenced"' not in gap_table

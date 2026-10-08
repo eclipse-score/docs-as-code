@@ -95,6 +95,11 @@
    .wp-doc-table td .dataTables_wrapper .dataTables_filter,
    .wp-doc-table td .dataTables_wrapper .dataTables_info,
    .wp-doc-table td .dataTables_wrapper .dataTables_paginate { display: none; }
+   /* Centers a pie that wraps onto a row of its own in the two-column grids. */
+   .score-centered-grid-item {
+       margin-left: auto;
+       margin-right: auto;
+   }
    </style>
 
 {# ===================================================================== #}
@@ -104,6 +109,13 @@
 Stakeholder Requirements
 ------------------------
 
+{#- Reference coverage: a stakeholder requirement is "referenced" when at least
+    one in-scope feature requirement is ``derived_from`` it. The index is built
+    and applied in Python, because every ``in`` test evaluated here would cross
+    the Rust/Python boundary once per comparison. -#}
+{% set ns_stkh_ref = split_by_reference(
+     ns_stkh_reqs.list,
+     referenced_ids("feat_req", "derived_from", report_version)) %}
 .. grid:: 1 2 2 2
    :gutter: 3
 
@@ -129,6 +141,17 @@ Stakeholder Requirements
          type == "stkh_req" and partially_verifies_back and not fully_verifies_back and {{ stkh_req_filter }}
          type == "stkh_req" and not fully_verifies_back and not partially_verifies_back and {{ stkh_req_filter }}
 
+   .. grid-item::
+      :class: score-centered-grid-item
+
+      .. needpie:: Stakeholder Requirements Reference Coverage
+         :labels: referenced by lower, not referenced
+         :colors: #37a12d, #ca2828
+         :legend:
+
+         id in {{ id_filter_list(ns_stkh_ref.referenced) }}
+         id in {{ id_filter_list(ns_stkh_ref.missing) }}
+
 .. dropdown:: Show requirements table
    :animate: fade-in
 
@@ -138,6 +161,21 @@ Stakeholder Requirements
       :columns: id;title;safety;status;testlink
       :colwidths: 13,22,8,10,47
       :sort: id
+{% if ns_stkh_ref.missing %}
+{#- Detail view of the "not referenced" slice of the reference coverage pie
+    above; both are rendered from the same in-scope ID list. -#}
+
+.. dropdown:: Not referenced by feature requirements ({{ ns_stkh_ref.missing|length }})
+   :animate: fade-in
+   :color: warning
+
+   .. needtable::
+      :filter: id in {{ id_filter_list(ns_stkh_ref.missing) }}
+      :style: table
+      :columns: id;title;safety;status
+      :colwidths: 15,45,15,25
+      :sort: id
+{% endif %}
 
 {# ===================================================================== #}
 {# Features                                                               #}
@@ -155,6 +193,10 @@ Feature Overview
    :style: table
    :sort: id
 
+{#- Reference coverage index, built once for all Features: a feature
+    requirement is "referenced" when at least one in-scope component
+    requirement is ``derived_from`` it. -#}
+{% set comp_referenced_ids = referenced_ids("comp_req", "derived_from", report_version) %}
 {% for feature in report_features %}
 {% set feature_id = feature["id"] %}
 {% set feature_title = feature["title"] %}
@@ -182,6 +224,9 @@ Feature Overview
 {% endif %}
 {% endfor %}
 {% set feature_req_filter = 'id in ' ~ id_filter_list(ns.req_ids) %}
+{#- Reference coverage: partition this Feature's in-scope requirements against
+    the index built once above. -#}
+{% set ns_feat_ref = split_by_reference(ns.req_ids, comp_referenced_ids) %}
 Requirements Statistics
 ^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -210,6 +255,17 @@ Requirements Statistics
          type == "feat_req" and "{{ feature_id }}" in satisfied_by and partially_verifies_back and not fully_verifies_back and {{ feature_req_filter }}
          type == "feat_req" and "{{ feature_id }}" in satisfied_by and not fully_verifies_back and not partially_verifies_back and {{ feature_req_filter }}
 
+   .. grid-item::
+      :class: score-centered-grid-item
+
+      .. needpie:: {{ feature_title }} Requirements Reference Coverage
+         :labels: referenced by lower, not referenced
+         :colors: #37a12d, #ca2828
+         :legend:
+
+         id in {{ id_filter_list(ns_feat_ref.referenced) }}
+         id in {{ id_filter_list(ns_feat_ref.missing) }}
+
 .. dropdown:: Show requirements table
    :animate: fade-in
 
@@ -219,6 +275,19 @@ Requirements Statistics
       :columns: id;title;safety;status;testlink
       :colwidths: 13,22,8,10,47
       :sort: id
+{% if ns_feat_ref.missing %}
+
+.. dropdown:: Not referenced by component requirements ({{ ns_feat_ref.missing|length }})
+   :animate: fade-in
+   :color: warning
+
+   .. needtable::
+      :filter: id in {{ id_filter_list(ns_feat_ref.missing) }}
+      :style: table
+      :columns: id;title;safety;status
+      :colwidths: 15,45,15,25
+      :sort: id
+{% endif %}
 
 Architecture Statistics
 ^^^^^^^^^^^^^^^^^^^^^^^
