@@ -41,9 +41,10 @@ import subprocess
 import tempfile
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import coverage
+from coverage.exceptions import NoDataError
 
 # Tests are not code under test; listing them would only add 0% noise.
 TEST_FILE = re.compile(
@@ -54,6 +55,9 @@ RECORD = re.compile(r"^SF:(.*)\n(?:.*\n)*?end_of_record\n", re.M)
 # Lets coverage_comment.yml find and update its earlier comment instead of
 # adding a new one on every push.
 COMMENT_MARKER = "<!-- python-coverage-report -->"
+# Version of the --json format. Raise it whenever that format changes, so a
+# pull request does not compare against numbers of main it cannot read.
+SCHEMA = 1
 
 
 @dataclass
@@ -89,13 +93,25 @@ def _lcov_from_data(cov: coverage.Coverage, tmp: str) -> str:
 
 
 def coverage_data_lcov(directory: Path) -> str:
-    """Return LCOV for the coverage.py data files in ``directory``."""
+    """Return LCOV for the coverage.py data files in ``directory``.
+
+    Empty if there are none, or none of them can be read, so the caller reports
+    the suite as having no data.
+    """
     data_files = [str(p) for p in directory.glob(".coverage*")]
+    # The directory exists as soon as a coverage run starts, even if no Sphinx
+    # process wrote data into it.
+    if not data_files:
+        return ""
     with tempfile.TemporaryDirectory() as tmp:
         cov = _coverage(tmp)
         # keep=True so the report can be regenerated from the same data.
+        # Unreadable files (e.g. of a killed process) are skipped with a warning.
         cov.combine(data_paths=data_files, keep=True)
-        return _lcov_from_data(cov, tmp)
+        try:
+            return _lcov_from_data(cov, tmp)
+        except NoDataError:
+            return ""
 
 
 def baseline_lcov(files: list[str]) -> str:
@@ -205,6 +221,7 @@ def summarize(
         ["git", "rev-parse", "HEAD"], capture_output=True, text=True, check=False
     ).stdout.strip()
     return {
+        "schema": SCHEMA,
         "commit": commit,
         "suites": {
             label: _counts(list(s.values())) if s else None for label, s in suites
@@ -409,6 +426,27 @@ def load_reports(
     return suites
 
 
+def load_reference(path: Path) -> tuple[dict[str, Any] | None, str | None]:
+    """Return main's numbers written by --json, or a note why there are none.
+
+    A pull request without a comparison is still useful; one whose summary
+    fails because of main's file is not.
+    """
+    # Main has no report yet before its first run with this tool, or after
+    # its artifact expired.
+    if not path.exists():
+        return None, "No coverage of main available to compare with."
+    try:
+        reference = json.loads(path.read_text())
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
+        print(f"warning: cannot read {path}: {exc}; not comparing with main")
+        return None, "The coverage of main could not be read; no comparison."
+    if not isinstance(reference, dict) or reference.get("schema") != SCHEMA:
+        print(f"warning: {path} is not in format {SCHEMA}; not comparing with main")
+        return None, "The coverage of main has an older format; no comparison."
+    return cast(dict[str, Any], reference), None
+
+
 def write_summary(
     summary: dict[str, Any],
     json_file: str | None,
@@ -422,12 +460,7 @@ def write_summary(
         return
     reference, note = None, None
     if compare_with:
-        # Main has no report yet before its first run with this tool, or after
-        # its artifact expired.
-        if Path(compare_with).exists():
-            reference = json.loads(Path(compare_with).read_text())
-        else:
-            note = "No coverage of main available to compare with."
+        reference, note = load_reference(Path(compare_with))
     Path(markdown_file).write_text(markdown(summary, reference, note))
     print(f"Wrote {Path(markdown_file).absolute()}")
 

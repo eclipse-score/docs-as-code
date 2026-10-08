@@ -48,7 +48,10 @@ jobs:
       - name: Checkout repository (Handle all events)
         uses: actions/checkout@v7
         with:
-          ref: ${{ github.head_ref || github.event.pull_request.head.ref || github.ref }}
+          # The commit this run was started for, not the branch tip: after a
+          # push during the run, the test jobs and coverage_report would
+          # otherwise measure and report different commits.
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
 
       - name: Setup Bazel with shared caching
@@ -124,7 +127,10 @@ jobs:
       - name: Checkout repository (Handle all events)
         uses: actions/checkout@v7
         with:
-          ref: ${{ github.head_ref || github.event.pull_request.head.ref || github.ref }}
+          # The commit this run was started for, not the branch tip: after a
+          # push during the run, the test jobs and coverage_report would
+          # otherwise measure and report different commits.
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
 
       - name: Setup Bazel with shared caching
@@ -142,6 +148,10 @@ jobs:
 
       - name: Collect unit test coverage
         if: ${{ matrix.coverage && !cancelled() }}
+        # There is no report when `bazel coverage` failed before running tests.
+        # The report then shows "no data" for the unit tests, and this job's
+        # result stays that of the tests.
+        continue-on-error: true
         # bazel-out is a symlink into Bazel's output base; copy the report out.
         run: >-
           mkdir -p coverage-data &&
@@ -199,6 +209,9 @@ jobs:
     # pull requests from forks. Also runs after failed tests, because the
     # coverage of the tests that did run is still useful.
     if: ${{ !cancelled() }}
+    # Coverage informs, it does not gate: a failure here must not fail the
+    # tests, which would skip the docs build and with it docs publishing.
+    continue-on-error: true
     needs: [docs_bzl, bazel_tests]
     runs-on: ubuntu-latest
     steps:
@@ -211,7 +224,10 @@ jobs:
       - name: Checkout repository (Handle all events)
         uses: actions/checkout@v7
         with:
-          ref: ${{ github.head_ref || github.event.pull_request.head.ref || github.ref }}
+          # The commit this run was started for, not the branch tip: after a
+          # push during the run, the test jobs and coverage_report would
+          # otherwise measure and report different commits.
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
 
       - name: Setup Bazel with shared caching
@@ -238,17 +254,21 @@ jobs:
       # Pull requests show their change against main, so they need main's
       # numbers. Main's own runs of this job upload them (on push), which saves
       # measuring main a second time here.
+      # Both main steps may fail (API errors, an artifact deleted in between):
+      # the summary then notes that main's numbers are missing.
       - name: Find coverage report of main
         id: main_report
         if: github.event_name == 'pull_request'
+        continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
           DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
-        # Newest artifact first. A fork's pull request can come from a branch
-        # with the same name, so only this repository's own runs count.
+        # Newest artifact first. The name alone is no proof: a pull request can
+        # change this workflow and upload under it, and a fork's can come from
+        # a branch named main. So only this repository's own main runs count.
         run: |
-          run_id=$(gh api "repos/$REPO/actions/artifacts?name=coverage-report&per_page=100" --jq "
+          run_id=$(gh api "repos/$REPO/actions/artifacts?name=coverage-report-main&per_page=100" --jq "
             [.artifacts[]
              | select(.expired | not)
              | select(.workflow_run.head_branch == \"$DEFAULT_BRANCH\")
@@ -258,9 +278,10 @@ jobs:
 
       - name: Download coverage report of main
         if: steps.main_report.outputs.run_id
+        continue-on-error: true
         uses: actions/download-artifact@v8
         with:
-          name: coverage-report
+          name: coverage-report-main
           path: coverage-data/main
           run-id: ${{ steps.main_report.outputs.run_id }}
           github-token: ${{ github.token }}
@@ -292,7 +313,13 @@ jobs:
       - name: Upload coverage report
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: coverage-report
+          # Main's reports get their own name, so pull requests find them
+          # without searching through the reports of all other runs.
+          # coverage_comment.yml downloads pull requests' under the plain name.
+          name: >-
+            ${{ github.event_name == 'push'
+            && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+            && 'coverage-report-main' || 'coverage-report' }}
           path: |
             coverage-data/coverage.lcov
             coverage-data/coverage.json
