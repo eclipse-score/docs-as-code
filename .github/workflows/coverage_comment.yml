@@ -55,14 +55,21 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
           HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          HEAD_REPO: ${{ github.event.workflow_run.head_repository.full_name }}
+          HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
         run: |
           pr=$(cat coverage-report/pr_number)
           [[ "$pr" =~ ^[0-9]+$ ]] || { echo "Invalid PR number: $pr"; exit 1; }
           # The number comes from the pull request's own run, which could write
-          # anything there. Only accept it if that pull request is the one whose
-          # commit was tested, so a run cannot comment on other pull requests.
-          [[ "$(gh api "repos/$REPO/pulls/$pr" --jq .head.sha)" == "$HEAD_SHA" ]] \
-            || { echo "PR #$pr does not point at $HEAD_SHA"; exit 1; }
+          # anything there. Only accept it if that pull request is the one that
+          # was tested, so a run cannot comment on other pull requests. Like
+          # cicd-workflows' docs-publish.yml, match the source repository and
+          # branch too: pull requests from several forks can share a commit.
+          gh api "repos/$REPO/pulls/$pr" \
+            | jq -e --arg repo "$HEAD_REPO" --arg ref "$HEAD_BRANCH" --arg sha "$HEAD_SHA" '
+                .head.repo.full_name == $repo and .head.ref == $ref and .head.sha == $sha
+              ' > /dev/null \
+            || { echo "PR #$pr is not $HEAD_REPO:$HEAD_BRANCH at $HEAD_SHA"; exit 1; }
           echo "number=$pr" >> "$GITHUB_OUTPUT"
 
       - name: Find existing coverage comment
