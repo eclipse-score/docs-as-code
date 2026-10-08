@@ -226,7 +226,7 @@
   {
     "name": "coverage_report_test__test_test_files_are_recognised_by_directory_or_name[src/tests/helpers.py-True]",
     "file": "tools/tests/coverage_report_test.py",
-    "line": "45",
+    "line": "46",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -240,7 +240,7 @@
   {
     "name": "coverage_report_test__test_test_files_are_recognised_by_directory_or_name[src/extensions/x/test/data.py-True]",
     "file": "tools/tests/coverage_report_test.py",
-    "line": "45",
+    "line": "46",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -254,7 +254,7 @@
   {
     "name": "coverage_report_test__test_test_files_are_recognised_by_directory_or_name[src/extensions/x/test_checks.py-True]",
     "file": "tools/tests/coverage_report_test.py",
-    "line": "45",
+    "line": "46",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -268,7 +268,7 @@
   {
     "name": "coverage_report_test__test_test_files_are_recognised_by_directory_or_name[tools/tests/coverage_report_test.py-True]",
     "file": "tools/tests/coverage_report_test.py",
-    "line": "45",
+    "line": "46",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -282,7 +282,7 @@
   {
     "name": "coverage_report_test__test_test_files_are_recognised_by_directory_or_name[conftest.py-True]",
     "file": "tools/tests/coverage_report_test.py",
-    "line": "45",
+    "line": "46",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -296,7 +296,7 @@
   {
     "name": "coverage_report_test__test_test_files_are_recognised_by_directory_or_name[src/extensions/x/checks.py-False]",
     "file": "tools/tests/coverage_report_test.py",
-    "line": "45",
+    "line": "46",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -310,7 +310,7 @@
   {
     "name": "coverage_report_test__test_test_files_are_recognised_by_directory_or_name[src/testing/latest.py-False]",
     "file": "tools/tests/coverage_report_test.py",
-    "line": "45",
+    "line": "46",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -324,7 +324,7 @@
   {
     "name": "coverage_report_test__test_test_files_are_recognised_by_directory_or_name[src/extensions/x/contest.py-False]",
     "file": "tools/tests/coverage_report_test.py",
-    "line": "45",
+    "line": "46",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -338,21 +338,7 @@
   {
     "name": "coverage_report_test__test_lcov_is_split_into_its_records",
     "file": "tools/tests/coverage_report_test.py",
-    "line": "65",
-    "result": "passed",
-    "repo_name": null,
-    "hash": null,
-    "url": null,
-    "TestType": null,
-    "DerivationTechnique": null,
-    "result_text": "",
-    "PartiallyVerifies": null,
-    "FullyVerifies": null
-  },
-  {
-    "name": "coverage_report_test__test_a_branch_gets_the_same_number_in_every_report",
-    "file": "tools/tests/coverage_report_test.py",
-    "line": "75",
+    "line": "66",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -366,7 +352,7 @@
   {
     "name": "coverage_report_test__test_a_line_or_branch_counts_as_run_if_any_report_ran_it",
     "file": "tools/tests/coverage_report_test.py",
-    "line": "88",
+    "line": "76",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -380,7 +366,7 @@
   {
     "name": "coverage_report_test__test_files_are_grouped_per_extension_else_per_directory[src/extensions/score_metamodel/checks/graph.py-src/extensions/score_metamodel]",
     "file": "tools/tests/coverage_report_test.py",
-    "line": "101",
+    "line": "95",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -394,7 +380,7 @@
   {
     "name": "coverage_report_test__test_files_are_grouped_per_extension_else_per_directory[src/helper_lib/__init__.py-src/helper_lib]",
     "file": "tools/tests/coverage_report_test.py",
-    "line": "101",
+    "line": "95",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -408,7 +394,7 @@
   {
     "name": "coverage_report_test__test_files_are_grouped_per_extension_else_per_directory[setup.py-.]",
     "file": "tools/tests/coverage_report_test.py",
-    "line": "101",
+    "line": "95",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -422,7 +408,7 @@
   {
     "name": "coverage_report_test__test_reports_keep_only_tracked_files",
     "file": "tools/tests/coverage_report_test.py",
-    "line": "118",
+    "line": "112",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -436,7 +422,7 @@
   {
     "name": "coverage_report_test__test_suites_without_usable_data_are_reported_as_no_data",
     "file": "tools/tests/coverage_report_test.py",
-    "line": "127",
+    "line": "121",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -450,7 +436,7 @@
   {
     "name": "coverage_report_test__test_coverage_py_data_files_become_lcov",
     "file": "tools/tests/coverage_report_test.py",
-    "line": "143",
+    "line": "135",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -464,7 +450,7 @@
   {
     "name": "coverage_report_test__test_unusable_numbers_of_main_give_a_note_instead_of_a_comparison[None-No coverage of main available]",
     "file": "tools/tests/coverage_report_test.py",
-    "line": "161",
+    "line": "153",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -478,7 +464,21 @@
   {
     "name": "coverage_report_test__test_unusable_numbers_of_main_give_a_note_instead_of_a_comparison[{\"schema\": 1, \"comm-could not be read]",
     "file": "tools/tests/coverage_report_test.py",
-    "line": "161",
+    "line": "153",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "coverage_report_test__test_unusable_numbers_of_main_give_a_note_instead_of_a_comparison[{\"schema\": 1, \"commit\": \"abc\"}-could not be read]",
+    "file": "tools/tests/coverage_report_test.py",
+    "line": "153",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -492,7 +492,7 @@
   {
     "name": "coverage_report_test__test_unusable_numbers_of_main_give_a_note_instead_of_a_comparison[{\"commit\": \"abc\"}-older format]",
     "file": "tools/tests/coverage_report_test.py",
-    "line": "161",
+    "line": "153",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -506,7 +506,7 @@
   {
     "name": "coverage_report_test__test_unusable_numbers_of_main_give_a_note_instead_of_a_comparison[[1]-older format]",
     "file": "tools/tests/coverage_report_test.py",
-    "line": "161",
+    "line": "153",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -520,7 +520,7 @@
   {
     "name": "coverage_report_test__test_summary_shows_the_change_against_main",
     "file": "tools/tests/coverage_report_test.py",
-    "line": "181",
+    "line": "174",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -534,7 +534,7 @@
   {
     "name": "coverage_report_test__test_files_no_test_imports_are_added_at_zero_percent",
     "file": "tools/tests/coverage_report_test.py",
-    "line": "202",
+    "line": "193",
     "result": "passed",
     "repo_name": null,
     "hash": null,
