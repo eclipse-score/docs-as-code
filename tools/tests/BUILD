@@ -23,3 +23,10 @@ score_pytest(
     ] + all_requirements,
     pytest_config = "//:pyproject.toml",
 )
+
+score_pytest(
+    name = "coverage_report_test",
+    srcs = ["coverage_report_test.py"],
+    deps = ["//tools:coverage_report"] + all_requirements,
+    pytest_config = "//:pyproject.toml",
+)
