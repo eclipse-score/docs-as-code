@@ -22,7 +22,9 @@ import pytest
 
 from tools.coverage_report import (
     SCHEMA,
+    Branch,
     FileCoverage,
+    Record,
     coverage_data_lcov,
     is_test_file,
     lcov_records,
@@ -30,7 +32,6 @@ from tools.coverage_report import (
     load_reports,
     main,
     markdown,
-    numeric_branches,
     package_of,
     parse_lcov,
     summarize,
@@ -67,33 +68,26 @@ def test_lcov_is_split_into_its_records() -> None:
     second = lcov("b.py", "DA:2,0")
     # Lines outside a record, like a test name, belong to no record.
     assert lcov_records("TN:\n" + first + second) == [
-        ("a.py", first),
-        ("b.py", second),
+        Record("a.py", first),
+        Record("b.py", second),
     ]
-
-
-def test_a_branch_gets_the_same_number_in_every_report() -> None:
-    names: dict[tuple[str, str, str], list[str]] = {}
-    first = numeric_branches(
-        lcov("a.py", "BRDA:3,0,jump to line 4,1", "BRDA:3,0,jump to line 6,0"), names
-    )
-    # The second report lists the same two branches in the other order.
-    second = numeric_branches(
-        lcov("a.py", "BRDA:3,0,jump to line 6,1", "BRDA:3,0,jump to line 4,-"), names
-    )
-    assert first == lcov("a.py", "BRDA:3,0,0,1", "BRDA:3,0,1,0")
-    assert second == lcov("a.py", "BRDA:3,0,1,1", "BRDA:3,0,0,-")
 
 
 def test_a_line_or_branch_counts_as_run_if_any_report_ran_it() -> None:
     merged = parse_lcov(
-        lcov("a.py", "DA:1,0", "DA:2,3", "BRDA:2,0,0,-", "BRDA:2,0,1,0")
-        + lcov("a.py", "DA:1,1", "DA:2,0", "BRDA:2,0,0,2", "BRDA:2,0,1,0")
+        lcov("a.py", "DA:1,0", "DA:2,3")
+        + lcov("a.py", "BRDA:2,0,jump to line 3,-", "BRDA:2,0,jump to line 4,0")
+        # The second report lists the same two branches in the other order.
+        + lcov("a.py", "DA:1,1", "DA:2,0")
+        + lcov("a.py", "BRDA:2,0,jump to line 4,0", "BRDA:2,0,jump to line 3,2")
     )
     assert merged == {
         "a.py": FileCoverage(
             lines={1: True, 2: True},
-            branches={(2, 0, 0): True, (2, 0, 1): False},
+            branches={
+                Branch(2, 0, "jump to line 3"): True,
+                Branch(2, 0, "jump to line 4"): False,
+            },
         )
     }
 
@@ -118,9 +112,9 @@ def test_files_are_grouped_per_extension_else_per_directory(
 def test_reports_keep_only_tracked_files(tmp_path: Path) -> None:
     report = tmp_path / "unit.lcov"
     report.write_text(lcov("a.py", "DA:1,1") + lcov("venv/lib.py", "DA:1,1"))
-    assert load_reports([f"Unit={report}"], {"a.py"}, {}) == [
-        ("Unit", lcov("a.py", "DA:1,1"))
-    ]
+    assert load_reports([f"Unit={report}"], {"a.py"}) == {
+        "Unit": lcov("a.py", "DA:1,1")
+    }
 
 
 # coverage.py warns about the corrupt file it skips; that is the case tested.
@@ -134,10 +128,8 @@ def test_suites_without_usable_data_are_reported_as_no_data(tmp_path: Path) -> N
     (tmp_path / "corrupt").mkdir()
     (tmp_path / "corrupt" / ".coverage.host.1.2").write_text("not a database")
     labels = ["missing", "empty.lcov", "untracked.lcov", "no_data_files", "corrupt"]
-    suites = load_reports(
-        [f"{name}={tmp_path / name}" for name in labels], {"a.py"}, {}
-    )
-    assert suites == [(name, None) for name in labels]
+    suites = load_reports([f"{name}={tmp_path / name}" for name in labels], {"a.py"})
+    assert suites == {name: None for name in labels}
 
 
 def test_coverage_py_data_files_become_lcov(
@@ -163,6 +155,7 @@ def test_coverage_py_data_files_become_lcov(
     [
         (None, "No coverage of main available"),
         ('{"schema": 1, "comm', "could not be read"),
+        ('{"schema": 1, "commit": "abc"}', "could not be read"),
         ('{"commit": "abc"}', "older format"),
         ("[1]", "older format"),
     ],
@@ -183,16 +176,14 @@ def test_summary_shows_the_change_against_main(tmp_path: Path) -> None:
         return {"src/a.py": FileCoverage(lines=dict(enumerate(hits, start=1)))}
 
     before = summarize(
-        [("Unit", files(True, False)), ("Scenarios", None)], files(True, False)
+        {"Unit": files(True, False), "Scenarios": None}, files(True, False)
     )
     path = tmp_path / "main.json"
-    path.write_text(json.dumps(before))
+    path.write_text(json.dumps(before.to_json()))
     reference, note = load_reference(path)
     assert note is None
 
-    now = summarize(
-        [("Unit", files(True, True)), ("Scenarios", None)], files(True, True)
-    )
+    now = summarize({"Unit": files(True, True), "Scenarios": None}, files(True, True))
     text = markdown(now, reference, note)
     assert "| Unit | 100.0% (2/2) | +50.0% | – | – |" in text
     assert "| Scenarios | no data | – | no data | – |" in text
