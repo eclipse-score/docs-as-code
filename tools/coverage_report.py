@@ -36,22 +36,19 @@ file. CI takes main.json from the latest run on main.
 import argparse
 import json
 import os
-import re
 import subprocess
 import tempfile
 from dataclasses import dataclass, field
-from pathlib import Path
+from fnmatch import fnmatchcase
+from pathlib import Path, PurePosixPath
 from typing import Any, cast
 
 import coverage
 from coverage.exceptions import NoDataError
 
 # Tests are not code under test; listing them would only add 0% noise.
-TEST_FILE = re.compile(
-    r"(^|/)tests?/|(^|/)test_[^/]*\.py$|_test\.py$|(^|/)conftest\.py$"
-)
-BRDA = re.compile(r"^BRDA:(\d+),(\d+),(.*),([^,]*)$")
-RECORD = re.compile(r"^SF:(.*)\n(?:.*\n)*?end_of_record\n", re.M)
+TEST_DIRECTORIES = {"test", "tests"}
+TEST_FILE_PATTERNS = ("test_*.py", "*_test.py", "conftest.py")
 # Lets coverage_comment.yml find and update its earlier comment instead of
 # adding a new one on every push.
 COMMENT_MARKER = "<!-- python-coverage-report -->"
@@ -70,6 +67,14 @@ class FileCoverage:
     )
 
 
+def is_test_file(path: str) -> bool:
+    """Return whether ``path`` lies in a test directory or is named like a test."""
+    *directories, name = PurePosixPath(path).parts
+    in_test_directory = any(part in TEST_DIRECTORIES for part in directories)
+    named_like_test = any(fnmatchcase(name, p) for p in TEST_FILE_PATTERNS)
+    return in_test_directory or named_like_test
+
+
 def tracked_python_files() -> list[str]:
     """Return the non-test Python files git tracks below the current directory.
 
@@ -77,7 +82,7 @@ def tracked_python_files() -> list[str]:
     symlinks or build output.
     """
     out = subprocess.check_output(["git", "ls-files", "*.py"], text=True)
-    return [f for f in out.splitlines() if not TEST_FILE.search(f)]
+    return [f for f in out.splitlines() if not is_test_file(f)]
 
 
 def _coverage(tmp: str) -> coverage.Coverage:
@@ -138,15 +143,35 @@ def numeric_branches(lcov: str, names: dict[tuple[str, str, str], list[str]]) ->
     for line in lcov.splitlines():
         if line.startswith("SF:"):
             source = line[3:]
-        match = BRDA.match(line)
-        if match:
-            lineno, block, branch, taken = match.groups()
+        if line.startswith("BRDA:"):
+            # BRDA:<line>,<block>,<branch>,<taken>; split from both ends, as
+            # the branch name is free text.
+            lineno, block, rest = line[5:].split(",", 2)
+            branch, taken = rest.rsplit(",", 1)
             known = names.setdefault((source, lineno, block), [])
             if branch not in known:
                 known.append(branch)
             line = f"BRDA:{lineno},{block},{known.index(branch)},{taken}"
         lines.append(line)
     return "\n".join(lines) + "\n"
+
+
+def lcov_records(lcov: str) -> list[tuple[str, str]]:
+    """Split LCOV text into its records, as (source file, record text) pairs.
+
+    A record runs from its SF: line to its end_of_record line.
+    """
+    records: list[tuple[str, str]] = []
+    record: list[str] = []
+    for line in lcov.splitlines():
+        if line.startswith("SF:"):
+            record = [line]
+        elif record:
+            record.append(line)
+            if line == "end_of_record":
+                records.append((record[0][3:], "\n".join(record) + "\n"))
+                record = []
+    return records
 
 
 def parse_lcov(lcov: str) -> dict[str, FileCoverage]:
@@ -409,9 +434,9 @@ def load_reports(
         # Test code is not under test, and the merged LCOV must count the same
         # files as the Markdown summary so genhtml shows the same totals.
         records = "".join(
-            m[0]
-            for m in RECORD.finditer(numeric_branches(text, names))
-            if m[1] in tracked
+            record
+            for source, record in lcov_records(numeric_branches(text, names))
+            if source in tracked
         )
         # An empty report means measuring failed (e.g. `bazel coverage` on a
         # Python version without a rules_python coverage tool). Shown as 0% it
@@ -504,8 +529,10 @@ def main() -> None:
     suites = load_reports(args.reports, set(tracked), names)
 
     reports = [text for _, text in suites if text]
-    covered = {sf for text in reports for sf in re.findall(r"^SF:(.*)$", text, re.M)}
-    missing = [m[0] for m in RECORD.finditer(baseline) if m[1] not in covered]
+    covered = {source for text in reports for source, _ in lcov_records(text)}
+    missing = [
+        record for source, record in lcov_records(baseline) if source not in covered
+    ]
     output = Path(args.output)
     output.write_text("".join(reports + missing))
     print(f"Wrote {output.absolute()}: {len(missing)} untested Python files added")
