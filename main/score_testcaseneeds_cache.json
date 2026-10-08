@@ -2880,7 +2880,7 @@
     "TestType": "requirements_based",
     "DerivationTechnique": "requirements_based",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_common_attr_status[version==2], tool_req__docs_req_types[version==1]",
+    "PartiallyVerifies": "tool_req__docs_req_types[version==1]",
     "FullyVerifies": null
   },
   {
@@ -2992,7 +2992,7 @@
     "TestType": "requirements_based",
     "DerivationTechnique": "requirements_based",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_req_types[version==1], tool_req__docs_common_attr_status[version==2]",
+    "PartiallyVerifies": "tool_req__docs_req_types[version==1]",
     "FullyVerifies": null
   },
   {
@@ -4770,7 +4770,7 @@
     "TestType": "requirements_based",
     "DerivationTechnique": "requirements_based",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_saf_attrs_mandatory[version==1]",
+    "PartiallyVerifies": null,
     "FullyVerifies": "tool_req__docs_saf_attr_dfa_failure_id[version==2], tool_req__docs_saf_attr_fmea_fault_id[version==2], tool_req__docs_saf_attrs_sufficient[version==1], tool_req__docs_saf_attrs_content[version==2]"
   },
   {
@@ -4812,8 +4812,8 @@
     "TestType": "requirements_based",
     "DerivationTechnique": "requirements_based",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_saf_attrs_mandatory[version==1]",
-    "FullyVerifies": "tool_req__docs_saf_types[version==2]"
+    "PartiallyVerifies": null,
+    "FullyVerifies": "tool_req__docs_saf_types[version==2], tool_req__docs_saf_attrs_mandatory[version==1]"
   },
   {
     "name": "test_rules_file_based__test_need",
