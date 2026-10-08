@@ -1,0 +1,91 @@
+# *******************************************************************************
+# Copyright (c) 2026 Contributors to the Eclipse Foundation
+#
+# See the NOTICE file(s) distributed with this work for additional
+# information regarding copyright ownership.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Apache License Version 2.0 which is available at
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# SPDX-License-Identifier: Apache-2.0
+# *******************************************************************************
+
+# Posts the coverage summary of a pull request's "PR Checks" run as a comment.
+# A separate workflow because pull requests from forks only get a read-only
+# token. It never checks out or runs pull request code: it only reads the
+# summary that _test.yml's coverage_report job uploaded.
+# GitHub runs workflow_run workflows from the default branch only.
+name: Coverage Comment
+
+on:
+  workflow_run:
+    workflows: ["PR Checks"]
+    types: [completed]
+
+permissions:
+  contents: read
+
+jobs:
+  comment:
+    # Not only on success: failed tests still produce a coverage report.
+    if: github.event.workflow_run.event == 'pull_request' && github.event.workflow_run.conclusion != 'cancelled'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read # download the triggering run's artifact
+      pull-requests: write # create or update the comment
+    steps:
+      - name: 🛡️ Harden Runner
+        if: github.repository_owner == 'eclipse-score'
+        uses: step-security/harden-runner@v2.21.1
+        with:
+          egress-policy: audit
+
+      - name: Download coverage report
+        uses: actions/download-artifact@v8
+        with:
+          name: coverage-report
+          path: coverage-report
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
+
+      - name: Check pull request number
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          HEAD_REPO: ${{ github.event.workflow_run.head_repository.full_name }}
+          HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
+        run: |
+          pr=$(cat coverage-report/pr_number)
+          [[ "$pr" =~ ^[0-9]+$ ]] || { echo "Invalid PR number: $pr"; exit 1; }
+          # The number comes from the pull request's own run, which could write
+          # anything there. Only accept it if that pull request is the one that
+          # was tested, so a run cannot comment on other pull requests. Like
+          # cicd-workflows' docs-publish.yml, match the source repository and
+          # branch too: pull requests from several forks can share a commit.
+          gh api "repos/$REPO/pulls/$pr" \
+            | jq -e --arg repo "$HEAD_REPO" --arg ref "$HEAD_BRANCH" --arg sha "$HEAD_SHA" '
+                .head.repo.full_name == $repo and .head.ref == $ref and .head.sha == $sha
+              ' > /dev/null \
+            || { echo "PR #$pr is not $HEAD_REPO:$HEAD_BRANCH at $HEAD_SHA"; exit 1; }
+          echo "number=$pr" >> "$GITHUB_OUTPUT"
+
+      - name: Find existing coverage comment
+        id: fc
+        uses: peter-evans/find-comment@b30e6a3c0ed37e7c023ccd3f1db5c6c0b0c23aad # v4.0.0
+        with:
+          issue-number: ${{ steps.pr.outputs.number }}
+          comment-author: "github-actions[bot]"
+          # Must match COMMENT_MARKER in tools/coverage_report.py.
+          body-includes: "<!-- python-coverage-report -->"
+
+      - name: Create or update coverage comment
+        uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5.0.0
+        with:
+          comment-id: ${{ steps.fc.outputs.comment-id }}
+          issue-number: ${{ steps.pr.outputs.number }}
+          body-path: coverage-report/summary.md
+          # The default, append, would stack every push's table in one comment.
+          edit-mode: replace

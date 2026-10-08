@@ -27,6 +27,10 @@ jobs:
             marker: bazel_cached
           - suite: runtime
             marker: bazel_slow
+          # Which lines run does not depend on the Python version, and measuring
+          # slows the job down: one version is enough.
+          - python-version: "3.12"
+            coverage: true
 
     steps:
       - name: 🛡️ Harden Runner
@@ -44,7 +48,10 @@ jobs:
       - name: Checkout repository (Handle all events)
         uses: actions/checkout@v7
         with:
-          ref: ${{ github.head_ref || github.event.pull_request.head.ref || github.ref }}
+          # The commit this run was started for, not the branch tip: after a
+          # push during the run, the test jobs and coverage_report would
+          # otherwise measure and report different commits.
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
 
       - name: Setup Bazel with shared caching
@@ -64,11 +71,25 @@ jobs:
         run: mkdir -p tests-report
 
       - name: Run docs.bzl tests
+        env:
+          # In the workspace, not /tmp: each Bazel sandbox gets a private /tmp.
+          # See src/tests/docs_bzl/README.md.
+          DOCS_BZL_COVERAGE_DIR: ${{ matrix.coverage && format('{0}/.coverage_docs_bzl', github.workspace) || '' }}
         run: >-
           .venv_docs/bin/python -m pytest -vv
           -m "${{ matrix.marker }}"
           src/tests/docs_bzl
           --junitxml=tests-report/docs_bzl_${{ matrix.python-version }}_${{ matrix.suite }}.xml
+
+      - name: Upload docs.bzl coverage data
+        if: ${{ matrix.coverage && !cancelled() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: coverage-data-docs-bzl-${{ matrix.suite }}
+          path: .coverage_docs_bzl
+          # upload-artifact skips dot files by default, and coverage.py names
+          # its data files .coverage.*
+          include-hidden-files: true
 
       - name: Upload docs.bzl test report
         # No need to upload something that doesn't exist.
@@ -85,6 +106,11 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.12", "3.14"]
+        include:
+          # Which lines run does not depend on the Python version, and measuring
+          # slows the job down: one version is enough.
+          - python-version: "3.12"
+            coverage: true
     steps:
       - name: 🛡️ Harden Runner
         if: github.repository_owner == 'eclipse-score'
@@ -101,7 +127,10 @@ jobs:
       - name: Checkout repository (Handle all events)
         uses: actions/checkout@v7
         with:
-          ref: ${{ github.head_ref || github.event.pull_request.head.ref || github.ref }}
+          # The commit this run was started for, not the branch tip: after a
+          # push during the run, the test jobs and coverage_report would
+          # otherwise measure and report different commits.
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
 
       - name: Setup Bazel with shared caching
@@ -110,10 +139,30 @@ jobs:
           disk-cache-key: ${{ github.job }}-${{ matrix.python-version }}
 
       - name: Run bazel test targets
+        # `bazel coverage` runs the same tests, so measuring needs no second test run.
         run: >-
-          bazel test --lockfile_mode=error
+          bazel ${{ matrix.coverage && 'coverage --combined_report=lcov' || 'test' }}
+          --lockfile_mode=error
           --@rules_python//python/config_settings:python_version=${{ matrix.python-version }}
           //... --build_tests_only
+
+      - name: Collect unit test coverage
+        if: ${{ matrix.coverage && !cancelled() }}
+        # There is no report when `bazel coverage` failed before running tests.
+        # The report then shows "no data" for the unit tests, and this job's
+        # result stays that of the tests.
+        continue-on-error: true
+        # bazel-out is a symlink into Bazel's output base; copy the report out.
+        run: >-
+          mkdir -p coverage-data &&
+          cp -L bazel-out/_coverage/_coverage_report.dat coverage-data/unit_tests.lcov
+
+      - name: Upload unit test coverage
+        if: ${{ matrix.coverage && !cancelled() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: coverage-data-unit-tests
+          path: coverage-data/unit_tests.lcov
 
       - name: Build all targets
         # Skip tests, since some are non buildable negative tests.
@@ -153,3 +202,127 @@ jobs:
         with:
           name: tests-report
           path: tests-report
+
+  coverage_report:
+    # Merged here rather than per job so the PR gets one combined number.
+    # coverage_comment.yml posts it: this workflow's token is read-only for
+    # pull requests from forks. Also runs after failed tests, because the
+    # coverage of the tests that did run is still useful.
+    if: ${{ !cancelled() }}
+    # Coverage informs, it does not gate: a failure here must not fail the
+    # tests, which would skip the docs build and with it docs publishing.
+    continue-on-error: true
+    needs: [docs_bzl, bazel_tests]
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛡️ Harden Runner
+        if: github.repository_owner == 'eclipse-score'
+        uses: step-security/harden-runner@v2.21.1
+        with:
+          egress-policy: audit
+
+      - name: Checkout repository (Handle all events)
+        uses: actions/checkout@v7
+        with:
+          # The commit this run was started for, not the branch tip: after a
+          # push during the run, the test jobs and coverage_report would
+          # otherwise measure and report different commits.
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+
+      - name: Setup Bazel with shared caching
+        uses: eclipse-score/cicd-actions/setup-bazel-cache@cache
+        with:
+          disk-cache-key: ${{ github.job }}
+
+      # Download by pattern, not name: when a test job uploaded nothing, the
+      # report shows "no data" for it instead of this job failing.
+      - name: Download unit test coverage
+        uses: actions/download-artifact@v8
+        with:
+          pattern: coverage-data-unit-tests
+          path: coverage-data/unit_tests
+          merge-multiple: true
+
+      - name: Download docs.bzl coverage
+        uses: actions/download-artifact@v8
+        with:
+          pattern: coverage-data-docs-bzl-*
+          path: coverage-data/docs_bzl
+          merge-multiple: true
+
+      # Pull requests show their change against main, so they need main's
+      # numbers. Main's own runs of this job upload them (on push), which saves
+      # measuring main a second time here.
+      # Both main steps may fail (API errors, an artifact deleted in between):
+      # the summary then notes that main's numbers are missing.
+      - name: Find coverage report of main
+        id: main_report
+        if: github.event_name == 'pull_request'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        # Newest artifact first. The name alone is no proof: a pull request can
+        # change this workflow and upload under it, and a fork's can come from
+        # a branch named main. So only this repository's own main runs count.
+        run: |
+          run_id=$(gh api "repos/$REPO/actions/artifacts?name=coverage-report-main&per_page=100" --jq "
+            [.artifacts[]
+             | select(.expired | not)
+             | select(.workflow_run.head_branch == \"$DEFAULT_BRANCH\")
+             | select(.workflow_run.head_repository_id == .workflow_run.repository_id)
+            ][0].workflow_run.id // empty")
+          echo "run_id=$run_id" >> "$GITHUB_OUTPUT"
+
+      - name: Download coverage report of main
+        if: steps.main_report.outputs.run_id
+        continue-on-error: true
+        uses: actions/download-artifact@v8
+        with:
+          name: coverage-report-main
+          path: coverage-data/main
+          run-id: ${{ steps.main_report.outputs.run_id }}
+          github-token: ${{ github.token }}
+
+      - name: Merge coverage
+        # coverage.json is what later pull requests compare against.
+        run: >-
+          mkdir -p coverage-data &&
+          bazel run --lockfile_mode=error //tools:coverage_report --
+          "Unit tests=coverage-data/unit_tests/unit_tests.lcov"
+          "docs.bzl scenarios=coverage-data/docs_bzl"
+          --output coverage-data/coverage.lcov
+          --markdown coverage-data/summary.md
+          --json coverage-data/coverage.json
+          ${{ github.event_name == 'pull_request' && '--compare-with coverage-data/main/coverage.json' || '' }}
+
+      # Pushes to main and merge queue runs get no PR comment; this makes their
+      # coverage visible on the run page.
+      - name: Show coverage summary
+        run: cat coverage-data/summary.md >> "$GITHUB_STEP_SUMMARY"
+
+      # coverage_comment.yml cannot take the number from its workflow_run
+      # event: that list of pull requests is empty for forks.
+      - name: Store pull request number for the coverage comment
+        if: github.event_name == 'pull_request'
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: echo "$PR_NUMBER" > coverage-data/pr_number
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          # Main's reports get their own name, so pull requests find them
+          # without searching through the reports of all other runs.
+          # coverage_comment.yml downloads pull requests' under the plain name.
+          name: >-
+            ${{ github.event_name == 'push'
+            && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+            && 'coverage-report-main' || 'coverage-report' }}
+          path: |
+            coverage-data/coverage.lcov
+            coverage-data/coverage.json
+            coverage-data/summary.md
+            coverage-data/pr_number
