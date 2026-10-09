@@ -1270,7 +1270,7 @@ Safety Analysis (DFA + FMEA) Process to Tool Requirement Mapping
    :parent_covered: YES
 
    Docs-As-Code shall allow FMEA needs (``feat_saf_fmea``, ``comp_saf_fmea``)
-   to have an optional ``root_cause`` attribute with non-empty content.
+   to have an optional ``failure_root_cause`` attribute with non-empty content.
 
 
 🔒 Security Analysis

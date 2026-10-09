@@ -21,7 +21,7 @@
    Tests optional attributes for safety analysis types:
    - mitigation_issue: GitHub issue URL pattern
    - safety_relevant: yes/no for all SAF types
-   - root_cause: non-empty content for FMEA
+   - failure_root_cause: non-empty content for FMEA
 
 
 .. feat_saf_dfa:: Valid mitigation issue
@@ -86,7 +86,7 @@
    :failure_effect: component failure
    :sufficient: no
    :status: valid
-   :root_cause: manufacturing defect in solder joints
+   :failure_root_cause: manufacturing defect in solder joints
    :expect_not: need_id
 
 
@@ -97,5 +97,5 @@
    :failure_effect: software crash
    :sufficient: yes
    :status: valid
-   :root_cause: null pointer dereference in interrupt handler
+   :failure_root_cause: null pointer dereference in interrupt handler
    :expect_not: need_id

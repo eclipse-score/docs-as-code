@@ -560,6 +560,15 @@
               "null"
             ]
           },
+          "failure_root_cause": {
+            "default": "",
+            "description": "Added by needs_fields config",
+            "field_type": "extra",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "fault_id": {
             "default": "",
             "description": "Added by needs_fields config",
@@ -1175,15 +1184,6 @@
             ]
           },
           "reviewers": {
-            "default": "",
-            "description": "Added by needs_fields config",
-            "field_type": "extra",
-            "type": [
-              "string",
-              "null"
-            ]
-          },
-          "root_cause": {
             "default": "",
             "description": "Added by needs_fields config",
             "field_type": "extra",
