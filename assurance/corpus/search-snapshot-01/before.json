@@ -1,0 +1,21 @@
+{
+  "needs": {
+    "R0": {
+      "id": "R0",
+      "type": "tool_req",
+      "content": "requirement",
+      "source_code_link": "code",
+      "testlink": [
+        "T"
+      ]
+    },
+    "T": {
+      "id": "T",
+      "type": "testcase",
+      "fully_verifies": [
+        "R0"
+      ],
+      "status": "passed"
+    }
+  }
+}

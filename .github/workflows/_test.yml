@@ -122,6 +122,22 @@ jobs:
           --@rules_python//python/config_settings:python_version=${{ matrix.python-version }}
           //... -- -//src/tests/...
 
+      - name: Evaluate public assurance scenarios
+        run: |
+          bazel run --lockfile_mode=error \
+            --@rules_python//python/config_settings:python_version=${{ matrix.python-version }} \
+            //assurance:evaluate -- --output "$GITHUB_WORKSPACE/assurance-runs/001/baseline"
+          bazel run --lockfile_mode=error \
+            --@rules_python//python/config_settings:python_version=${{ matrix.python-version }} \
+            //assurance:evaluate -- --split heldout --output "$GITHUB_WORKSPACE/assurance-runs/002/baseline"
+
+      - name: Upload assurance traces
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: assurance-runs-${{ matrix.python-version }}
+          path: assurance-runs
+
       - name: Prepare bundled test report
         if: ${{ !cancelled() }}
         # Follow Symlinks via '-L' to copy correctly.
