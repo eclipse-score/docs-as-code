@@ -5,7 +5,7 @@
 # information regarding copyright ownership.
 #
 # This program and the accompanying materials are made available under the
-# terms of the Apache License, Version 2.0 which is available at
+# terms of the Apache License Version 2.0 which is available at
 # https://www.apache.org/licenses/LICENSE-2.0
 #
 # SPDX-License-Identifier: Apache-2.0
@@ -20,6 +20,15 @@ score_pytest(
     deps = [
         "//tools:module_verification_reports",
         "//src/helper_lib",
+    ] + all_requirements,
+    pytest_config = "//:pyproject.toml",
+)
+
+score_pytest(
+    name = "docs_delta_test",
+    srcs = glob(["docs_delta_*_test.py", "docs_delta_test_support.py"]),
+    deps = [
+        "//tools:docs_delta_cli",
     ] + all_requirements,
     pytest_config = "//:pyproject.toml",
 )
