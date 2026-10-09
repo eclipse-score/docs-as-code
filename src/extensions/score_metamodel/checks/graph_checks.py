@@ -31,12 +31,45 @@ from sphinx_needs.need_item import NeedItem
 logger = logging.get_logger(__name__)
 
 
-def eval_need_check(need: NeedItem, check: str, log: CheckLogger) -> bool:
+class _CheckResolutionError(Exception):
+    """Raised when a check references an unavailable need attribute."""
+
+
+def _resolve_check_value(
+    token: str, need: NeedItem, context: NeedItem | None, log: CheckLogger
+) -> Any:
+    """
+    Resolve the right hand side of a check.
+
+    `self.<attribute>` refers to the need that triggered the check (`context`),
+    so a linked need can be compared against the need it is linked from.
+    Any other token is returned unchanged as a literal value.
+    """
+    if not token.startswith("self."):
+        return token
+    ref = context if context is not None else need
+    attr = token[len("self.") :]
+    if attr not in ref:
+        msg = f"Attribute not defined: {attr}"
+        log.warning_for_need(ref, msg)
+        raise _CheckResolutionError(msg)
+    return ref[attr]
+
+
+def eval_need_check(
+    need: NeedItem,
+    check: str,
+    log: CheckLogger,
+    context: NeedItem | None = None,
+) -> bool:
     """
     Perform a single check on a need:
     1. Split the check into its parts
        (e.g. "status == valid" -> ["status", "==", "valid"])
     2. Perform the check with the operator specified in the yaml file.
+
+    The right hand side may reference an attribute of the need that triggered
+    the check via `self.<attribute>` (e.g. `safety == self.safety`).
     """
     oper: dict[str, Callable[[Any, Any], bool]] = {
         "==": operator.eq,
@@ -61,11 +94,18 @@ def eval_need_check(need: NeedItem, check: str, log: CheckLogger) -> bool:
         log.warning_for_need(need, msg)
         return False
 
-    return oper[parts[1]](need[parts[0]], parts[2])
+    try:
+        right = _resolve_check_value(parts[2], need, context, log)
+    except _CheckResolutionError:
+        return False
+    return oper[parts[1]](need[parts[0]], right)
 
 
 def eval_need_condition(
-    need: NeedItem, condition: str | dict[str, list[Any]], log: CheckLogger
+    need: NeedItem,
+    condition: str | dict[str, list[Any]],
+    log: CheckLogger,
+    context: NeedItem | None = None,
 ) -> bool:
     """Evaluate a condition on a need:
     1. Check if the condition is only a simple check (e.g. "status == valid")
@@ -74,6 +114,9 @@ def eval_need_condition(
        (e.g. "and: [check1, check2]")
        Recursively call the eval_need_function for each check and combine the
        results with the binary operation which was specified in the yaml file.
+
+    `context` is the need that triggered the check and is used to resolve
+    `self.<attribute>` references in simple checks.
     """
     oper: dict[str, Any] = {
         "and": operator.and_,
@@ -87,7 +130,7 @@ def eval_need_condition(
                 f"Invalid condition type: condition ({type(condition)}),"
                 " expected str or dict."
             )
-        return eval_need_check(need, condition, log)
+        return eval_need_check(need, condition, log, context)
 
     cond: str = list(condition.keys())[0]
     vals: list[Any] = list(condition.values())[0]
@@ -96,7 +139,7 @@ def eval_need_condition(
         if not isinstance(vals, list) or len(vals) != 1:
             raise ValueError("Operator 'not' requires exactly one operand.")
 
-        return not eval_need_condition(need, vals[0], log)
+        return not eval_need_condition(need, vals[0], log, context)
 
     if cond in oper:
         if not isinstance(vals, list) or len(vals) <= 1:
@@ -104,7 +147,7 @@ def eval_need_condition(
 
         return reduce(
             lambda a, b: oper[cond](a, b),
-            (eval_need_condition(need, val, log) for val in vals),
+            (eval_need_condition(need, val, log, context) for val in vals),
         )
 
     raise ValueError(f"Unsupported condition operator: {cond}")
@@ -168,6 +211,7 @@ def check_needs_with_check_type_context(
     condition: str | dict[str, list[Any]],
     check_type: str,
     log: CheckLogger,
+    context: NeedItem | None = None,
 ) -> list[str]:
     """
     Return the ids of the parents that make the check fail.
@@ -175,10 +219,15 @@ def check_needs_with_check_type_context(
     - all: every parent that does not fulfill the condition.
     - one: [] as soon as one parent fulfills the condition,
            otherwise all parents, since every one of them fails.
+
+    `context` is the need that triggered the check; it is used to resolve
+    `self.<attribute>` references in the condition.
     """
     failed_needs: list[str] = []
+    if check_type == "check_one" and not parents:
+        return [""]
     for parent in parents:
-        if eval_need_condition(parent, condition, log):
+        if eval_need_condition(parent, condition, log, context):
             if check_type == "check_one":
                 return []
         else:
@@ -229,17 +278,23 @@ def check_parent_relation(
     # Unknown ids are dropped; sphinx-needs already warns about them.
     parents: list[NeedItem] = list(all_needs.filter_ids(parent_ids).values())
     failed_needs = check_needs_with_check_type_context(
-        parents, condition, check_type, log
+        parents, condition, check_type, log, context=need
     )
     if not failed_needs:
         return
 
     if check_type == "check_one":
-        msg = (
-            f"No linked need in `{parent_relation}` fulfills "
-            f"condition `{condition}`. "
-            f"Explanation: {explanation}"
-        )
+        if parents:
+            msg = (
+                f"No linked need in `{parent_relation}` fulfills "
+                f"condition `{condition}`. "
+                f"Explanation: {explanation}"
+            )
+        else:
+            msg = (
+                f"No linked need in `{parent_relation}`. "
+                f"Explanation: {explanation}"
+            )
         log.warning_for_need(need, msg, is_new_check=info_only)
     else:
         for need_id in failed_needs:

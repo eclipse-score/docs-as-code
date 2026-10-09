@@ -637,6 +637,8 @@ Architecture Attributes
   requirements of type :need:`tool_req__docs_req_types` with the exact same ``safety``
   value.
 
+  .. note:: implemented as info to enable non-breaking transition
+
 .. tool_req:: Ensure qm architecture elements do not fulfill safety requirements
   :id: tool_req__docs_arch_link_qm_to_safety_req
   :tags: Architecture
