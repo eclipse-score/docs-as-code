@@ -431,3 +431,124 @@ needs_id_regex = r"^[a-zA-Z0-9_]+$"
     # Referenced only outside the report scope, so it still counts as a gap.
     assert 'href="#stkh_req__only_out_of_scope"' in gap_table
     assert 'href="#stkh_req__referenced"' not in gap_table
+
+
+def test_module_report_resolves_the_module_from_belongs_to_or_legacy_id(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Both report shapes must reach the module they cover.
+
+    A ``mod_ver_report`` names its module through the mandatory ``belongs_to``
+    link. Consumers that still declare the report as a generic ``document``
+    have no such link, so the module is recovered from the report id instead.
+    """
+    monkeypatch.setenv("BUILD_WORKSPACE_DIRECTORY", str(tmp_path))
+    (tmp_path / "conf.py").write_text(
+        """
+extensions = [
+    "sphinx_needs",
+    "score_sphinx_needs_templates",
+    "score_metamodel",
+    "sphinx_design",
+]
+master_doc = "index"
+needs_id_regex = r"^[a-zA-Z0-9_]+$"
+""",
+        encoding="utf-8",
+    )
+    (tmp_path / "index.rst").write_text(
+        """
+.. workproduct:: Module report work product
+   :id: wp__module_report
+   :status: valid
+
+.. feat:: Report feature
+   :id: feat__report
+   :security: NO
+   :safety: ASIL_B
+   :status: valid
+
+.. comp:: Modern Component
+   :id: comp__modern
+   :security: NO
+   :safety: ASIL_B
+   :status: valid
+   :belongs_to: feat__report
+
+.. comp:: Legacy Component
+   :id: comp__legacy
+   :security: NO
+   :safety: ASIL_B
+   :status: valid
+   :belongs_to: feat__report
+
+.. comp_req:: Modern component requirement
+   :id: comp_req__modern__one
+   :reqtype: Functional
+   :security: NO
+   :safety: ASIL_B
+   :status: valid
+   :satisfied_by: comp__modern
+
+   The modern component shall do its job.
+
+.. comp_req:: Legacy component requirement
+   :id: comp_req__legacy__one
+   :reqtype: Functional
+   :security: NO
+   :safety: ASIL_B
+   :status: valid
+   :satisfied_by: comp__legacy
+
+   The legacy component shall do its job.
+
+.. mod:: Modern Module
+   :id: mod__modern
+   :security: NO
+   :safety: ASIL_B
+   :status: valid
+   :includes: comp__modern
+
+.. mod:: Legacy Module
+   :id: mod__legacy
+   :security: NO
+   :safety: ASIL_B
+   :status: valid
+   :includes: comp__legacy
+
+.. mod_ver_report:: Modern Module Verification Report
+   :id: mod_vrep__modern__report
+   :status: valid
+   :safety: ASIL_B
+   :security: NO
+   :verification_method: test_and_inspection
+   :belongs_to: mod__modern
+   :realizes: wp__module_report
+   :post_template: module_verification_report
+
+.. document:: Legacy Module Verification Report
+   :id: doc__legacy_verification_report
+   :status: valid
+   :safety: ASIL_B
+   :security: NO
+   :realizes: wp__module_report
+   :post_template: module_verification_report
+""",
+        encoding="utf-8",
+    )
+
+    app = SphinxTestApp(
+        srcdir=tmp_path,
+        outdir=tmp_path / "_build",
+        buildername="html",
+        freshenv=True,
+    )
+    try:
+        app.build(force_all=True)
+        html = (app.outdir / "index.html").read_text(encoding="utf-8")
+    finally:
+        app.cleanup()
+
+    assert 'id="comp-modern-component"' in html
+    assert 'id="comp-legacy-component"' in html
