@@ -31,6 +31,10 @@ from sphinx_needs.need_item import NeedItem
 logger = logging.get_logger(__name__)
 
 
+class _CheckResolutionError(Exception):
+    """Raised when a check references an unavailable need attribute."""
+
+
 def _resolve_check_value(
     token: str, need: NeedItem, context: NeedItem | None, log: CheckLogger
 ) -> Any:
@@ -48,7 +52,7 @@ def _resolve_check_value(
     if attr not in ref:
         msg = f"Attribute not defined: {attr}"
         log.warning_for_need(ref, msg)
-        return False
+        raise _CheckResolutionError(msg)
     return ref[attr]
 
 
@@ -90,7 +94,10 @@ def eval_need_check(
         log.warning_for_need(need, msg)
         return False
 
-    right = _resolve_check_value(parts[2], need, context, log)
+    try:
+        right = _resolve_check_value(parts[2], need, context, log)
+    except _CheckResolutionError:
+        return False
     return oper[parts[1]](need[parts[0]], right)
 
 
@@ -217,6 +224,8 @@ def check_needs_with_check_type_context(
     `self.<attribute>` references in the condition.
     """
     failed_needs: list[str] = []
+    if check_type == "check_one" and not parents:
+        return [""]
     for parent in parents:
         if eval_need_condition(parent, condition, log, context):
             if check_type == "check_one":
@@ -275,11 +284,17 @@ def check_parent_relation(
         return
 
     if check_type == "check_one":
-        msg = (
-            f"No linked need in `{parent_relation}` fulfills "
-            f"condition `{condition}`. "
-            f"Explanation: {explanation}"
-        )
+        if parents:
+            msg = (
+                f"No linked need in `{parent_relation}` fulfills "
+                f"condition `{condition}`. "
+                f"Explanation: {explanation}"
+            )
+        else:
+            msg = (
+                f"No linked need in `{parent_relation}`. "
+                f"Explanation: {explanation}"
+            )
         log.warning_for_need(need, msg, is_new_check=info_only)
     else:
         for need_id in failed_needs:
