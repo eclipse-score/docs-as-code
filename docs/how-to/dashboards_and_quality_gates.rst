@@ -76,6 +76,22 @@ The documentation build writes ``metrics.json`` via ``score_metrics``, and the `
 
 The dashboard charts and the CI gate both use the same computed metrics.
 
+``metrics.json`` content
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+The exported file contains a small, versioned set of fields that is kept
+deliberately stable:
+
+- ``overall_metrics`` – requirement coverage aggregated over all requirement types.
+- ``metrics_by_type`` – the same coverage numbers per requirement type.
+- ``tests`` – testcase linkage statistics, including broken test references.
+- ``needs_overview`` – generic overview of the needs in the metrics scope
+  (respecting ``score_metrics_include_external_needs``): ``total``,
+  ``external``, ``local`` and ``by_type`` counts.
+
+Only data that is broadly useful is added here, as it is very hard to remove
+fields later.
+
 Inputs for Linkage Metrics
 --------------------------
 
