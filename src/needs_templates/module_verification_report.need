@@ -1,14 +1,17 @@
 {#
   score: render-after-needs-collection
 
-  Content template for the ``document`` need type for ``module_verification_report``.
+  Content template for the ``mod_ver_report`` need type.
 
-  The report is a ``document`` need whose id encodes the module it covers
-  (``doc__<module>_verification_report``) — the ``document`` type has no
-  ``belongs_to`` link, so the module id is recovered from this need's own id
-  instead. The module's ``includes`` links provide the components. The
+  The report names the module it covers through its mandatory ``belongs_to``
+  link; the module's ``includes`` links provide the components. The
   ``linked_needs`` helper resolves this graph during the post-collection
   reread, so titles and report sections stay driven by the Need model.
+
+  Consumers that still declare the report as a generic ``document`` have no
+  ``belongs_to`` link available. For those the module id is recovered from the
+  report id (``doc__<module>_verification_report``) as before, until they have
+  migrated to ``mod_ver_report``.
 
   This report is module- and component-scoped only. The platform-wide,
   feature-scoped counterpart (all Features and their statistics) lives in the
@@ -20,7 +23,11 @@
   work — and real headings are what give the report its TOC entries and
   per-component navigation.
 #}
-{% set module_id = "mod__" ~ id|replace("doc__", "")|replace("_verification_report", "") %}
+{# ``belongs_to`` may carry a ``[version==N]`` selector; only the id part
+   identifies the module Need. Empty for legacy ``document`` reports. #}
+{% set module_link = belongs_to|first|default("", true) %}
+{% set module_id = module_link|split("[")|first if module_link
+     else ("mod__" ~ id|replace("doc__", "")|replace("_verification_report", "")) %}
 {# Unset/empty ``report_version`` keeps the report unscoped (all components
    and requirements shown), which is what the "_latest" report relies on. #}
 {% set report_version = report_version|default(None, true) %}
