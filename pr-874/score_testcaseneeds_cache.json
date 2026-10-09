@@ -224,20 +224,6 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_rules_are_working_correctly__test_score_pytest_loads_conftest",
-    "file": "tests/test_rules_are_working_correctly.py",
-    "line": "13",
-    "result": "passed",
-    "repo_name": null,
-    "hash": null,
-    "url": null,
-    "TestType": null,
-    "DerivationTechnique": null,
-    "result_text": "",
-    "PartiallyVerifies": null,
-    "FullyVerifies": null
-  },
-  {
     "name": "traceability_gate_test__test_gate_passes_when_thresholds_met",
     "file": "scripts_bazel/tests/traceability_gate_test.py",
     "line": "147",
@@ -2802,7 +2788,7 @@
   {
     "name": "test_rules_file_based__test_count_need_objects_ignores_nested_non_need_directives",
     "file": "src/extensions/score_metamodel/tests/test_rules_file_based.py",
-    "line": "113",
+    "line": "112",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -2812,6 +2798,20 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null
+  },
+  {
+    "name": "test_rules_file_based__test_rst_files[options/test_options_common_attrs_security.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/options/test_options_common_attrs_security.rst",
+    "line": "15",
+    "result": "passed",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": "",
+    "TestType": "requirements_based",
+    "DerivationTechnique": "requirements_based",
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": "tool_req__docs_common_attr_security[version==1]"
   },
   {
     "name": "test_rules_file_based__test_rst_files[options/test_doc_types.rst]",
@@ -2880,7 +2880,7 @@
     "TestType": "requirements_based",
     "DerivationTechnique": "requirements_based",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_common_attr_status[version==1], tool_req__docs_req_types[version==1]",
+    "PartiallyVerifies": "tool_req__docs_req_types[version==1]",
     "FullyVerifies": null
   },
   {
@@ -2896,6 +2896,34 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": "tool_req__docs_req_attr_rationale"
+  },
+  {
+    "name": "test_rules_file_based__test_rst_files[options/test_options_common_attrs_status.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/options/test_options_common_attrs_status.rst",
+    "line": "15",
+    "result": "passed",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": "",
+    "TestType": "requirements_based",
+    "DerivationTechnique": "requirements_based",
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": "tool_req__docs_common_attr_status[version==2]"
+  },
+  {
+    "name": "test_rules_file_based__test_rst_files[options/test_invalid_skipped.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/options/test_invalid_skipped.rst",
+    "line": "16",
+    "result": "passed",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": "",
+    "TestType": "requirements_based",
+    "DerivationTechnique": "requirements_based",
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": "tool_req__docs_common_attr_status_invalid[version==1]"
   },
   {
     "name": "test_rules_file_based__test_rst_files[options/test_need_extends.rst]",
@@ -2964,7 +2992,7 @@
     "TestType": "requirements_based",
     "DerivationTechnique": "requirements_based",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_req_types[version==1], tool_req__docs_common_attr_status[version==1]",
+    "PartiallyVerifies": "tool_req__docs_req_types[version==1]",
     "FullyVerifies": null
   },
   {
@@ -2998,7 +3026,7 @@
   {
     "name": "test_rules_file_based__test_count_need_objects_ignores_nested_non_need_directives",
     "file": "src/extensions/score_metamodel/tests/test_rules_file_based.py",
-    "line": "113",
+    "line": "112",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3038,6 +3066,20 @@
     "FullyVerifies": "potential_tool_malfunction__docs_as_code__m4"
   },
   {
+    "name": "test_rules_file_based__test_rst_files[architecture/test_arch_link_fulfils.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/architecture/test_arch_link_fulfils.rst",
+    "line": "15",
+    "result": "passed",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": "",
+    "TestType": "requirements_based",
+    "DerivationTechnique": "requirements_based",
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": "tool_req__docs_arch_link_fulfils[version==3]"
+  },
+  {
     "name": "test_rules_file_based__test_need",
     "file": "src/extensions/score_metamodel/tests/__init__.py",
     "line": "110",
@@ -3054,7 +3096,7 @@
   {
     "name": "test_rules_file_based__test_count_need_objects_ignores_nested_non_need_directives",
     "file": "src/extensions/score_metamodel/tests/test_rules_file_based.py",
-    "line": "113",
+    "line": "112",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3080,8 +3122,8 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_rules_file_based__test_rst_files[attributes/test_attributes_external_prefix.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/attributes/test_attributes_external_prefix.rst",
+    "name": "test_rules_file_based__test_rst_files[attributes/test_attributes_id_scheme.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/attributes/test_attributes_id_scheme.rst",
     "line": "16",
     "result": "passed",
     "repo_name": "local_repo",
@@ -3090,8 +3132,8 @@
     "TestType": "requirements_based",
     "DerivationTechnique": "requirements_based",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_common_attr_id_scheme",
-    "FullyVerifies": null
+    "PartiallyVerifies": null,
+    "FullyVerifies": "tool_req__docs_common_attr_id_scheme"
   },
   {
     "name": "test_rules_file_based__test_rst_files[attributes/test_attributes_format_id_length.rst]",
@@ -3122,20 +3164,6 @@
     "FullyVerifies": "tool_req__docs_stdreq_types[version==1], tool_req__docs_stdwp_types[version==1]"
   },
   {
-    "name": "test_rules_file_based__test_rst_files[attributes/test_attributes_format_id_format.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/attributes/test_attributes_format_id_format.rst",
-    "line": "16",
-    "result": "passed",
-    "repo_name": "local_repo",
-    "hash": "",
-    "url": "",
-    "TestType": "requirements_based",
-    "DerivationTechnique": "requirements_based",
-    "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_common_attr_id_scheme",
-    "FullyVerifies": null
-  },
-  {
     "name": "test_rules_file_based__test_rst_files[attributes/test_prohibited_words.rst]",
     "file": "src/extensions/score_metamodel/tests/rst/attributes/test_prohibited_words.rst",
     "line": "17",
@@ -3146,8 +3174,8 @@
     "TestType": "requirements_based",
     "DerivationTechnique": "requirements_based",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_common_attr_title, tool_req__docs_common_attr_desc_wording",
-    "FullyVerifies": null
+    "PartiallyVerifies": null,
+    "FullyVerifies": "tool_req__docs_common_attr_title[version==1], tool_req__docs_common_attr_desc_wording[version==1]"
   },
   {
     "name": "test_rules_file_based__test_rst_files[attributes/test_common_attr_safety.rst]",
@@ -3174,8 +3202,8 @@
     "TestType": "requirements_based",
     "DerivationTechnique": "requirements_based",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_req_attr_validity_correctness, tool_req__docs_req_attr_validity_consistency",
-    "FullyVerifies": null
+    "PartiallyVerifies": null,
+    "FullyVerifies": "tool_req__docs_req_attr_validity_correctness, tool_req__docs_req_attr_validity_consistency"
   },
   {
     "name": "test_bundle_lifecycle__test_multiple_bundle_targets_keep_declaration_order_in_json",
@@ -3297,10 +3325,10 @@
     "repo_name": "local_repo",
     "hash": "",
     "url": "",
-    "TestType": "requirements-based",
-    "DerivationTechnique": "requirements-analysis",
+    "TestType": "interface-test",
+    "DerivationTechnique": "error-guessing",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_common_attr_security",
+    "PartiallyVerifies": null,
     "FullyVerifies": null
   },
   {
@@ -3311,10 +3339,10 @@
     "repo_name": "local_repo",
     "hash": "",
     "url": "",
-    "TestType": "requirements-based",
-    "DerivationTechnique": "requirements-analysis",
+    "TestType": "interface-test",
+    "DerivationTechnique": "error-guessing",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_common_attr_description",
+    "PartiallyVerifies": null,
     "FullyVerifies": null
   },
   {
@@ -3899,10 +3927,10 @@
     "repo_name": "local_repo",
     "hash": "",
     "url": "",
-    "TestType": "requirements-based",
-    "DerivationTechnique": "requirements-analysis",
+    "TestType": "interface-test",
+    "DerivationTechnique": "equivalence-classes",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_common_attr_description",
+    "PartiallyVerifies": null,
     "FullyVerifies": null
   },
   {
@@ -3913,10 +3941,10 @@
     "repo_name": "local_repo",
     "hash": "",
     "url": "",
-    "TestType": "requirements-based",
-    "DerivationTechnique": "requirements-analysis",
+    "TestType": "interface-test",
+    "DerivationTechnique": "equivalence-classes",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_common_attr_description",
+    "PartiallyVerifies": null,
     "FullyVerifies": null
   },
   {
@@ -3927,10 +3955,10 @@
     "repo_name": "local_repo",
     "hash": "",
     "url": "",
-    "TestType": "requirements-based",
-    "DerivationTechnique": "requirements-analysis",
+    "TestType": "interface-test",
+    "DerivationTechnique": "equivalence-classes",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_common_attr_description",
+    "PartiallyVerifies": null,
     "FullyVerifies": null
   },
   {
@@ -3941,10 +3969,10 @@
     "repo_name": "local_repo",
     "hash": "",
     "url": "",
-    "TestType": "requirements-based",
-    "DerivationTechnique": "requirements-analysis",
+    "TestType": "interface-test",
+    "DerivationTechnique": "error-guessing",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_common_attr_description",
+    "PartiallyVerifies": null,
     "FullyVerifies": null
   },
   {
@@ -4720,7 +4748,7 @@
   {
     "name": "test_rules_file_based__test_count_need_objects_ignores_nested_non_need_directives",
     "file": "src/extensions/score_metamodel/tests/test_rules_file_based.py",
-    "line": "113",
+    "line": "112",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4742,7 +4770,7 @@
     "TestType": "requirements_based",
     "DerivationTechnique": "requirements_based",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_saf_attrs_mandatory[version==1]",
+    "PartiallyVerifies": null,
     "FullyVerifies": "tool_req__docs_saf_attr_dfa_failure_id[version==2], tool_req__docs_saf_attr_fmea_fault_id[version==2], tool_req__docs_saf_attrs_sufficient[version==1], tool_req__docs_saf_attrs_content[version==2]"
   },
   {
@@ -4770,8 +4798,8 @@
     "TestType": "requirements_based",
     "DerivationTechnique": "requirements_based",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_saf_attrs_violates[version==2]",
-    "FullyVerifies": null
+    "PartiallyVerifies": null,
+    "FullyVerifies": "tool_req__docs_saf_attrs_violates[version==2]"
   },
   {
     "name": "test_rules_file_based__test_rst_files[safety/test_saf_types.rst]",
@@ -4784,8 +4812,8 @@
     "TestType": "requirements_based",
     "DerivationTechnique": "requirements_based",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_saf_attrs_mandatory[version==1]",
-    "FullyVerifies": "tool_req__docs_saf_types[version==2]"
+    "PartiallyVerifies": null,
+    "FullyVerifies": "tool_req__docs_saf_types[version==2], tool_req__docs_saf_attrs_mandatory[version==1]"
   },
   {
     "name": "test_rules_file_based__test_need",
@@ -4804,7 +4832,7 @@
   {
     "name": "test_rules_file_based__test_count_need_objects_ignores_nested_non_need_directives",
     "file": "src/extensions/score_metamodel/tests/test_rules_file_based.py",
-    "line": "113",
+    "line": "112",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4860,7 +4888,7 @@
   {
     "name": "test_rules_file_based__test_count_need_objects_ignores_nested_non_need_directives",
     "file": "src/extensions/score_metamodel/tests/test_rules_file_based.py",
-    "line": "113",
+    "line": "112",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4869,20 +4897,6 @@
     "DerivationTechnique": null,
     "result_text": "",
     "PartiallyVerifies": null,
-    "FullyVerifies": null
-  },
-  {
-    "name": "test_rules_file_based__test_rst_files[graph/test_invalid_graph.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/graph/test_invalid_graph.rst",
-    "line": "16",
-    "result": "passed",
-    "repo_name": "local_repo",
-    "hash": "",
-    "url": "",
-    "TestType": "requirements_based",
-    "DerivationTechnique": "requirements_based",
-    "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_req_arch_link_safety_to_arch",
     "FullyVerifies": null
   },
   {
@@ -4896,8 +4910,8 @@
     "TestType": "requirements_based",
     "DerivationTechnique": "requirements_based",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_common_attr_safety_link_check",
-    "FullyVerifies": "potential_tool_malfunction__docs_as_code__m2"
+    "PartiallyVerifies": null,
+    "FullyVerifies": "tool_req__docs_common_attr_safety_link_check[version==1]"
   },
   {
     "name": "test_rules_file_based__test_rst_files[graph/test_workproduct_aspice_40.rst]",
@@ -4970,37 +4984,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_rules_file_based__test_need",
-    "file": "src/extensions/score_metamodel/tests/__init__.py",
-    "line": "110",
-    "result": "passed",
-    "repo_name": null,
-    "hash": null,
-    "url": null,
-    "TestType": null,
-    "DerivationTechnique": null,
-    "result_text": "",
-    "PartiallyVerifies": null,
-    "FullyVerifies": null
-  },
-  {
-    "name": "test_rules_file_based__test_count_need_objects_ignores_nested_non_need_directives",
-    "file": "src/extensions/score_metamodel/tests/test_rules_file_based.py",
-    "line": "113",
-    "result": "passed",
-    "repo_name": null,
-    "hash": null,
-    "url": null,
-    "TestType": null,
-    "DerivationTechnique": null,
-    "result_text": "",
-    "PartiallyVerifies": null,
-    "FullyVerifies": null
-  },
-  {
-    "name": "test_rules_file_based__test_rst_files[id_contains_feature/test_id_contains_feature.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/id_contains_feature/test_id_contains_feature.rst",
-    "line": "16",
+    "name": "test_rules_file_based__test_rst_files[graph/test_arch_link_safety.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/graph/test_arch_link_safety.rst",
+    "line": "15",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5008,8 +4994,8 @@
     "TestType": "requirements_based",
     "DerivationTechnique": "requirements_based",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_common_attr_id_scheme",
-    "FullyVerifies": null
+    "PartiallyVerifies": null,
+    "FullyVerifies": "tool_req__docs_req_arch_link_safety_to_arch[version==2]"
   },
   {
     "name": "test_mounts__test_materialize_mounts_serializes_structured_entries",
@@ -5588,7 +5574,7 @@
   {
     "name": "test_traceability_metrics__test_get_need_types_by_tags_returns_matching_directives_only",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": "26",
+    "line": "25",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5602,7 +5588,7 @@
   {
     "name": "test_traceability_metrics__test_get_need_types_by_tags_returns_empty_on_non_match",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": "87",
+    "line": "86",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5616,7 +5602,7 @@
   {
     "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[  -False]",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": "116",
+    "line": "115",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5630,7 +5616,7 @@
   {
     "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[text-True]",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": "116",
+    "line": "115",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5644,7 +5630,7 @@
   {
     "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[value2-False]",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": "116",
+    "line": "115",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5658,7 +5644,7 @@
   {
     "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[value3-True]",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": "116",
+    "line": "115",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5672,7 +5658,7 @@
   {
     "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[0-False]",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": "116",
+    "line": "115",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5686,7 +5672,7 @@
   {
     "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[1-True]",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": "116",
+    "line": "115",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5700,7 +5686,7 @@
   {
     "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[None-False]",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": "116",
+    "line": "115",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5714,7 +5700,7 @@
   {
     "name": "test_traceability_metrics__test_safe_percent_zero[3-0-100.0]",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": "141",
+    "line": "140",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5728,7 +5714,7 @@
   {
     "name": "test_traceability_metrics__test_safe_percent_zero[1-4-25.0]",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": "141",
+    "line": "140",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5742,7 +5728,7 @@
   {
     "name": "test_traceability_metrics__test_calculate_requirement_metrics_counts_links_and_missing_ids",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": "155",
+    "line": "154",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5756,7 +5742,7 @@
   {
     "name": "test_traceability_metrics__test_calculate_requirement_metrics_non_fully_linked",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": "184",
+    "line": "183",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5770,7 +5756,7 @@
   {
     "name": "test_traceability_metrics__test_calculate_requirement_metrics_non_fully_linked_2",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": "210",
+    "line": "209",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5784,7 +5770,7 @@
   {
     "name": "test_traceability_metrics__test_calculate_test_metrics_counts_linked_tests_and_broken_refs",
     "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-    "line": "236",
+    "line": "235",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5953,6 +5939,20 @@
     "name": "test_needs_templates__test_tool_qualification_matrix_groups_shared_requirements",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
     "line": "176",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_needs_templates__test_platform_report_gap_table_is_report_version_scoped",
+    "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
+    "line": "320",
     "result": "passed",
     "repo_name": null,
     "hash": null,
