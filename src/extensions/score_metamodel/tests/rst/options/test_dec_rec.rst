@@ -27,6 +27,9 @@
    :status: accepted
    :context: A decision record is needed for the test.
    :decision: Use a dedicated decision record need type.
+   :tracking: https://github.com/eclipse-score/score/issues/123
+   :version: 1
+   :consequences: Provides traceability for decisions.
    :affects: dec_rec__test__decision_record_2
 
 
@@ -35,3 +38,6 @@
    :status: proposed
    :context: This decision record is affected by another decision.
    :decision: Keep the relationship explicit.
+   :tracking: https://github.com/eclipse-score/score/issues/456
+   :version: 1
+   :consequences: Allows linking between related decisions.

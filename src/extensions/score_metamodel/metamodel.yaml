@@ -1048,14 +1048,16 @@ needs_types:
   dec_rec:
     title: Decision Record
     mandatory_options:
+      id: ^dec_rec__(Platform|Feature|Component|arch|proc|strat|infra|int)__[0-9a-zA-Z_-]+$
       status: ^(proposed|accepted|deprecated|rejected|superseded)$
-      context: ^.+$
-      decision: ^.+$
-    optional_options:
-      consequences: ^.*$
-      tracking: ^https://github\.com/[^/]+/[^/]+/issues/\d+$
+      context: ^[\s\S]+$
+      decision: ^[\s\S]+$
+      tracking: ^https://github\.com/eclipse-score/score/issues/\d+$
+      version: ^[0-9]+$
+      consequences: ^[\s\S]+$
     optional_links:
-      affects: ANY
+      affects: stkh_req, feat_req, comp_req, tool_req, aou_req, gd_req
+    parts: 3
 
 # Extra link types, which shall be available and allow need types to be linked to each other.
 # We use a dedicated linked type for each type of a connection, for instance from
