@@ -291,10 +291,7 @@ def check_parent_relation(
                 f"Explanation: {explanation}"
             )
         else:
-            msg = (
-                f"No linked need in `{parent_relation}`. "
-                f"Explanation: {explanation}"
-            )
+            msg = f"No linked need in `{parent_relation}`. Explanation: {explanation}"
         log.warning_for_need(need, msg, is_new_check=info_only)
     else:
         for need_id in failed_needs:
