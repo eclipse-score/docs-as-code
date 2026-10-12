@@ -166,5 +166,9 @@
   {
     "version": "pr-941",
     "url": "https://eclipse-score.github.io/docs-as-code/pr-941/"
+  },
+  {
+    "version": "pr-919",
+    "url": "https://eclipse-score.github.io/docs-as-code/pr-919/"
   }
 ]
