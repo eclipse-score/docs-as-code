@@ -1001,12 +1001,16 @@ needs_types:
 
   testcase:
     title: Testcase Needs parsed from test.xml files
+    mandatory_options:
+      # req-Id: tool_req__docs_test_metadata_mandatory_1
+      test_type: ^.+$
+      derivation_technique: ^.+$
+      # req-Id: tool_req__docs_test_metadata_mandatory_2
+      content: ^[\s\S]+$
     optional_options:
       name: ^.*$
       file: ^.*$
       line: ^.*$
-      test_type: ^.*$
-      derivation_technique: ^.*$
       result: ^.*$
       result_text: ^.*$
     optional_links:
@@ -1278,3 +1282,33 @@ graph_checks:
           - id contains aspice_40__iic
           - id contains std_wp
     explanation: Workproducts may only link to ASPICE 40 IIC stakeholder requirements. Please ensure that the linked requirement is an ASPICE 40 IIC stakeholder requirement.
+
+  # req-Id: tool_req__docs_test_metadata_link_levels
+  testcase_link_levels_feature_integration:
+    needs:
+      include: testcase
+      condition: test_type == feature_integration_test
+    check_all:
+      partially_verifies: id contains feat_req__
+      fully_verifies: id contains feat_req__
+    explanation: Feature Integration Test cases shall only link to Feature Requirements (feat_req).
+
+  # req-Id: tool_req__docs_test_metadata_link_levels
+  testcase_link_levels_component_integration:
+    needs:
+      include: testcase
+      condition: test_type == component_integration_test
+    check_all:
+      partially_verifies: id contains comp_req__
+      fully_verifies: id contains comp_req__
+    explanation: Component Integration Test cases shall only link to Component Requirements (comp_req).
+
+  # req-Id: tool_req__docs_test_metadata_link_levels
+  testcase_link_levels_unit:
+    needs:
+      include: testcase
+      condition: test_type == unit_test
+    check_all:
+      partially_verifies: id contains comp_req__
+      fully_verifies: id contains comp_req__
+    explanation: Unit Test cases shall only link to Component Requirements (comp_req).
