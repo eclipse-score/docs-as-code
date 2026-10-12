@@ -86,7 +86,7 @@
   {
     "name": "module_verification_reports_test__test_injection_is_reversible",
     "file": "tools/tests/module_verification_reports_test.py",
-    "line": "133",
+    "line": "131",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -100,7 +100,7 @@
   {
     "name": "module_verification_reports_test__test_missing_graph_is_a_structural_failure",
     "file": "tools/tests/module_verification_reports_test.py",
-    "line": "150",
+    "line": "148",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -114,7 +114,7 @@
   {
     "name": "module_verification_reports_test__test_component_without_a_feature_link_is_a_structural_failure",
     "file": "tools/tests/module_verification_reports_test.py",
-    "line": "155",
+    "line": "153",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -128,7 +128,7 @@
   {
     "name": "module_verification_reports_test__test_feature_resolved_only_through_external_needs_is_not_a_failure",
     "file": "tools/tests/module_verification_reports_test.py",
-    "line": "166",
+    "line": "164",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -142,7 +142,7 @@
   {
     "name": "module_verification_reports_test__test_checkout_clone_refresh_pinned_selection_and_cleanup",
     "file": "tools/tests/module_verification_reports_test.py",
-    "line": "206",
+    "line": "204",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -156,7 +156,7 @@
   {
     "name": "module_verification_reports_test__test_cached_checkout_rejects_a_remote_mismatch",
     "file": "tools/tests/module_verification_reports_test.py",
-    "line": "225",
+    "line": "223",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -170,7 +170,7 @@
   {
     "name": "module_verification_reports_test__test_local_fake_downstream_build_populates_gallery_and_assets",
     "file": "tools/tests/module_verification_reports_test.py",
-    "line": "245",
+    "line": "243",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -184,7 +184,7 @@
   {
     "name": "module_verification_reports_test__test_local_fake_downstream_runs_the_real_docs_target",
     "file": "tools/tests/module_verification_reports_test.py",
-    "line": "304",
+    "line": "302",
     "result": "skipped",
     "repo_name": null,
     "hash": null,
@@ -198,7 +198,7 @@
   {
     "name": "module_verification_reports_test__test_main_is_partial_but_pinned_is_strict_on_build_failure",
     "file": "tools/tests/module_verification_reports_test.py",
-    "line": "561",
+    "line": "541",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -212,7 +212,7 @@
   {
     "name": "module_verification_reports_test__test_pinned_golden_comparison_is_byte_for_byte",
     "file": "tools/tests/module_verification_reports_test.py",
-    "line": "633",
+    "line": "613",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -5953,20 +5953,6 @@
     "name": "test_needs_templates__test_platform_report_gap_table_is_report_version_scoped",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
     "line": "320",
-    "result": "passed",
-    "repo_name": null,
-    "hash": null,
-    "url": null,
-    "TestType": null,
-    "DerivationTechnique": null,
-    "result_text": "",
-    "PartiallyVerifies": null,
-    "FullyVerifies": null
-  },
-  {
-    "name": "test_needs_templates__test_module_report_resolves_the_module_from_belongs_to_or_legacy_id",
-    "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
-    "line": "436",
     "result": "passed",
     "repo_name": null,
     "hash": null,
