@@ -233,6 +233,8 @@ needs_types:
       approver: ^.*$
       reviewer: ^.*$
       report_version: ^v(0|[1-9]\d*)\.(0|[1-9]\d*)(\.(0|[1-9]\d*))?$
+    optional_links:
+      belongs_to: mod, comp, feat
     # req-Id: tool_req__docs_doc_generic_mandatory
     mandatory_links:
       realizes: workproduct
