@@ -34,9 +34,9 @@ py_binary(
     ],
 )
 
-# Bazel's coverage report only lists files that a test imported. This tool adds
-# the rest at 0% so untested files are visible, and writes the summary posted on
-# pull requests. A py_binary so CI and developers use the locked coverage.py.
+# Merges the coverage.py data of the unit tests and the docs.bzl scenarios and
+# writes the summary posted on pull requests. A py_binary so CI and developers
+# use the locked coverage.py.
 py_binary(
     name = "coverage_report",
     srcs = ["coverage_report.py"],

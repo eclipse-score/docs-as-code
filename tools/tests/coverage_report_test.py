@@ -13,7 +13,6 @@
 """Unit tests for merging coverage reports and comparing them with main."""
 
 import json
-import subprocess
 import sys
 from pathlib import Path
 
@@ -24,16 +23,14 @@ from tools.coverage_report import (
     SCHEMA,
     Branch,
     FileCoverage,
-    Record,
     coverage_data_lcov,
-    is_test_file,
-    lcov_records,
     load_reference,
     load_reports,
     main,
     markdown,
     package_of,
     parse_lcov,
+    run_by,
     summarize,
 )
 
@@ -41,36 +38,6 @@ from tools.coverage_report import (
 def lcov(path: str, *body: str) -> str:
     """Return one LCOV record for ``path``."""
     return "\n".join([f"SF:{path}", *body, "end_of_record"]) + "\n"
-
-
-@pytest.mark.parametrize(
-    ("path", "is_test"),
-    [
-        ("src/tests/helpers.py", True),
-        ("src/extensions/x/test/data.py", True),
-        ("src/extensions/x/test_checks.py", True),
-        ("tools/tests/coverage_report_test.py", True),
-        ("conftest.py", True),
-        ("src/extensions/x/checks.py", False),
-        # Only whole directory and file names count, not parts of them.
-        ("src/testing/latest.py", False),
-        ("src/extensions/x/contest.py", False),
-    ],
-)
-def test_test_files_are_recognised_by_directory_or_name(
-    path: str, is_test: bool
-) -> None:
-    assert is_test_file(path) is is_test
-
-
-def test_lcov_is_split_into_its_records() -> None:
-    first = lcov("a.py", "DA:1,1")
-    second = lcov("b.py", "DA:2,0")
-    # Lines outside a record, like a test name, belong to no record.
-    assert lcov_records("TN:\n" + first + second) == [
-        Record("a.py", first),
-        Record("b.py", second),
-    ]
 
 
 def test_a_line_or_branch_counts_as_run_if_any_report_ran_it() -> None:
@@ -109,41 +76,41 @@ def test_files_are_grouped_per_extension_else_per_directory(
     assert package_of(path) == package
 
 
-def test_reports_keep_only_tracked_files(tmp_path: Path) -> None:
-    report = tmp_path / "unit.lcov"
-    report.write_text(lcov("a.py", "DA:1,1") + lcov("venv/lib.py", "DA:1,1"))
-    assert load_reports([f"Unit={report}"], {"a.py"}) == {
-        "Unit": lcov("a.py", "DA:1,1")
-    }
-
-
 # coverage.py warns about the corrupt file it skips; that is the case tested.
 @pytest.mark.filterwarnings("ignore::coverage.exceptions.CoverageWarning")
 def test_suites_without_usable_data_are_reported_as_no_data(tmp_path: Path) -> None:
-    (tmp_path / "empty.lcov").write_text("")
-    (tmp_path / "untracked.lcov").write_text(lcov("venv/lib.py", "DA:1,1"))
+    (tmp_path / "a_file").write_text("")
     # The docs.bzl run creates its directory before any Sphinx process runs.
     (tmp_path / "no_data_files").mkdir()
     # What a Sphinx process killed while writing its data could leave behind.
     (tmp_path / "corrupt").mkdir()
     (tmp_path / "corrupt" / ".coverage.host.1.2").write_text("not a database")
-    labels = ["missing", "empty.lcov", "untracked.lcov", "no_data_files", "corrupt"]
-    suites = load_reports([f"{name}={tmp_path / name}" for name in labels], {"a.py"})
+    labels = ["missing", "a_file", "no_data_files", "corrupt"]
+    suites = load_reports([f"{name}={tmp_path / name}" for name in labels])
     assert suites == {name: None for name in labels}
+
+
+def write_data(directory: Path, lines: dict[str, list[int]]) -> None:
+    """Write a coverage.py data file to ``directory``, as a measured run would.
+
+    A file with no lines is one the run lists but never executed, as
+    `coverage run --source=...` does for files no test imports.
+    """
+    directory.mkdir(exist_ok=True)
+    data = coverage.CoverageData(
+        basename=str(directory / ".coverage"), suffix=f"host.{len(lines)}.1"
+    )
+    data.add_lines({str(Path(path).resolve()): hit for path, hit in lines.items()})
+    data.touch_files([str(Path(path).resolve()) for path in lines])
+    data.write()
 
 
 def test_coverage_py_data_files_become_lcov(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    tmp_path = tmp_path.resolve()
     monkeypatch.chdir(tmp_path)
     (tmp_path / "mod.py").write_text("x = 1\ny = 2\n")
-    (tmp_path / "data").mkdir()
-    data = coverage.CoverageData(
-        basename=str(tmp_path / "data" / ".coverage"), suffix="host.1.2"
-    )
-    data.add_lines({str(tmp_path / "mod.py"): [1]})
-    data.write()
+    write_data(tmp_path / "data", {"mod.py": [1]})
     report = coverage_data_lcov(tmp_path / "data")
     assert report.startswith("SF:mod.py\n")
     assert "DA:1,1" in report
@@ -171,6 +138,18 @@ def test_unusable_numbers_of_main_give_a_note_instead_of_a_comparison(
     assert message is not None and note in message
 
 
+def test_every_suite_counts_every_file_of_the_combined_report() -> None:
+    combined = {
+        "a.py": FileCoverage(lines={1: True, 2: True}),
+        "unused.py": FileCoverage(lines={1: False}),
+    }
+    suite = {"a.py": FileCoverage(lines={1: True})}
+    assert run_by(suite, combined) == {
+        "a.py": FileCoverage(lines={1: True, 2: False}),
+        "unused.py": FileCoverage(lines={1: False}),
+    }
+
+
 def test_summary_shows_the_change_against_main(tmp_path: Path) -> None:
     def files(*hits: bool) -> dict[str, FileCoverage]:
         return {"src/a.py": FileCoverage(lines=dict(enumerate(hits, start=1)))}
@@ -190,21 +169,20 @@ def test_summary_shows_the_change_against_main(tmp_path: Path) -> None:
     assert "Files with changed coverage (1, biggest drop first)" in text
 
 
-def test_files_no_test_imports_are_added_at_zero_percent(
+def test_suites_are_reported_apart_and_combined(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     monkeypatch.chdir(tmp_path)
     monkeypatch.delenv("BUILD_WORKSPACE_DIRECTORY", raising=False)
-    (tmp_path / "tested.py").write_text("x = 1\n")
-    (tmp_path / "untested.py").write_text("y = 1\n")
-    (tmp_path / "test_tested.py").write_text("def test_x():\n    pass\n")
-    subprocess.run(["git", "init", "-q"], check=True)
-    subprocess.run(["git", "add", "."], check=True)
-    (tmp_path / "unit.lcov").write_text(lcov("tested.py", "DA:1,1"))
+    (tmp_path / "a.py").write_text("x = 1\ny = 2\n")
+    (tmp_path / "unused.py").write_text("z = 1\n")
+    # The unit test run lists unused.py, though no test imports it.
+    write_data(tmp_path / "unit", {"a.py": [1], "unused.py": []})
+    write_data(tmp_path / "docs", {"a.py": [2]})
     monkeypatch.setattr(
         sys,
         "argv",
-        ["coverage_report", "Unit=unit.lcov", "Scenarios=missing"]
+        ["coverage_report", "Unit=unit", "Scenarios=docs", "Other=missing"]
         + ["--json", "summary.json"],
     )
 
@@ -212,11 +190,12 @@ def test_files_no_test_imports_are_added_at_zero_percent(
 
     summary = json.loads((tmp_path / "summary.json").read_text())
     assert summary["schema"] == SCHEMA
+    # Every suite counts the same 3 lines, also the one without unused.py.
     assert summary["suites"] == {
-        "Unit": {"lines": [1, 2], "branches": [0, 0]},
-        "Scenarios": None,
+        "Unit": {"lines": [1, 3], "branches": [0, 0]},
+        "Scenarios": {"lines": [1, 3], "branches": [0, 0]},
+        "Other": None,
     }
-    # Test files are not code under test.
-    assert sorted(summary["files"]) == ["tested.py", "untested.py"]
-    assert summary["files"]["untested.py"]["lines"] == [0, 1]
-    assert "SF:untested.py" in (tmp_path / "coverage.lcov").read_text()
+    assert summary["combined"] == {"lines": [2, 3], "branches": [0, 0]}
+    assert summary["files"]["unused.py"]["lines"] == [0, 1]
+    assert "SF:unused.py" in (tmp_path / "coverage.lcov").read_text()

@@ -101,18 +101,76 @@ jobs:
           name: tests-report-docs-bzl-${{ matrix.python-version }}-${{ matrix.suite }}
           path: tests-report
 
+  unit_tests_coverage:
+    # Measures the unit tests with pytest rather than `bazel coverage`: with
+    # --source, coverage.py also lists the files no test imports, at 0%.
+    # A failing test fails this job, like it fails bazel_tests.
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛡️ Harden Runner
+        if: github.repository_owner == 'eclipse-score'
+        uses: step-security/harden-runner@v2.21.1
+        with:
+          egress-policy: audit
+
+      - name: Install Graphviz
+        uses: eclipse-score/apt-install@main
+        with:
+          packages: graphviz
+          cache: false
+
+      - name: Checkout repository (Handle all events)
+        uses: actions/checkout@v7
+        with:
+          # The commit this run was started for, not the branch tip: after a
+          # push during the run, the test jobs and coverage_report would
+          # otherwise measure and report different commits.
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+
+      - name: Setup Bazel with shared caching
+        uses: eclipse-score/cicd-actions/setup-bazel-cache@cache
+        with:
+          disk-cache-key: ${{ github.job }}
+
+      # Which lines run does not depend on the Python version: one is enough.
+      - name: Setup venv
+        run: >-
+          bazel run --lockfile_mode=error
+          --@rules_python//python/config_settings:python_version=3.12
+          //:ide_support
+
+      - name: Run unit tests with coverage
+        env:
+          COVERAGE_FILE: ${{ github.workspace }}/coverage-data/unit_tests/.coverage
+        # The docs.bzl scenarios run in docs_bzl; the downstream compatibility
+        # tests build consumer repositories and are not unit tests.
+        # One module that fails to import must not leave all others unmeasured;
+        # pytest still exits non-zero for it.
+        run: >-
+          mkdir -p coverage-data/unit_tests &&
+          .venv_docs/bin/python -m coverage run --source=src,scripts_bazel,tools
+          -m pytest src tools scripts_bazel
+          --ignore=src/tests/docs_bzl
+          --ignore=src/tests/downstream_compatibility
+          --continue-on-collection-errors
+
+      - name: Upload unit test coverage data
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: coverage-data-unit-tests
+          path: coverage-data/unit_tests
+          # upload-artifact skips dot files by default, and coverage.py names
+          # its data files .coverage.*
+          include-hidden-files: true
+
   bazel_tests:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         python-version: ["3.12", "3.14"]
-        include:
-          # Which lines run does not depend on the Python version, and measuring
-          # slows the job down: one version is enough. Not 3.14 yet: rules_python
-          # < 2.1 has no coverage tool for it, so `bazel coverage` measures nothing.
-          - python-version: "3.12"
-            coverage: true
     steps:
       - name: 🛡️ Harden Runner
         if: github.repository_owner == 'eclipse-score'
@@ -141,30 +199,10 @@ jobs:
           disk-cache-key: ${{ github.job }}-${{ matrix.python-version }}
 
       - name: Run bazel test targets
-        # `bazel coverage` runs the same tests, so measuring needs no second test run.
         run: >-
-          bazel ${{ matrix.coverage && 'coverage --combined_report=lcov' || 'test' }}
-          --lockfile_mode=error
+          bazel test --lockfile_mode=error
           --@rules_python//python/config_settings:python_version=${{ matrix.python-version }}
           //... --build_tests_only
-
-      - name: Collect unit test coverage
-        if: ${{ matrix.coverage && !cancelled() }}
-        # There is no report when `bazel coverage` failed before running tests.
-        # The report then shows "no data" for the unit tests, and this job's
-        # result stays that of the tests.
-        continue-on-error: true
-        # bazel-out is a symlink into Bazel's output base; copy the report out.
-        run: >-
-          mkdir -p coverage-data &&
-          cp -L bazel-out/_coverage/_coverage_report.dat coverage-data/unit_tests.lcov
-
-      - name: Upload unit test coverage
-        if: ${{ matrix.coverage && !cancelled() }}
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: coverage-data-unit-tests
-          path: coverage-data/unit_tests.lcov
 
       - name: Build all targets
         # Skip tests, since some are non buildable negative tests.
@@ -214,7 +252,7 @@ jobs:
     # Coverage informs, it does not gate: a failure here must not fail the
     # tests, which would skip the docs build and with it docs publishing.
     continue-on-error: true
-    needs: [docs_bzl, bazel_tests]
+    needs: [docs_bzl, unit_tests_coverage]
     runs-on: ubuntu-latest
     steps:
       - name: 🛡️ Harden Runner
@@ -293,7 +331,7 @@ jobs:
         run: >-
           mkdir -p coverage-data &&
           bazel run --lockfile_mode=error //tools:coverage_report --
-          "Unit tests=coverage-data/unit_tests/unit_tests.lcov"
+          "Unit tests=coverage-data/unit_tests"
           "docs.bzl scenarios=coverage-data/docs_bzl"
           --output coverage-data/coverage.lcov
           --markdown coverage-data/summary.md

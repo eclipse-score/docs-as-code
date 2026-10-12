@@ -10,18 +10,17 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-"""Merge Python coverage reports and add every tracked file no test imports.
+"""Report the Python coverage of the test suites, apart and combined.
 
-Coverage reports only contain files that some test imported; a file no test
-touches is simply absent. This tool merges the given reports and adds every
-tracked non-test Python file at 0%, so untested files show up. Reports are
-LCOV files or directories of coverage.py data files (the docs.bzl scenario
-run's), optionally labelled as ``LABEL=PATH``:
+Each suite is a directory of coverage.py data files, optionally labelled as
+``LABEL=DIR``. What gets measured is set by [tool.coverage.run] in
+pyproject.toml: its ``source`` makes the unit test run also record every file no
+test imports, so those show up at 0% without a baseline of their own::
 
-    bazel coverage //... --combined_report=lcov --build_tests_only
+    coverage run -m pytest src tools scripts_bazel --ignore=src/tests
+    DOCS_BZL_COVERAGE_DIR=$PWD/.coverage_docs_bzl pytest src/tests/docs_bzl
     bazel run //tools:coverage_report -- \\
-        "Unit tests=bazel-out/_coverage/_coverage_report.dat" \\
-        "docs.bzl scenarios=.coverage_docs_bzl" --markdown summary.md
+        "Unit tests=." "docs.bzl scenarios=.coverage_docs_bzl" --markdown summary.md
     genhtml --branch-coverage coverage.lcov -o genhtml
 
 genhtml must be LCOV 2.x: coverage.py names its branches ("jump to line 45"),
@@ -52,7 +51,7 @@ The examples in the docstrings all use this small repository::
                             3          return "yes"
                             4      return "no"
     src/unused.py           1  VALUE = 1          (no test imports it)
-    src/tests/test_app.py   a test, so not code under test
+    src/tests/test_app.py   a test, so not measured
 
 The "Unit tests" suite ran ``check(True)`` (lines 1, 2, 3), the "docs.bzl
 scenarios" suite ran ``check(False)`` (lines 1, 2, 4).
@@ -65,16 +64,12 @@ import subprocess
 import tempfile
 from collections.abc import Mapping
 from dataclasses import dataclass, field
-from fnmatch import fnmatchcase
-from pathlib import Path, PurePosixPath
+from pathlib import Path
 from typing import Any, Self, cast
 
 import coverage
 from coverage.exceptions import NoDataError
 
-# Tests are not code under test; listing them would only add 0% noise.
-TEST_DIRECTORIES = {"test", "tests"}
-TEST_FILE_PATTERNS = ("test_*.py", "*_test.py", "conftest.py")
 # Lets coverage_comment.yml find and update its earlier comment instead of
 # adding a new one on every push.
 COMMENT_MARKER = "<!-- python-coverage-report -->"
@@ -113,17 +108,6 @@ class FileCoverage:
 
     lines: dict[int, bool] = field(default_factory=dict[int, bool])
     branches: dict[Branch, bool] = field(default_factory=dict[Branch, bool])
-
-
-@dataclass
-class Record:
-    """One LCOV record: the file it covers and its text, SF: to end_of_record.
-
-    Example: ``Record("src/app.py", "SF:src/app.py\\nDA:1,1\\nend_of_record\\n")``.
-    """
-
-    source: str
-    text: str
 
 
 def _percent(column: tuple[int, int] | None) -> float | None:
@@ -269,50 +253,20 @@ class Summary:
         )
 
 
-def is_test_file(path: str) -> bool:
-    """Return whether ``path`` lies in a test directory or is named like a test.
-
-    Example::
-
-        "src/tests/test_app.py"  -> True    directory "tests"
-        "src/x/test_checks.py"   -> True    name matches "test_*.py"
-        "conftest.py"            -> True    name matches "conftest.py"
-        "src/testing/latest.py"  -> False   only whole names count
-        "src/app.py"             -> False
-    """
-    *directories, name = PurePosixPath(path).parts
-    in_test_directory = any(part in TEST_DIRECTORIES for part in directories)
-    named_like_test = any(fnmatchcase(name, p) for p in TEST_FILE_PATTERNS)
-    return in_test_directory or named_like_test
-
-
-def tracked_python_files() -> list[str]:
-    """Return the non-test Python files git tracks below the current directory.
-
-    Asking git instead of walking the tree never picks up virtualenvs, bazel-*
-    symlinks or build output.
-
-    Example: git lists src/app.py, src/tests/test_app.py and src/unused.py;
-    returns ``["src/app.py", "src/unused.py"]``.
-    """
-    out = subprocess.check_output(["git", "ls-files", "*.py"], text=True)
-    return [f for f in out.splitlines() if not is_test_file(f)]
-
-
 def _coverage(tmp: str) -> coverage.Coverage:
     """Return a coverage.py object that keeps its data file in ``tmp``.
 
     Example: ``"/tmp/abc"`` -> a Coverage whose data file is /tmp/abc/.coverage.
     """
-    # config_file=False: pyproject.toml's [tool.coverage] is for measuring the
-    # Sphinx runs and would hide every file outside src/ from the report.
+    # config_file=False: [tool.coverage.run] already chose the files when
+    # measuring; the report lists every file in the data.
     return coverage.Coverage(data_file=str(Path(tmp) / ".coverage"), config_file=False)
 
 
 def _lcov_from_data(cov: coverage.Coverage, tmp: str) -> str:
     """Return the LCOV text of ``cov``'s data, going through a file in ``tmp``.
 
-    Example: see the outputs of coverage_data_lcov() and baseline_lcov().
+    Example: see the output of coverage_data_lcov().
     Raises NoDataError if the data names no file.
     """
     lcov_file = Path(tmp) / "report.lcov"
@@ -364,78 +318,6 @@ def coverage_data_lcov(directory: Path) -> str:
             return ""
 
 
-def baseline_lcov(files: list[str]) -> str:
-    """Return LCOV records listing ``files`` with no line or branch executed.
-
-    Example: ``["src/app.py", "src/unused.py"]`` returns::
-
-        SF:src/app.py
-        DA:1,0
-        DA:2,0
-        DA:3,0
-        DA:4,0
-        LF:4
-        LH:0
-        FN:1,4,check
-        FNDA:0,check
-        FNF:1
-        FNH:0
-        BRDA:2,0,jump to line 3,-
-        BRDA:2,0,jump to line 4,-
-        BRF:2
-        BRH:0
-        end_of_record
-        SF:src/unused.py
-        DA:1,0
-        LF:1
-        LH:0
-        end_of_record
-    """
-    with tempfile.TemporaryDirectory() as tmp:
-        cov = _coverage(tmp)
-        data = cov.get_data()
-        # Branch data, so untested files add their branches to the totals too.
-        # touch_files() refuses data that is neither line nor branch data yet.
-        data.add_arcs({})
-        data.touch_files([os.path.abspath(f) for f in files])
-        return _lcov_from_data(cov, tmp)
-
-
-def lcov_records(lcov: str) -> list[Record]:
-    r"""Split LCOV text into its records.
-
-    A record runs from its SF: line to its end_of_record line.
-
-    Example input::
-
-        TN:
-        SF:src/app.py
-        DA:1,1
-        end_of_record
-        SF:src/unused.py
-        DA:1,0
-        end_of_record
-
-    Output; the TN: line lies outside every record and is dropped::
-
-        [
-            Record("src/app.py", "SF:src/app.py\nDA:1,1\nend_of_record\n"),
-            Record("src/unused.py", "SF:src/unused.py\nDA:1,0\nend_of_record\n"),
-        ]
-    """
-    records: list[Record] = []
-    record: list[str] = []
-    for line in lcov.splitlines():
-        if line.startswith("SF:"):
-            record = [line]
-        elif record:
-            record.append(line)
-            if line == "end_of_record":
-                records.append(Record(record[0][3:], "\n".join(record) + "\n"))
-                record = []
-    return records
-
-
 def parse_lcov(lcov: str) -> dict[str, FileCoverage]:
     """Merge all records of LCOV text: executed anywhere wins.
 
@@ -443,19 +325,19 @@ def parse_lcov(lcov: str) -> dict[str, FileCoverage]:
     several reports are not counted more than once. A branch is the same in
     every report if its line, block and name are.
 
-    Example: the baseline, Unit tests and docs.bzl scenarios records of
-    src/app.py, joined one after the other (shown side by side, totals and FN
-    lines left out, "jump to line 3" shortened to "j3")::
+    Example: the Unit tests and docs.bzl scenarios records of src/app.py,
+    joined one after the other (shown side by side, totals and FN lines left
+    out, "jump to line 3" shortened to "j3")::
 
-        baseline         Unit tests       docs.bzl scenarios
-        SF:src/app.py    SF:src/app.py    SF:src/app.py
-        DA:1,0           DA:1,1           DA:1,1
-        DA:2,0           DA:2,1           DA:2,1
-        DA:3,0           DA:3,1           DA:3,0
-        DA:4,0           DA:4,0           DA:4,1
-        BRDA:2,0,j3,-    BRDA:2,0,j3,1    BRDA:2,0,j3,0
-        BRDA:2,0,j4,-    BRDA:2,0,j4,0    BRDA:2,0,j4,1
-        end_of_record    end_of_record    end_of_record
+        Unit tests       docs.bzl scenarios
+        SF:src/app.py    SF:src/app.py
+        DA:1,1           DA:1,1
+        DA:2,1           DA:2,1
+        DA:3,1           DA:3,0
+        DA:4,0           DA:4,1
+        BRDA:2,0,j3,1    BRDA:2,0,j3,0
+        BRDA:2,0,j4,0    BRDA:2,0,j4,1
+        end_of_record    end_of_record
 
     Output: line 3 ran in one suite and line 4 in the other, so all count::
 
@@ -511,15 +393,37 @@ def package_of(path: str) -> str:
     return "/".join(parts[:-1]) or "."
 
 
+def run_by(
+    suite: dict[str, FileCoverage], combined: dict[str, FileCoverage]
+) -> dict[str, FileCoverage]:
+    """Return what ``suite`` ran of every file in ``combined``.
+
+    Only the unit test run lists the files no test imports; this gives every
+    suite the same denominators: every line and branch of every file.
+
+    Example: ``suite`` is the docs.bzl scenarios', which has no record of
+    src/unused.py; ``combined`` has one, with its 1 line not run. Returns
+    ``suite`` plus ``"src/unused.py": FileCoverage(lines={1: False})``.
+    """
+    files: dict[str, FileCoverage] = {}
+    for path, file in combined.items():
+        ran = suite.get(path, FileCoverage())
+        files[path] = FileCoverage(
+            lines={n: ran.lines.get(n, False) for n in file.lines},
+            branches={b: ran.branches.get(b, False) for b in file.branches},
+        )
+    return files
+
+
 def summarize(
     suites: dict[str, dict[str, FileCoverage] | None],
     combined: dict[str, FileCoverage],
 ) -> Summary:
     """Return the numbers of the summary.
 
-    Example: ``suites`` holds the parse_lcov() result of each suite merged
-    with the baseline, None for a suite without data; ``combined`` that of all
-    of them. Returns the Summary of Summary's docstring.
+    Example: ``suites`` holds the parse_lcov() result of each suite, None for
+    a suite without data; ``combined`` that of all of them. Returns the
+    Summary of Summary's docstring.
     """
     # Files without code (empty __init__.py) have nothing to test and would
     # only add empty rows.
@@ -533,7 +437,7 @@ def summarize(
     return Summary(
         commit=commit,
         suites={
-            label: TotalCoverage.of(list(s.values())) if s else None
+            label: TotalCoverage.of(list(run_by(s, combined).values())) if s else None
             for label, s in suites.items()
         },
         combined=TotalCoverage.of(list(combined.values())),
@@ -679,7 +583,7 @@ def markdown(summary: Summary, reference: Summary | None, note: str | None) -> s
         | docs.bzl scenarios | 60.0% (3/5) |  | 50.0% (1/2) |  |
         | **Combined** | 80.0% (4/5) | +20.0% | 100.0% (2/2) |  |
 
-        Percentages cover every tracked non-test Python file; files that no ...
+        Percentages cover every non-test Python file in src/, tools/ and ...
         Δ is the change in percentage points against main at `9f8e7d6c`.
 
         <details><summary>Files with changed coverage (1, biggest drop ...
@@ -723,8 +627,8 @@ def markdown(summary: Summary, reference: Summary | None, note: str | None) -> s
     )
     out += [
         "",
-        "Percentages cover every tracked non-test Python file; "
-        "files that no test imports count as 0%.",
+        "Percentages cover every non-test Python file in src/, tools/ and "
+        "scripts_bazel/; files that no test imports count as 0%.",
     ]
     if reference:
         out.append(
@@ -811,54 +715,51 @@ def markdown(summary: Summary, reference: Summary | None, note: str | None) -> s
     return "\n".join(out)
 
 
-def load_reports(args: list[str], tracked: set[str]) -> dict[str, str | None]:
-    r"""Return the LCOV of each ``[LABEL=]PATH`` by label, None if it has no data.
+def load_reports(args: list[str]) -> dict[str, str | None]:
+    r"""Return the LCOV of each ``[LABEL=]DIR`` by label, None if it has no data.
 
-    Example: ``["Unit tests=unit.lcov", "docs.bzl scenarios=cov_docs"]``, where
-    unit.lcov has records for src/app.py and src/tests/test_app.py, and
-    cov_docs/ holds the data file of coverage_data_lcov()'s example. Returns
-    (the docs.bzl record's LF, LH, FN* and BRF/BRH lines left out)::
+    Example: ``["Unit tests=cov_unit", "docs.bzl scenarios=cov_docs"]``, where
+    cov_unit/ holds the data of a unit test run that called ``check(True)``
+    and never imported src/unused.py, and cov_docs/ the data file of
+    coverage_data_lcov()'s example. Returns (LF, LH, FN* and BRF/BRH lines
+    left out)::
 
         {
             "Unit tests":
                 "SF:src/app.py\nDA:1,1\nDA:2,1\nDA:3,1\nDA:4,0\n"
                 "BRDA:2,0,jump to line 3,1\nBRDA:2,0,jump to line 4,0\n"
-                "end_of_record\n",
+                "end_of_record\n"
+                "SF:src/unused.py\nDA:1,0\nend_of_record\n",
             "docs.bzl scenarios":
                 "SF:src/app.py\nDA:1,1\nDA:2,1\nDA:3,0\nDA:4,1\n"
                 "BRDA:2,0,jump to line 3,0\nBRDA:2,0,jump to line 4,1\n"
                 "end_of_record\n",
         }
 
-    The test file's record is gone. Had cov_docs/ been missing or empty:
-    ``"docs.bzl scenarios": None``.
+    Had cov_docs/ been missing or empty: ``"docs.bzl scenarios": None``.
     """
     suites: dict[str, str | None] = {}
     for arg in args:
         label, sep, path = arg.partition("=")
         if not sep:
             label, path = arg, arg
-        report = Path(path)
+        directory = Path(path)
         # A test job that failed early uploads no data; that must not hide
         # the coverage of the other suites.
-        if not report.exists():
-            print(f"warning: {path} does not exist; reporting '{label}' as no data")
+        if not directory.is_dir():
+            print(f"warning: {path} is no directory; reporting '{label}' as no data")
             suites[label] = None
             continue
-        text = coverage_data_lcov(report) if report.is_dir() else report.read_text()
-        # Test code is not under test, and the merged LCOV must count the same
-        # files as the Markdown summary so genhtml shows the same totals.
-        records = "".join(r.text for r in lcov_records(text) if r.source in tracked)
-        # An empty report means measuring failed (e.g. `bazel coverage` on a
-        # Python version without a rules_python coverage tool). Shown as 0% it
-        # would look like real, untested code.
-        if not records:
+        # No data means measuring failed. Shown as 0% it would look like real,
+        # untested code.
+        text = coverage_data_lcov(directory)
+        if not text:
             print(
                 f"warning: {path} has no coverage data; reporting '{label}' as no data"
             )
             suites[label] = None
             continue
-        suites[label] = records
+        suites[label] = text
     return suites
 
 
@@ -922,31 +823,31 @@ def write_summary(
 
 
 def main() -> None:
-    r"""Merge the reports named on the command line and write the results.
+    r"""Merge the suites named on the command line and write the results.
 
     Example::
 
         bazel run //tools:coverage_report -- \
-            "Unit tests=unit.lcov" "docs.bzl scenarios=cov_docs" \
+            "Unit tests=cov_unit" "docs.bzl scenarios=cov_docs" \
             --json coverage.json --markdown summary.md
 
-    Writes coverage.lcov (both suites' src/app.py records, plus the baseline
-    record of src/unused.py, which no suite has), coverage.json (see
-    Summary.to_json()) and summary.md (see markdown()). Prints::
+    Writes coverage.lcov (both suites' records, see load_reports()),
+    coverage.json (see Summary.to_json()) and summary.md (see markdown()).
+    Prints::
 
-        Wrote /repo/coverage.lcov: 1 untested Python files added
+        Wrote /repo/coverage.lcov
         Wrote /repo/coverage.json
         Wrote /repo/summary.md
     """
     parser = argparse.ArgumentParser(
-        description="Merge Python coverage reports and add untested files at 0%."
+        description="Report the Python coverage of the test suites, apart and combined."
     )
     parser.add_argument(
         "reports",
         nargs="*",
-        metavar="[LABEL=]PATH",
-        help="LCOV file or directory of coverage.py data files, relative to the "
-        "repository root. Missing paths are reported as 'no data'.",
+        metavar="[LABEL=]DIR",
+        help="directory of coverage.py data files, relative to the repository "
+        "root. Missing directories are reported as 'no data'.",
     )
     parser.add_argument(
         "-o",
@@ -965,31 +866,23 @@ def main() -> None:
     args = parser.parse_args()
 
     # `bazel run` starts in the runfiles tree. Work from the checkout instead so
-    # git sees the repository and LCOV paths are repo-relative (e.g. src/...),
-    # matching the paths in Bazel's coverage report.
+    # LCOV paths are repo-relative (e.g. src/...) and git finds the commit.
     os.chdir(os.environ.get("BUILD_WORKSPACE_DIRECTORY", "."))
 
-    tracked = tracked_python_files()
-    baseline = baseline_lcov(tracked)
-
-    suites = load_reports(args.reports, set(tracked))
-
+    suites = load_reports(args.reports)
     reports = [text for text in suites.values() if text]
-    covered = {r.source for text in reports for r in lcov_records(text)}
-    missing = [r.text for r in lcov_records(baseline) if r.source not in covered]
+    # genhtml merges the records of a file that more than one suite ran.
     output = Path(args.output)
-    output.write_text("".join(reports + missing))
-    print(f"Wrote {output.absolute()}: {len(missing)} untested Python files added")
+    output.write_text("".join(reports))
+    print(f"Wrote {output.absolute()}")
 
     if args.markdown or args.json:
-        # Merging each suite with the baseline gives all of them the same
-        # denominators: every line and branch of every tracked file.
         summary = summarize(
             {
-                label: parse_lcov(baseline + text) if text else None
+                label: parse_lcov(text) if text else None
                 for label, text in suites.items()
             },
-            parse_lcov(baseline + "".join(reports)),
+            parse_lcov("".join(reports)),
         )
         write_summary(summary, args.json, args.markdown, args.compare_with)
 

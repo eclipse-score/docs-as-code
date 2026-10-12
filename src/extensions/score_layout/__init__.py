@@ -16,8 +16,8 @@ from pathlib import Path
 from typing import Any, cast
 from urllib.parse import quote
 
-import html_options
-import sphinx_options
+import score_layout.html_options
+import score_layout.sphinx_options
 from sphinx.application import Sphinx
 
 from src.helper_lib import Environment, config_setdefault
@@ -71,19 +71,21 @@ def update_config(app: Sphinx, _config: Any):
 
     # Merge: user's entries take precedence over our defaults
     app.config.needs_layouts = {
-        **sphinx_options.needs_layouts,
+        **score_layout.sphinx_options.needs_layouts,
         **app.config.needs_layouts,
     }
     config_setdefault(
-        app.config, "needs_default_layout", sphinx_options.needs_default_layout
+        app.config,
+        "needs_default_layout",
+        score_layout.sphinx_options.needs_default_layout,
     )
-    config_setdefault(app.config, "html_theme", html_options.html_theme)
+    config_setdefault(app.config, "html_theme", score_layout.html_options.html_theme)
     app.config.html_context = {
-        **html_options.return_html_context(app),
+        **score_layout.html_options.return_html_context(app),
         **app.config.html_context,
     }
     app.config.html_theme_options = {
-        **html_options.return_html_theme_options(app),
+        **score_layout.html_options.return_html_theme_options(app),
         **app.config.html_theme_options,
     }
 
