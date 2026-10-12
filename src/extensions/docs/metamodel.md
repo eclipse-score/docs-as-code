@@ -74,6 +74,10 @@ Properties:
 - **tags**: A list of tags associated with the need type.
 - **parts**: The number of parts (separated by `__`) within the need ID.
 
+Generic Documents (`document`) may optionally link with `belongs_to` to the
+Module (`mod`), Component (`comp`), or Feature (`feat`) they document. The link
+can be omitted when the document has no such owner.
+
 ## Creating New Validation Checks
 
 The extension automatically discovers checks from the `checks/` directory and the metamodel.yaml config. There are several types of checks you can implement:
