@@ -178,12 +178,14 @@ class _NeedsOfType:
 _needs_of_type_callable = _NeedsOfType()
 
 
-def _parse_version(value: str) -> tuple[int, int, int]:
+def parse_version(value: str) -> tuple[int, int, int]:
     """Parse a ``valid_from``/``report_version``-style milestone string.
 
     Accepts ``vMAJOR.MINOR`` or ``vMAJOR.MINOR.PATCH`` (e.g. ``v0.8`` or
     ``v1.0.1``), matching the format enforced by the metamodel for
     ``valid_from``/``valid_until``/``report_version``.
+
+    Public API for use by other extensions that need version comparison.
     """
     numbers = [int(part) for part in value.strip().lstrip("vV").split(".")]
     while len(numbers) < 3:
@@ -191,7 +193,11 @@ def _parse_version(value: str) -> tuple[int, int, int]:
     return (numbers[0], numbers[1], numbers[2])
 
 
-class _RequirementInReportVersion:
+# Keep private alias for backwards compatibility with internal code
+_parse_version = parse_version
+
+
+class RequirementInReportVersion:
     """Decide whether a requirement Need belongs to a ``report_version`` scope.
 
     ``feat_req`` (and ``stkh_req``) carry ``valid_from`` directly. ``comp_req``
@@ -205,6 +211,8 @@ class _RequirementInReportVersion:
     Calling with an empty/``None`` ``report_version`` always returns ``True``,
     which keeps unscoped reports (e.g. "latest") showing every requirement as
     before.
+
+    Public API for use by other extensions that need version-scoped filtering.
     """
 
     def __call__(self, need: NeedItem, report_version: str | None) -> bool:
@@ -222,10 +230,14 @@ class _RequirementInReportVersion:
         return any(self(feat_req, report_version) for feat_req in linked_feat_reqs)
 
 
-_req_in_report_version_callable = _RequirementInReportVersion()
+# Public instance for direct import
+req_in_report_version = RequirementInReportVersion()
+
+# Private alias for backwards compatibility with internal code
+_req_in_report_version_callable = req_in_report_version
 
 
-class _AnyRequirementInReportVersion:
+class AnyRequirementInReportVersion:
     """Decide whether a Feature/Component has any requirement in scope.
 
     Used to drop an entire Feature/Component section from the report when
@@ -233,6 +245,8 @@ class _AnyRequirementInReportVersion:
     rendering an empty section. An empty/``None`` ``report_version`` always
     returns ``True`` (unscoped reports keep every Feature/Component, even
     ones without any requirement at all, as before).
+
+    Public API for use by other extensions that need version-scoped filtering.
     """
 
     def __call__(self, reqs: list[NeedItem], report_version: str | None) -> bool:
@@ -241,7 +255,11 @@ class _AnyRequirementInReportVersion:
         return any(_req_in_report_version_callable(req, report_version) for req in reqs)
 
 
-_any_req_in_report_version_callable = _AnyRequirementInReportVersion()
+# Public instance for direct import
+any_req_in_report_version = AnyRequirementInReportVersion()
+
+# Private alias for backwards compatibility with Jinja context
+_any_req_in_report_version_callable = any_req_in_report_version
 
 
 class _ReferencedIds:

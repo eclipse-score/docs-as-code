@@ -134,6 +134,13 @@ def calculate_status_and_coverage_metrics(  # noqa: C901
     Returns a dict with:
     - status: {valid: int, valid_inspected: int, invalid: int}
     - coverage: {fully_covered: int, partially_covered: int, not_covered: int}
+
+    Note:
+        The version filtering logic here duplicates ``req_in_report_version``
+        from ``score_sphinx_needs_templates``. We keep it separate because
+        this function operates during the build phase with an explicit
+        ``all_needs`` parameter, while ``req_in_report_version`` relies on
+        Sphinx environment state during template rendering.
     """
     import re
 
