@@ -23,6 +23,22 @@ from sphinx_needs.need_item import (
 )
 
 from src.extensions.score_metamodel import CheckLogger
+from src.helper_lib import Environment
+
+# The source directory CheckLogger puts in front of locations.
+SRCDIR = "docs"
+
+
+def expected_location() -> str:
+    """Return the location CheckLogger reports for a need created by need().
+
+    Under Bazel (runfiles set) it has no source directory in front, see
+    CheckLogger._location; under plain pytest it has.
+    """
+    env = Environment()
+    if env.optional_path("RUNFILES_DIR") or env.optional_path("RUNFILES_MANIFEST_FILE"):
+        return "docname.rst:42"
+    return f"{SRCDIR}/docname.rst:42"
 
 
 def fake_check_logger():
@@ -33,8 +49,7 @@ def fake_check_logger():
             self._mock_logger = MagicMock(spec=SphinxLoggerAdapter)
             self._mock_logger.warning = MagicMock()
             self._mock_logger.info = MagicMock()
-            app_path = MagicMock()
-            super().__init__(self._mock_logger, app_path)
+            super().__init__(self._mock_logger, SRCDIR)
 
         def assert_no_warnings(self):
             if self.warnings:
@@ -75,7 +90,7 @@ def fake_check_logger():
             assert kwargs["type"] == "score_metamodel"
 
             if expect_location:
-                assert kwargs["location"] == "docname.rst:42", kwargs
+                assert kwargs["location"] == expected_location(), kwargs
 
         def assert_info(self, expected_substring: str, expect_location: bool = True):
             """
@@ -102,7 +117,7 @@ def fake_check_logger():
             assert kwargs["type"] == "score_metamodel"
 
             if expect_location:
-                assert kwargs["location"] == "docname.rst:42", kwargs
+                assert kwargs["location"] == expected_location(), kwargs
 
     return FakeCheckLogger()
 

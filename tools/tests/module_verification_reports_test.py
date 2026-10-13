@@ -402,6 +402,16 @@ needs_extra_links:
   realizes:
     incoming: realized by
     outgoing: realizes
+  # Read by module_verification_report.need, even when no need sets them.
+  satisfied_by:
+    incoming: satisfies
+    outgoing: satisfied by
+  fully_verifies:
+    incoming: fully_verified_by
+    outgoing: fully_verifies
+  partially_verifies:
+    incoming: partially_verified_by
+    outgoing: partially_verifies
 """,
         encoding="utf-8",
     )
