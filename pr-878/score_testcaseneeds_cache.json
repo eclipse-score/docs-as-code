@@ -30,7 +30,7 @@
   {
     "name": "test_schema_export__test_load_metamodel_yaml",
     "file": "tools/schema_export/tests/test_schema_export.py",
-    "line": "47",
+    "line": "50",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -44,7 +44,7 @@
   {
     "name": "test_schema_export__test_build_json_schema",
     "file": "tools/schema_export/tests/test_schema_export.py",
-    "line": "58",
+    "line": "61",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -58,7 +58,7 @@
   {
     "name": "test_schema_export__test_build_metamodel_data",
     "file": "tools/schema_export/tests/test_schema_export.py",
-    "line": "75",
+    "line": "78",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -72,7 +72,7 @@
   {
     "name": "test_schema_export__test_schema_data_consistency",
     "file": "tools/schema_export/tests/test_schema_export.py",
-    "line": "101",
+    "line": "104",
     "result": "skipped",
     "repo_name": null,
     "hash": null,
