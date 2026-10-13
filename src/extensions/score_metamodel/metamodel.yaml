@@ -1053,7 +1053,6 @@ needs_types:
       context: ^[\s\S]+$
       decision: ^[\s\S]+$
       tracking: ^https://github\.com/eclipse-score/score/issues/\d+$
-      version: ^[0-9]+$
       consequences: ^[\s\S]+$
     optional_links:
       affects: stkh_req, feat_req, comp_req, tool_req, aou_req, gd_req
