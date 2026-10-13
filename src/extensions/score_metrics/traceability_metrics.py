@@ -227,23 +227,29 @@ def calculate_verification_metrics(
     # Calculate metrics per component
     for component_id in component_ids:
         # Requirements (comp_req with satisfied_by pointing to this component)
-        reqs = [
-            n
-            for n in all_needs.values()
-            if n.get("type") == "comp_req"
-            and component_id in n.get("satisfied_by", [])
-        ]
+        reqs = []
+        for n in all_needs.values():
+            if n.get("type") != "comp_req":
+                continue
+            sat_by = n.get("satisfied_by", [])
+            if isinstance(sat_by, str):
+                sat_by = [sat_by]
+            if component_id in sat_by:
+                reqs.append(n)
         req_metrics = calculate_status_and_coverage_metrics(
             reqs, version_filter=report_version, all_needs=all_needs
         )
 
         # Architecture elements (comp_arc_sta, comp_arc_dyn with belongs_to this component)
-        arch = [
-            n
-            for n in all_needs.values()
-            if n.get("type") in ("comp_arc_sta", "comp_arc_dyn")
-            and component_id in n.get("belongs_to", [])
-        ]
+        arch = []
+        for n in all_needs.values():
+            if n.get("type") not in ("comp_arc_sta", "comp_arc_dyn"):
+                continue
+            bel_to = n.get("belongs_to", [])
+            if isinstance(bel_to, str):
+                bel_to = [bel_to]
+            if component_id in bel_to:
+                arch.append(n)
         arch_metrics = calculate_status_and_coverage_metrics(
             arch, version_filter=report_version, all_needs=all_needs
         )
