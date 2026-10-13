@@ -119,6 +119,84 @@ def calculate_test_metrics(
     }
 
 
+def calculate_status_and_coverage_metrics(
+    needs_list: list[NeedItem],
+) -> dict[str, dict[str, int]]:
+    """Calculate status distribution and test coverage for a list of needs.
+
+    Returns a dict with:
+    - status: {valid: int, valid_inspected: int, invalid: int}
+    - coverage: {fully_covered: int, partially_covered: int, not_covered: int}
+    """
+    status_counts = {"valid": 0, "valid_inspected": 0, "invalid": 0}
+    coverage_counts = {"fully_covered": 0, "partially_covered": 0, "not_covered": 0}
+
+    for need in needs_list:
+        # Status distribution
+        status = str(need.get("status", ""))
+        if status in status_counts:
+            status_counts[status] += 1
+
+        # Test coverage (based on verifies_back links)
+        has_fully = bool(need.get("fully_verifies_back"))
+        has_partially = bool(need.get("partially_verifies_back"))
+
+        if has_fully:
+            coverage_counts["fully_covered"] += 1
+        elif has_partially:
+            coverage_counts["partially_covered"] += 1
+        else:
+            coverage_counts["not_covered"] += 1
+
+    return {"status": status_counts, "coverage": coverage_counts}
+
+
+def calculate_verification_metrics(all_needs: NeedsView) -> dict[str, dict]:
+    """Calculate per-component verification metrics for verification reports.
+
+    Looks for needs that have belongs_to links to components and calculates
+    status/coverage metrics for requirements and architecture elements.
+    """
+    verification_metrics: dict[str, dict] = {}
+
+    # Find all components by looking at belongs_to links
+    component_ids: set[str] = set()
+    for need in all_needs.values():
+        belongs_to = need.get("belongs_to")
+        if belongs_to:
+            if isinstance(belongs_to, list):
+                component_ids.update(belongs_to)
+            elif isinstance(belongs_to, str):
+                component_ids.add(belongs_to)
+
+    # Calculate metrics per component
+    for component_id in component_ids:
+        # Requirements (comp_req with satisfied_by pointing to this component)
+        reqs = [
+            n
+            for n in all_needs.values()
+            if n.get("type") == "comp_req"
+            and component_id in n.get("satisfied_by", [])
+        ]
+        req_metrics = calculate_status_and_coverage_metrics(reqs)
+
+        # Architecture elements (comp_arc_sta, comp_arc_dyn with belongs_to this component)
+        arch = [
+            n
+            for n in all_needs.values()
+            if n.get("type") in ("comp_arc_sta", "comp_arc_dyn")
+            and component_id in n.get("belongs_to", [])
+        ]
+        arch_metrics = calculate_status_and_coverage_metrics(arch)
+
+        verification_metrics[component_id] = {
+            "requirements": req_metrics,
+            "architecture": arch_metrics,
+        }
+
+    return verification_metrics
+
+
 def calculate_full_need_metrics(app: Sphinx, include_external: bool):
     """
     Calculate all tracked metrics for requirements and tests.
@@ -188,6 +266,7 @@ def calculate_full_need_metrics(app: Sphinx, include_external: bool):
         "overall_metrics": overall_metrics,
         "metrics_by_type": metrics_by_type,
         "tests": test_metrics,
+        "verification_metrics": calculate_verification_metrics(all_needs),
     }
     # Save the metrics in a Global Variable to enable access from other parts.
     # Not a great solution but it is needed, as needpie filter functions for example

@@ -247,3 +247,57 @@ def get_non_overlapping_link_metrics(
     only_code = with_code - fully
 
     results.extend([remaining, only_test, only_code, fully])
+
+
+def get_component_status_metrics(
+    needs: list[Any], results: list[int], **kwargs: Any
+) -> None:
+    """Get status distribution for a component's requirements or architecture.
+
+    Arguments via kwargs:
+        - component_id: The component ID (e.g., "comp__my_component")
+        - category: Either "requirements" or "architecture"
+
+    Returns [valid_count, valid_inspected_count, invalid_count].
+    """
+    results.clear()
+    component_id = str(kwargs.get("component_id", ""))
+    category = str(kwargs.get("category", "requirements"))
+
+    metrics = CALCULATED_METRICS.get("verification_metrics", {})
+    component_metrics = metrics.get(component_id, {})
+    category_metrics = component_metrics.get(category, {})
+    status = category_metrics.get("status", {})
+
+    results.extend([
+        status.get("valid", 0),
+        status.get("valid_inspected", 0),
+        status.get("invalid", 0),
+    ])
+
+
+def get_component_coverage_metrics(
+    needs: list[Any], results: list[int], **kwargs: Any
+) -> None:
+    """Get test coverage for a component's requirements or architecture.
+
+    Arguments via kwargs:
+        - component_id: The component ID (e.g., "comp__my_component")
+        - category: Either "requirements" or "architecture"
+
+    Returns [fully_covered, partially_covered, not_covered].
+    """
+    results.clear()
+    component_id = str(kwargs.get("component_id", ""))
+    category = str(kwargs.get("category", "requirements"))
+
+    metrics = CALCULATED_METRICS.get("verification_metrics", {})
+    component_metrics = metrics.get(component_id, {})
+    category_metrics = component_metrics.get(category, {})
+    coverage = category_metrics.get("coverage", {})
+
+    results.extend([
+        coverage.get("fully_covered", 0),
+        coverage.get("partially_covered", 0),
+        coverage.get("not_covered", 0),
+    ])
