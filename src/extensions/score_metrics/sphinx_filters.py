@@ -42,6 +42,9 @@ from __future__ import annotations
 from typing import Any
 
 from score_metrics.traceability_metrics import CALCULATED_METRICS
+
+# Import the public version-scoping helper for filtering by valid_from
+from score_sphinx_needs_templates import req_in_report_version
 from sphinx_needs.need_item import NeedItem
 
 
@@ -249,6 +252,71 @@ def get_non_overlapping_link_metrics(
     results.extend([remaining, only_test, only_code, fully])
 
 
+def _is_need_in_component(need: NeedItem, component_id: str, category: str) -> bool:
+    """Check if a need belongs to a component for a given category."""
+    need_type = str(need.get("type", ""))
+
+    if category == "requirements":
+        if need_type != "comp_req":
+            return False
+        sat_by = need.get("satisfied_by", [])
+        if isinstance(sat_by, str):
+            sat_by = [sat_by]
+        return component_id in sat_by
+
+    # architecture
+    if need_type not in ("comp_arc_sta", "comp_arc_dyn"):
+        return False
+    bel_to = need.get("belongs_to", [])
+    if isinstance(bel_to, str):
+        bel_to = [bel_to]
+    return component_id in bel_to
+
+
+def _count_status_filtered(
+    needs: list[Any], component_id: str, category: str, version: str
+) -> dict[str, int]:
+    """Count status distribution with version filtering."""
+    status = {"valid": 0, "valid_inspected": 0, "invalid": 0}
+
+    for need in needs:
+        if not _is_need_in_component(need, component_id, category):
+            continue
+        if not req_in_report_version(need, version):
+            continue
+
+        need_status = str(need.get("status", ""))
+        if need_status in status:
+            status[need_status] += 1
+
+    return status
+
+
+def _count_coverage_filtered(
+    needs: list[Any], component_id: str, category: str, version: str
+) -> dict[str, int]:
+    """Count test coverage with version filtering."""
+    coverage = {"fully_covered": 0, "partially_covered": 0, "not_covered": 0}
+
+    for need in needs:
+        if not _is_need_in_component(need, component_id, category):
+            continue
+        if not req_in_report_version(need, version):
+            continue
+
+        has_testlink = bool(need.get("testlink"))
+        has_code_link = bool(need.get("source_code_link"))
+
+        if has_testlink and has_code_link:
+            coverage["fully_covered"] += 1
+        elif has_testlink or has_code_link:
+            coverage["partially_covered"] += 1
+        else:
+            coverage["not_covered"] += 1
+
+    return coverage
+
+
 def get_component_status_metrics(
     needs: list[Any], results: list[int], **kwargs: Any
 ) -> None:
@@ -264,22 +332,17 @@ def get_component_status_metrics(
     results.clear()
     component_id = str(kwargs.get("component_id", ""))
     category = str(kwargs.get("category", "requirements"))
-    version = kwargs.get("version")  # Can be None or string
+    version = kwargs.get("version")
 
-    # With versioning, metrics are stored under versioned keys
+    # If version is specified, filter on-the-fly using the version-scoping helper
     if version:
-        metrics_key = f"verification_metrics_v{version}"
+        status = _count_status_filtered(needs, component_id, category, version)
     else:
-        metrics_key = "verification_metrics"
-
-    metrics = CALCULATED_METRICS.get(metrics_key, {})
-    if not metrics:
-        # Fallback to unversioned metrics
+        # Use pre-calculated metrics from CALCULATED_METRICS
         metrics = CALCULATED_METRICS.get("verification_metrics", {})
-
-    component_metrics = metrics.get(component_id, {})
-    category_metrics = component_metrics.get(category, {})
-    status = category_metrics.get("status", {})
+        component_metrics = metrics.get(component_id, {})
+        category_metrics = component_metrics.get(category, {})
+        status = category_metrics.get("status", {})
 
     results.extend(
         [
@@ -305,22 +368,17 @@ def get_component_coverage_metrics(
     results.clear()
     component_id = str(kwargs.get("component_id", ""))
     category = str(kwargs.get("category", "requirements"))
-    version = kwargs.get("version")  # Can be None or string
+    version = kwargs.get("version")
 
-    # With versioning, metrics are stored under versioned keys
+    # If version is specified, filter on-the-fly using the version-scoping helper
     if version:
-        metrics_key = f"verification_metrics_v{version}"
+        coverage = _count_coverage_filtered(needs, component_id, category, version)
     else:
-        metrics_key = "verification_metrics"
-
-    metrics = CALCULATED_METRICS.get(metrics_key, {})
-    if not metrics:
-        # Fallback to unversioned metrics
+        # Use pre-calculated metrics from CALCULATED_METRICS
         metrics = CALCULATED_METRICS.get("verification_metrics", {})
-
-    component_metrics = metrics.get(component_id, {})
-    category_metrics = component_metrics.get(category, {})
-    coverage = category_metrics.get("coverage", {})
+        component_metrics = metrics.get(component_id, {})
+        category_metrics = component_metrics.get(category, {})
+        coverage = category_metrics.get("coverage", {})
 
     results.extend(
         [
