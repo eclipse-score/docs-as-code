@@ -12,11 +12,14 @@
 # *******************************************************************************
 """Tests for schema export functionality."""
 
+import importlib
 import json
 
 # Import the modules to test
 import sys
+from collections.abc import Mapping
 from pathlib import Path
+from typing import Any, cast
 
 import pytest
 
@@ -38,7 +41,7 @@ def metamodel_path() -> Path:
 
 
 @pytest.fixture
-def metamodel_data(metamodel_path: Path) -> dict:
+def metamodel_data(metamodel_path: Path) -> Mapping[str, Any]:
     """Load actual metamodel data."""
     assert metamodel_path.is_file(), f"metamodel.yaml not found at {metamodel_path}"
     return load_metamodel_yaml(metamodel_path)
@@ -55,7 +58,7 @@ def test_load_metamodel_yaml(metamodel_path: Path):
     assert len(data["needs_types"]) > 0
 
 
-def test_build_json_schema(metamodel_data: dict):
+def test_build_json_schema(metamodel_data: Mapping[str, Any]):
     """Test JSON Schema generation."""
     schema = build_json_schema(metamodel_data, "sha256:test")
 
@@ -72,7 +75,7 @@ def test_build_json_schema(metamodel_data: dict):
     assert "graph_checks" in props
 
 
-def test_build_metamodel_data(metamodel_data: dict):
+def test_build_metamodel_data(metamodel_data: Mapping[str, Any]):
     """Test metamodel data export."""
     # Use a valid SHA-256 digest (64 hex characters)
     test_digest = "sha256:" + "a" * 64
@@ -98,10 +101,10 @@ def test_build_metamodel_data(metamodel_data: dict):
     assert len(data["link_types"]) > 0
 
 
-def test_schema_data_consistency(metamodel_data: dict):
+def test_schema_data_consistency(metamodel_data: Mapping[str, Any]):
     """Test that generated data is consistent with schema."""
     try:
-        import jsonschema
+        jsonschema = cast(Any, importlib.import_module("jsonschema"))
     except ImportError:
         pytest.skip("jsonschema package not available")
 
@@ -118,7 +121,7 @@ def test_schema_data_consistency(metamodel_data: dict):
         pytest.skip("Schema validation requires jsonschema package")
 
 
-def test_deterministic_output(metamodel_data: dict):
+def test_deterministic_output(metamodel_data: Mapping[str, Any]):
     """Test that generation is deterministic."""
     test_digest = "sha256:" + "a" * 64
     schema1 = build_json_schema(metamodel_data, test_digest)

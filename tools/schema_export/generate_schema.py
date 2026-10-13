@@ -69,81 +69,81 @@ def _as_string_list(value: Any) -> list[str]:
 
 def _build_base_options_schema(data: Mapping[str, Any]) -> dict[str, Any]:
     """Build JSON Schema for base options."""
-    base = _as_mapping(data.get("needs_types_base_options"))
-
-    schema = {
-        "type": "object",
-        "description": "Base options inherited by all need types",
-        "properties": {
-            "mandatory": {
-                "type": "object",
-                "description": "Mandatory options for all need types",
-                "additionalProperties": {
+    return cast(
+        dict[str, Any],
+        {
+            "type": "object",
+            "description": "Base options inherited by all need types",
+            "properties": {
+                "mandatory": {
                     "type": "object",
-                    "properties": {
-                        "name": {"type": "string"},
-                        "pattern": {"type": "string", "format": "regex"},
+                    "description": "Mandatory options for all need types",
+                    "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                            "name": {"type": "string"},
+                            "pattern": {"type": "string", "format": "regex"},
+                        },
+                        "required": ["name", "pattern"],
                     },
-                    "required": ["name", "pattern"],
                 },
-            },
-            "optional": {
-                "type": "object",
-                "description": "Optional options for all need types",
-                "additionalProperties": {
+                "optional": {
                     "type": "object",
-                    "properties": {
-                        "name": {"type": "string"},
-                        "pattern": {"type": "string", "format": "regex"},
+                    "description": "Optional options for all need types",
+                    "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                            "name": {"type": "string"},
+                            "pattern": {"type": "string", "format": "regex"},
+                        },
+                        "required": ["name", "pattern"],
                     },
-                    "required": ["name", "pattern"],
                 },
             },
         },
-    }
-
-    return schema
+    )
 
 
 def _build_need_type_schema(
     type_name: str, type_data: Mapping[str, Any]
 ) -> dict[str, Any]:
     """Build JSON Schema for a single need type."""
-    schema = {
-        "type": "object",
-        "description": f"Definition of {type_name} need type",
-        "properties": {
-            "title": {"type": "string"},
-            "prefix": {"type": "string"},
-            "color": {"type": "string"},
-            "style": {"type": "string"},
-            "tags": {"type": "array", "items": {"type": "string"}},
-            "parts": {"type": "integer"},
-            "mandatory_options": {
-                "type": "object",
-                "description": "Mandatory field patterns for this type",
-                "additionalProperties": {"type": "string", "format": "regex"},
+    return cast(
+        dict[str, Any],
+        {
+            "type": "object",
+            "description": f"Definition of {type_name} need type",
+            "properties": {
+                "title": {"type": "string"},
+                "prefix": {"type": "string"},
+                "color": {"type": "string"},
+                "style": {"type": "string"},
+                "tags": {"type": "array", "items": {"type": "string"}},
+                "parts": {"type": "integer"},
+                "mandatory_options": {
+                    "type": "object",
+                    "description": "Mandatory field patterns for this type",
+                    "additionalProperties": {"type": "string", "format": "regex"},
+                },
+                "optional_options": {
+                    "type": "object",
+                    "description": "Optional field patterns for this type",
+                    "additionalProperties": {"type": "string", "format": "regex"},
+                },
+                "mandatory_links": {
+                    "type": "object",
+                    "description": "Mandatory link patterns for this type",
+                    "additionalProperties": {"type": "string"},
+                },
+                "optional_links": {
+                    "type": "object",
+                    "description": "Optional link patterns for this type",
+                    "additionalProperties": {"type": "string"},
+                },
             },
-            "optional_options": {
-                "type": "object",
-                "description": "Optional field patterns for this type",
-                "additionalProperties": {"type": "string", "format": "regex"},
-            },
-            "mandatory_links": {
-                "type": "object",
-                "description": "Mandatory link patterns for this type",
-                "additionalProperties": {"type": "string"},
-            },
-            "optional_links": {
-                "type": "object",
-                "description": "Optional link patterns for this type",
-                "additionalProperties": {"type": "string"},
-            },
+            "required": ["title"],
         },
-        "required": ["title"],
-    }
-
-    return schema
+    )
 
 
 def _build_link_type_schema(
@@ -162,9 +162,9 @@ def _build_prohibited_words_schema(data: Mapping[str, Any]) -> dict[str, Any]:
     """Build JSON Schema for prohibited words checks."""
     checks = _as_mapping(data.get("prohibited_words_checks"))
 
-    checks_schema = {}
+    checks_schema: dict[str, Any] = {}
     for check_name, check_data in checks.items():
-        check_schema = {
+        check_schema: dict[str, Any] = {
             "type": "object",
             "description": f"Prohibited words check: {check_name}",
             "properties": {
@@ -177,7 +177,7 @@ def _build_prohibited_words_schema(data: Mapping[str, Any]) -> dict[str, Any]:
         }
 
         # Add dynamic properties for each option being checked
-        for option, words in _as_mapping(check_data).items():
+        for option in _as_mapping(check_data):
             if option != "types":
                 check_schema["properties"][option] = {
                     "type": "array",
@@ -243,50 +243,51 @@ def build_json_schema(data: Mapping[str, Any], digest: str) -> dict[str, Any]:
             rule_name, _as_mapping(rule_data)
         )
 
-    schema = {
-        "$schema": "https://json-schema.org/draft/2020-12/schema",
-        "$id": "https://eclipse-score.github.io/schemas/metamodel-schema.json",
-        "title": "S-CORE Metamodel Schema",
-        "description": "JSON Schema for the S-CORE requirements metamodel",
-        "type": "object",
-        "properties": {
-            "$schema": {
-                "type": "string",
-                "description": "Reference to this metamodel schema",
+    return cast(
+        dict[str, Any],
+        {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "$id": "https://eclipse-score.github.io/schemas/metamodel-schema.json",
+            "title": "S-CORE Metamodel Schema",
+            "description": "JSON Schema for the S-CORE requirements metamodel",
+            "type": "object",
+            "properties": {
+                "$schema": {
+                    "type": "string",
+                    "description": "Reference to this metamodel schema",
+                },
+                "metamodel_digest": {
+                    "type": "string",
+                    "pattern": "^sha256:[a-f0-9]{64}$",
+                    "description": "SHA256 digest of the source metamodel.yaml",
+                },
+                "schema_version": {
+                    "type": "integer",
+                    "const": 1,
+                    "description": "Schema version identifier",
+                },
+                "needs_types_base_options": _build_base_options_schema(data),
+                "needs_types": {
+                    "type": "object",
+                    "description": "All Sphinx-Needs types (directives)",
+                    "properties": need_types_properties,
+                },
+                "needs_extra_links": {
+                    "type": "object",
+                    "description": "All extra link definitions",
+                    "properties": link_types_properties,
+                },
+                "prohibited_words_checks": _build_prohibited_words_schema(data),
+                "graph_checks": {
+                    "type": "object",
+                    "description": "Graph validation rules",
+                    "properties": graph_rules_properties,
+                },
             },
-            "metamodel_digest": {
-                "type": "string",
-                "pattern": "^sha256:[a-f0-9]{64}$",
-                "description": "SHA256 digest of the source metamodel.yaml",
-            },
-            "schema_version": {
-                "type": "integer",
-                "const": 1,
-                "description": "Schema version identifier",
-            },
-            "needs_types_base_options": _build_base_options_schema(data),
-            "needs_types": {
-                "type": "object",
-                "description": "All Sphinx-Needs types (directives)",
-                "properties": need_types_properties,
-            },
-            "needs_extra_links": {
-                "type": "object",
-                "description": "All extra link definitions",
-                "properties": link_types_properties,
-            },
-            "prohibited_words_checks": _build_prohibited_words_schema(data),
-            "graph_checks": {
-                "type": "object",
-                "description": "Graph validation rules",
-                "properties": graph_rules_properties,
-            },
+            "required": ["$schema", "schema_version", "metamodel_digest"],
+            "additionalProperties": False,
         },
-        "required": ["$schema", "schema_version", "metamodel_digest"],
-        "additionalProperties": False,
-    }
-
-    return schema
+    )
 
 
 def render_schema(schema: Mapping[str, Any]) -> str:
