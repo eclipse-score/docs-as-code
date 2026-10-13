@@ -73,17 +73,35 @@
 {#- One row of two pies (status and test coverage) restricted to a single
     safety class, so that QM and ASIL figures are never mixed in one chart.
     QM Needs never reach ``valid_inspected``, so there ``valid`` already is
-    the green "done" slice rather than the yellow "not inspected yet" one. -#}
-{% macro safety_pie_row(title, subject, base, safety, safety_label) %}
+    the green "done" slice rather than the yellow "not inspected yet" one.
+
+    ``count`` decides between pies and placeholders only; it is deliberately
+    not shown, because it is resolved through the Need graph while the pies
+    count through Sphinx-Needs filters, and the two can disagree on links
+    carrying a ``[version==N]`` selector. -#}
+{% macro safety_pie_row(title, subject, base, safety, safety_label, count) %}
 {%- set scope = base ~ ' and safety == "' ~ safety ~ '"' %}
 {%- set statuses = ["valid", "invalid"] if safety == "QM" else ["valid", "valid_inspected", "invalid"] %}
 {%- set status_colors = "#37a12d, #ca2828" if safety == "QM" else "#f5c518, #37a12d, #ca2828" %}
+{#- docutils normalises ``:class:`` values, so avoid underscores in them. -#}
+{%- set safety_css = safety|lower|replace("_", "-") %}
+
+.. rubric:: {{ safety_label }} — {{ subject }}
+   :class: safety-class-heading safety-{{ safety_css }}
 
 .. grid:: 1 2 2 2
    :gutter: 3
 
    .. grid-item::
 
+{% if count == 0 %}
+      .. raw:: html
+
+         <div class="empty-pie">
+            <span class="empty-pie-title">{{ subject }} Status ({{ safety_label }})</span>
+            <span class="empty-pie-text">no {{ safety_label }} {{ subject|lower }}</span>
+         </div>
+{% else %}
       .. needpie:: {{ title }} {{ subject }} Status ({{ safety_label }})
          :labels: {{ statuses|join(", ") }}
          :colors: {{ status_colors }}
@@ -91,8 +109,17 @@
 
 {% for state in statuses %}         {{ scope }} and status == "{{ state }}"
 {% endfor %}
+{% endif %}
    .. grid-item::
 
+{% if count == 0 %}
+      .. raw:: html
+
+         <div class="empty-pie">
+            <span class="empty-pie-title">{{ subject }} Test Coverage ({{ safety_label }})</span>
+            <span class="empty-pie-text">no {{ safety_label }} {{ subject|lower }}</span>
+         </div>
+{% else %}
       .. needpie:: {{ title }} {{ subject }} Test Coverage ({{ safety_label }})
          :labels: fully covered, partially covered, not covered
          :colors: #37a12d, #f0a500, #ca2828
@@ -101,6 +128,7 @@
          {{ scope }} and fully_verifies_back
          {{ scope }} and partially_verifies_back and not fully_verifies_back
          {{ scope }} and not fully_verifies_back and not partially_verifies_back
+{% endif %}
 {% endmacro %}
 
 .. raw:: html
@@ -127,6 +155,23 @@
    .wp-doc-table td .dataTables_wrapper .dataTables_filter,
    .wp-doc-table td .dataTables_wrapper .dataTables_info,
    .wp-doc-table td .dataTables_wrapper .dataTables_paginate { display: none; }
+
+   p.rubric.safety-class-heading {
+       display: inline-block; margin: 1.4em 0 0.5em 0;
+       padding: 0.15em 0.9em; border-radius: 1em;
+       font-size: 0.95em; font-weight: 600; color: #ffffff;
+   }
+   p.rubric.safety-class-heading.safety-asil-b { background: #1f4e79; }
+   p.rubric.safety-class-heading.safety-qm { background: #6c757d; }
+
+   .empty-pie {
+       display: flex; flex-direction: column; align-items: center;
+       justify-content: center; gap: 0.4em;
+       height: 200px; padding: 0.5em; text-align: center;
+       border: 2px dashed #b0b0b0; border-radius: 6px; color: #6c757d;
+   }
+   .empty-pie-title { font-weight: 600; }
+   .empty-pie-text { font-style: italic; }
    </style>
 
 {# ===================================================================== #}
@@ -165,25 +210,35 @@ Component Overview
 {% set component_reqs_all = linked_needs(component_id, "satisfied_by_back")
      |selectattr("type", "eq", "comp_req")
      |list %}
-{% set ns = namespace(req_ids=[]) %}
+{% set ns = namespace(reqs=[]) %}
 {% for req in component_reqs_all %}
 {% if req_in_report_version(req, report_version) %}
-{% set ns.req_ids = ns.req_ids + [req["id"]] %}
+{% set ns.reqs = ns.reqs + [req] %}
 {% endif %}
 {% endfor %}
-{% set component_req_filter = 'id in ' ~ id_filter_list(ns.req_ids) %}
+{% set component_reqs = ns.reqs %}
+{% set component_req_filter = 'id in ' ~ id_filter_list(component_reqs|map(attribute="id")|list) %}
+{#- ``type`` has no "in" test in minijinja, so the two architecture types are
+    collected separately and concatenated. -#}
+{% set component_arcs_all = linked_needs(component_id, "belongs_to_back") %}
+{% set component_arcs = (component_arcs_all|selectattr("type", "eq", "comp_arc_sta")|list)
+     + (component_arcs_all|selectattr("type", "eq", "comp_arc_dyn")|list) %}
 
 Component Requirements Statistics
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 {% set req_base = 'type == "comp_req" and "' ~ component_id ~ '" in satisfied_by and ' ~ component_req_filter %}
-{{ safety_pie_row(component_title, "Requirements", req_base, "ASIL_B", "ASIL B") }}
-{{ safety_pie_row(component_title, "Requirements", req_base, "QM", "QM") }}
+{{ safety_pie_row(component_title, "Requirements", req_base, "ASIL_B", "ASIL B",
+     component_reqs|selectattr("safety", "eq", "ASIL_B")|list|length) }}
+{{ safety_pie_row(component_title, "Requirements", req_base, "QM", "QM",
+     component_reqs|selectattr("safety", "eq", "QM")|list|length) }}
 
 Component Architecture Statistics
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 {% set arc_base = 'type in ["comp_arc_sta", "comp_arc_dyn"] and "' ~ component_id ~ '" in belongs_to' %}
-{{ safety_pie_row(component_title, "Architecture Elements", arc_base, "ASIL_B", "ASIL B") }}
-{{ safety_pie_row(component_title, "Architecture Elements", arc_base, "QM", "QM") }}
+{{ safety_pie_row(component_title, "Architecture Elements", arc_base, "ASIL_B", "ASIL B",
+     component_arcs|selectattr("safety", "eq", "ASIL_B")|list|length) }}
+{{ safety_pie_row(component_title, "Architecture Elements", arc_base, "QM", "QM",
+     component_arcs|selectattr("safety", "eq", "QM")|list|length) }}
 
 Requirements Traceability
 ^^^^^^^^^^^^^^^^^^^^^^^^^
