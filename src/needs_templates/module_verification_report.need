@@ -70,6 +70,39 @@
 [{% for req_id in ids %}"{{ req_id }}"{% if not loop.last %}, {% endif %}{% endfor %}]
 {%- endmacro %}
 
+{#- One row of two pies (status and test coverage) restricted to a single
+    safety class, so that QM and ASIL figures are never mixed in one chart.
+    QM Needs never reach ``valid_inspected``, so there ``valid`` already is
+    the green "done" slice rather than the yellow "not inspected yet" one. -#}
+{% macro safety_pie_row(title, subject, base, safety, safety_label) %}
+{%- set scope = base ~ ' and safety == "' ~ safety ~ '"' %}
+{%- set statuses = ["valid", "invalid"] if safety == "QM" else ["valid", "valid_inspected", "invalid"] %}
+{%- set status_colors = "#37a12d, #ca2828" if safety == "QM" else "#f5c518, #37a12d, #ca2828" %}
+
+.. grid:: 1 2 2 2
+   :gutter: 3
+
+   .. grid-item::
+
+      .. needpie:: {{ title }} {{ subject }} Status ({{ safety_label }})
+         :labels: {{ statuses|join(", ") }}
+         :colors: {{ status_colors }}
+         :legend:
+
+{% for state in statuses %}         {{ scope }} and status == "{{ state }}"
+{% endfor %}
+   .. grid-item::
+
+      .. needpie:: {{ title }} {{ subject }} Test Coverage ({{ safety_label }})
+         :labels: fully covered, partially covered, not covered
+         :colors: #37a12d, #f0a500, #ca2828
+         :legend:
+
+         {{ scope }} and fully_verifies_back
+         {{ scope }} and partially_verifies_back and not fully_verifies_back
+         {{ scope }} and not fully_verifies_back and not partially_verifies_back
+{% endmacro %}
+
 .. raw:: html
 
    <style>
@@ -110,7 +143,7 @@ Component Overview
    :filter: id in [{% for component in components_in_mod %}"{{ component["id"] }}"{% if not loop.last %}, {% endif %}{% endfor %}]
    :columns: id as "Component";safety;security;status
    :style: table
-   :sort: id
+   :sort: safety
 
 {% for component in components_in_mod %}
 {% set component_id = component["id"] %}
@@ -142,59 +175,15 @@ Component Overview
 
 Component Requirements Statistics
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. grid:: 1 2 2 2
-   :gutter: 3
-
-   .. grid-item::
-
-      .. needpie:: {{ component_title }} Requirements Status
-         :labels: valid, valid_inspected, invalid
-         :colors: #f5c518, #37a12d, #ca2828
-         :legend:
-
-         type == "comp_req" and "{{ component_id }}" in satisfied_by and status == "valid" and {{ component_req_filter }}
-         type == "comp_req" and "{{ component_id }}" in satisfied_by and status == "valid_inspected" and {{ component_req_filter }}
-         type == "comp_req" and "{{ component_id }}" in satisfied_by and status == "invalid" and {{ component_req_filter }}
-
-   .. grid-item::
-
-      .. needpie:: {{ component_title }} Requirements Test Coverage
-         :labels: fully covered, partially covered, not covered
-         :colors: #37a12d, #f0a500, #ca2828
-         :legend:
-
-         type == "comp_req" and "{{ component_id }}" in satisfied_by and fully_verifies_back and {{ component_req_filter }}
-         type == "comp_req" and "{{ component_id }}" in satisfied_by and partially_verifies_back and not fully_verifies_back and {{ component_req_filter }}
-         type == "comp_req" and "{{ component_id }}" in satisfied_by and not fully_verifies_back and not partially_verifies_back and {{ component_req_filter }}
+{% set req_base = 'type == "comp_req" and "' ~ component_id ~ '" in satisfied_by and ' ~ component_req_filter %}
+{{ safety_pie_row(component_title, "Requirements", req_base, "ASIL_B", "ASIL B") }}
+{{ safety_pie_row(component_title, "Requirements", req_base, "QM", "QM") }}
 
 Component Architecture Statistics
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. grid:: 1 2 2 2
-   :gutter: 3
-
-   .. grid-item::
-
-      .. needpie:: {{ component_title }} Architecture Elements Status
-         :labels: valid, valid_inspected, invalid
-         :colors: #f5c518, #37a12d, #ca2828
-         :legend:
-
-         type in ["comp_arc_sta", "comp_arc_dyn"] and "{{ component_id }}" in belongs_to and status == "valid"
-         type in ["comp_arc_sta", "comp_arc_dyn"] and "{{ component_id }}" in belongs_to and status == "valid_inspected"
-         type in ["comp_arc_sta", "comp_arc_dyn"] and "{{ component_id }}" in belongs_to and status == "invalid"
-
-   .. grid-item::
-
-      .. needpie:: {{ component_title }} Architecture Elements Test Coverage
-         :labels: fully covered, partially covered, not covered
-         :colors: #37a12d, #f0a500, #ca2828
-         :legend:
-
-         type in ["comp_arc_sta", "comp_arc_dyn"] and "{{ component_id }}" in belongs_to and fully_verifies_back
-         type in ["comp_arc_sta", "comp_arc_dyn"] and "{{ component_id }}" in belongs_to and partially_verifies_back and not fully_verifies_back
-         type in ["comp_arc_sta", "comp_arc_dyn"] and "{{ component_id }}" in belongs_to and not fully_verifies_back and not partially_verifies_back
+{% set arc_base = 'type in ["comp_arc_sta", "comp_arc_dyn"] and "' ~ component_id ~ '" in belongs_to' %}
+{{ safety_pie_row(component_title, "Architecture Elements", arc_base, "ASIL_B", "ASIL B") }}
+{{ safety_pie_row(component_title, "Architecture Elements", arc_base, "QM", "QM") }}
 
 Requirements Traceability
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -210,7 +199,7 @@ verification status and the tests that (fully or partially) verify them:
       :style: table
       :columns: id;title;safety;status;testlink
       :colwidths: 13,22,8,10,47
-      :sort: id
+      :sort: safety
 
 Test Coverage
 ^^^^^^^^^^^^^
@@ -243,7 +232,7 @@ status have not yet been inspected.
       :style: table
       :columns: id;title;safety;status;tags
       :colwidths: 25,30,10,15,20
-      :sort: id
+      :sort: safety
 
 Verification & Safety Analysis Documents
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
