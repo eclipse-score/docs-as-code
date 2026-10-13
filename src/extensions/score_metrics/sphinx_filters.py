@@ -257,14 +257,26 @@ def get_component_status_metrics(
     Arguments via kwargs:
         - component_id: The component ID (e.g., "comp__my_component")
         - category: Either "requirements" or "architecture"
+        - version: Optional version to filter by valid_from (default: no filtering)
 
     Returns [valid_count, valid_inspected_count, invalid_count].
     """
     results.clear()
     component_id = str(kwargs.get("component_id", ""))
     category = str(kwargs.get("category", "requirements"))
+    version = kwargs.get("version")  # Can be None or string
 
-    metrics = CALCULATED_METRICS.get("verification_metrics", {})
+    # With versioning, metrics are stored under versioned keys
+    if version:
+        metrics_key = f"verification_metrics_v{version}"
+    else:
+        metrics_key = "verification_metrics"
+
+    metrics = CALCULATED_METRICS.get(metrics_key, {})
+    if not metrics:
+        # Fallback to unversioned metrics
+        metrics = CALCULATED_METRICS.get("verification_metrics", {})
+
     component_metrics = metrics.get(component_id, {})
     category_metrics = component_metrics.get(category, {})
     status = category_metrics.get("status", {})
@@ -284,14 +296,26 @@ def get_component_coverage_metrics(
     Arguments via kwargs:
         - component_id: The component ID (e.g., "comp__my_component")
         - category: Either "requirements" or "architecture"
+        - version: Optional version to filter by valid_from (default: no filtering)
 
     Returns [fully_covered, partially_covered, not_covered].
     """
     results.clear()
     component_id = str(kwargs.get("component_id", ""))
     category = str(kwargs.get("category", "requirements"))
+    version = kwargs.get("version")  # Can be None or string
 
-    metrics = CALCULATED_METRICS.get("verification_metrics", {})
+    # With versioning, metrics are stored under versioned keys
+    if version:
+        metrics_key = f"verification_metrics_v{version}"
+    else:
+        metrics_key = "verification_metrics"
+
+    metrics = CALCULATED_METRICS.get(metrics_key, {})
+    if not metrics:
+        # Fallback to unversioned metrics
+        metrics = CALCULATED_METRICS.get("verification_metrics", {})
+
     component_metrics = metrics.get(component_id, {})
     category_metrics = component_metrics.get(category, {})
     coverage = category_metrics.get("coverage", {})

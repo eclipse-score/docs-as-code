@@ -160,10 +160,7 @@ Component Requirements Statistics
          :labels: valid, valid_inspected, invalid
          :colors: #f5c518, #37a12d, #ca2828
          :legend:
-
-         type == "comp_req" and "{{ component_id }}" in satisfied_by and status == "valid" and {{ component_req_filter }}
-         type == "comp_req" and "{{ component_id }}" in satisfied_by and status == "valid_inspected" and {{ component_req_filter }}
-         type == "comp_req" and "{{ component_id }}" in satisfied_by and status == "invalid" and {{ component_req_filter }}
+         :filter-func: score_metrics.sphinx_filters.get_component_status_metrics(component_id="{{ component_id }}", category="requirements", version="{{ module_version or '' }}")
 
    .. grid-item::
 
@@ -171,10 +168,7 @@ Component Requirements Statistics
          :labels: fully covered, partially covered, not covered
          :colors: #37a12d, #f0a500, #ca2828
          :legend:
-
-         type == "comp_req" and "{{ component_id }}" in satisfied_by and fully_verifies_back and {{ component_req_filter }}
-         type == "comp_req" and "{{ component_id }}" in satisfied_by and partially_verifies_back and not fully_verifies_back and {{ component_req_filter }}
-         type == "comp_req" and "{{ component_id }}" in satisfied_by and not fully_verifies_back and not partially_verifies_back and {{ component_req_filter }}
+         :filter-func: score_metrics.sphinx_filters.get_component_coverage_metrics(component_id="{{ component_id }}", category="requirements", version="{{ module_version or '' }}")
 
 Component Architecture Statistics
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -188,10 +182,7 @@ Component Architecture Statistics
          :labels: valid, valid_inspected, invalid
          :colors: #f5c518, #37a12d, #ca2828
          :legend:
-
-         type in ["comp_arc_sta", "comp_arc_dyn"] and "{{ component_id }}" in belongs_to and status == "valid"
-         type in ["comp_arc_sta", "comp_arc_dyn"] and "{{ component_id }}" in belongs_to and status == "valid_inspected"
-         type in ["comp_arc_sta", "comp_arc_dyn"] and "{{ component_id }}" in belongs_to and status == "invalid"
+         :filter-func: score_metrics.sphinx_filters.get_component_status_metrics(component_id="{{ component_id }}", category="architecture", version="{{ module_version or '' }}")
 
    .. grid-item::
 
@@ -199,10 +190,7 @@ Component Architecture Statistics
          :labels: fully covered, partially covered, not covered
          :colors: #37a12d, #f0a500, #ca2828
          :legend:
-
-         type in ["comp_arc_sta", "comp_arc_dyn"] and "{{ component_id }}" in belongs_to and fully_verifies_back
-         type in ["comp_arc_sta", "comp_arc_dyn"] and "{{ component_id }}" in belongs_to and partially_verifies_back and not fully_verifies_back
-         type in ["comp_arc_sta", "comp_arc_dyn"] and "{{ component_id }}" in belongs_to and not fully_verifies_back and not partially_verifies_back
+         :filter-func: score_metrics.sphinx_filters.get_component_coverage_metrics(component_id="{{ component_id }}", category="architecture", version="{{ module_version or '' }}")
 
 Requirements Traceability
 ^^^^^^^^^^^^^^^^^^^^^^^^^
