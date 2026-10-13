@@ -2268,6 +2268,16 @@
           "repo_name": "local_repo",
           "hash": "",
           "url": ""
+        },
+        {
+          "file": "src/extensions/score_metamodel/metamodel.yaml",
+          "line": 1282,
+          "tag": "# req-Id:",
+          "need": "tool_req__docs_saf_attrs_mitigated_by",
+          "full_line": "# req-Id: tool_req__docs_saf_attrs_mitigated_by",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
         }
       ],
       "TestLinks": []
