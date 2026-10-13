@@ -76,6 +76,21 @@ The documentation build writes ``metrics.json`` via ``score_metrics``, and the `
 
 The dashboard charts and the CI gate both use the same computed metrics.
 
+``metrics.json`` Content
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+The exported file contains a versioned set of fields:
+
+- ``schema_version`` – schema version identifier.
+- ``generated_by`` – identifier of the producer that generated this file.
+- ``overall_metrics`` – requirement coverage aggregated over all requirement types.
+- ``metrics_by_type`` – the same coverage numbers per requirement type.
+- ``tests`` – testcase linkage statistics, including broken test references.
+- ``verification_metrics`` – per-component verification status and coverage metrics
+  for use by verification reports. Contains status distribution (valid, valid_inspected,
+  invalid) and test coverage (fully_covered, partially_covered, not_covered) for
+  both requirements and architecture elements, organized by component ID.
+
 Inputs for Linkage Metrics
 --------------------------
 
