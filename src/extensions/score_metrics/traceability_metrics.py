@@ -119,7 +119,7 @@ def calculate_test_metrics(
     }
 
 
-def calculate_status_and_coverage_metrics(
+def calculate_status_and_coverage_metrics(  # noqa: C901
     needs_list: list[NeedItem],
     version_filter: str | None = None,
     all_needs: NeedsView | None = None,
@@ -200,9 +200,9 @@ def calculate_status_and_coverage_metrics(
     return {"status": status_counts, "coverage": coverage_counts}
 
 
-def calculate_verification_metrics(
+def calculate_verification_metrics(  # noqa: C901
     all_needs: NeedsView, report_version: str | None = None
-) -> dict[str, dict]:
+) -> dict[str, dict[str, dict[str, dict[str, int]]]]:
     """Calculate per-component verification metrics for verification reports.
 
     Args:
@@ -212,7 +212,7 @@ def calculate_verification_metrics(
     Looks for needs that have belongs_to links to components and calculates
     status/coverage metrics for requirements and architecture elements.
     """
-    verification_metrics: dict[str, dict] = {}
+    verification_metrics: dict[str, dict[str, dict[str, dict[str, int]]]] = {}
 
     # Find all components by looking at belongs_to links
     component_ids: set[str] = set()

@@ -281,11 +281,13 @@ def get_component_status_metrics(
     category_metrics = component_metrics.get(category, {})
     status = category_metrics.get("status", {})
 
-    results.extend([
-        status.get("valid", 0),
-        status.get("valid_inspected", 0),
-        status.get("invalid", 0),
-    ])
+    results.extend(
+        [
+            status.get("valid", 0),
+            status.get("valid_inspected", 0),
+            status.get("invalid", 0),
+        ]
+    )
 
 
 def get_component_coverage_metrics(
@@ -320,8 +322,10 @@ def get_component_coverage_metrics(
     category_metrics = component_metrics.get(category, {})
     coverage = category_metrics.get("coverage", {})
 
-    results.extend([
-        coverage.get("fully_covered", 0),
-        coverage.get("partially_covered", 0),
-        coverage.get("not_covered", 0),
-    ])
+    results.extend(
+        [
+            coverage.get("fully_covered", 0),
+            coverage.get("partially_covered", 0),
+            coverage.get("not_covered", 0),
+        ]
+    )
