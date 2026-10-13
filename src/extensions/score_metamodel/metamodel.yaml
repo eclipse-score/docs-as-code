@@ -1278,3 +1278,16 @@ graph_checks:
           - id contains aspice_40__iic
           - id contains std_wp
     explanation: Workproducts may only link to ASPICE 40 IIC stakeholder requirements. Please ensure that the linked requirement is an ASPICE 40 IIC stakeholder requirement.
+
+  # req-Id: tool_req__docs_saf_attrs_mitigated_by
+  tool_req__docs_saf_attrs_mitigated_by:
+    needs:
+      include: feat_saf_dfa, comp_saf_dfa, feat_saf_fmea, comp_saf_fmea
+      condition: status == valid
+    check_one:
+      mitigated_by:
+        or:
+          - safety == ASIL_B
+          - type == aou_req
+    explanation: Valid safety analyses should link to at least one same-level or higher-safety requirement, or an Assumption of Use requirement.
+    info_only: true
