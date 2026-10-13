@@ -94,7 +94,7 @@ def write_data(directory: Path, lines: dict[str, list[int]]) -> None:
     """Write a coverage.py data file to ``directory``, as a measured run would.
 
     A file with no lines is one the run lists but never executed, as
-    `coverage run --source=...` does for files no test imports.
+    `source` in pyproject.toml makes coverage.py do for files no test imports.
     """
     directory.mkdir(exist_ok=True)
     data = coverage.CoverageData(

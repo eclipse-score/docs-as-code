@@ -123,21 +123,27 @@ pythonpath = [
 ]
 
 
-# Read by the hook in src/docs_cli/cli.py during coverage runs of the docs.bzl
-# scenario tests (see src/tests/docs_bzl/README.md). `bazel coverage` ignores
-# it: rules_python passes coverage.py its own configuration.
+# Read by `coverage run -m pytest` for the unit tests and by the hook in
+# src/docs_cli/cli.py during coverage runs of the docs.bzl scenario tests (see
+# src/tests/docs_bzl/README.md).
 [tool.coverage.run]
 branch = true
 # Each scenario starts its own Sphinx processes; one data file per process keeps
 # them from overwriting each other.
 parallel = true
-# A pattern instead of `source = ["src"]`: that is relative to the working
-# directory, which is Bazel's sandbox or runfiles tree, while coverage.py
-# records the real paths of the files in the checkout.
-include = ["*/src/*"]
+# `source` also records the files no test imports, so they show up at 0%.
+source = ["src", "scripts_bazel", "tools"]
 # Third-party code and tests are not the code under test.
 omit = [
     "*/external/*",
     "*/site-packages/*",
     "*/tests/*",
+    "*/test_*.py",
+    "*_test.py",
+    "*/conftest.py",
 ]
+
+[tool.coverage.report]
+# Lists files no test imports also in directories without __init__.py, such as
+# src/extensions/score_metamodel/docs.
+include_namespace_packages = true

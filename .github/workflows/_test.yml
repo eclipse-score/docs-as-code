@@ -103,7 +103,8 @@ jobs:
 
   unit_tests_coverage:
     # Measures the unit tests with pytest rather than `bazel coverage`: with
-    # --source, coverage.py also lists the files no test imports, at 0%.
+    # `source` in pyproject.toml, coverage.py also lists the files no test
+    # imports, at 0%.
     # A failing test fails this job, like it fails bazel_tests.
     runs-on: ubuntu-latest
     steps:
@@ -149,7 +150,7 @@ jobs:
         # pytest still exits non-zero for it.
         run: >-
           mkdir -p coverage-data/unit_tests &&
-          .venv_docs/bin/python -m coverage run --source=src,scripts_bazel,tools
+          .venv_docs/bin/python -m coverage run
           -m pytest src tools scripts_bazel
           --ignore=src/tests/docs_bzl
           --ignore=src/tests/downstream_compatibility
