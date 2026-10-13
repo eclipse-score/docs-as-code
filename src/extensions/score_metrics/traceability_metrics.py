@@ -121,17 +121,66 @@ def calculate_test_metrics(
 
 def calculate_status_and_coverage_metrics(
     needs_list: list[NeedItem],
+    version_filter: str | None = None,
+    all_needs: NeedsView | None = None,
 ) -> dict[str, dict[str, int]]:
     """Calculate status distribution and test coverage for a list of needs.
+
+    Args:
+        needs_list: List of needs to calculate metrics for.
+        version_filter: Optional version to filter needs by valid_from.
+        all_needs: All needs view (required for version filtering of comp_req).
 
     Returns a dict with:
     - status: {valid: int, valid_inspected: int, invalid: int}
     - coverage: {fully_covered: int, partially_covered: int, not_covered: int}
     """
+    import re
+
+    def parse_version(v: str) -> tuple[int, ...]:
+        """Parse version string like 'v1.2.3' into tuple (1, 2, 3)."""
+        match = re.match(r"v?(\d+)(?:\.(\d+))?(?:\.(\d+))?", v)
+        if not match:
+            raise ValueError(f"Invalid version: {v}")
+        return tuple(int(g or 0) for g in match.groups())
+
+    def req_in_version(need: NeedItem, version: str) -> bool:
+        """Check if a need is in scope for a given version."""
+        if not version:
+            return True
+
+        # Check direct valid_from
+        valid_from = need.get("valid_from")
+        if valid_from:
+            try:
+                return parse_version(valid_from) <= parse_version(version)
+            except ValueError:
+                return False
+
+        # For comp_req, check derived_from feat_reqs
+        if need.get("type") == "comp_req" and all_needs:
+            derived_from = need.get("derived_from", [])
+            if isinstance(derived_from, str):
+                derived_from = [derived_from]
+            for feat_id in derived_from:
+                if feat_id in all_needs:
+                    try:
+                        if req_in_version(all_needs[feat_id], version):
+                            return True
+                    except (KeyError, ValueError):
+                        pass
+            return False
+
+        return True  # No version info = always included
+
     status_counts = {"valid": 0, "valid_inspected": 0, "invalid": 0}
     coverage_counts = {"fully_covered": 0, "partially_covered": 0, "not_covered": 0}
 
     for need in needs_list:
+        # Apply version filter
+        if version_filter and not req_in_version(need, version_filter):
+            continue
+
         # Status distribution
         status = str(need.get("status", ""))
         if status in status_counts:
@@ -151,8 +200,14 @@ def calculate_status_and_coverage_metrics(
     return {"status": status_counts, "coverage": coverage_counts}
 
 
-def calculate_verification_metrics(all_needs: NeedsView) -> dict[str, dict]:
+def calculate_verification_metrics(
+    all_needs: NeedsView, report_version: str | None = None
+) -> dict[str, dict]:
     """Calculate per-component verification metrics for verification reports.
+
+    Args:
+        all_needs: All needs view from Sphinx build.
+        report_version: Optional version to filter requirements by valid_from.
 
     Looks for needs that have belongs_to links to components and calculates
     status/coverage metrics for requirements and architecture elements.
@@ -178,7 +233,9 @@ def calculate_verification_metrics(all_needs: NeedsView) -> dict[str, dict]:
             if n.get("type") == "comp_req"
             and component_id in n.get("satisfied_by", [])
         ]
-        req_metrics = calculate_status_and_coverage_metrics(reqs)
+        req_metrics = calculate_status_and_coverage_metrics(
+            reqs, version_filter=report_version, all_needs=all_needs
+        )
 
         # Architecture elements (comp_arc_sta, comp_arc_dyn with belongs_to this component)
         arch = [
@@ -187,7 +244,9 @@ def calculate_verification_metrics(all_needs: NeedsView) -> dict[str, dict]:
             if n.get("type") in ("comp_arc_sta", "comp_arc_dyn")
             and component_id in n.get("belongs_to", [])
         ]
-        arch_metrics = calculate_status_and_coverage_metrics(arch)
+        arch_metrics = calculate_status_and_coverage_metrics(
+            arch, version_filter=report_version, all_needs=all_needs
+        )
 
         verification_metrics[component_id] = {
             "requirements": req_metrics,
