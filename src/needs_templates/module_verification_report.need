@@ -160,7 +160,7 @@ Component Requirements Statistics
          :labels: valid, valid_inspected, invalid
          :colors: #f5c518, #37a12d, #ca2828
          :legend:
-         :filter-func: score_metrics.sphinx_filters.get_component_status_metrics(component_id="{{ component_id }}", category="requirements", version="{{ module_version or '' }}")
+         :filter-func: score_metrics.sphinx_filters.get_component_status_metrics("{{ component_id }}", "requirements", "{{ module_version or '' }}")
 
    .. grid-item::
 
@@ -168,7 +168,7 @@ Component Requirements Statistics
          :labels: fully covered, partially covered, not covered
          :colors: #37a12d, #f0a500, #ca2828
          :legend:
-         :filter-func: score_metrics.sphinx_filters.get_component_coverage_metrics(component_id="{{ component_id }}", category="requirements", version="{{ module_version or '' }}")
+         :filter-func: score_metrics.sphinx_filters.get_component_coverage_metrics("{{ component_id }}", "requirements", "{{ module_version or '' }}")
 
 Component Architecture Statistics
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -182,7 +182,7 @@ Component Architecture Statistics
          :labels: valid, valid_inspected, invalid
          :colors: #f5c518, #37a12d, #ca2828
          :legend:
-         :filter-func: score_metrics.sphinx_filters.get_component_status_metrics(component_id="{{ component_id }}", category="architecture", version="{{ module_version or '' }}")
+         :filter-func: score_metrics.sphinx_filters.get_component_status_metrics("{{ component_id }}", "architecture", "{{ module_version or '' }}")
 
    .. grid-item::
 
@@ -190,7 +190,7 @@ Component Architecture Statistics
          :labels: fully covered, partially covered, not covered
          :colors: #37a12d, #f0a500, #ca2828
          :legend:
-         :filter-func: score_metrics.sphinx_filters.get_component_coverage_metrics(component_id="{{ component_id }}", category="architecture", version="{{ module_version or '' }}")
+         :filter-func: score_metrics.sphinx_filters.get_component_coverage_metrics("{{ component_id }}", "architecture", "{{ module_version or '' }}")
 
 Requirements Traceability
 ^^^^^^^^^^^^^^^^^^^^^^^^^
