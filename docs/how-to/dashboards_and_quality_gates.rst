@@ -168,10 +168,12 @@ Recommended color palette
 
 This palette is generally easier to read:
 
-- ``#4E79A7`` (blue)
+- ``#D32F2F`` (red)
 - ``#F28E2B`` (orange)
 - ``#59A14F`` (green)
 - ``#B07AA1`` (purple)
+- ``#FFC107`` (yellow)
+- ``#4E79A7`` (blue)
 
 Example 1: Overall view (including remaining/unlinked)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -180,7 +182,7 @@ Example 1: Overall view (including remaining/unlinked)
 
    .. needpie:: Overall Requirement Coverage (non-overlapping)
       :labels: Remaining (no links), Test Link Only, Code Link Only, Fully Linked (Both)
-      :colors: #4E79A7, #F28E2B, #59A14F, #B07AA1
+      :colors: #D32F2F, #F28E2B, #FFC107, #59A14F
       :filter-func: score_metrics.sphinx_filters.get_non_overlapping_link_metrics
 
 This chart shows:
@@ -192,7 +194,7 @@ This chart shows:
 
 .. needpie:: Overall Requirement Coverage (non-overlapping)
    :labels: Remaining (no links), Test Link Only, Code Link Only, Fully Linked (Both)
-   :colors: #4E79A7, #F28E2B, #59A14F, #B07AA1
+   :colors: #D32F2F, #F28E2B, #FFC107 , #59A14F
    :filter-func: score_metrics.sphinx_filters.get_non_overlapping_link_metrics
 
 Example 2: Focused view (no total-based remainder)
@@ -206,7 +208,7 @@ This chart shows direct values only (no remaining slice):
 
 .. needpie:: Tool Requirements Snapshot
    :labels: Tool Req With Test Link, Tool Req With Code Link, Fully Linked (Overall)
-   :colors: #F28E2B, #4E79A7, #59A14F
+   :colors: #F28E2B, #FFC107, #59A14F
    :filter-func: score_metrics.sphinx_filters.get_just_metrics(metrics_by_type:tool_req:with_test_link,metrics_by_type:tool_req:with_code_link,overall_metrics:fully_linked)
 
 Presentation checklist
