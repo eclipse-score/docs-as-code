@@ -47,6 +47,12 @@ from score_metrics.traceability_metrics import CALCULATED_METRICS
 from score_sphinx_needs_templates import req_in_report_version
 from sphinx_needs.need_item import NeedItem
 
+# Import shared verification metrics helpers
+from src.helper_lib.verification_metrics import (
+    count_coverage_filtered,
+    count_status_filtered,
+)
+
 
 def _matches_source_selector(need: NeedItem, selector: str) -> bool:
     """Return whether a need matches a source selector.
@@ -252,71 +258,6 @@ def get_non_overlapping_link_metrics(
     results.extend([remaining, only_test, only_code, fully])
 
 
-def _is_need_in_component(need: NeedItem, component_id: str, category: str) -> bool:
-    """Check if a need belongs to a component for a given category."""
-    need_type = str(need.get("type", ""))
-
-    if category == "requirements":
-        if need_type != "comp_req":
-            return False
-        sat_by = need.get("satisfied_by", [])
-        if isinstance(sat_by, str):
-            sat_by = [sat_by]
-        return component_id in sat_by
-
-    # architecture
-    if need_type not in ("comp_arc_sta", "comp_arc_dyn"):
-        return False
-    bel_to = need.get("belongs_to", [])
-    if isinstance(bel_to, str):
-        bel_to = [bel_to]
-    return component_id in bel_to
-
-
-def _count_status_filtered(
-    needs: list[Any], component_id: str, category: str, version: str
-) -> dict[str, int]:
-    """Count status distribution with version filtering."""
-    status = {"valid": 0, "valid_inspected": 0, "invalid": 0}
-
-    for need in needs:
-        if not _is_need_in_component(need, component_id, category):
-            continue
-        if not req_in_report_version(need, version):
-            continue
-
-        need_status = str(need.get("status", ""))
-        if need_status in status:
-            status[need_status] += 1
-
-    return status
-
-
-def _count_coverage_filtered(
-    needs: list[Any], component_id: str, category: str, version: str
-) -> dict[str, int]:
-    """Count test coverage with version filtering."""
-    coverage = {"fully_covered": 0, "partially_covered": 0, "not_covered": 0}
-
-    for need in needs:
-        if not _is_need_in_component(need, component_id, category):
-            continue
-        if not req_in_report_version(need, version):
-            continue
-
-        has_testlink = bool(need.get("testlink"))
-        has_code_link = bool(need.get("source_code_link"))
-
-        if has_testlink and has_code_link:
-            coverage["fully_covered"] += 1
-        elif has_testlink or has_code_link:
-            coverage["partially_covered"] += 1
-        else:
-            coverage["not_covered"] += 1
-
-    return coverage
-
-
 def get_component_status_metrics(
     needs: list[Any], results: list[int], **kwargs: Any
 ) -> None:
@@ -325,7 +266,7 @@ def get_component_status_metrics(
     Arguments via kwargs:
         - component_id: The component ID (e.g., "comp__my_component")
         - category: Either "requirements" or "architecture"
-        - version: Optional version to filter by valid_from (default: no filtering)
+        - version: Optional version to filter by valid_from (only applied to requirements)
 
     Returns [valid_count, valid_inspected_count, invalid_count].
     """
@@ -336,7 +277,9 @@ def get_component_status_metrics(
 
     # If version is specified, filter on-the-fly using the version-scoping helper
     if version:
-        status = _count_status_filtered(needs, component_id, category, version)
+        status = count_status_filtered(
+            needs, component_id, category, version, req_in_report_version
+        )
     else:
         # Use pre-calculated metrics from CALCULATED_METRICS
         metrics = CALCULATED_METRICS.get("verification_metrics", {})
@@ -356,12 +299,15 @@ def get_component_status_metrics(
 def get_component_coverage_metrics(
     needs: list[Any], results: list[int], **kwargs: Any
 ) -> None:
-    """Get test coverage for a component's requirements or architecture.
+    """Get verification coverage for a component's requirements or architecture.
+
+    Uses the verification coverage axis (fully_verifies_back / partially_verifies_back),
+    not the link coverage axis (testlink / source_code_link).
 
     Arguments via kwargs:
         - component_id: The component ID (e.g., "comp__my_component")
         - category: Either "requirements" or "architecture"
-        - version: Optional version to filter by valid_from (default: no filtering)
+        - version: Optional version to filter by valid_from (only applied to requirements)
 
     Returns [fully_covered, partially_covered, not_covered].
     """
@@ -372,7 +318,9 @@ def get_component_coverage_metrics(
 
     # If version is specified, filter on-the-fly using the version-scoping helper
     if version:
-        coverage = _count_coverage_filtered(needs, component_id, category, version)
+        coverage = count_coverage_filtered(
+            needs, component_id, category, version, req_in_report_version
+        )
     else:
         # Use pre-calculated metrics from CALCULATED_METRICS
         metrics = CALCULATED_METRICS.get("verification_metrics", {})

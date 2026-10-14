@@ -28,6 +28,13 @@ from sphinx.application import Sphinx
 from sphinx_needs.data import NeedsView, SphinxNeedsData
 from sphinx_needs.need_item import NeedItem
 
+# Import shared verification metrics helpers
+from src.helper_lib.verification_metrics import (
+    count_coverage_filtered,
+    count_status_filtered,
+    is_need_in_component,
+)
+
 CALCULATED_METRICS: dict[str, Any] = {}
 
 
@@ -136,11 +143,9 @@ def calculate_status_and_coverage_metrics(  # noqa: C901
     - coverage: {fully_covered: int, partially_covered: int, not_covered: int}
 
     Note:
-        The version filtering logic here duplicates ``req_in_report_version``
-        from ``score_sphinx_needs_templates``. We keep it separate because
-        this function operates during the build phase with an explicit
-        ``all_needs`` parameter, while ``req_in_report_version`` relies on
-        Sphinx environment state during template rendering.
+        For component-specific metrics with version filtering, prefer using
+        the shared helpers from helper_lib.verification_metrics which handle
+        architecture version filtering correctly.
     """
     import re
 
@@ -215,6 +220,8 @@ def calculate_verification_metrics(  # noqa: C901
     Args:
         all_needs: All needs view from Sphinx build.
         report_version: Optional version to filter requirements by valid_from.
+            Note: Architecture elements are NOT version-filtered as they have
+            no valid_from or derived_from attributes.
 
     Looks for needs that have belongs_to links to components and calculates
     status/coverage metrics for requirements and architecture elements.
@@ -231,34 +238,38 @@ def calculate_verification_metrics(  # noqa: C901
             elif isinstance(belongs_to, str):
                 component_ids.add(belongs_to)
 
+    # Simple version filter function for use with shared helpers
+    def version_filter_func(need: NeedItem, version: str) -> bool:
+        """Simple passthrough to req_in_report_version for shared helpers."""
+        from score_sphinx_needs_templates import req_in_report_version
+
+        return req_in_report_version(need, version)
+
     # Calculate metrics per component
     for component_id in component_ids:
         # Requirements (comp_req with satisfied_by pointing to this component)
-        reqs = []
-        for n in all_needs.values():
-            if n.get("type") != "comp_req":
-                continue
-            sat_by = n.get("satisfied_by", [])
-            if isinstance(sat_by, str):
-                sat_by = [sat_by]
-            if component_id in sat_by:
-                reqs.append(n)
-        req_metrics = calculate_status_and_coverage_metrics(
-            reqs, version_filter=report_version, all_needs=all_needs
-        )
+        # Version filtering is applied to requirements
+        reqs = [n for n in all_needs.values() if is_need_in_component(n, component_id, "requirements")]
+
+        if report_version:
+            req_metrics = {
+                "status": count_status_filtered(
+                    reqs, component_id, "requirements", report_version, version_filter_func
+                ),
+                "coverage": count_coverage_filtered(
+                    reqs, component_id, "requirements", report_version, version_filter_func
+                ),
+            }
+        else:
+            req_metrics = calculate_status_and_coverage_metrics(
+                reqs, version_filter=None, all_needs=all_needs
+            )
 
         # Architecture elements (comp_arc_sta, comp_arc_dyn with belongs_to this component)
-        arch = []
-        for n in all_needs.values():
-            if n.get("type") not in ("comp_arc_sta", "comp_arc_dyn"):
-                continue
-            bel_to = n.get("belongs_to", [])
-            if isinstance(bel_to, str):
-                bel_to = [bel_to]
-            if component_id in bel_to:
-                arch.append(n)
+        # Version filtering is NOT applied to architecture elements
+        arch = [n for n in all_needs.values() if is_need_in_component(n, component_id, "architecture")]
         arch_metrics = calculate_status_and_coverage_metrics(
-            arch, version_filter=report_version, all_needs=all_needs
+            arch, version_filter=None, all_needs=all_needs
         )
 
         verification_metrics[component_id] = {
