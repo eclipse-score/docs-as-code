@@ -87,10 +87,12 @@ def test_pinned_profile_rejects_non_immutable_revisions(tmp_path: Path) -> None:
 
 def test_need_and_module_override_use_the_current_template_selector() -> None:
     page = report_need("inc_someip_gateway")
-    assert ":id: doc__inc_someip_gateway_verification_report" in page
+    assert ".. mod_ver_report:: Inc Someip Gateway Module Verification Report" in page
+    assert ":id: mod_vrep__inc_someip_gateway__report" in page
     assert ":post_template: module_verification_report" in page
     assert ":realizes: wp__verification_module_ver_report" in page
-    assert ":belongs_to:" not in page
+    assert ":belongs_to: mod__inc_someip_gateway" in page
+    assert ":verification_method: test_and_inspection" in page
     assert ":version: 1" in page
 
     original = """module(name = "consumer")
@@ -386,6 +388,24 @@ def test_local_fake_downstream_runs_the_real_docs_target(tmp_path: Path) -> None
       security: ^(YES|NO)$
       version: ^[0-9]+$
     mandatory_links:
+      realizes: workproduct
+    optional_options:
+      tags: .*
+      content: .*
+      template: .*
+  mod_ver_report:
+    title: Module Verification Report
+    prefix: mod_vrep__
+    parts: 3
+    mandatory_options:
+      status: ^(valid|invalid)$
+      safety: ^(QM|ASIL_B)$
+      security: ^(YES|NO)$
+      verification_method: ^.+$
+      version: ^[0-9]+$
+    mandatory_links:
+      belongs_to: mod
+    optional_links:
       realizes: workproduct
     optional_options:
       tags: .*
