@@ -19,6 +19,7 @@ import json
 import logging
 import os
 import shutil
+import subprocess
 import sys
 import time
 from pathlib import Path
@@ -57,6 +58,37 @@ def _build_external_needs_source_config() -> str:
     external = env.string_list("EXTERNAL_NEEDS_FILES", "[]")
     labels = env.string_list("EXTERNAL_NEEDS_LABELS", "[]")
     return json.dumps(data + external + labels)
+
+
+def _release_define(config_options: list[str], git_root: Path | None) -> list[str]:
+    """Return a ``release`` define such as ``1.2.3-4-gabc1234-dirty``.
+
+    Empty unless the version is known and the checkout differs from a clean
+    tag matching it. Release stays unset otherwise: score_layout uses it as the
+    version-switcher match. A describe that starts with the version is not
+    repeated; any other describe is appended as ``<version>+<describe>``.
+    """
+    version = next(
+        (
+            o.split("=", 2)[2]
+            for o in config_options
+            if o.startswith("--define=version=")
+        ),
+        "",
+    )
+    if not version or git_root is None:
+        return []
+    result = subprocess.run(
+        ["git", "-C", str(git_root), "describe", "--tags", "--always", "--dirty"],
+        capture_output=True,
+        text=True,
+    )
+    describe = result.stdout.strip().removeprefix("v")  # git tags are v-prefixed
+    if result.returncode != 0 or not describe or describe == version:
+        return []
+    if describe.startswith(version + "-"):
+        return [f"--define=release={describe}"]
+    return [f"--define=release={version}+{describe}"]
 
 
 def _compute_hash(files: list[Path]) -> str:
@@ -225,6 +257,9 @@ def sphinx_arguments(
         # options are supplied through ``SPHINX_CONFIG_OPTS``.
         base_arguments.append("-C")
         base_arguments.extend(config_options)
+        if not config.is_bazel_build:
+            # Sandboxed actions have no git checkout; keep them hermetic.
+            base_arguments.extend(_release_define(config_options, config.git_root))
     else:
         # Interactive builds with a checked-in ``conf.py`` intentionally leave
         # both variables empty and let Sphinx discover the file below the
