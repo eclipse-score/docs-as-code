@@ -59,6 +59,7 @@ load(
 )
 load(
     "@score_docs_as_code//:bzl/bundle_rules.bzl",
+    "create_assets",
     "create_bundle",
     "declare_docs_config_target",
     "external_docs_runfiles",
@@ -565,6 +566,33 @@ def docs_bundle(
         mounts_manifest = bundle.local_manifest,
         data = data,
         visibility = visibility,
+    )
+
+def docs_assets(name, srcs, visibility = None, **kwargs):
+    """Declare files that are copied as-is into the built documentation site.
+
+    ``srcs`` accepts files of any type (HTML, PDF, PNG, ...) and directory
+    outputs such as Doxygen HTML. Sphinx never reads these files. Place the
+    target like any other bundle: as an entry in ``bundles`` with ``mount_at``.
+
+    Rules:
+
+    1. A directory's contents go to ``<mount_at>/``.
+    2. A file goes to ``<mount_at>/<basename>``.
+    3. Only the HTML build (``docs`` and ``live_preview``) copies assets;
+       ``needs_json``, ``docs_check`` and ``docs_link_check`` never build them.
+    4. An asset may not overwrite a Sphinx page or a Sphinx folder such as
+       ``_static/``.
+    5. An external module's own assets travel with it; assets it mounted from
+       a third module do not.
+    6. Assets get no toctree entry: ``attach_to`` and ``toctree_index`` are
+       errors. Link to them from a normal page instead.
+    """
+    create_assets(
+        name = name,
+        srcs = srcs,
+        visibility = visibility,
+        **kwargs
     )
 
 def _missing_requirements(deps):

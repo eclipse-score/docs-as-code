@@ -53,6 +53,10 @@ DocsBundleInfo = provider(
         # export. These are semantic values; the Sphinx ``--define`` list is
         # assembled only at the action boundary.
         "config": "Structured project, URL, ID prefix, and metamodel configuration.",
+        # Files of any type (HTML, PDF, PNG, ...) copied unchanged into the
+        # built site. Each item is a struct(files = depset, destination =
+        # string, repository = string); Sphinx never reads these files.
+        "assets": "Files copied as-is into the built site, with their destination and owning repository.",
     },
 )
 
@@ -616,6 +620,7 @@ def _docs_bundle_impl(ctx):
             external_runfiles = external_runfiles,
             data = all_data,
             config = bundle_config,
+            assets = [],
         ),
     ]
 
@@ -709,6 +714,48 @@ def create_bundle(
         code_targets = code_targets,
         root_docs_config = root_docs_config,
         is_root_bundle = is_root_bundle,
+        visibility = visibility,
+        **kwargs
+    )
+    return ":" + name
+
+def _docs_assets_impl(ctx):
+    """Expose files of any type as a bundle that only carries assets."""
+    return [
+        # DefaultInfo stays empty: needs_json lists the docs bundle under its
+        # tools, so any file here would become an input of every Needs build.
+        DefaultInfo(files = depset()),
+        DocsBundleInfo(
+            entries = [],
+            own_source_files = depset(),
+            source_dir_execroot_path = "",
+            sourcelinks = [],
+            external_runfiles = depset(),
+            data = depset(),
+            config = None,
+            assets = [struct(
+                files = depset(ctx.files.srcs),
+                # The placing bundle's ``mount_at`` provides the destination.
+                destination = "",
+                repository = ctx.label.workspace_name,
+            )],
+        ),
+    ]
+
+_docs_assets = rule(
+    implementation = _docs_assets_impl,
+    attrs = {
+        # Any file type, plus directory outputs (for example Doxygen HTML).
+        "srcs": attr.label_list(allow_files = True, mandatory = True),
+    },
+    doc = "Internal rule that carries files copied as-is into the built site.",
+)
+
+def create_assets(name, srcs, visibility = None, **kwargs):
+    """Create a bundle that only carries files copied as-is into the built site."""
+    _docs_assets(
+        name = name,
+        srcs = srcs,
         visibility = visibility,
         **kwargs
     )
