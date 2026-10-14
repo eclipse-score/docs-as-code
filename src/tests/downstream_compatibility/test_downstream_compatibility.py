@@ -29,7 +29,9 @@ import shutil
 import subprocess
 import warnings
 from dataclasses import dataclass
+from io import StringIO
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 from pytest import TempPathFactory
@@ -273,28 +275,84 @@ def _run_bazel_cmd(cmd: str, repo_name: str, cwd: Path, python_version: str) -> 
             f"--@rules_python//python/config_settings:python_version={python_version}",
         )
 
-    process = subprocess.Popen(
-        args,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-        universal_newlines=True,
-        bufsize=1,
-        cwd=cwd,
-    )
+    for attempt in range(2):
+        process = subprocess.Popen(
+            args,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            universal_newlines=True,
+            bufsize=1,
+            cwd=cwd,
+        )
 
-    assert process.stdout is not None
-    for line in process.stdout:
-        print(line, end="")
-        if "WARNING" in line:
-            warnings.warn(f"{repo_name} `{cmd}`: {line.strip()}", stacklevel=2)
-    process.stdout.close()
+        assert process.stdout is not None
+        retryable_download_error = False
+        for line in process.stdout:
+            print(line, end="")
+            if "WARNING" in line:
+                warnings.warn(f"{repo_name} `{cmd}`: {line.strip()}", stacklevel=2)
+            if "Download from " in line and re.search(r"GET returned 5\d{2}", line):
+                retryable_download_error = True
+        process.stdout.close()
 
-    rc = process.wait()
-    if rc != 0:
+        rc = process.wait()
+        if rc == 0:
+            return
+        if attempt == 0 and retryable_download_error:
+            print(
+                f"Retrying {repo_name} `{cmd}` after a transient repository download error"
+            )
+            continue
         pytest.fail(
             f"`{cmd}` in {repo_name} exited with code {rc}",
             pytrace=False,
         )
+
+
+def test_run_bazel_cmd_retries_transient_repository_download(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    output = iter(
+        [
+            "WARNING: Download from https://example.com/archive.zip failed: "
+            "class java.io.IOException GET returned 500 Internal Server Error\n",
+            "",
+        ]
+    )
+    return_codes = iter([1, 0])
+    calls = 0
+
+    def fake_popen(*args: object, **kwargs: object) -> SimpleNamespace:
+        nonlocal calls
+        calls += 1
+        return SimpleNamespace(
+            stdout=StringIO(next(output)), wait=lambda: next(return_codes)
+        )
+
+    monkeypatch.setattr(subprocess, "Popen", fake_popen)
+
+    with pytest.warns(UserWarning):
+        _run_bazel_cmd("bazel run //:docs", "consumer", tmp_path, "3.12")
+
+    assert calls == 2
+
+
+def test_run_bazel_cmd_does_not_retry_build_failures(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    calls = 0
+
+    def fake_popen(*args: object, **kwargs: object) -> SimpleNamespace:
+        nonlocal calls
+        calls += 1
+        return SimpleNamespace(stdout=StringIO("ERROR: target failed\n"), wait=lambda: 1)
+
+    monkeypatch.setattr(subprocess, "Popen", fake_popen)
+
+    with pytest.raises(pytest.fail.Exception):
+        _run_bazel_cmd("bazel run //:docs", "consumer", tmp_path, "3.12")
+
+    assert calls == 1
 
 
 # ---------------------------------------------------------------------------
