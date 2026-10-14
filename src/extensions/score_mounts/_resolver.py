@@ -157,8 +157,36 @@ class MountSpec:
 
 
 @dataclass(frozen=True)
+class AssetSpec:
+    """One file or directory copied unchanged into the HTML output.
+
+    Sphinx never reads these files. A directory's contents go below
+    ``destination``; a file goes to ``<destination>/<basename>``. An empty
+    destination is the HTML output root.
+    """
+
+    # Execroot-relative output path, for example
+    # ``bazel-out/k8-fastbuild/bin/pkg/doxygen_html``.
+    path: str
+    # Directory below the HTML output root, for example ``child/api``.
+    destination: str
+    # Whether ``path`` is a directory output (for example Doxygen HTML).
+    is_directory: bool
+
+    @classmethod
+    def from_manifest_entry(cls, entry: dict[str, object]) -> AssetSpec:
+        """Create one asset spec from the producer-owned manifest entry."""
+        return cls(
+            path=cast("str", entry["path"]),
+            destination=cast("str", entry["destination"]),
+            is_directory=cast("bool", entry["is_directory"]),
+        )
+
+
+@dataclass(frozen=True)
 class MountsManifest:
     mounts: list[MountSpec]
+    assets: list[AssetSpec] = field(default_factory=list)
 
 
 def load_mounts_manifest(manifest_path: str | Path) -> MountsManifest:
@@ -173,8 +201,11 @@ def load_mounts_manifest(manifest_path: str | Path) -> MountsManifest:
         json.loads(manifest_path.read_text(encoding="utf-8")),
     )
     entries = cast("list[dict[str, object]]", data["mounts"])
+    # Older manifests have no ``assets`` key; they carry no assets.
+    asset_entries = cast("list[dict[str, object]]", data.get("assets", []))
     return MountsManifest(
-        mounts=[MountSpec.from_manifest_entry(entry) for entry in entries]
+        mounts=[MountSpec.from_manifest_entry(entry) for entry in entries],
+        assets=[AssetSpec.from_manifest_entry(entry) for entry in asset_entries],
     )
 
 
