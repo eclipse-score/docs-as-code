@@ -196,15 +196,52 @@ def declare_docs_config_target(
     )
     return ":" + name
 
+def _first_duplicate(items, key_of):
+    """Return the first two items that share a key, or ``None``."""
+    seen = {}
+    for item in items:
+        key = key_of(item)
+        if key in seen:
+            return struct(first = seen[key], second = item, key = key)
+        seen[key] = item
+    return None
+
 def _ensure_unique_entries(entries):
     """Reject a source directory reached through more than one bundle path."""
-    seen = {}
-    for entry in entries:
-        key = entry.runtime_path
-        if key in seen:
-            fail(("bundle conflict: source directory %r is included through more " +
-                  "than one bundle path; include every documentation source directory once") % key)
-        seen[key] = entry
+    duplicate = _first_duplicate(entries, lambda entry: entry.runtime_path)
+    if duplicate:
+        fail(("bundle conflict: source directory %r is included through more " +
+              "than one bundle path; include every documentation source directory once") %
+             duplicate.key)
+
+def _ensure_asset_placement(ctx, index, child):
+    """Reject toctree placement for a child that only carries assets."""
+    child_info = child[DocsBundleInfo]
+    if child_info.entries or not child_info.assets:
+        return
+    if ctx.attr.bundle_attach_tos[index] or ctx.attr.bundle_toctree_indices[index]:
+        fail(("asset bundle %s cannot use 'attach_to' or 'toctree_index': assets " +
+              "get no toctree entry; link to them from a normal page instead") %
+             child.label)
+
+def _ensure_unique_assets(assets):
+    """Reject two assets that would be copied to the same place in the site."""
+    # A directory's contents go to its destination, a file goes to
+    # ``<destination>/<basename>``. Overlaps inside a directory are only
+    # known when the files are copied, so the copy step checks those.
+    placed_files = [
+        struct(
+            file = asset_file,
+            output_path = asset.destination if asset_file.is_directory else join_path(asset.destination, asset_file.basename),
+        )
+        for asset in assets
+        for asset_file in asset.files.to_list()
+    ]
+    duplicate = _first_duplicate(placed_files, lambda placed: placed.output_path)
+    if duplicate:
+        fail(("asset conflict: %r and %r are both copied to %r; " +
+              "mount them at different places") %
+             (duplicate.first.file.short_path, duplicate.second.file.short_path, duplicate.key or "."))
 
 def _source_dir_runtime_path(ctx):
     """Return this bundle source directory's Bazel runtime path.
@@ -558,6 +595,7 @@ def _docs_bundle_impl(ctx):
             repository = ctx.label.workspace_name,
         ))
     for index, child in enumerate(ctx.attr.bundles):
+        _ensure_asset_placement(ctx, index, child)
         entries.extend([
             _rebase_bundle_entry(
                 entry,
@@ -576,6 +614,7 @@ def _docs_bundle_impl(ctx):
         ])
 
     _ensure_unique_entries(entries)
+    _ensure_unique_assets(assets)
     all_source_files = depset(
         direct = own_source_files,
         transitive = child_source_files,
