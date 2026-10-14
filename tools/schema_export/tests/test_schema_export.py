@@ -17,6 +17,7 @@ import json
 # Import the modules to test
 import sys
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -37,7 +38,7 @@ def metamodel_path() -> Path:
 
 
 @pytest.fixture
-def metamodel_data(metamodel_path: Path) -> dict:
+def metamodel_data(metamodel_path: Path) -> Any:
     """Load actual metamodel data."""
     assert metamodel_path.is_file(), f"metamodel.yaml not found at {metamodel_path}"
     return load_metamodel_yaml(metamodel_path)
