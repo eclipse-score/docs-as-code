@@ -112,7 +112,7 @@ docs-as-code (metamodel.yaml)
 ### Running Tests
 
 ```bash
-bazel test //src/extensions/score_metamodel/schema_export:unit_tests
+bazel test //tools/schema_export:unit_tests
 ```
 
 ### Local Development
