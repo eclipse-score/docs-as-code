@@ -30,21 +30,7 @@
   {
     "name": "test_schema_export__test_load_metamodel_yaml",
     "file": "tools/schema_export/tests/test_schema_export.py",
-    "line": "50",
-    "result": "passed",
-    "repo_name": null,
-    "hash": null,
-    "url": null,
-    "TestType": null,
-    "DerivationTechnique": null,
-    "result_text": "",
-    "PartiallyVerifies": null,
-    "FullyVerifies": null
-  },
-  {
-    "name": "test_schema_export__test_build_json_schema",
-    "file": "tools/schema_export/tests/test_schema_export.py",
-    "line": "61",
+    "line": "47",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -58,7 +44,7 @@
   {
     "name": "test_schema_export__test_build_metamodel_data",
     "file": "tools/schema_export/tests/test_schema_export.py",
-    "line": "78",
+    "line": "58",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -70,23 +56,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_schema_export__test_schema_data_consistency",
-    "file": "tools/schema_export/tests/test_schema_export.py",
-    "line": "104",
-    "result": "skipped",
-    "repo_name": null,
-    "hash": null,
-    "url": null,
-    "TestType": null,
-    "DerivationTechnique": null,
-    "result_text": "jsonschema package not available",
-    "PartiallyVerifies": null,
-    "FullyVerifies": null
-  },
-  {
     "name": "test_schema_export__test_deterministic_output",
     "file": "tools/schema_export/tests/test_schema_export.py",
-    "line": "124",
+    "line": "84",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -156,7 +128,7 @@
   {
     "name": "module_verification_reports_test__test_injection_is_reversible",
     "file": "tools/tests/module_verification_reports_test.py",
-    "line": "131",
+    "line": "133",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -170,7 +142,7 @@
   {
     "name": "module_verification_reports_test__test_missing_graph_is_a_structural_failure",
     "file": "tools/tests/module_verification_reports_test.py",
-    "line": "148",
+    "line": "150",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -184,7 +156,7 @@
   {
     "name": "module_verification_reports_test__test_component_without_a_feature_link_is_a_structural_failure",
     "file": "tools/tests/module_verification_reports_test.py",
-    "line": "153",
+    "line": "155",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -198,7 +170,7 @@
   {
     "name": "module_verification_reports_test__test_feature_resolved_only_through_external_needs_is_not_a_failure",
     "file": "tools/tests/module_verification_reports_test.py",
-    "line": "164",
+    "line": "166",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -212,7 +184,7 @@
   {
     "name": "module_verification_reports_test__test_checkout_clone_refresh_pinned_selection_and_cleanup",
     "file": "tools/tests/module_verification_reports_test.py",
-    "line": "204",
+    "line": "206",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -226,7 +198,7 @@
   {
     "name": "module_verification_reports_test__test_cached_checkout_rejects_a_remote_mismatch",
     "file": "tools/tests/module_verification_reports_test.py",
-    "line": "223",
+    "line": "225",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -240,7 +212,7 @@
   {
     "name": "module_verification_reports_test__test_local_fake_downstream_build_populates_gallery_and_assets",
     "file": "tools/tests/module_verification_reports_test.py",
-    "line": "243",
+    "line": "245",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -254,7 +226,7 @@
   {
     "name": "module_verification_reports_test__test_local_fake_downstream_runs_the_real_docs_target",
     "file": "tools/tests/module_verification_reports_test.py",
-    "line": "302",
+    "line": "304",
     "result": "skipped",
     "repo_name": null,
     "hash": null,
@@ -268,7 +240,7 @@
   {
     "name": "module_verification_reports_test__test_main_is_partial_but_pinned_is_strict_on_build_failure",
     "file": "tools/tests/module_verification_reports_test.py",
-    "line": "541",
+    "line": "561",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -282,7 +254,7 @@
   {
     "name": "module_verification_reports_test__test_pinned_golden_comparison_is_byte_for_byte",
     "file": "tools/tests/module_verification_reports_test.py",
-    "line": "613",
+    "line": "633",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3048,8 +3020,8 @@
     "TestType": "requirements_based",
     "DerivationTechnique": "requirements_based",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_verification_report_need",
-    "FullyVerifies": null
+    "PartiallyVerifies": null,
+    "FullyVerifies": "tool_req__docs_verification_report_need"
   },
   {
     "name": "test_rules_file_based__test_rst_files[options/test_options_extra_option.rst]",
