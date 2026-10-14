@@ -352,6 +352,35 @@ def test_read_test_xml_file(
     test_type="requirements-based",
     derivation_technique="requirements-analysis",
 )
+def test_read_test_xml_file_with_concatenated_documents(tmp_path: Path):
+    """Parse test cases when multiple XML reports were concatenated."""
+    report_dir = tmp_path / "tests-report"
+    report_dir.mkdir()
+    first_report = report_dir / "first.xml"
+    second_report = report_dir / "second.xml"
+    _write_test_xml(first_report, name="tc_first")
+    _write_test_xml(second_report, name="tc_second")
+    combined_report = report_dir / "test.xml"
+    combined_report.write_text(
+        first_report.read_text(encoding="utf-8")
+        + second_report.read_text(encoding="utf-8"),
+        encoding="utf-8",
+    )
+
+    needs, no_props, missing_props = xml_parser.read_test_xml_file(
+        combined_report, None
+    )
+
+    assert [need.name for need in needs] == ["tc_first", "tc_second"]
+    assert no_props == ["tc_first", "tc_second"]
+    assert missing_props == []
+
+
+@add_test_properties(
+    partially_verifies=["tool_req__docs_test_link_testcase"],
+    test_type="requirements-based",
+    derivation_technique="requirements-analysis",
+)
 def test_short_hash_consistency_and_format():
     """Ensure shorthash has the intended format"""
     h1 = xml_parser.short_hash("foo")
