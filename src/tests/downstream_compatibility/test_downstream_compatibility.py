@@ -300,7 +300,8 @@ def _run_bazel_cmd(cmd: str, repo_name: str, cwd: Path, python_version: str) -> 
             return
         if attempt == 0 and retryable_download_error:
             print(
-                f"Retrying {repo_name} `{cmd}` after a transient repository download error"
+                f"Retrying {repo_name} `{cmd}` after a transient "
+                "repository download error"
             )
             continue
         pytest.fail(
@@ -345,7 +346,9 @@ def test_run_bazel_cmd_does_not_retry_build_failures(
     def fake_popen(*args: object, **kwargs: object) -> SimpleNamespace:
         nonlocal calls
         calls += 1
-        return SimpleNamespace(stdout=StringIO("ERROR: target failed\n"), wait=lambda: 1)
+        return SimpleNamespace(
+            stdout=StringIO("ERROR: target failed\n"), wait=lambda: 1
+        )
 
     monkeypatch.setattr(subprocess, "Popen", fake_popen)
 
