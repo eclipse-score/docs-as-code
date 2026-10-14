@@ -844,6 +844,12 @@ def docs(
         bundle = ":docs_bundle",
         visibility = ["//visibility:private"],
     )
+    assets_runfiles = bundle_runfiles(
+        name = _bundle_internal_target("docs", "assets_runfiles"),
+        bundle = ":docs_bundle",
+        assets = True,
+        visibility = ["//visibility:private"],
+    )
 
     # ``bazel run`` reads local documentation from the workspace, so including
     # the complete bundle in runfiles would duplicate those sources. External
@@ -875,12 +881,16 @@ def docs(
         docs_env["KNOWN_GOOD_JSON"] = "$(rlocationpath " + known_good_str + ")"
         docs_data += known_good_label
 
+    # Only the HTML builds copy docs_assets into their output. Keeping the
+    # assets out of ``docs_data`` means the check targets never build them.
+    html_docs_data = docs_data + [assets_runfiles]
+
     # Generated documentation artifacts may live below ``docs/``.  A
     # py_binary named ``docs`` would own the conflicting Bazel output path
     # ``docs``; expose this binary via the alias below instead.
     _declare_docs_binary(
         name = "_score_docs_cli",
-        data = docs_data,
+        data = html_docs_data,
         deps = deps,
         env = docs_env,
         action = "incremental",
@@ -908,7 +918,7 @@ def docs(
     )
     _declare_docs_binary(
         name = "live_preview",
-        data = docs_data,
+        data = html_docs_data,
         deps = deps,
         env = docs_env,
         action = "live_preview",
