@@ -55,7 +55,7 @@ def test_load_metamodel_yaml(metamodel_path: Path):
     assert len(data["needs_types"]) > 0
 
 
-def test_build_metamodel_data(metamodel_data: dict):
+def test_build_metamodel_data(metamodel_data: Any):
     """Test metamodel data export."""
     # Use a valid SHA-256 digest (64 hex characters)
     test_digest = "sha256:" + "a" * 64
@@ -81,7 +81,7 @@ def test_build_metamodel_data(metamodel_data: dict):
     assert len(data["link_types"]) > 0
 
 
-def test_deterministic_output(metamodel_data: dict):
+def test_deterministic_output(metamodel_data: Any):
     """Test that generation is deterministic."""
     test_digest = "sha256:" + "a" * 64
 
