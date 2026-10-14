@@ -69,8 +69,23 @@ def _composition_manifest_impl(ctx):
             mount["files"] = entry.files
         json_mounts.append(mount)
 
+    # Assets are copied only into the composed HTML output, so the local
+    # Needs view never lists them. Only paths are written here: the manifest
+    # action does not build the asset files themselves.
+    json_assets = [] if ctx.attr.own_only else [
+        {
+            "path": asset_file.path,
+            "destination": asset.destination,
+            # A directory output (for example Doxygen HTML) is one File whose
+            # contents are copied below the destination.
+            "is_directory": asset_file.is_directory,
+        }
+        for asset in bundle_info.assets
+        for asset_file in asset.files.to_list()
+    ]
+
     out = ctx.actions.declare_file(ctx.label.name + ".json")
-    ctx.actions.write(out, json.encode({"mounts": json_mounts}))
+    ctx.actions.write(out, json.encode({"mounts": json_mounts, "assets": json_assets}))
     return [DefaultInfo(files = depset([out]))]
 
 _composition_manifest = rule(

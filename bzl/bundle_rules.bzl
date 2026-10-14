@@ -843,26 +843,33 @@ def bundle_source_files(name, bundle, visibility = None, tags = None):
     )
     return ":" + name
 
-def _external_docs_runfiles_impl(ctx):
-    """Expose external documentation sources needed under ``bazel run``."""
+def _bundle_runfiles_impl(ctx):
+    """Expose a composed bundle's files needed under ``bazel run``."""
     bundle = ctx.attr.bundle[DocsBundleInfo]
-    return [DefaultInfo(files = depset(
-        transitive = [bundle.external_runfiles, bundle.data],
-    ))]
+    if ctx.attr.assets:
+        transitive = [asset.files for asset in bundle.assets]
+    else:
+        transitive = [bundle.external_runfiles, bundle.data]
+    return [DefaultInfo(files = depset(transitive = transitive))]
 
-_external_docs_runfiles = rule(
-    implementation = _external_docs_runfiles_impl,
+_bundle_runfiles = rule(
+    implementation = _bundle_runfiles_impl,
     attrs = {
         "bundle": attr.label(providers = [DocsBundleInfo]),
+        # Assets are copied only into the HTML output, so they get their own
+        # target that only the HTML builds depend on. Without this flag the
+        # target carries external documentation sources and bundle data.
+        "assets": attr.bool(default = False),
     },
     doc = "Internal adapter from a docs bundle to its runtime runfiles.",
 )
 
-def external_docs_runfiles(name, bundle, visibility = None):
-    """Create a target containing only external bundle sources for ``bazel run``."""
-    _external_docs_runfiles(
+def bundle_runfiles(name, bundle, assets = False, visibility = None):
+    """Create a target with a bundle's runtime files, or only its assets."""
+    _bundle_runfiles(
         name = name,
         bundle = bundle,
+        assets = assets,
         visibility = visibility,
     )
     return ":" + name

@@ -59,10 +59,10 @@ load(
 )
 load(
     "@score_docs_as_code//:bzl/bundle_rules.bzl",
+    "bundle_runfiles",
     "create_assets",
     "create_bundle",
     "declare_docs_config_target",
-    "external_docs_runfiles",
     "generate_code_target_sourcelinks",
     "merge_bundle_sourcelinks",
     "sphinx_config_options",
@@ -839,7 +839,7 @@ def docs(
         known_good = known_good,
     )
 
-    external_docs_runfiles(
+    bundle_runfiles(
         name = "_external_docs_runfiles",
         bundle = ":docs_bundle",
         visibility = ["//visibility:private"],
