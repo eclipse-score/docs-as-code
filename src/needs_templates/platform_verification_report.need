@@ -191,6 +191,9 @@
        width: 100%;
        height: auto;
    }
+   /* ``.sd-row`` is a flex container without a justification of its own, so
+      this centres the rows that leave the third column empty. */
+   .score-pie-row { justify-content: center; }
 
    p.rubric.safety-class-heading {
        display: inline-block; margin: 1.4em 0 0.5em 0;
