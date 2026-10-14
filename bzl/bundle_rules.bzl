@@ -375,6 +375,22 @@ def _sourcelinks_visible_through(ctx, child):
         return sourcelinks
     return [link for link in sourcelinks if link.repository == child_repository]
 
+def _assets_visible_through(ctx, child):
+    """Keep an external module's own assets, but not its foreign mounts."""
+    assets = child[DocsBundleInfo].assets
+    child_repository = child.label.workspace_name
+    if child_repository == ctx.label.workspace_name:
+        return assets
+    return [asset for asset in assets if asset.repository == child_repository]
+
+def _rebase_asset(asset, mount_at):
+    """Move an asset below the mount point chosen by the parent."""
+    return struct(
+        files = asset.files,
+        destination = join_path(mount_at, asset.destination),
+        repository = asset.repository,
+    )
+
 def _parse_bundle_declaration(bundle):
     """Read one nested-bundle declaration and fill in optional values."""
     if type(bundle) != "dict":
@@ -409,6 +425,7 @@ def _docs_bundle_impl(ctx):
     source_dir_execroot_path = ""
     own_external_runfiles = []
     own_data = depset(direct = ctx.files.data)
+    assets = []
     own_bundle_label = str(ctx.label)
     own_bundle_name = ctx.label.name
     own_primary_need_id = ctx.attr.primary_need_id
@@ -553,6 +570,10 @@ def _docs_bundle_impl(ctx):
         child_source_files.append(child[DefaultInfo].files)
         child_external_runfiles.append(child[DocsBundleInfo].external_runfiles)
         sourcelinks.extend(_sourcelinks_visible_through(ctx, child))
+        assets.extend([
+            _rebase_asset(asset, ctx.attr.bundle_mount_ats[index])
+            for asset in _assets_visible_through(ctx, child)
+        ])
 
     _ensure_unique_entries(entries)
     all_source_files = depset(
@@ -620,7 +641,7 @@ def _docs_bundle_impl(ctx):
             external_runfiles = external_runfiles,
             data = all_data,
             config = bundle_config,
-            assets = [],
+            assets = assets,
         ),
     ]
 
