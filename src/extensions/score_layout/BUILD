@@ -47,7 +47,9 @@ py_library(
     imports = ["."],
     visibility = ["//visibility:public"],
     deps = [
+        requirement("matplotlib"),
         requirement("sphinx"),
+        requirement("sphinx-needs"),
         "//src/helper_lib",
     ],
 )

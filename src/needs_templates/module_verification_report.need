@@ -90,7 +90,8 @@
    :class: safety-class-heading safety-{{ safety_css }}
 
 .. grid:: 1 2 2 2
-   :gutter: 3
+   :gutter: 2
+   :class-row: score-pie-row
 
    .. grid-item::
 
@@ -156,6 +157,12 @@
    .wp-doc-table td .dataTables_wrapper .dataTables_info,
    .wp-doc-table td .dataTables_wrapper .dataTables_paginate { display: none; }
 
+   /* Scales every chart to its column, so all rows match in size. */
+   .score-pie-row img[id^="needpie-"] {
+       width: 100%;
+       height: auto;
+   }
+
    p.rubric.safety-class-heading {
        display: inline-block; margin: 1.4em 0 0.5em 0;
        padding: 0.15em 0.9em; border-radius: 1em;
@@ -164,10 +171,11 @@
    p.rubric.safety-class-heading.safety-asil-b { background: #1f4e79; }
    p.rubric.safety-class-heading.safety-qm { background: #6c757d; }
 
+   /* Matches the aspect ratio of the rendered pie charts. */
    .empty-pie {
        display: flex; flex-direction: column; align-items: center;
        justify-content: center; gap: 0.4em;
-       height: 200px; padding: 0.5em; text-align: center;
+       aspect-ratio: 9 / 10; padding: 0.5em; text-align: center;
        border: 2px dashed #b0b0b0; border-radius: 6px; color: #6c757d;
    }
    .empty-pie-title { font-weight: 600; }

@@ -82,17 +82,17 @@
 {#- docutils normalises ``:class:`` values, so avoid underscores in them. -#}
 {%- set safety_css = safety|lower|replace("_", "-") %}
 {%- set chart_prefix = (title ~ " " ~ subject)|trim %}
-{#- The three-pie rows are squeezed into a single row, which needs the charts
-    scaled down to the column width (see ``score-pie-row`` below). -#}
+{#- The pies are scaled to the column width (see ``score-pie-row`` below), so
+    that a three-pie row stays as readable as a two-pie one. -#}
 {%- set columns = "1 2 3 3" if with_reference else "1 2 2 2" %}
 
 .. rubric:: {{ safety_label }} — {{ subject }}
    :class: safety-class-heading safety-{{ safety_css }}
 
 .. grid:: {{ columns }}
-   :gutter: 3
-{% if with_reference %}   :class-row: score-pie-row
-{% endif %}
+   :gutter: 2
+   :class-row: score-pie-row
+
    .. grid-item::
 
 {% if count == 0 %}
@@ -186,14 +186,10 @@
    .wp-doc-table td .dataTables_wrapper .dataTables_filter,
    .wp-doc-table td .dataTables_wrapper .dataTables_info,
    .wp-doc-table td .dataTables_wrapper .dataTables_paginate { display: none; }
-   /* Shrinks the charts so that all three fit next to each other. */
+   /* Scales every chart to its column, so rows of two and of three match. */
    .score-pie-row img[id^="needpie-"] {
        width: 100%;
        height: auto;
-   }
-   .score-pie-row .empty-pie {
-       height: auto;
-       aspect-ratio: 16 / 9;
    }
 
    p.rubric.safety-class-heading {
@@ -204,10 +200,11 @@
    p.rubric.safety-class-heading.safety-asil-b { background: #1f4e79; }
    p.rubric.safety-class-heading.safety-qm { background: #6c757d; }
 
+   /* Matches the aspect ratio of the rendered pie charts. */
    .empty-pie {
        display: flex; flex-direction: column; align-items: center;
        justify-content: center; gap: 0.4em;
-       height: 200px; padding: 0.5em; text-align: center;
+       aspect-ratio: 9 / 10; padding: 0.5em; text-align: center;
        border: 2px dashed #b0b0b0; border-radius: 6px; color: #6c757d;
    }
    .empty-pie-title { font-weight: 600; }
