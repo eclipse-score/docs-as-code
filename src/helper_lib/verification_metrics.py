@@ -80,9 +80,12 @@ def count_status_filtered(
 
         # Architecture elements should not be version-filtered
         # (they have no valid_from or derived_from attributes)
-        if category == "requirements" and version:
-            if not version_filter_func(need, version):
-                continue
+        if (
+            category == "requirements"
+            and version
+            and not version_filter_func(need, version)
+        ):
+            continue
 
         need_status = str(need.get("status", ""))
         if need_status in status:
@@ -120,9 +123,13 @@ def count_coverage_filtered(
             continue
 
         # Architecture elements should not be version-filtered
-        if category == "requirements" and version:
-            if not version_filter_func(need, version):
-                continue
+        # (they have no valid_from or derived_from attributes)
+        if (
+            category == "requirements"
+            and version
+            and not version_filter_func(need, version)
+        ):
+            continue
 
         # Use verification coverage axis (not link coverage axis)
         has_fully = bool(need.get("fully_verifies_back"))
