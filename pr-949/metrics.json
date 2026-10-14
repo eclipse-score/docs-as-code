@@ -36,32 +36,5 @@
     "linked_to_requirements_pct": 18.736383442265794,
     "broken_references": []
   },
-  "verification_metrics": {
-    "doc_tool__score_docs_as_code": {
-      "requirements": {
-        "status": {
-          "valid": 0,
-          "valid_inspected": 0,
-          "invalid": 0
-        },
-        "coverage": {
-          "fully_covered": 0,
-          "partially_covered": 0,
-          "not_covered": 0
-        }
-      },
-      "architecture": {
-        "status": {
-          "valid": 0,
-          "valid_inspected": 0,
-          "invalid": 0
-        },
-        "coverage": {
-          "fully_covered": 0,
-          "partially_covered": 0,
-          "not_covered": 0
-        }
-      }
-    }
-  }
+  "verification_metrics": {}
 }
