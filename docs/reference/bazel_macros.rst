@@ -47,6 +47,10 @@ If a file is mounted documentation, use ``docs_bundle(srcs = [...])``. Both
 bundle attributes make files available to a build; they differ in whether the
 files are processed as documentation sources or carried as supporting data.
 
+Files that must appear in the HTML site unchanged and that Sphinx never reads,
+such as Doxygen output or PDFs, belong in :ref:`docs_assets <docs_assets_macro>`
+instead.
+
 Minimal example (root ``BUILD``)
 --------------------------------
 
@@ -292,3 +296,47 @@ Signature: ``docs_bundle(name, source_dir = None, srcs = [], data = [], entry_do
 
   The root project's ``project_url`` is resolved for the declaring bundle by
   appending its workspace-relative Bazel package path.
+
+.. _docs_assets_macro:
+
+Bazel macro: ``docs_assets``
+----------------------------
+
+``docs_assets`` (also from ``docs.bzl``) declares files that are copied
+**unchanged** into the HTML output. Sphinx never reads them. Use it for
+pre-built output such as Doxygen HTML, PDFs, or images. Like a bundle, it has no
+placement of its own: it is placed as an entry in ``bundles`` with ``mount_at``.
+
+.. code-block:: python
+
+   load("//:docs.bzl", "docs_assets")
+
+   docs_assets(
+       name = "api_docs",
+       srcs = [":doxygen_html", "manual.pdf"],
+       visibility = ["//visibility:public"],
+   )
+
+Signature: ``docs_assets(name, srcs, visibility = None)``.
+
+- ``srcs`` (list of bazel labels)
+  Files of any type and directory outputs (for example a Doxygen rule's HTML
+  directory). Checked-in and generated files both work.
+
+Rules:
+
+1. A directory's contents go to ``<mount_at>/``.
+2. A file goes to ``<mount_at>/<file name>``.
+3. Only the HTML builds (``docs`` and ``live_preview``) copy assets;
+   ``needs_json``, ``docs_check``, and ``docs_link_check`` never build them.
+4. An asset may not overwrite a Sphinx page or a file Sphinx writes itself
+   (``_static/``, ``_images/``, ``_sources/``, ``_downloads/``,
+   ``genindex.html``, ``search.html``, ``searchindex.js``, ``objects.inv``,
+   ``.buildinfo``). Two assets may not write the same path either. Both are
+   build errors.
+5. An external module's own assets travel with its bundle; assets that module
+   mounted from a third module do not.
+6. Assets get no toctree entry: ``attach_to`` and ``toctree_index`` are errors
+   for a ``docs_assets`` placement. Link to the files from a normal page.
+
+See :ref:`howto_docs_assets` for a worked example.

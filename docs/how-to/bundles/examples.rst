@@ -93,6 +93,67 @@ The generated page is rendered at ``data_test/index.html`` and is added to the
 consuming project's index page's toctree. A generated source bundle is mounted
 and navigated in exactly the same way as a bundle with workspace sources.
 
+.. _howto_docs_assets:
+
+Ship pre-built files (Doxygen HTML, PDFs, images)
+-------------------------------------------------
+
+Use ``docs_assets`` for files that are already finished and must appear in the
+HTML site unchanged: Doxygen output, PDFs, images, or any other file type.
+Sphinx never reads these files; they are copied into the output after the
+build.
+
+.. code-block:: starlark
+
+   load("@score_docs_as_code//:docs.bzl", "docs", "docs_assets")
+
+   docs_assets(
+       name = "api_docs",
+       srcs = [
+           ":doxygen_html",  # a directory output, for example from a Doxygen rule
+           "manual.pdf",  # any file
+       ],
+   )
+
+   docs(
+       source_dir = "docs",
+       bundles = [{
+           "bundle": ":api_docs",
+           "mount_at": "api",
+       }],
+   )
+
+This produces:
+
+* ``api/index.html`` and the rest of the Doxygen tree, because a directory's
+  *contents* go to ``mount_at``;
+* ``api/manual.pdf``, because a file goes to ``<mount_at>/<file name>``.
+
+Assets get no toctree entry. Link to them from a normal page instead, for
+example in ``docs/index.rst``:
+
+.. code-block:: rst
+
+   * `API reference <api/index.html>`_
+   * `User manual <api/manual.pdf>`_
+
+A ``docs_assets`` target is placed like any other bundle, so it can also sit
+inside a child bundle: mounted at ``api`` in a bundle that is mounted at
+``child``, the files land in ``child/api/``. See the `complete docs-assets
+fixture on GitHub
+<https://github.com/eclipse-score/docs-as-code/tree/main/src/tests/docs_bzl/scenarios/docs_assets>`_,
+which mounts an HTML directory, a PDF, a PNG, and an SVG this way.
+
+``data`` or ``docs_assets``?
+
+* ``docs_bundle(data = [...])``: Sphinx reads or references the file, for
+  example an image used by an ``.. image::`` directive.
+* ``docs_assets``: the file is copied as-is and Sphinx never sees it.
+
+Assets are copied only by the HTML builds (``bazel run //:docs`` and
+``live_preview``). ``needs_json``, ``docs_check``, and ``docs_link_check`` never
+build them, so a slow Doxygen run does not slow down those targets.
+
 Mount documentation from another module
 ----------------------------------------
 

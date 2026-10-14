@@ -87,8 +87,9 @@ The configuration has two separate responsibilities:
    docs --> output : mount_at / attach_to / toctree_index
    @enduml
 
-For nested composition, generated bundle data, and bundles published by
-another Bazel module, see :doc:`examples`.
+For nested composition, generated bundle data, pre-built files such as Doxygen
+HTML or PDFs, and bundles published by another Bazel module, see
+:doc:`examples`.
 
 Refresh the generated project configuration
 -------------------------------------------
