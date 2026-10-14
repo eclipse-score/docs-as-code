@@ -52,17 +52,18 @@ def _composition_manifest_impl(ctx):
                 # the bundle. It is intentionally independent of the Bazel
                 # target name and of any other Need IDs in the bundle.
                 "primary_need_id": entry.primary_need_id,
-                # Each direct target contributes its Bazel label and rule kind
-                # to the bundle metadata consumed by Python.
+                # Export sorted implementation files alongside target identity.
                 "code_targets": [
                     {
                         "label": target.label,
                         "type": target.type,
+                        "files": target.files,
                     }
                     for target in entry.code_targets
                 ],
             },
         }
+
         # Explicit source targets are mounted as a file allowlist. Directory
         # bundles omit this key and retain the existing recursive behavior.
         if entry.files:

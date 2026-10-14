@@ -45,6 +45,15 @@ including those of their ``deps`` recursively. This means that a
 ``cc_executable`` also covers source files from the ``cc_library`` targets it
 uses. You may also pass filegroups; their files are scanned directly.
 
+The exported ``bundle.code_targets[*].files`` list includes the sources and
+headers of every explicitly selected target, even when it is outside the bundle
+package. Recursive dependency traversal for this list is limited to the
+repository and BUILD package containing the ``docs_bundle`` declaration;
+subpackage targets are included. A sibling package or external repository
+ends that dependency branch, including dependencies that point back into the
+bundle package. This boundary does not depend on ``source_dir``. The existing
+source-link collection described above is unchanged.
+
 .. code-block:: starlark
    :emphasize-lines: 14
    :linenos:

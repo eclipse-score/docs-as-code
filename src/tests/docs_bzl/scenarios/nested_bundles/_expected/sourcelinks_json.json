@@ -20,6 +20,16 @@
     "url": ""
   },
   {
+    "file": "bazel-out/k8-fastbuild/bin/src/tests/docs_bzl/scenarios/nested_bundles/generated/generated_component.cc",
+    "full_line": "// req-traceability: tool_req__docs_bzl_nested_bundle",
+    "hash": "",
+    "line": 1,
+    "need": "tool_req__docs_bzl_nested_bundle",
+    "repo_name": "local_repo",
+    "tag": "// req-traceability:",
+    "url": ""
+  },
+  {
     "file": "src/tests/docs_bzl/scenarios/nested_bundles/child/filegroup_source.py",
     "full_line": "# req-traceability: tool_req__docs_bzl_nested_bundle",
     "hash": "",

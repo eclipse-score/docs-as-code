@@ -5,6 +5,9 @@
       "bundle": {
         "code_targets": [
           {
+            "files": [
+              "src/tests/docs_bzl/scenarios/nested_bundles/child/example.py"
+            ],
             "label": "@@//src/tests/docs_bzl/scenarios/nested_bundles:example_binary",
             "type": "py_binary"
           }
@@ -50,15 +53,74 @@
       "bundle": {
         "code_targets": [
           {
+            "files": [
+              "src/tests/docs_bzl/scenarios/nested_bundles/child/example.py"
+            ],
             "label": "@@//src/tests/docs_bzl/scenarios/nested_bundles:example_binary",
             "type": "py_binary"
           },
           {
+            "files": [
+              "src/tests/docs_bzl/scenarios/nested_bundles/child/example.cc",
+              "src/tests/docs_bzl/scenarios/nested_bundles/child/example_api.h",
+              "src/tests/docs_bzl/scenarios/nested_bundles/child/example_main.cc"
+            ],
             "label": "@@//src/tests/docs_bzl/scenarios/nested_bundles:example_executable",
             "type": "cc_binary"
           },
           {
+            "files": [],
+            "label": "@@//src/tests/docs_bzl/scenarios/nested_bundles:external_dependency_probe",
+            "type": "dependency_probe"
+          },
+          {
+            "files": [
+              "src/tests/docs_bzl/scenarios/basic_docs/outside_component.cc",
+              "src/tests/docs_bzl/scenarios/basic_docs/outside_component.h"
+            ],
+            "label": "@@//src/tests/docs_bzl/scenarios/nested_bundles:dependency_entrypoint",
+            "type": "cc_library"
+          },
+          {
+            "files": [
+              "src/tests/docs_bzl/scenarios/nested_bundles/generated/generated_component.cc",
+              "src/tests/docs_bzl/scenarios/nested_bundles/generated/generated_component.h"
+            ],
+            "label": "@@//src/tests/docs_bzl/scenarios/nested_bundles:generated_implementation",
+            "type": "cc_library"
+          },
+          {
+            "files": [
+              "src/tests/docs_bzl/scenarios/nested_bundles/child/example.cc"
+            ],
+            "label": "@@//src/tests/docs_bzl/scenarios/nested_bundles:local_dependency_probe",
+            "type": "cc_library"
+          },
+          {
+            "files": [
+              "src/tests/docs_bzl/scenarios/nested_bundles/child/example.cc",
+              "src/tests/docs_bzl/scenarios/nested_bundles/child/example_api.h",
+              "src/tests/docs_bzl/scenarios/nested_bundles/child/filegroup_source.py",
+              "src/tests/docs_bzl/scenarios/nested_bundles/subpackage/subpackage_support.cc"
+            ],
             "label": "@@//src/tests/docs_bzl/scenarios/nested_bundles:nested_filegroup_sources",
+            "type": "filegroup"
+          },
+          {
+            "files": [
+              "src/tests/docs_bzl/scenarios/basic_docs/outside_component.cc",
+              "src/tests/docs_bzl/scenarios/basic_docs/outside_component.h"
+            ],
+            "label": "@@//src/tests/docs_bzl/scenarios/nested_bundles:selected_with_sibling_files",
+            "type": "cc_library"
+          },
+          {
+            "files": [
+              "src/tests/docs_bzl/scenarios/basic_docs/outside_component.cc",
+              "src/tests/docs_bzl/scenarios/nested_bundles/child/example.cc",
+              "src/tests/docs_bzl/scenarios/nested_bundles/child/example_api.h"
+            ],
+            "label": "@@//src/tests/docs_bzl/scenarios/basic_docs:nested_bundles_outside_gateway",
             "type": "filegroup"
           }
         ],
