@@ -19,18 +19,9 @@ package(default_visibility = ["//visibility:public"])
 
 py_library(
     name = "schema_export_lib",
-    srcs = ["generate_schema.py", "export_data.py"],
+    srcs = ["export_data.py"],
     imports = ["."],
     deps = all_requirements,
-)
-
-py_binary(
-    name = "generate_schema_bin",
-    srcs = ["generate_schema.py"],
-    main = "generate_schema.py",
-    data = ["//src/extensions/score_metamodel:metamodel_yaml"],
-    deps = all_requirements,
-    visibility = ["//visibility:public"],
 )
 
 py_binary(
@@ -48,7 +39,6 @@ py_binary(
     main = "generate_all.py",
     data = [
         "//src/extensions/score_metamodel:metamodel_yaml",
-        "generate_schema.py",
         "export_data.py",
     ],
     deps = all_requirements,

@@ -11,10 +11,10 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-"""Generate both JSON Schema and metamodel data export.
+"""Generate metamodel data export for MCP server consumption.
 
-This is a convenience script that generates both the JSON Schema and the
-metamodel instance data in one call, suitable for CI/CD pipelines.
+This script exports the metamodel data from metamodel.yaml into a JSON format
+that can be consumed by downstream tools like the MCP server metamodel-flow package.
 
 Usage:
     generate_all.py --output-dir DIR [--source-commit SHA] [METAMODEL_YAML]
@@ -31,7 +31,7 @@ from pathlib import Path
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Generate both JSON Schema and metamodel data export"
+        description="Generate metamodel data export for MCP server consumption"
     )
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("metamodel", type=Path, nargs="?", default=None)
@@ -64,22 +64,6 @@ def main() -> int:
     env = os.environ.copy()
     env["SOURCE_COMMIT"] = args.source_commit
 
-    # Generate schema
-    schema_path = args.output_dir / "metamodel-schema.json"
-    print(f"Generating JSON Schema: {schema_path}")
-    result = subprocess.run(
-        [
-            sys.executable,
-            Path(__file__).parent / "generate_schema.py",
-            "--output",
-            str(schema_path),
-            str(meta_path),
-        ],
-        env=env,
-    )
-    if result.returncode != 0:
-        return result.returncode
-
     # Generate data export
     data_path = args.output_dir / "metamodel-data.json"
     print(f"Exporting metamodel data: {data_path}")
@@ -98,8 +82,7 @@ def main() -> int:
     if result.returncode != 0:
         return result.returncode
 
-    print(f"\n✓ Generated files in {args.output_dir}:")
-    print(f"  - {schema_path.name}")
+    print(f"\n✓ Generated file in {args.output_dir}:")
     print(f"  - {data_path.name}")
 
     return 0

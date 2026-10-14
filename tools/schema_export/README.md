@@ -13,48 +13,27 @@
 
 # Schema Export Package
 
-This package provides tools to export the S-CORE metamodel as JSON Schema and instance data.
+This package provides tools to export the S-CORE metamodel data for MCP server consumption.
 
 ## Purpose
 
-The schema export package enables AI agents and other tools to:
-1. Understand the metamodel structure via JSON Schema
-2. Validate metamodel instances
-3. Consume metamodel data for downstream processing
+The schema export package exports metamodel data from `metamodel.yaml` into a JSON format
+that can be consumed by downstream tools like the MCP server metamodel-flow package.
 
-## Why JSON Schema?
-
-**JSON Schema is the standard schema language for both JSON and YAML.**
-
-Although the metamodel is written in YAML, JSON Schema is the appropriate choice because:
-
-- **No YAML Schema specification exists** - JSON Schema is designed to validate both JSON and YAML documents
-- **Industry standard** - Widely adopted by AI tools and validation libraries
-- **YAML is a JSON superset** - JSON Schema validates YAML perfectly
-- **Tool ecosystem** - Rich support across all major programming languages
-
-We export as JSON (rather than YAML) for maximum tool compatibility, but the schema can validate both JSON and YAML instances.
+The exported data includes:
+- Need type definitions with merged options (base + type-specific)
+- Link type definitions
+- Prohibited words validation rules
+- Graph validation rules
 
 ## Tools
 
-### 1. `generate_schema.py` - JSON Schema Generator
-
-Generates a JSON Schema that describes the structure and validation rules of the S-CORE metamodel.
-
-```bash
-bazel run //tools/schema_export:generate_schema_bin -- \
-  --output path/to/metamodel-schema.json
-```
-
-### 2. `export_data.py` - Metamodel Data Exporter
+### `export_data.py` - Metamodel Data Exporter
 
 Exports the actual metamodel instance data from `metamodel.yaml` into JSON format.
 
-The source commit is read from the `SOURCE_COMMIT` environment variable or can be
-specified via the `--source-commit` argument.
-
 ```bash
-# Using environment variable
+# Using environment variable for source commit
 export SOURCE_COMMIT=$(git rev-parse HEAD)
 bazel run //tools/schema_export:export_data_bin -- \
   --output path/to/metamodel-data.json
@@ -65,12 +44,9 @@ bazel run //tools/schema_export:export_data_bin -- \
   --source-commit $(git rev-parse HEAD)
 ```
 
-### 3. `generate_all.py` - Combined Generator
+### `generate_all.py` - Convenience Wrapper
 
-Generates both schema and data in one call, suitable for CI/CD pipelines.
-
-The source commit is read from the `SOURCE_COMMIT` environment variable or can be
-specified via the `--source-commit` argument.
+A convenience script that calls `export_data.py`. Useful for CI/CD pipelines.
 
 ```bash
 # Using environment variable
@@ -84,20 +60,11 @@ bazel run //tools/schema_export:generate_all_bin -- \
   --source-commit $(git rev-parse HEAD)
 ```
 
-## Output Files
-
-### `metamodel-schema.json`
-
-A JSON Schema document that defines:
-- Structure of need types and their options
-- Link type definitions
-- Prohibited words validation rules
-- Graph validation rules
-- Base options inherited by all types
+## Output File
 
 ### `metamodel-data.json`
 
-An instance document containing:
+A JSON document containing:
 - All need types with their configurations
 - All link types
 - Prohibited words checks

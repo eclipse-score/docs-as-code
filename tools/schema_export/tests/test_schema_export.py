@@ -10,23 +10,19 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-"""Tests for schema export functionality."""
+"""Tests for metamodel data export functionality."""
 
-import importlib
 import json
 
 # Import the modules to test
 import sys
-from collections.abc import Mapping
 from pathlib import Path
-from typing import Any, cast
 
 import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from export_data import build_metamodel_data
-from generate_schema import build_json_schema, load_metamodel_yaml
+from export_data import build_metamodel_data, load_metamodel_yaml
 
 
 @pytest.fixture
@@ -41,7 +37,7 @@ def metamodel_path() -> Path:
 
 
 @pytest.fixture
-def metamodel_data(metamodel_path: Path) -> Mapping[str, Any]:
+def metamodel_data(metamodel_path: Path) -> dict:
     """Load actual metamodel data."""
     assert metamodel_path.is_file(), f"metamodel.yaml not found at {metamodel_path}"
     return load_metamodel_yaml(metamodel_path)
@@ -58,24 +54,7 @@ def test_load_metamodel_yaml(metamodel_path: Path):
     assert len(data["needs_types"]) > 0
 
 
-def test_build_json_schema(metamodel_data: Mapping[str, Any]):
-    """Test JSON Schema generation."""
-    schema = build_json_schema(metamodel_data, "sha256:test")
-
-    # Check schema structure
-    assert schema["$schema"] == "https://json-schema.org/draft/2020-12/schema"
-    assert schema["title"] == "S-CORE Metamodel Schema"
-    assert "properties" in schema
-
-    # Check that all major sections are present
-    props = schema["properties"]
-    assert "needs_types" in props
-    assert "needs_extra_links" in props
-    assert "prohibited_words_checks" in props
-    assert "graph_checks" in props
-
-
-def test_build_metamodel_data(metamodel_data: Mapping[str, Any]):
+def test_build_metamodel_data(metamodel_data: dict):
     """Test metamodel data export."""
     # Use a valid SHA-256 digest (64 hex characters)
     test_digest = "sha256:" + "a" * 64
@@ -101,34 +80,9 @@ def test_build_metamodel_data(metamodel_data: Mapping[str, Any]):
     assert len(data["link_types"]) > 0
 
 
-def test_schema_data_consistency(metamodel_data: Mapping[str, Any]):
-    """Test that generated data is consistent with schema."""
-    try:
-        jsonschema = cast(Any, importlib.import_module("jsonschema"))
-    except ImportError:
-        pytest.skip("jsonschema package not available")
-
-    test_digest = "sha256:" + "a" * 64
-    schema = build_json_schema(metamodel_data, test_digest)
-    data = build_metamodel_data(metamodel_data, test_digest)
-
-    # Validate data against schema (basic validation)
-    # Note: Full validation may require adjustments to schema structure
-    # This is a sanity check that the basic structure matches
-    try:
-        jsonschema.validate(data, schema)
-    except jsonschema.exceptions.SchemaError:
-        pytest.skip("Schema validation requires jsonschema package")
-
-
-def test_deterministic_output(metamodel_data: Mapping[str, Any]):
+def test_deterministic_output(metamodel_data: dict):
     """Test that generation is deterministic."""
     test_digest = "sha256:" + "a" * 64
-    schema1 = build_json_schema(metamodel_data, test_digest)
-    schema2 = build_json_schema(metamodel_data, test_digest)
-
-    # Should produce identical output
-    assert json.dumps(schema1, sort_keys=True) == json.dumps(schema2, sort_keys=True)
 
     data1 = build_metamodel_data(metamodel_data, test_digest)
     data2 = build_metamodel_data(metamodel_data, test_digest)
