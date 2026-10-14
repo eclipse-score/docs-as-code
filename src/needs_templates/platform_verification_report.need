@@ -245,7 +245,7 @@ Stakeholder Requirements
       :style: table
       :columns: id;title;safety;status;testlink
       :colwidths: 13,22,8,10,47
-      :sort: id
+      :sort: safety
 {% if ns_stkh_ref.missing %}
 {#- Detail view of the "not referenced" slices of the reference coverage pies
     above; both are rendered from the same in-scope ID list. -#}
@@ -259,7 +259,7 @@ Stakeholder Requirements
       :style: table
       :columns: id;title;safety;status
       :colwidths: 15,45,15,25
-      :sort: id
+      :sort: safety
 {% endif %}
 
 {# ===================================================================== #}
@@ -276,7 +276,7 @@ Feature Overview
    :filter: id in [{% for feature in report_features %}"{{ feature["id"] }}"{% if not loop.last %}, {% endif %}{% endfor %}]
    :columns: id as "Feature";safety;security;status
    :style: table
-   :sort: id
+   :sort: safety
 
 {#- Reference coverage index, built once for all Features: a feature
     requirement is "referenced" when at least one in-scope component
@@ -339,7 +339,7 @@ Requirements Statistics
       :style: table
       :columns: id;title;safety;status;testlink
       :colwidths: 13,22,8,10,47
-      :sort: id
+      :sort: safety
 {% if ns_feat_ref.missing %}
 
 .. dropdown:: Not referenced by component requirements ({{ ns_feat_ref.missing|length }})
@@ -351,7 +351,7 @@ Requirements Statistics
       :style: table
       :columns: id;title;safety;status
       :colwidths: 15,45,15,25
-      :sort: id
+      :sort: safety
 {% endif %}
 
 Architecture Statistics
@@ -370,7 +370,7 @@ Architecture Statistics
       :style: table
       :columns: id;title;safety;status;tags
       :colwidths: 25,30,10,15,20
-      :sort: id
+      :sort: safety
 
 Inspection Statistics
 ^^^^^^^^^^^^^^^^^^^^^
