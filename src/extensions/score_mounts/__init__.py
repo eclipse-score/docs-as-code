@@ -48,6 +48,7 @@ from src.extensions.score_mounts._resolver import (
     MountsManifest,
     MountSpec,
     load_mounts_manifest,
+    resolve_output_file,
     resolve_source_files,
     resolve_walk_dir,
 )
@@ -102,20 +103,7 @@ def _resolve_data_mounts(
         if spec.root_bundle:
             continue
         for data_file in spec.data:
-            if ws_root is not None and runfiles_dir is not None:
-                runfiles_str = str(runfiles_dir)
-                if "/bazel-out/" in runfiles_str:
-                    # Execroot = runfiles path before the first /bazel-out/ occurrence
-                    # e.g. runfiles=execroot/_main/bazel-out/... => execroot=execroot/_main
-                    walk_file = Path(runfiles_str.split("/bazel-out/")[0]) / data_file
-                else:
-                    walk_file = (
-                        ws_root
-                        / "bazel-bin"
-                        / data_file.removeprefix("bazel-out/k8-fastbuild/bin/")
-                    )
-            else:
-                walk_file = Path.cwd() / data_file
+            walk_file = resolve_output_file(data_file, ws_root, runfiles_dir)
             if not walk_file.is_file():
                 raise ValueError(
                     "score_mounts: resolved data file does not exist: "
