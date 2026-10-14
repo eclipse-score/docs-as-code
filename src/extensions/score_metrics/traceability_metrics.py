@@ -249,15 +249,27 @@ def calculate_verification_metrics(  # noqa: C901
     for component_id in component_ids:
         # Requirements (comp_req with satisfied_by pointing to this component)
         # Version filtering is applied to requirements
-        reqs = [n for n in all_needs.values() if is_need_in_component(n, component_id, "requirements")]
+        reqs = [
+            n
+            for n in all_needs.values()
+            if is_need_in_component(n, component_id, "requirements")
+        ]
 
         if report_version:
             req_metrics = {
                 "status": count_status_filtered(
-                    reqs, component_id, "requirements", report_version, version_filter_func
+                    reqs,
+                    component_id,
+                    "requirements",
+                    report_version,
+                    version_filter_func,
                 ),
                 "coverage": count_coverage_filtered(
-                    reqs, component_id, "requirements", report_version, version_filter_func
+                    reqs,
+                    component_id,
+                    "requirements",
+                    report_version,
+                    version_filter_func,
                 ),
             }
         else:
@@ -267,7 +279,11 @@ def calculate_verification_metrics(  # noqa: C901
 
         # Architecture elements (comp_arc_sta, comp_arc_dyn with belongs_to this component)
         # Version filtering is NOT applied to architecture elements
-        arch = [n for n in all_needs.values() if is_need_in_component(n, component_id, "architecture")]
+        arch = [
+            n
+            for n in all_needs.values()
+            if is_need_in_component(n, component_id, "architecture")
+        ]
         arch_metrics = calculate_status_and_coverage_metrics(
             arch, version_filter=None, all_needs=all_needs
         )
