@@ -59,6 +59,7 @@ load(
 )
 load(
     "@score_docs_as_code//:bzl/bundle_rules.bzl",
+    "DEFAULT_VERSION",
     "create_bundle",
     "declare_docs_config_target",
     "external_docs_runfiles",
@@ -717,6 +718,8 @@ def docs(
     config_is_missing = len(native.glob([config_file_path], allow_empty = True)) == 0
     sphinx_config = None if config_is_missing else ":" + config_file_path
     interactive_config_options = []
+    # The calling package's module version, so a consumer's docs show its own version.
+    version = native.module_version() or DEFAULT_VERSION
 
     if config_is_missing:
         if not project or not project_url:
@@ -728,6 +731,7 @@ def docs(
             project = project,
             project_url = project_url,
             required_in_id = _module_name_without_prefix(),
+            version = version,
         )
 
     # Publish the root project's structured configuration independently from
@@ -747,6 +751,7 @@ def docs(
         project_url = project_url or "",
         required_in_id = _module_name_without_prefix(),
         metamodel = bundle_config_metamodel,
+        version = version,
         visibility = [":" + config_visibility],
     )
 

@@ -85,6 +85,9 @@ Minimal example (root ``BUILD``)
   has no ``conf.py``; in that case ``docs()`` runs Sphinx in configuration-free
   mode and supplies these values, the Docs-as-Code baseline extensions and
   version, and a ``required_in_id`` entry derived from the Bazel module name.
+  The version is the ``version`` of the module that calls ``docs()`` (from
+  ``module(...)`` in ``MODULE.bazel``), or ``0.0.0`` if it declares none; use
+  ``|version|`` in reStructuredText to reference it.
   The first underscore-separated prefix is removed (for example,
   ``score_docs_as_code`` becomes ``docs_as_code``). If a ``conf.py`` exists,
   it remains authoritative for the root Sphinx build; these macro arguments
