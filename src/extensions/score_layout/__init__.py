@@ -18,7 +18,6 @@ from urllib.parse import quote
 
 import html_options
 import sphinx_options
-from needpie_layout import patch_needpie_layout
 from sphinx.application import Sphinx
 
 from src.helper_lib import Environment, config_setdefault
@@ -55,7 +54,6 @@ _SOURCE_DEPENDENT_SIDEBAR_ITEMS = frozenset({"edit-this-page", "sourcelink"})
 def setup(app: Sphinx) -> dict[str, str | bool]:
     logger.debug("score_layout setup called")
 
-    patch_needpie_layout()
     app.connect("config-inited", update_config)
     # Run after the PyData theme creates its edit-URL callback so mounted pages
     # can replace the callback with a workspace-aware one.
