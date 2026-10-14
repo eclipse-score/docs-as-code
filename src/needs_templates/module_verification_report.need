@@ -75,6 +75,10 @@
     QM Needs never reach ``valid_inspected``, so there ``valid`` already is
     the green "done" slice rather than the yellow "not inspected yet" one.
 
+    The raster has three columns for two pies on purpose: the third column
+    stays empty so that these charts render at the same size as the three-pie
+    rows of the platform report.
+
     ``count`` decides between pies and placeholders only; it is deliberately
     not shown, because it is resolved through the Need graph while the pies
     count through Sphinx-Needs filters, and the two can disagree on links
@@ -89,7 +93,7 @@
 .. rubric:: {{ safety_label }} — {{ subject }}
    :class: safety-class-heading safety-{{ safety_css }}
 
-.. grid:: 1 2 2 2
+.. grid:: 1 2 3 3
    :gutter: 2
    :class-row: score-pie-row
 
@@ -157,7 +161,8 @@
    .wp-doc-table td .dataTables_wrapper .dataTables_info,
    .wp-doc-table td .dataTables_wrapper .dataTables_paginate { display: none; }
 
-   /* Scales every chart to its column, so all rows match in size. */
+   /* Scales every chart to its column; together with the fixed three-column
+      raster this gives every chart the same size as in the platform report. */
    .score-pie-row img[id^="needpie-"] {
        width: 100%;
        height: auto;
@@ -180,7 +185,45 @@
    }
    .empty-pie-title { font-weight: 600; }
    .empty-pie-text { font-style: italic; }
+
+   .chart-legend { display: flex; flex-wrap: wrap; gap: 1.2em 2.5em; }
+   .chart-legend-group {
+       display: flex; flex-direction: column; gap: 0.3em;
+       flex: 1 1 20em; font-size: 0.9em;
+   }
+   .chart-legend-head { font-weight: 600; }
+   .chart-legend-dot {
+       display: inline-block; width: 0.8em; height: 0.8em;
+       margin-right: 0.5em; border-radius: 50%;
+       border: 1px solid rgba(0, 0, 0, 0.25);
+   }
    </style>
+
+.. dropdown:: Legend — status values and chart colours
+   :animate: fade-in
+   :open:
+
+   .. raw:: html
+
+      <div class="chart-legend">
+        <div class="chart-legend-group">
+          <span class="chart-legend-head">Status — ASIL B</span>
+          <span><span class="chart-legend-dot" style="background: #f5c518;"></span><code>valid</code> — agreed, formal inspection still outstanding</span>
+          <span><span class="chart-legend-dot" style="background: #37a12d;"></span><code>valid_inspected</code> — agreed and formally inspected</span>
+          <span><span class="chart-legend-dot" style="background: #ca2828;"></span><code>invalid</code> — not agreed; metamodel checks are skipped</span>
+        </div>
+        <div class="chart-legend-group">
+          <span class="chart-legend-head">Status — QM</span>
+          <span><span class="chart-legend-dot" style="background: #37a12d;"></span><code>valid</code> — agreed; QM needs are not formally inspected, so this is their final state</span>
+          <span><span class="chart-legend-dot" style="background: #ca2828;"></span><code>invalid</code> — not agreed; metamodel checks are skipped</span>
+        </div>
+        <div class="chart-legend-group">
+          <span class="chart-legend-head">Test coverage — both classes</span>
+          <span><span class="chart-legend-dot" style="background: #37a12d;"></span>fully covered — at least one test fully verifies the need</span>
+          <span><span class="chart-legend-dot" style="background: #f0a500;"></span>partially covered — only partially verifying tests</span>
+          <span><span class="chart-legend-dot" style="background: #ca2828;"></span>not covered — no verifying test at all</span>
+        </div>
+      </div>
 
 {# ===================================================================== #}
 {# Components                                                             #}
