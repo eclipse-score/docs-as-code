@@ -228,15 +228,10 @@ def calculate_verification_metrics(  # noqa: C901
     """
     verification_metrics: dict[str, dict[str, dict[str, dict[str, int]]]] = {}
 
-    # Find all components by looking at belongs_to links
-    component_ids: set[str] = set()
-    for need in all_needs.values():
-        belongs_to = need.get("belongs_to")
-        if belongs_to:
-            if isinstance(belongs_to, list):
-                component_ids.update(belongs_to)
-            elif isinstance(belongs_to, str):
-                component_ids.add(belongs_to)
+    # Find all components by looking at Needs with type "comp"
+    component_ids: set[str] = {
+        n["id"] for n in all_needs.values() if n.get("type") == "comp"
+    }
 
     # Simple version filter function for use with shared helpers
     def version_filter_func(need: NeedItem, version: str) -> bool:

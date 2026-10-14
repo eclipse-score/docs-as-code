@@ -263,17 +263,17 @@ def get_component_status_metrics(
 ) -> None:
     """Get status distribution for a component's requirements or architecture.
 
-    Arguments via kwargs:
-        - component_id: The component ID (e.g., "comp__my_component")
-        - category: Either "requirements" or "architecture"
-        - version: Optional version to filter by valid_from (only applied to requirements)
+    Arguments are passed via ``arg1``, ``arg2``, ``arg3``:
+        - ``arg1`` – component_id: The component ID (e.g., "comp__my_component")
+        - ``arg2`` – category: Either "requirements" or "architecture"
+        - ``arg3`` – version: Optional version to filter by valid_from (only applied to requirements)
 
     Returns [valid_count, valid_inspected_count, invalid_count].
     """
     results.clear()
-    component_id = str(kwargs.get("component_id", ""))
-    category = str(kwargs.get("category", "requirements"))
-    version = kwargs.get("version")
+    component_id = str(kwargs.get("arg1", ""))
+    category = str(kwargs.get("arg2", "requirements"))
+    version = kwargs.get("arg3")
 
     # If version is specified, filter on-the-fly using the version-scoping helper
     if version:
@@ -304,17 +304,17 @@ def get_component_coverage_metrics(
     Uses the verification coverage axis (fully_verifies_back / partially_verifies_back),
     not the link coverage axis (testlink / source_code_link).
 
-    Arguments via kwargs:
-        - component_id: The component ID (e.g., "comp__my_component")
-        - category: Either "requirements" or "architecture"
-        - version: Optional version to filter by valid_from (only applied to requirements)
+    Arguments are passed via ``arg1``, ``arg2``, ``arg3``:
+        - ``arg1`` – component_id: The component ID (e.g., "comp__my_component")
+        - ``arg2`` – category: Either "requirements" or "architecture"
+        - ``arg3`` – version: Optional version to filter by valid_from (only applied to requirements)
 
     Returns [fully_covered, partially_covered, not_covered].
     """
     results.clear()
-    component_id = str(kwargs.get("component_id", ""))
-    category = str(kwargs.get("category", "requirements"))
-    version = kwargs.get("version")
+    component_id = str(kwargs.get("arg1", ""))
+    category = str(kwargs.get("arg2", "requirements"))
+    version = kwargs.get("arg3")
 
     # If version is specified, filter on-the-fly using the version-scoping helper
     if version:
