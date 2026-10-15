@@ -157,8 +157,36 @@ class MountSpec:
 
 
 @dataclass(frozen=True)
+class AssetSpec:
+    """One file or directory copied unchanged into the HTML output.
+
+    Sphinx never reads these files. A directory's contents go below
+    ``destination``; a file goes to ``<destination>/<basename>``. An empty
+    destination is the HTML output root.
+    """
+
+    # Execroot-relative output path, for example
+    # ``bazel-out/k8-fastbuild/bin/pkg/doxygen_html``.
+    path: str
+    # Directory below the HTML output root, for example ``child/api``.
+    destination: str
+    # Whether ``path`` is a directory output (for example Doxygen HTML).
+    is_directory: bool
+
+    @classmethod
+    def from_manifest_entry(cls, entry: dict[str, object]) -> AssetSpec:
+        """Create one asset spec from the producer-owned manifest entry."""
+        return cls(
+            path=cast("str", entry["path"]),
+            destination=cast("str", entry["destination"]),
+            is_directory=cast("bool", entry["is_directory"]),
+        )
+
+
+@dataclass(frozen=True)
 class MountsManifest:
     mounts: list[MountSpec]
+    assets: list[AssetSpec] = field(default_factory=list)
 
 
 def load_mounts_manifest(manifest_path: str | Path) -> MountsManifest:
@@ -173,9 +201,31 @@ def load_mounts_manifest(manifest_path: str | Path) -> MountsManifest:
         json.loads(manifest_path.read_text(encoding="utf-8")),
     )
     entries = cast("list[dict[str, object]]", data["mounts"])
+    # Older manifests have no ``assets`` key; they carry no assets.
+    asset_entries = cast("list[dict[str, object]]", data.get("assets", []))
     return MountsManifest(
-        mounts=[MountSpec.from_manifest_entry(entry) for entry in entries]
+        mounts=[MountSpec.from_manifest_entry(entry) for entry in entries],
+        assets=[AssetSpec.from_manifest_entry(entry) for entry in asset_entries],
     )
+
+
+def _bazel_bin_relative(execroot_path: str) -> str | None:
+    """Return the part of ``execroot_path`` below ``bazel-out/<config>/bin``.
+
+    The configuration segment is not fixed (``k8-fastbuild``, ``k8-opt``,
+    ...), so any single segment is accepted. Returns ``None`` when the path
+    is not below a configuration's ``bin`` directory.
+    """
+    output_parts = execroot_path.split("/")
+    if (
+        # A generated file may be directly below the configuration's
+        # ``bin`` directory, so the path itself can end there.
+        len(output_parts) >= 3
+        and output_parts[0] == "bazel-out"
+        and output_parts[2] == "bin"
+    ):
+        return "/".join(output_parts[3:])
+    return None
 
 
 def resolve_walk_dir(
@@ -200,15 +250,9 @@ def resolve_walk_dir(
         if ws_root is not None:
             # Generated source files are exposed through bazel-bin at runtime,
             # while their manifest paths are execroot-relative bazel-out paths.
-            output_parts = spec.src_root.split("/")
-            if (
-                # A generated file may be directly below the configuration's
-                # ``bin`` directory, so the source root itself can end there.
-                len(output_parts) >= 3
-                and output_parts[0] == "bazel-out"
-                and output_parts[2] == "bin"
-            ):
-                return ws_root / "bazel-bin" / "/".join(output_parts[3:])
+            bin_relative = _bazel_bin_relative(spec.src_root)
+            if bin_relative is not None:
+                return ws_root / "bazel-bin" / bin_relative
             return ws_root / spec.src_root
         return Path.cwd() / spec.src_root
     if spec.external and ws_root is not None:
@@ -246,3 +290,30 @@ def resolve_source_files(
             )
         resolved_files.append(source_file)
     return resolved_files
+
+
+def resolve_output_file(
+    execroot_path: str,
+    ws_root: Path | None,
+    runfiles_dir: Path | None = None,
+) -> Path:
+    """Resolve an execroot-relative manifest path to a file on disk.
+
+    In a sandbox the runfiles directory lives below the execroot's
+    ``bazel-out``, so the execroot prefix is reused unchanged. Under
+    ``bazel run`` the same artifact is exposed below the workspace's
+    ``bazel-bin``, which drops the ``bazel-out/<configuration>/bin`` prefix
+    for any configuration (``k8-fastbuild``, ``k8-opt``, ...). Without a
+    workspace root the path is relative to the current directory.
+    """
+    if ws_root is None or runfiles_dir is None:
+        return Path.cwd() / execroot_path
+    runfiles_str = str(runfiles_dir)
+    if "/bazel-out/" in runfiles_str:
+        # Execroot = runfiles path before the first /bazel-out/ occurrence
+        # e.g. runfiles=execroot/_main/bazel-out/... => execroot=execroot/_main
+        return Path(runfiles_str.split("/bazel-out/")[0]) / execroot_path
+    bin_relative = _bazel_bin_relative(execroot_path)
+    if bin_relative is not None:
+        return ws_root / "bazel-bin" / bin_relative
+    return ws_root / "bazel-bin" / execroot_path

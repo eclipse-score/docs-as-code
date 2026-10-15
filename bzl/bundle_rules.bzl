@@ -53,6 +53,10 @@ DocsBundleInfo = provider(
         # export. These are semantic values; the Sphinx ``--define`` list is
         # assembled only at the action boundary.
         "config": "Structured project, URL, ID prefix, and metamodel configuration.",
+        # Files of any type (HTML, PDF, PNG, ...) copied unchanged into the
+        # built site. Each item is a struct(files = depset, destination =
+        # string, repository = string); Sphinx never reads these files.
+        "assets": "Files copied as-is into the built site, with their destination and owning repository.",
     },
 )
 
@@ -192,15 +196,52 @@ def declare_docs_config_target(
     )
     return ":" + name
 
+def _first_duplicate(items, key_of):
+    """Return the first two items that share a key, or ``None``."""
+    seen = {}
+    for item in items:
+        key = key_of(item)
+        if key in seen:
+            return struct(first = seen[key], second = item, key = key)
+        seen[key] = item
+    return None
+
 def _ensure_unique_entries(entries):
     """Reject a source directory reached through more than one bundle path."""
-    seen = {}
-    for entry in entries:
-        key = entry.runtime_path
-        if key in seen:
-            fail(("bundle conflict: source directory %r is included through more " +
-                  "than one bundle path; include every documentation source directory once") % key)
-        seen[key] = entry
+    duplicate = _first_duplicate(entries, lambda entry: entry.runtime_path)
+    if duplicate:
+        fail(("bundle conflict: source directory %r is included through more " +
+              "than one bundle path; include every documentation source directory once") %
+             duplicate.key)
+
+def _ensure_asset_placement(ctx, index, child):
+    """Reject toctree placement for a child that only carries assets."""
+    child_info = child[DocsBundleInfo]
+    if child_info.entries or not child_info.assets:
+        return
+    if ctx.attr.bundle_attach_tos[index] or ctx.attr.bundle_toctree_indices[index]:
+        fail(("asset bundle %s cannot use 'attach_to' or 'toctree_index': assets " +
+              "get no toctree entry; link to them from a normal page instead") %
+             child.label)
+
+def _ensure_unique_assets(assets):
+    """Reject two assets that would be copied to the same place in the site."""
+    # A directory's contents go to its destination, a file goes to
+    # ``<destination>/<basename>``. Overlaps inside a directory are only
+    # known when the files are copied, so the copy step checks those.
+    placed_files = [
+        struct(
+            file = asset_file,
+            output_path = asset.destination if asset_file.is_directory else join_path(asset.destination, asset_file.basename),
+        )
+        for asset in assets
+        for asset_file in asset.files.to_list()
+    ]
+    duplicate = _first_duplicate(placed_files, lambda placed: placed.output_path)
+    if duplicate:
+        fail(("asset conflict: %r and %r are both copied to %r; " +
+              "mount them at different places") %
+             (duplicate.first.file.short_path, duplicate.second.file.short_path, duplicate.key or "."))
 
 def _source_dir_runtime_path(ctx):
     """Return this bundle source directory's Bazel runtime path.
@@ -371,6 +412,22 @@ def _sourcelinks_visible_through(ctx, child):
         return sourcelinks
     return [link for link in sourcelinks if link.repository == child_repository]
 
+def _assets_visible_through(ctx, child):
+    """Keep an external module's own assets, but not its foreign mounts."""
+    assets = child[DocsBundleInfo].assets
+    child_repository = child.label.workspace_name
+    if child_repository == ctx.label.workspace_name:
+        return assets
+    return [asset for asset in assets if asset.repository == child_repository]
+
+def _rebase_asset(asset, mount_at):
+    """Move an asset below the mount point chosen by the parent."""
+    return struct(
+        files = asset.files,
+        destination = join_path(mount_at, asset.destination),
+        repository = asset.repository,
+    )
+
 def _parse_bundle_declaration(bundle):
     """Read one nested-bundle declaration and fill in optional values."""
     if type(bundle) != "dict":
@@ -405,6 +462,7 @@ def _docs_bundle_impl(ctx):
     source_dir_execroot_path = ""
     own_external_runfiles = []
     own_data = depset(direct = ctx.files.data)
+    assets = []
     own_bundle_label = str(ctx.label)
     own_bundle_name = ctx.label.name
     own_primary_need_id = ctx.attr.primary_need_id
@@ -537,6 +595,7 @@ def _docs_bundle_impl(ctx):
             repository = ctx.label.workspace_name,
         ))
     for index, child in enumerate(ctx.attr.bundles):
+        _ensure_asset_placement(ctx, index, child)
         entries.extend([
             _rebase_bundle_entry(
                 entry,
@@ -549,8 +608,13 @@ def _docs_bundle_impl(ctx):
         child_source_files.append(child[DefaultInfo].files)
         child_external_runfiles.append(child[DocsBundleInfo].external_runfiles)
         sourcelinks.extend(_sourcelinks_visible_through(ctx, child))
+        assets.extend([
+            _rebase_asset(asset, ctx.attr.bundle_mount_ats[index])
+            for asset in _assets_visible_through(ctx, child)
+        ])
 
     _ensure_unique_entries(entries)
+    _ensure_unique_assets(assets)
     all_source_files = depset(
         direct = own_source_files,
         transitive = child_source_files,
@@ -616,6 +680,7 @@ def _docs_bundle_impl(ctx):
             external_runfiles = external_runfiles,
             data = all_data,
             config = bundle_config,
+            assets = assets,
         ),
     ]
 
@@ -714,6 +779,48 @@ def create_bundle(
     )
     return ":" + name
 
+def _docs_assets_impl(ctx):
+    """Expose files of any type as a bundle that only carries assets."""
+    return [
+        # DefaultInfo stays empty: needs_json lists the docs bundle under its
+        # tools, so any file here would become an input of every Needs build.
+        DefaultInfo(files = depset()),
+        DocsBundleInfo(
+            entries = [],
+            own_source_files = depset(),
+            source_dir_execroot_path = "",
+            sourcelinks = [],
+            external_runfiles = depset(),
+            data = depset(),
+            config = None,
+            assets = [struct(
+                files = depset(ctx.files.srcs),
+                # The placing bundle's ``mount_at`` provides the destination.
+                destination = "",
+                repository = ctx.label.workspace_name,
+            )],
+        ),
+    ]
+
+_docs_assets = rule(
+    implementation = _docs_assets_impl,
+    attrs = {
+        # Any file type, plus directory outputs (for example Doxygen HTML).
+        "srcs": attr.label_list(allow_files = True, mandatory = True),
+    },
+    doc = "Internal rule that carries files copied as-is into the built site.",
+)
+
+def create_assets(name, srcs, visibility = None, **kwargs):
+    """Create a bundle that only carries files copied as-is into the built site."""
+    _docs_assets(
+        name = name,
+        srcs = srcs,
+        visibility = visibility,
+        **kwargs
+    )
+    return ":" + name
+
 def _bundle_source_files_impl(ctx):
     """Expose only a bundle's direct sources as a Sphinx source tree."""
     return [DefaultInfo(files = ctx.attr.bundle[DocsBundleInfo].own_source_files)]
@@ -736,26 +843,33 @@ def bundle_source_files(name, bundle, visibility = None, tags = None):
     )
     return ":" + name
 
-def _external_docs_runfiles_impl(ctx):
-    """Expose external documentation sources needed under ``bazel run``."""
+def _bundle_runfiles_impl(ctx):
+    """Expose a composed bundle's files needed under ``bazel run``."""
     bundle = ctx.attr.bundle[DocsBundleInfo]
-    return [DefaultInfo(files = depset(
-        transitive = [bundle.external_runfiles, bundle.data],
-    ))]
+    if ctx.attr.assets:
+        transitive = [asset.files for asset in bundle.assets]
+    else:
+        transitive = [bundle.external_runfiles, bundle.data]
+    return [DefaultInfo(files = depset(transitive = transitive))]
 
-_external_docs_runfiles = rule(
-    implementation = _external_docs_runfiles_impl,
+_bundle_runfiles = rule(
+    implementation = _bundle_runfiles_impl,
     attrs = {
         "bundle": attr.label(providers = [DocsBundleInfo]),
+        # Assets are copied only into the HTML output, so they get their own
+        # target that only the HTML builds depend on. Without this flag the
+        # target carries external documentation sources and bundle data.
+        "assets": attr.bool(default = False),
     },
     doc = "Internal adapter from a docs bundle to its runtime runfiles.",
 )
 
-def external_docs_runfiles(name, bundle, visibility = None):
-    """Create a target containing only external bundle sources for ``bazel run``."""
-    _external_docs_runfiles(
+def bundle_runfiles(name, bundle, assets = False, visibility = None):
+    """Create a target with a bundle's runtime files, or only its assets."""
+    _bundle_runfiles(
         name = name,
         bundle = bundle,
+        assets = assets,
         visibility = visibility,
     )
     return ":" + name

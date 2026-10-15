@@ -20,7 +20,8 @@ active execution context and derives structural directory exclusions. It:
 
 * sets ``config.mounts`` so ``sphinx_mounts`` can build the documentation;
 ``score_sync_toml`` reads the resulting ``config.mounts`` directly to write the
-generated ``ubproject.toml``.
+generated ``ubproject.toml``;
+* copies ``docs_assets`` unchanged into the HTML output after the build.
 
 For directory mounts, the source-ownership invariant is that every document is
 discovered exactly once: the primary Sphinx source tree owns files outside mounted
@@ -43,11 +44,17 @@ from sphinx.application import Sphinx
 from sphinx.config import Config
 from sphinx.util import logging
 
+from src.extensions.score_mounts._assets import (
+    check_asset_conflicts,
+    copy_assets,
+    plan_asset_copies,
+)
 from src.extensions.score_mounts._resolver import (
     BundleMetadata,
     MountsManifest,
     MountSpec,
     load_mounts_manifest,
+    resolve_output_file,
     resolve_source_files,
     resolve_walk_dir,
 )
@@ -102,20 +109,7 @@ def _resolve_data_mounts(
         if spec.root_bundle:
             continue
         for data_file in spec.data:
-            if ws_root is not None and runfiles_dir is not None:
-                runfiles_str = str(runfiles_dir)
-                if "/bazel-out/" in runfiles_str:
-                    # Execroot = runfiles path before the first /bazel-out/ occurrence
-                    # e.g. runfiles=execroot/_main/bazel-out/... => execroot=execroot/_main
-                    walk_file = Path(runfiles_str.split("/bazel-out/")[0]) / data_file
-                else:
-                    walk_file = (
-                        ws_root
-                        / "bazel-bin"
-                        / data_file.removeprefix("bazel-out/k8-fastbuild/bin/")
-                    )
-            else:
-                walk_file = Path.cwd() / data_file
+            walk_file = resolve_output_file(data_file, ws_root, runfiles_dir)
             if not walk_file.is_file():
                 raise ValueError(
                     "score_mounts: resolved data file does not exist: "
@@ -588,6 +582,31 @@ def _on_config_inited(app: Sphinx, config: Config) -> None:
     _set_runtime_attribute(app, "_score_mount_runtime_specs", tuple(runtime_specs))
 
 
+def _copy_assets_to_html_output(app: Sphinx, exception: Exception | None) -> None:
+    """Copy the manifest's ``docs_assets`` into the HTML output.
+
+    Runs on ``build-finished``, after Sphinx has written every page, so the
+    page list used for the conflict check is complete. Other builders
+    (for example the Needs export) have no site to copy assets into.
+    """
+    if exception is not None or app.builder.format != "html":
+        return
+    manifest: MountsManifest | None = getattr(app, "_score_mounts_manifest", None)
+    if manifest is None or not manifest.assets:
+        return
+
+    ws_root = find_ws_root()
+    runfiles_dir = get_runfiles_dir() if ws_root is not None else None
+    copies = plan_asset_copies(manifest.assets, ws_root, runfiles_dir)
+    # The output file of a page is its docname plus the builder's suffix.
+    # ``get_target_uri`` is a link and may use a different suffix or quoting.
+    out_suffix = getattr(app.builder, "out_suffix", ".html")
+    sphinx_pages = [f"{docname}{out_suffix}" for docname in app.env.found_docs]
+    check_asset_conflicts(copies, sphinx_pages)
+    copied = copy_assets(copies, Path(app.outdir))
+    logger.info("score_mounts: copied %d of %d asset file(s)", copied, len(copies))
+
+
 def setup(app: Sphinx) -> dict[str, object]:
     """Sphinx extension entry point: register the config value and event hook.
 
@@ -601,6 +620,7 @@ def setup(app: Sphinx) -> dict[str, object]:
     # The document-to-bundle mapping is calculated after Sphinx has completed
     # discovery so it contains only documents that really entered the environment.
     app.connect("env-updated", _set_document_bundles, priority=500)
+    app.connect("build-finished", _copy_assets_to_html_output)
     return {
         "version": "0.1",
         "parallel_read_safe": True,

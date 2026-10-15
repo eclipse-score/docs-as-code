@@ -29,7 +29,11 @@ from sphinx_autobuild.__main__ import (
     main as sphinx_autobuild_main,  # type: ignore[reportUnknownVariableType] # sphinx_autobuild doesn't provide complete type annotations
 )
 
-from src.extensions.score_mounts._resolver import load_mounts_manifest, resolve_walk_dir
+from src.extensions.score_mounts._resolver import (
+    load_mounts_manifest,
+    resolve_output_file,
+    resolve_walk_dir,
+)
 from src.helper_lib import Environment, get_runfiles_dir
 from src.helper_lib.config import DocsCliConfig
 
@@ -134,20 +138,7 @@ def mounted_watch_dirs(
             add_watch_dir(resolve_walk_dir(manifest, spec, ws_root, runfiles_dir))
 
         for data_file in spec.data:
-            if ws_root is not None and runfiles_dir is not None:
-                runfiles_str = str(runfiles_dir)
-                if "/bazel-out/" in runfiles_str:
-                    # The runfiles path points into the execroot's output
-                    # tree. Use the execroot prefix just like score_mounts.
-                    walk_file = Path(runfiles_str.split("/bazel-out/")[0]) / data_file
-                else:
-                    walk_file = (
-                        ws_root
-                        / "bazel-bin"
-                        / data_file.removeprefix("bazel-out/k8-fastbuild/bin/")
-                    )
-            else:
-                walk_file = Path.cwd() / data_file
+            walk_file = resolve_output_file(data_file, ws_root, runfiles_dir)
             add_watch_dir(walk_file.parent)
 
     return watch_dirs

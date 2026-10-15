@@ -59,9 +59,10 @@ load(
 )
 load(
     "@score_docs_as_code//:bzl/bundle_rules.bzl",
+    "bundle_runfiles",
+    "create_assets",
     "create_bundle",
     "declare_docs_config_target",
-    "external_docs_runfiles",
     "generate_code_target_sourcelinks",
     "merge_bundle_sourcelinks",
     "sphinx_config_options",
@@ -567,6 +568,33 @@ def docs_bundle(
         visibility = visibility,
     )
 
+def docs_assets(name, srcs, visibility = None, **kwargs):
+    """Declare files that are copied as-is into the built documentation site.
+
+    ``srcs`` accepts files of any type (HTML, PDF, PNG, ...) and directory
+    outputs such as Doxygen HTML. Sphinx never reads these files. Place the
+    target like any other bundle: as an entry in ``bundles`` with ``mount_at``.
+
+    Rules:
+
+    1. A directory's contents go to ``<mount_at>/``.
+    2. A file goes to ``<mount_at>/<basename>``.
+    3. Only the HTML build (``docs`` and ``live_preview``) copies assets;
+       ``needs_json``, ``docs_check`` and ``docs_link_check`` never build them.
+    4. An asset may not overwrite a Sphinx page or a Sphinx folder such as
+       ``_static/``.
+    5. An external module's own assets travel with it; assets it mounted from
+       a third module do not.
+    6. Assets get no toctree entry: ``attach_to`` and ``toctree_index`` are
+       errors. Link to them from a normal page instead.
+    """
+    create_assets(
+        name = name,
+        srcs = srcs,
+        visibility = visibility,
+        **kwargs
+    )
+
 def _missing_requirements(deps):
     """Add Python hub dependencies if they are missing."""
     found = []
@@ -811,9 +839,15 @@ def docs(
         known_good = known_good,
     )
 
-    external_docs_runfiles(
+    bundle_runfiles(
         name = "_external_docs_runfiles",
         bundle = ":docs_bundle",
+        visibility = ["//visibility:private"],
+    )
+    assets_runfiles = bundle_runfiles(
+        name = _bundle_internal_target("docs", "assets_runfiles"),
+        bundle = ":docs_bundle",
+        assets = True,
         visibility = ["//visibility:private"],
     )
 
@@ -847,12 +881,16 @@ def docs(
         docs_env["KNOWN_GOOD_JSON"] = "$(rlocationpath " + known_good_str + ")"
         docs_data += known_good_label
 
+    # Only the HTML builds copy docs_assets into their output. Keeping the
+    # assets out of ``docs_data`` means the check targets never build them.
+    html_docs_data = docs_data + [assets_runfiles]
+
     # Generated documentation artifacts may live below ``docs/``.  A
     # py_binary named ``docs`` would own the conflicting Bazel output path
     # ``docs``; expose this binary via the alias below instead.
     _declare_docs_binary(
         name = "_score_docs_cli",
-        data = docs_data,
+        data = html_docs_data,
         deps = deps,
         env = docs_env,
         action = "incremental",
@@ -880,7 +918,7 @@ def docs(
     )
     _declare_docs_binary(
         name = "live_preview",
-        data = docs_data,
+        data = html_docs_data,
         deps = deps,
         env = docs_env,
         action = "live_preview",
