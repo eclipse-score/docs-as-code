@@ -374,7 +374,7 @@ class _SafetyPieRow:
         missing: list[str] | None = None,
     ) -> str:
         scope = f'{base} and safety == "{safety}"'
-        # (slice label, status condition) per pie slice.
+        # (slice label, status condition) per pie slice; green "done" comes first.
         statuses = (
             [
                 ("valid", '(status == "valid" or status == "valid_inspected")'),
@@ -383,11 +383,11 @@ class _SafetyPieRow:
             if safety == "QM"
             else [
                 (state, f'status == "{state}"')
-                for state in ("valid", "valid_inspected", "invalid")
+                for state in ("valid_inspected", "valid", "invalid")
             ]
         )
         status_colors = (
-            "#37a12d, #ca2828" if safety == "QM" else "#f5c518, #37a12d, #ca2828"
+            "#37a12d, #ca2828" if safety == "QM" else "#37a12d, #f5c518, #ca2828"
         )
         # docutils normalises ``:class:`` values, so avoid underscores in them.
         safety_css = safety.lower().replace("_", "-")

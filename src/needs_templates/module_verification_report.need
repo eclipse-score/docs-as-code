@@ -131,8 +131,8 @@
       <div class="chart-legend">
         <div class="chart-legend-group">
           <span class="chart-legend-head">Status — ASIL B</span>
-          <span><span class="chart-legend-dot" style="background: #f5c518;"></span><code>valid</code> — agreed, formal inspection still outstanding</span>
           <span><span class="chart-legend-dot" style="background: #37a12d;"></span><code>valid_inspected</code> — agreed and formally inspected</span>
+          <span><span class="chart-legend-dot" style="background: #f5c518;"></span><code>valid</code> — agreed, formal inspection still outstanding</span>
           <span><span class="chart-legend-dot" style="background: #ca2828;"></span><code>invalid</code> — not agreed; metamodel checks are skipped</span>
         </div>
         <div class="chart-legend-group">

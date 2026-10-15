@@ -185,7 +185,8 @@ def test_safety_pie_row_qm_counts_inspected_as_valid() -> None:
         'BASE and safety == "QM" and (status == "valid" or status == "valid_inspected")'
     ) in qm
     assert 'BASE and safety == "QM" and status == "invalid"' in qm
-    assert ":labels: valid, valid_inspected, invalid" in asil
+    assert ":labels: valid_inspected, valid, invalid" in asil
+    assert ":colors: #37a12d, #f5c518, #ca2828" in asil
     assert 'BASE and safety == "ASIL_B" and status == "valid_inspected"' in asil
     assert ":class: safety-class-heading safety-asil-b" in asil
 
