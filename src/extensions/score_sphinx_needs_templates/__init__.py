@@ -341,9 +341,10 @@ class _SafetyPieRow:
     """Render one row of pies restricted to a single safety class.
 
     Shared by the module and platform verification reports, so that QM and
-    ASIL figures are never mixed in one chart. QM Needs never reach
-    ``valid_inspected``, so there ``valid`` already is the green "done" slice
-    rather than the yellow "not inspected yet" one.
+    ASIL figures are never mixed in one chart. QM Needs are not formally
+    inspected, so there ``valid`` already is the green "done" slice rather
+    than the yellow "not inspected yet" one; a QM Need that is nevertheless
+    ``valid_inspected`` counts as ``valid``, as in the metamodel graph checks.
 
     ``with_reference`` adds a third, reference-coverage pie; ``referenced`` and
     ``missing`` must already be partitioned over this safety class alone. The
@@ -373,10 +374,17 @@ class _SafetyPieRow:
         missing: list[str] | None = None,
     ) -> str:
         scope = f'{base} and safety == "{safety}"'
+        # (slice label, status condition) per pie slice.
         statuses = (
-            ["valid", "invalid"]
+            [
+                ("valid", '(status == "valid" or status == "valid_inspected")'),
+                ("invalid", 'status == "invalid"'),
+            ]
             if safety == "QM"
-            else ["valid", "valid_inspected", "invalid"]
+            else [
+                (state, f'status == "{state}"')
+                for state in ("valid", "valid_inspected", "invalid")
+            ]
         )
         status_colors = (
             "#37a12d, #ca2828" if safety == "QM" else "#f5c518, #37a12d, #ca2828"
@@ -417,11 +425,11 @@ class _SafetyPieRow:
         grid_item(
             "Status",
             [
-                f":labels: {', '.join(statuses)}",
+                f":labels: {', '.join(label for label, _ in statuses)}",
                 f":colors: {status_colors}",
                 ":legend:",
                 "",
-                *(f'{scope} and status == "{state}"' for state in statuses),
+                *(f"{scope} and {condition}" for _, condition in statuses),
             ],
         )
         grid_item(

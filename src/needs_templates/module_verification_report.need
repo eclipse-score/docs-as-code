@@ -137,7 +137,7 @@
         </div>
         <div class="chart-legend-group">
           <span class="chart-legend-head">Status — QM</span>
-          <span><span class="chart-legend-dot" style="background: #37a12d;"></span><code>valid</code> — agreed; QM needs are not formally inspected, so this is their final state</span>
+          <span><span class="chart-legend-dot" style="background: #37a12d;"></span><code>valid</code> — agreed; QM needs are not formally inspected, so this is their final state (<code>valid_inspected</code> counts here too)</span>
           <span><span class="chart-legend-dot" style="background: #ca2828;"></span><code>invalid</code> — not agreed; metamodel checks are skipped</span>
         </div>
         <div class="chart-legend-group">

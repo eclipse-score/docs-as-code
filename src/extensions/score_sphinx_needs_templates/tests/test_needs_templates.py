@@ -173,14 +173,18 @@ def test_any_req_in_report_version_false_if_no_requirement_matches() -> None:
     assert any_req_in_report_version([a, b], "v1.0") is False
 
 
-def test_safety_pie_row_qm_has_no_inspected_slice() -> None:
-    """QM Needs are never formally inspected, so ``valid`` is their final slice."""
+def test_safety_pie_row_qm_counts_inspected_as_valid() -> None:
+    """QM has no inspected slice; ``valid_inspected`` QM Needs count as valid."""
     safety_pie_row = vars(templates)["_SafetyPieRow"]()
 
     qm = safety_pie_row("Comp", "Requirements", "BASE", "QM", "QM", 1)
     asil = safety_pie_row("Comp", "Requirements", "BASE", "ASIL_B", "ASIL B", 1)
 
-    assert "valid_inspected" not in qm
+    assert ":labels: valid, invalid" in qm
+    assert (
+        'BASE and safety == "QM" and (status == "valid" or status == "valid_inspected")'
+    ) in qm
+    assert 'BASE and safety == "QM" and status == "invalid"' in qm
     assert ":labels: valid, valid_inspected, invalid" in asil
     assert 'BASE and safety == "ASIL_B" and status == "valid_inspected"' in asil
     assert ":class: safety-class-heading safety-asil-b" in asil
