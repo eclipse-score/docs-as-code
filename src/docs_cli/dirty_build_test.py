@@ -167,11 +167,6 @@ def test_module_change_after_successful_build_forces_clean(fs: FFS) -> None:
     test_type="interface-test",
     derivation_technique="explorative-testing",
 )
-@add_test_properties(
-    partially_verifies=[],
-    test_type="interface-test",
-    derivation_technique="explorative-testing",
-)
 def test_missing_hash_file_triggers_clean(fs: FFS) -> None:
     """If _build/ exists but hash file is absent, treat as stale (e.g. upgrade from old version)."""
     fs.create_dir(_BUILD)
