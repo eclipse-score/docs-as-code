@@ -5952,7 +5952,7 @@
   {
     "name": "test_needs_templates__test_safety_pie_row_empty_class_renders_placeholders_only",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
-    "line": "193",
+    "line": "194",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -5966,7 +5966,7 @@
   {
     "name": "test_needs_templates__test_safety_pie_row_reference_pie_only_on_request",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
-    "line": "203",
+    "line": "204",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -5980,7 +5980,7 @@
   {
     "name": "test_needs_templates__test_id_filter_list_renders_quoted_literal",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
-    "line": "220",
+    "line": "221",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -5994,7 +5994,7 @@
   {
     "name": "test_needs_templates__test_workproduct_rows_filter_by_slug_and_work_product",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
-    "line": "227",
+    "line": "228",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -6008,7 +6008,7 @@
   {
     "name": "test_needs_templates__test_tool_qualification_matrix_groups_shared_requirements",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
-    "line": "238",
+    "line": "239",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -6022,7 +6022,7 @@
   {
     "name": "test_needs_templates__test_platform_report_gap_table_is_report_version_scoped",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
-    "line": "382",
+    "line": "383",
     "result": "passed",
     "repo_name": null,
     "hash": null,
