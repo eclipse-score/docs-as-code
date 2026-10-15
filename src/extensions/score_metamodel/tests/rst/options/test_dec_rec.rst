@@ -18,8 +18,8 @@
    :test_type: requirements_based
    :derivation_technique: requirements_based
 
-   Tests that the dec_rec need type with its mandatory attributes and the
-   affects link is supported.
+   Tests that the dec_rec need type supports its mandatory attributes and affects
+   link, and that its tracking option accepts GitHub issue and pull request links.
 
 
 .. dec_rec:: Test Decision Record 1
@@ -27,6 +27,8 @@
    :status: accepted
    :context: A decision record is needed for the test.
    :decision: Use a dedicated decision record need type.
+   :tracking: https://github.com/eclipse-score/docs-as-code/issues/1
+   :expect_not: dec_rec__test__decision_record_1.tracking (https://github.com/eclipse-score/docs-as-code/issues/1): does not follow pattern
    :affects: dec_rec__test__decision_record_2
 
 
@@ -35,3 +37,5 @@
    :status: proposed
    :context: This decision record is affected by another decision.
    :decision: Keep the relationship explicit.
+   :tracking: https://github.com/eclipse-score/score/pull/2
+   :expect_not: dec_rec__test__decision_record_2.tracking (https://github.com/eclipse-score/score/pull/2): does not follow pattern

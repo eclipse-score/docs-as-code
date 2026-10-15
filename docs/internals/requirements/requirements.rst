@@ -1031,7 +1031,7 @@ Testing
   * ``context`` (mandatory)
   * ``decision`` (mandatory)
   * ``consequences`` (optional)
-  * ``tracking`` (optional, link to a GitHub issue)
+  * ``tracking`` (optional, link to a GitHub issue or pull request in the ``eclipse-score`` organization)
 
   A Decision Record shall be able to link to other needs via the optional ``affects`` link.
 

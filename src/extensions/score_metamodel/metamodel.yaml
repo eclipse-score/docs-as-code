@@ -1053,7 +1053,7 @@ needs_types:
       decision: ^.+$
     optional_options:
       consequences: ^.*$
-      tracking: ^https://github\.com/[^/]+/[^/]+/issues/\d+$
+      tracking: ^https://github\.com/eclipse-score/[^/]+/(?:issues|pull)/\d+$
     optional_links:
       affects: ANY
 
