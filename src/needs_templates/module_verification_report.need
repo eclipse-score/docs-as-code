@@ -78,71 +78,9 @@
 [{% for req_id in ids %}"{{ req_id }}"{% if not loop.last %}, {% endif %}{% endfor %}]
 {%- endmacro %}
 
-{#- One row of two pies (status and test coverage) restricted to a single
-    safety class, so that QM and ASIL figures are never mixed in one chart.
-    QM Needs never reach ``valid_inspected``, so there ``valid`` already is
-    the green "done" slice rather than the yellow "not inspected yet" one.
-
-    The raster has three columns for two pies on purpose: the third column
-    stays empty so that these charts render at the same size as the three-pie
-    rows of the platform report.
-
-    ``count`` decides between pies and placeholders only; it is deliberately
-    not shown, because it is resolved through the Need graph while the pies
-    count through Sphinx-Needs filters, and the two can disagree on links
-    carrying a ``[version==N]`` selector. -#}
-{% macro safety_pie_row(title, subject, base, safety, safety_label, count) %}
-{%- set scope = base ~ ' and safety == "' ~ safety ~ '"' %}
-{%- set statuses = ["valid", "invalid"] if safety == "QM" else ["valid", "valid_inspected", "invalid"] %}
-{%- set status_colors = "#37a12d, #ca2828" if safety == "QM" else "#f5c518, #37a12d, #ca2828" %}
-{#- docutils normalises ``:class:`` values, so avoid underscores in them. -#}
-{%- set safety_css = safety|lower|replace("_", "-") %}
-
-.. rubric:: {{ safety_label }} — {{ subject }}
-   :class: safety-class-heading safety-{{ safety_css }}
-
-.. grid:: 1 2 3 3
-   :gutter: 2
-   :class-row: score-pie-row
-
-   .. grid-item::
-
-{% if count == 0 %}
-      .. raw:: html
-
-         <div class="empty-pie">
-            <span class="empty-pie-title">{{ subject }} Status ({{ safety_label }})</span>
-            <span class="empty-pie-text">no {{ safety_label }} {{ subject|lower }}</span>
-         </div>
-{% else %}
-      .. needpie:: {{ title }} {{ subject }} Status ({{ safety_label }})
-         :labels: {{ statuses|join(", ") }}
-         :colors: {{ status_colors }}
-         :legend:
-
-{% for state in statuses %}         {{ scope }} and status == "{{ state }}"
-{% endfor %}
-{% endif %}
-   .. grid-item::
-
-{% if count == 0 %}
-      .. raw:: html
-
-         <div class="empty-pie">
-            <span class="empty-pie-title">{{ subject }} Test Coverage ({{ safety_label }})</span>
-            <span class="empty-pie-text">no {{ safety_label }} {{ subject|lower }}</span>
-         </div>
-{% else %}
-      .. needpie:: {{ title }} {{ subject }} Test Coverage ({{ safety_label }})
-         :labels: fully covered, partially covered, not covered
-         :colors: #37a12d, #f0a500, #ca2828
-         :legend:
-
-         {{ scope }} and fully_verifies_back
-         {{ scope }} and partially_verifies_back and not fully_verifies_back
-         {{ scope }} and not fully_verifies_back and not partially_verifies_back
-{% endif %}
-{% endmacro %}
+{#- ``safety_pie_row`` is a render helper shared with the platform report.
+    The module report passes no ``with_reference``, so each row is two pies
+    in the same three-column raster as the platform report's three-pie rows. -#}
 
 .. raw:: html
 

@@ -62,94 +62,9 @@
 [{% for req_id in ids %}"{{ req_id }}"{% if not loop.last %}, {% endif %}{% endfor %}]
 {%- endmacro %}
 
-{#- One row of pies restricted to a single safety class, so that QM and ASIL
-    figures are never mixed in one chart. QM Needs never reach
-    ``valid_inspected``, so there ``valid`` already is the green "done" slice
-    rather than the yellow "not inspected yet" one.
-
-    ``with_reference`` adds the third, reference-coverage pie, which only the
-    requirement rows have; ``referenced``/``missing`` must already be
-    partitioned over this safety class alone. The raster stays at three
-    columns either way, so that a two-pie row renders its charts at exactly
-    the same size as a three-pie one.
-
-    ``count`` decides between pies and placeholders only; it is deliberately
-    not shown, because it is resolved through the Need graph while the pies
-    count through Sphinx-Needs filters, and the two can disagree on links
-    carrying a ``[version==N]`` selector. -#}
-{% macro safety_pie_row(title, subject, base, safety, safety_label, count, with_reference, referenced, missing) %}
-{%- set scope = base ~ ' and safety == "' ~ safety ~ '"' %}
-{%- set statuses = ["valid", "invalid"] if safety == "QM" else ["valid", "valid_inspected", "invalid"] %}
-{%- set status_colors = "#37a12d, #ca2828" if safety == "QM" else "#f5c518, #37a12d, #ca2828" %}
-{#- docutils normalises ``:class:`` values, so avoid underscores in them. -#}
-{%- set safety_css = safety|lower|replace("_", "-") %}
-{%- set chart_prefix = (title ~ " " ~ subject)|trim %}
-
-.. rubric:: {{ safety_label }} — {{ subject }}
-   :class: safety-class-heading safety-{{ safety_css }}
-
-.. grid:: 1 2 3 3
-   :gutter: 2
-   :class-row: score-pie-row
-
-   .. grid-item::
-
-{% if count == 0 %}
-      .. raw:: html
-
-         <div class="empty-pie">
-            <span class="empty-pie-title">{{ subject }} Status ({{ safety_label }})</span>
-            <span class="empty-pie-text">no {{ safety_label }} {{ subject|lower }}</span>
-         </div>
-{% else %}
-      .. needpie:: {{ chart_prefix }} Status ({{ safety_label }})
-         :labels: {{ statuses|join(", ") }}
-         :colors: {{ status_colors }}
-         :legend:
-
-{% for state in statuses %}         {{ scope }} and status == "{{ state }}"
-{% endfor %}
-{% endif %}
-   .. grid-item::
-
-{% if count == 0 %}
-      .. raw:: html
-
-         <div class="empty-pie">
-            <span class="empty-pie-title">{{ subject }} Test Coverage ({{ safety_label }})</span>
-            <span class="empty-pie-text">no {{ safety_label }} {{ subject|lower }}</span>
-         </div>
-{% else %}
-      .. needpie:: {{ chart_prefix }} Test Coverage ({{ safety_label }})
-         :labels: fully covered, partially covered, not covered
-         :colors: #37a12d, #f0a500, #ca2828
-         :legend:
-
-         {{ scope }} and fully_verifies_back
-         {{ scope }} and partially_verifies_back and not fully_verifies_back
-         {{ scope }} and not fully_verifies_back and not partially_verifies_back
-{% endif %}
-{% if with_reference %}
-   .. grid-item::
-
-{% if count == 0 %}
-      .. raw:: html
-
-         <div class="empty-pie">
-            <span class="empty-pie-title">{{ subject }} Reference Coverage ({{ safety_label }})</span>
-            <span class="empty-pie-text">no {{ safety_label }} {{ subject|lower }}</span>
-         </div>
-{% else %}
-      .. needpie:: {{ chart_prefix }} Reference Coverage ({{ safety_label }})
-         :labels: referenced by lower, not referenced
-         :colors: #37a12d, #ca2828
-         :legend:
-
-         id in {{ id_filter_list(referenced) }}
-         id in {{ id_filter_list(missing) }}
-{% endif %}
-{% endif %}
-{% endmacro %}
+{#- ``safety_pie_row`` is a render helper shared with the module report. Its
+    ``with_reference`` flag adds the third, reference-coverage pie, which only
+    the requirement rows have. -#}
 {#- Stakeholder requirements are not scoped to a Feature, so they are
     collected once for the whole report rather than per-Feature like
     ``feat_req``. -#}
