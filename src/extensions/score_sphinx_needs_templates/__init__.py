@@ -290,9 +290,51 @@ class _SplitByReference:
 _split_by_reference_callable = _SplitByReference()
 
 
-def _id_filter_list(ids: list[str]) -> str:
-    """Render IDs as a quoted Sphinx-Needs ``id in [...]`` filter literal."""
-    return "[" + ", ".join(f'"{need_id}"' for need_id in ids) + "]"
+class _IdFilterList:
+    """Render Need IDs as the quoted ``[...]`` literal of an ``id in`` filter."""
+
+    def __call__(self, ids: list[str]) -> str:
+        return "[" + ", ".join(f'"{need_id}"' for need_id in ids) + "]"
+
+
+_id_filter_list_callable = _IdFilterList()
+
+
+class _WorkproductRows:
+    """Render work-product rows for a six-space indented ``list-table``.
+
+    Each row links the work product, its kind, the realising document and its
+    status. Both document cells are needtables over the same filter, differing
+    only in ``:columns:``, so a missing document renders as an empty cell.
+    """
+
+    def __call__(self, slug_norm: str, workproducts: list[list[str]]) -> str:
+        rows: list[str] = []
+        for wp_id, kind in workproducts:
+            doc_filter = (
+                f'type == "document" and "{slug_norm}" in id.replace("_", "").lower()'
+                f' and "{wp_id}" in realizes'
+            )
+            rows.append(
+                "\n".join(
+                    [
+                        f"      * - :need:`{wp_id}`",
+                        f"        - {kind}",
+                        "        - .. needtable::",
+                        f"             :filter: {doc_filter}",
+                        "             :columns: id",
+                        "             :style: table",
+                        "        - .. needtable::",
+                        f"             :filter: {doc_filter}",
+                        "             :columns: status",
+                        "             :style: table",
+                    ]
+                )
+            )
+        return "".join(f"\n{row}" for row in rows) + "\n"
+
+
+_workproduct_rows_callable = _WorkproductRows()
 
 
 class _SafetyPieRow:
@@ -402,8 +444,8 @@ class _SafetyPieRow:
                     ":colors: #37a12d, #ca2828",
                     ":legend:",
                     "",
-                    f"id in {_id_filter_list(referenced or [])}",
-                    f"id in {_id_filter_list(missing or [])}",
+                    f"id in {_id_filter_list_callable(referenced or [])}",
+                    f"id in {_id_filter_list_callable(missing or [])}",
                 ],
             )
         return "\n".join(lines) + "\n"
@@ -507,6 +549,12 @@ def setup(app: Sphinx) -> dict[str, object]:
     )
     app.config.needs_render_context.setdefault(
         "split_by_reference", _split_by_reference_callable
+    )
+    app.config.needs_render_context.setdefault(
+        "id_filter_list", _id_filter_list_callable
+    )
+    app.config.needs_render_context.setdefault(
+        "workproduct_rows", _workproduct_rows_callable
     )
     app.config.needs_render_context.setdefault(
         "safety_pie_row", _safety_pie_row_callable

@@ -37,34 +37,8 @@
      ["wp__feature_fmea", "FMEA"],
    ] %}
 
-{#- One work-product row: the need link, its kind, the realising document and
-    its status. Both cells are needtables over the same filter, differing only
-    in :columns:, so an empty match renders as an empty cell. -#}
-{% macro workproduct_rows(slug_norm, workproducts) %}
-{%- for wp in workproducts %}
-      * - :need:`{{ wp[0] }}`
-        - {{ wp[1] }}
-        - .. needtable::
-             :filter: type == "document" and "{{ slug_norm }}" in id.replace("_", "").lower() and "{{ wp[0] }}" in realizes
-             :columns: id
-             :style: table
-        - .. needtable::
-             :filter: type == "document" and "{{ slug_norm }}" in id.replace("_", "").lower() and "{{ wp[0] }}" in realizes
-             :columns: status
-             :style: table
-{%- endfor %}
-{% endmacro %}
-
-{#- Bracketed, quoted Sphinx-Needs ``id in [...]`` filter literal for a list
-    of Need IDs, used to scope needpie/needtable filters below to the
-    requirements that are in scope for ``report_version``. -#}
-{% macro id_filter_list(ids) -%}
-[{% for req_id in ids %}"{{ req_id }}"{% if not loop.last %}, {% endif %}{% endfor %}]
-{%- endmacro %}
-
-{#- ``safety_pie_row`` is a render helper shared with the module report. Its
-    ``with_reference`` flag adds the third, reference-coverage pie, which only
-    the requirement rows have. -#}
+{#- ``workproduct_rows``, ``id_filter_list`` and ``safety_pie_row`` are render
+    helpers shared with the module report. -#}
 {#- Stakeholder requirements are not scoped to a Feature, so they are
     collected once for the whole report rather than per-Feature like
     ``feat_req``. -#}

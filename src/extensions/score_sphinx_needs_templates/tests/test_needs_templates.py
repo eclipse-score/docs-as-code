@@ -213,6 +213,24 @@ def test_safety_pie_row_reference_pie_only_on_request() -> None:
     assert ".. needpie:: Stakeholder Requirements Status (QM)" in with_ref
 
 
+def test_id_filter_list_renders_quoted_literal() -> None:
+    id_filter_list = vars(templates)["_IdFilterList"]()
+
+    assert id_filter_list(["a", "b"]) == '["a", "b"]'
+    assert id_filter_list([]) == "[]"
+
+
+def test_workproduct_rows_filter_by_slug_and_work_product() -> None:
+    workproduct_rows = vars(templates)["_WorkproductRows"]()
+
+    rows = workproduct_rows("mycomp", [["wp__dfa", "DFA"], ["wp__fmea", "FMEA"]])
+
+    assert rows.count("      * - :need:`") == 2
+    assert "        - DFA\n" in rows
+    assert rows.count('"mycomp" in id.replace("_", "").lower()') == 4
+    assert rows.count('and "wp__fmea" in realizes') == 2
+
+
 def test_tool_qualification_matrix_groups_shared_requirements(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
