@@ -20,6 +20,7 @@ import subprocess
 from pathlib import Path
 
 import pytest
+from score_pytest.attribute_plugin import add_test_properties
 
 from src.helper_lib import find_git_root
 from tools.module_verification_reports import (
@@ -42,7 +43,13 @@ from tools.module_verification_reports import (
 )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_cache_path_defaults_inside_the_workspace(tmp_path: Path) -> None:
+    """Test cache path defaults inside the workspace."""
     assert resolve_cache_dir(workspace_root=tmp_path) == (
         tmp_path / ".cache" / "repo-cache"
     )
@@ -51,7 +58,13 @@ def test_cache_path_defaults_inside_the_workspace(tmp_path: Path) -> None:
     )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_profiles_and_filters_are_validated() -> None:
+    """Test profiles and filters are validated."""
     main = load_profile("main")
     pinned = load_profile("pinned")
     assert [repository.name for repository in main.repositories] == [
@@ -76,7 +89,13 @@ def test_profiles_and_filters_are_validated() -> None:
         select_repositories(main, ["lifecycle", "lifecycle"])
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_pinned_profile_rejects_non_immutable_revisions(tmp_path: Path) -> None:
+    """Test pinned profile rejects non immutable revisions."""
     (tmp_path / "module_verification_reports.toml").write_text(
         '[[repositories]]\nname = "lifecycle"\npinned = "main"\n',
         encoding="utf-8",
@@ -85,7 +104,13 @@ def test_pinned_profile_rejects_non_immutable_revisions(tmp_path: Path) -> None:
         load_profile("pinned", tmp_path)
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_need_and_module_override_use_the_current_template_selector() -> None:
+    """Test need and module override use the current template selector."""
     page = report_need("inc_someip_gateway")
     assert ".. mod_ver_report:: Inc Someip Gateway Module Verification Report" in page
     assert ":id: mod_vrep__inc_someip_gateway__report" in page
@@ -130,7 +155,13 @@ def _write_fake_checkout(path: Path, repository: str) -> None:
     assert repository
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_injection_is_reversible(tmp_path: Path) -> None:
+    """Test injection is reversible."""
     checkout = tmp_path / "consumer"
     _write_fake_checkout(checkout, "lifecycle")
     module_before = (checkout / "MODULE.bazel").read_bytes()
@@ -147,12 +178,24 @@ def test_injection_is_reversible(tmp_path: Path) -> None:
     assert not (checkout / "docs/module_verification_reports").exists()
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_missing_graph_is_a_structural_failure() -> None:
+    """Test missing graph is a structural failure."""
     with pytest.raises(ReportToolError, match="no includes graph"):
         validate_module_graph({"mod__lifecycle": {"id": "mod__lifecycle"}}, "lifecycle")
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_component_without_a_feature_link_is_a_structural_failure() -> None:
+    """Test component without a feature link is a structural failure."""
     with pytest.raises(ReportToolError, match="has no belongs_to feature"):
         validate_module_graph(
             {
@@ -163,6 +206,11 @@ def test_component_without_a_feature_link_is_a_structural_failure() -> None:
         )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_feature_resolved_only_through_external_needs_is_not_a_failure() -> None:
     """A component may point at a feature that lives in another repository's
     needs.json (e.g. score_platform), reached only through Sphinx-needs'
@@ -203,7 +251,13 @@ class _GitCommandRecorder:
         return subprocess.CompletedProcess(command, 0, "", "")
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_checkout_clone_refresh_pinned_selection_and_cleanup(tmp_path: Path) -> None:
+    """Test checkout clone refresh pinned selection and cleanup."""
     source_root = Path(__file__).parents[2]
     cache = tmp_path / "cache"
     spec = RepositorySpec("lifecycle", "a" * 40)
@@ -222,7 +276,13 @@ def test_checkout_clone_refresh_pinned_selection_and_cleanup(tmp_path: Path) -> 
     assert manager.lock_path("lifecycle").parent.name == "score-docs-as-code"
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_cached_checkout_rejects_a_remote_mismatch(tmp_path: Path) -> None:
+    """Test cached checkout rejects a remote mismatch."""
     checkout = tmp_path / "cache/eclipse-score/lifecycle"
     checkout.mkdir(parents=True)
     recorder = _GitCommandRecorder(checkout, origin="https://example.invalid/other.git")
@@ -242,9 +302,15 @@ def _fake_result(
     return subprocess.CompletedProcess(list(DOCS_COMMAND), returncode, stdout, stderr)
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_local_fake_downstream_build_populates_gallery_and_assets(
     tmp_path: Path,
 ) -> None:
+    """Test local fake downstream build populates gallery and assets."""
     source_root = Path(__file__).parents[2]
     checkout = tmp_path / "lifecycle"
     _write_fake_checkout(checkout, "lifecycle")
@@ -301,6 +367,11 @@ def test_local_fake_downstream_build_populates_gallery_and_assets(
     ] == ("lifecycle/report.html")
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_local_fake_downstream_runs_the_real_docs_target(tmp_path: Path) -> None:
     """Exercise injection and a real Bazel/Sphinx build without network access."""
 
@@ -558,7 +629,13 @@ needs_extra_links:
     assert (tmp_path / "gallery/lifecycle/report.html").is_file()
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_main_is_partial_but_pinned_is_strict_on_build_failure(tmp_path: Path) -> None:
+    """Test main is partial but pinned is strict on build failure."""
     source_root = Path(__file__).parents[2]
     specs = (RepositorySpec("lifecycle", "main"), RepositorySpec("baselibs", "main"))
 
@@ -630,7 +707,13 @@ def test_main_is_partial_but_pinned_is_strict_on_build_failure(tmp_path: Path) -
     assert pinned_strict
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_pinned_golden_comparison_is_byte_for_byte(tmp_path: Path) -> None:
+    """Test pinned golden comparison is byte for byte."""
     source_root = Path(__file__).parents[2]
     checkout = tmp_path / "lifecycle"
     _write_fake_checkout(checkout, "lifecycle")
