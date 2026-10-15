@@ -30,7 +30,7 @@
    :tracking: https://github.com/eclipse-score/docs-as-code/issues/1
    :version: 1
    :consequences: Provides traceability for decisions.
-   :affects: dec_rec__test__decision_record_2
+   :affects: dec_rec__feature__follow_up
 
 
 .. dec_rec:: Test Decision Record 2
@@ -39,7 +39,7 @@
    :context: This decision record is affected by another decision.
    :decision: Keep the relationship explicit.
    :tracking: https://github.com/eclipse-score/score/pull/2#discussion_r3
-   :expect_not: dec_rec__test__decision_record_2.tracking (https://github.com/eclipse-score/score/pull/2#discussion_r3): does not follow pattern
+   :expect_not: dec_rec__feature__follow_up.tracking (https://github.com/eclipse-score/score/pull/2#discussion_r3): does not follow pattern
    :version: 1
    :consequences: Allows linking between related decisions.
 
@@ -60,7 +60,7 @@
    :decision: Reject links owned by other organizations.
    :tracking: https://github.com/other-org/score/pull/3
    :version: 1
-   :expect: dec_rec__arch__invalid_tracking_org.tracking (https://github.com/other-org/score/pull/3): does not follow pattern
+   :expect: dec_rec__dac__invalid_tracking_org.tracking (https://github.com/other-org/score/pull/3): does not follow pattern
 
 
 .. dec_rec:: Decision Record with missing status
