@@ -845,7 +845,7 @@ Testing
          - component, feature, platform
        * - `derivation_technique`
          - `requirements-analysis`
-         - unit, component, feature
+         - all
        * - `derivation_technique`
          - `boundary-values`
          - component, feature, platform
@@ -896,13 +896,13 @@ for an overview.
        * - Path contains
          - Test level
          - Allowed "verifies" links
-       * - `docs/requirements`
+       * - `score/.*/tests/`
          - Component
          - `comp`, `comp_req`, `comp_arc_dyn`, `comp_arc_sta`, `real_arc_int`, `real_arc_int_op`
-       * - `features/requirements`
+       * - `score/tests/`
          - Feature
          - `feat`, `feat_req`, `feat_arc_dyn`, `feat_arc_sta`, `mod`, `mod_view_dyn`, `mod_view_sta`, `tool_req`
-       * - `requirements/stakeholder`
+       * - `platform_integration_tests/`
          - Platform
          - `stkh_req`
 
