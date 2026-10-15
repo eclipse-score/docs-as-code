@@ -822,12 +822,48 @@ Testing
 .. tool_req:: Extract Metadata from Tests
    :id: tool_req__docs_test_metadata_mandatory_1
    :tags: Testing
-   :version: 1
+   :version: 2
    :implemented: PARTIAL
    :parent_covered: YES: Together with tool_req__docs_test_metadata_mandatory_2, tool_req__docs_test_metadata_link_levels
    :satisfies: gd_req__verification_checks[version==1]
 
    Docs-as-Code shall ensure that each test case has TestType and DerivationTechnique set.
+   Each may contain multiple comma-separated tags of the following:
+
+   .. list-table::
+       :header-rows: 1
+       :widths: 1 1 2
+
+       * - Field
+         - Tag
+         - Levels
+       * - `test_type`
+         - `interface-test`
+         - unit, component, feature
+       * - `test_type`
+         - `requirements-based`
+         - component, feature, platform
+       * - `derivation_technique`
+         - `requirements-analysis`
+         - unit, component, feature
+       * - `derivation_technique`
+         - `boundary-values`
+         - component, feature, platform
+       * - `derivation_technique`
+         - `equivalence-classes`
+         - all
+       * - `derivation_technique`
+         - `fuzz-testing`
+         - unit, component, feature
+       * - `derivation_technique`
+         - `error-guessing`
+         - all
+       * - `derivation_technique`
+         - `explorative-testing`
+         - all
+
+See `more verification methods <https://eclipse-score.github.io/score/main/platform_management_plan/software_verification.html#verification-methods>`__
+for an overview.
 
 .. tool_req:: Extract Metadata from Tests
    :id: tool_req__docs_test_metadata_mandatory_2
@@ -845,17 +881,35 @@ Testing
 .. tool_req:: Extract Metadata from Tests
    :id: tool_req__docs_test_metadata_link_levels
    :tags: Testing
-   :version: 1
+   :version: 2
    :implemented: NO
    :parent_covered: YES: Together with tool_req__docs_test_metadata_mandatory_1, tool_req__docs_test_metadata_mandatory_2
    :satisfies: gd_req__verification_checks[version==1]
 
-   Docs-as-Code shall ensure that test cases link to requirements on the correct level:
+   Docs-as-Code shall ensure that test cases link to requirements on the correct level.
+   The test level is determined from folder structure.
 
-   - If Partially/FullyVerifies are set in Feature Integration Test these shall link to Feature Requirements
-   - If Partially/FullyVerifies are set in Component Integration Test these shall link to Component Requirements
-   - If Partially/FullyVerifies are set in Unit Test these shall link to Component Requirements
+   .. list-table::
+       :header-rows: 1
+       :widths: 2 1 3
 
+       * - Path contains
+         - Test level
+         - Allowed "verifies" links
+       * - `docs/requirements`
+         - Component
+         - `comp`, `comp_req`, `comp_arc_dyn`, `comp_arc_sta`, `real_arc_int`, `real_arc_int_op`
+       * - `features/requirements`
+         - Feature
+         - `feat`, `feat_req`, `feat_arc_dyn`, `feat_arc_sta`, `mod`, `mod_view_dyn`, `mod_view_sta`, `tool_req`
+       * - `requirements/stakeholder`
+         - Platform
+         - `stkh_req`
+
+   Anything else is "unit" level.
+
+`The folder structure <https://eclipse-score.github.io/score/main/contribute/general/folder.html>`__
+is described in the platform.
 
 .. tool_req:: Provide Metrics for linked requirements
    :id: tool_req__docs_test_linkage_metrics
