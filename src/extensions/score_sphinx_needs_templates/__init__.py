@@ -367,7 +367,9 @@ class _SafetyPieRow:
                     ]
                 )
             else:
-                lines.append(f"      .. needpie:: {chart_prefix} {name} ({safety_label})")
+                lines.append(
+                    f"      .. needpie:: {chart_prefix} {name} ({safety_label})"
+                )
                 lines.extend(f"         {line}".rstrip() for line in pie)
 
         grid_item(

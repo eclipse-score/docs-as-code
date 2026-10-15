@@ -173,6 +173,46 @@ def test_any_req_in_report_version_false_if_no_requirement_matches() -> None:
     assert any_req_in_report_version([a, b], "v1.0") is False
 
 
+def test_safety_pie_row_qm_has_no_inspected_slice() -> None:
+    """QM Needs are never formally inspected, so ``valid`` is their final slice."""
+    safety_pie_row = vars(templates)["_SafetyPieRow"]()
+
+    qm = safety_pie_row("Comp", "Requirements", "BASE", "QM", "QM", 1)
+    asil = safety_pie_row("Comp", "Requirements", "BASE", "ASIL_B", "ASIL B", 1)
+
+    assert "valid_inspected" not in qm
+    assert ":labels: valid, valid_inspected, invalid" in asil
+    assert 'BASE and safety == "ASIL_B" and status == "valid_inspected"' in asil
+    assert ":class: safety-class-heading safety-asil-b" in asil
+
+
+def test_safety_pie_row_empty_class_renders_placeholders_only() -> None:
+    safety_pie_row = vars(templates)["_SafetyPieRow"]()
+
+    row = safety_pie_row("Comp", "Requirements", "BASE", "QM", "QM", 0, True)
+
+    assert "needpie" not in row
+    assert row.count('<div class="empty-pie">') == 3
+    assert "no QM requirements" in row
+
+
+def test_safety_pie_row_reference_pie_only_on_request() -> None:
+    safety_pie_row = vars(templates)["_SafetyPieRow"]()
+
+    without = safety_pie_row("", "Stakeholder Requirements", "B", "QM", "QM", 2)
+    with_ref = safety_pie_row(
+        "", "Stakeholder Requirements", "B", "QM", "QM", 2, True, ["a", "b"], ["c"]
+    )
+
+    assert "Reference Coverage" not in without
+    assert without.count(".. needpie::") == 2
+    assert with_ref.count(".. needpie::") == 3
+    assert 'id in ["a", "b"]' in with_ref
+    assert 'id in ["c"]' in with_ref
+    # An empty title must not leave a leading blank in the chart title.
+    assert ".. needpie:: Stakeholder Requirements Status (QM)" in with_ref
+
+
 def test_tool_qualification_matrix_groups_shared_requirements(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
