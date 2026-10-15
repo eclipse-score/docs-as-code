@@ -11,9 +11,9 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-load("//:docs.bzl", "docs_bundle")
 load("@aspect_rules_py//py:defs.bzl", "py_binary")
 load("@docs_as_code_hub_env//:requirements.bzl", "all_requirements")
+load("//:docs.bzl", "docs_bundle")
 
 genrule(
     name = "generate_metamodel_rst",
@@ -36,8 +36,8 @@ py_binary(
     name = "generate_metamodel_rst_bin",
     srcs = ["generate_metamodel_rst.py"],
     main = "generate_metamodel_rst.py",
+    visibility = ["//visibility:public"],  # public to be reuseable for other metamodels
     deps = all_requirements,
-    visibility = ["//visibility:public"], # public to be reuseable for other metamodels
 )
 
 docs_bundle(

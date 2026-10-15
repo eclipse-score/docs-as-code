@@ -19,6 +19,7 @@ load("//:bzl/basics.bzl", "join_path")
 def _join_path_test_impl(ctx):
     """Check path joining and normalization at the Starlark level."""
     env = unittest.begin(ctx)
+
     # Each tuple contains ``prefix``, ``rest``, and the expected result.
     cases = [
         ("docs", "index", "docs/index"),

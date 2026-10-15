@@ -50,6 +50,6 @@ score_pytest(
     name = "score_mounts_tests",
     size = "small",
     srcs = glob(["tests/*.py"]),
-    deps = [":score_mounts"],
     pytest_config = "//:pyproject.toml",
+    deps = [":score_mounts"],
 )

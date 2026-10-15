@@ -51,11 +51,11 @@ py_library(
 py_library(
     name = "source_code_linker_helpers",
     srcs = [
+        "helpers.py",
         "needlinks.py",
+        "repo_source_links.py",
         "testlink.py",
         "xml_parser.py",
-        "helpers.py",
-        "repo_source_links.py",
     ],
     imports = ["."],
     visibility = ["//visibility:public"],
@@ -74,9 +74,9 @@ score_pytest(
     ],
     data = glob(["tests/*.json"]),
     imports = ["."],
+    pytest_config = "//:pyproject.toml",
     deps = [
         ":score_source_code_linker",
         "//src/extensions/score_metamodel",
     ],
-    pytest_config = "//:pyproject.toml",
 )
