@@ -14,16 +14,12 @@
 load("//:docs.bzl", "docs")
 
 package(default_visibility = ["//visibility:public"])
+
 exports_files([
     "pyproject.toml",
 ])
 
 docs(
-    project = "S-CORE Docs-as-Code",
-    project_url = "https://eclipse-score.github.io/docs-as-code",
-    external_needs = [
-        "@score_process_description//:needs_json_file",
-    ],
     bundles = [
         {
             "bundle": "//src/extensions/docs:extensions",
@@ -52,6 +48,11 @@ docs(
         "//tools:module_verification_reports",
         "//src:all_sources",
     ],
+    external_needs = [
+        "@score_process_description//:needs_json_file",
+    ],
+    project = "S-CORE Docs-as-Code",
+    project_url = "https://eclipse-score.github.io/docs-as-code",
     source_dir = "docs",
 )
 

@@ -30,6 +30,7 @@ def _sphinx_docs_impl(ctx):
     output = ctx.actions.declare_directory(ctx.label.name + "/_build/needs")
 
     bundle = ctx.attr.bundle[DocsBundleInfo]
+
     # The bundle owns both the direct inputs and their execution-root-relative
     # source root. Nested sources are provided separately for score_mounts, so
     # local exports retain their bundle ownership.
@@ -54,6 +55,7 @@ def _sphinx_docs_impl(ctx):
             project_url = bundle_config.project_url,
             required_in_id = bundle_config.required_in_id,
         )
+
         # Configuration-free actions need a concrete metamodel input. Use an
         # explicitly supplied label first, then the bundle's inherited default.
         metamodel_file = ctx.file.score_metamodel_yaml or bundle_config.metamodel
