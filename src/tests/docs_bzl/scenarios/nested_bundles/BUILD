@@ -14,6 +14,7 @@
 load("@aspect_rules_py//py:defs.bzl", "py_binary")
 load("//:bzl/mount_rules.bzl", "create_composition_manifest")
 load("//:docs.bzl", "docs", "docs_bundle")
+load(":custom_generator.bzl", "custom_source_generator")
 load(":dependency_probe.bzl", "dependency_probe")
 
 exports_files([
@@ -29,6 +30,12 @@ docs_bundle(
         ":external_dependency_probe",
         ":dependency_entrypoint",
         ":generated_implementation",
+        ":custom_generated_implementation",
+        ":custom_generated_assembly",
+        ":mixed_py_sources",
+        ":mixed_genrule_outputs",
+        ":mixed_filegroup_sources",
+        ":nested_mixed_filegroup_sources",
         ":local_dependency_probe",
         ":nested_filegroup_sources",
         ":selected_with_sibling_files",
@@ -101,6 +108,94 @@ cc_library(
     name = "generated_implementation",
     srcs = [":generated_component_source"],
     hdrs = [":generated_component_header"],
+)
+
+# Custom Starlark generators publish generated code through DefaultInfo.files.
+# Their srcs are inputs used to create those files, not implementation files.
+custom_source_generator(
+    name = "custom_generated_source",
+    srcs = ["child/example_main.cc"],
+    out = "generated/custom_generated_component.cc",
+)
+
+custom_source_generator(
+    name = "custom_generated_header",
+    srcs = ["child/example_api.h"],
+    out = "generated/custom_generated_component.h",
+)
+
+# Assembly output has a different extension from the generator input. The
+# source file list and sourcelink cache must contain the generated artifact,
+# not the text input that the generator reads.
+custom_source_generator(
+    name = "custom_generated_assembly",
+    srcs = ["child/generator_input.txt"],
+    out = "generated/custom_generated_component.S",
+)
+
+# aspect_rules_py forwards all py_library srcs through DefaultInfo.files. Keep
+# one handwritten module beside a generated module to ensure the collector
+# retains both files when a library consumes generator output.
+custom_source_generator(
+    name = "mixed_py_generated",
+    srcs = ["child/mixed_py_manual.py"],
+    out = "generated/mixed_py_generated.py",
+)
+
+py_library(
+    name = "mixed_py_sources",
+    srcs = [
+        "child/mixed_py_manual.py",
+        ":mixed_py_generated",
+    ],
+)
+
+# This generated file is reachable only through the mixed filegroups below.
+# Its unique path lets the source-link golden prove that filegroups forward
+# generator outputs instead of contributing only their ordinary source files.
+custom_source_generator(
+    name = "filegroup_generated_assembly",
+    srcs = ["child/generator_input.txt"],
+    out = "generated/filegroup_generated_component.S",
+)
+
+# This action produces both a commonly listed C++ source and an assembly
+# source. Treat both outputs as implementation files and omit its text input.
+genrule(
+    name = "mixed_genrule_outputs",
+    srcs = ["child/generator_input.txt"],
+    outs = [
+        "generated/genrule_component.cc",
+        "generated/genrule_component.S",
+    ],
+    cmd = "cp $< $(location :generated/genrule_component.cc) && " +
+          "cp $< $(location :generated/genrule_component.S)",
+)
+
+# A filegroup forwards its ordinary source and generated assembly output. Both
+# must remain in the bundle manifest and the source-link collection.
+filegroup(
+    name = "mixed_filegroup_sources",
+    srcs = [
+        "child/filegroup_manual.cc",
+        ":filegroup_generated_assembly",
+    ],
+)
+
+# A second filegroup layer verifies that forwarding behavior is preserved
+# through nested filegroups as well as for the directly selected target above.
+filegroup(
+    name = "nested_mixed_filegroup_sources",
+    srcs = [
+        "child/example_api.h",
+        ":mixed_filegroup_sources",
+    ],
+)
+
+cc_library(
+    name = "custom_generated_implementation",
+    srcs = [":custom_generated_source"],
+    hdrs = [":custom_generated_header"],
 )
 
 # Source and header declarations resolve through sibling-package filegroups.

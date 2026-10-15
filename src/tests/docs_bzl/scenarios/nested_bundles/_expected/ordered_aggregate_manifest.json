@@ -62,6 +62,54 @@
           },
           {
             "files": [
+              "src/tests/docs_bzl/scenarios/nested_bundles/generated/custom_generated_component.cc",
+              "src/tests/docs_bzl/scenarios/nested_bundles/generated/custom_generated_component.h"
+            ],
+            "label": "@@//src/tests/docs_bzl/scenarios/nested_bundles:custom_generated_implementation",
+            "type": "cc_library"
+          },
+          {
+            "files": [
+              "src/tests/docs_bzl/scenarios/nested_bundles/generated/custom_generated_component.S"
+            ],
+            "label": "@@//src/tests/docs_bzl/scenarios/nested_bundles:custom_generated_assembly",
+            "type": "custom_source_generator"
+          },
+          {
+            "files": [
+              "src/tests/docs_bzl/scenarios/nested_bundles/child/mixed_py_manual.py",
+              "src/tests/docs_bzl/scenarios/nested_bundles/generated/mixed_py_generated.py"
+            ],
+            "label": "@@//src/tests/docs_bzl/scenarios/nested_bundles:mixed_py_sources",
+            "type": "py_library"
+          },
+          {
+            "files": [
+              "src/tests/docs_bzl/scenarios/nested_bundles/generated/genrule_component.S",
+              "src/tests/docs_bzl/scenarios/nested_bundles/generated/genrule_component.cc"
+            ],
+            "label": "@@//src/tests/docs_bzl/scenarios/nested_bundles:mixed_genrule_outputs",
+            "type": "genrule"
+          },
+          {
+            "files": [
+              "src/tests/docs_bzl/scenarios/nested_bundles/child/filegroup_manual.cc",
+              "src/tests/docs_bzl/scenarios/nested_bundles/generated/filegroup_generated_component.S"
+            ],
+            "label": "@@//src/tests/docs_bzl/scenarios/nested_bundles:mixed_filegroup_sources",
+            "type": "filegroup"
+          },
+          {
+            "files": [
+              "src/tests/docs_bzl/scenarios/nested_bundles/child/example_api.h",
+              "src/tests/docs_bzl/scenarios/nested_bundles/child/filegroup_manual.cc",
+              "src/tests/docs_bzl/scenarios/nested_bundles/generated/filegroup_generated_component.S"
+            ],
+            "label": "@@//src/tests/docs_bzl/scenarios/nested_bundles:nested_mixed_filegroup_sources",
+            "type": "filegroup"
+          },
+          {
+            "files": [
               "src/tests/docs_bzl/scenarios/nested_bundles/child/example.cc"
             ],
             "label": "@@//src/tests/docs_bzl/scenarios/nested_bundles:local_dependency_probe",

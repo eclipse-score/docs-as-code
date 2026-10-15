@@ -71,16 +71,80 @@ DocsConfigInfo = provider(
 )
 
 CodeTargetSourcesInfo = provider(
-    doc = "Source files collected from an implementation target and its dependencies.",
+    doc = "Source information used by sourcelinks generation and bounded bundle file collection.",
     fields = {
-        "sources": "Depset of direct and transitive source files.",
-        "kind": "Bazel rule kind of the selected code target.",
-        "node": "Shared source-graph node with target location and direct dependencies.",
+        # The source-link cache needs implementation files from the complete
+        # dependency closure. Bundle manifests use `node` instead, because they
+        # must stop traversing dependencies at the bundle's package boundary.
+        # Keeping these as separate fields gives each consumer the traversal
+        # semantics it needs without rebuilding the data from rule attributes.
+        "sources": "Depset of this target's source/header files and its full dependency closure, used by sourcelinks generation.",
+        # The manifest preserves the rule kind of the explicitly selected
+        # target; dependency kinds do not replace the selected target's identity.
+        "kind": "Bazel rule kind of the selected code target, retained for the manifest.",
+        # The graph node carries target identities and source edges so the
+        # manifest collector can apply its repository/package boundary while
+        # retaining source and header files reached through nested filegroups.
+        "node": "Named source-graph struct used for package-aware file collection.",
     },
 )
 
-def _source_files_from_attributes(ctx):
-    """Return files explicitly declared through source or header attributes."""
+# Common implementation extensions used to distinguish generated sources and
+# headers from executables, archives, and other build products.
+_GENERATED_IMPLEMENTATION_EXTENSIONS = [
+    "S",
+    "c",
+    "cc",
+    "cpp",
+    "cxx",
+    "go",
+    "h",
+    "hh",
+    "hpp",
+    "hxx",
+    "inc",
+    "inl",
+    "java",
+    "js",
+    "jsx",
+    "kt",
+    "m",
+    "mm",
+    "proto",
+    "py",
+    "rs",
+    "s",
+    "swift",
+    "ts",
+    "tsx",
+]
+
+def _generated_implementation_files(target, ctx):
+    """Return common generated source and header files owned by this rule.
+
+    DefaultInfo.files can also contain executables and compiled libraries.
+    Keeping only generated files with implementation extensions avoids adding
+    those build products to the component's file list.
+    Filegroups forward their inputs, so their implementation files are visited
+    through the source attributes instead.
+    """
+    if ctx.rule.kind == "filegroup":
+        return []
+
+    return [
+        file
+        for file in target[DefaultInfo].files.to_list()
+        if not file.is_source and
+        file.owner == ctx.label and
+        file.extension in _GENERATED_IMPLEMENTATION_EXTENSIONS
+    ]
+
+def _source_files_from_attributes(target, ctx):
+    """Return generated outputs or files declared through source/header attributes."""
+    generated_files = _generated_implementation_files(target, ctx)
+    if generated_files:
+        return generated_files
+
     source_files = []
     for attribute_name in ["srcs", "hdrs", "textual_hdrs"]:
         if not hasattr(ctx.rule.attr, attribute_name):
@@ -102,11 +166,11 @@ def _code_target_node(target, ctx):
     """
     direct_files = []
     source_children = []
-    if ctx.rule.kind == "genrule":
-        # A genrule's srcs are action inputs, not the implementation files its
-        # parent selected. Its generated outputs are the files used by the
-        # parent's srcs or hdrs attribute, so keep those and stop at the rule.
-        direct_files.extend(target[DefaultInfo].files.to_list())
+    generated_files = _generated_implementation_files(target, ctx)
+    if generated_files:
+        # Generator source attributes are action inputs, so use the generated
+        # implementation outputs rather than exporting those inputs.
+        direct_files.extend(generated_files)
     else:
         for attribute_name in ["srcs", "hdrs", "textual_hdrs"]:
             if not hasattr(ctx.rule.attr, attribute_name):
@@ -141,6 +205,12 @@ def collect_bundle_code_target_files(root, repository, package):
     their resolved ``srcs``, ``hdrs``, and ``textual_hdrs``, including files
     behind nested filegroups outside the bundle package. Dependency targets
     are traversed only while their labels remain inside the boundary.
+
+    Args:
+        root: Graph node for the code target explicitly selected by the bundle.
+        repository: Workspace name that owns the bundle declaration.
+        package: BUILD package that owns the bundle declaration. Its subpackages
+            are included when checking dependency targets.
     """
 
     # Source attributes describe each accepted implementation target, even
@@ -181,7 +251,7 @@ def collect_bundle_code_target_files(root, repository, package):
 
 def _collect_code_target_sources_impl(target, ctx):
     source_node = _code_target_node(target, ctx)
-    source_files = _source_files_from_attributes(ctx)
+    source_files = _source_files_from_attributes(target, ctx)
     dependency_sources = []
     if hasattr(ctx.rule.attr, "deps"):
         dependency_sources = [
@@ -192,6 +262,9 @@ def _collect_code_target_sources_impl(target, ctx):
         child[CodeTargetSourcesInfo].node
         for child in source_node.children
     ]
+    # Keep the source-link closure separate from the named graph node: the
+    # former intentionally follows every dependency, while bundle file lists
+    # need target identities and branch edges to enforce their boundary.
     return [CodeTargetSourcesInfo(
         sources = depset(
             direct = source_files,
@@ -199,13 +272,26 @@ def _collect_code_target_sources_impl(target, ctx):
         ),
         # Preserve the selected target's kind, not its dependencies' kinds.
         kind = ctx.rule.kind,
+        # Starlark structs keep the per-target graph state under named fields.
+        # The collector needs each field for a different job: identity for
+        # boundary checks, source artifacts for inclusion, edges for traversal,
+        # and depth to bound its iterative walk.
         node = struct(
+            # The collector keys visits by label and accepts nodes only when
+            # both their repository and package are inside the bundle boundary.
             label = str(ctx.label),
             repository = ctx.label.workspace_name,
             package = ctx.label.package,
+            # `files` contains artifacts directly owned by this target;
+            # `selected_sources` additionally contains files resolved through
+            # nested source/header targets such as filegroups.
             files = source_node.files,
             selected_sources = source_node.source_files,
+            # Children retain source/header target edges and declared `deps`.
+            # The collector can therefore stop an excluded dependency branch
+            # without dropping a selected target's explicit filegroup files.
             children = child_nodes,
+            # This bounds the collector's iterative walk without recursion.
             depth = 1 + max([child.depth for child in child_nodes]) if child_nodes else 1,
         ),
     )]
