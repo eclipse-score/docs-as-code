@@ -56,6 +56,9 @@ DocsBundleInfo = provider(
     },
 )
 
+# Used when a module declares no version in MODULE.bazel.
+DEFAULT_VERSION = "0.0.0"
+
 # ``docs()`` exposes its structured project configuration through this
 # provider on a separate internal target. Keeping the config target separate
 # from the root ``DocsBundleInfo`` target is important: the root bundle may
@@ -135,12 +138,12 @@ def _package_relative_project_url(base_url, package_path):
     """
     return join_path(base_url, package_path)
 
-def sphinx_config_options(project, project_url = "", required_in_id = ""):
+def sphinx_config_options(project, project_url = "", required_in_id = "", version = DEFAULT_VERSION):
     """Serialize semantic bundle configuration for the Sphinx action boundary."""
     options = [
         "--define=extensions=score_sphinx_bundle",
         "--define=project=" + project,
-        "--define=version=0.0.0",
+        "--define=version=" + version,
     ]
     if project_url:
         options.append("--define=project_url=" + project_url)
@@ -155,6 +158,7 @@ def _docs_config_impl(ctx):
         project_url_base = ctx.attr.project_url,
         required_in_id = ctx.attr.required_in_id,
         metamodel = ctx.file.metamodel,
+        version = ctx.attr.version,
     ))]
 
 _docs_config = rule(
@@ -167,6 +171,7 @@ _docs_config = rule(
             allow_single_file = True,
             mandatory = True,
         ),
+        "version": attr.string(default = DEFAULT_VERSION),
     },
     doc = "Internal structured configuration target for a docs() root.",
 )
@@ -177,6 +182,7 @@ def declare_docs_config_target(
         project_url,
         required_in_id,
         metamodel,
+        version = DEFAULT_VERSION,
         visibility = None):
     """Declare the internal config target addressed through ``root_docs``."""
     _docs_config(
@@ -185,6 +191,7 @@ def declare_docs_config_target(
         project_url = project_url,
         required_in_id = required_in_id,
         metamodel = metamodel,
+        version = version,
         # The target is internal by naming convention, but bundles in nested
         # packages still need to consume its provider through ``root_docs``.
         visibility = visibility,
@@ -591,6 +598,7 @@ def _docs_bundle_impl(ctx):
             project_url_base = root_config.project_url_base,
             required_in_id = root_config.required_in_id,
             metamodel = root_config.metamodel,
+            version = root_config.version,
         )
     else:
         # A standalone bundle has no repository-level configuration to inherit.
@@ -604,6 +612,7 @@ def _docs_bundle_impl(ctx):
             project_url_base = "",
             required_in_id = "",
             metamodel = ctx.file.metamodel,
+            version = DEFAULT_VERSION,
         )
 
     return [

@@ -390,3 +390,43 @@ def test_direct_invocation_resolves_paths_relative_to_cwd(
     assert f"--define=score_metamodel_yaml={workspace}/metamodel.yaml" in arguments
     # A direct invocation has no Sphinx config path to resolve.
     assert "-c" not in arguments
+
+
+@pytest.mark.parametrize(
+    "version,describe,expected",
+    [
+        ("1.2.3", "v1.2.3", []),
+        ("1.2.3", "v1.2.3-4-gabc1234", ["--define=release=1.2.3-4-gabc1234"]),
+        ("1.2.3", "v1.2.3-dirty", ["--define=release=1.2.3-dirty"]),
+        ("1.2.3", "v1.2.30-4-gabc1234", ["--define=release=1.2.3+1.2.30-4-gabc1234"]),
+        ("1.2.3", "abc1234", ["--define=release=1.2.3+abc1234"]),
+        # A module without a declared version (placeholder 0.0.0) gets no dev release.
+        ("0.0.0", "abc1234", []),
+    ],
+)
+def test_release_define_extends_version_with_git_describe(
+    monkeypatch: pytest.MonkeyPatch, version: str, describe: str, expected: list[str]
+) -> None:
+    """A checkout that is not exactly the tagged version gets a dev release."""
+    monkeypatch.setattr(
+        docs_cli.subprocess,
+        "run",
+        Mock(return_value=Mock(returncode=0, stdout=describe + "\n")),
+    )
+
+    assert (
+        docs_cli._release_define([f"--define=version={version}"], Path("/repo"))  # pyright: ignore [reportPrivateUsage]
+        == expected
+    )
+
+
+def test_release_define_is_empty_without_git_or_version(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    run = Mock(return_value=Mock(returncode=128, stdout=""))
+    monkeypatch.setattr(docs_cli.subprocess, "run", run)
+
+    # No checkout, no version, or a failing git all leave release untouched.
+    assert docs_cli._release_define(["--define=version=1.2.3"], None) == []  # pyright: ignore [reportPrivateUsage]
+    assert docs_cli._release_define([], Path("/repo")) == []  # pyright: ignore [reportPrivateUsage]
+    assert docs_cli._release_define(["--define=version=1.2.3"], Path("/repo")) == []  # pyright: ignore [reportPrivateUsage]

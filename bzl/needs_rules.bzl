@@ -53,6 +53,7 @@ def _sphinx_docs_impl(ctx):
             project = bundle_config.project,
             project_url = bundle_config.project_url,
             required_in_id = bundle_config.required_in_id,
+            version = bundle_config.version,
         )
         # Configuration-free actions need a concrete metamodel input. Use an
         # explicitly supplied label first, then the bundle's inherited default.
