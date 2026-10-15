@@ -74,6 +74,7 @@
    :valid_from: v1.0
    :valid_until: v1.0.0-beta
    :expect: valid_until (v1.0.0-beta): does not follow pattern
+   :expect_not: inconsistent validity
 
 
 .. stkh_req:: valid_from is after valid_until
