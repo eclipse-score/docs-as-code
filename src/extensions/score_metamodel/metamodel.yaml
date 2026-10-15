@@ -1048,7 +1048,7 @@ needs_types:
   dec_rec:
     title: Decision Record
     mandatory_options:
-      id: (?i)^dec_rec__(Platform|Feature|Component|arch|proc|strat|infra|int)__[0-9a-zA-Z_-]+$
+      id: (?i:^dec_rec__(Platform|Feature|Component|arch|proc|strat|infra|int)__[0-9a-zA-Z_-]+$)
       status: ^(proposed|accepted|deprecated|rejected|superseded)$
       context: ^[\s\S]+$
       decision: ^[\s\S]+$
