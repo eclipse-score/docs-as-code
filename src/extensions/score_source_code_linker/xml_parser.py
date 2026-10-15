@@ -24,7 +24,6 @@ import hashlib
 import itertools
 import json
 import os
-import re
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import Any, cast
@@ -205,17 +204,6 @@ def parse_properties(case_properties: dict[str, Any], properties: Element):
     return case_properties
 
 
-def _parse_test_xml(file: Path) -> ET.Element:
-    try:
-        return ET.parse(file).getroot()
-    except ET.ParseError as error:
-        if not str(error).startswith("junk after document element"):
-            raise
-        xml_content = file.read_text(encoding="utf-8")
-        xml_content = re.sub(r"<\?xml\b[^?]*\?>", "", xml_content)
-        return ET.fromstring(f"<root>{xml_content}</root>")
-
-
 def read_test_xml_file(
     file: Path,
     known_good_json: Path | None,
@@ -233,9 +221,10 @@ def read_test_xml_file(
     test_case_needs: list[DataOfTestCase] = []
     non_prop_tests: list[str] = []
     missing_prop_tests: list[str] = []
-    root = _parse_test_xml(file)
+    tree = ET.parse(file)
+    root = tree.getroot()
     md = get_metadata_from_test_path(file, known_good_json)
-    for testsuite in root.iter("testsuite"):
+    for testsuite in root.findall("testsuite"):
         for testcase in testsuite.findall("testcase"):
             test_file = testcase.get("file")
             # When testcase_source_dirs is configured, only testcases whose source

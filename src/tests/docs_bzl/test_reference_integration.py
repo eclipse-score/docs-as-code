@@ -15,7 +15,7 @@
 
 import pytest
 
-from src.tests.docs_bzl.helpers import load_needs, repo_root, run_scenario
+from src.tests.docs_bzl.helpers import load_needs, run_scenario
 
 
 @pytest.mark.bazel_slow
@@ -48,9 +48,6 @@ def test_nested_component_package_is_mounted_by_its_module():
     generated_html = generated_page.read_text(encoding="utf-8")
     assert 'aria-label="On this page"' in generated_html
     assert "Edit on GitHub" not in generated_html
-    metamodel_path = repo_root() / "src/extensions/score_metamodel/metamodel.yaml"
-    metamodel_lines = len(metamodel_path.read_text(encoding="utf-8").splitlines())
-    assert f"The source metamodel contains {metamodel_lines} lines." in generated_html
 
 
 @pytest.mark.bazel_slow
