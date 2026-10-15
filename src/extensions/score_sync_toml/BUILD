@@ -12,8 +12,8 @@
 # *******************************************************************************
 
 load("@aspect_rules_py//py:defs.bzl", "py_library")
-load("@score_tools//score_pytest:pytest.bzl", "score_pytest")
 load("@docs_as_code_hub_env//:requirements.bzl", "requirement")
+load("@score_tools//score_pytest:pytest.bzl", "score_pytest")
 
 filegroup(
     name = "all_sources",
@@ -40,6 +40,6 @@ score_pytest(
     name = "score_sync_toml_tests",
     size = "small",
     srcs = ["test_mounts.py"],
-    deps = [":score_sync_toml"],
     pytest_config = "//:pyproject.toml",
+    deps = [":score_sync_toml"],
 )

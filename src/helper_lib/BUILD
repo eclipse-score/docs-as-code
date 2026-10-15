@@ -34,8 +34,8 @@ score_pytest(
     name = "helper_lib_tests",
     size = "small",
     srcs = ["test_helper_lib.py"],
+    pytest_config = "//:pyproject.toml",
     deps = [
         ":helper_lib",
     ] + all_requirements,
-    pytest_config = "//:pyproject.toml",
 )

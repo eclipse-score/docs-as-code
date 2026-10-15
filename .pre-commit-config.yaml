@@ -33,11 +33,10 @@ repos:
 
   - repo: local
     hooks:
-      - id: bazel-mod-tidy
-        name: format Bazel module files
-        entry: bazel mod tidy
+      - id: buildifier
+        name: format Bazel files
+        entry: .devcontainer/run-tool buildifier
         language: system
-        pass_filenames: false
         files: '(^|/)(MODULE\.bazel|.*\.bzl|BUILD(\.bazel)?)$'
 
       - id: bzlmod-lockfile

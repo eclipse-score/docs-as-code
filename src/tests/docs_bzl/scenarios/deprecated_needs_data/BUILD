@@ -17,10 +17,10 @@ load("//:docs.bzl", "docs")
 # other test builds its targets, so the package-loading message can be checked
 # without depending on Bazel printing it again for an already-loaded package.
 docs(
-    source_dir = "docs",
-    project = "Deprecated Needs Data Input",
-    project_url = "https://example.invalid/deprecated-needs-data-input",
     data = [
         "//src/tests/docs_bzl/scenarios/reference_integration/score_platform:needs_json_file",
     ],
+    project = "Deprecated Needs Data Input",
+    project_url = "https://example.invalid/deprecated-needs-data-input",
+    source_dir = "docs",
 )

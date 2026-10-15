@@ -36,9 +36,9 @@ score_pytest(
     # so it needs more time than a pure Python unit test.
     size = "medium",
     srcs = ["tests/test_needs_templates.py"],
+    pytest_config = "//:pyproject.toml",
     deps = [
         ":score_sphinx_needs_templates",
-        "//src/extensions/score_metamodel:score_metamodel",
+        "//src/extensions/score_metamodel",
     ],
-    pytest_config = "//:pyproject.toml",
 )

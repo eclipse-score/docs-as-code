@@ -52,10 +52,10 @@ docs_bundle(
 # still covers the standalone Needs export.
 docs_bundle(
     name = "docs_bundle",
-    source_dir = ".",
     bundles = [{
         "bundle": ":generated_metamodel",
         "mount_at": "generated_metamodel",
     }],
+    source_dir = ".",
     visibility = ["//visibility:public"],
 )
