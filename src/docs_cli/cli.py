@@ -63,9 +63,9 @@ def _build_external_needs_source_config() -> str:
 def _release_define(config_options: list[str], git_root: Path | None) -> list[str]:
     """Return a ``release`` define such as ``1.2.3-4-gabc1234-dirty``.
 
-    Empty unless the version is known and the checkout differs from a clean
-    tag matching it. Release stays unset otherwise: score_layout uses it as the
-    version-switcher match. A describe that starts with the version is not
+    Empty unless the module declares a version and the checkout differs from a
+    clean tag matching it. Release stays unset otherwise: score_layout uses it as
+    the version-switcher match. A describe that starts with the version is not
     repeated; any other describe is appended as ``<version>+<describe>``.
     """
     version = next(
@@ -76,7 +76,8 @@ def _release_define(config_options: list[str], git_root: Path | None) -> list[st
         ),
         "",
     )
-    if not version or git_root is None:
+    # DEFAULT_VERSION in bundle_rules.bzl: the module declares no version.
+    if not version or version == "0.0.0" or git_root is None:
         return []
     result = subprocess.run(
         ["git", "-C", str(git_root), "describe", "--tags", "--always", "--dirty"],

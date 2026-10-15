@@ -354,6 +354,8 @@ def test_direct_invocation_resolves_paths_relative_to_cwd(
         ("1.2.3", "v1.2.3-dirty", ["--define=release=1.2.3-dirty"]),
         ("1.2.3", "v1.2.30-4-gabc1234", ["--define=release=1.2.3+1.2.30-4-gabc1234"]),
         ("1.2.3", "abc1234", ["--define=release=1.2.3+abc1234"]),
+        # A module without a declared version (placeholder 0.0.0) gets no dev release.
+        ("0.0.0", "abc1234", []),
     ],
 )
 def test_release_define_extends_version_with_git_describe(
