@@ -29,6 +29,8 @@
    :decision: Use a dedicated decision record need type.
    :tracking: https://github.com/eclipse-score/docs-as-code/issues/1
    :expect_not: dec_rec__test__decision_record_1.tracking (https://github.com/eclipse-score/docs-as-code/issues/1): does not follow pattern
+   :version: 1
+   :consequences: Provides traceability for decisions.
    :affects: dec_rec__test__decision_record_2
 
 
@@ -39,3 +41,5 @@
    :decision: Keep the relationship explicit.
    :tracking: https://github.com/eclipse-score/score/pull/2
    :expect_not: dec_rec__test__decision_record_2.tracking (https://github.com/eclipse-score/score/pull/2): does not follow pattern
+   :version: 1
+   :consequences: Allows linking between related decisions.
