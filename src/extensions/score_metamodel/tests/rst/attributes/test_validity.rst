@@ -223,6 +223,19 @@
    This component requirement is used to check the validity attributes.
 
 
+.. comp_req:: Component requirement without validity bounds
+   :id: comp_req__attributes__validity_aaae
+   :version: 1
+   :reqtype: Functional
+   :safety: QM
+   :security: NO
+   :status: valid
+   :satisfied_by: comp__validity_target
+   :expect_not: is missing required attribute: `valid_from`, is missing required attribute: `valid_until`, inconsistent validity
+
+   Component requirements may omit validity bounds.
+
+
 .. comp_req:: Component requirement with malformed valid_from
    :id: comp_req__attributes__validity_aaab
    :version: 1

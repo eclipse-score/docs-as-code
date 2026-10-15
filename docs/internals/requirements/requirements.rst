@@ -435,7 +435,7 @@ Versioning
   :id: tool_req__docs_req_attr_validity_correctness
   :tags: Requirements
   :implemented: YES
-  :version: 2
+  :version: 3
   :parent_covered: YES
   :satisfies:
     gd_req__req_validity[version==1],
@@ -445,6 +445,8 @@ Versioning
 
   Docs-as-Code shall enforce that the ``valid_from`` and ``valid_until`` attributes of stakeholder, feature, and component requirements are correct.
 
+  Stakeholder and feature requirements require ``valid_from``. Component requirements may optionally provide ``valid_from`` and ``valid_until``.
+
   The format of a milestone is something like "v0.5" or "v1.0.1".
   No suffixes like "-SNAPSHOT" or "-beta" are allowed.
 
@@ -452,7 +454,7 @@ Versioning
   :id: tool_req__docs_req_attr_validity_consistency
   :tags: Requirements
   :implemented: YES
-  :version: 2
+  :version: 3
   :parent_covered: YES
   :satisfies: gd_req__req_validity[version==1]
 
