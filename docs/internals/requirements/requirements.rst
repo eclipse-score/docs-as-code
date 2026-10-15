@@ -1027,7 +1027,7 @@ Testing
 
   Docs-as-Code shall support the Decision Record (dec_rec) need type with the following options:
 
-  * ``id`` (mandatory, pattern: ``dec_rec__<Platform|Feature|Component|arch|proc|strat|infra|int>__<slug>``; category is case-insensitive)
+  * ``id`` (mandatory, pattern: ``dec_rec__<category>__<slug>``; category and slug contain letters, numbers, underscores, or hyphens)
   * ``status`` (mandatory, one of: proposed, accepted, deprecated, rejected, superseded)
   * ``context`` (mandatory)
   * ``decision`` (mandatory)

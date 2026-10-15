@@ -45,7 +45,7 @@
 
 
 .. dec_rec:: Decision Record without optional tracking or consequences
-   :id: dec_rec__component__no_tracking
+   :id: dec_rec__logging__no_tracking
    :status: accepted
    :context: Tracking and consequences are optional for existing decisions.
    :decision: Preserve backward compatibility.
@@ -54,7 +54,7 @@
 
 
 .. dec_rec:: Decision Record with invalid tracking organization
-   :id: dec_rec__arch__invalid_tracking_org
+   :id: dec_rec__dac__invalid_tracking_org
    :status: accepted
    :context: Tracking links must belong to the eclipse-score organization.
    :decision: Reject links owned by other organizations.
