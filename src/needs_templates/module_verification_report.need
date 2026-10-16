@@ -84,14 +84,9 @@
    /* Scales every chart to its column; together with the fixed three-column
       raster this gives every chart the same size as in the platform report. */
    .score-pie-row img[id^="needpie-"] {
-       width: 115%;
-       margin-left: -15%;
-       max-width: none;
+       width: 100%;
        height: auto;
    }
-   /* The left 13% of a needpie image is blank, so cropping it enlarges the
-      chart by 15% without hiding the two-line title, labels or legend. */
-   .score-pie-row > .sd-col { overflow: hidden; }
    /* ``.sd-row`` is a flex container without a justification of its own, so
       this centres the two pies in the three-column raster. */
    .score-pie-row { justify-content: center; }
@@ -108,7 +103,7 @@
    .empty-pie {
        display: flex; flex-direction: column; align-items: center;
        justify-content: center; gap: 0.4em;
-       aspect-ratio: 16 / 9; padding: 0.5em; text-align: center;
+       aspect-ratio: 5 / 6; padding: 0.5em; text-align: center;
        border: 2px dashed #b0b0b0; border-radius: 6px; color: #6c757d;
    }
    .empty-pie-title { font-weight: 600; }

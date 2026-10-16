@@ -10,12 +10,17 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
+import re
 from pathlib import Path
+from typing import Any
 
+import sphinx_needs.directives.needpie
+from docutils import nodes
 from sphinx.application import Sphinx
 from sphinx.environment import BuildEnvironment
 from sphinx_needs.data import SphinxNeedsData
 from sphinx_needs.need_item import NeedItem
+from sphinx_needs.utils import save_matplotlib_figure
 
 from src.helper_lib import config_setdefault
 
@@ -466,6 +471,57 @@ class _SafetyPieRow:
 
 _safety_pie_row_callable = _SafetyPieRow()
 
+# The second title line written by ``_SafetyPieRow``; it tells the report pies
+# apart from every other needpie in the build.
+_REPORT_PIE_TITLE = re.compile(
+    r"\n(?:Status|Test Coverage|Reference Coverage) \([^()\n]+\)$"
+)
+
+
+def _relayout_report_pie(figure: Any) -> None:
+    """Re-lay out a report pie as a portrait chart with the legend underneath.
+
+    Sphinx-Needs draws every needpie at 8x4 inches with the legend beside it,
+    so the circle covers only ~35% of the image width. The slice labels repeat
+    the legend and are hidden, which lets the circle fill ~80% of the width.
+    """
+    axes = figure.axes[0]
+    figure.set_size_inches(5, 6)
+    figure.subplots_adjust(left=0.02, right=0.98, top=0.87, bottom=0.17)
+    axes.set_ylim(-1.05, 1.05)
+    axes.title.set_wrap(True)
+    legend = axes.get_legend()
+    if legend is None:
+        return
+    names = [text.get_text() for text in legend.get_texts()]
+    for text in axes.texts:
+        label = text.get_text().strip()
+        if label and any(name.startswith(label) for name in names):
+            text.set_visible(False)
+        else:
+            text.set_fontsize(10)
+    # ``Axes.legend`` replaces the old legend; its "legend" heading carries no
+    # information and is dropped.
+    axes.legend(
+        list(legend.legend_handles),
+        names,
+        loc="upper center",
+        bbox_to_anchor=(0.5, -0.02),
+        frameon=False,
+        borderaxespad=0,
+        handlelength=1.2,
+        fontsize=10,
+    )
+
+
+def _save_needpie_figure(
+    app: Sphinx, figure: Any, basename: str, fromdocname: str
+) -> nodes.image:
+    """Drop-in for ``save_matplotlib_figure`` that touches report pies only."""
+    if figure.axes and _REPORT_PIE_TITLE.search(figure.axes[0].get_title()):
+        _relayout_report_pie(figure)
+    return save_matplotlib_figure(app, figure, basename, fromdocname)
+
 
 def _post_templates_requiring_reread(app: Sphinx) -> set[str]:
     """Return post-template names opting into the post-merge rendering pass."""
@@ -572,6 +628,7 @@ def setup(app: Sphinx) -> dict[str, object]:
     app.config.needs_render_context.setdefault(
         "safety_pie_row", _safety_pie_row_callable
     )
+    sphinx_needs.directives.needpie.save_matplotlib_figure = _save_needpie_figure
     app.connect("builder-inited", _capture_build_environment)
     # Run after the source-code linker has injected generated testcase Needs and
     # their verification backlinks (priority 525), so report templates can

@@ -12,13 +12,20 @@
 # *******************************************************************************
 """Tests for graph traversal helpers used by Sphinx-Needs templates."""
 
+import re
 from collections.abc import Iterable
 from pathlib import Path
+from typing import Any
 
+import matplotlib
 import pytest
 import score_sphinx_needs_templates as templates
 from score_pytest.attribute_plugin import add_test_properties
 from sphinx.testing.util import SphinxTestApp
+
+matplotlib.use("Agg")
+
+import matplotlib.pyplot  # noqa: E402
 
 
 class FakeLink:
@@ -274,6 +281,77 @@ def test_safety_pie_row_reference_pie_only_on_request() -> None:
     assert 'id in ["c"]' in with_ref
     # An empty title must not leave a leading blank in the chart title.
     assert ".. needpie:: Stakeholder Requirements\n         Status (QM)\n" in with_ref
+
+
+def _needpie_figure(title: str, legend: bool = True) -> Any:
+    """Build a figure shaped the way Sphinx-Needs leaves a needpie chart."""
+    figure, axes = matplotlib.pyplot.subplots(
+        figsize=(8, 4), subplot_kw={"aspect": "equal"}
+    )
+    pie: Any = axes.pie([3, 1], labels=[" valid", " invalid"], autopct="%1.1f%%")
+    if legend:
+        axes.legend(
+            pie[0],
+            ["valid", "invalid"],
+            title="legend",
+            loc="center left",
+            bbox_to_anchor=(0.8, 0, 0.5, 1),
+        )
+    axes.set_title(title)
+    return figure
+
+
+def test_report_pie_title_marks_safety_pie_row_charts_only() -> None:
+    safety_pie_row = vars(templates)["_SafetyPieRow"]()
+    report_pie_title = vars(templates)["_REPORT_PIE_TITLE"]
+
+    row = safety_pie_row("Comp", "Requirements", "B", "ASIL_B", "ASIL B", 2, True)
+    titles = re.findall(r"\.\. needpie:: (.*)\n +(.*)\n", row)
+
+    assert len(titles) == 3
+    assert all(report_pie_title.search(f"{a}\n{b}") for a, b in titles)
+    assert not report_pie_title.search("Comp Requirements Status (ASIL B)")
+
+
+def test_report_pie_moves_legend_below_and_hides_slice_labels() -> None:
+    relayout = vars(templates)["_relayout_report_pie"]
+    figure = _needpie_figure("Comp Requirements\nStatus (ASIL B)")
+    axes = figure.axes[0]
+
+    relayout(figure)
+    figure.canvas.draw()
+
+    assert tuple(figure.get_size_inches()) == (5, 6)
+    assert axes.get_legend().get_window_extent().y1 < axes.get_window_extent().y0
+    visible = [t.get_text() for t in axes.texts if t.get_visible()]
+    assert visible == ["75.0%", "25.0%"]
+    matplotlib.pyplot.close(figure)
+
+
+def test_report_pie_without_legend_keeps_slice_labels() -> None:
+    relayout = vars(templates)["_relayout_report_pie"]
+    figure = _needpie_figure("Comp Requirements\nStatus (QM)", legend=False)
+
+    relayout(figure)
+
+    assert figure.axes[0].get_legend() is None
+    assert all(t.get_visible() for t in figure.axes[0].texts)
+    matplotlib.pyplot.close(figure)
+
+
+def test_other_needpies_are_saved_unchanged(monkeypatch: pytest.MonkeyPatch) -> None:
+    saved: list[Any] = []
+    monkeypatch.setattr(
+        templates, "save_matplotlib_figure", lambda *args: saved.append(args)
+    )
+    save_needpie_figure = vars(templates)["_save_needpie_figure"]
+    figure = _needpie_figure("Open issues")
+
+    save_needpie_figure(None, figure, "need_pie_x", "index")
+
+    assert tuple(figure.get_size_inches()) == (8, 4)
+    assert len(saved) == 1
+    matplotlib.pyplot.close(figure)
 
 
 def test_id_filter_list_renders_quoted_literal() -> None:
