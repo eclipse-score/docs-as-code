@@ -374,6 +374,10 @@ class _SafetyPieRow:
     count through Sphinx-Needs filters, and the two can disagree on links
     carrying a ``[version==N]`` selector.
 
+    With ``component`` and ``category`` the status and coverage pies are
+    counted by the shared ``score_metrics`` filter functions instead of the
+    inline ``base`` filters; ``version`` then scopes the requirements.
+
     This is a render helper instead of a Jinja macro because the MiniJinja
     environment has no template loader, so macros cannot be shared between
     templates.
@@ -390,6 +394,9 @@ class _SafetyPieRow:
         with_reference: bool = False,
         referenced: list[str] | None = None,
         missing: list[str] | None = None,
+        component: str | None = None,
+        category: str | None = None,
+        version: str | None = None,
     ) -> str:
         scope = f'{base} and safety == "{safety}"'
         # (slice label, status condition) per pie slice; green "done" comes first.
@@ -440,14 +447,28 @@ class _SafetyPieRow:
                 )
                 lines.extend(f"         {line}".rstrip() for line in pie)
 
+        def counted_by(func: str) -> list[str]:
+            # sphinx-needs splits the call on its last ".", so encode the version.
+            encoded_version = (version or "").replace(".", "_")
+            return [
+                f":filter-func: score_metrics.sphinx_filters.{func}"
+                f"({component}, {category}, {encoded_version}, {safety})"
+            ]
+
         grid_item(
             "Status",
             [
                 f":labels: {', '.join(label for label, _ in statuses)}",
                 f":colors: {status_colors}",
                 ":legend:",
-                "",
-                *(f"{scope} and {condition}" for _, condition in statuses),
+                *(
+                    counted_by("get_component_status_metrics")
+                    if component
+                    else [
+                        "",
+                        *(f"{scope} and {condition}" for _, condition in statuses),
+                    ]
+                ),
             ],
         )
         grid_item(
@@ -456,10 +477,16 @@ class _SafetyPieRow:
                 ":labels: fully covered, partially covered, not covered",
                 ":colors: #37a12d, #f0a500, #ca2828",
                 ":legend:",
-                "",
-                f"{scope} and fully_verifies_back",
-                f"{scope} and partially_verifies_back and not fully_verifies_back",
-                f"{scope} and not fully_verifies_back and not partially_verifies_back",
+                *(
+                    counted_by("get_component_coverage_metrics")
+                    if component
+                    else [
+                        "",
+                        f"{scope} and fully_verifies_back",
+                        f"{scope} and partially_verifies_back and not fully_verifies_back",
+                        f"{scope} and not fully_verifies_back and not partially_verifies_back",
+                    ]
+                ),
             ],
         )
         if with_reference:

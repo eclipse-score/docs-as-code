@@ -63,6 +63,15 @@ def _arg(kwargs: dict[str, Any], name: str, default: str = "") -> str:
     return str(kwargs.get(name, default)).strip().strip("\"'")
 
 
+def _version_arg(kwargs: dict[str, Any]) -> str | None:
+    """Return ``arg3`` as a version, with ``_`` turned back into ``.``.
+
+    sphinx-needs resolves the module with ``rsplit(".", 1)`` over the whole
+    call, so a version such as ``v1.0`` must be passed as ``v1_0``.
+    """
+    return _arg(kwargs, "arg3").replace("_", ".") or None
+
+
 def _matches_source_selector(need: NeedItem, selector: str) -> bool:
     """Return whether a need matches a source selector.
 
@@ -272,40 +281,34 @@ def get_component_status_metrics(
 ) -> None:
     """Get status distribution for a component's requirements or architecture.
 
-    Arguments are passed via ``arg1``, ``arg2``, ``arg3``:
+    Arguments are passed via ``arg1`` .. ``arg4``:
         - ``arg1`` – component_id: The component ID (e.g., "comp__my_component")
         - ``arg2`` – category: Either "requirements" or "architecture"
-        - ``arg3`` – version: Optional version to filter by valid_from (only applied to requirements)
+        - ``arg3`` – version: Optional, see :func:`_version_arg`
+        - ``arg4`` – safety: Optional safety class, e.g. ``ASIL_B`` or ``QM``
 
-    sphinx-needs resolves the module path with ``rsplit(".", 1)`` over the
-    whole call, so no argument may contain a dot (``v1.0`` breaks the call).
-
-    Returns [valid_count, valid_inspected_count, invalid_count].
+    Returns ``[valid, valid_inspected, invalid]`` without a safety class,
+    ``[valid_inspected, valid, invalid]`` for an ASIL class and
+    ``[valid, invalid]`` for ``QM``, where ``valid_inspected`` counts as
+    ``valid`` because QM Needs are not formally inspected.
     """
     results.clear()
-    component_id = _arg(kwargs, "arg1")
-    category = _arg(kwargs, "arg2", "requirements")
-    version = _arg(kwargs, "arg3") or None
-
-    # If version is specified, filter on-the-fly using the version-scoping helper
-    if version:
-        status = count_status_filtered(
-            needs, component_id, category, version, req_in_report_version
-        )
-    else:
-        # Use pre-calculated metrics from CALCULATED_METRICS
-        metrics = CALCULATED_METRICS.get("verification_metrics", {})
-        component_metrics = metrics.get(component_id, {})
-        category_metrics = component_metrics.get(category, {})
-        status = category_metrics.get("status", {})
-
-    results.extend(
-        [
-            status.get("valid", 0),
-            status.get("valid_inspected", 0),
-            status.get("invalid", 0),
-        ]
+    safety = _arg(kwargs, "arg4") or None
+    status = count_status_filtered(
+        needs,
+        _arg(kwargs, "arg1"),
+        _arg(kwargs, "arg2", "requirements"),
+        _version_arg(kwargs),
+        req_in_report_version,
+        safety,
     )
+
+    if safety == "QM":
+        results.extend([status["valid"] + status["valid_inspected"], status["invalid"]])
+    elif safety:
+        results.extend([status["valid_inspected"], status["valid"], status["invalid"]])
+    else:
+        results.extend([status["valid"], status["valid_inspected"], status["invalid"]])
 
 
 def get_component_coverage_metrics(
@@ -316,37 +319,24 @@ def get_component_coverage_metrics(
     Uses the verification coverage axis (fully_verifies_back / partially_verifies_back),
     not the link coverage axis (testlink / source_code_link).
 
-    Arguments are passed via ``arg1``, ``arg2``, ``arg3``:
-        - ``arg1`` – component_id: The component ID (e.g., "comp__my_component")
-        - ``arg2`` – category: Either "requirements" or "architecture"
-        - ``arg3`` – version: Optional version to filter by valid_from (only applied to requirements)
-
-    sphinx-needs resolves the module path with ``rsplit(".", 1)`` over the
-    whole call, so no argument may contain a dot (``v1.0`` breaks the call).
+    Arguments are the same as for :func:`get_component_status_metrics`.
 
     Returns [fully_covered, partially_covered, not_covered].
     """
     results.clear()
-    component_id = _arg(kwargs, "arg1")
-    category = _arg(kwargs, "arg2", "requirements")
-    version = _arg(kwargs, "arg3") or None
-
-    # If version is specified, filter on-the-fly using the version-scoping helper
-    if version:
-        coverage = count_coverage_filtered(
-            needs, component_id, category, version, req_in_report_version
-        )
-    else:
-        # Use pre-calculated metrics from CALCULATED_METRICS
-        metrics = CALCULATED_METRICS.get("verification_metrics", {})
-        component_metrics = metrics.get(component_id, {})
-        category_metrics = component_metrics.get(category, {})
-        coverage = category_metrics.get("coverage", {})
+    coverage = count_coverage_filtered(
+        needs,
+        _arg(kwargs, "arg1"),
+        _arg(kwargs, "arg2", "requirements"),
+        _version_arg(kwargs),
+        req_in_report_version,
+        _arg(kwargs, "arg4") or None,
+    )
 
     results.extend(
         [
-            coverage.get("fully_covered", 0),
-            coverage.get("partially_covered", 0),
-            coverage.get("not_covered", 0),
+            coverage["fully_covered"],
+            coverage["partially_covered"],
+            coverage["not_covered"],
         ]
     )

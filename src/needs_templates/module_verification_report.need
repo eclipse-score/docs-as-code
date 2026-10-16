@@ -200,19 +200,21 @@ Component Overview
 
 Component Requirements Statistics
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-{% set req_base = 'type == "comp_req" and "' ~ component_id ~ '" in satisfied_by and ' ~ component_req_filter %}
-{{ safety_pie_row(component_title, "Requirements", req_base, "ASIL_B", "ASIL B",
-     component_reqs|selectattr("safety", "eq", "ASIL_B")|list|length) }}
-{{ safety_pie_row(component_title, "Requirements", req_base, "QM", "QM",
-     component_reqs|selectattr("safety", "eq", "QM")|list|length) }}
+{{ safety_pie_row(component_title, "Requirements", "", "ASIL_B", "ASIL B",
+     component_reqs|selectattr("safety", "eq", "ASIL_B")|list|length,
+     component=component_id, category="requirements", version=module_version) }}
+{{ safety_pie_row(component_title, "Requirements", "", "QM", "QM",
+     component_reqs|selectattr("safety", "eq", "QM")|list|length,
+     component=component_id, category="requirements", version=module_version) }}
 
 Component Architecture Statistics
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-{% set arc_base = 'type in ["comp_arc_sta", "comp_arc_dyn"] and "' ~ component_id ~ '" in belongs_to' %}
-{{ safety_pie_row(component_title, "Architecture Elements", arc_base, "ASIL_B", "ASIL B",
-     component_arcs|selectattr("safety", "eq", "ASIL_B")|list|length) }}
-{{ safety_pie_row(component_title, "Architecture Elements", arc_base, "QM", "QM",
-     component_arcs|selectattr("safety", "eq", "QM")|list|length) }}
+{{ safety_pie_row(component_title, "Architecture Elements", "", "ASIL_B", "ASIL B",
+     component_arcs|selectattr("safety", "eq", "ASIL_B")|list|length,
+     component=component_id, category="architecture") }}
+{{ safety_pie_row(component_title, "Architecture Elements", "", "QM", "QM",
+     component_arcs|selectattr("safety", "eq", "QM")|list|length,
+     component=component_id, category="architecture") }}
 
 Requirements Traceability
 ^^^^^^^^^^^^^^^^^^^^^^^^^

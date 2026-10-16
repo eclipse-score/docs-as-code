@@ -53,12 +53,35 @@ def is_need_in_component(need: NeedItem, component_id: str, category: str) -> bo
     return component_id in bel_to
 
 
+def _in_scope(
+    need: NeedItem,
+    component_id: str,
+    category: str,
+    version: str | None,
+    version_filter_func: Any,
+    safety: str | None,
+) -> bool:
+    """Whether a need is counted for this component, category, version and safety."""
+    if not is_need_in_component(need, component_id, category):
+        return False
+    if safety and need.get("safety") != safety:
+        return False
+    # Architecture elements have neither valid_from nor derived_from, so the
+    # version scope applies to requirements only.
+    return not (
+        category == "requirements"
+        and version
+        and not version_filter_func(need, version)
+    )
+
+
 def count_status_filtered(
     needs: list[Any],
     component_id: str,
     category: str,
-    version: str,
+    version: str | None,
     version_filter_func: Any,
+    safety: str | None = None,
 ) -> dict[str, int]:
     """Count status distribution with version filtering.
 
@@ -68,6 +91,7 @@ def count_status_filtered(
         category: Either "requirements" or "architecture".
         version: Version string for filtering (only applied to requirements).
         version_filter_func: Callable like req_in_report_version(need, version).
+        safety: Optional safety class (e.g. "ASIL_B", "QM") to restrict to.
 
     Returns:
         Dict with status counts: {valid: int, valid_inspected: int, invalid: int}
@@ -75,15 +99,8 @@ def count_status_filtered(
     status = {"valid": 0, "valid_inspected": 0, "invalid": 0}
 
     for need in needs:
-        if not is_need_in_component(need, component_id, category):
-            continue
-
-        # Architecture elements should not be version-filtered
-        # (they have no valid_from or derived_from attributes)
-        if (
-            category == "requirements"
-            and version
-            and not version_filter_func(need, version)
+        if not _in_scope(
+            need, component_id, category, version, version_filter_func, safety
         ):
             continue
 
@@ -98,8 +115,9 @@ def count_coverage_filtered(
     needs: list[Any],
     component_id: str,
     category: str,
-    version: str,
+    version: str | None,
     version_filter_func: Any,
+    safety: str | None = None,
 ) -> dict[str, int]:
     """Count verification coverage with version filtering.
 
@@ -112,6 +130,7 @@ def count_coverage_filtered(
         category: Either "requirements" or "architecture".
         version: Version string for filtering (only applied to requirements).
         version_filter_func: Callable like req_in_report_version(need, version).
+        safety: Optional safety class (e.g. "ASIL_B", "QM") to restrict to.
 
     Returns:
         Dict with coverage counts: {fully_covered: int, partially_covered: int, not_covered: int}
@@ -119,15 +138,8 @@ def count_coverage_filtered(
     coverage = {"fully_covered": 0, "partially_covered": 0, "not_covered": 0}
 
     for need in needs:
-        if not is_need_in_component(need, component_id, category):
-            continue
-
-        # Architecture elements should not be version-filtered
-        # (they have no valid_from or derived_from attributes)
-        if (
-            category == "requirements"
-            and version
-            and not version_filter_func(need, version)
+        if not _in_scope(
+            need, component_id, category, version, version_filter_func, safety
         ):
             continue
 
