@@ -59,3 +59,29 @@ docs_bundle(
     }],
     visibility = ["//visibility:public"],
 )
+
+# This sibling component exposes a library and public headers. Other components
+# may depend on it without taking ownership of its implementation sources.
+cc_library(
+    name = "implementation",
+    srcs = ["implementation.cc"],
+    hdrs = [":public_headers"],
+    # This dependency returns to the linked component's package subtree.
+    deps = ["//src/tests/docs_bzl/scenarios/reference_integration/modern_module/docs/components/component/detail:support"],
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "public_headers",
+    srcs = ["api.h"],
+    visibility = ["//visibility:public"],
+)
+
+# The API can be explicitly selected without claiming ownership of its sibling
+# implementation dependency. Both are outside the selecting bundle's package.
+cc_library(
+    name = "api",
+    hdrs = [":public_headers"],
+    deps = [":implementation"],
+    visibility = ["//visibility:public"],
+)
