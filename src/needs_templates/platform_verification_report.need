@@ -37,40 +37,19 @@
      ["wp__feature_fmea", "FMEA"],
    ] %}
 
-{#- One work-product row: the need link, its kind, the realising document and
-    its status. Both cells are needtables over the same filter, differing only
-    in :columns:, so an empty match renders as an empty cell. -#}
-{% macro workproduct_rows(slug_norm, workproducts) %}
-{%- for wp in workproducts %}
-      * - :need:`{{ wp[0] }}`
-        - {{ wp[1] }}
-        - .. needtable::
-             :filter: type == "document" and "{{ slug_norm }}" in id.replace("_", "").lower() and "{{ wp[0] }}" in realizes
-             :columns: id
-             :style: table
-        - .. needtable::
-             :filter: type == "document" and "{{ slug_norm }}" in id.replace("_", "").lower() and "{{ wp[0] }}" in realizes
-             :columns: status
-             :style: table
-{%- endfor %}
-{% endmacro %}
-
-{#- Bracketed, quoted Sphinx-Needs ``id in [...]`` filter literal for a list
-    of Need IDs, used to scope needpie/needtable filters below to the
-    requirements that are in scope for ``report_version``. -#}
-{% macro id_filter_list(ids) -%}
-[{% for req_id in ids %}"{{ req_id }}"{% if not loop.last %}, {% endif %}{% endfor %}]
-{%- endmacro %}
+{#- ``workproduct_rows``, ``id_filter_list`` and ``safety_pie_row`` are render
+    helpers shared with the module report. -#}
 {#- Stakeholder requirements are not scoped to a Feature, so they are
     collected once for the whole report rather than per-Feature like
     ``feat_req``. -#}
 {% set ns_stkh_reqs = namespace(list=[]) %}
 {% for req in needs_of_type("stkh_req")|unique(attribute="id")|list %}
 {% if req_in_report_version(req, report_version) %}
-{% set ns_stkh_reqs.list = ns_stkh_reqs.list + [req["id"]] %}
+{% set ns_stkh_reqs.list = ns_stkh_reqs.list + [req] %}
 {% endif %}
 {% endfor %}
-{% set stkh_req_filter = 'id in ' ~ id_filter_list(ns_stkh_reqs.list) %}
+{% set stkh_req_ids = ns_stkh_reqs.list|map(attribute="id")|list %}
+{% set stkh_req_filter = 'id in ' ~ id_filter_list(stkh_req_ids) %}
 .. raw:: html
 
    <style>
@@ -95,12 +74,77 @@
    .wp-doc-table td .dataTables_wrapper .dataTables_filter,
    .wp-doc-table td .dataTables_wrapper .dataTables_info,
    .wp-doc-table td .dataTables_wrapper .dataTables_paginate { display: none; }
-   /* Centers a pie that wraps onto a row of its own in the two-column grids. */
-   .score-centered-grid-item {
-       margin-left: auto;
-       margin-right: auto;
+   /* Scales every chart to its column; together with the fixed three-column
+      raster this gives every chart in the report the same size. */
+   .score-pie-row img[id^="needpie-"] {
+       width: 100%;
+       height: auto;
+   }
+   /* ``.sd-row`` is a flex container without a justification of its own, so
+      this centres the rows that leave the third column empty. */
+   .score-pie-row { justify-content: center; }
+
+   p.rubric.safety-class-heading {
+       display: inline-block; margin: 1.4em 0 0.5em 0;
+       padding: 0.15em 0.9em; border-radius: 1em;
+       font-size: 0.95em; font-weight: 600; color: #ffffff;
+   }
+   p.rubric.safety-class-heading.safety-asil-b { background: #1f4e79; }
+   p.rubric.safety-class-heading.safety-qm { background: #6c757d; }
+
+   /* Matches the aspect ratio of the rendered pie charts. */
+   .empty-pie {
+       display: flex; flex-direction: column; align-items: center;
+       justify-content: center; gap: 0.4em;
+       aspect-ratio: 16 / 9; padding: 0.5em; text-align: center;
+       border: 2px dashed #b0b0b0; border-radius: 6px; color: #6c757d;
+   }
+   .empty-pie-title { font-weight: 600; }
+   .empty-pie-text { font-style: italic; }
+
+   .chart-legend { display: flex; flex-wrap: wrap; gap: 1.2em 2.5em; }
+   .chart-legend-group {
+       display: flex; flex-direction: column; gap: 0.3em;
+       flex: 1 1 20em; font-size: 0.9em;
+   }
+   .chart-legend-head { font-weight: 600; }
+   .chart-legend-dot {
+       display: inline-block; width: 0.8em; height: 0.8em;
+       margin-right: 0.5em; border-radius: 50%;
+       border: 1px solid rgba(0, 0, 0, 0.25);
    }
    </style>
+
+.. dropdown:: Legend — status values and chart colours
+   :animate: fade-in
+   :open:
+
+   .. raw:: html
+
+      <div class="chart-legend">
+        <div class="chart-legend-group">
+          <span class="chart-legend-head">Status — ASIL B</span>
+          <span><span class="chart-legend-dot" style="background: #37a12d;"></span><code>valid_inspected</code> — agreed and formally inspected</span>
+          <span><span class="chart-legend-dot" style="background: #f5c518;"></span><code>valid</code> — agreed, formal inspection still outstanding</span>
+          <span><span class="chart-legend-dot" style="background: #ca2828;"></span><code>invalid</code> — not agreed; metamodel checks are skipped</span>
+        </div>
+        <div class="chart-legend-group">
+          <span class="chart-legend-head">Status — QM</span>
+          <span><span class="chart-legend-dot" style="background: #37a12d;"></span><code>valid</code> — agreed; QM needs are not formally inspected, so this is their final state (<code>valid_inspected</code> counts here too)</span>
+          <span><span class="chart-legend-dot" style="background: #ca2828;"></span><code>invalid</code> — not agreed; metamodel checks are skipped</span>
+        </div>
+        <div class="chart-legend-group">
+          <span class="chart-legend-head">Test coverage — both classes</span>
+          <span><span class="chart-legend-dot" style="background: #37a12d;"></span>fully covered — at least one test fully verifies the need</span>
+          <span><span class="chart-legend-dot" style="background: #f0a500;"></span>partially covered — only partially verifying tests</span>
+          <span><span class="chart-legend-dot" style="background: #ca2828;"></span>not covered — no verifying test at all</span>
+        </div>
+        <div class="chart-legend-group">
+          <span class="chart-legend-head">Reference coverage — both classes</span>
+          <span><span class="chart-legend-dot" style="background: #37a12d;"></span>referenced by lower — a requirement one level down derives from it</span>
+          <span><span class="chart-legend-dot" style="background: #ca2828;"></span>not referenced — nothing on the level below derives from it</span>
+        </div>
+      </div>
 
 {# ===================================================================== #}
 {# Stakeholder Requirements                                               #}
@@ -113,44 +157,17 @@ Stakeholder Requirements
     one in-scope feature requirement is ``derived_from`` it. The index is built
     and applied in Python, because every ``in`` test evaluated here would cross
     the Rust/Python boundary once per comparison. -#}
-{% set ns_stkh_ref = split_by_reference(
-     ns_stkh_reqs.list,
-     referenced_ids("feat_req", "derived_from", report_version)) %}
-.. grid:: 1 2 2 2
-   :gutter: 3
-
-   .. grid-item::
-
-      .. needpie:: Stakeholder Requirements Status
-         :labels: valid, valid_inspected, invalid
-         :colors: #f5c518, #37a12d, #ca2828
-         :legend:
-
-         type == "stkh_req" and status == "valid" and {{ stkh_req_filter }}
-         type == "stkh_req" and status == "valid_inspected" and {{ stkh_req_filter }}
-         type == "stkh_req" and status == "invalid" and {{ stkh_req_filter }}
-
-   .. grid-item::
-
-      .. needpie:: Stakeholder Requirements Test Coverage
-         :labels: fully covered, partially covered, not covered
-         :colors: #37a12d, #f0a500, #ca2828
-         :legend:
-
-         type == "stkh_req" and fully_verifies_back and {{ stkh_req_filter }}
-         type == "stkh_req" and partially_verifies_back and not fully_verifies_back and {{ stkh_req_filter }}
-         type == "stkh_req" and not fully_verifies_back and not partially_verifies_back and {{ stkh_req_filter }}
-
-   .. grid-item::
-      :class: score-centered-grid-item
-
-      .. needpie:: Stakeholder Requirements Reference Coverage
-         :labels: referenced by lower, not referenced
-         :colors: #37a12d, #ca2828
-         :legend:
-
-         id in {{ id_filter_list(ns_stkh_ref.referenced) }}
-         id in {{ id_filter_list(ns_stkh_ref.missing) }}
+{% set stkh_referenced_ids = referenced_ids("feat_req", "derived_from", report_version) %}
+{% set ns_stkh_ref = split_by_reference(stkh_req_ids, stkh_referenced_ids) %}
+{% set stkh_base = 'type == "stkh_req" and ' ~ stkh_req_filter %}
+{% set stkh_asil = ns_stkh_reqs.list|selectattr("safety", "eq", "ASIL_B")|list %}
+{% set stkh_qm = ns_stkh_reqs.list|selectattr("safety", "eq", "QM")|list %}
+{% set stkh_asil_ref = split_by_reference(stkh_asil|map(attribute="id")|list, stkh_referenced_ids) %}
+{% set stkh_qm_ref = split_by_reference(stkh_qm|map(attribute="id")|list, stkh_referenced_ids) %}
+{{ safety_pie_row("", "Stakeholder Requirements", stkh_base, "ASIL_B", "ASIL B",
+     stkh_asil|length, true, stkh_asil_ref.referenced, stkh_asil_ref.missing) }}
+{{ safety_pie_row("", "Stakeholder Requirements", stkh_base, "QM", "QM",
+     stkh_qm|length, true, stkh_qm_ref.referenced, stkh_qm_ref.missing) }}
 
 .. dropdown:: Show requirements table
    :animate: fade-in
@@ -160,9 +177,9 @@ Stakeholder Requirements
       :style: table
       :columns: id;title;safety;status;testlink
       :colwidths: 13,22,8,10,47
-      :sort: id
+      :sort: safety
 {% if ns_stkh_ref.missing %}
-{#- Detail view of the "not referenced" slice of the reference coverage pie
+{#- Detail view of the "not referenced" slices of the reference coverage pies
     above; both are rendered from the same in-scope ID list. -#}
 
 .. dropdown:: Not referenced by feature requirements ({{ ns_stkh_ref.missing|length }})
@@ -174,7 +191,7 @@ Stakeholder Requirements
       :style: table
       :columns: id;title;safety;status
       :colwidths: 15,45,15,25
-      :sort: id
+      :sort: safety
 {% endif %}
 
 {# ===================================================================== #}
@@ -191,7 +208,7 @@ Feature Overview
    :filter: id in [{% for feature in report_features %}"{{ feature["id"] }}"{% if not loop.last %}, {% endif %}{% endfor %}]
    :columns: id as "Feature";safety;security;status
    :style: table
-   :sort: id
+   :sort: safety
 
 {#- Reference coverage index, built once for all Features: a feature
     requirement is "referenced" when at least one in-scope component
@@ -217,54 +234,34 @@ Feature Overview
 {% set feature_reqs_all = linked_needs(feature_id, "satisfied_by_back")
      |selectattr("type", "eq", "feat_req")
      |list %}
-{% set ns = namespace(req_ids=[]) %}
+{% set ns = namespace(reqs=[]) %}
 {% for req in feature_reqs_all %}
 {% if req_in_report_version(req, report_version) %}
-{% set ns.req_ids = ns.req_ids + [req["id"]] %}
+{% set ns.reqs = ns.reqs + [req] %}
 {% endif %}
 {% endfor %}
-{% set feature_req_filter = 'id in ' ~ id_filter_list(ns.req_ids) %}
+{% set feature_reqs = ns.reqs %}
+{% set feature_req_ids = feature_reqs|map(attribute="id")|list %}
+{% set feature_req_filter = 'id in ' ~ id_filter_list(feature_req_ids) %}
 {#- Reference coverage: partition this Feature's in-scope requirements against
     the index built once above. -#}
-{% set ns_feat_ref = split_by_reference(ns.req_ids, comp_referenced_ids) %}
+{% set ns_feat_ref = split_by_reference(feature_req_ids, comp_referenced_ids) %}
+{#- ``type`` has no "in" test in minijinja, so the two architecture types are
+    collected separately and concatenated. -#}
+{% set feature_arcs_all = linked_needs(feature_id, "belongs_to_back") %}
+{% set feature_arcs = (feature_arcs_all|selectattr("type", "eq", "feat_arc_sta")|list)
+     + (feature_arcs_all|selectattr("type", "eq", "feat_arc_dyn")|list) %}
 Requirements Statistics
 ^^^^^^^^^^^^^^^^^^^^^^^
-
-.. grid:: 1 2 2 2
-   :gutter: 3
-
-   .. grid-item::
-
-      .. needpie:: {{ feature_title }} Requirements Status
-         :labels: valid, valid_inspected, invalid
-         :colors: #f5c518, #37a12d, #ca2828
-         :legend:
-
-         type == "feat_req" and "{{ feature_id }}" in satisfied_by and status == "valid" and {{ feature_req_filter }}
-         type == "feat_req" and "{{ feature_id }}" in satisfied_by and status == "valid_inspected" and {{ feature_req_filter }}
-         type == "feat_req" and "{{ feature_id }}" in satisfied_by and status == "invalid" and {{ feature_req_filter }}
-
-   .. grid-item::
-
-      .. needpie:: {{ feature_title }} Requirements Test Coverage
-         :labels: fully covered, partially covered, not covered
-         :colors: #37a12d, #f0a500, #ca2828
-         :legend:
-
-         type == "feat_req" and "{{ feature_id }}" in satisfied_by and fully_verifies_back and {{ feature_req_filter }}
-         type == "feat_req" and "{{ feature_id }}" in satisfied_by and partially_verifies_back and not fully_verifies_back and {{ feature_req_filter }}
-         type == "feat_req" and "{{ feature_id }}" in satisfied_by and not fully_verifies_back and not partially_verifies_back and {{ feature_req_filter }}
-
-   .. grid-item::
-      :class: score-centered-grid-item
-
-      .. needpie:: {{ feature_title }} Requirements Reference Coverage
-         :labels: referenced by lower, not referenced
-         :colors: #37a12d, #ca2828
-         :legend:
-
-         id in {{ id_filter_list(ns_feat_ref.referenced) }}
-         id in {{ id_filter_list(ns_feat_ref.missing) }}
+{% set req_base = 'type == "feat_req" and "' ~ feature_id ~ '" in satisfied_by and ' ~ feature_req_filter %}
+{% set feat_asil = feature_reqs|selectattr("safety", "eq", "ASIL_B")|list %}
+{% set feat_qm = feature_reqs|selectattr("safety", "eq", "QM")|list %}
+{% set feat_asil_ref = split_by_reference(feat_asil|map(attribute="id")|list, comp_referenced_ids) %}
+{% set feat_qm_ref = split_by_reference(feat_qm|map(attribute="id")|list, comp_referenced_ids) %}
+{{ safety_pie_row(feature_title, "Requirements", req_base, "ASIL_B", "ASIL B",
+     feat_asil|length, true, feat_asil_ref.referenced, feat_asil_ref.missing) }}
+{{ safety_pie_row(feature_title, "Requirements", req_base, "QM", "QM",
+     feat_qm|length, true, feat_qm_ref.referenced, feat_qm_ref.missing) }}
 
 .. dropdown:: Show requirements table
    :animate: fade-in
@@ -274,7 +271,7 @@ Requirements Statistics
       :style: table
       :columns: id;title;safety;status;testlink
       :colwidths: 13,22,8,10,47
-      :sort: id
+      :sort: safety
 {% if ns_feat_ref.missing %}
 
 .. dropdown:: Not referenced by component requirements ({{ ns_feat_ref.missing|length }})
@@ -286,36 +283,16 @@ Requirements Statistics
       :style: table
       :columns: id;title;safety;status
       :colwidths: 15,45,15,25
-      :sort: id
+      :sort: safety
 {% endif %}
 
 Architecture Statistics
 ^^^^^^^^^^^^^^^^^^^^^^^
-
-.. grid:: 1 2 2 2
-   :gutter: 3
-
-   .. grid-item::
-
-      .. needpie:: {{ feature_title }} Architecture Elements Status
-         :labels: valid, valid_inspected, invalid
-         :colors: #f5c518, #37a12d, #ca2828
-         :legend:
-
-         type in ["feat_arc_sta", "feat_arc_dyn"] and "{{ feature_id }}" in belongs_to and status == "valid"
-         type in ["feat_arc_sta", "feat_arc_dyn"] and "{{ feature_id }}" in belongs_to and status == "valid_inspected"
-         type in ["feat_arc_sta", "feat_arc_dyn"] and "{{ feature_id }}" in belongs_to and status == "invalid"
-
-   .. grid-item::
-
-      .. needpie:: {{ feature_title }} Architecture Elements Test Coverage
-         :labels: fully covered, partially covered, not covered
-         :colors: #37a12d, #f0a500, #ca2828
-         :legend:
-
-         type in ["feat_arc_sta", "feat_arc_dyn"] and "{{ feature_id }}" in belongs_to and fully_verifies_back
-         type in ["feat_arc_sta", "feat_arc_dyn"] and "{{ feature_id }}" in belongs_to and partially_verifies_back and not fully_verifies_back
-         type in ["feat_arc_sta", "feat_arc_dyn"] and "{{ feature_id }}" in belongs_to and not fully_verifies_back and not partially_verifies_back
+{% set arc_base = 'type in ["feat_arc_sta", "feat_arc_dyn"] and "' ~ feature_id ~ '" in belongs_to' %}
+{{ safety_pie_row(feature_title, "Architecture Elements", arc_base, "ASIL_B", "ASIL B",
+     feature_arcs|selectattr("safety", "eq", "ASIL_B")|list|length, false, [], []) }}
+{{ safety_pie_row(feature_title, "Architecture Elements", arc_base, "QM", "QM",
+     feature_arcs|selectattr("safety", "eq", "QM")|list|length, false, [], []) }}
 
 .. dropdown:: Show architectural elements table
    :animate: fade-in
@@ -325,7 +302,7 @@ Architecture Statistics
       :style: table
       :columns: id;title;safety;status;tags
       :colwidths: 25,30,10,15,20
-      :sort: id
+      :sort: safety
 
 Inspection Statistics
 ^^^^^^^^^^^^^^^^^^^^^

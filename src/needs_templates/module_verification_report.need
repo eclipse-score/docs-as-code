@@ -53,30 +53,8 @@
      ["wp__sw_component_fmea", "FMEA"],
    ] %}
 
-{#- One work-product row: the need link, its kind, the realising document and
-    its status. Both cells are needtables over the same filter, differing only
-    in :columns:, so an empty match renders as an empty cell. -#}
-{% macro workproduct_rows(slug_norm, workproducts) %}
-{%- for wp in workproducts %}
-      * - :need:`{{ wp[0] }}`
-        - {{ wp[1] }}
-        - .. needtable::
-             :filter: type == "document" and "{{ slug_norm }}" in id.replace("_", "").lower() and "{{ wp[0] }}" in realizes
-             :columns: id
-             :style: table
-        - .. needtable::
-             :filter: type == "document" and "{{ slug_norm }}" in id.replace("_", "").lower() and "{{ wp[0] }}" in realizes
-             :columns: status
-             :style: table
-{%- endfor %}
-{% endmacro %}
-
-{#- Bracketed, quoted Sphinx-Needs ``id in [...]`` filter literal for a list
-    of Need IDs, used to scope needpie/needtable filters below to the
-    requirements that are in scope for ``applies_to_module_version``. -#}
-{% macro id_filter_list(ids) -%}
-[{% for req_id in ids %}"{{ req_id }}"{% if not loop.last %}, {% endif %}{% endfor %}]
-{%- endmacro %}
+{#- ``workproduct_rows``, ``id_filter_list`` and ``safety_pie_row`` are render
+    helpers shared with the platform report. -#}
 
 .. raw:: html
 
@@ -102,7 +80,73 @@
    .wp-doc-table td .dataTables_wrapper .dataTables_filter,
    .wp-doc-table td .dataTables_wrapper .dataTables_info,
    .wp-doc-table td .dataTables_wrapper .dataTables_paginate { display: none; }
+
+   /* Scales every chart to its column; together with the fixed three-column
+      raster this gives every chart the same size as in the platform report. */
+   .score-pie-row img[id^="needpie-"] {
+       width: 100%;
+       height: auto;
+   }
+   /* ``.sd-row`` is a flex container without a justification of its own, so
+      this centres the two pies in the three-column raster. */
+   .score-pie-row { justify-content: center; }
+
+   p.rubric.safety-class-heading {
+       display: inline-block; margin: 1.4em 0 0.5em 0;
+       padding: 0.15em 0.9em; border-radius: 1em;
+       font-size: 0.95em; font-weight: 600; color: #ffffff;
+   }
+   p.rubric.safety-class-heading.safety-asil-b { background: #1f4e79; }
+   p.rubric.safety-class-heading.safety-qm { background: #6c757d; }
+
+   /* Matches the aspect ratio of the rendered pie charts. */
+   .empty-pie {
+       display: flex; flex-direction: column; align-items: center;
+       justify-content: center; gap: 0.4em;
+       aspect-ratio: 16 / 9; padding: 0.5em; text-align: center;
+       border: 2px dashed #b0b0b0; border-radius: 6px; color: #6c757d;
+   }
+   .empty-pie-title { font-weight: 600; }
+   .empty-pie-text { font-style: italic; }
+
+   .chart-legend { display: flex; flex-wrap: wrap; gap: 1.2em 2.5em; }
+   .chart-legend-group {
+       display: flex; flex-direction: column; gap: 0.3em;
+       flex: 1 1 20em; font-size: 0.9em;
+   }
+   .chart-legend-head { font-weight: 600; }
+   .chart-legend-dot {
+       display: inline-block; width: 0.8em; height: 0.8em;
+       margin-right: 0.5em; border-radius: 50%;
+       border: 1px solid rgba(0, 0, 0, 0.25);
+   }
    </style>
+
+.. dropdown:: Legend — status values and chart colours
+   :animate: fade-in
+   :open:
+
+   .. raw:: html
+
+      <div class="chart-legend">
+        <div class="chart-legend-group">
+          <span class="chart-legend-head">Status — ASIL B</span>
+          <span><span class="chart-legend-dot" style="background: #37a12d;"></span><code>valid_inspected</code> — agreed and formally inspected</span>
+          <span><span class="chart-legend-dot" style="background: #f5c518;"></span><code>valid</code> — agreed, formal inspection still outstanding</span>
+          <span><span class="chart-legend-dot" style="background: #ca2828;"></span><code>invalid</code> — not agreed; metamodel checks are skipped</span>
+        </div>
+        <div class="chart-legend-group">
+          <span class="chart-legend-head">Status — QM</span>
+          <span><span class="chart-legend-dot" style="background: #37a12d;"></span><code>valid</code> — agreed; QM needs are not formally inspected, so this is their final state (<code>valid_inspected</code> counts here too)</span>
+          <span><span class="chart-legend-dot" style="background: #ca2828;"></span><code>invalid</code> — not agreed; metamodel checks are skipped</span>
+        </div>
+        <div class="chart-legend-group">
+          <span class="chart-legend-head">Test coverage — both classes</span>
+          <span><span class="chart-legend-dot" style="background: #37a12d;"></span>fully covered — at least one test fully verifies the need</span>
+          <span><span class="chart-legend-dot" style="background: #f0a500;"></span>partially covered — only partially verifying tests</span>
+          <span><span class="chart-legend-dot" style="background: #ca2828;"></span>not covered — no verifying test at all</span>
+        </div>
+      </div>
 
 {# ===================================================================== #}
 {# Components                                                             #}
@@ -118,7 +162,7 @@ Component Overview
    :filter: id in [{% for component in components_in_mod %}"{{ component["id"] }}"{% if not loop.last %}, {% endif %}{% endfor %}]
    :columns: id as "Component";safety;security;status
    :style: table
-   :sort: id
+   :sort: safety
 
 {% for component in components_in_mod %}
 {% set component_id = component["id"] %}
@@ -140,69 +184,35 @@ Component Overview
 {% set component_reqs_all = linked_needs(component_id, "satisfied_by_back")
      |selectattr("type", "eq", "comp_req")
      |list %}
-{% set ns = namespace(req_ids=[]) %}
+{% set ns = namespace(reqs=[]) %}
 {% for req in component_reqs_all %}
 {% if req_in_report_version(req, module_version) %}
-{% set ns.req_ids = ns.req_ids + [req["id"]] %}
+{% set ns.reqs = ns.reqs + [req] %}
 {% endif %}
 {% endfor %}
-{% set component_req_filter = 'id in ' ~ id_filter_list(ns.req_ids) %}
+{% set component_reqs = ns.reqs %}
+{% set component_req_filter = 'id in ' ~ id_filter_list(component_reqs|map(attribute="id")|list) %}
+{#- ``type`` has no "in" test in minijinja, so the two architecture types are
+    collected separately and concatenated. -#}
+{% set component_arcs_all = linked_needs(component_id, "belongs_to_back") %}
+{% set component_arcs = (component_arcs_all|selectattr("type", "eq", "comp_arc_sta")|list)
+     + (component_arcs_all|selectattr("type", "eq", "comp_arc_dyn")|list) %}
 
 Component Requirements Statistics
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. grid:: 1 2 2 2
-   :gutter: 3
-
-   .. grid-item::
-
-      .. needpie:: {{ component_title }} Requirements Status
-         :labels: valid, valid_inspected, invalid
-         :colors: #f5c518, #37a12d, #ca2828
-         :legend:
-
-         type == "comp_req" and "{{ component_id }}" in satisfied_by and status == "valid" and {{ component_req_filter }}
-         type == "comp_req" and "{{ component_id }}" in satisfied_by and status == "valid_inspected" and {{ component_req_filter }}
-         type == "comp_req" and "{{ component_id }}" in satisfied_by and status == "invalid" and {{ component_req_filter }}
-
-   .. grid-item::
-
-      .. needpie:: {{ component_title }} Requirements Test Coverage
-         :labels: fully covered, partially covered, not covered
-         :colors: #37a12d, #f0a500, #ca2828
-         :legend:
-
-         type == "comp_req" and "{{ component_id }}" in satisfied_by and fully_verifies_back and {{ component_req_filter }}
-         type == "comp_req" and "{{ component_id }}" in satisfied_by and partially_verifies_back and not fully_verifies_back and {{ component_req_filter }}
-         type == "comp_req" and "{{ component_id }}" in satisfied_by and not fully_verifies_back and not partially_verifies_back and {{ component_req_filter }}
+{% set req_base = 'type == "comp_req" and "' ~ component_id ~ '" in satisfied_by and ' ~ component_req_filter %}
+{{ safety_pie_row(component_title, "Requirements", req_base, "ASIL_B", "ASIL B",
+     component_reqs|selectattr("safety", "eq", "ASIL_B")|list|length) }}
+{{ safety_pie_row(component_title, "Requirements", req_base, "QM", "QM",
+     component_reqs|selectattr("safety", "eq", "QM")|list|length) }}
 
 Component Architecture Statistics
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. grid:: 1 2 2 2
-   :gutter: 3
-
-   .. grid-item::
-
-      .. needpie:: {{ component_title }} Architecture Elements Status
-         :labels: valid, valid_inspected, invalid
-         :colors: #f5c518, #37a12d, #ca2828
-         :legend:
-
-         type in ["comp_arc_sta", "comp_arc_dyn"] and "{{ component_id }}" in belongs_to and status == "valid"
-         type in ["comp_arc_sta", "comp_arc_dyn"] and "{{ component_id }}" in belongs_to and status == "valid_inspected"
-         type in ["comp_arc_sta", "comp_arc_dyn"] and "{{ component_id }}" in belongs_to and status == "invalid"
-
-   .. grid-item::
-
-      .. needpie:: {{ component_title }} Architecture Elements Test Coverage
-         :labels: fully covered, partially covered, not covered
-         :colors: #37a12d, #f0a500, #ca2828
-         :legend:
-
-         type in ["comp_arc_sta", "comp_arc_dyn"] and "{{ component_id }}" in belongs_to and fully_verifies_back
-         type in ["comp_arc_sta", "comp_arc_dyn"] and "{{ component_id }}" in belongs_to and partially_verifies_back and not fully_verifies_back
-         type in ["comp_arc_sta", "comp_arc_dyn"] and "{{ component_id }}" in belongs_to and not fully_verifies_back and not partially_verifies_back
+{% set arc_base = 'type in ["comp_arc_sta", "comp_arc_dyn"] and "' ~ component_id ~ '" in belongs_to' %}
+{{ safety_pie_row(component_title, "Architecture Elements", arc_base, "ASIL_B", "ASIL B",
+     component_arcs|selectattr("safety", "eq", "ASIL_B")|list|length) }}
+{{ safety_pie_row(component_title, "Architecture Elements", arc_base, "QM", "QM",
+     component_arcs|selectattr("safety", "eq", "QM")|list|length) }}
 
 Requirements Traceability
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -218,7 +228,7 @@ verification status and the tests that (fully or partially) verify them:
       :style: table
       :columns: id;title;safety;status;testlink
       :colwidths: 13,22,8,10,47
-      :sort: id
+      :sort: safety
 
 Test Coverage
 ^^^^^^^^^^^^^
@@ -251,7 +261,7 @@ status have not yet been inspected.
       :style: table
       :columns: id;title;safety;status;tags
       :colwidths: 25,30,10,15,20
-      :sort: id
+      :sort: safety
 
 Verification & Safety Analysis Documents
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

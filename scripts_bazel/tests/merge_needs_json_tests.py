@@ -21,6 +21,7 @@ from typing import cast
 
 import pytest
 from pyfakefs.fake_filesystem import FakeFilesystem as FFS
+from score_pytest.attribute_plugin import add_test_properties
 
 from scripts_bazel import merge_needs_json
 
@@ -30,7 +31,13 @@ def _write_json(fs: FFS, path: Path, data: object) -> Path:
     return path
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_merges_all_needs_and_ignores_version_keys(fs: FFS) -> None:
+    """Test merges all needs and ignores version keys."""
     first = _write_json(
         fs,
         Path("/inputs/first.json"),
@@ -89,7 +96,13 @@ def test_merges_all_needs_and_ignores_version_keys(fs: FFS) -> None:
     assert merged["versions"]["first-version"]["created_by"] == "first"
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_identical_duplicate_need_is_ignored(fs: FFS) -> None:
+    """Test identical duplicate need is ignored."""
     first_data = {
         "versions": {
             "first-version": {
@@ -111,9 +124,15 @@ def test_identical_duplicate_need_is_ignored(fs: FFS) -> None:
     assert list(merged["versions"]["first-version"]["needs"]) == ["REQ-1"]
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_conflicting_need_returns_error_without_writing_output(
     fs: FFS, capsys: pytest.CaptureFixture[str]
 ) -> None:
+    """Test conflicting need returns error without writing output."""
     first = _write_json(
         fs,
         Path("/inputs/first.json"),
@@ -163,17 +182,29 @@ def test_conflicting_need_returns_error_without_writing_output(
 
 
 @pytest.mark.parametrize(("boolean", "number"), [(True, 1), (False, 0)])
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_json_comparison_distinguishes_booleans_from_numbers(
     boolean: bool,
     number: int,
 ) -> None:
+    """Test json comparison distinguishes booleans from numbers."""
     assert not merge_needs_json._json_values_equal(  # pyright: ignore[reportPrivateUsage]
         {"nested": [boolean]},
         {"nested": [number]},
     )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_ignores_version_metadata_and_recalculates_needs_amount(fs: FFS) -> None:
+    """Test ignores version metadata and recalculates needs amount."""
     first = _write_json(
         fs,
         Path("/inputs/first.json"),
@@ -242,12 +273,18 @@ def test_ignores_version_metadata_and_recalculates_needs_amount(fs: FFS) -> None
         ),
     ],
 )
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_rejects_invalid_schema(
     fs: FFS,
     capsys: pytest.CaptureFixture[str],
     payload: object,
     expected_error: str,
 ) -> None:
+    """Test rejects invalid schema."""
     source = _write_json(fs, Path("/inputs/invalid.json"), payload)
     output = Path("/outputs/merged.json")
 
@@ -259,7 +296,13 @@ def test_rejects_invalid_schema(
     assert not output.exists()
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_rejects_invalid_json(fs: FFS, capsys: pytest.CaptureFixture[str]) -> None:
+    """Test rejects invalid json."""
     source = Path("/inputs/invalid.json")
     fs.create_file(source, contents="{not json")
     output = Path("/outputs/merged.json")
@@ -283,12 +326,18 @@ def test_rejects_invalid_json(fs: FFS, capsys: pytest.CaptureFixture[str]) -> No
         ),
     ],
 )
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_rejects_non_canonical_json(
     fs: FFS,
     capsys: pytest.CaptureFixture[str],
     contents: str,
     expected_error: str,
 ) -> None:
+    """Test rejects non canonical json."""
     source = Path("/inputs/non_canonical.json")
     fs.create_file(source, contents=contents)
     output = Path("/outputs/merged.json")
@@ -301,9 +350,15 @@ def test_rejects_non_canonical_json(
     assert not output.exists()
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_failed_output_serialization_keeps_existing_file(
     fs: FFS,
 ) -> None:
+    """Test failed output serialization keeps existing file."""
     output = Path("/outputs/merged.json")
     _write_json(fs, output, {"previous": "result"})
 
