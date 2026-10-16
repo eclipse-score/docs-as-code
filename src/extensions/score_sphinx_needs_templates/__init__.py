@@ -504,7 +504,7 @@ def _relayout_report_pie(figure: Any) -> None:
         legend.remove()
     for text in axes.texts:
         if _SLICE_VALUE.match(text.get_text()):
-            text.set_fontsize(17)
+            text.set_fontsize(14)
         else:
             text.set_visible(False)
 

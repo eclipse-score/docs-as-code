@@ -333,7 +333,7 @@ def test_report_pie_shows_only_enlarged_slice_numbers(legend: bool) -> None:
     assert axes.get_legend() is None
     visible = [t for t in axes.texts if t.get_visible()]
     assert [t.get_text() for t in visible] == ["75.0%\n(3)", "25.0%\n(1)"]
-    assert all(t.get_fontsize() == 17 for t in visible)
+    assert all(t.get_fontsize() == 14 for t in visible)
     matplotlib.pyplot.close(figure)
 
 
