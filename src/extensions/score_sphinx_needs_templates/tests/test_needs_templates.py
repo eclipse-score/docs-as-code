@@ -199,7 +199,6 @@ def test_any_req_in_report_version_scoped_empty_list_is_excluded() -> None:
 )
 def test_any_req_in_report_version_true_if_at_least_one_requirement_matches() -> None:
     """Test any req in report version true if at least one requirement matches."""
-    any_req_in_report_version = vars(templates)["_AnyRequirementInReportVersion"]()
     out_of_scope = FakeNeed("feat_req__a")
     out_of_scope["valid_from"] = "v2.0"
     in_scope = FakeNeed("feat_req__b")
@@ -215,7 +214,6 @@ def test_any_req_in_report_version_true_if_at_least_one_requirement_matches() ->
 )
 def test_any_req_in_report_version_false_if_no_requirement_matches() -> None:
     """Test any req in report version false if no requirement matches."""
-    any_req_in_report_version = vars(templates)["_AnyRequirementInReportVersion"]()
     a = FakeNeed("feat_req__a")
     a["valid_from"] = "v2.0"
     b = FakeNeed("feat_req__b")
