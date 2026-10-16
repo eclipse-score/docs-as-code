@@ -481,44 +481,32 @@ _SLICE_VALUE = re.compile(r"^[\d.]+%\n\(\d+\)$")
 
 
 def _relayout_report_pie(figure: Any) -> None:
-    """Re-lay out a report pie as a portrait chart with the legend underneath.
+    """Re-lay out a report pie as a compact chart showing only its numbers.
 
     Sphinx-Needs draws every needpie at 8x4 inches with the legend beside it,
-    so the circle covers only ~35% of the image width. The slice labels repeat
-    the legend and are hidden, which lets the circle fill ~60% of the width
-    and leaves room for large slice numbers. Projects that suppress needpie
-    legends (``Axes.legend`` patched away) keep their slice labels instead.
+    so the circle covers only ~35% of the image width. The reports explain the
+    slice colours once at the top of the page, so the legend and the slice
+    labels are dropped; the circle fills ~60% of the width and the numbers in
+    the slices are enlarged.
     """
     axes = figure.axes[0]
-    width, height = 5.0, 4.8
-    # Inches reserved above the circle for the title and below it for the legend.
+    width, height = 5.0, 4.0
+    # Inches reserved above the circle for the title and below it as margin.
     figure.set_size_inches(width, height)
     figure.subplots_adjust(
-        left=0.02, right=0.98, top=1 - 0.75 / height, bottom=1.05 / height
+        left=0.02, right=0.98, top=1 - 0.75 / height, bottom=0.15 / height
     )
     axes.set_ylim(-1.05, 1.05)
     axes.title.set_fontsize(13)
     axes.title.set_wrap(True)
     legend = axes.get_legend()
+    if legend is not None:
+        legend.remove()
     for text in axes.texts:
         if _SLICE_VALUE.match(text.get_text()):
             text.set_fontsize(17)
-        elif legend is not None:
+        else:
             text.set_visible(False)
-    if legend is None:
-        return
-    # ``Axes.legend`` replaces the old legend; its "legend" heading carries no
-    # information and is dropped.
-    axes.legend(
-        list(legend.legend_handles),
-        [text.get_text() for text in legend.get_texts()],
-        loc="upper center",
-        bbox_to_anchor=(0.5, -0.02),
-        frameon=False,
-        borderaxespad=0,
-        handlelength=1.2,
-        fontsize=12,
-    )
 
 
 def _save_needpie_figure(

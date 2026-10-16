@@ -317,33 +317,23 @@ def test_report_pie_title_marks_safety_pie_row_charts_only() -> None:
     assert not report_pie_title.search("Comp Requirements Status (ASIL B)")
 
 
-def test_report_pie_moves_legend_below_and_hides_slice_labels() -> None:
+@pytest.mark.parametrize("legend", [True, False])
+def test_report_pie_shows_only_enlarged_slice_numbers(legend: bool) -> None:
+    """The page explains the colours, so legend and slice labels are dropped.
+
+    ``legend=False`` covers projects that patch ``Axes.legend`` away.
+    """
     relayout = vars(templates)["_relayout_report_pie"]
-    figure = _needpie_figure("Comp Requirements\nStatus (ASIL B)")
+    figure = _needpie_figure("Comp Requirements\nStatus (ASIL B)", legend=legend)
     axes = figure.axes[0]
 
     relayout(figure)
-    figure.canvas.draw()
 
-    assert tuple(figure.get_size_inches()) == (5, 4.8)
-    assert axes.get_legend().get_window_extent().y1 < axes.get_window_extent().y0
-    visible = [t.get_text() for t in axes.texts if t.get_visible()]
-    assert visible == ["75.0%\n(3)", "25.0%\n(1)"]
-    assert all(t.get_fontsize() == 17 for t in axes.texts if t.get_visible())
-    matplotlib.pyplot.close(figure)
-
-
-def test_report_pie_without_legend_keeps_slice_labels() -> None:
-    """Projects may patch ``Axes.legend`` away; the numbers must grow anyway."""
-    relayout = vars(templates)["_relayout_report_pie"]
-    figure = _needpie_figure("Comp Requirements\nStatus (QM)", legend=False)
-    texts = figure.axes[0].texts
-
-    relayout(figure)
-
-    assert figure.axes[0].get_legend() is None
-    assert all(t.get_visible() for t in texts)
-    assert sorted(t.get_fontsize() for t in texts) == [10, 10, 17, 17]
+    assert tuple(figure.get_size_inches()) == (5, 4)
+    assert axes.get_legend() is None
+    visible = [t for t in axes.texts if t.get_visible()]
+    assert [t.get_text() for t in visible] == ["75.0%\n(3)", "25.0%\n(1)"]
+    assert all(t.get_fontsize() == 17 for t in visible)
     matplotlib.pyplot.close(figure)
 
 
