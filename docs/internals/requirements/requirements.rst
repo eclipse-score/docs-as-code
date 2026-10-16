@@ -1023,7 +1023,7 @@ Testing
 .. tool_req:: Decision Record Type
   :id: tool_req__docs_dec_rec_type
   :tags: Process / Other
-  :version: 1
+  :version: 2
   :implemented: YES
   :satisfies:
    gd_req__process_management_build_blocks_attr[version==1],
@@ -1031,11 +1031,13 @@ Testing
 
   Docs-as-Code shall support the Decision Record (dec_rec) need type with the following options:
 
+  * ``id`` (mandatory, pattern: ``dec_rec__<category>__<slug>``; category and slug contain letters, numbers, underscores, or hyphens)
   * ``status`` (mandatory, one of: proposed, accepted, deprecated, rejected, superseded)
   * ``context`` (mandatory)
   * ``decision`` (mandatory)
+  * ``tracking`` (optional, link to a GitHub issue or pull request in the ``eclipse-score`` organization)
+  * ``version`` (mandatory)
   * ``consequences`` (optional)
-  * ``tracking`` (optional, link to a GitHub issue)
 
   A Decision Record shall be able to link to other needs via the optional ``affects`` link.
 
