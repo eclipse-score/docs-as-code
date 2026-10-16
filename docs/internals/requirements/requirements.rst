@@ -833,6 +833,8 @@ Testing
 
    Docs-as-Code shall ensure that each test case has TestType and DerivationTechnique set.
 
+   .. note:: implemented as info-only for smooth migration
+
 .. tool_req:: Extract Metadata from Tests
    :id: tool_req__docs_test_metadata_mandatory_2
    :tags: Testing
@@ -850,7 +852,7 @@ Testing
    :id: tool_req__docs_test_metadata_link_levels
    :tags: Testing
    :version: 1
-   :implemented: NO
+   :implemented: PARTIAL
    :parent_covered: YES: Together with tool_req__docs_test_metadata_mandatory_1, tool_req__docs_test_metadata_mandatory_2
    :satisfies: gd_req__verification_checks[version==1]
 
@@ -859,6 +861,8 @@ Testing
    - If Partially/FullyVerifies are set in Feature Integration Test these shall link to Feature Requirements
    - If Partially/FullyVerifies are set in Component Integration Test these shall link to Component Requirements
    - If Partially/FullyVerifies are set in Unit Test these shall link to Component Requirements
+
+   .. note:: implemented as info-only for smooth migration
 
 
 .. tool_req:: Provide Metrics for linked requirements
