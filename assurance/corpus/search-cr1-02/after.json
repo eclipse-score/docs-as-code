@@ -1,0 +1,25 @@
+{
+  "needs": {
+    "G1_search_1": {
+      "id": "G1_search_1",
+      "type": "gd_guidl",
+      "complies": [
+        "R1_search_1"
+      ]
+    },
+    "A1_search_1": {
+      "id": "A1_search_1",
+      "type": "evidence",
+      "links": [
+        "G1_search_1"
+      ]
+    },
+    "T1_search_1": {
+      "id": "T1_search_1",
+      "type": "testcase",
+      "fully_verifies": [
+        "R1_search_1"
+      ]
+    }
+  }
+}

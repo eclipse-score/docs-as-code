@@ -22,6 +22,7 @@ This section is not relevant for users of docs-as-code but for developers extend
    :maxdepth: 1
 
    benchmark_results
+   assurance_harness
    decisions/index
    requirements/index
    testing
