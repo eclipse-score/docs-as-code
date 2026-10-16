@@ -21,7 +21,7 @@ on:
 jobs:
   docs-deploy:
     if: github.event.workflow_run.conclusion == 'success'
-    uses: eclipse-score/cicd-workflows/.github/workflows/docs-publish.yml@4070976810a223e21c70bbee3602e5509724794e # main 08/10/2026
+    uses: eclipse-score/cicd-workflows/.github/workflows/docs-publish.yml@e5295061011ca186d3397e187764c73feed4b67c # main 08/10/2026
     permissions:
       actions: read
       contents: write
