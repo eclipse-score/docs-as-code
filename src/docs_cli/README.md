@@ -59,7 +59,13 @@ targets receive structured Sphinx overrides through `SPHINX_CONFIG_OPTS`. When
 no config file is supplied and that option list is non-empty, the CLI selects
 Sphinx's configuration-free mode automatically.
 
-All actions share the package's `_build` directory. Before starting, the CLI
+All actions share the package's `_build` directory. Set the `DOCS_BUILD_DIR`
+environment variable to use a different directory; relative values are resolved
+against the package, absolute values are used as-is (e.g.
+`DOCS_BUILD_DIR=docs_build_tmp bazel run //:docs`). Because stale output is
+deleted, the CLI rejects values that equal or contain the workspace, package or
+source directory. Sandboxed Bazel build actions
+ignore it and always write to their declared output. Before starting, the CLI
 removes stale output if the previous build recorded warnings, the stored hash
 is missing, or the contents of `MODULE.bazel`, `MODULE.bazel.lock` or the package's
 `BUILD` file have changed. Successful non-preview builds record the input hash;

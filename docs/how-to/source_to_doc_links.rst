@@ -41,9 +41,18 @@ Scanning Source Code for Links
 
 In your ``BUILD`` files, pass the implementation targets to the ``docs`` rule
 as ``code_targets``. Their ``srcs``, ``hdrs``, and ``textual_hdrs`` are scanned,
-including those of their ``deps`` recursively. This means that a
-``cc_executable`` also covers source files from the ``cc_library`` targets it
+including those of their ``deps`` recursively within the component boundary
+described below. This means that a ``cc_executable`` also covers source files from the ``cc_library`` targets it
 uses. You may also pass filegroups; their files are scanned directly.
+
+Source-link scanning includes the sources and headers of every explicitly
+selected target, even when it is outside the bundle package. Transitive
+dependencies are filtered by the repository and BUILD package containing the
+``docs_bundle`` declaration; subpackage targets are included. Local targets
+reached through a sibling package or external repository are included too.
+This boundary does not depend on ``source_dir``. Source and header attributes
+resolve filegroups and generated outputs; selecting generator rules directly
+as implementation targets is not supported.
 
 .. code-block:: starlark
    :emphasize-lines: 14
