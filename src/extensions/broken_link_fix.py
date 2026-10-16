@@ -10,7 +10,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-import re
 from collections.abc import Callable
 from enum import StrEnum
 from typing import Any, cast
@@ -45,10 +44,8 @@ def process_result(self: CheckExternalLinksBuilder, result: CheckResult) -> None
     """
     match result.status:
         case _Status.BROKEN:
-            """ Ignore client errors from sourceforge.io """
-            if re.match(
-                r"^https://[^/]+\.sourceforge\.io(/|$)", result.uri
-            ) and "403 Client Error" in str(result.message):
+            """Ignore selected HTTP errors that can be caused by access restrictions or rate limits."""
+            if result.code in {401, 402, 403, 407, 418, 429, 451, 504, 511}:
                 logger.info(darkgray("-ignored- ") + result.uri)
                 self.write_entry(
                     "ignored",
