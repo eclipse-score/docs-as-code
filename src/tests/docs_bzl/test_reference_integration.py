@@ -13,9 +13,11 @@
 
 """Reference integration scenario for the public docs() API."""
 
+import json
+
 import pytest
 
-from src.tests.docs_bzl.helpers import load_needs, run_scenario
+from src.tests.docs_bzl.helpers import built_output, load_needs, run_bazel, run_scenario
 
 
 @pytest.mark.bazel_slow
@@ -143,3 +145,49 @@ def test_bundle_metadata_is_added_to_the_explicit_primary_need():
         "docs/components/component:component_sources"
     )
     assert legacy_need["bazel_type"] == "filegroup"
+
+
+@pytest.mark.bazel_cached
+def test_component_files_and_sourcelinks_share_the_component_boundary():
+    """Local implementation files feed the scanner; sibling implementation does not.
+
+    The local support library and the sibling library both carry traceability
+    markers. Only the local marker may enter this component's source-link cache.
+    Its public sibling header remains included because it is explicitly declared
+    in hdrs. api.h is shared by two libraries and must appear only once.
+    """
+    scenario = "reference_integration/modern_module/docs/components/component"
+    package = f"//src/tests/docs_bzl/scenarios/{scenario}"
+    prefix = package[2:] + "/"
+    sibling_header = prefix.rsplit("component/", 1)[0] + "unlinked_component/api.h"
+    # Other scenario builds may leave this target cached in multiple Bazel
+    # configurations. Inspect only the current top-level configuration.
+    result = run_bazel(
+        [
+            "cquery",
+            f"config({package}:docs_bundle.__internal__.files, target)",
+            "--output=starlark",
+            '--starlark:expr="\\n".join([f.short_path for f in target.files.to_list()])',
+        ]
+    )
+    assert sorted(result.stdout.splitlines()) == sorted(
+        [
+            prefix + "api.h",
+            prefix + "implementation.cc",
+            prefix + "implementation.py",
+            prefix + "detail/support.cc",
+            prefix + "generated/config.def",
+            sibling_header,
+        ]
+    )
+
+    run_scenario("build", scenario, ":docs_bundle.__internal__.sourcelinks_json")
+    cache = built_output(
+        f"scenarios/{scenario}", "docs_bundle.__internal__.sourcelinks_json.json"
+    )
+    links = json.loads(cache.read_text(encoding="utf-8"))
+    # Repository metadata entries have no file; compare the actual code links.
+    assert {link["file"] for link in links if "file" in link} == {
+        prefix + "implementation.py",
+        prefix + "detail/support.cc",
+    }

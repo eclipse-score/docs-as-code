@@ -10,8 +10,5 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 // *******************************************************************************
-// req-traceability: tool_req__docs_bzl_nested_bundle
-
-int filegroup_manual() {
-  return 0;
-}
+// req-traceability: tool_req__modern_component
+int component_support() { return 1; }

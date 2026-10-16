@@ -49,16 +49,17 @@ Standalone bundle Needs actions receive a local-only view containing the
 bundle's own root entries; composed builds receive the complete active
 composition. Both views use the same schema and runtime resolver.
 
-Each ``bundle.code_targets`` entry keeps its identity and adds sorted
-``files``. Explicitly selected targets keep their sources even when their
-labels are outside the bundle. Dependency traversal stays in the same
-repository and below the BUILD package containing ``docs_bundle``; subpackages
-are included, while sibling packages and external repositories are excluded.
-An excluded dependency ends that branch, even if it depends back on a target in
-the bundle package. The boundary is independent of ``source_dir``: for a bundle
-declared in ``components/memory``, ``components/memory/detail`` is in,
-``components/sensor`` is out, and a dependency under an external repository is
-out.
+Each bundle declares a private ``<name>.__internal__.files`` target whose
+``DefaultInfo.files`` contains its implementation artifacts. The source-link
+cache scans exactly that file set. The public bundle manifest does not expose
+implementation file lists.
+
+Explicitly selected code targets contribute their declared sources and headers.
+Transitive dependency targets are filtered to the bundle's repository and BUILD
+package, including subpackages. Local targets reached through foreign
+dependencies remain included. The boundary is independent of ``source_dir``;
+nested documentation bundles keep their own file sets. Source/header attributes
+resolve filegroups and generated outputs without inspecting generator inputs.
 
 At ``config-inited``, ``score_mounts`` resolves all directory source mounts before
 constructing ``config.mounts``. A mount below Sphinx's primary source directory

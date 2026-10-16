@@ -59,3 +59,18 @@ docs_bundle(
     }],
     visibility = ["//visibility:public"],
 )
+
+# This sibling component exposes a library and public headers. Other components
+# may depend on it without taking ownership of its implementation sources.
+cc_library(
+    name = "implementation",
+    srcs = ["implementation.cc"],
+    hdrs = [":public_headers"],
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "public_headers",
+    srcs = ["api.h"],
+    visibility = ["//visibility:public"],
+)

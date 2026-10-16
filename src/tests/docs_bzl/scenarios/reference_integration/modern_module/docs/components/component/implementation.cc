@@ -10,6 +10,6 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 // *******************************************************************************
-#pragma once
+#include "api.h"
 
-int outside_component();
+int component_value() { return 42; }

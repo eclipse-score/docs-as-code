@@ -10,15 +10,11 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-"""A minimal target for testing arbitrary dependency-graph boundaries."""
 
-def _dependency_probe_impl(ctx):
-    """Publish no files while allowing arbitrary targets on a deps edge."""
-    return [DefaultInfo(files = depset())]
-
-dependency_probe = rule(
-    implementation = _dependency_probe_impl,
-    attrs = {
-        "deps": attr.label_list(),
-    },
+# Both libraries declare api.h; the manifest must emit its path only once.
+cc_library(
+    name = "support",
+    srcs = ["support.cc"],
+    hdrs = ["//src/tests/docs_bzl/scenarios/reference_integration/modern_module/docs/components/component:api.h"],
+    visibility = ["//visibility:public"],
 )

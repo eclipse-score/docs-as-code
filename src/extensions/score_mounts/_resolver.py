@@ -34,8 +34,7 @@ class BazelTarget:
     This is deliberately not just a Bazel label: the label identifies the
     target, while ``type`` carries ``ctx.rule.kind`` (for example
     ``cc_library`` or ``filegroup``). Both values are needed by consumers of
-    the composition manifest. ``files`` lists this selected target's sorted
-    implementation files.
+    the composition manifest.
     """
 
     # Canonical Bazel label, for example
@@ -44,17 +43,11 @@ class BazelTarget:
     # Bazel rule kind, for example ``cc_library`` or ``filegroup``. The rule
     # kind is not encoded in the label itself.
     type: str
-    # Sorted source and header paths exported by Bazel. Older manifests omit it.
-    files: tuple[str, ...] = ()
 
     @classmethod
-    def from_manifest_entry(cls, entry: dict[str, object]) -> BazelTarget:
+    def from_manifest_entry(cls, entry: dict[str, str]) -> BazelTarget:
         """Create a target from the producer-owned manifest representation."""
-        return cls(
-            label=cast("str", entry["label"]),
-            type=cast("str", entry["type"]),
-            files=tuple(cast("list[str]", entry.get("files", []))),
-        )
+        return cls(label=entry["label"], type=entry["type"])
 
 
 @dataclass(frozen=True)
@@ -86,7 +79,7 @@ class BundleMetadata:
     def from_manifest_entry(cls, entry: dict[str, object]) -> BundleMetadata:
         """Create bundle metadata from one producer-owned manifest entry."""
         bundle = cast("dict[str, object]", entry["bundle"])
-        targets = cast("list[dict[str, object]]", bundle["code_targets"])
+        targets = cast("list[dict[str, str]]", bundle["code_targets"])
         return cls(
             label=cast("str", bundle["label"]),
             name=cast("str", bundle["name"]),

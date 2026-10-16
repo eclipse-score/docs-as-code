@@ -10,4 +10,5 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 // *******************************************************************************
-int outside_component() { return 0; }
+#pragma once
+int unlinked_component_value();

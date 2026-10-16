@@ -10,4 +10,5 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 // *******************************************************************************
-// req-traceability: tool_req__docs_bzl_nested_bundle
+#pragma once
+int component_value();

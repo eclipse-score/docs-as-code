@@ -135,11 +135,7 @@ def test_load_bundle_metadata_and_direct_targets(tmp_path: Path) -> None:
                         "name": "memory",
                         "primary_need_id": "comp__memory",
                         "code_targets": [
-                            {
-                                "label": "@@//pkg:memory_core",
-                                "type": "cc_library",
-                                "files": ["src/memory/core.cc", "src/memory/core.h"],
-                            },
+                            {"label": "@@//pkg:memory_core", "type": "cc_library"},
                             {"label": "@@//pkg:memory_api", "type": "cc_library"},
                         ],
                     },
@@ -156,11 +152,7 @@ def test_load_bundle_metadata_and_direct_targets(tmp_path: Path) -> None:
         name="memory",
         primary_need_id="comp__memory",
         code_targets=(
-            BazelTarget(
-                label="@@//pkg:memory_core",
-                type="cc_library",
-                files=("src/memory/core.cc", "src/memory/core.h"),
-            ),
+            BazelTarget(label="@@//pkg:memory_core", type="cc_library"),
             BazelTarget(label="@@//pkg:memory_api", type="cc_library"),
         ),
     )

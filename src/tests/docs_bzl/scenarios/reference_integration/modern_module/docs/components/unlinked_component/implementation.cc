@@ -10,4 +10,5 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 // *******************************************************************************
-int subpackage_support() { return 0; }
+// req-traceability: tool_req__modern_component
+int unlinked_component_value() { return 2; }
