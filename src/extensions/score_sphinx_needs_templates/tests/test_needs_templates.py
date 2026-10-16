@@ -343,7 +343,7 @@ def test_report_pie_without_legend_keeps_slice_labels() -> None:
 
     assert figure.axes[0].get_legend() is None
     assert all(t.get_visible() for t in texts)
-    assert sorted(t.get_fontsize() for t in texts) == [12, 12, 17, 17]
+    assert sorted(t.get_fontsize() for t in texts) == [10, 10, 17, 17]
     matplotlib.pyplot.close(figure)
 
 
