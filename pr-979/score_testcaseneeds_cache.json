@@ -5980,7 +5980,7 @@
   {
     "name": "test_needs_templates__test_report_pie_title_marks_safety_pie_row_charts_only",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
-    "line": "304",
+    "line": "308",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -5994,7 +5994,7 @@
   {
     "name": "test_needs_templates__test_report_pie_moves_legend_below_and_hides_slice_labels",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
-    "line": "316",
+    "line": "320",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -6008,7 +6008,7 @@
   {
     "name": "test_needs_templates__test_report_pie_without_legend_keeps_slice_labels",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
-    "line": "331",
+    "line": "336",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -6022,7 +6022,7 @@
   {
     "name": "test_needs_templates__test_other_needpies_are_saved_unchanged",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
-    "line": "342",
+    "line": "350",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -6036,7 +6036,7 @@
   {
     "name": "test_needs_templates__test_id_filter_list_renders_quoted_literal",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
-    "line": "357",
+    "line": "365",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -6050,7 +6050,7 @@
   {
     "name": "test_needs_templates__test_workproduct_rows_filter_by_slug_and_work_product",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
-    "line": "364",
+    "line": "372",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -6064,7 +6064,7 @@
   {
     "name": "test_needs_templates__test_tool_qualification_matrix_groups_shared_requirements",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
-    "line": "375",
+    "line": "383",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -6078,7 +6078,7 @@
   {
     "name": "test_needs_templates__test_platform_report_gap_table_is_report_version_scoped",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
-    "line": "524",
+    "line": "532",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
