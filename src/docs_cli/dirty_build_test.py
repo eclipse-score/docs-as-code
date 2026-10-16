@@ -16,6 +16,7 @@ from pathlib import Path
 
 import pytest
 from pyfakefs.fake_filesystem import FakeFilesystem as FFS
+from score_pytest.attribute_plugin import add_test_properties
 
 from src.docs_cli import cli as docs_cli
 from src.docs_cli.cli import (
@@ -54,6 +55,11 @@ def _simulate_old_state(fs: FFS, warnings: str | None) -> None:
         fs.create_file(_BUILD / "warnings.txt", contents=warnings)
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_clean_removes_build_dir_when_previous_build_had_warnings(
     fs: FFS,
 ) -> None:
@@ -66,6 +72,11 @@ def test_clean_removes_build_dir_when_previous_build_had_warnings(
     assert not _BUILD.exists()
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_clean_keeps_build_dir_when_warnings_txt_is_empty(fs: FFS) -> None:
     """If warnings.txt exists and is empty, the build dir is kept."""
 
@@ -76,6 +87,11 @@ def test_clean_keeps_build_dir_when_warnings_txt_is_empty(fs: FFS) -> None:
     assert _BUILD.exists()
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_clean_is_noop_when_warnings_txt_is_absent(fs: FFS) -> None:
     """If warnings.txt does not exist, the build dir is kept (no error)."""
 
@@ -86,15 +102,27 @@ def test_clean_is_noop_when_warnings_txt_is_absent(fs: FFS) -> None:
     assert _BUILD.exists()
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_clean_is_noop_when_build_dir_is_absent(fs: FFS) -> None:
+    """Test clean is noop when build dir is absent."""
     fs.create_file(_MODULE, contents="stable")
 
     clean_builddir_if_stale(_BUILD, [_MODULE])
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_module_changed_removes_build_dir_when_one_sentinel_file_changed(
     fs: FFS,
 ) -> None:
+    """Test module changed removes build dir when one sentinel file changed."""
     _simulate_old_state(fs, warnings=None)
 
     _LOCK.write_bytes(b"new lock")
@@ -103,9 +131,15 @@ def test_module_changed_removes_build_dir_when_one_sentinel_file_changed(
     assert not _BUILD.exists()
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_module_changed_keeps_build_dir_when_all_sentinel_files_unchanged(
     fs: FFS,
 ) -> None:
+    """Test module changed keeps build dir when all sentinel files unchanged."""
     _simulate_old_state(fs, warnings=None)
 
     clean_builddir_if_stale(_BUILD, [_MODULE, _LOCK])
@@ -113,7 +147,13 @@ def test_module_changed_keeps_build_dir_when_all_sentinel_files_unchanged(
     assert _BUILD.exists()
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_module_change_after_successful_build_forces_clean(fs: FFS) -> None:
+    """Test module change after successful build forces clean."""
     _simulate_old_state(fs, warnings=None)
 
     _MODULE.write_bytes(b"version 2")
@@ -122,6 +162,11 @@ def test_module_change_after_successful_build_forces_clean(fs: FFS) -> None:
     assert not _BUILD.exists()
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_missing_hash_file_triggers_clean(fs: FFS) -> None:
     """If _build/ exists but hash file is absent, treat as stale (e.g. upgrade from old version)."""
     fs.create_dir(_BUILD)
@@ -140,6 +185,16 @@ def test_missing_hash_file_triggers_clean(fs: FFS) -> None:
         ("check", "needs"),
         ("linkcheck", "linkcheck"),
     ],
+)
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
 )
 def test_successful_build_reuses_output_until_module_changes(
     docs_workspace: Path,
@@ -171,7 +226,13 @@ def test_successful_build_reuses_output_until_module_changes(
     assert reused == [False, True, False]
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_mounted_watch_dirs_match_sphinx_mount_paths(tmp_path: Path) -> None:
+    """Test mounted watch dirs match sphinx mount paths."""
     manifest_path = tmp_path / "_mounts_manifest.json"
     manifest_path.write_text(
         json.dumps(
@@ -242,9 +303,15 @@ def test_mounted_watch_dirs_match_sphinx_mount_paths(tmp_path: Path) -> None:
     ]
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_mounted_watch_dirs_use_data_directories_for_pure_data_bundles(
     tmp_path: Path,
 ) -> None:
+    """Test mounted watch dirs use data directories for pure data bundles."""
     manifest_path = tmp_path / "_mounts_manifest.json"
     manifest_path.write_text(
         json.dumps(

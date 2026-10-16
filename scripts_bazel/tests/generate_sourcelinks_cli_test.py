@@ -22,6 +22,7 @@ import sys
 from pathlib import Path
 
 import pytest
+from score_pytest.attribute_plugin import add_test_properties
 
 import scripts_bazel.generate_sourcelinks_cli
 from src.extensions.score_source_code_linker.needlinks import is_metadata
@@ -60,11 +61,22 @@ def assert_json_internal_types(input: list[dict[str, str | int]]):
         (Path("external/"), Path("external")),
     ],
 )
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_clean_external_prefix(input_path: Path, expected_output: Path):
+    """Test clean external prefix."""
     output = scripts_bazel.generate_sourcelinks_cli.clean_external_prefix(input_path)
     assert output == expected_output
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_generate_sourcelinks_cli_basic(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -111,9 +123,15 @@ def some_function():
     assert data[1]["need"] == "tool_req__docs_arch_types"
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_generate_sourcelinks_cli_parses_cpp_traceability_tag(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
+    """Test generate sourcelinks cli parses cpp traceability tag."""
     test_file = tmp_path / "test_source.cc"
     test_file.write_text("// req-Id: tool_req__docs_arch_types\n")
     output_file = tmp_path / "output.json"
@@ -135,9 +153,15 @@ def test_generate_sourcelinks_cli_parses_cpp_traceability_tag(
     assert data[1]["need"] == "tool_req__docs_arch_types"
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_generate_sourcelinks_cli_parse_external_module(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ):
+    """Test generate sourcelinks cli parse external module."""
     # 1. Create the 'external' directory inside the temp path
     external_root = tmp_path / "external"
     external_root.mkdir()
@@ -185,9 +209,15 @@ def some_function():
     assert_json_internal_types(data[1:])
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_generate_sourcelinks_cli_file_not_exists(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ):
+    """Test generate sourcelinks cli file not exists."""
     external_root = tmp_path / "external"
     external_root.mkdir()
 

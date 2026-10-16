@@ -435,7 +435,7 @@ Versioning
   :id: tool_req__docs_req_attr_validity_correctness
   :tags: Requirements
   :implemented: YES
-  :version: 2
+  :version: 3
   :parent_covered: YES
   :satisfies:
     gd_req__req_validity[version==1],
@@ -443,7 +443,9 @@ Versioning
     gd_req__req_attr_valid_until[version==1],
   :status: valid
 
-  Docs-as-Code shall enforce that the ``valid_from`` and ``valid_until`` attributes of stakeholder and feature requirements are correct.
+  Docs-as-Code shall enforce that the ``valid_from`` and ``valid_until`` attributes of stakeholder, feature, and component requirements are correct.
+
+  Stakeholder and feature requirements require ``valid_from``. Component requirements may optionally provide ``valid_from`` and ``valid_until``.
 
   The format of a milestone is something like "v0.5" or "v1.0.1".
   No suffixes like "-SNAPSHOT" or "-beta" are allowed.
@@ -452,11 +454,11 @@ Versioning
   :id: tool_req__docs_req_attr_validity_consistency
   :tags: Requirements
   :implemented: YES
-  :version: 2
+  :version: 3
   :parent_covered: YES
   :satisfies: gd_req__req_validity[version==1]
 
-  Docs-as-Code shall enforce that ``valid_from`` is before ``valid_until`` attribute in stakeholder and feature requirements.
+  Docs-as-Code shall enforce that ``valid_from`` is before ``valid_until`` attribute in stakeholder, feature, and component requirements.
   We consider "from" is inclusive but "until" is exclusive, so from v0.5 until v1.0 means valid for v0.5 but not for v1.0.
   If either attribute is missing, no check is performed.
 

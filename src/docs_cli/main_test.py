@@ -17,6 +17,7 @@ from unittest.mock import Mock
 
 import pytest
 from pyfakefs.fake_filesystem import FakeFilesystem as FFS
+from score_pytest.attribute_plugin import add_test_properties
 
 from src.docs_cli import cli as docs_cli
 from src.docs_cli.cli import sphinx_arguments
@@ -69,6 +70,11 @@ def workspace(fs: FFS, monkeypatch: pytest.MonkeyPatch) -> Path:
         ("build_needs_json", "needs"),
     ],
 )
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_build_action_selects_sphinx_builder(
     workspace: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -111,6 +117,11 @@ def test_build_action_selects_sphinx_builder(
     assert arguments[-2:] == ["-b", builder]
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_failed_build_returns_exit_code_and_forces_next_build_clean(
     workspace: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -158,11 +169,17 @@ def test_failed_build_returns_exit_code_and_forces_next_build_clean(
     assert rebuild_exit_code == 0
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_live_preview_uses_port_and_bundle_watches(
     workspace: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     # Arrange
+    """Test live preview uses port and bundle watches."""
     monkeypatch.setenv("ACTION", "live_preview")
     manifest = workspace / "runfiles/mounts.json"
     manifest.write_text(
@@ -212,11 +229,17 @@ def test_live_preview_uses_port_and_bundle_watches(
     assert not (workspace / "component/_build/.module_bazel_hash").exists()
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_bazel_configuration_resolves_runfiles_and_preserves_repo_relative_edit_path(
     workspace: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     # Arrange
+    """Test bazel configuration resolves runfiles and preserves repo relative edit path."""
     monkeypatch.setenv("SPHINX_CONFIG_FILE", "config/conf.py")
     monkeypatch.setenv("SCORE_METAMODEL_YAML", "config/metamodel.yaml")
     monkeypatch.setenv("MOUNTS_MANIFEST", "mounts.json")
@@ -250,6 +273,11 @@ def test_bazel_configuration_resolves_runfiles_and_preserves_repo_relative_edit_
     assert expected_arguments <= set(arguments)
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_configuration_free_build_forwards_structured_sphinx_options(
     workspace: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -269,11 +297,17 @@ def test_configuration_free_build_forwards_structured_sphinx_options(
     assert "--define=extensions=score_sphinx_bundle" in arguments
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_bazel_build_resolves_mount_manifest_from_execroot(
     workspace: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     # Arrange
+    """Test bazel build resolves mount manifest from execroot."""
     monkeypatch.delenv("BUILD_WORKSPACE_DIRECTORY")
     monkeypatch.chdir(workspace)
     monkeypatch.setenv("ACTION", "build_needs_json")
@@ -295,11 +329,17 @@ def test_bazel_build_resolves_mount_manifest_from_execroot(
     )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_bazel_needs_action_uses_external_needs_labels_channel(
     workspace: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     # Arrange
+    """Test bazel needs action uses external needs labels channel."""
     monkeypatch.delenv("BUILD_WORKSPACE_DIRECTORY")
     monkeypatch.chdir(workspace)
     monkeypatch.setenv("ACTION", "build_needs_json")
@@ -313,6 +353,11 @@ def test_bazel_needs_action_uses_external_needs_labels_channel(
     assert '--define=external_needs_source=["//:needs_json"]' in arguments
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_direct_invocation_resolves_paths_relative_to_cwd(
     workspace: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -320,6 +365,7 @@ def test_direct_invocation_resolves_paths_relative_to_cwd(
     # Arrange
     # A direct invocation has neither Bazel's workspace marker nor a runfiles
     # tree. PACKAGE_DIR is a docs.bzl value and must not be needed here.
+    """Test direct invocation resolves paths relative to cwd."""
     monkeypatch.delenv("BUILD_WORKSPACE_DIRECTORY")
     monkeypatch.delenv("PACKAGE_DIR")
     monkeypatch.delenv("RUNFILES_DIR", raising=False)

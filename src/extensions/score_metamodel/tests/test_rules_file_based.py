@@ -21,7 +21,7 @@ from typing import Any, cast
 
 import pytest
 from score_metamodel.tests import need as test_need
-from score_pytest.attribute_plugin import apply_test_metadata
+from score_pytest.attribute_plugin import add_test_properties, apply_test_metadata
 from sphinx.testing.util import SphinxTestApp
 from sphinx_needs.data import NeedsExtendType, SphinxNeedsData
 from sphinx_needs.need_item import NeedItem
@@ -109,6 +109,11 @@ def count_need_objects(rst_file: Path, need_directives: Collection[str]) -> RstD
     return rst_data
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_count_need_objects_ignores_nested_non_need_directives(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -305,6 +310,11 @@ def _check_need_warnings(
         )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 @pytest.mark.parametrize("rst_file", RST_FILES)
 def test_rst_files(
     record_property: Callable[[str, object], None],
@@ -314,6 +324,7 @@ def test_rst_files(
     monkeypatch: pytest.MonkeyPatch,
     request: pytest.FixtureRequest,
 ) -> None:
+    """Build each RST test fixture and validate its warnings and Needs."""
     ### Build the given rst file with Sphinx and check expected/unexpected warnings.
     # Build the documentation
     app = sphinx_app_setup(RST_DIR / rst_file)

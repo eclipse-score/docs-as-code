@@ -17,6 +17,7 @@ from pathlib import Path
 
 import pytest
 import score_sphinx_needs_templates as templates
+from score_pytest.attribute_plugin import add_test_properties
 from sphinx.testing.util import SphinxTestApp
 
 
@@ -57,6 +58,11 @@ class FakeNeed(dict[str, str]):
         return self._links
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_backlinks_merge_indexed_and_new_outgoing_links(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -76,6 +82,11 @@ def test_backlinks_merge_indexed_and_new_outgoing_links(
     assert [need["id"] for need in linked] == ["TC-old", "TC-new"]
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_parse_version_pads_missing_patch() -> None:
     """A two-component milestone implies patch ``0`` for comparison purposes."""
     assert templates.parse_version("v0.8") == (0, 8, 0)
@@ -83,6 +94,11 @@ def test_parse_version_pads_missing_patch() -> None:
     assert templates.parse_version("V2.3") == (2, 3, 0)
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_req_in_report_version_unscoped_report_version_always_true() -> None:
     """No ``report_version`` means the report is unscoped ("latest")."""
     need = FakeNeed("feat_req__x")
@@ -91,6 +107,11 @@ def test_req_in_report_version_unscoped_report_version_always_true() -> None:
     assert templates.req_in_report_version(need, "") is True  # type: ignore[reportArgumentType]
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_req_in_report_version_direct_valid_from_boundary() -> None:
     """``valid_from`` is inclusive: equal or later report_version is in scope."""
     need = FakeNeed("feat_req__x")
@@ -101,6 +122,11 @@ def test_req_in_report_version_direct_valid_from_boundary() -> None:
     assert templates.req_in_report_version(need, "v0.9") is True  # type: ignore[reportArgumentType]
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_req_in_report_version_malformed_valid_from_is_excluded() -> None:
     """An unparsable ``valid_from`` must not raise; it just excludes the need."""
     need = FakeNeed("feat_req__x")
@@ -109,6 +135,11 @@ def test_req_in_report_version_malformed_valid_from_is_excluded() -> None:
     assert templates.req_in_report_version(need, "v1.0") is False  # type: ignore[reportArgumentType]
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_req_in_report_version_missing_valid_from_without_derived_from_is_excluded(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -121,6 +152,11 @@ def test_req_in_report_version_missing_valid_from_without_derived_from_is_exclud
     assert templates.req_in_report_version(comp_req, "v1.0") is False  # type: ignore[reportArgumentType]
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_req_in_report_version_comp_req_inherits_via_derived_from(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -136,17 +172,34 @@ def test_req_in_report_version_comp_req_inherits_via_derived_from(
     assert templates.req_in_report_version(comp_req, "v0.8") is True  # type: ignore[reportArgumentType]
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_any_req_in_report_version_unscoped_true_even_for_empty_list() -> None:
     """Unscoped ("latest") reports keep Features/Components with no requirement."""
     assert templates.any_req_in_report_version([], None) is True
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_any_req_in_report_version_scoped_empty_list_is_excluded() -> None:
     """A scoped report has nothing to show for a Feature/Component with no reqs."""
     assert templates.any_req_in_report_version([], "v1.0") is False
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_any_req_in_report_version_true_if_at_least_one_requirement_matches() -> None:
+    """Test any req in report version true if at least one requirement matches."""
+    any_req_in_report_version = vars(templates)["_AnyRequirementInReportVersion"]()
     out_of_scope = FakeNeed("feat_req__a")
     out_of_scope["valid_from"] = "v2.0"
     in_scope = FakeNeed("feat_req__b")
@@ -155,7 +208,14 @@ def test_any_req_in_report_version_true_if_at_least_one_requirement_matches() ->
     assert templates.any_req_in_report_version([out_of_scope, in_scope], "v1.0") is True  # type: ignore[reportArgumentType]
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_any_req_in_report_version_false_if_no_requirement_matches() -> None:
+    """Test any req in report version false if no requirement matches."""
+    any_req_in_report_version = vars(templates)["_AnyRequirementInReportVersion"]()
     a = FakeNeed("feat_req__a")
     a["valid_from"] = "v2.0"
     b = FakeNeed("feat_req__b")
@@ -164,6 +224,74 @@ def test_any_req_in_report_version_false_if_no_requirement_matches() -> None:
     assert templates.any_req_in_report_version([a, b], "v1.0") is False  # type: ignore[reportArgumentType]
 
 
+def test_safety_pie_row_qm_counts_inspected_as_valid() -> None:
+    """QM has no inspected slice; ``valid_inspected`` QM Needs count as valid."""
+    safety_pie_row = vars(templates)["_SafetyPieRow"]()
+
+    qm = safety_pie_row("Comp", "Requirements", "BASE", "QM", "QM", 1)
+    asil = safety_pie_row("Comp", "Requirements", "BASE", "ASIL_B", "ASIL B", 1)
+
+    assert ":labels: valid, invalid" in qm
+    assert (
+        'BASE and safety == "QM" and (status == "valid" or status == "valid_inspected")'
+    ) in qm
+    assert 'BASE and safety == "QM" and status == "invalid"' in qm
+    assert ":labels: valid_inspected, valid, invalid" in asil
+    assert ":colors: #37a12d, #f5c518, #ca2828" in asil
+    assert 'BASE and safety == "ASIL_B" and status == "valid_inspected"' in asil
+    assert ":class: safety-class-heading safety-asil-b" in asil
+
+
+def test_safety_pie_row_empty_class_renders_placeholders_only() -> None:
+    safety_pie_row = vars(templates)["_SafetyPieRow"]()
+
+    row = safety_pie_row("Comp", "Requirements", "BASE", "QM", "QM", 0, True)
+
+    assert "needpie" not in row
+    assert row.count('<div class="empty-pie">') == 3
+    assert "no QM requirements" in row
+
+
+def test_safety_pie_row_reference_pie_only_on_request() -> None:
+    safety_pie_row = vars(templates)["_SafetyPieRow"]()
+
+    without = safety_pie_row("", "Stakeholder Requirements", "B", "QM", "QM", 2)
+    with_ref = safety_pie_row(
+        "", "Stakeholder Requirements", "B", "QM", "QM", 2, True, ["a", "b"], ["c"]
+    )
+
+    assert "Reference Coverage" not in without
+    assert without.count(".. needpie::") == 2
+    assert with_ref.count(".. needpie::") == 3
+    assert 'id in ["a", "b"]' in with_ref
+    assert 'id in ["c"]' in with_ref
+    # An empty title must not leave a leading blank in the chart title.
+    assert ".. needpie:: Stakeholder Requirements Status (QM)" in with_ref
+
+
+def test_id_filter_list_renders_quoted_literal() -> None:
+    id_filter_list = vars(templates)["_IdFilterList"]()
+
+    assert id_filter_list(["a", "b"]) == '["a", "b"]'
+    assert id_filter_list([]) == "[]"
+
+
+def test_workproduct_rows_filter_by_slug_and_work_product() -> None:
+    workproduct_rows = vars(templates)["_WorkproductRows"]()
+
+    rows = workproduct_rows("mycomp", [["wp__dfa", "DFA"], ["wp__fmea", "FMEA"]])
+
+    assert rows.count("      * - :need:`") == 2
+    assert "        - DFA\n" in rows
+    assert rows.count('"mycomp" in id.replace("_", "").lower()') == 4
+    assert rows.count('and "wp__fmea" in realizes') == 2
+
+
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_tool_qualification_matrix_groups_shared_requirements(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -308,6 +436,11 @@ needs_id_regex = r"^[a-zA-Z0-9_]+$"
     assert '<section id="traceability-evidence">' not in html
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_platform_report_gap_table_is_report_version_scoped(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,

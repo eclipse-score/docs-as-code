@@ -27,6 +27,7 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+from score_pytest.attribute_plugin import add_test_properties
 
 import scripts_bazel.traceability_gate as gate
 
@@ -144,11 +145,17 @@ def _run_main(
     return gate.main()
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_gate_passes_when_thresholds_met(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
 ) -> None:
+    """Pass when all configured linkage thresholds are met."""
     metrics_json = _write_metrics_json(tmp_path)
 
     rc = _run_main(
@@ -170,11 +177,17 @@ def test_gate_passes_when_thresholds_met(
     assert "Threshold check passed." in captured.out
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_gate_fails_when_threshold_not_met(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
 ) -> None:
+    """Fail when a configured linkage threshold is not met."""
     metrics_json = _write_metrics_json(tmp_path)
 
     rc = _run_main(
@@ -188,11 +201,17 @@ def test_gate_fails_when_threshold_not_met(
     assert "[tool_req] requirements with code links" in captured.out
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_gate_require_all_links_fails(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
 ) -> None:
+    """Fail when --require-all-links finds unlinked requirements."""
     metrics_json = _write_metrics_json(tmp_path)
 
     rc = _run_main(
@@ -205,11 +224,17 @@ def test_gate_require_all_links_fails(
     assert "Threshold check failed:" in captured.out
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_gate_fail_on_broken_test_refs(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
 ) -> None:
+    """Fail when test references point to missing requirements."""
     metrics_by_type: dict[str, object] = {
         "tool_req": {
             "include_not_implemented": False,
@@ -243,11 +268,17 @@ def test_gate_fail_on_broken_test_refs(
     assert "broken testcase references found: 1" in captured.out
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_gate_specific_need_type_only(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
 ) -> None:
+    """Limit threshold checks to the selected need type."""
     metrics_by_type: dict[str, object] = {
         "tool_req": {
             "include_not_implemented": False,
@@ -299,11 +330,17 @@ def test_gate_specific_need_type_only(
     assert "[comp_req]" not in captured.out
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_gate_unknown_need_type_fails(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
 ) -> None:
+    """Reject need types absent from the metrics file."""
     metrics_json = _write_metrics_json(tmp_path)
 
     rc = _run_main(
@@ -316,11 +353,17 @@ def test_gate_unknown_need_type_fails(
     assert "not found in metrics JSON" in captured.out
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_gate_unsupported_schema_version(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
 ) -> None:
+    """Reject metrics files with unsupported schema versions."""
     metrics_json = _write_metrics_json(tmp_path, schema_version="99")
 
     rc = _run_main(monkeypatch, ["--metrics-json", str(metrics_json)])
@@ -330,11 +373,17 @@ def test_gate_unsupported_schema_version(
     assert "unsupported schema_version" in captured.err
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_gate_missing_file_returns_error(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
 ) -> None:
+    """Return an error when the metrics file does not exist."""
     missing = tmp_path / "does_not_exist.json"
 
     rc = _run_main(monkeypatch, ["--metrics-json", str(missing)])
@@ -344,11 +393,17 @@ def test_gate_missing_file_returns_error(
     assert "metrics JSON not found" in captured.err
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_gate_missing_metrics_by_type_returns_error(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
 ) -> None:
+    """Return an error when per-type metrics are absent."""
     payload: dict[str, object] = {
         "schema_version": "2",
         "generated_by": "sphinx_build",
@@ -378,11 +433,17 @@ def test_gate_missing_metrics_by_type_returns_error(
     assert "missing or empty 'metrics_by_type'" in captured.err
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_gate_missing_tests_section_returns_error(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
 ) -> None:
+    """Return an error when test linkage metrics are absent."""
     metrics_by_type: dict[str, object] = {
         "tool_req": {
             "include_not_implemented": False,
