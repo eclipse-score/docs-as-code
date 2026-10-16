@@ -476,6 +476,8 @@ _safety_pie_row_callable = _SafetyPieRow()
 _REPORT_PIE_TITLE = re.compile(
     r"\n(?:Status|Test Coverage|Reference Coverage) \([^()\n]+\)$"
 )
+# Sphinx-Needs writes the value inside a slice as "<percent>%\n(<count>)".
+_SLICE_VALUE = re.compile(r"^[\d.]+%\n\(\d+\)$")
 
 
 def _relayout_report_pie(figure: Any) -> None:
@@ -484,7 +486,8 @@ def _relayout_report_pie(figure: Any) -> None:
     Sphinx-Needs draws every needpie at 8x4 inches with the legend beside it,
     so the circle covers only ~35% of the image width. The slice labels repeat
     the legend and are hidden, which lets the circle fill ~60% of the width
-    and leaves room for large slice numbers.
+    and leaves room for large slice numbers. Projects that suppress needpie
+    legends (``Axes.legend`` patched away) keep their slice labels instead.
     """
     axes = figure.axes[0]
     width, height = 5.0, 4.8
@@ -497,20 +500,18 @@ def _relayout_report_pie(figure: Any) -> None:
     axes.title.set_fontsize(13)
     axes.title.set_wrap(True)
     legend = axes.get_legend()
+    for text in axes.texts:
+        if _SLICE_VALUE.match(text.get_text()):
+            text.set_fontsize(17)
+        elif legend is not None:
+            text.set_visible(False)
     if legend is None:
         return
-    names = [text.get_text() for text in legend.get_texts()]
-    for text in axes.texts:
-        label = text.get_text().strip()
-        if label and any(name.startswith(label) for name in names):
-            text.set_visible(False)
-        else:
-            text.set_fontsize(17)
     # ``Axes.legend`` replaces the old legend; its "legend" heading carries no
     # information and is dropped.
     axes.legend(
         list(legend.legend_handles),
-        names,
+        [text.get_text() for text in legend.get_texts()],
         loc="upper center",
         bbox_to_anchor=(0.5, -0.02),
         frameon=False,

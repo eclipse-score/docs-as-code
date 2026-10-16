@@ -288,7 +288,11 @@ def _needpie_figure(title: str, legend: bool = True) -> Any:
     figure, axes = matplotlib.pyplot.subplots(
         figsize=(8, 4), subplot_kw={"aspect": "equal"}
     )
-    pie: Any = axes.pie([3, 1], labels=[" valid", " invalid"], autopct="%1.1f%%")
+    pie: Any = axes.pie(
+        [3, 1],
+        labels=[" valid", " invalid"],
+        autopct=lambda pct: f"{pct:.1f}%\n({round(pct * 4 / 100)})",
+    )
     if legend:
         axes.legend(
             pie[0],
@@ -324,18 +328,22 @@ def test_report_pie_moves_legend_below_and_hides_slice_labels() -> None:
     assert tuple(figure.get_size_inches()) == (5, 4.8)
     assert axes.get_legend().get_window_extent().y1 < axes.get_window_extent().y0
     visible = [t.get_text() for t in axes.texts if t.get_visible()]
-    assert visible == ["75.0%", "25.0%"]
+    assert visible == ["75.0%\n(3)", "25.0%\n(1)"]
+    assert all(t.get_fontsize() == 17 for t in axes.texts if t.get_visible())
     matplotlib.pyplot.close(figure)
 
 
 def test_report_pie_without_legend_keeps_slice_labels() -> None:
+    """Projects may patch ``Axes.legend`` away; the numbers must grow anyway."""
     relayout = vars(templates)["_relayout_report_pie"]
     figure = _needpie_figure("Comp Requirements\nStatus (QM)", legend=False)
+    texts = figure.axes[0].texts
 
     relayout(figure)
 
     assert figure.axes[0].get_legend() is None
-    assert all(t.get_visible() for t in figure.axes[0].texts)
+    assert all(t.get_visible() for t in texts)
+    assert sorted(t.get_fontsize() for t in texts) == [12, 12, 17, 17]
     matplotlib.pyplot.close(figure)
 
 
