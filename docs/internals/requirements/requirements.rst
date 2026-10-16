@@ -300,7 +300,7 @@ Versioning
    :implemented: YES
    :version: 1
    :parent_covered: NO: parent talks about setting covered to false, but we want to issue a build error.
-   :satisfies: gd_req__req_suspicious[version==4]
+   :satisfies: gd_req__req_suspicious[version in [3,4]]
    :status: invalid
 
    Docs-as-Code shall check if linked parent needs have different versions, compared to
@@ -439,8 +439,8 @@ Versioning
   :parent_covered: YES
   :satisfies:
     gd_req__req_validity[version==1],
-    gd_req__req_attr_valid_from[version==2],
-    gd_req__req_attr_valid_until[version==2],
+    gd_req__req_attr_valid_from[version in [1,2]],
+    gd_req__req_attr_valid_until[version in [1,2]],
   :status: valid
 
   Docs-as-Code shall enforce that the ``valid_from`` and ``valid_until`` attributes of stakeholder, feature, and component requirements are correct.
@@ -530,7 +530,7 @@ Versioning
   :version: 1
   :satisfies:
      gd_req__arch_hierarchical_structure[version==1],
-     gd_req__arch_build_blocks[version==2],
+     gd_req__arch_build_blocks[version in [1,2]],
   :implemented: YES
   :parent_covered: YES
 
@@ -544,6 +544,7 @@ Versioning
   * Component (comp)
   * Interface (real_arc_int)
   * Interface Operation (real_arc_int_op)
+  * Module (mod) while removed in process description now, we still support it for backwards-compatibility
 
 --------------------------
 Architecture Attributes
