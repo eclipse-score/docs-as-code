@@ -10,12 +10,17 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
+import re
 from pathlib import Path
+from typing import Any
 
+import sphinx_needs.directives.needpie
+from docutils import nodes
 from sphinx.application import Sphinx
 from sphinx.environment import BuildEnvironment
 from sphinx_needs.data import SphinxNeedsData
 from sphinx_needs.need_item import NeedItem
+from sphinx_needs.utils import save_matplotlib_figure
 
 from src.helper_lib import config_setdefault
 
@@ -417,8 +422,13 @@ class _SafetyPieRow:
                     ]
                 )
             else:
-                lines.append(
-                    f"      .. needpie:: {chart_prefix} {name} ({safety_label})"
+                # A continuation line keeps its newline in the directive argument,
+                # so matplotlib draws a two-line, narrower title.
+                lines.extend(
+                    [
+                        f"      .. needpie:: {chart_prefix}",
+                        f"         {name} ({safety_label})",
+                    ]
                 )
                 lines.extend(f"         {line}".rstrip() for line in pie)
 
@@ -460,6 +470,52 @@ class _SafetyPieRow:
 
 
 _safety_pie_row_callable = _SafetyPieRow()
+
+# The second title line written by ``_SafetyPieRow``; it tells the report pies
+# apart from every other needpie in the build.
+_REPORT_PIE_TITLE = re.compile(
+    r"\n(?:Status|Test Coverage|Reference Coverage) \([^()\n]+\)$"
+)
+# Sphinx-Needs writes the value inside a slice as "<percent>%\n(<count>)".
+_SLICE_VALUE = re.compile(r"^[\d.]+%\n\(\d+\)$")
+
+
+def _relayout_report_pie(figure: Any) -> None:
+    """Re-lay out a report pie as a compact chart showing only its numbers.
+
+    Sphinx-Needs draws every needpie at 8x4 inches with the legend beside it,
+    so the circle covers only ~35% of the image width. The reports explain the
+    slice colours once at the top of the page, so the legend and the slice
+    labels are dropped; the circle fills ~60% of the width and the numbers in
+    the slices are enlarged.
+    """
+    axes = figure.axes[0]
+    width, height = 5.0, 4.0
+    # Inches reserved above the circle for the title and below it as margin.
+    figure.set_size_inches(width, height)
+    figure.subplots_adjust(
+        left=0.02, right=0.98, top=1 - 0.75 / height, bottom=0.15 / height
+    )
+    axes.set_ylim(-1.05, 1.05)
+    axes.title.set_fontsize(13)
+    axes.title.set_wrap(True)
+    legend = axes.get_legend()
+    if legend is not None:
+        legend.remove()
+    for text in axes.texts:
+        if _SLICE_VALUE.match(text.get_text()):
+            text.set_fontsize(14)
+        else:
+            text.set_visible(False)
+
+
+def _save_needpie_figure(
+    app: Sphinx, figure: Any, basename: str, fromdocname: str
+) -> nodes.image:
+    """Drop-in for ``save_matplotlib_figure`` that touches report pies only."""
+    if figure.axes and _REPORT_PIE_TITLE.search(figure.axes[0].get_title()):
+        _relayout_report_pie(figure)
+    return save_matplotlib_figure(app, figure, basename, fromdocname)
 
 
 def _post_templates_requiring_reread(app: Sphinx) -> set[str]:
@@ -567,6 +623,7 @@ def setup(app: Sphinx) -> dict[str, object]:
     app.config.needs_render_context.setdefault(
         "safety_pie_row", _safety_pie_row_callable
     )
+    sphinx_needs.directives.needpie.save_matplotlib_figure = _save_needpie_figure
     app.connect("builder-inited", _capture_build_environment)
     # Run after the source-code linker has injected generated testcase Needs and
     # their verification backlinks (priority 525), so report templates can
