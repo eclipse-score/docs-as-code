@@ -896,17 +896,19 @@ for an overview.
        * - Path contains
          - Test level
          - Allowed "verifies" links
-       * - `score/.*/tests/`
-         - Component
-         - `comp`, `comp_req`, `comp_arc_dyn`, `comp_arc_sta`, `real_arc_int`, `real_arc_int_op`
-       * - `score/tests/`
-         - Feature
-         - `feat`, `feat_req`, `feat_arc_dyn`, `feat_arc_sta`, `mod`, `mod_view_dyn`, `mod_view_sta`, `tool_req`
        * - `platform_integration_tests/`
          - Platform
          - `stkh_req`
+       * - `score/tests/`
+         - Feature
+         - `feat`, `feat_req`, `feat_arc_dyn`, `feat_arc_sta`, `mod`, `mod_view_dyn`, `mod_view_sta`, `tool_req`
+       * - `score/.*/tests/`
+         - Component
+         - `comp`, `comp_req`, `comp_arc_dyn`, `comp_arc_sta`, `real_arc_int`, `real_arc_int_op`
+       * - anything else
+         - Unit
+         - `comp_req`, `feat_req`
 
-   Anything else is "unit" level.
 
 `The folder structure <https://eclipse-score.github.io/score/main/contribute/general/folder.html>`__
 is described in the platform.
