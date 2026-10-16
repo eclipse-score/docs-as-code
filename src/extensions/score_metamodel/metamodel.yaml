@@ -232,9 +232,6 @@ needs_types:
       author: ^.*$
       approver: ^.*$
       reviewer: ^.*$
-      # Scopes module_verification_report/platform_verification_report to
-      # requirements with valid_from <= report_version. Unset means unscoped
-      # (all requirements shown), used e.g. for the "_latest" reports.
       report_version: ^v(0|[1-9]\d*)\.(0|[1-9]\d*)(\.(0|[1-9]\d*))?$
     # req-Id: tool_req__docs_doc_generic_mandatory
     mandatory_links:
@@ -322,6 +319,7 @@ needs_types:
       rationale: ^.+$
       # req-Id: tool_req__docs_common_attr_security
       security: ^(YES|NO)$
+      # req-Id: tool_req__docs_req_attr_validity_correctness
       valid_from: ^v(0|[1-9]\d*)\.(0|[1-9]\d*)(\.(0|[1-9]\d*))?$
     optional_options:
       # req-Id: tool_req__docs_req_attr_testcov
@@ -350,6 +348,7 @@ needs_types:
       status: ^(valid|invalid|valid_inspected)$
       # req-Id: tool_req__docs_common_attr_description
       content: ^[\s\S]+$
+      # req-Id: tool_req__docs_req_attr_validity_correctness
       valid_from: ^v(0|[1-9]\d*)\.(0|[1-9]\d*)(\.(0|[1-9]\d*))?$
     mandatory_links:
       satisfied_by: feat
@@ -395,6 +394,10 @@ needs_types:
       # req-Id: tool_req__docs_req_attr_testcov
       testcovered: ^(YES|NO)$
       hash: ^.*$
+      # req-Id: tool_req__docs_req_attr_validity_correctness
+      valid_from: ^v(0|[1-9]\d*)\.(0|[1-9]\d*)(\.(0|[1-9]\d*))?$
+      # req-Id: tool_req__docs_req_attr_validity_correctness
+      valid_until: ^v(0|[1-9]\d*)\.(0|[1-9]\d*)(\.(0|[1-9]\d*))?$
     tags:
       - requirement
       - requirement_excl_process
@@ -1219,6 +1222,8 @@ needs_extra_links:
 #   - <relation>: defines the relation which is used derive the type of the parent need
 #   - condition: defines the condition that should be checked
 #     - [and / or / xor / not]
+#     - `self.<attribute>` refers to an attribute of the need the check is applied to,
+#       e.g. `safety == self.safety` compares the linked need with its origin
 # - info_only [OPTIONAL]: if `true`, violations are reported as info instead of warning
 ##############################################################
 
@@ -1240,6 +1245,16 @@ graph_checks:
     check_all:
       fulfils: safety != QM
     explanation: An QM architecture element cannot implement ASIL requirements.
+
+  # req-Id: tool_req__docs_arch_link_safety_to_req
+  tool_req__docs_arch_link_safety_to_req:
+    needs:
+      include: feat_arc_sta, feat_arc_dyn, logic_arc_int, comp, comp_arc_sta, comp_arc_dyn, real_arc_int
+      condition: safety != QM
+    check_one:
+      fulfils: safety == self.safety
+    explanation: A safety relevant architecture element must be linked to at least one requirement with the exact same safety value via fulfils.
+    info_only: true
 
   # req-Id: tool_req__docs_req_arch_link_safety_to_arch
   tool_req__docs_req_arch_link_safety_to_arch:
@@ -1280,3 +1295,16 @@ graph_checks:
           - id contains aspice_40__iic
           - id contains std_wp
     explanation: Workproducts may only link to ASPICE 40 IIC stakeholder requirements. Please ensure that the linked requirement is an ASPICE 40 IIC stakeholder requirement.
+
+  # req-Id: tool_req__docs_saf_attrs_mitigated_by
+  tool_req__docs_saf_attrs_mitigated_by:
+    needs:
+      include: feat_saf_dfa, comp_saf_dfa, feat_saf_fmea, comp_saf_fmea
+      condition: status == valid
+    check_one:
+      mitigated_by:
+        or:
+          - safety == ASIL_B
+          - type == aou_req
+    explanation: Valid safety analyses should link to at least one same-level or higher-safety requirement, or an Assumption of Use requirement.
+    info_only: true

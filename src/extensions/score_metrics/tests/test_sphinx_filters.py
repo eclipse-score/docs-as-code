@@ -21,10 +21,17 @@ from score_metrics.sphinx_filters import (
     generic_pie_items_by_tag,
     generic_pie_linked_items,
 )
+from score_pytest.attribute_plugin import add_test_properties
 from sphinx_needs.need_item import NeedItem
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_generic_pie_linked_items_matches_source_by_id_prefix() -> None:
+    """Test generic pie linked items matches source by id prefix."""
     needs = cast(
         list[NeedItem],
         [
@@ -46,7 +53,13 @@ def test_generic_pie_linked_items_matches_source_by_id_prefix() -> None:
     assert results == [1, 0]
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_generic_pie_items_by_tag_matches_source_by_id_prefix() -> None:
+    """Test generic pie items by tag matches source by id prefix."""
     needs = cast(
         list[NeedItem],
         [
@@ -106,6 +119,11 @@ def reset_global_metrics():
     sphinx_filters.CALCULATED_METRICS = {}
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_get_key_values_raises_key_error_when_global_is_empty() -> None:
     """It raises KeyError if CALCULATED_METRICS is still empty."""
     results: list[int] = []
@@ -113,6 +131,11 @@ def test_get_key_values_raises_key_error_when_global_is_empty() -> None:
         sphinx_filters._get_key_values(results, ["overall_metrics:total"])  # pyright: ignore[reportPrivateUsage]
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_get_key_values_appends_values_when_metrics_loaded() -> None:
     """It appends resolved integer values once metrics data is loaded."""
     sphinx_filters.CALCULATED_METRICS = EXAMPLE_METRICS
@@ -130,6 +153,11 @@ def test_get_key_values_appends_values_when_metrics_loaded() -> None:
     assert results == [61, 46, 16]
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_get_metrics_with_overall_total_considered_when_metrics_loaded() -> None:
     """It computes remainder from overall total and selected metrics."""
     sphinx_filters.CALCULATED_METRICS = EXAMPLE_METRICS
@@ -147,6 +175,11 @@ def test_get_metrics_with_overall_total_considered_when_metrics_loaded() -> None
     assert results == [10, 46, 3, 2]
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_get_metrics_with_custom_type_total_considered_with_total_suffix() -> None:
     """It uses trailing ':total' as baseline and computes remainder."""
     sphinx_filters.CALCULATED_METRICS = EXAMPLE_METRICS
@@ -164,6 +197,11 @@ def test_get_metrics_with_custom_type_total_considered_with_total_suffix() -> No
     assert results == [12, 46, 3]
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_get_metrics_with_custom_type_total_considered_without_total_suffix() -> None:
     """It appends values directly when trailing ':total' is not provided."""
     sphinx_filters.CALCULATED_METRICS = EXAMPLE_METRICS
@@ -180,6 +218,11 @@ def test_get_metrics_with_custom_type_total_considered_without_total_suffix() ->
     assert results == [43, 3]
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_get_just_metrics_appends_values_when_metrics_loaded() -> None:
     """It appends selected values without remainder logic."""
     sphinx_filters.CALCULATED_METRICS = EXAMPLE_METRICS
@@ -195,6 +238,11 @@ def test_get_just_metrics_appends_values_when_metrics_loaded() -> None:
     assert results == [61, 16]
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_get_metrics_with_custom_type_total_considered_empty_kwargs_raises_index_error() -> (
     None
 ):

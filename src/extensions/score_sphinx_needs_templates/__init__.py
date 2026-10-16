@@ -290,6 +290,178 @@ class _SplitByReference:
 _split_by_reference_callable = _SplitByReference()
 
 
+class _IdFilterList:
+    """Render Need IDs as the quoted ``[...]`` literal of an ``id in`` filter."""
+
+    def __call__(self, ids: list[str]) -> str:
+        return "[" + ", ".join(f'"{need_id}"' for need_id in ids) + "]"
+
+
+_id_filter_list_callable = _IdFilterList()
+
+
+class _WorkproductRows:
+    """Render work-product rows for a six-space indented ``list-table``.
+
+    Each row links the work product, its kind, the realising document and its
+    status. Both document cells are needtables over the same filter, differing
+    only in ``:columns:``, so a missing document renders as an empty cell.
+    """
+
+    def __call__(self, slug_norm: str, workproducts: list[list[str]]) -> str:
+        rows: list[str] = []
+        for wp_id, kind in workproducts:
+            doc_filter = (
+                f'type == "document" and "{slug_norm}" in id.replace("_", "").lower()'
+                f' and "{wp_id}" in realizes'
+            )
+            rows.append(
+                "\n".join(
+                    [
+                        f"      * - :need:`{wp_id}`",
+                        f"        - {kind}",
+                        "        - .. needtable::",
+                        f"             :filter: {doc_filter}",
+                        "             :columns: id",
+                        "             :style: table",
+                        "        - .. needtable::",
+                        f"             :filter: {doc_filter}",
+                        "             :columns: status",
+                        "             :style: table",
+                    ]
+                )
+            )
+        return "".join(f"\n{row}" for row in rows) + "\n"
+
+
+_workproduct_rows_callable = _WorkproductRows()
+
+
+class _SafetyPieRow:
+    """Render one row of pies restricted to a single safety class.
+
+    Shared by the module and platform verification reports, so that QM and
+    ASIL figures are never mixed in one chart. QM Needs are not formally
+    inspected, so there ``valid`` already is the green "done" slice rather
+    than the yellow "not inspected yet" one; a QM Need that is nevertheless
+    ``valid_inspected`` counts as ``valid``, as in the metamodel graph checks.
+
+    ``with_reference`` adds a third, reference-coverage pie; ``referenced`` and
+    ``missing`` must already be partitioned over this safety class alone. The
+    raster stays at three columns either way, so that a two-pie row renders
+    its charts at exactly the same size as a three-pie one.
+
+    ``count`` decides between pies and placeholders only; it is deliberately
+    not shown, because it is resolved through the Need graph while the pies
+    count through Sphinx-Needs filters, and the two can disagree on links
+    carrying a ``[version==N]`` selector.
+
+    This is a render helper instead of a Jinja macro because the MiniJinja
+    environment has no template loader, so macros cannot be shared between
+    templates.
+    """
+
+    def __call__(
+        self,
+        title: str,
+        subject: str,
+        base: str,
+        safety: str,
+        safety_label: str,
+        count: int,
+        with_reference: bool = False,
+        referenced: list[str] | None = None,
+        missing: list[str] | None = None,
+    ) -> str:
+        scope = f'{base} and safety == "{safety}"'
+        # (slice label, status condition) per pie slice; green "done" comes first.
+        statuses = (
+            [
+                ("valid", '(status == "valid" or status == "valid_inspected")'),
+                ("invalid", 'status == "invalid"'),
+            ]
+            if safety == "QM"
+            else [
+                (state, f'status == "{state}"')
+                for state in ("valid_inspected", "valid", "invalid")
+            ]
+        )
+        status_colors = (
+            "#37a12d, #ca2828" if safety == "QM" else "#37a12d, #f5c518, #ca2828"
+        )
+        # docutils normalises ``:class:`` values, so avoid underscores in them.
+        safety_css = safety.lower().replace("_", "-")
+        chart_prefix = f"{title} {subject}".strip()
+
+        lines = [
+            "",
+            f".. rubric:: {safety_label} — {subject}",
+            f"   :class: safety-class-heading safety-{safety_css}",
+            "",
+            ".. grid:: 1 2 3 3",
+            "   :gutter: 2",
+            "   :class-row: score-pie-row",
+        ]
+
+        def grid_item(name: str, pie: list[str]) -> None:
+            lines.extend(["", "   .. grid-item::", ""])
+            if count == 0:
+                lines.extend(
+                    [
+                        "      .. raw:: html",
+                        "",
+                        '         <div class="empty-pie">',
+                        f'            <span class="empty-pie-title">{subject} {name} ({safety_label})</span>',
+                        f'            <span class="empty-pie-text">no {safety_label} {subject.lower()}</span>',
+                        "         </div>",
+                    ]
+                )
+            else:
+                lines.append(
+                    f"      .. needpie:: {chart_prefix} {name} ({safety_label})"
+                )
+                lines.extend(f"         {line}".rstrip() for line in pie)
+
+        grid_item(
+            "Status",
+            [
+                f":labels: {', '.join(label for label, _ in statuses)}",
+                f":colors: {status_colors}",
+                ":legend:",
+                "",
+                *(f"{scope} and {condition}" for _, condition in statuses),
+            ],
+        )
+        grid_item(
+            "Test Coverage",
+            [
+                ":labels: fully covered, partially covered, not covered",
+                ":colors: #37a12d, #f0a500, #ca2828",
+                ":legend:",
+                "",
+                f"{scope} and fully_verifies_back",
+                f"{scope} and partially_verifies_back and not fully_verifies_back",
+                f"{scope} and not fully_verifies_back and not partially_verifies_back",
+            ],
+        )
+        if with_reference:
+            grid_item(
+                "Reference Coverage",
+                [
+                    ":labels: referenced by lower, not referenced",
+                    ":colors: #37a12d, #ca2828",
+                    ":legend:",
+                    "",
+                    f"id in {_id_filter_list_callable(referenced or [])}",
+                    f"id in {_id_filter_list_callable(missing or [])}",
+                ],
+            )
+        return "\n".join(lines) + "\n"
+
+
+_safety_pie_row_callable = _SafetyPieRow()
+
+
 def _post_templates_requiring_reread(app: Sphinx) -> set[str]:
     """Return post-template names opting into the post-merge rendering pass."""
     template_folder = _needs_template_folder()
@@ -385,6 +557,15 @@ def setup(app: Sphinx) -> dict[str, object]:
     )
     app.config.needs_render_context.setdefault(
         "split_by_reference", _split_by_reference_callable
+    )
+    app.config.needs_render_context.setdefault(
+        "id_filter_list", _id_filter_list_callable
+    )
+    app.config.needs_render_context.setdefault(
+        "workproduct_rows", _workproduct_rows_callable
+    )
+    app.config.needs_render_context.setdefault(
+        "safety_pie_row", _safety_pie_row_callable
     )
     app.connect("builder-inited", _capture_build_environment)
     # Run after the source-code linker has injected generated testcase Needs and
