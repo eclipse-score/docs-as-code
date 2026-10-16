@@ -3838,7 +3838,7 @@
   {
     "name": "test_graph_checks__test_info_only[all_default]",
     "file": "src/extensions/score_metamodel/tests/test_graph_checks.py",
-    "line": "277",
+    "line": "279",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3852,7 +3852,7 @@
   {
     "name": "test_graph_checks__test_info_only[all_false]",
     "file": "src/extensions/score_metamodel/tests/test_graph_checks.py",
-    "line": "277",
+    "line": "279",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3866,7 +3866,7 @@
   {
     "name": "test_graph_checks__test_info_only[all_true]",
     "file": "src/extensions/score_metamodel/tests/test_graph_checks.py",
-    "line": "277",
+    "line": "279",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3880,7 +3880,7 @@
   {
     "name": "test_graph_checks__test_info_only[one_default]",
     "file": "src/extensions/score_metamodel/tests/test_graph_checks.py",
-    "line": "277",
+    "line": "279",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3894,7 +3894,7 @@
   {
     "name": "test_graph_checks__test_info_only[one_true]",
     "file": "src/extensions/score_metamodel/tests/test_graph_checks.py",
-    "line": "277",
+    "line": "279",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3908,7 +3908,7 @@
   {
     "name": "test_graph_checks__test_info_only_keeps_message",
     "file": "src/extensions/score_metamodel/tests/test_graph_checks.py",
-    "line": "300",
+    "line": "302",
     "result": "passed",
     "repo_name": null,
     "hash": null,
