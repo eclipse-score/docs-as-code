@@ -26,9 +26,9 @@ cc_library(
     srcs = ["implementation.cc"],
     hdrs = [":public_headers"],
     textual_hdrs = [":generated_config"],
-    # Subpackages belong to this component; sibling components do not.
+    # The sibling dependency itself uses our local support library. Component
+    # membership follows labels even when the dependency path leaves the package.
     deps = [
-        "//src/tests/docs_bzl/scenarios/reference_integration/modern_module/docs/components/component/detail:support",
         "//src/tests/docs_bzl/scenarios/reference_integration/modern_module/docs/components/unlinked_component:implementation",
         "@bazel_tools//tools/cpp:malloc",
     ],
@@ -79,4 +79,13 @@ docs_bundle(
     ],
     primary_need_id = "comp__modern_component",
     visibility = ["//visibility:public"],
+)
+
+# This independent bundle deliberately selects a sibling's header-only API.
+# Its own files remain selected, but its sibling implementation dependency does
+# not become ours. The local support library behind that dependency is eligible.
+docs_bundle(
+    name = "selected_sibling_api",
+    code_targets = ["//src/tests/docs_bzl/scenarios/reference_integration/modern_module/docs/components/unlinked_component:api"],
+    visibility = ["//visibility:private"],
 )

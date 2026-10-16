@@ -148,46 +148,75 @@ def test_bundle_metadata_is_added_to_the_explicit_primary_need():
 
 
 @pytest.mark.bazel_cached
-def test_component_files_and_sourcelinks_share_the_component_boundary():
-    """Local implementation files feed the scanner; sibling implementation does not.
+@pytest.mark.parametrize(
+    ("bundle_name", "expected_files", "expected_link_files"),
+    [
+        pytest.param(
+            "docs_bundle",
+            (
+                "component/api.h",
+                "component/implementation.cc",
+                "component/implementation.py",
+                "component/detail/support.cc",
+                "component/generated/config.def",
+                "unlinked_component/api.h",
+            ),
+            (
+                "component/implementation.py",
+                "component/detail/support.cc",
+                "unlinked_component/api.h",
+            ),
+            id="local_support_reached_only_through_sibling",
+        ),
+        pytest.param(
+            "selected_sibling_api",
+            (
+                "component/api.h",
+                "component/detail/support.cc",
+                "unlinked_component/api.h",
+            ),
+            ("component/detail/support.cc", "unlinked_component/api.h"),
+            id="explicit_sibling_api_excludes_its_sibling_implementation",
+        ),
+    ],
+)
+def test_component_files_and_sourcelinks_share_the_component_boundary(
+    bundle_name: str,
+    expected_files: tuple[str, ...],
+    expected_link_files: tuple[str, ...],
+):
+    """Explicit selections and local leaves survive foreign dependency paths.
 
-    The local support library and the sibling library both carry traceability
-    markers. Only the local marker may enter this component's source-link cache.
-    Its public sibling header remains included because it is explicitly declared
-    in hdrs. api.h is shared by two libraries and must appear only once.
+    The linked component reaches its local support library only through the
+    sibling implementation. The second bundle explicitly selects the sibling's
+    header-only API, which depends on that same sibling implementation. In both
+    cases the implementation's files and marker are excluded, while the local
+    support files and marker are retained. The selected API's own header and
+    marker must also survive despite its out-of-package label.
     """
     scenario = "reference_integration/modern_module/docs/components/component"
     package = f"//src/tests/docs_bzl/scenarios/{scenario}"
-    prefix = package[2:] + "/"
-    sibling_header = prefix.rsplit("component/", 1)[0] + "unlinked_component/api.h"
+    components_prefix = package[2:].rsplit("/", 1)[0] + "/"
     # Other scenario builds may leave this target cached in multiple Bazel
     # configurations. Inspect only the current top-level configuration.
     result = run_bazel(
         [
             "cquery",
-            f"config({package}:docs_bundle.__internal__.files, target)",
+            f"config({package}:{bundle_name}.__internal__.files, target)",
             "--output=starlark",
             '--starlark:expr="\\n".join([f.short_path for f in target.files.to_list()])',
         ]
     )
     assert sorted(result.stdout.splitlines()) == sorted(
-        [
-            prefix + "api.h",
-            prefix + "implementation.cc",
-            prefix + "implementation.py",
-            prefix + "detail/support.cc",
-            prefix + "generated/config.def",
-            sibling_header,
-        ]
+        components_prefix + path for path in expected_files
     )
 
-    run_scenario("build", scenario, ":docs_bundle.__internal__.sourcelinks_json")
+    run_scenario("build", scenario, f":{bundle_name}.__internal__.sourcelinks_json")
     cache = built_output(
-        f"scenarios/{scenario}", "docs_bundle.__internal__.sourcelinks_json.json"
+        f"scenarios/{scenario}", f"{bundle_name}.__internal__.sourcelinks_json.json"
     )
     links = json.loads(cache.read_text(encoding="utf-8"))
     # Repository metadata entries have no file; compare the actual code links.
     assert {link["file"] for link in links if "file" in link} == {
-        prefix + "implementation.py",
-        prefix + "detail/support.cc",
+        components_prefix + path for path in expected_link_files
     }

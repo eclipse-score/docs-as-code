@@ -113,7 +113,7 @@
           "sections": [
             "S-CORE Modern Component"
           ],
-          "source_code_link": "https://github.com/placeholder/placeholder/blob/unknown/src/tests/docs_bzl/scenarios/reference_integration/modern_module/docs/components/component/implementation.py#L17<>src/tests/docs_bzl/scenarios/reference_integration/modern_module/docs/components/component/implementation.py:17, https://github.com/placeholder/placeholder/blob/unknown/src/tests/docs_bzl/scenarios/reference_integration/modern_module/docs/components/component/detail/support.cc#L13<>src/tests/docs_bzl/scenarios/reference_integration/modern_module/docs/components/component/detail/support.cc:13",
+          "source_code_link": "https://github.com/placeholder/placeholder/blob/unknown/src/tests/docs_bzl/scenarios/reference_integration/modern_module/docs/components/component/implementation.py#L17<>src/tests/docs_bzl/scenarios/reference_integration/modern_module/docs/components/component/implementation.py:17, https://github.com/placeholder/placeholder/blob/unknown/src/tests/docs_bzl/scenarios/reference_integration/modern_module/docs/components/component/detail/support.cc#L13<>src/tests/docs_bzl/scenarios/reference_integration/modern_module/docs/components/component/detail/support.cc:13, https://github.com/placeholder/placeholder/blob/unknown/src/tests/docs_bzl/scenarios/reference_integration/modern_module/docs/components/unlinked_component/api.h#L14<>src/tests/docs_bzl/scenarios/reference_integration/modern_module/docs/components/unlinked_component/api.h:14",
           "title": "Modern component implementation is traceable",
           "type": "tool_req",
           "type_name": "Tool Requirement",

@@ -11,4 +11,5 @@
 // SPDX-License-Identifier: Apache-2.0
 // *******************************************************************************
 #pragma once
+// req-traceability: tool_req__modern_component
 int unlinked_component_value();
