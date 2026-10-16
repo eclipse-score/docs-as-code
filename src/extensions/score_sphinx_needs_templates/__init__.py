@@ -483,12 +483,18 @@ def _relayout_report_pie(figure: Any) -> None:
 
     Sphinx-Needs draws every needpie at 8x4 inches with the legend beside it,
     so the circle covers only ~35% of the image width. The slice labels repeat
-    the legend and are hidden, which lets the circle fill ~80% of the width.
+    the legend and are hidden, which lets the circle fill ~60% of the width
+    and leaves room for large slice numbers.
     """
     axes = figure.axes[0]
-    figure.set_size_inches(5, 6)
-    figure.subplots_adjust(left=0.02, right=0.98, top=0.87, bottom=0.17)
+    width, height = 5.0, 4.8
+    # Inches reserved above the circle for the title and below it for the legend.
+    figure.set_size_inches(width, height)
+    figure.subplots_adjust(
+        left=0.02, right=0.98, top=1 - 0.75 / height, bottom=1.05 / height
+    )
     axes.set_ylim(-1.05, 1.05)
+    axes.title.set_fontsize(13)
     axes.title.set_wrap(True)
     legend = axes.get_legend()
     if legend is None:
@@ -499,7 +505,7 @@ def _relayout_report_pie(figure: Any) -> None:
         if label and any(name.startswith(label) for name in names):
             text.set_visible(False)
         else:
-            text.set_fontsize(10)
+            text.set_fontsize(17)
     # ``Axes.legend`` replaces the old legend; its "legend" heading carries no
     # information and is dropped.
     axes.legend(
@@ -510,7 +516,7 @@ def _relayout_report_pie(figure: Any) -> None:
         frameon=False,
         borderaxespad=0,
         handlelength=1.2,
-        fontsize=10,
+        fontsize=12,
     )
 
 

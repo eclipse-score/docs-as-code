@@ -321,7 +321,7 @@ def test_report_pie_moves_legend_below_and_hides_slice_labels() -> None:
     relayout(figure)
     figure.canvas.draw()
 
-    assert tuple(figure.get_size_inches()) == (5, 6)
+    assert tuple(figure.get_size_inches()) == (5, 4.8)
     assert axes.get_legend().get_window_extent().y1 < axes.get_window_extent().y0
     visible = [t.get_text() for t in axes.texts if t.get_visible()]
     assert visible == ["75.0%", "25.0%"]
