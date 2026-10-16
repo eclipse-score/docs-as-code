@@ -257,7 +257,7 @@ def test_get_metrics_with_custom_type_total_considered_empty_kwargs_raises_index
         sphinx_filters.get_metrics_with_first_value_total(needs=[], results=results)
 
 
-_PROPS = {
+_PROPS: dict[str, Any] = {
     "partially_verifies": [],
     "test_type": "interface-test",
     "derivation_technique": "explorative-testing",
@@ -265,7 +265,7 @@ _PROPS = {
 
 
 def _need(need_id: str, need_type: str, link: str, **fields: Any) -> NeedItem:
-    need = {
+    need: dict[str, Any] = {
         "id": need_id,
         "type": need_type,
         link: ["comp__x"],
@@ -332,7 +332,7 @@ def _call_like_needpie(signature: str, needs: list[NeedItem]) -> list[int]:
     args = ff.args.split(",") if ff.args else []
     results: list[int] = []
     ff.func(
-        needs=needs,
+        needs=cast(Any, needs),
         results=results,
         **{f"arg{index + 1}": arg for index, arg in enumerate(args)},
     )
@@ -381,7 +381,7 @@ def test_filter_func_arguments_must_not_contain_a_dot() -> None:
         )
 
 
-_DEFAULTS = {"satisfied_by": [], "belongs_to": []}
+_DEFAULTS: dict[str, list[str]] = {"satisfied_by": [], "belongs_to": []}
 
 
 def _pie_counts(rst: str, needs: list[NeedItem]) -> list[list[int]]:
@@ -408,7 +408,7 @@ def _pie_counts(rst: str, needs: list[NeedItem]) -> list[list[int]]:
 @add_test_properties(**_PROPS)
 def test_safety_pie_row_filter_funcs_match_inline_filters() -> None:
     """The central filter functions count exactly what the inline filters count."""
-    row = sphinx_needs_templates._safety_pie_row_callable
+    row = vars(sphinx_needs_templates)["_safety_pie_row_callable"]
     in_scope = ["r1", "r2", "r3"]
     req_base = f'type == "comp_req" and "comp__x" in satisfied_by and id in {in_scope}'
     arc_base = 'type in ["comp_arc_sta", "comp_arc_dyn"] and "comp__x" in belongs_to'
