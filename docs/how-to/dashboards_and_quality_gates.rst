@@ -60,9 +60,39 @@ explicit override in ``docs/conf.py``:
 When this setting is provided, the explicit list is used instead of
 autodiscovery.
 
-Use ``score_metrics_include_external_needs = True`` only in repositories that
+Use ``score_metrics_include_external_needs = True`` in repositories that
 intentionally aggregate requirements across module dependencies, such as
-integration repositories.
+integration repositories, or combine it with the optional feature scope below.
+
+Optional External Feature Scope
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A module repository can report on feature requirements maintained in another
+repository, such as ``score``, without counting unrelated external requirements.
+First import that repository's needs data through the existing external-needs
+configuration, then configure the metrics in ``docs/conf.py``:
+
+.. code-block:: python
+
+   score_metrics_include_external_needs = True
+   score_metrics_requirement_types = "feat_req,comp_req,aou_req"
+   score_metrics_external_feature_ids = ["feat__lifecycle"]
+
+Replace the example feature ID with the exact ID referenced by the imported
+feature requirements' ``satisfied_by`` links. Multiple feature IDs are supported.
+All local requirements of the selected requirement types remain included.
+External requirements are included only if they are ``feat_req`` needs with a
+``satisfied_by`` link to at least one selected feature. Requirements without
+tests are still counted; unrelated external requirements are excluded.
+Local tests can link to the imported requirements through ``fully_verifies``
+or ``partially_verifies`` as usual. The metrics selection does not remove
+imported needs from the documentation or from test-reference resolution.
+
+This feature is opt-in: ``score_metrics_external_feature_ids`` defaults to
+``[]``, preserving the existing local-only or full-aggregation behavior.
+The scope has no effect while ``score_metrics_include_external_needs`` is
+``False``. It does not import external needs automatically or change the
+configured requirement types.
 
 Building the Dashboard
 ----------------------
