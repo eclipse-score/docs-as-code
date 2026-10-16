@@ -89,7 +89,7 @@ def clean_builddir_if_stale(build_dir: Path, sentinel_files: list[Path]) -> None
         build_dir, sentinel_files
     ):
         print(
-            "Previous build had warnings or the hash changed. Removing _build to ensure a clean build."
+            f"Previous build had warnings or the hash changed. Removing {build_dir} to ensure a clean build."
         )
         shutil.rmtree(build_dir)
 
