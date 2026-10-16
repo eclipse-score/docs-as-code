@@ -2311,7 +2311,7 @@
         },
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 1285,
+          "line": 1297,
           "tag": "# req-Id:",
           "need": "tool_req__docs_saf_attrs_mitigated_by",
           "full_line": "# req-Id: tool_req__docs_saf_attrs_mitigated_by",
@@ -2636,7 +2636,7 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 1227,
+          "line": 1229,
           "tag": "# req-Id:",
           "need": "tool_req__docs_common_attr_safety_link_check",
           "full_line": "# req-Id: tool_req__docs_common_attr_safety_link_check",
@@ -2654,10 +2654,28 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 1236,
+          "line": 1238,
           "tag": "# req-Id:",
           "need": "tool_req__docs_arch_link_qm_to_safety_req",
           "full_line": "# req-Id: tool_req__docs_arch_link_qm_to_safety_req",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        }
+      ],
+      "TestLinks": []
+    }
+  },
+  {
+    "need": "tool_req__docs_arch_link_safety_to_req",
+    "links": {
+      "CodeLinks": [
+        {
+          "file": "src/extensions/score_metamodel/metamodel.yaml",
+          "line": 1247,
+          "tag": "# req-Id:",
+          "need": "tool_req__docs_arch_link_safety_to_req",
+          "full_line": "# req-Id: tool_req__docs_arch_link_safety_to_req",
           "repo_name": "local_repo",
           "hash": "",
           "url": ""
@@ -2672,7 +2690,7 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 1245,
+          "line": 1257,
           "tag": "# req-Id:",
           "need": "tool_req__docs_req_arch_link_safety_to_arch",
           "full_line": "# req-Id: tool_req__docs_req_arch_link_safety_to_arch",
@@ -2690,7 +2708,7 @@
       "CodeLinks": [
         {
           "file": "src/extensions/score_metamodel/metamodel.yaml",
-          "line": 1264,
+          "line": 1276,
           "tag": "# req-Id:",
           "need": "tool_req__docs_arch_link_security",
           "full_line": "# req-Id: tool_req__docs_arch_link_security",
@@ -3165,86 +3183,6 @@
         {
           "file": "src/tests/docs_bzl/scenarios/nested_bundles/child/example.cc",
           "line": 1,
-          "tag": "// req-traceability:",
-          "need": "tool_req__docs_bzl_nested_bundle",
-          "full_line": "// req-traceability: tool_req__docs_bzl_nested_bundle",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        },
-        {
-          "file": "bazel-out/k8-fastbuild/bin/src/tests/docs_bzl/scenarios/nested_bundles/generated/generated_component.cc",
-          "line": 1,
-          "tag": "// req-traceability:",
-          "need": "tool_req__docs_bzl_nested_bundle",
-          "full_line": "// req-traceability: tool_req__docs_bzl_nested_bundle",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        },
-        {
-          "file": "bazel-out/k8-fastbuild/bin/src/tests/docs_bzl/scenarios/nested_bundles/generated/custom_generated_component.S",
-          "line": 13,
-          "tag": "// req-traceability:",
-          "need": "tool_req__docs_bzl_nested_bundle",
-          "full_line": "// req-traceability: tool_req__docs_bzl_nested_bundle",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        },
-        {
-          "file": "src/tests/docs_bzl/scenarios/nested_bundles/child/mixed_py_manual.py",
-          "line": 14,
-          "tag": "# req-traceability:",
-          "need": "tool_req__docs_bzl_nested_bundle",
-          "full_line": "# req-traceability: tool_req__docs_bzl_nested_bundle",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        },
-        {
-          "file": "bazel-out/k8-fastbuild/bin/src/tests/docs_bzl/scenarios/nested_bundles/generated/mixed_py_generated.py",
-          "line": 14,
-          "tag": "# req-traceability:",
-          "need": "tool_req__docs_bzl_nested_bundle",
-          "full_line": "# req-traceability: tool_req__docs_bzl_nested_bundle",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        },
-        {
-          "file": "bazel-out/k8-fastbuild/bin/src/tests/docs_bzl/scenarios/nested_bundles/generated/genrule_component.cc",
-          "line": 13,
-          "tag": "// req-traceability:",
-          "need": "tool_req__docs_bzl_nested_bundle",
-          "full_line": "// req-traceability: tool_req__docs_bzl_nested_bundle",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        },
-        {
-          "file": "bazel-out/k8-fastbuild/bin/src/tests/docs_bzl/scenarios/nested_bundles/generated/genrule_component.S",
-          "line": 13,
-          "tag": "// req-traceability:",
-          "need": "tool_req__docs_bzl_nested_bundle",
-          "full_line": "// req-traceability: tool_req__docs_bzl_nested_bundle",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        },
-        {
-          "file": "src/tests/docs_bzl/scenarios/nested_bundles/child/filegroup_manual.cc",
-          "line": 13,
-          "tag": "// req-traceability:",
-          "need": "tool_req__docs_bzl_nested_bundle",
-          "full_line": "// req-traceability: tool_req__docs_bzl_nested_bundle",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        },
-        {
-          "file": "bazel-out/k8-fastbuild/bin/src/tests/docs_bzl/scenarios/nested_bundles/generated/filegroup_generated_component.S",
-          "line": 13,
           "tag": "// req-traceability:",
           "need": "tool_req__docs_bzl_nested_bundle",
           "full_line": "// req-traceability: tool_req__docs_bzl_nested_bundle",

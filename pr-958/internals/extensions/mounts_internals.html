@@ -511,16 +511,16 @@ be a root in a standalone manifest and a child in another composition.</p></li>
 <p>Standalone bundle Needs actions receive a local-only view containing the
 bundle’s own root entries; composed builds receive the complete active
 composition. Both views use the same schema and runtime resolver.</p>
-<p>Each <code class="docutils literal notranslate"><span class="pre">bundle.code_targets</span></code> entry keeps its identity and adds sorted
-<code class="docutils literal notranslate"><span class="pre">files</span></code>. Explicitly selected targets keep their sources even when their
-labels are outside the bundle. Dependency traversal stays in the same
-repository and below the BUILD package containing <code class="docutils literal notranslate"><span class="pre">docs_bundle</span></code>; subpackages
-are included, while sibling packages and external repositories are excluded.
-An excluded dependency ends that branch, even if it depends back on a target in
-the bundle package. The boundary is independent of <code class="docutils literal notranslate"><span class="pre">source_dir</span></code>: for a bundle
-declared in <code class="docutils literal notranslate"><span class="pre">components/memory</span></code>, <code class="docutils literal notranslate"><span class="pre">components/memory/detail</span></code> is in,
-<code class="docutils literal notranslate"><span class="pre">components/sensor</span></code> is out, and a dependency under an external repository is
-out.</p>
+<p>Each bundle declares a private <code class="docutils literal notranslate"><span class="pre">&lt;name&gt;.__internal__.files</span></code> target whose
+<code class="docutils literal notranslate"><span class="pre">DefaultInfo.files</span></code> contains its implementation artifacts. The source-link
+cache scans exactly that file set. The public bundle manifest does not expose
+implementation file lists.</p>
+<p>Explicitly selected code targets contribute their declared sources and headers.
+Transitive dependency targets are filtered to the bundle’s repository and BUILD
+package, including subpackages. Local targets reached through foreign
+dependencies remain included. The boundary is independent of <code class="docutils literal notranslate"><span class="pre">source_dir</span></code>;
+nested documentation bundles keep their own file sets. Source/header attributes
+resolve filegroups and generated outputs without inspecting generator inputs.</p>
 <p>At <code class="docutils literal notranslate"><span class="pre">config-inited</span></code>, <code class="docutils literal notranslate"><span class="pre">score_mounts</span></code> resolves all directory source mounts before
 constructing <code class="docutils literal notranslate"><span class="pre">config.mounts</span></code>. A mount below Sphinx’s primary source directory
 is added to the primary <code class="docutils literal notranslate"><span class="pre">exclude_patterns</span></code> as a relative <code class="docutils literal notranslate"><span class="pre">&lt;mount&gt;/**</span></code> pattern.

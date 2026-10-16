@@ -501,17 +501,17 @@ of <a class="reference internal" href="../internals/requirements/requirements.ht
 <h2>Scanning Source Code for Links<a class="headerlink" href="#scanning-source-code-for-links" title="Link to this heading">#</a></h2>
 <p>In your <code class="docutils literal notranslate"><span class="pre">BUILD</span></code> files, pass the implementation targets to the <code class="docutils literal notranslate"><span class="pre">docs</span></code> rule
 as <code class="docutils literal notranslate"><span class="pre">code_targets</span></code>. Their <code class="docutils literal notranslate"><span class="pre">srcs</span></code>, <code class="docutils literal notranslate"><span class="pre">hdrs</span></code>, and <code class="docutils literal notranslate"><span class="pre">textual_hdrs</span></code> are scanned,
-including those of their <code class="docutils literal notranslate"><span class="pre">deps</span></code> recursively. This means that a
-<code class="docutils literal notranslate"><span class="pre">cc_executable</span></code> also covers source files from the <code class="docutils literal notranslate"><span class="pre">cc_library</span></code> targets it
+including those of their <code class="docutils literal notranslate"><span class="pre">deps</span></code> recursively within the component boundary
+described below. This means that a <code class="docutils literal notranslate"><span class="pre">cc_executable</span></code> also covers source files from the <code class="docutils literal notranslate"><span class="pre">cc_library</span></code> targets it
 uses. You may also pass filegroups; their files are scanned directly.</p>
-<p>The exported <code class="docutils literal notranslate"><span class="pre">bundle.code_targets[*].files</span></code> list includes the sources and
-headers of every explicitly selected target, even when it is outside the bundle
-package. Recursive dependency traversal for this list is limited to the
-repository and BUILD package containing the <code class="docutils literal notranslate"><span class="pre">docs_bundle</span></code> declaration;
-subpackage targets are included. A sibling package or external repository
-ends that dependency branch, including dependencies that point back into the
-bundle package. This boundary does not depend on <code class="docutils literal notranslate"><span class="pre">source_dir</span></code>. The existing
-source-link collection described above is unchanged.</p>
+<p>Source-link scanning includes the sources and headers of every explicitly
+selected target, even when it is outside the bundle package. Transitive
+dependencies are filtered by the repository and BUILD package containing the
+<code class="docutils literal notranslate"><span class="pre">docs_bundle</span></code> declaration; subpackage targets are included. Local targets
+reached through a sibling package or external repository are included too.
+This boundary does not depend on <code class="docutils literal notranslate"><span class="pre">source_dir</span></code>. Source and header attributes
+resolve filegroups and generated outputs; selecting generator rules directly
+as implementation targets is not supported.</p>
 <div class="highlight-starlark notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="n">cc_library</span><span class="p">(</span>
 <span class="linenos"> 2</span>   <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;some_library&quot;</span><span class="p">,</span>
 <span class="linenos"> 3</span>   <span class="n">srcs</span> <span class="o">=</span> <span class="p">[</span>
