@@ -11,7 +11,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-from typing import cast
+from typing import Any, cast
 
 import pytest
 
@@ -21,8 +21,11 @@ from score_metrics.sphinx_filters import (
     generic_pie_items_by_tag,
     generic_pie_linked_items,
 )
+from score_metrics.traceability_metrics import calculate_verification_metrics
 from score_pytest.attribute_plugin import add_test_properties
+from sphinx_needs.exceptions import NeedsInvalidFilter
 from sphinx_needs.need_item import NeedItem
+from sphinx_needs.utils import check_and_get_external_filter_func
 
 
 @add_test_properties(
@@ -252,3 +255,102 @@ def test_get_metrics_with_custom_type_total_considered_empty_kwargs_raises_index
 
     with pytest.raises(IndexError):
         sphinx_filters.get_metrics_with_first_value_total(needs=[], results=results)
+
+
+_COMPONENT_NEEDS = cast(
+    list[NeedItem],
+    [
+        {
+            "id": "comp_req__x__in",
+            "type": "comp_req",
+            "satisfied_by": ["comp__x"],
+            "status": "valid",
+            "valid_from": "v1",
+            "fully_verifies_back": ["tc__a"],
+            "partially_verifies_back": [],
+        },
+        {
+            "id": "comp_req__x__later",
+            "type": "comp_req",
+            "satisfied_by": ["comp__x"],
+            "status": "invalid",
+            "valid_from": "v2",
+            "fully_verifies_back": [],
+            "partially_verifies_back": [],
+        },
+        {
+            "id": "comp_arc_sta__x__a",
+            "type": "comp_arc_sta",
+            "belongs_to": ["comp__x"],
+            "status": "valid",
+            "fully_verifies_back": [],
+            "partially_verifies_back": ["tc__b"],
+        },
+    ],
+)
+
+
+def _call_like_needpie(signature: str, needs: list[NeedItem]) -> list[int]:
+    """Parse and call a filter-func exactly the way ``needpie`` does."""
+    ff = check_and_get_external_filter_func(f"score_metrics.sphinx_filters.{signature}")
+    assert ff is not None
+    args = ff.args.split(",") if ff.args else []
+    results: list[int] = []
+    ff.func(
+        needs=needs,
+        results=results,
+        **{f"arg{index + 1}": arg for index, arg in enumerate(args)},
+    )
+    return results
+
+
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
+def test_component_metrics_accept_quoted_arguments(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Quoted, space-separated arguments as written in a template are decoded."""
+    all_needs = {n["id"]: n for n in _COMPONENT_NEEDS}
+    all_needs["comp__x"] = cast(NeedItem, {"id": "comp__x", "type": "comp"})
+    monkeypatch.setattr(
+        sphinx_filters,
+        "CALCULATED_METRICS",
+        {"verification_metrics": calculate_verification_metrics(cast(Any, all_needs))},
+    )
+
+    status = 'get_component_status_metrics("comp__x", "requirements", "")'
+    coverage = 'get_component_coverage_metrics("comp__x", "architecture", "")'
+
+    assert _call_like_needpie(status, _COMPONENT_NEEDS) == [1, 0, 1]
+    assert _call_like_needpie(coverage, _COMPONENT_NEEDS) == [0, 1, 0]
+
+
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
+def test_component_metrics_version_scopes_requirements_only() -> None:
+    """A version excludes later requirements but never architecture elements."""
+    reqs = 'get_component_status_metrics("comp__x", "requirements", "v1")'
+    arcs = 'get_component_status_metrics("comp__x", "architecture", "v1")'
+
+    assert _call_like_needpie(reqs, _COMPONENT_NEEDS) == [1, 0, 0]
+    assert _call_like_needpie(arcs, _COMPONENT_NEEDS) == [1, 0, 0]
+
+
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
+def test_filter_func_arguments_must_not_contain_a_dot() -> None:
+    """sphinx-needs splits the call on its last dot, so ``v1.0`` cannot be passed."""
+    with pytest.raises(NeedsInvalidFilter):
+        _call_like_needpie(
+            'get_component_status_metrics("comp__x", "requirements", "v1.0")',
+            _COMPONENT_NEEDS,
+        )

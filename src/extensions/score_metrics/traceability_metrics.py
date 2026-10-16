@@ -126,73 +126,21 @@ def calculate_test_metrics(
     }
 
 
-def calculate_status_and_coverage_metrics(  # noqa: C901
+def calculate_status_and_coverage_metrics(
     needs_list: list[NeedItem],
-    version_filter: str | None = None,
-    all_needs: NeedsView | None = None,
 ) -> dict[str, dict[str, int]]:
     """Calculate status distribution and test coverage for a list of needs.
 
-    Args:
-        needs_list: List of needs to calculate metrics for.
-        version_filter: Optional version to filter needs by valid_from.
-        all_needs: All needs view (required for version filtering of comp_req).
+    Version scoping is done by the callers via ``req_in_report_version``.
 
     Returns a dict with:
     - status: {valid: int, valid_inspected: int, invalid: int}
     - coverage: {fully_covered: int, partially_covered: int, not_covered: int}
-
-    Note:
-        For component-specific metrics with version filtering, prefer using
-        the shared helpers from helper_lib.verification_metrics which handle
-        architecture version filtering correctly.
     """
-    import re
-
-    def parse_version(v: str) -> tuple[int, ...]:
-        """Parse version string like 'v1.2.3' into tuple (1, 2, 3)."""
-        match = re.match(r"v?(\d+)(?:\.(\d+))?(?:\.(\d+))?", v)
-        if not match:
-            raise ValueError(f"Invalid version: {v}")
-        return tuple(int(g or 0) for g in match.groups())
-
-    def req_in_version(need: NeedItem, version: str) -> bool:
-        """Check if a need is in scope for a given version."""
-        if not version:
-            return True
-
-        # Check direct valid_from
-        valid_from = need.get("valid_from")
-        if valid_from:
-            try:
-                return parse_version(valid_from) <= parse_version(version)
-            except ValueError:
-                return False
-
-        # For comp_req, check derived_from feat_reqs
-        if need.get("type") == "comp_req" and all_needs:
-            derived_from = need.get("derived_from", [])
-            if isinstance(derived_from, str):
-                derived_from = [derived_from]
-            for feat_id in derived_from:
-                if feat_id in all_needs:
-                    try:
-                        if req_in_version(all_needs[feat_id], version):
-                            return True
-                    except (KeyError, ValueError):
-                        pass
-            return False
-
-        return True  # No version info = always included
-
     status_counts = {"valid": 0, "valid_inspected": 0, "invalid": 0}
     coverage_counts = {"fully_covered": 0, "partially_covered": 0, "not_covered": 0}
 
     for need in needs_list:
-        # Apply version filter
-        if version_filter and not req_in_version(need, version_filter):
-            continue
-
         # Status distribution
         status = str(need.get("status", ""))
         if status in status_counts:
@@ -268,9 +216,7 @@ def calculate_verification_metrics(  # noqa: C901
                 ),
             }
         else:
-            req_metrics = calculate_status_and_coverage_metrics(
-                reqs, version_filter=None, all_needs=all_needs
-            )
+            req_metrics = calculate_status_and_coverage_metrics(reqs)
 
         # Architecture elements (comp_arc_sta, comp_arc_dyn with belongs_to this component)
         # Version filtering is NOT applied to architecture elements
@@ -279,9 +225,7 @@ def calculate_verification_metrics(  # noqa: C901
             for n in all_needs.values()
             if is_need_in_component(n, component_id, "architecture")
         ]
-        arch_metrics = calculate_status_and_coverage_metrics(
-            arch, version_filter=None, all_needs=all_needs
-        )
+        arch_metrics = calculate_status_and_coverage_metrics(arch)
 
         verification_metrics[component_id] = {
             "requirements": req_metrics,

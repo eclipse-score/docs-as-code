@@ -54,6 +54,15 @@ from src.helper_lib.verification_metrics import (
 )
 
 
+def _arg(kwargs: dict[str, Any], name: str, default: str = "") -> str:
+    """Return a filter-func argument without surrounding whitespace and quotes.
+
+    sphinx-needs splits the argument string on ``,`` and passes the parts
+    verbatim, so ``f("a", "b")`` arrives as ``'"a"'`` and ``' "b"'``.
+    """
+    return str(kwargs.get(name, default)).strip().strip("\"'")
+
+
 def _matches_source_selector(need: NeedItem, selector: str) -> bool:
     """Return whether a need matches a source selector.
 
@@ -268,12 +277,15 @@ def get_component_status_metrics(
         - ``arg2`` – category: Either "requirements" or "architecture"
         - ``arg3`` – version: Optional version to filter by valid_from (only applied to requirements)
 
+    sphinx-needs resolves the module path with ``rsplit(".", 1)`` over the
+    whole call, so no argument may contain a dot (``v1.0`` breaks the call).
+
     Returns [valid_count, valid_inspected_count, invalid_count].
     """
     results.clear()
-    component_id = str(kwargs.get("arg1", ""))
-    category = str(kwargs.get("arg2", "requirements"))
-    version = kwargs.get("arg3")
+    component_id = _arg(kwargs, "arg1")
+    category = _arg(kwargs, "arg2", "requirements")
+    version = _arg(kwargs, "arg3") or None
 
     # If version is specified, filter on-the-fly using the version-scoping helper
     if version:
@@ -309,12 +321,15 @@ def get_component_coverage_metrics(
         - ``arg2`` – category: Either "requirements" or "architecture"
         - ``arg3`` – version: Optional version to filter by valid_from (only applied to requirements)
 
+    sphinx-needs resolves the module path with ``rsplit(".", 1)`` over the
+    whole call, so no argument may contain a dot (``v1.0`` breaks the call).
+
     Returns [fully_covered, partially_covered, not_covered].
     """
     results.clear()
-    component_id = str(kwargs.get("arg1", ""))
-    category = str(kwargs.get("arg2", "requirements"))
-    version = kwargs.get("arg3")
+    component_id = _arg(kwargs, "arg1")
+    category = _arg(kwargs, "arg2", "requirements")
+    version = _arg(kwargs, "arg3") or None
 
     # If version is specified, filter on-the-fly using the version-scoping helper
     if version:
