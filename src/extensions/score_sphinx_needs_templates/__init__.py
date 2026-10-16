@@ -417,8 +417,13 @@ class _SafetyPieRow:
                     ]
                 )
             else:
-                lines.append(
-                    f"      .. needpie:: {chart_prefix} {name} ({safety_label})"
+                # A continuation line keeps its newline in the directive argument,
+                # so matplotlib draws a two-line, narrower title.
+                lines.extend(
+                    [
+                        f"      .. needpie:: {chart_prefix}",
+                        f"         {name} ({safety_label})",
+                    ]
                 )
                 lines.extend(f"         {line}".rstrip() for line in pie)
 

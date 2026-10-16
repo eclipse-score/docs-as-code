@@ -273,7 +273,7 @@ def test_safety_pie_row_reference_pie_only_on_request() -> None:
     assert 'id in ["a", "b"]' in with_ref
     assert 'id in ["c"]' in with_ref
     # An empty title must not leave a leading blank in the chart title.
-    assert ".. needpie:: Stakeholder Requirements Status (QM)" in with_ref
+    assert ".. needpie:: Stakeholder Requirements\n         Status (QM)\n" in with_ref
 
 
 def test_id_filter_list_renders_quoted_literal() -> None:
