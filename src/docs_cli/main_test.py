@@ -123,7 +123,6 @@ def test_build_action_selects_sphinx_builder(
     test_type="interface-test",
     derivation_technique="explorative-testing",
 )
-
 @pytest.mark.parametrize(
     "value,expected",
     [
@@ -159,6 +158,7 @@ def test_docs_build_dir_rejects_paths_that_cleanup_could_destroy(
 
     with pytest.raises(ValueError, match="DOCS_BUILD_DIR"):
         DocsCliConfig.from_environment()
+
 
 def test_failed_build_returns_exit_code_and_forces_next_build_clean(
     workspace: Path,
