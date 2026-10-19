@@ -21,19 +21,26 @@ from score_sphinx_needs_templates.report_pie import draw_report_pie
 from sphinx.testing.util import SphinxTestApp
 
 
-def test_draw_report_pie_shows_only_large_slice_numbers() -> None:
-    figure = draw_report_pie(
-        "Comp Requirements\nStatus (QM)", [1, 30, 0], ["g", "y", "r"]
-    )
+@pytest.mark.parametrize(
+    ("sizes", "expected"),
+    [
+        # 1 of 31 is 3.2%: still numbered, at half size.
+        ([1, 30, 0], [("3.2%\n(1)", 7), ("96.8%\n(30)", 14)]),
+        # 1 of 61 is 1.6%: too small for any number; 0 is never numbered.
+        ([1, 60, 0], [("98.4%\n(60)", 14)]),
+    ],
+)
+def test_draw_report_pie_sizes_slice_numbers_by_share(
+    sizes: list[int], expected: list[tuple[str, float]]
+) -> None:
+    figure = draw_report_pie("Comp Requirements\nStatus (QM)", sizes, ["g", "y", "r"])
     axes = figure.axes[0]
 
     visible = [t for t in axes.texts if t.get_visible() and t.get_text()]
 
     assert tuple(figure.get_size_inches()) == (5, 4)
     assert axes.get_legend() is None
-    # 1 of 31 is below 5% and 0 is empty, so only the 30 carries a number.
-    assert [t.get_text() for t in visible] == ["96.8%\n(30)"]
-    assert visible[0].get_fontsize() == 14
+    assert [(t.get_text(), t.get_fontsize()) for t in visible] == expected
     assert axes.get_title() == "Comp Requirements\nStatus (QM)"
 
 

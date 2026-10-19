@@ -42,7 +42,9 @@ _TITLE_INCHES, _BOTTOM_INCHES = 0.75, 0.15
 _VALUE_FONT_SIZE = 14
 _TITLE_FONT_SIZE = 13
 # Slices below this share get no number, as their text would overlap.
-_MIN_LABELLED_SHARE = 0.05
+_MIN_LABELLED_SHARE = 0.02
+# Slices below this share get their number at half size to fit.
+_SMALL_SLICE_SHARE = 0.05
 
 
 class ReportPie(nodes.General, nodes.Element):
@@ -114,6 +116,8 @@ def draw_report_pie(title: str, sizes: list[int], colors: list[str]) -> Figure:
     values: list[Text] = pie[2]
     for size, value in zip(sizes, values, strict=True):
         value.set_visible(size >= total * _MIN_LABELLED_SHARE)
+        if size < total * _SMALL_SLICE_SHARE:
+            value.set_fontsize(_VALUE_FONT_SIZE / 2)
     axes.set(xlim=(-1.05, 1.05), ylim=(-1.05, 1.05))
     axes.set_title(title, fontsize=_TITLE_FONT_SIZE, wrap=True)
     return figure
