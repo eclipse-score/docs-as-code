@@ -30,11 +30,17 @@ from matplotlib import style
 from matplotlib.figure import Figure
 from matplotlib.text import Text
 from sphinx.application import Sphinx
+from sphinx.util import logging
 from sphinx.util.docutils import SphinxDirective
 from sphinx_needs.config import NeedsSphinxConfig
 from sphinx_needs.data import SphinxNeedsData
+from sphinx_needs.exceptions import NeedsInvalidFilter
 from sphinx_needs.filter_common import filter_needs_parts
-from sphinx_needs.utils import save_matplotlib_figure
+from sphinx_needs.utils import (
+    check_and_get_external_filter_func,
+    save_matplotlib_figure,
+)
+from sphinx_needs.views import NeedsAndPartsListView
 
 _FIGURE_INCHES = (5.0, 4.0)
 # Inches kept free above the circle for the two-line title and below it.
@@ -47,12 +53,19 @@ _MIN_LABELLED_SHARE = 0.02
 _SMALL_SLICE_SHARE = 0.05
 
 
+logger = logging.getLogger(__name__)
+
+
 class ReportPie(nodes.General, nodes.Element):
     pass
 
 
 class ReportPieDirective(SphinxDirective):
-    """Pie chart with one slice per content line, each a Sphinx-Needs filter."""
+    """Pie chart with one slice per content line, each a Sphinx-Needs filter.
+
+    Alternatively ``:filter-func:`` names a function that fills the slice sizes,
+    called exactly like ``needpie`` calls it.
+    """
 
     has_content = True
     optional_arguments = 1
@@ -60,6 +73,7 @@ class ReportPieDirective(SphinxDirective):
     option_spec = {
         "labels": directives.unchanged_required,
         "colors": directives.unchanged_required,
+        "filter-func": directives.unchanged_required,
     }
 
     def run(self) -> Sequence[nodes.Node]:
@@ -67,13 +81,19 @@ class ReportPieDirective(SphinxDirective):
         filters = [line for line in content if line.strip()]
         labels = _split(self.options.get("labels", ""))
         colors = _split(self.options.get("colors", ""))
-        if not (len(filters) == len(labels) == len(colors)):
+        filter_func = str(self.options.get("filter-func", ""))
+        if filter_func and filters:
+            raise self.error("score-report-pie takes filter lines or :filter-func:")
+        if len(labels) != len(colors) or (
+            not filter_func and len(filters) != len(labels)
+        ):
             raise self.error(
-                "score-report-pie needs one label and one colour per filter line"
+                "score-report-pie needs one label and one colour per slice"
             )
         node = ReportPie(
             title=self.arguments[0] if self.arguments else "",
             filters=filters,
+            filter_func=filter_func,
             labels=labels,
             colors=colors,
             target_id=f"score-report-pie-{self.env.docname}-"
@@ -94,7 +114,7 @@ def _report_pie_style() -> Iterator[None]:
         yield
 
 
-def draw_report_pie(title: str, sizes: list[int], colors: list[str]) -> Figure:
+def draw_report_pie(title: str, sizes: Sequence[float], colors: list[str]) -> Figure:
     """Draw the chart; ``sizes`` must contain at least one non-zero value."""
     total = sum(sizes)
     height = _FIGURE_INCHES[1]
@@ -123,6 +143,20 @@ def draw_report_pie(title: str, sizes: list[int], colors: list[str]) -> Figure:
     return figure
 
 
+def _call_filter_func(signature: str, need_list: NeedsAndPartsListView) -> list[float]:
+    """Call a ``needpie``-style filter function and return its slice sizes."""
+    result = check_and_get_external_filter_func(signature)
+    assert result is not None
+    args = result.args.split(",") if result.args else []
+    sizes: list[float] = []
+    result.func(
+        needs=need_list,
+        results=sizes,
+        **{f"arg{index + 1}": arg for index, arg in enumerate(args)},
+    )
+    return sizes
+
+
 def _process_report_pies(app: Sphinx, doctree: nodes.document, docname: str) -> None:
     pies: list[nodes.Element] = list(doctree.findall(ReportPie))
     if not pies:
@@ -134,12 +168,37 @@ def _process_report_pies(app: Sphinx, doctree: nodes.document, docname: str) -> 
         filters: list[str] = pie["filters"]
         labels: list[str] = pie["labels"]
         target_id: str = pie["target_id"]
-        sizes = [
-            len(filter_needs_parts(need_list, needs_config, line, location=pie))
-            for line in filters
-        ]
+        filter_func: str = pie["filter_func"]
+        sizes: list[float]
+        if filter_func:
+            try:
+                sizes = _call_filter_func(filter_func, need_list)
+            except NeedsInvalidFilter as error:
+                logger.warning(
+                    "score-report-pie: %s", error, location=pie, type="score_report_pie"
+                )
+                pie.replace_self(nodes.paragraph(text=f"{title}: invalid filter"))
+                continue
+            if len(sizes) != len(labels):
+                logger.warning(
+                    "score-report-pie: %s returned %d values for %d labels",
+                    filter_func,
+                    len(sizes),
+                    len(labels),
+                    location=pie,
+                    type="score_report_pie",
+                )
+                pie.replace_self(nodes.paragraph(text=f"{title}: invalid filter"))
+                continue
+        else:
+            sizes = [
+                float(
+                    len(filter_needs_parts(need_list, needs_config, line, location=pie))
+                )
+                for line in filters
+            ]
         counts = ", ".join(
-            f"{label} {size}" for label, size in zip(labels, sizes, strict=True)
+            f"{label} {size:g}" for label, size in zip(labels, sizes, strict=True)
         )
         alt = f"{' '.join(title.split())}: {counts}"
         if not any(sizes):

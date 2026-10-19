@@ -120,3 +120,67 @@ Report
     assert 'width="360pt"' in report_svg
     # The generic needpie keeps Sphinx-Needs' own 8x4 inch layout.
     assert 'width="576pt"' in needpie_svg
+
+
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
+def test_report_pie_counts_through_filter_func(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """``:filter-func:`` receives the Needs and its arguments like in ``needpie``."""
+    monkeypatch.setenv("BUILD_WORKSPACE_DIRECTORY", str(tmp_path))
+    monkeypatch.syspath_prepend(str(tmp_path))
+    (tmp_path / "pie_counts.py").write_text(
+        "def by_status(needs, results, arg1, arg2):\n"
+        "    for status in (arg1, arg2):\n"
+        '        results.append(sum(n["status"] == status for n in needs))\n',
+        encoding="utf-8",
+    )
+    (tmp_path / "conf.py").write_text(
+        'extensions = ["sphinx_needs", "score_sphinx_needs_templates"]\n'
+        'master_doc = "index"\n',
+        encoding="utf-8",
+    )
+    (tmp_path / "index.rst").write_text(
+        """
+Report
+======
+
+.. req:: Open
+   :id: REQ_001
+   :status: open
+
+.. req:: Closed
+   :id: REQ_002
+   :status: closed
+
+.. req:: Also closed
+   :id: REQ_003
+   :status: closed
+
+.. score-report-pie:: Comp Requirements
+   Status (QM)
+   :labels: open, closed
+   :colors: #37a12d, #ca2828
+   :filter-func: pie_counts.by_status(open,closed)
+""",
+        encoding="utf-8",
+    )
+
+    app = SphinxTestApp(
+        srcdir=tmp_path,
+        outdir=tmp_path / "_build",
+        buildername="html",
+        freshenv=True,
+    )
+    try:
+        app.build(force_all=True)
+        html = (app.outdir / "index.html").read_text(encoding="utf-8")
+    finally:
+        app.cleanup()
+
+    assert 'alt="Comp Requirements Status (QM): open 1, closed 2"' in html
