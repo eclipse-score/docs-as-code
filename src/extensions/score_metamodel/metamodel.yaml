@@ -1055,9 +1055,8 @@ needs_types:
       status: ^(proposed|accepted|deprecated|rejected|superseded)$
       context: ^[\s\S]+$
       decision: ^[\s\S]+$
-    optional_options:
       tracking: ^https://github\.com/eclipse-score/[^/]+/(?:issues|pull)/\d+(?:#[A-Za-z0-9_-]+)?$
-      consequences: ^[\s\S]*$
+      consequences: ^[\s\S]+$
     optional_links:
       affects: ANY
     parts: 3

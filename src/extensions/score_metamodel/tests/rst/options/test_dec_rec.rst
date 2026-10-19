@@ -44,13 +44,24 @@
    :consequences: Allows linking between related decisions.
 
 
-.. dec_rec:: Decision Record without optional tracking or consequences
+.. dec_rec:: Decision Record with missing tracking
    :id: dec_rec__logging__no_tracking
    :status: accepted
-   :context: Tracking and consequences are optional for existing decisions.
-   :decision: Preserve backward compatibility.
+   :context: The tracking link is missing.
+   :decision: Require tracking for every decision record.
    :version: 1
-   :expect_not: does not follow pattern
+   :consequences: Decisions must refer to an issue or pull request.
+   :expect: dec_rec__logging__no_tracking: is missing required attribute: `tracking`.
+
+
+.. dec_rec:: Decision Record with missing consequences
+   :id: dec_rec__logging__no_consequences
+   :status: accepted
+   :context: The consequences are missing.
+   :decision: Require consequences for every decision record.
+   :tracking: https://github.com/eclipse-score/score/pull/2
+   :version: 1
+   :expect: dec_rec__logging__no_consequences: is missing required attribute: `consequences`.
 
 
 .. dec_rec:: Decision Record with invalid tracking organization
@@ -60,6 +71,7 @@
    :decision: Reject links owned by other organizations.
    :tracking: https://github.com/other-org/score/pull/3
    :version: 1
+   :consequences: Tracking is restricted to the eclipse-score organization.
    :expect: dec_rec__dac__invalid_tracking_org.tracking (https://github.com/other-org/score/pull/3): does not follow pattern
 
 
@@ -67,5 +79,7 @@
    :id: dec_rec__proc__missing_status
    :context: The status is missing.
    :decision: Required fields remain enforced.
+   :tracking: https://github.com/eclipse-score/score/issues/1
    :version: 1
+   :consequences: Every decision record must declare its status.
    :expect: dec_rec__proc__missing_status: is missing required attribute: `status`.

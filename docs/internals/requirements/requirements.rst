@@ -1029,15 +1029,15 @@ Testing
    gd_req__process_management_build_blocks_attr[version==1],
    gd_req__process_management_build_blocks_link[version==1],
 
-  Docs-as-Code shall support the Decision Record (dec_rec) need type with the following options:
+  Docs-as-Code shall support the Decision Record (dec_rec) need type with the following mandatory options:
 
   * ``id`` (mandatory, pattern: ``dec_rec__<category>__<slug>``; category and slug contain letters, numbers, underscores, or hyphens)
   * ``status`` (mandatory, one of: proposed, accepted, deprecated, rejected, superseded)
   * ``context`` (mandatory)
   * ``decision`` (mandatory)
-  * ``tracking`` (optional, link to a GitHub issue or pull request in the ``eclipse-score`` organization)
+  * ``tracking`` (mandatory, link to a GitHub issue or pull request in the ``eclipse-score`` organization)
   * ``version`` (mandatory)
-  * ``consequences`` (optional)
+  * ``consequences`` (mandatory, non-empty)
 
   A Decision Record shall be able to link to other needs via the optional ``affects`` link.
 
