@@ -10,6 +10,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
+import re
 from collections.abc import Callable
 from enum import StrEnum
 from typing import Any, cast
