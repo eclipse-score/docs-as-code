@@ -40,6 +40,17 @@
     },
     "tests": {
       "$ref": "#/$defs/testMetrics"
+    },
+    "verification_metrics": {
+      "type": "object",
+      "description": "Per-component verification status and coverage metrics for verification reports.",
+      "additionalProperties": {
+        "$ref": "#/$defs/componentVerificationMetrics"
+      },
+      "propertyNames": {
+        "type": "string",
+        "minLength": 1
+      }
     }
   },
   "$defs": {
@@ -134,6 +145,67 @@
       "type": "number",
       "minimum": 0,
       "maximum": 100
+    },
+    "componentVerificationMetrics": {
+      "type": "object",
+      "description": "Verification metrics for a single component.",
+      "additionalProperties": false,
+      "properties": {
+        "requirements": {
+          "$ref": "#/$defs/statusAndCoverageMetrics"
+        },
+        "architecture": {
+          "$ref": "#/$defs/statusAndCoverageMetrics"
+        }
+      }
+    },
+    "statusAndCoverageMetrics": {
+      "type": "object",
+      "description": "Status distribution and test coverage metrics.",
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "type": "object",
+          "description": "Count by status value.",
+          "additionalProperties": false,
+          "properties": {
+            "valid": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "valid_inspected": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "invalid": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "coverage": {
+          "type": "object",
+          "description": "Test coverage by verification links.",
+          "additionalProperties": false,
+          "properties": {
+            "fully_covered": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Items with fully_verifies_back link."
+            },
+            "partially_covered": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Items with only partially_verifies_back link."
+            },
+            "not_covered": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Items with no verification links."
+            }
+          }
+        }
+      }
     }
   }
 }

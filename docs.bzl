@@ -59,6 +59,7 @@ load(
 )
 load(
     "@score_docs_as_code//:bzl/bundle_rules.bzl",
+    "collect_bundle_code_files",
     "create_bundle",
     "declare_docs_config_target",
     "external_docs_runfiles",
@@ -328,7 +329,9 @@ def _declare_docs_bundle(
         }.
       code_targets: Implementation targets or filegroups to scan for source-code
                     links. Implementation target source files and their dependencies
-                    are collected recursively; filegroups expand to their files.
+                    are collected recursively within this bundle's repository and
+                    BUILD package, including subpackages; filegroups expand to
+                    their files.
       primary_need_id: Sphinx-Needs ID of the primary Need representing this
                        bundle. Other Needs may remain in the bundle; only this
                        Need receives bundle-level target metadata.
@@ -357,11 +360,18 @@ def _declare_docs_bundle(
     # Keep directory-discovered sources separate from explicit Bazel targets so
     # each kind can retain its own runtime path and staging behavior.
     source_dir_globbed = glob_doc_sources(source_dir) if source_dir != None else []
+    # The private file set is the single source of implementation artifacts.
+    # Sourcelinks scan these same bounded files; consumers can inspect the
+    # internal target without adding a field to the public bundle manifest.
+    code_files = collect_bundle_code_files(
+        name = _bundle_internal_target(name, "files"),
+        code_targets = code_targets,
+    )
     sourcelinks_json = None
     if code_targets:
         sourcelinks_json = generate_code_target_sourcelinks(
             name = _bundle_internal_target(name, "sourcelinks_json"),
-            code_targets = code_targets,
+            code_files = code_files,
         )
 
     # ``needs_json`` is an inventory consumed by score_metamodel, not content
@@ -670,8 +680,9 @@ def docs(
                       form, without a warning for now. ``needs_json_file`` is
                       also supported for directly naming an inventory file.
       code_targets: Implementation targets or filegroups to scan for source code
-                    links. Implementation targets are scanned recursively; filegroups
-                    expand to their files.
+                    links. Dependencies are scanned within this bundle's repository
+                    and BUILD package, including subpackages; filegroups expand
+                    to their files.
       primary_need_id: Sphinx-Needs ID of the primary Need representing this
                        documentation project and its root bundle. Other Needs
                        remain unchanged.

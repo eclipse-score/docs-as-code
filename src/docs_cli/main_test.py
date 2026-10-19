@@ -43,6 +43,7 @@ def workspace(fs: FFS, monkeypatch: pytest.MonkeyPatch) -> Path:
         "KNOWN_GOOD_JSON",
         "RUNFILES_DIR",
         "RUNFILES_MANIFEST_FILE",
+        "DOCS_BUILD_DIR",
     )
     for name in ENVIRONMENT_OVERRIDES:
         monkeypatch.delenv(name, raising=False)
@@ -122,6 +123,43 @@ def test_build_action_selects_sphinx_builder(
     test_type="interface-test",
     derivation_technique="explorative-testing",
 )
+@pytest.mark.parametrize(
+    "value,expected",
+    [
+        (None, "/workspace/component/_build"),
+        ("", "/workspace/component/_build"),
+        ("docs_build_tmp", "/workspace/component/docs_build_tmp"),
+        ("/tmp/docs_out", "/tmp/docs_out"),
+    ],
+)
+def test_docs_build_dir_overrides_interactive_output_dir(
+    workspace: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    value: str | None,
+    expected: str,
+) -> None:
+    """DOCS_BUILD_DIR selects the output directory; ``_build`` is the default."""
+    monkeypatch.setenv("ACTION", "incremental")
+    if value is not None:
+        monkeypatch.setenv("DOCS_BUILD_DIR", value)
+
+    assert DocsCliConfig.from_environment().output_dir == Path(expected)
+
+
+@pytest.mark.parametrize("value", [".", "..", "/", "/workspace", "docs"])
+def test_docs_build_dir_rejects_paths_that_cleanup_could_destroy(
+    workspace: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    value: str,
+) -> None:
+    """Stale-cache cleanup removes the build dir, so it must not hold sources."""
+    monkeypatch.setenv("ACTION", "incremental")
+    monkeypatch.setenv("DOCS_BUILD_DIR", value)
+
+    with pytest.raises(ValueError, match="DOCS_BUILD_DIR"):
+        DocsCliConfig.from_environment()
+
+
 def test_failed_build_returns_exit_code_and_forces_next_build_clean(
     workspace: Path,
     monkeypatch: pytest.MonkeyPatch,
