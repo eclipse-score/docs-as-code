@@ -5434,7 +5434,7 @@
   {
     "name": "test_sphinx_filters__test_generic_pie_linked_items_matches_source_by_id_prefix",
     "file": "src/extensions/score_metrics/tests/test_sphinx_filters.py",
-    "line": "28",
+    "line": "31",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5448,7 +5448,7 @@
   {
     "name": "test_sphinx_filters__test_generic_pie_items_by_tag_matches_source_by_id_prefix",
     "file": "src/extensions/score_metrics/tests/test_sphinx_filters.py",
-    "line": "56",
+    "line": "59",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5462,7 +5462,7 @@
   {
     "name": "test_sphinx_filters__test_get_key_values_raises_key_error_when_global_is_empty",
     "file": "src/extensions/score_metrics/tests/test_sphinx_filters.py",
-    "line": "122",
+    "line": "125",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5476,7 +5476,7 @@
   {
     "name": "test_sphinx_filters__test_get_key_values_appends_values_when_metrics_loaded",
     "file": "src/extensions/score_metrics/tests/test_sphinx_filters.py",
-    "line": "134",
+    "line": "137",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5490,7 +5490,7 @@
   {
     "name": "test_sphinx_filters__test_get_metrics_with_overall_total_considered_when_metrics_loaded",
     "file": "src/extensions/score_metrics/tests/test_sphinx_filters.py",
-    "line": "156",
+    "line": "159",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5504,7 +5504,7 @@
   {
     "name": "test_sphinx_filters__test_get_metrics_with_custom_type_total_considered_with_total_suffix",
     "file": "src/extensions/score_metrics/tests/test_sphinx_filters.py",
-    "line": "178",
+    "line": "181",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5518,7 +5518,7 @@
   {
     "name": "test_sphinx_filters__test_get_metrics_with_custom_type_total_considered_without_total_suffix",
     "file": "src/extensions/score_metrics/tests/test_sphinx_filters.py",
-    "line": "200",
+    "line": "203",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5532,7 +5532,7 @@
   {
     "name": "test_sphinx_filters__test_get_just_metrics_appends_values_when_metrics_loaded",
     "file": "src/extensions/score_metrics/tests/test_sphinx_filters.py",
-    "line": "221",
+    "line": "224",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5546,7 +5546,77 @@
   {
     "name": "test_sphinx_filters__test_get_metrics_with_custom_type_total_considered_empty_kwargs_raises_index_error",
     "file": "src/extensions/score_metrics/tests/test_sphinx_filters.py",
-    "line": "241",
+    "line": "244",
+    "result": "passed",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": "",
+    "TestType": "interface-test",
+    "DerivationTechnique": "explorative-testing",
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_sphinx_filters__test_component_metrics_accept_quoted_arguments",
+    "file": "src/extensions/score_metrics/tests/test_sphinx_filters.py",
+    "line": "342",
+    "result": "passed",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": "",
+    "TestType": "interface-test",
+    "DerivationTechnique": "explorative-testing",
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_sphinx_filters__test_component_metrics_split_by_safety_class",
+    "file": "src/extensions/score_metrics/tests/test_sphinx_filters.py",
+    "line": "352",
+    "result": "passed",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": "",
+    "TestType": "interface-test",
+    "DerivationTechnique": "explorative-testing",
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_sphinx_filters__test_component_metrics_version_scopes_requirements_only",
+    "file": "src/extensions/score_metrics/tests/test_sphinx_filters.py",
+    "line": "364",
+    "result": "passed",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": "",
+    "TestType": "interface-test",
+    "DerivationTechnique": "explorative-testing",
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_sphinx_filters__test_filter_func_arguments_must_not_contain_a_dot",
+    "file": "src/extensions/score_metrics/tests/test_sphinx_filters.py",
+    "line": "374",
+    "result": "passed",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": "",
+    "TestType": "interface-test",
+    "DerivationTechnique": "explorative-testing",
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_sphinx_filters__test_safety_pie_row_filter_funcs_match_inline_filters",
+    "file": "src/extensions/score_metrics/tests/test_sphinx_filters.py",
+    "line": "408",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5784,7 +5854,7 @@
   {
     "name": "test_needs_templates__test_backlinks_merge_indexed_and_new_outgoing_links",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
-    "line": "57",
+    "line": "61",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5798,7 +5868,7 @@
   {
     "name": "test_needs_templates__test_parse_version_pads_missing_patch",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
-    "line": "81",
+    "line": "85",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5812,7 +5882,7 @@
   {
     "name": "test_needs_templates__test_req_in_report_version_unscoped_report_version_always_true",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
-    "line": "95",
+    "line": "97",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5826,7 +5896,7 @@
   {
     "name": "test_needs_templates__test_req_in_report_version_direct_valid_from_boundary",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
-    "line": "109",
+    "line": "110",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5854,7 +5924,7 @@
   {
     "name": "test_needs_templates__test_req_in_report_version_missing_valid_from_without_derived_from_is_excluded",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
-    "line": "139",
+    "line": "138",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5868,7 +5938,7 @@
   {
     "name": "test_needs_templates__test_req_in_report_version_comp_req_inherits_via_derived_from",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
-    "line": "157",
+    "line": "155",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5882,7 +5952,7 @@
   {
     "name": "test_needs_templates__test_any_req_in_report_version_unscoped_true_even_for_empty_list",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
-    "line": "178",
+    "line": "175",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5896,7 +5966,7 @@
   {
     "name": "test_needs_templates__test_any_req_in_report_version_scoped_empty_list_is_excluded",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
-    "line": "190",
+    "line": "185",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5910,7 +5980,7 @@
   {
     "name": "test_needs_templates__test_any_req_in_report_version_true_if_at_least_one_requirement_matches",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
-    "line": "202",
+    "line": "195",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5924,7 +5994,7 @@
   {
     "name": "test_needs_templates__test_any_req_in_report_version_false_if_no_requirement_matches",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
-    "line": "218",
+    "line": "210",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5938,7 +6008,7 @@
   {
     "name": "test_needs_templates__test_safety_pie_row_qm_counts_inspected_as_valid",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
-    "line": "234",
+    "line": "225",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -5952,7 +6022,7 @@
   {
     "name": "test_needs_templates__test_safety_pie_row_empty_class_renders_placeholders_only",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
-    "line": "252",
+    "line": "243",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -5966,7 +6036,7 @@
   {
     "name": "test_needs_templates__test_safety_pie_row_reference_pie_only_on_request",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
-    "line": "262",
+    "line": "253",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -5980,7 +6050,7 @@
   {
     "name": "test_needs_templates__test_id_filter_list_renders_quoted_literal",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
-    "line": "279",
+    "line": "270",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -5994,7 +6064,7 @@
   {
     "name": "test_needs_templates__test_workproduct_rows_filter_by_slug_and_work_product",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
-    "line": "286",
+    "line": "277",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -6008,7 +6078,7 @@
   {
     "name": "test_needs_templates__test_tool_qualification_matrix_groups_shared_requirements",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
-    "line": "297",
+    "line": "288",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -6022,7 +6092,7 @@
   {
     "name": "test_needs_templates__test_platform_report_gap_table_is_report_version_scoped",
     "file": "src/extensions/score_sphinx_needs_templates/tests/test_needs_templates.py",
-    "line": "446",
+    "line": "437",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",

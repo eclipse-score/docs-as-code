@@ -531,6 +531,21 @@ integration repositories.</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">_build/metrics.json</span></code></p></li>
 </ul>
 <p>The dashboard charts and the CI gate both use the same computed metrics.</p>
+<section id="metrics-json-content">
+<h3><code class="docutils literal notranslate"><span class="pre">metrics.json</span></code> Content<a class="headerlink" href="#metrics-json-content" title="Link to this heading">#</a></h3>
+<p>The exported file contains a versioned set of fields:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">schema_version</span></code> – schema version identifier.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">generated_by</span></code> – identifier of the producer that generated this file.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">overall_metrics</span></code> – requirement coverage aggregated over all requirement types.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">metrics_by_type</span></code> – the same coverage numbers per requirement type.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tests</span></code> – testcase linkage statistics, including broken test references.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">verification_metrics</span></code> – per-component verification status and coverage metrics
+for use by verification reports. Contains status distribution (valid, valid_inspected,
+invalid) and test coverage (fully_covered, partially_covered, not_covered) for
+both requirements and architecture elements, organized by component ID.</p></li>
+</ul>
+</section>
 </section>
 <section id="inputs-for-linkage-metrics">
 <h2>Inputs for Linkage Metrics<a class="headerlink" href="#inputs-for-linkage-metrics" title="Link to this heading">#</a></h2>
@@ -711,7 +726,10 @@ gate thresholds so CI calls a single Bazel target.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#optional-override-for-requirement-types">Optional Override for Requirement Types</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#building-the-dashboard">Building the Dashboard</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#building-the-dashboard">Building the Dashboard</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#metrics-json-content"><code class="docutils literal notranslate"><span class="pre">metrics.json</span></code> Content</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs-for-linkage-metrics">Inputs for Linkage Metrics</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#choosing-local-vs-aggregated-views">Choosing Local vs Aggregated Views</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ci-quality-gate">CI Quality Gate</a></li>
