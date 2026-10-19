@@ -249,14 +249,14 @@ def test_safety_pie_row_qm_counts_inspected_as_valid() -> None:
     assert ":class: safety-class-heading safety-asil-b" in asil
 
 
-def test_safety_pie_row_empty_class_renders_placeholders_only() -> None:
+def test_safety_pie_row_empty_class_renders_one_slim_placeholder() -> None:
     safety_pie_row = vars(templates)["_SafetyPieRow"]()
 
     row = safety_pie_row("Comp", "Requirements", "BASE", "QM", "QM", 0, True)
 
     assert "score-report-pie" not in row
-    assert row.count('<div class="empty-pie">') == 3
-    assert "no QM requirements" in row
+    assert ".. grid::" not in row
+    assert row.count('<div class="empty-pie">no QM requirements</div>') == 1
 
 
 def test_safety_pie_row_reference_pie_only_on_request() -> None:

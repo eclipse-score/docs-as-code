@@ -400,33 +400,37 @@ class _SafetyPieRow:
             f".. rubric:: {safety_label} — {subject}",
             f"   :class: safety-class-heading safety-{safety_css}",
             "",
-            ".. grid:: 1 2 3 3",
-            "   :gutter: 2",
-            "   :class-row: score-pie-row",
         ]
+        if count == 0:
+            lines.extend(
+                [
+                    ".. raw:: html",
+                    "",
+                    f'   <div class="empty-pie">no {safety_label} {subject.lower()}</div>',
+                ]
+            )
+            return "\n".join(lines) + "\n"
+
+        lines.extend(
+            [
+                ".. grid:: 1 2 3 3",
+                "   :gutter: 2",
+                "   :class-row: score-pie-row",
+            ]
+        )
 
         def grid_item(name: str, pie: list[str]) -> None:
-            lines.extend(["", "   .. grid-item::", ""])
-            if count == 0:
-                lines.extend(
-                    [
-                        "      .. raw:: html",
-                        "",
-                        '         <div class="empty-pie">',
-                        f'            <span class="empty-pie-title">{subject} {name} ({safety_label})</span>',
-                        f'            <span class="empty-pie-text">no {safety_label} {subject.lower()}</span>',
-                        "         </div>",
-                    ]
-                )
-            else:
-                # The continuation line keeps the chart title on two narrow lines.
-                lines.extend(
-                    [
-                        f"      .. score-report-pie:: {chart_prefix}",
-                        f"         {name} ({safety_label})",
-                    ]
-                )
-                lines.extend(f"         {line}".rstrip() for line in pie)
+            # The continuation line keeps the chart title on two narrow lines.
+            lines.extend(
+                [
+                    "",
+                    "   .. grid-item::",
+                    "",
+                    f"      .. score-report-pie:: {chart_prefix}",
+                    f"         {name} ({safety_label})",
+                ]
+            )
+            lines.extend(f"         {line}".rstrip() for line in pie)
 
         grid_item(
             "Status",
