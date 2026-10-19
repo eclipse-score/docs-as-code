@@ -83,7 +83,7 @@
 
    /* Scales every chart to its column; together with the fixed three-column
       raster this gives every chart the same size as in the platform report. */
-   .score-pie-row img[id^="needpie-"] {
+   .score-pie-row img.score-report-pie {
        width: 100%;
        height: auto;
    }
@@ -103,7 +103,7 @@
    .empty-pie {
        display: flex; flex-direction: column; align-items: center;
        justify-content: center; gap: 0.4em;
-       aspect-ratio: 4 / 3; padding: 0.5em; text-align: center;
+       aspect-ratio: 5 / 4; padding: 0.5em; text-align: center;
        border: 2px dashed #b0b0b0; border-radius: 6px; color: #6c757d;
    }
    .empty-pie-title { font-weight: 600; }
