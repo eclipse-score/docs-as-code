@@ -32,7 +32,9 @@ linkcheckbase = cast(
 class _Status(StrEnum):
     BROKEN = "broken"
 
+
 IGNORED_HTTP_CODES: frozenset[int] = frozenset({401, 402, 403, 407, 418, 429, 451, 511})
+
 
 def process_result(self: CheckExternalLinksBuilder, result: CheckResult) -> None:
     """hook a custom process_result function.
