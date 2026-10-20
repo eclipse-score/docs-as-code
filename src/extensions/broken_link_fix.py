@@ -32,6 +32,7 @@ linkcheckbase = cast(
 class _Status(StrEnum):
     BROKEN = "broken"
 
+IGNORED_HTTP_CODES: frozenset[int] = frozenset({401, 402, 403, 407, 418, 429, 451, 511})
 
 def process_result(self: CheckExternalLinksBuilder, result: CheckResult) -> None:
     """hook a custom process_result function.
@@ -45,8 +46,8 @@ def process_result(self: CheckExternalLinksBuilder, result: CheckResult) -> None
     """
     match result.status:
         case _Status.BROKEN:
-            """Ignore selected HTTP errors that can be caused by access restrictions or rate limits."""
-            if result.code in {401, 402, 403, 407, 418, 429, 451, 504, 511}:
+            # Ignore selected HTTP errors that can be caused by access restrictions or rate limits.
+            if result.code in IGNORED_HTTP_CODES:
                 logger.info(darkgray("-ignored- ") + result.uri)
                 self.write_entry(
                     "ignored",
