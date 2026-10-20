@@ -3309,16 +3309,56 @@
     }
   },
   {
-    "need": "tool_req__docs_common_attr_security[version==1]",
+    "need": "tool_req__docs_common_attr_status_invalid[version==1]",
     "links": {
       "CodeLinks": [],
       "TestLinks": [
         {
-          "name": "test_rules_file_based__test_rst_files[options/test_options_common_attrs_security.rst]",
-          "file": "src/extensions/score_metamodel/tests/rst/options/test_options_common_attrs_security.rst",
-          "line": 15,
-          "need": "tool_req__docs_common_attr_security[version==1]",
+          "name": "test_rules_file_based__test_rst_files[options/test_invalid_skipped.rst]",
+          "file": "src/extensions/score_metamodel/tests/rst/options/test_invalid_skipped.rst",
+          "line": 16,
+          "need": "tool_req__docs_common_attr_status_invalid[version==1]",
           "verify_type": "fully",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        }
+      ]
+    }
+  },
+  {
+    "need": "tool_req__docs_common_attr_status[version==2]",
+    "links": {
+      "CodeLinks": [],
+      "TestLinks": [
+        {
+          "name": "test_rules_file_based__test_rst_files[options/test_options_common_attrs_status.rst]",
+          "file": "src/extensions/score_metamodel/tests/rst/options/test_options_common_attrs_status.rst",
+          "line": 15,
+          "need": "tool_req__docs_common_attr_status[version==2]",
+          "verify_type": "fully",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        }
+      ]
+    }
+  },
+  {
+    "need": "tool_req__docs_restrict_needextend",
+    "links": {
+      "CodeLinks": [],
+      "TestLinks": [
+        {
+          "name": "test_rules_file_based__test_rst_files[options/test_need_extends.rst]",
+          "file": "src/extensions/score_metamodel/tests/rst/options/test_need_extends.rst",
+          "line": 15,
+          "need": "tool_req__docs_restrict_needextend",
+          "verify_type": "partially",
           "result": "passed",
           "result_text": "",
           "repo_name": "local_repo",
@@ -3381,100 +3421,16 @@
     }
   },
   {
-    "need": "tool_req__docs_req_types[version==1]",
+    "need": "tool_req__docs_saf_attr_fmea_failure_effect[version==1]",
     "links": {
       "CodeLinks": [],
       "TestLinks": [
         {
-          "name": "test_rules_file_based__test_rst_files[options/gd_req_comp.rst]",
-          "file": "src/extensions/score_metamodel/tests/rst/options/gd_req_comp.rst",
+          "name": "test_rules_file_based__test_rst_files[options/test_options_failure_effect.rst]",
+          "file": "src/extensions/score_metamodel/tests/rst/options/test_options_failure_effect.rst",
           "line": 16,
-          "need": "tool_req__docs_req_types[version==1]",
-          "verify_type": "partially",
-          "result": "passed",
-          "result_text": "",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        },
-        {
-          "name": "test_rules_file_based__test_rst_files[options/test_options_options.rst]",
-          "file": "src/extensions/score_metamodel/tests/rst/options/test_options_options.rst",
-          "line": 16,
-          "need": "tool_req__docs_req_types[version==1]",
-          "verify_type": "partially",
-          "result": "passed",
-          "result_text": "",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        },
-        {
-          "name": "test_rules_file_based__test_rst_files[options/test_options_extra_option.rst]",
-          "file": "src/extensions/score_metamodel/tests/rst/options/test_options_extra_option.rst",
-          "line": 16,
-          "need": "tool_req__docs_req_types[version==1]",
-          "verify_type": "partially",
-          "result": "passed",
-          "result_text": "",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        }
-      ]
-    }
-  },
-  {
-    "need": "tool_req__docs_common_attr_status[version==2]",
-    "links": {
-      "CodeLinks": [],
-      "TestLinks": [
-        {
-          "name": "test_rules_file_based__test_rst_files[options/test_options_common_attrs_status.rst]",
-          "file": "src/extensions/score_metamodel/tests/rst/options/test_options_common_attrs_status.rst",
-          "line": 15,
-          "need": "tool_req__docs_common_attr_status[version==2]",
+          "need": "tool_req__docs_saf_attr_fmea_failure_effect[version==1]",
           "verify_type": "fully",
-          "result": "passed",
-          "result_text": "",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        }
-      ]
-    }
-  },
-  {
-    "need": "tool_req__docs_common_attr_status_invalid[version==1]",
-    "links": {
-      "CodeLinks": [],
-      "TestLinks": [
-        {
-          "name": "test_rules_file_based__test_rst_files[options/test_invalid_skipped.rst]",
-          "file": "src/extensions/score_metamodel/tests/rst/options/test_invalid_skipped.rst",
-          "line": 16,
-          "need": "tool_req__docs_common_attr_status_invalid[version==1]",
-          "verify_type": "fully",
-          "result": "passed",
-          "result_text": "",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        }
-      ]
-    }
-  },
-  {
-    "need": "tool_req__docs_restrict_needextend",
-    "links": {
-      "CodeLinks": [],
-      "TestLinks": [
-        {
-          "name": "test_rules_file_based__test_rst_files[options/test_need_extends.rst]",
-          "file": "src/extensions/score_metamodel/tests/rst/options/test_need_extends.rst",
-          "line": 15,
-          "need": "tool_req__docs_restrict_needextend",
-          "verify_type": "partially",
           "result": "passed",
           "result_text": "",
           "repo_name": "local_repo",
@@ -3505,16 +3461,60 @@
     }
   },
   {
-    "need": "tool_req__docs_saf_attr_fmea_failure_effect[version==1]",
+    "need": "tool_req__docs_common_attr_security[version==1]",
     "links": {
       "CodeLinks": [],
       "TestLinks": [
         {
-          "name": "test_rules_file_based__test_rst_files[options/test_options_failure_effect.rst]",
-          "file": "src/extensions/score_metamodel/tests/rst/options/test_options_failure_effect.rst",
-          "line": 16,
-          "need": "tool_req__docs_saf_attr_fmea_failure_effect[version==1]",
+          "name": "test_rules_file_based__test_rst_files[options/test_options_common_attrs_security.rst]",
+          "file": "src/extensions/score_metamodel/tests/rst/options/test_options_common_attrs_security.rst",
+          "line": 15,
+          "need": "tool_req__docs_common_attr_security[version==1]",
           "verify_type": "fully",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        }
+      ]
+    }
+  },
+  {
+    "need": "tool_req__docs_req_types[version==1]",
+    "links": {
+      "CodeLinks": [],
+      "TestLinks": [
+        {
+          "name": "test_rules_file_based__test_rst_files[options/gd_req_comp.rst]",
+          "file": "src/extensions/score_metamodel/tests/rst/options/gd_req_comp.rst",
+          "line": 16,
+          "need": "tool_req__docs_req_types[version==1]",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        },
+        {
+          "name": "test_rules_file_based__test_rst_files[options/test_options_extra_option.rst]",
+          "file": "src/extensions/score_metamodel/tests/rst/options/test_options_extra_option.rst",
+          "line": 16,
+          "need": "tool_req__docs_req_types[version==1]",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        },
+        {
+          "name": "test_rules_file_based__test_rst_files[options/test_options_options.rst]",
+          "file": "src/extensions/score_metamodel/tests/rst/options/test_options_options.rst",
+          "line": 16,
+          "need": "tool_req__docs_req_types[version==1]",
+          "verify_type": "partially",
           "result": "passed",
           "result_text": "",
           "repo_name": "local_repo",
@@ -3585,26 +3585,6 @@
     }
   },
   {
-    "need": "tool_req__docs_stdreq_types[version==1]",
-    "links": {
-      "CodeLinks": [],
-      "TestLinks": [
-        {
-          "name": "test_rules_file_based__test_rst_files[attributes/test_std_types.rst]",
-          "file": "src/extensions/score_metamodel/tests/rst/attributes/test_std_types.rst",
-          "line": 16,
-          "need": "tool_req__docs_stdreq_types[version==1]",
-          "verify_type": "fully",
-          "result": "passed",
-          "result_text": "",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        }
-      ]
-    }
-  },
-  {
     "need": "tool_req__docs_common_attr_title[version==1]",
     "links": {
       "CodeLinks": [],
@@ -3634,6 +3614,26 @@
           "file": "src/extensions/score_metamodel/tests/rst/attributes/test_prohibited_words.rst",
           "line": 17,
           "need": "tool_req__docs_common_attr_desc_wording[version==1]",
+          "verify_type": "fully",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        }
+      ]
+    }
+  },
+  {
+    "need": "tool_req__docs_stdreq_types[version==1]",
+    "links": {
+      "CodeLinks": [],
+      "TestLinks": [
+        {
+          "name": "test_rules_file_based__test_rst_files[attributes/test_std_types.rst]",
+          "file": "src/extensions/score_metamodel/tests/rst/attributes/test_std_types.rst",
+          "line": 16,
+          "need": "tool_req__docs_stdreq_types[version==1]",
           "verify_type": "fully",
           "result": "passed",
           "result_text": "",
@@ -3678,86 +3678,6 @@
           "file": "src/extensions/score_metamodel/tests/test_metamodel_load.py",
           "line": 250,
           "need": "potential_tool_malfunction__docs_as_code__m1",
-          "verify_type": "fully",
-          "result": "passed",
-          "result_text": "",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        }
-      ]
-    }
-  },
-  {
-    "need": "tool_req__docs_saf_attr_dfa_failure_id[version==2]",
-    "links": {
-      "CodeLinks": [],
-      "TestLinks": [
-        {
-          "name": "test_rules_file_based__test_rst_files[safety/test_saf_mandatory_attrs.rst]",
-          "file": "src/extensions/score_metamodel/tests/rst/safety/test_saf_mandatory_attrs.rst",
-          "line": 16,
-          "need": "tool_req__docs_saf_attr_dfa_failure_id[version==2]",
-          "verify_type": "fully",
-          "result": "passed",
-          "result_text": "",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        }
-      ]
-    }
-  },
-  {
-    "need": "tool_req__docs_saf_attr_fmea_fault_id[version==2]",
-    "links": {
-      "CodeLinks": [],
-      "TestLinks": [
-        {
-          "name": "test_rules_file_based__test_rst_files[safety/test_saf_mandatory_attrs.rst]",
-          "file": "src/extensions/score_metamodel/tests/rst/safety/test_saf_mandatory_attrs.rst",
-          "line": 16,
-          "need": "tool_req__docs_saf_attr_fmea_fault_id[version==2]",
-          "verify_type": "fully",
-          "result": "passed",
-          "result_text": "",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        }
-      ]
-    }
-  },
-  {
-    "need": "tool_req__docs_saf_attrs_sufficient[version==1]",
-    "links": {
-      "CodeLinks": [],
-      "TestLinks": [
-        {
-          "name": "test_rules_file_based__test_rst_files[safety/test_saf_mandatory_attrs.rst]",
-          "file": "src/extensions/score_metamodel/tests/rst/safety/test_saf_mandatory_attrs.rst",
-          "line": 16,
-          "need": "tool_req__docs_saf_attrs_sufficient[version==1]",
-          "verify_type": "fully",
-          "result": "passed",
-          "result_text": "",
-          "repo_name": "local_repo",
-          "hash": "",
-          "url": ""
-        }
-      ]
-    }
-  },
-  {
-    "need": "tool_req__docs_saf_attrs_content[version==2]",
-    "links": {
-      "CodeLinks": [],
-      "TestLinks": [
-        {
-          "name": "test_rules_file_based__test_rst_files[safety/test_saf_mandatory_attrs.rst]",
-          "file": "src/extensions/score_metamodel/tests/rst/safety/test_saf_mandatory_attrs.rst",
-          "line": 16,
-          "need": "tool_req__docs_saf_attrs_content[version==2]",
           "verify_type": "fully",
           "result": "passed",
           "result_text": "",
@@ -3838,6 +3758,86 @@
           "file": "src/extensions/score_metamodel/tests/rst/safety/test_saf_violates.rst",
           "line": 15,
           "need": "tool_req__docs_saf_attrs_violates[version==2]",
+          "verify_type": "fully",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        }
+      ]
+    }
+  },
+  {
+    "need": "tool_req__docs_saf_attr_dfa_failure_id[version==2]",
+    "links": {
+      "CodeLinks": [],
+      "TestLinks": [
+        {
+          "name": "test_rules_file_based__test_rst_files[safety/test_saf_mandatory_attrs.rst]",
+          "file": "src/extensions/score_metamodel/tests/rst/safety/test_saf_mandatory_attrs.rst",
+          "line": 16,
+          "need": "tool_req__docs_saf_attr_dfa_failure_id[version==2]",
+          "verify_type": "fully",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        }
+      ]
+    }
+  },
+  {
+    "need": "tool_req__docs_saf_attr_fmea_fault_id[version==2]",
+    "links": {
+      "CodeLinks": [],
+      "TestLinks": [
+        {
+          "name": "test_rules_file_based__test_rst_files[safety/test_saf_mandatory_attrs.rst]",
+          "file": "src/extensions/score_metamodel/tests/rst/safety/test_saf_mandatory_attrs.rst",
+          "line": 16,
+          "need": "tool_req__docs_saf_attr_fmea_fault_id[version==2]",
+          "verify_type": "fully",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        }
+      ]
+    }
+  },
+  {
+    "need": "tool_req__docs_saf_attrs_sufficient[version==1]",
+    "links": {
+      "CodeLinks": [],
+      "TestLinks": [
+        {
+          "name": "test_rules_file_based__test_rst_files[safety/test_saf_mandatory_attrs.rst]",
+          "file": "src/extensions/score_metamodel/tests/rst/safety/test_saf_mandatory_attrs.rst",
+          "line": 16,
+          "need": "tool_req__docs_saf_attrs_sufficient[version==1]",
+          "verify_type": "fully",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        }
+      ]
+    }
+  },
+  {
+    "need": "tool_req__docs_saf_attrs_content[version==2]",
+    "links": {
+      "CodeLinks": [],
+      "TestLinks": [
+        {
+          "name": "test_rules_file_based__test_rst_files[safety/test_saf_mandatory_attrs.rst]",
+          "file": "src/extensions/score_metamodel/tests/rst/safety/test_saf_mandatory_attrs.rst",
+          "line": 16,
+          "need": "tool_req__docs_saf_attrs_content[version==2]",
           "verify_type": "fully",
           "result": "passed",
           "result_text": "",
@@ -3969,15 +3969,15 @@
     }
   },
   {
-    "need": "tool_req__docs_common_attr_safety_link_check[version==1]",
+    "need": "tool_req__docs_req_arch_link_safety_to_arch[version==2]",
     "links": {
       "CodeLinks": [],
       "TestLinks": [
         {
-          "name": "test_rules_file_based__test_rst_files[graph/test_metamodel_graph.rst]",
-          "file": "src/extensions/score_metamodel/tests/rst/graph/test_metamodel_graph.rst",
+          "name": "test_rules_file_based__test_rst_files[graph/test_arch_link_safety.rst]",
+          "file": "src/extensions/score_metamodel/tests/rst/graph/test_arch_link_safety.rst",
           "line": 15,
-          "need": "tool_req__docs_common_attr_safety_link_check[version==1]",
+          "need": "tool_req__docs_req_arch_link_safety_to_arch[version==2]",
           "verify_type": "fully",
           "result": "passed",
           "result_text": "",
@@ -4009,15 +4009,15 @@
     }
   },
   {
-    "need": "tool_req__docs_arch_link_security[version==1]",
+    "need": "tool_req__docs_req_link_covers_aou[version==1]",
     "links": {
       "CodeLinks": [],
       "TestLinks": [
         {
-          "name": "test_rules_file_based__test_rst_files[graph/test_arch_link_security.rst]",
-          "file": "src/extensions/score_metamodel/tests/rst/graph/test_arch_link_security.rst",
-          "line": 15,
-          "need": "tool_req__docs_arch_link_security[version==1]",
+          "name": "test_rules_file_based__test_rst_files[graph/test_req_link_covers_aou.rst]",
+          "file": "src/extensions/score_metamodel/tests/rst/graph/test_req_link_covers_aou.rst",
+          "line": 16,
+          "need": "tool_req__docs_req_link_covers_aou[version==1]",
           "verify_type": "fully",
           "result": "passed",
           "result_text": "",
@@ -4029,15 +4029,15 @@
     }
   },
   {
-    "need": "tool_req__docs_req_link_covers_aou[version==1]",
+    "need": "tool_req__docs_common_attr_safety_link_check[version==1]",
     "links": {
       "CodeLinks": [],
       "TestLinks": [
         {
-          "name": "test_rules_file_based__test_rst_files[graph/test_req_link_covers_aou.rst]",
-          "file": "src/extensions/score_metamodel/tests/rst/graph/test_req_link_covers_aou.rst",
-          "line": 16,
-          "need": "tool_req__docs_req_link_covers_aou[version==1]",
+          "name": "test_rules_file_based__test_rst_files[graph/test_metamodel_graph.rst]",
+          "file": "src/extensions/score_metamodel/tests/rst/graph/test_metamodel_graph.rst",
+          "line": 15,
+          "need": "tool_req__docs_common_attr_safety_link_check[version==1]",
           "verify_type": "fully",
           "result": "passed",
           "result_text": "",
@@ -4069,15 +4069,15 @@
     }
   },
   {
-    "need": "tool_req__docs_req_arch_link_safety_to_arch[version==2]",
+    "need": "tool_req__docs_arch_link_security[version==1]",
     "links": {
       "CodeLinks": [],
       "TestLinks": [
         {
-          "name": "test_rules_file_based__test_rst_files[graph/test_arch_link_safety.rst]",
-          "file": "src/extensions/score_metamodel/tests/rst/graph/test_arch_link_safety.rst",
+          "name": "test_rules_file_based__test_rst_files[graph/test_arch_link_security.rst]",
+          "file": "src/extensions/score_metamodel/tests/rst/graph/test_arch_link_security.rst",
           "line": 15,
-          "need": "tool_req__docs_req_arch_link_safety_to_arch[version==2]",
+          "need": "tool_req__docs_arch_link_security[version==1]",
           "verify_type": "fully",
           "result": "passed",
           "result_text": "",
@@ -4096,7 +4096,7 @@
         {
           "name": "test_traceability_metrics__test_get_need_types_by_tags_returns_matching_directives_only",
           "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 25,
+          "line": 28,
           "need": "tool_req__docs_test_linkage_metrics",
           "verify_type": "partially",
           "result": "passed",
@@ -4108,7 +4108,7 @@
         {
           "name": "test_traceability_metrics__test_get_need_types_by_tags_returns_empty_on_non_match",
           "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 86,
+          "line": 89,
           "need": "tool_req__docs_test_linkage_metrics",
           "verify_type": "partially",
           "result": "passed",
@@ -4120,7 +4120,7 @@
         {
           "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[  -False]",
           "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 115,
+          "line": 118,
           "need": "tool_req__docs_test_linkage_metrics",
           "verify_type": "partially",
           "result": "passed",
@@ -4132,7 +4132,7 @@
         {
           "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[text-True]",
           "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 115,
+          "line": 118,
           "need": "tool_req__docs_test_linkage_metrics",
           "verify_type": "partially",
           "result": "passed",
@@ -4144,7 +4144,7 @@
         {
           "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[value2-False]",
           "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 115,
+          "line": 118,
           "need": "tool_req__docs_test_linkage_metrics",
           "verify_type": "partially",
           "result": "passed",
@@ -4156,7 +4156,7 @@
         {
           "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[value3-True]",
           "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 115,
+          "line": 118,
           "need": "tool_req__docs_test_linkage_metrics",
           "verify_type": "partially",
           "result": "passed",
@@ -4168,7 +4168,7 @@
         {
           "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[0-False]",
           "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 115,
+          "line": 118,
           "need": "tool_req__docs_test_linkage_metrics",
           "verify_type": "partially",
           "result": "passed",
@@ -4180,7 +4180,7 @@
         {
           "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[1-True]",
           "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 115,
+          "line": 118,
           "need": "tool_req__docs_test_linkage_metrics",
           "verify_type": "partially",
           "result": "passed",
@@ -4192,7 +4192,7 @@
         {
           "name": "test_traceability_metrics__test_is_non_empty_string_and_non_string_behavior[None-False]",
           "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 115,
+          "line": 118,
           "need": "tool_req__docs_test_linkage_metrics",
           "verify_type": "partially",
           "result": "passed",
@@ -4204,7 +4204,7 @@
         {
           "name": "test_traceability_metrics__test_safe_percent_zero[3-0-100.0]",
           "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 140,
+          "line": 143,
           "need": "tool_req__docs_test_linkage_metrics",
           "verify_type": "partially",
           "result": "passed",
@@ -4216,7 +4216,7 @@
         {
           "name": "test_traceability_metrics__test_safe_percent_zero[1-4-25.0]",
           "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 140,
+          "line": 143,
           "need": "tool_req__docs_test_linkage_metrics",
           "verify_type": "partially",
           "result": "passed",
@@ -4228,7 +4228,7 @@
         {
           "name": "test_traceability_metrics__test_calculate_requirement_metrics_counts_links_and_missing_ids",
           "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 154,
+          "line": 157,
           "need": "tool_req__docs_test_linkage_metrics",
           "verify_type": "partially",
           "result": "passed",
@@ -4240,7 +4240,7 @@
         {
           "name": "test_traceability_metrics__test_calculate_requirement_metrics_non_fully_linked",
           "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 183,
+          "line": 186,
           "need": "tool_req__docs_test_linkage_metrics",
           "verify_type": "partially",
           "result": "passed",
@@ -4252,7 +4252,7 @@
         {
           "name": "test_traceability_metrics__test_calculate_requirement_metrics_non_fully_linked_2",
           "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 209,
+          "line": 212,
           "need": "tool_req__docs_test_linkage_metrics",
           "verify_type": "partially",
           "result": "passed",
@@ -4264,7 +4264,91 @@
         {
           "name": "test_traceability_metrics__test_calculate_test_metrics_counts_linked_tests_and_broken_refs",
           "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 235,
+          "line": 238,
+          "need": "tool_req__docs_test_linkage_metrics",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        },
+        {
+          "name": "test_traceability_metrics__test_calculate_full_need_metrics_optional_external_feature_scope[False-None-1-1]",
+          "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
+          "line": 274,
+          "need": "tool_req__docs_test_linkage_metrics",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        },
+        {
+          "name": "test_traceability_metrics__test_calculate_full_need_metrics_optional_external_feature_scope[True-None-6-2]",
+          "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
+          "line": 274,
+          "need": "tool_req__docs_test_linkage_metrics",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        },
+        {
+          "name": "test_traceability_metrics__test_calculate_full_need_metrics_optional_external_feature_scope[True-feature_ids2-6-2]",
+          "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
+          "line": 274,
+          "need": "tool_req__docs_test_linkage_metrics",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        },
+        {
+          "name": "test_traceability_metrics__test_calculate_full_need_metrics_optional_external_feature_scope[False-feature_ids3-1-1]",
+          "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
+          "line": 274,
+          "need": "tool_req__docs_test_linkage_metrics",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        },
+        {
+          "name": "test_traceability_metrics__test_calculate_full_need_metrics_optional_external_feature_scope[True-feature_ids4-4-1]",
+          "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
+          "line": 274,
+          "need": "tool_req__docs_test_linkage_metrics",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        },
+        {
+          "name": "test_traceability_metrics__test_calculate_full_need_metrics_optional_external_feature_scope[True-feature_ids5-5-1]",
+          "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
+          "line": 274,
+          "need": "tool_req__docs_test_linkage_metrics",
+          "verify_type": "partially",
+          "result": "passed",
+          "result_text": "",
+          "repo_name": "local_repo",
+          "hash": "",
+          "url": ""
+        },
+        {
+          "name": "test_traceability_metrics__test_calculate_full_need_metrics_optional_external_feature_scope[True-feature_ids6-1-1]",
+          "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
+          "line": 274,
           "need": "tool_req__docs_test_linkage_metrics",
           "verify_type": "partially",
           "result": "passed",
@@ -4284,7 +4368,7 @@
         {
           "name": "test_traceability_metrics__test_calculate_requirement_metrics_counts_links_and_missing_ids",
           "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 154,
+          "line": 157,
           "need": "potential_tool_malfunction__docs_as_code__m3",
           "verify_type": "partially",
           "result": "passed",
@@ -4296,7 +4380,7 @@
         {
           "name": "test_traceability_metrics__test_calculate_test_metrics_counts_linked_tests_and_broken_refs",
           "file": "src/extensions/score_metrics/tests/test_traceability_metrics.py",
-          "line": 235,
+          "line": 238,
           "need": "potential_tool_malfunction__docs_as_code__m3",
           "verify_type": "partially",
           "result": "passed",

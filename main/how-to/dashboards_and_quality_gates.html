@@ -517,9 +517,35 @@ explicit override in <code class="docutils literal notranslate"><span class="pre
 </div>
 <p>When this setting is provided, the explicit list is used instead of
 autodiscovery.</p>
-<p>Use <code class="docutils literal notranslate"><span class="pre">score_metrics_include_external_needs</span> <span class="pre">=</span> <span class="pre">True</span></code> only in repositories that
+<p>Use <code class="docutils literal notranslate"><span class="pre">score_metrics_include_external_needs</span> <span class="pre">=</span> <span class="pre">True</span></code> in repositories that
 intentionally aggregate requirements across module dependencies, such as
-integration repositories.</p>
+integration repositories, or combine it with the optional feature scope below.</p>
+</section>
+<section id="optional-external-feature-scope">
+<h3>Optional External Feature Scope<a class="headerlink" href="#optional-external-feature-scope" title="Link to this heading">#</a></h3>
+<p>A module repository can report on feature requirements maintained in another
+repository, such as <code class="docutils literal notranslate"><span class="pre">score</span></code>, without counting unrelated external requirements.
+First import that repository’s needs data through the existing external-needs
+configuration, then configure the metrics in <code class="docutils literal notranslate"><span class="pre">docs/conf.py</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">score_metrics_include_external_needs</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">score_metrics_requirement_types</span> <span class="o">=</span> <span class="s2">&quot;feat_req,comp_req,aou_req&quot;</span>
+<span class="n">score_metrics_external_feature_ids</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;feat__lifecycle&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Replace the example feature ID with the exact ID referenced by the imported
+feature requirements’ <code class="docutils literal notranslate"><span class="pre">satisfied_by</span></code> links. Multiple feature IDs are supported.
+All local requirements of the selected requirement types remain included.
+External requirements are included only if they are <code class="docutils literal notranslate"><span class="pre">feat_req</span></code> needs with a
+<code class="docutils literal notranslate"><span class="pre">satisfied_by</span></code> link to at least one selected feature. Requirements without
+tests are still counted; unrelated external requirements are excluded.
+Local tests can link to the imported requirements through <code class="docutils literal notranslate"><span class="pre">fully_verifies</span></code>
+or <code class="docutils literal notranslate"><span class="pre">partially_verifies</span></code> as usual. The metrics selection does not remove
+imported needs from the documentation or from test-reference resolution.</p>
+<p>This feature is opt-in: <code class="docutils literal notranslate"><span class="pre">score_metrics_external_feature_ids</span></code> defaults to
+<code class="docutils literal notranslate"><span class="pre">[]</span></code>, preserving the existing local-only or full-aggregation behavior.
+The scope has no effect while <code class="docutils literal notranslate"><span class="pre">score_metrics_include_external_needs</span></code> is
+<code class="docutils literal notranslate"><span class="pre">False</span></code>. It does not import external needs automatically or change the
+configured requirement types.</p>
 </section>
 </section>
 <section id="building-the-dashboard">
@@ -724,6 +750,7 @@ gate thresholds so CI calls a single Bazel target.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configuration">Configuration</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#default-behavior-no-configuration-needed">Default Behavior (No Configuration Needed)</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#optional-override-for-requirement-types">Optional Override for Requirement Types</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#optional-external-feature-scope">Optional External Feature Scope</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#building-the-dashboard">Building the Dashboard</a><ul class="nav section-nav flex-column">
