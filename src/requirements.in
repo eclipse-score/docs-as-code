@@ -1,5 +1,5 @@
 Sphinx
-sphinx-needs
+sphinx-needs<9
 sphinxcontrib-plantuml
 pydata-sphinx-theme
 sphinx-design
@@ -7,7 +7,7 @@ sphinx-autobuild
 ruamel.yaml
 myst-parser
 PyGithub
-sphinx-needs[plotting]
+sphinx-needs[plotting]<9
 sphinxcontrib.mermaid
 
 # Although not required in all targets, we want pytest within ide_support to run tests from the IDE.
@@ -20,7 +20,7 @@ needs-config-writer
 # needs-config-writer @ https://github.com/useblocks/needs-config-writer/archive/032a5f8.zip
 
 # Mount external source trees into the Sphinx project without copying.
-sphinx-mounts
+sphinx-mounts<0.3
 
 # Need this to enable non bazel execution
 bazel-runfiles
