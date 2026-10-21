@@ -255,6 +255,9 @@ def calculate_full_need_metrics(app: Sphinx, include_external: bool):
     filter_reqs = [t.strip() for t in raw.split(",") if t.strip()]
     if not filter_reqs:
         filter_reqs = get_need_types_by_tags(metamodel.needs_types, {"requirement"})
+    external_feature_ids = set(
+        getattr(app.config, "score_metrics_external_feature_ids", [])
+    )
     #            ──────────────────[ Calculate Test Metrics ]──────────────────
 
     test_needs = list(all_needs.filter_types(["testcase"]).values())
@@ -278,10 +281,21 @@ def calculate_full_need_metrics(app: Sphinx, include_external: bool):
             needs_of_req_type = all_needs.filter_types([req_type]).filter_is_external(
                 False
             )
+        selected_requirements = list(needs_of_req_type.values())
+        if include_external and external_feature_ids:
+            selected_requirements = [
+                need
+                for need in selected_requirements
+                if not need.get("is_external")
+                or (
+                    req_type == "feat_req"
+                    and external_feature_ids.intersection(need.get("satisfied_by", []))
+                )
+            ]
         # We do not care if there is no requirements of this type.
-        if not list(needs_of_req_type.values()):
+        if not selected_requirements:
             continue
-        req_metrics = calculate_requirement_metrics(list(needs_of_req_type.values()))
+        req_metrics = calculate_requirement_metrics(selected_requirements)
         overall_metrics["total"] += req_metrics["total"]
         overall_metrics["with_code_link"] += req_metrics["with_code_link"]
         overall_metrics["with_test_link"] += req_metrics["with_test_link"]

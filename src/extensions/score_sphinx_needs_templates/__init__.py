@@ -10,6 +10,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
+from collections.abc import Mapping
 from pathlib import Path
 
 from sphinx.application import Sphinx
@@ -39,7 +40,7 @@ def _base_need_id(need_id: str) -> str:
     return need_id.split("[", 1)[0]
 
 
-def _find_need(needs: dict[str, NeedItem], need_id: str) -> NeedItem | None:
+def _find_need(needs: Mapping[str, NeedItem], need_id: str) -> NeedItem | None:
     """Find a Need by its address, tolerating version-qualified collection keys."""
     base_id = _base_need_id(need_id)
     for candidate_id in (need_id, base_id):
@@ -55,14 +56,22 @@ def _find_need(needs: dict[str, NeedItem], need_id: str) -> NeedItem | None:
     return None
 
 
-def _get_available_needs() -> dict[str, NeedItem]:
+def _get_available_needs() -> Mapping[str, NeedItem]:
     """Return the current Needs, including temporarily removed Needs."""
     if _build_environment is None:
         # The render helpers are registered before ``builder-inited`` captures
         # the environment. There is no Need collection to query before then.
         return {}
 
-    needs = SphinxNeedsData(_build_environment).get_needs_mutable()
+    needs_data = SphinxNeedsData(_build_environment)
+    # ``get_needs_mutable()`` raises once the Needs are frozen, which is the
+    # case in the write phase (e.g. ``doctree-resolved`` handlers). Calling
+    # ``get_needs_view()`` earlier would freeze them prematurely.
+    needs: Mapping[str, NeedItem] = (
+        needs_data.get_needs_view()
+        if needs_data.needs_is_post_processed
+        else needs_data.get_needs_mutable()
+    )
     if _temporarily_removed_needs:
         # ``env.clear_doc()`` removes the Needs belonging to the page being
         # reread. Preserve the live collection and overlay the saved entries
@@ -99,7 +108,7 @@ class _LinkedNeeds:
 
     @staticmethod
     def _resolve_backlinks(
-        needs: dict[str, NeedItem],
+        needs: Mapping[str, NeedItem],
         source: NeedItem | None,
         need_id: str,
         link_type: str,

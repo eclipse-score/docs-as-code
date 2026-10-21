@@ -82,6 +82,43 @@ def test_backlinks_merge_indexed_and_new_outgoing_links(
     assert [need["id"] for need in linked] == ["TC-old", "TC-new"]
 
 
+class FakeNeedsData:
+    """``SphinxNeedsData`` double that rejects mutable access once frozen."""
+
+    def __init__(self, _env: object, *, frozen: bool, needs: dict[str, FakeNeed]):
+        self.needs_is_post_processed = frozen
+        self._needs = needs
+
+    def get_needs_mutable(self) -> dict[str, FakeNeed]:
+        if self.needs_is_post_processed:
+            raise RuntimeError("Needs have already been post-processed and frozen.")
+        return self._needs
+
+    def get_needs_view(self) -> dict[str, FakeNeed]:
+        return self._needs
+
+
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
+@pytest.mark.parametrize("frozen", [False, True])
+def test_get_available_needs_works_before_and_after_freeze(
+    monkeypatch: pytest.MonkeyPatch, frozen: bool
+) -> None:
+    """Write-phase handlers (``doctree-resolved``) resolve links after the freeze."""
+    needs = {"REQ": FakeNeed("REQ")}
+    monkeypatch.setattr(templates, "_build_environment", object())
+    monkeypatch.setattr(
+        templates,
+        "SphinxNeedsData",
+        lambda env: FakeNeedsData(env, frozen=frozen, needs=needs),
+    )
+
+    assert list(templates._get_available_needs()) == ["REQ"]  # type: ignore[reportPrivateUsage]
+
+
 @add_test_properties(
     partially_verifies=[],
     test_type="interface-test",
