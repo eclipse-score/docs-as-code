@@ -82,7 +82,9 @@ Report record
    :post_template: tool_qualification_report
 
    Evaluates the S-CORE Docs-as-Code tool for building and checking
-   documentation and traceability data from RST/Markdown sources.
+   documentation and traceability data from RST/Markdown sources. It also
+   summarizes changed Needs between the published documentation and a pull
+   request's proposed documentation.
 
 Details
 -------
