@@ -31,12 +31,15 @@ filegroup(
 
 score_pytest(
     name = "dirty_build_test",
-    srcs = ["dirty_build_test.py", "cli.py"],
+    srcs = [
+        "cli.py",
+        "dirty_build_test.py",
+    ],
+    pytest_config = "//:pyproject.toml",
     deps = all_requirements + [
         "//src/extensions/score_mounts",
         "//src/helper_lib",
     ],
-    pytest_config = "//:pyproject.toml",
 )
 
 # Exercise dispatch and the docs.bzl environment contract with the same
@@ -44,10 +47,13 @@ score_pytest(
 # it distinct from score_pytest's own main.py entry in the test sources.
 score_pytest(
     name = "main_test",
-    srcs = ["main_test.py", "cli.py"],
+    srcs = [
+        "cli.py",
+        "main_test.py",
+    ],
+    pytest_config = "//:pyproject.toml",
     deps = all_requirements + [
         "//src/extensions/score_mounts",
         "//src/helper_lib",
     ],
-    pytest_config = "//:pyproject.toml",
 )

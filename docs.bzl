@@ -71,6 +71,7 @@ load(
     "@score_docs_as_code//:bzl/mount_rules.bzl",
     "create_composition_manifest",
 )
+
 # Keep the low-level action behind this name so this macro owns the shared
 # Sphinx policy while ``needs_rules.bzl`` owns Bazel's input/output plumbing.
 load("@score_docs_as_code//:bzl/needs_rules.bzl", "sphinx_docs")
@@ -90,15 +91,16 @@ def _needs_sphinx_extra_opts(
     These values cross the Bazel action boundary as command-line options. The
     shared warning and traceback flags are supplied by the launcher instead.
     """
+
     # The launcher supplies diagnostics shared by every builder. Keep only
     # target-specific defines here so the action does not receive duplicate
     # ``-W``, ``--keep-going``, and ``-T`` options after JSON transport.
     return [
         option
         for name, value in [
-        ("master_doc", master_doc),
-        ("score_bundle_needs_export", score_bundle_needs_export),
-        ("score_source_code_linker_plain_links", score_source_code_linker_plain_links),
+            ("master_doc", master_doc),
+            ("score_bundle_needs_export", score_bundle_needs_export),
+            ("score_source_code_linker_plain_links", score_source_code_linker_plain_links),
         ]
         for option in _sphinx_define(name, value)
     ]
@@ -139,6 +141,7 @@ def _needs_sphinx_docs(
     String settings travel as Sphinx ``--define`` options. Bazel labels stay
     typed until the private rule can declare them as sandbox inputs.
     """
+
     # These three files use typed rule attributes below so the private rule can
     # pass their paths to the action. Add them to ``tools`` as well: that puts
     # the files in the Sphinx executable's runfiles (for Python-side lookup)
@@ -199,6 +202,7 @@ def _bundle_needs_local_label(bundle):
     that implementation name directly.
     """
     label = str(bundle)
+
     # A package-local label is meaningful inside the BUILD file invoking the
     # macro. Turn it into an absolute workspace label before passing it to the
     # Python extension, which resolves inventory paths from Bazel runfiles.
@@ -214,6 +218,7 @@ def _bundle_needs_local_label(bundle):
         )
 
     package, target = label.rsplit(":", 1)
+
     # Bundle callers name public targets. Keep generated implementation names
     # private as more internal targets are added over time.
     if "__internal__" in target:
@@ -283,18 +288,18 @@ def _is_needs_inventory_target(label):
     return str(label).rsplit(":", 1)[-1] in ("needs_json", "needs_json_file")
 
 def _declare_docs_bundle(
-    name,
-    source_dir = None,
-    srcs = [],
-    data = [],
-    entry_doc = "index",
-    bundles = [],
-    code_targets = [],
-    primary_need_id = None,
-    root_docs_config = None,
-    is_root_bundle = False,
-    visibility = None,
-    **kwargs):
+        name,
+        source_dir = None,
+        srcs = [],
+        data = [],
+        entry_doc = "index",
+        bundles = [],
+        code_targets = [],
+        primary_need_id = None,
+        root_docs_config = None,
+        is_root_bundle = False,
+        visibility = None,
+        **kwargs):
     """Declare the shared bundle target implementation.
 
     This helper performs the bundle declaration used by both public entry
@@ -360,6 +365,7 @@ def _declare_docs_bundle(
     # Keep directory-discovered sources separate from explicit Bazel targets so
     # each kind can retain its own runtime path and staging behavior.
     source_dir_globbed = glob_doc_sources(source_dir) if source_dir != None else []
+
     # The private file set is the single source of implementation artifacts.
     # Sourcelinks scan these same bounded files; consumers can inspect the
     # internal target without adding a field to the public bundle manifest.
@@ -489,6 +495,7 @@ def _declare_bundle_local_needs(
 
     needs_local = _bundle_internal_target(name, "needs_local")
     needs_local_builder = _bundle_internal_target(name, "needs_local_builder")
+
     # The source provider and local manifest describe the same owner-only
     # document set. Pass both to Sphinx so mounted descendants are neither
     # loaded as local sources nor assigned to this bundle's Needs export.
@@ -528,17 +535,17 @@ def _declare_bundle_local_needs(
     )
 
 def docs_bundle(
-    name,
-    source_dir = None,
-    srcs = [],
-    data = [],
-    entry_doc = "index",
-    bundles = [],
-    code_targets = [],
-    primary_need_id = None,
-    root_docs = None,
-    visibility = None,
-    **kwargs):
+        name,
+        source_dir = None,
+        srcs = [],
+        data = [],
+        entry_doc = "index",
+        bundles = [],
+        code_targets = [],
+        primary_need_id = None,
+        root_docs = None,
+        visibility = None,
+        **kwargs):
     """Declare a reusable documentation bundle.
 
     The declaration itself is delegated to the shared helper. Keeping this
@@ -562,6 +569,7 @@ def docs_bundle(
         visibility = visibility,
         **kwargs
     )
+
     # The public bundle target above is composable and may contain nested
     # bundles. The local Needs inventory must instead use its source-only
     # sibling, so exported Needs reflect this bundle's ownership boundary.
@@ -732,6 +740,7 @@ def docs(
     if config_is_missing:
         if not project or not project_url:
             fail("docs(): no " + config_file_path + " found; provide both project and project_url to docs().")
+
         # Sphinx can run without a configuration file when ``-C`` is used.
         # Keep the macro's structured values as command-line overrides instead
         # of materializing a generated ``conf.py`` in the output tree.
@@ -787,8 +796,9 @@ def docs(
         root_docs_config = root_docs_config,
         is_root_bundle = True,
         visibility = ["//visibility:public"],
-        tags = ["manual"]
+        tags = ["manual"],
     )
+
     # The runtime manifest must be generated from the actual root bundle. The
     # root entry carries the project's direct code_targets and gives Python a
     # complete composition snapshot alongside the nested mounts.
@@ -796,6 +806,7 @@ def docs(
         name = "_mounts_manifest",
         bundle = ":docs_bundle",
     )
+
     # As with child docs_bundle targets, export Needs from the root's direct
     # source provider. Nested bundles are rendered by docs_bundle but keep
     # separate ownership and separate local Needs inventories.
