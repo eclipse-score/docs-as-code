@@ -31,6 +31,27 @@ a Sphinx extension that models requirements, tests, tasks and other "needs" insi
 Advanced
 ^^^^^^^^
 
+Generic Document Ownership
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The S-CORE metamodel's generic ``document`` supports an optional
+``belongs_to`` link to the module (``mod``), component (``comp``), or feature
+(``feat``) it describes. Documents may omit this link.
+
+The example assumes that ``mod__api`` and ``wp__api_reference`` are defined in
+the same documentation build.
+
+.. code-block:: rst
+
+   .. document:: API Overview
+      :id: doc__api_overview
+      :version: 1
+      :status: valid
+      :safety: QM
+      :security: NO
+      :realizes: wp__api_reference
+      :belongs_to: mod__api
+
 Needextend
 ~~~~~~~~~~
 
