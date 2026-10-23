@@ -711,7 +711,7 @@ Architecture Attributes
   :id: tool_req__docs_arch_links
   :implemented: YES
   :version: 1
-  :satisfies: gd_req__impl_diagram_check_id[version==1], gd_req__impl_diagram_linkage_id[version==1]
+  :satisfies: gd_req__arch_diagram_check_id[version==1], gd_req__arch_diagram_linkage_id[version==1]
   :parent_covered: YES
 
   Architectural diagrams (``mod_view_sta``, ``feat_arc_sta``, ``comp_arc_sta``,
