@@ -11,6 +11,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
+load("@aspect_rules_py//py:defs.bzl", "py_library")
 load("@docs_as_code_hub_env//:requirements.bzl", "all_requirements")
 load("@score_tools//score_pytest:pytest.bzl", "score_pytest")
 
@@ -29,12 +30,29 @@ filegroup(
     visibility = ["//visibility:public"],
 )
 
+# Documentation binaries are declared in consumer packages. The library is a
+# runtime dependency of their CLI and contains the LCOV aggregation and writer.
+py_library(
+    name = "lcov_summary_lib",
+    srcs = ["lcov_summary.py"],
+    visibility = ["//visibility:public"],
+)
+
+score_pytest(
+    name = "lcov_summary_test",
+    srcs = ["lcov_summary_test.py"],
+    data = glob(["fixtures/*.info"]),
+    deps = [":lcov_summary_lib"],
+    pytest_config = "//:pyproject.toml",
+)
+
 score_pytest(
     name = "dirty_build_test",
     srcs = ["dirty_build_test.py", "cli.py"],
     deps = all_requirements + [
         "//src/extensions/score_mounts",
         "//src/helper_lib",
+        ":lcov_summary_lib",
     ],
     pytest_config = "//:pyproject.toml",
 )
@@ -48,6 +66,7 @@ score_pytest(
     deps = all_requirements + [
         "//src/extensions/score_mounts",
         "//src/helper_lib",
+        ":lcov_summary_lib",
     ],
     pytest_config = "//:pyproject.toml",
 )

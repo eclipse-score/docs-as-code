@@ -12,6 +12,8 @@
 # *******************************************************************************
 
 load("@aspect_rules_py//py:defs.bzl", "py_library")
+load("@docs_as_code_hub_env//:requirements.bzl", "all_requirements")
+load("@score_tools//score_pytest:pytest.bzl", "score_pytest")
 
 py_library(
     name = "score_plantuml",
@@ -27,4 +29,20 @@ py_library(
     imports = ["."],
     visibility = ["//visibility:public"],
     deps = ["@score_docs_as_code//src/helper_lib"],
+)
+
+# Coverage rendering operates on Sphinx-Needs nodes and reads the CLI's JSON.
+py_library(
+    name = "score_coverage",
+    srcs = ["score_coverage.py"],
+    imports = ["."],
+    visibility = ["//visibility:public"],
+    deps = all_requirements,
+)
+
+score_pytest(
+    name = "score_coverage_test",
+    srcs = ["score_coverage_test.py"],
+    deps = [":score_coverage"],
+    pytest_config = "//:pyproject.toml",
 )

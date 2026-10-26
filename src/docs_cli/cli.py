@@ -29,6 +29,7 @@ from sphinx_autobuild.__main__ import (
     main as sphinx_autobuild_main,  # type: ignore[reportUnknownVariableType] # sphinx_autobuild doesn't provide complete type annotations
 )
 
+from src.docs_cli.lcov_summary import generate_summary
 from src.extensions.score_mounts._resolver import load_mounts_manifest, resolve_walk_dir
 from src.helper_lib import Environment, get_runfiles_dir
 from src.helper_lib.config import DocsCliConfig
@@ -81,7 +82,7 @@ def _module_hash_changed(build_dir: Path, sentinel_files: list[Path]) -> bool:
 
 
 def clean_builddir_if_stale(build_dir: Path, sentinel_files: list[Path]) -> None:
-    """Delete build_dir if the previous build had warnings or any sentinel file changed."""
+    """Clear stale output, retaining generated sentinel files in its root."""
     if not build_dir.exists():
         return
 
@@ -89,9 +90,21 @@ def clean_builddir_if_stale(build_dir: Path, sentinel_files: list[Path]) -> None
         build_dir, sentinel_files
     ):
         print(
-            f"Previous build had warnings or the hash changed. Removing {build_dir} to ensure a clean build."
+            f"Previous build had warnings or the hash changed. Cleaning {build_dir} to ensure a clean build."
         )
-        shutil.rmtree(build_dir)
+        # Generated root-level inputs participate in the cache check but must
+        # survive removal of stale HTML, doctrees and diagnostics.
+        inputs = {file for file in sentinel_files if file.parent == build_dir}
+        if inputs:
+            for entry in build_dir.iterdir():
+                if entry in inputs:
+                    continue
+                if entry.is_dir() and not entry.is_symlink():
+                    shutil.rmtree(entry)
+                else:
+                    entry.unlink()
+        else:
+            shutil.rmtree(build_dir)
 
 
 def update_module_hash(build_dir: Path, sentinel_files: list[Path]) -> None:
@@ -170,6 +183,7 @@ def _resolve_runfiles_relative_path(config: DocsCliConfig, value: Path) -> Path:
 
 def sphinx_arguments(
     config: DocsCliConfig,
+    coverage_summary: Path | None = None,
 ) -> list[str]:
     """Build Sphinx arguments from the resolved launcher configuration."""
     output_dir = config.output_dir
@@ -242,6 +256,9 @@ def sphinx_arguments(
         sourcelinks_json = _resolve_runfiles_relative_path(config, sourcelinks_json)
         base_arguments.append(f"--define=score_sourcelinks_json={sourcelinks_json}")
 
+    if coverage_summary is not None:
+        base_arguments.append(f"--define=score_coverage_summary={coverage_summary}")
+
     if github_repository := env.get("GITHUB_REPOSITORY", ""):
         # GITHUB_REPOSITORY is expected as "owner/repo"; partition("/") splits
         # once into (owner, separator, repo), so we can ignore the separator.
@@ -299,6 +316,22 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
+def _coverage_summary_for_run(config: DocsCliConfig) -> Path | None:
+    """Summarize the workspace report using this project's exported file lists."""
+    source_file_lists = env.optional_path("SCORE_SOURCE_FILE_LISTS")
+    if (
+        not config.is_bazel_run
+        or config.action not in ("incremental", "live_preview")
+        or source_file_lists is None
+    ):
+        return None
+    source_file_lists = _resolve_runfiles_relative_path(config, source_file_lists)
+    assert config.ws_root is not None
+    report = config.ws_root / "coverage-report/coverage_report.dat"
+    summary = config.output_dir / "coverage_summary.json"
+    return generate_summary(source_file_lists, report, summary)
+
+
 def main(argv: list[str] | None = None) -> int:
     """Run the requested builder and record whether its output can be reused."""
     args = parse_args(argv)
@@ -323,11 +356,14 @@ def main(argv: list[str] | None = None) -> int:
         ws_root / "MODULE.bazel.lock",
         package_dir / "BUILD",
     ]
+    coverage_summary = _coverage_summary_for_run(config)
+    if coverage_summary is not None:
+        sentinel_files.append(coverage_summary)
     if not config.is_bazel_build:
         clean_builddir_if_stale(output_dir, sentinel_files)
 
     warning_file = output_dir / "warnings.txt"
-    base_arguments = sphinx_arguments(config)
+    base_arguments = sphinx_arguments(config, coverage_summary=coverage_summary)
 
     if config.action == "live_preview":
         sphinx_autobuild_main(
