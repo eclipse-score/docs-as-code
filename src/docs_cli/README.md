@@ -52,8 +52,8 @@ linking can traverse this Bazel package boundary.
 configuration such as `SPHINX_CONFIG_FILE`, `SCORE_METAMODEL_YAML`,
 `SPHINX_CONFIG_OPTS`, `MOUNTS_MANIFEST`,
 `EXTERNAL_NEEDS_FILES`, `TEST_SOURCES`, `KNOWN_GOOD_JSON` and
-`SCORE_SOURCE_FILE_LISTS`. For HTML builds and live preview,
-`SCORE_SOURCE_FILE_LISTS` points to the root bundle's generated file lists.
+`SCORE_CODE_FILE_LISTS`. For HTML builds and live preview,
+`SCORE_CODE_FILE_LISTS` points to the root bundle's generated file lists.
 At startup, the CLI combines those lists with the optional workspace report at
 `coverage-report/coverage_report.dat` and writes the generated input to
 `<output-directory>/coverage_summary.json`. Cache cleanup preserves this

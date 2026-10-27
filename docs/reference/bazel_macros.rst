@@ -176,7 +176,7 @@ The CLI used by ``bazel run :docs`` and ``:live_preview``
 reads ``coverage-report/coverage_report.dat`` relative to the workspace root.
 The documentation workflow can download this artifact with its optional
 ``coverage-report-artifact`` input. The CLI calculates coverage per primary Need
-from the bundles' source-file lists and writes
+from the bundles' code-file lists and writes
 ``<build-output>/coverage_summary.json``.
 This generated input participates in the local documentation cache check and
 remains available when stale output is removed.

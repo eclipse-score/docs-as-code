@@ -10,12 +10,12 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-"""Export composed bundles' source-file lists for coverage attribution."""
+"""Export composed bundles' code-file lists for coverage attribution."""
 
 load("@score_docs_as_code//:bzl/bundle_rules.bzl", "DocsBundleInfo")
 
 def _file_identity(file):
-    """Export Bazel's repository-relative identity for a source artifact.
+    """Export Bazel's repository-relative identity for a code artifact.
 
     short_path spells an external file as ../<canonical repo>/<path>, even
     when the file is generated. The path inside that repository is independent
@@ -29,25 +29,25 @@ def _file_identity(file):
     # short_path already omits the configuration root for generated outputs.
     return struct(repository = repository, path = path)
 
-def _source_file_lists_impl(ctx):
-    """Export source-file identities and primary Need IDs from composed bundles.
+def _code_file_lists_impl(ctx):
+    """Export code-file identities and primary Need IDs from composed bundles.
 
     Membership comes from the bounded file sets shared with source links. Only
     identities enter this JSON, so source edits that preserve membership leave
     the exported file lists unchanged. Bundle entries retain each file set's
     ownership as children are mounted into a parent.
     """
-    source_file_lists = {}
+    code_file_lists = {}
     for entry in ctx.attr.bundle[DocsBundleInfo].entries:
         # A primary Need belongs to this bundle's own documentation. Pure
         # aggregators and data-only entries provide no local Need declarations.
         # The metamodel validates the actual ID against those own documents.
         if not entry.primary_need_id or not entry.src_root:
             continue
-        if entry.primary_need_id in source_file_lists:
+        if entry.primary_need_id in code_file_lists:
             fail("primary Need ID %s belongs to multiple bundles: %s and %s" % (
                 entry.primary_need_id,
-                source_file_lists[entry.primary_need_id]["bundle"],
+                code_file_lists[entry.primary_need_id]["bundle"],
                 entry.bundle_label,
             ))
         files = {}
@@ -57,7 +57,7 @@ def _source_file_lists_impl(ctx):
                 "repository": identity.repository,
                 "path": identity.path,
             }
-        source_file_lists[entry.primary_need_id] = {
+        code_file_lists[entry.primary_need_id] = {
             "primary_need_id": entry.primary_need_id,
             "bundle": entry.bundle_label,
             "files": [files[key] for key in sorted(files)],
@@ -65,18 +65,18 @@ def _source_file_lists_impl(ctx):
     out = ctx.actions.declare_file(ctx.label.name + ".json")
     ctx.actions.write(out, json.encode({
         "version": 1,
-        "source_file_lists": [source_file_lists[key] for key in sorted(source_file_lists)],
+        "code_file_lists": [code_file_lists[key] for key in sorted(code_file_lists)],
     }) + "\n")
     return [DefaultInfo(files = depset([out]))]
 
-_source_file_lists = rule(
-    implementation = _source_file_lists_impl,
+_code_file_lists = rule(
+    implementation = _code_file_lists_impl,
     attrs = {"bundle": attr.label(mandatory = True, providers = [DocsBundleInfo])},
 )
 
-def declare_source_file_lists(name, bundle):
+def declare_code_file_lists(name, bundle):
     """Export a bundle's composed file identities as a private JSON target."""
-    _source_file_lists(
+    _code_file_lists(
         name = name,
         bundle = bundle,
         visibility = ["//visibility:private"],

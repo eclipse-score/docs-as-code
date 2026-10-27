@@ -19,7 +19,7 @@ from pathlib import Path
 import pytest
 
 from src.docs_cli.lcov_summary import (
-    load_source_file_lists,
+    load_code_file_lists,
     parse_lcov,
     summarize,
 )
@@ -48,21 +48,21 @@ def test_coverage_summary_uses_existing_bounded_implementation_files(
     workflow_coverage: Path,
 ):
     scenario = "reference_integration/modern_module"
-    run_scenario("build", scenario, ":docs_bundle.__internal__.source_file_lists")
+    run_scenario("build", scenario, ":docs_bundle.__internal__.code_file_lists")
     folder = f"scenarios/{scenario}"
     manifest = json.loads(
         built_output(
-            folder, "docs_bundle.__internal__.source_file_lists.json"
+            folder, "docs_bundle.__internal__.code_file_lists.json"
         ).read_text()
     )
-    assert len(manifest["source_file_lists"]) == 1
-    source_file_list = manifest["source_file_lists"][0]
-    assert source_file_list["primary_need_id"] == "comp__modern_component"
+    assert len(manifest["code_file_lists"]) == 1
+    code_file_list = manifest["code_file_lists"][0]
+    assert code_file_list["primary_need_id"] == "comp__modern_component"
     prefix = f"src/tests/docs_bzl/{folder}/docs/components/"
     # These are exactly the existing private collection's files: selected
     # sibling headers and local leaves behind excluded dependencies survive,
     # while sibling implementation files and external malloc sources do not.
-    assert source_file_list["files"] == [
+    assert code_file_list["files"] == [
         {"repository": "_main", "path": prefix + path}
         for path in (
             "component/api.h",
@@ -76,8 +76,8 @@ def test_coverage_summary_uses_existing_bounded_implementation_files(
     summary: dict[str, object] = {
         "version": 1,
         "coverage_summaries": summarize(
-            load_source_file_lists(
-                built_output(folder, "docs_bundle.__internal__.source_file_lists.json")
+            load_code_file_lists(
+                built_output(folder, "docs_bundle.__internal__.code_file_lists.json")
             ),
             parse_lcov(workflow_coverage.read_text(encoding="utf-8")),
         ),
@@ -99,18 +99,18 @@ def test_coverage_summary_uses_existing_bounded_implementation_files(
 def test_primary_need_types_empty_files_and_explicit_external_targets():
     """A module primary Need and a component primary Need both retain code ownership."""
     scenario = "coverage_summary"
-    run_scenario("build", scenario, ":aggregate.__internal__.source_file_lists")
+    run_scenario("build", scenario, ":aggregate.__internal__.code_file_lists")
     manifest = json.loads(
         built_output(
-            f"scenarios/{scenario}", "aggregate.__internal__.source_file_lists.json"
+            f"scenarios/{scenario}", "aggregate.__internal__.code_file_lists.json"
         ).read_text()
     )
-    assert [entry["primary_need_id"] for entry in manifest["source_file_lists"]] == [
+    assert [entry["primary_need_id"] for entry in manifest["code_file_lists"]] == [
         "comp__files",
         "mod__empty",
     ]
-    assert manifest["source_file_lists"][1]["files"] == []
-    files = manifest["source_file_lists"][0]["files"]
+    assert manifest["code_file_lists"][1]["files"] == []
+    files = manifest["code_file_lists"][0]["files"]
     assert {
         "repository": "bazel_tools",
         "path": "tools/cpp/runfiles/runfiles.h",
@@ -118,10 +118,10 @@ def test_primary_need_types_empty_files_and_explicit_external_targets():
     assert len(files) == len({(file["repository"], file["path"]) for file in files})
     result = {
         "coverage_summaries": summarize(
-            load_source_file_lists(
+            load_code_file_lists(
                 built_output(
                     f"scenarios/{scenario}",
-                    "aggregate.__internal__.source_file_lists.json",
+                    "aggregate.__internal__.code_file_lists.json",
                 )
             ),
             parse_lcov(
@@ -145,7 +145,7 @@ def test_conflicting_primary_need_ids_fail_instead_of_overwriting_membership():
     result = run_bazel(
         [
             "build",
-            "//src/tests/docs_bzl/scenarios/coverage_summary:conflict.__internal__.source_file_lists",
+            "//src/tests/docs_bzl/scenarios/coverage_summary:conflict.__internal__.code_file_lists",
         ],
         expect_error=True,
     )
@@ -208,7 +208,7 @@ def test_documentation_checks_do_not_consume_coverage_file_lists(target: str):
     result = run_bazel(
         [
             "aquery",
-            f"inputs('.*source_file_lists[.]json', deps({package}:{target}))",
+            f"inputs('.*code_file_lists[.]json', deps({package}:{target}))",
         ]
     )
     assert not result.stdout.strip()

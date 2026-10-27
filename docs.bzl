@@ -68,8 +68,8 @@ load(
     "sphinx_config_options",
 )
 load(
-    "@score_docs_as_code//:bzl/coverage_rules.bzl",
-    "declare_source_file_lists",
+    "@score_docs_as_code//:bzl/code_file_lists.bzl",
+    "declare_code_file_lists",
 )
 load(
     "@score_docs_as_code//:bzl/mount_rules.bzl",
@@ -413,8 +413,8 @@ def _declare_docs_bundle(
     # File identities are intrinsic bundle metadata, independent of whether a
     # coverage report is available. Export the composed view under the bundle's
     # own internal name so docs() can consume it without a separate user target.
-    source_file_lists = declare_source_file_lists(
-        name = _bundle_internal_target(name, "source_file_lists"),
+    code_file_lists = declare_code_file_lists(
+        name = _bundle_internal_target(name, "code_file_lists"),
         bundle = ":" + name,
     )
 
@@ -465,7 +465,7 @@ def _declare_docs_bundle(
         sourcelinks_json = sourcelinks_json,
         source_bundle = source_bundle,
         local_manifest = local_manifest,
-        source_file_lists = source_file_lists,
+        code_file_lists = code_file_lists,
     )
 
 def _declare_bundle_local_needs(
@@ -874,9 +874,9 @@ def docs(
     # in the workspace when bazel run starts. Coverage collection and summary
     # generation therefore leave sandboxed Needs inventories independent of
     # downloaded artifacts. Fast validation uses the base data/environment.
-    coverage_data = docs_data + [root_bundle.source_file_lists]
+    coverage_data = docs_data + [root_bundle.code_file_lists]
     coverage_env = docs_env | {
-        "SCORE_SOURCE_FILE_LISTS": "$(rlocationpath " + root_bundle.source_file_lists + ")",
+        "SCORE_CODE_FILE_LISTS": "$(rlocationpath " + root_bundle.code_file_lists + ")",
     }
 
     # Generated documentation artifacts may live below ``docs/``.  A

@@ -19,11 +19,11 @@ from pathlib import Path
 import pytest
 
 from src.docs_cli.lcov_summary import (
+    CodeFileList,
     CoverageError,
     FileIdentity,
-    SourceFileList,
     file_identity,
-    load_source_file_lists,
+    load_code_file_lists,
     parse_lcov,
     summarize,
     summary_json,
@@ -31,8 +31,8 @@ from src.docs_cli.lcov_summary import (
 )
 
 
-def source_files(*paths: str, name: str = "comp__example") -> SourceFileList:
-    return SourceFileList(name, frozenset(file_identity(path) for path in paths))
+def code_files(*paths: str, name: str = "comp__example") -> CodeFileList:
+    return CodeFileList(name, frozenset(file_identity(path) for path in paths))
 
 
 def test_repeated_records_union_line_and_branch_identities():
@@ -41,7 +41,7 @@ def test_repeated_records_union_line_and_branch_identities():
         "SF:src/a.cc\nDA:1,0\nDA:2,8\nBRDA:1,0,0,0\nBRDA:1,0,1,2\nend_of_record\n"
     )
     files = parse_lcov(text + text)
-    summary = summarize([source_files("src/a.cc")], files)[0]
+    summary = summarize([code_files("src/a.cc")], files)[0]
     assert summary["lines"] == {"total": 2, "percent": 100}
     assert summary["branches"] == {"total": 2, "percent": 100}
 
@@ -49,21 +49,21 @@ def test_repeated_records_union_line_and_branch_identities():
 def test_aggregate_before_rounding_and_round_halves_up():
     # An average of file percentages would be 50%; the selected files cover 1/3.
     files = parse_lcov("SF:a\nDA:1,1\nSF:b\nDA:1,0\nDA:2,0\n")
-    assert summarize([source_files("a", "b")], files)[0]["lines"]["percent"] == 33
+    assert summarize([code_files("a", "b")], files)[0]["lines"]["percent"] == 33
     halves = parse_lcov(
         "SF:a\n" + "".join(f"DA:{n},{int(n <= 1)}\n" for n in range(1, 9))
     )
-    assert summarize([source_files("a")], halves)[0]["lines"]["percent"] == 13
+    assert summarize([code_files("a")], halves)[0]["lines"]["percent"] == 13
 
 
 def test_missing_uninstrumented_and_measured_zero_are_distinct():
     files = parse_lcov("SF:empty\nLF:0\nBRF:0\nSF:zero\nDA:1,0\nBRDA:1,0,0,-\n")
     summaries = summarize(
         [
-            source_files("absent", name="missing"),
-            source_files("empty", name="uninstrumented"),
-            source_files("zero", name="zero"),
-            source_files(name="no_files"),
+            code_files("absent", name="missing"),
+            code_files("empty", name="uninstrumented"),
+            code_files("zero", name="zero"),
+            code_files(name="no_files"),
         ],
         files,
     )
@@ -79,9 +79,9 @@ def test_missing_uninstrumented_and_measured_zero_are_distinct():
 
 def test_partial_result_counts_absent_records_without_inventing_instrumented_lines():
     files = parse_lcov("SF:measured\nDA:1,1\n")
-    summary = summarize(
-        [source_files("measured", "rust.rs", "api.h", "unknown")], files
-    )[0]
+    summary = summarize([code_files("measured", "rust.rs", "api.h", "unknown")], files)[
+        0
+    ]
     assert summary["files"] == {"total": 4, "measured": 1}
     assert summary["lines"] == {"total": 1, "percent": 100}
     assert summary["branches"] == {"total": 0, "percent": None}
@@ -90,7 +90,7 @@ def test_partial_result_counts_absent_records_without_inventing_instrumented_lin
 def test_exact_file_membership_excludes_siblings_and_retains_explicit_shared_files():
     files = parse_lcov("SF:src/a\nDA:1,1\nSF:src/sibling/b\nDA:1,0\n")
     summaries = summarize(
-        [source_files("src/a", name="parent"), source_files("src/a", name="shared")],
+        [code_files("src/a", name="parent"), code_files("src/a", name="shared")],
         files,
     )
     assert len(summaries) == 2
@@ -108,7 +108,7 @@ def test_canonical_bazel_paths_preserve_repository_identity():
         "dep+", "include/x.h"
     )
     files = parse_lcov("SF:src/a\nDA:1,1\nSF:external/other/src/a\nDA:1,0\n")
-    assert summarize([source_files("src/a")], files)[0]["lines"]["percent"] == 100
+    assert summarize([code_files("src/a")], files)[0]["lines"]["percent"] == 100
     assert len(files) == 2
 
 
@@ -130,7 +130,7 @@ def test_unsupported_paths_do_not_fall_back_to_suffix_matching(path: str):
 
 def test_source_items_determine_metric_even_when_llvm_summary_differs():
     files = parse_lcov("SF:a\nDA:1,1\nDA:2,1\nLF:3\nLH:2\nBRDA:1,0,0,1\nBRF:2\nBRH:1\n")
-    summary = summarize([source_files("a")], files)[0]
+    summary = summarize([code_files("a")], files)[0]
     assert summary["lines"] == {"total": 2, "percent": 100}
     assert summary["branches"] == {"total": 1, "percent": 100}
 
@@ -161,7 +161,7 @@ def test_equivalent_rounded_summaries_preserve_bytes_and_modification_time(
         text = "SF:a\n" + "".join(
             f"DA:{n},{counter if n <= hits else 0}\n" for n in range(1, 1001)
         )
-        return summarize([source_files("a")], parse_lcov(text))
+        return summarize([code_files("a")], parse_lcov(text))
 
     assert write_summary(output, summary_json(summary_for(501, 1)))
     os.utime(output, ns=(123456789000, 123456789000))
@@ -180,28 +180,26 @@ def test_changed_totals_and_availability_update_output_even_at_same_percentage(
 ):
     output = tmp_path / "summary.json"
     files = parse_lcov("SF:a\nDA:1,1\nSF:b\nDA:1,1\n")
-    assert write_summary(output, summary_json(summarize([source_files("a")], files)))
+    assert write_summary(output, summary_json(summarize([code_files("a")], files)))
+    assert write_summary(output, summary_json(summarize([code_files("a", "b")], files)))
     assert write_summary(
-        output, summary_json(summarize([source_files("a", "b")], files))
-    )
-    assert write_summary(
-        output, summary_json(summarize([source_files("a", "b", "missing")], files))
+        output, summary_json(summarize([code_files("a", "b", "missing")], files))
     )
 
 
-def test_source_file_lists_validate_and_deduplicate_file_membership(tmp_path: Path):
-    path = tmp_path / "source_file_lists.json"
+def test_code_file_lists_validate_and_deduplicate_file_membership(tmp_path: Path):
+    path = tmp_path / "code_file_lists.json"
     entry: dict[str, object] = {
         "primary_need_id": "comp",
         "files": [{"repository": "repo+", "path": "src/a"}] * 2,
     }
-    path.write_text(json.dumps({"version": 1, "source_file_lists": [entry]}))
-    assert load_source_file_lists(path) == [
-        SourceFileList("comp", frozenset({FileIdentity("repo+", "src/a")}))
+    path.write_text(json.dumps({"version": 1, "code_file_lists": [entry]}))
+    assert load_code_file_lists(path) == [
+        CodeFileList("comp", frozenset({FileIdentity("repo+", "src/a")}))
     ]
-    path.write_text(json.dumps({"version": 1, "source_file_lists": [entry, entry]}))
+    path.write_text(json.dumps({"version": 1, "code_file_lists": [entry, entry]}))
     with pytest.raises(CoverageError, match="duplicate primary Need ID"):
-        load_source_file_lists(path)
+        load_code_file_lists(path)
 
 
 @pytest.mark.parametrize(
@@ -212,25 +210,25 @@ def test_coverage_tool_golden_excerpts_preserve_backend_item_counts(
 ):
     """Both report layouts work; backend line definitions remain intentionally distinct."""
     text = (Path(__file__).parent / "fixtures" / f"{backend}.info").read_text()
-    summary = summarize([source_files("src/coverable.cpp")], parse_lcov(text))[0]
+    summary = summarize([code_files("src/coverable.cpp")], parse_lcov(text))[0]
     assert summary["lines"] == {"total": total, "percent": percent}
     assert summary["branches"] == {"total": 4, "percent": 75}
 
 
-def test_record_and_source_file_list_order_do_not_change_output(tmp_path: Path):
+def test_record_and_code_file_list_order_do_not_change_output(tmp_path: Path):
     output = tmp_path / "summary.json"
     a = "SF:a\nDA:1,1\nBRDA:1,0,0,1\nend_of_record\n"
     b = "SF:b\nDA:1,0\nBRDA:1,1,0,0\nend_of_record\n"
-    source_file_lists = [
-        source_files("a", name="second"),
-        source_files("b", name="first"),
+    code_file_lists = [
+        code_files("a", name="second"),
+        code_files("b", name="first"),
     ]
     assert write_summary(
-        output, summary_json(summarize(source_file_lists, parse_lcov(a + b)))
+        output, summary_json(summarize(code_file_lists, parse_lcov(a + b)))
     )
     assert not write_summary(
         output,
-        summary_json(summarize(list(reversed(source_file_lists)), parse_lcov(b + a))),
+        summary_json(summarize(list(reversed(code_file_lists)), parse_lcov(b + a))),
     )
 
 
@@ -239,7 +237,7 @@ def test_branch_expressions_with_commas_retain_identity_across_records():
         "SF:a\nBRDA:1,0,check(x,y),1\nBRDA:1,1,check(x,y),-\nend_of_record\n"
         "SF:a\nBRDA:1,0,check(x,y),0\nBRDA:1,1,check(x,y),2\nend_of_record\n"
     )
-    summary = summarize([source_files("a")], parse_lcov(text))[0]
+    summary = summarize([code_files("a")], parse_lcov(text))[0]
     assert summary["branches"] == {"total": 2, "percent": 100}
 
 
@@ -248,19 +246,19 @@ def test_canonical_external_path_forms_merge_before_aggregation():
         "SF:external/repo+/src/a\nDA:1,1\nDA:2,0\nend_of_record\n"
         "SF:../repo+/src/a\nDA:1,0\nDA:2,1\nend_of_record\n"
     )
-    summary = summarize([source_files("external/repo+/src/a")], parse_lcov(text))[0]
+    summary = summarize([code_files("external/repo+/src/a")], parse_lcov(text))[0]
     assert summary["files"] == {"total": 1, "measured": 1}
     assert summary["lines"] == {"total": 2, "percent": 100}
 
 
 def test_explicit_repository_keeps_an_external_named_source_directory(tmp_path: Path):
     """An exported path is already scoped; only LCOV paths carry repository prefixes."""
-    path = tmp_path / "source_file_lists.json"
+    path = tmp_path / "code_file_lists.json"
     path.write_text(
         json.dumps(
             {
                 "version": 1,
-                "source_file_lists": [
+                "code_file_lists": [
                     {
                         "primary_need_id": "mod__example",
                         "files": [
@@ -271,7 +269,7 @@ def test_explicit_repository_keeps_an_external_named_source_directory(tmp_path: 
             }
         )
     )
-    selected = load_source_file_lists(path)
+    selected = load_code_file_lists(path)
     report = parse_lcov("SF:external/dep+/external/vendor/header.h\nDA:1,1\n")
     summary = summarize(selected, report)[0]
     assert summary["files"] == {"total": 1, "measured": 1}
@@ -282,12 +280,12 @@ def test_explicit_repository_keeps_an_external_named_source_directory(tmp_path: 
 def test_exported_source_paths_must_stay_inside_their_repository(
     tmp_path: Path, path: str
 ):
-    file_lists = tmp_path / "source_file_lists.json"
+    file_lists = tmp_path / "code_file_lists.json"
     file_lists.write_text(
         json.dumps(
             {
                 "version": 1,
-                "source_file_lists": [
+                "code_file_lists": [
                     {
                         "primary_need_id": "mod__example",
                         "files": [{"repository": "dep+", "path": path}],
@@ -297,4 +295,4 @@ def test_exported_source_paths_must_stay_inside_their_repository(
         )
     )
     with pytest.raises(CoverageError):
-        load_source_file_lists(file_lists)
+        load_code_file_lists(file_lists)

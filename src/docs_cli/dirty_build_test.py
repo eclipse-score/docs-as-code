@@ -38,7 +38,7 @@ def docs_workspace(fs: FFS, monkeypatch: pytest.MonkeyPatch) -> Path:
     monkeypatch.setenv("PACKAGE_DIR", "component")
     monkeypatch.setenv("SOURCE_DIRECTORY", "docs")
     monkeypatch.setenv("DATA", "[]")
-    monkeypatch.delenv("SCORE_SOURCE_FILE_LISTS", raising=False)
+    monkeypatch.delenv("SCORE_CODE_FILE_LISTS", raising=False)
     fs.create_dir(_WORKSPACE / "component")
     for name in ("MODULE.bazel", "MODULE.bazel.lock", "component/BUILD"):
         fs.create_file(_WORKSPACE / name, contents="stable")
@@ -359,7 +359,7 @@ def test_coverage_summary_is_a_sentinel_preserved_during_output_cleanup(
         json.dumps(
             {
                 "version": 1,
-                "source_file_lists": [
+                "code_file_lists": [
                     {
                         "primary_need_id": "mod__test",
                         "files": [{"repository": "_main", "path": "source.cc"}],
@@ -368,7 +368,7 @@ def test_coverage_summary_is_a_sentinel_preserved_during_output_cleanup(
             }
         )
     )
-    monkeypatch.setenv("SCORE_SOURCE_FILE_LISTS", str(file_lists))
+    monkeypatch.setenv("SCORE_CODE_FILE_LISTS", str(file_lists))
     report = docs_workspace / "coverage-report/coverage_report.dat"
     report.parent.mkdir()
     original = "SF:source.cc\nDA:1,1\nDA:2,1\nDA:3,0\n"
@@ -450,7 +450,7 @@ def test_checks_ignore_coverage_even_with_a_configured_file_list(
     """Coverage cannot break validation or link checks that do not display it."""
     monkeypatch.setenv("ACTION", action)
     monkeypatch.setenv(
-        "SCORE_SOURCE_FILE_LISTS", str(docs_workspace / "missing-files.json")
+        "SCORE_CODE_FILE_LISTS", str(docs_workspace / "missing-files.json")
     )
     build_dir = docs_workspace / "component/_build"
 

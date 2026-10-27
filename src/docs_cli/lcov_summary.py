@@ -10,7 +10,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-"""Summarize LCOV for selected source-file lists with stable JSON output."""
+"""Summarize LCOV for selected code-file lists with stable JSON output."""
 
 import json
 import os
@@ -23,7 +23,7 @@ from typing import TypedDict, cast
 
 
 class CoverageError(ValueError):
-    """Invalid source-file lists or unsupported LCOV data."""
+    """Invalid code-file lists or unsupported LCOV data."""
 
 
 @dataclass(frozen=True, order=True)
@@ -33,7 +33,7 @@ class FileIdentity:
 
 
 @dataclass(frozen=True)
-class SourceFileList:
+class CodeFileList:
     primary_need_id: str
     files: frozenset[FileIdentity]
 
@@ -89,20 +89,20 @@ def _string(value: object, name: str) -> str:
     return value
 
 
-def load_source_file_lists(path: Path) -> list[SourceFileList]:
-    """Load source-file lists and validate unique primary Need IDs."""
+def load_code_file_lists(path: Path) -> list[CodeFileList]:
+    """Load code-file lists and validate unique primary Need IDs."""
     data = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(data, dict) or data.get("version") != 1:
-        raise CoverageError("source-file lists must have version 1")
+        raise CoverageError("code-file lists must have version 1")
     data = cast(dict[str, object], data)
-    entries = data.get("source_file_lists")
+    entries = data.get("code_file_lists")
     if not isinstance(entries, list):
-        raise CoverageError("source-file lists must contain a source_file_lists list")
-    source_file_lists: dict[str, SourceFileList] = {}
+        raise CoverageError("code-file lists must contain a code_file_lists list")
+    code_file_lists: dict[str, CodeFileList] = {}
     for entry in cast(list[object], entries):
         if not isinstance(entry, dict) or not isinstance(entry.get("files"), list):
             raise CoverageError(
-                "each source file list must contain a primary_need_id and a files list"
+                "each code file list must contain a primary_need_id and a files list"
             )
         entry = cast(dict[str, object], entry)
         primary_need_id = _string(entry.get("primary_need_id"), "primary_need_id")
@@ -110,7 +110,7 @@ def load_source_file_lists(path: Path) -> list[SourceFileList]:
         for item in cast(list[object], entry["files"]):
             if not isinstance(item, dict):
                 raise CoverageError(
-                    "source file lists must contain repository/path objects"
+                    "code file lists must contain repository/path objects"
                 )
             item = cast(dict[str, object], item)
             repository = _string(item.get("repository"), "file repository")
@@ -118,12 +118,12 @@ def load_source_file_lists(path: Path) -> list[SourceFileList]:
             # The export already identifies the repository. A directory named
             # "external" inside it is an ordinary directory, not an LCOV prefix.
             files.add(FileIdentity(repository, _relative_source_path(file_path)))
-        if primary_need_id in source_file_lists:
+        if primary_need_id in code_file_lists:
             raise CoverageError(f"duplicate primary Need ID: {primary_need_id}")
-        source_file_lists[primary_need_id] = SourceFileList(
+        code_file_lists[primary_need_id] = CodeFileList(
             primary_need_id, frozenset(files)
         )
-    return list(source_file_lists.values())
+    return list(code_file_lists.values())
 
 
 def _number(value: str, *, positive: bool = False) -> int:
@@ -227,7 +227,7 @@ def _dimension(records: list[Collection[bool]], measured: bool) -> Dimension:
 
 
 def summarize(
-    source_file_lists: list[SourceFileList],
+    code_file_lists: list[CodeFileList],
     files: dict[FileIdentity, FileCoverage],
 ) -> list[Summary]:
     """Aggregate available source items for each primary Need before rounding.
@@ -236,15 +236,15 @@ def summarize(
     is unknown and therefore cannot contribute to line or branch totals.
     """
     summaries: list[Summary] = []
-    for source_file_list in sorted(
-        source_file_lists, key=lambda source_file_list: source_file_list.primary_need_id
+    for code_file_list in sorted(
+        code_file_lists, key=lambda code_file_list: code_file_list.primary_need_id
     ):
-        records = [files[file] for file in source_file_list.files if file in files]
+        records = [files[file] for file in code_file_list.files if file in files]
         measured = len(records)
-        total = len(source_file_list.files)
+        total = len(code_file_list.files)
         summaries.append(
             {
-                "primary_need_id": source_file_list.primary_need_id,
+                "primary_need_id": code_file_list.primary_need_id,
                 "files": {"total": total, "measured": measured},
                 "lines": _dimension(
                     [record.lines.values() for record in records], bool(measured)
@@ -285,14 +285,14 @@ def write_summary(output: Path, content: bytes) -> bool:
 
 
 def generate_summary(
-    source_file_lists: Path, coverage_report: Path, output: Path
+    code_file_lists: Path, coverage_report: Path, output: Path
 ) -> Path:
     """Write coverage summaries for the exported files and return the JSON path.
 
     An absent report yields unavailable measurements. Parsing finishes before
     writing, so invalid input leaves an existing summary intact.
     """
-    selected_files = load_source_file_lists(source_file_lists)
+    selected_files = load_code_file_lists(code_file_lists)
     lcov = (
         coverage_report.read_text(encoding="utf-8") if coverage_report.exists() else ""
     )

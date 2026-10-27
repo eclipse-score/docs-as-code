@@ -314,18 +314,18 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 
 def _coverage_summary_for_run(config: DocsCliConfig) -> Path | None:
     """Summarize the workspace report using this project's exported file lists."""
-    source_file_lists = env.optional_path("SCORE_SOURCE_FILE_LISTS")
+    code_file_lists = env.optional_path("SCORE_CODE_FILE_LISTS")
     if (
         not config.is_bazel_run
         or config.action not in ("incremental", "live_preview")
-        or source_file_lists is None
+        or code_file_lists is None
     ):
         return None
-    source_file_lists = _resolve_runfiles_relative_path(config, source_file_lists)
+    code_file_lists = _resolve_runfiles_relative_path(config, code_file_lists)
     assert config.ws_root is not None
     report = config.ws_root / "coverage-report/coverage_report.dat"
     summary = config.output_dir / "coverage_summary.json"
-    return generate_summary(source_file_lists, report, summary)
+    return generate_summary(code_file_lists, report, summary)
 
 
 def main(argv: list[str] | None = None) -> int:
