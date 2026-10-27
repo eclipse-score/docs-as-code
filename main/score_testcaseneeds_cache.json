@@ -2982,22 +2982,8 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_rules_file_based__test_rst_files[options/test_options_common_attrs_security.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/options/test_options_common_attrs_security.rst",
-    "line": "15",
-    "result": "passed",
-    "repo_name": "local_repo",
-    "hash": "",
-    "url": "",
-    "TestType": "interface-test",
-    "DerivationTechnique": "explorative-testing",
-    "result_text": "",
-    "PartiallyVerifies": null,
-    "FullyVerifies": "tool_req__docs_common_attr_security[version==1]"
-  },
-  {
-    "name": "test_rules_file_based__test_rst_files[options/test_doc_types.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/options/test_doc_types.rst",
+    "name": "test_rules_file_based__test_rst_files[options/test_req_attr_rationale.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/options/test_req_attr_rationale.rst",
     "line": "16",
     "result": "passed",
     "repo_name": "local_repo",
@@ -3007,7 +2993,35 @@
     "DerivationTechnique": "explorative-testing",
     "result_text": "",
     "PartiallyVerifies": null,
-    "FullyVerifies": "tool_req__docs_doc_types"
+    "FullyVerifies": "tool_req__docs_req_attr_rationale"
+  },
+  {
+    "name": "test_rules_file_based__test_rst_files[options/test_options_extra_option.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/options/test_options_extra_option.rst",
+    "line": "16",
+    "result": "passed",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": "",
+    "TestType": "interface-test",
+    "DerivationTechnique": "explorative-testing",
+    "result_text": "",
+    "PartiallyVerifies": "tool_req__docs_req_types[version==1]",
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_rules_file_based__test_rst_files[options/test_need_extends.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/options/test_need_extends.rst",
+    "line": "15",
+    "result": "passed",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": "",
+    "TestType": "interface-test",
+    "DerivationTechnique": "explorative-testing",
+    "result_text": "",
+    "PartiallyVerifies": "tool_req__docs_restrict_needextend",
+    "FullyVerifies": null
   },
   {
     "name": "test_rules_file_based__test_rst_files[options/wp_comp.rst]",
@@ -3024,8 +3038,8 @@
     "FullyVerifies": "tool_req__docs_stdwp_types[version==1], tool_req__docs_wp_types[version==1]"
   },
   {
-    "name": "test_rules_file_based__test_rst_files[options/gd_req_comp.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/options/gd_req_comp.rst",
+    "name": "test_rules_file_based__test_rst_files[options/test_options_verification_report.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/options/test_options_verification_report.rst",
     "line": "16",
     "result": "passed",
     "repo_name": "local_repo",
@@ -3034,8 +3048,8 @@
     "TestType": "interface-test",
     "DerivationTechnique": "explorative-testing",
     "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_req_types[version==1]",
-    "FullyVerifies": null
+    "PartiallyVerifies": null,
+    "FullyVerifies": "tool_req__docs_verification_report_need"
   },
   {
     "name": "test_rules_file_based__test_rst_files[options/test_doc_tool_attrs.rst]",
@@ -3050,76 +3064,6 @@
     "result_text": "",
     "PartiallyVerifies": "tool_req__docs_tvr_version",
     "FullyVerifies": "tool_req__docs_doc_generic_mandatory, tool_req__docs_tvr_safety, tool_req__docs_tvr_security, tool_req__docs_tvr_status, tool_req__docs_tvr_confidence_level"
-  },
-  {
-    "name": "test_rules_file_based__test_rst_files[options/test_options_options.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/options/test_options_options.rst",
-    "line": "16",
-    "result": "passed",
-    "repo_name": "local_repo",
-    "hash": "",
-    "url": "",
-    "TestType": "interface-test",
-    "DerivationTechnique": "explorative-testing",
-    "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_req_types[version==1]",
-    "FullyVerifies": null
-  },
-  {
-    "name": "test_rules_file_based__test_rst_files[options/test_req_attr_rationale.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/options/test_req_attr_rationale.rst",
-    "line": "16",
-    "result": "passed",
-    "repo_name": "local_repo",
-    "hash": "",
-    "url": "",
-    "TestType": "interface-test",
-    "DerivationTechnique": "explorative-testing",
-    "result_text": "",
-    "PartiallyVerifies": null,
-    "FullyVerifies": "tool_req__docs_req_attr_rationale"
-  },
-  {
-    "name": "test_rules_file_based__test_rst_files[options/test_options_common_attrs_status.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/options/test_options_common_attrs_status.rst",
-    "line": "15",
-    "result": "passed",
-    "repo_name": "local_repo",
-    "hash": "",
-    "url": "",
-    "TestType": "interface-test",
-    "DerivationTechnique": "explorative-testing",
-    "result_text": "",
-    "PartiallyVerifies": null,
-    "FullyVerifies": "tool_req__docs_common_attr_status[version==2]"
-  },
-  {
-    "name": "test_rules_file_based__test_rst_files[options/test_invalid_skipped.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/options/test_invalid_skipped.rst",
-    "line": "16",
-    "result": "passed",
-    "repo_name": "local_repo",
-    "hash": "",
-    "url": "",
-    "TestType": "interface-test",
-    "DerivationTechnique": "explorative-testing",
-    "result_text": "",
-    "PartiallyVerifies": null,
-    "FullyVerifies": "tool_req__docs_common_attr_status_invalid[version==1]"
-  },
-  {
-    "name": "test_rules_file_based__test_rst_files[options/test_need_extends.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/options/test_need_extends.rst",
-    "line": "15",
-    "result": "passed",
-    "repo_name": "local_repo",
-    "hash": "",
-    "url": "",
-    "TestType": "interface-test",
-    "DerivationTechnique": "explorative-testing",
-    "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_restrict_needextend",
-    "FullyVerifies": null
   },
   {
     "name": "test_rules_file_based__test_rst_files[options/test_dec_rec.rst]",
@@ -3150,9 +3094,9 @@
     "FullyVerifies": "tool_req__docs_req_attr_reqtype"
   },
   {
-    "name": "test_rules_file_based__test_rst_files[options/test_options_verification_report.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/options/test_options_verification_report.rst",
-    "line": "16",
+    "name": "test_rules_file_based__test_rst_files[options/test_options_common_attrs_status.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/options/test_options_common_attrs_status.rst",
+    "line": "15",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -3161,11 +3105,25 @@
     "DerivationTechnique": "explorative-testing",
     "result_text": "",
     "PartiallyVerifies": null,
-    "FullyVerifies": "tool_req__docs_verification_report_need"
+    "FullyVerifies": "tool_req__docs_common_attr_status[version==2]"
   },
   {
-    "name": "test_rules_file_based__test_rst_files[options/test_options_extra_option.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/options/test_options_extra_option.rst",
+    "name": "test_rules_file_based__test_rst_files[options/test_options_options.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/options/test_options_options.rst",
+    "line": "16",
+    "result": "passed",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": "",
+    "TestType": "interface-test",
+    "DerivationTechnique": "explorative-testing",
+    "result_text": "",
+    "PartiallyVerifies": "tool_req__docs_req_types[version==1]",
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_rules_file_based__test_rst_files[options/gd_req_comp.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/options/gd_req_comp.rst",
     "line": "16",
     "result": "passed",
     "repo_name": "local_repo",
@@ -3192,6 +3150,48 @@
     "FullyVerifies": "tool_req__docs_saf_attr_fmea_failure_effect[version==1]"
   },
   {
+    "name": "test_rules_file_based__test_rst_files[options/test_invalid_skipped.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/options/test_invalid_skipped.rst",
+    "line": "16",
+    "result": "passed",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": "",
+    "TestType": "interface-test",
+    "DerivationTechnique": "explorative-testing",
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": "tool_req__docs_common_attr_status_invalid[version==1]"
+  },
+  {
+    "name": "test_rules_file_based__test_rst_files[options/test_options_common_attrs_security.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/options/test_options_common_attrs_security.rst",
+    "line": "15",
+    "result": "passed",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": "",
+    "TestType": "interface-test",
+    "DerivationTechnique": "explorative-testing",
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": "tool_req__docs_common_attr_security[version==1]"
+  },
+  {
+    "name": "test_rules_file_based__test_rst_files[options/test_doc_types.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/options/test_doc_types.rst",
+    "line": "16",
+    "result": "passed",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": "",
+    "TestType": "interface-test",
+    "DerivationTechnique": "explorative-testing",
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": "tool_req__docs_doc_types"
+  },
+  {
     "name": "test_rules_file_based__test_need",
     "file": "src/extensions/score_metamodel/tests/__init__.py",
     "line": "110",
@@ -3218,34 +3218,6 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null
-  },
-  {
-    "name": "test_rules_file_based__test_rst_files[architecture/test_arch_link_fulfils_aou.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/architecture/test_arch_link_fulfils_aou.rst",
-    "line": "15",
-    "result": "passed",
-    "repo_name": "local_repo",
-    "hash": "",
-    "url": "",
-    "TestType": "interface-test",
-    "DerivationTechnique": "explorative-testing",
-    "result_text": "",
-    "PartiallyVerifies": null,
-    "FullyVerifies": "tool_req__docs_arch_link_fulfils_aou[version==3]"
-  },
-  {
-    "name": "test_rules_file_based__test_rst_files[architecture/architecture_tests.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/architecture/architecture_tests.rst",
-    "line": "16",
-    "result": "passed",
-    "repo_name": "local_repo",
-    "hash": "",
-    "url": "",
-    "TestType": "interface-test",
-    "DerivationTechnique": "explorative-testing",
-    "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_arch_types",
-    "FullyVerifies": "potential_tool_malfunction__docs_as_code__m4"
   },
   {
     "name": "test_rules_file_based__test_rst_files[architecture/test_arch_link_fulfils.rst]",
@@ -3262,6 +3234,34 @@
     "FullyVerifies": "tool_req__docs_arch_link_fulfils[version==3]"
   },
   {
+    "name": "test_rules_file_based__test_rst_files[architecture/architecture_tests.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/architecture/architecture_tests.rst",
+    "line": "16",
+    "result": "passed",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": "",
+    "TestType": "interface-test",
+    "DerivationTechnique": "explorative-testing",
+    "result_text": "",
+    "PartiallyVerifies": "tool_req__docs_arch_types",
+    "FullyVerifies": "potential_tool_malfunction__docs_as_code__m4"
+  },
+  {
+    "name": "test_rules_file_based__test_rst_files[architecture/test_arch_link_fulfils_aou.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/architecture/test_arch_link_fulfils_aou.rst",
+    "line": "15",
+    "result": "passed",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": "",
+    "TestType": "interface-test",
+    "DerivationTechnique": "explorative-testing",
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": "tool_req__docs_arch_link_fulfils_aou[version==3]"
+  },
+  {
     "name": "test_rules_file_based__test_need",
     "file": "src/extensions/score_metamodel/tests/__init__.py",
     "line": "110",
@@ -3290,23 +3290,9 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_rules_file_based__test_rst_files[attributes/test_common_attr_version.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/attributes/test_common_attr_version.rst",
-    "line": "16",
-    "result": "passed",
-    "repo_name": "local_repo",
-    "hash": "",
-    "url": "",
-    "TestType": "interface-test",
-    "DerivationTechnique": "explorative-testing",
-    "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_common_attr_version",
-    "FullyVerifies": null
-  },
-  {
-    "name": "test_rules_file_based__test_rst_files[attributes/test_attributes_id_scheme.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/attributes/test_attributes_id_scheme.rst",
-    "line": "16",
+    "name": "test_rules_file_based__test_rst_files[attributes/test_prohibited_words.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/attributes/test_prohibited_words.rst",
+    "line": "17",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -3315,21 +3301,7 @@
     "DerivationTechnique": "explorative-testing",
     "result_text": "",
     "PartiallyVerifies": null,
-    "FullyVerifies": "tool_req__docs_common_attr_id_scheme"
-  },
-  {
-    "name": "test_rules_file_based__test_rst_files[attributes/test_attributes_format_id_length.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/attributes/test_attributes_format_id_length.rst",
-    "line": "16",
-    "result": "passed",
-    "repo_name": "local_repo",
-    "hash": "",
-    "url": "",
-    "TestType": "interface-test",
-    "DerivationTechnique": "explorative-testing",
-    "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_req_types",
-    "FullyVerifies": null
+    "FullyVerifies": "tool_req__docs_common_attr_title[version==1], tool_req__docs_common_attr_desc_wording[version==1]"
   },
   {
     "name": "test_rules_file_based__test_rst_files[attributes/test_std_types.rst]",
@@ -3346,9 +3318,9 @@
     "FullyVerifies": "tool_req__docs_stdreq_types[version==1], tool_req__docs_stdwp_types[version==1]"
   },
   {
-    "name": "test_rules_file_based__test_rst_files[attributes/test_prohibited_words.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/attributes/test_prohibited_words.rst",
-    "line": "17",
+    "name": "test_rules_file_based__test_rst_files[attributes/test_attributes_id_scheme.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/attributes/test_attributes_id_scheme.rst",
+    "line": "16",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -3357,7 +3329,7 @@
     "DerivationTechnique": "explorative-testing",
     "result_text": "",
     "PartiallyVerifies": null,
-    "FullyVerifies": "tool_req__docs_common_attr_title[version==1], tool_req__docs_common_attr_desc_wording[version==1]"
+    "FullyVerifies": "tool_req__docs_common_attr_id_scheme"
   },
   {
     "name": "test_rules_file_based__test_rst_files[attributes/test_common_attr_safety.rst]",
@@ -3374,6 +3346,20 @@
     "FullyVerifies": "tool_req__docs_common_attr_safety"
   },
   {
+    "name": "test_rules_file_based__test_rst_files[attributes/test_attributes_format_id_length.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/attributes/test_attributes_format_id_length.rst",
+    "line": "16",
+    "result": "passed",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": "",
+    "TestType": "interface-test",
+    "DerivationTechnique": "explorative-testing",
+    "result_text": "",
+    "PartiallyVerifies": "tool_req__docs_req_types",
+    "FullyVerifies": null
+  },
+  {
     "name": "test_rules_file_based__test_rst_files[attributes/test_validity.rst]",
     "file": "src/extensions/score_metamodel/tests/rst/attributes/test_validity.rst",
     "line": "16",
@@ -3386,6 +3372,20 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": "tool_req__docs_req_attr_validity_correctness, tool_req__docs_req_attr_validity_consistency"
+  },
+  {
+    "name": "test_rules_file_based__test_rst_files[attributes/test_common_attr_version.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/attributes/test_common_attr_version.rst",
+    "line": "16",
+    "result": "passed",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": "",
+    "TestType": "interface-test",
+    "DerivationTechnique": "explorative-testing",
+    "result_text": "",
+    "PartiallyVerifies": "tool_req__docs_common_attr_version",
+    "FullyVerifies": null
   },
   {
     "name": "test_bundle_lifecycle__test_multiple_bundle_targets_keep_declaration_order_in_json",
@@ -4942,20 +4942,6 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_rules_file_based__test_rst_files[safety/test_saf_mandatory_attrs.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/safety/test_saf_mandatory_attrs.rst",
-    "line": "16",
-    "result": "passed",
-    "repo_name": "local_repo",
-    "hash": "",
-    "url": "",
-    "TestType": "interface-test",
-    "DerivationTechnique": "explorative-testing",
-    "result_text": "",
-    "PartiallyVerifies": null,
-    "FullyVerifies": "tool_req__docs_saf_attr_dfa_failure_id[version==2], tool_req__docs_saf_attr_fmea_fault_id[version==2], tool_req__docs_saf_attrs_sufficient[version==1], tool_req__docs_saf_attrs_content[version==2]"
-  },
-  {
     "name": "test_rules_file_based__test_rst_files[safety/test_saf_optional_attrs.rst]",
     "file": "src/extensions/score_metamodel/tests/rst/safety/test_saf_optional_attrs.rst",
     "line": "15",
@@ -4998,6 +4984,20 @@
     "FullyVerifies": "tool_req__docs_saf_types[version==2], tool_req__docs_saf_attrs_mandatory[version==1]"
   },
   {
+    "name": "test_rules_file_based__test_rst_files[safety/test_saf_mandatory_attrs.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/safety/test_saf_mandatory_attrs.rst",
+    "line": "16",
+    "result": "passed",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": "",
+    "TestType": "interface-test",
+    "DerivationTechnique": "explorative-testing",
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": "tool_req__docs_saf_attr_dfa_failure_id[version==2], tool_req__docs_saf_attr_fmea_fault_id[version==2], tool_req__docs_saf_attrs_sufficient[version==1], tool_req__docs_saf_attrs_content[version==2]"
+  },
+  {
     "name": "test_rules_file_based__test_need",
     "file": "src/extensions/score_metamodel/tests/__init__.py",
     "line": "110",
@@ -5024,20 +5024,6 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": null
-  },
-  {
-    "name": "test_rules_file_based__test_rst_files[security/test_sec_attr_stride_threat_id.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/security/test_sec_attr_stride_threat_id.rst",
-    "line": "15",
-    "result": "passed",
-    "repo_name": "local_repo",
-    "hash": "",
-    "url": "",
-    "TestType": "interface-test",
-    "DerivationTechnique": "explorative-testing",
-    "result_text": "",
-    "PartiallyVerifies": null,
-    "FullyVerifies": "tool_req__docs_sec_attr_stride_threat_id[version==1]"
   },
   {
     "name": "test_rules_file_based__test_rst_files[security/test_security_types.rst]",
@@ -5054,6 +5040,20 @@
     "FullyVerifies": "tool_req__docs_sec_types[version==2], tool_req__docs_sec_attrs_mandatory[version==1]"
   },
   {
+    "name": "test_rules_file_based__test_rst_files[security/test_sec_attr_stride_threat_id.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/security/test_sec_attr_stride_threat_id.rst",
+    "line": "15",
+    "result": "passed",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": "",
+    "TestType": "interface-test",
+    "DerivationTechnique": "explorative-testing",
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": "tool_req__docs_sec_attr_stride_threat_id[version==1]"
+  },
+  {
     "name": "test_rules_file_based__test_need",
     "file": "src/extensions/score_metamodel/tests/__init__.py",
     "line": "110",
@@ -5071,6 +5071,62 @@
     "name": "test_rules_file_based__test_count_need_objects_ignores_nested_non_need_directives",
     "file": "src/extensions/score_metamodel/tests/test_rules_file_based.py",
     "line": "112",
+    "result": "passed",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": "",
+    "TestType": "interface-test",
+    "DerivationTechnique": "explorative-testing",
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_rules_file_based__test_rst_files[graph/test_req_link_satisfies.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/graph/test_req_link_satisfies.rst",
+    "line": "16",
+    "result": "passed",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": "",
+    "TestType": "interface-test",
+    "DerivationTechnique": "explorative-testing",
+    "result_text": "",
+    "PartiallyVerifies": "tool_req__docs_req_link_satisfies_allowed[version==1]",
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_rules_file_based__test_rst_files[graph/test_arch_link_security.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/graph/test_arch_link_security.rst",
+    "line": "15",
+    "result": "passed",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": "",
+    "TestType": "interface-test",
+    "DerivationTechnique": "explorative-testing",
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": "tool_req__docs_arch_link_security[version==1]"
+  },
+  {
+    "name": "test_rules_file_based__test_rst_files[graph/test_workproduct_aspice_40.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/graph/test_workproduct_aspice_40.rst",
+    "line": "16",
+    "result": "passed",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": "",
+    "TestType": "interface-test",
+    "DerivationTechnique": "explorative-testing",
+    "result_text": "",
+    "PartiallyVerifies": "tool_req__docs_stdwp_types",
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_rules_file_based__test_rst_files[graph/test_tool_qualification.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/graph/test_tool_qualification.rst",
+    "line": "15",
     "result": "passed",
     "repo_name": "local_repo",
     "hash": "",
@@ -5096,22 +5152,8 @@
     "FullyVerifies": "tool_req__docs_common_attr_safety_link_check[version==1]"
   },
   {
-    "name": "test_rules_file_based__test_rst_files[graph/test_workproduct_aspice_40.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/graph/test_workproduct_aspice_40.rst",
-    "line": "16",
-    "result": "passed",
-    "repo_name": "local_repo",
-    "hash": "",
-    "url": "",
-    "TestType": "interface-test",
-    "DerivationTechnique": "explorative-testing",
-    "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_stdwp_types",
-    "FullyVerifies": null
-  },
-  {
-    "name": "test_rules_file_based__test_rst_files[graph/test_arch_link_security.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/graph/test_arch_link_security.rst",
+    "name": "test_rules_file_based__test_rst_files[graph/test_arch_link_safety.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/graph/test_arch_link_safety.rst",
     "line": "15",
     "result": "passed",
     "repo_name": "local_repo",
@@ -5121,7 +5163,7 @@
     "DerivationTechnique": "explorative-testing",
     "result_text": "",
     "PartiallyVerifies": null,
-    "FullyVerifies": "tool_req__docs_arch_link_security[version==1]"
+    "FullyVerifies": "tool_req__docs_req_arch_link_safety_to_arch[version==2]"
   },
   {
     "name": "test_rules_file_based__test_rst_files[graph/test_req_link_covers_aou.rst]",
@@ -5136,48 +5178,6 @@
     "result_text": "",
     "PartiallyVerifies": null,
     "FullyVerifies": "tool_req__docs_req_link_covers_aou[version==1]"
-  },
-  {
-    "name": "test_rules_file_based__test_rst_files[graph/test_req_link_satisfies.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/graph/test_req_link_satisfies.rst",
-    "line": "16",
-    "result": "passed",
-    "repo_name": "local_repo",
-    "hash": "",
-    "url": "",
-    "TestType": "interface-test",
-    "DerivationTechnique": "explorative-testing",
-    "result_text": "",
-    "PartiallyVerifies": "tool_req__docs_req_link_satisfies_allowed[version==1]",
-    "FullyVerifies": null
-  },
-  {
-    "name": "test_rules_file_based__test_rst_files[graph/test_tool_qualification.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/graph/test_tool_qualification.rst",
-    "line": "15",
-    "result": "passed",
-    "repo_name": "local_repo",
-    "hash": "",
-    "url": "",
-    "TestType": "interface-test",
-    "DerivationTechnique": "explorative-testing",
-    "result_text": "",
-    "PartiallyVerifies": null,
-    "FullyVerifies": null
-  },
-  {
-    "name": "test_rules_file_based__test_rst_files[graph/test_arch_link_safety.rst]",
-    "file": "src/extensions/score_metamodel/tests/rst/graph/test_arch_link_safety.rst",
-    "line": "15",
-    "result": "passed",
-    "repo_name": "local_repo",
-    "hash": "",
-    "url": "",
-    "TestType": "interface-test",
-    "DerivationTechnique": "explorative-testing",
-    "result_text": "",
-    "PartiallyVerifies": null,
-    "FullyVerifies": "tool_req__docs_req_arch_link_safety_to_arch[version==2]"
   },
   {
     "name": "test_mounts__test_materialize_mounts_serializes_structured_entries",
