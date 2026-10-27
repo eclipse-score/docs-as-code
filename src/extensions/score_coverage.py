@@ -12,27 +12,61 @@
 # *******************************************************************************
 """Read prepared coverage summaries and render them in Need metadata."""
 
+import hashlib
 import json
 from pathlib import Path
 from typing import Any, cast
 
 from docutils import nodes
 from sphinx.application import Sphinx
+from sphinx.environment import BuildEnvironment
 from sphinx.errors import SphinxError
 from sphinx_needs.nodes import Need
 
 
+def _summary_fingerprint(app: Sphinx) -> str | None:
+    path: str = app.config.score_coverage_summary
+    return (
+        hashlib.sha256(Path(path).read_bytes()).hexdigest()
+        if path and Path(path).is_file()
+        else None
+    )
+
+
+def note_coverage_dependency(app: Sphinx) -> None:
+    """Remember the summary used by this document without adding a source-file dependency."""
+    if app.builder.format == "html":
+        # The summary belongs to the whole documentation build, outside mounted
+        # bundles. Sphinx metadata is purged and merged with its document, so it
+        # also carries this fingerprint correctly through parallel reading.
+        app.env.metadata[app.env.docname]["score_coverage_summary"] = (
+            _summary_fingerprint(app)
+        )
+
+
 def _note_summary_dependency(app: Sphinx, doctree: nodes.document) -> None:
-    # Need metadata depends on this external input. Recording
-    # it while reading lets standalone incremental builds detect JSON changes.
-    # Also track a configured path that is currently absent, so its appearance
-    # is noticed on a subsequent build.
-    if (
-        app.builder.format == "html"
-        and app.config.score_coverage_summary
-        and any(doctree.findall(Need))
-    ):
-        app.env.note_dependency(Path(app.config.score_coverage_summary))
+    if any(doctree.findall(Need)):
+        note_coverage_dependency(app)
+
+
+def _outdated_coverage_docs(
+    app: Sphinx,
+    env: BuildEnvironment,
+    added: set[str],
+    changed: set[str],
+    removed: set[str],
+) -> list[str]:
+    """Re-read coverage consumers when the build-wide summary changes or disappears."""
+    if app.builder.format != "html":
+        return []
+    fingerprint = _summary_fingerprint(app)
+    return [
+        docname
+        for docname, metadata in env.metadata.items()
+        if docname not in removed
+        and "score_coverage_summary" in metadata
+        and metadata["score_coverage_summary"] != fingerprint
+    ]
 
 
 def _metric_text(total: int | None, percent: int | None) -> str:
@@ -120,6 +154,7 @@ def setup(app: Sphinx) -> dict[str, object]:
         rebuild="env",
     )
     app.connect("doctree-read", _note_summary_dependency)
+    app.connect("env-get-outdated", _outdated_coverage_docs)
     # The default handler (priority 500) creates the metadata area. Reuse its
     # nodes and CSS classes without introducing fields into the Need data model.
     app.connect("doctree-resolved", render_coverage, priority=600)

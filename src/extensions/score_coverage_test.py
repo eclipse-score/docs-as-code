@@ -16,9 +16,15 @@ import json
 import re
 from html import unescape
 from pathlib import Path
+from types import SimpleNamespace
+from typing import cast
 
 import pytest
+from sphinx.application import Sphinx
+from sphinx.environment import BuildEnvironment
 from sphinx.testing.util import SphinxTestApp
+
+from src.extensions import score_coverage
 
 
 @pytest.mark.parametrize(
@@ -159,3 +165,58 @@ def test_content_only_layout_keeps_coverage_out_of_the_content(tmp_path: Path) -
         assert not app.warning.getvalue()
     finally:
         app.cleanup()
+
+
+def test_summary_changes_invalidate_consumers_without_bundle_file_dependencies(
+    tmp_path: Path,
+) -> None:
+    """A build-wide summary must refresh consumers without escaping mounted bundle roots."""
+    summary = tmp_path / "coverage.json"
+    env = cast(
+        BuildEnvironment,
+        SimpleNamespace(
+            docname="consumer",
+            metadata={"consumer": {}, "prose": {}},
+            dependencies={},
+        ),
+    )
+    app = cast(
+        Sphinx,
+        SimpleNamespace(
+            builder=SimpleNamespace(format="html"),
+            config=SimpleNamespace(score_coverage_summary=str(summary)),
+            env=env,
+        ),
+    )
+    outdated = vars(score_coverage)["_outdated_coverage_docs"]
+    score_coverage.note_coverage_dependency(app)
+    assert outdated(app, env, set(), set(), set()) == []
+    summary.write_text("first result")
+    assert outdated(app, env, set(), set(), set()) == ["consumer"]
+    score_coverage.note_coverage_dependency(app)
+    summary.write_text("first result")
+    assert outdated(app, env, set(), set(), set()) == []
+    summary.write_text("changed result")
+    assert outdated(app, env, set(), set(), set()) == ["consumer"]
+    assert outdated(app, env, set(), set(), {"consumer"}) == []
+    score_coverage.note_coverage_dependency(app)
+    summary.unlink()
+    assert outdated(app, env, set(), set(), set()) == ["consumer"]
+    assert env.metadata["prose"] == {}
+    assert env.dependencies == {}
+
+
+@pytest.mark.parametrize("builder", ["needs", "linkcheck"])
+def test_documentation_checks_ignore_summary_changes(builder: str) -> None:
+    """Export and check builders neither track nor open coverage inputs."""
+    env = cast(BuildEnvironment, SimpleNamespace(metadata={}))
+    # No configuration or file access is available on this test double.
+    app = cast(
+        Sphinx, SimpleNamespace(builder=SimpleNamespace(format=builder), env=env)
+    )
+    score_coverage.note_coverage_dependency(app)
+    assert (
+        vars(score_coverage)["_outdated_coverage_docs"](app, env, set(), set(), set())
+        == []
+    )
+    assert env.metadata == {}

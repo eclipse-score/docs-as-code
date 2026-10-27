@@ -22,7 +22,6 @@ reports explain the colours once per page, and large numbers in the slices.
 import hashlib
 from collections.abc import Iterator, Sequence
 from contextlib import contextmanager
-from pathlib import Path
 from typing import Any
 
 from docutils import nodes
@@ -43,7 +42,10 @@ from sphinx_needs.utils import (
 )
 from sphinx_needs.views import NeedsAndPartsListView
 
-from src.extensions.score_coverage import read_coverage_summaries
+from src.extensions.score_coverage import (
+    note_coverage_dependency,
+    read_coverage_summaries,
+)
 
 _FIGURE_INCHES = (5.0, 4.0)
 # Inches kept free above the circle for the two-line title and below it.
@@ -237,8 +239,7 @@ class CoverageReportDirective(SphinxDirective):
     option_spec = {"title": directives.unchanged_required}
 
     def run(self) -> Sequence[nodes.Node]:
-        if self.env.app.builder.format == "html" and self.config.score_coverage_summary:
-            self.env.note_dependency(Path(self.config.score_coverage_summary))
+        note_coverage_dependency(self.env.app)
         node = CoverageReport(
             need_id=self.arguments[0],
             title=self.options.get("title", self.arguments[0]),
