@@ -1,6 +1,6 @@
 {
-  "validation_summary": "Schema validation completed with 0 warning(s) in 0.374 seconds. Validated 5100 needs/s.",
-  "validated_needs_per_second": 5100,
+  "validation_summary": "Schema validation completed with 0 warning(s) in 0.386 seconds. Validated 4944 needs/s.",
+  "validated_needs_per_second": 4944,
   "validated_needs_count": 1907,
   "validation_warnings": {}
 }
