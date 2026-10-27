@@ -183,7 +183,6 @@ def _resolve_runfiles_relative_path(config: DocsCliConfig, value: Path) -> Path:
 
 def sphinx_arguments(
     config: DocsCliConfig,
-    coverage_summary: Path | None = None,
 ) -> list[str]:
     """Build Sphinx arguments from the resolved launcher configuration."""
     output_dir = config.output_dir
@@ -255,9 +254,6 @@ def sphinx_arguments(
         # only the extension reads ``app.config.score_sourcelinks_json``.
         sourcelinks_json = _resolve_runfiles_relative_path(config, sourcelinks_json)
         base_arguments.append(f"--define=score_sourcelinks_json={sourcelinks_json}")
-
-    if coverage_summary is not None:
-        base_arguments.append(f"--define=score_coverage_summary={coverage_summary}")
 
     if github_repository := env.get("GITHUB_REPOSITORY", ""):
         # GITHUB_REPOSITORY is expected as "owner/repo"; partition("/") splits
@@ -363,7 +359,7 @@ def main(argv: list[str] | None = None) -> int:
         clean_builddir_if_stale(output_dir, sentinel_files)
 
     warning_file = output_dir / "warnings.txt"
-    base_arguments = sphinx_arguments(config, coverage_summary=coverage_summary)
+    base_arguments = sphinx_arguments(config)
 
     if config.action == "live_preview":
         sphinx_autobuild_main(

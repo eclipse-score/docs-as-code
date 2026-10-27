@@ -378,7 +378,10 @@ def test_coverage_summary_is_a_sentinel_preserved_during_output_cleanup(
     reused = []
 
     def build(arguments: list[str]) -> int:
-        assert f"--define=score_coverage_summary={summary}" in arguments
+        # Coverage is an optional extension. Its input is available at the
+        # conventional path without adding overrides unknown to other builds.
+        assert not any("score_coverage_summary" in argument for argument in arguments)
+        assert summary.is_file()
         reused.append((build_dir / "output").exists())
         build_dir.mkdir(exist_ok=True)
         (build_dir / "output").touch()

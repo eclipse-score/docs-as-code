@@ -87,7 +87,15 @@ def render_coverage(app: Sphinx, doctree: nodes.document, docname: str) -> None:
 
 
 def setup(app: Sphinx) -> dict[str, object]:
-    app.add_config_value("score_coverage_summary", "", rebuild="env")
+    # The CLI prepares this input in the output directory before Sphinx starts.
+    # Discovering it here keeps launchers compatible with projects that do not
+    # enable coverage. Standalone Sphinx builds may configure a different path.
+    summary = Path(app.outdir) / "coverage_summary.json"
+    app.add_config_value(
+        "score_coverage_summary",
+        str(summary) if summary.is_file() else "",
+        rebuild="env",
+    )
     # The default handler (priority 500) creates the metadata area. Reuse its
     # nodes and CSS classes without introducing fields into the Need data model.
     app.connect("doctree-resolved", render_coverage, priority=600)

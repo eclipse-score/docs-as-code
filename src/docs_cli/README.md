@@ -58,8 +58,9 @@ At startup, the CLI combines those lists with the optional workspace report at
 `coverage-report/coverage_report.dat` and writes the generated input to
 `<output-directory>/coverage_summary.json`. Cache cleanup preserves this
 generated input while removing stale documentation output.
-It adds that file to the cache sentinels and passes its path to Sphinx as
-`score_coverage_summary`.
+It adds that file to the cache sentinels. When enabled, the `score_coverage`
+extension discovers the summary in the output directory; standalone Sphinx
+builds can configure a different path with `score_coverage_summary`.
 The [coverage documentation](coverage.md) describes the inputs and JSON format.
 The sandboxed Needs action passes its external-needs labels separately through
 the internal `EXTERNAL_NEEDS_LABELS` variable.

@@ -53,14 +53,17 @@ to one documentation project, shared by the cache check and the renderer.
    the existing local documentation output can be reused.
 
 4. **Local documentation build — receives the summary from step 3.**
-   `bazel run :docs` and `:live_preview` pass the path to
-   Sphinx as `score_coverage_summary`. Cache cleanup preserves this generated
-   input while removing stale documentation output.
+   `bazel run :docs` and `:live_preview` prepare the summary before starting
+   Sphinx. Cache cleanup preserves this generated input while removing stale
+   documentation output.
    The `score_coverage` extension adds a compact display-only attribute in each
    matching Need's existing metadata area, using the normal attribute styling:
    `coverage: lines 67% · branches 100% · files 2/6`.
-   `score_metamodel` loads the coverage extension, including when a project
-   configures SCORE extensions individually instead of using `score_sphinx_bundle`.
+   `score_sphinx_bundle` loads this extension. Projects configuring extensions
+   individually can enable `score_coverage` explicitly. The extension discovers
+   `<build-output>/coverage_summary.json`; standalone Sphinx builds can override
+   that path with `score_coverage_summary`. Without the extension, generated
+   summaries have no effect on rendering.
    Need IDs supply the association automatically. Missing measurements display
    as "no data"; uninstrumented dimensions display as "not instrumented".
    A content-only layout has no attribute area and receives no extra output.

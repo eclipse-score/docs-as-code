@@ -21,39 +21,6 @@ import pytest
 from sphinx.testing.util import SphinxTestApp
 
 
-def test_metamodel_registers_coverage_without_the_extension_bundle(
-    tmp_path: Path,
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    """Individual SCORE extensions accept the CLI override, including with -W."""
-    monkeypatch.chdir(tmp_path)
-    monkeypatch.setenv("BUILD_WORKSPACE_DIRECTORY", str(tmp_path))
-    summary = tmp_path / "coverage.json"
-    summary.write_text(json.dumps({"version": 1, "coverage_summaries": []}))
-    (tmp_path / "conf.py").write_text(
-        'extensions = ["sphinx_needs", "score_metamodel"]\nmaster_doc = "index"\n'
-        'project_url = "https://example.invalid/coverage"\n'
-        'external_needs_source = "[]"\n'
-    )
-    (tmp_path / "index.rst").write_text("Example\n=======\n")
-    app = SphinxTestApp(
-        srcdir=tmp_path,
-        outdir=tmp_path / "_build",
-        buildername="html",
-        freshenv=True,
-        warningiserror=True,
-        confoverrides={"score_coverage_summary": str(summary)},
-    )
-    try:
-        app.build()
-        assert "score_coverage" in app.extensions
-        assert app.config.score_coverage_summary == str(summary)
-        assert not app.warning.getvalue()
-        assert app.statuscode == 0
-    finally:
-        app.cleanup()
-
-
 @pytest.mark.parametrize(
     ("total", "percent", "measured", "expected"),
     [
@@ -63,15 +30,24 @@ def test_metamodel_registers_coverage_without_the_extension_bundle(
         (None, None, 0, "lines no data"),
     ],
 )
+@pytest.mark.parametrize("configure_summary", [False, True])
 def test_summary_is_rendered_only_inside_the_matching_need(
     tmp_path: Path,
     total: int | None,
     percent: int | None,
     measured: int,
     expected: str,
+    configure_summary: bool,
 ) -> None:
-    """Need IDs select the attribute; zero, missing data and no instrumentation differ."""
-    summary = tmp_path / "coverage.json"
+    """Discovered and configured summaries preserve Need selection and metric states."""
+    # SphinxTestApp places HTML below <builddir>/html.
+    output = tmp_path / "_build/html"
+    output.mkdir(parents=True)
+    summary = (
+        tmp_path / "coverage.json"
+        if configure_summary
+        else output / "coverage_summary.json"
+    )
     summary.write_text(
         json.dumps(
             {
@@ -87,10 +63,15 @@ def test_summary_is_rendered_only_inside_the_matching_need(
             }
         )
     )
+    if configure_summary:
+        # An explicit path must take precedence over automatic discovery.
+        (output / "coverage_summary.json").write_text("not the configured input")
+    summary_config = (
+        f"score_coverage_summary = {str(summary)!r}\n" if configure_summary else ""
+    )
     (tmp_path / "conf.py").write_text(
         'extensions = ["sphinx_needs", "score_coverage"]\n'
-        'master_doc = "index"\n'
-        f"score_coverage_summary = {str(summary)!r}\n"
+        'master_doc = "index"\n' + summary_config
     )
     (tmp_path / "index.rst").write_text(
         "Example\n=======\n\n.. req:: Selected\n   :id: REQ_1\n\n   Original content.\n\n"
@@ -98,7 +79,7 @@ def test_summary_is_rendered_only_inside_the_matching_need(
         ".. list-table::\n   :class: need\n\n   * - Ordinary table\n"
     )
     app = SphinxTestApp(
-        srcdir=tmp_path, outdir=tmp_path / "_build", buildername="html", freshenv=True
+        srcdir=tmp_path, builddir=tmp_path / "_build", buildername="html", freshenv=True
     )
     try:
         for _ in range(2):
@@ -130,7 +111,7 @@ def test_unconfigured_coverage_leaves_needs_unchanged(tmp_path: Path) -> None:
         "Example\n=======\n\n.. req:: Selected\n   :id: REQ_1\n"
     )
     app = SphinxTestApp(
-        srcdir=tmp_path, outdir=tmp_path / "_build", buildername="html", freshenv=True
+        srcdir=tmp_path, builddir=tmp_path / "_build", buildername="html", freshenv=True
     )
     try:
         app.build(force_all=True)
@@ -168,7 +149,7 @@ def test_content_only_layout_keeps_coverage_out_of_the_content(tmp_path: Path) -
         "Example\n=======\n\n.. req:: Selected\n   :id: REQ_1\n\n   Original content.\n"
     )
     app = SphinxTestApp(
-        srcdir=tmp_path, outdir=tmp_path / "_build", buildername="html", freshenv=True
+        srcdir=tmp_path, builddir=tmp_path / "_build", buildername="html", freshenv=True
     )
     try:
         app.build(force_all=True)
