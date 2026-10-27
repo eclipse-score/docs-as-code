@@ -609,6 +609,22 @@ for extension processing.
 When <code class="docutils literal notranslate"><span class="pre">metamodel</span></code> is omitted the default metamodel is used unchanged.</p>
 </li>
 </ul>
+<section id="coverage-input">
+<h3>Coverage input<a class="headerlink" href="#coverage-input" title="Link to this heading">#</a></h3>
+<p>The CLI used by <code class="docutils literal notranslate"><span class="pre">bazel</span> <span class="pre">run</span> <span class="pre">:docs</span></code> and <code class="docutils literal notranslate"><span class="pre">:live_preview</span></code>
+reads <code class="docutils literal notranslate"><span class="pre">coverage-report/coverage_report.dat</span></code> relative to the workspace root.
+The documentation workflow can download this artifact with its optional
+<code class="docutils literal notranslate"><span class="pre">coverage-report-artifact</span></code> input. The CLI calculates coverage per primary Need
+from the bundles’ code-file lists and writes
+<code class="docutils literal notranslate"><span class="pre">&lt;build-output&gt;/coverage_summary.json</span></code>.
+This generated input participates in the local documentation cache check and
+remains available when stale output is removed.</p>
+<p>When the report is absent, selected files have missing coverage. Measurements
+are raw, without applied justifications. A compact display-only attribute is
+added to the matching primary Need’s metadata area, for example
+<code class="docutils literal notranslate"><span class="pre">coverage:</span> <span class="pre">lines</span> <span class="pre">67%</span> <span class="pre">·</span> <span class="pre">branches</span> <span class="pre">100%</span> <span class="pre">·</span> <span class="pre">files</span> <span class="pre">2/6</span></code>. <code class="docutils literal notranslate"><span class="pre">needs_json</span></code>,
+<code class="docutils literal notranslate"><span class="pre">docs_check</span></code> and <code class="docutils literal notranslate"><span class="pre">docs_link_check</span></code> retain their existing inputs.</p>
+</section>
 </section>
 <section id="bazel-macro-docs-bundle">
 <span id="docs-bundle-macro"></span><h2>Bazel macro: <code class="docutils literal notranslate"><span class="pre">docs_bundle</span></code><a class="headerlink" href="#bazel-macro-docs-bundle" title="Link to this heading">#</a></h2>
@@ -781,7 +797,10 @@ appending its workspace-relative Bazel package path.</p>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bundle-content-and-supporting-files">Bundle content and supporting files</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#minimal-example-root-build">Minimal example (root <code class="docutils literal notranslate"><span class="pre">BUILD</span></code>)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#minimal-example-root-build">Minimal example (root <code class="docutils literal notranslate"><span class="pre">BUILD</span></code>)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#coverage-input">Coverage input</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bazel-macro-docs-bundle">Bazel macro: <code class="docutils literal notranslate"><span class="pre">docs_bundle</span></code></a></li>
 </ul>
   </nav></div>
