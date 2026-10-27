@@ -467,7 +467,7 @@ def _docs_bundle_impl(ctx):
     # Keep implementation ownership with the declaring documentation entry.
     # The metamodel resolves its primary Need from that entry's own documents;
     # rebasing into a parent preserves the same bounded implementation file set.
-    own_code_files = depset(ctx.files.code_files)
+    own_code_files = ctx.attr.code_files[DefaultInfo].files if ctx.attr.code_files else depset()
     own_code_targets = [
         struct(
             label = str(target.label),
