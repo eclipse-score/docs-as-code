@@ -24,21 +24,11 @@ filegroup(
 )
 
 py_library(
-    # Keep chart drawing independent of template setup: the coverage renderer
-    # shares these figures, and template setup enables that renderer's directive.
-    name = "report_pie",
-    srcs = ["report_pie.py"],
-    visibility = ["//src/extensions:__pkg__"],
-    deps = all_requirements,
-)
-
-py_library(
     name = "score_sphinx_needs_templates",
-    srcs = ["__init__.py"],
+    srcs = [":all_sources"],
     data = ["@score_docs_as_code//src/needs_templates:files"],
     visibility = ["//visibility:public"],
     deps = all_requirements + [
-        ":report_pie",
         "//src/extensions:score_coverage",
         "@score_docs_as_code//src/helper_lib",
     ],

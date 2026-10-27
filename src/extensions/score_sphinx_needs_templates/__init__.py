@@ -601,8 +601,6 @@ def _capture_build_environment(app: Sphinx) -> None:
 def setup(app: Sphinx) -> dict[str, object]:
     """Install Sphinx-Needs template helpers and the marked-page second pass."""
     app.setup_extension("sphinx_needs")
-    # Report templates emit score-coverage-report even without a summary input.
-    app.setup_extension("score_coverage")
 
     config_setdefault(
         app.config, "needs_template_folder", str(_needs_template_folder())

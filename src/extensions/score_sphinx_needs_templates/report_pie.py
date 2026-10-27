@@ -22,6 +22,7 @@ reports explain the colours once per page, and large numbers in the slices.
 import hashlib
 from collections.abc import Iterator, Sequence
 from contextlib import contextmanager
+from pathlib import Path
 from typing import Any
 
 from docutils import nodes
@@ -41,6 +42,8 @@ from sphinx_needs.utils import (
     save_matplotlib_figure,
 )
 from sphinx_needs.views import NeedsAndPartsListView
+
+from src.extensions.score_coverage import read_coverage_summaries
 
 _FIGURE_INCHES = (5.0, 4.0)
 # Inches kept free above the circle for the two-line title and below it.
@@ -108,8 +111,8 @@ def _split(value: str) -> list[str]:
 
 
 @contextmanager
-def report_pie_style() -> Iterator[None]:
-    """Pin the matplotlib settings, which other charts may have changed globally."""
+def _report_pie_style() -> Iterator[None]:
+    """Keep report chart styling and dimensions independent of preceding needpie charts."""
     with style.context(["default", {"savefig.bbox": "standard"}]):
         yield
 
@@ -211,7 +214,7 @@ def _process_report_pies(app: Sphinx, doctree: nodes.document, docname: str) -> 
             pie.replace_self(nodes.paragraph(text=f"{alt} (no Needs found)"))
             continue
         digest = hashlib.sha256(target_id.encode()).hexdigest()[:10]
-        with report_pie_style():
+        with _report_pie_style():
             image = save_matplotlib_figure(
                 app,
                 draw_report_pie(title, sizes, pie["colors"]),
@@ -223,8 +226,112 @@ def _process_report_pies(app: Sphinx, doctree: nodes.document, docname: str) -> 
         pie.replace_self(image)
 
 
+class CoverageReport(nodes.General, nodes.Element):
+    """Placeholder resolved from the summary during HTML writing."""
+
+
+class CoverageReportDirective(SphinxDirective):
+    """Show aggregate coverage for the primary Need named by the argument."""
+
+    required_arguments = 1
+    option_spec = {"title": directives.unchanged_required}
+
+    def run(self) -> Sequence[nodes.Node]:
+        if self.env.app.builder.format == "html" and self.config.score_coverage_summary:
+            self.env.note_dependency(Path(self.config.score_coverage_summary))
+        node = CoverageReport(
+            need_id=self.arguments[0],
+            title=self.options.get("title", self.arguments[0]),
+        )
+        self.set_source_info(node)
+        return [node]
+
+
+def _coverage_report(
+    app: Sphinx, report: CoverageReport, summary: dict[str, Any] | None, docname: str
+) -> nodes.container:
+    block = nodes.container(classes=["score-coverage-report"])
+    if summary is None:
+        block += nodes.paragraph(text="No coverage data available for this component.")
+        return block
+    files = summary["files"]
+    if not files["total"]:
+        block += nodes.paragraph(text="No source files selected for this component.")
+        return block
+    block += nodes.paragraph(
+        text=f"Coverage measurements available for {files['measured']}/{files['total']} "
+        "selected source files. Green: covered; red: not covered. "
+        "Percentages describe the available measurements."
+    )
+    row = nodes.container(
+        classes=[
+            "sd-row",
+            "sd-row-cols-1",
+            "sd-row-cols-md-2",
+            "sd-g-3",
+            "score-pie-row",
+        ]
+    )
+    for dimension, label in (("lines", "Line"), ("branches", "Branch")):
+        metric = summary[dimension]
+        column = nodes.container(classes=["sd-col"])
+        percent = metric["percent"]
+        title = f"{report['title']} {label} Coverage"
+        if percent is None:
+            column += nodes.paragraph(
+                text=f"{label} coverage: "
+                + ("no data." if metric["total"] is None else "not instrumented.")
+            )
+        else:
+            # Sphinx caches images by filename even across forced writes of a
+            # cached doctree. Include the displayed content so changed coverage
+            # produces a fresh image and a fresh browser URL.
+            digest = hashlib.sha256(
+                f"{docname}-{title}-{percent}".encode()
+            ).hexdigest()[:10]
+            with _report_pie_style():
+                image = save_matplotlib_figure(
+                    app,
+                    draw_report_pie(
+                        title,
+                        [percent, 100 - percent],
+                        ["#37a12d", "#ca2828"],
+                        show_counts=False,
+                    ),
+                    f"score_coverage_pie_{digest}",
+                    docname,
+                )
+            image["alt"] = f"{title}: covered {percent}%, not covered {100 - percent}%"
+            image["classes"].append("score-report-pie")
+            column += image
+        row += column
+    block += row
+    return block
+
+
+def _process_coverage_reports(
+    app: Sphinx, doctree: nodes.document, docname: str
+) -> None:
+    reports = list(doctree.findall(CoverageReport))
+    if not reports:
+        return
+    if app.builder.format != "html":
+        for report in reports:
+            report.replace_self([])
+        return
+    summaries = read_coverage_summaries(app)
+    for report in reports:
+        need_id = str(report["need_id"]).split("[", 1)[0]
+        report.replace_self(
+            _coverage_report(app, report, summaries.get(need_id), docname)
+        )
+
+
 def setup(app: Sphinx) -> None:
     app.add_node(ReportPie)
+    app.add_node(CoverageReport)
+    app.add_directive("score-coverage-report", CoverageReportDirective)
+    app.connect("doctree-resolved", _process_coverage_reports, priority=600)
     app.add_directive("score-report-pie", ReportPieDirective)
     # After Sphinx-Needs (default priority) has resolved all Need nodes.
     app.connect("doctree-resolved", _process_report_pies, priority=600)

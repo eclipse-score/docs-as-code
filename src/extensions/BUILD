@@ -31,24 +31,19 @@ py_library(
     deps = ["@score_docs_as_code//src/helper_lib"],
 )
 
-# Coverage rendering reads prepared JSON and shares the verification report's
-# chart drawing code so both displays use the same figure sizing and styling.
+# Coverage exposes prepared JSON summaries and renders Need metadata. Report
+# charts are owned by the template extension, which consumes this library.
 py_library(
     name = "score_coverage",
     srcs = ["score_coverage.py"],
     imports = ["."],
     visibility = ["//visibility:public"],
-    deps = all_requirements + [
-        "//src/extensions/score_sphinx_needs_templates:report_pie",
-    ],
+    deps = all_requirements,
 )
 
 score_pytest(
     name = "score_coverage_test",
     srcs = ["score_coverage_test.py"],
     pytest_config = "//:pyproject.toml",
-    deps = [
-        ":score_coverage",
-        "//src/extensions/score_sphinx_needs_templates",
-    ],
+    deps = [":score_coverage"],
 )

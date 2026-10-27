@@ -10,119 +10,29 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-"""Render prepared coverage summaries in Need metadata and verification reports."""
+"""Read prepared coverage summaries and render them in Need metadata."""
 
-import hashlib
 import json
-from collections.abc import Sequence
 from pathlib import Path
 from typing import Any, cast
 
 from docutils import nodes
-from docutils.parsers.rst import directives
 from sphinx.application import Sphinx
 from sphinx.errors import SphinxError
-from sphinx.util.docutils import SphinxDirective
 from sphinx_needs.nodes import Need
-from sphinx_needs.utils import save_matplotlib_figure
-
-from src.extensions.score_sphinx_needs_templates.report_pie import (
-    draw_report_pie,
-    report_pie_style,
-)
-
-
-class CoverageReport(nodes.General, nodes.Element):
-    """Placeholder resolved from the summary during HTML writing."""
-
-
-class CoverageReportDirective(SphinxDirective):
-    """Show aggregate coverage for the primary Need named by the argument."""
-
-    required_arguments = 1
-    option_spec = {"title": directives.unchanged_required}
-
-    def run(self) -> Sequence[nodes.Node]:
-        node = CoverageReport(
-            need_id=self.arguments[0],
-            title=self.options.get("title", self.arguments[0]),
-        )
-        self.set_source_info(node)
-        return [node]
 
 
 def _note_summary_dependency(app: Sphinx, doctree: nodes.document) -> None:
-    # Metadata and report pages both depend on this external input. Recording
+    # Need metadata depends on this external input. Recording
     # it while reading lets standalone incremental builds detect JSON changes.
     # Also track a configured path that is currently absent, so its appearance
     # is noticed on a subsequent build.
     if (
         app.builder.format == "html"
         and app.config.score_coverage_summary
-        and any(isinstance(node, Need | CoverageReport) for node in doctree.findall())
+        and any(doctree.findall(Need))
     ):
         app.env.note_dependency(Path(app.config.score_coverage_summary))
-
-
-def _coverage_report(
-    app: Sphinx, report: CoverageReport, summary: dict[str, Any] | None, docname: str
-) -> nodes.container:
-    block = nodes.container(classes=["score-coverage-report"])
-    if summary is None:
-        block += nodes.paragraph(text="No coverage data available for this component.")
-        return block
-    files = summary["files"]
-    if not files["total"]:
-        block += nodes.paragraph(text="No source files selected for this component.")
-        return block
-    block += nodes.paragraph(
-        text=f"Coverage measurements available for {files['measured']}/{files['total']} "
-        "selected source files. Green: covered; red: not covered. "
-        "Percentages describe the available measurements."
-    )
-    row = nodes.container(
-        classes=[
-            "sd-row",
-            "sd-row-cols-1",
-            "sd-row-cols-md-2",
-            "sd-g-3",
-            "score-pie-row",
-        ]
-    )
-    for dimension, label in (("lines", "Line"), ("branches", "Branch")):
-        metric = summary[dimension]
-        column = nodes.container(classes=["sd-col"])
-        percent = metric["percent"]
-        title = f"{report['title']} {label} Coverage"
-        if percent is None:
-            column += nodes.paragraph(
-                text=f"{label} coverage: {_metric_text(metric['total'], percent)}."
-            )
-        else:
-            # Sphinx caches images by filename even across forced writes of a
-            # cached doctree. Include the displayed content so changed coverage
-            # produces a fresh image and a fresh browser URL.
-            digest = hashlib.sha256(
-                f"{docname}-{title}-{percent}".encode()
-            ).hexdigest()[:10]
-            with report_pie_style():
-                image = save_matplotlib_figure(
-                    app,
-                    draw_report_pie(
-                        title,
-                        [percent, 100 - percent],
-                        ["#37a12d", "#ca2828"],
-                        show_counts=False,
-                    ),
-                    f"score_coverage_pie_{digest}",
-                    docname,
-                )
-            image["alt"] = f"{title}: covered {percent}%, not covered {100 - percent}%"
-            image["classes"].append("score-report-pie")
-            column += image
-        row += column
-    block += row
-    return block
 
 
 def _metric_text(total: int | None, percent: int | None) -> str:
@@ -160,22 +70,9 @@ def _metadata_area(need: nodes.table) -> nodes.line_block | None:
     return None
 
 
-def render_coverage(app: Sphinx, doctree: nodes.document, docname: str) -> None:
-    """Resolve report charts and metadata after Sphinx-Needs renders its layouts."""
+def read_coverage_summaries(app: Sphinx) -> dict[str, dict[str, Any]]:
+    """Read the prepared summaries indexed by their primary Need IDs."""
     path: str = app.config.score_coverage_summary
-    reports = list(doctree.findall(CoverageReport))
-    if app.builder.format != "html":
-        for report in reports:
-            report.replace_self([])
-        return
-    # Ordinary RST tables can reuse the CSS class; rendered Needs also have IDs.
-    need_nodes = [
-        table
-        for table in doctree.findall(nodes.table)
-        if "need" in table["classes"] and table["ids"]
-    ]
-    if not need_nodes and not reports:
-        return
     data: dict[str, Any] = (
         cast(dict[str, Any], json.loads(Path(path).read_text(encoding="utf-8")))
         if path and Path(path).is_file()
@@ -183,14 +80,22 @@ def render_coverage(app: Sphinx, doctree: nodes.document, docname: str) -> None:
     )
     if data.get("version") != 1:
         raise SphinxError("Coverage summaries must have version 1")
-    summaries = {
-        entry["primary_need_id"]: entry for entry in data["coverage_summaries"]
-    }
-    for report in reports:
-        need_id = str(report["need_id"]).split("[", 1)[0]
-        report.replace_self(
-            _coverage_report(app, report, summaries.get(need_id), docname)
-        )
+    return {entry["primary_need_id"]: entry for entry in data["coverage_summaries"]}
+
+
+def render_coverage(app: Sphinx, doctree: nodes.document, docname: str) -> None:
+    """Add metadata after Sphinx-Needs has rendered its layouts."""
+    if app.builder.format != "html":
+        return
+    # Ordinary RST tables can reuse the CSS class; rendered Needs also have IDs.
+    need_nodes = [
+        table
+        for table in doctree.findall(nodes.table)
+        if "need" in table["classes"] and table["ids"]
+    ]
+    if not need_nodes:
+        return
+    summaries = read_coverage_summaries(app)
     for need in need_nodes:
         # Collection IDs can include a version qualifier; source ownership uses
         # the primary Need's unqualified ID, matching the bundle declaration.
@@ -214,8 +119,6 @@ def setup(app: Sphinx) -> dict[str, object]:
         str(summary) if summary.is_file() else "",
         rebuild="env",
     )
-    app.add_node(CoverageReport)
-    app.add_directive("score-coverage-report", CoverageReportDirective)
     app.connect("doctree-read", _note_summary_dependency)
     # The default handler (priority 500) creates the metadata area. Reuse its
     # nodes and CSS classes without introducing fields into the Need data model.
