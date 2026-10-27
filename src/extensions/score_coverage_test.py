@@ -21,6 +21,39 @@ import pytest
 from sphinx.testing.util import SphinxTestApp
 
 
+def test_metamodel_registers_coverage_without_the_extension_bundle(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Individual SCORE extensions accept the CLI override, including with -W."""
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("BUILD_WORKSPACE_DIRECTORY", str(tmp_path))
+    summary = tmp_path / "coverage.json"
+    summary.write_text(json.dumps({"version": 1, "coverage_summaries": []}))
+    (tmp_path / "conf.py").write_text(
+        'extensions = ["sphinx_needs", "score_metamodel"]\nmaster_doc = "index"\n'
+        'project_url = "https://example.invalid/coverage"\n'
+        'external_needs_source = "[]"\n'
+    )
+    (tmp_path / "index.rst").write_text("Example\n=======\n")
+    app = SphinxTestApp(
+        srcdir=tmp_path,
+        outdir=tmp_path / "_build",
+        buildername="html",
+        freshenv=True,
+        warningiserror=True,
+        confoverrides={"score_coverage_summary": str(summary)},
+    )
+    try:
+        app.build()
+        assert "score_coverage" in app.extensions
+        assert app.config.score_coverage_summary == str(summary)
+        assert not app.warning.getvalue()
+        assert app.statuscode == 0
+    finally:
+        app.cleanup()
+
+
 @pytest.mark.parametrize(
     ("total", "percent", "measured", "expected"),
     [

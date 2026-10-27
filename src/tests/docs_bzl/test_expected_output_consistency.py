@@ -131,3 +131,44 @@ def test_html_comparison_normalizes_wrapper_uuids_and_preserves_need_content(
         assert 'id="SNCB-00000001"' in normalized
         assert 'id="SNCB-00000002"' in normalized
         assert new in normalized
+
+
+@pytest.mark.bazel_cached
+def test_html_source_links_ignore_checkout_metadata_but_preserve_link_targets(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """A new checkout must pass; changed source files, lines and external links must fail."""
+    expected_path = tmp_path / "expected.html"
+    actual_path = tmp_path / "actual.html"
+    prefix = "https://github.com/owner/repo/blob/" + "a" * 40 + "/"
+    source = "src/tests/docs_bzl/scenarios/example/code.cc#L17"
+    dependency = "external/dep/code.cc#L3"
+    html = (
+        '<span class="needs_source_code_link"><span class="needs_data">'
+        f'<a href="{prefix}{source}">code.cc:17</a>'
+        f'<a href="{prefix}{dependency}">dependency</a></span></div>'
+        f'<a href="{prefix}{source}">Ordinary link</a>'
+    )
+    other_checkout = html.replace(
+        prefix + source,
+        "https://github.com/fork/project/blob/" + "b" * 40 + "/" + source,
+        1,
+    )
+    expected_path.write_text(html)
+    actual_path.write_text(other_checkout)
+    expected = _stub_expected_output_execution(monkeypatch, expected_path, actual_path)
+
+    update_expected_output("fixture", expected)
+    assert expected_path.read_text() == html
+
+    for old, new in (
+        ("example/code.cc#L17", "example/other.cc#L17"),
+        ("code.cc#L17", "code.cc#L18"),
+        (prefix + dependency, prefix.replace("owner/repo", "other/repo") + dependency),
+        (f'{prefix}{source}">Ordinary', f'{prefix}{source}0">Ordinary'),
+    ):
+        expected_path.write_text(html)
+        actual_path.write_text(other_checkout.replace(old, new))
+        with pytest.raises(AssertionError, match="expected outputs changed"):
+            update_expected_output("fixture", expected)

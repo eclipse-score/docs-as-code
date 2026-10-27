@@ -16,8 +16,8 @@ from pathlib import Path
 
 import pytest
 from pyfakefs.fake_filesystem import FakeFilesystem as FFS
-
 from score_pytest.attribute_plugin import add_test_properties
+
 from src.docs_cli import cli as docs_cli
 from src.docs_cli.cli import (
     clean_builddir_if_stale,

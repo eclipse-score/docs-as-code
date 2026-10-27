@@ -43,6 +43,9 @@ py_library(
 score_pytest(
     name = "score_coverage_test",
     srcs = ["score_coverage_test.py"],
-    deps = [":score_coverage"],
+    deps = [
+        ":score_coverage",
+        "//src/extensions/score_metamodel",
+    ],
     pytest_config = "//:pyproject.toml",
 )

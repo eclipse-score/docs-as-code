@@ -59,6 +59,8 @@ to one documentation project, shared by the cache check and the renderer.
    The `score_coverage` extension adds a compact display-only attribute in each
    matching Need's existing metadata area, using the normal attribute styling:
    `coverage: lines 67% · branches 100% · files 2/6`.
+   `score_metamodel` loads the coverage extension, including when a project
+   configures SCORE extensions individually instead of using `score_sphinx_bundle`.
    Need IDs supply the association automatically. Missing measurements display
    as "no data"; uninstrumented dimensions display as "not instrumented".
    A content-only layout has no attribute area and receives no extra output.

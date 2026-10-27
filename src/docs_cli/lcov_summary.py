@@ -230,6 +230,11 @@ def summarize(
     source_file_lists: list[SourceFileList],
     files: dict[FileIdentity, FileCoverage],
 ) -> list[Summary]:
+    """Aggregate available source items for each primary Need before rounding.
+
+    Missing files contribute to availability counts, but their instrumentation
+    is unknown and therefore cannot contribute to line or branch totals.
+    """
     summaries: list[Summary] = []
     for source_file_list in sorted(
         source_file_lists, key=lambda source_file_list: source_file_list.primary_need_id

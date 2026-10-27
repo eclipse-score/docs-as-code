@@ -17,8 +17,8 @@ from unittest.mock import Mock
 
 import pytest
 from pyfakefs.fake_filesystem import FakeFilesystem as FFS
-
 from score_pytest.attribute_plugin import add_test_properties
+
 from src.docs_cli import cli as docs_cli
 from src.docs_cli.cli import sphinx_arguments
 from src.helper_lib import config as config_module

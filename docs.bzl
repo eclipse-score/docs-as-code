@@ -632,7 +632,7 @@ def _sphinx_deps(deps):
     return deps + _missing_requirements(deps)
 
 def _sphinx_runtime_deps(deps):
-    """Add the extensions required by every Sphinx invocation."""
+    """Add the shared Sphinx dependencies and the CLI's summary library."""
     result = _sphinx_deps(deps)
     for fixed_dep in [
         Label("//src:plantuml_for_python"),

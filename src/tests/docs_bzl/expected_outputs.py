@@ -242,8 +242,9 @@ def _comparison_bytes(path: Path) -> bytes:
     JSON output is formatted for humans before comparison. This keeps checked-in
     expected files readable while still checking the complete parsed document;
     object-key order is intentionally normalized, but array order and all JSON
-    values remain significant. HTML normalizes only Sphinx-Needs' random wrapper
-    IDs; Need IDs, values, markup and whitespace retain strict byte comparison.
+    values remain significant. HTML normalizes Sphinx-Needs' random wrapper IDs
+    and checkout metadata in local fixture source links. Need IDs, source paths,
+    line anchors, values, markup and whitespace retain strict byte comparison.
     """
     raw = path.read_bytes()
     if path.suffix == ".html":
@@ -251,10 +252,23 @@ def _comparison_bytes(path: Path) -> bytes:
         # Stable ordinals preserve wrapper identity/order without changing the
         # actual Need IDs or any of the rendered content.
         indices = itertools.count(1)
-        return re.sub(
+        raw = re.sub(
             rb'(<div class="need_container docutils container" id=")SNCB-[0-9a-f]{8}(")',
             lambda match: match[1] + f"SNCB-{next(indices):08x}".encode() + match[2],
             raw,
+        )
+        # Local source links use the checkout's remote and HEAD. Normalize only
+        # those URL components in fixture source metadata; external dependency
+        # links and the actual source paths and line anchors remain significant.
+        return re.sub(
+            rb'<span class="needs_source_code_link">.*?</div>',
+            lambda metadata: re.sub(
+                rb'https://github\.com/[^/"<>]+/[^/"<>]+/blob/[0-9a-f]{40}/(?=src/tests/docs_bzl/scenarios/)',
+                b"https://github.com/OWNER/REPO/blob/REVISION/",
+                metadata[0],
+            ),
+            raw,
+            flags=re.DOTALL,
         )
     if path.suffix != ".json":
         return raw

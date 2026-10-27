@@ -243,6 +243,10 @@ def _clear_needs_defaults(app: Sphinx):
 
 
 def setup(app: Sphinx) -> dict[str, str | bool]:
+    # Bundle metadata and its coverage display also apply to projects that
+    # configure SCORE extensions individually instead of loading the bundle.
+    # Register coverage before Sphinx validates the CLI's config overrides.
+    app.setup_extension("score_coverage")
     app.add_config_value("external_needs_source", "", rebuild="env")
     app.add_config_value(
         "runfiles_dir",
