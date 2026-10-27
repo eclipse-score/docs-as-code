@@ -12,7 +12,7 @@
 # *******************************************************************************
 
 load("@docs_as_code_hub_env//:requirements.bzl", "all_requirements")
-load("//:score_pytest.bzl", "score_pytest")
+load("@score_tools//score_pytest:pytest.bzl", "score_pytest")
 
 score_pytest(
     name = "module_verification_reports_test",

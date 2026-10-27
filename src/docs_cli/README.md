@@ -32,8 +32,10 @@ workspace root; for a nested package, use a label such as `//component:docs`.
 
 ## Layout and Bazel integration
 
-- `cli.py` contains the complete implementation: CLI parsing, Sphinx arguments,
+- `cli.py` contains CLI parsing, Sphinx arguments,
   cache checks, bundle watch directories and action dispatch.
+- `lcov_summary.py` calculates coverage summaries; [coverage.md](coverage.md)
+  describes its data flow and JSON format.
 - `dirty_build_test.py` covers cache invalidation and mounted watch directories.
 - `main_test.py` covers dispatch, build results and the Bazel environment contract.
 
@@ -48,15 +50,38 @@ linking can traverse this Bazel package boundary.
 
 `docs.bzl` provides `SOURCE_DIRECTORY`, `PACKAGE_DIR`, `DATA`, and optional
 configuration such as `SPHINX_CONFIG_FILE`, `SCORE_METAMODEL_YAML`,
-`MOUNTS_MANIFEST`, `EXTERNAL_NEEDS_FILES`, `TEST_SOURCES` and `KNOWN_GOOD_JSON`.
+`SPHINX_CONFIG_OPTS`, `MOUNTS_MANIFEST`,
+`EXTERNAL_NEEDS_FILES`, `TEST_SOURCES`, `KNOWN_GOOD_JSON` and
+`SCORE_CODE_FILE_LISTS`. For HTML builds and live preview,
+`SCORE_CODE_FILE_LISTS` points to the root bundle's generated file lists.
+At startup, the CLI combines those lists with the optional workspace report at
+`coverage-report/coverage_report.dat` and writes the generated input to
+`<output-directory>/coverage_summary.json`. Cache cleanup preserves this
+generated input while removing stale documentation output.
+It adds that file to the cache sentinels. When enabled, the `score_coverage`
+extension discovers the summary in the output directory; standalone Sphinx
+builds can configure a different path with `score_coverage_summary`.
+The [coverage documentation](coverage.md) describes the inputs and JSON format.
+The sandboxed Needs action passes its external-needs labels separately through
+the internal `EXTERNAL_NEEDS_LABELS` variable.
 Bazel provides the workspace and runfiles locations. The CLI resolves source
-and output paths relative to the package containing the `docs()` call; generated
-configuration is resolved through runfiles.
+and output paths relative to the package containing the `docs()` call. A
+checked-in `conf.py` is resolved from the source tree; configuration-free
+targets receive structured Sphinx overrides through `SPHINX_CONFIG_OPTS`. When
+no config file is supplied and that option list is non-empty, the CLI selects
+Sphinx's configuration-free mode automatically.
 
-All actions share the package's `_build` directory. Before starting, the CLI
+All actions share the package's `_build` directory. Set the `DOCS_BUILD_DIR`
+environment variable to use a different directory; relative values are resolved
+against the package, absolute values are used as-is (e.g.
+`DOCS_BUILD_DIR=docs_build_tmp bazel run //:docs`). Because stale output is
+deleted, the CLI rejects values that equal or contain the workspace, package or
+source directory. Sandboxed Bazel build actions
+ignore it and always write to their declared output. Before starting, the CLI
 removes stale output if the previous build recorded warnings, the stored hash
 is missing, or the contents of `MODULE.bazel`, `MODULE.bazel.lock` or the package's
-`BUILD` file have changed. Successful non-preview builds record the input hash;
+`BUILD` file or the calculated coverage summary have changed. Successful
+non-preview builds record the input hash;
 failed builds append a marker to `warnings.txt` to force cleanup next time.
 
 Live preview also watches mounted bundle source directories and generated data

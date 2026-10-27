@@ -12,6 +12,15 @@
    # SPDX-License-Identifier: Apache-2.0
    # *******************************************************************************
 
+.. test_metadata:: Test Restricted Needextend Usage
+   :id: test_metadata__need_extends
+   :partially_verifies_list: tool_req__docs_restrict_needextend
+   :test_type: requirements_based
+   :derivation_technique: requirements_based
+
+   Tests that needextend may only add values to unset options within its own
+   document and reports an error for replace, delete and append actions.
+
 
 .. stkh_req:: Test Req Extends 1
    :id: stkh_req__test__need_extends_1

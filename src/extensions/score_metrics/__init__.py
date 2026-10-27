@@ -71,6 +71,17 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
             "Default is False so each repo gates only its own needs."
         ),
     )
+    app.add_config_value(
+        "score_metrics_external_feature_ids",
+        [],
+        rebuild="env",
+        types=[list],
+        description=(
+            "Optional feature IDs used to select external feat_req requirements "
+            "by satisfied_by links when external needs are enabled. Local "
+            "requirements remain included. Empty preserves full aggregation."
+        ),
+    )
     app.setup_extension("score_metamodel")
 
     # Calculates the metrics & sets global var for access

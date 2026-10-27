@@ -41,7 +41,7 @@ Rust
    There is currently no provided official way to add this metadata in Rust.
    Use the advanced JUnit XML path below until Rust support is available.
 
-See the `Verification Templates <https://eclipse-score.github.io/reference_integration/main/_collections/score_process/process/process_areas/verification/guidance/verification_templates.html>`_
+See the `Verification Templates <https://eclipse-score.github.io/reference_integration/main/process_methods_tools/score_process_description/process_areas/verification/guidance/verification_templates.html>`_
 for complete examples and the required metadata.
 
 Advanced usage: JUnit XML for other languages

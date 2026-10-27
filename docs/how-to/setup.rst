@@ -56,7 +56,7 @@ This action requires configuration in the ``.bazelrc`` file::
         project = "S-CORE <feature name>",
         project_url = "https://eclipse-score.github.io/<repo name>",
         external_needs = [
-            "@other_repo:needs_json",  # Optional, if you have dependencies
+            "@other_repo//:docs",  # Optional, if you reference another project's Needs
         ],
     )
 

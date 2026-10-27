@@ -20,6 +20,7 @@ from typing import Any
 
 import pytest
 from pytest import TempPathFactory
+from score_pytest.attribute_plugin import add_test_properties
 from sphinx.testing.util import SphinxTestApp
 from sphinx_needs.data import SphinxNeedsData
 
@@ -213,12 +214,6 @@ def sphinx_app_setup(
     git_repo_setup: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> Callable[[], SphinxTestApp]:
-    # Source links are generated before Sphinx starts, matching the Bazel build
-    # contract used by the extension in production.
-    monkeypatch.setenv(
-        "SCORE_SOURCELINKS", str(sphinx_base_dir / ".expected_codelink.json")
-    )
-
     def _create_app():
         base_dir = sphinx_base_dir
         docs_dir = base_dir / "docs"
@@ -233,6 +228,14 @@ def sphinx_app_setup(
             outdir=sphinx_base_dir / "out",
             buildername="html",
             warningiserror=True,
+            # Source links are generated before Sphinx starts; the docs CLI
+            # passes the resolved path via ``--define``, matching the Bazel
+            # build contract used by the extension in production.
+            confoverrides={
+                "score_sourcelinks_json": str(
+                    sphinx_base_dir / ".expected_codelink.json"
+                ),
+            },
         )
 
     return _create_app
@@ -512,6 +515,14 @@ def compare_grouped_json_files(file1: Path, golden_file: Path):
         )
 
 
+@add_test_properties(
+    fully_verifies=[
+        "potential_tool_malfunction__docs_as_code__m8",
+        "potential_tool_malfunction__docs_as_code__m9",
+    ],
+    test_type="requirements-based",
+    derivation_technique="requirements-analysis",
+)
 def test_source_link_integration_ok(
     sphinx_app_setup: Callable[[], SphinxTestApp],
     example_source_link_text_all_ok: dict[str, list[NeedLink]],

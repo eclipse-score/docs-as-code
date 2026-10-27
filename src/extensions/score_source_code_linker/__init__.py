@@ -59,9 +59,7 @@ from src.extensions.score_source_code_linker.xml_parser import (
     construct_and_add_need,
     run_xml_parser,
 )
-from src.helper_lib import Environment, find_ws_root
-
-env = Environment()
+from src.helper_lib import find_ws_root
 
 LOGGER = get_logger(__name__)
 # Uncomment this to enable more verbose logging
@@ -82,16 +80,12 @@ def get_cache_filename(build_dir: Path, filename: str) -> Path:
     return build_dir / filename
 
 
-def build_and_save_combined_file(outdir: Path, app: Sphinx | None = None):
+def build_and_save_combined_file(outdir: Path, app: Sphinx):
     """
     Reads the saved partial caches of codelink & testlink
     Builds the combined JSON cache & saves it
     """
-    source_code_links_path = env.get("SCORE_SOURCELINKS", "")
-    if not source_code_links_path and app is not None:
-        source_code_links_path = str(
-            getattr(app.config, "score_sourcelinks_json", "") or ""
-        ).strip()
+    source_code_links_path = app.config.score_sourcelinks_json.strip()
     if source_code_links_path:
         source_code_links_json = Path(source_code_links_path)
         try:
@@ -99,8 +93,8 @@ def build_and_save_combined_file(outdir: Path, app: Sphinx | None = None):
         except FileNotFoundError as exc:
             raise FileNotFoundError(
                 "Pre-generated source-code links file does not exist: "
-                f"{source_code_links_json}. Check SCORE_SOURCELINKS or "
-                "score_sourcelinks_json."
+                f"{source_code_links_json}. Check the score_sourcelinks_json "
+                "Sphinx config value (set from SCORE_SOURCELINKS by the docs CLI)."
             ) from exc
         except AssertionError:
             source_code_links = load_source_code_links_with_metadata_json(
@@ -146,25 +140,33 @@ def setup_source_code_linker(app: Sphinx):
     )
 
     # Define need_string_links here to not have them in conf.py. Test links
-    # carry the result as an additional field in their serialized value.
-    app.config.needs_string_links.setdefault(
-        "source_code_linker_pure",
-        {
-            "regex": r"(?P<url>.+)<>(?P<name>.+)",
-            "link_url": "{{url}}",
-            "link_name": "{{name}}",
-            "options": ["source_code_link"],
-        },
-    )
-    app.config.needs_string_links.setdefault(
-        "test_code_linker",
-        {
-            "regex": r"(?P<url>.+)<>(?P<name>.+)<>(?P<result>.+)",
-            "link_url": "{{url}}",
-            "link_name": "{{name}} ({{result}})",
-            "options": ["testlink"],
-        },
-    )
+    # carry the result as an additional field in their serialized value. A
+    # custom metamodel may omit either extension field, and Sphinx-Needs 8.5
+    # reports a warning when a linker names an unavailable field. Consumers
+    # may declare fields through either SCORE's needs_fields or Sphinx-Needs'
+    # needs_extra_options, so both configuration sources must be considered.
+    configured_fields = set(app.config.needs_fields)
+    configured_fields.update(app.config.needs_extra_options)
+    if "source_code_link" in configured_fields:
+        app.config.needs_string_links.setdefault(
+            "source_code_linker_pure",
+            {
+                "regex": r"(?P<url>.+)<>(?P<name>.+)",
+                "link_url": "{{url}}",
+                "link_name": "{{name}}",
+                "options": ["source_code_link"],
+            },
+        )
+    if "testlink" in configured_fields:
+        app.config.needs_string_links.setdefault(
+            "test_code_linker",
+            {
+                "regex": r"(?P<url>.+)<>(?P<name>.+)<>(?P<result>.+)",
+                "link_url": "{{url}}",
+                "link_name": "{{name}} ({{result}})",
+                "options": ["testlink"],
+            },
+        )
 
 
 def register_test_code_linker(app: Sphinx):

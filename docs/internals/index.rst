@@ -24,3 +24,4 @@ This section is not relevant for users of docs-as-code but for developers extend
    benchmark_results
    decisions/index
    requirements/index
+   testing

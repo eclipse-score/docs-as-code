@@ -16,18 +16,25 @@ Conversion of documentation bundles from Bazel into mount metadata.
 
 load("@score_docs_as_code//:bzl/bundle_rules.bzl", "DocsBundleInfo")
 
-def _mounts_manifest_impl(ctx):
-    """Generate the canonical Sphinx mount manifest."""
+def _composition_manifest_impl(ctx):
+    """Generate the bundle composition manifest."""
     bundle_info = ctx.attr.bundle[DocsBundleInfo]
     entries = bundle_info.entries
 
     json_mounts = []
     for entry in entries:
+        # A standalone bundle's Needs action must see only the entries it owns.
+        # Composed documentation still receives every entry through the normal
+        # manifest, so this filter changes only the manifest view requested by
+        # the caller.
+        if ctx.attr.own_only and not entry.root_bundle:
+            continue
         mount = {
             "src_root": entry.src_root,
             "runtime_path": entry.runtime_path,
             "mount_at": entry.mount_at,
             "attach_to": entry.attach_to,
+            "toctree_index": entry.toctree_index,
             "entry_doc": entry.entry_doc,
             "external": entry.external,
             "repository": entry.repository,
@@ -35,6 +42,26 @@ def _mounts_manifest_impl(ctx):
             # tree rather than a workspace or external-repository directory.
             "generated": entry.generated,
             "data": [f.path for f in entry.data.to_list()],
+            # Keep identity and direct-target metadata in the same manifest as
+            # placement so all runtime consumers use one composition snapshot.
+            "root_bundle": entry.root_bundle,
+            "bundle": {
+                "label": entry.bundle_label,
+                "name": entry.bundle_name,
+                # This explicit ID identifies the primary Need represented by
+                # the bundle. It is intentionally independent of the Bazel
+                # target name and of any other Need IDs in the bundle.
+                "primary_need_id": entry.primary_need_id,
+                # Each direct target contributes its Bazel label and rule kind
+                # to the bundle metadata consumed by Python.
+                "code_targets": [
+                    {
+                        "label": target.label,
+                        "type": target.type,
+                    }
+                    for target in entry.code_targets
+                ],
+            },
         }
         # Explicit source targets are mounted as a file allowlist. Directory
         # bundles omit this key and retain the existing recursive behavior.
@@ -46,18 +73,23 @@ def _mounts_manifest_impl(ctx):
     ctx.actions.write(out, json.encode({"mounts": json_mounts}))
     return [DefaultInfo(files = depset([out]))]
 
-_create_mounts_manifest = rule(
-    implementation = _mounts_manifest_impl,
+_composition_manifest = rule(
+    implementation = _composition_manifest_impl,
     attrs = {
         "bundle": attr.label(providers = [DocsBundleInfo]),
+        # ``own_only`` creates the local view used by a bundle's standalone
+        # Needs export; the default keeps the complete composition unchanged.
+        "own_only": attr.bool(default = False),
     },
-    doc = "Writes a Sphinx mount manifest from reusable documentation bundles.",
+    doc = "Writes the bundle composition consumed by runtime documentation tools.",
 )
 
-def create_mounts_manifest(name, bundle):
-    """Create a Sphinx mount manifest from reusable documentation bundles."""
-    _create_mounts_manifest(
+def create_composition_manifest(name, bundle, own_only = False, visibility = None):
+    """Create a mount manifest for composed builds or local Needs document mapping."""
+    _composition_manifest(
         name = name,
         bundle = bundle,
+        own_only = own_only,
+        visibility = visibility,
     )
     return ":" + name

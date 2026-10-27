@@ -21,6 +21,7 @@ from sphinx_needs import logging
 from sphinx_needs.data import NeedsView, SphinxNeedsData
 from sphinx_needs.need_item import NeedItem
 
+from src.extensions.score_metamodel.bundle_metadata import apply_bundle_metadata
 from src.extensions.score_metamodel.external_needs import connect_external_needs
 from src.extensions.score_metamodel.log import CheckLogger
 
@@ -106,6 +107,8 @@ def _run_checks(app: Sphinx) -> None:
 
     # Filter out external needs, as checks are only intended to be run
     # on internal needs.
+    # Needs with status `invalid` are not filtered here: graph checks must still
+    # see them as link targets. CheckLogger drops all findings for them.
     needs_all_needs = SphinxNeedsData(app.env).get_needs_view()
 
     logger.debug(f"Running checks for {len(needs_all_needs)} needs")
@@ -133,9 +136,7 @@ def _run_checks(app: Sphinx) -> None:
 
     enabled_local_checks = [c for c in local_checks if is_check_enabled(c)]
 
-    needs_local_needs = (
-        SphinxNeedsData(app.env).get_needs_view().filter_is_external(False)
-    )
+    needs_local_needs = needs_all_needs.filter_is_external(False)
     # Need-Local checks: checks which can be checked file-local, without a
     # graph of other needs.
     for need in needs_local_needs.values():
@@ -243,6 +244,13 @@ def _clear_needs_defaults(app: Sphinx):
 
 def setup(app: Sphinx) -> dict[str, str | bool]:
     app.add_config_value("external_needs_source", "", rebuild="env")
+    app.add_config_value(
+        "runfiles_dir",
+        "",
+        rebuild="env",
+        types=str,
+        description="Bazel runfiles root supplied by the documentation CLI.",
+    )
     app.add_config_value("score_metamodel_yaml", "", rebuild="env")
     app.add_config_value("required_in_id", [], rebuild="env")
     app.add_config_value("score_bundle_needs_export", False, rebuild="env")
@@ -259,15 +267,27 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     app.config.needs_types += metamodel.needs_types
     app.config.needs_links.update(metamodel.needs_links)
     app.config.needs_fields.update(metamodel.needs_fields)
-    app.config.needs_string_links.setdefault(
-        "github_issue_linker",
-        {
-            "regex": r"(?P<url>https://github\.com/[^/]+/(?P<repo>[^/]+)/issues/(?P<number>\d+))",
-            "link_url": "{{url}}",
-            "link_name": "{{repo}}#{{number}}",
-            "options": ["mitigation_issue", "tracking"],
-        },
-    )
+    # Sphinx-Needs validates every string-link option against the active
+    # metamodel. A consumer may intentionally provide a smaller metamodel than
+    # SCORE's default one, so only configure the linker for fields that exist
+    # in this build.
+    configured_fields = set(app.config.needs_fields)
+    configured_fields.update(app.config.needs_extra_options)
+    github_issue_options = [
+        field
+        for field in ("mitigation_issue", "tracking")
+        if field in configured_fields
+    ]
+    if github_issue_options:
+        app.config.needs_string_links.setdefault(
+            "github_issue_linker",
+            {
+                "regex": r"(?P<url>https://github\.com/[^/]+/(?P<repo>[^/]+)/issues/(?P<number>\d+))",
+                "link_url": "{{url}}",
+                "link_name": "{{repo}}#{{number}}",
+                "options": github_issue_options,
+            },
+        )
     app.config.graph_checks = metamodel.needs_graph_check
     app.config.prohibited_words_checks = metamodel.prohibited_words_checks
 
@@ -278,11 +298,7 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     config_setdefault(app.config, "needs_reproducible_json", True)
     config_setdefault(app.config, "needs_json_remove_defaults", True)
 
-    # sphinx-collections runs on default prio 500.
-    # We need to populate the sphinx-collections config before that happens.
-    # If we put it anywhere higher it seems that other things already lock the needs
-    # To ensure that this runs first before locking happens priot is => 425
-    # The lower the number the higher priority it has (runs earlier)
+    # Populate external Needs before Sphinx-Needs locks its configuration.
     _ = app.connect("config-inited", connect_external_needs, priority=425)
 
     discover_checks()
@@ -297,6 +313,9 @@ def setup(app: Sphinx) -> dict[str, str | bool]:
     )
 
     _ = app.connect("write-started", lambda app, _builder: _run_checks(app))
+    # The template extension may purge and reread report pages at priority 600.
+    # Matching after that pass makes the final Need collection authoritative.
+    _ = app.connect("env-updated", apply_bundle_metadata, priority=650)
 
     return {
         "version": "0.1",

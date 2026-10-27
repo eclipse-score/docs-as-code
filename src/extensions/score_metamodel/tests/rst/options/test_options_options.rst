@@ -15,7 +15,7 @@
 
 .. test_metadata::
    :id: test_metadata__mandatory_options_and_links
-   :partially_verifies_list: tool_req__docs_common_attr_status[version==1], tool_req__docs_req_types[version==1]
+   :partially_verifies_list: tool_req__docs_req_types[version==1]
    :test_type: requirements_based
    :derivation_technique: requirements_based
 
@@ -74,6 +74,22 @@
 .. feat_saf_fmea:: This is a test
    :id: feat_saf_fmea__test_options__2
    :sufficient: yes
+   :expect_not: does not follow pattern
+
+
+
+.. Test if the optional `maturity` option for `mod` follows the pattern `^(preview|experimental|release)$`
+
+.. mod:: Test Module Maturity Bad
+   :id: mod__test_options__maturity_bad
+   :maturity: stable
+   :expect: mod__test_options__maturity_bad.maturity (stable): does not follow pattern `^(preview|experimental|release)$`.
+
+
+
+.. mod:: Test Module Maturity Good
+   :id: mod__test_options__maturity_good
+   :maturity: preview
    :expect_not: does not follow pattern
 
 
@@ -344,6 +360,7 @@
    :id: tool_req__test_good_1
    :status: valid
    :safety: QM
+   :satisfies: comp_req__test_good_1
    :expect_not: does not follow pattern
 
 
@@ -354,6 +371,7 @@
    :id: tool_req__test_good_2
    :status: valid
    :safety: ASIL_B
+   :satisfies: comp_req__test_good_2
    :expect_not: does not follow pattern
 
 
@@ -599,7 +617,7 @@
 
 .. feat_sec_ana:: Missing threat_scenario_id
    :id: feat_sec_ana__test_options__bad_4
-   :status: invalid
+   :status: valid
    :sufficient: no
    :threat_effect: Unauthorized access to stored data.
    :expect: feat_sec_ana__test_options__bad_4: is missing required attribute: `threat_scenario_id`.
@@ -638,7 +656,7 @@
 .. feat_sec_ana:: Missing threat_effect
    :id: feat_sec_ana__test_options__bad_7
    :threat_scenario_id: SC_01_02
-   :status: invalid
+   :status: valid
    :sufficient: no
    :expect: feat_sec_ana__test_options__bad_7: is missing required attribute: `threat_effect`.
 
@@ -679,7 +697,7 @@
 .. feat_sec_ana:: Invalid mitigation_issue (pull request, not issue)
    :id: feat_sec_ana__test_options__bad_10
    :threat_scenario_id: SC_01_04
-   :status: invalid
+   :status: valid
    :sufficient: no
    :threat_effect: Unauthorized data access.
    :mitigation_issue: https://github.com/eclipse-score/docs-as-code/pull/508
@@ -693,7 +711,7 @@
 .. feat_sec_ana:: Missing argument content
    :id: feat_sec_ana__test_options__bad_11
    :threat_scenario_id: SC_01_04
-   :status: invalid
+   :status: valid
    :sufficient: no
    :threat_effect: Unauthorized data access.
    :expect: feat_sec_ana__test_options__bad_11: is missing required attribute: `content`.

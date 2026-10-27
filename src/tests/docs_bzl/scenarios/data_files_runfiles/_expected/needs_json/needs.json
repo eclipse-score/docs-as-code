@@ -6,7 +6,7 @@
     "": {
       "creator": {
         "program": "sphinx_needs",
-        "version": "8.3.1"
+        "version": "8.5.0"
       },
       "needs": {},
       "needs_amount": 0,
@@ -98,6 +98,24 @@
           "avatar": {
             "default": null,
             "description": "Added by service github-issues",
+            "field_type": "extra",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "bazel_target": {
+            "default": "",
+            "description": "Added by needs_fields config",
+            "field_type": "extra",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "bazel_type": {
+            "default": "",
+            "description": "Added by needs_fields config",
             "field_type": "extra",
             "type": [
               "string",
@@ -329,6 +347,15 @@
             },
             "type": "array"
           },
+          "detection_sufficient": {
+            "default": "",
+            "description": "Added by needs_fields config",
+            "field_type": "extra",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "docname": {
             "default": null,
             "description": "Name of the document where the need is defined (None if external).",
@@ -396,6 +423,15 @@
             ]
           },
           "failure_id": {
+            "default": "",
+            "description": "Added by needs_fields config",
+            "field_type": "extra",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "failure_root_cause": {
             "default": "",
             "description": "Added by needs_fields config",
             "field_type": "extra",
@@ -679,6 +715,15 @@
             },
             "type": "array"
           },
+          "maturity": {
+            "default": "",
+            "description": "Added by needs_fields config",
+            "field_type": "extra",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "max_amount": {
             "default": null,
             "description": "Added by service github-issues",
@@ -901,6 +946,24 @@
               "null"
             ]
           },
+          "realized_by": {
+            "default": [],
+            "description": "Link field",
+            "field_type": "links",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "realized_by_back": {
+            "default": [],
+            "description": "Backlink field",
+            "field_type": "backlinks",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
           "realizes": {
             "default": [],
             "description": "Link field",
@@ -918,6 +981,15 @@
               "type": "string"
             },
             "type": "array"
+          },
+          "report_version": {
+            "default": "",
+            "description": "Added by needs_fields config",
+            "field_type": "extra",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "reqtype": {
             "default": "",
@@ -991,15 +1063,6 @@
               "null"
             ]
           },
-          "root_cause": {
-            "default": "",
-            "description": "Added by needs_fields config",
-            "field_type": "extra",
-            "type": [
-              "string",
-              "null"
-            ]
-          },
           "safety": {
             "default": "",
             "description": "Added by needs_fields config",
@@ -1010,6 +1073,15 @@
             ]
           },
           "safety_affected": {
+            "default": "",
+            "description": "Added by needs_fields config",
+            "field_type": "extra",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "safety_measures": {
             "default": "",
             "description": "Added by needs_fields config",
             "field_type": "extra",
@@ -1118,15 +1190,6 @@
             ]
           },
           "source_code_link": {
-            "default": "",
-            "description": "Added by needs_fields config",
-            "field_type": "extra",
-            "type": [
-              "string",
-              "null"
-            ]
-          },
-          "source_roots": {
             "default": "",
             "description": "Added by needs_fields config",
             "field_type": "extra",

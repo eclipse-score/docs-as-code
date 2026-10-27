@@ -69,8 +69,10 @@ as ``internals/code_docs/overview``.
 
 Every mount adds the bundle's configured entry document to a host toctree. By
 default that is the ``index`` beside ``mount_at``; ``attach_to`` overrides the
-host document whose first toctree receives the entry. The entry itself belongs
-to the ``docs_bundle`` and defaults to ``index``.
+host document that receives the entry. The host document may contain several
+toctrees. ``toctree_index`` selects which one receives the entry, counting from
+``0`` (the first toctree). The entry itself belongs to the ``docs_bundle`` and
+defaults to ``index``.
 
 The configuration has two separate responsibilities:
 
@@ -82,7 +84,7 @@ The configuration has two separate responsibilities:
    rectangle "docs(bundles = [...])\nplacement" as docs
    rectangle "Rendered docs" as output
    bundle --> docs : select bundle
-   docs --> output : mount_at / attach_to
+   docs --> output : mount_at / attach_to / toctree_index
    @enduml
 
 For nested composition, generated bundle data, and bundles published by

@@ -20,7 +20,6 @@
      tool_req__docs_saf_attr_fmea_fault_id[version==2],
      tool_req__docs_saf_attrs_sufficient[version==1],
      tool_req__docs_saf_attrs_content[version==2]
-   :partially_verifies_list: tool_req__docs_saf_attrs_mandatory[version==1]
    :test_type: requirements_based
    :derivation_technique: requirements_based
 
@@ -36,7 +35,7 @@
    :status: valid
    :failure_effect: signal lost
    :sufficient: yes
-   :expect: is missing required attribute: `failure_id`
+   :expect: is missing required attribute: `failure_id`.
 
 
 .. comp_saf_dfa:: Valid failure_id

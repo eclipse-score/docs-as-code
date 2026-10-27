@@ -12,7 +12,7 @@
 # *******************************************************************************
 
 load("@aspect_rules_py//py:defs.bzl", "py_library")
-load("//:score_pytest.bzl", "score_pytest")
+load("@score_tools//score_pytest:pytest.bzl", "score_pytest")
 
 filegroup(
     name = "sources",

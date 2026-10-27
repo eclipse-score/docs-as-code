@@ -17,6 +17,8 @@ needs_types_base_options:
     # req-Id: tool_req__docs_dd_link_source_code_link
     source_code_link: ^https://github.com/.*
     testlink: ^https://github.com/.*
+    bazel_target: ^.*$
+    bazel_type: ^.*$
     # Version will be mandatory global option in future releases
     # For now giving grace periods to consumers
   mandatory_options:
@@ -230,6 +232,7 @@ needs_types:
       author: ^.*$
       approver: ^.*$
       reviewer: ^.*$
+      report_version: ^v(0|[1-9]\d*)\.(0|[1-9]\d*)(\.(0|[1-9]\d*))?$
     # req-Id: tool_req__docs_doc_generic_mandatory
     mandatory_links:
       realizes: workproduct
@@ -241,13 +244,16 @@ needs_types:
     mandatory_options:
       # req-Id: tool_req__docs_tvr_status
       status: ^(draft|evaluated|qualified|released|rejected)$
-      # req-Id: tool_req__docs_tvr_safety
-      safety_affected: "^(YES|NO)$"
       # req-Id: tool_req__docs_tvr_security
       security_affected: "^(YES|NO)$"
+    optional_options:
+      # These summary fields are rendered from the owned malfunction graph by
+      # the structured TVR workflow. They are optional so process templates
+      # can declare their output shape; report authors must not duplicate them.
+      # req-Id: tool_req__docs_tvr_safety
+      safety_affected: "^(YES|NO)$"
       # req-Id: tool_req__docs_tvr_confidence_level
       tcl: "^(LOW|HIGH)$"
-    optional_options:
       author: ^.*$
       approver: ^.*$
       reviewer: ^.*$
@@ -257,6 +263,43 @@ needs_types:
     optional_links:
       realizes: workproduct
     parts: 2
+
+  # Tool qualification reports keep use cases top-level for readable rendering.
+  # Their malfunctions are nested below them and use parent_needs as their
+  # semantic relationship.
+  # Structured tool qualification reports use tool_usecase as the context
+  # anchor for their evaluation. Legacy reports without use cases remain
+  # accepted for compatibility and are left unchanged by the workflow check.
+  # Tool requirements are linked through malfunctions; upstream requirements
+  # are linked from those tool requirements.
+  tool_usecase:
+    title: Tool Use Case
+    description: |
+      Defines the usage context in which the tool is evaluated.
+      A tool use case does not introduce additional requirements.
+      Where applicable, its nested malfunctions provide context for the tool
+      requirements relevant to a particular way the project relies on the tool.
+      Those tool requirements may satisfy upstream requirements.
+    color: "#E1D5E7"
+    mandatory_links:
+      belongs_to: doc_tool
+    parts: 3
+
+  # A malfunction describes a violation of one or more requirements. Safety
+  # measures are deliberately kept as free text on the malfunction because
+  # they are report evidence, not independently traceable model elements.
+  potential_tool_malfunction:
+    title: Potential Tool Malfunction
+    color: "#F8CECC"
+    mandatory_options:
+      safety_affected: "^(YES|NO)$"
+    optional_options:
+      detection_sufficient: "^(YES|NO)$"
+      safety_measures: ^.+$
+    mandatory_links:
+      parent_needs: tool_usecase
+      violates: tool_req
+    parts: 3
 
   # Requirements
   # req-Id: tool_req__docs_req_types
@@ -269,13 +312,14 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_safety
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
-      status: ^(valid|invalid)$
+      status: ^(valid|invalid|valid_inspected)$
       # WARNING: THis will be activated again with new process release (1.1.0)
       # content: ^[\s\S]+$
       # req-Id: tool_req__docs_req_attr_rationale
       rationale: ^.+$
       # req-Id: tool_req__docs_common_attr_security
       security: ^(YES|NO)$
+      # req-Id: tool_req__docs_req_attr_validity_correctness
       valid_from: ^v(0|[1-9]\d*)\.(0|[1-9]\d*)(\.(0|[1-9]\d*))?$
     optional_options:
       # req-Id: tool_req__docs_req_attr_testcov
@@ -301,9 +345,10 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_safety
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
-      status: ^(valid|invalid)$
+      status: ^(valid|invalid|valid_inspected)$
       # req-Id: tool_req__docs_common_attr_description
       content: ^[\s\S]+$
+      # req-Id: tool_req__docs_req_attr_validity_correctness
       valid_from: ^v(0|[1-9]\d*)\.(0|[1-9]\d*)(\.(0|[1-9]\d*))?$
     mandatory_links:
       satisfied_by: feat
@@ -335,7 +380,7 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_safety
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
-      status: ^(valid|invalid)$
+      status: ^(valid|invalid|valid_inspected)$
       # req-Id: tool_req__docs_common_attr_description
       content: ^[\s\S]+$
     mandatory_links:
@@ -349,6 +394,10 @@ needs_types:
       # req-Id: tool_req__docs_req_attr_testcov
       testcovered: ^(YES|NO)$
       hash: ^.*$
+      # req-Id: tool_req__docs_req_attr_validity_correctness
+      valid_from: ^v(0|[1-9]\d*)\.(0|[1-9]\d*)(\.(0|[1-9]\d*))?$
+      # req-Id: tool_req__docs_req_attr_validity_correctness
+      valid_until: ^v(0|[1-9]\d*)\.(0|[1-9]\d*)(\.(0|[1-9]\d*))?$
     tags:
       - requirement
       - requirement_excl_process
@@ -361,9 +410,8 @@ needs_types:
     mandatory_options:
       # req-Id: tool_req__docs_common_attr_description
       content: ^[\s\S]+$
-    optional_links:
+    mandatory_links:
       # req-Id: tool_req__docs_req_link_satisfies_allowed
-      # TODO: make it mandatory
       satisfies: gd_req, stkh_req, feat_req, comp_req
     optional_options:
       tags: ^.*$
@@ -392,7 +440,7 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_safety
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
-      status: ^(valid|invalid)$
+      status: ^(valid|invalid|valid_inspected)$
       # req-Id: tool_req__docs_common_attr_description
       content: ^[\s\S]+$
     optional_options:
@@ -419,7 +467,7 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_safety
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
-      status: ^(valid|invalid)$
+      status: ^(valid|invalid|valid_inspected)$
     optional_links:
       # req-Id: tool_req__arch_linkage_safety
       # Old direction kept optional during migration; superseded by logic_arc_int included_by feat
@@ -443,7 +491,7 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_safety
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
-      status: ^(valid|invalid)$
+      status: ^(valid|invalid|valid_inspected)$
     mandatory_links:
       # req-Id: tool_req__docs_arch_links
       includes: logic_arc_int, logic_arc_int_op
@@ -469,7 +517,7 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_safety
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
-      status: ^(valid|invalid)$
+      status: ^(valid|invalid|valid_inspected)$
     mandatory_links:
       # req-Id: tool_req__docs_arch_links
       belongs_to: feat
@@ -494,7 +542,7 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_safety
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
-      status: ^(valid|invalid)$
+      status: ^(valid|invalid|valid_inspected)$
     optional_links:
       # req-Id: tool_req__arch_linkage_safety
       # New direction kept optional during migration; will supersede feat includes logic_arc_int
@@ -517,7 +565,7 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_safety
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
-      status: ^(valid|invalid)$
+      status: ^(valid|invalid|valid_inspected)$
     mandatory_links:
       included_by: logic_arc_int
     tags:
@@ -537,18 +585,8 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_safety
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
-      status: ^(valid|invalid)$
-      # Maps included components to the repository-relative root directory of
-      # their implementation, written as one ``<comp-id>: <path>`` pair per line:
-      #
-      #   :source_roots:
-      #      comp__example_parser: src/parser
-      #      comp__example_logging: src/logging
-      #
-      # Coverage data is attributed to the component that declares the most
-      # specific matching root, so nested components each report their own code.
-      # Components without an entry report no coverage.
-      source_roots: ^[ \t]*[A-Za-z0-9_]+[ \t]*:[ \t]*[A-Za-z0-9_][A-Za-z0-9_-]*(/[A-Za-z0-9_][A-Za-z0-9_-]*)*[ \t]*(\n[ \t]*[A-Za-z0-9_]+[ \t]*:[ \t]*[A-Za-z0-9_][A-Za-z0-9_-]*(/[A-Za-z0-9_][A-Za-z0-9_-]*)*[ \t]*)*\n?$
+      status: ^(valid|invalid|valid_inspected)$
+      maturity: ^(preview|experimental|release)$
     mandatory_links:
       # req-Id: tool_req__arch_linkage_safety
       includes: comp
@@ -592,7 +630,7 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_safety
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
-      status: ^(valid|invalid)$
+      status: ^(valid|invalid|valid_inspected)$
     mandatory_links:
       belongs_to: feat # preparation for linking change according to DR-005
     optional_links:
@@ -618,7 +656,7 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_safety
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
-      status: ^(valid|invalid)$
+      status: ^(valid|invalid|valid_inspected)$
     mandatory_links:
       # req-Id: tool_req__docs_arch_links
       belongs_to: comp
@@ -642,7 +680,7 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_safety
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
-      status: ^(valid|invalid)$
+      status: ^(valid|invalid|valid_inspected)$
     mandatory_links:
       # req-Id: tool_req__docs_arch_links
       belongs_to: comp
@@ -665,7 +703,7 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_safety
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
-      status: ^(valid|invalid)$
+      status: ^(valid|invalid|valid_inspected)$
       language: ^(cpp|rust)$
     optional_links:
       fulfils: comp_req
@@ -686,7 +724,7 @@ needs_types:
       # req-Id: tool_req__docs_common_attr_safety
       safety: ^(QM|ASIL_B)$
       # req-Id: tool_req__docs_common_attr_status
-      status: ^(valid|invalid)$
+      status: ^(valid|invalid|valid_inspected)$
     mandatory_links:
       # req-Id: tool_req__arch_linkage_safety
       included_by: real_arc_int
@@ -812,7 +850,7 @@ needs_types:
       # req-Id: tool_req__docs_saf_attrs_safety_relevant
       safety_relevant: ^(yes|no)$
       # req-Id: tool_req__docs_saf_attrs_root_cause
-      root_cause: ^[\s\S]+$
+      failure_root_cause: ^[\s\S]+$
       mitigation_issue: ^https://github\.com/[^/]+/[^/]+/issues/\d+$
     mandatory_links:
       # req-Id: tool_req__docs_saf_attrs_violates
@@ -843,7 +881,7 @@ needs_types:
     optional_options:
       # req-Id: tool_req__docs_saf_attrs_mitigation_issue
       safety_relevant: ^(yes|no)$
-      root_cause: ^[\s\S]+$
+      failure_root_cause: ^[\s\S]+$
       mitigation_issue: ^https://github\.com/[^/]+/[^/]+/issues/\d+$
     mandatory_links:
       # req-Id: tool_req__docs_saf_attrs_violates
@@ -1071,6 +1109,17 @@ needs_extra_links:
     incoming: realized by
     outgoing: realizes
 
+  realized_by:
+    incoming: realized by
+    outgoing: realizes
+
+  # Sphinx-Needs stores nested Need relationships under parent_needs. Use
+  # report-oriented labels so generated links describe the containment rather
+  # than exposing the implementation-oriented word "parent".
+  parent_needs:
+    incoming: contains
+    outgoing: contained by
+
   # Decision Record
   affects:
     incoming: affected by
@@ -1164,10 +1213,16 @@ needs_extra_links:
 #                          to perform the check on all needs types, set include to .
 #   - condition: defines (together with apply) the condition which the needs need to fulfill
 #     - [and / or / xor / not]
-# - check: defines the check that should be applied
+# - check_all / check_one: defines the check that should be applied (exactly one of them)
+#   - check_all: every linked need has to fulfill the condition
+#   - check_one: at least one linked need has to fulfill the condition
+#                (a need without any linked needs passes)
 #   - <relation>: defines the relation which is used derive the type of the parent need
 #   - condition: defines the condition that should be checked
 #     - [and / or / xor / not]
+#     - `self.<attribute>` refers to an attribute of the need the check is applied to,
+#       e.g. `safety == self.safety` compares the linked need with its origin
+# - info_only [OPTIONAL]: if `true`, violations are reported as info instead of warning
 ##############################################################
 
 graph_checks:
@@ -1176,7 +1231,7 @@ graph_checks:
     needs:
       include: stkh_req, feat_req, comp_req, aou_req, gd_req, tool_req
       condition: safety == QM
-    check:
+    check_all:
       derived_from: safety == QM
     explanation: QM requirements cannot be derived from ASIL requirements.
 
@@ -1185,23 +1240,37 @@ graph_checks:
     needs:
       include: feat_arc_sta, logic_arc_int, logic_arc_int_op, comp_arc_sta, real_arc_int, real_arc_int_op
       condition: safety == QM
-    check:
+    check_all:
       fulfils: safety != QM
     explanation: An QM architecture element cannot implement ASIL requirements.
+
+  # req-Id: tool_req__docs_arch_link_safety_to_req
+  tool_req__docs_arch_link_safety_to_req:
+    needs:
+      include: feat_arc_sta, feat_arc_dyn, logic_arc_int, comp, comp_arc_sta, comp_arc_dyn, real_arc_int
+      condition: safety != QM
+    check_one:
+      fulfils: safety == self.safety
+    explanation: A safety relevant architecture element must be linked to at least one requirement with the exact same safety value via fulfils.
+    info_only: true
 
   # req-Id: tool_req__docs_req_arch_link_safety_to_arch
   tool_req__docs_req_arch_link_safety_to_arch:
     needs:
-      include: feat_arc_sta, logic_arc_int, logic_arc_int_op, comp_arc_sta, real_arc_int, real_arc_int_op
+      include: feat_arc_sta, logic_arc_int, logic_arc_int_op, comp_arc_sta, real_arc_int, real_arc_int_op, comp, feat
       condition:
         and:
           - safety != QM
-          - status == valid
-    check:
+          - or:
+              - status == valid
+              - status == valid_inspected
+    check_all:
       implements: # TODO: which attribute???
         and:
           - safety != QM
-          - status == valid
+          - or:
+              - status == valid
+              - status == valid_inspected
     explanation: An safety architecture element can only link other safety architecture elements.
 
   # req-Id: tool_req__docs_arch_link_security
@@ -1209,7 +1278,7 @@ graph_checks:
     needs:
       include: feat_arc_sta, logic_arc_int, logic_arc_int_op, comp_arc_sta, real_arc_int, real_arc_int_op
       condition: security == YES
-    check:
+    check_all:
       implements: security == YES # Which attribute???
     explanation: An security architecture element can only link other security architecture elements.
 
@@ -1218,9 +1287,22 @@ graph_checks:
     needs:
       include: workproduct
       condition: complies != []
-    check:
+    check_all:
       complies:
         or:
           - id contains aspice_40__iic
           - id contains std_wp
     explanation: Workproducts may only link to ASPICE 40 IIC stakeholder requirements. Please ensure that the linked requirement is an ASPICE 40 IIC stakeholder requirement.
+
+  # req-Id: tool_req__docs_saf_attrs_mitigated_by
+  tool_req__docs_saf_attrs_mitigated_by:
+    needs:
+      include: feat_saf_dfa, comp_saf_dfa, feat_saf_fmea, comp_saf_fmea
+      condition: status == valid
+    check_one:
+      mitigated_by:
+        or:
+          - safety == ASIL_B
+          - type == aou_req
+    explanation: Valid safety analyses should link to at least one same-level or higher-safety requirement, or an Assumption of Use requirement.
+    info_only: true

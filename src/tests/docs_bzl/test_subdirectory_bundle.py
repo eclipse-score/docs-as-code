@@ -18,6 +18,7 @@ from src.tests.docs_bzl.helpers import run_bazel, run_package
 
 PRODUCER = "//src/tests/docs_bzl/scenarios/subdirectory_bundle/producer"
 CONSUMER = "//src/tests/docs_bzl/scenarios/subdirectory_bundle/consumer"
+EMBEDDED_BUNDLE = "//src/tests/docs_bzl/scenarios/subdirectory_bundle/producer/docs/embedded:docs_bundle"
 
 
 @pytest.mark.bazel_cached
@@ -45,6 +46,28 @@ def test_docs_targets_build_with_a_bundle_in_a_subdirectory():
             ],
         ]
     )
+
+
+@pytest.mark.bazel_cached
+def test_parent_needs_export_does_not_depend_on_mounted_child_bundle():
+    """The root's local Needs export must use its source-only provider.
+
+    The public ``docs_bundle`` provider includes the embedded child for
+    rendering. Querying dependencies of ``needs_local`` verifies that its
+    source-only provider prevents the export action from pulling that child
+    into the parent's ownership boundary.
+    """
+    result = run_bazel(
+        [
+            "query",
+            f"deps({PRODUCER}:docs.__internal__.needs_local)",
+            "--output=label",
+        ]
+    )
+
+    dependencies = set(result.stdout.splitlines())
+    assert f"{PRODUCER}:docs_bundle.__internal__.source_bundle" in dependencies
+    assert EMBEDDED_BUNDLE not in dependencies
 
 
 @pytest.mark.bazel_slow

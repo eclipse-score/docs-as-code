@@ -60,7 +60,12 @@ Minimal example (root ``BUILD``)
        project_url = "https://github.com/eclipse-score/my-project",
        data = [
            # labels to any extra tools or data you want included
-           # e.g. "//:needs_json" or other tool targets
+           # e.g. "//:some_tool" or other supporting files
+       ],
+       external_needs = [
+           # public docs() or docs_bundle targets whose Needs are referenced
+           # by this project's documentation
+           "@score_process_description//:docs_bundle",
        ],
        bundles = [
            # dicts describing bundles to mount into this project
@@ -77,12 +82,19 @@ Minimal example (root ``BUILD``)
 
 - ``project`` and ``project_url`` (strings, optional)
   Project name and canonical project URL. They are required when ``source_dir``
-  has no ``conf.py``; in that case ``docs()`` generates the Sphinx configuration
-  and supplies the Docs-as-Code baseline version, extensions, and a
-  ``required_in_id`` entry derived from the Bazel module name. The first
-  underscore-separated prefix is removed (for example,
+  has no ``conf.py``; in that case ``docs()`` runs Sphinx in configuration-free
+  mode and supplies these values, the Docs-as-Code baseline extensions and
+  version, and a ``required_in_id`` entry derived from the Bazel module name.
+  The first underscore-separated prefix is removed (for example,
   ``score_docs_as_code`` becomes ``docs_as_code``). If a ``conf.py`` exists,
-  it remains authoritative and these values are not used.
+  it remains authoritative for the root Sphinx build; these macro arguments
+  are not used to override it. They are still published when supplied so an
+  associated child bundle can receive explicit root metadata; supply them
+  explicitly when associated bundles need that metadata. Values are not read
+  back from ``conf.py`` or inherited from it.
+  The root bundle nevertheless publishes the module-derived
+  ``required_in_id`` through the root docs configuration; associated child
+  bundles inherit it and cannot override it locally.
 
 - ``data`` (list of bazel labels)
   Supporting files for this project's root ``:docs_bundle``. The files are
@@ -90,14 +102,21 @@ Minimal example (root ``BUILD``)
   mounts this project's public bundle. Put files belonging to a mounted child
   in that child's ``docs_bundle(data = [...])`` instead.
 
+  Passing a Needs inventory target through ``data`` is deprecated and prints
+  an INFO message. Put Needs inventory targets in ``external_needs`` instead.
+
   .. note::
 
-     To pull in another module's needs for cross-referencing, add its
-     ``:needs_json`` target here.
+     To reference Needs owned by another documentation project, use
+     ``external_needs`` with that project's public ``:docs`` target or a
+     public ``:docs_bundle`` target. The ``:needs_json`` label remains accepted
+     as a deprecated form without a warning for now. ``:needs_json_file`` is
+     also supported for directly naming an inventory file.
 
 - ``bundles`` (list of placement dicts)
-  Documentation bundles to overlay into this project's documentation tree, each with its
-  placement (``mount_at``). See :ref:`howto_mount_external_sources` for the full reference.
+  Documentation bundles to overlay into this project's documentation tree,
+  each with its placement (``mount_at``, optional ``attach_to`` and
+  ``toctree_index``). See :ref:`howto_mount_external_sources` for the full reference.
 
 - ``deps`` (list of bazel labels)
   Additional Bazel dependencies to add to the Python binaries and the virtual environment
@@ -115,10 +134,19 @@ Minimal example (root ``BUILD``)
   generated JSON is supplied to ``live_preview`` just like a normal documentation
   build.
 
+- ``primary_need_id`` (string, optional)
+  ID of the Sphinx-Needs item that represents the primary subject of this
+  documentation project. A project may contain many other Needs; when this
+  value is set, bundle-level target metadata is written only to this Need.
+
 - ``external_needs`` (list of bazel labels)
-  External ``:needs_json_file`` targets from other modules/repositories
-  for referencing their needs.
-  Do not use ``:needs_json`` targets.
+  Public ``:docs`` or ``:docs_bundle`` targets from other modules or
+  repositories. ``docs()`` maps each label to that target's locally owned
+  Needs inventory, so imported descendants are not treated as part of the
+  target's own inventory. The referenced Needs can then be used by this
+  project's documentation and its ``needs_json`` output. The ``:needs_json``
+  label remains accepted as a deprecated form without a warning for now;
+  ``:needs_json_file`` remains supported as a direct inventory-file target.
 
 - ``metamodel`` (bazel label, optional)
   Path to a custom ``metamodel.yaml`` file.
@@ -140,6 +168,24 @@ Minimal example (root ``BUILD``)
   You may use ``@score_docs_as_code//src/extensions/score_metamodel:metamodel_yaml``
   for extension processing.
   When ``metamodel`` is omitted the default metamodel is used unchanged.
+
+Coverage input
+~~~~~~~~~~~~~~
+
+The CLI used by ``bazel run :docs`` and ``:live_preview``
+reads ``coverage-report/coverage_report.dat`` relative to the workspace root.
+The documentation workflow can download this artifact with its optional
+``coverage-report-artifact`` input. The CLI calculates coverage per primary Need
+from the bundles' code-file lists and writes
+``<build-output>/coverage_summary.json``.
+This generated input participates in the local documentation cache check and
+remains available when stale output is removed.
+
+When the report is absent, selected files have missing coverage. Measurements
+are raw, without applied justifications. A compact display-only attribute is
+added to the matching primary Need's metadata area, for example
+``coverage: lines 67% · branches 100% · files 2/6``. ``needs_json``,
+``docs_check`` and ``docs_link_check`` retain their existing inputs.
 
 .. _docs_bundle_macro:
 
@@ -165,16 +211,17 @@ site).
        visibility = ["//visibility:public"],
    )
 
-Signature: ``docs_bundle(name, source_dir = None, srcs = [], data = [], entry_doc = "index", bundles = [], code_targets = [], visibility = None)``.
+Signature: ``docs_bundle(name, source_dir = None, srcs = [], data = [], entry_doc = "index", bundles = [], code_targets = [], primary_need_id = None, root_docs = None, visibility = None)``.
 
 - ``source_dir`` (string, optional)
   Directory holding the bundle's own doc sources. It is globbed the same way as
   ``docs()`` (RST, Markdown, images, and the other doc file kinds). The
   ``source_dir`` itself is the mount root, so the files mount relative to it (so
   ``concept/index.rst`` with ``source_dir = "concept"`` becomes ``index.rst``).
-  Standalone bundle-local Needs exports always use a self-contained, generated
-  Sphinx configuration. A root bundle created by ``docs()`` instead uses the
-  project's ``conf.py`` so its local export matches the normal project build.
+  Standalone bundle-local Needs exports use Sphinx's configuration-free mode
+  with a self-contained set of baseline overrides. A root bundle created by
+  ``docs()`` uses the project's ``conf.py`` when one exists, so its local export
+  remains compatible while that legacy path is phased out.
   The bundle exposes those files as a Bazel depset (via the ``DocsBundleInfo``
   provider) and records the ``source_dir`` path; sphinx-mounts walks that original
   directory directly — no copy is made. Leave it unset for a bundle whose
@@ -196,7 +243,8 @@ Signature: ``docs_bundle(name, source_dir = None, srcs = [], data = [], entry_do
 - ``entry_doc`` (string, optional)
   Bundle-relative docname used as the canonical navigation entry. It defaults to
   ``index``. Every mount attaches this entry to the parent ``index`` toctree by
-  default; a placement's ``attach_to`` may override that host document.
+  default; a placement's ``attach_to`` may override that host document, and its
+  ``toctree_index`` selects which toctree of that document receives the entry.
 
 - ``bundles`` (list of composition dicts, optional)
   Nested bundles to compose into this one, so a bundle can aggregate other
@@ -208,6 +256,9 @@ Signature: ``docs_bundle(name, source_dir = None, srcs = [], data = [], entry_do
   - ``attach_to`` (optional) — a docname (relative to this bundle) whose toctree
     receives the child's bundle-defined entry document. When omitted, the parent
     ``index`` document receives it.
+  - ``toctree_index`` (optional) — the 0-based index of the toctree inside the
+    ``attach_to`` document that receives the entry. It defaults to ``0`` (the
+    first toctree).
 
   A child's ``mount_at``/``attach_to`` **prefix-stack** with the placement this
   bundle later receives, so composition is fully transitive. The same underlying
@@ -217,16 +268,17 @@ Signature: ``docs_bundle(name, source_dir = None, srcs = [], data = [], entry_do
 
 - ``needs_local`` (internal target)
   A source-bearing bundle creates ``<name>.__internal__.needs_local`` with the
-  Needs declared by its own sources. The standalone build is intentionally
-  self-contained in this version: references to Needs defined outside the
-  bundle remain unresolved and fail strict builds. Cross-bundle imports and
-  merged exports are planned for a later change. Data-only bundles do not
-  create a Needs target.
+  ``needs.json`` file for Needs declared by its own sources. The standalone
+  build is intentionally self-contained in this version: references to Needs
+  defined outside the bundle remain unresolved and fail strict builds.
+  Cross-bundle imports and merged exports are planned for a later change.
+  Data-only bundles do not create a Needs target.
 
 .. note::
 
-   A bundle is **placement-free**: its ``mount_at`` and ``attach_to`` are assigned
-   by the mounter, while its ``entry_doc`` belongs to the bundle. This lets the
+   A bundle is **placement-free**: its ``mount_at``, ``attach_to``, and
+   ``toctree_index`` are assigned by the mounter, while its ``entry_doc`` belongs to
+   the bundle. This lets the
    same bundle be mounted at different locations by different consumers without
    changing its canonical entry page.
 
@@ -236,3 +288,25 @@ Signature: ``docs_bundle(name, source_dir = None, srcs = [], data = [], entry_do
    recursively from their ``deps``; filegroups expand to their files. The bundle
    owns one cached scan result; Bazel only regenerates it when its collected source
    inputs change.
+
+- ``primary_need_id`` (string, optional)
+   ID of the local Sphinx-Needs item representing the primary subject of this
+   bundle. The bundle may contain many additional Needs; only this explicitly
+   selected Need receives bundle-level target metadata. The ID is independent
+   of the Bazel bundle target name.
+
+- ``root_docs`` (bazel label, optional)
+  Root documentation target whose structured project configuration and
+  metamodel are used by this bundle's standalone Needs export. For a root
+  documentation target declared in the same repository's root package, use
+  ``//:docs``. The reference is resolved to an internal configuration target,
+  so the bundle does not depend on the root bundle's composed content. It is
+  deliberately opt-in: standalone bundles otherwise keep their own local
+  configuration. The generated ``docs.__internal__.config`` target is an
+  implementation detail and is not part of the public target surface; it
+  publishes a structured provider for the bundle rule to consume.
+  This includes the effective ``required_in_id`` namespace; a bundle associated
+  with root docs cannot override it locally. A ``conf.py`` is never inherited.
+
+  The root project's ``project_url`` is resolved for the declaring bundle by
+  appending its workspace-relative Bazel package path.

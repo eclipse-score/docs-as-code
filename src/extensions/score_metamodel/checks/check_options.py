@@ -102,45 +102,6 @@ def validate_options(
     _validate(need_type["optional_options"], False)
 
 
-#              ╭──────────────────────────────────────────────────────────╮
-#              │ Checks will be deactivated for now to give silent grace  │
-#              │                         period.                          │
-#              │    Afterwards they will be activated as 'non fatal'.     │
-#              │   Before getting enabled as 'mandatory' in the future    │
-#              │                 where this can be delted                 │
-#              ╰──────────────────────────────────────────────────────────╯
-
-
-# @local_check
-# def check_version_attr_present(
-#     _: Sphinx,
-#     need: NeedItem,
-#     log: CheckLogger,
-# ):
-#     """
-#     This is a temporary check to allow for non fatal warnings if a version attribute
-#     is missing in any need.
-#     In future releases the version will be mandatory and this check
-#     can be deleted as then it is covered by the normal validate_options function
-#     Checks if version attribute is present in the need. Will emit a non fatal warning
-#     """
-#     need_version = need.get("version")
-#     if not need_version:
-#         log.warning_for_need(
-#             need,
-#             msg="is missing attribute `version`. All needs "
-#             + "are required to have the version attribute in future releases. "
-#             + "It should be a whole number like: 'version: 1'.",
-#             is_new_check=True,
-#         )
-#     elif not need_version.isdigit():
-#         # As the version is already in the need here, this can be a 'error log'.
-#         log.warning_for_need(
-#             need,
-#             msg="Version is required to be a whole number e.g '1, 10, 12'",
-#         )
-
-
 def _to_link_pattern(value: ScoreNeedType) -> str:
     """
     Convert a link constraint to a regex pattern.
@@ -273,14 +234,24 @@ def check_extra_options(
         log.warning_for_need(need, msg)
 
 
+# Same pattern as the `valid_from`/`valid_until` options in metamodel.yaml:
+# v<major>.<minor> with an optional .<patch>, no leading zeroes.
+_MILESTONE_PATTERN = re.compile(r"v(0|[1-9]\d*)\.(0|[1-9]\d*)(\.(0|[1-9]\d*))?$")
+
+
 def parse_milestone(value: str) -> tuple[int, int, int]:
-    """Parse a string like 'v0.5' or 'v1.0.0'. No suffixes."""
-    match = re.match(r"v(\d+)(\.(\d+))?(\.(\d+))?$", value)
+    """Parse a string like 'v0.5' or 'v1.0.0'. No suffixes.
+
+    Uses the same pattern as the `valid_from`/`valid_until` options in
+    metamodel.yaml, so values rejected by the option schema raise ValueError
+    and stay with pattern validation instead of being compared here.
+    """
+    match = _MILESTONE_PATTERN.match(value)
     if not match:
         raise ValueError(f"Invalid milestone format: {value}")
     major = int(match.group(1))
-    minor = int(match.group(3) or 0)
-    patch = int(match.group(5) or 0)
+    minor = int(match.group(2))
+    patch = int(match.group(4) or 0)
     return (major, minor, patch)
 
 
@@ -294,7 +265,7 @@ def check_validity_consistency(
     """
     Check if the attributes valid_from < valid_until.
     """
-    if need["type"] not in ("stkh_req", "feat_req"):
+    if need["type"] not in ("stkh_req", "feat_req", "comp_req"):
         return
 
     valid_from = need.get("valid_from", None)
@@ -303,8 +274,13 @@ def check_validity_consistency(
     if not valid_from or not valid_until:
         return
 
-    valid_from_version = parse_milestone(valid_from)
-    valid_until_version = parse_milestone(valid_until)
+    try:
+        valid_from_version = parse_milestone(valid_from)
+        valid_until_version = parse_milestone(valid_until)
+    except ValueError:
+        # Pattern validation reports malformed milestones separately.
+        return
+
     if valid_from_version >= valid_until_version:
         msg = (
             "inconsistent validity: "

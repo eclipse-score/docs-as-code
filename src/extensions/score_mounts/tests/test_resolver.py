@@ -12,16 +12,20 @@
 # *******************************************************************************
 """Unit tests for the mounts manifest loader (``_resolver``).
 
-These cover the pure parsing layer only: reading the JSON manifest into
-``MountSpec`` objects, applying defaults, rejecting malformed input, and
-resolving source roots in runfiles versus an exec root."""
+These cover the pure parsing layer only: reading the synchronized producer
+format into ``MountSpec`` objects and resolving source roots in runfiles versus
+an exec root."""
 
 import json
 from pathlib import Path
+from typing import cast
 
 import pytest
+from score_pytest.attribute_plugin import add_test_properties
 
 from src.extensions.score_mounts._resolver import (
+    BazelTarget,
+    BundleMetadata,
     MountSpec,
     load_mounts_manifest,
     resolve_source_files,
@@ -29,14 +33,52 @@ from src.extensions.score_mounts._resolver import (
 )
 
 
-def _write_manifest(tmp_path: Path, payload: dict[str, object]) -> Path:
+def _write_manifest(
+    tmp_path: Path,
+    payload: dict[str, object],
+) -> Path:
+    """Write one complete producer-shaped manifest fixture."""
+    if isinstance(payload.get("mounts"), list):
+        mounts: list[object] = []
+        for raw_entry in cast("list[object]", payload["mounts"]):
+            if isinstance(raw_entry, dict):
+                entry = cast("dict[str, object]", raw_entry)
+                mounts.append(
+                    {
+                        "src_root": "",
+                        "runtime_path": "",
+                        "mount_at": "",
+                        "attach_to": "",
+                        "entry_doc": "index",
+                        "external": False,
+                        "repository": "",
+                        "generated": False,
+                        "data": [],
+                        "root_bundle": False,
+                        "bundle": {
+                            "label": "@@//:test_bundle",
+                            "name": "test_bundle",
+                            "code_targets": [],
+                        },
+                        **entry,
+                    }
+                )
+            else:
+                mounts.append(raw_entry)
+        payload = {**payload, "mounts": mounts}
     tmp_path.mkdir(parents=True, exist_ok=True)
     manifest = tmp_path / "_mounts_manifest.json"
     manifest.write_text(json.dumps(payload), encoding="utf-8")
     return manifest
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_load_single_entry(tmp_path: Path) -> None:
+    """Load one mount from a manifest."""
     manifest = _write_manifest(
         tmp_path,
         {
@@ -56,11 +98,21 @@ def test_load_single_entry(tmp_path: Path) -> None:
             src_root="src/docs",
             runtime_path="src/docs_dir",
             mount_at="internals/code_docs",
+            bundle=BundleMetadata(
+                label="@@//:test_bundle",
+                name="test_bundle",
+            ),
         )
     ]
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_load_entry_with_attach_to_and_entry_doc(tmp_path: Path) -> None:
+    """Load mount attachment and entry-document metadata."""
     manifest = _write_manifest(
         tmp_path,
         {
@@ -80,7 +132,106 @@ def test_load_entry_with_attach_to_and_entry_doc(tmp_path: Path) -> None:
     assert spec.entry_doc == "start"
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
+def test_load_bundle_metadata_and_direct_targets(tmp_path: Path) -> None:
+    """Decode bundle identity and direct target pairs from the manifest."""
+    manifest = _write_manifest(
+        tmp_path,
+        {
+            "mounts": [
+                {
+                    "src_root": "docs",
+                    "runtime_path": "docs",
+                    "mount_at": "component",
+                    "root_bundle": True,
+                    "bundle": {
+                        "label": "@@//pkg:memory",
+                        "name": "memory",
+                        "primary_need_id": "comp__memory",
+                        "code_targets": [
+                            {"label": "@@//pkg:memory_core", "type": "cc_library"},
+                            {"label": "@@//pkg:memory_api", "type": "cc_library"},
+                        ],
+                    },
+                }
+            ],
+        },
+    )
+
+    result = load_mounts_manifest(manifest)
+
+    assert result.mounts[0].root_bundle is True
+    assert result.mounts[0].bundle == BundleMetadata(
+        label="@@//pkg:memory",
+        name="memory",
+        primary_need_id="comp__memory",
+        code_targets=(
+            BazelTarget(label="@@//pkg:memory_core", type="cc_library"),
+            BazelTarget(label="@@//pkg:memory_api", type="cc_library"),
+        ),
+    )
+
+
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
+def test_load_entry_with_toctree_index(tmp_path: Path) -> None:
+    """Load the configured toctree index."""
+    manifest = _write_manifest(
+        tmp_path,
+        {
+            "mounts": [
+                {
+                    "src_root": "src/docs",
+                    "runtime_path": "src/docs_dir",
+                    "mount_at": "x",
+                    "attach_to": "internals/index",
+                    "toctree_index": 1,
+                }
+            ],
+        },
+    )
+    spec = load_mounts_manifest(str(manifest)).mounts[0]
+    assert spec.toctree_index == 1
+
+
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
+def test_load_entry_without_toctree_index_defaults_to_zero(tmp_path: Path) -> None:
+    """Older manifests lack the field; they must extend the first toctree."""
+    manifest = _write_manifest(
+        tmp_path,
+        {
+            "mounts": [
+                {
+                    "src_root": "src/docs",
+                    "runtime_path": "src/docs_dir",
+                    "mount_at": "x",
+                    "attach_to": "internals/index",
+                }
+            ],
+        },
+    )
+    spec = load_mounts_manifest(str(manifest)).mounts[0]
+    assert spec.toctree_index == 0
+
+
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_external_mount_keeps_execroot_and_runfiles_locations(tmp_path: Path) -> None:
+    """Preserve both source locations for an external mount."""
     manifest = _write_manifest(
         tmp_path,
         {
@@ -107,22 +258,15 @@ def test_external_mount_keeps_execroot_and_runfiles_locations(tmp_path: Path) ->
     assert specs[1].repository == "score_process_description+"
 
 
-def test_load_missing_required_key_raises(tmp_path: Path) -> None:
-    manifest = _write_manifest(tmp_path, {"mounts": [{"runtime_path": "src/docs_dir"}]})
-    with pytest.raises(ValueError, match="missing 'src_root'/'mount_at'"):
-        load_mounts_manifest(str(manifest))
-
-
-def test_load_non_object_raises(tmp_path: Path) -> None:
-    manifest = tmp_path / "_mounts_manifest.json"
-    manifest.write_text('["not", "an", "object"]', encoding="utf-8")
-    with pytest.raises(ValueError, match="must be a JSON object"):
-        load_mounts_manifest(str(manifest))
-
-
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_external_mount_uses_execroot_path_in_sandbox(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
+    """Resolve external mount paths from the execroot in a sandbox."""
     monkeypatch.chdir(tmp_path)
     manifest = _write_manifest(
         tmp_path,
@@ -143,7 +287,13 @@ def test_external_mount_uses_execroot_path_in_sandbox(
     )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_external_mount_uses_runfiles_root_under_bazel_run(tmp_path: Path) -> None:
+    """Resolve external mount paths from the runfiles root."""
     manifest = _write_manifest(
         tmp_path / "_main" / "package",
         {
@@ -166,6 +316,11 @@ def test_external_mount_uses_runfiles_root_under_bazel_run(tmp_path: Path) -> No
     ) == (tmp_path / "score_process_description+" / "docs_as_mount")
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_generated_source_mount_uses_bazel_bin_under_bazel_run(tmp_path: Path) -> None:
     """Translate an execroot-relative generated source to workspace bazel-bin."""
     manifest = _write_manifest(
@@ -194,6 +349,11 @@ def test_generated_source_mount_uses_bazel_bin_under_bazel_run(tmp_path: Path) -
     )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_generated_root_source_mount_uses_bazel_bin_under_bazel_run(
     tmp_path: Path,
 ) -> None:
@@ -219,6 +379,11 @@ def test_generated_root_source_mount_uses_bazel_bin_under_bazel_run(
     )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_explicit_source_files_resolve_below_original_root(tmp_path: Path) -> None:
     """Resolve an explicit file allowlist without copying its source files."""
     source_root = tmp_path / "workspace" / "docs"
@@ -247,6 +412,11 @@ def test_explicit_source_files_resolve_below_original_root(tmp_path: Path) -> No
     ) == [source_root / "index.rst", source_root / "guide.rst"]
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_generated_source_mount_uses_execroot_in_sandbox(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:

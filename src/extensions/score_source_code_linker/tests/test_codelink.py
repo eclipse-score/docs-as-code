@@ -21,9 +21,12 @@ import tempfile
 from collections.abc import Generator
 from dataclasses import asdict
 from pathlib import Path
-from typing import Any
+from types import SimpleNamespace
+from typing import Any, cast
 
 import pytest
+from score_pytest.attribute_plugin import add_test_properties
+from sphinx.application import Sphinx
 
 # S-CORE plugin to allow for properties/attributes in xml
 # Enables Testlinking
@@ -267,6 +270,11 @@ def sample_needs() -> dict[str, dict[str, str]]:
     }
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_get_cache_filename():
     """Test that cache paths are resolved relative to the build directory."""
     build_dir = Path("/tmp/build")
@@ -282,6 +290,11 @@ def make_needs(needs_dict: dict[str, dict[str, Any]]) -> NeedsMutable:
     )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_find_need_direct_match():
     """Test finding a need with direct ID match."""
     all_needs = make_needs(
@@ -295,6 +308,11 @@ def test_find_need_direct_match():
     assert result["id"] == "REQ_001"
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_find_need_not_found():
     """Test finding a need that doesn't exist."""
     all_needs = make_needs(
@@ -307,6 +325,11 @@ def test_find_need_not_found():
     assert result is None
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_group_by_need(sample_needlinks: list[NeedLink]) -> None:
     """Test grouping source code links by need ID."""
     result = group_by_need(sample_needlinks)
@@ -326,12 +349,22 @@ def test_group_by_need(sample_needlinks: list[NeedLink]) -> None:
             assert len(found_link.links.CodeLinks) == 1
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_group_by_need_empty_list():
     """Test grouping empty list of needlinks."""
     result = group_by_need([], [])
     assert len(result) == 0
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_cache_file_operations(
     temp_dir: Path, sample_needlinks: list[NeedLink]
 ) -> None:
@@ -358,34 +391,51 @@ def test_cache_file_operations(
     assert loaded_links[3].line == 2
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_combining_without_source_links_continues_with_empty_code_links(
-    temp_dir: Path, monkeypatch: pytest.MonkeyPatch
+    temp_dir: Path,
 ) -> None:
-    """A build without a pre-generated source-link input must not scan or fail."""
-    monkeypatch.delenv("SCORE_SOURCELINKS", raising=False)
-
-    build_and_save_combined_file(temp_dir)
+    """A build without a configured source-link input must not scan or fail."""
+    fake_config = SimpleNamespace(score_sourcelinks_json="")
+    app = cast(Sphinx, SimpleNamespace(config=fake_config))
+    build_and_save_combined_file(temp_dir, app)
 
     grouped_cache = temp_dir / "score_scl_grouped_cache.json"
     assert json.loads(grouped_cache.read_text(encoding="utf-8")) == []
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_combining_with_missing_source_links_reports_configured_path(
-    temp_dir: Path, monkeypatch: pytest.MonkeyPatch
+    temp_dir: Path,
 ) -> None:
     """Report the configured source-link file when it cannot be found."""
     missing_file = temp_dir / "missing_source_links.json"
-    monkeypatch.setenv("SCORE_SOURCELINKS", str(missing_file))
+    fake_config = SimpleNamespace(score_sourcelinks_json=str(missing_file))
+    app = cast(Sphinx, SimpleNamespace(config=fake_config))
 
     with pytest.raises(FileNotFoundError) as exc_info:
-        build_and_save_combined_file(temp_dir)
+        build_and_save_combined_file(temp_dir, app)
 
     assert str(exc_info.value) == (
         "Pre-generated source-code links file does not exist: "
-        f"{missing_file}. Check SCORE_SOURCELINKS or score_sourcelinks_json."
+        f"{missing_file}. Check the score_sourcelinks_json Sphinx config value "
+        "(set from SCORE_SOURCELINKS by the docs CLI)."
     )
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_cache_file_with_encoded_comments(temp_dir: Path) -> None:
     """Test that cache file properly handles encoded comments."""
     # Create needlinks with spaces in tags and full_line
@@ -418,6 +468,11 @@ def test_cache_file_with_encoded_comments(temp_dir: Path) -> None:
     assert loaded_links[0].full_line == "#" + " req-Id: TEST_001"
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_group_by_need_and_find_need_integration(
     sample_needlinks: list[NeedLink],
 ) -> None:
@@ -441,6 +496,11 @@ def test_group_by_need_and_find_need_integration(
             assert found_need["id"] == found_link.need
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_source_linker_end_to_end_with_real_files(
     temp_dir: Path, git_repo: Path
 ) -> None:
@@ -541,6 +601,11 @@ def another_function():
         assert f"src/{needlink.file.name}#L{needlink.line}" in github_link
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_multiple_commits_hash_consistency(git_repo: Path) -> None:
     """Test that git hash remains consistent and links update properly."""
     # Get initial hash
@@ -575,6 +640,11 @@ def test_multiple_commits_hash_consistency(git_repo: Path) -> None:
     assert new_hash in github_link
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_is_metadata_missing_keys():
     """Bad path: Dict missing required keys returns False"""
     incomplete = {"repo_name": "test", "hash": "abc"}
@@ -584,6 +654,11 @@ def test_is_metadata_missing_keys():
 #            ─────────────────[ NeedLink Dataclass Tests ]─────────────────
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_needlink_to_dict_without_metadata():
     """to_dict_without_metadata should return NeedLink without metadata"""
     needlink = NeedLink(
@@ -605,6 +680,11 @@ def test_needlink_to_dict_without_metadata():
     assert result["line"] == 10
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_needlink_to_dict_full():
     """to_dict_full includes all fields"""
     needlink = NeedLink(
@@ -628,6 +708,11 @@ def test_needlink_to_dict_full():
 #            ────────────────────[ JSON Encoder Tests ]────────────────────
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_needlink_encoder_includes_metadata():
     """Encoder includes all fields"""
     encoder = NeedLinkEncoder()
@@ -654,6 +739,11 @@ def test_needlink_encoder_includes_metadata():
 # ============================================================================
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_needlink_decoder_with_all_fields():
     """Decoder reconstructs NeedLink with all fields"""
     json_data: dict[str, Any] = {
@@ -674,6 +764,11 @@ def test_needlink_decoder_with_all_fields():
     assert result.repo_name == "test_repo"
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_needlink_decoder_non_needlink_dict():
     """Edge case: Non-NeedLink dict is returned unchanged"""
     json_data = {"some": "other", "data": "structure"}
@@ -684,6 +779,11 @@ def test_needlink_decoder_non_needlink_dict():
 #            ───────────────[ Testing Encoding / Decoding ]─────────────
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_load_validates_list_type(tmp_path: Path):
     """Bad path: Non-list JSON fails validation"""
     test_file = tmp_path / "not_list.json"
@@ -693,6 +793,11 @@ def test_load_validates_list_type(tmp_path: Path):
         load_source_code_links_json(test_file)
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_load_validates_all_items_are_needlinks(tmp_path: Path):
     """Bad path: List with invalid items fails validation"""
     test_file = tmp_path / "invalid_items.json"
@@ -705,6 +810,11 @@ def test_load_validates_all_items_are_needlinks(tmp_path: Path):
 # Adding additional tests to test the metadata stuff (excluding it if wanted)
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_store_and_load_with_metadata(tmp_path: Path):
     """Happy path: Store with metadata dict and load correctly"""
     metadata: MetaData = {
@@ -747,6 +857,11 @@ def test_store_and_load_with_metadata(tmp_path: Path):
         assert nl.hash == "commit_xyz"
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_load_with_metadata_missing_metadata_dict(tmp_path: Path):
     """
     Test if loading file without metadata dict via
@@ -771,6 +886,11 @@ def test_load_with_metadata_missing_metadata_dict(tmp_path: Path):
         load_source_code_links_with_metadata_json(test_file)
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_load_with_metadata_invalid_items_after_metadata(tmp_path: Path):
     """Test wrong JSON structure"""
     test_file = tmp_path / "bad_items.json"
@@ -788,6 +908,11 @@ def test_load_with_metadata_invalid_items_after_metadata(tmp_path: Path):
 #            ────────────────[ File Path Resolution Tests ]────────────────
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_load_resolves_relative_path_with_env_var(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ):
@@ -817,6 +942,11 @@ def test_load_resolves_relative_path_with_env_var(
     assert loaded[0].need == "REQ_1"
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_load_with_metadata_resolves_relative_path(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ):
@@ -852,6 +982,11 @@ def test_load_with_metadata_resolves_relative_path(
 #            ─────────────────────[ Roundtrip Tests ]───────────────────
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_roundtrip_standard_format(tmp_path: Path):
     """Happy path: Standard format preserves all data"""
     needlinks = [
@@ -887,6 +1022,11 @@ def test_roundtrip_standard_format(tmp_path: Path):
     assert loaded[1].repo_name == "mod_b"
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_roundtrip_metadata_format_applies_metadata(tmp_path: Path):
     """Happy path: Metadata format applies metadata to all links"""
     metadata: MetaData = {
@@ -923,6 +1063,11 @@ def test_roundtrip_metadata_format_applies_metadata(tmp_path: Path):
         assert link.url == "https://github.com/shared/repo"
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_roundtrip_empty_lists(tmp_path: Path):
     """Edge case: Empty list can be stored and loaded"""
     test_file = tmp_path / "empty.json"
@@ -935,6 +1080,11 @@ def test_roundtrip_empty_lists(tmp_path: Path):
 #            ──────────────[ JSON Format Verification Tests ]──────────────
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_json_format_with_metadata_has_separate_dict(tmp_path: Path):
     """Edge case: Verify metadata format has metadata as first element"""
     metadata: MetaData = {
@@ -967,6 +1117,11 @@ def test_json_format_with_metadata_has_separate_dict(tmp_path: Path):
 #            ───────────[ NeedLink Equality and Hashing Tests ]─────────
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_needlink_equality_same_values():
     """Happy path: Two NeedLinks with same values are equal"""
     link1 = NeedLink(
@@ -994,6 +1149,11 @@ def test_needlink_equality_same_values():
     assert hash(link1) == hash(link2)
 
 
+@add_test_properties(
+    partially_verifies=[],
+    test_type="interface-test",
+    derivation_technique="explorative-testing",
+)
 def test_needlink_inequality_different_values():
     """Edge case: NeedLinks with different values are not equal"""
     link1 = NeedLink(

@@ -12,7 +12,7 @@
 # *******************************************************************************
 load("@aspect_rules_py//py:defs.bzl", "py_library")
 load("@docs_as_code_hub_env//:requirements.bzl", "all_requirements")
-load("//:score_pytest.bzl", "score_pytest")
+load("@score_tools//score_pytest:pytest.bzl", "score_pytest")
 
 filegroup(
     name = "all_sources",
@@ -39,6 +39,7 @@ py_library(
     # TODO: Figure out if all requirements are needed or if we can break it down a bit
     deps = all_requirements + [
         "@score_docs_as_code//src/helper_lib",
+        "@score_docs_as_code//src/extensions/score_sphinx_needs_templates",
     ],
 )
 

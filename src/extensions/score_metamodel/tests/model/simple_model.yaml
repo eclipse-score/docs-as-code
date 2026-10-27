@@ -60,5 +60,5 @@ graph_checks:
     needs:
       include: type1
       condition: opt1 == test
-    check:
+    check_all:
       link1: opt1 == test

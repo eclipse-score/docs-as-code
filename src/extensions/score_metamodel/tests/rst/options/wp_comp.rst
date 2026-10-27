@@ -43,9 +43,6 @@
    :expect_not: complies
 
 
-.. FIXME: this will currently be printed as an INFO, and not as a warning.
-   Re-enable EXCPECT once we can enable that as a warning.
-
 .. workproduct:: Cannot refer to std_req element
    :id: wp__003
    :complies: std_req__iso26262__001

@@ -24,10 +24,11 @@ semantics are documented in :ref:`docs_concept_mounts`; BUILD usage is in
 Architecture and manifest contract
 ----------------------------------
 
-``docs.bzl`` owns bundle graph traversal. Its ``_mounts_manifest`` rule turns
-the ``DocsBundleInfo`` provider graph and each consumer placement into one JSON
-manifest. Python deliberately receives paths rather than Bazel labels, so it
-does not reconstruct Bazel repository names at Sphinx runtime.
+``docs.bzl`` owns bundle graph traversal. Its composition-manifest rule turns the
+``DocsBundleInfo`` provider graph and each consumer placement into one JSON composition
+manifest. The same manifest supplies both mount placement and document-to-bundle
+metadata. Python deliberately receives paths and stable bundle metadata rather than
+Bazel providers, so it does not reconstruct Bazel repository names at Sphinx runtime.
 
 Each manifest entry contains:
 
@@ -37,7 +38,28 @@ Each manifest entry contains:
   walked;
 * ``mount_at`` and ``attach_to`` — the already-composed Sphinx placement; and
 * ``entry_doc`` — the canonical entry document declared by the source bundle.
-* ``external`` — whether the directory belongs to another Bazel module.
+* ``external`` — whether the directory belongs to another Bazel module;
+* ``bundle`` — the declaring bundle's Bazel label, name, explicit primary Need
+  ID, and direct targets;
+* ``root_bundle`` — whether this physical entry belongs to the root bundle of
+  the current composition. This is composition-specific: the same bundle can
+  be a root in a standalone manifest and a child in another composition.
+
+Standalone bundle Needs actions receive a local-only view containing the
+bundle's own root entries; composed builds receive the complete active
+composition. Both views use the same schema and runtime resolver.
+
+Each bundle declares a private ``<name>.__internal__.files`` target whose
+``DefaultInfo.files`` contains its implementation artifacts. The source-link
+cache scans exactly that file set. The public bundle manifest does not expose
+implementation file lists.
+
+Explicitly selected code targets contribute their declared sources and headers.
+Transitive dependency targets are filtered to the bundle's repository and BUILD
+package, including subpackages. Local targets reached through foreign
+dependencies remain included. The boundary is independent of ``source_dir``;
+nested documentation bundles keep their own file sets. Source/header attributes
+resolve filegroups and generated outputs without inspecting generator inputs.
 
 At ``config-inited``, ``score_mounts`` resolves all directory source mounts before
 constructing ``config.mounts``. A mount below Sphinx's primary source directory
@@ -52,6 +74,20 @@ Explicit ``docs_bundle(srcs = [...])`` entries remain in file-list mode and are
 not included in these directory exclusions. They are intended for generated
 sources outside the primary source tree; an explicitly mounted workspace file
 below a walked root is a known limitation and would need exact-file exclusions.
+
+Document-to-bundle mapping
+--------------------------
+
+After Sphinx has updated its environment, ``score_mounts`` exposes
+``get_document_bundles(app)``. The result maps each actually discovered
+bundle-owned docname to one bundle instance. Mounted source docnames come from
+the mount integration's recorded output, while primary docnames come from
+Sphinx's discovery set. Documents discovered through data-only mounts are
+intentionally omitted because those mounts provide auxiliary files rather than
+bundle-owned source roots. This avoids assigning a bundle to skipped,
+conflicting, or data-only mounts. The bundle metadata pass in
+``score_metamodel`` consumes this mapping without inspecting paths or mount
+configuration.
 
 The rule rejects conflicting final placements before Sphinx starts. A mount
 without ``attach_to`` is attached to the ``index`` document beside its

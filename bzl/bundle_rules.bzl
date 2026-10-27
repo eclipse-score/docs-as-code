@@ -38,7 +38,10 @@ load("@score_docs_as_code//:bzl/basics.bzl", "join_path")
 DocsBundleInfo = provider(
     doc = "A documentation bundle with its source and placement metadata.",
     fields = {
-        "entries": "Ordered entries, one per source directory, including its final documentation-tree location.",
+        # Each entry carries the source and placement information needed by
+        # the runtime manifest, plus the identity, primary Need, and
+        # direct-target metadata of the bundle that declared it.
+        "entries": "Ordered entries with sources, placement, primary Need, direct targets, and bounded implementation files.",
         "own_source_files": "This bundle's direct source files, excluding nested bundles.",
         "source_dir_execroot_path": "Execution-root-relative path of this bundle's direct source root.",
         "sourcelinks": "Source-code-link JSON files together with their owning repository.",
@@ -46,18 +49,43 @@ DocsBundleInfo = provider(
         # Bundle-owned supporting/runtime files. Unlike host-owned docs data,
         # these are resolved at this bundle's mount.
         "data": "Bundle-owned supporting/runtime files resolved at the bundle's mount.",
+        # Structured Sphinx configuration for this bundle's standalone Needs
+        # export. These are semantic values; the Sphinx ``--define`` list is
+        # assembled only at the action boundary.
+        "config": "Structured project, URL, ID prefix, and metamodel configuration.",
+    },
+)
+
+# ``docs()`` exposes its structured project configuration through this
+# provider on a separate internal target. Keeping the config target separate
+# from the root ``DocsBundleInfo`` target is important: the root bundle may
+# compose a child bundle, while that child still needs to read the root
+# project's configuration. A separate target avoids creating a dependency
+# cycle between the root bundle and its children.
+DocsConfigInfo = provider(
+    doc = "Structured configuration published by a repository's docs() root.",
+    fields = {
+        # This is the Starlark struct payload carried by the provider. The
+        # target that publishes this provider is referenced through a Bazel
+        # label; callers must first obtain the provider from that target.
+        "values": "Structured project, URL base, ID prefix, and metamodel configuration.",
     },
 )
 
 CodeTargetSourcesInfo = provider(
     doc = "Source files collected from an implementation target and its dependencies.",
     fields = {
-        "sources": "Depset of direct and transitive source files.",
+        "kind": "Bazel rule kind of the selected code target.",
+        "direct_sources": "Resolved source/header files declared by this target.",
+        "targets": "Depset of target labels and their direct source/header files.",
     },
 )
 
 def _source_files_from_attributes(ctx):
     """Return files explicitly declared through source or header attributes."""
+    # DefaultInfo resolves filegroups and generator outputs at the attribute
+    # boundary. We inspect the consuming library's declarations, so generator
+    # inputs and the library's compiled outputs do not enter the file list.
     source_files = []
     for attribute_name in ["srcs", "hdrs", "textual_hdrs"]:
         if not hasattr(ctx.rule.attr, attribute_name):
@@ -71,16 +99,20 @@ def _source_files_from_attributes(ctx):
 
 def _collect_code_target_sources_impl(target, ctx):
     """Collect source files from an implementation target and its ``deps`` tree."""
-    dependency_sources = []
-    if hasattr(ctx.rule.attr, "deps"):
-        dependency_sources = [
-            dependency[CodeTargetSourcesInfo].sources
-            for dependency in ctx.rule.attr.deps
-        ]
+    direct_sources = _source_files_from_attributes(ctx)
+    dependencies = getattr(ctx.rule.attr, "deps", [])
     return [CodeTargetSourcesInfo(
-        sources = depset(
-            direct = _source_files_from_attributes(ctx),
-            transitive = dependency_sources,
+        # The aspect follows dependencies to collect source files, but the
+        # manifest needs the kind of the target explicitly selected by the
+        # bundle rather than the kinds of those transitive dependencies.
+        kind = ctx.rule.kind,
+        direct_sources = direct_sources,
+        # Keep the declaring target's label beside its files: file ownership
+        # alone cannot express libraries that explicitly use sibling-package
+        # filegroups. A flat depset lets each bundle apply its own boundary.
+        targets = depset(
+            direct = [struct(label = ctx.label, files = tuple(direct_sources))],
+            transitive = [dependency[CodeTargetSourcesInfo].targets for dependency in dependencies],
         ),
     )]
 
@@ -91,10 +123,129 @@ _collect_code_target_sources = aspect(
     doc = "Collects sources recursively through standard implementation dependencies.",
 )
 
+def _bundle_code_files_impl(ctx):
+    """Resolve the implementation artifacts owned by this bundle.
+
+    Explicitly selected targets always contribute their declarations. Transitive
+    dependencies are filtered by the bundle's repository and BUILD package,
+    including subpackages. Local targets reached through foreign dependencies
+    remain eligible; the flat collection does not prune dependency branches.
+    Nested documentation bundles keep their own component file lists.
+    """
+    selected = [target[CodeTargetSourcesInfo] for target in ctx.attr.code_targets]
+    files = []
+
+    # Merge dependency records before filtering so shared targets are visited
+    # once even when multiple implementation entry points depend on them.
+    targets = depset(transitive = [info.targets for info in selected])
+    package = ctx.label.package
+    for target in targets.to_list():
+        label = target.label
+        if label.workspace_name == ctx.label.workspace_name and (
+            not package or label.package == package or label.package.startswith(package + "/")
+        ):
+            files.extend(target.files)
+
+    # Explicit selection includes a target's own declarations even when its
+    # label is outside the component boundary.
+    for info in selected:
+        files.extend(info.direct_sources)
+    return [DefaultInfo(files = depset(files))]
+
+_bundle_code_files = rule(
+    implementation = _bundle_code_files_impl,
+    attrs = {
+        "code_targets": attr.label_list(aspects = [_collect_code_target_sources]),
+    },
+    doc = "Collects component implementation artifacts within the bundle package boundary.",
+)
+
+def collect_bundle_code_files(name, code_targets):
+    """Declare the private file set shared by sourcelinks and internal consumers.
+
+    The target lives in the bundle's BUILD package, so its own label provides
+    the component boundary. It is independent of the composed bundle provider
+    to avoid a cycle through the source-link cache used by that provider.
+    """
+    _bundle_code_files(
+        name = name,
+        code_targets = code_targets,
+        visibility = ["//visibility:private"],
+    )
+    return ":" + name
+
 def _parent_index_docname(mount_at):
     """Choose the page that links to a bundled subtree by default."""
     parent = mount_at.rsplit("/", 1)[0] if "/" in mount_at else ""
     return join_path(parent, "index")
+
+def _package_relative_project_url(base_url, package_path):
+    """Append a bundle's workspace-relative Bazel package to its project URL.
+
+    ``project_url`` identifies the documentation root represented by the
+    bundle. A bundle declared from a nested Bazel package therefore needs a
+    package-specific URL, while an empty root package keeps the configured URL
+    unchanged. The base URL is retained separately in ``DocsBundleInfo`` so a
+    child of a child does not append all ancestor package paths repeatedly.
+    """
+    return join_path(base_url, package_path)
+
+def sphinx_config_options(project, project_url = "", required_in_id = ""):
+    """Serialize semantic bundle configuration for the Sphinx action boundary."""
+    options = [
+        "--define=extensions=score_sphinx_bundle",
+        "--define=project=" + project,
+        "--define=version=0.0.0",
+    ]
+    if project_url:
+        options.append("--define=project_url=" + project_url)
+    if required_in_id:
+        options.append("--define=required_in_id=" + required_in_id)
+    return options
+
+def _docs_config_impl(ctx):
+    """Publish the structured configuration for one ``docs()`` root."""
+    return [DocsConfigInfo(values = struct(
+        project = ctx.attr.project,
+        project_url_base = ctx.attr.project_url,
+        required_in_id = ctx.attr.required_in_id,
+        metamodel = ctx.file.metamodel,
+    ))]
+
+_docs_config = rule(
+    implementation = _docs_config_impl,
+    attrs = {
+        "project": attr.string(mandatory = True),
+        "project_url": attr.string(mandatory = True),
+        "required_in_id": attr.string(mandatory = True),
+        "metamodel": attr.label(
+            allow_single_file = True,
+            mandatory = True,
+        ),
+    },
+    doc = "Internal structured configuration target for a docs() root.",
+)
+
+def declare_docs_config_target(
+        name,
+        project,
+        project_url,
+        required_in_id,
+        metamodel,
+        visibility = None):
+    """Declare the internal config target addressed through ``root_docs``."""
+    _docs_config(
+        name = name,
+        project = project,
+        project_url = project_url,
+        required_in_id = required_in_id,
+        metamodel = metamodel,
+        # The target is internal by naming convention, but bundles in nested
+        # packages still need to consume its provider through ``root_docs``.
+        visibility = visibility,
+        tags = ["manual"],
+    )
+    return ":" + name
 
 def _ensure_unique_entries(entries):
     """Reject a source directory reached through more than one bundle path."""
@@ -203,12 +354,14 @@ def _pure_data_runtime_path(ctx):
     )
     return "__data__/%s" % encoded_label
 
-def _rebase_bundle_entry(entry, mount_at, attach_to):
+def _rebase_bundle_entry(entry, mount_at, attach_to, toctree_index):
     """Place a bundle entry below a requested documentation-tree location.
 
     A bundle's own root has no ``mount_at`` yet. For that root, an omitted
-    ``attach_to`` means the parent directory's ``index`` page. Nested entries
-    retain their existing attachment and are rebased below ``mount_at``.
+    ``attach_to`` means the parent directory's ``index`` page, and the
+    placement's ``toctree_index`` selects which toctree of that page receives
+    the entry. Nested entries retain their existing attachment (including its
+    own ``toctree_index``) and are rebased below ``mount_at``.
 
     ``data`` is deliberately kept with the entry that declares it. A composed
     bundle may expose several source and data-only entries, each resolving its
@@ -216,17 +369,25 @@ def _rebase_bundle_entry(entry, mount_at, attach_to):
     bundle's aggregate data would associate the same file with unrelated
     mounts, so the mounts resolver could select the wrong destination.
     """
-    is_bundle_root = not entry.mount_at
-    if is_bundle_root:
+    if not entry.mount_at:
+        # The child bundle's own root has not been placed below the parent yet.
+        # Its default attachment is therefore the parent directory's index;
+        # an explicit attach_to still overrides that default.
         rebased_attach_to = attach_to or _parent_index_docname(mount_at)
+        rebased_toctree_index = toctree_index
     else:
+        # This entry is already below another location in the child bundle.
+        # Keep its attachment relative to that location and prefix the whole
+        # placement with the mount point chosen by the parent.
         rebased_attach_to = join_path(mount_at, entry.attach_to)
+        rebased_toctree_index = entry.toctree_index
 
     return struct(
         runtime_path = entry.runtime_path,
         src_root = entry.src_root,
         mount_at = join_path(mount_at, entry.mount_at),
         attach_to = rebased_attach_to,
+        toctree_index = rebased_toctree_index,
         entry_doc = entry.entry_doc,
         external = entry.external,
         repository = entry.repository,
@@ -236,6 +397,18 @@ def _rebase_bundle_entry(entry, mount_at, attach_to):
         # Preserve the explicit file allowlist when the entry is rebased.
         files = entry.files,
         data = entry.data,
+        # Rebasing changes only placement. Keep the declaring bundle identity
+        # and direct targets attached to the source entry as it moves through
+        # the composition graph.
+        bundle_label = entry.bundle_label,
+        bundle_name = entry.bundle_name,
+        primary_need_id = entry.primary_need_id,
+        code_targets = entry.code_targets,
+        code_files = entry.code_files,
+        # This entry is now part of a parent composition. It may have been the
+        # root of its own standalone bundle, but it is a child entry here and
+        # must be handled as a mounted source rather than as the parent's root.
+        root_bundle = False,
     )
 
 def _entries_visible_through(ctx, child):
@@ -259,7 +432,7 @@ def _parse_bundle_declaration(bundle):
     if type(bundle) != "dict":
         fail("each bundle declaration must be a dict, got %r" % bundle)
 
-    allowed_keys = ["bundle", "mount_at", "attach_to"]
+    allowed_keys = ["bundle", "mount_at", "attach_to", "toctree_index"]
     unknown = [key for key in bundle if key not in allowed_keys]
     if unknown:
         fail("unknown key(s) %r in %r; allowed keys: %r" %
@@ -269,11 +442,16 @@ def _parse_bundle_declaration(bundle):
 
     mount_at = bundle["mount_at"]
     attach_to = bundle.get("attach_to", "")
+    toctree_index = bundle.get("toctree_index", 0)
+    if type(toctree_index) != "int" or toctree_index < 0:
+        fail("each entry's 'toctree_index' must be a non-negative int; got %r" %
+             toctree_index)
 
     return struct(
         bundle = bundle["bundle"],
         mount_at = mount_at,
         attach_to = attach_to,
+        toctree_index = toctree_index,
     )
 
 def _docs_bundle_impl(ctx):
@@ -283,6 +461,20 @@ def _docs_bundle_impl(ctx):
     source_dir_execroot_path = ""
     own_external_runfiles = []
     own_data = depset(direct = ctx.files.data)
+    own_bundle_label = str(ctx.label)
+    own_bundle_name = ctx.label.name
+    own_primary_need_id = ctx.attr.primary_need_id
+    # Keep implementation ownership with the declaring documentation entry.
+    # The metamodel resolves its primary Need from that entry's own documents;
+    # rebasing into a parent preserves the same bounded implementation file set.
+    own_code_files = ctx.attr.code_files[DefaultInfo].files if ctx.attr.code_files else depset()
+    own_code_targets = [
+        struct(
+            label = str(target.label),
+            type = target[CodeTargetSourcesInfo].kind,
+        )
+        for target in ctx.attr.code_targets
+    ]
 
     # The macro validates this combination before creating the rule; retain
     # the rule-level check for callers of the internal helper as well.
@@ -302,6 +494,7 @@ def _docs_bundle_impl(ctx):
             src_root = source_dir_execroot_path,
             mount_at = "",
             attach_to = "",
+            toctree_index = 0,
             entry_doc = ctx.attr.entry_doc,
             external = external,
             repository = ctx.label.workspace_name,
@@ -310,6 +503,15 @@ def _docs_bundle_impl(ctx):
             # Directory mounts discover all supported files below this root.
             files = [],
             data = own_data,
+            bundle_label = own_bundle_label,
+            bundle_name = own_bundle_name,
+            primary_need_id = own_primary_need_id,
+            # This direct entry belongs to the current composition's root
+            # bundle. _rebase_bundle_entry changes this to false if a parent
+            # embeds the bundle as a child.
+            root_bundle = True,
+            code_targets = own_code_targets,
+            code_files = own_code_files,
         ))
         own_source_files.extend(ctx.files.source_dir_globbed)
         # Local sources are read directly from the workspace by ``bazel run``.
@@ -332,6 +534,9 @@ def _docs_bundle_impl(ctx):
             src_root = source_dir_execroot_path,
             mount_at = "",
             attach_to = "",
+            # The bundle root has no toctree_index of its own; the placement
+            # that mounts this bundle supplies it (default 0).
+            toctree_index = 0,
             entry_doc = ctx.attr.entry_doc,
             external = external,
             repository = ctx.label.workspace_name,
@@ -342,6 +547,15 @@ def _docs_bundle_impl(ctx):
             # original source root and therefore visits only declared files.
             files = source_files,
             data = own_data,
+            bundle_label = own_bundle_label,
+            bundle_name = own_bundle_name,
+            primary_need_id = own_primary_need_id,
+            # This direct entry belongs to the current composition's root
+            # bundle. _rebase_bundle_entry changes this to false if a parent
+            # embeds the bundle as a child.
+            root_bundle = True,
+            code_targets = own_code_targets,
+            code_files = own_code_files,
         ))
         own_source_files.extend(ctx.files.source_targets)
         # Explicit artifacts outside the workspace source tree need to be
@@ -355,6 +569,9 @@ def _docs_bundle_impl(ctx):
             src_root = "",
             mount_at = "",
             attach_to = "",
+            # The bundle root has no toctree_index of its own; the placement
+            # that mounts this bundle supplies it (default 0).
+            toctree_index = 0,
             entry_doc = ctx.attr.entry_doc,
             external = False,
             repository = ctx.label.workspace_name,
@@ -363,6 +580,15 @@ def _docs_bundle_impl(ctx):
             # Pure-data entries have no documentation source allowlist.
             files = [],
             data = own_data,
+            bundle_label = own_bundle_label,
+            bundle_name = own_bundle_name,
+            primary_need_id = own_primary_need_id,
+            # This direct entry belongs to the current composition's root
+            # bundle. _rebase_bundle_entry changes this to false if a parent
+            # embeds the bundle as a child.
+            root_bundle = True,
+            code_targets = own_code_targets,
+            code_files = own_code_files,
         ))
 
     child_source_files = []
@@ -379,6 +605,7 @@ def _docs_bundle_impl(ctx):
                 entry,
                 ctx.attr.bundle_mount_ats[index],
                 ctx.attr.bundle_attach_tos[index],
+                ctx.attr.bundle_toctree_indices[index],
             )
             for entry in _entries_visible_through(ctx, child)
         ])
@@ -401,6 +628,47 @@ def _docs_bundle_impl(ctx):
             for child in ctx.attr.bundles
         ],
     )
+
+    # A bundle associated with a root docs project inherits that project's
+    # structured configuration. The root config target is deliberately
+    # separate from the root bundle: the root bundle may compose this bundle,
+    # so making the child depend on ``:docs_bundle`` would create a cycle.
+    # The provider carries semantic values; Sphinx CLI options are assembled
+    # later by the Needs action.
+    if ctx.attr.root_docs_config:
+        root_config = ctx.attr.root_docs_config[DocsConfigInfo].values
+        project_url = root_config.project_url_base
+        if not ctx.attr.is_root_bundle:
+            # A reusable bundle represents the package in which it is
+            # declared, so its local Needs inventory gets a package-relative
+            # URL. The root bundle itself represents the configured project;
+            # keeping its canonical URL unchanged is required by consumers
+            # that import the root inventory as external Needs.
+            project_url = _package_relative_project_url(
+                root_config.project_url_base,
+                ctx.label.package,
+            )
+        bundle_config = struct(
+            project = root_config.project,
+            project_url = project_url,
+            project_url_base = root_config.project_url_base,
+            required_in_id = root_config.required_in_id,
+            metamodel = root_config.metamodel,
+        )
+    else:
+        # A standalone bundle has no repository-level configuration to inherit.
+        # Use the owner-provided project name when an internal source-only
+        # sibling is being constructed; a public bundle defaults to its target
+        # name. Its URL and ID namespace stay empty, and its metamodel comes
+        # from the internal rule attribute.
+        bundle_config = struct(
+            project = ctx.attr.project_name or ctx.label.name,
+            project_url = "",
+            project_url_base = "",
+            required_in_id = "",
+            metamodel = ctx.file.metamodel,
+        )
+
     return [
         DefaultInfo(files = depset(transitive = [all_source_files, all_data])),
         DocsBundleInfo(
@@ -410,6 +678,7 @@ def _docs_bundle_impl(ctx):
             sourcelinks = sourcelinks,
             external_runfiles = external_runfiles,
             data = all_data,
+            config = bundle_config,
         ),
     ]
 
@@ -423,10 +692,32 @@ _docs_bundle = rule(
         # those cases do not call _source_dir_runtime_path().
         "source_dir": attr.string(default = ""),
         "entry_doc": attr.string(default = "index"),
+        # Optional explicit association with the Need representing this
+        # bundle. The value is a Sphinx-Needs ID, not a Bazel label.
+        "primary_need_id": attr.string(default = ""),
+        # The semantic Sphinx project name can differ from this rule's target
+        # name when an internal sibling provider represents a public bundle.
+        "project_name": attr.string(default = ""),
         "bundles": attr.label_list(providers = [DocsBundleInfo]),
         "bundle_mount_ats": attr.string_list(),
         "bundle_attach_tos": attr.string_list(),
+        "bundle_toctree_indices": attr.int_list(),
         "data": attr.label_list(allow_files = True),
+        # The aspect preserves the selected target's rule kind while
+        # recursively collecting its source files for source-link generation.
+        "code_targets": attr.label_list(aspects = [_collect_code_target_sources]),
+        # Reuse the exact file set used by source links. This sibling target
+        # has no dependency on bundle composition, so it cannot form a cycle.
+        "code_files": attr.label(allow_files = True),
+        "metamodel": attr.label(
+            allow_single_file = True,
+            default = Label("@score_docs_as_code//src/extensions/score_metamodel:metamodel_yaml"),
+        ),
+        "root_docs_config": attr.label(providers = [DocsConfigInfo]),
+        # ``docs()`` marks its own bundle so its exported project URL stays at
+        # the configured canonical root. Standalone docs_bundle targets use
+        # their Bazel package as the relative URL suffix.
+        "is_root_bundle": attr.bool(default = False),
     },
     doc = "Internal rule that carries bundle files and their documentation-tree locations.",
 )
@@ -439,15 +730,32 @@ def create_bundle(
     sourcelinks_json = None,
     source_dir = None,
     entry_doc = "index",
+    primary_need_id = None,
     data = [],
+    code_targets = [],
+    code_files = None,
+    root_docs_config = None,
+    is_root_bundle = False,
+    project_name = None,
     visibility = None,
     **kwargs):
     """Create a bundle from directory-discovered files and source targets.
 
     ``source_dir_globbed`` and ``source_targets`` are separate internal inputs
     because they use different runtime path and staging rules.
+
+    ``project_name`` preserves the Sphinx identity of a public bundle when an
+    internal sibling target carries only that bundle's direct source files.
+    A root docs configuration, when present, remains authoritative.
     """
     parsed_bundles = [_parse_bundle_declaration(declaration) for declaration in bundles]
+    # The public macros use ``None`` to represent an omitted optional ID, but
+    # the underlying Bazel rule has a string attribute and the manifest schema
+    # keeps this field string-valued. Normalize at that boundary so callers do
+    # not need to know about the rule's empty-string sentinel.
+    normalized_primary_need_id = (
+        primary_need_id if primary_need_id != None else ""
+    )
     _docs_bundle(
         name = name,
         source_dir_globbed = source_dir_globbed,
@@ -455,10 +763,20 @@ def create_bundle(
         sourcelinks_json = sourcelinks_json,
         source_dir = source_dir if source_dir != None else "",
         entry_doc = entry_doc,
+        primary_need_id = normalized_primary_need_id,
         bundles = [bundle.bundle for bundle in parsed_bundles],
         bundle_mount_ats = [bundle.mount_at for bundle in parsed_bundles],
         bundle_attach_tos = [bundle.attach_to for bundle in parsed_bundles],
+        bundle_toctree_indices = [bundle.toctree_index for bundle in parsed_bundles],
+        # The rule target normally defines the project name. An explicit
+        # semantic name lets an internal provider keep the identity of the
+        # public bundle whose direct sources it exposes.
+        project_name = project_name if project_name != None else name,
         data = data,
+        code_targets = code_targets,
+        code_files = code_files,
+        root_docs_config = root_docs_config,
+        is_root_bundle = is_root_bundle,
         visibility = visibility,
         **kwargs
     )
@@ -555,10 +873,7 @@ def merge_bundle_sourcelinks(name, bundle, known_good = None, visibility = None)
 
 def _code_targets_sourcelinks_impl(ctx):
     """Generate one source-link cache for the implementation targets of a bundle."""
-    source_files = depset(transitive = [
-        target[CodeTargetSourcesInfo].sources
-        for target in ctx.attr.code_targets
-    ])
+    source_files = ctx.attr.code_files[DefaultInfo].files
     if not source_files.to_list():
         fail("code_targets must declare source files through filegroups, srcs, hdrs, or textual_hdrs")
 
@@ -578,7 +893,7 @@ def _code_targets_sourcelinks_impl(ctx):
 _code_targets_sourcelinks = rule(
     implementation = _code_targets_sourcelinks_impl,
     attrs = {
-        "code_targets": attr.label_list(aspects = [_collect_code_target_sources]),
+        "code_files": attr.label(mandatory = True),
         "_generate_sourcelinks": attr.label(
             default = Label("//scripts_bazel:generate_sourcelinks"),
             cfg = "exec",
@@ -588,11 +903,11 @@ _code_targets_sourcelinks = rule(
     doc = "Generates source-code links from implementation target source files.",
 )
 
-def generate_code_target_sourcelinks(name, code_targets, visibility = None):
+def generate_code_target_sourcelinks(name, code_files, visibility = None):
     """Create a cached source-link JSON file for one documentation bundle."""
     _code_targets_sourcelinks(
         name = name,
-        code_targets = code_targets,
+        code_files = code_files,
         visibility = visibility,
     )
     return ":" + name

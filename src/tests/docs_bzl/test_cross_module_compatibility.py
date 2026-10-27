@@ -27,6 +27,7 @@ def _write_cross_module_consumer(
 bazel_dep(name = "rules_python", version = "1.8.5")
 python = use_extension("@rules_python//python/extensions:python.bzl", "python")
 python.toolchain(is_default = True, python_version = "3.12")
+python.toolchain(is_default = False, python_version = "3.14")
 bazel_dep(name = "score_docs_as_code", version = "4.6.0")
 local_path_override(module_name = "score_docs_as_code", path = "{source_root}")
 bazel_dep(name = "score_docs_compatibility_fixture", version = "0.0.1")
@@ -91,8 +92,9 @@ links: {}
 
 
 @pytest.mark.bazel_slow
+@pytest.mark.parametrize("python_version", ["3.12", "3.14"])
 def test_cross_module_version_mismatch_is_reported_without_failing(
-    tmp_path: Path,
+    tmp_path: Path, python_version: str
 ) -> None:
     _write_cross_module_consumer(
         tmp_path,
@@ -100,7 +102,13 @@ def test_cross_module_version_mismatch_is_reported_without_failing(
         "score_cross_module_compatibility_allow_version_mismatches = True",
     )
     result = subprocess.run(
-        ["bazel", f"--bazelrc={repo_root() / '.bazelrc'}", "run", "//:docs"],
+        [
+            "bazel",
+            f"--bazelrc={repo_root() / '.bazelrc'}",
+            "run",
+            f"--@rules_python//python/config_settings:python_version={python_version}",
+            "//:docs",
+        ],
         cwd=tmp_path,
         text=True,
         capture_output=True,
@@ -128,10 +136,19 @@ def test_cross_module_version_mismatch_is_reported_without_failing(
 
 
 @pytest.mark.bazel_slow
-def test_external_findings_remain_fatal_by_default(tmp_path: Path) -> None:
+@pytest.mark.parametrize("python_version", ["3.12", "3.14"])
+def test_external_findings_remain_fatal_by_default(
+    tmp_path: Path, python_version: str
+) -> None:
     _write_cross_module_consumer(tmp_path)
     result = subprocess.run(
-        ["bazel", f"--bazelrc={repo_root() / '.bazelrc'}", "run", "//:docs"],
+        [
+            "bazel",
+            f"--bazelrc={repo_root() / '.bazelrc'}",
+            "run",
+            f"--@rules_python//python/config_settings:python_version={python_version}",
+            "//:docs",
+        ],
         cwd=tmp_path,
         text=True,
         capture_output=True,

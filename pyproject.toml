@@ -71,6 +71,9 @@ ignore = [
 
 [tool.ruff.lint.isort]
 combine-as-imports = true
+# Local remnants of the former in-repository score_pytest package must not
+# change import sorting for this now external Bazel-provided test dependency.
+known-third-party = ["score_pytest"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = [

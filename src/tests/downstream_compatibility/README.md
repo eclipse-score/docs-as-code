@@ -96,6 +96,7 @@ Filters which repositories to test.
 - [module_template](https://github.com/eclipse-score/module_template)
 - [persistency](https://github.com/eclipse-score/persistency)
 - [process_description](https://github.com/eclipse-score/process_description)
+- [reference_integration](https://github.com/eclipse-score/reference_integration)
 - [score](https://github.com/eclipse-score/score)
 - [time](https://github.com/eclipse-score/time)
 

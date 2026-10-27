@@ -5,14 +5,14 @@
 # *******************************************************************************
 load("@aspect_rules_py//py:defs.bzl", "py_library")
 load("@docs_as_code_hub_env//:requirements.bzl", "all_requirements")
-load("//:score_pytest.bzl", "score_pytest")
+load("@score_tools//score_pytest:pytest.bzl", "score_pytest")
 
 py_library(
     name = "score_cross_module_compatibility",
     srcs = ["__init__.py"],
     imports = ["."],
     visibility = ["//visibility:public"],
-    deps = all_requirements + ["@score_docs_as_code//src/helper_lib"],
+    deps = all_requirements,
 )
 
 score_pytest(

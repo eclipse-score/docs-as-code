@@ -13,7 +13,7 @@
 
 load("@aspect_rules_py//py:defs.bzl", "py_library")
 load("@docs_as_code_hub_env//:requirements.bzl", "all_requirements")
-load("//:score_pytest.bzl", "score_pytest")
+load("@score_tools//score_pytest:pytest.bzl", "score_pytest")
 
 filegroup(
     name = "sources",
@@ -57,6 +57,7 @@ py_library(
     # TODO: Figure out if all requirements are needed or if we can break it down a bit
     deps = all_requirements + [
         "@score_docs_as_code//src/extensions/score_cross_module_compatibility",
+        "@score_docs_as_code//src/extensions/score_mounts",
         "@score_docs_as_code//src/extensions/score_metrics",
         "@score_docs_as_code//src/helper_lib",
     ],
@@ -105,18 +106,6 @@ score_pytest(
     name = "file_based_tests_graph",
     srcs = ["tests/test_rules_file_based.py"],
     data = glob(["tests/rst/graph/*.rst"]) + [
-        "tests/__init__.py",
-        "tests/rst/conf.py",
-        "tests/rst/needs.json",
-    ],
-    pytest_config = "//:pyproject.toml",
-    deps = [":score_metamodel"],
-)
-
-score_pytest(
-    name = "file_based_tests_id_contains_feature",
-    srcs = ["tests/test_rules_file_based.py"],
-    data = glob(["tests/rst/id_contains_feature/*.rst"]) + [
         "tests/__init__.py",
         "tests/rst/conf.py",
         "tests/rst/needs.json",

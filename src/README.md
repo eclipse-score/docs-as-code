@@ -45,6 +45,14 @@ It should be treated as a 'get-started' guide, giving you all needed information
   - **VSCode** (Optional)
     - Several integrations and guides are developed primarily with VS Code in mind.
 
+Python 3.12 is the default Bazel toolchain. Python 3.14 is also supported and is
+selected explicitly for compatibility checks:
+
+```bash
+bazel run --@rules_python//python/config_settings:python_version=3.14 //:ide_support
+bazel test --@rules_python//python/config_settings:python_version=3.14 //...
+```
+
 
 
 ### Key external tools used inside `_tooling`
@@ -102,17 +110,32 @@ Find everything related to testing and how to add your own test suite [here](/sr
 
 The file [requirements.in](./requirements.in) is a [PIP requirements file](https://pip.pypa.io/en/stable/reference/requirements-file-format/) that describe first level dependencies.
 
-The file [requirements.txt](./requirements.txt) is a [pip-compile lock file](https://pip-tools.readthedocs.io/en/latest/cli/pip-compile/) that holds
-the pinned dependency tree calculated from [requirements.in](./requirements.in).
+The files [requirements.txt](./requirements.txt) and
+[requirements_py314.txt](./requirements_py314.txt) are [pip-compile lock
+files](https://pip-tools.readthedocs.io/en/latest/cli/pip-compile/) for Python
+3.12 and Python 3.14 respectively. Both hold the pinned dependency tree
+calculated from [requirements.in](./requirements.in).
 
 To update dependencies (e.g. after adding a dependency), run:
 ```
 bazel run //src:requirements.update
 ```
 
+Update the Python 3.14 dependency lock with its matching toolchain:
+
+```bash
+bazel run --@rules_python//python/config_settings:python_version=3.14 //src:requirements_py314.update
+```
+
 To update the full dependency tree, run
 ```
 bazel run //src:requirements.update -- --upgrade
+```
+
+To upgrade the Python 3.14 dependency tree, run:
+
+```bash
+bazel run --@rules_python//python/config_settings:python_version=3.14 //src:requirements_py314.update -- --upgrade
 ```
 
 ## Best Practices

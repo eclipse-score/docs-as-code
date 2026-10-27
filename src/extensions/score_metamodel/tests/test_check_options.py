@@ -67,9 +67,9 @@ class TestCheckOptions:
     ]
 
     @add_test_properties(
-        partially_verifies=["tool_req__docs_common_attr_security"],
-        test_type="requirements-based",
-        derivation_technique="requirements-analysis",
+        partially_verifies=[],
+        test_type="interface-test",
+        derivation_technique="error-guessing",
     )
     def test_unknown_directive(self):
         """Given a need with an unknown type, should raise an error"""
@@ -91,9 +91,9 @@ class TestCheckOptions:
             check_options(app, need_1, cast(CheckLogger, logger))
 
     @add_test_properties(
-        partially_verifies=["tool_req__docs_common_attr_description"],
-        test_type="requirements-based",
-        derivation_technique="requirements-analysis",
+        partially_verifies=[],
+        test_type="interface-test",
+        derivation_technique="error-guessing",
     )
     def test_unknown_option_present_in_neither_req_opt_neither_opt_opt(self):
         """

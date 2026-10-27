@@ -23,6 +23,7 @@ Via Python (requires ide_support to have been run first):
 Known non-passing tests are sometimes marked xfail and do not count as failures.
 """
 
+import os
 import re
 import shutil
 import subprocess
@@ -51,9 +52,14 @@ class ConsumerRepo:
     name: str
     git_url: str
     commands: list[str]
+    module_file: str
 
     def __init__(
-        self, name: str, git_url: str | None = None, commands: list[str] | None = None
+        self,
+        name: str,
+        git_url: str | None = None,
+        commands: list[str] | None = None,
+        module_file: str = "MODULE.bazel",
     ) -> None:
         self.name = name
 
@@ -68,6 +74,7 @@ class ConsumerRepo:
             # The minimum is to ensure that the repo can build against the current score_docs_as_code branch.
             # If docs works, then usually docs_check and needs_json will work as well.
             self.commands = ["bazel run //:docs"]
+        self.module_file = module_file
 
 
 REPOS_TO_TEST: list[ConsumerRepo] = [
@@ -98,6 +105,10 @@ REPOS_TO_TEST: list[ConsumerRepo] = [
             "bazel run //:docs",
             "bazel build //:needs_json",
         ],
+    ),
+    ConsumerRepo(
+        name="reference_integration",
+        module_file="bazel_common/score_modules_tooling.MODULE.bazel",
     ),
     ConsumerRepo(
         name="score",
@@ -157,10 +168,15 @@ _BAZEL_DEP_PATTERN = r"""^bazel_dep\(name = ["']score_docs_as_code["'](?:, versi
 
 
 def _write_module_bazel(
-    repo_path: Path, override_type: str, commit: str, remote: str
+    repo_path: Path,
+    override_type: str,
+    commit: str,
+    remote: str,
+    module_file: str = "MODULE.bazel",
 ) -> None:
-    """Overwrite MODULE.bazel with the requested override type applied."""
-    original = (repo_path / "MODULE.bazel").read_text(encoding="utf-8")
+    """Overwrite the selected module file with the requested override applied."""
+    module_path = repo_path / module_file
+    original = module_path.read_text(encoding="utf-8")
     base = _strip_score_docs_overrides(original)
 
     if override_type == "local":
@@ -177,7 +193,7 @@ git_override(
     commit = "{commit}"
 )"""
 
-    (repo_path / "MODULE.bazel").write_text(
+    module_path.write_text(
         re.sub(_BAZEL_DEP_PATTERN, replacement, base, flags=re.MULTILINE),
         encoding="utf-8",
     )
@@ -242,7 +258,7 @@ def _cleanup_before_cmd(cwd: Path, cmd: str) -> None:
         subprocess.run(["bazel", "clean", "--async"], check=True, text=True, cwd=cwd)
 
 
-def _run_bazel_cmd(cmd: str, repo_name: str, cwd: Path) -> None:
+def _run_bazel_cmd(cmd: str, repo_name: str, cwd: Path, python_version: str) -> None:
     """Stream a bazel command to stdout; fail on non-zero exit, warn on WARNING lines."""
 
     # We do not care about broken bazel lock files in downstream repos.
@@ -251,6 +267,11 @@ def _run_bazel_cmd(cmd: str, repo_name: str, cwd: Path) -> None:
     # explicit command-line option takes precedence over that configuration.
     args = cmd.split()
     args.insert(2, "--lockfile_mode=off")
+    if python_version != "3.12":
+        args.insert(
+            2,
+            f"--@rules_python//python/config_settings:python_version={python_version}",
+        )
 
     process = subprocess.Popen(
         args,
@@ -402,6 +423,17 @@ def test_consumer_repo(
 
     repo_path = repos_base_dir / repo.name
     _ensure_repo(repo_path, repo.git_url, use_cache)
-    _write_module_bazel(repo_path, override_type, current_hash, gh_url)
+    _write_module_bazel(
+        repo_path,
+        override_type,
+        current_hash,
+        gh_url,
+        module_file=repo.module_file,
+    )
     _cleanup_before_cmd(repo_path, cmd)
-    _run_bazel_cmd(cmd, repo.name, repo_path)
+    _run_bazel_cmd(
+        cmd,
+        repo.name,
+        repo_path,
+        os.environ.get("DOCS_AS_CODE_TEST_PYTHON_VERSION", "3.12"),
+    )
