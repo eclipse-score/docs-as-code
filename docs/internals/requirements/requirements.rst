@@ -631,14 +631,16 @@ Architecture Attributes
   :id: tool_req__docs_arch_link_safety_to_req
   :tags: Architecture
   :implemented: PARTIAL
-  :version: 2
+  :version: 3
   :satisfies: gd_req__arch_linkage_requirement[version==1]
   :parent_covered: YES
 
   Docs-as-Code shall enforce that architecture elements of type
   :need:`tool_req__docs_arch_types` with ``safety != QM`` are linked to at least one
-  requirements of type :need:`tool_req__docs_req_types` with the exact same ``safety``
-  value.
+  requirement of type :need:`tool_req__docs_req_types` with ``safety != QM``.
+  For features and components, this shall be checked through incoming
+  ``satisfied_by`` allocations; for architectural views and interfaces, through
+  ``fulfils``. Additional QM requirements are permitted.
 
   .. note:: implemented as info to enable non-breaking transition
 
@@ -646,13 +648,16 @@ Architecture Attributes
   :id: tool_req__docs_arch_link_qm_to_safety_req
   :tags: Architecture
   :implemented: PARTIAL
-  :version: 2
+  :version: 3
   :satisfies: gd_req__arch_linkage_requirement[version==1]
   :parent_covered: YES
 
   Docs-as-Code shall enforce that architecture elements of type
   :need:`tool_req__docs_arch_types` with ``safety == QM`` are not linked to requirements
   of type :need:`tool_req__docs_req_types` with ``safety != QM``.
+  This shall be checked for mandatory ``satisfied_by`` allocations of feature and
+  component requirements and for optional ``fulfils`` links when present.
+  QM requirements may be allocated to QM or safety architecture elements.
 
 
 .. tool_req:: Restrict links for safety requirements

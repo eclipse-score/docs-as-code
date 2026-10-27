@@ -141,10 +141,22 @@ jobs:
     needs: [docs_bzl, bazel_tests]
     runs-on: ubuntu-latest
     steps:
-      - name: Download test reports
+      # Both Python versions produce Bazel reports at the same paths. Download
+      # one version for documentation so concurrent artifact extraction cannot
+      # corrupt overlapping files or duplicate test cases in the documentation.
+      # Both versions remain available as separate artifacts for inspection.
+      - name: Download Bazel test reports for documentation
         uses: actions/download-artifact@v8
         with:
-          pattern: tests-report-*
+          name: tests-report-bazel-3.12
+          path: tests-report
+
+      # The docs.bzl report filenames include their Python version and suite,
+      # so these artifacts can be merged without overlapping paths.
+      - name: Download docs.bzl test reports
+        uses: actions/download-artifact@v8
+        with:
+          pattern: tests-report-docs-bzl-*
           path: tests-report
           merge-multiple: true
 

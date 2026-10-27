@@ -1238,20 +1238,46 @@ graph_checks:
   # req-Id: tool_req__docs_arch_link_qm_to_safety_req
   tool_req__docs_arch_link_qm_to_safety_req:
     needs:
-      include: feat_arc_sta, logic_arc_int, logic_arc_int_op, comp_arc_sta, real_arc_int, real_arc_int_op
+      include: feat, feat_arc_sta, feat_arc_dyn, logic_arc_int, logic_arc_int_op, comp, comp_arc_sta, comp_arc_dyn, real_arc_int, real_arc_int_op
       condition: safety == QM
     check_all:
-      fulfils: safety != QM
-    explanation: An QM architecture element cannot implement ASIL requirements.
+      fulfils: safety == QM
+    explanation: A QM architecture element cannot fulfil safety requirements.
+    info_only: true
+
+  # Allocation compatibility is checked from the requirement, where the
+  # mandatory satisfied_by link identifies every allocated feature/component.
+  # QM requirements impose no safety restriction on their allocation targets.
+  # req-Id: tool_req__docs_arch_link_qm_to_safety_req
+  tool_req__docs_req_allocation_safety:
+    needs:
+      include: feat_req, comp_req
+      condition: safety != QM
+    check_all:
+      satisfied_by: safety != QM
+    explanation: A safety requirement cannot be allocated to a QM architecture element.
+    info_only: true
+
+  # Features/components receive requirements through incoming satisfied_by
+  # links. Their optional fulfils links do not replace this allocation.
+  # req-Id: tool_req__docs_arch_link_safety_to_req
+  tool_req__docs_allocation_safety_to_req:
+    needs:
+      include: feat, comp
+      condition: safety != QM
+    check_one:
+      satisfied_by_back: safety != QM
+    explanation: A safety relevant feature or component must have at least one safety requirement allocated via satisfied_by.
+    info_only: true
 
   # req-Id: tool_req__docs_arch_link_safety_to_req
   tool_req__docs_arch_link_safety_to_req:
     needs:
-      include: feat_arc_sta, feat_arc_dyn, logic_arc_int, comp, comp_arc_sta, comp_arc_dyn, real_arc_int
+      include: feat_arc_sta, feat_arc_dyn, logic_arc_int, comp_arc_sta, comp_arc_dyn, real_arc_int
       condition: safety != QM
     check_one:
-      fulfils: safety == self.safety
-    explanation: A safety relevant architecture element must be linked to at least one requirement with the exact same safety value via fulfils.
+      fulfils: safety != QM
+    explanation: A safety relevant architecture element must be linked to at least one safety requirement via fulfils.
     info_only: true
 
   # req-Id: tool_req__docs_req_arch_link_safety_to_arch
