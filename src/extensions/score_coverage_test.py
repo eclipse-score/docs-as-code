@@ -213,7 +213,12 @@ def _write_report_project(tmp_path: Path, *, template: bool = False) -> Path:
 
 
 def _write_report_summary(
-    path: Path, *, total: int | None = 3, percent: int | None = 67, measured: int = 2
+    path: Path,
+    *,
+    total: int | None = 3,
+    percent: int | None = 67,
+    measured: int = 2,
+    files_total: int = 6,
 ) -> None:
     path.write_text(
         json.dumps(
@@ -222,7 +227,7 @@ def _write_report_summary(
                 "coverage_summaries": [
                     {
                         "primary_need_id": "comp__example",
-                        "files": {"total": 6, "measured": measured},
+                        "files": {"total": files_total, "measured": measured},
                         "lines": {"total": total, "percent": percent},
                         "branches": {
                             "total": total,
@@ -236,25 +241,38 @@ def _write_report_summary(
 
 
 @pytest.mark.parametrize(
-    ("total", "percent", "measured", "state"),
+    ("total", "percent", "measured", "files_total", "state"),
     [
-        (3, 67, 2, "covered 67%"),
-        (3, 0, 2, "covered 0%"),
-        (0, None, 2, "not instrumented"),
-        (None, None, 0, "no data"),
+        (3, 67, 2, 6, "covered 67%"),
+        (3, 0, 2, 6, "covered 0%"),
+        (0, None, 2, 6, "not instrumented"),
+        (None, None, 0, 6, "no data"),
+        (None, None, 0, 0, "No source files selected"),
     ],
 )
 def test_report_pies_use_summary_percentages_and_preserve_unavailable_states(
-    tmp_path: Path, total: int | None, percent: int | None, measured: int, state: str
+    tmp_path: Path,
+    total: int | None,
+    percent: int | None,
+    measured: int,
+    files_total: int,
+    state: str,
 ) -> None:
     summary = _write_report_project(tmp_path)
-    _write_report_summary(summary, total=total, percent=percent, measured=measured)
+    _write_report_summary(
+        summary,
+        total=total,
+        percent=percent,
+        measured=measured,
+        files_total=files_total,
+    )
     app = SphinxTestApp(srcdir=tmp_path, builddir=tmp_path / "_build", freshenv=True)
     try:
         app.build()
         html = (app.outdir / "index.html").read_text()
         assert state in html
-        assert f"{measured}/6 selected source files" in html
+        if files_total:
+            assert f"{measured}/{files_total} selected source files" in html
         assert "No coverage data available for this component." in html
         images = list((app.outdir / "_images").glob("score_coverage_pie_*.svg"))
         assert len(images) == (2 if percent is not None else 0)
@@ -335,5 +353,67 @@ def test_report_checks_do_not_read_coverage_inputs(
         app.build()
         assert not app.warning.getvalue()
         assert not list(app.outdir.rglob("score_coverage_pie_*"))
+    finally:
+        app.cleanup()
+
+
+def test_forced_write_refreshes_chart_without_rereading_document(
+    tmp_path: Path,
+) -> None:
+    """Sphinx's image cache must not preserve old slices when only writing again."""
+    summary = _write_report_project(tmp_path)
+    _write_report_summary(summary)
+    app = SphinxTestApp(srcdir=tmp_path, builddir=tmp_path / "_build", freshenv=True)
+    try:
+        app.build()
+        before = (app.outdir / "index.html").read_text()
+        _write_report_summary(summary, percent=33)
+        # Keep the document current: force_all rewrites it from the cached doctree.
+        os.utime(summary, (0, 0))
+        app.build(force_all=True)
+        after = (app.outdir / "index.html").read_text()
+        assert "covered 33%" in after
+        pattern = r'alt="Example component Line Coverage:[^"]+"[^>]*src="([^"]+)"'
+        before_image = re.search(pattern, before)
+        after_image = re.search(pattern, after)
+        assert before_image is not None and after_image is not None
+        assert before_image[1] != after_image[1]
+        assert "33%" in (app.outdir / after_image[1]).read_text()
+        assert not app.warning.getvalue()
+    finally:
+        app.cleanup()
+
+
+@pytest.mark.parametrize("builder", ["html", "needs", "linkcheck"])
+def test_only_html_pages_displaying_coverage_depend_on_summary(
+    tmp_path: Path, builder: str
+) -> None:
+    """Coverage updates leave unrelated prose and documentation checks reusable."""
+    summary = _write_report_project(tmp_path)
+    _write_report_summary(summary)
+    with (tmp_path / "index.rst").open("a") as index:
+        index.write("\n.. toctree::\n\n   prose\n   need_only\n   report_only\n")
+    (tmp_path / "need_only.rst").write_text(
+        "Need\n====\n\n.. req:: Selected\n   :id: REQ_SELECTED\n"
+    )
+    (tmp_path / "report_only.rst").write_text(
+        "Report\n======\n\n.. score-coverage-report:: comp__example\n"
+    )
+    (tmp_path / "prose.rst").write_text(
+        "Prose\n=====\n\nNo Needs or coverage reports.\n"
+    )
+    app = SphinxTestApp(
+        srcdir=tmp_path,
+        builddir=tmp_path / "_build",
+        buildername=builder,
+        freshenv=True,
+    )
+    try:
+        app.build()
+        assert summary not in {Path(p) for p in app.env.dependencies["prose"]}
+        for docname in ("index", "need_only", "report_only"):
+            dependencies = {Path(p) for p in app.env.dependencies[docname]}
+            assert (summary in dependencies) == (builder == "html")
+        assert not app.warning.getvalue()
     finally:
         app.cleanup()

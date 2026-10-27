@@ -23,6 +23,7 @@ from docutils.parsers.rst import directives
 from sphinx.application import Sphinx
 from sphinx.errors import SphinxError
 from sphinx.util.docutils import SphinxDirective
+from sphinx_needs.nodes import Need
 from sphinx_needs.utils import save_matplotlib_figure
 
 from src.extensions.score_sphinx_needs_templates.report_pie import (
@@ -45,7 +46,6 @@ class CoverageReportDirective(SphinxDirective):
         node = CoverageReport(
             need_id=self.arguments[0],
             title=self.options.get("title", self.arguments[0]),
-            target_id=f"coverage-{self.env.docname}-{self.env.new_serialno('coverage')}",
         )
         self.set_source_info(node)
         return [node]
@@ -56,8 +56,12 @@ def _note_summary_dependency(app: Sphinx, doctree: nodes.document) -> None:
     # it while reading lets standalone incremental builds detect JSON changes.
     # Also track a configured path that is currently absent, so its appearance
     # is noticed on a subsequent build.
-    if app.config.score_coverage_summary:
-        app.env.note_dependency(app.config.score_coverage_summary)
+    if (
+        app.builder.format == "html"
+        and app.config.score_coverage_summary
+        and any(isinstance(node, Need | CoverageReport) for node in doctree.findall())
+    ):
+        app.env.note_dependency(Path(app.config.score_coverage_summary))
 
 
 def _coverage_report(
@@ -68,6 +72,9 @@ def _coverage_report(
         block += nodes.paragraph(text="No coverage data available for this component.")
         return block
     files = summary["files"]
+    if not files["total"]:
+        block += nodes.paragraph(text="No source files selected for this component.")
+        return block
     block += nodes.paragraph(
         text=f"Coverage measurements available for {files['measured']}/{files['total']} "
         "selected source files. Green: covered; red: not covered. "
@@ -92,8 +99,11 @@ def _coverage_report(
                 text=f"{label} coverage: {_metric_text(metric['total'], percent)}."
             )
         else:
+            # Sphinx caches images by filename even across forced writes of a
+            # cached doctree. Include the displayed content so changed coverage
+            # produces a fresh image and a fresh browser URL.
             digest = hashlib.sha256(
-                f"{report['target_id']}-{dimension}".encode()
+                f"{docname}-{title}-{percent}".encode()
             ).hexdigest()[:10]
             with report_pie_style():
                 image = save_matplotlib_figure(
@@ -151,7 +161,7 @@ def _metadata_area(need: nodes.table) -> nodes.line_block | None:
 
 
 def render_coverage(app: Sphinx, doctree: nodes.document, docname: str) -> None:
-    """Add a display-only attribute after Sphinx-Needs has rendered its layouts."""
+    """Resolve report charts and metadata after Sphinx-Needs renders its layouts."""
     path: str = app.config.score_coverage_summary
     reports = list(doctree.findall(CoverageReport))
     if app.builder.format != "html":
