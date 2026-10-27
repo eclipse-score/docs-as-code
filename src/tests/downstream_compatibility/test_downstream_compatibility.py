@@ -249,8 +249,10 @@ def _cleanup_before_cmd(cwd: Path, cmd: str) -> None:
     for p in cwd.glob("*/ubproject.toml"):
         p.unlink()
 
-    # _build is created by :docs
-    shutil.rmtree(cwd / "_build", ignore_errors=True)
+    # Keep generated HTML for artifact upload when subsequent build/test
+    # commands run; interactive builders still start with a clean output.
+    if cmd.startswith("bazel run "):
+        shutil.rmtree(cwd / "_build", ignore_errors=True)
 
     # for ide_support, also clear the venv and bazel cache to ensure a clean slate
     if cmd == "bazel run //:ide_support":

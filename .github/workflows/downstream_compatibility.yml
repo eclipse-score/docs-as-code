@@ -109,3 +109,11 @@ jobs:
           PYTHONUNBUFFERED: "1"
           CONSUMER: ${{ matrix.consumer }}
           DOCS_AS_CODE_TEST_PYTHON_VERSION: ${{ matrix.python-version }}
+
+      - name: Upload downstream HTML
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: downstream-html-${{ matrix.consumer }}-${{ matrix.python-version }}
+          path: ~/.cache/docs_as_code_consumer_tests/*/_build/
+          if-no-files-found: ignore
