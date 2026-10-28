@@ -16,7 +16,7 @@ on:
   workflow_call:
 jobs:
   docs_bzl:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
@@ -80,7 +80,7 @@ jobs:
           path: tests-report
 
   bazel_tests:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
@@ -139,7 +139,7 @@ jobs:
   merge_test_reports:
     if: ${{ !cancelled() }}
     needs: [docs_bzl, bazel_tests]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       # Both Python versions produce Bazel reports at the same paths. Download
       # one version for documentation so concurrent artifact extraction cannot
