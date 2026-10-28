@@ -36,3 +36,7 @@ __pycache__/
 # AI
 /.codex
 /.claude
+
+# Deterministic assurance scenario output; exported by CI as an artifact.
+/runs/
+/assurance-runs/

@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "patterns": [
+    {
+      "id": "goal_requirements",
+      "relation": "complies",
+      "checks": [
+        "supporting requirement exists",
+        "supporting status acceptable",
+        "content/status changes propagated by argument graph"
+      ]
+    },
+    {
+      "id": "solution_verification",
+      "relation": "links",
+      "checks": [
+        "V&V evidence exists",
+        "supporting test output not failed/rejected/invalid"
+      ]
+    },
+    {
+      "id": "requirements_breakdown",
+      "relation": "links",
+      "checks": [
+        "child requirement exists",
+        "native type-scoped coverage meets explicitly supplied threshold"
+      ]
+    }
+  ]
+}
