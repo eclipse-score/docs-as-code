@@ -1085,19 +1085,21 @@ is described in the platform.
 .. tool_req:: Decision Record Type
   :id: tool_req__docs_dec_rec_type
   :tags: Process / Other
-  :version: 1
+  :version: 2
   :implemented: YES
   :satisfies:
    gd_req__process_management_build_blocks_attr[version==1],
    gd_req__process_management_build_blocks_link[version==1],
 
-  Docs-as-Code shall support the Decision Record (dec_rec) need type with the following options:
+  Docs-as-Code shall support the Decision Record (dec_rec) need type with the following mandatory options:
 
+  * ``id`` (mandatory, pattern: ``dec_rec__<category>__<slug>``; category and slug contain letters, numbers, underscores, or hyphens)
   * ``status`` (mandatory, one of: proposed, accepted, deprecated, rejected, superseded)
   * ``context`` (mandatory)
   * ``decision`` (mandatory)
-  * ``consequences`` (optional)
-  * ``tracking`` (optional, link to a GitHub issue)
+  * ``tracking`` (mandatory, link to a GitHub issue or pull request in the ``eclipse-score`` organization)
+  * ``version`` (mandatory)
+  * ``consequences`` (mandatory, non-empty)
 
   A Decision Record shall be able to link to other needs via the optional ``affects`` link.
 
