@@ -41,7 +41,7 @@ DocsBundleInfo = provider(
         # Each entry carries the source and placement information needed by
         # the runtime manifest, plus the identity, primary Need, and
         # direct-target metadata of the bundle that declared it.
-        "entries": "Ordered entries with source, placement, primary Need, and direct-target metadata.",
+        "entries": "Ordered entries with sources, placement, primary Need, direct targets, and bounded implementation files.",
         "own_source_files": "This bundle's direct source files, excluding nested bundles.",
         "source_dir_execroot_path": "Execution-root-relative path of this bundle's direct source root.",
         "sourcelinks": "Source-code-link JSON files together with their owning repository.",
@@ -404,6 +404,7 @@ def _rebase_bundle_entry(entry, mount_at, attach_to, toctree_index):
         bundle_name = entry.bundle_name,
         primary_need_id = entry.primary_need_id,
         code_targets = entry.code_targets,
+        code_files = entry.code_files,
         # This entry is now part of a parent composition. It may have been the
         # root of its own standalone bundle, but it is a child entry here and
         # must be handled as a mounted source rather than as the parent's root.
@@ -463,6 +464,10 @@ def _docs_bundle_impl(ctx):
     own_bundle_label = str(ctx.label)
     own_bundle_name = ctx.label.name
     own_primary_need_id = ctx.attr.primary_need_id
+    # Keep implementation ownership with the declaring documentation entry.
+    # The metamodel resolves its primary Need from that entry's own documents;
+    # rebasing into a parent preserves the same bounded implementation file set.
+    own_code_files = ctx.attr.code_files[DefaultInfo].files if ctx.attr.code_files else depset()
     own_code_targets = [
         struct(
             label = str(target.label),
@@ -506,6 +511,7 @@ def _docs_bundle_impl(ctx):
             # embeds the bundle as a child.
             root_bundle = True,
             code_targets = own_code_targets,
+            code_files = own_code_files,
         ))
         own_source_files.extend(ctx.files.source_dir_globbed)
         # Local sources are read directly from the workspace by ``bazel run``.
@@ -549,6 +555,7 @@ def _docs_bundle_impl(ctx):
             # embeds the bundle as a child.
             root_bundle = True,
             code_targets = own_code_targets,
+            code_files = own_code_files,
         ))
         own_source_files.extend(ctx.files.source_targets)
         # Explicit artifacts outside the workspace source tree need to be
@@ -581,6 +588,7 @@ def _docs_bundle_impl(ctx):
             # embeds the bundle as a child.
             root_bundle = True,
             code_targets = own_code_targets,
+            code_files = own_code_files,
         ))
 
     child_source_files = []
@@ -698,6 +706,9 @@ _docs_bundle = rule(
         # The aspect preserves the selected target's rule kind while
         # recursively collecting its source files for source-link generation.
         "code_targets": attr.label_list(aspects = [_collect_code_target_sources]),
+        # Reuse the exact file set used by source links. This sibling target
+        # has no dependency on bundle composition, so it cannot form a cycle.
+        "code_files": attr.label(allow_files = True),
         "metamodel": attr.label(
             allow_single_file = True,
             default = Label("@score_docs_as_code//src/extensions/score_metamodel:metamodel_yaml"),
@@ -722,6 +733,7 @@ def create_bundle(
     primary_need_id = None,
     data = [],
     code_targets = [],
+    code_files = None,
     root_docs_config = None,
     is_root_bundle = False,
     project_name = None,
@@ -762,6 +774,7 @@ def create_bundle(
         project_name = project_name if project_name != None else name,
         data = data,
         code_targets = code_targets,
+        code_files = code_files,
         root_docs_config = root_docs_config,
         is_root_bundle = is_root_bundle,
         visibility = visibility,

@@ -232,17 +232,8 @@ verification status and the tests that (fully or partially) verify them:
 Test Coverage
 ^^^^^^^^^^^^^
 
-Per-source-file line and branch coverage aggregated from the LCOV report
-produced by ``bazel coverage``.
-
-.. dropdown:: Show test coverage table
-   :animate: fade-in
-
-   .. note::
-
-      No coverage data available for this component. Run ``bazel coverage``
-      with the corresponding targets and rebuild the docs to populate this
-      table.
+.. score-coverage-report:: {{ component_id }}
+   :title: {{ component_title }}
 
 Architectural Elements
 ^^^^^^^^^^^^^^^^^^^^^^

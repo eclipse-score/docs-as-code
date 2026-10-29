@@ -35,6 +35,7 @@ def workspace(fs: FFS, monkeypatch: pytest.MonkeyPatch) -> Path:
         "EXTERNAL_NEEDS_FILES",
         "EXTERNAL_NEEDS_LABELS",
         "TEST_SOURCES",
+        "SCORE_CODE_FILE_LISTS",
         "MOUNTS_MANIFEST",
         "SPHINX_CONFIG_FILE",
         "SPHINX_CONFIG_OPTS",

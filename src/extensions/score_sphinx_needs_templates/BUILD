@@ -29,6 +29,7 @@ py_library(
     data = ["@score_docs_as_code//src/needs_templates:files"],
     visibility = ["//visibility:public"],
     deps = all_requirements + [
+        "//src/extensions:score_coverage",
         "@score_docs_as_code//src/helper_lib",
     ],
 )
@@ -42,9 +43,9 @@ score_pytest(
         "tests/test_needs_templates.py",
         "tests/test_report_pie.py",
     ],
+    pytest_config = "//:pyproject.toml",
     deps = [
         ":score_sphinx_needs_templates",
-        "//src/extensions/score_metamodel:score_metamodel",
+        "//src/extensions/score_metamodel",
     ],
-    pytest_config = "//:pyproject.toml",
 )

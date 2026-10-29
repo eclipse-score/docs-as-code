@@ -18,6 +18,9 @@
           "docname": "components/component/index",
           "external_css": "external_link",
           "id": "comp__modern_component",
+          "includes_back": [
+            "mod__modern_module"
+          ],
           "lineno": 29,
           "safety": "QM",
           "satisfied_by_back": [
@@ -100,6 +103,49 @@
           "type_name": "Process Requirements",
           "version": 1
         },
+        "mod__modern_module": {
+          "belongs_to_back": [
+            "mod_vrep__docs_as_code__modern_module"
+          ],
+          "docname": "index",
+          "external_css": "external_link",
+          "id": "mod__modern_module",
+          "includes": [
+            "comp__modern_component"
+          ],
+          "lineno": 27,
+          "section_name": "S-CORE Modern Module",
+          "sections": [
+            "S-CORE Modern Module"
+          ],
+          "title": "Modern module",
+          "type": "mod",
+          "type_name": "Module",
+          "version": 1
+        },
+        "mod_vrep__docs_as_code__modern_module": {
+          "belongs_to": [
+            "mod__modern_module"
+          ],
+          "docname": "index",
+          "external_css": "external_link",
+          "id": "mod_vrep__docs_as_code__modern_module",
+          "lineno": 32,
+          "post_content": "\n\n\n\n\n\n\n\n\n\n\n.. raw:: html\n\n   <style>\n   .wp-doc-table td .needstable_wrapper,\n   .wp-doc-table td .pst-scrollable-table-container {\n       margin: 0; padding: 0; overflow: visible;\n   }\n   .wp-doc-table td table.NEEDS_TABLE,\n   .wp-doc-table td table.NEEDS_DATATABLES {\n       border: 0; margin: 0; box-shadow: none; background: transparent;\n       width: auto;\n   }\n   .wp-doc-table td table.NEEDS_TABLE thead,\n   .wp-doc-table td table.NEEDS_DATATABLES thead { display: none; }\n   .wp-doc-table td table.NEEDS_TABLE tbody tr,\n   .wp-doc-table td table.NEEDS_DATATABLES tbody tr { background: transparent; }\n   .wp-doc-table td table.NEEDS_TABLE tbody td,\n   .wp-doc-table td table.NEEDS_DATATABLES tbody td {\n       border: 0; padding: 0; background: transparent;\n   }\n   .wp-doc-table td .dataTables_wrapper .dataTables_length,\n   .wp-doc-table td .dataTables_wrapper .dataTables_filter,\n   .wp-doc-table td .dataTables_wrapper .dataTables_info,\n   .wp-doc-table td .dataTables_wrapper .dataTables_paginate { display: none; }\n\n   /* Scales every chart to its column; together with the fixed three-column\n      raster this gives every chart the same size as in the platform report. */\n   .score-pie-row img.score-report-pie {\n       width: 100%;\n       height: auto;\n   }\n   /* ``.sd-row`` is a flex container without a justification of its own, so\n      this centres the two pies in the three-column raster. */\n   .score-pie-row { justify-content: center; }\n\n   p.rubric.safety-class-heading {\n       display: inline-block; margin: 1.4em 0 0.5em 0;\n       padding: 0.15em 0.9em; border-radius: 1em;\n       font-size: 0.95em; font-weight: 600; color: #ffffff;\n   }\n   p.rubric.safety-class-heading.safety-asil-b { background: #1f4e79; }\n   p.rubric.safety-class-heading.safety-qm { background: #6c757d; }\n\n   /* Stands in for a whole pie row of a safety class without any Need. */\n   .empty-pie {\n       padding: 0.2em 0.8em; margin-bottom: 0.5em;\n       border: 2px dashed #b0b0b0; border-radius: 6px;\n       color: #6c757d; font-style: italic;\n   }\n\n   .chart-legend { display: flex; flex-wrap: wrap; gap: 1.2em 2.5em; }\n   .chart-legend-group {\n       display: flex; flex-direction: column; gap: 0.3em;\n       flex: 1 1 20em; font-size: 0.9em;\n   }\n   .chart-legend-head { font-weight: 600; }\n   .chart-legend-dot {\n       display: inline-block; width: 0.8em; height: 0.8em;\n       margin-right: 0.5em; border-radius: 50%;\n       border: 1px solid rgba(0, 0, 0, 0.25);\n   }\n   </style>\n\n.. dropdown:: Legend — status values and chart colours\n   :animate: fade-in\n   :open:\n\n   .. raw:: html\n\n      <div class=\"chart-legend\">\n        <div class=\"chart-legend-group\">\n          <span class=\"chart-legend-head\">Status — ASIL B</span>\n          <span><span class=\"chart-legend-dot\" style=\"background: #37a12d;\"></span><code>valid_inspected</code> — agreed and formally inspected</span>\n          <span><span class=\"chart-legend-dot\" style=\"background: #f5c518;\"></span><code>valid</code> — agreed, formal inspection still outstanding</span>\n          <span><span class=\"chart-legend-dot\" style=\"background: #ca2828;\"></span><code>invalid</code> — not agreed; metamodel checks are skipped</span>\n        </div>\n        <div class=\"chart-legend-group\">\n          <span class=\"chart-legend-head\">Status — QM</span>\n          <span><span class=\"chart-legend-dot\" style=\"background: #37a12d;\"></span><code>valid</code> — agreed; QM needs are not formally inspected, so this is their final state (<code>valid_inspected</code> counts here too)</span>\n          <span><span class=\"chart-legend-dot\" style=\"background: #ca2828;\"></span><code>invalid</code> — not agreed; metamodel checks are skipped</span>\n        </div>\n        <div class=\"chart-legend-group\">\n          <span class=\"chart-legend-head\">Test coverage — both classes</span>\n          <span><span class=\"chart-legend-dot\" style=\"background: #37a12d;\"></span>fully covered — at least one test fully verifies the need</span>\n          <span><span class=\"chart-legend-dot\" style=\"background: #f0a500;\"></span>partially covered — only partially verifying tests</span>\n          <span><span class=\"chart-legend-dot\" style=\"background: #ca2828;\"></span>not covered — no verifying test at all</span>\n        </div>\n      </div>\n\n\n\n\n\nComponents\n----------\n\nComponent Overview\n~~~~~~~~~~~~~~~~~~\n\n.. needtable::\n   :filter: id in []\n   :columns: id as \"Component\";safety;security;status\n   :style: table\n   :sort: safety\n\n",
+          "post_template": "module_verification_report",
+          "safety": "QM",
+          "section_name": "S-CORE Modern Module",
+          "sections": [
+            "S-CORE Modern Module"
+          ],
+          "security": "NO",
+          "status": "valid",
+          "title": "Modern module verification report",
+          "type": "mod_ver_report",
+          "type_name": "Module Verification Report",
+          "verification_method": "Automated tests",
+          "version": 1
+        },
         "tool_req__modern_component": {
           "content": "The modern component implementation is covered by the component source\ncode-link scan. The linked component requirement above depends on the\nplatform feature requirement. The integration test checks that the\ncomponent can be built through its module, where that requirement is\navailable, but not as a standalone bundle.",
           "docname": "components/component/index",
@@ -138,7 +184,7 @@
           "version": 1
         }
       },
-      "needs_amount": 6,
+      "needs_amount": 8,
       "needs_defaults_removed": true,
       "needs_schema": {
         "$schema": "http://json-schema.org/draft-07/schema#",

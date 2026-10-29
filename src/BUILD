@@ -36,6 +36,7 @@ filegroup(
         ["*.py"],
     ) + [
         "//src/docs_cli:all_sources",
+        "//src/extensions:score_coverage",
         "//src/extensions/score_draw_uml_funcs:all_sources",
         "//src/extensions/score_layout:all_sources",
         "//src/extensions/score_metamodel:all_sources",

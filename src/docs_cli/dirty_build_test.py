@@ -38,6 +38,7 @@ def docs_workspace(fs: FFS, monkeypatch: pytest.MonkeyPatch) -> Path:
     monkeypatch.setenv("PACKAGE_DIR", "component")
     monkeypatch.setenv("SOURCE_DIRECTORY", "docs")
     monkeypatch.setenv("DATA", "[]")
+    monkeypatch.delenv("SCORE_CODE_FILE_LISTS", raising=False)
     fs.create_dir(_WORKSPACE / "component")
     for name in ("MODULE.bazel", "MODULE.bazel.lock", "component/BUILD"):
         fs.create_file(_WORKSPACE / name, contents="stable")
@@ -345,3 +346,119 @@ def test_mounted_watch_dirs_use_data_directories_for_pure_data_bundles(
     assert mounted_watch_dirs(manifest_path, workspace, runfiles_dir) == [
         str(workspace / "bazel-bin/pkg/generated")
     ]
+
+
+def test_coverage_summary_is_a_sentinel_preserved_during_output_cleanup(
+    docs_workspace: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Raw reports are read at startup; only summarized changes invalidate output."""
+    monkeypatch.setenv("ACTION", "incremental")
+    file_lists = docs_workspace / "files.json"
+    file_lists.write_text(
+        json.dumps(
+            {
+                "version": 1,
+                "code_file_lists": [
+                    {
+                        "primary_need_id": "mod__test",
+                        "files": [{"repository": "_main", "path": "source.cc"}],
+                    }
+                ],
+            }
+        )
+    )
+    monkeypatch.setenv("SCORE_CODE_FILE_LISTS", str(file_lists))
+    report = docs_workspace / "coverage-report/coverage_report.dat"
+    report.parent.mkdir()
+    original = "SF:source.cc\nDA:1,1\nDA:2,1\nDA:3,0\n"
+    report.write_text(original)
+    build_dir = docs_workspace / "component/_build"
+    summary = build_dir / "coverage_summary.json"
+    reused = []
+
+    def build(arguments: list[str]) -> int:
+        # Coverage is an optional extension. Its input is available at the
+        # conventional path without adding overrides unknown to other builds.
+        assert not any("score_coverage_summary" in argument for argument in arguments)
+        assert summary.is_file()
+        reused.append((build_dir / "output").exists())
+        build_dir.mkdir(exist_ok=True)
+        (build_dir / "output").touch()
+        return 0
+
+    monkeypatch.setattr(docs_cli, "sphinx_main", build)
+    assert docs_cli.main([]) == 0
+    initial = summary.read_bytes()
+    initial_mtime = summary.stat().st_mtime_ns
+    report.write_text(original.replace("DA:1,1", "DA:1,900"))
+    assert docs_cli.main([]) == 0
+    assert summary.read_bytes() == initial
+    assert summary.stat().st_mtime_ns == initial_mtime
+    report.write_text(original.replace("DA:1,1", "DA:1,0"))
+    assert docs_cli.main([]) == 0
+    assert (
+        json.loads(summary.read_bytes())["coverage_summaries"][0]["lines"]["percent"]
+        == 33
+    )
+    report.unlink()
+    assert docs_cli.main([]) == 0
+    assert json.loads(summary.read_bytes())["coverage_summaries"][0]["files"] == {
+        "total": 1,
+        "measured": 0,
+    }
+    assert docs_cli.main([]) == 0
+    assert reused == [False, True, False, False, True]
+
+    # A malformed report leaves both cached documentation and summary intact.
+    previous = summary.read_bytes()
+    report.write_text("SF:source.cc\nDA:invalid\n")
+    with pytest.raises(ValueError):
+        docs_cli.main([])
+    assert summary.read_bytes() == previous
+    assert (build_dir / "output").exists()
+
+
+def test_cleanup_preserves_generated_sentinels_and_removes_stale_outputs(
+    fs: FFS,
+) -> None:
+    """Generated inputs survive cleanup with their bytes and modification time intact."""
+    summary = _BUILD / "coverage_summary.json"
+    fs.create_file(summary, contents="previous")
+    update_module_hash(_BUILD, [summary])
+    fs.create_file(_BUILD / "index.html", contents="stale")
+    fs.create_file(_BUILD / "nested/page.html", contents="stale")
+    fs.create_file("/external/keep.txt", contents="keep")
+    fs.create_symlink(_BUILD / "external", "/external")
+    summary.write_text("changed")
+    modified = summary.stat().st_mtime_ns
+
+    clean_builddir_if_stale(_BUILD, [summary])
+
+    assert set(_BUILD.iterdir()) == {summary}
+    assert summary.read_text() == "changed"
+    assert summary.stat().st_mtime_ns == modified
+    assert Path("/external/keep.txt").read_text() == "keep"
+
+
+@pytest.mark.parametrize("action", ["check", "linkcheck"])
+def test_checks_ignore_coverage_even_with_a_configured_file_list(
+    docs_workspace: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    action: str,
+) -> None:
+    """Coverage cannot break validation or link checks that do not display it."""
+    monkeypatch.setenv("ACTION", action)
+    monkeypatch.setenv(
+        "SCORE_CODE_FILE_LISTS", str(docs_workspace / "missing-files.json")
+    )
+    build_dir = docs_workspace / "component/_build"
+
+    def build(arguments: list[str]) -> int:
+        assert not any("score_coverage_summary" in argument for argument in arguments)
+        build_dir.mkdir(exist_ok=True)
+        return 0
+
+    monkeypatch.setattr(docs_cli, "sphinx_main", build)
+    assert docs_cli.main([]) == 0
+    assert not (build_dir / "coverage_summary.json").exists()

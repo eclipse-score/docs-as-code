@@ -30,14 +30,6 @@ load("//:docs.bzl", "docs")
 # test_sources scopes the test-code-linker to this (test-less) package, avoiding
 # the workspace-wide bazel-testlogs scan during the html build.
 docs(
-    project = "S-CORE Reference Integration",
-    project_url = "https://example.invalid/score-reference-integration",
-    source_dir = "docs",
-    # Import the public docs target rather than its implementation-level
-    # needs_json output. The integration page references a Need owned by this
-    # target, so this also exercises resolution through the imported inventory.
-    external_needs = ["//src/tests/docs_bzl/scenarios/reference_integration/score_platform:docs"],
-    test_sources = ["src/tests/docs_bzl/scenarios/reference_integration"],
     bundles = [
         {
             "bundle": "//src/tests/docs_bzl/scenarios/reference_integration/legacy_module:docs_bundle",
@@ -50,4 +42,17 @@ docs(
             "attach_to": "modules",
         },
     ],
+    # Import the public docs target rather than its implementation-level
+    # needs_json output. The integration page references a Need owned by this
+    # target, so this also exercises resolution through the imported inventory.
+    external_needs = [
+        "//src/tests/docs_bzl/scenarios/reference_integration/score_platform:docs",
+        # Mounted verification reports reference the process work products.
+        # Each consuming docs() project declares its own external inventories.
+        "@score_process_description//:needs_json",
+    ],
+    project = "S-CORE Reference Integration",
+    project_url = "https://example.invalid/score-reference-integration",
+    source_dir = "docs",
+    test_sources = ["src/tests/docs_bzl/scenarios/reference_integration"],
 )

@@ -25,6 +25,7 @@ py_library(
     visibility = ["//visibility:public"],
     deps = all_requirements + [
         "@score_docs_as_code//src/extensions:score_plantuml",
+        "@score_docs_as_code//src/extensions:score_coverage",
         "@score_docs_as_code//src/extensions:broken_link_fix",
         "@score_docs_as_code//src/extensions/score_sphinx_needs_templates",
         "@score_docs_as_code//src/extensions/score_draw_uml_funcs",

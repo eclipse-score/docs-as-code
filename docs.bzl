@@ -68,6 +68,10 @@ load(
     "sphinx_config_options",
 )
 load(
+    "@score_docs_as_code//:bzl/code_file_lists.bzl",
+    "declare_code_file_lists",
+)
+load(
     "@score_docs_as_code//:bzl/mount_rules.bzl",
     "create_composition_manifest",
 )
@@ -139,7 +143,7 @@ def _needs_sphinx_docs(
     String settings travel as Sphinx ``--define`` options. Bazel labels stay
     typed until the private rule can declare them as sandbox inputs.
     """
-    # These three files use typed rule attributes below so the private rule can
+    # These files use typed rule attributes below so the private rule can
     # pass their paths to the action. Add them to ``tools`` as well: that puts
     # the files in the Sphinx executable's runfiles (for Python-side lookup)
     # and declares them as action inputs (for sandbox availability). Callers
@@ -398,11 +402,20 @@ def _declare_docs_bundle(
         bundles = bundles,
         data = bundle_data,
         code_targets = code_targets,
+        code_files = code_files,
         primary_need_id = primary_need_id,
         root_docs_config = root_docs_config,
         is_root_bundle = is_root_bundle,
         visibility = visibility,
         **kwargs
+    )
+
+    # File identities are intrinsic bundle metadata, independent of whether a
+    # coverage report is available. Export the composed view under the bundle's
+    # own internal name so docs() can consume it without a separate user target.
+    code_file_lists = declare_code_file_lists(
+        name = _bundle_internal_target(name, "code_file_lists"),
+        bundle = ":" + name,
     )
 
     # The public provider above represents the complete documentation tree:
@@ -429,6 +442,7 @@ def _declare_docs_bundle(
         primary_need_id = primary_need_id,
         data = bundle_data,
         code_targets = code_targets,
+        code_files = code_files,
         root_docs_config = root_docs_config,
         is_root_bundle = is_root_bundle,
         visibility = visibility,
@@ -451,6 +465,7 @@ def _declare_docs_bundle(
         sourcelinks_json = sourcelinks_json,
         source_bundle = source_bundle,
         local_manifest = local_manifest,
+        code_file_lists = code_file_lists,
     )
 
 def _declare_bundle_local_needs(
@@ -617,11 +632,12 @@ def _sphinx_deps(deps):
     return deps + _missing_requirements(deps)
 
 def _sphinx_runtime_deps(deps):
-    """Add the extensions required by every Sphinx invocation."""
+    """Add the shared Sphinx dependencies and the CLI's summary library."""
     result = _sphinx_deps(deps)
     for fixed_dep in [
         Label("//src:plantuml_for_python"),
         Label("//src/extensions/score_sphinx_bundle:score_sphinx_bundle"),
+        Label("//src/docs_cli:lcov_summary_lib"),
     ]:
         if fixed_dep not in result:
             result.append(fixed_dep)
@@ -766,11 +782,7 @@ def docs(
     # list-valued attributes such as ``data`` and ``tools``.
     metamodel_label = [metamodel] if metamodel else []
 
-    deps = _sphinx_deps(deps)
-    deps = deps + [
-        Label("//src:plantuml_for_python"),
-        Label("//src/extensions/score_sphinx_bundle:score_sphinx_bundle"),
-    ]
+    deps = _sphinx_runtime_deps(deps)
 
     known_good_label = [known_good] if known_good else []
 
@@ -858,14 +870,23 @@ def docs(
         docs_env["KNOWN_GOOD_JSON"] = "$(rlocationpath " + known_good_str + ")"
         docs_data += known_good_label
 
+    # The CLI combines these declared file identities with the optional report
+    # in the workspace when bazel run starts. Coverage collection and summary
+    # generation therefore leave sandboxed Needs inventories independent of
+    # downloaded artifacts. Fast validation uses the base data/environment.
+    coverage_data = docs_data + [root_bundle.code_file_lists]
+    coverage_env = docs_env | {
+        "SCORE_CODE_FILE_LISTS": "$(rlocationpath " + root_bundle.code_file_lists + ")",
+    }
+
     # Generated documentation artifacts may live below ``docs/``.  A
     # py_binary named ``docs`` would own the conflicting Bazel output path
     # ``docs``; expose this binary via the alias below instead.
     _declare_docs_binary(
         name = "_score_docs_cli",
-        data = docs_data,
+        data = coverage_data,
         deps = deps,
-        env = docs_env,
+        env = coverage_env,
         action = "incremental",
     )
 
@@ -891,9 +912,9 @@ def docs(
     )
     _declare_docs_binary(
         name = "live_preview",
-        data = docs_data,
+        data = coverage_data,
         deps = deps,
-        env = docs_env,
+        env = coverage_env,
         action = "live_preview",
     )
 
