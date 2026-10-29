@@ -17,10 +17,6 @@ load("//:docs.bzl", "docs")
 # runtime test load a public docs_bundle export and a needs_json_file from
 # different packages without importing the same Need twice.
 docs(
-    source_dir = "docs",
-    project = "External Needs Inputs",
-    project_url = "https://example.invalid/external-needs-inputs",
-    test_sources = ["src/tests/docs_bzl/scenarios/external_needs_inputs"],
     external_needs = [
         # A docs() label resolves to that producer's local Needs inventory.
         "//src/tests/docs_bzl/scenarios/reference_integration/score_platform:docs",
@@ -29,4 +25,8 @@ docs(
         # A direct inventory file label remains supported for non-bundle inputs.
         "//src/tests/docs_bzl/scenarios/subdirectory_bundle/producer:needs_json_file",
     ],
+    project = "External Needs Inputs",
+    project_url = "https://example.invalid/external-needs-inputs",
+    source_dir = "docs",
+    test_sources = ["src/tests/docs_bzl/scenarios/external_needs_inputs"],
 )

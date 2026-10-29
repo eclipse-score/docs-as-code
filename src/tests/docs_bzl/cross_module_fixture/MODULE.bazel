@@ -11,6 +11,9 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 
-module(name = "score_docs_compatibility_fixture", version = "0.0.1")
+module(
+    name = "score_docs_compatibility_fixture",
+    version = "0.0.1",
+)
 
 bazel_dep(name = "score_docs_as_code", version = "4.6.0")

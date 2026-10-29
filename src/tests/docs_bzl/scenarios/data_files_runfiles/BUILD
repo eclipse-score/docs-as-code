@@ -67,25 +67,29 @@ docs_bundle(
 )
 
 docs(
+    bundles = [
+        {
+            "bundle": ":data_bundle",
+            "mount_at": "data_test",
+            "attach_to": "index",
+        },
+        {
+            "bundle": ":legacy_data_bundle",
+            "mount_at": "legacy_data_test",
+            "attach_to": "index",
+        },
+        {
+            "bundle": ":isolated_source_bundle",
+            "mount_at": "isolated_test",
+            "attach_to": "index",
+        },
+    ],
     source_dir = "docs",
     # Keep this fixture's test-source scope local. The default imports every
     # test report in the repository, including unrelated external-link
     # warnings that would make this focused runtime scenario fail as an
     # accidental side effect of the global test corpus.
     test_sources = ["src/tests/docs_bzl/scenarios/data_files_runfiles"],
-    bundles = [{
-        "bundle": ":data_bundle",
-        "mount_at": "data_test",
-        "attach_to": "index",
-    }, {
-        "bundle": ":legacy_data_bundle",
-        "mount_at": "legacy_data_test",
-        "attach_to": "index",
-    }, {
-        "bundle": ":isolated_source_bundle",
-        "mount_at": "isolated_test",
-        "attach_to": "index",
-    }],
 )
 
 # END docs-bundle-howto: generated-data
