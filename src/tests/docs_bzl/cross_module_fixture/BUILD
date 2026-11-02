@@ -14,7 +14,7 @@
 load("@score_docs_as_code//:docs.bzl", "docs")
 
 docs(
-    source_dir = "docs",
     project = "Score Docs Compatibility Fixture",
     project_url = "https://eclipse-score.github.io/docs-as-code",
+    source_dir = "docs",
 )

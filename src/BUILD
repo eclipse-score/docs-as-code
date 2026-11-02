@@ -40,12 +40,12 @@ filegroup(
         "//src/extensions/score_draw_uml_funcs:all_sources",
         "//src/extensions/score_layout:all_sources",
         "//src/extensions/score_metamodel:all_sources",
+        "//src/extensions/score_metrics:all_sources",
         "//src/extensions/score_mounts:all_sources",
         "//src/extensions/score_source_code_linker:all_sources",
         "//src/extensions/score_sphinx_bundle:all_sources",
         "//src/extensions/score_sphinx_needs_templates:all_sources",
         "//src/extensions/score_sync_toml:all_sources",
-        "//src/extensions/score_metrics:all_sources",
         "//src/helper_lib:all_sources",
     ],
     visibility = ["//visibility:public"],
@@ -93,14 +93,14 @@ compile_pip_requirements(
 
 compile_pip_requirements(
     name = "requirements_py314",
+    srcs = [
+        "requirements.in",
+    ],
     # Keep the Python version selector in pip-compile's generated header so
     # developers regenerate this lock with its matching toolchain.
     env = {
         "CUSTOM_COMPILE_COMMAND": "bazel run --@rules_python//python/config_settings:python_version=3.14 //src:requirements_py314.update",
     },
-    srcs = [
-        "requirements.in",
-    ],
     requirements_txt = "requirements_py314.txt",
     tags = [
         "manual",
