@@ -1331,4 +1331,3 @@ graph_checks:
           - safety == ASIL_B
           - type == aou_req
     explanation: Valid safety analyses should link to at least one same-level or higher-safety requirement, or an Assumption of Use requirement.
-    info_only: true
