@@ -891,12 +891,12 @@ for an overview.
 .. tool_req:: Extract Metadata from Tests
    :id: tool_req__docs_test_metadata_link_levels
    :tags: Testing
-   :version: 2
+   :version: 3
    :implemented: NO
    :parent_covered: YES: Together with tool_req__docs_test_metadata_mandatory_1, tool_req__docs_test_metadata_mandatory_2
    :satisfies: gd_req__verification_checks[version==2]
 
-   Docs-as-Code shall ensure that test cases link to requirements on the correct level.
+   Docs-as-Code shall ensure that test cases link to at least one requirement on the correct level.
    The test level is determined from folder structure.
 
    .. list-table::
