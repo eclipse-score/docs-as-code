@@ -1268,7 +1268,6 @@ graph_checks:
     check_one:
       satisfied_by_back: safety != QM
     explanation: A safety relevant feature or component must have at least one safety requirement allocated via satisfied_by.
-    info_only: true
 
   # req-Id: tool_req__docs_arch_link_safety_to_req
   tool_req__docs_arch_link_safety_to_req:
@@ -1278,7 +1277,6 @@ graph_checks:
     check_one:
       fulfils: safety != QM
     explanation: A safety relevant architecture element must be linked to at least one safety requirement via fulfils.
-    info_only: true
 
   # req-Id: tool_req__docs_req_arch_link_safety_to_arch
   tool_req__docs_req_arch_link_safety_to_arch:
