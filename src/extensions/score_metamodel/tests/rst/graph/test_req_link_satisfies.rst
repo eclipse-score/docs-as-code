@@ -15,7 +15,7 @@
 
 .. test_metadata::
    :id: test_metadata__req_link_satisfies_allowed
-   :partially_verifies_list: tool_req__docs_req_link_satisfies_allowed[version==1]
+   :fully_verifies_list: tool_req__docs_req_link_satisfies_allowed[version==1]
    :test_type: requirements_based
    :derivation_technique: requirements_based
 
@@ -23,8 +23,7 @@
    The table rows Feature Requirement -> Stakeholder Requirement and
    Component Requirement -> Feature Requirement are implemented via
    ``derived_from`` because ``satisfies`` is hard-deprecated for those types.
-   Having at least one link is enforced for ``tool_req``.
-   It is not yet enforced for ``gd_req`` (TODO in metamodel.yaml).
+   Having at least one link is enforced for both ``tool_req`` and ``gd_req``.
 
 
 .. Setup: link targets used by the tests below.
@@ -40,6 +39,7 @@
 
 .. gd_req:: Process requirement
    :id: gd_req__test_satisfies
+   :satisfies: wf__test_satisfies
 
 .. workproduct:: Workproduct
    :id: wp__test_satisfies
@@ -129,6 +129,13 @@
    :id: comp_req__test_derived_from_bad
    :derived_from: stkh_req__test_satisfies
    :expect: comp_req__test_derived_from_bad: references 'stkh_req__test_satisfies' as 'derived_from', but it must reference Feature Requirement (feat_req).
+
+   Some content.
+
+
+.. gd_req:: Process requirement without any satisfies link
+   :id: gd_req__test_missing_satisfies
+   :expect: gd_req__test_missing_satisfies: is missing required link: `satisfies`.
 
    Some content.
 

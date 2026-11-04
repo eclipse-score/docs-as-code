@@ -139,10 +139,10 @@ needs_types:
     mandatory_options:
       # req-Id: tool_req__docs_common_attr_description
       content: ^[\s\S]+$
-    optional_links:
+    mandatory_links:
       # req-Id: tool_req__docs_req_link_satisfies_allowed
-      # TODO: fix once process_description is fixed
       satisfies: workflow
+    optional_links:
       complies: std_req
     tags:
       - requirement
