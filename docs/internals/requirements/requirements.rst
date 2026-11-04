@@ -911,7 +911,7 @@ for an overview.
        * - `platform_integration_tests/`
          - Platform
          - `stkh_req`
-       * - `score/tests/`
+       * - `score/tests/` or `feature_integration_tests/`
          - Feature
          - `feat`, `feat_req`, `feat_arc_dyn`, `feat_arc_sta`, `mod`, `mod_view_dyn`, `mod_view_sta`, `tool_req`
        * - `score/.*/tests/`
