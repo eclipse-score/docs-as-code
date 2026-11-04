@@ -1330,3 +1330,13 @@ graph_checks:
         safety == ASIL_B
     explanation: Valid safety analyses should link to at least one same-level or higher-safety requirement.
     info_only: true
+
+  # req-Id: tool_req__arch_consistency_interf
+  tool_req__arch_consistency_interf:
+    needs:
+      include: logic_arc_int
+      condition: included_by != []
+    check_one:
+      implements_back: id != ""
+    explanation: A logical interface included by a feature must be implemented by at least one component.
+    info_only: true
