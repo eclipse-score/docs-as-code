@@ -896,7 +896,9 @@ for an overview.
    :parent_covered: YES: Together with tool_req__docs_test_metadata_mandatory_1, tool_req__docs_test_metadata_mandatory_2
    :satisfies: gd_req__verification_checks[version==2]
 
-   Docs-as-Code shall ensure that test cases link to at least one requirement on the correct level.
+   Docs-as-Code shall ensure that test cases use only allowed requirement types for their test level.
+   Platform Integration Tests shall link to at least one stakeholder requirement.
+   For other levels, any set verification links shall use the allowed types for that level.
    The test level is determined from folder structure.
 
    .. list-table::
