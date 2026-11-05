@@ -43,5 +43,6 @@
    :safety_affected: NO
    :security_affected: NO
    :tcl: LOW
+   :tool_version: v1.0
    :realizes: wp__doc_types
    :expect_not: is missing required attribute, is missing required link, does not follow pattern

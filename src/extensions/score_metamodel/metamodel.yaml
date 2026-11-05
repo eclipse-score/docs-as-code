@@ -246,6 +246,8 @@ needs_types:
       status: ^(draft|evaluated|qualified|released|rejected)$
       # req-Id: tool_req__docs_tvr_security
       security_affected: "^(YES|NO)$"
+      # req-Id: tool_req__docs_tvr_version
+      tool_version: ^.+$
     optional_options:
       # These summary fields are rendered from the owned malfunction graph by
       # the structured TVR workflow. They are optional so process templates
@@ -257,9 +259,6 @@ needs_types:
       author: ^.*$
       approver: ^.*$
       reviewer: ^.*$
-      # FIXME: temp optional for migration. Will be made mandatory in future releases.
-      # req-Id: tool_req__docs_tvr_version
-      tool_version: ^.*$
     optional_links:
       realizes: workproduct
     parts: 2
