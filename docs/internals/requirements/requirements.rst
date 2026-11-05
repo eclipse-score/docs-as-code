@@ -835,7 +835,7 @@ Testing
    :version: 2
    :implemented: PARTIAL
    :parent_covered: YES: Together with tool_req__docs_test_metadata_mandatory_2, tool_req__docs_test_metadata_link_levels
-   :satisfies: gd_req__verification_checks[version==1]
+   :satisfies: gd_req__verification_checks[version==2]
 
    Docs-as-Code shall ensure that each test case has TestType and DerivationTechnique set.
    Each may contain multiple comma-separated tags of the following:
@@ -852,13 +852,13 @@ Testing
          - unit, component, feature
        * - `test_type`
          - `requirements-based`
-         - component, feature, platform
+         - all
        * - `derivation_technique`
          - `requirements-analysis`
          - all
        * - `derivation_technique`
          - `boundary-values`
-         - component, feature, platform
+         - all
        * - `derivation_technique`
          - `equivalence-classes`
          - all
@@ -870,7 +870,7 @@ Testing
          - all
        * - `derivation_technique`
          - `explorative-testing`
-         - all
+         - feature, platform
 
 See `more verification methods <https://eclipse-score.github.io/score/main/platform_management_plan/software_verification.html#verification-methods>`__
 for an overview.
@@ -881,7 +881,7 @@ for an overview.
    :version: 1
    :implemented: PARTIAL
    :parent_covered: YES: Together with tool_req__docs_test_metadata_mandatory_1, tool_req__docs_test_metadata_link_levels
-   :satisfies: gd_req__verification_checks[version==1]
+   :satisfies: gd_req__verification_checks[version==2]
    :status: invalid
 
    Docs-as-Code shall ensure that each test case has a non empty description.
@@ -891,12 +891,14 @@ for an overview.
 .. tool_req:: Extract Metadata from Tests
    :id: tool_req__docs_test_metadata_link_levels
    :tags: Testing
-   :version: 2
+   :version: 3
    :implemented: NO
    :parent_covered: YES: Together with tool_req__docs_test_metadata_mandatory_1, tool_req__docs_test_metadata_mandatory_2
-   :satisfies: gd_req__verification_checks[version==1]
+   :satisfies: gd_req__verification_checks[version==2]
 
-   Docs-as-Code shall ensure that test cases link to requirements on the correct level.
+   Docs-as-Code shall ensure that test cases use only allowed requirement types for their test level.
+   Platform Integration Tests shall link to at least one stakeholder requirement.
+   For other levels, any set verification links shall use the allowed types for that level.
    The test level is determined from folder structure.
 
    .. list-table::
@@ -909,7 +911,7 @@ for an overview.
        * - `platform_integration_tests/`
          - Platform
          - `stkh_req`
-       * - `score/tests/`
+       * - `score/tests/` or `feature_integration_tests/`
          - Feature
          - `feat`, `feat_req`, `feat_arc_dyn`, `feat_arc_sta`, `mod`, `mod_view_dyn`, `mod_view_sta`, `tool_req`
        * - `score/.*/tests/`
