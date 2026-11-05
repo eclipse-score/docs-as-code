@@ -12,7 +12,8 @@
 # *******************************************************************************
 
 load("@aspect_rules_py//py:defs.bzl", "py_library")
-load("@rules_java//java:java_binary.bzl", "java_binary")
+load(":plantuml.bzl", "plantuml_binary")
+load(":plantuml_toolchains.bzl", "plantuml_toolchain")
 load("@rules_python//python:pip.bzl", "compile_pip_requirements")
 
 # These are only exported because they're passed as files to the //docs.bzl
@@ -51,14 +52,64 @@ filegroup(
     visibility = ["//visibility:public"],
 )
 
-java_binary(
+toolchain_type(name = "plantuml_toolchain_type")
+
+plantuml_toolchain(
+    name = "_plantuml_toolchain_linux_amd64_impl",
+    binary = "@plantuml_native_linux_amd64//:plantuml",
+    runtime = "@plantuml_native_linux_amd64//:runtime",
+)
+toolchain(
+    name = "_plantuml_toolchain_linux_amd64",
+    toolchain = ":_plantuml_toolchain_linux_amd64_impl",
+    toolchain_type = ":plantuml_toolchain_type",
+    exec_compatible_with = ["@platforms//os:linux", "@platforms//cpu:x86_64"],
+    target_compatible_with = ["@platforms//os:linux", "@platforms//cpu:x86_64"],
+)
+
+plantuml_toolchain(
+    name = "_plantuml_toolchain_linux_arm64_impl",
+    binary = "@plantuml_native_linux_arm64//:plantuml",
+    runtime = "@plantuml_native_linux_arm64//:runtime",
+)
+toolchain(
+    name = "_plantuml_toolchain_linux_arm64",
+    toolchain = ":_plantuml_toolchain_linux_arm64_impl",
+    toolchain_type = ":plantuml_toolchain_type",
+    exec_compatible_with = ["@platforms//os:linux", "@platforms//cpu:aarch64"],
+    target_compatible_with = ["@platforms//os:linux", "@platforms//cpu:aarch64"],
+)
+
+plantuml_toolchain(
+    name = "_plantuml_toolchain_macos_arm64_impl",
+    binary = "@plantuml_native_macos_arm64//:plantuml",
+    runtime = "@plantuml_native_macos_arm64//:runtime",
+)
+toolchain(
+    name = "_plantuml_toolchain_macos_arm64",
+    toolchain = ":_plantuml_toolchain_macos_arm64_impl",
+    toolchain_type = ":plantuml_toolchain_type",
+    exec_compatible_with = ["@platforms//os:macos", "@platforms//cpu:aarch64"],
+    target_compatible_with = ["@platforms//os:macos", "@platforms//cpu:aarch64"],
+)
+
+plantuml_toolchain(
+    name = "_plantuml_toolchain_windows_amd64_impl",
+    binary = "@plantuml_native_windows_amd64//:plantuml.exe",
+    runtime = "@plantuml_native_windows_amd64//:runtime",
+    windows = True,
+)
+toolchain(
+    name = "_plantuml_toolchain_windows_amd64",
+    toolchain = ":_plantuml_toolchain_windows_amd64_impl",
+    toolchain_type = ":plantuml_toolchain_type",
+    exec_compatible_with = ["@platforms//os:windows", "@platforms//cpu:x86_64"],
+    target_compatible_with = ["@platforms//os:windows", "@platforms//cpu:x86_64"],
+)
+
+plantuml_binary(
     name = "plantuml",
-    jvm_flags = ["-Djava.awt.headless=true"],
-    main_class = "net.sourceforge.plantuml.Run",
     visibility = ["//visibility:public"],
-    runtime_deps = [
-        "@plantuml//jar",
-    ],
 )
 
 # This makes it possible for py_venv to depend on plantuml.

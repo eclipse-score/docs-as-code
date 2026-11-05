@@ -10,7 +10,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-import matplotlib
 from sphinx.application import Sphinx
 
 from src.helper_lib import config_setdefault
@@ -45,6 +44,17 @@ score_extensions = [
 
 
 def setup(app: Sphinx) -> dict[str, object]:
+    # Matplotlib consults HOME during import. Bazel sandboxes may not have a
+    # home directory, so use a writable config/cache location beside the build.
+    import os
+    from pathlib import Path
+
+    mpl_config_dir = Path(os.environ.get("MPLCONFIGDIR", ".matplotlib"))
+    mpl_config_dir.mkdir(parents=True, exist_ok=True)
+    os.environ["MPLCONFIGDIR"] = str(mpl_config_dir.resolve())
+
+    import matplotlib
+
     matplotlib.rcParamsDefault["savefig.bbox"] = "tight"
 
     # Keep the project URL available when Sphinx runs in configuration-free
