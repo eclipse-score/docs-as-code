@@ -3948,7 +3948,7 @@
     "FullyVerifies": null
   },
   {
-    "name": "test_graph_checks__test_eval_need_condition_invalid_type_raises_value_error",
+    "name": "test_graph_checks__test_link_conditions_compare_against_an_empty_list[empty-equals]",
     "file": "src/extensions/score_metamodel/tests/test_graph_checks.py",
     "line": "85",
     "result": "passed",
@@ -3962,9 +3962,65 @@
     "FullyVerifies": null
   },
   {
+    "name": "test_graph_checks__test_link_conditions_compare_against_an_empty_list[empty-differs]",
+    "file": "src/extensions/score_metamodel/tests/test_graph_checks.py",
+    "line": "85",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_graph_checks__test_link_conditions_compare_against_an_empty_list[linked-equals]",
+    "file": "src/extensions/score_metamodel/tests/test_graph_checks.py",
+    "line": "85",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_graph_checks__test_link_conditions_compare_against_an_empty_list[linked-differs]",
+    "file": "src/extensions/score_metamodel/tests/test_graph_checks.py",
+    "line": "85",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_graph_checks__test_eval_need_condition_invalid_type_raises_value_error",
+    "file": "src/extensions/score_metamodel/tests/test_graph_checks.py",
+    "line": "109",
+    "result": "passed",
+    "repo_name": null,
+    "hash": null,
+    "url": null,
+    "TestType": null,
+    "DerivationTechnique": null,
+    "result_text": "",
+    "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
     "name": "test_graph_checks__test_eval_need_condition_not_with_wrong_operand_count_raises_value_error",
     "file": "src/extensions/score_metamodel/tests/test_graph_checks.py",
-    "line": "94",
+    "line": "118",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3978,7 +4034,7 @@
   {
     "name": "test_graph_checks__test_eval_need_condition_and_or_xor_branches",
     "file": "src/extensions/score_metamodel/tests/test_graph_checks.py",
-    "line": "107",
+    "line": "131",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -3992,7 +4048,7 @@
   {
     "name": "test_graph_checks__test_filter_needs_by_criteria_invalid",
     "file": "src/extensions/score_metamodel/tests/test_graph_checks.py",
-    "line": "140",
+    "line": "164",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4006,7 +4062,7 @@
   {
     "name": "test_graph_checks__test_filter_needs_by_criteria_unknown_type_logs_warning",
     "file": "src/extensions/score_metamodel/tests/test_graph_checks.py",
-    "line": "173",
+    "line": "197",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4020,7 +4076,7 @@
   {
     "name": "test_graph_checks__test_invalid_check_keys_raise_value_error[missing]",
     "file": "src/extensions/score_metamodel/tests/test_graph_checks.py",
-    "line": "223",
+    "line": "247",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4034,7 +4090,7 @@
   {
     "name": "test_graph_checks__test_invalid_check_keys_raise_value_error[old_check_key]",
     "file": "src/extensions/score_metamodel/tests/test_graph_checks.py",
-    "line": "223",
+    "line": "247",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4048,7 +4104,7 @@
   {
     "name": "test_graph_checks__test_invalid_check_keys_raise_value_error[both]",
     "file": "src/extensions/score_metamodel/tests/test_graph_checks.py",
-    "line": "223",
+    "line": "247",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4062,7 +4118,7 @@
   {
     "name": "test_graph_checks__test_check_all_warns_once_per_failing_parent",
     "file": "src/extensions/score_metamodel/tests/test_graph_checks.py",
-    "line": "243",
+    "line": "267",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4076,7 +4132,7 @@
   {
     "name": "test_graph_checks__test_check_one[one_fulfills]",
     "file": "src/extensions/score_metamodel/tests/test_graph_checks.py",
-    "line": "255",
+    "line": "279",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4090,7 +4146,7 @@
   {
     "name": "test_graph_checks__test_check_one[none_fulfill]",
     "file": "src/extensions/score_metamodel/tests/test_graph_checks.py",
-    "line": "255",
+    "line": "279",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4104,7 +4160,7 @@
   {
     "name": "test_graph_checks__test_check_one[no_parents]",
     "file": "src/extensions/score_metamodel/tests/test_graph_checks.py",
-    "line": "255",
+    "line": "279",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4118,7 +4174,7 @@
   {
     "name": "test_graph_checks__test_check_one[unknown_parent]",
     "file": "src/extensions/score_metamodel/tests/test_graph_checks.py",
-    "line": "255",
+    "line": "279",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4132,7 +4188,7 @@
   {
     "name": "test_graph_checks__test_info_only[all_default]",
     "file": "src/extensions/score_metamodel/tests/test_graph_checks.py",
-    "line": "279",
+    "line": "303",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4146,7 +4202,7 @@
   {
     "name": "test_graph_checks__test_info_only[all_false]",
     "file": "src/extensions/score_metamodel/tests/test_graph_checks.py",
-    "line": "279",
+    "line": "303",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4160,7 +4216,7 @@
   {
     "name": "test_graph_checks__test_info_only[all_true]",
     "file": "src/extensions/score_metamodel/tests/test_graph_checks.py",
-    "line": "279",
+    "line": "303",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4174,7 +4230,7 @@
   {
     "name": "test_graph_checks__test_info_only[one_default]",
     "file": "src/extensions/score_metamodel/tests/test_graph_checks.py",
-    "line": "279",
+    "line": "303",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4188,7 +4244,7 @@
   {
     "name": "test_graph_checks__test_info_only[one_true]",
     "file": "src/extensions/score_metamodel/tests/test_graph_checks.py",
-    "line": "279",
+    "line": "303",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -4202,7 +4258,7 @@
   {
     "name": "test_graph_checks__test_info_only_keeps_message",
     "file": "src/extensions/score_metamodel/tests/test_graph_checks.py",
-    "line": "302",
+    "line": "326",
     "result": "passed",
     "repo_name": null,
     "hash": null,
@@ -5373,6 +5429,20 @@
     "DerivationTechnique": "explorative-testing",
     "result_text": "",
     "PartiallyVerifies": null,
+    "FullyVerifies": null
+  },
+  {
+    "name": "test_rules_file_based__test_rst_files[architecture/test_arch_consistency_interf.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/architecture/test_arch_consistency_interf.rst",
+    "line": "15",
+    "result": "passed",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": "",
+    "TestType": "interface-test",
+    "DerivationTechnique": "explorative-testing",
+    "result_text": "",
+    "PartiallyVerifies": "tool_req__arch_consistency_interf[version==1]",
     "FullyVerifies": null
   },
   {

@@ -2073,6 +2073,21 @@
         }
       },
       {
+        "need": "tool_req__arch_consistency_interf",
+        "links": {
+          "CodeLinks": [
+            {
+              "file": "src/extensions/score_metamodel/metamodel.yaml",
+              "line": 1334,
+              "tag": "# req-Id:",
+              "need": "tool_req__arch_consistency_interf",
+              "full_line": "# req-Id: tool_req__arch_consistency_interf"
+            }
+          ],
+          "TestLinks": []
+        }
+      },
+      {
         "need": "tool_req__docs_saf_attrs_mandatory",
         "links": {
           "CodeLinks": [
@@ -3305,6 +3320,23 @@
               "line": 16,
               "need": "tool_req__docs_stdreq_types[version==1]",
               "verify_type": "fully",
+              "result": "passed",
+              "result_text": ""
+            }
+          ]
+        }
+      },
+      {
+        "need": "tool_req__arch_consistency_interf[version==1]",
+        "links": {
+          "CodeLinks": [],
+          "TestLinks": [
+            {
+              "name": "test_rules_file_based__test_rst_files[architecture/test_arch_consistency_interf.rst]",
+              "file": "src/extensions/score_metamodel/tests/rst/architecture/test_arch_consistency_interf.rst",
+              "line": 15,
+              "need": "tool_req__arch_consistency_interf[version==1]",
+              "verify_type": "partially",
               "result": "passed",
               "result_text": ""
             }
