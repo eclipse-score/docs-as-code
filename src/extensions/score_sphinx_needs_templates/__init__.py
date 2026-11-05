@@ -335,13 +335,35 @@ class _WorkproductRows:
     Each row links the work product, its kind, the realising document and its
     status. Both document cells are needtables over the same filter, differing
     only in ``:columns:``, so a missing document renders as an empty cell.
+
+    Documents are matched by the slug occurring in their ID. ``sibling_titles``
+    lists the titles of all elements in the same report; a document whose ID
+    also contains a longer sibling slug (e.g. ``timedaemon`` for ``time``) is
+    left to that sibling, so the longest match wins.
     """
 
-    def __call__(self, slug_norm: str, workproducts: list[list[str]]) -> str:
+    def __call__(
+        self,
+        slug_norm: str,
+        workproducts: list[list[str]],
+        sibling_titles: list[str] | None = None,
+    ) -> str:
+        id_norm = 'id.replace("_", "").lower()'
+        longer_slugs = sorted(
+            {
+                slug
+                for slug in (
+                    title.replace("_", "").replace(" ", "").lower()
+                    for title in sibling_titles or []
+                )
+                if slug != slug_norm and slug_norm in slug
+            }
+        )
+        exclusions = "".join(f' and "{slug}" not in {id_norm}' for slug in longer_slugs)
         rows: list[str] = []
         for wp_id, kind in workproducts:
             doc_filter = (
-                f'type == "document" and "{slug_norm}" in id.replace("_", "").lower()'
+                f'type == "document" and "{slug_norm}" in {id_norm}{exclusions}'
                 f' and "{wp_id}" in realizes'
             )
             rows.append(

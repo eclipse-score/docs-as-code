@@ -325,6 +325,24 @@ def test_workproduct_rows_filter_by_slug_and_work_product() -> None:
     assert rows.count('and "wp__fmea" in realizes') == 2
 
 
+def test_workproduct_rows_leave_documents_to_longer_sibling_slug() -> None:
+    workproduct_rows = vars(templates)["_WorkproductRows"]()
+
+    rows = workproduct_rows(
+        "time", [["wp__dfa", "DFA"]], ["Time", "Time Daemon", "time_slave", "Other"]
+    )
+
+    assert rows.count('"time" in id.replace("_", "").lower()') == 2
+    assert rows.count('"timedaemon" not in id.replace("_", "").lower()') == 2
+    assert rows.count('"timeslave" not in id.replace("_", "").lower()') == 2
+    assert '"other"' not in rows
+
+    longest = workproduct_rows(
+        "timedaemon", [["wp__dfa", "DFA"]], ["Time", "Time Daemon"]
+    )
+    assert "not in" not in longest
+
+
 @add_test_properties(
     partially_verifies=[],
     test_type="interface-test",

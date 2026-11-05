@@ -161,6 +161,8 @@ Component Overview
    :style: table
    :sort: safety
 
+{# All module components, so a document is credited to the longest matching slug only. #}
+{% set module_component_titles = linked_needs(module_id, "includes")|map(attribute="title")|list %}
 {% for component in components_in_mod %}
 {% set component_id = component["id"] %}
 {% set component_title = component["title"] %}
@@ -271,5 +273,5 @@ this component. A dash (``—``) means the corresponding document is missing.
         - Kind
         - Realized by
         - Status
-{{ workproduct_rows(component_slug_norm, component_workproducts) }}
+{{ workproduct_rows(component_slug_norm, component_workproducts, module_component_titles) }}
 {% endfor %}
