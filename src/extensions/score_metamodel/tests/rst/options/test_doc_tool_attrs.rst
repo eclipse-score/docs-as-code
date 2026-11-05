@@ -15,7 +15,7 @@
 
 .. test_metadata:: Document and TVR Attribute Validation
    :id: test_metadata__doc_tool_attrs
-   :fully_verifies_list: tool_req__docs_doc_generic_mandatory,tool_req__docs_tvr_safety,tool_req__docs_tvr_security,tool_req__docs_tvr_status,tool_req__docs_tvr_confidence_level
+   :fully_verifies_list: tool_req__docs_doc_generic_mandatory,tool_req__docs_doc_generic_optional,tool_req__docs_tvr_safety,tool_req__docs_tvr_security,tool_req__docs_tvr_status,tool_req__docs_tvr_confidence_level
    :partially_verifies_list: tool_req__docs_tvr_version
    :test_type: requirements_based
    :derivation_technique: requirements_based
@@ -24,6 +24,9 @@
    Verification Reports (doc_tool), plus validation of TVR summary attribute
    values, as defined in the metamodel. Every mandatory attribute is
    exercised with an accepted value, an unaccepted value, and an omitted value.
+
+   Generic Documents accept optional belongs_to links to modules, components,
+   and features, reject workproduct targets, and remain valid without an owner.
 
    The tool_version attribute is not enforced yet for migration purposes.
 

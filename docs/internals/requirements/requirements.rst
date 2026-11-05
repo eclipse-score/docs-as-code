@@ -346,6 +346,24 @@ Versioning
   * realizes
 
 
+.. tool_req:: Optional links of Generic Documents
+  :id: tool_req__docs_doc_generic_optional
+  :tags: Documents
+  :implemented: YES
+  :version: 1
+  :satisfies: gd_req__doc_attributes_manual[version==1]
+  :parent_covered: NO: The process requirement does not specify optional document ownership.
+
+  Docs-as-Code shall support an optional ``belongs_to`` link for Generic
+  Documents (``document``). When present, the link shall only target Modules
+  (``mod``), Components (``comp``), or Features (``feat``). Omitting the link
+  shall not produce a missing-link finding.
+
+  .. note::
+    Optional document ownership was agreed in the process meeting documented
+    in `#940 <https://github.com/eclipse-score/docs-as-code/issues/940>`_.
+
+
 --------
  Mapping
 --------
