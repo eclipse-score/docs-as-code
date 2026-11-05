@@ -161,8 +161,8 @@ Component Overview
    :style: table
    :sort: safety
 
-{# All module components, so a document is credited to the longest matching slug only. #}
-{% set module_component_titles = linked_needs(module_id, "includes")|map(attribute="title")|list %}
+{# All module components, so a document is credited to the longest matching slug only. -#}
+{% set module_component_titles = linked_needs(module_id, "includes")|map(attribute="title")|list -%}
 {% for component in components_in_mod %}
 {% set component_id = component["id"] %}
 {% set component_title = component["title"] %}
