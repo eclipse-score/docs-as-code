@@ -852,13 +852,13 @@ Testing
          - unit, component, feature
        * - `test_type`
          - `requirements-based`
-         - component, feature, platform
+         - all
        * - `derivation_technique`
          - `requirements-analysis`
          - all
        * - `derivation_technique`
          - `boundary-values`
-         - component, feature, platform
+         - all
        * - `derivation_technique`
          - `equivalence-classes`
          - all
@@ -870,7 +870,7 @@ Testing
          - all
        * - `derivation_technique`
          - `explorative-testing`
-         - all
+         - feature, platform
 
 See `more verification methods <https://eclipse-score.github.io/score/main/platform_management_plan/software_verification.html#verification-methods>`__
 for an overview.
