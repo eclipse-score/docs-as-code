@@ -82,6 +82,30 @@ def test_eval_need_check_missing_attribute_logs_and_returns_false() -> None:
     # assert "Attribute not defined: priority" in msg
 
 
+@pytest.mark.parametrize(
+    ("links", "condition", "expected"),
+    [
+        ([], "included_by == []", True),
+        ([], "included_by != []", False),
+        (["feat__test"], "included_by == []", False),
+        (["feat__test"], "included_by != []", True),
+    ],
+    ids=["empty-equals", "empty-differs", "linked-equals", "linked-differs"],
+)
+def test_link_conditions_compare_against_an_empty_list(
+    links: list[str], condition: str, expected: bool
+) -> None:
+    """Empty-list literals must select needs by link presence, not string equality."""
+    log = fake_check_logger()
+
+    result = graph_checks.eval_need_condition(
+        test_need(included_by=links), condition, log
+    )
+
+    assert result is expected
+    assert log.warnings == 0
+
+
 def test_eval_need_condition_invalid_type_raises_value_error() -> None:
     """Raise error for condition values that are neither string nor dict."""
     log = fake_check_logger()
