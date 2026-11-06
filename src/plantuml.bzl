@@ -26,6 +26,9 @@ if [[ -n \"${{RUNFILES_DIR:-}}\" ]]; then
   runfiles=\"$RUNFILES_DIR\"
 elif [[ -d \"$0.runfiles\" ]]; then
   runfiles=\"$0.runfiles\"
+elif [[ \"$0\" == *.runfiles/* ]]; then
+  # Sphinx/IDE launches this tool from a containing runfiles tree.
+  runfiles=\"${{0%.runfiles/*}}.runfiles\"
 else
   echo \"Cannot locate PlantUML runfiles directory\" >&2
   exit 1
