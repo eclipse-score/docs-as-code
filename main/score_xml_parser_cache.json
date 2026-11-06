@@ -387,6 +387,18 @@
     "name": "test_rules_file_based__test_rst_files[options/test_doc_tool_attrs.rst]",
     "file": "src/extensions/score_metamodel/tests/rst/options/test_doc_tool_attrs.rst",
     "line": 16,
+    "need": "tool_req__docs_doc_generic_optional",
+    "verify_type": "fully",
+    "result": "passed",
+    "result_text": "",
+    "repo_name": "local_repo",
+    "hash": "",
+    "url": ""
+  },
+  {
+    "name": "test_rules_file_based__test_rst_files[options/test_doc_tool_attrs.rst]",
+    "file": "src/extensions/score_metamodel/tests/rst/options/test_doc_tool_attrs.rst",
+    "line": 16,
     "need": "tool_req__docs_tvr_safety",
     "verify_type": "fully",
     "result": "passed",

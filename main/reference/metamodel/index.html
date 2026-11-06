@@ -1485,6 +1485,9 @@ comp_sec_ana ..&gt; comp_req : mitigated_by
 comp_sec_ana ..&gt; aou_req : mitigated_by
 doc_tool ..&gt; workproduct : realizes
 document --&gt; workproduct : realizes
+document ..&gt; mod : belongs_to
+document ..&gt; comp : belongs_to
+document ..&gt; feat : belongs_to
 feat ..&gt; logic_arc_int : includes
 feat ..&gt; logic_arc_int_op : includes
 feat ..&gt; logic_arc_int : provides
@@ -2205,6 +2208,21 @@ class comp_req {
   +valid_from [optional]*
   +valid_until [optional]*
 }
+class document {
+  +id
+  +safety
+  +security
+  +status
+  +version
+  +approver [optional]*
+  +author [optional]*
+  +bazel_target [optional]*
+  +bazel_type [optional]*
+  +report_version [optional]*
+  +reviewer [optional]*
+  +source_code_link [optional]*
+  +testlink [optional]*
+}
 class feat {
   +id
   +safety
@@ -2268,6 +2286,7 @@ comp ..&gt; real_arc_int_op : uses
 comp_arc_dyn --&gt; comp : belongs_to
 comp_arc_sta --&gt; comp : belongs_to
 comp_req --&gt; comp : satisfied_by
+document ..&gt; comp : belongs_to
 mod --&gt; comp : includes
 mod_view_sta ..&gt; comp : includes
 style aou_req fill:#FCFCFC,stroke:#666,color:#000
@@ -2285,6 +2304,7 @@ click comp href &quot;#comp&quot; &quot;Open comp details&quot;
 click comp_arc_dyn href &quot;#comp-arc-dyn&quot; &quot;Open comp_arc_dyn details&quot;
 click comp_arc_sta href &quot;#comp-arc-sta&quot; &quot;Open comp_arc_sta details&quot;
 click comp_req href &quot;#comp-req&quot; &quot;Open comp_req details&quot;
+click document href &quot;#document&quot; &quot;Open document details&quot;
 click feat href &quot;#feat&quot; &quot;Open feat details&quot;
 click logic_arc_int href &quot;#logic-arc-int&quot; &quot;Open logic_arc_int details&quot;
 click mod href &quot;#mod&quot; &quot;Open mod details&quot;
@@ -4018,6 +4038,17 @@ config:
 ---
 classDiagram
   direction BT
+class comp {
+  +id
+  +safety
+  +security
+  +status
+  +version
+  +bazel_target [optional]*
+  +bazel_type [optional]*
+  +source_code_link [optional]*
+  +testlink [optional]*
+}
 class document {
   +id
   +safety
@@ -4033,6 +4064,29 @@ class document {
   +source_code_link [optional]*
   +testlink [optional]*
 }
+class feat {
+  +id
+  +safety
+  +security
+  +status
+  +version
+  +bazel_target [optional]*
+  +bazel_type [optional]*
+  +source_code_link [optional]*
+  +testlink [optional]*
+}
+class mod {
+  +id
+  +version
+  +bazel_target [optional]*
+  +bazel_type [optional]*
+  +maturity [optional]*
+  +safety [optional]*
+  +security [optional]*
+  +source_code_link [optional]*
+  +status [optional]*
+  +testlink [optional]*
+}
 class workproduct {
   +id
   +status
@@ -4043,9 +4097,18 @@ class workproduct {
   +testlink [optional]*
 }
 document --&gt; workproduct : realizes
+document ..&gt; mod : belongs_to
+document ..&gt; comp : belongs_to
+document ..&gt; feat : belongs_to
+style comp fill:#D5E8D4,stroke:#666,color:#000
+style feat fill:#FFF2CC,stroke:#666,color:#000
+style mod fill:#D5E8D4,stroke:#666,color:#000
 style workproduct fill:#E1D5E7,stroke:#666,color:#000
 style document fill:#FFFFFF,stroke:#000,stroke-width:3px,color:#000
+click comp href &quot;#comp&quot; &quot;Open comp details&quot;
 click document href &quot;#document&quot; &quot;Open document details&quot;
+click feat href &quot;#feat&quot; &quot;Open feat details&quot;
+click mod href &quot;#mod&quot; &quot;Open mod details&quot;
 click workproduct href &quot;#workproduct&quot; &quot;Open workproduct details&quot;
     </pre><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
 <summary class="sd-summary-title sd-card-header">
@@ -4127,6 +4190,10 @@ click workproduct href &quot;#workproduct&quot; &quot;Open workproduct details&q
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">realizes</span></code></p></td>
 <td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">workproduct</span></code></p></td>
 </tr>
+<tr class="row-odd"><td><p class="sd-card-text">Optional</p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">belongs_to</span></code></p></td>
+<td><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">mod,</span> <span class="pre">comp,</span> <span class="pre">feat</span></code></p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -4151,6 +4218,21 @@ class comp {
   +version
   +bazel_target [optional]*
   +bazel_type [optional]*
+  +source_code_link [optional]*
+  +testlink [optional]*
+}
+class document {
+  +id
+  +safety
+  +security
+  +status
+  +version
+  +approver [optional]*
+  +author [optional]*
+  +bazel_target [optional]*
+  +bazel_type [optional]*
+  +report_version [optional]*
+  +reviewer [optional]*
   +source_code_link [optional]*
   +testlink [optional]*
 }
@@ -4227,6 +4309,7 @@ class logic_arc_int_op {
   +testlink [optional]*
 }
 comp --&gt; feat : belongs_to
+document ..&gt; feat : belongs_to
 feat ..&gt; logic_arc_int : includes
 feat ..&gt; logic_arc_int_op : includes
 feat ..&gt; logic_arc_int : provides
@@ -4245,6 +4328,7 @@ style logic_arc_int fill:#FFF2CC,stroke:#666,color:#000
 style logic_arc_int_op fill:#FFF2CC,stroke:#666,color:#000
 style feat fill:#FFF2CC,stroke:#000,stroke-width:3px,color:#000
 click comp href &quot;#comp&quot; &quot;Open comp details&quot;
+click document href &quot;#document&quot; &quot;Open document details&quot;
 click feat href &quot;#feat&quot; &quot;Open feat details&quot;
 click feat_arc_dyn href &quot;#feat-arc-dyn&quot; &quot;Open feat_arc_dyn details&quot;
 click feat_arc_sta href &quot;#feat-arc-sta&quot; &quot;Open feat_arc_sta details&quot;
@@ -6554,6 +6638,21 @@ class comp {
   +source_code_link [optional]*
   +testlink [optional]*
 }
+class document {
+  +id
+  +safety
+  +security
+  +status
+  +version
+  +approver [optional]*
+  +author [optional]*
+  +bazel_target [optional]*
+  +bazel_type [optional]*
+  +report_version [optional]*
+  +reviewer [optional]*
+  +source_code_link [optional]*
+  +testlink [optional]*
+}
 class mod {
   +id
   +version
@@ -6598,6 +6697,7 @@ class mod_view_sta {
   +source_code_link [optional]*
   +testlink [optional]*
 }
+document ..&gt; mod : belongs_to
 mod --&gt; comp : includes
 mod_ver_report --&gt; mod : belongs_to
 mod_view_dyn ..&gt; mod : belongs_to
@@ -6607,6 +6707,7 @@ style mod_view_dyn fill:#D5E8D4,stroke:#666,color:#000
 style mod_view_sta fill:#D5E8D4,stroke:#666,color:#000
 style mod fill:#D5E8D4,stroke:#000,stroke-width:3px,color:#000
 click comp href &quot;#comp&quot; &quot;Open comp details&quot;
+click document href &quot;#document&quot; &quot;Open document details&quot;
 click mod href &quot;#mod&quot; &quot;Open mod details&quot;
 click mod_ver_report href &quot;#mod-ver-report&quot; &quot;Open mod_ver_report details&quot;
 click mod_view_dyn href &quot;#mod-view-dyn&quot; &quot;Open mod_view_dyn details&quot;
