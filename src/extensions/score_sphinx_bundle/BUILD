@@ -18,7 +18,7 @@ score_pytest(
     name = "mpl_config_tests",
     srcs = ["test_mpl_config.py"],
     pytest_config = "//:pyproject.toml",
-    deps = all_requirements + ["@docs_as_code_hub_env//matplotlib:pkg"],
+    deps = ["@docs_as_code_hub_env//matplotlib:pkg"],
 )
 
 filegroup(
