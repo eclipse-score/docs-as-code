@@ -85,46 +85,46 @@ http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "ht
 
 http_archive(
     name = "plantuml_native_linux_amd64",
-    urls = ["https://github.com/plantuml/plantuml/releases/download/v1.2026.9/native-plantuml-linux-amd64-1.2026.9.zip"],
-    sha256 = "4bf6d1a3efee62e5e42a4f950ac4b6c11c6455a37fc1a0f784fb5867ca8c2ff0",
     build_file_content = """
 package(default_visibility = [\"//visibility:public\"])
 filegroup(name = \"runtime\", srcs = glob([\"**\"]))
 exports_files([\"plantuml\"])
 """,
+    sha256 = "4bf6d1a3efee62e5e42a4f950ac4b6c11c6455a37fc1a0f784fb5867ca8c2ff0",
+    urls = ["https://github.com/plantuml/plantuml/releases/download/v1.2026.9/native-plantuml-linux-amd64-1.2026.9.zip"],
 )
 
 http_archive(
     name = "plantuml_native_linux_arm64",
-    urls = ["https://github.com/plantuml/plantuml/releases/download/v1.2026.9/native-plantuml-linux-arm64-1.2026.9.zip"],
-    sha256 = "04d51abe63f33a18c6b180f8e6c4c65449c1422f47f4dd0dd30261a1e4aed5e2",
     build_file_content = """
 package(default_visibility = [\"//visibility:public\"])
 filegroup(name = \"runtime\", srcs = glob([\"**\"]))
 exports_files([\"plantuml\"])
 """,
+    sha256 = "04d51abe63f33a18c6b180f8e6c4c65449c1422f47f4dd0dd30261a1e4aed5e2",
+    urls = ["https://github.com/plantuml/plantuml/releases/download/v1.2026.9/native-plantuml-linux-arm64-1.2026.9.zip"],
 )
 
 http_archive(
     name = "plantuml_native_macos_arm64",
-    urls = ["https://github.com/plantuml/plantuml/releases/download/v1.2026.9/native-plantuml-macos-arm64-1.2026.9.zip"],
-    sha256 = "3315869dbfee61971f63af79afff0857308f29ea0f6bfca4c322d3d6a211d770",
     build_file_content = """
 package(default_visibility = [\"//visibility:public\"])
 filegroup(name = \"runtime\", srcs = glob([\"**\"]))
 exports_files([\"plantuml\"])
 """,
+    sha256 = "3315869dbfee61971f63af79afff0857308f29ea0f6bfca4c322d3d6a211d770",
+    urls = ["https://github.com/plantuml/plantuml/releases/download/v1.2026.9/native-plantuml-macos-arm64-1.2026.9.zip"],
 )
 
 http_archive(
     name = "plantuml_native_windows_amd64",
-    urls = ["https://github.com/plantuml/plantuml/releases/download/v1.2026.9/native-plantuml-windows-amd64-1.2026.9.zip"],
-    sha256 = "240d2cdf8e83dc3557dae771d08f04e6765a6889feba16433b34f2c866b6cc4a",
     build_file_content = """
 package(default_visibility = [\"//visibility:public\"])
 filegroup(name = \"runtime\", srcs = glob([\"**\"]))
 exports_files([\"plantuml.exe\"])
 """,
+    sha256 = "240d2cdf8e83dc3557dae771d08f04e6765a6889feba16433b34f2c866b6cc4a",
+    urls = ["https://github.com/plantuml/plantuml/releases/download/v1.2026.9/native-plantuml-windows-amd64-1.2026.9.zip"],
 )
 
 # Bazel LSP

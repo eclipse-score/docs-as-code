@@ -20,8 +20,8 @@ plantuml_toolchain = rule(
 )
 
 
-def register_plantuml_toolchains():
-    """Declare and register the native PlantUML toolchain variants."""
+def declare_plantuml_toolchains():
+    """Declare native PlantUML toolchains; register them from MODULE.bazel."""
     variants = [
         ("linux_amd64", "@platforms//os:linux", "@platforms//cpu:x86_64", "@plantuml_native_linux_amd64", "plantuml", False),
         ("linux_arm64", "@platforms//os:linux", "@platforms//cpu:aarch64", "@plantuml_native_linux_arm64", "plantuml", False),
@@ -30,7 +30,6 @@ def register_plantuml_toolchains():
     ]
 
     for name, os_constraint, cpu_constraint, repo, binary, windows in variants:
-        platform_name = "_plantuml_platform_" + name
         toolchain_name = "_plantuml_toolchain_" + name
 
         plantuml_toolchain(
@@ -46,4 +45,3 @@ def register_plantuml_toolchains():
             exec_compatible_with = [os_constraint, cpu_constraint],
             target_compatible_with = [os_constraint, cpu_constraint],
         )
-        native.register_toolchains("//src:" + toolchain_name)

@@ -1,5 +1,5 @@
 # *******************************************************************************
-# Copyright (c) 2024 Contributors to the Eclipse Foundation
+# Copyright (c) 2026 Contributors to the Eclipse Foundation
 #
 # See the NOTICE file(s) distributed with this work for additional
 # information regarding copyright ownership.
@@ -12,8 +12,9 @@
 # *******************************************************************************
 
 load("@aspect_rules_py//py:defs.bzl", "py_library")
+load("@score_tools//score_pytest:pytest.bzl", "score_pytest")
 load(":plantuml.bzl", "plantuml_binary")
-load(":plantuml_toolchains.bzl", "plantuml_toolchain")
+load(":plantuml_toolchains.bzl", "declare_plantuml_toolchains")
 load("@rules_python//python:pip.bzl", "compile_pip_requirements")
 
 # These are only exported because they're passed as files to the //docs.bzl
@@ -53,63 +54,17 @@ filegroup(
 )
 
 toolchain_type(name = "plantuml_toolchain_type")
-
-plantuml_toolchain(
-    name = "_plantuml_toolchain_linux_amd64_impl",
-    binary = "@plantuml_native_linux_amd64//:plantuml",
-    runtime = "@plantuml_native_linux_amd64//:runtime",
-)
-toolchain(
-    name = "_plantuml_toolchain_linux_amd64",
-    toolchain = ":_plantuml_toolchain_linux_amd64_impl",
-    toolchain_type = ":plantuml_toolchain_type",
-    exec_compatible_with = ["@platforms//os:linux", "@platforms//cpu:x86_64"],
-    target_compatible_with = ["@platforms//os:linux", "@platforms//cpu:x86_64"],
-)
-
-plantuml_toolchain(
-    name = "_plantuml_toolchain_linux_arm64_impl",
-    binary = "@plantuml_native_linux_arm64//:plantuml",
-    runtime = "@plantuml_native_linux_arm64//:runtime",
-)
-toolchain(
-    name = "_plantuml_toolchain_linux_arm64",
-    toolchain = ":_plantuml_toolchain_linux_arm64_impl",
-    toolchain_type = ":plantuml_toolchain_type",
-    exec_compatible_with = ["@platforms//os:linux", "@platforms//cpu:aarch64"],
-    target_compatible_with = ["@platforms//os:linux", "@platforms//cpu:aarch64"],
-)
-
-plantuml_toolchain(
-    name = "_plantuml_toolchain_macos_arm64_impl",
-    binary = "@plantuml_native_macos_arm64//:plantuml",
-    runtime = "@plantuml_native_macos_arm64//:runtime",
-)
-toolchain(
-    name = "_plantuml_toolchain_macos_arm64",
-    toolchain = ":_plantuml_toolchain_macos_arm64_impl",
-    toolchain_type = ":plantuml_toolchain_type",
-    exec_compatible_with = ["@platforms//os:macos", "@platforms//cpu:aarch64"],
-    target_compatible_with = ["@platforms//os:macos", "@platforms//cpu:aarch64"],
-)
-
-plantuml_toolchain(
-    name = "_plantuml_toolchain_windows_amd64_impl",
-    binary = "@plantuml_native_windows_amd64//:plantuml.exe",
-    runtime = "@plantuml_native_windows_amd64//:runtime",
-    windows = True,
-)
-toolchain(
-    name = "_plantuml_toolchain_windows_amd64",
-    toolchain = ":_plantuml_toolchain_windows_amd64_impl",
-    toolchain_type = ":plantuml_toolchain_type",
-    exec_compatible_with = ["@platforms//os:windows", "@platforms//cpu:x86_64"],
-    target_compatible_with = ["@platforms//os:windows", "@platforms//cpu:x86_64"],
-)
+declare_plantuml_toolchains()
 
 plantuml_binary(
     name = "plantuml",
     visibility = ["//visibility:public"],
+)
+
+score_pytest(
+    name = "plantuml_regression_test",
+    srcs = ["plantuml_regression_test.py"],
+    pytest_config = "//:pyproject.toml",
 )
 
 # This makes it possible for py_venv to depend on plantuml.
