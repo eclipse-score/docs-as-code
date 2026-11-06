@@ -1,5 +1,5 @@
 # *******************************************************************************
-# Copyright (c) 2024 Contributors to the Eclipse Foundation
+# Copyright (c) 2026 Contributors to the Eclipse Foundation
 #
 # See the NOTICE file(s) distributed with this work for additional
 # information regarding copyright ownership.
@@ -12,8 +12,10 @@
 # *******************************************************************************
 
 load("@aspect_rules_py//py:defs.bzl", "py_library")
-load("@rules_java//java:java_binary.bzl", "java_binary")
 load("@rules_python//python:pip.bzl", "compile_pip_requirements")
+load("@score_tools//score_pytest:pytest.bzl", "score_pytest")
+load(":plantuml.bzl", "plantuml_binary")
+load(":plantuml_toolchains.bzl", "declare_plantuml_toolchains")
 
 # These are only exported because they're passed as files to the //docs.bzl
 # macros, and thus must be visible to other packages. They should only be
@@ -51,14 +53,19 @@ filegroup(
     visibility = ["//visibility:public"],
 )
 
-java_binary(
+toolchain_type(name = "plantuml_toolchain_type")
+
+declare_plantuml_toolchains()
+
+plantuml_binary(
     name = "plantuml",
-    jvm_flags = ["-Djava.awt.headless=true"],
-    main_class = "net.sourceforge.plantuml.Run",
     visibility = ["//visibility:public"],
-    runtime_deps = [
-        "@plantuml//jar",
-    ],
+)
+
+score_pytest(
+    name = "plantuml_regression_test",
+    srcs = ["plantuml_regression_test.py"],
+    pytest_config = "//:pyproject.toml",
 )
 
 # This makes it possible for py_venv to depend on plantuml.

@@ -10,7 +10,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
-import matplotlib
 from sphinx.application import Sphinx
 
 from src.helper_lib import config_setdefault
@@ -45,6 +44,14 @@ score_extensions = [
 
 
 def setup(app: Sphinx) -> dict[str, object]:
+    # Set a default before importing Matplotlib so it need not inspect HOME.
+    # Matplotlib falls back to a temporary cache if this path is not writable.
+    import os
+
+    os.environ.setdefault("MPLCONFIGDIR", os.path.abspath(".matplotlib"))
+
+    import matplotlib
+
     matplotlib.rcParamsDefault["savefig.bbox"] = "tight"
 
     # Keep the project URL available when Sphinx runs in configuration-free
