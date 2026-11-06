@@ -12,10 +12,10 @@
 # *******************************************************************************
 
 load("@aspect_rules_py//py:defs.bzl", "py_library")
+load("@rules_python//python:pip.bzl", "compile_pip_requirements")
 load("@score_tools//score_pytest:pytest.bzl", "score_pytest")
 load(":plantuml.bzl", "plantuml_binary")
 load(":plantuml_toolchains.bzl", "declare_plantuml_toolchains")
-load("@rules_python//python:pip.bzl", "compile_pip_requirements")
 
 # These are only exported because they're passed as files to the //docs.bzl
 # macros, and thus must be visible to other packages. They should only be
@@ -54,6 +54,7 @@ filegroup(
 )
 
 toolchain_type(name = "plantuml_toolchain_type")
+
 declare_plantuml_toolchains()
 
 plantuml_binary(

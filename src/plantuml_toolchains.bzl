@@ -1,5 +1,17 @@
-"""PlantUML native binary platform toolchains."""
+# *******************************************************************************
+# Copyright (c) 2026 Contributors to the Eclipse Foundation
+#
+# See the NOTICE file(s) distributed with this work for additional
+# information regarding copyright ownership.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Apache License Version 2.0 which is available at
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# SPDX-License-Identifier: Apache-2.0
+# *******************************************************************************
 
+"""PlantUML native binary platform toolchains."""
 
 def _plantuml_toolchain_impl(ctx):
     return [platform_common.ToolchainInfo(
@@ -7,7 +19,6 @@ def _plantuml_toolchain_impl(ctx):
         runtime = ctx.attr.runtime[DefaultInfo].files,
         windows = ctx.attr.windows,
     )]
-
 
 plantuml_toolchain = rule(
     implementation = _plantuml_toolchain_impl,
@@ -18,7 +29,6 @@ plantuml_toolchain = rule(
     },
     provides = [platform_common.ToolchainInfo],
 )
-
 
 def declare_plantuml_toolchains():
     """Declare native PlantUML toolchains; register them from MODULE.bazel."""

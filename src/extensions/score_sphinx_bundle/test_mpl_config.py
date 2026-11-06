@@ -16,10 +16,11 @@ import os
 from pathlib import Path
 
 import matplotlib
+from _pytest.monkeypatch import MonkeyPatch
 
 
 def test_mpl_config_default_does_not_overwrite_explicit_value(
-    monkeypatch, tmp_path: Path
+    monkeypatch: MonkeyPatch, tmp_path: Path
 ) -> None:
     """The extension preserves a caller-provided Matplotlib config path."""
     from src.extensions.score_sphinx_bundle import setup
@@ -29,13 +30,15 @@ def test_mpl_config_default_does_not_overwrite_explicit_value(
     monkeypatch.chdir(tmp_path)
     app = _FakeSphinxApp()
 
-    setup(app)
+    setup(app)  # type: ignore[arg-type] -- lightweight Sphinx test double.
 
     assert Path(os.environ["MPLCONFIGDIR"]) == configured
     assert not configured.exists()
 
 
-def test_mpl_config_default_avoids_home_lookup(monkeypatch, tmp_path: Path) -> None:
+def test_mpl_config_default_avoids_home_lookup(
+    monkeypatch: MonkeyPatch, tmp_path: Path
+) -> None:
     """The extension sets a default before importing Matplotlib."""
     from src.extensions.score_sphinx_bundle import setup
 
@@ -44,14 +47,16 @@ def test_mpl_config_default_avoids_home_lookup(monkeypatch, tmp_path: Path) -> N
     monkeypatch.chdir(tmp_path)
     app = _FakeSphinxApp()
 
-    setup(app)
+    setup(app)  # type: ignore[arg-type] -- lightweight Sphinx test double.
 
     assert os.environ["MPLCONFIGDIR"] == str(tmp_path / ".matplotlib")
+    monkeypatch.setattr(matplotlib, "get_configdir", lambda: os.environ["MPLCONFIGDIR"])
     assert matplotlib.get_configdir() == str(tmp_path / ".matplotlib")
 
 
 class _FakeConfig:
     def __init__(self) -> None:
+        self._raw_config = {}
         self.templates_path = []
         self.exclude_patterns = []
         self.source_suffix = {}
@@ -67,11 +72,13 @@ class _FakeSphinxApp:
         self.config = _FakeConfig()
         self.builder = _FakeBuilder()
 
-    def add_config_value(self, name, default, rebuild) -> None:
+    def add_config_value(self, name: str, default: object, rebuild: str) -> None:
         setattr(self.config, name, default)
 
-    def setup_extension(self, extension) -> None:
+    def setup_extension(self, extension: str) -> None:
         pass
 
-    def connect(self, event, callback, priority=None) -> None:
+    def connect(
+        self, event: str, callback: object, priority: int | None = None
+    ) -> None:
         pass
