@@ -1,0 +1,1297 @@
+{
+  "schema_version": 1,
+  "source": "Native gate unit-test threshold/broken-reference fixtures; modeled public argument snapshots, not production CI failures",
+  "tasks": [
+    {
+      "task_id": "search-cr1-01",
+      "split": "search",
+      "input_path": "search-cr1-01",
+      "input_files": [
+        "before.json",
+        "after.json",
+        "metrics.json",
+        "metrics-before.json"
+      ],
+      "before": "before.json",
+      "after": "after.json",
+      "metrics": "metrics.json",
+      "rule_ids": [
+        "CR-001"
+      ],
+      "gate_args": [
+        "--min-req-code",
+        "75",
+        "--min-req-test",
+        "50",
+        "--fail-on-broken-test-refs"
+      ],
+      "expected_gate_verdict": "fail",
+      "expected_impacted_ids": [
+        "A1_search_0",
+        "G1_search_0"
+      ],
+      "source": "scripts_bazel/tests/traceability_gate_test.py; public modeled argument snapshots",
+      "confidential": false
+    },
+    {
+      "task_id": "search-cr1-02",
+      "split": "search",
+      "input_path": "search-cr1-02",
+      "input_files": [
+        "before.json",
+        "after.json",
+        "metrics.json",
+        "metrics-before.json"
+      ],
+      "before": "before.json",
+      "after": "after.json",
+      "metrics": "metrics.json",
+      "rule_ids": [
+        "CR-001"
+      ],
+      "gate_args": [
+        "--min-req-code",
+        "75",
+        "--min-req-test",
+        "50",
+        "--fail-on-broken-test-refs"
+      ],
+      "expected_gate_verdict": "fail",
+      "expected_impacted_ids": [
+        "A1_search_1",
+        "G1_search_1"
+      ],
+      "source": "scripts_bazel/tests/traceability_gate_test.py; public modeled argument snapshots",
+      "confidential": false
+    },
+    {
+      "task_id": "search-cr1-03",
+      "split": "search",
+      "input_path": "search-cr1-03",
+      "input_files": [
+        "before.json",
+        "after.json",
+        "metrics.json",
+        "metrics-before.json"
+      ],
+      "before": "before.json",
+      "after": "after.json",
+      "metrics": "metrics.json",
+      "rule_ids": [
+        "CR-001"
+      ],
+      "gate_args": [
+        "--min-req-code",
+        "75",
+        "--min-req-test",
+        "50",
+        "--fail-on-broken-test-refs"
+      ],
+      "expected_gate_verdict": "fail",
+      "expected_impacted_ids": [
+        "A1_search_2",
+        "G1_search_2"
+      ],
+      "source": "scripts_bazel/tests/traceability_gate_test.py; public modeled argument snapshots",
+      "confidential": false
+    },
+    {
+      "task_id": "search-cr1-04",
+      "split": "search",
+      "input_path": "search-cr1-04",
+      "input_files": [
+        "before.json",
+        "after.json",
+        "metrics.json",
+        "metrics-before.json"
+      ],
+      "before": "before.json",
+      "after": "after.json",
+      "metrics": "metrics.json",
+      "rule_ids": [
+        "CR-001"
+      ],
+      "gate_args": [
+        "--min-req-code",
+        "75",
+        "--min-req-test",
+        "50",
+        "--fail-on-broken-test-refs"
+      ],
+      "expected_gate_verdict": "fail",
+      "expected_impacted_ids": [
+        "A1_search_3",
+        "G1_search_3"
+      ],
+      "source": "scripts_bazel/tests/traceability_gate_test.py; public modeled argument snapshots",
+      "confidential": false
+    },
+    {
+      "task_id": "search-cr2-01",
+      "split": "search",
+      "input_path": "search-cr2-01",
+      "input_files": [
+        "before.json",
+        "after.json",
+        "metrics.json",
+        "metrics-before.json"
+      ],
+      "before": "before.json",
+      "after": "after.json",
+      "metrics": "metrics.json",
+      "rule_ids": [
+        "CR-002"
+      ],
+      "gate_args": [
+        "--min-req-code",
+        "75",
+        "--min-req-test",
+        "50",
+        "--fail-on-broken-test-refs"
+      ],
+      "expected_gate_verdict": "pass",
+      "expected_impacted_ids": [
+        "A2_search_0",
+        "G2_search_0",
+        "R2_search_0",
+        "T2_search_0"
+      ],
+      "source": "scripts_bazel/tests/traceability_gate_test.py; public modeled argument snapshots",
+      "confidential": false
+    },
+    {
+      "task_id": "search-cr2-02",
+      "split": "search",
+      "input_path": "search-cr2-02",
+      "input_files": [
+        "before.json",
+        "after.json",
+        "metrics.json",
+        "metrics-before.json"
+      ],
+      "before": "before.json",
+      "after": "after.json",
+      "metrics": "metrics.json",
+      "rule_ids": [
+        "CR-002"
+      ],
+      "gate_args": [
+        "--min-req-code",
+        "75",
+        "--min-req-test",
+        "50",
+        "--fail-on-broken-test-refs"
+      ],
+      "expected_gate_verdict": "pass",
+      "expected_impacted_ids": [
+        "A2_search_1",
+        "G2_search_1",
+        "R2_search_1",
+        "T2_search_1"
+      ],
+      "source": "scripts_bazel/tests/traceability_gate_test.py; public modeled argument snapshots",
+      "confidential": false
+    },
+    {
+      "task_id": "search-cr2-03",
+      "split": "search",
+      "input_path": "search-cr2-03",
+      "input_files": [
+        "before.json",
+        "after.json",
+        "metrics.json",
+        "metrics-before.json"
+      ],
+      "before": "before.json",
+      "after": "after.json",
+      "metrics": "metrics.json",
+      "rule_ids": [
+        "CR-002"
+      ],
+      "gate_args": [
+        "--min-req-code",
+        "75",
+        "--min-req-test",
+        "50",
+        "--fail-on-broken-test-refs"
+      ],
+      "expected_gate_verdict": "pass",
+      "expected_impacted_ids": [
+        "A2_search_2",
+        "G2_search_2",
+        "R2_search_2",
+        "T2_search_2"
+      ],
+      "source": "scripts_bazel/tests/traceability_gate_test.py; public modeled argument snapshots",
+      "confidential": false
+    },
+    {
+      "task_id": "search-cr2-04",
+      "split": "search",
+      "input_path": "search-cr2-04",
+      "input_files": [
+        "before.json",
+        "after.json",
+        "metrics.json",
+        "metrics-before.json"
+      ],
+      "before": "before.json",
+      "after": "after.json",
+      "metrics": "metrics.json",
+      "rule_ids": [
+        "CR-002"
+      ],
+      "gate_args": [
+        "--min-req-code",
+        "75",
+        "--min-req-test",
+        "50",
+        "--fail-on-broken-test-refs"
+      ],
+      "expected_gate_verdict": "pass",
+      "expected_impacted_ids": [
+        "A2_search_3",
+        "G2_search_3",
+        "R2_search_3",
+        "T2_search_3"
+      ],
+      "source": "scripts_bazel/tests/traceability_gate_test.py; public modeled argument snapshots",
+      "confidential": false
+    },
+    {
+      "task_id": "search-cr3-01",
+      "split": "search",
+      "input_path": "search-cr3-01",
+      "input_files": [
+        "before.json",
+        "after.json",
+        "metrics.json",
+        "metrics-before.json"
+      ],
+      "before": "before.json",
+      "after": "after.json",
+      "metrics": "metrics.json",
+      "rule_ids": [
+        "CR-003"
+      ],
+      "gate_args": [
+        "--min-req-code",
+        "75",
+        "--min-req-test",
+        "50",
+        "--fail-on-broken-test-refs"
+      ],
+      "expected_gate_verdict": "fail",
+      "expected_impacted_ids": [
+        "A3_search_0",
+        "G3_search_0",
+        "R3_search_0",
+        "T3_search_0"
+      ],
+      "source": "scripts_bazel/tests/traceability_gate_test.py; public modeled argument snapshots",
+      "confidential": false
+    },
+    {
+      "task_id": "search-cr3-02",
+      "split": "search",
+      "input_path": "search-cr3-02",
+      "input_files": [
+        "before.json",
+        "after.json",
+        "metrics.json",
+        "metrics-before.json"
+      ],
+      "before": "before.json",
+      "after": "after.json",
+      "metrics": "metrics.json",
+      "rule_ids": [
+        "CR-003"
+      ],
+      "gate_args": [
+        "--min-req-code",
+        "75",
+        "--min-req-test",
+        "50",
+        "--fail-on-broken-test-refs"
+      ],
+      "expected_gate_verdict": "fail",
+      "expected_impacted_ids": [
+        "A3_search_1",
+        "G3_search_1",
+        "R3_search_1",
+        "T3_search_1"
+      ],
+      "source": "scripts_bazel/tests/traceability_gate_test.py; public modeled argument snapshots",
+      "confidential": false
+    },
+    {
+      "task_id": "search-cr3-03",
+      "split": "search",
+      "input_path": "search-cr3-03",
+      "input_files": [
+        "before.json",
+        "after.json",
+        "metrics.json",
+        "metrics-before.json"
+      ],
+      "before": "before.json",
+      "after": "after.json",
+      "metrics": "metrics.json",
+      "rule_ids": [
+        "CR-003"
+      ],
+      "gate_args": [
+        "--min-req-code",
+        "75",
+        "--min-req-test",
+        "50",
+        "--fail-on-broken-test-refs"
+      ],
+      "expected_gate_verdict": "fail",
+      "expected_impacted_ids": [
+        "A3_search_2",
+        "G3_search_2",
+        "R3_search_2",
+        "T3_search_2"
+      ],
+      "source": "scripts_bazel/tests/traceability_gate_test.py; public modeled argument snapshots",
+      "confidential": false
+    },
+    {
+      "task_id": "search-cr3-04",
+      "split": "search",
+      "input_path": "search-cr3-04",
+      "input_files": [
+        "before.json",
+        "after.json",
+        "metrics.json",
+        "metrics-before.json"
+      ],
+      "before": "before.json",
+      "after": "after.json",
+      "metrics": "metrics.json",
+      "rule_ids": [
+        "CR-003"
+      ],
+      "gate_args": [
+        "--min-req-code",
+        "75",
+        "--min-req-test",
+        "50",
+        "--fail-on-broken-test-refs"
+      ],
+      "expected_gate_verdict": "fail",
+      "expected_impacted_ids": [
+        "A3_search_3",
+        "G3_search_3",
+        "R3_search_3",
+        "T3_search_3"
+      ],
+      "source": "scripts_bazel/tests/traceability_gate_test.py; public modeled argument snapshots",
+      "confidential": false
+    },
+    {
+      "task_id": "search-cr4-01",
+      "split": "search",
+      "input_path": "search-cr4-01",
+      "input_files": [
+        "before.json",
+        "after.json",
+        "metrics.json",
+        "metrics-before.json"
+      ],
+      "before": "before.json",
+      "after": "after.json",
+      "metrics": "metrics.json",
+      "rule_ids": [
+        "CR-004"
+      ],
+      "gate_args": [
+        "--min-req-code",
+        "75",
+        "--min-req-test",
+        "50",
+        "--fail-on-broken-test-refs"
+      ],
+      "expected_gate_verdict": "pass",
+      "expected_impacted_ids": [
+        "A4_search_0",
+        "G4_search_0",
+        "R4_search_0",
+        "T4_search_0"
+      ],
+      "source": "scripts_bazel/tests/traceability_gate_test.py; public modeled argument snapshots",
+      "confidential": false
+    },
+    {
+      "task_id": "search-cr4-02",
+      "split": "search",
+      "input_path": "search-cr4-02",
+      "input_files": [
+        "before.json",
+        "after.json",
+        "metrics.json",
+        "metrics-before.json"
+      ],
+      "before": "before.json",
+      "after": "after.json",
+      "metrics": "metrics.json",
+      "rule_ids": [
+        "CR-004"
+      ],
+      "gate_args": [
+        "--min-req-code",
+        "75",
+        "--min-req-test",
+        "50",
+        "--fail-on-broken-test-refs"
+      ],
+      "expected_gate_verdict": "pass",
+      "expected_impacted_ids": [
+        "A4_search_1",
+        "G4_search_1",
+        "R4_search_1",
+        "T4_search_1"
+      ],
+      "source": "scripts_bazel/tests/traceability_gate_test.py; public modeled argument snapshots",
+      "confidential": false
+    },
+    {
+      "task_id": "search-cr4-03",
+      "split": "search",
+      "input_path": "search-cr4-03",
+      "input_files": [
+        "before.json",
+        "after.json",
+        "metrics.json",
+        "metrics-before.json"
+      ],
+      "before": "before.json",
+      "after": "after.json",
+      "metrics": "metrics.json",
+      "rule_ids": [
+        "CR-004"
+      ],
+      "gate_args": [
+        "--min-req-code",
+        "75",
+        "--min-req-test",
+        "50",
+        "--fail-on-broken-test-refs"
+      ],
+      "expected_gate_verdict": "pass",
+      "expected_impacted_ids": [
+        "A4_search_2",
+        "G4_search_2",
+        "R4_search_2",
+        "T4_search_2"
+      ],
+      "source": "scripts_bazel/tests/traceability_gate_test.py; public modeled argument snapshots",
+      "confidential": false
+    },
+    {
+      "task_id": "search-cr4-04",
+      "split": "search",
+      "input_path": "search-cr4-04",
+      "input_files": [
+        "before.json",
+        "after.json",
+        "metrics.json",
+        "metrics-before.json"
+      ],
+      "before": "before.json",
+      "after": "after.json",
+      "metrics": "metrics.json",
+      "rule_ids": [
+        "CR-004"
+      ],
+      "gate_args": [
+        "--min-req-code",
+        "75",
+        "--min-req-test",
+        "50",
+        "--fail-on-broken-test-refs"
+      ],
+      "expected_gate_verdict": "pass",
+      "expected_impacted_ids": [
+        "A4_search_3",
+        "G4_search_3",
+        "R4_search_3",
+        "T4_search_3"
+      ],
+      "source": "scripts_bazel/tests/traceability_gate_test.py; public modeled argument snapshots",
+      "confidential": false
+    },
+    {
+      "task_id": "search-cr5-01",
+      "split": "search",
+      "input_path": "search-cr5-01",
+      "input_files": [
+        "before.json",
+        "after.json",
+        "metrics.json",
+        "metrics-before.json"
+      ],
+      "before": "before.json",
+      "after": "after.json",
+      "metrics": "metrics.json",
+      "rule_ids": [
+        "CR-005"
+      ],
+      "gate_args": [
+        "--min-req-code",
+        "75",
+        "--min-req-test",
+        "50",
+        "--fail-on-broken-test-refs"
+      ],
+      "expected_gate_verdict": "fail",
+      "expected_impacted_ids": [
+        "coverage"
+      ],
+      "source": "scripts_bazel/tests/traceability_gate_test.py; public modeled argument snapshots",
+      "confidential": false
+    },
+    {
+      "task_id": "search-cr5-02",
+      "split": "search",
+      "input_path": "search-cr5-02",
+      "input_files": [
+        "before.json",
+        "after.json",
+        "metrics.json",
+        "metrics-before.json"
+      ],
+      "before": "before.json",
+      "after": "after.json",
+      "metrics": "metrics.json",
+      "rule_ids": [
+        "CR-005"
+      ],
+      "gate_args": [
+        "--min-req-code",
+        "75",
+        "--min-req-test",
+        "50",
+        "--fail-on-broken-test-refs"
+      ],
+      "expected_gate_verdict": "pass",
+      "expected_impacted_ids": [],
+      "source": "scripts_bazel/tests/traceability_gate_test.py; public modeled argument snapshots",
+      "confidential": false
+    },
+    {
+      "task_id": "search-cr5-03",
+      "split": "search",
+      "input_path": "search-cr5-03",
+      "input_files": [
+        "before.json",
+        "after.json",
+        "metrics.json",
+        "metrics-before.json"
+      ],
+      "before": "before.json",
+      "after": "after.json",
+      "metrics": "metrics.json",
+      "rule_ids": [
+        "CR-005"
+      ],
+      "gate_args": [
+        "--min-req-code",
+        "75",
+        "--min-req-test",
+        "50",
+        "--fail-on-broken-test-refs"
+      ],
+      "expected_gate_verdict": "pass",
+      "expected_impacted_ids": [],
+      "source": "scripts_bazel/tests/traceability_gate_test.py; public modeled argument snapshots",
+      "confidential": false
+    },
+    {
+      "task_id": "search-cr5-04",
+      "split": "search",
+      "input_path": "search-cr5-04",
+      "input_files": [
+        "before.json",
+        "after.json",
+        "metrics.json",
+        "metrics-before.json"
+      ],
+      "before": "before.json",
+      "after": "after.json",
+      "metrics": "metrics.json",
+      "rule_ids": [
+        "CR-005"
+      ],
+      "gate_args": [
+        "--min-req-code",
+        "75",
+        "--min-req-test",
+        "50",
+        "--fail-on-broken-test-refs"
+      ],
+      "expected_gate_verdict": "fail",
+      "expected_impacted_ids": [
+        "coverage"
+      ],
+      "source": "scripts_bazel/tests/traceability_gate_test.py; public modeled argument snapshots",
+      "confidential": false
+    },
+    {
+      "task_id": "heldout-cr1-01",
+      "split": "heldout",
+      "input_path": "heldout-cr1-01",
+      "input_files": [
+        "before.json",
+        "after.json",
+        "metrics.json",
+        "metrics-before.json"
+      ],
+      "before": "before.json",
+      "after": "after.json",
+      "metrics": "metrics.json",
+      "rule_ids": [
+        "CR-001"
+      ],
+      "gate_args": [
+        "--min-req-code",
+        "75",
+        "--min-req-test",
+        "50",
+        "--fail-on-broken-test-refs"
+      ],
+      "expected_gate_verdict": "fail",
+      "expected_impacted_ids": [
+        "A1_heldout_0",
+        "G1_heldout_0"
+      ],
+      "source": "scripts_bazel/tests/traceability_gate_test.py; public modeled argument snapshots",
+      "confidential": false
+    },
+    {
+      "task_id": "heldout-cr1-02",
+      "split": "heldout",
+      "input_path": "heldout-cr1-02",
+      "input_files": [
+        "before.json",
+        "after.json",
+        "metrics.json",
+        "metrics-before.json"
+      ],
+      "before": "before.json",
+      "after": "after.json",
+      "metrics": "metrics.json",
+      "rule_ids": [
+        "CR-001"
+      ],
+      "gate_args": [
+        "--min-req-code",
+        "75",
+        "--min-req-test",
+        "50",
+        "--fail-on-broken-test-refs"
+      ],
+      "expected_gate_verdict": "fail",
+      "expected_impacted_ids": [
+        "A1_heldout_1",
+        "G1_heldout_1"
+      ],
+      "source": "scripts_bazel/tests/traceability_gate_test.py; public modeled argument snapshots",
+      "confidential": false
+    },
+    {
+      "task_id": "heldout-cr2-01",
+      "split": "heldout",
+      "input_path": "heldout-cr2-01",
+      "input_files": [
+        "before.json",
+        "after.json",
+        "metrics.json",
+        "metrics-before.json"
+      ],
+      "before": "before.json",
+      "after": "after.json",
+      "metrics": "metrics.json",
+      "rule_ids": [
+        "CR-002"
+      ],
+      "gate_args": [
+        "--min-req-code",
+        "75",
+        "--min-req-test",
+        "50",
+        "--fail-on-broken-test-refs"
+      ],
+      "expected_gate_verdict": "pass",
+      "expected_impacted_ids": [
+        "A2_heldout_0",
+        "G2_heldout_0",
+        "R2_heldout_0",
+        "T2_heldout_0"
+      ],
+      "source": "scripts_bazel/tests/traceability_gate_test.py; public modeled argument snapshots",
+      "confidential": false
+    },
+    {
+      "task_id": "heldout-cr2-02",
+      "split": "heldout",
+      "input_path": "heldout-cr2-02",
+      "input_files": [
+        "before.json",
+        "after.json",
+        "metrics.json",
+        "metrics-before.json"
+      ],
+      "before": "before.json",
+      "after": "after.json",
+      "metrics": "metrics.json",
+      "rule_ids": [
+        "CR-002"
+      ],
+      "gate_args": [
+        "--min-req-code",
+        "75",
+        "--min-req-test",
+        "50",
+        "--fail-on-broken-test-refs"
+      ],
+      "expected_gate_verdict": "pass",
+      "expected_impacted_ids": [
+        "A2_heldout_1",
+        "G2_heldout_1",
+        "R2_heldout_1",
+        "T2_heldout_1"
+      ],
+      "source": "scripts_bazel/tests/traceability_gate_test.py; public modeled argument snapshots",
+      "confidential": false
+    },
+    {
+      "task_id": "heldout-cr3-01",
+      "split": "heldout",
+      "input_path": "heldout-cr3-01",
+      "input_files": [
+        "before.json",
+        "after.json",
+        "metrics.json",
+        "metrics-before.json"
+      ],
+      "before": "before.json",
+      "after": "after.json",
+      "metrics": "metrics.json",
+      "rule_ids": [
+        "CR-003"
+      ],
+      "gate_args": [
+        "--min-req-code",
+        "75",
+        "--min-req-test",
+        "50",
+        "--fail-on-broken-test-refs"
+      ],
+      "expected_gate_verdict": "fail",
+      "expected_impacted_ids": [
+        "A3_heldout_0",
+        "G3_heldout_0",
+        "R3_heldout_0",
+        "T3_heldout_0"
+      ],
+      "source": "scripts_bazel/tests/traceability_gate_test.py; public modeled argument snapshots",
+      "confidential": false
+    },
+    {
+      "task_id": "heldout-cr3-02",
+      "split": "heldout",
+      "input_path": "heldout-cr3-02",
+      "input_files": [
+        "before.json",
+        "after.json",
+        "metrics.json",
+        "metrics-before.json"
+      ],
+      "before": "before.json",
+      "after": "after.json",
+      "metrics": "metrics.json",
+      "rule_ids": [
+        "CR-003"
+      ],
+      "gate_args": [
+        "--min-req-code",
+        "75",
+        "--min-req-test",
+        "50",
+        "--fail-on-broken-test-refs"
+      ],
+      "expected_gate_verdict": "fail",
+      "expected_impacted_ids": [
+        "A3_heldout_1",
+        "G3_heldout_1",
+        "R3_heldout_1",
+        "T3_heldout_1"
+      ],
+      "source": "scripts_bazel/tests/traceability_gate_test.py; public modeled argument snapshots",
+      "confidential": false
+    },
+    {
+      "task_id": "heldout-cr4-01",
+      "split": "heldout",
+      "input_path": "heldout-cr4-01",
+      "input_files": [
+        "before.json",
+        "after.json",
+        "metrics.json",
+        "metrics-before.json"
+      ],
+      "before": "before.json",
+      "after": "after.json",
+      "metrics": "metrics.json",
+      "rule_ids": [
+        "CR-004"
+      ],
+      "gate_args": [
+        "--min-req-code",
+        "75",
+        "--min-req-test",
+        "50",
+        "--fail-on-broken-test-refs"
+      ],
+      "expected_gate_verdict": "pass",
+      "expected_impacted_ids": [
+        "A4_heldout_0",
+        "G4_heldout_0",
+        "R4_heldout_0",
+        "T4_heldout_0"
+      ],
+      "source": "scripts_bazel/tests/traceability_gate_test.py; public modeled argument snapshots",
+      "confidential": false
+    },
+    {
+      "task_id": "heldout-cr4-02",
+      "split": "heldout",
+      "input_path": "heldout-cr4-02",
+      "input_files": [
+        "before.json",
+        "after.json",
+        "metrics.json",
+        "metrics-before.json"
+      ],
+      "before": "before.json",
+      "after": "after.json",
+      "metrics": "metrics.json",
+      "rule_ids": [
+        "CR-004"
+      ],
+      "gate_args": [
+        "--min-req-code",
+        "75",
+        "--min-req-test",
+        "50",
+        "--fail-on-broken-test-refs"
+      ],
+      "expected_gate_verdict": "pass",
+      "expected_impacted_ids": [
+        "A4_heldout_1",
+        "G4_heldout_1",
+        "R4_heldout_1",
+        "T4_heldout_1"
+      ],
+      "source": "scripts_bazel/tests/traceability_gate_test.py; public modeled argument snapshots",
+      "confidential": false
+    },
+    {
+      "task_id": "heldout-cr5-01",
+      "split": "heldout",
+      "input_path": "heldout-cr5-01",
+      "input_files": [
+        "before.json",
+        "after.json",
+        "metrics.json",
+        "metrics-before.json"
+      ],
+      "before": "before.json",
+      "after": "after.json",
+      "metrics": "metrics.json",
+      "rule_ids": [
+        "CR-005"
+      ],
+      "gate_args": [
+        "--min-req-code",
+        "75",
+        "--min-req-test",
+        "50",
+        "--fail-on-broken-test-refs"
+      ],
+      "expected_gate_verdict": "fail",
+      "expected_impacted_ids": [
+        "coverage"
+      ],
+      "source": "scripts_bazel/tests/traceability_gate_test.py; public modeled argument snapshots",
+      "confidential": false
+    },
+    {
+      "task_id": "heldout-cr5-02",
+      "split": "heldout",
+      "input_path": "heldout-cr5-02",
+      "input_files": [
+        "before.json",
+        "after.json",
+        "metrics.json",
+        "metrics-before.json"
+      ],
+      "before": "before.json",
+      "after": "after.json",
+      "metrics": "metrics.json",
+      "rule_ids": [
+        "CR-005"
+      ],
+      "gate_args": [
+        "--min-req-code",
+        "75",
+        "--min-req-test",
+        "50",
+        "--fail-on-broken-test-refs"
+      ],
+      "expected_gate_verdict": "pass",
+      "expected_impacted_ids": [],
+      "source": "scripts_bazel/tests/traceability_gate_test.py; public modeled argument snapshots",
+      "confidential": false
+    },
+    {
+      "task_id": "search-snapshot-01",
+      "split": "search",
+      "input_path": "search-snapshot-01",
+      "input_files": [
+        "before.json",
+        "after.json",
+        "metrics.json",
+        "metrics-before.json"
+      ],
+      "before": "before.json",
+      "after": "after.json",
+      "metrics": "metrics.json",
+      "rule_ids": [
+        "CR-005"
+      ],
+      "gate_args": [
+        "--need-type",
+        "tool_req",
+        "--min-req-code",
+        "100"
+      ],
+      "expected_gate_verdict": "fail",
+      "expected_impacted_ids": [
+        "R0",
+        "T",
+        "coverage"
+      ],
+      "source": "src/extensions/score_metrics/traceability_metrics.py native extraction and scripts_bazel/tests/traceability_gate_test.py type-scoped threshold seeds",
+      "confidential": false,
+      "metrics_mode": "snapshot",
+      "coverage_types": [
+        "tool_req"
+      ]
+    },
+    {
+      "task_id": "search-snapshot-02",
+      "split": "search",
+      "input_path": "search-snapshot-02",
+      "input_files": [
+        "before.json",
+        "after.json",
+        "metrics.json",
+        "metrics-before.json"
+      ],
+      "before": "before.json",
+      "after": "after.json",
+      "metrics": "metrics.json",
+      "rule_ids": [
+        "CR-005"
+      ],
+      "gate_args": [
+        "--need-type",
+        "tool_req",
+        "--min-req-code",
+        "100"
+      ],
+      "expected_gate_verdict": "pass",
+      "expected_impacted_ids": [],
+      "source": "src/extensions/score_metrics/traceability_metrics.py native extraction and scripts_bazel/tests/traceability_gate_test.py type-scoped threshold seeds",
+      "confidential": false,
+      "metrics_mode": "snapshot",
+      "coverage_types": [
+        "tool_req"
+      ]
+    },
+    {
+      "task_id": "search-snapshot-03",
+      "split": "search",
+      "input_path": "search-snapshot-03",
+      "input_files": [
+        "before.json",
+        "after.json",
+        "metrics.json",
+        "metrics-before.json"
+      ],
+      "before": "before.json",
+      "after": "after.json",
+      "metrics": "metrics.json",
+      "rule_ids": [
+        "CR-005"
+      ],
+      "gate_args": [
+        "--need-type",
+        "tool_req",
+        "--min-req-code",
+        "100"
+      ],
+      "expected_gate_verdict": "fail",
+      "expected_impacted_ids": [
+        "R0",
+        "R1",
+        "R2",
+        "T",
+        "coverage"
+      ],
+      "source": "src/extensions/score_metrics/traceability_metrics.py native extraction and scripts_bazel/tests/traceability_gate_test.py type-scoped threshold seeds",
+      "confidential": false,
+      "metrics_mode": "snapshot",
+      "coverage_types": [
+        "tool_req"
+      ]
+    },
+    {
+      "task_id": "search-snapshot-04",
+      "split": "search",
+      "input_path": "search-snapshot-04",
+      "input_files": [
+        "before.json",
+        "after.json",
+        "metrics.json",
+        "metrics-before.json"
+      ],
+      "before": "before.json",
+      "after": "after.json",
+      "metrics": "metrics.json",
+      "rule_ids": [
+        "CR-005"
+      ],
+      "gate_args": [
+        "--need-type",
+        "tool_req",
+        "--min-req-code",
+        "100"
+      ],
+      "expected_gate_verdict": "pass",
+      "expected_impacted_ids": [],
+      "source": "src/extensions/score_metrics/traceability_metrics.py native extraction and scripts_bazel/tests/traceability_gate_test.py type-scoped threshold seeds",
+      "confidential": false,
+      "metrics_mode": "snapshot",
+      "coverage_types": [
+        "tool_req"
+      ]
+    },
+    {
+      "task_id": "search-snapshot-05",
+      "split": "search",
+      "input_path": "search-snapshot-05",
+      "input_files": [
+        "before.json",
+        "after.json",
+        "metrics.json",
+        "metrics-before.json"
+      ],
+      "before": "before.json",
+      "after": "after.json",
+      "metrics": "metrics.json",
+      "rule_ids": [
+        "CR-005"
+      ],
+      "gate_args": [
+        "--need-type",
+        "tool_req",
+        "--min-req-code",
+        "100"
+      ],
+      "expected_gate_verdict": "fail",
+      "expected_impacted_ids": [
+        "R0",
+        "R1",
+        "T",
+        "coverage"
+      ],
+      "source": "src/extensions/score_metrics/traceability_metrics.py native extraction and scripts_bazel/tests/traceability_gate_test.py type-scoped threshold seeds",
+      "confidential": false,
+      "metrics_mode": "snapshot",
+      "coverage_types": [
+        "tool_req"
+      ]
+    },
+    {
+      "task_id": "search-snapshot-06",
+      "split": "search",
+      "input_path": "search-snapshot-06",
+      "input_files": [
+        "before.json",
+        "after.json",
+        "metrics.json",
+        "metrics-before.json"
+      ],
+      "before": "before.json",
+      "after": "after.json",
+      "metrics": "metrics.json",
+      "rule_ids": [
+        "CR-005"
+      ],
+      "gate_args": [
+        "--need-type",
+        "tool_req",
+        "--min-req-code",
+        "100"
+      ],
+      "expected_gate_verdict": "pass",
+      "expected_impacted_ids": [],
+      "source": "src/extensions/score_metrics/traceability_metrics.py native extraction and scripts_bazel/tests/traceability_gate_test.py type-scoped threshold seeds",
+      "confidential": false,
+      "metrics_mode": "snapshot",
+      "coverage_types": [
+        "tool_req"
+      ]
+    },
+    {
+      "task_id": "search-snapshot-07",
+      "split": "search",
+      "input_path": "search-snapshot-07",
+      "input_files": [
+        "before.json",
+        "after.json",
+        "metrics.json",
+        "metrics-before.json"
+      ],
+      "before": "before.json",
+      "after": "after.json",
+      "metrics": "metrics.json",
+      "rule_ids": [
+        "CR-005"
+      ],
+      "gate_args": [
+        "--need-type",
+        "tool_req",
+        "--min-req-code",
+        "100"
+      ],
+      "expected_gate_verdict": "fail",
+      "expected_impacted_ids": [
+        "R0",
+        "T",
+        "coverage"
+      ],
+      "source": "src/extensions/score_metrics/traceability_metrics.py native extraction and scripts_bazel/tests/traceability_gate_test.py type-scoped threshold seeds",
+      "confidential": false,
+      "metrics_mode": "snapshot",
+      "coverage_types": [
+        "tool_req"
+      ]
+    },
+    {
+      "task_id": "search-snapshot-08",
+      "split": "search",
+      "input_path": "search-snapshot-08",
+      "input_files": [
+        "before.json",
+        "after.json",
+        "metrics.json",
+        "metrics-before.json"
+      ],
+      "before": "before.json",
+      "after": "after.json",
+      "metrics": "metrics.json",
+      "rule_ids": [
+        "CR-005"
+      ],
+      "gate_args": [
+        "--need-type",
+        "tool_req",
+        "--min-req-code",
+        "100"
+      ],
+      "expected_gate_verdict": "pass",
+      "expected_impacted_ids": [],
+      "source": "src/extensions/score_metrics/traceability_metrics.py native extraction and scripts_bazel/tests/traceability_gate_test.py type-scoped threshold seeds",
+      "confidential": false,
+      "metrics_mode": "snapshot",
+      "coverage_types": [
+        "tool_req"
+      ]
+    },
+    {
+      "task_id": "search-snapshot-09",
+      "split": "search",
+      "input_path": "search-snapshot-09",
+      "input_files": [
+        "before.json",
+        "after.json",
+        "metrics.json",
+        "metrics-before.json"
+      ],
+      "before": "before.json",
+      "after": "after.json",
+      "metrics": "metrics.json",
+      "rule_ids": [
+        "CR-005"
+      ],
+      "gate_args": [
+        "--need-type",
+        "tool_req",
+        "--min-req-code",
+        "100"
+      ],
+      "expected_gate_verdict": "fail",
+      "expected_impacted_ids": [
+        "R0",
+        "R1",
+        "R2",
+        "T",
+        "coverage"
+      ],
+      "source": "src/extensions/score_metrics/traceability_metrics.py native extraction and scripts_bazel/tests/traceability_gate_test.py type-scoped threshold seeds",
+      "confidential": false,
+      "metrics_mode": "snapshot",
+      "coverage_types": [
+        "tool_req"
+      ]
+    },
+    {
+      "task_id": "search-snapshot-10",
+      "split": "search",
+      "input_path": "search-snapshot-10",
+      "input_files": [
+        "before.json",
+        "after.json",
+        "metrics.json",
+        "metrics-before.json"
+      ],
+      "before": "before.json",
+      "after": "after.json",
+      "metrics": "metrics.json",
+      "rule_ids": [
+        "CR-005"
+      ],
+      "gate_args": [
+        "--need-type",
+        "tool_req",
+        "--min-req-code",
+        "100"
+      ],
+      "expected_gate_verdict": "pass",
+      "expected_impacted_ids": [
+        "EXT"
+      ],
+      "source": "src/extensions/score_metrics/traceability_metrics.py native extraction and scripts_bazel/tests/traceability_gate_test.py type-scoped threshold seeds",
+      "confidential": false,
+      "metrics_mode": "snapshot",
+      "coverage_types": [
+        "tool_req"
+      ]
+    }
+  ]
+}

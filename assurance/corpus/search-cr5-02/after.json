@@ -1,0 +1,36 @@
+{
+  "needs": {
+    "R5_search_1": {
+      "id": "R5_search_1",
+      "type": "tool_req",
+      "content": "Original obligation",
+      "testlink": [
+        "T5_search_1"
+      ],
+      "source_code_link": [
+        "code.cpp"
+      ]
+    },
+    "G5_search_1": {
+      "id": "G5_search_1",
+      "type": "gd_guidl",
+      "complies": [
+        "R5_search_1"
+      ]
+    },
+    "A5_search_1": {
+      "id": "A5_search_1",
+      "type": "evidence",
+      "links": [
+        "G5_search_1"
+      ]
+    },
+    "T5_search_1": {
+      "id": "T5_search_1",
+      "type": "testcase",
+      "fully_verifies": [
+        "R5_search_1"
+      ]
+    }
+  }
+}
